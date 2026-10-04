@@ -1088,7 +1088,7 @@ Func_081848ec:
 	adds r3, r2, r3
 	adds r3, r3, r4
 	str r3, [sp, #196]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_0818526c
 	movs r2, #0
 	ldrb r0, [r3, r7]
@@ -1591,7 +1591,7 @@ Func_081848ec:
 	adds r3, r3, r1
 	str r3, [sp, #196]
 	str r4, [sp, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r4, [sp, #8]
 	ldr r3, [r4]
 	cmp r3, #0
@@ -1744,7 +1744,7 @@ Func_081848ec:
 	adds r3, r7, r3
 	adds r3, r3, r0
 	str r3, [sp, #196]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #128]
 	movs r1, #128
 	lsls r1, r1, #12
@@ -1909,7 +1909,7 @@ Func_081848ec:
 	adds r0, r2, r0
 	adds r0, r0, r3
 	str r0, [sp, #196]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [r5, #4]
 	adds r0, r7, #0
 	movs r2, #0
@@ -2035,7 +2035,7 @@ Func_081848ec:
 	lsls r4, r4, #5
 	adds r3, r2, r4
 	str r3, [r5, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r6, [sp, #128]
 	movs r5, #128
 	lsls r5, r5, #12
@@ -2201,7 +2201,7 @@ Func_081848ec:
 	str r2, [r4, #20]
 	adds r5, #255
 	str r3, [sp, #196]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	cmp r11, r5
 	ble .L_081859ec
 	movs r3, #128
@@ -2296,7 +2296,7 @@ Func_081848ec:
 	strb r2, [r3]
 	lsls r5, r5, #9
 	strb r2, [r6, #1]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r5, #0
 	ldr r1, .L_08185b34
 	movs r2, #0
@@ -3089,7 +3089,7 @@ Func_08185b9c:
 	ldr r3, .L_08186210
 	str r1, [r7, #12]
 	str r3, [r0, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_08186214
 	ldr r1, [sp, #84]
 	movs r2, #0
@@ -3297,7 +3297,7 @@ Func_08185b9c:
 	str r0, [sp, #56]
 	strb r3, [r0]
 	strb r3, [r2, #1]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r1, #128
 	movs r0, #0
 	lsls r1, r1, #13
@@ -3436,7 +3436,7 @@ Func_08185b9c:
 	adds r3, r3, r2
 	mov r4, r8
 	str r3, [r4, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r5, #8]
 	bl Func_080150e4
 	ldr r3, [r5, #8]
@@ -4296,7 +4296,7 @@ Func_08185b9c:
 	ands r3, r2
 	strb r3, [r7, #24]
 	str r5, [r7, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r2, #128
 	lsls r2, r2, #8
 	movs r1, #128

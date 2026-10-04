@@ -272,7 +272,7 @@ Func_08192c9c:
 	movs r0, #188
 	str r3, [r5]
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r6, [sp, #184]
 	str r6, [sp, #164]
 .L_08192ec8:
@@ -3511,7 +3511,7 @@ Func_08192c9c:
 	ldr r0, [r6]
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r0, #1
 	ldr r1, .L_081947c0
 	movs r2, #0

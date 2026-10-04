@@ -59,24 +59,28 @@ void ObjectMotion_SetActionVariant(u32 object_id, s32 priority)
 void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
 {
     void *p;
-    u8 flags;
-    u32 shape;
-    u32 dst_attr;
+    u8 block;
+    u32 tile;
+    u32 attr;
     u32 merged;
 
+    /* One pointer holds the object and then its sprite, as in ☀️; separate
+       object and sprite locals load the sprite into another register. The
+       tile number is the low ten bits of the third attribute word at +8,
+       which the sprite struct keeps as bytes. */
     p = Object_GetById(source_id);
-    p = *(void **)((u8 *)p + 0x50);
-    flags = *(u8 *)((u8 *)p + 0x10);
-    shape = *(u16 *)((u8 *)p + 0x8);
+    p = ((struct ObjectRuntime *)p)->animation;
+    block = ((struct FieldSprite *)p)->vram_block;
+    tile = *(u16 *)((u8 *)p + 8);
 
     p = Object_GetById(target_id);
-    p = *(void **)((u8 *)p + 0x50);
-    dst_attr = *(u16 *)((u8 *)p + 0x8);
-    *(u8 *)((u8 *)p + 0x10) = flags;
-    shape <<= 22;
-    shape >>= 22;
+    p = ((struct ObjectRuntime *)p)->animation;
+    attr = *(u16 *)((u8 *)p + 8);
+    ((struct FieldSprite *)p)->vram_block = block;
+    tile <<= 22;
+    tile >>= 22;
     merged = 0xfffffc00;
-    merged &= dst_attr;
-    merged |= shape;
-    *(u16 *)((u8 *)p + 0x8) = merged;
+    merged &= attr;
+    merged |= tile;
+    *(u16 *)((u8 *)p + 8) = merged;
 }

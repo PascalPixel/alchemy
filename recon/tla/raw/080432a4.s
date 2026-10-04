@@ -81,7 +81,7 @@ Func_080432a4:
 	cmp r5, #2
 	ble .L_080432e8
 .L_0804333a:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	mov r1, r8
 	cmp r1, #0
 	beq .L_0804334e

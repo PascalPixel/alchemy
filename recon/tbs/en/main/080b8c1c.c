@@ -1,3 +1,27 @@
+/* 2026-10-04 (second-wave finisher 1), alchemy diff 82, unchanged: the
+ * draft now uses the shared BattlePresentationWork / Transition /
+ * MotionObject types and indexes work.params[i][j] as the adopted
+ * BattlePres_RunPsynergyCast does; the code is identical. Reading of the
+ * ROM tail: its &work (r5) is a fresh pseudo that loop.c hoisted, and the
+ * two spilled r2 copies at sp+0/sp+4 are low-register-only base pseudos
+ * that found no low register because i holds r7 and the offset giv r6;
+ * here cse2 folds the tail's &work into the long-lived r6, so i falls to
+ * r8 and nothing spills. Tried without effect on that: inline
+ * Work_GetCount/Work_GetActor/Work_ResetFrom helpers on &work or a tail
+ * pointer (73-96), a w pointer for the head with work. in the tail (125,
+ * frame 88), pinning i to r7 (138: a global register variable; 138 too
+ * when the pin is scoped to a block from the first unit loop on).
+ * -dg on this draft: the tail's &work is pseudo 44 (35 refs over 131
+ * insns, the GCSE copy of &work for the whole body); -fno-gcse (diagnosis
+ * only) gives sp-relative tail loads instead, so the ROM's fresh tail base
+ * is not plain GCSE either. A head written with w = &work and w-> (the List
+ * calls on work.actors, which keeps add rN, sp, #44 there) gives frame 88
+ * with one spilled tail copy (122); its tail then reuses w. Inline
+ * Pres_GetCount/GetActor/GetObject helpers on w or &work in the head loop
+ * and tail: 91-122. 132 generated tail spellings on this draft (for/while/
+ * do loops, i/j, work./w->/ids[] access, i = 0 before or after the stage
+ * calls): best 72.
+ */
 /* 2026-10-04 (finisher 3), 82 rows off by dd.ts. The 8 bytes at sp+0 and
  * sp+4 are caller-save slots, not a local: in the ROM's reset loop the
  * units base (r2) and the count base (r1) are two pseudos for &work held in
@@ -35,124 +59,88 @@
  * its own variable or in i or j; the four stage calls as a loop; five
  * minutes of alchemy permute. */
 #include "TYPES.H"
-
-struct BattlePresentationTransition {
-    s32 angle;
-    s32 timer;
-};
-
-struct BattlePresentationWork {
-    s32 stage;
-    s32 is_party_target;
-    s32 primary_unit;
-    s32 secondary_unit;
-    s32 action_value;
-    s32 unit_count;
-    s32 reserved_18;
-    u8 reserved_1c[8];
-    s16 units[8];
-    u8 child_values[32];
-};
-
-struct MotionChild {
-    u8 reserved_00[5];
-    u8 value;
-};
-
-struct MotionEntry {
-    u8 reserved_00[39];
-    u8 child_count;
-    struct MotionChild *children[1];
-};
-
-struct BattleMotionActor {
-    u8 reserved_00[80];
-    struct MotionEntry *motion;
-};
-
-struct BattleMotionSlot {
-    struct BattleMotionActor *actor;
-};
+#include "BATTLE_EVENT.H"
+#include "BATTLE_WORK.H"
+#include "MOTION_OBJECT.H"
+#include "BATTLE_PRESENTATION.H"
+#include "ANIMSPR.H"
 
 extern struct BattlePresentationTransition *gTransitionWork;
-extern u8 *gBattleWork;
-
 void WaitFrames(s32 frames);
-s32 BattleObject_IsValidId(s32 object_id);
 s32 BattleParty_ListLivingUnits(s32 side_mask, s16 *unit_ids);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
-void Object_SetMode(void *actor, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(void *actor, s32 mode);
+void Object_SetMode(void *object, s32 mode);
+void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
 void BattleFx_RunIceFleckBurstFar(struct BattlePresentationWork *work);
 void BattleFx_DispatchModeFar(struct BattlePresentationWork *work);
-void Actor_ResetMotionAtAnchor(s32 unit_id);
+void Actor_ResetMotionAtAnchor(s32 actor);
 
 s32 BattlePres_RunUnitAction(s16 *action)
 {
     struct BattlePresentationWork work;
     struct BattlePresentationTransition *transition = gTransitionWork;
-    struct BattleMotionActor *actor;
+    struct MotionObject *object;
     s32 facing;
     s32 i;
-    s32 j;
 
     if (action[0] > 4)
         facing = -0x2000;
     else
         facing = 0x2000;
-    if (transition->angle == facing) {
-        transition->timer = 40;
+    if (transition->target_yaw == facing) {
+        transition->frames = 40;
         WaitFrames(40);
     } else {
-        transition->angle = facing;
-        transition->timer = 40;
+        transition->target_yaw = facing;
+        transition->frames = 40;
         WaitFrames(40);
     }
-    work.stage = action[4];
-    work.action_value = action[6];
-    work.primary_unit = action[0];
-    work.secondary_unit = action[5];
-    if (BattleObject_IsValidId(work.primary_unit) < 0)
+    work.kind = action[4];
+    work.initial_value = action[6];
+    work.actor = action[0];
+    work.first_target = action[5];
+    if (BattleObject_IsValidId(work.actor) < 0)
         return -1;
-    if (work.secondary_unit > 127)
-        work.unit_count = BattleParty_ListLivingUnits(2, work.units);
+    if (work.first_target > 127)
+        work.count = BattleParty_ListLivingUnits(2, work.actors);
     else
-        work.unit_count = BattleParty_ListLivingUnits(1, work.units);
-    UiWindow_DrawPartyStatusContentsFar(gBattleWork[65] & ~1);
-    actor = GetBattleObjectSlot(work.primary_unit)->actor;
-    Object_SetMode(actor, 3);
-    ObjectDispatch_ApplyValueToChildrenFar(actor, 16);
+        work.count = BattleParty_ListLivingUnits(1, work.actors);
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode & ~1);
+    object = GetBattleObjectSlot(work.actor)->object;
+    Object_SetMode(object, 3);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     if ((u16)action[5] <= 7) {
-        work.is_party_target = 1;
-        BattleParty_ListLivingUnits(1, work.units);
-        work.unit_count = 1;
+        work.side = 1;
+        BattleParty_ListLivingUnits(1, work.actors);
+        work.count = 1;
     } else {
-        work.is_party_target = 0;
-        BattleParty_ListLivingUnits(2, work.units);
-        work.unit_count = 1;
+        work.side = 0;
+        BattleParty_ListLivingUnits(2, work.actors);
+        work.count = 1;
     }
-    for (i = 0; i != work.unit_count; i++) {
-        struct MotionEntry *motion = GetBattleObjectSlot(work.units[i])->actor->motion;
+    for (i = 0; i != work.count; i++) {
+        struct AnimationObject *animation =
+            GetBattleObjectSlot(work.actors[i])->object->records;
+        s32 j;
 
-        for (j = 0; j != motion->child_count - 1; j++)
-            work.child_values[i * 4 + j] = motion->children[j]->value;
+        for (j = 0; j != animation->count - 1; j++)
+            work.params[i][j] = animation->entries[j]->param;
     }
     i = 0;
-    work.stage = 0;
-    work.reserved_18 = 0;
+    work.kind = 0;
+    work.variant = 0;
     BattleFx_RunIceFleckBurstFar(&work);
-    work.stage = 1;
+    work.kind = 1;
     BattleFx_RunIceFleckBurstFar(&work);
-    work.stage = 2;
+    work.kind = 2;
     BattleFx_RunIceFleckBurstFar(&work);
-    work.stage = 3;
+    work.kind = 3;
     BattleFx_RunIceFleckBurstFar(&work);
-    work.stage = 0;
+    work.kind = 0;
     BattleFx_DispatchModeFar(&work);
-    Object_SetMode(actor, 1);
-    for (; i != work.unit_count; i++)
-        Actor_ResetMotionAtAnchor(work.units[i]);
-    Actor_ResetMotionAtAnchor(work.primary_unit);
+    Object_SetMode(object, 1);
+    for (; i != work.count; i++)
+        Actor_ResetMotionAtAnchor(work.actors[i]);
+    Actor_ResetMotionAtAnchor(work.actor);
     return 0;
 }

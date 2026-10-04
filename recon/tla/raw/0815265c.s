@@ -2400,7 +2400,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r5, [r3, #48]
 	asrs r0, r0, #1
 	mov r8, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r0, r5, #0
 	adds r1, #12
@@ -2551,11 +2551,11 @@ BattleFx_RunProjectileVolleyB:
 	cmp r6, #14
 	bne .L_0815399e
 	ldr r0, [sp, #84]
-	bl Func_081504c0
+	bl SummonFx_RunCanvasMode1
 	b .L_081539aa
 .L_0815399e:
 	ldr r0, [sp, #84]
-	bl Func_081504b4
+	bl SummonFx_RunCanvasMode3
 	b .L_081539aa
 .L_081539a6:
 	bl Func_08143bb8

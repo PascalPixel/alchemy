@@ -2,6 +2,167 @@
 #include "WINDOW.H"
 #include "GLYPH.H"
 
+s32 __divsi3(s32 numerator, s32 denominator);
+
+/* Measures the widest queued line and total height, adding 15 for every line.
+   Only the four spacing slots saturate. Optional 8.8 spacing is between words
+   internationally and between characters in Japanese. */
+void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16 *spacing)
+{
+    struct UiRenderWork *work;
+    u32 lines;
+    u32 width;
+    u32 height;
+    u32 line_width;
+    u32 count;
+    u32 c;
+    u32 glyph;
+    u32 i;
+    u16 counts[4];
+    u16 widths[4];
+    s32 gap;
+    u32 style;
+#if !EDITION_INTERNATIONAL
+    s32 trailing;
+#endif
+
+    work = (struct UiRenderWork *)gWindowWork[0];
+#if !EDITION_INTERNATIONAL
+    trailing = 0;
+#endif
+    width = 0;
+    height = 15;
+    lines = 0;
+    line_width = 0;
+    count = 0;
+    for (;;) {
+        c = work->entries[pos];
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
+        if (c > 31) {
+#if EDITION_INTERNATIONAL
+            if (c == 32) {
+                line_width += 5;
+                count++;
+            } else {
+                glyph = UiText_Glyphs[c - 32].width;
+                style = work->outline;
+                if (style == 1 || style == 5)
+                    glyph++;
+                line_width += glyph;
+            }
+#else
+            if (c != 0xde && c != 0xdf) {
+                if (c == 32) {
+                    line_width += 7;
+                } else {
+                    if (c == 0xa5)
+                        trailing = -1;
+                    else if (c == 0x21)
+                        trailing = -3;
+                    else if (c == 0xa1 || c == 0xa4)
+                        trailing = -6;
+                    else
+                        trailing = 0;
+                    glyph = 10;
+                    if (c <= 0xff)
+                        glyph = UiText_Glyphs[c - 32].width;
+                    style = work->outline;
+                    if (style == 1 || style == 5)
+                        glyph++;
+                    line_width += glyph;
+                }
+            }
+            count++;
+#endif
+            continue;
+        }
+        switch (c) {
+        case 0:
+#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
+        case 1:
+#endif
+            goto done;
+        case 3:
+#if EDITION_INTERNATIONAL
+            count++;
+#else
+            line_width += trailing;
+#endif
+            counts[lines] = count;
+            widths[lines] = line_width;
+            if (width < line_width)
+                width = line_width;
+            if (lines < 3)
+                lines++;
+            count = 0;
+            line_width = 0;
+            height += 15;
+            break;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        case 1:
+            work->outline = 0;
+            goto done;
+#endif
+        case 14:
+        case 28:
+            pos = (pos + 1) & RENDER_ENTRY_MASK;
+        case 8:
+        case 10:
+        case 15:
+        case 17:
+            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            break;
+        case 9:
+            work->outline = work->entries[pos];
+            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            break;
+        }
+    }
+done:
+#if EDITION_INTERNATIONAL
+    count++;
+#else
+    line_width += trailing;
+#endif
+    counts[lines] = count;
+    widths[lines] = line_width;
+    if (width < line_width)
+        width = line_width;
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+    if (work->mode)
+        width = width + 2;
+#endif
+    *out_width = width;
+    *out_height = height;
+    width = (width + 19) >> 3;
+    width = (width << 3) - 16;
+    if (spacing != NULL) {
+        i = 0;
+        while (i <= lines) {
+            if (counts[i] <= 1) {
+                *spacing++ = 0;
+            } else {
+                gap = width - widths[i];
+                gap -= 4;
+                if (gap < 0)
+                    gap = 0;
+                gap = __divsi3(gap << 8, counts[i] - 1);
+#if EDITION_INTERNATIONAL
+                if ((u32)gap > 0xc00)
+                    gap = 0x200;
+#else
+                if ((u32)gap > 0x800)
+                    gap = 0;
+                if ((u32)gap > 0x100)
+                    gap = 0x100;
+#endif
+                *spacing++ = gap;
+            }
+            i++;
+        }
+    }
+}
+
 /* Measures a rendered message: the widest line of its first variant, the
    tallest variant (a newline adds 15 pixels to the variant it ends) and, for
    up to four lines, the 8.8 spacing that spreads each line across the window

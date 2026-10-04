@@ -13,7 +13,7 @@
 
 extern u8 VinasuChojo_PairActionScript[];
 void VinasuChojo_ShowMessage();
-void FieldScene_RunScene3c9_02001280();
+void VinasuChojo_ShowPartyMember();
 void Engine_TaskWait();
 void Engine_MapRedraw();
 void Engine_ActorSetSpriteFlags();
@@ -47,10 +47,6 @@ void Engine_EventOpenScreen();
 void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
 void Engine_AudioPlayCue();
-
-struct Half {
-    u16 v;
-};
 
 extern u8 MsgVinasuRobin[];
 extern u8 MsgVinasuRobinHandedOverShamansRod[];
@@ -449,35 +445,23 @@ void VinasuChojo_FaceActor(s32 actor, s32 facing)
  */
 void Scene_RunScriptedActorPresentation(void)
 {
-    /* FAKEMATCH: a one-halfword struct keeps the zero in a pool word held in
-     * r8, as the reference does. */
-    struct Half zero;
-    u8 *companion;
+    struct FieldActor *companion;
     struct FieldActor *leader;
-    s32 none;
 
-    companion = (u8 *)Object_GetById(18);
+    companion = Object_GetById(18);
     Engine_EventBegin();
-    FieldScene_RunScene3c9_02001280(1, 0);
-    FieldScene_RunScene3c9_02001280(2, 0);
-    FieldScene_RunScene3c9_02001280(3, 0);
+    VinasuChojo_ShowPartyMember(1, 0);
+    VinasuChojo_ShowPartyMember(2, 0);
+    VinasuChojo_ShowPartyMember(3, 0);
     Engine_CameraMoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
-    /* FAKEMATCH: one zero shared by the flag stores; writing 0 at each store
-     * reallocates the function's registers (measured 2026-10-04). */
-    none = 0;
-    companion[85] = none;
-    {
-        /* FAKEMATCH: the volatile read keeps the flag byte's load in place. */
-        u8 value = *(volatile u8 *)&companion[35];
-    
-        companion[35] = (u8)(value | 2);
-    }
+    companion->motion_flags = 0;
+    companion->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
     Engine_ActorSetSpritePriority(18, 1);
     Engine_ActorSetPosition(18, PIXELS(580), PIXELS(338));
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    leader->motion_flags = none;
+    leader->motion_flags = 0;
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
     Engine_ActorSetPosition(ACTOR_PARTY_LEADER, PIXELS(581), PIXELS(288));
     Engine_TaskWait(1);
@@ -504,8 +488,7 @@ void Scene_RunScriptedActorPresentation(void)
     leader->y.fixed = PIXELS(8);
     leader->z.fixed = PIXELS(148);
     leader->facing = FACING_WEST;
-    leader->motion_flags = 3;
-    zero.v = 0;
+    leader->motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Engine_AudioPlayCue(152);
     leader->velocity_y = 0x40000;
     Engine_AudioPlayCue(152);
@@ -528,17 +511,11 @@ void Scene_RunScriptedActorPresentation(void)
     Actor_MoveToAndWait(18, 530, 211);
     Actor_MoveToAndWait(18, 580, 221);
     Engine_ActorSetDestination(18, 580, 338);
-    {
-        u8 *record = Object_GetById(ACTOR_PARTY_LEADER);
-        /* FAKEMATCH: the volatile read keeps the flag byte's load in place. */
-        u8 value = *(volatile u8 *)&record[35];
-    
-        record[35] = (u8)(value | 1);
-    }
+    Object_GetById(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-    FieldScene_RunScene3c9_02001280(1, 1);
-    FieldScene_RunScene3c9_02001280(2, 1);
-    FieldScene_RunScene3c9_02001280(3, 1);
+    VinasuChojo_ShowPartyMember(1, 1);
+    VinasuChojo_ShowPartyMember(2, 1);
+    VinasuChojo_ShowPartyMember(3, 1);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 492, 164);
     Engine_ActorWalkTo(1, 514, 164);
     Actor_WalkTo(ACTOR_IVAN, 492, 140);
@@ -559,7 +536,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_ActorFaceDirection(ACTOR_GERALD, FACING_WEST, 0);
     Engine_ActorFaceDirection(ACTOR_IVAN, FACING_WEST, 0);
     VinasuChojo_FaceActor(ACTOR_MIA, FACING_WEST);
-    Engine_EventGetViewCenter()->motion_flags = zero.v;
+    Engine_EventGetViewCenter()->motion_flags = 0;
     Engine_CameraSetSpeed(0x4cccc, 0x9999);
     Engine_CameraMoveTo(0x1300000, 0x200000, 0x9e0000, 1);
     Engine_CameraWaitForMove();
@@ -744,20 +721,20 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventEnd();
 }
 
-/* The first scene step. */
-void FieldScene_RunScene3c9_02001280(s32 a0, s32 a1)
+/* Shows a party member walking at the party's pace, or hides it while the
+   leader is carried up alone. */
+void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
 {
-    u32 i;
     s32 record;
 
-    if (a1 != 0) {
-        Actor_SetChildValue(a0, 0);
-        record = Actor_Get(a0);
+    if (shown != 0) {
+        Actor_SetChildValue(actor, 0);
+        record = Actor_Get(actor);
         Engine_ActorSetSpriteFlags(record, 1);
-        Actor_SetSpeed(a0, 0xcccc, 0x6666);
+        Actor_SetSpeed(actor, 0xcccc, 0x6666);
     } else {
-        Actor_SetChildValue(a0, 15);
-        record = Actor_Get(a0);
+        Actor_SetChildValue(actor, 15);
+        record = Actor_Get(actor);
         Engine_ActorSetSpriteFlags(record, 0);
     }
 }

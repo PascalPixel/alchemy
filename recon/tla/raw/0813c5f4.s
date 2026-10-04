@@ -262,7 +262,7 @@ Func_0813c5f4:
 	orrs r2, r1
 	strh r2, [r3]
 .L_0813c7fe:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #32]
 	bl Graphics_PrepareTransferInIwramWork

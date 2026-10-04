@@ -1,21 +1,20 @@
 #include "TYPES.H"
 #include "CALL.H"
+#include "FIELDOBJ.H"
 
 extern u8 MsgKorashiamuHeyYouRe[];
-extern struct EventWork *gEventWork;
 extern u8 KorashiamuIriguchi_ActionTable1[];
 extern u8 KorashiamuIriguchi_ActionTable2[];
 extern u8 KorashiamuIriguchi_ActionTable4[];
-#define SCENE_WORK ((u8 *)gEventWork)
 
-static __inline__ void bump_step(s32 amount)
+/* Moves the next dialogue line on by count messages. */
+static __inline__ void Event_SkipMessages(s32 count)
 {
-    u16 *step = (u16 *)((u8 *)gEventWork + 0x1d8);
+    u16 *message = &gEventWork->message;
 
-    *step = *step + amount;
+    *message = *message + count;
 }
 
-#define SCENE_FIELD_1C8 (*(s32 *)(SCENE_WORK + 0x1c8))
 void FieldScene_CallPairWith10();
 void SceneState_ForwardMaskedHalfwordWith10();
 s32 Engine_GameFlagIsSet();
@@ -24,7 +23,7 @@ void Engine_EventWait();
 void Engine_EventBegin();
 void Engine_EventEnd();
 s32 Engine_EventChooseYesNo();
-s32 Object_GetById();
+struct FieldActor *Object_GetById();
 void Engine_ActorSetSpeed();
 void Engine_ActorEnableActionCallback();
 void Object_SetActionCallbackAndRefreshById();
@@ -44,7 +43,7 @@ void Engine_ActorSetAttachedEffect();
 void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
-u8 *Engine_EventGetViewCenter();
+struct FieldActor *Engine_EventGetViewCenter();
 void Engine_EventRequestExit();
 void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
@@ -57,13 +56,6 @@ extern u8 KorashiamuIriguchi_ActionTable7[];
 extern u8 KorashiamuIriguchi_ActionTable8[];
 extern u8 KorashiamuIriguchi_ActionTable9[];
 
-struct ActorMotion {
-    u8 pad0[100];
-    u16 step[2];
-    u8 pad104[4];
-    s32 target;
-};
-
 void Engine_ActorStop();
 void Engine_TaskWait();
 void Engine_EventShowMessage();
@@ -71,13 +63,11 @@ void Engine_EventShowMessage();
 /* Runs only while flag 0x962 is set: resets the battle runtime, stages
  * presentation actors 17 to 20, places party actors 0 to 3 (taking optional
  * party record positions), then plays one of three closing sequences chosen by
- * two queries. The later two sequences first advance the scene step counter;
- * every sequence stores 40 in scene work field 0x1c8. */
+ * two queries. The later two sequences first skip a message; every sequence
+ * closes the screen over 40 frames. */
 void Scene_RunBranchingActorPresentation(void)
 {
     s32 record;
-    s32 value;
-    u8 *slot;
 
     if (Engine_GameFlagIsSet(0x962) == 0) {
         return;
@@ -86,18 +76,16 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(17, 1);
     Call3(Engine_ActorFaceDirection, 17, 0x3000, 20);
-    value = 192;
     Engine_ActorFaceDirection(17, 0, 60);
     Call3(Engine_ActorShowEmote, 17, 0x100, 40);
-    SceneState_ForwardMaskedHalfwordWith10(17, (value << 6));
+    SceneState_ForwardMaskedHalfwordWith10(17, 0x3000);
     Engine_EventSetMessage((s32)MsgKorashiamuHeyYouRe);
     Engine_ActorStartRepeatedMotion(17, 2);
     FieldScene_CallPairWith10(17);
-    Engine_ActorFaceDirection(18, (value << 6), 0);
-    Engine_ActorFaceDirection(19, (value << 6), 0);
-    Engine_ActorFaceDirection(20, (value << 6), 0);
-    slot = Engine_EventGetViewCenter();
-    *(u8 *)(slot + 85) = 0;
+    Engine_ActorFaceDirection(18, 0x3000, 0);
+    Engine_ActorFaceDirection(19, 0x3000, 0);
+    Engine_ActorFaceDirection(20, 0x3000, 0);
+    Engine_EventGetViewCenter()->motion_flags = 0;
     Engine_CameraSetSpeed(0x19999, 0x3333);
     Call4(Engine_CameraMoveTo, 0x1000000, -1, 0xac0000, 1);
     Engine_CameraWaitForMove();
@@ -135,10 +123,10 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_ActorSetAnimation(18, 3);
     Engine_ActorSetAnimation(19, 3);
     Engine_ActorSetAnimationAndWait(20, 3);
-    Engine_ActorFaceDirection(17, (value << 6), 0);
-    Engine_ActorFaceDirection(18, (value << 6), 0);
-    Engine_ActorFaceDirection(19, (value << 6), 0);
-    SceneState_ForwardMaskedHalfwordWith10(20, (value << 6));
+    Engine_ActorFaceDirection(17, 0x3000, 0);
+    Engine_ActorFaceDirection(18, 0x3000, 0);
+    Engine_ActorFaceDirection(19, 0x3000, 0);
+    SceneState_ForwardMaskedHalfwordWith10(20, 0x3000);
     Call3(Engine_ActorSetSpeed, 17, 0x9999, 0x4ccc);
     Call3(Engine_ActorWalkToAndWait, 17, 0x102, 172);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
@@ -146,15 +134,15 @@ void Scene_RunBranchingActorPresentation(void)
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Engine_ActorSetPosition(1, ((struct FieldActor *)record)->x.fixed, ((struct FieldActor *)record)->z.fixed);
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Engine_ActorSetPosition(2, ((struct FieldActor *)record)->x.fixed, ((struct FieldActor *)record)->z.fixed);
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Engine_ActorSetPosition(3, ((struct FieldActor *)record)->x.fixed, ((struct FieldActor *)record)->z.fixed);
     }
     Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
@@ -193,11 +181,11 @@ void Scene_RunBranchingActorPresentation(void)
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Engine_ActorEnableActionCallback(0, (s32)KorashiamuIriguchi_ActionTable4);
         Engine_EventWait(80);
-        SCENE_FIELD_1C8 = 40;
+        gEventWork->transition_frames = 40;
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
     } else {
-        bump_step(1);
+        Event_SkipMessages(1);
         Call3(Engine_ActorShowEmote, 17, 0x102, 40);
         FieldScene_CallPairWith10(17);
         Call3(Engine_ActorShowEmote, 18, 0x102, 40);
@@ -216,9 +204,9 @@ void Scene_RunBranchingActorPresentation(void)
         Call3(Engine_ActorFaceDirection, 17, 0xb000, 0);
         Engine_ActorFaceDirection(19, 0x8000, 0);
         Engine_ActorFaceDirection(20, 0, 60);
-        Engine_ActorFaceDirection(17, (value << 6), 0);
-        Engine_ActorFaceDirection(19, (value << 6), 0);
-        Engine_ActorFaceDirection(20, (value << 6), 20);
+        Engine_ActorFaceDirection(17, 0x3000, 0);
+        Engine_ActorFaceDirection(19, 0x3000, 0);
+        Engine_ActorFaceDirection(20, 0x3000, 20);
         Engine_ActorSetAnimation(17, 3);
         Engine_ActorSetAnimation(18, 3);
         Engine_ActorSetAnimation(19, 3);
@@ -246,11 +234,11 @@ void Scene_RunBranchingActorPresentation(void)
             Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
             Engine_ActorEnableActionCallback(0, (s32)KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(80);
-            SCENE_FIELD_1C8 = 40;
+            gEventWork->transition_frames = 40;
             Engine_EventCloseScreen();
             Engine_EventWaitForScreen();
         } else {
-            bump_step(1);
+            Event_SkipMessages(1);
             Engine_EventWait(20);
             Engine_ActorStartRepeatedMotion(1, 2);
             Engine_EventShowMessageAndWait(1, 0, 20);
@@ -275,7 +263,7 @@ void Scene_RunBranchingActorPresentation(void)
             Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
             Engine_ActorEnableActionCallback(1, (s32)KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(80);
-            SCENE_FIELD_1C8 = 40;
+            gEventWork->transition_frames = 40;
             Engine_EventCloseScreen();
             Engine_EventWaitForScreen();
         }
@@ -290,12 +278,10 @@ void Scene_RunBranchingActorPresentation(void)
  * player answer the entry question and send everyone into the arena. */
 void KorashiamuIriguchi_RunGatherScene(void)
 {
-    s32 rec;
-    u8 *record;
-    s32 base5_200af24;
+    struct FieldActor *actor;
+    s32 script;
 
-    if (Engine_GameFlagIsSet(0x234) == 0) {
-    } else {
+    if (Engine_GameFlagIsSet(0x234) != 0) {
         Engine_GameFlagSet(0x235);
         Engine_EventBegin();
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
@@ -309,9 +295,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
         Engine_EventSetMessage((s32)MsgKorashiamuYouReadyForFinals);
         /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(Engine_EventOpenMessage, 0x8008, 0);
-        rec = Engine_EventChooseYesNo(0, 0);
-        if (rec != 0) {
-        } else {
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             Engine_EventWait(20);
             SceneState_ForwardMaskedHalfwordWith10(12, 0xd000);
             Engine_ActorRunRepeatedMotion(12, 1);
@@ -372,51 +356,45 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_ActorRunRepeatedMotion(8, 2);
             FieldScene_CallPairWith10(8);
             Engine_ActorSetSpeed(8, 0x10000, 0x8000);
-            *(u8 *)(Object_GetById(8) + 90) &= 254;
+            Object_GetById(8)->unknown_5a &= ~1;
             Engine_ActorWalkToAndWait(8, 0x318, 72);
             Engine_EventWait(1);
-            {
-                u8 *record = Object_GetById(8);
-                u8 value = *(volatile u8 *)&record[90];
-            
-                record[90] = (u8)(value | 1);
-            }
+            Object_GetById(8)->unknown_5a |= 1;
             SceneState_ForwardMaskedHalfwordWith10(8, 0);
             Engine_ActorStop(13);
-            record = Object_GetById(13);
-            *(s32 *)((s32)record + 108) = rec;
-            ((struct ActorMotion *)record)->step[0] = rec;
-            ((struct ActorMotion *)record)->step[1] = rec;
-            *(s32 *)((s32)record + 36) = rec;
-            *(s32 *)((s32)record + 40) = rec;
-            *(s32 *)((s32)record + 44) = rec;
-            *(s32 *)((s32)record + 56) = -0x80000000;
-            *(s32 *)((s32)record + 60) = -0x80000000;
-            *(s32 *)((s32)record + 64) = -0x80000000;
+            actor = Object_GetById(13);
+            actor->update = NULL;
+            actor->unknown_64 = 0;
+            actor->unknown_66 = 0;
+            actor->velocity_x = 0;
+            actor->velocity_y = 0;
+            actor->velocity_z = 0;
+            actor->target_x = ACTOR_NO_TARGET;
+            actor->target_y = ACTOR_NO_TARGET;
+            actor->target_z = ACTOR_NO_TARGET;
             Engine_TaskWait(1);
-            base5_200af24 = (s32)KorashiamuIriguchi_ActionTable8;
-            Engine_ActorEnableActionCallback(15, base5_200af24);
+            script = (s32)KorashiamuIriguchi_ActionTable8;
+            Engine_ActorEnableActionCallback(15, script);
             Engine_EventWait(20);
-            Engine_ActorEnableActionCallback(13, base5_200af24);
+            Engine_ActorEnableActionCallback(13, script);
             Engine_EventWait(20);
-            Engine_ActorEnableActionCallback(17, base5_200af24);
+            Engine_ActorEnableActionCallback(17, script);
             Engine_EventWait(20);
-            Engine_ActorEnableActionCallback(14, base5_200af24);
+            Engine_ActorEnableActionCallback(14, script);
             Engine_EventWait(20);
-            Engine_ActorEnableActionCallback(16, base5_200af24);
+            Engine_ActorEnableActionCallback(16, script);
             Engine_EventWait(20);
-            Engine_ActorEnableActionCallback(12, base5_200af24);
+            Engine_ActorEnableActionCallback(12, script);
             Engine_EventWait(20);
-            Engine_ActorEnableActionCallback(18, base5_200af24);
+            Engine_ActorEnableActionCallback(18, script);
             Engine_EventWait(60);
-            Engine_ActorEnableActionCallback(0, base5_200af24);
+            Engine_ActorEnableActionCallback(0, script);
             Engine_EventWait(80);
             Engine_EventRequestExit(66);
-            goto L_0200115c;
+        } else {
+            gEventWork->message++;
+            Engine_EventShowMessage(0x8008, 0);
         }
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
-        Engine_EventShowMessage(0x8008, 0);
-        L_0200115c:;
         Engine_EventEnd();
     }
 }

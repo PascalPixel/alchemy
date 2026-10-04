@@ -527,7 +527,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data1FF
 	resource , Resource_Data200
 	resource , Resource_Data201
-	resource , Resource_Data202
+	resource UiFixedBlockATiles, Resource_Data202
 	resource , Monster_BlueDevilSprites
 	resource , Monster_PinkBruteSprites
 	resource , Monster_ClubTrollSprites

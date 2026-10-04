@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081504d8
+	.global SummonFx_RunCanvasEffect
 	.thumb_func
-Func_081504d8:
+SummonFx_RunCanvasEffect:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -338,7 +338,7 @@ Func_081504d8:
 	bgt .L_0815075a
 	b .L_08150922
 .L_0815075a:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #24]
 	bl Graphics_PrepareTransferInIwramWork
@@ -350,7 +350,7 @@ Func_081504d8:
 	str r3, [r5, #4]
 	ldr r3, [r6, #16]
 	str r3, [r5, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #24]
 	bl Graphics_PrepareTransferInIwramWork

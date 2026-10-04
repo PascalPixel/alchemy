@@ -4,12 +4,6 @@
 	.global Rom_Start
 Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
-	.section .rom.0000616c, "ax"
-	.global SerialRuntime_CollectReceivedPayloads
-	.type SerialRuntime_CollectReceivedPayloads, %function
-	.thumb_func
-SerialRuntime_CollectReceivedPayloads:
-	.incbin "baserom.gba", 0x0000616c, 0x000000e4
 	.section .rom.0000656c, "ax"
 	.global SerialRuntime_StepBlockTransfer
 	.type SerialRuntime_StepBlockTransfer, %function
@@ -149,14 +143,14 @@ ScriptObject_CycleTable:
 	.global Script_MainScript
 Script_MainScript:
 	.incbin "baserom.gba", 0x00012a40, 0x00000014
-	.global Data_08013254
-Data_08013254:
+	.global WorldMap_KeyHeadings
+WorldMap_KeyHeadings:
 	.incbin "baserom.gba", 0x00012a54, 0x00000020
-	.global Data_08013274
-Data_08013274:
+	.global WorldMap_FootprintActions
+WorldMap_FootprintActions:
 	.incbin "baserom.gba", 0x00012a74, 0x00000018
-	.global Data_0801328c
-Data_0801328c:
+	.global WorldMap_KeyYaws
+WorldMap_KeyYaws:
 	.incbin "baserom.gba", 0x00012a8c, 0x00000040
 	.global Data_080132cc
 Data_080132cc:
@@ -234,12 +228,6 @@ UiWork_StepChannelScript:
 Func_08018038:
 UiText_BuildRenderEntries:
 	.incbin "baserom.gba", 0x00016f60, 0x0000064c
-	.section .rom.00017744, "ax"
-	.global UiText_MeasureEntryDimensions
-	.type UiText_MeasureEntryDimensions, %function
-	.thumb_func
-UiText_MeasureEntryDimensions:
-	.incbin "baserom.gba", 0x00017744, 0x000001f8
 	.section .rom.000180a4, "ax"
 	.global UiWork_AnimateSpriteSlots
 	.type UiWork_AnimateSpriteSlots, %function
@@ -248,12 +236,6 @@ UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x000180a4, 0x00000480
 	.section .rom.00018b2c, "ax"
 	.incbin "baserom.gba", 0x00018b2c, 0x00000110
-	.section .rom.000198bc, "ax"
-	.global MenuSelection_DrawFrame
-	.type MenuSelection_DrawFrame, %function
-	.thumb_func
-MenuSelection_DrawFrame:
-	.incbin "baserom.gba", 0x000198bc, 0x00000560
 	.section .rom.0001cdbc, "ax"
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function
@@ -266,14 +248,6 @@ UiText_RenderStringTiles:
 	.thumb_func
 SaveMenu_SelectSlot:
 	.incbin "baserom.gba", 0x0001f1c8, 0x00000580
-	.section .rom.0001fb5a, "ax"
-	.incbin "baserom.gba", 0x0001fb5a, 0x00000002
-	.section .rom.0001fb5c, "ax"
-	.global NameEntry_EditOwnerName
-	.type NameEntry_EditOwnerName, %function
-	.thumb_func
-NameEntry_EditOwnerName:
-	.incbin "baserom.gba", 0x0001fb5c, 0x000004b4
 	.section .rom.00020e0e, "ax"
 	.incbin "baserom.gba", 0x00020e0e, 0x000008fe
 	.section .rom.00021a1e, "ax"
@@ -360,7 +334,10 @@ Menu_AnimatedCursorTiles:
 	.incbin "baserom.gba", 0x000337b8, 0x00002000
 	.global Data_080366f8
 Data_080366f8:
-	.incbin "baserom.gba", 0x000357b8, 0x00000058
+	.incbin "baserom.gba", 0x000357b8, 0x00000048
+	.global Menu_CursorBobOffsets
+Menu_CursorBobOffsets:
+	.incbin "baserom.gba", 0x00035800, 0x00000010
 	.global PaletteGlow_WaveTable
 PaletteGlow_WaveTable:
 	.incbin "baserom.gba", 0x00035810, 0x00000079
@@ -393,7 +370,16 @@ UiWindow_PartyColumnOffsets:
 	.incbin "baserom.gba", 0x00036284, 0x00000014
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
-	.incbin "baserom.gba", 0x00036298, 0x00000028
+	.incbin "baserom.gba", 0x00036298, 0x00000018
+	.global NameEntry_CaretWave
+NameEntry_CaretWave:
+	.incbin "baserom.gba", 0x000362b0, 0x00000008
+	.global NameEntry_DeleteKeyLabel
+NameEntry_DeleteKeyLabel:
+	.incbin "baserom.gba", 0x000362b8, 0x00000004
+	.global NameEntry_EndKeyLabel
+NameEntry_EndKeyLabel:
+	.incbin "baserom.gba", 0x000362bc, 0x00000004
 	.global Data_080371fe
 Data_080371fe:
 	.incbin "baserom.gba", 0x000362c0, 0x00000008
@@ -482,7 +468,10 @@ WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x00073a76, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x00073ab8, 0x00000114
+	.incbin "baserom.gba", 0x00073ab8, 0x00000010
+	.global NameEntry_KeyboardTilemap
+NameEntry_KeyboardTilemap:
+	.incbin "baserom.gba", 0x00073ac8, 0x00000104
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x00073bcc, 0x00008434
@@ -926,12 +915,6 @@ BattlePres_RunUnitAction:
 	.thumb_func
 BattlePresentation_RunUnitTransition:
 	.incbin "baserom.gba", 0x000bded8, 0x000003bc
-	.section .rom.000be6c4, "ax"
-	.global Func_080ba6ac
-	.type Func_080ba6ac, %function
-	.thumb_func
-Func_080ba6ac:
-	.incbin "baserom.gba", 0x000be6c4, 0x0000026c
 	.section .rom.000c1868, "ax"
 	.incbin "baserom.gba", 0x000c1868, 0x00000048
 	.section .rom.000c18b0, "ax"

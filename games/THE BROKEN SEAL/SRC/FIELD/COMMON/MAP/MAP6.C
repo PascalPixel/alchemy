@@ -12,6 +12,8 @@
 #include "DMA.H"
 #include "MAP.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
+#include "IWRAM_CALL.H"
 
 extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultMapCells;
@@ -152,18 +154,18 @@ s32 Map_InitializePerspectiveScene(void)
     u32 size;
     s32 i;
 
-    *(volatile u16 *)0x04000000 &= 0xc1ff;
+    REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
     Blend_SetDarkenTarget0(0);
     work = (struct PerspectiveWork *)Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
     fill = 0;
-    Dma_Set(&fill, work, 0x85000000 | (sizeof(struct PerspectiveWork) / 4), (volatile u32 *)0x040000d4);
+    Dma_Set(&fill, work, 0x85000000 | (sizeof(struct PerspectiveWork) / 4), REG_DMA3);
     work->view_x = 0;
     work->view_y = 0;
     work->scale_x = 0x200000;
     work->scale_y = 0x400000;
     work->limit_x = 0x1fe00000;
     work->limit_y = 0x1fe00000;
-    work->unknown_010 = 0;
+    work->script = NULL;
     work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), Ram_MapCollision + 0x1000);
     MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
@@ -224,6 +226,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.x = 0;
     vector.y = 0;
     vector.z = far_plane;
+    /* FAKEMATCH: Iwram_TransformVector's void call loads camera into r1 after the routine; the value-returning cast keeps r1 first. */
     ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))0x03000250)(&vector, camera);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
@@ -231,9 +234,9 @@ s32 Map_InitializePerspectiveScene(void)
     do {
         size = (s32)&Transform_UpdateVerticesSize;
         Dma_Set((void *)Transform_UpdateVertices, (void *)Runtime_AllocateHeapBlock(46, size),
-                0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+                0x84000000 | (size >> 2), REG_DMA3);
     } while (0);
-    WorldMap_BuildScanlineTable(((RatioFn)0x0300013c)(Trig_Cos(*pitch), Trig_Sin(*pitch)),
+    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = work->pitch;
@@ -252,8 +255,8 @@ s32 Map_InitializePerspectiveScene(void)
     vector.x = 0;
     vector.y = 0;
     vector.z = *distance + 0x10000;
-    ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))0x03000250)(&vector, camera);
-    *(volatile u16 *)0x0400004c = 0;
+    Iwram_TransformVector((s32 *)&vector, (s32 *)camera);
+    REG_MOSAIC = 0;
     /* FAKEMATCH: loop notes keep the display writes in source order */
     do {
         Io_Put16((u16 *)0x04000000, 0x42);

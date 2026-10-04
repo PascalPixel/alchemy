@@ -55,7 +55,7 @@ Func_081c0e70:
 .L_081c0e88:
 	.4byte gMusicVolume
 .L_081c0e8c:
-	.4byte Data_02005810
+	.4byte gMusicVolumeStep
 .L_081c0e90:
 	ldr r3, .L_081c0f20
 	ldrh r3, [r3]
@@ -134,7 +134,7 @@ Func_081c0e70:
 .L_081c0f1e:
 	pop {r5, r6, pc}
 .L_081c0f20:
-	.4byte Data_02005810
+	.4byte gMusicVolumeStep
 .L_081c0f24:
 	.4byte gMusicVolumeTarget
 .L_081c0f28:

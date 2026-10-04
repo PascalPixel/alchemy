@@ -473,11 +473,11 @@ void FieldScene_StagePairedActors(void)
  * reply, and the dialogue then continues from MsgSoruWhyDenyDont. */
 void FieldScene_RunElementalStarDemand(void)
 {
-    u8 *field_85;
-    u8 *field_80_38;
-    u8 *record12;
-    u8 *record8;
-    s32 cnt;
+    u8 *motion_flags;
+    u8 *sprite_flags;
+    struct FieldActor *star;
+    struct FieldActor *glow;
+    s32 i;
     s32 zero;
 
     Engine_AudioPlayCue(61);
@@ -504,20 +504,21 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_ActorRunRepeatedMotion(9, 2);
     Engine_ActorSetAnimation(9, 4);
     Event_SayThenWait(9, 10);
-    record12 = (u8 *)Object_GetById(12);
-    record8 = (u8 *)Object_GetById(8);
-    field_80_38 = *(u8 **)(record12 + 80) + 38;
+    star = Object_GetById(12);
+    glow = Object_GetById(8);
+    sprite_flags = &star->sprite->flags;
+    /* FAKEMATCH: one zero for both flag stores; a literal at each moves the literal pool by a word. */
     zero = 0;
-    *field_80_38 = zero;
-    *(s32 *)(record12 + 24) = 0x1999;
-    *(s32 *)(record12 + 28) = 0x1999;
-    *(s32 *)(record8 + 24) = 0x1999;
-    *(s32 *)(record8 + 28) = 0x1999;
+    *sprite_flags = zero;
+    star->scale_x = 0x1999;
+    star->scale_y = 0x1999;
+    glow->scale_x = 0x1999;
+    glow->scale_y = 0x1999;
     Call2(Engine_ActorSetChildValue, 12, 0x100);
     Call3(Engine_ActorSetPosition, 12, 0x1d70000, 0x1220000);
-    field_85 = record12 + 85;
-    *field_85 = zero;
-    *(s32 *)(record12 + 12) = 0x280000;
+    motion_flags = &star->motion_flags;
+    *motion_flags = zero;
+    star->y.fixed = 0x280000;
     Engine_EventWait(1);
     Event_SayThenWait(12, 10);
     Call3(Engine_ActorShowEmote, 5, 0x100, 0);
@@ -532,30 +533,32 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_ActorSetPosition(8, 0x1d70000, 0x1220000);
     Audio_PlayCue(190);
     Engine_ActorSetSpritePriority(12, 2);
-    for (cnt = 0; cnt != 90; cnt++) {
-        *(s32 *)(record12 + 12) += -0x1999;
-        *(s32 *)(record12 + 24) += 0x28f;
-        *(s32 *)(record12 + 28) += 0x28f;
-        *(s32 *)(record8 + 24) += 0x28f;
-        *(s32 *)(record8 + 28) += 0x28f;
+    for (i = 0; i != 90; i++) {
+        star->y.fixed -= 0x1999;
+        star->scale_x += 0x28f;
+        star->scale_y += 0x28f;
+        glow->scale_x += 0x28f;
+        glow->scale_y += 0x28f;
         Engine_EventWait(1);
     }
-    *field_85 = 5;
+    *motion_flags = 5;
     Engine_EventWait(80);
-    for (cnt = 0; cnt != 60; cnt++) {
-        *(s32 *)(record12 + 12) += -0x8000;
+    for (i = 0; i != 60; i++) {
+        star->y.fixed -= 0x8000;
         Engine_EventWait(1);
     }
-    *field_85 = 3;
+    *motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Engine_EventWait(30);
-    *field_80_38 = 1;
+    *sprite_flags = 1;
     Engine_ActorSetPosition(8, 0, 0);
     Engine_ActorSetSpritePriority(12, 1);
     {
-        u8 *flags = (u8 *)Object_GetById(12) + 35;
-        cnt = 1;
-        cnt |= *flags;
-        *flags = cnt;
+        u8 *flags = &Object_GetById(12)->priority_flags;
+
+        /* FAKEMATCH: the bit held in the loop counter first keeps the 1 in r5 ahead of the actor 8 call's arguments; a plain |= loads it after. */
+        i = ACTOR_PRIORITY_AUTOMATIC;
+        i |= *flags;
+        *flags = i;
     }
     Engine_ActorSetChildValue(12, 0);
     Call3(Engine_ActorSetSpeed, 12, 0x8000, 0x4000);

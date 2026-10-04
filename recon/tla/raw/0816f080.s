@@ -428,7 +428,7 @@ Func_0816f080:
 	subs r3, #24
 	str r3, [r6, #24]
 .L_0816f3d2:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_0816f4b8
 	ldr r0, [r6]
 	ldr r1, [r6, #4]
@@ -487,7 +487,7 @@ Func_0816f080:
 	adds r3, r3, r4
 	mov r0, r8
 	str r3, [r0, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_0816f4c4
 	ldr r0, [r5]
 	ldr r2, .L_0816f4b8

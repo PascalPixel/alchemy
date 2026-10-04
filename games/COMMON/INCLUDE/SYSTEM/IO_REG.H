@@ -32,6 +32,8 @@ enum DisplayControl {
 #define REG_BG1VOFS (*(volatile u16 *)0x04000016)
 #define REG_BG2HOFS (*(volatile u16 *)0x04000018)
 #define REG_BG2VOFS (*(volatile u16 *)0x0400001a)
+#define REG_BG3HOFS (*(volatile u16 *)0x0400001c)
+#define REG_BG3VOFS (*(volatile u16 *)0x0400001e)
 
 #define REG_BG2PA (*(volatile u16 *)0x04000020)
 #define REG_BG2PB (*(volatile u16 *)0x04000022)
@@ -39,6 +41,12 @@ enum DisplayControl {
 #define REG_BG2PD (*(volatile u16 *)0x04000026)
 #define REG_BG2X (*(volatile s32 *)0x04000028)
 #define REG_BG2Y (*(volatile s32 *)0x0400002c)
+#define REG_BG3PA (*(volatile u16 *)0x04000030)
+#define REG_BG3PB (*(volatile u16 *)0x04000032)
+#define REG_BG3PC (*(volatile u16 *)0x04000034)
+#define REG_BG3PD (*(volatile u16 *)0x04000036)
+#define REG_BG3X (*(volatile s32 *)0x04000038)
+#define REG_BG3Y (*(volatile s32 *)0x0400003c)
 
 #define REG_WIN0H (*(volatile u16 *)0x04000040)
 #define REG_WIN1H (*(volatile u16 *)0x04000042)
@@ -49,6 +57,7 @@ enum DisplayControl {
 #define REG_MOSAIC (*(volatile u16 *)0x0400004c)
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
+#define REG_BLDY (*(volatile u16 *)0x04000054)
 
 /* BG2's screen block in the canvas layout. */
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
@@ -116,6 +125,8 @@ enum KeyMask {
 
 /* KEYCNT: interrupt when A, B, Select and Start are all held (soft reset). */
 #define KEYCNT_SOFT_RESET 0xc00f
+/* KEYCNT: interrupt when L and R are both held (The Broken Seal wakes from sleep). */
+#define KEYCNT_SHOULDERS_WAKE 0xc300
 /* KEYCNT: interrupt when L, R and Select are all held (wake from sleep). */
 #define KEYCNT_SLEEP_WAKE 0xc304
 

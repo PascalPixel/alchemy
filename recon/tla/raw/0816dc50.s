@@ -431,7 +431,7 @@ Func_0816dc50:
 	subs r3, #16
 	str r6, [sp, #28]
 	str r3, [r5, #16]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #16]
 	bl Graphics_PrepareTransferInIwramWork

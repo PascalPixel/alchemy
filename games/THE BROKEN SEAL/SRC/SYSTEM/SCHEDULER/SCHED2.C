@@ -17,7 +17,7 @@
 typedef void (*KeyCallbackFn)(void);
 
 /* The linear-congruential generator updates one unsigned word. */
-extern u32 Data_03001cb4;
+extern u32 gRandomSeed;
 extern const u16 Math_ArcTanTable[];
 
 extern const u8 System_BasicColorPalette[];
@@ -394,9 +394,9 @@ next_task:
 
 u32 Random16(void)
 {
-    u32 value = Data_03001cb4 * 0x41c64e6d + 0x3039;
+    u32 value = gRandomSeed * 0x41c64e6d + 0x3039;
 
-    Data_03001cb4 = value;
+    gRandomSeed = value;
     return (value << 8) >> 16;
 }
 

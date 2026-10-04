@@ -151,7 +151,7 @@ Func_08153c30:
 	ldrsh r0, [r1, r3]
 	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #20]
 	ldr r1, [sp, #16]
 	bl Graphics_PrepareTransferInIwramWork

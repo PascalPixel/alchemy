@@ -1935,7 +1935,7 @@ Func_08179f18:
 	str r3, [r6, #20]
 	cmp r3, r0
 	ble .L_0817ae1a
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_0817b014
 	mov r1, r10
 	ldrsb r0, [r3, r1]
@@ -1960,7 +1960,7 @@ Func_08179f18:
 	bl Func_0801521c
 	ldr r5, [sp, #160]
 	lsls r0, r5, #11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r0, .L_0817b024
 	mov r1, r8
 	movs r2, #4
@@ -1977,13 +1977,13 @@ Func_08179f18:
 	bl Sys_Free
 	mov r0, r8
 	bl Sys_Free
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r0, #148
 	lsls r0, r0, #8
 	bl SceneTransform_ApplyPitch
 	movs r0, #208
 	lsls r0, r0, #7
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r2, [sp, #160]
 	cmp r2, #156
 	bne .L_0817ae54

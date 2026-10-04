@@ -9,7 +9,9 @@
  * The build checks each entry against the routine named beside it. */
 #define Iwram_ClearWords ((s32 (*)(void *destination, s32 size))0x03000258) /* IwramClearWords */
 #define Iwram_FillWords ((s32 (*)(void *destination, s32 size, u32 value))0x03000260) /* IwramFillWords */
+#define Iwram_RatioMulQ14 ((s32 (*)(s32 divisor, s32 value))0x03000230) /* IwramRatioMulQ14 */
 #define Iwram_Sqrt ((s32 (*)(s32 value))0x030002d4) /* IwramSqrt */
+#define Iwram_TransformVector ((void (*)(const s32 *vector, s32 *result))0x03000354) /* IwramTransformVector */
 #define Iwram_SignedDivide ((s32 (*)(s32 dividend, s32 divisor))0x03000528) /* IwramSignedDivide */
 #define Iwram_UnsignedDivide ((u32 (*)(u32 dividend, u32 divisor))0x03000534) /* IwramUnsignedDivide */
 #define Iwram_CopyWords ((s32 (*)(void *destination, const void *source, s32 size))0x03000730) /* IwramCopyWords */

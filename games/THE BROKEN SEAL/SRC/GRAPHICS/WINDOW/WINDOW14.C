@@ -8,6 +8,10 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "RUNTIME_INTERFACES.H"
+#include "IO_REG.H"
+#include "DMA.H"
+#include "FIELD_SPRITE.H"
+#include "WORKSPACE_OPTIONS.H"
 
 extern u8 Resource_FixedBlockBTiles[];
 
@@ -214,5 +218,281 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input)
     text[length++] = 15;
     text[length] = 0;
     UiText_DrawString(text, output, 0, -2);
+}
+#endif
+
+/* The Japanese edition has its own kana editor, still on its scaffold. */
+#if EDITION_INTERNATIONAL
+/* Spanish and Italian names take one more column in the label window. */
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#define NAME_LABEL_WIDTH 9
+#else
+#define NAME_LABEL_WIDTH 8
+#endif
+
+/* German, Spanish and French write the delete and end keys as text over the
+   keyboard; English and Italian draw them in the keyboard's tilemap. Both
+   keys are three columns wide, except the German ENDE key, which takes four. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
+#define NAME_KEY_LABELS 1
+#else
+#define NAME_KEY_LABELS 0
+#endif
+#if defined(TBS_EDITION_DE)
+#define NAME_END_KEY_WIDTH 4
+#else
+#define NAME_END_KEY_WIDTH 3
+#endif
+
+/* The cursor's sideways sway, eight frames long. */
+extern s8 NameEntry_CaretWave[];
+extern const u8 NameEntry_KeyboardTilemap[];
+#if NAME_KEY_LABELS
+extern u8 NameEntry_DeleteKeyLabel[];
+extern u8 NameEntry_EndKeyLabel[];
+void UiText_DrawStringInWindow(u8 *str, struct RenderInput *window, s32 x, s32 y);
+#endif
+extern u32 gFrameTick;
+/* Read again for every key test. */
+extern volatile u32 gKeysRepeat;
+extern u32 gKeyState;
+
+void *Owner_GetStateFar(s32 owner);
+void Ui_LoadWindowGraphics(void);
+s32 Localization_LookupEntryId(s32 entry);
+s32 UiWindow_CreateWithSideObject(s32 entry, s32 side, s32 x, s32 y);
+void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x0, s32 y0, s32 x1, s32 y1);
+void ShopCursor_SetPositionImmediateFar(union MenuCursor *cursor, s32 x, s32 y);
+void RenderOutput_PrepareForRedraw(struct RenderInput *window);
+void Shop_SetCursorFar(union MenuCursor *cursor, s32 x, s32 y, s32 speed);
+void ShopCursor_AdvanceFar(union MenuCursor *cursor);
+void ShopCursor_MoveTowardTargetFar(union MenuCursor *cursor);
+void UiWork_FinalizeEntityMatchingLocalizedId(s32 entry);
+
+/* Edits an owner's name in place, five characters long, with the cursor
+   state the shop menus use. Returns -1 when cancelled. */
+s32 NameEntry_EditOwnerName(s32 entry)
+{
+    struct RenderInput *label;
+    s32 result = 0;
+    s32 original_length = 0;
+    s32 length = 0;
+    u8 text[16];
+    u8 *input = text + 1;
+    u8 *saved = (u8 *)Owner_GetStateFar(entry);
+    u8 *work = gWindowWork[0];
+    s32 text_dirty = 1;
+    s32 cursor_dirty = 1;
+    struct RenderInput *window;
+    union MenuCursor cursor;
+    union MenuCursor caret;
+    s32 column, row, slot;
+    u8 *end;
+    u16 *pal;
+
+    Ui_LoadWindowGraphics();
+    window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 9, 2);
+    label = (struct RenderInput *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
+    UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
+    UiWindow_CopyTilemapRegion(window, NameEntry_KeyboardTilemap);
+#if NAME_KEY_LABELS
+    UiText_DrawStringInWindow(NameEntry_DeleteKeyLabel, window, 144, 32);
+    UiText_DrawStringInWindow(NameEntry_EndKeyLabel, window, 144, 40);
+#endif
+    UiWindow_DrawDividerLine(window, 18, 0, 18, 7);
+    ((struct UiRenderWork *)work)->dirty = text_dirty;
+    text[0] = result;
+    {
+        s32 i;
+
+        for (i = 0; i < 14; i++) {
+            u32 c = saved[i];
+
+            input[i] = c;
+            if (c != 0) {
+                original_length++;
+                length++;
+            }
+        }
+    }
+    input[14] = 0;
+    UiText_DrawPaddedLabel((s32)label, saved);
+    slot = Resource_FindFreeEntry();
+    column = 18;
+    row = 5;
+    if (slot <= 95) {
+        VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
+        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        cursor.output = (struct RenderOutput *)slot;
+        ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 + 140, window->y * 8 + 52);
+    }
+    slot = Resource_FindFreeEntry();
+    if (slot <= 95) {
+        VramBlock_LoadCached(slot, 128, RomBytes_080317e4);
+        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        caret.output = (struct RenderOutput *)slot;
+        ((struct RenderOutput *)slot)->sentinel = 255;
+        ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->priority = 0;
+        ShopCursor_SetPositionImmediateFar(&caret, UiText_SetRenderString(input) + 70, 22);
+    }
+    pal = (u16 *)0x050001c0;
+    Dma_Set((void *)0x050001e0, pal, 0x84000008, (volatile u32 *)0x040000d4);
+    pal[4] = 0x6318;
+    end = (u8 *)(original_length + (s32)input);
+    for (;;) {
+        s32 width = 1;
+
+        if (column == 18) {
+            if (row == 4)
+                width = 3;
+            if (row == 5)
+                width = NAME_END_KEY_WIDTH;
+        }
+        UiWindow_SetTileAttributeRect(window, column, row, width, 1, 14);
+        WaitFrames(1);
+        UiWindow_SetTileAttributeRect(window, column, row, width, 1, 15);
+        if (cursor_dirty) {
+            cursor_dirty = 0;
+            Shop_SetCursorFar(&cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
+        }
+        if (text_dirty) {
+            text_dirty = 0;
+            Shop_SetCursorFar(&caret, UiText_SetRenderString(input) + 70, 22, 3);
+        }
+        ShopCursor_AdvanceFar(&cursor);
+        ShopCursor_MoveTowardTargetFar(&caret);
+        {
+            u32 frame = (gFrameTick >> 1) & 7;
+            /* FAKEMATCH: the caret sprite lives in r5, as the native allocates it. */
+            register struct RenderOutput *o asm("r5") = caret.output;
+
+            ((struct FieldSprite *)o->unknown_10)->x = o->x + NameEntry_CaretWave[frame];
+            ((struct FieldSprite *)o->unknown_10)->y = o->y + NameEntry_CaretWave[(frame + 5) & 7];
+        }
+        if (gKeysRepeat & KEY_UP) {
+            Audio_PlayCue(111);
+            cursor_dirty = 1;
+            row--;
+            if (column != 18) {
+                if (row == -1)
+                    row = 5;
+            } else {
+                row = (row != 3);
+                row = 5 - row;
+            }
+        }
+        if (gKeysRepeat & KEY_DOWN) {
+            Audio_PlayCue(111);
+            cursor_dirty = 1;
+            row++;
+            if (column != 18) {
+                if (row == 6)
+                    row = 0;
+            } else {
+                row = (row != 6);
+                row += 4;
+            }
+        }
+        if (gKeysRepeat & KEY_LEFT) {
+            Audio_PlayCue(111);
+            cursor_dirty = 1;
+            column--;
+            if (column == -1) {
+                column = 18;
+                if ((u32)(row - 4) > 1)
+                    column = 16;
+            } else if (column == 5 || column == 11 || column == 17) {
+                column--;
+            }
+        }
+        if (gKeysRepeat & KEY_RIGHT) {
+            Audio_PlayCue(111);
+            cursor_dirty = 1;
+            column++;
+            if (column == 19)
+                column = 0;
+            else if (column == 5 || column == 11 || column == 17)
+                column++;
+            if (column == 18 && (u32)(row - 4) > 1)
+                column = 0;
+        }
+        if (gKeyState & KEY_START) {
+            Audio_PlayCue(111);
+            cursor_dirty = 1;
+            column = 18;
+            row = 5;
+        }
+        if (gKeysRepeat & KEY_B) {
+            Audio_PlayCue(113);
+remove_character:
+            if (length != 0) {
+                length--;
+                *--end = 0;
+                RenderOutput_PrepareForRedraw(label);
+                UiText_DrawPaddedLabel((s32)label, input);
+                text_dirty = 1;
+                continue;
+            }
+            result = -1;
+            goto finish;
+        }
+        if (!(gKeysRepeat & KEY_A))
+            continue;
+        Audio_PlayCue(112);
+        if (column == 18) {
+            if (row == 5) {
+                if (length == 0) {
+                    caret.output->active = 13;
+                    RenderOutput_PrepareForRedraw(label);
+                    UiText_DrawPaddedLabel((s32)label, saved);
+                    WaitFrames(10);
+                } else {
+                    /* FAKEMATCH: the destination lives in r2, as the native allocates it. */
+                    register u8 *dst asm("r2") = saved;
+                    /* FAKEMATCH: the source lives in r1, as the native allocates it. */
+                    register u8 *src asm("r1") = input;
+                    s32 i = 0;
+
+                    while (i < 15) {
+                        *dst++ = *src++;
+                        i++;
+                    }
+                }
+                goto finish;
+            }
+            if (row == 4)
+                goto remove_character;
+            continue;
+        }
+        {
+            u32 tx = window->x + column + 1;
+            u32 cell;
+            u32 character;
+
+            /* FAKEMATCH: keeps the column term whole, as the native adds it. */
+            __asm__("" : "+r"(tx));
+            cell = ((window->y + row + 1) << 5) + tx;
+            character = work[cell * 2];
+            if (length == 5)
+                continue;
+            *end++ = character;
+            *end = 0;
+            length++;
+            if (length == 5) {
+                column = 18;
+                row = 5;
+                cursor_dirty = 1;
+            }
+            RenderOutput_PrepareForRedraw(label);
+            UiText_DrawPaddedLabel((s32)label, input);
+            text_dirty = 1;
+        }
+    }
+finish:
+    UiWork_Finalize((struct UiWindow *)window, 2);
+    UiWork_Finalize((struct UiWindow *)label, 2);
+    UiWork_FinalizeEntityMatchingLocalizedId(entry);
+    WaitFrames(1);
+    return result;
 }
 #endif

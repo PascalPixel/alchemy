@@ -12,7 +12,7 @@ Func_08038390:
 	.global Func_08038398
 	.thumb_func
 Func_08038398:
-	overlay_veneer Func_08044460
+	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlot
 	.global UiText_MeasureResourceEntriesFar
 	.thumb_func
 UiText_MeasureResourceEntriesFar:

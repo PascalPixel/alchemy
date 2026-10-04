@@ -32,7 +32,7 @@ struct BattleObjectSlot {
 /* One queued action: the acting unit and what it does. */
 struct BattleActionRecord {
     s16 unit_id;                    /* 0x00 */
-    u8 unknown_02[2];
+    u16 slot;                       /* 0x02, the party slot sent over a link */
     u16 priority;                   /* 0x04, signed when ordering turns */
     s16 command;                    /* 0x06, command dispatch selector */
     s16 parameter;                  /* 0x08 */

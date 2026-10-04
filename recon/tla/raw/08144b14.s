@@ -324,7 +324,7 @@ Func_08144b14:
 	mov r0, r8
 	lsls r0, r0, #4
 	mov r10, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #36]
 	bl Graphics_PrepareTransferInIwramWork
@@ -479,7 +479,7 @@ Func_08144b14:
 	ldrsh r0, [r1, r3]
 	bl GetBattleObjectSlotFar
 	ldr r5, [r0]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	adds r1, r0, #0
 	adds r1, #12

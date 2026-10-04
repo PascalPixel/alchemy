@@ -28,6 +28,27 @@ LAYOUT_OFFSET_GUARD(TitlePaletteWork_Page, struct TitlePaletteWork, page, 0x3000
 extern u16 Palette_ChannelCurve[32];
 extern u16 Palette_ChannelCurveLight[32];
 extern u16 Palette_ChannelCurveContrast[32];
+
+/* Graphics_TransformPaletteBuffer's modes: below FROM_SOURCE a BGR555 fill
+   colour; FROM_SOURCE takes the mode from the source's first entry; the
+   fixed treatments follow PLAIN; from FLAGS on, a tint colour in the low
+   bits with one treatment flag, or else the address of an expanded buffer. */
+enum PaletteTransform {
+    PALETTE_TRANSFORM_FROM_SOURCE = 0x8000,
+    PALETTE_TRANSFORM_PLAIN = 0x10000,
+    PALETTE_TRANSFORM_GREY = 0x10001,
+    PALETTE_TRANSFORM_SEPIA = 0x10002,
+    PALETTE_TRANSFORM_WARM = 0x10003,
+    PALETTE_TRANSFORM_MUTED = 0x10004,
+    PALETTE_TRANSFORM_PALE = 0x10005,
+    PALETTE_TRANSFORM_RED = 0x10006,
+    PALETTE_TRANSFORM_WARM2 = 0x10007,
+    PALETTE_TRANSFORM_FLAGS = 0x100000,
+    PALETTE_TRANSFORM_TINT = 0x200000,
+    PALETTE_TRANSFORM_BLEND = 0x400000,
+    PALETTE_TRANSFORM_SPLIT = 0x800000
+};
+
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *source, u16 *destination, s32 half);
 
 void TitlePalette_InitializeBuffers(void);

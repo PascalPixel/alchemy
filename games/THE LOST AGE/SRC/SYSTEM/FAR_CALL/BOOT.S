@@ -168,7 +168,7 @@ Func_080001f8:
 	.global Func_08000200
 	.thumb_func
 Func_08000200:
-	overlay_veneer Func_08014de4
+	overlay_veneer Render_ResetTransformState
 	.global Func_08000208
 	.thumb_func
 Func_08000208:
@@ -192,7 +192,7 @@ SceneTransform_ApplyPitchFar:
 	.global Func_08000230
 	.thumb_func
 Func_08000230:
-	overlay_veneer Func_08015068
+	overlay_veneer SceneTransform_ApplyYaw
 	.global Func_08000238
 	.thumb_func
 Func_08000238:

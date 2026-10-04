@@ -11,6 +11,7 @@ use crate::targets::decomp_target;
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--show]
+       alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--show]
 Compiles DRAFT.c for the game's English edition with the build's own
 compiler and options, then compares its instructions with the English raw
 listing objects out/<game>-en/obj/recon/<game>/raw/ADDRESS.o (build the
@@ -18,13 +19,19 @@ edition first). ADDRESS defaults to the draft's file name; give several,
 comma-separated, when the draft holds a nested function and its parent.
 The game defaults from the draft's path. Prints the instruction counts and
 how many differ; --show prints the comparison, - for the listing and + for
-the draft. "differ 0" means the code matches instruction for instruction."#;
+the draft. "differ 0" means the code matches instruction for instruction.
+An overlay draft (a path under overlays/) compares with the function of
+the same name, or --symbol, in out/<game>-en/overlays/OVERLAY_overlay.o;
+the overlay defaults from the path (resource_XXX)."#;
 
 struct Options {
     draft: PathBuf,
     addresses: Vec<String>,
     game: &'static str,
     show: bool,
+    /// An overlay draft: the overlay (resource_XXX) and the listing symbol.
+    overlay: Option<String>,
+    symbol: Option<String>,
 }
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
@@ -32,10 +39,20 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut addresses = Vec::new();
     let mut game = None;
     let mut show = false;
+    let mut overlay = None;
+    let mut symbol = None;
     let mut i = 0;
     while i < arguments.len() {
         match arguments[i].as_str() {
             "--show" => show = true,
+            "--overlay" => {
+                i += 1;
+                overlay = Some(arguments.get(i).ok_or_else(|| USAGE.to_string())?.clone());
+            }
+            "--symbol" => {
+                i += 1;
+                symbol = Some(arguments.get(i).ok_or_else(|| USAGE.to_string())?.clone());
+            }
             "--game" => {
                 i += 1;
                 game = match arguments.get(i).map(String::as_str) {
@@ -54,7 +71,11 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         i += 1;
     }
     let draft = draft.ok_or_else(|| USAGE.to_string())?;
-    if addresses.is_empty() {
+    let path_text = draft.to_string_lossy().into_owned();
+    if overlay.is_none() && path_text.contains("/overlays/") {
+        overlay = resource_name(&path_text);
+    }
+    if addresses.is_empty() && overlay.is_none() {
         let stem = draft
             .file_stem()
             .map(|s| s.to_string_lossy().into_owned())
@@ -70,7 +91,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     } else {
         "tbs"
     });
-    Ok(Options { draft, addresses, game, show })
+    Ok(Options { draft, addresses, game, show, overlay, symbol })
 }
 
 /// One disassembled object as comparable lines: addresses dropped, branch
@@ -156,12 +177,36 @@ pub(crate) fn compare(listing: &[String], draft: &[String]) -> (usize, Vec<Strin
     (table[0][0] as usize, script)
 }
 
-fn disassemble(object: &Path) -> Result<Vec<String>, String> {
+fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<String>, String> {
     let object = object.to_string_lossy();
-    Ok(normalize(&command(
-        &["arm-none-eabi-objdump", "-d", "-r", "--no-show-raw-insn", &object],
-        root(),
-    )?))
+    let only = symbol.map(|s| format!("--disassemble={s}"));
+    let mut arguments = vec!["arm-none-eabi-objdump", "-d", "-r", "--no-show-raw-insn"];
+    if let Some(only) = only.as_deref() {
+        arguments.push(only);
+    }
+    arguments.push(&object);
+    Ok(normalize(&command(&arguments, root())?))
+}
+
+/// The overlay a draft belongs to, from its path: resource_XXX.
+fn resource_name(path: &str) -> Option<String> {
+    let at = path.find("resource_")?;
+    let id = &path[at + 9..at + 12];
+    id.chars().all(|c| c.is_ascii_hexdigit()).then(|| format!("resource_{id}"))
+}
+
+/// Text symbols an object defines.
+fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
+    let listing = command(&["arm-none-eabi-nm", "--defined-only", &object.to_string_lossy()], root())?;
+    Ok(listing
+        .lines()
+        .filter_map(|l| {
+            let mut words = l.split_whitespace();
+            let (_, kind, name) = (words.next()?, words.next()?, words.next()?);
+            matches!(kind, "T" | "t").then(|| name.to_string())
+        })
+        .filter(|n| !n.starts_with('$') && !n.starts_with(".L"))
+        .collect())
 }
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
@@ -196,6 +241,31 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     assemble.extend(["-o", &object_text, &assembly]);
     command(&assemble, root)?;
     let mut listing = Vec::new();
+    let mut draft_symbol = None;
+    if let Some(overlay) = &options.overlay {
+        let reference = root.join(target.output_dir).join(format!("overlays/{overlay}_overlay.o"));
+        if !reference.exists() {
+            return Err(format!("{}: no overlay listing object; build {}-en first", reference.display(), options.game));
+        }
+        let symbol = match &options.symbol {
+            Some(s) => s.clone(),
+            None => {
+                let ours = text_symbols(&reference)?;
+                let shared: Vec<String> = text_symbols(&object)?.into_iter().filter(|s| ours.contains(s)).collect();
+                let stem = options.draft.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
+                let address = stem.rsplit('_').next().unwrap_or("").to_ascii_lowercase();
+                let by_address: Vec<String> = if address.len() == 8 { ours.iter().filter(|s| s.to_ascii_lowercase().ends_with(&address)).cloned().collect() } else { Vec::new() };
+                match (shared.as_slice(), by_address.as_slice()) {
+                    ([one], _) | ([], [one]) => one.clone(),
+                    _ => return Err(format!("name the listing function with --symbol (the draft and {overlay} share {} names)", shared.len())),
+                }
+            }
+        };
+        listing.extend(disassemble(&reference, Some(&symbol))?);
+        if text_symbols(&object)?.contains(&symbol) {
+            draft_symbol = Some(symbol);
+        }
+    }
     for address in &options.addresses {
         let reference = root
             .join(target.output_dir)
@@ -207,9 +277,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 options.game
             ));
         }
-        listing.extend(disassemble(&reference)?);
+        listing.extend(disassemble(&reference, None)?);
     }
-    let compiled = disassemble(&object)?;
+    let compiled = disassemble(&object, draft_symbol.as_deref())?;
     let (common, script) = compare(&listing, &compiled);
     println!(
         "listing {} instructions, draft {}, common {common}, differ {}",
@@ -228,6 +298,13 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn overlay_comes_from_the_draft_path() {
+        assert_eq!(resource_name("recon/tbs/en/overlays/resource_383_c_020048c8.c").as_deref(), Some("resource_383"));
+        assert_eq!(resource_name("recon/tbs/en/overlays/resource_3cd/02008768.c").as_deref(), Some("resource_3cd"));
+        assert_eq!(resource_name("recon/tbs/en/main/08011bf4.c"), None);
+    }
 
     #[test]
     fn branches_compare_by_distance_and_calls_by_shape() {

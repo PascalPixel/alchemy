@@ -299,7 +299,7 @@ Func_0818b868:
 	ble .L_0818bb18
 	ldr r0, [sp, #28]
 	str r2, [r0, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r2, #128
 	lsls r2, r2, #8
 	movs r1, #128

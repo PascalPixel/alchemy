@@ -61,9 +61,9 @@ struct FieldStepWork {
     s16 warp_event;
     u8 unknown_170[0xc];
     u16 unknown_17c;
-    s16 unknown_17e;
+    s16 psynergy_request;
     u8 unknown_180[2];
-    u16 unknown_182;
+    u16 raised_trigger;
     s16 fallen_count;
     s16 standing_count;
     u16 fallen[11];

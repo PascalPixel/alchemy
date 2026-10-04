@@ -354,7 +354,7 @@ Func_080feec0:
 	strb r0, [r4, #28]
 	ldr r0, [sp, #36]
 	ldrh r1, [r4, r2]
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	b .L_080ff1a2
 	.2byte 0x0000
 .L_080ff18c:

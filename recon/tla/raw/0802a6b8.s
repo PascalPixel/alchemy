@@ -90,7 +90,7 @@ Func_0802a6b8:
 	adds r1, r5, #0
 	bl Resource_DecodeType01
 	adds r0, r5, #0
-	bl Func_0802ce4c
+	bl DisplayBlend_StartScript
 .L_0802a780:
 	ldr r3, [r7, #60]
 	ldr r1, .L_0802a920

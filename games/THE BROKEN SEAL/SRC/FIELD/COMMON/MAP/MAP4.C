@@ -18,7 +18,7 @@ extern TerrainHeightFn Map_TerrainHeightFunctions[16];
 /* Height of the terrain at a 16.16 map position on one of the layers: the
  * metatile's shape selects the height function, which gets the metatile's
  * height bytes and the position inside the metatile. */
-s32 Func_08011f54(s32 layer, s32 x, s32 y)
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
 {
     struct MapState *work = gMapWork[0];
     struct MapCell *cells;

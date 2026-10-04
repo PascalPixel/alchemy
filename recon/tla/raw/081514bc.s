@@ -150,7 +150,7 @@ Func_081514bc:
 	str r3, [r0, #8]
 	str r6, [r0]
 	str r6, [r0, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #8]
 	bl SceneTransform_ApplyPosition
 	ldr r1, [sp, #36]

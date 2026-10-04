@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08015068
+	.global SceneTransform_ApplyYaw
 	.thumb_func
-Func_08015068:
+SceneTransform_ApplyYaw:
 	push {r5, r6, lr}
 	sub sp, #48
 	adds r6, r0, #0

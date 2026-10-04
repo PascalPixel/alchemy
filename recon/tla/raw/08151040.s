@@ -217,7 +217,7 @@ Func_08151040:
 	movs r0, #0
 	movs r1, #0
 	bl BattlePres_SetupTransitionSceneFar
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #8]
 	ldr r0, [sp, #24]
 	bl Graphics_PrepareTransferInIwramWork

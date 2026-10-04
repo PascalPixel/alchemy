@@ -992,13 +992,13 @@ Func_0815f16c:
 	blt .L_0815fa50
 	movs r0, #5
 	mov r9, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r6, #20]
 	bl Func_080150e4
 	ldr r0, [r6, #12]
 	bl SceneTransform_ApplyPitch
 	ldr r0, [r6, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	add r5, sp, #204
 	adds r1, r5, #0
 	adds r0, r6, #0
@@ -1090,7 +1090,7 @@ Func_0815f16c:
 	mov r5, r10
 	cmp r5, #63
 	bgt .L_0815faaa
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #108]
 	mov r5, r8
 	adds r1, r0, #0
@@ -2676,7 +2676,7 @@ Func_0815f16c:
 	mov lr, r4
 	.2byte 0xf800
 .L_0816073e:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #108]
 	ldr r0, [sp, #108]
 	adds r1, #12
@@ -5643,12 +5643,12 @@ Func_0815f16c:
 	blt .L_08161ea8
 	movs r5, #3
 	ands r5, r1
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r7, #12]
 	bl SceneTransform_ApplyPitch
 	mov r6, r10
 	ldr r0, [r7, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r1, r6, #0
 	adds r0, r7, #0
 	bl Func_0815e1ec
@@ -6708,7 +6708,7 @@ Func_0815f16c:
 	movs r3, #3
 	ands r2, r3
 	str r2, [r6, #24]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r2, r8
 	ldr r0, [r2]
 	ldr r1, [r2, #4]
@@ -6840,7 +6840,7 @@ Func_0815f16c:
 	str r3, [r6, #8]
 	str r1, [r6, #12]
 	str r7, [r6, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #12]
 	ldr r0, [r2]
 	ldr r1, [r2, #4]
@@ -6880,7 +6880,7 @@ Func_0815f16c:
 	negs r5, r2
 	lsls r0, r5, #11
 	lsls r5, r5, #4
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r0, r5, #0
 	bl SceneTransform_ApplyPitch
 	b .L_081627fc
@@ -6889,7 +6889,7 @@ Func_0815f16c:
 	bl SceneTransform_ApplyPitch
 	ldr r3, [sp, #112]
 	lsls r0, r3, #11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_081627fc:
 	adds r0, r7, #0
 	bl Func_0801521c
@@ -6906,7 +6906,7 @@ Func_0815f16c:
 	ldr r1, [sp, #112]
 	negs r0, r1
 	lsls r0, r0, #12
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r0, #128
 	lsls r0, r0, #8
 	bl Func_0801521c
@@ -7047,7 +7047,7 @@ Func_0815f16c:
 	str r3, [r7, #20]
 	cmp r3, r2
 	ble .L_08162998
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
 	lsrs r3, r0, #31
@@ -7122,7 +7122,7 @@ Func_0815f16c:
 	str r3, [r7, #20]
 	cmp r3, r0
 	blt .L_08162ad0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #12]
 	movs r2, #0
 	ldr r0, [r1]
@@ -7184,7 +7184,7 @@ Func_0815f16c:
 	str r3, [r7, #20]
 	cmp r3, r2
 	ble .L_08162ac0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r3, r8
 	ldr r0, [r3]
 	mov r2, r8
@@ -7404,7 +7404,7 @@ Func_0815f16c:
 	str r3, [r7, #20]
 	cmp r3, r1
 	blt .L_08162c74
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #12]
 	movs r1, #160
 	ldr r0, [r2]
@@ -7481,7 +7481,7 @@ Func_0815f16c:
 	lsls r0, r0, #7
 	str r1, [r7, #20]
 	adds r5, r6, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #12]
 	mov r2, r11
 	ldr r0, [r1]
@@ -7518,7 +7518,7 @@ Func_0815f16c:
 	lsls r0, r5, #1
 	adds r0, r0, r1
 	lsls r0, r0, #12
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_08162d32
 .L_08162d24:
 	ldr r3, [sp, #112]
@@ -7526,7 +7526,7 @@ Func_0815f16c:
 	lsls r0, r2, #1
 	subs r0, r0, r3
 	lsls r0, r0, #12
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_08162d32:
 	ldr r0, .L_08162da8
 	mov r1, r8
@@ -7667,7 +7667,7 @@ Func_0815f16c:
 	lsls r6, r3, #4
 	str r1, [r7, #20]
 	adds r5, r6, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #12]
 	movs r2, #0
 	ldr r0, [r1]
@@ -7707,7 +7707,7 @@ Func_0815f16c:
 	lsls r0, r5, #3
 	adds r0, r0, r1
 	lsls r0, r0, #10
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_08162eb2
 .L_08162ea4:
 	ldr r3, [sp, #112]
@@ -7715,7 +7715,7 @@ Func_0815f16c:
 	lsls r0, r2, #3
 	subs r0, r0, r3
 	lsls r0, r0, #10
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_08162eb2:
 	ldr r0, .L_081630d8
 	mov r1, r10
@@ -8964,7 +8964,7 @@ Func_0815f16c:
 	bne .L_08163848
 .L_08163840:
 	ldr r0, [sp, #128]
-	bl Func_081504c0
+	bl SummonFx_RunCanvasMode1
 	b .L_081638ac
 .L_08163848:
 	ldr r1, [sp, #124]
@@ -8974,14 +8974,14 @@ Func_0815f16c:
 	bne .L_0816385a
 .L_08163852:
 	ldr r0, [sp, #128]
-	bl Func_081504cc
+	bl SummonFx_RunCanvasMode2
 	b .L_081638ac
 .L_0816385a:
 	ldr r2, [sp, #124]
 	cmp r2, #11
 	bne .L_081638ac
 	ldr r0, [sp, #128]
-	bl Func_081504b4
+	bl SummonFx_RunCanvasMode3
 	b .L_081638ac
 .L_08163868:
 	ldr r3, [sp, #52]

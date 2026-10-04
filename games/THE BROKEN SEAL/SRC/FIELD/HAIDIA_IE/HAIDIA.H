@@ -49,7 +49,7 @@ struct SceneVerticalEffect {
 /*
  * Exact 2026-09-23 (832 bytes), a tagged fake match. The callback passed
  * to the target-and-callback call (main Object_SetTargetAndCallback) is the
- * data symbol Data_0200ac00, as in HAIDIA_IE/ELDER_AID_EVENT.C; as a plain
+ * data symbol HaidiaIe_FaceTargetActions, as in HAIDIA_IE/ELDER_AID_EVENT.C; as a plain
  * integer its pool load was scheduled before the zero actor argument.
  * The do/while around the 0x22b area-state store holds the linked scene
  * load after the store, as in the reference.
@@ -117,10 +117,10 @@ extern u8 Data_0200ba64[];
 extern u8 Data_0200b938[];
 extern u8 Value_0200beb4;
 extern u8 Data_0200ae34[];
-extern u8 Data_0200aef0[];
-extern u8 Data_0200af50[];
-extern u8 Data_0200af78[];
-extern u8 Data_0200a874[];
+extern u8 HaidiaIe_Actor17Actions[];
+extern u8 HaidiaIe_LeaderStepActions[];
+extern u8 HaidiaIe_Actor25StepActions[];
+extern u8 HaidiaIe_Actor22Actions[];
 extern u8 Data_0200aa48[];
 extern u8 Data_0200ab2c[];
 extern u8 Data_0200ac14[];

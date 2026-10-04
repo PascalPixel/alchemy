@@ -14,7 +14,7 @@ TEXT_MESSAGE_ENUM(MsgHaidiaFarewell);
 
 void Scene_RunExtendedActorSequence(void)
 {
-    extern const u8 Data_0200ac00[];
+    extern const u8 HaidiaIe_FaceTargetActions[];
 
     u8 *record;
     struct EventWork *work;
@@ -83,7 +83,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorSetAnimation(30, 3);
     Engine_ActorEnableActionCallback(30, (s32)Data_0200ac14);
     Engine_EventWait(40);
-    base5_200ac00 = Data_0200ac00;
+    base5_200ac00 = HaidiaIe_FaceTargetActions;
     Call3(Object_SetTargetAndCallback, 11, 0x1001e, (s32)(base5_200ac00));
     Call3(Object_SetTargetAndCallback, 12, 0x1001e, (s32)(base5_200ac00));
     Object_RefreshSelectorById(30);

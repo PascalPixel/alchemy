@@ -1,7 +1,8 @@
 #include "RESOURCE.H"
 /* Not-yet-C: complete 200-byte nested stat-arrow owner of
  * DjinnMenu_ShowChangePreview (main:08022b44), which must adopt it in the
- * same object. Plain stores in the order active, kind, index, sprite, tile
+ * same object. The current best is the parent's draft (2 off with both
+ * addresses; its header has the sched2 dependence analysis).Plain stores in the order active, kind, index, sprite, tile
  * clear, attribute word, sentinel, x, y now give the reference allocation
  * (x r8, chain r9, y sl, rising fp, output r6, sprite r7, zero and window
  * address r5); only sched2 differs: the sentinel/x/y stores follow the

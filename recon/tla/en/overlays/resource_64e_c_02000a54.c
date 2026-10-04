@@ -1,4 +1,8 @@
 /* CANONICAL DRAFT: VINASU_CHOJO opening bank, 2026-10-02.
+ * 2026-10-04: the idle hook (VinasuChojo_Idle) and the setup step after it
+ * are C in SCENE_EVENTS.C; the startup (VinasuChojo_Start) is C for Japanese,
+ * and the international editions keep its listing (their saved scene/entrance
+ * stores rebuild 516 apart from 428 and load 5 from the pool).
  * Saved-tree default scorer: startup610/15, setup11025/152, departure
  *24410/362; overlay imports are unresolved in its main-only namespace.
  * This diagnostic does not replace the complete native identity judgments.
@@ -79,7 +83,7 @@ void Func_02001c4c(void);
 void Func_02001c54(s32);
 void Func_02001ccc(u32, s32);
 void Func_02001cd4(u32);
-void Func_02000a18(void);
+void VinasuChojo_RunSetupStep(void);
 void SceneState_RunActor13AtColumn42Setup(void);
 
 void Func_02000b2c(void);
@@ -155,7 +159,7 @@ void Func_02000b2c(void)
     ObjectMotion_SetPositionAndReset(8, 0x2c8, 0x338);
     ObjectMotion_ArmCallback(5, 0xa000, 0);
     Engine_EventWait(20);
-    Func_02000a18();
+    VinasuChojo_RunSetupStep();
     SceneState_RunActor13AtColumn42Setup();
     Engine_EventWait(20);
     ObjectMotion_SetPositionAndReset(8, 0x2d8, 0x348);

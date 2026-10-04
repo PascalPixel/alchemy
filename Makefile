@@ -52,7 +52,8 @@ help:
 	  'make similar         the nearest C twins of every not-yet-C function in either game, into out/reports/similar.tsv' \
 	  'make worst           rank maintained C by how mechanical it reads; the camelotized share' \
 	  'alchemy diff DRAFT.c compare a C draft with the listing it would replace (tools/out/cargo-target/release/alchemy)' \
-	  'alchemy adopt ADDR LABEL [NAME]  take an adopted function out of the scaffolding of all six editions'
+	  'alchemy adopt ADDR LABEL [NAME]  take an adopted function out of the scaffolding of all six editions' \
+	  'alchemy queues --workers N --out-dir DIR  split not-yet-C work into queues by module run or overlay'
 
 # Setup may download pinned dependencies; ordinary build commands stay offline.
 fetch-dependencies:
@@ -71,8 +72,9 @@ merge-drivers:
 	git config merge.alchemy-lines.name "linker script by lines"
 	git config merge.alchemy-lines.driver "tools/out/cargo-target/release/alchemy merge-driver lines %O %A %B"
 
-# In a new worktree, before its first build: link the main checkout's ROMs
-# and installed tools, and clone release tools and edition builds copy-on-write.
+# In a new worktree, before its first build: check out the compiler
+# submodules, link the main checkout's ROMs and installed tools, and clone
+# release tools and edition builds copy-on-write.
 # Private reports, verification and recovery output stay in the main checkout.
 MAIN_CHECKOUT = $(shell git rev-parse --path-format=absolute --git-common-dir)/..
 worktree:

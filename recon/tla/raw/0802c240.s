@@ -228,14 +228,14 @@ Func_0802c240:
 	asrs r1, r1, #1
 	lsls r2, r2, #1
 	bl Camera_StoreSceneParameters
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r0, r9
 	bl SceneTransform_ApplyPosition
 	movs r1, #143
 	lsls r1, r1, #1
 	adds r3, r7, r1
 	ldrh r0, [r3]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r2, #142
 	lsls r2, r2, #1
 	adds r6, r7, r2
@@ -264,7 +264,7 @@ Func_0802c240:
 	mov lr, r3
 	.2byte 0xf800
 .L_0802c446:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r1, r9
 	ldr r0, [sp, #32]
 	bl Graphics_PrepareTransferInIwramWork

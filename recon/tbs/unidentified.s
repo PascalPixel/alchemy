@@ -111,14 +111,14 @@ ScriptObject_CycleTable:
 	.global Script_MainScript
 Script_MainScript:
 	.incbin "baserom.gba", 0x00013240, 0x00000014
-	.global Data_08013254
-Data_08013254:
+	.global WorldMap_KeyHeadings
+WorldMap_KeyHeadings:
 	.incbin "baserom.gba", 0x00013254, 0x00000020
-	.global Data_08013274
-Data_08013274:
+	.global WorldMap_FootprintActions
+WorldMap_FootprintActions:
 	.incbin "baserom.gba", 0x00013274, 0x00000018
-	.global Data_0801328c
-Data_0801328c:
+	.global WorldMap_KeyYaws
+WorldMap_KeyYaws:
 	.incbin "baserom.gba", 0x0001328c, 0x00000040
 	.global Data_080132cc
 Data_080132cc:
@@ -237,8 +237,8 @@ Menu_AnimatedCursorTiles:
 	.global Data_080366f8
 Data_080366f8:
 	.incbin "baserom.gba", 0x000366f8, 0x00000048
-	.global Data_08036740
-Data_08036740:
+	.global Menu_CursorBobOffsets
+Menu_CursorBobOffsets:
 	.incbin "baserom.gba", 0x00036740, 0x00000010
 	.global PaletteGlow_WaveTable
 PaletteGlow_WaveTable:
@@ -276,8 +276,8 @@ UiWindow_PartyColumnOffsets:
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
 	.incbin "baserom.gba", 0x000371e0, 0x00000016
-	.global Data_080371f6
-Data_080371f6:
+	.global NameEntry_CaretWave
+NameEntry_CaretWave:
 	.incbin "baserom.gba", 0x000371f6, 0x00000008
 	.global Data_080371fe
 Data_080371fe:
@@ -379,7 +379,10 @@ WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x00073812, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x00073854, 0x00000114
+	.incbin "baserom.gba", 0x00073854, 0x00000010
+	.global NameEntry_KeyboardTilemap
+NameEntry_KeyboardTilemap:
+	.incbin "baserom.gba", 0x00073864, 0x00000104
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x00073968, 0x00003698

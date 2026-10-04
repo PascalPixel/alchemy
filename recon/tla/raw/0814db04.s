@@ -546,7 +546,7 @@ Func_0814db04:
 	movs r0, #145
 	bl Audio_PlayCue
 .L_0814df3e:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #40]
 	cmp r2, #32
 	bne .L_0814df9c

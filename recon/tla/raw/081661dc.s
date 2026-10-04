@@ -290,7 +290,7 @@ Func_081661dc:
 	mov lr, r3
 	.2byte 0xf800
 .L_08166426:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #24]
 	ldr r1, [sp, #12]
 	bl Graphics_PrepareTransferInIwramWork

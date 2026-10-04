@@ -781,7 +781,7 @@ BattlePres_RunBurstScene:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #20]
 	bl Graphics_PrepareTransferInIwramWork

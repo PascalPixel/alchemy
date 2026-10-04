@@ -1,6 +1,58 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
+#include "DMA.H"
+
+/* Swap the received packets into the pending set with interrupts off and
+   take the channel flags the receive interrupt left; then, for each of the
+   two channels, copy a packet whose checksum holds into the payload area
+   and mark the channel, and invert a good packet's checksum so it is not
+   taken twice. Returns the channels collected this time. */
+u8 SerialRuntime_CollectReceivedPayloads(void *payload)
+{
+    u8 flags[8];
+    s32 i;
+    u32 k;
+    u16 *packet;
+    u16 *swap;
+    s32 sum;
+    s32 enable;
+
+    *(u32 *)&flags[4] = 0;
+    /* FAKEMATCH: keeps the frame clear ahead of the interrupt disable; without it the IME address load rises above "sub sp" (score 6). */
+    __asm__("");
+    REG_IME = 0;
+    for (i = 0; i <= 3; i++) {
+        swap = gSerialRuntime.pending_buffer[i];
+        gSerialRuntime.pending_buffer[i] = gSerialRuntime.ready_buffer[i];
+        gSerialRuntime.ready_buffer[i] = swap;
+    }
+    *(u32 *)flags = *(u32 *)gSerialRuntime.channel_flags;
+    /* FAKEMATCH: an unsigned long store does not alias the u32 snapshot, so sched2 puts lr = sp before the snapshot store as the native does (2 without). */
+    *(unsigned long *)gSerialRuntime.channel_flags = 0;
+    /* FAKEMATCH: a separate enable value set before the barrier loads the 1 ahead of the IME address and lets -1 be derived from it (26 with a literal 1). */
+    enable = 1;
+    /* FAKEMATCH: holds the IME address load after the 1 (score 6 without). */
+    __asm__("");
+    REG_IME = enable;
+    /* FAKEMATCH: keeps the IME store ahead of the mask clear and the loop setup (score 22 without). */
+    __asm__("");
+    gSerialRuntime.current_mask = 0;
+    for (i = 0; i <= 1; i++) {
+        packet = gSerialRuntime.pending_buffer[i];
+        sum = 0;
+        for (k = 0; k <= 13; k++)
+            sum += packet[k];
+        if (flags[i] == 1 && (s16)sum == -1) {
+            Dma_Set(gSerialRuntime.pending_buffer[i] + 2, (u8 *)payload + i * 24, 0x84000006, (volatile u32 *)DMA3);
+            gSerialRuntime.current_mask |= 1 << i;
+        }
+        if ((s16)sum == -1)
+            gSerialRuntime.pending_buffer[i][1] = ~gSerialRuntime.pending_buffer[i][1];
+    }
+    gSerialRuntime.received_mask |= gSerialRuntime.current_mask;
+    return gSerialRuntime.current_mask;
+}
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {

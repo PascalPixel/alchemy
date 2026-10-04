@@ -3,20 +3,16 @@
 #include "TYPES.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
-
-typedef struct {
-    u8 filler0[12];
-    s32 unk12;
-} T;
+#include "FIELDOBJ.H"
+#include "MAP_SCROLL.H"
 
 extern s32 BabiFune_StoredSlot0;
 extern s32 BabiFune_StoredRecord1;
 extern s32 BabiFune_StoredSlot3;
 extern s32 BabiFune_StoredRecord2;
-T *Object_GetById(s32);
+struct FieldActor *Object_GetById(s32 actor);
 
 extern u8 MsgFieldLooksLikeFinally[];
-extern u8 *gEventWork;
 extern const s32 BabiFune_ActionScriptA[];
 extern const s32 BabiFune_ActionScriptB[];
 extern const s32 BabiFune_ActionScriptC[];
@@ -54,44 +50,44 @@ void Event_SetPairWork1c0Far();
 s32 SceneState_StoreSlotZeroField12(void)
 {
     s32 *d;
-    T *p;
+    struct FieldActor *p;
 
     d = &BabiFune_StoredSlot0;
     p = Object_GetById(0);
-    *d = p->unk12;
+    *d = p->y.fixed;
     return 0;
 }
 
 s32 SceneData_StoreRecord1Field12(void)
 {
     s32 *p;
-    T *rec;
+    struct FieldActor *rec;
 
     p = &BabiFune_StoredRecord1;
     rec = Object_GetById(1);
-    *p = rec->unk12;
+    *p = rec->y.fixed;
     return 0;
 }
 
 s32 SceneState_StoreSlotThreeField12(void)
 {
     s32 *d;
-    T *p;
+    struct FieldActor *p;
 
     d = &BabiFune_StoredSlot3;
     p = Object_GetById(3);
-    *d = p->unk12;
+    *d = p->y.fixed;
     return 0;
 }
 
 s32 SceneData_StoreRecord2Field12(void)
 {
     s32 *d;
-    T *p;
+    struct FieldActor *p;
 
     d = &BabiFune_StoredRecord2;
     p = Object_GetById(2);
-    *d = p->unk12;
+    *d = p->y.fixed;
     return 0;
 }
 
@@ -100,10 +96,10 @@ s32 SceneData_StoreRecord2Field12(void)
  * on the title scene at entrance 9. */
 void Scene_RunExtendedPresentationSequence(void)
 {
-    u8 *runtime;
-    u8 *scene;
+    struct MapScrollWork *scroll;
+    struct FieldActor *ship;
+    struct EventWork *event;
     s32 blank;
-    void *p176;
 
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
@@ -143,11 +139,11 @@ void Scene_RunExtendedPresentationSequence(void)
         Engine_EventWait(30);
         Call3(Engine_ActorShowEmote, 1, 258, 50);
         Engine_EventShowMessage(1, 0);
-        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
+        gEventWork->message++;
     } else {
         Engine_EventWait(30);
         Call3(Engine_ActorShowEmote, 1, 258, 50);
-        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
+        gEventWork->message++;
         Engine_EventShowMessage(1, 0);
     }
     Engine_EventWait(10);
@@ -184,14 +180,14 @@ void Scene_RunExtendedPresentationSequence(void)
         Engine_ActorFaceDirection(1, 57344, 0);
         Engine_EventWait(20);
         Engine_EventShowMessage(1, 0);
-        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
+        gEventWork->message++;
     } else {
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(1, 2);
         Engine_EventWait(20);
         Engine_ActorFaceDirection(1, 57344, 0);
         Engine_EventWait(20);
-        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
+        gEventWork->message++;
         Engine_EventShowMessage(1, 0);
     }
     Engine_EventWait(10);
@@ -220,12 +216,12 @@ void Scene_RunExtendedPresentationSequence(void)
         Engine_ActorSetAnimationAndWait(3, 3);
         Engine_EventWait(20);
         Engine_EventShowMessage(3, 0);
-        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
+        gEventWork->message++;
     } else {
         Engine_EventWait(30);
         Engine_ActorSetAnimationAndWait(3, 3);
         Engine_EventWait(20);
-        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
+        gEventWork->message++;
         Engine_EventShowMessage(3, 0);
     }
     Engine_EventWait(10);
@@ -296,27 +292,28 @@ void Scene_RunExtendedPresentationSequence(void)
 #else
     Engine_EventWait(80);
 #endif
-    scene = gMapWork[0];
-    p176 = (void *)Object_GetById(8);
-    *(s32 *)(p176 + 52) = 131;
-    *(s32 *)(p176 + 48) = 131072;
-    *(s32 *)(scene + 284) = -0x3000;
+    scroll = gMapWork[0];
+    ship = Object_GetById(8);
+    ship->acceleration = 131;
+    ship->speed = 0x20000;
+    scroll->layers[0].speed_x = -0x3000;
     ObjectMotion_CommitPositionAndActivate(8, 60, 0);
-    *(s32 *)(scene + 284) = -0x6000;
+    scroll->layers[0].speed_x = -0x6000;
     ObjectMotion_CommitPositionAndActivate(8, 60, 0);
     Engine_EventWait(80);
     Engine_EventWait(100);
     Engine_CameraSetSpeed(144179, 655);
     Engine_CameraMoveTo(52953088, -1, 11010048, 1);
     Engine_EventWait(300);
-    runtime = *(u8 **)(((u8 *)gMapWork) + 76);
-    *(u32 *)(runtime + 448) = 256;
+    /* The event work is the twentieth cell from the map work's. */
+    event = gMapWork[19];
+    event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     /* FAKEMATCH: keep the backdrop zero before its address calculation. */
     do {
         blank = 0;
     } while (0);
     *(u16 *)0x05000000 = blank;
-    *(u32 *)(runtime + 456) = 96;
+    event->transition_frames = 96;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);

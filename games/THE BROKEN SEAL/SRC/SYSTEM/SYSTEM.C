@@ -101,7 +101,7 @@ void WaitFrames(s32 frames)
     __asm__ volatile("mov %0, sp" : "=r"(base));
     if ((u32)base < (u32)Ram_FrameWaitStackTop) {
         gSavedStackSize = (u32)Ram_FrameWaitStackTop - (u32)base;
-        Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | 0x84000000, REG_DMA3);
+        Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
         /* CAMELOT_ASM: moves the stack pointer */
         __asm__ volatile("mov sp, %0" : : "r"((u32)Ram_FrameWaitStackTop));
     }
@@ -133,7 +133,7 @@ void WaitFrames(s32 frames)
                     gPostLoadCounter = 0;
                 else {
                     gPostLoadCounter++;
-                    if (gPostLoadCounter > 0x2a30)
+                    if (gPostLoadCounter > 3 * 60 * 60)
                         gSleepRequested = 1;
                 }
             }
@@ -198,7 +198,7 @@ void WaitFrames(s32 frames)
                     /* CAMELOT_ASM: Halt in VBlankIntrWait */
                     VBlankIntrWait();
                 gSleepActive = 1;
-                Io_Write16(0xc300, &REG_KEYCNT);
+                Io_Write16(KEYCNT_SHOULDERS_WAKE, &REG_KEYCNT);
                 Bios_SoundBiasOff();
                 /* CAMELOT_ASM: Stop, which no C compiles to */
                 __asm__ volatile("swi 3");
@@ -229,8 +229,8 @@ void WaitFrames(s32 frames)
            measured reload of the saved-stack-size address. */
         /* CAMELOT_ASM: moves the stack pointer */
         __asm__ volatile("mov sp, %0" : : "r"(base));
-        Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | 0x84000000, REG_DMA3);
-        while (((volatile struct DmaRegisters *)REG_DMA3)->control & DMA_ENABLE32)
+        Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+        while (DMA3->control & DMA_ENABLE32)
             ;
         gSavedStackSize = 0;
     }

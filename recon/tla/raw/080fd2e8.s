@@ -110,7 +110,7 @@ Func_080fd2e8:
 	adds r3, r3, r2
 	ldrh r1, [r6, r3]
 	adds r0, r6, #0
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	cmp r7, #2
 	bne .L_080fd3dc
 	ldr r0, [sp, #0]

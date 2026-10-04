@@ -69,10 +69,12 @@ struct GameState {
     u8 message_speed;
     u8 unknown_20d[2];
     u8 unknown_20f;
-    u16 unknown_210;
-    u16 unknown_212;
-    u16 unknown_214;
-    u16 unknown_216;
+    /* The keys that act as A, B, Select and Start; the field script raises
+       its three key flags for Select, A and Start. */
+    u16 a_keys;
+    u16 b_keys;
+    u16 select_keys;
+    u16 start_keys;
     /* The keys that invoke each stored Psynergy shortcut. */
     u16 first_shortcut_keys;
     u16 second_shortcut_keys;
@@ -110,7 +112,8 @@ struct GameState {
     /* Where Retreat returns the party. */
     s16 retreat_scene;
     s16 retreat_entrance;
-    s32 unknown_244;
+    /* How far the party may still walk before Avoid wears off. */
+    s32 avoid_distance;
     u8 unknown_248[2];
     /* The battle object an effect paused, resumed when the next one runs;
        -1 when none is. */
@@ -139,7 +142,7 @@ LAYOUT_SIZE_GUARD(GameState_Size, struct GameState, 0xd20);
 LAYOUT_OFFSET_GUARD(GameState_WonPrizes, struct GameState, won_prizes, 0x12c);
 LAYOUT_OFFSET_GUARD(GameState_SceneGroup, struct GameState, scene_group, 0x1cc);
 LAYOUT_OFFSET_GUARD(GameState_DashKeys, struct GameState, dash_keys, 0x21c);
-LAYOUT_OFFSET_GUARD(GameState_Unknown244, struct GameState, unknown_244, 0x244);
+LAYOUT_OFFSET_GUARD(GameState_AvoidDistance, struct GameState, avoid_distance, 0x244);
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
 LAYOUT_OFFSET_GUARD(GameState_Special, struct GameState, special, 0x1d6);
 LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
@@ -148,7 +151,7 @@ LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0
 LAYOUT_OFFSET_GUARD(GameState_ActiveOwners, struct GameState, active_owners, 0x1f8);
 LAYOUT_OFFSET_GUARD(GameState_Speech, struct GameState, speech, 0x20a);
 LAYOUT_OFFSET_GUARD(GameState_MessageSpeed, struct GameState, message_speed, 0x20c);
-LAYOUT_OFFSET_GUARD(GameState_Keys210, struct GameState, unknown_210, 0x210);
+LAYOUT_OFFSET_GUARD(GameState_AKeys, struct GameState, a_keys, 0x210);
 LAYOUT_OFFSET_GUARD(GameState_FirstShortcutKeys, struct GameState, first_shortcut_keys, 0x218);
 LAYOUT_OFFSET_GUARD(GameState_SecondShortcutKeys, struct GameState, second_shortcut_keys, 0x21a);
 LAYOUT_OFFSET_GUARD(GameState_FirstShortcut, struct GameState, first_shortcut, 0x220);

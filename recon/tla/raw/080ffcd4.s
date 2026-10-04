@@ -227,7 +227,7 @@ Func_080ffcd4:
 	strb r0, [r7, #28]
 	adds r0, r7, #0
 	ldrh r1, [r7, r2]
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	movs r2, #2
 	mov r8, r2
 .L_080ffeaa:

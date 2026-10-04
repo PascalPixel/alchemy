@@ -419,7 +419,7 @@ LuckyDice_Run:
 	adds r3, r6, #0
 	bl Graphics_ScaleRgb555Buffer
 .L_081ac4ce:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #104]
 	ldr r1, [sp, #40]
 	bl Graphics_PrepareTransferInIwramWork

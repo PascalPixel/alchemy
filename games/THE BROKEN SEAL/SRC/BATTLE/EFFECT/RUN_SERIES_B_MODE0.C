@@ -286,7 +286,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 2);
                 draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-                draw[0](canvas, (u8 *)work + cel * 1600 + 0x60e,
+                draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
                     screen.x - 20, screen.y - 20, 40, 40);
                 Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             }
@@ -296,7 +296,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 
                     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 2);
                     draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-                    draw[0](canvas, (u8 *)work + cel * 960 + 0x2b8e,
+                    draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE,
                         screen.x - 12, screen.y - 20, 24, 40);
                     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }
@@ -306,7 +306,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 
                     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 2);
                     draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-                    draw[0](canvas, (u8 *)work + cel * 2048 + 0x2b8e,
+                    draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                         screen.x - 16, screen.y - 32, 32, 64);
                     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }
@@ -318,9 +318,9 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
                     draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
                     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags | 8, 2);
                     draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-                    draw[0](canvas, (u8 *)work + cel * 2048 + 0x2b8e,
+                    draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                         screen.x - 32, screen.y - 24, 64, 32);
-                    draw[1](canvas, (u8 *)work + cel * 2048 + 0x2b8e,
+                    draw[1](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                         screen.x - 32, screen.y + 8, 64, 32);
                     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -331,7 +331,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 
                     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, 3);
                     draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-                    draw[0](canvas, (u8 *)work + cel * 1600 + 0x2b8e,
+                    draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
                         screen.x - 20, screen.y - 20, 40, 40);
                     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }

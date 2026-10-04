@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08014de4
+	.global Render_ResetTransformState
 	.thumb_func
-Func_08014de4:
+Render_ResetTransformState:
 	push {r5, lr}
 	movs r1, #48
 	movs r0, #8

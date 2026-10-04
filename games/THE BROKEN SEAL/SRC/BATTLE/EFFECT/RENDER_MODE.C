@@ -48,6 +48,10 @@ extern u8 RenderMode_GlintFlips[];
 
 /* Its mode entries, BattleFx_RenderMode0Or1 to BattleFx_RenderMode6, are COMMON's RENDER_MODE.C. */
 
+/* Where mode 3 decodes its tornado glints in work->sheet, after the
+   particle picture at the start. */
+enum { RENDER_MODE_TORNADO = 0x2580 };
+
 /* Battle effect: a cloud of particles around each affected unit, eight
    frames apart, in one of eight modes that choose the picture, how many
    particles there are and whether they close in on the unit or rise. */
@@ -74,7 +78,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     count = 16;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
     if (mode == 0) {
         palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     } else if (mode == 1) {
@@ -86,24 +90,24 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     } else if (mode == 4) {
         palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     } else if (mode == 5) {
-        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1, 0);
         palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
     } else if (mode == 7) {
         count = 24;
-        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1, 0);
         palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     } else {
         count = 32;
-        Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
         palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
     }
     /* FAKEMATCH: forwarded through Call3, the palette copy loads its routine
        before it shifts the destination, as the reference does. */
     Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT, (s32)palette, 128);
     if (mode == 4)
-        Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
     if (mode == 3)
-        Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, (u8 *)work + 0x2580, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + RENDER_MODE_TORNADO, 1, 0);
 
     for (i = 0; i != 512; i++) {
         struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -169,8 +173,8 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                     y = base.y - ((Trig_Cos(angle) * radius) >> 16)
                         - (BattleFx_GlintCellHeights[frame & 3] >> 1);
                     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3 | RenderMode_GlintFlips[Random16() & 3], 2);
-                    ((DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
-                        (u8 *)work + BattleFx_GlintCellOffsets[frame & 3] + 0x2580,
+                    ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+                        work->sheet + BattleFx_GlintCellOffsets[frame & 3] + RENDER_MODE_TORNADO,
                         x, y + 16,
                         BattleFx_GlintCellWidths[frame & 3],
                         BattleFx_GlintCellHeights[frame & 3]);
@@ -178,9 +182,9 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                 }
             }
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
-            draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+            draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
-            draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+            draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             point[0] = object->x;
@@ -208,16 +212,16 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                             EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
                             screen.x >>= 1;
                             if (mode == 5 || mode == 7)
-                                draw[1](canvas, (u8 *)work + cel * 1600,
+                                draw[1](canvas, work->sheet + cel * 1600,
                                     screen.x - 20, screen.y - 20, 40, 40);
                             else if (mode == 6)
-                                draw[1](canvas, (u8 *)work + 0xc00,
+                                draw[1](canvas, work->sheet + 0xc00,
                                     screen.x - 6, screen.y - 12, 12, 24);
                             else if (mode == 4)
-                                draw[1](canvas, work,
+                                draw[1](canvas, work->sheet,
                                     screen.x - 11, screen.y - 21, 22, 42);
                             else
-                                draw[(i & 3) != 0](canvas, (u8 *)work + cel * 1152,
+                                draw[(i & 3) != 0](canvas, work->sheet + cel * 1152,
                                     screen.x - 12, screen.y - 24, 24, 48);
                             if (DECAYS(mode)) {
                                 mote->x -= mote->x / distance;

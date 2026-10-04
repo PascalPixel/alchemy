@@ -14,6 +14,7 @@
 #include "GAME_STATE.H"
 #include "FRAME.H"
 #include "SAVE_STATE.H"
+#include "IO_REG.H"
 
 void GameState_InitDefaults(void);
 s32 Game_ResetForNewGameFar(s32);
@@ -101,28 +102,19 @@ u32 Party_GetAverageLevel(void)
 void *Owner_GetState(u32 owner)
 {
     struct BattleUnit *states;
-    register u32 offset asm("r3"); /* FAKEMATCH: the scaled index in r3 */
+    struct BattleUnit *unit;
 
-    asm volatile("mov r3, lr" ::: "r3"); /* FAKEMATCH: the entry copy of lr */
+    /* FAKEMATCH: the dead entry copy of lr no ordinary C emits */
+    asm volatile("mov r3, lr" ::: "r3");
     states = gGameState.owners;
-    if (owner < 8)
-        {
-        register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
-        offset = sizeof(struct BattleUnit);
-        offset *= owner;
-        r = (u8 *)states + offset;
-        return r;
-        }
-    if (owner - 0x80 < 6 && gBattleOwnerStates != NULL)
-        {
-        register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
-        u8 *t;
-        offset = sizeof(struct BattleUnit);
-        offset *= owner;
-        t = (u8 *)gBattleOwnerStates + offset;
-        r = t - 0xa600;
-        return r;
-        }
+    if (owner < 8) {
+        unit = &states[owner];
+        return unit;
+    }
+    if (owner - 0x80 < 6 && gBattleOwnerStates != NULL) {
+        unit = &gBattleOwnerStates[owner - 0x80];
+        return unit;
+    }
     return NULL;
 }
 
@@ -595,13 +587,13 @@ void GameState_InitDefaults(void)
     zero = 0;
     START_DMA(&zero, gSaveStamp + 0x1c, 0x85000298);
     Owner_InitRecords();
-    gGameState.unknown_210 = 1;
-    gGameState.unknown_212 = 2;
-    gGameState.unknown_214 = 4;
-    gGameState.unknown_216 = 8;
-    gGameState.first_shortcut_keys = 0x200;
-    gGameState.second_shortcut_keys = 0x100;
-    gGameState.dash_keys = 2;
+    gGameState.a_keys = KEY_A;
+    gGameState.b_keys = KEY_B;
+    gGameState.select_keys = KEY_SELECT;
+    gGameState.start_keys = KEY_START;
+    gGameState.first_shortcut_keys = KEY_L;
+    gGameState.second_shortcut_keys = KEY_R;
+    gGameState.dash_keys = KEY_B;
     gGameState.first_shortcut = 0;
     gGameState.second_shortcut = 0;
     gGameState.selected_actor = 0;

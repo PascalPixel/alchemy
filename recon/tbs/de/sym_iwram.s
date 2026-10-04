@@ -85,8 +85,8 @@ gBlendTargetLevel:
 	.global gSerialExchangeActive
 gSerialExchangeActive:
 	.space 0x00000004
-	.global Data_03001cb4
-Data_03001cb4:
+	.global gRandomSeed
+gRandomSeed:
 	.space 0x00000004
 	.global gResetRequested
 gResetRequested:

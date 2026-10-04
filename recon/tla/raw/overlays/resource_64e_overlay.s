@@ -4,71 +4,6 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080a4,"ax",%progbits
-	.global Func_020000a4
-	.thumb_func
-Func_020000a4:
-	push {r5, r6, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	adds r6, r2, #0
-	adds r0, r3, #0
-	adds r2, r5, #0
-	adds r1, r4, #0
-	adds r3, r6, #0
-	bl Func_02001b3c
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_020080d8
-	movs r1, #0
-	bl Object_SetSpritePriority
-	adds r0, r5, #0
-	movs r1, #14
-	bl ConfigureOverlayObject
-	adds r0, r5, #0
-	movs r1, #1
-	bl Animation_SetStateFlags
-	adds r0, r5, #0
-	b .L_020080da
-.L_020080d8:
-	movs r0, #0
-.L_020080da:
-	pop {r5, r6, pc}
-	.section .text.x020080dc,"ax",%progbits
-	.global Func_020000dc
-	.thumb_func
-Func_020000dc:
-	push {r5, r6, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	adds r6, r2, #0
-	adds r0, r3, #0
-	adds r2, r5, #0
-	adds r1, r4, #0
-	adds r3, r6, #0
-	bl Func_02001b3c
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02008114
-	movs r1, #1
-	bl Object_SetSpritePriority
-	adds r0, r5, #0
-	movs r1, #15
-	bl ConfigureOverlayObject
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #2
-	orrs r3, r2
-	strb r3, [r1]
-	adds r0, r5, #0
-	b .L_02008116
-.L_02008114:
-	movs r0, #0
-.L_02008116:
-	pop {r5, r6, pc}
 	.section .text.x0200814e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008150,"ax",%progbits
@@ -734,54 +669,6 @@ Func_020005a8:
 	pop {r5, r6, r7, pc}
 .L_0200864c:
 	.4byte gFrameCount
-	.section .text.x02008664,"ax",%progbits
-	.global Func_02000664
-	.thumb_func
-Func_02000664:
-	push {lr}
-	adds r3, r0, #0
-	adds r3, #100
-	ldrh r3, [r3]
-	movs r1, #15
-	ands r1, r3
-	bl Object_SetPartAttribute
-	movs r0, #0
-	pop {pc}
-	.section .text.x02008678,"ax",%progbits
-	.global Func_02000678
-	.thumb_func
-Func_02000678:
-	push {lr}
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	movs r0, #0
-	pop {pc}
-	.section .text.x02008684,"ax",%progbits
-	.global Func_02000684
-	.thumb_func
-Func_02000684:
-	push {lr}
-	ldr r3, .L_020086a0
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #99
-	bne .L_0200869a
-	ldr r0, .L_020086a4
-	b .L_0200869c
-.L_0200869a:
-	ldr r0, .L_020086a8
-.L_0200869c:
-	pop {pc}
-	.2byte 0x0000
-.L_020086a0:
-	.4byte gPartyState
-.L_020086a4:
-	.4byte Data_02002378
-.L_020086a8:
-	.4byte Data_020021b0
 	.section .text.x020086ac,"ax",%progbits
 	.global Func_020006ac
 	.thumb_func
@@ -987,43 +874,11 @@ Func_0200078c:
 	.4byte 0xfffffd5c
 .L_02008870:
 	.4byte 0xfffe0000
-	.section .text.x02008a14,"ax",%progbits
-	.global Func_02000a14
-	.thumb_func
-Func_02000a14:
-	movs r0, #0
-	bx lr
-	.section .text.x02008a18,"ax",%progbits
-	.global Func_02000a18
-	.thumb_func
-Func_02000a18:
-	push {lr}
-	movs r0, #140
-	movs r1, #1
-	bl Func_02001c7c
-	movs r1, #10
-	movs r0, #4
-	bl Func_02001c84
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #224
-	ldr r2, [r3]
-	ldr r3, .L_02008a50
-	str r3, [r2, #36]
-	bl Func_02001c9c
-	movs r0, #10
-	bl Engine_EventWait
-	movs r0, #1
-	bl Field_DispatchTypeHandler
-	bl Func_02001c8c
-	bl Func_02001c94
-	pop {pc}
-.L_02008a50:
-	.4byte Func_02000a14
 	.section .text.x02008a54,"ax",%progbits
-	.global Func_02000a54
+	.if EDITION_INTERNATIONAL
+	.global VinasuChojo_Start
 	.thumb_func
-Func_02000a54:
+VinasuChojo_Start:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1125,6 +980,7 @@ Func_02000a54:
 	.if EDITION_INTERNATIONAL
 .L_02008b24:
 	.4byte 0x00000005
+	.endif
 	.endif
 	.section .text.x02008b2c,"ax",%progbits
 	.global Func_02000b2c
@@ -1251,7 +1107,7 @@ Func_02000b2c:
 	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
-	bl Func_02000a18
+	bl VinasuChojo_RunSetupStep
 	bl SceneState_RunActor13AtColumn42Setup
 	movs r0, #20
 	bl Engine_EventWait
@@ -3011,7 +2867,7 @@ gSceneExits:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x0000002e
-	.4byte Func_02000664
+	.4byte SceneActor_ApplyCounterLowBitsAsMode
 	.4byte 0x00000011
 .L_0200a180:
 	.4byte 0x00000016
@@ -3024,10 +2880,10 @@ gSceneExits:
 	.4byte 0x0000001e
 	.4byte 0x00000000
 	.4byte 0x0000002e
-	.4byte Func_02000678
+	.4byte SceneActor_ClearSingleChildField
 	.4byte 0x00000011
-	.global Data_020021b0
-Data_020021b0:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0038
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -3142,8 +2998,8 @@ Data_020021b0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02002378
-Data_02002378:
+	.global gScenePlacementsEntrance99
+gScenePlacementsEntrance99:
 	.4byte 0xffff0004
 	.4byte 0x00000001
 	.4byte 0x00080000

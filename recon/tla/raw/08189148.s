@@ -702,7 +702,7 @@ Func_08189148:
 	subs r7, #8
 	cmp r5, #0
 	bne .L_0818964e
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #16]
 	ldr r0, [sp, #16]
 	adds r1, #12

@@ -495,7 +495,7 @@ void SceneState_ApplyFlag90d(void)
 s32 HaidiaIe_RestoreEntryState(void)
 {
     extern u8 Data_02000240[];
-    extern u8 Data_0200ac00[];
+    extern u8 HaidiaIe_FaceTargetActions[];
     void HaidiaIe_RunScene015B4();
     void SceneState_SetValues352_365_2116_2117_40();
     void Scene_RunExtendedActorSequence();
@@ -548,7 +548,7 @@ s32 HaidiaIe_RestoreEntryState(void)
             }
             Engine_ActorSetPosition(17, 0, 0);
             Engine_ActorSetPosition(18, 0, 0);
-            Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)Data_0200ac00);
+            Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)HaidiaIe_FaceTargetActions);
         } else {
             if (Engine_GameFlagIsSet(0x815) != 0) {
                 Call3(Engine_ActorSetPosition, 16, 0xb40000, 0x2380000);
@@ -614,9 +614,9 @@ s32 HaidiaIe_RestoreEntryState(void)
  * answer skips straight to that second reply. */
 void FieldScene_RunElderAidEvent(void)
 {
-    extern u8 Data_0200ac00[];
+    extern u8 HaidiaIe_FaceTargetActions[];
 
-    s32 record;
+    struct FieldActor *leader;
     s32 skip_reply = 0;
     s32 unk;
 
@@ -631,9 +631,9 @@ void FieldScene_RunElderAidEvent(void)
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Call3(Engine_ActorSetSpeed, 25, 0x10000, 0x8000);
         Call3(Engine_ActorWalkToAndWait, 0, 179, 0x315);
-        record = Object_GetById(0);
-        if (record != 0) {
-            Engine_ActorSetPosition(25, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        leader = Object_GetById(ACTOR_PARTY_LEADER);
+        if (leader != NULL) {
+            Engine_ActorSetPosition(25, leader->x.fixed, leader->z.fixed);
         }
         Call3(Engine_ActorWalkToAndWait, 25, 179, 0x324);
         Engine_ActorFaceEachOther(0, 25, 40);
@@ -656,16 +656,16 @@ void FieldScene_RunElderAidEvent(void)
 #endif
         Call3(Engine_ActorSetSpeed, 17, 0x19999, 0xcccc);
         Call3(Engine_ActorSetSpeed, 18, 0x19999, 0xcccc);
-        Engine_ActorEnableActionCallback(17, (s32)Data_0200aef0);
+        Engine_ActorEnableActionCallback(17, (s32)HaidiaIe_Actor17Actions);
         Engine_EventWait(20);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-        ((struct FieldActor *)Object_GetById(18))->priority_flags |= 1;
+        Object_GetById(18)->priority_flags |= 1;
 #endif
-        Engine_ActorEnableActionCallback(18, (s32)Data_0200aef0);
+        Engine_ActorEnableActionCallback(18, (s32)HaidiaIe_Actor17Actions);
         Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
         Call3(Engine_ActorFaceDirection, 25, 0xc000, 60);
-        Engine_ActorEnableActionCallback(0, (s32)Data_0200af50);
-        Object_SetActionCallbackAndRefreshById(25, (s32)Data_0200af78);
+        Engine_ActorEnableActionCallback(0, (s32)HaidiaIe_LeaderStepActions);
+        Object_SetActionCallbackAndRefreshById(25, (s32)HaidiaIe_Actor25StepActions);
         Engine_EventWait(20);
         Engine_ActorFaceDirection(0, 0, 0);
         Engine_ActorFaceDirection(25, 0, 10);
@@ -684,11 +684,11 @@ void FieldScene_RunElderAidEvent(void)
             Engine_ActorSetAnimation(19, 4);
         } else {
             Engine_ActorSetAnimation(19, 3);
-            *(u16 *)(((s32)gEventWork + 0x1d8)) += 1;
+            gEventWork->message++;
         }
         Call2(Engine_EventShowMessage, 0x4013, 0);
         if (skip_reply != 0) {
-            *(u16 *)(((s32)gEventWork + 0x1d8)) += 1;
+            gEventWork->message++;
         }
         unk = 0x4000;
         SceneActor_SetPairZeroAndValue(22, 0x4000, 30);
@@ -706,7 +706,7 @@ void FieldScene_RunElderAidEvent(void)
         BattleFx_CommitObjectPositionAndWait();
         Engine_CameraSetSpeed(0xcccc, 0x1999);
         Call4(Engine_CameraMoveTo, 0xcd0000, -1, 0x30a0000, 1);
-        Engine_ActorEnableActionCallback(22, (s32)Data_0200a874);
+        Engine_ActorEnableActionCallback(22, (s32)HaidiaIe_Actor22Actions);
         Object_RefreshSelectorById(22);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(SceneActor_SetPairZeroAndValue, 22, 0x2000, 60);
@@ -733,27 +733,27 @@ void FieldScene_RunElderAidEvent(void)
         Engine_ActorSetAnimationAndWait(26, 3);
         Engine_ActorSetAnimationAndWait(22, 3);
         Engine_ActorSetAnimation(25, 2);
-        record = Object_GetById(0);
-        if (record != 0) {
-            Engine_ActorSetDestination(25, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        leader = Object_GetById(ACTOR_PARTY_LEADER);
+        if (leader != NULL) {
+            Engine_ActorSetDestination(25, leader->x.part.pixel, leader->z.part.pixel);
         }
         Engine_ActorWaitForMove(25);
         Engine_ActorSetPosition(25, 0, 0);
         Engine_ActorSetAnimation(26, 2);
-        record = Object_GetById(0);
-        if (record != 0) {
-            Engine_ActorSetDestination(26, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        leader = Object_GetById(ACTOR_PARTY_LEADER);
+        if (leader != NULL) {
+            Engine_ActorSetDestination(26, leader->x.part.pixel, leader->z.part.pixel);
         }
         Engine_ActorWaitForMove(26);
         Engine_ActorSetPosition(26, 0, 0);
         Engine_ActorSetAnimation(22, 2);
-        record = Object_GetById(0);
-        if (record != 0) {
-            Engine_ActorSetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        leader = Object_GetById(ACTOR_PARTY_LEADER);
+        if (leader != NULL) {
+            Engine_ActorSetDestination(22, leader->x.part.pixel, leader->z.part.pixel);
         }
         Engine_ActorWaitForMove(22);
         Engine_ActorSetPosition(22, 0, 0);
-        Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)Data_0200ac00);
+        Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)HaidiaIe_FaceTargetActions);
         Engine_GameFlagSet(0x840);
         Engine_EventEnd();
     }
@@ -824,7 +824,7 @@ void HaidiaIe_RunScriptScene(void)
  * and records this house as the scene the party returns to. */
 void FieldScene_RunGroupChoreography(void)
 {
-    extern u8 Data_0200ac00[];
+    extern u8 HaidiaIe_FaceTargetActions[];
 
     s32 record;
     s32 walk_speed;
@@ -881,7 +881,7 @@ void FieldScene_RunGroupChoreography(void)
     SceneActor_SetPairZeroAndValue(24, turn_speed, 20);
     Engine_ActorRunRepeatedMotion(25, 2);
     Event_SayThenWait(0x1019, 10);
-    Call3(Object_SetTargetAndCallback, 0, 0x10019, (s32)Data_0200ac00);
+    Call3(Object_SetTargetAndCallback, 0, 0x10019, (s32)HaidiaIe_FaceTargetActions);
     Call3(Engine_ActorWalkToAndWait, 25, 93, 0x169);
     SceneActor_SetPairZeroAndValue(25, approach_speed, 40);
     Event_SayThenWait(25, 20);
@@ -1009,7 +1009,7 @@ void HaidiaIe_RunScene015B4(void)
 
 void Scene_RunExtendedActorSequence(void)
 {
-    extern const u8 Data_0200ac00[];
+    extern const u8 HaidiaIe_FaceTargetActions[];
 
     u8 *record;
     struct EventWork *work;
@@ -1077,7 +1077,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorSetAnimation(30, 3);
     Engine_ActorEnableActionCallback(30, (s32)Data_0200ac14);
     Engine_EventWait(40);
-    base5_200ac00 = Data_0200ac00;
+    base5_200ac00 = HaidiaIe_FaceTargetActions;
     Call3(Object_SetTargetAndCallback, 11, 0x1001e, (s32)(base5_200ac00));
     Call3(Object_SetTargetAndCallback, 12, 0x1001e, (s32)(base5_200ac00));
     Object_RefreshSelectorById(30);

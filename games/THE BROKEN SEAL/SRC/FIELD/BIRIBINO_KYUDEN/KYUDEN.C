@@ -428,7 +428,7 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
     s32 rec8;
     s32 record;
 
-    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
+    gEventWork->start_transition = 0x209;
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
     Engine_GameFlagSet(0x84b);

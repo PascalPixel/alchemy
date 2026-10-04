@@ -225,7 +225,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
 
     if (gGameState.entrance == 19) {
         Engine_GameFlagClear(0x12f);
-        *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
+        gEventWork->start_transition = 0x209;
     } else {
         if (Engine_GameFlagIsSet(0x834) != 0) {
             Engine_ActorSetPosition(11, 0, 0);

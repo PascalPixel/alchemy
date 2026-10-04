@@ -97,7 +97,7 @@ void SuharaMura_AnimateCells0(void)
     Audio_PlayCue(158);
     Map_AnimateCells(SuharaMura_CellSteps0, x, y);
     Actor_WalkBy(0, 0, -16);
-    *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
+    gEventWork->transition_frames = 16;
     Engine_EventRequestExit(no);
 }
 
@@ -111,7 +111,7 @@ void SuharaMura_AnimateCells1(void)
     Audio_PlayCue(158);
     Map_AnimateCells(SuharaMura_CellSteps1, x, y);
     Actor_WalkBy(0, 0, -16);
-    *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
+    gEventWork->transition_frames = 16;
     Engine_EventRequestExit(no);
 }
 

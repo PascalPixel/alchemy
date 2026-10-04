@@ -396,9 +396,9 @@ void FieldScene_RunActorThreeBranchSequence(void)
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(3, 3);
         Event_ShowMessageAndWait(3, 0, 20);
-        *(u16 *)((*(u8 **)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     } else {
-        *(u16 *)((*(u8 **)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(3, 4);
         Event_ShowMessageAndWait(3, 0, 20);

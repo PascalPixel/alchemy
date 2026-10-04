@@ -475,7 +475,7 @@ void PaletteScene_RunActorTransitionSequence(void)
         Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
     } else {
         Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Event_ShowMessage(ACTOR_GERALD, 0);
     KorimaKi_PlayGesture(10, 4);
@@ -601,7 +601,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Engine_EventWait(10);
     KorimaKi_PlayGesture(10, 2);

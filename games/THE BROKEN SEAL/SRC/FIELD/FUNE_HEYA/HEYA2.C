@@ -1217,7 +1217,7 @@ s32 FuneHeya_ApplyEntryState(void)
 {
     Engine_TaskWait(1);
     Engine_GameFlagSet(0x144);
-    *(s32 *)(*(s32 *)&gEventWork + 0x1c0) = 0x209;
+    gEventWork->start_transition = 0x209;
     switch (((union GameStateRows *)&gGameState)->halves[225][0]) {
     case 1:
     case 2:
@@ -1602,7 +1602,7 @@ void FieldScene_RunFourActorCoordinatePresentation(void)
     Engine_ActorSetAnimation(9, 1);
     mode = 128;
     OverlayObject_SetPositionAndHeading(0, 0x1b8, 134, 0x8000);
-    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = (mode << 1);
+    gEventWork->start_transition = (mode << 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x198, 134);
@@ -2740,7 +2740,7 @@ void FieldScene_RunFormationAndEffectPresentation(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1a8, 0x110);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1a8, 164);
     Engine_EventWait(60);
-    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
+    gEventWork->start_transition = 0x209;
     FieldScene_RunSceneStep(9, 0, 0);
     GameFlag_Clear(0x301);
     GameFlag_Clear(0x927);

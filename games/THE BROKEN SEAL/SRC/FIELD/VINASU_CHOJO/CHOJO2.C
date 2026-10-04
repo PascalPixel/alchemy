@@ -378,11 +378,11 @@ void FieldScene_RunMultiActorPresentation(void)
     } else {
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     VinasuChojo_ShowMessage(2);
     if (count_flag != 0) {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
     request_a = 0x1001;

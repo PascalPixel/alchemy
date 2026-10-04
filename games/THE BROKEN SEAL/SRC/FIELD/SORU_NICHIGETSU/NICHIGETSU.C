@@ -1286,7 +1286,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
     s32 lit;
 
     Engine_TaskWait(1);
-    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x204;
+    gEventWork->start_transition = 0x204;
     done = 0;
     if (Engine_GameFlagIsSet(0x809) != 0 && Engine_GameFlagIsSet(0x814) == 0
         && Engine_GameFlagIsSet(0x819) == 0) {

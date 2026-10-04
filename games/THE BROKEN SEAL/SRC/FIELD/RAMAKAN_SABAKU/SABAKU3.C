@@ -282,7 +282,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
     gGameState.hazard_damage = 0x119;
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku4) {
     } else {
-        *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x100;
+        gEventWork->start_transition = 0x100;
         RamakanSabaku_ClaimSandEffectVram();
         Engine_TaskAddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
         if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {

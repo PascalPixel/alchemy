@@ -2011,7 +2011,7 @@ void Scene_RepairTheHouse(void)
     Camera_MoveTo(0x17f0000, 0xa00000, 0x36d0000, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    *(s32 *)(*(u8 **)&gEventWork + 0x1c8) = 32;
+    gEventWork->transition_frames = 32;
     Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR_JASMINE, 0x8000, turn_side);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, turn_side);

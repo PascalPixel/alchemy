@@ -308,7 +308,7 @@ void Scene_RunScene39eSequenceB(void)
             Engine_ActorSetAnimationAndWait(8, 3);
             Event_ShowMessage(8, 0);
         } else {
-            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 2;
+            gEventWork->message += 2;
             Event_ShowMessage(8, 0);
         }
         Engine_ActorSetAnimationAndWait(8, 3);
@@ -325,9 +325,9 @@ void Scene_RunScene39eSequenceB(void)
             FieldScene_FinishSequence();
             Engine_EventWait(30);
             Event_ShowMessage(8, 0);
-            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+            gEventWork->message += 1;
         } else {
-            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+            gEventWork->message += 1;
             Engine_EventWait(20);
             Engine_ActorSetAnimationAndWait(8, 3);
             Engine_EventWait(20);
@@ -2125,11 +2125,11 @@ void FieldScene_RunRoofEnsembleSequence(void)
         Engine_EventWait(20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
         /* Same step counter as bump_step(), incremented inline here. */
-        *(u16 *)((*(u8 **)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
     } else {
         Engine_EventWait(20);
         /* Same step counter as bump_step(), incremented inline here. */
-        *(u16 *)((*(u8 **)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message += 1;
         Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);

@@ -84,22 +84,25 @@ s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj)
     return 1;
 }
 
-s32 OverlayObject_UpdateFacingTowardTarget(void *obj)
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
     s32 delta;
     u16 old;
     s32 angle;
-    void *target;
-    target = (*(void * *)((u8 *)(obj) + (0x68)));
+    struct FacingObject *target;
+
+    target = obj->facing_target;
     if (target != NULL) {
-        (*(u8 *)((u8 *)(obj) + (0x5A))) = (u8)(0xFE & (*(u8 *)((u8 *)(obj) + (0x5A))));
-        angle = (u16)ArcTan2((*(s32 *)((u8 *)(target) + (0x10))) - (*(s32 *)((u8 *)(obj) + (0x10))), (*(s32 *)((u8 *)(target) + (8))) - (*(s32 *)((u8 *)(obj) + (8))));
-        old = (*(u16 *)((u8 *)(obj) + (6)));
+        obj->facing_flags &= ~1;
+        angle = (u16)ArcTan2(target->position_z - obj->position_z, target->position_x - obj->position_x);
+        old = obj->facing;
         delta = (s16)(angle - old);
         if (delta != 0) {
-            if (delta > 0x1000) delta = 0x1000;
-            if (delta < -0x1000) delta = -0x1000;
-            (*(u16 *)((u8 *)(obj) + (6))) = (u16)(old + delta);
+            if (delta > 0x1000)
+                delta = 0x1000;
+            if (delta < -0x1000)
+                delta = -0x1000;
+            obj->facing = old + delta;
         }
     }
     return 1;

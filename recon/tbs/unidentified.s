@@ -306,8 +306,8 @@ Graphics_ExpandNibbleTable:
 	.global Link_TimeLabelString
 Link_TimeLabelString:
 	.incbin "baserom.gba", 0x00037300, 0x00000008
-	.global Data_08037308
-Data_08037308:
+	.global DjinnMenu_BlinkTile
+DjinnMenu_BlinkTile:
 	.incbin "baserom.gba", 0x00037308, 0x00000020
 	.global OwnerStatus_StatCursors
 OwnerStatus_StatCursors:
@@ -330,12 +330,12 @@ OwnerStatus_SlashString:
 	.global OwnerStatus_PpString
 OwnerStatus_PpString:
 	.incbin "baserom.gba", 0x000373e4, 0x00000003
-	.global Data_080373e7
-Data_080373e7:
+	.global DjinnMenu_ElementXOffsets
+DjinnMenu_ElementXOffsets:
 	.incbin "baserom.gba", 0x000373e7, 0x00000003
 	.incbin "baserom.gba", 0x000373ea, 0x00000001
-	.global Data_080373eb
-Data_080373eb:
+	.global DjinnMenu_ElementYOffsets
+DjinnMenu_ElementYOffsets:
 	.incbin "baserom.gba", 0x000373eb, 0x00000004
 	.global Menu_SelectionStepDelays
 Menu_SelectionStepDelays:
@@ -1682,11 +1682,6 @@ DisplayScroll_LineTable:
 	.global DisplayScroll_Font
 DisplayScroll_Font:
 	.incbin "baserom.gba", 0x000f1770, 0x00000890
-	.section .unidentified.080f2b6c,"ax"
-	.global Func_080f2b6c
-	.thumb_func
-Func_080f2b6c:
-	.incbin "baserom.gba", 0x000f2b6c, 0x00000004
 	.section .unidentified.080f38bc,"a"
 	.global Title_PromptTiles
 Title_PromptTiles:

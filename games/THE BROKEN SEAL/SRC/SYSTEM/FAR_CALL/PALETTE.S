@@ -13,7 +13,7 @@ FarCall_PaletteTable:
 Func_080f2000:
 	overlay_veneer Title_ShowIntro
 	overlay_veneer Graphics_NoOpColor
-	overlay_veneer Func_080f2b6c
+	overlay_veneer Title_NoOpPalette
 	.global Title_ShowSplashScreenFar
 	.thumb_func
 Title_ShowSplashScreenFar:

@@ -1915,12 +1915,6 @@ DisplayScroll_Font:
 	.thumb_func
 Func_080f2028:
 	.incbin "baserom.gba", 0x000e9028, 0x00000478
-	.section .rom.000e9b6c, "ax"
-	.global Func_080f2b6c
-	.type Func_080f2b6c, %function
-	.thumb_func
-Func_080f2b6c:
-	.incbin "baserom.gba", 0x000e9b6c, 0x00000004
 	.section .rom.000ea078, "ax"
 	.global Unnamed_080f3078
 	.type Unnamed_080f3078, %function

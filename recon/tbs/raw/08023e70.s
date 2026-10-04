@@ -1363,13 +1363,13 @@ Battle_SelectAbility:
 .L_0802490c:
 	.4byte Data_03001e90
 .L_08024910:
-	.4byte Data_080373e7
+	.4byte DjinnMenu_ElementXOffsets
 .L_08024914:
-	.4byte Data_080373eb
+	.4byte DjinnMenu_ElementYOffsets
 .L_08024918:
 	.4byte gFrameCount
 .L_0802491c:
-	.4byte Data_08037308
+	.4byte DjinnMenu_BlinkTile
 .L_08024920:
 	.4byte IwramCopyWords
 .L_08024924:

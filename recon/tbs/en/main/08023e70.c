@@ -1,8 +1,38 @@
-/* 2026-10-04 H1 owner/API pass: current EN score13161 (214 register,
+/* 2026-10-04 H2 data-owner/flow pass: current EN score 11030
+ * (197 register, 60 stack, 25 operand, 60 reordered, 32 inserted, 25 deleted).
+ * All six TBS plans compile complete 2760-byte objects with a 224-byte frame;
+ * native extent 2756 includes all pools and also has a 224-byte frame.
+ *
+ * gWindowWork[42] and gLinkCountdownWork name the same EN pointer cell.
+ * Native setup uses the former's base plus 168; later selected/auto/commit
+ * paths load the named cell directly. Following those real accesses gives
+ * 11085 from 13161, removing 16 inserted instructions, without new state.
+ * Separate consumed build/row code locals give 11030, retained.
+ * Runtime_BumpFree is the existing producer name paired with allocation.
+ *
+ * DjinnMenu_BlinkTile is the 32-byte BG tile copied to both adjacent VRAM
+ * tiles, the first alternating with palette index 4. ElementXOffsets and
+ * ElementYOffsets are four-byte tables consumed by the four highlight calls.
+ * Names remain at their existing scaffold owner; this adds no data credit.
+ * Independent current-tree/owned-ROM review found only this function's
+ * three literals in main and no pointers in 96 active EN overlays.
+ *
+ * Ordinary trials from 11085: selection scope 11748; destructive message-code
+ * consumption 11175; reversed row flags 11405; scoped consumption 11838.
+ * From 11030: bounded row for-loop 11190; consumed timer local 11105;
+ * flat available/timer branches 11030, no improvement.
+ * Native 84 nonlocal calls versus candidate 81: the used/recovering paths
+ * merge one CopyMessageString and Finalize pair; the row status paths merge
+ * one SetParamNibble call. These are duplicated native sites, not omitted
+ * source behavior. No barrier or other instruction-presence device added.
+ * Broad register/stack/control/pool differences keep this draft uncredited.
+ */
+
+/* Earlier H1 owner/API pass: EN score13161 (214 register,
  * 61 stack,29 operand,61 reordered,48 inserted,28 deleted).
  * All six TBS plans compile complete2780-byte objects with a224-byte frame;
  * native extent2756 includes every pool, with the same224-byte frame.
- * The former ordinary draft scored13657 and had a216-byte frame.
+ * The former ordinary draft scored13657 and had a 216-byte frame.
  *
  * Shared UiWindow/MenuSprite/UiRenderWork, MenuCell, BattleUnit and
  * DjinnRecoveryList replace duplicate views. Current WINDOW15.C owns the
@@ -20,8 +50,7 @@
  *   the aggregate recovers the eight frame bytes without unread storage.
  * No new asm, binding, compiler option or instruction device was added.
  * Remaining broad allocation/control/pool differences keep this uncredited.
- * The three legacy table labels still need source-owned data names before
- * adoption. Earlier scalar-draft observations below are historical only.
+ * H2 above supplies the three formerly anonymous data names.
  */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -55,16 +84,9 @@
  * its two OAM words and the real narrow fields. The +0xfffa and +248
  * cursor biases preserve the native wrapped hardware coordinates.
  *
- * Earlier scalar-draft residual: every reference block, branch,
- * loop, call and store is present and the extent matches to four bytes, but
- * the allocator picks different callee-saved registers (the result lives in
- * r5 here and r6 there, the icon and page loop counters in r4 here and r7
- * there), so two fewer pseudos are spilled and every stack slot above the
- * outgoing-argument word is offset by eight.  Because the allocator gave the
- * two "close the detail window" blocks and the two 0x666 message blocks the
- * same registers here, the late cross-jump pass tail-merged them; the
- * reference keeps both copies, which is why three `bl` sites are absent from
- * the candidate even though nothing is missing from the source.
+ * Earlier scalar-draft allocation trials had a216-byte frame and missing
+ * duplicated call sites. H1 recovered the real consumed MenuPoint; H2
+ * above records the current frame and the precise remaining call merges.
  */
 
 /* The command collector owns this 260-byte state. The common menu prefix
@@ -93,13 +115,15 @@ struct PartyStatusWindow {
 LAYOUT_SIZE_GUARD(PartyStatusWindow_Size, struct PartyStatusWindow, 16);
 LAYOUT_OFFSET_GUARD(PartyStatusWindow_Flags, struct PartyStatusWindow, flags, 12);
 
-#define MENU_STATE ((struct BattleMenuSelection *)gWindowWork[42])
+/* Direct name for the same work cell accessed through slot 42 at setup. */
+#define MENU_STATE ((struct BattleMenuSelection *)gLinkCountdownWork)
 #define CURSOR_OWNER ((struct PartyStatusWindow *)gWindowWork[1])
 
 extern volatile u32 gKeysHeld;
-extern u8 Data_08037308[];
-extern u8 Data_080373e7[];
-extern u8 Data_080373eb[];
+/* One 8x8 BG tile; the first copy blinks against palette-index 4. */
+extern const u8 DjinnMenu_BlinkTile[32];
+extern const u8 DjinnMenu_ElementXOffsets[4];
+extern const u8 DjinnMenu_ElementYOffsets[4];
 
 void RenderOutput_ClearList(void *work);
 void UiWork_ClearValueNameTables(void);
@@ -124,7 +148,6 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     u32 *tbl;
     u32 *pos;
     u32 cur;
-    u32 code;
     u32 blink;
     s32 res;
     s32 cnt;
@@ -168,9 +191,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     msg_win = UiWindow_Create(0, 4, 30, 4, 42);
     UiWork_SetAltFlagAndClearTable(1);
     list_win = UiWindow_Create(21, 9, 9, 11, 6);
-    page = MENU_STATE->menu.page;
-    row = MENU_STATE->menu.row;
-    saved_row = MENU_STATE->menu.preferred_row;
+    page = ((struct MenuCell *)gWindowWork[42])->page;
+    row = ((struct MenuCell *)gWindowWork[42])->row;
+    saved_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     unit = Owner_GetStateFar(owner);
 
     /* Flatten the active and available Djinn grids into one page-ordered table. */
@@ -182,6 +205,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                 pos++;
                 cnt++;
             } else if (unit->djinn_available[x] & (u32)(1 << y)) {
+                u32 code;
                 list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
                 for (i = 0; i < list->count; i++) {
                     if (list->entries[i].unit_id == owner && list->entries[i].element == x &&
@@ -265,6 +289,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
             prev_row = row;
             if (page != prev_page) {
+                u32 code;
                 RenderOutput_RedrawSavedRect(list_win);
                 pos = &tbl[page];
                 code = *pos;
@@ -497,16 +522,16 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                 if (((1 << i) & mask) == 0) {
                     pal = 15;
                 }
-                Ui_SetRectHighlight(icon_win->x + Data_080373e7[i] + 1,
-                              icon_win->y + Data_080373eb[i] + 1, 2, 2, pal);
+                Ui_SetRectHighlight(icon_win->x + DjinnMenu_ElementXOffsets[i] + 1,
+                              icon_win->y + DjinnMenu_ElementYOffsets[i] + 1, 2, 2, pal);
             }
         }
         if (gFrameCount & 4) {
-            Iwram_CopyWords((void *)0x06006500, Data_08037308, 32);
-            Iwram_CopyWords((void *)0x06006520, Data_08037308, 32);
+            Iwram_CopyWords((void *)0x06006500, DjinnMenu_BlinkTile, 32);
+            Iwram_CopyWords((void *)0x06006520, DjinnMenu_BlinkTile, 32);
         } else {
             Iwram_FillWords((void *)0x06006500, 32, 0x44444444);
-            Iwram_CopyWords((void *)0x06006520, Data_08037308, 32);
+            Iwram_CopyWords((void *)0x06006520, DjinnMenu_BlinkTile, 32);
         }
         WaitFrames(1);
     }
@@ -522,7 +547,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     UiWork_Finalize(list_win, 1);
     UiWindow_MarkVisibleTileAttributes();
     UiWork_SetAltFlagAndClearTable(0);
-    Sys_Free(tbl);
+    Runtime_BumpFree(tbl);
     WaitFrames(1);
     return ret;
 }

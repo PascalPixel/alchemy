@@ -230,7 +230,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW3.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0001749c)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/MEASURE_STRING_VARIANT.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000178c8)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/PUT_GLYPH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_TILEMAP_ENTRY.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.00017de8)

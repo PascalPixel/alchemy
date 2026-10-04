@@ -154,9 +154,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 g = ((c << 7) & 0x1f000);
                 b = (c & 0x7c00);
                 c = Iwram_SignedDivide(r + g + b, 7);
-                dst[i * 3 + 0] = c;
-                dst[i * 3 + 1] = c;
-                dst[i * 3 + 2] = c;
+                *dst++ = c;
+                *dst++ = c;
+                *dst++ = c;
             }
             break;
         case PALETTE_TRANSFORM_SEPIA:
@@ -204,8 +204,6 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 b -= 6;
                 r = Graphics_ClampRgb555Channel(r);
                 g = Graphics_ClampRgb555Channel(g);
-                /* FAKEMATCH: keeps b's lifetime as the native allocates it. */
-                __asm__("" : "+r"(b));
                 b = Graphics_ClampRgb555Channel(b);
                 dst[0] = Palette_ChannelCurveContrast[b];
                 dst[1] = Palette_ChannelCurveLight[g];
@@ -231,11 +229,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                     g = 24;
                 if (b > 26)
                     b = 26;
-                    /* FAKEMATCH: a scheduling barrier the native order needs. */
-                    __asm__("");
                 g += 2;
-                /* FAKEMATCH: keeps g's lifetime as the native allocates it. */
-                __asm__("" : "+r"(g));
                 b += 2;
                 r = Graphics_ClampRgb555Channel(r);
                 g = Graphics_ClampRgb555Channel(g);
@@ -256,11 +250,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 mean = Graphics_ClampRgb555Channel((r + g + b) / 3);
                 r = (r >> 1) + mean;
                 g = (g >> 1) + mean;
-                /* FAKEMATCH: keeps mean's lifetime as the native allocates it. */
-                __asm__("" : "+r"(mean));
                 b = (b >> 1) + mean;
-                /* FAKEMATCH: keeps c's lifetime as the native allocates it. */
-                __asm__("" : "+r"(c));
                 r = Graphics_ClampRgb555Channel(r);
                 g = Graphics_ClampRgb555Channel(g);
                 b = Graphics_ClampRgb555Channel(b);
@@ -273,8 +263,6 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         case PALETTE_TRANSFORM_RED:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                /* FAKEMATCH: keeps b's lifetime as the native allocates it. */
-                __asm__("" : "+r"(b));
                 r = c & 31;
                 g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
@@ -283,8 +271,6 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 g = g - g / 3;
                 b = b - b / 3;
                 dst[0] = Palette_ChannelCurve[b];
-                /* FAKEMATCH: a scheduling barrier the native order needs. */
-                __asm__("");
                 dst[1] = Palette_ChannelCurve[g];
                 dst[2] = Palette_ChannelCurveLight[r];
                 dst += 3;

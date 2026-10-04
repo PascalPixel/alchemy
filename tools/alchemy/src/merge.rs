@@ -55,7 +55,7 @@ fn parse(text: &str) -> Scaffold {
         if let Some(name) = section(line) {
             started = true;
             next = Some(name.to_string());
-            for l in pending.drain(..) {
+            for l in tag(pending.drain(..).collect()) {
                 s.post.insert((last_end, l));
             }
             continue;
@@ -72,16 +72,53 @@ fn parse(text: &str) -> Scaffold {
             }
             s.ranges.push((offset, offset + size));
             last_end = offset + size;
-            for l in pending.drain(..) {
+            for l in tag(pending.drain(..).collect()) {
                 s.pre.insert((offset, l));
             }
         } else if line.starts_with("\t.size ") {
-            s.post.insert((last_end, line.to_string()));
+            s.post.insert((last_end, format!("\u{1}{line}")));
         } else if !line.is_empty() {
             pending.push(line.to_string());
         }
     }
     s
+}
+
+/// Prefix each directive with the label it introduces (the next label line;
+/// none for directives before the incbin itself), so two labels at one
+/// address keep their own .global, .type and .thumb_func.
+fn tag(lines: Vec<String>) -> Vec<String> {
+    let mut owner = String::new();
+    let mut out: Vec<String> = lines
+        .into_iter()
+        .rev()
+        .map(|line| {
+            if line.ends_with(':') && !line.starts_with(['\t', ' ', '@']) {
+                owner = line.trim_end_matches(':').to_string();
+            }
+            format!("{owner}\u{1}{line}")
+        })
+        .collect();
+    out.reverse();
+    out
+}
+
+/// Write tagged lines grouped by label: each label's directives, then the
+/// label; lines that introduce no label first.
+fn emit(out: &mut Vec<String>, lines: Vec<&String>) {
+    let rank = |l: &str| {
+        if l.starts_with('@') { 0 } else if l.starts_with("\t.balign") { 1 } else if l.starts_with("\t.global") { 2 }
+        else if l.starts_with("\t.type") { 3 } else if l.starts_with("\t.thumb_func") { 4 } else if l.ends_with(':') { 9 } else { 5 }
+    };
+    let mut groups: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
+    for tagged in &lines {
+        let (owner, line) = tagged.split_once('\u{1}').unwrap_or(("", tagged));
+        groups.entry(owner).or_default().push(line);
+    }
+    for (_, mut group) in groups {
+        group.sort_by_key(|l| rank(l));
+        out.extend(group.into_iter().map(str::to_string));
+    }
 }
 
 fn intersect(mut a: Vec<(u32, u32)>, mut b: Vec<(u32, u32)>) -> Vec<(u32, u32)> {
@@ -105,6 +142,40 @@ fn intersect(mut a: Vec<(u32, u32)>, mut b: Vec<(u32, u32)>) -> Vec<(u32, u32)> 
     out
 }
 
+fn union(a: Vec<(u32, u32)>, b: Vec<(u32, u32)>) -> Vec<(u32, u32)> {
+    let mut all: Vec<(u32, u32)> = a.into_iter().chain(b).filter(|r| r.0 < r.1).collect();
+    all.sort();
+    let mut out: Vec<(u32, u32)> = Vec::new();
+    for (lo, hi) in all {
+        match out.last_mut() {
+            Some(last) if lo <= last.1 => last.1 = last.1.max(hi),
+            _ => out.push((lo, hi)),
+        }
+    }
+    out
+}
+
+/// The parts of `a` that `b` does not cover.
+fn subtract(a: Vec<(u32, u32)>, b: Vec<(u32, u32)>) -> Vec<(u32, u32)> {
+    let b = union(b, Vec::new());
+    let mut out = Vec::new();
+    for (mut lo, hi) in union(a, Vec::new()) {
+        for &(blo, bhi) in &b {
+            if bhi <= lo || blo >= hi {
+                continue;
+            }
+            if blo > lo {
+                out.push((lo, blo));
+            }
+            lo = lo.max(bhi);
+        }
+        if lo < hi {
+            out.push((lo, hi));
+        }
+    }
+    out
+}
+
 fn three_way<T: Ord + Clone>(base: &BTreeSet<T>, ours: &BTreeSet<T>, theirs: &BTreeSet<T>) -> BTreeSet<T> {
     ours.union(theirs)
         .filter(|k| (ours.contains(k) && theirs.contains(k)) || !base.contains(k))
@@ -115,7 +186,12 @@ fn three_way<T: Ord + Clone>(base: &BTreeSet<T>, ours: &BTreeSet<T>, theirs: &BT
 /// Merge three versions of an edition scaffold by ROM bytes.
 pub fn merge_scaffold(base: &str, ours: &str, theirs: &str) -> String {
     let (b, o, t) = (parse(base), parse(ours), parse(theirs));
-    let cover = intersect(o.ranges.clone(), t.ranges.clone());
+    // A byte stays scaffold when both sides keep it, or when one side adds
+    // it back (a table relinked at its own address) and the base lacked it.
+    let cover = union(
+        intersect(o.ranges.clone(), t.ranges.clone()),
+        union(subtract(o.ranges.clone(), b.ranges.clone()), subtract(t.ranges.clone(), b.ranges.clone())),
+    );
     let inside = |at: u32| cover.iter().any(|&(lo, hi)| at >= lo && at < hi);
     let pre = three_way(&b.pre, &o.pre, &t.pre);
     let post = three_way(&b.post, &o.post, &t.post);
@@ -138,10 +214,9 @@ pub fn merge_scaffold(base: &str, ours: &str, theirs: &str) -> String {
                 out.push(format!("\t.section .rom.{name}, \"ax\""));
             }
             let lines: Vec<&String> = pre.iter().filter(|(o, _)| *o == at).map(|(_, l)| l).collect();
-            out.extend(lines.iter().filter(|l| !l.ends_with(':')).map(|l| l.to_string()));
-            out.extend(lines.iter().filter(|l| l.ends_with(':')).map(|l| l.to_string()));
+            emit(&mut out, lines);
             out.push(format!("\t.incbin \"baserom.gba\", 0x{at:08x}, 0x{:08x}", end - at));
-            out.extend(post.iter().filter(|(o, _)| *o == end).map(|(_, l)| l.clone()));
+            emit(&mut out, post.iter().filter(|(o, _)| *o == end).map(|(_, l)| l).collect());
         }
     }
     out.join("\n") + "\n"
@@ -276,6 +351,24 @@ mod tests {
         assert_eq!(dropped, 1);
         assert_eq!(unplaced, ["00000110"]);
         assert_eq!(fixed, "  \"*/A.o\"(.text)\n");
+    }
+
+    #[test]
+    fn bytes_one_side_adds_back_survive() {
+        // Ours adopted A; theirs relinked C and added 0x130..0x138 as scaffold.
+        let ours = "@ header\n\t.section .rom.00000110, \"ax\"\n\t.global B\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000010\n\t.global C\nC:\n\t.incbin \"baserom.gba\", 0x00000120, 0x00000010\n";
+        let theirs = format!("{BASE}\t.global D\nD:\n\t.incbin \"baserom.gba\", 0x00000130, 0x00000008\n");
+        let merged = merge_scaffold(BASE, ours, &theirs);
+        assert!(merged.contains("D:\n\t.incbin \"baserom.gba\", 0x00000130, 0x00000008"), "{merged}");
+        assert!(!merged.contains("A:"), "{merged}");
+    }
+
+    #[test]
+    fn two_labels_at_one_address_keep_their_own_thumb_marks() {
+        let base = "@ h\n\t.section .rom.00000100, \"ax\"\n\t.global F\n\t.thumb_func\nF:\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000010\n";
+        let ours = "@ h\n\t.section .rom.00000100, \"ax\"\n\t.global F\n\t.thumb_func\nF:\n\t.global E\n\t.thumb_func\nE:\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000010\n";
+        let merged = merge_scaffold(base, ours, base);
+        assert_eq!(merged.matches(".thumb_func\nE:").count() + merged.matches(".thumb_func\nF:").count(), 2, "{merged}");
     }
 
     #[test]

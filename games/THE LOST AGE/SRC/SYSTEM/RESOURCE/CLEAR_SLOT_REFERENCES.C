@@ -1,0 +1,33 @@
+#include "RESOURCE.H"
+#include "VRAM_TAB.H"
+
+/* Frees every VRAM block resource ID owns; returns -1 when ID is out of
+   range or owned any, 0 otherwise. */
+s32 Resource_ClearSlotReferences(s32 resource_id)
+{
+    s32 cleared_count = 0;
+    s32 remaining;
+    u8 *marker;
+    u8 empty_marker;
+
+    if ((u32)resource_id >= VRAM_CACHE_ENTRY_COUNT)
+        return -1;
+    marker = ResourceBlockOwners;
+    /* FAKEMATCH: the plain order sets up the count before the marker. */
+    __asm__("" : "+r"(marker));
+    empty_marker = VRAM_BLOCK_OWNER_FREE;
+    /* FAKEMATCH: the plain order sets up the count before the marker. */
+    __asm__("" : "+r"(marker));
+    remaining = VRAM_BLOCK_COUNT;
+    do {
+        if (*marker == resource_id) {
+            cleared_count++;
+            *marker = empty_marker;
+        }
+        marker++;
+        remaining--;
+    } while (remaining != 0);
+    if (cleared_count != 0)
+        return -1;
+    return 0;
+}

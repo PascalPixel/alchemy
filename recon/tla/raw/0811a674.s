@@ -20,7 +20,7 @@ Func_0811a674:
 	lsls r0, r0, #1
 	adds r0, #255
 	ands r0, r3
-	bl Func_0811a640
+	bl Resource_FindFreeSlot
 	movs r2, #165
 	lsls r2, r2, #1
 	adds r3, r6, r2

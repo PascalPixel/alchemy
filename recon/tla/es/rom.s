@@ -191,12 +191,6 @@ ResourceTable_AllocateBlocks:
 	.type Func_08014220, %function
 Func_08014220:
 	.incbin "baserom.gba", 0x0001424c, 0x00000020
-	.section .rom.0001426c, "ax"
-	.global Resource_ClearSlotReferences
-	.thumb_func
-	.type Resource_ClearSlotReferences, %function
-Resource_ClearSlotReferences:
-	.incbin "baserom.gba", 0x0001426c, 0x00000034
 	.section .rom.000142a0, "ax"
 	.global Resource_ResetEntry
 	.thumb_func
@@ -3867,18 +3861,6 @@ FacingObject_TurnPairToFaceEachOther:
 	.type Func_080d36a8, %function
 Func_080d36a8:
 	.incbin "baserom.gba", 0x000dc69c, 0x00000020
-	.section .rom.000dc6e8, "ax"
-	.global ObjectGroup_ApplyIndexedChildValue
-	.thumb_func
-	.type ObjectGroup_ApplyIndexedChildValue, %function
-ObjectGroup_ApplyIndexedChildValue:
-	.incbin "baserom.gba", 0x000dc6e8, 0x00000050
-	.section .rom.000dc738, "ax"
-	.global Object_SetPartAttribute
-	.thumb_func
-	.type Object_SetPartAttribute, %function
-Object_SetPartAttribute:
-	.incbin "baserom.gba", 0x000dc738, 0x0000003c
 	.section .rom.000dc774, "ax"
 	.global Func_080d3780
 	.thumb_func
@@ -4625,7 +4607,10 @@ Graphics_ColorCurveC:
 	.incbin "baserom.gba", 0x000f92ba, 0x00000412
 	.global Object_VariantMotionScripts
 Object_VariantMotionScripts:
-	.incbin "baserom.gba", 0x000f96cc, 0x0000077c
+	.incbin "baserom.gba", 0x000f96cc, 0x000001b4
+	.global Data_080f088c
+Data_080f088c:
+	.incbin "baserom.gba", 0x000f9880, 0x000005c8
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x000f9e48, 0x00000050
@@ -5091,7 +5076,9 @@ BattleMotion_GetSlotField14:
 	.thumb_func
 	.type Func_0811a5fc, %function
 Func_0811a5fc:
-	.incbin "baserom.gba", 0x0011a614, 0x00000b70
+	.incbin "baserom.gba", 0x0011a614, 0x00000044
+	.section .rom.0011a68c, "ax"
+	.incbin "baserom.gba", 0x0011a68c, 0x00000af8
 	.section .rom.0011b198, "ax"
 	.incbin "baserom.gba", 0x0011b198, 0x00000114
 	.section .rom.0011b2dc, "ax"
@@ -5344,7 +5331,10 @@ Summon_GetEntryByte4:
 	.incbin "baserom.gba", 0x00128202, 0x0000065a
 	.global Data_08128844
 Data_08128844:
-	.incbin "baserom.gba", 0x0012885c, 0x000084c8
+	.incbin "baserom.gba", 0x0012885c, 0x0000428c
+	.global Resource_SlotAssignments
+Resource_SlotAssignments:
+	.incbin "baserom.gba", 0x0012cae8, 0x0000423c
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x00130d24, 0x000072dc

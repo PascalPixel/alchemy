@@ -3,7 +3,22 @@
 /* Draft, 342 rows off, nearly all register and stack-slot numbers. Two causes
    remain: the ROM keeps the 0x40000 shot height in a stack slot (r4 is then
    free as a reload register from the palette chain on), and in the frame loop
-   it strength-reduces k * 8 and hoists k * 4 for the burst index. */
+   it strength-reduces k * 8 and hoists k * 4 for the burst index.
+   2026-10-04 (wave 3, alchemy diff 484): the frame difference is that k * 4
+   slot. The ROM's frame-loop slots are 12 k * 8, 16 shot, 20 camera + 12,
+   24 k * 4, 28 mode * 2, 32 &draw, 36 camera, 40 total, 44 k, 48 frame,
+   52 canvas, 56 effect, draw at 60 and position at 68; here the burst
+   index k * 32 is reduced as a k-loop induction ([sp, #12]) instead of
+   k * 8, there is no k * 4 slot, and everything above it sits 4 lower.
+   The ROM's burst loop is not strength-reduced at all: each pass computes
+   ((k * 4) << 3) + i, multiplies by 28 and reloads gBursts; only k * 4 and
+   the 63 mask are hoisted. Compiled with -fno-strength-reduce (an
+   experiment only) this draft gives that loop shape, but with k << 5
+   hoisted, because every spelling tried folds k * 4 * 8 (k * 4 << 3,
+   (u32)(k * 4) * 8, (s16)(k * 4) * 8, (k << 2) * 8, a [][8] view, which
+   gives k * 896). So the ROM's index keeps k * 4 apart in some form not
+   yet found, and that same form presumably defeats the reduction. A
+   device search reached 328 only by piling up barriers; not kept. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"

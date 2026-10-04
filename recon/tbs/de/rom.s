@@ -602,14 +602,6 @@ BattleFx_BuildBuffer:
 	.type FunctionHead_08097c3c, %function
 FunctionHead_08097c3c:
 	.incbin "baserom.gba", 0x0009b2d8, 0x00000344
-	.section .rom.0009d096, "ax"
-	.incbin "baserom.gba", 0x0009d096, 0x00000002
-	.section .rom.0009d098, "ax"
-	.global RunBattleEffect05
-	.thumb_func
-	.type RunBattleEffect05, %function
-RunBattleEffect05:
-	.incbin "baserom.gba", 0x0009d098, 0x00000328
 	.section .rom.0009fb78, "ax"
 	.global Data_0809c410
 Data_0809c410:

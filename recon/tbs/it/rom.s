@@ -324,12 +324,7 @@ Battle_CollectPartyCommands:
 	.type AffineEffect_UpdateFrame, %function
 AffineEffect_UpdateFrame:
 	.incbin "baserom.gba", 0x000282c0, 0x00000348
-	.section .rom.000298a8, "ax"
-	.global DebugMenu_BrowseEntryGlyphs
-	.thumb_func
-	.type DebugMenu_BrowseEntryGlyphs, %function
-DebugMenu_BrowseEntryGlyphs:
-	.incbin "baserom.gba", 0x000298a8, 0x00000194
+	.section .rom.00029a3c, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:
 	.incbin "baserom.gba", 0x00029a3c, 0x00000100
@@ -602,14 +597,6 @@ BattleFx_BuildBuffer:
 	.type FunctionHead_08097c3c, %function
 FunctionHead_08097c3c:
 	.incbin "baserom.gba", 0x00097cc8, 0x00000344
-	.section .rom.00099a86, "ax"
-	.incbin "baserom.gba", 0x00099a86, 0x00000002
-	.section .rom.00099a88, "ax"
-	.global RunBattleEffect05
-	.thumb_func
-	.type RunBattleEffect05, %function
-RunBattleEffect05:
-	.incbin "baserom.gba", 0x00099a88, 0x00000328
 	.section .rom.0009c568, "ax"
 	.global Data_0809c410
 Data_0809c410:

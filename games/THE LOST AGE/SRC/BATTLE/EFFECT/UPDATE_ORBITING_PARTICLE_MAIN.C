@@ -4,8 +4,23 @@
 #include "OBJECT_EFX.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
+#include "FRAME.H"
+#include "OBJECT_DISPATCH.H"
 
 struct OrbitingParticle;
+
+/* ☀️'s main orbit step, which in ⚓️ returns 0 to its dispatcher. */
+s32 BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
+{
+    s32 phase = gFrameCount & 7;
+
+    if (phase == 0) {
+        Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 2);
+    } else if (phase == 2) {
+        Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 0);
+    }
+    return 0;
+}
 
 void BattleFx_UpdateOrbitingParticleFade(void *object)
 {

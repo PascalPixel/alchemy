@@ -183,4 +183,4 @@ Func_080de688:
 .L_080de810:
 	.4byte Func_080de5fc
 .L_080de814:
-	.4byte Func_080de550
+	.4byte BattleFx_UpdateOrbitingParticleMain

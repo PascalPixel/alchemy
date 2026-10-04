@@ -74,9 +74,9 @@ Func_08016348:
 	strb r3, [r7, #1]
 .L_080163ce:
 	mov r0, r12
-	bl Func_080165b4
+	bl SerialRuntime_CollectReceivedPayloads
 	mov r0, r8
-	bl Func_08016544
+	bl SerialRuntime_PrepareSendPacket
 	ldr r7, .L_080163f0
 	b .L_080163f4
 	.2byte 0x0000

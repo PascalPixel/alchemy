@@ -98,31 +98,11 @@ Func_0200006c:
 .L_02008104:
 	.4byte 0x04000128
 .L_02008108:
-	.4byte Data_02001ae4
+	.4byte LinkLobby_SlotValues
 .L_0200810c:
 	.4byte Data_02003874
 .L_02008110:
-	.4byte Data_02001afc
-	.section .text.x02008114,"ax",%progbits
-	.global Func_02000114
-	.thumb_func
-Func_02000114:
-	ldr r3, .L_02008128
-	ldr r2, .L_0200812c
-	lsls r1, r0, #2
-	ldrb r3, [r3, r0]
-	ldr r4, .L_02008130
-	ldr r2, [r1, r2]
-	lsls r3, r3, #2
-	str r2, [r3, r4]
-	bx lr
-	.2byte 0x0000
-.L_02008128:
-	.4byte Data_02001afc
-.L_0200812c:
-	.4byte Data_02001ae4
-.L_02008130:
-	.4byte Data_02003a74
+	.4byte LinkLobby_SlotColumns
 	.section .text.x02008134,"ax",%progbits
 	.global Func_02000134
 	.thumb_func
@@ -184,7 +164,7 @@ Func_02000134:
 	movs r3, #0
 	str r3, [r2]
 	movs r0, #4
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	b .L_020081b4
 .L_020081b0:
 	movs r3, #0
@@ -301,7 +281,7 @@ Func_02000134:
 	adds r0, #2
 	bl GameFlag_ClearBit
 	movs r0, #4
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 .L_020082aa:
 	movs r0, #131
 	lsls r0, r0, #1
@@ -385,7 +365,7 @@ Func_02000344:
 	lsls r3, r3, #18
 	movs r0, #4
 	ldr r5, [r3, #108]
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #128
 	lsls r0, r0, #2
 	bl GameFlag_ClearBit
@@ -1106,7 +1086,7 @@ Func_02000864:
 	adds r0, #2
 	bl GameFlag_ClearBit
 	movs r0, #4
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #128
 	movs r3, #1
 	lsls r0, r0, #2
@@ -1122,7 +1102,7 @@ Func_02000864:
 	adds r0, #255
 	bl GameFlag_SetBit
 	movs r0, #2
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #2
 	bl Func_0200006c
 	cmp r0, #0
@@ -1294,9 +1274,9 @@ Func_02000864:
 	movs r0, #216
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #0
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #4
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r1, #144
 	lsls r1, r1, #3
 	adds r0, r5, #0
@@ -1453,7 +1433,7 @@ Func_02000bb0:
 	cmp r0, #0
 	bne .L_02008c70
 	movs r0, #5
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	bl Func_02000044
 	movs r0, #116
 	adds r0, #255
@@ -1503,7 +1483,7 @@ Func_02000bb0:
 	lsls r0, r0, #1
 	bl GameFlag_SetBit
 	movs r0, #0
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	adds r0, r6, #6
 	b .L_02008cb2
 .L_02008c70:
@@ -1513,7 +1493,7 @@ Func_02000bb0:
 	cmp r0, #0
 	beq .L_02008ca2
 	movs r0, #0
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	ldr r0, .L_02008d9c
 	bl Func_02001a64
 	movs r1, #0
@@ -1612,7 +1592,7 @@ Func_02000bb0:
 	bl Func_02001a64
 .L_02008d60:
 	movs r0, #1
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #128
 	lsls r0, r0, #2
 	adds r0, #2
@@ -2547,7 +2527,7 @@ Func_0200145c:
 	movs r0, #11
 	bl Func_0200199c
 	movs r0, #4
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #5
@@ -2611,7 +2591,7 @@ Func_0200145c:
 	bl Event_SetStatus1c6
 	bl Event_WaitValue1c8Frames
 	movs r0, #5
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r3, #177
 	lsls r3, r3, #2
 	adds r2, r6, r3
@@ -2721,7 +2701,7 @@ Func_0200145c:
 	bl UiText_OpenMessageAtObject
 .L_02009638:
 	movs r0, #0
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	b .L_020096e4
 .L_02009640:
 	cmp r3, #9
@@ -2739,7 +2719,7 @@ Func_0200145c:
 	bl Event_SetStatus1c6
 	bl Event_WaitValue1c8Frames
 	movs r0, #5
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r1, #133
 	lsls r1, r1, #2
 	adds r3, r6, r1
@@ -2793,7 +2773,7 @@ Func_0200145c:
 	bl GameFlag_SetByte
 	movs r0, #0
 .L_020096e0:
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 .L_020096e4:
 	bl Func_02001a1c
 	b .L_02009876
@@ -2806,9 +2786,9 @@ Func_0200145c:
 	bl Event_SetStatus1c6
 	bl Event_WaitValue1c8Frames
 	movs r0, #0
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #4
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #250
 	lsls r0, r0, #2
 	bl GameFlag_Test
@@ -2832,7 +2812,7 @@ Func_0200145c:
 	bl WaitFrames
 	bl Func_02000044
 	movs r0, #0
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #4
 	b .L_020096e0
 .L_0200974c:
@@ -2879,9 +2859,9 @@ Func_0200145c:
 	bl Event_SetStatus1c6
 	bl Event_WaitValue1c8Frames
 	movs r0, #0
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #4
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #116
 	adds r0, #255
 	bl GameFlag_Test
@@ -2960,9 +2940,9 @@ Func_0200145c:
 	strb r2, [r5]
 	movs r0, #0
 	strb r2, [r3]
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 	movs r0, #4
-	bl Func_02000114
+	bl LinkLobby_WriteSlotValue
 .L_02009876:
 	ldr r5, .L_020098c0
 	movs r1, #144
@@ -3003,16 +2983,16 @@ Func_0200145c:
 .L_020098c4:
 	.4byte gPartyState
 	.section .rodata.x02009ae4,"a",%progbits
-	.global Data_02001ae4
-Data_02001ae4:
+	.global LinkLobby_SlotValues
+LinkLobby_SlotValues:
 	.4byte 0x43314773
 	.4byte 0x33323130
 	.4byte 0x31434241
 	.4byte 0x32454443
 	.4byte 0x33474645
 	.4byte 0x434d4753
-	.global Data_02001afc
-Data_02001afc:
+	.global LinkLobby_SlotColumns
+LinkLobby_SlotColumns:
 	.4byte 0x01010100
 	.2byte 0x0001
 	.global Data_02001b02

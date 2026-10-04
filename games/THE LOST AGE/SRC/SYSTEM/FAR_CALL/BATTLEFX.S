@@ -25,12 +25,12 @@ BattleFx_StartItemBreakFar:
 	.global BattleFx_SnapScaleToFullFar
 	.thumb_func
 BattleFx_SnapScaleToFullFar:
-@ This entry changes the active party's second value in Spanish/Italian.
+@ Spanish/Italian entries drain the active party here.
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleParty_ApplySecondValueDelta
+	overlay_veneer BattleParty_ApplyDrain
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleParty_ApplySecondValueDelta
+	overlay_veneer BattleParty_ApplyDrain
 .else
 	overlay_veneer BattleFx_SnapScaleToFull
 .endif
@@ -50,7 +50,15 @@ UpdateRisingParticleBurstFar:
 	.global Func_080c8540
 	.thumb_func
 Func_080c8540:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cb6c8
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080cb6c8
+.else
+	overlay_veneer BattleParty_ApplyDrain
+.endif
+.endif
 	.global Func_080c8548
 	.thumb_func
 Func_080c8548:

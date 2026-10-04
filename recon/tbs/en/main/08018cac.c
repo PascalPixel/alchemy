@@ -1,104 +1,88 @@
-/*
- * Draft: UiText_DrawGlyph, complete English owner [08018cac, 08018efc).
- * The 2026-09-29 permuter trial reduced its score from 7965 to 6875 with
- * allocation and scheduling rewrites. The current approved compiler scored
- * that retained draft 6855 (152 differing rows) before this correction.
- *
- * 2026-10-03: replace its private window/work/output records with maintained
- * owners, use physical labels for the copied ARM routine and display work,
- * and call the allocated code buffer through its actual five-argument type.
- * The old permuter temporaries, register hints and operand shuffles are
- * removed. That correction scored 8270 (45 register-only, 29 operand, 22
- * reordered, 25 inserted, 36 deleted rows). A shared width-result local
- * gives the same score as direct space-width returns. The initial six-byte
- * OAM view failed layout guards because this compiler rounds nested records
- * to words; the eight-byte packed/table union below passes without packing.
- * Remaining: register allocation, stack/branch layout and literal addressing
- * still differ, including the separately named display-work cell load.
- *
- * Bounded lifetime trials later that day: keep copied-code/resource locals
- * inside their branch and tile/output locals inside the normal branch, with
- * direct space-width returns. Separate allocation and callback pointers score
- * 8065/151; one typed callback handle scores the same and is retained. Entry
- * work/spacing snapshots and resource lookup order are unchanged. The whole
- * owner still differs in 151 instruction rows; no new matching device is used.
- * The ARM routine remains uncredited disassembly; this draft is not adopted.
- */
+/* Draft, not exact: score 450, 13 differing rows (was 8065/151); two of
+ * them are the link-time names below, not yet defined.
+ * Remaining: case 3 of the outline switch stores width's register (mov r2,
+ * r9, which CSE knows holds 5) where the listing loads #5; in the cursor
+ * branch the 0x12b6 offset takes r3 not r2 and the window copy r1 not r3.
+ * Found: one shared `return width` (space cases jump to it); u32 spacing
+ * locals (ldrh, lsr); the glyph width through its own temporary; the cursor
+ * position as (x << 3) + ((width - 2) << 3) into u16 bitfields, which keeps
+ * the narrowed 0xfffe / 254 apart; plain u16 stores for the attributes
+ * (a union lets the glyph_tiles load pass the attr1 store); a sprite
+ * pointer at output+16 whose bitfields force its address into r7 (GCSE
+ * places it at the end of the other branch); gWindowWork[22] for the
+ * battle display. To link: row 20 of DIRECTORY.S (UiText_SmallFont) needs
+ * its ResourceId name and Func_080155d0 a CodeSize symbol after its last
+ * byte; Japanese is 0x18 bytes longer and needs its own branch. */
 #include "WINDOW.H"
 #include "BATTLE_WORK.H"
 #include "RESOURCE.H"
+#include "RESOURCE_IDS.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
 
 extern const u8 Func_080155d0[];
+extern u8 UiText_DrawGlyphCodeSize[];
+extern char ResourceId_SmallFont;
 
-/* Glyph outputs interpret the packed words as the three OAM attributes.
- * Cursor placement changes only Y, retaining the other byte of attr0. */
-union GlyphSpriteAttributes {
+typedef s32 (*GlyphRoutine)(struct UiWindow *, s32, s32, s32, u8 *);
+
+/* The sprite a glyph output carries, from the output's sixteenth byte. */
+struct GlyphSprite {
+    u32 unknown_00;
     struct {
-        u16 vertical;
-        u16 horizontal;
-        u16 tile;
-        u16 high;
-    } attributes;
-    struct {
-        u8 y;
-        u8 flags;
-    } bytes;
+        u16 y : 8;
+        u16 flags : 8;
+        u16 x : 9;
+        u16 unknown_attr1 : 7;
+    } pos;
+    u16 tile;
+    u16 unknown_0a;
 };
 
-LAYOUT_SIZE_GUARD(GlyphSpriteAttributes_Size, union GlyphSpriteAttributes,
-    sizeof(((struct RenderOutput *)0)->packed) +
-    sizeof(((struct RenderOutput *)0)->table));
-LAYOUT_OFFSET_GUARD(GlyphSpriteAttributes_Horizontal,
-    union GlyphSpriteAttributes, attributes.horizontal, 2);
-LAYOUT_OFFSET_GUARD(GlyphSpriteAttributes_Tile,
-    union GlyphSpriteAttributes, attributes.tile,
-    (u32)&((struct RenderOutput *)0)->table -
-    (u32)&((struct RenderOutput *)0)->packed);
+#define OAM(output) ((struct GlyphSprite *)(output)->unknown_10)
 
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
     s32 x, s32 y, s32 mode)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-    u16 offset_x = work->unknown_before_count;
-    u16 offset_y = work->line_spacing;
+    u32 spacing_x = work->unknown_before_count;
+    u32 spacing_y = work->line_spacing;
+    s32 width;
 
     if (mode != 1 && (window->flags & 8) != 0) {
-        u8 *resource;
-        s32 (*draw)(struct UiWindow *, s32, s32, s32, u8 *);
-        s32 size;
-        s32 width;
+        u8 *font;
+        GlyphRoutine draw;
+        u32 size;
+        s32 result;
 
-        if (gBattleDisplayWork->window == window) {
-            Resource_GetTableEntry(0x14);
-            Resource_GetTableEntry(0x13);
-            if (character == 32)
-                return 3;
+        if (((struct BattleDisplayWork *)gWindowWork[22])->window == window) {
+            Resource_GetTableEntry((s32)&ResourceId_SmallFont);
+            Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+            width = 3;
+            if (character == ' ')
+                goto done;
         }
-        resource = Resource_GetTableEntry(0x13);
-        if (character == 32)
-            return 4;
-        size = 0x318;
-        draw = (s32 (*)(struct UiWindow *, s32, s32, s32, u8 *))
-            Runtime_BumpAllocate(size);
-        Dma_Set(Func_080155d0, (void *)draw, 0x84000000 | (size >> 2),
-            REG_DMA3);
-        width = draw(window, character, x, y, resource);
-        Runtime_BumpFree((void *)draw);
-        return width;
+        font = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+        width = 4;
+        if (character == ' ')
+            goto done;
+        size = (u32)UiText_DrawGlyphCodeSize;
+        draw = (GlyphRoutine)Runtime_BumpAllocate(size);
+        Dma_Set(Func_080155d0, draw, 0x84000000 | (size >> 2), REG_DMA3);
+        result = draw(window, character, x, y, font);
+        Runtime_BumpFree(draw);
+        return result;
     }
 
-    if (character == 32)
-        return 5;
+    width = 5;
+    if (character == ' ')
+        goto done;
     {
         u32 tiles[32];
         struct RenderOutput *output;
-        union GlyphSpriteAttributes *sprite;
-        s32 width;
         s32 index;
-        s32 tile;
+        struct GlyphSprite *sprite;
 
         output = RenderOutput_AcquireFree();
         if (output == NULL)
@@ -127,35 +111,36 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
                 output->unknown_0c = 0;
                 break;
             }
-            width = UiText_RenderGlyphPair(character, tiles);
-            if (width == 0)
-                width = 1;
+            {
+                s32 drawn = UiText_RenderGlyphPair(character, tiles);
+
+                if (drawn == 0)
+                    drawn = 1;
+                width = drawn;
+            }
         }
 
-        sprite = (union GlyphSpriteAttributes *)&output->packed;
         if ((u8)output->active == 2) {
+            sprite = OAM(output);
             if (work->glyph_resource == 99)
                 work->glyph_resource = Resource_FindFreeEntry();
-            sprite->attributes.horizontal = (sprite->attributes.horizontal & ~0x1ff) |
-                ((((window->x + window->width + 0xfffe) << 3) + 4) & 0x1ff);
-            sprite->bytes.y =
-                (((u8)window->y + (u8)window->height + 254) << 3) - 1;
+            sprite->pos.x = (window->x << 3) + ((window->width - 2) << 3) + 4;
+            sprite->pos.y = (window->y << 3) + ((window->height - 2) << 3) - 1;
         } else {
-            tile = work->glyph_tiles + index;
-            Dma_Set(tiles, (void *)(0x06010000 + (tile << 5)), 0x84000020,
-                REG_DMA3);
-            sprite->attributes.vertical =
-                y + (offset_y >> 1) + (window->y << 3) + 0xfffe;
-            sprite->attributes.horizontal =
-                ((window->x << 3) + x + (offset_x >> 1) + 2) | 0x4000;
-            sprite->attributes.tile = tile;
+            Dma_Set(tiles, (void *)(0x06010000 + (work->glyph_tiles + index) * 32),
+                0x84000020, REG_DMA3);
+            ((u16 *)&output->packed)[0] = y + (spacing_y >> 1) + window->y * 8 - 2;
+            ((u16 *)&output->packed)[1] = (x + (spacing_x >> 1) + window->x * 8 + 2) | 0x4000;
+            ((u16 *)&output->packed)[2] = work->glyph_tiles + index;
+            sprite = OAM(output);
         }
         output->sentinel = 254;
-        output->x = sprite->attributes.horizontal & 0x1ff;
-        output->y = sprite->bytes.y;
+        output->x = sprite->pos.x;
+        output->y = sprite->pos.y;
         output->index = index;
         output->next = NULL;
         RenderOutput_AppendToList(&window->output, output);
-        return width;
     }
+done:
+    return width;
 }

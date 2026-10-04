@@ -1,3 +1,8 @@
+/* 2026-10-04 sun100 main-7: still score 2 (frame 36 vs 8). ARM frames grow
+ * downward, so the 28 unused bytes at sp+8..35 were allocated before the
+ * mode slot at sp+4: seven 4-byte caller-save slots (r0-r4, ip, lr) from
+ * reload's setup_save_areas fit, with mode evicted from a register later.
+ * The source shape that makes global alloc pick caller-saves is not found. */
 /* 2026-10-04 frame audit: BattleFx_InitializeStarField, 608 bytes, pool included.
  * Uncredited under S1/S2/C1; the owned English ROM supplies the raw listing.
  * Entries JA/EN/DE/ES/FR/IT: 080b8470, 080c1470, 080c3a88, 080c5488, 080c5488, 080c1488.

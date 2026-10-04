@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_0814ef44
+	.balign 4
+	.global BattleFx_RunSeriesA
 	.thumb_func
-Func_0814ef44:
+BattleFx_RunSeriesA:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

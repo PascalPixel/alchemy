@@ -1,4 +1,8 @@
 #include "TYPES.H"
+#include "DMA.H"
+#include "RESOURCE.H"
+#include "RENDER_INPUT.H"
+#include "RUNTIME_MEM.H"
 
 struct Record_080b06c0 {
     u8 filler0[4];
@@ -60,4 +64,46 @@ void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
         dst += 4;
         count--;
     } while (count >= 0);
+}
+
+/* The blank price tiles the digits are drawn over. */
+extern const u8 Shop_PriceTiles[];
+
+/* ☀️'s, staging in ⚓️'s heap block 56: builds a sprite showing a price of
+   up to five digits, least significant digit first, over the blank price
+   tiles. */
+struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
+{
+    u8 *buf;
+    s32 slot;
+    struct RenderOutput *sprite;
+
+    buf = Runtime_AllocateBlock(56, 0x400);
+    sprite = 0;
+    Dma_Set(Shop_PriceTiles, buf, 0x84000040, (volatile u32 *)0x040000d4);
+    Shop_CopyGlyphs(value % 10, (s32)buf, 0);
+    value = value / 10;
+    if (value != 0) {
+        Shop_CopyGlyphs(value % 10, (s32)buf, 1);
+        value = value / 10;
+        if (value != 0) {
+            Shop_CopyGlyphs(value % 10, (s32)buf, 2);
+            value = value / 10;
+            if (value != 0) {
+                s32 last;
+
+                Shop_CopyGlyphs(value % 10, (s32)buf, 3);
+                last = value / 10;
+                if (last != 0)
+                    Shop_CopyGlyphs(last % 10, (s32)buf, 4);
+            }
+        }
+    }
+    slot = Resource_FindFreeEntry();
+    if (slot != 96) {
+        VramBlock_LoadCached(slot, 0x100, buf);
+        sprite = RenderOutput_CreateFar(slot, 0x80008000, (struct RenderInput *)window, x, y);
+    }
+    Runtime_ReleaseHeapBlock(56);
+    return sprite;
 }

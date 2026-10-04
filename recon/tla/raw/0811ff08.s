@@ -48,10 +48,10 @@ BattlePresentation_WaitForAdvance:
 	lsls r5, r5, #7
 	adds r5, r5, r2
 	mov r9, r3
-	bl Func_08013d0c
+	bl QueueIoWriteDelay10
 	adds r0, r6, #0
 	movs r1, #16
-	bl Func_08013c58
+	bl QueueIoWriteDelay6
 	movs r2, #16
 	movs r3, #128
 	lsls r3, r3, #19

@@ -1,56 +1,24 @@
-/* 2026-10-04 channel-curve ownership recovery, still uncredited.
- * The three physical scaffold labels name 32-entry channel-index curves:
- * the ordinary curve, a curve whose interior entries are all lighter, and
- * a contrast curve reaching the BGR555 maximum at index25. Their values
- * remain private-input scaffolding; no editable data or code credit added.
- * PALBUF.H owns the transform declaration and callers pass palette fields.
- * Removed the duplicate unnamed alias at the same function entry.
- * Fresh EN baseline was 223: 3 register, 8 stack, 1 operand, 3 reordered.
- * Natural blue-first/shared-value variants:223/828; lower-clamp test via
- * shared blue:898 with two deleted instructions, rejected. A real consumed
- * four-field tint record scores7516/frame44, versus native40; rejected.
- * Whole-channel register bindings score15520; removed, no device retained.
- * A 35-second focused search scores 4280 candidates, none improve. A fresh
- * 216-form tint declaration/assignment/sum search recovers two stack slots
- * with the tr, tb, tg declaration order (221). Explicit consumed scaled
- * tint locals (576 declaration/assignment forms) do not improve it; neither
- * do 216 global/scale/blend declaration permutations.
- * Scoped blue variables score 483..1343, or insert/delete instructions.
- * Tied channel lifetime tests mostly score 223..1323. Blue-first plus a
- * tied, already-defined red value changes only the intended computation/
- * copy register choice: 223 -> 213 before the tint declaration recovery.
- * A scoped lower-clamp value scores 331 or 13682..13892; rejected.
- * Lower-clamp variants using blue delete two instructions (393..913),
- * and an intervening tied channel barrier is at best 213; rejected.
- * Combined retained source scores 211: 1 register, 6 stack, 1 operand,
- * 3 reordered instructions. It remains uncredited; no adoption claim.
- */
-/* Draft, not exact: score 211, 11 differing instructions of 831 (was 10457
- * and 447). Rewritten from the listing in plain C: no link-time constants,
- * no permuter temporaries. Same size, same frame, every loop in place.
- * Green and blue have the listing's registers (b r5, g r6) because the
- * 0x10004 loop takes green before red; the other four loops take red first.
- * The allocator's priorities for g and b are 1% apart, so most edits to any
- * loop swap them back (about 100 instructions): check that first.
- * Remaining, all register choice or order:
- *  - 0x10002 tests blue for green's lower clamp; here green is tested.
- *    Ordinary blue-first assignment alone still computes green. Every spelling
- *    of the two assignments compiles to the same code or swaps g and b back
- *    (b = g = x computes blue first but loses the registers).
- *  - in the 0x400000 blend the listing spills tr + tg last (sp+4, below the
- *    three shifted tints); here it is spilled first (sp+16). The four are
- *    GCSE's hoisted temporaries (regs 475..478 in the .gcse dump), numbered
- *    in hash order of their expressions, which depends on the pseudo numbers
- *    of tr, tg and tb: so on how many pseudos the code above the blend
- *    makes, not on the order the blend is written in. Shifted tints in
- *    variables, a sum variable and other operand orders leave it unchanged.
- *  - three reordered instructions that follow from those two.
- * The grey sum is exact now: its three terms go into r, g and b and are
- * added from there (c takes the quotient). */
+/* Draft, not exact: score 26, 7 differing instructions of 876 (was 206/10).
+ * The three channel curves are declared here without const: the listing
+ * loads the next curve's address after each store, which const tables let
+ * the scheduler hoist above it. PALBUF.H (only declarations use them) should
+ * drop const when this adopts.
+ * Remaining, register choice and spill slots only:
+ *  - 0x10002: the green lower clamp tests blue and its branch skips blue's
+ *    own test (jump threading); the three tagged devices give the registers
+ *    but block the threading. Device-free forms swap g and b (n2: 220 rows);
+ *    keeping only the red device (n7) leaves just this test (29 rows).
+ *  - 0x400000 blend: the hoisted tr + tg and the three tint << 16 values take
+ *    stack slots sum 4, tb 8, tg 12, tr 16 in the listing; here tg 4, tb 8,
+ *    tr 12, sum 16 (slot order follows GCSE's hoisted pseudo numbering).
+ * Earlier notes: grey sum exact with its three terms in r, g, b; g/b
+ * allocator priorities are 1% apart, so edits to any loop can swap them. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
-#include "PALBUF.H"
+extern u16 Palette_ChannelCurve[32];
+extern u16 Palette_ChannelCurveLight[32];
+extern u16 Palette_ChannelCurveContrast[32];
 
 /* Expands a 512-entry (or 256-entry half) BGR555 palette into the engine's
  * three-halfword-per-entry working buffer, applying one of several colour

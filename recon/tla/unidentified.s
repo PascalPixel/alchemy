@@ -691,8 +691,8 @@ Data_080f0e9c:
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
 	.incbin "baserom.gba", 0x000f0ea4, 0x00000020
-	.global Data_080f0ec4
-Data_080f0ec4:
+	.global BattleFx_EightWayHeadingWords
+BattleFx_EightWayHeadingWords:
 	.incbin "baserom.gba", 0x000f0ec4, 0x00000020
 	.global Data_080f0ee4
 Data_080f0ee4:
@@ -952,8 +952,8 @@ Data_08105a50:
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x0010c008, 0x00000140
-	.global Data_0810c148
-Data_0810c148:
+	.global Shop_PriceTiles
+Shop_PriceTiles:
 	.incbin "baserom.gba", 0x0010c148, 0x00000100
 	.global Data_0810c248
 Data_0810c248:

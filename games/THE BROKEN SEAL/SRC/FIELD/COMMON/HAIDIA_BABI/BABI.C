@@ -3,7 +3,6 @@
 #include "HAIDIA_BABI.H"
 #include "RAM_BUFFER.H"
 
-s32 ArcTan2(s32, s32);
 s32 FieldScene_PrepareActors(s32);
 
 extern u8 MsgHaidiaFolksSeemKnow[];
@@ -19,34 +18,8 @@ void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
 
-/* The facing controller and the scene hooks the entry veneers export. */
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
-{
-    s32 delta;
-    u16 old;
-    s32 tgt;
-    struct FacingObject *target;
-
-    target = object->facing_target;
-    if (target != NULL) {
-        object->facing_flags = (u8)(0xFE & object->facing_flags);
-        tgt = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
-        old = object->facing;
-        delta = (s16)(tgt - old);
-        if (delta != 0) {
-            if (delta > 0x1000) {
-                delta = 0x1000;
-            }
-            /* The loader relocates the stored pool word to -0x1000. */
-            if (delta < -0x1000) {
-                delta = -0x1000;
-            }
-            object->facing = (u16)(old + delta);
-        }
-    }
-    return 1;
-}
-
+/* The scene hooks the entry veneers export; the facing controller before
+   them is COMMON FIELD/COMMON/OBJECT/FACING.C. */
 s32 *HaidiaBabi_GetEntrances(void)
 {
     return gHaidiaBabiEntrances;

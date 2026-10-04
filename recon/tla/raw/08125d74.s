@@ -247,10 +247,10 @@ Func_08125d74:
 	bl WaitFrames
 	adds r0, r5, #0
 	movs r1, #2
-	bl Func_08013d0c
+	bl QueueIoWriteDelay10
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_08013c58
+	bl QueueIoWriteDelay6
 	adds r3, r7, #0
 	subs r3, #74
 	cmp r3, #2
@@ -442,10 +442,10 @@ Func_08125d74:
 	bl Func_08038128
 	adds r0, r5, #0
 	movs r1, #2
-	bl Func_08013d0c
+	bl QueueIoWriteDelay10
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_08013c58
+	bl QueueIoWriteDelay6
 	ldr r3, .L_08126148
 	movs r2, #128
 	lsls r2, r2, #19

@@ -32,21 +32,14 @@
 #define NAME_PREFIX_LAST_INDEX 4
 #endif
 
-/* Columns follow the localized words; window flags and channel markers
-   follow the Japanese window/name layout. */
+/* Window flags and channel markers follow the Japanese window/name layout. */
 #if !EDITION_INTERNATIONAL
-#define SELECT_ENTRY_11_COLUMN 6
-#define CONFIRM_ENTRY_19_COLUMN 8
 #define WINDOW_BUSY_FLAGS_OFS 0x118A
 #define SUMMON_CHANNEL_MARKER 'A'
 #elif defined(TLA_EDITION_DE)
-#define SELECT_ENTRY_11_COLUMN 8
-#define CONFIRM_ENTRY_19_COLUMN 10
 #define WINDOW_BUSY_FLAGS_OFS 0x138A
 #define SUMMON_CHANNEL_MARKER '1'
 #else
-#define SELECT_ENTRY_11_COLUMN 7
-#define CONFIRM_ENTRY_19_COLUMN 10
 #define WINDOW_BUSY_FLAGS_OFS 0x138A
 #define SUMMON_CHANNEL_MARKER '1'
 #endif

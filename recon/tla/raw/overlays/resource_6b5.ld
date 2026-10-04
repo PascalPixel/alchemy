@@ -9,7 +9,7 @@ SECTIONS
         "*/resource_6b5_overlay.o"(.text.x02008044)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/SCENE_TABLES_2.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x0200806c)
-        "*/resource_6b5_overlay.o"(.text.x02008114)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/LOBBY.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008134)
         "*/resource_6b5_overlay.o"(.text.x020082d8)
         "*/resource_6b5_overlay.o"(.text.x02008344)

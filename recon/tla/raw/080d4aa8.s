@@ -8,4 +8,4 @@ Func_080d4aa8:
 	str r3, [r0, #108]
 	bx lr
 .L_080d4ab0:
-	.4byte Func_080d4a54
+	.4byte SceneActor_UpdateFacingTowardTarget

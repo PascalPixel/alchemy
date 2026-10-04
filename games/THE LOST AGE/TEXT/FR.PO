@@ -259,7 +259,7 @@ msgctxt "message"
 msgid "00062"
 msgstr "Fuir"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00063"
 msgstr "Oui"
 
@@ -19299,7 +19299,7 @@ msgctxt "message"
 msgid "04822"
 msgstr "Hanté"
 
-msgctxt "message"
+msgctxt "MsgStatusNormal"
 msgid "04823"
 msgstr "Statut normal."
 
@@ -19307,7 +19307,7 @@ msgctxt "message"
 msgid "04824"
 msgstr "Continuez!"
 
-msgctxt "message"
+msgctxt "MsgStatusAdvice"
 msgid "04825"
 msgstr "KO. Ressusciter au temple ou"
 

@@ -45,26 +45,38 @@ struct ObjectRuntime *FieldObject_Create(s32, s32, s32, s32);
 /* runtime/remap_bytes_by_table.c */
 extern u8 Runtime_ByteRemapTable[];
 
-/* The Japanese edition steers on the world map its own way, which stays in
-   its scaffold for now. */
-#if EDITION_INTERNATIONAL
-
 /*
  * World-map player movement: pick the heading from the pad, probe the map
- * ahead and to both sides, fall back to eight neighbouring headings, then
- * steer the object, smooth the map rotation and drop footprint effects.
- * angle_offsets[28] uses only 8 entries and sizes the 92-byte frame.
+ * ahead and to both sides, fall back to neighbouring headings, then steer
+ * the object, smooth the map rotation and drop footprint effects.
+ * The Japanese edition probes 0x80000 ahead and a twelfth of a turn to each
+ * side at once and falls back to six headings; the others probe 0x70000
+ * ahead, then a sixteenth and an eighth of a turn to each side one at a
+ * time, and fall back to eight. The angle buffer's unused slots size the
+ * ROM frames: 100 bytes in Japanese, 92 in the others.
  */
+#if EDITION_INTERNATIONAL
+#define WORLD_PROBE_RADIUS 0x70000
+#else
+#define WORLD_PROBE_RADIUS 0x80000
+#endif
+
 s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 {
     struct FieldPosition position;
+#if EDITION_INTERNATIONAL
     struct FieldPosition test_position;
     s16 angle_offsets[28]; /* the ROM frame keeps 28 slots; 8 are used */
+#else
+    struct FieldPosition left_position;
+    struct FieldPosition right_position;
+    s16 angle_offsets[22]; /* the ROM frame keeps 22 slots; 6 are used */
+#endif
     s32 collision;
     s32 angle;
-    s32 mode;
     u16 direction;
     s32 angle_index;
+    s32 mode;
     s32 count;
     s32 difference;
     s32 collision_kind;
@@ -78,6 +90,9 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 
     mode = 2;
     collision = 0;
+#if !EDITION_INTERNATIONAL
+    count = 0;
+#endif
     if (gKeysHeld & gGameState.dash_keys) {
         object->speed_limit = 0x10000;
         object->acceleration = 0x14000;
@@ -100,34 +115,35 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x70000, direction, &position);
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
     if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
         goto update_object;
+#if EDITION_INTERNATIONAL
     if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
         goto choose_direction;
 
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
-    Vector_AddPolarOffset(0x70000, direction + 0x1000, &test_position);
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
     if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
-    Vector_AddPolarOffset(0x70000, direction - 0x1000, &test_position);
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
     if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
-    Vector_AddPolarOffset(0x70000, direction + 0x2000, &test_position);
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
     if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
-    Vector_AddPolarOffset(0x70000, direction - 0x2000, &test_position);
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
     if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
         goto choose_direction;
     goto update_object;
@@ -147,37 +163,81 @@ choose_direction:
         position.x = object->x;
         position.y = object->y;
         position.z = object->z;
-        Vector_AddPolarOffset(0x70000, direction, &position);
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
         if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
-        Vector_AddPolarOffset(0x70000, direction + 0x1000, &test_position);
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
         if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
-        Vector_AddPolarOffset(0x70000, direction - 0x1000, &test_position);
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
         if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
-        Vector_AddPolarOffset(0x70000, direction + 0x2000, &test_position);
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
         if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
-        Vector_AddPolarOffset(0x70000, direction - 0x2000, &test_position);
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
         if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
             continue;
         angle = (s16)direction;
         goto update_object;
     }
     collision |= 1;
+
+#else
+    left_position.x = object->x;
+    left_position.y = object->y;
+    left_position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
+    right_position.x = object->x;
+    right_position.y = object->y;
+    right_position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+    if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
+         | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&left_position)
+         | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&right_position)) == 0)
+        goto update_object;
+
+    angle_offsets[count++] = direction + 0x1000;
+    angle_offsets[count++] = direction - 0x1000;
+    angle_offsets[count++] = direction + 0x2000;
+    angle_offsets[count++] = direction - 0x2000;
+    angle_offsets[count++] = direction + 0x3000;
+    angle_offsets[count++] = direction - 0x3000;
+    for (angle_index = 0; angle_index < count; angle_index++) {
+        direction = angle_offsets[angle_index];
+        position.x = object->x;
+        position.y = object->y;
+        position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+        left_position.x = object->x;
+        left_position.y = object->y;
+        left_position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
+        right_position.x = object->x;
+        right_position.y = object->y;
+        right_position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+        if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
+             | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&left_position)
+             | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&right_position)) != 0)
+            continue;
+        angle = (s16)direction;
+        goto update_object;
+    }
+    collision |= 1;
+#endif
 
 update_object:
     if (gEventWork != NULL) {
@@ -264,7 +324,6 @@ movement_done:
     return 1;
 }
 
-#endif /* EDITION_INTERNATIONAL */
 
 s32 Field_CheckConfiguredKeysAndCount(void *work)
 {

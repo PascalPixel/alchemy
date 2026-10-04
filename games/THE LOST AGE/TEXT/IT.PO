@@ -259,7 +259,7 @@ msgctxt "message"
 msgid "00062"
 msgstr "Fuggi"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00063"
 msgstr "Sì"
 
@@ -19299,7 +19299,7 @@ msgctxt "message"
 msgid "04822"
 msgstr "Persec."
 
-msgctxt "message"
+msgctxt "MsgStatusNormal"
 msgid "04823"
 msgstr "Il tuo stato è normale."
 
@@ -19307,7 +19307,7 @@ msgctxt "message"
 msgid "04824"
 msgstr "Continua così."
 
-msgctxt "message"
+msgctxt "MsgStatusAdvice"
 msgid "04825"
 msgstr "Sei KO. Rianimati in un Tempio"
 

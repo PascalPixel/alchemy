@@ -2,6 +2,15 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 
+/* ☀️'s: the trade offers are owner 0x83's, or else the party's own, which
+   ⚓️ keeps 12 bytes into the party state. */
+struct TradeOfferState *Trade_GetOfferState(s32 which)
+{
+    if (which != 0) {
+        return Owner_GetState(0x83);
+    }
+    return (struct TradeOfferState *)&gPartyState.unknown_000[0xc];
+}
 
 u32 Party_GetAverageLevel(void)
 {

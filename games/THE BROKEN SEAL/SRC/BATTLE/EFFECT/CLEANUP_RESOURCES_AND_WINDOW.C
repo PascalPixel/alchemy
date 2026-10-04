@@ -19,10 +19,19 @@ void BattleFx_CleanupResourcesAndWindow(void)
     UiWork_FinalizeFar(*(u32 *)(gMapCellBuffer + 0x1c), 2);
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+/* The European world map steers its cursor to the nearest place while no
+   key is held, names places within 64 rather than 100 and starts the name
+   three pixels left of the marker rather than one. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define WORLD_MAP_CURSOR_SNAPS 1
+#define WORLD_MAP_NAME_RANGE   64
+#define WORLD_MAP_NAME_LEFT    3
 #else
-/* The European editions build the marker window their own way, which stays
-   in their scaffolds for now. */
+#define WORLD_MAP_CURSOR_SNAPS 0
+#define WORLD_MAP_NAME_RANGE   100
+#define WORLD_MAP_NAME_LEFT    1
+#endif
 
 struct MapMarker {
     struct MapMarker *link;
@@ -86,6 +95,7 @@ extern u8 MsgPresentLocation[];
 s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
+s32 ArcTan2(s32 dz, s32 dx);
 void UiWindow_Clear(s32 window);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
@@ -122,6 +132,7 @@ void Map_UpdateWorldMapMarkers(void)
     s32 blend;
     s32 best;
     s32 best_distance;
+    s32 cursor_x;
     s32 best_x;
     s32 best_y;
     s32 message;
@@ -131,7 +142,6 @@ void Map_UpdateWorldMapMarkers(void)
     s32 position[3];
     struct WorldMapWork *work;
     struct MapObject *object;
-    s32 cursor_x;
     s32 cursor_y;
     s32 tile;
     s32 mode;
@@ -144,13 +154,21 @@ void Map_UpdateWorldMapMarkers(void)
     struct IoWriteQueue *q;
     volatile u16 *ime;
 
+#if WORLD_MAP_CURSOR_SNAPS
+    leader = gGameState.selected_actor;
+    work = (struct WorldMapWork *)Ram_MapCellBuffer;
+    marker = work->markers;
+    place = WorldMap_PlaceMarkers;
+    tile_base = gVramBlockCache[work->vram_block].offset >> 5;
+#else
     work = (struct WorldMapWork *)Ram_MapCellBuffer;
     leader = gGameState.selected_actor;
     place = WorldMap_PlaceMarkers;
     tile_base = gVramBlockCache[work->vram_block].offset >> 5;
     marker = work->markers;
+#endif
     best = -1;
-    best_distance = 100;
+    best_distance = WORLD_MAP_NAME_RANGE;
     blend = WorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
     if (!GameFlag_TestFar(0x11c) && (gKeysHeld & KEYS_SHOULDERS)) {
         object = ObjectTable_Get(gGameState.selected_actor);
@@ -198,10 +216,17 @@ markers:
             message = *place++;
             if (flag == 0)
                 continue;
+#if WORLD_MAP_CURSOR_SNAPS
+            if (flag == -1)
+                break;
+            tile = flag >> 16;
+            mode = 1;
+#else
             tile = flag >> 16;
             mode = 1;
             if (flag == -1)
                 break;
+#endif
         }
         if (!GameFlag_TestFar(flag))
             continue;
@@ -226,6 +251,35 @@ markers:
         if (i != 0 || (gFrameCount & 15) <= 7)
             Runtime_PushSlotEntry(marker++, y);
     }
+#if WORLD_MAP_CURSOR_SNAPS
+    /* With no key held, the cursor jumps onto the nearest place within a
+       pixel, or steps toward it at a speed that starts at two pixels. */
+    if (gKeysHeld == 0) {
+        if (best != -1) {
+            if (best_distance <= 1) {
+                work->x.value = best_x << 16;
+                work->z.value = best_y << 16;
+                work->speed = 0x10000;
+            } else {
+                if (work->speed < 0x20000)
+                    work->speed = 0x20000;
+                angle = ArcTan2(best_y - cursor_y, best_x - cursor_x);
+                position[0] = work->x.value;
+                position[1] = 0;
+                position[2] = work->z.value;
+                Vector_AddPolarOffset(work->speed, (u16)angle, position);
+                work->x.value = position[0];
+                work->z.value = position[2];
+                if (work->speed < 0x60000)
+                    work->speed += 0x2000;
+            }
+            cursor_x = work->x.part.whole;
+            cursor_y = work->z.part.whole;
+        } else {
+            work->speed = 0x10000;
+        }
+    }
+#endif
     if (best != -1 && (gFrameCount & 15) <= 7) {
         marker->blend_mode = 0;
         marker->tile = tile_base + 3;
@@ -249,7 +303,7 @@ markers:
             UiText_MeasureResourceEntriesFar(best_message, &width, &height);
             cursor_x = best_x;
             cursor_y = best_y;
-            cursor_x--;
+            cursor_x -= WORLD_MAP_NAME_LEFT;
             cursor_y -= 11;
             if (cursor_x + width > 240) {
                 cursor_x = 232 - width;
@@ -265,4 +319,3 @@ markers:
     QUEUE_IO_WRITE_DELAY2(0x04000050, 0x3f00);
     QUEUE_IO_WRITE_DELAY2(0x04000052, ((16 - blend) << 8) | blend);
 }
-#endif

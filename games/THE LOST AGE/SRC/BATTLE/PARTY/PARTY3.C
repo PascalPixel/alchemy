@@ -6,9 +6,30 @@
 #include "FIXED_MATH.H"
 
 s32 Party_CountActiveOwnersFar(void);
+s16 Owner_AdjustSecondValueFar(s32 unit, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
+
+/* ☀️'s: passes a health change to every active party member in turn. */
+void BattleParty_ApplyDrain(s32 amount)
+{
+    s32 target_count = Party_CountActiveOwnersFar();
+
+    if (target_count > 0) {
+        /* FAKEMATCH: the base-plus-offset cursor, as ☀️'s, retains the address
+           setup and operand order; a direct array address folds into the pool. */
+        u8 *base = (u8 *)&gPartyState;
+        s32 offset = (u32)&((struct PartyState *)0)->active_owners;
+        u8 *target_id = base + offset;
+        s32 remaining = target_count;
+
+        do {
+            Owner_AdjustSecondValueFar(*target_id++, amount);
+            remaining--;
+        } while (remaining != 0);
+    }
+}
 
 /* Passes a health change to every active party member: amount itself, or
  * when scaled amount percent of the member's maximum HP, falling back to the

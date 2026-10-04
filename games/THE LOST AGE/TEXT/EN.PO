@@ -259,7 +259,7 @@ msgctxt "message"
 msgid "00062"
 msgstr "Flee"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00063"
 msgstr "Yes"
 
@@ -17459,7 +17459,7 @@ msgctxt "message"
 msgid "04362"
 msgstr "Haunt"
 
-msgctxt "message"
+msgctxt "MsgStatusNormal"
 msgid "04363"
 msgstr "Your status is normal."
 
@@ -17467,7 +17467,7 @@ msgctxt "message"
 msgid "04364"
 msgstr "Keep working on it."
 
-msgctxt "message"
+msgctxt "MsgStatusAdvice"
 msgid "04365"
 msgstr "You are down. Revive at a Sanctum"
 

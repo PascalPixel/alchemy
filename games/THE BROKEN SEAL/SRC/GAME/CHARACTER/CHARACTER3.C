@@ -31,6 +31,9 @@ struct ElementLevelBonus {
 };
 
 extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
+
+/* Elemental power less resistance, from +200 down to -200, and its bonus. */
+extern const s16 Element_PowerResistCurve[5][2];
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 
 s32 GameFlag_Test(s32 flag);
@@ -484,4 +487,45 @@ void Owner_RefreshDerivedData(s32 owner_no)
     owner->class_index = Owner_DetermineClass(owner->class_id, (u8 *)owner->djinn_available);
     Owner_RefreshClassActions(owner_no);
     Owner_BuildDigitTiles(owner_no, (s16 (*)[2])owner->base_elements);
+}
+
+/* The elemental bonus for a power less resistance, read off the curve between
+   its two nearest points: 0x100 plus the curve's value, or plus half of it. */
+s32 Curve_LookupScaledValue(s32 input, s32 halve)
+{
+    s32 min;
+    s32 max;
+    s32 n;
+    s32 i;
+    s32 value;
+    s32 dx;
+    s32 dy;
+
+    max = Element_PowerResistCurve[0][0];
+    min = Element_PowerResistCurve[4][0];
+    n = 5;
+    if (input > max)
+        input = max;
+    else if (input < min)
+        input = min;
+    for (i = 0; i < n; i++) {
+        if (input > Element_PowerResistCurve[i][0])
+            break;
+    }
+    if (i == n) {
+        value = Element_PowerResistCurve[i - 1][1];
+    } else {
+        dx = Element_PowerResistCurve[i - 1][0] - Element_PowerResistCurve[i][0];
+        dy = Element_PowerResistCurve[i - 1][1] - Element_PowerResistCurve[i][1];
+        value = (input - Element_PowerResistCurve[i][0]) * dy / dx
+            + Element_PowerResistCurve[i][1];
+    }
+    switch (halve) {
+    case 0:
+        break;
+    case 1:
+        value /= 2;
+        break;
+    }
+    return value + 0x100;
 }

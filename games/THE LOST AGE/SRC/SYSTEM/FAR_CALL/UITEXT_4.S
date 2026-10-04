@@ -8,7 +8,7 @@
 	.global Func_08038390
 	.thumb_func
 Func_08038390:
-	overlay_veneer Func_0804da3c
+	overlay_veneer Menu_RunConfirmSelectionAt
 	.global Func_08038398
 	.thumb_func
 Func_08038398:

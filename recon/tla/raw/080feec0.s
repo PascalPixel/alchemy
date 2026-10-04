@@ -201,7 +201,7 @@ Func_080feec0:
 	mov r0, r11
 	adds r1, r7, #0
 	mov r2, r9
-	bl Func_080ff27c
+	bl CharacterMenu_DrawSelectionLabels
 	b .L_080ff066
 .L_080ff05c:
 	mov r0, r11

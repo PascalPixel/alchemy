@@ -127,24 +127,6 @@ loop:
     WaitFrames(1);
 }
 
-/* The same queued sprite with its OAM attributes as fields. */
-struct PromptSprite {
-    struct PromptSprite *next;
-    u16 y : 8;
-    u16 affine : 2;
-    u16 mode : 2;
-    u16 mosaic : 1;
-    u16 colors : 1;
-    u16 shape : 2;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 size : 2;
-    u16 tile : 10;
-    u16 priority : 2;
-    u16 palette : 4;
-    u16 unused;
-};
-
 s32 Ui_GetTableWordZeroFar(s32 index);
 
 /* Draw the prompt arrow at (x, y), nudged up and left every fourth frame,
@@ -153,8 +135,8 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 {
     struct MenuPoint pos;
     s32 tiles;
-    struct PromptSprite sprite;
-    struct PromptSprite *spr;
+    struct CursorSprite sprite;
+    struct CursorSprite *spr;
     s32 slot;
 
     tiles = Ui_GetTableWordZeroFar(0);

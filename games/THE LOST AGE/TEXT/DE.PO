@@ -259,7 +259,7 @@ msgctxt "message"
 msgid "00062"
 msgstr "Rückzug"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00063"
 msgstr "Ja"
 
@@ -19315,7 +19315,7 @@ msgctxt "message"
 msgid "04826"
 msgstr "Spuk"
 
-msgctxt "message"
+msgctxt "MsgStatusNormal"
 msgid "04827"
 msgstr "Dein Status ist normal."
 
@@ -19323,7 +19323,7 @@ msgctxt "message"
 msgid "04828"
 msgstr "Arbeite weiter daran."
 
-msgctxt "message"
+msgctxt "MsgStatusAdvice"
 msgid "04829"
 msgstr "Kampfunfähig. Gehe in ein Heilig-"
 

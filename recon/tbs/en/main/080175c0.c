@@ -1,3 +1,10 @@
+/* 2026-10-04 sun100 main-7: still score 2 (frame 16 vs 8); return-shape,
+ * zero-reuse and declaration-order variants all give frame 8. Lead to test:
+ * ARM frames grow downward and reload's setup_save_areas leaves a 4-byte
+ * caller-save slot per call-clobbered register a call-crossing pseudo held
+ * in any reload pass, even when that pseudo is later evicted; the native's
+ * eight extra bytes fit two such slots. Needs the source that makes global
+ * alloc choose caller-saves (refs > 4 x calls crossed, no callee-saved reg). */
 /* 2026-10-04 frame audit: UiText_OpenEntryMessage, 96 bytes, pool included.
  * Uncredited under S1/S2/C1; the owned English ROM supplies the raw listing.
  * Entries JA/EN/DE/ES/FR/IT: 0801750c, 080175c0, 08016260, 08016590, 08016570, 08017570.

@@ -257,7 +257,7 @@ Func_080cb2b8:
 	str r0, [r2]
 	adds r0, r1, #0
 	movs r1, #0
-	bl Func_080cb6c8
+	bl BattleParty_ApplyDrain
 	bl BattlePlacement_UpdateTimedEntriesFar
 	cmp r0, #0
 	beq .L_080cb4a8

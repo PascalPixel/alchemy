@@ -3,7 +3,9 @@
 #include "IO_REG.H"
 #include "BATTLE_UNIT.H"
 
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
+/* The German and French viewers start their second form one past the last
+ * message of their catalogues, which has no name, and stay on scaffold. */
+#if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 
 /* The byte in the window work the viewer clears after each message; the
  * localised window work is larger. */
@@ -21,7 +23,7 @@ extern u8 MsgRariberoHowDidSearchForSheba;
 
 /* Where the second form starts: the first message after the menu texts in
  * the Japanese catalogue, which the English catalogue names, and in the
- * Italian one the empty message after the sample name. */
+ * Italian and Spanish ones the empty message after the sample name. */
 #if defined(TBS_EDITION_EN)
 extern u8 MsgBecameCursed;
 #define DEBUG_SECOND_FORM ((s32)&MsgBecameCursed)

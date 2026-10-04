@@ -426,8 +426,8 @@ Element_PowerResistByLevel:
 	.global Enemy_ElementPresetTable
 Enemy_ElementPresetTable:
 	.incbin "baserom.gba", 0x00088e38, 0x00000420
-	.global Data_08089258
-Data_08089258:
+	.global Element_PowerResistCurve
+Element_PowerResistCurve:
 	.incbin "baserom.gba", 0x00089258, 0x00000014
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:

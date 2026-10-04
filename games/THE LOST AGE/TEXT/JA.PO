@@ -259,7 +259,7 @@ msgctxt "message"
 msgid "00062"
 msgstr "にげる"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00063"
 msgstr "はい"
 
@@ -17447,7 +17447,7 @@ msgctxt "message"
 msgid "04359"
 msgstr "あくりょう"
 
-msgctxt "message"
+msgctxt "MsgStatusNormal"
 msgid "04360"
 msgstr "ステータスは せいじょうです"
 
@@ -17455,7 +17455,7 @@ msgctxt "message"
 msgid "04361"
 msgstr "こんごとも しょうじんしてください"
 
-msgctxt "message"
+msgctxt "MsgStatusAdvice"
 msgid "04362"
 msgstr "せんとうふのうです 神殿でなおしてもらったり"
 

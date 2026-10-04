@@ -304,7 +304,7 @@ Func_08000308:
 	.global Func_08000310
 	.thumb_func
 Func_08000310:
-	overlay_veneer Func_08013b68
+	overlay_veneer QueueIoWriteDelay1
 	.global QueueIoWriteDelay2Far
 	.thumb_func
 QueueIoWriteDelay2Far:
@@ -312,31 +312,31 @@ QueueIoWriteDelay2Far:
 	.global Func_08000320
 	.thumb_func
 Func_08000320:
-	overlay_veneer Func_08013be0
+	overlay_veneer QueueIoWriteDelay3
 	.global Func_08000328
 	.thumb_func
 Func_08000328:
-	overlay_veneer Func_08013c1c
+	overlay_veneer QueueIoWriteDelay5
 	.global Func_08000330
 	.thumb_func
 Func_08000330:
-	overlay_veneer Func_08013c58
+	overlay_veneer QueueIoWriteDelay6
 	.global Func_08000338
 	.thumb_func
 Func_08000338:
-	overlay_veneer Func_08013c94
+	overlay_veneer QueueIoWriteDelay7
 	.global Func_08000340
 	.thumb_func
 Func_08000340:
-	overlay_veneer Func_08013cd0
+	overlay_veneer QueueIoWriteDelay9
 	.global Func_08000348
 	.thumb_func
 Func_08000348:
-	overlay_veneer Func_08013d0c
+	overlay_veneer QueueIoWriteDelay10
 	.global Func_08000350
 	.thumb_func
 Func_08000350:
-	overlay_veneer Func_08013d48
+	overlay_veneer QueueIoWriteDelay11
 	.global Runtime_SetMainState19Far
 	.thumb_func
 Runtime_SetMainState19Far:

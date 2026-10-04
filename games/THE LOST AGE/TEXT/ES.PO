@@ -259,7 +259,7 @@ msgctxt "message"
 msgid "00062"
 msgstr "Huir"
 
-msgctxt "message"
+msgctxt "MsgCommandYes"
 msgid "00063"
 msgstr "Sí"
 
@@ -19299,7 +19299,7 @@ msgctxt "message"
 msgid "04822"
 msgstr "Pos."
 
-msgctxt "message"
+msgctxt "MsgStatusNormal"
 msgid "04823"
 msgstr "El estado es normal."
 
@@ -19307,7 +19307,7 @@ msgctxt "message"
 msgid "04824"
 msgstr "Sigue trabajando."
 
-msgctxt "message"
+msgctxt "MsgStatusAdvice"
 msgid "04825"
 msgstr "Ha caído. Revívelo en un Templo"
 

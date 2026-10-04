@@ -3,6 +3,9 @@
 
 extern u8 CharacterMenu_CursorWidths[];
 void Render_SetTilemapFlagRect(const u8 *, s32, s32, s32, s32, u32);
+void UiText_DrawResourceFar(s32 message, s32 target, s32 x, s32 y);
+extern u8 MsgStatusAdvice[][2];
+extern u8 MsgStatusNormal[];
 
 /* ⚓️ keeps the cursor's tilemap object at 0x28; ☀️ at 0x24. */
 struct CursorMenuState {
@@ -51,4 +54,29 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
     different = 1 ^ (u32)invert;
     last = 15 - (((0u - different) | different) >> 31);
     Render_SetTilemapFlagRect(state->object, x, y, width, 1, last);
+}
+
+/* The selected status shows its two advice lines; an owner without any
+   status shows the normal-status line. ⚓️ calls the resource veneer that ☀️
+   also names UiText_DrawMessageAt. */
+void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
+    const u8 *entries)
+{
+    s32 count = 0;
+    s32 index = 0;
+
+    do {
+        if (entries[index] != 0) {
+            if (selected == count) {
+                s32 message = (s32)MsgStatusAdvice[index];
+                UiText_DrawResourceFar(message, target, 0, -1);
+                UiText_DrawResourceFar(message + 1, target, 0, 15);
+            }
+            count++;
+        }
+        index++;
+    } while (index <= 4);
+
+    if (count == 0)
+        UiText_DrawResourceFar((s32)MsgStatusNormal, target, 0, 0);
 }

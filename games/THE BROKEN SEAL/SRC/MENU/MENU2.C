@@ -44,17 +44,6 @@ void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index);
 void Menu_StepRight(struct SelectionScreen *state);
 void Menu_StepLeft(struct SelectionScreen *state);
 
-struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *state)
-{
-    struct NodeChainNode *node = state->node;
-    s32 index;
-
-    for (index = 0; index != state->count; ++index) {
-        node = node->next;
-    }
-    return node;
-}
-
 /* Runs the selection until it is confirmed, or cancelled when mode allows. */
 s32 Menu_SelectionLoop(s32 mode)
 {

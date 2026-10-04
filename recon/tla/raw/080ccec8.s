@@ -206,7 +206,7 @@ Func_080ccec8:
 	lsls r0, r0, #3
 	movs r1, #0
 	adds r0, #255
-	bl Func_080cb6c8
+	bl BattleParty_ApplyDrain
 	movs r0, #1
 	bl Func_08038128
 	movs r0, #126

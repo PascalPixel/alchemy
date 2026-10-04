@@ -47,6 +47,26 @@ struct MenuSprite {
     } oam;
 };
 
+/* A queued cursor sprite with its attributes as fields only: the blinking
+   list cursor and the battle prompt arrow. Code clears its two attribute
+   words through a u32 view of the sprite, then sets the fields. */
+struct CursorSprite {
+    struct CursorSprite *next;
+    u16 y : 8;
+    u16 affine : 2;
+    u16 mode : 2;
+    u16 mosaic : 1;
+    u16 colors : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 size : 2;
+    u16 tile : 10;
+    u16 priority : 2;
+    u16 palette : 4;
+    u16 unused;
+};
+
 /* The attribute words of a blank 16x16 sprite. */
 #define MENU_SPRITE_SIZE_16 0x40000000
 

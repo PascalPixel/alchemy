@@ -1,3 +1,8 @@
+/* 2026-10-04 sun100 main-7: still score 45; 240 s of permutation, 48302
+ * candidates, none below 45. ARM frames grow downward: canvas (sp+56) was
+ * spilled first, then the unused word at sp+52, then draw and the rest in
+ * pseudo order, which fits a caller-save slot set up in reload's first pass
+ * before draw..sp+8 were evicted; the source that causes it is not found. */
 /* DRAFT: Independent S2 audit of the former RunFlippingBurst adoption.
  * Kept ordinary form: one saved blitter, no unread reservation; T10 setup.
  * Remaining score 45: five stack operands and two projection offsets. Complete

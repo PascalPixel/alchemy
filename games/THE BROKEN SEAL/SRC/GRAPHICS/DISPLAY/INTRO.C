@@ -166,16 +166,21 @@ back_rest_cell:
     *(volatile u16 *)0x04000050 = 0x3f44;
 }
 
-/* The German edition keeps its own version in its scaffold: its prompt is
-   eight tiles drawn as two rows of three sprites, at lines 116 and 124,
-   and the obvious branch for it compiles four bytes short. */
-#if !defined(TBS_EDITION_DE)
-
 /* The prompt is five tiles. Japanese and French draw five sprites from
    column 56, the Japanese ones two lines lower; the others draw three
-   from column 80. */
+   from column 80. The German prompt is eight tiles, two rows of three
+   sprites from column 80, at lines 116 and 124. */
+#if defined(TBS_EDITION_DE)
+#define PROMPT_TILES 8
+#else
 #define PROMPT_TILES 5
-#if !EDITION_INTERNATIONAL
+#endif
+#if defined(TBS_EDITION_DE)
+#define PROMPT_ROWS 2
+#define PROMPT_SPRITES 3
+#define PROMPT_X 80
+#define PROMPT_Y 116
+#elif !EDITION_INTERNATIONAL
 #define PROMPT_SPRITES 5
 #define PROMPT_X 56
 #define PROMPT_Y 126
@@ -366,10 +371,9 @@ s32 Title_ShowIntro(s32 prompt)
     Bg0_ClearTilemap();
     if (prompt != 0) {
         u8 *buffer = Runtime_AllocateBlock(14, 0x400);
-        struct IntroSprite *sprite;
+        struct IntroSprite *sprite = work->sprites;
 
         Resource_DecodeByteLz(Title_PromptTiles, buffer);
-        sprite = work->sprites;
         for (i = 0; i < PROMPT_TILES; i++) {
             s32 block = VramBlock_LoadCached(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
             u32 *out = (u32 *)sprite;
@@ -393,7 +397,20 @@ s32 Title_ShowIntro(s32 prompt)
             struct IntroSprite *sprite = work->sprites;
             u32 level;
             s32 x;
-            u32 inverse;
+#if defined(TBS_EDITION_DE)
+            u32 row;
+            s32 y;
+
+            for (row = 0, y = PROMPT_Y; row < PROMPT_ROWS; y += 8, row++) {
+                for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
+                    sprite->x = x;
+                    sprite->y = y;
+                    Runtime_PushSlotEntry(sprite, 0);
+                    x += 32;
+                    sprite++;
+                }
+            }
+#else
 
             for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
                 sprite->x = x;
@@ -402,10 +419,10 @@ s32 Title_ShowIntro(s32 prompt)
                 x += 32;
                 sprite++;
             }
+#endif
             level = Title_PromptBlendLevels[i % 60];
             *(volatile u16 *)0x04000050 = 0x2f50;
-            inverse = 16 - level;
-            *(volatile u16 *)0x04000052 = (inverse << 8) + level;
+            *(volatile u16 *)0x04000052 = (16 - level) * 256 + level;
         }
         if ((gKeyState & (KEY_A | KEY_START)) != 0) {
             result = 1;
@@ -420,5 +437,3 @@ s32 Title_ShowIntro(s32 prompt)
     WaitFrames(1);
     return result;
 }
-
-#endif

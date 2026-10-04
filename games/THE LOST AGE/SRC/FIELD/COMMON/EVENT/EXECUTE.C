@@ -3,19 +3,10 @@
 #include "BATTLE_UNIT.H"
 #include "EVENTWRK.H"
 
-/* A pending event: twelve bytes, keyed by a packed filter. */
-struct PendingEvent {
-    u32 key;
-    u16 flags;
-    u16 condition;
-    s32 action;
-};
-
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
 void Func_080dc410(s32 action, s32 flags);
 void Func_080dc62c(s32 actor, s32 target);
-s32 Func_080ceafc(struct PendingEvent *event, s32 mode, s32 target);
 void FieldEvent_RunTypeHandler(void);
 void Func_080dc7cc(void);
 void Func_080dc7e8(void);
@@ -40,10 +31,10 @@ s32 EventRuntime_ExecutePackedAction(u32 packed)
     }
     Func_080dc410(action, 0);
     Func_080dc62c(EventRuntime_GetControlledOwner(), target);
-    Func_080ceafc(first, mode, target);
+    EventRuntime_RunPendingEvent(first, mode, target);
     FieldEvent_RunTypeHandler();
     Func_080dc7cc();
-    Func_080ceafc(second, mode, target);
+    EventRuntime_RunPendingEvent(second, mode, target);
     Func_080dc7e8();
     return 0;
 }

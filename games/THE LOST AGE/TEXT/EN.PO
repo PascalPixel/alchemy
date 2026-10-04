@@ -14099,7 +14099,7 @@ msgctxt "message"
 msgid "03522"
 msgstr "{argument_ability_name}{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgNothingHappens"
 msgid "03523"
 msgstr "But nothing happens.{end_wait}"
 

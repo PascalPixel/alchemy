@@ -635,7 +635,7 @@ Func_080e5d5c:
 	ldrsb r1, [r7, r1]
 	adds r2, r5, #0
 	mov r0, r8
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 	movs r0, #192
 	ldr r4, [sp, #28]
 	lsls r0, r0, #5

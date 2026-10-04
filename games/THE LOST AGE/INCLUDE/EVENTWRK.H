@@ -57,10 +57,20 @@ LAYOUT_OFFSET_GUARD(EventWork_ActionCounter, struct EventWork, action_counter, 0
 LAYOUT_OFFSET_GUARD(EventWork_PendingSecond, struct EventWork, pending_second, 0xcac);
 LAYOUT_OFFSET_GUARD(EventWork_CueState, struct EventWork, cue_state, 0xcb8);
 
+/* A pending event: twelve bytes, keyed by a packed filter; its action is a
+   message below 0x10000 and otherwise a routine. */
+struct PendingEvent {
+    u32 key;
+    u16 flags;
+    u16 condition;
+    s32 action;
+};
+
 void EventRuntime_RunMessage(s32 actor, s32 message);
 void EventRuntime_ResolveAllPendingActions(void);
 void EventRuntime_ResolvePendingActions(s32 skip);
 s32 EventRuntime_ExecutePackedAction(u32 action);
+s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode, s32 target);
 s32 EventRuntime_GetControlledOwner(void);
 void EventRuntime_ShowMessageAndWait(s32 actor, s32 flags);
 void EventRuntime_UpdateWaitMode(void);

@@ -369,7 +369,7 @@ Func_080de21c:
 	ldrsh r1, [r3, r2]
 	movs r4, #26
 	ldrsh r2, [r3, r4]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080de520:
 	movs r0, #10
 	bl WaitFrames

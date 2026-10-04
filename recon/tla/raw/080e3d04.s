@@ -567,7 +567,7 @@ Func_080e3d04:
 	ldrsh r1, [r2, r3]
 	movs r3, #0
 	ldrsh r2, [r5, r3]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 	b .L_080e4190
 .L_080e4180:
 	.4byte 0x00000100

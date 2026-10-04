@@ -757,6 +757,7 @@
     "*/recon/tla/it/rom.o"(.rom.000cdfb0)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EXECUTE.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000ce61c)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PENDING_EVENT.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000ceb58)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/HAS_TRIGGER.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/OBJECT_STATE.o"(.text)

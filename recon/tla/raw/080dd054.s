@@ -437,7 +437,7 @@ Func_080dd054:
 	ldrsh r1, [r3, r2]
 	movs r4, #26
 	ldrsh r2, [r3, r4]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080dd3ec:
 	bl Func_080dc7cc
 	ldr r0, [sp, #24]

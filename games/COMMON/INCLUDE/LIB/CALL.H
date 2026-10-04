@@ -32,7 +32,7 @@
  * replacement per function with all other source unchanged; none matched.
  * Constant reuse/register changes: FieldScene_RunClosingAuxiliarySequence,
  * FieldScene_RunFinalAuxiliarySequence, MakyuriChojo_RiseActorPair,
- * MakyuriChojo_SinkActorPair, FieldScene_RunScene3b4_02002290.
+ * MakyuriChojo_SinkActorPair, TakaraAshiba_InitializeScene2.
  * Argument order only: KareiMachi_SetupEntryActors,
  * HaidiaArashi_RunCallOutSequence, MakyuriHeya_SinkActorWithSparks,
  * HaidiaDou_RunLoweredActorScene, FieldScene_RunScene3ba_02000270,

@@ -7,6 +7,7 @@
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 #include "CALL.H"
+#include "IO_REG.H"
 s32 SceneActor_FaceTowardActorZero();
 void SceneActor_PublishMarkerBySlotZeroHeight(void);
 void ActorPresentation_PlaceActorFourteenOnActorNine(void);
@@ -78,11 +79,11 @@ void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void);
 void FieldScene_RunSingleStep(void);
 void FieldScene_CallHelper3c70(void);
 
-void FieldScene_RunScene3b4_02002188(void);
-void FieldScene_RunScene3b4_02002290(void);
-void FieldScene_RunScene3b4_02002334(void);
+void TakaraAshiba_InitializeScene1(void);
+void TakaraAshiba_InitializeScene2(void);
+void TakaraAshiba_InitializeScene3(void);
 
-void FieldScene_RunScene3b4_02002188(void)
+void TakaraAshiba_InitializeScene1(void)
 {
     u32 i;
     s32 record;
@@ -122,37 +123,35 @@ void FieldScene_RunScene3b4_02002188(void)
     }
 }
 
-void FieldScene_RunScene3b4_02002290(void)
+/* The second platform scene's start: actors 8 to 11 become solid, 8 to 12
+ * are drawn at 0.7 of their width, the column and stand triggers are
+ * scheduled, and the blend is set. */
+void TakaraAshiba_InitializeScene2(void)
 {
-    s32 record;
-
-    *(u8 *)((s32)Object_GetById(8) + 89) = 1;
-    *(u8 *)((s32)Object_GetById(9) + 89) = 1;
-    *(u8 *)((s32)Object_GetById(10) + 89) = 1;
-    *(u8 *)((s32)Object_GetById(11) + 89) = 1;
-    record = Engine_GetTriggerActor(8);
-    *(s32 *)(record + 24) = 0xb333;
-    record = Engine_GetTriggerActor(9);
-    *(s32 *)(record + 24) = 0xb333;
-    record = Engine_GetTriggerActor(10);
-    *(s32 *)(record + 24) = 0xb333;
-    record = Engine_GetTriggerActor(11);
-    *(s32 *)(record + 24) = 0xb333;
-    record = Engine_GetTriggerActor(12);
-    *(s32 *)(record + 24) = 0xb333;
+    Object_GetById(8)->collision_flags = 1;
+    Object_GetById(9)->collision_flags = 1;
+    Object_GetById(10)->collision_flags = 1;
+    Object_GetById(11)->collision_flags = 1;
+    Object_GetById(8)->scale_x = 0xb333;
+    Object_GetById(9)->scale_x = 0xb333;
+    Object_GetById(10)->scale_x = 0xb333;
+    Object_GetById(11)->scale_x = 0xb333;
+    Object_GetById(12)->scale_x = 0xb333;
     Call2(Scheduler_AddOrUpdateCallback, (s32)SceneState_TriggerColumnNineteen, 0xc80);
     Value2(Scheduler_AddOrUpdateCallback, (s32)SceneState_TriggerColumnTen, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
     {
-        u16 t;
-        t = 0x3f42;
-        *(volatile u16 *)0x04000050 = t;
-        t = 0x607;
-        *(volatile u16 *)0x04000052 = t;
+        /* FAKEMATCH: each blend value is loaded before its register address. */
+        u16 value;
+
+        value = 0x3f42;
+        REG_BLDCNT = value;
+        value = 0x607;
+        REG_BLDALPHA = value;
     }
 }
 
-void FieldScene_RunScene3b4_02002334(void)
+void TakaraAshiba_InitializeScene3(void)
 {
     s32 record;
 

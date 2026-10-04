@@ -82,11 +82,11 @@ void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void);
 void FieldScene_RunSingleStep(void);
 void FieldScene_CallHelper3c70(void);
 
-void FieldScene_RunScene3b4_02002188(void);
-void FieldScene_RunScene3b4_02002290(void);
-void FieldScene_RunScene3b4_02002334(void);
+void TakaraAshiba_InitializeScene1(void);
+void TakaraAshiba_InitializeScene2(void);
+void TakaraAshiba_InitializeScene3(void);
 
-void FieldScene_RunScene3b4_02002334(void)
+void TakaraAshiba_InitializeScene3(void)
 {
     s32 record;
 

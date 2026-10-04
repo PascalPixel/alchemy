@@ -114,7 +114,10 @@ struct GameState {
     /* The link lobby's tallies, which its rounds count and its attendants
        report (MENU/LINK_LOBBY). */
     u16 link_tallies[8];
-    u8 unknown_2b4[0x0c];
+    u8 unknown_2b4[4];
+    /* The build stamp time a new game started under. */
+    u32 start_stamp;
+    u8 unknown_2bc[4];
     struct BattleUnit owners[8];
 };
 
@@ -145,6 +148,7 @@ LAYOUT_OFFSET_GUARD(GameState_FirstShortcut, struct GameState, first_shortcut, 0
 LAYOUT_OFFSET_GUARD(GameState_RetreatEntrance, struct GameState, retreat_entrance, 0x242);
 LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);
 LAYOUT_OFFSET_GUARD(GameState_LinkTallies, struct GameState, link_tallies, 0x2a4);
+LAYOUT_OFFSET_GUARD(GameState_StartStamp, struct GameState, start_stamp, 0x2b8);
 
 extern struct GameState gGameState;
 

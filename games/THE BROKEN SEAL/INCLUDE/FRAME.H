@@ -18,7 +18,7 @@ extern void (*Data_03001cfc)(void); /* One-shot VBlank callback. */
 
 /* Sleep, reset and frame-wait state. */
 extern u8 Data_03001ca0; /* Sleep disabled. */
-extern u8 gOptionMirror; /* Auto-sleep setting. */
+extern volatile u8 gOptionMirror; /* Auto-sleep setting. */
 extern u8 gSleepRequested;
 extern u8 gDebugMode;
 extern u8 gDebugPaused;

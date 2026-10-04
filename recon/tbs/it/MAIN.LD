@@ -333,7 +333,6 @@
     "*/recon/tbs/it/rom.o"(.rom.00072c78)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/GAME.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00077d38)
     "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/PARTY2.o"(.text)
     "*/games/COMMON/SRC/GAME/CHARACTER/RATIOS_SECOND_INPUT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/VALUES.o"(.text)

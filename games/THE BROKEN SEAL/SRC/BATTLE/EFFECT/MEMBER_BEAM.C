@@ -87,8 +87,8 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    if (work->effect->unknown_001c == 1)
-        BattleFx_PrepareCanvasEffect(effect, mode, work->effect->side ^ work->effect->unknown_001c, 0, &screen_x, &screen_y);
+    if (work->effect->with_djinni == 1)
+        BattleFx_PrepareCanvasEffect(effect, mode, work->effect->side ^ work->effect->with_djinni, 0, &screen_x, &screen_y);
     palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
     CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
     palette += 128;
@@ -133,7 +133,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
             AudioCommand_PlayFar(212);
         if (frame == 80)
             BattleEventRuntime_BeginPhaseFar(0);
-        k = work->effect->unknown_001c;
+        k = work->effect->with_djinni;
         if (k == 1) {
             s32 angle = frame << 11;
             s32 x = (-Trig_Sin(angle) * 20 >> 16) + screen_x + offset - 20;

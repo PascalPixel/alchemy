@@ -113,7 +113,7 @@ void WaitFrames(s32 frames)
         gSchedulerStatus = 0;
         Render_BuildOamList(Runtime_AllocateHeapBlock(52, 0x400));
         Data_03001e44 = 1;
-        if (Data_03001f58) {
+        if (gCpuLoadDisplayEnabled) {
             line = *(u16 *)&REG_VCOUNT;
             if (line >= 160)
                 line -= 160;

@@ -58,7 +58,7 @@ extern const u8 Data_080f39ab[];
     ENTRY((i) + 2, 1) = (tile); \
     ENTRY((i) + 3, 1) = (tile)
 
-void Func_080f2028(void)
+void Title_PlaceIntroSprites(void)
 {
     struct IntroWork *work;
     u32 n;

@@ -5,7 +5,7 @@
 
 /* Rendering and VBlank state. These are separate IWRAM cells. */
 extern u8 Data_03001e44; /* Display and OAM work pending. */
-extern u8 Data_03001f58; /* CPU load display enabled. */
+extern u8 gCpuLoadDisplayEnabled; /* CPU load display enabled. */
 extern u8 gOamCopyEnabled;
 extern u16 Data_03001ccc; /* VBlanks since the last frame wait. */
 extern u16 gLagFramesShown;

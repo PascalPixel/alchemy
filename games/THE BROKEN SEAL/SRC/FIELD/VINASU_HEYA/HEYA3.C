@@ -346,10 +346,14 @@ s32 Scene_RunEntrySetup(void)
             BattleFx_SetQueuedSoundAndPlay(170);
             DisplayBlend_EnableRunScript();
             {
-                register s32 zero asm("r3"); /* FAKEMATCH: pins the zero to r3 */
-                asm("mov %0, #0" : "=l"(zero)); /* FAKEMATCH: zero before the address load */
+                /* FAKEMATCH: pins the zero to r3. */
+                register s32 zero asm("r3");
+
+                /* FAKEMATCH: sets the zero before the address load. */
+                asm("mov %0, #0" : "=l"(zero));
                 REG_BLDCNT = zero;
-                asm volatile(""); /* FAKEMATCH: keeps the store before the next call setup */
+                /* FAKEMATCH: keeps the store before the next call setup. */
+                asm volatile("");
             }
             if (Engine_GameFlagIsSet(0x300)) {
                 Engine_MapCopyCellsTo(15, 96, 9, 96, 3, 3);
@@ -524,7 +528,10 @@ s32 Scene_RunEntrySetup(void)
             Object_GetById(20)->priority_flags |= 2;
             Object_GetById(20)->y.fixed = -0x108000;
             DisplayBlend_EnableRunScript();
-            do { *(s16 *)&REG_BLDCNT = 0; } while (0); /* FAKEMATCH: the do/while keeps the zero ahead of the register address */
+            /* FAKEMATCH: the do/while keeps the zero ahead of the register address. */
+            do {
+                *(s16 *)&REG_BLDCNT = 0;
+            } while (0);
             if (Engine_GameFlagIsSet(0x306)) {
                 BattleFx_SetQueuedSoundAndPlay(170);
                 Engine_MapCopyCellsTo(36, 81, 32, 81, 3, 2);
@@ -542,7 +549,7 @@ s32 Scene_RunEntrySetup(void)
                 Engine_MapCopyCellsTo(63, 29, 49, 20, 1, 1);
                 Engine_MapCopyCellsTo(41, 56, 44, 17, 3, 4);
             }
-            if ((u16)(gGameState.entrance - 18) <= 1) {
+            if (gGameState.entrance == 18 || gGameState.entrance == 19) {
                 Engine_EventOpenScreen();
                 Engine_EventWaitForScreen();
                 gEventWork->start_transition = 0x204;

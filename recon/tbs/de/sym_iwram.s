@@ -304,8 +304,8 @@ gKorosseoWork:
 	.global gDebugMode
 gDebugMode:
 	.space 0x00000004
-	.global Data_03001f58
-Data_03001f58:
+	.global gCpuLoadDisplayEnabled
+gCpuLoadDisplayEnabled:
 	.space 0x00000004
 	.global gSleepComboFrames
 gSleepComboFrames:

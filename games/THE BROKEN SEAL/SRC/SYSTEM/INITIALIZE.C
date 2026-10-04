@@ -9,7 +9,7 @@ void System_VBlankHandler(void);
 
 extern u8 Data_03001ac4;
 extern u8 gDebugMode;
-extern u8 Data_03001f58;
+extern u8 gCpuLoadDisplayEnabled;
 extern s32 Data_03007800;
 extern u8 gOamCopyEnabled;
 extern u8 Data_03001ca0;
@@ -54,7 +54,7 @@ void System_Initialize(void)
     *(u32 *)&gIoWriteQueue.count = 0;
     Data_03001ac4 = 0;
     gDebugMode = 0;
-    Data_03001f58 = 0;
+    gCpuLoadDisplayEnabled = 0;
     Resource_LoadWorkHeader();
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();

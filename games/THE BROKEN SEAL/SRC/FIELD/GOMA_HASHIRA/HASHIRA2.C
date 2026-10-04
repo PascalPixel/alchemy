@@ -4,6 +4,7 @@
 #include "STAGED_ACTOR.H"
 #include "CALL.H"
 #include "TBS_EDITION.H"
+#include "FIELDOBJ.H"
 #if !EDITION_INTERNATIONAL
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
@@ -32,7 +33,7 @@ s32 Engine_GameFlagSet(s32 flag);
 #endif
 void Audio_PlayCue(s32 cue);
 #if EDITION_INTERNATIONAL
-u8 *Object_GetById();
+struct FieldActor *Object_GetById();
 #endif
 void ObjectGroup_ConfigureChildValue();
 #if EDITION_INTERNATIONAL
@@ -157,62 +158,32 @@ void FieldScene_RunPillarSequence(void)
     Engine_EventEnd();
 }
 
+/* Once the pushed pillar stands on cell (38, 14), it rises out of the
+ * floor, throwing six bursts of effect around it. */
 void FieldScene_RunPillarBurst(void)
 {
-    s32 a;
-    s32 b;
-    s32 x0, x1, x2;
-    s32 c2;
-    s32 q1, q2, q3, e1, e2;
-    s32 g1a, g1b, g1c, g2a, g2b, g2c, g3a, g3b, g3c, g4a, g4b, g4c, g5a, g5b, g5c, g6a, g6b, g6c;
+    s32 x;
+    s32 z;
 
-    q1 = ((s32 (*)())Object_GetById)(10);
-    a = *(s32 *)(q1 + 8) / 0x100000;
-    q2 = ((s32 (*)())Object_GetById)(10);
-    b = *(s32 *)(q2 + 16) / 0x100000;
-    if (a == 38) {
-        if (b == 14) {
-            q3 = (s32)Object_GetById(10);
-            *(s32 *)(q3 + 12) = -0x20000;
-            e1 = ((s32 (*)())Object_GetById)(10);
-            e2 = ((s32 (*)())Object_GetById)(10);
-            *(s32 *)(e1 + 60) = *(s32 *)(e2 + 12);
-            Audio_PlayCue(188);
-            g1a = ((s32 (*)())Object_GetById)(10);
-            g1b = ((s32 (*)())Object_GetById)(10);
-            g1c = (s32)Object_GetById(10);
-            GomaHashira_SpawnPillarEffect(*(s32 *)(g1a + 8), *(s32 *)(g1b + 12),
-                  *(s32 *)(g1c + 16), 0x8000, 0, 0, 1);
-            g2a = ((s32 (*)())Object_GetById)(10);
-            g2b = ((s32 (*)())Object_GetById)(10);
-            g2c = (s32)Object_GetById(10);
-            GomaHashira_SpawnPillarEffect(*(s32 *)(g2a + 8), *(s32 *)(g2b + 12),
-                  *(s32 *)(g2c + 16), 0x6666, 0x6666, 0, 1);
-            g3a = ((s32 (*)())Object_GetById)(10);
-            g3b = ((s32 (*)())Object_GetById)(10);
-            g3c = (s32)Object_GetById(10);
-            x0 = *(s32 *)(g3a + 8);
-            x1 = *(s32 *)(g3b + 12);
-            x2 = *(s32 *)(g3c + 16);
-            c2 = -0x6666;
-            GomaHashira_SpawnPillarEffect(x0, x1, x2, c2, 0x6666, 0, 1);
-            g4a = ((s32 (*)())Object_GetById)(10);
-            g4b = ((s32 (*)())Object_GetById)(10);
-            g4c = (s32)Object_GetById(10);
-            GomaHashira_SpawnPillarEffect(*(s32 *)(g4a + 8), *(s32 *)(g4b + 12),
-                  *(s32 *)(g4c + 16), -0x8000, 0, 0, 1);
-            g5a = ((s32 (*)())Object_GetById)(10);
-            g5b = ((s32 (*)())Object_GetById)(10);
-            g5c = (s32)Object_GetById(10);
-            GomaHashira_SpawnPillarEffect(*(s32 *)(g5a + 8), *(s32 *)(g5b + 12),
-                  *(s32 *)(g5c + 16), 0x6666, c2, 0, 1);
-            g6a = ((s32 (*)())Object_GetById)(10);
-            g6b = ((s32 (*)())Object_GetById)(10);
-            g6c = (s32)Object_GetById(10);
-            GomaHashira_SpawnPillarEffect(*(s32 *)(g6a + 8), *(s32 *)(g6b + 12),
-                  *(s32 *)(g6c + 16), c2, c2, 0, 1);
-            Engine_GameFlagSet(0x301);
-        }
+    x = Object_GetById(10)->x.fixed / 0x100000;
+    z = Object_GetById(10)->z.fixed / 0x100000;
+    if (x == 38 && z == 14) {
+        Object_GetById(10)->y.fixed = -0x20000;
+        Object_GetById(10)->target_y = Object_GetById(10)->y.fixed;
+        Audio_PlayCue(188);
+        GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+            Object_GetById(10)->z.fixed, 0x8000, 0, 0, 1);
+        GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+            Object_GetById(10)->z.fixed, 0x6666, 0x6666, 0, 1);
+        GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+            Object_GetById(10)->z.fixed, -0x6666, 0x6666, 0, 1);
+        GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+            Object_GetById(10)->z.fixed, -0x8000, 0, 0, 1);
+        GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+            Object_GetById(10)->z.fixed, 0x6666, -0x6666, 0, 1);
+        GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+            Object_GetById(10)->z.fixed, -0x6666, -0x6666, 0, 1);
+        Engine_GameFlagSet(0x301);
     }
 }
 

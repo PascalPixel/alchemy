@@ -79,7 +79,8 @@ struct BattleEffectArgument {
     s32 unknown_0010;
     s32 count;
     s32 variant;
-    s32 unknown_001c;
+    /* 1 when a djinni appears beside the effect. */
+    s32 with_djinni;
     s32 unknown_0020;
     s16 actors[8];
 };

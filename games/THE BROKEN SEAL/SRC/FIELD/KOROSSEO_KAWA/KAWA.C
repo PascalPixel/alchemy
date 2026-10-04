@@ -76,8 +76,11 @@ void Script_WaitForEventTimeout(struct FieldActor *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
+/* The stage scenes call these without prototypes, as C89 allows, so they
+ * return int here: the calls set r0 last, as an implicit declaration does. */
+s32 FieldScene_RunMiddleSequence();
+s32 SceneState_StoreParamsAndInitTable();
+s32 Korosseo_FadeInCompetitor();
 
 static inline void InitializeActorZero(void)
 {
@@ -139,7 +142,6 @@ void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
 void Engine_EventShowMessage();
-void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Engine_ActorSetSpeed();
 void Engine_ActorWalkToAndWait();
 void Engine_EventWait();
@@ -156,7 +158,6 @@ void SceneState_SendIdBySceneId();
 void Engine_EventEnd();
 extern u8 MsgKorosseoAreaCalledPipeworks[];
 extern u8 MsgKorosseoObjectiveMakeGood[];
-void SceneState_StoreParamsAndInitTable();
 void SceneState_InitTableWordsAndLoad3200();
 void SceneState_ReleaseTableAndResetC6a6();
 void Engine_ObjectSetPosition();
@@ -188,7 +189,7 @@ void SceneState_ReleaseTableAndResetC6a6(void);
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -591,7 +592,7 @@ void KorosseoKawa_RaisePipes(void)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -679,7 +680,7 @@ void KorosseoKawa_RunStageStart(void)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -891,7 +892,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -1035,89 +1036,68 @@ void FieldScene_RunCommandSequence(s32 a0)
 
 /* Colosso river stage: unless the stage is already cleared, walk the player
  * through the introduction, push the pillars and hand over to the stage. */
-void KorosseoKawa_RunStageIntro(s32 a0)
+void KorosseoKawa_RunStageIntro(s32 scene)
 {
-    s32 rec;
-    s32 record;
+    s32 path;
 
     if (gGameState.entrance == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
-        rec = SceneDialogue_RunFlagGatedPromptInteraction(a0, 1);
-        if (rec != 0) {
-        } else {
+        path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 1);
+        if (path == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                s32 cx = 0x1480000 >> 17;
-                s32 cy = 1;
-                s32 cz = 0xa80000 >> 16;
-                s32 cm;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-                cm = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-                cz <<= 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
-                cx <<= 17;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
-                Camera_MoveTo(cx, -cy, cz, cm);
+                s32 x = 0xa4;
+                s32 y = 1;
+                s32 z = 0xa8;
+
+                /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
+                asm("" : "+r"(x), "+r"(y), "+r"(z));
+                Camera_MoveTo(x << 17, -y, z << 16, 1);
             }
             Engine_CameraWaitForMove();
-            Engine_EventShowMessage(a0, 0);
-            {
-                s32 fx = 0x118;
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fz asm("r2") = 200;
-                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
-                asm("" : : "r"(fx), "r"(fz) : "r0");
-                Korosseo_FadeInCompetitor(0, fx, fz);
-            }
-            Actor_SetSpeed(0, 0x10000, 0x8000);
-            Actor_WalkToAndWait(0, 0x168, 200);
+            Engine_EventShowMessage(scene, 0);
+            Korosseo_FadeInCompetitor(0, 280, 200);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
             Engine_EventWait(30);
-            Actor_ShowEmote(0, 0x102, 60);
-            Engine_EventShowMessage(a0, 0);
-            Actor_WalkToAndWait(0, 0x138, 200);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+            Engine_EventShowMessage(scene, 0);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
             Engine_EventWait(30);
-            Actor_FaceDirection(0, 0xc000, 10);
-            Actor_ShowEmote(0, 0x106, 60);
-            Actor_SetSpeed(0, 0x18000, 0xc000);
-            OverlayObject_PlaceWithScale14000(0, 0x128, 184);
-            OverlayObject_PlaceWithScale14000(0, 0x128, 152);
-            OverlayObject_PlaceWithScale14000(0, 0x138, 152);
-            Actor_FaceDirection(0, 0x4000, 15);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+            OverlayObject_PlaceWithScale14000(0, 296, 184);
+            OverlayObject_PlaceWithScale14000(0, 296, 152);
+            OverlayObject_PlaceWithScale14000(0, 312, 152);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
-            Actor_SetSpeed(0, 0x18000, 0xc000);
-            Actor_WalkToAndWait(0, 0x130, 184);
-            Engine_ActorWalkToAndWait(0, 0x128, 192);
-            Engine_ActorWalkToAndWait(0, 0x128, 200);
-            Engine_ActorFaceDirection(0, 0, 15);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 192);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 200);
+            Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 15);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
-            Engine_ActorSetAnimation(0, 1);
-            Engine_EventShowMessage(a0, 0);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+            Engine_EventShowMessage(scene, 0);
             Korosseo_RestoreCompetitor(0);
-            Engine_CameraFollowActor(0, 0);
+            Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
             Actor_SetPosition(9, 0x1380000, 0xa80000);
-            SceneState_SendIdBySceneId(a0, 1);
-            goto L_020013c2;
-        }
-        if (rec == 1) {
+            SceneState_SendIdBySceneId(scene, 1);
+        } else if (path == 1) {
             Engine_EventSetMessage((s32)MsgKorosseoObjectiveStageClear);
-            Engine_EventShowMessage(a0, 0);
+            Engine_EventShowMessage(scene, 0);
         }
-        L_020013c2:;
-        ((s32 (*)())FieldScene_RunMiddleSequence)(rec, a0, 1);
+        FieldScene_RunMiddleSequence(path, scene, 1);
         Engine_EventEnd();
     }
 }
@@ -1193,7 +1173,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoObjectiveMakeGood);
             Engine_EventShowMessage(a0, 0);
         }
-        ((s32 (*)())FieldScene_RunMiddleSequence)(rec4, a0, 2);
+        FieldScene_RunMiddleSequence(rec4, a0, 2);
         Engine_EventEnd();
     }
 }
@@ -1213,7 +1193,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -1223,88 +1203,60 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 
 /* In-image direction table: sixteen packed steps, high half x, low half z. */
 
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
-void FieldScene_RunScene3ba_020015e0(s32 a0)
+/* The Broken Bridge stage: the camera pans to the bridge, the competitor
+ * fades in and walks to its end, then the stage opens. */
+void Korosseo_RunBrokenBridgeIntro(s32 scene)
 {
-
-    u32 i;
-    s32 rec8;
-    s32 record;
+    s32 path;
 
     if (gGameState.entrance == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
-        rec8 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 3);
-        if (rec8 == 0) {
+        path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 3);
+        if (path == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoTheyCallBrokenBridge);
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                s32 cx = 0x3480000 >> 18;
-                s32 cy = 1;
-                s32 cz = 0xd80000 >> 16;
-                s32 cm;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-                cm = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-                cz <<= 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
-                cx <<= 18;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
-                Camera_MoveTo(cx, -cy, cz, cm);
+                s32 x = 0xd2;
+                s32 y = 1;
+                s32 z = 0xd8;
+
+                /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
+                asm("" : "+r"(x), "+r"(y), "+r"(z));
+                Camera_MoveTo(x << 18, -y, z << 16, 1);
             }
             Engine_CameraWaitForMove();
-            {
-                /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
-                register s32 mode asm("r1") = 0;
-                /* FAKEMATCH: the direct void form reverses the two argument moves. */
-                asm("" : : "r"(mode) : "r0");
-                Event_ShowMessage(a0, mode);
-            }
+            Event_ShowMessage(scene, 0);
             SceneState_SetMode66AndPassOpeningSequence();
             Engine_EventWait(60);
-            Event_ShowMessage(a0, 0);
-            {
-                s32 fx = 0x2e0;
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fz asm("r2") = 200;
-                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
-                asm("" : : "r"(fx), "r"(fz) : "r0");
-                Korosseo_FadeInCompetitor(0, fx, fz);
-            }
-            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-            Value3(Engine_ActorFaceDirection, 0, 0, 0);
+            Event_ShowMessage(scene, 0);
+            Korosseo_FadeInCompetitor(0, 736, 200);
+            /* FAKEMATCH: the discarded result sets r0 after both other arguments. */
+            Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0, 0);
             SceneState_WaitUntilWordC41cIs22();
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x330, 200);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
             Engine_EventWait(30);
             Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
-            Event_ShowMessage(a0, 0);
+            Event_ShowMessage(scene, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-            SceneState_SendIdBySceneId(a0, 3);
-        } else {
-            if (rec8 == 1) {
-                Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
-                Event_ShowMessage(a0, 0);
-            }
+            SceneState_SendIdBySceneId(scene, 3);
+        } else if (path == 1) {
+            Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
+            Event_ShowMessage(scene, 0);
         }
-        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        Value3(FieldScene_RunMiddleSequence, rec8, a0, 3);
+        FieldScene_RunMiddleSequence(path, scene, 3);
         Engine_EventEnd();
     }
 }
 
-void Scene_RunSceneFourCoordinator(s32 scene)
+/* The Lumber Water stage: the camera pans over the logs, the competitor
+ * fades in and pushes the first log, then the stage opens. */
+void Korosseo_RunLumberWaterIntro(s32 scene)
 {
-
     s32 path;
 
     if (gGameState.entrance == 2) {
@@ -1315,82 +1267,52 @@ void Scene_RunSceneFourCoordinator(s32 scene)
     path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 4);
     if (path == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
-        Camera_SetSpeed(196608, 24576);
+        Camera_SetSpeed(0x30000, 0x6000);
         {
-            s32 cx = 71303168 >> 19;
-            s32 cy = 1;
-            s32 cz = 11010048 >> 16;
-            s32 cm;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-            cm = 1;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-            cz <<= 16;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
-            cx <<= 19;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
-            Camera_MoveTo(cx, -cy, cz, cm);
+            s32 x = 0x88;
+            s32 y = 1;
+            s32 z = 0xa8;
+
+            /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
+            asm("" : "+r"(x), "+r"(y), "+r"(z));
+            Camera_MoveTo(x << 19, -y, z << 16, 1);
         }
         Engine_CameraWaitForMove();
         Event_ShowMessage(scene, 0);
-        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        {
-            /* FAKEMATCH: native parameter zero in r2 precedes r1/r0 setup. */
-            register s32 zero asm("r2") = 0;
-            /* FAKEMATCH: the measured message boundary moved r1 ahead of r2. */
-            asm("" : : "r"(zero) : "r0", "r1");
-            Value3(SceneState_StoreParamsAndInitTable, 120, 72, zero);
-        }
-        {
-            /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
-            register s32 mode asm("r1") = 0;
-            /* FAKEMATCH: the direct void form reverses the two argument moves. */
-            asm("" : : "r"(mode) : "r0");
-            Event_ShowMessage(scene, mode);
-        }
+        SceneState_StoreParamsAndInitTable(120, 72, 0);
+        Event_ShowMessage(scene, 0);
         SceneState_ReleaseTableAndResetC6a6();
         Engine_EventWait(15);
-        {
-            s32 fx = 984;
-            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-            register s32 fz asm("r2") = 200;
-            /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
-            asm("" : : "r"(fx), "r"(fz) : "r0");
-            Korosseo_FadeInCompetitor(0, fx, fz);
-        }
+        Korosseo_FadeInCompetitor(0, 984, 200);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 30);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 262, 60);
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
         OverlayObject_PlaceWithScale14000(0, 1000, 192);
         OverlayObject_PlaceWithScale14000(0, 1000, 176);
         OverlayObject_PlaceWithScale14000(0, 1016, 168);
         Engine_EventWait(15);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
-        Camera_MoveTo(71303168, -1, 11010048, 1);
+        Camera_MoveTo(0x4400000, -1, 0xa80000, 1);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
         Engine_EventWait(10);
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
         Engine_EventWait(10);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 32768, 30);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
         Event_ShowMessage(scene, 0);
         Korosseo_RestoreCompetitor(0);
         Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-        Actor_SetPosition(18, 66584576, 11010048);
+        Actor_SetPosition(18, 0x3f80000, 0xa80000);
         SceneState_SendIdBySceneId(scene, 4);
     } else if (path == 1) {
         Engine_EventSetMessage((s32)MsgKorosseoLogsKeyClearingStage);
         Event_ShowMessage(scene, 0);
     }
-    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-    Value3(FieldScene_RunMiddleSequence, path, scene, 4);
+    FieldScene_RunMiddleSequence(path, scene, 4);
     Engine_EventEnd();
 }
 

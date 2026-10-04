@@ -9,6 +9,11 @@
  * id) == -1) goto done; found->dirty = found->dirty; done:" (reload_cse
  * drops the self-store): dead code for an instruction count, which S2 does
  * not allow, so it is not used. The real arm is still unknown.
+ * 2026-10-04 sun w2 finisher 3: an arm "return (struct ResourceObject *)-1"
+ * does empty after reload (cse puts the call result, already -1 in r0, in
+ * the return), but the other path's mov r0, r8 keeps cmp r0, r2; beq (32
+ * with a different pool shift). An empty static inline call as the arm
+ * (with and without an argument) and "return found" vanish early (32).
  */
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"

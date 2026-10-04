@@ -114,7 +114,7 @@ PsynergyMenu_DrawListPage:
 	adds r3, r4, #0
 	mov r0, r8
 	movs r1, #25
-	bl Func_080ff8e0
+	bl PsynergyMenu_DrawRange
 	mov r3, r10
 	adds r3, #1
 	lsls r3, r3, #24

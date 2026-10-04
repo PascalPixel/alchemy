@@ -95,19 +95,8 @@ Func_080132d0:
 	.thumb_func
 Func_080132fc:
 	.incbin "baserom.gba", 0x00013328, 0x00000004
-	.section .rom.00013338, "ax"
-	.incbin "baserom.gba", 0x00013338, 0x00000060
-	.section .rom.00013398, "ax"
-	.global Resource_LoadCode
-	.type Resource_LoadCode, %function
-	.thumb_func
-Resource_LoadCode:
-	.incbin "baserom.gba", 0x00013398, 0x00000054
-	.global Runtime_IgnoreInterrupt
-	.type Runtime_IgnoreInterrupt, %function
-	.thumb_func
-Runtime_IgnoreInterrupt:
-	.incbin "baserom.gba", 0x000133ec, 0x00000004
+	.section .rom.000133f0, "ax"
+	.balign 4
 	.global Runtime_InstallIwramAndIrqs
 	.type Runtime_InstallIwramAndIrqs, %function
 	.thumb_func
@@ -2140,12 +2129,6 @@ Func_080ae868:
 	.thumb_func
 Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000bbc68, 0x0000003c
-	.section .rom.000bbca4, "ax"
-	.global Inventory_GetQuantity
-	.type Inventory_GetQuantity, %function
-	.thumb_func
-Inventory_GetQuantity:
-	.incbin "baserom.gba", 0x000bbca4, 0x00000024
 	.section .rom.000bbe40, "ax"
 	.global Func_080aee40
 	.type Func_080aee40, %function
@@ -2420,14 +2403,14 @@ Func_080c85c0:
 	.incbin "baserom.gba", 0x000d59cc, 0x00000a00
 	.section .rom.000d6694, "ax"
 	.incbin "baserom.gba", 0x000d6694, 0x0000028c
-	.section .rom.000d6934, "ax"
-	.incbin "baserom.gba", 0x000d6934, 0x00000010
 	.section .rom.000d6944, "ax"
 	.global Game_ResetForNewGame
 	.type Game_ResetForNewGame, %function
 	.thumb_func
 Game_ResetForNewGame:
-	.incbin "baserom.gba", 0x000d6944, 0x00000484
+	.incbin "baserom.gba", 0x000d6944, 0x000002cc
+	.section .rom.000d6c38, "ax"
+	.incbin "baserom.gba", 0x000d6c38, 0x00000190
 	.section .rom.000d6dc8, "ax"
 	.global Func_080c9dc8
 	.type Func_080c9dc8, %function
@@ -3414,13 +3397,7 @@ Func_080d7430:
 	.type Func_080d7788, %function
 	.thumb_func
 Func_080d7788:
-	.incbin "baserom.gba", 0x000e4788, 0x000002f0
-	.section .rom.000e4a78, "ax"
-	.global BattleFx_InitializeSlots
-	.type BattleFx_InitializeSlots, %function
-	.thumb_func
-BattleFx_InitializeSlots:
-	.incbin "baserom.gba", 0x000e4a78, 0x0000003c
+	.incbin "baserom.gba", 0x000e4788, 0x000002d0
 	.section .rom.000e4ab4, "ax"
 	.global Func_080d7ab4
 	.type Func_080d7ab4, %function
@@ -3936,10 +3913,10 @@ Func_080eb2d0:
 Func_080eb960:
 	.incbin "baserom.gba", 0x000f8960, 0x000002d0
 	.section .rom.000f8c30, "ax"
-	.global Func_080ebc30
-	.type Func_080ebc30, %function
+	.global EffectSlot_Update
+	.type EffectSlot_Update, %function
 	.thumb_func
-Func_080ebc30:
+EffectSlot_Update:
 	.incbin "baserom.gba", 0x000f8c30, 0x00000240
 	.section .rom.000f8ea6, "ax"
 	.incbin "baserom.gba", 0x000f8ea6, 0x00000002
@@ -4082,14 +4059,8 @@ Palette_CopyObjectBankToBackground14:
 	.thumb_func
 Func_080f94a4:
 	.incbin "baserom.gba", 0x001034a4, 0x00000f3c
-	.section .rom.00104462, "ax"
-	.incbin "baserom.gba", 0x00104462, 0x00000002
-	.section .rom.00104464, "ax"
-	.global ItemMenu_HideAllIcons
-	.type ItemMenu_HideAllIcons, %function
-	.thumb_func
-ItemMenu_HideAllIcons:
-	.incbin "baserom.gba", 0x00104464, 0x00000884
+	.section .rom.00104484, "ax"
+	.incbin "baserom.gba", 0x00104484, 0x00000864
 	.section .rom.00104cfa, "ax"
 	.incbin "baserom.gba", 0x00104cfa, 0x0000011e
 	.global ItemMenu_DrawIcons
@@ -4099,8 +4070,8 @@ ItemMenu_DrawIcons:
 	.incbin "baserom.gba", 0x00104e18, 0x000002d4
 	.section .rom.0010514c, "ax"
 	.incbin "baserom.gba", 0x0010514c, 0x00000cac
-	.section .rom.00105e60, "ax"
-	.incbin "baserom.gba", 0x00105e60, 0x00000d54
+	.section .rom.00105ea0, "ax"
+	.incbin "baserom.gba", 0x00105ea0, 0x00000d14
 	.section .rom.00106bb4, "ax"
 	.global Func_080fcab8
 	.type Func_080fcab8, %function
@@ -4120,7 +4091,9 @@ Func_080fe184:
 Func_080fe274:
 	.incbin "baserom.gba", 0x00108420, 0x00000f80
 	.section .rom.00109494, "ax"
-	.incbin "baserom.gba", 0x00109494, 0x000011f0
+	.incbin "baserom.gba", 0x00109494, 0x000005f8
+	.section .rom.00109af8, "ax"
+	.incbin "baserom.gba", 0x00109af8, 0x00000b8c
 	.section .rom.0010a70c, "ax"
 	.global ItemMenu_DrawEquippedItemNames
 	.type ItemMenu_DrawEquippedItemNames, %function
@@ -5239,12 +5212,12 @@ Func_081c1e48:
 	.thumb_func
 Func_081c2314:
 	.incbin "baserom.gba", 0x001c2314, 0x00000014
-	.global Func_081c2328
+AudioCommand_InvokeSlot35:
 	.global AudioCommand_InvokeSlot35
+	.global Func_081c2328
 	.type AudioCommand_InvokeSlot35, %function
 	.thumb_func
 Func_081c2328:
-AudioCommand_InvokeSlot35:
 	.incbin "baserom.gba", 0x001c2328, 0x00000014
 	.section .rom.001c332c, "ax"
 	.incbin "baserom.gba", 0x001c332c, 0x00000014

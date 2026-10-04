@@ -289,7 +289,7 @@ Func_080cb91c:
 	adds r3, r6, r1
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Func_080c9934
+	bl Field_GetSceneAttributes
 	movs r2, #208
 	adds r5, r0, #0
 	lsls r2, r2, #4

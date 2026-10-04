@@ -1,3 +1,28 @@
+/* Exact304B/frame36 independently compiled with the approved compiler
+ * and era assembler:137 instructions,2 zero alignment bytes,28 pool bytes.
+ * Isolated bytes/r3 removal scores825 but keeps that full extent/frame
+ * and all137 instructions. The scorer's apparent insert/delete pair is
+ * alignment: coordinate ADD is at exact+0x9a/plain+0x9c; column copy at
+ * exact+0x90/plain+0x96. The consumed cell*8 shift moves before visibility
+ * tests, and remaining differences are registers/order; no work is lost.
+ * Independent source/S2 review requested. No adoption or credit yet.
+ */
+/* 2026-10-04 ordinary search seed8105/two jobs: exact after631
+ * candidates. Actual full-cell copy/drawing index split is retained;
+ * ordinary temporary lifetimes and statement order recover the rest.
+ * plain_bytes: draft: score 825 (44 register-only, 1 operand, 6 reordered, 1 inserted, 1 deleted)
+ * plain_register_bytes: draft: score 825 (44 register-only, 1 operand, 6 reordered, 1 inserted, 1 deleted)
+ * Full extent and binding review pending; still uncredited.
+ */
+/* alchemy permute: Map_CopyMetatileCellsRect against recon/tbs/raw/080105d4.s: score 0 (exact).
+   Job 1, iteration 318; rewrites: 6x reorder independent statements, 3x change loop form, 3x pointer arithmetic or indexing, 2x remove a temporary, 2x drop a same-width cast, 2x split or join a compound assignment, 2x toggle register, 1x reorder local declarations, 1x add a same-width cast. */
+/* 2026-10-04 ordinary drawing/offset order trials from140:
+ * second_source_before_destination: draft: score 720 (24 register-only, 1 operand, 6 reordered, 1 inserted, 1 deleted)
+ * second_destination_after_load: draft: score 820 (31 register-only, 1 operand, 7 reordered, 1 inserted, 1 deleted)
+ * swap_x_y_preparation: draft: score 1057 (21 register-only, 12 stack-only, 4 operand, 4 reordered, 1 inserted, 5 deleted)
+ * commute_offset_sum: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * Retain best measured ordinary shape 140.
+ */
 /* Current140: copied whole word and masked drawing index have separate
  * consumed lifetimes. Signed bounds, complete-cell writes, three layers
  * and both drawing words are unchanged; no new steering device.
@@ -174,12 +199,12 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
 {
     /* FAKEMATCH: after ordinary helper/lifetime forms remained at2055,
        temporary sharing, casts and statement order steer allocation/
-       scheduling; the current measured result is140 with no new state
+       scheduling; the current measured result is0 with no new state
        or source side effects. */
     s32 y = dst_y;
     u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
-    u32 *dst = (u32 *)Ram_MapCellBuffer + (y * 128 + dst_x);
-    struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
+    u32 *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dst_x];
+    struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
     struct TilePos tile[3];
     s32 i;
     struct TilePos *pos = tile;
@@ -201,33 +226,31 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
             for (x = dst_x; x < dst_x + width; x++) {
                 u32 whole = *src++;
                 u32 cell;
-                u32 offset;
-                u32 *dest;
+                register u32 offset;
                 u32 tmp3;
+                u32 *dest;
                 u32 n;
                 register u32 *tiles;
                 u32 tmp6;
                 u32 tmp12;
                 u32 tmp13;
-                u32 tmp11;
                 dst[0] = whole;
                 cell = whole & 0xfff;
                 tmp12 = x & 15;
                 tmp6 = tmp12;
+                dst += 1;
                 tmp3 = (u32)(y & 15);
                 tmp13 = tmp3 << 5;
-                dst++;
+                pos = tile;
                 tmp12 = tmp13;
                 n = tmp12;
-                pos = tile;
                 n += tmp6;
                 tmp13 = n * 4;
-                tmp11 = tmp13;
                 i = 0;
-                tmp6 = tmp11;
+                tmp6 = tmp13;
                 offset = tmp6;
-                while (i < 3) {
-                    if (pos->x <= x && 16 + (*pos).x > x && pos->y <= y && pos->y + 12 > (s32)y) {
+                for (; i < 3; i += 1) {
+                    if (pos->x <= (s32)x && 16 + (*pos).x > x && pos->y <= y && pos->y + 12 > y) {
                         u32 *tmp;
                         u32 tmp2;
                         u32 tmp4;
@@ -235,11 +258,10 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
                         u32 tmp10;
                         u32 tmp14;
                         u32 tmp16;
-                        /* FAKEMATCH: keep the consumed drawing byte offset in native r3 after ordinary cell/offset lifetime trials failed to retain its native scheduling. */
+                        /* FAKEMATCH: after ordinary lifetime trials, removing this consumed r3 binding scores825 with register/order differences only; all137 instructions,36-byte frame and304-byte extent remain. */
                         register u32 bytes __asm__ ("r3") = cell * 8;
                         u32 tmp8;
-                        u32 *tmp9;
-                        u32 tmp17;
+                        register u32 tmp17;
                         tmp = (u32 *)Ram_MapBlocks;
                         tmp8 = 0x06002800 + offset;
                         tiles = tmp;
@@ -249,33 +271,31 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
                         tiles = (u32 *)((u8 *)tiles + bytes);
                         tmp16 = *tiles;
                         tmp14 = tmp16;
+                        tmp17 = 0x06002840 + offset;
                         tmp10 = tmp14;
                         *dest = tmp10;
                         tmp7 = (u32 *)(Ram_MapBlocks + 4);
                         tiles = tmp7;
-                        tmp17 = 0x06002840 + offset;
+                        tiles = (u32 *)((u8 *)tiles + bytes);
                         tmp8 = tmp17;
                         tmp14 = tmp8;
-                        tiles = (u32 *)((u8 *)tiles + bytes);
-                        tmp17 = *tiles;
+                        tmp17 = tiles[0];
                         tmp16 = tmp17;
                         tmp10 = tmp16;
                         tmp4 = tmp10;
                         tmp2 = tmp4;
                         tmp4 = tmp14;
-                        tmp9 = (u32 *)tmp4;
-                        tmp7 = tmp9;
+                        tmp7 = (u32 *)tmp4;
                         dest = tmp7;
-                        (s32)(*dest = tmp2);
+                        *dest = tmp2;
                         break;
                     }
                     n = 0x800;
                     offset += n;
                     pos++;
-                    i += 1;
                 }
             }
-            src += 128 - width;
+            src = src + (128 - width);
             dst = 128 - width + dst;
             y++;
         } while (y < (s32)dst_y + height);

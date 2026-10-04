@@ -526,6 +526,7 @@
     "*/recon/tla/it/rom.o"(.rom.000429e0)
     "*/recon/tla/it/rom.o"(.rom.00042e10)
     "*/recon/tla/it/rom.o"(.rom.00043128)
+    "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/FIND_FREE_SUMMARY_SLOT.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000432c0)
     "*/recon/tla/it/rom.o"(.rom.00043308)
     "*/recon/tla/it/rom.o"(.rom.00043550)

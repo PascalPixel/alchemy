@@ -1688,8 +1688,9 @@ Func_080430c4:
 	.type Text_FormatPlayTime, %function
 	.thumb_func
 Text_FormatPlayTime:
-	.incbin "baserom.gba", 0x00043200, 0x000000ac
+	.incbin "baserom.gba", 0x00043200, 0x00000080
 	.section .rom.000432ac, "ax"
+	.balign 4
 	.global Func_0804325c
 	.type Func_0804325c, %function
 	.thumb_func

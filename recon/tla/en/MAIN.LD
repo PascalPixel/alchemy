@@ -794,7 +794,7 @@
         "*/recon/tla/raw/08042ff0.o"(.text)
         "*/recon/tla/raw/080430c4.o"(.text)
         "*/recon/tla/raw/080431b0.o"(.text)
-        "*/recon/tla/raw/08043230.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/FIND_FREE_SUMMARY_SLOT.o"(.text)
         "*/recon/tla/raw/0804325c.o"(.text)
         "*/recon/tla/raw/080432a4.o"(.text)
         "*/recon/tla/raw/08043358.o"(.text)

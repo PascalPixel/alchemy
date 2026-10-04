@@ -25,18 +25,18 @@ static __inline__ void System_SoftReset(void)
        the value-returning pointer preserves the measured r0 call. */
     s32 (*reset)(void) = (s32 (*)(void))Cart_Restart;
 
-    Data_03007800 = 0x19670704;
+    gCartridgeResetMarker = 0x19670704;
     Io_Write16(0, &REG_IME);
     reset();
 }
 
 #define VBlankIntrWait()                                                       \
     {                                                                          \
-        *(volatile u16 *)&Data_03001d28 &= ~1;                                 \
+        gVBlankDone &= ~1;                                                     \
         do {                                                                   \
             /* CAMELOT_ASM: Halt, which no C compiles to */                    \
             __asm__ volatile("swi 2");                                         \
-        } while (!(*(volatile u16 *)&Data_03001d28 & 1));                       \
+        } while (!(gVBlankDone & 1));                                          \
     }
 
 /* Installs or removes the handler for one interrupt with IME off: sets
@@ -97,8 +97,6 @@ void WaitFrames(s32 frames)
     s16 dispcnt;
     s16 backdrop;
 
-    /* FAKEMATCH: volatile accesses retain the measured rereads of the idle,
-       sleep, shoulder-combo and debug-repeat cells after their stores. */
     /* CAMELOT_ASM: reads the stack pointer */
     __asm__ volatile("mov %0, sp" : "=r"(base));
     if ((u32)base < (u32)Ram_FrameWaitStackTop) {
@@ -112,14 +110,14 @@ void WaitFrames(s32 frames)
         Runtime_InvokeCallbacksByKey(0xc80);
         gSchedulerStatus = 0;
         Render_BuildOamList(Runtime_AllocateHeapBlock(52, 0x400));
-        Data_03001e44 = 1;
-        if (Data_03001f58) {
+        gFrameRenderPending = 1;
+        if (gCpuLoadDisplayEnabled) {
             line = *(u16 *)&REG_VCOUNT;
             if (line >= 160)
                 line -= 160;
             else
                 line += 68;
-            line += (Data_03001ccc - 1) << 8;
+            line += (gLagFrameCount - 1) << 8;
             if (gCpuLoadTimer == 0)
                 gCpuLoadPeak = 0;
             else
@@ -129,33 +127,35 @@ void WaitFrames(s32 frames)
                 gCpuLoadTimer = 30;
             }
         }
-        if ((*(volatile u8 *)&Data_03001ca0) == 0) {
+        if (gSleepDisabled == 0) {
             if (gOptionMirror) {
                 if (gKeysHeld)
-                    (*(volatile u16 *)&gPostLoadCounter) = 0;
+                    gPostLoadCounter = 0;
                 else {
-                    (*(volatile u16 *)&gPostLoadCounter)++;
-                    if ((*(volatile u16 *)&gPostLoadCounter) > 0x2a30)
-                        (*(volatile u8 *)&gSleepRequested) = 1;
+                    gPostLoadCounter++;
+                    if (gPostLoadCounter > 0x2a30)
+                        gSleepRequested = 1;
                 }
             }
             if (gKeysHeld == KEYS_SHOULDERS) {
-                (*(volatile u16 *)&gSleepComboFrames)++;
-                if ((*(volatile u16 *)&gSleepComboFrames) >= 180) {
-                    (*(volatile u16 *)&gSleepComboFrames) = 0;
-                    (*(volatile u8 *)&gSleepRequested) = 1;
+                gSleepComboFrames++;
+                if (gSleepComboFrames >= 180) {
+                    gSleepComboFrames = 0;
+                    gSleepRequested = 1;
                 }
             } else {
-                (*(volatile u16 *)&gSleepComboFrames) = 0;
+                gSleepComboFrames = 0;
             }
         }
         if (gDebugMode) {
             for (;;) {
                 if (gDebugPaused) {
+                    /* FAKEMATCH: a volatile read keeps the measured reread of the repeated keys. */
                     if ((*(volatile u32 *)&gKeysRepeat) & (KEY_A | KEY_B | KEY_SELECT))
                         break;
                     if (gKeysHeld & KEYS_DPAD)
                         break;
+                    /* FAKEMATCH: a volatile read keeps the measured reread of the repeated keys. */
                     if ((*(volatile u32 *)&gKeysRepeat) & KEY_START) {
                         gDebugPaused = 0;
                         break;
@@ -174,8 +174,8 @@ void WaitFrames(s32 frames)
                 }
             }
         }
-        gLagFramesShown = Data_03001ccc;
-        Data_03001ccc = 0;
+        gLagFramesShown = gLagFrameCount;
+        gLagFrameCount = 0;
         /* CAMELOT_ASM: Halt in VBlankIntrWait */
         VBlankIntrWait();
         Runtime_ReleaseHeapBlock(52);
@@ -188,10 +188,10 @@ void WaitFrames(s32 frames)
             if (gSerialRuntime.mode)
                 gSerialRuntime.transfer_enabled = 1;
         }
-        if ((*(volatile u8 *)&gSleepRequested) && (*(volatile u8 *)&Data_03001ca0) == 0) {
+        if (gSleepRequested && gSleepDisabled == 0) {
             dispcnt = REG_DISPCNT;
             backdrop = PLTT_BACKDROP;
-            if ((*(volatile u8 *)&gSleepRequested) == 1) {
+            if (gSleepRequested == 1) {
                 Io_Write16(0, &REG_DISPCNT);
                 Io_Write16(0x7fff, &PLTT_BACKDROP);
                 for (j = 0; j < 60; j++)
@@ -210,10 +210,10 @@ void WaitFrames(s32 frames)
                 for (j = 0; j < 10; j++)
                     /* CAMELOT_ASM: Halt in VBlankIntrWait */
                     VBlankIntrWait();
-                (*(volatile u8 *)&gSleepRequested) = 0;
-                (*(volatile u16 *)&gPostLoadCounter) = 0;
+                gSleepRequested = 0;
+                gPostLoadCounter = 0;
             } else {
-                (*(volatile u8 *)&gSleepRequested)--;
+                gSleepRequested--;
             }
         }
         if (gResetRequested) {

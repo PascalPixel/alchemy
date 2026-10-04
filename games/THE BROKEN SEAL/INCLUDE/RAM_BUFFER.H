@@ -26,7 +26,7 @@
 
 /* The IWRAM heap ends where this word lies: the allocators compare against
  * its address, which GCC turns into a test against the byte before it. */
-#define Ram_IwramHeapEnd ((u8 *)0x03007800) /* Data_03007800 */
+#define Ram_IwramHeapEnd ((u8 *)0x03007800) /* gCartridgeResetMarker */
 
 /* WaitFrames preserves the caller's stack below this boundary before moving
  * SP here. The constant also folds its comparison against the preceding byte. */

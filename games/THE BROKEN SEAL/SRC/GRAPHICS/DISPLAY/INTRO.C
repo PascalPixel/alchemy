@@ -196,7 +196,7 @@ back_rest_cell:
 
 extern volatile u32 gKeyState;
 extern u8 gOamCopyEnabled;
-extern volatile u8 Data_03001f58;
+extern volatile u8 gCpuLoadDisplayEnabled;
 extern const u8 Title_PromptTiles[];
 extern const u8 Title_PromptBlendLevels[];
 
@@ -231,14 +231,14 @@ s32 Title_ShowIntro(s32 prompt)
 
     result = 0;
     blank = 0x1ff;
-    saved = Data_03001f58;
+    saved = gCpuLoadDisplayEnabled;
     work = Runtime_AllocateHeapBlock(43, 224);
     Bg0_ClearTilemap();
     Resource_InitializeTable();
     WaitFrames(1);
     Scheduler_ResetTaskTable();
     gOamCopyEnabled = result;
-    Data_03001f58 = result;
+    gCpuLoadDisplayEnabled = result;
     Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
     /* FAKEMATCH: retain the pre-existing ignored scalar-return call boundary.
@@ -430,7 +430,7 @@ s32 Title_ShowIntro(s32 prompt)
         }
         WaitFrames(1);
     }
-    Data_03001f58 = saved;
+    gCpuLoadDisplayEnabled = saved;
     Runtime_ReleaseHeapBlock(43);
     *(volatile u16 *)0x04000050 = 0;
     *(volatile u16 *)0x04000052 = 0;

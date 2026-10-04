@@ -83,7 +83,7 @@ extern s32 gBattleRandomSeed;
 extern volatile u16 gLinkStatus;
 extern u8 *gBattleOwnerStates;
 extern u8 gActorSpriteSlots[];
-extern u8 Data_03001f58;
+extern u8 gCpuLoadDisplayEnabled;
 void BattlePresentation_UpdateCamera(void);
 void Func_080b7738(void);
 
@@ -299,7 +299,7 @@ s32 Battle_RunEncounter(s32 arg)
     }
     Func_080c02a4(object, arg);
     timer->field_14 = 0;
-    Data_03001f58 = 0;
+    gCpuLoadDisplayEnabled = 0;
     Scheduler_AddOrUpdateCallback((s32)Func_080b7738, 0xc80);
 
     for (;;) {

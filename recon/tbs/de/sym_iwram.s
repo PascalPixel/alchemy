@@ -73,8 +73,8 @@ gBlendDuration:
 	.global gLoadedStateWord
 gLoadedStateWord:
 	.space 0x00000004
-	.global Data_03001ca0
-Data_03001ca0:
+	.global gSleepDisabled
+gSleepDisabled:
 	.space 0x00000004
 	.global gCpuLoadPeak
 gCpuLoadPeak:
@@ -103,8 +103,8 @@ gTransformStackDepth:
 	.global gSleepRequested
 gSleepRequested:
 	.space 0x00000004
-	.global Data_03001ccc
-Data_03001ccc:
+	.global gLagFrameCount
+gLagFrameCount:
 	.space 0x00000004
 	.global gLagFramesShown
 gLagFramesShown:
@@ -148,8 +148,8 @@ gDebugPaused:
 	.global gPostLoadCounter
 gPostLoadCounter:
 	.space 0x00000004
-	.global Data_03001d28
-Data_03001d28:
+	.global gVBlankDone
+gVBlankDone:
 	.space 0x00000004
 	.global gTransformStackTop
 gTransformStackTop:
@@ -165,8 +165,8 @@ gFrameCount:
 	.global Data_03001e40
 Data_03001e40:
 	.space 0x00000004
-	.global Data_03001e44
-Data_03001e44:
+	.global gFrameRenderPending
+gFrameRenderPending:
 	.space 0x0000000c
 	.global Data_03001e50
 Data_03001e50:
@@ -304,8 +304,8 @@ gKorosseoWork:
 	.global gDebugMode
 gDebugMode:
 	.space 0x00000004
-	.global Data_03001f58
-Data_03001f58:
+	.global gCpuLoadDisplayEnabled
+gCpuLoadDisplayEnabled:
 	.space 0x00000004
 	.global gSleepComboFrames
 gSleepComboFrames:

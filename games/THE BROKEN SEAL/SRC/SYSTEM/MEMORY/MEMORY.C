@@ -15,7 +15,7 @@ extern const u8 System_BasicColorPalette[];
 
 /* The window frame colours of background bank 15. */
 extern const u16 Ui_WindowPalette[];
-extern u8 Data_03007800[];
+extern u8 gCartridgeResetMarker[];
 
 /* The debug text writer before this is DEBUG_TEXT.C, and the two number
    drawers after it are COMMON's DEBUG_NUMBER.C. */
@@ -101,7 +101,7 @@ s32 Runtime_GetRemainingIwram(void)
 {
     union HeapState *work = (union HeapState *)gWorkSlot;
 
-    return (s32)Data_03007800 - (s32)work->heap.next_iwram;
+    return (s32)gCartridgeResetMarker - (s32)work->heap.next_iwram;
 }
 
 s32 Runtime_GetRemainingEwram(void)

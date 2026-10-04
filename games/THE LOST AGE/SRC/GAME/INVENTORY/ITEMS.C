@@ -1,5 +1,22 @@
 #include "INVENTORY.H"
 
+s32 Inventory_GetQuantity(s32 owner, s32 slot)
+{
+    s32 item_id;
+
+    owner = ((struct OwnerInventoryState *)Owner_GetState(owner))->inventory[slot];
+    /* FAKEMATCH: keeps the mask after the slot load. */
+    __asm__("");
+    item_id = ITEM_ID_MASK;
+    item_id &= owner;
+    owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;
+    owner++;
+    if (item_id == 0) {
+        owner = 0;
+    }
+    return owner;
+}
+
 s32 Inventory_Count(s32 owner)
 {
     struct OwnerInventoryState *inv = Owner_GetState(owner);

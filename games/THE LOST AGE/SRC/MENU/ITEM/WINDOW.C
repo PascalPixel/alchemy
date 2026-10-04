@@ -1,4 +1,5 @@
 #include "M7_INTERFACES.H"
+#include "RAM_BUFFER.H"
 
 extern u8 Menu_PlusSignString;
 extern u8 Menu_MinusSignString;
@@ -35,4 +36,25 @@ void ItemMenu_DrawStat(
         UiText_DrawStringInWindowFar(
             &Menu_MinusSignString, window, x - digits * 8 + 16, y);
     }
+}
+
+/* The item menu's two windows in its work, which ⚓️ keeps in the heap
+   slot ☀️ names gMenuWork. */
+struct ItemMenuWindows {
+    u8 unknown_00[0x24];
+    struct RenderInput *item_window;
+    u8 unknown_28[0xc8];
+    struct RenderInput *message_window;
+};
+
+#define ITEM_MENU ((struct ItemMenuWindows *)Ram_HeapSlots->menu_runtime)
+
+void ItemMenu_SetItemWin5(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->item_window, 13, 5, 17, 10);
+}
+
+void ItemMenu_SetItemWin3(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->item_window, 13, 3, 17, 10);
 }

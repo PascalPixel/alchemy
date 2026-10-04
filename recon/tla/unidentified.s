@@ -1115,8 +1115,8 @@ Data_0812cd74:
 Data_0812ce54:
 	.incbin "baserom.gba", 0x0012ce54, 0x00000020
 	.section .unidentified.0812ce7c,"a"
-	.global Data_0812ce7c
-Data_0812ce7c:
+	.global BattleFormation_Records
+BattleFormation_Records:
 	.incbin "baserom.gba", 0x0012ce7c, 0x00000018
 	.global Data_0812ce94
 Data_0812ce94:

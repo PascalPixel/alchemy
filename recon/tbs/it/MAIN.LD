@@ -223,7 +223,6 @@
     "*/recon/tbs/it/rom.o"(.rom.00017f42)
     "*/recon/tbs/it/rom.o"(.rom.00017f44)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW3.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00018764)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/MEASURE_STRING_VARIANT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/PUT_GLYPH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_TILEMAP_ENTRY.o"(.text)

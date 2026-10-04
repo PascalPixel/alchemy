@@ -239,12 +239,6 @@ UiWork_StepChannelScript:
 Func_08018038:
 UiText_BuildRenderEntries:
 	.incbin "baserom.gba", 0x00017f44, 0x00000688
-	.section .rom.00018764, "ax"
-	.global UiText_MeasureEntryDimensions
-	.thumb_func
-	.type UiText_MeasureEntryDimensions, %function
-UiText_MeasureEntryDimensions:
-	.incbin "baserom.gba", 0x00018764, 0x000001f8
 	.section .rom.000190e0, "ax"
 	.global UiWork_AnimateSpriteSlots
 	.thumb_func

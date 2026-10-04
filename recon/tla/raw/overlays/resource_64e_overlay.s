@@ -940,9 +940,10 @@ Func_0200078c:
 .L_02008870:
 	.4byte 0xfffe0000
 	.section .text.x02008a54,"ax",%progbits
-	.global Func_02000a54
+	.if EDITION_INTERNATIONAL
+	.global VinasuChojo_Start
 	.thumb_func
-Func_02000a54:
+VinasuChojo_Start:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1044,6 +1045,7 @@ Func_02000a54:
 	.if EDITION_INTERNATIONAL
 .L_02008b24:
 	.4byte 0x00000005
+	.endif
 	.endif
 	.section .text.x02008b2c,"ax",%progbits
 	.global Func_02000b2c

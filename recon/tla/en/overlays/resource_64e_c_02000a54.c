@@ -1,4 +1,8 @@
 /* CANONICAL DRAFT: VINASU_CHOJO opening bank, 2026-10-02.
+ * 2026-10-04: the idle hook (VinasuChojo_Idle) and the setup step after it
+ * are C in SCENE_EVENTS.C; the startup (VinasuChojo_Start) is C for Japanese,
+ * and the international editions keep its listing (their saved scene/entrance
+ * stores rebuild 516 apart from 428 and load 5 from the pool).
  * Saved-tree default scorer: startup610/15, setup11025/152, departure
  *24410/362; overlay imports are unresolved in its main-only namespace.
  * This diagnostic does not replace the complete native identity judgments.

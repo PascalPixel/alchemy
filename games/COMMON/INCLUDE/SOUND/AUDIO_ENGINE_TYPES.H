@@ -38,6 +38,14 @@
 #define REG_NR43 (*(volatile u8 *)0x0400007c)
 #define REG_NR44 (*(volatile u8 *)0x0400007d)
 #define REG_NR51 (*(volatile u8 *)0x04000081)
+
+/* The master controls: NR50 is SOUNDCNT_L's low byte, the volume of the
+   two speakers. SOUNDCNT_X turns the sound circuit on. */
+#define REG_NR50 (*(volatile u8 *)0x04000080)
+#define REG_SOUNDCNT_L (*(volatile u16 *)0x04000080)
+#define REG_SOUNDCNT_X (*(volatile u16 *)0x04000084)
+#define SOUNDCNT_X_ENABLE 0x80
+#define SOUNDCNT_X_ALL_TONES_ON 0x0f
 #define REG_SOUNDBIAS_H (*(volatile u8 *)0x04000089)
 #define REG_WAVE_RAM ((volatile u32 *)0x04000090)
 

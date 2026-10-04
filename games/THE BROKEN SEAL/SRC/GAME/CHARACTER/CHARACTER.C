@@ -14,6 +14,7 @@
 #include "GAME_STATE.H"
 #include "FRAME.H"
 #include "SAVE_STATE.H"
+#include "IO_REG.H"
 
 void GameState_InitDefaults(void);
 s32 Game_ResetForNewGameFar(s32);
@@ -586,13 +587,13 @@ void GameState_InitDefaults(void)
     zero = 0;
     START_DMA(&zero, gSaveStamp + 0x1c, 0x85000298);
     Owner_InitRecords();
-    gGameState.unknown_210 = 1;
-    gGameState.unknown_212 = 2;
-    gGameState.unknown_214 = 4;
-    gGameState.unknown_216 = 8;
-    gGameState.first_shortcut_keys = 0x200;
-    gGameState.second_shortcut_keys = 0x100;
-    gGameState.dash_keys = 2;
+    gGameState.a_keys = KEY_A;
+    gGameState.b_keys = KEY_B;
+    gGameState.select_keys = KEY_SELECT;
+    gGameState.start_keys = KEY_START;
+    gGameState.first_shortcut_keys = KEY_L;
+    gGameState.second_shortcut_keys = KEY_R;
+    gGameState.dash_keys = KEY_B;
     gGameState.first_shortcut = 0;
     gGameState.second_shortcut = 0;
     gGameState.selected_actor = 0;

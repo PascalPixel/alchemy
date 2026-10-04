@@ -3927,18 +3927,6 @@ FacingObject_TurnPairToFaceEachOther:
 	.thumb_func
 Func_080d36a8:
 	.incbin "baserom.gba", 0x000d369c, 0x00000020
-	.section .rom.000d36e8, "ax"
-	.global ObjectGroup_ApplyIndexedChildValue
-	.type ObjectGroup_ApplyIndexedChildValue, %function
-	.thumb_func
-ObjectGroup_ApplyIndexedChildValue:
-	.incbin "baserom.gba", 0x000d36e8, 0x00000050
-	.section .rom.000d3738, "ax"
-	.global Object_SetPartAttribute
-	.type Object_SetPartAttribute, %function
-	.thumb_func
-Object_SetPartAttribute:
-	.incbin "baserom.gba", 0x000d3738, 0x0000003c
 	.section .rom.000d3774, "ax"
 	.global Func_080d3780
 	.type Func_080d3780, %function
@@ -4685,7 +4673,10 @@ Graphics_ColorCurveB:
 	.incbin "baserom.gba", 0x000f027a, 0x00000040
 	.global Graphics_ColorCurveC
 Graphics_ColorCurveC:
-	.incbin "baserom.gba", 0x000f02ba, 0x00000b8e
+	.incbin "baserom.gba", 0x000f02ba, 0x000005c6
+	.global Data_080f088c
+Data_080f088c:
+	.incbin "baserom.gba", 0x000f0880, 0x000005c8
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x000f0e48, 0x00000050

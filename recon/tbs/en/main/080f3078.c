@@ -124,10 +124,14 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 /* FAKEMATCH: tied red selects native blue-first copy; 223 -> 213, unchanged instruction presence after ordinary forms fail. */
                 asm("" : "+r"(r));
                 g = b;
+                /* FAKEMATCH: independent channel lower-clamp lifetime after ordinary forms merge tests. */
+                asm("" : "+r"(g));
                 if (r < 8)
                     r = 8;
-                if (g < 8)
+                if (b < 8)
                     g = 8;
+                /* FAKEMATCH: retain second independent channel test by tied lifetime. */
+                asm("" : "+r"(b));
                 if (b < 8)
                     b = 8;
                 if (r > 28)
@@ -164,8 +168,8 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         case 0x10004:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                g = (c >> 5) & 31;
                 r = c & 31;
+                g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
                 if (r < 10)
                     r = 10;

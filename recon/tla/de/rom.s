@@ -4769,24 +4769,7 @@ BattlePres_SetActorModes:
 	.incbin "baserom.gba", 0x00126d14, 0x00000ea4
 	.section .rom.00127c96, "ax"
 	.incbin "baserom.gba", 0x00127c96, 0x00000422
-	.section .rom.001280d4, "ax"
-	.incbin "baserom.gba", 0x001280d4, 0x00000040
-	.section .rom.00128114, "ax"
-	.global Summon_IsEntryFlagged
-	.type Summon_IsEntryFlagged, %function
-	.thumb_func
-Summon_IsEntryFlagged:
-	.incbin "baserom.gba", 0x00128114, 0x00000050
-	.global Func_0812814c
-	.type Func_0812814c, %function
-	.thumb_func
-Func_0812814c:
-	.incbin "baserom.gba", 0x00128164, 0x00000028
-	.global Func_08128174
-	.type Func_08128174, %function
-	.thumb_func
-Func_08128174:
-	.incbin "baserom.gba", 0x0012818c, 0x00000020
+	.section .rom.001281ac, "ax"
 	.global Summon_GetEntryByte4
 	.type Summon_GetEntryByte4, %function
 	.thumb_func

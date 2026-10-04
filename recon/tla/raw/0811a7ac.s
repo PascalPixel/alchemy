@@ -43,13 +43,13 @@ BattlePresentation_SpawnActorObject:
 	lsls r5, r5, #1
 	add r5, r10
 	ldrh r0, [r5]
-	bl Func_081280bc
+	bl Summon_GetEntryValue
 	adds r1, r0, #0
 	cmp r6, #0
 	bne .L_0811a81a
 	ldrh r0, [r5]
 	str r1, [sp, #0]
-	bl Func_081280d8
+	bl Summon_GetEntryFlag1Field
 	mov r11, r0
 	ldr r1, [sp, #0]
 	b .L_0811a88c

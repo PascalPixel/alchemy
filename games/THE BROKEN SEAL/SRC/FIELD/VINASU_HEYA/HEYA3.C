@@ -530,7 +530,7 @@ s32 Scene_RunEntrySetup(void)
             DisplayBlend_EnableRunScript();
             /* FAKEMATCH: the do/while keeps the zero ahead of the register address. */
             do {
-                *(s16 *)&REG_BLDCNT = 0;
+                REG_BLDCNT = 0;
             } while (0);
             if (Engine_GameFlagIsSet(0x306)) {
                 BattleFx_SetQueuedSoundAndPlay(170);

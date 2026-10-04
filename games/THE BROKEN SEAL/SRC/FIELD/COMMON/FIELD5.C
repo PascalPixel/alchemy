@@ -290,7 +290,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             else
                 gGameState.hazard_steps = gGameState.hazard_limit / 2;
         }
-        if (gGameState.avoid_distance != 0 && gGameState.unknown_23e != 2) {
+        if (gGameState.avoid_distance != 0 && gGameState.scene_variant != 2) {
             gGameState.avoid_distance -= actor->speed_limit;
             if (gGameState.avoid_distance <= 0) {
                 gGameState.avoid_distance = 1;

@@ -67,7 +67,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     for (i = 0; SideObject_ActorKindIdMap[i][0] != -1; i++) {}
     total = count + i;
 
-    cancel = 2;
+    cancel = KEY_B;
     while (1) {
         if (gKeysRepeat & KEY_LEFT) {
             redraw = 1;

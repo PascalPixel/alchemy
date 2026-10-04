@@ -996,14 +996,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
             {
                 struct EffectStep *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
-                s32 mask;
-                /* FAKEMATCH: Initialize the mask after the loop counter. */
-                for (i = 0, mask = 3; i != 16; i++, step++) {
+                for (i = 0; i != 16; i++, step++) {
                     s32 image = i % 3;
                     EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                     projected.x /= 2;
                     blitters[i & 1](canvas, Ram_MapCellBuffer + image * 576, projected.x - 12, projected.y - 12, 24, 24);
-                    EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & mask) + 11));
+                    EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
                     step->variant++;
                 }
             }
@@ -1047,7 +1045,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             Audio_PlayCue(134);
         }
         if (frame == 6) {
-            if ((u32)kind_from_four <= 1 || kind == 7 || kind == 13 || kind == 18 || kind == 19 || kind == 23 || kind == 34 || kind == 100) {
+            if (kind == 4 || kind == 5 || kind == 7 || kind == 13 || kind == 18 || kind == 19 || kind == 23 || kind == 34 || kind == 100) {
                 BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
                 work->shake_frames = 8;
             } else if (kind == 20 || kind == 14 || kind == 33) {
@@ -1081,7 +1079,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         Runtime_ReleaseHeapBlock(46);
         BattleFx_RunPaletteRampMode1(command);
     } else {
-        if ((u32)kind_from_two <= 1 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
+        if (kind == 2 || kind == 3 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
             Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
         }
         Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);

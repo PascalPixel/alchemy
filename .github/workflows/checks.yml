@@ -49,8 +49,8 @@ jobs:
       - name: Test asset encoders and analysis tools on synthetic inputs
         run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p ags -p psynergy
 
-      - name: Test Alchemy command-line behavior
-        run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --test cli
+      - name: Test Alchemy commands and relocated build caches
+        run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --test cli --test build_script
 
       # These suites need neither ROMs nor the installed game compilers.
       # Compiler execution and the complete preprocessed C audit remain in make land.

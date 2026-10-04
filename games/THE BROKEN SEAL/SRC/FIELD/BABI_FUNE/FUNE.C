@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
+#include "IO_REG.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_POINT_POSITION.H"
 
@@ -184,7 +185,6 @@ void BabiFune_UpdateDriftingObject(u8 *obj);
 void BabiFune_UpdateWaves(void)
 {
     volatile u16 blend;
-    u8 zero;
     struct FixedPointPosition place;
     struct FixedPointPosition *pos;
     struct WaveMap *map;
@@ -202,7 +202,7 @@ void BabiFune_UpdateWaves(void)
             /* FAKEMATCH: outside a one-pass block the register's address is
                formed before the halfword is read back. */
             do {
-                *(volatile u16 *)0x04000052 = value;
+                REG_BLDALPHA = value;
             } while (0);
         }
         BabiFune_ShimmerPhase++;
@@ -251,9 +251,8 @@ void BabiFune_UpdateWaves(void)
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
             actor->unknown_64 = 60;
-            zero = 0;
             actor->unknown_66 = 1;
-            actor->motion_flags = zero;
+            actor->motion_flags = 0;
             actor->priority_flags = 2;
             actor->sprite->priority = 2;
             Engine_ObjectSetBlendMode(actor, OBJECT_BLEND_NORMAL);

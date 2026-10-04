@@ -242,9 +242,9 @@ void Func_08144aac(s32, struct DrawFuncs *);
 void BattleFx_RunSparkGroups(struct SummonAction *, s32);
 void BattleFx_RenderMode5(struct SummonAction *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
-void Func_081504b4(struct SummonAction *);
-void Func_081504c0(struct SummonAction *);
-void Func_081504cc(struct SummonAction *);
+void SummonFx_RunCanvasMode3(struct SummonAction *);
+void SummonFx_RunCanvasMode1(struct SummonAction *);
+void SummonFx_RunCanvasMode2(struct SummonAction *);
 void Func_08152475(void);
 void BattleFx_RunProjectileVolley(struct SummonAction *, s32);
 s32 Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -2107,11 +2107,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         Func_0801314c(188);
         Func_0801314c(104);
         if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
-            Func_081504c0(action);
+            SummonFx_RunCanvasMode1(action);
         else if (kind == 9 || kind == 67)
-            Func_081504cc(action);
+            SummonFx_RunCanvasMode2(action);
         else if (kind == 11)
-            Func_081504b4(action);
+            SummonFx_RunCanvasMode3(action);
         return;
     }
     if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 || kind == 72 || kind == 58 || kind == 59

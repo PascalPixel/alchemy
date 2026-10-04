@@ -1304,6 +1304,8 @@
     "*/recon/tla/de/rom.o"(.rom.0014cb60)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SERIES_A.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0014ef44)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SUMMON_CANVAS_MODES.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.001504d6)
     "*/recon/tla/de/rom.o"(.rom.00152470)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/PROJECTILE_VOLLEY_B.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0015265a)

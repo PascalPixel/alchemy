@@ -528,7 +528,7 @@ Func_0813cb34:
 	ldr r0, .L_0813cf7c
 	bl Scheduler_RemoveCallback
 	mov r0, r9
-	bl Func_081504c0
+	bl SummonFx_RunCanvasMode1
 	b .L_0813cf60
 .L_0813cf5c:
 	bl Func_08143bb8

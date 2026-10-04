@@ -796,11 +796,11 @@ Func_0814512c:
 	cmp r3, #3
 	bne .L_08145742
 	ldr r0, [sp, #52]
-	bl Func_081504c0
+	bl SummonFx_RunCanvasMode1
 	b .L_0814574e
 .L_08145742:
 	ldr r0, [sp, #52]
-	bl Func_081504b4
+	bl SummonFx_RunCanvasMode3
 	b .L_0814574e
 .L_0814574a:
 	bl Func_08143bb8

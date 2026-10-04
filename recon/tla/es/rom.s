@@ -5473,7 +5473,12 @@ Func_0814cb60:
 	.type BattleFx_RunSeriesA, %function
 	.thumb_func
 BattleFx_RunSeriesA:
-	.incbin "baserom.gba", 0x0014ef44, 0x0000352c
+	.incbin "baserom.gba", 0x0014ef44, 0x00001564
+	.section .rom.001504d6, "ax"
+	.incbin "baserom.gba", 0x001504d6, 0x00000002
+	.global SummonFx_RunCanvasEffect
+SummonFx_RunCanvasEffect:
+	.incbin "baserom.gba", 0x001504d8, 0x00001f98
 	.section .rom.00152470, "ax"
 	.global BattleFx_RunNoEffect
 	.type BattleFx_RunNoEffect, %function

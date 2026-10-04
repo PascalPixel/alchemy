@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081c11cc
+	.global SongFlag_Clear
 	.thumb_func
-Func_081c11cc:
+SongFlag_Clear:
 	movs r3, #7
 	ands r3, r0
 	movs r2, #1

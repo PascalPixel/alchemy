@@ -1436,7 +1436,7 @@
     "*/recon/tla/fr/rom.o"(.rom.001c1000)
     "*/recon/tla/fr/rom.o"(.rom.001c1014)
     "*/games/THE LOST AGE/SRC/SOUND/UPDATE_TOGGLE_MASK.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.001c117c)
+    "*/games/THE LOST AGE/SRC/SOUND/SONG_FLAG.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001c1188)
     "*/recon/tla/fr/rom.o"(.rom.001c11ac)
     "*/recon/tla/fr/rom.o"(.rom.001c11cc)

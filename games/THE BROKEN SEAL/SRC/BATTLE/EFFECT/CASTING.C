@@ -49,10 +49,10 @@ void BattleFx_StepPaletteToResource(s32 resource_id);
 
 void Audio_PlayCue(s32 cue);
 
-static __inline__ void LoadResource(s32 id, void *dest, s32 skip, s32 copy)
+static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
 {
     /* FAKEMATCH: Inline scope keeps each resource call's arguments local. */
-    Resource_LoadAndDecompress(id, dest, skip, copy);
+    Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
 static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
@@ -177,9 +177,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         BattleFx_BeginCanvasLayer(0);
     }
     REG_BLDALPHA = 0x1010;
-    LoadResource((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-    LoadResource((s32)&ResourceId_FireStreakSheet, work, 1, 0);
-    LoadResource((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
+    LoadResource(&ResourceId_ParticleSpritesA, sprites, 0, 0);
+    LoadResource(&ResourceId_FireStreakSheet, work, 1, 0);
+    LoadResource(&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
     /* FAKEMATCH: Local dimensions preserve the packing argument order. */
     {
         s32 width = 40;
@@ -187,28 +187,28 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         PackRows(Ram_MapCellBuffer, work->sheet + 0x5100, width, height);
     }
     if (kind == 5 || kind == 23) {
-        LoadResource((s32)&ResourceId_FlashBurstSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_FlashBurstSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 12) {
-        LoadResource((s32)&ResourceId_SkullSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_SkullSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 6 || kind == 27) {
-        LoadResource((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
-        LoadResource((s32)&ResourceId_LightningBoltSheet, Ram_MapCellBuffer + 0xc56, 1, 0);
+        LoadResource(&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_LightningBoltSheet, Ram_MapCellBuffer + 0xc56, 1, 0);
     } else if (kind == 31) {
-        LoadResource((s32)&ResourceId_RuneSheet, Ram_MapCellBuffer, 1, 1);
+        LoadResource(&ResourceId_RuneSheet, Ram_MapCellBuffer, 1, 1);
     } else if (kind == 8) {
-        LoadResource((s32)&ResourceId_RockSpireSheet, Ram_MapCellBuffer, 1, 1);
+        LoadResource(&ResourceId_RockSpireSheet, Ram_MapCellBuffer, 1, 1);
     } else if (kind == 14) {
-        LoadResource((s32)&ResourceId_BlueFlameSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_BlueFlameSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 30) {
-        LoadResource((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 16) {
-        LoadResource((s32)&ResourceId_IceChipSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_IceChipSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 20) {
-        LoadResource((s32)&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);
     } else if ((u32)(kind - 33) <= 1) {
-        LoadResource((s32)&ResourceId_FlameSheetA, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_FlameSheetA, Ram_MapCellBuffer, 1, 0);
     } else if (kind != 11 && kind != 32) {
-        LoadResource((s32)&ResourceId_SmokeSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_SmokeSheet, Ram_MapCellBuffer, 1, 0);
     }
     switch (kind) {
     case 0:
@@ -221,7 +221,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 12:
     case 13:
     case 33:
-        LoadResource((s32)&ResourceId_VenusDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+        LoadResource(&ResourceId_VenusDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     case 2:
     case 14:
@@ -230,7 +230,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 17:
     case 18:
     case 19:
-        LoadResource((s32)&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+        LoadResource(&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     case 3:
     case 5:
@@ -242,7 +242,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 25:
     case 34:
     case 35:
-        LoadResource((s32)&ResourceId_MarsDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+        LoadResource(&ResourceId_MarsDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     case 1:
     case 6:
@@ -253,10 +253,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 30:
     case 31:
     case 32:
-        LoadResource((s32)&ResourceId_JupiterDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+        LoadResource(&ResourceId_JupiterDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     case 100:
-        LoadResource((s32)&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+        LoadResource(&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     }
     work->transfer_mode = 2;
@@ -470,13 +470,13 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         }
     }
     if (kind == 11) {
-        LoadResource((s32)&ResourceId_CounterRevealSheet, work, 1, 1);
-        LoadResource((s32)&ResourceId_RedCrescentSheetA, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_CounterRevealSheet, work, 1, 1);
+        LoadResource(&ResourceId_RedCrescentSheetA, Ram_MapCellBuffer, 1, 0);
         REG_BLDALPHA = 0xe10;
     }
     if (kind == 32) {
-        LoadResource((s32)&ResourceId_BlueBeastSheet, work, 1, 1);
-        LoadResource((s32)&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer, 1, 0);
+        LoadResource(&ResourceId_BlueBeastSheet, work, 1, 1);
+        LoadResource(&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer, 1, 0);
         REG_BLDALPHA = 0xe10;
     }
     if (kind != 7 && kind != 13 && kind != 18 && kind != 11 && kind != 32 && kind != 19) {

@@ -49,7 +49,7 @@ Func_081c0c1c:
 .L_081c0c74:
 	.4byte gMusicVolume
 .L_081c0c78:
-	.4byte Data_02005810
+	.4byte gMusicVolumeStep
 .L_081c0c7c:
 	.4byte Data_02005834
 .L_081c0c80:

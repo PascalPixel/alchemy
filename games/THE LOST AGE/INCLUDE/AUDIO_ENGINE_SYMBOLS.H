@@ -17,6 +17,7 @@ enum AudioCommandMask {
 
 extern u16 gMusicVolume;
 extern u16 gMusicVolumeTarget;
+extern u16 gMusicVolumeStep;
 extern u8 gMusicRestoreDelay;
 extern u8 Audio_CommandMask;
 

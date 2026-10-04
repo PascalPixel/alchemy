@@ -71,7 +71,7 @@ extern struct AudioFrameState Data_03001138;
 extern u8 Data_02005814;
 extern u16 Data_02005820[8];
 extern u16 Data_02005830;
-extern u16 Data_02005810;
+extern u16 gMusicVolumeStep;
 extern u16 gMusicVolume;
 extern u16 gMusicVolumeTarget;
 extern u8 gMusicRestoreDelay;
@@ -164,7 +164,7 @@ void AudioCommand_Play(s32 cue)
             else
                 *(s16 *)&gMusicVolume = 0x100;
             *(s16 *)&gMusicVolumeTarget = 0x100;
-            *(s16 *)&Data_02005810 = 4;
+            *(s16 *)&gMusicVolumeStep = 4;
             Data_02005814 = 0;
         }
     }

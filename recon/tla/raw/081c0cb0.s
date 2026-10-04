@@ -195,7 +195,7 @@ Func_081c0cb0:
 .L_081c0e20:
 	.4byte gMusicVolumeTarget
 .L_081c0e24:
-	.4byte Data_02005810
+	.4byte gMusicVolumeStep
 .L_081c0e28:
 	.4byte Data_02005814
 .L_081c0e2c:

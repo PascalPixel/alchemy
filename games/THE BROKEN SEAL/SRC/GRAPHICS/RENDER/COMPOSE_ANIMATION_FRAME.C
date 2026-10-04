@@ -5,8 +5,9 @@
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
-extern u8 gMenuCtrlWork[];
-extern u8 gWorkSlot[];
+#include "IO_REG.H"
+#include "HEAP_STATE.H"
+extern void *gMenuCtrlWork[];
 
 /* Steps the scripts of a composite sprite's layers, picks each layer's frame
    for the facing direction and, when a frame changed, draws the layers in
@@ -58,15 +59,15 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
     s32 tile;
 
     changed = 0;
-    ctx = *(struct ObjectSystemWork **)gMenuCtrlWork;
+    ctx = (struct ObjectSystemWork *)gMenuCtrlWork[0];
     held = 1;
-    draw = *(DrawFn *)&gMenuCtrlWork[184];
+    draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
     if (draw == 0) {
-        block = (void *)Runtime_AllocateHeapBlock(52, (s32)Render_DecodeFrameCodeSize);
+        block = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
         Dma_Set(Render_DecodeFrame, block,
-                (((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) | 0x84000000,
-                (volatile u32 *)0x040000d4);
-        draw = *(DrawFn *)&gMenuCtrlWork[184];
+                (((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) | (DMA_ENABLE32 | DMA_32BIT),
+                REG_DMA3);
+        draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
         held = 0;
     }
 
@@ -289,9 +290,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
         tile = VramBlock_LoadCached(obj->slot, size, 0);
         {
             void *vram = (void *)(0x06010000 + (tile << 5));
-            UploadFn *slots = (UploadFn *)gWorkSlot;
-
-            slots[53](buf, obj->width, obj->height, vram);
+            ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(buf, obj->width, obj->height, vram);
         }
         obj->part[0].tile = tile;
         obj->dirty = 0;

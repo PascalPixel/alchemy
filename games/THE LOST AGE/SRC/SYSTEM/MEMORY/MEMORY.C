@@ -3,6 +3,25 @@
 #include "IWRAM_CALL.H"
 #include "RUNTIME_MEM.H"
 
+/* The sound mixer's workspace, which the IWRAM heap ends at. */
+extern u8 IwramSoundMixWorkspace[];
+
+/* The IWRAM left between the heap's cursor and the mixer's workspace. */
+s32 Runtime_GetRemainingIwram(void)
+{
+    struct HeapSlots *work = Ram_HeapSlots;
+
+    return (s32)IwramSoundMixWorkspace - (s32)work->next_iwram;
+}
+
+/* The EWRAM left between the heap's cursor and the end of EWRAM. */
+s32 Runtime_GetRemainingEwram(void)
+{
+    struct HeapSlots *work = Ram_HeapSlots;
+
+    return 0x02040000 - (s32)work->next_ewram;
+}
+
 /* Hands out a block for the heap slot at byte offset kind once, from IWRAM
    while it lasts and then from EWRAM below 0x02040000, and keeps it in the
    slot; ⚓️ passes the offset where ☀️ passes the slot number. Slots 0 and

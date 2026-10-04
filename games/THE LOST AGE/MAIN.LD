@@ -127,8 +127,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00014bac)
     "*/recon/tla/ja/rom.o"(.rom.00014c4c)
     "*/recon/tla/ja/rom.o"(.rom.00014c6c)
-    "*/recon/tla/ja/rom.o"(.rom.00014ca0)
-    "*/recon/tla/ja/rom.o"(.rom.00014cb0)
     "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/MEMORY.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00014de0)
     "*/recon/tla/ja/rom.o"(.rom.00014de4)

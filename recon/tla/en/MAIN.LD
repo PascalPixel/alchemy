@@ -123,8 +123,6 @@
         "*/recon/tla/raw/08014bac.o"(.text)
         "*/recon/tla/raw/08014c4c.o"(.text)
         "*/recon/tla/raw/08014c6c.o"(.text)
-        "*/recon/tla/raw/08014ca0.o"(.text)
-        "*/recon/tla/raw/08014cb0.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/MEMORY.o"(.text)
         "*/recon/tla/raw/08014de0.o"(.text)
         "*/recon/tla/raw/08014de4.o"(.text)

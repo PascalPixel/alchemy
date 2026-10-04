@@ -11,7 +11,7 @@ Func_08196a28:
 	ldrb r3, [r5, #1]
 	adds r7, r1, #0
 	lsls r6, r3
-	bl Func_08014ca0
+	bl Runtime_GetRemainingIwram
 	adds r2, r6, #0
 	adds r2, #8
 	cmp r0, r2

@@ -290,18 +290,6 @@ Func_08014c4c:
 	.thumb_func
 Func_08014c6c:
 	.incbin "baserom.gba", 0x00014c98, 0x00000034
-	.section .rom.00014ccc, "ax"
-	.global Func_08014ca0
-	.type Func_08014ca0, %function
-	.thumb_func
-Func_08014ca0:
-	.incbin "baserom.gba", 0x00014ccc, 0x00000010
-	.section .rom.00014cdc, "ax"
-	.global Func_08014cb0
-	.type Func_08014cb0, %function
-	.thumb_func
-Func_08014cb0:
-	.incbin "baserom.gba", 0x00014cdc, 0x00000010
 	.section .rom.00014e0c, "ax"
 	@ Uncredited four-byte tail; independent purpose is unproved.
 	.incbin "baserom.gba", 0x00014e0c, 0x00000004

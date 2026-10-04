@@ -114,8 +114,6 @@
     "*/recon/tla/it/rom.o"(.rom.00014bd8)
     "*/recon/tla/it/rom.o"(.rom.00014c78)
     "*/recon/tla/it/rom.o"(.rom.00014c98)
-    "*/recon/tla/it/rom.o"(.rom.00014ccc)
-    "*/recon/tla/it/rom.o"(.rom.00014cdc)
     "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/MEMORY.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00014e0c)
     "*/recon/tla/it/rom.o"(.rom.00014e10)

@@ -84,11 +84,11 @@ Runtime_ReleaseHeapBlockFar:
 	.global Func_08000158
 	.thumb_func
 Func_08000158:
-	overlay_veneer Func_08014ca0
+	overlay_veneer Runtime_GetRemainingIwram
 	.global Func_08000160
 	.thumb_func
 Func_08000160:
-	overlay_veneer Func_08014cb0
+	overlay_veneer Runtime_GetRemainingEwram
 	.global Runtime_BumpAllocateFar
 	.thumb_func
 Runtime_BumpAllocateFar:

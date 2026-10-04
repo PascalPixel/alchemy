@@ -30,41 +30,16 @@ extern u8 gMapCellBuffer[];
 
 void BattlePres_ConfigureEffectDisplay(void)
 {
-    /* FAKEMATCH: the queued write is QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C)
-     * written out inline with that function's two odd constructs: the loop that
-     * runs once around the IME read and the count stored through an explicit u16
-     * pointer. */
-    volatile u16 *ime;
-    struct IoWriteQueue *q;
-    u32 saved;
-    s32 count;
-
-    *(volatile u16 *)0x04000050 = 0;
-    *(volatile u16 *)0x04000052 = 0x100e;
-    *(volatile u16 *)0x04000040 = 0x00f0;
-    *(volatile u16 *)0x04000044 = 0x1088;
-    *(volatile u16 *)0x04000042 = 0x00f0;
-    *(volatile u16 *)0x04000046 = 0x1088;
-    *(volatile u16 *)0x04000048 = 0x3537;
-    *(volatile u16 *)0x0400004a = 0x3f21;
-
-    q = &gIoWriteQueue;
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-    do {
-        ime = &REG_IME;
-        saved = *ime;
-    } while (0);
-    *ime = (u16)ime;
-    count = q->count;
-    if (count <= 31) {
-        u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
-        *(u16 *)&q->count = count + 1;
-        *destination++ = 0x7741;
-        *destination++ = 0x04000000;
-        *destination = 0x20000;
-    }
-    *ime = saved;
-
+    REG_BLDCNT = 0;
+    REG_BLDALPHA = 0x100e;
+    REG_WIN0H = 0x00f0;
+    REG_WIN0V = 0x1088;
+    REG_WIN1H = 0x00f0;
+    REG_WIN1V = 0x1088;
+    REG_WININ = 0x3537;
+    REG_WINOUT = 0x3f21;
+    /* DISPCNT: mode 1, 1D sprite tiles, BG0 to BG2, objects and both windows. */
+    IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
     WaitFrames(1);
 }
 

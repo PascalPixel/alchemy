@@ -238,5 +238,5 @@ void WaitFrames(s32 frames)
 
 void Runtime_SetMainState19(void)
 {
-    Data_03001b00 = 19;
+    gKeyRepeatTimer = 19;
 }

@@ -36,7 +36,7 @@ void HaidiaDou_RunProbedColumnScene(void)
             Engine_ActorSetSpritePriority(10, 3);
             *(u8 *)((s32)Object_GetById(probe.actor_slot) + 85) = 3;
             ObjectMotion_OffsetPositionAndResetMotion(probe.actor_slot, -6, 0);
-            SceneActor_WaitActorDescent((u8 *)Object_GetById(probe.actor_slot));
+            SceneActor_WaitActorDescent(Object_GetById(probe.actor_slot));
             Object_SetModeById(probe.actor_slot, 8);
             {
                 u8 *obj = (u8 *)Object_GetById(probe.actor_slot);

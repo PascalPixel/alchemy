@@ -83,14 +83,15 @@ struct FieldActor {
     union FieldCoordinate x;
     union FieldCoordinate y;
     union FieldCoordinate z;
-    /* The height a falling actor lands on. */
+    /* The ground height under the actor, which a falling actor lands on. */
     s32 terrain_height;
     /* The sprite's scale on each axis; 0x10000 draws it at full size. */
     s32 scale_x;
     s32 scale_y;
     /* How near another actor must come to touch this one. */
     u16 radius;
-    u8 unknown_22;
+    /* The map layer the actor stands on, for its heights and collision. */
+    u8 terrain_id;
     u8 priority_flags;
     s32 velocity_x;
     s32 velocity_y;
@@ -101,7 +102,8 @@ struct FieldActor {
     s32 target_x;
     s32 target_y;
     s32 target_z;
-    /* A falling actor's rebound factor, and the pull of its fall. */
+    /* What a landing keeps of the fall speed, and what pulls the actor down
+       each frame while it falls toward the ground. */
     s32 bounce;
     s32 gravity;
     /* The height a rise starts from; rise_counter lifts the actor above it. */

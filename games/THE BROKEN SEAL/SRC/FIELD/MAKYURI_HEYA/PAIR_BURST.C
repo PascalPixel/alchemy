@@ -19,7 +19,7 @@ void MakyuriHeya_UpdateLeaderEffectTarget(void)
     struct FieldActor *actor = Object_GetById(0);
     struct LeaderEffectWork *work = *(struct LeaderEffectWork **)Ram_ActorEffectWork;
 
-    if (actor->unknown_22 == 0 && actor->z.fixed >> 20 > 12 && actor->z.fixed >> 20 <= 18)
+    if (actor->terrain_id == 0 && actor->z.fixed >> 20 > 12 && actor->z.fixed >> 20 <= 18)
         work->target = NULL;
     else
         work->target = actor;

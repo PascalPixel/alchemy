@@ -733,7 +733,7 @@ void BiribinoMura_PushFacedBlock(void)
         (leader->z.part.pixel + (s16)BiribinoMura_FacingCellSteps[dir]) >> 4);
     if (block != NULL) {
         zero = 0;
-        block->unknown_22 = 2;
+        block->terrain_id = 2;
         p = pos;
         step = BiribinoMura_FacingCellSteps[dir];
         p[0].fixed = block->x.fixed + (step & -0x10000);
@@ -805,7 +805,7 @@ void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
     sprite = effect->sprite;
     Engine_ObjectSetScript(effect, Mura_SpawnScript);
     effect->motion_flags = 0;
-    effect->unknown_22 = 1;
+    effect->terrain_id = 1;
     effect->priority_flags = 2;
     if (sprite == NULL)
         return;

@@ -213,7 +213,7 @@ void StagedActor_PushActorAhead(void)
         return;
     }
 
-    target->unknown_22 = 2;
+    target->terrain_id = 2;
     zero = 0;
 
     step = KorosseoKawa_DirectionSteps[dir];

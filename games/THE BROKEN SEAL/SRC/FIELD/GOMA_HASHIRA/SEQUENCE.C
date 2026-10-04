@@ -98,7 +98,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
     if (GameFlag_IsSet(0x301) != 0) {
         Actor_SetPosition(10, 0x2680000, 0xe80000);
         if (gGameState.entrance == 2 || gGameState.entrance == 3) {
-            Object_GetById(10)->unknown_22 = 2;
+            Object_GetById(10)->terrain_id = 2;
             actor = Object_GetById(10);
             actor->y.fixed = actor->y.fixed - 1;
             Object_GetById(10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -110,7 +110,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
         Engine_EventWaitForScreen();
         Actor_SetPosition(9, 0x1800000, 0xc00000);
         Battle_WaitMode0(60);
-        Object_GetById(9)->unknown_22 = 2;
+        Object_GetById(9)->terrain_id = 2;
         Actor_MoveToAndWait(9, 0x198, 192);
         Battle_WaitMode0(60);
         FieldScene_RunPillarSequence();

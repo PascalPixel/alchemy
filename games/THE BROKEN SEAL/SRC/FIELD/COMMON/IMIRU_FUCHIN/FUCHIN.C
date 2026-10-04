@@ -919,7 +919,7 @@ void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
 
     if (actor != NULL) {
         Engine_ActorSetSpritePriority(id, 3);
-        actor->unknown_22 = 2;
+        actor->terrain_id = 2;
         actor->priority_flags |= 2;
         actor->x.fixed = (tile_x << 20) + 0x80000;
         actor->z.fixed = (tile_z << 20) + 0x80000;
@@ -1618,16 +1618,16 @@ void SceneActor_StepSubjectAlongHeading(void)
         probe.z = (subject->z.fixed & (s32)0xfff00000) + 0x80000;
         z = probe.z;
         x = probe.x;
-        goal = GetMapCellCollision(subject->unknown_22, x, z);
+        goal = GetMapCellCollision(subject->terrain_id, x, z);
         /*
          * 0x100000 is built by shifting, not loaded as a constant.  The probe
          * block is passed by address and is advanced by the callee.
          */
         Vector_AddPolarOffset(0x100000, heading, &probe);
 
-        marker = GetMapCellCollision(subject->unknown_22, probe.x, probe.z);
+        marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
         if (marker == 255
-                || Map_GetTerrainHeight(subject->unknown_22, probe.x, probe.z)
+                || Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z)
                     - subject->y.fixed > 0x80000) {
             subject->facing = (u16)heading;
             goto tail;
@@ -1651,7 +1651,7 @@ void SceneActor_StepSubjectAlongHeading(void)
 
         goto advance_probe;
 continue_probe:
-        if (Map_GetTerrainHeight(subject->unknown_22, probe.x, probe.z)
+        if (Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z)
                 - subject->y.fixed > 0x80000) {
             goto finish_probe;
         }
@@ -1668,7 +1668,7 @@ continue_probe:
 advance_probe:
         /* FAKEMATCH: retain the measured second probe call's stack-address order. */
         SceneActor_AdvanceProbe(0x100000, heading, &probe);
-        marker = GetMapCellCollision(subject->unknown_22, probe.x, probe.z);
+        marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
         if (marker != 255) {
             goto continue_probe;
         }

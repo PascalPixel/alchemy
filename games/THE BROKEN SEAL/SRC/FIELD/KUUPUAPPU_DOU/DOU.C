@@ -215,7 +215,7 @@ void KuupuappuDou_PushBlockAhead(void)
     if (beyond != 0 && (beyond->collision_flags & 1)) {
         return;
     }
-    block->unknown_22 = 2;
+    block->terrain_id = 2;
     zero = 0;
     p = pos;
     p[0].fixed = block->x.fixed + (KuupuappuDou_DirectionSteps[direction] & 0xffff0000);

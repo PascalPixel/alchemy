@@ -98,7 +98,7 @@ void VinasuHeya_SettlePushedBlocks(void)
             Engine_ActorSetSpritePriority(0, 3);
         }
         Engine_ActorSetSpriteFlags(Object_GetById(id), 0);
-        block->unknown_22 = 0;
+        block->terrain_id = 0;
         block->motion_flags = 3;
         block->bounce = 0;
         block->gravity = 0x1999;

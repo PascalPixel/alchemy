@@ -31,7 +31,7 @@ void FieldScene_RunScene3a6_020014ac(void)
     Object_SetModeById(9, 3);
     *(u8 *)((s32)Object_GetById(9) + 85) = 3;
     ObjectMotion_OffsetPositionAndResetMotion(9, 6, 0);
-    SceneActor_WaitActorDescent((u8 *)Actor_Get(9));
+    SceneActor_WaitActorDescent(Actor_Get(9));
     Object_SetModeById(9, 8);
     Engine_ActorSetSpritePriority(9, 3);
     *(u8 *)((s32)Object_GetById(9) + 35) = 2;

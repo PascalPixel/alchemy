@@ -144,7 +144,7 @@ void VinasuHeya_RunCellPushScene(void)
                 }
                 actor = Object_GetById(9);
                 Engine_ActorSetSpriteFlags(actor, 0);
-                block->unknown_22 = set;
+                block->terrain_id = set;
                 block->motion_flags = 3;
                 block->gravity = 0x1999;
                 block->bounce = set;

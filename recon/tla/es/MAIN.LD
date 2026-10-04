@@ -1161,7 +1161,7 @@
     "*/games/THE LOST AGE/SRC/BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.001201dc)
     "*/games/COMMON/SRC/BATTLE/EFFECT/CAN_AFFECT_DEFEATED_UNIT.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.001203c0)
+    "*/games/THE LOST AGE/SRC/BATTLE/PARTY/INSERT_UNIT.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0012046c)
     "*/games/COMMON/SRC/BATTLE/CHECK_STATUS_OR_SPECIAL_ID.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.001224f0)

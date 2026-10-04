@@ -23,7 +23,22 @@
  * the union word store and tile clear are alias set 0). Tried: every order
  * of entry/clear/sentinel/x/y/word (both clear forms, with active and/or kind
  * through u8 casts), field/u16/s16/u32 casts of x, y, word and clear, a
- * separate bit-field struct, entry split across a barrier, a slot local. */
+ * separate bit-field struct, entry split across a barrier, a slot local.
+ * 2026-10-04 sun w2 finisher 3: the draft below is that 2-off form (alchemy
+ * diff 08022a7c,08022b44: differ 2). Measured with -fsched-verbose: the
+ * reload copy 326 (adds r7, r6, #0) has two dependants (93, the block end)
+ * and priority prio(93) + 1 = 20; the x store has priority 20 only through
+ * its anti dependence on r3 for the word's pool load (anti costs 0), and
+ * three or four dependants. The ROM order needs the copy to beat the x
+ * store and the x store to beat 93 (six dependants) one cycle later, i.e.
+ * prio(copy) >= prio(93) + 2, impossible while 93 is the copy's only real
+ * dependant; so the ROM's dependence graph here differs, not just a tie.
+ * Also measured: the alias sets. RenderOutput's set (25) holds int and u32
+ * through its table union, so a u32-typed word or clear still conflicts
+ * with x/y; a non-union word store or a separate x/y view (no ints) unpins
+ * the word store from the window load and everything floats (14-16);
+ * volatile barriers after sentinel, x, y or entry give 10-12; a "+r" copy
+ * of entry before the + 16 swaps r6/r7 (38). */
 #include "RENDER_INPUT.H"
 #include "IWRAM_CALL.H"
 #include "EDITION.H"
@@ -139,16 +154,20 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     {
         struct RenderOutput *output = RenderOutput_AcquireFree();
         struct PreviewSprite *entry;
+        u32 zero;
         if (output) {
             output->active = 1;
             output->kind = 1;
             output->index = Resource_LoadIntoFreeSlot(128);
             entry = (struct PreviewSprite *)((u8 *)output + 16);
-            output->table.value = 0;
             output->sentinel = 240;
             output->x = 120;
             output->y = 120;
             entry->attributes.word = 0x40000400;
+            zero = 0;
+            /* FAKEMATCH: a fresh zero keeps the window chain in r9 */
+            __asm__("" : "=r"(zero) : "0"(zero));
+            entry->tile.value = zero;
             entry->attributes.bits.x = win->x * 8 + x;
             entry->attributes.bits.y = win->y * 8 + y;
             entry->tile.bits.index = Resource_GetBuffer((u8)output->index, rising ? Data_080313a4 : Data_08031424);

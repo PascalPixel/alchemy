@@ -14,7 +14,7 @@ struct OwnerGrowthRecord {
 
 extern struct OwnerGrowthRecord Owner_GrowthRecords[8];
 
-struct OwnerGrowthRecord *Owner_GetRecordStride180(s32 index)
+struct OwnerGrowthRecord *Character_GetDefinition(s32 index)
 {
     /* FAKEMATCH: keep the row width in the native multiply operand register. */
     register s32 stride asm("r3") = sizeof(struct OwnerGrowthRecord);

@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern u16 Data_02004c00;
+extern u16 gScratchWord;
 extern s16 Flash_Handler0;
 extern u32 *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
@@ -13,7 +13,7 @@ extern u32 gFrameTick;
 
 void DisplayScroll_UpdateObjects(void)
 {
-    u32 frame = Data_02004c00;
+    u32 frame = gScratchWord;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
     u32 *entry = gFlashNumRemainingBytes + 48;
@@ -35,5 +35,5 @@ void DisplayScroll_UpdateObjects(void)
     }
     Dma_Set(gFlashNumRemainingBytes, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
     if (Flash_Handler0 == 0 && (gFrameTick & 3) == 0)
-        Data_02004c00++;
+        gScratchWord++;
 }

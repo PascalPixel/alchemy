@@ -149,19 +149,19 @@ BattlePres_RunUnitAction:
 	adds r0, r6, #0
 	str r7, [r6]
 	str r7, [r6, #24]
-	bl Func_080c9020
+	bl BattleFx_RunIceFleckBurstFar
 	movs r3, #1
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Func_080c9020
+	bl BattleFx_RunIceFleckBurstFar
 	movs r3, #2
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Func_080c9020
+	bl BattleFx_RunIceFleckBurstFar
 	movs r3, #3
 	str r3, [r6]
 	adds r0, r6, #0
-	bl Func_080c9020
+	bl BattleFx_RunIceFleckBurstFar
 	adds r0, r6, #0
 	str r7, [r6]
 	bl BattleFx_DispatchModeFar

@@ -19,7 +19,7 @@ struct State_080935b0 {
     s32 fourth;
 };
 
-extern u8 Data_03001af4[];
+extern u8 gScanlinePitch[];
 s32 BattleFx_StepRatioTransition(void);
 
 struct Work_080936a0 {
@@ -82,7 +82,7 @@ s32 BattleFx_StepRatioTransition(void)
     (*step)++;
     offset = *from + __divsi3(delta * *step, *duration);
     *(s32 *)(work + 0x34c) = Iwram_MulQ16(*(s32 *)(work + 0x348), offset);
-    *(u32 *)Data_03001af4 = *(u16 *)(work + 0x118) + 1;
+    *(u32 *)gScanlinePitch = *(u16 *)(work + 0x118) + 1;
     if (*step == *duration) {
         *duration = 0;
         Scheduler_RemoveCallback((u32)(BattleFx_StepRatioTransition));

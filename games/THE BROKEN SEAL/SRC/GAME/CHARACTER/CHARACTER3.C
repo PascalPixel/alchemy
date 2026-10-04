@@ -331,7 +331,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
         if (record <= 7) {
             for (i = 0; i <= 3; i++) {
-                *output += Owner_GetRecordStride180(record)->element_bonus[i];
+                *output += Character_GetDefinition(record)->element_bonus[i];
                 output++;
             }
         }

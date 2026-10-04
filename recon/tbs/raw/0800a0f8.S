@@ -147,7 +147,7 @@ Func_0800a0f8:
 	str	r3, [r6, #12]
 	b	.L_0800a344
 	.4byte Rom_Start + 0xc0
-	.4byte Data_03001f60
+	.4byte gScanlineAngle
 	.4byte gProjection + 0xc
 	.4byte gFrameCount
 .L_0800a31c:

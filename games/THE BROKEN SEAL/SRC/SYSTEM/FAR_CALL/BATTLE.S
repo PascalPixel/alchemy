@@ -21,9 +21,6 @@ Func_080b5010:
 	overlay_veneer BattleActor_SpawnObjectsForList
 	overlay_veneer Graphics_FadeAlphaOut
 	overlay_veneer Graphics_FadeAlphaIn
-	.global Func_080b5028
-	.thumb_func
-Func_080b5028:
 	.global BattlePres_SetupTransitionSceneFar
 	.thumb_func
 BattlePres_SetupTransitionSceneFar:
@@ -40,9 +37,6 @@ BattlePresentation_ConfigurePaletteFadeFar:
 	.thumb_func
 BattleBackground_LoadFar:
 	overlay_veneer BattleBackground_Load
-	.global Func_080b5048
-	.thumb_func
-Func_080b5048:
 	.global BattlePresentation_SetPaletteLevelFar
 	.thumb_func
 BattlePresentation_SetPaletteLevelFar:

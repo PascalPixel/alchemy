@@ -18,7 +18,7 @@
  * reset loop continues from it; the facing and the list side are if/else.
  * Tried without effect: a count variable set before or after the call, in
  * its own variable or in i or j; the four stage calls as a loop; five
- * minutes of alchemy permute. Func_080c9020 still needs its name. */
+ * minutes of alchemy permute. */
 #include "TYPES.H"
 
 struct BattlePresentationTransition {
@@ -69,7 +69,7 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void Object_SetMode(void *actor, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *actor, s32 mode);
-void Func_080c9020(struct BattlePresentationWork *work);
+void BattleFx_RunIceFleckBurstFar(struct BattlePresentationWork *work);
 void BattleFx_DispatchModeFar(struct BattlePresentationWork *work);
 void Actor_ResetMotionAtAnchor(s32 unit_id);
 
@@ -126,13 +126,13 @@ s32 BattlePres_RunUnitAction(s16 *action)
     i = 0;
     work.stage = 0;
     work.reserved_18 = 0;
-    Func_080c9020(&work);
+    BattleFx_RunIceFleckBurstFar(&work);
     work.stage = 1;
-    Func_080c9020(&work);
+    BattleFx_RunIceFleckBurstFar(&work);
     work.stage = 2;
-    Func_080c9020(&work);
+    BattleFx_RunIceFleckBurstFar(&work);
     work.stage = 3;
-    Func_080c9020(&work);
+    BattleFx_RunIceFleckBurstFar(&work);
     work.stage = 0;
     BattleFx_DispatchModeFar(&work);
     Object_SetMode(actor, 1);

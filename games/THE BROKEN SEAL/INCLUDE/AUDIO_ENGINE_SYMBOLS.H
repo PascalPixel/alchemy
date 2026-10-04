@@ -27,7 +27,9 @@ void Bios_CpuSet(const void *source, void *destination, u32 control);
 
 struct SoundPlayer;
 struct AudioTrackSlotWork;
-extern struct AudioTrackSlotWork *Data_02004c00;
+/* A scratch word the flash library, the credits scroll and the track packer
+   each use in turn; the packer keeps its work block here. */
+extern struct AudioTrackSlotWork *gScratchWord;
 extern struct SoundPlayer gMusicPlayerBgm;
 extern struct SoundPlayer gMusicPlayerFanfare;
 extern struct SoundPlayer Data_02004360;

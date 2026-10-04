@@ -104,11 +104,10 @@ s32 ArutinYama_RunAreaScene(void)
  * place the scene actors and restore the cells each story flag records. */
 void ArutinYama_ApplyEntryState(void)
 {
-    u32 i;
-    s32 rec7;
-    s32 rec8;
-    u8 *record;
-    u8 *p5;
+    s32 opened;
+    s32 flag;
+    struct FieldActor *actor;
+    u8 *map;
 
     if (Engine_GameFlagIsSet(0x109) == 0) {
         if (gGameState.entrance == 99) {
@@ -119,45 +118,45 @@ void ArutinYama_ApplyEntryState(void)
     if (Engine_GameFlagIsSet(0x8fd) == 0) {
         Engine_ActorSetPosition(8, 0, 0);
     } else {
-        record = Object_GetById(8);
-        if ((s32)record != 0) {
-            record[35] = 2;
-            Engine_ActorSetSpriteFlags((s32)record, 0);
+        actor = Object_GetById(8);
+        if (actor != 0) {
+            actor->priority_flags = 2;
+            Engine_ActorSetSpriteFlags(actor, 0);
         }
     }
-    record = Object_GetById(9);
-    if ((s32)record != 0) {
-        record[35] = 2;
-        Engine_ActorSetSpriteFlags((s32)record, 0);
+    actor = Object_GetById(9);
+    if (actor != 0) {
+        actor->priority_flags = 2;
+        Engine_ActorSetSpriteFlags(actor, 0);
     }
-    rec7 = Engine_GameFlagIsSet(0x8fd);
-    if (rec7 == 0) {
+    opened = Engine_GameFlagIsSet(0x8fd);
+    if (opened == 0) {
         Engine_ActorSetChildValue(10, 2);
-        rec8 = Engine_GameFlagIsSet(0x905);
-        if (rec8 != 0) {
+        flag = Engine_GameFlagIsSet(0x905);
+        if (flag != 0) {
             Engine_ActorSetAnimation(9, 0);
-            record = ((u8 *)Object_GetById(9));
-            *(s32 *)((s32)record + 108) = (s32)SceneState_ForwardByRuntimeSelector;
-            *(u8 *)((u8 *)Object_GetById(9) + 85) = rec7;
-            record = ((u8 *)Object_GetById(9));
-            *(s32 *)((s32)record + 12) = 0x200000;
+            actor = Object_GetById(9);
+            actor->update = SceneState_ForwardByRuntimeSelector;
+            Object_GetById(9)->motion_flags = opened;
+            actor = Object_GetById(9);
+            actor->y.fixed = 0x200000;
             Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
             Engine_ActorSetPosition(10, 0x780000, 0xd70000);
-            record = ((u8 *)Object_GetById(10));
-            *(u16 *)((s32)record + 6) = rec7;
+            actor = Object_GetById(10);
+            actor->facing = opened;
             Engine_ActorSetAnimation(10, 3);
             SceneState_StoreParamsAndInstallTask(0x820000, 0, 0xa80000, 0);
-            goto L_020022de;
+            return;
         }
         if (Engine_GameFlagIsSet(0x904) == 0) {
-            goto L_020022de;
+            return;
         }
         Engine_ActorSetAnimation(9, 0);
-        record = ((u8 *)Object_GetById(9));
-        *(s32 *)((s32)record + 108) = (s32)SceneState_ForwardByRuntimeSelector;
-        *(u8 *)((u8 *)Object_GetById(9) + 85) = rec8;
-        record = ((u8 *)Object_GetById(9));
-        *(s32 *)((s32)record + 12) = 0x200000;
+        actor = Object_GetById(9);
+        actor->update = SceneState_ForwardByRuntimeSelector;
+        Object_GetById(9)->motion_flags = flag;
+        actor = Object_GetById(9);
+        actor->y.fixed = 0x200000;
         Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
         Call3(Engine_ActorSetPosition, 10, 0x1040000, 0xd70000);
         {
@@ -166,36 +165,27 @@ void ArutinYama_ApplyEntryState(void)
             Call3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)script);
         }
     } else {
-        p5 = (s32)gMapWork[0];
+        map = gMapWork[0];
         Engine_ActorSetPosition(10, 0, 0);
         Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 2, 3, 14);
-        *(u16 *)((s32)p5 + 20) &= 0xfdff;
+        *(u16 *)(map + 20) &= 0xfdff;
         SceneActor_ClearCollisionFlagAndPlaceMarker(8);
         if (Engine_GameFlagIsSet(0x200) != 0) {
             Engine_ActorSetAnimation(8, 5);
             Call6(Engine_MapCopyCellAttributes, 7, 13, 1, 1, 9, 13);
-            record = ((u8 *)Object_GetById(8));
-            *(s32 *)((s32)record + 12) = 0;
-            {
-                u8 value = *(volatile u8 *)&record[35];
-            
-                record[35] = (u8)(value | 2);
-            }
+            actor = Object_GetById(8);
+            actor->y.fixed = 0;
+            actor->priority_flags |= 2;
         }
         SceneActor_ClearCollisionFlagAndPlaceMarker(9);
         if (Engine_GameFlagIsSet(0x201) != 0) {
             Engine_ActorSetAnimation(9, 5);
             Call6(Engine_MapCopyCellAttributes, 29, 1, 3, 1, 17, 13);
-            record = ((u8 *)Object_GetById(9));
-            *(s32 *)((s32)record + 12) = 0x200000;
-            {
-                u8 value = *(volatile u8 *)&record[35];
-            
-                record[35] = (u8)(value | 2);
-            }
+            actor = Object_GetById(9);
+            actor->y.fixed = 0x200000;
+            actor->priority_flags |= 2;
         }
     }
-    L_020022de:;
 }
 
 void FieldScene_RunScene3a4_02002310(void)

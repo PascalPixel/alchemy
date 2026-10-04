@@ -24,17 +24,17 @@ BattleFx_InitializeModeFar:
 	.thumb_func
 BattleFx_DispatchModeFar:
 	overlay_veneer BattleFx_DispatchMode
-	.global Func_080c9020
+	.global BattleFx_RunIceFleckBurstFar
 	.thumb_func
-Func_080c9020:
+BattleFx_RunIceFleckBurstFar:
 	overlay_veneer BattleFx_RunIceFleckBurst
 	.global BattleEffect_RunTileAndPaletteAnimationFar
 	.thumb_func
 BattleEffect_RunTileAndPaletteAnimationFar:
 	overlay_veneer BattleEffect_RunTileAndPaletteAnimation
-	.global Func_080c9030
+	.global BattleFx_RunGatheringBurstFar
 	.thumb_func
-Func_080c9030:
+BattleFx_RunGatheringBurstFar:
 	overlay_veneer BattleFx_RunGatheringBurst
 	.global BattlePresentation_PrepareSceneFar
 	.thumb_func

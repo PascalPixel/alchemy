@@ -41,7 +41,7 @@ void Owner_InitRecords(void)
             state = (struct OwnerRecordState *)Owner_GetState(*remote);
             if (state != 0) {
                 state->class_id = (u8)*remote;
-                tmpl = (struct OwnerEquipTemplate *)Owner_GetRecordStride180(state->class_id);
+                tmpl = (struct OwnerEquipTemplate *)Character_GetDefinition(state->class_id);
 
                 for (i = 14; i >= 0; i--)
                     state->inventory[i] = 0;

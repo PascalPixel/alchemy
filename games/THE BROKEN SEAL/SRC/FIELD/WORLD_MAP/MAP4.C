@@ -18,8 +18,8 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination)
     *(u16 *)(destination + 64) = *colors;
 }
 
-extern u32 Data_03001af4;
-extern u32 Data_03001f60;
+extern u32 gScanlinePitch;
+extern u32 gScanlineAngle;
 extern u32 Data_03001e40;
 extern void *Data_03001e50[];
 u32 Random16(void);
@@ -157,13 +157,13 @@ void WorldMap_UpdateView(void)
     Iwram_TransformVector((s32 *)&local, (s32 *)cam);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((u8 *)cam, pos);
-    if (Data_03001af4 != view->pitch) {
+    if (gScanlinePitch != view->pitch) {
         s32 c = Trig_Cos(view->pitch);
         s32 s = Trig_Sin(view->pitch);
 
         WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(c, s), pos, map->scanlines);
-        Data_03001f60 = 0;
-        Data_03001af4 = view->pitch;
+        gScanlineAngle = 0;
+        gScanlinePitch = view->pitch;
     }
     ((s32 (*)(void *, s32 *, void *, void *))Data_03001e50[46])(cam, pos, map->scanlines, buffer[Data_03001e40 & 1]);
 }

@@ -1002,6 +1002,8 @@
     "*/recon/tla/de/rom.o"(.rom.000e9a50)
     "*/recon/tla/de/rom.o"(.rom.000e9a84)
     "*/recon/tla/de/rom.o"(.rom.000e9adc)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SET_CALLBACK_WHEN_TARGET_UNSET.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.000e9f2c)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/GET_CYCLED_TABLE_WORD.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/FRAGMENT.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000ea054)

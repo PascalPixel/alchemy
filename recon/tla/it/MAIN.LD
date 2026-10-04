@@ -917,6 +917,8 @@
     "*/recon/tla/it/rom.o"(.rom.000dca44)
     "*/recon/tla/it/rom.o"(.rom.000dca78)
     "*/recon/tla/it/rom.o"(.rom.000dcad0)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SET_CALLBACK_WHEN_TARGET_UNSET.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.000dcf20)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/GET_CYCLED_TABLE_WORD.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/FRAGMENT.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000dd048)

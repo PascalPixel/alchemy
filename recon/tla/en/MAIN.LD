@@ -1513,7 +1513,7 @@
         "*/recon/tla/raw/080dcdc8.o"(.text)
         "*/recon/tla/raw/080dce20.o"(.text)
         "*/recon/tla/raw/080dce60.o"(.text)
-        "*/recon/tla/raw/080dcf08.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SET_CALLBACK_WHEN_TARGET_UNSET.o"(.text)
         "*/recon/tla/raw/080dcf2c.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/GET_CYCLED_TABLE_WORD.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/FRAGMENT.o"(.text)

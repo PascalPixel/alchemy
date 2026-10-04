@@ -4316,7 +4316,9 @@ Func_080dc978:
 	.type Func_080dca50, %function
 	.thumb_func
 Func_080dca50:
-	.incbin "baserom.gba", 0x000e5ad0, 0x00000478
+	.incbin "baserom.gba", 0x000e5ad0, 0x0000042c
+	.section .rom.000e5f20, "ax"
+	.incbin "baserom.gba", 0x000e5f20, 0x00000028
 	.section .rom.000e6048, "ax"
 	.global Func_080ca6a4
 	.type Func_080ca6a4, %function
@@ -4592,7 +4594,10 @@ ObjectMotion_StepAngleScript:
 	.incbin "baserom.gba", 0x000fc2f4, 0x00000480
 	.global Object_LinkedMotionScript
 Object_LinkedMotionScript:
-	.incbin "baserom.gba", 0x000fc774, 0x0000188c
+	.incbin "baserom.gba", 0x000fc774, 0x000001f4
+	.global BattleFx_UntargetedObjectScript
+BattleFx_UntargetedObjectScript:
+	.incbin "baserom.gba", 0x000fc968, 0x00001698
 	.section .rom.000fe028, "ax"
 	.global UiIcon_PrepareObjectFar
 	.type UiIcon_PrepareObjectFar, %function

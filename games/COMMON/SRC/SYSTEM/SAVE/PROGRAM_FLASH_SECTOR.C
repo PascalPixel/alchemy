@@ -1,4 +1,5 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 struct FlashChipInfo {
     u8 unknown_00[4];
@@ -25,8 +26,8 @@ u16 ProgramFlashSector(u16 sector, u8 *source)
         return result;
 
     CopyFlashReadRoutineToRam(savedCode);
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xFFFC) |
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xFFFC) |
         gFlash->control;
     gFlashNumRemainingBytes =
         gFlash->size;
@@ -43,8 +44,8 @@ u16 ProgramFlashSector(u16 sector, u8 *source)
         destination++;
     }
 
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xFFFC) | 3;
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xFFFC) | 3;
 
     return result;
 }

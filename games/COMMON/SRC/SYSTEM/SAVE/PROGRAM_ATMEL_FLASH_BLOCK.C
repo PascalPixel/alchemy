@@ -1,4 +1,5 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 struct FlashInfo08007220 {
     u8 unknown_00[24];
@@ -22,8 +23,8 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source)
         return 0x80ff;
 
     CopyFlashReadRoutineToRam(savedCode);
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xfffc) |
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xfffc) |
         Flash_ChipAtmelLayout.control;
 
     current = sector << 5;
@@ -49,7 +50,7 @@ attempt:
         current += 1;
     }
 
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xfffc) | 3;
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xfffc) | 3;
     return result;
 }

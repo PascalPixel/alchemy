@@ -27,6 +27,7 @@
  */
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 /* gFlash が指すフラッシュ管理ブロック。control は待ち時間設定値。 */
 struct FlashChipInfo {
@@ -51,8 +52,8 @@ u16 EraseFlashChip(void)
     u16 result;
     s32 *status;
 
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xFFFC) |
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xFFFC) |
         gFlash->control;
 
     *(volatile u8 *)0x0E005555 = 0xAA;
@@ -67,8 +68,8 @@ u16 EraseFlashChip(void)
     status = (s32 *)&Flash_Handler3;
     result = _call_via_r3(3, (u8 *)0x0E000000, 255, *status);
 
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xFFFC) | 3;
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xFFFC) | 3;
 
     return result;
 }

@@ -1,4 +1,5 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 /* The chip description a detected flash ID selects: five handlers, then the
    chip's geometry and timing, whose ID sits at offset 0x28. */
@@ -23,7 +24,7 @@ s32 IdentifyFlash(void)
     u16 id;
     const struct FlashChip *const *chip;
 
-    *(volatile u16 *)0x04000204 = (*(volatile u16 *)0x04000204 & ~3) | 3;
+    REG_WAITCNT = (REG_WAITCNT & ~3) | 3;
     id = ReadFlashId();
     chip = Flash_Chips;
     missing = 1;

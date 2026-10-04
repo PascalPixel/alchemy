@@ -1,4 +1,5 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 /* gFlash が指すフラッシュ機種表。 */
 struct FlashChipInfo {
@@ -96,8 +97,8 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
         destination++;
     }
 
-    *(volatile u16 *)0x04000204 =
-        (*(volatile u16 *)0x04000204 & 0xFFFC) | 3;
+    REG_WAITCNT =
+        (REG_WAITCNT & 0xFFFC) | 3;
 
     return status;
 }

@@ -1,4 +1,5 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 extern u8 *gFlash;
 extern volatile u8 gFlashTimerNum;
@@ -18,9 +19,9 @@ void StopFlashTimer(void)
     record--;
     *cursor = record;
 
-    *(volatile u16 *)0x04000208 = 0;
-    *(volatile u16 *)0x04000200 &= ~(u16)(8 << gFlashTimerNum);
-    *(volatile u16 *)0x04000208 = gFlashSavedIme;
+    REG_IME = 0;
+    REG_IE &= ~(u16)(8 << gFlashTimerNum);
+    REG_IME = gFlashSavedIme;
 }
 
 u8 ReadFlashByte(u8 *value)

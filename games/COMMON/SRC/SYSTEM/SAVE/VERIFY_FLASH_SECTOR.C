@@ -1,4 +1,5 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 /* The flash chip description: its five handlers, then its geometry. */
 struct FlashChipType {
@@ -23,7 +24,7 @@ s32 Flash_VerifySector(u16 sector, s32 source)
     u16 count;
     FlashVerifyCore core;
 
-    *(volatile u16 *)0x04000204 = (*(volatile u16 *)0x04000204 & 0xfffc) | 3;
+    REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
     from = (u16 *)VerifyFlashCore;
     from = (u16 *)((u32)from ^ 1);
     to = code;

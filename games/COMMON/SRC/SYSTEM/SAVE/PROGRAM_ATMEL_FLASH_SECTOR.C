@@ -1,4 +1,5 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
+#include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 struct Config_080071a8 {
     u8 pad_00[24];
@@ -23,8 +24,8 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
     slot = (u16)slot;
     destination = (volatile u8 *)(
         0x0e000000 + (slot << Flash_ChipAtmelLayout.shift));
-    saved_ime = *(volatile u16 *)0x04000208;
-    *(volatile u16 *)0x04000208 = 0;
+    saved_ime = REG_IME;
+    REG_IME = 0;
     *(volatile u8 *)0x0e005555 = 0xaa;
     *(volatile u8 *)0x0e002aaa = 0x55;
     *(volatile u8 *)0x0e005555 = 0xa0;
@@ -39,6 +40,6 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
 
     destination--;
     input--;
-    *(volatile u16 *)0x04000208 = saved_ime;
+    REG_IME = saved_ime;
     return Flash_Handler3(1, destination, *input);
 }

@@ -53,6 +53,15 @@ struct MapWork {
     struct MapLayer layers[4];       /* 0x108 */
 };
 
+/* A position on the world map, in 16.16 fixed point. */
+struct WorldPosition {
+    s32 x;
+    u8 unknown_04[4];
+    s32 y;
+};
+
+s32 GetWorldMapCollision(struct WorldPosition *position);
+
 LAYOUT_SIZE_GUARD(MapLayer_Size, struct MapLayer, 56);
 LAYOUT_OFFSET_GUARD(MapWork_Layers, struct MapWork, layers, 0x108);
 

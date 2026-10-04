@@ -1082,18 +1082,6 @@ Func_0802db64:
 	.thumb_func
 Func_0802db88:
 	.incbin "baserom.gba", 0x0002db04, 0x000000c0
-	.section .rom.0002dbc4, "ax"
-	.global Func_0802dc48
-	.type Func_0802dc48, %function
-	.thumb_func
-Func_0802dc48:
-	.incbin "baserom.gba", 0x0002dbc4, 0x00000074
-	.section .rom.0002dc38, "ax"
-	.global Func_0802dcbc
-	.type Func_0802dcbc, %function
-	.thumb_func
-Func_0802dcbc:
-	.incbin "baserom.gba", 0x0002dc38, 0x0000001c
 	.section .rom.0002dc54, "ax"
 	.global Func_0802dcd8
 	.type Func_0802dcd8, %function
@@ -1117,7 +1105,10 @@ Data_0802eec4:
 	.incbin "baserom.gba", 0x0002ee40, 0x00000100
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
-	.incbin "baserom.gba", 0x0002ef40, 0x0000020c
+	.incbin "baserom.gba", 0x0002ef40, 0x00000040
+	.global WorldMap_TerrainBehaviorTable
+WorldMap_TerrainBehaviorTable:
+	.incbin "baserom.gba", 0x0002ef80, 0x000001cc
 	.global ObjectDispatch_Table4
 ObjectDispatch_Table4:
 	.incbin "baserom.gba", 0x0002f14c, 0x00000030

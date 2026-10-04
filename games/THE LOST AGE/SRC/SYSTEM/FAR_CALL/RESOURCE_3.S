@@ -12,7 +12,7 @@ ResourceMetadata_SumCommandLengthsFar:
 	.global Func_080202b0
 	.thumb_func
 Func_080202b0:
-	overlay_veneer Func_0802dc48
+	overlay_veneer GetWorldMapTerrainBehavior
 	.global ResourceSlot_LoadFar
 	.thumb_func
 ResourceSlot_LoadFar:

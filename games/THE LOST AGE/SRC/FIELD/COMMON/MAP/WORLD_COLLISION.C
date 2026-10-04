@@ -1,11 +1,6 @@
 #include "RAM_BUFFER.H"
 #include "TYPES.H"
-
-struct WorldPosition {
-    s32 x;
-    u8 unknown_04[4];
-    s32 y;
-};
+#include "MAP.H"
 
 s32 GetWorldMapCollision(struct WorldPosition *position)
 {

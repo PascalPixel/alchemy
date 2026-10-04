@@ -1897,10 +1897,10 @@ Title_PromptBlendLevels:
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x000f7168, 0x00001e98
 	.section .rom.000f9440, "ax"
-	.global Unnamed_080f6440
-	.type Unnamed_080f6440, %function
+	.global ReelGame_RunFrame
+	.type ReelGame_RunFrame, %function
 	.thumb_func
-Unnamed_080f6440:
+ReelGame_RunFrame:
 	.incbin "baserom.gba", 0x000f9440, 0x00000eec
 	.section .rom.000fb708, "ax"
 	.global ReelGame_SparkCellOffsets

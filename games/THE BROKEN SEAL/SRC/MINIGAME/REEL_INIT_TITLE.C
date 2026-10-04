@@ -15,6 +15,7 @@
 #include "RESOURCE.H"
 #include "SYSTEM.H"
 #include "TBS_EDITION.H"
+#include "IO_REG.H"
 
 /* One of the five reels: where it stands, its twenty-one symbols, whether
    it is held and where it is to stop. */
@@ -107,7 +108,7 @@ void ReelGame_InitTitle(void)
     state->cursor = 0;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    *(volatile u16 *)0x04000050 = 0;
+    REG_BLDCNT = 0;
     window = UiWindow_CreateFar(18, 0, 12, 4, 6);
     state->sub_window = window;
     message = (s32)&MsgSlotsBet;
@@ -136,10 +137,10 @@ s32 PartyInventory_CountItemFar(s32 item);
 void Palette_DarkenSceneStep(void);
 void Palette_StepTowardResource(s32 resource);
 void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
-void Unnamed_080f6440(void);
+void ReelGame_RunFrame(void);
 void BattlePres_ProcessPendingTileTransfer(void);
 
-#define REG_DMA3 ((volatile u32 *)0x040000d4)
+
 
 /* The sparks live at the start of the map cell buffer. */
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
@@ -219,33 +220,33 @@ void ReelGame_Run(void)
                 *(volatile u16 *)(0x06003000 + j) = k * 32 + i + 148;
         }
     }
-    *(volatile u16 *)0x0400000a = 0x509;
-    *(volatile u16 *)0x0400000c = 0x680;
+    REG_BG1CNT = 0x509;
+    REG_BG2CNT = 0x680;
     gBgScroll[0].x = 0;
     gBgScroll[0].y = 0;
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
     gBgScroll[2].x = 0;
     gBgScroll[2].y = 0;
-    *(volatile u16 *)0x04000048 = 0x3737;
-    *(volatile u16 *)0x0400004a = 0x2727;
-    *(volatile u16 *)0x04000050 = 0x3f44;
-    *(volatile u16 *)0x04000052 = 0x1010;
-    *(volatile u16 *)0x04000014 = 0;
-    *(volatile u16 *)0x04000018 = 0;
-    *(volatile u16 *)0x04000016 = 0xff60;
-    *(volatile u16 *)0x0400001a = 0xff60;
-    *(volatile u16 *)0x04000040 = 0x28c8;
-    *(volatile u16 *)0x04000044 = 0x1878;
-    *(volatile u16 *)0x04000040 = 0xf0;
-    *(volatile u16 *)0x04000044 = 0xa0;
-    *(volatile u16 *)0x04000042 = 0xf0;
-    *(volatile u16 *)0x04000046 = 0xa0;
+    REG_WININ = 0x3737;
+    REG_WINOUT = 0x2727;
+    REG_BLDCNT = 0x3f44;
+    REG_BLDALPHA = 0x1010;
+    REG_BG1HOFS = 0;
+    REG_BG2HOFS = 0;
+    REG_BG1VOFS = 0xff60;
+    REG_BG2VOFS = 0xff60;
+    REG_WIN0H = 0x28c8;
+    REG_WIN0V = 0x1878;
+    REG_WIN0H = 0xf0;
+    REG_WIN0V = 0xa0;
+    REG_WIN1H = 0xf0;
+    REG_WIN1V = 0xa0;
     /* The saved sprite palette and the canvas size are declared here, once
        the display is set: the stack shows them made after the bet's
        address and before the state's. */
     {
-        u16 *shade = (u16 *)((u8 *)work + 0x200);
+        u16 *shade = (u16 *)(work->sheet + 0x200);
         s32 size = 0x8000;
 
         state->state = 0;
@@ -255,8 +256,8 @@ void ReelGame_Run(void)
         state->timer = 0;
         Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
             (void *)0x05000000, 0x84000020, REG_DMA3);
-        *(u16 *)0x05000080 = 0x2f8b;
-        *(u16 *)0x05000082 = 0x5bf6;
+        BG_PLTT_COLOR(4, 0) = 0x2f8b;
+        BG_PLTT_COLOR(4, 1) = 0x5bf6;
         entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
         Dma_Set(entry, (void *)0x05000200, 0x84000078, REG_DMA3);
         entry += 480;
@@ -310,7 +311,7 @@ void ReelGame_Run(void)
         Dma_Set((void *)0x05000200, shade, 0x84000080, REG_DMA3);
         Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
         Graphics_ScaleRgb555((u16 *)work, (u16 *)0x05000000, 0, 0x100);
-        *(volatile u16 *)0x04000000 = 0x3740;
+        REG_DISPCNT = 0x3740;
         if (PartyInventory_CountItemFar(228) == 1) {
             s32 window = UiWindow_CreateFar(6, 16, 18, 3, 6);
 
@@ -326,7 +327,7 @@ void ReelGame_Run(void)
             UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
         }
         work->transfer_pending = 0;
-        Scheduler_AddOrUpdateCallback((s32)Unnamed_080f6440, 0x480);
+        Scheduler_AddOrUpdateCallback((s32)ReelGame_RunFrame, 0x480);
         Scheduler_AddOrUpdateCallback((s32)BattlePres_ProcessPendingTileTransfer, 0x480);
 
         for (frame = 0; state->state != 10; frame++) {
@@ -451,7 +452,7 @@ void ReelGame_Run(void)
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         Scheduler_RemoveCallback((u32)BattlePres_ProcessPendingTileTransfer);
-        Scheduler_RemoveCallback((u32)Unnamed_080f6440);
+        Scheduler_RemoveCallback((u32)ReelGame_RunFrame);
         Runtime_ReleaseHeapBlock(45);
         Runtime_ReleaseHeapBlock(40);
         Runtime_ReleaseHeapBlock(39);

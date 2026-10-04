@@ -4810,7 +4810,9 @@ Func_080fe184:
 Func_080fe274:
 	.incbin "baserom.gba", 0x001043a8, 0x00000f80
 	.section .rom.0010541c, "ax"
-	.incbin "baserom.gba", 0x0010541c, 0x000011f0
+	.incbin "baserom.gba", 0x0010541c, 0x000005f8
+	.section .rom.00105a80, "ax"
+	.incbin "baserom.gba", 0x00105a80, 0x00000b8c
 	.section .rom.00106694, "ax"
 	.global ItemMenu_DrawEquippedItemNames
 	.type ItemMenu_DrawEquippedItemNames, %function

@@ -1023,6 +1023,8 @@
     "*/recon/tla/es/rom.o"(.rom.001043a8)
     "*/games/THE LOST AGE/SRC/MENU/MENU8.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0010541c)
+    "*/games/THE LOST AGE/SRC/MENU/ABILITY/RANGE_PAGE.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.00105a80)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/ITEM6.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00106694)
     "*/games/THE LOST AGE/SRC/MENU/PLACE_ENTRY_OBJECT_IN_GRID.o"(.text)

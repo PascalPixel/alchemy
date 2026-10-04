@@ -1884,7 +1884,7 @@
         "*/recon/tla/raw/080ff5bc.o"(.text)
         "*/recon/tla/raw/080ff7b4.o"(.text)
         "*/recon/tla/raw/080ff850.o"(.text)
-        "*/recon/tla/raw/080ff8e0.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/ABILITY/RANGE_PAGE.o"(.text)
         "*/recon/tla/raw/080ff94c.o"(.text)
         "*/recon/tla/raw/080ffb5c.o"(.text)
         "*/recon/tla/raw/080ffcd4.o"(.text)

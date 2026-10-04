@@ -1962,7 +1962,7 @@
         "*/recon/tla/raw/08109068.o"(.text)
         "*/recon/tla/raw/08109188.o"(.text)
         "*/recon/tla/raw/081091cc.o"(.text)
-        "*/recon/tla/raw/08109270.o"(.text)
+        "*/games/COMMON/SRC/MENU/SHOP/DRAW_MESSAGE.o"(.text)
         "*/recon/tla/raw/0810928c.o"(.text)
         "*/recon/tla/raw/081093a4.o"(.text)
         "*/recon/tla/raw/081095b0.o"(.text)

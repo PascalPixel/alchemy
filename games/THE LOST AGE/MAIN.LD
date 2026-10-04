@@ -1056,6 +1056,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00108aa8)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/LOAD_RESOURCE_TO_BLOCK.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00108b70)
+    "*/games/COMMON/SRC/MENU/SHOP/DRAW_MESSAGE.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.0010928a)
     "*/games/THE LOST AGE/SRC/MENU/SHOP/SELL_PRICE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00109ae8)
     "*/recon/tla/ja/rom.o"(.rom.0010a814)

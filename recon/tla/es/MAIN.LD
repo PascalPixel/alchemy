@@ -1065,6 +1065,8 @@
     "*/recon/tla/es/rom.o"(.rom.0010caa8)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/LOAD_RESOURCE_TO_BLOCK.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0010cb70)
+    "*/games/COMMON/SRC/MENU/SHOP/DRAW_MESSAGE.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.0010d28c)
     "*/games/THE LOST AGE/SRC/MENU/SHOP/SELL_PRICE.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0010dad8)
     "*/recon/tla/es/rom.o"(.rom.0010e808)

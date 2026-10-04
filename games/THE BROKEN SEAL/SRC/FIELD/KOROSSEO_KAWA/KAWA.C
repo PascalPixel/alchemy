@@ -1108,8 +1108,8 @@ void KorosseoKawa_RunStageIntro(s32 scene)
 void Korosseo_RunPipeworksIntro(s32 a0)
 {
     s32 rec4;
-    u8 *rec7;
-    u8 *record;
+    struct FieldActor *second;
+    struct FieldActor *first;
 
     if (gGameState.entrance == 2) {
         Korosseo_FinishSoloRound();
@@ -1133,29 +1133,29 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_EventShowMessage(a0, 0);
             SceneState_ReleaseTableAndResetC6a6();
             Engine_TaskWait(2);
-            record = (u8 *)Object_GetById(13);
-            record[85] = 0;
-            *(s32 *)(record + 52) = 0x6666;
-            *(s32 *)(record + 48) = 0xcccc;
-            Engine_ObjectSetPosition((s32)record, *(s32 *)(record + 8), 0x80000, *(s32 *)(record + 16));
-            rec7 = (u8 *)Object_GetById(14);
-            rec7[85] = 0;
-            *(s32 *)(rec7 + 52) = 0x6666;
-            *(s32 *)(rec7 + 48) = 0xcccc;
-            Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), 0x200000, *(s32 *)(rec7 + 16));
-            Script_WaitForEventTimeout((s32)rec7);
+            first = Object_GetById(13);
+            first->motion_flags = 0;
+            first->acceleration = 0x6666;
+            first->speed = 0xcccc;
+            Engine_ObjectSetPosition(first, first->x.fixed, 0x80000, first->z.fixed);
+            second = Object_GetById(14);
+            second->motion_flags = 0;
+            second->acceleration = 0x6666;
+            second->speed = 0xcccc;
+            Engine_ObjectSetPosition(second, second->x.fixed, 0x200000, second->z.fixed);
+            Script_WaitForEventTimeout((s32)second);
             Engine_EventWait(45);
-            record = (u8 *)Object_GetById(13);
-            record[85] = 0;
-            *(s32 *)(record + 52) = 0x6666;
-            *(s32 *)(record + 48) = 0xcccc;
-            Engine_ObjectSetPosition((s32)record, *(s32 *)(record + 8), 0x180000, *(s32 *)(record + 16));
-            rec7 = (u8 *)Value1((s32 (*)())Object_GetById, 14);
-            rec7[85] = 0;
-            *(s32 *)(rec7 + 52) = 0x6666;
-            *(s32 *)(rec7 + 48) = 0xcccc;
-            Engine_ObjectSetPosition((struct FieldActor *)rec7, *(s32 *)(rec7 + 8), 0, *(s32 *)(rec7 + 16));
-            Script_WaitForEventTimeout((s32)rec7);
+            first = Object_GetById(13);
+            first->motion_flags = 0;
+            first->acceleration = 0x6666;
+            first->speed = 0xcccc;
+            Engine_ObjectSetPosition(first, first->x.fixed, 0x180000, first->z.fixed);
+            second = (struct FieldActor *)Value1((s32 (*)())Object_GetById, 14);
+            second->motion_flags = 0;
+            second->acceleration = 0x6666;
+            second->speed = 0xcccc;
+            Engine_ObjectSetPosition(second, second->x.fixed, 0, second->z.fixed);
+            Script_WaitForEventTimeout((s32)second);
             Engine_EventWait(15);
             Engine_EventShowMessage(a0, 0);
             SceneState_StoreParamsAndInitTable(56, 64, 0);

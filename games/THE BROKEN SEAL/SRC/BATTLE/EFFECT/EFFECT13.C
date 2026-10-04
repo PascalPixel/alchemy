@@ -6,6 +6,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
+#include "ANIMSPR.H"
 #include "GAME_STATE.H"
 #include "OBJECT_EFX.H"
 #include "SOUND_IDS.H"
@@ -229,39 +230,30 @@ void UpdateRisingParticleBurst(void *object)
     Object_Destroy(source);
 }
 
-void ObjectDispatch_ApplyValueToKind200Children(int arg0)
+/* Sets the draw parameter of every live object whose first animation is
+   entry 200, and marks its sprite for redrawing. */
+void ObjectDispatch_ApplyValueToKind200Children(s32 value)
 {
-  s32 cnt;
-  u8 *p;
-  u8 kind;
-  void *child;
-  void *rec;
-  void *obj;
-  obj = *((void **)((u32)&gObjectSlots));
-  cnt = 0x3F;
-  do
-  {
-    if (1)
-    {
-      if ((*((s32 *)(((u8 *)obj) + 0))) != 0)
-      {
-        kind = *(p = (u8 *)(((u8 *)obj) + 0x54));
-        if (kind == 1)
-        {
-          child = *((void **)(((u8 *)obj) + 0x50));
-          rec = *((void **)(((u8 *)child) + 0x28));
-          if ((*((s16 *)(((u8 *)rec) + 0))) == 0xC8)
-          {
-            *((s8 *)(((u8 *)rec) + 5)) = arg0;
-            *((u8 *)(((u8 *)child) + 0x25)) = kind;
-          }
+    struct ObjectRuntime *object = *(struct ObjectRuntime **)gObjectSlots;
+    s32 count = 63;
+
+    do {
+        if (object->script != NULL) {
+            u8 kind = object->animation_kind;
+
+            if (kind == 1) {
+                struct AnimationObject *animation = object->animation;
+                struct AnimationEntry *entry = animation->entries[0];
+
+                if (entry->anim_id == 200) {
+                    entry->param = value;
+                    animation->dirty = kind;
+                }
+            }
         }
-      }
-      cnt -= 1;
-    }
-    obj += 0x70;
-  }
-  while (cnt >= 0);
+        count--;
+        object++;
+    } while (count >= 0);
 }
 
 /* Counts down the scene timer while it runs and raises request 0x2090 once

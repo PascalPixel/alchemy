@@ -1,3 +1,11 @@
+/* 2026-10-04 real destination and mask lifetime controls:
+ * bytes_after_bases: draft: score 635 (29 register-only, 2 operand, 7 reordered)
+ * plain_bytes_after_bases: draft: score 2178 (49 register-only, 3 stack-only, 8 operand, 12 reordered, 3 inserted, 7 deleted)
+ * mask_after_dst_advance: draft: score 715 (26 register-only, 3 operand, 5 reordered, 1 inserted, 1 deleted)
+ * mask_before_layer_test: draft: score 710 (26 register-only, 3 operand, 5 reordered, 1 inserted, 1 deleted)
+ * drawing_dest_first: draft: score 560 (27 register-only, 2 operand, 6 reordered)
+ * Retain560; none improves the source or its measured match.
+ */
 /* 2026-10-04 current560: initialize the consumed row before forming
  * source/destination pointers, and use it in the destination origin.
  * Same signed bounds and cursor/row updates; no new device or state.

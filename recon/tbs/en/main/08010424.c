@@ -1,3 +1,72 @@
+/* 2026-10-04 current exact316B/frame36: direct C address addition and
+ * a volatile destination for both genuine VRAM writes. The display consumes
+ * these stores; ordinary map-cell/table accesses remain unqualified.
+ * Resources independently reviewed the hardware contract; root review
+ * remains pending. Input-only scheduling barrier removal gives70, two
+ * register choices and one reordered load, without inserted/deleted code.
+ * Approved compiler and era assembler confirm full extent/pool/padding.
+ * The prior paired ADD-asm/tmp2-barrier exact trial is rejected: replacing
+ * only ADD asm by C scores445 and folds the destination ADD into indexed
+ * STR. Its deleted instruction is real address arithmetic, not a copy, so
+ * the old add-device justification does not survive that source shape.
+ * A selective volatile-first-store trial was superseded by the coherent
+ * destination qualification of both hardware stores. Still uncredited.
+ */
+/* 2026-10-04 coherent VRAM destination qualifier trials:
+ * both_volatile: draft: score 0 (exact)
+ * both_volatile_input_base: draft: score 0 (exact)
+ * both_volatile_no_barrier: draft: score 70 (2 register-only, 1 reordered)
+ * Retain both_volatile_input_base only for source/S2 review.
+ */
+/* 2026-10-04 direct-add/input-lifetime controls:
+ * input_barrier: draft: score 0 (exact)
+ * direct_C_input: draft: score 445 (53 register-only, 1 operand, 1 reordered, 1 deleted)
+ * commuted_C_input: draft: score 445 (53 register-only, 1 operand, 1 reordered, 1 deleted)
+ * direct_pointer_C: draft: score 445 (53 register-only, 1 operand, 1 reordered, 1 deleted)
+ * volatile_store_C: draft: score 0 (exact)
+ * Retain volatile_store_C pending independent review.
+ */
+/* 2026-10-04 narrower exact candidate: reuse existing consumed tmp2 for
+ * the screen base. Isolated barrier removal now returns40 with only the
+ * two literal loads swapped: no frame, arithmetic, insertion/deletion or
+ * register-operand difference. Barrier retained only for scheduling.
+ * This replaces the earlier separate-base lifetime with broader spills.
+ * Pending independent review; no adoption/credit yet.
+ */
+/* 2026-10-04 existing consumed temporary/base lifetime trials:
+ * tmp2_ordinary: draft: score 40 (2 operand)
+ * tmp2_barrier: draft: score 0 (exact)
+ * tmp16_ordinary: draft: score 290 (1 register-only, 1 operand, 1 reordered, 1 inserted, 1 deleted)
+ * tmp16_barrier: draft: score 10 (2 register-only)
+ * tmp21_ordinary: draft: score 110 (2 register-only, 2 operand, 1 reordered)
+ * tmp21_barrier: draft: score 70 (2 register-only, 1 reordered)
+ * tmp18_ordinary: draft: score 40 (2 operand)
+ * tmp18_barrier: draft: score 0 (exact)
+ * Retain new-base exact candidate uncredited pending device review.
+ */
+/* 2026-10-04 base-order device isolation:
+ * outside_table: draft: score 255 (14 register-only, 1 operand, 1 reordered, 1 deleted)
+ * base_input: draft: score 1568 (30 register-only, 3 stack-only, 1 operand, 11 reordered, 5 inserted, 2 deleted)
+ * outside_table_input: draft: score 1713 (29 register-only, 3 stack-only, 3 operand, 11 reordered, 5 inserted, 3 deleted)
+ * barrier_removed: draft: score 1568 (30 register-only, 3 stack-only, 1 operand, 11 reordered, 5 inserted, 2 deleted)
+ * Retain existing_exact as draft pending independent device review.
+ */
+/* 2026-10-04 final consumed-base scheduling trials:
+ * base_readwrite: draft: score 1748 (30 register-only, 3 stack-only, 2 operand, 12 reordered, 7 inserted, 1 deleted)
+ * base_volatile_rw: draft: score 0 (exact)
+ * base_r2_volatile_rw: draft: score 0 (exact)
+ * Retain base_volatile_rw; no new device before independent review.
+ * Permuter search refuses inline assembly; no tool/routing change made.
+ */
+/* 2026-10-04 ordinary base scope and existing-add operand order trials:
+ * operand_list_order: draft: score 40 (2 operand)
+ * literal_operand: draft: score 40 (2 operand)
+ * register_hint: draft: score 40 (2 operand)
+ * signed_base: draft: score 40 (2 operand)
+ * table_in_base_scope: draft: score 1568 (30 register-only, 3 stack-only, 1 operand, 11 reordered, 5 inserted, 2 deleted)
+ * base_before_table: draft: score 1568 (30 register-only, 3 stack-only, 1 operand, 11 reordered, 5 inserted, 2 deleted)
+ * Retain prior40; no new device introduced.
+ */
 /* 2026-10-04 focused candidate40: replaces only the first existing
  * destination-address addition with low-register add operands. No new
  * arithmetic, storage or table value; flags explicitly clobbered. All
@@ -181,7 +250,8 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
             while (x < dst_x + width) {
                 /* FAKEMATCH: the cell value remains live in r5 while layers are tested. */
                 register u32 cell __asm__ ("r5") = 0xfff & *src++;
-                u32 *dest;
+                /* Both destinations are VRAM: the display consumes each store. */
+                volatile u32 *dest;
                 u32 offset;
                 u32 tmp3;
                 u32 n;
@@ -223,12 +293,13 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
                         /* FAKEMATCH: consumed offset in r3 changes only registers/order, preserving all instructions. */
                         register u32 bytes __asm__ ("r3") = cell * 8;
                         u32 tmp16;
-                        tmp = (u32 *)Ram_MapBlocks;
-                        tiles = tmp;
                         {
-                            u32 screen_base = 0x06002800;
-                            /* FAKEMATCH: ordinary address addition scores70; low-register operands score40 with only the two literal loads swapped. */
-                            __asm__ ("add %0, %1, %2" : "=l" (tmp16) : "l" (offset), "l" (screen_base) : "cc");
+                            tmp2 = 0x06002800;
+                            /* FAKEMATCH: removing this consumed-base input barrier scores70 (two register choices and one reordered load), with no instruction or frame change. */
+                            __asm__ __volatile__ ("" : : "l" (tmp2));
+                            tmp = (u32 *)Ram_MapBlocks;
+                            tiles = tmp;
+                            tmp16 = offset + tmp2;
                         }
                         tmp21 = tmp16;
                         tmp18 = tmp21;

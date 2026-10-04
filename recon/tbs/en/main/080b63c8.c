@@ -2,6 +2,20 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
+ * 2026-10-04, second wave: the owner-state copy was written as
+ *    src++ before the read (it copied from gActorSpriteSlots + 1); the
+ *    listing reads [r1] then advances, so it is now a plain
+ *    *dst++ = *src++ for loop, same score (86). Item 1 from the dumps: the
+ *    zero (pseudo 55) is block-local, so local-alloc places it; r5 holds
+ *    the fill cell's address and buf leaves r6 free at the zero's birth
+ *    (after Scheduler_ResetTaskTable), so it takes r6. The listing's r7
+ *    means r6 was busy there: a zero born before the IWRAM clear (with
+ *    buf still live), its set moved down by sched2, which may cross calls
+ *    for a call-saved hard register. An unused "s32 zero = 0" or
+ *    "delay = 0" at the top does not do it (cse keeps the new zero), and
+ *    a "r"(buf) use after the first zero store splits the zero (111).
+ *    An 800-iteration device search (seed 7) found nothing below 86.
+ *    Separate block-local copy pointers change the frame (250+).
  * DRAFT (dd.ts differ 86 of 645, was 111), reworked 2026-10-04: same frame.
  * 2026-10-04: statement and declaration order (timer, dst, the scene word 0
  *    and field_18 stores, the copy body) fixed item 2; item 1 and 3 remain.
@@ -249,13 +263,8 @@ s32 Battle_RunEncounter(s32 arg)
         work->field_50 = (u8)((*(u32 *)0x04000128 << 26) >> 30);
         src = gActorSpriteSlots;
         dst = gBattleOwnerStates;
-        pos = 0;
-        do {
-            pos++;
-            src++;
-            *dst = *src;
-            dst++;
-        } while (pos <= 0x7c7);
+        for (pos = 0; pos <= 0x7c7; pos++)
+            *dst++ = *src++;
         object = GameFlag_GetByteFar(0x3f0);
         BattleParty_AssignMemberSlots();
         work->field_42 = 0;

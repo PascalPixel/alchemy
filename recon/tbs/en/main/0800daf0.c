@@ -1,15 +1,29 @@
+/* 2026-10-04, second wave: alchemy diff 35 (was 120), 225 instructions
+   against 224. Greg dumps show why y lost r5: global allocation orders by
+   refs*log2(refs)/live length, and y (3 refs over 41 insns) came after the
+   four bounds (3 refs over 22-28), so min_z/min_x took r5/r6. One tagged
+   extra use of y (the asm below) puts it ahead; y then takes r5, the bounds
+   r6/r7 and the 0xff880000 reload r5, all as the listing has them.
+   Plain reshapes kept: no tmp for the distance or the y magnitude (the
+   product then forms in r0), dz declared before dy, and dz recomputed
+   before dy after the square root. Everything outside one stretch matches.
+   Left: from the second 0xffff fixup to the square root call, the reload
+   registers are one step off the listing's round robin (listing obj r2,
+   z r4, 0xffff r2, multiply operand r3; here r4, r2, r3, r4), plus one extra
+   obj reload before dy. Reload rotates through spill regs {2,3,4,5}; the
+   listing behaves as if the two 0xffff loads did not advance it. Tried
+   without effect: "+r"/"=r" forms of the device, statement orders of dx,
+   dy, dz (dx,dy,dz and dy,dx,dz score 66). A device search from here
+   reached 33 only with scheduling barriers. */
 /* 2026-10-04: fresh EN baseline 895; ordinary temporary reuse and step
    assignment improve to 715 (50 register-only, one reordered, four
    inserted instructions), still 500/492 bytes. Two 55-second searches
    evaluated 19,060 candidates without another improvement. Explicit
    bindings of bounds/y to r7/r6/r5 worsened to 4102 and were discarded.
    Existing resident IWRAM entries now use their shared header names. */
-/* Draft, not exact: 500 bytes against 492. Written from the listing.
-   The clamped x is in fp and z in a stack slot as in the ROM, once the
-   whole-pixel z distance reuses dz as the x distance reuses dx.
-   Remaining: the ROM keeps the leader y in r5 and the lower bounds in r7 and
-   r6; here the bounds take r6 and r5 and y shares r9 with dy through a copy.
-   Merging y with the step fixes the bounds but moves x to r5. */
+/* Draft, not exact. Written from the listing. The clamped x is in fp and z
+   in a stack slot as in the ROM, once the whole-pixel z distance reuses dz
+   as the x distance reuses dx. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -57,8 +71,8 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
     s32 x;
     s32 y;
     s32 z;
-    s32 dy;
     s32 dz;
+    s32 dy;
     s32 dx;
     s32 dist;
     s32 step;
@@ -74,6 +88,9 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
     if (leader != NULL && leader->active != 0) {
         x = leader->x;
         y = leader->y;
+        /* y takes r5 because one more use lifts it above the lower bounds. */
+        /* FAKEMATCH: global allocation order, as the native allocates y. */
+        __asm__("" : : "r"(y));
         z = leader->z;
         obj->target_x = 0x80000000;
         obj->target_y = 0x80000000;
@@ -91,14 +108,12 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
             obj->y = y;
             obj->z = z;
         } else {
-            s32 tmp;
             dx = (x - obj->x) / 0x10000;
             dz = (z - obj->z) / 0x10000;
-            tmp = dx * dx + dz * dz;
-            dist = Iwram_Sqrt(tmp) << 16;
+            dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
             dx = x - obj->x;
-            dy = y - obj->y;
             dz = z - obj->z;
+            dy = y - obj->y;
             if (dist < 0x400000)
                 dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
             if ((step = dist / 8) > obj->speed_limit)
@@ -115,8 +130,7 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
                 obj->x += dx;
                 obj->z += dz;
             }
-            tmp = dy < 0 ? -dy : dy;
-            if (tmp > 0x8000)
+            if ((dy < 0 ? -dy : dy) > 0x8000)
                 dy /= 4;
             obj->y += dy;
         }

@@ -21,7 +21,16 @@ Func_080c8520:
 	.global BattleFx_StartItemBreakFar
 	.thumb_func
 BattleFx_StartItemBreakFar:
+@ Spanish/Italian entries lift and burst the object here.
+.ifdef TLA_EDITION_ES
+	overlay_veneer UpdateRisingParticleBurst
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer UpdateRisingParticleBurst
+.else
 	overlay_veneer BattleFx_StartItemBreak
+.endif
+.endif
 	.global BattleFx_SnapScaleToFullFar
 	.thumb_func
 BattleFx_SnapScaleToFullFar:

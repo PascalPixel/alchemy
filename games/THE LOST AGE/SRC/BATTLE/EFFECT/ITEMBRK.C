@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "RAM_BUFFER.H"
 
-struct BattleEffectScene {
-    u8 pad00[16];
+/* The battle effects' work, as far as the item break reads it. */
+struct BattleFxScene {
+    u8 unknown_00[16];
     void *volatile main_object;
 };
-
-extern struct BattleEffectScene *gEffectWork;
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_StartItemBreak(void *object);
@@ -15,15 +15,19 @@ void Object_SetMode(void *object, s32 mode);
 void BattleFx_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
 
+/* The item break: shatter the main object into fragments, snap it back to
+   full scale, hold it for half a second, then lift and burst it. */
 void BattleFx_RunItemBreakSequence(void)
 {
+    /* FAKEMATCH: an unused 12-byte local explains the native 12-byte frame. */
     s32 work[3];
-    struct BattleEffectScene *scene;
+    struct BattleFxScene *scene;
     void *object;
 
-    scene = gEffectWork;
+    scene = Ram_HeapSlots->effect_work;
     object = scene->main_object;
 
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling, as in ☀️. */
     do {
         BattleEffect_InitializeSharedScene();
     } while (0);

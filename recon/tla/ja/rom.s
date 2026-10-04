@@ -4414,7 +4414,9 @@ Func_080dcadc:
 	.type Func_080dd054, %function
 	.thumb_func
 Func_080dd054:
-	.incbin "baserom.gba", 0x000dd010, 0x000004d4
+	.incbin "baserom.gba", 0x000dd010, 0x00000494
+	.section .rom.000dd4e2, "ax"
+	.incbin "baserom.gba", 0x000dd4e2, 0x00000002
 	.section .rom.000dd4e4, "ax"
 	.global BattleFx_StartItemBreak
 	.type BattleFx_StartItemBreak, %function
@@ -5015,14 +5017,6 @@ BattleParty_PrepareReserveOwners:
 	.thumb_func
 Func_0811a39c:
 	.incbin "baserom.gba", 0x0011a398, 0x000000b0
-	.section .rom.0011a47e, "ax"
-	.incbin "baserom.gba", 0x0011a47e, 0x00000002
-	.section .rom.0011a480, "ax"
-	.global BattleMotion_GetSlotField14
-	.type BattleMotion_GetSlotField14, %function
-	.thumb_func
-BattleMotion_GetSlotField14:
-	.incbin "baserom.gba", 0x0011a480, 0x0000000c
 	.section .rom.0011a4da, "ax"
 	.incbin "baserom.gba", 0x0011a4da, 0x00000c8e
 	.section .rom.0011b17c, "ax"

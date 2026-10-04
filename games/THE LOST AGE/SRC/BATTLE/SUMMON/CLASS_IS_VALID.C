@@ -3,8 +3,15 @@
    do not move it. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
+#include "MOTION_OBJECT.H"
 
 extern s32 Summon_IsEntryFlagged(s32 index);
+
+/* The palette of a battle object's slot, as ☀️ reads it. */
+s32 BattleMotion_GetSlotField14(s32 id)
+{
+    return GetBattleObjectSlot(id)->palette;
+}
 
 struct Layout {
     u8 pad[4];

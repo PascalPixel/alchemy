@@ -14,6 +14,7 @@ mod coverage;
 mod decode;
 mod deps;
 mod deps_command;
+mod diff;
 mod edition;
 mod elf;
 mod gate;
@@ -31,6 +32,8 @@ Build and verify:
   build       build compilers, maintained source, assembly and ROMs
   verify      the gates of make verify, make land and the commit hooks
   check       run repository contract checks
+Matching:
+  diff        compare a C draft with the listing it would replace
 Reports for people (nothing else reads them):
   deps        dependency map of not-yet-C code: what unblocks the most
   worst       maintained C ranked by how mechanical it reads
@@ -50,6 +53,7 @@ fn main() -> ExitCode {
         "verify" => verify::entry(rest),
         "check" => check::entry(rest),
         "deps" => deps_command::entry(rest),
+        "diff" => result(diff::run(rest)),
         "worst" => result(worst_command::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

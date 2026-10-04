@@ -993,7 +993,7 @@ fn remove_scratch(paths: &[PathBuf]) {
     }
 }
 
-fn c_steps(target: DecompTarget, source: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
+pub(crate) fn c_steps(target: DecompTarget, source: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
     let source_text = source.to_string_lossy().into_owned();
     let assembly = object.with_extension("s");
     let mut options = SourceToAssemblyPlanOptions::new(

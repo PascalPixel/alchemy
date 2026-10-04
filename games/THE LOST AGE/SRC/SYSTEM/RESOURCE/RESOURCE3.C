@@ -1,14 +1,62 @@
 #include "TYPES.H"
+#include "METADATA_LOOKUP.H"
 
 void ResourceMetadata_ClearRecord(void *record);
+s32 Func_08022c98(s32 id);
 
-/* ⚓️ keeps the slot count at 0x1b, where ☀️ keeps it at 0x27. */
+/* ⚓️ keeps the slot count at 0x1b, where ☀️ keeps it at 0x27, and the
+   size and offsets from 0x0c. */
 struct MetadataSlotState {
-    u8 unknown_00[0x1b];
+    u8 unknown_00[0x0c];
+    s32 scale;
+    u8 unknown_10[4];
+    u8 width;
+    u8 height;
+    s8 offset_x;
+    s8 offset_y;
+    u8 unknown_18[3];
     u8 count;
     u8 unknown_1c[0x0c];
     s32 slots[4];
 };
+
+/* ☀️'s: give the object its next free animation slot, taking the first
+   one's size and offsets from its metadata. */
+s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
+{
+    s32 value = state->slots[0];
+    s32 index = 0;
+    s32 *slot;
+    struct AnimationMetadata *metadata;
+
+    if (value != 0) {
+        slot = &state->slots[0];
+        do {
+            index++;
+            if (index > 3)
+                break;
+            slot++;
+            value = *slot;
+        } while (value != 0);
+    }
+    if (index == 4)
+        return -1;
+    value = Func_08022c98(id);
+    if (value == 0)
+        return 0;
+    state->slots[index] = value;
+    metadata = Resource_GetMetadataRecordFar(id);
+    if (state->count == 0) {
+        state->width = metadata->width;
+        state->height = metadata->height;
+        state->scale = metadata->scale << 8;
+        state->offset_y = metadata->adjust_y;
+        state->offset_x = metadata->adjust_x;
+    }
+    if (index == state->count)
+        state->count = index + 1;
+    return value;
+}
 
 void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle)
 {

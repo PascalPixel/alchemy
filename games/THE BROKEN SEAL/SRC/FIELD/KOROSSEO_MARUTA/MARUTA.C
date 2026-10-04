@@ -466,62 +466,56 @@ void FieldScene_RunEarlySequence(void)
     extern void Object_CommitPosition();
 
     extern u16 gColossoEarlySequenceData[];
-    s32 leader;
-    s32 log_actor;
-    u8 *state;
-    s32 tile;
+    struct FieldActor *rider;
+    struct FieldActor *log;
+    struct EventWork *work;
+    s32 angle;
+    s32 actor;
     s32 x;
+    s32 z;
     s32 steps;
     s32 next_x;
     s32 column;
     s32 acceleration;
-    s32 direction;
-    s32 cell_step;
-    s32 record;
-    s32 selected_actor;
-    s32 z;
-    volatile s32 *keys;
-    s32 cell_center[3];
+    s32 mode;
+    s32 step;
+    s32 ahead[3];
 
-    state = (u8 *)&gGameState;
-    leader = Object_GetById(*(s32 *)(state + 500));
-    log_actor = Object_GetById(31);
+    rider = Object_GetById(gGameState.selected_actor);
+    log = Object_GetById(31);
     steps = 0;
-    tile = gColossoEarlySequenceData[*(u16 *)(leader + 6) >> 13];
-    selected_actor = *(s32 *)(state + 500);
-    cell_center[0] = (*(s32 *)(leader + 8) & -0x100000) + 0x80000;
-    cell_center[1] = *(s32 *)(leader + 12);
-    cell_center[2] = (*(s32 *)(leader + 16) & -0x100000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, tile, (s32)cell_center);
-    x = *(s32 *)(log_actor + 8);
-    z = *(s32 *)(log_actor + 16);
-    if ((cell_center[0] - x >= 0 ? cell_center[0] - x : x - cell_center[0]) > 0x80000
-        || (cell_center[2] - z >= 0 ? cell_center[2] - z : z - cell_center[2]) > 0x200000) {
+    angle = gColossoEarlySequenceData[rider->facing >> 13];
+    actor = gGameState.selected_actor;
+    ahead[0] = (rider->x.fixed & -0x100000) + 0x80000;
+    ahead[1] = rider->y.fixed;
+    ahead[2] = (rider->z.fixed & -0x100000) + 0x80000;
+    Vector_AddPolarOffset(0x100000, angle, ahead);
+    x = log->x.fixed;
+    z = log->z.fixed;
+    if ((ahead[0] - x >= 0 ? ahead[0] - x : x - ahead[0]) > 0x80000
+        || (ahead[2] - z >= 0 ? ahead[2] - z : z - ahead[2]) > 0x200000) {
         goto far;
     }
-    keys = (volatile s32 *)gKeysHeld;
-    if ((*keys & 32) != 0) {
-        direction = 2;
-        cell_step = -8;
+    if (gKeysHeld & KEY_LEFT) {
+        mode = 2;
+        step = -8;
         for (;;) {
             next_x = x - 0x100000;
-            if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0) {
+            if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0)
                 goto moved;
-            }
             steps++;
             x = next_x;
         }
     }
-    if ((*keys & 16) == 0) {
+    if (!(gKeysHeld & KEY_RIGHT)) {
         return;
     }
-    direction = 3;
-    cell_step = 8;
+    mode = 3;
+    step = 8;
     for (;;) {
         next_x = x + 0x100000;
-        if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0) {
+        if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0)
             goto moved;
-        }
         steps++;
         x = next_x;
     }
@@ -529,43 +523,42 @@ moved:
     if (steps == 0) {
         return;
     }
-    Map_CopyCellAttributes(74, 8, 1, 4, *(s32 *)(log_actor + 8) >> 20, 9);
+    Map_CopyCellAttributes(74, 8, 1, 4, log->x.fixed >> 20, 9);
     Map_CopyCellAttributes(120, 60, 8, 5, 74, 60);
     Engine_EventBegin();
-    Engine_ActorSetAnimation(selected_actor, 8);
+    Engine_ActorSetAnimation(actor, 8);
     Engine_EventWait(6);
-    *(s32 *)(log_actor + 48) = 0x8000;
+    log->speed = 0x8000;
     acceleration = 0x3333;
-    *(s32 *)(log_actor + 52) = acceleration;
-    Object_SetMode(log_actor, direction);
-    Object_SetPosition(log_actor, x, 0, z);
+    log->acceleration = acceleration;
+    Object_SetMode(log, mode);
+    Object_SetPosition(log, x, 0, z);
     Engine_EventWait(6);
-    Engine_ActorSetAnimation(selected_actor, 2);
-    record = (s32)Runtime_AllocateBlock(27, 0xccc);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(record + 0x1e0), log_actor);
-    Actor_SetSpeed(selected_actor, 0x8000, acceleration);
+    Engine_ActorSetAnimation(actor, 2);
+    work = Runtime_AllocateBlock(27, 0xccc);
+    ObjectDispatch_InitFromTable4WithArgument(work->view_center, log);
+    Actor_SetSpeed(actor, 0x8000, acceleration);
     Audio_PlayCue(239);
-    Object_SetMode(leader, 2);
-    Object_SetPosition(leader, ((steps * cell_step) << 16) + *(s32 *)(leader + 8), 0,
-                       *(s32 *)(leader + 16));
-    Object_CommitPosition(leader);
-    Object_SetMode(leader, 1);
-    Object_CommitPosition(log_actor);
+    Object_SetMode(rider, 2);
+    Object_SetPosition(rider, ((steps * step) << 16) + rider->x.fixed, 0, rider->z.fixed);
+    Object_CommitPosition(rider);
+    Object_SetMode(rider, 1);
+    Object_CommitPosition(log);
     if (x >= 0x5300000) {
         GameFlag_Set(0x369);
         Engine_ActorSetAnimation(31, 3);
         Actor_SetDestinationOffset(31, 18, 6);
         Engine_EventWait(30);
-        Object_SetMode(log_actor, 8);
-        Object_CommitPosition(log_actor);
-        *(u8 *)(log_actor + 35) = 2;
+        Object_SetMode(log, 8);
+        Object_CommitPosition(log);
+        log->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         column = 84;
         Map_CopyCellAttributes(86, 10, 1, 2, column, 10);
         Map_CopyCellAttributes(86, 9, 1, 1, column, 12);
         Audio_PlayCue(0x120);
         Audio_PlayCue(240);
     } else {
-        Object_SetMode(log_actor, 1);
+        Object_SetMode(log, 1);
         Audio_PlayCue(0x120);
         Audio_PlayCue(213);
         column = x >> 20;

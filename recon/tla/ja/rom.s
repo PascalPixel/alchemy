@@ -1687,12 +1687,8 @@ Func_08042690:
 	.thumb_func
 Func_0804297c:
 	.incbin "baserom.gba", 0x00042ac0, 0x00000430
-	.section .rom.00042ef0, "ax"
-	.global Func_08042dac
-	.type Func_08042dac, %function
-	.thumb_func
-Func_08042dac:
-	.incbin "baserom.gba", 0x00042ef0, 0x00000318
+	.section .rom.00042f08, "ax"
+	.incbin "baserom.gba", 0x00042f08, 0x00000300
 	.section .rom.00043208, "ax"
 	.global Func_080430c4
 	.type Func_080430c4, %function
@@ -3267,7 +3263,16 @@ Func_080cae5c:
 	.section .rom.000cafc4, "ax"
 	.incbin "baserom.gba", 0x000cafc4, 0x00000704
 	.section .rom.000cb82c, "ax"
-	.incbin "baserom.gba", 0x000cb82c, 0x00001484
+	.incbin "baserom.gba", 0x000cb82c, 0x00000e48
+	.global Func_080cc67c
+Func_080cc67c:
+	.incbin "baserom.gba", 0x000cc674, 0x00000148
+	.global Func_080cc7c4
+Func_080cc7c4:
+	.incbin "baserom.gba", 0x000cc7bc, 0x00000204
+	.section .rom.000cc9f4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000cc9f4, 0x000002bc
 	.section .rom.000cccb0, "ax"
 	.global BattleAction_FindDescriptor
 	.type BattleAction_FindDescriptor, %function

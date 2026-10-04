@@ -1672,12 +1672,8 @@ Func_08042690:
 	.thumb_func
 Func_0804297c:
 	.incbin "baserom.gba", 0x000429e0, 0x00000430
-	.section .rom.00042e10, "ax"
-	.global Func_08042dac
-	.type Func_08042dac, %function
-	.thumb_func
-Func_08042dac:
-	.incbin "baserom.gba", 0x00042e10, 0x00000318
+	.section .rom.00042e28, "ax"
+	.incbin "baserom.gba", 0x00042e28, 0x00000300
 	.section .rom.00043128, "ax"
 	.global Func_080430c4
 	.type Func_080430c4, %function
@@ -3442,12 +3438,21 @@ Func_080cb82c:
 	.type Func_080cb8a4, %function
 	.thumb_func
 Func_080cb8a4:
-	.incbin "baserom.gba", 0x000cb8a4, 0x000010f0
+	.incbin "baserom.gba", 0x000cb8a4, 0x00000dd8
+	.global Func_080cc67c
+Func_080cc67c:
+	.incbin "baserom.gba", 0x000cc67c, 0x00000148
+	.global Func_080cc7c4
+Func_080cc7c4:
+	.incbin "baserom.gba", 0x000cc7c4, 0x000001d0
 	.global Stream_ReadLittleEndianHalfword
 	.type Stream_ReadLittleEndianHalfword, %function
 	.thumb_func
 Stream_ReadLittleEndianHalfword:
-	.incbin "baserom.gba", 0x000cc994, 0x00000324
+	.incbin "baserom.gba", 0x000cc994, 0x00000034
+	.section .rom.000cc9fc, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000cc9fc, 0x000002bc
 	.global BattleAction_FindDescriptor
 	.type BattleAction_FindDescriptor, %function
 	.thumb_func

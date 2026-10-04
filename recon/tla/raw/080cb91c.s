@@ -131,7 +131,7 @@ Func_080cb91c:
 	.2byte 0xf800
 	mov r1, r8
 	str r0, [r1, #16]
-	bl Func_080cc9c8
+	bl BattleMap_ApplySceneEntranceView
 	ldr r0, [r6, #28]
 	mov lr, r0
 	.2byte 0xf800

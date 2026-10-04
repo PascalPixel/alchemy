@@ -1924,18 +1924,6 @@ Func_080453d0:
 	.incbin "baserom.gba", 0x0004597a, 0x00000032
 	.section .rom.000459ca, "ax"
 	.incbin "baserom.gba", 0x000459ca, 0x0000096a
-	.section .rom.00046334, "ax"
-	.global Func_08046134
-	.type Func_08046134, %function
-	.thumb_func
-Func_08046134:
-	.incbin "baserom.gba", 0x00046334, 0x00000094
-	.section .rom.000463c8, "ax"
-	.global BattleLayout_HighlightPartyPanels
-	.type BattleLayout_HighlightPartyPanels, %function
-	.thumb_func
-BattleLayout_HighlightPartyPanels:
-	.incbin "baserom.gba", 0x000463c8, 0x00000098
 	.section .rom.00046484, "ax"
 	.incbin "baserom.gba", 0x00046484, 0x00000150
 	.section .rom.00046612, "ax"

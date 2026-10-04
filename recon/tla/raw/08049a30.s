@@ -190,7 +190,7 @@ Func_08049a30:
 	str r3, [sp, #0]
 	subs r2, #2
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	bl Ui_FillVramBlockPattern
 	ldr r1, [sp, #72]
 	cmp r1, #0
@@ -394,7 +394,7 @@ Func_08049a30:
 	str r3, [sp, #0]
 	adds r0, #1
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	ldr r1, [sp, #68]
 	movs r3, #1
 	movs r2, #0

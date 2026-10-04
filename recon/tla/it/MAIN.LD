@@ -677,7 +677,6 @@
     "*/games/THE LOST AGE/SRC/GAME/PARTY/COUNT_ACTIVE_OWNERS.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000afde4)
     "*/games/THE LOST AGE/SRC/GAME/PARTY/LIST_ACTIVE_OWNERS.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000afebc)
     "*/games/THE LOST AGE/SRC/GAME/PARTY/COUNTERS.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000aff34)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/GET_DEFINITION.o"(.text)

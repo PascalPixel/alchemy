@@ -119,7 +119,7 @@ Func_080d7c04:
 	bl Audio_PlayCue
 	movs r0, #100
 	bl WaitFrames
-	bl Func_08108060
+	bl Shop_InitEffectFar
 	bl Func_080d7ab4
 .L_080d7d32:
 	add sp, #12

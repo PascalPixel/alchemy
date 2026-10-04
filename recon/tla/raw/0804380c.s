@@ -41,7 +41,7 @@ Func_0804380c:
 	movs r7, #2
 	b .L_08043896
 .L_0804385c:
-	bl Func_08043230
+	bl SaveState_FindFreeSummarySlot
 	movs r3, #186
 	lsls r3, r3, #2
 	adds r6, r0, #0

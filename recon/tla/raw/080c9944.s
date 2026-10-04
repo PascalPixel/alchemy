@@ -307,7 +307,7 @@ Game_ResetForNewGame:
 	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_080c9bc4
-	bl Func_080c9dc8
+	bl Party_PlaySavedMusic
 	b .L_080c9bec
 .L_080c9bc4:
 	movs r0, #141
@@ -328,7 +328,7 @@ Game_ResetForNewGame:
 	bl Audio_PlayCue
 	b .L_080c9bec
 .L_080c9be8:
-	bl Func_080c9dc8
+	bl Party_PlaySavedMusic
 .L_080c9bec:
 	ldr r3, .L_080c9c0c
 	mov r0, r10

@@ -44,4 +44,4 @@ Func_080c8688:
 	.global Func_080c8690
 	.thumb_func
 Func_080c8690:
-	overlay_veneer Func_080d2c98
+	overlay_veneer Event_NoOp

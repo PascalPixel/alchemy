@@ -43,7 +43,7 @@ Func_0810b1b4:
 	ldrsb r0, [r2, r3]
 	bl Audio_PlayCue
 	ldr r0, .L_0810b368
-	bl Func_081088d8
+	bl Shop_RestoreSceneTiles
 	mov r0, r10
 	lsls r0, r0, #2
 	mov r9, r0
@@ -186,7 +186,7 @@ Func_0810b1b4:
 	ldr r0, [r2, r3]
 	movs r1, #16
 	bl Animation_ApplyChildValueFar
-	bl Func_08108928
+	bl Shop_InitEffect
 	movs r0, #30
 	bl WaitFrames
 	movs r3, #128

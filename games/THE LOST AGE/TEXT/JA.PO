@@ -50211,7 +50211,7 @@ msgctxt "message"
 msgid "12550"
 msgstr "エナジーは せいしんパワーです{line_break}そして エナジーをもつ者たちを{line_break}エナジストと よびます{page_break}エナジーは クラスがかわったり{line_break}せいちょうで へんかします{line_break}いろいろ 使ってみて下さい。"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveTutorialA"
 msgid "12551"
 msgstr "もしも ジンをほかの人に{line_break}わたしたいなら こうして{line_break}いどうして下さい。{end_wait}"
 
@@ -50423,7 +50423,7 @@ msgctxt "message"
 msgid "12603"
 msgstr "あなた方も ボクらジンを{line_break}うまく やく立ててくださいね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveTutorialB"
 msgid "12604"
 msgstr "もしも ジンをほかの人に{line_break}わたしとうなったら こうして{line_break}いどうしておくれやす。{end_wait}"
 

@@ -789,7 +789,7 @@ Func_081197f0:
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_08119eb0
-	bl Func_081197d0
+	bl Tutorial_GetDjinnGiveMessage
 	movs r1, #0
 	adds r0, #7
 	movs r2, #4
@@ -809,7 +809,7 @@ Func_081197f0:
 	bl UiWork_FinalizeFar
 	movs r0, #1
 	bl WaitFrames
-	bl Func_081197d0
+	bl Tutorial_GetDjinnGiveMessage
 	movs r2, #4
 	movs r3, #1
 	movs r1, #10
@@ -833,7 +833,7 @@ Func_081197f0:
 	ldr r5, [sp, #40]
 	subs r5, #74
 .L_08119ebc:
-	bl Func_081195d4
+	bl BattlePres_ClearLinkPayload
 	cmp r5, #1
 	bls .L_08119f34
 	ldr r2, [sp, #40]
@@ -898,7 +898,7 @@ Func_081197f0:
 	ldr r5, [sp, #40]
 	subs r5, #74
 .L_08119f4c:
-	bl Func_081195d4
+	bl BattlePres_ClearLinkPayload
 	movs r0, #0
 	bl Scheduler_EnableCallbacks
 	ldr r3, .L_08119f70
@@ -918,7 +918,7 @@ Func_081197f0:
 .L_08119f74:
 	.4byte 0x00000c84
 .L_08119f78:
-	bl Func_081195d4
+	bl BattlePres_ClearLinkPayload
 	ldr r5, [sp, #40]
 	subs r5, #74
 	cmp r5, #1

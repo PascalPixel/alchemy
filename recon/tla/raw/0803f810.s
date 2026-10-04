@@ -4,5 +4,5 @@
 	.thumb_func
 Func_0803f810:
 	push {lr}
-	bl Func_08042dac
+	bl UiWork_FinalizeAndReleaseBlock16
 	pop {pc}

@@ -40,7 +40,7 @@ UiWindow_DrawPartyStatusContentsFar:
 	.global Func_08038138
 	.thumb_func
 Func_08038138:
-	overlay_veneer Func_08042dac
+	overlay_veneer UiWork_FinalizeAndReleaseBlock16
 	.global UiWork_FinalizePendingCoreFar
 	.thumb_func
 UiWork_FinalizePendingCoreFar:

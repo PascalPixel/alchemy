@@ -290,18 +290,6 @@ Func_08014c4c:
 	.thumb_func
 Func_08014c6c:
 	.incbin "baserom.gba", 0x00014c6c, 0x00000034
-	.section .rom.00014ca0, "ax"
-	.global Func_08014ca0
-	.type Func_08014ca0, %function
-	.thumb_func
-Func_08014ca0:
-	.incbin "baserom.gba", 0x00014ca0, 0x00000010
-	.section .rom.00014cb0, "ax"
-	.global Func_08014cb0
-	.type Func_08014cb0, %function
-	.thumb_func
-Func_08014cb0:
-	.incbin "baserom.gba", 0x00014cb0, 0x00000010
 	.section .rom.00014de0, "ax"
 	@ Uncredited four-byte tail; independent purpose is unproved.
 	.incbin "baserom.gba", 0x00014de0, 0x00000004
@@ -634,13 +622,8 @@ Animation_ApplyChildValue:
 	.thumb_func
 Func_08022bd8:
 	.incbin "baserom.gba", 0x00022bd8, 0x000000a0
-	.section .rom.00022c78, "ax"
-	.global Func_08022c78
-	.type Func_08022c78, %function
-	.thumb_func
-Func_08022c78:
-	.incbin "baserom.gba", 0x00022c78, 0x0000000c
 	.section .rom.00022c84, "ax"
+	.balign 4
 	.global Func_08022c84
 	.type Func_08022c84, %function
 	.thumb_func
@@ -775,7 +758,9 @@ Func_08023f94:
 	.type Object_SetMoveTarget, %function
 	.thumb_func
 Object_SetMoveTarget:
-	.incbin "baserom.gba", 0x00024738, 0x00000518
+	.incbin "baserom.gba", 0x00024738, 0x000001e8
+	.section .rom.0002493c, "ax"
+	.incbin "baserom.gba", 0x0002493c, 0x00000314
 	.section .rom.00024c6e, "ax"
 	.incbin "baserom.gba", 0x00024c6e, 0x0000003e
 	.section .rom.00024d14, "ax"
@@ -1687,12 +1672,8 @@ Func_08042690:
 	.thumb_func
 Func_0804297c:
 	.incbin "baserom.gba", 0x00042ac0, 0x00000430
-	.section .rom.00042ef0, "ax"
-	.global Func_08042dac
-	.type Func_08042dac, %function
-	.thumb_func
-Func_08042dac:
-	.incbin "baserom.gba", 0x00042ef0, 0x00000318
+	.section .rom.00042f08, "ax"
+	.incbin "baserom.gba", 0x00042f08, 0x00000300
 	.section .rom.00043208, "ax"
 	.global Func_080430c4
 	.type Func_080430c4, %function
@@ -1703,8 +1684,9 @@ Func_080430c4:
 	.type Text_FormatPlayTime, %function
 	.thumb_func
 Text_FormatPlayTime:
-	.incbin "baserom.gba", 0x000432f4, 0x000000ac
+	.incbin "baserom.gba", 0x000432f4, 0x00000080
 	.section .rom.000433a0, "ax"
+	.balign 4
 	.global Func_0804325c
 	.type Func_0804325c, %function
 	.thumb_func
@@ -3198,7 +3180,9 @@ Func_080c8948:
 	.section .rom.000c9944, "ax"
 	.incbin "baserom.gba", 0x000c9944, 0x000002cc
 	.section .rom.000c9c38, "ax"
-	.incbin "baserom.gba", 0x000c9c38, 0x000002f4
+	.incbin "baserom.gba", 0x000c9c38, 0x00000190
+	.section .rom.000c9de0, "ax"
+	.incbin "baserom.gba", 0x000c9de0, 0x0000014c
 	.section .rom.000c9f2c, "ax"
 	.global BattleFx_LookupResult
 	.type BattleFx_LookupResult, %function
@@ -3256,7 +3240,16 @@ Func_080cae5c:
 	.section .rom.000cafc4, "ax"
 	.incbin "baserom.gba", 0x000cafc4, 0x00000704
 	.section .rom.000cb82c, "ax"
-	.incbin "baserom.gba", 0x000cb82c, 0x00001484
+	.incbin "baserom.gba", 0x000cb82c, 0x00000e48
+	.global Func_080cc67c
+Func_080cc67c:
+	.incbin "baserom.gba", 0x000cc674, 0x00000148
+	.global Func_080cc7c4
+Func_080cc7c4:
+	.incbin "baserom.gba", 0x000cc7bc, 0x00000204
+	.section .rom.000cc9f4, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000cc9f4, 0x000002bc
 	.section .rom.000cccb0, "ax"
 	.global BattleAction_FindDescriptor
 	.type BattleAction_FindDescriptor, %function
@@ -3636,11 +3629,8 @@ Func_080d2b4c:
 	.thumb_func
 Func_080d2c64:
 	.incbin "baserom.gba", 0x000d2c44, 0x00000034
-	.global Func_080d2c98
-	.type Func_080d2c98, %function
-	.thumb_func
-Func_080d2c98:
-	.incbin "baserom.gba", 0x000d2c78, 0x00000004
+	.section .rom.000d2c7c, "ax"
+	.balign 4
 	.global Func_080d2c9c
 	.type Func_080d2c9c, %function
 	.thumb_func
@@ -4724,19 +4714,8 @@ Func_08108028:
 	.incbin "baserom.gba", 0x001080a8, 0x00000438
 	.section .rom.001084f4, "ax"
 	.incbin "baserom.gba", 0x001084f4, 0x00000268
-	.section .rom.001088d8, "ax"
-	.global Func_081088d8
-	.type Func_081088d8, %function
-	.thumb_func
-Func_081088d8:
-	.incbin "baserom.gba", 0x001088d8, 0x00000050
-	.section .rom.00108928, "ax"
-	.global Func_08108928
-	.type Func_08108928, %function
-	.thumb_func
-Func_08108928:
-	.incbin "baserom.gba", 0x00108928, 0x00000020
 	.section .rom.00108948, "ax"
+	.balign 4
 	.global Func_08108948
 	.type Func_08108948, %function
 	.thumb_func
@@ -4763,8 +4742,7 @@ Func_08108aa8:
 	.section .rom.00108b70, "ax"
 	.incbin "baserom.gba", 0x00108b70, 0x000006f8
 	.section .rom.0010928a, "ax"
-	.incbin "baserom.gba", 0x0010928a, 0x00000002
-	.incbin "baserom.gba", 0x0010928c, 0x0000081c
+	.incbin "baserom.gba", 0x0010928a, 0x0000081e
 	.section .rom.00109ae8, "ax"
 	.incbin "baserom.gba", 0x00109ae8, 0x00000d2c
 	.section .rom.0010a814, "ax"
@@ -4866,13 +4844,15 @@ Func_08118f6c:
 	.type BattlePres_WaitSync, %function
 	.thumb_func
 BattlePres_WaitSync:
-	.incbin "baserom.gba", 0x001192d0, 0x00000464
+	.incbin "baserom.gba", 0x001192d0, 0x00000304
+	.section .rom.001195ec, "ax"
+	.incbin "baserom.gba", 0x001195ec, 0x00000148
 	.section .rom.00119734, "ax"
 	.global Func_08119734
 	.type Func_08119734, %function
 	.thumb_func
 Func_08119734:
-	.incbin "baserom.gba", 0x00119734, 0x000000bc
+	.incbin "baserom.gba", 0x00119734, 0x0000009c
 	.section .rom.001197f0, "ax"
 	.global Func_081197f0
 	.type Func_081197f0, %function

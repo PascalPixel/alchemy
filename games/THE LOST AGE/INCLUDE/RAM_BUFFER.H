@@ -30,7 +30,9 @@ struct ObjectSystemWork;
 struct DisplayTransitionState;
 
 struct HeapSlots {
-    void *unknown_00[2];
+    /* The heap cursors: the next free EWRAM and IWRAM addresses. */
+    void *next_ewram;
+    void *next_iwram;
     /* The transform stack's block of 48-byte matrices. */
     u8 *transform_stack;
     void *unknown_0c[2];

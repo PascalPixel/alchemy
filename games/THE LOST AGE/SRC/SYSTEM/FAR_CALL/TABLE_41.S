@@ -28,11 +28,11 @@ Func_08108050:
 	.global Shop_RestoreSceneTilesFar
 	.thumb_func
 Shop_RestoreSceneTilesFar:
-	overlay_veneer Func_081088d8
-	.global Func_08108060
+	overlay_veneer Shop_RestoreSceneTiles
+	.global Shop_InitEffectFar
 	.thumb_func
-Func_08108060:
-	overlay_veneer Func_08108928
+Shop_InitEffectFar:
+	overlay_veneer Shop_InitEffect
 	.global Func_08108068
 	.thumb_func
 Func_08108068:

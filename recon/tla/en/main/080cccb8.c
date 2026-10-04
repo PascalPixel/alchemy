@@ -26,13 +26,12 @@ struct ActionDescriptorTables {
 
 struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
 {
-    struct ActionDescriptorTables *work = Ram_HeapSlots->event_work;
     struct ActionDescriptor *entry;
     s32 i;
     s32 group = 8;
 
     for (i = 0; i < 4; i++) {
-        entry = work->tables[i];
+        entry = ((struct ActionDescriptorTables *)Ram_HeapSlots->event_work)->tables[i];
         if (entry == NULL)
             continue;
         if (id <= 7) {

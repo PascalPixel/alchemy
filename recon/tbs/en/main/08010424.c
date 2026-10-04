@@ -1,3 +1,14 @@
+/* 2026-10-04 ordinary follow-up seed6104/two jobs/10795 candidates:
+ * no improvement from70; same two register choices and one load reorder.
+ */
+/* 2026-10-04 first drawing/source base lifetime trials:
+ * plain: draft: score 1613 (40 register-only, 3 stack-only, 2 operand, 12 reordered, 4 inserted, 2 deleted)
+ * map_pin: draft: score 70 (2 register-only, 1 reordered)
+ * map_barrier: draft: score 315 (14 register-only, 1 operand, 2 reordered, 1 deleted)
+ * pair_pin: draft: score 70 (2 register-only, 1 reordered)
+ * pair_barrier: draft: score 590 (45 register-only, 2 operand, 2 reordered, 2 deleted)
+ * Retain prior70; any new device requires instruction-presence review.
+ */
 /* 2026-10-04 independent follow-up: retained70 (two register choices
  * and one table-base load reorder); no new binding or barrier retained.
  * Plain first-base scalar1673; native r2 scalar/pointer bindings both70,

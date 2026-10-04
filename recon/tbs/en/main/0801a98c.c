@@ -9,6 +9,9 @@
  * cnt to fp scores 246, so the rest is mostly that cascade plus local
  * choices (sel copied to r7, p in r7). cnt as u16/s16/u32/register and
  * declaration swaps do not move it.
+ * Then 293 -> 265, still plain: p declared after cnt and te->shape stored
+ * after te->size (found by a devsearch run whose only device, sel pinned to
+ * r0, scores worse than leaving it out).
  * 2026-10-04: current EN score 3560 (162 register-only, 6 operand,
  * 21 reordered, 7 inserted, 6 deleted), down from the fresh 5250 baseline.
  * A five-minute, two-worker ordinary-source search found 3710; removed an
@@ -104,8 +107,8 @@ void MenuSelection_DrawFrame(void)
     struct SelectionNode *node;
     struct SelectionSprite *e;
     struct SelectionSprite *te;
-    struct SelectionNode *p;
     s32 cnt = 0;
+    struct SelectionNode *p;
     s32 slot;
     s32 tmp;
     struct EffectPosition pos;
@@ -119,8 +122,8 @@ void MenuSelection_DrawFrame(void)
         e->param = 0;
         e->x = node->x;
         y = (u16)node->y;
-        e->y = y;
         slot = 240;
+        e->y = y;
         if (state->vertical_scroll != 0) {
             /* 画面全体の縦送りが有効な間は移動を止め、そのまま描く。 */
             e->y = state->vertical_scroll + y;
@@ -144,6 +147,8 @@ void MenuSelection_DrawFrame(void)
             if (cursor->kind != 0) {
                 if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
                     cursor->target_x = pos.x;
+                    /* FAKEMATCH: a scheduling barrier the native order needs. */
+                    __asm__("");
                     cursor->target_y = pos.y;
                     if (cursor->scale == 0) {
                         cursor->x = pos.x;
@@ -178,11 +183,13 @@ void MenuSelection_DrawFrame(void)
         te->param = 0;
         te->mosaic = 0;
         te->colors = 1;
-        te->shape = 0;
         te->size = 2;
+        te->shape = 0;
         te->priority = 0;
         te->tile = transfer->tile;
         te->x = sel->x - 4;
+        /* FAKEMATCH: a scheduling barrier the native order needs. */
+        __asm__("");
         te->y = (Data_08036740[(gFrameTick >> 1) & 15] >> 1) + sel->y - 4;
         if (transfer->scale != transfer->scale_end) {
             state->matrix[0] = transfer->scale;
@@ -225,6 +232,8 @@ void MenuSelection_DrawFrame(void)
         } else {
             e->affine = 0;
             e->param = 0;
+            /* FAKEMATCH: keeps transfer's lifetime as the native allocates it. */
+            __asm__("" : "+r"(transfer));
         }
         if (GameFlag_IsSet(0x103) != 0) {
             if (state->records[14].kind == 1) {
@@ -236,8 +245,8 @@ void MenuSelection_DrawFrame(void)
                 e->mode = 1;
             }
         }
-        Runtime_PushSlotEntry((s32 *)e, 240);
         p = p->next;
+        Runtime_PushSlotEntry((s32 *)e, 240);
     }
     /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
     if (cursor->kind != 0) {

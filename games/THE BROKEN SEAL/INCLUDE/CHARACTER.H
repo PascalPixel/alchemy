@@ -22,6 +22,12 @@ struct CharacterDefinition {
     u8 unknown_0b2[2];
 };
 
+struct ClassAbility {
+    u8 ability;
+    u8 level;
+    u8 unknown_02[2];
+};
+
 struct ClassDefinition {
     s32 series;
     u8 required[4];
@@ -31,7 +37,9 @@ struct ClassDefinition {
     u8 defense;
     u8 agility;
     u8 luck;
-    u8 unknown_0e[0x46];
+    u8 unknown_0e[2];
+    struct ClassAbility abilities[16];
+    u8 unknown_50[4];
 };
 
 struct DjinnDefinition {
@@ -91,6 +99,8 @@ LAYOUT_OFFSET_GUARD(CharacterDefinition_StartingLevel, struct CharacterDefinitio
 LAYOUT_OFFSET_GUARD(CharacterDefinition_Items, struct CharacterDefinition, items, 0x98);
 LAYOUT_SIZE_GUARD(ClassDefinition_Size, struct ClassDefinition, 0x54);
 LAYOUT_OFFSET_GUARD(ClassDefinition_Hp, struct ClassDefinition, hp, 8);
+LAYOUT_SIZE_GUARD(ClassAbility_Size, struct ClassAbility, 4);
+LAYOUT_OFFSET_GUARD(ClassDefinition_Abilities, struct ClassDefinition, abilities, 0x10);
 LAYOUT_SIZE_GUARD(DjinnDefinition_Size, struct DjinnDefinition, 0xc);
 LAYOUT_SIZE_GUARD(EnemyDefinition_Size, struct EnemyDefinition, 0x54);
 LAYOUT_OFFSET_GUARD(EnemyDefinition_Rewards, struct EnemyDefinition, rewards, 0x20);

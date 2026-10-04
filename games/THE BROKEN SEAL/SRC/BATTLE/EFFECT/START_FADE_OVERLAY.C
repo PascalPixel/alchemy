@@ -4,14 +4,12 @@
 #include "DMA.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "VRAM_BLOCK.H"
+#include "IO_REG.H"
 
 void *ObjectTable_Get(u32 object);
 void Object_EffectSpawnCallback(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-#define REG_BLDCNT (*(volatile u16 *)0x04000050)
-#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
-#define REG_BLDY (*(volatile u16 *)0x04000054)
 
 /* One sprite entry of the fade overlay, with its attribute words. */
 struct FadeMark {

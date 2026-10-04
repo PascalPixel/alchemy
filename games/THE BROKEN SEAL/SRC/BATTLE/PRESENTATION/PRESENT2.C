@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "TRANSFORM.H"
 #include "SCENE.H"
+#include "IO_REG.H"
 
-#define REG_BLDCNT (*(volatile u16 *)0x04000050)
 
 struct BattleTransitionEntry {
     u32 value;

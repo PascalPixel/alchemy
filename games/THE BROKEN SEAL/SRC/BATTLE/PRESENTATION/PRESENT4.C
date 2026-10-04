@@ -10,11 +10,11 @@
 #include "DMA.H"
 #include "SCENE.H"
 #include "BATTLE_WORK.H"
+#include "IO_REG.H"
 
 extern u8 gLinkStatus[];
 
 #define LINK_STAT (*(u16 *)gLinkStatus)
-#define REG_SIOCNT (*(volatile u32 *)0x04000128)
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
@@ -169,7 +169,7 @@ void BattlePresentation_ClearBg0VerticalOffset(void)
 {
     u32 zero = 0;
 
-    *(volatile u16 *)0x04000012 = zero;
+    REG_BG0VOFS = zero;
 }
 
 void Party_ReservedNoOp5B14(void)

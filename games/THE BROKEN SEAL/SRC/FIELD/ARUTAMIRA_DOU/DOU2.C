@@ -8,6 +8,7 @@
 #include "CALL.H"
 #include "SCENE_IDS.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 extern u8 MsgArutamiraBabi[];
 extern u8 MsgArutamiraCameBackPleaseDraughtQuickly[];
@@ -23,8 +24,6 @@ extern u8 MsgArutamiraThatsSukuretaSaidAlchemyCould[];
 extern u8 MsgArutamiraWhatWasThat[];
 extern u8 MsgArutamiraWouldHaveRevealedMyselfSooner[];
 extern u8 gDisplayTransition[];
-#define REG_BLDCNT (*(volatile u16 *)0x04000050)
-#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 s32 Engine_PartyRemoveItem(s32 item);
 void Battle_ResetEffectCounter(void);
 void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);

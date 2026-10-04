@@ -3,8 +3,8 @@
 #include "GLOBAL_CELLS.H"
 #include "RENDER_INPUT.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
-#define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 typedef void (*InterruptHandler)(void);
 void Runtime_SetIrqHandler(s32 index, s32 priority, InterruptHandler handler);
 void Graphics_ClearBg1ControlBit2(void);

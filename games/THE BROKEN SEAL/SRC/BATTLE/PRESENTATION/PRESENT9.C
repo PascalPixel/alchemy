@@ -44,8 +44,6 @@ void BattleActor_SpawnObjectsForList(u16 *ids, s32 mode);
 void BattleEffect_RunTileAndPaletteAnimationFar(struct TransitionActorList *list);
 void BattlePres_SetActorRecordMode(s32 id, s32 mode);
 
-#define REG_BG0CNT (*(volatile u16 *)0x04000008)
-#define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 
 /*
  * The battle-entry transition. The normal entry copies the seven curtain
@@ -253,7 +251,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
     {
         u32 saved = ime;
 
-        *(volatile u16 *)0x04000208 = saved;
+        REG_IME = saved;
     }
 }
 

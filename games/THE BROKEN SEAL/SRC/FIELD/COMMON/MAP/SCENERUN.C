@@ -4,6 +4,7 @@
 #include "GAME_STATE.H"
 #include "SCENE_IDS.H"
 #include "FIELDRUN.H"
+#include "IO_REG.H"
 
 /* Scenes past the table are not maps: a blank screen, the two table
    screens that draw over the last object palettes, and a battle. */
@@ -14,8 +15,6 @@ enum {
     SCENE_BATTLE = 0x1fe
 };
 
-#define REG_DMA0 ((volatile u16 *)0x040000b0)
-#define REG_DMA3 ((volatile u32 *)0x040000d4)
 #define OBJ_PALETTE_LAST ((void *)0x050001c0)
 #define DMA_COPY_16_WORDS 0x84000010
 

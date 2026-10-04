@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 
-#define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 
 void Graphics_SetBg1Priority3(void)
 {

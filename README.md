@@ -7,7 +7,7 @@ form people can read, change and build on.
 
 ## Progress
 
-**☀️ 91.25% · ⚓️ 5.28%**
+**☀️ 91.33% · ⚓️ 5.28%**
 
 FAKEMATCH marks C that needs a matching aid to reproduce the original
 compiler’s register choices or instruction order. Those bytes are already

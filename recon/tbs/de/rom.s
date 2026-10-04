@@ -1606,38 +1606,38 @@ ParticleField_PuffSizes:
 	.global StagedParticles_UnitScale
 StagedParticles_UnitScale:
 	.incbin "baserom.gba", 0x000f0940, 0x00000008
-	.global Data_080eeb48
-Data_080eeb48:
+	.global DualTable_VineWidths
+DualTable_VineWidths:
 	.incbin "baserom.gba", 0x000f0948, 0x00000003
-	.global Data_080eeb4b
-Data_080eeb4b:
+	.global DualTable_HeightLimits
+DualTable_HeightLimits:
 	.incbin "baserom.gba", 0x000f094b, 0x00000003
-	.global Data_080eeb4e
-Data_080eeb4e:
+	.global DualTable_VineCells
+DualTable_VineCells:
 	.incbin "baserom.gba", 0x000f094e, 0x00000006
-	.global Data_080eeb54
-Data_080eeb54:
+	.global DualTable_PillarWidths
+DualTable_PillarWidths:
 	.incbin "baserom.gba", 0x000f0954, 0x00000004
-	.global Data_080eeb58
-Data_080eeb58:
+	.global DualTable_PillarCells
+DualTable_PillarCells:
 	.incbin "baserom.gba", 0x000f0958, 0x00000006
-	.global Data_080eeb5e
-Data_080eeb5e:
+	.global DualTable_ColumnCounts
+DualTable_ColumnCounts:
 	.incbin "baserom.gba", 0x000f095e, 0x00000003
-	.global Data_080eeb61
-Data_080eeb61:
+	.global DualTable_ColumnX
+DualTable_ColumnX:
 	.incbin "baserom.gba", 0x000f0961, 0x00000010
-	.global Data_080eeb71
-Data_080eeb71:
+	.global DualTable_PillarHeights
+DualTable_PillarHeights:
 	.incbin "baserom.gba", 0x000f0971, 0x00000008
-	.global Data_080eeb79
-Data_080eeb79:
+	.global DualTable_PuffWidths
+DualTable_PuffWidths:
 	.incbin "baserom.gba", 0x000f0979, 0x00000007
-	.global Data_080eeb80
-Data_080eeb80:
+	.global DualTable_PuffHeights
+DualTable_PuffHeights:
 	.incbin "baserom.gba", 0x000f0980, 0x00000008
-	.global Data_080eeb88
-Data_080eeb88:
+	.global DualTable_PuffCells
+DualTable_PuffCells:
 	.incbin "baserom.gba", 0x000f0988, 0x0000000e
 	.global RisingColumns_ColumnOffsets
 RisingColumns_ColumnOffsets:

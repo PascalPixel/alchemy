@@ -255,7 +255,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/GLYPH/GLYPH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/FIND_FREE_TRANSFER_ENTRY.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0001a984)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU.o"(.text)
     "*/games/COMMON/SRC/MENU/GET_NODE_AT_COUNT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU2.o"(.text)

@@ -252,12 +252,6 @@ UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x00017de8, 0x00000480
 	.section .rom.00018870, "ax"
 	.incbin "baserom.gba", 0x00018870, 0x00000110
-	.section .rom.00019600, "ax"
-	.global MenuSelection_DrawFrame
-	.thumb_func
-	.type MenuSelection_DrawFrame, %function
-MenuSelection_DrawFrame:
-	.incbin "baserom.gba", 0x00019600, 0x00000560
 	.section .rom.0001cb00, "ax"
 	.global UiText_RenderStringTiles
 	.thumb_func
@@ -364,7 +358,10 @@ Menu_AnimatedCursorTiles:
 	.incbin "baserom.gba", 0x00033520, 0x00002000
 	.global Data_080366f8
 Data_080366f8:
-	.incbin "baserom.gba", 0x00035520, 0x00000058
+	.incbin "baserom.gba", 0x00035520, 0x00000048
+	.global Menu_CursorBobOffsets
+Menu_CursorBobOffsets:
+	.incbin "baserom.gba", 0x00035568, 0x00000010
 	.global PaletteGlow_WaveTable
 PaletteGlow_WaveTable:
 	.incbin "baserom.gba", 0x00035578, 0x00000079

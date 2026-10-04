@@ -242,7 +242,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/GLYPH/GLYPH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/FIND_FREE_TRANSFER_ENTRY.o"(.text)
-        "*/recon/tbs/raw/0801a98c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU.o"(.text)
         "*/games/COMMON/SRC/MENU/GET_NODE_AT_COUNT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU2.o"(.text)

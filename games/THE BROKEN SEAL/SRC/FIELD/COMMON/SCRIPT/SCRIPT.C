@@ -799,19 +799,19 @@ s32 Field_CheckConfiguredKeys(void)
 
     if (work == NULL)
         return 0;
-    if (gKeyState & gGameState.unknown_214) {
+    if (gKeyState & gGameState.select_keys) {
         s16 *flag = (s16 *)work->unknown_172;
         s32 value = 1;
 
         *flag = value;
         result = 1;
-    } else if (gKeyState & gGameState.unknown_210) {
+    } else if (gKeyState & gGameState.a_keys) {
         s16 *flag = (s16 *)(work->unknown_172 + 2);
         s32 value = 1;
 
         *flag = value;
         result = 1;
-    } else if (gKeyState & gGameState.unknown_216) {
+    } else if (gKeyState & gGameState.start_keys) {
         s16 *flag = (s16 *)(work->unknown_172 + 4);
         s32 value = 1;
 

@@ -69,10 +69,12 @@ struct GameState {
     u8 message_speed;
     u8 unknown_20d[2];
     u8 unknown_20f;
-    u16 unknown_210;
-    u16 unknown_212;
-    u16 unknown_214;
-    u16 unknown_216;
+    /* The keys that act as A, B, Select and Start; the field script raises
+       its three key flags for Select, A and Start. */
+    u16 a_keys;
+    u16 b_keys;
+    u16 select_keys;
+    u16 start_keys;
     /* The keys that invoke each stored Psynergy shortcut. */
     u16 first_shortcut_keys;
     u16 second_shortcut_keys;
@@ -148,7 +150,7 @@ LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0
 LAYOUT_OFFSET_GUARD(GameState_ActiveOwners, struct GameState, active_owners, 0x1f8);
 LAYOUT_OFFSET_GUARD(GameState_Speech, struct GameState, speech, 0x20a);
 LAYOUT_OFFSET_GUARD(GameState_MessageSpeed, struct GameState, message_speed, 0x20c);
-LAYOUT_OFFSET_GUARD(GameState_Keys210, struct GameState, unknown_210, 0x210);
+LAYOUT_OFFSET_GUARD(GameState_AKeys, struct GameState, a_keys, 0x210);
 LAYOUT_OFFSET_GUARD(GameState_FirstShortcutKeys, struct GameState, first_shortcut_keys, 0x218);
 LAYOUT_OFFSET_GUARD(GameState_SecondShortcutKeys, struct GameState, second_shortcut_keys, 0x21a);
 LAYOUT_OFFSET_GUARD(GameState_FirstShortcut, struct GameState, first_shortcut, 0x220);

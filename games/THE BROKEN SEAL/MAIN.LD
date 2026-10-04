@@ -657,7 +657,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_ZERO.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/FORMATION_SELECT_RANDOM_AVAILABLE_MEMBER.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000b8ffc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/SUMMON.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE10.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000b9a0a)

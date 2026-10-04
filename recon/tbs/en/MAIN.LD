@@ -656,7 +656,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_ZERO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/FORMATION_SELECT_RANDOM_AVAILABLE_MEMBER.o"(.text)
-        "*/recon/tbs/raw/080c1ffc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/SUMMON.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE10.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.080c2a0a)

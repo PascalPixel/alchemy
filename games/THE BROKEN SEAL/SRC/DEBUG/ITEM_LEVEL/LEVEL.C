@@ -1,6 +1,7 @@
 /* The item and level debug room: its scene tables, actor 13's steps and the
  * record counts it adjusts. */
 #include "LEVEL.H"
+#include "FIELDOBJ.H"
 #include "CALL.H"
 #include "PARTY_STATE.H"
 #include "TYPES.H"
@@ -412,8 +413,8 @@ done:
  * and the far debug browsers. */
 void SceneState_SetWorkWords1c0And1c8(void)
 {
-    *(s32 *)((*(u8 **)&gEventWork) + 0x1c0) = 0x201;
-    *(s32 *)((*(u8 **)&gEventWork) + 0x1c8) = 24;
+    gEventWork->start_transition = 0x201;
+    gEventWork->transition_frames = 24;
     Engine_EventRequestExit();
 }
 
@@ -422,8 +423,8 @@ void SceneState_SetWorkWords1c0And1c8(void)
  * local. */
 s32 FieldScene_RunEntrySetup(void)
 {
-    *(s32 *)((*(u8 **)&gEventWork) + 448) = 516;
-    *(s32 *)((*(u8 **)&gEventWork) + 456) = 24;
+    gEventWork->start_transition = 516;
+    gEventWork->transition_frames = 24;
 #if EDITION_INTERNATIONAL
     *(s32 *)(Object_GetById(11) + 28) = 0x19999;
     *(s32 *)(Object_GetById(11) + 24) = 0x19999;

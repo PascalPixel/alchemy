@@ -220,8 +220,8 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade);
 s32 BattleFx_InitializeStarField(s32 kind);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 void BattleMotion_ProjectScaledPosition(s32 unit, struct EffectPosition *position);
-void Func_080c9020(struct EffectLaunch *launch);
-void Func_080c9030(struct EffectLaunch *launch);
+void BattleFx_RunIceFleckBurstFar(struct EffectLaunch *launch);
+void BattleFx_RunGatheringBurstFar(struct EffectLaunch *launch);
 void BattlePresentation_PrepareSceneFar(s32 kind);
 void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
 
@@ -299,10 +299,10 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
     QueueIoWriteDelay2(0x0400000c, 0x784);
     QueueIoWriteDelay2(0x04000050, 0x3f44);
     WaitFrames(1);
-    Io_Write16(*(u16 *)0x04000040, 240);
-    Io_Write16(*(u16 *)0x04000044, 0x1088);
-    Io_Write16(*(u16 *)0x04000048, 63);
-    Io_Write16(*(u16 *)0x0400004a, 17);
+    Io_Write16(REG_WIN0H, 240);
+    Io_Write16(REG_WIN0V, 0x1088);
+    Io_Write16(REG_WININ, 63);
+    Io_Write16(REG_WINOUT, 17);
     if (mode == 0) {
         QueueIoWriteDelay2(0x04000052, 0x100e);
         BattleFx_InitializeStarField(kind);
@@ -353,7 +353,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         launch.target = unit;
         launch.count = 1;
         launch.unknown_0010 = 1;
-        Func_080c9020(&launch);
+        BattleFx_RunIceFleckBurstFar(&launch);
     } else {
         launch2.kind = kind;
         launch2.unknown_001c = 0;
@@ -363,6 +363,6 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         launch2.target = unit;
         launch2.count = 1;
         launch2.unknown_0010 = 1;
-        Func_080c9030(&launch2);
+        BattleFx_RunGatheringBurstFar(&launch2);
     }
 }

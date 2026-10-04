@@ -89,7 +89,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0001336c)
     "*/recon/tla/ja/rom.o"(.rom.00013438)
     "*/games/THE LOST AGE/SRC/SYSTEM/SYSTEM.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000138a8)
+    "*/recon/tla/ja/rom.o"(.rom.000138b4)
     "*/recon/tla/ja/rom.o"(.rom.00013b30)
     "*/games/THE LOST AGE/SRC/SYSTEM/IO.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00013d84)

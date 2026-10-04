@@ -165,3 +165,9 @@ void WaitFrames(s32 frames)
         }
     }
 }
+
+/* Sets the key repeat timer to 19 frames. */
+void Runtime_SetMainState19(void)
+{
+    gInput.repeat_timer = 19;
+}

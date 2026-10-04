@@ -664,7 +664,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLIPPING_BURST.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000cda0c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT3.o"(.text)
-    "*/recon/tbs/raw/080ccc38.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT44.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT45.o"(.text)

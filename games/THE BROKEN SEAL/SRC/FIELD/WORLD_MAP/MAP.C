@@ -5,6 +5,7 @@
 #include "IWRAM_CALL.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
+#include "SCRIPT_MOTION.H"
 
 #define FrameCounter gFrameCount
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
@@ -1308,8 +1309,8 @@ void WorldMap_MeetVenusDjinni(void)
     count = 0;
     djinni = Object_GetById(DJINNI);
     leader = Object_GetById(0);
-    x = (leader->x.fixed + (s32)0xea300000) / 2 + 0x15d00000;
-    z = (leader->z.fixed + (s32)0xfad00000) / 2 + 0x5300000;
+    x = (leader->x.fixed - 0x15d00000) / 2 + 0x15d00000;
+    z = (leader->z.fixed - 0x5300000) / 2 + 0x5300000;
     if (!GameFlag_IsSet(FLAG_DJINNI_MET)) {
         Owner_RefreshActiveRatios(1);
         GameFlag_Set(FLAG_DJINNI_MET);
@@ -1333,11 +1334,11 @@ void WorldMap_MeetVenusDjinni(void)
         Event_WaitForDisplayField358Clear();
         Battle_SetObjectFlag5bWhenMode3();
         djinni->motion_flags = 2;
-        *(s32 *)&djinni->unknown_44[4] = 0x4000;
+        ((struct ScriptMotionObject *)djinni)->gravity = 0x4000;
         djinni->speed = 0x10000;
         djinni->acceleration = 0x10000;
         djinni->velocity_y = 0;
-        *(s32 *)djinni->unknown_14 = 0;
+        ((struct ScriptMotionObject *)djinni)->terrain_height = 0;
         FieldObject_SetPosition(djinni, 0x15d00000, 0, 0x5300000);
         for (i = 0; i < 16; i++) {
             djinni->scale_x += 0x800;
@@ -1349,7 +1350,7 @@ void WorldMap_MeetVenusDjinni(void)
         Task_Wait(16);
         djinni->update = 0;
         Engine_ObjectSetPartPalettes(djinni, 0);
-        *(s32 *)&djinni->unknown_44[4] = 0x10000;
+        ((struct ScriptMotionObject *)djinni)->gravity = 0x10000;
         Event_ShowMessage(DJINNI, 0);
         Audio_PlayCue(131);
         Engine_PsynergyBegin(140, 0);
@@ -1393,7 +1394,7 @@ void WorldMap_MeetVenusDjinni(void)
         Event_ShowMessage(DJINNI, 0);
         djinni->motion_flags = 2;
         djinni->velocity_y = 0;
-        *(s32 *)djinni->unknown_14 = 0;
+        ((struct ScriptMotionObject *)djinni)->terrain_height = 0;
         for (i = 7; i >= 0; i--) {
             djinni->facing += 0x1000;
             Task_Wait(1);

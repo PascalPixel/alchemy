@@ -744,7 +744,50 @@ pub fn png_from_gba_tiles(
     bpp: GbaBpp,
     tiles_wide: usize,
 ) -> Result<Vec<u8>, AssetError> {
-    let rgb = palette_rgb(palette, bpp)?;
+    png_from_tiles(tiles, palette, bpp, tiles_wide, None)
+}
+
+/// Display 4bpp tiles with their explicit hardware palette banks. The PNG's
+/// high index nibble selects the bank; its low nibble retains the tile pixel.
+pub fn png_from_gba_tiles_banked(
+    tiles: &[u8],
+    palette: &[u8],
+    tile_palettes: &[u8],
+    tiles_wide: usize,
+) -> Result<Vec<u8>, AssetError> {
+    if palette.is_empty() || !palette.len().is_multiple_of(32) || palette.len() > 512 {
+        return err("banked tiles require 1..16 whole BGR555 palette banks");
+    }
+    if tile_palettes.len() != tiles.len() / GbaBpp::Bpp4.tile_bytes() {
+        return err("banked tiles require exactly one palette bank per tile");
+    }
+    if tile_palettes.iter().any(|bank| *bank > 15) {
+        return err("tile palette banks must be in 0..15");
+    }
+    if tile_palettes
+        .iter()
+        .any(|bank| *bank as usize >= palette.len() / 32)
+    {
+        return err("tile references a missing BGR555 palette bank");
+    }
+    png_from_tiles(
+        tiles,
+        palette,
+        GbaBpp::Bpp4,
+        tiles_wide,
+        Some(tile_palettes),
+    )
+}
+
+fn png_from_tiles(
+    tiles: &[u8],
+    palette: &[u8],
+    bpp: GbaBpp,
+    tiles_wide: usize,
+    banks: Option<&[u8]>,
+) -> Result<Vec<u8>, AssetError> {
+    let output_bpp = if banks.is_some() { GbaBpp::Bpp8 } else { bpp };
+    let rgb = palette_rgb(palette, output_bpp)?;
     let entries = rgb.len() / 3;
     let (tiles_high, width, height) = image_shape(tiles, bpp, tiles_wide)?;
     let mut pixels = vec![0u8; width * height];
@@ -753,7 +796,7 @@ pub fn png_from_gba_tiles(
             let offset = (tile_y * tiles_wide + tile_x) * bpp.tile_bytes();
             for y in 0..8 {
                 for x in 0..8 {
-                    let index = match bpp {
+                    let mut index = match bpp {
                         GbaBpp::Bpp4 => {
                             let byte = tiles[offset + y * 4 + x / 2];
                             if x.is_multiple_of(2) {
@@ -764,6 +807,9 @@ pub fn png_from_gba_tiles(
                         }
                         GbaBpp::Bpp8 => tiles[offset + y * 8 + x],
                     };
+                    if let Some(banks) = banks {
+                        index |= banks[tile_y * tiles_wide + tile_x] << 4;
+                    }
                     if index as usize >= entries {
                         return err("tile references an index outside the BGR555 palette");
                     }
@@ -772,7 +818,7 @@ pub fn png_from_gba_tiles(
             }
         }
     }
-    let encoded = if bpp == GbaBpp::Bpp4 {
+    let encoded = if output_bpp == GbaBpp::Bpp4 {
         let mut packed = Vec::with_capacity(pixels.len() / 2);
         for pair in pixels.chunks_exact(2) {
             packed.push(pair[0] << 4 | pair[1]);
@@ -785,7 +831,7 @@ pub fn png_from_gba_tiles(
         width,
         height,
         png::ColorType::Indexed,
-        bpp.png_depth(),
+        output_bpp.png_depth(),
         Some(&rgb),
         &encoded,
     )
@@ -794,6 +840,53 @@ pub fn png_from_gba_tiles(
 #[cfg(test)]
 mod tile_tests {
     use super::*;
+
+    #[test]
+    fn banked_tiles_preserve_low_pixels_and_select_real_colors() {
+        let palette: Vec<u8> = (0..256u16).flat_map(|index| index.to_le_bytes()).collect();
+        let tile: Vec<u8> = (0..32)
+            .map(|index| ((index * 2 + 1) % 16) << 4 | ((index * 2) % 16))
+            .collect();
+        let tiles = tile.repeat(3);
+        let png = png_from_gba_tiles_banked(&tiles, &palette, &[0, 13, 15], 3).unwrap();
+        let image = indexed_png(&png).unwrap();
+        assert_eq!((image.width, image.height), (24, 8));
+        assert_eq!(decode(&png).unwrap().0.bit_depth, png::BitDepth::Eight);
+        assert_eq!(bgr555_palette_from_png(&png).unwrap(), palette);
+        for y in 0..8 {
+            for (tile, bank) in [0, 13, 15].into_iter().enumerate() {
+                for x in 0..8 {
+                    let low = (y * 8 + x) % 16;
+                    let index = bank * 16 + low;
+                    assert_eq!(image.pixels[y * 24 + tile * 8 + x], index as u32);
+                    assert_eq!(
+                        image.palette[index],
+                        [((index & 31) * 8) as u8, (((index >> 5) & 31) * 8) as u8, 0]
+                    );
+                }
+            }
+        }
+        // The ordinary converter still refuses palettes above its 16-entry limit.
+        assert!(png_from_gba_tiles(&tiles, &palette, GbaBpp::Bpp4, 3).is_err());
+    }
+
+    #[test]
+    fn banked_tiles_require_whole_banks_and_exact_tile_assignments() {
+        let palette = vec![0; 14 * 32];
+        assert!(png_from_gba_tiles_banked(&[0; 32], &palette, &[13], 1).is_ok());
+        for banks in [&[][..], &[0, 1], &[14], &[16]] {
+            assert!(png_from_gba_tiles_banked(&[0; 32], &palette, banks, 1).is_err());
+        }
+        for size in [0, 2, 31, 34, 544] {
+            assert!(png_from_gba_tiles_banked(&[0; 32], &vec![0; size], &[0], 1).is_err());
+        }
+        assert!(png_from_gba_tiles_banked(&[0; 31], &palette, &[], 1).is_err());
+        assert!(png_from_gba_tiles_banked(&[0; 33], &palette, &[0], 1).is_err());
+        assert!(png_from_gba_tiles_banked(&[0; 32], &palette, &[0], 0).is_err());
+        let mut invalid = palette;
+        invalid[1] = 0x80;
+        assert!(png_from_gba_tiles_banked(&[0; 32], &invalid, &[0], 1).is_err());
+    }
 
     fn fixture_png(bpp: GbaBpp, width: usize, height: usize) -> Vec<u8> {
         let entries = bpp.palette_entries();

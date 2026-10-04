@@ -1,3 +1,11 @@
+/* 2026-10-04 fill-return contract: current EN score 180 (three reordered instructions)
+ * after MENU_LIST.H follows the native s32 Ui_FillVramBlockPattern ABI
+ * instead of void (previous score 240). Native08016738 preserves
+ * the fill cursor in r0 with pop{r1}/bx r1; an isolated void-return
+ * control uses pop{r0}/bx r0. Callers discard the result.
+ * The first highlight argument-store ordering now agrees.
+ * Earlier header measurements below refer to the prior declaration.
+ */
 /* 2026-10-04 W4 paired-selector pass: fresh approved compilation repeats
  * score240, solely four reordered instructions. The item selector's
  * consumed pointer/lifetime trials did not yield a transferable improvement.

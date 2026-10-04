@@ -1,3 +1,11 @@
+/* 2026-10-04 fill-return contract: current EN score 14796 (326 register,106 stack,61 operand,83 reordered,41 inserted,25 deleted)
+ * after MENU_LIST.H follows the native s32 Ui_FillVramBlockPattern ABI
+ * instead of void (previous score 14696). Native08016738 preserves
+ * the fill cursor in r0 with pop{r1}/bx r1; an isolated void-return
+ * control uses pop{r0}/bx r0. Callers discard the result.
+ * The truthful return contract is retained despite the larger residual.
+ * Earlier header measurements below refer to the prior declaration.
+ */
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"

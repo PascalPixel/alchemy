@@ -1,12 +1,41 @@
+/* 2026-10-04 H1 owner/API pass: current EN score13161 (214 register,
+ * 61 stack,29 operand,61 reordered,48 inserted,28 deleted).
+ * All six TBS plans compile complete2780-byte objects with a224-byte frame;
+ * native extent2756 includes every pool, with the same224-byte frame.
+ * The former ordinary draft scored13657 and had a216-byte frame.
+ *
+ * Shared UiWindow/MenuSprite/UiRenderWork, MenuCell, BattleUnit and
+ * DjinnRecoveryList replace duplicate views. Current WINDOW15.C owns the
+ * 16-byte party-panel shape retained locally here. The command collector
+ * allocates260 bytes and writes actor/result fields ate0/e4; that tail
+ * remains a guarded local view, not an extension invented for the frame.
+ * Its native call also supplies unused argumentr1=1, represented explicitly.
+ * Input cells and IWRAM helpers use real declarations. No status semantics
+ * are inferred for the ignored fill/copy results.
+ *
+ * Owner normalization alone:13925/frame216. Ordinary trials:
+ * - C division instead of explicit __divsi3 calls:13785.
+ * - Both real cursor coordinates as the existing MenuPoint:13306.
+ * - Both together:13161/frame224, retained. Each coordinate is consumed;
+ *   the aggregate recovers the eight frame bytes without unread storage.
+ * No new asm, binding, compiler option or instruction device was added.
+ * Remaining broad allocation/control/pool differences keep this uncredited.
+ * The three legacy table labels still need source-owned data names before
+ * adoption. Earlier scalar-draft observations below are historical only.
+ */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "MENU_LIST.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_PARTY.H"
+#include "IWRAM_CALL.H"
 
 /*
- * Battle ability picker (owner main:08023e70, 2756 bytes).
+ * Battle Djinn picker (owner main:08023e70, 2756 bytes).
  *
- * Builds a flat table of the acting unit's selectable abilities out of two
+ * Builds a flat table of the acting unit's selectable Djinn out of two
  * 4 x 20 bit grids in the unit record, then runs a modal five-per-page list
  * until the player confirms an entry or cancels.  The return value is the
  * packed table code of the confirmed entry, or -1 on cancel.
@@ -14,7 +43,7 @@
  * Packed table code, as used by every draw and commit site below:
  *   bits  0.. 7  row within the grid column (0..19)
  *   bits  8..11  grid column (0..3)
- *   bit  16      entry came from the second grid (field_0f8), so it carries
+ *   bit  16      entry came from the second grid (djinn_available), so it carries
  *                a placement record and a detail sub-window
  *   bits 17..21  placement timer, when positive
  *   bit  31      table terminator (0x80000000)
@@ -22,13 +51,11 @@
  * The single `bl` back into the middle of the owner at 0x0802489c is the
  * out-of-range back edge of the outer `for (;;)`, not a call.
  *
- * Uncertain and left neutral: the 12-byte cursor record pushed through
- * Runtime_PushSlotEntry is written both as words and as narrow sub-fields,
- * so its sub-word members are spelled through offsets rather than guessed
- * bitfields; the +0xFFFA and +248 cursor biases are transcribed as the
- * reference materializes them.
+ * The shared 12-byte MenuSprite passed to Runtime_PushSlotEntry exposes
+ * its two OAM words and the real narrow fields. The +0xfffa and +248
+ * cursor biases preserve the native wrapped hardware coordinates.
  *
- * Residual, measured rather than guessed: every reference block, branch,
+ * Earlier scalar-draft residual: every reference block, branch,
  * loop, call and store is present and the extent matches to four bytes, but
  * the allocator picks different callee-saved registers (the result lives in
  * r5 here and r6 there, the icon and page loop counters in r4 here and r7
@@ -40,140 +67,60 @@
  * the candidate even though nothing is missing from the source.
  */
 
-/* Only the m2c spellings this draft actually uses. */
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
-
-#define RUNTIME (*(struct RuntimeCells *)0x03001e8c)
-#define MENU_STATE (RUNTIME.menu)
-#define CURSOR_OWNER (*(struct CursorOwner **)0x03001e90)
-#define FRAME_COUNTER (*(u32 *)0x03001e40)
-#define BATTLE_OPTIONS (*(u32 *)0x03001ae8)
-#define INPUT_TRIGGER (*(s32 *)0x03001c94)
-#define INPUT_REPEAT (*(s32 *)0x03001b04)
-
-/* Flag bytes the render context exposes to the frame builder. */
-#define CTX_LIST_DIRTY 0xEA3
-#define CTX_TEXT_BUSY 0xEA6
-
-struct MenuRuntime;
-
-struct UiWindow {
-    s32 field_00;
-    s32 field_04;
-    u16 field_08;
-    u16 field_0a;
-    u16 field_0c;
-    u16 field_0e;
+/* The command collector owns this 260-byte state. The common menu prefix
+ * ends at 0xe0; the actor and eight selected Djinn codes are written by
+ * Battle_CollectPartyCommands and read here to reject duplicate choices. */
+struct BattleMenuSelection {
+    struct MenuCell menu;
+    s32 actor_id;
+    u32 selected[8];
 };
 
-struct CursorOwner {
-    struct UiWindow *field_00;
-    u8 unknown_04[8];
-    u16 field_0c;
+LAYOUT_SIZE_GUARD(BattleMenuSelection_Size, struct BattleMenuSelection, 0x104);
+LAYOUT_OFFSET_GUARD(BattleMenuSelection_Selected, struct BattleMenuSelection, selected, 0xe4);
+
+/* Same producer-owned record as WINDOW15.C. It describes the party panel,
+ * not a cursor sprite; leave this local until that owner is shared. */
+struct PartyStatusWindow {
+    struct UiWindow *window;
+    u16 x;
+    u16 y;
+    u16 width;
+    u16 height;
+    u16 flags;
 };
 
-/* Written as words and then patched as narrow fields; see the header note. */
-struct RenderSlot {
-    s32 field_00;
-    s32 field_04;
-    s32 field_08;
-};
+LAYOUT_SIZE_GUARD(PartyStatusWindow_Size, struct PartyStatusWindow, 16);
+LAYOUT_OFFSET_GUARD(PartyStatusWindow_Flags, struct PartyStatusWindow, flags, 12);
 
-struct RuntimeCells {
-    u8 *ctx;
-    u8 unknown_004[0xa4];
-    struct MenuRuntime *menu;
-};
+#define MENU_STATE ((struct BattleMenuSelection *)gWindowWork[42])
+#define CURSOR_OWNER ((struct PartyStatusWindow *)gWindowWork[1])
 
-struct MenuRuntime {
-    u8 unknown_000[0x30];
-    s32 field_30;
-    s32 field_34;
-    s32 field_38;
-    u8 unknown_03c[0x10];
-    s32 field_4c;
-    u8 unknown_050[0x88];
-    s32 field_d8;
-    s32 field_dc;
-    u8 unknown_0e0[4];
-    s32 field_e4[8];
-};
-
-/* Same shape the placement updater already uses. */
-struct PlacementEntry {
-    u8 x;
-    u8 y;
-    u8 id;
-    s8 timer;
-};
-
-struct PlacementList {
-    struct PlacementEntry entries[64];
-    s32 count;
-};
-
-struct PlacementTable {
-    u8 padding[8];
-    struct PlacementList list;
-};
-
-struct BattleUnitGrid {
-    u8 unknown_000[0xf8];
-    u32 field_0f8[4];
-    u32 field_108[4];
-};
-
-extern u8 Resource_FixedBlockBTiles[];
+extern volatile u32 gKeysHeld;
 extern u8 Data_08037308[];
 extern u8 Data_080373e7[];
 extern u8 Data_080373eb[];
 
-s32 __divsi3(s32 numerator, s32 denominator);
-void Sys_Free(void *buf);
-void WaitFrames(s32 frames);
-void Runtime_SetMainState19(void);
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 pal);
-void UiWork_Finalize(struct UiWindow *win, s32 mode);
-void RenderOutput_RedrawSavedRect(struct UiWindow *win);
-void RenderOutput_ClearList(struct UiWindow *win);
-void Ui_FillVramBlockPattern(void);
-void UiText_RenderWideStringAtOffset(s16 *buf, struct UiWindow *win, s32 x, s32 y);
-void UiWindow_SetTilemapEntry(struct UiWindow *win, s32 tile, s32 x, s32 y, s32 flags);
-s32 UiText_CopyMessageString(s32 message, s16 *buf, s32 count);
+void RenderOutput_ClearList(void *work);
 void UiWork_ClearValueNameTables(void);
 void UiWork_PushValueSlot(s32 value, s32 width);
 void UiWindow_MarkVisibleTileAttributes(void);
 void UiWork_SetAltFlagAndClearTable(s32 flag);
-void UiWork_SetParamNibble(s32 nibble);
-void UiText_DrawCharacterAtOffset(s32 message, struct UiWindow *win, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 digits, struct UiWindow *win, s32 x, s32 y);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 w, s32 h, s32 pal);
-struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner, u32 code, s32 sel,
-                               s32 *count);
-struct PlacementTable *Trade_GetOfferStateFar(s32 side);
-struct BattleUnitGrid *Owner_GetStateFar(s32 owner);
-void Audio_PlayCue(s32 cue);
+struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *window, s32 owner,
+    u32 code, s32 selection, s32 *count);
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 
-/* The two IWRAM helpers below are reached through the compiler's call-via
- * veneer bank, so they are modelled as what they are: typed indirect calls
- * to fixed relocated routines. */
-typedef void (*VramFillProc)(u32 dst, s32 count, u32 value);
-typedef void (*VramCopyProc)(u32 dst, u8 *src, s32 count);
-
-#define VRAM_FILL ((VramFillProc)0x03000168)
-#define VRAM_COPY ((VramCopyProc)0x03001388)
-
-s32 Battle_SelectAbility(s32 owner)
+s32 Battle_SelectAbility(s32 owner, s32 unused)
 {
-    u8 *ctx;
-    struct MenuRuntime *menu;
-    struct BattleUnitGrid *unit;
-    struct PlacementList *list;
+    struct UiRenderWork *ctx;
+    struct BattleMenuSelection *menu;
+    struct BattleUnit *unit;
+    struct DjinnRecoveryList *list;
     struct UiWindow *msg_win;
     struct UiWindow *list_win;
     struct UiWindow *detail_win;
     struct UiWindow *icon_win;
-    struct CursorOwner *cursor;
+    struct PartyStatusWindow *cursor;
     u32 *tbl;
     u32 *pos;
     u32 cur;
@@ -195,8 +142,7 @@ s32 Battle_SelectAbility(s32 owner)
     s32 pages;
     s32 tile;
     s32 pal;
-    s32 curs_x;
-    s32 curs_y;
+    struct MenuPoint cursor_pos;
     s32 trig;
     s32 rep;
     s32 opts;
@@ -204,10 +150,10 @@ s32 Battle_SelectAbility(s32 owner)
     s32 y;
     s32 i;
     s32 j;
-    s16 buf[64];
-    struct RenderSlot slot;
+    u16 buf[64];
+    struct MenuSprite slot;
 
-    ctx = RUNTIME.ctx;
+    ctx = (struct UiRenderWork *)gWindowWork[0];
     detail_win = 0;
     prev_row = -1;
     res = Resource_LoadIntoFreeSlot(0x80);
@@ -222,31 +168,31 @@ s32 Battle_SelectAbility(s32 owner)
     msg_win = UiWindow_Create(0, 4, 30, 4, 42);
     UiWork_SetAltFlagAndClearTable(1);
     list_win = UiWindow_Create(21, 9, 9, 11, 6);
-    page = MENU_STATE->field_34;
-    row = MENU_STATE->field_30;
-    saved_row = MENU_STATE->field_38;
+    page = MENU_STATE->menu.page;
+    row = MENU_STATE->menu.row;
+    saved_row = MENU_STATE->menu.preferred_row;
     unit = Owner_GetStateFar(owner);
 
-    /* Flatten the two ability grids into one page-ordered table. */
+    /* Flatten the active and available Djinn grids into one page-ordered table. */
     for (x = 0; x <= 3; x++) {
         pos = &tbl[cnt];
         for (y = 0; y <= 19; y++) {
-            if (unit->field_108[x] & (u32)(1 << y)) {
+            if (unit->djinn_active[x] & (u32)(1 << y)) {
                 *pos = (u32)((x << 8) | y);
                 pos++;
                 cnt++;
-            } else if (unit->field_0f8[x] & (u32)(1 << y)) {
+            } else if (unit->djinn_available[x] & (u32)(1 << y)) {
                 list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
                 for (i = 0; i < list->count; i++) {
-                    if (list->entries[i].id == owner && list->entries[i].x == x &&
-                        list->entries[i].y == y) {
+                    if (list->entries[i].unit_id == owner && list->entries[i].element == x &&
+                        list->entries[i].index == y) {
                         break;
                     }
                 }
                 code = (u32)((x << 8) | y | 0x10000);
                 *pos = code;
-                if (list->entries[i].timer > 0) {
-                    code |= (u32)(list->entries[i].timer << 17);
+                if (list->entries[i].turns > 0) {
+                    code |= (u32)(list->entries[i].turns << 17);
                     *pos = code;
                 }
                 cnt++;
@@ -255,15 +201,15 @@ s32 Battle_SelectAbility(s32 owner)
         }
     }
     tbl[cnt] = 0x80000000;
-    ctx[CTX_LIST_DIRTY] = 1;
+    ctx->dirty = 1;
 
     for (;;) {
         if (page != prev_page || row != prev_row || redraw != 0) {
             cur = tbl[page + row];
-            ctx[CTX_TEXT_BUSY] = 1;
+            ctx->menu_busy = 1;
             mask = 0;
-            Ui_SetRectHighlight(list_win->field_0c + 1, list_win->field_0e + prev_row * 2 + 1,
-                          list_win->field_08 - 2, 1, 15);
+            Ui_SetRectHighlight(list_win->x + 1, list_win->y + prev_row * 2 + 1,
+                          list_win->width - 2, 1, 15);
             if (sub_sel != 0) {
                 UiWork_Finalize(msg_win, 1);
                 msg_win = UiWindow_Create(0, 4, 30, 4, 42);
@@ -274,7 +220,7 @@ s32 Battle_SelectAbility(s32 owner)
                 UiWork_ClearValueNameTables();
                 is_used = 0;
                 for (i = 0; i <= 7; i++) {
-                    if ((u32)MENU_STATE->field_e4[i] == cur) {
+                    if ((u32)MENU_STATE->selected[i] == cur) {
                         is_used = 1;
                         break;
                     }
@@ -309,12 +255,12 @@ s32 Battle_SelectAbility(s32 owner)
             } else {
                 UiText_CopyMessageString(0x8ed, buf, 52);
             }
-            ctx[CTX_TEXT_BUSY] = 0;
+            ctx->menu_busy = 0;
             if (sub_sel == 0) {
-                ctx[CTX_TEXT_BUSY] = 1;
+                ctx->menu_busy = 1;
                 UiWork_Finalize(msg_win, 1);
                 msg_win = UiWindow_Create(0, 4, 30, 4, 42);
-                ctx[CTX_TEXT_BUSY] = (u8)sub_sel;
+                ctx->menu_busy = (u8)sub_sel;
             }
             UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
             prev_row = row;
@@ -331,9 +277,9 @@ s32 Battle_SelectAbility(s32 owner)
                         UiWork_SetParamNibble(2);
                     }
                     UiText_DrawCharacterAtOffset((s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + 0x45f,
-                                  list_win, 8, j * 16);
+                                  (struct RenderInput *)list_win, 8, j * 16);
                     if (code & 0x3e0000) {
-                        UiText_DrawNumberAtOffset((s32)((code & 0x3e0000) >> 17), 1, list_win, 48, j * 16);
+                        UiText_DrawNumberAtOffset((s32)((code & 0x3e0000) >> 17), 1, (struct RenderInput *)list_win, 48, j * 16);
                     }
                     UiWork_SetParamNibble(15);
                     j++;
@@ -346,60 +292,60 @@ s32 Battle_SelectAbility(s32 owner)
                 prev_page = page;
             }
             if (cnt > 5) {
-                for (j = 0; j < (pages = __divsi3(cnt + 4, 5)); j++) {
+                for (j = 0; j < (pages = ((cnt + 4) / 5)); j++) {
                     tile = j + 0xf301;
-                    if (j == __divsi3(page, 5)) {
+                    if (j == (page / 5)) {
                         tile = j + 0xf30b;
                     }
-                    UiWindow_SetTilemapEntry(list_win, tile, list_win->field_08 - pages + j - 2, -1, 0);
+                    UiWindow_SetTilemapEntry(list_win, tile, list_win->width - pages + j - 2, -1, 0);
                 }
             }
-            Ui_SetRectHighlight(list_win->field_0c + 1, list_win->field_0e + row * 2 + 1,
-                          list_win->field_08 - 2, 1, 14);
-            ctx[CTX_LIST_DIRTY] = 1;
-            ctx[CTX_TEXT_BUSY] = 0;
+            Ui_SetRectHighlight(list_win->x + 1, list_win->y + row * 2 + 1,
+                          list_win->width - 2, 1, 14);
+            ctx->dirty = 1;
+            ctx->menu_busy = 0;
         }
 
         if (cnt > 5) {
-            for (j = 0; j < (pages = __divsi3(cnt + 4, 5)); j++) {
+            for (j = 0; j < (pages = ((cnt + 4) / 5)); j++) {
                 tile = j + 0xf301;
-                if ((BATTLE_OPTIONS & 0x100) || (FRAME_COUNTER & 15) <= 11) {
-                    if (j == __divsi3(page, 5)) {
+                if ((gKeysHeld & 0x100) || (gFrameCount & 15) <= 11) {
+                    if (j == (page / 5)) {
                         tile = j + 0xf30b;
                     }
                 }
                 UiWindow_SetTilemapEntry(list_win, tile,
-                              list_win->field_08 - __divsi3(cnt + 4, 5) + j - 2, -1, 0);
+                              list_win->width - ((cnt + 4) / 5) + j - 2, -1, 0);
             }
-            if ((BATTLE_OPTIONS & 0x100) == 0) {
-                UiWindow_SetTilemapEntry(list_win, 0xf334, list_win->field_08 - pages - 3, -1, 0);
-                UiWindow_SetTilemapEntry(list_win, 0xf335, list_win->field_08 - 2, -1, 0);
+            if ((gKeysHeld & 0x100) == 0) {
+                UiWindow_SetTilemapEntry(list_win, 0xf334, list_win->width - pages - 3, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf335, list_win->width - 2, -1, 0);
             } else {
-                UiWindow_SetTilemapEntry(list_win, 0xf011, list_win->field_08 - pages - 3, -1, 0);
-                UiWindow_SetTilemapEntry(list_win, 0xf012, list_win->field_08 - 2, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf011, list_win->width - pages - 3, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf012, list_win->width - 2, -1, 0);
             }
-            ctx[CTX_LIST_DIRTY] |= (u8)(2 << ((u32)(list_win->field_0e - 1) >> 2));
+            ctx->dirty |= (u8)(2 << ((u32)(list_win->y - 1) >> 2));
         }
 
-        trig = INPUT_TRIGGER;
-        rep = INPUT_REPEAT;
-        opts = (s32)BATTLE_OPTIONS;
+        trig = gKeyState;
+        rep = gKeysRepeat;
+        opts = (s32)gKeysHeld;
         menu = MENU_STATE;
-        if (menu->field_d8 != 0) {
+        if (menu->menu.auto_enabled != 0) {
             trig = 0;
             rep = 0;
             opts = 0;
-            if (menu->field_dc == 0) {
-                menu->field_dc = 60;
+            if (menu->menu.auto_delay == 0) {
+                menu->menu.auto_delay = 60;
                 rep = 1;
                 trig = 1;
             } else {
-                menu->field_dc = menu->field_dc - 1;
+                menu->menu.auto_delay = menu->menu.auto_delay - 1;
             }
         }
         menu = MENU_STATE;
-        if (menu->field_4c == 0 || (trig & 2)) {
-            Audio_PlayCue(0x71);
+        if (menu->menu.active == 0 || (trig & 2)) {
+            AudioCommand_PlayFar(0x71);
             ret = -1;
             break;
         }
@@ -411,9 +357,9 @@ s32 Battle_SelectAbility(s32 owner)
             cur = tbl[page + row];
             if ((cur & 0x3e0000) == 0) {
                 if (is_used == 0) {
-                    menu->field_34 = page;
-                    menu->field_30 = row;
-                    menu->field_38 = saved_row;
+                    menu->menu.page = page;
+                    menu->menu.row = row;
+                    menu->menu.preferred_row = saved_row;
                     ret = (s32)cur;
                     break;
                 }
@@ -424,22 +370,22 @@ s32 Battle_SelectAbility(s32 owner)
                 UiText_CopyMessageString(0x898, buf, 52);
                 UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
             }
-            Audio_PlayCue(0x72);
+            AudioCommand_PlayFar(0x72);
         }
 
         if (cnt != 0) {
             if (rep & 0x80) {
-                Audio_PlayCue(0x6f);
+                AudioCommand_PlayFar(0x6f);
                 row++;
                 if (row == 5 || page + row == cnt) {
                     row = 0;
                 }
                 saved_row = row;
             } else if (rep & 0x40) {
-                Audio_PlayCue(0x6f);
+                AudioCommand_PlayFar(0x6f);
                 row--;
                 if (row < 0) {
-                    if (page == __divsi3(cnt - 1, 5) * 5) {
+                    if (page == ((cnt - 1) / 5) * 5) {
                         row = cnt - page - 1;
                     } else {
                         row = 4;
@@ -450,16 +396,16 @@ s32 Battle_SelectAbility(s32 owner)
                 if (detail_win != 0) {
                     for (i = 0; i < sub_cnt; i++) {
                         tile = i + 0xf301;
-                        if ((FRAME_COUNTER & 15) <= 11 && i == sub_sel - 1) {
+                        if ((gFrameCount & 15) <= 11 && i == sub_sel - 1) {
                             tile = sub_sel + 0xf30b;
                         }
                         UiWindow_SetTilemapEntry(detail_win, tile,
-                                      detail_win->field_08 - sub_cnt + i - 2, -1, 0);
+                                      detail_win->width - sub_cnt + i - 2, -1, 0);
                     }
-                    UiWindow_SetTilemapEntry(detail_win, 0xf334, detail_win->field_08 - sub_cnt - 3, -1,
+                    UiWindow_SetTilemapEntry(detail_win, 0xf334, detail_win->width - sub_cnt - 3, -1,
                                   0);
-                    UiWindow_SetTilemapEntry(detail_win, 0xf335, detail_win->field_08 - 2, -1, 0);
-                    ctx[CTX_LIST_DIRTY] |= (u8)(2 << (detail_win->field_0e >> 2));
+                    UiWindow_SetTilemapEntry(detail_win, 0xf335, detail_win->width - 2, -1, 0);
+                    ctx->dirty |= (u8)(2 << (detail_win->y >> 2));
                 }
                 if (sub_sel == 0 && sub_cnt != 0) {
                     if (detail_win != 0) {
@@ -473,14 +419,14 @@ s32 Battle_SelectAbility(s32 owner)
                     }
                     if (sub_sel != 0) {
                         if (rep & 16) {
-                            Audio_PlayCue(0x6f);
+                            AudioCommand_PlayFar(0x6f);
                             sub_sel++;
                             if (sub_sel > sub_cnt) {
                                 sub_sel = 1;
                             }
                             redraw = 1;
                         } else if (rep & 32) {
-                            Audio_PlayCue(0x6f);
+                            AudioCommand_PlayFar(0x6f);
                             sub_sel--;
                             if (sub_sel <= 0) {
                                 sub_sel = sub_cnt;
@@ -496,7 +442,7 @@ s32 Battle_SelectAbility(s32 owner)
                 sub_sel = 0;
                 redraw = 1;
             } else if (rep & 16) {
-                Audio_PlayCue(0x6f);
+                AudioCommand_PlayFar(0x6f);
                 Runtime_SetMainState19();
                 if (page + 5 >= cnt) {
                     if (page != 0) {
@@ -506,7 +452,7 @@ s32 Battle_SelectAbility(s32 owner)
                 } else {
                     page = page + 5;
                     row = saved_row;
-                    if (page == __divsi3(cnt - 1, 5) * 5) {
+                    if (page == ((cnt - 1) / 5) * 5) {
                         row = cnt - page - 1;
                         if (row > saved_row) {
                             row = saved_row;
@@ -514,13 +460,13 @@ s32 Battle_SelectAbility(s32 owner)
                     }
                 }
             } else if (rep & 32) {
-                Audio_PlayCue(0x6f);
+                AudioCommand_PlayFar(0x6f);
                 Runtime_SetMainState19();
                 if (page != 0) {
                     page -= 5;
                     row = saved_row;
                 } else {
-                    page = __divsi3(cnt - 1, 5) * 5;
+                    page = ((cnt - 1) / 5) * 5;
                     row = saved_row;
                     if (page != 0) {
                         row = cnt - page - 1;
@@ -532,47 +478,43 @@ s32 Battle_SelectAbility(s32 owner)
             }
         }
 
-        curs_x = list_win->field_0c * 8 - 2;
-        curs_y = (row * 2 + list_win->field_0e) * 8 + 20;
-        slot.field_04 = 0x40000000;
-        slot.field_08 = 0;
-        M2C_FIELD(&slot, u16 *, 8) =
-            (u16)((M2C_FIELD(&slot, u16 *, 8) & 0xfffffc00) |
-                  (Resource_GetBuffer(res, Resource_FixedBlockBTiles) & 0x3ff));
-        M2C_FIELD(&slot, u16 *, 6) =
-            (u16)((M2C_FIELD(&slot, u16 *, 6) & 0xfffffe00) |
-                  ((curs_x + (s32)((FRAME_COUNTER & 4) >> 1) + 0xfffa) & 0x1ff));
-        M2C_FIELD(&slot, u8 *, 4) = (u8)(curs_y - (s32)((FRAME_COUNTER & 4) >> 2) + 248);
+        cursor_pos.x = list_win->x * 8 - 2;
+        cursor_pos.y = (row * 2 + list_win->y) * 8 + 20;
+        slot.oam.word.attr01 = 0x40000000;
+        slot.oam.word.attr23 = 0;
+        slot.oam.f.tile = Resource_GetBuffer(res, (s32)Resource_FixedBlockBTiles);
+        slot.oam.f.x = cursor_pos.x + (s32)((gFrameCount & 4) >> 1) + 0xfffa;
+        slot.oam.f.y = cursor_pos.y - (s32)((gFrameCount & 4) >> 2) + 248;
         if (cnt != 0) {
             Runtime_PushSlotEntry(&slot, 242);
         }
         cursor = CURSOR_OWNER;
-        blink = FRAME_COUNTER & 4;
-        icon_win = cursor->field_00;
-        if (cursor->field_0c & 2) {
+        blink = gFrameCount & 4;
+        icon_win = cursor->window;
+        if (cursor->flags & 2) {
             for (i = 0; i <= 3; i++) {
                 pal = 15 - (blink != 0);
                 if (((1 << i) & mask) == 0) {
                     pal = 15;
                 }
-                Ui_SetRectHighlight(icon_win->field_0c + Data_080373e7[i] + 1,
-                              icon_win->field_0e + Data_080373eb[i] + 1, 2, 2, pal);
+                Ui_SetRectHighlight(icon_win->x + Data_080373e7[i] + 1,
+                              icon_win->y + Data_080373eb[i] + 1, 2, 2, pal);
             }
         }
-        if (FRAME_COUNTER & 4) {
-            VRAM_COPY(0x06006500, Data_08037308, 32);
-            VRAM_COPY(0x06006520, Data_08037308, 32);
+        if (gFrameCount & 4) {
+            Iwram_CopyWords((void *)0x06006500, Data_08037308, 32);
+            Iwram_CopyWords((void *)0x06006520, Data_08037308, 32);
         } else {
-            VRAM_FILL(0x06006500, 32, 0x44444444);
-            VRAM_COPY(0x06006520, Data_08037308, 32);
+            Iwram_FillWords((void *)0x06006500, 32, 0x44444444);
+            Iwram_CopyWords((void *)0x06006520, Data_08037308, 32);
         }
         WaitFrames(1);
     }
 
     cursor = CURSOR_OWNER;
-    if (cursor->field_0c & 2) {
-        icon_win = cursor->field_00;
-        Ui_SetRectHighlight(icon_win->field_0c + 1, icon_win->field_0e + 1, 4, 4, 15);
+    if (cursor->flags & 2) {
+        icon_win = cursor->window;
+        Ui_SetRectHighlight(icon_win->x + 1, icon_win->y + 1, 4, 4, 15);
     }
     Resource_ResetEntry(res);
     UiWork_Finalize(msg_win, 1);

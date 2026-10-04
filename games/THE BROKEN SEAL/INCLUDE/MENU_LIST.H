@@ -96,7 +96,8 @@ void UiWindow_SetTilemapEntry(
     struct UiWindow *window, s32 tile, s32 x, s32 y, u32 layer);
 void UiWork_SetParamNibble(s32 param);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 value);
-void Ui_FillVramBlockPattern(void);
+/* The native return preserves the IWRAM fill cursor in r0; callers discard it. */
+s32 Ui_FillVramBlockPattern(void);
 void Vram_CopyTile(s32 source, s32 destination);
 void AudioCommand_PlayFar(s32 cue);
 

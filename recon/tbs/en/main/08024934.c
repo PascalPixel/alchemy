@@ -1,3 +1,11 @@
+/* 2026-10-04 fill-return contract: current EN score 15855 (217 register,75 stack,50 operand,83 reordered,41 inserted,44 deleted)
+ * after MENU_LIST.H follows the native s32 Ui_FillVramBlockPattern ABI
+ * instead of void (previous score 15925). Native08016738 preserves
+ * the fill cursor in r0 with pop{r1}/bx r1; an isolated void-return
+ * control uses pop{r0}/bx r0. Callers discard the result.
+ * No body change or steering device was added.
+ * Earlier header measurements below refer to the prior declaration.
+ */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 /* Not-yet-C: complete 2124-byte summon picker, including literal pools.

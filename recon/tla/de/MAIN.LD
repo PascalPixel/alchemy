@@ -90,7 +90,7 @@
     "*/recon/tla/de/rom.o"(.rom.00014048)
     "*/recon/tla/de/rom.o"(.rom.00014104)
     "*/recon/tla/de/rom.o"(.rom.0001424c)
-    "*/recon/tla/de/rom.o"(.rom.0001426c)
+    "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/CLEAR_SLOT_REFERENCES.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000142a0)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/ACTIVATE_ENTRY.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00014300)

@@ -207,12 +207,6 @@ ResourceTable_AllocateBlocks:
 	.thumb_func
 Func_08014220:
 	.incbin "baserom.gba", 0x00014220, 0x00000020
-	.section .rom.00014240, "ax"
-	.global Resource_ClearSlotReferences
-	.type Resource_ClearSlotReferences, %function
-	.thumb_func
-Resource_ClearSlotReferences:
-	.incbin "baserom.gba", 0x00014240, 0x00000034
 	.section .rom.00014274, "ax"
 	.global Resource_ResetEntry
 	.type Resource_ResetEntry, %function

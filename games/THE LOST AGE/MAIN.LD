@@ -103,7 +103,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0001401c)
     "*/recon/tla/ja/rom.o"(.rom.000140d8)
     "*/recon/tla/ja/rom.o"(.rom.00014220)
-    "*/recon/tla/ja/rom.o"(.rom.00014240)
+    "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/CLEAR_SLOT_REFERENCES.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00014274)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/ACTIVATE_ENTRY.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000142d4)

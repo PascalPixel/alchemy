@@ -99,7 +99,7 @@
         "*/recon/tla/raw/08014174.o"(.text)
         "*/recon/tla/raw/080141f4.o"(.text)
         "*/recon/tla/raw/08014220.o"(.text)
-        "*/recon/tla/raw/08014240.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/CLEAR_SLOT_REFERENCES.o"(.text)
         "*/recon/tla/raw/08014274.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/ACTIVATE_ENTRY.o"(.text)
         "*/recon/tla/raw/080142d4.o"(.text)

@@ -71,8 +71,9 @@ merge-drivers:
 	git config merge.alchemy-lines.name "linker script by lines"
 	git config merge.alchemy-lines.driver "tools/out/cargo-target/release/alchemy merge-driver lines %O %A %B"
 
-# In a new worktree, before its first build: link the main checkout's ROMs
-# and installed tools, and clone release tools and edition builds copy-on-write.
+# In a new worktree, before its first build: check out the compiler
+# submodules, link the main checkout's ROMs and installed tools, and clone
+# release tools and edition builds copy-on-write.
 # Private reports, verification and recovery output stay in the main checkout.
 MAIN_CHECKOUT = $(shell git rev-parse --path-format=absolute --git-common-dir)/..
 worktree:

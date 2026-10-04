@@ -193,10 +193,8 @@ void FieldScene_RunPrimarySequence(void)
 
 s32 FieldScene_RunScene3b3SequenceD(void)
 {
-    s32 FieldScene_RunScene3b3SequenceD();
-
-    u8 *rec;
-    u8 *pflag;
+    struct FieldActor *leader;
+    u8 *flags;
     s32 saved;
     s32 mode;
 #if !EDITION_INTERNATIONAL
@@ -205,67 +203,67 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     s32 *p;
     s32 buf[3];
 
-    rec = Object_GetById(ACTOR_PARTY_LEADER);
-    pflag = rec + 85;
-    saved = *pflag;
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    flags = &leader->motion_flags;
+    saved = *flags;
 #if EDITION_INTERNATIONAL
-    mode = (*(u16 *)(rec + 6) + 0x2000) & 0xc000;
+    mode = (leader->facing + 0x2000) & 0xc000;
 #endif
     if (gCell[249][0] != 0) {
         return 0;
     }
     p = buf;
 #if EDITION_INTERNATIONAL
-    p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
-    p[1] = *(s32 *)(rec + 12);
-    p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, mode, (s32)p);
+    p[0] = (leader->x.fixed & -0x100000) + 0x80000;
+    p[1] = leader->y.fixed;
+    p[2] = (leader->z.fixed & -0x100000) + 0x80000;
+    Vector_AddPolarOffset(0x100000, mode, p);
 #else
-    mode = *(u16 *)(rec + 6) >> 12;
+    mode = leader->facing >> 12;
     step = StagedActor_DirectionSteps[mode];
-    p[0] = *(s32 *)(rec + 8) + (step & 0xffff0000);
-    p[1] = *(s32 *)(rec + 12);
+    p[0] = leader->x.fixed + (step & 0xffff0000);
+    p[1] = leader->y.fixed;
     step <<= 16;
-    p[2] = *(s32 *)(rec + 16) + step;
+    p[2] = leader->z.fixed + step;
 #endif
-    if (Object_CheckMovementCollision((s32)rec, (s32)p) == 1) {
+    if (Object_CheckMovementCollision(leader, p) == 1) {
         goto reject;
     }
-    if (StagedActor_FindAtTile((s32)p, (s32)rec) != 0) {
+    if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) != 0) {
         goto reject;
     }
 #if EDITION_INTERNATIONAL
-    p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
-    p[1] = *(s32 *)(rec + 12);
-    p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
-    Vector_AddPolarOffset(0x200000, mode, (s32)p);
+    p[0] = (leader->x.fixed & -0x100000) + 0x80000;
+    p[1] = leader->y.fixed;
+    p[2] = (leader->z.fixed & -0x100000) + 0x80000;
+    Vector_AddPolarOffset(0x200000, mode, p);
 #else
     step = StagedActor_DirectionSteps[mode];
-    p[0] = *(s32 *)(rec + 8) + ((step & 0xffff0000) * 2);
-    p[1] = *(s32 *)(rec + 12);
+    p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
+    p[1] = leader->y.fixed;
     step <<= 17;
-    p[2] = *(s32 *)(rec + 16) + step;
+    p[2] = leader->z.fixed + step;
 #endif
-    if (StagedActor_FindAtTile((s32)p, (s32)rec) != 0) {
+    if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) != 0) {
         goto reject;
     }
-    if (Object_CheckMovementCollision((s32)rec, (s32)p) != 0) {
+    if (Object_CheckMovementCollision(leader, p) != 0) {
         goto reject;
     }
     Engine_EventBegin();
-    Object_SetMode((s32)rec, 6);
+    Object_SetMode(leader, 6);
     WaitFrames(6);
     Engine_AudioPlayCue(152);
-    Object_SetMode((s32)rec, 7);
-    *(s32 *)(rec + 48) = 0x30000;
-    *(s32 *)(rec + 52) = 0x20000;
-    *(s32 *)(rec + 40) = 0x40000;
-    *pflag &= 126;
-    Engine_ActorSetSpriteFlags((s32)rec, 0);
-    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
-    Object_SetMode((s32)rec, 6);
-    Engine_ActorSetSpriteFlags((s32)rec, 1);
-    *pflag = saved;
+    Object_SetMode(leader, 7);
+    leader->speed = 0x30000;
+    leader->acceleration = 0x20000;
+    leader->velocity_y = 0x40000;
+    *flags &= 126;
+    Engine_ActorSetSpriteFlags(leader, 0);
+    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)p)[1], ((s16 *)p)[5]);
+    Object_SetMode(leader, 6);
+    Engine_ActorSetSpriteFlags(leader, 1);
+    *flags = saved;
     Engine_EventEnd();
     return 1;
 reject:

@@ -105,7 +105,8 @@ struct GameState {
     s32 unknown_238;
     /* The item the field hands the party once the scene is up. */
     u16 pending_item;
-    s16 unknown_23e;
+    /* The variant of the current scene, from its row of the scene table. */
+    s16 scene_variant;
     /* Where Retreat returns the party. */
     s16 retreat_scene;
     s16 retreat_entrance;

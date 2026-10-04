@@ -242,7 +242,7 @@ s32 Func_0808c4f8(void)
     work->transition_active = 0;
     work->unknown_1b0 = 0x199;
     work->unknown_1b4 = 0;
-    if (gGameState.unknown_23e == 2) {
+    if (gGameState.scene_variant == 2) {
         work->unknown_1b0 = 0;
         GameFlag_SetBitFar(0x144);
     }

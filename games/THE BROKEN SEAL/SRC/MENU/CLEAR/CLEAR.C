@@ -305,7 +305,7 @@ s32 Scene_GetModeMask(void)
     if (Engine_GameFlagIsSet(324) == 0) {
         return 0;
     }
-    if (gGameState.unknown_23e == 2) {
+    if (gGameState.scene_variant == 2) {
         return 0;
     }
     mode = gGameState.scene ^ (s32)&SceneId_WorldMap;

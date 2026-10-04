@@ -5,6 +5,7 @@
 #include "SCENE.H"
 #include "BATTLE_RUNTIME.H"
 #include "ANIMSPR.H"
+#include "EFFECT_STEP.H"
 
 s32 ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
 void Animation_SetWorkEntryFar(struct AnimationEntry *entry, s32 index);
@@ -33,10 +34,24 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
     }
 }
 
-/* The trailing projection helpers stay in this module after the uncredited
-   scaled-position extent, placed between these two sections by the linker. */
-s32 __attribute__((section(".text.motion_projection")))
-BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
+s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
+{
+    struct MotionObject *object = GetBattleObjectSlot(id)->object;
+    struct AnimationObject *record = GetMotionRecord(object, 0);
+    s32 scaled;
+    s32 factor;
+    /* FAKEMATCH: the input position BattleMotion_ProjectPosition fills, unused here; it is the native frame's 12 bytes. */
+    struct EffectPosition input;
+
+    Camera_ApplyTransformByFlag();
+    scaled = Render_ProjectPoint(&object->x, projected);
+    factor = Iwram_MulQ16(scaled, record->scale);
+    scaled = Iwram_MulQ16(factor, (s32)Battle_GetObjectTableValue(id) >> 16);
+    projected[1] -= scaled;
+    return 0;
+}
+
+s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
 {
     struct MotionObject *object = GetBattleObjectSlot(id)->object;
     struct AnimationObject *record = GetMotionRecord(object, 0);
@@ -54,8 +69,7 @@ BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
     return 0;
 }
 
-u32 __attribute__((section(".text.motion_projection")))
-Battle_GetObjectTableValue(s32 id)
+u32 Battle_GetObjectTableValue(s32 id)
 {
     u32 value;
     u8 no;

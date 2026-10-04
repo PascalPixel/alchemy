@@ -974,14 +974,6 @@ Inn_PriceMultipliers:
 	.thumb_func
 Battle_RunEncounter:
 	.incbin "baserom.gba", 0x000ad3c8, 0x00000698
-	.section .rom.000af45c, "ax"
-	.balign 4
-	.global BattleMotion_ProjectScaledPosition
-	.type BattleMotion_ProjectScaledPosition, %function
-	.thumb_func
-BattleMotion_ProjectScaledPosition:
-	.incbin "baserom.gba", 0x000af45c, 0x00000064
-	.size BattleMotion_ProjectScaledPosition, .-BattleMotion_ProjectScaledPosition
 	.section .rom.000afc1c, "ax"
 	.global BattlePres_RunUnitAction
 	.type BattlePres_RunUnitAction, %function

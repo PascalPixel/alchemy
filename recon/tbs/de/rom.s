@@ -971,14 +971,6 @@ DebugBattle_ViewMessages:
 	.thumb_func
 Battle_RunEncounter:
 	.incbin "baserom.gba", 0x000b89e0, 0x00000698
-	.section .rom.000baa74, "ax"
-	.balign 4
-	.global BattleMotion_ProjectScaledPosition
-	.type BattleMotion_ProjectScaledPosition, %function
-	.thumb_func
-BattleMotion_ProjectScaledPosition:
-	.incbin "baserom.gba", 0x000baa74, 0x00000064
-	.size BattleMotion_ProjectScaledPosition, .-BattleMotion_ProjectScaledPosition
 	.section .rom.000bb234, "ax"
 	.global BattlePres_RunUnitAction
 	.type BattlePres_RunUnitAction, %function

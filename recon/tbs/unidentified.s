@@ -1694,14 +1694,14 @@ Data_080f39ab:
 	.global Title_PromptBlendLevels
 Title_PromptBlendLevels:
 	.incbin "baserom.gba", 0x000f39b1, 0x0000003d
-	.global Data_080f39ee
-Data_080f39ee:
+	.global Palette_ChannelCurve
+Palette_ChannelCurve:
 	.incbin "baserom.gba", 0x000f39ee, 0x00000040
-	.global Data_080f3a2e
-Data_080f3a2e:
+	.global Palette_ChannelCurveLight
+Palette_ChannelCurveLight:
 	.incbin "baserom.gba", 0x000f3a2e, 0x00000040
-	.global Data_080f3a6e
-Data_080f3a6e:
+	.global Palette_ChannelCurveContrast
+Palette_ChannelCurveContrast:
 	.incbin "baserom.gba", 0x000f3a6e, 0x00000592
 	.section .unidentified.080f53dc,"a"
 	.incbin "baserom.gba", 0x000f53dc, 0x00000020

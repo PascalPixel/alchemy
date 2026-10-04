@@ -1,3 +1,14 @@
+/* 2026-10-04: fresh EN baseline 220; moving position construction after
+   DMA improves to 90 (five register-only, one reordered instruction),
+   complete 236/236 bytes. Two 55-second searches evaluated 21,578
+   candidates without another improvement. Bindings of position, next
+   and value to r1 scored 155/300/305, and a constrained intermediate
+   scored 510; all discarded. Further scoped empty-barrier trials can
+   reproduce the complete step tail (score 105), but lose the initial
+   shifted-position copy; keeping that copy changes allocation across
+   the copy loops (235/360/420). Late tied-copy and fixed-start trials
+   score 175 and 2032. These are discarded too: the readable 90 remains
+   the canonical draft, without new devices or code credit. */
 /* 2026-10-01 (wave 1, slice 1): still 300. Plain C with no device comes
    close: u16 start and len, an s16 step variable (pos = start + 1; if
    ((u16)pos >= len) pos = 0; cycle->pos = (u16)pos;) gives the reference's
@@ -54,23 +65,22 @@ void Func_08011bf4(void)
 
     for (i = 0; i < count; i++) {
         struct PaletteSnapshot *cycle = &work->entries[i];
-
         if (cycle->timer == 0) {
             u16 start = (s16)cycle->position;
             u16 len = (s16)cycle->count;
             void *dest = cycle->source;
             /* FAKEMATCH: 520,000 ordinary permutations still exchange r1/r4 for the color cursor and buffer; bind the cursor to r4. */
-            register u16 *src asm("r4") = cycle->colors;
+            register u16 *src asm ("r4") = cycle->colors;
             u8 j;
             u32 pos;
             u32 next;
             u32 value;
             for (j = len - start; j < len; j++)
                 buf[j] = *src++;
-            pos = (s16)start << 16;
             for (j = 0; j < len - start; j++)
                 buf[j] = *src++;
             Dma_Set(buf, dest, 0x80000000 | len, (volatile u32 *)0x040000d4);
+            pos = (s16)start << 16;
             /* FAKEMATCH: the copy of the sum and the test assigning pos keep
                gcse from sharing the test's shift with the store. */
             value = pos + 0x10000;

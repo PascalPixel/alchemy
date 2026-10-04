@@ -1,3 +1,4 @@
+/* 2026-10-04 TBS 91% attempt: Fresh EN remains score 180, three reordered instructions. Bounded glyph temporaries/casts, halfword/word views, consumed frame pointer at seven declaration positions, and cursor/glyph scheduling controls did not improve it. Original body retained; no new steering device or credit. */
 /* 2026-10-04 edition contracts: five battle rows in every edition,
  * independent of the shops. MsgBattleNoPsynergy comes from each catalog.
  * Japanese descriptions use UiText_DecodeMessage with capacity32;

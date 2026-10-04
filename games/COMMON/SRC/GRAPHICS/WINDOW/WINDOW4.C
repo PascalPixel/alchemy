@@ -112,12 +112,23 @@ void UiWork_AdvanceChannelTransition(struct UiChannelSlot *channel)
     UiWindow_DrawFrame(x, y, width, height);
 }
 
+#endif
+
 void UiWork_ClearValueNameTables(void)
 {
     s32 no;
     struct UiRenderWork *work;
 
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    /* The native code loads the work pointer before the table offsets. */
+    /* FAKEMATCH: scheduling barrier; otherwise the offset comes first. */
+    __asm__("");
+#else
     work = (struct UiRenderWork *)gWindowWork[0];
+#endif
     no = 0;
 
     /* 対応する値と識別子は同じ順序で消去する。 */
@@ -127,8 +138,6 @@ void UiWork_ClearValueNameTables(void)
         no++;
     } while (no != 8);
 }
-
-#endif
 
 void UiWork_PushValueSlot(u32 value, u32 flag)
 {

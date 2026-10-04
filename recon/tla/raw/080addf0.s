@@ -136,9 +136,9 @@ Func_080addf0:
 	strh r2, [r3]
 	adds r3, r7, r1
 	str r0, [r3]
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	movs r0, #5
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	movs r1, #149
 	movs r0, #4
 	bl OwnerAction_Add

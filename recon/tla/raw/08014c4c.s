@@ -16,6 +16,6 @@ Func_08014c4c:
 	bx lr
 	.2byte 0x0000
 .L_08014c64:
-	.4byte Data_08017b10
+	.4byte System_BasicColorPalette
 .L_08014c68:
 	.4byte 0x05000200

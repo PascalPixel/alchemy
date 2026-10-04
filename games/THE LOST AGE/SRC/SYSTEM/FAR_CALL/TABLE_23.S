@@ -20,11 +20,11 @@ Func_080ad210:
 	.global Func_080ad218
 	.thumb_func
 Func_080ad218:
-	overlay_veneer Func_080ae0dc
+	overlay_veneer Party_SetLeaderJasmine
 	.global Func_080ad220
 	.thumb_func
 Func_080ad220:
-	overlay_veneer Func_080ae0f0
+	overlay_veneer Party_SetLeaderGarcia
 	.global Func_080ad228
 	.thumb_func
 Func_080ad228:

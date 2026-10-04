@@ -40,7 +40,7 @@ Party_CountActiveOwnersFar:
 	.global Party_AddActiveOwnerFar
 	.thumb_func
 Party_AddActiveOwnerFar:
-	overlay_veneer Func_080afdd8
+	overlay_veneer Party_AddActiveOwner
 	.global Party_ListActiveOwnersFar
 	.thumb_func
 Party_ListActiveOwnersFar:

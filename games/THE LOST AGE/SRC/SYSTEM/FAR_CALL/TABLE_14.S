@@ -24,7 +24,7 @@ Func_08038110:
 	.global UiWork_ClearValueNameTablesFar
 	.thumb_func
 UiWork_ClearValueNameTablesFar:
-	overlay_veneer Func_0803cca8
+	overlay_veneer UiWork_ClearValueNameTables
 	.global UiText_DrawQuantity
 	.thumb_func
 UiText_DrawQuantity:

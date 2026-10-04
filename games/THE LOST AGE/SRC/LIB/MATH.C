@@ -28,3 +28,10 @@ s32 FixedSqrt(s32 value)
 {
     return Iwram_Sqrt(value) << 8;
 }
+
+extern const u8 System_BasicColorPalette[];
+
+s32 Runtime_GetLowTableAddress(void)
+{
+    return (s32)System_BasicColorPalette;
+}

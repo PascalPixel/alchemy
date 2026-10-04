@@ -2230,7 +2230,7 @@ Func_08046b08:
 	ldr r3, [sp, #80]
 	cmp r3, #0
 	beq .L_08047c7a
-	bl Func_0803cca8
+	bl UiWork_ClearValueNameTables
 	movs r3, #128
 	lsls r3, r3, #9
 	ands r3, r5

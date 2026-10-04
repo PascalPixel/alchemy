@@ -56,7 +56,7 @@ Func_080ae868:
 .L_080ae8c8:
 	adds r0, r5, #0
 	adds r5, #1
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	cmp r5, #3
 	ble .L_080ae8c8
 	movs r0, #0
@@ -215,7 +215,7 @@ Func_080ae868:
 	lsls r0, r0, #24
 	asrs r0, r0, #24
 	adds r6, #1
-	bl Func_080afdd8
+	bl Party_AddActiveOwner
 	cmp r5, #0
 	bne .L_080aea06
 .L_080aea18:

@@ -289,7 +289,7 @@ Func_080dcb44:
 .L_080dcd84:
 	.4byte 0xfff20000
 .L_080dcd88:
-	.4byte Func_080dcf08
+	.4byte BattleFx_SetCallbackWhenTargetUnset
 .L_080dcd8c:
 	movs r1, #203
 	lsls r1, r1, #1

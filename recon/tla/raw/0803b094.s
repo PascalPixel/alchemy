@@ -954,7 +954,7 @@ UiText_BuildRenderEntries:
 	mov r1, r11
 	cmp r1, #0
 	beq .L_0803b782
-	bl Func_0803cca8
+	bl UiWork_ClearValueNameTables
 .L_0803b782:
 	ldr r0, [sp, #32]
 	add sp, #132

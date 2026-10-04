@@ -15,8 +15,8 @@ Data_080179ea:
 	.global Data_08017af0
 Data_08017af0:
 	.incbin "baserom.gba", 0x00017af0, 0x00000020
-	.global Data_08017b10
-Data_08017b10:
+	.global System_BasicColorPalette
+System_BasicColorPalette:
 	.incbin "baserom.gba", 0x00017b10, 0x000001c0
 	.global Data_08017cd0
 Data_08017cd0:

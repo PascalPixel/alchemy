@@ -24,7 +24,7 @@ Func_08042808:
 	ldrb r3, [r3, #5]
 	cmp r3, #0
 	bne .L_08042850
-	bl Func_080149f0
+	bl Runtime_GetLowTableAddress
 	movs r3, #128
 	movs r2, #128
 	lsls r3, r3, #19

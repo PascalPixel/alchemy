@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080afdd8
+	.global Party_AddActiveOwner
 	.thumb_func
-Func_080afdd8:
+Party_AddActiveOwner:
 	push {r5, r6, lr}
 	adds r6, r0, #0
 	bl Party_CountActiveOwners

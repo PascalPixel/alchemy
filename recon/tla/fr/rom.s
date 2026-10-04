@@ -4384,14 +4384,8 @@ Palette_CopyObjectBankToBackground14:
 	.thumb_func
 Func_080f94a4:
 	.incbin "baserom.gba", 0x000fb4a4, 0x00000f4c
-	.section .rom.000fc472, "ax"
-	.incbin "baserom.gba", 0x000fc472, 0x00000002
-	.section .rom.000fc474, "ax"
-	.global ItemMenu_HideAllIcons
-	.type ItemMenu_HideAllIcons, %function
-	.thumb_func
-ItemMenu_HideAllIcons:
-	.incbin "baserom.gba", 0x000fc474, 0x00000884
+	.section .rom.000fc494, "ax"
+	.incbin "baserom.gba", 0x000fc494, 0x00000864
 	.section .rom.000fcd0a, "ax"
 	.incbin "baserom.gba", 0x000fcd0a, 0x0000011e
 	.global ItemMenu_DrawIcons

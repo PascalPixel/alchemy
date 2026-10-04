@@ -1804,8 +1804,6 @@
         "*/recon/tla/raw/080fa2d0.o"(.text)
         "*/recon/tla/raw/080fa368.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/ITEM/INTERFACE.o"(.text)
-        "*/recon/tla/raw/080fa456.o"(.text)
-        "*/recon/tla/raw/080fa458.o"(.text)
         "*/recon/tla/raw/080fa478.o"(.text)
         "*/recon/tla/raw/080fa50c.o"(.text)
         "*/recon/tla/raw/080fa5a4.o"(.text)

@@ -507,7 +507,7 @@
     "*/recon/tla/de/rom.o"(.rom.00042064)
     "*/recon/tla/de/rom.o"(.rom.000420fc)
     "*/recon/tla/de/rom.o"(.rom.00042150)
-    "*/recon/tla/de/rom.o"(.rom.000421dc)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/RENDER.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00042238)
     "*/recon/tla/de/rom.o"(.rom.00042268)
     "*/recon/tla/de/rom.o"(.rom.00042298)

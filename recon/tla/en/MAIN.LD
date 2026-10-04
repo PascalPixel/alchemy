@@ -766,7 +766,7 @@
         "*/recon/tla/raw/08042010.o"(.text)
         "*/recon/tla/raw/080420a8.o"(.text)
         "*/recon/tla/raw/080420fc.o"(.text)
-        "*/recon/tla/raw/08042188.o"(.text)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/RENDER.o"(.text)
         "*/recon/tla/raw/080421e4.o"(.text)
         "*/recon/tla/raw/08042214.o"(.text)
         "*/recon/tla/raw/08042244.o"(.text)

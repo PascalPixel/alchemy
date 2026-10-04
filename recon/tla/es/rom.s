@@ -1241,7 +1241,12 @@ UiText_ShowPositionedMessageAndWait:
 	.type UiText_RenderWideStringAtOffset, %function
 	.thumb_func
 UiText_RenderWideStringAtOffset:
-	.incbin "baserom.gba", 0x0003aab0, 0x0000032c
+	.incbin "baserom.gba", 0x0003aab0, 0x0000020c
+	.global UiText_RenderWideStringInWindow
+	.type UiText_RenderWideStringInWindow, %function
+	.thumb_func
+UiText_RenderWideStringInWindow:
+	.incbin "baserom.gba", 0x0003acbc, 0x00000120
 	.global UiText_FormatNumber
 	.type UiText_FormatNumber, %function
 	.thumb_func
@@ -1608,12 +1613,6 @@ UiText_DrawString:
 	.thumb_func
 UiText_DrawStringAtOffset:
 	.incbin "baserom.gba", 0x00042168, 0x0000008c
-	.section .rom.000421f4, "ax"
-	.global UiText_DrawStringInWindow
-	.type UiText_DrawStringInWindow, %function
-	.thumb_func
-UiText_DrawStringInWindow:
-	.incbin "baserom.gba", 0x000421f4, 0x0000005c
 	.section .rom.00042250, "ax"
 	.global UiText_DrawNumber
 	.type UiText_DrawNumber, %function

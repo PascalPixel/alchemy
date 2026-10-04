@@ -548,7 +548,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00042154)
     "*/recon/tla/ja/rom.o"(.rom.000421ec)
     "*/recon/tla/ja/rom.o"(.rom.00042240)
-    "*/recon/tla/ja/rom.o"(.rom.000422cc)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/RENDER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00042328)
     "*/recon/tla/ja/rom.o"(.rom.00042358)
     "*/recon/tla/ja/rom.o"(.rom.00042388)

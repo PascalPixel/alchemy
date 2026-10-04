@@ -14,6 +14,14 @@
  * priority: cnt as u16/s16/u32/register, declaration orders (random
  * permutations, 186 best), cursor_entry volatile (176); for the tile base,
  * five spellings of the address (34-52).
+ * Why the pin: the -dg dump puts cnt at 7 refs over 238 insns (priority
+ * 0.059) under slot (6/176) and cursor_entry (11/446, 0.074); one more ref
+ * of cnt would lift it above both. Duplicating node = node->next; cnt++ in
+ * both arms of the scale test does exactly that unpinned (85 rows, cnt in
+ * fp), but the two tails keep different scratch registers and are not
+ * cross-jumped into the ROM's single tail. In the cursor block the tile base
+ * (reg 685, REG_EQUIV Menu_AnimatedCursorTiles) gets r3 from local-alloc;
+ * the ROM's lands in fp, which suggests it was not local-allocated there.
  */
 /* 2026-10-04: current EN score 3560 (162 register-only, 6 operand,
  * 21 reordered, 7 inserted, 6 deleted), down from the fresh 5250 baseline.

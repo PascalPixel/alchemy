@@ -37,7 +37,7 @@ struct MapScrollWork {
 struct PerspectiveWork {
     s32 *origin;
     s32 shake_x, shake_y, shake_decay;
-    void *unknown_010;              /* 0x010 */
+    u8 *script;                     /* 0x010 */
     u16 fade;                       /* 0x014 */
     u8 fade_step;                   /* 0x016 */
     u8 unknown_017[0xe4 - 0x17];

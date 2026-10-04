@@ -100,7 +100,6 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 nibble;
     s32 affinity;
     struct BattleUnit *copy;
-    s32 g1;
     s32 power;
     s16 hp0;
     s32 kind;
@@ -1177,8 +1176,7 @@ pp_store:
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura);
             if (target->guard_level > 0)
                 break;
-            g1 = 1;
-            target->guard_level = g1;
+            target->guard_level = 1;
             break;
 
 

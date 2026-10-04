@@ -5,7 +5,7 @@
 Func_081c0cb0:
 	push {r5, r6, r7, lr}
 	adds r6, r0, #0
-	bl Func_081c11ac
+	bl SongFlag_Set
 	ldr r3, .L_081c0dc8
 	movs r5, #240
 	ldrb r3, [r3, #3]

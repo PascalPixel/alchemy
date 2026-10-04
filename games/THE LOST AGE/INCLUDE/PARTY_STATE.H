@@ -19,13 +19,16 @@ struct PartyState {
     /* The debug selection's remembered pair; ☀️ keeps it at 0x1c8. */
     s16 primary;
     s16 secondary;
-    u8 unknown_1ec[2];
+    /* The area of the last scene; ☀️ keeps it at 0x1cc. */
+    s16 scene_group;
     /* Two halfword pairs; ☀️ keeps its first pair at 0x1ce. */
     u16 pair_1ee[2];
     u16 pair_1f2[2];
     /* The halfword Event_GetSpecialValue reads; ☀️ keeps it at 0x1d6. */
     s16 special;
-    u8 unknown_1f8[0x1a];
+    u8 unknown_1f8[0x18];
+    /* The cue the scene plays; ☀️ keeps it at 0x1f0. */
+    s16 cue;
     u8 render_mode;
     u8 unknown_213;
     s32 current_owner;

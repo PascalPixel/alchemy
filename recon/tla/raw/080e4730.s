@@ -296,7 +296,7 @@ Func_080e4730:
 	movs r6, #24
 	ldrsh r1, [r5, r6]
 	negs r2, r2
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080e49b2:
 	movs r6, #144
 	movs r5, #128

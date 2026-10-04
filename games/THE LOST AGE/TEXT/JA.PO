@@ -14103,7 +14103,7 @@ msgctxt "message"
 msgid "03523"
 msgstr "{argument_ability_name}{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgNothingHappens"
 msgid "03524"
 msgstr "しかし なにもおこらなかった。{end_wait}"
 

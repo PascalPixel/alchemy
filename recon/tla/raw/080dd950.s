@@ -66,7 +66,7 @@ Func_080dd950:
 	ldrsh r1, [r7, r2]
 	movs r3, #26
 	ldrsh r2, [r7, r3]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080dd9e8:
 	adds r3, r7, #0
 	adds r3, #52

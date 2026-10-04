@@ -1,12 +1,12 @@
 #include "EDITION.H"
 #include "FAR_RUNTIME.H"
-#include "SHOP.H"
 #include "SYSTEM.H"
 
+void Shop_DrawMsg(s32 window, s32 message);
 s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 #if !EDITION_INTERNATIONAL
 void RenderOutput_ClearListFar(s32);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 #endif
 
 void Shop_DrawMsg(s32 window, s32 message)
@@ -19,7 +19,7 @@ void Shop_DrawMsg(s32 window, s32 message)
         /* The Japanese shop clears the window and waits a frame first. */
         RenderOutput_ClearListFar(window);
         WaitFrames(1);
-        UiText_DrawMessageAt(message, window, 0, 0);
+        UiText_DrawResourceFar(message, window, 0, 0);
 #endif
     }
 }

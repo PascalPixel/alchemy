@@ -1,0 +1,76 @@
+#include "TYPES.H"
+#include "RAM_BUFFER.H"
+#include "EVENTWRK.H"
+#include "OBJECT_RUNTIME.H"
+#include "FIELD_SPRITE.H"
+#include "DMA.H"
+
+/* The 32 objects ObjectTable_Snapshot saves; their indices sit in the 32
+   bytes before them and their two frame bytes and priorities after. */
+extern struct ObjectRuntime Data_02001024[];
+
+/* Empties the event's object table. */
+void ObjectTable_Clear(void)
+{
+    struct EventWork *work = Ram_HeapSlots->event_work;
+    s32 i;
+
+    for (i = 0; i < 80; i++)
+        work->objects[i] = NULL;
+}
+
+struct ObjectRuntime *ObjectTable_Get(u32 object_id)
+{
+    struct EventWork *work = Ram_HeapSlots->event_work;
+
+    if (object_id > 0xbf)
+        return NULL;
+    return work->objects[object_id];
+}
+
+/* Copies every live object of the table into the 32-entry snapshot beside
+   its index, with its sprite's two frame bytes and drawing priority, and
+   marks the unused index slots with 255. */
+void ObjectTable_Snapshot(void)
+{
+    struct ObjectRuntime *copy = Data_02001024;
+    u8 *indices = (u8 *)Data_02001024 - 32;
+    u8 *frames = (u8 *)&Data_02001024[32];
+    u8 *next_frames = frames + 32;
+    u8 *priorities = frames + 64;
+    u32 count = 0;
+    struct ObjectRuntime *object;
+    struct FieldSprite *sprite;
+    s32 i;
+    u32 frame;
+    u32 next;
+    u32 priority;
+    s32 limit = 80;
+
+    for (i = 0; i < limit; i++) {
+        object = ObjectTable_Get(i);
+        if (object == NULL)
+            continue;
+        *indices++ = i;
+        Dma_Set(object, copy, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), (volatile u32 *)0x040000d4);
+        if (object->animation_kind == 1) {
+            sprite = object->animation;
+            frame = sprite->frame;
+            next = sprite->next_frame;
+            priority = sprite->priority;
+        } else {
+            frame = 0;
+            next = 0;
+            priority = 0;
+        }
+        *frames++ = frame;
+        *next_frames++ = next;
+        *priorities++ = priority;
+        count++;
+        copy++;
+        if (count > 31)
+            break;
+    }
+    for (i = count; i < 32; i++)
+        *indices++ = 255;
+}

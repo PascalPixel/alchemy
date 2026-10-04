@@ -45,7 +45,7 @@ Func_080ed2a4:
 	cmp r3, #3
 	beq .L_080ed30c
 .L_080ed2f6:
-	bl Func_080cad9c
+	bl ObjectTable_Snapshot
 	ldr r6, [sp, #16]
 	movs r1, #197
 	lsls r1, r1, #1

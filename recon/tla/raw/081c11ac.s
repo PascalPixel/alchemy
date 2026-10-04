@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081c11ac
+	.global SongFlag_Set
 	.thumb_func
-Func_081c11ac:
+SongFlag_Set:
 	movs r3, #7
 	ands r3, r0
 	movs r2, #1

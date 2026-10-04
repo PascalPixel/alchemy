@@ -16,15 +16,15 @@ Func_081c0088:
 	.global Func_081c0090
 	.thumb_func
 Func_081c0090:
-	overlay_veneer Func_081c1188
+	overlay_veneer SongFlag_Test
 	.global Func_081c0098
 	.thumb_func
 Func_081c0098:
-	overlay_veneer Func_081c11ac
+	overlay_veneer SongFlag_Set
 	.global Func_081c00a0
 	.thumb_func
 Func_081c00a0:
-	overlay_veneer Func_081c11cc
+	overlay_veneer SongFlag_Clear
 	.global Func_081c00a8
 	.thumb_func
 Func_081c00a8:

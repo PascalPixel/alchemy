@@ -951,7 +951,7 @@ Func_080e68d0:
 	adds r2, r6, #0
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 	movs r3, #200
 	lsls r3, r3, #5
 	adds r3, #40
@@ -967,7 +967,7 @@ Func_080e68d0:
 	adds r1, #255
 	adds r0, r7, #0
 	adds r2, r6, #0
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080e709c:
 	ldr r0, .L_080e70f4
 	bl Scheduler_RemoveCallback

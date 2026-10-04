@@ -79,7 +79,7 @@ extern struct SoundPlayer gMusicPlayerBgm;
 extern struct SoundPlayer Data_02006b60;
 extern struct SoundPlayer Data_02006990;
 
-void Func_081c11ac(s32 cue);
+void SongFlag_Set(s32 cue);
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
 void MusicPlayer_StartSong(struct SoundPlayer *player,
     const struct SequenceHeader *header);
@@ -100,7 +100,7 @@ void AudioCommand_Play(s32 cue)
     s32 slot;
     u32 busy;
 
-    Func_081c11ac(cue);
+    SongFlag_Set(cue);
     flags = cue & 0xf000;
     {
         /* FAKEMATCH: eight ordinary type/lifetime forms load the busy byte directly into r7; the native sequence first captures r3, then hands it to a normal local before any call. */

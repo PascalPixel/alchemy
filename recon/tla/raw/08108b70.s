@@ -114,7 +114,7 @@ Func_08108b70:
 	ldr r1, .L_08108f68
 	ldr r0, [sp, #24]
 	adds r1, r5, r1
-	bl Func_08109270
+	bl Shop_DrawMsg
 	ldr r0, [sp, #32]
 	bl RenderOutput_RedrawSavedRectFar
 	movs r3, #0

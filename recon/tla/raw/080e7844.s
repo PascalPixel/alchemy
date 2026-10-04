@@ -910,7 +910,7 @@ Func_080e7844:
 	movs r3, #26
 	ldrsh r2, [r0, r3]
 	ldr r0, [sp, #20]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080e7f5c:
 	ldr r0, [sp, #48]
 	bl Resource_ResetEntry

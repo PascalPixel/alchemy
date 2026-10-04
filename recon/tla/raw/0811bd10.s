@@ -20,7 +20,7 @@ Func_0811bd10:
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
-	bl Func_080156f8
+	bl Graphics_PrepareTransferAndRun
 	b .L_0811bd46
 .L_0811bd3c:
 	adds r1, r5, #0

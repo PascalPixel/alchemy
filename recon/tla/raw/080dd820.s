@@ -69,7 +69,7 @@ Func_080dd820:
 	ldrsh r1, [r7, r3]
 	movs r3, #26
 	ldrsh r2, [r7, r3]
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080dd8b8:
 	movs r0, #131
 	bl Audio_PlayCue

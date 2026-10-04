@@ -249,7 +249,7 @@ Func_080ce61c:
 .L_080ce826:
 	adds r1, r7, #0
 	mov r2, r10
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080ce82e:
 	movs r3, #128
 	lsls r3, r3, #6
@@ -511,7 +511,7 @@ Func_080ce61c:
 	adds r1, r7, #0
 	ldr r0, [sp, #8]
 	mov r2, r10
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 	movs r0, #160
 	lsls r0, r0, #1
 	bl GameFlag_Test
@@ -551,14 +551,14 @@ Func_080ce61c:
 	movs r2, #0
 	ldrsb r2, [r5, r2]
 	adds r1, r7, #0
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 .L_080ceab0:
 	movs r5, #160
 	mov r0, r8
 	adds r1, r7, #0
 	mov r2, r10
 	lsls r5, r5, #1
-	bl Func_080ceafc
+	bl EventRuntime_RunPendingEvent
 	adds r0, r5, #0
 	bl GameFlag_Test
 	cmp r0, #0

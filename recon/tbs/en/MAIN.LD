@@ -543,7 +543,7 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_STOCK_PAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_MONEY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_ITEM_PRICE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_MESSAGE.o"(.text)
+        "*/games/COMMON/SRC/MENU/SHOP/DRAW_MESSAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/UPDATE_PARTY_MEMBER_LIST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_EQUIP_COMPARISON.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOP3.o"(.text)

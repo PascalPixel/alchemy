@@ -1645,7 +1645,7 @@ void Scene_RunPairedActorEffectSequence(void)
         star->actor.x.fixed = 0;
         star->actor.y.fixed = 0;
         star->actor.z.fixed = 0;
-        SceneActor_ParkRecord((u8 *)star);
+        SceneActor_ParkRecord(&star->actor);
     }
     Actor_ShowEmote(21, 0x100, 0);
     Actor_ShowEmote(6, 0x100, 0);

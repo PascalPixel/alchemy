@@ -100,7 +100,9 @@ struct FieldActor {
     s32 target_x;
     s32 target_y;
     s32 target_z;
-    u8 unknown_44[0x0c];
+    u8 unknown_44[8];
+    /* The height a rise starts from; rise_counter lifts the actor above it. */
+    s32 rise_base_y;
     struct FieldSprite *sprite;
     /* Cleared while the actor is outside the area where actors are active. */
     u8 active;
@@ -129,6 +131,7 @@ LAYOUT_OFFSET_GUARD(FieldActor_PriorityFlags, struct FieldActor, priority_flags,
 LAYOUT_OFFSET_GUARD(FieldActor_MotionFlags, struct FieldActor, motion_flags, 0x55);
 LAYOUT_OFFSET_GUARD(FieldActor_CollisionFlags, struct FieldActor, collision_flags, 0x59);
 LAYOUT_OFFSET_GUARD(FieldActor_RiseEnabled, struct FieldActor, rise_enabled, 0x63);
+LAYOUT_OFFSET_GUARD(FieldActor_RiseBaseY, struct FieldActor, rise_base_y, 0x4c);
 LAYOUT_OFFSET_GUARD(FieldActor_VelocityY, struct FieldActor, velocity_y, 0x28);
 LAYOUT_OFFSET_GUARD(FieldActor_Speed, struct FieldActor, speed, 0x30);
 LAYOUT_OFFSET_GUARD(FieldActor_TargetX, struct FieldActor, target_x, 0x38);

@@ -103,7 +103,7 @@ extern Spr *Data_0200e6e8;
 
 s32 Math_RemainderUnsigned(s32, s32);
 void OverlayObject_SetValue1(void *, s32);
-void SceneActor_ParkRecord(u8 *record);
+void SceneActor_ParkRecord(struct FieldActor *actor);
 s32 Object_CheckMovementCollision();
 void Vector_AddPolarOffset();
 void SceneActor_SetByte55ForActorZeroAnd12To17();

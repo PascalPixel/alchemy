@@ -11,6 +11,7 @@
 #include "STAGED_ACTOR.H"
 #include "MAP_SCROLL.H"
 #include "TBS_EDITION.H"
+#include "IO_REG.H"
 
 extern u8 MsgVinasuPairDefeated[];
 void SceneEffect_SpawnParticlesAboveActor(void);
@@ -28,7 +29,6 @@ extern u8 Data_0200e0f4[];
 void Engine_EventWait();
 void VinasuChojo_ShowMessage();
 void Object_SetActionCallbackAndRefreshById();
-void SceneActor_ParkRecord();
 void Event_SetPairWork1c0();
 void ObjectTable_Snapshot();
 
@@ -67,7 +67,7 @@ void Object_RefreshSelectorById();
 extern const u8 VinasuChojo_RiseActionScript[];
 extern const s32 VinasuChojo_RiseParticleScript[];
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor);
-void SceneEffect_AdvanceGatedRiseCounter(u8 *obj);
+void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 
 extern const s32 VinasuChojo_BesideParticleScript[];
 void FieldScene_RunScene3c9_02005b90(union FieldObject *object);
@@ -217,7 +217,7 @@ void FieldScene_RunScene3c9_02003924(void)
         *(u16 *)(record + 6) = shown;
     }
     *(s32 *)(record + 12) = 0x200000;
-    SceneActor_ParkRecord((u8 *)record);
+    SceneActor_ParkRecord(record);
     Engine_ActorSetAnimation(ACTOR_IVAN, 18);
     record = Actor_Get(ACTOR_IVAN);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -230,7 +230,7 @@ void FieldScene_RunScene3c9_02003924(void)
     }
     *(s32 *)(record + 12) = 0x200000;
     *(s32 *)(record + 16) = 0xde0000;
-    SceneActor_ParkRecord((u8 *)record);
+    SceneActor_ParkRecord(record);
     Engine_ActorSetAnimation(ACTOR_MIA, 18);
     record = Actor_Get(ACTOR_MIA);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -243,7 +243,7 @@ void FieldScene_RunScene3c9_02003924(void)
     }
     *(s32 *)(record + 12) = 0x200000;
     *(s32 *)(record + 16) = 0xde0000;
-    SceneActor_ParkRecord((u8 *)record);
+    SceneActor_ParkRecord(record);
     Actor_SetPosition(21, 0xc40000, 0xdc0000);
     Engine_ActorSetAnimation(21, 5);
     Actor_SetPosition(6, 0xbc0000, 0x13c0000);
@@ -252,16 +252,16 @@ void FieldScene_RunScene3c9_02003924(void)
     Engine_ActorSetSpriteFlags(record, 0);
     record = Actor_Get(8);
     *(s32 *)(record + 8) += -0x100000;
-    SceneActor_ParkRecord((u8 *)record);
+    SceneActor_ParkRecord(record);
     record = Object_GetById(9);
     *(s32 *)(record + 8) += -0x100000;
-    SceneActor_ParkRecord((u8 *)record);
+    SceneActor_ParkRecord(record);
     record = Actor_Get(10);
     *(s32 *)(record + 8) += 0x100000;
-    SceneActor_ParkRecord((u8 *)record);
+    SceneActor_ParkRecord(record);
     record = Object_GetById(11);
     *(s32 *)(record + 8) += 0x100000;
-    SceneActor_ParkRecord((u8 *)record);
+    SceneActor_ParkRecord(record);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     record = Actor_Get(23);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -502,52 +502,38 @@ void FieldScene_RunMultiActorPresentation(void)
 
 void VinasuChojo_RunActorTransition(void)
 {
-    /* FAKEMATCH: the shared zero lives in a one-halfword struct so it is a
-     * HImode register; its pool load then has the movhi reach of 64 bytes the
-     * reference pool placement needs. */
-    struct Half {
-        u16 v;
-    };
-    struct Half zero;
-    struct FieldActor *actor26;
-    struct FieldActor *actor27;
-    struct FieldActor *actor28;
-    u8 *record;
-    u8 *action_start;
-    s32 none;
-    u8 *action_next;
-    u8 *action_end;
+    struct FieldActor *lower;
+    struct FieldActor *middle;
+    struct FieldActor *upper;
+    struct FieldActor *actor;
 
     Engine_AudioPlayCue(19);
     Engine_AudioPlayCue(0x120);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
-    Call3(Engine_ActorShowEmote, 0, 0x100, 0);
-    Call3(Engine_ActorShowEmote, 1, 0x100, 0);
-    Call3(Engine_ActorShowEmote, 2, 0x100, 0);
-    Call3(Engine_ActorShowEmote, 3, 0x100, 0);
-    Call3(Engine_ActorShowEmote, 21, 0x100, 0);
-    Call3(Engine_ActorShowEmote, 6, 0x100, 10);
-    Call3(Engine_ActorFaceDirection, 0, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 21, 0xd000, 0);
-    Call3(Engine_ActorFaceDirection, 6, 0xd000, 0);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x20000, 0x10000);
+    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
+    Actor_ShowEmote(21, 0x100, 0);
+    Actor_ShowEmote(6, 0x100, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(6, FACING_NORTH + FACING_STEP, 0);
+    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
-    Call4(Engine_CameraMoveTo, 0x1300000, 0x200000, 0xb40000, 1);
+    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+    Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 1);
     Engine_CameraWaitForMove();
-    record = Object_GetById(24);
-    *(s32 *)(record + 24) = 0x1999;
-    record = Object_GetById(25);
-    *(s32 *)(record + 24) = 0x1999;
-    action_start = Data_0200e088;
-    Engine_ActorEnableActionCallback(24, action_start);
-    Engine_ActorEnableActionCallback(25, action_start);
+    Object_GetById(24)->scale_x = 0x1999;
+    Object_GetById(25)->scale_x = 0x1999;
+    Engine_ActorEnableActionCallback(24, Data_0200e088);
+    Engine_ActorEnableActionCallback(25, Data_0200e088);
     Engine_AudioPlayCue(145);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x60000, 0x60000, 0x10000);
-    Call2(Engine_ColorBufferApplyTarget, 0x4063ff, 0);
+    Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
+    ColorBuffer_ApplyTarget(0x4063ff, 0);
     Engine_ColorBufferInterpolate(16);
     Engine_TaskWait(20);
     Engine_ColorBufferApplyTarget(0x7fff, 0);
@@ -555,181 +541,150 @@ void VinasuChojo_RunActorTransition(void)
     Engine_TaskWait(60);
     Engine_AudioPlayCue(141);
     Engine_GameFlagSet(0x236);
-    record = Object_GetById(24);
-    *(s32 *)(record + 12) = -0x600000;
-    record = Object_GetById(25);
-    *(s32 *)(record + 12) = -0x400000;
+    Object_GetById(24)->y.fixed = -PIXELS(96);
+    Object_GetById(25)->y.fixed = -PIXELS(64);
     Engine_ActorSetChildValue(26, 7);
-    record = Object_GetById(26);
-    Engine_ActorSetSpriteFlags(record, 0);
-    actor26 = Object_GetById(26);
-    actor26->scale_y = -0x10000;
-    record = Object_GetById(24);
-    actor26->scale_x = *(s32 *)(record + 24);
-    none = 0;
-    actor26->motion_flags = none;
-    actor26->x.fixed = 0x1300000;
-    actor26->y.fixed = -0x200000;
-    actor26->z.fixed = 0x600000;
+    Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
+    lower = Object_GetById(26);
+    lower->scale_y = -0x10000;
+    lower->scale_x = Object_GetById(24)->scale_x;
+    lower->motion_flags = 0;
+    lower->x.fixed = PIXELS(304);
+    lower->y.fixed = -PIXELS(32);
+    lower->z.fixed = PIXELS(96);
     Engine_ActorSetChildValue(27, 7);
-    record = Object_GetById(27);
-    Engine_ActorSetSpriteFlags(record, 0);
-    actor27 = Object_GetById(27);
-    actor27->scale_y = -0x10000;
-    record = Object_GetById(24);
-    actor27->scale_x = *(s32 *)(record + 24);
-    actor27->motion_flags = none;
-    actor27->x.fixed = 0x1300000;
-    actor27->y.fixed = none;
-    actor27->z.fixed = 0x600000;
+    Engine_ActorSetSpriteFlags(Object_GetById(27), 0);
+    middle = Object_GetById(27);
+    middle->scale_y = -0x10000;
+    middle->scale_x = Object_GetById(24)->scale_x;
+    middle->motion_flags = 0;
+    middle->x.fixed = PIXELS(304);
+    middle->y.fixed = 0;
+    middle->z.fixed = PIXELS(96);
     Engine_ActorSetChildValue(28, 7);
-    record = Object_GetById(28);
-    Engine_ActorSetSpriteFlags(record, 0);
-    actor28 = Object_GetById(28);
-    actor28->scale_y = -0x10000;
-    record = Object_GetById(24);
-    actor28->scale_x = *(s32 *)(record + 24);
-    actor28->motion_flags = none;
-    actor28->x.fixed = 0x1300000;
-    actor28->y.fixed = 0x200000;
-    actor28->z.fixed = 0x600000;
-    Call6(Engine_MapCopyCellsTo, 102, 4, 74, 4, 18, 23);
-    Call6(Engine_MapCopyCellsTo, 39, 72, 11, 72, 16, 21);
+    Engine_ActorSetSpriteFlags(Object_GetById(28), 0);
+    upper = Object_GetById(28);
+    upper->scale_y = -0x10000;
+    upper->scale_x = Object_GetById(24)->scale_x;
+    upper->motion_flags = 0;
+    upper->x.fixed = PIXELS(304);
+    upper->y.fixed = PIXELS(32);
+    upper->z.fixed = PIXELS(96);
+    Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
+    Map_CopyCellsTo(39, 72, 11, 72, 16, 21);
     Engine_MapCopyCellAttributes(19, 6, 3, 7, 22, 6);
     Engine_MapCopyCellAttributes(19, 6, 3, 7, 13, 6);
     Engine_MapCopyCellAttributes(19, 6, 3, 7, 22, 13);
     Engine_MapCopyCellAttributes(19, 6, 3, 7, 13, 13);
     Engine_TaskWait(1);
-    record = Object_GetById(8);
-    *(s32 *)(record + 8) += -0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(9);
-    *(s32 *)(record + 8) += -0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(10);
-    *(s32 *)(record + 8) += 0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(11);
-    *(s32 *)(record + 8) += 0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(0);
-    *(s32 *)(record + 8) += 0x100000;
-    *(s32 *)(record + 16) += 0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(1);
-    *(s32 *)(record + 8) += 0x100000;
-    *(s32 *)(record + 16) += 0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(2);
-    *(s32 *)(record + 8) += 0x100000;
-    *(s32 *)(record + 16) += 0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(3);
-    *(s32 *)(record + 8) += 0x100000;
-    *(s32 *)(record + 16) += 0x100000;
-    SceneActor_ParkRecord(record);
-    Call3(Engine_ActorSetPosition, 21, 0xc40000, 0xdc0000);
+    actor = Object_GetById(8);
+    actor->x.fixed -= PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(9);
+    actor->x.fixed -= PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(10);
+    actor->x.fixed += PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(11);
+    actor->x.fixed += PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
+    actor->x.fixed += PIXELS(16);
+    actor->z.fixed += PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(ACTOR_GERALD);
+    actor->x.fixed += PIXELS(16);
+    actor->z.fixed += PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(ACTOR_IVAN);
+    actor->x.fixed += PIXELS(16);
+    actor->z.fixed += PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(ACTOR_MIA);
+    actor->x.fixed += PIXELS(16);
+    actor->z.fixed += PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    Actor_SetPosition(21, PIXELS(196), PIXELS(220));
     Engine_ActorSetAnimation(21, 5);
-    Call3(Engine_ActorSetPosition, 6, 0xbc0000, 0x13c0000);
+    Actor_SetPosition(6, PIXELS(188), PIXELS(316));
     Engine_ActorSetAnimation(6, 5);
-    record = Object_GetById(6);
-    Engine_ActorSetSpriteFlags(record, 0);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
+    Engine_ActorSetSpriteFlags(Object_GetById(6), 0);
+    Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
     Engine_ColorBufferApplyTarget(0x4063ff, 0);
     Engine_ColorBufferInterpolate(120);
-    action_next = Data_0200e0d0;
-    Engine_ActorEnableActionCallback(24, action_next);
-    Engine_ActorEnableActionCallback( 25, action_next);
-    Engine_ActorEnableActionCallback( 26, action_next);
-    Engine_ActorEnableActionCallback( 27, action_next);
-    Engine_ActorEnableActionCallback(28, action_next);
+    Engine_ActorEnableActionCallback(24, Data_0200e0d0);
+    Engine_ActorEnableActionCallback(25, Data_0200e0d0);
+    Engine_ActorEnableActionCallback(26, Data_0200e0d0);
+    Engine_ActorEnableActionCallback(27, Data_0200e0d0);
+    Engine_ActorEnableActionCallback(28, Data_0200e0d0);
     Engine_TaskWait(120);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
+    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Engine_ColorBufferApplyTarget(0x203210, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_TaskWait(120);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x20000, 0x10000);
-    Call2(Engine_ColorBufferApplyTarget, 0x10000, 0);
+    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    ColorBuffer_ApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_TaskWait(120);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
-    record = Object_GetById(24);
-    action_end = Data_0200e0f4;
-    *(s32 *)(record + 28) = 0x51e;
-    Engine_ActorEnableActionCallback(25, action_end);
-    Engine_ActorEnableActionCallback( 26, action_end);
-    Engine_ActorEnableActionCallback( 27, action_end);
-    Object_SetActionCallbackAndRefreshById(28, action_end);
+    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+    Object_GetById(24)->scale_y = 0x51e;
+    Engine_ActorEnableActionCallback(25, Data_0200e0f4);
+    Engine_ActorEnableActionCallback(26, Data_0200e0f4);
+    Engine_ActorEnableActionCallback(27, Data_0200e0f4);
+    Object_SetActionCallbackAndRefreshById(28, Data_0200e0f4);
     Engine_AudioPlayCue(0x121);
     Engine_ActorSetChildValue(24, 15);
     Engine_EventWait(20);
-    Object_SetActionCallbackAndRefreshById(24, (s32)Data_0200e130);
-    Scheduler_RemoveCallback((u32)((s32)SceneEffect_SpawnParticlesAboveActor));
-    Engine_ActorJump(2, 2, 20);
-    VinasuChojo_ShowMessage(2);
-    Call3(Engine_ActorFaceDirection, 1, 0x6000, 20);
-    Call2(Engine_ActorSetAttachedEffect, 1, 0x102);
+    Object_SetActionCallbackAndRefreshById(24, Data_0200e130);
+    Scheduler_RemoveCallback((u32)SceneEffect_SpawnParticlesAboveActor);
+    Engine_ActorJump(ACTOR_IVAN, 2, 20);
+    VinasuChojo_ShowMessage(ACTOR_IVAN);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 20);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
     Engine_EventWait(20);
-    Engine_ActorStartRepeatedMotion(1, 2);
-    VinasuChojo_ShowMessage(1);
-    Call3(Engine_ActorSetSpeed, 3, 0xcccc, 0x6666);
-    Engine_ActorWalkToAndWait(3, 0x146, 220);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    VinasuChojo_ShowMessage(ACTOR_GERALD);
+    Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
+    Engine_ActorWalkToAndWait(ACTOR_MIA, 326, 220);
     Engine_EventWait(40);
-    Engine_ActorSetAttachedEffect(3, 0x102);
-    VinasuChojo_ShowMessage(3);
-    record = ((u8 *)Value1(Object_GetById, 0));
-    record[98] = none;
-    *(u8 *)((record + 98) + 1) = 1;
-    *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    zero.v = 0;
-    {
-        s32 shown = 0xa000;
-
-        *(u16 *)(record + 6) = shown;
-    }
-    record = ((u8 *)Value1(Object_GetById, 1));
-    record[98] = zero.v;
-    *(u8 *)((record + 98) + 1) = 1;
-    {
-        s32 shown = 0xa000;
-
-        *(u16 *)(record + 6) = shown;
-    }
-    *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    record = ((u8 *)Value1(Object_GetById, 2));
-    record[98] = zero.v;
-    *(u8 *)((record + 98) + 1) = 1;
-    {
-        s32 shown = 0xa000;
-
-        *(u16 *)(record + 6) = shown;
-    }
-    *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    record = ((u8 *)Value1(Object_GetById, 3));
-    record[98] = zero.v;
-    *(u8 *)((record + 98) + 1) = 1;
-    {
-        s32 shown = 0xa000;
-
-        *(u16 *)(record + 6) = shown;
-    }
-    *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    record = ((u8 *)Value1(Object_GetById, 21));
-    record[98] = zero.v;
-    *(u8 *)((record + 98) + 1) = 1;
-    *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    record = ((u8 *)Value1(Object_GetById, 6));
-    record[98] = zero.v;
-    *(u8 *)((record + 98) + 1) = 1;
-    *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    *(u8 *)((u8 *)Object_GetById(23) + 85) = zero.v;
-    record = Object_GetById(23);
-    Engine_ActorSetSpriteFlags(record, 0);
-    Engine_ActorSetChildValue(23, 7);
-    Engine_ActorSetSpritePriority(23, 2);
-    VinasuChojo_TransitionStep = none;
+    Engine_ActorSetAttachedEffect(ACTOR_MIA, 0x102);
+    VinasuChojo_ShowMessage(ACTOR_MIA);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    actor->rise_counter = 0;
+    actor->rise_enabled = 1;
+    actor->rise_base_y = actor->y.fixed;
+    actor->facing = FACING_NORTHWEST;
+    actor = Actor_Get(ACTOR_GERALD);
+    actor->rise_counter = 0;
+    actor->rise_enabled = 1;
+    actor->facing = FACING_NORTHWEST;
+    actor->rise_base_y = actor->y.fixed;
+    actor = Actor_Get(ACTOR_IVAN);
+    actor->rise_counter = 0;
+    actor->rise_enabled = 1;
+    actor->facing = FACING_NORTHWEST;
+    actor->rise_base_y = actor->y.fixed;
+    actor = Actor_Get(ACTOR_MIA);
+    actor->rise_counter = 0;
+    actor->rise_enabled = 1;
+    actor->facing = FACING_NORTHWEST;
+    actor->rise_base_y = actor->y.fixed;
+    actor = Actor_Get(21);
+    actor->rise_counter = 0;
+    actor->rise_enabled = 1;
+    actor->rise_base_y = actor->y.fixed;
+    actor = Actor_Get(6);
+    actor->rise_counter = 0;
+    actor->rise_enabled = 1;
+    actor->rise_base_y = actor->y.fixed;
+    Object_GetById(PARTICLE_SOURCE_ACTOR)->motion_flags = 0;
+    Engine_ActorSetSpriteFlags(Object_GetById(PARTICLE_SOURCE_ACTOR), 0);
+    Engine_ActorSetChildValue(PARTICLE_SOURCE_ACTOR, 7);
+    Engine_ActorSetSpritePriority(PARTICLE_SOURCE_ACTOR, 2);
+    VinasuChojo_TransitionStep = 0;
     VinasuChojo_TransitionTimer = 240;
-    ((void (*)())Engine_TaskAddCallback)((s32)VinasuChojo_RunTransitionStep, 0xc80);
+    Engine_TaskAddCallback(VinasuChojo_RunTransitionStep, TASK_PRIORITY_SCENE);
     do {
         Engine_TaskWait(1);
     } while (Engine_GameFlagIsSet(0x237) == 0);
@@ -738,8 +693,14 @@ void VinasuChojo_RunActorTransition(void)
     Engine_GameFlagSet(0x11a);
     ObjectTable_Snapshot();
     Event_SetPairWork1c0((s32)&SceneId_WorldMap, 91);
-    { s32 white = 0x7fff; *(u16 *)0x05000000 = white; }
-    *(s32 *)((*(s32 *)&gEventWork + 0x1c8)) = 1;
+    {
+        /* FAKEMATCH: storing 0x7fff directly reuses the colour's earlier pool
+         * entry and moves the literal pool; measured 2026-10-04. */
+        s32 white = 0x7fff;
+
+        PLTT_BACKDROP = white;
+    }
+    gEventWork->transition_frames = 1;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
 }
@@ -786,7 +747,7 @@ void FieldScene_RestageParty(void)
     actor->x.fixed = PIXELS(346);
     actor->y.fixed = PIXELS(32);
     actor->z.fixed = PIXELS(205);
-    SceneActor_ParkRecord((u8 *)actor);
+    SceneActor_ParkRecord(actor);
     actor->rise_enabled = 0;
     actor->velocity_y = 0x20000;
 
@@ -794,7 +755,7 @@ void FieldScene_RestageParty(void)
     actor->x.fixed = PIXELS(356);
     actor->y.fixed = PIXELS(32);
     actor->z.fixed = PIXELS(192);
-    SceneActor_ParkRecord((u8 *)actor);
+    SceneActor_ParkRecord(actor);
     actor->rise_enabled = 0;
     actor->velocity_y = 0x20000;
 
@@ -802,7 +763,7 @@ void FieldScene_RestageParty(void)
     actor->x.fixed = PIXELS(360);
     actor->y.fixed = PIXELS(32);
     actor->z.fixed = PIXELS(222);
-    SceneActor_ParkRecord((u8 *)actor);
+    SceneActor_ParkRecord(actor);
     actor->rise_enabled = 0;
     actor->velocity_y = 0x20000;
 
@@ -810,7 +771,7 @@ void FieldScene_RestageParty(void)
     actor->x.fixed = PIXELS(334);
     actor->y.fixed = PIXELS(32);
     actor->z.fixed = PIXELS(222);
-    SceneActor_ParkRecord((u8 *)actor);
+    SceneActor_ParkRecord(actor);
     actor->rise_enabled = 0;
     actor->velocity_y = 0x20000;
 
@@ -1193,26 +1154,19 @@ void Scene_RunExtendedActorTransition(void)
 
 /* Parking an actor record. */
 
-/*
- * Park a record: stamp the sentinel 0x80000000 into the three mirror fields at
- * +56, +60 and +64, zero the three at +36, +40 and +44, and clear the u16
- * angle at +100.  The 24-byte owner at 0x02005688 has no prologue, no stack
- * use and no literal pool.  0x80000000 is read as a sentinel because it is
- * stamped into three position-family fields at once and then tested for
- * equality; the roles of +36, +40 and +44 are not established.
- */
-void SceneActor_ParkRecord(u8 *record)
+/* Parks an actor where it stands: no target to move toward, no velocity
+ * and its timer cleared. */
+void SceneActor_ParkRecord(struct FieldActor *actor)
 {
-    /* The sentinel is built as 128 shifted left by 24, not pooled. */
-    *(s32 *)(record + 56) = (s32)0x80000000;
-    *(s32 *)(record + 60) = (s32)0x80000000;
-    *(s32 *)(record + 64) = (s32)0x80000000;
+    actor->target_x = ACTOR_NO_TARGET;
+    actor->target_y = ACTOR_NO_TARGET;
+    actor->target_z = ACTOR_NO_TARGET;
 
-    *(s32 *)(record + 36) = 0;
-    *(s32 *)(record + 40) = 0;
-    *(s32 *)(record + 44) = 0;
+    actor->velocity_x = 0;
+    actor->velocity_y = 0;
+    actor->velocity_z = 0;
 
-    *(u16 *)(record + 100) = 0;
+    actor->unknown_64 = 0;
 }
 
 /*
@@ -1252,7 +1206,7 @@ void VinasuChojo_RunTransitionStep(void)
         center->z.fixed = 164 << 16;
         center->scale_x = 0x10000;
         center->scale_y = 0x10000;
-        SceneActor_ParkRecord((u8 *)center);
+        SceneActor_ParkRecord(center);
         Engine_ActorEnableActionCallback(23, VinasuChojo_RiseActionScript);
         break;
     case 25:
@@ -1327,29 +1281,27 @@ void VinasuChojo_RunTransitionStep(void)
         }
     }
     VinasuChojo_TransitionStep++;
-    SceneEffect_AdvanceGatedRiseCounter((u8 *)Actor_Get(0));
-    SceneEffect_AdvanceGatedRiseCounter((u8 *)Actor_Get(1));
-    SceneEffect_AdvanceGatedRiseCounter((u8 *)Actor_Get(2));
-    SceneEffect_AdvanceGatedRiseCounter((u8 *)Actor_Get(3));
-    SceneEffect_AdvanceGatedRiseCounter((u8 *)Actor_Get(21));
-    SceneEffect_AdvanceGatedRiseCounter((u8 *)Actor_Get(6));
+    SceneEffect_AdvanceGatedRiseCounter(Actor_Get(0));
+    SceneEffect_AdvanceGatedRiseCounter(Actor_Get(1));
+    SceneEffect_AdvanceGatedRiseCounter(Actor_Get(2));
+    SceneEffect_AdvanceGatedRiseCounter(Actor_Get(3));
+    SceneEffect_AdvanceGatedRiseCounter(Actor_Get(21));
+    SceneEffect_AdvanceGatedRiseCounter(Actor_Get(6));
 }
 
 /* The gated rise counter. */
-void SceneEffect_AdvanceGatedRiseCounter(u8 *obj)
+void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
 {
-    if (*(u8 *)(obj + 99) != 0) {
-        u8 counter = *(u8 *)(obj + 98);
+    if (actor->rise_enabled != 0) {
+        u8 counter = actor->rise_counter;
 
-        *(u32 *)(obj + 12) = *(u32 *)(obj + 76) + ((u32)(counter >> 2) << 16);
+        actor->y.fixed = actor->rise_base_y + ((u32)(counter >> 2) << 16);
 
-        SceneActor_ParkRecord(obj);
+        SceneActor_ParkRecord(actor);
 
-        {
-            if (*(u8 *)(obj + 98) != 0) {
-                if (*(u8 *)(obj + 98) <= 31) {
-                    ++*(u8 *)(obj + 98);
-                }
+        if (actor->rise_counter != 0) {
+            if (actor->rise_counter <= 31) {
+                ++actor->rise_counter;
             }
         }
     }

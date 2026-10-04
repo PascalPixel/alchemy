@@ -3579,12 +3579,8 @@ Func_080eab98:
 	.thumb_func
 Func_080eaf28:
 	.incbin "baserom.gba", 0x000d6d80, 0x00000128
-	.section .rom.000d6f5c, "ax"
-	.global EventRuntime_GetControlledOwner
-	.type EventRuntime_GetControlledOwner, %function
-	.thumb_func
-EventRuntime_GetControlledOwner:
-	.incbin "baserom.gba", 0x000d6f5c, 0x00000054
+	.section .rom.000d6f80, "ax"
+	.incbin "baserom.gba", 0x000d6f80, 0x00000030
 	.section .rom.000d6fb0, "ax"
 	.global Event_FindFacingTrigger
 	.type Event_FindFacingTrigger, %function

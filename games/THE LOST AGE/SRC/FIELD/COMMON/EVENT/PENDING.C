@@ -27,3 +27,17 @@ void EventRuntime_ResolvePendingActions(s32 skip)
     if (gPartyState.pending_third != 0 && !(skip & 4))
         EventRuntime_ExecutePackedAction(0x208b);
 }
+
+/* The party member the player controls, or 8 while an override holds. */
+s32 EventRuntime_GetControlledOwner(void)
+{
+    struct PartyState *state = &gPartyState;
+    s32 actor;
+
+    /* FAKEMATCH: load the party state's address before the default owner. */
+    asm("");
+    actor = 8;
+    if (state->owner_override == 0)
+        actor = state->current_owner;
+    return actor;
+}

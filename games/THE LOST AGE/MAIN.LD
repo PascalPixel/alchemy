@@ -786,7 +786,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/PLAY_CUE_AND_START_EMITTER_ON_TARGET.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cdc6a)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PENDING.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000cdf3c)
+    "*/recon/tla/ja/rom.o"(.rom.000cdf60)
     "*/recon/tla/ja/rom.o"(.rom.000cdf90)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/HAS_TRIGGER.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/OBJECT_STATE.o"(.text)

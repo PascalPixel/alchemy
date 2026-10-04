@@ -1172,7 +1172,6 @@
         "*/recon/tla/raw/080cdc74.o"(.text)
         "*/recon/tla/raw/080cdd80.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PENDING.o"(.text)
-        "*/recon/tla/raw/080cdf5c.o"(.text)
         "*/recon/tla/raw/080cdf80.o"(.text)
         "*/recon/tla/raw/080cdfb0.o"(.text)
         "*/recon/tla/raw/080ce0ac.o"(.text)

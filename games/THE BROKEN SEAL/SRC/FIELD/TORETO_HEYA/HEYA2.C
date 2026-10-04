@@ -248,8 +248,7 @@ void ToretoHeya_RunTableScene(void)
 {
     u32 i;
     s32 rec8;
-    s32 record;
-    s32 base3_2000240;
+    struct FieldActor *leader;
 
     rec8 = Engine_GameFlagIsSet(3);
     Engine_EventBegin();
@@ -261,22 +260,22 @@ void ToretoHeya_RunTableScene(void)
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
     Engine_ActorSetSpeed(3, 0x10000, 0x8000);
-    *((u8 *)Object_GetById(3) + 35) &= 254;
+    Object_GetById(3)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(3, 2);
-    *((u8 *)Object_GetById(0) + 35) &= 254;
+    Object_GetById(0)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(0, 2);
-    record = ((s32 (*)())Object_GetById)(0);
-    if (record != 0) {
-        Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    leader = Object_GetById(0);
+    if (leader != NULL) {
+        Engine_ActorSetPosition(1, leader->x.fixed, leader->z.fixed);
     }
-    record = ((s32 (*)())Object_GetById)(0);
-    if (record != 0) {
-        Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    leader = Object_GetById(0);
+    if (leader != NULL) {
+        Engine_ActorSetPosition(2, leader->x.fixed, leader->z.fixed);
     }
     if (rec8 != 0) {
-        record = ((s32 (*)())Object_GetById)(0);
-        if (record != 0) {
-            Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        leader = Object_GetById(0);
+        if (leader != NULL) {
+            Engine_ActorSetPosition(3, leader->x.fixed, leader->z.fixed);
         }
         Engine_ActorEnableActionCallback(3, ToretoHeya_TableActions3);
     }
@@ -316,14 +315,9 @@ void ToretoHeya_RunTableScene(void)
     Engine_EventWait(40);
     ToretoHeya_PlayGesture(11);
     Engine_EventShowMessage(0x8008, 0);
-    {
-        u8 *work = *(u8 **)&gEventWork;
-
-        *(s32 *)(work + 0x1c0) = 0x200;
-        *(s32 *)(work + 0x1c8) = 64;
-    }
-    base3_2000240 = (s32)&gGameState;
-    *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->transition_frames = 64;
+    gGameState.battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_ToretoHeya, 19);
     BattleFx_SetWeightedResult(36, 0);
     Engine_EventEnd();
@@ -333,16 +327,16 @@ void FieldScene_RunFourActorEncounter(void)
 {
     u32 i;
     s32 rec;
-    s32 record;
+    struct FieldActor *record;
     s32 v6;
     s32 v5;
     s32 base5_200962d;
     s32 base5_2009ec8;
 
     rec = GameFlag_IsSet(3);
-    *((u8 *)Object_GetById(3) + 35) &= 254;
+    Object_GetById(3)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(ACTOR_MIA, 2);
-    *((u8 *)Object_GetById(0) + 35) &= 254;
+    Object_GetById(0)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     PartyInventory_FindOwner(184);
     Audio_PlayCue(17);
@@ -354,17 +348,17 @@ void FieldScene_RunFourActorEncounter(void)
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xa60000, 0x500000);
     v6 = 192;
     record = Actor_Get(ACTOR_PARTY_LEADER);
-    *(u16 *)(record + 6) = (v6 << 8);
+    record->facing = v6 << 8;
     Actor_SetPosition(ACTOR_GERALD, 0x940000, 0x5a0000);
     record = Actor_Get(ACTOR_GERALD);
-    *(u16 *)(record + 6) = (v6 << 8);
+    record->facing = v6 << 8;
     Actor_SetPosition(ACTOR_IVAN, 0xb60000, 0x5a0000);
     record = Object_GetById(ACTOR_IVAN);
-    *(u16 *)(record + 6) = (v6 << 8);
+    record->facing = v6 << 8;
     if (rec != 0) {
         Actor_SetPosition(ACTOR_MIA, 0xa60000, 0x680000);
         record = Object_GetById(ACTOR_MIA);
-        *(u16 *)(record + 6) = (v6 << 8);
+        record->facing = v6 << 8;
     }
     ToretoHeya_PlayGesture(0);
     Engine_TaskWait(10);
@@ -520,7 +514,7 @@ void FieldScene_RunFourActorEncounter(void)
     }
     Object_SetActionCallbackAndRefreshById(2, base5_2009ec8);
     Engine_EventWait(20);
-    *((u8 *)Object_GetById(0) + 35) |= 1;
+    Object_GetById(0)->priority_flags |= 1;
     GameFlag_Set(0x844);
     Engine_TaskAddCallback((s32)ToretoPalette_ApplyTint, 0xc80);
     Engine_EventEnd();

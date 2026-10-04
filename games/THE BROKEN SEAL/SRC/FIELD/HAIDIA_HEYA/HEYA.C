@@ -387,9 +387,9 @@ void FieldScene_RunLongPresentationSequence(void)
     record = Actor_Get(25);
     Engine_ActorSetSpriteFlags(record, 0);
     v6 = 0;
-    *((u8 *)Object_GetById(23) + 85) = v6;
-    *((u8 *)Object_GetById(24) + 85) = v6;
-    *((u8 *)Object_GetById(25) + 85) = v6;
+    Object_GetById(23)->motion_flags = v6;
+    Object_GetById(24)->motion_flags = v6;
+    Object_GetById(25)->motion_flags = v6;
     base7_20090c1 = (s32)Scene_UpdateTimedActor;
     ((void (*)())Engine_TaskAddCallback)(base7_20090c1, 0xc80);
     Engine_TaskWait(1);
@@ -588,7 +588,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Engine_ActorSetAnimation(9, 3);
     Engine_ActorSetAnimation(10, 3);
     Engine_ActorSetAnimationAndWait(9, 3);
-    *((u8 *)Object_GetById(3) + 35) &= 254;
+    Object_GetById(3)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(ACTOR_MIA, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_MIA, 0x31a, 0x208);
@@ -596,7 +596,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Actor_WalkToAndWait(ACTOR_MIA, 0x310, 0x1f0);
     Actor_FaceDirection(ACTOR_MIA, 0x9000, 10);
-    *((u8 *)Object_GetById(3) + 35) |= 1;
+    Object_GetById(3)->priority_flags |= 1;
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
     Engine_ActorSetAnimation(8, 3);
     Engine_ActorSetAnimation(9, 3);

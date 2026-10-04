@@ -213,7 +213,7 @@ void RunEventScript01(void)
     gKorimaKiSparkSound = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-    *((u8 *)Object_GetById(0) + 90) &= 254;
+    Object_GetById(0)->unknown_5a &= 254;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Audio_PlayCue(133);

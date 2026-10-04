@@ -347,7 +347,7 @@ void FieldScene_ConfigureActor0ThenRun(s32 a0)
     u32 i;
     s32 record;
 
-    *((u8 *)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->motion_flags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);

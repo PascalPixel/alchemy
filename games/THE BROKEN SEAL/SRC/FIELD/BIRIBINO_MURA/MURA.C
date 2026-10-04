@@ -267,7 +267,7 @@ void FieldScene_RunEarlySequence(void)
     tbl2 = (u8 *)Mura_DoorCellSteps;
     Engine_MapAnimateCells(*(s32 *)(tbl2 + off), a1, a2);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    *((u8 *)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->motion_flags = 0;
     *(s32 *)((*(u8 **)&gEventWork + 0x1c0)) = 0x100;
     if (v5 == 6) {
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -395,10 +395,10 @@ void FieldScene_RunScene38b_02000584(void)
             Engine_EventWait(20);
             Event_ShowMessage(14, 0);
             Actor_SetSpeed(14, 0x9999, 0x4ccc);
-            *((u8 *)Object_GetById(14) + 90) &= 254;
+            Object_GetById(14)->unknown_5a &= 254;
             Actor_WalkToAndWait(14, 0x10a, 172);
             Engine_EventWait(1);
-            *((u8 *)Object_GetById(14) + 90) |= 1;
+            Object_GetById(14)->unknown_5a |= 1;
             Engine_EventWait(10);
             Engine_ActorSetAnimationAndWait(14, 3);
             Event_ShowMessageAndWait(14, 0, 10);
@@ -410,7 +410,7 @@ void FieldScene_RunScene38b_02000584(void)
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
             Actor_SetSpeed(14, 0x10000, 0x8000);
-            *((u8 *)Object_GetById(14) + 90) &= 254;
+            Object_GetById(14)->unknown_5a &= 254;
             Actor_WalkToAndWait(14, 0x106, 156);
             Engine_EventWait(1);
             {
@@ -586,9 +586,9 @@ void FieldScene_RunScene38bSequenceA(void)
         rec8->motion_flags = rec7;
         record = GameFlag_IsSet(0x881);
         if (record != 0) {
-            *((u8 *)Object_GetById(9) + 89) |= 16;
-            *((u8 *)Object_GetById(16) + 89) |= 16;
-            *((u8 *)Object_GetById(11) + 89) |= 16;
+            Object_GetById(9)->collision_flags |= 16;
+            Object_GetById(16)->collision_flags |= 16;
+            Object_GetById(11)->collision_flags |= 16;
             Actor_SetPosition(16, 0x8e0000, 0x9c0000);
             record = Actor_Get(16);
             Engine_ActorSetSpriteFlags(record, 0);

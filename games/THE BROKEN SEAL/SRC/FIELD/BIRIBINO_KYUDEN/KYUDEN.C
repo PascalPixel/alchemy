@@ -483,10 +483,10 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
                             Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
                             record = (s32)Object_GetById(24);
                             Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-                            *((u8 *)Object_GetById(21) + 85) = rec8;
-                            *((u8 *)Object_GetById(22) + 85) = rec8;
-                            *((u8 *)Object_GetById(23) + 85) = rec8;
-                            *((u8 *)Object_GetById(24) + 85) = rec8;
+                            Object_GetById(21)->motion_flags = rec8;
+                            Object_GetById(22)->motion_flags = rec8;
+                            Object_GetById(23)->motion_flags = rec8;
+                            Object_GetById(24)->motion_flags = rec8;
                             record = (s32)Object_GetById(21);
                             *(s32 *)(record + 12) = -0x40000;
                             record = ((s32 (*)())Object_GetById)(22);

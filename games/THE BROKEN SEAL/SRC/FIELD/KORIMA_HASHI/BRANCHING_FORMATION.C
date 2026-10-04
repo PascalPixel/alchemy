@@ -237,7 +237,7 @@ s32 Scene_Initialize(void)
     FieldScene_RedrawActorFootprint(10);
     if (Engine_GameFlagIsSet(0x200) != 0) {
         zero = 0;
-        *((u8 *)Object_GetById(10) + 35) = 2;
+        Object_GetById(10)->priority_flags = 2;
         DrawPlacement(0, 17, 2, 4, 19, 17);
         record = StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);
         record = (s32)Object_GetById(10);

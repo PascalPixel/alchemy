@@ -68,8 +68,8 @@ void FieldScene_RunScene3b3_02001fd4(void)
         ((struct FieldActor *)Object_GetById(0))->z.fixed);
 #endif
     if (FieldScene_RunScene3b3SequenceD() == 0) {
-        *((u8 *)Object_GetById(0) + 85) &= 254;
-        *((u8 *)Object_GetById(0) + 35) &= 254;
+        Object_GetById(0)->motion_flags &= 254;
+        Object_GetById(0)->priority_flags &= 254;
         StagedActor_AdvancePair();
         TakaraHashira_UpdatePillarActors();
         {

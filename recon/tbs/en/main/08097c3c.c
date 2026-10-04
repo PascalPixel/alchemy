@@ -1,4 +1,20 @@
-/* 2026-10-04 finisher 5 (score 115, was 183; z before x and speed/lift before
+/* 2026-10-04 third wave, finisher 2 (still 115): CSE's skip-block path
+ * carries the first test's mask into the nearby test. A volatile asm with
+ * an empty operand list before the nearby test flushes CSE's table, and a
+ * mask local with __asm__("" : "+r"(mask)) at the same point does the same
+ * more narrowly; both give the ROM's second mask load (161), but global
+ * allocation then gives cell_x r2 and the first mask r1 (ROM r0 and r2), so
+ * the second mask takes r0 rather than ip and the reload rotation shifts
+ * below. Moving cell_x to r0 by reusing keys (pseudo in r0), or pinning
+ * cell_x to r0 or the mask to r2 (even in an inner block), spills p and
+ * grows the frame to 56 (265-275); pinning p to r9 is worse (336+). An
+ * unused user label before the cell loads is deleted and changes nothing.
+ * Devsearch (300 iterations, seed 301) reached 101 with two empty asm
+ * barriers in the move path, "+r" on moved before AudioCommand_PlayFar(175)
+ * and on p after the loop, and swapped nearby/moved declarations; none of
+ * them touches the cell tests, so they are not kept here.
+ *
+ * 2026-10-04 finisher 5 (score 115, was 183; z before x and speed/lift before
  * unknown_5b in the move path take 121 to 115): a tagged r11 binding for the
  * loop's 0x100000 makes global allocation leave source on the stack as the
  * ROM does ([sp+20], 52-byte frame, every stack offset now right); a tagged

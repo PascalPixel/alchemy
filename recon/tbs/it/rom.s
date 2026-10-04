@@ -237,8 +237,6 @@ UiText_BuildRenderEntries:
 	.thumb_func
 UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x000190e0, 0x00000480
-	.section .rom.00019b68, "ax"
-	.incbin "baserom.gba", 0x00019b68, 0x00000110
 	.section .rom.0001ddf8, "ax"
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function

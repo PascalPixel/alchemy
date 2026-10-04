@@ -7,7 +7,6 @@ use fs2::FileExt;
 use psynergy::process::run;
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
 
 const CONTAINER: &str = "agscc";
 /// The container's target makefile fragment: generated sources and flags.
@@ -19,26 +18,6 @@ const LIBRARY_DEFINES: &[&str] = &[
     "-DIN_LIBGCC2",
     "-D__GCC_FLOAT_NOT_NEEDED",
 ];
-/// The options `agscc/build.sh` configures the container with.
-const CONFIGURE: &[&str] = &[
-    "--build=i686-unknown-linux-gnu",
-    "--host=i686-unknown-linux-gnu",
-    "--target=arm-elf",
-    "--with-cpu=arm7tdmi",
-    "--enable-multilib",
-    "--enable-interwork",
-    "--enable-languages=c",
-    "--without-headers",
-    "--disable-shared",
-    "--disable-threads",
-    "--disable-nls",
-    "--with-gnu-as",
-    "--with-gnu-ld",
-    "--disable-checking",
-];
-const CONFIGURE_CFLAGS: &str =
-    "-O2 -std=gnu17 -Wno-error -Wno-implicit-int -Wno-implicit-function-declaration";
-
 fn member_name(name: &str) -> bool {
     name.starts_with('_')
         && name.len() > 1
@@ -99,8 +78,8 @@ enum Source {
     Assembly(PathBuf),
     /// A fine-grained source a container rule generates.
     Generated(String),
-    /// C that includes the configured `tconfig.h`.
-    Configured(PathBuf),
+    /// C that includes the fixed ARM target headers.
+    Target(PathBuf),
 }
 fn source_of(container: &Path, source: &str) -> Source {
     if !source.contains('/') {
@@ -108,63 +87,8 @@ fn source_of(container: &Path, source: &str) -> Source {
     } else if source.ends_with(".asm") {
         Source::Assembly(container.join(source))
     } else {
-        Source::Configured(container.join(source))
+        Source::Target(container.join(source))
     }
-}
-
-/// The configured container headers (`tconfig.h`, `tm.h`), produced once by
-/// the container's own `configure` under ignored output.
-fn configured(root: &Path) -> Result<PathBuf, String> {
-    static LOCK: Mutex<()> = Mutex::new(());
-    let container = root.join(CONTAINER);
-    let script = container.join("gcc/configure");
-    let identity = sha256::hex(
-        &[
-            read(&script)?,
-            CONFIGURE.join("\0").into_bytes(),
-            CONFIGURE_CFLAGS.as_bytes().to_vec(),
-        ]
-        .concat(),
-    );
-    let parent = root.join("tools/out/compiler-build/runtime");
-    let directory = parent.join(format!("configure-{}", &identity[..16]));
-    if directory.join("tconfig.h").is_file() {
-        return Ok(directory);
-    }
-    let _guard = LOCK.lock().map_err(|_| "runtime configure lock poisoned")?;
-    std::fs::create_dir_all(&parent).map_err(|error| format!("{}: {error}", parent.display()))?;
-    let lock_path = parent.join(".configure.lock");
-    let lock = std::fs::File::create(&lock_path)
-        .map_err(|error| format!("{}: {error}", lock_path.display()))?;
-    lock.lock_exclusive()
-        .map_err(|error| format!("{}: {error}", lock_path.display()))?;
-    if directory.join("tconfig.h").is_file() {
-        return Ok(directory);
-    }
-    let work = tempfile::Builder::new()
-        .prefix(".configure-")
-        .tempdir_in(&parent)
-        .map_err(|error| error.to_string())?;
-    let output = std::process::Command::new("sh")
-        .arg(&script)
-        .arg(format!("--srcdir={}", container.join("gcc").display()))
-        .args(CONFIGURE)
-        .env("CFLAGS", CONFIGURE_CFLAGS)
-        .current_dir(work.path())
-        .output()
-        .map_err(|error| format!("runtime configure: {error}"))?;
-    if !output.status.success() || !work.path().join("tconfig.h").is_file() {
-        let log = String::from_utf8_lossy(&output.stderr);
-        let tail: Vec<_> = log.lines().rev().take(12).collect();
-        return Err(format!(
-            "runtime configure of {CONTAINER} failed: {}",
-            tail.into_iter().rev().collect::<Vec<_>>().join("\n")
-        ));
-    }
-    let staged = work.keep();
-    std::fs::rename(&staged, &directory)
-        .map_err(|error| format!("{}: {error}", directory.display()))?;
-    Ok(directory)
 }
 
 /// The compile command of one member, without its output option.
@@ -210,8 +134,14 @@ fn member_command(
                 text(generated),
             ]);
         }
-        Source::Configured(path) => {
-            command.push(format!("-I{}", configured(root)?.display()));
+        Source::Target(path) => {
+            for name in ["tconfig.h", "tm.h"] {
+                write(
+                    work.join(name),
+                    read(container.join("config/arm").join(name))?,
+                )?;
+            }
+            command.push(format!("-I{}", work.display()));
             command.extend(includes.iter().map(|path| format!("-I{}", path.display())));
             command.extend([format!("-DL{member}"), text(path)]);
         }

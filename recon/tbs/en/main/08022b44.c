@@ -1,6 +1,25 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_UNIT.H"
+/* 2026-10-04 sun finisher 4 (second wave): 2 off as written now (the
+ * fresh-zero clear through the entry pointer is in the source). The one
+ * remaining difference is sched2 placing the reload copy "adds r7, r6, #0"
+ * (insn 329) after the x/y stores instead of between "movs r3, #120" and
+ * the x store. -fsched-verbose=9 gives the dependence table: x store prio
+ * 20 with deps {tile clear, word store, word constant load (anti on r3)},
+ * the copy prio 20 with one dep, so the x store wins on dependants. The ROM
+ * order needs prio(copy) = prio(x store) + 1 = prio(movs r3, #120); the x
+ * store's prio is the word constant load's (2 + word store) through the r3
+ * anti-dependence, the copy's is 2 + max(word store, clear), so the clear
+ * would need one more priority than the word store (both 18 now, each from
+ * its dependence on the static-chain load of win). Searched without effect:
+ * all orders of entry/sentinel/x/y/word/clear with the word and the clear
+ * as union member, *(u32 *) or *(unsigned long *) and x/y as field or
+ * *(s16 *) (u32/long word casts drop the word store's dependence on the win
+ * load and pull the copy up to the call); the index store split from its
+ * call at every position; "+r" lifetime asms on entry or output and empty
+ * barriers at every line of the block; x and y as a chained assignment or
+ * through an s16 pointer. */
 /* 2026-10-04 sun finisher 8: DjinnMenu_ShowChangePreview (main:08022b44)
  * with its nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c),
  * one object, 1788 bytes (Japanese 1784). As written: 6 instructions off in
@@ -144,11 +163,16 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             output->kind = 1;
             output->index = Resource_LoadIntoFreeSlot(128);
             entry = (struct PreviewSprite *)((u8 *)output + 16);
-            output->table.value = 0;
             output->sentinel = 240;
             output->x = 120;
             output->y = 120;
             entry->attributes.word = 0x40000400;
+            {
+                s32 zero = 0;
+                /* FAKEMATCH: a fresh zero keeps the clear off the s8 stores' bit-field zero, which global gives r8 (6 without, 2 with). */
+                __asm__("" : "+r"(zero));
+                entry->tile.value = zero;
+            }
             entry->attributes.bits.x = win->x * 8 + x;
             entry->attributes.bits.y = win->y * 8 + y;
             entry->tile.bits.index = Resource_GetBuffer((u8)output->index, rising ? Data_080313a4 : Data_08031424);

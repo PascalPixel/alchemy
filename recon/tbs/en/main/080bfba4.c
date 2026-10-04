@@ -1,3 +1,12 @@
+/* 2026-10-04 sun finisher 4 (second wave): unchanged at EN 16. greg dump of
+ * the shared-counter variant (one counter for the three scans, score 46):
+ * the counter (8th by priority) conflicts with the third scan's entry
+ * pointer (r1), the r2/r3 temporaries and ip, so r0 is the first free
+ * register; the counts base that the ROM reloads into r0 is a spilled
+ * pseudo (last by priority), so it cannot hold r0 first. The ROM's r4 needs
+ * an allocno or hard-register use in r0 across the scans that this source
+ * does not have. A 60-minute devsearch (seed 41, barriers, lifetimes, pins,
+ * swaps) found nothing below 16. */
 /* 2026-10-04 (finisher 7): unchanged at EN 16. Measured with a -dg dump:
  * the separate first/second-scan counter (37 refs over 46 insns, priority
  * 4.0) is allocated early and only r3 conflicts with it, so it takes r1; a

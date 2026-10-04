@@ -7,6 +7,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 extern u8 gBattleWork[];
 
@@ -64,17 +65,17 @@ void BattleFx_SetupCanvasTileMap(void)
                 *(volatile u16 *)(0x0600fb00 + off) = row * 16 + 0x100 + col;
         }
     }
-    *(volatile u16 *)0x04000000 = 0x7741;
+    REG_DISPCNT = 0x7741;
     *(volatile u16 *)0x0400000a = 0x1f81;
-    *(volatile u16 *)0x04000050 = 0x3f42;
-    *(volatile u16 *)0x04000040 = 0xf0;
-    *(volatile u16 *)0x04000044 = 0x1088;
-    *(volatile u16 *)0x04000042 = 0xf0;
-    *(volatile u16 *)0x04000046 = 0x1088;
-    *(volatile u16 *)0x04000048 = 0x3537;
-    *(volatile u16 *)0x0400004a = 0x3f21;
-    *(volatile u16 *)0x04000052 = 0x100e;
+    REG_BLDCNT = 0x3f42;
+    REG_WIN0H = 0xf0;
+    REG_WIN0V = 0x1088;
+    REG_WIN1H = 0xf0;
+    REG_WIN1V = 0x1088;
+    REG_WININ = 0x3537;
+    REG_WINOUT = 0x3f21;
+    REG_BLDALPHA = 0x100e;
     ClearWords(Iwram_ClearWords, canvas, 0x4000);
-    ClearWords(Iwram_ClearWords, (void *)0x06004000, 0x4000);
+    ClearWords(Iwram_ClearWords, BG_CHAR_BLOCK(1), 0x4000);
     WaitFrames(1);
 }

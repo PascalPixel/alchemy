@@ -580,13 +580,11 @@ void OverlayObject_InitWithRandomFields(s32 a)
 void FieldScene_RunPrimarySequence(void)
 {
     u32 i;
-    s32 rec;
-    s32 id0_state;
+    struct FieldActor *actor;
 
     Engine_EventBegin();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    id0_state = (u8 *)Object_GetById(0);
-    Engine_ActorSetSpriteFlags(id0_state, 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
     Engine_TaskWait(1);
     Event_CallWithLastActiveObjectId((s32)FuneHobashira_EnsembleObjects);
     Engine_TaskWait(1);
@@ -600,7 +598,7 @@ void FieldScene_RunPrimarySequence(void)
     OverlayObject_InitWithRandomFields(14);
     OverlayObject_InitWithRandomFields(15);
     Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
-    gEventWork->start_transition = 0x203;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(0x12c);
@@ -638,9 +636,9 @@ void FieldScene_RunPrimarySequence(void)
     Actor_SetPosition(14, 0, 0);
     Actor_SetPosition(15, 0, 0);
     Engine_EventWait(100);
-    rec = (u8 *)Object_GetById(18);
-    *(s32 *)(rec + 24) = 0x1999;
-    *(s32 *)(rec + 28) = 0x1999;
+    actor = Object_GetById(18);
+    actor->scale_x = 0x1999;
+    actor->scale_y = 0x1999;
     Actor_SetPosition(18, 0xac0000, 0x1540000);
     Engine_ActorStop(8);
     Engine_TaskWait(1);
@@ -649,8 +647,8 @@ void FieldScene_RunPrimarySequence(void)
     Audio_PlayCue(29);
     GameFlag_Set(0x8f0);
     for (i = 0; i < 32; i++) {
-        *(s32 *)(rec + 24) += 0xccc;
-        *(s32 *)(rec + 28) += 0xccc;
+        actor->scale_x += 0xccc;
+        actor->scale_y += 0xccc;
         Engine_TaskWait(1);
     }
     Actor_ShowEmote(8, 0x101, 60);
@@ -658,20 +656,15 @@ void FieldScene_RunPrimarySequence(void)
     Actor_WalkToAndWait(8, 168, 0x154);
     Actor_WalkToAndWait(8, 200, 0x154);
     Actor_FaceDirection(8, 0x8000, 0);
-    rec = (u8 *)Object_GetById(17);
-    *(s32 *)(rec + 24) = 0x12666;
-    *(s32 *)(rec + 28) = 0x12666;
-    *(s32 *)(rec + 8) = 0xac0000;
-    *(s32 *)(rec + 12) = 0xa00000;
-    *(s32 *)(rec + 16) = 0x1540000;
-    {
-        /* Clear the flag word at +6. */
-        s32 shown = 0;
-
-        *(u16 *)(rec + 6) = shown;
-    }
-    *(s32 *)(rec + 68) = 0x6666;
-    *(s32 *)(rec + 72) = 0x30000;
+    actor = Object_GetById(17);
+    actor->scale_x = 0x12666;
+    actor->scale_y = 0x12666;
+    actor->x.fixed = 0xac0000;
+    actor->y.fixed = 0xa00000;
+    actor->z.fixed = 0x1540000;
+    actor->facing = 0;
+    *(s32 *)&actor->unknown_44[0] = 0x6666;
+    *(s32 *)&actor->unknown_44[4] = 0x30000;
     Engine_EventWait(20);
     Engine_ActorJump(8, 6, 20);
     Audio_PlayCue(147);
@@ -680,25 +673,20 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventWait(80);
     Engine_ActorSetSpritePriority(17, 1);
     Actor_SetSpeed(17, 0x10000, 0x8000);
-    *(s32 *)(rec + 68) = 0x1999;
-    *(s32 *)(rec + 72) = 0xb333;
+    *(s32 *)&actor->unknown_44[0] = 0x1999;
+    *(s32 *)&actor->unknown_44[4] = 0xb333;
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = 0x80000;
+    actor->velocity_y = 0x80000;
     Actor_SetDestination(17, 132, 0x168);
     Actor_SetDestination(18, 132, 0x168);
     Engine_EventWait(40);
     Actor_SetPosition(17, 0, 0);
-    rec = (u8 *)Object_GetById(8);
-    *(s32 *)(rec + 24) = 0x10000;
-    *(s32 *)(rec + 28) = 0x10000;
-    {
-        /* Set the flag word at +6. */
-        s32 shown = 0x5000;
-
-        *(u16 *)(rec + 6) = shown;
-    }
+    actor = Object_GetById(8);
+    actor->scale_x = 0x10000;
+    actor->scale_y = 0x10000;
+    actor->facing = 0x5000;
     Engine_EventWait(40);
-    gEventWork->start_transition = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(13);

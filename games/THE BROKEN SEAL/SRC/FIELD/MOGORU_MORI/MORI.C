@@ -790,13 +790,13 @@ end:
 
 void SceneActor_BobActorZeroWhenTargetClear(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     u8 *mode;
     u8 saved;
     s32 target[3];
 
     record = Object_GetById(ACTOR_PARTY_LEADER);
-    mode = record + 85;
+    mode = &record->motion_flags;
     saved = *mode;
 
     target[0] = Object_GetById(0)->x.fixed + (s32)0xffe00000;
@@ -810,20 +810,20 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
         *mode = 0;
         Object_SetModeById(11, 7);
 
-        *(s32 *)(record + 12) += (s32)0xffff0000;
-        *(s32 *)(record + 20) += (s32)0xffff0000;
+        record->y.fixed += (s32)0xffff0000;
+        record->terrain_height += (s32)0xffff0000;
         WaitFrames(2);
 
-        *(s32 *)(record + 12) += (s32)0xffff0000;
-        *(s32 *)(record + 20) += (s32)0xffff0000;
+        record->y.fixed += (s32)0xffff0000;
+        record->terrain_height += (s32)0xffff0000;
         WaitFrames(10);
 
-        *(s32 *)(record + 12) += 0x10000;
-        *(s32 *)(record + 20) += 0x10000;
+        record->y.fixed += 0x10000;
+        record->terrain_height += 0x10000;
         WaitFrames(4);
 
-        *(s32 *)(record + 12) += 0x10000;
-        *(s32 *)(record + 20) += 0x10000;
+        record->y.fixed += 0x10000;
+        record->terrain_height += 0x10000;
 
         *mode = saved;
         Engine_EventEnd();

@@ -78,10 +78,10 @@ void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
 
 void OverlayObject_SetField54(s32 arg0, s32 arg1)
 {
-    u8 *entry = (u8 *)Object_GetById(arg0);
+    struct FieldActor *entry = Object_GetById(arg0);
 
     if (entry != 0) {
-        u8 *field = entry + 0x54;
+        u8 *field = &entry->active;
 
         *field = arg1;
     }

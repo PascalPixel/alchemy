@@ -225,7 +225,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW3.o"(.text)
         "*/recon/tbs/raw/08018850.o"(.text)
         "*/recon/tbs/raw/08018a50.o"(.text)
-        "*/recon/tbs/raw/08018cac.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/PUT_GLYPH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_TILEMAP_ENTRY.o"(.text)
         "*/recon/tbs/raw/080191cc.o"(.text .rodata .data .padding)

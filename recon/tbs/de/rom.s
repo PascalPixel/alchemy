@@ -240,6 +240,8 @@ Script_OperandHandlerTable:
 Map_LayeredScenes:
 	.incbin "baserom.gba", 0x00012f84, 0x00000d7c
 	.section .rom.000142d0, "ax"
+	.global Func_080155d0
+Func_080155d0:
 	.incbin "baserom.gba", 0x000142d0, 0x000002f4
 	.global Tile_BuildMetatiles
 Tile_BuildMetatiles:
@@ -274,9 +276,6 @@ UiText_MeasureEntryDimensions:
 	.thumb_func
 UiText_MeasureStringVariant:
 	.incbin "baserom.gba", 0x00017688, 0x00000240
-	.global UiText_DrawGlyph
-UiText_DrawGlyph:
-	.incbin "baserom.gba", 0x000178c8, 0x00000250
 	.section .rom.00017de8, "ax"
 	.global UiWork_AnimateSpriteSlots
 	.type UiWork_AnimateSpriteSlots, %function

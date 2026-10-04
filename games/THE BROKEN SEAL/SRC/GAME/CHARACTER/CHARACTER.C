@@ -101,28 +101,19 @@ u32 Party_GetAverageLevel(void)
 void *Owner_GetState(u32 owner)
 {
     struct BattleUnit *states;
-    register u32 offset asm("r3"); /* FAKEMATCH: the scaled index in r3 */
+    struct BattleUnit *unit;
 
-    asm volatile("mov r3, lr" ::: "r3"); /* FAKEMATCH: the entry copy of lr */
+    /* FAKEMATCH: the dead entry copy of lr no ordinary C emits */
+    asm volatile("mov r3, lr" ::: "r3");
     states = gGameState.owners;
-    if (owner < 8)
-        {
-        register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
-        offset = sizeof(struct BattleUnit);
-        offset *= owner;
-        r = (u8 *)states + offset;
-        return r;
-        }
-    if (owner - 0x80 < 6 && gBattleOwnerStates != NULL)
-        {
-        register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
-        u8 *t;
-        offset = sizeof(struct BattleUnit);
-        offset *= owner;
-        t = (u8 *)gBattleOwnerStates + offset;
-        r = t - 0xa600;
-        return r;
-        }
+    if (owner < 8) {
+        unit = &states[owner];
+        return unit;
+    }
+    if (owner - 0x80 < 6 && gBattleOwnerStates != NULL) {
+        unit = &gBattleOwnerStates[owner - 0x80];
+        return unit;
+    }
     return NULL;
 }
 

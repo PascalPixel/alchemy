@@ -1581,27 +1581,35 @@ s32 SceneEffect_SetModeByFrameBit1(s32 arg0)
     return 0;
 }
 
-s32 KorimaMura_TriggerRegionScript(s32 a0)
+/* Starts the region script when the actor stands inside one of the
+ * village's trigger rectangles; the cleared layout has two, the first has
+ * three. */
+s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {
     if (KorimaMura_LayoutFlag != 0) {
-        if ((u32)(*(s32 *)(a0 + 8) - 0x3b0001) <= 0x51fffe && *(s32 *)(a0 + 16) > 0xd30000 && *(s32 *)(a0 + 16) <= 0x100ffff)
+        if (actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x8d0000
+            && actor->z.fixed > 0xd30000 && actor->z.fixed < 0x1010000)
             goto hit;
-        if ((u32)(*(s32 *)(a0 + 8) - 0x450001) <= 0x34fffe && *(s32 *)(a0 + 16) > 0xc20000 && *(s32 *)(a0 + 16) <= 0x114ffff)
+        if (actor->x.fixed > 0x450000 && actor->x.fixed < 0x7a0000
+            && actor->z.fixed > 0xc20000 && actor->z.fixed < 0x1150000)
             goto hit;
     } else {
-        if ((u32)(*(s32 *)(a0 + 8) - 0x3b0001) <= 0x33fffe && *(s32 *)(a0 + 16) > 0xc20000 && *(s32 *)(a0 + 16) < 0xe60000)
+        if (actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x6f0000
+            && actor->z.fixed > 0xc20000 && actor->z.fixed < 0xe60000)
             goto hit;
-        if ((u32)(*(s32 *)(a0 + 8) - 0x6f0001) <= 0x1dfffe && *(s32 *)(a0 + 16) > 0xd80000 && *(s32 *)(a0 + 16) < 0xfa0000)
+        if (actor->x.fixed > 0x6f0000 && actor->x.fixed < 0x8d0000
+            && actor->z.fixed > 0xd80000 && actor->z.fixed < 0xfa0000)
             goto hit;
-        if ((u32)(*(s32 *)(a0 + 8) - 0x4e0001) <= 0x2bfffe && *(s32 *)(a0 + 16) > 0xf10000 && *(s32 *)(a0 + 16) <= 0x114ffff)
+        if (actor->x.fixed > 0x4e0000 && actor->x.fixed < 0x7a0000
+            && actor->z.fixed > 0xf10000 && actor->z.fixed < 0x1150000)
             goto hit;
     }
     return 0;
 hit:
     Engine_AudioPlayCue(106);
-    /* FAKEMATCH: the do/while loads the script address before a0. */
+    /* FAKEMATCH: the do/while loads the script address before the actor. */
     do {
-        Engine_ObjectSetScript(a0, KorimaMura_RegionScript);
+        Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
     } while (0);
     KorimaMura_PendingPose = 1;
     return 0;

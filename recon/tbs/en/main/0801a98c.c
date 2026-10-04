@@ -118,7 +118,8 @@ void MenuSelection_DrawFrame(void)
     struct SelectionNode *node;
     struct SelectionSprite *e;
     struct SelectionSprite *te;
-    /* FAKEMATCH: cnt pinned to fp, which plain C gives cursor_entry (165 rows unpinned, 34 pinned). */
+    u8 *tiles = Menu_AnimatedCursorTiles;
+    /* FAKEMATCH: cnt pinned to fp, which plain C gives cursor_entry (154 rows unpinned, 17 pinned). */
     register s32 cnt asm("fp") = 0;
     s32 slot;
     s32 tmp;
@@ -253,7 +254,7 @@ void MenuSelection_DrawFrame(void)
     }
     /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
     if (cursor->kind != 0) {
-        cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, &Menu_AnimatedCursorTiles[((gFrameTick >> 2) & 15) << 8]);
+        cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, &tiles[((gFrameTick >> 2) & 15) << 8]);
         if (cursor->target_x != cursor->x) {
             tmp = (cursor->target_x - cursor->x) >> 1;
             if (tmp != 0) {

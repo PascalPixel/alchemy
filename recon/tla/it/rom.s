@@ -306,10 +306,10 @@ Func_08014cb0:
 	@ Uncredited four-byte tail; independent purpose is unproved.
 	.incbin "baserom.gba", 0x00014e0c, 0x00000004
 	.section .rom.00014e10, "ax"
-	.global Func_08014de4
-	.type Func_08014de4, %function
+	.global Render_ResetTransformState
+	.type Render_ResetTransformState, %function
 	.thumb_func
-Func_08014de4:
+Render_ResetTransformState:
 	.incbin "baserom.gba", 0x00014e10, 0x00000038
 	.section .rom.00014ed4, "ax"
 	.global Func_08014ea8
@@ -336,10 +336,10 @@ Func_08014efc:
 SceneTransform_ApplyPitch:
 	.incbin "baserom.gba", 0x00015050, 0x00000044
 	.section .rom.00015094, "ax"
-	.global Func_08015068
-	.type Func_08015068, %function
+	.global SceneTransform_ApplyYaw
+	.type SceneTransform_ApplyYaw, %function
 	.thumb_func
-Func_08015068:
+SceneTransform_ApplyYaw:
 	.incbin "baserom.gba", 0x00015094, 0x0000007c
 	.section .rom.00015110, "ax"
 	.global Func_080150e4
@@ -5567,14 +5567,15 @@ Func_081b2008:
 	.incbin "baserom.gba", 0x001b3e70, 0x00000040
 	.section .rom.001b3ed8, "ax"
 	.incbin "baserom.gba", 0x001b3ed8, 0x00004128
-	.section .rom.001b8008, "ax"
-	.global Func_081b8008
-	.type Func_081b8008, %function
-	.thumb_func
-Func_081b8008:
-	.incbin "baserom.gba", 0x001b8008, 0x000000a0
+	.section .rom.001b8020, "ax"
+	.incbin "baserom.gba", 0x001b8020, 0x00000088
 	.section .rom.001b810c, "ax"
-	.incbin "baserom.gba", 0x001b810c, 0x00007ef4
+	.incbin "baserom.gba", 0x001b810c, 0x000002b8
+	.global Func_081b83c4
+	.type Func_081b83c4, %function
+	.thumb_func
+Func_081b83c4:
+	.incbin "baserom.gba", 0x001b83c4, 0x00007c3c
 	.section .rom.001c00b0, "ax"
 	.incbin "baserom.gba", 0x001c00b0, 0x00000064
 	.global LeftoverSoundDriver_StaleCallTarget

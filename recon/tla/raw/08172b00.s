@@ -337,7 +337,7 @@ Func_08172b00:
 	movs r0, #145
 	bl Audio_PlayCue
 .L_08172da6:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #72]
 	ldr r1, [sp, #16]
 	bl Graphics_PrepareTransferInIwramWork

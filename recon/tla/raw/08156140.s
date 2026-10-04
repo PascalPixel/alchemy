@@ -1250,7 +1250,7 @@ BattleFx_RunProjectileVolley:
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 .L_08156ac2:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #116]
 	ldr r1, [sp, #48]
 	bl Graphics_PrepareTransferInIwramWork

@@ -61,7 +61,7 @@ Func_0819273c:
 	strb r0, [r5, #20]
 	strb r1, [r5, #21]
 	strb r1, [r5, #17]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r2, r8
 	ldr r3, .L_08192820
 	lsls r2, r2, #16

@@ -2400,7 +2400,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r5, [r3, #48]
 	asrs r0, r0, #1
 	mov r8, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r0, r5, #0
 	adds r1, #12

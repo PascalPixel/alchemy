@@ -197,7 +197,7 @@ Func_0802b998:
 	str r2, [r6]
 	str r2, [r6, #4]
 	str r2, [r6, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r6, #0
 	bl SceneTransform_ApplyPosition
 	movs r3, #143
@@ -205,7 +205,7 @@ Func_0802b998:
 	adds r3, r7, r3
 	str r3, [sp, #4]
 	ldrh r0, [r3]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r1, #142
 	lsls r1, r1, #1
 	adds r1, r1, r7
@@ -223,7 +223,7 @@ Func_0802b998:
 	ldr r2, .L_0802bce0
 	mov lr, r2
 	.2byte 0xf800
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r0, r10
 	adds r1, r6, #0
 	bl Graphics_PrepareTransferInIwramWork
@@ -285,19 +285,19 @@ Func_0802b998:
 	str r5, [r6]
 	str r5, [r6, #4]
 	str r5, [r6, #8]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r3, #224
 	mov r1, r8
 	lsls r3, r3, #8
 	strh r3, [r1]
 	ldr r2, [sp, #4]
 	strh r5, [r2]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r6, #0
 	bl SceneTransform_ApplyPosition
 	ldr r3, [sp, #4]
 	ldrh r0, [r3]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	mov r1, r8
 	ldrh r0, [r1]
 	bl SceneTransform_ApplyPitch

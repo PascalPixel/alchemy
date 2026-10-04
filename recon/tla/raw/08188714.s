@@ -278,7 +278,7 @@ Func_08188714:
 	ldr r3, [r0, #24]
 	cmp r3, #0
 	bne .L_08188a1e
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0
@@ -546,7 +546,7 @@ Func_08188714:
 	mov r8, r0
 	lsls r7, r7, #6
 .L_08188b6c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #20]
 	movs r2, #0
 	ldr r0, [r1]

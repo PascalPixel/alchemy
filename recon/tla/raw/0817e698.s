@@ -369,7 +369,7 @@ Func_0817e698:
 	str r2, [r5, #16]
 	str r3, [r5, #20]
 	str r6, [r5, #12]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #4]
 	movs r0, #0
 	ldr r1, [r2, #4]

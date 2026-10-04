@@ -60,7 +60,7 @@ Func_08023e18:
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_08023ea6
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_08023ef0
 	ldr r0, .L_08023ef4
 	adds r7, r7, r3

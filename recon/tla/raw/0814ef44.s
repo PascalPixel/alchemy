@@ -888,7 +888,7 @@ BattleFx_RunSeriesA:
 	ldr r0, [sp, #60]
 	lsls r0, r0, #3
 	mov r9, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #36]
 	ldr r1, [sp, #20]
 	bl Graphics_PrepareTransferInIwramWork
@@ -989,7 +989,7 @@ BattleFx_RunSeriesA:
 	mov r5, r9
 	subs r0, r3, r5
 	lsls r0, r0, #11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_0814f732
 .L_0814f6d6:
 	cmp r7, #11
@@ -1023,18 +1023,18 @@ BattleFx_RunSeriesA:
 	lsls r0, r0, #3
 	subs r0, r5, r0
 	lsls r0, r0, #9
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_0814f732
 .L_0814f71a:
 	cmp r7, #3
 	bne .L_0814f726
 .L_0814f71e:
 	ldr r0, [sp, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_0814f732
 .L_0814f726:
 	ldr r0, [sp, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r0, [sp, #16]
 	bl SceneTransform_ApplyPitch
 .L_0814f732:

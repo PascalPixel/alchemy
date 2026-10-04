@@ -2851,7 +2851,7 @@
         "*/recon/tla/raw/081b3ff4.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.081b4888)
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/RESOURCE_F.o"(.text)
-        "*/recon/tla/raw/081b8008.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/CAMERA/CAMERA.o"(.text)
         "*/recon/tla/raw/081b8020.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/PALETTE/SCALE_RGB555_BUFFER_B.o"(.text)
         "*/recon/tla/raw/081b810c.o"(.text)

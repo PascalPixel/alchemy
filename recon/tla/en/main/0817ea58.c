@@ -155,7 +155,7 @@ void Func_0815f0a0(s32);
 void Func_08138086(Particle *, s32, s32);
 void Func_08138058(Particle *, s32, s32);
 s32 *Func_081969f8(s32);
-void Func_08014de4(void);
+void Render_ResetTransformState(void);
 void Func_08015160(s32, s32, s32);
 void Func_080150e4(s32);
 void SceneTransform_ApplyPitch(s32);
@@ -770,7 +770,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 z = 0;
             if (z >= -63) {
                 beam[5] = z;
-                Func_08014de4();
+                Render_ResetTransformState();
                 Func_08015160(camera + 0x20000, 0x80000, 0);
                 Func_080150e4(0x4300);
                 SceneTransform_ApplyPitch(-0x800);

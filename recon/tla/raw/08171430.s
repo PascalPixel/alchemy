@@ -304,7 +304,7 @@ Func_08171430:
 	subs r3, r3, r2
 	strh r3, [r0, #54]
 .L_0817169e:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #8]
 	ldr r0, [sp, #48]
 	bl Graphics_PrepareTransferInIwramWork
@@ -845,7 +845,7 @@ Func_08171430:
 	ldr r4, [sp, #24]
 	mov r0, r11
 	str r4, [r0, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r0, r10
 	adds r1, r7, #0
 	movs r2, #0

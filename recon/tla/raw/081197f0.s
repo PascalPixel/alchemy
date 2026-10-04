@@ -66,7 +66,7 @@ Func_081197f0:
 	movs r0, #106
 	adds r0, #255
 	bl GameFlag_SetBit
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r5, .L_08119ab4
 	movs r1, #76
 	mov r0, r10

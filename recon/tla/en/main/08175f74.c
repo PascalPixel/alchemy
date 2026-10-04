@@ -246,12 +246,12 @@ s32 Func_08002096(s32);
 s32 Func_08002090(s32);
 s32 __divsi3(s32, s32);
 struct Model *Func_081969f8(s32);
-void Func_08014de4(void);
+void Render_ResetTransformState(void);
 void Func_080151e4(s32, s32, s32);
 void Func_08015160(s32, s32, s32);
 void SceneTransform_ApplyPitch(s32);
 void Func_080150e4(s32);
-void Func_08015068(s32);
+void SceneTransform_ApplyYaw(s32);
 void Func_0801521c(s32);
 void Func_08196958(const void *, void *, s32);
 void Func_08196a7c(struct Model *);
@@ -770,12 +770,12 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 model->mesh = Data_08199364;
                 model->texture = texture;
                 if (frame <= 282) {
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     Func_080151e4(scale * 2, scale * 2, scale * 2);
                     Func_08015160(-0x100000, -0x80000, 0);
                     SceneTransform_ApplyPitch(0xe000);
                     Func_080150e4(0x4000 - t * 256);
-                    Func_08015068(-t << 10);
+                    SceneTransform_ApplyYaw(-t << 10);
                     Func_08196958(Data_08199210, texture, 4);
                     Func_08196a7c(model);
                 }
@@ -797,11 +797,11 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     model->mesh = Data_08199340;
                     model->kind = 7;
                     model->texture = texture;
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     Func_08015160(-0x80000, -0x80000, 0);
                     Func_080151e4(scale, scale, scale);
                     SceneTransform_ApplyPitch(0xc000);
-                    Func_08015068(-t << 10);
+                    SceneTransform_ApplyYaw(-t << 10);
                     Func_08196958(Data_08199210, texture, 4);
                     Func_08196a7c(model);
                 }
@@ -928,7 +928,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                                 depth2 = 0;
                             }
                             model->depth = depth2;
-                            Func_08014de4();
+                            Render_ResetTransformState();
                             Func_08015160(-0x80000, -0x80000, 0);
                             Func_080151e4(size / 2, size, size / 2);
                             if (k == 0) {
@@ -1183,14 +1183,14 @@ void Func_08175f74(struct BattleEffectArgument *arg)
             model->texture = texture;
             if (depth > -48) {
                 model->depth = depth;
-                Func_08014de4();
+                Render_ResetTransformState();
                 Func_08015160(0x40000, 0, 0);
                 Func_080151e4(scale112, scale112, scale112);
                 SceneTransform_ApplyPitch(0x2000);
                 if (frame > 55) {
-                    Func_08015068(frame << 10);
+                    SceneTransform_ApplyYaw(frame << 10);
                 } else {
-                    Func_08015068(-frame << 10);
+                    SceneTransform_ApplyYaw(-frame << 10);
                 }
                 Func_08196958(Data_08199210, texture, 4);
                 Func_08196a7c(model);
@@ -1200,11 +1200,11 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 model->depth = depth;
             }
             if (depth > -48) {
-                Func_08014de4();
+                Render_ResetTransformState();
                 Func_08015160(0x40000, -0x100000, 0);
                 Func_0801521c(-0xa710);
                 SceneTransform_ApplyPitch(0x2000);
-                Func_08015068(-frame << 9);
+                SceneTransform_ApplyYaw(-frame << 9);
                 Func_08196958(Data_08199210, texture, 4);
                 Func_08196a7c(model);
             }
@@ -1216,19 +1216,19 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     d = -32;
                 }
                 model->depth = d;
-                Func_08014de4();
+                Render_ResetTransformState();
                 Func_08015160(0x20000, -0x200000, 0);
                 Func_0801521c(0x58f0);
                 SceneTransform_ApplyPitch(0x2000);
-                Func_08015068(frame << 10);
+                SceneTransform_ApplyYaw(frame << 10);
                 Func_08196958(Data_08199210, texture, 4);
                 Func_08196a7c(model);
                 if (frame > -48) {
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     Func_08015160(0x20000, -0x300000, 0);
                     Func_0801521c(-0x31e0);
                     SceneTransform_ApplyPitch(0x2000);
-                    Func_08015068(-frame << 10);
+                    SceneTransform_ApplyYaw(-frame << 10);
                     Func_08196958(Data_08199210, texture, 4);
                     Func_08196a7c(model);
                 }
@@ -1635,7 +1635,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
 
                     model->depth = member->timer * 3 - 64;
                     member->timer++;
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     Func_08015160((member->x / 2 - 56) << 16, (member->y - 56) << 16, 0);
                     Func_080151e4(size / 3, size, size);
                     SceneTransform_ApplyPitch(0xc000);

@@ -1,75 +1,73 @@
+/*
+ * Draft: Camera_ResetSceneDefaults, ported from its ☀️ twin; it follows
+ * Runtime_BlankDisplayAndRunScene in FIELD/COMMON/CAMERA/CAMERA.C. Score 2:
+ * the listing passes the camera (adds r1, r5) before loading its distance
+ * into the transform vector; this C loads first, with or without load
+ * scheduling. A struct vector, a copied output pointer and a lifetime
+ * barrier change nothing.
+ */
+#include "IO_REG.H"
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
-#include "SCENE.H"
+
+void Func_081b83c4(void);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
 
-struct SceneCameraState {
-    u8 filler0[12];
-    s32 field0c;
-    s32 field10;
-    s32 field14;
-    s32 field18;
-    s32 field1c;
-    s32 field20;
-    u8 filler24[16];
-    s16 field34;
-    s16 field36;
+/* The scene camera in its heap slot. */
+struct SceneCamera {
+    u8 unknown_00[0x0c];
+    s32 pos[3];
+    s32 tilt;
+    s32 follow_pos;
+    s32 distance;
+    u8 unknown_24[0x10];
+    s16 pitch;
+    s16 yaw;
 };
 
-struct SceneCameraRuntime {
-    struct SceneCameraState *state;
-    u8 filler04[124];
-    void *secondary;
+/* The projection the camera's parameters feed. */
+struct SceneProjection {
+    u32 unknown_00[3];
+    s32 center_x;
+    s32 center_y;
 };
 
-struct SceneCameraTransfer {
-    s32 first;
-    s32 second;
-    s32 third;
-};
+extern struct SceneProjection gCameraSceneParameters;
 
-struct SceneCameraObject {
-    u32 field00;
-    u32 field04;
-    u32 field08;
-    u32 field0c;
-    s32 anchor;
-};
-
-extern struct SceneCameraRuntime gCameraWork;
-extern struct SceneCameraObject gProjection;
-
+/* Points the scene camera at the origin from its default pitch and
+   distance and sets up the projection from it. */
 void Camera_ResetSceneDefaults(void)
 {
-    struct SceneCameraState *state = gCameraWork.state;
-    struct SceneCameraTransfer local;
+    struct SceneCamera *state = Ram_HeapSlots->camera_work;
+    s32 local[3];
     u32 result;
     u32 param1;
 
-    state->field34 = 152 << 8;
-    state->field20 = 255 << 17;
-    state->field0c = 0;
-    state->field10 = 0;
-    state->field14 = 0;
-    state->field36 = 0;
-    state->field1c = 0;
-    gProjection.field0c = 0;
-    gProjection.anchor = 0;
-    state->field18 = 0;
+    state->pitch = 147 << 8;
+    state->distance = 255 << 17;
+    state->pos[0] = 0;
+    state->pos[1] = 0;
+    state->pos[2] = 0;
+    state->yaw = 0;
+    state->follow_pos = 0;
+    gCameraSceneParameters.center_x = 0;
+    gCameraSceneParameters.center_y = 0;
+    state->tilt = 0;
 
     Render_ResetTransformState();
-    SceneTransform_ApplyPosition(&state->field0c);
-    SceneTransform_ApplyYaw(state->field36);
-    SceneTransform_ApplyPitch(state->field34);
+    SceneTransform_ApplyPosition(state->pos);
+    SceneTransform_ApplyYaw(state->yaw);
+    SceneTransform_ApplyPitch(state->pitch);
 
-    local.first = 0;
-    local.second = 0;
-    local.third = state->field20;
-    Iwram_TransformVector((s32 *)&local, (s32 *)state);
+    local[0] = 0;
+    local[1] = 0;
+    local[2] = state->distance;
+    Iwram_TransformVector(local, (s32 *)state);
 
     param1 = 250;
     param1 = param1 << 16;

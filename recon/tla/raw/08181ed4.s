@@ -442,7 +442,7 @@ Func_08181ed4:
 	lsls r3, r0, #1
 	ands r3, r2
 	strb r3, [r5, #25]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #56]
 	ldr r1, .L_081822e0
 	lsrs r3, r0, #31

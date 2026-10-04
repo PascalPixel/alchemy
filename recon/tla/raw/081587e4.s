@@ -272,7 +272,7 @@ Func_081587e4:
 	cmp r1, #32
 	bne .L_081589e6
 .L_08158a0c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #16]
 	bl Graphics_PrepareTransferInIwramWork

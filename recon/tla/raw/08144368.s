@@ -152,7 +152,7 @@ Func_08144368:
 	cmp r7, #160
 	bne .L_08144476
 .L_08144492:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r1, r10
 	adds r1, #12
 	mov r0, r10

@@ -426,7 +426,7 @@
         "*/recon/tla/raw/08029838.o"(.text)
         "*/recon/tla/raw/080298c0.o"(.text)
         "*/recon/tla/raw/0802a124.o"(.text)
-        "*/recon/tla/raw/0802a52c.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/REMAP_BYTES.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)
         "*/recon/tla/raw/0802a5e4.o"(.text)
         "*/recon/tla/raw/0802a650.o"(.text)

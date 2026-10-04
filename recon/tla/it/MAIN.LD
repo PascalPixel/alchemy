@@ -324,7 +324,7 @@
     "*/recon/tla/it/rom.o"(.rom.00026320)
     "*/recon/tla/it/rom.o"(.rom.00026f80)
     "*/recon/tla/it/rom.o"(.rom.00026fc8)
-    "*/recon/tla/it/rom.o"(.rom.0002a52c)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/REMAP_BYTES.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0002a5e4)
     "*/recon/tla/it/rom.o"(.rom.0002a650)

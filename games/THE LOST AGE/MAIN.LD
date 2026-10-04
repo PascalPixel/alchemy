@@ -352,7 +352,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00026320)
     "*/recon/tla/ja/rom.o"(.rom.00026f80)
     "*/recon/tla/ja/rom.o"(.rom.00026fc8)
-    "*/recon/tla/ja/rom.o"(.rom.0002a4a8)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/REMAP_BYTES.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002a560)
     "*/recon/tla/ja/rom.o"(.rom.0002a5cc)

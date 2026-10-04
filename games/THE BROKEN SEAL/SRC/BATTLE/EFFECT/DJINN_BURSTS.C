@@ -180,7 +180,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
     sheet = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     draw = callbacks;
     BattleFx_FetchRectangleBlitters(0, draw);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);

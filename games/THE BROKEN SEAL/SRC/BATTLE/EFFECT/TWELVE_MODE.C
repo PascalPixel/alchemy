@@ -16,6 +16,7 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -166,7 +167,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
         BattleFx_BeginCanvasLayer(0);
     else
         BattleFx_BeginCanvasLayer(1);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work, 1, 0);
     if (TwelveMode_Records[mode * 7] == 0)

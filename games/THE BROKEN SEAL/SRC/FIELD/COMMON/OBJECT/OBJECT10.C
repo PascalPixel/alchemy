@@ -61,14 +61,14 @@ s32 Scene_FadeColorFromWhite(void)
     } else {
         s32 color = 0x7fff;
 
-        *(u16 *)0x05000000 = color;
+        PLTT_BACKDROP = color;
         DisplayTransition_Finish(0x207, 16);
         work->status_1c6 = 0;
         WaitFrames(16);
         for (i = 0; i < 16; i++) {
             c = 30 - i * 2;
             color = (c << 10) | (c << 5) | c;
-            *(u16 *)0x05000000 = color;
+            PLTT_BACKDROP = color;
             WaitFrames(1);
         }
     }

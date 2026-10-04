@@ -14,6 +14,7 @@
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -162,7 +163,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
             for (k = 0; k != 160; k++)
                 *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
             if (frame > total - 16)
-                *(volatile u16 *)0x04000052 = (total - frame) | 0x1000;
+                REG_BLDALPHA = (total - frame) | 0x1000;
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             for (k = 0; k != work->effect->count; k++) {

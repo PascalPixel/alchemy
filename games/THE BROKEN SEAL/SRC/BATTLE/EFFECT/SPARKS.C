@@ -10,6 +10,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "IO_REG.H"
 
 struct CameraWork {
     u8 unknown_00[0x36];
@@ -90,7 +91,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
         origin_x = pos.x / 2;
         origin_y = pos.y + 48;
     }
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw[0] = (DrawRectangle)gWorkSlot[46];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);

@@ -16,6 +16,7 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -165,7 +166,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         struct BattleCamera *camera = gCameraWork;
 
         if (frame > 75)
-            *(volatile u16 *)0x04000052 = (168 - frame * 2) | 0x1000;
+            REG_BLDALPHA = (168 - frame * 2) | 0x1000;
         if (frame == 8)
             Audio_PlayCue(212);
         Render_ResetTransformState();
@@ -275,5 +276,5 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
     Iwram_ClearWords((void *)0x06004000, size);
     Iwram_ClearWords(canvas, size);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
 }

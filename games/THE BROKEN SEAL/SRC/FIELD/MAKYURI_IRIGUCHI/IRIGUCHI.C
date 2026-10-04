@@ -5,6 +5,7 @@
 #include "TYPES.H"
 #include "MAKYURI.H"
 #include "FIELD_EFFECT.H"
+#include "IO_REG.H"
 
 extern u8 MsgMakyuriWhoHonorsHeart[];
 
@@ -296,11 +297,11 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
      * in registers ahead of their address loads, as in MAKYURI_HEYA. */
     do {
         s32 blend = 0x3f40;
-        *(volatile u16 *)0x04000050 = blend;
+        REG_BLDCNT = blend;
     } while (0);
     {
         s32 alpha = 0x1010;
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     }
     Makyuri_SpawnLightObjects(21, (s32)gSceneState);
     GameFlag_Set(0x111);

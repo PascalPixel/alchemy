@@ -171,7 +171,7 @@ s32 Map_InitializePerspectiveScene(void)
     MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
     Io_Set16(0x3f9e, (u16 *)0x04000050);
     Io_Set16(0x1010, (u16 *)0x04000052);
-    *(u16 *)0x04000054 = 0;
+    REG_BLDY = 0;
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
     work->fade = 0x1f00;
@@ -182,8 +182,8 @@ s32 Map_InitializePerspectiveScene(void)
     /* FAKEMATCH: loop note keeps BG2PA's constant after its address */
     do {
         Io_Put16((u16 *)0x04000020, 0x100);
-        *(u16 *)0x04000022 = 0;
-        *(u16 *)0x04000024 = 0;
+        REG_BG2PB = 0;
+        REG_BG2PC = 0;
     } while (0);
     /* FAKEMATCH: loop notes keep BG2PD's constant late and r0 first below */
     do {
@@ -191,8 +191,8 @@ s32 Map_InitializePerspectiveScene(void)
         *(s32 *)0x04000028 = 0;
         *(s32 *)0x0400002c = 0;
         Io_Put16((u16 *)0x04000030, 0x100);
-        *(u16 *)0x04000032 = 0;
-        *(u16 *)0x04000034 = 0;
+        REG_BG3PB = 0;
+        REG_BG3PC = 0;
         Io_Put16((u16 *)0x04000036, 0x100);
         *(s32 *)0x04000038 = 0;
         *(s32 *)0x0400003c = 0;
@@ -379,7 +379,7 @@ void MapAnimation_ApplyAffineFrame(void)
        gMapWork loads in 1a5404f7 added eight bytes in all six editions. */
     u8 **pointers = &gMapAnimationPages;
     struct MapAffinePair (*lines)[160] = ((struct MapFrameWork *)*pointers++)->pages;
-    s32 dispcnt = (s16)(*(volatile u16 *)0x04000000 & 0xfff8);
+    s32 dispcnt = (s16)(REG_DISPCNT & 0xfff8);
     u32 *dst = (u32 *)0x04000020;
     struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers++;
     volatile u16 *channel = (volatile u16 *)0x040000b0;
@@ -419,6 +419,6 @@ void MapAnimation_ApplyAffineFrame(void)
     }
     dispcnt |= mode;
     control = (u16)dispcnt;
-    *(volatile u16 *)0x04000000 = control;
+    REG_DISPCNT = control;
     work->window_pending = 0;
 }

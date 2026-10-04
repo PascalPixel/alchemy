@@ -42,6 +42,7 @@ void BattlePresentation_DrawStreaks(void);
 #include "RESOURCE.H"
 #include "MOTION_OBJECT.H"
 #include "B5_CONTEXT.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -83,8 +84,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(0);
     work->fade_frames = 24;
     work->fade_step = 0;
-    *(volatile u16 *)0x04000052 = 0x100c;
-    *(volatile u16 *)0x04000020 = 0x100;
+    REG_BLDALPHA = 0x100c;
+    REG_BG2PA = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
     switch (work->effect->kind) {
@@ -129,7 +130,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
         EffectPosition_ApplyStepAndYOffset(effect->actor, &ground);
         *(volatile s32 *)0x04000028 = (64 - ground.x) << 8;
         if (frame > 49)
-            *(volatile u16 *)0x04000052 = (0x70 - frame * 2) | 0x1000;
+            REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
         if (frame == 26) {
             AudioCommand_PlayFar(212);
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
@@ -363,7 +364,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
     canvas = *p;
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
-    *(u16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
     if (work->effect->side == 1) {
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
         draw[0] = (DrawRectangle)heap[7];

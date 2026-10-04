@@ -249,7 +249,7 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
     s32 offset;
 
     BattleFx_BeginCanvasLayer(bg_control);
-    *(volatile u16 *)0x0400000c = bg_control | 0x6784;
+    REG_BG2CNT = bg_control | 0x6784;
     offset = 0;
     for (row = 0; row != 16; row++) {
         for (col = 0; col != 8; col++, offset += 2) {
@@ -316,12 +316,12 @@ void BattleFx_EndCanvasLayer(void)
     gBgScroll[1].y = work->saved_bg1_y;
     gProjection.center_x = 120;
     gProjection.center_y = 120;
-    *(volatile u16 *)0x0400000c = 0x787;
+    REG_BG2CNT = 0x787;
     Iwram_ClearWords((void *)0x06004000, 0x4000);
     Scheduler_RemoveCallback((s32)Palette_StepFadeTransfer);
     gBgScroll[1].y = 32;
     QUEUE_DISPLAY_CONTROL(0x7341);
-    *(volatile u16 *)0x04000050 = 0;
+    REG_BLDCNT = 0;
     WaitFrames(1);
 
     BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 7);

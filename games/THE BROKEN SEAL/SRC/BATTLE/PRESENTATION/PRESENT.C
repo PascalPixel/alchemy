@@ -5,6 +5,7 @@
 #include "RAM_BUFFER.H"
 #include "BATTLE_PRESENTATION.H"
 #include "MAP_SCROLL.H"
+#include "IO_REG.H"
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
@@ -59,7 +60,7 @@ void BattlePres_UpdateHBlankScroll(void)
         /* FAKEMATCH: the do-while keeps the BG2CNT address load after the
            record read. */
         do {
-            *(u16 *)0x0400000c = control;
+            REG_BG2CNT = control;
         } while (0);
         Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, (volatile u32 *)0x040000b0);
         Dma_Set(&records->affine, (void *)0x04000020, 0x84000004, (volatile u32 *)0x040000d4);
@@ -152,5 +153,5 @@ void Graphics_ClearBg0Vofs(void)
 {
     u32 zero = 0;
 
-    *(volatile u16 *)0x04000012 = zero;
+    REG_BG0VOFS = zero;
 }

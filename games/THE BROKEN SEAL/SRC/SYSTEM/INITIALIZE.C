@@ -58,7 +58,7 @@ void System_Initialize(void)
     Resource_LoadWorkHeader();
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
-    *(u16 *)0x04000000 = 0x140;
+    REG_DISPCNT = 0x140;
     Runtime_SetIrqHandler(0, 1, (void (*)(void))System_VBlankHandler);
 #if defined(HALT_ON_GAMEPAK_IRQ)
     Runtime_SetIrqHandler(13, 1, IwramHalt);

@@ -1,4 +1,5 @@
 #include "SERIAL_RUNTIME.H"
+#include "IO_REG.H"
 
 /* link/serial/enable_transfer_timer.c */
 void SerialRuntime_EnableTransferTimer(void)
@@ -13,12 +14,12 @@ void SerialRuntime_DisableTransfer(void)
 {
     struct SerialRuntime *state;
 
-    *(volatile u16 *)0x04000208 = 0;
-    *(u16 *)0x04000200 = *(u16 *)0x04000200 & 0xff3f;
-    *(volatile u16 *)0x04000208 = 1;
-    *(u16 *)0x04000128 = 0x2003;
-    *(u32 *)0x0400010c = 0x0000c963;
-    *(u16 *)0x04000202 = 0xc0;
+    REG_IME = 0;
+    REG_IE = REG_IE & 0xff3f;
+    REG_IME = 1;
+    REG_SIOCNT16 = 0x2003;
+    REG_TM3CNT = 0x0000c963;
+    REG_IF = 0xc0;
     state = &gSerialRuntime;
     state->transfer_enabled = 0;
 }

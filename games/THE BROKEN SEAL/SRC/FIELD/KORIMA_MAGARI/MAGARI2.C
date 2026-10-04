@@ -6,6 +6,7 @@
 #include "CALL.H"
 #include "DMA.H"
 #include "MAP.H"
+#include "IO_REG.H"
 
 struct TileRun {
     s16 id;
@@ -232,7 +233,7 @@ void State_UpdateScrollRegistersWithPreset(void)
     u32 *source;
     volatile u32 *destination;
 
-    line = *(volatile u16 *)0x04000006;
+    line = REG_VCOUNT;
     source = (u32 *)(gBgScroll + 4);
     destination = (volatile u32 *)0x04000014;
 

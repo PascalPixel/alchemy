@@ -12,6 +12,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -67,7 +68,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     work->effect = efx;
     BattleFx_BeginCanvasLayer(2);
     step = 0x04000052;
-    *(u16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
     *(u16 *)step = 0x1000;
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &last);
@@ -83,9 +84,9 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     size = 32;
     do {
         if (frame <= 8)
-            *(u16 *)0x04000052 = (frame << 1) | 0x1000;
+            REG_BLDALPHA = (frame << 1) | 0x1000;
         if (frame > 53)
-            *(u16 *)0x04000052 = (0x7c - (frame << 1)) | 0x1000;
+            REG_BLDALPHA = (0x7c - (frame << 1)) | 0x1000;
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, step);
         ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 33, 41, size, size);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);

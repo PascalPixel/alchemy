@@ -349,7 +349,7 @@ void Title_LoadBackground(void)
 
     id = (s32)&ResourceId_GoldenSunLogo;
     Blend_SetDarkenTarget16(0);
-    *(volatile u16 *)0x0400000c = 0x681;
+    REG_BG2CNT = 0x681;
     gBgScroll[5] = 0;
     blank = 0x1ff;
     res = Resource_GetTableEntry(id);

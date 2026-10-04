@@ -466,9 +466,9 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     dst = (void *)*cursor;
     work->effect = efx;
     BattleFx_BeginCanvasLayer(1);
-    *(u16 *)0x04000020 = 0x100;
-    *(u16 *)0x04000050 = 0;
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BG2PA = 0x100;
+    REG_BLDCNT = 0;
+    REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work, 1, 1);
     if (work->effect->side == 1) {
         *(u32 *)0x04000028 = 0xffff9000;
@@ -491,8 +491,8 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
             BattleEventRuntime_BeginPhaseFar(132);
         }
         if (frame >= total - 16) {
-            *(u16 *)0x04000050 = 0x3f44;
-            *(u16 *)0x04000052 = (total - frame - 1) | 0x1000;
+            REG_BLDCNT = 0x3f44;
+            REG_BLDALPHA = (total - frame - 1) | 0x1000;
         }
 
         for (i = 0; i != BattleFxPillar_Counts[work->effect->variant]; i++) {

@@ -70,7 +70,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     if (work->effect->prelude == 1)
         BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side, 2, &screen_x, &screen_y);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);

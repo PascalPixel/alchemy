@@ -17,6 +17,7 @@
 #include "ANIMSPR.H"
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
+#include "IO_REG.H"
 
 s32 Render_ProjectPoint(s32 *, s32 *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
@@ -198,7 +199,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     WaitFrames(1);
     BattlePres_ConfigureEffectDisplay();
     BattleFx_SetupCanvasTileMap();
-    *(volatile u16 *)0x0400000a = 0x1f80;
+    REG_BG1CNT = 0x1f80;
     WaitFrames(1);
     if (kind == 5) {
         if (work->effect->side == 0) {
@@ -246,7 +247,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 50;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    *(volatile u16 *)0x0400000a = 0x1f81;
+    REG_BG1CNT = 0x1f81;
     EffectPosition_ApplyAnimationAndYOffset(work->effect->actors[0], &anchor);
     if (work->effect->side == 0)
         shake = 96 - anchor.x;
@@ -404,7 +405,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unknown_000c, 130);
     WaitFrames(1);
     BattleFx_SetupCanvasTileMap();
-    *(volatile u16 *)0x0400000a = 0x1f80;
+    REG_BG1CNT = 0x1f80;
     if (work->effect->side == 0) {
         BattleEffect_LoadWork(46, 7, 7, 3, 3);
         BattleEffect_LoadWork(47, 7, 7, 3, 2);
@@ -505,7 +506,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     Iwram_ClearWords((void *)0x06004000, words);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    *(volatile u16 *)0x0400000a = 0x1f81;
+    REG_BG1CNT = 0x1f81;
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
     if (work->effect->side == 0)
         shake = 32 - anchor.x;

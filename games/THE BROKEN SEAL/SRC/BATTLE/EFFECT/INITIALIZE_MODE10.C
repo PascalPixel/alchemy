@@ -624,13 +624,13 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
     BattlePres_ConfigureEffectDisplay();
-    *(u16 *)0x05000000 = 0;
+    PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    *(u16 *)0x04000048 = 0x2137;
+    REG_WININ = 0x2137;
     BattleEffect_WipeCanvas(1, 0);
-    *(u16 *)0x04000040 = 0xf0f0;
+    REG_WIN0H = 0xf0f0;
     Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, aux, 0, 0);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
@@ -642,10 +642,10 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
     BattleFx_SpawnObjects(9, 0x174, 1);
-    *(u16 *)0x04000000 = 0x7741;
-    *(u16 *)0x04000020 = 0x80;
-    *(u16 *)0x04000052 = 0x1010;
-    *(u16 *)0x04000050 = 0x3f44;
+    REG_DISPCNT = 0x7741;
+    REG_BG2PA = 0x80;
+    REG_BLDALPHA = 0x1010;
+    REG_BLDCNT = 0x3f44;
     work->transfer_mode = 2;
     work->transfer_value = 50;
 
@@ -872,7 +872,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
     BattleEffect_SetupBlendedDisplay();
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     Audio_PlayCue(0x121);
 
     for (i = 0; i != 64; i++) {

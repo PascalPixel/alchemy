@@ -10,6 +10,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "IO_REG.H"
 
 struct CameraWork {
     u8 unknown_00[0x36];
@@ -68,7 +69,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
     graphics = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw[0] = (DrawRectangle)heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 7, 2);

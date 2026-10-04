@@ -8,6 +8,7 @@
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern u16 *gDebugTextCursor;
 
@@ -34,7 +35,7 @@ void Bg0_ClearTilemap(void)
     {
         s32 control = 0x400;
 
-        *(volatile u16 *)0x04000008 = control;
+        REG_BG0CNT = control;
     }
 }
 
@@ -51,7 +52,7 @@ void Ui_LoadWindowGraphics(void)
        order of the palette stores */
     do {
         s32 black = 0;
-        *(volatile u16 *)0x05000000 = black;
+        PLTT_BACKDROP = black;
     } while (0);
     do {
         volatile u16 *pal;

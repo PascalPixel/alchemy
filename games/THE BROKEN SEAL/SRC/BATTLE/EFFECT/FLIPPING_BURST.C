@@ -208,8 +208,8 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
     canvas = *cursor;
     work->effect = efx;
     BattleFx_BeginCanvasLayer(1);
-    *(u16 *)0x04000020 = 0x100;
-    *(u16 *)0x04000052 = 0x1000;
+    REG_BG2PA = 0x100;
+    REG_BLDALPHA = 0x1000;
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     draw[0] = (DrawRectangle)heap_cache[46 - 39];
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
@@ -249,14 +249,14 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
     Audio_PlayCue(212);
     for (frame = 0; frame != 120; frame++) {
         if (frame <= 16) {
-            *(u16 *)0x04000052 = frame | 0x1000;
+            REG_BLDALPHA = frame | 0x1000;
             if (frame == 16)
-                *(u16 *)0x04000050 = 0;
+                REG_BLDCNT = 0;
         }
         if (frame > 103) {
-            *(u16 *)0x04000052 = (0x78 - frame) | 0x1000;
+            REG_BLDALPHA = (0x78 - frame) | 0x1000;
             if (frame == 104)
-                *(u16 *)0x04000050 = 0x3f44;
+                REG_BLDCNT = 0x3f44;
         }
         for (i = 15; i != -1; i--) {
             /* The blitter index, drift >> 31, is computed before the call's

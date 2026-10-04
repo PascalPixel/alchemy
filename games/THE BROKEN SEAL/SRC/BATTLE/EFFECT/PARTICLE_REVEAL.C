@@ -65,7 +65,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     sheet = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 11, 2);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
     draw[0] = heap_cache[7];
@@ -477,7 +477,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side, 2, &screen_x, &screen_y);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     if (work->effect->side == 1)
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
     else

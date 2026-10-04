@@ -14,37 +14,37 @@ void DisplayTransition_UpdateScanline(void)
     struct DisplayTransitionWindow *state;
     u16 value;
 
-    line = *(volatile u16 *)0x04000006;
+    line = REG_VCOUNT;
     state = gMapWork[0];
 
 again:
     switch (state->irq_phase) {
     case 3:
         if (line >= state->irq_first_line) {
-            value = *(volatile u16 *)0x04000000;
-            *(volatile u16 *)0x04000000 = (value & 0xFFF8) | 2;
+            value = REG_DISPCNT;
+            REG_DISPCNT = (value & 0xFFF8) | 2;
             value = 9;
             state->irq_phase = value;
         }
         break;
     case 2:
         if (line >= state->irq_second_line) {
-            value = *(volatile u16 *)0x04000000;
-            *(volatile u16 *)0x04000000 = value & 0xFFF8;
+            value = REG_DISPCNT;
+            REG_DISPCNT = value & 0xFFF8;
             value = 9;
             state->irq_phase = value;
         }
         break;
     case 1:
         if (line >= state->irq_first_line) {
-            value = *(volatile u16 *)0x04000000;
-            *(volatile u16 *)0x04000000 = (value & 0xFFF8) | 2;
+            value = REG_DISPCNT;
+            REG_DISPCNT = (value & 0xFFF8) | 2;
             state->irq_phase++;
             goto again;
         }
         if (line >= state->irq_second_line) {
-            value = *(volatile u16 *)0x04000000;
-            *(volatile u16 *)0x04000000 = value & 0xFFF8;
+            value = REG_DISPCNT;
+            REG_DISPCNT = value & 0xFFF8;
             value = 3;
             state->irq_phase = value;
             goto again;

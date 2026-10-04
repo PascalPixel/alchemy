@@ -65,12 +65,12 @@ extern u16 ParticleStreams_CellOffsets[];
 
 void Graphics_ResetBg2Pa(void)
 {
-    *(volatile u16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
 }
 
 void Graphics_SetBg2AffineScaleHalf(void)
 {
-    *(u16 *)0x04000020 = 0x80;
+    REG_BG2PA = 0x80;
 }
 
 /* Battle effect mode 6: eight sprite objects swoop in over a cloud of
@@ -116,15 +116,15 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
     BattlePres_ConfigureEffectDisplay();
-    *(u16 *)0x05000000 = 0;
+    PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
     Scheduler_AddOrUpdateCallback((s32)Graphics_ResetBg2Pa, 0x480);
     Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    *(u16 *)0x04000048 = 0x2137;
+    REG_WININ = 0x2137;
     BattleEffect_WipeCanvas(1, 0);
-    *(u16 *)0x04000040 = 0xf0f0;
+    REG_WIN0H = 0xf0f0;
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(8, 0x17a, 1);
     gProjection.center_y = 240;
@@ -133,10 +133,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet + 0x4e20, 0, 0);
-    *(u16 *)0x04000000 = 0x7741;
-    *(u16 *)0x04000020 = 0x80;
-    *(u16 *)0x04000052 = 0x1010;
-    *(u16 *)0x04000050 = 0x3f44;
+    REG_DISPCNT = 0x7741;
+    REG_BG2PA = 0x80;
+    REG_BLDALPHA = 0x1010;
+    REG_BLDCNT = 0x3f44;
     step = 1;
     px = 140 << 17;
     py = 200 << 16;
@@ -151,7 +151,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     blit[0] = (DrawRectangle)cache[46 - 40];
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
     blit[1] = (DrawRectangle)cache[47 - 40];
-    *(u16 *)0x0400000c = 0x784;
+    REG_BG2CNT = 0x784;
 
     for (i = 0; i != 1024; i++) {
         PARTICLES[i].variant = -1;
@@ -425,7 +425,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     Runtime_SetIrqHandler(2, 0, 0);
     BattleEffect_SetupBlendedDisplay();
     Scheduler_RemoveCallback((s32)Graphics_ResetBg2Pa);
-    *(u16 *)0x04000040 = 0xf0;
+    REG_WIN0H = 0xf0;
     work->transfer_mode = 2;
     work->transfer_value = 75;
     for (i = 0; i != 1024; i++) {
@@ -442,8 +442,8 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     }
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work, 1, 1);
     Audio_PlayCue(0x121);
-    *(u16 *)0x04000020 = 0x80;
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BG2PA = 0x80;
+    REG_BLDALPHA = 0x1010;
 
     frame = 0;
     do {

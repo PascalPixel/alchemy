@@ -9,6 +9,7 @@
 #include "SYSTEM.H"
 #include "MAP_SCROLL.H"
 #include "MAPFRAME.H"
+#include "IO_REG.H"
 
 extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
@@ -33,7 +34,7 @@ void MapAnimation_PresentFrame(void)
     /* FAKEMATCH: the do-while keeps the BG1CNT store ahead of the DMA
        source and destination loads. */
     do {
-        *(volatile u16 *)0x0400000a = control;
+        REG_BG1CNT = control;
     } while (0);
     Dma_Set((const void *)gMapCellBuffer, (void *)0x06006a00, 0x84002580, (volatile u32 *)0x040000d4);
 }

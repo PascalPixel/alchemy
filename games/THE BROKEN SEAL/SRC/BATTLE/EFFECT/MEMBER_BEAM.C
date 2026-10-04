@@ -16,6 +16,7 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -111,7 +112,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
         gMotes[i].z = (Random16() | -32) << 14;
         gMotes[i].variant = Random16() & 255;
     }
-    *(volatile u16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
     if (work->effect->count == 1) {
         EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &single);
         offset = 64 - single.x;

@@ -3,6 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RAM_BUFFER.H"
 #include "MAP.H"
+#include "IO_REG.H"
 
 /* Blend script runner: a halfword script in the map work that writes
    BLDCNT and the alpha or brightness level on a frame delay. */
@@ -44,16 +45,16 @@ again:
     }
 
     if ((command & 0xf000) == 0x3000) {
-        *(volatile u16 *)0x04000050 = command;
+        REG_BLDCNT = command;
         work->blend_control = command;
         state->cursor++;
         goto again;
     }
 
     if ((work->blend_control & 0xc0) == 0x40)
-        *(volatile u16 *)0x04000052 = command;
+        REG_BLDALPHA = command;
     else
-        *(volatile u16 *)0x04000054 = command;
+        REG_BLDY = command;
     state->delay = cursor[0];
     state->cursor += 2;
     goto again;

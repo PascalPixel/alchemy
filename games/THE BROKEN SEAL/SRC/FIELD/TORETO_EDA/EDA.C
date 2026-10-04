@@ -3,6 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "RESOURCE_397.H"
+#include "IO_REG.H"
 
 extern struct EventWork *gEventWork;
 extern u8 gDisplayTransition[];
@@ -170,8 +171,8 @@ void Effect_SetAlphaBlendForScene9(void)
     /* Start the scene, then configure alpha blending for its display state. */
     DisplayTransition_InitializeBattleEffectState(9);
 
-    *(volatile u16 *)0x04000050 = 0x3f42;
-    *(volatile u16 *)0x04000052 = 0x0c04;
+    REG_BLDCNT = 0x3f42;
+    REG_BLDALPHA = 0x0c04;
 
     disp = *(u8 **)gDisplayTransition;
     {
@@ -241,8 +242,8 @@ s32 State_SetRuntimeWord448To256(void)
 
     DisplayTransition_InitializeBattleEffectState(9);
 
-    *(volatile u16 *)0x04000050 = 0x3f42;
-    *(volatile u16 *)0x04000052 = 0x0c04;
+    REG_BLDCNT = 0x3f42;
+    REG_BLDALPHA = 0x0c04;
 
     disp = base[4];
     {
@@ -270,13 +271,13 @@ void Effect_UpdateBg3HofsByVcount(void)
     u16 *src;
     u32 value;
 
-    if (*(u16 *)0x04000006 >= sSplitLine) {
+    if (REG_VCOUNT >= sSplitLine) {
         src = &sHofsAbove;
     } else {
         src = &sHofsBelow;
     }
     value = *src;
-    *(u16 *)0x0400001c = value;
+    REG_BG3HOFS = value;
 }
 
 /*

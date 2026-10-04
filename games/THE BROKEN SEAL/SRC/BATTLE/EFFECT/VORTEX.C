@@ -13,6 +13,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "IO_REG.H"
 
 
 /* The camera sway the phased-delta callback reads: its strength at 0x77ac
@@ -76,7 +77,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
-    *(u16 *)0x04000052 = 0x0f0f;
+    REG_BLDALPHA = 0x0f0f;
     draw[1] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     y = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
@@ -204,7 +205,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
     palette += 128;
@@ -222,7 +223,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 50;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    *(u16 *)0x04000052 = 0x1000;
+    REG_BLDALPHA = 0x1000;
     WaitFrames(1);
     AudioCommand_PlayFar(141);
 
@@ -239,9 +240,9 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
         else
             wave -= 0x200000;
         if (frame <= 16)
-            *(u16 *)0x04000052 = frame | 0x1000;
+            REG_BLDALPHA = frame | 0x1000;
         if (frame > 63)
-            *(u16 *)0x04000052 = (0x4f - frame) | 0x1000;
+            REG_BLDALPHA = (0x4f - frame) | 0x1000;
         for (i = 0; i != Tornado_Shapes[work->effect->variant * 3]; i++) {
             x = ((Tornado_Shapes[work->effect->variant * 3 + 1]
                     * Trig_Sin((frame << 11) + i * 0x4000) + wave) >> 16) + 40;

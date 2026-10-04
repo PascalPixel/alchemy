@@ -5,6 +5,7 @@
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 #include "CALL.H"
+#include "IO_REG.H"
 
 enum {
     /* Message 0x182 + 243. */
@@ -913,7 +914,7 @@ void SetBlendAlphaCoefficients(void)
     u32 coefficient = 208;
 
     coefficient <<= 4;
-    *(u16 *)0x04000052 = coefficient;
+    REG_BLDALPHA = coefficient;
 }
 
 /* Complete blend-alpha setter through return and its two pool words. */
@@ -921,7 +922,7 @@ void SceneEffect_SetBlendAlpha0607(void)
 {
     u16 value = 0x0607;
 
-    *(volatile u16 *)0x04000052 = value;
+    REG_BLDALPHA = value;
 }
 
 /*

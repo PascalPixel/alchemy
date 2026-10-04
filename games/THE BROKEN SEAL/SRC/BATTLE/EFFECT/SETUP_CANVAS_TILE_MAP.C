@@ -66,7 +66,7 @@ void BattleFx_SetupCanvasTileMap(void)
         }
     }
     REG_DISPCNT = 0x7741;
-    *(volatile u16 *)0x0400000a = 0x1f81;
+    REG_BG1CNT = 0x1f81;
     REG_BLDCNT = 0x3f42;
     REG_WIN0H = 0xf0;
     REG_WIN0V = 0x1088;

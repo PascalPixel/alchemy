@@ -45,8 +45,8 @@ s32 Title_ShowSplashScreen(s32 mode)
     Blend_SetDarkenTarget16(1);
     Bg0_ClearTilemap();
     WaitFrames(1);
-    *(volatile u16 *)0x0400000c = 0x681;
-    *(volatile u16 *)0x04000000 = 0x1440;
+    REG_BG2CNT = 0x681;
+    REG_DISPCNT = 0x1440;
     result = 0;
     gBgScroll[2].y = result;
     data = Resource_GetTableEntry(resource);
@@ -81,7 +81,7 @@ row:
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
-    *(volatile u16 *)0x04000000 = 0x1540;
+    REG_DISPCNT = 0x1540;
     if (mode == 0) {
         Blend_SetDarkenTarget0(1);
         Blend_WaitForTransition();

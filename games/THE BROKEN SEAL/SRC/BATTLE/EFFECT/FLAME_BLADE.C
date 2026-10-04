@@ -10,6 +10,7 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 extern void *gBattleFxWork[];
 
@@ -66,7 +67,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     effect->variant = 1;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     BattleFx_FetchRectangleBlitters(work->effect->side, routine);
     Object_SetMode(object, 2);
     ObjectDispatch_ApplyValueToChildrenFar(object, 48);

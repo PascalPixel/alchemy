@@ -384,9 +384,9 @@ void FieldScene_RunScene3b8SequenceB(void)
     Actor_Get(0)->active = 0;
     Actor_Get(10)->active = 0;
     Task_Wait(1);
-    *(volatile u16 *)0x04000000 = 0x1140;
+    REG_DISPCNT = 0x1140;
     Event_ShowMessage(-1, 0);
-    *(volatile u16 *)0x04000000 = 0x140;
+    REG_DISPCNT = 0x140;
     Actor_Get(0)->active = 1;
     Actor_Get(10)->active = 1;
     Actor_SetAnimation(0, 31);

@@ -4,6 +4,7 @@
 #include "FIELD_EVENT.H"
 #include "HASHIRA.H"
 #include "FIELD_SCENE.H"
+#include "IO_REG.H"
 
 extern s32 StagedActor_DirectionSteps[];
 
@@ -375,7 +376,7 @@ void SceneState_ApplyPlacementResult(void)
  * shaken set while the display is outside the visible lines. */
 void TakaraHashira_JitterBackgroundScroll(void)
 {
-    u32 line = *(volatile u16 *)0x04000006;
+    u32 line = REG_VCOUNT;
     u32 *src = &gBgScroll[1];
     volatile u32 *reg = (volatile u32 *)0x04000014;
 

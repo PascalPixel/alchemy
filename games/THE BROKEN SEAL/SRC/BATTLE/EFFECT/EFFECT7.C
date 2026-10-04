@@ -9,6 +9,7 @@
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
+#include "IO_REG.H"
 
 extern void *gBattleFxWork[];
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -48,8 +49,8 @@ void BattleFx_RunBouncingSheep(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000020 = 0x100;
-    *(volatile u16 *)0x04000050 = 0;
+    REG_BG2PA = 0x100;
+    REG_BLDCNT = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     draw_a = (DrawRectangleFn)heap_cache[7];

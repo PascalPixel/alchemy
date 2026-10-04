@@ -5,6 +5,7 @@
 #include "CALL.H"
 #include "FIELDOBJ.H"
 #include "MAP_SCROLL.H"
+#include "IO_REG.H"
 
 extern s32 BabiFune_StoredSlot0;
 extern s32 BabiFune_StoredRecord1;
@@ -312,7 +313,7 @@ void Scene_RunExtendedPresentationSequence(void)
     do {
         blank = 0;
     } while (0);
-    *(u16 *)0x05000000 = blank;
+    PLTT_BACKDROP = blank;
     event->transition_frames = 96;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

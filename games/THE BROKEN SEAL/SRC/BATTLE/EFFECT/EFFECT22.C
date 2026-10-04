@@ -11,6 +11,7 @@
 #include "FIXED_MATH.H"
 #include "EFFECT_STEP.H"
 #include "B5_CONTEXT.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -61,7 +62,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     canvas = *heap_cache;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000050 = 0;
+    REG_BLDCNT = 0;
     if (variant == 0) {
         Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work, 1, 0);
         Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, gMapCellBuffer, 1, 1);
@@ -149,7 +150,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     work->effect = object;
     sprites = heap_cache[2];
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, (u8 *)work + 0x460, 1, 0);

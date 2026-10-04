@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
+#include "IO_REG.H"
 
 extern u8 gBlendFramesLeft;
 extern volatile u8 gBlendTargetLevel;
@@ -48,7 +49,7 @@ void BlendTransition_Update(void)
             delta = gBlendStartLevel - gBlendTargetLevel;
             step = *remaining;
             level += __divsi3(delta * step, gBlendDuration);
-            *(volatile u16 *)0x04000054 = level;
+            REG_BLDY = level;
             if (*remaining == 0)
                 gBlendDuration = 0;
         }

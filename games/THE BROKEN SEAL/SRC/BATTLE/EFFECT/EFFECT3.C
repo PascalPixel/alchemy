@@ -9,6 +9,7 @@
 #include "DMA.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
+#include "IO_REG.H"
 
 extern u8 Data_03001e74[];
 
@@ -114,7 +115,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
 
     if (mode == 0) {
         Scheduler_RemoveCallback((u32)((s32)Graphics_AdvancePaletteCycle));
-        *(volatile u16 *)0x04000054 = mode;
+        REG_BLDY = mode;
         BattlePres_ClearAllActorRecordModes();
         WaitFrames(1);
         QueueIoWriteDelay2(0x04000050, 0);

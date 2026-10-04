@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 
 void BattleFx_BeginCanvasLayer(s32 bg_control);
 
@@ -12,7 +13,7 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
     s32 offset;
 
     BattleFx_BeginCanvasLayer(bg_control);
-    *(volatile u16 *)0x0400000c = bg_control | 0x4784;
+    REG_BG2CNT = bg_control | 0x4784;
     offset = 0;
     for (row = 0; row != 16; row++) {
         for (col = 0; col != 8; col++, offset += 2) {
@@ -38,7 +39,7 @@ void BattleFx_BeginTiledCanvasFilled(s32 bg_control)
     s32 offset;
 
     BattleFx_BeginCanvasLayer(bg_control);
-    *(volatile u16 *)0x0400000c = bg_control | 0x4784;
+    REG_BG2CNT = bg_control | 0x4784;
     offset = 0;
     for (row = 0; row != 16; row++) {
         for (col = 0; col != 8; col++, offset += 2) {

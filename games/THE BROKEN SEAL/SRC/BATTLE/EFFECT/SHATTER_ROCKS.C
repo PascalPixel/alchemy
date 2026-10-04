@@ -9,6 +9,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "B5_CONTEXT.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 extern u8 ShatterRocks_ShardOffsets[];
@@ -58,8 +59,8 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(1);
-    *(volatile u16 *)0x04000020 = 0x100;
-    *(volatile u16 *)0x04000050 = 0;
+    REG_BG2PA = 0x100;
+    REG_BLDCNT = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     blit = heap_cache[7];

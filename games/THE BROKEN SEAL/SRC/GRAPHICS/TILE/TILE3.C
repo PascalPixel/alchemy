@@ -185,7 +185,7 @@ s32 DisplayScroll_RunSlideshow(void)
     Graphics_ClearCharacterBlockAndPalette(0);
     Graphics_ClearCharacterBlockAndPalette(1);
     Io_Write16(REG_BG2CNT, 0x1f8a);
-    Io_Write16(*(volatile u16 *)0x0400000e, 0x0f83);
+    Io_Write16(REG_BG3CNT, 0x0f83);
     Io_Write16(REG_DISPCNT, 0x1c40);
     Io_Write16(REG_BLDCNT, 0x2844);
     DisplayScroll_InitObjectTable();

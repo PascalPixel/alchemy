@@ -1,5 +1,6 @@
 #include "PROJECT.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 extern u8 gBattleWork[];
 
@@ -20,7 +21,7 @@ void BattleEffect_SetupBlendedDisplay(void)
     u8 *work = pointers[0];
     volatile u32 zero;
 
-    *(u16 *)0x04000000 = 1;
+    REG_DISPCNT = 1;
     gBgScroll[3] = 32;
     BattleBackground_LoadFar(1, *(u16 *)(work + 0x648), 24);
     zero = 0;
@@ -28,8 +29,8 @@ void BattleEffect_SetupBlendedDisplay(void)
     zero = 0;
     Dma_Set((const void *)&zero, (void *)0x06004000, 0x85001000, (volatile u32 *)0x040000d4);
     WaitFrames(1);
-    *(u16 *)0x04000052 = 0x100e;
-    *(u16 *)0x04000050 = 0x3f46;
-    *(u16 *)0x04000000 = 0x7741;
+    REG_BLDALPHA = 0x100e;
+    REG_BLDCNT = 0x3f46;
+    REG_DISPCNT = 0x7741;
     gProjection.center_y = 120;
 }

@@ -14,6 +14,7 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_MOTION.H"
 #include "BATTLE_COMMAND.H"
+#include "IO_REG.H"
 
 void UiWork_ClearValueNameTablesFar(void);
 s32 BattlePres_ShowMessageWhenField38Positive(const struct BattleActionRecord *);
@@ -283,12 +284,12 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
     }
 
     WaitFrames(30);
-    *(u16 *)0x04000050 = 0x3f40;
+    REG_BLDCNT = 0x3f40;
     for (index = 0; index != side_count; index++) {
         BattlePres_SetActorRecordMode(index + side_start, 1);
     }
     for (index = 0; index != 16; index++) {
-        *(u16 *)0x04000052 = (16 - index) | 0x1000;
+        REG_BLDALPHA = (16 - index) | 0x1000;
         WaitFrames(1);
     }
     UiWindow_DrawPartyStatusContentsFar(9);
@@ -327,12 +328,12 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 
     WaitFrames(10);
     BattleActor_CommitPlacement();
-    *(u16 *)0x04000050 = 0x3f40;
+    REG_BLDCNT = 0x3f40;
     for (index = 0; index != side_count; index++) {
         BattlePres_SetActorRecordMode(index + side_start, 1);
     }
     for (index = 0; index != 16; index++) {
-        *(u16 *)0x04000052 = index | 0x1000;
+        REG_BLDALPHA = index | 0x1000;
         WaitFrames(1);
     }
     for (index = 0; index != side_count; index++) {

@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "IO_REG.H"
 
 struct Workspace {
     u8 unknown_000[356];
@@ -45,9 +46,9 @@ void TorebiIzumi_RiseAndFadeIn(void)
         {
             s32 mode = 0x3f42;
 
-            *(volatile u16 *)0x04000050 = mode;
+            REG_BLDCNT = mode;
         }
-        *(volatile u16 *)0x04000052 = *(u16 *)p;
+        REG_BLDALPHA = *(u16 *)p;
         p += 2;
         /* FAKEMATCH: the empty do/while keeps the step pointer's advance ahead of the wait's argument. */
         do { } while (0);

@@ -78,7 +78,7 @@ void DebugBattle_ViewMessages(void)
         {
             s32 control = 0x1341;
 
-            *(volatile u16 *)0x04000000 = control;
+            REG_DISPCNT = control;
         }
         gCell[0x20c] = 2;
         for (;;) {

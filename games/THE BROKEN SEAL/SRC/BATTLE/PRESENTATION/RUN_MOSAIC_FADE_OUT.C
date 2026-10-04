@@ -1,6 +1,7 @@
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 void Blend_SetDarkenTarget16(s32 arg0);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -14,8 +15,8 @@ s32 BattlePres_RunMosaicFadeOut(void)
     s32 i;
     volatile u16 *reg;
 
-    bg0cnt = *(volatile u16 *)0x04000008;
-    *(volatile u16 *)0x04000008 = bg0cnt | 0x40;
+    bg0cnt = REG_BG0CNT;
+    REG_BG0CNT = bg0cnt | 0x40;
     reg = (volatile u16 *)0x04000008;
     bg1cnt = *++reg;
     *reg = bg1cnt | 0x40;
@@ -32,11 +33,11 @@ s32 BattlePres_RunMosaicFadeOut(void)
         Random16();
         Random16();
         Random16();
-        *(volatile u16 *)0x0400004c = (i << 8) | i;
+        REG_MOSAIC = (i << 8) | i;
         WaitFrames(1);
     }
 
-    *(volatile u16 *)0x04000000 = 1;
+    REG_DISPCNT = 1;
     WaitFrames(4);
     reg = (volatile u16 *)0x04000008;
     *reg++ = bg0cnt;

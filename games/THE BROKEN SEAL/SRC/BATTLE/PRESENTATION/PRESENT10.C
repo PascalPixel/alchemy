@@ -10,6 +10,7 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_PRESENTATION.H"
 #include "HEAP_STATE.H"
+#include "IO_REG.H"
 
 extern struct BattleBackgroundView *gTransitionWork;
 
@@ -86,5 +87,5 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
         Scheduler_AddOrUpdateCallback((s32)BattlePres_UpdateHBlankScroll, 0x4ff);
     view->mode = mode;
     if (mode == 1)
-        *(volatile u16 *)0x0400000a = 0x1f83;
+        REG_BG1CNT = 0x1f83;
 }

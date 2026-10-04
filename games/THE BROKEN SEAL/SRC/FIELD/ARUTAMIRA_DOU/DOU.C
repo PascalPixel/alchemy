@@ -6,6 +6,7 @@
 #include "FIELD_SCENE.H"
 #include "SCENE_IDS.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 extern const struct ScenePlacement gArutamiraDouPlacements2[];
 extern const struct ScenePlacement gArutamiraDouPlacements4[];
@@ -89,32 +90,32 @@ void ArutamiraDou_ApplyFadeBlend(void)
     do {
         s32 blend = 0x3f42;
 
-        *(volatile u16 *)0x04000050 = blend;
+        REG_BLDCNT = blend;
     } while (0);
     if (level == 0) {
         s32 alpha = 0x1000;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else if (level == 1) {
         s32 alpha = 0xe00;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else if (level == 2) {
         s32 alpha = 0xc00;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else if (level == 3) {
         s32 alpha = 0xa00;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else if (level == 4) {
         s32 alpha = 0x800;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     } else {
         s32 alpha = 0x600;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     }
 }
 
@@ -207,11 +208,11 @@ void SceneEffect_SetupBlendByFlag201(void)
     }
     {
         s32 a = 0x3f42;
-        *(u16 *)0x4000050 = a;
+        REG_BLDCNT = a;
     }
     {
         s32 b = 0xc04;
-        *(u16 *)0x4000052 = b;
+        REG_BLDALPHA = b;
     }
 }
 
@@ -229,7 +230,7 @@ void ArutamiraDou_ApplyRoomVisuals(void)
     {
         s32 alpha = 0x1000;
 
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     }
     if ((s16)map.value == (s32)&SceneId_ArutamiraDou6) {
         Engine_ActorSetChildValue(16, 1);

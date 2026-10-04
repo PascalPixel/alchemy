@@ -106,8 +106,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
     sheet = cursor[1];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000052 = 0x1010;
-    *(volatile u16 *)0x0400000c = 0x784;
+    REG_BLDALPHA = 0x1010;
+    REG_BG2CNT = 0x784;
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw.upper = cursor[6];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
@@ -428,7 +428,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
     graphics = cursor[1];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     BattleFx_FetchRectangleBlitters(0, draw);
     palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);

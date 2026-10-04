@@ -6,6 +6,7 @@
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 #include "SCENE_IDS.H"
+#include "IO_REG.H"
 
 extern const struct ScenePlacement gTorebiIzumiPlacements2[];
 extern const struct ScenePlacement gTorebiIzumiPlacementsOther[];
@@ -41,12 +42,12 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic);
 
 static __inline__ void Io_SetBlendControl(s32 value)
 {
-    *(volatile u16 *)0x04000050 = value;
+    REG_BLDCNT = value;
 }
 
 static __inline__ void Io_SetBlendAlpha(s32 value)
 {
-    *(volatile u16 *)0x04000052 = value;
+    REG_BLDALPHA = value;
 }
 
 u8 *SceneData_GetSceneTableA(void)

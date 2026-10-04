@@ -407,7 +407,7 @@ void FieldScene_RunScene371_0200357c(void)
     BattleFx_ScheduleRatioTransition(0x16666, 0x12c);
     Engine_EventWait(0x10e);
     gEventWork->transition_frames = 16;
-    *(u16 *)0x05000000 = 0x7fff;
+    PLTT_BACKDROP = 0x7fff;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(111);

@@ -101,7 +101,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     BattlePres_ConfigureEffectDisplay();
-    *(u16 *)0x05000000 = 0;
+    PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -122,18 +122,18 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-    *(volatile u16 *)0x04000048 = 0x2737;
-    *(volatile u16 *)0x04000040 = 0xf0;
-    *(volatile u16 *)0x04000046 = 0x1088;
+    REG_WININ = 0x2737;
+    REG_WIN0H = 0xf0;
+    REG_WIN1V = 0x1088;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
     BattleEffect_WipeCanvas(1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 1);
-    *(volatile u16 *)0x04000000 = 0x7741;
-    *(volatile u16 *)0x04000020 = 0x80;
-    *(volatile u16 *)0x04000052 = 0x1010;
-    *(volatile u16 *)0x04000050 = 0x3f44;
+    REG_DISPCNT = 0x7741;
+    REG_BG2PA = 0x80;
+    REG_BLDALPHA = 0x1010;
+    REG_BLDCNT = 0x3f44;
     work->transfer_mode = 2;
     work->transfer_value = 50;
     base.x = 0xbc0000;
@@ -353,7 +353,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
     sheet = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work, 1, 1);
     for (i = 1; i != 20; i++) {
         for (j = 0; j != 936; j++) {

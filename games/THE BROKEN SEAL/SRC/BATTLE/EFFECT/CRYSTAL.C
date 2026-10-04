@@ -9,6 +9,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "IO_REG.H"
 
 struct CameraWork {
     u8 unknown_00[0x36];
@@ -64,7 +65,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work, 1, 1);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;

@@ -10,6 +10,7 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 extern void *gBattleFxWork[];
 
@@ -65,7 +66,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &pos);
     half = pos.x / 2;
 

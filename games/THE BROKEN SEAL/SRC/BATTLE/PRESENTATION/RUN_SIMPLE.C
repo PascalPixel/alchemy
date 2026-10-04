@@ -104,13 +104,13 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
     else
         work.side = 0;
 
-    *(volatile u16 *)0x04000040 = 0x00f0;
-    *(volatile u16 *)0x04000044 = 0x1088;
-    *(volatile u16 *)0x04000042 = 0x00f0;
-    *(volatile u16 *)0x04000046 = 0x1088;
-    *(volatile u16 *)0x04000048 = 0x3537;
-    *(volatile u16 *)0x0400004a = 0x3f21;
-    *(volatile u16 *)0x04000000 |= 0x6000;
+    REG_WIN0H = 0x00f0;
+    REG_WIN0V = 0x1088;
+    REG_WIN1H = 0x00f0;
+    REG_WIN1V = 0x1088;
+    REG_WININ = 0x3537;
+    REG_WINOUT = 0x3f21;
+    REG_DISPCNT |= 0x6000;
 
     if (direct != 0) {
         WaitFrames(10);

@@ -97,3 +97,51 @@ void FourObjectMotion_UpdateAllPositions(void)
             break;
     }
 }
+
+extern struct FourObjectMotionState *gMenuWork;
+
+void Link_DrawShiftedTilePairFar(void *);
+s32 Object_ApplyProjectedPlacementFar(u32, u32 *, u32 *, u32);
+
+void FourObjectMotion_UpdateBottomRow(void)
+{
+    struct FourObjectMotionState *work = gMenuWork;
+    s32 i;
+    u32 motion[2];
+    u32 request[4];
+
+    Link_DrawShiftedTilePairFar((void *)0x06002500);
+    i = 0;
+    do {
+        u32 obj = (u32)work->objects[i];
+
+        if (obj != 0) {
+            u32 y = (241u << 17) - ((u32)(s32)work->vertical_origins[i] << 16);
+            s32 phase;
+            s32 limit;
+            /* FAKEMATCH: the row's second read lives in r2, as the native allocates it. */
+            register s32 py asm("r2");
+
+            ((struct FieldSprite *)obj)->priority = 0;
+            phase = work->phases[i];
+            if (phase < 0) {
+                motion[0] = -phase;
+                motion[1] = -phase;
+            } else {
+                motion[0] = phase + (s32)(0x10000 - phase) / 3;
+                motion[1] = motion[0];
+                work->phases[i] = motion[0];
+            }
+            request[0] = (u32)(s32)work->positions_x[i] << 16;
+            request[1] = y;
+            request[2] = ((u32)(s32)work->positions_y[i] << 16) + y;
+            request[3] = 0;
+            py = work->positions_y[i];
+            limit = 0x8000;
+            if (py >= 0)
+                limit = 0x4000;
+            Object_ApplyProjectedPlacementFar(obj, request, motion, limit);
+        }
+        i++;
+    } while (i <= 3);
+}

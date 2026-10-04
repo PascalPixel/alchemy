@@ -2,7 +2,15 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
- * DRAFT (52 of 754 instructions differ), reworked 2026-10-02: same frame.
+ * DRAFT (dd.ts differ 86 of 645, was 111), reworked 2026-10-04: same frame.
+ * 2026-10-04: statement and declaration order (timer, dst, the scene word 0
+ *    and field_18 stores, the copy body) fixed item 2; item 1 and 3 remain.
+ *    In global.c, pass 0 of find_reg never takes a register not yet used
+ *    and skips registers another pseudo prefers, so the zero takes r7 only
+ *    when r7 is already in use when it is allocated; pinning the zero to r7
+ *    lets the scene share r7 (wrong code) and pinning the scene or its
+ *    vector breaks the offset addressing. The copy as an indexed for loop
+ *    re-reads the destination pointer every byte (differ 247).
  * 1. At the top the ROM keeps the scene in r10, its vector in r9 and the
  *    shared zero in r7; here they are r7, r10 and r6. The zero lives in the
  *    first block only, so the ROM's first block has r6 taken while the zero
@@ -158,11 +166,11 @@ s32 Battle_RunEncounter(s32 arg)
     struct BattleCamera *scene;
     s32 *cam;
     struct BattleEncounterWork *work;
-    struct BattleTimerWork *timer;
     u8 *buf;
+    struct BattleTimerWork *timer;
     u8 *src;
-    u8 *dst;
     s32 object;
+    u8 *dst;
     s32 cnt;
     s32 i;
     s32 delay;
@@ -187,9 +195,9 @@ s32 Battle_RunEncounter(s32 arg)
     timer->frames = 0;
     timer->value = 0x2000;
     timer->field_14 = 1;
-    timer->field_18 = 0;
     timer->field_1c = 0;
     *(u16 *)0x04000000 = 1;
+    timer->field_18 = 0;
     GameFlag_SetBitFar(0x103);
     GameFlag_SetBitFar(0x169);
     Render_ResetTransformState();
@@ -214,8 +222,8 @@ s32 Battle_RunEncounter(s32 arg)
     cam[2] = 0;
     ((s32 *)scene)[1] = 0xb40000;
     ((s32 *)scene)[2] = 0x400000;
-    ((s32 *)scene)[0] = 0;
     scene->yaw = 0x2800;
+    ((s32 *)scene)[0] = 0;
     scene->pitch = 0x5000;
     scene->distance = 0x1000000;
     object = BattleFormation_BuildEnemyList(work->field_00);
@@ -244,8 +252,8 @@ s32 Battle_RunEncounter(s32 arg)
         pos = 0;
         do {
             pos++;
-            *dst = *src;
             src++;
+            *dst = *src;
             dst++;
         } while (pos <= 0x7c7);
         object = GameFlag_GetByteFar(0x3f0);

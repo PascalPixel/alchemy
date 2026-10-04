@@ -348,7 +348,7 @@ Func_08000360:
 	.global Func_08000368
 	.thumb_func
 Func_08000368:
-	overlay_veneer Func_080167d8
+	overlay_veneer SerialRuntime_WaitForStatusMask
 	.global Func_08000370
 	.thumb_func
 Func_08000370:

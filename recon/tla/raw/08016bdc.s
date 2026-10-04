@@ -25,7 +25,7 @@ Func_08016bdc:
 	ldr r2, .L_08016c90
 	bl Bios_CpuSet
 	movs r0, #3
-	bl Func_080167d8
+	bl SerialRuntime_WaitForStatusMask
 .L_08016c10:
 	ldr r0, .L_08016c8c
 	bl SerialRuntime_BeginTransferB

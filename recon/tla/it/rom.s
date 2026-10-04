@@ -463,18 +463,6 @@ SerialRuntime_CollectReceivedPayloads:
 	.thumb_func
 SerialRuntime_HandleTransferInterrupt:
 	.incbin "baserom.gba", 0x000166c0, 0x00000118
-	.section .rom.000167d8, "ax"
-	.global SerialRuntime_RemoveIrqHandlers
-	.type SerialRuntime_RemoveIrqHandlers, %function
-	.thumb_func
-SerialRuntime_RemoveIrqHandlers:
-	.incbin "baserom.gba", 0x000167d8, 0x0000002c
-	.section .rom.00016804, "ax"
-	.global Func_080167d8
-	.type Func_080167d8, %function
-	.thumb_func
-Func_080167d8:
-	.incbin "baserom.gba", 0x00016804, 0x00000034
 	.section .rom.00016838, "ax"
 	.global Func_0801680c
 	.type Func_0801680c, %function

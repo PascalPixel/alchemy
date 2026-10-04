@@ -2110,7 +2110,6 @@
         "*/recon/tla/raw/0811bd50.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/MOTION/GET_MOTION_RECORD.o"(.text)
         "*/recon/tla/raw/0811bddc.o"(.text)
-        "*/recon/tla/raw/0811be3c.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RESET_MOTION_AT_ANCHOR.o"(.text)
         "*/recon/tla/raw/0811bec6.o"(.text)
         "*/recon/tla/raw/0811bec8.o"(.text)

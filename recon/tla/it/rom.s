@@ -5097,12 +5097,6 @@ Func_0811bd50:
 	.thumb_func
 Camera_InitDefaultTransform:
 	.incbin "baserom.gba", 0x0011bdf4, 0x00000060
-	.section .rom.0011be54, "ax"
-	.global GetBattleObjectSlot
-	.type GetBattleObjectSlot, %function
-	.thumb_func
-GetBattleObjectSlot:
-	.incbin "baserom.gba", 0x0011be54, 0x0000002c
 	.section .rom.0011bede, "ax"
 	.incbin "baserom.gba", 0x0011bede, 0x00000002
 	.global BattleMotion_SetupEscapeObject

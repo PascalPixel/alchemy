@@ -1116,7 +1116,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0011bd4c)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/GET_MOTION_RECORD.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011bdd8)
-    "*/recon/tla/ja/rom.o"(.rom.0011be38)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RESET_MOTION_AT_ANCHOR.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011bec2)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/SET_OBJECT_POSITION.o"(.text)

@@ -23,7 +23,8 @@ struct BattleSession {
     u8 unknown_046[0x12];
     s16 party_units[7];             /* 0x058 */
     s16 enemy_units[7];             /* 0x066 */
-    u8 unknown_074[0x278];
+    u8 placement[16];               /* 0x074, standing place per unit */
+    struct BattleObjectSlot slots[14]; /* 0x084, object records in formation order */
     struct BattleActionRecord actions[20]; /* 0x2ec */
     u8 unknown_42c[0x138];
     /* Summons queued by the effect that calls the next one in. */
@@ -46,6 +47,8 @@ LAYOUT_OFFSET_GUARD(BattleSession_TwoSided, struct BattleSession, two_sided, 0x0
 LAYOUT_OFFSET_GUARD(BattleSession_EncounterMode, struct BattleSession, encounter_mode, 0x045);
 LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BattleSession, party_units, 0x058);
 LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BattleSession, enemy_units, 0x066);
+LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BattleSession, placement, 0x074);
+LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BattleSession, slots, 0x084);
 LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BattleSession, actions, 0x2ec);
 LAYOUT_OFFSET_GUARD(
     BattleSession_QueuedSummons,

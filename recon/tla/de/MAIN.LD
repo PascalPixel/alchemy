@@ -1208,7 +1208,6 @@
     "*/recon/tla/de/rom.o"(.rom.0011bcb0)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/GET_MOTION_RECORD.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0011bdf4)
-    "*/recon/tla/de/rom.o"(.rom.0011be54)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RESET_MOTION_AT_ANCHOR.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0011bede)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/SET_OBJECT_POSITION.o"(.text)

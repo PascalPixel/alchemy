@@ -715,7 +715,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT18.o"(.text)
-        "*/recon/tbs/raw/080dc454.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_BURSTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STAGED_PARTICLES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT19.o"(.text)

@@ -1163,12 +1163,6 @@ BattleFx_RunSevenMode:
 	.thumb_func
 Unnamed_080d1714:
 	.incbin "baserom.gba", 0x000d4f14, 0x00000d38
-	.section .rom.000dfc54, "ax"
-	.global BattleFx_RunOrbitingSparks
-	.type BattleFx_RunOrbitingSparks, %function
-	.thumb_func
-BattleFx_RunOrbitingSparks:
-	.incbin "baserom.gba", 0x000dfc54, 0x00000268
 	.section .rom.000e226e, "ax"
 	.incbin "baserom.gba", 0x000e226e, 0x00000002
 	.section .rom.000e2270, "ax"

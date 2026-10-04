@@ -313,7 +313,6 @@ SECTIONS
     "*/games/COMMON/SRC/BATTLE/DRAW_PARTY_PANELS_WITH_EMPTY_LIST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_LOCALIZED_RESOURCE.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.00027170)
-    "*/recon/tbs/ja/rom.o"(.rom.000281fc)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU17.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU7.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION.o"(.text)

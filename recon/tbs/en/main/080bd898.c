@@ -1,3 +1,19 @@
+/* 2026-10-04 (third wave, finisher 3): combined diff 50 (was 176), 823/823
+ * instructions, no FAKEMATCH device. Phase 11 now ORs the entry's frame
+ * with a 0xff held in a variable (old | none): a literal |= 0xff is folded
+ * to a plain store in every form tried (u8, s8 cast, bitfield, -1, ~0,
+ * inline helper), while the native keeps ldrb/orr/strb with 255 hoisted
+ * into r8, so the native source did not see a constant there either
+ * (BattleMotion_SetRecordChildValues shows the same pattern with a mask).
+ * Reading the old frame into a u8 local before the param store gives the
+ * native register order. In phase 5, tile.word = x comes before
+ * attributes.word (68 from 72). Left: (1) phase 5 head, reload registers
+ * one step off the native round robin (tiles constant r1, the 352 offset
+ * r2, -1 in r4 and x = 0 late through r1 in the native), then the entry
+ * and x stores and the r9/fp reloads; (2) phase 11, mov r8, r3 (the 255)
+ * follows add r5, sp, #12 in the native, before it here; moving none's
+ * assignment into the for initializer or before the loop does not move it.
+ * Tried without gain: x = 0 at four other positions. */
 /* DRAFT: BattleEvent_Playback and its nested tile clearer, covering the
  * native 1948-byte bank: 72-byte clearer and 1876-byte playback, including
  * the jump table, literal pools and alignment. No production adoption.
@@ -255,8 +271,8 @@ void BattleEvent_Playback(void)
             UiWork_ClearValueNameTablesFar();
             QueueIoWriteDelay10(0x0400004a, 4);
             QueueIoWriteDelay6(0x0400004a, 16);
-            entry->attributes.word = 0xa000;
             entry->tile.word = x;
+            entry->attributes.word = 0xa000;
             entry->tile.bits.tile = Resource_GetBuffer(state->display_source, tiles);
             x = context->x * 8 + (viewport->x >> 8) + 4;
             entry->attributes.bits.x = x;
@@ -318,11 +334,17 @@ void BattleEvent_Playback(void)
                 if (frame == 6 || (state->timer & 7) == 0) {
                     struct AnimationObject *record;
                     s32 n;
+                    s32 none = 0xff;
 
                     for (n = 0; (record = GetMotionRecord(GetBattleObjectSlot(state->actor_id)->object, n)) != 0; n++) {
+                        struct AnimationEntry *child;
+                        u8 old;
+
                         records[n] = record;
-                        record->entries[0]->param = frame;
-                        record->entries[0]->frame = 0xff;
+                        child = record->entries[0];
+                        old = child->frame;
+                        child->param = frame;
+                        child->frame = old | none;
                     }
                 }
                 state->timer++;

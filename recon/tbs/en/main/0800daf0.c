@@ -1,3 +1,13 @@
+/* 2026-10-04, third wave (finisher 3): still 35. A -dp/-dg compile maps
+   the stretch to insns 168-197: obj->x reload r2 (168), x reload r4 (170),
+   0xffff reload r2 (177), obj reload r4 (183), z reload r2 (185), 0xffff
+   r3 (192), sl reload r4 (197). The native has r2, r4, r2, r2, r4, r2, r3:
+   from 183 on every choice is the next spill register, consistent with
+   the 177 constant reload not advancing last_spill_reg (or r4 being busy
+   at 183 only). find_equiv_reg cannot supply the constant there (the bge
+   at 173 ends its backward scan), so the native 177 is likely not a plain
+   constant reload. Explicit "if (d < 0) d += 0xffff; d >>= 16" (with the
+   literal or a variable) scores 216, plain >> 16 78. */
 /* 2026-10-04, second wave: alchemy diff 35 (was 120), 225 instructions
    against 224. Greg dumps show why y lost r5: global allocation orders by
    refs*log2(refs)/live length, and y (3 refs over 41 insns) came after the

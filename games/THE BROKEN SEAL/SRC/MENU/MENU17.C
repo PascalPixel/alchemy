@@ -7,6 +7,155 @@
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "GLOBAL_CELLS.H"
+#include "AFFINE.H"
+#include "VRAM_TAB.H"
+
+struct WindowLine {
+    u16 left;
+    u16 span;
+};
+
+struct WindowBuffer {
+    u8 unknown_000[4];
+    struct WindowLine lines[160];
+};
+
+extern volatile u32 gFrameCount;
+extern u16 Data_080366f8[];
+extern u8 *gDisplayTransition;
+
+void AffineEffect_UpdateFrame(void)
+{
+    struct ResourceMenuWork *work;
+    struct ResourceMenuEntry *sprite;
+    struct AffineTransform effect;
+    s32 scale;
+    s32 matrix;
+    s32 edge;
+    /* Unpinned, global allocation gives x r1 and the entry offset r4. */
+    /* FAKEMATCH: register choice, measured 42 instructions without. */
+    register s32 x asm("r0");
+    s32 y;
+    u32 end;
+    u32 i;
+    u16 *line;
+    u8 *buffers;
+
+    work = gMenuSelectWork;
+    sprite = work->entries;
+    scale = Data_080366f8[(gFrameCount * 2) & 31];
+    scale = (scale - 256) / 4 + 304;
+    effect.scale_x = scale;
+    effect.scale_y = scale;
+    effect.angle = 0;
+    matrix = AffineMatrix_BuildForEffect(&effect);
+    for (i = 0; i < work->count; i++, sprite++) {
+        u32 *attr;
+        s32 slot;
+        s32 px;
+
+        px = sprite->x;
+        if (px == 0)
+            continue;
+        if (i == work->selection) {
+            s32 left = px + scale * 7 / 512 - 20;
+
+            if (sprite->y != 0)
+                y = sprite->y + scale * 3 / 256 - 20;
+            else
+                y = (scale * 15 / 256 - 30) & 255;
+            attr = &sprite->link;
+            *attr++ = 0;
+            *attr++ = (matrix << 25) | y | (left << 16) | 0x80002300;
+            *attr = gVramBlockCache[sprite->slot].offset >> 5;
+            slot = 246;
+        } else {
+            u32 base;
+            u32 value;
+
+            attr = &sprite->link;
+            /* Without this use the attr copy follows the y load. */
+            /* FAKEMATCH: instruction order, measured 2 instructions without. */
+            __asm__("" : : "r"(attr));
+            y = sprite->y;
+            *attr++ = 0;
+            value = y | (px << 16) | 0x80002000;
+            base = gVramBlockCache[sprite->slot].offset;
+            *attr++ = value;
+            *attr = base >> 5;
+            slot = 245;
+        }
+        Runtime_PushSlotEntry(sprite, slot);
+    }
+    if (work->row == 0) {
+        struct WindowBuffer *window;
+        /* With x pinned, x + span otherwise lands in r0. */
+        /* FAKEMATCH: register choice, measured 4 instructions without. */
+        register s32 span asm("r2");
+
+        buffers = gDisplayTransition;
+        if (buffers == 0 || work->count == 0)
+            return;
+        window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
+        x = work->entries[work->selection].x;
+        span = (scale * 12 - 2817) / 256;
+        edge = ((x - span) << 8) + (x + span) + 23;
+        end = work->entries[work->selection].y + 24;
+        end += (scale * 32 - 7937) / 512 + 1;
+        line = &window->lines[24].span;
+        i = 24;
+        if (i < end) {
+            do {
+                *line = (*line & 0xff) | edge;
+                i++;
+                line += 2;
+            } while (i < end);
+        }
+        edge = work->entries[0].x;
+        if (work->selection == 0)
+            edge -= (scale * 12 - 2817) / 256;
+        edge <<= 8;
+        line = &window->lines[0].span;
+        for (i = 0; i <= 23; i++) {
+            *line = (*line & 0xff) | edge;
+            line += 2;
+        }
+    } else {
+        struct WindowBuffer *window;
+        s32 start;
+        /* With x pinned, x + span otherwise lands in r0. */
+        /* FAKEMATCH: register choice, measured 4 instructions without. */
+        register s32 span asm("r3");
+
+        buffers = gDisplayTransition;
+        if (buffers == 0 || work->count == 0)
+            return;
+        window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
+        x = work->entries[work->selection].x;
+        span = (scale * 12 - 2817) / 256;
+        edge = ((x - span) << 8) + (x + span) + 23;
+        start = work->entries[work->selection].y;
+        start -= (scale * 32 - 7937) / 512 + 1;
+        line = &window->lines[start].span;
+        i = start;
+        if (i <= 135) {
+            do {
+                *line = (*line & 0xff) | edge;
+                i++;
+                line += 2;
+            } while (i <= 135);
+        }
+        edge = work->entries[0].x;
+        if (work->selection == 0)
+            edge -= (scale * 12 - 2817) / 256;
+        edge <<= 8;
+        line = &window->lines[136].span;
+        for (i = 136; i <= 159; i++) {
+            *line = (*line & 0xff) | edge;
+            line += 2;
+        }
+    }
+}
 
 void AffineEffect_UpdateFrame(void);
 

@@ -261,12 +261,6 @@ SaveMenu_SelectSlot:
 	.thumb_func
 Battle_CollectPartyCommands:
 	.incbin "baserom.gba", 0x00027240, 0x00001080
-	.section .rom.000282c0, "ax"
-	.global AffineEffect_UpdateFrame
-	.type AffineEffect_UpdateFrame, %function
-	.thumb_func
-AffineEffect_UpdateFrame:
-	.incbin "baserom.gba", 0x000282c0, 0x00000348
 	.section .rom.00029a3c, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:

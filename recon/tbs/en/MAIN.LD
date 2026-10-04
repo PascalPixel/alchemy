@@ -328,7 +328,6 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/SET_FOUND_FLAG_AND_ADD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/RUN_WORKSPACE_RESULT_LOOP.o"(.text)
-        "*/recon/tbs/raw/08029554.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0802977c.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.08029910)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/MENU_ICONS.o"(.rodata)

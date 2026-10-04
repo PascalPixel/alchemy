@@ -333,7 +333,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/SET_FOUND_FLAG_AND_ADD.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/RUN_WORKSPACE_RESULT_LOOP.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000295ac)
     "*/recon/tbs/ja/rom.o"(.rom.000297d4)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/MARK_CODES.o"(.rodata)

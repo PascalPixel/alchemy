@@ -324,7 +324,6 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/SET_FOUND_FLAG_AND_ADD.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/RUN_WORKSPACE_RESULT_LOOP.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.00028714)
     "*/recon/tbs/es/rom.o"(.rom.0002893c)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
     "*/recon/tbs/es/rom.o"(.rom.000330b4)

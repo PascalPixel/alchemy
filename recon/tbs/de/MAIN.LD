@@ -328,7 +328,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/SET_FOUND_FLAG_AND_ADD.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/RUN_WORKSPACE_RESULT_LOOP.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00028218)
     "*/recon/tbs/de/rom.o"(.rom.00028440)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
     "*/recon/tbs/de/rom.o"(.rom.00032bd4)

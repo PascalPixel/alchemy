@@ -329,12 +329,6 @@ Battle_CollectPartyCommands:
 	.thumb_func
 AffineEffect_UpdateFrame:
 	.incbin "baserom.gba", 0x00026e58, 0x00000348
-	.section .rom.00028218, "ax"
-	.global DebugMenu_BrowseIcons
-	.type DebugMenu_BrowseIcons, %function
-	.thumb_func
-DebugMenu_BrowseIcons:
-	.incbin "baserom.gba", 0x00028218, 0x00000228
 	.section .rom.00028440, "ax"
 	.global DebugMenu_BrowseEntryGlyphs
 	.type DebugMenu_BrowseEntryGlyphs, %function
@@ -502,7 +496,22 @@ Menu_ColonString:
 	.incbin "baserom.gba", 0x0003625c, 0x00000004
 	.global Menu_HexDigitsString
 Menu_HexDigitsString:
-	.incbin "baserom.gba", 0x00036260, 0x00000038
+	.incbin "baserom.gba", 0x00036260, 0x00000014
+	.global Data_08037440
+Data_08037440:
+	.incbin "baserom.gba", 0x00036274, 0x00000008
+	.global Data_08037448
+Data_08037448:
+	.incbin "baserom.gba", 0x0003627c, 0x00000008
+	.global Data_08037450
+Data_08037450:
+	.incbin "baserom.gba", 0x00036284, 0x00000008
+	.global Data_08037458
+Data_08037458:
+	.incbin "baserom.gba", 0x0003628c, 0x00000008
+	.global Data_08037460
+Data_08037460:
+	.incbin "baserom.gba", 0x00036294, 0x00000004
 	.section .rom.0007a770, "ax"
 	.incbin "baserom.gba", 0x0007a770, 0x00000158
 	.global WorkspaceOptions_SliderPalette

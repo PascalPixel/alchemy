@@ -1,16 +1,18 @@
-/* 2026-10-04 (finisher 1): 169 -> 36 differing instructions, plain C.
+/* 2026-10-04 (finisher 1): 169 -> 24 differing instructions, plain C.
  * The header now gives BattlePresentationWork its real tail, s16 actors[8]
  * then u8 params[8][4] at 0x34; indexing work.params[i][j] with the count
  * read each pass gives the native addressing (no hoisted base, no extra r9
  * save; plan r7, mode sl, object r8 match). The first angle offset as an
  * if/else gives the native fresh actor-id copy (adds rN, r4, #0) for each
- * test. Left: the same-side test (two instructions short). Native copies
+ * test. Left: the same-side test. Native copies
  * the actor id once before the target test, then each arm evaluates its
  * actor test as a value in r3 and tests it in the arm (cmp/bne/b, cmp/beq).
  * if (target <= 7 ? (same = actor <= 7) : (same = actor > 7)) gives that
  * arm shape exactly but copies the id inside each arm (37); a u8/s32 id
  * local read before the test scores 46-91; ?:, == of two tests, 0/1
- * assignments and inline IsParty/IsEnemy predicates score 36-93. */
+ * assignments and inline IsParty/IsEnemy predicates score 36-93. An s8
+ * same (24, below) gets the full length and the single copy shape but
+ * materializes into r2 and sign-extends before its test. */
 /* Draft: complete native extent [080ba978,080babdc), 612 bytes.
  * Earlier 2026-10-02 work recorded 12 differing instructions with the native
  * frame/register allocation. Byte predicates recovered the same-side copy
@@ -94,7 +96,7 @@ s32 Func_080ba978(struct BattlePlan *plan, s32 mode)
         struct MotionObject *actor = GetBattleObjectSlot(plan->actor_id)->object;
         s32 angle = (u16)ArcTan2(actor->x, actor->z);
         s32 current;
-        s32 same;
+        s8 same;
 
         if (plan->actor_id <= 7)
             current = angle - 0x1800;

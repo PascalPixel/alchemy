@@ -142,7 +142,6 @@ void Ui_RunIconMonitor(void)
 {
     struct IconColumn ent[4];
     struct AnimationMetadata *metadata;
-    struct AnimationObject *h;
     struct AnimationObject *tbl;
     volatile s32 zero;
     s32 no;

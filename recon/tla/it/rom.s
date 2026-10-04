@@ -4326,7 +4326,17 @@ Func_080db9c0:
 	.type Field_BeginPaletteTransition, %function
 	.thumb_func
 Field_BeginPaletteTransition:
-	.incbin "baserom.gba", 0x000dc238, 0x000003e8
+	.incbin "baserom.gba", 0x000dc238, 0x00000050
+	.global BattleEffect_InitializeSharedScene
+	.type BattleEffect_InitializeSharedScene, %function
+	.thumb_func
+BattleEffect_InitializeSharedScene:
+	.incbin "baserom.gba", 0x000dc288, 0x000000f0
+	.global BattleFx_PrepareBufferInterpolation
+	.type BattleFx_PrepareBufferInterpolation, %function
+	.thumb_func
+BattleFx_PrepareBufferInterpolation:
+	.incbin "baserom.gba", 0x000dc378, 0x000002a8
 	.global Func_080dc62c
 	.type Func_080dc62c, %function
 	.thumb_func
@@ -4361,7 +4371,14 @@ Func_080dca50:
 	.type Func_080ca6a4, %function
 	.thumb_func
 Func_080ca6a4:
-	.incbin "baserom.gba", 0x000dd048, 0x000005e8
+	.incbin "baserom.gba", 0x000dd048, 0x00000494
+	.section .rom.000dd51a, "ax"
+	.incbin "baserom.gba", 0x000dd51a, 0x00000002
+	.global BattleFx_StartItemBreak
+	.type BattleFx_StartItemBreak, %function
+	.thumb_func
+BattleFx_StartItemBreak:
+	.incbin "baserom.gba", 0x000dd51c, 0x00000114
 	.section .rom.000dd630, "ax"
 	.global BattleFx_SnapScaleToFull
 	.type BattleFx_SnapScaleToFull, %function
@@ -4369,10 +4386,10 @@ Func_080ca6a4:
 BattleFx_SnapScaleToFull:
 	.incbin "baserom.gba", 0x000dd630, 0x0000002c
 	.section .rom.000dd65c, "ax"
-	.global BattleFx_StartItemBreak
-	.type BattleFx_StartItemBreak, %function
+	.global UpdateRisingParticleBurst
+	.type UpdateRisingParticleBurst, %function
 	.thumb_func
-BattleFx_StartItemBreak:
+UpdateRisingParticleBurst:
 	.incbin "baserom.gba", 0x000dd65c, 0x00000ee8
 	.section .rom.000de598, "ax"
 	.incbin "baserom.gba", 0x000de598, 0x00000714
@@ -5079,14 +5096,6 @@ BattleParty_PrepareReserveOwners:
 	.thumb_func
 Func_0811a39c:
 	.incbin "baserom.gba", 0x0011a3b4, 0x000000b0
-	.section .rom.0011a49a, "ax"
-	.incbin "baserom.gba", 0x0011a49a, 0x00000002
-	.section .rom.0011a49c, "ax"
-	.global BattleMotion_GetSlotField14
-	.type BattleMotion_GetSlotField14, %function
-	.thumb_func
-BattleMotion_GetSlotField14:
-	.incbin "baserom.gba", 0x0011a49c, 0x0000000c
 	.section .rom.0011a4f6, "ax"
 	.incbin "baserom.gba", 0x0011a4f6, 0x0000011e
 	.global Func_0811a5fc

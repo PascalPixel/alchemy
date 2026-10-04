@@ -1,3 +1,7 @@
+/* 2026-10-04: with the object byte store written as ☀️'s s8 store and unit
+ * set before max_speed, differ 4 (dd): native stores max_speed between the
+ * movs and the ldr of the object, then lsls; here movs, lsls of 1.0 precede
+ * the store. Earlier header follows. */
 /* 2026-10-03 effect-slot suffix probe.
  * The existing draft could not compile: TYPES, EffectSlot and DMA owners
  * were not included, and its flag41 name no longer belongs to EffectSlot.
@@ -44,12 +48,12 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
     if (object != NULL)
         object->priority = 0;
     EffectSlot_SetPosition(effect, x, z);
-    effect->max_speed = 0x20000;
     unit = 0x10000;
+    effect->max_speed = 0x20000;
     effect->acceleration = effect->scale_y = effect->scale_x = unit;
     effect->origin_x = x;
     effect->origin_z = z;
-    ((struct FieldSprite *)effect->object)->unknown_1a = 0;
+    ((s8 *)effect->object)[26] = 0;
     effect->stop_at_target = 1;
     effect->flag42 = 1;
     effect->update_motion = 1;

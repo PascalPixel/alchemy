@@ -1,15 +1,29 @@
-/* UpdateRisingParticleBurst: lift and spin the source for 31 frames, then
-   burst eight item-break fragments with random speeds and headings. */
+/* Draft: UpdateRisingParticleBurst, ☀️'s body with child kind 0x2a1.
+ * Differ 6 (dd): native loads -0x800 into r5 before the first cue call, and
+ * sets the 0x2000 constant and the WaitFrames argument one load earlier. A
+ * local for -0x800 set before the call rematerialises it in the loop (12). */
 #include "TYPES.H"
-#include "OBJECT_EFX.H"
 #include "SYSTEM.H"
+#include "RAM_BUFFER.H"
+#include "MOTION_OBJECT.H"
+#include "OBJDISP.H"
+#include "OBJECT_EFX.H"
 
+struct BattleFxScene { u8 pad00[16]; void *volatile main_object; };
+
+void BattleEffect_InitializeSharedScene(void);
+void *BattleFx_StartItemBreak(void *object);
+void BattleFx_SnapScaleToFull(struct MotionObject *object);
+void Object_SetMode(void *object, s32 mode);
+void BattleFx_PrepareBufferInterpolation(void);
+void UpdateRisingParticleBurst(void *object);
 extern void *Object_Spawn(s32, s32, s32, s32);
 extern void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
-extern void Engine_ObjectSetScript(void *object, const void *script);
-extern void Object_Destroy(void *object);
+extern void BattleFx_UpdateItemBreakFragment(void *);
 extern void Audio_PlayCue(s32);
-
+s32 Object_CommitPosition();
+extern void Object_Destroy(void *object);
+#define SOUND_ITEM_BREAK 138
 void UpdateRisingParticleBurst(void *source)
 {
     s32 count;
@@ -21,20 +35,20 @@ void UpdateRisingParticleBurst(void *source)
 
     Audio_PlayCue(154);
     for (count = 30; count >= 0; count--) {
-        *(s32 *)((s8 *)source + 12) += 0x10000;
-        *(u16 *)((s8 *)source + 6) += 0x2000;
-        *(s32 *)((s8 *)source + 24) += -0x800;
-        *(s32 *)((s8 *)source + 28) += -0x800;
+        ((struct MotionObject *)source)->y += 0x10000;
+        ((struct MotionObject *)source)->angle += 0x2000;
+        ((struct MotionObject *)source)->scale_x += -0x800;
+        ((struct MotionObject *)source)->scale_y += -0x800;
         WaitFrames(1);
     }
     count = 7;
     unit = 0x10000;
     for (; count >= 0; count--) {
-        child = Object_Spawn(0x11d, *(s32 *)((s8 *)source + 8),
-                             *(s32 *)((s8 *)source + 12),
+        child = Object_Spawn(0x2a1, *(s32 *)((s8 *)source + 8),
+                             ((struct MotionObject *)source)->y,
                              *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            Engine_ObjectSetScript(child, &BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
             {
                 s32 speed = Random16();
 

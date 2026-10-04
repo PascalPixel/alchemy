@@ -185,7 +185,6 @@
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP5.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00012518)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/FIND_NEXT_NUMBER_WITH_METADATA.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00012b2c)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE4.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00012f20)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/WINDOW.o"(.text .rodata .data .padding)

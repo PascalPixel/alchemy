@@ -183,7 +183,6 @@
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP5.o"(.text)
         "*/recon/tbs/raw/08012518.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/FIND_NEXT_NUMBER_WITH_METADATA.o"(.text)
-        "*/recon/tbs/raw/08012b2c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE4.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.08012f20)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/WINDOW.o"(.text .rodata .data .padding)

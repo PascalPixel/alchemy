@@ -2,8 +2,116 @@
 #include "METADATA_LOOKUP.H"
 #include "ANIMSPR.H"
 #include "HEAP_STATE.H"
+#include "IO_REG.H"
 
 extern struct AnimationObject *gSpriteObjects;
+extern volatile u32 gKeysHeld;
+extern s32 gFrameTick;
+
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *point);
+
+/* Lays out icon-monitor points around a position. The first sprite layer
+   selects the ring shape; holding B turns it with the frame counter. A ring
+   of fewer than ten points steps the cursor over the rest of the table. */
+void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
+{
+    struct AnimationPosition *pair;
+    s32 angle;
+    s32 i;
+    u16 turn;
+    u8 kind;
+
+    angle = 0;
+    kind = gSpriteObjects->entries[0]->kind;
+    if ((gKeysHeld & KEY_B) != 0)
+        angle = (s16)(gFrameTick << 8);
+    switch ((u32)kind) {
+    case 3:
+        for (i = 0; i < 6; i++) {
+            angle <<= 16;
+            out->x = x << 16;
+            angle = (u32)angle >> 16;
+            out->y = 0;
+            out->z = z << 16;
+            Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
+            out++;
+            angle = (s16)(angle + 0x2aaa);
+        }
+        for (; i < 10; i++)
+            out++;
+        break;
+    case 5:
+    case 8:
+    case 44:
+    case 88:
+        for (i = 0; i < 8; i++) {
+            angle <<= 16;
+            out->x = x << 16;
+            angle = (u32)angle >> 16;
+            out->y = 0;
+            out->z = z << 16;
+            Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
+            out++;
+            angle = (s16)(angle + 0x2000);
+        }
+        for (; i < 10; i++)
+            out++;
+        break;
+    case 4:
+    case 6:
+        for (i = 0; i < 10; i++) {
+            angle <<= 16;
+            out->x = x << 16;
+            angle = (u32)angle >> 16;
+            out->y = 0;
+            out->z = z << 16;
+            Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
+            out++;
+            angle = (s16)(angle + 0x1999);
+        }
+        break;
+    case 20:
+        turn = angle;
+        angle = (s16)(turn + 0x4000);
+        i = 0;
+        pair = out;
+        while (i < 2) {
+            pair[i * 2].x = x << 16;
+            pair[i * 2].y = 0;
+            pair[i * 2].z = z << 16;
+            angle <<= 16;
+            angle = (u32)angle >> 16;
+            Vector_AddPolarOffset(0x280000, (u16)angle, &out[0].x);
+            pair[i * 2 + 1].x = x << 16;
+            {
+                s32 *point = &out[1].x;
+                pair[i * 2 + 1].y = 0;
+                pair[i * 2 + 1].z = z << 16;
+                Vector_AddPolarOffset(0x280000, (u16)angle, point);
+            }
+            angle = (angle + (u32)0x8000) << 16;
+            i++;
+            out += 2;
+            angle >>= 16;
+        }
+        break;
+    default:
+        angle = (s32)(((u32)angle << 16) + 0x20000000) >> 16;
+        for (i = 0; i < 4; i++) {
+            angle <<= 16;
+            angle = (u32)angle >> 16;
+            out->x = x << 16;
+            out->y = 0;
+            out->z = z << 16;
+            Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
+            out++;
+            angle = (s16)(angle + 0x4000);
+        }
+        for (i = 4; i < 10; i++)
+            out++;
+        break;
+    }
+}
 
 void Animation_InitWorkFromMetadata(struct AnimationEntry *entry);
 void Render_ApplyProjectedPlacement(struct AnimationObject *object, s32 *position, s32 *scale, s32 mode);

@@ -161,7 +161,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
-    void *sheet;
+    u8 *sheet;
     DrawRectangle callbacks[2];
     DrawRectangle *draw;
     struct EffectStep *step; /* walks the puffs, then the motes it draws */
@@ -184,8 +184,8 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     draw = callbacks;
     BattleFx_FetchRectangleBlitters(0, draw);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, (u8 *)work + 0x320, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -232,20 +232,20 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
         if (frame == 56)
             BattleEventRuntime_BeginPhaseFar(0x85);
         if (frame <= 23)
-            callbacks[0](canvas, (u8 *)work + 0x320 + (frame / 4) * 0x640, 40, 20, 40, 40);
+            callbacks[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40, 40);
         if (frame == 20)
             Iwram_CopyWords((void *)BG_PLTT,
                 Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
         if (frame >= 20 && frame <= 31) {
             if (frame > 23)
-                draw[1](canvas, work, 146 - frame * 4, curtain_y, 20, 40);
+                draw[1](canvas, work->sheet, 146 - frame * 4, curtain_y, 20, 40);
             else
-                callbacks[0](canvas, work, 50, 20, 20, 40);
+                callbacks[0](canvas, work->sheet, 50, 20, 20, 40);
         }
         if (frame == 32) {
             Audio_PlayCue(0x91);
             work->shake_frames = 8;
-            Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
+            Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
         }
         if (frame > 31) {
             member = 0;
@@ -255,7 +255,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
                     s32 cell = step->variant / 8;
                     u32 width;
 
-                    callbacks[0](canvas, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                    callbacks[0](canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
                         step->x - ((width = PuffArc_CellWidths[cell]) >> 1),
                         step->y + PuffArc_CellBiasY[cell],
                         width, PuffArc_CellHeights[cell]);
@@ -275,7 +275,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 
                 size = (member & 1) + 3;
                 x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     x - ((u32)size >> 1), HI(step->y) - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
                 angle = step->z;

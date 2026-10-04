@@ -668,18 +668,14 @@ void FieldScene_RunSetupSequence(void)
 
 void Scene_JoinRodSearch(void)
 {
-    u32 i;
-    u8 *record;
-    s32 v5;
-    s32 v6;
     s32 mes;
 
     Engine_EventWait(20);
-    *(u8 *)((u8 *)Object_GetById(2) + 91) = 0;
+    Object_GetById(2)->unknown_5b = 0;
     Engine_ActorJump(2, 4, 0);
     Engine_EventWait(40);
     mes = (s32)MsgKuupuappuThankHelpBelieve;
-    Engine_EventSetMessage((s32)MsgKuupuappuThankHelpBelieve);
+    Engine_EventSetMessage(mes);
     Engine_EventWait(20);
     SceneActor_SetModeZeroAndValue(2, 20);
     Call3(Engine_ActorShowEmote, 2, 0x101, 0);
@@ -689,13 +685,11 @@ void Scene_JoinRodSearch(void)
     SceneEffect_ApplyPairWithValue141(2, 0);
     Engine_EventWait(40);
     SceneState_SetValue2ThenFinish();
-    v5 = 254;
     Engine_ActorRunRepeatedMotion(0, 1);
-    *(u8 *)((u8 *)Object_GetById(0) + 90) &= v5;
+    Object_GetById(0)->unknown_5a &= ~1;
     Call3(Engine_ActorWalkToAndWait, 0, 0x180, 0x1a8);
-    v6 = 1;
     Engine_EventWait(1);
-    *(u8 *)((u8 *)Object_GetById(0) + 90) |= v6;
+    Object_GetById(0)->unknown_5a |= 1;
     Engine_EventWait(30);
     Engine_EventShowMessage(2, 0);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
@@ -728,23 +722,17 @@ void Scene_JoinRodSearch(void)
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
     Call3(Engine_ActorWalkToAndWait, 2, 0x180, 0x198);
     Engine_EventWait(10);
-    Engine_MessageShowCentered((mes + 5), 1);
-    Engine_EventSetMessage((mes + 6));
+    Engine_MessageShowCentered(mes + 5, 1);
+    Engine_EventSetMessage(mes + 6);
     Engine_ActorFaceEachOther(2, 1, 0);
     FieldScene_RunSplitTripleSteps(0, 1, 20);
     Call3(Engine_ActorShowEmote, 1, 0x102, 0);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(1, 1);
-    *(u8 *)((u8 *)Object_GetById(1) + 90) &= v5;
+    Object_GetById(1)->unknown_5a &= ~1;
     Call3(Engine_ActorWalkToAndWait, 1, 0x160, 0x198);
     Engine_EventWait(1);
-    {
-        u8 *record = (u8 *)Object_GetById(1);
-        /* FAKEMATCH: retain this byte read before the flag merge. */
-        u8 value = *(volatile u8 *)&record[90];
-
-        record[90] = (u8)(value | v6);
-    }
+    Object_GetById(1)->unknown_5a |= 1;
     Engine_EventWait(10);
     Call3(Engine_ActorWalkTo, 2, 0x170, 0x198);
     Engine_EventWait(20);
@@ -783,8 +771,8 @@ void Scene_JoinRodSearch(void)
     Engine_EventShowMessage(2, 0);
     Call3(Engine_ActorShowEmote, 1, 0x102, 0);
     Engine_EventWait(60);
-    Engine_MessageShowCentered((mes + 13), 1);
-    Engine_EventSetMessage((mes + 14));
+    Engine_MessageShowCentered(mes + 13, 1);
+    Engine_EventSetMessage(mes + 14);
     Engine_ActorFaceEachOther(2, 0, 0);
     Engine_ActorFaceActor(1, 0, 0);
     Engine_ActorShowEmote(0, 0x102, 0);

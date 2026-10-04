@@ -15,6 +15,7 @@
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 #include "MOTION_OBJECT.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -62,7 +63,7 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
 /* Resource id the reference loads from its literal pool. */
 extern const u16 ParticleStreams_CellOffsets[];
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void Graphics_PrepareTransferInIwramWork(void *eye, void *target);
 void SceneTransform_ApplyPosition(s32 *position);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -412,7 +413,7 @@ void BattleFx_RunSwirlingStars(void *object)
 
         camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera, camera->pos);
         SceneTransform_ApplyPosition(record);
         star = (struct EffectStep *)Ram_MapCellBuffer;
         for (i = 0; i != 64; i++, star++) {
@@ -492,12 +493,12 @@ void BattleFx_RunOrbitingSparks(void)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+    camera = ((struct BattleCamera **)gWorkSlot)[HEAP_SLOT_CAMERA];
     BattleFx_BeginCanvasLayer(1);
-    *(volatile u16 *)0x04000020 = 0x100;
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BG2PA = 0x100;
+    REG_BLDALPHA = 0x1010;
     palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
-    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    Iwram_CopyWords(BG_PLTT, palette, 128);
     Resource_DecodeType01(palette + 128, work);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     work->transfer_mode = 1;
@@ -512,7 +513,7 @@ void BattleFx_RunOrbitingSparks(void)
         x_offset = -112;
     /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the seed counter is set before its pointer */
     do {
-        *(volatile s32 *)0x04000028 = x_offset << 8;
+        REG_BG2X = x_offset << 8;
     } while (0);
     for (i = 0; i != 64; i++) {
         struct EffectStep *step = &work->particles[i];
@@ -536,7 +537,7 @@ void BattleFx_RunOrbitingSparks(void)
                 register s32 *rec asm("r0");
 
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera, camera->pos);
                 rec = record;
                 rec[0] = member_object->x;
                 rec[1] = member_object->y;

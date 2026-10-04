@@ -49,9 +49,9 @@ static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
     *field = step;
 }
 
-void FieldScene_RunScene3b4_02002188(void);
-void FieldScene_RunScene3b4_02002290(void);
-void FieldScene_RunScene3b4_02002334(void);
+void TakaraAshiba_InitializeScene1(void);
+void TakaraAshiba_InitializeScene2(void);
+void TakaraAshiba_InitializeScene3(void);
 
 extern const struct SceneEntrance gTakaraAshibaEntrances1[];
 extern const struct SceneEntrance gTakaraAshibaEntrances2[];
@@ -1368,13 +1368,13 @@ s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (gGameState.scene == (s32)&SceneId_TakaraAshiba1) {
-        FieldScene_RunScene3b4_02002188();
+        TakaraAshiba_InitializeScene1();
     }
     if (gGameState.scene == (s32)&SceneId_TakaraAshiba2) {
-        FieldScene_RunScene3b4_02002290();
+        TakaraAshiba_InitializeScene2();
     }
     if (gGameState.scene == (s32)&SceneId_TakaraAshiba3) {
-        FieldScene_RunScene3b4_02002334();
+        TakaraAshiba_InitializeScene3();
     }
     return 0;
 }

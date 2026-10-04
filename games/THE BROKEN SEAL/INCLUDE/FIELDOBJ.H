@@ -100,7 +100,9 @@ struct FieldActor {
     s32 target_x;
     s32 target_y;
     s32 target_z;
-    u8 unknown_44[8];
+    /* A falling actor's rebound factor, and the pull of its fall. */
+    s32 bounce;
+    s32 gravity;
     /* The height a rise starts from; rise_counter lifts the actor above it. */
     s32 rise_base_y;
     struct FieldSprite *sprite;
@@ -131,6 +133,8 @@ LAYOUT_OFFSET_GUARD(FieldActor_PriorityFlags, struct FieldActor, priority_flags,
 LAYOUT_OFFSET_GUARD(FieldActor_MotionFlags, struct FieldActor, motion_flags, 0x55);
 LAYOUT_OFFSET_GUARD(FieldActor_CollisionFlags, struct FieldActor, collision_flags, 0x59);
 LAYOUT_OFFSET_GUARD(FieldActor_RiseEnabled, struct FieldActor, rise_enabled, 0x63);
+LAYOUT_OFFSET_GUARD(FieldActor_Bounce, struct FieldActor, bounce, 0x44);
+LAYOUT_OFFSET_GUARD(FieldActor_Gravity, struct FieldActor, gravity, 0x48);
 LAYOUT_OFFSET_GUARD(FieldActor_RiseBaseY, struct FieldActor, rise_base_y, 0x4c);
 LAYOUT_OFFSET_GUARD(FieldActor_VelocityY, struct FieldActor, velocity_y, 0x28);
 LAYOUT_OFFSET_GUARD(FieldActor_Speed, struct FieldActor, speed, 0x30);

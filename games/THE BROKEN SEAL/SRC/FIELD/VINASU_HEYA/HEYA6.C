@@ -100,8 +100,8 @@ void VinasuHeya_SettlePushedBlocks(void)
         Engine_ActorSetSpriteFlags(Object_GetById(id), 0);
         block->unknown_22 = 0;
         block->motion_flags = 3;
-        *(s32 *)&block->unknown_44[0] = 0;
-        *(s32 *)&block->unknown_44[4] = 0x1999;
+        block->bounce = 0;
+        block->gravity = 0x1999;
         Call6((void (*)())Engine_MapCopyCellAttributes, 42, 41, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
         OverlayObject_WaitUntilIdle(block);
         Engine_AudioPlayCue(188);
@@ -323,7 +323,7 @@ void VinasuHeya_ResolveFloatingBlock(void)
             /* FAKEMATCH: the zero is taken before the priority call, in the search counter, so it is held in r5 across the call */
             j = 0;
             Engine_ActorSetSpritePriority(i + 10, 1);
-            *(s32 *)block->unknown_44 = j;
+            block->bounce = j;
             if (block->z.fixed >> 20 <= 12) {
                 first = OverlayObject_SpawnWithMode14(block->x.fixed, 0, 0xe00000, 253);
                 second = OverlayObject_SpawnWithMode14(block->x.fixed, 0, 0xf00000, 253);

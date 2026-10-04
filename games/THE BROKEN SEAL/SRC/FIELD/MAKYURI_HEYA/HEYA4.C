@@ -9,6 +9,7 @@
 #include "MAKYURI_HEYA.H"
 #include "FIELD_SCENE.H"
 #include "MAP_RENDER_WORK.H"
+#include "IO_REG.H"
 
 TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
 TEXT_MESSAGE_ENUM(MsgImiruHermesHealingWaterFountain);
@@ -986,7 +987,7 @@ void FieldScene_RunScene39cSequenceB(void)
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
         OverlayObject_PrepareSpawnedObject(Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
         Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
-        *(s32 *)&Object_GetById(ACTOR_PARTY_LEADER)->unknown_44[4] = 0x8000;
+        Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
         Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
         Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
@@ -1179,11 +1180,6 @@ void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
  * fourth room, the blend and the room lights, starts the palette cycle when
  * flag 0x875 is set, then per room and entrance restores the pushed
  * pillars, lifts and cells from the story flags. */
-
-/* FAKEMATCH: the do/while blocks keep the blend constants out of the shared
- * pool. */
-
-/* Mercury Lighthouse rooms: set the blend and lights, then per area and entrance restore the pushed pillars, lifts and cells from the story flags. */
 s32 Scene_Initialize(void)
 {
     struct FieldActor *actor;
@@ -1199,11 +1195,11 @@ s32 Scene_Initialize(void)
     /* FAKEMATCH: the do/while and the held value keep the blend constant in a register ahead of its address load. */
     do {
         s32 blend = 0x3f40;
-        *(volatile u16 *)0x04000050 = blend;
+        REG_BLDCNT = blend;
     } while (0);
     {
         s32 alpha = 0x1010;
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     }
     Makyuri_SpawnLightObjects(21, (s32)gSceneState);
     BattleFx_StartFadeOverlay(0);
@@ -1452,8 +1448,8 @@ s32 Scene_Initialize(void)
             Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
             Object_GetById(8)->y.fixed = 144 << 16;
             Object_GetById(8)->motion_flags = 0;
-            *(s32 *)&Object_GetById(8)->unknown_44[0] = 0;
-            *(s32 *)&Object_GetById(8)->unknown_44[4] = 0x4ccc;
+            Object_GetById(8)->bounce = 0;
+            Object_GetById(8)->gravity = 0x4ccc;
             gEventWork->start_transition = 0x100;
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
@@ -1493,7 +1489,7 @@ s32 Scene_Initialize(void)
             Engine_ActorSetPosition(3, 0, 0);
             DisplayBlend_EnableRunScript();
             /* FAKEMATCH: the do/while keeps this zero from being shared, as a pool halfword, with the later zero stores. */
-            do { s32 z = 0; *(volatile u16 *)0x04000050 = z; } while (0);
+            do { s32 z = 0; REG_BLDCNT = z; } while (0);
             Object_GetById(9)->scale_x = -0x10000;
             Engine_ActorSetSpritePriority(14, 1);
             Engine_ActorSetSpritePriority(15, 1);
@@ -1708,7 +1704,7 @@ void MakyuriHeya_RideLift(void)
     Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
     Battle_WaitMode0(30);
     Actor_WalkToAndWait(0, 704, 584);
-    *(s32 *)Actor_Get(0)->unknown_44 = 0;
+    Actor_Get(0)->bounce = 0;
     Object_SetModeById(0, 6);
     Battle_WaitMode0(6);
     Object_SetModeById(0, 7);
@@ -1720,7 +1716,7 @@ void MakyuriHeya_RideLift(void)
     Actor_SetDestination(0, 736, 584);
     ObjectMotion_CommitCurrentPositionAndActivate(0);
     Engine_ActorSetSpriteFlags(Actor_Get(0), 1);
-    *(s32 *)Actor_Get(0)->unknown_44 = 0x4000;
+    Actor_Get(0)->bounce = 0x4000;
     Object_SetModeById(0, 6);
     Battle_WaitMode0(6);
     Actor_FaceDirection(0, 0x8000, 30);

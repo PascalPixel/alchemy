@@ -530,7 +530,7 @@ void ArutinYama_RunLeapSequence(void)
     actor->motion.active = 0;
     actor->motion.timer = 0;
     actor->motion.delay = 0;
-    *(s32 *)&actor->actor.unknown_44[4] = 0x6666;
+    actor->actor.gravity = 0x6666;
     actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ActorMoveToAndWait, 10, 212, 200);

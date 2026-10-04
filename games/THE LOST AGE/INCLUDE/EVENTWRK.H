@@ -27,7 +27,9 @@ struct EventWork {
     u16 message_actor;
     s16 choice;
     s16 message_state;
-    u8 unknown_1cc[0x14];
+    /* The object the camera centres on. */
+    struct ObjectRuntime *view_center;
+    u8 unknown_1d0[0x10];
     s32 current_owner;
     s32 object_status;
     u8 unknown_1e8[0xaba];

@@ -3251,18 +3251,8 @@ ObjectTable_FindLastActiveId:
 	.type Scene_AssignViewFlags, %function
 	.thumb_func
 Scene_AssignViewFlags:
-	.incbin "baserom.gba", 0x000cacec, 0x00000098
-	.section .rom.000cad84, "ax"
-	.global ObjectTable_Get
-	.type ObjectTable_Get, %function
-	.thumb_func
-ObjectTable_Get:
-	.incbin "baserom.gba", 0x000cad84, 0x00000018
-	.global Func_080cad9c
-	.type Func_080cad9c, %function
-	.thumb_func
-Func_080cad9c:
-	.incbin "baserom.gba", 0x000cad9c, 0x000000c0
+	.incbin "baserom.gba", 0x000cacec, 0x00000078
+	.section .rom.000cae5c, "ax"
 	.global Func_080cae5c
 	.type Func_080cae5c, %function
 	.thumb_func

@@ -15,8 +15,11 @@ struct FieldSprite {
     u8 unknown_11;
     /* The sprite's angle, in 0x10000ths of a turn. */
     u16 rotation;
-    u8 unknown_14[6];
-    u8 unknown_1a;
+    u8 unknown_14[4];
+    /* The animation frame and the one after it. */
+    u8 frame;
+    u8 unknown_19;
+    u8 next_frame;
     u8 unknown_1b[10];
     u8 unknown_25 : 2;
     u8 part_priority : 2;

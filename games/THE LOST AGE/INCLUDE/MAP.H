@@ -24,7 +24,9 @@ struct MapAnimation {
    Seal's MapState to the blend script; the last BLDCNT written sits four
    bytes later. */
 struct MapWork {
-    u8 unknown_000[0x14];
+    /* The view origin: x, y and z. */
+    s32 *origin;
+    u8 unknown_004[0x10];
     u16 flags;
     /* Nonzero selects 8 bpp characters for the animation copies. */
     u8 wide_tiles;

@@ -770,6 +770,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000ca4a8)
     "*/recon/tla/ja/rom.o"(.rom.000ca6e8)
     "*/recon/tla/ja/rom.o"(.rom.000cacc0)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/TABLE.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000cae5c)
     "*/recon/tla/ja/rom.o"(.rom.000cad84)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COUNTERS.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cafc4)

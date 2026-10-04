@@ -1014,7 +1014,7 @@ Func_080cb91c:
 	beq .L_080cc192
 	str r1, [sp, #4]
 	bl EventRuntime_PrepareCurrentObject
-	bl Func_080cad9c
+	bl ObjectTable_Snapshot
 	movs r3, #128
 	ldr r0, [sp, #8]
 	lsls r3, r3, #2

@@ -3427,13 +3427,9 @@ Event_ReadSpawnCoordinates:
 	.type ObjectTable_FindLastActiveId, %function
 	.thumb_func
 ObjectTable_FindLastActiveId:
-	.incbin "baserom.gba", 0x000cacc0, 0x000000c4
-	.section .rom.000cad84, "ax"
-	.global ObjectTable_Get
-	.type ObjectTable_Get, %function
-	.thumb_func
-ObjectTable_Get:
-	.incbin "baserom.gba", 0x000cad84, 0x000001ec
+	.incbin "baserom.gba", 0x000cacc0, 0x000000a4
+	.section .rom.000cae5c, "ax"
+	.incbin "baserom.gba", 0x000cae5c, 0x00000114
 	.section .rom.000cafc4, "ax"
 	.incbin "baserom.gba", 0x000cafc4, 0x00000704
 	.section .rom.000cb82c, "ax"
@@ -3948,10 +3944,10 @@ Func_080d4568:
 Func_080d45b8:
 	.incbin "baserom.gba", 0x000d45ac, 0x000000ec
 	.section .rom.000d4698, "ax"
-	.global Func_080cad9c
-	.type Func_080cad9c, %function
+	.global Func_080d4698
+	.type Func_080d4698, %function
 	.thumb_func
-Func_080cad9c:
+Func_080d4698:
 	.incbin "baserom.gba", 0x000d4698, 0x00000070
 	.section .rom.000d4708, "ax"
 	.global Func_080cae5c

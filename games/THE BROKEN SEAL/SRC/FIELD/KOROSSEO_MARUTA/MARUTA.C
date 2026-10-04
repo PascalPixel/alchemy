@@ -1518,88 +1518,59 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 /* Colosso log stage: unless the stage is already cleared, show the
  * introduction, wait up to 240 frames for the log to settle and hand over to
  * the stage. */
-void KorosseoMaruta_RunStageIntro(s32 a0)
+void KorosseoMaruta_RunStageIntro(s32 scene)
 {
-    s32 p8;
-    s32 rec8;
+    struct EventWork *work;
+    s32 state;
 
     if (gGameState.entrance == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
-        rec8 = ColossoLogRollingStage_RunStateInteraction(a0, 3);
-        if (rec8 == 0) {
-            p8 = *(s32 *)&gEventWork;
+        state = ColossoLogRollingStage_RunStateInteraction(scene, 3);
+        if (state == 0) {
+            work = gEventWork;
             Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledWall);
             ColossoLogRollingStage_ResetAndRunSceneTask();
-            Engine_CameraSetSpeed(0x30000, 0x6000);
-            {
-                s32 cx = 0x2680000 >> 18;
-                s32 cy = 1;
-                s32 cz = 0xb80000 >> 16;
-                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
-                register s32 cm asm("r3") = 1;
-                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz), "+r"(cm));
-                cz <<= 16;
-                cy = -cy;
-                cx <<= 18;
-                Engine_CameraMoveTo(cx, cy, cz, cm);
-            }
+            Engine_CameraSetSpeed(3 << 16, 0x6000);
+            Engine_CameraMoveTo(154 << 18, -1, 184 << 16, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(30);
-            {
-                /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
-                register s32 mode asm("r1") = 0;
-                /* FAKEMATCH: the direct void form reverses the two argument moves. */
-                asm("" : : "r"(mode) : "r0");
-                Engine_EventShowMessage(a0, mode);
-            }
+            Event_ShowMessage(scene, 0);
             ColossoLogRollingStage_StartSceneTask();
             Engine_EventWait(60);
-            Engine_EventShowMessage(a0, 0);
-            {
-                s32 fx = 0x1f8;
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fz asm("r2") = 200;
-                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
-                asm("" : : "r"(fx), "r"(fz) : "r0");
-                Korosseo_FadeInCompetitor(0, fx, fz);
-            }
+            Engine_EventShowMessage(scene, 0);
+            /* FAKEMATCH: native sets r0 after the other arguments; direct and Call3 calls set it first. */
+            Value3(Korosseo_FadeInCompetitor, 0, 504, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             ColossoLogRollingStage_WaitForSceneTask();
+            /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
-            ColossoLogRollingStage_PositionScaledObject(0, 0x2a8, 200);
-            if (*(s16 *)(p8 + 0x182) != 5) {
+            ColossoLogRollingStage_PositionScaledObject(0, 680, 200);
+            if (work->raised_trigger != 5) {
                 do {
                     Engine_TaskWait(1);
-                    if (++rec8 > 239) {
+                    if (++state > 239) {
                         break;
                     }
-                } while (*(s16 *)(p8 + 0x182) != 5);
+                } while (work->raised_trigger != 5);
             }
             ColossoLogRollingStage_ClampAndOffsetActiveActor();
+            /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
             Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
+            /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
             Call3(Engine_ActorShowEmote, 0, 0x103, 60);
-            Engine_EventShowMessage(a0, 0);
+            Engine_EventShowMessage(scene, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(0, 0);
-            ColossoLogRollingStage_InitializeStateInteraction(a0, 3);
-            {
-                /* FAKEMATCH: the slot pointer and word temporary order the address before the zero */
-                u8 *slot = (u8 *)(p8 + 0x182);
-                s32 shown = 0;
-
-                *(u16 *)slot = shown;
-            }
-        } else {
-            if (rec8 == 1) {
-                Engine_EventSetMessage((s32)MsgKorosseoOperatorWallsCheer);
-                Engine_EventShowMessage(a0, 0);
-            }
+            ColossoLogRollingStage_InitializeStateInteraction(scene, 3);
+            work->raised_trigger = 0;
+        } else if (state == 1) {
+            Engine_EventSetMessage((s32)MsgKorosseoOperatorWallsCheer);
+            Engine_EventShowMessage(scene, 0);
         }
-        ((s32 (*)())FieldScene_RunMiddleSequence)(rec8, a0, 3);
+        FieldScene_RunMiddleSequence(state, scene, 3);
         Engine_EventEnd();
     }
 }

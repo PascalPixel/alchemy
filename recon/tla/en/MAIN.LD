@@ -991,8 +991,6 @@
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT_2.o"(.text)
         "*/recon/tla/raw/080af402.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT.o"(.text)
-        "*/recon/tla/raw/080af464.o"(.text)
-        "*/recon/tla/raw/080af4b8.o"(.text)
         "*/recon/tla/raw/080af4e4.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/CHARACTER/ADD_ACTION.o"(.text)
         "*/recon/tla/raw/080af792.o"(.text)

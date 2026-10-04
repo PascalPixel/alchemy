@@ -20,7 +20,7 @@ OwnerAction_AddFar:
 	.global Equipment_HasValueFar
 	.thumb_func
 Equipment_HasValueFar:
-	overlay_veneer Func_080af4b8
+	overlay_veneer Equipment_HasValue
 	.global Func_080ad090
 	.thumb_func
 Func_080ad090:

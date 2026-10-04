@@ -2436,12 +2436,13 @@ Item_GetTargetMode:
 	.thumb_func
 Item_AdjustCounter:
 	.incbin "baserom.gba", 0x000aa374, 0x00000028
-	.section .rom.000aa460, "ax"
-	.global Func_080af464
-	.type Func_080af464, %function
+	.section .rom.000aa4e0, "ax"
+	.balign 4
+	.global Func_080af4e4
+	.type Func_080af4e4, %function
 	.thumb_func
-Func_080af464:
-	.incbin "baserom.gba", 0x000aa460, 0x00000290
+Func_080af4e4:
+	.incbin "baserom.gba", 0x000aa4e0, 0x00000210
 	.section .rom.000aa78e, "ax"
 	.incbin "baserom.gba", 0x000aa78e, 0x0000000a
 	.section .rom.000aa7a8, "ax"

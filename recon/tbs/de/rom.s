@@ -1009,16 +1009,6 @@ BattleEvent_Playback:
 	.thumb_func
 BattleUnit_ProcessTurnEnd:
 	.incbin "baserom.gba", 0x000c21bc, 0x00000414
-	.section .rom.000c3dae, "ax"
-	.incbin "baserom.gba", 0x000c3dae, 0x00000002
-	.section .rom.000c3db0, "ax"
-	.balign 4
-	.global BattleFx_PlayUnitElementEffect
-	.type BattleFx_PlayUnitElementEffect, %function
-	.thumb_func
-BattleFx_PlayUnitElementEffect:
-	.incbin "baserom.gba", 0x000c3db0, 0x0000027c
-	.size BattleFx_PlayUnitElementEffect, .-BattleFx_PlayUnitElementEffect
 	.section .rom.000c4614, "ax"
 	.incbin "baserom.gba", 0x000c4614, 0x0000036c
 	.section .rom.000c5022, "ax"

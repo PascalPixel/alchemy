@@ -654,7 +654,6 @@
         "*/games/COMMON/SRC/BATTLE/PRESENTATION/PRESENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE6.o"(.text)
-        "*/recon/tbs/raw/080c1798.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_ZERO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/FORMATION_SELECT_RANDOM_AVAILABLE_MEMBER.o"(.text)

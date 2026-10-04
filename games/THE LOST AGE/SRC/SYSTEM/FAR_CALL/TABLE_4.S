@@ -12,7 +12,7 @@ Map_GetTerrainHeightFar:
 	.global Func_080201c8
 	.thumb_func
 Func_080201c8:
-	overlay_veneer Func_0802d6b0
+	overlay_veneer GetMapCellCollision
 	.global Func_080201d0
 	.thumb_func
 Func_080201d0:

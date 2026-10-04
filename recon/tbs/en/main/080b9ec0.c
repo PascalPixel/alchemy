@@ -24,6 +24,14 @@
  * The compiler loads the whole bank and adds 176 for slot 44, rather than
  * retaining the native slot-9 base. Stopped after this one whole-owner form;
  * no interior anchor, device, matching-C credit or further search.
+ * 2026-10-04 sun w3 finisher 6: the native relocation is gBattleWork (slot
+ * 9) + 140, held in r5 across BattlePres_BuildTargetList, which matched C
+ * reaches as "(void **)&gBattleWork" (SETUP_BLENDED_DISPLAY.C,
+ * SETUP_CANVAS_TILE_MAP.C). Writing the transition slot as
+ * ((void **)&gBattleWork)[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE]
+ * and battle as gBattleWork scores 387 against 385 here: the frame (work
+ * at sp+16 with an extra spilled list address, native sp+12 with the list
+ * address in r10, &work in r7, plan in r9) still dominates.
  */
 #include "TYPES.H"
 #include "IO_REG.H"

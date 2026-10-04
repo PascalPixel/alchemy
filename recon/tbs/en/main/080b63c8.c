@@ -2,6 +2,14 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
+ * 2026-10-04 sun w3 finisher 6 (alchemy diff 86 for this body): the
+ *    listing stores timer field_18 before field_1c and then DISPCNT, but
+ *    that order here scores 111 (one fewer timer reload, allocation moves).
+ *    A used zero ("delay = 0" before the IWRAM clear, used by the timer and
+ *    fill stores) does not reach r7: cse still makes a fresh zero and buf
+ *    moves to r8 (152). The defeat line's leader byte read written as
+ *    gCell[504], *(gCell + off), gCell[off] or through dst or a block-local
+ *    pointer moves the allocation of the whole function (262-267).
  * 2026-10-04, second wave: the owner-state copy was written as
  *    src++ before the read (it copied from gActorSpriteSlots + 1); the
  *    listing reads [r1] then advances, so it is now a plain

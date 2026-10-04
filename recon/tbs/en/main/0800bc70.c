@@ -14,6 +14,19 @@
  * the return), but the other path's mov r0, r8 keeps cmp r0, r2; beq (32
  * with a different pool shift). An empty static inline call as the arm
  * (with and without an argument) and "return found" vanish early (32).
+ * 2026-10-04 sun w3 finisher 6, alchemy diff 32 (all of it the two missing
+ * instructions plus pool shifts). All of these vanish early (32): arms
+ * "found = (struct AnimationObject *)found->part", "entry = found",
+ * "found = found", "found->part[0] = found->part[0]" (struct self-copy),
+ * a ternary "== -1 ? (struct ResourceObject *)found->part : found",
+ * "return found->part" / "return found" duplicates, switch with case -1
+ * (empty, or returning found, with and without default), "i = Register;
+ * if (i == -1) return found", "!= -1" return, goto fail with a duplicate
+ * return, and a second result pointer obj = found set before the NULL test
+ * and reassigned in the arm. Real arms that store (flags = 1, flags |= 1,
+ * slot = resource) keep their store (43-97). A scan of the whole built
+ * tbs-en.elf finds no matched C function with a dead "movs #1; negs" before
+ * its epilogue, so no house idiom to copy.
  */
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"

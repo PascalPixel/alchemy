@@ -1,3 +1,20 @@
+/* 2026-10-04 sun w3 finisher 6 (alchemy diff 117 for this body):
+ * - The listing's send stage stores the cursor (str [r7]) before the size
+ *   and advances the cursor before the sequence; writing those two in the
+ *   listing's order here scores 158 (allocation moves: cursor to lr, flag
+ *   to r7). Reading own->peer_flags directly in the final test instead of
+ *   through the flag local gives the flag lr, as listed, but moves peer
+ *   from ip to r7 (201).
+ * - A fresh plain rewrite (no cursor pointers, no halfword record) scores
+ *   198: cse reuses the loaded own->flags (r7, known 1) for the stores of
+ *   1, so no pooled-one pseudo appears; a "u8 one = 1" local does the same.
+ * - A local register pin of the send cursor to r7 compiles wrong code: the
+ *   peer pseudo is also given r7 and peer->flags is read through the
+ *   cursor. Do not use asm("rN") pins on this function.
+ * - devsearch (seeds 11, 23) from the listing-order body reached 95 only by
+ *   pinning src to r7 (the listing has src in r0) and reordering volatile
+ *   statements back; nothing adoptable.
+ */
 /* 2026-10-04, third pass: 117 of 257 instructions differ (was 158). Plain
  * reshapes only: id declared after own, peer formed after own, and in the
  * send stage the resend's cursor store follows the size update and the

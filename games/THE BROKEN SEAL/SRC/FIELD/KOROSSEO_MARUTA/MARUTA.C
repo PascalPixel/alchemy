@@ -751,7 +751,7 @@ void KorosseoMaruta_RunStageStart(void)
     /* FAKEMATCH: the do/while keeps the stage flag store ahead of the
      * scene load that follows it. */
     do {
-        gGameState.unknown_200[0x22b - 0x200] = 3;
+        gGameState.battle_start = 3;
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoMaruta, 4);
     Event_SetPair1d4((s32)&SceneId_KorosseoMaruta, 5);

@@ -1147,7 +1147,6 @@ void MogoruMori_RunClosingChoreography(void)
     s32 x;
     s32 z;
     s32 zero;
-    s32 game;
 
     actor = Object_GetById(18);
     Engine_EventBegin();
@@ -1206,8 +1205,7 @@ void MogoruMori_RunClosingChoreography(void)
     /* FAKEMATCH: an empty do-while here moves px into r1 after the
      * other arguments of the call above. */
     do { } while (0);
-    game = (s32)&gGameState;
-    *(u8 *)(game + 0x22b) = 3;
+    gGameState.battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
     BattleFx_SetWeightedResult(53, 1);
     Engine_EventEnd();

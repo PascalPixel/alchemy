@@ -1066,7 +1066,7 @@ void InspectOrdinaryObject(void)
     Engine_ActorShowEmote(15, 256, 60);
     TurnActorToSceneDirection(15);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.unknown_200[0x22b - 0x200] = 3;
+    gGameState.battle_start = 3;
     Engine_BattleFxSetWeightedResult(98, 2);
     Engine_ActorSetPosition(15, 0, 0);
     Engine_EventEnd();
@@ -1081,7 +1081,7 @@ void InspectEmptyChest(void)
     Engine_ActorShowEmote(11, 256, 60);
     TurnActorToSceneDirection(11);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.unknown_200[0x22b - 0x200] = 3;
+    gGameState.battle_start = 3;
     Engine_BattleFxSetWeightedResult(98, 2);
     Engine_ActorSetPosition(11, 0, 0);
     Engine_EventEnd();
@@ -1144,7 +1144,7 @@ void RunpaJo_RunGuardChallenge(void)
     Engine_EventShowMessage(12, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo2, 31);
-    gGameState.unknown_200[0x22b - 0x200] = 3;
+    gGameState.battle_start = 3;
     Engine_BattleFxSetWeightedResult(98, 3);
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(13, 0, 0);
@@ -1176,7 +1176,7 @@ void InspectEmptySceneObject(void)
     Engine_ActorShowEmote(16, 256, 60);
     TurnActorToSceneDirection(16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.unknown_200[0x22b - 0x200] = 3;
+    gGameState.battle_start = 3;
     Engine_BattleFxSetWeightedResult(98, 2);
     Engine_ActorSetPosition(16, 0, 0);
     Engine_EventEnd();
@@ -1491,7 +1491,7 @@ void PlayStoryScene(void)
         Battle_WaitMode0(1);
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
-            gGameState.unknown_200[0x22b - 0x200] = 3;
+            gGameState.battle_start = 3;
         } while (0);
         Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         Engine_BattleFxSetWeightedResult(98, 4);
@@ -1691,7 +1691,7 @@ void PlayStoryScene(void)
         Battle_WaitMode0(1);
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
-            gGameState.unknown_200[0x22b - 0x200] = 3;
+            gGameState.battle_start = 3;
         } while (0);
         Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         Engine_BattleFxSetWeightedResult(98, 4);

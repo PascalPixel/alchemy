@@ -505,12 +505,10 @@ void FieldScene_RunScene3b1SequenceC(void)
 
 void FuneHeya_RunFlagBranchSequence(void)
 {
-    s32 base3_2000240;
 
     Engine_EventBegin();
     Battle_ResetEffectCounterFar();
-    base3_2000240 = (s32)((u8 *)&gGameState);
-    *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    gGameState.battle_start = 3;
     /* FAKEMATCH: the do/while orders the flag store before this call. */
     do {
         Engine_GameFlagClear(0x8f0);

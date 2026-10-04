@@ -632,7 +632,6 @@ void KorosseoKabe_RunStageStart(void)
     s32 rec8;
     s32 v5;
     s32 base;
-    s32 base3_2000240;
 
     base = 2;
     SceneState_EmptyHook();
@@ -664,11 +663,10 @@ void KorosseoKabe_RunStageStart(void)
     /* FAKEMATCH: base is set at the top of the function, so 2 - rec8 + 1
      * is not folded into 3 - rec8. */
     BattleFx_SetWeightedResult(72, base - rec8 + 1);
-    base3_2000240 = (s32)&gGameState;
     /* FAKEMATCH: the do/while keeps the stage flag store ahead of the
      * pool load that follows it. */
     do {
-        *(u8 *)((base3_2000240 + 0x22b)) = 3;
+        gGameState.battle_start = 3;
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKabe, 4);
     Event_SetPair1d4((s32)&SceneId_KorosseoKabe, 5);

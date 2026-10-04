@@ -764,7 +764,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorWaitForMove(8);
-    gGameState.unknown_200[0x22b - 0x200] = 3;
+    gGameState.battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama10, 99);
     BattleFx_SetWeightedResult(53, 3);
 }

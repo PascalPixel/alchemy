@@ -76,7 +76,7 @@ restart:
                      * 5 is loaded before the byte's address as in the
                      * reference */
                     do {
-                        gGameState.unknown_200[0x22b - 0x200] = 5;
+                        gGameState.battle_start = 5;
                     } while (0);
                 }
                 if (preset != loaded) {

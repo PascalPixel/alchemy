@@ -911,7 +911,7 @@ void FieldScene_RunGroupChoreography(void)
     Object_SetActionCallbackAndRefreshById(25, (s32)HaidiaIe_Actor25Actions);
     /* FAKEMATCH: the do/while loads the linked scene after the store. */
     do {
-        gGameState.unknown_200[0x22b - 0x200] = 2;
+        gGameState.battle_start = 2;
     } while (0);
     {
         const void *message = &SceneId_HaidiaIe;

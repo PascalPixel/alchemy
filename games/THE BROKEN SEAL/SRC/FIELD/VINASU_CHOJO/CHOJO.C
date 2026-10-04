@@ -1322,8 +1322,8 @@ void FieldScene_RunStep6(void)
 
 /* The scene after the pair fall. */
 extern u8 MsgVinasuBeatEm[];
-extern const u8 Data_0200e074[];
-extern const u8 Data_0200e088[];
+extern const u8 VinasuChojo_ScaleStepAction[];
+extern const u8 VinasuChojo_BeamOpenAction[];
 extern const u8 Data_020060ac[];
 extern const u8 Data_0200622c[];
 void SceneEffect_SpawnParticlesAboveActor(void);
@@ -1378,14 +1378,14 @@ void Scene_RunPairedActorEffectSequence(void)
     actor->facing = FACING_NORTH + FACING_STEP;
     Actor_SetPosition(ACTOR_FIRST_OF_PAIR, PIXELS(294), PIXELS(212));
     Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 9);
-    Actor_EnableActionCallback(ACTOR_FIRST_OF_PAIR, Data_0200e074);
+    Actor_EnableActionCallback(ACTOR_FIRST_OF_PAIR, VinasuChojo_ScaleStepAction);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_OF_PAIR), 0);
     actor = Actor_Get(ACTOR_SECOND_OF_PAIR);
     actor->unknown_64 = 10;
     actor->facing = FACING_EAST;
     Actor_SetPosition(ACTOR_SECOND_OF_PAIR, PIXELS(286), PIXELS(192));
     Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 7);
-    Actor_EnableActionCallback(ACTOR_SECOND_OF_PAIR, Data_0200e074);
+    Actor_EnableActionCallback(ACTOR_SECOND_OF_PAIR, VinasuChojo_ScaleStepAction);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_OF_PAIR), 0);
     Event_GetViewCenter()->motion_flags = 0;
     Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
@@ -1663,8 +1663,8 @@ void Scene_RunPairedActorEffectSequence(void)
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
     Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
     Actor_FaceDirection(6, FACING_EAST, 0);
-    Actor_EnableActionCallback(24, Data_0200e088);
-    Actor_EnableActionCallback(25, Data_0200e088);
+    Actor_EnableActionCallback(24, VinasuChojo_BeamOpenAction);
+    Actor_EnableActionCallback(25, VinasuChojo_BeamOpenAction);
     Audio_PlayCue(145);
     Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
     ColorBuffer_ApplyTarget(0x4063ff, 0);

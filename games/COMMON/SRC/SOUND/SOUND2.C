@@ -1,5 +1,6 @@
 #include "AUDIO_ENGINE.H"
 #include "TYPES.H"
+#include "../../INCLUDE/SYSTEM/IO_REG.H"
 
 s32 __divsi3(s32 numerator, s32 denominator);
 void Sound_LoadCommandTable(SoundCommand *table);
@@ -31,19 +32,19 @@ void AudioEngine_Initialize(struct SoundWork *work)
     u32 zero;
 
     work->lock = 0;
-    if (*(u32 *)0x040000C4 & 0x02000000)
-        *(u32 *)0x040000C4 = 0x84400004;
-    if (*(u32 *)0x040000D0 & 0x02000000)
-        *(u32 *)0x040000D0 = 0x84400004;
-    *(u16 *)0x040000C6 = 0x400;
-    *(u16 *)0x040000D2 = 0x400;
-    *(u16 *)0x04000084 = 0x8F;
-    *(u16 *)0x04000082 = 0xA90E;
-    *(volatile u8 *)0x04000089 = (*(volatile u8 *)0x04000089 & 0x3F) | 0x40;
-    *(u32 *)0x040000BC = (u32)work->buffers[0];
-    *(u32 *)0x040000C0 = 0x040000A0;
-    *(u32 *)0x040000C8 = (u32)work->buffers[1];
-    *(u32 *)0x040000CC = 0x040000A4;
+    if (REG_DMA1CNT & 0x02000000)
+        REG_DMA1CNT = 0x84400004;
+    if (REG_DMA2CNT & 0x02000000)
+        REG_DMA2CNT = 0x84400004;
+    REG_DMA1CNT_H = 0x400;
+    REG_DMA2CNT_H = 0x400;
+    REG_SOUNDCNT_X = 0x8F;
+    REG_SOUNDCNT_H = 0xA90E;
+    REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & 0x3F) | 0x40;
+    REG_DMA1SAD = (u32)work->buffers[0];
+    REG_DMA1DAD = (u32)&REG_FIFO_A;
+    REG_DMA2SAD = (u32)work->buffers[1];
+    REG_DMA2DAD = (u32)&REG_FIFO_B;
     SOUND_WORK = work;
     zero = 0;
     Bios_CpuSet(&zero, work, 0x050003EC);
@@ -64,7 +65,7 @@ void AudioEngine_SetPcmRate(u32 mode)
 {
     struct SoundWork *work = SOUND_WORK;
     u32 frame;
-    u16 *timer;
+    volatile u16 *timer;
 
     mode = (mode & 0xF0000) >> 16;
     work->rate = mode;
@@ -73,15 +74,15 @@ void AudioEngine_SetPcmRate(u32 mode)
     work->transfer_period = __divsi3(0x630, frame);
     work->output_rate = __divsi3(0x91D1B * frame + 5000, 10000);
     work->rate_step = (__divsi3(0x1000000, work->output_rate) + 1) >> 1;
-    *(u16 *)0x04000102 = 0;
-    timer = (u16 *)0x04000100;
+    REG_TM0CNT_H = 0;
+    timer = &REG_TM0CNT_L;
     *timer = -__divsi3(0x44940, frame);
     AudioEngine_ResumeDirectSound();
     while (*(volatile u8 *)0x04000006 == 159)
         ;
     while (*(volatile u8 *)0x04000006 != 159)
         ;
-    *(u16 *)0x04000102 = 0x80;
+    REG_TM0CNT_H = 0x80;
 }
 
 void AudioEngine_SetMode(u32 mode)
@@ -114,7 +115,7 @@ void AudioEngine_SetMode(u32 mode)
     value = mode & 0xB00000;
     if (value != 0) {
         value = (value & 0x300000) >> 14;
-        *(volatile u8 *)0x04000089 = (*(volatile u8 *)0x04000089 & 0x3F) | value;
+        REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & 0x3F) | value;
     }
     value = mode & 0xF0000;
     if (value != 0) {
@@ -162,12 +163,12 @@ void AudioEngine_SuspendDirectSound(void)
     if (work->lock - SOUND_LOCK > 1)
         return;
     work->lock += 10;
-    if (*(u32 *)0x040000C4 & 0x02000000)
-        *(u32 *)0x040000C4 = 0x84400004;
-    if (*(u32 *)0x040000D0 & 0x02000000)
-        *(u32 *)0x040000D0 = 0x84400004;
-    *(u16 *)0x040000C6 = 0x400;
-    *(u16 *)0x040000D2 = 0x400;
+    if (REG_DMA1CNT & 0x02000000)
+        REG_DMA1CNT = 0x84400004;
+    if (REG_DMA2CNT & 0x02000000)
+        REG_DMA2CNT = 0x84400004;
+    REG_DMA1CNT_H = 0x400;
+    REG_DMA2CNT_H = 0x400;
     zero = 0;
     Bios_CpuSet(&zero, work->buffers, 0x05000318);
 }
@@ -179,8 +180,8 @@ void AudioEngine_ResumeDirectSound(void)
 
     if (lock == SOUND_LOCK)
         return;
-    *(u16 *)0x040000C6 = 0xB600;
-    *(u16 *)0x040000D2 = 0xB600;
+    REG_DMA1CNT_H = 0xB600;
+    REG_DMA2CNT_H = 0xB600;
     work->transfer_countdown = 0;
     work->lock = lock - 10;
 }
@@ -406,19 +407,19 @@ void CgbChannel_Mute(u8 channel)
 {
     switch (channel) {
     case 1:
-        *(u8 *)0x04000063 = 8;
-        *(u8 *)0x04000065 = 0x80;
+        REG_NR12 = 8;
+        REG_NR14 = 0x80;
         break;
     case 2:
-        *(u8 *)0x04000069 = 8;
-        *(u8 *)0x0400006d = 0x80;
+        REG_NR22 = 8;
+        REG_NR24 = 0x80;
         break;
     case 3:
-        *(u8 *)0x04000070 = 0;
+        REG_NR30 = 0;
         break;
     default:
-        *(u8 *)0x04000079 = 8;
-        *(u8 *)0x0400007d = 0x80;
+        REG_NR42 = 8;
+        REG_NR44 = 0x80;
         break;
     }
 }

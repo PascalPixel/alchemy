@@ -1,5 +1,14 @@
 #include "TYPES.H"
 
+void Func_0811b75c(s16 *list, s32 refresh, s32 spawn);
+
+/* ⚓️ spawns the list's objects through a three-argument routine that ☀️
+   does not have; this keeps ☀️'s two-argument entry. */
+void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
+{
+    Func_0811b75c(list, refresh, 1);
+}
+
 struct MotionRecordState {
     u8 unknown_00[0x10];
     s32 field10;

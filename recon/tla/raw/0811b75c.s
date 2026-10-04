@@ -20,7 +20,7 @@ Func_0811b75c:
 .L_0811b778:
 	ldr r0, [sp, #16]
 	mov r1, r11
-	bl Func_0811b4ac
+	bl BattlePlacement_ContainsId
 	cmp r0, #0
 	bne .L_0811b794
 	mov r0, r11

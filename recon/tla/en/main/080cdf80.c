@@ -2,6 +2,10 @@
  * Draft: Item_MatchesFilter does not yet match; the reference sets the result
  * 1 before subtracting 1 from the type (1 swap). A u8 compare and a switch
  * both reshape it.
+ * 2026-10-04: a type local, a result local set to 1 before the test, a
+ * barrier after the subtraction, "+r" on the type or the result, and 300
+ * device-search steps all keep or worsen the swap. It now directly follows
+ * PENDING.C, which it would join.
  * Links as its recon/tla/raw listing.
  */
 #include "TYPES.H"

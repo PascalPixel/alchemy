@@ -26,6 +26,8 @@
 struct BattleSession;
 struct BattlePresentationTransition;
 struct MapWork;
+struct ObjectSystemWork;
+struct DisplayTransitionState;
 
 struct HeapSlots {
     void *unknown_00[2];
@@ -35,7 +37,10 @@ struct HeapSlots {
     /* The field's 64 script objects, which The Broken Seal keeps as
        gObjectSlots. */
     void *script_objects;
-    void *unknown_18[2];
+    /* The object system's work, which The Broken Seal keeps as
+       gMenuCtrlWork. */
+    struct ObjectSystemWork *object_system;
+    void *unknown_1c[1];
     /* The field map's work block. */
     struct MapWork *map_work;
     /* The battle session, which The Broken Seal keeps in its own cell. */
@@ -52,7 +57,11 @@ struct HeapSlots {
     void *unknown_64[2];
     /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
-    void *unknown_70[16];
+    void *unknown_70[3];
+    /* The display transition's state, which The Broken Seal keeps in its
+       slot 31 too. */
+    struct DisplayTransitionState *display_transition;
+    void *unknown_80[12];
     struct BattlePresentationTransition *transition_work;
     void *unknown_b4[6];
     /* The serial link runtime's work. */

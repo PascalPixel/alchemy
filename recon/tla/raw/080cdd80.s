@@ -103,7 +103,7 @@ Func_080cdd80:
 	bl Object_CommitPosition
 	movs r0, #1
 	bl WaitFrames
-	bl Func_080d2c98
+	bl Event_NoOp
 	mov r0, r10
 	ldr r1, [r7]
 	ldr r2, [r7, #4]

@@ -25,7 +25,9 @@ struct PartyState {
     u16 pair_1f2[2];
     /* The halfword Event_GetSpecialValue reads; ☀️ keeps it at 0x1d6. */
     s16 special;
-    u8 unknown_1f8[0x1a];
+    u8 unknown_1f8[0x18];
+    /* The music cue the party state keeps. */
+    s16 music;
     u8 render_mode;
     u8 unknown_213;
     s32 current_owner;

@@ -48975,7 +48975,7 @@ msgctxt "message"
 msgid "12241"
 msgstr "Psynergy is a mental{line_break}power. People who wield{line_break}it are called Adepts.{page_break}Psynergy can change{line_break}with class changes or{line_break}when you go up a level.{page_break}Try changing your{line_break}class to earn new{line_break}Psynergy."
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveTutorialA"
 msgid "12242"
 msgstr "To give your Djinni to{line_break}someone else, move it{line_break}like this.{end_wait}"
 
@@ -49187,7 +49187,7 @@ msgctxt "message"
 msgid "12294"
 msgstr "You and your friends should{line_break}make sure you get the most{line_break}out of us Djinn.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveTutorialB"
 msgid "12295"
 msgstr "To give your Djinni to{line_break}someone else, move it{line_break}like this.{end_wait}"
 

@@ -50807,7 +50807,7 @@ msgctxt "message"
 msgid "12699"
 msgstr "La Psinergía es un poder{line_break}mental. Aquellos que la{line_break}usan reciben el nombre{page_break}de Adeptos. La Psinergía{line_break}puede cambiar con las{line_break}clases o cuando subes de{page_break}nivel. Intenta cambiar{line_break}la clase para conseguir{line_break}nuevas Psinergías."
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveTutorialA"
 msgid "12700"
 msgstr "Para dar tu Djinn{line_break}a otro, hazlo de la{line_break}siguiente forma.{end_wait}"
 
@@ -51019,7 +51019,7 @@ msgctxt "message"
 msgid "12752"
 msgstr "Tus amigos y tú debéis{line_break}aseguraros de que nos{line_break}sacáis todo el provecho.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveTutorialB"
 msgid "12753"
 msgstr "Para dar tu Djinn{line_break}a otro, hazlo de la{line_break}siguiente forma.{end_wait}"
 

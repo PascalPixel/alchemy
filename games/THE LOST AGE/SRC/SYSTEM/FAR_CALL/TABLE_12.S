@@ -8,7 +8,23 @@
 	.global Func_08020380
 	.thumb_func
 Func_08020380:
+.ifdef TLA_EDITION_DE
 	overlay_veneer Func_08022c78
+.else
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08022c78
+.else
+.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08022c78
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08022c78
+.else
+	overlay_veneer VramBlock_Reset93
+.endif
+.endif
+.endif
+.endif
 	.global Func_08020388
 	.thumb_func
 Func_08020388:

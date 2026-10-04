@@ -50951,7 +50951,7 @@ msgctxt "message"
 msgid "12735"
 msgstr "Psynergy ist eine{line_break}Macht des Geistes. {line_break}Menschen, die sie an-{page_break}wenden können, werden{line_break}Adepten genannt. Die{line_break}Psynergy kann sich{page_break}durch die Änderung der{line_break}Klasse oder bei einem{line_break}Levelanstieg verändern. {page_break}Versuche, deine Klasse{line_break}zu ändern, um neue{line_break}Psynergien zu gewinnen."
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveTutorialA"
 msgid "12736"
 msgstr "Um deinen Dschinn{line_break}jemand anderem zu{line_break}geben, bewege ihn so:{end_wait}"
 
@@ -51163,7 +51163,7 @@ msgctxt "message"
 msgid "12788"
 msgstr "Gut, ich begleite dich jetzt.{line_break}Nochmals vielen Dank!{page_break}Bitte setze uns Dschinns{line_break}mit Bedacht ein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveTutorialB"
 msgid "12789"
 msgstr "Um deinen Dschinn{line_break}jemand anderem zu{line_break}geben, bewege ihn so:{end_wait}"
 

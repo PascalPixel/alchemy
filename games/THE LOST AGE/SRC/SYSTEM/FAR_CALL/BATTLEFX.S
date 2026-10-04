@@ -108,10 +108,10 @@ Func_080c8558:
 	.thumb_func
 Func_080c8560:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Audio_PlayPartyCue
+	overlay_veneer Party_PlaySavedMusic
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Audio_PlayPartyCue
+	overlay_veneer Party_PlaySavedMusic
 .else
 	overlay_veneer BattleFx_GetWeightedResult
 .endif
@@ -131,7 +131,15 @@ Func_080c8568:
 	.global Func_080c8570
 	.thumb_func
 Func_080c8570:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c9dc8
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c9dc8
+.else
+	overlay_veneer Party_PlaySavedMusic
+.endif
+.endif
 	.global Func_080c8578
 	.thumb_func
 Func_080c8578:

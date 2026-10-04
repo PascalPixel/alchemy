@@ -17,7 +17,7 @@ Func_0802493c:
 	add r5, sp, #12
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_08024920
+	bl ObjectList_CollectActive
 	ldr r6, [r5]
 	mov r0, sp
 	adds r0, #16

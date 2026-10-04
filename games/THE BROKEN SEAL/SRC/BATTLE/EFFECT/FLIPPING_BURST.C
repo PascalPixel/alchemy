@@ -15,6 +15,7 @@
 #include "EFFECT_STEP.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -213,8 +214,8 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(0);
     work->fade_frames = 24;
     work->fade_step = 0;
-    *(volatile u16 *)0x04000052 = 0x100c;
-    *(volatile u16 *)0x04000020 = 0x100;
+    REG_BLDALPHA = 0x100c;
+    REG_BG2PA = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
     switch (work->effect->kind) {
@@ -231,7 +232,12 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
         palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
         break;
     }
-    { s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords; copy((void *)0x05000000, palette, 128); }
+    {
+        /* FAKEMATCH: called through a pointer, the routine's address loads before the palette's. */
+        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+        copy((void *)BG_PLTT, palette, 128);
+    }
 
     for (i = 0; i != 128; i++) {
         gFlecks[i].y = 0;
@@ -257,9 +263,9 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 
     for (frame = 0; frame != 56; frame++) {
         EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &ground);
-        *(volatile s32 *)0x04000028 = (64 - ground.x) << 8;
+        REG_BG2X = (64 - ground.x) << 8;
         if (frame > 49)
-            *(volatile u16 *)0x04000052 = (0x70 - frame * 2) | 0x1000;
+            REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
         if (frame == 16)
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
         if (frame <= 55) {

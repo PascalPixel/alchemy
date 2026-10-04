@@ -40,13 +40,14 @@ struct Ring {
 };
 
 struct SparkWork {
-    u8 padding0000[0x11c0];
+    u8 sheet[0x11c0];
     struct Spark sparks[16];
     struct Ring rings[3];
     s32 frames;
     s32 ready;
-    u8 padding13c4[8];
-    s32 unknown_13cc;
+    s32 origin_x;
+    s32 origin_y;
+    s32 origin_pending;
 };
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 height);

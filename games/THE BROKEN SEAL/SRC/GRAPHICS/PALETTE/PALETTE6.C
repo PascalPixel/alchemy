@@ -115,7 +115,7 @@ s32 BattleFx_InitializeStarField(s32 mode)
         data = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
         break;
     }
-    Dma_Set(data, BG_PLTT, 0x84000020, REG_DMA3);
+    Dma_Set(data, BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
     /* FAKEMATCH: the two one-pass blocks keep the BG2 origin and matrix writes in source order, the zero loaded first. */
     do {
         zero = 0;

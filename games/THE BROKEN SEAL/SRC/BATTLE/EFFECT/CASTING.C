@@ -996,14 +996,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
             {
                 struct EffectStep *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
-                s32 mask;
-                /* FAKEMATCH: Initialize the mask after the loop counter. */
-                for (i = 0, mask = 3; i != 16; i++, step++) {
+                for (i = 0; i != 16; i++, step++) {
                     s32 image = i % 3;
                     EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                     projected.x /= 2;
                     blitters[i & 1](canvas, Ram_MapCellBuffer + image * 576, projected.x - 12, projected.y - 12, 24, 24);
-                    EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & mask) + 11));
+                    EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
                     step->variant++;
                 }
             }

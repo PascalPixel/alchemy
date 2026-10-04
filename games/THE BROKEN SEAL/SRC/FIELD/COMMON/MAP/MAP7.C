@@ -80,6 +80,7 @@ void Map_ShowWorldMap(void)
     Resource_DecodeType01(graphics + 448, (void *)gMapCellBuffer);
     Dma_Set((void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
     {
+        /* FAKEMATCH: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
         s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;
         REG_BG1CNT = v;
         v = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
@@ -118,7 +119,7 @@ void Map_ShowWorldMap(void)
         *ime = (u16)ime;
         count = q->count;
         if (count <= 31) {
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
+            u32 *destination = q->entries[count];
             *(u16 *)&q->count = count + 1;
             *destination++ = (u16)blend;
             *destination++ = (u32)&REG_BLDALPHA;

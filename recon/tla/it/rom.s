@@ -4642,8 +4642,8 @@ Func_080f94a4:
 	.incbin "baserom.gba", 0x000f94a4, 0x00000f3c
 	.section .rom.000fa484, "ax"
 	.incbin "baserom.gba", 0x000fa484, 0x00000864
-	.section .rom.000facfa, "ax"
-	.incbin "baserom.gba", 0x000facfa, 0x0000011e
+	.section .rom.000fad1e, "ax"
+	.incbin "baserom.gba", 0x000fad1e, 0x000000fa
 	.global ItemMenu_DrawIcons
 	.type ItemMenu_DrawIcons, %function
 	.thumb_func

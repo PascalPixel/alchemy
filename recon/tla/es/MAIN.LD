@@ -1005,7 +1005,7 @@
     "*/games/THE LOST AGE/SRC/MENU/ITEM/INTERFACE.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00100478)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/ITEM_LIST.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.00100cee)
+    "*/recon/tla/es/rom.o"(.rom.00100d12)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/REMOVE_FIRST_UNFLAGGED.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00101140)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/WINDOW.o"(.text)

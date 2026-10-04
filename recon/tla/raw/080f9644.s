@@ -65,7 +65,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	ldr r1, .L_080f9a04
 	movs r0, #0
-	bl Func_080facb4
+	bl ItemMenu_DrawMsg
 	mov r3, r9
 	ldr r0, [r3, #48]
 	bl RenderOutput_RedrawSavedRectFar
@@ -117,7 +117,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	ldr r1, .L_080f9a08
 	movs r0, #0
-	bl Func_080facb4
+	bl ItemMenu_DrawMsg
 	movs r0, #0
 	bl Func_080fc6bc
 	movs r3, #1
@@ -912,7 +912,7 @@ Func_080f9644:
 	bl ItemMenu_SetItemWin3
 	ldr r1, .L_080f9e68
 	movs r0, #0
-	bl Func_080facb4
+	bl ItemMenu_DrawMsg
 	movs r0, #1
 	bl Func_080fc6bc
 	movs r1, #1

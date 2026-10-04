@@ -1018,7 +1018,7 @@
     "*/recon/tla/it/rom.o"(.rom.000fb8f4)
     "*/recon/tla/it/rom.o"(.rom.000fb900)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/WINDOW.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000fbde4)
+    "*/recon/tla/it/rom.o"(.rom.000fbe24)
     "*/recon/tla/it/rom.o"(.rom.000fcb04)
     "*/games/THE LOST AGE/SRC/MENU/ABILITY/ABILITY3.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000fe280)

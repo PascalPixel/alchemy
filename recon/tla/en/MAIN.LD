@@ -1834,8 +1834,6 @@
         "*/recon/tla/raw/080fb8ac.o"(.text)
         "*/recon/tla/raw/080fb8b8.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/ITEM/WINDOW.o"(.text)
-        "*/recon/tla/raw/080fbd9c.o"(.text)
-        "*/recon/tla/raw/080fbdbc.o"(.text)
         "*/recon/tla/raw/080fbddc.o"(.text)
         "*/recon/tla/raw/080fbe00.o"(.text)
         "*/recon/tla/raw/080fbe24.o"(.text)

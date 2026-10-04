@@ -1007,7 +1007,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000fb7cc)
     "*/recon/tla/ja/rom.o"(.rom.000fb7d8)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/WINDOW.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000fbd40)
+    "*/recon/tla/ja/rom.o"(.rom.000fbd80)
     "*/recon/tla/ja/rom.o"(.rom.000fca7c)
     "*/games/THE LOST AGE/SRC/MENU/ABILITY/ABILITY3.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000fe1b8)

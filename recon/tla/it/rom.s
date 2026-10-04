@@ -4767,8 +4767,8 @@ ItemMenu_DrawItemDetails:
 	.thumb_func
 Func_080fb8b8:
 	.incbin "baserom.gba", 0x000fb900, 0x0000047c
-	.section .rom.000fbde4, "ax"
-	.incbin "baserom.gba", 0x000fbde4, 0x00000d20
+	.section .rom.000fbe24, "ax"
+	.incbin "baserom.gba", 0x000fbe24, 0x00000ce0
 	.section .rom.000fcb04, "ax"
 	.global Func_080fcab8
 	.type Func_080fcab8, %function

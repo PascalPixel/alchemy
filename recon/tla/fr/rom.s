@@ -4401,8 +4401,8 @@ ItemMenu_DrawIcons:
 	.incbin "baserom.gba", 0x000fce28, 0x000002d4
 	.section .rom.000fd15c, "ax"
 	.incbin "baserom.gba", 0x000fd15c, 0x00000c40
-	.section .rom.000fde04, "ax"
-	.incbin "baserom.gba", 0x000fde04, 0x00000d54
+	.section .rom.000fde44, "ax"
+	.incbin "baserom.gba", 0x000fde44, 0x00000d14
 	.section .rom.000feb58, "ax"
 	.global Func_080fcab8
 	.type Func_080fcab8, %function

@@ -1,4 +1,15 @@
-/* 2026-10-04: current EN score 3560 (162 register-only, 6 operand,
+/* 2026-10-04 (second-wave finisher 1): alchemy diff 415 -> 293, plain C,
+ * no device. The transfer block has its own sprite pointer (te) and the
+ * third chain its own node (p), so loop one keeps node r7 / e r6 as the
+ * ROM does; slot = 241 is set first in the cursor arm and cnt++ follows
+ * node = node->next; the FAKEMATCH step temporary is gone (293 without it).
+ * Left: global allocation gives fp to cursor_entry and puts cnt at sp+8;
+ * the ROM gives cnt fp and spills cursor_entry, which frees fp for the
+ * hoisted -13 in chain three and the tile base in the cursor block. Pinning
+ * cnt to fp scores 246, so the rest is mostly that cascade plus local
+ * choices (sel copied to r7, p in r7). cnt as u16/s16/u32/register and
+ * declaration swaps do not move it.
+ * 2026-10-04: current EN score 3560 (162 register-only, 6 operand,
  * 21 reordered, 7 inserted, 6 deleted), down from the fresh 5250 baseline.
  * A five-minute, two-worker ordinary-source search found 3710; removed an
  * unnecessary path temporary without changing that score. Replaced raw work
@@ -92,6 +103,8 @@ void MenuSelection_DrawFrame(void)
     register struct SelectionNode *transfer = &state->records[15];
     struct SelectionNode *node;
     struct SelectionSprite *e;
+    struct SelectionSprite *te;
+    struct SelectionNode *p;
     s32 cnt = 0;
     s32 slot;
     s32 tmp;
@@ -122,15 +135,12 @@ void MenuSelection_DrawFrame(void)
                 if (node->x + node->dx < node->target_x) {
                     node->x = node->target_x;
                 } else {
-                    /* FAKEMATCH: removing this consumed step temporary changes
-                       scheduling/allocation and worsens EN 3710 to 3770. */
-                    register s32 next_x;
-                    next_x = node->x + node->dx;
-                    node->x = next_x;
+                    node->x = node->x + node->dx;
                 }
             }
             e->x = node->x;
         } else if (cnt == state->cursor_index) {
+            slot = 241;
             if (cursor->kind != 0) {
                 if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
                     cursor->target_x = pos.x;
@@ -142,9 +152,7 @@ void MenuSelection_DrawFrame(void)
                     }
                 }
             }
-            slot = 241;
         }
-        cnt++;
         if (node->scale != 0) {
             if (GameFlag_IsSet(0x103) != 0) {
                 if (state->records[14].kind == 1) {
@@ -159,55 +167,56 @@ void MenuSelection_DrawFrame(void)
             Runtime_PushSlotEntry((s32 *)e, slot);
         }
         node = node->next;
+        cnt++;
     }
     /* 二列目: 転送枠。選択中の節点に合わせて拡大縮小しながら描く。 */
     if (transfer->kind != 0) {
         struct SelectionNode *sel = NodeChain_GetNodeAtCount((u8 *)state);
-        e = &transfer->sprite;
-        e->mode = 0;
-        e->affine = 0;
-        e->param = 0;
-        e->mosaic = 0;
-        e->colors = 1;
-        e->shape = 0;
-        e->size = 2;
-        e->priority = 0;
-        e->tile = transfer->tile;
-        e->x = sel->x - 4;
-        e->y = (Data_08036740[(gFrameTick >> 1) & 15] >> 1) + sel->y - 4;
+        te = &transfer->sprite;
+        te->mode = 0;
+        te->affine = 0;
+        te->param = 0;
+        te->mosaic = 0;
+        te->colors = 1;
+        te->shape = 0;
+        te->size = 2;
+        te->priority = 0;
+        te->tile = transfer->tile;
+        te->x = sel->x - 4;
+        te->y = (Data_08036740[(gFrameTick >> 1) & 15] >> 1) + sel->y - 4;
         if (transfer->scale != transfer->scale_end) {
             state->matrix[0] = transfer->scale;
             state->matrix[1] = transfer->scale;
             state->matrix[2] = 0;
-            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
-            e->affine = 3;
-            e->x = e->x + 0xfff0;
-            e->y = e->y + 0xf0;
+            te->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
+            te->affine = 3;
+            te->x = te->x + 0xfff0;
+            te->y = te->y + 0xf0;
             transfer->scale = transfer->scale + transfer->scale_step;
         }
         if (GameFlag_IsSet(0x103) != 0) {
-            e->mode = 1;
+            te->mode = 1;
         }
-        Runtime_PushSlotEntry((s32 *)e, 248);
+        Runtime_PushSlotEntry((s32 *)te, 248);
     }
     MenuSelection_DrawSideMarker((u8 *)state, 0);
     MenuSelection_DrawSideMarker((u8 *)state, 1);
     /* 三列目: 縦横の移動と倍率を同時に進める節点鎖。 */
-    node = state->path;
-    while (node != 0) {
-        e = &node->sprite;
-        if (node->x != node->target_x) {
-            node->x = node->x + node->dx;
+    p = state->path;
+    while (p != 0) {
+        e = &p->sprite;
+        if (p->x != p->target_x) {
+            p->x = p->x + p->dx;
         }
-        if (node->y != node->target_y) {
-            node->y = node->y + node->dy;
+        if (p->y != p->target_y) {
+            p->y = p->y + p->dy;
         }
-        e->x = node->x;
-        e->y = node->y;
-        if (node->scale != node->scale_end) {
-            node->scale = node->scale + node->scale_step;
-            state->matrix[0] = node->scale;
-            state->matrix[1] = node->scale;
+        e->x = p->x;
+        e->y = p->y;
+        if (p->scale != p->scale_end) {
+            p->scale = p->scale + p->scale_step;
+            state->matrix[0] = p->scale;
+            state->matrix[1] = p->scale;
             state->matrix[2] = 0;
             e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
             e->affine = 3;
@@ -223,12 +232,12 @@ void MenuSelection_DrawFrame(void)
             } else {
                 e->mode = 0;
             }
-            if (node->kind == 1) {
+            if (p->kind == 1) {
                 e->mode = 1;
             }
         }
         Runtime_PushSlotEntry((s32 *)e, 240);
-        node = node->next;
+        p = p->next;
     }
     /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
     if (cursor->kind != 0) {

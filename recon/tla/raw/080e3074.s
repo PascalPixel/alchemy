@@ -465,7 +465,7 @@ Func_080e3074:
 	b .L_080e3600
 	.2byte 0x0000
 .L_080e342c:
-	.4byte Func_080e3060
+	.4byte BattleFx_SpinObject
 .L_080e3430:
 	.4byte 0x050003c0
 .L_080e3434:

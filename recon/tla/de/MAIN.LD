@@ -1035,6 +1035,8 @@
     "*/recon/tla/de/rom.o"(.rom.000ef5e8)
     "*/recon/tla/de/rom.o"(.rom.000ef774)
     "*/recon/tla/de/rom.o"(.rom.000ef8d4)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SPIN.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.000f0074)
     "*/recon/tla/de/rom.o"(.rom.000f0698)
     "*/recon/tla/de/rom.o"(.rom.000f07e0)
     "*/recon/tla/de/rom.o"(.rom.000f1244)

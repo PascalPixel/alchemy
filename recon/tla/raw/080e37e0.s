@@ -103,4 +103,4 @@ Func_080e37e0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080e38c4:
-	.4byte Func_080e3060
+	.4byte BattleFx_SpinObject

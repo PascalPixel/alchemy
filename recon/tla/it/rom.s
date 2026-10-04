@@ -4434,7 +4434,13 @@ Func_080eaeb4:
 	.type ObjectGroup_ApplyRandomChildValues, %function
 	.thumb_func
 ObjectGroup_ApplyRandomChildValues:
-	.incbin "baserom.gba", 0x000e2768, 0x00000f24
+	.incbin "baserom.gba", 0x000e2768, 0x000008ec
+	.section .rom.000e3068, "ax"
+	.global Func_080e3074
+	.type Func_080e3074, %function
+	.thumb_func
+Func_080e3074:
+	.incbin "baserom.gba", 0x000e3068, 0x00000624
 	.section .rom.000e368c, "ax"
 	.global Func_080da938
 	.type Func_080da938, %function

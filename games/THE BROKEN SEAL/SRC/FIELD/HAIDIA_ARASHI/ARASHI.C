@@ -343,42 +343,42 @@ void FieldScene_RunScene372_02000400(void)
 s32 FieldScene_RunFlagGatedActorSetup(void)
 {
     /* FAKEMATCH: the coordinates, angles and tiles held in locals keep the
-       native register choice and pool order; inlining any one but the
-       last X changes the function. */
-    s32 w1 = 0x14E0000;
-    s32 w2 = 0x3A40000;
-    s32 w3 = 0xE00000;
-    s32 w4 = 0x3680000;
-    s32 w5 = 0x400000;
-    s32 w6 = 0x1B00000;
-    s32 w7 = 0x720000;
-    s32 w8 = 0xC00000;
-    s32 w9 = 0x2000;
-    s32 w10 = 0xE30000;
-    s32 w11 = 0x4000;
-    s32 w12 = 0xF70000;
-    s32 w13 = 0x4000;
-    s32 w14 = 0xF30000;
-    s32 w15 = 0x1900000;
-    s32 w16 = 0x1A80000;
-    s32 w17 = 0x190;
-    s32 w18 = 0x1A8;
-    s32 w19 = 0x1A80000;
-    s32 w20 = 0x1A8;
-    s32 b1 = 0x4BE0000;
-    s32 b2 = 0x4BE0000;
-    s32 b3 = 0x4BE0000;
-    s32 w21 = 0xA50000;
-    s32 p1 = 0x2BF0000;
-    s32 p2 = 0x47B0000;
-    s32 p3 = 0x14D0000;
-    s32 p4 = 0x4FD0000;
-    s32 p5 = 0x2630000;
-    s32 p6 = 0x2730000;
-    s32 p7 = 0x2730000;
-    s32 c1 = 0x26B;
-    s32 c2 = 0x101;
-    s32 c3 = 0x26B;
+       native register choice and pool order; inlining any one of them
+       changes the function. */
+    s32 x11 = 0x14E0000;
+    s32 z11 = 0x3A40000;
+    s32 x12 = 0xE00000;
+    s32 z12 = 0x3680000;
+    s32 x13 = 0x400000;
+    s32 x14 = 0x1B00000;
+    s32 x19 = 0x720000;
+    s32 x10 = 0xC00000;
+    s32 facing10 = 0x2000;
+    s32 x24 = 0xE30000;
+    s32 facing24 = 0x4000;
+    s32 x25 = 0xF70000;
+    s32 facing25 = 0x4000;
+    s32 x23 = 0xF30000;
+    s32 x22 = 0x1900000;
+    s32 x21 = 0x1A80000;
+    s32 walk_x22 = 0x190;
+    s32 walk_x21 = 0x1A8;
+    s32 back_x21 = 0x1A80000;
+    s32 back_walk_x21 = 0x1A8;
+    s32 z10 = 0x4BE0000;
+    s32 z24 = 0x4BE0000;
+    s32 z25 = 0x4BE0000;
+    s32 x9 = 0xA50000;
+    s32 z13 = 0x2BF0000;
+    s32 z14 = 0x47B0000;
+    s32 z19 = 0x14D0000;
+    s32 z23 = 0x4FD0000;
+    s32 z22 = 0x2630000;
+    s32 z21 = 0x2730000;
+    s32 back_z21 = 0x2730000;
+    s32 walk_z22 = 0x26B;
+    s32 effect22 = 0x101;
+    s32 back_walk_z21 = 0x26B;
 
     BattleFx_SetQueuedSoundAndPlay(0xAA);
     Engine_ActorSetPosition(23, 0, 0);
@@ -387,19 +387,19 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Engine_GameFlagClear(0x206);
     }
     if (Engine_GameFlagIsSet(0x830) != 0) {
-        Engine_ActorSetPosition(11, w1, w2);
+        Engine_ActorSetPosition(11, x11, z11);
         HaidiaArashi_SetStormCellAttributes();
     }
     if (Engine_GameFlagIsSet(0x831) != 0) {
-        Engine_ActorSetPosition(12, w3, w4);
+        Engine_ActorSetPosition(12, x12, z12);
         ActorPresentation_SetEightSceneCells();
     }
     if (Engine_GameFlagIsSet(0x832) != 0) {
-        Engine_ActorSetPosition(13, w5, p1);
+        Engine_ActorSetPosition(13, x13, z13);
         SceneState_ApplyFourRects();
     }
     if (Engine_GameFlagIsSet(0x833) != 0) {
-        Engine_ActorSetPosition(14, w6, p2);
+        Engine_ActorSetPosition(14, x14, z14);
         FieldScene_DrawFiveTileBlocks();
     }
     Object_GetById(11)->collision_flags |= 4;
@@ -421,7 +421,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         actor->scale_y = 0x20000;
     }
     if (Engine_GameFlagIsSet(FLAG_BOULDER_FELL) != 0) {
-        Engine_ActorSetPosition(19, w7, p3);
+        Engine_ActorSetPosition(19, x19, z19);
     } else {
         Engine_ActorEnableActionCallback(19, HaidiaArashi_ActorNineteenScript);
     }
@@ -429,7 +429,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         s32 h2;
         u8 *tbl;
         FieldScene_BuildPlacementGrid();
-        Engine_ActorSetPosition(9, w21, 0x4CD0000);
+        Engine_ActorSetPosition(9, x9, 0x4CD0000);
         {
             struct FieldActor *actor;
 
@@ -484,8 +484,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         }
     } else if (Engine_GameFlagIsSet(0x83a) != 0) {
         u8 *tbl;
-        Engine_ActorSetPosition(10, w8, b1);
-        Engine_ActorFaceDirection(10, w9, 0);
+        Engine_ActorSetPosition(10, x10, z10);
+        Engine_ActorFaceDirection(10, facing10, 0);
         Engine_ActorSetAnimation(10, 5);
         {
             struct FieldActor *actor;
@@ -495,8 +495,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         }
         tbl = HaidiaArashi_ActorEightScript;
         Engine_ActorEnableActionCallback(10, tbl);
-        Engine_ActorSetPosition(24, w10, b2);
-        Engine_ActorFaceDirection(24, w11, 0);
+        Engine_ActorSetPosition(24, x24, z24);
+        Engine_ActorFaceDirection(24, facing24, 0);
         Engine_ActorSetAnimation(24, 6);
         {
             struct FieldActor *actor;
@@ -505,8 +505,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         }
         Engine_ActorEnableActionCallback(24, tbl);
-        Engine_ActorSetPosition(25, w12, b3);
-        Engine_ActorFaceDirection(25, w13, 0);
+        Engine_ActorSetPosition(25, x25, z25);
+        Engine_ActorFaceDirection(25, facing25, 0);
         Engine_ActorSetAnimation(25, 6);
         {
             struct FieldActor *actor;
@@ -515,7 +515,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         }
         Engine_ActorEnableActionCallback(25, tbl);
-        Engine_ActorSetPosition(23, w14, p4);
+        Engine_ActorSetPosition(23, x23, z23);
         Engine_ActorFaceDirection(23, 0xC000, 0);
         Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
         Engine_ActorSetPosition(17, 0, 0);
@@ -554,18 +554,18 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     Engine_ActorSetAnimation(23, 7);
     if (Engine_GameFlagIsSet(0x837) == 0) {
         Engine_EventBegin();
-        Engine_ActorSetAttachedEffect(22, c2);
-        Engine_ActorSetPosition(22, w15, p5);
-        Engine_ActorSetPosition(21, w16, p6);
-        Engine_ActorWalkTo(22, w17, c1);
-        Engine_ActorWalkToAndWait(21, w18, 0x26B);
+        Engine_ActorSetAttachedEffect(22, effect22);
+        Engine_ActorSetPosition(22, x22, z22);
+        Engine_ActorSetPosition(21, x21, z21);
+        Engine_ActorWalkTo(22, walk_x22, walk_z22);
+        Engine_ActorWalkToAndWait(21, walk_x21, 0x26B);
         Engine_ActorSetAnimation(21, 2);
         Engine_ActorSetAnimation(22, 5);
         Engine_EventEnd();
     } else {
         Engine_EventBegin();
-        Engine_ActorSetPosition(21, w19, p7);
-        Engine_ActorWalkToAndWait(21, w20, c3);
+        Engine_ActorSetPosition(21, back_x21, back_z21);
+        Engine_ActorWalkToAndWait(21, back_walk_x21, back_walk_z21);
         Engine_ActorSetAnimation(21, 3);
         Engine_EventEnd();
     }

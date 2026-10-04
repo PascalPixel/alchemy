@@ -1,3 +1,54 @@
+/* 2026-10-04 focused candidate40: replaces only the first existing
+ * destination-address addition with low-register add operands. No new
+ * arithmetic, storage or table value; flags explicitly clobbered. All
+ * instructions/registers match except reversed drawing/table literal loads.
+ * Independent review replaced only this asm with ordinary C and recovered
+ *70, without instruction insertion/deletion. Consumed u32 addition and
+ *low-register/cc constraints are valid S2 register/order steering.
+ *Approved compiler/era assembler confirm full316B/frame36. Uncredited.
+ */
+/* 2026-10-04 paired consumed-base input order trials:
+ * screen_first_table_first: rejected high-register add operands before scoring.
+ * screen_first_table_last: rejected high-register add operands before scoring.
+ * table_first_table_first: draft: score 1773 (41 register-only, 3 stack-only, 3 operand, 11 reordered, 5 inserted, 3 deleted)
+ * table_first_table_last: draft: score 1773 (41 register-only, 3 stack-only, 3 operand, 11 reordered, 5 inserted, 3 deleted)
+ * table_inside_base_scope: rejected high-register add operands before scoring.
+ * Retain unbound-base40 pending independent S2 review.
+ */
+/* 2026-10-04 existing destination-result operand trials:
+ * r2_output_r: draft: score 40 (2 operand)
+ * r2_output_l: draft: score 40 (2 operand)
+ * plain_output_r: draft: score 40 (2 operand)
+ * plain_output_l: draft: score 40 (2 operand)
+ * Retain r2_output_r; new device is not admitted without independent review.
+ */
+/* 2026-10-04 existing address-addition register trials:
+ * address_add: draft: score 855 (48 register-only, 2 operand, 9 reordered)
+ * address_add_table_lifetime: draft: score 215 (6 register-only, 1 operand, 1 reordered, 1 deleted)
+ * address_add_table_input: draft: score 255 (6 register-only, 3 operand, 1 reordered, 1 deleted)
+ * Retain prior70; no new device until independent S2 review.
+ */
+/* 2026-10-04 consumed drawing-base allocation trials:
+ * plain_base_reuse: draft: score 70 (2 register-only, 1 reordered)
+ * base_r2: draft: score 975 (46 register-only, 2 operand, 5 reordered, 2 inserted, 2 deleted) (C89 nested scope).
+ * base_r2_clobber5: draft: score 755 (46 register-only, 1 operand, 5 reordered, 1 inserted, 1 deleted) (C89 nested scope).
+ * base_any_clobber5: draft: score 1883 (37 register-only, 3 stack-only, 5 operand, 11 reordered, 6 inserted, 3 deleted) (C89 nested scope).
+ * base_r2_input: draft: score 565 (45 register-only, 4 operand, 1 reordered, 2 deleted) (C89 nested scope).
+ * Retain prior70; no new device unless separately reviewed.
+ */
+/* Typed canonical MapCell/word union: draft: score 70 (2 register-only, 1 reordered).
+ * Retain prior70; no additional header/type definition adopted.
+ */
+/* 2026-10-04 bounded-value/typed-cell trials:
+ * cell_s32: draft: score 70 (2 register-only, 1 reordered)
+ * cell_u16: draft: score 2033 (41 register-only, 3 stack-only, 3 operand, 12 reordered, 7 inserted, 3 deleted)
+ * cell_s16: draft: score 2033 (41 register-only, 3 stack-only, 3 operand, 12 reordered, 7 inserted, 3 deleted)
+ * bytes_s32: draft: score 70 (2 register-only, 1 reordered)
+ * bytes_u16: draft: score 475 (3 register-only, 1 reordered, 4 inserted)
+ * bytes_s16: draft: score 475 (3 register-only, 1 reordered, 4 inserted)
+ * typed_cells: rejected duplicate existing MapCell type before scoring.
+ * Retain prior70; no new steering device.
+ */
 /* 2026-10-04 ordinary follow-up seed6104/two jobs/10795 candidates:
  * no improvement from70; same two register choices and one load reorder.
  */
@@ -174,7 +225,11 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
                         u32 tmp16;
                         tmp = (u32 *)Ram_MapBlocks;
                         tiles = tmp;
-                        tmp16 = 0x06002800 + offset;
+                        {
+                            u32 screen_base = 0x06002800;
+                            /* FAKEMATCH: ordinary address addition scores70; low-register operands score40 with only the two literal loads swapped. */
+                            __asm__ ("add %0, %1, %2" : "=l" (tmp16) : "l" (offset), "l" (screen_base) : "cc");
+                        }
                         tmp21 = tmp16;
                         tmp18 = tmp21;
                         tmp2 = tmp18;

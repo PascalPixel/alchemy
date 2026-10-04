@@ -56,6 +56,7 @@ void ColossoLogRollingStage_SceneTask(void)
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
+#include "FLAG_IDS.H"
 
 extern u8 MsgKorosseoDidntThinkBattles[];
 
@@ -796,48 +797,44 @@ s32 ColossoLogRollingStage_GetSceneEventState(void)
     return (s32)gKorosseoMarutaEvents;
 }
 
-/* Cell holding the shared scene-work pointer; +448 is the scene phase word. */
-/* Shared cross-overlay scene-record block: +450 is the scene sub-state, read as
- * a signed halfword, and +498 is a byte this owner clears on the way in. */
-
-/* Builds the log-rolling stage, then runs the beat named by the scene
- * sub-state.  Returns 0 on every path. */
+/* Builds the log-rolling stage, then runs the beat the entrance names.
+ * Returns 0 on every path. */
 s32 StageSetup_BuildAndDispatch(void)
 {
-    u8 *rec;
+    struct FieldActor *actor;
     s32 i;
-    s32 val;
-    s32 hit;
-    s32 cnt;
+    s32 x;
+    s32 height;
+    s32 column;
 
-    *(s32 *)(((u8 *)gEventWork) + 448) = 256;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_GameFlagSet(324);
     Engine_TaskAddCallback(ColossoLogRollingStage_ShowActorPositionMessage, 3200);
     Call6(Engine_MapCopyCellAttributes, 74, 60, 8, 6, 120, 60);
 
     Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 
-    rec = Object_GetById(10);
-    Engine_ActorSetSpriteFlags(rec, 0);
-    rec[85] = 0;
-    *(s32 *)(rec + 12) = 0x200000;
+    actor = Object_GetById(10);
+    Engine_ActorSetSpriteFlags(actor, 0);
+    actor->motion_flags = 0;
+    actor->y.fixed = 32 << 16;
 
-    rec = (u8 *)Object_GetById(11);
-    Engine_ActorSetSpriteFlags(rec, 0);
-    rec[85] = 0;
-    *(s32 *)(rec + 12) = 0x40000;
+    actor = Object_GetById(11);
+    Engine_ActorSetSpriteFlags(actor, 0);
+    actor->motion_flags = 0;
+    actor->y.fixed = 4 << 16;
 
     if (Engine_GameFlagIsSet(866) != 0) {
         Engine_ActorSetAnimation(9, 5);
-        rec = (u8 *)Object_GetById(10);
-        *(s32 *)(rec + 12) = 0x40000;
-        rec = (u8 *)Object_GetById(11);
-        *(s32 *)(rec + 12) = 0x200000;
+        actor = Object_GetById(10);
+        actor->y.fixed = 4 << 16;
+        actor = Object_GetById(11);
+        actor->y.fixed = 32 << 16;
         Call6(Engine_MapCopyCellAttributes, 15, 12, 1, 1, 13, 12);
     } else {
-        rec = (u8 *)Object_GetById(9);
-        *(s32 *)(rec + 24) = 0x18000;
-        *(s32 *)(rec + 28) = 0x18000;
+        actor = Object_GetById(9);
+        actor->scale_x = 0x18000;
+        actor->scale_y = 0x18000;
         if (Engine_GameFlagIsSet(871) != 0) {
             Call6(Engine_MapCopyCellAttributes, 0, 24, 1, 1, 9, 12);
         } else {
@@ -848,40 +845,40 @@ s32 StageSetup_BuildAndDispatch(void)
     if (Engine_GameFlagIsSet(872) != 0) {
         Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, 12);
         Engine_MapCopyCellAttributes(1, 25, 1, 1, 9, 12);
-        rec = (u8 *)Object_GetById(12);
-        Engine_ActorSetSpriteFlags(rec, 0);
-        rec[85] = 0;
-        *(s32 *)(rec + 12) = 0x20000;
-        rec[35] = 2;
-        rec = (u8 *)Object_GetById(10);
-        *(s32 *)(rec + 12) = 0x40000;
-        rec[35] = 2;
-        rec = (u8 *)Object_GetById(11);
-        *(s32 *)(rec + 12) = 0x200000;
+        actor = Object_GetById(12);
+        Engine_ActorSetSpriteFlags(actor, 0);
+        actor->motion_flags = 0;
+        actor->y.fixed = 2 << 16;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        actor = Object_GetById(10);
+        actor->y.fixed = 4 << 16;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        actor = Object_GetById(11);
+        actor->y.fixed = 32 << 16;
     }
 
-    cnt = GameFlag_GetByte(880);
-    if (cnt == 0) {
-        cnt = 19;
+    column = GameFlag_GetByte(880);
+    if (column == 0) {
+        column = 19;
     }
-    rec = (u8 *)Object_GetById(13);
-    *(s32 *)(rec + 8) = (cnt << 20) + 0x80000;
-    rec[85] = 0;
-    rec[35] = 2;
+    actor = Object_GetById(13);
+    actor->x.fixed = (column << 20) + (8 << 16);
+    actor->motion_flags = 0;
+    actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
     Call6(Engine_MapCopyCellAttributes, 18, 10, 3, 1, 18, 11);
-    Engine_MapCopyCellAttributes(17, 11, 1, 1, cnt, 11);
+    Engine_MapCopyCellAttributes(17, 11, 1, 1, column, 11);
 
     /* The three drifting obstacles: any one still at rest and clear of the
      * grid is planted and drawn twice, once on its own row and once 52 rows
      * further down. */
     for (i = 15; i <= 17; i++) {
-        rec = (u8 *)Object_GetById(i);
-        hit = Map_GetTerrainHeight(0, *(s32 *)(rec + 8), *(s32 *)(rec + 16));
-        if (*(s32 *)(rec + 12) == 0 && hit == 0) {
-            rec[35] = 2;
-            rec[85] = hit;
-            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, *(s32 *)(rec + 8) >> 20, *(s32 *)(rec + 16) >> 20);
-            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, *(s32 *)(rec + 8) >> 20, (*(s32 *)(rec + 16) >> 20) + 52);
+        actor = Object_GetById(i);
+        height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+        if (actor->y.fixed == 0 && height == 0) {
+            actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+            actor->motion_flags = height;
+            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, actor->x.fixed >> 20, (actor->z.fixed >> 20) + 52);
         }
     }
 
@@ -889,43 +886,39 @@ s32 StageSetup_BuildAndDispatch(void)
      * also puts each pair on the grid; the uncleared arm only prepares the
      * records and installs the second per-frame task. */
     if (Engine_GameFlagIsSet(865) != 0) {
-        s32 state;
-        s32 mode;
+        s32 still;
+        s32 underfoot;
         s32 row;
 
+        /* FAKEMATCH: the loop's constants live in locals so they stay in r8-sl
+         * across the calls, as native keeps them; written inline they do not. */
         i = 18;
-        state = 0;
-        mode = 2;
-        val = 33;
+        still = 0;
+        underfoot = ACTOR_PRIORITY_UNDERFOOT;
+        x = 33;
         row = 11;
         for (; i <= 22; i++) {
-            rec = (u8 *)Object_GetById(i);
-            rec[35] = mode;
-            Object_SetMode(rec, 2);
-            rec = (u8 *)Object_GetById(i + 5);
-            rec[35] = mode;
-            rec[85] = state;
-            *(s32 *)(rec + 12) = 0x200000;
-            Object_SetMode(rec, 10);
-            Engine_MapCopyCellAttributes(74, 12, 1, 1, val, row);
-            val += 2;
+            actor = Object_GetById(i);
+            actor->priority_flags = underfoot;
+            Object_SetMode(actor, 2);
+            actor = Object_GetById(i + 5);
+            actor->priority_flags = underfoot;
+            actor->motion_flags = still;
+            actor->y.fixed = 32 << 16;
+            Object_SetMode(actor, 10);
+            Engine_MapCopyCellAttributes(74, 12, 1, 1, x, row);
+            x += 2;
         }
         Engine_ActorSetAnimation(28, 10);
         BattleEffect_PauseObject(28);
     } else {
-        s32 state;
-        s32 mode;
-
-        i = 18;
-        state = 0;
-        mode = 2;
-        for (; i <= 22; i++) {
-            rec = (u8 *)Object_GetById(i);
-            rec[35] = mode;
-            rec = (u8 *)Object_GetById(i + 5);
-            rec[35] = mode;
-            rec[85] = state;
-            *(s32 *)(rec + 12) = 0x200000;
+        for (i = 18; i <= 22; i++) {
+            actor = Object_GetById(i);
+            actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+            actor = Object_GetById(i + 5);
+            actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+            actor->motion_flags = 0;
+            actor->y.fixed = 32 << 16;
         }
         Engine_TaskAddCallback(ColossoLogRollingStage_SceneTask, 3200);
     }
@@ -937,54 +930,49 @@ s32 StageSetup_BuildAndDispatch(void)
 
     if (Engine_GameFlagIsSet(867) != 0) {
         Map_SetLayerEntryFlag(1);
-        rec = (u8 *)Object_GetById(30);
-        rec[85] = 0;
-        *(s32 *)(rec + 8) = 0x046a0000;
-        *(s32 *)(rec + 16) = 0xb80000;
-        Engine_ActorSetSpriteFlags(rec, 0);
-        Object_SetMode(rec, 3);
-        Engine_ObjectSetScript(rec, KorosseoMaruta_Record30Script);
+        actor = Object_GetById(30);
+        actor->motion_flags = 0;
+        actor->x.fixed = 1130 << 16;
+        actor->z.fixed = 184 << 16;
+        Engine_ActorSetSpriteFlags(actor, 0);
+        Object_SetMode(actor, 3);
+        Engine_ObjectSetScript(actor, KorosseoMaruta_Record30Script);
     } else {
         Map_SetLayerEntryFlag(2);
     }
 
     if (Engine_GameFlagIsSet(873) != 0) {
-        rec = (u8 *)Object_GetById(31);
-        Object_SetMode(rec, 8);
-        rec[35] = 2;
+        actor = Object_GetById(31);
+        Object_SetMode(actor, 8);
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         Engine_MapCopyCellAttributes(86, 10, 1, 2, 84, 10);
         Engine_MapCopyCellAttributes(86, 9, 1, 1, 84, 12);
     } else {
-        rec = (u8 *)Object_GetById(31);
-        Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, *(s32 *)(rec + 8) >> 20, 9);
-        Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, *(s32 *)(rec + 8) >> 20, 61);
+        actor = Object_GetById(31);
+        Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, actor->x.fixed >> 20, 9);
+        Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, actor->x.fixed >> 20, 61);
     }
 
-    {
-        s32 state;
-        s32 mode;
-
-        state = 0;
-        mode = 2;
-        rec = (u8 *)Object_GetById(9);
-        rec[85] = state;
-        rec[35] = mode;
-        rec = (u8 *)Object_GetById(10);
-        rec[85] = state;
-        rec[35] = mode;
-        rec = (u8 *)Object_GetById(11);
-        rec[85] = state;
-        rec[35] = mode;
-        Engine_ActorSetAnimation(8, 9);
-        gGameState.movement_mode = state;
-    }
+    actor = Object_GetById(9);
+    actor->motion_flags = 0;
+    actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+    actor = Object_GetById(10);
+    actor->motion_flags = 0;
+    actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+    actor = Object_GetById(11);
+    actor->motion_flags = 0;
+    actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+    Engine_ActorSetAnimation(8, 9);
+    gGameState.movement_mode = 0;
     Korosseo_ShowItemIcon(39, 3);
     Korosseo_ShowItemIcon(40, 17);
     Engine_ActorSetChildValue(8, 2);
 
-    switch (*(s16 *)(((u8 *)&gGameState) + 450)) {
+    switch (gGameState.entrance) {
     case 1:
-        ((s32 (*)())ColossoLogRollingStage_SetupSceneDescriptor)(0, 8, 6, 0x5e80000, 0xc00000, 39, 40);
+        /* FAKEMATCH: called as returning s32 it sets r0 before the constants, as
+         * native does; the void call sets it after them. */
+        ((s32 (*)())ColossoLogRollingStage_SetupSceneDescriptor)(0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
         Call6(Engine_MapCopyCellsTo, 127, 0, 1, 2, 5, 2);
         Engine_ActorDestroy(32);
         Engine_ActorDestroy(33);
@@ -993,7 +981,7 @@ s32 StageSetup_BuildAndDispatch(void)
         Engine_ActorDestroy(36);
         Engine_ActorDestroy(37);
         Engine_ActorDestroy(38);
-        if (Engine_GameFlagIsSet(265) == 0) {
+        if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
             Engine_AudioPlayCue(17);
             Korosseo_SelectSoloCompetitor(0);
             ColossoLogRollingStage_RestoreActorPositions();
@@ -1010,7 +998,7 @@ s32 StageSetup_BuildAndDispatch(void)
         Engine_TaskAddCallback(ColossoLogRollingStage_MarkSceneProgress, 3200);
         Engine_ActorDestroy(39);
         Engine_ActorDestroy(40);
-        if (Engine_GameFlagIsSet(265) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
             break;
         }
         ColossoLogRollingStage_RestoreActorPositions();
@@ -1019,7 +1007,7 @@ s32 StageSetup_BuildAndDispatch(void)
         break;
 
     case 3:
-        if (Engine_GameFlagIsSet(265) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
             break;
         }
         Korosseo_RunGreetScene(32);

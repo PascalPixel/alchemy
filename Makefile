@@ -31,7 +31,7 @@ compiler-runtime: toolchain-check compiler-source-check
 $(LIBGCC):
 	$(MAKE) compiler-runtime
 
-.PHONY: help bootstrap fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools
+.PHONY: help bootstrap merge-drivers fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check coverage coverage-check
@@ -60,6 +60,15 @@ fetch-dependencies:
 bootstrap: fetch-dependencies
 	$(ALCHEMY) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
 	$(MAKE) $(LIBGCC)
+	$(MAKE) merge-drivers
+
+# Git merges scaffolds by ROM bytes and linker scripts by lines
+# (.gitattributes); after a merge, alchemy merge-driver links reconciles them.
+merge-drivers:
+	git config merge.alchemy-scaffold.name "edition scaffold by ROM bytes"
+	git config merge.alchemy-scaffold.driver "tools/out/cargo-target/release/alchemy merge-driver scaffold %O %A %B"
+	git config merge.alchemy-lines.name "linker script by lines"
+	git config merge.alchemy-lines.driver "tools/out/cargo-target/release/alchemy merge-driver lines %O %A %B"
 
 # In a new worktree, before its first build: link the main checkout's ROMs
 # and installed tools, and clone release tools and edition builds copy-on-write.

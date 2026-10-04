@@ -1,0 +1,6 @@
+# Adoptions edit these on every branch; alchemy merges them by ROM bytes and
+# by lines (make merge-drivers registers the drivers; make bootstrap runs it).
+recon/*/*/rom.s merge=alchemy-scaffold
+recon/*/*/MAIN.LD merge=alchemy-lines
+games/*/MAIN.LD merge=alchemy-lines
+recon/*/raw/overlays/*.ld merge=alchemy-lines

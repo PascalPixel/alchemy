@@ -18,6 +18,7 @@ mod diff;
 mod edition;
 mod elf;
 mod gate;
+mod merge;
 mod process;
 mod similar;
 mod similar_command;
@@ -35,6 +36,8 @@ Build and verify:
   check       run repository contract checks
 Matching:
   diff        compare a C draft with the listing it would replace
+  merge-driver  git merge drivers for scaffolds and linker scripts, and
+              links, which reconciles linker scripts after a merge
 Reports for people (nothing else reads them):
   deps        dependency map of not-yet-C code: what unblocks the most
   similar     each not-yet-C function's nearest C twins in either game
@@ -56,6 +59,7 @@ fn main() -> ExitCode {
         "check" => check::entry(rest),
         "deps" => deps_command::entry(rest),
         "diff" => result(diff::run(rest)),
+        "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),
         "worst" => result(worst_command::run(rest)),
         "-h" | "--help" => {

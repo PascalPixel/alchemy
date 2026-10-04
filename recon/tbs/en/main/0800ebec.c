@@ -1,3 +1,11 @@
+/* 2026-10-04 sun w3 finisher 4: unchanged at 253. Measured: the r6 copy of
+ * (u16)angle reaching the second probe is CSE skip-blocks carrying it over
+ * the debug block (-fno-cse-skip-blocks, diagnostic only, recomputes it in
+ * r1 as the ROM does); the ROM's CSE did not skip that block, so its
+ * source has a label or a second jump into the code after it. The
+ * condition folded into one if with a comma expression, blocked = 0 moved
+ * above the posA copy (290) and (angle & 0xffff) spellings (262, 290)
+ * were tried. */
 /* Draft, not exact: 1,788 of 1,804 bytes, every call site in the ROM order.
  * The angle is the table value itself, narrowed at each use; the facing
  * clamp subtracts in int and narrows after, as the ROM does.

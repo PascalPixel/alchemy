@@ -1,3 +1,25 @@
+/* 2026-10-04 sun w3 finisher 4: alchemy diff 70 (was 351), 1504 bytes,
+ * frame 64 as native. What lined up, each measured:
+ *   - the pad loop is two loops: the continues re-enter through a first
+ *     WaitFrames ("next"), and the fall-through tail runs its own
+ *     WaitFrames back to the inner top, so the pad cells are volatile global
+ *     reads whose addresses loop.c hoists after the first WaitFrames (fp
+ *     held, r9 trigger), not pointer variables set once (351 -> 277);
+ *   - mode unsigned: the switch compiles to the native unsigned chain and
+ *     the held-cell address outranks mode, which spills to sp+16 (-> 194);
+ *   - work declared after flag gives the native spill-slot order (-> 132);
+ *   - the DMA source word volatile: its stores go through r4 (-> 124);
+ *   - the toggle passes on ? priority : 8 to one call (-> 92); moved is
+ *     cleared before cnt is set (-> 90);
+ *   - one int holds the alternate flag and then the created object, as the
+ *     native shares r5 between them (-> 70).
+ * Remaining: (1) the left/right arm's first test reads through the hoisted
+ * r9 in the native, after a discarded read through a fresh r1 that the
+ * other three tests reuse; here all four use r1, and the slot temporaries
+ * swap r0/r2. Pointer variables for the trigger cell score 223. (2) the
+ * third Register call sets r0 before its ldrsh and the flags store adds 38
+ * to r5 in place; here r3 is a copy. Tried for (2): flag without the cast,
+ * a byte store at obj + 38, an AnimationObject temporary (all 70). */
 /* 2026-10-04 shared point contract: the monitor owns ten AnimationPosition
  * records, consumed at 16-byte intervals by TILE4.C. The one-word native
  * clear remains unchanged; typing the allocation preserves score 6238. */
@@ -119,26 +141,21 @@ void Battle_PlaceActorsByFormationKind(void);
 void Ui_RunIconMonitor(void)
 {
     struct IconColumn ent[4];
-    volatile u32 *keys;
-    volatile u32 *trig;
-    struct AnimationPosition *work;
     struct AnimationMetadata *metadata;
-    struct AnimationObject *h;
     struct AnimationObject *tbl;
-    s32 zero;
+    volatile s32 zero;
     s32 no;
     s32 x;
     s32 y;
-    s32 mode;
+    u32 mode;
     s32 flag;
+    struct AnimationPosition *work;
     s32 slot;
     u32 cnt;
     s32 alt;
     s32 moved;
     u32 i;
 
-    keys = &gKeysHeld;
-    trig = &gKeysRepeat;
     x = 144;
     y = 96;
     mode = 1;
@@ -183,11 +200,11 @@ restart:
         if (metadata->draw_kind == 20 && (i & 1) != 0) {
             alt = 1;
         }
-        h = (struct AnimationObject *)ResourceObject_Create(ent[0].no + alt + (alt << 12));
-        ResourceMetadata_Register(h, ent[1].no);
-        ResourceMetadata_Register(h, ent[2].no);
-        ResourceMetadata_Register(h, ent[3].no);
-        h->flags = (u8)flag;
+        alt = (s32)ResourceObject_Create(ent[0].no + alt + (alt << 12));
+        ResourceMetadata_Register((struct AnimationObject *)alt, ent[1].no);
+        ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
+        ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
+        ((struct AnimationObject *)alt)->flags = (u8)flag;
     }
 
     for (i = 0; i <= 3; i++) {
@@ -203,37 +220,38 @@ restart:
     Map_BuildProbeRing(x, y, work);
     Scheduler_AddOrUpdateCallback((s32)Battle_PlaceActorsByFormationKind, 3200);
 
+next:
+    WaitFrames(1);
     for (;;) {
-        WaitFrames(1);
 
-        if ((*keys & KEY_START) != 0) {
-            if ((*keys & KEY_LEFT) != 0) {
+        if ((*(volatile u32 *)&gKeysHeld & KEY_START) != 0) {
+            if ((*(volatile u32 *)&gKeysHeld & KEY_LEFT) != 0) {
                 x--;
             }
-            if ((*keys & KEY_RIGHT) != 0) {
+            if ((*(volatile u32 *)&gKeysHeld & KEY_RIGHT) != 0) {
                 x++;
             }
-            if ((*keys & KEY_UP) != 0) {
+            if ((*(volatile u32 *)&gKeysHeld & KEY_UP) != 0) {
                 y--;
             }
-            if ((*keys & KEY_DOWN) != 0) {
+            if ((*(volatile u32 *)&gKeysHeld & KEY_DOWN) != 0) {
                 y++;
             }
             Map_BuildProbeRing(x, y, work);
         } else {
             /* The reference opens this arm with a load of the trigger cell
                whose result is discarded before the first test. */
-            (void)*trig;
-            if ((*trig & KEY_UP) != 0) {
+            (void)*(volatile u32 *)&gKeysRepeat;
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_UP) != 0) {
                 slot = (slot - 1) & 3;
             }
-            if ((*trig & KEY_DOWN) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_DOWN) != 0) {
                 slot = (slot + 1) & 3;
             }
-            if ((*trig & KEY_LEFT) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_LEFT) != 0) {
                 mode = (mode - 1) & 3;
             }
-            if ((*trig & KEY_RIGHT) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_RIGHT) != 0) {
                 mode++;
                 mode = mode & 3;
             }
@@ -253,7 +271,7 @@ restart:
             if (slot == 1) {
                 break;
             }
-            if ((*trig & KEY_L) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_L) != 0) {
                 ent[slot].animation--;
                 if (ent[slot].animation < 0) {
                     ent[slot].animation = 0;
@@ -261,9 +279,9 @@ restart:
                 if (slot == 0) {
                     ent[1].animation = ent[0].animation;
                 }
-                continue;
+                goto next;
             }
-            if ((*trig & KEY_R) == 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_R) == 0) {
                 break;
             }
             ent[slot].animation++;
@@ -273,21 +291,21 @@ restart:
             if (slot == 0) {
                 ent[1].animation = ent[0].animation;
             }
-            continue;
+            goto next;
 
         case 1:
-            cnt = 1;
             moved = 0;
-            if ((*keys & KEY_START) != 0) {
+            cnt = 1;
+            if ((*(volatile u32 *)&gKeysHeld & KEY_START) != 0) {
                 cnt = 10;
             }
-            if ((*trig & KEY_L) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_L) != 0) {
                 for (i = 0; i < cnt; i++) {
                     ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, -1);
                 }
                 moved = 1;
             }
-            if ((*trig & KEY_R) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_R) != 0) {
                 for (i = 0; i < cnt; i++) {
                     ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, 1);
                 }
@@ -300,24 +318,24 @@ restart:
                 goto restart;
             }
             if (ent[slot].on == 0) {
-                continue;
+                goto next;
             }
             Ui_SetGridColumnNumber(slot, ent[slot].no);
             Ui_SetGridColumnByte6(slot, ent[slot].priority);
             Ui_SetGridColumnByte5(slot, ent[slot].param);
             Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
-            continue;
+            goto next;
 
         case 2:
             moved = 0;
-            if ((*trig & KEY_L) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_L) != 0) {
                 ent[slot].priority--;
                 if (ent[slot].priority < 0) {
                     ent[slot].priority = 3;
                 }
                 moved = 1;
             }
-            if ((*trig & KEY_R) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_R) != 0) {
                 ent[slot].priority++;
                 if (ent[slot].priority > 3) {
                     ent[slot].priority = 0;
@@ -328,21 +346,21 @@ restart:
                 break;
             }
             if (ent[slot].on == 0) {
-                continue;
+                goto next;
             }
             Ui_SetGridColumnByte6(slot, ent[slot].priority);
-            continue;
+            goto next;
 
         case 3:
             moved = 0;
-            if ((*trig & KEY_L) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_L) != 0) {
                 ent[slot].param--;
                 if (ent[slot].param < 0) {
                     ent[slot].param = 15;
                 }
                 moved = 1;
             }
-            if ((*trig & KEY_R) != 0) {
+            if ((*(volatile u32 *)&gKeysRepeat & KEY_R) != 0) {
                 ent[slot].param++;
                 if (ent[slot].param > 15) {
                     ent[slot].param = 0;
@@ -353,47 +371,44 @@ restart:
                 break;
             }
             if (ent[slot].on == 0) {
-                continue;
+                goto next;
             }
             Ui_SetGridColumnByte5(slot, ent[slot].param);
-            continue;
+            goto next;
 
         default:
             break;
         }
 
-        if ((*trig & KEY_A) != 0) {
+        if ((*(volatile u32 *)&gKeysRepeat & KEY_A) != 0) {
             if (mode == 0) {
                 if (slot != 1) {
                     if (ent[slot].on == 0) {
-                        continue;
+                        goto next;
                     }
                     Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
                     if (slot != 0) {
-                        continue;
+                        goto next;
                     }
                     Ui_FillGridColumnFromMetadata(1, ent[1].animation);
-                    continue;
+                    goto next;
                 }
             } else if (slot != 0) {
                 ent[slot].on = ent[slot].on ^ 1;
-                if (ent[slot].on != 0) {
-                    Ui_SetGridColumnByte6(slot, ent[slot].priority);
-                } else {
-                    Ui_SetGridColumnByte6(slot, 8);
-                }
-                continue;
+                Ui_SetGridColumnByte6(slot, ent[slot].on != 0 ? ent[slot].priority : 8);
+                goto next;
             }
         }
 
-        if ((*trig & KEY_SELECT) != 0) {
+        if ((*(volatile u32 *)&gKeysRepeat & KEY_SELECT) != 0) {
             Scheduler_ResetTaskTable();
-            if ((*keys & KEY_B) != 0) {
+            if ((*(volatile u32 *)&gKeysHeld & KEY_B) != 0) {
                 RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
             } else {
                 RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
             }
             goto restart;
         }
+        WaitFrames(1);
     }
 }

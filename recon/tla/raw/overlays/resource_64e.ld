@@ -7,8 +7,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/OBJECTS.o"(.text)
-        "*/resource_64e_overlay.o"(.text.x020080a4)
-        "*/resource_64e_overlay.o"(.text.x020080dc)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_64e_overlay.o"(.text.x0200814e)
         "*/resource_64e_overlay.o"(.text.x02008150)

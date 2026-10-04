@@ -4,69 +4,6 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
-	.section .text.x020080a4,"ax",%progbits
-	.global Func_020000a4
-	.thumb_func
-Func_020000a4:
-	push {r5, r6, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	adds r6, r2, #0
-	adds r0, r3, #0
-	adds r2, r5, #0
-	adds r1, r4, #0
-	adds r3, r6, #0
-	bl Func_02001b3c
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_020080d8
-	movs r1, #0
-	bl Object_SetSpritePriority
-	adds r0, r5, #0
-	movs r1, #14
-	bl ConfigureOverlayObject
-	adds r0, r5, #0
-	movs r1, #1
-	bl Animation_SetStateFlags
-	adds r0, r5, #0
-	b .L_020080da
-.L_020080d8:
-	movs r0, #0
-.L_020080da:
-	pop {r5, r6, pc}
-	.section .text.x020080dc,"ax",%progbits
-	.global Func_020000dc
-	.thumb_func
-Func_020000dc:
-	push {r5, r6, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	adds r6, r2, #0
-	adds r0, r3, #0
-	adds r2, r5, #0
-	adds r1, r4, #0
-	adds r3, r6, #0
-	bl Func_02001b3c
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02008114
-	movs r1, #1
-	bl Object_SetSpritePriority
-	adds r0, r5, #0
-	movs r1, #15
-	bl ConfigureOverlayObject
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #2
-	orrs r3, r2
-	strb r3, [r1]
-	adds r0, r5, #0
-	b .L_02008116
-.L_02008114:
-	movs r0, #0
-.L_02008116:
-	pop {r5, r6, pc}
 	.section .text.x0200814e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008150,"ax",%progbits

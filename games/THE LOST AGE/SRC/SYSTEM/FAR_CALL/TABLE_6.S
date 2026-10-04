@@ -8,7 +8,7 @@
 	.global Func_08020228
 	.thumb_func
 Func_08020228:
-	overlay_veneer Func_0802dcbc
+	overlay_veneer Runtime_SetWorkTripleIfNonNegative
 	.global Func_08020230
 	.thumb_func
 Func_08020230:

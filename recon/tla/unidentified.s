@@ -133,8 +133,8 @@ Data_0802eec4:
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
 	.incbin "baserom.gba", 0x0002efc4, 0x00000040
-	.global Data_0802f004
-Data_0802f004:
+	.global WorldMap_TerrainBehaviorTable
+WorldMap_TerrainBehaviorTable:
 	.incbin "baserom.gba", 0x0002f004, 0x00000050
 	.global Data_0802f054
 Data_0802f054:

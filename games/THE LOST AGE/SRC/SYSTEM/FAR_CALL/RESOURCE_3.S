@@ -12,7 +12,7 @@ ResourceMetadata_SumCommandLengthsFar:
 	.global Func_080202b0
 	.thumb_func
 Func_080202b0:
-	overlay_veneer Func_0802dc48
+	overlay_veneer GetWorldMapTerrainBehavior
 	.global ResourceSlot_LoadFar
 	.thumb_func
 ResourceSlot_LoadFar:
@@ -20,7 +20,7 @@ ResourceSlot_LoadFar:
 	.global Func_080202c0
 	.thumb_func
 Func_080202c0:
-	overlay_veneer Func_0802d6e8
+	overlay_veneer SetMapCellCollision
 	.global Animation_ApplyChildValueFar
 	.thumb_func
 Animation_ApplyChildValueFar:

@@ -10,6 +10,12 @@ extern void *Resource_DirectoryTable[];
 extern const u8 Resource_PatchThumbBranchCode[];
 extern u8 Resource_PatchThumbBranchCodeSize[];
 
+/* Called with a block count before the start-up allocations; empty in
+   the release build. */
+void Resource_ReservedNoOp(s32 count)
+{
+}
+
 void *Resource_GetTableEntry(s32 index)
 {
     return Resource_DirectoryTable[index];

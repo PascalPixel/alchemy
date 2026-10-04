@@ -48,7 +48,7 @@ Func_08020190:
 	.thumb_func
 Func_08020198:
 	.if TABLE_3_EUROPE
-	overlay_veneer Func_0802d6b0
+	overlay_veneer GetMapCellCollision
 	.else
 	overlay_veneer Func_0802cc74
 	.endif

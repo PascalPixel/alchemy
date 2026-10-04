@@ -89,12 +89,6 @@ Func_080132c8:
 	.thumb_func
 Func_080132d0:
 	.incbin "baserom.gba", 0x000132fc, 0x0000002c
-	.section .rom.00013328, "ax"
-	.global Func_080132fc
-	.type Func_080132fc, %function
-	.thumb_func
-Func_080132fc:
-	.incbin "baserom.gba", 0x00013328, 0x00000004
 	.section .rom.000133f0, "ax"
 	.balign 4
 	.global Runtime_InstallIwramAndIrqs
@@ -382,9 +376,12 @@ Resource_DecodeType01:
 	.type Resource_DecodeByteLzInRam, %function
 	.thumb_func
 Resource_DecodeByteLzInRam:
-	.incbin "baserom.gba", 0x00015948, 0x000006e0
+	.incbin "baserom.gba", 0x00015948, 0x000005f0
+	.global SaveState_FindLatestSlot
+SaveState_FindLatestSlot:
+	.incbin "baserom.gba", 0x00015f38, 0x000000f0
 	.section .rom.00016048, "ax"
-	.incbin "baserom.gba", 0x00016048, 0x00000120
+	.incbin "baserom.gba", 0x00016048, 0x000000b8
 	.section .rom.000161ac, "ax"
 	.global Func_08016180
 	.type Func_08016180, %function
@@ -1016,18 +1013,8 @@ Func_08022f24:
 	.thumb_func
 Func_0802d658:
 	.incbin "baserom.gba", 0x0002d658, 0x00000058
-	.section .rom.0002d6b0, "ax"
-	.global Func_0802d6b0
-	.type Func_0802d6b0, %function
-	.thumb_func
-Func_0802d6b0:
-	.incbin "baserom.gba", 0x0002d6b0, 0x00000038
-	.section .rom.0002d6e8, "ax"
-	.global Func_0802d6e8
-	.type Func_0802d6e8, %function
-	.thumb_func
-Func_0802d6e8:
-	.incbin "baserom.gba", 0x0002d6e8, 0x00000194
+	.section .rom.0002d71c, "ax"
+	.incbin "baserom.gba", 0x0002d71c, 0x00000160
 	.section .rom.0002d87c, "ax"
 	.global Func_0802d87c
 	.type Func_0802d87c, %function
@@ -1051,17 +1038,7 @@ Func_0802db88:
 Func_0802b7e0:
 	.section .rom.0002db64, "ax"
 	.incbin "baserom.gba", 0x0002db64, 0x000000e4
-	.section .rom.0002dc48, "ax"
-	.global Func_0802dc48
-	.type Func_0802dc48, %function
-	.thumb_func
-Func_0802dc48:
-	.incbin "baserom.gba", 0x0002dc48, 0x00000074
-	.global Func_0802dcbc
-	.type Func_0802dcbc, %function
-	.thumb_func
-Func_0802dcbc:
-	.incbin "baserom.gba", 0x0002dcbc, 0x0000001c
+	.section .rom.0002dcd8, "ax"
 	.global Func_0802dcd8
 	.type Func_0802dcd8, %function
 	.thumb_func
@@ -1084,7 +1061,10 @@ Data_0802eec4:
 	.incbin "baserom.gba", 0x0002eec4, 0x00000100
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
-	.incbin "baserom.gba", 0x0002efc4, 0x0000020c
+	.incbin "baserom.gba", 0x0002efc4, 0x00000040
+	.global WorldMap_TerrainBehaviorTable
+WorldMap_TerrainBehaviorTable:
+	.incbin "baserom.gba", 0x0002f004, 0x000001cc
 	.global ObjectDispatch_Table4
 ObjectDispatch_Table4:
 	.incbin "baserom.gba", 0x0002f1d0, 0x00000030
@@ -2417,17 +2397,13 @@ Inventory_Remove:
 	.thumb_func
 Item_AdjustCounter:
 	.incbin "baserom.gba", 0x000b4378, 0x00000028
-	.section .rom.000b443c, "ax"
-	.global BattleAction_GetDirect
-	.type BattleAction_GetDirect, %function
+	.section .rom.000b44e4, "ax"
+	.balign 4
+	.global Func_080af4e4
+	.type Func_080af4e4, %function
 	.thumb_func
-BattleAction_GetDirect:
-	.incbin "baserom.gba", 0x000b443c, 0x00000028
-	.global Func_080af464
-	.type Func_080af464, %function
-	.thumb_func
-Func_080af464:
-	.incbin "baserom.gba", 0x000b4464, 0x00000290
+Func_080af4e4:
+	.incbin "baserom.gba", 0x000b44e4, 0x00000210
 	.section .rom.000b4792, "ax"
 	.incbin "baserom.gba", 0x000b4792, 0x0000000a
 	.section .rom.000b47ac, "ax"
@@ -2736,13 +2712,10 @@ Func_080ccec8:
 	.type Func_080cd91c, %function
 	.thumb_func
 Func_080cd91c:
-	.incbin "baserom.gba", 0x000d291c, 0x000002dc
-	.section .rom.000d2bf8, "ax"
-	.global Func_080cdbf8
-	.type Func_080cdbf8, %function
-	.thumb_func
-Func_080cdbf8:
-	.incbin "baserom.gba", 0x000d2bf8, 0x00000048
+	.incbin "baserom.gba", 0x000d291c, 0x000001a4
+	.global Func_080cdac0
+Func_080cdac0:
+	.incbin "baserom.gba", 0x000d2ac0, 0x00000138
 	.section .rom.000d2c72, "ax"
 	.incbin "baserom.gba", 0x000d2c72, 0x00000002
 	.section .rom.000d2c74, "ax"
@@ -4708,8 +4681,6 @@ Func_08120060:
 	.thumb_func
 BattleEv_DispatchQueued:
 	.incbin "baserom.gba", 0x001201dc, 0x000001c4
-	.section .rom.001203c0, "ax"
-	.incbin "baserom.gba", 0x001203c0, 0x000000ac
 	.section .rom.0012046c, "ax"
 	.global Battle_ResolveTargetAction
 	.type Battle_ResolveTargetAction, %function

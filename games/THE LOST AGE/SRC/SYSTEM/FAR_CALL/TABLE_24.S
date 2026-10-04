@@ -8,7 +8,7 @@
 	.global Func_080ad2e8
 	.thumb_func
 Func_080ad2e8:
-	overlay_veneer Func_080af464
+	overlay_veneer Party_FindOwnerWithAction
 	.global Func_080ad2f0
 	.thumb_func
 Func_080ad2f0:

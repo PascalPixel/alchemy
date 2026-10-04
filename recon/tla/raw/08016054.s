@@ -35,7 +35,7 @@ Func_08016054:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r7, #0
-	bl Func_08015f0c
+	bl SaveState_FindLatestSlot
 	adds r5, r0, #0
 	cmp r5, #14
 	bhi .L_080160c0

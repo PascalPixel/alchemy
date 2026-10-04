@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08015f0c
+	.global SaveState_FindLatestSlot
 	.thumb_func
-Func_08015f0c:
+SaveState_FindLatestSlot:
 	push {r5, r6, lr}
 	movs r3, #192
 	lsls r3, r3, #18

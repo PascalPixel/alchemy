@@ -89,12 +89,6 @@ Func_080132c8:
 	.thumb_func
 Func_080132d0:
 	.incbin "baserom.gba", 0x000132d0, 0x0000002c
-	.section .rom.000132fc, "ax"
-	.global Func_080132fc
-	.type Func_080132fc, %function
-	.thumb_func
-Func_080132fc:
-	.incbin "baserom.gba", 0x000132fc, 0x00000004
 	.section .rom.000133c4, "ax"
 	.balign 4
 	.global Runtime_InstallIwramAndIrqs
@@ -382,9 +376,12 @@ Resource_DecodeType01:
 	.type Resource_DecodeByteLzInRam, %function
 	.thumb_func
 Resource_DecodeByteLzInRam:
-	.incbin "baserom.gba", 0x0001591c, 0x000006e0
+	.incbin "baserom.gba", 0x0001591c, 0x000005f0
+	.global SaveState_FindLatestSlot
+SaveState_FindLatestSlot:
+	.incbin "baserom.gba", 0x00015f0c, 0x000000f0
 	.section .rom.0001601c, "ax"
-	.incbin "baserom.gba", 0x0001601c, 0x00000120
+	.incbin "baserom.gba", 0x0001601c, 0x000000b8
 	.section .rom.00016180, "ax"
 	.global Func_08016180
 	.type Func_08016180, %function
@@ -1017,18 +1014,6 @@ Func_0802d644:
 	.thumb_func
 Func_0802d658:
 	.incbin "baserom.gba", 0x0002d5d4, 0x00000058
-	.section .rom.0002d62c, "ax"
-	.global Func_0802d6b0
-	.type Func_0802d6b0, %function
-	.thumb_func
-Func_0802d6b0:
-	.incbin "baserom.gba", 0x0002d62c, 0x00000038
-	.section .rom.0002d664, "ax"
-	.global Func_0802d6e8
-	.type Func_0802d6e8, %function
-	.thumb_func
-Func_0802d6e8:
-	.incbin "baserom.gba", 0x0002d664, 0x00000034
 	.section .rom.0002d698, "ax"
 	.global Func_0802d71c
 	.type Func_0802d71c, %function
@@ -1071,18 +1056,6 @@ Func_0802db64:
 	.thumb_func
 Func_0802db88:
 	.incbin "baserom.gba", 0x0002db04, 0x000000c0
-	.section .rom.0002dbc4, "ax"
-	.global Func_0802dc48
-	.type Func_0802dc48, %function
-	.thumb_func
-Func_0802dc48:
-	.incbin "baserom.gba", 0x0002dbc4, 0x00000074
-	.section .rom.0002dc38, "ax"
-	.global Func_0802dcbc
-	.type Func_0802dcbc, %function
-	.thumb_func
-Func_0802dcbc:
-	.incbin "baserom.gba", 0x0002dc38, 0x0000001c
 	.section .rom.0002dc54, "ax"
 	.global Func_0802dcd8
 	.type Func_0802dcd8, %function
@@ -1106,7 +1079,10 @@ Data_0802eec4:
 	.incbin "baserom.gba", 0x0002ee40, 0x00000100
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
-	.incbin "baserom.gba", 0x0002ef40, 0x0000020c
+	.incbin "baserom.gba", 0x0002ef40, 0x00000040
+	.global WorldMap_TerrainBehaviorTable
+WorldMap_TerrainBehaviorTable:
+	.incbin "baserom.gba", 0x0002ef80, 0x000001cc
 	.global ObjectDispatch_Table4
 ObjectDispatch_Table4:
 	.incbin "baserom.gba", 0x0002f14c, 0x00000030
@@ -2398,17 +2374,13 @@ Inventory_Remove:
 	.thumb_func
 Item_AdjustCounter:
 	.incbin "baserom.gba", 0x000aa374, 0x00000028
-	.section .rom.000aa438, "ax"
-	.global BattleAction_GetDirect
-	.type BattleAction_GetDirect, %function
+	.section .rom.000aa4e0, "ax"
+	.balign 4
+	.global Func_080af4e4
+	.type Func_080af4e4, %function
 	.thumb_func
-BattleAction_GetDirect:
-	.incbin "baserom.gba", 0x000aa438, 0x00000028
-	.global Func_080af464
-	.type Func_080af464, %function
-	.thumb_func
-Func_080af464:
-	.incbin "baserom.gba", 0x000aa460, 0x00000290
+Func_080af4e4:
+	.incbin "baserom.gba", 0x000aa4e0, 0x00000210
 	.section .rom.000aa78e, "ax"
 	.incbin "baserom.gba", 0x000aa78e, 0x0000000a
 	.section .rom.000aa7a8, "ax"
@@ -3271,12 +3243,10 @@ SceneEvent_FindActiveRecord:
 	.type Func_080cd91c, %function
 	.thumb_func
 Func_080cd91c:
-	.incbin "baserom.gba", 0x000cd914, 0x000002dc
-	.global Func_080cdbf8
-	.type Func_080cdbf8, %function
-	.thumb_func
-Func_080cdbf8:
-	.incbin "baserom.gba", 0x000cdbf0, 0x00000048
+	.incbin "baserom.gba", 0x000cd914, 0x000001a4
+	.global Func_080cdac0
+Func_080cdac0:
+	.incbin "baserom.gba", 0x000cdab8, 0x00000138
 	.section .rom.000cdc6a, "ax"
 	.incbin "baserom.gba", 0x000cdc6a, 0x00000002
 	.global Func_080cdc74
@@ -5026,8 +4996,6 @@ Func_08120060:
 	.thumb_func
 BattleEv_DispatchQueued:
 	.incbin "baserom.gba", 0x001201c0, 0x000001c4
-	.section .rom.001203a4, "ax"
-	.incbin "baserom.gba", 0x001203a4, 0x000000ac
 	.section .rom.00120450, "ax"
 	.global Battle_ResolveTargetAction
 	.type Battle_ResolveTargetAction, %function

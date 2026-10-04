@@ -71,7 +71,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x318, 140);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 100);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 100);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
     Audio_PlayCue(183);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
@@ -81,7 +81,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     actor9->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     actor9->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWithFixedY;
     Engine_ActorSetAnimation(8, 4);
-    *(s32 *)((u8 *)actor8 + 68) = 0x8000;
+    *(s32 *)&actor8->unknown_44[0] = 0x8000;
     actor8->x.fixed = 0x3120000;
     actor8->y.fixed = 0x200000;
     actor8->z.fixed = 0x5a0000;
@@ -103,27 +103,27 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
-    *(u16 *)((u8 *)actor0 + 100) = 0;
+    actor0->unknown_64 = 0;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ArutinYama_LeaderRideScript);
     if (GameFlag_IsSet(0x205) != 0) {
         Actor_SetPosition(ACTOR_GERALD, 0x36e0000, 0x2100000);
         actor = Actor_Get(ACTOR_GERALD);
-        actor->facing = 0x5000;
+        actor->facing = FACING_SOUTH + FACING_STEP;
     }
     Camera_SetSpeed(0x14000, 0x2800);
     Camera_MoveTo(0x3120000, -1, 0x22c0000, 1);
     Engine_EventWait(a0);
     Engine_ActorSetSpritePriority(8, 1);
     Actor_SetSpeed(8, 0x195c2, 0xcae1);
-    *(u16 *)((u8 *)actor8 + 100) = 0;
+    actor8->unknown_64 = 0;
     Engine_ActorEnableActionCallback(8, ArutinYama_LogRideScript);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)((u8 *)actor0 + 100) == 0);
+    } while ((s16)actor0->unknown_64 == 0);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)((u8 *)actor8 + 100) == 0);
+    } while ((s16)actor8->unknown_64 == 0);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Audio_PlayCue(0x121);
@@ -133,8 +133,8 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     actor9->z.fixed = 0x26a0000;
     actor9->y.fixed = -0x400000;
     Actor_SetSpeed(8, 0x19999, 0xcccc);
-    *(s32 *)((u8 *)actor8 + 68) = 0x1999;
-    *(s32 *)((u8 *)actor8 + 72) = 0x3333;
+    *(s32 *)&actor8->unknown_44[0] = 0x1999;
+    *(s32 *)&actor8->unknown_44[4] = 0x3333;
     actor8->velocity_y = 0x40000;
     Actor_MoveToAndWait(8, 0x312, 0x25c);
     Actor_SetSpeed(8, 0x33333, 0x19999);
@@ -160,9 +160,9 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x356, 0x248);
     if (GameFlag_IsSet(0x205) != 0) {
         Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-        Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
     }
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 40);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Camera_MoveTo(0x3140000, -0x400000, 0x2620000, 1);

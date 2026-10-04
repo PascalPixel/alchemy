@@ -749,9 +749,8 @@ fn assembly_inputs(
     hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
     hasher.update(with_includes(&[root, &directory], &root.join(source))?);
     // Built editable assets and code streams are actual assembler inputs.
-    let built = sound_files(root, source)
+    let built = asset_files(root, source)
         .into_iter()
-        .chain(graphics_files(root, source))
         .map(|built| directory.join(built));
     for input in stream_paths(root, target, source, &directory)?
         .into_iter()
@@ -786,69 +785,29 @@ fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), Str
     fs::write(&stamp, key).map_err(|error| error.to_string())
 }
 
-/// The sound files a game's data source reads, as pret's data files read the
-/// `.bin` files its build makes: `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"`
-/// names the file the build writes from `SOUND/SAMPLE/WAVE_00.PCM8.WAV`,
-/// relative to the build directory. `COMMON/SOUND/...` names a file built
-/// from the input of that path in games/COMMON, one both games share.
-fn sound_files(root: &Path, source: &Path) -> Vec<String> {
+/// Editable sound and resource files this source reads, in sound/resource order.
+/// SOUND uses incbin; GRAPHICS and MAP also allow generated assembly includes.
+fn asset_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern =
-        regex::Regex::new(r#"(?m)^\s*\.incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)""#)
-            .expect("static pattern");
-    pattern
-        .captures_iter(&text)
-        .map(|capture| capture[1].to_owned())
-        .collect()
-}
-
-/// Write every sound file `source` reads from the game's editable input of
-/// the same name, rewriting a file only when its bytes change.
-fn build_sound_files(
-    root: &Path,
-    target: DecompTarget,
-    source: &Path,
-    output: &Path,
-) -> Result<(), String> {
-    for built in sound_files(root, source) {
-        let stem = built.strip_suffix(".bin").expect("pattern ends in .bin");
-        if stem.split('/').any(|part| part.is_empty() || part == "..") {
-            return Err(format!(
-                "{}: {built} is not a sound file path",
-                source.display()
-            ));
+    let pattern = regex::Regex::new(
+        r#"(?m)^\s*\.(?:incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)"|(?:incbin|include)\s+"((?:COMMON/)?(?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)")"#,
+    ).expect("static pattern");
+    let (mut sound, mut graphics) = (Vec::new(), Vec::new());
+    for capture in pattern.captures_iter(&text) {
+        if let Some(path) = capture.get(1) {
+            sound.push(path.as_str().to_owned());
+        } else {
+            graphics.push(capture[2].to_owned());
         }
-        let (game, stem) = match stem.strip_prefix("COMMON/") {
-            Some(shared) => ("games/COMMON", shared),
-            None => (target.game_dir(), stem),
-        };
-        let inputs: Vec<PathBuf> = ["WAV", "PCM4"]
-            .iter()
-            .map(|extension| Path::new(game).join(format!("{stem}.{extension}")))
-            .filter(|path| root.join(path).is_file())
-            .collect();
-        let [input] = inputs.as_slice() else {
-            return Err(format!(
-                "{}: {built} needs exactly one WAV or PCM4 input",
-                source.display()
-            ));
-        };
-        let bytes = fs::read(root.join(input)).map_err(|error| error.to_string())?;
-        let encoded = ags::sound::build_sound_file(&input.to_string_lossy(), &bytes)
-            .map_err(|error| format!("{}: {error}", input.display()))?;
-        let path = output.join(&built);
-        if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
-            continue;
-        }
-        fs::create_dir_all(path.parent().expect("sound file directory"))
-            .map_err(|error| error.to_string())?;
-        fs::write(&path, encoded).map_err(|error| error.to_string())?;
     }
-    Ok(())
+    sound.extend(graphics);
+    sound
 }
 
+/// Build editable assets, retaining an unchanged output. Graphics in a COMMON
+/// source belong to COMMON; sound belongs to the edition unless explicitly shared.
 fn prepare_assets(
     root: &Path,
     target: DecompTarget,
@@ -856,8 +815,68 @@ fn prepare_assets(
     output: &Path,
 ) -> Result<(), String> {
     for source in sources {
-        build_sound_files(root, target, source, output)?;
-        build_graphics_files(root, target, source, output)?;
+        for built in asset_files(root, source) {
+            let sound = built
+                .strip_prefix("COMMON/")
+                .unwrap_or(&built)
+                .starts_with("SOUND/");
+            let recipe = if sound {
+                built
+                    .strip_suffix(".bin")
+                    .expect("sound recipe ends in .bin")
+            } else {
+                &built
+            };
+            if recipe
+                .split('/')
+                .any(|part| part.is_empty() || part == "..")
+            {
+                let kind = if sound { "sound" } else { "resource" };
+                return Err(format!(
+                    "{}: {built} is not a {kind} file path",
+                    source.display()
+                ));
+            }
+            let (game, recipe) = match recipe.strip_prefix("COMMON/") {
+                Some(shared) => (Path::new("games/COMMON"), shared),
+                None if !sound && source.starts_with("games/COMMON") => {
+                    (Path::new("games/COMMON"), recipe)
+                }
+                None => (Path::new(target.game_dir()), recipe),
+            };
+            let encoded = if sound {
+                let inputs: Vec<PathBuf> = ["WAV", "PCM4"]
+                    .iter()
+                    .map(|extension| game.join(format!("{recipe}.{extension}")))
+                    .filter(|path| root.join(path).is_file())
+                    .collect();
+                let [input] = inputs.as_slice() else {
+                    return Err(format!(
+                        "{}: {built} needs exactly one WAV or PCM4 input",
+                        source.display()
+                    ));
+                };
+                let bytes = fs::read(root.join(input)).map_err(|error| error.to_string())?;
+                ags::sound::build_sound_file(&input.to_string_lossy(), &bytes)
+                    .map_err(|error| format!("{}: {error}", input.display()))?
+            } else {
+                let image = game.join("SRC").join(ags::resource::input_name(recipe)?);
+                let input = fs::read(root.join(&image)).map_err(|error| {
+                    format!("{}: {}: {error}", source.display(), image.display())
+                })?;
+                ags::resource::build_file_with(recipe, &input, &|name| {
+                    let path = root.join(ags::resource::sibling_path(&image, name)?);
+                    fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
+                })?
+            };
+            let path = output.join(&built);
+            if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
+                continue;
+            }
+            fs::create_dir_all(path.parent().expect("asset file directory"))
+                .map_err(|error| error.to_string())?;
+            fs::write(&path, encoded).map_err(|error| error.to_string())?;
+        }
     }
     Ok(())
 }
@@ -865,65 +884,6 @@ fn prepare_assets(
 /// The compressor Camelot's resource packer ran on every code overlay. Each
 /// overlay takes the smaller of the two encodings, the palette one on ties.
 const OVERLAY_MACHINE: LzMachine = ags::resource::PACKER;
-
-/// The resource files an assembly source reads with
-/// `.incbin "GRAPHICS/..."`, or as assembler source with `.include`, each
-/// named by its recipe. `COMMON/GRAPHICS/...` names a file built from the
-/// input of that path in games/COMMON, one both games share.
-fn graphics_files(root: &Path, source: &Path) -> Vec<String> {
-    let Ok(text) = fs::read_to_string(root.join(source)) else {
-        return Vec::new();
-    };
-    let pattern = regex::Regex::new(
-        r#"(?m)^\s*\.(?:incbin|include)\s+"((?:COMMON/)?(?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)""#,
-    )
-    .expect("static pattern");
-    pattern
-        .captures_iter(&text)
-        .map(|capture| capture[1].to_owned())
-        .collect()
-}
-
-/// Write every resource file `source` reads from the input its name gives
-/// under the `SRC` of the source's game or of `COMMON`, as pret's graphics rules build what its data sources read,
-/// rewriting a file only when its bytes change.
-fn build_graphics_files(
-    root: &Path,
-    target: DecompTarget,
-    source: &Path,
-    output: &Path,
-) -> Result<(), String> {
-    for built in graphics_files(root, source) {
-        if built.split('/').any(|part| part.is_empty() || part == "..") {
-            return Err(format!(
-                "{}: {built} is not a resource file path",
-                source.display()
-            ));
-        }
-        // Inputs sit under the SRC of the game, or COMMON, whose source reads
-        // them, or of COMMON when the name says so.
-        let (game, recipe) = match built.strip_prefix("COMMON/") {
-            Some(shared) => (Path::new("games/COMMON"), shared),
-            None if source.starts_with("games/COMMON") => (Path::new("games/COMMON"), &*built),
-            None => (Path::new(target.game_dir()), &*built),
-        };
-        let image = game.join("SRC").join(ags::resource::input_name(recipe)?);
-        let png = fs::read(root.join(&image))
-            .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
-        let encoded = ags::resource::build_file_with(recipe, &png, &|name| {
-            let path = root.join(ags::resource::sibling_path(&image, name)?);
-            fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
-        })?;
-        let path = output.join(&built);
-        if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
-            continue;
-        }
-        fs::create_dir_all(path.parent().expect("resource file directory"))
-            .map_err(|error| error.to_string())?;
-        fs::write(&path, encoded).map_err(|error| error.to_string())?;
-    }
-    Ok(())
-}
 
 /// The code overlays an assembly source reads with
 /// `.incbin "overlays/resource_XXX.lz"`, each linked from the game's common
@@ -1318,10 +1278,7 @@ fn overlay_inputs(
 ) -> Result<Sha256, String> {
     let mut hasher = Sha256::new();
     hasher.update(with_includes(&[root, output], &root.join(listing))?);
-    for built in sound_files(root, listing)
-        .into_iter()
-        .chain(graphics_files(root, listing))
-    {
+    for built in asset_files(root, listing) {
         let path = output.join(&built);
         hasher.update(fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?);
     }
@@ -1719,6 +1676,63 @@ mod tests {
         assert!(!compiled_cache(&object, &stamp, &key));
         compile(root, target, source, &object).unwrap();
         assert_eq!(fs::read(object).unwrap(), current);
+    }
+
+    #[test]
+    fn shared_asset_sources_keep_sound_and_graphics_ownership_and_path_refusals() {
+        let work = tempfile::tempdir().unwrap();
+        let root = work.path();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
+        let source = PathBuf::from("games/COMMON/SRC/DATA.S");
+        for directory in [
+            "games/COMMON/SRC/GRAPHICS",
+            "games/COMMON/SOUND",
+            "games/THE BROKEN SEAL/SOUND",
+        ] {
+            fs::create_dir_all(root.join(directory)).unwrap();
+        }
+        fs::write(root.join(&source), ".include \"GRAPHICS/OWN.table\"\n.incbin \"SOUND/LOCAL.bin\"\n.incbin \"COMMON/SOUND/SHARED.bin\"\n.include \"SOUND/IGNORED.bin\"\n").unwrap();
+        fs::write(
+            root.join("games/COMMON/SRC/GRAPHICS/OWN.TSV"),
+            "value:u16\n2\n",
+        )
+        .unwrap();
+        fs::write(root.join("games/COMMON/SOUND/LOCAL.PCM4"), [0x66; 16]).unwrap();
+        fs::write(root.join("games/COMMON/SOUND/SHARED.PCM4"), [0x43; 16]).unwrap();
+        fs::write(
+            root.join("games/THE BROKEN SEAL/SOUND/LOCAL.PCM4"),
+            [0x25; 16],
+        )
+        .unwrap();
+        assert_eq!(
+            asset_files(root, &source),
+            [
+                "SOUND/LOCAL.bin",
+                "COMMON/SOUND/SHARED.bin",
+                "GRAPHICS/OWN.table"
+            ]
+        );
+        let output = root.join("out/tbs-ja");
+        prepare_assets(root, target, &[source.clone()], &output).unwrap();
+        assert_eq!(
+            fs::read(output.join("SOUND/LOCAL.bin")).unwrap(),
+            [0x25; 16]
+        );
+        assert_eq!(
+            fs::read(output.join("COMMON/SOUND/SHARED.bin")).unwrap(),
+            [0x43; 16]
+        );
+        assert_eq!(fs::read(output.join("GRAPHICS/OWN.table")).unwrap(), [2, 0]);
+        for path in [
+            "SOUND//LOCAL.bin",
+            "SOUND/../LOCAL.bin",
+            "GRAPHICS/../OWN.table",
+        ] {
+            fs::write(root.join(&source), format!(".incbin \"{path}\"\n")).unwrap();
+            assert!(prepare_assets(root, target, &[source.clone()], &output)
+                .unwrap_err()
+                .contains("file path"));
+        }
     }
 
     #[test]

@@ -1943,8 +1943,8 @@ s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
 void FieldScene_RunLateSequence(void)
 {
     s32 tmp[3];
-    s32 record;
-    s32 rec;
+    struct FieldActor *leader;
+    struct FieldActor *block;
     s32 idx;
     s32 w;
     s32 w2;
@@ -1953,37 +1953,37 @@ void FieldScene_RunLateSequence(void)
     s32 zero;
     s32 k;
 
-    record = Object_GetById(ACTOR_PARTY_LEADER);
-    idx = (s32)((u32)*(u16 *)(record + 6) >> 12);
-    a = *(s16 *)(record + 10);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    idx = (s32)((u32)leader->facing >> 12);
+    a = leader->x.part.pixel;
     w = KareiMachi_Data01[idx];
-    rec = SceneActor_FindAtTileXZ((a + (w >> 16)) >> 4, (*(s16 *)(record + 18) + (s32)(s16)w) >> 4);
-    if (rec != 0) {
+    block = (struct FieldActor *)SceneActor_FindAtTileXZ((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s32)(s16)w) >> 4);
+    if (block != NULL) {
         zero = 0;
-        *(u8 *)(rec + 34) = 2;
+        block->terrain_id = 2;
         dst = tmp;
         w2 = KareiMachi_Data01[idx];
-        dst[0] = *(s32 *)(rec + 8) + (w2 & -0x10000);
-        dst[1] = *(s32 *)(rec + 12);
-        dst[2] = *(s32 *)(rec + 16) + (w2 << 16);
-        if (Object_CheckMovementCollision(rec, (s32)dst) <= 0) {
-            Object_SetMode(record, 8);
+        dst[0] = block->x.fixed + (w2 & -0x10000);
+        dst[1] = block->y.fixed;
+        dst[2] = block->z.fixed + (w2 << 16);
+        if (Object_CheckMovementCollision(block, dst) <= 0) {
+            Object_SetMode(leader, 8);
             k = 0x3333;
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);
-            *(s32 *)(rec + 48) = k;
-            *(s32 *)(rec + 52) = k;
-            Object_SetPosition(rec, dst[0], dst[1], dst[2]);
-            *(s32 *)(record + 48) = k;
-            *(s32 *)(record + 52) = k;
-            Object_SetPosition(record, dst[0], dst[1], dst[2]);
-            Object_CommitPosition(rec);
+            block->speed = k;
+            block->acceleration = k;
+            Object_SetPosition(block, dst[0], dst[1], dst[2]);
+            leader->speed = k;
+            leader->acceleration = k;
+            Object_SetPosition(leader, dst[0], dst[1], dst[2]);
+            Object_CommitPosition(block);
             BattleFx_PlayQueuedSound();
-            *(s32 *)(rec + 8) = dst[0];
-            *(s32 *)(rec + 16) = dst[2];
-            *(s32 *)(rec + 36) = zero;
-            *(s32 *)(rec + 44) = zero;
-            Object_SetMode(record, 1);
+            block->x.fixed = dst[0];
+            block->z.fixed = dst[2];
+            block->velocity_x = zero;
+            block->velocity_z = zero;
+            Object_SetMode(leader, 1);
             FieldScene_RunScene3a8SequenceB();
         }
     }

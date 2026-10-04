@@ -83,7 +83,8 @@ struct FieldActor {
     union FieldCoordinate x;
     union FieldCoordinate y;
     union FieldCoordinate z;
-    u8 unknown_14[4];
+    /* The ground height under the actor, which a falling actor lands on. */
+    s32 terrain_height;
     /* The sprite's scale on each axis; 0x10000 draws it at full size. */
     s32 scale_x;
     s32 scale_y;

@@ -1253,7 +1253,7 @@ s32 BabiIriguchi_SetupScene(void)
         }
         SceneState_ApplyRectsAtActors8And9();
         actor = Object_GetById(9);
-        actor->y.fixed = *(s32 *)Object_GetById(9)->unknown_14;
+        actor->y.fixed = Object_GetById(9)->terrain_height;
         if (GameFlag_IsSet(0x300) != 0) {
             Object_SetModeById(10, 4);
             Object_GetById(10)->collision_flags = 0xfe;

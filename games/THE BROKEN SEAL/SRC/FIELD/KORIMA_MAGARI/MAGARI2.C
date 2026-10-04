@@ -495,7 +495,7 @@ void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
          * union has an s16 member, which would order the next entry load
          * after this store. */
         *(s32 *)&actor->y += height;
-        *(s32 *)actor->unknown_14 = height;
+        actor->terrain_height = height;
     }
 }
 

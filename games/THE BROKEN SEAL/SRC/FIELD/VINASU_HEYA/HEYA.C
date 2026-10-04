@@ -1068,7 +1068,7 @@ void VinasuHeya_UpdateFloorSwitch(void)
         Map_CopyCellsTo(55, 117, 41, 117, 3, 5);
         GameFlag_Clear(0x201);
         leader->motion_flags |= 1;
-        *(s32 *)leader->unknown_14 = 0;
+        leader->terrain_height = 0;
         leader->y.fixed = 0;
     } else if (!GameFlag_IsSet(0x201)) {
         Engine_EventBegin();
@@ -1078,7 +1078,7 @@ void VinasuHeya_UpdateFloorSwitch(void)
         GameFlag_Set(0x201);
         Engine_AudioPlayCue(161);
         leader->motion_flags &= ~1;
-        *(s32 *)leader->unknown_14 = -0x20000;
+        leader->terrain_height = -0x20000;
         leader->y.fixed = -0x20000;
         Engine_EventEnd();
     }

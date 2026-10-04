@@ -415,7 +415,7 @@ s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
         actor->target_z = ACTOR_NO_TARGET;
     } else {
         actor->target_x = leader->x.fixed;
-        actor->target_y = *(s32 *)leader->unknown_14;
+        actor->target_y = leader->terrain_height;
         actor->target_z = leader->z.fixed;
         dx = actor->x.fixed - leader->x.fixed;
         if (dx < 0) {

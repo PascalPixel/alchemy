@@ -26,17 +26,17 @@ void SceneState_SetValues8_3_4(void)
 
 /* Give the actor at most sixty frames to descend to its target height, then
  * clamp the live height to the target so the following scene starts exact. */
-void SceneActor_WaitActorDescent(u8 *obj)
+void SceneActor_WaitActorDescent(struct FieldActor *actor)
 {
-    s32 cnt = 60;
+    s32 frames = 60;
 
-    while (cnt != 0) {
+    while (frames != 0) {
         WaitFrames(1);
-        cnt--;
-        if (*(s32 *)(obj + 12) <= *(s32 *)(obj + 20))
+        frames--;
+        if (actor->y.fixed <= actor->terrain_height)
             break;
     }
-    *(s32 *)(obj + 12) = *(s32 *)(obj + 20);
+    actor->y.fixed = actor->terrain_height;
 }
 
 /* Point an object toward actor zero using their fixed-point X/Z delta. */

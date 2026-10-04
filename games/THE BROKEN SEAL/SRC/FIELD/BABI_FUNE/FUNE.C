@@ -214,25 +214,25 @@ void BabiFune_UpdateWaves(void)
         if (BabiFune_StoredSlot0 != -0x10000) {
             actor = Object_GetById(0);
             actor->y.fixed = BabiFune_StoredSlot0 + swell;
-            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + swell;
+            actor->terrain_height = BabiFune_StoredSlot0 + swell;
             actor->motion_flags = 0;
         }
         if (BabiFune_StoredRecord1 != -0x10000) {
             actor = Object_GetById(1);
             actor->y.fixed = BabiFune_StoredRecord1 + swell;
-            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + swell;
+            actor->terrain_height = BabiFune_StoredSlot0 + swell;
             actor->motion_flags = 0;
         }
         if (BabiFune_StoredSlot3 != -0x10000) {
             actor = Object_GetById(3);
             actor->y.fixed = BabiFune_StoredSlot3 + swell;
-            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + swell;
+            actor->terrain_height = BabiFune_StoredSlot0 + swell;
             actor->motion_flags = 0;
         }
         if (BabiFune_StoredRecord2 != -0x10000) {
             actor = Object_GetById(2);
             actor->y.fixed = BabiFune_StoredRecord2 + swell;
-            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + swell;
+            actor->terrain_height = BabiFune_StoredSlot0 + swell;
             actor->motion_flags = 0;
         }
         BabiFune_SwellPhase++;

@@ -74,7 +74,7 @@ Func_0804128c:
 	adds r5, #2
 	cmp r3, #8
 	ble .L_080412dc
-	bl Func_08044460
+	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #128
 	movs r3, #0
 	lsls r1, r1, #23

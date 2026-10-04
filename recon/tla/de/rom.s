@@ -1818,24 +1818,8 @@ Func_080438c8:
 	.incbin "baserom.gba", 0x00043a18, 0x00000228
 	.section .rom.00043d2c, "ax"
 	.incbin "baserom.gba", 0x00043d2c, 0x00000788
-	.section .rom.000444b4, "ax"
-	.global Func_08044460
-	.type Func_08044460, %function
-	.thumb_func
-Func_08044460:
-	.incbin "baserom.gba", 0x000444b4, 0x00000018
-	.section .rom.000444cc, "ax"
-	.global Func_08044478
-	.type Func_08044478, %function
-	.thumb_func
-Func_08044478:
-	.incbin "baserom.gba", 0x000444cc, 0x00000010
-	.section .rom.000444dc, "ax"
-	.global Func_08044488
-	.type Func_08044488, %function
-	.thumb_func
-Func_08044488:
-	.incbin "baserom.gba", 0x000444dc, 0x000000d0
+	.section .rom.000444ec, "ax"
+	.incbin "baserom.gba", 0x000444ec, 0x000000c0
 	.section .rom.000445ac, "ax"
 	.global Func_08044558
 	.type Func_08044558, %function

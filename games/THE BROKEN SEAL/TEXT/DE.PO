@@ -9347,7 +9347,7 @@ msgctxt "MsgDmgP"
 msgid "02334"
 msgstr "{argument_actor_name:1} nimmt {argument_signed_number} Schaden!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "02335"
 msgstr "Der Sensenmann ruft nach {argument_actor_name:1}!"
 
@@ -9359,7 +9359,7 @@ msgctxt "MsgPpLossP"
 msgid "02337"
 msgstr "{argument_actor_name:1} verliert {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "02338"
 msgstr "{argument_actor_name:1} ist am Ende seiner Kraft..."
 

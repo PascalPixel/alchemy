@@ -7,6 +7,11 @@
 #include "BATTLE_WORK.H"
 
 #include "MOTION_OBJECT.H"
+#include "RUNTIME_MEM.H"
+#include "BATTLE_EVENT.H"
+#include "BATTLE_RUNTIME.H"
+#include "OBJDISP.H"
+#include "IWRAM_CALL.H"
 
 /* The two party groups in the order their round-end effects resolve. */
 struct BattleGroupOrder {
@@ -232,4 +237,189 @@ s32 Battle_ProcessRoundEnd(void)
         }
     }
     }
+}
+
+u32 Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
+
+/* End of one unit's turn. The Djinn it summoned with join its side's
+   recovery order and raise their element's level; the power each element
+   gains is announced. When both sides still stand, curse, poison and the
+   Grim Reaper's count then take their toll. */
+s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
+{
+    s32 id;
+    struct BattleUnit *unit;
+    s32 both_sides;
+    s32 counts[4];
+    struct DjinnRecoveryList *list;
+    s32 best;
+    s32 order;
+
+    id = plan->actor_id;
+    both_sides = 0;
+    unit = Owner_GetStateFar(id);
+    list = &Trade_GetOfferStateFar((u32)id > 7)->list;
+    for (best = 0; best < list->count; best++) {
+        if (list->entries[best].unit_id == id && list->entries[best].turns == -1) {
+            Djinn_DeactivateFar(id, list->entries[best].element, list->entries[best].index);
+        }
+    }
+    if (BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, 0) != 0 && BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) != 0) {
+        both_sides = 1;
+    }
+    {
+        s32 i;
+        s32 owner;
+        struct DjinnRecoveryList *pending;
+        pending = &Trade_GetOfferStateFar((u32)id > 7)->list;
+        for (i = 0; i < 4; i++) {
+            counts[i] = 0;
+        }
+        for (;;) {
+            s32 tmp;
+            owner = -1;
+            for (i = 0; i < pending->count; i++) {
+                if (pending->entries[i].turns == -2) {
+                    owner = pending->entries[i].unit_id;
+                    break;
+                }
+            }
+            /* FAKEMATCH: one temporary for the sentinel and the third scan's count puts the -1 in r3 and the order copy before the count load. */
+            tmp = -1;
+            if (owner == tmp) {
+                break;
+            }
+            order = -1;
+            for (i = 0; i < pending->count; i++) {
+                if (pending->entries[i].unit_id == owner && pending->entries[i].turns > order) {
+                    order = pending->entries[i].turns;
+                }
+            }
+            order++;
+            if (order <= 1) {
+                order = 2;
+            }
+            i = 0;
+            tmp = pending->count;
+            if (i < tmp) {
+                do {
+                    if (pending->entries[i].unit_id == owner && pending->entries[i].turns == -2) {
+                        pending->entries[i].turns = order;
+                        counts[pending->entries[i].element]++;
+                        order++;
+                    }
+                    i++;
+                } while (i < pending->count);
+            }
+        }
+    }
+    if (both_sides != 0) {
+        struct BattleUnit *before;
+        s32 most;
+        s32 i;
+        most = 0;
+        before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+        Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
+        best = -1;
+        for (i = 0; i <= 3; i++) {
+            if (counts[i] > most) {
+                most = counts[i];
+                best = i;
+            }
+        }
+        if (best >= 0 && unit->element_modifier[best] < most) {
+            unit->element_modifier[best] = most;
+        }
+        BattleUnit_Recalculate(id);
+        for (i = 0; i <= 3; i++) {
+            order = unit->elements[i].power - before->elements[i].power;
+            if (order > 0) {
+                BattleEventRuntime_Reset();
+                BattleEventRuntime_SchedulePhase(25);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                BattleEv_Push(BATTLE_EVENT_VALUE, order);
+                BattleEv_Push(BATTLE_EVENT_SOUND, 175);
+                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgEarthPowerUp + i);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+                Audio_PlayCue(212);
+                Object_SetMode(GetBattleObjectSlot(id)->object, 3);
+                ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
+                BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
+                BattleEventRuntime_WaitForReady();
+            }
+        }
+        Sys_Free(before);
+    }
+    if (both_sides != 0) {
+        s8 *poison;
+        BattleEventRuntime_Reset();
+        if (plan->pending_amount_60 != 0) {
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, plan->pending_amount_60);
+            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurseDamage);
+            if (Owner_AdjustFirstValueFar(id, -plan->pending_amount_60) == 0) {
+                s32 text;
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                if ((u32)id <= 7) {
+                    text = (s32)&MsgGoesDown;
+                } else {
+                    text = (s32)&MsgStrengthExhausted;
+                }
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+            } else {
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+            }
+        }
+        BattleEv_DispatchQueued();
+        BattleEventRuntime_Reset();
+        poison = &unit->poison;
+        if (*poison != 0) {
+            s32 damage = unit->max_hp * *poison / 10;
+            struct BattleSession *state = gBattleWork;
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, damage);
+            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPoisonDamage);
+            if (*poison != 0) {
+                state->events.pending_cue = 134;
+            } else {
+                state->events.pending_cue = 133;
+            }
+            if (Owner_AdjustFirstValueFar(id, -damage) == 0) {
+                s32 text;
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                if ((u32)id <= 7) {
+                    text = (s32)&MsgGoesDown;
+                } else {
+                    text = (s32)&MsgStrengthExhausted;
+                }
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+            } else {
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+            }
+        }
+        BattleEv_DispatchQueued();
+        BattleEventRuntime_Reset();
+        if (unit->death_count != 0) {
+            if (--unit->death_count == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                if ((u32)id <= 7) {
+                    /* "goes down" and "strength is exhausted" are the rows
+                       either side of the Reaper's call. */
+                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls - 3);
+                } else {
+                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls + 3);
+                }
+            }
+        }
+        BattleEv_DispatchQueued();
+    }
+    BattleUnit_Recalculate(id);
 }

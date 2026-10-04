@@ -21,8 +21,10 @@ extern char MsgFelled; /* 「あいてを たおした！」 */
 extern char MsgGoesDown; /* 「たおれてしまった…」 */
 extern char MsgDmgE; /* 「Nの ダメージ！」敵側 */
 extern char MsgDmgP; /* 「Nの ダメージ！」味方側 */
+extern char MsgReaperCalls; /* 「しりょうのよびごえをきいた！」 */
 extern char MsgPpLossE; /* 「PPを Nうしなった！」敵側 */
 extern char MsgPpLossP; /* 「PPを Nうしなった！」味方側 */
+extern char MsgStrengthExhausted; /* 「力つきた…」 */
 extern char MsgDmgEmphE; /* 相性で句読点が変わる・敵側 */
 extern char MsgDmgEmphP; /* 相性で句読点が変わる・味方側 */
 extern char MsgPartyFlees;

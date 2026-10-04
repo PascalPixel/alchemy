@@ -618,7 +618,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/TIMED_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/RUNTIME_RESERVED_NO_OP_C.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PROCESS_ROUND_END.o"(.text)
-        "*/recon/tbs/raw/080bfba4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_MOSAIC_FADE_OUT.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/TILE/BUILD_SEQUENTIAL_TABLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT.o"(.text)

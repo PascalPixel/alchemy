@@ -8359,7 +8359,7 @@ msgctxt "MsgDmgP"
 msgid "02087"
 msgstr "{argument_actor_name:1} takes {argument_signed_number} damage!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "02088"
 msgstr "The Grim Reaper calls out to {argument_actor_name:1}!"
 
@@ -8371,7 +8371,7 @@ msgctxt "MsgPpLossP"
 msgid "02090"
 msgstr "{argument_actor_name:1} loses {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "02091"
 msgstr "{argument_actor_name:1}'s strength is exhausted..."
 

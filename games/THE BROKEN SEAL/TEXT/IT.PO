@@ -9347,7 +9347,7 @@ msgctxt "MsgDmgP"
 msgid "02334"
 msgstr "Danno su {argument_actor_name:1}: {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "02335"
 msgstr "{argument_actor_name:1} ode il richiamo del Mietitore!"
 
@@ -9359,7 +9359,7 @@ msgctxt "MsgPpLossP"
 msgid "02337"
 msgstr "{argument_actor_name:1} perde {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "02338"
 msgstr "{argument_actor_name:1} ha perso le forze..."
 

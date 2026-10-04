@@ -32,7 +32,7 @@ void SceneTransform_ApplyRoll(s32 angle);
 void Graphics_PrepareTransferInIwramWork(void *eye, void *target);
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
-u32 Battle_GetObjectTableValueFar(s32 actor_id);
+s32 Battle_GetObjectTableValueFar(s32 actor_id);
 void BattleMotion_ApplyVariantMotionFar(s32 actor_id, s32 motion);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_TickMemberTimers(void);
@@ -40,7 +40,7 @@ s32 BattleFx_RunSparkGroups(void *effect, s32 mode);
 void BattleFx_RenderMode5(void *effect);
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s32 state_slot,
                                s32 state_value);
-void BattleFx_RunPaletteRampMode1(s32 effect);
+void BattleFx_RunPaletteRampMode1(struct BattleEffectArgument *effect);
 s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 /* This caller passes a height too; the packer itself uses 288 rows. */
 void Graphics_PackTileRows();
@@ -164,7 +164,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     RectangleBlit blitters[2];
     struct EffectPosition projected;
 
-    slots = (void **)(gWorkSlot + 39 * 4);
+    slots = (void **)gWorkSlot + 39;
     slot = slots;
     work = (struct BattleEffectWork *)*slot++;
     canvas = *slot;
@@ -205,7 +205,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         LoadResource(&ResourceId_IceChipSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 20) {
         LoadResource(&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);
-    } else if ((u32)(kind - 33) <= 1) {
+    } else if (kind == 33 || kind == 34) {
         LoadResource(&ResourceId_FlameSheetA, Ram_MapCellBuffer, 1, 0);
     } else if (kind != 11 && kind != 32) {
         LoadResource(&ResourceId_SmokeSheet, Ram_MapCellBuffer, 1, 0);
@@ -449,22 +449,22 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         particle->variant = 0;
     }
     if (kind != 14) {
-        s32 height = (s32)Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
+        s32 height = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
         for (i = 0; i != 32; i++) {
             particle = &work->particles[i];
             particle->x = target_actor->x;
             particle->y = height;
             particle->z = target_actor->z;
             if (kind == 31) {
-                particle->velocity_x = ((s32)(Random16() & 255) - 127) << 12;
-                particle->velocity_y = ((s32)(Random16() & 255) - 64) << 10;
+                particle->velocity_x = ((Random16() & 255) - 127) << 12;
+                particle->velocity_y = ((Random16() & 255) - 64) << 10;
             } else {
-                particle->velocity_x = ((s32)(Random16() & 255) - 127) << 12;
-                particle->velocity_y = ((s32)(Random16() & 255) - 64) << 12;
+                particle->velocity_x = ((Random16() & 255) - 127) << 12;
+                particle->velocity_y = ((Random16() & 255) - 64) << 12;
             }
             /* FAKEMATCH: Keep the final velocity store ahead of the lifetime calculation. */
             do {
-                particle->velocity_z = ((s32)(Random16() & 255) - 127) << 12;
+                particle->velocity_z = ((Random16() & 255) - 127) << 12;
             } while (0);
             particle->variant = i / 2 + 32;
         }
@@ -489,17 +489,17 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             particle->y = height;
             particle->z = target_actor->z;
             if (kind == 5 || kind == 23) {
-                particle->velocity_x = ((s32)(Random16() & 255) - 127) << 11;
+                particle->velocity_x = ((Random16() & 255) - 127) << 11;
                 particle->velocity_y = (Random16() & 255) << 11;
-                particle->velocity_z = ((s32)(Random16() & 255) - 127) << 11;
+                particle->velocity_z = ((Random16() & 255) - 127) << 11;
             } else if (kind == 25) {
-                particle->velocity_x = ((s32)(Random16() & 255) - 127) << 11;
+                particle->velocity_x = ((Random16() & 255) - 127) << 11;
                 particle->velocity_y = (Random16() & 127) << 10;
-                particle->velocity_z = ((s32)(Random16() & 255) - 127) << 11;
+                particle->velocity_z = ((Random16() & 255) - 127) << 11;
             } else {
-                particle->velocity_x = ((s32)(Random16() & 255) - 127) << 10;
+                particle->velocity_x = ((Random16() & 255) - 127) << 10;
                 particle->velocity_y = (Random16() & 127) << 10;
-                particle->velocity_z = ((s32)(Random16() & 255) - 127) << 10;
+                particle->velocity_z = ((Random16() & 255) - 127) << 10;
             }
             particle->variant = 0;
         }
@@ -511,7 +511,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     kind_from_four = kind - 4;
     if ((u32)kind_from_four <= 2 || kind == 23 || kind == 30 || kind == 27 || kind == 33 || kind == 34 || kind == 100) {
         duration = 32;
-    } else if ((u32)kind <= 3 || kind == 8 || kind == 9 || kind == 10 || kind == 22 || kind == 25 || kind == 29 || kind == 31 || kind == 14) {
+    } else if (kind >= 0 && kind <= 3 || kind == 8 || kind == 9 || kind == 10 || kind == 22 || kind == 25 || kind == 29 || kind == 31 || kind == 14) {
         duration = 48;
     } else if (kind == 21) {
         duration = 20;
@@ -603,7 +603,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             break;
         }
         if (kind != 11 && kind != 8 && kind != 32) {
-            if ((u32)(frame - 4) <= 11) {
+            if (frame >= 4 && frame <= 15) {
                 draw_pair[1](canvas, work->sheet + (frame - 4) / 2 * 960 + 0x5100, target_screen->x / 2 - 8, caster_screen->y - 24, 20, 48);
             }
             Render_ResetTransformState();
@@ -650,7 +650,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 struct MotionObject *caster;
                 s32 height;
                 caster = GetBattleObjectSlotFar(work->effect->actor)->object;
-                height = (s32)Battle_GetObjectTableValueFar(work->effect->actor) / 2;
+                height = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
                 for (i = 0; i != 32; i++, step++) {
                     if (step->variant >= 0) {
                         s32 size = (i & 1) + 6;
@@ -673,7 +673,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
         } else if (kind == 21) {
         } else if (kind == 6 || kind == 27) {
-            if ((u32)(frame - 6) <= 13) {
+            if (frame >= 6 && frame <= 19) {
                 phase = frame;
                 i = 0;
                 do {
@@ -682,7 +682,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     phase += 3;
                 } while (i != 2);
             }
-            if ((u32)(frame - 8) <= 15) {
+            if (frame >= 8 && frame <= 23) {
                 for (i = 0; i != 3; i++) {
                     s32 image = i & 3;
                     s32 angle = Random16() & 0xffff;
@@ -766,7 +766,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             s32 height;
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
-            if ((u32)(frame - 4) <= 19) {
+            if (frame >= 4 && frame <= 23) {
                 pair_x = target_screen->x / 2;
                 height = 48;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
@@ -822,22 +822,22 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     blitters[0](canvas, work, CastingImpact_ImageX[work->effect->side * 7], image_y + CastingImpact_ImageY[0], 57, 98);
                 }
                 blitters[0](canvas, work->sheet + 0x15d2, CastingImpact_ImageX[work->effect->side * 7 + 1], image_y + CastingImpact_ImageY[1], 99, 69);
-                if ((u32)(frame - 4) <= 1) {
+                if (frame == 4 || frame == 5) {
                     FillWords(canvas, 0x4000, 0x3f3f3f3f);
                 }
-                if ((u32)(frame - 6) <= 1) {
+                if (frame == 6 || frame == 7) {
                     blitters[0](canvas, work->sheet + 0x3081, CastingImpact_ImageX[work->effect->side * 7 + 2], image_y + CastingImpact_ImageY[2], 128, 91);
                 }
-                if ((u32)(frame - 8) <= 1) {
+                if (frame == 8 || frame == 9) {
                     DrawCroppedImage(canvas, Ram_MapCellBuffer, CastingImpact_ImageX[work->effect->side * 7 + 3], image_y + CastingImpact_ImageY[3], 128, &blitters[0]);
                 }
-                if ((u32)(frame - 10) <= 1) {
+                if (frame == 10 || frame == 11) {
                     blitters[0](canvas, Ram_MapCellBuffer + 0x2d80, CastingImpact_ImageX[work->effect->side * 7 + 4], image_y + CastingImpact_ImageY[4], 128, 59);
                 }
-                if ((u32)(frame - 12) <= 1) {
+                if (frame == 12 || frame == 13) {
                     blitters[0](canvas, Ram_MapCellBuffer + 0x4b00, CastingImpact_ImageX[work->effect->side * 7 + 5], image_y + CastingImpact_ImageY[5], 122, 29);
                 }
-                if ((u32)(frame - 14) <= 1) {
+                if (frame == 14 || frame == 15) {
                     blitters[0](canvas, Ram_MapCellBuffer + 0x58d2, CastingImpact_ImageX[work->effect->side * 7 + 6], image_y + CastingImpact_ImageY[6], 76, 25);
                 }
             }
@@ -854,11 +854,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
             {
                 s32 fade;
-                if ((u32)(fade = frame - 16) <= 15) {
+                fade = frame - 16;
+                if (fade >= 0 && fade <= 15) {
                     REG_BLDALPHA = (16 - fade) | 0x1000;
                 }
             }
-            if ((u32)(frame - 4) <= 1) {
+            if (frame == 4 || frame == 5) {
                 FillWords(canvas, 0x4000, 0x3f3f3f3f);
             }
             if (frame <= 3) {
@@ -880,19 +881,19 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 } else {
                     blitters[0](canvas, work->sheet + 0x1e00, 32, 16, 80, 104);
                 }
-                if ((u32)(frame - 6) <= 1) {
+                if (frame == 6 || frame == 7) {
                     blitters[0](canvas, work->sheet + 0x3e80, 0, 16, 128, 91);
                 }
-                if ((u32)(frame - 8) <= 1) {
+                if (frame == 8 || frame == 9) {
                     DrawCroppedImage(canvas, Ram_MapCellBuffer, 0, 16, 128, &blitters[0]);
                 }
-                if ((u32)(frame - 10) <= 1) {
+                if (frame == 10 || frame == 11) {
                     blitters[0](canvas, Ram_MapCellBuffer + 0x2d80, 0, 16, 128, 59);
                 }
-                if ((u32)(frame - 12) <= 1) {
+                if (frame == 12 || frame == 13) {
                     blitters[0](canvas, Ram_MapCellBuffer + 0x4b00, 0, 16, 128, 29);
                 }
-                if ((u32)(frame - 14) <= 1) {
+                if (frame == 14 || frame == 15) {
                     blitters[0](canvas, Ram_MapCellBuffer + 0x5980, 0, 16, 128, 26);
                 }
             }
@@ -954,7 +955,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
         } else if (kind == 8) {
             s32 height;
-            if ((u32)(frame - 5) <= 44) {
+            if (frame >= 5 && frame <= 49) {
                 if (frame > 25) {
                     height = 196 - (frame << 2);
                 } else {
@@ -965,7 +966,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 }
                 DrawImage(canvas, Ram_MapCellBuffer, 48, 104 - height, 32, height, &blitters[0]);
             }
-        } else if ((u32)(kind - 33) <= 1) {
+        } else if (kind == 33 || kind == 34) {
             s32 offset;
             s32 image_x;
             s32 image_y;
@@ -1078,7 +1079,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
-        BattleFx_RunPaletteRampMode1((s32)command);
+        BattleFx_RunPaletteRampMode1(command);
     } else {
         if ((u32)kind_from_two <= 1 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
             Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);

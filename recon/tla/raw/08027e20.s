@@ -828,7 +828,7 @@ Func_08027e20:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r1, [sp, #16]
 	mov r2, r8
 	str r1, [r2, #36]

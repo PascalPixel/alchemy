@@ -75,7 +75,7 @@ EffectSlot_UpdateMotion:
 	.2byte 0xf800
 	add r0, r9
 	str r0, [sp, #0]
-	bl Func_080149e0
+	bl FixedSqrt
 .L_080ebdb2:
 	movs r6, #128
 	lsls r6, r6, #12

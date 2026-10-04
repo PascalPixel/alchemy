@@ -112,8 +112,6 @@
         "*/recon/tla/raw/0801489c.o"(.text)
         "*/recon/tla/raw/080148e8.o"(.text)
         "*/games/THE LOST AGE/SRC/LIB/MATH.o"(.text)
-        "*/recon/tla/raw/080149e0.o"(.text)
-        "*/recon/tla/raw/080149f0.o"(.text)
         "*/recon/tla/raw/080149f8.o"(.text)
         "*/recon/tla/raw/08014a24.o"(.text)
         "*/recon/tla/raw/08014aa8.o"(.text)

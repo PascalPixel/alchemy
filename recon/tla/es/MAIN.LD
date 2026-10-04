@@ -105,7 +105,7 @@
     "*/recon/tla/es/rom.o"(.rom.000148c8)
     "*/recon/tla/es/rom.o"(.rom.00014914)
     "*/games/THE LOST AGE/SRC/LIB/MATH.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.00014a0c)
+    "*/recon/tla/es/rom.o"(.rom.00014a24)
     "*/recon/tla/es/rom.o"(.rom.00014a50)
     "*/recon/tla/es/rom.o"(.rom.00014ad4)
     "*/recon/tla/es/rom.o"(.rom.00014b0c)

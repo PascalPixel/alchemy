@@ -327,7 +327,7 @@ Func_080298c0:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r1, [sp, #32]
 	str r1, [r7, #36]
 	str r1, [r7, #44]
@@ -937,7 +937,7 @@ Func_080298c0:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r6, [sp, #32]
 	str r6, [r7, #36]
 	str r6, [r7, #44]

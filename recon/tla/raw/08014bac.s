@@ -81,4 +81,4 @@ Func_08014bac:
 .L_08014c44:
 	.4byte 0x050001e8
 .L_08014c48:
-	.4byte Data_08017b10
+	.4byte System_BasicColorPalette

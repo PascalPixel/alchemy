@@ -49,7 +49,7 @@ Func_08126e00:
 	muls r2, r3
 	adds r3, r2, #0
 	adds r0, r0, r3
-	bl Func_080149e0
+	bl FixedSqrt
 	movs r3, #240
 	lsls r3, r3, #4
 	adds r3, #255

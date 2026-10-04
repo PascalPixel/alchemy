@@ -237,12 +237,7 @@ Vector_AddPolarOffset:
 	.thumb_func
 ArcTan2:
 	.incbin "baserom.gba", 0x00014914, 0x000000cc
-	.section .rom.00014a0c, "ax"
-	.global Func_080149e0
-	.type Func_080149e0, %function
-	.thumb_func
-Func_080149e0:
-	.incbin "baserom.gba", 0x00014a0c, 0x00000018
+	.section .rom.00014a24, "ax"
 	.global Text_FormatHexToWork
 	.type Text_FormatHexToWork, %function
 	.thumb_func
@@ -523,7 +518,10 @@ Func_08016dd0:
 	.section .rom.000178e0, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x000178e0, 0x00000434
+	.incbin "baserom.gba", 0x000178e0, 0x0000025c
+	.global System_BasicColorPalette
+System_BasicColorPalette:
+	.incbin "baserom.gba", 0x00017b3c, 0x000001d8
 	.section .rom.00017d34, "ax"
 	.incbin "baserom.gba", 0x00017d34, 0x0000005c
 	.global Flash_Chips

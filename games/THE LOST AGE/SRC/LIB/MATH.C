@@ -22,3 +22,17 @@ s32 Math_IntegerSqrt(s32 value)
     } while (bit >= 0);
     return result;
 }
+
+s32 FixedSqrt(s32 value)
+{
+    s32 (*root)(s32) = Iwram_Sqrt;
+
+    return (s32)((u32)root(value) << 8);
+}
+
+extern const u8 System_BasicColorPalette[];
+
+s32 Runtime_GetLowTableAddress(void)
+{
+    return (s32)System_BasicColorPalette;
+}

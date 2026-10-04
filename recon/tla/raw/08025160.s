@@ -289,7 +289,7 @@ Func_08025160:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	adds r7, r0, #0
 .L_08025372:
 	adds r1, r7, #0

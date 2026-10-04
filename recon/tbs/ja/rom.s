@@ -264,12 +264,6 @@ NameEntry_EditOwnerName:
 	.thumb_func
 Battle_CollectPartyCommands:
 	.incbin "baserom.gba", 0x00027170, 0x0000108c
-	.section .rom.000281fc, "ax"
-	.global AffineEffect_UpdateFrame
-	.type AffineEffect_UpdateFrame, %function
-	.thumb_func
-AffineEffect_UpdateFrame:
-	.incbin "baserom.gba", 0x000281fc, 0x00000348
 	.section .rom.00029968, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:

@@ -307,7 +307,6 @@ iwram :
     "*/games/COMMON/SRC/BATTLE/DRAW_PARTY_PANELS_WITH_EMPTY_LIST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_LOCALIZED_RESOURCE.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.00025dd8)
-    "*/recon/tbs/de/rom.o"(.rom.00026e58)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU17.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU7.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION.o"(.text)

@@ -306,7 +306,6 @@
         "*/games/COMMON/SRC/BATTLE/DRAW_PARTY_PANELS_WITH_EMPTY_LIST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_LOCALIZED_RESOURCE.o"(.text)
         "*/recon/tbs/raw/08027114.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/08028194.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU17.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU7.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION.o"(.text)

@@ -14,8 +14,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
 s32 BattleActor_RemoveFromLists(s32 actor)
 #else
 void BattleActor_RemoveFromLists(s32 actor)
@@ -23,16 +22,14 @@ void BattleActor_RemoveFromLists(s32 actor)
 {
     struct BattleSession *work;
     s32 i;
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
     /* FAKEMATCH: retain r2 and integer-load/pointer-store operands; natural loops split the removal exit. */
     register s32 slot asm("r2");
 #endif
     u32 j;
     s32 unit;
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
     work = Ram_HeapSlots->battle_work;
     Owner_GetState(actor)->status_12a = BATTLE_UNIT_ABSENT;
     i = (u32)&((struct BattleSession *)0)->party_units;
@@ -70,8 +67,7 @@ void BattleActor_RemoveFromLists(s32 actor)
         j = 0;
 again:
         unit = work->enemy_units[j];
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
         if (unit == actor)
             goto enemy_removed;
 #else
@@ -82,16 +78,14 @@ again:
 #endif
         j++;
         if (unit == BATTLE_UNIT_LIST_END)
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
             break;
 #else
             return;
 #endif
         goto again;
     } while (0);
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
     return -1;
 enemy_removed:
     work->enemy_units[j] = BATTLE_UNIT_REMOVED;
@@ -105,8 +99,7 @@ removed:
         if (work->actions[j].unit_id == actor)
             work->actions[j].unit_id = BATTLE_UNIT_LIST_END;
     }
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
     return 0;
 #endif
 }
@@ -116,8 +109,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
     void *items[4];
     struct BattleUnit *state;
     struct AnimationObject *item;
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
     /* FAKEMATCH: ordering the child load swaps r2/r3 unless it stays in r2. */
     register struct AnimationEntry *child asm("r2");
 #else
@@ -125,8 +117,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 #endif
     s32 index;
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
     state = Owner_GetState(id);
 #else
     state = Owner_GetStateFar(id);
@@ -134,15 +125,13 @@ void BattleMotion_InitializeActorRecords(s32 id)
     index = 0;
     while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
         if (state->status_12a != BATTLE_UNIT_ENEMY)
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
             Animation_ApplyChildArgumentFar(item, 4);
 #else
             AnimationObjects_SelectAnimationFar(item, 4);
 #endif
         else
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
             Animation_ApplyChildArgumentFar(item, 5);
 #else
             AnimationObjects_SelectAnimationFar(item, 5);
@@ -154,8 +143,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
         index = 0;
         while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
             child = item->entries[0];
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
             /* FAKEMATCH: load the child before the index shift; ordinary loops reverse them. */
             asm("" : "+r" (child), "+r" (index));
 #endif

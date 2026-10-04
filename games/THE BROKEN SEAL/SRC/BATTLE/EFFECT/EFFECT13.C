@@ -33,8 +33,7 @@ void BattleFx_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
 
 extern void *Object_Spawn(s32, s32, s32, s32);
-extern void Motion_SetTargetPositionFromMagnitudeAngle(
-    struct ObjectRuntime *object, s32 magnitude, s32 angle);
+extern void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
 extern void Object_SetMode(void *, s32);
 extern void BattleFx_UpdateItemBreakFragment(void *);
 
@@ -121,57 +120,48 @@ void BattleFx_RunItemBreakSequence(void)
     UpdateRisingParticleBurst(object);
 }
 
-void *BattleFx_StartItemBreak(void *source)
+void *BattleFx_StartItemBreak(void *object)
 {
+    struct MotionObject *source = object;
+    struct MotionObject *parent;
+    struct MotionObject *child;
     s32 angle;
-    s32 fragment_height;
-    s32 fragment_scale;
-    s32 fragment_count;
-    u32 vel;
-    u32 rotation_jitter;
-    s32 zero;
-    void *parent;
-    void *child;
+    s32 distance;
+    s32 speed;
+    s32 i;
+    u32 spread;
+    u32 jitter;
 
-    angle = (((struct MotionObject *)source)->angle + 0x2000) & 0xc000;
-    parent = Object_Spawn(0xd7, *(s32 *)((s8 *)source + 8),
-                           ((struct MotionObject *)source)->y + 0x100000,
-                           *(s32 *)((s8 *)source + 16));
+    angle = (source->angle + 0x2000) & 0xc000;
+    parent = Object_Spawn(0xd7, source->x, source->y + (16 << 16), source->z);
     if (parent == 0)
         return 0;
-    *(s32 *)((s8 *)parent + 0x1c) = 0x4000;
-    *(s32 *)((s8 *)parent + 0x18) = 0x4000;
-    *(s32 *)((s8 *)parent + 0x6c) = (s32)BattleFx_UpdateItemBreakFragment;
-    *(s32 *)((s8 *)parent + 0x30) = 0x20000;
-    *(s32 *)((s8 *)parent + 0x34) = 0x20000;
-    zero = 0;
-    *(s8 *)((s8 *)parent + 0x55) = zero;
+    parent->scale_y = 0x4000;
+    parent->scale_x = 0x4000;
+    parent->update = BattleFx_UpdateItemBreakFragment;
+    parent->speed_limit = 0x20000;
+    parent->acceleration = 0x20000;
+    parent->motion_flags = 0;
     Object_SetMode(parent, 3);
-    Motion_SetTargetPositionFromMagnitudeAngle(parent, 0x100000, angle);
+    Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
-    fragment_count = 7;
-    do {
-        child = Object_Spawn(0x11d, *(s32 *)((s8 *)source + 8),
-                              ((struct MotionObject *)source)->y + 0x100000,
-                              *(s32 *)((s8 *)source + 16));
+    for (i = 7; i >= 0; i--) {
+        child = Object_Spawn(0x11d, source->x, source->y + (16 << 16), source->z);
         if (child != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
-            fragment_scale = Random16() + 0x10000;
-            *(s32 *)((s8 *)child + 0x34) = 0x10000;
-            *(s32 *)((s8 *)child + 0x30) = fragment_scale;
-            *(s8 *)((s8 *)child + 0x55) = 2;
-            *(s32 *)((s8 *)child + 0x48) = 0x51e;
-            vel = Random16();
-            *(s32 *)((s8 *)child + 0x28) = vel - Random16();
-            fragment_height = Random16() * 0x18 + 0x80000;
-            rotation_jitter = Random16();
-            Motion_SetTargetPositionFromMagnitudeAngle(
-                child, fragment_height,
-                          ((rotation_jitter - Random16()) >> 3) +
-                          ((struct MotionObject *)source)->angle);
+            speed = Random16() + 0x10000;
+            child->acceleration = 0x10000;
+            child->speed_limit = speed;
+            child->motion_flags = 2;
+            child->vertical_motion_strength = 0x51e;
+            spread = Random16();
+            child->velocity_y = spread - Random16();
+            distance = Random16() * 24 + (8 << 16);
+            jitter = Random16();
+            Motion_SetTargetPositionFromMagnitudeAngle(child, distance,
+                                                       ((jitter - Random16()) >> 3) + source->angle);
         }
-        fragment_count--;
-    } while (fragment_count >= 0);
+    }
     Audio_PlayCue(SOUND_ITEM_BREAK);
     return parent;
 }

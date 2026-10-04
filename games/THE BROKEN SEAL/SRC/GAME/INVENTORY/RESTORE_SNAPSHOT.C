@@ -2,13 +2,65 @@
 #include "INVENTORY.H"
 #include "CHARACTER.H"
 #include "GAME_STATE.H"
+#include "ITEM.H"
 
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
 extern u16 gInventorySnapshot[];
 
+void Inventory_AddAndEquip(s32 owner, s32 target);
+void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
+void Owner_RefreshActiveRatios(s32 mode);
 
+/* Saves the party's inventories once, with the two Psynergy shortcuts and
+ * the first four active owners, then leaves each member only the items of
+ * type 6, packed to the front, and hands the first member item 16. */
+void InventorySnapshot_Save(void)
+{
+    u16 *save;
+    struct BattleUnit *unit;
+    s16 *inventory;
+    s32 owner;
+    s32 i;
+    s32 n;
+    s16 first;
+    s16 second;
+
+    save = gInventorySnapshot;
+    if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
+        *save++ = INVENTORY_SNAPSHOT_SENTINEL;
+        first = gGameState.first_shortcut;
+        second = gGameState.second_shortcut;
+        for (owner = 0; owner < 4; owner++) {
+            unit = (struct BattleUnit *)Owner_GetState(owner);
+            for (n = 0; n < 15; n++)
+                *save++ = unit->inventory[n];
+            for (n = 0; n < 15; n++) {
+                if (Item_GetDirect(unit->inventory[n])->type != 6)
+                    unit->inventory[n] = 0;
+            }
+            n = 0;
+            inventory = (s16 *)unit->inventory;
+            for (i = 0; i < 15; i++) {
+                if (inventory[i] != 0)
+                    inventory[n++] = inventory[i];
+            }
+            for (; n < 15; n++)
+                inventory[n] = 0;
+            Owner_RefreshDerivedData(owner);
+            Owner_RecalculateStats(owner);
+        }
+        *save++ = first;
+        *save++ = second;
+        inventory = (s16 *)gGameState.active_owners;
+        save[0] = inventory[0];
+        save[1] = inventory[1];
+        Inventory_AddAndEquip(0, 16);
+        GameFlag_SetBit(0x952);
+    }
+    Owner_RefreshActiveRatios(1);
+}
 
 /* Restores a saved inventory snapshot when it starts with its sentinel: the
  * fifteen inventory words of each of the four owners, refreshing their

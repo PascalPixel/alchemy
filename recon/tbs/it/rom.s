@@ -535,12 +535,6 @@ GameState_InitDefaults:
 	.thumb_func
 Owner_RefreshClassActions:
 	.incbin "baserom.gba", 0x00078bf0, 0x00000238
-	.section .rom.0007a664, "ax"
-	.global Func_0807a664
-	.type Func_0807a664, %function
-	.thumb_func
-Func_0807a664:
-	.incbin "baserom.gba", 0x0007a664, 0x0000013c
 	.section .rom.0007a828, "ax"
 	.global Character_ElementGroupTable
 Character_ElementGroupTable:

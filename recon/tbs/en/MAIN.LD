@@ -357,7 +357,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/RANDOM16.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/DJINN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/ADD_AND_EQUIP.o"(.text)
-        "*/recon/tbs/raw/0807a664.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/RESTORE_SNAPSHOT.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.0807a828)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/OBJECT.o"(.text .rodata .data .padding)

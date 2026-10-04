@@ -14159,7 +14159,7 @@ msgctxt "message"
 msgid "03537"
 msgstr "Was it nice to rest?{line_break}Come stay again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGlyphName"
 msgid "03538"
 msgstr "Isaac"
 

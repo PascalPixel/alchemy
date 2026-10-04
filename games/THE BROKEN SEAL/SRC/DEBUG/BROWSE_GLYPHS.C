@@ -1,41 +1,33 @@
-/* Draft, not exact: 404 of 404 bytes, score 485 (was 975), 12 rows off.
- * The frame loop is a while (1) with the A and B exits as breaks; the wrap
- * is the % operator, and the two id tables are s16 pairs read as
- * [index][1]. The B mask is a variable set to 2 before the loop: that is
- * what puts it in a register (the reference's r9) and spills redraw and the
- * portrait window as the reference does; portrait is declared before
- * redraw, which orders their two slots.
- * Remaining: the reference keeps the work pointer in fp and the mask in r9,
- * here they are swapped (the mask is a constant to the allocator, so it
- * ranks last), and with it the slot read is ldrh [fp, r1] there and an
- * add here. Setting the mask at the top of the loop body, a second set, a
- * narrower type and moving the work read do not turn it; 110,000 permuter
- * candidates reached 345.
- * 2026-10-04 mechanism: cse adds REG_EQUAL 2 to the mask's set, and
- * local-alloc's update_equiv_regs turns it into REG_EQUIV and doubles its
- * live length (88 -> 168 against work's 125), so global allocates work
- * first (order 8, 10, 9, 11: count r8, total sl, work r9, mask fp). The
- * reference's r9 mask must therefore be a register with no constant
- * equivalence. KEY_B inline (975), an initializer (1265), for (;;) (4476),
- * the mask in the finalize calls (cse folds it back, 485) do not.
- * Pinning the mask to r9 (measurement only) leaves 470: the reference
- * loads 0x12f2 into r1 and reads [copy of fp, r1]; here the offset's
- * single-use REG_EQUIV is substituted into the address and reload adds it
- * to fp. Both residuals vanish if constant sets carry no equivalence. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "RENDER_INPUT.H"
+#include "TBS_EDITION.H"
 
+/* The German and French browsers name their entries from one past the last
+   message of their catalogues, which has no name, and stay on scaffold. */
+#if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 
+/* The window work's tile slot the glyph loader writes its entry to, the
+   halfword after the slot value. */
 struct GlyphWork {
-    u8 unknown_00[0x12f2];
+    u8 unknown_00[RENDER_SLOT_VALUE_OFS + 2];
     u16 slot;
 };
 
 extern struct GlyphWork *gWindowWork;
 extern volatile u32 gKeysRepeat;
 extern s16 SideObject_CharacterIdMap[][2], SideObject_ActorKindIdMap[][2];
-extern u8 Value_00000dd2[];
+
+/* The names the browser shows: the Japanese and English catalogues start
+   them at the first character's name; the Spanish and Italian ones point at
+   the empty message after the sample name, the end of their catalogues. */
+#if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
+extern u8 MsgDebugGlyphName;
+#define DEBUG_GLYPH_NAME ((s32)&MsgDebugGlyphName)
+#else
+extern u8 MsgDebugSecondForm;
+#define DEBUG_GLYPH_NAME ((s32)&MsgDebugSecondForm)
+#endif
 
 struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
@@ -46,6 +38,9 @@ void UiText_DrawCharacterAtOffset(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
 void UiWork_Finalize(struct RenderInput *, s32);
 
+/* The debug glyph browser: shows each character's and each actor kind's
+   portrait glyph with its number and name. Left and right step, L and R
+   jump ten; A or B leaves. */
 s32 DebugMenu_BrowseEntryGlyphs(void)
 {
     struct GlyphWork *work;
@@ -59,7 +54,8 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     s32 glyph;
     s32 tile;
     s32 slot;
-    s32 cancel;
+    /* FAKEMATCH: the B mask's constant equivalence ranks it after work; the native mask is in r9 and work in fp. */
+    register s32 cancel asm("r9");
 
     work = gWindowWork;
     redraw = 1;
@@ -101,10 +97,17 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
                 glyph = SideObject_CharacterIdMap[index][1];
             else
                 glyph = SideObject_ActorKindIdMap[index - count][1] + 128;
-            slot = work->slot;
-            UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, 15, 1);
+            {
+                /* FAKEMATCH: forced temporary pinned to r1; reload otherwise adds the offset to fp in r3. */
+                register u32 off asm("r1") = RENDER_SLOT_VALUE_OFS + 2;
+                /* FAKEMATCH: the palette stays in r2 across the slot store, as natively. */
+                register s32 pal asm("r2");
+                slot = *(u16 *)((u8 *)work + off);
+                pal = 15;
+                UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);
+            }
             UiText_DrawNumberInWindow(index, 2, window, 0, 0);
-            UiText_DrawCharacterAtOffset(index + (s32)Value_00000dd2, window, 24, 0);
+            UiText_DrawCharacterAtOffset(index + DEBUG_GLYPH_NAME, window, 24, 0);
         }
         WaitFrames(1);
     }
@@ -113,3 +116,5 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     WaitFrames(1);
     return 0;
 }
+
+#endif

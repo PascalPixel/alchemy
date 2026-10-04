@@ -15731,7 +15731,7 @@ msgctxt "message"
 msgid "03930"
 msgstr "戦士さん ゆっくりやすんだ{line_break}いってくる よろしネ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGlyphName"
 msgid "03931"
 msgstr "ロビン"
 

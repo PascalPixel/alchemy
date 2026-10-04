@@ -338,12 +338,7 @@ AffineEffect_UpdateFrame:
 	.thumb_func
 DebugMenu_BrowseIcons:
 	.incbin "baserom.gba", 0x00028714, 0x00000228
-	.section .rom.0002893c, "ax"
-	.global DebugMenu_BrowseEntryGlyphs
-	.type DebugMenu_BrowseEntryGlyphs, %function
-	.thumb_func
-DebugMenu_BrowseEntryGlyphs:
-	.incbin "baserom.gba", 0x0002893c, 0x00000194
+	.section .rom.00028ad0, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:
 	.incbin "baserom.gba", 0x00028ad0, 0x00000100

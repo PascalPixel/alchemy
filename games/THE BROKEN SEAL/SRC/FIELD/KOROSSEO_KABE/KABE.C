@@ -1116,108 +1116,62 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
  * full presentation, passing actor 0's position on with Y raised by 0x400000,
  * route 1 plays the short revisit, and every such path ends in the common
  * coordinator tail. */
-void FieldScene_RunLiftedActorCoordinator(s32 scene)
+void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 {
     s32 z;
-    void *actor;
-    s32 path;
+    struct FieldActor *actor;
+    s32 result;
 
     if (gGameState.entrance == 2) {
         Korosseo_FinishSoloRound();
         return;
     }
     Engine_EventBegin();
-    path = KorosseoKabe_RunStateInteraction(scene, 4);
-    if (path == 0) {
+    result = KorosseoKabe_RunStateInteraction(speaker, 4);
+    if (result == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoFansJustCallWall);
-        Engine_CameraSetSpeed(196608, 24576);
-        {
-            s32 cx = 35127296 >> 18;
-            s32 cy = 1;
-            s32 cz = 15728640 >> 16;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            register s32 cm asm("r3");
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-            cz <<= 16;
-            /* FAKEMATCH: native X/Y components precede Z scaling and mode setup. */
-            asm("" : "+r"(cx), "+r"(cy) : "r"(cz) : "r3");
-            cm = 1;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx), "+r"(cy) : "r"(cm), "r"(cz));
-            cy = -cy;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx) : "r"(cy), "r"(cz), "r"(cm));
-            Call4(Engine_CameraMoveTo, cx << 18, cy, cz, cm);
-        }
+        Engine_CameraSetSpeed(0x30000, 0x6000);
+        Camera_MoveTo(0x2180000, -1, 0xf00000, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(45);
-        Call2(Engine_CameraSetSpeed, 65536, 8192);
-        {
-            s32 cx = 35127296 >> 18;
-            s32 cy = 1;
-            s32 cz = 12582912 >> 16;
-            s32 cm;
-            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-            cm = 1;
-            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-            cz <<= 16;
-            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-            asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
-            cx <<= 18;
-            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-            asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
-            Call4(Engine_CameraMoveTo, cx, -cy, cz, cm);
-        }
-        z = 132;
+        Camera_SetSpeed(0x10000, 0x2000);
+        Camera_MoveTo(0x2180000, -1, 0xc00000, 1);
+        z = 264;
         Engine_CameraWaitForMove();
-        Engine_EventShowMessage(scene, 0);
-        /* FAKEMATCH: native scales the reused coordinate after the message call. */
-        asm("" : "+r"(z));
-        z <<= 1;
-        {
-            s32 fx = 632;
-            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-            register s32 fz asm("r2") = z;
-            /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
-            asm("" : : "r"(fx), "r"(fz) : "r0");
-            Korosseo_FadeInCompetitor(0, fx, fz);
-        }
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
-        Call3(Engine_ActorWalkToAndWait, 0, 616, z);
+        Engine_EventShowMessage(speaker, 0);
+        /* FAKEMATCH: called as returning int, this sets r0 last; a void call sets r0 first. */
+        ((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 632, z);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        Value3(Engine_ActorFaceDirection, 0, 49152, 20);
+        Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0xc000, 20);
         battle_owner_69();
-        Call2(Engine_CameraSetSpeed, 16384, 2048);
-        Call4(Engine_CameraMoveTo, 35127296, -1, 10485760, 1);
-        Call3(Engine_ActorSetSpeed, 0, 32768, 16384);
-        Engine_ActorSetAnimation(0, 10);
-        actor = Object_GetById(0);
-        Engine_ObjectSetPosition(actor, *(s32 *)((u8 *)actor + 8),
-            *(s32 *)((u8 *)actor + 12) + 4194304,
-            *(s32 *)((u8 *)actor + 16));
-        ObjectMotion_CommitCurrentPositionAndActivate(0);
+        Camera_SetSpeed(0x4000, 0x800);
+        Camera_MoveTo(0x2180000, -1, 0xa00000, 1);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
+        actor = Object_GetById(ACTOR_PARTY_LEADER);
+        Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x400000, actor->z.fixed);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
         battle_owner_69();
-        Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
-        Event_ShowMessage(scene, 0);
-        Call3(Engine_ActorSetSpeed, 0, 98304, 49152);
+        Camera_MoveTo(-1, -1, -1, 0);
+        Event_ShowMessage(speaker, 0);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        Value3(SceneActor_PlaceWithScale14000, 0, 488, 248);
-        Call3(Engine_ActorFaceDirection, 0, 16384, 20);
-        BattleFx_RunRisingObjectSequence(0, 6, 0);
-        Engine_CameraMoveTo(35127296, -1, 10485760, 1);
-        Engine_EventShowMessage(scene, 0);
-        Korosseo_RestoreCompetitor(0);
-        Engine_CameraFollowActor(0, 0);
-        KorosseoKabe_ShowFollowUpPrompt(scene, 4);
-    } else if (path == 1) {
+        Value3(SceneActor_PlaceWithScale14000, ACTOR_PARTY_LEADER, 488, 248);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
+        BattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
+        Engine_CameraMoveTo(0x2180000, -1, 0xa00000, 1);
+        Engine_EventShowMessage(speaker, 0);
+        Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
+        Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
+        KorosseoKabe_ShowFollowUpPrompt(speaker, 4);
+    } else if (result == 1) {
         Engine_EventSetMessage((s32)MsgKorosseoScalingWallQuickly);
-        Engine_EventShowMessage(scene, 0);
+        Engine_EventShowMessage(speaker, 0);
     }
     /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-    Value3(FieldScene_RunMiddleSequence, path, scene, 4);
+    Value3(FieldScene_RunMiddleSequence, result, speaker, 4);
     Engine_EventEnd();
 }
 

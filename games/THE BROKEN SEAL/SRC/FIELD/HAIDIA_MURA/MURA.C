@@ -400,30 +400,29 @@ void FieldScene_RunPrimarySequenceSecond(void)
 
 void FieldScene_RunScene373SequenceC(void)
 {
-    u32 i;
-    s32 rec7;
-    s32 rec8;
-    s32 record;
+    struct FieldActor *leader;
+    struct FieldActor *jasmine;
+    struct FieldActor *actor;
 
-    rec8 = Object_GetById(ACTOR_PARTY_LEADER);
-    rec7 = Object_GetById(ACTOR_JASMINE);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    jasmine = Object_GetById(ACTOR_JASMINE);
     Engine_EventBegin();
-    *(s32 *)(rec7 + 8) = *(s32 *)(rec8 + 8);
-    *(s32 *)(rec7 + 12) = *(s32 *)(rec8 + 12);
-    *(s32 *)(rec7 + 16) = *(s32 *)(rec8 + 16);
-    *(s32 *)(rec7 + 56) = -0x80000000;
-    *(s32 *)(rec7 + 60) = -0x80000000;
-    *(s32 *)(rec7 + 64) = -0x80000000;
-    *(s32 *)(rec7 + 36) = 0;
-    *(s32 *)(rec7 + 40) = 0;
-    *(s32 *)(rec7 + 44) = 0;
-    *(s32 *)(rec7 + 20) = *(s32 *)(rec8 + 12);
+    jasmine->x.fixed = leader->x.fixed;
+    jasmine->y.fixed = leader->y.fixed;
+    jasmine->z.fixed = leader->z.fixed;
+    jasmine->target_x = ACTOR_NO_TARGET;
+    jasmine->target_y = ACTOR_NO_TARGET;
+    jasmine->target_z = ACTOR_NO_TARGET;
+    jasmine->velocity_x = 0;
+    jasmine->velocity_y = 0;
+    jasmine->velocity_z = 0;
+    jasmine->terrain_height = leader->y.fixed;
     Engine_TaskWait(1);
     Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_JASMINE, 110, 0x11b);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 2);
     Engine_EventSetMessage((s32)MsgHaidiaSukuretaIsWaitingForUs);
-    if (*(s32 *)(rec8 + 8) < *(s32 *)(rec7 + 8)) {
+    if (leader->x.fixed < jasmine->x.fixed) {
         Event_ShowMessageAndWait(0xa005, 0, 2);
     } else {
         Event_ShowMessageAndWait(0x8005, 0, 2);
@@ -431,9 +430,9 @@ void FieldScene_RunScene373SequenceC(void)
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(2);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
-    record = Object_GetById(ACTOR_PARTY_LEADER);
-    if (record != 0) {
-        Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
+    if (actor != NULL) {
+        Actor_SetDestination(ACTOR_JASMINE, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_JASMINE);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);

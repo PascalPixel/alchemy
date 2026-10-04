@@ -252,7 +252,7 @@ s32 Func_0808c4f8(void)
         gGameState.hazard_limit = 16;
         gGameState.hazard_mode = 0;
         gGameState.hazard_damage = 1;
-        gGameState.unknown_24a = -1;
+        gGameState.paused_object = -1;
         gGameState.cloaked = 0;
     }
     BattleFx_ScheduleCallbackWhenValue24cSet();

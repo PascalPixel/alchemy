@@ -78,7 +78,6 @@
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_POLL_AND_TRANSFER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_POLL_STATUS.o"(.text)
     "*/games/COMMON/SRC/SYSTEM/LINK/SIO_XCHG.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.0000616c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_INTR.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.0000656c)

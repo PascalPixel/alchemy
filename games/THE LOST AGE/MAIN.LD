@@ -1186,6 +1186,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00126cf8)
     "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/CHARGE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00127c7a)
+    "*/games/THE LOST AGE/SRC/BATTLE/FORMATION_SELECT_RANDOM_AVAILABLE_MEMBER.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.00127cd0)
     "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/DEFINITION.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001280b8)
     "*/recon/tla/ja/rom.o"(.rom.001280f8)

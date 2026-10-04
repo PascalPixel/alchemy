@@ -2288,7 +2288,7 @@
         "*/recon/tla/raw/08127adc.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/CHARGE.o"(.text)
         "*/recon/tla/raw/08127c7e.o"(.text)
-        "*/recon/tla/raw/08127c80.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/FORMATION_SELECT_RANDOM_AVAILABLE_MEMBER.o"(.text)
         "*/recon/tla/raw/08127cd4.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/DEFINITION.o"(.text)
         "*/recon/tla/raw/081280bc.o"(.text)

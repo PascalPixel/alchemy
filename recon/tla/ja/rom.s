@@ -5266,7 +5266,9 @@ BattlePres_SetActorRecordMode:
 BattlePres_SetActorModes:
 	.incbin "baserom.gba", 0x00126cf8, 0x00000ea4
 	.section .rom.00127c7a, "ax"
-	.incbin "baserom.gba", 0x00127c7a, 0x00000422
+	.incbin "baserom.gba", 0x00127c7a, 0x00000002
+	.section .rom.00127cd0, "ax"
+	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
 	.section .rom.001280b8, "ax"
 	.incbin "baserom.gba", 0x001280b8, 0x00000040
 	.section .rom.001280f8, "ax"
@@ -5290,7 +5292,10 @@ Data_08128844:
 	.incbin "baserom.gba", 0x00128840, 0x0000428c
 	.global Resource_SlotAssignments
 Resource_SlotAssignments:
-	.incbin "baserom.gba", 0x0012cacc, 0x0000423c
+	.incbin "baserom.gba", 0x0012cacc, 0x000003ac
+	.global BattleFormation_Records
+BattleFormation_Records:
+	.incbin "baserom.gba", 0x0012ce78, 0x00003e90
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x00130d08, 0x000072f8

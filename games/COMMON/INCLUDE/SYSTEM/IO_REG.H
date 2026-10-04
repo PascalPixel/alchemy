@@ -9,7 +9,24 @@
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)
 #define REG_DISPSTAT (*(volatile u16 *)0x04000004)
 #define REG_VCOUNT (*(volatile u16 *)0x04000006)
+#define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 #define REG_BG2CNT (*(volatile u16 *)0x0400000c)
+#define REG_BG3CNT (*(volatile u16 *)0x0400000e)
+
+/* BGxCNT: the character and screen base blocks a background reads. */
+#define BGCNT_CHAR_BASE(block) ((block) << 2)
+#define BGCNT_SCREEN_BASE(block) ((block) << 8)
+
+/* DISPCNT: one-dimensional sprite tiles and the layers it shows. */
+enum DisplayControl {
+    DISPCNT_OBJ_1D_MAP = 0x0040,
+    DISPCNT_BG0_ON = 0x0100,
+    DISPCNT_BG1_ON = 0x0200,
+    DISPCNT_BG2_ON = 0x0400,
+    DISPCNT_BG3_ON = 0x0800,
+    DISPCNT_OBJ_ON = 0x1000,
+    DISPCNT_WIN0_ON = 0x2000
+};
 
 #define REG_BG2PA (*(volatile u16 *)0x04000020)
 #define REG_BG2PB (*(volatile u16 *)0x04000022)
@@ -24,6 +41,7 @@
 #define REG_WIN1V (*(volatile u16 *)0x04000046)
 #define REG_WININ (*(volatile u16 *)0x04000048)
 #define REG_WINOUT (*(volatile u16 *)0x0400004a)
+#define REG_MOSAIC (*(volatile u16 *)0x0400004c)
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 

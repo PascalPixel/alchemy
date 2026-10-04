@@ -7,6 +7,8 @@
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "RUNTIME_MEM.H"
+#include "IO_REG.H"
+#include "FLAG_IDS.H"
 
 void Map_SetCameraCenter(s32 x, s32 y);
 
@@ -82,7 +84,7 @@ struct SceneLayerSource {
 struct SceneHeader {
     u8 origin[4];
     u8 priority[3];
-    u8 screen[3];
+    u8 char_base[3];
     u16 unknown_0a;
     struct SceneLayerSource layers[3];
     s32 tiles;
@@ -141,7 +143,7 @@ s32 Map_LoadLayeredScene(s32 index)
     u8 *src;
     s32 cnt;
 
-    *(volatile u16 *)0x04000000 &= 0xc1ff;
+    REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
     Blend_SetDarkenTarget0(0);
     entry = &Map_LayeredScenes[index];
     work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
@@ -207,49 +209,49 @@ s32 Map_LoadLayeredScene(s32 index)
         source++;
         layer++;
     }
-    work->flags = 0x1000;
+    work->flags = DISPCNT_OBJ_ON;
     if (work->enabled[0] != 0)
-        work->flags = 0x1800;
+        work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
     if (work->enabled[1] != 0)
-        work->flags |= 0x400;
+        work->flags |= DISPCNT_BG2_ON;
     if (work->enabled[2] != 0)
-        work->flags |= 0x200;
-    cnt = work->enabled[0] | (header->screen[0] << 2) | 0x500;
-    *(volatile u16 *)0x0400000e = cnt;
+        work->flags |= DISPCNT_BG1_ON;
+    cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
+    REG_BG3CNT = cnt;
     /* FAKEMATCH: one-pass loops hold the second and third background
        control writes in source order. */
     do {
-        cnt = work->enabled[1] | (header->screen[1] << 2) | 0x600;
-        *(volatile u16 *)0x0400000c = cnt;
+        cnt = work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6);
+        REG_BG2CNT = cnt;
     } while (0);
     do {
-        cnt = work->enabled[2] | (header->screen[2] << 2) | 0x700;
-        *(volatile u16 *)0x0400000a = cnt;
+        cnt = work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7);
+        REG_BG1CNT = cnt;
     } while (0);
-    if (GameFlag_IsSet(0x170) != 0) {
-        GameFlag_ClearBitFar(0x170);
+    if (GameFlag_IsSet(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
+        GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
     } else {
         buf = (u8 *)Runtime_BumpAllocate(0x4000);
         if (buf != NULL) {
             backdrop = *(s16 *)0x05000000;
             Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
             *(s16 *)buf = backdrop;
-            Iwram_CopyWords((void *)0x05000000, buf, 0x1c0);
+            Iwram_CopyWords((void *)BG_PLTT, buf, 0x1c0);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[2] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x06004000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(1), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[3] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x06008000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(2), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[4] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x0600c000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(3), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[5] + (u32)&ResourceId_Map001), gMapLayerData);
             Runtime_BumpFree(buf);
         }
     }
     cnt = 0;
-    *(volatile u16 *)0x0400004c = cnt;
-    *(volatile u16 *)0x04000050 = cnt;
-    cnt = 0x140;
-    *(volatile u16 *)0x04000000 = cnt;
+    REG_MOSAIC = cnt;
+    REG_BLDCNT = cnt;
+    cnt = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+    REG_DISPCNT = cnt;
     Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
     return 2;
 }

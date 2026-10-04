@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08015510
+	.global Graphics_PrepareTransfer
 	.thumb_func
-Func_08015510:
+Graphics_PrepareTransfer:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

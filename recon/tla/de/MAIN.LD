@@ -130,7 +130,7 @@
     "*/recon/tla/de/rom.o"(.rom.000151d8)
     "*/recon/tla/de/rom.o"(.rom.00015278)
     "*/recon/tla/de/rom.o"(.rom.000153b0)
-    "*/recon/tla/de/rom.o"(.rom.00015714)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/TRANSFER.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00015724)
     "*/recon/tla/de/rom.o"(.rom.00015740)
     "*/games/THE LOST AGE/SRC/GRAPHICS/CAMERA_STORE_SCENE_PARAMETERS.o"(.text)

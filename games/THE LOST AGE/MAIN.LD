@@ -143,7 +143,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000151ac)
     "*/recon/tla/ja/rom.o"(.rom.0001524c)
     "*/recon/tla/ja/rom.o"(.rom.00015384)
-    "*/recon/tla/ja/rom.o"(.rom.000156e8)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/TRANSFER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000156f8)
     "*/recon/tla/ja/rom.o"(.rom.00015714)
     "*/games/THE LOST AGE/SRC/GRAPHICS/CAMERA_STORE_SCENE_PARAMETERS.o"(.text)

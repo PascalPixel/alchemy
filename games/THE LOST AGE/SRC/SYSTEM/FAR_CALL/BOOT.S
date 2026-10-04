@@ -344,7 +344,7 @@ Runtime_SetMainState19Far:
 	.global Func_08000360
 	.thumb_func
 Func_08000360:
-	overlay_veneer Func_080156f8
+	overlay_veneer Graphics_PrepareTransferAndRun
 	.global Func_08000368
 	.thumb_func
 Func_08000368:

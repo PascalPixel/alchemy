@@ -370,19 +370,12 @@ Func_0801524c:
 	.type Func_08015384, %function
 	.thumb_func
 Func_08015384:
-	.incbin "baserom.gba", 0x000153b0, 0x00000364
-	.section .rom.00015714, "ax"
-	.global Graphics_PrepareTransferInIwramWork
-	.type Graphics_PrepareTransferInIwramWork, %function
+	.incbin "baserom.gba", 0x000153b0, 0x0000018c
+	.global Graphics_PrepareTransfer
+	.type Graphics_PrepareTransfer, %function
 	.thumb_func
-Graphics_PrepareTransferInIwramWork:
-	.incbin "baserom.gba", 0x00015714, 0x00000010
-	.section .rom.00015724, "ax"
-	.global Func_080156f8
-	.type Func_080156f8, %function
-	.thumb_func
-Func_080156f8:
-	.incbin "baserom.gba", 0x00015724, 0x0000001c
+Graphics_PrepareTransfer:
+	.incbin "baserom.gba", 0x0001553c, 0x000001d8
 	.section .rom.00015740, "ax"
 	.global Func_08015714
 	.type Func_08015714, %function

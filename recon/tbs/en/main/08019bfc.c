@@ -13,7 +13,26 @@
    the tree base and offset table as [T, hi*8] then [T, hi*8 + 4] before
    the low byte's offset, where the struct index forms T + hi*8 first.
    Pointer-array or 2D-array tables give that addressing but move every
-   other register (1275-1660); hi/lo temporaries do not help. */
+   other register (1275-1660); hi/lo temporaries do not help.
+   2026-10-04 (finisher 5), instruction diff 123: the greg dump explains
+   the swap. bit (84 uses) is allocated first, but global.c's
+   regs_someone_prefers keeps it off r3 (tree prefers r3) and r2 (rank,
+   pseudo 40, prefers r2 through the tail's rank * 3 temporaries), so bit
+   takes r1 and tree r2; the native bit can take r2, so its rank carries no
+   r2 preference. Tried without effect: separate bit variables per reader
+   (123), rank as u32 (123), rank + rank * 2 (125), rank *= 3 (157),
+   (index & 1) parity (130), reusing code for the result as the native's r5
+   suggests (125), a pointer for the leaf pair (123), pins of bit r2 (144)
+   or tree r1 (135). The [][2] table with code >> 8 / code &= 0xff gives the
+   native head sequence exactly but reallocates the loop (184).
+   Now 103 (this source): writing the second leaf as p[-1] | ((p[0] & 15)
+   << 8), the native operand order, removes index's r2 preference so bit
+   takes r2 (115); reading text, text_bits and tree_bits before the tree
+   (statement-order search over all 1680 orders) gives text_bits r0 and
+   tree_bits r4 as native (103). Left: tree is r3 and depth r1 (native r1
+   and r3, from tree's r3 preference via the head add) and the head loads
+   [T + hi*8] before the low byte; the [][2] head (142-155 in every order),
+   tree += split heads (163) and a tree r1 pin (135) are worse. */
 #include "TYPES.H"
 #include "TEXT_READER.H"
 
@@ -44,10 +63,10 @@ s32 Func_08019bfc(struct TextReader *reader)
 
     code = reader->previous_code;
     context = &Text_MessageContexts[code >> 8];
-    tree = context->trees + context->offsets[code & 0xff];
     text = (const u8 *)reader->words;
     text_bits = reader->bits;
     tree_bits = 1;
+    tree = context->trees + context->offsets[code & 0xff];
     leaves = tree - 1;
     rank = 0;
     for (;;) {
@@ -90,7 +109,7 @@ s32 Func_08019bfc(struct TextReader *reader)
     if (((index * 4) & 7) == 0)
         value = (leaves[-(index >> 1)] << 4) | (leaves[-(index >> 1) - 1] >> 4);
     else
-        value = ((leaves[-(index >> 1)] & 0xf) << 8) | leaves[-(index >> 1) - 1];
+        value = leaves[-(index >> 1) - 1] | ((leaves[-(index >> 1)] & 0xf) << 8);
     reader->bits = text_bits;
     reader->previous_code = value;
     reader->words = (const u32 *)text;

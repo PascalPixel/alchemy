@@ -40,6 +40,8 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
 void BattlePresentation_DrawStreaks(void);
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
+#include "MOTION_OBJECT.H"
+#include "B5_CONTEXT.H"
 
 extern u8 gBattleFxWork[];
 
@@ -323,4 +325,112 @@ void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *efx)
 void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx)
 {
     BattleFx_RunTwoResource(efx, 1);
+}
+
+void BattleEventRuntime_BeginPhaseFar(s32 cue);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
+void AudioCommand_PlayFar(s32 cue);
+void Camera_ApplyShake(s32 random_mask, u32 shake_range);
+void ObjectGroup_TickMemberTimers(void);
+
+extern u8 TwoResource_CellWidths[];
+extern u8 TwoResource_CellHeights[];
+extern u16 TwoResource_CellSourceOffsets[];
+extern u8 TwoResource_CellX[];
+extern s8 TwoResource_CellBiasY[];
+
+/* Swirl and tail cells of a two-sheet effect: for the first 24 frames the
+   blitter draws one cell every four frames, the swirl from the work block,
+   the tail from the map cell buffer; in mode 1 the target is thrown up at
+   frame 13 and the camera shakes again at frame 65. */
+void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
+{
+    struct BattleEffectWork *work;
+    void *canvas;
+    struct MotionObject *object;
+    struct EffectPosition position;
+    /* FAKEMATCH: only draw[0] is loaded and read; the unused second routine word, a real DrawRectangle, is the 4 bytes the native frame keeps between the routine and the position. */
+    DrawRectangle draw[2];
+    s32 frames;
+    s32 frame;
+    s32 cell;
+    void **heap;
+    void **p;
+
+    heap = (void **)gBattleFxWork;
+    p = heap;
+    work = *p++;
+    canvas = *p;
+    work->effect = efx;
+    BattleFx_BeginCanvasLayer(0);
+    *(u16 *)0x04000020 = 0x100;
+    if (work->effect->side == 1) {
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
+        draw[0] = (DrawRectangle)heap[7];
+    } else {
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 1);
+        draw[0] = (DrawRectangle)heap[7];
+    }
+    Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet, Ram_MapCellBuffer, 1, 0);
+    if (mode == 0) {
+        void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+        /* FAKEMATCH: the copier address is set before the costly 0x05000000 operand, as the reference loads it */
+        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+        copy((void *)0x05000000, palette, 128);
+    }
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
+    if (work->effect->side == 0)
+        *(s32 *)0x04000028 = (16 - position.x) << 8;
+    else
+        *(s32 *)0x04000028 = (112 - position.x) << 8;
+    frames = 74;
+    if (mode != 1)
+        frames = 48;
+    for (frame = 0; frame != frames; frame++) {
+        cell = frame / 4;
+        if (cell <= 5) {
+            if (cell <= 3)
+                draw[0](canvas, (u8 *)work + TwoResource_CellSourceOffsets[cell],
+                    TwoResource_CellX[cell + work->effect->side * 6], TwoResource_CellBiasY[cell] + 32,
+                    TwoResource_CellWidths[cell], TwoResource_CellHeights[cell]);
+            else
+                draw[0](canvas, Ram_MapCellBuffer + TwoResource_CellSourceOffsets[cell],
+                    TwoResource_CellX[cell + work->effect->side * 6], TwoResource_CellBiasY[cell] + 32,
+                    TwoResource_CellWidths[cell], TwoResource_CellHeights[cell]);
+        }
+        if (frame == 8) {
+            if (mode == 0) {
+                BattleEventRuntime_BeginPhaseFar(0x85);
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
+            } else {
+                AudioCommand_PlayFar(0x86);
+                ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
+            }
+            work->shake_frames = 8;
+        }
+        if (mode == 1) {
+            if (frame == 13) {
+                object->velocity_y = 0xc0000;
+                object->vertical_motion_strength = 0x7851;
+                object->vertical_motion_phase = 0x4000;
+            }
+            if (frame == 65) {
+                work->shake_frames = 4;
+                BattleEventRuntime_BeginPhaseFar(0x86);
+            }
+        }
+        Camera_ApplyShake(8, 8);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+    BattleFx_EndCanvasLayer();
 }

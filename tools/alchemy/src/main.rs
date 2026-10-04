@@ -19,6 +19,7 @@ mod diff;
 mod edition;
 mod elf;
 mod gate;
+mod label;
 mod merge;
 mod process;
 mod similar;
@@ -38,6 +39,7 @@ Build and verify:
 Matching:
   diff        compare a C draft with the listing it would replace
   adopt       take an adopted function out of every edition's scaffolding
+  label       label English-only scaffold data in the other editions
   merge-driver  git merge drivers for scaffolds and linker scripts, and
               links, which reconciles linker scripts after a merge
 Reports for people (nothing else reads them):
@@ -61,6 +63,7 @@ fn main() -> ExitCode {
         "check" => check::entry(rest),
         "deps" => deps_command::entry(rest),
         "adopt" => result(adopt::run(rest)),
+        "label" => result(label::run(rest)),
         "diff" => result(diff::run(rest)),
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),

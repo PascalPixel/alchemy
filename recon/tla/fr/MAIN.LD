@@ -757,7 +757,6 @@
     "*/recon/tla/fr/rom.o"(.rom.000d1d78)
     "*/recon/tla/fr/rom.o"(.rom.000d1ec8)
     "*/recon/tla/fr/rom.o"(.rom.000d291c)
-    "*/recon/tla/fr/rom.o"(.rom.000d2bf8)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/PLAY_CUE_AND_START_EMITTER_ON_TARGET.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d2c72)
     "*/recon/tla/fr/rom.o"(.rom.000d2c74)

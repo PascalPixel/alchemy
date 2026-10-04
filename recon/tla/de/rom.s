@@ -2470,13 +2470,10 @@ Func_080ccec8:
 	.type Func_080cd91c, %function
 	.thumb_func
 Func_080cd91c:
-	.incbin "baserom.gba", 0x000da91c, 0x000002dc
-	.section .rom.000dabf8, "ax"
-	.global Func_080cdbf8
-	.type Func_080cdbf8, %function
-	.thumb_func
-Func_080cdbf8:
-	.incbin "baserom.gba", 0x000dabf8, 0x00000048
+	.incbin "baserom.gba", 0x000da91c, 0x000001a4
+	.global Func_080cdac0
+Func_080cdac0:
+	.incbin "baserom.gba", 0x000daac0, 0x00000138
 	.section .rom.000dac72, "ax"
 	.incbin "baserom.gba", 0x000dac72, 0x00000002
 	.section .rom.000dac74, "ax"

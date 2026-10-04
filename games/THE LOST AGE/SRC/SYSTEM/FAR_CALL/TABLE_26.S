@@ -32,7 +32,15 @@ Func_080c82c0:
 	.global Func_080c82c8
 	.thumb_func
 Func_080c82c8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_FindNearestObject
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_FindNearestObject
+.else
 	overlay_veneer Func_080dd054
+.endif
+.endif
 	.global Func_080c82d0
 	.thumb_func
 Func_080c82d0:
@@ -40,7 +48,15 @@ Func_080c82d0:
 	.global Func_080c82d8
 	.thumb_func
 Func_080c82d8:
-	overlay_veneer Func_080cdbf8
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080dd054
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080dd054
+.else
+	overlay_veneer BattleFx_FindNearestObject
+.endif
+.endif
 	.global Func_080c82e0
 	.thumb_func
 Func_080c82e0:

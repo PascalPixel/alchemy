@@ -1145,7 +1145,6 @@
         "*/recon/tla/raw/080cda58.o"(.text)
         "*/recon/tla/raw/080cda84.o"(.text)
         "*/recon/tla/raw/080cdac0.o"(.text)
-        "*/recon/tla/raw/080cdbf8.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/PLAY_CUE_AND_START_EMITTER_ON_TARGET.o"(.text)
         "*/recon/tla/raw/080cdc72.o"(.text)
         "*/recon/tla/raw/080cdc74.o"(.text)

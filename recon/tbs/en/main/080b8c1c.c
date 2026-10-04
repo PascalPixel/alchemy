@@ -1,4 +1,19 @@
-/* 2026-10-04 (main-5), score 2269 unchanged: a work pointer throughout
+/* 2026-10-04 (finisher 3), 82 rows off by dd.ts. The 8 bytes at sp+0 and
+ * sp+4 are caller-save slots, not a local: in the ROM's reset loop the
+ * units base (r2) and the count base (r1) are two pseudos for &work held in
+ * call-clobbered registers and saved around Actor_ResetMotionAtAnchor,
+ * because the three call-saved low registers are taken by a fresh &work
+ * (r5, also read for primary_unit), the units offset (r6) and i (r7). Here
+ * i sits in r8, the old &work (r6) reaches the tail and one copy suffices.
+ * So the source must give i a low register and a separate &work in the
+ * tail. Tried without effect: block pointers for the tail (one or two, 73),
+ * an inline helper for the loop or for its reads, w-> throughout with
+ * work. in the tail (134), pinning i to r7 (138), while and if/do forms,
+ * j as the tail index, and the 1 of the party arm as a shared count
+ * variable or pinned to r8. devsearch reaches 60 only with a frame reserve
+ * and barriers, which the caller-save explanation rules out.
+ *
+ * 2026-10-04 (main-5), score 2269 unchanged: a work pointer throughout
  * (2353), one count variable stored after the arms (2867; in i, 3037) and
  * while forms of both unit loops (2269) did not help. Four minutes of
  * permute reached 1400 only by moving i = 0 to the reset loop and making

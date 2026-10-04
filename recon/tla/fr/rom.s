@@ -2524,11 +2524,6 @@ Func_080ae868:
 	.thumb_func
 Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000b3c68, 0x0000003c
-	.global Inventory_GetQuantity
-	.type Inventory_GetQuantity, %function
-	.thumb_func
-Inventory_GetQuantity:
-	.incbin "baserom.gba", 0x000b3ca4, 0x00000024
 	.section .rom.000b3e40, "ax"
 	.global Func_080aee40
 	.type Func_080aee40, %function

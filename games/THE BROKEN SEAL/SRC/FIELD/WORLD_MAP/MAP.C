@@ -1244,7 +1244,7 @@ void FieldScene_RunScene371_02001b5c(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001c08(void)
+void WorldMap_ShowDjinnTutorial(void)
 {
 
     u32 i;
@@ -1495,7 +1495,7 @@ listened:
         Actor_WalkToAndWait(DJINNI, tile_x, tile_z);
     }
 finish:
-    FieldScene_RunScene371_02001c08();
+    WorldMap_ShowDjinnTutorial();
     Battle_ClearObjectFlag5bWhenMode3();
     return;
 learn:

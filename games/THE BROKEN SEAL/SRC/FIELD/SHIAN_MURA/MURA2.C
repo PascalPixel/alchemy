@@ -3,6 +3,9 @@
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 
+/* Set once the man at the well has spilled his water on the party. */
+#define FLAG_SHIAN_WATER_SPILLED 0x200
+
 struct SceneState { u8 unk_00[14]; s16 field_0e; };
 
 struct Actor { u8 unk_00[35]; u8 presentation_flags; };
@@ -260,108 +263,95 @@ void SceneEffect_ShowActorSetupMessage(void)
 
 void FieldScene_RunPrimarySequence(void)
 {
-    u32 i;
-    s32 rec7;
-    struct FieldActor *actor;
-    u8 *record;
-    s32 v7;
-    s32 v5;
-    s32 p5;
-    s32 q1;
-    s32 t2;
-    s32 q2;
-    s32 hi;
-    s32 lo;
+    struct FieldActor *puddle;
+    struct FieldActor *record;
+    struct FieldActor *leader;
+    s32 moved;
+    s32 facing;
+    s32 x;
+    s32 z;
+    s32 column;
+    s32 scale_y;
+    s32 scale_x;
 
-    actor = (struct FieldActor *)Object_GetById(20);
+    puddle = Object_GetById(20);
     Engine_EventBegin();
-    v7 = 0;
+    moved = 0;
     record = Actor_Get(18);
-    *(s32 *)((s32)record + 108) = v7;
-    if (GameFlag_IsSet(0x200) == 0) {
-        record = Object_GetById(18);
-        if ((*(s32 *)((s32)record + 8) >> 20) > 19) {
-            goto L_020006a2;
+    record->update = NULL;
+    if (GameFlag_IsSet(FLAG_SHIAN_WATER_SPILLED) != 0 || (Object_GetById(18)->x.fixed >> 20) <= 19) {
+        record = Actor_Get(18);
+        facing = record->facing;
+        Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
+        Engine_EventWait(10);
+        Engine_EventSetMessage((s32)MsgShianNowMustGetWaterAgain);
+        if (GameFlag_IsSet(FLAG_SHIAN_WATER_SPILLED) == 0) {
+            bump_step(1);
+            Event_ShowMessage(18, 0);
+            Object_GetById(18)->unknown_64 = 0;
+            record = Object_GetById(18);
+            record->facing = facing;
+        } else {
+            Event_ShowMessage(18, 0);
+            Actor_FaceDirection(18, 0x8000, 20);
         }
+        record = Actor_Get(18);
+        record->update = (void *)ShianMura_WatchGateTrigger;
+        Engine_EventEnd();
+        return;
     }
-    record = Actor_Get(18);
-    p5 = *(u16 *)((s32)record + 6);
-    Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
-    Engine_EventWait(10);
-    Engine_EventSetMessage((s32)MsgShianNowMustGetWaterAgain);
-    if (GameFlag_IsSet(0x200) == 0) {
-        bump_step(1);
-        Event_ShowMessage(18, 0);
-        *(u16 *)((u8 *)Object_GetById(18) + 100) = v7;
-        record = Object_GetById(18);
-        *(u16 *)((s32)record + 6) = p5;
-    } else {
-        Event_ShowMessage(18, 0);
-        Actor_FaceDirection(18, 0x8000, 20);
-    }
-    record = Actor_Get(18);
-    *(s32 *)((s32)record + 108) = (s32)ShianMura_WatchGateTrigger;
-    Engine_EventEnd();
-    goto L_02000916;
-    L_020006a2:;
-    record = Object_GetById(ACTOR_PARTY_LEADER);
-    if ((*(s32 *)((s32)record + 16) >> 19) > 27) {
-        record = Object_GetById(ACTOR_PARTY_LEADER);
-        if ((*(s32 *)((s32)record + 16) >> 19) <= 29) {
-            record = Object_GetById(ACTOR_PARTY_LEADER);
-            if ((*(s32 *)((s32)record + 8) >> 20) != 26) {
-                Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-                Engine_ActorFaceActor(0, 18, 0);
-                Engine_EventWait(5);
-                rec7 = Object_GetById(ACTOR_PARTY_LEADER);
-                record = Actor_Get(18);
-                if (*(s32 *)(rec7 + 8) < *(s32 *)((s32)record + 8)) {
-                    *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
-                    record = Object_GetById(18);
-                    Actor_WalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) - 8), 232);
-                    v7 = 1;
-                } else {
-                    *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
-                    record = Object_GetById(18);
-                    Actor_WalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) + 24), 232);
-                }
-                Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-            }
+    if ((Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 19) > 27
+        && (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 29
+        && (Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) != 26) {
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+        Engine_ActorFaceActor(0, 18, 0);
+        Engine_EventWait(5);
+        leader = Object_GetById(ACTOR_PARTY_LEADER);
+        record = Actor_Get(18);
+        if (leader->x.fixed < record->x.fixed) {
+            Object_GetById(0)->unknown_5a &= ~1;
+            record = Object_GetById(18);
+            Actor_WalkTo(ACTOR_PARTY_LEADER, ((record->x.fixed >> 20) << 4) - 8, 232);
+            moved = 1;
+        } else {
+            Object_GetById(0)->unknown_5a &= ~1;
+            record = Object_GetById(18);
+            Actor_WalkTo(ACTOR_PARTY_LEADER, ((record->x.fixed >> 20) << 4) + 24, 232);
         }
+        Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     }
-    v5 = 128;
     record = Actor_Get(18);
-    *(s32 *)((s32)record + 56) = (v5 << 24);
+    record->target_x = ACTOR_NO_TARGET;
     record = Object_GetById(18);
-    *(s32 *)((s32)record + 60) = (v5 << 24);
+    record->target_y = ACTOR_NO_TARGET;
     record = Actor_Get(18);
-    *(s32 *)((s32)record + 64) = (v5 << 24);
+    record->target_z = ACTOR_NO_TARGET;
     Engine_ActorEnableActionCallback(18, 1);
     Engine_ActorSetAnimation(18, 1);
     Engine_ActorRunRepeatedMotion(18, 2);
     Engine_EventWait(10);
     Audio_PlayCue(228);
-    actor->scale_x = 0x4ccc;
-    actor->scale_y = 0x4ccc;
+    puddle->scale_x = 0x4ccc;
+    puddle->scale_y = 0x4ccc;
     record = Object_GetById(18);
-    q1 = *(s32 *)((s32)record + 8);
+    x = record->x.fixed;
     record = Object_GetById(18);
-    t2 = *(s32 *)((s32)record + 16) >> 20;
-    Actor_SetPosition(20, (((q1 >> 20) << 20) + 0x80000), ((t2 << 20) + 0x80000));
+    z = record->z.fixed >> 20;
+    Actor_SetPosition(20, ((x >> 20) << 20) + (8 << 16), (z << 20) + (8 << 16));
     record = Object_GetById(18);
-    q2 = *(s32 *)((s32)record + 8);
+    column = record->x.fixed;
     record = Object_GetById(18);
-    Map_CopyCellAttributes(16, 16, 1, 1, (q2 >> 20), (*(s32 *)((s32)record + 16) >> 20));
+    Map_CopyCellAttributes(16, 16, 1, 1, column >> 20, record->z.fixed >> 20);
     Engine_ActorSetSpritePriority(20, 2);
-    actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+    puddle->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     do {
         Engine_TaskWait(3);
-        hi = actor->scale_y;
-        lo = actor->scale_x;
-        actor->scale_y = hi + 0x1999;
-        lo += 0x1999;
-        actor->scale_x = lo;
-    } while (lo <= 0xffff);
+        scale_y = puddle->scale_y;
+        scale_x = puddle->scale_x;
+        puddle->scale_y = scale_y + 0x1999;
+        scale_x += 0x1999;
+        puddle->scale_x = scale_x;
+    } while (scale_x <= 0xffff);
     Actor_ShowEmote(18, 0x105, 70);
     Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -371,17 +361,14 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventSetMessage((s32)MsgShianDoingMadeMeSpillMy);
     Event_ShowMessageAndWait(18, 0, 20);
     BattleFx_PlayQueuedSound();
-    record = Object_GetById(ACTOR_PARTY_LEADER);
-    if ((*(s32 *)((s32)record + 8) >> 20) == 26) {
-        record = Object_GetById(ACTOR_PARTY_LEADER);
-        if ((*(s32 *)((s32)record + 16) >> 20) > 13) {
-            v7 = 1;
-        }
+    if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26
+        && (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20) > 13) {
+        moved = 1;
     }
-    if (v7 != 0) {
+    if (moved != 0) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
-        *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
+        Object_GetById(0)->unknown_5a &= ~1;
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
         Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -389,15 +376,14 @@ void FieldScene_RunPrimarySequence(void)
     }
     Actor_SetSpeed(18, 0xcccc, 0x6666);
     record = Object_GetById(18);
-    if ((*(s32 *)((s32)record + 16) >> 20) != 14) {
+    if ((record->z.fixed >> 20) != 14) {
         record = Actor_Get(18);
-        Actor_WalkToAndWait(18, *(s16 *)((s32)record + 10), 232);
+        Actor_WalkToAndWait(18, record->x.part.pixel, 232);
     }
     Actor_WalkToAndWait(18, 0x118, 232);
-    GameFlag_Set(0x200);
+    GameFlag_Set(FLAG_SHIAN_WATER_SPILLED);
     Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
     Engine_EventEnd();
-    L_02000916:;
 }
 
 void SceneEffect_ActivateNearbyActor(void)

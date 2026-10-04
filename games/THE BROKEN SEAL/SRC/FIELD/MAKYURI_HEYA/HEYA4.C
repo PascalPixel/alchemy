@@ -986,7 +986,7 @@ void FieldScene_RunScene39cSequenceB(void)
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
         OverlayObject_PrepareSpawnedObject(Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
         Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
-        *(s32 *)&Object_GetById(ACTOR_PARTY_LEADER)->unknown_44[4] = 0x8000;
+        Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
         Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
         Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
@@ -1452,8 +1452,8 @@ s32 Scene_Initialize(void)
             Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
             Object_GetById(8)->y.fixed = 144 << 16;
             Object_GetById(8)->motion_flags = 0;
-            *(s32 *)&Object_GetById(8)->unknown_44[0] = 0;
-            *(s32 *)&Object_GetById(8)->unknown_44[4] = 0x4ccc;
+            Object_GetById(8)->bounce = 0;
+            Object_GetById(8)->gravity = 0x4ccc;
             gEventWork->start_transition = 0x100;
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
@@ -1708,7 +1708,7 @@ void MakyuriHeya_RideLift(void)
     Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
     Battle_WaitMode0(30);
     Actor_WalkToAndWait(0, 704, 584);
-    *(s32 *)Actor_Get(0)->unknown_44 = 0;
+    Actor_Get(0)->bounce = 0;
     Object_SetModeById(0, 6);
     Battle_WaitMode0(6);
     Object_SetModeById(0, 7);
@@ -1720,7 +1720,7 @@ void MakyuriHeya_RideLift(void)
     Actor_SetDestination(0, 736, 584);
     ObjectMotion_CommitCurrentPositionAndActivate(0);
     Engine_ActorSetSpriteFlags(Actor_Get(0), 1);
-    *(s32 *)Actor_Get(0)->unknown_44 = 0x4000;
+    Actor_Get(0)->bounce = 0x4000;
     Object_SetModeById(0, 6);
     Battle_WaitMode0(6);
     Actor_FaceDirection(0, 0x8000, 30);

@@ -21,14 +21,6 @@ void MakyuriIriguchi_ArriveWithSparks(void);
 void MakyuriIriguchi_CrossDoorway(void);
 void MakyuriIriguchi_RunDoorScene(void);
 
-/* An actor's lift: how fast it rises and what pulls it back. */
-struct ActorLift {
-    s32 gravity;
-    s32 rise;
-};
-
-#define ACTOR_LIFT(actor) ((struct ActorLift *)(actor)->unknown_44)
-
 void Engine_EventBegin();
 void Engine_ActorSetPosition();
 void ObjectMotion_SetSpeedParameters();
@@ -363,8 +355,8 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_MapRedraw();
         WaitFrames(1);
         Actor_Get(0)->y.fixed = 0x820000;
-        ACTOR_LIFT(Actor_Get(0))->rise = 0x8000;
-        ACTOR_LIFT(Actor_Get(0))->gravity = flag;
+        Actor_Get(0)->gravity = 0x8000;
+        Actor_Get(0)->bounce = flag;
         Actor_Get(0)->motion_flags = flag;
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
@@ -391,8 +383,8 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_MapRenderWaitForValues();
         Actor_SetAttachedEffect(0, 0x100);
-        ACTOR_LIFT(Actor_Get(0))->rise = 0x10000;
-        ACTOR_LIFT(Actor_Get(0))->gravity = 0x4000;
+        Actor_Get(0)->gravity = 0x10000;
+        Actor_Get(0)->bounce = 0x4000;
         if (!GameFlag_IsSet(0x875)) {
             ColorBuffer_ApplySource(0x10000, 0);
             ColorBuffer_ApplyTarget(0x10003, 1);

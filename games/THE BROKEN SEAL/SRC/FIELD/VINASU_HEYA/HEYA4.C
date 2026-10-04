@@ -291,8 +291,8 @@ void FieldScene_RunLeaderDropSequence(void)
     Engine_MapRedraw();
     Engine_TaskWait(1);
     leader->y.fixed = 130 << 16;
-    *(s32 *)&leader->unknown_44[4] = 0x8000;
-    *(s32 *)&leader->unknown_44[0] = 0;
+    leader->gravity = 0x8000;
+    leader->bounce = 0;
     leader->motion_flags = 0;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();

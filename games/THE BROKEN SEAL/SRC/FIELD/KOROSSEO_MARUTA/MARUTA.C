@@ -229,46 +229,43 @@ void FieldScene_RunClosingAuxiliarySequence(void)
 {
     extern void Object_SetPosition();
 
-    u32 i;
-    u8 *p9;
-    s32 rec;
-    s32 rec7;
-    u8 *record;
-    u8 *p6;
+    s32 actor;
+    s32 lowered;
+    struct FieldActor *log;
+    struct FieldActor *rider;
+    u8 *flags;
 
-    u8 *base = (u8 *)&gGameState;
-
-    p6 = *(u8 **)(base + 500);
-    rec = GameFlag_IsSet(0x362);
-    if (rec == 0) {
-        record = Object_GetById(10);
-        if ((s32)record != 0) {
-            Actor_SetDestination((s32)p6, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+    actor = gGameState.selected_actor;
+    lowered = GameFlag_IsSet(0x362);
+    if (lowered == 0) {
+        log = Object_GetById(10);
+        if (log != NULL) {
+            Actor_SetDestination(actor, log->x.part.pixel, log->z.part.pixel);
         }
-        Engine_ActorWaitForMove((s32)p6);
-        record = Object_GetById(11);
-        record[85] = rec;
-        *(s32 *)((s32)record + 52) = 0x6666;
-        *(s32 *)((s32)record + 48) = 0xcccc;
-        Object_SetPosition((s32)record, *(s32 *)((s32)record + 8), 0x200000, *(s32 *)((s32)record + 16));
-        record = Object_GetById(10);
-        record[85] = rec;
-        *(s32 *)((s32)record + 52) = 0x6666;
-        *(s32 *)((s32)record + 48) = 0xcccc;
-        Call4(Object_SetPosition, (s32)record, *(s32 *)((s32)record + 8), 0x40000, *(s32 *)((s32)record + 16));
-        rec7 = Object_GetById((s32)p6);
-        p9 = rec7 + 85;
-        *p9 = rec;
-        *(s32 *)(rec7 + 52) = 0x6666;
-        *(s32 *)(rec7 + 48) = 0xcccc;
-        Object_SetPosition(rec7, *(s32 *)(rec7 + 8), 0x40000, *(s32 *)(rec7 + 16));
-        Engine_ActorSetSpriteFlags(rec7, 1);
-        Engine_ActorWaitForMove((s32)p6);
+        Engine_ActorWaitForMove(actor);
+        log = Object_GetById(11);
+        log->motion_flags = lowered;
+        log->acceleration = 0x6666;
+        log->speed = 0xcccc;
+        Object_SetPosition(log, log->x.fixed, 0x200000, log->z.fixed);
+        log = Object_GetById(10);
+        log->motion_flags = lowered;
+        log->acceleration = 0x6666;
+        log->speed = 0xcccc;
+        Call4(Object_SetPosition, (s32)log, log->x.fixed, 0x40000, log->z.fixed);
+        rider = Object_GetById(actor);
+        flags = &rider->motion_flags;
+        *flags = lowered;
+        rider->acceleration = 0x6666;
+        rider->speed = 0xcccc;
+        Object_SetPosition(rider, rider->x.fixed, 0x40000, rider->z.fixed);
+        Engine_ActorSetSpriteFlags(rider, 1);
+        Engine_ActorWaitForMove(actor);
         Map_CopyCellAttributes(0, 24, 1, 1, 9, 12);
         Engine_TaskWait(2);
-        Engine_ActorSetSpriteFlags(rec7, 1);
-        *p9 = 3;
-        *(s32 *)(rec7 + 20) = *(s32 *)(rec7 + 12);
+        Engine_ActorSetSpriteFlags(rider, 1);
+        *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+        *(s32 *)rider->unknown_14 = rider->y.fixed;
         Engine_GameFlagSet(0x367);
     }
 }

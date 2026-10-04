@@ -13,7 +13,8 @@ struct DisplayScrollObject {
 
 LAYOUT_SIZE_GUARD(DisplayScrollObject_Size, struct DisplayScrollObject, 8);
 
-extern u16 Data_02004c00;
+/* The credits keep their scroll position in the shared scratch word. */
+extern u16 gScratchWord;
 extern s16 Flash_Handler0;
 /* Flash and audio reuse these scratch cells in their own modes. */
 extern struct DisplayScrollObject *gFlashNumRemainingBytes;
@@ -40,7 +41,7 @@ void DisplayScroll_UpdateObjects(void)
 {
     /* FAKEMATCH: keep the existing two-word OAM walk over the real records;
        named field stores in f4f9d28 reverse stores and register allocation. */
-    u32 frame = Data_02004c00;
+    u32 frame = gScratchWord;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
     u32 *entry = (u32 *)(gFlashNumRemainingBytes + 24);
@@ -62,7 +63,7 @@ void DisplayScroll_UpdateObjects(void)
     }
     Dma_Set(gFlashNumRemainingBytes, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
     if (Flash_Handler0 == 0 && (gFrameTick & 3) == 0)
-        Data_02004c00++;
+        gScratchWord++;
 }
 
 /* When no line is still being drawn and the scroll position has entered a
@@ -74,9 +75,9 @@ void DisplayScroll_RenderEnteringLine(void)
     s32 line;
 
     if (Flash_Handler0 == 0) {
-        current = Data_02004c00;
-        if ((s16)Data_02004c00 / 8 != Flash_Layout / 8) {
-            line = (s16)Data_02004c00 / 8;
+        current = gScratchWord;
+        if ((s16)gScratchWord / 8 != Flash_Layout / 8) {
+            line = (s16)gScratchWord / 8;
             Flash_Layout = current;
             Flash_Handler0 = DisplayScroll_DrawLine(DisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
         }
@@ -142,7 +143,7 @@ void DisplayScroll_InitObjectTable(void)
         *q = 0x300;
         entry += 2;
     }
-    Data_02004c00 = 0;
+    gScratchWord = 0;
     Flash_Layout = 0;
     Flash_Handler0 = 0;
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0x480);

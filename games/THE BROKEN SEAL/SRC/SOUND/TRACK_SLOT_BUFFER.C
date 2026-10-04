@@ -14,14 +14,14 @@ void AudioTrack_ResetSlotBuckets(void)
     limit = 0x3FF;
     index = 0;
     zero = 0;
-    record = (u8 *)&Data_02004c00->nodes[0].back;
+    record = (u8 *)&gScratchWord->nodes[0].back;
     do {
         *(s32 *)(record + sizeof(struct AudioSlotNode *)) = index;
         index++;
         *(s32 *)record = zero;
         record += sizeof(struct AudioSlotNode);
     } while (index <= limit);
-    slot = (s32 *)Data_02004c00->bucket;
+    slot = (s32 *)gScratchWord->bucket;
     {
         s32 zero2 = 0;
         for (index = 0xFF; index >= 0; index--) {
@@ -44,7 +44,7 @@ void AudioTrack_InsertSlotNode(s32 index)
     void **node;
     void *next;
 
-    base = (s32)Data_02004c00;
+    base = (s32)gScratchWord;
     node_off = index * sizeof(struct AudioSlotNode);
     tbl_off = index * sizeof(s32) + (u32)&((struct AudioTrackSlotWork *)0)->bucket_by_slot;
     bucket = *(s32 *)(base + tbl_off) * 4;
@@ -70,7 +70,7 @@ void AudioTrack_RemoveSlotNode(s32 slot)
     s32 next_link_offset;
     void *previous_node;
 
-    track_table = (s32)Data_02004c00;
+    track_table = (s32)gScratchWord;
     slot_offset = slot * sizeof(struct AudioSlotNode);
     next_link_offset = slot_offset + (u32)&((struct AudioSlotNode *)0)->back;
     next_node = *(s32 *)(track_table + next_link_offset);
@@ -102,7 +102,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
             u8 value;
 
             AudioTrack_RemoveSlotNode(removal & mask);
-            state = Data_02004c00;
+            state = gScratchWord;
             read_offset = state->input_cursor;
             value = input[read_offset];
             next_offset = read_offset + 1;
@@ -122,7 +122,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
     current++;
     if (current < limit) {
         u32 mask = 0x3ff;
-        struct AudioTrackSlotWork **root = &Data_02004c00;
+        struct AudioTrackSlotWork **root = &gScratchWord;
         s32 empty = -1;
 
         do {
@@ -143,7 +143,7 @@ void AudioTrack_CopyBufferedBytes(u8 *destination)
        at the output lanes. Typed direct accesses shrink 72 to 68 bytes
        and reverse the two lane-base registers. */
     u32 cnt_off = (u32)&((struct AudioTrackSlotWork *)0)->out_cnt;
-    u8 **base_p = (u8 **)&Data_02004c00;
+    u8 **base_p = (u8 **)&gScratchWord;
     u8 *base = *base_p;
     u32 index = 0;
     u32 *cnt_p = (u32 *)(base + cnt_off);
@@ -192,11 +192,11 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
     struct AudioSlotNode *node;
     s32 len;
 
-    Data_02004c00->match_len = 1;
-    if (Data_02004c00->bucket_by_slot[start] == -1) {
+    gScratchWord->match_len = 1;
+    if (gScratchWord->bucket_by_slot[start] == -1) {
         return;
     }
-    node = Data_02004c00->bucket[Data_02004c00->bucket_by_slot[start]];
+    node = gScratchWord->bucket[gScratchWord->bucket_by_slot[start]];
     if (start + MATCH_MAX > WINDOW_MASK) {
         /* The run can wrap the ring, so both sides are masked. */
         while (node != NULL) {
@@ -204,14 +204,14 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 
             if (dist > 0 && dist <= DIST_MAX) {
                 for (len = 1; len < MATCH_MAX; len++) {
-                    if (Data_02004c00->bucket_by_slot[(start + len) & WINDOW_MASK]
-                        != Data_02004c00->bucket_by_slot[(node->slot + len) & WINDOW_MASK]) {
+                    if (gScratchWord->bucket_by_slot[(start + len) & WINDOW_MASK]
+                        != gScratchWord->bucket_by_slot[(node->slot + len) & WINDOW_MASK]) {
                         break;
                     }
                 }
-                if (Data_02004c00->match_len < len) {
-                    Data_02004c00->match_ofs = dist;
-                    Data_02004c00->match_len = len;
+                if (gScratchWord->match_len < len) {
+                    gScratchWord->match_ofs = dist;
+                    gScratchWord->match_len = len;
                     if (len == MATCH_MAX) {
                         return;
                     }
@@ -225,14 +225,14 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 
             if (dist > 0 && dist <= DIST_MAX) {
                 for (len = 1; len < MATCH_MAX; len++) {
-                    if (Data_02004c00->bucket_by_slot[start + len]
-                        != Data_02004c00->bucket_by_slot[(node->slot + len) & WINDOW_MASK]) {
+                    if (gScratchWord->bucket_by_slot[start + len]
+                        != gScratchWord->bucket_by_slot[(node->slot + len) & WINDOW_MASK]) {
                         break;
                     }
                 }
-                if (Data_02004c00->match_len < len) {
-                    Data_02004c00->match_ofs = dist;
-                    Data_02004c00->match_len = len;
+                if (gScratchWord->match_len < len) {
+                    gScratchWord->match_ofs = dist;
+                    gScratchWord->match_len = len;
                     if (len == MATCH_MAX) {
                         return;
                     }
@@ -254,81 +254,81 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
     s16 code;
 
     defer = 0;
-    Data_02004c00 = (struct AudioTrackSlotWork *)gMapCellBuffer;
+    gScratchWord = (struct AudioTrackSlotWork *)gMapCellBuffer;
     AudioTrack_ResetSlotBuckets();
-    Data_02004c00->input_limit = size;
-    Data_02004c00->pos = 0;
-    Data_02004c00->input_cursor = 0;
-    Data_02004c00->out_total = 0;
-    Data_02004c00->flag_mask = 0x80;
-    Data_02004c00->out_buf[0] = 0;
-    Data_02004c00->out_cnt = 1;
+    gScratchWord->input_limit = size;
+    gScratchWord->pos = 0;
+    gScratchWord->input_cursor = 0;
+    gScratchWord->out_total = 0;
+    gScratchWord->flag_mask = 0x80;
+    gScratchWord->out_buf[0] = 0;
+    gScratchWord->out_cnt = 1;
     AudioTrack_ConsumeSlotBytes(0, PRIME_COUNT, input);
 
-    while (Data_02004c00->bucket_by_slot[Data_02004c00->pos] != -1) {
-        AudioTrack_FindWindowMatch(Data_02004c00->pos);
+    while (gScratchWord->bucket_by_slot[gScratchWord->pos] != -1) {
+        AudioTrack_FindWindowMatch(gScratchWord->pos);
         if (defer == 0) {
-            len = Data_02004c00->match_len;
-            if (Data_02004c00->match_len > 1) {
+            len = gScratchWord->match_len;
+            if (gScratchWord->match_len > 1) {
                 /* Lazy evaluation: take one literal now when the match one
                    slot later reaches at least as far as this match followed
                    by the best one after it. */
-                save_ofs = Data_02004c00->match_ofs;
+                save_ofs = gScratchWord->match_ofs;
                 save_len = len;
-                AudioTrack_FindWindowMatch((Data_02004c00->pos + 1) & WINDOW_MASK);
-                if (Data_02004c00->match_len > 2) {
-                    reach[0] = Data_02004c00->match_len + 1;
-                    AudioTrack_FindWindowMatch((Data_02004c00->pos + len) & WINDOW_MASK);
-                    reach[1] = Data_02004c00->match_len + len;
+                AudioTrack_FindWindowMatch((gScratchWord->pos + 1) & WINDOW_MASK);
+                if (gScratchWord->match_len > 2) {
+                    reach[0] = gScratchWord->match_len + 1;
+                    AudioTrack_FindWindowMatch((gScratchWord->pos + len) & WINDOW_MASK);
+                    reach[1] = gScratchWord->match_len + len;
                     if (reach[0] >= reach[1]) {
                         save_len = 1;
                         defer = 1;
                     }
                 }
-                Data_02004c00->match_ofs = save_ofs;
-                Data_02004c00->match_len = save_len;
+                gScratchWord->match_ofs = save_ofs;
+                gScratchWord->match_len = save_len;
             }
         }
 
-        if (Data_02004c00->match_len > 1) {
+        if (gScratchWord->match_len > 1) {
             defer = 0;
-            Data_02004c00->out_buf[0] |= Data_02004c00->flag_mask;
-            if (Data_02004c00->match_len <= 16) {
-                code = ((Data_02004c00->match_ofs << 4) & ~0xfff)
-                       | (Data_02004c00->match_ofs & 0xff)
-                       | (((Data_02004c00->match_len - 1) << 8) & 0xf00);
-                Data_02004c00->out_buf[Data_02004c00->out_cnt++] = (u16)code >> 8;
-                Data_02004c00->out_buf[Data_02004c00->out_cnt++] = code;
+            gScratchWord->out_buf[0] |= gScratchWord->flag_mask;
+            if (gScratchWord->match_len <= 16) {
+                code = ((gScratchWord->match_ofs << 4) & ~0xfff)
+                       | (gScratchWord->match_ofs & 0xff)
+                       | (((gScratchWord->match_len - 1) << 8) & 0xf00);
+                gScratchWord->out_buf[gScratchWord->out_cnt++] = (u16)code >> 8;
+                gScratchWord->out_buf[gScratchWord->out_cnt++] = code;
             } else {
-                code = ((Data_02004c00->match_ofs << 4) & ~0xfff)
-                       | (Data_02004c00->match_ofs & 0xff);
-                Data_02004c00->out_buf[Data_02004c00->out_cnt++] = (u16)code >> 8;
-                Data_02004c00->out_buf[Data_02004c00->out_cnt++] = code;
-                Data_02004c00->out_buf[Data_02004c00->out_cnt++] =
-                    Data_02004c00->match_len - 17;
+                code = ((gScratchWord->match_ofs << 4) & ~0xfff)
+                       | (gScratchWord->match_ofs & 0xff);
+                gScratchWord->out_buf[gScratchWord->out_cnt++] = (u16)code >> 8;
+                gScratchWord->out_buf[gScratchWord->out_cnt++] = code;
+                gScratchWord->out_buf[gScratchWord->out_cnt++] =
+                    gScratchWord->match_len - 17;
             }
         } else {
-            Data_02004c00->out_buf[Data_02004c00->out_cnt++] =
-                Data_02004c00->bucket_by_slot[Data_02004c00->pos];
-            Data_02004c00->match_len = 1;
+            gScratchWord->out_buf[gScratchWord->out_cnt++] =
+                gScratchWord->bucket_by_slot[gScratchWord->pos];
+            gScratchWord->match_len = 1;
         }
 
-        AudioTrack_ConsumeSlotBytes(Data_02004c00->pos + PRIME_COUNT,
-                                    Data_02004c00->match_len, input);
-        Data_02004c00->pos =
-            (Data_02004c00->pos + Data_02004c00->match_len) & WINDOW_MASK;
-        Data_02004c00->flag_mask >>= 1;
-        if (Data_02004c00->flag_mask == 0) {
+        AudioTrack_ConsumeSlotBytes(gScratchWord->pos + PRIME_COUNT,
+                                    gScratchWord->match_len, input);
+        gScratchWord->pos =
+            (gScratchWord->pos + gScratchWord->match_len) & WINDOW_MASK;
+        gScratchWord->flag_mask >>= 1;
+        if (gScratchWord->flag_mask == 0) {
             AudioTrack_CopyBufferedBytes(dst);
-            Data_02004c00->flag_mask = 0x80;
-            Data_02004c00->out_buf[0] = 0;
-            Data_02004c00->out_cnt = 1;
+            gScratchWord->flag_mask = 0x80;
+            gScratchWord->out_buf[0] = 0;
+            gScratchWord->out_cnt = 1;
         }
     }
 
-    Data_02004c00->out_buf[0] |= Data_02004c00->flag_mask;
-    Data_02004c00->out_buf[Data_02004c00->out_cnt++] = 0;
-    Data_02004c00->out_buf[Data_02004c00->out_cnt++] = 0;
+    gScratchWord->out_buf[0] |= gScratchWord->flag_mask;
+    gScratchWord->out_buf[gScratchWord->out_cnt++] = 0;
+    gScratchWord->out_buf[gScratchWord->out_cnt++] = 0;
     AudioTrack_CopyBufferedBytes(dst);
-    return Data_02004c00->out_total;
+    return gScratchWord->out_total;
 }

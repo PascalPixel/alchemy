@@ -158,15 +158,19 @@ void FieldScene_RunBracketedSceneWithFlag282(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3c9_02003924(void)
+/*
+ * Entrance 4: the summit after the pair's fall. The cells are restored, the
+ * party stand at the edge with actors 21 and 6 behind them, the particles
+ * rise beside actor 23, and the leap plays as the screen opens.
+ */
+void VinasuChojo_RunLeapEntrance(void)
 {
-    u32 i;
-    s32 rec4;
-    s32 record;
+    struct FieldActor *leader;
+    struct FieldActor *actor;
 
-    rec4 = Object_GetById(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
-    *((u8 *)Engine_EventGetViewCenter() + 85) = 0;
+    Engine_EventGetViewCenter()->motion_flags = 0;
     Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
     Map_CopyCellsTo(39, 72, 11, 72, 16, 20);
     Map_CopyCellAttributes(19, 6, 3, 7, 22, 6);
@@ -174,89 +178,66 @@ void FieldScene_RunScene3c9_02003924(void)
     Map_CopyCellAttributes(19, 6, 3, 7, 22, 13);
     Map_CopyCellAttributes(19, 6, 3, 7, 13, 13);
     Engine_TaskWait(1);
-    Camera_MoveTo(0xc00000, -0x400000, 0xee0000, 0);
+    Camera_MoveTo(PIXELS(192), -PIXELS(64), PIXELS(238), 0);
     Engine_TaskWait(1);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    Engine_ActorDestroy(20);
-    Engine_ActorDestroy(19);
+    Engine_ActorDestroy(ACTOR_FIRST_OF_PAIR);
+    Engine_ActorDestroy(ACTOR_SECOND_OF_PAIR);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
-    record = Actor_Get(ACTOR_PARTY_LEADER);
-    Engine_ActorSetSpriteFlags(record, 0);
-    *(s32 *)(rec4 + 8) = 0x15a0000;
-    *(s32 *)(rec4 + 16) = 0xcd0000;
-    *(s32 *)(rec4 + 12) = 0x200000;
-    {
-        s32 shown = 0x6000;
-
-        *(u16 *)(rec4 + 6) = shown;
-    }
-    SceneActor_ParkRecord(rec4);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+    leader->x.fixed = PIXELS(346);
+    leader->z.fixed = PIXELS(205);
+    leader->y.fixed = PIXELS(32);
+    leader->facing = FACING_SOUTHWEST;
+    SceneActor_ParkRecord(leader);
     Engine_ActorSetAnimation(ACTOR_GERALD, 18);
-    record = Actor_Get(ACTOR_GERALD);
-    Engine_ActorSetSpriteFlags(record, 0);
-    record = Actor_Get(ACTOR_GERALD);
-    *(s32 *)(record + 8) = 0x1640000;
-    *(s32 *)(record + 16) = 0xc00000;
-    {
-        s32 shown = 0xa000;
-
-        *(u16 *)(record + 6) = shown;
-    }
-    *(s32 *)(record + 12) = 0x200000;
-    SceneActor_ParkRecord(record);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_GERALD), 0);
+    actor = Actor_Get(ACTOR_GERALD);
+    actor->x.fixed = PIXELS(356);
+    actor->z.fixed = PIXELS(192);
+    actor->facing = FACING_NORTHWEST;
+    actor->y.fixed = PIXELS(32);
+    SceneActor_ParkRecord(actor);
     Engine_ActorSetAnimation(ACTOR_IVAN, 18);
-    record = Actor_Get(ACTOR_IVAN);
-    Engine_ActorSetSpriteFlags(record, 0);
-    record = Actor_Get(ACTOR_IVAN);
-    *(s32 *)(record + 8) = 0x1680000;
-    {
-        s32 shown = 0x2000;
-
-        *(u16 *)(record + 6) = shown;
-    }
-    *(s32 *)(record + 12) = 0x200000;
-    *(s32 *)(record + 16) = 0xde0000;
-    SceneActor_ParkRecord(record);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
+    actor = Actor_Get(ACTOR_IVAN);
+    actor->x.fixed = PIXELS(360);
+    actor->facing = FACING_SOUTHEAST;
+    actor->y.fixed = PIXELS(32);
+    actor->z.fixed = PIXELS(222);
+    SceneActor_ParkRecord(actor);
     Engine_ActorSetAnimation(ACTOR_MIA, 18);
-    record = Actor_Get(ACTOR_MIA);
-    Engine_ActorSetSpriteFlags(record, 0);
-    record = Actor_Get(ACTOR_MIA);
-    *(s32 *)(record + 8) = 0x14e0000;
-    {
-        s32 shown = 0x8000;
-
-        *(u16 *)(record + 6) = shown;
-    }
-    *(s32 *)(record + 12) = 0x200000;
-    *(s32 *)(record + 16) = 0xde0000;
-    SceneActor_ParkRecord(record);
-    Actor_SetPosition(21, 0xc40000, 0xdc0000);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
+    actor = Actor_Get(ACTOR_MIA);
+    actor->x.fixed = PIXELS(334);
+    actor->facing = FACING_WEST;
+    actor->y.fixed = PIXELS(32);
+    actor->z.fixed = PIXELS(222);
+    SceneActor_ParkRecord(actor);
+    Actor_SetPosition(21, PIXELS(196), PIXELS(220));
     Engine_ActorSetAnimation(21, 5);
-    Actor_SetPosition(6, 0xbc0000, 0x13c0000);
+    Actor_SetPosition(6, PIXELS(188), PIXELS(316));
     Engine_ActorSetAnimation(6, 5);
-    record = Actor_Get(6);
-    Engine_ActorSetSpriteFlags(record, 0);
-    record = Actor_Get(8);
-    *(s32 *)(record + 8) += -0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(9);
-    *(s32 *)(record + 8) += -0x100000;
-    SceneActor_ParkRecord(record);
-    record = Actor_Get(10);
-    *(s32 *)(record + 8) += 0x100000;
-    SceneActor_ParkRecord(record);
-    record = Object_GetById(11);
-    *(s32 *)(record + 8) += 0x100000;
-    SceneActor_ParkRecord(record);
+    Engine_ActorSetSpriteFlags(Actor_Get(6), 0);
+    actor = Actor_Get(8);
+    actor->x.fixed -= PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(9);
+    actor->x.fixed -= PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Actor_Get(10);
+    actor->x.fixed += PIXELS(16);
+    SceneActor_ParkRecord(actor);
+    actor = Object_GetById(11);
+    actor->x.fixed += PIXELS(16);
+    SceneActor_ParkRecord(actor);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    record = Actor_Get(23);
-    Engine_ActorSetSpriteFlags(record, 0);
-    *(u8 *)((u8 *)Object_GetById(23) + 85) = 4;
-    Actor_SetChildValue(23, 4);
-    record = Actor_Get(23);
-    *(s32 *)(record + 12) = 0x280000;
-    ((void (*)())Engine_TaskAddCallback)((s32)SceneEffect_SpawnParticlesBesideActor, 0xc80);
+    Engine_ActorSetSpriteFlags(Actor_Get(PARTICLE_SOURCE_ACTOR), 0);
+    Object_GetById(PARTICLE_SOURCE_ACTOR)->motion_flags = 4;
+    Actor_SetChildValue(PARTICLE_SOURCE_ACTOR, 4);
+    Actor_Get(PARTICLE_SOURCE_ACTOR)->y.fixed = PIXELS(40);
+    Engine_TaskAddCallback(SceneEffect_SpawnParticlesBesideActor, TASK_PRIORITY_SCENE);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     gEventWork->transition_frames = 24;
     Engine_EventOpenScreen();

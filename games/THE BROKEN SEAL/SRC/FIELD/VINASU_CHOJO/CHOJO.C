@@ -401,7 +401,7 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
         FieldScene_RunBracketedSceneWithFlag282();
         break;
     case 4:
-        FieldScene_RunScene3c9_02003924();
+        VinasuChojo_RunLeapEntrance();
         break;
     case 9:
         Engine_EventBegin();

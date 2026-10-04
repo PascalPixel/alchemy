@@ -113,7 +113,7 @@ void Scene_RunScriptedActorPresentation(void);
 void SceneEffect_SpawnParticlesBesideActor();
 void Scene_RunPairedActorEffectSequence(void);
 void Inventory_AddItem(s32, s32);
-void FieldScene_RunScene3c9_02003924(void);
+void VinasuChojo_RunLeapEntrance(void);
 void FieldScene_RunBracketedSceneWithFlag282(void);
 void VinasuChojo_RunActorTransition();
 void FieldScene_RunMultiActorPresentation();

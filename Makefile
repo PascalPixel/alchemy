@@ -52,7 +52,8 @@ help:
 	  'make similar         the nearest C twins of every not-yet-C function in either game, into out/reports/similar.tsv' \
 	  'make worst           rank maintained C by how mechanical it reads; the camelotized share' \
 	  'alchemy diff DRAFT.c compare a C draft with the listing it would replace (tools/out/cargo-target/release/alchemy)' \
-	  'alchemy adopt ADDR LABEL [NAME]  take an adopted function out of the scaffolding of all six editions'
+	  'alchemy adopt ADDR LABEL [NAME]  take an adopted function out of the scaffolding of all six editions' \
+	  'alchemy queues --workers N --out-dir DIR  split not-yet-C work into queues by module run or overlay'
 
 # Setup may download pinned dependencies; ordinary build commands stay offline.
 fetch-dependencies:

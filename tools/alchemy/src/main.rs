@@ -22,6 +22,7 @@ mod gate;
 mod label;
 mod merge;
 mod process;
+mod queues;
 mod similar;
 mod similar_command;
 mod targets;
@@ -40,6 +41,7 @@ Matching:
   diff        compare a C draft with the listing it would replace
   adopt       take an adopted function out of every edition's scaffolding
   label       label English-only scaffold data in the other editions
+  queues      split not-yet-C work into queues that cannot collide
   merge-driver  git merge drivers for scaffolds and linker scripts, and
               links, which reconciles linker scripts after a merge
 Reports for people (nothing else reads them):
@@ -64,6 +66,7 @@ fn main() -> ExitCode {
         "deps" => deps_command::entry(rest),
         "adopt" => result(adopt::run(rest)),
         "label" => result(label::run(rest)),
+        "queues" => result(queues::run(rest)),
         "diff" => result(diff::run(rest)),
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),

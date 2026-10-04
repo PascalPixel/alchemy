@@ -695,7 +695,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000aa1f6)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION_2.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION_3.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000aa334)
     "*/recon/tla/ja/rom.o"(.rom.000aa374)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT_2.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT.o"(.text)

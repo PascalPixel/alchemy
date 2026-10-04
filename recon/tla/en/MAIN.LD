@@ -986,8 +986,6 @@
         "*/recon/tla/raw/080af244.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION_2.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/MUTATION_3.o"(.text)
-        "*/recon/tla/raw/080af338.o"(.text)
-        "*/recon/tla/raw/080af348.o"(.text)
         "*/recon/tla/raw/080af378.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT_2.o"(.text)
         "*/recon/tla/raw/080af402.o"(.text .rodata .data .padding)

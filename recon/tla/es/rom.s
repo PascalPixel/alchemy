@@ -2456,12 +2456,6 @@ Inventory_Remove:
 	.incbin "baserom.gba", 0x000b8154, 0x00000080
 	.section .rom.000b8206, "ax"
 	.incbin "baserom.gba", 0x000b8206, 0x0000009e
-	.section .rom.000b8344, "ax"
-	.global Item_GetTargetMode
-	.type Item_GetTargetMode, %function
-	.thumb_func
-Item_GetTargetMode:
-	.incbin "baserom.gba", 0x000b8344, 0x00000040
 	.section .rom.000b8384, "ax"
 	.global Item_AdjustCounter
 	.type Item_AdjustCounter, %function

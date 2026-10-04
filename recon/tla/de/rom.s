@@ -2116,12 +2116,6 @@ Func_080af1fc:
 	.thumb_func
 Func_080af244:
 	.incbin "baserom.gba", 0x000bc244, 0x00000054
-	.section .rom.000bc338, "ax"
-	.global Item_GetTargetMode
-	.type Item_GetTargetMode, %function
-	.thumb_func
-Item_GetTargetMode:
-	.incbin "baserom.gba", 0x000bc338, 0x00000040
 	.section .rom.000bc378, "ax"
 	.global Item_AdjustCounter
 	.type Item_AdjustCounter, %function

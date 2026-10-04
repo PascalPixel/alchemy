@@ -1,3 +1,16 @@
+/* 2026-10-04 W4 consumer recheck: this 636-byte dependency has four
+ * unfinished callers totaling 6,340 bytes, second to ResourceObject_Create.
+ * Fresh approved compilation reproduces score 2, solely the 240/200-byte
+ * frame adjustments. EFFECT.S forwards the two launch calls unchanged to
+ * Unnamed_080cb7f8 and BattleFx_RunGatheringBurst; their argument accesses
+ * use the ordinary effect prefix, not an implicit caller-frame tail.
+ * Both output positions are the three-word Render_ProjectPoint result.
+ * The separate BattlePres_RunUnitAction draft uses its 84-byte record tail
+ * as 32 child-state bytes after eight actor ids; that is not evidence of
+ * any additional storage owned by this caller. No consumed lifetime found
+ * explains sp+200..239. Retain the draft and its unresolved launch layout;
+ * no frame reservation or new instruction-steering device was tried.
+ */
 /* 2026-10-04 frame audit: BattleFx_PlayUnitElementEffect, 636 bytes, pool included.
  * Uncredited under S1/S2/C1; the owned English ROM supplies the raw listing.
  * Entries JA/EN/DE/ES/FR/IT: 080b8798, 080c1798, 080c3db0, 080c57b0, 080c57b0, 080c17b0.

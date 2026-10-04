@@ -436,22 +436,7 @@ s32 FieldScene_RunEntrySetup(void)
     return 0;
 }
 
-#if EDITION_INTERNATIONAL
-void FieldScene_DrawThreeCaptionWindow(void)
-{
-    /*
-     * The frame is 36 bytes: 4 for the stacked fifth argument, plus a 32-byte
-     * local that no instruction reads or writes.  Only its size is known, not
-     * its element type, so the declaration must stay at 32 bytes.
-     */
-    u8 buf[32];
-    s32 handle = UiWindow_Create(0, 13, 30, 6, 2);
-
-    UiText_DrawStringInWindow(gItemLevelGlyphsUpper, handle, 0, 0);
-    UiText_DrawStringInWindow(gItemLevelGlyphsLower, handle, 0, 8);
-    UiText_DrawStringInWindow(gItemLevelGlyphsMarks, handle, 0, 16);
-}
-#else
+#if !EDITION_INTERNATIONAL
 void ItemLevel_RunMotionTest(void)
 {
     /* FAKEMATCH: Call3 places the actor argument before the coordinate shifts;
@@ -465,8 +450,12 @@ void ItemLevel_RunMotionTest(void)
 }
 #endif
 
+/* These trailing helpers remain in their module after the uncredited
+ * international caption routine. The linker places that extent between
+ * this section and the preceding source. */
 /* Set the flag byte at +53 of the record the effect work pointer holds. */
-void SceneState_SetRecordFlag53(void)
+void __attribute__((section(".text.item_level_tail")))
+SceneState_SetRecordFlag53(void)
 {
     u8 *record = *(u8 **)gEffectWork;
 
@@ -478,12 +467,14 @@ void SceneState_SetRecordFlag53(void)
  * the wrapper hands its callee's result back; declaring the pair void would
  * compile pop {r0} / bx r0 instead.
  */
-int SceneState_GetFarResult100c(void)
+int __attribute__((section(".text.item_level_tail")))
+SceneState_GetFarResult100c(void)
 {
     return DebugMenu_BrowseIcons();
 }
 
-int SceneState_GetFarResult1020(void)
+int __attribute__((section(".text.item_level_tail")))
+SceneState_GetFarResult1020(void)
 {
     return DebugMenu_BrowseEntryGlyphs();
 }

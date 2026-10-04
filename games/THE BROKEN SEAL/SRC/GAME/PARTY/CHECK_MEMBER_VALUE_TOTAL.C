@@ -4,6 +4,7 @@
 #include "GAME_STATE.H"
 #include "EVENT_RUNTIME.H"
 #include "ITEM.H"
+#include "ITEMGIFT.H"
 
 extern u8 MsgCannotCarryMore;
 
@@ -67,7 +68,7 @@ s32 Shop_PickUnitItemFar(s32 *owner, s32 *slot);
 s32 Object_CallSpawnRoutineAtOrigin(s32 mode);
 void Audio_PlayCue(s32 cue);
 
-s32 PartyInventory_GiveItem(s32 item)
+s32 PartyInventory_GiveItem(s32 item, s32 unused)
 {
     struct EventRuntime *work;
     s32 saved;

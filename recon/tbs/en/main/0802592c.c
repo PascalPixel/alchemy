@@ -1,3 +1,11 @@
+/* 2026-10-04 W4 paired-selector pass: fresh approved compilation repeats
+ * score240, solely four reordered instructions. The item selector's
+ * consumed pointer/lifetime trials did not yield a transferable improvement.
+ * Twelve narrow empty/read-only cursor scheduling controls around the two
+ * real coordinate writes, submission and glyph assignment scored260..2170;
+ * none retained. This closes that cursor-boundary axis. No new storage,
+ * device, compiler change or source credit; keep the existing best body.
+ */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 /* 2026-10-03: EN score 240, four reordered instructions, no other

@@ -1,3 +1,16 @@
+/* 2026-10-04 W4 pointer/cursor pass: retained source still scores 137
+ * (17 stack-only, two reordered); no new device or storage retained.
+ * Cursor-pointer declaration at all 23 local positions: 137..173.
+ * Explicit consumed text/handle pointers, two declaration positions and
+ * four safe initialization boundaries: 16 trials, 1553..3297.
+ * Separating row-sprite/cursor lifetimes and moving cursor initialization:
+ * nine trials, 137..1581. Native handles/cursor/text pointer spills remain
+ * at 28/24/32 versus the generated 24/32/28. These lifetime axes are closed.
+ * Ordinary control removes the existing three asm boundaries: score768.
+ * Focused corrected-permuter search, seeds2520/2521,45s,4731 candidates:
+ * best757 repeats the prior window-y temporary, rejected. The authoritative
+ * source and both volatile frame-counter reads remain unchanged.
+ */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 /* 2026-10-03: EN score 137: 17 stack-only and two reordered instructions;

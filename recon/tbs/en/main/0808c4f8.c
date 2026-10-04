@@ -10,6 +10,7 @@
    (2) the reference clears the fill word from r7 with one more stack slot;
    (3) it compares the map with a pooled 1 (a halfword compare). */
 #include "TYPES.H"
+#include "ITEMGIFT.H"
 #include "IO_REG.H"
 #include "DMA.H"
 #include "GAME_STATE.H"
@@ -155,7 +156,6 @@ void BattleEffect_InitializeBuffers(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void Battle_InitializeRenderObject(void);
 s32 Party_CheckMemberValueTotal(s32 item);
-void PartyInventory_GiveItem(s32 item, s32 owner);
 void Scene_FadeColorFromWhite(s32 scene);
 s32 ObjectEffect_RunPendingFlagEvent(void);
 void FieldObject_PlaceSceneActors(void);

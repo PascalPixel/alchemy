@@ -1,5 +1,50 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
+	.if EDITION_INTERNATIONAL
+@ Uncredited complete caption routine, including its literal pool.
+@ Ordinary source remains in recon/tbs/en/overlays/resource_3cd/02008768.c.
+.section .text.caption,"ax",%progbits
+.balign 4, 0
+.thumb
+.global FieldScene_DrawThreeCaptionWindow
+.type FieldScene_DrawThreeCaptionWindow, %function
+.thumb_func
+FieldScene_DrawThreeCaptionWindow:
+ push {r5, lr}
+ sub sp, #36
+ movs r3, #2
+ str r3, [sp]
+ movs r1, #13
+ movs r2, #30
+ movs r3, #6
+ movs r0, #0
+ bl UiWindow_Create
+ adds r5, r0, #0
+ adds r1, r5, #0
+ ldr r0, .Lupper
+ movs r2, #0
+ movs r3, #0
+ bl UiText_DrawStringInWindow
+ adds r1, r5, #0
+ ldr r0, .Llower
+ movs r2, #0
+ movs r3, #8
+ bl UiText_DrawStringInWindow
+ ldr r0, .Lmarks
+ adds r1, r5, #0
+ movs r2, #0
+ movs r3, #16
+ bl UiText_DrawStringInWindow
+ add sp, #36
+ pop {r5}
+ pop {r0}
+ bx r0
+ .balign 4, 0
+.Lupper: .4byte gItemLevelGlyphsUpper
+.Llower: .4byte gItemLevelGlyphsLower
+.Lmarks: .4byte gItemLevelGlyphsMarks
+.size FieldScene_DrawThreeCaptionWindow, .-FieldScene_DrawThreeCaptionWindow
+	.endif
 	.thumb
 	.section .rodata.x020088d0,"a",%progbits
 	.global gItemLevelLvLabel

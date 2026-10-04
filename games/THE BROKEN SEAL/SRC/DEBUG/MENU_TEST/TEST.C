@@ -7,6 +7,7 @@
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
 #include "ITEM.H"
+#include "ITEMGIFT.H"
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
@@ -15,7 +16,6 @@ TEXT_MESSAGE_ENUM(MsgHaidiaComeOnHurry);
 
 void Event_SetValue1d8(s16 message);
 void BattleEv_RunWait(s32 mode, s32 frames);
-s32 PartyInventory_GiveItem(s32 item);
 
 extern u8 MsgSanctumWelcome[];
 extern u8 MsgWarriorShopWelcome[];
@@ -205,12 +205,7 @@ void SceneState_SetRecordFlag53(void)
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void DebugMenu_GiveItemToParty(void)
 {
-    /* FAKEMATCH: the obsolete second-argument zero must use r1 before the one-argument item API. */
-    register s32 unused asm("r1") = 0;
-
-    /* FAKEMATCH: keeping the unused r1 value live emits the original caller setup; a plain call omits it. */
-    asm("" : : "r"(unused));
-    PartyInventory_GiveItem(181);
+    PartyInventory_GiveItem(181, 0);
 }
 #endif
 

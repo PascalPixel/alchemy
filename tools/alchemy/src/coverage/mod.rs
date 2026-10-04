@@ -13,12 +13,14 @@ pub(crate) mod raster;
 pub(crate) mod sessions;
 pub(crate) mod tree;
 
-use crate::coverage::progress::{measured, GameDone};
+use crate::coverage::calcrom::Game;
+use crate::coverage::jsnum::commas;
+use crate::coverage::progress::GameDone;
 use crate::coverage::tree::root;
 use std::path::Path;
 const USAGE: &str =
     "usage: alchemy check coverage [--write [--publication]|--check|--models|--self-test]\n\
-Publishes README's progress line, today's progress history row and both figures from each game's\n\
+Publishes README's progress line and breakdown, today's history row and both figures from each game's\n\
 six verified builds together (make compare-editions); a game without all six stays pending.\n\
 --publication preserves approved model attribution; --check fails when any published value is stale.";
 fn read(path: &Path) -> Result<String, String> {
@@ -58,26 +60,101 @@ fn parse(argv: &[String]) -> Result<Options, String> {
 }
 /// The README status line under "## Progress": ☀️ The Broken Seal and
 /// ⚓️ The Lost Age, each DONE in all six of its editions together and
-/// pending until six byte-identical builds measure it. The parts of ⚓️
-/// (C, assembly and 8-byte stubs) are for `make progress`, not for fans.
+/// pending until six byte-identical builds measure it.
 fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let show = |done: Option<GameDone>| {
         done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
     };
     format!("**☀️ {} · ⚓️ {}**", show(sun), show(anchor))
 }
-fn update_readme(text: &str, status: &str) -> String {
-    let mut out = text.to_string();
-    if let Some(start) = out.find("**☀️ ") {
-        if let Some(end) = out[start..].find('\n') {
-            out.replace_range(start..start + end, status);
-        }
+const BREAKDOWN_START: &str = "<!-- progress-breakdown:start -->";
+const BREAKDOWN_END: &str = "<!-- progress-breakdown:end -->";
+
+/// The same six verified measurements as the headline, with no second counter.
+/// Veneers are separated from assembly; steered C is an included subset.
+fn breakdown(sun: Option<&Game>, anchor: Option<&Game>) -> String {
+    let mut out = String::from("| Language | ☀️ TBS | ⚓️ TLA |\n| :--- | ---: | ---: |\n");
+    for (language, name) in [
+        ("ja", "Japanese"),
+        ("en", "English"),
+        ("de", "German"),
+        ("es", "Spanish"),
+        ("fr", "French"),
+        ("it", "Italian"),
+    ] {
+        let show = |game: Option<&Game>| {
+            game.and_then(|game| game.editions.iter().find(|(lang, _)| *lang == language))
+                .map_or("pending".into(), |(_, count)| {
+                    format!(
+                        "{:.2}% ({}/{})",
+                        count.done.percent(),
+                        commas(count.done.bytes()),
+                        commas(count.done.executable)
+                    )
+                })
+        };
+        out.push_str(&format!("| {name} | {} | {} |\n", show(sun), show(anchor)));
+    }
+    out.push_str("\nBytes added across all six editions:\n\n| Code | ☀️ TBS | ⚓️ TLA |\n| :--- | ---: | ---: |\n");
+    let parts = |game: Option<&Game>| {
+        game.map(|game| {
+            let count = game.combined();
+            let done = count.done;
+            [
+                done.common_c + done.game_c,
+                done.common_asm + done.game_asm - done.veneers,
+                done.veneers,
+                done.bytes(),
+                done.executable,
+                count.steered,
+            ]
+        })
+    };
+    let (sun, anchor) = (parts(sun), parts(anchor));
+    for (i, name) in [
+        "C",
+        "Proven assembly, including libraries",
+        "8-byte far-call stubs (veneers)",
+        "Total counted",
+        "Total executable",
+        "FAKEMATCH-steered C, already included above",
+    ]
+    .iter()
+    .enumerate()
+    {
+        let show =
+            |parts: Option<[i64; 6]>| parts.map_or("pending".into(), |parts| commas(parts[i]));
+        out.push_str(&format!("| {name} | {} | {} |\n", show(sun), show(anchor)));
     }
     out
 }
+
+fn update_readme(text: &str, status: &str, details: &str) -> Result<String, String> {
+    let mut out = text.to_string();
+    for marker in ["**☀️ ", BREAKDOWN_START, BREAKDOWN_END] {
+        if out.matches(marker).count() != 1 {
+            return Err(format!("README must contain exactly one {marker:?}"));
+        }
+    }
+    let start = out.find("**☀️ ").unwrap();
+    let end = out[start..].find('\n').unwrap_or(out.len() - start);
+    out.replace_range(start..start + end, status);
+    let marker_position = |marker| {
+        out.find(marker)
+            .ok_or_else(|| "README breakdown markers must be outside the status line".to_string())
+    };
+    let start = marker_position(BREAKDOWN_START)? + BREAKDOWN_START.len();
+    let end = marker_position(BREAKDOWN_END)?;
+    if start > end {
+        return Err("README progress breakdown markers are reversed".into());
+    }
+    out.replace_range(start..end, &format!("\n\n{}\n", details.trim_end()));
+    Ok(out)
+}
 #[cfg(test)]
 mod tests {
-    use super::{status_line, update_readme};
+    use super::{breakdown, status_line, update_readme, BREAKDOWN_END, BREAKDOWN_START};
+    use crate::coverage::calcrom::{Counted, Game};
     use crate::coverage::progress::GameDone;
     #[test]
     fn figures_are_redrawn_with_each_count_and_match_the_readme() {
@@ -180,13 +257,94 @@ mod tests {
             "**☀️ 59.00% · ⚓️ 6.00%**"
         );
         let updated = update_readme(
-            "# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**\n\nDetails\n",
+            &format!("# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**\n\n{BREAKDOWN_START}\nold counts\n{BREAKDOWN_END}\n\nDetails\n"),
             &status,
-        );
+            "new counts\n",
+        ).unwrap();
         assert_eq!(
             updated,
-            "# Alchemy\n\n## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n\nDetails\n"
+            format!("# Alchemy\n\n## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n\n{BREAKDOWN_START}\n\nnew counts\n{BREAKDOWN_END}\n\nDetails\n")
         );
+    }
+
+    #[test]
+    fn readme_breakdown_separates_veneers_and_never_adds_steered_credit() {
+        let mut game = Game {
+            english: Default::default(),
+            editions: Vec::new(),
+            edition_credits: Default::default(),
+            edition_data: Default::default(),
+        };
+        for lang in ["ja", "en", "de", "es", "fr", "it"] {
+            game.editions.push((
+                lang,
+                Counted {
+                    done: GameDone {
+                        common_c: 10,
+                        game_c: if lang == "ja" { 30 } else { 50 },
+                        common_asm: 20,
+                        game_asm: 40,
+                        veneers: 16,
+                        executable: 1000,
+                    },
+                    library: 8,
+                    steered: 24,
+                    uncredited: 4,
+                },
+            ));
+        }
+        let details = breakdown(Some(&game), None);
+        assert!(details.contains("| Japanese | 10.00% (100/1,000) | pending |"));
+        for language in ["English", "German", "Spanish", "French", "Italian"] {
+            assert!(details.contains(&format!("| {language} | 12.00% (120/1,000) | pending |")));
+        }
+        assert!(details.contains("| C | 340 | pending |"));
+        assert!(details.contains("| Proven assembly, including libraries | 264 | pending |"));
+        assert!(details.contains("| 8-byte far-call stubs (veneers) | 96 | pending |"));
+        assert!(details.contains("| Total counted | 700 | pending |"));
+        assert!(details.contains("| Total executable | 6,000 | pending |"));
+        assert!(details.contains("| FAKEMATCH-steered C, already included above | 144 | pending |"));
+        let readme = format!(
+            "**☀️ 11.66% · ⚓️ pending**\n{BREAKDOWN_START}\n\n{details}\n{BREAKDOWN_END}\n"
+        );
+        let pending =
+            update_readme(&readme, &status_line(None, None), &breakdown(None, None)).unwrap();
+        assert!(!pending.contains("144"));
+        assert!(!pending.contains("11.66%"));
+        assert!(pending.contains("| Japanese | pending | pending |"));
+        assert!(pending.contains("| Total counted | pending | pending |"));
+        // Changes below the displayed precision still make the published breakdown stale.
+        game.editions[0].1.steered += 1;
+        let updated = update_readme(
+            &readme,
+            &status_line(Some(game.combined().done), None),
+            &breakdown(Some(&game), None),
+        )
+        .unwrap();
+        assert_ne!(updated, readme);
+        assert!(updated.contains("| FAKEMATCH-steered C, already included above | 145 | pending |"));
+    }
+
+    #[test]
+    fn readme_publication_rejects_missing_duplicate_or_reversed_markers() {
+        let valid =
+            format!("**☀️ pending · ⚓️ pending**\n{BREAKDOWN_START}\nold\n{BREAKDOWN_END}\n");
+        for marker in ["**☀️ ", BREAKDOWN_START, BREAKDOWN_END] {
+            assert!(update_readme(&valid.replace(marker, ""), "status", "counts").is_err());
+            assert!(update_readme(&format!("{valid}{marker}"), "status", "counts").is_err());
+        }
+        for marker in [BREAKDOWN_START, BREAKDOWN_END] {
+            let misplaced = valid
+                .replace(marker, "")
+                .replace("**☀️ ", &format!("**☀️ {marker}"));
+            assert!(update_readme(&misplaced, "status", "counts").is_err());
+        }
+        assert!(update_readme(
+            &format!("**☀️ pending · ⚓️ pending**\n{BREAKDOWN_END}\n{BREAKDOWN_START}"),
+            "status",
+            "counts"
+        )
+        .is_err());
     }
 }
 /// Both README figures as the history's recorded figure date draws them.
@@ -321,10 +479,21 @@ fn run(argv: &[String]) -> Result<String, String> {
             .collect::<Vec<_>>()
             .join("\n"));
     }
-    let (sun, anchor) = (measured(&root, "tbs-en")?, measured(&root, "tla-en")?);
+    let (sun_game, anchor_game) = (
+        progress::status(&root, "tbs-en")?.ok(),
+        progress::status(&root, "tla-en")?.ok(),
+    );
+    let (sun, anchor) = (
+        sun_game.as_ref().map(|game| game.combined().done),
+        anchor_game.as_ref().map(|game| game.combined().done),
+    );
     let status = status_line(sun, anchor);
     let readme = read(&root.join("README.md"))?;
-    let updated = update_readme(&readme, &status);
+    let updated = update_readme(
+        &readme,
+        &status,
+        &breakdown(sun_game.as_ref(), anchor_game.as_ref()),
+    )?;
     if o.check {
         if updated != readme {
             return Err("README progress is stale; run: make coverage".into());

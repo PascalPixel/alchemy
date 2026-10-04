@@ -26,7 +26,7 @@ Func_0811a4e0:
 	mov r8, r0
 	ldrh r0, [r5]
 	mov r10, r1
-	bl Func_081280bc
+	bl Summon_GetEntryValue
 	mov r4, r10
 	adds r6, r0, #0
 .L_0811a51a:
@@ -74,7 +74,7 @@ Func_0811a4e0:
 	add r3, r9
 	ldrh r0, [r3]
 	str r4, [sp, #0]
-	bl Func_081280d8
+	bl Summon_GetEntryFlag1Field
 	ldr r2, .L_0811a5f8
 	ldr r4, [sp, #0]
 	lsls r1, r5, #14

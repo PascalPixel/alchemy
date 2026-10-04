@@ -4903,8 +4903,6 @@ Shop_GlyphRowOffsets:
 	.global Resource_FarCall009
 Resource_FarCall009:
 	.incbin "baserom.gba", 0x00118000, 0x00000010
-	.section .rom.00118058, "ax"
-	.incbin "baserom.gba", 0x00118058, 0x00000010
 	.section .rom.00118080, "ax"
 	.global Battle_GetObjectTableValueFar
 	.thumb_func
@@ -5051,10 +5049,6 @@ BattleMotion_SetupEscapeObject:
 Func_0811c074:
 	.incbin "baserom.gba", 0x0011c070, 0x000000ac
 	.section .rom.0011c11c, "ax"
-	.global Func_081280fc
-	.thumb_func
-	.type Func_081280fc, %function
-Func_081280fc:
 	.incbin "baserom.gba", 0x0011c11c, 0x000000d8
 	.section .rom.0011c20c, "ax"
 	.incbin "baserom.gba", 0x0011c20c, 0x000000a4
@@ -5071,10 +5065,6 @@ Func_0811c2b4:
 Func_0811c314:
 	.incbin "baserom.gba", 0x0011c310, 0x00000068
 	.section .rom.0011c378, "ax"
-	.global Func_0812814c
-	.thumb_func
-	.type Func_0812814c, %function
-Func_0812814c:
 	.incbin "baserom.gba", 0x0011c378, 0x000002d4
 	.section .rom.0011c666, "ax"
 	.incbin "baserom.gba", 0x0011c666, 0x00000002
@@ -5234,17 +5224,7 @@ BattlePres_SetActorModes:
 	.incbin "baserom.gba", 0x00126cf8, 0x00000ea4
 	.section .rom.00127c7a, "ax"
 	.incbin "baserom.gba", 0x00127c7a, 0x00000422
-	.section .rom.001280b8, "ax"
-	.incbin "baserom.gba", 0x001280b8, 0x00000040
-	.section .rom.001280f8, "ax"
-	.global Func_08128174
-	.global Summon_IsEntryFlagged
-	.thumb_func
-	.type Func_08128174, %function
-	.type Summon_IsEntryFlagged, %function
-Func_08128174:
-Summon_IsEntryFlagged:
-	.incbin "baserom.gba", 0x001280f8, 0x00000098
+	.section .rom.00128190, "ax"
 	.global Summon_GetEntryByte4
 	.thumb_func
 	.type Summon_GetEntryByte4, %function

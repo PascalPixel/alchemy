@@ -1,15 +1,15 @@
-#include "SCENE.H"
-#include "INVENTORY.H"
-#include "GAME_FLAGS.H"
+/*
+ * Draft: Runtime_GetBuildStampTime (☀️ CHARACTER.C) at its ⚓️ address. 4
+ * instructions differ, two load delay slots the native fills (ldr r1 after
+ * the first ldrb, asrs after the gDebugMode address load); it matches
+ * exactly with -mtune=arm9tdmi. Needs DIRECTORY.S row 2 named BuildStamp.
+ * Links as recon/tla/raw/080add74.s.
+ */
 #include "TYPES.H"
 #include "RESOURCE.H"
-#include "PARTY_STATE.H"
+#include "FRAME.H"
 
-extern struct PartyState gGameState;
-void GameFlag_ClearBit(s32 flag);
-s32 GameFlag_SetBit(s32 flag);
-
-/* game_flags/refresh_lure_cap.c */
+extern char ResourceId_BuildStamp;
 
 u16 Runtime_GetBuildStampTime(void)
 {

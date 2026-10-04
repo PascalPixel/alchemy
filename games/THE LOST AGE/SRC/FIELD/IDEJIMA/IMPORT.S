@@ -150,9 +150,9 @@ Func_02003228:
 	.thumb_func
 Func_02003230:
 	overlay_veneer Func_080c8100
-	.global Func_02003238
+	.global Engine_ActorPlaceAtActor
 	.thumb_func
-Func_02003238:
+Engine_ActorPlaceAtActor:
 	overlay_veneer Func_080c8110
 	.global Engine_ActorSetAnimation
 	.thumb_func
@@ -218,17 +218,17 @@ ObjectMotion_ArmCallback:
 	.thumb_func
 Func_020032b8:
 	overlay_veneer Func_080c81f0
-	.global Func_020032c0
+	.global Engine_ActorShowEmote
 	.thumb_func
-Func_020032c0:
+Engine_ActorShowEmote:
 	overlay_veneer Func_080c8210
-	.global Func_020032c8
+	.global Engine_ActorSetAttachedEffect
 	.thumb_func
-Func_020032c8:
+Engine_ActorSetAttachedEffect:
 	overlay_veneer Func_080c8218
-	.global Func_020032d0
+	.global Engine_CameraSetSpeed
 	.thumb_func
-Func_020032d0:
+Engine_CameraSetSpeed:
 	overlay_veneer Func_080c8230
 	.global Motion_CamBounds
 	.thumb_func

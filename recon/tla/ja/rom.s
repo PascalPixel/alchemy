@@ -4888,6 +4888,13 @@ Shop_GlyphRowOffsets:
 	.global Resource_FarCall009
 Resource_FarCall009:
 	.incbin "baserom.gba", 0x00118000, 0x00000010
+	.section .rom.00118070, "ax"
+	.incbin "baserom.gba", 0x00118070, 0x00000008
+	.global BattleMotion_ApproachTargetFar
+	.thumb_func
+	.type BattleMotion_ApproachTargetFar, %function
+BattleMotion_ApproachTargetFar:
+	.incbin "baserom.gba", 0x00118078, 0x00000008
 	.section .rom.00118080, "ax"
 	.global Battle_GetObjectTableValueFar
 	.thumb_func

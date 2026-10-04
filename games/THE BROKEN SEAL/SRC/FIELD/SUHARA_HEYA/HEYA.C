@@ -121,7 +121,7 @@ void State_ApplyCounter16cThenCall7b(void)
  */
 void Scene_RunPrimaryScript(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     GameFlag_Set(2480);
     if (GameFlag_IsSet(2442) == 0) {
         Audio_PlayCue(30);
@@ -371,9 +371,9 @@ void Scene_RunPrimaryScript(void)
         Audio_PlayCue(30);
         Actor_SetSpeed(19, 78643, 39321);
         Actor_SetAnimation(19, 2);
-        record = (u8 *)Actor_Get(0);
+        record = Actor_Get(0);
         if (record != 0) {
-            Actor_SetDestination(19, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(19, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(19);
         Actor_SetPosition(19, 0, 0);

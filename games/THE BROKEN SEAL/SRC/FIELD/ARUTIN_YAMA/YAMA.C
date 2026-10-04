@@ -461,7 +461,7 @@ void FieldScene_RunEarlySequence(void)
     extern u8 ArutinYama_RiseTimer[];
 
     s32 i;
-    s32 record;
+    struct FieldActor *record;
     u8 *p5;
     u8 *rec;
     s32 v;
@@ -476,9 +476,9 @@ void FieldScene_RunEarlySequence(void)
         Engine_TaskWait(4);
         if (i == 8) {
             record = Object_GetById(8);
-            *(s32 *)(record + 24) = 0x1999;
+            record->scale_x = 0x1999;
             record = Actor_Get(8);
-            *(s32 *)(record + 28) = 0x1999;
+            record->scale_y = 0x1999;
             Actor_SetPosition(8, 0x980000, 0xd80000);
             Engine_ActorEnableActionCallback(8, ArutinYama_EarlyActorScript);
         }

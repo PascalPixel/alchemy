@@ -80,8 +80,8 @@ void RamakanSabaku_UpdateTravelDust(void)
  * towards it with the search emote. */
 void RamakanSabaku_FaceNearestActor(void)
 {
-    u8 *target;
-    u8 *actor;
+    struct FieldActor *target;
+    struct FieldActor *actor;
     u8 *record;
     s32 id;
     s32 best;
@@ -97,8 +97,8 @@ void RamakanSabaku_FaceNearestActor(void)
         u8 *other = Actor_Get(id);
 
         if (other != 0) {
-            dx = (*(s32 *)(target + 8) - *(s32 *)(other + 8)) / 0x10000;
-            dz = (*(s32 *)(target + 16) - *(s32 *)(other + 16)) / 0x10000;
+            dx = (target->x.fixed - *(s32 *)(other + 8)) / 0x10000;
+            dz = (target->z.fixed - *(s32 *)(other + 16)) / 0x10000;
             {
                 s32 ax = dx;
 
@@ -125,7 +125,7 @@ void RamakanSabaku_FaceNearestActor(void)
     Actor_SetAttachedEffect(0, 0x101);
     actor = Actor_Get(0);
     record = Object_GetById(0);
-    *(u16 *)(actor + 6) = (*(u16 *)(record + 6) + 0x8000) & -0x1000;
+    actor->facing = (*(u16 *)(record + 6) + 0x8000) & -0x1000;
     Engine_ActorSetAnimation(0, 5);
     Object_SetActionById(0, 24);
     Actor_SetSpeed(0, 0x1999, 0xccc);
@@ -215,7 +215,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
 void FieldScene_RunScene3a5_020014b0(void)
 {
     s32 rec8;
-    s32 record;
+    struct FieldActor *record;
     s32 rect[3];
     s32 shown;
     u16 *shown_addr;
@@ -232,13 +232,13 @@ void FieldScene_RunScene3a5_020014b0(void)
             shown = 0x258;
             *shown_addr = shown;
             record = Object_GetById(ACTOR_PARTY_LEADER);
-            *(s32 *)(record + 36) = rec8;
+            record->velocity_x = rec8;
             record = Object_GetById(ACTOR_PARTY_LEADER);
-            *(s32 *)(record + 44) = rec8;
+            record->velocity_z = rec8;
             record = Actor_Get(ACTOR_PARTY_LEADER);
-            *(s32 *)(record + 56) = -0x80000000;
+            record->target_x = -0x80000000;
             record = Actor_Get(ACTOR_PARTY_LEADER);
-            *(s32 *)(record + 64) = -0x80000000;
+            record->target_z = -0x80000000;
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
             Engine_EventWait(40);
@@ -250,7 +250,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             rect[1] = rec8;
             rect[2] = rec8;
             record = Actor_Get(ACTOR_PARTY_LEADER);
-            Call3(Vector_AddPolarOffset, -0x100000, *(u16 *)(record + 6), (s32)rect);
+            Call3(Vector_AddPolarOffset, -0x100000, record->facing, (s32)rect);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
             Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000, rect[2] / 0x10000);

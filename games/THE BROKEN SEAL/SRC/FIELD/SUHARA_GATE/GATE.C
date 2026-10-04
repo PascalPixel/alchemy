@@ -158,7 +158,7 @@ void Scene_RunScene3c3SequenceC(void)
     s32 v5;
 
     arg = *(s16 *)(*(u8 **)gWork + 0x16c);
-    *(u8 *)((s32)Actor_Get(0) + 85) = 0;
+    Actor_Get(0)->motion_flags = 0;
     v5 = 2;
     Audio_PlayCue(158);
     Map_CopyCellsTo(66, 36, 71, 8, v5, v5);
@@ -206,7 +206,7 @@ void Scene_RunScene3c3SequenceA(void)
     extern u8 gWork[];
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 v5;
 
     Engine_EventBegin();
@@ -215,7 +215,7 @@ void Scene_RunScene3c3SequenceA(void)
     Actor_FaceDirection(0, 0xc000, 0);
     record = Actor_Get(0);
     if (record != 0) {
-        Actor_SetPosition(11, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(11, record->x.fixed, record->z.fixed);
     }
     Engine_TaskWait(1);
     Actor_SetSpeed(11, 0x19999, 0xcccc);
@@ -291,7 +291,7 @@ void Scene_RunScene3c3SequenceA(void)
     Engine_ActorSetAnimation(11, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(11);
     Actor_SetPosition(11, 0, 0);

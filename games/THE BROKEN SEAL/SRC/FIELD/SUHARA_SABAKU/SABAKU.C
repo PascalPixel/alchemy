@@ -340,7 +340,7 @@ void FieldScene_RunLateActor12Step(void) { SuharaSabaku_RestoreActorScaleAndBlen
 void FieldScene_RunActorThirteenRestoration(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x9a0) == 0) {
     } else {
@@ -354,7 +354,7 @@ void FieldScene_RunActorThirteenRestoration(void)
                 /* Record layout observed here: s32 at +8, s32 at +16. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
-                    Actor_SetPosition(ACTOR_ID, *(s32 *)(record + 8), *(s32 *)(record + 16));
+                    Actor_SetPosition(ACTOR_ID, record->x.fixed, record->z.fixed);
                 }
                 Actor_FaceActor(ACTOR_ID, 0xc000, 0);
                 Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 0x4e8);
@@ -385,7 +385,7 @@ void FieldScene_RunActorThirteenRestoration(void)
                 /* Record layout observed here: s16 at +10, s16 at +18. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
-                    Actor_SetDestination(ACTOR_ID, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                    Actor_SetDestination(ACTOR_ID, record->x.part.pixel, record->z.part.pixel);
                 }
                 Engine_ActorWaitForMove(ACTOR_ID);
                 Actor_SetPosition(ACTOR_ID, 0, 0);

@@ -1946,7 +1946,7 @@ void Scene_RepairTheHouse(void)
     u32 i;
     s32 turn_back;
     s32 turn_side;
-    u8 *turned;
+    struct FieldActor *turned;
 #if EDITION_INTERNATIONAL
     s32 none;
 #else
@@ -1976,16 +1976,16 @@ void Scene_RepairTheHouse(void)
      * temporary is what the record byte stores below reuse out of a high
      * register.
      */
-    *(u16 *)(turned + 6) = 0;
+    turned->facing = 0;
     turn_back = 0xc000;
-    *(u16 *)(turned + 6) = turn_back;
+    turned->facing = turn_back;
     Actor_SetPosition(ACTOR_GERALD, 0x12a0000, 0x2e00000);
     turned = Actor_Get(ACTOR_GERALD);
     turn_side = 0x4000;
-    *(u16 *)(turned + 6) = turn_side;
+    turned->facing = turn_side;
     Actor_SetPosition(ACTOR_JASMINE, 0x12a0000, 0x2f80000);
     turned = Actor_Get(ACTOR_JASMINE);
-    *(u16 *)(turned + 6) = turn_side;
+    turned->facing = turn_side;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
     Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
     rec = Actor_Get(23);

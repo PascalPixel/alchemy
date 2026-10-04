@@ -214,7 +214,7 @@ void FieldScene_RunScene398SequenceB(void)
 {
     u32 i;
     struct FieldActor *rec7;
-    s32 rec8;
+    struct FieldActor *rec8;
     s32 record;
     s32 v5;
 
@@ -229,8 +229,8 @@ void FieldScene_RunScene398SequenceB(void)
         L_02000330:;
         GameFlag_Clear(0x303);
     }
-    if ((*(s32 *)(rec8 + 8) >> 20) == 35) {
-        if ((*(s32 *)(rec8 + 16) >> 20) != 23) {
+    if ((rec8->x.fixed >> 20) == 35) {
+        if ((rec8->z.fixed >> 20) != 23) {
             goto L_02000350;
         }
         GameFlag_Set(0x304);

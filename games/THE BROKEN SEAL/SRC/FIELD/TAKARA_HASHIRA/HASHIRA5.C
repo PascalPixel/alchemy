@@ -104,7 +104,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
 {
     u32 i;
     u8 *queried;
-    u8 *record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Camera_SetSpeed(0x10000, 0x2000);
@@ -121,7 +121,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
         /* Flag byte at +85: cleared, since queried is zero here. */
         Object_GetById(REC_ID)->motion_flags = queried;
         record = Actor_Get(REC_ID);
-        *(s32 *)(record + 12) = -0x200000;
+        record->y.fixed = -0x200000;
         Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
         Engine_ActorSetAnimation(REC_ID, 1);
         Map_AnimateCells(TakaraHashira_ShiftSteps3, 80, 24);
@@ -145,7 +145,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
         /* Flag byte at +85: cleared unconditionally in this branch. */
         Object_GetById(REC_ID)->motion_flags = 0;
         record = Actor_Get(REC_ID);
-        *(s32 *)(record + 12) = -0x200000;
+        record->y.fixed = -0x200000;
         Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);
         Engine_ActorSetAnimation(REC_ID, 2);
         Map_CopyCellsTo(65, 45, 16, 27, 2, 4);

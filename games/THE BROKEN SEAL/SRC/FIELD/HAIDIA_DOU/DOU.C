@@ -249,7 +249,7 @@ void FieldScene_RunScene3a6SequenceA(void)
 {
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x200) == 0) {
         GameFlag_Set(0x200);
@@ -266,7 +266,7 @@ void FieldScene_RunScene3a6SequenceA(void)
         Actor_WalkToAndWait(8, 0x318, 248);
         Audio_PlayCue(152);
         record = Actor_Get(8);
-        *(s32 *)(record + 40) = 0x80000;
+        record->velocity_y = 0x80000;
         Actor_WalkToAndWait(8, 0x318, 0x118);
         Battle_WaitMode0(20);
         Actor_FaceDirection(8, 0xc000, 20);

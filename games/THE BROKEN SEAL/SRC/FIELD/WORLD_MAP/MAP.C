@@ -686,7 +686,7 @@ void RunEventScript01(void)
 void FieldScene_RunActorTransferSequence(void)
 {
     u8 *actor;
-    u8 *record;
+    struct FieldActor *record;
     s32 scale;
     s32 action;
 
@@ -723,7 +723,7 @@ void FieldScene_RunActorTransferSequence(void)
     Audio_PlayCue(0x121);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x1704, 0x640);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
@@ -857,9 +857,9 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_EventWait(10);
     scale = 192;
     record = Actor_Get(9);
-    *(s32 *)(record + 40) = (scale << 11);
+    record->velocity_y = (scale << 11);
     record = Object_GetById(8);
-    *(s32 *)(record + 40) = (scale << 11);
+    record->velocity_y = (scale << 11);
     Audio_PlayCue(145);
     Camera_SetSpeed(0x40000, 0x40000);
     FieldScene_RunScene371_02001680();
@@ -941,7 +941,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);

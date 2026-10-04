@@ -262,7 +262,7 @@ void Scene_RunScene39eSequenceB(void)
 {
     u32 i;
     s32 rec7;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     rec7 = GameFlag_IsSet(0x300);
@@ -273,7 +273,7 @@ void Scene_RunScene39eSequenceB(void)
         Object_GetById(8)->unknown_5b = 0;
         Audio_PlayCue(152);
         record = Actor_Get(8);
-        *(s32 *)(record + 40) = 0x80000;
+        record->velocity_y = 0x80000;
         Engine_ActorSetAnimation(8, 1);
         Engine_EventWait(30);
         Engine_EventSetMessage((s32)MsgShianMustSurviveTestGrottoBefore);
@@ -290,7 +290,7 @@ void Scene_RunScene39eSequenceB(void)
         Audio_PlayCue(152);
         Object_GetById(8)->unknown_5b = rec7;
         record = Actor_Get(8);
-        *(s32 *)(record + 40) = 0x80000;
+        record->velocity_y = 0x80000;
         Engine_ActorSetAnimation(8, 1);
         Engine_EventWait(30);
         Event_OpenMessage(8, 0);
@@ -1508,7 +1508,7 @@ void FieldScene_RunScene39e_02002778(void)
  * curious. */
 void ShianJiin_AskIfCurious(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -1524,7 +1524,7 @@ void ShianJiin_AskIfCurious(void)
     Object_GetById(8)->unknown_5b = 0;
     Audio_PlayCue(152);
     record = Actor_Get(8);
-    *(s32 *)(record + 40) = 0x80000;
+    record->velocity_y = 0x80000;
     Engine_ActorSetAnimation(8, 1);
     Engine_EventSetMessage((s32)MsgShianExcellentRobin);
     Event_ShowMessageAndWait(8, 0, 20);
@@ -1612,7 +1612,7 @@ void ShianJiin_AskIfCurious(void)
 void FieldScene_RunRoofEnsembleSequence(void)
 {
     u32 unused;
-    u8 *source_record;
+    struct FieldActor *source_record;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
@@ -1640,15 +1640,15 @@ void FieldScene_RunRoofEnsembleSequence(void)
      * through each accessor) into the matching setter for another actor. */
     source_record = Actor_Get(ACTOR_PARTY_LEADER);
     if (source_record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(source_record + 8), *(s32 *)(source_record + 16));
+        Actor_SetPosition(ACTOR_GERALD, source_record->x.fixed, source_record->z.fixed);
     }
     source_record = Actor_Get(ACTOR_PARTY_LEADER);
     if (source_record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(source_record + 8), *(s32 *)(source_record + 16));
+        Actor_SetPosition(ACTOR_IVAN, source_record->x.fixed, source_record->z.fixed);
     }
     source_record = Actor_Get(ACTOR_PARTY_LEADER);
     if (source_record != 0) {
-        Actor_SetPosition(ACTOR_MIA, *(s32 *)(source_record + 8), *(s32 *)(source_record + 16));
+        Actor_SetPosition(ACTOR_MIA, source_record->x.fixed, source_record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);

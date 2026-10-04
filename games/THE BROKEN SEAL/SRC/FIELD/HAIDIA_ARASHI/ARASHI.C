@@ -1084,7 +1084,7 @@ void HaidiaArashi_RunCallOutSequence(void)
 
 void FieldScene_RunScene372SequenceE(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 base;
 
     if (GameFlag_IsSet(0x837) == 0) {
@@ -1104,7 +1104,7 @@ void FieldScene_RunScene372SequenceE(void)
         ((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
         Event_ShowMessage(22, 0);
         record = Actor_Get(22);
-        *(s32 *)(record + 28) = 0x10000;
+        record->scale_y = 0x10000;
         Engine_ActorRunRepeatedMotion(22, 1);
         Engine_EventWait(20);
         Event_AskYesNo(22, 0);
@@ -1119,7 +1119,7 @@ void FieldScene_RunScene372SequenceE(void)
         Engine_ActorSetAnimation(22, 2);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(22);
         Actor_SetPosition(22, 0, 0);
@@ -1198,7 +1198,7 @@ void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
 void Scene_BoulderFalls(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 *phase;
     struct FieldActor *actor;
     s32 steps;
@@ -1271,9 +1271,9 @@ void Scene_BoulderFalls(void)
         Engine_EventWait(30);
         Actor_SetPosition(19, 0x720000, 0x1220000);
         record = Actor_Get(19);
-        shifted = *(s32 *)(record + 12) + 0x400000;
-        *(s32 *)(record + 12) = shifted;
-        *(s32 *)(record + 60) = shifted;
+        shifted = record->y.fixed + 0x400000;
+        record->y.fixed = shifted;
+        record->target_y = shifted;
         Actor_SetSpeed(19, 0xcccc, 0x6666);
         Audio_PlayCue(145);
         Actor_MoveToAndWait(19, 114, 0x14d);
@@ -1352,7 +1352,7 @@ void Scene_BoulderFalls(void)
         Engine_ActorSetAnimation(22, 2);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(22);
         Actor_SetPosition(22, 0, 0);

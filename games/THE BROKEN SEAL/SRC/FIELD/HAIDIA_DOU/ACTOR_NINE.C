@@ -4,7 +4,7 @@ void FieldScene_RunScene3a6_020014ac(void)
 {
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 zero;
 
     Engine_EventBegin();
@@ -21,7 +21,7 @@ void FieldScene_RunScene3a6_020014ac(void)
     zero = 0;
     Object_GetById(9)->motion_flags = zero;
     record = Actor_Get(9);
-    *(s32 *)(record + 68) = zero;
+    record->bounce = zero;
     ObjectMotion_OffsetPositionAndResetMotion(9, 12, 0);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);

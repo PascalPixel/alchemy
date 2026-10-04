@@ -199,7 +199,7 @@ void RunEventScript01(void)
 {
 
     u32 i;
-    s32 rec8;
+    struct FieldActor *rec8;
 
     rec8 = Actor_Get(ACTOR_PARTY_LEADER);
     Engine_ActorFaceDirection(0, 0xc000, 0);
@@ -217,22 +217,22 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Audio_PlayCue(133);
-    *(s32 *)(rec8 + 40) = 0x50000;
-    *(s32 *)(rec8 + 72) = 0x4000;
-    *(s32 *)(rec8 + 68) = 0xa000;
+    rec8->velocity_y = 0x50000;
+    rec8->gravity = 0x4000;
+    rec8->bounce = 0xa000;
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x14f, 0x102);
-    while (*(s32 *)(rec8 + 40) >= 0) {
+    while (rec8->velocity_y >= 0) {
         Engine_TaskWait(1);
     }
     do {
         Engine_TaskWait(1);
-    } while (*(s32 *)(rec8 + 40) <= 0);
+    } while (rec8->velocity_y <= 0);
     Audio_PlayCue(161);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
     Engine_EventWait(120);
     Engine_TaskRemoveCallback((s32)PaletteScene_SpawnEffect);
     Engine_TaskWait(40);
-    *(s32 *)(rec8 + 68) = 0x4000;
+    rec8->bounce = 0x4000;
     {
         u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
         u8 flags = record[90] | 1;
@@ -252,10 +252,10 @@ void RunEventScript01(void)
     {
         s32 shown = 0xc000;
 
-        *(u16 *)(rec8 + 6) = shown;
+        rec8->facing = shown;
     }
-    *(s32 *)(rec8 + 72) = 0x10000;
-    *(s32 *)(rec8 + 68) = 0x4000;
+    rec8->gravity = 0x10000;
+    rec8->bounce = 0x4000;
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(40);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
@@ -269,7 +269,7 @@ void RunEventScript01(void)
 void PaletteScene_RunActorTransitionSequence(void)
 {
     s32 actorThreeEnabled;
-    u8 *object;
+    struct FieldActor *object;
     s32 *transitionState;
     s32 cycle;
     s32 sceneWorkSlot;
@@ -285,11 +285,11 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Actor_SetPosition(ACTOR_GERALD, object->x.fixed, object->z.fixed);
     }
     object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Actor_SetPosition(ACTOR_IVAN, object->x.fixed, object->z.fixed);
     }
     Engine_ActorEnableActionCallback(ACTOR_GERALD, SceneAction_ActorOneEntry);
     Engine_ActorEnableActionCallback(ACTOR_IVAN, SceneAction_ActorTwoEntry);
@@ -297,7 +297,7 @@ void PaletteScene_RunActorTransitionSequence(void)
         Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
         object = Actor_Get(ACTOR_PARTY_LEADER);
         if (object != 0) {
-            Actor_SetPosition(ACTOR_MIA, *(s32 *)(object + 8), *(s32 *)(object + 16));
+            Actor_SetPosition(ACTOR_MIA, object->x.fixed, object->z.fixed);
         }
         Engine_ActorEnableActionCallback(ACTOR_MIA, SceneAction_ActorThreeEntry);
     }

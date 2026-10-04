@@ -260,7 +260,7 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 void FieldScene_RunScene382_020004a0(void)
 {
-    s32 record;
+    struct FieldActor *record;
     struct EventWork *p5;
 
     p5 = gEventWork;
@@ -271,7 +271,7 @@ void FieldScene_RunScene382_020004a0(void)
     Engine_EventBegin();
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     if (p5->touched_trigger == 20) {

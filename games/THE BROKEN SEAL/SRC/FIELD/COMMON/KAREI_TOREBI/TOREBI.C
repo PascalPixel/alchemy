@@ -255,11 +255,11 @@ void SceneDialogue_RunActor12Event(void)
 {
     s32 owner;
     s32 slot;
-    u8 *record;
+    struct FieldActor *record;
     s16 angle;
 
-    record = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    angle = (u16)((*(u16 *)(record + 6) + 0x2000) & ~0x3fff);
+    record = Actor_Get(ACTOR_PARTY_LEADER);
+    angle = (u16)((record->facing + 0x2000) & ~0x3fff);
     Engine_EventBegin();
     if (GameFlag_IsSet(0x8a7) != 0) {
         if (GameFlag_IsSet(0x8a9) != 0) {
@@ -297,8 +297,8 @@ void SceneDialogue_RunActor12Event(void)
             Event_ShowMessage(12, 0);
             Inventory_Discard(owner, slot);
             GameFlag_Set(0x8a7);
-            record = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, *(s16 *)(record + 10), 0x518);
+            record = Actor_Get(ACTOR_PARTY_LEADER);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, record->x.part.pixel, 0x518);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 0x518);
             Actor_WalkToAndWait(12, 88, 0x518);
             Actor_FaceDirection(12, 0, 0);

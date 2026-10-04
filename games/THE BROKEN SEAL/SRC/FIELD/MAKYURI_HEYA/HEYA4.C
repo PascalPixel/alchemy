@@ -1574,7 +1574,7 @@ void MakyuriHeya_RunPartyScene(void)
     s32 event;
     struct FieldActor *actor;
 
-    position = *(s32 *)((u8 *)Actor_Get(8) + 8) / 0x100000;
+    position = Actor_Get(8)->x.fixed / 0x100000;
     if (position != 48) {
         return;
     }

@@ -1638,7 +1638,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     extern struct SceneWork *Data_03001ebc;
 
     u8 *fieldActor;
-    u8 *object;
+    struct FieldActor *object;
     struct SceneWork *work;
     u32 random;
     u32 motionPhase;
@@ -1706,15 +1706,15 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Engine_ActorSetAnimationAndWait(10, 3);
     object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Actor_SetPosition(ACTOR_GERALD, object->x.fixed, object->z.fixed);
     }
     object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Actor_SetPosition(ACTOR_IVAN, object->x.fixed, object->z.fixed);
     }
     object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(ACTOR_MIA, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Actor_SetPosition(ACTOR_MIA, object->x.fixed, object->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
@@ -1876,7 +1876,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_SetPosition(9, 0x1b80000, 0x1540000);
     object = Actor_Get(9);
     scale = 0x4000;
-    *(u16 *)(object + 6) = scale;
+    object->facing = scale;
     Camera_MoveTo(0x17c0000, -1, 0x1180000, 0);
     Engine_MapRedraw();
     Engine_TaskWait(10);

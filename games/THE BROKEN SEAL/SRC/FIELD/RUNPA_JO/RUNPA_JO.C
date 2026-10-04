@@ -1708,7 +1708,7 @@ void PlayStoryScene(void)
 void FieldScene_RunMainScriptSequence(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
     s32 script_a;
     s32 script_b;
     s32 script_c;
@@ -2291,21 +2291,21 @@ void FieldScene_RunMainScriptSequence(void)
     Object_SetModeById(ACTOR_GERALD, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Object_SetModeById(ACTOR_IVAN, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Object_SetModeById(ACTOR_MIA, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);

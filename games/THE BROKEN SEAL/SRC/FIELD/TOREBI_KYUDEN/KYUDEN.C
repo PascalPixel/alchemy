@@ -141,13 +141,13 @@ void FieldScene_RunBranchedSteps1FF1(s32 a)
 void RunOpeningAuxiliarySequence(s32 a)
 {
 
-    u8 *ret;
+    struct FieldActor *ret;
     s16 v;
     s32 c;
     s32 t;
 
     ret = Actor_Get(ACTOR_PARTY_LEADER);
-    v = (*(u16 *)(ret + 6) + 0x2000) & 0xc000;
+    v = (ret->facing + 0x2000) & 0xc000;
     Event_Begin();
     Battle_ResetEffectCounterFar();
     if (GameFlag_IsSet(512) == 0) {
@@ -253,18 +253,18 @@ void FieldScene_RunBranchedSteps2006(s32 a)
 
 void RunMiddleAuxiliarySequence(s32 a)
 {
-    u8 *obj;
+    struct FieldActor *obj;
     u8 *q;
 
-    obj = (u8 *)Actor_Get(a);
+    obj = Actor_Get(a);
     Event_Begin();
     q = TorebiKyuden_MiddleActionScript;
     Actor_EnableActionCallback(a, q);
     Event_SetMessage((s32)MsgTorebiCantFightBecauseLittleIndigestion);
     Event_ShowMessage(a, 0);
     Actor_Stop(a);
-    *(s32 *)(obj + 28) = 0x10000;
-    *(s32 *)(obj + 24) = 0x10000;
+    obj->scale_y = 0x10000;
+    obj->scale_x = 0x10000;
     Event_Wait(30);
     Actor_RunRepeatedMotion(a, 2);
     Event_Wait(30);
@@ -283,8 +283,8 @@ void RunMiddleAuxiliarySequence(s32 a)
     Event_ShowMessage(a, 0);
     Actor_FaceDirection(a, 0xe000, 0);
     Event_Wait(10);
-    *(s32 *)(obj + 28) = 0x10000;
-    *(s32 *)(obj + 24) = 0x10000;
+    obj->scale_y = 0x10000;
+    obj->scale_x = 0x10000;
     Actor_EnableActionCallback(a, q);
     Event_End();
 }
@@ -522,12 +522,12 @@ void FieldScene_RunScene3b8SequenceB(void)
 
 void FieldScene_RunScene3b8SequenceA(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s16 dir;
     u16 facing;
 
     record = Actor_Get(0);
-    dir = (*(u16 *)(record + 6) + 0x2000) & -0x4000;
+    dir = (record->facing + 0x2000) & -0x4000;
     Event_Begin();
     Battle_ResetEffectCounterFar();
     Event_SetMessage((s32)MsgTorebiLikeSleep);
@@ -662,21 +662,21 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_SetAnimation(1, 2);
         record = Actor_Get(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPositionFar(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            ObjectMotion_ResetAndSetPositionFar(1, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(ACTOR_GERALD);
         Actor_SetPosition(1, 0, 0);
         Actor_SetAnimation(3, 2);
         record = Actor_Get(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPositionFar(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            ObjectMotion_ResetAndSetPositionFar(3, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(ACTOR_MIA);
         Actor_SetPosition(3, 0, 0);
         Actor_SetAnimation(2, 2);
         record = Actor_Get(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPositionFar(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            ObjectMotion_ResetAndSetPositionFar(2, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(2);
         Actor_SetPosition(2, 0, 0);

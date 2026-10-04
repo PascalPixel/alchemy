@@ -563,7 +563,7 @@ s32 Scene_Initialize(void)
     current = gGameState.scene;
     if (current == (s32)&SceneId_TakaraShima1) {
         FieldScene_RunScene3b2_0200167c();
-        *(s32 *)((u8 *)Actor_Get(8) + 56) = 0x810000;
+        Actor_Get(8)->target_x = 0x810000;
         FieldScene_RedrawActorFootprint(9);
         FieldScene_RedrawActorFootprint(10);
         if (GameFlag_IsSet(0x240) != 0) {
@@ -915,32 +915,32 @@ void ShowSaveMyLifeMessage(void)
 
 void FieldScene_RunScene3b2_0200167c(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x8c4) != 0) {
         Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
         Actor_SetPosition(15, 0x3c80000, 0x3c80000);
     } else {
         record = Actor_Get(15);
-        *(s32 *)(record + 28) = 0x19999;
+        record->scale_y = 0x19999;
     }
     if (GameFlag_IsSet(0x8c5) != 0) {
         Actor_SetPosition(16, 0x3c80000, 0x3c80000);
     } else {
         record = Actor_Get(16);
-        *(s32 *)(record + 28) = 0x19999;
+        record->scale_y = 0x19999;
     }
     if (GameFlag_IsSet(0x8c6) != 0) {
         Actor_SetPosition(17, 0x3c80000, 0x3c80000);
     } else {
         record = Actor_Get(17);
-        *(s32 *)(record + 28) = 0x19999;
+        record->scale_y = 0x19999;
     }
     if (GameFlag_IsSet(0x8c7) != 0) {
         Actor_SetPosition(18, 0x3c80000, 0x3c80000);
     } else {
         record = Actor_Get(18);
-        *(s32 *)(record + 28) = 0x19999;
+        record->scale_y = 0x19999;
     }
 }
 

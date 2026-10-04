@@ -79,7 +79,7 @@ void Func_02001c4c(void);
 void Func_02001c54(s32);
 void Func_02001ccc(u32, s32);
 void Func_02001cd4(u32);
-void Func_02000a18(void);
+void VinasuChojo_RunSetupStep(void);
 void SceneState_RunActor13AtColumn42Setup(void);
 
 void Func_02000b2c(void);
@@ -155,7 +155,7 @@ void Func_02000b2c(void)
     ObjectMotion_SetPositionAndReset(8, 0x2c8, 0x338);
     ObjectMotion_ArmCallback(5, 0xa000, 0);
     Engine_EventWait(20);
-    Func_02000a18();
+    VinasuChojo_RunSetupStep();
     SceneState_RunActor13AtColumn42Setup();
     Engine_EventWait(20);
     ObjectMotion_SetPositionAndReset(8, 0x2d8, 0x348);

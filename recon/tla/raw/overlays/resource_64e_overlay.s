@@ -939,39 +939,6 @@ Func_0200078c:
 	.4byte 0xfffffd5c
 .L_02008870:
 	.4byte 0xfffe0000
-	.section .text.x02008a14,"ax",%progbits
-	.global Func_02000a14
-	.thumb_func
-Func_02000a14:
-	movs r0, #0
-	bx lr
-	.section .text.x02008a18,"ax",%progbits
-	.global Func_02000a18
-	.thumb_func
-Func_02000a18:
-	push {lr}
-	movs r0, #140
-	movs r1, #1
-	bl Func_02001c7c
-	movs r1, #10
-	movs r0, #4
-	bl Func_02001c84
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #224
-	ldr r2, [r3]
-	ldr r3, .L_02008a50
-	str r3, [r2, #36]
-	bl Func_02001c9c
-	movs r0, #10
-	bl Engine_EventWait
-	movs r0, #1
-	bl Field_DispatchTypeHandler
-	bl Func_02001c8c
-	bl Func_02001c94
-	pop {pc}
-.L_02008a50:
-	.4byte Func_02000a14
 	.section .text.x02008a54,"ax",%progbits
 	.global Func_02000a54
 	.thumb_func
@@ -1203,7 +1170,7 @@ Func_02000b2c:
 	bl ObjectMotion_ArmCallback
 	movs r0, #20
 	bl Engine_EventWait
-	bl Func_02000a18
+	bl VinasuChojo_RunSetupStep
 	bl SceneState_RunActor13AtColumn42Setup
 	movs r0, #20
 	bl Engine_EventWait

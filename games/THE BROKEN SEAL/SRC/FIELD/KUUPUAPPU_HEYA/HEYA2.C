@@ -2205,24 +2205,23 @@ void RunEventScript01(void)
 void RunDialoguePromptScene(void)
 {
     s32 off1d8;
-    u8 *rec8;
-    u8 *record;
-    u8 *work;
+    struct FieldActor *obj;
+    struct FieldActor *actor;
     s32 aftermath;
     s32 rod;
-    u8 *p7;
+    struct EventWork *event;
 
-    p7 = (u8 *)gEventWork;
+    event = gEventWork;
     GameFlag_Set(0x855);
     Engine_EventBegin();
     {
-        u8 *record = (u8 *)Object_GetById(12);
+        struct FieldActor *actor = Object_GetById(12);
         /* FAKEMATCH: a result temporary, not a compound or-assign: the
          * reference merges the byte into the mask's register, which the
          * two-address ORR does only when the result is its own object. */
-        u8 merged = (u8)(record[35] | 1);
+        u8 merged = actor->priority_flags | 1;
 
-        record[35] = merged;
+        actor->priority_flags = merged;
     }
     Actor_MoveToAndWait(15, 0x368, 0x1a9);
     Actor_MoveToAndWait(16, 0x368, 0x199);
@@ -2236,12 +2235,12 @@ void RunDialoguePromptScene(void)
     Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
-    record = (u8 *)Object_GetById(10);
-    Engine_ActorSetSpriteFlags((struct FieldActor *)record, 1);
-    record = (u8 *)Object_GetById(11);
-    Engine_ActorSetSpriteFlags((struct FieldActor *)record, 1);
-    record = (u8 *)Object_GetById(12);
-    Engine_ActorSetSpriteFlags((struct FieldActor *)record, 1);
+    actor = Object_GetById(10);
+    Engine_ActorSetSpriteFlags(actor, 1);
+    actor = Object_GetById(11);
+    Engine_ActorSetSpriteFlags(actor, 1);
+    actor = Object_GetById(12);
+    Engine_ActorSetSpriteFlags(actor, 1);
     Actor_SetPosition(13, 0x3000000, 0x1980000);
     Actor_SetPosition(14, 0x3000000, 0x1a80000);
     Actor_MoveToAndWait(9, 0x310, 0x1a8);
@@ -2256,9 +2255,8 @@ void RunDialoguePromptScene(void)
     Actor_FaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Actor_FaceActor(ACTOR_IVAN, 10, 0);
-    work = (u8 *)gEventWork;
-    *(s32 *)(work + 0x1c8) = 30;
-    *(s32 *)(work + 0x1c0) = 0x201;
+    gEventWork->transition_frames = 30;
+    gEventWork->start_transition = 0x201;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
@@ -2370,14 +2368,14 @@ void RunDialoguePromptScene(void)
     Audio_PlayCue(124);
     Engine_ActorSetAnimation(16, 4);
     {
-        u8 *rec;
+        struct FieldActor *rec;
         /* FAKEMATCH: the zero is spelled as a sum of a zero local with
          * itself, which keeps the reference's register for it. */
         s32 t = 0;
         u16 zero_sym = (u16)(t + t);
 
-        rec = (u8 *)Object_GetById(19);
-        rec[85] = zero_sym;
+        rec = Object_GetById(19);
+        rec->motion_flags = zero_sym;
     }
     Engine_ActorSetSpritePriority(19, 1);
     Actor_SetPosition(19, 0x3680000, 0x1980000);
@@ -2503,18 +2501,18 @@ void RunDialoguePromptScene(void)
     Actor_FaceDirection(ACTOR_IVAN, 0xd000, 0);
     Object_RefreshSelectorById(9);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-    rec8 = (((s32 (*)())Object_GetById))(14);
+    obj = Object_GetById(14);
     {
-        u8 *target = rec8 + 91;
+        u8 *target = &obj->unknown_5b;
         /* FAKEMATCH: the flag goes through a word-sized local and a
          * pointer temporary, which keeps the reference's registers. */
         s32 shown = 1;
 
         *target = shown;
     }
-    *(s32 *)(rec8 + 56) = ACTOR_NO_TARGET;
-    *(s32 *)(rec8 + 60) = ACTOR_NO_TARGET;
-    *(s32 *)(rec8 + 64) = ACTOR_NO_TARGET;
+    obj->target_x = ACTOR_NO_TARGET;
+    obj->target_y = ACTOR_NO_TARGET;
+    obj->target_z = ACTOR_NO_TARGET;
     Actor_ShowEmote(9, 0x100, 0);
     Engine_ActorSetAnimation(14, 1);
     Engine_EventWait(50);
@@ -2596,11 +2594,11 @@ void RunDialoguePromptScene(void)
     Actor_FaceDirection(ACTOR_IVAN, 0, 0);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
-    rec8 = BattleFx_PlayCueAndStartEmitterOnTarget(2, 17, 65);
+    obj = (struct FieldActor *)BattleFx_PlayCueAndStartEmitterOnTarget(2, 17, 65);
     Engine_EventWait(60);
     rod = (s32)MsgKuupuappuIvanGotShamansRod;
     Engine_MessageShowCentered(rod, 1);
-    Engine_ObjectDispatchRelease((struct FieldActor *)rec8);
+    Engine_ObjectDispatchRelease(obj);
     Engine_ActorSetAnimation(17, 2);
     Engine_EventWait(20);
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
@@ -2618,8 +2616,8 @@ void RunDialoguePromptScene(void)
     SceneActor_SetModeZeroAndValue(2, 20);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     {
-        u16 *slot = (u16 *)(p7 + 0x1d8);
-        s32 saved = *(s16 *)slot;
+        u16 *slot = &event->message;
+        s32 saved = (s16)*slot;
 
         if (OverlayObject_GetObjectTwoByte118()!= 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
@@ -2641,9 +2639,9 @@ void RunDialoguePromptScene(void)
     SceneActor_SetModeZeroAndValue(1, 20);
     SceneEffect_ApplyThreeValuesAndFinish(0, 3, 20);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    record = (((s32 (*)())Object_GetById))(0);
-    if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    actor = Object_GetById(0);
+    if (actor != NULL) {
+        Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -2656,7 +2654,7 @@ void RunDialoguePromptScene(void)
     Actor_SetPosition(11, 0, 0);
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x209;
+    gEventWork->start_transition = 0x209;
     Engine_EventEnd();
 }
 

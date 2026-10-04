@@ -1,3 +1,16 @@
+/* 2026-10-04 finisher 5 (score 121, was 183): a tagged r11 binding for the
+ * loop's 0x100000 makes global allocation leave source on the stack as the
+ * ROM does ([sp+20], 52-byte frame, every stack offset now right); a tagged
+ * r4 binding for the source cell z gives 121. Remaining: the cell tests.
+ * CSE follows the jump from the first cell test into the nearby test
+ * (label 520 has one use), so one 0xfff00000 pseudo serves both tests and
+ * takes r0; the ROM loads the mask again for the nearby test and parks it
+ * in ip (a second pseudo), and reload's register rotation after that point
+ * differs throughout the move path. Rewriting the tests with ||, nested
+ * ifs, >> 20 or without the cell locals: 121 to 278, no gain.
+ * (lreg dump: source 19 weighted refs/258 insns outranks the 0x100000 copy,
+ * 16/354, so without the binding source takes r11.)
+ */
 /* DRAFT of FunctionHead_08097c3c: the effect that lets the player push a
    target one step: a preview object shows the step tried, and a step that
    fits moves the target (and the source object with it when the source
@@ -116,7 +129,8 @@ void FunctionHead_08097c3c(void)
     s32 direction;
     s32 keys;
     s32 cell_x;
-    s32 cell_z;
+    /* FAKEMATCH: the native's source cell z sits in r4 (127 -> 121). */
+    register s32 cell_z asm("r4");
     struct FxPosition *p;
 
     work = gEffectWork;
@@ -150,6 +164,9 @@ void FunctionHead_08097c3c(void)
     target->lift = 0x3333;
     target->unknown_5a = moved;
     target->mode = 2;
+    {
+    /* FAKEMATCH: the native gives r11 to the loop's 0x100000 and leaves the source object on the stack; global allocation otherwise ranks source first (183 -> 127). */
+    register s32 step asm("r11") = 0x100000;
     for (;;) {
         WaitFrames(1);
         keys = gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS);
@@ -158,9 +175,9 @@ void FunctionHead_08097c3c(void)
         direction = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
         if (direction == 0xffff) {
             position.x = target->x;
-            position.y = target->y + 0x100000;
+            position.y = target->y + step;
             position.z = target->z;
-            Vector_AddPolarOffset(0x100000, angle, &position);
+            Vector_AddPolarOffset(step, angle, &position);
             Object_SetMoveTargetFar(preview, position.x, position.y, position.z);
             Object_SetMode(preview, 1);
             preview->velocity_x = 0;
@@ -169,16 +186,16 @@ void FunctionHead_08097c3c(void)
             continue;
         }
         position.x = target->x;
-        position.y = target->y + 0x100000;
+        position.y = target->y + step;
         position.z = target->z;
-        Vector_AddPolarOffset(0x100000, angle, &position);
+        Vector_AddPolarOffset(step, angle, &position);
         Vector_AddPolarOffset(0x20000, direction, &position);
         Object_SetMoveTargetFar(preview, position.x, position.y, position.z);
         Object_CommitPosition(preview);
         position.x = target->x;
         position.y = target->y;
         position.z = target->z;
-        Vector_AddPolarOffset(0x100000, direction, &position);
+        Vector_AddPolarOffset(step, direction, &position);
         nearby.x = target->x;
         nearby.y = target->y;
         nearby.z = target->z;
@@ -218,8 +235,8 @@ void FunctionHead_08097c3c(void)
         preview->flag = 0;
         preview->speed = 0x3333;
         preview->lift = 0x3333;
-        Vector_AddPolarOffset(0x100000, direction, &position);
-        Object_SetMoveTargetFar(preview, position.x, position.y + 0x100000, position.z);
+        Vector_AddPolarOffset(step, direction, &position);
+        Object_SetMoveTargetFar(preview, position.x, position.y + step, position.z);
         if (moved == 1) {
             Object_GetById(work->source_id)->unknown_5a &= 0xfe;
             source->speed = 0x3333;
@@ -232,6 +249,7 @@ void FunctionHead_08097c3c(void)
         target->velocity_x = 0;
         target->velocity_z = 0;
         break;
+    }
     }
     Animation_ApplyChildValuesFar(target, work->palette);
     ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->script));

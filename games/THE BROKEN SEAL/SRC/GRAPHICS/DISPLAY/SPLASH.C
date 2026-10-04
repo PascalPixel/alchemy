@@ -145,31 +145,31 @@ s32 Title_ShowAnimatedSplash(void)
     Blend_SetDarkenTarget16(1);
     Bg0_ClearTilemap();
     WaitFrames(1);
-    *(volatile u16 *)0x0400000c = 0x685;
-    *(volatile u16 *)0x04000000 = 0x1440;
+    REG_BG2CNT = 0x685;
+    REG_DISPCNT = 0x1440;
     gBgScroll[2].y = result;
     decode = Ram_MapCellBuffer;
     Resource_DecodeType01(Resource_GetTableEntry(resource), decode);
     buffer = decode;
-    Dma_Set(buffer, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
+    Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x1c0 / 4, REG_DMA3);
     buffer += 0x1c0;
-    Dma_Set(buffer, (void *)0x06003000, 0x84000200, (volatile u32 *)0x040000d4);
+    Dma_Set(buffer, (void *)0x06003000, DMA_ENABLE32 | DMA_32BIT | 0x800 / 4, REG_DMA3);
     buffer += 0x800;
-    Dma_Set(buffer, (void *)0x06004000, 0x84001000, (volatile u32 *)0x040000d4);
+    Dma_Set(buffer, BG_CHAR_BLOCK(1), DMA_ENABLE32 | DMA_32BIT | 0x4000 / 4, REG_DMA3);
     buffer += 0x4000;
     for (i = 0; i < 4; i++) {
         gBgScroll[i].y = 0;
         gBgScroll[i].x = 0;
     }
-    Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
+    Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
     Blend_SetBrightenTarget0(1);
     Blend_WaitForTransition();
-    *(volatile u16 *)0x04000000 = 0x1540;
+    REG_DISPCNT = 0x1540;
     for (i = 0; i < 120; i++) {
         /* FAKEMATCH: the unsigned address sum retains the DMA source operand order. */
-        Dma_Set((void *)((((gFrameCount >> 3) & 3) << 10) + (u32)buffer), (void *)0x06004100, 0x840000d0, (volatile u32 *)0x040000d4);
+        Dma_Set((void *)((((gFrameCount >> 3) & 3) << 10) + (u32)buffer), BG_CHAR_BLOCK(1) + 0x100, DMA_ENABLE32 | DMA_32BIT | 0x340 / 4, REG_DMA3);
         if (gKeyState & (KEY_A | KEY_START))
             break;
         WaitFrames(1);

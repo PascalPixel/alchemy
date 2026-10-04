@@ -272,7 +272,7 @@ struct FloatingBlock {
 static __inline__ void FloatingBlock_Settle(struct FieldActor *block, s32 value)
 {
     block->target_y = ACTOR_NO_TARGET;
-    *(s32 *)block->unknown_14 = value;
+    block->terrain_height = value;
     block->velocity_y = value;
     block->motion_flags = value;
     ((struct FloatingBlock *)block)->height_index = value;

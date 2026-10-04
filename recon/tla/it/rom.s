@@ -4863,10 +4863,10 @@ Func_08108048:
 	.thumb_func
 Func_08108050:
 	.incbin "baserom.gba", 0x00108050, 0x00000008
-	.global Unnamed_080b0840Far
-	.type Unnamed_080b0840Far, %function
+	.global Shop_RestoreSceneTilesFar
+	.type Shop_RestoreSceneTilesFar, %function
 	.thumb_func
-Unnamed_080b0840Far:
+Shop_RestoreSceneTilesFar:
 	.incbin "baserom.gba", 0x00108058, 0x00000008
 	.global Func_08108060
 	.type Func_08108060, %function

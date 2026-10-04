@@ -111,7 +111,7 @@ struct CaptureObject {
 };
 
 void BattleFx_InitializeSlots(void);
-void Unnamed_080b0840Far(s32 value);
+void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Func_080091f0(s32 x, s32 y, s32 z);
@@ -280,7 +280,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 
     BattleFx_InitializeSlots();
     effect_slots = gEffectWork;
-    Unnamed_080b0840Far(0x201090);
+    Shop_RestoreSceneTilesFar(0x201090);
     WaitFrames(30);
     ObjectMotion_ArmCallback(arg, 0x4000, 0);
     WaitFrames(20);
@@ -479,7 +479,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 
     BattleFx_InitializeSlots();
     effect_slots = gEffectWork;
-    Unnamed_080b0840Far(0x201204);
+    Shop_RestoreSceneTilesFar(0x201204);
     WaitFrames(30);
     djinni->visible = 0;
     Audio_PlayCue(152);

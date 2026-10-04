@@ -18,7 +18,7 @@ Func_080d7c04:
 	adds r3, #224
 	ldr r0, .L_080d7d38
 	ldr r5, [r3]
-	bl Unnamed_080b0840Far
+	bl Shop_RestoreSceneTilesFar
 	movs r0, #173
 	bl Audio_PlayCue
 	adds r0, r6, #0

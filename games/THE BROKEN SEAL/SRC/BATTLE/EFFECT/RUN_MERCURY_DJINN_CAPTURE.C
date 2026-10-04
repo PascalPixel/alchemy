@@ -47,7 +47,7 @@ struct CaptureResource {
 
 struct CaptureObject *Object_GetById(s32 id);
 void BattleFx_InitializeSlots(void);
-void Unnamed_080b0840Far(s32 value);
+void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
@@ -93,7 +93,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
 
     BattleFx_InitializeSlots();
     effect_slots = gEffectWork;
-    Unnamed_080b0840Far(0x204084);
+    Shop_RestoreSceneTilesFar(0x204084);
     WaitFrames(30);
     djinni->visible = 0;
     Audio_PlayCue(173);

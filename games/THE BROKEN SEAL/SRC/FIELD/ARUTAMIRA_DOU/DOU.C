@@ -289,7 +289,7 @@ void ArutamiraDou_SettleActorOnCell(void)
 
     if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
         actor->motion_flags = 2;
-        *(s32 *)actor->unknown_14 = 0;
+        actor->terrain_height = 0;
         actor->priority_flags = 2;
         Engine_MapCopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if EDITION_INTERNATIONAL

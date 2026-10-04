@@ -371,7 +371,7 @@ static inline s32 GameFlag_Set(s32 flag)
 
 static inline void GameFlag_Clear(s32 flag)
 {
-    /* FAKEMATCH: Direct calls change FieldScene_RunScene371_02001c08 (EN): push	{lr} becomes push	{r5, r6, lr}. */
+    /* FAKEMATCH: Direct calls change WorldMap_ShowDjinnTutorial (EN): push	{lr} becomes push	{r5, r6, lr}. */
     Engine_GameFlagClear(flag);
 }
 

@@ -31,7 +31,7 @@ Func_080d82e0:
 	ldr r3, [r3]
 	ldr r0, .L_080d846c
 	mov r9, r3
-	bl Unnamed_080b0840Far
+	bl Shop_RestoreSceneTilesFar
 	movs r0, #30
 	bl WaitFrames
 	adds r2, r6, #0

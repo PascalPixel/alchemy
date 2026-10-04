@@ -29,7 +29,7 @@ Func_080d7f80:
 	ldr r3, [r3]
 	ldr r0, .L_080d8134
 	mov r10, r3
-	bl Unnamed_080b0840Far
+	bl Shop_RestoreSceneTilesFar
 	movs r0, #30
 	bl WaitFrames
 	movs r1, #128

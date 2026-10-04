@@ -86,7 +86,7 @@ void BattleEffect_CleanupSceneObjectsFar(void);
 #define ACTOR_FIELD_0XA(record) (*(s16 *)((record) + 10))
 #define ACTOR_FIELD_0X12(record) (*(s16 *)((record) + 18))
 
-extern u8 MakyuriChojo_NearestActor[];
+extern s32 MakyuriChojo_NearestActor;
 
 void Owner_RefreshRatiosOnFlagFar();
 s32 Battle_GetWorkObject1e0Far();

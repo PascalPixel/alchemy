@@ -343,7 +343,7 @@ BattleFx_PlayQueuedSound:
 	.global Shop_RestoreSceneTiles
 	.thumb_func
 Shop_RestoreSceneTiles:
-	overlay_veneer Unnamed_080b0840Far
+	overlay_veneer Shop_RestoreSceneTilesFar
 	.global Shop_InitEffect
 	.thumb_func
 Shop_InitEffect:

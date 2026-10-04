@@ -27,7 +27,7 @@ struct TrackingWork {
  * placed, and the exits. */
 extern s16 gImiruFuchinKeyHeadings[];
 extern s16 gImiruFuchinHeadings[];
-extern s32 gImiruFuchinDragonsEye[];
+extern struct FieldActor *gImiruFuchinDragonsEye;
 extern s32 gImiruFuchinExits[];
 
 void ImiruFuchin_BlowCaveMouthDust(void);

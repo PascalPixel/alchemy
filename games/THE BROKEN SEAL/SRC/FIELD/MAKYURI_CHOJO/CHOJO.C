@@ -380,43 +380,43 @@ void SceneActor_InitializeMotion(void)
     }
 }
 
-void FieldScene_RunScene39d_020009fc(void)
+/* The leader steps onto the nearest kind 0xf2 actor in reach: flag 0x250
+   records the ride, and the two dip under the leader's weight and settle
+   back over twenty frames. */
+void MakyuriChojo_StepOntoNearestActor(void)
 {
-    u32 i;
-    u8 *rec;
-    u8 *rec8;
-    s32 record;
-    s32 nearest;
+    struct FieldActor *leader;
+    struct FieldActor *actor;
+    s32 id;
 
-    rec = Object_GetById(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
-    record = FindNearestF2Actor();
-    nearest = (s32)MakyuriChojo_NearestActor;
-    *(s32 *)nearest = record;
-    if (record != 0) {
+    id = FindNearestF2Actor();
+    MakyuriChojo_NearestActor = id;
+    if (id != 0) {
         Engine_GameFlagSet(0x250);
-        rec8 = Object_GetById(*(s32 *)nearest);
-        rec8[85] = 0;
-        rec[85] &= 254;
-        *(s32 *)((s32)rec8 + 12) += -0x30000;
-        *(s32 *)((s32)rec + 12) += -0x30000;
-        *(s32 *)((s32)rec + 20) += -0x30000;
+        actor = Object_GetById(MakyuriChojo_NearestActor);
+        actor->motion_flags = 0;
+        leader->motion_flags &= 0xfe;
+        actor->y.fixed -= 0x30000;
+        leader->y.fixed -= 0x30000;
+        leader->terrain_height -= 0x30000;
         Engine_TaskWait(2);
-        *(s32 *)((s32)rec8 + 12) += -0x20000;
-        *(s32 *)((s32)rec + 12) += -0x20000;
-        *(s32 *)((s32)rec + 20) += -0x20000;
+        actor->y.fixed -= 0x20000;
+        leader->y.fixed -= 0x20000;
+        leader->terrain_height -= 0x20000;
         Engine_TaskWait(10);
-        *(s32 *)((s32)rec8 + 12) += 0x20000;
-        *(s32 *)((s32)rec + 12) += 0x20000;
-        *(s32 *)((s32)rec + 20) += 0x20000;
+        actor->y.fixed += 0x20000;
+        leader->y.fixed += 0x20000;
+        leader->terrain_height += 0x20000;
         Engine_TaskWait(4);
-        *(s32 *)((s32)rec8 + 12) += 0x20000;
-        *(s32 *)((s32)rec + 12) += 0x20000;
-        *(s32 *)((s32)rec + 20) += 0x20000;
+        actor->y.fixed += 0x20000;
+        leader->y.fixed += 0x20000;
+        leader->terrain_height += 0x20000;
         Engine_TaskWait(4);
-        *(s32 *)((s32)rec8 + 12) += 0x10000;
-        *(s32 *)((s32)rec + 12) += 0x10000;
-        *(s32 *)((s32)rec + 20) += 0x10000;
+        actor->y.fixed += 0x10000;
+        leader->y.fixed += 0x10000;
+        leader->terrain_height += 0x10000;
     }
     Engine_EventEnd();
 }

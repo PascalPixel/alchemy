@@ -175,8 +175,6 @@ void SceneDialogue_AskIfFineWarrior(void)
 
 void BiribinoNiwa_RunGardenEvent(void)
 {
-    u8 *record;
-
     Engine_EventBegin();
     if (Value1(Engine_GameFlagIsSet, 0x84a) != 0) {
         if (Engine_GameFlagIsSet(0x304) != 0) {
@@ -190,7 +188,7 @@ void BiribinoNiwa_RunGardenEvent(void)
             }
             Engine_EventSetMessage((s32)MsgBiribinoMasterQuiteCranky);
             Engine_EventShowMessage(12, 0);
-            goto L_0200041c;
+            goto done;
         }
         Engine_EventSetMessage((s32)MsgBiribinoLordMccoyDifficult);
         Engine_EventShowMessage(12, 0);
@@ -198,12 +196,11 @@ void BiribinoNiwa_RunGardenEvent(void)
         Engine_EventSetMessage((s32)MsgBiribinoLordOnlyMeet);
         Engine_EventOpenMessage(12, 0);
         if (Engine_EventChooseYesNo(0, 0) != 0) {
-            goto L_02000408;
+            goto declined;
         }
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        gEventWork->message++;
         Engine_EventShowMessageAndWait(12, 0, 10);
-        record = ((u8 * (*)())Object_GetById)(0);
-        if (*(s32 *)((s32)record + 16) <= 0x10dffff) {
+        if (Object_GetById(0)->z.fixed < 0x10e0000) {
             Call3(Engine_ActorSetSpeed, 12, 0xcccc, 0x6666);
             Call3(Engine_ActorWalkToAndWait, 0, 0x15a, 0x112);
             Call3(Engine_ActorWalkToAndWait, 0, 0x148, 0x11a);
@@ -225,22 +222,17 @@ void BiribinoNiwa_RunGardenEvent(void)
         Engine_EventShowMessageAndWait(11, 0, 20);
         Call3(Engine_ActorFaceDirection, 11, 0xf000, 0);
         Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-        *(u8 *)(((u8 * (*)())Object_GetById)(12) + 90) &= 254;
+        Object_GetById(12)->unknown_5a &= 0xfe;
         Call3(Engine_ActorWalkToAndWait, 12, 0x15a, 0x107);
         Engine_EventWait(1);
-        {
-            u8 *record = ((u8 * (*)())Object_GetById)(12);
-            /* FAKEMATCH: the flag byte is read through a volatile access. */
-            u8 value = *(volatile u8 *)&record[90];
-        
-            record[90] = (u8)(value | 1);
-        }
+        Object_GetById(12)->unknown_5a |= 1;
         Call3(Engine_ActorSetSpeed, 11, 0x9999, 0x4ccc);
         Call3(Engine_ActorWalkToAndWait, 11, 0x148, 0x107);
         Call3(Engine_ActorWalkToAndWait, 11, 0x148, 252);
         Call3(Engine_ActorFaceDirection, 11, 0xc000, 10);
         FieldScene_OpenGate();
         Call3(Engine_ActorWalkToAndWait, 11, 0x148, 246);
+        /* FAKEMATCH: called without its prototype, the actor id loads after the two zeros. */
         ((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
         /* FAKEMATCH: the do/while keeps this call after the argument setup
          * of the previous one. */
@@ -249,11 +241,11 @@ void BiribinoNiwa_RunGardenEvent(void)
         } while (0);
     }
     Call3(Engine_ObjectSetTargetAndCallback, 12, 0x10000, (s32)BiribinoNiwa_GuardScript);
-    goto L_0200041c;
-    L_02000408:;
+    goto done;
+declined:
     Engine_EventShowMessage(12, 0);
     Call3(Engine_ActorFaceDirection, 12, 0x3000, 10);
-    L_0200041c:;
+done:
     Engine_EventEnd();
 }
 

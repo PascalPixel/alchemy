@@ -5,7 +5,7 @@
 #include "RESOURCE_397.H"
 
 extern struct EventWork *gEventWork;
-extern u8 Data_03001ecc[];
+extern u8 gDisplayTransition[];
 
 /* The two tracked scene objects share this coordinate and terrain prefix. */
 struct SceneObject {
@@ -173,7 +173,7 @@ void Effect_SetAlphaBlendForScene9(void)
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x0c04;
 
-    disp = *(u8 **)Data_03001ecc;
+    disp = *(u8 **)gDisplayTransition;
     {
         u16 *slot = (u16 *)(disp + 0x534);
         int value = 0x3f3f;

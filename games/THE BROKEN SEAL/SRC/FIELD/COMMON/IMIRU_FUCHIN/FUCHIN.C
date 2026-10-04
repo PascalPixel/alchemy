@@ -1300,17 +1300,11 @@ void ImiruFuchin_PlaceDragonsEye(void)
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     GlyphTransfer *glyph;
-    /* FAKEMATCH: a direct constant loads the ID after the three coordinate shifts. */
-    register s32 id asm("r0") = 22;
-    /* FAKEMATCH: the ID-only constraint orders coordinate setup r2,r3,r1 instead of r1,r2,r3. */
-    register s32 x asm("r1") = 0xf80000;
-    /* FAKEMATCH: the two-lane constraint leaves coordinate setup r1,r3,r2 instead of r1,r2,r3. */
-    register s32 y asm("r2") = 0x80000;
     /* FAKEMATCH: separate immediate clears select r1 instead of the
        native r5 zero value at the same 128-byte extent. */
     s32 clear = 0;
 
-    actor = Engine_ObjectCreate(id, x, y, 0x980000);
+    actor = Object_Create(22, 0xf80000, 0x80000, 0x980000);
     if (actor != NULL) {
         sprite = actor->sprite;
         sprite->flags = clear;
@@ -1323,7 +1317,7 @@ void ImiruFuchin_PlaceDragonsEye(void)
         Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);
         Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
         Engine_HeapRelease(17);
-        gImiruFuchinDragonsEye[0] = (s32)actor;
+        gImiruFuchinDragonsEye = actor;
     }
 }
 
@@ -1335,15 +1329,15 @@ void ImiruFuchin_TakeDragonsEye(void)
 
     /* r5 holds &gImiruFuchinDragonsEye across the calls; the word is reloaded before
      * the second test. */
-    if (gImiruFuchinDragonsEye[0] != 0) {
-        Engine_RunRisingObjectSequence((struct FieldActor *)gImiruFuchinDragonsEye[0], 3);
+    if (gImiruFuchinDragonsEye != NULL) {
+        Engine_RunRisingObjectSequence(gImiruFuchinDragonsEye, 3);
     }
 
     Engine_PartyGiveItem((s32) 0xE6, 0);
     Engine_GameFlagSet((s32) 0xF13);
 
-    if (gImiruFuchinDragonsEye[0] != 0) {
-        Engine_ObjectDispatchRelease((struct FieldActor *)gImiruFuchinDragonsEye[0]);
+    if (gImiruFuchinDragonsEye != NULL) {
+        Engine_ObjectDispatchRelease(gImiruFuchinDragonsEye);
     }
 
     Engine_EventEnd();

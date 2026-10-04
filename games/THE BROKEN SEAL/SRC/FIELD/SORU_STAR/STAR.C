@@ -9,7 +9,6 @@
 extern u8 MsgSoruVenusStarBagged[];
 extern u16 SoruStar_StarCells[];
 extern struct EventWork *gEventWork;
-s32 Scene_PresentItem();
 void Event_SayThenWait();
 void Engine_WorkSetValuesIfNonNegative();
 void Engine_MapAnimateCells();

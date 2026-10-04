@@ -22,7 +22,7 @@ extern u8 MsgArutamiraSoWellDoIt[];
 extern u8 MsgArutamiraThatsSukuretaSaidAlchemyCould[];
 extern u8 MsgArutamiraWhatWasThat[];
 extern u8 MsgArutamiraWouldHaveRevealedMyselfSooner[];
-extern u8 Data_03001ecc[];
+extern u8 gDisplayTransition[];
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 s32 Engine_PartyRemoveItem(s32 item);
@@ -393,7 +393,7 @@ void FieldScene_RunExtendedActorPresentation(void)
     Event_OpenMessage(9, 0);
     Engine_EventSetMessage((s32)MsgArutamiraBabi);
     Engine_EventChooseYesNo(0, 0);
-    display = *(u8 **)Data_03001ecc;
+    display = *(u8 **)gDisplayTransition;
     {
         u16 *slot = (u16 *)(display + 0x52a);
         s32 value = 32;

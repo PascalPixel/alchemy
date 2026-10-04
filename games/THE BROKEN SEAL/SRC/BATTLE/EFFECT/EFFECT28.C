@@ -14,6 +14,7 @@
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_RUNTIME.H"
 #include "DMA.H"
+#include "IO_REG.H"
 #include "DISPTRAN.H"
 
 struct ParticlePosition {
@@ -171,7 +172,7 @@ s32 EffectRuntime_GetCurrentObject(s32 id);
 struct MapEventEntry *_call_via_r0(s32 resource);
 s32 GameFlag_TestFar(s32 flag);
 
-extern struct DisplayTransitionState *Data_03001ecc;
+extern struct DisplayTransitionState *gDisplayTransition;
 
 void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source);
 
@@ -601,29 +602,29 @@ void FieldEffect_SpawnNearbyMarkers(void)
 
 void BattleFx_StartWindowHBlankDma(void)
 {
-    struct DisplayTransitionState *work = Data_03001ecc;
+    struct DisplayTransitionState *work = gDisplayTransition;
     u16 *source = work->pages[work->page];
-    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    volatile u16 *channel = REG_DMA0;
     s32 value;
     s32 other;
 
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];
-    *(volatile u16 *)0x04000000 |= 0x6000;
+    REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
     /* FAKEMATCH: a do-while(0) around the WININ copy makes the reference load
        the value before the WININ address */
     do {
         value = *source++;
-        *(volatile u16 *)0x04000048 = value;
+        REG_WININ = value;
     } while (0);
     value = *source++;
-    *(volatile u16 *)0x0400004a = value;
-    *(volatile u16 *)0x04000040 = *source++;
+    REG_WINOUT = value;
+    REG_WIN0H = *source++;
     other = *source++;
-    *(volatile u16 *)0x04000042 = other;
+    REG_WIN1H = other;
     other = 160;
-    *(volatile u16 *)0x04000044 = other;
-    *(volatile u16 *)0x04000046 = other;
-    Dma_Set(source, (void *)0x04000040, 0xa6600001, (volatile u32 *)channel);
+    REG_WIN0V = other;
+    REG_WIN1V = other;
+    Dma_Set(source, (void *)&REG_WIN0H, 0xa6600001, (volatile u32 *)channel);
 }

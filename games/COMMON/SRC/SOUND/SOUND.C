@@ -283,16 +283,16 @@ void CgbAudio_Initialize(struct CgbNote *notes)
     u32 limit;
     u32 control;
 
-    *(u16 *)0x04000084 = 0x8F;
-    *(u16 *)0x04000080 = 0;
-    *(u8 *)0x04000063 = 8;
-    *(u8 *)0x04000069 = 8;
-    *(u8 *)0x04000079 = 8;
-    *(u8 *)0x04000065 = 0x80;
-    *(u8 *)0x0400006D = 0x80;
-    *(u8 *)0x0400007D = 0x80;
-    *(u8 *)0x04000070 = 0;
-    *(u8 *)0x04000080 = 0x77;
+    REG_SOUNDCNT_X = SOUNDCNT_X_ENABLE | SOUNDCNT_X_ALL_TONES_ON;
+    REG_SOUNDCNT_L = 0;
+    REG_NR12 = 8;
+    REG_NR22 = 8;
+    REG_NR42 = 8;
+    REG_NR14 = 0x80;
+    REG_NR24 = 0x80;
+    REG_NR44 = 0x80;
+    REG_NR30 = 0;
+    REG_NR50 = 0x77;
 
     work = SOUND_WORK;
     lock = work->lock;

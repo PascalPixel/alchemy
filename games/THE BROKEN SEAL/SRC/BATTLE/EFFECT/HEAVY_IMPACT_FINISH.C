@@ -2,92 +2,82 @@
 #include "FX_SCENE.H"
 #include "GAME_STATE.H"
 #include "FIXED_MATH.H"
+#include "MOTION_OBJECT.H"
 
 extern struct BattleFxScene *gEffectWork;
 
-void BattleFx_AdvanceSpinAngle(void);
+struct MotionObject *Object_GetById(s32 id);
+void BattleFx_AdvanceSpinAngle(struct MotionObject *object);
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *);
 
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
 int ObjectMotion_ArmCallback();
 int ObjectMotion_Launch();
 
-void BattleFx_FinishHeavyImpact(s32 arg)
+void BattleFx_FinishHeavyImpact(s32 id)
 {
     struct {
         s32 x;
         s32 y;
         s32 z;
     } pos;
-    s32 value;
-    s32 base;
-    s32 id;
+    struct MotionObject *object;
+    struct BattleFxScene *scene;
+    struct EffectSlot *slot;
+    s32 scale;
     s32 count;
-    void *ctx;
-    void *work;
 
-    id = arg;
-    ctx = Object_GetById();
-    /* The single-pass block preserves the first call's argument schedule. */
+    object = Object_GetById(id);
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-    do
-    {
-        if (ctx == ((void *)0))
-        {
+    do {
+        if (object == NULL)
             return;
-        }
         BattleFx_InitializeSlots();
-        base = (s32)gEffectWork;
-        Unnamed_080b0840Far(0x20118C);
-        Audio_PlayCue(0xAD);
+        scene = gEffectWork;
+        Shop_RestoreSceneTilesFar(0x20118c);
+        Audio_PlayCue(0xad);
         Motion_SetVarCbAndRefresh(id, 1);
-    }
-    while (0);
-    Audio_PlayCue(0xAE);
+    } while (0);
+    Audio_PlayCue(0xae);
     Motion_SetVarCbAndRefresh(id, 1);
-    /* A second boundary gives the third repeated call its observed order. */
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-    do
-    {
-        Audio_PlayCue(0xAF);
+    do {
+        Audio_PlayCue(0xaf);
         Motion_SetVarCbAndRefresh(id, 1);
-        WaitFrames(0x14);
-        Audio_PlayCue(0x8C);
-        (*((s32 *)(((s8 *)ctx) + 0x6C))) = (s32)BattleFx_AdvanceSpinAngle;
-        WaitFrames(0x28);
+        WaitFrames(20);
+        Audio_PlayCue(0x8c);
+        object->update = BattleFx_AdvanceSpinAngle;
+        WaitFrames(40);
         Audio_PlayCue(0x99);
-        ObjectMotion_Launch(id, 0xC, 0x16);
-        pos.x = ((s32)(*((s32 *)(((s8 *)ctx) + 8))));
-        pos.y = ((s32)(*((s32 *)(((s8 *)ctx) + 0xC))));
-        pos.z = ((s32)(*((s32 *)(((s8 *)ctx) + 0x10))));
+        ObjectMotion_Launch(id, 12, 22);
+        pos.x = object->x;
+        pos.y = object->y;
+        pos.z = object->z;
         Camera_WorldToScreen(&pos);
-        Object_Destroy(ctx);
-        Audio_PlayCue(0xA4);
-        work = (base + 0x58);
-        count = 0x17;
-        do
-        {
-            EffectSlot_Initialize(work, 0x11C, pos.x, pos.z);
-            EffectSlot_SetCallback(work, BattleFx_RunAngledApproachPhases);
-            EffectSlot_SetObjectMode(work, 7);
-            ObjectGroup_SetChildValueUnlessFifteenFar(*((s32 *)work), ((u32)(Random16() * 7)) >> 0x10);
-            value = ((u32)Random16() / 3 + 0x10000);
-            (*((s32 *)(((s8 *)work) + 0x2C))) = value;
-            (*((s32 *)(((s8 *)work) + 0x28))) = value;
-            count = (count - 1);
+        Object_Destroy(object);
+        Audio_PlayCue(0xa4);
+        slot = scene->slots;
+        count = 23;
+        do {
+            EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
+            EffectSlot_SetCallback(slot, BattleFx_RunAngledApproachPhases);
+            EffectSlot_SetObjectMode(slot, 7);
+            ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, (u32)(Random16() * 7) >> 16);
+            scale = (u32)Random16() / 3 + 0x10000;
+            slot->scale_y = scale;
+            slot->scale_x = scale;
+            count--;
             WaitFrames(1);
-            work += 0x48;
-        }
-        while (count >= 0);
-    }
-    while (0);
-    WaitFrames(0x3C);
+            slot++;
+        } while (count >= 0);
+    } while (0);
+    WaitFrames(60);
     ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
-    WaitFrames(0x14);
-    Object_SetMode(Object_GetById(gGameState.selected_actor), 0x1C);
-    WaitFrames(0x28);
-    Audio_PlayCue(0xA4);
-    WaitFrames(0x64);
+    WaitFrames(20);
+    Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
+    WaitFrames(40);
+    Audio_PlayCue(0xa4);
+    WaitFrames(100);
     Shop_InitEffectFar();
     BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

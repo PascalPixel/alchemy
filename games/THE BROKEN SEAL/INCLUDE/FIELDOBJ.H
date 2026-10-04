@@ -83,7 +83,8 @@ struct FieldActor {
     union FieldCoordinate x;
     union FieldCoordinate y;
     union FieldCoordinate z;
-    u8 unknown_14[4];
+    /* The height a falling actor lands on. */
+    s32 terrain_height;
     /* The sprite's scale on each axis; 0x10000 draws it at full size. */
     s32 scale_x;
     s32 scale_y;
@@ -128,6 +129,7 @@ struct FieldActor {
 LAYOUT_OFFSET_GUARD(FieldActor_Facing, struct FieldActor, facing, 0x06);
 LAYOUT_OFFSET_GUARD(FieldActor_X, struct FieldActor, x, 0x08);
 LAYOUT_OFFSET_GUARD(FieldActor_Z, struct FieldActor, z, 0x10);
+LAYOUT_OFFSET_GUARD(FieldActor_TerrainHeight, struct FieldActor, terrain_height, 0x14);
 LAYOUT_OFFSET_GUARD(FieldActor_ScaleY, struct FieldActor, scale_y, 0x1c);
 LAYOUT_OFFSET_GUARD(FieldActor_PriorityFlags, struct FieldActor, priority_flags, 0x23);
 LAYOUT_OFFSET_GUARD(FieldActor_MotionFlags, struct FieldActor, motion_flags, 0x55);

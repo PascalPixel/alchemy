@@ -141,7 +141,7 @@ void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
 void Summon_ClearWorkFields(void);
 s32 BattleRandom16Far(void);
-void Func_080c02a4(s32 object, s32 arg);
+void BattlePres_RunEntryTransition(s32 object, s32 arg);
 void Battle_ReservedNoOp9B2C(void);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void Runtime_GetRemainingIwram(void);
@@ -314,7 +314,7 @@ s32 Battle_RunEncounter(s32 arg)
         else if ((BattleRandom16Far() & 31) == 0)
             work->field_45 = 2;
     }
-    Func_080c02a4(object, arg);
+    BattlePres_RunEntryTransition(object, arg);
     timer->field_14 = 0;
     gCpuLoadDisplayEnabled = 0;
     Scheduler_AddOrUpdateCallback((s32)Func_080b7738, 0xc80);

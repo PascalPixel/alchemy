@@ -51,7 +51,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 
     BattleFx_InitializeSlots();
     effect_slots = *(void **)gEffectWork;
-    Unnamed_080b0840Far(0x201090);
+    Shop_RestoreSceneTilesFar(0x201090);
     WaitFrames(30);
     ObjectMotion_ArmCallback(arg, 0x4000, 0);
     WaitFrames(20);

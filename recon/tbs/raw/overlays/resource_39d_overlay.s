@@ -247,7 +247,7 @@ MakyuriChojo_EventTable:
 	.4byte SceneActor_InitializeMotion
 	.4byte 0x00000002
 	.4byte 0x0250000a
-	.4byte FieldScene_RunScene39d_020009fc
+	.4byte MakyuriChojo_StepOntoNearestActor
 	.4byte 0x00000003
 	.4byte 0x03500064
 	.4byte 0x00300000

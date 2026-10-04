@@ -143,7 +143,7 @@ void MakyuriHeya_SpawnSparkPair(void)
     point = (*(struct EventSpawns **)&gEventWork)->points[gGameState.selected_actor];
     spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
     if (spark != NULL) {
-        *(s32 *)spark->unknown_14 = point->value;
+        spark->terrain_height = point->value;
         sprite = spark->sprite;
         Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
         spark->motion_flags = 0;
@@ -157,7 +157,7 @@ void MakyuriHeya_SpawnSparkPair(void)
     }
     spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
     if (spark != NULL) {
-        *(s32 *)spark->unknown_14 = point->value;
+        spark->terrain_height = point->value;
         sprite = spark->sprite;
         Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
         spark->motion_flags = 0;

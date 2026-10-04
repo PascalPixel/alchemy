@@ -26,7 +26,8 @@ enum DisplayControl {
     DISPCNT_BG2_ON = 0x0400,
     DISPCNT_BG3_ON = 0x0800,
     DISPCNT_OBJ_ON = 0x1000,
-    DISPCNT_WIN0_ON = 0x2000
+    DISPCNT_WIN0_ON = 0x2000,
+    DISPCNT_WIN1_ON = 0x4000
 };
 #define REG_BG1HOFS (*(volatile u16 *)0x04000014)
 #define REG_BG1VOFS (*(volatile u16 *)0x04000016)

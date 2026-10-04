@@ -48,7 +48,7 @@ Math_IntegerSqrtFar:
 	.global Func_08000110
 	.thumb_func
 Func_08000110:
-	overlay_veneer Func_080149e0
+	overlay_veneer FixedSqrt
 	.global Math_SineFar
 	.thumb_func
 Math_SineFar:

@@ -165,7 +165,7 @@ Func_0811edb0:
 	movs r0, #60
 	bl WaitFrames
 .L_0811eef4:
-	bl Func_081234f0
+	bl BattleEventRuntime_WaitForReady
 	adds r6, r5, #0
 	mov r0, r9
 	movs r1, #1
@@ -319,6 +319,6 @@ Func_0811edb0:
 .L_0811f024:
 	.4byte 0xffffe000
 .L_0811f028:
-	.4byte Func_08122d10
+	.4byte BattleEvent_Playback
 .L_0811f02c:
 	.4byte 0x00000c68

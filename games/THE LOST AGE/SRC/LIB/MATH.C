@@ -22,3 +22,9 @@ s32 Math_IntegerSqrt(s32 value)
     } while (bit >= 0);
     return result;
 }
+
+/* The square root of a Q16 value, in Q16. */
+s32 FixedSqrt(s32 value)
+{
+    return Iwram_Sqrt(value) << 8;
+}

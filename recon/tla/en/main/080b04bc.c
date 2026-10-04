@@ -1,32 +1,34 @@
-/*
- * Draft: RollWeaponUnleash does not yet match; 2 halfwords differ from ☀️'s C, first at +0x30 (movs r1, #100).
- * Links as recon/tla/raw/080b04bc.s.
+/* Draft: RollWeaponUnleash, 88-byte EN extent.
+ * 2026-10-04: ☀️'s body (DJINN.C) differs by one instruction's place: the
+ * native sets r1 = 100 for __divsi3 right after loading secondary_flags,
+ * in the load's shadow; this build sets it after the sum. The same body
+ * matches with -mtune=arm9tdmi (load scheduling on), which is not ⚓️'s
+ * option set (K1), so no device was added.
  */
 #include "INVENTORY.H"
+#include "BATTLE_RANDOM.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
 
-u16 RollWeaponUnleash(struct BattleUnit *owner)
+s32 RollWeaponUnleash(struct BattleUnit *owner)
 {
     struct ItemDefinition *item;
     s32 rate;
 
-    if (FIELD_AT_OFFSET(owner, u8, 0x129) == 0) {
+    if (owner->class_index == 0) {
         return 1;
     }
-    item = Inventory_GetEquippedDefinition(owner, 1);
+    item = Inventory_GetEquippedDefinition((struct OwnerInventoryState *)owner, 1);
     if (item == NULL) {
         return 1;
     }
-    if (FIELD_AT_OFFSET(item, u16, 0xE) == 0) {
+    if (item->description_message == 0) {
         return 1;
     }
-    rate = __divsi3(
-        (Equipment_GetUnleashRateBonus(owner) +
-         (FIELD_AT_OFFSET(item, u8, 0xB) * 5)) << 0x10,
-        100);
+    rate = ((Equipment_GetUnleashRateBonus(owner) +
+         (item->secondary_flags * 5)) << 0x10) / 100;
     if (rate > (s32)(BattleRandom16() & 0xFFFF)) {
-        return FIELD_AT_OFFSET(item, u16, 0xE);
+        return item->description_message;
     }
     return 1;
 }

@@ -8,6 +8,22 @@
 #include "RAM_BUFFER.H"
 #include "../../COMMON/INCLUDE/BATTLE/BATTLE_SESSION.H"
 
+/* The event playback state, ☀️'s with the cue a halfword and one more
+   halfword beside it. */
+struct BattleEventState {
+    struct BattleEventQueue queue;  /* 0x000 */
+    s32 phase;                      /* 0x148 */
+    s32 event_index;                /* 0x14c */
+    s32 timer;                      /* 0x150 */
+    u8 unknown_154[0x14];
+    s16 pending_cue;                /* 0x168, played before the next actor */
+    s16 unknown_16a;
+    s32 flags;                      /* 0x16c */
+};
+
+LAYOUT_SIZE_GUARD(BattleEventState_Size, struct BattleEventState, 0x170);
+LAYOUT_OFFSET_GUARD(BattleEventState_PendingCue, struct BattleEventState, pending_cue, 0x168);
+
 /*
  * The Lost Age's battle session, which its heap slot 9 holds. It opens as
  * The Broken Seal's does; the summon queue and the event queue lie later.
@@ -27,7 +43,8 @@ struct BattleSession {
     u8 unknown_053[5];
     s16 party_units[7];             /* 0x058 */
     s16 enemy_units[7];             /* 0x066 */
-    u8 unknown_074[0x278];
+    u8 placement[16];               /* 0x074, standing place per unit */
+    struct BattleObjectSlot slots[14]; /* 0x084, object records in formation order */
     struct BattleActionRecord actions[20]; /* 0x2ec */
     u8 unknown_42c[0x138];
     /* Summons queued by the effect that calls the next one in. */
@@ -36,8 +53,8 @@ struct BattleSession {
     s8 queue_head;                  /* 0x56a */
     s8 queue_count;                 /* 0x56b */
     u8 unknown_56c[0x178];
-    struct BattleEventQueue events; /* 0x6e4 */
-    u8 unknown_82c[0x3c];
+    struct BattleEventState events; /* 0x6e4 */
+    u8 unknown_854[0x14];
     u8 unknown_868;                 /* 0x868 */
 };
 
@@ -50,6 +67,8 @@ LAYOUT_OFFSET_GUARD(BattleSession_TwoSided, struct BattleSession, two_sided, 0x0
 LAYOUT_OFFSET_GUARD(BattleSession_EncounterMode, struct BattleSession, encounter_mode, 0x045);
 LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BattleSession, party_units, 0x058);
 LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BattleSession, enemy_units, 0x066);
+LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BattleSession, placement, 0x074);
+LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BattleSession, slots, 0x084);
 LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BattleSession, actions, 0x2ec);
 LAYOUT_OFFSET_GUARD(
     BattleSession_QueuedSummons,

@@ -3,6 +3,7 @@
 #include "RAM_BUFFER.H"
 #include "EVENTWRK.H"
 #include "PARTY_STATE.H"
+#include "OBJECT_RUNTIME.H"
 
 void DisplayTransition_Start(s32 mode, s32 frames);
 void DisplayTransition_Finish(s32 mode, s32 frames);
@@ -59,4 +60,24 @@ void EventRuntime_SetCountdown(u16 frames)
     struct EventWork *event = Ram_HeapSlots->event_work;
 
     event->countdown = frames;
+}
+
+u16 BattleFx_GetWeightedResult(s32 row, s32 column);
+s32 BattleFx_LookupResult(void *position);
+s32 BattleFx_SelectBattleCue(s32 row, s32 column);
+
+/* ☀️'s scripted battle request: store the encounter table's enemy group for
+   (row, column) as the next battle, let a controlled object look it up, and
+   pick the battle's cue. ⚓️ asks for the controlled object rather than
+   reading it. */
+void BattleFx_SetWeightedResult(s32 row, s32 column)
+{
+    struct EventWork *event = Ram_HeapSlots->event_work;
+    s32 first = row;
+    s32 second = column;
+
+    event->battle_group = BattleFx_GetWeightedResult(first, second);
+    if (event->control_mode == 3)
+        BattleFx_LookupResult((u8 *)ObjectTable_Get(EventRuntime_GetControlledOwner()) + 8);
+    BattleFx_SelectBattleCue(first, second);
 }

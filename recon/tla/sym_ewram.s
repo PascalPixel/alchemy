@@ -64,8 +64,8 @@ Data_02001000:
 	.global Data_02001024
 Data_02001024:
 	.space 0x00001068
-	.global Data_0200208c
-Data_0200208c:
+	.global gItemCounters
+gItemCounters:
 	.space 0x000002c0
 	.global gSceneState
 gSceneState:

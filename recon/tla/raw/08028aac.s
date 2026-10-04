@@ -531,7 +531,7 @@ Func_08028aac:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r3, [sp, #12]
 	adds r2, r7, #0
 	str r3, [r7, #36]

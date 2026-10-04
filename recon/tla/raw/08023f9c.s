@@ -210,7 +210,7 @@ Func_08023f9c:
 	adds r5, r5, r6
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r1, [r7, #48]
 	cmp r0, r1
 	bgt .L_08024126
@@ -262,7 +262,7 @@ Func_08023f9c:
 	adds r5, r5, r6
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	cmp r0, #0
 	beq .L_080241ba
 	ldr r3, [r7, #52]
@@ -359,7 +359,7 @@ Func_08023f9c:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 .L_0802423e:
 	cmp r0, #0
 	bne .L_0802424c
@@ -404,7 +404,7 @@ Func_08023f9c:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	ldr r1, [r7, #48]
 	cmp r0, r1
 	ble .L_0802431c
@@ -438,7 +438,7 @@ Func_08023f9c:
 	.2byte 0xf800
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	cmp r0, #0
 	beq .L_08024318
 	ldr r3, [r7, #52]
@@ -641,7 +641,7 @@ Func_08023f9c:
 	adds r5, r5, r6
 	adds r5, r5, r0
 	adds r0, r5, #0
-	bl Func_080149e0
+	bl FixedSqrt
 	cmp r0, #0
 	beq .L_08024492
 	mov r3, r8

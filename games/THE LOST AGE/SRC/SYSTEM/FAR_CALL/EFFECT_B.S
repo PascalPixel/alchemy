@@ -20,7 +20,7 @@ EffectSlot_SetPositionFar:
 	.global Func_080c85a0
 	.thumb_func
 Func_080c85a0:
-	overlay_veneer Func_080ebea8
+	overlay_veneer EffectSlot_SetObjectMode
 	.global Func_080c85a8
 	.thumb_func
 Func_080c85a8:

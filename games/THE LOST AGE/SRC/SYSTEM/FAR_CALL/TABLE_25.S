@@ -20,7 +20,7 @@ Func_080c8278:
 	.global Func_080c8280
 	.thumb_func
 Func_080c8280:
-	overlay_veneer Func_080d2b0c
+	overlay_veneer BattleFx_SetWeightedResult
 	.global Func_080c8288
 	.thumb_func
 Func_080c8288:

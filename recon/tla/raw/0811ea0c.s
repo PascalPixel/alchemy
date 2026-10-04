@@ -407,7 +407,7 @@ Func_0811ea0c:
 	ldr r0, [sp, #4]
 	bl Sys_Free
 .L_0811ed5e:
-	bl Func_081234f0
+	bl BattleEventRuntime_WaitForReady
 	ldr r2, [sp, #12]
 	cmp r2, #0
 	beq .L_0811ed7e
@@ -445,4 +445,4 @@ Func_0811ea0c:
 .L_0811eda8:
 	.4byte 0x00000caa
 .L_0811edac:
-	.4byte Func_08122d10
+	.4byte BattleEvent_Playback

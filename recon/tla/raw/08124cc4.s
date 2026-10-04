@@ -76,7 +76,7 @@ Func_08124cc4:
 	beq .L_08124e04
 	movs r2, #2
 	mov r9, r2
-	bl Func_081234a4
+	bl BattleEventRuntime_Reset
 	movs r0, #30
 	bl Func_08122c88
 	movs r0, #0
@@ -141,7 +141,7 @@ Func_08124cc4:
 	movs r3, #0
 	bl Func_08127308
 .L_08124df8:
-	bl Func_081234f0
+	bl BattleEventRuntime_WaitForReady
 	b .L_08124e04
 .L_08124dfe:
 	movs r2, #1

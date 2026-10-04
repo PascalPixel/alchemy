@@ -682,7 +682,7 @@ Battle_RunEncounter:
 .L_080b6994:
 	.4byte 0x00000001
 .L_080b6998:
-	.4byte Data_03001f58
+	.4byte gCpuLoadDisplayEnabled
 .L_080b699c:
 	.4byte Func_080b7738
 .L_080b69a0:

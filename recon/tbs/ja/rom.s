@@ -1877,10 +1877,10 @@ DisplayScroll_LineTable:
 DisplayScroll_Font:
 	.incbin "baserom.gba", 0x000e8908, 0x000006f8
 	.section .rom.000e9028, "ax"
-	.global Func_080f2028
-	.type Func_080f2028, %function
+	.global Title_PlaceIntroSprites
+	.type Title_PlaceIntroSprites, %function
 	.thumb_func
-Func_080f2028:
+Title_PlaceIntroSprites:
 	.incbin "baserom.gba", 0x000e9028, 0x00000478
 	.section .rom.000ea078, "ax"
 	.global Graphics_TransformPaletteBuffer

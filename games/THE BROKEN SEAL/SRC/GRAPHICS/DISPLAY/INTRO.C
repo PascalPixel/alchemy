@@ -196,13 +196,13 @@ back_rest_cell:
 
 extern volatile u32 gKeyState;
 extern u8 gOamCopyEnabled;
-extern volatile u8 Data_03001f58;
+extern volatile u8 gCpuLoadDisplayEnabled;
 extern const u8 Title_PromptTiles[];
 extern const u8 Title_PromptBlendLevels[];
 
 void Bg0_ClearTilemap(void);
 void Resource_InitializeTable(void);
-void Func_080f2028(void);
+void Title_PlaceIntroSprites(void);
 s32 Graphics_TransformSmallPalette(s32 index, s32 transform);
 void Blend_SetBrightenTarget16(s32 frames);
 void Blend_SetBrightenTarget0(s32 frames);
@@ -231,14 +231,14 @@ s32 Title_ShowIntro(s32 prompt)
 
     result = 0;
     blank = 0x1ff;
-    saved = Data_03001f58;
+    saved = gCpuLoadDisplayEnabled;
     work = Runtime_AllocateHeapBlock(43, 224);
     Bg0_ClearTilemap();
     Resource_InitializeTable();
     WaitFrames(1);
     Scheduler_ResetTaskTable();
     gOamCopyEnabled = result;
-    Data_03001f58 = result;
+    gCpuLoadDisplayEnabled = result;
     Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
     /* FAKEMATCH: retain the pre-existing ignored scalar-return call boundary.
@@ -270,7 +270,7 @@ s32 Title_ShowIntro(s32 prompt)
         *ime = old;
     }
     Graphics_UpdatePaletteInterpolation(60);
-    Scheduler_AddOrUpdateCallback((s32)Func_080f2028, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)Title_PlaceIntroSprites, 0x480);
 
     for (;;) {
         s32 frame;
@@ -278,7 +278,7 @@ s32 Title_ShowIntro(s32 prompt)
         s32 tick;
 
         frame = work->frame;
-        if ((u32)(frame - 21) <= 217 && (gKeyState & (KEY_A | KEY_START)) != 0) {
+        if (frame > 20 && frame < 239 && (gKeyState & (KEY_A | KEY_START)) != 0) {
             work->state = 1;
             work->frame = 239;
             frame = 239;
@@ -294,7 +294,7 @@ s32 Title_ShowIntro(s32 prompt)
                 y = gBgScroll[1].y;
                 if ((y & 7) == 0) {
                     Dma_Set(Ram_MapCellBuffer + 0x2580 - work->back_rows * 960, (u8 *)0x06004b00 - work->back_rows * 960,
-                        0x800001e0, (volatile u32 *)0x040000d4);
+                        0x800001e0, REG_DMA3);
                     work->back_rows++;
                     tick = work->tick;
                 }
@@ -307,11 +307,11 @@ s32 Title_ShowIntro(s32 prompt)
                 if ((y & 7) == 0) {
                     if (work->front_rows * 8 <= 24) {
                         Dma_Set(Ram_MapCellBuffer + 0x99c0 - work->front_rows * 1920, (u8 *)0x0600e4c0 - work->front_rows * 1920,
-                            0x800003c0, (volatile u32 *)0x040000d4);
+                            0x800003c0, REG_DMA3);
                     } else {
                         zero = 0;
                         Dma_Set(&zero, (u8 *)0x06004ec0 + (160 - work->front_rows * 8) % 160 * 240, 0x810003c0,
-                            (volatile u32 *)0x040000d4);
+                            REG_DMA3);
                         map = (u16 *)0x0600f6c0;
                         for (i = 0; i < 5; i++) {
                             for (j = 0; j < 30; j++)
@@ -325,24 +325,24 @@ s32 Title_ShowIntro(s32 prompt)
             }
             if (work->frame == 239)
                 work->state = 1;
-        } else if (next == 0x119) {
+        } else if (next == 281) {
             work->state = 2;
-        } else if (next == 0x121) {
+        } else if (next == 289) {
             work->state = 0;
-        } else if (next == 0x118) {
+        } else if (next == 280) {
             Blend_SetBrightenTarget16(1);
-            Scheduler_RemoveCallback((u32)Func_080f2028);
+            Scheduler_RemoveCallback((u32)Title_PlaceIntroSprites);
             gOamCopyEnabled = 1;
             WaitFrames(1);
-            *(volatile u16 *)0x0400000c = 0x681;
-            *(volatile u16 *)0x04000000 = 0x1440;
+            REG_BG2CNT = 0x681;
+            REG_DISPCNT = 0x1440;
             gBgScroll[2].y = 0;
             data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
-            Dma_Set(data, (void *)0x05000000, 0x84000078, (volatile u32 *)0x040000d4);
-            *(u16 *)0x05000000 = 0;
+            Dma_Set(data, (void *)BG_PLTT, 0x84000078, REG_DMA3);
+            BG_PLTT[0] = 0;
             data += 0x200;
             Resource_DecodeByteLz(data, Ram_MapCellBuffer);
-            Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x80004b00, (volatile u32 *)0x040000d4);
+            Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x80004b00, REG_DMA3);
             map = (u16 *)0x06003000;
             tile = 0x100;
             i = 0;
@@ -387,7 +387,7 @@ s32 Title_ShowIntro(s32 prompt)
     }
     Blend_SetBrightenTarget0(30);
     Blend_WaitForTransition();
-    *(volatile u16 *)0x04000000 = 0x1540;
+    REG_DISPCNT = 0x1540;
     if (prompt != 0)
         limit = 3600;
     else
@@ -421,8 +421,8 @@ s32 Title_ShowIntro(s32 prompt)
             }
 #endif
             level = Title_PromptBlendLevels[i % 60];
-            *(volatile u16 *)0x04000050 = 0x2f50;
-            *(volatile u16 *)0x04000052 = (16 - level) * 256 + level;
+            REG_BLDCNT = 0x2f50;
+            REG_BLDALPHA = (16 - level) * 256 + level;
         }
         if ((gKeyState & (KEY_A | KEY_START)) != 0) {
             result = 1;
@@ -430,10 +430,10 @@ s32 Title_ShowIntro(s32 prompt)
         }
         WaitFrames(1);
     }
-    Data_03001f58 = saved;
+    gCpuLoadDisplayEnabled = saved;
     Runtime_ReleaseHeapBlock(43);
-    *(volatile u16 *)0x04000050 = 0;
-    *(volatile u16 *)0x04000052 = 0;
+    REG_BLDCNT = 0;
+    REG_BLDALPHA = 0;
     WaitFrames(1);
     return result;
 }

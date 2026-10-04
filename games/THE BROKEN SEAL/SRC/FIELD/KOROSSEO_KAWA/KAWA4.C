@@ -140,7 +140,7 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 

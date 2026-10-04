@@ -189,7 +189,7 @@ void SceneState_ReleaseTableAndResetC6a6(void);
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -592,7 +592,7 @@ void KorosseoKawa_RaisePipes(void)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -680,7 +680,7 @@ void KorosseoKawa_RunStageStart(void)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -892,7 +892,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -1193,7 +1193,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
@@ -1205,7 +1205,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 
 /* The Broken Bridge stage: the camera pans to the bridge, the competitor
  * fades in and walks to its end, then the stage opens. */
-void FieldScene_RunScene3ba_020015e0(s32 scene)
+void Korosseo_RunBrokenBridgeIntro(s32 scene)
 {
     s32 path;
 
@@ -1255,7 +1255,7 @@ void FieldScene_RunScene3ba_020015e0(s32 scene)
 
 /* The Lumber Water stage: the camera pans over the logs, the competitor
  * fades in and pushes the first log, then the stage opens. */
-void Scene_RunSceneFourCoordinator(s32 scene)
+void Korosseo_RunLumberWaterIntro(s32 scene)
 {
     s32 path;
 

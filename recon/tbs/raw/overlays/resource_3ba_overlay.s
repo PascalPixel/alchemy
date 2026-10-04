@@ -479,10 +479,10 @@ KorosseoKawa_SceneTableD:
 	.4byte Korosseo_RunPipeworksIntro
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte FieldScene_RunScene3ba_020015e0
+	.4byte Korosseo_RunBrokenBridgeIntro
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte Scene_RunSceneFourCoordinator
+	.4byte Korosseo_RunLumberWaterIntro
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte MsgKorosseoKawaThisYearsFinalsAreIncredibleThis

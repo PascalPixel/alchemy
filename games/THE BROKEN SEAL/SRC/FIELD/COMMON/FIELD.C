@@ -30,11 +30,11 @@ extern struct KeyMoveEventWork *gEventWork;
 extern volatile u32 gKeysHeld;
 extern u32 gKeysRepeat;
 extern u8 gDebugMode;
-extern const s16 Data_08013254[16];
-extern const s32 Data_0801328c[16];
-extern const u8 Data_08013274[];
+extern const s16 WorldMap_KeyHeadings[16];
+extern const s32 WorldMap_KeyYaws[16];
+extern const u8 WorldMap_FootprintActions[];
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
-s32 Func_08011f54(u32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
@@ -104,7 +104,7 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
     if ((gKeysRepeat & KEY_L) != 0)
         object->speed_limit = 0x40000;
 
-    angle = Data_08013254[(gKeysHeld >> 4) & 15];
+    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
     direction = angle;
     if (direction == 0xffff) {
         collision |= 4;
@@ -282,7 +282,7 @@ update_object:
 
 movement_done:
     work = gMapWork[0];
-    rate = Data_0801328c[(gKeysHeld >> 4) & 15];
+    rate = WorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
     step = (s16)(rate - work->yaw) / 8;
     if (step > 0x200)
         step = 0x200;
@@ -306,7 +306,7 @@ movement_done:
             effect = FieldObject_Create(24, object->x, object->y, object->z);
             if (effect != 0) {
                 animation = effect->animation;
-                ObjectDispatch_Initialize((struct DispatchObject *)effect, (u32)(Data_08013274 + 12));
+                ObjectDispatch_Initialize((struct DispatchObject *)effect, (u32)(WorldMap_FootprintActions + 12));
                 effect->flags = collision;
                 effect->terrain_id = 1;
                 if (animation != 0) {
@@ -373,7 +373,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
     object->speed_limit = 0x8000;
     object->acceleration = 0x4000;
     motion = 12;
-    angle = Data_08013254[(gKeysHeld >> 4) & 15];
+    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
     if (angle == 0xffff) {
         blocked = 4;
     } else {
@@ -405,11 +405,11 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
             blocked = 4;
             motion = 12;
         } else if (gKeysHeld & KEY_UP) {
-            height = Func_08011f54(object->terrain_id, pos.x, pos.z - 0x100000);
+            height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z - 0x100000);
             if (height - object->y < 0x100000)
                 goto refused;
         } else if (gKeysHeld & KEY_DOWN) {
-            height = Func_08011f54(object->terrain_id, pos.x, pos.z);
+            height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z);
             if (height - object->y > -0x80000) {
 refused:
                 blocked = 1;

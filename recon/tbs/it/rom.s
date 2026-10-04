@@ -152,14 +152,14 @@ ScriptObject_CycleTable:
 	.global Script_MainScript
 Script_MainScript:
 	.incbin "baserom.gba", 0x00013240, 0x00000014
-	.global Data_08013254
-Data_08013254:
+	.global WorldMap_KeyHeadings
+WorldMap_KeyHeadings:
 	.incbin "baserom.gba", 0x00013254, 0x00000020
-	.global Data_08013274
-Data_08013274:
+	.global WorldMap_FootprintActions
+WorldMap_FootprintActions:
 	.incbin "baserom.gba", 0x00013274, 0x00000018
-	.global Data_0801328c
-Data_0801328c:
+	.global WorldMap_KeyYaws
+WorldMap_KeyYaws:
 	.incbin "baserom.gba", 0x0001328c, 0x00000040
 	.global Data_080132cc
 Data_080132cc:

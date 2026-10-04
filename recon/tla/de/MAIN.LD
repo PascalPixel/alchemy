@@ -260,7 +260,7 @@
     "*/recon/tla/de/rom.o"(.rom.000227e0)
     "*/recon/tla/de/rom.o"(.rom.000229ac)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE3.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.00022acc)
+    "*/recon/tla/de/rom.o"(.rom.00022b04)
     "*/recon/tla/de/rom.o"(.rom.00022bac)
     "*/recon/tla/de/rom.o"(.rom.00022bd8)
     "*/recon/tla/de/rom.o"(.rom.00022c78)

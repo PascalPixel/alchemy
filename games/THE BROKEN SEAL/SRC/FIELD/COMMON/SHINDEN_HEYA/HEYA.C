@@ -1793,26 +1793,28 @@ void SceneState_ResetObject14Word108(void)
     Engine_ActorSetPosition(14, 0, 0);
 }
 
-void ShindenHeya_FollowLeaderOffset(u8 *obj)
+/* Holds an object on actor 8, moving it off by a few pixels on each
+   of four frames in turn so that it jitters. */
+void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
 {
-    u8 *leader;
+    struct FieldActor *leader;
 
-    leader = (u8 *)Object_GetById(8);
-    *(s32 *)(obj + 56) = *(s32 *)(obj + 8) = *(s32 *)(leader + 8);
-    *(s32 *)(obj + 60) = *(s32 *)(obj + 12) = *(s32 *)(leader + 12);
-    *(s32 *)(obj + 64) = *(s32 *)(obj + 16) = *(s32 *)(leader + 16) + -0x20000;
-    switch (*(u32 *)&gFrameCount & 3) {
+    leader = Object_GetById(8);
+    actor->target_x = actor->x.fixed = leader->x.fixed;
+    actor->target_y = actor->y.fixed = leader->y.fixed;
+    actor->target_z = actor->z.fixed = leader->z.fixed - 0x20000;
+    switch (gFrameCount & 3) {
     case 0:
-        *(s32 *)(obj + 56) = *(s32 *)(obj + 8) = *(s32 *)(leader + 8) + -0x38000;
+        actor->target_x = actor->x.fixed = leader->x.fixed - 0x38000;
         break;
     case 1:
-        *(s32 *)(obj + 56) = *(s32 *)(obj + 8) = *(s32 *)(leader + 8) + 0x30000;
+        actor->target_x = actor->x.fixed = leader->x.fixed + 0x30000;
         break;
     case 2:
-        *(s32 *)(obj + 60) = *(s32 *)(obj + 12) = *(s32 *)(leader + 12) + 0x20000;
+        actor->target_y = actor->y.fixed = leader->y.fixed + 0x20000;
         break;
     case 3:
-        *(s32 *)(obj + 64) = *(s32 *)(obj + 16) = *(s32 *)(leader + 16);
+        actor->target_z = actor->z.fixed = leader->z.fixed;
         break;
     }
 }

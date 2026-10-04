@@ -3225,7 +3225,12 @@ Encounter_SelectEnemyGroup:
 	.section .rom.000ca1bc, "ax"
 	.incbin "baserom.gba", 0x000ca1bc, 0x000002d8
 	.section .rom.000ca4a8, "ax"
-	.incbin "baserom.gba", 0x000ca4a8, 0x00000240
+	.incbin "baserom.gba", 0x000ca4a8, 0x00000130
+	.global BattleFx_SelectBattleCue
+	.type BattleFx_SelectBattleCue, %function
+	.thumb_func
+BattleFx_SelectBattleCue:
+	.incbin "baserom.gba", 0x000ca5d8, 0x00000110
 	.section .rom.000ca6e8, "ax"
 	.global Event_SpawnObjectTable
 	.type Event_SpawnObjectTable, %function
@@ -3632,12 +3637,8 @@ Func_080d295c:
 	.thumb_func
 Func_080d296c:
 	.incbin "baserom.gba", 0x000d294c, 0x000000a0
-	.section .rom.000d2aec, "ax"
-	.global Func_080d2b0c
-	.type Func_080d2b0c, %function
-	.thumb_func
-Func_080d2b0c:
-	.incbin "baserom.gba", 0x000d2aec, 0x00000040
+	.section .rom.000d2b2c, "ax"
+	.align 2, 0
 	.global Func_080d2b4c
 	.type Func_080d2b4c, %function
 	.thumb_func

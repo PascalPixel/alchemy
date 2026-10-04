@@ -3412,7 +3412,12 @@ Audio_SelectPartyCueForArea:
 Func_080d46a4:
 	.incbin "baserom.gba", 0x000ca280, 0x00000214
 	.section .rom.000ca4a8, "ax"
-	.incbin "baserom.gba", 0x000ca4a8, 0x000001fc
+	.incbin "baserom.gba", 0x000ca4a8, 0x00000130
+	.global BattleFx_SelectBattleCue
+	.type BattleFx_SelectBattleCue, %function
+	.thumb_func
+BattleFx_SelectBattleCue:
+	.incbin "baserom.gba", 0x000ca5d8, 0x000000cc
 	.section .rom.000ca6a4, "ax"
 	.global Event_SelectSpawnObjectMode
 	.type Event_SelectSpawnObjectMode, %function
@@ -3703,12 +3708,8 @@ Inventory_PromptAndSetObjectMode:
 	.thumb_func
 Menu_RunDefaultConfirmation:
 	.incbin "baserom.gba", 0x000d2950, 0x000000b0
-	.section .rom.000d2b00, "ax"
-	.global Func_080d2b0c
-	.type Func_080d2b0c, %function
-	.thumb_func
-Func_080d2b0c:
-	.incbin "baserom.gba", 0x000d2b00, 0x00000040
+	.section .rom.000d2b40, "ax"
+	.align 2, 0
 	.global Func_080d2b4c
 	.type Func_080d2b4c, %function
 	.thumb_func

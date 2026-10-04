@@ -846,7 +846,6 @@
     "*/recon/tla/de/rom.o"(.rom.000df96c)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_DRAW_QUANTITY_PAIR_WITH_CUE.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVENT2.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000dfb0c)
     "*/recon/tla/de/rom.o"(.rom.000dfb4c)
     "*/games/THE LOST AGE/SRC/GAME/PARTY/SET_FIELD_PAIRS.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SET_DESTINATION.o"(.text)

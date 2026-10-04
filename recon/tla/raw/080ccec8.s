@@ -348,7 +348,7 @@ Func_080ccec8:
 	strb r3, [r2]
 	movs r0, #104
 	adds r1, r7, #0
-	bl Func_080ca5d8
+	bl BattleFx_SelectBattleCue
 	movs r1, #128
 	lsls r1, r1, #2
 	adds r1, #14

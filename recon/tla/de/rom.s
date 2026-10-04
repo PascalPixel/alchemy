@@ -2380,7 +2380,12 @@ Func_080ca368:
 Func_080ca3f4:
 	.incbin "baserom.gba", 0x000d73f4, 0x000000a0
 	.section .rom.000d74a8, "ax"
-	.incbin "baserom.gba", 0x000d74a8, 0x000001fc
+	.incbin "baserom.gba", 0x000d74a8, 0x00000130
+	.global BattleFx_SelectBattleCue
+	.type BattleFx_SelectBattleCue, %function
+	.thumb_func
+BattleFx_SelectBattleCue:
+	.incbin "baserom.gba", 0x000d75d8, 0x000000cc
 	.section .rom.000d76a4, "ax"
 	.global Func_080ca6a4
 	.type Func_080ca6a4, %function
@@ -2860,13 +2865,8 @@ Func_080d295c:
 	.thumb_func
 Func_080d296c:
 	.incbin "baserom.gba", 0x000df96c, 0x000000a0
-	.section .rom.000dfb0c, "ax"
-	.global Func_080d2b0c
-	.type Func_080d2b0c, %function
-	.thumb_func
-Func_080d2b0c:
-	.incbin "baserom.gba", 0x000dfb0c, 0x00000040
 	.section .rom.000dfb4c, "ax"
+	.align 2, 0
 	.global Func_080d2b4c
 	.type Func_080d2b4c, %function
 	.thumb_func

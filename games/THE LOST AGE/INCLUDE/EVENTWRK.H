@@ -14,7 +14,13 @@ struct EventWork {
     u8 unknown_156[2];
     /* Set to 999 when a destination is chosen. */
     s16 countdown;
-    u8 unknown_15a[0x52];
+    u8 unknown_15a[0xa];
+    /* The next scripted battle's enemy group, from the encounter table. */
+    u16 battle_group;
+    u8 unknown_166[0x24];
+    /* 3 while the player controls an object other than the leader. */
+    s8 control_mode;
+    u8 unknown_18b[0x21];
     s32 screen_effect;
     u8 unknown_1b0[2];
     s16 screen_status;
@@ -47,6 +53,8 @@ struct EventWork {
 LAYOUT_OFFSET_GUARD(EventWork_Objects, struct EventWork, objects, 0x14);
 LAYOUT_OFFSET_GUARD(EventWork_Exit, struct EventWork, exit, 0x154);
 LAYOUT_OFFSET_GUARD(EventWork_Countdown, struct EventWork, countdown, 0x158);
+LAYOUT_OFFSET_GUARD(EventWork_BattleGroup, struct EventWork, battle_group, 0x164);
+LAYOUT_OFFSET_GUARD(EventWork_ControlMode, struct EventWork, control_mode, 0x18a);
 LAYOUT_OFFSET_GUARD(EventWork_ScreenEffect, struct EventWork, screen_effect, 0x1ac);
 LAYOUT_OFFSET_GUARD(EventWork_Delay, struct EventWork, delay, 0x1b4);
 LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, message_id, 0x1c4);

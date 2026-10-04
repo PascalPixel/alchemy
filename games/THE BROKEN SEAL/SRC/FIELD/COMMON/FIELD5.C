@@ -45,7 +45,7 @@ void UpdateMapRegionAtPosition(s32 x, s32 y, s32 z);
 s32 BattleFx_ApplyLookupResult(void *motion, s32 speed);
 s32 EffectRuntime_LookupByTableEntry(s32 kind, s32 speed);
 void BattleParty_ApplyDrain(s32 steps, s32 unused);
-s32 Func_080b50f8(void);
+s32 BattlePlacement_UpdateTimedEntriesFar(void);
 void Audio_PlayCue(s32 cue);
 void Event_ClearInvalidPackedValues(void);
 s32 BattleParty_ApplyStatusDamage(void);
@@ -210,10 +210,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
        full BattleUnit view moved the party-byte load before its index shift.
        Signed lvalue/array views reduced frame 44 to 40; a second used base
        grew it to 48. Scalar s16 interpretations keep the actual frame. */
-    struct FieldStepWork *work = (struct FieldStepWork *)Data_03001ebc;
+    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
     /* FAKEMATCH: the map work cell is reached as gEventWork[-19]; the ROM loads
        0x03001ebc once and subtracts 76 to reach 0x03001e70. */
-    struct MapState *map = ((struct MapState **)&Data_03001ebc)[-19];
+    struct MapState *map = ((struct MapState **)&gEventWork)[-19];
     s32 selected = gGameState.selected_actor;
     struct ObjectRuntime *actor = work->actors[selected];
     s16 hp[8];
@@ -279,16 +279,16 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             n = sum / 0x10000;
             work->encounter_steps = sum & 0xffff;
             BattleParty_ApplyDrain(n, 0);
-            if (Func_080b50f8())
+            if (BattlePlacement_UpdateTimedEntriesFar())
                 Audio_PlayCue(STEP_CUE_EFFECT);
             Event_ClearInvalidPackedValues();
             fell = BattleParty_ApplyStatusDamage();
         }
-        if (((s16)gGameState.unknown_22e) == 0 && event == STEP_EVENT_HAZARD) {
+        if (gGameState.hazard_mode == 0 && event == STEP_EVENT_HAZARD) {
             if (work->previous_tile->collision_code == STEP_EVENT_HAZARD)
-                gGameState.unknown_232 += actor->speed_limit / 0x10000;
+                gGameState.hazard_steps += actor->speed_limit / 0x10000;
             else
-                gGameState.unknown_232 = ((s16)gGameState.unknown_22c) / 2;
+                gGameState.hazard_steps = gGameState.hazard_limit / 2;
         }
         if (gGameState.unknown_244 != 0 && gGameState.unknown_23e != 2) {
             gGameState.unknown_244 -= actor->speed_limit;
@@ -300,16 +300,16 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         }
     }
 
-    if (((s16)gGameState.unknown_22e) == 1) {
-        gGameState.unknown_232++;
-        if (gGameState.unknown_232 == ((s16)gGameState.unknown_22c) / 2)
+    if (gGameState.hazard_mode == 1) {
+        gGameState.hazard_steps++;
+        if (gGameState.hazard_steps == gGameState.hazard_limit / 2)
             BattleFx_ConfigureLinkedObject(selected, 0x101);
-        if (gGameState.unknown_232 == ((s16)gGameState.unknown_22c))
+        if (gGameState.hazard_steps == gGameState.hazard_limit)
             BattleFx_ConfigureLinkedObject(selected, 0x100);
     }
-    if (gGameState.unknown_232 >= ((s16)gGameState.unknown_22c)) {
-        n = ((s16)gGameState.unknown_230);
-        gGameState.unknown_232 = 0;
+    if (gGameState.hazard_steps >= gGameState.hazard_limit) {
+        n = gGameState.hazard_damage;
+        gGameState.hazard_steps = 0;
         BattleParty_ApplyHealthDelta(-(n & 255), n & 0x100);
         fell++;
     }

@@ -90,10 +90,14 @@ struct GameState {
     u8 saved_options;
     /* How the next battle begins: 2 when a tile's ambush starts it. */
     u8 battle_start;
-    u16 unknown_22c;
-    u16 unknown_22e;
-    u16 unknown_230;
-    s16 unknown_232;
+    /* The area's ground hazard, such as the Lamakan Desert's heat: steps
+       counts up, on hazard tiles in mode 0 and on every step in mode 1,
+       and on reaching the limit the party takes the damage (its low byte,
+       with 0x100 passed on as a flag) and the count starts again. */
+    s16 hazard_limit;
+    s16 hazard_mode;
+    s16 hazard_damage;
+    s16 hazard_steps;
     /* The Djinni event the field resolves once the scene is up. */
     s16 pending_djinn_event;
     /* Why the scene is changing: -1 when the party fell in battle. */

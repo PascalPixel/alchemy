@@ -249,9 +249,9 @@ s32 Func_0808c4f8(void)
     work->cells = Ram_MapCellBuffer;
     if (GameFlag_IsSet(0x109) == 0) {
         Party_ResolveTablePair();
-        gGameState.unknown_22c = 16;
-        gGameState.unknown_22e = 0;
-        gGameState.unknown_230 = 1;
+        gGameState.hazard_limit = 16;
+        gGameState.hazard_mode = 0;
+        gGameState.hazard_damage = 1;
         gGameState.unknown_24a = -1;
         gGameState.cloaked = 0;
     }

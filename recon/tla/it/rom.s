@@ -685,12 +685,7 @@ Animation_LookupValueByKey:
 	.thumb_func
 InitializeAnimationObjects:
 	.incbin "baserom.gba", 0x000228e0, 0x0000008c
-	.section .rom.00022acc, "ax"
-	.global Func_08022acc
-	.type Func_08022acc, %function
-	.thumb_func
-Func_08022acc:
-	.incbin "baserom.gba", 0x00022acc, 0x00000038
+	.section .rom.00022b04, "ax"
 	.global Animation_ApplyChildArgument
 	.type Animation_ApplyChildArgument, %function
 	.thumb_func

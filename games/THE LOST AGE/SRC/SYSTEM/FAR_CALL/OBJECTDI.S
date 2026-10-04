@@ -8,7 +8,7 @@
 	.global Func_08020080
 	.thumb_func
 Func_08020080:
-	overlay_veneer Func_08022acc
+	overlay_veneer Animation_SetWorkEntry
 	.global Func_08020088
 	.thumb_func
 Func_08020088:

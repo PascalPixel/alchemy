@@ -168,3 +168,27 @@ void ResourceMetadata_ReleaseSlot(u8 *rec, u32 no)
         }
     }
 }
+
+void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
+{
+    s32 hi;
+    struct AnimationMetadata *info;
+    s32 value;
+
+    hi = 0x80 & no;
+    if (work->scripts != 0) {
+        info = Resource_GetMetadataRecordFar(work->anim_id);
+        if (no < (s32)info->animation_count) {
+            value = (s32)work->scripts[no];
+            work->kind = info->draw_kind;
+            work->script = (u8 *)value;
+            /* FAKEMATCH: keeps the step's constant after both stores. */
+            __asm__("");
+            work->step = 0x10;
+            if (hi == 0) {
+                work->pos = hi;
+                work->timer = (s16)hi;
+            }
+        }
+    }
+}

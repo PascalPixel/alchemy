@@ -633,8 +633,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0004d30c)
     "*/recon/tla/ja/rom.o"(.rom.0004d360)
     "*/games/THE LOST AGE/SRC/MENU/MENU7.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0004d580)
-    "*/recon/tla/ja/rom.o"(.rom.0004d5dc)
     "*/games/THE LOST AGE/SRC/MENU/SELECTION.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004d764)
     "*/recon/tla/ja/rom.o"(.rom.0004d7ac)

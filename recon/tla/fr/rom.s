@@ -1946,18 +1946,6 @@ Menu_EndResourceSelection:
 	.thumb_func
 Menu_RunResourceSelectionLoop:
 	.incbin "baserom.gba", 0x0004d394, 0x000001d8
-	.section .rom.0004d5b4, "ax"
-	.global Menu_AppendResourceEntry
-	.type Menu_AppendResourceEntry, %function
-	.thumb_func
-Menu_AppendResourceEntry:
-	.incbin "baserom.gba", 0x0004d5b4, 0x0000005c
-	.section .rom.0004d610, "ax"
-	.global Menu_CenterResourceEntries
-	.type Menu_CenterResourceEntries, %function
-	.thumb_func
-Menu_CenterResourceEntries:
-	.incbin "baserom.gba", 0x0004d610, 0x0000009c
 	.section .rom.0004d798, "ax"
 	.global Menu_AnimateSelectionToEntry
 	.type Menu_AnimateSelectionToEntry, %function

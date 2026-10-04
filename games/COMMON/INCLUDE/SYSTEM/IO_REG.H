@@ -116,6 +116,8 @@ enum KeyMask {
 
 /* KEYCNT: interrupt when A, B, Select and Start are all held (soft reset). */
 #define KEYCNT_SOFT_RESET 0xc00f
+/* KEYCNT: interrupt when L and R are both held (The Broken Seal wakes from sleep). */
+#define KEYCNT_SHOULDERS_WAKE 0xc300
 /* KEYCNT: interrupt when L, R and Select are all held (wake from sleep). */
 #define KEYCNT_SLEEP_WAKE 0xc304
 

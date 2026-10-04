@@ -701,7 +701,7 @@
         "*/recon/tla/raw/0803f620.o"(.text)
         "*/recon/tla/raw/0803f624.o"(.text)
         "*/recon/tla/raw/0803f698.o"(.text)
-        "*/recon/tla/raw/0803f6c0.o"(.text)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/RESOURCE.o"(.text)
         "*/recon/tla/raw/0803f6c8.o"(.text)
         "*/recon/tla/raw/0803f758.o"(.text)
         "*/recon/tla/raw/0803f778.o"(.text)

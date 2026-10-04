@@ -1522,12 +1522,8 @@ UiTextResource_Initialize:
 	.thumb_func
 UiTextResource_SetPosition:
 	.incbin "baserom.gba", 0x0003f7cc, 0x00000028
-	.section .rom.0003f7f4, "ax"
-	.global UiTextResource_Release
-	.type UiTextResource_Release, %function
-	.thumb_func
-UiTextResource_Release:
-	.incbin "baserom.gba", 0x0003f7f4, 0x00000098
+	.section .rom.0003f7fc, "ax"
+	.incbin "baserom.gba", 0x0003f7fc, 0x00000090
 	.global Resource_ResetPendingTransfer
 	.type Resource_ResetPendingTransfer, %function
 	.thumb_func

@@ -342,11 +342,9 @@ void FieldScene_RunScene372_02000400(void)
 
 s32 FieldScene_RunFlagGatedActorSetup(void)
 {
-    s32 m;
-    s32 t;
-    s32 m2;
-    s32 h;
-    s32 k;
+    /* FAKEMATCH: the coordinates, angles and tiles held in locals keep the
+       native register choice and pool order; inlining any one but the
+       last X changes the function. */
     s32 w1 = 0x14E0000;
     s32 w2 = 0x3A40000;
     s32 w3 = 0xE00000;
@@ -371,7 +369,6 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     s32 b2 = 0x4BE0000;
     s32 b3 = 0x4BE0000;
     s32 w21 = 0xA50000;
-    s32 w22 = 0xA50000;
     s32 p1 = 0x2BF0000;
     s32 p2 = 0x47B0000;
     s32 p3 = 0x14D0000;
@@ -405,42 +402,23 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Engine_ActorSetPosition(14, w6, p2);
         FieldScene_DrawFiveTileBlocks();
     }
-    {
-        u8 *q;
-        q = Object_GetById(11);
-        q += 0x59;
-        m = 4;
-        *q = *q | m;
-        q = Object_GetById(12);
-        q += 0x59;
-        *q = *q | m;
-        q = Object_GetById(13);
-        q += 0x59;
-        *q = *q | m;
-        q = Object_GetById(14);
-        q += 0x59;
-        *q = *q | m;
-        q = Object_GetById(15);
-        q += 0x59;
-        *q = *q | m;
-        q = Object_GetById(16);
-        q += 0x59;
-        *q = *q | m;
-        q = Object_GetById(17);
-        q += 0x59;
-        *q = *q | m;
-        q = Object_GetById(18);
-        q += 0x59;
-        { u8 tmp = m | *q; *q = tmp; }
-    }
+    Object_GetById(11)->collision_flags |= 4;
+    Object_GetById(12)->collision_flags |= 4;
+    Object_GetById(13)->collision_flags |= 4;
+    Object_GetById(14)->collision_flags |= 4;
+    Object_GetById(15)->collision_flags |= 4;
+    Object_GetById(16)->collision_flags |= 4;
+    Object_GetById(17)->collision_flags |= 4;
+    Object_GetById(18)->collision_flags |= 4;
     if (Engine_GameFlagIsSet(0x837) != 0) {
         Engine_ActorSetPosition(22, 0, 0);
     }
     {
-        u8 *q;
-        q = Object_GetById(19);
-        *(s32 *)(q + 0x18) = 0x20000;
-        *(s32 *)(q + 0x1C) = 0x20000;
+        struct FieldActor *actor;
+
+        actor = Object_GetById(19);
+        actor->scale_x = 0x20000;
+        actor->scale_y = 0x20000;
     }
     if (Engine_GameFlagIsSet(FLAG_BOULDER_FELL) != 0) {
         Engine_ActorSetPosition(19, w7, p3);
@@ -453,69 +431,49 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         FieldScene_BuildPlacementGrid();
         Engine_ActorSetPosition(9, w21, 0x4CD0000);
         {
-            u8 *o;
-            s32 v;
-            o = Object_GetById(9);
+            struct FieldActor *actor;
+
+            actor = Object_GetById(9);
             h2 = 0xE000;
-            *(u16 *)(o + 6) = h2;
-            v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-            *(u16 *)(o + 0x64) = v;
+            actor->facing = h2;
+            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
             tbl = HaidiaArashi_ActorEightScript;
-            o += 0x66;
-            t = 1;
-            *(u16 *)o = t;
+            actor->unknown_66 = 1;
             Engine_ActorEnableActionCallback(9, tbl);
         }
-        Engine_ActorSetPosition(26, w22, 0x4E60000);
+        Engine_ActorSetPosition(26, 0xA50000, 0x4E60000);
         {
-            u8 *o;
-            s32 v;
-            o = Object_GetById(26);
-            *(u16 *)(o + 6) = h2;
-            v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-            *(u16 *)(o + 0x64) = v;
-            o += 0x66;
-            t = 2;
-            *(u16 *)o = t;
+            struct FieldActor *actor;
+
+            actor = Object_GetById(26);
+            actor->facing = h2;
+            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->unknown_66 = 2;
             Engine_ActorEnableActionCallback(26, tbl);
         }
         Engine_ActorSetPosition(22, 0x980000, 0x5050000);
         {
-            u8 *o;
-            s32 v;
-            o = Object_GetById(22);
-            *(u16 *)(o + 6) = h2;
-            v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-            *(u16 *)(o + 0x64) = v;
-            o += 0x66;
-            t = 3;
-            *(u16 *)o = t;
+            struct FieldActor *actor;
+
+            actor = Object_GetById(22);
+            actor->facing = h2;
+            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->unknown_66 = 3;
             Engine_ActorEnableActionCallback(22, tbl);
         }
         Engine_ActorSetPosition(8, 0xB80000, 0x5180000);
         {
-            u8 *o;
-            s32 v;
-            o = Object_GetById(8);
-            *(u16 *)(o + 6) = h2;
-            v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-            *(u16 *)(o + 0x64) = v;
-            o += 0x66;
-            t = 4;
-            *(u16 *)o = t;
+            struct FieldActor *actor;
+
+            actor = Object_GetById(8);
+            actor->facing = h2;
+            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->unknown_66 = 4;
             Engine_ActorEnableActionCallback(8, tbl);
         }
         Engine_ActorSetAnimation(8, 6);
-        {
-            u8 *r;
-            r = Object_GetById(22);
-            r += 0x23;
-            m2 = 0xFE;
-            *r = *r & m2;
-            r = Object_GetById(8);
-            r += 0x23;
-            *r = m2 & *r;
-        }
+        Object_GetById(22)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        Object_GetById(8)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
         Scheduler_AddOrUpdateCallback(OverlayObject_CopyRecordField1ToSlots22And8, 0xC80);
         Engine_ActorSetPosition(24, 0, 0);
         Engine_ActorSetPosition(25, 0, 0);
@@ -530,11 +488,10 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Engine_ActorFaceDirection(10, w9, 0);
         Engine_ActorSetAnimation(10, 5);
         {
-            u8 *o;
-            s32 v;
-            o = Object_GetById(10);
-            v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-            *(u16 *)(o + 0x64) = v;
+            struct FieldActor *actor;
+
+            actor = Object_GetById(10);
+            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         }
         tbl = HaidiaArashi_ActorEightScript;
         Engine_ActorEnableActionCallback(10, tbl);
@@ -542,22 +499,20 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Engine_ActorFaceDirection(24, w11, 0);
         Engine_ActorSetAnimation(24, 6);
         {
-            u8 *o;
-            s32 v;
-            o = Object_GetById(24);
-            v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-            *(u16 *)(o + 0x64) = v;
+            struct FieldActor *actor;
+
+            actor = Object_GetById(24);
+            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         }
         Engine_ActorEnableActionCallback(24, tbl);
         Engine_ActorSetPosition(25, w12, b3);
         Engine_ActorFaceDirection(25, w13, 0);
         Engine_ActorSetAnimation(25, 6);
         {
-            u8 *o;
-            s32 v;
-            o = Object_GetById(25);
-            v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-            *(u16 *)(o + 0x64) = v;
+            struct FieldActor *actor;
+
+            actor = Object_GetById(25);
+            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         }
         Engine_ActorEnableActionCallback(25, tbl);
         Engine_ActorSetPosition(23, w14, p4);
@@ -569,42 +524,32 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Engine_ActorSetPosition(17, 0, 0);
         Engine_ActorSetPosition(18, 0, 0);
     }
-    {
-        s16 *table = (s16 *)&gGameState;
-        if (table[225] != 15 || Engine_GameFlagIsSet(0x87b) != 0) {
-            Effect_SoundAndFlash();
-            BattleFx_StartTwelveFrameBlend();
-        }
+    if (gGameState.entrance != 15 || Engine_GameFlagIsSet(0x87b) != 0) {
+        Effect_SoundAndFlash();
+        BattleFx_StartTwelveFrameBlend();
     }
     if (Engine_GameFlagIsSet(0x210) != 0) {
         SceneState_SetFlag210AndConfigureRegion40_84();
     }
     Engine_GameFlagSet(0x834);
-    k = 46;
-    Engine_MapCopyCellAttributes(29, 24, 1, 2, 26, k);
-    Engine_MapCopyCellAttributes(29, 25, 1, 1, 27, k);
-    Engine_MapCopyCellAttributes(29, 25, 1, 1, 28, k);
-    k = 20;
-    Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, k, 0x58);
-    Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, k, 0x59);
+    Engine_MapCopyCellAttributes(29, 24, 1, 2, 26, 46);
+    Engine_MapCopyCellAttributes(29, 25, 1, 1, 27, 46);
+    Engine_MapCopyCellAttributes(29, 25, 1, 1, 28, 46);
+    Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, 20, 0x58);
+    Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, 20, 0x59);
     {
-        u8 *o;
-        u8 *q;
-        o = Object_GetById(21);
-        q = o + 0x55;
-        *q = 0;
-        *(s32 *)(o + 0xC) = 0xC00000;
-        q += 4;
-        *q = 8;
-        Engine_ActorSetSpriteFlags(o, 0);
+        struct FieldActor *actor;
+
+        actor = Object_GetById(21);
+        actor->motion_flags = 0;
+        actor->y.fixed = 0xC00000;
+        actor->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(actor, 0);
     }
     Engine_TaskWait(1);
-    if (Engine_GameFlagIsSet(0x87b) == 0) {
-        s16 *table = (s16 *)&gGameState;
-        if (table[225] == 15) {
-            Scene_DoraSendsRobinToThePlaza();
-            return 0;
-        }
+    if (Engine_GameFlagIsSet(0x87b) == 0 && gGameState.entrance == 15) {
+        Scene_DoraSendsRobinToThePlaza();
+        return 0;
     }
     Engine_ActorSetAnimation(23, 7);
     if (Engine_GameFlagIsSet(0x837) == 0) {
@@ -624,11 +569,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Engine_ActorSetAnimation(21, 3);
         Engine_EventEnd();
     }
-    {
-        u8 *state = (u8 *)gEventWork;
-        *(s32 *)(state + 0x1C0) = 0x100;
-        *(s32 *)(state + 0x1C8) = 24;
-    }
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 24;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     BattleFx_SetBlock30Values128One();

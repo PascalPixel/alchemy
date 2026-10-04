@@ -17,7 +17,10 @@ enum { UI_TEXT_ENTRY_COUNT = 256 };
 /* The known tilemap, windows, text channels, output queues, entry ring and named values.
    Other fields and the remainder of the resident work are not described. */
 struct UiRenderWork {
-    u8 unknown_before_tilemap[8];
+    u8 unknown_00[3];
+    /* Set when the tilemap needs copying to VRAM. */
+    u8 dirty;
+    u8 unknown_04[4];
     u16 tilemap[640];
     struct UiWindow windows[UI_WINDOW_COUNT];
     struct UiChannelSlot channels[3];

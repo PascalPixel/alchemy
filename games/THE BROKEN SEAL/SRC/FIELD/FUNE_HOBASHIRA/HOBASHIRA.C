@@ -663,8 +663,8 @@ void FieldScene_RunPrimarySequence(void)
     actor->y.fixed = 0xa00000;
     actor->z.fixed = 0x1540000;
     actor->facing = 0;
-    *(s32 *)&actor->unknown_44[0] = 0x6666;
-    *(s32 *)&actor->unknown_44[4] = 0x30000;
+    actor->bounce = 0x6666;
+    actor->gravity = 0x30000;
     Engine_EventWait(20);
     Engine_ActorJump(8, 6, 20);
     Audio_PlayCue(147);
@@ -673,8 +673,8 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventWait(80);
     Engine_ActorSetSpritePriority(17, 1);
     Actor_SetSpeed(17, 0x10000, 0x8000);
-    *(s32 *)&actor->unknown_44[0] = 0x1999;
-    *(s32 *)&actor->unknown_44[4] = 0xb333;
+    actor->bounce = 0x1999;
+    actor->gravity = 0xb333;
     Audio_PlayCue(153);
     actor->velocity_y = 0x80000;
     Actor_SetDestination(17, 132, 0x168);

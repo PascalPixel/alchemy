@@ -307,44 +307,37 @@ void FieldScene_RunFinalAuxiliarySequence(void)
 {
     extern void Object_SetPosition();
 
-    u8 *rec;
-    u8 *b1;
-    u8 *t;
-    u8 *b2;
-    u8 *b3;
-    s32 two;
-    s32 zero;
-    s32 a;
-    s32 b;
+    struct FieldActor *probe;
+    struct FieldActor *log;
+    struct FieldActor *upper;
+    struct FieldActor *lower;
+    s32 x;
+    s32 z;
 
-    rec = (u8 *)Object_GetById(12);
-    a = (*(s32 *)((s32)rec + 8) >> 20);
-    if (a == 9) {
-        b = (*(s32 *)((s32)rec + 16) >> 20);
-        if (b == 12) {
-            b1 = Object_GetById(12);
-            Engine_ActorSetSpriteFlags((s32)b1, 0);
-            t = b1 + 35;
-            zero = 0;
-            two = 2;
-            *t = two;
-            t += 50;
-            *t = zero;
-            *(s32 *)((s32)b1 + 52) = 0x6666;
-            *(s32 *)((s32)b1 + 48) = 0xcccc;
-            Call4(Object_SetPosition, (s32)b1, *(s32 *)((s32)b1 + 8), 0x40000, *(s32 *)((s32)b1 + 16));
-            b2 = (u8 *)Object_GetById(11);
-            b2[35] = two;
-            *(s32 *)((s32)b2 + 52) = 0x6666;
-            *(s32 *)((s32)b2 + 48) = 0xcccc;
-            Object_SetPosition((s32)b2, *(s32 *)((s32)b2 + 8), 0x200000, *(s32 *)((s32)b2 + 16));
-            b3 = Object_GetById(10);
-            *(s32 *)((s32)b3 + 52) = 0x6666;
-            *(s32 *)((s32)b3 + 48) = 0xcccc;
-            Object_SetPosition((s32)b3, *(s32 *)((s32)b3 + 8), 0x40000, *(s32 *)((s32)b3 + 16));
+    probe = Object_GetById(12);
+    x = probe->x.fixed >> 20;
+    if (x == 9) {
+        z = probe->z.fixed >> 20;
+        if (z == 12) {
+            log = Object_GetById(12);
+            Engine_ActorSetSpriteFlags(log, 0);
+            log->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+            log->motion_flags = 0;
+            log->acceleration = 0x6666;
+            log->speed = 0xcccc;
+            Call4(Object_SetPosition, (s32)log, log->x.fixed, 0x40000, log->z.fixed);
+            upper = Object_GetById(11);
+            upper->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+            upper->acceleration = 0x6666;
+            upper->speed = 0xcccc;
+            Object_SetPosition(upper, upper->x.fixed, 0x200000, upper->z.fixed);
+            lower = Object_GetById(10);
+            lower->acceleration = 0x6666;
+            lower->speed = 0xcccc;
+            Object_SetPosition(lower, lower->x.fixed, 0x40000, lower->z.fixed);
             Engine_GameFlagSet(0x368);
-            Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, b);
-            Engine_MapCopyCellAttributes(1, 25, 1, 1, a, b);
+            Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, z);
+            Engine_MapCopyCellAttributes(1, 25, 1, 1, x, z);
         }
     }
 }

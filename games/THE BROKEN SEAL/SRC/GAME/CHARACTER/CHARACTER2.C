@@ -75,7 +75,7 @@ struct LevelUpResult *OwnerAction_CheckLevelThreshold(s32 owner, struct LevelUpR
     return Owner_GetValueIfLevelThresholdReached(owner, value);
 }
 
-struct CharacterDefinition *Owner_GetRecordStride180(s32 index)
+struct CharacterDefinition *Character_GetDefinition(s32 index)
 {
     struct CharacterDefinition *base;
 
@@ -116,7 +116,7 @@ void Owner_InitRecords(void)
             state = (struct BattleUnit *)Owner_GetState(*remote);
             if (state != 0) {
                 state->class_id = (u8)*remote;
-                tmpl = Owner_GetRecordStride180(state->class_id);
+                tmpl = Character_GetDefinition(state->class_id);
 
                 for (i = 14; i >= 0; i--)
                     state->inventory[i] = 0;
@@ -187,7 +187,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         threshold = Owner_GetLevelThreshold(owner, st->level);
         if (threshold != (u32)-1 && st->experience < threshold)
             st->experience = threshold;
-        work->growth = Owner_GetRecordStride180(owner);
+        work->growth = Character_GetDefinition(owner);
         if (res->level == 1) {
             res->hp += work->growth->hp[0];
             res->pp += work->growth->pp[0];

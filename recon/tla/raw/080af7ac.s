@@ -68,7 +68,7 @@ Func_080af7ac:
 	strh r3, [r2]
 	movs r5, #14
 	ldrh r0, [r2]
-	bl Owner_GetRecordStride180
+	bl Character_GetDefinition
 	ldr r2, .L_080af854
 	adds r3, r7, #0
 	mov r10, r0

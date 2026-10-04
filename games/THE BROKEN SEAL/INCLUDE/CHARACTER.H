@@ -113,7 +113,7 @@ LAYOUT_SIZE_GUARD(LevelUpResult_Size, struct LevelUpResult, 0x10);
 
 extern struct CharacterDefinition Character_DefinitionTable[];
 extern struct ClassDefinition Class_DefinitionTable[];
-struct CharacterDefinition *Owner_GetRecordStride180(s32 index);
+struct CharacterDefinition *Character_GetDefinition(s32 index);
 struct ClassDefinition *Owner_GetRecordStride84(s32 index);
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
 struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(s32 owner, struct LevelUpResult *result);

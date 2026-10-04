@@ -63,7 +63,7 @@ struct LevelUpWork {
 
 void Sys_Free(void *buffer);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
-struct OwnerGrowth *Owner_GetRecordStride180(s32 owner);
+struct OwnerGrowth *Character_GetDefinition(s32 owner);
 s32 Owner_RefreshClassActions(s32 owner);
 void Owner_RecalculateStats(s32 owner);
 u32 Random16(void);
@@ -101,7 +101,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         threshold = Owner_GetLevelThreshold(owner, st->level);
         if (threshold != (u32)-1 && st->experience < threshold)
             st->experience = threshold;
-        work->growth = Owner_GetRecordStride180(owner);
+        work->growth = Character_GetDefinition(owner);
         if (res->level == 1) {
             res->hp += work->growth->hp[0];
             res->pp += work->growth->pp[0];

@@ -1,3 +1,15 @@
+/* 2026-10-04, third pass: 117 of 257 instructions differ (was 158). Plain
+ * reshapes only: id declared after own, peer formed after own, and in the
+ * send stage the resend's cursor store follows the size update and the
+ * cursor advance follows the sequence update. The receive stage now matches
+ * up to one scheduled add and the pool offsets. Left: in the send stage the
+ * listing keeps the cursor address in r7, the first cursor value in r0 and
+ * peer->flags in lr; here the cursor goes to r8, the value to lr and the
+ * flag to r7, and the later ip copies use r0/r1 where the listing uses
+ * r1/r2/r3. Dropping the flag local (or its reuse for own->peer_flags)
+ * scores 168. A device search (register pins, lifetime barriers) reached 95
+ * only with pins that contradict the listing; nothing adopted.
+ */
 /* 2026-10-04 later: score 1250 (49 register-only, 2 operand, 6 reordered,
  * 2 inserted, 4 deleted), from 2375. One u8 flag local holds peer->flags and
  * then own->peer_flags in the send stage (a permuter rewrite, kept as plain
@@ -42,17 +54,17 @@ struct OneCell { u16 v; };
 void SerialRuntime_StepBlockTransfer(void)
 {
     struct SerialTransferState *peer;
+    u32 id;
     struct SerialTransferState *own;
     u32 gap;
-    u32 id;
     /* FAKEMATCH: the halfword record retains the measured pooled-one
        construction; it is not protocol state. */
     struct OneCell one;
 
     id = ~((REG_SIOCNT << 26) >> 30) & 1;
     one.v = 1;
-    peer = (struct SerialTransferState *)gSerialPeerPayloads[id];
     own = &gSerialTransfer;
+    peer = (struct SerialTransferState *)gSerialPeerPayloads[id];
     if ((gLinkStatus & 3) != 3)
         return;
     /* flags: 1 requests blocks; 2 acknowledges the final block. */
@@ -106,9 +118,9 @@ void SerialRuntime_StepBlockTransfer(void)
             if (flag == 1) {
                 if (peer->active & 0x80) {
                     gap = (gSerialBlockSequence - peer->active) & 0x7f;
-                    *send = src - gap * 20;
                     gSerialSendSize += gap * 20;
                     gSerialBlockSequence -= gap;
+                    *send = src - gap * 20;
                     gSerialBlockSequence &= 0x7f;
                 }
                 if (gSerialSendSize != 0) {
@@ -119,8 +131,8 @@ void SerialRuntime_StepBlockTransfer(void)
                     else
                         own->peer_flags = 2;
                     own->active = gSerialBlockSequence & 0x7f;
-                    *send += 20;
                     gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
+                    *send += 20;
                 }
             }
             flag = own->peer_flags;

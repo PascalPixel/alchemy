@@ -10,8 +10,12 @@
 #include "INVENTORY.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
+#include "DMA.H"
+#include "GAME_STATE.H"
+#include "FRAME.H"
+#include "SAVE_STATE.H"
 
-s32 GameState_InitDefaults();
+void GameState_InitDefaults(void);
 s32 Game_ResetForNewGameFar(s32);
 
 
@@ -514,7 +518,7 @@ void GameFlag_RefreshLureCap(void)
     }
 }
 
-u16 Runtime_GetBuildStampTime(void)
+u32 Runtime_GetBuildStampTime(void)
 {
     u8 *digits;
     s32 hourTens;
@@ -555,4 +559,80 @@ u16 Runtime_GetBuildStampTime(void)
         result |= (s32)0xffff8000;
     }
     return (u16)result;
+}
+
+extern u8 GameFlagBytes[];
+extern u8 gSaveStamp[];
+extern u8 gSceneState[];
+extern s16 gSaveSlot;
+
+/* The scene work past its first 0x100 bytes: the play-time word a save
+   copies there and the byte after it, which a new game marks unset. */
+struct SceneStateTail {
+    u8 unknown_000[0x100];
+    u32 play_time;
+    u8 unknown_104;
+};
+
+void Owner_InitRecords(void);
+void Party_AddActiveOwner(s32 owner);
+
+/* Clears the game state, the scene work, the story flags and the save
+   records, then seeds a new game's options, first party member, start
+   stamp and the defaults at 0x11d. */
+void GameState_InitDefaults(void)
+{
+    volatile s32 zero;
+
+    zero = 0;
+    START_DMA(&zero, &gGameState, 0x850000b0);
+    zero = 0;
+    START_DMA(&zero, gSceneState, 0x850003e1);
+    WAIT_DMA();
+    zero = 0;
+    START_DMA(&zero, GameFlagBytes, 0x85000080);
+    ((struct SceneStateTail *)gSceneState)->unknown_104 = 0xff;
+    zero = 0;
+    START_DMA(&zero, gSaveStamp + 0x1c, 0x85000298);
+    Owner_InitRecords();
+    gGameState.unknown_210 = 1;
+    gGameState.unknown_212 = 2;
+    gGameState.unknown_214 = 4;
+    gGameState.unknown_216 = 8;
+    gGameState.first_shortcut_keys = 0x200;
+    gGameState.second_shortcut_keys = 0x100;
+    gGameState.dash_keys = 2;
+    gGameState.first_shortcut = 0;
+    gGameState.second_shortcut = 0;
+    gGameState.selected_actor = 0;
+    Party_AddActiveOwner(0);
+    gGameState.coins = 0;
+    gGameState.message_speed = 1;
+    gGameState.speech = 1;
+    gGameState.unknown_20b = 1;
+    gGameState.palette_glow[0] = 0;
+    gGameState.palette_glow[1] = 8;
+    gGameState.build_stamp = 0;
+    gGameState.start_stamp = Runtime_GetBuildStampTime();
+    gLoadedStateWord = 0;
+    gGameState.play_time = 0;
+    gOptionMirror = 0;
+    gGameState.saved_options = gOptionMirror;
+    gPostLoadCounter = 0;
+    gSaveSlot = -1;
+    gGameState.unknown_11d[0] = 4;
+    gGameState.unknown_11d[1] = 4;
+    gGameState.unknown_11d[2] = 4;
+    gGameState.unknown_11d[3] = 8;
+    gGameState.unknown_11d[4] = 8;
+    gGameState.unknown_11d[5] = 8;
+    gGameState.unknown_11d[6] = 16;
+    gGameState.unknown_11d[7] = 16;
+    gGameState.unknown_11d[8] = 16;
+    gGameState.unknown_11d[9] = 32;
+    gGameState.unknown_11d[10] = 32;
+    gGameState.unknown_11d[11] = 32;
+    gGameState.unknown_11d[12] = 64;
+    gGameState.unknown_11d[13] = 64;
+    gGameState.unknown_11d[14] = 64;
 }

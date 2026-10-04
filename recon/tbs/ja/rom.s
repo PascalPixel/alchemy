@@ -506,12 +506,6 @@ Menu_PartySpriteResourceIds:
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x0006c594, 0x00000a6c
-	.section .rom.0006dd38, "ax"
-	.global GameState_InitDefaults
-	.thumb_func
-	.type GameState_InitDefaults, %function
-GameState_InitDefaults:
-	.incbin "baserom.gba", 0x0006dd38, 0x00000208
 	.section .rom.0006ebf0, "ax"
 	.global Owner_RefreshClassActions
 	.thumb_func

@@ -76,8 +76,11 @@ void Script_WaitForEventTimeout(struct FieldActor *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
+/* The stage scenes call these without prototypes, as C89 allows, so they
+ * return int here: the calls set r0 last, as an implicit declaration does. */
+s32 FieldScene_RunMiddleSequence();
+s32 SceneState_StoreParamsAndInitTable();
+s32 Korosseo_FadeInCompetitor();
 
 static inline void InitializeActorZero(void)
 {
@@ -139,7 +142,6 @@ void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
 void Engine_EventShowMessage();
-void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Engine_ActorSetSpeed();
 void Engine_ActorWalkToAndWait();
 void Engine_EventWait();
@@ -156,7 +158,6 @@ void SceneState_SendIdBySceneId();
 void Engine_EventEnd();
 extern u8 MsgKorosseoAreaCalledPipeworks[];
 extern u8 MsgKorosseoObjectiveMakeGood[];
-void SceneState_StoreParamsAndInitTable();
 void SceneState_InitTableWordsAndLoad3200();
 void SceneState_ReleaseTableAndResetC6a6();
 void Engine_ObjectSetPosition();
@@ -1058,8 +1059,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
             }
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(scene, 0);
-            /* FAKEMATCH: the discarded result sets r0 after both coordinates. */
-            Value3(Korosseo_FadeInCompetitor, 0, 280, 200);
+            Korosseo_FadeInCompetitor(0, 280, 200);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
             Engine_EventWait(30);
@@ -1097,8 +1097,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
             Engine_EventSetMessage((s32)MsgKorosseoObjectiveStageClear);
             Engine_EventShowMessage(scene, 0);
         }
-        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        Value3(FieldScene_RunMiddleSequence, path, scene, 1);
+        FieldScene_RunMiddleSequence(path, scene, 1);
         Engine_EventEnd();
     }
 }
@@ -1174,7 +1173,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoObjectiveMakeGood);
             Engine_EventShowMessage(a0, 0);
         }
-        ((s32 (*)())FieldScene_RunMiddleSequence)(rec4, a0, 2);
+        FieldScene_RunMiddleSequence(rec4, a0, 2);
         Engine_EventEnd();
     }
 }
@@ -1233,8 +1232,7 @@ void FieldScene_RunScene3ba_020015e0(s32 scene)
             SceneState_SetMode66AndPassOpeningSequence();
             Engine_EventWait(60);
             Event_ShowMessage(scene, 0);
-            /* FAKEMATCH: the discarded result sets r0 after both coordinates. */
-            Value3(Korosseo_FadeInCompetitor, 0, 736, 200);
+            Korosseo_FadeInCompetitor(0, 736, 200);
             /* FAKEMATCH: the discarded result sets r0 after both other arguments. */
             Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0, 0);
             SceneState_WaitUntilWordC41cIs22();
@@ -1250,8 +1248,7 @@ void FieldScene_RunScene3ba_020015e0(s32 scene)
             Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
             Event_ShowMessage(scene, 0);
         }
-        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        Value3(FieldScene_RunMiddleSequence, path, scene, 3);
+        FieldScene_RunMiddleSequence(path, scene, 3);
         Engine_EventEnd();
     }
 }
@@ -1282,13 +1279,11 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         }
         Engine_CameraWaitForMove();
         Event_ShowMessage(scene, 0);
-        /* FAKEMATCH: the discarded result sets the arguments up from r2 down to r0. */
-        Value3(SceneState_StoreParamsAndInitTable, 120, 72, 0);
+        SceneState_StoreParamsAndInitTable(120, 72, 0);
         Event_ShowMessage(scene, 0);
         SceneState_ReleaseTableAndResetC6a6();
         Engine_EventWait(15);
-        /* FAKEMATCH: the discarded result sets r0 after both coordinates. */
-        Value3(Korosseo_FadeInCompetitor, 0, 984, 200);
+        Korosseo_FadeInCompetitor(0, 984, 200);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
@@ -1317,8 +1312,7 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         Engine_EventSetMessage((s32)MsgKorosseoLogsKeyClearingStage);
         Event_ShowMessage(scene, 0);
     }
-    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-    Value3(FieldScene_RunMiddleSequence, path, scene, 4);
+    FieldScene_RunMiddleSequence(path, scene, 4);
     Engine_EventEnd();
 }
 

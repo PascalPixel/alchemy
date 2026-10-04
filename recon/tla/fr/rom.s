@@ -3725,13 +3725,7 @@ Func_080d7430:
 	.type Func_080d7788, %function
 	.thumb_func
 Func_080d7788:
-	.incbin "baserom.gba", 0x000dc77c, 0x000002f0
-	.section .rom.000dca6c, "ax"
-	.global BattleFx_InitializeSlots
-	.type BattleFx_InitializeSlots, %function
-	.thumb_func
-BattleFx_InitializeSlots:
-	.incbin "baserom.gba", 0x000dca6c, 0x0000003c
+	.incbin "baserom.gba", 0x000dc77c, 0x000002d0
 	.section .rom.000dcaa8, "ax"
 	.global Func_080d7ab4
 	.type Func_080d7ab4, %function
@@ -4247,10 +4241,10 @@ Func_080eb2d0:
 Func_080eb960:
 	.incbin "baserom.gba", 0x000f0954, 0x000002d0
 	.section .rom.000f0c24, "ax"
-	.global Func_080ebc30
-	.type Func_080ebc30, %function
+	.global EffectSlot_Update
+	.type EffectSlot_Update, %function
 	.thumb_func
-Func_080ebc30:
+EffectSlot_Update:
 	.incbin "baserom.gba", 0x000f0c24, 0x00000240
 	.section .rom.000f0e9a, "ax"
 	.incbin "baserom.gba", 0x000f0e9a, 0x00000002

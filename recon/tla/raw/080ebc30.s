@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ebc30
+	.global EffectSlot_Update
 	.thumb_func
-Func_080ebc30:
+EffectSlot_Update:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	adds r6, r5, #0

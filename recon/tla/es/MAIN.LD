@@ -884,7 +884,7 @@
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e0518)
     "*/recon/tla/es/rom.o"(.rom.000e077c)
-    "*/recon/tla/es/rom.o"(.rom.000e0a6c)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/EFFECT32.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e0aa8)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET_COPY.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e1734)

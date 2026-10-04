@@ -34,4 +34,4 @@ Func_080d7ab4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d7af4:
-	.4byte Func_080d7a58
+	.4byte BattleFx_UpdateAllSlots

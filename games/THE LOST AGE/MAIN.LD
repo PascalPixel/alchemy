@@ -908,6 +908,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000d5fb4)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d7504)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/EFFECT32.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000d7a70)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET_COPY.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d86fc)
     "*/games/COMMON/SRC/FIELD/COMMON/DISPATCH_TYPE_HANDLER.o"(.text)

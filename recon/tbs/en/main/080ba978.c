@@ -1,15 +1,16 @@
-/* 2026-10-04 (finisher 1): 169 -> 53 differing instructions. The header
- * now gives BattlePresentationWork its real tail, s16 actors[8] then
- * u8 params[8][4] at 0x34; indexing work.params[i][j] with the count read
- * each pass gives the native per-iteration addressing (no hoisted base, no
- * extra r9 save; plan r7, mode sl, object r8 all match). Left: the same-side
- * test. Native evaluates each arm's actor test as a value and tests it in the
- * arm (cmp/bne/b, cmp/beq), and copies the actor id (adds rN, r4, #0) for
- * every test; this draft shares one copy and joins the arms first. Tried
- * here: ?: in the if, (a <= 7) == (b <= 7), explicit 0/1 assignments, inverted
- * tests (all 53-61); static inline IsParty/IsEnemy only in the ?: arms gives
- * the native arm shape but rereads the id from memory and moves plan to r6
- * (80-86); inline for every test 82-93. */
+/* 2026-10-04 (finisher 1): 169 -> 36 differing instructions, plain C.
+ * The header now gives BattlePresentationWork its real tail, s16 actors[8]
+ * then u8 params[8][4] at 0x34; indexing work.params[i][j] with the count
+ * read each pass gives the native addressing (no hoisted base, no extra r9
+ * save; plan r7, mode sl, object r8 match). The first angle offset as an
+ * if/else gives the native fresh actor-id copy (adds rN, r4, #0) for each
+ * test. Left: the same-side test (two instructions short). Native copies
+ * the actor id once before the target test, then each arm evaluates its
+ * actor test as a value in r3 and tests it in the arm (cmp/bne/b, cmp/beq).
+ * if (target <= 7 ? (same = actor <= 7) : (same = actor > 7)) gives that
+ * arm shape exactly but copies the id inside each arm (37); a u8/s32 id
+ * local read before the test scores 46-91; ?:, == of two tests, 0/1
+ * assignments and inline IsParty/IsEnemy predicates score 36-93. */
 /* Draft: complete native extent [080ba978,080babdc), 612 bytes.
  * Earlier 2026-10-02 work recorded 12 differing instructions with the native
  * frame/register allocation. Byte predicates recovered the same-side copy
@@ -92,10 +93,12 @@ s32 Func_080ba978(struct BattlePlan *plan, s32 mode)
     } else {
         struct MotionObject *actor = GetBattleObjectSlot(plan->actor_id)->object;
         s32 angle = (u16)ArcTan2(actor->x, actor->z);
-        s32 current = angle - 0x1800;
+        s32 current;
         s32 same;
 
-        if (plan->actor_id > 7)
+        if (plan->actor_id <= 7)
+            current = angle - 0x1800;
+        else
             current = angle + 0x1800;
         current = (s16)current;
         current += ((plan->actor_id <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;

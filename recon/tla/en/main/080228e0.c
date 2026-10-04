@@ -1,4 +1,10 @@
-/* ☀️'s Animation_InitializeObjects over ⚓️'s object layout: 6 differ, three single scheduling swaps. */
+/* ☀️'s Animation_InitializeObjects over ⚓️'s object layout: 6 differ, three
+   single scheduling swaps; the index spill to [sp] goes after the entry load
+   instead of before it. A pointer walk over the entries, a barrier before the
+   metadata call and 900 device-search steps (best 4, with six devices) did
+   not close it. It is the next function above RESOURCE3 now that
+   Animation_InitWorkFromMetadata has joined it; the lookup (080228bc)
+   matches and follows once this does. */
 #include "TYPES.H"
 #include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"

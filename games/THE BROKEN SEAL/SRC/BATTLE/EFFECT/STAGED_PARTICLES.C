@@ -61,6 +61,25 @@ extern const Scale StagedParticles_UnitScale;
 /* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
+/* The slash sheet's pictures in work->sheet, each as many bytes as its
+   width times its height: five flash frames, the last three in two or
+   three parts, then the falling slash's three parts. */
+enum SlashSheetCell {
+    SLASH_FLASH_1 = 0x0000,
+    SLASH_FLASH_2 = 0x0188,
+    SLASH_FLASH_3_TOP = 0x057c,
+    SLASH_FLASH_3_BOTTOM = 0x07d4,
+    SLASH_FLASH_4_TOP = 0x0aaa,
+    SLASH_FLASH_4_MIDDLE = 0x0c90,
+    SLASH_FLASH_4_BOTTOM = 0x0e74,
+    SLASH_FLASH_5_TOP = 0x1088,
+    SLASH_FLASH_5_MIDDLE = 0x11f8,
+    SLASH_FLASH_5_BOTTOM = 0x147c,
+    SLASH_TOP = 0x16ac,
+    SLASH_MIDDLE = 0x17fc,
+    SLASH_BOTTOM = 0x1bf3
+};
+
 /* Battle effect: nine scene objects follow a recorded path across a violet
    sky while sixteen slashes appear one after another, eight frames apart;
    each gathers twenty-four sparks for sixteen frames, flashes through five
@@ -96,17 +115,17 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     scroll_x = gBgScroll[1].x;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2000);
-    *(volatile u16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
     BattlePres_ConfigureEffectDisplay();
-    *(u16 *)0x05000000 = 0;
-    *(u16 *)0x05000002 = 0;
+    BG_PLTT[0] = 0;
+    BG_PLTT[1] = 0;
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(0, 0);
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(9, 370, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work, 1, 1);
-    Iwram_CopyWords((void *)0x05000000,
+    Iwram_CopyWords((void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
@@ -127,10 +146,10 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     Scheduler_AddOrUpdateCallback((s32)BattleFx_AdvanceScrollOnInterval, 0x480);
     presentation->busy = 1;
     BattleEffect_WipeCanvas(0, 1);
-    *(volatile u16 *)0x04000000 = 0x7741;
-    *(volatile u16 *)0x04000020 = 0x80;
-    *(volatile u16 *)0x04000052 = 0x1010;
-    *(volatile u16 *)0x04000050 = 0x3f44;
+    REG_DISPCNT = 0x7741;
+    REG_BG2PA = 0x80;
+    REG_BLDALPHA = 0x1010;
+    REG_BLDCNT = 0x3f44;
     path_x = 0;
     path_y = 0;
     for (i = 0; i != 16; i++) {
@@ -152,7 +171,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     }
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    *(volatile u16 *)0x0400000c = 0x784;
+    REG_BG2CNT = 0x784;
     for (frame = 0; frame != 220 && !(gKeysRepeat & (KEY_A | KEY_B)); frame++) {
         if (frame <= 209) {
             if (frame == 0) {
@@ -196,30 +215,30 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
                     slash->y += slash->velocity_y;
                     slash->velocity_x -= 0x10000;
                     slash->velocity_y += 0x20000;
-                    draw[0](canvas, (u8 *)work + 0x16ac, x + 4, y - 40, 16, 21);
-                    draw[0](canvas, (u8 *)work + 0x17fc, x - 16, y - 19, 29, 35);
-                    draw[0](canvas, (u8 *)work + 0x1bf3, x - 20, y + 16, 21, 24);
+                    draw[0](canvas, work->sheet + SLASH_TOP, x + 4, y - 40, 16, 21);
+                    draw[0](canvas, work->sheet + SLASH_MIDDLE, x - 16, y - 19, 29, 35);
+                    draw[0](canvas, work->sheet + SLASH_BOTTOM, x - 20, y + 16, 21, 24);
                 } else if (frame >= i * 8 + 80) {
                     switch (frame - start - 16) {
                     case 0:
-                        draw[0](canvas, work, x - 7, y - 14, 14, 28);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_1, x - 7, y - 14, 14, 28);
                         break;
                     case 1:
-                        draw[0](canvas, (u8 *)work + 392, x - 11, y - 22, 23, 44);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_2, x - 11, y - 22, 23, 44);
                         break;
                     case 2:
-                        draw[0](canvas, (u8 *)work + 0x57c, x - 4, y - 31, 20, 30);
-                        draw[0](canvas, (u8 *)work + 0x7d4, x - 16, y - 1, 22, 33);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_3_TOP, x - 4, y - 31, 20, 30);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_3_BOTTOM, x - 16, y - 1, 22, 33);
                         break;
                     case 3:
-                        draw[0](canvas, (u8 *)work + 0xaaa, x + 1, y - 38, 18, 27);
-                        draw[0](canvas, (u8 *)work + 0xc90, x - 11, y - 11, 22, 22);
-                        draw[0](canvas, (u8 *)work + 0xe74, x - 19, y + 11, 19, 28);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_4_TOP, x + 1, y - 38, 18, 27);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_4_MIDDLE, x - 11, y - 11, 22, 22);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_4_BOTTOM, x - 19, y + 11, 19, 28);
                         break;
                     case 4:
-                        draw[0](canvas, (u8 *)work + 0x1088, x + 4, y - 40, 16, 23);
-                        draw[0](canvas, (u8 *)work + 0x11f8, x - 10, y - 17, 23, 28);
-                        draw[0](canvas, (u8 *)work + 0x147c, x - 20, y + 11, 20, 28);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_5_TOP, x + 4, y - 40, 16, 23);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_5_MIDDLE, x - 10, y - 17, 23, 28);
+                        draw[0](canvas, work->sheet + SLASH_FLASH_5_BOTTOM, x - 20, y + 11, 20, 28);
                         break;
                     }
                 } else {
@@ -261,8 +280,8 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     BattleEffect_SetupBlendedDisplay();
     for (i = 0; i != 9; i++)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)OBJECTS[i]);
-    *(volatile u16 *)0x04000020 = 0x80;
-    *(volatile u16 *)0x04000000 = 0x7741;
+    REG_BG2PA = 0x80;
+    REG_DISPCNT = 0x7741;
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);
     for (i = 0; i != 32; i++) {
         struct EffectStep *slash = &work->particles[i];
@@ -293,8 +312,8 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
                             slash->y + PuffArc_CellBiasY[cell] - 40,
                             width, PuffArc_CellHeights[cell]);
                         if (slash->variant <= 11) {
-                            draw[0](canvas, (u8 *)work + 0x16ac, slash->x + 4, slash->y - 40, 16, 21);
-                            draw[0](canvas, (u8 *)work + 0x17fc, slash->x - 16, slash->y - 19, 29, 35);
+                            draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4, slash->y - 40, 16, 21);
+                            draw[0](canvas, work->sheet + SLASH_MIDDLE, slash->x - 16, slash->y - 19, 29, 35);
                         }
                     }
                     slash->variant++;
@@ -303,10 +322,10 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 
                     if (slash->y > 56)
                         height = height - slash->y + 56;
-                    draw[0](canvas, (u8 *)work + 0x16ac, slash->x + 4, slash->y - 40, 16, 21);
-                    draw[0](canvas, (u8 *)work + 0x17fc, slash->x - 16, slash->y - 19, 29, 35);
+                    draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4, slash->y - 40, 16, 21);
+                    draw[0](canvas, work->sheet + SLASH_MIDDLE, slash->x - 16, slash->y - 19, 29, 35);
                     if (height > 0)
-                        draw[0](canvas, (u8 *)work + 0x1bf3, slash->x - 20, slash->y + 16, 21, height);
+                        draw[0](canvas, work->sheet + SLASH_BOTTOM, slash->x - 20, slash->y + 16, 21, height);
                     slash->x -= 6;
                     slash->y += 12;
                     if (slash->y > 79) {

@@ -7,6 +7,8 @@
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "RUNTIME_MEM.H"
+#include "IO_REG.H"
+#include "FLAG_IDS.H"
 
 void Map_SetCameraCenter(s32 x, s32 y);
 
@@ -82,7 +84,7 @@ struct SceneLayerSource {
 struct SceneHeader {
     u8 origin[4];
     u8 priority[3];
-    u8 screen[3];
+    u8 char_base[3];
     u16 unknown_0a;
     struct SceneLayerSource layers[3];
     s32 tiles;
@@ -141,7 +143,7 @@ s32 Map_LoadLayeredScene(s32 index)
     u8 *src;
     s32 cnt;
 
-    *(volatile u16 *)0x04000000 &= 0xc1ff;
+    REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
     Blend_SetDarkenTarget0(0);
     entry = &Map_LayeredScenes[index];
     work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
@@ -207,49 +209,49 @@ s32 Map_LoadLayeredScene(s32 index)
         source++;
         layer++;
     }
-    work->flags = 0x1000;
+    work->flags = DISPCNT_OBJ_ON;
     if (work->enabled[0] != 0)
-        work->flags = 0x1800;
+        work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
     if (work->enabled[1] != 0)
-        work->flags |= 0x400;
+        work->flags |= DISPCNT_BG2_ON;
     if (work->enabled[2] != 0)
-        work->flags |= 0x200;
-    cnt = work->enabled[0] | (header->screen[0] << 2) | 0x500;
-    *(volatile u16 *)0x0400000e = cnt;
+        work->flags |= DISPCNT_BG1_ON;
+    cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
+    REG_BG3CNT = cnt;
     /* FAKEMATCH: one-pass loops hold the second and third background
        control writes in source order. */
     do {
-        cnt = work->enabled[1] | (header->screen[1] << 2) | 0x600;
-        *(volatile u16 *)0x0400000c = cnt;
+        cnt = work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6);
+        REG_BG2CNT = cnt;
     } while (0);
     do {
-        cnt = work->enabled[2] | (header->screen[2] << 2) | 0x700;
-        *(volatile u16 *)0x0400000a = cnt;
+        cnt = work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7);
+        REG_BG1CNT = cnt;
     } while (0);
-    if (GameFlag_IsSet(0x170) != 0) {
-        GameFlag_ClearBitFar(0x170);
+    if (GameFlag_IsSet(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
+        GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
     } else {
         buf = (u8 *)Runtime_BumpAllocate(0x4000);
         if (buf != NULL) {
             backdrop = *(s16 *)0x05000000;
             Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
             *(s16 *)buf = backdrop;
-            Iwram_CopyWords((void *)0x05000000, buf, 0x1c0);
+            Iwram_CopyWords((void *)BG_PLTT, buf, 0x1c0);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[2] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x06004000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(1), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[3] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x06008000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(2), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[4] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords((void *)0x0600c000, buf, 0x4000);
+            Iwram_CopyWords(BG_CHAR_BLOCK(3), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[5] + (u32)&ResourceId_Map001), gMapLayerData);
             Runtime_BumpFree(buf);
         }
     }
     cnt = 0;
-    *(volatile u16 *)0x0400004c = cnt;
-    *(volatile u16 *)0x04000050 = cnt;
-    cnt = 0x140;
-    *(volatile u16 *)0x04000000 = cnt;
+    REG_MOSAIC = cnt;
+    REG_BLDCNT = cnt;
+    cnt = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+    REG_DISPCNT = cnt;
     Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
     return 2;
 }
@@ -486,119 +488,98 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
     u32 y;
     register u32 x;
 
-    i = 2;
-    if (i >= 0) {
-        while (1) {
-            s32 tmp5;
-            s32 tmp8;
-            tmp8 = layer->x;
-            tmp5 = tmp8 >> 20;
-            pos->x = tmp5;
-            tmp8 = layer->y;
-            tmp5 = tmp8;
-            pos->y = tmp5 >> 20;
-            ++pos;
-            layer++;
-            i--;
-            if (0 > i)
-                break;
-        }
+    for (i = 2; i >= 0; i--) {
+        pos->x = layer->x >> 20;
+        pos->y = layer->y >> 20;
+        pos++;
+        layer++;
     }
-    y = dst_y;
-    if (y < dst_y + height) {
-        do {
-            u32 tmp20;
-            x = dst_x;
-            while (x < dst_x + width) {
-                /* FAKEMATCH: the cell value remains live in r5 while layers are tested. */
-                register u32 cell __asm__ ("r5") = 0xfff & *src++;
-                /* Both destinations are VRAM: the display consumes each store. */
-                volatile u32 *dest;
-                u32 offset;
-                u32 tmp3;
-                u32 n;
-                register u32 *tiles;
-                u32 tmp6;
-                u32 tmp9;
-                u32 tmp12;
-                u32 tmp11;
-                u32 tmp13;
-                u32 tmp15;
-                tmp9 = *dst;
-                tmp3 = tmp9 & -0x1000;
-                tmp12 = x & 15;
-                (s32)(dst[0] = cell | tmp3);
-                tmp6 = tmp12;
-                dst++;
-                tmp15 = y & 15;
-                tmp3 = tmp15;
-                pos = tile;
-                tmp13 = tmp3 << 5;
-                tmp12 = tmp13;
-                n = tmp12;
-                n += tmp6;
-                tmp13 = 4 * n;
-                i = 0;
-                tmp11 = tmp13;
-                tmp6 = tmp11;
-                offset = tmp6;
-                for (; i < 3; i++) {
-                    if (pos->x <= (s32)x && 16 + pos->x > (s32)x && pos->y <= (s32)y && pos->y + 12 > (s32)y) {
-                        u32 *tmp;
-                        u32 tmp2;
-                        u32 tmp4;
-                        u32 *tmp7;
-                        u32 tmp10;
-                        u32 tmp14;
-                        u32 tmp18;
-                        u32 tmp21;
-                        /* FAKEMATCH: consumed offset in r3 changes only registers/order, preserving all instructions. */
-                        register u32 bytes __asm__ ("r3") = cell * 8;
-                        u32 tmp16;
-                        {
-                            tmp2 = 0x06002800;
-                            /* FAKEMATCH: removing this consumed-base input barrier scores70 (two register choices and one reordered load), with no instruction or frame change. */
-                            __asm__ __volatile__ ("" : : "l" (tmp2));
-                            tmp = (u32 *)Ram_MapBlocks;
-                            tiles = tmp;
-                            tmp16 = offset + tmp2;
-                        }
-                        tmp21 = tmp16;
-                        tmp18 = tmp21;
-                        tmp2 = tmp18;
-                        tmp = (u32 *)tmp2;
-                        dest = tmp;
-                        tiles = (u32 *)((u8 *)tiles + bytes);
-                        tmp14 = *tiles;
-                        tmp10 = tmp14;
-                        *dest = tmp10;
-                        tmp7 = (u32 *)(Ram_MapBlocks + 4);
-                        tiles = tmp7;
-                        tiles = (u32 *)((u8 *)tiles + bytes);
-                        tmp16 = 0x06002840 + offset;
-                        tmp18 = tmp16;
-                        tmp14 = tmp18;
-                        tmp21 = *tiles;
-                        tmp10 = tmp21;
-                        tmp4 = tmp10;
-                        tmp2 = tmp4;
-                        tmp4 = tmp14;
-                        tmp7 = (u32 *)tmp4;
-                        dest = tmp7;
-                        (s32)(*dest = tmp2);
-                        break;
+    for (y = dst_y; y < dst_y + height; y++) {
+        for (x = dst_x; x < dst_x + width; x++) {
+            /* FAKEMATCH: the cell value remains live in r5 while layers are tested. */
+            register u32 cell __asm__ ("r5") = 0xfff & *src++;
+            /* Both destinations are VRAM: the display consumes each store. */
+            volatile u32 *dest;
+            u32 offset;
+            u32 tmp3;
+            u32 n;
+            register u32 *tiles;
+            u32 tmp6;
+            u32 tmp9;
+            u32 tmp12;
+            u32 tmp11;
+            u32 tmp13;
+            u32 tmp15;
+            tmp9 = *dst;
+            tmp3 = tmp9 & -0x1000;
+            tmp12 = x & 15;
+            dst[0] = cell | tmp3;
+            tmp6 = tmp12;
+            dst++;
+            tmp15 = y & 15;
+            tmp3 = tmp15;
+            pos = tile;
+            tmp13 = tmp3 << 5;
+            tmp12 = tmp13;
+            n = tmp12;
+            n += tmp6;
+            tmp13 = 4 * n;
+            i = 0;
+            tmp11 = tmp13;
+            tmp6 = tmp11;
+            offset = tmp6;
+            for (; i < 3; i++) {
+                if (pos->x <= (s32)x && 16 + pos->x > (s32)x && pos->y <= (s32)y && pos->y + 12 > (s32)y) {
+                    u32 *tmp;
+                    u32 tmp2;
+                    u32 tmp4;
+                    u32 *tmp7;
+                    u32 tmp10;
+                    u32 tmp14;
+                    u32 tmp18;
+                    u32 tmp21;
+                    /* FAKEMATCH: consumed offset in r3 changes only registers/order, preserving all instructions. */
+                    register u32 bytes __asm__ ("r3") = cell * 8;
+                    u32 tmp16;
+                    {
+                        tmp2 = 0x06002800;
+                        /* FAKEMATCH: removing this consumed-base input barrier scores70 (two register choices and one reordered load), with no instruction or frame change. */
+                        __asm__ __volatile__ ("" : : "l" (tmp2));
+                        tmp = (u32 *)Ram_MapBlocks;
+                        tiles = tmp;
+                        tmp16 = offset + tmp2;
                     }
-                    n = 0x800;
-                    offset += n;
-                    pos++;
+                    tmp21 = tmp16;
+                    tmp18 = tmp21;
+                    tmp2 = tmp18;
+                    tmp = (u32 *)tmp2;
+                    dest = tmp;
+                    tiles = (u32 *)((u8 *)tiles + bytes);
+                    tmp14 = *tiles;
+                    tmp10 = tmp14;
+                    *dest = tmp10;
+                    tmp7 = (u32 *)(Ram_MapBlocks + 4);
+                    tiles = tmp7;
+                    tiles = (u32 *)((u8 *)tiles + bytes);
+                    tmp16 = 0x06002840 + offset;
+                    tmp18 = tmp16;
+                    tmp14 = tmp18;
+                    tmp21 = *tiles;
+                    tmp10 = tmp21;
+                    tmp4 = tmp10;
+                    tmp2 = tmp4;
+                    tmp4 = tmp14;
+                    tmp7 = (u32 *)tmp4;
+                    dest = tmp7;
+                    *dest = tmp2;
+                    break;
                 }
-                x++;
+                offset += 0x800;
+                pos++;
             }
-            src += (s32)(128 - width);
-            tmp20 = 128 - width;
-            dst = dst + tmp20;
-            y++;
-        } while (y < dst_y + height);
+        }
+        src += 128 - width;
+        dst += 128 - width;
     }
 }
 

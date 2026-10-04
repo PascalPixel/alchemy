@@ -8,6 +8,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
+#include "FACING_OBJECT.H"
 extern u8 gEffectWork[];
 extern u8 gKeysHeld[];
 
@@ -250,7 +251,7 @@ static __inline__ void AdvanceProbe_02001fa4(s32 heading, s32 *probe)
 
 /* The sources call one another across files. */
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj);
-s32 OverlayObject_UpdateFacingTowardTarget(void *obj);
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 s32 SceneData_ReturnZero(void);
 u8 *SceneData_GetTableA990(void);
 void FieldScene_Forward2188(void);

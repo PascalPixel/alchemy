@@ -15,6 +15,15 @@ extern u8 MsgBattleItemBroken[];
 extern u8 MsgBattleItemNoEffect[];
 
 s32 Item_ClassifyUseAbility(s32 owner, s32 entry);
+
+/* Window tiles of the page indicator, in palette 15: one number for each
+   page, lit for the page shown, between two edge tiles. */
+enum BattleListTile {
+    LIST_TILE_PAGE_NUMBER = 0xf301,
+    LIST_TILE_PAGE_NUMBER_LIT = 0xf30b,
+    LIST_TILE_PAGES_LEFT = 0xf334,
+    LIST_TILE_PAGES_RIGHT = 0xf335
+};
 s32 Resource_LoadKind26EntryToBuffer(s32 entry, s32 handle);
 
 /*
@@ -159,9 +168,9 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 
             if (count > BATTLE_LIST_ROWS) {
                 for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-                    tile = i + 0xf301;
+                    tile = i + LIST_TILE_PAGE_NUMBER;
                     if (i == page / BATTLE_LIST_ROWS) {
-                        tile = i + 0xf30b;
+                        tile = i + LIST_TILE_PAGE_NUMBER_LIT;
                     }
                     UiWindow_SetTilemapEntry(
                         window,
@@ -184,10 +193,10 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 
         if (count > BATTLE_LIST_ROWS) {
             for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-                tile = i + 0xf301;
+                tile = i + LIST_TILE_PAGE_NUMBER;
                 if ((gFrameCount & 15) <= 11) {
                     if (i == page / BATTLE_LIST_ROWS) {
-                        tile = i + 0xf30b;
+                        tile = i + LIST_TILE_PAGE_NUMBER_LIT;
                     }
                 }
                 UiWindow_SetTilemapEntry(
@@ -199,9 +208,9 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
             }
             edge = -1;
             UiWindow_SetTilemapEntry(
-                window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
+                window, LIST_TILE_PAGES_LEFT, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
-                window, 0xf335, window->width - 2, edge, 0);
+                window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
             /* Same correction as the paired action selector. */
             /* FAKEMATCH: reload render work before its dirty-field offset. */
             __asm__ volatile ("" : : "r" (render));

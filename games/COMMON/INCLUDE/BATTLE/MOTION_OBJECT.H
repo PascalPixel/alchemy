@@ -37,7 +37,9 @@ struct MotionObject {
     u8 snap_to_target;
     u8 unknown_59;
     u8 auto_face_motion;
-    u8 unknown_5b[0x15];
+    u8 unknown_5b[0x11];
+    /* Called each frame while set. */
+    void (*update)();
 };
 
 /* The fields battle uses at the start of a 24-byte animation entry. */
@@ -78,6 +80,9 @@ typedef char MotionObject_records_offset[
 ];
 typedef char MotionObject_record_storage_kind_offset[
     MOTION_OBJECT_OFFSET(struct MotionObject, record_storage_kind) == 0x54 ? 1 : -1
+];
+typedef char MotionObject_update_offset[
+    MOTION_OBJECT_OFFSET(struct MotionObject, update) == 0x6c ? 1 : -1
 ];
 LAYOUT_SIZE_GUARD(SpriteEntry_PrefixSize, struct SpriteEntry, 0x08);
 LAYOUT_OFFSET_GUARD(SpriteEntry_Palette, struct SpriteEntry, palette, 0x05);

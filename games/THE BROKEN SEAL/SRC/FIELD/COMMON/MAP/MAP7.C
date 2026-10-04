@@ -73,17 +73,17 @@ void Map_ShowWorldMap(void)
     }
     menu->suspended = 1;
     WaitFrames(1);
-    blend = *(volatile u16 *)0x04000052;
+    blend = REG_BLDALPHA;
     graphics = Resource_GetTableEntry(resource);
-    Dma_Set(graphics, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
-    *(u16 *)0x05000000 = 0;
+    Dma_Set(graphics, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | (448 / 4), REG_DMA3);
+    BG_PLTT[0] = 0;
     Resource_DecodeType01(graphics + 448, (void *)gMapCellBuffer);
-    Dma_Set((void *)gMapCellBuffer, (void *)0x06006a00, 0x84002580, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
     {
-        s32 v = 0x682;
-        *(volatile u16 *)0x0400000a = v;
-        v = 0x1340;
-        *(volatile u16 *)0x04000000 = v;
+        s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;
+        REG_BG1CNT = v;
+        v = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+        REG_DISPCNT = v;
     }
     BattleFx_SetupResourcesAndWindow();
     Scheduler_AddOrUpdateCallback((s32)Map_UpdateWorldMapMarkers, 0xc80);
@@ -98,9 +98,9 @@ void Map_ShowWorldMap(void)
         s32 v;
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
-            v = 64;
+            v = DISPCNT_OBJ_1D_MAP;
         } while (0);
-        *(volatile u16 *)0x04000000 = v;
+        REG_DISPCNT = v;
     }
     Map_LoadAreaGraphicsFar();
     {
@@ -121,7 +121,7 @@ void Map_ShowWorldMap(void)
             u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
             *(u16 *)&q->count = count + 1;
             *destination++ = (u16)blend;
-            *destination++ = 0x04000052;
+            *destination++ = (u32)&REG_BLDALPHA;
             *destination = 0x20000;
         }
         *ime = saved;

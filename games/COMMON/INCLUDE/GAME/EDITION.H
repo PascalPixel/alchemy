@@ -22,4 +22,13 @@
 #define EDITION_INTERNATIONAL 0
 #endif
 
+/* Shared source names the game it is built for when the two differ. */
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#define GAME_TLA 1
+#else
+#define GAME_TLA 0
+#endif
+
 #endif

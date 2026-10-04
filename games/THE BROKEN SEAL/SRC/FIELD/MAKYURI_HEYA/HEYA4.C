@@ -9,6 +9,7 @@
 #include "MAKYURI_HEYA.H"
 #include "FIELD_SCENE.H"
 #include "MAP_RENDER_WORK.H"
+#include "IO_REG.H"
 
 TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
 TEXT_MESSAGE_ENUM(MsgImiruHermesHealingWaterFountain);
@@ -1179,11 +1180,6 @@ void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
  * fourth room, the blend and the room lights, starts the palette cycle when
  * flag 0x875 is set, then per room and entrance restores the pushed
  * pillars, lifts and cells from the story flags. */
-
-/* FAKEMATCH: the do/while blocks keep the blend constants out of the shared
- * pool. */
-
-/* Mercury Lighthouse rooms: set the blend and lights, then per area and entrance restore the pushed pillars, lifts and cells from the story flags. */
 s32 Scene_Initialize(void)
 {
     struct FieldActor *actor;
@@ -1199,11 +1195,11 @@ s32 Scene_Initialize(void)
     /* FAKEMATCH: the do/while and the held value keep the blend constant in a register ahead of its address load. */
     do {
         s32 blend = 0x3f40;
-        *(volatile u16 *)0x04000050 = blend;
+        REG_BLDCNT = blend;
     } while (0);
     {
         s32 alpha = 0x1010;
-        *(volatile u16 *)0x04000052 = alpha;
+        REG_BLDALPHA = alpha;
     }
     Makyuri_SpawnLightObjects(21, (s32)gSceneState);
     BattleFx_StartFadeOverlay(0);
@@ -1493,7 +1489,7 @@ s32 Scene_Initialize(void)
             Engine_ActorSetPosition(3, 0, 0);
             DisplayBlend_EnableRunScript();
             /* FAKEMATCH: the do/while keeps this zero from being shared, as a pool halfword, with the later zero stores. */
-            do { s32 z = 0; *(volatile u16 *)0x04000050 = z; } while (0);
+            do { s32 z = 0; REG_BLDCNT = z; } while (0);
             Object_GetById(9)->scale_x = -0x10000;
             Engine_ActorSetSpritePriority(14, 1);
             Engine_ActorSetSpritePriority(15, 1);

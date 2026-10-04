@@ -1882,19 +1882,22 @@ DisplayScroll_Font:
 	.thumb_func
 Func_080f2028:
 	.incbin "baserom.gba", 0x000e9028, 0x00000478
-	.section .rom.000ea078, "ax"
-	.global Graphics_TransformPaletteBuffer
-	.type Graphics_TransformPaletteBuffer, %function
-	.thumb_func
-Graphics_TransformPaletteBuffer:
-	.incbin "baserom.gba", 0x000ea078, 0x00000704
 	.section .rom.000ea8bc, "ax"
 	.global Title_PromptTiles
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000ea8bc, 0x000000f5
 	.global Title_PromptBlendLevels
 Title_PromptBlendLevels:
-	.incbin "baserom.gba", 0x000ea9b1, 0x0000064f
+	.incbin "baserom.gba", 0x000ea9b1, 0x0000003d
+	.global Palette_ChannelCurve
+Palette_ChannelCurve:
+	.incbin "baserom.gba", 0x000ea9ee, 0x00000040
+	.global Palette_ChannelCurveLight
+Palette_ChannelCurveLight:
+	.incbin "baserom.gba", 0x000eaa2e, 0x00000040
+	.global Palette_ChannelCurveContrast
+Palette_ChannelCurveContrast:
+	.incbin "baserom.gba", 0x000eaa6e, 0x00000592
 	.section .rom.000eb168, "ax"
 	.global LuckyDice_Run
 	.type LuckyDice_Run, %function

@@ -6,7 +6,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 
-void Unnamed_080f3078(u32, void *, void *, s32);
+
 
 
 
@@ -24,7 +24,7 @@ void TitlePalette_InitializeBuffers(void)
     Dma_Set(&zero, buffer, 0x85000c01, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, buffer, 0x84000080, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, (volatile u32 *)0x040000d4);
-    Unnamed_080f3078(0x10000, buffer, buffer->target, 0);
+    Graphics_TransformPaletteBuffer(0x10000, buffer->palette, buffer->target, 0);
     operation = 3200;
     Scheduler_AddOrUpdateCallback((s32)(TitlePalette_UpdateFade), operation);
 }
@@ -40,7 +40,7 @@ void Graphics_TransformLargePalette(s32 index, s32 transform)
     struct TitlePaletteWork *target = Data_03001ed0;
 
     if (target != NULL)
-        Unnamed_080f3078(index, target, target->target, transform);
+        Graphics_TransformPaletteBuffer(index, target->palette, target->target, transform);
 }
 
 void Graphics_TransformSmallPalette(s32 index, s32 transform)
@@ -48,7 +48,7 @@ void Graphics_TransformSmallPalette(s32 index, s32 transform)
     struct TitlePaletteWork *target = Data_03001ed0;
 
     if (target != NULL)
-        Unnamed_080f3078(index, target, target->current, transform);
+        Graphics_TransformPaletteBuffer(index, target, target->current, transform);
 }
 
 void Graphics_SetPaletteTransformValue(s32 value)

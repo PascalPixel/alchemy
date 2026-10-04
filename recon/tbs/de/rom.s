@@ -1926,10 +1926,10 @@ DisplayScroll_Font:
 Title_ShowIntro:
 	.incbin "baserom.gba", 0x000f3cec, 0x00000494
 	.section .rom.000f468c, "ax"
-	.global Unnamed_080f3078
-	.type Unnamed_080f3078, %function
+	.global Graphics_TransformPaletteBuffer
+	.type Graphics_TransformPaletteBuffer, %function
 	.thumb_func
-Unnamed_080f3078:
+Graphics_TransformPaletteBuffer:
 	.incbin "baserom.gba", 0x000f468c, 0x00000704
 	.section .rom.000f4ed0, "ax"
 	.incbin "baserom.gba", 0x000f4ed0, 0x00000730

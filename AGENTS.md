@@ -234,6 +234,7 @@ make progress          # the count, with one line per edition
 make deps              # dependency map: what unblocks the most
 make worst             # maintained C ranked by how mechanical it reads
 tools/out/cargo-target/release/alchemy diff DRAFT.c   # a draft against its listing
+tools/out/cargo-target/release/alchemy adopt ADDR LABEL NAME   # then out of the scaffolding
 make verify
 make land              # on main, before committing a landing
 ```

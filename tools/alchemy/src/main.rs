@@ -1,5 +1,6 @@
 use std::process::ExitCode;
 
+mod adopt;
 mod assembly {
     pub mod addresses;
 }
@@ -36,6 +37,7 @@ Build and verify:
   check       run repository contract checks
 Matching:
   diff        compare a C draft with the listing it would replace
+  adopt       take an adopted function out of every edition's scaffolding
   merge-driver  git merge drivers for scaffolds and linker scripts, and
               links, which reconciles linker scripts after a merge
 Reports for people (nothing else reads them):
@@ -58,6 +60,7 @@ fn main() -> ExitCode {
         "verify" => verify::entry(rest),
         "check" => check::entry(rest),
         "deps" => deps_command::entry(rest),
+        "adopt" => result(adopt::run(rest)),
         "diff" => result(diff::run(rest)),
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),

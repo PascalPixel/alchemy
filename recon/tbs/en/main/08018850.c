@@ -1,3 +1,13 @@
+/* 2026-10-04 finisher 6: EN dd score 50 (from 123; plain C without the
+ * gap barrier 118). Changes: the line-break and end paths store the count
+ * before the width, as the native does; the end path computes count, width
+ * and the outputs in native order; the rounding is two statements on width;
+ * the spacing loop indexes counts[i]; the gap subtracts 4 in its own
+ * statement. Remaining: width (native r7) and spacing (native r6) exchange
+ * registers, the frame-address setup order at entry (sp+24/sp+16), and the
+ * gap computation lands in r3 before r0. Declaration order has no effect;
+ * a gap pin to r7 fixes the exchange but breaks the gap code. Non-English
+ * editions are still unproved. Earlier notes follow. */
 /* 2026-10-04 main-8: EN 1310. Remaining: high registers swap pairwise (native
  * counts r8, widths r9, lines r10, jump table lr; here lines r8, table r9,
  * counts r10, widths lr). No single statement or declaration move and no
@@ -64,17 +74,15 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
     s32 gap;
     u32 style;
     u16 counts[4];
-    u32 tmp;
-    u32 tmp2;
 #if !EDITION_INTERNATIONAL
     s32 trailing;
 #endif
 
     work = (struct UiRenderWork *)gWindowWork[0];
     height = 15;
+    lines = 0;
     count = 0;
     width = 0;
-    lines = 0;
     line_width = 0;
 #if !EDITION_INTERNATIONAL
     trailing = 0;
@@ -133,14 +141,14 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 #else
             line_width += trailing;
 #endif
-            widths[lines] = line_width;
             counts[lines] = count;
+            widths[lines] = line_width;
             if (width < line_width)
                 width = line_width;
             if (lines < 3)
                 lines++;
-            line_width = 0;
             count = 0;
+            line_width = 0;
             height += 15;
             break;
         case 14:
@@ -159,38 +167,39 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
         }
     }
 done:
-#if !EDITION_INTERNATIONAL
+#if EDITION_INTERNATIONAL
+    count++;
+#else
     line_width += trailing;
 #endif
+    counts[lines] = count;
     widths[lines] = line_width;
-    if (width < (tmp = line_width))
+    if (width < line_width)
         width = line_width;
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
     if (work->mode)
         width = width + 2;
 #endif
     *out_width = width;
-#if EDITION_INTERNATIONAL
-    count++;
-#endif
-    counts[lines] = count;
-    tmp = (width + 19) >> 3;
-    tmp2 = (tmp << 3) - 16;
     *out_height = height;
-    width = tmp2;
+    width = (width + 19) >> 3;
+    width = (width << 3) - 16;
     if (spacing != NULL) {
         i = 0;
         while (i <= lines) {
-            if (*(counts + i) <= 1) {
+            if (counts[i] <= 1) {
                 *spacing = 0;
             } else {
-                gap = width - widths[i] - 4;
+                gap = width - widths[i];
+                gap -= 4;
                 if (gap < 0)
                     gap = 0;
-                gap = __divsi3(gap << 8, *(counts + i) - 1);
+                gap = __divsi3(gap << 8, counts[i] - 1);
 #if EDITION_INTERNATIONAL
                 if ((u32)gap > 0xc00)
                     gap = 0x200;
+                /* FAKEMATCH: keeps gap live in r0 through the clamp, as the native allocates it. */
+                __asm__("" : "+r"(gap));
 #else
                 if ((u32)gap > 0x800)
                     gap = 0;

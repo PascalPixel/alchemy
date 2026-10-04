@@ -514,54 +514,48 @@ s32 Scene_Initialize(void)
 
 void FieldScene_RunMiddleSequence(void)
 {
-    s32 scene;
-    s32 rec5;
-    s32 rec6;
-    s32 rec0;
+    struct FieldActor *leader;
     s32 kind;
 
-    scene = Object_GetById(0);
-    rec5 = GameFlag_IsSet(0x242);
-    if (rec5 != 0) {
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (GameFlag_IsSet(0x242) != 0) {
         Map_CopyCellsTo(64, 32, 0, 32, 32, 32);
         Map_CopyCellAttributes(64, 32, 32, 32, 0, 0);
         kind = 20;
     } else {
-        rec6 = GameFlag_IsSet(0x241);
-        if (rec6 != 0) {
+        if (GameFlag_IsSet(0x241) != 0) {
             Map_CopyCellsTo(64, 0, 0, 32, 32, 32);
             /* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-            Value6(Engine_MapCopyCellAttributes, 64, 0, 32, 32, rec5, rec5);
+            Value6(Engine_MapCopyCellAttributes, 64, 0, 32, 32, 0, 0);
             Engine_ActorDestroy(17);
             kind = 20;
         } else {
-            rec0 = GameFlag_IsSet(0x240);
-            if (rec0 == 0) {
-                goto L_020009b8;
+            if (GameFlag_IsSet(0x240) == 0) {
+                goto unchanged;
             }
             Map_CopyCellsTo(0, 64, 0, 32, 32, 32);
             /* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-            Value6(Engine_MapCopyCellAttributes, 0, 64, 32, 32, rec6, rec6);
+            Value6(Engine_MapCopyCellAttributes, 0, 64, 32, 32, 0, 0);
             Engine_ActorDestroy(16);
             kind = 17;
         }
     }
     Engine_ActorDestroy(kind);
     Engine_ActorDestroy(21);
-    goto L_020009da;
-L_020009b8:
-    Map_CopyCellAttributes(0, 32, 32, 32, rec0, rec0);
+    goto placed;
+unchanged:
+    Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
     Engine_ActorDestroy(15);
     Engine_ActorDestroy(16);
     Engine_ActorDestroy(17);
-L_020009da:
+placed:
     if (GameFlag_IsSet(0x8ff) != 0) {
         Engine_ActorDestroy(18);
     } else {
         BattleFx_SetQueuedSoundAndPlay(170);
         Actor_SetChildValue(18, 2);
         Engine_ActorSetAnimation(18, 3);
-        ((void (*)())Engine_TaskAddCallback)((s32)SceneEffect_SpawnDriftingParticle, 0xc80);
+        Engine_TaskAddCallback(SceneEffect_SpawnDriftingParticle, 0xc80);
     }
     if (gGameState.entrance == 3) {
         GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
@@ -570,46 +564,22 @@ L_020009da:
     if (GameFlag_IsSet(0x906) != 0) {
         Actor_SetPosition(19, 0x1680000, 0xa80000);
     }
-    Engine_ActorSetSpriteFlags((s32)Object_GetById(19), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
     Actor_SetChildValue(22, 15);
     Engine_ActorSetChildValue(23, 15);
     Actor_SetChildValue(24, 15);
-    {
-        u8 bits = 8;
-        u8 *flags = (u8 *)Object_GetById(22) + 89;
-        u8 value = *flags;
-
-        value |= bits;
-        *flags = value;
-        flags = (u8 *)Object_GetById(23) + 89;
-        value = *flags;
-        value |= bits;
-        *flags = value;
-        flags = (u8 *)Object_GetById(24) + 89;
-        bits |= *flags;
-        *flags = bits;
-    }
-    {
-        u8 bits = 2;
-        u8 *flags = (u8 *)Object_GetById(22) + 35;
-        u8 value = *flags;
-
-        value |= bits;
-        *flags = value;
-        flags = (u8 *)Object_GetById(23) + 35;
-        value = *flags;
-        value |= bits;
-        *flags = value;
-        flags = (u8 *)Object_GetById(24) + 35;
-        bits |= *flags;
-        *flags = bits;
-    }
+    Object_GetById(22)->collision_flags |= 8;
+    Object_GetById(23)->collision_flags |= 8;
+    Object_GetById(24)->collision_flags |= 8;
+    Object_GetById(22)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(23)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(24)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     Engine_ActorSetSpritePriority(22, 1);
     Engine_ActorSetSpritePriority(23, 1);
     Engine_ActorSetSpritePriority(24, 1);
     Engine_TaskWait(1);
     Engine_EventBegin();
-    Camera_MoveTo(*(s32 *)(scene + 8), *(s32 *)(scene + 12), *(s32 *)(scene + 16), 0);
+    Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
     Engine_MapRedraw();
     Engine_EventEnd();
     Engine_TaskWait(1);

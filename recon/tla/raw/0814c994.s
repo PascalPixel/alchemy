@@ -117,7 +117,7 @@ Func_0814c994:
 	b .L_0814cb46
 .L_0814cab0:
 	adds r0, r5, #0
-	bl Func_08164bf4
+	bl BattleFx_InitializeDefaultMode
 	b .L_0814cb46
 .L_0814cab8:
 	adds r0, r5, #0

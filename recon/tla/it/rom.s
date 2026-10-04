@@ -5547,7 +5547,13 @@ BattlePres_RunBurstScene:
 	.type Func_0815e320, %function
 	.thumb_func
 Func_0815e320:
-	.incbin "baserom.gba", 0x0015e320, 0x0000bef8
+	.incbin "baserom.gba", 0x0015e320, 0x000068d4
+	.section .rom.00164c0a, "ax"
+	.incbin "baserom.gba", 0x00164c0a, 0x00000002
+	.incbin "baserom.gba", 0x00164c0c, 0x000000b8
+	.global BattleEffect_RunParticleStreams
+BattleEffect_RunParticleStreams:
+	.incbin "baserom.gba", 0x00164cc4, 0x00005554
 	.section .rom.0016a29c, "ax"
 	.incbin "baserom.gba", 0x0016a29c, 0x00014778
 	.section .rom.0017ea58, "ax"

@@ -2,6 +2,8 @@
 #include "TYPES.H"
 #include "CALL.H"
 #include "FIELD_SERVICE.H"
+#include "FIELDOBJ.H"
+#include "ANIMSPR.H"
 
 extern u8 MsgHaidiaBigBoyWhy[];
 extern u8 MsgHaidiaKnowWayGo[];
@@ -1365,43 +1367,46 @@ void Scene_BoulderFalls(void)
     }
 }
 
-void OverlayObject_SetChildByte5AndMark(u8 *o, s32 n)
+/* Points every scripted layer of an animated actor at one frame mode:
+   mode - 1, or with mode 0 a mode taken from the frame count. The low four
+   bits of the active byte name the sprite kind; 1 is an animation object. */
+void Arashi_SetActorFrameMode(struct FieldActor *actor, s32 mode)
 {
-    if ((*(u8 *)(o + 0x54) & 15) == 1) {
-        u8 *c = *(u8 **)(o + 0x50);
-        s32 idx = n - 1;
-        u8 cnt;
-        if (n == 0) {
-            idx = HaidiaArashi_FrameModes[(gFrameCount >> 1) & (*(u8 *)(o + 0x54) & 15)];
+    if ((actor->active & 15) == 1) {
+        struct AnimationObject *animation = (struct AnimationObject *)actor->sprite;
+        s32 param = mode - 1;
+        u8 count;
+        if (mode == 0) {
+            param = HaidiaArashi_FrameModes[(gFrameCount >> 1) & (actor->active & 15)];
         }
-        cnt = *(u8 *)(c + 0x27);
-        if (cnt != 0) {
-            u8 **p = (u8 **)(c + 0x28);
-            s32 k = cnt;
+        count = animation->count;
+        if (count != 0) {
+            struct AnimationEntry **entries = animation->entries;
+            s32 k = count;
             do {
-                u8 *e = *p++;
-                if (e != 0 && *(s32 *)(e + 16) != 0) {
-                    *(u8 *)(e + 5) = idx;
+                struct AnimationEntry *entry = *entries++;
+                if (entry != NULL && entry->script != NULL) {
+                    entry->param = param;
                 }
                 k--;
             } while (k != 0);
         }
-        *(u8 *)(c + 0x25) = 1;
+        animation->dirty = 1;
     }
 }
 
 void ActorPresentation_SetFourActorsModeByBit(void)
 {
     if (((gFrameCount >> HaidiaArashi_ShakeShift) & 3) != 0) {
-        OverlayObject_SetChildByte5AndMark(Object_GetById(32), 1);
-        OverlayObject_SetChildByte5AndMark(Object_GetById(33), 1);
-        OverlayObject_SetChildByte5AndMark(Object_GetById(30), 1);
-        OverlayObject_SetChildByte5AndMark(Object_GetById(29), 1);
+        Arashi_SetActorFrameMode(Object_GetById(32), 1);
+        Arashi_SetActorFrameMode(Object_GetById(33), 1);
+        Arashi_SetActorFrameMode(Object_GetById(30), 1);
+        Arashi_SetActorFrameMode(Object_GetById(29), 1);
     } else {
-        OverlayObject_SetChildByte5AndMark(Object_GetById(32), 8);
-        OverlayObject_SetChildByte5AndMark(Object_GetById(33), 8);
-        OverlayObject_SetChildByte5AndMark(Object_GetById(30), 8);
-        OverlayObject_SetChildByte5AndMark(Object_GetById(29), 8);
+        Arashi_SetActorFrameMode(Object_GetById(32), 8);
+        Arashi_SetActorFrameMode(Object_GetById(33), 8);
+        Arashi_SetActorFrameMode(Object_GetById(30), 8);
+        Arashi_SetActorFrameMode(Object_GetById(29), 8);
     }
 }
 

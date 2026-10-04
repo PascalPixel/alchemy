@@ -189,7 +189,7 @@ void FieldScene_RunScene372SequenceB(void);
 void FieldScene_RunActor22SceneWhenFlag836Only(void);
 void FieldScene_RunScene372SequenceD(void);
 void Scene_BoulderFalls(void);
-void OverlayObject_SetChildByte5AndMark(u8 *o, s32 n);
+void Arashi_SetActorFrameMode(struct FieldActor *actor, s32 mode);
 void ActorPresentation_SetFourActorsModeByBit(void);
 void SceneDialogue_RunActorTenFlag30dDialogue(void);
 void HaidiaArashi_FlashLightning(void);

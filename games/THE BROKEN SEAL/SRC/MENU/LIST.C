@@ -93,7 +93,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         spr = &sprites[i];
         /* FAKEMATCH: the block that runs once keeps y = i * 2 first. */
         do {
-            sprites[i].oam.word.attr01 = 0x40000000;
+            sprites[i].oam.word.attr01 = MENU_SPRITE_SIZE_16;
             sprites[i].oam.word.attr23 = 0;
         } while (0);
         spr->oam.f.x = window->x * 8 + 8;
@@ -165,7 +165,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                         entry & ACTION_ID_MASK, 0, &handles[i], &glyph, 1);
                     sprites[i].oam.f.tile = glyph;
 
-                    if ((action->target_flags & 0x80) == 0) {
+                    if ((action->target_flags & ACTION_USABLE_IN_BATTLE) == 0) {
                         UiWork_SetParamNibble(4);
                     } else if (action->pp_cost > unit->pp) {
                         UiWork_SetParamNibble(2);
@@ -275,7 +275,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         if ((gKeyState & KEY_A) != 0) {
             if (count != 0) {
                 result = page + row;
-                if ((Ability_GetData(actions[result])->target_flags & 0x80) != 0) {
+                if ((Ability_GetData(actions[result])->target_flags & ACTION_USABLE_IN_BATTLE) != 0) {
                     break;
                 }
                 /* FAKEMATCH: a dead store here keeps the test above from

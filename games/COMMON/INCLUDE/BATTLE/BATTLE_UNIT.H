@@ -36,6 +36,13 @@ struct BattleAction {
     u8 unknown_0d[3];
 };
 
+/* Where an action's target_flags let it be used, as the ability menu's
+   usable-in-field and usable-in-battle notes read them. */
+enum BattleActionUse {
+    ACTION_USABLE_IN_FIELD = 0x40,
+    ACTION_USABLE_IN_BATTLE = 0x80
+};
+
 /*
  * Live combatant record returned by Runtime_GetObject.  Only fields established
  * by multiple battle owners are named.  The unresolved condition bytes keep

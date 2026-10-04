@@ -207,40 +207,38 @@ void FieldScene_RunInitBracketThenSequence(void)
 s32 FieldScene_RunPrimarySequence(s32 a0)
 {
 
-    s32 box[3];
-    u8 *rec;
-    u8 *flag;
-    u8 *slot;
+    union FieldCoordinate to[3];
+    struct FieldActor *leader;
+    u8 *flags;
     s32 saved;
 
-    rec = (u8 *)Object_GetById(ACTOR_PARTY_LEADER);
-    flag = rec + 85;
-    saved = *flag;
-    slot = (u8 *)box;
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    flags = &leader->motion_flags;
+    saved = *flags;
 #if EDITION_INTERNATIONAL
-    *(s32 *)(slot + 0) = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
-    *(s32 *)(slot + 4) = *(s32 *)(rec + 12);
-    *(s32 *)(slot + 8) = (*(s32 *)(rec + 16) & -0x100000) + 0x280000;
+    to[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
+    to[1].fixed = leader->y.fixed;
+    to[2].fixed = (leader->z.fixed & -0x100000) + 0x280000;
 #else
-    *(s32 *)(slot + 0) = *(s32 *)(rec + 8);
-    *(s32 *)(slot + 4) = *(s32 *)(rec + 12);
-    *(s32 *)(slot + 8) = *(s32 *)(rec + 16) + 0x200000;
+    to[0].fixed = leader->x.fixed;
+    to[1].fixed = leader->y.fixed;
+    to[2].fixed = leader->z.fixed + 0x200000;
 #endif
-    if (Object_CheckMovementCollision((s32)rec, (s32)slot) == 0) {
+    if (Object_CheckMovementCollision(leader, to) == 0) {
         Engine_EventBegin();
-        Object_SetMode((s32)rec, 6);
+        Object_SetMode(leader, 6);
         WaitFrames(6);
         Engine_AudioPlayCue(152);
-        Object_SetMode((s32)rec, 7);
-        *(s32 *)(rec + 48) = 0x30000;
-        *(s32 *)(rec + 52) = 0x20000;
-        *(s32 *)(rec + 40) = 0x40000;
-        *flag = *flag & 126;
-        Engine_ActorSetSpriteFlags((s32)rec, 0);
-        Engine_ActorMoveToAndWait(0, *(s16 *)(slot + 2), *(s16 *)(slot + 10));
-        Object_SetMode((s32)rec, 6);
-        Engine_ActorSetSpriteFlags((s32)rec, 1);
-        *flag = (u8)saved;
+        Object_SetMode(leader, 7);
+        leader->speed = 0x30000;
+        leader->acceleration = 0x20000;
+        leader->velocity_y = 0x40000;
+        *flags &= 126;
+        Engine_ActorSetSpriteFlags(leader, 0);
+        Engine_ActorMoveToAndWait(0, to[0].part.pixel, to[2].part.pixel);
+        Object_SetMode(leader, 6);
+        Engine_ActorSetSpriteFlags(leader, 1);
+        *flags = saved;
         Engine_EventEnd();
         return 1;
     }

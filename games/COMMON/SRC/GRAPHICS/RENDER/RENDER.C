@@ -3,6 +3,7 @@
 #include "TYPES.H"
 #include "TRANSFORM.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 /* Lost Age source currently covers rewind, push and the two matrix copies.
    Its reset, pop and identity helpers remain raw until their C matches.
@@ -45,7 +46,7 @@ void Render_ResetTransformState(void)
 void Graphics_SaveTransferWorkOnce(void)
 {
     if (gTransformStackDepth <= 0) {
-        Dma_Set(gTransform, gTransformStackTop, 0x8400000c, (volatile u32 *)0x040000d4);
+        Dma_Set(gTransform, gTransformStackTop, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
         gTransformStackDepth++;
         gTransformStackTop += 48;
     }
@@ -53,12 +54,12 @@ void Graphics_SaveTransferWorkOnce(void)
 
 void Graphics_SaveTransferWork(void *destination)
 {
-    Dma_Set(gTransform, destination, 0x8400000c, (volatile u32 *)0x040000d4);
+    Dma_Set(gTransform, destination, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
 }
 
 void Graphics_LoadTransferWork(const void *source)
 {
-    Dma_Set(source, gTransform, 0x8400000c, (volatile u32 *)0x040000d4);
+    Dma_Set(source, gTransform, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
 }
 
 #if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
@@ -69,7 +70,7 @@ void Graphics_RestoreTransferWork(void)
     if (gTransformStackDepth > 0) {
         --gTransformStackDepth;
         gTransformStackTop -= 48;
-        Dma_Set(gTransformStackTop, gTransform, 0x8400000c, (volatile u32 *)0x040000d4);
+        Dma_Set(gTransformStackTop, gTransform, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
     }
 }
 
@@ -261,7 +262,7 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
     u32 (*divide)(u32 dividend, u32 divisor);
 
     dot = (Dot3Fn)code;
-    Dma_Set(RelocatedQ16DotProduct, code, 0x84000007, (volatile u32 *)0x040000d4);
+    Dma_Set(RelocatedQ16DotProduct, code, DMA_ENABLE32 | DMA_32BIT | 7, REG_DMA3);
     dx = target[0] - eye[0];
     dy = target[1] - eye[1];
     dz = target[2] - eye[2];

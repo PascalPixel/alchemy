@@ -20,7 +20,7 @@ extern ScriptCommandFn ScriptObject_CommandTable[];
 extern const s32 ScriptObject_CycleTable[];
 extern struct ScriptMotionObject *gObjectSlots;
 
-s32 Func_08011f54(s32, s32, s32);
+s32 Map_GetTerrainHeight(s32, s32, s32);
 s32 FixedSqrt(s32);
 s32 ArcTan2(s32, s32);
 
@@ -196,7 +196,7 @@ void Object_UpdateAllThumb(void)
                 if ((obj->motion_flags & 1) != 0) {
                     vx = px + obj->velocity_x;
                     vz = pz + obj->velocity_z;
-                    ground = Func_08011f54((s32)obj->terrain_id, vx, vz);
+                    ground = Map_GetTerrainHeight((s32)obj->terrain_id, vx, vz);
                     vy = ground - obj->terrain_height;
                     if (ground - py > -0x40000)
                         py += vy;

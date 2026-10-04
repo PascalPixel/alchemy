@@ -32,6 +32,8 @@ enum DisplayControl {
 #define REG_BG1VOFS (*(volatile u16 *)0x04000016)
 #define REG_BG2HOFS (*(volatile u16 *)0x04000018)
 #define REG_BG2VOFS (*(volatile u16 *)0x0400001a)
+#define REG_BG3HOFS (*(volatile u16 *)0x0400001c)
+#define REG_BG3VOFS (*(volatile u16 *)0x0400001e)
 
 #define REG_BG2PA (*(volatile u16 *)0x04000020)
 #define REG_BG2PB (*(volatile u16 *)0x04000022)
@@ -49,6 +51,7 @@ enum DisplayControl {
 #define REG_MOSAIC (*(volatile u16 *)0x0400004c)
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
+#define REG_BLDY (*(volatile u16 *)0x04000054)
 
 /* BG2's screen block in the canvas layout. */
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)

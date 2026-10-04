@@ -21,7 +21,7 @@ struct StepOwner {
     u8 unknown_000[0x38];
     s16 hp;                         /* 0x038 */
     u8 unknown_03a[0x131 - 0x3a];
-    u8 unknown_131;                 /* 0x131 */
+    u8 poison;                      /* 0x131 */
 };
 
 enum StepTileEvent {
@@ -290,12 +290,12 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             else
                 gGameState.hazard_steps = gGameState.hazard_limit / 2;
         }
-        if (gGameState.unknown_244 != 0 && gGameState.unknown_23e != 2) {
-            gGameState.unknown_244 -= actor->speed_limit;
-            if (gGameState.unknown_244 <= 0) {
-                gGameState.unknown_244 = 1;
-                if (work->unknown_17e == 0)
-                    work->unknown_17e = 0x2096;
+        if (gGameState.avoid_distance != 0 && gGameState.unknown_23e != 2) {
+            gGameState.avoid_distance -= actor->speed_limit;
+            if (gGameState.avoid_distance <= 0) {
+                gGameState.avoid_distance = 1;
+                if (work->psynergy_request == 0)
+                    work->psynergy_request = 0x2096;
             }
         }
     }
@@ -325,8 +325,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
                 work->standing_count++;
             } else if (hp[i] != 0) {
                 work->fallen[work->fallen_count++] = gGameState.active_owners[i];
-                work->unknown_182 = 0xffff;
-                owner->unknown_131 = 0;
+                work->raised_trigger = 0xffff;
+                owner->poison = 0;
             }
         }
     }

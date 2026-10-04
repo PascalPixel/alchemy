@@ -109,7 +109,8 @@ struct GameState {
     /* Where Retreat returns the party. */
     s16 retreat_scene;
     s16 retreat_entrance;
-    s32 unknown_244;
+    /* How far the party may still walk before Avoid wears off. */
+    s32 avoid_distance;
     u8 unknown_248[2];
     /* The battle object an effect paused, resumed when the next one runs;
        -1 when none is. */
@@ -138,7 +139,7 @@ LAYOUT_SIZE_GUARD(GameState_Size, struct GameState, 0xd20);
 LAYOUT_OFFSET_GUARD(GameState_WonPrizes, struct GameState, won_prizes, 0x12c);
 LAYOUT_OFFSET_GUARD(GameState_SceneGroup, struct GameState, scene_group, 0x1cc);
 LAYOUT_OFFSET_GUARD(GameState_DashKeys, struct GameState, dash_keys, 0x21c);
-LAYOUT_OFFSET_GUARD(GameState_Unknown244, struct GameState, unknown_244, 0x244);
+LAYOUT_OFFSET_GUARD(GameState_AvoidDistance, struct GameState, avoid_distance, 0x244);
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
 LAYOUT_OFFSET_GUARD(GameState_Special, struct GameState, special, 0x1d6);
 LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);

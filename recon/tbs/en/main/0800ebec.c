@@ -74,8 +74,8 @@ extern volatile u8 gDebugMode;
 extern u8 ResourceBlockOwners[];
 extern volatile u32 gKeysHeld;
 extern struct PlayerState gGameState;
-extern s16 Data_08013254[];
-extern s16 Data_08013274[];
+extern s16 WorldMap_KeyHeadings[];
+extern s16 WorldMap_FootprintActions[];
 extern struct FieldActor *gObjectSlots;
 extern u16 *gEventWork;
 extern struct CameraState *gMapWork;
@@ -177,7 +177,7 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
         actor->accel = 0x10000;
         mode = 5;
     }
-    angle = Data_08013254[(gKeysHeld >> 4) & 15];
+    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
     if ((u16)angle == 0xffff) {
         blocked |= 4;
         goto tail;
@@ -384,7 +384,7 @@ tail:
             u16 flip;
             print->pos[3] = actor->pos[3];
             sprite = print->sprite;
-            ObjectDispatch_Initialize(print, Data_08013274);
+            ObjectDispatch_Initialize(print, WorldMap_FootprintActions);
             print->kind = 2;
             print->blocked = blocked;
             if (sprite != 0) {

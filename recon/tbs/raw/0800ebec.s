@@ -275,7 +275,7 @@ FieldObject_UpdatePlayerControl:
 .L_0800ee00:
 	.4byte 0x0000017f
 .L_0800ee04:
-	.4byte Data_08013254
+	.4byte WorldMap_KeyHeadings
 .L_0800ee08:
 	.4byte 0x0000ffff
 .L_0800ee0c:
@@ -871,7 +871,7 @@ FieldObject_UpdatePlayerControl:
 .L_0800f2b8:
 	.4byte gMapWork
 .L_0800f2bc:
-	.4byte Data_08013274
+	.4byte WorldMap_FootprintActions
 .L_0800f2c0:
 	movs r3, #18
 	mov r1, r10

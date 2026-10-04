@@ -863,93 +863,75 @@ void SoruSekizo_CheckTileTrigger016A4(void)
 
 void SoruSekizo_RunStatueDropScene(void)
 {
-    u32 i;
-    u8 *rec8;
-    s32 record;
-    u8 *p5;
-    s32 zero;
+    struct FieldActor *statue;
+    struct FieldActor *leader;
+    s32 z;
 
-    rec8 = (u8 *)Object_GetById(17);
+    statue = Object_GetById(17);
     Call4(SetMapCellCollision, 2, 0x1100000, 0x800000, 0);
     Call4(SetMapCellCollision, 2, 0x1200000, 0x800000, 0);
-    if ((s32)rec8 == 0) {
-    } else {
-        p5 = *(s32 *)((s32)rec8 + 16);
+    if (statue != NULL) {
+        z = statue->z.fixed;
         Engine_EventBegin();
-        if (((s32)p5 >> 20) != 8) {
-        } else {
+        if ((z >> 20) == 8) {
             if (Engine_GameFlagIsSet(0x207) == 0) {
-                record = (u8 *)Object_GetById(0);
-                if ((u32)(*(s32 *)(record + 16) >> 19) <= 17) {
+                leader = Object_GetById(0);
+                if ((u32)(leader->z.fixed >> 19) <= 17) {
                     Call3(Engine_ActorWalkToAndWait, 0, 0x121, 158);
-                    record = (u8 *)Object_GetById(0);
-                    {
-                        s32 shown = 0xc000;
-                    
-                        *(u16 *)(record + 6) = shown;
-                    }
+                    leader = Object_GetById(0);
+                    leader->facing = FACING_NORTH;
                 }
             }
-            if (Engine_GameFlagIsSet(0x816) == 0) {
-            } else {
-                if (Engine_GameFlagIsSet(0x817) == 0) {
-                } else {
-                    Engine_GameFlagSet(0x818);
-                    Call2(Engine_CameraSetSpeed, 0x20000, 0x4000);
-                    Call4(Engine_CameraMoveTo, 0x11e0000, -1, 0x920000, 1);
-                    Engine_CameraWaitForMove();
-                    *(u8 *)((u8 *)Object_GetById(17) + 90) &= 254;
-                    Call3(Engine_ActorSetSpeed, 17, 0x30000, 0x10000);
-                    zero = 0;
-                    rec8[85] = zero;
-                    Engine_ActorSetSpritePriority(17, 3);
-                    Engine_AudioPlayCue(189);
-                    Engine_ActorSetDestination(17, 0x120, 178);
-                    Engine_EventWait(8);
-                    Call3(Engine_ActorSetPosition, 18, 0x1200000, 0xb20000);
-                    *(s32 *)((s32)rec8 + 56) = -0x80000000;
-                    *(s32 *)((s32)rec8 + 60) = -0x80000000;
-                    *(s32 *)((s32)rec8 + 64) = -0x80000000;
-                    *(s32 *)((s32)rec8 + 8) = zero;
-                    *(s32 *)((s32)rec8 + 12) = zero;
-                    *(s32 *)((s32)rec8 + 16) = zero;
-                    *(s32 *)((s32)rec8 + 36) = zero;
-                    *(s32 *)((s32)rec8 + 40) = zero;
-                    *(s32 *)((s32)rec8 + 44) = zero;
-                    Engine_ActorSetPosition(17, 0, 0);
-                    Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
-                    Engine_EventWait(10);
-                    Engine_AudioPlayCue(141);
-                    Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
-                    Engine_EventWait(10);
-                    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
-                    Engine_EventWait(35);
-                    Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
-                    Engine_EventWait(20);
-                    Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
-                    Engine_EventWait(30);
-                    Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x20000, 0x10000);
-                    Engine_EventWait(40);
-                    Engine_AudioPlayCue(0x121);
-                    Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
-                    Engine_EventWait(10);
-                    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
-                    Engine_EventWait(60);
-                    Engine_AudioPlayCue(188);
-                    if (Engine_GameFlagIsSet(0x80b) != 0) {
-                        if (Engine_GameFlagIsSet(0x80c) != 0) {
-                            if (Engine_GameFlagIsSet(0x80d) != 0) {
-                                if (Engine_GameFlagIsSet(0x80e) != 0) {
-                                    Engine_GameFlagSet(0x80f);
-                                }
-                            }
-                        }
-                    }
-                    Engine_EventWait(40);
-                    Engine_MessageShowCentered((s32)MsgSoruSomethingClicked, 1);
-                    Engine_MapCopyCellAttributes(0, 1, 2, 1, 17, 8);
-                    Engine_MapCopyCellAttributes(17, 9, 2, 1, 17, 7);
+            if (Engine_GameFlagIsSet(0x816) != 0 && Engine_GameFlagIsSet(0x817) != 0) {
+                Engine_GameFlagSet(0x818);
+                Call2(Engine_CameraSetSpeed, 0x20000, 0x4000);
+                Call4(Engine_CameraMoveTo, 0x11e0000, -1, 0x920000, 1);
+                Engine_CameraWaitForMove();
+                Object_GetById(17)->unknown_5a &= ~1;
+                Call3(Engine_ActorSetSpeed, 17, 0x30000, 0x10000);
+                statue->motion_flags = 0;
+                Engine_ActorSetSpritePriority(17, 3);
+                Engine_AudioPlayCue(189);
+                Engine_ActorSetDestination(17, 0x120, 178);
+                Engine_EventWait(8);
+                Call3(Engine_ActorSetPosition, 18, 0x1200000, 0xb20000);
+                statue->target_x = ACTOR_NO_TARGET;
+                statue->target_y = ACTOR_NO_TARGET;
+                statue->target_z = ACTOR_NO_TARGET;
+                statue->x.fixed = 0;
+                statue->y.fixed = 0;
+                statue->z.fixed = 0;
+                statue->velocity_x = 0;
+                statue->velocity_y = 0;
+                statue->velocity_z = 0;
+                Engine_ActorSetPosition(17, 0, 0);
+                Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
+                Engine_EventWait(10);
+                Engine_AudioPlayCue(141);
+                Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
+                Engine_EventWait(10);
+                Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+                Engine_EventWait(35);
+                Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
+                Engine_EventWait(20);
+                Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
+                Engine_EventWait(30);
+                Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x20000, 0x10000);
+                Engine_EventWait(40);
+                Engine_AudioPlayCue(0x121);
+                Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
+                Engine_EventWait(10);
+                Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+                Engine_EventWait(60);
+                Engine_AudioPlayCue(188);
+                if (Engine_GameFlagIsSet(0x80b) != 0 && Engine_GameFlagIsSet(0x80c) != 0
+                    && Engine_GameFlagIsSet(0x80d) != 0 && Engine_GameFlagIsSet(0x80e) != 0) {
+                    Engine_GameFlagSet(0x80f);
                 }
+                Engine_EventWait(40);
+                Engine_MessageShowCentered((s32)MsgSoruSomethingClicked, 1);
+                Engine_MapCopyCellAttributes(0, 1, 2, 1, 17, 8);
+                Engine_MapCopyCellAttributes(17, 9, 2, 1, 17, 7);
             }
         }
         Engine_EventEnd();

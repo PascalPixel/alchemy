@@ -41,6 +41,12 @@ enum DisplayControl {
 #define REG_BG2PD (*(volatile u16 *)0x04000026)
 #define REG_BG2X (*(volatile s32 *)0x04000028)
 #define REG_BG2Y (*(volatile s32 *)0x0400002c)
+#define REG_BG3PA (*(volatile u16 *)0x04000030)
+#define REG_BG3PB (*(volatile u16 *)0x04000032)
+#define REG_BG3PC (*(volatile u16 *)0x04000034)
+#define REG_BG3PD (*(volatile u16 *)0x04000036)
+#define REG_BG3X (*(volatile s32 *)0x04000038)
+#define REG_BG3Y (*(volatile s32 *)0x0400003c)
 
 #define REG_WIN0H (*(volatile u16 *)0x04000040)
 #define REG_WIN1H (*(volatile u16 *)0x04000042)

@@ -6,7 +6,8 @@
 #include "FIELD_SCENE.H"
 
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
-extern u8 gKeysHeld[];
+#include "IO_REG.H"
+#include "KEYSTATE.H"
 
 extern u8 gColossoHexChars[];
 

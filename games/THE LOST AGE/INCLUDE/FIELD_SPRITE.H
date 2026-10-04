@@ -9,7 +9,10 @@ struct FieldSprite {
     u8 unknown_09 : 2;
     u8 priority : 2;
     u8 unknown_09_high : 4;
-    u8 unknown_0a[8];
+    u8 unknown_0a[6];
+    /* The VRAM block that holds the sprite's frames. */
+    u8 vram_block;
+    u8 unknown_11;
     /* The sprite's angle, in 0x10000ths of a turn. */
     u16 rotation;
     u8 unknown_14[6];

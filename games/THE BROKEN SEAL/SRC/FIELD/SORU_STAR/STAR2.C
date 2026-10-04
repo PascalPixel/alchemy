@@ -3,6 +3,7 @@
 #include "CALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "GLYPH.H"
 
 extern u8 MsgSoruAlexOnlyOneLeft[];
 extern u8 MsgSoruGarciaSilence[];
@@ -970,53 +971,46 @@ void Event_SayThenWait(s32 speaker, s32 frames)
 
 /* Presenting an item: its icon rises over the scene while the party member
    holding item 224 exchanges it for the presented item. */
-s32 Scene_PresentItem(s32 item)
+s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
 {
-    register u8 *buf asm("r8"); /* FAKEMATCH: pins the buffer to r8 */
-    u8 *obj;
+    register GlyphTransfer *glyph asm("r8"); /* FAKEMATCH: pins the glyph buffer to r8 */
+    struct FieldActor *actor;
+    struct FieldSprite *sprite;
+    u8 *flags;
     s32 owner;
     s32 slot;
-    u8 *sprite;
-    u8 *p;
-    s32 mask;
 
     {
         register s32 zero asm("r0"); /* FAKEMATCH: builds the zero in r0 */
 
         asm("mov %0, #0" : "=l"(zero)); /* FAKEMATCH: the zero is not a reloadable constant */
-        buf = (u8 *)zero;
+        glyph = (GlyphTransfer *)zero;
     }
-    obj = ((u8 * (*)(s32))Engine_ObjectCreate)(22);
+    actor = Engine_ObjectCreate(22, x, y, z);
     owner = PartyInventory_FindOwner(224);
     slot = Inventory_Find(owner, 224);
-
-    if (obj == 0) {
+    if (actor == NULL)
         return owner;
-    }
-    {
-        ((void (*)(u8 *, const s32 *))Engine_ObjectSetScript)(obj, SoruStar_PresentItemScript);
-        sprite = *(u8 **)(obj + 80);
-        p = sprite + 38;
-        *p = (u32)buf;
-        p++;
-        *p = (u32)buf;
-        mask = 33;
-        mask = -mask;
-        sprite[5] &= mask;
-        sprite[9] &= 0xf;
-        *(s32 *)(obj + 40) = 163840;
-        *(s32 *)(obj + 72) = 16384;
-        buf = (u8 *)Engine_HeapAllocate(17, 1544);
-        Engine_ItemLoadIcon(item);
-        Engine_VramLoad(sprite[28], 128, buf + 1024);
-        Engine_HeapRelease(17);
-        Engine_AudioPlayCue(83);
-        ((void (*)(u8 *, s32))Engine_RunRisingObjectSequence)(obj, 3);
-        ((s32 (*)(s32, s32))Inventory_Discard)(owner, slot);
-        Inventory_AddItem(owner, item);
-        ((void (*)(u8 *))Engine_ObjectDispatchRelease)(obj);
-        Engine_ActorSetAnimation(0, 1);
-    }
+    Engine_ObjectSetScript(actor, SoruStar_PresentItemScript);
+    sprite = actor->sprite;
+    /* FAKEMATCH: stepping one pointer over the two bytes keeps their address in r3. */
+    flags = &sprite->flags;
+    *flags++ = (u32)glyph;
+    *flags = (u32)glyph;
+    sprite->full_color = 0;
+    sprite->palette = 0;
+    actor->velocity_y = 0x28000;
+    actor->gravity = 0x4000;
+    glyph = Engine_HeapAllocate(17, sizeof(*glyph));
+    Engine_ItemLoadIcon(item);
+    Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
+    Engine_HeapRelease(17);
+    Engine_AudioPlayCue(83);
+    Engine_RunRisingObjectSequence(actor, 3);
+    Inventory_Discard(owner, slot);
+    Inventory_AddItem(owner, item);
+    Engine_ObjectDispatchRelease(actor);
+    Engine_ActorSetAnimation(0, 1);
     return owner;
 }
 

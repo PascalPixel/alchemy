@@ -66,7 +66,7 @@ union MotionWork {
 extern s32 Inventory_Count(s32 arg0);                         /* 0x02004352 -> 08077248 */
 extern s32 Inventory_Count(s32 arg0);                         /* 0x0200435c -> 08077248 */
 extern s32 Shop_PickUnitItem(s32 *out_first, s32 *out_second);  /* 0x02004372 -> 080b0058 */
-extern void Inventory_Discard(s32 arg0, s32 arg1);              /* 0x02004382 -> 080772b0 */
+s32 Inventory_Discard(s32 owner, s32 slot);
 extern void PartyInventory_Add(s32 arg0);                        /* 0x0200438a -> 08077030 */
 extern void PartyInventory_Add(s32 arg0);                        /* 0x02004390 -> 08077030 */
 extern void PartyInventory_Add(s32 arg0);                        /* 0x02004396 -> 08077030 */
@@ -76,7 +76,7 @@ s32 CalculateAngleFromCoordinateDelta(s32, s32);
 void Scene_UnmaskGarcia(void);
 void Scene_BagJupiterStar(void);
 void UiWork_PushValueSlotFar();
-s32 Scene_PresentItem();
+s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
 void SoruStar_LineUpFollowers(void);
 void Party_RemoveOwnerRestored();
 void PartyInventory_Discard();

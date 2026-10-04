@@ -77,6 +77,7 @@ have_work:
 
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "GLOBAL_CELLS.H"
 
 s32 UiWork_IsComplete(void);
 void UiText_ShowMessageAndWaitCore(s32 argument)
@@ -90,4 +91,28 @@ check:
         goto again;
     }
     WaitFrames(1);
+}
+
+s32 UiText_BuildRenderEntries(s32, s32);
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
+
+s32 UiText_OpenEntryMessage(s32 window, s32 argument)
+{
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    s32 entry;
+    s32 result = 0;
+    /* FAKEMATCH: four unread render entry slots, the native frame's eight extra bytes. */
+    u16 entries[4];
+
+    work->result[0] = 0;
+    work->result[1] = 0;
+    entry = UiText_BuildRenderEntries(argument, 1);
+    if (work->entries[entry] == 0)
+        return 0;
+    if (window == 0)
+        return 0;
+    result = (s32)UiText_QueueRenderEntries((struct UiWindow *)window, entry, 0, 0, 0, 1);
+    if (result == 0)
+        return 0;
+    return result;
 }

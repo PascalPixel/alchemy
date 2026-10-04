@@ -252,15 +252,6 @@ Tile_BuildMetatilesEnd:
 	.thumb_func
 UiWork_StepChannelScript:
 	.incbin "baserom.gba", 0x000155d0, 0x000005fc
-	.section .rom.00016260, "ax"
-	.balign 4
-	.global UiText_OpenEntryMessage
-	.type UiText_OpenEntryMessage, %function
-	.thumb_func
-UiText_OpenEntryMessage:
-	.incbin "baserom.gba", 0x00016260, 0x00000060
-	.size UiText_OpenEntryMessage, .-UiText_OpenEntryMessage
-@ Uncredited frame audit; see the English BattleFx_InitializeStarField draft.
 	.section .rom.00016c56, "ax"
 	.incbin "baserom.gba", 0x00016c56, 0x00000002
 	.section .rom.00016c58, "ax"

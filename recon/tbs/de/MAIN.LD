@@ -220,7 +220,6 @@ iwram :
     "*/games/COMMON/SRC/GRAPHICS/RENDER/IS_COMPLETE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_COUNTERS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/MESSAGE.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00016260)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/TEXT4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_GLYPH_PAIR.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/GET_WIDE_STRING_WIDTH.o"(.text)

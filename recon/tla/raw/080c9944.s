@@ -338,7 +338,7 @@ Game_ResetForNewGame:
 	adds r3, r3, r1
 	strh r2, [r3]
 	movs r0, #0
-	bl Func_080c9c10
+	bl BattleFx_LoadResourceGroup
 	adds r0, r6, #0
 	bl Func_080cb91c
 	bl Func_080c9694

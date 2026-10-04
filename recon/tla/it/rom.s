@@ -3482,7 +3482,9 @@ Func_080c8940:
 	.type Game_ResetForNewGame, %function
 	.thumb_func
 Game_ResetForNewGame:
-	.incbin "baserom.gba", 0x000c9944, 0x00000484
+	.incbin "baserom.gba", 0x000c9944, 0x000002cc
+	.section .rom.000c9c38, "ax"
+	.incbin "baserom.gba", 0x000c9c38, 0x00000190
 	.section .rom.000c9dc8, "ax"
 	.global Audio_PlayPartyCue
 	.type Audio_PlayPartyCue, %function

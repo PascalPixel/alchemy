@@ -1103,7 +1103,7 @@
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.o"(.text)
         "*/recon/tla/raw/080c9934.o"(.text)
         "*/recon/tla/raw/080c9944.o"(.text)
-        "*/recon/tla/raw/080c9c10.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOAD_RESOURCE_GROUP.o"(.text)
         "*/recon/tla/raw/080c9c38.o"(.text)
         "*/recon/tla/raw/080c9dc8.o"(.text)
         "*/recon/tla/raw/080c9de0.o"(.text)

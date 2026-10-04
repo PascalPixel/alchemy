@@ -738,6 +738,8 @@
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000d6934)
     "*/recon/tla/de/rom.o"(.rom.000d6944)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOAD_RESOURCE_GROUP.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.000d6c38)
     "*/recon/tla/de/rom.o"(.rom.000d6dc8)
     "*/recon/tla/de/rom.o"(.rom.000d6f2c)
     "*/recon/tla/de/rom.o"(.rom.000d6fd8)

@@ -1,14 +1,32 @@
-/* NONMATCHING: the spring game, 680 bytes; 159 of 282 lines differ (English).
- * A fresh plain rewrite. What it settles: the prompt is a real loop left only by goto,
- * so the -1 of the choice test is not carried into the later prompts (cse does not
- * follow a jump past a loop end); the key wait is a for (;;) whose two tests each
- * break, which expand_end_loop rolls to the bottom and loop.c lifts the A-button
- * block out of; the weight sum reads bytes from the state pointer and the draw reads
- * the signed array one byte in, indexed from 284.
- * Remaining: loop.c lifts the coin text out of the prompt loop here (life 13 against
- * a threshold of 14 per insn) where the English reference loads it inside the loop and
- * the Japanese one before it; choice and message then trade r9/r10, coins and tickets
- * r7/r8; the sum loop counts down; state + 1 is kept across the prize call. */
+/* NONMATCHING: the spring game, 680 bytes; alchemy diff 111 (was 157).
+ * 2026-10-04 sun w3 finisher 1: the prompt is a goto loop (prompt: ... goto
+ * prompt), not a for (;;). That is what places the A-button block where the
+ * English reference has it: loop.c lifts that exit block out of the key loop to
+ * the nearest barrier before its target at the outer level, and only a goto loop
+ * leaves the prompt's back-jump barrier outside any loop (a for (;;) keeps it
+ * inside the loop notes, so the block went after the choice-0 jump instead). With
+ * the goto loop, choice/message take r10/r9 and coins/tickets r8/r7 as in the
+ * reference, and the coin text loads inside the loop; the choice-0 retry has its
+ * own SetMessage/ShowMessage/Wait/goto tail (crossjumping shares the call as the
+ * reference does). The prize and coin tables are not const (the reference reloads
+ * the coin table entry after the call), and the weight sum reads a u8 then casts
+ * (ldrb and shifts, not ldrsb).
+ * Remaining (111):
+ *  - the -1 constants: here cse keeps the choice test's -1 in a pseudo and reuses
+ *    it for the later Event_ShowMessage/Event_OpenMessage(-1, 0) (and the result
+ *    test's -1 for Party_AdjustSixDigitCounterA(-1)); the reference materialises a
+ *    fresh -1 at every use and the compare's in r3. A switch on choice (case -1, 0,
+ *    1) avoids the carry but emits a balanced decision tree (0 first), and an
+ *    if (choice == -1) before a switch carries again;
+ *  - the sum loop: the reference keeps i counting up against a copy of the
+ *    count in ip and does not fold the entry test (cmp i, n with i = 0); here
+ *    loop.c reverses it and cse folds the entry test to n <= 0;
+ *  - text + 1 (both windows): the reference adds 1 at the use (adds r0, r5, #1),
+ *    here the text register itself is incremented before the call;
+ *  - state + 1 kept across the prize call for the halving (the reference
+ *    recomputes fp + 1); the roll loop index r5 against r6.
+ * Earlier: a for (;;) prompt scored 157 (A block misplaced, r9/r10 and r7/r8
+ * swapped, text hoisted). */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "EDITION.H"
@@ -23,8 +41,8 @@ extern u8 MsgTorebiThrow[];
 extern u8 MsgTorebiToss[];
 extern u8 MsgTorebiWonNumberCoin[];
 extern u8 MsgTorebiCounterMarker[];
-extern const u16 Data_0200200c[];
-extern const s32 Data_02001fd0[];
+extern u16 Data_0200200c[];
+extern s32 Data_02001fd0[];
 
 void Battle_ResetEffectCounter(void);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
@@ -79,7 +97,7 @@ s32 TorebiIzumi_RunSpringGame(void)
     Battle_ResetEffectCounter();
     message = (s32)MsgTorebiThrow;
     state = (struct StateBytes *)&gGameState;
-    for (;;) {
+prompt:
         coins = state->coins;
         tickets = PartyInventory_CountItem(229);
         Event_SetMessage(message);
@@ -109,18 +127,20 @@ s32 TorebiIzumi_RunSpringGame(void)
                 goto play;
             }
             Event_SetMessage(message + 1);
-        } else {
-            if (choice != 1) {
-                goto play;
-            }
-            if (tickets != 0) {
-                goto room;
-            }
-            Event_SetMessage(message + 2);
+            Event_ShowMessage(-1, 0);
+            Task_Wait(1);
+            goto prompt;
         }
+        if (choice != 1) {
+            goto play;
+        }
+        if (tickets != 0) {
+            goto room;
+        }
+        Event_SetMessage(message + 2);
         Event_ShowMessage(-1, 0);
         Task_Wait(1);
-    }
+        goto prompt;
 room:
     if (PartyInventory_CountFreeSlots() == 0) {
         Event_SetMessage(message + 4);
@@ -176,7 +196,8 @@ play:
     } else {
         sum = 0;
         for (i = 0; i < result * 3 + 3; i++) {
-            sum += (s8)((u8 *)state)[i + 285];
+            u8 w = ((u8 *)state)[i + 285];
+            sum += (s8)w;
         }
         roll = (u32)(sum * Random_Next()) >> 16;
         for (i = 0; i < 15; i++) {

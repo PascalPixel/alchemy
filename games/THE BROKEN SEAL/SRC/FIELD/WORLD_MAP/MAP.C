@@ -1024,21 +1024,21 @@ void FieldScene_RunScene371_020017a4(void)
 {
 
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     struct FieldActor *record;
 
     rec7 = Object_GetById(15);
     record = Object_GetById(14);
-    *(s32 *)(rec7 + 8) = record->x.fixed;
-    *(s32 *)(rec7 + 16) = record->z.fixed;
-    if (*(s32 *)(rec7 + 12) < 0xa0000) {
-        *(s32 *)(rec7 + 12) = 0xa0000;
+    rec7->x.fixed = record->x.fixed;
+    rec7->z.fixed = record->z.fixed;
+    if (rec7->y.fixed < 0xa0000) {
+        rec7->y.fixed = 0xa0000;
         if (GameFlag_IsSet(0x200) == 0) {
             Audio_PlayCue(145);
             Object_SetMode(rec7, 3);
             GameFlag_Set(0x200);
             {
-                u16 *target = (u16 *)(rec7 + 100);
+                u16 *target = (u16 *)&rec7->unknown_64;
                 s32 shown = 1;
 
                 *target = shown;

@@ -1115,7 +1115,7 @@ void FieldScene_SetupActorTenCamera(void)
 void Scene_RunActorLeapSequence(void)
 {
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
     s32 zero;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -1125,10 +1125,10 @@ void Scene_RunActorLeapSequence(void)
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
     zero = 0;
 #endif
-    rec7 = (s32)Object_GetById(0);
+    rec7 = Object_GetById(0);
     Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    state = (u8 *)(rec7 + 85);
+    state = (u8 *)&rec7->motion_flags;
     zero = 0;
     *state = zero;
 #endif
@@ -1138,10 +1138,10 @@ void Scene_RunActorLeapSequence(void)
     {
         s32 shown = 0x4000;
 
-        *(u16 *)(rec7 + 6) = shown;
+        rec7->facing = shown;
     }
     Call3(Engine_ActorSetSpeed, 0, 0x30000, 0x18000);
-    Engine_ActorMoveToAndWait(0, *(s16 *)(rec7 + 10), 0x228);
+    Engine_ActorMoveToAndWait(0, rec7->x.part.pixel, 0x228);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(0, 22);
     Engine_EventWait(30);
@@ -1151,17 +1151,17 @@ void Scene_RunActorLeapSequence(void)
     {
         s32 shown = 0xc000;
 
-        *(u16 *)(rec7 + 6) = shown;
+        rec7->facing = shown;
     }
     Engine_ActorSetAnimation(0, 5);
     Object_SetActionById(0, 24);
     Engine_EventWait(40);
-    *(s32 *)(rec7 + 72) = 0x9999;
+    rec7->gravity = 0x9999;
     {
-        s32 z = *(s32 *)(rec7 + 16) + 0x480000;
+        s32 z = rec7->z.fixed + 0x480000;
 
-        *(s32 *)(rec7 + 68) = zero;
-        OverlayObject_SpawnWithMode14(*(s32 *)(rec7 + 8), 0, z, 223);
+        rec7->bounce = zero;
+        OverlayObject_SpawnWithMode14(rec7->x.fixed, 0, z, 223);
     }
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     /* FAKEMATCH: the existing map adapter keeps destination setup and

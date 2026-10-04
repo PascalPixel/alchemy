@@ -685,7 +685,7 @@ void FieldScene_RunScene3b9_020023e0(void)
 void FieldScene_RunScene3b9_020024d8(void)
 {
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(13);
@@ -709,13 +709,13 @@ void FieldScene_RunScene3b9_020024d8(void)
     FieldScene_CallPairWith10(8);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     {
-        u16 *target = (u16 *)(rec7 + 100);
+        u16 *target = (u16 *)&rec7->unknown_64;
         s32 shown = 0x2d0;
 
         *target = shown;
     }
     {
-        u16 *target = (u16 *)(rec7 + 102);
+        u16 *target = (u16 *)&rec7->unknown_66;
         s32 shown = 112;
 
         *target = shown;

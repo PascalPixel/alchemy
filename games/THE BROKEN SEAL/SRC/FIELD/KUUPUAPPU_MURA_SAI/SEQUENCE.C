@@ -294,7 +294,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     mode = 0;
     actor = (u8 *)Object_GetById(15);
     *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
-    *(u16 *)((u8 *)Object_GetById(15) + 100) = mode;
+    Object_GetById(15)->unknown_64 = mode;
     if (Engine_GameFlagIsSet(0x858))
         Call3(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
     if (gGameState.entrance <= 2 && !Engine_GameFlagIsSet(52)

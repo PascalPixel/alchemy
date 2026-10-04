@@ -574,7 +574,7 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
         if (best > ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000) continue;
 
         best = ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000;
-        *(u16 *)((u8 *)Object_GetById(subject) + 100) = (u16)slot;
+        Object_GetById(subject)->unknown_64 = (u16)slot;
     }
 
     ObjectMotion_SetSpeedParameters(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */

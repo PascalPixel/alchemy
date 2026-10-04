@@ -1418,7 +1418,7 @@ s32 Scene_Initialize(void)
                 Audio_PlayCue(211);
             SetEffectRecordMode(Object_GetById(9), 1);
             Engine_ActorSetSpritePriority(10, 2);
-            Object_GetById(10)->unknown_22 = 2;
+            Object_GetById(10)->terrain_id = 2;
             SetEffectRecordMode(Object_GetById(11), 1);
             SetEffectRecordMode(Object_GetById(12), 1);
             SetEffectRecordMode(Object_GetById(13), 1);

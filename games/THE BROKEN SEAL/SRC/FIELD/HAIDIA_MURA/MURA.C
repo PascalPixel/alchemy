@@ -1244,7 +1244,7 @@ s32 HaidiaMura_ApplyEntryState(void)
         actor->z.fixed = 0x2480000;
         actor->y.fixed = 0xc00000;
         HaidiaMura_OpenVillagerLane();
-        actor->unknown_22 = 3;
+        actor->terrain_id = 3;
         actor->motion_flags = 0;
         Engine_TaskAddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)

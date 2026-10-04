@@ -977,7 +977,7 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     center_z += z;
     Engine_ObjectSetPosition(object, x, object->y.fixed, center_z);
     Engine_ObjectCommitPosition(object);
-    object->unknown_22 = 0;
+    object->terrain_id = 0;
     object->x.fixed = x;
     object->z.fixed = center_z;
     object->velocity_x = 0;
@@ -1175,7 +1175,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
     if (n == 4) {
         return;
     }
-    object->unknown_22 = 2;
+    object->terrain_id = 2;
     leader->x.fixed = 0;
     leader->z.fixed = 0;
     ResourceMetadata_Register(object->sprite, 16);

@@ -96,7 +96,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
     }
     rows++;
     for (row = 0; row <= rows; row++) {
-        top = Map_GetTerrainHeightFar(actor->unknown_22, actor->x.fixed, (row << 20) + actor->z.fixed);
+        top = Map_GetTerrainHeightFar(actor->terrain_id, actor->x.fixed, (row << 20) + actor->z.fixed);
         top /= 0x100000;
         if (level < top) {
             x = ((actor->x.fixed >> 20) << 20) + 0x80000;

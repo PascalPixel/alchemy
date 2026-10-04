@@ -90,7 +90,8 @@ struct FieldActor {
     s32 scale_y;
     /* How near another actor must come to touch this one. */
     u16 radius;
-    u8 unknown_22;
+    /* The map layer the actor stands on, for its heights and collision. */
+    u8 terrain_id;
     u8 priority_flags;
     s32 velocity_x;
     s32 velocity_y;

@@ -747,7 +747,7 @@ void SceneActor_MarkObjectAtTiles94To95(s32 actor)
         x = o->x.fixed >> 19;
         y = o->z.fixed >> 19;
         if (x >= 94 && x <= 95 && y > 23 && y <= 26) {
-            o->unknown_22 = 1;
+            o->terrain_id = 1;
         }
     }
 }
@@ -788,7 +788,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
     ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
     actor = Object_GetById(15);
-    actor->unknown_22 = 1;
+    actor->terrain_id = 1;
     zero = 0;
     if (Engine_GameFlagIsSet(0x303)) {
         Object_SetMode(actor, 4);

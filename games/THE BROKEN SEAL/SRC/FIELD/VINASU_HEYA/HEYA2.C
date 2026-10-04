@@ -247,7 +247,7 @@ void Scene_RunScene3c8SequenceA(void)
                 Actor_SetSpritePriority(i, 3);
         }
         Actor_SetSpriteFlags(Object_GetById(id), 0);
-        actor->unknown_22 = 0;
+        actor->terrain_id = 0;
         motion = &actor->motion_flags;
         *motion = 3;
         ((union FieldObject *)actor)->effect.velocity_y = 0x1999;

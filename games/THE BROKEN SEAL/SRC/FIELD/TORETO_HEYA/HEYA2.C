@@ -178,7 +178,7 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
     *(s32 *)((u8 *)actor + 72) = 0x8000;
     Engine_AudioPlayCue(204);
     Engine_EventWait(3);
-    actor->unknown_22 = 2;
+    actor->terrain_id = 2;
     Engine_ActorSetSpritePriority(leader, 3);
     for (cnt = 29; cnt >= 0; cnt--) {
 
@@ -617,7 +617,7 @@ s32 ToretoHeya_EnterRoom(void)
         Engine_AudioPlayCue(204);
         Event_SetPairWork1c0((s32)&SceneId_ToretoHeya, entrance - 10);
         Engine_EventWait(20);
-        actor->unknown_22 = 2;
+        actor->terrain_id = 2;
         Engine_ActorSetSpritePriority(leader, 3);
         Engine_EventWait(2);
         Engine_ActorSetAttachedEffect(leader, 0x100);

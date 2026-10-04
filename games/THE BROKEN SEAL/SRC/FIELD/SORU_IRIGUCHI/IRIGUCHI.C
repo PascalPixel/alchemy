@@ -490,7 +490,7 @@ void SoruIriguchi_PushFacedBlock(void)
         (leader->z.part.pixel + (s16)gSoruPushSteps[dir]) >> 4);
     if (block != NULL) {
         zero = 0;
-        block->unknown_22 = 2;
+        block->terrain_id = 2;
         p = pos;
         step = gSoruPushSteps[dir];
         p[0].fixed = block->x.fixed + (step & -0x10000);

@@ -363,7 +363,7 @@ void StagedActorPairScene_RunSpinningLeap(s32 id)
     Actor_SetDestination(id, 472, 288);
     work->object.effect.velocity_y = 0xcccc;
     work->object.actor.motion_flags = 3;
-    work->object.actor.unknown_22 = 0;
+    work->object.actor.terrain_id = 0;
     Engine_ActorWaitForMove(id);
     StagedActorPairScene_WaitForHeight(work, 0x200000);
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);

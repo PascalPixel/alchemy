@@ -1302,9 +1302,10 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
     }
 }
 
+/* The Lumber Water stage: the camera pans over the logs, the competitor
+ * fades in and pushes the first log, then the stage opens. */
 void Scene_RunSceneFourCoordinator(s32 scene)
 {
-
     s32 path;
 
     if (gGameState.entrance == 2) {
@@ -1315,75 +1316,48 @@ void Scene_RunSceneFourCoordinator(s32 scene)
     path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 4);
     if (path == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
-        Camera_SetSpeed(196608, 24576);
+        Camera_SetSpeed(0x30000, 0x6000);
         {
-            s32 cx = 71303168 >> 19;
-            s32 cy = 1;
-            s32 cz = 11010048 >> 16;
-            s32 cm;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-            cm = 1;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-            cz <<= 16;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
-            cx <<= 19;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
-            Camera_MoveTo(cx, -cy, cz, cm);
+            s32 x = 0x88;
+            s32 y = 1;
+            s32 z = 0xa8;
+
+            /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
+            asm("" : "+r"(x), "+r"(y), "+r"(z));
+            Camera_MoveTo(x << 19, -y, z << 16, 1);
         }
         Engine_CameraWaitForMove();
         Event_ShowMessage(scene, 0);
-        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        {
-            /* FAKEMATCH: native parameter zero in r2 precedes r1/r0 setup. */
-            register s32 zero asm("r2") = 0;
-            /* FAKEMATCH: the measured message boundary moved r1 ahead of r2. */
-            asm("" : : "r"(zero) : "r0", "r1");
-            Value3(SceneState_StoreParamsAndInitTable, 120, 72, zero);
-        }
-        {
-            /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
-            register s32 mode asm("r1") = 0;
-            /* FAKEMATCH: the direct void form reverses the two argument moves. */
-            asm("" : : "r"(mode) : "r0");
-            Event_ShowMessage(scene, mode);
-        }
+        /* FAKEMATCH: the discarded result sets the arguments up from r2 down to r0. */
+        Value3(SceneState_StoreParamsAndInitTable, 120, 72, 0);
+        Event_ShowMessage(scene, 0);
         SceneState_ReleaseTableAndResetC6a6();
         Engine_EventWait(15);
-        {
-            s32 fx = 984;
-            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-            register s32 fz asm("r2") = 200;
-            /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
-            asm("" : : "r"(fx), "r"(fz) : "r0");
-            Korosseo_FadeInCompetitor(0, fx, fz);
-        }
+        /* FAKEMATCH: the discarded result sets r0 after both coordinates. */
+        Value3(Korosseo_FadeInCompetitor, 0, 984, 200);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 30);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 262, 60);
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
         OverlayObject_PlaceWithScale14000(0, 1000, 192);
         OverlayObject_PlaceWithScale14000(0, 1000, 176);
         OverlayObject_PlaceWithScale14000(0, 1016, 168);
         Engine_EventWait(15);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
-        Camera_MoveTo(71303168, -1, 11010048, 1);
+        Camera_MoveTo(0x4400000, -1, 0xa80000, 1);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
         Engine_EventWait(10);
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
         Engine_EventWait(10);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 32768, 30);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
         Event_ShowMessage(scene, 0);
         Korosseo_RestoreCompetitor(0);
         Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-        Actor_SetPosition(18, 66584576, 11010048);
+        Actor_SetPosition(18, 0x3f80000, 0xa80000);
         SceneState_SendIdBySceneId(scene, 4);
     } else if (path == 1) {
         Engine_EventSetMessage((s32)MsgKorosseoLogsKeyClearingStage);

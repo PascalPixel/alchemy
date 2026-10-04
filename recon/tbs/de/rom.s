@@ -1133,12 +1133,6 @@ Summon_EntryTable:
 	.thumb_func
 BattleFx_RunFlippingBurst:
 	.incbin "baserom.gba", 0x000ccfa4, 0x00000348
-	.section .rom.000cd5f8, "ax"
-	.global Unnamed_080cb7f8
-	.type Unnamed_080cb7f8, %function
-	.thumb_func
-Unnamed_080cb7f8:
-	.incbin "baserom.gba", 0x000cd5f8, 0x00000414
 	.section .rom.000cda0c, "ax"
 	.global BattleEffect_RunTileAndPaletteAnimation
 	.type BattleEffect_RunTileAndPaletteAnimation, %function

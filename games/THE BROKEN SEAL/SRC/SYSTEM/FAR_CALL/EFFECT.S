@@ -27,7 +27,7 @@ BattleFx_DispatchModeFar:
 	.global Func_080c9020
 	.thumb_func
 Func_080c9020:
-	overlay_veneer Unnamed_080cb7f8
+	overlay_veneer BattleFx_RunIceFleckBurst
 	.global BattleEffect_RunTileAndPaletteAnimationFar
 	.thumb_func
 BattleEffect_RunTileAndPaletteAnimationFar:

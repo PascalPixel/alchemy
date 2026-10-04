@@ -1,18 +1,10 @@
-/* Complete current-source and own-ROM audit, 2026-10-02.
- * Ordinary TBS flags; all six complete 62-byte functions are exact, with the
- * Random16 call resolved and one real public definition. The following two
- * bytes stay in their separate uncredited scaffold; no linker rows change.
- * EN trials first: plain shape emitted 46 bytes (60 linked differences);
- * chain-only and r0-memory each differed at 4 bytes; frame-order emitted 64
- * bytes with 53 differences; r0-order and weights-order emitted 64 bytes
- * with 55 differences; the short r0/chain handoff was exact.
- * All private trial assemblies were reproduced from their current sources.
- */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern u8 Data_03001e74[];
 
+/* Picks one of eight entries by weight: a random byte falls into the
+   running total of the weights, and the entry whose share it lands in is
+   chosen. A roll past all eight picks the first. */
 s32 Battle_SelectWeightedIndex(u8 *weights)
 {
     s32 value;
@@ -39,14 +31,12 @@ s32 Battle_SelectWeightedIndex(u8 *weights)
     result = 0;
     index = 0;
     if (value >= total) {
-loop:
-        index++;
-        if (index <= 7) {
+        while (++index <= 7) {
             total += weights[index];
-            if (value < total)
+            if (value < total) {
                 result = index;
-            else
-                goto loop;
+                break;
+            }
         }
     }
     return result;

@@ -305,23 +305,23 @@ void FieldScene_RunLeaderDropSequence(void)
     leader->motion_flags &= ~ACTOR_FOLLOWS_TERRAIN;
     spray->y.fixed += -3 << 16;
     leader->y.fixed += -3 << 16;
-    *(s32 *)leader->unknown_14 += -3 << 16;
+    leader->terrain_height += -3 << 16;
     Engine_TaskWait(2);
     spray->y.fixed += -2 << 16;
     leader->y.fixed += -2 << 16;
-    *(s32 *)leader->unknown_14 += -2 << 16;
+    leader->terrain_height += -2 << 16;
     Engine_TaskWait(10);
     spray->y.fixed += 2 << 16;
     leader->y.fixed += 2 << 16;
-    *(s32 *)leader->unknown_14 += 2 << 16;
+    leader->terrain_height += 2 << 16;
     Engine_TaskWait(4);
     spray->y.fixed += 2 << 16;
     leader->y.fixed += 2 << 16;
-    *(s32 *)leader->unknown_14 += 2 << 16;
+    leader->terrain_height += 2 << 16;
     Engine_TaskWait(4);
     spray->y.fixed += 1 << 16;
     leader->y.fixed += 1 << 16;
-    *(s32 *)leader->unknown_14 += 1 << 16;
+    leader->terrain_height += 1 << 16;
     leader->motion_flags = 0;
     spray->motion_flags = 0;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
@@ -336,7 +336,7 @@ void FieldScene_RunLeaderDropSequence(void)
     GameFlag_Set(0x101);
     for (i = 0; i < 128; i++) {
         leader->y.fixed += 1 << 16;
-        *(s32 *)leader->unknown_14 += 1 << 16;
+        leader->terrain_height += 1 << 16;
         spray->y.fixed += 1 << 16;
         Engine_TaskWait(1);
     }

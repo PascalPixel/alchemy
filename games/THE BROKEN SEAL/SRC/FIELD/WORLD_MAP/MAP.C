@@ -5,7 +5,6 @@
 #include "IWRAM_CALL.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
-#include "SCRIPT_MOTION.H"
 
 #define FrameCounter gFrameCount
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
@@ -1334,11 +1333,11 @@ void WorldMap_MeetVenusDjinni(void)
         Event_WaitForDisplayField358Clear();
         Battle_SetObjectFlag5bWhenMode3();
         djinni->motion_flags = 2;
-        ((struct ScriptMotionObject *)djinni)->gravity = 0x4000;
+        djinni->gravity = 0x4000;
         djinni->speed = 0x10000;
         djinni->acceleration = 0x10000;
         djinni->velocity_y = 0;
-        ((struct ScriptMotionObject *)djinni)->terrain_height = 0;
+        djinni->terrain_height = 0;
         FieldObject_SetPosition(djinni, 0x15d00000, 0, 0x5300000);
         for (i = 0; i < 16; i++) {
             djinni->scale_x += 0x800;
@@ -1350,7 +1349,7 @@ void WorldMap_MeetVenusDjinni(void)
         Task_Wait(16);
         djinni->update = 0;
         Engine_ObjectSetPartPalettes(djinni, 0);
-        ((struct ScriptMotionObject *)djinni)->gravity = 0x10000;
+        djinni->gravity = 0x10000;
         Event_ShowMessage(DJINNI, 0);
         Audio_PlayCue(131);
         Engine_PsynergyBegin(140, 0);
@@ -1394,7 +1393,7 @@ void WorldMap_MeetVenusDjinni(void)
         Event_ShowMessage(DJINNI, 0);
         djinni->motion_flags = 2;
         djinni->velocity_y = 0;
-        ((struct ScriptMotionObject *)djinni)->terrain_height = 0;
+        djinni->terrain_height = 0;
         for (i = 7; i >= 0; i--) {
             djinni->facing += 0x1000;
             Task_Wait(1);

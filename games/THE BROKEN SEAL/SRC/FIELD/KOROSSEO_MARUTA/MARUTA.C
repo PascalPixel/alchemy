@@ -265,7 +265,7 @@ void FieldScene_RunClosingAuxiliarySequence(void)
         Engine_TaskWait(2);
         Engine_ActorSetSpriteFlags(rider, 1);
         *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-        *(s32 *)rider->unknown_14 = rider->y.fixed;
+        rider->terrain_height = rider->y.fixed;
         Engine_GameFlagSet(0x367);
     }
 }

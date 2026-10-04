@@ -8,7 +8,7 @@ Func_08015e8c:
 	lsls r3, r3, #18
 	adds r3, #204
 	ldr r5, [r3]
-	bl Func_08015f0c
+	bl SaveState_FindLatestSlot
 	cmp r0, #14
 	bls .L_08015ea2
 	movs r0, #1

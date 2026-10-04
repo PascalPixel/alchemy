@@ -400,9 +400,12 @@ Resource_DecodeType01:
 	.type Resource_DecodeByteLzInRam, %function
 	.thumb_func
 Resource_DecodeByteLzInRam:
-	.incbin "baserom.gba", 0x0001591c, 0x000006e0
+	.incbin "baserom.gba", 0x0001591c, 0x000005f0
+	.global SaveState_FindLatestSlot
+SaveState_FindLatestSlot:
+	.incbin "baserom.gba", 0x00015f0c, 0x000000f0
 	.section .rom.0001601c, "ax"
-	.incbin "baserom.gba", 0x0001601c, 0x00000120
+	.incbin "baserom.gba", 0x0001601c, 0x000000b8
 	.section .rom.00016180, "ax"
 	.global Func_08016180
 	.type Func_08016180, %function

@@ -268,14 +268,6 @@ UiText_RenderStringTiles:
 	.type SaveMenu_SelectSlot, %function
 SaveMenu_SelectSlot:
 	.incbin "baserom.gba", 0x0001f1c8, 0x00000580
-	.section .rom.0001fb5a, "ax"
-	.incbin "baserom.gba", 0x0001fb5a, 0x00000002
-	.section .rom.0001fb5c, "ax"
-	.global NameEntry_EditOwnerName
-	.thumb_func
-	.type NameEntry_EditOwnerName, %function
-NameEntry_EditOwnerName:
-	.incbin "baserom.gba", 0x0001fb5c, 0x000004b4
 	.section .rom.00020e0e, "ax"
 	.incbin "baserom.gba", 0x00020e0e, 0x000008fe
 	.section .rom.00021a1e, "ax"
@@ -395,7 +387,16 @@ UiWindow_PartyColumnOffsets:
 	.incbin "baserom.gba", 0x00036284, 0x00000014
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
-	.incbin "baserom.gba", 0x00036298, 0x00000028
+	.incbin "baserom.gba", 0x00036298, 0x00000018
+	.global NameEntry_CaretWave
+NameEntry_CaretWave:
+	.incbin "baserom.gba", 0x000362b0, 0x00000008
+	.global NameEntry_DeleteKeyLabel
+NameEntry_DeleteKeyLabel:
+	.incbin "baserom.gba", 0x000362b8, 0x00000004
+	.global NameEntry_EndKeyLabel
+NameEntry_EndKeyLabel:
+	.incbin "baserom.gba", 0x000362bc, 0x00000004
 	.global Data_080371fe
 Data_080371fe:
 	.incbin "baserom.gba", 0x000362c0, 0x00000008
@@ -484,7 +485,10 @@ WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x00073a76, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x00073ab8, 0x00000114
+	.incbin "baserom.gba", 0x00073ab8, 0x00000010
+	.global NameEntry_KeyboardTilemap
+NameEntry_KeyboardTilemap:
+	.incbin "baserom.gba", 0x00073ac8, 0x00000104
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x00073bcc, 0x00008434

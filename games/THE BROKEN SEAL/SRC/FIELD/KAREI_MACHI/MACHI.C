@@ -2152,55 +2152,28 @@ void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p)
 
 void FieldScene_RunSupplementalSequenceOne(s32 a0)
 {
-    s32 rec7;
-    s32 rec8;
-    s32 record;
-    s32 mask;
-    s32 c12;
-    s32 old;
-    u8 *rp;
-    u8 *p4;
+    struct FieldActor *a;
+    struct FieldActor *b;
 
-    rec7 = Object_GetById(8);
-    rec8 = Actor_Get(9);
-    if ((u32)(*(s16 *)(rec7 + 10) + -0x17d) <= 12) {
-        if (*(s16 *)(rec7 + 18) <= 0x309) {
-            goto L_020037ae;
+    a = Actor_Get(8);
+    b = Actor_Get(9);
+    if ((u32)(a->x.part.pixel - 381) <= 12 && a->z.part.pixel > 777) {
+        a->sprite->priority = Actor_Get(ACTOR_PARTY_LEADER)->sprite->priority;
+    } else if (!GameFlag_IsSet(0x302) && a->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
+        if (!GameFlag_IsSet(0x202)) {
+            BattleFx_SetQueuedSoundAndPlay(-1);
+            Audio_PlayCue(230);
+            GameFlag_Set(0x202);
         }
-        record = Object_GetById(ACTOR_PARTY_LEADER);
-        p4 = (u8 *)*(s32 *)(rec7 + 80);
-        rp = (u8 *)*(s32 *)(record + 80);
-        c12 = 12 & rp[9];
-        old = p4[9];
-        mask = -13;
-        mask &= old;
-        p4[9] = (mask | c12);
-    } else {
-        L_020037ae:;
-        if (GameFlag_IsSet(0x302) == 0) {
-            if (*(s16 *)(rec7 + 10) <= 245) {
-                if ((*(volatile s32 *)&gFrameCount & 1) == 0) {
-                    if (GameFlag_IsSet(0x202) == 0) {
-                        BattleFx_SetQueuedSoundAndPlay(-1);
-                        Audio_PlayCue(230);
-                        GameFlag_Set(0x202);
-                    }
-                    FieldScene_RunScene3a8SequenceA(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16));
-                }
-            }
-        }
+        FieldScene_RunScene3a8SequenceA(a->x.fixed, a->y.fixed, a->z.fixed);
     }
-    if (GameFlag_IsSet(0x303) == 0) {
-        if (*(s16 *)(rec8 + 10) <= 0x2c5) {
-            if ((*(volatile s32 *)&gFrameCount & 1) == 0) {
-                if (GameFlag_IsSet(0x203) == 0) {
-                    BattleFx_SetQueuedSoundAndPlay(-1);
-                    Audio_PlayCue(230);
-                    GameFlag_Set(0x203);
-                }
-                FieldScene_RunScene3a8SequenceA(*(s32 *)(rec8 + 8), *(s32 *)(rec8 + 12), *(s32 *)(rec8 + 16));
-            }
+    if (!GameFlag_IsSet(0x303) && b->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
+        if (!GameFlag_IsSet(0x203)) {
+            BattleFx_SetQueuedSoundAndPlay(-1);
+            Audio_PlayCue(230);
+            GameFlag_Set(0x203);
         }
+        FieldScene_RunScene3a8SequenceA(b->x.fixed, b->y.fixed, b->z.fixed);
     }
 }
 

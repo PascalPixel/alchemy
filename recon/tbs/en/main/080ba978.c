@@ -1,3 +1,15 @@
+/* 2026-10-04 (finisher 1): 169 -> 53 differing instructions. The header
+ * now gives BattlePresentationWork its real tail, s16 actors[8] then
+ * u8 params[8][4] at 0x34; indexing work.params[i][j] with the count read
+ * each pass gives the native per-iteration addressing (no hoisted base, no
+ * extra r9 save; plan r7, mode sl, object r8 all match). Left: the same-side
+ * test. Native evaluates each arm's actor test as a value and tests it in the
+ * arm (cmp/bne/b, cmp/beq), and copies the actor id (adds rN, r4, #0) for
+ * every test; this draft shares one copy and joins the arms first. Tried
+ * here: ?: in the if, (a <= 7) == (b <= 7), explicit 0/1 assignments, inverted
+ * tests (all 53-61); static inline IsParty/IsEnemy only in the ?: arms gives
+ * the native arm shape but rereads the id from memory and moves plan to r6
+ * (80-86); inline for every test 82-93. */
 /* Draft: complete native extent [080ba978,080babdc), 612 bytes.
  * Earlier 2026-10-02 work recorded 12 differing instructions with the native
  * frame/register allocation. Byte predicates recovered the same-side copy
@@ -120,20 +132,13 @@ s32 Func_080ba978(struct BattlePlan *plan, s32 mode)
     else
         work.side = 0;
 
-    {
-        /* Child parameters reuse the tail of the actor storage, starting
-           at work + 0x34, with four bytes reserved per target. */
-        u8 *params = (u8 *)&work.actors[8];
+    for (i = 0; i != work.count; i++) {
+        struct AnimationObject *animation = GetMotionRecord(
+            GetBattleObjectSlot(work.actors[i])->object, 0);
+        s32 j;
 
-        for (i = 0; i != work.count; i++) {
-            struct AnimationObject *animation = GetMotionRecord(
-                GetBattleObjectSlot(work.actors[i])->object, 0);
-            s32 count = animation->count - 1;
-            s32 j;
-
-            for (j = 0; j != count; j++)
-                params[i * 4 + j] = animation->entries[j]->param;
-        }
+        for (j = 0; j != animation->count - 1; j++)
+            work.params[i][j] = animation->entries[j]->param;
     }
     if (plan->failure != 0) {
         if (plan->failure == 1) {

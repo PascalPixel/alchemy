@@ -36,7 +36,8 @@ struct BattlePresentationTransition {
 
 /* The action effect prepared from a plan and consumed by the presentation
    dispatchers. Its target storage is distinct from an individual effect
-   argument: presentation reserves 24 ids. */
+   argument: presentation holds 8 target ids, then four child parameter
+   bytes for each target. */
 struct BattlePresentationWork {
     s32 kind;
     s32 side;
@@ -47,7 +48,8 @@ struct BattlePresentationWork {
     s32 variant;
     s32 flags;
     u8 unknown_20[4];
-    s16 actors[24];
+    s16 actors[8];
+    u8 params[8][4]; /* per-target child parameters */
 };
 
 LAYOUT_SIZE_GUARD(BattlePresentationTransition_Size, struct BattlePresentationTransition, 0x18);

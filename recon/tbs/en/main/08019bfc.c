@@ -13,7 +13,18 @@
    the tree base and offset table as [T, hi*8] then [T, hi*8 + 4] before
    the low byte's offset, where the struct index forms T + hi*8 first.
    Pointer-array or 2D-array tables give that addressing but move every
-   other register (1275-1660); hi/lo temporaries do not help. */
+   other register (1275-1660); hi/lo temporaries do not help.
+   2026-10-04 (finisher 5), instruction diff 123: the greg dump explains
+   the swap. bit (84 uses) is allocated first, but global.c's
+   regs_someone_prefers keeps it off r3 (tree prefers r3) and r2 (rank,
+   pseudo 40, prefers r2 through the tail's rank * 3 temporaries), so bit
+   takes r1 and tree r2; the native bit can take r2, so its rank carries no
+   r2 preference. Tried without effect: separate bit variables per reader
+   (123), rank as u32 (123), rank + rank * 2 (125), rank *= 3 (157),
+   (index & 1) parity (130), reusing code for the result as the native's r5
+   suggests (125), a pointer for the leaf pair (123), pins of bit r2 (144)
+   or tree r1 (135). The [][2] table with code >> 8 / code &= 0xff gives the
+   native head sequence exactly but reallocates the loop (184). */
 #include "TYPES.H"
 #include "TEXT_READER.H"
 

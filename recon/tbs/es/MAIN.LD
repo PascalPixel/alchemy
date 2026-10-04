@@ -768,7 +768,6 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SPLASH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/RESERVED_NO_OP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE2.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000f6078)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE4.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/PALETTE.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000f68bc)

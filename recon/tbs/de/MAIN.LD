@@ -772,7 +772,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SPLASH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/RESERVED_NO_OP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE2.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000f468c)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE4.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/PALETTE.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000f4ed0)

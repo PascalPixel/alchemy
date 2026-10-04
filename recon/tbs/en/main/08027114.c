@@ -159,7 +159,7 @@ void UpdateLinkSessionCountdown(void);
 void Battle_DrawPartyPanelsWithEmptyList(void);
 s32 Battle_ClassifyEntryKind(const struct BattleAction *entry);
 s32 UiText_ShowLocalizedMessageAndWait(void);
-s32 UiText_DrawLocalizedResource80d(void);
+s32 UiText_DrawWaitingForOpponent(void);
 struct UiWindowWork *UiText_ShowMessageAndWaitComplete(s32 id, s32 x, s32 y);
 struct UiWindowWork *UiWindow_Create(s32 a, s32 b, s32 c, s32 d, s32 e);
 void UiWindow_SetTilemapEntry(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);

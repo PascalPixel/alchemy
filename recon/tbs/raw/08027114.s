@@ -1948,7 +1948,7 @@ Battle_CollectPartyCommands:
 	bl Ui_FillVramBlockPattern
 	add r2, sp, #100
 	mov r9, r2
-	bl UiText_DrawLocalizedResource80d
+	bl UiText_DrawWaitingForOpponent
 	b .L_080280c4
 .L_080280b8:
 	adds r7, r5, #0

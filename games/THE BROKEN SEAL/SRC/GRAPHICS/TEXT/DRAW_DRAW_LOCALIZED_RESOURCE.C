@@ -37,7 +37,7 @@ struct MessageFrame {
 /* The caller sets r9 to the end of its two captured pointer fields.
    Ordinary frame shapes select different registers; measured handoffs keep
    the native chain save, frame store and two call-argument orders. */
-s32 UiText_DrawLocalizedResource80d(void)
+s32 UiText_DrawWaitingForOpponent(void)
 {
     /* FAKEMATCH: Retain the native incoming-r9 chain spill before message argument setup; ordinary captured-frame shapes change its store/register order. */
     struct MessageFrame *volatile saved;

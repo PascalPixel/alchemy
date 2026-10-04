@@ -4,6 +4,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 #include "DMA.H"
+#include "IO_REG.H"
 #include "GAME_STATE.H"
 #include "SCROLL.H"
 #include "ANIMSPR.H"
@@ -183,7 +184,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
 
 void DisplayScroll_ArmHBlankDma(void)
 {
-    volatile u32 *dma;
+    volatile u16 *dma;
     struct DisplayScrollWork *state;
     u32 *source;
     u16 status;
@@ -193,20 +194,21 @@ void DisplayScroll_ArmHBlankDma(void)
     state = gHBlankScrollWork;
     source = (u32 *)state->rows[state->page];
 
-    dma = (volatile u32 *)0x040000b0;
+    /* Stop channel 0 before the first scanline's words are written by hand. */
+    dma = REG_DMA0;
     destination = (volatile u32 *)0x04000014;
-    status = *(volatile u16 *)((u8 *)dma + 10);
-    control = 0xc5ff & status;
-    *(volatile u16 *)((u8 *)dma + 10) = control;
-    status = *(volatile u16 *)((u8 *)dma + 10);
-    control = 0x7fff & status;
-    *(volatile u16 *)((u8 *)dma + 10) = control;
-    (void)*(volatile u16 *)((u8 *)dma + 10);
+    status = dma[5];
+    control = status & (u16)~DMA_START_HBLANK_REPEAT;
+    dma[5] = control;
+    status = dma[5];
+    control = status & (u16)~DMA_ENABLE;
+    dma[5] = control;
+    (void)dma[5];
 
     *destination = *source++;
     *destination = *source++;
     *destination = *source++;
 
     control = 0xa6600003;
-    Dma_Set(source, destination, control, dma);
+    Dma_Set(source, destination, control, (volatile u32 *)dma);
 }

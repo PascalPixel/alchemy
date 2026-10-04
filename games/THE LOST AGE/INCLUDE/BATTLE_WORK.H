@@ -8,6 +8,22 @@
 #include "RAM_BUFFER.H"
 #include "../../COMMON/INCLUDE/BATTLE/BATTLE_SESSION.H"
 
+/* The event playback state, ☀️'s with the cue a halfword and one more
+   halfword beside it. */
+struct BattleEventState {
+    struct BattleEventQueue queue;  /* 0x000 */
+    s32 phase;                      /* 0x148 */
+    s32 event_index;                /* 0x14c */
+    s32 timer;                      /* 0x150 */
+    u8 unknown_154[0x14];
+    s16 pending_cue;                /* 0x168, played before the next actor */
+    s16 unknown_16a;
+    s32 flags;                      /* 0x16c */
+};
+
+LAYOUT_SIZE_GUARD(BattleEventState_Size, struct BattleEventState, 0x170);
+LAYOUT_OFFSET_GUARD(BattleEventState_PendingCue, struct BattleEventState, pending_cue, 0x168);
+
 /*
  * The Lost Age's battle session, which its heap slot 9 holds. It opens as
  * The Broken Seal's does; the summon queue and the event queue lie later.
@@ -33,8 +49,8 @@ struct BattleSession {
     s8 queue_head;                  /* 0x56a */
     s8 queue_count;                 /* 0x56b */
     u8 unknown_56c[0x178];
-    struct BattleEventQueue events; /* 0x6e4 */
-    u8 unknown_82c[0x3c];
+    struct BattleEventState events; /* 0x6e4 */
+    u8 unknown_854[0x14];
     u8 unknown_868;                 /* 0x868 */
 };
 

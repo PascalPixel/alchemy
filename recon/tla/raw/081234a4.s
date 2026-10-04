@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081234a4
+	.global BattleEventRuntime_Reset
 	.thumb_func
-Func_081234a4:
+BattleEventRuntime_Reset:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #36]

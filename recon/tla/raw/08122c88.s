@@ -37,4 +37,4 @@ Func_08122c88:
 	pop {pc}
 	.2byte 0x0000
 .L_08122ccc:
-	.4byte Func_08122d10
+	.4byte BattleEvent_Playback

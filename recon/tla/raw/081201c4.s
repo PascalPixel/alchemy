@@ -190,7 +190,7 @@ BattleEv_DispatchQueued:
 	bge .L_08120356
 	b .L_081201e6
 .L_08120356:
-	bl Func_081234a4
+	bl BattleEventRuntime_Reset
 	pop {r5, r6, r7, pc}
 .L_0812035c:
 	.4byte .L_081201f8

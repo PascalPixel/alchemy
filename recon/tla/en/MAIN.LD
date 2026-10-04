@@ -2193,7 +2193,7 @@
         "*/recon/tla/raw/08122cd0.o"(.text)
         "*/recon/tla/raw/08122d10.o"(.text)
         "*/recon/tla/raw/081234a4.o"(.text)
-        "*/recon/tla/raw/081234f0.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/EVENT_RUNTIME.o"(.text)
         "*/games/COMMON/SRC/BATTLE/PARTY/IS_UNIT_LISTED.o"(.text)
         "*/recon/tla/raw/08123574.o"(.text)
         "*/recon/tla/raw/08123648.o"(.text)

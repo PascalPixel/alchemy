@@ -5217,7 +5217,17 @@ Battle_ResolveTargetAction:
 	.type Func_08122c4c, %function
 	.thumb_func
 Func_08122c4c:
-	.incbin "baserom.gba", 0x00122c64, 0x000008e8
+	.incbin "baserom.gba", 0x00122c64, 0x000000c4
+	.global BattleEvent_Playback
+	.type BattleEvent_Playback, %function
+	.thumb_func
+BattleEvent_Playback:
+	.incbin "baserom.gba", 0x00122d28, 0x00000794
+	.global BattleEventRuntime_Reset
+	.type BattleEventRuntime_Reset, %function
+	.thumb_func
+BattleEventRuntime_Reset:
+	.incbin "baserom.gba", 0x001234bc, 0x0000004c
 	.section .rom.0012358c, "ax"
 	.global Func_08123574
 	.type Func_08123574, %function

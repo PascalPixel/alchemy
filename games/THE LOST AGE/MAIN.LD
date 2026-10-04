@@ -1156,6 +1156,7 @@ SECTIONS
     "*/games/COMMON/SRC/BATTLE/CHECK_STATUS_OR_SPECIAL_ID.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001224d4)
     "*/recon/tla/ja/rom.o"(.rom.00122c48)
+    "*/games/THE LOST AGE/SRC/BATTLE/EVENT_RUNTIME.o"(.text)
     "*/games/COMMON/SRC/BATTLE/PARTY/IS_UNIT_LISTED.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00123570)
     "*/games/THE LOST AGE/SRC/BATTLE/PARTY/ROLL_COUNTER_EARLY_END.o"(.text)

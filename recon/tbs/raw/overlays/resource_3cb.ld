@@ -10,7 +10,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY2.o"(.text)
-        "*/resource_3cb_overlay.o"(.text.x02008580)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/WINS_TALK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY5.o"(.text)

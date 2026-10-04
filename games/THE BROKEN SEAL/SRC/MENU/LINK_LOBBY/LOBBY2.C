@@ -7,6 +7,7 @@
 #include "SERIAL_RUNTIME.H"
 #include "CALL.H"
 #include "TBS_EDITION.H"
+#include "IWRAM_CALL.H"
 
 extern u8 MsgLobbyWantParticipatePlease[];
 
@@ -228,4 +229,156 @@ s32 SceneData_CopyUpToThreeEntries(u16 *dest)
     }
     if (dest != 0) *dest = 0x00ff;
     return cnt;
+}
+
+/* One offered item: the third byte names the party member it belongs to. */
+struct LinkOffer {
+    u8 item;
+    u8 count;
+    u8 owner;
+    u8 flags;
+};
+
+/* The trade offer after its eight-byte header. */
+struct LinkOfferList {
+    struct LinkOffer entries[64];
+    s32 count;
+};
+
+/* Sends this console's party records to the linked player: each member's
+ * 0x154-byte record marked 2 at 0x12a, then blank records (marked 0) up to
+ * three, then the 0x140-byte trade offer with its owners renumbered into
+ * the peer's order and the items of members not sent removed. Every send
+ * waits for at most 600 frames in total and 24 unready polls. Returns 0, or
+ * -1 when the link fails. */
+s32 LinkLobby_SendPartyRecords(void)
+{
+    s32 result;
+    u8 *table;
+    u16 owners[8];
+    u8 slots[8];
+    s32 ret;
+    u8 *heap;
+    s32 count;
+    s32 timeout;
+    s32 tries;
+    s32 i;
+    s32 j;
+    s32 k;
+    u32 size;
+    struct LinkOfferList *list;
+
+    size = 0x154;
+    heap = Runtime_BumpAllocateAlternatePool(size);
+    result = 0;
+    timeout = 600;
+    count = SceneData_CopyUpToThreeEntries(owners);
+    table = slots;
+    for (i = 7; i >= 0; i--) {
+        table[i] = 0;
+    }
+    for (i = 0; i < count; i++) {
+        /* FAKEMATCH: a one-pass boundary keeps the send failure inline and
+           gives the record copy's argument order; without it loop.c moves
+           the failure out of the loop. */
+        do {
+            Iwram_CopyWords(heap, Owner_GetState(owners[i]), size);
+            heap[0x12a] = 2;
+            table[owners[i]] = i - 128;
+            ret = SerialRuntime_BeginTransferA(heap, size);
+            tries = 0;
+            if (ret == -1) {
+                result = ret;
+                goto done;
+            }
+        } while (0);
+        while (SerialRuntime_GetActiveTransfers() != 0) {
+            Engine_TaskWait(1);
+            if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+                /* FAKEMATCH: a one-pass boundary keeps this failure inline,
+                   so its -1 is reloaded here and jump2 merges it into the
+                   offer's; moved out of the loop, it shifts every later
+                   reload register. */
+                do {
+                    if (++tries > 24) {
+                        result = -1;
+                        goto done;
+                    }
+                } while (0);
+            }
+        }
+        Engine_TaskWait(2);
+    }
+    goto next;
+wait:
+    Engine_TaskWait(1);
+    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+        if (++tries > 24) {
+            result = -1;
+            goto done;
+        }
+    }
+test:
+    if (SerialRuntime_GetActiveTransfers() != 0) {
+        goto wait;
+    }
+    Engine_TaskWait(2);
+    i++;
+next:
+    if (i <= 2) {
+        heap[0x12a] = tries = 0;
+        if ((ret = SerialRuntime_BeginTransferA(heap, size)) != -1) {
+            goto test;
+        }
+        result = ret;
+        goto done;
+    }
+    Runtime_BumpFree(heap);
+    size = 0x140;
+    heap = Runtime_BumpAllocateAlternatePool(size);
+    /* FAKEMATCH: a one-pass boundary gives the offer copy's argument order
+       and keeps the list base's copy first after the call. */
+    do {
+        Iwram_CopyWords(heap, Trade_GetOfferState(0), size);
+    } while (0);
+    {
+        s32 timeout;
+        s32 tries;
+
+        list = (struct LinkOfferList *)(heap + 8);
+        tries = 0;
+        timeout = 600;
+        for (j = 0; j < list->count; j++) {
+            list->entries[j].owner = slots[list->entries[j].owner];
+            if ((s8)list->entries[j].owner == 0) {
+                for (k = j; k < list->count - 1; k++) {
+                    list->entries[k] = list->entries[k + 1];
+                }
+                list->count--;
+                j--;
+            }
+        }
+        if ((ret = SerialRuntime_BeginTransferA(heap, size)) == -1) {
+            result = ret;
+            goto done;
+        }
+        goto test3;
+    wait3:
+        Engine_TaskWait(1);
+        if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+            if (++tries > 24) {
+                result = -1;
+                goto done;
+            }
+        }
+    test3:
+        if (SerialRuntime_GetActiveTransfers() != 0) {
+            goto wait3;
+        }
+        Engine_TaskWait(1);
+        Engine_TaskWait(2);
+    }
+done:
+    Runtime_BumpFree(heap);
+    return result;
 }

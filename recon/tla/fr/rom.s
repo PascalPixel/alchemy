@@ -237,12 +237,8 @@ Vector_AddPolarOffset:
 	.thumb_func
 ArcTan2:
 	.incbin "baserom.gba", 0x00014914, 0x000000cc
-	.section .rom.00014a0c, "ax"
-	.global Func_080149e0
-	.type Func_080149e0, %function
-	.thumb_func
-Func_080149e0:
-	.incbin "baserom.gba", 0x00014a0c, 0x00000018
+	.section .rom.00014a1c, "ax"
+	.incbin "baserom.gba", 0x00014a1c, 0x00000008
 	.global Text_FormatHexToWork
 	.type Text_FormatHexToWork, %function
 	.thumb_func

@@ -118,7 +118,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0001489c)
     "*/recon/tla/ja/rom.o"(.rom.000148e8)
     "*/games/THE LOST AGE/SRC/LIB/MATH.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000149e0)
+    "*/recon/tla/ja/rom.o"(.rom.000149f0)
     "*/recon/tla/ja/rom.o"(.rom.00014a24)
     "*/recon/tla/ja/rom.o"(.rom.00014aa8)
     "*/recon/tla/ja/rom.o"(.rom.00014ae0)

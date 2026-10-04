@@ -1,3 +1,18 @@
+/* Current140: copied whole word and masked drawing index have separate
+ * consumed lifetimes. Signed bounds, complete-cell writes, three layers
+ * and both drawing words are unchanged; no new steering device.
+ */
+/* 2026-10-04 full-cell/index ownership controls from early-row560:
+ * split_whole_and_index: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * split_signed_index: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * split_register_index: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * register_row: draft: score 560 (27 register-only, 2 operand, 6 reordered)
+ * split_register_row: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * index_from_assignment: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * advance_destination_with_copy: draft: score 560 (27 register-only, 2 operand, 6 reordered)
+ * Retain split_whole_and_index140: one real full-cell copy followed by
+ * its separate low-twelve-bit drawing index, with no new instruction.
+ */
 /* 2026-10-04 real destination and mask lifetime controls:
  * bytes_after_bases: draft: score 635 (29 register-only, 2 operand, 7 reordered)
  * plain_bytes_after_bases: draft: score 2178 (49 register-only, 3 stack-only, 8 operand, 12 reordered, 3 inserted, 7 deleted)
@@ -159,7 +174,7 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
 {
     /* FAKEMATCH: after ordinary helper/lifetime forms remained at2055,
        temporary sharing, casts and statement order steer allocation/
-       scheduling; the current measured result is560 with no new state
+       scheduling; the current measured result is140 with no new state
        or source side effects. */
     s32 y = dst_y;
     u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
@@ -184,7 +199,8 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
     if (y < dst_y + height) {
         do {
             for (x = dst_x; x < dst_x + width; x++) {
-                u32 cell = *src++;
+                u32 whole = *src++;
+                u32 cell;
                 u32 offset;
                 u32 *dest;
                 u32 tmp3;
@@ -194,8 +210,8 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
                 u32 tmp12;
                 u32 tmp13;
                 u32 tmp11;
-                dst[0] = cell;
-                cell &= 0xfff;
+                dst[0] = whole;
+                cell = whole & 0xfff;
                 tmp12 = x & 15;
                 tmp6 = tmp12;
                 tmp3 = (u32)(y & 15);

@@ -182,8 +182,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             if (unit == 254)
                 continue;
             if (Owner_AdjustFirstValueFar(unit, 0xc0000000) == 0) {
-                BattleEv_Push(8, unit);
-                BattleEv_Push(9, unit);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, unit);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, unit);
             }
         }
         BattleEv_DispatchQueued();
@@ -307,10 +307,14 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 case 7:
                 case 8:
                     UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorRaisesItem);
-                    goto resolve;
+                    break;
+                default:
+                    UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
+                    break;
                 }
+            } else {
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
             }
-            UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
         }
         break;
     case 3:
@@ -401,12 +405,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 Owner_RecalculateStatsFar(command->unit_id);
                 BattleEventRuntime_Reset();
                 BattleEventRuntime_SchedulePhase(30);
-                BattleEv_Push(0, command->unit_id);
-                BattleEv_Push(3, DJINN_ELEMENT(command->parameter) * 20 + DJINN_INDEX(command->parameter) + 300);
-                BattleEv_Push(14, 175);
-                BattleEv_Push(10, 0);
-                BattleEv_Push(4, (s32)&MsgDjinnSet);
-                BattleEv_Push(11, command->unit_id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, command->unit_id);
+                BattleEv_Push(BATTLE_EVENT_ACTION, DJINN_ELEMENT(command->parameter) * 20 + DJINN_INDEX(command->parameter) + 300);
+                BattleEv_Push(BATTLE_EVENT_SOUND, 175);
+                BattleEv_Push(BATTLE_EVENT_REFRESH, 0);
+                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDjinnSet);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, command->unit_id);
                 AudioCommand_PlayFar(212);
                 Object_SetMode(GetBattleObjectSlot(command->unit_id)->object, 3);
                 ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(command->unit_id)->object, 32);
@@ -475,7 +479,6 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         }
         break;
     }
-resolve:
     if (action == 1) {
         struct BattleUnit *defender = Owner_GetStateFar(plan->target_ids[0]);
 
@@ -506,6 +509,8 @@ resolve:
         }
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
+        /* FAKEMATCH: the one-pass block keeps the native test order; the
+           same tests as one if condition change 44 instructions. */
         do {
             if (defender->hp == 0 || defender->sleep != 0 || defender->stun != 0
                 || defender->cannot_move != 0 || defender->charm != 0)

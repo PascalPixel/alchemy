@@ -944,7 +944,7 @@
         "*/recon/tla/raw/080ae220.o"(.text)
         "*/recon/tla/raw/080ae2fc.o"(.text)
         "*/recon/tla/raw/080ae358.o"(.text)
-        "*/recon/tla/raw/080ae3fc.o"(.text)
+        "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST_BITS.o"(.text)
         "*/recon/tla/raw/080ae410.o"(.text)
         "*/recon/tla/raw/080ae5fc.o"(.text)
         "*/recon/tla/raw/080ae6c8.o"(.text)

@@ -675,6 +675,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000a83f8)
     "*/games/THE LOST AGE/SRC/GAME/PARTY/LEADER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000a9114)
+    "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST_BITS.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000a940c)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/ADD_FOUND_TO_OWNER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000a9864)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/RATIOS.o"(.text)

@@ -635,6 +635,8 @@
     "*/recon/tla/it/rom.o"(.rom.000ad3f8)
     "*/games/THE LOST AGE/SRC/GAME/PARTY/LEADER.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000ae118)
+    "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST_BITS.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.000ae410)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/ADD_FOUND_TO_OWNER.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000ae874)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/RATIOS.o"(.text)

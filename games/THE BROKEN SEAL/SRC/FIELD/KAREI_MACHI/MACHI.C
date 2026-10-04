@@ -272,16 +272,6 @@ s32 Object_CreateFar();
 u8 *Battle_GetWorkObject1e0();
 void Object_Destroy(void);
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step_0200164c(s32 amount)
-{
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
 void SceneState_LinkRecordZeroWhenFlag200Clear(void);
 
 void SceneEffect_UpdateLobeOrbitEffect26(void);
@@ -1466,8 +1456,6 @@ void KareiMachi_AlternateDance(void)
  * by exit 5. */
 void FieldScene_RunTwoActorCutsceneSequence(void)
 {
-    extern struct SceneWork *Data_03001ebc;
-
     struct FieldActor *actor;
 
     Engine_EventBegin();
@@ -1477,7 +1465,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Engine_TaskWait(1);
     Camera_SetSpeed(0x3333, 0x666);
     Camera_MoveTo(0xc00000, -1, 0xfc0000, 1);
-    Data_03001ebc->setup = 40;
+    gEventWork->transition_frames = 40;
     Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 0x116);
@@ -1563,9 +1551,9 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
         Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
-        bump_step_0200164c(1);
+        gEventWork->message++;
     } else {
-        bump_step_0200164c(1);
+        gEventWork->message++;
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
         Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
     }
@@ -1637,8 +1625,8 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Actor_WalkToAndWait(9, 194, 212);
     Actor_SetPosition(8, 0, 0);
     Actor_SetPosition(9, 0, 0);
-    Data_03001ebc->setup = 24;
-    Data_03001ebc->request = 0x201;
+    gEventWork->transition_frames = 24;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(5);

@@ -103,8 +103,6 @@ ResourceObject_Create:
 	.type Ui_RunIconMonitor, %function
 Ui_RunIconMonitor:
 	.incbin "baserom.gba", 0x00012478, 0x000005e0
-	.section .rom.00012a8c, "ax"
-	.incbin "baserom.gba", 0x00012a8c, 0x000001f4
 	.section .rom.00012e80, "ax"
 	.global Object_ShadowTiles
 Object_ShadowTiles:

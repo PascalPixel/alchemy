@@ -101,12 +101,6 @@ Object_UpdateAllEnd:
 	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000ebec, "ax"
 	.incbin "baserom.gba", 0x0000ebec, 0x0000070c
-	.section .rom.000105d4, "ax"
-	.global Map_CopyMetatileCellsRect
-	.type Map_CopyMetatileCellsRect, %function
-	.thumb_func
-Map_CopyMetatileCellsRect:
-	.incbin "baserom.gba", 0x000105d4, 0x00000130
 	.section .rom.00010788, "ax"
 	.global Func_08010788
 	.type Func_08010788, %function

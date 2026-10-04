@@ -10,6 +10,9 @@ void BattleFx_InitializeMode1(struct BattleEffectArgument *effect);
 void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
 
+/* Star-field cleanup ignores the presentation kind passed by its caller. */
+s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
+
 void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 wait);
 
 /* BattleEffect_LoadWork builds a rectangle blitter into heap slot `slot`,

@@ -185,7 +185,6 @@ SECTIONS
     "*/games/COMMON/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.00010534)
     "*/games/COMMON/SRC/FIELD/COMMON/MAP/MAPCOPY.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000106e8)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SET_WORK_FLAG_BITS9_11.o"(.text)

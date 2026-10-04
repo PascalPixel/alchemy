@@ -10,36 +10,31 @@
  * was measured at 3050 (27 register, 5 stack, 10 operand, 8 reordered,
  * 17 inserted, 5 deleted); its 40-byte frame and real copy operations
  * do not occur in the native function. Keep this ordinary near match.
+ * Follow-up ordinary source trials, without a new steering device:
+ * - Fully consumed local Spark copied field by field: 5120. Named scalar
+ *   fields, direct field access and loop-local scope give the same result:
+ *   a 40-byte frame and real extra stack/copy instructions.
+ * - Mirroring each heap store through local fields: 2630, still a 40-byte
+ *   frame with extra stores; named fields/register declaration do not help.
+ * - Removing the existing empty scheduling barrier: 62 (one reordered
+ *   multiply-entry load plus the same two frame differences). An advancing
+ *   cursor gives 132, countdown 142, pointer-end loop 2007, scoped cursor 62.
+ * The retained draft uses the shared heap-slot declaration and actual
+ * allocated-object size; this ownership cleanup retains score 2. Neither
+ * local-record model explains the native 28 bytes without extra work.
  * Independent native-stack/consumer review agrees the explicit reserve
  * has no consumed owner. Adjacent functions remain in their source module.
  */
 #include "RUNTIME_MEM.H"
-#include "BATTLE_PARTY.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
-#include "SCENE.H"
-#include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
-
-extern u8 Data_03001e74[];
-
-struct State080c1084 {
-    u8 padding_000[0x64e];
-    u16 index;
-    u16 field_650;
-};
-
-extern s8 Data_080c5c10[];
-
-void Graphics_AdvancePaletteCycle(void);
-void BattlePres_ClearAllActorRecordModes(void);
-void QueueIoWriteDelay2(u32, u32);
-void BattlePres_SetActorRecordMode(s32, s32);
-extern u8 *gBattleWork;
+#include "HEAP_STATE.H"
+#include "FIXED_MATH.H"
 
 struct Spark {
     s32 pos[6];
@@ -64,37 +59,6 @@ struct SparkWork {
     s32 unknown_13cc;
 };
 
-typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 height);
-
-struct WorkSlots {
-    u8 padding00[0x9c];
-    struct SparkWork *work;
-    void *dest;
-    u8 padding0a4[0xb8 - 0xa4];
-    DrawFunc draw_spark;
-    DrawFunc draw_ring;
-};
-
-extern struct WorkSlots Data_03001e50;
-extern s32 Data_080c3604[];
-extern u8 Data_080c3620[];
-extern s32 Data_080c3628[];
-s32 FixedSqrt(s32 value);
-u32 Random16(void);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
-
-u32 ColorBuffer_BackupAndScaleThreeQuarters(void *, void *, u32);
-
-/* graphics/vram/Display_UploadBlock.c */
-struct State {
-    u8 unknown[156];
-    u32 context;
-    u32 source;
-};
-
-extern struct State gWorkSlot;
-
 s32 BattleFx_UpdateStarField(void);
 u32 Graphics_UploadVramBlock(void);
 extern s32 *gTransitionWork;
@@ -111,8 +75,8 @@ s32 BattleFx_InitializeStarField(s32 mode)
     s32 zero;
 
     gTransitionWork[2] = 1;
-    work = Runtime_AllocateBlock(39, 0x13d0);
-    Runtime_AllocateHeapBlock(40, 0x4000);
+    work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
     /* FAKEMATCH: the empty statement keeps the multiply routine's address load ahead of the spark cursor. */
     __asm__("");
     for (i = 0; i < 16; i++) {
@@ -148,7 +112,7 @@ s32 BattleFx_InitializeStarField(s32 mode)
     work->frames = 0;
     work->ready = 0;
     work->unknown_13cc = 0;
-    Iwram_ClearWords((void *)gWorkSlot.source, 0x4000);
+    Iwram_ClearWords(gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], 0x4000);
     data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
     Iwram_CopyWords((void *)0x05000000, data, 128);
     data += 128;
@@ -181,8 +145,8 @@ s32 BattleFx_InitializeStarField(s32 mode)
         *(u16 *)0x04000024 = zero;
         *(u16 *)0x04000026 = scale;
     } while (0);
-    FarCall_EffectTable(46, 7, 7, 3, 3);
-    FarCall_EffectTable(47, 7, 7, 3, 2);
+    FarCall_EffectTable(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+    FarCall_EffectTable(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
     Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateStarField, 0xc80);
     return Scheduler_AddOrUpdateCallback((s32)Graphics_UploadVramBlock, 0xc80);
 }

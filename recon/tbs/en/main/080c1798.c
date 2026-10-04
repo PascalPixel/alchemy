@@ -12,6 +12,13 @@
  * unresolved ownership question: frame spacing alone does not prove its
  * actors[24] capacity, and BattleEffectArgument has actors[8]. Do not
  * invent a larger position or an unread record to fill the top 40 bytes.
+ * Cleanup contract follow-up: all six owned ROMs have exactly one direct
+ * call to Graphics_ResetVramBlockAndReleaseHeapBlocks, from this routine,
+ * and no literal function pointers to it. The caller supplies kind only.
+ * The resident IwramClearWords sets r2 to zero before use, so the old
+ * three-argument cleanup definition mistook incoming r2 for a parameter.
+ * The shared one-argument, s32-result contract and existing two-argument
+ * IWRAM clear call leave the 84-byte callee exact and this draft at 2.
  * Independent native-stack/consumer review agrees the explicit reserve
  * has no consumed owner. Adjacent functions remain in their source module.
  */
@@ -21,6 +28,7 @@
 #include "IO_WRITE_QUEUE.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_WORK.H"
+#include "BATTLE_EFX.H"
 
 /* The tail of the work block in heap slot 39 that both the star field and
    the prepared scene end with: where BG2's reference point should be, and
@@ -51,7 +59,6 @@ extern void *gWorkSlot[];
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade);
 s32 BattleFx_InitializeStarField(s32 kind);
-void Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 kind);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 void BattleMotion_ProjectScaledPosition(s32 unit, struct EffectPosition *position);
 void Func_080c9020(struct EffectLaunch *launch);

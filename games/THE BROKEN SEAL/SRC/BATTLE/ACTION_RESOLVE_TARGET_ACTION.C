@@ -494,7 +494,9 @@ after_power:
             if (pp <= 0)
                 pp = 0;
             BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            goto pp_store;
+            target->pp = pp;
+            Owner_RecalculateRatiosFar(target_id);
+            break;
         }
 
         case BATTLE_DAMAGE_HP_ADDITIVE_6:
@@ -622,7 +624,6 @@ after_power:
                 BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
                 BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpRecover);
             }
-pp_store:
             target->pp = pp;
             Owner_RecalculateRatiosFar(target_id);
             break;

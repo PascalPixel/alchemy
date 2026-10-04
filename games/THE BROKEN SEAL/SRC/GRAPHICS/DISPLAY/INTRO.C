@@ -29,7 +29,7 @@ struct IntroWork {
     s32 frame;
     s32 tick;
     s32 state;
-    s32 unknown_14;
+    s32 rise;
     u8 unknown_18[0x68];
     struct IntroSprite sprites[8];
 };
@@ -51,20 +51,20 @@ void Title_LoadIntroBackgrounds(void)
     s32 blank;
 
     work = Ram_WorkSlot[43];
-    *(volatile u16 *)0x04000000 = 0;
+    REG_DISPCNT = 0;
     data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
-    Dma_Set(data, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
-    *(u16 *)0x05000200 = 0;
+    Dma_Set(data, (void *)OBJ_PLTT, 0x84000080, REG_DMA3);
+    OBJ_PLTT[0] = 0;
     data += 0x200;
     Resource_DecodeByteLz(data, Ram_MapCellBuffer);
-    Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x80000f00, (volatile u32 *)0x040000d4);
+    Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x80000f00, REG_DMA3);
     data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
-    Dma_Set(data, (void *)0x05000000, 0x84000080, (volatile u32 *)0x040000d4);
-    *(u16 *)0x05000000 = 0;
+    Dma_Set(data, (void *)BG_PLTT, 0x84000080, REG_DMA3);
+    BG_PLTT[0] = 0;
     data += 0x200;
     Resource_DecodeByteLz(data, Ram_MapCellBuffer);
-    Dma_Set(Ram_MapCellBuffer + 0x2940, (void *)0x06000000, 0x80002760, (volatile u32 *)0x040000d4);
-    Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, (volatile u32 *)0x040000d4);
+    Dma_Set(Ram_MapCellBuffer + 0x2940, (void *)0x06000000, 0x80002760, REG_DMA3);
+    Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, REG_DMA3);
 
     /* FAKEMATCH: goto loops and a tile counted in its high half keep the
        increment's constant inside each strip, where the loop pass would
@@ -141,13 +141,13 @@ back_rest_cell:
     if (++y <= 31)
         goto back_rest;
 
-    *(volatile u16 *)0x0400000a = 0x1f43;
-    *(volatile u16 *)0x0400000c = 0x1e81;
-    *(volatile u16 *)0x04000040 = 0xf0;
-    *(volatile u16 *)0x04000044 = 0x9f;
-    *(volatile u16 *)0x04000042 = 0xf0;
-    *(volatile u16 *)0x04000046 = 0x9f;
-    *(volatile u16 *)0x04000048 = 0x1616;
+    REG_BG1CNT = 0x1f43;
+    REG_BG2CNT = 0x1e81;
+    REG_WIN0H = 0xf0;
+    REG_WIN0V = 0x9f;
+    REG_WIN1H = 0xf0;
+    REG_WIN1V = 0x9f;
+    REG_WININ = 0x1616;
     for (y = 0; y < 4; y++) {
         gBgScroll[y].y = 0;
         gBgScroll[y].x = 0;
@@ -158,12 +158,12 @@ back_rest_cell:
     work->back_rows = 0;
     work->front_rows = 0;
     work->tick = 0;
-    work->unknown_14 = 0;
+    work->rise = 0;
     work->state = 0;
-    Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
-    *(volatile u16 *)0x04000050 = 0x3fbf;
-    *(volatile u16 *)0x04000052 = 0x1010;
-    *(volatile u16 *)0x04000050 = 0x3f44;
+    Dma_Set(gBgScroll, REG_BG0HOFS, 0x84000004, REG_DMA3);
+    REG_BLDCNT = 0x3fbf;
+    REG_BLDALPHA = 0x1010;
+    REG_BLDCNT = 0x3f44;
 }
 
 /* The prompt is five tiles. Japanese and French draw five sprites from

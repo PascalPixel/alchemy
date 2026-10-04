@@ -1045,7 +1045,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             Audio_PlayCue(134);
         }
         if (frame == 6) {
-            if ((u32)kind_from_four <= 1 || kind == 7 || kind == 13 || kind == 18 || kind == 19 || kind == 23 || kind == 34 || kind == 100) {
+            if (kind == 4 || kind == 5 || kind == 7 || kind == 13 || kind == 18 || kind == 19 || kind == 23 || kind == 34 || kind == 100) {
                 BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
                 work->shake_frames = 8;
             } else if (kind == 20 || kind == 14 || kind == 33) {
@@ -1079,7 +1079,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         Runtime_ReleaseHeapBlock(46);
         BattleFx_RunPaletteRampMode1(command);
     } else {
-        if ((u32)kind_from_two <= 1 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
+        if (kind == 2 || kind == 3 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
             Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
         }
         Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);

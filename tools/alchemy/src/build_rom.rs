@@ -1428,6 +1428,81 @@ mod tests {
     use super::*;
 
     #[test]
+    fn overlay_veneers_keep_their_targets_when_preceding_data_grows() {
+        use object::{Object, ObjectSection, ObjectSymbol};
+
+        prefer_installed_binutils();
+        let root = crate::compiler::routing::root();
+        for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
+            for (leading, prefix) in [(0, 0), (2, 0), (0, 2)] {
+                let work = tempfile::tempdir().unwrap();
+                let dir = work.path();
+                fs::write(dir.join("lead.s"), format!(".text\n.space {leading}\n")).unwrap();
+                fs::write(
+                    dir.join("veneer.s"),
+                    format!(
+                        ".syntax unified\n.thumb\n.text\n.include \"{}/games/{game}/SRC/SYSTEM/OVERLAY.INC\"\n.space {prefix}\n.global Entry, End, Target\n.thumb_func\nEntry:\noverlay_veneer Target\nEnd:\n.thumb_func\nTarget:\nbx lr\n",
+                        root.display()
+                    ),
+                )
+                .unwrap();
+                for name in ["lead", "veneer"] {
+                    command(
+                        &assembly_command(
+                            &dir.join(format!("{name}.s")).to_string_lossy(),
+                            &dir.join(format!("{name}.o")).to_string_lossy(),
+                        ),
+                        root,
+                    )
+                    .unwrap();
+                }
+                fs::write(
+                    dir.join("test.ld"),
+                    "SECTIONS { .text 0x02008000 : { lead.o(.text) veneer.o(.text) } }\n",
+                )
+                .unwrap();
+                command(
+                    &[
+                        "arm-none-eabi-ld",
+                        "-T",
+                        "test.ld",
+                        "-o",
+                        "test.elf",
+                        "lead.o",
+                        "veneer.o",
+                    ],
+                    dir,
+                )
+                .unwrap();
+                let elf = fs::read(dir.join("test.elf")).unwrap();
+                let file = object::File::parse(&*elf).unwrap();
+                let section = file.section_by_name(".text").unwrap();
+                let bytes = section.data().unwrap();
+                let symbol = |name| file.symbol_by_name(name).unwrap().address() as u32 & !1;
+                let entry = symbol("Entry");
+                let offset = (entry - section.address() as u32) as usize;
+                let instruction = u16::from_le_bytes(bytes[offset..offset + 2].try_into().unwrap());
+                assert_eq!(instruction & 0xff00, 0x4c00, "Thumb literal load into r4");
+                assert_eq!(&bytes[offset + 2..offset + 4], &[0x20, 0x47], "bx r4");
+                // Thumb literal loads use a word-aligned PC, even when the
+                // function itself starts on the second half of a word.
+                let literal = ((entry + 4) & !3) + u32::from(instruction & 0xff) * 4;
+                let at = (literal - section.address() as u32) as usize;
+                let loaded = u32::from_le_bytes(bytes[at..at + 4].try_into().unwrap());
+                assert_eq!(
+                    loaded,
+                    symbol("Target") | 1,
+                    "{game}, preceding object {leading} bytes, in-section prefix {prefix} bytes"
+                );
+                if prefix == 0 {
+                    assert_eq!(symbol("End") - entry, 8, "aligned veneer stays eight bytes");
+                    assert_eq!(&bytes[offset..offset + 4], &[0x00, 0x4c, 0x20, 0x47]);
+                }
+            }
+        }
+    }
+
+    #[test]
     fn kept_overlay_products_are_rebuilt_after_any_preserved_timestamp_overwrite() {
         prefer_installed_binutils();
         let work = tempfile::tempdir().unwrap();

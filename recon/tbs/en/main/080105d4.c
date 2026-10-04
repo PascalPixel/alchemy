@@ -1,3 +1,64 @@
+/* Current140: copied whole word and masked drawing index have separate
+ * consumed lifetimes. Signed bounds, complete-cell writes, three layers
+ * and both drawing words are unchanged; no new steering device.
+ */
+/* 2026-10-04 full-cell/index ownership controls from early-row560:
+ * split_whole_and_index: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * split_signed_index: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * split_register_index: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * register_row: draft: score 560 (27 register-only, 2 operand, 6 reordered)
+ * split_register_row: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * index_from_assignment: draft: score 140 (7 register-only, 2 operand, 1 reordered)
+ * advance_destination_with_copy: draft: score 560 (27 register-only, 2 operand, 6 reordered)
+ * Retain split_whole_and_index140: one real full-cell copy followed by
+ * its separate low-twelve-bit drawing index, with no new instruction.
+ */
+/* 2026-10-04 real destination and mask lifetime controls:
+ * bytes_after_bases: draft: score 635 (29 register-only, 2 operand, 7 reordered)
+ * plain_bytes_after_bases: draft: score 2178 (49 register-only, 3 stack-only, 8 operand, 12 reordered, 3 inserted, 7 deleted)
+ * mask_after_dst_advance: draft: score 715 (26 register-only, 3 operand, 5 reordered, 1 inserted, 1 deleted)
+ * mask_before_layer_test: draft: score 710 (26 register-only, 3 operand, 5 reordered, 1 inserted, 1 deleted)
+ * drawing_dest_first: draft: score 560 (27 register-only, 2 operand, 6 reordered)
+ * Retain560; none improves the source or its measured match.
+ */
+/* 2026-10-04 current560: initialize the consumed row before forming
+ * source/destination pointers, and use it in the destination origin.
+ * Same signed bounds and cursor/row updates; no new device or state.
+ * This removes the extra row copy, leaving only register/operand/order
+ * differences. Full-cell stores and both drawing words remain intact.
+ */
+/* 2026-10-04 native live-register trials after real early-row correction:
+ * row6: draft: score 1894 (27 register-only, 9 stack-only, 6 operand, 10 reordered, 3 inserted, 7 deleted)
+ * counter5: draft: score 995 (23 register-only, 2 operand, 7 reordered, 4 inserted)
+ * row_counter: draft: score 2282 (30 register-only, 7 stack-only, 4 operand, 15 reordered, 6 inserted, 5 deleted)
+ * masked7: draft: score 2275 (49 register-only, 5 stack-only, 8 operand, 12 reordered, 4 inserted, 7 deleted)
+ * row_masked: draft: score 2629 (37 register-only, 4 stack-only, 6 operand, 13 reordered, 3 inserted, 12 deleted)
+ * row_counter_masked: draft: score 2918 (38 register-only, 3 stack-only, 5 operand, 13 reordered, 7 inserted, 11 deleted)
+ * Retain early-row560 pending any new-device review.
+ */
+/* Ordinary search seed7105/two jobs/10200 candidates retained560;
+ * no new source changes. Native instructions all present; differences are
+ *27 registers,2 operands and6 reorderings, with row still inr7 versusr6.
+ */
+/* 2026-10-04 endpoint trials from560:
+ * end_before_test: draft: score 1368 (28 register-only, 8 stack-only, 2 operand, 9 reordered, 2 inserted, 4 deleted)
+ * end_after_test: draft: score 1073 (29 register-only, 8 stack-only, 2 operand, 9 reordered, 1 inserted, 2 deleted)
+ * Retain early-row560; field names unchanged.
+ */
+/* 2026-10-04 row ownership/lifetime trials from675:
+ * before_src: draft: score 560 (27 register-only, 2 operand, 6 reordered)
+ * before_dst: draft: score 1178 (30 register-only, 8 stack-only, 2 operand, 9 reordered, 2 inserted, 2 deleted)
+ * after_dst: draft: score 1198 (30 register-only, 8 stack-only, 3 operand, 9 reordered, 2 inserted, 2 deleted)
+ * end_before_test: malformed field-name rename; no score.
+ * end_after_test: malformed field-name rename; no score.
+ * Retain before_src; any endpoint model needs semantic review.
+ */
+/* 2026-10-04 canonical MapCell lifetime trials:
+ * canonical_word_union: draft: score 675 (26 register-only, 3 operand, 6 reordered, 1 inserted)
+ * typed_cell_cursors: draft: score 675 (26 register-only, 3 operand, 6 reordered, 1 inserted)
+ * consumed_cell_value: draft: score 875 (18 register-only, 3 operand, 5 reordered, 2 inserted, 2 deleted)
+ * Retain prior675; no new shared declaration or unused storage.
+ */
 /* 2026-10-04 current draft: score675 (26 register,3 operand,6 scheduling,
  * 1 inserted instruction). The consumed drawing byte-offset lifetime in r3
  * prevents hoisting of its shift; full-cell stores, signed bounds, all three
@@ -117,15 +178,15 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
 {
     /* FAKEMATCH: after ordinary helper/lifetime forms remained at2055,
        temporary sharing, casts and statement order steer allocation/
-       scheduling; the current measured result is675 with no new state
+       scheduling; the current measured result is140 with no new state
        or source side effects. */
+    s32 y = dst_y;
     u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
-    u32 *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
+    u32 *dst = (u32 *)Ram_MapCellBuffer + (y * 128 + dst_x);
     struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
     struct TilePos tile[3];
     s32 i;
     struct TilePos *pos = tile;
-    s32 y;
     register s32 x;
 
     i = 2;
@@ -139,11 +200,11 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
         layer++;
         i--;
     }
-    y = dst_y;
     if (y < dst_y + height) {
         do {
             for (x = dst_x; x < dst_x + width; x++) {
-                u32 cell = *src++;
+                u32 whole = *src++;
+                u32 cell;
                 u32 offset;
                 u32 *dest;
                 u32 tmp3;
@@ -153,8 +214,8 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
                 u32 tmp12;
                 u32 tmp13;
                 u32 tmp11;
-                dst[0] = cell;
-                cell &= 0xfff;
+                dst[0] = whole;
+                cell = whole & 0xfff;
                 tmp12 = x & 15;
                 tmp6 = tmp12;
                 tmp3 = (u32)(y & 15);

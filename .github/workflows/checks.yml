@@ -40,11 +40,12 @@ jobs:
       - name: Build pinned binutils for synthetic ELF tests
         run: tools/out/cargo-target/release/alchemy bootstrap --binutils
 
-      - name: Test coverage failure paths with synthetic objects
+      - name: Test coverage failure paths and veneer relocation with synthetic objects
         run: >-
           env PATH="$PWD/tools/out/binutils/bin:$PATH"
           cargo test --locked --offline --release --manifest-path tools/Cargo.toml
           -p alchemy --bin alchemy -- coverage::calcrom::tests::symbol_inspection_
+          build_rom::tests::overlay_veneers_keep_their_targets_when_preceding_data_grows
 
       - name: Test asset encoders and analysis tools on synthetic inputs
         run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p ags -p psynergy

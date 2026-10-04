@@ -5,7 +5,8 @@
 
 use super::asm::{Data, Label, Pointer};
 use encoding_rs::WINDOWS_1252;
-use psynergy::assets::huffman_archive::encode_huffman_archive;
+mod huffman;
+use huffman::encode_huffman_archive;
 use psynergy::assets::po::{self, Catalog};
 use std::collections::BTreeMap;
 use std::fs;
@@ -483,8 +484,7 @@ fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
 pub fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
     // Laid out from a word-aligned start, its padding holds wherever the
     // linker places it on a word boundary.
-    let built = encode_huffman_archive(0, source.symbol_count, &source.banks)
-        .map_err(|error| error.to_string())?;
+    let built = encode_huffman_archive(0, source.symbol_count, &source.banks)?;
     let mut data = Data::from_bytes(built.bytes);
     data.align = 4;
     let models = format!("{label}Models");

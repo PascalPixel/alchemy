@@ -1,5 +1,10 @@
-use super::{AssetError, Node};
+use super::super::AssetError;
 use std::collections::HashMap;
+
+enum Node {
+    Leaf(u16),
+    Branch(Box<Node>, Box<Node>),
+}
 
 pub struct Message {
     pub symbols: Option<Vec<u16>>,
@@ -172,35 +177,4 @@ impl<'a> MessageReader<'a> {
         }
         Err(AssetError("message exceeds symbol limit".into()))
     }
-}
-
-#[test]
-fn message_reader_inverts_owned_encoder_and_rejects_truncation() {
-    use super::encode_huffman_archive;
-    let banks = vec![vec![Some(vec![1, 2, 1]), None, Some(vec![2; 2041])]];
-    let archive = encode_huffman_archive(0x1000, 3, &banks).unwrap();
-    let contexts = archive.messages - 8;
-    let mut reader =
-        MessageReader::new(&archive.bytes, 0x1000, contexts, archive.directory, 3).unwrap();
-    for (index, expected) in banks[0].iter().enumerate() {
-        assert_eq!(&reader.message(index).unwrap().symbols, expected);
-    }
-    let mut truncated = MessageReader::new(
-        &archive.bytes[..archive.bytes.len() - 1],
-        0x1000,
-        contexts,
-        archive.directory,
-        3,
-    )
-    .unwrap();
-    assert!(truncated.message(0).is_err());
-    let mut invalid = archive.bytes.clone();
-    invalid[(contexts - 0x1000) as usize..(contexts - 0x1000) as usize + 4]
-        .copy_from_slice(&0u32.to_le_bytes());
-    assert!(
-        MessageReader::new(&invalid, 0x1000, contexts, archive.directory, 3)
-            .unwrap()
-            .message(0)
-            .is_err()
-    );
 }

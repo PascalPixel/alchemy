@@ -91,30 +91,3 @@ check:
     }
     WaitFrames(1);
 }
-
-#include "GLOBAL_CELLS.H"
-#include "TYPES.H"
-
-struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
-
-/* Clear the result pair, then queue the selected entry in this window. */
-s32 UiText_OpenEntryMessage(s32 window, s32 argument)
-{
-    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-    s32 entry;
-    s32 result = 0;
-    /* FAKEMATCH: an unused buffer reproduces the reference's 16-byte frame. */
-    u8 unused[8];
-
-    work->result[0] = 0;
-    work->result[1] = 0;
-    entry = UiText_BuildRenderEntries(argument, 1);
-    if (work->entries[entry] == 0)
-        return 0;
-    if (window == 0)
-        return 0;
-    result = (s32)UiText_QueueRenderEntries((struct UiWindow *)window, entry, 0, 0, 0, 1);
-    if (result == 0)
-        return 0;
-    return result;
-}

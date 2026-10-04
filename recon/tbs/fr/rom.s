@@ -98,18 +98,6 @@ Object_UpdateAllEnd:
 	.incbin "baserom.gba", 0x0000d2f0, 0x000001ec
 	.section .rom.0000e3ec, "ax"
 	.incbin "baserom.gba", 0x0000e3ec, 0x0000070c
-	.section .rom.0000fc24, "ax"
-	.global Map_CopyMetatileIndicesRect
-	.type Map_CopyMetatileIndicesRect, %function
-	.thumb_func
-Map_CopyMetatileIndicesRect:
-	.incbin "baserom.gba", 0x0000fc24, 0x0000013c
-	.section .rom.0000fd60, "ax"
-	.global Map_PlayMetatileCopySequence
-	.type Map_PlayMetatileCopySequence, %function
-	.thumb_func
-Map_PlayMetatileCopySequence:
-	.incbin "baserom.gba", 0x0000fd60, 0x00000074
 	.section .rom.0000fdd4, "ax"
 	.global Map_CopyMetatileCellsRect
 	.type Map_CopyMetatileCellsRect, %function
@@ -3337,3 +3325,53 @@ BattleMotion_ProjectScaledPosition:
 Party_ComputeEligibleMemberAverage:
 	.incbin "baserom.gba", 0x000c5a4c, 0x000000c8
 	.size Party_ComputeEligibleMemberAverage, .-Party_ComputeEligibleMemberAverage
+
+@ Uncredited frame audit; see the English UiText_OpenEntryMessage draft.
+	.section .rom.00016570, "ax"
+	.balign 4
+	.global UiText_OpenEntryMessage
+	.type UiText_OpenEntryMessage, %function
+	.thumb_func
+UiText_OpenEntryMessage:
+	.incbin "baserom.gba", 0x00016570, 0x00000060
+	.size UiText_OpenEntryMessage, .-UiText_OpenEntryMessage
+
+@ Uncredited frame audit; see the English BattlePres_SyncTurn draft.
+	.section .rom.000ba160, "ax"
+	.balign 4
+	.global BattlePres_SyncTurn
+	.type BattlePres_SyncTurn, %function
+	.thumb_func
+BattlePres_SyncTurn:
+	.incbin "baserom.gba", 0x000ba160, 0x00000230
+	.size BattlePres_SyncTurn, .-BattlePres_SyncTurn
+
+@ Uncredited frame audit; see the English BattleFx_InitializeStarField draft.
+	.section .rom.000c5488, "ax"
+	.balign 4
+	.global BattleFx_InitializeStarField
+	.type BattleFx_InitializeStarField, %function
+	.thumb_func
+BattleFx_InitializeStarField:
+	.incbin "baserom.gba", 0x000c5488, 0x00000260
+	.size BattleFx_InitializeStarField, .-BattleFx_InitializeStarField
+
+@ Uncredited frame audit; see the English BattleFx_PlayUnitElementEffect draft.
+	.section .rom.000c57b0, "ax"
+	.balign 4
+	.global BattleFx_PlayUnitElementEffect
+	.type BattleFx_PlayUnitElementEffect, %function
+	.thumb_func
+BattleFx_PlayUnitElementEffect:
+	.incbin "baserom.gba", 0x000c57b0, 0x0000027c
+	.size BattleFx_PlayUnitElementEffect, .-BattleFx_PlayUnitElementEffect
+
+@ Uncredited frame audit; see the English BattleFx_RunParticleField draft.
+	.section .rom.000deee0, "ax"
+	.balign 4
+	.global BattleFx_RunParticleField
+	.type BattleFx_RunParticleField, %function
+	.thumb_func
+BattleFx_RunParticleField:
+	.incbin "baserom.gba", 0x000deee0, 0x00000444
+	.size BattleFx_RunParticleField, .-BattleFx_RunParticleField

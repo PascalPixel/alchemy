@@ -10,17 +10,6 @@ pub(crate) use publication::figure_test_reason;
 const USAGE: &str =
     "usage: alchemy check <publication|commit-progress|coverage|layout|no-asm|progress|routes> [args]";
 
-/// Run a check body and report its error the way every check does.
-fn report(result: Result<(), String>) -> ExitCode {
-    match result {
-        Ok(()) => ExitCode::SUCCESS,
-        Err(error) => {
-            eprintln!("error: {error}");
-            ExitCode::FAILURE
-        }
-    }
-}
-
 fn routes(arguments: &[String]) -> ExitCode {
     if arguments == ["--standard"] {
         for flag in crate::compiler::routing::cflags_for_target(

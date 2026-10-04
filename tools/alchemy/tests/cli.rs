@@ -35,6 +35,31 @@ fn unknown_command_is_refused() {
 }
 
 #[test]
+fn coverage_refuses_publication_options_at_the_outer_boundary() {
+    for argument in ["--write", "--publication", "--models", "unknown"] {
+        let output = command().args(["coverage", argument]).output().unwrap();
+        assert_eq!(output.status.code(), Some(2));
+        assert_eq!(
+            String::from_utf8_lossy(&output.stderr).trim(),
+            "usage: alchemy coverage"
+        );
+    }
+}
+
+#[test]
+fn compiler_source_build_refuses_extra_options() {
+    let output = command()
+        .args(["build", "compilers", "--publication"])
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(2));
+    assert_eq!(
+        String::from_utf8_lossy(&output.stderr).trim(),
+        "usage: alchemy build compilers"
+    );
+}
+
+#[test]
 fn project_build_stages_remain_discoverable() {
     for stage in ["compilers", "runtime", "rom"] {
         let output = command().args(["build", stage, "--help"]).output().unwrap();
@@ -175,6 +200,9 @@ fn worktree_prepares_only_available_edition_caches() {
             std::fs::create_dir_all(&directory).unwrap();
             std::fs::write(directory.join("fixture"), b"cargo cache").unwrap();
         }
+        let debug = primary.join("tools/out/cargo-target/debug");
+        std::fs::create_dir_all(&debug).unwrap();
+        std::fs::write(debug.join("fixture"), b"disposable test cache").unwrap();
         let output = worktree_prepare(&worktree);
         assert!(
             output.status.success(),
@@ -223,6 +251,11 @@ fn worktree_prepares_only_available_edition_caches() {
         }
         let cargo_copy = worktree.join("tools/out/cargo-target");
         assert_eq!(cargo_copy.exists(), cargo);
+        assert!(!cargo_copy.join("debug").exists(), "{case}");
+        assert_eq!(
+            std::fs::read(debug.join("fixture")).unwrap(),
+            b"disposable test cache"
+        );
         if cargo {
             assert!(!std::fs::symlink_metadata(&cargo_copy)
                 .unwrap()
@@ -244,7 +277,7 @@ fn worktree_prepares_only_available_edition_caches() {
 fn worktree_propagates_cache_copy_failures() {
     for collision in ["out/tbs-ja", "tools/out/cargo-target"] {
         let (_fixture, primary, worktree) = worktree_fixture();
-        for cached in ["out/tbs-ja", "tools/out/cargo-target"] {
+        for cached in ["out/tbs-ja", "tools/out/cargo-target/release"] {
             std::fs::create_dir_all(primary.join(cached)).unwrap();
             std::fs::write(primary.join(cached).join("fixture"), b"synthetic cache").unwrap();
         }

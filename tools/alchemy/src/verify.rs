@@ -476,8 +476,8 @@ mod tests {
     fn main_default_gates_override_an_ambient_tla_target() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
-        std::fs::write(root.join("Makefile"), "build-full coverage:\n\t@printf '%s\\n' '$(TARGET)'\ncompare-tla:\n\t@printf '%s\\n' tla-ja\n").unwrap();
-        for gate in ["build-full", "coverage", "compare-tla"] {
+        std::fs::write(root.join("Makefile"), "build-rom coverage:\n\t@printf '%s\\n' '$(TARGET)'\ncompare-tla:\n\t@printf '%s\\n' tla-ja\n").unwrap();
+        for gate in ["build-rom", "coverage", "compare-tla"] {
             let arguments = make_arguments(Path::new("/unused/alchemy"), &[], gate, true);
             let output = Command::new("make")
                 .args(arguments)

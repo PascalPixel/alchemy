@@ -434,7 +434,7 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
             return ExitCode::from(2);
         }
     };
-    super::report(result)
+    crate::result(result)
 }
 
 #[cfg(test)]

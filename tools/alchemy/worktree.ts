@@ -18,9 +18,10 @@ const editions = [
     "tbs-ja", "tbs-en", "tbs-de", "tbs-es", "tbs-fr", "tbs-it",
     "tla-ja", "tla-en", "tla-de", "tla-es", "tla-fr", "tla-it",
 ];
-for (const cache of ["tools/out/cargo-target", ...editions.map(id => "out/" + id)]) {
+for (const cache of ["tools/out/cargo-target/release", ...editions.map(id => "out/" + id)]) {
     const source = join(main, cache);
     if (statSync(source, { throwIfNoEntry: false })?.isDirectory()) {
+        mkdirSync(dirname(cache), { recursive: true });
         execFileSync("cp", ["-c", "-R", source, dirname(cache) + "/"], { stdio: "inherit" });
     }
 }

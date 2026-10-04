@@ -1,3 +1,5 @@
+/* Canonical saved ES/FR/IT attempt: the identical copies are consolidated
+ * here. DE retains its distinct source and measurements. */
 /* NONMATCHING: localized room entry before call and callback refinements, 2026-10-01.
  * The complete 3456-byte initializer compiles with the approved TBS flags.
  * 13 instruction bytes differ: direct position calls schedule the

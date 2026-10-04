@@ -43,7 +43,7 @@ fn main() -> ExitCode {
         "bootstrap" => result(bootstrap::run(rest)),
         "build" => build::entry(rest),
         "verify" => verify::entry(rest),
-        "coverage" => make_target(command, rest),
+        "coverage" => coverage_command(rest),
         "raw" => result(raw::run(rest)),
         "permute" => result(permute::run(rest)),
         "drafts" => result(permute::drafts::run(rest)),
@@ -61,30 +61,19 @@ fn main() -> ExitCode {
     }
 }
 
-fn make_target(target: &str, arguments: &[String]) -> ExitCode {
+fn coverage_command(arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
-        if target == "coverage" {
-            println!(
-                "usage: alchemy coverage\nPublishes README progress and both figures from each game's six verified builds."
-            );
-        } else {
-            println!("usage: alchemy {target}\nRuns the repository's make {target} contract.");
-        }
+        println!(
+            "usage: alchemy coverage\nPublishes README progress and both figures from each game's six verified builds."
+        );
         return ExitCode::SUCCESS;
     }
     if !arguments.is_empty() {
-        eprintln!("usage: alchemy {target}");
+        eprintln!("usage: alchemy coverage");
         return ExitCode::from(2);
     }
-    match std::process::Command::new("make")
-        .current_dir(crate::compiler::routing::root())
-        .arg(target)
-        .status()
-    {
-        Ok(status) if status.success() => ExitCode::SUCCESS,
-        Ok(_) => ExitCode::FAILURE,
-        Err(error) => result(Err(format!("cannot run make {target}: {error}"))),
-    }
+    coverage::entry(&["--write".to_string(), "--publication".to_string()]);
+    ExitCode::SUCCESS
 }
 
 fn recovery_command(command: &str, arguments: &[String]) -> ExitCode {

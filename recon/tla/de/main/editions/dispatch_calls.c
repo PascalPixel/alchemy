@@ -1,3 +1,5 @@
+/* Canonical saved DE/ES/FR/IT attempt: the identical copies are
+ * consolidated here. This path keeps DE as its draft-scoring edition. */
 /* 2026-10-03: removed the unused unary ApplyChildValuesToRecord declaration.
    The complete edition object is unchanged; the older metadata-argument
    draft limitation below remains outside this correction. */

@@ -33,7 +33,7 @@ $(LIBGCC):
 	$(MAKE) compiler-runtime
 
 .PHONY: help bootstrap fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools
-.PHONY: compare compare-tla compare-all build-full build-rom
+.PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check untracked-check
 .PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
@@ -64,7 +64,7 @@ bootstrap: fetch-dependencies
 	$(MAKE) $(LIBGCC)
 
 # In a new worktree, before its first build: link the main checkout's ROMs
-# and installed tools, and clone existing tool and edition builds copy-on-write.
+# and installed tools, and clone release tools and edition builds copy-on-write.
 # Private reports, verification and recovery output stay in the main checkout.
 MAIN_CHECKOUT = $(shell git rev-parse --path-format=absolute --git-common-dir)/..
 worktree:
@@ -119,7 +119,7 @@ $(COMPARE_EDITIONS): compare-%:
 	$(BUILD) rom --target $*
 	@grep -F ' out/$*/' rom.sha1 | $(SHA1) -
 
-build-full build-rom:
+build-rom:
 	$(BUILD) rom --target $(TARGET)
 
 # Reading local references does not restore source catalogs or award credit.

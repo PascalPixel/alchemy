@@ -1,3 +1,5 @@
+/* Canonical saved DE/ES/FR/IT/JA attempt: the identical copies are
+ * consolidated here. This path keeps DE as its draft-scoring edition. */
 /* NONMATCHING: partial canonical PO enum import, 2026-10-01.
  * The complete 2816-byte Scene_RunExtendedActorSequence extent compiles with
  * the approved TBS flags. 2 literal-pool bytes still differ because

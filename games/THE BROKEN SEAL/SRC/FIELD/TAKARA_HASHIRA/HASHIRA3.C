@@ -272,7 +272,7 @@ void SceneEffect_SpawnRandomizedParticle(void)
                   secondary, 0, 0x014d0000, d);
 }
 
-s32 SceneEffect_SpawnRandomEffectEveryEightFrames(u8 *actor)
+s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
 {
     u8 desc[40];
     u8 *p;
@@ -290,9 +290,9 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(u8 *actor)
     *(s32 *)(p + 8) = 0xb333;
     *(s32 *)(p + 12) = 0xb333;
 
-    x = *(s32 *)(actor + 8) + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
-    y = *(s32 *)(actor + 12) + ((s32)(((u32)Engine_RandomNext() * 17) >> 16) << 16);
-    z = *(s32 *)(actor + 16) + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+    x = actor->x.fixed + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+    y = actor->y.fixed + ((s32)(((u32)Engine_RandomNext() * 17) >> 16) << 16);
+    z = actor->z.fixed + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
     scale = Math_Divide((s32)(((u32)Engine_RandomNext() * 5) >> 16) * 0x10000 + 0x30000, 10);
 
     Effect_Spawn(x, y, z, 0, scale, (s32)phase, 0x00090001, p);

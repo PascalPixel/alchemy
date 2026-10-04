@@ -133,18 +133,18 @@ void StagedActor_AdvanceCounter98(u8 *o)
     }
 }
 
-s32 StagedActor_CountdownUntilPositionUnset(u8 *o)
+s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o)
 {
-    s32 n = *(s32 *)(o + 76);
+    s32 n = o->rise_base_y;
 
     if (n != 0) {
-        *(s32 *)(o + 76) = n - 1;
+        o->rise_base_y = n - 1;
     } else {
         return 1;
     }
-    if (*(s32 *)(o + 56) == 0x80000000
-        && *(s32 *)(o + 60) == *(s32 *)(o + 56)
-        && *(s32 *)(o + 64) == *(s32 *)(o + 60)) {
+    if (o->target_x == 0x80000000
+        && o->target_y == o->target_x
+        && o->target_z == o->target_y) {
         return 1;
     }
     return 0;

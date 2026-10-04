@@ -81,7 +81,7 @@ void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
  * mirrored back from +20 afterwards. The owner at 0x02000da8 is 52 bytes
  * and carries no pool.
  */
-void SceneActor_WaitHeightBelowLimit(u8 *obj, s32 limit)
+void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
 {
     s32 cnt = 60;
 
@@ -90,17 +90,17 @@ void SceneActor_WaitHeightBelowLimit(u8 *obj, s32 limit)
             break;
         }
         WaitFrames(1);
-        if (*(s32 *)(obj + 12) <= *(s32 *)(obj + 20)) {
+        if (obj->y.fixed <= obj->terrain_height) {
             break;
         }
-        if (*(s32 *)(obj + 12) <= limit) {
+        if (obj->y.fixed <= limit) {
             break;
         }
         cnt--;
     }
 
-    *(u32 *)(obj + 0x28) = 0;
-    *(u32 *)(obj + 0x3c) = 0x80000000;
+    obj->velocity_y = 0;
+    obj->target_y = 0x80000000;
 }
 
 s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth, struct StagedActorProbe *probe, s32 *left, s32 *top)

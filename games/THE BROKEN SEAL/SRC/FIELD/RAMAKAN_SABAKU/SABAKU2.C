@@ -73,7 +73,7 @@ void OverlayObject_WaitUntilField12BelowLimit(u8 *o, s32 limit)
 
 /* Every eighth frame play the sand cue; every sixteenth spawn a sand effect
  * at the actor with a random heading. */
-s32 RamakanSabaku_EmitSandEffect(u8 *actor)
+s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {
     struct EffectParams params;
     s32 phase;
@@ -88,7 +88,7 @@ s32 RamakanSabaku_EmitSandEffect(u8 *actor)
     params.scaleX = 0xcccc;
     params.scaleY = 0xcccc;
     params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-    Effect_Spawn(*(s32 *)(actor + 8), *(s32 *)(actor + 12), *(s32 *)(actor + 16), 0, phase, phase, 0x00880001, &params);
+    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase, 0x00880001, &params);
     return 0;
 }
 

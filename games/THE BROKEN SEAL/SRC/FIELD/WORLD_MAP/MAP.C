@@ -115,7 +115,7 @@ void StoryActor_AdvanceTimer(u8 *actor)
     }
 }
 
-void StoryActor_ConfigureSpawnedObject(u8 *actor)
+void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 {
 
     s32 fixed_scale;
@@ -124,12 +124,12 @@ void StoryActor_ConfigureSpawnedObject(u8 *actor)
 
     if ((gFrameCount & 4) != 0) {
         fixed_scale = 0x14ccc;
-        *(s32 *)(actor + 0x18) = fixed_scale;
-        *(s32 *)(actor + 0x1c) = fixed_scale;
+        actor->scale_x = fixed_scale;
+        actor->scale_y = fixed_scale;
     } else {
         fixed_scale = 0x10000;
-        *(s32 *)(actor + 0x18) = fixed_scale;
-        *(s32 *)(actor + 0x1c) = fixed_scale;
+        actor->scale_x = fixed_scale;
+        actor->scale_y = fixed_scale;
     }
 
     if ((gFrameCount & 2) == 0) {
@@ -137,9 +137,9 @@ void StoryActor_ConfigureSpawnedObject(u8 *actor)
     }
 
     {
-        s32 x = *(s32 *)(actor + 0x08);
-        s32 y = *(s32 *)(actor + 0x0c);
-        s32 z = *(s32 *)(actor + 0x10);
+        s32 x = actor->x.fixed;
+        s32 y = actor->y.fixed;
+        s32 z = actor->z.fixed;
         spawned_actor = Engine_ObjectCreate(0x11d, x, y, z);
     }
     Engine_AudioPlayCue(0xf6);

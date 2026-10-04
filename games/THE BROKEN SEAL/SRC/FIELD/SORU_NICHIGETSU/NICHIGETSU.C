@@ -3,6 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 
 /* The scene's tables, which the entry veneers publish to the map engine. */
 extern const struct SceneEntrance gSoruNichigetsuEntrances[];
@@ -1452,7 +1453,6 @@ void SoruNichigetsu_RunLightScene(void)
 {
     struct FieldActor *leader;
     u8 *field;
-    s32 frames;
 
     Engine_EventBegin();
     Call4((void (*)())Engine_CameraMoveTo, 0x11e0000, -1, 0x860000, 0);
@@ -1464,12 +1464,7 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_TaskWait(1);
     Call3((void (*)())Engine_ActorSetPosition, 1, 0x1180000, 0x860000);
     Call3((void (*)())Engine_ActorFaceDirection, 1, 0xa000, 0);
-    {
-        u8 *ev = (u8 *)Data_03001ebc.event;
-
-        frames = 0x1c8;
-        *(s32 *)(ev + frames) = 1;
-    }
+    Data_03001ebc.event->transition_frames = 1;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_ColorBufferApplyTarget(0x2051cc, 1);
@@ -1539,9 +1534,9 @@ void SoruNichigetsu_RunLightScene(void)
     field[0x2a02] = 1;
     field[0x2a03] = 1;
     /* FAKEMATCH: the do/while keeps the backdrop-colour clear ahead of the event-work load. */
-    do { *(u16 *)0x05000000 = 0; } while (0);
+    do { PLTT_BACKDROP = 0; } while (0);
     Data_03001ebc.event->start_transition = 0x204;
-    *(s32 *)((u8 *)Data_03001ebc.event + frames) = 16;
+    Data_03001ebc.event->transition_frames = 16;
     Engine_EventEnd();
 }
 

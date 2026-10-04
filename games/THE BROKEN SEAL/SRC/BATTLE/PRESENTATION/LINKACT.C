@@ -5,7 +5,7 @@
 #include "BATTLE_RANDOM.H"
 #include "BATTLE_RUNTIME.H"
 
-extern s32 Data_03001cb4;
+extern s32 gRandomSeed;
 extern volatile u16 gLinkStatus;
 extern volatile u16 gSerialReceivedSize;
 
@@ -133,7 +133,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
     for (index = 0; index < count; index++) {
         struct BattleActionRecord *action = &actions[index];
 
-        *(u16 *)action->unknown_02 = battle->owner_slots[action->unit_id];
+        action->slot = battle->owner_slots[action->unit_id];
         /* The side is read through a byte pointer each pass, as the
          * reference reads it. */
         if (*(u8 *)&battle->link_side == 0) {
@@ -160,7 +160,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
                 saved = *ime;
                 *ime = (u16)(u32)ime;
             } while (0);
-            gBattleRandomSeed = state->seed = Data_03001cb4;
+            gBattleRandomSeed = state->seed = gRandomSeed;
             do { /* FAKEMATCH: the one-pass restore, see above */
                 *ime = saved;
             } while (0);
@@ -182,7 +182,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
         for (index = 0; index < result; index++) {
             struct BattleActionRecord *action = &actions[count + index];
 
-            action->unit_id = *(u16 *)action->unknown_02;
+            action->unit_id = action->slot;
             action->target = (u16)action->target ^ 0x80;
         }
 

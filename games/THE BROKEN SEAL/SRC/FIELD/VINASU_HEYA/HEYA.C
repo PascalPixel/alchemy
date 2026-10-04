@@ -305,9 +305,9 @@ s32 SceneEffect_SpawnTwoRandomizedParticles(struct Object_020006a0 *obj)
 void SceneEffect_RunObjectZeroColorSequence(void)
 {
     struct EffectObject *obj;
-    u8 *state;
+    struct EventWork *state;
 
-    state = *(u8 **)&gEventWork;
+    state = gEventWork;
     obj = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
     Engine_AudioPlayCue(228);
@@ -322,7 +322,7 @@ void SceneEffect_RunObjectZeroColorSequence(void)
     Engine_EventWait(30);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Engine_EventRequestExit(*(s16 *)(state + 0x16c));
+    Engine_EventRequestExit(state->touched_trigger);
     Engine_EventEnd();
 }
 

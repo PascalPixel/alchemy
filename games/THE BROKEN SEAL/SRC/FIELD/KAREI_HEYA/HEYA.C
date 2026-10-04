@@ -202,7 +202,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 void FieldScene_RunArrivalPlacement(void)
 {
 
-    u8 *work = *(u8 **)&gEventWork;
+    struct EventWork *work = gEventWork;
     u32 slot;
     s32 idx;
     u8 *p;
@@ -219,7 +219,7 @@ void FieldScene_RunArrivalPlacement(void)
 
     /* The sub-state slot is read twice, here and for Engine_EventRequestExit below, and
      * both reads are kept. */
-    switch (*(s16 *)(work + 364)) {         /* 182 << 1 */
+    switch (work->touched_trigger) {         /* 182 << 1 */
     case 12: idx = 0; break;
     case 13: idx = 1; break;
     case 16: idx = 2; break;
@@ -245,7 +245,7 @@ void FieldScene_RunArrivalPlacement(void)
     Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
     Engine_EventWait(10);
 
-    Engine_EventRequestExit(*(s16 *)(work + 364));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();

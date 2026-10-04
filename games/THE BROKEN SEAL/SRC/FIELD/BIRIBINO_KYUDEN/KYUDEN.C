@@ -253,12 +253,12 @@ void FieldScene_RunActorSeventeenFlagDialogue(void)
 
 void BiribinoKyuden_RunDoorExitScene(void)
 {
-    u8 *work;
+    struct EventWork *work;
     s32 lock;
 
-    work = *(u8 **)&gEventWork;
+    work = gEventWork;
     lock = 0;
-    if (*(s16 *)(work + 0x16c) == 9) {
+    if (work->touched_trigger == 9) {
         if (Engine_GameFlagIsSet(0x200) == 0) {
             Engine_AudioPlayCue(188);
             lock = 1;
@@ -275,12 +275,12 @@ void BiribinoKyuden_RunDoorExitScene(void)
     Engine_EventWait(10);
     Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
     Engine_ActorSetAnimation(0, 2);
-    if (*(s16 *)(work + 0x16c) == 9)
+    if (work->touched_trigger == 9)
         Call3(Engine_ActorSetDestinationOffset, 0, 0, -16);
     else
         Call3(Engine_ActorCenterAndWalk, 0, 3, -16);
     Engine_EventWait(16);
-    Engine_EventRequestExit(*(s16 *)(work + 0x16c));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventEnd();
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);

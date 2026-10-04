@@ -109,7 +109,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void FieldScene_RunActorEightPromptDialogue(void)
 {
-    u8 *work;
+    struct EventWork *work;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinYourFirstTimeVisitAltin);
@@ -119,8 +119,8 @@ void FieldScene_RunActorEightPromptDialogue(void)
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         Engine_EventShowMessage(8, 0);
     } else {
-        work = (u8 *)gEventWork;
-        *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + 1);
+        work = gEventWork;
+        work->message = (u16)(work->message + 1);
         Engine_EventAskYesNo(8, 0);
     }
 
@@ -404,14 +404,14 @@ void FieldScene_RunEarlySequence(void)
 
 void FieldScene_RunScene3a3SequenceB(void)
 {
-    u8 *work;
+    struct EventWork *work;
 
-    work = (u8 *)gEventWork;
+    work = gEventWork;
     Engine_EventBegin();
     Object_GetById(0)->motion_flags = 0;
     Audio_PlayCue(123);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-    Engine_EventRequestExit(*(s16 *)(work + 0x16c));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();

@@ -532,7 +532,6 @@
     "*/recon/tbs/es/rom.o"(.rom.000afe6c)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_INITIALIZE_TOP_ROW.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000b1c78)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT15.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000b1f40)
     "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/MARK_BALANCED_ENTRIES.o"(.text)

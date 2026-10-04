@@ -808,12 +808,6 @@ Func_080aa768:
 	.incbin "baserom.gba", 0x000aeff0, 0x0000051c
 	.section .rom.000afe6c, "ax"
 	.incbin "baserom.gba", 0x000afe6c, 0x000012fc
-	.section .rom.000b1c78, "ax"
-	.global FourObjectMotion_UpdateBottomRow
-	.type FourObjectMotion_UpdateBottomRow, %function
-	.thumb_func
-FourObjectMotion_UpdateBottomRow:
-	.incbin "baserom.gba", 0x000b1c78, 0x000000fc
 	.section .rom.000b1f40, "ax"
 	.incbin "baserom.gba", 0x000b1f40, 0x00001040
 	.section .rom.000b32b8, "ax"

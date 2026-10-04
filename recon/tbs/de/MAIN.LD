@@ -536,7 +536,6 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000ae460)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_INITIALIZE_TOP_ROW.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000b0288)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT15.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000b0550)
     "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/MARK_BALANCED_ENTRIES.o"(.text)

@@ -540,7 +540,6 @@
         "*/recon/tbs/raw/080ab5e4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_INITIALIZE_TOP_ROW.o"(.text)
-        "*/recon/tbs/raw/080ad40c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT15.o"(.text)
         "*/recon/tbs/raw/080ad6d4.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080ae2f4.o"(.text .rodata .data .padding)

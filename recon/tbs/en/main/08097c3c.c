@@ -9,6 +9,10 @@
  * cell_x to r0 or the mask to r2 (even in an inner block), spills p and
  * grows the frame to 56 (265-275); pinning p to r9 is worse (336+). An
  * unused user label before the cell loads is deleted and changes nothing.
+ * Devsearch (300 iterations, seed 301) reached 101 with two empty asm
+ * barriers in the move path, "+r" on moved before AudioCommand_PlayFar(175)
+ * and on p after the loop, and swapped nearby/moved declarations; none of
+ * them touches the cell tests, so they are not kept here.
  *
  * 2026-10-04 finisher 5 (score 115, was 183; z before x and speed/lift before
  * unknown_5b in the move path take 121 to 115): a tagged r11 binding for the

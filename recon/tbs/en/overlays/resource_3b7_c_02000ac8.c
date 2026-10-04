@@ -1,32 +1,32 @@
-/* NONMATCHING: the spring game, 680 bytes; alchemy diff 111 (was 157).
- * 2026-10-04 sun w3 finisher 1: the prompt is a goto loop (prompt: ... goto
- * prompt), not a for (;;). That is what places the A-button block where the
- * English reference has it: loop.c lifts that exit block out of the key loop to
- * the nearest barrier before its target at the outer level, and only a goto loop
- * leaves the prompt's back-jump barrier outside any loop (a for (;;) keeps it
- * inside the loop notes, so the block went after the choice-0 jump instead). With
- * the goto loop, choice/message take r10/r9 and coins/tickets r8/r7 as in the
- * reference, and the coin text loads inside the loop; the choice-0 retry has its
- * own SetMessage/ShowMessage/Wait/goto tail (crossjumping shares the call as the
- * reference does). The prize and coin tables are not const (the reference reloads
- * the coin table entry after the call), and the weight sum reads a u8 then casts
- * (ldrb and shifts, not ldrsb).
- * Remaining (111):
- *  - the -1 constants: here cse keeps the choice test's -1 in a pseudo and reuses
- *    it for the later Event_ShowMessage/Event_OpenMessage(-1, 0) (and the result
- *    test's -1 for Party_AdjustSixDigitCounterA(-1)); the reference materialises a
- *    fresh -1 at every use and the compare's in r3. A switch on choice (case -1, 0,
- *    1) avoids the carry but emits a balanced decision tree (0 first), and an
- *    if (choice == -1) before a switch carries again;
- *  - the sum loop: the reference keeps i counting up against a copy of the
- *    count in ip and does not fold the entry test (cmp i, n with i = 0); here
- *    loop.c reverses it and cse folds the entry test to n <= 0;
- *  - text + 1 (both windows): the reference adds 1 at the use (adds r0, r5, #1),
- *    here the text register itself is incremented before the call;
- *  - state + 1 kept across the prize call for the halving (the reference
- *    recomputes fp + 1); the roll loop index r5 against r6.
- * Earlier: a for (;;) prompt scored 157 (A block misplaced, r9/r10 and r7/r8
- * swapped, text hoisted). */
+/* NONMATCHING: the spring game, 680 bytes; alchemy diff 42 (was 157 this morning).
+ * 2026-10-04 sun w3 finisher 1. Settled, each measured:
+ *  - the prompt is a goto loop (prompt: ... goto prompt), not a for (;;): loop.c
+ *    lifts the A-button exit block out of the key loop to the nearest barrier
+ *    before its target at the outer level, and only a goto loop leaves the
+ *    prompt's back-jump barrier outside any loop (a for (;;) keeps it inside the
+ *    loop notes and the block landed after the choice-0 jump). The choice-0 retry
+ *    has its own SetMessage/ShowMessage/Wait/goto tail (crossjumping shares the
+ *    call as the reference does);
+ *  - the -1 tests compare with a variable (cancel = -1): gcse propagates the
+ *    constant into the jumps after cse, so reload materialises the -1 in r3 at
+ *    each test and no later -1 argument reuses it. With a literal -1 cse keeps the
+ *    compare's -1 in a pseudo and every later -1 argument (ShowMessage,
+ *    OpenMessage, Party_AdjustSixDigitCounterA) reuses it;
+ *  - one text variable for both windows: text is then global and local-alloc does
+ *    not tie text + 1 to it, so the add goes straight into r0 at the call;
+ *  - the weight sum is if (i < n) do { ... } while (i < n): i counts up against
+ *    a copy of n (ip) and the entry test stays cmp i, n; a for loop is reversed by
+ *    loop.c and its entry test folded. The byte is read as u8 and cast (ldrb and
+ *    shifts); the roll is Random_Next() * sum (operand order);
+ *  - the prize and coin tables are not const (the coin entry is reloaded after
+ *    the call).
+ * Remaining (42, all but four pool and branch offsets): state + 1. gcse reuses
+ * the roll's first read base (fp + 1, kept in r5 across the prize call) for the
+ * halving; the reference recomputes mov r0, fp; adds r0, #1 there and uses r1 for
+ * the first read. Tried: a weight local (42), a pointer to the weight (79), the
+ * state pointer reassigned (58) or gGameState spelled at the halving (38 but the
+ * base comes from the pool), the roll loop as do/while (65) or through
+ * (s8 *)state + 285 (51), the halving through (s8 *)state + 285 (79). */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "EDITION.H"
@@ -82,12 +82,13 @@ struct StateBytes {
 s32 TorebiIzumi_RunSpringGame(void)
 {
     s32 choice = 0;
+    s32 text;
+    s32 cancel = -1;
     s32 coins;
     s32 tickets;
     struct UiWindow *window;
     s32 result;
     s32 sum;
-    s32 count;
     s32 i;
     s32 roll;
     s32 message;
@@ -104,7 +105,7 @@ prompt:
         Event_OpenMessage(-1, 0);
         window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
       {
-        s32 text = (s32)MsgTorebiCoins;
+        text = (s32)MsgTorebiCoins;
         UiText_DrawCharacterAtOffset(text, window, 0, 0);
         UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
 #if !EDITION_INTERNATIONAL
@@ -119,7 +120,7 @@ prompt:
         choice = Menu_SelectEntry20To21(choice);
         UiWork_Finalize(window, 2);
         UiWork_FinalizePendingCore();
-        if (choice == -1) {
+        if (choice == cancel) {
             goto end;
         }
         if (choice == 0) {
@@ -152,7 +153,7 @@ room:
 play:
     window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
     {
-        s32 text = (s32)MsgTorebiToss;
+        text = (s32)MsgTorebiToss;
 
         UiText_DrawCharacterAtOffset(text, window, 0, 0);
         UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
@@ -173,7 +174,7 @@ play:
         Task_Wait(1);
     }
     UiWork_Finalize(window, 2);
-    if (result == -1) {
+    if (result == cancel) {
         goto end;
     }
     if (choice == 0) {
@@ -195,11 +196,15 @@ play:
         }
     } else {
         sum = 0;
-        for (i = 0; i < result * 3 + 3; i++) {
-            u8 w = ((u8 *)state)[i + 285];
-            sum += (s8)w;
+        i = 0;
+        if (i < result * 3 + 3) {
+            do {
+                u8 w = ((u8 *)state)[i + 285];
+                sum += (s8)w;
+                i++;
+            } while (i < result * 3 + 3);
         }
-        roll = (u32)(sum * Random_Next()) >> 16;
+        roll = (u32)(Random_Next() * sum) >> 16;
         for (i = 0; i < 15; i++) {
             roll -= state->rest[i + 284];
             if (roll < 0) {
@@ -210,12 +215,8 @@ play:
             i = 14;
         }
         TorebiIzumi_RevealPrize(Data_02001fd0[i]);
-        {
-            s8 weight = state->rest[i + 284];
-
-            if (state->rest[i + 284] > 1) {
-                state->rest[i + 284] /= 2;
-            }
+        if (state->rest[i + 284] > 1) {
+            state->rest[i + 284] /= 2;
         }
     }
 end:

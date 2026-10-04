@@ -80,10 +80,10 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
                 d = 1;
             if (d > 63)
                 d = 63;
-            ((u8 *)work)[y * 128 + x] = d;
-            ((u8 *)work)[y * 128 + 127 - x] = d;
-            ((u8 *)work)[(127 - y) * 128 + x] = d;
-            ((u8 *)work)[(127 - y) * 128 + 127 - x] = d;
+            work->sheet[y * 128 + x] = d;
+            work->sheet[y * 128 + 127 - x] = d;
+            work->sheet[(127 - y) * 128 + x] = d;
+            work->sheet[(127 - y) * 128 + 127 - x] = d;
         }
     }
 
@@ -154,11 +154,11 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
                 *ime = (u16)ime;
                 count = q->count;
                 if (count <= 31) {
-                    u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
+                    u32 *destination = q->entries[count];
                     /* FAKEMATCH: the count is stored through a u16 pointer, as in the IO write queue, which places the store after the entry address. */
                     *(u16 *)&q->count = count + 1;
                     *destination++ = (u32)(pal + 1);
-                    *destination++ = 0x05000002;
+                    *destination++ = (u32)&BG_PLTT[1];
                     *destination = 0x8000003f;
                 }
                 REG_IME = saved;

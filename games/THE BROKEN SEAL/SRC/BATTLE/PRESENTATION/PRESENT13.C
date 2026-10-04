@@ -23,7 +23,7 @@ void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Camera_StoreSceneParameters(s32, u32, s32);
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode);
 void BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
-void Func_080ba978(struct BattlePlan *plan, s32 mode);
+s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 void Func_080ba6ac(struct BattlePlan *plan, s32 mode, struct BattleActionRecord *request);
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 void BattleMotion_DestroyAllSlotObjects(void);
@@ -95,13 +95,13 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
             BattlePresentation_RunUnitTransition(&battle->plan, 0);
             break;
         case 3:
-            Func_080ba978(&battle->plan, 0);
+            BattlePres_RunPsynergyCast(&battle->plan, 0);
             break;
         case 6:
-            Func_080ba978(&battle->plan, 1);
+            BattlePres_RunPsynergyCast(&battle->plan, 1);
             break;
         case 8:
-            Func_080ba978(&battle->plan, 2);
+            BattlePres_RunPsynergyCast(&battle->plan, 2);
             break;
         case 4:
             Func_080ba6ac(&battle->plan, 0, request);

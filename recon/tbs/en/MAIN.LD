@@ -605,8 +605,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_SIMPLE.o"(.text)
         "*/recon/tbs/raw/080ba6ac.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/SET_RECORD_CHILD_VALUES.o"(.text)
-        "*/recon/tbs/raw/080ba976.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080ba978.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/RUN_VALUE_SEQUENCE.o"(.text)
         "*/games/COMMON/SRC/BATTLE/BATTLE4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE4.o"(.text)

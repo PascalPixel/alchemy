@@ -281,8 +281,6 @@
     "*/recon/tbs/es/rom.o"(.rom.0001f260)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW14.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.0001fbf2)
-    "*/recon/tbs/es/rom.o"(.rom.0001fbf4)
     "*/games/THE BROKEN SEAL/SRC/MENU/PARTY/TALK_CHOICE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/LOOKUP_CHARACTER_VALUE_BY_FLAG32.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)

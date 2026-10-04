@@ -276,8 +276,8 @@ UiWindow_PartyColumnOffsets:
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
 	.incbin "baserom.gba", 0x000371e0, 0x00000016
-	.global Data_080371f6
-Data_080371f6:
+	.global NameEntry_CaretWave
+NameEntry_CaretWave:
 	.incbin "baserom.gba", 0x000371f6, 0x00000008
 	.global Data_080371fe
 Data_080371fe:
@@ -379,7 +379,10 @@ WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x00073812, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x00073854, 0x00000114
+	.incbin "baserom.gba", 0x00073854, 0x00000010
+	.global NameEntry_KeyboardTilemap
+NameEntry_KeyboardTilemap:
+	.incbin "baserom.gba", 0x00073864, 0x00000104
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x00073968, 0x00003698

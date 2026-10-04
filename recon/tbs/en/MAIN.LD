@@ -278,8 +278,6 @@
         "*/recon/tbs/raw/08020244.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW14.o"(.text)
-        "*/recon/tbs/raw/08020bd6.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/08020bd8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/PARTY/TALK_CHOICE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/LOOKUP_CHARACTER_VALUE_BY_FLAG32.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)

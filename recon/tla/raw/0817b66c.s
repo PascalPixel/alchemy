@@ -134,7 +134,7 @@ Func_0817b66c:
 	cmp r7, #32
 	bne .L_0817b720
 .L_0817b77c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, .L_0817b948
 	movs r3, #104
 	str r3, [r2, #16]
@@ -273,7 +273,7 @@ Func_0817b66c:
 	str r2, [r5, #12]
 	str r3, [r5, #20]
 .L_0817b89c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_0817b960
 	ldr r0, [r5]
 	ldr r1, [r5, #4]

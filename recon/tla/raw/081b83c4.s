@@ -3909,7 +3909,7 @@ Func_081b83c4:
 	adds r3, r6, #0
 	bl Graphics_ScaleRgb555BufferB
 .L_081ba23a:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #116]
 	ldr r1, [sp, #36]
 	bl Graphics_PrepareTransferInIwramWork

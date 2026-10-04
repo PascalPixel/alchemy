@@ -50,13 +50,13 @@ Func_08126700:
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl Camera_StoreSceneParameters
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r0, r10
 	bl SceneTransform_ApplyPosition
 	mov r2, r8
 	movs r3, #54
 	ldrsh r0, [r2, r3]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	mov r2, r8
 	movs r3, #52
 	ldrsh r0, [r2, r3]
@@ -75,7 +75,7 @@ Func_08126700:
 	movs r5, #120
 	str r5, [r3, #12]
 	str r5, [r3, #16]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r0, r8
 	mov r1, r10
 	bl Graphics_PrepareTransferInIwramWork

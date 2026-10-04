@@ -317,10 +317,10 @@ Func_08014cb0:
 	@ Uncredited four-byte tail; independent purpose is unproved.
 	.incbin "baserom.gba", 0x00014de0, 0x00000004
 	.section .rom.00014de4, "ax"
-	.global Func_08014de4
-	.type Func_08014de4, %function
+	.global Render_ResetTransformState
+	.type Render_ResetTransformState, %function
 	.thumb_func
-Func_08014de4:
+Render_ResetTransformState:
 	.incbin "baserom.gba", 0x00014de4, 0x00000038
 	.section .rom.00014ea8, "ax"
 	.global Func_08014ea8
@@ -347,10 +347,10 @@ Func_08014efc:
 SceneTransform_ApplyPitch:
 	.incbin "baserom.gba", 0x00015024, 0x00000044
 	.section .rom.00015068, "ax"
-	.global Func_08015068
-	.type Func_08015068, %function
+	.global SceneTransform_ApplyYaw
+	.type SceneTransform_ApplyYaw, %function
 	.thumb_func
-Func_08015068:
+SceneTransform_ApplyYaw:
 	.incbin "baserom.gba", 0x00015068, 0x0000007c
 	.section .rom.000150e4, "ax"
 	.global Func_080150e4

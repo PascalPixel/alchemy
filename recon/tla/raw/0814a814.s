@@ -494,7 +494,7 @@ BattleFx_RenderMode:
 	ldr r3, [r0]
 	ldr r1, [sp, #40]
 	str r3, [r1, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #48]
 	ldr r1, [sp, #24]
 	bl Graphics_PrepareTransferInIwramWork
@@ -517,7 +517,7 @@ BattleFx_RenderMode:
 .L_0814ac1e:
 	lsls r5, r0, #9
 	adds r0, r5, #0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	mov r2, r10
 	cmp r2, #1
 	bls .L_0814ac30

@@ -305,7 +305,7 @@ Func_081823a8:
 	ldr r3, [sp, #44]
 	bl Func_0814cd48
 .L_08182600:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #32]
 	ldr r1, [sp, #20]
 	bl Graphics_PrepareTransferInIwramWork
@@ -377,7 +377,7 @@ Func_081823a8:
 	b .L_081826c8
 .L_08182688:
 	mov r0, r11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_081826c8
 .L_08182690:
 	adds r0, r7, #0

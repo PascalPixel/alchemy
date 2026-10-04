@@ -247,7 +247,7 @@ Func_0813cb34:
 	adds r3, #12
 	str r3, [sp, #8]
 .L_0813cd22:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #24]
 	ldr r1, [sp, #8]
 	bl Graphics_PrepareTransferInIwramWork

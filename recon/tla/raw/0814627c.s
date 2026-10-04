@@ -192,7 +192,7 @@ Func_0814627c:
 	bls .L_08146402
 	b .L_081465aa
 .L_08146402:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #52]
 	adds r1, r0, #0
 	adds r1, #12
@@ -244,7 +244,7 @@ Func_0814627c:
 	mov r8, r2
 	mov r11, r3
 .L_0814646c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r1, r9
 	cmp r1, #63
 	bgt .L_08146490
@@ -257,7 +257,7 @@ Func_0814627c:
 	mov r0, r11
 	bl Func_080150e4
 	mov r0, r11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_08146490:
 	ldr r0, [sp, #24]
 	bl Func_080150e4

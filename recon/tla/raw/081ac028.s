@@ -24,13 +24,13 @@ Func_081ac028:
 	str r6, [r3, #16]
 	str r6, [r5, #24]
 	sub sp, #12
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r5, #0
 	adds r0, #12
 	bl SceneTransform_ApplyPosition
 	movs r3, #54
 	ldrsh r0, [r5, r3]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r3, #52
 	ldrsh r0, [r5, r3]
 	bl SceneTransform_ApplyPitch

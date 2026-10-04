@@ -1183,7 +1183,7 @@ Func_0814bee0:
 	cmp r3, r0
 	ble .L_0814c812
 	str r3, [r6, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_0814c910
 	movs r2, #0
 	ldrsb r1, [r3, r7]

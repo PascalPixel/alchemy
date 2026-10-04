@@ -33,13 +33,13 @@ Camera_ConfigureScene:
 	str r6, [r5, #24]
 	sub sp, #16
 	mov r10, r0
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r0, r5, #0
 	adds r0, #12
 	bl SceneTransform_ApplyPosition
 	movs r3, #54
 	ldrsh r0, [r5, r3]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r2, #52
 	ldrsh r0, [r5, r2]
 	bl SceneTransform_ApplyPitch

@@ -289,7 +289,7 @@ Func_0814ce30:
 	movs r3, #0
 	str r3, [r2]
 .L_0814d076:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	adds r1, r5, #0
 	adds r1, #12
 	adds r0, r5, #0

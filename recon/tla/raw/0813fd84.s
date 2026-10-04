@@ -837,7 +837,7 @@ Func_0813fd84:
 	bhi .L_08140440
 	movs r5, #128
 	lsls r5, r5, #12
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	subs r5, r5, r7
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
@@ -853,7 +853,7 @@ Func_0813fd84:
 	mov r1, r10
 	lsls r5, r1, #1
 	ldrh r0, [r3, r5]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r3, .L_081406c0
 	ldrh r0, [r3, r5]
 	bl SceneTransform_ApplyPitch
@@ -886,7 +886,7 @@ Func_0813fd84:
 .L_08140466:
 	mov r0, r8
 	str r5, [r0, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
 	movs r2, #0
@@ -939,7 +939,7 @@ Func_0813fd84:
 	ldr r3, .L_081406cc
 	lsls r6, r6, #9
 	str r3, [r4, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r2, #0
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
@@ -990,7 +990,7 @@ Func_0813fd84:
 .L_08140542:
 	mov r1, r8
 	str r5, [r1, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
 	movs r2, #0
@@ -1053,7 +1053,7 @@ Func_0813fd84:
 	lsls r6, r6, #9
 	adds r6, #128
 .L_081405c8:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_081406b4
 	ldr r1, .L_081406b8
 	movs r2, #0
@@ -1213,7 +1213,7 @@ Func_0813fd84:
 	add r3, r11
 	mov r5, r9
 	str r3, [r5, #4]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r6]
 	ldr r1, .L_08140790
 	ldr r2, .L_08140794
@@ -1999,7 +1999,7 @@ Func_0813fd84:
 	lsls r1, r1, #12
 	adds r3, r3, r1
 	str r3, [r5]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r3, .L_08140edc
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
@@ -2133,7 +2133,7 @@ Func_0813fd84:
 	strb r2, [r3, #1]
 	strb r2, [r3, #2]
 .L_08140e48:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, .L_08140ef0
 	cmp r5, #0
 	blt .L_08140e56
@@ -2899,7 +2899,7 @@ Func_0813fd84:
 	adds r3, r7, #0
 	bl Func_0818caa8
 .L_08141426:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r5, .L_0814152c
 	ldr r4, .L_08141530
 	ldr r0, [r6]

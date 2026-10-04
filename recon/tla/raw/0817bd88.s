@@ -163,7 +163,7 @@ Func_0817bd88:
 .L_0817bed0:
 	.4byte Data_02012000
 .L_0817bed4:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #52]
 	ldr r1, [sp, #28]
 	bl Graphics_PrepareTransferInIwramWork
@@ -463,7 +463,7 @@ Func_0817bd88:
 	lsls r2, r0, #2
 	bics r3, r2
 	strb r3, [r6, #24]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
 	lsrs r3, r0, #31
@@ -488,7 +488,7 @@ Func_0817bd88:
 	cmp r3, #1
 	bne .L_0817c170
 	adds r0, r5, #0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_0817c170:
 	movs r0, #128
 	lsls r0, r0, #7

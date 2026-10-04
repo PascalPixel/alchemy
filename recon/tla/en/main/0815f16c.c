@@ -216,9 +216,9 @@ void Func_08013560(s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Scheduler_RemoveCallback(void *);
 s32 Random16(void);
-void Func_08014de4(void);
+void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32);
-void Func_08015068(s32);
+void SceneTransform_ApplyYaw(s32);
 void Func_080150e4(s32);
 void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
@@ -550,10 +550,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (p->x >= 0) {
                 if (frame >= i / 4) {
                     n = 5;
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     Func_080150e4(p->vz);
                     SceneTransform_ApplyPitch(p->vx);
-                    Func_08015068(p->vy);
+                    SceneTransform_ApplyYaw(p->vy);
                     Func_0815e1ec(p, pos);
                     pos[0] = pos[0] / 2 + base[0];
                     if (kind <= 37)
@@ -574,7 +574,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             }
         }
         if (kind <= 37 && count < 64) {
-            Func_08014de4();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(bg, (u8 *)bg + 12);
             Func_0815e1ec(origin, pos);
             pos[0] = pos[0] / 2;
@@ -890,7 +890,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             if (frame >= 4 && frame < 16)
                 drawFuncs.draw[1](screen, work->frames + 0x5100 + ((frame - 4) / 2) * 0x3c0, target[0] / 2 - 8,
                                   base[1] - 24, 20, 48);
-            Func_08014de4();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(bg, (u8 *)bg + 12);
             if (frame > 3) {
                 if (kind == 79) {
@@ -1416,9 +1416,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             for (i = 0; i != 64; i++, p++) {
                 if (p->x >= 0 && frame >= i / 2) {
                     m = i & 3;
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     SceneTransform_ApplyPitch(p->vx);
-                    Func_08015068(p->vy);
+                    SceneTransform_ApplyYaw(p->vy);
                     Func_0815e1ec(p, point);
                     point[0] = point[0] / 2 + target[0] / 2;
                     point[1] = point[1] + target[1] + 32;
@@ -1617,7 +1617,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             model->fade = 0;
                         texture164.pixels = EWRAM_BUF + 0xc56 + (p->life << 12);
                         p->life = (p->life + 1) & 3;
-                        Func_08014de4();
+                        Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                         Func_080150e4(p->z);
                         p->z += p->vz;
@@ -1645,7 +1645,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             model->mesh = Data_08199340;
             model->matrix = matrix;
             model->fade = fade;
-            Func_08014de4();
+            Render_ResetTransformState();
             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
             Func_080151e4(0x8000, 0x10000, 0x8000);
             if (frame == 8)
@@ -1654,17 +1654,17 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 angle = frame << 12;
                 if (kind == 82) {
                     SceneTransform_ApplyPitch(-0x800);
-                    Func_08015068(-frame << 11);
+                    SceneTransform_ApplyYaw(-frame << 11);
                     SceneTransform_ApplyPitch(-frame << 4);
                 } else {
                     SceneTransform_ApplyPitch(-0x1000);
-                    Func_08015068(frame << 11);
+                    SceneTransform_ApplyYaw(frame << 11);
                 }
                 Func_0801521c(angle);
                 Func_08196958(Data_08199210, matrix, 4);
                 Func_08196a7c(model);
                 if (kind != 82) {
-                    Func_08015068(-frame << 12);
+                    SceneTransform_ApplyYaw(-frame << 12);
                     Func_0801521c(0x8000);
                     Func_08196958(Data_08199210, matrix, 4);
                     Func_08196a7c(model);
@@ -1704,7 +1704,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             fade = (8 - t) * 8;
                         model->fade = fade;
                         if (fade > -64) {
-                            Func_08014de4();
+                            Render_ResetTransformState();
                             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                             Func_080151e4(0x8000, 0x10000, 0x8000);
                             Func_080150e4((i << 14) + 0x2000);
@@ -1724,7 +1724,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                         fade = (8 - t) * 8;
                     model->fade = fade;
                     if (fade >= -63) {
-                        Func_08014de4();
+                        Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                         Func_080151e4(0x8000, 0x10000, 0x8000);
                         SceneTransform_ApplyPitch(0x4000);
@@ -1742,7 +1742,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                             fade = (8 - t) * 8;
                         model->fade = fade;
                         if (fade > -64) {
-                            Func_08014de4();
+                            Render_ResetTransformState();
                             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
                             Func_080151e4(0x8000, 0x10000, 0x8000);
                             Func_080150e4((i << 14) + 0x2000);
@@ -1800,7 +1800,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     fade = (8 - t) * 8;
                 model->fade = fade;
                 if (fade >= -63) {
-                    Func_08014de4();
+                    Render_ResetTransformState();
                     Func_08015160((target[0] / 2 - 64) << 16, 0x280000, 0);
                     Func_080151e4(0x8000, 0x10000, 0x8000);
                     SceneTransform_ApplyPitch(1000);
@@ -1822,14 +1822,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     if (fade > -64) {
                         scale = (frame - start) * Data_08198956[i] * 1500 + 0x4180;
                         model->fade = fade;
-                        Func_08014de4();
+                        Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 60) << 16, Data_0819895a[i] << 16, 0);
                         Func_080151e4(scale * 2, scale * 4, scale / 4);
                         SceneTransform_ApplyPitch(1000);
                         if (i & 1)
-                            Func_08015068((i * 2 + frame) << 12);
+                            SceneTransform_ApplyYaw((i * 2 + frame) << 12);
                         else
-                            Func_08015068((i * 2 - frame) << 12);
+                            SceneTransform_ApplyYaw((i * 2 - frame) << 12);
                         Func_08196958(Data_08198c6c, matrix, 16);
                         Func_08196a7c(model);
                     }
@@ -1861,14 +1861,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     if (fade > -64) {
                         scale = (frame - start) * Data_08198962[i] * 2000 + 0x4000;
                         model->fade = fade;
-                        Func_08014de4();
+                        Render_ResetTransformState();
                         Func_08015160((target[0] / 2 - 60) << 16, 0x280000, 0);
                         Func_080151e4(scale, Data_08198966[i] * scale * 2, scale / 4);
                         SceneTransform_ApplyPitch(1000);
                         if (i & 1)
-                            Func_08015068((i * 8 + frame) << 10);
+                            SceneTransform_ApplyYaw((i * 8 + frame) << 10);
                         else
-                            Func_08015068((i * 8 - frame) << 10);
+                            SceneTransform_ApplyYaw((i * 8 - frame) << 10);
                         Func_08196958(Data_08199090, matrix, 32);
                         Func_08196a7c(model);
                     }

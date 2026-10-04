@@ -292,7 +292,7 @@ Func_0814ea58:
 	movs r0, #133
 	bl Func_081180e8
 .L_0814ec9c:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #28]
 	ldr r1, [sp, #20]
 	bl Graphics_PrepareTransferInIwramWork

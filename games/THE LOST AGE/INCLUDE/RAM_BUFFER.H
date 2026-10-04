@@ -40,7 +40,10 @@ struct HeapSlots {
     struct MapWork *map_work;
     /* The battle session, which The Broken Seal keeps in its own cell. */
     struct BattleSession *battle_work;
-    void *unknown_28[5];
+    void *unknown_28[2];
+    /* The scene camera. */
+    void *camera_work;
+    void *unknown_34[2];
     /* The window tilemap: a dirty flag at 3, then 32 x 32 cells from 8. */
     u8 *window_tiles;
     /* The party status window's handle and place. */

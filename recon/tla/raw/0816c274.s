@@ -254,7 +254,7 @@ Func_0816c274:
 .L_0816c47c:
 	.4byte Func_08143000
 .L_0816c480:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #16]
 	ldr r0, [sp, #28]
 	bl Graphics_PrepareTransferInIwramWork
@@ -437,7 +437,7 @@ Func_0816c274:
 	cmp r8, r3
 	bne .L_0816c5c4
 .L_0816c5f2:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, .L_0816c6d8
 	movs r3, #104
 	str r3, [r2, #16]
@@ -491,7 +491,7 @@ Func_0816c274:
 	bl Func_0801521c
 	mov r3, r9
 	lsls r0, r3, #9
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r0, .L_0816c6f0
 	adds r1, r7, #0
 	movs r2, #4

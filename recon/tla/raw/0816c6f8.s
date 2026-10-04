@@ -1002,7 +1002,7 @@ Func_0816c6f8:
 	strb r3, [r5, #24]
 	strb r3, [r5, #25]
 	str r2, [r5, #12]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r3, r11
 	cmp r3, #7
 	ble .L_0816ceda
@@ -1027,7 +1027,7 @@ Func_0816c6f8:
 .L_0816ceda:
 	mov r3, r11
 	lsls r0, r3, #9
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r2, #128
 	ldr r0, [sp, #56]
 	ldr r1, [sp, #60]
@@ -1129,7 +1129,7 @@ Func_0816c6f8:
 	cmp r3, r1
 	ble .L_0816d010
 	str r3, [r6, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r2, [sp, #28]
 	ldr r0, [r2]
 	movs r2, #0
@@ -1156,14 +1156,14 @@ Func_0816c6f8:
 	lsls r0, r7, #2
 	add r0, r11
 	lsls r0, r0, #11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_0816d000
 .L_0816cff4:
 	lsls r0, r7, #2
 	mov r3, r11
 	subs r0, r0, r3
 	lsls r0, r0, #11
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_0816d000:
 	ldr r0, .L_0816d124
 	mov r1, r8

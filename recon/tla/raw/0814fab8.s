@@ -650,7 +650,7 @@ Func_0814fab8:
 	movs r0, #212
 	bl Audio_PlayCue
 .L_0814ffa6:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #24]
 	bl Graphics_PrepareTransferInIwramWork
@@ -742,7 +742,7 @@ Func_0814fab8:
 	bne .L_08150074
 	mov r4, r9
 	lsls r0, r4, #10
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	b .L_08150084
 	.2byte 0x0000
 .L_0815006c:
@@ -753,7 +753,7 @@ Func_0814fab8:
 	mov r1, r9
 	lsls r5, r1, #10
 	adds r0, r5, #0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r0, r5, #0
 	bl Func_080150e4
 .L_08150084:

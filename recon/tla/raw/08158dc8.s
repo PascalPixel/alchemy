@@ -371,7 +371,7 @@ Func_08158dc8:
 	lsls r0, r0, #17
 	ldr r2, .L_081592d0
 	bl Camera_StoreSceneParameters
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r6, [sp, #100]
 	cmp r6, #128
 	ble .L_08159130
@@ -407,7 +407,7 @@ Func_08158dc8:
 	adds r0, r5, #0
 	bl SceneTransform_ApplyPitch
 	lsls r0, r6, #12
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	ldr r2, [sp, #100]
 	cmp r2, #150
 	ble .L_08159116

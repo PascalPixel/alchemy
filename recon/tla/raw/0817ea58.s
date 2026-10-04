@@ -2762,7 +2762,7 @@ Func_0817ea58:
 	cmp r3, r4
 	blt .L_0817ffc0
 	str r3, [r5, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #124]
 	movs r2, #128
 	lsls r2, r2, #10

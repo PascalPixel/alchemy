@@ -318,7 +318,7 @@ Func_08153ebc:
 	ands r3, r0
 	adds r3, #48
 	str r3, [r5]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	bl Random16
 	mov r3, r8
 	ands r0, r3
@@ -330,7 +330,7 @@ Func_08153ebc:
 	bl Random16
 	mov r2, r8
 	ands r0, r2
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	adds r0, r6, #0
 	bl Graphics_SaveTransferWork
 	movs r3, #1

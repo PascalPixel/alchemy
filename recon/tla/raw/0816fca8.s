@@ -737,7 +737,7 @@ Func_0816fca8:
 	mov r1, r8
 	str r3, [r1, #4]
 	str r2, [r6, #20]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r2, r11
 	ldr r0, [r2]
 	ldr r1, [r2, #4]

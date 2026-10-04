@@ -390,7 +390,7 @@ Func_0813e3d0:
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
 .L_0813e6da:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r1, [sp, #8]
 	ldr r0, [sp, #12]
 	bl Graphics_PrepareTransferInIwramWork

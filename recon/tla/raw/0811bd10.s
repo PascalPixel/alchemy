@@ -7,7 +7,7 @@ Func_0811bd10:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r5, [r3, #48]
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	movs r0, #108
 	adds r0, #255
 	bl GameFlag_Test

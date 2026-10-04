@@ -733,7 +733,7 @@ Func_0817d724:
 	strb r3, [r5, #24]
 	str r7, [r5, #8]
 	movs r7, #128
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	lsls r7, r7, #8
 	movs r1, #128
 	adds r0, r7, #0
@@ -754,7 +754,7 @@ Func_0817d724:
 	cmp r3, #1
 	bne .L_0817dd00
 	adds r0, r7, #0
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 .L_0817dd00:
 	ldr r0, .L_0817dfa8
 	bl Func_0801521c

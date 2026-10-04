@@ -278,13 +278,13 @@ Func_0815e9f4:
 	movs r3, #1
 	ands r3, r1
 	adds r7, r3, #5
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [r6, #20]
 	bl Func_080150e4
 	ldr r0, [r6, #12]
 	bl SceneTransform_ApplyPitch
 	ldr r0, [r6, #16]
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	add r5, sp, #80
 	adds r0, r6, #0
 	adds r1, r5, #0
@@ -614,7 +614,7 @@ Func_0815e9f4:
 	mov lr, r4
 	.2byte 0xf800
 .L_0815eede:
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #8]
 	bl Graphics_PrepareTransferInIwramWork

@@ -277,7 +277,7 @@ Func_08179994:
 	adds r6, r3, r2
 	movs r3, #3
 	ands r6, r3
-	bl Func_08014de4
+	bl Render_ResetTransformState
 	mov r1, r8
 	ldr r3, .L_08179d70
 	ldr r0, [r1]
@@ -312,7 +312,7 @@ Func_08179994:
 	muls r0, r3
 	adds r0, r1, r0
 	lsls r0, r0, #8
-	bl Func_08015068
+	bl SceneTransform_ApplyYaw
 	movs r3, #0
 	mov r2, r10
 	str r3, [r5]

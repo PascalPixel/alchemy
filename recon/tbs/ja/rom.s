@@ -990,14 +990,6 @@ Func_080ba6ac:
 	.thumb_func
 Func_080ba978:
 	.incbin "baserom.gba", 0x000b1978, 0x00000264
-	.section .rom.000b4422, "ax"
-	.incbin "baserom.gba", 0x000b4422, 0x00000002
-	.section .rom.000b4424, "ax"
-	.global BattleCommand_SelectAutomatic
-	.type BattleCommand_SelectAutomatic, %function
-	.thumb_func
-BattleCommand_SelectAutomatic:
-	.incbin "baserom.gba", 0x000b4424, 0x00000380
 	.section .rom.000b4850, "ax"
 	.incbin "baserom.gba", 0x000b4850, 0x00000048
 	.section .rom.000b4898, "ax"

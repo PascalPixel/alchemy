@@ -57,7 +57,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     Ok(o)
 }
 
-fn load(root: &Path, build: &Path) -> Result<Vec<Image>, String> {
+fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
     let mut images = Vec::new();
     for elf_path in images_in(build)? {
         let data = fs::read(&elf_path).map_err(|e| format!("{}: {e}", elf_path.display()))?;
@@ -70,6 +70,8 @@ fn load(root: &Path, build: &Path) -> Result<Vec<Image>, String> {
             .map(|s| s.to_string_lossy().into_owned())
             .unwrap_or_default();
         let image = similar::Image {
+            build: name,
+            name: &stem,
             elf: &elf,
             map: &map,
         };
@@ -277,7 +279,7 @@ fn report(o: &Options, build: &Path, out_dir: &Path) -> Result<String, String> {
         .map(|n| n.to_string_lossy().into_owned())
         .unwrap_or_default();
     let (game, lang) = name.split_once('-').unwrap_or((&name, "en"));
-    let images = load(&o.root, build)?;
+    let images = load(&o.root, build, &name)?;
     let ids = listing_ids(&o.root, game, &images);
     let index = Index::build(&images, &ids);
     let drafts = drafts(&o.root, game, lang, &images);

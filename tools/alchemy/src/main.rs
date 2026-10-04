@@ -20,6 +20,7 @@ mod elf;
 mod gate;
 mod process;
 mod similar;
+mod similar_command;
 mod targets;
 mod thumb;
 mod verify;
@@ -36,6 +37,7 @@ Matching:
   diff        compare a C draft with the listing it would replace
 Reports for people (nothing else reads them):
   deps        dependency map of not-yet-C code: what unblocks the most
+  similar     each not-yet-C function's nearest C twins in either game
   worst       maintained C ranked by how mechanical it reads
 Run any command with --help for its options."#;
 
@@ -54,6 +56,7 @@ fn main() -> ExitCode {
         "check" => check::entry(rest),
         "deps" => deps_command::entry(rest),
         "diff" => result(diff::run(rest)),
+        "similar" => similar_command::entry(rest),
         "worst" => result(worst_command::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

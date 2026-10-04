@@ -35,7 +35,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check coverage coverage-check
-.PHONY: progress deps worst clean
+.PHONY: progress deps similar worst clean
 
 help:
 	@printf '%s\n' \
@@ -49,6 +49,7 @@ help:
 	  'make coverage        measure once: README progress line and the decomp.dev report' \
 	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
 	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv' \
+	  'make similar         each not-yet-C function's nearest C twins in either game, into out/reports/similar.tsv' \
 	  'make worst           rank maintained C by how mechanical it reads; the camelotized share' \
 	  'alchemy diff DRAFT.c compare a C draft with the listing it would replace (tools/out/cargo-target/release/alchemy)'
 
@@ -186,6 +187,12 @@ progress:
 deps:
 	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- deps --build out/tbs-en --build out/tla-en \
 	    --out-dir out/reports $(DEPS_FLAGS)
+
+# Each not-yet-C function's nearest C twins across both games, for ports.
+# A report for people only.
+similar:
+	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- similar --build out/tbs-en --build out/tla-en \
+	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)
 
 # Maintained C ranked by how mechanical it reads, worst first: what to
 # rewrite in Camelot's style next. A report for people only.

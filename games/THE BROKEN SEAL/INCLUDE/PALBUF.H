@@ -24,6 +24,12 @@ LAYOUT_OFFSET_GUARD(TitlePaletteWork_Delta, struct TitlePaletteWork, delta, 0x1c
 LAYOUT_OFFSET_GUARD(TitlePaletteWork_Packed, struct TitlePaletteWork, packed, 0x2800);
 LAYOUT_OFFSET_GUARD(TitlePaletteWork_Page, struct TitlePaletteWork, page, 0x3000);
 
+/* Channel-index curves for the expanded palette work buffers. */
+extern const u16 Palette_ChannelCurve[32];
+extern const u16 Palette_ChannelCurveLight[32];
+extern const u16 Palette_ChannelCurveContrast[32];
+void Graphics_TransformPaletteBuffer(u32 mode, u16 *source, u16 *destination, s32 half);
+
 void TitlePalette_InitializeBuffers(void);
 void TitlePalette_UpdateFade(void);
 void Graphics_TransformLargePalette(s32 index, s32 transform);

@@ -1940,10 +1940,10 @@ DisplayScroll_Font:
 Func_080f2028:
 	.incbin "baserom.gba", 0x000f5028, 0x00000478
 	.section .rom.000f6078, "ax"
-	.global Unnamed_080f3078
-	.type Unnamed_080f3078, %function
+	.global Graphics_TransformPaletteBuffer
+	.type Graphics_TransformPaletteBuffer, %function
 	.thumb_func
-Unnamed_080f3078:
+Graphics_TransformPaletteBuffer:
 	.incbin "baserom.gba", 0x000f6078, 0x00000704
 	.section .rom.000f68bc, "ax"
 	.global Title_PromptTiles

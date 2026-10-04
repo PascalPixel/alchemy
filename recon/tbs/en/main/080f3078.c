@@ -1,4 +1,31 @@
-/* Draft, not exact: score 223, 15 differing instructions of 831 (was 10457
+/* 2026-10-04 channel-curve ownership recovery, still uncredited.
+ * The three physical scaffold labels name 32-entry channel-index curves:
+ * the ordinary curve, a curve whose interior entries are all lighter, and
+ * a contrast curve reaching the BGR555 maximum at index25. Their values
+ * remain private-input scaffolding; no editable data or code credit added.
+ * PALBUF.H owns the transform declaration and callers pass palette fields.
+ * Removed the duplicate unnamed alias at the same function entry.
+ * Fresh EN baseline was 223: 3 register, 8 stack, 1 operand, 3 reordered.
+ * Natural blue-first/shared-value variants:223/828; lower-clamp test via
+ * shared blue:898 with two deleted instructions, rejected. A real consumed
+ * four-field tint record scores7516/frame44, versus native40; rejected.
+ * Whole-channel register bindings score15520; removed, no device retained.
+ * A 35-second focused search scores 4280 candidates, none improve. A fresh
+ * 216-form tint declaration/assignment/sum search recovers two stack slots
+ * with the tr, tb, tg declaration order (221). Explicit consumed scaled
+ * tint locals (576 declaration/assignment forms) do not improve it; neither
+ * do 216 global/scale/blend declaration permutations.
+ * Scoped blue variables score 483..1343, or insert/delete instructions.
+ * Tied channel lifetime tests mostly score 223..1323. Blue-first plus a
+ * tied, already-defined red value changes only the intended computation/
+ * copy register choice: 223 -> 213 before the tint declaration recovery.
+ * A scoped lower-clamp value scores 331 or 13682..13892; rejected.
+ * Lower-clamp variants using blue delete two instructions (393..913),
+ * and an intervening tied channel barrier is at best 213; rejected.
+ * Combined retained source scores 211: 1 register, 6 stack, 1 operand,
+ * 3 reordered instructions. It remains uncredited; no adoption claim.
+ */
+/* Draft, not exact: score 211, 11 differing instructions of 831 (was 10457
  * and 447). Rewritten from the listing in plain C: no link-time constants,
  * no permuter temporaries. Same size, same frame, every loop in place.
  * Green and blue have the listing's registers (b r5, g r6) because the
@@ -6,8 +33,8 @@
  * The allocator's priorities for g and b are 1% apart, so most edits to any
  * loop swap them back (about 100 instructions): check that first.
  * Remaining, all register choice or order:
- *  - 0x10002 computes blue first and copies it to green, and tests blue for
- *    green's lower clamp; here green is computed and tested. Every spelling
+ *  - 0x10002 tests blue for green's lower clamp; here green is tested.
+ *    Ordinary blue-first assignment alone still computes green. Every spelling
  *    of the two assignments compiles to the same code or swaps g and b back
  *    (b = g = x computes blue first but loses the registers).
  *  - in the 0x400000 blend the listing spills tr + tg last (sp+4, below the
@@ -23,6 +50,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
+#include "PALBUF.H"
 
 /* Expands a 512-entry (or 256-entry half) BGR555 palette into the engine's
  * three-halfword-per-entry working buffer, applying one of several colour
@@ -47,9 +75,6 @@
 s32 Graphics_ClampRgb555Channel(s32 val);
 s32 Graphics_ClampRgb555Component(s32 val);
 
-extern const u16 Data_080f39ee[];
-extern const u16 Data_080f3a2e[];
-extern const u16 Data_080f3a6e[];
 
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {
@@ -95,8 +120,10 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = c & 31;
                 c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
                 r = c * 4 + 5;
-                g = c * 3 + 5;
-                b = g;
+                b = c * 3 + 5;
+                /* FAKEMATCH: tied red selects native blue-first copy; 223 -> 213, unchanged instruction presence after ordinary forms fail. */
+                asm("" : "+r"(r));
+                g = b;
                 if (r < 8)
                     r = 8;
                 if (g < 8)
@@ -109,9 +136,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                     g = 28;
                 if (b > 28)
                     b = 28;
-                *dst++ = Data_080f3a2e[b];
-                *dst++ = Data_080f3a2e[g];
-                *dst++ = Data_080f3a2e[r];
+                *dst++ = Palette_ChannelCurveLight[b];
+                *dst++ = Palette_ChannelCurveLight[g];
+                *dst++ = Palette_ChannelCurveLight[r];
             }
             break;
         case 0x10003:
@@ -128,9 +155,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = Graphics_ClampRgb555Channel(r);
                 g = Graphics_ClampRgb555Channel(g);
                 b = Graphics_ClampRgb555Channel(b);
-                dst[0] = Data_080f3a6e[b];
-                dst[1] = Data_080f3a2e[g];
-                dst[2] = Data_080f39ee[r];
+                dst[0] = Palette_ChannelCurveContrast[b];
+                dst[1] = Palette_ChannelCurveLight[g];
+                dst[2] = Palette_ChannelCurve[r];
                 dst += 3;
             }
             break;
@@ -157,9 +184,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = Graphics_ClampRgb555Channel(r);
                 g = Graphics_ClampRgb555Channel(g);
                 b = Graphics_ClampRgb555Channel(b);
-                *dst++ = Data_080f39ee[b];
-                *dst++ = Data_080f39ee[g];
-                *dst++ = Data_080f39ee[r];
+                *dst++ = Palette_ChannelCurve[b];
+                *dst++ = Palette_ChannelCurve[g];
+                *dst++ = Palette_ChannelCurve[r];
             }
             break;
         case 0x10005:
@@ -177,9 +204,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = Graphics_ClampRgb555Channel(r);
                 g = Graphics_ClampRgb555Channel(g);
                 b = Graphics_ClampRgb555Channel(b);
-                dst[0] = Data_080f3a6e[b];
-                dst[1] = Data_080f3a6e[g];
-                dst[2] = Data_080f3a6e[r];
+                dst[0] = Palette_ChannelCurveContrast[b];
+                dst[1] = Palette_ChannelCurveContrast[g];
+                dst[2] = Palette_ChannelCurveContrast[r];
                 dst += 3;
             }
             break;
@@ -193,9 +220,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = Graphics_ClampRgb555Channel(r);
                 g = g - g / 3;
                 b = b - b / 3;
-                dst[0] = Data_080f39ee[b];
-                dst[1] = Data_080f39ee[g];
-                dst[2] = Data_080f3a2e[r];
+                dst[0] = Palette_ChannelCurve[b];
+                dst[1] = Palette_ChannelCurve[g];
+                dst[2] = Palette_ChannelCurveLight[r];
                 dst += 3;
             }
             break;
@@ -213,9 +240,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = Graphics_ClampRgb555Channel(r);
                 g = Graphics_ClampRgb555Channel(g);
                 b = Graphics_ClampRgb555Channel(b);
-                dst[0] = Data_080f3a6e[b];
-                dst[1] = Data_080f3a2e[g];
-                dst[2] = Data_080f39ee[r];
+                dst[0] = Palette_ChannelCurveContrast[b];
+                dst[1] = Palette_ChannelCurveLight[g];
+                dst[2] = Palette_ChannelCurve[r];
                 dst += 3;
             }
             break;
@@ -255,8 +282,8 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         }
     } else if (mode & 0x400000) {
         u32 tr;
-        u32 tg;
         u32 tb;
+        u32 tg;
 
         tr = mode & 31;
         tg = (mode >> 5) & 31;
@@ -271,9 +298,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             r = Graphics_ClampRgb555Channel((u32)r >> 16);
             g = Graphics_ClampRgb555Channel((u32)g >> 16);
             b = Graphics_ClampRgb555Channel((u32)b >> 16);
-            *dst++ = Data_080f39ee[b];
-            *dst++ = Data_080f39ee[g];
-            *dst++ = Data_080f39ee[r];
+            *dst++ = Palette_ChannelCurve[b];
+            *dst++ = Palette_ChannelCurve[g];
+            *dst++ = Palette_ChannelCurve[r];
         }
     } else if (mode & 0x800000) {
         for (i = 0; i < cnt; i++) {

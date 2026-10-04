@@ -1,9 +1,7 @@
 .syntax unified
 	.thumb
-	.global Unnamed_080f3078
-	.thumb_func
-Unnamed_080f3078:
 	.global Graphics_TransformPaletteBuffer
+	.thumb_func
 Graphics_TransformPaletteBuffer:
 	push {r5, r6, r7, lr}
 	mov r7, r11
@@ -519,11 +517,11 @@ Graphics_TransformPaletteBuffer:
 .L_080f345c:
 	.4byte IwramSignedDivide
 .L_080f3460:
-	.4byte Data_080f3a2e
+	.4byte Palette_ChannelCurveLight
 .L_080f3464:
-	.4byte Data_080f3a6e
+	.4byte Palette_ChannelCurveContrast
 .L_080f3468:
-	.4byte Data_080f39ee
+	.4byte Palette_ChannelCurve
 .L_080f346c:
 	movs r3, #0
 	ldr r1, [sp, #36]
@@ -588,11 +586,11 @@ Graphics_TransformPaletteBuffer:
 	b .L_080f3766
 	.2byte 0x0000
 .L_080f34ec:
-	.4byte Data_080f3a6e
+	.4byte Palette_ChannelCurveContrast
 .L_080f34f0:
-	.4byte Data_080f3a2e
+	.4byte Palette_ChannelCurveLight
 .L_080f34f4:
-	.4byte Data_080f39ee
+	.4byte Palette_ChannelCurve
 .L_080f34f8:
 	movs r2, #0
 	ldr r3, [sp, #36]
@@ -845,7 +843,7 @@ Graphics_TransformPaletteBuffer:
 .L_080f36e8:
 	.4byte IwramMulQ16ReturnIp
 .L_080f36ec:
-	.4byte Data_080f39ee
+	.4byte Palette_ChannelCurve
 .L_080f36f0:
 	movs r3, #128
 	lsls r3, r3, #16

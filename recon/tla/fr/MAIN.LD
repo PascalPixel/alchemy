@@ -658,7 +658,7 @@
     "*/recon/tla/fr/rom.o"(.rom.000b4378)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT_2.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b443c)
+    "*/recon/tla/fr/rom.o"(.rom.000b4464)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/ADD_ACTION.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b4792)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/GROWTH.o"(.text)

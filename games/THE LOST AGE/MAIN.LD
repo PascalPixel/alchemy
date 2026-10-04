@@ -698,7 +698,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000aa374)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT_2.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/COUNT.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000aa438)
+    "*/recon/tla/ja/rom.o"(.rom.000aa460)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/ADD_ACTION.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aa78e)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/GROWTH.o"(.text)

@@ -37,6 +37,13 @@ struct BattlePlan {
     u32 pending_amount_60;          /* 0x60 */
 };
 
+/* The Lost Age's action definitions are twelve bytes, four fewer than
+ * The Broken Seal's BattleAction. */
+struct ActionDefinition {
+    u8 unknown_00[12];
+};
+
+LAYOUT_SIZE_GUARD(ActionDefinition_Size, struct ActionDefinition, 12);
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
 LAYOUT_OFFSET_GUARD(BattlePlan_ActorId2, struct BattlePlan, actor_id2, 0x02);
 LAYOUT_OFFSET_GUARD(BattlePlan_TargetIds, struct BattlePlan, target_ids, 0x03);

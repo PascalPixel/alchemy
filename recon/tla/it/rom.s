@@ -2462,12 +2462,7 @@ Item_GetTargetMode:
 	.thumb_func
 Item_AdjustCounter:
 	.incbin "baserom.gba", 0x000af384, 0x00000028
-	.section .rom.000af448, "ax"
-	.global BattleAction_GetDirect
-	.type BattleAction_GetDirect, %function
-	.thumb_func
-BattleAction_GetDirect:
-	.incbin "baserom.gba", 0x000af448, 0x00000028
+	.section .rom.000af470, "ax"
 	.global Func_080af464
 	.type Func_080af464, %function
 	.thumb_func

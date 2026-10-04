@@ -55,7 +55,7 @@ extern u8 MsgLobbyNoteCantUse[];
 extern u8 MsgLobbyWonNumberBattle[];
 extern u8 MsgLobbyWonNumberBattleBroke[];
 extern u8 MsgLobbyWonNumberBattleTold[];
-extern u8 gOptionMirror[];
+extern u8 gOptionMirror;
 s32 LinkLobby_DrawThreeDigitValue(s32 value);
 s32 LinkLobby_SaveBattleResults(void);
 s32 LinkLobby_SaveMonsterBattleResults(void);
@@ -366,6 +366,7 @@ s32 LinkLobby_RunRoundResult(void)
     Sound_LoadPresetParameters(2);
     LinkLobby_DrawThreeDigitValue(gGameState.link_tallies[6]);
     {
+        /* FAKEMATCH: the two stacked arguments are made before either is stored. */
         s32 a = 13, b = 10;
         Engine_MapCopyCellAttributes(11, 11, 1, 1, a, b);
     }
@@ -525,7 +526,7 @@ s32 LinkLobby_RunRoundResult(void)
         SerialRuntime_Initialize();
         Engine_GameFlagClear(0x172);
         GameFlag_SetByte(0x3f8, -1);
-        if (gGameState.unknown_200[0x2a] != 0) {
+        if (gGameState.saved_options != 0) {
             Engine_EventBegin();
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
@@ -534,8 +535,8 @@ s32 LinkLobby_RunRoundResult(void)
             Engine_EventShowMessage(8, 0);
             Engine_EventEnd();
         }
-        gGameState.unknown_200[0x2a] = 0;
-        *(u8 *)gOptionMirror = 0;
+        gGameState.saved_options = 0;
+        gOptionMirror = 0;
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
     }

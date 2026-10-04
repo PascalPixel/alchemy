@@ -20,7 +20,11 @@ struct BattleSession {
     u8 unknown_042[2];
     u8 two_sided;                   /* 0x044 */
     u8 encounter_mode;              /* 0x045 */
-    u8 unknown_046[0x12];
+    u8 unknown_046[0x0a];
+    u8 link_side;                   /* 0x050 */
+    u8 unknown_051;
+    u8 link_paused;                 /* 0x052 */
+    u8 unknown_053[5];
     s16 party_units[7];             /* 0x058 */
     s16 enemy_units[7];             /* 0x066 */
     u8 unknown_074[0x278];

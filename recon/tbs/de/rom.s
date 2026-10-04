@@ -1026,15 +1026,6 @@ BattleEvent_Playback:
 	.thumb_func
 BattleUnit_ProcessTurnEnd:
 	.incbin "baserom.gba", 0x000c21bc, 0x00000414
-	.section .rom.000c3a88, "ax"
-	.balign 4
-	.global BattleFx_InitializeStarField
-	.type BattleFx_InitializeStarField, %function
-	.thumb_func
-BattleFx_InitializeStarField:
-	.incbin "baserom.gba", 0x000c3a88, 0x00000260
-	.size BattleFx_InitializeStarField, .-BattleFx_InitializeStarField
-@ Uncredited frame audit; see the English BattleFx_PlayUnitElementEffect draft.
 	.section .rom.000c3dae, "ax"
 	.incbin "baserom.gba", 0x000c3dae, 0x00000002
 	.section .rom.000c3db0, "ax"

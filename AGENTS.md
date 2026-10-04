@@ -108,8 +108,10 @@ or functions is exactly this cheating.
   compiler-steering C (wrappers, volatile, forced temporaries, dead code),
   inline assembly and fixed-register variables are allowed when each carries a
   `FAKEMATCH` tag with its measured reason inside the function. A device is
-  for a difference of instruction order or register choice only, and only
-  after reshaping the source has failed; a function is never written as
+  for a difference of instruction order or register choice only, or an
+  unused local of a real type whose size exactly explains the native stack
+  frame, and only after reshaping the source has failed; a function is
+  never written as
   inline assembly. A fake match stays in the source, tagged; it is never
   replaced by a compiler option or routing that fits only those functions
   (K1, K3). `/* CAMELOT_ASM: proof */` marks assembly Camelot very likely

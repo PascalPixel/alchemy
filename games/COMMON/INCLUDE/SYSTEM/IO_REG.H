@@ -16,6 +16,7 @@
 /* BGxCNT: the character and screen base blocks a background reads. */
 #define BGCNT_CHAR_BASE(block) ((block) << 2)
 #define BGCNT_SCREEN_BASE(block) ((block) << 8)
+#define BGCNT_256_COLORS 0x0080
 
 /* DISPCNT: one-dimensional sprite tiles and the layers it shows. */
 enum DisplayControl {

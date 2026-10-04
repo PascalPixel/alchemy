@@ -90,7 +90,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     void *canvas;
     s32 total;
     s32 member;
-    void *sheet;
+    u8 *sprites;
     s32 limit;
     s32 shift;
     s32 narrow;
@@ -109,7 +109,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    sheet = heap_cache[2];
+    sprites = heap_cache[2];
     shift = 0;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
@@ -133,7 +133,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     } else {
         narrow = 1;
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work, 0, 0);
     if (mode <= 1 || mode == 3 || mode == 4 || mode == 5) {
         if (work->effect->variant == 0)
@@ -324,7 +324,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
                                     edge, edge);
                             } else {
                                 draw[1](canvas,
-                                    (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                                    sprites + ParticleStreams_CellOffsets[size - 1],
                                     screen.x - size / 2, screen.y - size, size, size * 2);
                             }
                             if (mode <= 2 || mode == 6) {

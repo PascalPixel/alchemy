@@ -1,3 +1,13 @@
+/* 2026-10-04 edition contracts: five battle rows in every edition,
+ * independent of the shops. MsgBattleNoPsynergy comes from each catalog.
+ * Japanese descriptions use UiText_DecodeMessage with capacity32;
+ * international descriptions use UiText_CopyMessageString with capacity52.
+ * ES/FR/IT draw the second ability label tile from f005, not f01e.
+ * All six complete1876-byte native extents, pools included, verified
+ * independently against owned ROMs. All six draft scores:180, three
+ * reordered instructions; unchanged EN residual. No new matching device
+ * or credit. Earlier headers below describe the previous EN-only work.
+ */
 /* 2026-10-04 fill-return contract: current EN score 180 (three reordered instructions)
  * after MENU_LIST.H follows the native s32 Ui_FillVramBlockPattern ABI
  * instead of void (previous score 240). Native08016738 preserves
@@ -59,6 +69,9 @@
 #include "IO_REG.H"
 #include "BATTLE_TYPES.H"
 #include "MENU_LIST.H"
+#include "text/MSG_IDS.H"
+
+TEXT_MESSAGE_ENUM(MsgBattleNoPsynergy);
 
 /*
  * Battle action (Psynergy) selection loop.
@@ -68,8 +81,7 @@
  * when the list is longer than one page, five entry glyph sprites and a
  * blinking cursor sprite. It then blocks, one frame at a time, handling the
  * four direction keys plus confirm and cancel, and returns the selected index
- * into `actions` or -1 when the caller cancelled. Message 2279, shown for an
- * empty list, has no name in the catalogs yet.
+ * into `actions` or -1 when the caller cancelled. MsgBattleNoPsynergy describes an empty list.
  *
  * Previous residual (EN score 631 before the 2026-10-03 trials: ten reordered instructions,
  * two register choices and one rotation of five stack slots):
@@ -137,8 +149,8 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     struct MenuSprite cursor;
     struct MenuSprite *spr;
     u16 buffer[64];
-    s32 handles[PAGE_ROWS];
-    struct MenuSprite sprites[PAGE_ROWS];
+    s32 handles[BATTLE_LIST_ROWS];
+    struct MenuSprite sprites[BATTLE_LIST_ROWS];
     s32 glyph;
 
     render = (struct UiRenderWork *)gWindowWork[0];
@@ -147,7 +159,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     cursor_handle = Resource_LoadIntoFreeSlot(128);
     unit = Owner_GetStateFar(unit_id);
     message_window = UiWindow_Create(0, 5, 30, 4, 42);
-    icon_count = PAGE_ROWS;
+    icon_count = BATTLE_LIST_ROWS;
     /* FAKEMATCH: the native window spill precedes the row-count spill. */
     __asm__ volatile ("");
     page = ((struct MenuCell *)gWindowWork[42])->page;
@@ -155,9 +167,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     /* FAKEMATCH: finish restoring the row before setting up the list window. */
     __asm__ volatile ("");
-    window = UiWindow_Create(9, 9, 21, PAGE_ROWS * 2 + 1, 6);
+    window = UiWindow_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
 
-    for (i = 0; i < PAGE_ROWS; i++) {
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
         s32 y = i * 2;
 
         spr = &sprites[i];
@@ -170,7 +182,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         spr->oam.f.y = (y + window->y) * 8 + 4;
     }
 
-    for (i = 0; i < PAGE_ROWS; i++) {
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
         handles[i] = Resource_LoadIntoFreeSlot(128);
         sprites[i].oam.f.tile = Resource_GetBuffer(handles[i], -1);
     }
@@ -192,20 +204,32 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 15);
             Ui_FillVramBlockPattern();
             if (count != 0) {
+#if EDITION_INTERNATIONAL
                 UiText_CopyMessageString(
                     (actions[page + row] & ACTION_ID_MASK) +
                         (s32)&MsgAbilityDescription,
                     buffer,
                     52);
+#else
+                UiText_DecodeMessage(
+                    (actions[page + row] & ACTION_ID_MASK) +
+                        (s32)&MsgAbilityDescription,
+                    buffer,
+                    32);
+#endif
             } else {
-                UiText_CopyMessageString(2279, buffer, 52);
+#if EDITION_INTERNATIONAL
+                UiText_CopyMessageString(MsgBattleNoPsynergy, buffer, 52);
+#else
+                UiText_DecodeMessage(MsgBattleNoPsynergy, buffer, 32);
+#endif
             }
             UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
             drawn_row = row;
 
             if (page != drawn_page) {
                 RenderOutput_RedrawSavedRect(window);
-                for (i = 0; i < PAGE_ROWS; i++) {
+                for (i = 0; i < BATTLE_LIST_ROWS; i++) {
                     struct BattleAction *action;
 
                     entry = actions[page + i];
@@ -214,7 +238,11 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     }
                     action = Ability_GetData(entry);
                     UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+                    UiWindow_SetTilemapEntry(window, 0xf005, 12, i * 2, 0);
+#else
                     UiWindow_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
+#endif
                     Ability_LoadGlyph(
                         entry & ACTION_ID_MASK, 0, &handles[i], &glyph, 1);
                     sprites[i].oam.f.tile = glyph;
@@ -254,16 +282,16 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 drawn_page = page;
             }
 
-            if (count > PAGE_ROWS) {
-                for (i = 0; i < (count + 4) / PAGE_ROWS; i++) {
+            if (count > BATTLE_LIST_ROWS) {
+                for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
                     tile = i + 0xf301;
-                    if (i == page / PAGE_ROWS) {
+                    if (i == page / BATTLE_LIST_ROWS) {
                         tile = i + 0xf30b;
                     }
                     UiWindow_SetTilemapEntry(
                         window,
                         tile,
-                        window->width - (count + 4) / PAGE_ROWS + i - 2,
+                        window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2,
                         -1,
                         0);
                 }
@@ -279,24 +307,24 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
             render->menu_busy = 0;
         }
 
-        if (count > PAGE_ROWS) {
-            for (i = 0; i < (count + 4) / PAGE_ROWS; i++) {
+        if (count > BATTLE_LIST_ROWS) {
+            for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
                 tile = i + 0xf301;
                 if ((gFrameCount & 15) <= 11) {
-                    if (i == page / PAGE_ROWS) {
+                    if (i == page / BATTLE_LIST_ROWS) {
                         tile = i + 0xf30b;
                     }
                 }
                 UiWindow_SetTilemapEntry(
                     window,
                     tile,
-                    window->width - (count + 4) / PAGE_ROWS + i - 2,
+                    window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2,
                     -1,
                     0);
             }
             edge = -1;
             UiWindow_SetTilemapEntry(
-                window, 0xf334, window->width - (count + 4) / PAGE_ROWS - 3, edge, 0);
+                window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, 0xf335, window->width - 2, edge, 0);
             /* An ordinary scoped pointer retained the inverse load order. */
@@ -349,7 +377,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
             if ((gKeysRepeat & KEY_DOWN) != 0) {
                 AudioCommand_PlayFar(111);
                 row++;
-                if (row == PAGE_ROWS || page + row == count) {
+                if (row == BATTLE_LIST_ROWS || page + row == count) {
                     row = 0;
                 }
                 preferred_row = row;
@@ -357,26 +385,26 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 AudioCommand_PlayFar(111);
                 row--;
                 if (row < 0) {
-                    if (page == (count - 1) / PAGE_ROWS * PAGE_ROWS) {
+                    if (page == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
                         row = count - page - 1;
                     } else {
-                        row = PAGE_ROWS - 1;
+                        row = BATTLE_LIST_ROWS - 1;
                     }
                 }
                 preferred_row = row;
             } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
                 AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
-                if (page + PAGE_ROWS >= count) {
+                if (page + BATTLE_LIST_ROWS >= count) {
                     if (page != 0) {
                         page = 0;
                         row = preferred_row;
                     }
                 } else {
-                    page += PAGE_ROWS;
+                    page += BATTLE_LIST_ROWS;
                     row = preferred_row;
                     if (page ==
-                        (count - 1) / PAGE_ROWS * PAGE_ROWS) {
+                        (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
                         row = count - page - 1;
                         if (row > preferred_row) {
                             row = preferred_row;
@@ -388,9 +416,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 Runtime_SetMainState19();
                 if (page != 0) {
                     row = preferred_row;
-                    page -= PAGE_ROWS;
+                    page -= BATTLE_LIST_ROWS;
                 } else {
-                    page = (count - 1) / PAGE_ROWS * PAGE_ROWS;
+                    page = (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS;
                     row = preferred_row;
                     if (page != 0) {
                         row = count - page - 1;
@@ -407,7 +435,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     UiWork_Finalize(message_window, 1);
     UiWork_Finalize(window, 1);
     WaitFrames(1);
-    for (i = 0; i < PAGE_ROWS; i++) {
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
         Resource_ResetEntry(handles[i]);
     }
     Resource_ResetEntry(cursor_handle);

@@ -9123,7 +9123,7 @@ msgctxt "message"
 msgid "02278"
 msgstr "すばやさが {argument_signed_number}下がっています"
 
-msgctxt "message"
+msgctxt "MsgBattleNoItems"
 msgid "02279"
 msgstr "なにももっていません"
 
@@ -9131,7 +9131,7 @@ msgctxt "message"
 msgid "02280"
 msgstr "あいてがいません"
 
-msgctxt "message"
+msgctxt "MsgBattleNoPsynergy"
 msgid "02281"
 msgstr "つかえるエナジーがありません"
 
@@ -9147,11 +9147,11 @@ msgctxt "message"
 msgid "02284"
 msgstr "そうびをもっていません"
 
-msgctxt "message"
+msgctxt "MsgBattleItemNoEffect"
 msgid "02285"
 msgstr "使ってもこうかがありません"
 
-msgctxt "message"
+msgctxt "MsgBattleItemBroken"
 msgid "02286"
 msgstr "こわれています"
 
@@ -9159,7 +9159,7 @@ msgctxt "message"
 msgid "02287"
 msgstr "ジンをもっていません"
 
-msgctxt "message"
+msgctxt "MsgBattleItemUnavailable"
 msgid "02288"
 msgstr "せんとう中はつかえません"
 

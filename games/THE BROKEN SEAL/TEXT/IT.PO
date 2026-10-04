@@ -10103,7 +10103,7 @@ msgctxt "message"
 msgid "02523"
 msgstr "Agilità è calata di {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgBattleNoItems"
 msgid "02524"
 msgstr "Non hai più strumenti."
 
@@ -10111,7 +10111,7 @@ msgctxt "message"
 msgid "02525"
 msgstr "Non hai avversario."
 
-msgctxt "message"
+msgctxt "MsgBattleNoPsynergy"
 msgid "02526"
 msgstr "Non hai Psinergia."
 
@@ -10127,11 +10127,11 @@ msgctxt "message"
 msgid "02529"
 msgstr "Non hai strumenti attivi."
 
-msgctxt "message"
+msgctxt "MsgBattleItemNoEffect"
 msgid "02530"
 msgstr "Non avrà alcun effetto."
 
-msgctxt "message"
+msgctxt "MsgBattleItemBroken"
 msgid "02531"
 msgstr "Strumento rotto."
 
@@ -10139,7 +10139,7 @@ msgctxt "message"
 msgid "02532"
 msgstr "Non hai Djinn."
 
-msgctxt "message"
+msgctxt "MsgBattleItemUnavailable"
 msgid "02533"
 msgstr "Non si può usare in battaglia."
 

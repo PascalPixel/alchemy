@@ -1,3 +1,15 @@
+/* 2026-10-04 edition contracts: Item_Get uses ITEM.H's real return type,
+ * and broken entries use INVENTORY_BROKEN. Catalog names own all four
+ * reason/empty messages. The battle list has five rows and a 15x11 window
+ * at x=15 in every edition, unlike the shop's localized geometry.
+ * Japanese text uses UiText_DecodeMessage with capacity32; international
+ * text uses UiText_CopyMessageString with capacity52. Full1836-byte native
+ * extents, pools included, were verified independently in all six ROMs.
+ * International residual:137 (17 stack-only, two reordered), all five.
+ * Japanese residual:737: the same residual plus two native pool loads
+ * replaced by four constant-building instructions. No device added to
+ * force these loads; keep the complete function uncredited.
+ */
 /* 2026-10-04 W4 pointer/cursor pass: retained source still scores 137
  * (17 stack-only, two reordered); no new device or storage retained.
  * Cursor-pointer declaration at all 23 local positions: 137..173.
@@ -50,6 +62,13 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "text/MSG_IDS.H"
+
+TEXT_MESSAGE_ENUM(MsgBattleItemUnavailable);
+TEXT_MESSAGE_ENUM(MsgBattleNoItems);
+TEXT_MESSAGE_ENUM(MsgBattleItemBroken);
+TEXT_MESSAGE_ENUM(MsgBattleItemNoEffect);
+#include "ITEM.H"
 
 /*
  * Item list of the battle menu.
@@ -65,14 +84,10 @@
  * header lists apply here too.
  */
 
-#define ITEM_ID_MASK 0x1ff
-#define ITEM_BROKEN 0x400
-
 extern u8 MsgItemName;
 extern u8 MsgItemPlainName;
 
 s32 Item_ClassifyUseAbility(s32 owner, s32 entry);
-void *Item_Get(s32 entry);
 s32 Resource_LoadKind26EntryToBuffer(s32 entry, s32 handle);
 
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
@@ -98,8 +113,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
     struct MenuSprite cursor;
     struct MenuSprite *spr;
     u16 buffer[64];
-    s32 handles[PAGE_ROWS];
-    struct MenuSprite sprites[PAGE_ROWS];
+    s32 handles[BATTLE_LIST_ROWS];
+    struct MenuSprite sprites[BATTLE_LIST_ROWS];
 
     render = (struct UiRenderWork *)gWindowWork[0];
     drawn_page = -1;
@@ -112,9 +127,9 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
     preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     /* FAKEMATCH: restore the saved row before preparing the window call. */
     __asm__ volatile ("");
-    window = UiWindow_Create(SHOP_LIST_X, 9, SHOP_LIST_WIDTH, PAGE_ROWS * 2 + 1, 6);
+    window = UiWindow_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
 
-    for (i = 0; i < PAGE_ROWS; i++) {
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
         s32 y = i * 2;
 
         spr = &sprites[i];
@@ -126,7 +141,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
         spr->oam.f.y = (y + window->y) * 8 + 4;
     }
 
-    for (i = 0; i < PAGE_ROWS; i++) {
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
         handles[i] = Resource_LoadIntoFreeSlot(128);
         sprites[i].oam.f.tile = Resource_GetBuffer(handles[i], -1);
     }
@@ -149,22 +164,37 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
             Ui_FillVramBlockPattern();
             if (count != 0) {
                 if (Item_ClassifyUseAbility(owner, entries[page + row]) == 2) {
-                    UiText_CopyMessageString(0x8ee, buffer, 52);
+#if EDITION_INTERNATIONAL
+                    UiText_CopyMessageString(MsgBattleItemUnavailable, buffer, 52);
+#else
+                    UiText_DecodeMessage(MsgBattleItemUnavailable, buffer, 32);
+#endif
                 } else {
+#if EDITION_INTERNATIONAL
                     UiText_CopyMessageString(
                         (entries[page + row] & ITEM_ID_MASK) + (s32)&MsgItemPlainName,
                         buffer,
                         52);
+#else
+                    UiText_DecodeMessage(
+                        (entries[page + row] & ITEM_ID_MASK) + (s32)&MsgItemPlainName,
+                        buffer,
+                        32);
+#endif
                 }
             } else {
-                UiText_CopyMessageString(0x8e5, buffer, 52);
+#if EDITION_INTERNATIONAL
+                UiText_CopyMessageString(MsgBattleNoItems, buffer, 52);
+#else
+                UiText_DecodeMessage(MsgBattleNoItems, buffer, 32);
+#endif
             }
             UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
             drawn_row = row;
 
             if (page != drawn_page) {
                 RenderOutput_RedrawSavedRect(window);
-                for (i = 0; i < PAGE_ROWS; i++) {
+                for (i = 0; i < BATTLE_LIST_ROWS; i++) {
                     entry = entries[page + i];
                     if (entry == 0) {
                         break;
@@ -173,7 +203,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                     UiWork_SetParamNibble(15);
                     if (Item_ClassifyUseAbility(owner, entry) != 0) {
                         UiWork_SetParamNibble(4);
-                    } else if ((entry & ITEM_BROKEN) != 0) {
+                    } else if ((entry & INVENTORY_BROKEN) != 0) {
                         UiWork_SetParamNibble(2);
                     }
                     UiText_DrawCharacterAtOffset(
@@ -187,16 +217,16 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 drawn_page = page;
             }
 
-            if (count > PAGE_ROWS) {
-                for (i = 0; i < (count + 4) / PAGE_ROWS; i++) {
+            if (count > BATTLE_LIST_ROWS) {
+                for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
                     tile = i + 0xf301;
-                    if (i == page / PAGE_ROWS) {
+                    if (i == page / BATTLE_LIST_ROWS) {
                         tile = i + 0xf30b;
                     }
                     UiWindow_SetTilemapEntry(
                         window,
                         tile,
-                        window->width - (count + 4) / PAGE_ROWS + i - 2,
+                        window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2,
                         -1,
                         0);
                 }
@@ -212,24 +242,24 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
             render->menu_busy = 0;
         }
 
-        if (count > PAGE_ROWS) {
-            for (i = 0; i < (count + 4) / PAGE_ROWS; i++) {
+        if (count > BATTLE_LIST_ROWS) {
+            for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
                 tile = i + 0xf301;
                 if ((gFrameCount & 15) <= 11) {
-                    if (i == page / PAGE_ROWS) {
+                    if (i == page / BATTLE_LIST_ROWS) {
                         tile = i + 0xf30b;
                     }
                 }
                 UiWindow_SetTilemapEntry(
                     window,
                     tile,
-                    window->width - (count + 4) / PAGE_ROWS + i - 2,
+                    window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2,
                     -1,
                     0);
             }
             edge = -1;
             UiWindow_SetTilemapEntry(
-                window, 0xf334, window->width - (count + 4) / PAGE_ROWS - 3, edge, 0);
+                window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, 0xf335, window->width - 2, edge, 0);
             /* Same correction as the paired action selector. */
@@ -266,7 +296,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 result = page + row;
                 Item_Get(entries[result]);
                 reason = 0;
-                if ((entries[result] & ITEM_BROKEN) == 0) {
+                if ((entries[result] & INVENTORY_BROKEN) == 0) {
                     reason = Item_ClassifyUseAbility(owner, entries[result]);
                     if (reason == 0) {
                         break;
@@ -274,11 +304,23 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 }
                 AudioCommand_PlayFar(114);
                 if (reason == 2) {
-                    UiText_CopyMessageString(0x8ee, buffer, 52);
-                } else if ((entries[result] & ITEM_BROKEN) != 0) {
-                    UiText_CopyMessageString(0x8ec, buffer, 52);
+#if EDITION_INTERNATIONAL
+                    UiText_CopyMessageString(MsgBattleItemUnavailable, buffer, 52);
+#else
+                    UiText_DecodeMessage(MsgBattleItemUnavailable, buffer, 32);
+#endif
+                } else if ((entries[result] & INVENTORY_BROKEN) != 0) {
+#if EDITION_INTERNATIONAL
+                    UiText_CopyMessageString(MsgBattleItemBroken, buffer, 52);
+#else
+                    UiText_DecodeMessage(MsgBattleItemBroken, buffer, 32);
+#endif
                 } else {
-                    UiText_CopyMessageString(0x8eb, buffer, 52);
+#if EDITION_INTERNATIONAL
+                    UiText_CopyMessageString(MsgBattleItemNoEffect, buffer, 52);
+#else
+                    UiText_DecodeMessage(MsgBattleItemNoEffect, buffer, 32);
+#endif
                 }
                 Ui_FillVramBlockPattern();
                 UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
@@ -296,7 +338,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
             if ((gKeysRepeat & KEY_DOWN) != 0) {
                 AudioCommand_PlayFar(111);
                 row++;
-                if (row == PAGE_ROWS || page + row == count) {
+                if (row == BATTLE_LIST_ROWS || page + row == count) {
                     row = 0;
                 }
                 preferred_row = row;
@@ -304,25 +346,25 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 AudioCommand_PlayFar(111);
                 row--;
                 if (row < 0) {
-                    if (page == (count - 1) / PAGE_ROWS * PAGE_ROWS) {
+                    if (page == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
                         row = count - page - 1;
                     } else {
-                        row = PAGE_ROWS - 1;
+                        row = BATTLE_LIST_ROWS - 1;
                     }
                 }
                 preferred_row = row;
             } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
                 AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
-                if (page + PAGE_ROWS >= count) {
+                if (page + BATTLE_LIST_ROWS >= count) {
                     if (page != 0) {
                         page = 0;
                         row = preferred_row;
                     }
                 } else {
-                    page += PAGE_ROWS;
+                    page += BATTLE_LIST_ROWS;
                     row = preferred_row;
-                    if (page == (count - 1) / PAGE_ROWS * PAGE_ROWS) {
+                    if (page == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
                         row = count - page - 1;
                         if (row > preferred_row) {
                             row = preferred_row;
@@ -333,10 +375,10 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
                 if (page != 0) {
-                    page -= PAGE_ROWS;
+                    page -= BATTLE_LIST_ROWS;
                     row = preferred_row;
                 } else {
-                    page = (count - 1) / PAGE_ROWS * PAGE_ROWS;
+                    page = (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS;
                     row = preferred_row;
                     if (page != 0) {
                         row = count - page - 1;
@@ -354,7 +396,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
     UiWork_Finalize(window, 1);
     WaitFrames(1);
     Resource_ResetEntry(cursor_handle);
-    for (i = 0; i < PAGE_ROWS; i++) {
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
         Resource_ResetEntry(handles[i]);
     }
     WaitFrames(1);

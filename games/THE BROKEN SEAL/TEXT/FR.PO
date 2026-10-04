@@ -10103,7 +10103,7 @@ msgctxt "message"
 msgid "02523"
 msgstr "L'Agilité diminue de {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgBattleNoItems"
 msgid "02524"
 msgstr "Vous n'avez pas d'objet."
 
@@ -10111,7 +10111,7 @@ msgctxt "message"
 msgid "02525"
 msgstr "Vous n'avez pas d'adversaire."
 
-msgctxt "message"
+msgctxt "MsgBattleNoPsynergy"
 msgid "02526"
 msgstr "Vous n'avez pas de Psynergie."
 
@@ -10127,11 +10127,11 @@ msgctxt "message"
 msgid "02529"
 msgstr "Vous n'avez pas d'équipement."
 
-msgctxt "message"
+msgctxt "MsgBattleItemNoEffect"
 msgid "02530"
 msgstr "L'utiliser n'aura pas d'effet."
 
-msgctxt "message"
+msgctxt "MsgBattleItemBroken"
 msgid "02531"
 msgstr "C'est cassé."
 
@@ -10139,7 +10139,7 @@ msgctxt "message"
 msgid "02532"
 msgstr "Vous n'avez pas de Djinn."
 
-msgctxt "message"
+msgctxt "MsgBattleItemUnavailable"
 msgid "02533"
 msgstr "Impossible à utiliser en combat."
 

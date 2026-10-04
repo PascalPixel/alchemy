@@ -13,7 +13,10 @@
    lists, the target and status screens. Each opens a list window and a message
    window, draws one page of rows, queues one sprite per row and a blinking
    cursor, and keeps its page and row in the shared menu cell so that the list
-   reopens where it was left. A page holds PAGE_ROWS rows (TBS_EDITION.H). */
+   reopens where it was left. The battle item and ability lists keep five rows
+   in every edition, independently of the shops' localized page size. */
+
+enum { BATTLE_LIST_ROWS = 5 };
 
 /* A queued sprite: the list link Runtime_PushSlotEntry fills, then the three
    hardware attributes as two words or as fields. */

@@ -1,3 +1,4 @@
+/* 2026-10-04 TBS 91% attempt: Fresh EN remains score 137: 17 stack-only and two reordered instructions. A consumed volatile frame-counter pointer at seven declaration positions scores 148 with 28 stack-only differences; all rejected, original body retained. No new device or credit. */
 /* 2026-10-04 edition contracts: Item_Get uses ITEM.H's real return type,
  * and broken entries use INVENTORY_BROKEN. Catalog names own all four
  * reason/empty messages. The battle list has five rows and a 15x11 window

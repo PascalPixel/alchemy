@@ -1,3 +1,4 @@
+/* 2026-10-04 TBS 91% attempt: Fresh EN remains score 1310. Signedness/register declaration trials for all eleven scalar u32 locals failed to improve it. The conditional draft is not compatible with the permuter reprint: its initial reprint scores 10415, so that search was stopped without retaining a candidate. Original body retained. */
 /* Current draft (2026-10-03), not exact: EN score 1310, 55 differing rows
    (29 register, 14 operand, 9 reordered, 3 inserted). EN object .text is
    518 bytes against the 512-byte listing; no linked extent is proved.

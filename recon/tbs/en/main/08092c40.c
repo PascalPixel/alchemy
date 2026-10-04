@@ -1,3 +1,8 @@
+/* 2026-10-04: EN score405, one register-only row and four deleted
+ * instructions. Thirteen ordinary positions for initializing the side handle
+ * retain455; binding its live value to r9 fixes the ten swapped flag/side
+ * register rows. The native unused mode reload remains absent and this is
+ * still uncredited. Flags-only/both fixed bindings were worse (1635/1615). */
 /* UiText_OpenMessageAtObject: plain international near miss for raw08092c40.
    Native complete836 includes its16-byte pool. Prior ordinary EN body828
    has120 complete differing positions, including eight missing bytes; calls
@@ -49,7 +54,9 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
     s32 left;
     s32 pos[3];
     struct UiWindow *handle;
-    s32 side;
+    /* Ordinary lifetime/declaration trials retain455. */
+    /* FAKEMATCH: r9 for the consumed side handle fixes ten register-choice differences. */
+    register s32 side __asm__("r9");
     s32 flags;
     s32 message;
     struct ObjectRuntime *object;

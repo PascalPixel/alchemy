@@ -648,7 +648,6 @@
     "*/recon/tbs/it/rom.o"(.rom.000c17ae)
     "*/recon/tbs/it/rom.o"(.rom.000c17b0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_ZERO.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000c1a4c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/FORMATION_SELECT_RANDOM_AVAILABLE_MEMBER.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000c2014)

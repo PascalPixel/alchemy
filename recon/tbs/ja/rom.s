@@ -1022,15 +1022,6 @@ BattleUnit_ProcessTurnEnd:
 BattleFx_PlayUnitElementEffect:
 	.incbin "baserom.gba", 0x000b8798, 0x0000027c
 	.size BattleFx_PlayUnitElementEffect, .-BattleFx_PlayUnitElementEffect
-	.section .rom.000b8a34, "ax"
-	.balign 4
-	.global Party_ComputeEligibleMemberAverage
-	.type Party_ComputeEligibleMemberAverage, %function
-	.thumb_func
-Party_ComputeEligibleMemberAverage:
-	.incbin "baserom.gba", 0x000b8a34, 0x000000c8
-	.size Party_ComputeEligibleMemberAverage, .-Party_ComputeEligibleMemberAverage
-@ Uncredited frame audit; see the English UiText_OpenEntryMessage draft.
 	.section .rom.000b8ffc, "ax"
 	.incbin "baserom.gba", 0x000b8ffc, 0x0000036c
 	.section .rom.000b9a0a, "ax"

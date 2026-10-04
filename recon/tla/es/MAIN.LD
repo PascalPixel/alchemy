@@ -446,7 +446,6 @@
     "*/recon/tla/es/rom.o"(.rom.0003cb7a)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW4.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0003cc06)
-    "*/recon/tla/es/rom.o"(.rom.0003cd08)
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/WINDOW4.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0003cd68)
     "*/recon/tla/es/rom.o"(.rom.0003ce7c)

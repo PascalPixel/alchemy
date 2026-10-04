@@ -487,7 +487,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0003cbd2)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW4.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003cc5e)
-    "*/recon/tla/ja/rom.o"(.rom.0003cd60)
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/WINDOW4.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003cdc0)
     "*/recon/tla/ja/rom.o"(.rom.0003ced4)

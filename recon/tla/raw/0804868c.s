@@ -258,7 +258,7 @@ Func_0804868c:
 	bne .L_08048884
 	b .L_080489a0
 .L_08048884:
-	bl Func_0803cca8
+	bl UiWork_ClearValueNameTables
 	movs r3, #0
 	str r3, [sp, #24]
 	movs r3, #192
@@ -826,7 +826,7 @@ Func_0804868c:
 	bne .L_08048d1a
 	ands r5, r6
 	bl Ui_FillVramBlockPattern
-	bl Func_0803cca8
+	bl UiWork_ClearValueNameTables
 	lsrs r0, r5, #17
 	movs r1, #5
 	bl UiWork_PushValueSlot

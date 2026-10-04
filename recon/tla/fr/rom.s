@@ -1311,12 +1311,6 @@ UiText_DecodeMessage:
 	.incbin "baserom.gba", 0x0003cb5e, 0x00000002
 	.section .rom.0003cbea, "ax"
 	.incbin "baserom.gba", 0x0003cbea, 0x00000102
-	.section .rom.0003ccec, "ax"
-	.global Func_0803cca8
-	.type Func_0803cca8, %function
-	.thumb_func
-Func_0803cca8:
-	.incbin "baserom.gba", 0x0003ccec, 0x00000028
 	.section .rom.0003cd4c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003cd4c, 0x00000114

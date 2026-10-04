@@ -4701,8 +4701,9 @@ Func_080f94a4:
 	.thumb_func
 ItemMenu_HideAllIcons:
 	.incbin "baserom.gba", 0x000fa464, 0x00000884
-	.section .rom.000facfa, "ax"
-	.incbin "baserom.gba", 0x000facfa, 0x0000011e
+	.section .rom.000fad1e, "ax"
+	.incbin "baserom.gba", 0x000fad1e, 0x00000002
+	.incbin "baserom.gba", 0x000fad20, 0x000000f8
 	.global ItemMenu_DrawIcons
 	.type ItemMenu_DrawIcons, %function
 	.thumb_func

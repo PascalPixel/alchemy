@@ -995,7 +995,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000fa36a)
     "*/recon/tla/ja/rom.o"(.rom.000fa36c)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/ITEM_LIST.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000fabea)
+    "*/recon/tla/ja/rom.o"(.rom.000fac0e)
     "*/games/THE LOST AGE/SRC/GAME/INVENTORY/REMOVE_FIRST_UNFLAGGED.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000fb03c)
     "*/recon/tla/ja/rom.o"(.rom.000fb7cc)

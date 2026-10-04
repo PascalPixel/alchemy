@@ -8311,7 +8311,7 @@ msgctxt "MsgItemAlreadyUsed"
 msgid "02075"
 msgstr "{argument_actor_name:233} つかおうとしたアイテムは{line_break}もう なくなっている!"
 
-msgctxt "message"
+msgctxt "MsgUsedItemBroke"
 msgid "02076"
 msgstr "{argument_item_name:234} こわれて使えなくなった!"
 

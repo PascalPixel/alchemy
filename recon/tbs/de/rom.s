@@ -230,12 +230,6 @@ UiWork_StepChannelScript:
 Func_08018038:
 UiText_BuildRenderEntries:
 	.incbin "baserom.gba", 0x00016c58, 0x000006ac
-	.section .rom.0001749c, "ax"
-	.global UiText_MeasureEntryDimensions
-	.type UiText_MeasureEntryDimensions, %function
-	.thumb_func
-UiText_MeasureEntryDimensions:
-	.incbin "baserom.gba", 0x0001749c, 0x000001ec
 	.section .rom.00017de8, "ax"
 	.global UiWork_AnimateSpriteSlots
 	.type UiWork_AnimateSpriteSlots, %function
@@ -923,12 +917,6 @@ BattlePres_RunUnitAction:
 	.thumb_func
 BattlePresentation_RunUnitTransition:
 	.incbin "baserom.gba", 0x000bc4d8, 0x000003bc
-	.section .rom.000bccc4, "ax"
-	.global Func_080ba6ac
-	.type Func_080ba6ac, %function
-	.thumb_func
-Func_080ba6ac:
-	.incbin "baserom.gba", 0x000bccc4, 0x0000026c
 	.section .rom.000bfe68, "ax"
 	.incbin "baserom.gba", 0x000bfe68, 0x00000048
 	.section .rom.000bfeb0, "ax"

@@ -35,6 +35,7 @@ extern char MsgPoisonDamage; /* The poison does N damage (English text) */
 extern char MsgNoEffect; /* 「しかし こうかがなかった！」 */
 extern char MsgCastLacksPp; /* 「しかし EPがたりなかった!」 */
 extern char MsgPsynergyBlocked; /* 「しかし エナジーをふうじられている!」 */
+extern char MsgUsedItemBroke; /* 「…こわれて使えなくなった!」 */
 extern char MsgLeechGain; /* 「さらに PPを Nかいふく！」 */
 extern char MsgLeechTake; /* 「PPを Nすいとられた！」 */
 extern char MsgAtkDown; /* 「こうげきが Nさがった！」 */

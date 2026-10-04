@@ -10,6 +10,11 @@
 #include "BATTLE_PRESENTATION.H"
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
+#include "BATTLE_WORK.H"
+#include "OBJDISP.H"
+#include "INVENTORY.H"
+#include "IO_REG.H"
+#include "CALLBACK_SCHEDULER.H"
 s32 ResourceMetadata_SumCommandLengthsFar(s32 battle_value, s32 second, s32 third);
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 id);
@@ -241,5 +246,118 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
         Actor_ResetMotionAtAnchor(saved_input->target_ids[0]);
     }
     Actor_ResetMotionAtAnchor(work.actor);
+    return 0;
+}
+
+void Object_SetMode(void *object, s32 mode);
+s32 Inventory_RemoveFar(s32 owner, s32 slot);
+s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
+
+/* Presents an item used in battle: turns the camera toward the user's side,
+   darkens the background palette over twenty frames for an item effect and
+   runs it, then spends the item by its use type: 1 removes it (later queued
+   item commands of the same unit move down a slot), 2 breaks it one time in
+   eight, and 4 turns item 0xb8 into 0xb9. */
+s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
+                        struct BattleActionRecord *selection)
+{
+    struct BattlePresentationWork work;
+    struct MotionObject *object;
+    s32 i;
+    s32 item;
+    struct BattleUnit *unit;
+    struct ItemDefinition *def;
+    struct BattlePresentationTransition *transition = gTransitionWork;
+    s32 facing;
+
+    if (plan->actor_id > 4)
+        facing = -0x2000;
+    else
+        facing = 0x2000;
+    if (transition->target_yaw != facing)
+        transition->target_yaw = facing;
+    BattlePres_BuildTargetList(plan, &work);
+    BattlePres_SetActorModes(0, 0);
+    object = GetBattleObjectSlot(work.actor)->object;
+    Object_SetMode(object, 3);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+    if (plan->target_ids[0] <= 7)
+        work.side = 1;
+    else
+        work.side = 0;
+
+    for (i = 0; i != work.count; i++) {
+        struct AnimationObject *animation = GetMotionRecord(
+            GetBattleObjectSlot(work.actors[i])->object, 0);
+        s32 j;
+
+        for (j = 0; j != animation->count - 1; j++)
+            work.params[i][j] = animation->entries[j]->param;
+    }
+
+    Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+    if (work.kind != 0) {
+        s32 fade;
+
+        i = 0;
+        fade = 0;
+        do {
+            struct BattleSession *battle = gBattleWork;
+
+            if (i < 20) {
+                u16 *palette = battle->palette;
+                s32 value = 0x10000 - fade;
+
+                battle->brightness = value;
+                Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value, 128);
+            }
+            WaitFrames(1);
+            i++;
+            fade += 0x444;
+        } while (i < 20);
+        if (plan->presentation_flags & 0x4000)
+            BattleFx_DispatchByIdRangeFar(&work);
+        else
+            BattleFx_DispatchModeFar(&work);
+    } else {
+        WaitFrames(60);
+    }
+    BattleEventRuntime_WaitForReady();
+    Object_SetMode(object, 1);
+    for (i = 0; i != work.count; i++)
+        Actor_ResetMotionAtAnchor(work.actors[i]);
+
+    unit = Owner_GetStateFar(selection->unit_id);
+    item = unit->inventory[selection->parameter];
+    def = Item_Get(item);
+    if (def->use_type == 1) {
+        s32 result = Inventory_RemoveFar(selection->unit_id, selection->parameter);
+        s32 index = selection->parameter;
+        if (result == 2) {
+            struct BattleSession *battle = gBattleWork;
+            u32 row;
+
+            for (row = 0; row < 20; row++) {
+                if (battle->actions[row].command == 2
+                    && battle->actions[row].unit_id == selection->unit_id) {
+                    if (battle->actions[row].parameter == index)
+                        battle->actions[row].parameter = -1;
+                    else if (battle->actions[row].parameter > index)
+                        battle->actions[row].parameter--;
+                }
+            }
+        }
+    } else if (def->use_type == 2) {
+        if ((BattleRandom16Far() & 7) == 0) {
+            BattleEv_Push(BATTLE_EVENT_ITEM, unit->inventory[selection->parameter]);
+            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgUsedItemBroke);
+            Inventory_BreakFar(selection->unit_id, selection->parameter);
+            BattleEv_DispatchQueued();
+        }
+    } else if (def->use_type == 4) {
+        if ((item & ITEM_ID_MASK) == 0xb8)
+            item = 0xb9;
+        unit->inventory[selection->parameter] = item;
+    }
     return 0;
 }

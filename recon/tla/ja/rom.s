@@ -3312,8 +3312,8 @@ Func_080c8948:
 	.incbin "baserom.gba", 0x000c89cc, 0x00000a00
 	.section .rom.000c9694, "ax"
 	.incbin "baserom.gba", 0x000c9694, 0x0000028c
-	.section .rom.000c9934, "ax"
-	.incbin "baserom.gba", 0x000c9934, 0x000002dc
+	.section .rom.000c9944, "ax"
+	.incbin "baserom.gba", 0x000c9944, 0x000002cc
 	.section .rom.000c9c38, "ax"
 	.incbin "baserom.gba", 0x000c9c38, 0x000002f4
 	.section .rom.000c9f2c, "ax"

@@ -770,7 +770,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DECODE_FRAME_DATA.o"(.text .rodata .data .padding)
     "*/recon/tla/ja/rom.o"(.rom.000c9694)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000c9934)
+    "*/recon/tla/ja/rom.o"(.rom.000c9944)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOAD_RESOURCE_GROUP.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000c9c38)
     "*/recon/tla/ja/rom.o"(.rom.000c9f2c)

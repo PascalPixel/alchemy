@@ -3476,8 +3476,7 @@ Func_080c8940:
 	.incbin "baserom.gba", 0x000c89cc, 0x00000a00
 	.section .rom.000c9694, "ax"
 	.incbin "baserom.gba", 0x000c9694, 0x0000028c
-	.section .rom.000c9934, "ax"
-	.incbin "baserom.gba", 0x000c9934, 0x00000010
+	.section .rom.000c9944, "ax"
 	.global Game_ResetForNewGame
 	.type Game_ResetForNewGame, %function
 	.thumb_func

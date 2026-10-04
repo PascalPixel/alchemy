@@ -732,7 +732,7 @@
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DECODE_FRAME_DATA.o"(.text .rodata .data .padding)
     "*/recon/tla/it/rom.o"(.rom.000c9694)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000c9934)
+    "*/recon/tla/it/rom.o"(.rom.000c9944)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOAD_RESOURCE_GROUP.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000c9c38)
     "*/recon/tla/it/rom.o"(.rom.000c9dc8)

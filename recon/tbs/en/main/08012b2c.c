@@ -1,3 +1,15 @@
+/* 2026-10-04 finisher 5: the three tails restored as "for (; i < 10; i++)
+ * out++;" after the six- and eight-point rings and "for (i = 4; i < 10;
+ * i++) out++;" after the default ring: the cursor steps over the unused
+ * slots of the ten-point table and is dead afterwards, so only the counter
+ * survives, as in the ROM. alchemy diff 70 -> 4 over the full 500-byte
+ * extent; the "empty tail" measurement below no longer holds for this body.
+ * Remaining 4, all in case 20: the scheduler puts "adds r6, r7" (pair = out)
+ * first among the prologue copies instead of last, and "mov r3, r11" before
+ * the first x store. Index-form stores (base[i * 2], a reduced giv) do place
+ * the copy last, but reshuffle global allocation in every case (score 100+).
+ * Scheduling barriers around the first stores and the angle shift: 4 to 6.
+ */
 /* 2026-10-04 canonical contract correction: remove all three empty counter
  * tails. Fresh score 120 described a 500-byte shape that still required
  * unconsumed counter instructions; it was not adoption-ready. Without those
@@ -152,6 +164,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
             out++;
             angle = (s16)(angle + 0x2aaa);
         }
+for (; i < 10; i++) out++;
         break;
     case 5:
     case 8:
@@ -175,6 +188,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
             out++;
             angle = (s16)(angle + 0x2000);
         }
+for (; i < 10; i++) out++;
         break;
     case 4:
     case 6:
@@ -249,6 +263,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
             (u16)(angle = (s16)(angle + 0x4000));
             i++;
         }
+for (i = 4; i < 10; i++) out++;
         break;
     }
 }

@@ -35,7 +35,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check coverage coverage-check
-.PHONY: progress deps clean
+.PHONY: progress deps worst clean
 
 help:
 	@printf '%s\n' \
@@ -182,8 +182,13 @@ progress:
 # A report for people only: the build and the count never read it. The listings
 # under recon/<game>/raw are the English builds' disassembly, so it reads those.
 deps:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- deps --build out/tbs-en --build out/tla-en \
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml --bin psynergy -- deps --build out/tbs-en --build out/tla-en \
 	    --out-dir out/reports $(DEPS_FLAGS)
+
+# Maintained C ranked by how mechanical it reads, worst first: what to
+# rewrite in Camelot's style next. A report for people only.
+worst:
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml --bin psynergy-worst -- --out out/reports/worst.tsv
 
 clean:
 	@rm -rf out

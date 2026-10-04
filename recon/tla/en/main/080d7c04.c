@@ -40,7 +40,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         }
         BattleFx_InitializeSlots();
         base = (*((s32 *)gEffectWork));
-        Unnamed_080b0840Far(0x20118C);
+        Shop_RestoreSceneTilesFar(0x20118C);
         Audio_PlayCue(0xAD);
         Motion_SetVarCbAndRefresh(id, 1);
     }

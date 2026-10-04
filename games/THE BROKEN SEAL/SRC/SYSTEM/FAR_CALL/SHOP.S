@@ -52,9 +52,9 @@ ShopCursor_SetPositionImmediateFar:
 	.thumb_func
 Shop_FillSelectorFar:
 	overlay_veneer Shop_FillSelector
-	.global Unnamed_080b0840Far
+	.global Shop_RestoreSceneTilesFar
 	.thumb_func
-Unnamed_080b0840Far:
+Shop_RestoreSceneTilesFar:
 	overlay_veneer Shop_RestoreSceneTiles
 	.global Shop_InitEffectFar
 	.thumb_func

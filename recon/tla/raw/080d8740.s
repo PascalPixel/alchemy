@@ -27,7 +27,7 @@ Func_080d8740:
 	lsls r0, r0, #14
 	adds r0, #132
 	str r3, [sp, #4]
-	bl Unnamed_080b0840Far
+	bl Shop_RestoreSceneTilesFar
 	movs r0, #30
 	bl WaitFrames
 	adds r2, r6, #0

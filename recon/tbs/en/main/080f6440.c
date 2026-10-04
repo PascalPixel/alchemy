@@ -1,3 +1,12 @@
+/* 2026-10-04: column r10 binding trial scored 15310 vs 3720; rejected.
+ * Use the existing ReelGame_Run saved-game view from GameState+12 instead
+ * of the unresolved gReelSave import. Native palette/data owners unchanged.
+ * Fresh canonical-owner score: 3790; all imports resolve. A 120-second
+ * ordinary-source search reached 3393 but added four stack bytes and eight
+ * instructions; rejected, retaining the readable 40-byte-frame draft.
+ * Scoped register operands on consumed work/save/column/mismatch/symbol
+ * values at five existing boundaries did not improve 3790; none retained.
+ */
 /* NONMATCHING: alchemy drafts scores 3720, 146 differing instructions of
  * 1731 (was 6025 and 234). The frame is the listing's 40 bytes.
  * Latest: in the line check the mismatch flag and the first symbol are
@@ -19,9 +28,8 @@
  * read twice before the pressed bits are stored, the second read masked into
  * a variable; n is cleared before blend is set. Earlier: the object buffer
  * words are volatile; a row stop count is a signed 8-bit bitfield; the fill
- * loops count with !=; the prizes live in a struct whose label is 12 bytes
- * into gCell, written here as gReelSave, which needs that label in
- * recon/tbs/sym_ewram.s on adoption.
+ * loops count with !=; the prizes use the same GameState+12 saved-game
+ * view as ReelGame_Run.
  * Remaining: the listing spills the hit count and keeps the mismatch flag in
  * r9, the column in r10 and the bet address in r11 where this draft spills
  * the flag and keeps the count in r11, the column in r8, the bet address in
@@ -46,6 +54,7 @@
 #include "UI.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "GAME_STATE.H"
 
 /* Per-frame driver for the five-reel symbol minigame.
  *
@@ -105,7 +114,6 @@ extern u8 gBattleFxWork[];
 extern volatile u32 gKeysHeld;
 extern u8 gDebugPaused;
 extern char MsgSlotsBet;
-extern struct ReelSave gReelSave;
 extern const u8 Data_080f870c[];
 extern const u8 Data_080f8712[];
 extern const u8 Data_080f871a[];
@@ -114,6 +122,7 @@ extern const u8 Data_080f8728[];
 void ReelGame_RunFrame(void)
 {
     struct ReelWork *work;
+    struct ReelSave *save;
     struct BattleEffectWork *fx;
     volatile u16 *dma;
     s32 n;
@@ -130,6 +139,7 @@ void ReelGame_RunFrame(void)
     s32 k;
     s32 i;
 
+    save = (struct ReelSave *)((u8 *)&gGameState + 12);
     work = ((struct ReelWork **)gBattleFxWork)[6];
     fx = ((struct BattleEffectWork **)gBattleFxWork)[0];
     n = 0;
@@ -171,7 +181,7 @@ void ReelGame_RunFrame(void)
         UiNumber_DrawAt(work->bet, 2, work->sub_window, 64, 8);
         if (work->pressed & 2) {
             work->state = 10;
-            gReelSave.won_prizes[0] = 254;
+            save->won_prizes[0] = 254;
             UiWork_FinalizeFar(work->window, 1);
             goto build_objects;
         }
@@ -378,14 +388,14 @@ void ReelGame_RunFrame(void)
                     }
                     if (mixed == 0) {
                         work->line[col] = 1;
-                        gReelSave.won_prizes[0 + hits] = Data_080f870c[found];
+                        save->won_prizes[0 + hits] = Data_080f870c[found];
                         hits++;
                     }
                 }
             }
             work->timer = 0;
             if (hits != 0) {
-                gReelSave.won_prizes[0 + hits] = -1;
+                save->won_prizes[0 + hits] = -1;
                 work->state = 2;
                 AudioCommand_PlayFar(171);
                 fx->transfer_mode = 1;

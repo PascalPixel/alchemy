@@ -734,54 +734,6 @@ Func_020005a8:
 	pop {r5, r6, r7, pc}
 .L_0200864c:
 	.4byte gFrameCount
-	.section .text.x02008664,"ax",%progbits
-	.global Func_02000664
-	.thumb_func
-Func_02000664:
-	push {lr}
-	adds r3, r0, #0
-	adds r3, #100
-	ldrh r3, [r3]
-	movs r1, #15
-	ands r1, r3
-	bl Object_SetPartAttribute
-	movs r0, #0
-	pop {pc}
-	.section .text.x02008678,"ax",%progbits
-	.global Func_02000678
-	.thumb_func
-Func_02000678:
-	push {lr}
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	movs r0, #0
-	pop {pc}
-	.section .text.x02008684,"ax",%progbits
-	.global Func_02000684
-	.thumb_func
-Func_02000684:
-	push {lr}
-	ldr r3, .L_020086a0
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #99
-	bne .L_0200869a
-	ldr r0, .L_020086a4
-	b .L_0200869c
-.L_0200869a:
-	ldr r0, .L_020086a8
-.L_0200869c:
-	pop {pc}
-	.2byte 0x0000
-.L_020086a0:
-	.4byte gPartyState
-.L_020086a4:
-	.4byte Data_02002378
-.L_020086a8:
-	.4byte Data_020021b0
 	.section .text.x020086ac,"ax",%progbits
 	.global Func_020006ac
 	.thumb_func
@@ -3011,7 +2963,7 @@ gSceneExits:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x0000002e
-	.4byte Func_02000664
+	.4byte SceneActor_ApplyCounterLowBitsAsMode
 	.4byte 0x00000011
 .L_0200a180:
 	.4byte 0x00000016
@@ -3024,10 +2976,10 @@ gSceneExits:
 	.4byte 0x0000001e
 	.4byte 0x00000000
 	.4byte 0x0000002e
-	.4byte Func_02000678
+	.4byte SceneActor_ClearSingleChildField
 	.4byte 0x00000011
-	.global Data_020021b0
-Data_020021b0:
+	.global gScenePlacements
+gScenePlacements:
 	.4byte 0xffff0038
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -3142,8 +3094,8 @@ Data_020021b0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02002378
-Data_02002378:
+	.global gScenePlacementsEntrance99
+gScenePlacementsEntrance99:
 	.4byte 0xffff0004
 	.4byte 0x00000001
 	.4byte 0x00080000

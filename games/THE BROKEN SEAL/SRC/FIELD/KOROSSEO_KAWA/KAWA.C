@@ -1035,89 +1035,70 @@ void FieldScene_RunCommandSequence(s32 a0)
 
 /* Colosso river stage: unless the stage is already cleared, walk the player
  * through the introduction, push the pillars and hand over to the stage. */
-void KorosseoKawa_RunStageIntro(s32 a0)
+void KorosseoKawa_RunStageIntro(s32 scene)
 {
-    s32 rec;
-    s32 record;
+    s32 path;
 
     if (gGameState.entrance == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
-        rec = SceneDialogue_RunFlagGatedPromptInteraction(a0, 1);
-        if (rec != 0) {
-        } else {
+        path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 1);
+        if (path == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                s32 cx = 0x1480000 >> 17;
-                s32 cy = 1;
-                s32 cz = 0xa80000 >> 16;
-                s32 cm;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-                cm = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-                cz <<= 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
-                cx <<= 17;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
-                Camera_MoveTo(cx, -cy, cz, cm);
+                s32 x = 0xa4;
+                s32 y = 1;
+                s32 z = 0xa8;
+
+                /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
+                asm("" : "+r"(x), "+r"(y), "+r"(z));
+                Camera_MoveTo(x << 17, -y, z << 16, 1);
             }
             Engine_CameraWaitForMove();
-            Engine_EventShowMessage(a0, 0);
-            {
-                s32 fx = 0x118;
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fz asm("r2") = 200;
-                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
-                asm("" : : "r"(fx), "r"(fz) : "r0");
-                Korosseo_FadeInCompetitor(0, fx, fz);
-            }
-            Actor_SetSpeed(0, 0x10000, 0x8000);
-            Actor_WalkToAndWait(0, 0x168, 200);
+            Engine_EventShowMessage(scene, 0);
+            /* FAKEMATCH: the discarded result sets r0 after both coordinates. */
+            Value3(Korosseo_FadeInCompetitor, 0, 280, 200);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
             Engine_EventWait(30);
-            Actor_ShowEmote(0, 0x102, 60);
-            Engine_EventShowMessage(a0, 0);
-            Actor_WalkToAndWait(0, 0x138, 200);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+            Engine_EventShowMessage(scene, 0);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
             Engine_EventWait(30);
-            Actor_FaceDirection(0, 0xc000, 10);
-            Actor_ShowEmote(0, 0x106, 60);
-            Actor_SetSpeed(0, 0x18000, 0xc000);
-            OverlayObject_PlaceWithScale14000(0, 0x128, 184);
-            OverlayObject_PlaceWithScale14000(0, 0x128, 152);
-            OverlayObject_PlaceWithScale14000(0, 0x138, 152);
-            Actor_FaceDirection(0, 0x4000, 15);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+            OverlayObject_PlaceWithScale14000(0, 296, 184);
+            OverlayObject_PlaceWithScale14000(0, 296, 152);
+            OverlayObject_PlaceWithScale14000(0, 312, 152);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
-            Actor_SetSpeed(0, 0x18000, 0xc000);
-            Actor_WalkToAndWait(0, 0x130, 184);
-            Engine_ActorWalkToAndWait(0, 0x128, 192);
-            Engine_ActorWalkToAndWait(0, 0x128, 200);
-            Engine_ActorFaceDirection(0, 0, 15);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 192);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 200);
+            Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 15);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
-            Engine_ActorSetAnimation(0, 1);
-            Engine_EventShowMessage(a0, 0);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+            Engine_EventShowMessage(scene, 0);
             Korosseo_RestoreCompetitor(0);
-            Engine_CameraFollowActor(0, 0);
+            Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
             Actor_SetPosition(9, 0x1380000, 0xa80000);
-            SceneState_SendIdBySceneId(a0, 1);
-            goto L_020013c2;
-        }
-        if (rec == 1) {
+            SceneState_SendIdBySceneId(scene, 1);
+        } else if (path == 1) {
             Engine_EventSetMessage((s32)MsgKorosseoObjectiveStageClear);
-            Engine_EventShowMessage(a0, 0);
+            Engine_EventShowMessage(scene, 0);
         }
-        L_020013c2:;
-        ((s32 (*)())FieldScene_RunMiddleSequence)(rec, a0, 1);
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
+        Value3(FieldScene_RunMiddleSequence, path, scene, 1);
         Engine_EventEnd();
     }
 }

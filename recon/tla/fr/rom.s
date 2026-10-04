@@ -95,19 +95,8 @@ Func_080132d0:
 	.thumb_func
 Func_080132fc:
 	.incbin "baserom.gba", 0x00013328, 0x00000004
-	.section .rom.00013338, "ax"
-	.incbin "baserom.gba", 0x00013338, 0x00000060
-	.section .rom.00013398, "ax"
-	.global Resource_LoadCode
-	.type Resource_LoadCode, %function
-	.thumb_func
-Resource_LoadCode:
-	.incbin "baserom.gba", 0x00013398, 0x00000054
-	.global Runtime_IgnoreInterrupt
-	.type Runtime_IgnoreInterrupt, %function
-	.thumb_func
-Runtime_IgnoreInterrupt:
-	.incbin "baserom.gba", 0x000133ec, 0x00000004
+	.section .rom.000133f0, "ax"
+	.balign 4
 	.global Runtime_InstallIwramAndIrqs
 	.type Runtime_InstallIwramAndIrqs, %function
 	.thumb_func

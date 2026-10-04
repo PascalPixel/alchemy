@@ -240,7 +240,7 @@ Func_080afbec:
 .L_080afdac:
 	.4byte IwramClearWords
 .L_080afdb0:
-	.4byte Data_080b9e7c
+	.4byte Enemy_DefinitionTable
 .L_080afdb4:
 	.4byte 0x0000042c
 .L_080afdb8:

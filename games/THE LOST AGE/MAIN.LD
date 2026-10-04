@@ -674,7 +674,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OWNER_2.o"(.text .rodata .data .padding)
     "*/recon/tla/ja/rom.o"(.rom.000a8338)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/CHARACTER.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000a83a8)
+
     "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/COPY_BYTES_DIRECTIONAL.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000a83f6)
     "*/recon/tla/ja/rom.o"(.rom.000a83f8)

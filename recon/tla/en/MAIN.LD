@@ -943,7 +943,6 @@
         "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OWNER_2.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ad338.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/CHARACTER/CHARACTER.o"(.text)
-        "*/recon/tla/raw/080ad3a8.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/COPY_BYTES_DIRECTIONAL.o"(.text)
         "*/recon/tla/raw/080ad3f6.o"(.text)
         "*/recon/tla/raw/080ad3f8.o"(.text)

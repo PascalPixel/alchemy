@@ -2044,12 +2044,6 @@ Func_080ad0b8:
 	.incbin "baserom.gba", 0x000ba0b8, 0x00000008
 	.section .rom.000ba338, "ax"
 	.incbin "baserom.gba", 0x000ba338, 0x00000010
-	.section .rom.000ba3a8, "ax"
-	.global Owner_GetRecord
-	.type Owner_GetRecord, %function
-	.thumb_func
-Owner_GetRecord:
-	.incbin "baserom.gba", 0x000ba3a8, 0x0000001c
 	.section .rom.000ba3f6, "ax"
 	.incbin "baserom.gba", 0x000ba3f6, 0x00000002
 	.section .rom.000ba3f8, "ax"
@@ -2397,7 +2391,10 @@ Item_DefinitionTable:
 	.incbin "baserom.gba", 0x000bf364, 0x000058b0
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
-	.incbin "baserom.gba", 0x000c4c14, 0x00009338
+	.incbin "baserom.gba", 0x000c4c14, 0x00002268
+	.global Enemy_DefinitionTable
+Enemy_DefinitionTable:
+	.incbin "baserom.gba", 0x000c6e7c, 0x000070d0
 	.global Owner_GrowthRecords
 Owner_GrowthRecords:
 	.incbin "baserom.gba", 0x000cdf4c, 0x000005c0

@@ -498,8 +498,8 @@ Item_DefinitionTable:
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
 	.incbin "baserom.gba", 0x000b7c14, 0x00002268
-	.global Data_080b9e7c
-Data_080b9e7c:
+	.global Enemy_DefinitionTable
+Enemy_DefinitionTable:
 	.incbin "baserom.gba", 0x000b9e7c, 0x000070d0
 	.global Owner_GrowthRecords
 Owner_GrowthRecords:

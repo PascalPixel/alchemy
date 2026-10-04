@@ -1,19 +1,24 @@
 #include "RESOURCE.H"
-/* NONMATCHING (2026-10-04): dd.ts differ 54 of 506 (English). The loop
- * exits are gotos, so expand_end_loop finds no exit to roll to the bottom;
- * label is declared first (its stack slot sits above the counters);
- * gKeysRepeat is volatile (the A test reloads it); the tile index keeps
- * both +1 terms ((x+col+1) + ((y+row+1) << 5)); the caret bits use an OAM
- * priority field. Remaining: the 0xea3 and text[0] byte stores interleave;
- * end = input + original_length loads its operands in the other order; the
- * caret sprite and the wave table trade r4/r5; the save copy gives its
- * counter r2 (the ROM r0, destination r2); the tile index still folds one
- * +1 after the shift. Editions: en and it are 0x494 bytes, de/es/fr 0x4b4
- * and ja 0x5e0, so the others need their own branches. */
+/* DRAFT (2026-10-04): dd.ts differ 0 of 506 against the English listing.
+ * Shape: the loop exits are gotos, so expand_end_loop finds no exit to roll
+ * to the bottom; label is declared first (its stack slot sits above the
+ * counters); gKeysRepeat is volatile (the A test reloads it); the 0xea3
+ * flag is a struct field store (UiRenderWork.dirty: an in-struct store lets
+ * the scheduler lift the result load above it; the anonymous struct here
+ * stands in for it); the caret bits are the FieldSprite inside RenderOutput
+ * at 0x10; end is int arithmetic. Four FAKEMATCH devices: the caret sprite
+ * in r5, the save copy pointers in r2/r1, the column term kept whole.
+ * Before adoption: merge into WINDOW14.C (it precedes this listing, and the
+ * two-byte 08020bd6 listing becomes alignment) using WINDOW.H types
+ * (gWindowWork[0], struct UiRenderWork, struct UiWindow); and editions:
+ * en and it are 0x494 bytes; de/es/fr are 0x4b4 (two extra string draws at
+ * (144,32) and (144,40) after the divider line, and width 4 for the column
+ * 18 keys); ja is 0x5e0 and different. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "DMA.H"
 #include "RENDER_INPUT.H"
+#include "FIELD_SPRITE.H"
 #include "SHOP.H"
 #include "WORKSPACE_OPTIONS.H"
 
@@ -45,7 +50,6 @@ void UiWork_Finalize(struct RenderInput *,s32);
 void UiWork_FinalizeEntityMatchingLocalizedId(s32);
 
 /* The five-character name editor uses the same cursor state as shop menus. */
-struct NameEntryOam { u16 index : 10; u16 priority : 2; u16 palette : 4; };
 
 s32 NameEntry_EditOwnerName(s32 entry)
 {
@@ -73,7 +77,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry),0,3,1);
     UiWindow_CopyTilemapRegion(window,(void *)(Menu_PartySpriteResourceIds + 4));
     UiWindow_DrawDividerLine(window,18,0,18,7);
-    work[0xea3] = text_dirty;
+    ((struct { u8 pad[0xea3]; u8 flag; } *)work)->flag = text_dirty;
     text[0] = result;
     {
         s32 i;
@@ -100,13 +104,13 @@ s32 NameEntry_EditOwnerName(s32 entry)
         slot = (s32)RenderOutput_Create(slot,0x40000000,window,0,0);
         caret.output = (struct RenderOutput *)slot;
         ((struct RenderOutput *)slot)->sentinel = 255;
-        ((struct NameEntryOam *)((u8 *)slot + 24))->priority = 0;
+        ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->priority = 0;
         ShopCursor_SetPositionImmediateFar(&caret,UiText_SetRenderString(input)+70,22);
     }
     pal = (u16 *)0x050001c0;
     Dma_Set((void *)0x050001e0,pal,0x84000008,(volatile u32 *)0x040000d4);
     pal[4] = 0x6318;
-    end = input + original_length;
+    end = (u8 *)(original_length + (s32)input);
     for(;;) {
         s32 width = 1;
         if(column == 18) {
@@ -128,12 +132,10 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_MoveTowardTargetFar(&caret);
         {
             u32 frame = (gFrameTick >> 1) & 7;
-            u8 *sprite = (u8 *)caret.output;
-            s8 *wave = Data_080371f6;
-            u32 x = (*(u16 *)(sprite+6) + wave[frame]) & 511;
-            *(u16 *)(sprite+22) = (*(u16 *)(sprite+22) & 0xfffffe00) | x;
-            frame = (frame+5)&7;
-            sprite[20] = sprite[8] + ((u8 *)wave)[frame];
+            /* FAKEMATCH: the caret sprite lives in r5, as the native allocates it. */
+            register struct RenderOutput *o asm("r5") = caret.output;
+            ((struct FieldSprite *)o->unknown_10)->x = o->x + Data_080371f6[frame];
+            ((struct FieldSprite *)o->unknown_10)->y = o->y + Data_080371f6[(frame+5)&7];
         }
         if(gKeysRepeat & KEY_UP) {
             Audio_PlayCue(111); cursor_dirty = 1; row--;
@@ -182,8 +184,12 @@ remove_character:
                     UiText_DrawPaddedLabel(label,saved);
                     WaitFrames(10);
                 } else {
-                    s32 i=0; u8 *src=input; u8 *dst=saved;
-                    for (; i < 15; i++) *dst++ = *src++;
+                    /* FAKEMATCH: the destination lives in r2, as the native allocates it. */
+                    register u8 *dst asm("r2")=saved;
+                    /* FAKEMATCH: the source lives in r1, as the native allocates it. */
+                    register u8 *src asm("r1")=input;
+                    s32 i=0;
+                    while (i < 15) { *dst++ = *src++; i++; }
                 }
                 goto finish;
             }
@@ -191,8 +197,13 @@ remove_character:
             continue;
         }
         {
-            u32 cell=(window->x+column+1)+((window->y+row+1)<<5);
-            u32 character=work[cell*2];
+            u32 tx=window->x+column+1;
+            u32 cell;
+            u32 character;
+            /* FAKEMATCH: keeps the column term whole, as the native adds it. */
+            __asm__("" : "+r"(tx));
+            cell=((window->y+row+1)<<5)+tx;
+            character=work[cell*2];
             if(length==5) continue;
             *end++=character; *end=0; length++;
             if(length==5) { column=18; row=5; cursor_dirty=1; }

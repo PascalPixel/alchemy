@@ -1223,81 +1223,54 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 
 /* In-image direction table: sixteen packed steps, high half x, low half z. */
 
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
-void FieldScene_RunScene3ba_020015e0(s32 a0)
+/* The Broken Bridge stage: the camera pans to the bridge, the competitor
+ * fades in and walks to its end, then the stage opens. */
+void FieldScene_RunScene3ba_020015e0(s32 scene)
 {
-
-    u32 i;
-    s32 rec8;
-    s32 record;
+    s32 path;
 
     if (gGameState.entrance == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
-        rec8 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 3);
-        if (rec8 == 0) {
+        path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 3);
+        if (path == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoTheyCallBrokenBridge);
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                s32 cx = 0x3480000 >> 18;
-                s32 cy = 1;
-                s32 cz = 0xd80000 >> 16;
-                s32 cm;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-                cm = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-                cz <<= 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
-                cx <<= 18;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
-                Camera_MoveTo(cx, -cy, cz, cm);
+                s32 x = 0xd2;
+                s32 y = 1;
+                s32 z = 0xd8;
+
+                /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
+                asm("" : "+r"(x), "+r"(y), "+r"(z));
+                Camera_MoveTo(x << 18, -y, z << 16, 1);
             }
             Engine_CameraWaitForMove();
-            {
-                /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
-                register s32 mode asm("r1") = 0;
-                /* FAKEMATCH: the direct void form reverses the two argument moves. */
-                asm("" : : "r"(mode) : "r0");
-                Event_ShowMessage(a0, mode);
-            }
+            Event_ShowMessage(scene, 0);
             SceneState_SetMode66AndPassOpeningSequence();
             Engine_EventWait(60);
-            Event_ShowMessage(a0, 0);
-            {
-                s32 fx = 0x2e0;
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fz asm("r2") = 200;
-                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
-                asm("" : : "r"(fx), "r"(fz) : "r0");
-                Korosseo_FadeInCompetitor(0, fx, fz);
-            }
-            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-            Value3(Engine_ActorFaceDirection, 0, 0, 0);
+            Event_ShowMessage(scene, 0);
+            /* FAKEMATCH: the discarded result sets r0 after both coordinates. */
+            Value3(Korosseo_FadeInCompetitor, 0, 736, 200);
+            /* FAKEMATCH: the discarded result sets r0 after both other arguments. */
+            Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0, 0);
             SceneState_WaitUntilWordC41cIs22();
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x330, 200);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
             Engine_EventWait(30);
             Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
-            Event_ShowMessage(a0, 0);
+            Event_ShowMessage(scene, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-            SceneState_SendIdBySceneId(a0, 3);
-        } else {
-            if (rec8 == 1) {
-                Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
-                Event_ShowMessage(a0, 0);
-            }
+            SceneState_SendIdBySceneId(scene, 3);
+        } else if (path == 1) {
+            Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
+            Event_ShowMessage(scene, 0);
         }
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        Value3(FieldScene_RunMiddleSequence, rec8, a0, 3);
+        Value3(FieldScene_RunMiddleSequence, path, scene, 3);
         Engine_EventEnd();
     }
 }

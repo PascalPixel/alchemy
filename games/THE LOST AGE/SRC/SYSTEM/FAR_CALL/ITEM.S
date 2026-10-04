@@ -28,7 +28,7 @@ Inventory_FindEquippedFar:
 	.global Party_AdjustSixDigitCounterAFar
 	.thumb_func
 Party_AdjustSixDigitCounterAFar:
-	overlay_veneer Func_080afeb0
+	overlay_veneer Party_AdjustSixDigitCounterA
 	.global Item_GetEquipmentGroupFar
 	.thumb_func
 Item_GetEquipmentGroupFar:

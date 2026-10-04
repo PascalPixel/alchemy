@@ -3,6 +3,23 @@
 
 /* The party's counters, each kept within its range as ☀️ keeps them. */
 
+/* Adds to the party's coins, kept within 0..999999. */
+s32 Party_AdjustSixDigitCounterA(s32 amount)
+{
+    s32 value;
+
+    value = gPartyState.coins;
+    /* FAKEMATCH: ⚓️ loads the 999999 limit ahead of the coins; plain C loads it after. */
+    __asm__("" : "+r"(value));
+    value = (s32)((u32)value + (u32)amount);
+    if (value > 0xf423f)
+        value = 0xf423f;
+    if (value < 0)
+        value = 0;
+    gPartyState.coins = value;
+    return value;
+}
+
 /* Adds to the party's second six-digit counter, kept within 0..999999. */
 s32 Party_AdjustSixDigitCounterB(s32 amount)
 {

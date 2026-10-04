@@ -1,4 +1,5 @@
-/* 2026-10-04 finisher 5 (score 121, was 183): a tagged r11 binding for the
+/* 2026-10-04 finisher 5 (score 115, was 183; z before x and speed/lift before
+ * unknown_5b in the move path take 121 to 115): a tagged r11 binding for the
  * loop's 0x100000 makes global allocation leave source on the stack as the
  * ROM does ([sp+20], 52-byte frame, every stack offset now right); a tagged
  * r4 binding for the source cell z gives 121. Remaining: the cell tests.
@@ -10,6 +11,13 @@
  * ifs, >> 20 or without the cell locals: 121 to 278, no gain.
  * (lreg dump: source 19 weighted refs/258 insns outranks the 0x100000 copy,
  * 16/354, so without the binding source takes r11.)
+ * The ROM also reloads source twice ([sp+20] into r2 and r3) for the cell
+ * loads instead of inheriting the r1 of the hit compare, which reload does
+ * only after a used label; no label sits there in any shape tried (if/else,
+ * while, nested hit tests, declaration order: 115 to 162). A devsearch seed
+ * reached 74 only by "+r" barriers on the spilled source and moved, which
+ * insert ldr/str pairs; that confirms the reload register rotation but is
+ * not admissible.
  */
 /* DRAFT of FunctionHead_08097c3c: the effect that lets the player push a
    target one step: a preview object shows the step tried, and a step that
@@ -224,13 +232,13 @@ void FunctionHead_08097c3c(void)
         moved = 1;
     move:
         AudioCommand_PlayFar(175);
-        x = position.x;
         z = position.z;
+        x = position.x;
         Object_SetMode(preview, Data_0809f118[(u16)(angle - direction) >> 14]);
         WaitFrames(15);
-        target->unknown_5b = 0;
         target->speed = 0x3333;
         target->lift = 0x3333;
+        target->unknown_5b = 0;
         Object_SetMoveTargetFar(target, position.x, position.y, position.z);
         preview->flag = 0;
         preview->speed = 0x3333;

@@ -10,6 +10,15 @@ use std::sync::OnceLock;
 pub fn root() -> &'static Path {
     static ROOT: OnceLock<PathBuf> = OnceLock::new();
     ROOT.get_or_init(|| {
+        // The checkout the command runs in, so a binary built in one
+        // worktree never edits another; else the one it was built from.
+        let current = std::env::current_dir().ok();
+        if let Some(found) = current.as_deref().and_then(|dir| {
+            dir.ancestors()
+                .find(|d| d.join("tools/alchemy/Cargo.toml").is_file() && d.join("games").is_dir())
+        }) {
+            return found.to_path_buf();
+        }
         Path::new(env!("CARGO_MANIFEST_DIR"))
             .parent()
             .expect("crate dir has a parent")

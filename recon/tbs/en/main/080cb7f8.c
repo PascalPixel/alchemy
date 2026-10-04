@@ -1,3 +1,9 @@
+/* 2026-10-04: scoped read/write register-operand trials on initialized work,
+ * camera, sheet and canvas at four existing boundaries did not improve 9.
+ * Explicit consumed ground/camera pointers, both declaration/assignment
+ * orders and read-only/read-write operands before/inside the frame loop,
+ * also did not improve 9 (best 51). No trial device was retained.
+ */
 /* 2026-10-03 T4: independent coordinate-storage and lifetime pass, best 9.
  * The retained T3 source is unchanged. Rejected trials:
  * - One record holding point, projected position and ground: 1110; frame

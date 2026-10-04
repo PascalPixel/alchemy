@@ -9,7 +9,18 @@
  * r8 and nothing spills. Tried without effect on that: inline
  * Work_GetCount/Work_GetActor/Work_ResetFrom helpers on &work or a tail
  * pointer (73-96), a w pointer for the head with work. in the tail (125,
- * frame 88), pinning i to r7 (138: a global register variable).
+ * frame 88), pinning i to r7 (138: a global register variable; 138 too
+ * when the pin is scoped to a block from the first unit loop on).
+ * -dg on this draft: the tail's &work is pseudo 44 (35 refs over 131
+ * insns, the GCSE copy of &work for the whole body); -fno-gcse (diagnosis
+ * only) gives sp-relative tail loads instead, so the ROM's fresh tail base
+ * is not plain GCSE either. A head written with w = &work and w-> (the List
+ * calls on work.actors, which keeps add rN, sp, #44 there) gives frame 88
+ * with one spilled tail copy (122); its tail then reuses w. Inline
+ * Pres_GetCount/GetActor/GetObject helpers on w or &work in the head loop
+ * and tail: 91-122. 132 generated tail spellings on this draft (for/while/
+ * do loops, i/j, work./w->/ids[] access, i = 0 before or after the stage
+ * calls): best 72.
  */
 /* 2026-10-04 (finisher 3), 82 rows off by dd.ts. The 8 bytes at sp+0 and
  * sp+4 are caller-save slots, not a local: in the ROM's reset loop the

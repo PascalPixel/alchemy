@@ -170,7 +170,6 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.0000bc70)
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/OBJECT.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0000c62c)
     "*/games/COMMON/SRC/FIELD/COMMON/SCRIPT/SCRIPT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT13.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.0000caca)

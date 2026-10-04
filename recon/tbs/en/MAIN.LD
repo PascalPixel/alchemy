@@ -157,7 +157,6 @@
         "*/recon/tbs/raw/0800bc70.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
         "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/OBJECT.o"(.text)
-        "*/recon/tbs/raw/0800c62c.o"(.text)
         "*/games/COMMON/SRC/FIELD/COMMON/SCRIPT/SCRIPT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT13.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/UPDATE_ALL_THUMB.o"(.text)

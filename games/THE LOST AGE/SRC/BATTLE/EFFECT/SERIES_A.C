@@ -74,10 +74,10 @@ void BattleFx_RunSeriesAMode12(struct BattleEffectArgument *effect)
     BattleFx_RunSeriesA(effect, 12);
 }
 
-/* Mode 13 runs as the second variant with the fourth field cleared. */
+/* Mode 13 runs as the second variant without its casting prelude. */
 void BattleFx_RunSeriesAMode13(struct BattleEffectArgument *effect)
 {
-    effect->unknown_001c = 0;
+    effect->prelude = 0;
     effect->variant = 2;
     BattleFx_RunSeriesA(effect, 13);
 }

@@ -205,7 +205,7 @@ struct EffectLaunch {
     s32 unknown_0010;
     s32 count;
     s32 variant;
-    s32 unknown_001c;
+    s32 prelude;
     s32 unknown_0020;
     s16 actors[24];
 };
@@ -341,7 +341,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         }
         BattleFx_ScheduleCallbacksAndReleaseBlocksFar();
     } else if (mode == 2) {
-        launch.unknown_001c = 0;
+        launch.prelude = 0;
         launch.kind = kind;
         launch.variant = variant;
         launch.actor = unit;
@@ -352,7 +352,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         Func_080c9020(&launch);
     } else {
         launch2.kind = kind;
-        launch2.unknown_001c = 0;
+        launch2.prelude = 0;
         launch2.variant = 0;
         launch2.actor = unit;
         launch2.actors[0] = unit;

@@ -77,7 +77,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    if (work->effect->unknown_001c == 1)
+    if (work->effect->prelude == 1)
         BattleFx_PrepareCanvasEffect(effect, 3, work->effect->side, 0, &origin_x, &origin_y);
     *(s16 *)0x04000020 = 0x100;
     palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
@@ -101,7 +101,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
         if (frame == 64)
             BattleEventRuntime_BeginPhaseFar(0);
         Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-        if (work->effect->unknown_001c == 1) {
+        if (work->effect->prelude == 1) {
             s32 x;
             s32 y;
 

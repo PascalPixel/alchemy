@@ -244,7 +244,7 @@ Resource_GetTableEntryFar:
 	.global Func_08000298
 	.thumb_func
 Func_08000298:
-	overlay_veneer Func_080132fc
+	overlay_veneer Resource_ReservedNoOp
 	.global Resource_LoadCodeFar
 	.thumb_func
 Resource_LoadCodeFar:

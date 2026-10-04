@@ -70,7 +70,6 @@
         "*/recon/tla/raw/080132c8.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/CONSTANT_ZERO_RESULT.o"(.text)
         "*/recon/tla/raw/080132d0.o"(.text)
-        "*/recon/tla/raw/080132fc.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE.o"(.text)
         "*/recon/tla/raw/080133c4.o"(.text)
         "*/recon/tla/raw/08013438.o"(.text)

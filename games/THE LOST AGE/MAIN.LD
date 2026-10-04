@@ -83,7 +83,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000132c8)
     "*/games/THE LOST AGE/SRC/SYSTEM/CONSTANT_ZERO_RESULT.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000132d0)
-    "*/recon/tla/ja/rom.o"(.rom.000132fc)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000133c4)
     "*/recon/tla/ja/rom.o"(.rom.00013438)

@@ -39,7 +39,7 @@ LuckyDice_Run:
 	bl Runtime_AllocateBlock
 	str r0, [sp, #104]
 	ldr r0, .L_081ac2e4
-	bl Func_080132fc
+	bl Resource_ReservedNoOp
 	bl Func_081ac028
 	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081ac2e8

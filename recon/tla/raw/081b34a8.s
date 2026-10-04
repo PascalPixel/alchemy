@@ -36,7 +36,7 @@ Func_081b34a8:
 	str r0, [sp, #36]
 	ldr r0, .L_081b353c
 	ldr r5, .L_081b3540
-	bl Func_080132fc
+	bl Resource_ReservedNoOp
 	movs r0, #160
 	lsls r0, r0, #1
 	adds r5, r5, r0

@@ -89,12 +89,6 @@ Func_080132c8:
 	.thumb_func
 Func_080132d0:
 	.incbin "baserom.gba", 0x000132fc, 0x0000002c
-	.section .rom.00013328, "ax"
-	.global Func_080132fc
-	.type Func_080132fc, %function
-	.thumb_func
-Func_080132fc:
-	.incbin "baserom.gba", 0x00013328, 0x00000004
 	.section .rom.000133f0, "ax"
 	.balign 4
 	.global Runtime_InstallIwramAndIrqs

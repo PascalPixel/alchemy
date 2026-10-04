@@ -70,7 +70,6 @@
     "*/recon/tla/es/rom.o"(.rom.000132f4)
     "*/games/THE LOST AGE/SRC/SYSTEM/CONSTANT_ZERO_RESULT.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000132fc)
-    "*/recon/tla/es/rom.o"(.rom.00013328)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000133f0)
     "*/recon/tla/es/rom.o"(.rom.00013464)

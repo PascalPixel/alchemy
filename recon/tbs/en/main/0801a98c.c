@@ -1,27 +1,21 @@
-/* 2026-10-04 (second-wave finisher 1): alchemy diff 415 -> 165 in plain C,
- * 34 with one tagged pin. What moved it: node is the one function-wide node
- * pointer, reused for the transfer block's selected node and for the third
- * chain (separate sel/p locals cost 70+), while the transfer block has its
- * own sprite pointer te; slot = 241 is set first in the cursor arm; cnt++
+/* 2026-10-04 (second-wave finisher 1): alchemy diff 415 -> 4, plain C, no
+ * device. What moved it: node is the one function-wide node pointer,
+ * reused for the transfer block's selected node and for the third chain
+ * (separate sel/p locals cost 70+), while the transfer block has its own
+ * sprite pointer te; slot = 241 is set first in the cursor arm; cnt++
  * follows node = node->next; e->y += vertical_scroll; the transfer y is
- * node->y + (wobble >> 1) - 4; te->shape is stored after te->size; the old
- * step temporary, barriers and transfer lifetime devices did nothing and are
- * gone. Left: global allocation gives fp to cursor_entry and puts cnt at
- * sp+8; the ROM gives cnt fp and spills cursor_entry. The tagged pin fixes
- * that; its 34 remaining rows are all in the cursor block, where the ROM
- * holds the tile base in fp (mov fp, r5; add r2, fp) and reloads cursor
- * through r4, which the pinned fp cannot reproduce. Tried for the plain
- * priority: cnt as u16/s16/u32/register, declaration orders (random
- * permutations, 186 best), cursor_entry volatile (176); for the tile base,
- * five spellings of the address (34-52).
- * Why the pin: the -dg dump puts cnt at 7 refs over 238 insns (priority
- * 0.059) under slot (6/176) and cursor_entry (11/446, 0.074); one more ref
- * of cnt would lift it above both. Duplicating node = node->next; cnt++ in
- * both arms of the scale test does exactly that unpinned (85 rows, cnt in
- * fp), but the two tails keep different scratch registers and are not
- * cross-jumped into the ROM's single tail. In the cursor block the tile base
- * (reg 685, REG_EQUIV Menu_AnimatedCursorTiles) gets r3 from local-alloc;
- * the ROM's lands in fp, which suggests it was not local-allocated there.
+ * node->y + (wobble >> 1) - 4; te->shape is stored after te->size; the
+ * cursor block reuses cnt for the tile base (cnt = (s32)Menu_Animated
+ * CursorTiles). That last one is what the ROM's allocation shows: the two
+ * extra refs lift cnt above slot and cursor_entry so it gets fp (the -dg
+ * dump had cnt at 7 refs, priority 0.059, under cursor_entry's 0.074), and
+ * the tile base is then set in fp through r5 (ldr r5; mov fp, r5). The old
+ * step temporary, barriers and transfer lifetime devices did nothing and
+ * are gone.
+ * Left: sched2 puts add r2, fp after ldrh r0 / lsls r1 where the ROM has it
+ * before them (4 rows). Spellings of the address (pointer or integer
+ * arithmetic, either operand order, * 256, / 4 % 16, a u8 * cast, the sum
+ * computed into cnt first: 4-24) do not move it.
  */
 /* 2026-10-04: current EN score 3560 (162 register-only, 6 operand,
  * 21 reordered, 7 inserted, 6 deleted), down from the fresh 5250 baseline.
@@ -118,9 +112,7 @@ void MenuSelection_DrawFrame(void)
     struct SelectionNode *node;
     struct SelectionSprite *e;
     struct SelectionSprite *te;
-    u8 *tiles = Menu_AnimatedCursorTiles;
-    /* FAKEMATCH: cnt pinned to fp, which plain C gives cursor_entry (154 rows unpinned, 17 pinned). */
-    register s32 cnt asm("fp") = 0;
+    s32 cnt = 0;
     s32 slot;
     s32 tmp;
     struct EffectPosition pos;
@@ -254,7 +246,8 @@ void MenuSelection_DrawFrame(void)
     }
     /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
     if (cursor->kind != 0) {
-        cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, &tiles[((gFrameTick >> 2) & 15) << 8]);
+        cnt = (s32)Menu_AnimatedCursorTiles;
+        cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, (void *)(cnt + (((gFrameTick >> 2) & 15) << 8)));
         if (cursor->target_x != cursor->x) {
             tmp = (cursor->target_x - cursor->x) >> 1;
             if (tmp != 0) {

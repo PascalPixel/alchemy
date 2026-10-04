@@ -191,12 +191,6 @@ ResourceTable_AllocateBlocks:
 	.thumb_func
 Func_08014220:
 	.incbin "baserom.gba", 0x00014220, 0x00000020
-	.section .rom.00014240, "ax"
-	.global Resource_ClearSlotReferences
-	.type Resource_ClearSlotReferences, %function
-	.thumb_func
-Resource_ClearSlotReferences:
-	.incbin "baserom.gba", 0x00014240, 0x00000034
 	.section .rom.00014274, "ax"
 	.global Resource_ResetEntry
 	.type Resource_ResetEntry, %function
@@ -3805,18 +3799,6 @@ FacingObject_TurnPairToFaceEachOther:
 	.thumb_func
 Func_080d36a8:
 	.incbin "baserom.gba", 0x000d3688, 0x00000020
-	.section .rom.000d36d4, "ax"
-	.global ObjectGroup_ApplyIndexedChildValue
-	.type ObjectGroup_ApplyIndexedChildValue, %function
-	.thumb_func
-ObjectGroup_ApplyIndexedChildValue:
-	.incbin "baserom.gba", 0x000d36d4, 0x00000050
-	.section .rom.000d3724, "ax"
-	.global Object_SetPartAttribute
-	.type Object_SetPartAttribute, %function
-	.thumb_func
-Object_SetPartAttribute:
-	.incbin "baserom.gba", 0x000d3724, 0x0000003c
 	.section .rom.000d3760, "ax"
 	.global Func_080d3780
 	.type Func_080d3780, %function
@@ -4528,7 +4510,10 @@ BattleFx_ParticleScript:
 	.incbin "baserom.gba", 0x000f00a0, 0x00000544
 	.global Object_VariantMotionScripts
 Object_VariantMotionScripts:
-	.incbin "baserom.gba", 0x000f05e4, 0x0000077c
+	.incbin "baserom.gba", 0x000f05e4, 0x000001b4
+	.global Data_080f088c
+Data_080f088c:
+	.incbin "baserom.gba", 0x000f0798, 0x000005c8
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x000f0d60, 0x00000050
@@ -4986,7 +4971,9 @@ BattleMotion_GetSlotField14:
 	.type Func_0811a5fc, %function
 	.thumb_func
 Func_0811a5fc:
-	.incbin "baserom.gba", 0x0011a5f8, 0x00000b70
+	.incbin "baserom.gba", 0x0011a5f8, 0x00000044
+	.section .rom.0011a670, "ax"
+	.incbin "baserom.gba", 0x0011a670, 0x00000af8
 	.section .rom.0011b17c, "ax"
 	.incbin "baserom.gba", 0x0011b17c, 0x00000114
 	.section .rom.0011b2c0, "ax"
@@ -5219,7 +5206,9 @@ BattlePres_SetActorRecordMode:
 BattlePres_SetActorModes:
 	.incbin "baserom.gba", 0x00126cf8, 0x00000ea4
 	.section .rom.00127c7a, "ax"
-	.incbin "baserom.gba", 0x00127c7a, 0x00000422
+	.incbin "baserom.gba", 0x00127c7a, 0x00000002
+	.section .rom.00127cd0, "ax"
+	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
 	.section .rom.00128190, "ax"
 	.global Summon_GetEntryByte4
 	.type Summon_GetEntryByte4, %function
@@ -5230,7 +5219,13 @@ Summon_GetEntryByte4:
 	.incbin "baserom.gba", 0x001281e6, 0x0000065a
 	.global Data_08128844
 Data_08128844:
-	.incbin "baserom.gba", 0x00128840, 0x000084c8
+	.incbin "baserom.gba", 0x00128840, 0x0000428c
+	.global Resource_SlotAssignments
+Resource_SlotAssignments:
+	.incbin "baserom.gba", 0x0012cacc, 0x000003ac
+	.global BattleFormation_Records
+BattleFormation_Records:
+	.incbin "baserom.gba", 0x0012ce78, 0x00003e90
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x00130d08, 0x000072f8

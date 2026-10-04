@@ -306,58 +306,16 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/*
- * Battle-presentation sub-effect at 0x080e0c84.
- *
- * Confirmed member of the 0x03001eec "battle work" subsystem family
- * documented in games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (owner
- * 080ce85c) and games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PUFF_ARC.C (owner
- * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
- * prologue, same the +0x7828 field=object republish, same
- * BattleFx_BeginCanvasLayer(0)/Scheduler_AddOrUpdateCallback(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
- * Runtime_ReleaseHeapBlock(id)/BattleFx_EndCanvasLayer() bracket, and the same
- * BattleFx_FetchRectangleBlitters(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
- * resolver already established in recon/tbs/en/main/080e01e4.c.
- *
- * Unlike member_orbit's single 64-frame per-member sprite loop, this owner
- * runs a 64-slot randomly-seeded particle pool (fixed-point x/y plus a
- * sin/cos velocity pair) alongside the 64-frame animation loop, and reads
- * every particle's fixed-point position back through the upper halfword of
- * its s32 field -- the same +2 / +6 halfword
- * idiom already confirmed in 080e01e4.c.
- *
- * Every `Func_080072f4`/`Func_08007314` call site is an indirect call
- * through the value the reference loads into r4/r12 immediately before the
- * `bl`, not a real function -- both addresses fall inside the
- * container-built `_call_via_rN` bank at 0x080072e4 (r4 slot at
- * +0x10, ip/r12 slot at +0x30). All such call sites here go through
- * `routine[]`, a two-entry DrawRectangleFn array BattleFx_FetchRectangleBlitters fills.
- *
- * All three Resource_LoadAndDecompress id arguments are loaded from the reference's
- * literal pool rather than built with a `movs` immediate: each is a row of
- * the resource directory, and `(s32)&ResourceId_X` forces the same pool load
- * even though the row numbers would otherwise fit an 8-bit `movs` immediate.
- */
-
-typedef struct {
-    s32 x;
-    s32 y;
-    s32 rot;
-    s32 vx;
-    s32 vy;
-    s32 unk14;
-    s32 unk18;
-} Particle;
-
-/* The EWRAM scratch buffer holds the effect's particle records. */
-extern Particle gMapCellBuffer[];
+/* The effect's sixty-four motes live in the map cell buffer. */
+extern struct EffectStep gMapCellBuffer[];
 #define PARTICLE_COUNT 64
 
 extern u8 ParticleReveal_CellWidths[];
 extern u8 ParticleReveal_CellHeights[];
 extern u16 ParticleReveal_CellSourceOffsets[];
 
-void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
+void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
+    s32 anchor, s32 *out_x, s32 *out_y);
 void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -365,140 +323,119 @@ void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 
-void BattleFx_RunParticleReveal(void *object)
+/* Battle effect: water spray bursts from the first affected unit as
+   sixty-four ice chips that fly up and fall under gravity, a quarter of
+   them more every frame, while a small Mercury djinn circles above the
+   unit when the effect asks for one and a strip of waves rises along the
+   bottom of the screen. The last sixteen frames fade the blend out. */
+void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
     void **cursor;
-    void *work;
+    struct BattleEffectWork *work;
     void *canvas;
     s32 spawn[3];
     s32 screen_y;
     s32 screen_x;
     DrawRectangleFn routine[2];
-    Particle *p;
+    struct EffectStep *p;
     s32 i;
     s32 frame;
-    s32 clamp;
+    s32 rise;
 
     heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    (*(void **)((u8 *)(work) + (0x7828))) = object;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    BattleFx_PrepareCanvasEffect(object, 1,
-        (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), 2,
-        &screen_x, &screen_y);
-    BattleFx_FetchRectangleBlitters(
-        (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), routine);
+    BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screen_x, &screen_y);
+    BattleFx_FetchRectangleBlitters(work->effect->side, routine);
     Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work, 1, 1);
-    (*(s32 *)((u8 *)(work) + (0x7780))) = 2;
-    (*(s32 *)((u8 *)(work) + (0x7784))) = 75;
-    {
-        s32 interval;
-        void *callback;
-
-        interval = 0x480;
-        callback = (void *)BattlePresentation_ProcessPendingGraphicsTransfer;
-        Scheduler_AddOrUpdateCallback(callback, interval);
-    }
-    EffectPosition_ApplyAlternateStepAndYOffset(
-        (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), spawn);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], spawn);
 
     for (i = 0; i != PARTICLE_COUNT; i++) {
         s32 angle;
-        s32 amp;
+        s32 speed;
 
-        angle = (Random16() & 0x7FFF) + 0x4000;
-        amp = (Random16() & 0x1FF) + 0x80;
-        gMapCellBuffer[i].x =
-            ((spawn[0] / 2 + (Random16() & 0xF)) - 8) << 16;
+        angle = (Random16() & 0x7fff) + 0x4000;
+        speed = (Random16() & 0x1ff) + 0x80;
+        gMapCellBuffer[i].x = ((spawn[0] / 2 + (Random16() & 0xf)) - 8) << 16;
         gMapCellBuffer[i].y = (spawn[1] + 8) << 16;
-        gMapCellBuffer[i].vx = (Trig_Sin(angle) * amp) >> 9;
-        gMapCellBuffer[i].vy = (Trig_Cos(angle) * amp) >> 6;
-        gMapCellBuffer[i].rot = Random16() & 0x7F;
-        gMapCellBuffer[i].unk14 = Random16() & 0x7F;
-        gMapCellBuffer[i].unk18 = (Random16() & 0xF) + 32;
+        gMapCellBuffer[i].velocity_x = (Trig_Sin(angle) * speed) >> 9;
+        gMapCellBuffer[i].velocity_y = (Trig_Cos(angle) * speed) >> 6;
+        gMapCellBuffer[i].z = Random16() & 0x7f;
+        gMapCellBuffer[i].velocity_z = Random16() & 0x7f;
+        gMapCellBuffer[i].variant = (Random16() & 0xf) + 32;
     }
 
     for (frame = 0; frame != 64; frame++) {
-        if (frame > 47) {
-            (*(s16 *)((u8 *)((void *)0x04000052) + (0))) = (64 - frame) | 0x1000;
-        }
+        if (frame > 47)
+            REG_BLDALPHA = (64 - frame) | 0x1000;
         if (frame == 1) {
-            Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, (u8 *)work + 0x400, 1, 1);
-            Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, (u8 *)work + 0x65C0, 1, 0);
+            Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet + 0x400, 1, 1);
+            Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet + 0x65c0, 1, 0);
         }
 
-        if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x1C))) == 1) {
-            s32 orbit_angle;
+        if (work->effect->unknown_001c == 1) {
+            s32 orbit;
             s32 x;
             s32 y;
 
-            orbit_angle = frame << 11;
-            x = (((-Trig_Sin(orbit_angle)) << 2) >> 16)
-                + screen_x / 2 - 10;
-            y = ((Trig_Cos(orbit_angle) << 1) >> 16) + screen_y - 22;
-            if (frame > 0x45) {
-                y = (y - frame * 2) + 0x8A;
-            }
-            routine[1](canvas, (u8 *)work + 0x65C0, x, y, 20, 40);
-            if (frame <= 3) {
-                routine[1](canvas, (u8 *)work + 0x65C0, x, y, 20, 40);
-            }
+            orbit = frame << 11;
+            x = ((-Trig_Sin(orbit) << 2) >> 16) + screen_x / 2 - 10;
+            y = ((Trig_Cos(orbit) << 1) >> 16) + screen_y - 22;
+            if (frame > 69)
+                y = (y - frame * 2) + 138;
+            routine[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+            if (frame <= 3)
+                routine[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
         }
 
         for (i = 0, p = gMapCellBuffer; i != PARTICLE_COUNT; i++, p++) {
             if (frame >= i / 4 + 4) {
-                s32 index;
+                s32 cell;
                 s32 w;
                 s32 h;
 
-                index = (p->rot / 128) & 3;
-                routine[i & 1](
-                    canvas, (u8 *)work + 0x400 + ParticleReveal_CellSourceOffsets[index],
-                    (*(s16 *)((u8 *)(p) + (2))) - (w = ParticleReveal_CellWidths[index]) / 2,
-                    (*(s16 *)((u8 *)(p) + (6))) - (h = ParticleReveal_CellHeights[index]) / 2,
-                    w, h);
-                EffectStep_AdvanceWithGravity3D(p, 0x3F, 0x1000);
+                cell = (p->z / 128) & 3;
+                routine[i & 1](canvas, work->sheet + 0x400 + ParticleReveal_CellSourceOffsets[cell],
+                    HI(p->x) - (w = ParticleReveal_CellWidths[cell]) / 2,
+                    HI(p->y) - (h = ParticleReveal_CellHeights[cell]) / 2, w, h);
+                EffectStep_AdvanceWithGravity3D(p, 63, 0x1000);
             }
         }
 
         if (frame == 8) {
-            (*(s32 *)((u8 *)(work) + (0x77A8))) = frame;
+            work->shake_frames = frame;
             BattleEventRuntime_BeginPhaseFar(0x86);
-            ObjectGroup_UpdateMembers(
-                (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
-                7, 5, 0, 16);
-            BattleMotion_ApplyVariantMotionFar(
-                (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), 3);
+            ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 16);
+            BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
         }
 
-        clamp = frame * 4;
-        if (clamp > 32) {
-            clamp = 32;
-        }
-        if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 0) {
-            for (i = 0; i != 5; i++) {
-                routine[0](canvas, work, (i << 5) - (frame / 4 & 31),
-                    120 - clamp, 32, 32);
-            }
+        rise = frame * 4;
+        if (rise > 32)
+            rise = 32;
+        if (work->effect->side == 0) {
+            for (i = 0; i != 5; i++)
+                routine[0](canvas, work, (i << 5) - (frame / 4 & 31), 120 - rise, 32, 32);
         } else {
-            for (i = 0; i != 5; i++) {
-                routine[0](canvas, work, ((i << 5) + (frame / 4 & 31)) - 32,
-                    120 - clamp, 32, 32);
-            }
+            for (i = 0; i != 5; i++)
+                routine[0](canvas, work, ((i << 5) + (frame / 4 & 31)) - 32, 120 - rise, 32, 32);
         }
 
         Camera_ApplyShake(4, 8);
         ObjectGroup_TickMemberTimers();
-        (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(0x2F);
-    Runtime_ReleaseHeapBlock(0x2E);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }
 

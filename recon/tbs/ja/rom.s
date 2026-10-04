@@ -117,12 +117,6 @@ ObjectSystem_UpdateCameraFixed:
 	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000ebec, "ax"
 	.incbin "baserom.gba", 0x0000ebec, 0x0000070c
-	.section .rom.00011b54, "ax"
-	.global Func_08011bf4
-	.thumb_func
-	.type Func_08011bf4, %function
-Func_08011bf4:
-	.incbin "baserom.gba", 0x00011b54, 0x000000ec
 	.section .rom.00012478, "ax"
 	.global Ui_RunIconMonitor
 	.thumb_func
@@ -990,14 +984,6 @@ Func_080ba6ac:
 	.type Func_080ba978, %function
 Func_080ba978:
 	.incbin "baserom.gba", 0x000b1978, 0x00000264
-	.section .rom.000b4422, "ax"
-	.incbin "baserom.gba", 0x000b4422, 0x00000002
-	.section .rom.000b4424, "ax"
-	.global BattleCommand_SelectAutomatic
-	.thumb_func
-	.type BattleCommand_SelectAutomatic, %function
-BattleCommand_SelectAutomatic:
-	.incbin "baserom.gba", 0x000b4424, 0x00000380
 	.section .rom.000b4850, "ax"
 	.incbin "baserom.gba", 0x000b4850, 0x00000048
 	.section .rom.000b4898, "ax"

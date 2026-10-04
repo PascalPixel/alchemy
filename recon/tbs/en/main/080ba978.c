@@ -1,3 +1,18 @@
+/* 2026-10-04 (finisher 1): 169 -> 24 differing instructions, plain C.
+ * The header now gives BattlePresentationWork its real tail, s16 actors[8]
+ * then u8 params[8][4] at 0x34; indexing work.params[i][j] with the count
+ * read each pass gives the native addressing (no hoisted base, no extra r9
+ * save; plan r7, mode sl, object r8 match). The first angle offset as an
+ * if/else gives the native fresh actor-id copy (adds rN, r4, #0) for each
+ * test. Left: the same-side test. Native copies
+ * the actor id once before the target test, then each arm evaluates its
+ * actor test as a value in r3 and tests it in the arm (cmp/bne/b, cmp/beq).
+ * if (target <= 7 ? (same = actor <= 7) : (same = actor > 7)) gives that
+ * arm shape exactly but copies the id inside each arm (37); a u8/s32 id
+ * local read before the test scores 46-91; ?:, == of two tests, 0/1
+ * assignments and inline IsParty/IsEnemy predicates score 36-93. An s8
+ * same (24, below) gets the full length and the single copy shape but
+ * materializes into r2 and sign-extends before its test. */
 /* Draft: complete native extent [080ba978,080babdc), 612 bytes.
  * Earlier 2026-10-02 work recorded 12 differing instructions with the native
  * frame/register allocation. Byte predicates recovered the same-side copy
@@ -80,10 +95,12 @@ s32 Func_080ba978(struct BattlePlan *plan, s32 mode)
     } else {
         struct MotionObject *actor = GetBattleObjectSlot(plan->actor_id)->object;
         s32 angle = (u16)ArcTan2(actor->x, actor->z);
-        s32 current = angle - 0x1800;
-        s32 same;
+        s32 current;
+        s8 same;
 
-        if (plan->actor_id > 7)
+        if (plan->actor_id <= 7)
+            current = angle - 0x1800;
+        else
             current = angle + 0x1800;
         current = (s16)current;
         current += ((plan->actor_id <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
@@ -120,20 +137,13 @@ s32 Func_080ba978(struct BattlePlan *plan, s32 mode)
     else
         work.side = 0;
 
-    {
-        /* Child parameters reuse the tail of the actor storage, starting
-           at work + 0x34, with four bytes reserved per target. */
-        u8 *params = (u8 *)&work.actors[8];
+    for (i = 0; i != work.count; i++) {
+        struct AnimationObject *animation = GetMotionRecord(
+            GetBattleObjectSlot(work.actors[i])->object, 0);
+        s32 j;
 
-        for (i = 0; i != work.count; i++) {
-            struct AnimationObject *animation = GetMotionRecord(
-                GetBattleObjectSlot(work.actors[i])->object, 0);
-            s32 count = animation->count - 1;
-            s32 j;
-
-            for (j = 0; j != count; j++)
-                params[i * 4 + j] = animation->entries[j]->param;
-        }
+        for (j = 0; j != animation->count - 1; j++)
+            work.params[i][j] = animation->entries[j]->param;
     }
     if (plan->failure != 0) {
         if (plan->failure == 1) {

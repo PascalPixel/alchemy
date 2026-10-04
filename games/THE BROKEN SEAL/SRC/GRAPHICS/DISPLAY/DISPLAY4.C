@@ -154,6 +154,6 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count)
 
 void Runtime_ScheduleCallbackAndReleaseBlock28(void)
 {
-    Scheduler_RemoveCallback((u32)Func_08011bf4);
+    Scheduler_RemoveCallback((u32)PaletteQueue_StepCycles);
     Runtime_ReleaseHeapBlock(0x1C);
 }

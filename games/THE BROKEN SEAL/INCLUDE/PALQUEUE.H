@@ -31,6 +31,6 @@ LAYOUT_OFFSET_GUARD(PaletteSnapshotWork_Count, struct PaletteSnapshotWork, count
 void Runtime_AllocateAndClearQueue(void);
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
 void Runtime_ScheduleCallbackAndReleaseBlock28(void);
-void Func_08011bf4(void);
+void PaletteQueue_StepCycles(void);
 
 #endif

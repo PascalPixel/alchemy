@@ -17,7 +17,7 @@ void BattleMotion_SetupEscapeObject(s32 unit_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
 s32 ActivateBattleObjectSlot(s32 unit_id);
 extern struct BattlePresentationTransition *gTransitionWork;
-void BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
+s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Camera_StoreSceneParameters(s32, u32, s32);

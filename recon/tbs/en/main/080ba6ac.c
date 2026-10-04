@@ -1,3 +1,12 @@
+/* 2026-10-04 (finisher 1): 178 -> 124 differing instructions. Child
+ * parameters through the header's new work.params[i][j] (count read each
+ * pass) match natively; the fade loop is a do-while whose body re-tests
+ * i < 20 after loading gBattleWork (the native layout tests at the top
+ * and the bottom and never reverses the counter); the palette address is
+ * taken before the brightness store. Left: the 20-row command scan, which
+ * natively indexes battle + 0x2f0 + row * 16 on every access instead of
+ * advancing a row pointer, the item kind's final u8 narrowing, and the
+ * argument setup around the item lookups (r5/r7 against r4/r5). */
 /* Draft, complete main:080ba6ac [080ba6ac,080ba918), 620 bytes.
  * Baseline: 600/620 bytes, 290 differing halfwords, 201 aligned edits.
  * H1 transfers the signed-member/cached-child-count model from 080ba978,
@@ -118,37 +127,33 @@ s32 Func_080ba6ac(struct BattlePlan *plan, s32 unused,
     else
         work.side = 0;
 
-    {
-        /* Child parameters reuse the tail of the actor storage, starting
-           at work + 0x34, with four bytes reserved per target. */
-        u8 *params = (u8 *)&work.actors[8];
+    for (i = 0; i != work.count; i++) {
+        struct AnimationObject *animation = GetMotionRecord(
+            GetBattleObjectSlot(work.actors[i])->object, 0);
+        s32 j;
 
-        for (i = 0; i != work.count; i++) {
-            struct AnimationObject *animation = GetMotionRecord(
-                GetBattleObjectSlot(work.actors[i])->object, 0);
-            s32 count = animation->count - 1;
-            s32 j;
-
-            for (j = 0; j != count; j++)
-                params[i * 4 + j] = animation->entries[j]->param;
-        }
+        for (j = 0; j != animation->count - 1; j++)
+            work.params[i][j] = animation->entries[j]->param;
     }
 
     Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
     if (work.kind != 0) {
         s32 fade = 0;
         i = 0;
-        while (i <= 19) {
+        do {
             struct BattleSession *battle = gBattleWork;
-            s32 value = 0x10000 - fade;
 
-            battle->brightness = value;
-            Graphics_ScaleRgb555Clamped(
-                battle->palette, (u16 *)(BG_PLTT + 6 * 16), value, 128);
+            if (i < 20) {
+                u16 *palette = battle->palette;
+                s32 value = 0x10000 - fade;
+
+                battle->brightness = value;
+                Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value, 128);
+            }
             WaitFrames(1);
             i++;
             fade += 0x444;
-        }
+        } while (i < 20);
         if (plan->presentation_flags & 0x4000)
             BattleFx_DispatchByIdRangeFar((s32 *)&work);
         else

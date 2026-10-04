@@ -11,7 +11,7 @@
 #include "IWRAM_CALL.H"
 
 s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
-void BattleCommand_SelectAutomatic(struct BattleActionRecord *entry, s32 mode);
+s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *entry, s32 mode);
 
 s32 Func_080771e8(s32 group, s32 index);
 

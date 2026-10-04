@@ -42,9 +42,9 @@ void SceneActor_WaitActorDescent(struct FieldActor *actor)
 /* Point an object toward actor zero using their fixed-point X/Z delta. */
 s32 SceneActor_FaceActorZero(u8 *obj)
 {
-    u8 *target = Object_GetById(ACTOR_PARTY_LEADER);
-    s32 dz = *(s32 *)(target + 16) - *(s32 *)(obj + 16);
-    s32 dx = *(s32 *)(target + 8) - *(s32 *)(obj + 8);
+    struct FieldActor *target = Object_GetById(ACTOR_PARTY_LEADER);
+    s32 dz = target->z.fixed - *(s32 *)(obj + 16);
+    s32 dx = target->x.fixed - *(s32 *)(obj + 8);
 
     *(s16 *)(obj + 6) = (s16)ArcTan2(dz, dx);
     return 0;
@@ -305,8 +305,8 @@ void FieldScene_RunScene3a6SequenceB(void)
 void FieldScene_RunScene3a6SequenceC(void)
 {
 
-    s32 rec8;
-    s32 record;
+    struct FieldActor *rec8;
+    struct FieldActor *record;
     s32 idx;
     s32 tbl;
     s32 idx4;
@@ -320,10 +320,10 @@ void FieldScene_RunScene3a6SequenceC(void)
             idx = p5->touched_trigger;
             rec8 = Object_GetById(8);
             record = Object_GetById(ACTOR_PARTY_LEADER);
-            *(s32 *)(rec8 + 48) = *(s32 *)(record + 48);
+            rec8->speed = record->speed;
             rec8 = Object_GetById(8);
             record = Object_GetById(ACTOR_PARTY_LEADER);
-            *(s32 *)(rec8 + 52) = *(s32 *)(record + 52);
+            rec8->acceleration = record->acceleration;
             idx -= 45;
             tbl = (s32)HaidiaDou_WalkTargets;
             idx <<= 3;

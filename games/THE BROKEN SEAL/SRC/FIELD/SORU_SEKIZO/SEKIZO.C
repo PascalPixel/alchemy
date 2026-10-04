@@ -282,7 +282,7 @@ void FieldScene_SetupStagedActors(void)
 void FieldScene_RunStagedActorScene(void)
 {
     u8 *work;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     work = (u8 *)gEventWork;
@@ -447,14 +447,14 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(5, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(5);
     Engine_ActorSetPosition(5, 0, 0);
     Engine_ActorSetAnimation(1, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(1);
     Engine_ActorSetPosition(1, 0, 0);
@@ -826,14 +826,14 @@ void ConfigureAlternateSceneAndCheckActors(void)
 
 void FieldScene_RunClosingSequence(void)
 {
-    s32 first;
+    struct FieldActor *first;
     s32 kind;
-    s32 second;
+    struct FieldActor *second;
 
     first = Object_GetById(0);
-    kind = *(s32 *)(first + 8) >> 20;
+    kind = first->x.fixed >> 20;
     second = Object_GetById(0);
-    if ((*(s32 *)(second + 16) >> 20) == 8) {
+    if ((second->z.fixed >> 20) == 8) {
         if ((u32)(kind - 17) <= 1) {
             Call4(SetMapCellCollision, 2, 0x1100000, 0x800000, 255);
             Call4(SetMapCellCollision, 2, 0x1200000, 0x800000, 255);
@@ -941,11 +941,11 @@ void SoruSekizo_RunStatueDropScene(void)
 void FieldScene_RunScene37bSequenceA(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     record = Object_GetById(17);
     if (record != 0) {
-        if ((*(s32 *)(record + 16) >> 20) == 8) {
+        if ((record->z.fixed >> 20) == 8) {
             Engine_EventBegin();
             Audio_PlayCue(185);
             Actor_SetSpeed(17, 0x3333, 0x1999);
@@ -953,7 +953,7 @@ void FieldScene_RunScene37bSequenceA(void)
             *(u8 *)((s32)Object_GetById(17) + 90) &= 254;
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
             record = Object_GetById(0);
-            Actor_SetDestination(ACTOR_PARTY_LEADER, *(s16 *)(record + 10), 136);
+            Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel, 136);
             Actor_SetDestination(17, 0x120, 120);
             Engine_ActorWaitForMove(17);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1001,14 +1001,14 @@ void FieldScene_ApplyRect10_14_7_13_7(void)
  */
 void SceneActor_UseActorTenCellAndNext(void)
 {
-    u8 *record = Object_GetById(10);
+    struct FieldActor *record = Object_GetById(10);
     s32 cell;
 
     if (record == 0) {
         return;
     }
 
-    cell = *(s32 *)(record + 16) >> 20;
+    cell = record->z.fixed >> 20;
     SoruSekizo_RunEventSequence(10, 13, cell + 1, 13, cell);
 }
 

@@ -924,7 +924,7 @@ void ToretoHeya_RunLandingDustScene(void)
     struct Vec dir;
     struct EffectParams *p;
     struct Vec *v;
-    u8 *leader;
+    struct FieldActor *leader;
     u32 i;
     s32 x;
     s32 z;
@@ -942,7 +942,7 @@ void ToretoHeya_RunLandingDustScene(void)
     Engine_AudioPlayCue(204);
     ((u8 *)Object_GetById(0))[85] = 3;
     Engine_EventWait(24);
-    leader = (u8 *)Object_GetById(0);
+    leader = Object_GetById(0);
     p = &params;
     p->kind = 7;
     p->script = (s32)ToretoHeya_AdvanceEffectMotion;
@@ -957,7 +957,7 @@ void ToretoHeya_RunLandingDustScene(void)
         v->z = z;
         x += x / 2;
         v->x = x;
-        Effect_Spawn(*(s32 *)(leader + 8), *(s32 *)(leader + 12), *(s32 *)(leader + 16), x, v->y, z, 0x1090001, p);
+        Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, x, v->y, z, 0x1090001, p);
     }
     Engine_AudioPlayCue(188);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x101);

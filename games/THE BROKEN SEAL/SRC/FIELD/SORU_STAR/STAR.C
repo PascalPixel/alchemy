@@ -737,7 +737,7 @@ void Scene_OfferGuarantee(void)
 void Scene_UnmaskGarcia(void)
 {
     u8 *obj;
-    s32 other;
+    struct FieldActor *other;
     u16 *tbl;
     s32 left;
     s32 cnt;
@@ -749,7 +749,7 @@ void Scene_UnmaskGarcia(void)
     Engine_EventWait(40);
     other = Object_GetById(ACTOR_GARCIA_MASKED);
     if (other != 0) {
-        Actor_SetPosition(ACTOR_GARCIA, *(s32 *)(other + 8), *(s32 *)(other + 16));
+        Actor_SetPosition(ACTOR_GARCIA, other->x.fixed, other->z.fixed);
     }
     Actor_SetPosition(ACTOR_GARCIA_MASKED, 0, 0);
     Engine_EventWait(20);

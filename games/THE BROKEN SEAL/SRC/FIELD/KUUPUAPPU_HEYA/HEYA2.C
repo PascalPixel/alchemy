@@ -1628,8 +1628,8 @@ s32 KuupuappuHeya_ApplyEntryState(void)
             s32 zero = 0;
 
             ((u8 *)Object_GetById(8))[85] = zero;
-            *(s32 *)(((u8 *)Object_GetById(8)) + 12) = zero;
-            *(s32 *)(((u8 *)Object_GetById(8)) + 20) = zero;
+            Object_GetById(8)->y.fixed = zero;
+            Object_GetById(8)->terrain_height = zero;
         }
         break;
     case 10:

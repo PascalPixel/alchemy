@@ -1991,10 +1991,10 @@ void FieldScene_RunLateSequence(void)
 
 void FieldScene_RunScene3a8SequenceB(void)
 {
-    s32 rec8;
-    s32 rec4;
+    struct FieldActor *rec8;
+    struct FieldActor *rec4;
     s32 rec7;
-    s32 rec2;
+    struct FieldActor *rec2;
     u32 i;
     s32 v5;
     s32 v6;
@@ -2004,7 +2004,7 @@ void FieldScene_RunScene3a8SequenceB(void)
     rec4 = Object_GetById(9);
     rec7 = GameFlag_IsSet(0x302);
     if (rec7 != 0) {
-    } else if ((*(s32 *)(rec8 + 8) >> 19) > 29) {
+    } else if ((rec8->x.fixed >> 19) > 29) {
     } else {
         rec2 = Object_GetById(11);
         Engine_EventBegin();
@@ -2023,8 +2023,8 @@ void FieldScene_RunScene3a8SequenceB(void)
         v5 = 2;
         Map_CopyCellsTo(16, 109, 13, 109, 3, v5);
         Engine_EventWait(40);
-        *(s32 *)(rec2 + 24) = 0x1999;
-        *(s32 *)(rec2 + 28) = 0x1999;
+        rec2->scale_x = 0x1999;
+        rec2->scale_y = 0x1999;
         Actor_SetPosition(11, 0x960000, 0x2d80000);
         Engine_ActorEnableActionCallback(11, (s32)KareiMachi_ActionScript01);
         v6 = 1;
@@ -2063,7 +2063,7 @@ void FieldScene_RunScene3a8SequenceB(void)
         Engine_EventEnd();
     }
     if (GameFlag_IsSet(0x303) != 0) {
-    } else if ((*(s32 *)(rec4 + 8) >> 19) > 87) {
+    } else if ((rec4->x.fixed >> 19) > 87) {
     } else {
         Engine_EventBegin();
         i = 67;

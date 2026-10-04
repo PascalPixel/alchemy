@@ -667,7 +667,7 @@ void FieldScene_RunSceneEntryHook(void)
 
 void Scene_EnterSolSanctum(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -679,15 +679,15 @@ void Scene_EnterSolSanctum(void)
     Camera_MoveTo(0x4c80000, -1, 0x880000, 1);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_SUKURETA, record->x.fixed, record->z.fixed);
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_JASMINE, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_JASMINE, record->x.fixed, record->z.fixed);
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
@@ -719,17 +719,17 @@ void Scene_EnterSolSanctum(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_JASMINE, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_SUKURETA, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -946,7 +946,7 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
 void Scene_RunTransitionCue(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x204;
@@ -955,7 +955,7 @@ void Scene_RunTransitionCue(void)
     Engine_EventWait(20);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(8, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(8, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(8, 0x10000, 0x8000);
     Engine_ActorSetAnimation(8, 2);
@@ -988,7 +988,7 @@ void Scene_RunTransitionCue(void)
     Engine_ActorSetAnimation(8, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(8, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(8);
     Actor_SetPosition(8, 0, 0);

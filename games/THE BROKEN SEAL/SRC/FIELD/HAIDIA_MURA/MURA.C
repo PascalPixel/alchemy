@@ -597,7 +597,7 @@ void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
 {
     u32 i;
     s32 p8;
-    s32 rec8;
+    struct FieldActor *rec8;
     s32 record;
 
     p8 = a1;
@@ -614,8 +614,8 @@ void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
     Object_RefreshSelectorById(0);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(22, 2);
-    *(s32 *)(rec8 + 24) = 0x10000;
-    *(s32 *)(rec8 + 28) = 0x10000;
+    rec8->scale_x = 0x10000;
+    rec8->scale_y = 0x10000;
     record = Object_GetById(ACTOR_PARTY_LEADER);
     *(s32 *)(record + 24) = 0x10000;
     *(s32 *)(record + 28) = 0x10000;
@@ -1636,7 +1636,7 @@ void FieldScene_RunLargeStagingSequence(void)
      * 2026-10-02: removing only rec's initializer still changes allocation
      * through the whole scene, including actor setup and stacked messages. */
     s32 rec = 0;
-    s32 rec3;
+    struct FieldActor *rec3;
     u8 *rec8;
     u8 *record;
     s32 none2;
@@ -1728,8 +1728,8 @@ void FieldScene_RunLargeStagingSequence(void)
     Engine_ActorJump(10, 2, 20);
     Engine_EventSetMessage(msg + 1);
     Event_ShowMessageAndWait(0x100a, 0, 10);
-    *(s32 *)(rec3 + 24) = 0x10000;
-    *(s32 *)(rec3 + 28) = 0x10000;
+    rec3->scale_x = 0x10000;
+    rec3->scale_y = 0x10000;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
     Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 40);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);

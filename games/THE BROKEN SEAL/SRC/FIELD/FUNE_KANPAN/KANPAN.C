@@ -1183,7 +1183,7 @@ void FieldScene_RunScene3af_02001920(void)
  * 0x903, and close the encounter when the state is 6. */
 void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 v5;
 
     *(s32 *)((s32)gMapWork[0] + 236) = 0x410000;
@@ -1193,29 +1193,29 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
     Engine_ActorDestroy(24);
     Call3(Engine_ActorSetPosition, 23, 0xee0000, 0x2720000);
     v5 = 192;
-    record = (s32)Object_GetById(23);
-    *(u16 *)(record + 6) = (v5 << 6);
+    record = Object_GetById(23);
+    record->facing = (v5 << 6);
     if (Engine_GameFlagIsSet(0x903) != 0) {
         Call3(Engine_ActorSetPosition, 22, 0xa20000, 0x27a0000);
-        record = (s32)Object_GetById(22);
-        *(u16 *)(record + 6) = (v5 << 6);
+        record = Object_GetById(22);
+        record->facing = (v5 << 6);
         Call3(Engine_ActorSetPosition, 21, 0xa20000, 0x2a40000);
-        record = (s32)Object_GetById(21);
+        record = Object_GetById(21);
         {
             s32 facing = 0xd000; /* FAKEMATCH: word temporary keeps the facing as movs+lsls */
 
-            *(u16 *)(record + 6) = facing;
+            record->facing = facing;
         }
     } else {
         Engine_ActorSetPosition(22, 0xa00000, 0x28c0000);
-        record = (s32)Object_GetById(22);
-        *(u16 *)(record + 6) = (v5 << 6);
+        record = Object_GetById(22);
+        record->facing = (v5 << 6);
         Call3(Engine_ActorSetPosition, 21, 0xa60000, 0x29c0000);
-        record = (s32)Object_GetById(21);
+        record = Object_GetById(21);
         {
             s32 facing = 0xb000; /* FAKEMATCH: word temporary keeps the facing as movs+lsls */
 
-            *(u16 *)(record + 6) = facing;
+            record->facing = facing;
         }
     }
     if (gGameState.entrance == 6) {
@@ -1226,7 +1226,7 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
 
 void FieldScene_RunScene3af_02001a98(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -1239,18 +1239,18 @@ void FieldScene_RunScene3af_02001a98(void)
     Actor_SetPosition(27, 0, 0);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(23, 0, 0);
-    record = (s32)Object_GetById(23);
+    record = Object_GetById(23);
     {
         s32 shown = 0x3000;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Actor_SetPosition(21, 0xe80000, 0x28a0000);
-    record = (s32)Object_GetById(21);
+    record = Object_GetById(21);
     {
         s32 shown = 0xb000;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Camera_MoveTo(0xe80000, -1, 0x27c0000, 0);
     Engine_MapRedraw();
@@ -1260,14 +1260,14 @@ void FieldScene_RunScene3af_02001a98(void)
 
 void FieldScene_RunScene3af_02001b58(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x27c0000);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    record = (s32)Object_GetById(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_TaskWait(1);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1279,18 +1279,18 @@ void FieldScene_RunScene3af_02001b58(void)
     Actor_SetPosition(22, 0, 0);
     Actor_SetPosition(21, 0, 0);
     Actor_SetPosition(20, 0, 0);
-    record = (s32)Object_GetById(20);
+    record = Object_GetById(20);
     {
         s32 shown = 0x3000;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Actor_SetPosition(23, 0xe80000, 0x28a0000);
-    record = (s32)Object_GetById(23);
+    record = Object_GetById(23);
     {
         s32 shown = 0xb000;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Engine_TaskWait(1);
     FieldScene_RunScene3af_02001c14(20, 23);

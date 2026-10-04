@@ -127,8 +127,8 @@ void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b)
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
-    s32 rec;
-    s32 record;
+    struct FieldActor *rec;
+    struct FieldActor *record;
     s32 p9;
     s32 p11;
     s32 count;
@@ -143,8 +143,8 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     u8 buf[8];
 
     rec = Object_GetById(owner);
-    p9 = *(s16 *)(rec + 10);
-    p11 = *(s16 *)(rec + 18);
+    p9 = rec->x.part.pixel;
+    p11 = rec->z.part.pixel;
     if (mode != 3) {
         count = Party_CountActiveOwners();
         for (i = 0; i < count; i++) {
@@ -203,7 +203,7 @@ L_main:
     Actor_SetSpeed(owner, 0x10000, 0x8000);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(obj, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(obj, record->x.fixed, record->z.fixed);
     }
     hi = p11 + 16;
     Actor_WalkToAndWait(obj, p9, hi);
@@ -225,9 +225,9 @@ L_main:
     Party_RemoveActiveOwner(obj);
     GameFlag_Set(base + 512);
     rec = Object_GetById(obj);
-    sx = *(s32 *)(rec + 8) >> 20;
+    sx = rec->x.fixed >> 20;
     GameFlag_SetByte((obj << 4) + 880, sx);
-    sy = *(s32 *)(rec + 16) >> 20;
+    sy = rec->z.fixed >> 20;
     GameFlag_SetByte((obj << 4) + 888, sy);
 }
 

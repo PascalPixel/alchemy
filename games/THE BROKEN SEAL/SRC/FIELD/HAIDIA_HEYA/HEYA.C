@@ -282,11 +282,11 @@ s32 Scene_RunSupplementalSequenceOne(void)
 void FieldScene_RunByActorDirectionAndFlags(void)
 {
 
-    u8 *p;
+    struct FieldActor *p;
     u32 dir;
 
     p = Object_GetById(ACTOR_PARTY_LEADER);
-    dir = *(u16 *)(p + 6);
+    dir = p->facing;
     dir += 0xffff5fff;
 
     if (dir <= 0x3ffe) {

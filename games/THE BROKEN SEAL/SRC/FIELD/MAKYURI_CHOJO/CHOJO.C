@@ -1646,7 +1646,7 @@ void MakyuriChojo_LowerCollectedActors(void)
     u32 j;
     u32 n;
     s32 speed;
-    u8 *actor;
+    struct FieldActor *actor;
 
     work = ((u8 *)gMapWork[0]) + 0x164;
     speed = 0x1999;
@@ -1665,8 +1665,8 @@ void MakyuriChojo_LowerCollectedActors(void)
         *(s32 *)(work + 12) -= speed;
         for (j = 0; j < n; j++) {
             *(s32 *)((u8 *)Object_GetById(ids[j]) + 16) += speed;
-            actor = (u8 *)Object_GetById(ids[j]);
-            *(s32 *)(actor + 64) = *(s32 *)((u8 *)Object_GetById(ids[j]) + 16);
+            actor = Object_GetById(ids[j]);
+            actor->target_z = *(s32 *)((u8 *)Object_GetById(ids[j]) + 16);
         }
         if ((i & 3) == 3)
             speed += 0x1999;
@@ -1688,7 +1688,7 @@ void MakyuriChojo_RaiseCollectedActors(void)
     u32 j;
     u32 n;
     s32 speed;
-    u8 *actor;
+    struct FieldActor *actor;
 
     work = ((u8 *)gMapWork[0]) + 0x164;
     speed = 0x18000;
@@ -1707,8 +1707,8 @@ void MakyuriChojo_RaiseCollectedActors(void)
         *(s32 *)(work + 12) += speed;
         for (j = 0; j < n; j++) {
             *(s32 *)((u8 *)Object_GetById(ids[j]) + 16) -= speed;
-            actor = (u8 *)Object_GetById(ids[j]);
-            *(s32 *)(actor + 64) = *(s32 *)((u8 *)Object_GetById(ids[j]) + 16);
+            actor = Object_GetById(ids[j]);
+            actor->target_z = *(s32 *)((u8 *)Object_GetById(ids[j]) + 16);
         }
         if ((i & 3) == 3 && i > 75)
             speed += -0x3333;

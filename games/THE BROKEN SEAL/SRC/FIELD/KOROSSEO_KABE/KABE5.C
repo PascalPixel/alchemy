@@ -14,8 +14,8 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
                    s32 extra, s32 third, s32 fourth)
 {
     u8 *descriptor;
-    u8 *first_record;
-    u8 *second_record;
+    struct FieldActor *first_record;
+    struct FieldActor *second_record;
     s32 handle;
     s32 extent;
 
@@ -30,13 +30,13 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     *(s32 *)(descriptor + 232) = centre;
     *(s32 *)(descriptor + 236) = extra;
 
-    first_record = (u8 *)Object_GetById(first);
-    second_record = (u8 *)Object_GetById(second);
+    first_record = Object_GetById(first);
+    second_record = Object_GetById(second);
 
     if (Engine_GameFlagIsSet(0x109) == 0) {
-        *(s32 *)(second_record + 8) =
-            (centre << 1) - *(s32 *)(first_record + 8);
-        *(s32 *)(second_record + 16) = *(s32 *)(first_record + 16);
+        second_record->x.fixed =
+            (centre << 1) - first_record->x.fixed;
+        second_record->z.fixed = first_record->z.fixed;
     }
 
     *(u16 *)(descriptor + 218) = 0;

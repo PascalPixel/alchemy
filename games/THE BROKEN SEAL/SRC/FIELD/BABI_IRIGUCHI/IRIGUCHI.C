@@ -221,22 +221,22 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void BabiIriguchi_JumpFromLedge(void)
 {
-    s32 rec7;
+    struct FieldActor *rec7;
 
-    rec7 = (s32)Object_GetById(0);
+    rec7 = Object_GetById(0);
     Engine_EventBegin();
-    if ((*(s32 *)(rec7 + 8) >> 20) != 6) {
-        if ((*(s32 *)(rec7 + 8) >> 20) != 18) {
+    if ((rec7->x.fixed >> 20) != 6) {
+        if ((rec7->x.fixed >> 20) != 18) {
             goto done;
         }
     }
-    if ((*(s32 *)(rec7 + 16) >> 20) == 20) {
-        *(s32 *)(rec7 + 56) = -0x80000000;
-        *(s32 *)(rec7 + 64) = -0x80000000;
+    if ((rec7->z.fixed >> 20) == 20) {
+        rec7->target_x = -0x80000000;
+        rec7->target_z = -0x80000000;
         Call3(Engine_ActorShowEmote, 0, 0x100, 20);
         Call3(ObjectMotion_SetSpeedParameters, 0, 0x20000, 0x10000);
         Engine_ActorJump(0, 4, 0);
-{ u16 dir = *(u16 *)(rec7 + 6); if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff) goto step_down; }
+{ u16 dir = rec7->facing; if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff) goto step_down; }
         ObjectMotion_OffsetPositionAndResetMotion(0, 16, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
         Call3(Engine_ActorFaceDirection, 0, 0x8000, 20);
@@ -336,7 +336,7 @@ void FieldScene_RunStepWithValue2693(void)
 
 void FieldScene_RunBranchingActorSequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     GameFlag_Set(0x988);
     GameFlag_Set(0x98a);
@@ -587,21 +587,21 @@ void FieldScene_RunBranchingActorSequence(void)
     Object_SetModeById(ACTOR_GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Object_SetModeById(ACTOR_IVAN, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Object_SetModeById(ACTOR_MIA, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -611,7 +611,7 @@ void FieldScene_RunBranchingActorSequence(void)
 
 void FieldScene_RunActorEventSequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     GameFlag_Set(0x989);
     Engine_EventBegin();
@@ -863,21 +863,21 @@ void FieldScene_RunActorEventSequence(void)
     Object_SetModeById(ACTOR_GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Object_SetModeById(ACTOR_IVAN, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Object_SetModeById(ACTOR_MIA, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);

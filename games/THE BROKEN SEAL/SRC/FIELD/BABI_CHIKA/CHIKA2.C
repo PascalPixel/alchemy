@@ -736,7 +736,7 @@ void FieldScene_RunLateSequenceSecond(void)
 
 void FieldScene_RunScene3c4SequenceA(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 v6;
     s32 p5;
     s32 q;
@@ -745,67 +745,67 @@ void FieldScene_RunScene3c4SequenceA(void)
     Engine_EventBegin();
     Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
     record = Object_GetById(19);
-    p5 = *(s32 *)(record + 8);
+    p5 = record->x.fixed;
     q = Object_GetById(19)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(20);
-    p5 = *(s32 *)(record + 8);
+    p5 = record->x.fixed;
     q = Object_GetById(20)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(21);
-    p5 = *(s32 *)(record + 8);
+    p5 = record->x.fixed;
     q = Object_GetById(21)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(22);
-    p5 = *(s32 *)(record + 8);
+    p5 = record->x.fixed;
     q = Object_GetById(22)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(23);
-    p5 = *(s32 *)(record + 8);
+    p5 = record->x.fixed;
     q = Object_GetById(23)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(19);
-    if ((*(s32 *)(record + 8) >> 20) == 25) {
+    if ((record->x.fixed >> 20) == 25) {
         record = Object_GetById(19);
-        if ((*(s32 *)(record + 16) >> 20) == 49) {
+        if ((record->z.fixed >> 20) == 49) {
             v6 = 1;
         }
     }
     record = Object_GetById(20);
-    if ((*(s32 *)(record + 8) >> 20) == 23) {
+    if ((record->x.fixed >> 20) == 23) {
         record = Object_GetById(20);
-        if ((*(s32 *)(record + 16) >> 20) == 49) {
+        if ((record->z.fixed >> 20) == 49) {
             v6 = (v6 + 1);
         }
     }
     record = Object_GetById(21);
-    if ((*(s32 *)(record + 8) >> 20) == 25) {
+    if ((record->x.fixed >> 20) == 25) {
         record = Object_GetById(21);
-        if ((*(s32 *)(record + 16) >> 20) == 47) {
+        if ((record->z.fixed >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
     record = Object_GetById(22);
-    if ((*(s32 *)(record + 8) >> 20) == 23) {
+    if ((record->x.fixed >> 20) == 23) {
         record = Object_GetById(22);
-        if ((*(s32 *)(record + 16) >> 20) == 47) {
+        if ((record->z.fixed >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
     record = Object_GetById(23);
-    if ((*(s32 *)(record + 8) >> 20) == 24) {
+    if ((record->x.fixed >> 20) == 24) {
         record = Object_GetById(23);
-        if ((*(s32 *)(record + 16) >> 20) == 48) {
+        if ((record->z.fixed >> 20) == 48) {
             v6 = (v6 + 1);
         }
     }
@@ -929,27 +929,27 @@ void FieldScene_PlaceAndPinSlots10And11(void)
 
 void FieldScene_RunScene3c4_02002480(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 p5;
 
     Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
     Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
     *(u8 *)(((s32 (*)())Object_GetById)(14) + 34) = 1;
     record = Object_GetById(12);
-    p5 = *(s32 *)(record + 8);
+    p5 = record->x.fixed;
     record = Object_GetById(12);
     p5 = p5 >> 20;
-    Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
+    Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
     record = Object_GetById(13);
-    p5 = *(s32 *)(record + 8);
+    p5 = record->x.fixed;
     record = Object_GetById(13);
     p5 = p5 >> 20;
-    Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
+    Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
     record = Object_GetById(14);
-    p5 = *(s32 *)(record + 8);
+    p5 = record->x.fixed;
     record = Object_GetById(14);
     p5 = p5 >> 20;
-    Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
+    Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 }
 
 /* Copies the cell attributes back and marks the grid cells under actors 17 and 18. */

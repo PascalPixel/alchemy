@@ -104,7 +104,7 @@ void FieldScene_RunPrimarySequence(void)
     extern u8 Data_03001ebc[];
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     u8 *p6;
     s32 n;
 
@@ -112,7 +112,7 @@ void FieldScene_RunPrimarySequence(void)
     for (i = 8; i < 66; i++) {
         record = Object_GetById(i);
         if (record != 0) {
-            *(u8 *)(record + 85) = 0;
+            record->motion_flags = 0;
         }
     }
     p6 = p6 + 0x16c;
@@ -269,9 +269,9 @@ s32 Scene_InitFacingActors(void)
  * message once and add to it for the two answers. */
 void SceneDialogue_RunFacingPrompt(s32 no)
 {
-    u8 *actor = Object_GetById(0);
+    struct FieldActor *actor = Object_GetById(0);
     s32 msg;
-    if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0x8000) {
+    if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0x8000) {
         Engine_ShopOpen(28, no);
     } else if (Engine_GameFlagIsSet(0x950) != 0) {
         Engine_EventSetMessage((s32)MsgTorebiRightOneWell);
@@ -295,9 +295,9 @@ void SceneDialogue_RunFacingPrompt(s32 no)
 
 void SceneDialogue_RunFacingActionPrompt(s32 no)
 {
-    u8 *actor = Object_GetById(0);
+    struct FieldActor *actor = Object_GetById(0);
     s32 msg;
-    if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
+    if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000) {
         Engine_ShopOpen(26, no);
     } else if (Engine_GameFlagIsSet(0x950) != 0) {
         msg = (s32)MsgTorebiComeWayKalay;
@@ -325,8 +325,8 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
 /* The facing action line. */
 void SceneDialogue_RunFacingAction(s32 no)
 {
-    u8 *actor = Object_GetById(0);
-    if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
+    struct FieldActor *actor = Object_GetById(0);
+    if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000) {
         Engine_ShopOpen(27, no);
     } else {
         if (Engine_GameFlagIsSet(0x950) != 0) {
@@ -477,8 +477,8 @@ void SceneDialogue_RunFacingMessage(s32 no)
 {
     s32 Engine_GameFlagIsSet(s32 flag);
 
-    u8 *actor = Object_GetById(0);
-    if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
+    struct FieldActor *actor = Object_GetById(0);
+    if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000) {
         Engine_SanctumOpen(no);
     } else {
         if (Engine_GameFlagIsSet(0x950) != 0) {

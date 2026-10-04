@@ -12,8 +12,8 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     extern void Korosseo_DrawGauge(void);
 
     u8 *descriptor;
-    u8 *first_record;
-    u8 *second_record;
+    struct FieldActor *first_record;
+    struct FieldActor *second_record;
     s32 handle;
     s32 extent;
 
@@ -32,9 +32,9 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     second_record = Object_GetById(second_actor);
 
     if (Engine_GameFlagIsSet(0x109) == 0) {
-        *(s32 *)(second_record + 8) =
-            (centre << 1) - *(s32 *)(first_record + 8);
-        *(s32 *)(second_record + 16) = *(s32 *)(first_record + 16);
+        second_record->x.fixed =
+            (centre << 1) - first_record->x.fixed;
+        second_record->z.fixed = first_record->z.fixed;
     }
 
     *(u16 *)(descriptor + 218) = 0;

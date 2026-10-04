@@ -163,8 +163,8 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
 {
 
     u8 *desc;
-    u8 *rec0;
-    u8 *rec1;
+    struct FieldActor *rec0;
+    struct FieldActor *rec1;
     s32 handle;
     s32 pal;
 
@@ -179,13 +179,13 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     *(s32 *)(desc + 232) = centre;
     *(s32 *)(desc + 236) = extra;
 
-    rec0 = (u8 *)Object_GetById(first);
-    rec1 = (u8 *)Object_GetById(second);
+    rec0 = Object_GetById(first);
+    rec1 = Object_GetById(second);
 
     if (Engine_GameFlagIsSet(0x109) == 0) {
-        *(s32 *)(rec1 + 8) =
-            (centre << 1) - *(s32 *)(rec0 + 8);
-        *(s32 *)(rec1 + 16) = *(s32 *)(rec0 + 16);
+        rec1->x.fixed =
+            (centre << 1) - rec0->x.fixed;
+        rec1->z.fixed = rec0->z.fixed;
     }
 
     *(u16 *)(desc + 218) = 0;

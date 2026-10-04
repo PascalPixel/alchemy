@@ -175,11 +175,11 @@ void *SceneData_GetTable9368(void)
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 v3;
 
     record = Object_GetById(9);
-    v3 = *(s32 *)(record + 8) / 0x100000;
+    v3 = record->x.fixed / 0x100000;
     GameFlag_Clear(0x861);
     GameFlag_Clear(0x862);
     if (v3 == 15) {
@@ -312,7 +312,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
 void FieldScene_RunScene387SequenceA(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
 #if EDITION_INTERNATIONAL
     BattleFx_PlayQueuedSound();
@@ -325,7 +325,7 @@ void FieldScene_RunScene387SequenceA(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 168);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
@@ -339,7 +339,7 @@ void FieldScene_RunScene387SequenceA(void)
         Engine_ActorSetAnimation(ACTOR_GERALD, 2);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(ACTOR_GERALD);
         Actor_SetPosition(ACTOR_GERALD, 0, 0);

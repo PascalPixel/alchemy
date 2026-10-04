@@ -157,7 +157,7 @@ void Scene_RunActorTwelveDialogue(void)
 
 void Scene_PlanSanctumVisit(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     s32 x, y;
     s32 sneak;
 
@@ -171,9 +171,9 @@ void Scene_PlanSanctumVisit(void)
         Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SUKURETA, 20);
         Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-        record = (u8 *)Object_GetById(0);
-        x = *(s16 *)(record + 10);
-        y = *(s16 *)(record + 18);
+        record = Object_GetById(0);
+        x = record->x.part.pixel;
+        y = record->z.part.pixel;
         Actor_SetPosition(ACTOR_JASMINE, x << 16, y << 16);
         Actor_SetPosition(ACTOR_GERALD, x << 16, y << 16);
         Actor_SetSpeed(ACTOR_JASMINE, 0x8000, 0x4000);
@@ -688,7 +688,7 @@ void Scene_OverhearSaturosAndMenardi(void)
 void HaidiaSukureta_RunArrivalScene(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     if (Value1(Engine_GameFlagIsSet, 0x800) != 0) {
     } else {
@@ -696,10 +696,10 @@ void HaidiaSukureta_RunArrivalScene(void)
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
         Engine_EventSetMessage((s32)MsgHaidiaWho);
         Engine_EventShowMessage(13, 0);
-        record = (s32)Object_GetById(0);
+        record = Object_GetById(0);
         {
-            s32 x = *(s16 *)(record + 10);
-            s32 y = *(s16 *)(record + 18);
+            s32 x = record->x.part.pixel;
+            s32 y = record->z.part.pixel;
 
             Engine_ActorSetPosition(5, x << 16, y << 16);
             Engine_ActorSetPosition(1, x << 16, y << 16);
@@ -748,16 +748,16 @@ void HaidiaSukureta_RunArrivalScene(void)
         Engine_CameraFollowActor(0, 1);
         Engine_CameraWaitForMove();
         Engine_ActorSetAnimation(1, 2);
-        record = (s32)Object_GetById(0);
+        record = Object_GetById(0);
         if (record != 0) {
-            Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(1);
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetAnimation(5, 2);
-        record = (s32)Object_GetById(0);
+        record = Object_GetById(0);
         if (record != 0) {
-            Engine_ActorSetDestination(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Engine_ActorSetDestination(5, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(5);
         Engine_ActorSetPosition(5, 0, 0);
@@ -859,7 +859,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
 
 void HaidiaSukureta_RunActorSequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 base;
 
     if (Value1(Engine_GameFlagIsSet, 0x839) == 0) {
@@ -880,9 +880,9 @@ void HaidiaSukureta_RunActorSequence(void)
             Engine_CameraMoveTo(0x620000, -1, 0x11b0000, 1);
             Call3(Engine_ActorWalkToAndWait, 0, 94, 0x125);
             Call3(Engine_ActorFaceDirection, 0, 0xa000, 0);
-            record = (s32)Object_GetById(0);
+            record = Object_GetById(0);
             if (record != 0) {
-                Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
+                Engine_ActorSetPosition(1, record->x.fixed, record->z.fixed);
             }
             Call3(Engine_ActorWalkToAndWait, 1, 110, 0x117);
             Call3(Engine_ActorFaceDirection, 1, 0xa000, 40);
@@ -923,9 +923,9 @@ void HaidiaSukureta_RunActorSequence(void)
                 Engine_GameFlagSet(0x839);
             }
             Engine_ActorSetAnimation(1, 2);
-            record = (s32)Object_GetById(0);
+            record = Object_GetById(0);
             if (record != 0) {
-                Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
             }
             Engine_ActorWaitForMove(1);
             Engine_ActorSetPosition(1, 0, 0);

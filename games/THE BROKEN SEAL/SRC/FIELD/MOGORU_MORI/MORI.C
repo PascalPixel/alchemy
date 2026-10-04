@@ -150,20 +150,20 @@ s32 OverlayObject_ApplyZero(s32 a)
  * lifting it by the given height while it moves. */
 void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    s32 rec7;
+    struct FieldActor *rec7;
 
-    rec7 = (s32)Object_GetById(a0);
+    rec7 = Object_GetById(a0);
     Engine_ActorSetSpritePriority(a0, 1);
     Actor_SetSpeed(a0, 0x30000, 0x18000);
     Audio_PlayCue(152);
-    *(s32 *)(rec7 + 40) = a3;
-    *(s32 *)(rec7 + 72) = 0x8000;
-    *(s32 *)(rec7 + 68) = 0;
+    rec7->velocity_y = a3;
+    rec7->gravity = 0x8000;
+    rec7->bounce = 0;
     Engine_ActorSetSpriteFlags(rec7, 0);
     Actor_MoveToAndWait(a0, a1, a2);
     Actor_SetPosition(a0, a1 << 16, a2 << 16);
     Engine_ActorSetSpriteFlags(rec7, 1);
-    *(s32 *)(rec7 + 72) = 0x10000;
+    rec7->gravity = 0x10000;
 }
 
 /* A ring of seventeen puffs bursts out around the actor. */
@@ -349,7 +349,7 @@ void FieldScene_RunScriptedSteps0And17E6(void)
 
 void FieldScene_RunActor10WaypointSequence(void)
 {
-    u8 *slot;
+    struct FieldActor *slot;
 
     slot = Object_GetById(10);
 
@@ -359,8 +359,8 @@ void FieldScene_RunActor10WaypointSequence(void)
     FieldScene_RunSixCallSetupSequence(10, 1);
     FieldScene_RunScene39f_02000d90(10, 88, 120, 0x60000);        /* 192 << 11 */
 
-    Effect_Spawn(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
-                  *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
+    Effect_Spawn(slot->x.fixed, slot->y.fixed,
+                  slot->z.fixed + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
     Engine_CameraFollowActor(10, 1);
@@ -450,7 +450,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
 
 void SceneActor_RunActorTwelveThreeWaypointMotion(void)
 {
-    u8 *slot;
+    struct FieldActor *slot;
 
     slot = Object_GetById(12);
 
@@ -460,8 +460,8 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     FieldScene_RunSixCallSetupSequence(12, 1);
     FieldScene_RunScene39f_02000d90(12, 536, 344, 0x70000);       /* 134 << 2, 172 << 1, 224 << 11 */
 
-    Effect_Spawn(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
-                  *(s32 *)(slot + 16) + 0x100000,   /* 128 << 13 */
+    Effect_Spawn(slot->x.fixed, slot->y.fixed,
+                  slot->z.fixed + 0x100000,   /* 128 << 13 */
                   0, 0, 0, 1, 0);
 
     Engine_CameraFollowActor(12, 1);
@@ -582,14 +582,14 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
  * leader watching each one, then leaves; flag 0x303 records it. */
 void MogoruMori_RunBranchHopScene(void)
 {
-    s32 rec7;
+    struct FieldActor *rec7;
 
-    rec7 = (s32)Object_GetById(12);
+    rec7 = Object_GetById(12);
     Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(12, 1);
     FieldScene_RunScene39f_02000d90(12, 0x188, 104, 0x70000);
     Battle_WaitMode0(10);
-    Effect_Spawn(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + 0x40000), 0, 0, 0, 1, 0);
+    Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + 0x40000), 0, 0, 0, 1, 0);
     Engine_CameraFollowActor(12, 1);
     Engine_ActorFaceEachOther(12, 0, 0);
     Battle_WaitMode0(20);
@@ -616,7 +616,7 @@ void MogoruMori_RunBranchHopScene(void)
 
 void FieldScene_RunActorThirteenPresentationBeat(void)
 {
-    u8 *slot;
+    struct FieldActor *slot;
 
     slot = Object_GetById(13);
 
@@ -627,8 +627,8 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
     FieldScene_RunScene39f_02000d90(13, 456, 104, 0x70000);       /* 228 << 1, 224 << 11 */
     Battle_WaitMode0(10);
 
-    Effect_Spawn(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
-                  *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
+    Effect_Spawn(slot->x.fixed, slot->y.fixed,
+                  slot->z.fixed + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Engine_CameraFollowActor(13, 1);
@@ -683,7 +683,7 @@ void FieldScene_RunScene39f_02001818(void)
 
 void SceneActor_RunActorFourteenFourWaypointMotion(void)
 {
-    u8 *slot;
+    struct FieldActor *slot;
 
     slot = Object_GetById(14);
 
@@ -694,8 +694,8 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
     FieldScene_RunScene39f_02000d90(14, 392, 504, 0x60000);       /* 196 << 1, 252 << 1, 192 << 11 */
     Battle_WaitMode0(10);
 
-    Effect_Spawn(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
-                  *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
+    Effect_Spawn(slot->x.fixed, slot->y.fixed,
+                  slot->z.fixed + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Engine_CameraFollowActor(14, 1);
@@ -908,11 +908,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
 void FieldScene_RunScene39fSequenceA(void)
 {
 
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 big;
-    s32 first;
+    struct FieldActor *first;
     s32 shown;
-    s32 second;
+    struct FieldActor *second;
     s32 base3_2000240;
 
     rec7 = Object_GetById(15);
@@ -921,7 +921,7 @@ void FieldScene_RunScene39fSequenceA(void)
     FieldScene_RunSixCallSetupSequence(15, 0);
     FieldScene_RunScene39f_02000d90(15, 0x1d8, 104, big);
     Battle_WaitMode0(10);
-    Effect_Spawn(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + big), 0, 0, 0, 1, 0);
+    Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + big), 0, 0, 0, 1, 0);
     Engine_CameraFollowActor(15, 1);
     Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(30);
@@ -930,9 +930,9 @@ void FieldScene_RunScene39fSequenceA(void)
     Audio_PlayCue(147);
     Battle_WaitMode0(60);
     first = Object_GetById(ACTOR_PARTY_LEADER);
-    shown = *(s16 *)(first + 10);
+    shown = first->x.part.pixel;
     second = Object_GetById(ACTOR_PARTY_LEADER);
-    FieldScene_RunScene39f_02000d90(15, shown, *(s16 *)(second + 18), 0x60000);
+    FieldScene_RunScene39f_02000d90(15, shown, second->z.part.pixel, 0x60000);
     /* FAKEMATCH: called as returning a doubleword, the wait keeps the
      * registers the game keeps across it. */
     ((s64 (*)())Battle_WaitMode0)(10);
@@ -947,7 +947,7 @@ void FieldScene_RunScene39fSequenceA(void)
 
 void FieldScene_RunSlot16WaypointSequence(void)
 {
-    u8 *slot;
+    struct FieldActor *slot;
 
     slot = Object_GetById(16);
 
@@ -958,8 +958,8 @@ void FieldScene_RunSlot16WaypointSequence(void)
     FieldScene_RunScene39f_02000d90(16, 456, 152, 0x60000);       /* 228 << 1, 192 << 11 */
     Battle_WaitMode0(10);
 
-    Effect_Spawn(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
-                  *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
+    Effect_Spawn(slot->x.fixed, slot->y.fixed,
+                  slot->z.fixed + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Engine_CameraFollowActor(16, 1);
@@ -994,7 +994,7 @@ void FieldScene_RunSlot16WaypointSequence(void)
 
 void FieldScene_RunActor17CameraSequence(void)
 {
-    u8 *slot;
+    struct FieldActor *slot;
 
     slot = Object_GetById(17);
 
@@ -1005,8 +1005,8 @@ void FieldScene_RunActor17CameraSequence(void)
     FieldScene_RunScene39f_02000d90(17, 392, 104, 0x60000);       /* 196 << 1, 192 << 11 */
     Battle_WaitMode0(10);
 
-    Effect_Spawn(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
-                  *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
+    Effect_Spawn(slot->x.fixed, slot->y.fixed,
+                  slot->z.fixed + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Engine_CameraFollowActor(17, 1);
@@ -1059,7 +1059,7 @@ void FieldScene_RunScene39f_02002004(void)
 
 void FieldScene_RunActorEighteenEffectSequence(void)
 {
-    u8 *slot;
+    struct FieldActor *slot;
 
     slot = Object_GetById(18);
 
@@ -1070,8 +1070,8 @@ void FieldScene_RunActorEighteenEffectSequence(void)
     FieldScene_RunScene39f_02000d90(18, 712, 536, 0x60000);       /* 178 << 2, 134 << 2, 192 << 11 */
     Battle_WaitMode0(10);
 
-    Effect_Spawn(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
-                  *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
+    Effect_Spawn(slot->x.fixed, slot->y.fixed,
+                  slot->z.fixed + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
     Engine_CameraFollowActor(18, 1);
@@ -1108,7 +1108,7 @@ void FieldScene_RunActorEighteenEffectSequence(void)
 
 void FieldScene_RunScene39f_020021b0(void)
 {
-    s32 rec7;
+    struct FieldActor *rec7;
 
     rec7 = Object_GetById(18);
     Engine_EventBegin();
@@ -1116,7 +1116,7 @@ void FieldScene_RunScene39f_020021b0(void)
     FieldScene_RunSixCallSetupSequence(18, 1);
     FieldScene_RunScene39f_02000d90(18, 136, 0x198, 0x80000);
     Battle_WaitMode0(10);
-    Effect_Spawn(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + 0x40000), 0, 0, 0, 1, 0);
+    Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + 0x40000), 0, 0, 0, 1, 0);
     Actor_FaceDirection(18, 0xc000, 40);
     Actor_SetAttachedEffect(18, 0x102);
     Engine_ActorRunRepeatedMotion(18, 2);

@@ -506,17 +506,17 @@ void Scene_UpdatePuzzleActors(void)
 {
     s32 p10;
     s32 p9;
-    s32 rec7;
-    s32 record;
+    struct FieldActor *rec7;
+    struct FieldActor *record;
     s32 p6;
     s32 row;
 
     rec7 = Object_GetById(ACTOR_PARTY_LEADER);
     record = Object_GetById(20);
-    row = *(s32 *)(record + 16) >> 20;
-    p9 = (*(s32 *)(rec7 + 8) >> 20);
-    p10 = (*(s32 *)(rec7 + 16) >> 20);
-    p6 = *(s32 *)(record + 8);
+    row = record->z.fixed >> 20;
+    p9 = (rec7->x.fixed >> 20);
+    p10 = (rec7->z.fixed >> 20);
+    p6 = record->x.fixed;
     Map_CopyCellAttributes(15, 11, 3, 1, 15, 12);
     Map_CopyCellAttributes(15, 11, 3, 1, 15, 13);
     Map_CopyCellAttributes(15, 11, 3, 1, 15, 14);
@@ -676,7 +676,7 @@ void FieldScene_RunScene38b_02000d10(void)
     /* FAKEMATCH: the inline halfword cell view remains pending a native field review. */
 
     s32 arg0;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -686,9 +686,9 @@ void FieldScene_RunScene38b_02000d10(void)
         if (Engine_GameFlagIsSet(0x109) == 0) {
             rec7 = Object_GetById(ACTOR_PARTY_LEADER);
             Engine_EventBegin();
-            arg0 = *(s32 *)(rec7 + 8);
-            *(s32 *)(rec7 + 12) = 0x100000;
-            Engine_CameraMoveTo(arg0, 0x100000, *(s32 *)(rec7 + 16), 0);
+            arg0 = rec7->x.fixed;
+            rec7->y.fixed = 0x100000;
+            Engine_CameraMoveTo(arg0, 0x100000, rec7->z.fixed, 0);
             Engine_MapRedraw();
             Engine_EventEnd();
             Engine_TaskWait(1);

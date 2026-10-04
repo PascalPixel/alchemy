@@ -404,16 +404,16 @@ void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
     s32 k1 = 0x1f80000;
     s32 k2 = 0x180000;
     s32 k3 = 0x900000;
-    u8 *obj = (u8 *)Object_GetById(a);
+    struct FieldActor *obj = Object_GetById(a);
     s32 buf[3];
     s32 *bp = buf;
 
     bp[0] = k1;
     bp[2] = k2;
     Vector_AddPolarOffset(b, c, bp);
-    *(s32 *)(obj + 8) = bp[0];
-    *(s32 *)(obj + 12) = bp[2];
-    *(s32 *)(obj + 16) = k3;
+    obj->x.fixed = bp[0];
+    obj->y.fixed = bp[2];
+    obj->z.fixed = k3;
 }
 
 /* Contiguous unnamed state-owner run for resource_3bd. */

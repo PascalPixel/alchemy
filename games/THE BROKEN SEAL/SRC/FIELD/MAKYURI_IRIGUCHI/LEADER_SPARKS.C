@@ -31,12 +31,12 @@ s32 SceneAudio_PlayCue118AndReturnZero(void)
 /* Keep this object facing actor 0 while the actor remains near ground level. */
 s32 SceneActor_FaceLeaderWhileGrounded(u8 *object)
 {
-    u8 *leader = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if ((*(s32 *)(leader + 16) >> 19) <= 22) {
+    if ((leader->z.fixed >> 19) <= 22) {
         *(u16 *)(object + 6) = ArcTan2(
-            *(s32 *)(leader + 16) - *(s32 *)(object + 16),
-            *(s32 *)(leader + 8) - *(s32 *)(object + 8));
+            leader->z.fixed - *(s32 *)(object + 16),
+            leader->x.fixed - *(s32 *)(object + 8));
     } else if (*(u16 *)(object + 6) != 0xc000) {
         Engine_ActorFaceDirection(ACTOR_MIA, 0xc000, 0);
     }

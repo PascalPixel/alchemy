@@ -128,26 +128,26 @@ void StagedActor_PushActorAhead(void)
 s32 *SceneActor_FindOccupantAheadOfSubject(void)
 {
 
-    u8 *record;
+    struct FieldActor *record;
     s32 facing;
     s32 position[3];
     s32 *occupant;
 
-    record = (u8 *)Object_GetById(gGameState.selected_actor);
+    record = Object_GetById(gGameState.selected_actor);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
-    facing = (*(u16 *)(record + 6) + 0x2000) & 0xc000;
+    facing = (record->facing + 0x2000) & 0xc000;
 
-    position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
-    position[1] = *(s32 *)(record + 12);
-    position[2] = (*(s32 *)(record + 16) & 0xfff00000) + 0x80000;
+    position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
+    position[1] = record->y.fixed;
+    position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
     Vector_AddPolarOffset(0x100000, facing, position);          /* 128 << 13 */
 
     occupant = SceneData_FindSlotAtPosition(position, record);
     if (occupant == 0) {
-        position[0] = (*(s32 *)(record + 8) & 0xfff00000) + 0x80000;
-        position[1] = *(s32 *)(record + 12);
-        position[2] = (*(s32 *)(record + 16) & 0xfff00000) + 0x80000;
+        position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
+        position[1] = record->y.fixed;
+        position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
         Vector_AddPolarOffset(0x200000, facing, position);      /* 128 << 14 */
 
         occupant = SceneData_FindSlotAtPosition(position, record);

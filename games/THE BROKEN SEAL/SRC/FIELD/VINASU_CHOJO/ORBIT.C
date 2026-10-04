@@ -63,7 +63,7 @@ void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
  */
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 {
-    u8 *anchor = Object_GetById(23);
+    struct FieldActor *anchor = Object_GetById(23);
     u16 *pangle = (u16 *)(actor + 100);
     s32 angle = *pangle;
     s32 cosine;
@@ -72,12 +72,12 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
     s32 across;
 
     cosine = Engine_MathCos(angle);
-    along = *(s32 *)(anchor + 8)
+    along = anchor->x.fixed
           + cosine *(*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6);
     *(s32 *)(actor + 8) = along;
 
     sine = Engine_MathSin(angle);
-    across = *(s32 *)(anchor + 16)
+    across = anchor->z.fixed
            + sine *(*(u8 *)(actor + 98) + 4);
     *(s32 *)(actor + 16) = across;
 

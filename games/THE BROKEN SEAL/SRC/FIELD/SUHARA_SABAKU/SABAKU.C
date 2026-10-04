@@ -168,7 +168,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     s32 p10;
     s32 rec2;
     u8 *rec7;
-    s32 record;
+    struct FieldActor *record;
     u8 *p6;
     u8 *base;
 
@@ -184,7 +184,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         Engine_ActorSetAnimation((s32)p6, 9);
         record = Object_GetById(p10);
         if (record != 0) {
-            Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination((s32)p6, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove((s32)p6);
         Audio_PlayCue(244);

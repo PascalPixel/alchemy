@@ -468,11 +468,11 @@ void MakyuriHeya_FadePaletteToWhite(void)
  * once. The closing call runs on every path. */
 void FieldScene_RunColumnChoreography(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 pos;
 
     record = Object_GetById(10);
-    pos = *(s32 *)(record + 8);
+    pos = record->x.fixed;
     if (pos < 0) pos += 0xfffff;
     pos >>= 20;
     Engine_EventBegin();
@@ -603,12 +603,12 @@ void FieldScene_RunColumnChoreography(void)
         Object_SetModeById(1, 2);
         record = Object_GetById(0);
         if (record != 0) {
-            Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
         }
         Object_SetModeById(2, 2);
         record = Object_GetById(0);
         if (record != 0) {
-            Actor_SetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(2, record->x.part.pixel, record->z.part.pixel);
         }
         ObjectMotion_CommitCurrentPositionAndActivate(1);
         Engine_ActorSetPosition(1, 0, 0);
@@ -1572,7 +1572,7 @@ void MakyuriHeya_RunPartyScene(void)
     s32 base;
     s32 position;
     s32 event;
-    u8 *actor;
+    struct FieldActor *actor;
 
     position = *(s32 *)((u8 *)Actor_Get(8) + 8) / 0x100000;
     if (position != 48) {
@@ -1647,7 +1647,7 @@ void MakyuriHeya_RunPartyScene(void)
     Object_SetModeById(3, 2);
     actor = Object_GetById(0);
     if (actor != 0) {
-        Engine_ActorSetDestination(3, *(s16 *)(actor + 10), *(s16 *)(actor + 18));
+        Engine_ActorSetDestination(3, actor->x.part.pixel, actor->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(3);
     Engine_ActorSetPosition(3, 0, 0);

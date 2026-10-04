@@ -177,13 +177,13 @@ u8 *SceneData_GetActorTable(void) { return GomaHashira_Actors; }
 
 void ConfigureSceneForActorEightColumn(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     s32 x;
     s32 a4;
     s32 a5;
 
-    actor = (u8 *)Object_GetById(8);
-    x = *(s32 *)(actor + 8);
+    actor = Object_GetById(8);
+    x = actor->x.fixed;
     if (x < 0)
         x += 0xfffff;
     x >>= 20;
@@ -208,7 +208,7 @@ void FieldScene_RunPrimarySequence(void)
     s32 flags;
     s32 a0;
     s32 a2;
-    s32 rec4;
+    struct FieldActor *rec4;
     s32 rec7a, reca, v1a, v2a, v3a, ta, ua, na;
     s32 rec7b, recb, v1b, v2b, v3b, tb, ub, nb;
 
@@ -218,7 +218,7 @@ void FieldScene_RunPrimarySequence(void)
         v1a = Engine_RandomNext();
         a0 = *(s32 *)(rec7a + 8);
         a0 = a0 + (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
-        rec4 = (u8 *)Object_GetById(9);
+        rec4 = Object_GetById(9);
         reca = (s32)Object_GetById(9);
         a2 = *(s32 *)(reca + 16);
         a2 = a2 + 0x60000;
@@ -231,14 +231,14 @@ void FieldScene_RunPrimarySequence(void)
         na = na + ta;
         v3a = Engine_RandomNext();
         na = -na;
-        Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
+        Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
         if (flags == 0) {
             rec7b = (u8 *)Object_GetById(9);
             v1b = Engine_RandomNext();
             a0 = *(s32 *)(rec7b + 8);
             a0 = a0 + (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
-            rec4 = (u8 *)Object_GetById(9);
+            rec4 = Object_GetById(9);
             recb = (s32)Object_GetById(9);
             a2 = *(s32 *)(recb + 16);
             a2 = a2 + 0x60000;
@@ -251,7 +251,7 @@ void FieldScene_RunPrimarySequence(void)
             nb = nb + tb;
             v3b = Engine_RandomNext();
             nb = -nb;
-            Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
+            Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
         }
     }
 }

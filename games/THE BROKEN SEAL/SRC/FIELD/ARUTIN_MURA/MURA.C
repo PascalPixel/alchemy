@@ -144,9 +144,9 @@ void SceneDialogue_ShowLine1918(void)
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 
-    u8 *rec18;
+    struct FieldActor *rec18;
     u8 *ready_flag;
-    u8 *record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     if (GameFlag_IsSet(0x909) != 0) {
@@ -158,17 +158,17 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Event_ShowMessageAndWait(14, 0, 10);
         ready_flag = GameFlag_IsSet(0x8ff);
         if (ready_flag == 0) {
-            rec18 = (u8 *)Object_GetById(18);
+            rec18 = Object_GetById(18);
             /* Clear the byte at +85 of the lookup result. */
             *(u8 *)(Battle_GetWorkObject1e0() + 85) = ready_flag;
             Camera_SetSpeed(0x10000, 0x2000);
-            Camera_MoveTo(*(s32 *)(rec18 + 8), *(s32 *)(rec18 + 12), *(s32 *)(rec18 + 16), 1); /* use_setter 1 */
+            Camera_MoveTo(rec18->x.fixed, rec18->y.fixed, rec18->z.fixed, 1); /* use_setter 1 */
             Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
             Actor_FaceDirection(14, 0x3000, 0);
             Engine_CameraWaitForMove();
             Engine_EventWait(120); /* should_wait 120 */
-            record = (u8 *)Object_GetById(0);
-            Camera_MoveTo(*(s32 *)(record + 8), *(s32 *)(record + 12), *(s32 *)(record + 16), 1); /* use_setter 1 */
+            record = Object_GetById(0);
+            Camera_MoveTo(record->x.fixed, record->y.fixed, record->z.fixed, 1); /* use_setter 1 */
             Engine_CameraWaitForMove();
         }
         Engine_ActorSetAnimationAndWait(14, 4);
@@ -316,11 +316,11 @@ void FieldScene_RunActorTwentyOneFlagBranch(void)
 
 void FieldScene_RunFacingGatedDialogue18(void)
 {
-    u8 *rec;
+    struct FieldActor *rec;
 
-    rec = (u8 *)Object_GetById(0);
+    rec = Object_GetById(0);
 
-    if ((u32)((*(u16 *)(rec + 6) + 0x5fff) << 16) <= 0x3ffe0000) {
+    if ((u32)((rec->facing + 0x5fff) << 16) <= 0x3ffe0000) {
         Engine_InnOpen(6, 18);
         return;
     }

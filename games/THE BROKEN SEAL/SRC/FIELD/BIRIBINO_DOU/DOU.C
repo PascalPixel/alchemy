@@ -213,15 +213,15 @@ void FieldScene_RunActor17Steps28AndD2(void)
 void FieldScene_RunScene398SequenceB(void)
 {
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 rec8;
     s32 record;
     s32 v5;
 
     rec7 = Object_GetById(11);
     rec8 = Actor_Get(12);
-    if ((*(s32 *)(rec7 + 8) >> 20) == 35) {
-        if ((*(s32 *)(rec7 + 16) >> 20) != 23) {
+    if ((rec7->x.fixed >> 20) == 35) {
+        if ((rec7->z.fixed >> 20) != 23) {
             goto L_02000330;
         }
         GameFlag_Set(0x303);
@@ -440,7 +440,7 @@ s32 *SceneActor_FindSlotAtTile(s32 x, s32 z)
 
 void StagedActor_PushActorAhead(void)
 {
-    u8 *player;
+    struct FieldActor *player;
     u8 *target;
     u8 *blocker;
     s32 heading;
@@ -449,11 +449,11 @@ void StagedActor_PushActorAhead(void)
     s32 pos[3];
 
     player = Object_GetById(ACTOR_PARTY_LEADER);
-    heading = *(u16 *)(player + 6) >> 12;
+    heading = player->facing >> 12;
 
-    tx = (*(s16 *)(player + 10)
+    tx = (player->x.part.pixel
         + (StagedActor_DirectionSteps[heading] >> 16)) >> 4;
-    tz = (*(s16 *)(player + 18)
+    tz = (player->z.part.pixel
         + ((StagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
     target = (u8 *)SceneActor_FindSlotAtTile(tx, tz);
     if (target == 0) return;
@@ -482,8 +482,8 @@ void StagedActor_PushActorAhead(void)
     *(s32 *)(target + 52) = 0x3333;
     Object_SetPosition(target, pos[0], pos[1], pos[2]);
 
-    *(s32 *)(player + 48) = 0x3333;
-    *(s32 *)(player + 52) = 0x3333;
+    player->speed = 0x3333;
+    player->acceleration = 0x3333;
     Object_SetPosition(player, pos[0], pos[1], pos[2]);
 
     Object_CommitPosition(target);

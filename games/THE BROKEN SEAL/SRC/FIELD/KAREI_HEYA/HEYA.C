@@ -151,11 +151,11 @@ void SceneDialogue_RunActor16Dialogue(void)
 
 void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
-    u8 *p = (u8 *)Object_GetById(0);
+    struct FieldActor *p = Object_GetById(0);
 
     /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
-    if ((u16)(*(u16 *)(p + 6) - 0x6001) <= 0x3FFE) {
+    if ((u16)(p->facing - 0x6001) <= 0x3FFE) {
         Engine_InnOpen(7, 8);
     } else {
         Engine_EventBegin();
@@ -177,11 +177,11 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 {
     void Engine_EventSetMessage(int);
 
-    u8 *p = (u8 *)Object_GetById(0);
+    struct FieldActor *p = Object_GetById(0);
 
     /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
-    if ((u16)(*(u16 *)(p + 6) + 0x5FFF) <= 0x3FFE) {
+    if ((u16)(p->facing + 0x5FFF) <= 0x3FFE) {
         Engine_SanctumOpen(8);
     } else {
         Engine_EventBegin();

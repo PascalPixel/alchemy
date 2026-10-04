@@ -648,7 +648,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     extern u8 ArutinYama_RiseTimer[];
 
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(ACTOR_PARTY_LEADER);
@@ -667,7 +667,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
     FieldScene_RunEarlySequence();
-    Camera_MoveTo(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16), 1);
+    Camera_MoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);
     Engine_CameraWaitForMove();
     Event_LoadAreaScript(ArutinYama_OpenedAreaScript);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -793,7 +793,7 @@ void SceneActor_SetActor8ModeByCounterBit(void)
 void RunEventScript01(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     u8 *work;
     s32 addr_0200affd;
     s32 addr_0200c0e4;
@@ -811,15 +811,15 @@ void RunEventScript01(void)
     Engine_EventWait(20);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);

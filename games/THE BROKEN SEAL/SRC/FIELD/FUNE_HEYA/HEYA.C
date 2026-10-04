@@ -922,13 +922,13 @@ struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 void FuneHeya_TurnActorToOpenSide(s32 a0)
 {
     s32 p10;
-    s32 rec4;
+    struct FieldActor *rec4;
     u8 *record;
     s32 none;
     s32 v8;
     s32 v6;
 
-    rec4 = (s32)Object_GetById(0);
+    rec4 = Object_GetById(0);
     v8 = 1;
     ObjectMotion_SetActionVariant(a0, 2);
     {
@@ -938,19 +938,19 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
     
         record[35] = (u8)(value | 1);
     }
-    v6 = (((*(u16 *)(rec4 + 6) + 0x4000) & 0xf000) >> 12);
-    if (SceneActor_CheckBucketOffsetPoint((((*(u16 *)(rec4 + 6) + 0x4000) & 0xf000) >> 12)) != 0) {
+    v6 = (((rec4->facing + 0x4000) & 0xf000) >> 12);
+    if (SceneActor_CheckBucketOffsetPoint((((rec4->facing + 0x4000) & 0xf000) >> 12)) != 0) {
         none = 0;
         v8 = none;
     }
     if (v8 != 0) {
-        v6 = (((*(u16 *)(rec4 + 6) + -0x4000) & 0xf000) >> 12);
-        if (SceneActor_CheckBucketOffsetPoint((((*(u16 *)(rec4 + 6) + -0x4000) & 0xf000) >> 12)) != 0) {
+        v6 = (((rec4->facing + -0x4000) & 0xf000) >> 12);
+        if (SceneActor_CheckBucketOffsetPoint((((rec4->facing + -0x4000) & 0xf000) >> 12)) != 0) {
             none = 0;
             v8 = none;
         }
         if (v8 != 0) {
-            v6 = (((*(u16 *)(rec4 + 6) + 0x8000) & 0xf000) >> 12);
+            v6 = (((rec4->facing + 0x8000) & 0xf000) >> 12);
         }
     }
     record = (s32)Object_GetById(0);
@@ -966,6 +966,6 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
     }
     Engine_ActorWaitForMove(a0);
     Engine_ActorSetAnimation(a0, 1);
-    FieldScene_CallPairWith10(a0, *(u16 *)(rec4 + 6));
+    FieldScene_CallPairWith10(a0, rec4->facing);
     p10 = a0;
 }

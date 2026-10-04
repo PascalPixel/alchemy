@@ -487,7 +487,7 @@ void FieldScene_RunScene37aSequenceF(void)
 void Scene_EnterInnerSanctum(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 request;
 
     Engine_EventSetMessage((s32)MsgSoruWhRoom);
@@ -496,7 +496,7 @@ void Scene_EnterInnerSanctum(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_SUKURETA, record->x.fixed, record->z.fixed);
     }
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 1);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
@@ -1046,7 +1046,7 @@ void FieldScene_RunFlaggedSequence(void)
 void Scene_ChangeLunaPictureToSol(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(FLAG_LUNA_PICTURE_CHANGED_TO_SOL) != 0) {
     } else {
@@ -1089,7 +1089,7 @@ void Scene_ChangeLunaPictureToSol(void)
             Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
             record = Object_GetById(0);
             if (record != 0) {
-                Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                Actor_SetDestination(ACTOR_SUKURETA, record->x.part.pixel, record->z.part.pixel);
             }
             Engine_ActorWaitForMove(ACTOR_SUKURETA);
             Actor_SetPosition(ACTOR_SUKURETA, 0, 0);

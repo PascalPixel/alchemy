@@ -558,16 +558,16 @@ void FuneKanpan_RunRobinTalk(void)
 
 void FieldScene_RunScene3af_02004218(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     Camera_MoveTo(0xe80000, -1, 0x2a40000, 0);
     Engine_MapRedraw();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x2a40000);
-    record = (s32)Object_GetById(0);
+    record = Object_GetById(0);
     {
         s32 shown = 0x4000;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Engine_TaskWait(1);
 }

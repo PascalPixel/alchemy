@@ -370,8 +370,8 @@ void FieldScene_RunScene3b4_02000ccc(void)
 
 void FieldScene_CopyActorPosition(void)
 {
-    s32 dst;
-    s32 src;
+    struct FieldActor *dst;
+    struct FieldActor *src;
     s32 idx;
     s32 tbl;
     s32 idx4;
@@ -381,12 +381,12 @@ void FieldScene_CopyActorPosition(void)
     if (Engine_GameFlagIsSet(0x9ca) != 0) {
         if (Data_02000240[293] != 15) {
             idx = work->touched_trigger;
-            dst = (s32)Object_GetById(15);
-            src = (s32)Object_GetById(0);
-            *(s32 *)(dst + 48) = *(s32 *)(src + 48);
-            dst = (s32)Object_GetById(15);
-            src = (s32)Object_GetById(0);
-            *(s32 *)(dst + 52) = *(s32 *)(src + 48);
+            dst = Object_GetById(15);
+            src = Object_GetById(0);
+            dst->speed = src->speed;
+            dst = Object_GetById(15);
+            src = Object_GetById(0);
+            dst->acceleration = src->speed;
             idx -= 30;
             tbl = (s32)TakaraAshiba_ActorFifteenWalkTargets;
             idx <<= 3;
@@ -814,7 +814,7 @@ void FieldScene_RunPrimarySequence(void)
  * 0x168). */
 void TakaraAshiba_RunActorElevenFollowScene(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 base3_2000240;
     s32 v3;
 
@@ -833,9 +833,9 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
             Call3(ObjectMotion_OffsetPositionAndResetMotion, 11, -8, 0);
         }
         ObjectMotion_CommitCurrentPositionAndActivate(11);
-        record = (s32)Object_GetById(0);
+        record = Object_GetById(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPosition(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            ObjectMotion_ResetAndSetPosition(11, record->x.part.pixel, record->z.part.pixel);
         }
         ObjectMotion_CommitCurrentPositionAndActivate(11);
 #if EDITION_INTERNATIONAL
@@ -1062,9 +1062,9 @@ void SceneState_ApplyRectAndSetSlotEightByte35(void)
  * columns lifts it on its own branch. */
 void TakaraAshiba_DispatchByActorEightColumn(void)
 {
-    u8 *actor = (u8 *)Object_GetById(8);
-    s32 x = *(s32 *)(actor + 8);
-    s32 height = *(s32 *)(actor + 12);
+    struct FieldActor *actor = Object_GetById(8);
+    s32 x = actor->x.fixed;
+    s32 height = actor->y.fixed;
     s32 column = x / 0x100000;
     u8 lowered;
 

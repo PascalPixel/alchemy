@@ -171,7 +171,7 @@ void ActorPresentation_SelectActorTwentySevenState(void)
 void FieldScene_RunScene372_02003e48(void)
 {
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 rec8;
     s32 record;
 
@@ -196,8 +196,8 @@ void FieldScene_RunScene372_02003e48(void)
         Engine_ActorSetAnimation(8, 6);
     } else {
         Engine_ActorStop(8);
-        *(s32 *)(rec7 + 24) = 0x10000;
-        *(s32 *)(rec7 + 28) = 0x10000;
+        rec7->scale_x = 0x10000;
+        rec7->scale_y = 0x10000;
         Actor_FaceDirection(8, 0x1000, 0);
         if (*(s16 *)(rec8 + 6) >= 0) {
             Engine_ActorSetAnimation(8, 7);

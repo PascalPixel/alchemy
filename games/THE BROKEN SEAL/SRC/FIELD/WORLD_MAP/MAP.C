@@ -625,7 +625,7 @@ s32 WorldMap_EnterScene(void)
 void RunEventScript01(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Engine_EventOpenScreen();
@@ -650,7 +650,7 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(12, 2);
     record = Object_GetById(8);
     if (record != 0) {
-        Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(12);
     Actor_SetPosition(12, 0, 0);
@@ -658,7 +658,7 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(11, 2);
     record = Object_GetById(8);
     if (record != 0) {
-        Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(11);
     Actor_SetPosition(11, 0, 0);
@@ -666,7 +666,7 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     record = Object_GetById(8);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_PARTY_LEADER, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1025,12 +1025,12 @@ void FieldScene_RunScene371_020017a4(void)
 
     u32 i;
     s32 rec7;
-    s32 record;
+    struct FieldActor *record;
 
     rec7 = Object_GetById(15);
     record = Object_GetById(14);
-    *(s32 *)(rec7 + 8) = *(s32 *)(record + 8);
-    *(s32 *)(rec7 + 16) = *(s32 *)(record + 16);
+    *(s32 *)(rec7 + 8) = record->x.fixed;
+    *(s32 *)(rec7 + 16) = record->z.fixed;
     if (*(s32 *)(rec7 + 12) < 0xa0000) {
         *(s32 *)(rec7 + 12) = 0xa0000;
         if (GameFlag_IsSet(0x200) == 0) {
@@ -1051,7 +1051,7 @@ void FieldScene_RunScene371_020017fc(void)
 {
 
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(8);
@@ -1059,8 +1059,8 @@ void FieldScene_RunScene371_020017fc(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    *(s32 *)(rec7 + 28) = 0x14000;
-    *(s32 *)(rec7 + 24) = 0x14000;
+    rec7->scale_y = 0x14000;
+    rec7->scale_x = 0x14000;
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x6666, 0x3333);
@@ -1220,7 +1220,7 @@ void FieldScene_RunScene371_02001b5c(void)
 {
 
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(8);
@@ -1229,8 +1229,8 @@ void FieldScene_RunScene371_02001b5c(void)
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x13e80000, 0x9180000);
-    *(s32 *)(rec7 + 28) = 0x14000;
-    *(s32 *)(rec7 + 24) = 0x14000;
+    rec7->scale_y = 0x14000;
+    rec7->scale_x = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();

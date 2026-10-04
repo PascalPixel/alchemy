@@ -178,7 +178,7 @@ s32 Scene_Initialize(void)
 /* Signed halfword table in RAM; index 225 selects the scene. */
 void FieldScene_DispatchSceneByIndex(void)
 {
-    u8 *rec;
+    struct FieldActor *rec;
     s32 h;
     s32 x1 = 0x038a0000;
     s32 z1 = 0x01a60000;
@@ -189,9 +189,9 @@ void FieldScene_DispatchSceneByIndex(void)
     switch (gGameState.entrance) {
     case 9:
         if (Engine_GameFlagIsSet(0x941) != 0) {
-            rec = (u8 *)Object_GetById(8);
+            rec = Object_GetById(8);
             h = 0x1000;
-            *(u16 *)(rec + 6) = h;
+            rec->facing = h;
 
             if (Engine_GameFlagIsSet(0x914) == 0) {
                 Scene_RunPartySequence();
@@ -200,9 +200,9 @@ void FieldScene_DispatchSceneByIndex(void)
             Engine_ActorSetPosition(9, 0, 0);
             if (Engine_GameFlagIsSet(0x321) != 0) {
                 Engine_ActorSetPosition(8, x1, z1);
-                rec = (u8 *)Object_GetById(8);
+                rec = Object_GetById(8);
                 h = 0xd000;
-                *(u16 *)(rec + 6) = h;
+                rec->facing = h;
             }
         }
         break;
@@ -723,7 +723,7 @@ void SceneChannel_ConfigureUniformAndHandoff(s32 handoff)
 void Scene_RunPartySequence(void)
 {
 
-    s32 record;
+    struct FieldActor *record;
     u8 *work;
     s32 v5;
     s32 tbl;
@@ -745,17 +745,17 @@ void Scene_RunPartySequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x360, 0x1f2);
-    record = (u8 *)Object_GetById(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
-    record = (u8 *)Object_GetById(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
     }
-    record = (u8 *)Object_GetById(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
     }
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x358, 0x1e6);
     Actor_WalkTo(ACTOR_GERALD, 0x350, 0x1f6);

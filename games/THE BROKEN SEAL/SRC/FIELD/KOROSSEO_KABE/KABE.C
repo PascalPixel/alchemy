@@ -129,12 +129,12 @@ void FieldScene_RunSingleStep(void)
 
 void SceneState_ConfigureRegionByActorElevenColumn(void)
 {
-    u8 *work;
+    struct FieldActor *work;
     s32 v0;
     s32 v1;
 
-    work = (u8 *)Object_GetById(11);
-    if ((*(s32 *)(work + 8) >> 20) == 36) {
+    work = Object_GetById(11);
+    if ((work->x.fixed >> 20) == 36) {
         Engine_GameFlagSet(0x335);
         v0 = 0x23;
         v1 = 0x4D;
@@ -468,7 +468,7 @@ void FieldScene_RunStep17At40By25(void)
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     s32 i;
-    s32 rec8;
+    struct FieldActor *rec8;
     s32 rec7;
     s32 xa;
     s32 xb;
@@ -478,12 +478,12 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 yd;
     s32 record;
 
-    rec8 = (s32)Object_GetById(gGameState.selected_actor);
+    rec8 = Object_GetById(gGameState.selected_actor);
     for (i = 22; i <= 25; i++) {
         rec7 = Object_GetById(i);
         *(u8 *)(rec7 + 91) = 0;
         xa = *(s32 *)(rec7 + 8);
-        xb = *(s32 *)(rec8 + 8);
+        xb = rec8->x.fixed;
         xd = xa - xb;
         if (xd >= 0) {
             if (xd > 0x9ffff) {
@@ -496,7 +496,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             }
         }
         ya = *(s32 *)(rec7 + 16);
-        yb = *(s32 *)(rec8 + 16);
+        yb = rec8->z.fixed;
         yd = ya - yb;
         if (yd >= 0) {
             if (yd > 0x9ffff) {
@@ -511,11 +511,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
         if (GameFlag_IsSet(0x104) != 0) {
             yb = *(s32 *)(rec7 + 16);
         } else {
-            yb = *(s32 *)(rec8 + 16);
+            yb = rec8->z.fixed;
             yd = *(s32 *)(rec7 + 44);
             yb = yb + yd;
         }
-        *(s32 *)(rec8 + 16) = yb;
+        rec8->z.fixed = yb;
     }
     if (KorosseoKabe_SpectatorTimer != 0
         && *(s32 *)(rec7 + 56) == (s32)0x80000000) {

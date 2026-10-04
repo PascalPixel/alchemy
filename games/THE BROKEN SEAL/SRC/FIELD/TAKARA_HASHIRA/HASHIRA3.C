@@ -150,11 +150,11 @@ void SceneState_ClearWord24AndObjectByte62(void)
  */
 s32 SceneActor_UpdateBit1ByPositionToSlotZero(u8 *actor)
 {
-    u8 *ref = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if (*(s32 *)(actor + 16) > *(s32 *)(ref + 16)) {
+    if (*(s32 *)(actor + 16) > ref->z.fixed) {
         actor[35] = (u8)(actor[35] & 0xfd);
-        if (*(s32 *)(actor + 12) < *(s32 *)(ref + 12))
+        if (*(s32 *)(actor + 12) < ref->y.fixed)
             actor[35] = (u8)(actor[35] | 2);
     }
 
@@ -193,15 +193,15 @@ void FieldScene_RunActor12Step(void)
 void FieldScene_RunScene3b3_0200215c(void)
 {
     u32 i;
-    s32 rec7;
-    s32 record;
+    struct FieldActor *rec7;
+    struct FieldActor *record;
     u8 *p6;
 
     rec7 = Object_GetById(ACTOR_PARTY_LEADER);
     record = Object_GetById(13);
     p6 = *(s32 *)gEffectWork;
-    if ((*(s32 *)(record + 8) >> 20) == (*(s32 *)(rec7 + 8) >> 20)) {
-        if ((*(s32 *)(record + 16) >> 20) != (*(s32 *)(rec7 + 16) >> 20)) {
+    if ((record->x.fixed >> 20) == (rec7->x.fixed >> 20)) {
+        if ((record->z.fixed >> 20) != (rec7->z.fixed >> 20)) {
             goto L_02002198;
         }
         Engine_GameFlagSet(0x203);
@@ -349,14 +349,14 @@ void TakaraHashira_RunMapShiftScene(void)
  */
 void StagedActor_PlaceAtObjectTenCell(void)
 {
-    u8 *obj = Object_GetById(10);
+    struct FieldActor *obj = Object_GetById(10);
     s32 x;
     s32 z;
 
     Engine_EventBegin();
 
-    x = *(s32 *)(obj + 8) >> 20;
-    z = *(s32 *)(obj + 16) >> 20;
+    x = obj->x.fixed >> 20;
+    z = obj->z.fixed >> 20;
 
     StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0);
     Engine_EventEnd();
@@ -466,22 +466,22 @@ void OverlayObject_SetCallbackAndMode2(s32 id)
 
 void SceneActor_CheckActors8To11NearSlotZero(void)
 {
-    u8 *hero = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *hero = Object_GetById(ACTOR_PARTY_LEADER);
     u32 selector = 8;
     u8 *actor;
 
 loop:
     actor = Object_GetById(selector);
 
-    if (*(s32 *)(hero + 12) / 0x10000 != *(s32 *)(actor + 12) / 0x10000)
+    if (hero->y.fixed / 0x10000 != *(s32 *)(actor + 12) / 0x10000)
         goto mark_and_continue;
 
-    if (*(s32 *)(hero + 16) > *(s32 *)(actor + 16) - 0x80000
-        || *(s32 *)(hero + 16) <= *(s32 *)(actor + 16) - 0x180000)
+    if (hero->z.fixed > *(s32 *)(actor + 16) - 0x80000
+        || hero->z.fixed <= *(s32 *)(actor + 16) - 0x180000)
         goto mark_and_continue;
 
-    if (*(s32 *)(hero + 8) - 0x100000 > *(s32 *)(actor + 8)
-        || *(s32 *)(actor + 8) >= *(s32 *)(hero + 8) + 0x100000)
+    if (hero->x.fixed - 0x100000 > *(s32 *)(actor + 8)
+        || *(s32 *)(actor + 8) >= hero->x.fixed + 0x100000)
         goto continue_loop;
 
     {

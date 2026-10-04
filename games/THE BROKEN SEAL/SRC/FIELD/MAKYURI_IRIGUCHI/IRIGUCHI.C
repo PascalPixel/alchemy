@@ -210,12 +210,12 @@ void FieldScene_RunActor8StepWithTableA820(void)
 
 void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 field8;
     s32 quotient;
 
     record = Object_GetById(ACTOR_PARTY_LEADER);
-    field8 = *(s32 *)(record + 8);
+    field8 = record->x.fixed;
     quotient = field8 / 0x100000;
     Engine_GameFlagSet(0x205);
     if (quotient == 7) {

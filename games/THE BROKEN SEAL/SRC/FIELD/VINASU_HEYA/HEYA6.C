@@ -219,7 +219,7 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
 void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 {
 
-    u8 *cand;
+    struct FieldActor *cand;
     s32 highest = (s32)0xffb00000;
     u8 *sel = 0;
     u32 i;
@@ -235,14 +235,14 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
         cand = Object_GetById(no);
         sel = Object_GetById(selector);
 
-        if ((*(s32 *)(cand + 8) >> 20)
+        if ((cand->x.fixed >> 20)
                 != (*(s32 *)(sel + 8) >> 20)
-            || (*(s32 *)(cand + 16) >> 20)
+            || (cand->z.fixed >> 20)
                 != (*(s32 *)(sel + 16) >> 20)) {
             continue;
         }
 
-        cand_y = *(s32 *)(cand + 12) + 0x100000;
+        cand_y = cand->y.fixed + 0x100000;
         if (highest <= cand_y) {
             *(u16 *)(sel + 100) = (u16)no;
             highest = cand_y;

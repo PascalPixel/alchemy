@@ -1084,7 +1084,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     extern void Owner_RefreshActiveRatios();
     extern void Graphics_EnableObjLayerAndCallbacks();
 
-    s32 record;
+    struct FieldActor *record;
     s32 data_table_addr;
     s32 callback_target;
 
@@ -1106,7 +1106,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Engine_ActorEnableActionCallback(0, (s32)KorosseoMaruta_LeaderActionA);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
@@ -1121,21 +1121,21 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     record = Object_GetById(2);
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     record = Object_GetById(3);
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Engine_TaskWait(1);
     Engine_CameraFollowActor(0, 0);
@@ -1148,12 +1148,12 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     data_table_addr = (s32)gColossoMultiPhaseData;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
     record = Object_GetById(0);
-    *(s32 *)(record + 24) = 0x10000;
+    record->scale_x = 0x10000;
     record = Object_GetById(0);
-    *(s32 *)(record + 28) = 0x10000;
+    record->scale_y = 0x10000;
     Engine_ActorSetAnimationAndWait(0, 36);
     record = Object_GetById(0);
-    *(s32 *)(record + 8) += 0x30000;
+    record->x.fixed += 0x30000;
     Engine_EventWait(10);
     record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);

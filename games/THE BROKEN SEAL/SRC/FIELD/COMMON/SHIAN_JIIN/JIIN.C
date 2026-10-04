@@ -722,8 +722,8 @@ void FieldScene_DispatchApproachByFacing(void)
 {
     Engine_EventBegin();
 
-    if (*(u16 *)(((u8 *)Object_GetById(0)) + 6) > (128 << 7)
-        && *(u16 *)(((u8 *)Object_GetById(0)) + 6) < (192 << 8)) {
+    if (Object_GetById(0)->facing > (128 << 7)
+        && Object_GetById(0)->facing < (192 << 8)) {
         FieldScene_RunForwardArcBurst();
     } else {
         ShianJiin_SpinAway();
@@ -766,12 +766,12 @@ void FieldScene_DispatchByFacing(void)
 
 void FieldScene_DispatchByFacingAndFlags(void)
 {
-    u8 *record = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *record = Object_GetById(ACTOR_PARTY_LEADER);
     u16 facing;
 
     Engine_EventBegin();
 
-    facing = *(u16 *)(record + 6);
+    facing = record->facing;
     if ((u16)(facing - 0x2000) <= 0x3fff) {
         Scene_RunPrimarySequence();
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
@@ -786,7 +786,7 @@ void FieldScene_DispatchByFacingAndFlags(void)
     Engine_CameraMoveToActor(20, 1);
     Engine_CameraWaitForMove();
 
-    if (*(s16 *)(record + 18) <= 209) {
+    if (record->z.part.pixel <= 209) {
         if (Engine_GameFlagIsSet(0x89a) == 0) goto scene0;
         if (Engine_GameFlagIsSet(0x89b) != 0) goto scene0;
         goto scene1;
@@ -1351,11 +1351,11 @@ void StartSchoolDoorEvent(void)
 
 void FieldScene_DispatchByRange(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     u32 biased;
 
     record = Object_GetById(ACTOR_PARTY_LEADER);
-    biased = *(u16 *)(record + 6);
+    biased = record->facing;
     Engine_EventBegin();
 
     biased = biased + 0xffff5fff;
@@ -1394,7 +1394,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 void FieldScene_SpawnRandomizedParticle(void)
 {
     struct Params params;
-    u8 *record;
+    struct FieldActor *record;
     s32 draw;
     s32 offset;
 
@@ -1410,9 +1410,9 @@ void FieldScene_SpawnRandomizedParticle(void)
 
     offset = ((u32)(Engine_RandomNext() * 8) >> 16) * 13107;
 
-    Effect_Spawn(*(s32 *)(record + 8) + ((8 - (gFrameCount & 15)) << 16),
-                  *(s32 *)(record + 12) + (192 << 13),
-                  *(s32 *)(record + 16),
+    Effect_Spawn(record->x.fixed + ((8 - (gFrameCount & 15)) << 16),
+                  record->y.fixed + (192 << 13),
+                  record->z.fixed,
                   0,
                   -offset,
                   0,
@@ -2263,7 +2263,7 @@ void FieldScene_FinishSequence(void)
 void FieldScene_SpawnEightShots(void)
 {
     struct Descriptor_02000484 descriptor;
-    u8 *record;
+    struct FieldActor *record;
     u32 i;
 
     record = Object_GetById(8);
@@ -2277,8 +2277,8 @@ void FieldScene_SpawnEightShots(void)
         if (i & 1) {
             Engine_AudioPlayCue(0x82);
         }
-        Effect_Spawn(*(s32 *)(record + 8), *(s32 *)(record + 12),
-                      *(s32 *)(record + 16) + 0xffe80000, 0,
+        Effect_Spawn(record->x.fixed, record->y.fixed,
+                      record->z.fixed + 0xffe80000, 0,
                       0x9999, 0, 0x00360001, (u8 *)&descriptor);
     }
     Engine_EventWait(60);

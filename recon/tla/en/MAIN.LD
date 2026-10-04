@@ -2119,7 +2119,7 @@
         "*/recon/tla/raw/0811a4de.o"(.text)
         "*/recon/tla/raw/0811a4e0.o"(.text)
         "*/recon/tla/raw/0811a5fc.o"(.text)
-        "*/recon/tla/raw/0811a640.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/FIND_FREE_SLOT.o"(.text)
         "*/recon/tla/raw/0811a674.o"(.text)
         "*/recon/tla/raw/0811a720.o"(.text)
         "*/recon/tla/raw/0811a7ac.o"(.text)

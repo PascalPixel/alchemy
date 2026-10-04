@@ -1103,6 +1103,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0011a480)
     "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/CLASS_IS_VALID.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011a4da)
+    "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/FIND_FREE_SLOT.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.0011a670)
     "*/games/THE LOST AGE/SRC/BATTLE/PARTY/GET_STEP_PAIR.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011b17c)
     "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/FIND_SLOT.o"(.text)

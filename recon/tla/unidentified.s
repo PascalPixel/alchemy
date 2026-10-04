@@ -1081,8 +1081,8 @@ Data_0812a176:
 	.global Data_0812cacc
 Data_0812cacc:
 	.incbin "baserom.gba", 0x0012cacc, 0x00000004
-	.global Data_0812cad0
-Data_0812cad0:
+	.global Resource_SlotAssignments
+Resource_SlotAssignments:
 	.incbin "baserom.gba", 0x0012cad0, 0x000000e0
 	.global Data_0812cbb0
 Data_0812cbb0:

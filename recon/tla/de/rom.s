@@ -4604,7 +4604,9 @@ Func_0811a39c:
 BattleMotion_GetSlotField14:
 	.incbin "baserom.gba", 0x0011a49c, 0x0000000c
 	.section .rom.0011a4f6, "ax"
-	.incbin "baserom.gba", 0x0011a4f6, 0x00000c8e
+	.incbin "baserom.gba", 0x0011a4f6, 0x00000162
+	.section .rom.0011a68c, "ax"
+	.incbin "baserom.gba", 0x0011a68c, 0x00000af8
 	.section .rom.0011b198, "ax"
 	.incbin "baserom.gba", 0x0011b198, 0x00000114
 	.section .rom.0011b2dc, "ax"
@@ -4872,7 +4874,10 @@ Summon_GetEntryByte4:
 	.incbin "baserom.gba", 0x00128202, 0x0000065a
 	.global Data_08128844
 Data_08128844:
-	.incbin "baserom.gba", 0x0012885c, 0x000084c8
+	.incbin "baserom.gba", 0x0012885c, 0x0000428c
+	.global Resource_SlotAssignments
+Resource_SlotAssignments:
+	.incbin "baserom.gba", 0x0012cae8, 0x0000423c
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x00130d24, 0x000072dc

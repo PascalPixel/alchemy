@@ -1163,7 +1163,7 @@
         "*/recon/tla/raw/080ce0ac.o"(.text)
         "*/recon/tla/raw/080ce31c.o"(.text)
         "*/recon/tla/raw/080ce458.o"(.text)
-        "*/recon/tla/raw/080ce574.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EXECUTE.o"(.text)
         "*/recon/tla/raw/080ce61c.o"(.text)
         "*/recon/tla/raw/080ceafc.o"(.text)
         "*/recon/tla/raw/080ceb58.o"(.text)

@@ -2809,12 +2809,24 @@ Func_080cdd80:
 	.type Event_FindFacingTrigger, %function
 	.thumb_func
 Event_FindFacingTrigger:
-	.incbin "baserom.gba", 0x000d2fb0, 0x000005c4
-	.global EventRuntime_ExecutePackedAction
-	.type EventRuntime_ExecutePackedAction, %function
+	.incbin "baserom.gba", 0x000d2fb0, 0x0000036c
+	.global Func_080ce31c
+	.type Func_080ce31c, %function
 	.thumb_func
-EventRuntime_ExecutePackedAction:
-	.incbin "baserom.gba", 0x000d3574, 0x000005e4
+Func_080ce31c:
+	.incbin "baserom.gba", 0x000d331c, 0x0000013c
+	.global Func_080ce458
+	.type Func_080ce458, %function
+	.thumb_func
+Func_080ce458:
+	.incbin "baserom.gba", 0x000d3458, 0x0000011c
+	.section .rom.000d361c, "ax"
+	.incbin "baserom.gba", 0x000d361c, 0x000004e0
+	.global Func_080ceafc
+	.type Func_080ceafc, %function
+	.thumb_func
+Func_080ceafc:
+	.incbin "baserom.gba", 0x000d3afc, 0x0000005c
 	.section .rom.000d3b58, "ax"
 	.global Func_080ceb58
 	.type Func_080ceb58, %function

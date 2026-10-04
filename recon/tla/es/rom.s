@@ -3511,12 +3511,24 @@ Func_080eaf28:
 	.type Event_FindFacingTrigger, %function
 	.thumb_func
 Event_FindFacingTrigger:
-	.incbin "baserom.gba", 0x000d6fb0, 0x000005c4
-	.global EventRuntime_ExecutePackedAction
-	.type EventRuntime_ExecutePackedAction, %function
+	.incbin "baserom.gba", 0x000d6fb0, 0x0000036c
+	.global Func_080ce31c
+	.type Func_080ce31c, %function
 	.thumb_func
-EventRuntime_ExecutePackedAction:
-	.incbin "baserom.gba", 0x000d7574, 0x000005e4
+Func_080ce31c:
+	.incbin "baserom.gba", 0x000d731c, 0x0000013c
+	.global Func_080ce458
+	.type Func_080ce458, %function
+	.thumb_func
+Func_080ce458:
+	.incbin "baserom.gba", 0x000d7458, 0x0000011c
+	.section .rom.000d761c, "ax"
+	.incbin "baserom.gba", 0x000d761c, 0x000004e0
+	.global Func_080ceafc
+	.type Func_080ceafc, %function
+	.thumb_func
+Func_080ceafc:
+	.incbin "baserom.gba", 0x000d7afc, 0x0000005c
 	.section .rom.000d7b58, "ax"
 	.global Func_080dca84
 	.type Func_080dca84, %function
@@ -4293,12 +4305,27 @@ BattleEffect_InitializeSharedScene:
 	.type BattleFx_PrepareBufferInterpolation, %function
 	.thumb_func
 BattleFx_PrepareBufferInterpolation:
-	.incbin "baserom.gba", 0x000e5378, 0x000002a8
+	.incbin "baserom.gba", 0x000e5378, 0x0000008c
+	.global Func_080dc410
+	.type Func_080dc410, %function
+	.thumb_func
+Func_080dc410:
+	.incbin "baserom.gba", 0x000e5404, 0x0000021c
 	.global Func_080dc62c
 	.type Func_080dc62c, %function
 	.thumb_func
 Func_080dc62c:
-	.incbin "baserom.gba", 0x000e5620, 0x0000034c
+	.incbin "baserom.gba", 0x000e5620, 0x000001a0
+	.global Func_080dc7cc
+	.type Func_080dc7cc, %function
+	.thumb_func
+Func_080dc7cc:
+	.incbin "baserom.gba", 0x000e57c0, 0x0000001c
+	.global Func_080dc7e8
+	.type Func_080dc7e8, %function
+	.thumb_func
+Func_080dc7e8:
+	.incbin "baserom.gba", 0x000e57dc, 0x00000190
 	.section .rom.000e596c, "ax"
 	.global Func_080cdec8
 	.type Func_080cdec8, %function

@@ -107,80 +107,73 @@ void VinasuHeya_ShiftBridge(void)
  * the flag. */
 void VinasuHeya_RunCellPushScene(void)
 {
-    u32 i;
-    u8 *p10;
-    s32 p8;
-    s32 p9;
-    s32 rec;
-    s32 rec5;
-    u8 *rec8;
-    u8 *record;
-    s32 v5;
-    s32 slot8;
+    u8 *flags;
+    s32 z;
+    s32 x;
+    s32 set;
+    struct FieldActor *leader;
+    struct FieldActor *block;
+    struct FieldActor *actor;
+    s32 row;
+    s32 marker;
 
-    slot8 = 0;
-    rec8 = (s32)Object_GetById(9);
-    rec5 = (s32)Object_GetById(0);
-    v5 = 45;
+    marker = 0;
+    block = Object_GetById(9);
+    leader = Object_GetById(0);
+    row = 45;
     Engine_EventBegin();
-    Engine_MapCopyCellAttributes(109, 43, 7, 5, v5, 43);
-    p10 = (s32)rec8 + 35;
-    if ((2 & rec8[35]) != 0) {
-        Engine_MapCopyCellAttributes(45, 45, 1, 1, 46, v5);
+    Engine_MapCopyCellAttributes(109, 43, 7, 5, row, 43);
+    flags = &block->priority_flags;
+    if ((2 & block->priority_flags) != 0) {
+        Engine_MapCopyCellAttributes(45, 45, 1, 1, 46, row);
     } else {
-        Call6(Engine_MapCopyCellAttributes, 48, 42, 1, 1, (*(s32 *)((s32)rec8 + 8) >> 20), (*(s32 *)((s32)rec8 + 16) >> 20));
+        Call6(Engine_MapCopyCellAttributes, 48, 42, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
     }
-    p9 = (*(s32 *)((s32)rec8 + 8) >> 20);
-    if (p9 != 46) {
+    x = block->x.fixed >> 20;
+    if (x != 46) {
     } else {
-        p8 = (*(s32 *)((s32)rec8 + 16) >> 20);
-        if (p8 != 45) {
+        z = block->z.fixed >> 20;
+        if (z != 45) {
         } else {
-            rec = Engine_GameFlagIsSet(0x301);
-            if (rec != 0) {
+            set = Engine_GameFlagIsSet(0x301);
+            if (set != 0) {
             } else {
-                if ((*(s32 *)(rec5 + 16) >> 20) <= 45) {
-                    record = OverlayObject_PrepareObjectWithCommand15(0x2e80000, 0, 0x2c00000, 20);
-                    slot8 = (s32)record;
+                if ((leader->z.fixed >> 20) <= 45) {
+                    marker = OverlayObject_PrepareObjectWithCommand15(0x2e80000, 0, 0x2c00000, 20);
                     Engine_ActorSetSpritePriority(0, 3);
                 }
-                record = (s32)Object_GetById(9);
-                Engine_ActorSetSpriteFlags((s32)record, 0);
-                rec8[34] = rec;
-                rec8[85] = 3;
-                *(s32 *)((s32)rec8 + 72) = 0x1999;
-                *(s32 *)((s32)rec8 + 68) = rec;
-                Engine_MapCopyCellAttributes(43, 45, 1, 1, p9, p8);
-                OverlayObject_WaitUntilIdle((s32)rec8);
+                actor = Object_GetById(9);
+                Engine_ActorSetSpriteFlags(actor, 0);
+                block->unknown_22 = set;
+                block->motion_flags = 3;
+                *(s32 *)&block->unknown_44[4] = 0x1999;
+                *(s32 *)&block->unknown_44[0] = set;
+                Engine_MapCopyCellAttributes(43, 45, 1, 1, x, z);
+                OverlayObject_WaitUntilIdle(block);
                 Engine_AudioPlayCue(188);
-                rec8[85] = rec;
-                *(s32 *)((s32)rec8 + 12) = -0x100000;
+                block->motion_flags = set;
+                block->y.fixed = -0x100000;
                 Engine_ActorSetSpritePriority(9, 3);
-                { s32 two = 2; *p10 = two; } /* FAKEMATCH: a block-local word temporary keeps the 2 from being shared with the later |= 2 */
-                Engine_MapCopyCellAttributes(45, 45, 1, 1, p9, p8);
+                /* FAKEMATCH: a block-local word temporary keeps the 2 from being shared with the later |= 2 */
                 {
-                    u8 *record = (s32)Object_GetById(0);
-                    u8 value = *(volatile u8 *)&record[35];
-                
-                    record[35] = (u8)(value | 1);
+                    s32 two = 2;
+
+                    *flags = two;
                 }
-                Engine_ObjectDispatchRelease(slot8);
-                rec8[89] = rec;
-                *p10 |= 2;
-                *(u8 *)((s32)Object_GetById(10) + 89) = rec;
-                {
-                    u8 *record = (s32)Object_GetById(10);
-                    u8 value = *(volatile u8 *)&record[35];
-                
-                    record[35] = (u8)(value | 2);
-                }
+                Engine_MapCopyCellAttributes(45, 45, 1, 1, x, z);
+                Object_GetById(0)->priority_flags |= 1;
+                Engine_ObjectDispatchRelease(marker);
+                block->collision_flags = set;
+                *flags |= 2;
+                Object_GetById(10)->collision_flags = set;
+                Object_GetById(10)->priority_flags |= 2;
                 Engine_ActorSetPosition(10, 0x3280000, 0x2d80000);
-                Engine_ActorEnableActionCallback(10, (s32)gVinasuPushScript);
+                Engine_ActorEnableActionCallback(10, gVinasuPushScript);
                 Engine_ActorStartAction(10);
                 Engine_EventWait(30);
                 Engine_AudioPlayCue(158);
-                Engine_MapAnimateCells((s32)gVinasuPushCells, 110, 41);
-                Call6(Engine_MapCopyCellAttributes, 46, 41, 1, 1, p9, 42);
+                Engine_MapAnimateCells(gVinasuPushCells, 110, 41);
+                Call6(Engine_MapCopyCellAttributes, 46, 41, 1, 1, x, 42);
                 Engine_GameFlagSet(0x301);
             }
         }

@@ -439,8 +439,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT40.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CALL_EFFECT_03_AND_STOP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT41.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00099a86)
-    "*/recon/tbs/it/rom.o"(.rom.00099a88)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/LIFT_DROP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT16.o"(.text)

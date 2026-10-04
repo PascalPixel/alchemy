@@ -594,14 +594,6 @@ UiText_OpenMessageAtObject:
 	.thumb_func
 FunctionHead_08097c3c:
 	.incbin "baserom.gba", 0x0008ec24, 0x00000344
-	.section .rom.000909e2, "ax"
-	.incbin "baserom.gba", 0x000909e2, 0x00000002
-	.section .rom.000909e4, "ax"
-	.global RunBattleEffect05
-	.type RunBattleEffect05, %function
-	.thumb_func
-RunBattleEffect05:
-	.incbin "baserom.gba", 0x000909e4, 0x00000328
 	.section .rom.00093404, "ax"
 	.global Data_0809c410
 Data_0809c410:

@@ -1,21 +1,20 @@
-/* NONMATCHING (2026-10-04, wave 3): alchemy diff 34 (was 105). Gains: the
- * first poll loop's retry failure jumps into the offer phase's failure
- * block (goto fail), which is where the ROM's cross-jumped copy sits; the
- * offer phase polls through labels like the pad phase, so loop.c leaves its
- * failure in place; the pad and offer sends lost their do/while(0) devices;
- * heap[0x12a] = tries = 0 shares the zero as the ROM does; the sends pass
- * size; the offer remap reads slots[] directly (the ROM hoists it into ip);
- * timeout = 600 is set before the party count. Only the first send keeps
- * its one-pass device. Remaining: reload registers are one step behind
- * the ROM's round robin from the first loop's "add sl, 2" on (ROM r1, r2,
- * r3, r1; here r3, r1, r2, r3), so the pad failure (r1) cross-jumps into
- * nothing and the pad send compares in r2. The ROM probably reloaded one
- * more constant in the first loop: its retry failure there was most likely
- * inline (reload r3) and only later cross-jumped into the offer block.
- * A labelled inline block (fail1:) is still moved by loop.c (71). Local
- * declaration order and the i - 128 spellings change nothing. Two small
- * scheduling differences remain in the first loop (i - 128 before the
- * table reload, r0 = heap before the size constant).
+/* NONMATCHING (2026-10-04, wave 3): alchemy diff 2 (was 105): only the
+ * offer phase's "mov r5, r8" (list = heap + 8) is scheduled two
+ * instructions later than in the ROM. Causes found: loop.c moves a
+ * retry failure out of any loop it sits in, and each moved block's -1 is
+ * then reloaded at the end of the function, which shifts reload's
+ * round-robin registers from the first loop on (ROM r1, r2, r3, r1 for
+ * "add sl, 2", the pad failure, the pad send check and j = 0). In the ROM
+ * the first loop's retry failure stayed inline (reload r3) and jump2 later
+ * cross-jumped it into the identical offer-phase block. The one-pass
+ * do/while(0) boundaries reproduce that: one around the per-party copy and
+ * send (it also gives the copy and table-store order), one around the
+ * retry failure. The pad and offer phases poll through labels, so loop.c
+ * has no loop to move their failures out of. heap[0x12a] = tries = 0
+ * shares the zero; the offer remap reads slots[] directly (the ROM hoists
+ * it into ip); timeout = 600 is set before the party count; the offer
+ * send passes size. A scheduling barrier after the offer copy fixes the
+ * copy's argument order but holds list's copy back.
  * Earlier notes: */
 /* NONMATCHING (2026-10-04): score 1815 (17 register-only, 13 reordered,
  * 6 inserted). The callees now carry the overlay's own veneer names and the
@@ -167,11 +166,11 @@ s32 LinkLobby_SendPartyRecords(void)
         table[i] = 0;
     }
     for (i = 0; i < count; i++) {
-        Iwram_CopyWords(heap, Owner_GetState(owners[i]), size);
-        heap[0x12a] = 2;
-        table[owners[i]] = i - 128;
         /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
         do {
+            Iwram_CopyWords(heap, Owner_GetState(owners[i]), size);
+            heap[0x12a] = 2;
+            table[owners[i]] = i - 128;
             ret = SerialRuntime_BeginTransferA(heap, size);
             tries = 0;
             if (ret == -1) {
@@ -182,9 +181,12 @@ s32 LinkLobby_SendPartyRecords(void)
         while (SerialRuntime_GetActiveTransfers() != 0) {
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
-                if (++tries > 24) {
-                    goto fail;
-                }
+                do {
+                    if (++tries > 24) {
+                        result = -1;
+                        goto done;
+                    }
+                } while (0);
             }
         }
         Engine_TaskWait(2);
@@ -217,6 +219,8 @@ next:
     size = 0x140;
     heap = Runtime_BumpAllocateAlternatePool(size);
     Iwram_CopyWords(heap, Trade_GetOfferState(0), size);
+    /* FAKEMATCH: a scheduling barrier the native order needs. */
+    __asm__("");
     {
         s32 timeout;
         s32 tries;
@@ -234,7 +238,7 @@ next:
                 j--;
             }
         }
-        if ((ret = SerialRuntime_BeginTransferA(heap, 0x140)) == -1) {
+        if ((ret = SerialRuntime_BeginTransferA(heap, size)) == -1) {
             result = ret;
             goto done;
         }
@@ -243,7 +247,6 @@ next:
         Engine_TaskWait(1);
         if (--timeout < 0 || (LINK_STAT & 3) != 3) {
             if (++tries > 24) {
-            fail:
                 result = -1;
                 goto done;
             }

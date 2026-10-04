@@ -8,6 +8,7 @@ use std::io::Write;
 pub const USAGE: &str = "usage: psynergy convert FORMAT INPUT OUTPUT [options]\n\
 formats: png2bpp4 | png2bpp8 | png2bgr555 | wav2pcm8 | words2bin | pairs2bin | tilemap2bin\n\
 bpp42png | bpp82png take --palette FILE --tiles-wide N\n\
+bpp42png also takes --tile-palettes TSV (palette:u8 column, one bank per tile)\n\
 pcm82wav takes --rate HZ\n\
 OUTPUT must not exist.\n";
 const FORMATS: &str = "png2bpp4 | bpp42png | png2bpp8 | bpp82png | png2bgr555 | wav2pcm8 | pcm82wav | words2bin | pairs2bin | tilemap2bin";
@@ -15,6 +16,7 @@ const FORMATS: &str = "png2bpp4 | bpp42png | png2bpp8 | bpp82png | png2bgr555 | 
 #[derive(Default)]
 struct Options {
     palette: Option<String>,
+    tile_palettes: Option<String>,
     tiles_wide: Option<usize>,
     rate: Option<u32>,
 }
@@ -29,6 +31,7 @@ fn options(args: &[String]) -> Result<Options, String> {
         let decimal = |name: &str| format!("{name} must be a decimal integer");
         let duplicate = match flag.as_str() {
             "--palette" => options.palette.replace(value.clone()).is_some(),
+            "--tile-palettes" => options.tile_palettes.replace(value.clone()).is_some(),
             "--tiles-wide" => options
                 .tiles_wide
                 .replace(value.parse().map_err(|_| decimal(flag))?)
@@ -81,17 +84,46 @@ fn convert(format: &str, input: &[u8], options: Options) -> Result<Vec<u8>, Stri
             } else {
                 GbaBpp::Bpp8
             };
+            if let Some(path) = options.tile_palettes {
+                if bpp != GbaBpp::Bpp4 {
+                    return Err("--tile-palettes is only valid for bpp42png".into());
+                }
+                let table =
+                    std::fs::read_to_string(&path).map_err(|error| format!("{path}: {error}"))?;
+                let (header, rows) = table.split_once('\n').unwrap_or((&table, ""));
+                if header.trim_end_matches('\r') != "palette:u8" {
+                    return Err(format!("{path}: expected palette:u8 header"));
+                }
+                let words = text::import_words(rows)?;
+                let banks: Vec<u8> = words
+                    .chunks_exact(2)
+                    .map(|word| {
+                        u8::try_from(u16::from_le_bytes([word[0], word[1]]))
+                            .map_err(|_| "tile palette bank exceeds u8".to_string())
+                    })
+                    .collect::<Result<_, _>>()?;
+                return image::png_from_gba_tiles_banked(input, &palette, &banks, tiles_wide)
+                    .map_err(asset);
+            }
             image::png_from_gba_tiles(input, &palette, bpp, tiles_wide).map_err(asset)
         }
         "pcm82wav" => {
-            let (None, None, Some(rate)) = (options.palette, options.tiles_wide, options.rate)
-            else {
+            let (None, None, None, Some(rate)) = (
+                options.palette,
+                options.tiles_wide,
+                options.tile_palettes,
+                options.rate,
+            ) else {
                 return Err("pcm82wav takes exactly --rate HZ".into());
             };
             wav::pcm8_wav(input, rate).map_err(asset)
         }
         _ => {
-            if options.palette.is_some() || options.tiles_wide.is_some() || options.rate.is_some() {
+            if options.palette.is_some()
+                || options.tiles_wide.is_some()
+                || options.tile_palettes.is_some()
+                || options.rate.is_some()
+            {
                 return Err(format!("{format} does not accept conversion options"));
             }
             encode(format, input)
@@ -174,6 +206,41 @@ mod tests {
         assert!(convert("words2bin", b"0x1234", rate()).is_err());
         assert!(convert("bpp42png", &[0; 32], rate()).is_err());
         assert!(convert("pcm82wav", &[0], Options::default()).is_err());
+        assert!(options(&args(&["--tile-palettes", "a", "--tile-palettes", "b"])).is_err());
+    }
+
+    #[test]
+    fn banked_tile_conversion_requires_an_explicit_checked_table() {
+        let dir = tempfile::tempdir().unwrap();
+        let palette = dir.path().join("palette.bgr555");
+        let table = dir.path().join("banks.tsv");
+        std::fs::write(&palette, vec![0; 512]).unwrap();
+        let context = || Options {
+            palette: Some(palette.to_string_lossy().into_owned()),
+            tile_palettes: Some(table.to_string_lossy().into_owned()),
+            tiles_wide: Some(3),
+            ..Options::default()
+        };
+        std::fs::write(&table, "palette:u8\n0\n13\n15\n").unwrap();
+        let png = convert("bpp42png", &[0x21; 96], context()).unwrap();
+        let image = image::indexed_png(&png).unwrap();
+        assert_eq!(
+            [image.pixels[0], image.pixels[8], image.pixels[16]],
+            [1, 209, 241]
+        );
+        assert!(convert("bpp82png", &[0; 192], context()).is_err());
+        assert!(convert("png2bpp4", &png, context()).is_err());
+        assert!(convert("pcm82wav", &[0], context()).is_err());
+        for contents in [
+            "0\n13\n15\n",
+            "palette:u8\n0\n13\n",
+            "palette:u8\n0\n13\n16\n",
+            "palette:u8\n0\n13\n256\n",
+            "palette:u8\n0\t13\t15\n",
+        ] {
+            std::fs::write(&table, contents).unwrap();
+            assert!(convert("bpp42png", &[0; 96], context()).is_err());
+        }
     }
 
     #[test]

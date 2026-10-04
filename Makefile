@@ -48,7 +48,9 @@ help:
 	  'make land            on main, before committing a landing: make verify, then the count published' \
 	  'make coverage        measure once: README progress line and the decomp.dev report' \
 	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
-	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv'
+	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv' \
+	  'make worst           rank maintained C by how mechanical it reads; the camelotized share' \
+	  'alchemy diff DRAFT.c compare a C draft with the listing it would replace (tools/out/cargo-target/release/alchemy)'
 
 # Setup may download pinned dependencies; ordinary build commands stay offline.
 fetch-dependencies:

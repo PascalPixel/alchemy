@@ -1204,9 +1204,12 @@ fn build_overlay(
     }
     let names = directory.join(format!("resource_{id}.own"));
     fs::write(&names, own).map_err(|error| error.to_string())?;
+    // The link reads only the main image's symbols, so the copy keeps none of
+    // its section contents and is gone once the overlay is linked.
     command(
         &[
             "arm-none-eabi-objcopy",
+            "--extract-symbol",
             &format!("--strip-symbols={}", names.display()),
             &symbols.to_string_lossy(),
             &own_symbols,
@@ -1216,6 +1219,7 @@ fn build_overlay(
     for step in &steps {
         command(step, root)?;
     }
+    fs::remove_file(&own_symbols).map_err(|error| format!("{own_symbols}: {error}"))?;
     overlay_gate(&elf, &map)?;
     let mut decoded = fs::read(&image).map_err(|error| error.to_string())?;
     store_thumb_calls(&mut decoded);

@@ -74,7 +74,8 @@ struct AnimationSpritePart {
     u16 affine_index : 5;
     u16 size : 2;
     u16 tile : 10;
-    u16 attr : 6;
+    u16 priority : 2;
+    u16 palette : 4;
     u8 unknown_0a[2];
 };
 

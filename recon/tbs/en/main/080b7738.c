@@ -1,3 +1,18 @@
+/* 2026-10-04 hardware priority field recovery.
+ * AnimationSpritePart attribute 2 now names tile:10, priority:2, palette:4,
+ * as the current FieldSprite/MenuSprite owners and hardware layout do.
+ * All four priority writes use the real field; no byte alias or pin remains.
+ * Complete .text is 428 bytes including its pool, with the native 44-byte
+ * frame. All six TBS editions score 1175 (49 register, 2 operand,
+ * 8 reordered, 2 inserted, 2 deleted), with all nine relocations resolved.
+ * This supersedes the retained typed-byte-view measurement below: 420 bytes,
+ * frame36, score5737. The field split restores the priority-loop shape and
+ * consumed spill storage without adding filler or instruction devices.
+ * Remaining: object/slot and priority-loop register allocation, icon dirty
+ * pointer/store ordering and priority-value load ordering. Equal extent is
+ * not byte identity; this stays an uncredited draft.
+ * The older attempts below are preserved as S4 trial notes only.
+ */
 /* 2026-10-03 typed-owner attempt; this supersedes the old matching scores.
  * Native EN extent [080b7738,080b78e4): 428 bytes including the pool.
  * Retained ordinary typed draft: 420 bytes, frame 36 versus native 44;
@@ -165,10 +180,7 @@ again:
                 case 1:
                 {
                     struct AnimationObject *record = object->records;
-                    u8 *attributes = (u8 *)&record->part[0];
-
-                    /* Attribute 2: priority is bits 2-3 of its high byte. */
-                    attributes[9] = (attributes[9] & ~0x0c) | ((value & 3) << 2);
+                    record->part[0].priority = value;
                     break;
                 }
                 case 2:
@@ -176,9 +188,7 @@ again:
                         struct AnimationObject *record = ((struct AnimationObject **)object->records)[j];
 
                         if (record != 0) {
-                            u8 *attributes = (u8 *)&record->part[0];
-
-                            attributes[9] = (attributes[9] & ~0x0c) | ((value & 3) << 2);
+                            record->part[0].priority = value;
                         }
                     }
                     break;
@@ -201,10 +211,7 @@ again:
                 case 1:
                 {
                     struct AnimationObject *record = object->records;
-                    u8 *attributes = (u8 *)&record->part[0];
-
-                    /* Attribute 2: priority is bits 2-3 of its high byte. */
-                    attributes[9] = (attributes[9] & ~0x0c) | ((value & 3) << 2);
+                    record->part[0].priority = value;
                     break;
                 }
                 case 2:
@@ -212,9 +219,7 @@ again:
                         struct AnimationObject *record = ((struct AnimationObject **)object->records)[j];
 
                         if (record != 0) {
-                            u8 *attributes = (u8 *)&record->part[0];
-
-                            attributes[9] = (attributes[9] & ~0x0c) | ((value & 3) << 2);
+                            record->part[0].priority = value;
                         }
                     }
                     break;

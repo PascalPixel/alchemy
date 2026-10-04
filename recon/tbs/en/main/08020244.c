@@ -1,57 +1,51 @@
+/* 2026-10-04 canonical save-summary recovery; uncredited draft.
+ * Removed four fabricated Value_* literal-address imports: the native pool
+ * holds message ids 0, 1, 3 and 2. The two native __modsi3 calls are ordinary
+ * signed C remainder operations, not a separately named Modulo function.
+ * The actual workspace owns three SaveSummary records. Use SAVE_STATE.H,
+ * its gSaveWorkspace, WINDOW.H and gWindowWork, and the real GameState
+ * palette_glow fields; remove the private record and duplicate declarations.
+ * The unknown word at summary+0x38 remains unnamed and read at word width.
+ * EN diagnostic: prior17572 with five unresolved symbols; literal/remainder
+ * repair18402; shared types/owners19112 with all imports resolved. Remaining
+ * differences: 98 register,17 stack,90 operand,92 reorder,35 insert,75 delete.
+ * Routing-only remeasure against this EN listing: JA19267 (three unresolved
+ * old callback/window names), DE19282, ES/FR/IT19252. Those are diagnostics,
+ * not proofs against each localized native extent. Native EN extent1408B.
+ * No FAKEMATCH, compiler change, filler or adoption is introduced. Broad
+ * control flow, allocation and localized callback contracts still need work.
+ */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
 #include "DMA.H"
+#include "SAVE_STATE.H"
+#include "GAME_STATE.H"
+#include "WINDOW.H"
 
-/* Runs the three-member menu used to choose a party member. */
-
-/* One selectable owner slot; three of them live at workspace + 0x1040. */
-struct MenuOwnerEntry {
-    u8 unk_00[0x10];
-    u8 name[12];        /* 0x10 */
-    u8 present;         /* 0x1c */
-    u8 unk_1d;          /* 0x1d */
-    u16 label;          /* 0x1e */
-    s32 field_20;       /* 0x20 */
-    s32 field_24;       /* 0x24 */
-    s8 counts[4];       /* 0x28 */
-    s8 kinds[4];        /* 0x2c */
-    s8 flags[4];        /* 0x30: [3] is the variant ObjectPlacement_CreateGroup reads */
-    u8 icon;            /* 0x34 */
-    u8 icon_sub;        /* 0x35 */
-    u16 cost;           /* 0x36 */
-    s32 field_38;       /* 0x38 */
-    u8 unk_3c[4];       /* 0x3c */
-};
+/* Selects one of the three saved-game summaries. */
 
 /*
  * The three owner slots live at workspace + 0x1040 with a 0x40 stride. The
  * reference never keeps a table pointer live: every indexed read is formed
  * from the workspace byte pointer and a folded slot offset, so the scalar
  * probes below are spelled that way and only the record actually handed to
- * a callee is taken as a whole MenuOwnerEntry.
+ * a callee is taken as the shared SaveSummary.
  */
-#define SLOT(i)         ((struct MenuOwnerEntry *)(base + 0x1040 + (i) * 0x40))
+#define SLOT(i)         ((struct SaveSummary *)(base + 0x1040 + (i) * 0x40))
 #define SLOT_PRESENT(i) (base[(i) * 0x40 + 0x105C])
-#define SLOT_FLAG_A(i)  (SLOT(i)->flags[1])
-#define SLOT_FLAG_B(i)  (SLOT(i)->flags[2])
+#define SLOT_FLAG_A(i)  (SLOT(i)->send_flag)
+#define SLOT_FLAG_B(i)  (SLOT(i)->flag_count)
 #define SLOT_ICON(i)    (base[(i) * 0x40 + 0x1074])
 #define SLOT_ICON2(i)   (base[(i) * 0x40 + 0x1075])
 #define SLOT_COUNT(i,k) (((s8 *)base)[(i) * 0x40 + 0x1068 + (k)])
 
-extern u8 gGameState[];
-extern u8 Value_00000000;
-extern u8 Value_00000001;
-extern u8 Value_00000002;
-extern u8 Value_00000003;
 
 u32 Runtime_GetBuildStampTimeFar(void);
-s32 Modulo(s32 value, s32 divisor);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void PaletteGlow_Update(s32 icon, s32 icon_sub);
-void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 kind);
 void UiWindow_FillTilemapRect(void *win, s32 x, s32 y, s32 width, s32 height);
 void UiWindow_DrawDividerLine(void *win, s32 a, s32 b, s32 c, s32 d);
 void UiText_DrawResource(s32 message, void *win, s32 x, s32 y);
@@ -66,12 +60,11 @@ void Scheduler_ScheduleCallbackAAfterFrames(void);
 void Scheduler_ScheduleCallbackA(void);
 struct RenderOutput *RenderResource_CreatePair(s32 mode, struct RenderInput *win, s32 x, s32 y);
 void Ui_ApplyTableOffsetToPair(void *pair);
-void UiWork_Finalize(void *work, s32 kind);
 void RenderOutput_RedrawSavedRect(void *win);
 
 s32 SaveMenu_SelectSlot(s32 idx, s32 mode)
 {
-    struct MenuOwnerEntry *e;
+    struct SaveSummary *e;
     u8 *base;
     u8 *render;
     void *work;
@@ -89,12 +82,12 @@ s32 SaveMenu_SelectSlot(s32 idx, s32 mode)
     s32 result;
 
     work = Runtime_AllocateHeapBlock(55, 0xA70);
-    base = *(u8 **)0x03001F1C;
+    base = (u8 *)gSaveWorkspace;
     win1 = 0;
     win2 = 0;
     win3 = 0;
     redraw = 1;
-    render = *(u8 **)0x03001E8C;
+    render = gWindowWork[0];
     limit = Runtime_GetBuildStampTimeFar();
     if (idx < 0) {
         idx = 0;
@@ -166,17 +159,17 @@ ready:
     cnt = 2;
     e = SLOT(0);
     do {
-        if (e->present == 0) {
-            msg = (s32)&Value_00000000;
-        } else if (e->cost < limit) {
-            msg = (s32)&Value_00000001;
-        } else if (e->field_20 != e->field_38) {
-            msg = (s32)&Value_00000003;
-        } else if (mode == 5 && e->flags[1] == 0) {
-            msg = (s32)&Value_00000002;
+        if (e->level == 0) {
+            msg = 0;
+        } else if (e->frames < limit) {
+            msg = 1;
+        } else if (e->play_time != *(u32 *)e->unknown_38) {
+            msg = 3;
+        } else if (mode == 5 && e->send_flag == 0) {
+            msg = 2;
         } else {
             UiText_DrawString(e->name, win, 12, row);
-            UiText_DrawResource(e->label + RENDER_RESOURCE_BASE, win, 62, row);
+            UiText_DrawResource(e->area + RENDER_RESOURCE_BASE, win, 62, row);
             render[RENDER_DIRTY_OFS] = 1;
             goto next;
         }
@@ -222,7 +215,7 @@ loop:
                 win3 = 0;
             }
         } else {
-            PaletteGlow_Update(gGameState[0x205], gGameState[0x206]);
+            PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
             Menu_ClearSecondObjectRowAndScheduleUpdate();
             Menu_ClearFirstObjectRowAndScheduleUpdate();
             UiWork_Finalize(win3, 2);
@@ -244,7 +237,7 @@ loop:
         Audio_PlayCue(111);
         redraw = 1;
         do {
-            idx = Modulo(idx + 2, 3);
+            idx = (idx + 2) % 3;
         } while (mode != 0
                  && (SLOT_PRESENT(idx) == 0
                      || (mode == 1 && SLOT_FLAG_A(idx) != 0)
@@ -256,7 +249,7 @@ loop:
         Audio_PlayCue(111);
         redraw = 1;
         do {
-            idx = Modulo(idx + 4, 3);
+            idx = (idx + 4) % 3;
         } while (mode != 0
                  && (SLOT_PRESENT(idx) == 0
                      || (mode == 1 && SLOT_FLAG_A(idx) != 0)
@@ -284,7 +277,7 @@ teardown:
     UiWork_Finalize(win, 2);
     Scheduler_ScheduleCallbackA();
     Runtime_ReleaseHeapBlock(55);
-    PaletteGlow_Update(gGameState[0x205], gGameState[0x206]);
+    PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
     WaitFrames(1);
 
 done:

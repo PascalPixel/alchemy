@@ -1,3 +1,23 @@
+/* 2026-10-04 canonical contract correction: remove all three empty counter
+ * tails. Fresh score 120 described a 500-byte shape that still required
+ * unconsumed counter instructions; it was not adoption-ready. Without those
+ * tails the complete source extent is 476 bytes versus native 500, score 2000
+ * (8 operand, 4 reordered, 2 inserted, 14 deleted) in all six TBS plans.
+ * No new steering is added; raw/scaffold ownership and credit are unchanged.
+ *
+ * Native tails after the six/eight/default rings alter only r4 and flags,
+ * writing no remaining point or ground field. Each owned TBS ROM has exactly
+ * two direct BL callers, both in Ui_RunIconMonitor; a whole-ROM aligned-word
+ * scan and all 96 active overlays per edition find no pointer references.
+ * Both callers discard r4: its next local use assigns a fresh constant.
+ * Battle_PlaceActorsByFormationKind consumes only the actual 6/8/10/4 points
+ * selected by the same kind and cannot observe these counter-only tails.
+ * The scans do not prove the absence of an arbitrary computed target, but
+ * no current caller/data contract supports these instructions as behavior.
+ * Do not restore them as timing, count results or point initialization
+ * without new evidence. The older measured attempts below are retained as
+ * rejected evidence, not instructions for reaching an exact match.
+ */
 /* 2026-10-04 paired zero-stage narrowing: paired zero after clobber1245; paired zero plus memory order1170; paired zero input only1245. */
 /* 2026-10-04 paired store-order narrowing: paired volatile x store 120; paired consumed x memory and angle 190; paired volatile x memory and angle 190; paired x stage before shift 120. */
 /* 2026-10-04 paired remaining-order trials: paired cursor binding 120; paired first-store split barriers 225; paired first-store memory input 180. */
@@ -19,7 +39,7 @@
 /* 2026-10-03 ordinary coordinate-store trials: x store before truncation 295; three coordinate stores before truncation 295; x store before existing angle barrier 295. */
 /* 2026-10-03 ordinary fixed-slot loop trials: bounded ten-point loop 3745; derived signed countdown 475; derived unsigned countdown 695. */
 /* 2026-10-03 ordinary idle-tail trials: natural continuation 695; natural remaining count 800; plain countdown 875. */
-/* Current near miss (2026-10-04): 500 bytes, score 120 in all six TBS plans.
+/* Earlier near miss (2026-10-04), rejected: 500 bytes, score 120 in all six TBS plans.
  * Ordinary x stores before angle truncation remove the three regular-ring
  * scheduling differences. Only paired-point register/order differences remain
  * (2 reordered only); no instruction is inserted or deleted.
@@ -31,10 +51,11 @@
  * still differ; the original ground word is never touched.
  * Removed the empty countdown constraint: it restored instruction presence
  * rather than only register choice or order. The ordinary trailing loop
- * remains uncredited; the former score475 was not adoption-ready.
+ * was uncredited; the former score475 was not adoption-ready.
  * Uses the shared AnimationObject/AnimationEntry model and the actual
  * Vector_AddPolarOffset(s32, s32, s32 *) interface with explicit u16 calls.
- * Only empty register/scheduling constraints remain. No code is credited.
+ * Three empty counter tails also remained; the audit above removes them.
+ * No code was credited.
  * Earlier attempts are recorded below; they are measurements, not inputs. */
 /* 2026-10-03 measured variants: r source-x binding 1840; h source-x binding 1840. Kept lowest score. */
 /* 2026-10-03 measured variants: asm inputs 635; asm volatile inputs 635; asm angle input 635; asm input angle reverse 635; asm x output 635; asm angle zero output 635; asm zero output 1475; asm x zero output 1655; asm tied x 635; asm angle with early x 635; asm zero volatile 635; asm zero memory 635. Kept lowest score. */
@@ -119,7 +140,6 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
             out++;
             angle = (s16)(angle + 0x2aaa);
         }
-        for (; i < 10; i++);
         break;
     case 5:
     case 8:
@@ -143,7 +163,6 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
             out++;
             angle = (s16)(angle + 0x2000);
         }
-        for (; i < 10; i++);
         break;
     case 4:
     case 6:
@@ -218,7 +237,6 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
             (u16)(angle = (s16)(angle + 0x4000));
             i++;
         }
-        for (i = 9 - i; i >= 0; i--);
         break;
     }
 }

@@ -1,3 +1,22 @@
+/* NONMATCHING (2026-10-04, wave 3): alchemy diff 34 (was 105). Gains: the
+ * first poll loop's retry failure jumps into the offer phase's failure
+ * block (goto fail), which is where the ROM's cross-jumped copy sits; the
+ * offer phase polls through labels like the pad phase, so loop.c leaves its
+ * failure in place; the pad and offer sends lost their do/while(0) devices;
+ * heap[0x12a] = tries = 0 shares the zero as the ROM does; the sends pass
+ * size; the offer remap reads slots[] directly (the ROM hoists it into ip);
+ * timeout = 600 is set before the party count. Only the first send keeps
+ * its one-pass device. Remaining: reload registers are one step behind
+ * the ROM's round robin from the first loop's "add sl, 2" on (ROM r1, r2,
+ * r3, r1; here r3, r1, r2, r3), so the pad failure (r1) cross-jumps into
+ * nothing and the pad send compares in r2. The ROM probably reloaded one
+ * more constant in the first loop: its retry failure there was most likely
+ * inline (reload r3) and only later cross-jumped into the offer block.
+ * A labelled inline block (fail1:) is still moved by loop.c (71). Local
+ * declaration order and the i - 128 spellings change nothing. Two small
+ * scheduling differences remain in the first loop (i - 128 before the
+ * table reload, r0 = heap before the size constant).
+ * Earlier notes: */
 /* NONMATCHING (2026-10-04): score 1815 (17 register-only, 13 reordered,
  * 6 inserted). The callees now carry the overlay's own veneer names and the
  * copy goes through IWRAM_CALL.H's Iwram_CopyWords, so no name differences
@@ -141,19 +160,19 @@ s32 LinkLobby_SendPartyRecords(void)
     size = 0x154;
     heap = Runtime_BumpAllocateAlternatePool(size);
     result = 0;
+    timeout = 600;
     count = SceneData_CopyUpToThreeEntries(owners);
     table = slots;
-    timeout = 600;
     for (i = 7; i >= 0; i--) {
         table[i] = 0;
     }
     for (i = 0; i < count; i++) {
-        Iwram_CopyWords(heap, Owner_GetState(owners[i]), 0x154);
+        Iwram_CopyWords(heap, Owner_GetState(owners[i]), size);
         heap[0x12a] = 2;
         table[owners[i]] = i - 128;
         /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
         do {
-            ret = SerialRuntime_BeginTransferA(heap, 0x154);
+            ret = SerialRuntime_BeginTransferA(heap, size);
             tries = 0;
             if (ret == -1) {
                 result = ret;
@@ -164,8 +183,7 @@ s32 LinkLobby_SendPartyRecords(void)
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
                 if (++tries > 24) {
-                    result = -1;
-                    goto done;
+                    goto fail;
                 }
             }
         }
@@ -188,16 +206,12 @@ test:
     i++;
 next:
     if (i <= 2) {
-        heap[0x12a] = 0;
-        tries = 0;
-        /* FAKEMATCH: keep this send/check boundary distinct from polling. */
-        do {
-            if ((ret = SerialRuntime_BeginTransferA(heap, 0x154)) != -1) {
-                goto test;
-            }
-            result = ret;
-            goto done;
-        } while (0);
+        heap[0x12a] = tries = 0;
+        if ((ret = SerialRuntime_BeginTransferA(heap, size)) != -1) {
+            goto test;
+        }
+        result = ret;
+        goto done;
     }
     Runtime_BumpFree(heap);
     size = 0x140;
@@ -211,7 +225,7 @@ next:
         tries = 0;
         timeout = 600;
         for (j = 0; j < list->count; j++) {
-            list->entries[j].owner = table[list->entries[j].owner];
+            list->entries[j].owner = slots[list->entries[j].owner];
             if ((s8)list->entries[j].owner == 0) {
                 for (k = j; k < list->count - 1; k++) {
                     list->entries[k] = list->entries[k + 1];
@@ -220,21 +234,23 @@ next:
                 j--;
             }
         }
-        /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
-        do {
-            if ((ret = SerialRuntime_BeginTransferA(heap, 0x140)) == -1) {
-                result = ret;
+        if ((ret = SerialRuntime_BeginTransferA(heap, 0x140)) == -1) {
+            result = ret;
+            goto done;
+        }
+        goto test3;
+    wait3:
+        Engine_TaskWait(1);
+        if (--timeout < 0 || (LINK_STAT & 3) != 3) {
+            if (++tries > 24) {
+            fail:
+                result = -1;
                 goto done;
             }
-        } while (0);
-        while (SerialRuntime_GetActiveTransfers() != 0) {
-            Engine_TaskWait(1);
-            if (--timeout < 0 || (LINK_STAT & 3) != 3) {
-                if (++tries > 24) {
-                    result = -1;
-                    goto done;
-                }
-            }
+        }
+    test3:
+        if (SerialRuntime_GetActiveTransfers() != 0) {
+            goto wait3;
         }
         Engine_TaskWait(1);
         Engine_TaskWait(2);

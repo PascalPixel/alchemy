@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.align 2, 0
 	.global Func_080b075c
 	.thumb_func
 Func_080b075c:
@@ -27,7 +28,7 @@ Func_080b075c:
 	lsls r2, r2, #1
 	adds r3, r6, r2
 	ldrh r0, [r3]
-	bl Func_080b06a8
+	bl Battle_IsEffect90Class
 	b .L_080b0a82
 .L_080b0794:
 	mov r3, r8
@@ -37,11 +38,11 @@ Func_080b075c:
 	lsls r4, r4, #1
 	adds r3, r6, r4
 	ldrh r0, [r3]
-	bl Func_080b06c8
+	bl Battle_IsEffect91Class
 	b .L_080b0a82
 .L_080b07a8:
 	mov r0, r8
-	bl Func_080b0740
+	bl BattleFx_IsRevive
 	cmp r0, #0
 	beq .L_080b07be
 	movs r7, #56
@@ -305,7 +306,7 @@ Func_080b075c:
 	adds r0, r6, #0
 	mov r1, r8
 	adds r7, r7, r3
-	bl Func_080b06e8
+	bl BattleTarget_IsWeakToEffect
 	cmp r0, #0
 	beq .L_080b0a40
 	adds r7, #25

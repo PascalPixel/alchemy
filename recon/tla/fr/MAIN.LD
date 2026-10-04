@@ -681,6 +681,8 @@
     "*/games/COMMON/SRC/BATTLE/RANDOM16.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/ITEM/GET_UNLEASH_RATE_BONUS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b54ba)
+    "*/games/THE LOST AGE/SRC/GAME/DJINN/WEAKNESS.o"(.text)
+    "*/recon/tla/fr/rom.o"(.rom.000b575c)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b5bb6)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_2.o"(.text)

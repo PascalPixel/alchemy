@@ -2536,7 +2536,10 @@ Owner_RefreshClassActions:
 Curve_LookupScaledValue:
 	.incbin "baserom.gba", 0x000b52dc, 0x0000009c
 	.section .rom.000b54ba, "ax"
-	.incbin "baserom.gba", 0x000b54ba, 0x000005da
+	.incbin "baserom.gba", 0x000b54ba, 0x000001ee
+	.section .rom.000b575c, "ax"
+	.align 2, 0
+	.incbin "baserom.gba", 0x000b575c, 0x00000338
 	.section .rom.000b5bb6, "ax"
 	.incbin "baserom.gba", 0x000b5bb6, 0x000000c2
 	.section .rom.000b5c9a, "ax"
@@ -2596,7 +2599,13 @@ Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000c650c, 0x000000e8
 	.global Data_080c15f4
 Data_080c15f4:
-	.incbin "baserom.gba", 0x000c65f4, 0x000055bc
+	.incbin "baserom.gba", 0x000c65f4, 0x00005524
+	.global Battle_Effect90Classes
+Battle_Effect90Classes:
+	.incbin "baserom.gba", 0x000cbb18, 0x0000005e
+	.global Battle_Effect91Classes
+Battle_Effect91Classes:
+	.incbin "baserom.gba", 0x000cbb76, 0x0000003a
 	.global Djinn_Definitions
 Djinn_Definitions:
 	.incbin "baserom.gba", 0x000cbbb0, 0x00001450

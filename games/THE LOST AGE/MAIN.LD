@@ -721,6 +721,8 @@ SECTIONS
     "*/games/COMMON/SRC/BATTLE/RANDOM16.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/ITEM/GET_UNLEASH_RATE_BONUS.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ab4b6)
+    "*/games/THE LOST AGE/SRC/GAME/DJINN/WEAKNESS.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000ab758)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000abbb2)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_2.o"(.text)

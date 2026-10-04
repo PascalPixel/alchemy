@@ -525,11 +525,11 @@ Data_080c6684:
 	.global Data_080c6b04
 Data_080c6b04:
 	.incbin "baserom.gba", 0x000c6b04, 0x00000014
-	.global Data_080c6b18
-Data_080c6b18:
+	.global Battle_Effect90Classes
+Battle_Effect90Classes:
 	.incbin "baserom.gba", 0x000c6b18, 0x0000005e
-	.global Data_080c6b76
-Data_080c6b76:
+	.global Battle_Effect91Classes
+Battle_Effect91Classes:
 	.incbin "baserom.gba", 0x000c6b76, 0x0000003a
 	.global Djinn_Definitions
 Djinn_Definitions:

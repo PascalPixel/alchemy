@@ -2235,14 +2235,9 @@ Curve_LookupScaledValue:
 	.type Func_080b04bc, %function
 	.thumb_func
 Func_080b04bc:
-	.incbin "baserom.gba", 0x000bd4bc, 0x00000284
-	.section .rom.000bd740, "ax"
-	.global Func_080b0740
-	.type Func_080b0740, %function
-	.thumb_func
-Func_080b0740:
-	.incbin "baserom.gba", 0x000bd740, 0x0000001c
+	.incbin "baserom.gba", 0x000bd4bc, 0x000001ec
 	.section .rom.000bd75c, "ax"
+	.align 2, 0
 	.global Func_080b075c
 	.type Func_080b075c, %function
 	.thumb_func
@@ -2315,7 +2310,13 @@ Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000ce50c, 0x000000e8
 	.global Data_080c15f4
 Data_080c15f4:
-	.incbin "baserom.gba", 0x000ce5f4, 0x000055bc
+	.incbin "baserom.gba", 0x000ce5f4, 0x00005524
+	.global Battle_Effect90Classes
+Battle_Effect90Classes:
+	.incbin "baserom.gba", 0x000d3b18, 0x0000005e
+	.global Battle_Effect91Classes
+Battle_Effect91Classes:
+	.incbin "baserom.gba", 0x000d3b76, 0x0000003a
 	.global Djinn_Definitions
 Djinn_Definitions:
 	.incbin "baserom.gba", 0x000d3bb0, 0x00001450

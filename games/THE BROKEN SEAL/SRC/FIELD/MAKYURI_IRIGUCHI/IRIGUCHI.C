@@ -447,16 +447,16 @@ void MakyuriIriguchi_CrossDoorway(void)
     s32 i;
     s32 zero;
     s32 mask;
-    u8 *p;
-    s32 record;
+    struct FieldActor *ivan;
+    struct FieldActor *actor;
 
     Engine_EventBegin();
-    record = (s32)Object_GetById(12);
-    *(s32 *)(record + 24) = -0x10000;
-    record = (s32)Object_GetById(13);
-    *(s32 *)(record + 24) = -0x10000;
-    record = (s32)Object_GetById(14);
-    *(s32 *)(record + 24) = -0x10000;
+    actor = Object_GetById(12);
+    actor->scale_x = -0x10000;
+    actor = Object_GetById(13);
+    actor->scale_x = -0x10000;
+    actor = Object_GetById(14);
+    actor->scale_x = -0x10000;
     Call3(Engine_ActorSetPosition, 3, 0x880000, 0xb80000);
     Call3(Engine_ActorSetPosition, 0, 0x880000, 0x1280000);
     Call3(Engine_ActorSetPosition, 8, 0x880000, 0x980000);
@@ -468,7 +468,7 @@ void MakyuriIriguchi_CrossDoorway(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_ActorRunRepeatedMotion(3, 1);
-    *(u8 *)((s32)Object_GetById(8) + 90) &= 254;
+    Object_GetById(8)->unknown_5a &= 254;
     Battle_WaitMode0(20);
     mask = 254;
     zero = 0;
@@ -479,10 +479,10 @@ void MakyuriIriguchi_CrossDoorway(void)
         ObjectMotion_CommitCurrentPositionAndActivate(3);
         Call3(Engine_ActorFaceDirection, 3, 0xc000, 30);
         Engine_ActorRunRepeatedMotion(3, 1);
-        p = (u8 *)Object_GetById(3);
+        ivan = Object_GetById(3);
         /* FAKEMATCH: or-ing a zero kept from before the loop leaves the
          * reference's unread zero in sl. */
-        p[90] = (p[90] & mask) | zero;
+        ivan->unknown_5a = (ivan->unknown_5a & mask) | zero;
         Engine_ActorWalkTo(3, 136, 184);
         Battle_WaitMode0(10);
         Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path1);
@@ -506,8 +506,8 @@ void MakyuriIriguchi_CrossDoorway(void)
     }
     Battle_WaitMode0(20);
     Engine_ActorShowEmote(3, 0x102, 60);
-    record = (s32)Object_GetById(3);
-    *(s32 *)(record + 108) = (s32)SceneActor_FaceLeaderWhileGrounded;
+    actor = Object_GetById(3);
+    actor->update = (void (*)(union FieldObject *))SceneActor_FaceLeaderWhileGrounded;
     Engine_CameraMoveToActor(0, 1);
     Battle_WaitMode0(30);
     Call3(Engine_ActorWalkToAndWait, 0, 136, 0x108);

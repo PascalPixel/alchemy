@@ -1,3 +1,12 @@
+/* 2026-10-04 (finisher 7): unchanged at EN 16. Measured with a -dg dump:
+ * the separate first/second-scan counter (37 refs over 46 insns, priority
+ * 4.0) is allocated early and only r3 conflicts with it, so it takes r1; a
+ * counter shared with the third scan (52 refs over 92, priority 2.8) still
+ * outranks the third scan's hoisted counts base (8 over 18, 1.3) and takes
+ * r0, pushing the base to r4. The listing's r4 needs the shared counter
+ * allocated after that base and the third scan's entry pointer (r0, r1),
+ * or a lower-priority conflicting pseudo that prefers r0-r2. A register pin
+ * on the counter blocks loop reversal (score 297). */
 /* 2026-10-04 later: EN score 40 (8 register-only), 1044/1044 bytes.
  * BattleFx_PlayUnitElementEffect declared s32, as the matched
  * PROCESS_ROUND_END.C declares it, puts the r0 = id load last before that

@@ -242,12 +242,8 @@ UiText_BuildRenderEntries:
 	.type UiText_MeasureEntryDimensions, %function
 UiText_MeasureEntryDimensions:
 	.incbin "baserom.gba", 0x0001749c, 0x000001ec
-	.section .rom.00017688, "ax"
-	.global UiText_MeasureStringVariant
-	.thumb_func
-	.type UiText_MeasureStringVariant, %function
-UiText_MeasureStringVariant:
-	.incbin "baserom.gba", 0x00017688, 0x00000240
+	.section .rom.000178c8, "ax"
+	.balign 4
 	.global UiText_DrawGlyph
 UiText_DrawGlyph:
 	.incbin "baserom.gba", 0x000178c8, 0x00000250

@@ -1,3 +1,16 @@
+/* 2026-10-04 (finisher 7): EN score 238 (was 328), 384/384 instructions.
+ * work->count and work->selection are read directly (the listing reloads
+ * both with ldrsh through a hoisted &count in sl, as GCC does for a field
+ * test); there is no mask variable (the 255 is loop.c's hoisted constant);
+ * the else arm reads y before its stores; sprite is set right after work,
+ * so the allocator ranks i above sprite (i r5, sprite r6 as listed).
+ * Left: x takes r4 where the listing has r2, so the gVramBlockCache base
+ * cannot take caller-saved r4 (the listing saves it at sp+0 around
+ * Runtime_PushSlotEntry, frame 12) and lands in r9, pushing the matrix to
+ * fp; left is ip in the listing; the else arm's slot load still follows its
+ * second store; the window halves keep the window in sl and &selection in
+ * lr in the listing. Global-allocation priority (floor_log2(refs) * refs /
+ * live length, refs weighted by loop depth; see a -dg dump) orders them. */
 /* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
  * and canonical resource/allocator contracts. Earlier measurements are
  * prior checkpoints; fresh complete-object comparison is pending. */
@@ -43,8 +56,6 @@ void AffineEffect_UpdateFrame(void)
     struct ResourceMenuEntry *sprite;
     struct AffineTransform effect;
     struct WindowBuffer *window;
-    s16 *count;
-    s16 *selected;
     s32 scale;
     s32 matrix;
     s32 span;
@@ -54,19 +65,17 @@ void AffineEffect_UpdateFrame(void)
     u32 i;
     u32 end;
     u16 *line;
-    u32 mask;
     u8 *buffers;
 
     work = gMenuSelectWork;
-    scale = Data_080366f8[(gFrameCount * 2) & 31];
     sprite = work->entries;
+    scale = Data_080366f8[(gFrameCount * 2) & 31];
     scale = (scale - 256) / 4 + 304;
     effect.scale_x = scale;
     effect.scale_y = scale;
     effect.angle = 0;
     matrix = AffineMatrix_BuildForEffect(&effect);
-    count = &work->count;
-    for (i = 0; i < *count; i++, sprite++) {
+    for (i = 0; i < work->count; i++, sprite++) {
         u32 *attr;
         s32 slot;
 
@@ -86,9 +95,10 @@ void AffineEffect_UpdateFrame(void)
             *attr = gVramBlockCache[sprite->slot].offset >> 5;
             slot = 246;
         } else {
+            y = sprite->y;
             attr = &sprite->link;
             *attr++ = 0;
-            *attr++ = sprite->y | (x << 16) | 0x80002000;
+            *attr++ = y | (x << 16) | 0x80002000;
             *attr = gVramBlockCache[sprite->slot].offset >> 5;
             slot = 245;
         }
@@ -96,62 +106,56 @@ void AffineEffect_UpdateFrame(void)
     }
     if (work->row == 0) {
         buffers = Data_03001ecc;
-        if (buffers == 0 || *count == 0)
+        if (buffers == 0 || work->count == 0)
             return;
         window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
-        selected = &work->selection;
-        x = work->entries[*selected].x;
+        x = work->entries[work->selection].x;
         span = (scale * 12 - 2817) / 256;
         edge = ((x - span) << 8) + x + span + 23;
-        y = work->entries[*selected].y + 24;
+        y = work->entries[work->selection].y + 24;
         end = y + (scale * 32 - 7937) / 512 + 1;
         line = &window->lines[24].span;
         i = 24;
         if (i < end) {
-            mask = 255;
             do {
-                *line = (*line & mask) | edge;
+                *line = (*line & 0xff) | edge;
                 i++;
                 line += 2;
             } while (i < end);
         }
         edge = work->entries[0].x;
-        if (*selected == 0)
+        if (work->selection == 0)
             edge -= (scale * 12 - 2817) / 256;
         edge <<= 8;
         line = &window->lines[0].span;
-        mask = 255;
         for (i = 0; i <= 23; i++) {
-            *line = (*line & mask) | edge;
+            *line = (*line & 0xff) | edge;
             line += 2;
         }
     } else {
         buffers = Data_03001ecc;
-        if (buffers == 0 || *count == 0)
+        if (buffers == 0 || work->count == 0)
             return;
         window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
-        selected = &work->selection;
-        x = work->entries[*selected].x;
+        x = work->entries[work->selection].x;
         span = (scale * 12 - 2817) / 256;
         edge = ((x - span) << 8) + x + span + 23;
-        i = work->entries[*selected].y - (scale * 32 - 7937) / 512 - 1;
+        i = work->entries[work->selection].y - (scale * 32 - 7937) / 512 - 1;
         line = &window->lines[i].span;
         if (i <= 135) {
-            mask = 255;
             do {
-                *line = (*line & mask) | edge;
+                *line = (*line & 0xff) | edge;
                 i++;
                 line += 2;
             } while (i <= 135);
         }
         edge = work->entries[0].x;
-        if (*selected == 0)
+        if (work->selection == 0)
             edge -= (scale * 12 - 2817) / 256;
         edge <<= 8;
         line = &window->lines[136].span;
-        mask = 255;
         for (i = 136; i <= 159; i++) {
-            *line = (*line & mask) | edge;
+            *line = (*line & 0xff) | edge;
             line += 2;
         }
     }

@@ -764,17 +764,17 @@ u32 Field_StoreAssignedKeyValue(u32 value)
     struct FieldStepWork *work = (struct FieldStepWork *)gWork;
 
     if (GameFlag_TestFar(0x107) != 0) {
-        StoreHalfword((s16 *)&work->unknown_182, 0xFA);
+        StoreHalfword((s16 *)&work->raised_trigger, 0xFA);
     } else if (work->mode == 3) {
         if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x100) {
-            StoreHalfword((s16 *)&work->unknown_182, 0xFC88);
+            StoreHalfword((s16 *)&work->raised_trigger, 0xFC88);
         } else if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x200) {
-            StoreHalfword((s16 *)&work->unknown_182, 0xFC87);
+            StoreHalfword((s16 *)&work->raised_trigger, 0xFC87);
         }
     } else {
         switch (selector) {
         case 0:
-            StoreHalfword(&work->unknown_17e, request);
+            StoreHalfword(&work->psynergy_request, request);
             break;
         case 1:
             StoreHalfword((s16 *)work->unknown_180, request);

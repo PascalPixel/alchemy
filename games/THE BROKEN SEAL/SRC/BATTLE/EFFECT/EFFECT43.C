@@ -78,7 +78,7 @@ void RunBattleEffect16(void)
 
         *tile_slot = slot;
         VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
-        gGameState.unknown_244 = 0x09600000;
+        gGameState.avoid_distance = 0x09600000;
         gGameState.unknown_248[0] = GameFlag_TestFar(0x145);
         Animation_ApplyChildValuesFar(object, zero);
         object->callback = BattleFx_UpdatePairedArcSpawner;

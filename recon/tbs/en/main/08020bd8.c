@@ -1,19 +1,15 @@
 #include "RESOURCE.H"
-/* 2026-09-29: five minutes of permutation reached 9291 from 10306 through
- * 70 rewrites, mostly operand swaps, casts and temporaries; not kept, since
- * the owner is far from exact. */
-/* Complete owner [08020bd8, 0802106c): 1172 bytes including both final
- * pool words. The default unregistered score incorrectly included the
- * following menu and Djinn functions (1928 bytes); score this extent only.
- * Named globals plus shared MenuCursor unions: 1140 bytes, 526 differing
- * halfwords / 347 aligned edits before correcting the owner lookup argument.
- * The union only repairs one store-order slot here. Named globals leave a
- * 92-byte frame instead of 96; the saved text length remains in a high
- * register instead of its stack slot. The accept-key block rotates before
- * the loop, and several literal pools differ. Replacing the loop with
- * explicit next-frame/finished gotos grows to 1192 bytes and 385 edits.
- * Three bounded structural hypotheses stopped; do not repeat those axes.
- * FAKEMATCH: shared cursor unions preserve object-pointer store ordering. */
+/* NONMATCHING (2026-10-04): dd.ts differ 54 of 506 (English). The loop
+ * exits are gotos, so expand_end_loop finds no exit to roll to the bottom;
+ * label is declared first (its stack slot sits above the counters);
+ * gKeysRepeat is volatile (the A test reloads it); the tile index keeps
+ * both +1 terms ((x+col+1) + ((y+row+1) << 5)); the caret bits use an OAM
+ * priority field. Remaining: the 0xea3 and text[0] byte stores interleave;
+ * end = input + original_length loads its operands in the other order; the
+ * caret sprite and the wave table trade r4/r5; the save copy gives its
+ * counter r2 (the ROM r0, destination r2); the tile index still folds one
+ * +1 after the shift. Editions: en and it are 0x494 bytes, de/es/fr 0x4b4
+ * and ja 0x5e0, so the others need their own branches. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "DMA.H"
@@ -23,9 +19,12 @@
 
 extern u8 *gWindowWork;
 extern u32 gFrameTick;
-extern u32 gKeysRepeat;
+extern volatile u32 gKeysRepeat;
 extern u32 gKeyState;
 extern s8 Data_080371f6[];
+extern const s32 Menu_PartySpriteResourceIds[];
+extern const u8 Resource_FixedBlockBTiles[];
+extern const u8 RomBytes_080317e4[];
 
 u8 *Owner_GetStateFar(s32 owner);
 void Ui_LoadWindowGraphics(void);
@@ -46,8 +45,11 @@ void UiWork_Finalize(struct RenderInput *,s32);
 void UiWork_FinalizeEntityMatchingLocalizedId(s32);
 
 /* The five-character name editor uses the same cursor state as shop menus. */
+struct NameEntryOam { u16 index : 10; u16 priority : 2; u16 palette : 4; };
+
 s32 NameEntry_EditOwnerName(s32 entry)
 {
+    struct RenderInput *label;
     s32 result = 0;
     s32 original_length = 0;
     s32 length = 0;
@@ -58,29 +60,28 @@ s32 NameEntry_EditOwnerName(s32 entry)
     s32 text_dirty = 1;
     s32 cursor_dirty = 1;
     struct RenderInput *window;
-    struct RenderInput *label;
     union MenuCursor cursor;
     union MenuCursor caret;
     s32 column, row, slot;
     u8 *end;
     struct RenderOutput *output;
+    u16 *pal;
 
     Ui_LoadWindowGraphics();
     window = UiWindow_Create(3,6,24,9,2);
     label = UiWindow_Create(8,3,8,3,2);
     UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry),0,3,1);
-    UiWindow_CopyTilemapRegion(window,(void *)0x08073864);
+    UiWindow_CopyTilemapRegion(window,(void *)(Menu_PartySpriteResourceIds + 4));
     UiWindow_DrawDividerLine(window,18,0,18,7);
     work[0xea3] = text_dirty;
     text[0] = result;
     {
-        u8 *dst = input;
-        u8 *src = saved;
-        do {
-            u32 c = *src++;
-            *dst++ = c;
+        s32 i;
+        for (i = 0; i < 14; i++) {
+            u32 c = saved[i];
+            input[i] = c;
             if(c != 0) { original_length++; length++; }
-        } while(dst <= text + 14);
+        }
     }
     input[14] = 0;
     UiText_DrawPaddedLabel(label,saved);
@@ -88,22 +89,23 @@ s32 NameEntry_EditOwnerName(s32 entry)
     column = 18;
     row = 5;
     if(slot <= 95) {
-        VramBlock_LoadCached(slot,128,(void *)0x080310a4);
-        output = RenderOutput_Create(slot,0x40000000,window,0,0);
-        cursor.output = output;
+        VramBlock_LoadCached(slot,128,(void *)Resource_FixedBlockBTiles);
+        slot = (s32)RenderOutput_Create(slot,0x40000000,window,0,0);
+        cursor.output = (struct RenderOutput *)slot;
         ShopCursor_SetPositionImmediateFar(&cursor,window->x * 8 + 140,window->y * 8 + 52);
     }
     slot = Resource_FindFreeEntry();
     if(slot <= 95) {
-        VramBlock_LoadCached(slot,128,(void *)0x080317e4);
-        output = RenderOutput_Create(slot,0x40000000,window,0,0);
-        caret.output = output;
-        output->sentinel = 255;
-        ((u8 *)output)[25] &= -13;
+        VramBlock_LoadCached(slot,128,(void *)RomBytes_080317e4);
+        slot = (s32)RenderOutput_Create(slot,0x40000000,window,0,0);
+        caret.output = (struct RenderOutput *)slot;
+        ((struct RenderOutput *)slot)->sentinel = 255;
+        ((struct NameEntryOam *)((u8 *)slot + 24))->priority = 0;
         ShopCursor_SetPositionImmediateFar(&caret,UiText_SetRenderString(input)+70,22);
     }
-    Dma_Set((void *)0x050001e0,(void *)0x050001c0,0x84000008,(volatile u32 *)0x040000d4);
-    *(volatile u16 *)0x050001c8 = 0x6318;
+    pal = (u16 *)0x050001c0;
+    Dma_Set((void *)0x050001e0,pal,0x84000008,(volatile u32 *)0x040000d4);
+    pal[4] = 0x6318;
     end = input + original_length;
     for(;;) {
         s32 width = 1;
@@ -136,12 +138,12 @@ s32 NameEntry_EditOwnerName(s32 entry)
         if(gKeysRepeat & KEY_UP) {
             Audio_PlayCue(111); cursor_dirty = 1; row--;
             if(column != 18) { if(row == -1) row = 5; }
-            else row = 5 - (row != 3);
+            else { row = (row != 3); row = 5 - row; }
         }
         if(gKeysRepeat & KEY_DOWN) {
             Audio_PlayCue(111); cursor_dirty = 1; row++;
             if(column != 18) { if(row == 6) row = 0; }
-            else row = 4 + (row != 6);
+            else { row = (row != 6); row += 4; }
         }
         if(gKeysRepeat & KEY_LEFT) {
             Audio_PlayCue(111); cursor_dirty = 1; column--;
@@ -168,7 +170,7 @@ remove_character:
                 continue;
             }
             result=-1;
-            break;
+            goto finish;
         }
         if(!(gKeysRepeat & KEY_A)) continue;
         Audio_PlayCue(112);
@@ -181,24 +183,25 @@ remove_character:
                     WaitFrames(10);
                 } else {
                     s32 i=0; u8 *src=input; u8 *dst=saved;
-                    do { *dst++ = *src++; i++; } while(i<=14);
+                    for (; i < 15; i++) *dst++ = *src++;
                 }
-                break;
+                goto finish;
             }
             if(row==4) goto remove_character;
             continue;
         }
         {
-            u32 cell=(window->y+row+1)*32+window->x+column+1;
+            u32 cell=(window->x+column+1)+((window->y+row+1)<<5);
             u32 character=work[cell*2];
             if(length==5) continue;
             *end++=character; *end=0; length++;
-            if(length==5) { cursor_dirty=1; column=18; row=5; }
+            if(length==5) { column=18; row=5; cursor_dirty=1; }
             RenderOutput_PrepareForRedraw(label);
             UiText_DrawPaddedLabel(label,input);
             text_dirty=1;
         }
     }
+finish:
     UiWork_Finalize(window,2);
     UiWork_Finalize(label,2);
     UiWork_FinalizeEntityMatchingLocalizedId(entry);

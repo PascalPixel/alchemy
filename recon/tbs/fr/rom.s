@@ -246,12 +246,8 @@ Func_08018038:
 	.thumb_func
 UiText_MeasureEntryDimensions:
 	.incbin "baserom.gba", 0x00017744, 0x000001f8
-	.section .rom.0001793c, "ax"
-	.global UiText_MeasureStringVariant
-	.type UiText_MeasureStringVariant, %function
-	.thumb_func
-UiText_MeasureStringVariant:
-	.incbin "baserom.gba", 0x0001793c, 0x00000248
+	.section .rom.00017b84, "ax"
+	.balign 4
 	.global UiText_DrawGlyph
 UiText_DrawGlyph:
 	.incbin "baserom.gba", 0x00017b84, 0x00000250

@@ -1,7 +1,9 @@
 /* Draft of BattleFx_DrawScaledObject (080ebc94). Matches in tla-ja and tla-en.
    tla-de/es/fr/it fail to link: their TABLE.S names the stub at 0x08020010,
    whose bytes are the same as the English Render_ApplyProjectedPlacementFar,
-   ResourceObject_CreateFar. Resolve the far-call table names before adopting. */
+   ResourceObject_CreateFar. In those editions 0x20010 is still scaffold, so
+   alchemy label Render_ApplyProjectedPlacementFar 0x08020010 8 --game tla
+   names it there; adopt with that. */
 #include "TYPES.H"
 #include "EFFECT_SLOT.H"
 #include "IWRAM_CALL.H"

@@ -123,7 +123,7 @@ void Engine_EventEnd();
 extern u8 MsgKorosseoObjectiveGetAcross[];
 extern u8 MsgKorosseoStageCalledScales[];
 void Korosseo_FinishSoloRound();
-void FieldScene_RunMiddleSequence();
+s32 FieldScene_RunMiddleSequence();
 void Object_SetPosition();
 void Object_CommitPosition();
 
@@ -1387,10 +1387,10 @@ void Korosseo_RunGreetScene(s32 a0)
 
 void FieldScene_RunDualArrivalSequence(s32 scene)
 {
-    void *p17;
-    void *p19;
-    void *p23;
-    void *p25;
+    struct FieldActor *pan1;
+    struct FieldActor *pan2;
+    struct FieldActor *back1;
+    struct FieldActor *back2;
     s32 state;
 
     if (gGameState.entrance == 2) {
@@ -1401,8 +1401,8 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
     state = ColossoLogRollingStage_RunStateInteraction(scene, 1);
     if (state == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoStageCalledScales);
-        Engine_CameraSetSpeed(196608, 24576);
-        Engine_CameraMoveTo(9961472, -1, 13107200, 1);
+        Engine_CameraSetSpeed(3 << 16, 0x6000);
+        Engine_CameraMoveTo(152 << 16, -1, 200 << 16, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
         Engine_EventShowMessage(scene, 0);
@@ -1413,29 +1413,29 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         Engine_EventShowMessage(scene, 0);
         ColossoLogRollingStage_StopPaletteTask();
         Engine_TaskWait(2);
-        p17 = Object_GetById(10);
-        *(u8 *)((u8 *)p17 + 85) = 0;
-        *(s32 *)(p17 + 52) = 26214;
-        *(s32 *)(p17 + 48) = 52428;
-        Call4(Object_SetPosition, (s32)p17, *(s32 *)(p17 + 8), 262144, *(s32 *)(p17 + 16));
-        p19 = Object_GetById(11);
-        *(u8 *)((u8 *)p19 + 85) = 0;
-        *(s32 *)(p19 + 52) = 26214;
-        *(s32 *)(p19 + 48) = 52428;
-        Call4(Object_SetPosition, (s32)p19, *(s32 *)(p19 + 8), 2097152, *(s32 *)(p19 + 16));
-        Object_CommitPosition(p19);
+        pan1 = Object_GetById(10);
+        pan1->motion_flags = 0;
+        pan1->acceleration = 0x6666;
+        pan1->speed = 0xcccc;
+        Call4(Object_SetPosition, (s32)pan1, pan1->x.fixed, 4 << 16, pan1->z.fixed);
+        pan2 = Object_GetById(11);
+        pan2->motion_flags = 0;
+        pan2->acceleration = 0x6666;
+        pan2->speed = 0xcccc;
+        Call4(Object_SetPosition, (s32)pan2, pan2->x.fixed, 32 << 16, pan2->z.fixed);
+        Object_CommitPosition(pan2);
         Engine_EventWait(45);
-        p23 = Object_GetById(10);
-        *(u8 *)((u8 *)p23 + 85) = 0;
-        *(s32 *)(p23 + 52) = 26214;
-        *(s32 *)(p23 + 48) = 52428;
-        Object_SetPosition((s32)p23, *(s32 *)(p23 + 8), 2097152, *(s32 *)(p23 + 16));
-        p25 = Object_GetById(11);
-        *(u8 *)((u8 *)p25 + 85) = 0;
-        *(s32 *)(p25 + 52) = 26214;
-        *(s32 *)(p25 + 48) = 52428;
-        Object_SetPosition((s32)p25, *(s32 *)(p25 + 8), 262144, *(s32 *)(p25 + 16));
-        Object_CommitPosition(p25);
+        back1 = Object_GetById(10);
+        back1->motion_flags = 0;
+        back1->acceleration = 0x6666;
+        back1->speed = 0xcccc;
+        Object_SetPosition(back1, back1->x.fixed, 32 << 16, back1->z.fixed);
+        back2 = Object_GetById(11);
+        back2->motion_flags = 0;
+        back2->acceleration = 0x6666;
+        back2->speed = 0xcccc;
+        Object_SetPosition(back2, back2->x.fixed, 4 << 16, back2->z.fixed);
+        Object_CommitPosition(back2);
         Engine_EventWait(15);
         Engine_EventShowMessage(scene, 0);
         ColossoLogRollingStage_StartPaletteTask(104, 68, 0);
@@ -1453,8 +1453,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         Engine_EventSetMessage((s32)MsgKorosseoObjectiveGetAcross);
         Engine_EventShowMessage(scene, 0);
     }
-    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-    Value3(FieldScene_RunMiddleSequence, state, scene, 1);
+    FieldScene_RunMiddleSequence(state, scene, 1);
     Engine_EventEnd();
 }
 
@@ -1463,7 +1462,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
     s32 x;
     extern void Korosseo_FinishSoloRound();
-    extern void FieldScene_RunMiddleSequence();
+    extern s32 FieldScene_RunMiddleSequence();
     extern void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
     extern void Korosseo_RestoreCompetitor();
 

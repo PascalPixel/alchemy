@@ -234,7 +234,7 @@ Func_0804868c:
 	adds r1, #1
 	subs r2, #2
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	ldr r0, [sp, #32]
 	cmp r0, #0
 	beq .L_08048878
@@ -593,7 +593,7 @@ Func_0804868c:
 	str r3, [sp, #0]
 	subs r2, #2
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	ldr r0, [sp, #72]
 	movs r3, #1
 	movs r1, #0
@@ -1284,7 +1284,7 @@ Func_0804868c:
 	movs r2, #2
 	movs r3, #1
 	adds r5, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	cmp r5, #3
 	ble .L_08049038
 .L_0804907a:
@@ -1344,7 +1344,7 @@ Func_0804868c:
 	adds r1, #1
 	movs r2, #4
 	movs r3, #4
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 .L_080490ec:
 	ldr r0, [sp, #60]
 	bl Resource_ResetEntry

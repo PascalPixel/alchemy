@@ -20,7 +20,7 @@ UiText_MeasureResourceEntriesFar:
 	.global Func_080383a8
 	.thumb_func
 Func_080383a8:
-	overlay_veneer Func_08046134
+	overlay_veneer Ui_SetRectHighlight
 	.global Ability_LoadGlyphFar
 	.thumb_func
 Ability_LoadGlyphFar:

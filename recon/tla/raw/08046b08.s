@@ -361,7 +361,7 @@ Func_08046b08:
 	ldrh r2, [r3, #8]
 	ldrh r3, [r3, #10]
 	str r4, [sp, #0]
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	ldr r3, .L_08047114
 	movs r0, #1
 	ldr r3, [r3, #4]
@@ -920,7 +920,7 @@ Func_08046b08:
 	adds r1, #1
 	movs r2, #2
 	movs r3, #2
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	b .L_080472da
 .L_08047228:
 	cmp r2, #3
@@ -969,7 +969,7 @@ Func_08046b08:
 	movs r2, #20
 .L_08047278:
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 	b .L_080472da
 .L_08047280:
 	.4byte Data_0805f7d8
@@ -1013,7 +1013,7 @@ Func_08046b08:
 	adds r1, #1
 	movs r2, #7
 	movs r3, #1
-	bl Func_08046134
+	bl Ui_SetRectHighlight
 .L_080472da:
 	add r1, sp, #436
 	ldr r3, [r1, #12]

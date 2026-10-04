@@ -39,8 +39,8 @@ gBlendStartLevel:
 	.global gCpuLoadTimer
 gCpuLoadTimer:
 	.space 0x00000004
-	.global Data_03001af4
-Data_03001af4:
+	.global gScanlinePitch
+gScanlinePitch:
 	.space 0x00000004
 	.global gKeysPressedLatch
 gKeysPressedLatch:
@@ -310,8 +310,8 @@ Data_03001f58:
 	.global gSleepComboFrames
 gSleepComboFrames:
 	.space 0x00000004
-	.global Data_03001f60
-Data_03001f60:
+	.global gScanlineAngle
+gScanlineAngle:
 	.space 0x00000004
 	.global gLinkStatus
 gLinkStatus:

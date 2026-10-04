@@ -20,8 +20,10 @@ extern char ResourceId_DefaultMetatileAttributes;
 void Transform_UpdateVertices(void);
 extern u8 Transform_UpdateVerticesSize;
 
-extern u32 Data_03001f60;
-extern u32 Data_03001af4;
+/* The heading and pitch the plane's scanline table was last built for;
+   clearing or changing them makes the next frame rebuild it. */
+extern u32 gScanlineAngle;
+extern u32 gScanlinePitch;
 extern u32 gFrameCount;
 void Blend_SetDarkenTarget0(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
@@ -233,8 +235,8 @@ s32 Map_InitializePerspectiveScene(void)
     } while (0);
     WorldMap_BuildScanlineTable(((RatioFn)0x0300013c)(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles->scanlines);
-    Data_03001f60 = 0;
-    Data_03001af4 = work->pitch;
+    gScanlineAngle = 0;
+    gScanlinePitch = work->pitch;
     ((PlaneFn)((union HeapState *)gWorkSlot)->slots[46])(camera, position, tiles->scanlines,
                                  lines[gFrameCount & 1]);
     position[0] = 0;

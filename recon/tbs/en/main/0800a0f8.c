@@ -70,7 +70,7 @@ struct VertexOut {
 
 
 extern struct FarCallStub WaitFramesFar[];
-extern u32 Data_03001f60;
+extern u32 gScanlineAngle;
 
 extern u32 gFrameCount;
 
@@ -109,8 +109,8 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
     angle = (u16)((ArcTan2Fn)WaitFramesFar[8].target)(x >> 4, z >> 4);
     ox = FIXED_MUL(0x8000, to->x);
     oz = FIXED_MUL(0x8000, to->z);
-    if (angle != Data_03001f60) {
-        Data_03001f60 = angle;
+    if (angle != gScanlineAngle) {
+        gScanlineAngle = angle;
         sn = ((TrigFn)WaitFramesFar[11].target)(angle);
         cs = ((TrigFn)WaitFramesFar[12].target)(angle);
         for (i = 0; i < 160; i++) {

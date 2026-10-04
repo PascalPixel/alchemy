@@ -1,18 +1,21 @@
-/* 2026-10-04 (second-wave finisher 1): alchemy diff 415 -> 293, plain C,
- * no device. The transfer block has its own sprite pointer (te) and the
- * third chain its own node (p), so loop one keeps node r7 / e r6 as the
- * ROM does; slot = 241 is set first in the cursor arm and cnt++ follows
- * node = node->next; the FAKEMATCH step temporary is gone (293 without it).
- * Left: global allocation gives fp to cursor_entry and puts cnt at sp+8;
- * the ROM gives cnt fp and spills cursor_entry, which frees fp for the
- * hoisted -13 in chain three and the tile base in the cursor block. Pinning
- * cnt to fp scores 246, so the rest is mostly that cascade plus local
- * choices (sel copied to r7, p in r7). cnt as u16/s16/u32/register and
- * declaration swaps do not move it.
- * Then 293 -> 265, still plain: p declared after cnt and te->shape stored
- * after te->size (found by a devsearch run whose only device, sel pinned to
- * r0, scores worse than leaving it out).
- * 2026-10-04: current EN score 3560 (162 register-only, 6 operand,
+/* 2026-10-04 (second-wave finisher 1): alchemy diff 415 -> 165 in plain C,
+ * 34 with one tagged pin. What moved it: node is the one function-wide node
+ * pointer, reused for the transfer block's selected node and for the third
+ * chain (separate sel/p locals cost 70+), while the transfer block has its
+ * own sprite pointer te; slot = 241 is set first in the cursor arm; cnt++
+ * follows node = node->next; e->y += vertical_scroll; the transfer y is
+ * node->y + (wobble >> 1) - 4; te->shape is stored after te->size; the old
+ * step temporary, barriers and transfer lifetime devices did nothing and are
+ * gone. Left: global allocation gives fp to cursor_entry and puts cnt at
+ * sp+8; the ROM gives cnt fp and spills cursor_entry. The tagged pin fixes
+ * that; its 34 remaining rows are all in the cursor block, where the ROM
+ * holds the tile base in fp (mov fp, r5; add r2, fp) and reloads cursor
+ * through r4, which the pinned fp cannot reproduce. Tried for the plain
+ * priority: cnt as u16/s16/u32/register, declaration orders (random
+ * permutations, 186 best), cursor_entry volatile (176); for the tile base,
+ * five spellings of the address (34-52).
+ */
+/* 2026-10-04: current EN score 3560 (162 register-only, 6 operand,
  * 21 reordered, 7 inserted, 6 deleted), down from the fresh 5250 baseline.
  * A five-minute, two-worker ordinary-source search found 3710; removed an
  * unnecessary path temporary without changing that score. Replaced raw work
@@ -103,12 +106,12 @@ void MenuSelection_DrawFrame(void)
     /* +0x300 はカーソル節点 (+0x2d8) 自身の表示スロットに当たる。 */
     struct SelectionSprite *cursor_entry = &state->records[14].sprite;
     struct SelectionNode *cursor = &state->records[14];
-    register struct SelectionNode *transfer = &state->records[15];
+    struct SelectionNode *transfer = &state->records[15];
     struct SelectionNode *node;
     struct SelectionSprite *e;
     struct SelectionSprite *te;
-    s32 cnt = 0;
-    struct SelectionNode *p;
+    /* FAKEMATCH: cnt pinned to fp, which plain C gives cursor_entry (165 rows unpinned, 34 pinned). */
+    register s32 cnt asm("fp") = 0;
     s32 slot;
     s32 tmp;
     struct EffectPosition pos;
@@ -121,12 +124,10 @@ void MenuSelection_DrawFrame(void)
         e->affine = 0;
         e->param = 0;
         e->x = node->x;
-        y = (u16)node->y;
+        e->y = node->y;
         slot = 240;
-        e->y = y;
         if (state->vertical_scroll != 0) {
-            /* 画面全体の縦送りが有効な間は移動を止め、そのまま描く。 */
-            e->y = state->vertical_scroll + y;
+            e->y += state->vertical_scroll;
         } else if (node->x != node->target_x) {
             if (node->dx > 0) {
                 if (node->x + node->dx > node->target_x) {
@@ -147,8 +148,6 @@ void MenuSelection_DrawFrame(void)
             if (cursor->kind != 0) {
                 if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
                     cursor->target_x = pos.x;
-                    /* FAKEMATCH: a scheduling barrier the native order needs. */
-                    __asm__("");
                     cursor->target_y = pos.y;
                     if (cursor->scale == 0) {
                         cursor->x = pos.x;
@@ -176,7 +175,7 @@ void MenuSelection_DrawFrame(void)
     }
     /* 二列目: 転送枠。選択中の節点に合わせて拡大縮小しながら描く。 */
     if (transfer->kind != 0) {
-        struct SelectionNode *sel = NodeChain_GetNodeAtCount((u8 *)state);
+        node = NodeChain_GetNodeAtCount((u8 *)state);
         te = &transfer->sprite;
         te->mode = 0;
         te->affine = 0;
@@ -187,10 +186,8 @@ void MenuSelection_DrawFrame(void)
         te->shape = 0;
         te->priority = 0;
         te->tile = transfer->tile;
-        te->x = sel->x - 4;
-        /* FAKEMATCH: a scheduling barrier the native order needs. */
-        __asm__("");
-        te->y = (Data_08036740[(gFrameTick >> 1) & 15] >> 1) + sel->y - 4;
+        te->x = node->x - 4;
+        te->y = node->y + (Data_08036740[(gFrameTick >> 1) & 15] >> 1) - 4;
         if (transfer->scale != transfer->scale_end) {
             state->matrix[0] = transfer->scale;
             state->matrix[1] = transfer->scale;
@@ -209,21 +206,21 @@ void MenuSelection_DrawFrame(void)
     MenuSelection_DrawSideMarker((u8 *)state, 0);
     MenuSelection_DrawSideMarker((u8 *)state, 1);
     /* 三列目: 縦横の移動と倍率を同時に進める節点鎖。 */
-    p = state->path;
-    while (p != 0) {
-        e = &p->sprite;
-        if (p->x != p->target_x) {
-            p->x = p->x + p->dx;
+    node = state->path;
+    while (node != 0) {
+        e = &node->sprite;
+        if (node->x != node->target_x) {
+            node->x = node->x + node->dx;
         }
-        if (p->y != p->target_y) {
-            p->y = p->y + p->dy;
+        if (node->y != node->target_y) {
+            node->y = node->y + node->dy;
         }
-        e->x = p->x;
-        e->y = p->y;
-        if (p->scale != p->scale_end) {
-            p->scale = p->scale + p->scale_step;
-            state->matrix[0] = p->scale;
-            state->matrix[1] = p->scale;
+        e->x = node->x;
+        e->y = node->y;
+        if (node->scale != node->scale_end) {
+            node->scale = node->scale + node->scale_step;
+            state->matrix[0] = node->scale;
+            state->matrix[1] = node->scale;
             state->matrix[2] = 0;
             e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
             e->affine = 3;
@@ -232,8 +229,6 @@ void MenuSelection_DrawFrame(void)
         } else {
             e->affine = 0;
             e->param = 0;
-            /* FAKEMATCH: keeps transfer's lifetime as the native allocates it. */
-            __asm__("" : "+r"(transfer));
         }
         if (GameFlag_IsSet(0x103) != 0) {
             if (state->records[14].kind == 1) {
@@ -241,12 +236,12 @@ void MenuSelection_DrawFrame(void)
             } else {
                 e->mode = 0;
             }
-            if (p->kind == 1) {
+            if (node->kind == 1) {
                 e->mode = 1;
             }
         }
-        p = p->next;
         Runtime_PushSlotEntry((s32 *)e, 240);
+        node = node->next;
     }
     /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
     if (cursor->kind != 0) {

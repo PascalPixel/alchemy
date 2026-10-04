@@ -10,12 +10,14 @@
 #include "FIXED_MATH.H"
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern u8 gMapCellBuffer[];
 extern u8 gBattleFxWork[];
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
-/* One column record at work + 0x7080. */
+/* A growing column of the dual-table effect, laid over one of the work
+   block's particles. */
 struct DualColumn {
     s32 x;
     s32 y;
@@ -25,63 +27,42 @@ struct DualColumn {
     s32 start;
 };
 
-/* One slot of the 512-entry spark pool in gMapCellBuffer; age -1 is free. */
-struct DualSpark {
+/* A puff of dust, one of 512 in the map cell buffer; age -1 is free. */
+struct DualPuff {
     s32 x;
     s32 y;
     u8 unknown_08[16];
     s32 age;
 };
 
-struct DualTableEffect {
-    u8 unknown_00[4];
-    s32 mirror;
-    u8 unknown_08[12];
-    s32 target_count;
-    s32 table;
-    u8 unknown_1c[8];
-    s16 targets[8];
-};
-
-struct DualTableWork {
-    u8 cells[0x7080];
-    struct DualColumn columns[16];
-    u8 unknown_7240[0x540];
-    s32 unknown_7780;
-    s32 unknown_7784;
-    u8 unknown_7788[0x20];
-    s32 cue;
-    u8 unknown_77ac[0x78];
-    s32 transfer_pending;
-    struct DualTableEffect *effect;
-};
-
-extern void *Data_03001e50[];
-extern u8 Data_080eeb4b[];
-extern u16 Data_080eeb4e[];
-extern u8 Data_080eeb48[];
-extern s8 Data_080eeb71[];
-extern u16 Data_080eeb58[];
-extern u8 Data_080eeb54[];
-extern u8 Data_080eeb5e[];
-extern u8 Data_080eeb61[];
-extern s8 Data_080eeb79[];
-extern u8 Data_080eeb80[];
-extern u16 Data_080eeb88[];
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+/* Per variant: how many columns rise. Per column: where it stands and,
+   by thirds, how tall it may grow. */
+extern u8 DualTable_ColumnCounts[];
+extern u8 DualTable_ColumnX[];
+extern u8 DualTable_HeightLimits[];
+/* The three vine and three pillar images: width and sheet offset. A
+   pillar column is also cut to its height by its place in eight. */
+extern u8 DualTable_VineWidths[];
+extern u16 DualTable_VineCells[];
+extern u8 DualTable_PillarWidths[];
+extern u16 DualTable_PillarCells[];
+extern s8 DualTable_PillarHeights[];
+/* The dust puff's seven images by age: width, height and sheet offset. */
+extern s8 DualTable_PuffWidths[];
+extern u8 DualTable_PuffHeights[];
+extern u16 DualTable_PuffCells[];
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
 
 typedef struct Column {
     s32 x;
     s32 unused[6];
 } Column;
 
-extern u8 gWorkSlot[];
+extern void *gWorkSlot[];
 extern s8 RisingColumns_ColumnOffsets[];
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void Audio_PlayCue(s32);
@@ -111,27 +92,26 @@ struct PillarWork {
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattleFx_RunDualTable(void *object, s32 arg1);
+void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode);
 
-/* battle/effects/dual_table/run_mode0.c */
-void BattleFx_RunDualTableMode0(s32 arg0)
+/* The vines. */
+void BattleFx_RunDualTableMode0(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunDualTable(arg0, 0);
+    BattleFx_RunDualTable(effect, 0);
 }
 
-/* battle/effects/dual_table/run_mode1.c */
-void BattleFx_RunDualTableMode1(s32 arg0)
+/* The green pillars. */
+void BattleFx_RunDualTableMode1(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunDualTable(arg0, 1);
+    BattleFx_RunDualTable(effect, 1);
 }
 
-/* Battle effect with two variants: arg1 picks resource 0x83 or 0x84 and the
-   matching cell tables. It seeds one column per table entry in the 28-byte
-   records at work + 0x7080 (x, y, height limit, start frame), then for each
-   frame grows every started column upward, drawing it with the two
-   alternating rectangle blitters. Four frames after a column starts it cues
-   the effect targets and drops a spark into gMapCellBuffer's 512-slot pool;
-   the sparks are drawn and aged every frame. A sibling of MEMBER_ORBIT.C.
+/* Vines (mode 0) or green pillars (mode 1) shoot up from the ground in a
+   row of columns, as many as the effect's variant asks for. Each column
+   starts four frames after the last and grows eight lines a frame up to its
+   height; four frames after it starts the targets react, and on that frame
+   and four frames later a puff of dust rises at its foot. The puffs live in
+   a 512-slot pool in the map cell buffer, age -1 marking a free slot.
 
    Shape notes, measured against the ROM:
    - One i serves every loop, which gives it a live range long enough to put
@@ -141,230 +121,220 @@ void BattleFx_RunDualTableMode1(s32 arg0)
      derives the target id offset from its index the same way, so both
      inductions are seeded after the hoisted invariants as in the ROM.
    - The spawn scan is a while loop whose free-slot case breaks out.
-   - The spark blits halve a signed table byte with a plain / 2. */
-void BattleFx_RunDualTable(void *object, s32 arg1)
+   - The puff blits halve a signed table byte with a plain / 2. */
+void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 {
     void **heap_cache;
     void **cursor;
-    struct DualTableWork *work;
-    s32 mode;
-    void *draw_destination;
-    s32 status;
+    struct BattleEffectWork *work;
+    void *canvas;
     void *rectangle[2];
     void *second_slot;
 
-    s32 sp24;
-    s32 sp20;
-    void **slot_pair;
-    s32 sp18;
-    s32 sp14;
-    s32 sp10;
-    s32 sp0C;
+    s32 frame;
+    s32 duration;
+    void **draw;
+    s32 cue_frame;
+    s32 fade_start;
+    s32 fade_end;
+    s32 start;
 
-    u8 *slot_cursor;
+    u8 *age;
 
     struct DualColumn *seed;
-    s32 temp_r2_134;
-    s32 temp_r5_140;
-    s32 temp_r3_145;
+    s32 x;
+    s32 height;
+    s32 limit;
 
-    u8 *cell_base;
+    s32 puff_cells;
     struct DualColumn *column;
-    s32 var_r5_297;
-    s32 temp_r3_298;
-    u8 temp_r4_315;
-    s8 temp_r3_335;
-    u8 temp_r4_348;
+    s32 length;
+    s32 reach;
+    s8 pillar_height;
 
     s32 n;
-    s32 id_offset;
-    s32 cue_frame;
+    s32 react_frame;
 
 
     s32 i;
-    struct DualSpark *spark;
-    s32 temp_r2_474;
-    s32 temp_r7_481;
-    s8 temp_r5_490;
-    s8 temp_r4_498;
-    s8 temp_r4_518;
-    s32 temp_r3_538;
+    struct DualPuff *puff;
+    s32 puff_age;
+    s32 image;
 
-    mode = arg1;
 
     heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
-    draw_destination = *cursor;
-    work->effect = object;
+    canvas = *cursor;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(s16 *)0x04000020 = 0x100;
-    *(s16 *)0x04000050 = 0;
+    REG_BG2PA = 0x100;
+    REG_BLDCNT = 0;
     if (mode == 1) {
         Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work, 1, 1);
     } else {
         Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work, 1, 1);
     }
-    if (work->effect->mirror == 1) {
-        *(s32 *)0x04000028 = 0xFFFF9000;
+    if (work->effect->side == 1) {
+        REG_BG2X = -0x7000;
     }
-    status = BattleEffect_LoadWork(46, 7, 7, 3, 1);
-    rectangle[0] = Data_03001e50[46];
-    status = BattleEffect_LoadWork(47, 7, 7, 7, 1);
-    second_slot = Data_03001e50[47];
-    slot_pair = rectangle;
-    slot_pair[1] = second_slot;
+    BattleEffect_LoadWork(46, 7, 7, 3, 1);
+    rectangle[0] = gWorkSlot[46];
+    BattleEffect_LoadWork(47, 7, 7, 7, 1);
+    second_slot = gWorkSlot[47];
+    /* FAKEMATCH: the columns draw through a second pointer to the pair, whose address the frame keeps in a stack slot. */
+    draw = rectangle;
+    draw[1] = second_slot;
 
-    sp20 = Data_080eeb5e[work->effect->table] * 4 + 0x38;
+    duration = DualTable_ColumnCounts[work->effect->variant] * 4 + 56;
 
-    slot_cursor = gMapCellBuffer + 0x18;
+    age = gMapCellBuffer + 0x18;
     i = 0;
     do {
         i += 1;
-        *(s32 *)slot_cursor = -1;
-        slot_cursor += 28;
+        *(s32 *)age = -1;
+        age += sizeof(struct DualPuff);
     } while (i != 0x400);
 
     i = 0;
-    seed = work->columns;
+    seed = (struct DualColumn *)work->particles;
     do {
-        temp_r2_134 = (Data_080eeb61[i] + (7 & Random16())) - 4;
-        seed->y = i / 2 + 0x6C;
-        seed->x = temp_r2_134;
-        temp_r5_140 = (63 & Random16()) + 0x37;
-        seed->height = temp_r5_140;
-        temp_r3_145 = Data_080eeb4b[i % 3];
-        if (temp_r3_145 < temp_r5_140) {
-            seed->height = temp_r3_145;
+        x = (DualTable_ColumnX[i] + (7 & Random16())) - 4;
+        seed->y = i / 2 + 108;
+        seed->x = x;
+        height = (63 & Random16()) + 55;
+        seed->height = height;
+        limit = DualTable_HeightLimits[i % 3];
+        if (limit < height) {
+            seed->height = limit;
         }
-        temp_r3_145 = i * 4 + 8;
-        seed->start = temp_r3_145;
+        limit = i * 4 + 8;
+        seed->start = limit;
         i += 1;
         seed++;
     } while (i != 16);
 
-    work->unknown_7780 = 1;
-    work->unknown_7784 = 0;
-    Scheduler_AddOrUpdateCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    sp24 = 0;
-    if (sp20 != 0) {
-        sp18 = sp20 - 64;
-        sp14 = sp20 - 20;
-        sp10 = sp20 - 4;
+    frame = 0;
+    if (duration != 0) {
+        cue_frame = duration - 64;
+        fade_start = duration - 20;
+        fade_end = duration - 4;
         do {
-            if (sp24 == sp18) {
-                Func_080b50e8(0x84);
+            if (frame == cue_frame) {
+                BattleEventRuntime_BeginPhaseFar(0x84);
             }
-            if (sp24 >= sp14 && sp24 < sp10) {
-                *(s16 *)0x04000050 = 0x3F44;
-                *(s16 *)0x04000052 = ((sp20 - sp24) - 5) | 0x1000;
+            if (frame >= fade_start && frame < fade_end) {
+                REG_BLDCNT = 0x3F44;
+                REG_BLDALPHA = ((duration - frame) - 5) | 0x1000;
             }
-            if (sp24 < sp10) {
+            if (frame < fade_end) {
                 i = 0;
-                if (Data_080eeb5e[work->effect->table] != 0) {
+                if (DualTable_ColumnCounts[work->effect->variant] != 0) {
                     do {
-                        column = (struct DualColumn *)((u8 *)work + 0x7080 + i * 0x1C);
-                        sp0C = i * 4 + 8;
-                        if (sp24 == ((i * 4) + 9)) {
-                            work->cue = 2;
+                        column = (struct DualColumn *)((u8 *)work->particles + i * sizeof(struct DualColumn));
+                        start = i * 4 + 8;
+                        if (frame == i * 4 + 9) {
+                            work->shake_frames = 2;
                         }
-                        if (sp24 > sp0C) {
-                            u32 texture_index = i % 3;
+                        if (frame > start) {
+                            u32 shape = i % 3;
 
-                            var_r5_297 = (sp24 - sp0C) * 8;
-                            temp_r3_298 = column->height;
-                            if (var_r5_297 > temp_r3_298) {
-                                var_r5_297 = temp_r3_298;
+                            length = (frame - start) * 8;
+                            reach = column->height;
+                            if (length > reach) {
+                                length = reach;
                             }
                             if (mode == 0) {
                                 {
-                                    s32 sel = 1 & i;
-                                    s32 cell = Data_080eeb4e[texture_index];
-                                    texture_index = Data_080eeb48[texture_index];
-                                    ((DrawRectangleFn)slot_pair[sel])(draw_destination, (u8 *)work + cell,
-                                        column->x - (texture_index >> 1),
-                                        column->y - var_r5_297, texture_index, var_r5_297);
+                                    s32 side = 1 & i;
+                                    s32 cell = DualTable_VineCells[shape];
+                                    shape = DualTable_VineWidths[shape];
+                                    ((DrawRectangleFn)draw[side])(canvas, work->sheet + cell,
+                                        column->x - (shape >> 1),
+                                        column->y - length, shape, length);
                                 }
                             } else {
-                                temp_r3_335 = Data_080eeb71[7 & i];
-                                if (var_r5_297 > temp_r3_335) {
-                                    var_r5_297 = temp_r3_335;
+                                pillar_height = DualTable_PillarHeights[7 & i];
+                                if (length > pillar_height) {
+                                    length = pillar_height;
                                 }
                                 {
-                                    s32 sel = 1 & i;
-                                    s32 cell = Data_080eeb58[texture_index];
-                                    texture_index = Data_080eeb54[texture_index];
-                                    ((DrawRectangleFn)slot_pair[sel])(draw_destination, (u8 *)work + cell,
-                                        column->x - (texture_index >> 1),
-                                        column->y - var_r5_297, texture_index, var_r5_297);
+                                    s32 side = 1 & i;
+                                    s32 cell = DualTable_PillarCells[shape];
+                                    shape = DualTable_PillarWidths[shape];
+                                    ((DrawRectangleFn)draw[side])(canvas, work->sheet + cell,
+                                        column->x - (shape >> 1),
+                                        column->y - length, shape, length);
                                 }
                             }
                         }
                         n = 0;
-                        if (work->effect->target_count != 0) {
-                            cue_frame = sp0C + 4;
+                        if (work->effect->count != 0) {
+                            react_frame = start + 4;
                             do {
-                                id_offset = n * 2 + 0x24;
-                                if (sp24 == cue_frame) {
+                                if (frame == react_frame) {
                                     if (!(i & 1)) {
-                                        Func_080f9010(0x85);
+                                        Audio_PlayCue(0x85);
                                     }
-                                    ObjectGroup_UpdateMembers(*(s16 *)((u8 *)work->effect + id_offset), 7, 5, n, 3);
+                                    ObjectGroup_UpdateMembers(work->effect->actors[n], 7, 5, n, 3);
                                 }
                                 n += 1;
-                            } while (n != work->effect->target_count);
+                            } while (n != work->effect->count);
                         } else {
-                            cue_frame = sp0C + 4;
+                            react_frame = start + 4;
                         }
-                        if ((sp24 == cue_frame) || (sp24 == (sp0C + 8))) {
-                            var_r5_297 = (u32)gMapCellBuffer;
+                        if ((frame == react_frame) || (frame == (start + 8))) {
+                            /* FAKEMATCH: the scan reuses length as its puff pointer; a pointer variable of its own takes another register. */
+                            length = (u32)gMapCellBuffer;
                             n = 0;
                             while (n != 0x200) {
-                                if (((struct DualSpark *)var_r5_297)->age == -1) {
-                                    ((struct DualSpark *)var_r5_297)->x = ((Random16() & 0xF) + column->x) - 8;
-                                    ((struct DualSpark *)var_r5_297)->y = (Random16() & 0xF) + 0x50;
-                                    ((struct DualSpark *)var_r5_297)->age = 0;
+                                if (((struct DualPuff *)length)->age == -1) {
+                                    ((struct DualPuff *)length)->x = ((Random16() & 0xF) + column->x) - 8;
+                                    ((struct DualPuff *)length)->y = (Random16() & 0xF) + 80;
+                                    ((struct DualPuff *)length)->age = 0;
                                     break;
                                 }
-                                var_r5_297 += 0x1C;
+                                length += sizeof(struct DualPuff);
                                 n += 1;
                             }
                         }
                         i += 1;
-                    } while (i != Data_080eeb5e[work->effect->table]);
+                    } while (i != DualTable_ColumnCounts[work->effect->variant]);
                 }
             }
 
             i = 0;
-            spark = (struct DualSpark *)gMapCellBuffer;
+            puff = (struct DualPuff *)gMapCellBuffer;
             do {
-                temp_r2_474 = spark->age;
-                if (temp_r2_474 >= 0) {
-                    temp_r7_481 = temp_r2_474 / 2;
-                    cell_base = (u8 *)0x1E59;
+                puff_age = puff->age;
+                if (puff_age >= 0) {
+                    image = puff_age / 2;
+                    puff_cells = 0x1e59;
                     if (mode != 0) {
-                        cell_base = (u8 *)0xAFF;
+                        puff_cells = 0xaff;
                     }
                     ((DrawRectangleFn)rectangle[0])(
-                        draw_destination,
-                        (u8 *)work + (Data_080eeb88[temp_r7_481] + (s32)cell_base),
-                        spark->x - Data_080eeb79[temp_r7_481],
-                        spark->y - (s8)Data_080eeb80[temp_r7_481] / 2,
-                        Data_080eeb79[temp_r7_481], (s8)Data_080eeb80[temp_r7_481]);
+                        canvas,
+                        work->sheet + (DualTable_PuffCells[image] + puff_cells),
+                        puff->x - DualTable_PuffWidths[image],
+                        puff->y - (s8)DualTable_PuffHeights[image] / 2,
+                        DualTable_PuffWidths[image], (s8)DualTable_PuffHeights[image]);
                     ((DrawRectangleFn)rectangle[1])(
-                        draw_destination,
-                        (u8 *)work + (Data_080eeb88[temp_r7_481] + (s32)cell_base),
-                        spark->x,
-                        spark->y - (s8)Data_080eeb80[temp_r7_481] / 2,
-                        Data_080eeb79[temp_r7_481], (s8)Data_080eeb80[temp_r7_481]);
-                    temp_r3_538 = spark->age + 1;
-                    spark->age = temp_r3_538;
-                    if (temp_r3_538 == 0xE) {
-                        spark->age = -1;
+                        canvas,
+                        work->sheet + (DualTable_PuffCells[image] + puff_cells),
+                        puff->x,
+                        puff->y - (s8)DualTable_PuffHeights[image] / 2,
+                        DualTable_PuffWidths[image], (s8)DualTable_PuffHeights[image]);
+                    puff->age++;
+                    if (puff->age == 14) {
+                        puff->age = -1;
                     }
                 }
-                spark++;
+                puff++;
                 i += 1;
             } while (i != 0x200);
 
@@ -372,12 +342,12 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
             ObjectGroup_TickMemberTimers();
             work->transfer_pending = 1;
             WaitFrames(1);
-            sp24 += 1;
-        } while (sp24 != sp20);
+            frame += 1;
+        } while (frame != duration);
     }
-    Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }
 
@@ -396,7 +366,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     s32 i, frame, cell, height, offset, middle;
     Column *column;
 
-    cache = (u32 *)(gWorkSlot + 39 * 4);
+    cache = (u32 *)(gWorkSlot + 39);
     entry = cache;
     work = (struct BattleEffectWork *)*entry++;
     dst = (void *)*entry;
@@ -490,7 +460,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     s32 age;
     s32 start;
 
-    cache = (u32 *)(gWorkSlot + 39 * 4);
+    cache = (u32 *)(gWorkSlot + 39);
     cursor = cache;
     work = (struct PillarWork *)*cursor++;
     dst = (void *)*cursor;

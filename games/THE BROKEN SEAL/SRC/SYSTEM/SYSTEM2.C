@@ -44,12 +44,12 @@ void System_VBlankHandler(void)
     }
     Func_080f9018();
     BlendTransition_Update();
-    if (Data_03001e44 != 0) {
+    if (gFrameRenderPending != 0) {
         if (gOamCopyEnabled != 0)
             Dma_Set(((union HeapState *)gWorkSlot)->slots[52], OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
         Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
         IoWriteQueue_FlushPending();
-        Data_03001e44 = 0;
+        gFrameRenderPending = 0;
     }
     hook = Data_03001cfc;
     if (hook != 0) {
@@ -78,8 +78,8 @@ void System_VBlankHandler(void)
     }
     Data_03001d0c = keys;
     gFrameTick++;
-    Data_03001ccc++;
-    Data_03001d28 = 1;
+    gLagFrameCount++;
+    gVBlankDone = 1;
     Func_080006fc();
 }
 

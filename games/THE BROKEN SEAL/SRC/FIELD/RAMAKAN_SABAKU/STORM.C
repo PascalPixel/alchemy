@@ -118,7 +118,7 @@ void RamakanSabaku_RunSandstorm(void)
     QueueIoWriteDelay3((u32)palette++, *word++);
     QueueIoWriteDelay3((u32)palette++, *word++);
 
-    RamakanSabaku_SandLevel = gGameState.unknown_232 * 120 / (s16)gGameState.unknown_22c;
+    RamakanSabaku_SandLevel = gGameState.hazard_steps * 120 / gGameState.hazard_limit;
     if (RamakanSabaku_SandLevel > 118) {
         RamakanSabaku_SandFlash = 119;
     }

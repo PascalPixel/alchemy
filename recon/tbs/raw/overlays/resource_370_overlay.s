@@ -398,7 +398,7 @@ Func_020003cc:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -448,7 +448,7 @@ Func_020003cc:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -498,7 +498,7 @@ Func_020003cc:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -693,7 +693,7 @@ Clear_LoadFourthSlot:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -759,7 +759,7 @@ Clear_LoadFourthSlot:
 .L_020086cc:
 	.4byte 0x00000002
 .L_020086d0:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 .L_020086d4:
 	.4byte gDebugMode
 .L_020086d8:
@@ -936,15 +936,15 @@ Clear_LoadFourthSlot:
 	.ifndef TBS_EDITION_FR
 	.else
 .L_02008878:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 	.endif
 	.else
 .L_02008878:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 	.endif
 	.else
 .L_02008878:
-	.4byte Data_03001ca0
+	.4byte gSleepDisabled
 	.endif
 	.ifndef TBS_EDITION_EN
 	.ifndef TBS_EDITION_DE

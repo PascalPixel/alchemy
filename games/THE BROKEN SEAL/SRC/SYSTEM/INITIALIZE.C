@@ -10,9 +10,9 @@ void System_VBlankHandler(void);
 extern u8 Data_03001ac4;
 extern u8 gDebugMode;
 extern u8 gCpuLoadDisplayEnabled;
-extern s32 Data_03007800;
+extern s32 gCartridgeResetMarker;
 extern u8 gOamCopyEnabled;
-extern u8 Data_03001ca0;
+extern u8 gSleepDisabled;
 
 
 void Resource_LoadWorkHeader(void);
@@ -67,9 +67,9 @@ void System_Initialize(void)
     Audio_InitializeRuntimeDefaultsFar();
     Resource_InitializeTable();
     Scheduler_ResetTaskTable();
-    Data_03007800 = 0;
+    gCartridgeResetMarker = 0;
     gOamCopyEnabled = 1;
-    Data_03001ca0 = 0;
+    gSleepDisabled = 0;
     WaitFrames(10);
     Game_ResetForNewGameFar(0);
 }

@@ -380,7 +380,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
             Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet + 0x65c0, 1, 0);
         }
 
-        if (work->effect->with_djinni == 1) {
+        if (work->effect->prelude == 1) {
             s32 orbit;
             s32 x;
             s32 y;
@@ -506,7 +506,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
     for (frame = 0; frame != 96; frame++) {
         if (frame > 16)
             BattleFx_StepPaletteToResource((s32)&ResourceId_PortalSheet);
-        if (work->effect->with_djinni == 1) {
+        if (work->effect->prelude == 1) {
             s32 angle = frame << 11;
             s32 x = ((-Trig_Sin(angle) << 2) >> 16) + screen_x / 2 - 10;
             s32 y = ((Trig_Cos(angle) << 1) >> 16) + screen_y - 22;

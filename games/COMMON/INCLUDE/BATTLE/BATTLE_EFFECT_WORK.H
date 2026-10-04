@@ -79,8 +79,9 @@ struct BattleEffectArgument {
     s32 unknown_0010;
     s32 count;
     s32 variant;
-    /* 1 when a djinni appears beside the effect. */
-    s32 with_djinni;
+    /* 1 when the effect draws its own casting prelude; the casting impact
+       clears it before handing over to a follow-up effect. */
+    s32 prelude;
     s32 unknown_0020;
     s16 actors[8];
 };

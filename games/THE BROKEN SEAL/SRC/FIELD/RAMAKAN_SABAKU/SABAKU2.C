@@ -504,7 +504,7 @@ void RamakanSabaku_SweepBack(void)
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x104, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
     hold = (u16 *)(work + 0xcba);
-    progress = &gGameState.unknown_232;
+    progress = &gGameState.hazard_steps;
     zero = 0;
     do {
         /* The hold is set from a word local to the loop, as the game builds it there each pass. */

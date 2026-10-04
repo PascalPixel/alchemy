@@ -113,7 +113,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     shift = 0;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    if (work->effect->with_djinni == 1) {
+    if (work->effect->prelude == 1) {
         s32 kind = mode == 6 ? 2 : 1;
 
         if (mode == 6 || mode == 0)
@@ -233,7 +233,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 
         if (frame == 40)
             BattleEventRuntime_BeginPhaseFar(0);
-        if (work->effect->with_djinni == 1) {
+        if (work->effect->prelude == 1) {
             if (narrow == 0) {
                 s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
                 s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;

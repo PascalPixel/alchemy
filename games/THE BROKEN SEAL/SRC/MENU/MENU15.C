@@ -30,7 +30,7 @@ void Func_080b0038(void *object, s32 x, s32 y);
 
 extern volatile u32 Data_03001c94;
 extern volatile u32 gKeysRepeat;
-extern u8 Data_03001ca0;
+extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
 extern u8 MsgMessageSpeedSetting;
 extern u8 MsgSpeechSetting;
@@ -195,7 +195,7 @@ s32 Menu_RunWorkspaceOptions(void)
             page = (page + 5) % 5;
             work->option[page] = (work->option[page] + work->option_count[page]) % work->option_count[page];
             work->page = page;
-            if (Data_03001ca0 != 0)
+            if (gSleepDisabled != 0)
                 work->option[4] = 0;
 
             for (i = 0; i <= 2; i++) {

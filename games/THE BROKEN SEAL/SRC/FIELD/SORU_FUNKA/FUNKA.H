@@ -32,11 +32,6 @@ typedef struct {
 } Ent;
 
 typedef struct {
-    u8 filler0[6];
-    u16 unk6;
-} Ent_02002820;
-
-typedef struct {
     u8 unk[9];
     u8 unk0 : 2;
     u8 mode : 2;
@@ -109,7 +104,7 @@ s32 Engine_TaskAddCallback(void (*)(), s32);
 void FieldScene_RunVariantStep();
 void FieldEffect_InitSparkles(void);
 void SceneState_ForwardByRuntimeWordBits(s32 object);
-void SceneActor_MoveTo232_125AndFace4000(s32 no);
+void SoruFunka_PlaceBeforeStar(s32 actor);
 void SceneState_ApplyRectsByCondition(s32 a);
 void SceneState_ApplyRectPairByFlag(s32 a);
 void FieldScene_RunRandomHalfBranch(void);

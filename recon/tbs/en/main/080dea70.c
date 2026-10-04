@@ -92,7 +92,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
         BattleFx_BeginCanvasLayer(0);
     else
         BattleFx_BeginCanvasLayer(1);
-    if (work->effect->with_djinni == 1)
+    if (work->effect->prelude == 1)
         BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screen_x, &screen_y);
     if (mode == 5) {
         if (work->effect->side == 1)
@@ -225,7 +225,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
             if (frame == 16)
                 BattleEventRuntime_BeginPhaseFar(133);
         }
-        if (work->effect->with_djinni == 1) {
+        if (work->effect->prelude == 1) {
             s32 x = (-Trig_Sin(frame << 11) << 2 >> 16) + screen_x / 2 - 10;
             s32 y = (Trig_Cos(frame << 11) << 1 >> 16) + screen_y - 24;
 

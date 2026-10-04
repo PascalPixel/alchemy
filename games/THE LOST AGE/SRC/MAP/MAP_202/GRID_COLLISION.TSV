@@ -1,18 +1,18 @@
 cell:u8	grid:128x128	fill:0	at:10,0
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1
 
 
 ff
 
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-00 00 ff ff 00 ff 00 00 00 00 00 00 00 00 00 00 00 ff ff
-00 00 ff 00 00 00 ff 00 00 00 ff ff ff 00 00 00 ff ff
-00 00 ff 00 00 00 00 ff 00 ff ff ff ff
-00 00 00 00 00 00 00 00 ff 00 00 02 00 00 00 ff
-00 00 ff ff 00 00 00 00 00 00 00 00 00 00 ff
-00 00 00 ff ff ff 00 ff 00 00 00 00 00 ff ff
-00 00 00 00 00 ff ff ff
-00 00 00 00 00 00 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+0 0 ff ff 0 ff 0 0 0 0 0 0 0 0 0 0 0 ff ff
+0 0 ff 0 0 0 ff 0 0 0 ff ff ff 0 0 0 ff ff
+0 0 ff 0 0 0 0 ff 0 ff ff ff ff
+0 0 0 0 0 0 0 0 ff 0 0 2 0 0 0 ff
+0 0 ff ff 0 0 0 0 0 0 0 0 0 0 ff
+0 0 0 ff ff ff 0 ff 0 0 0 0 0 ff ff
+0 0 0 0 0 ff ff ff
+0 0 0 0 0 0 ff
 
 
 
@@ -63,17 +63,17 @@ ff
 
 
 
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1
 
 
 ff
-00 00 ff ff ff ff
-00 00 ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 ff
-00 00 ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 ff ff
-00 00 ff 00 00 00 ff 00 00 00 00 00 00 00 00 00 ff ff
-00 00 ff 00 00 00 00 ff
-00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 ff
-00 00 ff ff 00 00 00 00 ff 00 00 00 00 00 ff
-00 00 ff ff ff ff 00 ff ff 00 00 00 00 ff ff
-00 00 00 00 ff ff 00 ff
-00 00 ff ff ff ff ff ff
+0 0 ff ff ff ff
+0 0 ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 ff
+0 0 ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 ff ff
+0 0 ff 0 0 0 ff 0 0 0 0 0 0 0 0 0 ff ff
+0 0 ff 0 0 0 0 ff
+0 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 ff
+0 0 ff ff 0 0 0 0 ff 0 0 0 0 0 ff
+0 0 ff ff ff ff 0 ff ff 0 0 0 0 ff ff
+0 0 0 0 ff ff 0 ff
+0 0 ff ff ff ff ff ff

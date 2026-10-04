@@ -1,89 +1,59 @@
 cell:u8	grid:128x128	fill:0	at:2,1
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 21 2b
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 22 2c
-00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 00 23 2d
-00 00 00 ff ff ff ff ff ff 02 ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ff 00 ff
-00 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 07 ff ff
-00 00 00 ff 00 00 ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff 00 00 00 ff
-00 00 00 ff 00 ff ff ff 00 00 ff ff ff 00 00 ff 00 00 00 00 00 00 ff 22 00 00 00 ff ff 00 00 00 00 00 00 00 ff ff 00 00 00 ff ff
-00 00 00 ff ff 00 ff 00 00 00 ff ff ff 00 00 ff 00 00 00 00 00 00 ff 22 00 00 00 00 ff 00 00 00 00 00 00 00 ff 00 00 00 00 22 ff
-00 00 00 00 ff 00 00 00 00 00 ff ff ff ff ff ff 00 00 00 00 00 00 ff 22 00 00 00 00 ff 00 00 00 00 00 00 00 ff 00 00 00 00 22 ff
-00 00 00 00 ff 00 00 00 00 00 ff 00 00 00 ff ff ff ff ff ff 00 00 ff 22 ff ff 00 00 ff ff 00 00 00 00 00 ff ff 00 00 00 00 22 ff
-ff ff ff ff ff 00 00 00 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff 22 33 33 33 00 ff ff 00 00 00 00 00 ff ff 00 35 35 35 22 ff
-ff 00 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 ff 00 00 ff 22 00 00 00 00 00 ff 00 00 00 00 00 ff 00 00 00 ff ff 22 ff
-ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 ff 22 00 00 00 00 00 ff 00 00 00 00 00 ff 00 00 00 00 00 22 ff
-ff 00 00 ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 ff 22 00 00 00 00 00 ff 00 00 00 00 00 ff 00 00 00 00 00 22 ff
-ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff 00 00 ff 00 00 ff 22 00 00 00 00 00 ff 00 00 00 00 00 ff 00 00 00 00 00 22 ff
-ff 00 00 ff ff ff ff ff ff ff ff ff ff 00 00 ff ff 00 00 ff 00 00 ff 22 00 00 00 00 00 ff 00 ff ff ff 00 ff 00 00 00 00 00 22 ff
-ff 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff 00 00 ff 00 00 ff 22 32 32 32 32 00 ff ff ff 06 ff ff ff 00 34 34 34 34 22 ff
-ff 00 00 00 00 00 00 00 00 ff ff ff ff 00 00 ff ff 00 00 ff 00 00 ff 22 00 ff 00 00 00 00 22 00 00 00 22 00 00 00 00 00 00 22 ff
-ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff 00 00 ff 00 00 ff 00 00 00 00 00 00 00 22 22 00 22 22 00 00 00 00 00 00 00 ff
-00 00 00 00 00 00 ff 00 00 00 ff 00 00 00 00 ff ff 00 00 ff 00 00 ff 00 00 00 00 00 00 00 00 22 00 22 00 00 00 00 00 00 00 00 ff
-00 00 00 00 ff ff ff 00 00 ff ff ff 00 00 ff ff ff 00 00 ff 00 00 ff ff 00 00 00 00 00 00 00 22 22 22 00 00 00 00 00 00 00 ff ff
-00 00 00 ff ff 01 ff 00 00 00 ff 00 00 00 ff ff ff 00 00 ff 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-00 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff ff ff 00 00 ff
-00 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
-00 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff
-00 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 21 2b
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 22 2c
+0 0 0 0 0 0 0 0 ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 23 2d
+0 0 0 ff ff ff ff ff ff 2 ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ff 0 ff
+0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 7 ff ff
+0 0 0 ff 0 0 ff 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 ff 0 ff ff ff 0 0 ff ff ff 0 0 ff 0 0 0 0 0 0 ff 22 0 0 0 ff ff 0 0 0 0 0 0 0 ff ff 0 0 0 ff ff
+0 0 0 ff ff 0 ff 0 0 0 ff ff ff 0 0 ff 0 0 0 0 0 0 ff 22 0 0 0 0 ff 0 0 0 0 0 0 0 ff 0 0 0 0 22 ff
+0 0 0 0 ff 0 0 0 0 0 ff ff ff ff ff ff 0 0 0 0 0 0 ff 22 0 0 0 0 ff 0 0 0 0 0 0 0 ff 0 0 0 0 22 ff
+0 0 0 0 ff 0 0 0 0 0 ff 0 0 0 ff ff ff ff ff ff 0 0 ff 22 ff ff 0 0 ff ff 0 0 0 0 0 ff ff 0 0 0 0 22 ff
+ff ff ff ff ff 0 0 0 0 ff ff ff 0 0 ff ff ff ff ff ff 0 0 ff 22 33 33 33 0 ff ff 0 0 0 0 0 ff ff 0 35 35 35 22 ff
+ff 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 0 0 ff 0 0 ff 22 0 0 0 0 0 ff 0 0 0 0 0 ff 0 0 0 ff ff 22 ff
+ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 ff 22 0 0 0 0 0 ff 0 0 0 0 0 ff 0 0 0 0 0 22 ff
+ff 0 0 ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 ff 22 0 0 0 0 0 ff 0 0 0 0 0 ff 0 0 0 0 0 22 ff
+ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 ff ff 0 0 ff 0 0 ff 22 0 0 0 0 0 ff 0 0 0 0 0 ff 0 0 0 0 0 22 ff
+ff 0 0 ff ff ff ff ff ff ff ff ff ff 0 0 ff ff 0 0 ff 0 0 ff 22 0 0 0 0 0 ff 0 ff ff ff 0 ff 0 0 0 0 0 22 ff
+ff 0 0 0 0 0 0 0 0 ff ff ff ff ff ff ff ff 0 0 ff 0 0 ff 22 32 32 32 32 0 ff ff ff 6 ff ff ff 0 34 34 34 34 22 ff
+ff 0 0 0 0 0 0 0 0 ff ff ff ff 0 0 ff ff 0 0 ff 0 0 ff 22 0 ff 0 0 0 0 22 0 0 0 22 0 0 0 0 0 0 22 ff
+ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 ff ff 0 0 ff 0 0 ff 0 0 0 0 0 0 0 22 22 0 22 22 0 0 0 0 0 0 0 ff
+0 0 0 0 0 0 ff 0 0 0 ff 0 0 0 0 ff ff 0 0 ff 0 0 ff 0 0 0 0 0 0 0 0 22 0 22 0 0 0 0 0 0 0 0 ff
+0 0 0 0 ff ff ff 0 0 ff ff ff 0 0 ff ff ff 0 0 ff 0 0 ff ff 0 0 0 0 0 0 0 22 22 22 0 0 0 0 0 0 0 ff ff
+0 0 0 ff ff 1 ff 0 0 0 ff 0 0 0 ff ff ff 0 0 ff 0 0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+0 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff ff ff 0 0 ff
+0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff
+0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff
+0 0 0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
 
 
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff
-00 00 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 08 ff ff
-00 00 00 00 00 ff ff ff ff ff ff 03 ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff
-00 00 00 00 00 ff 00 00 00 00 2b 00 2b 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff
-00 00 00 00 00 ff 00 ff ff ff 00 2c 00 ff 00 ff 00 ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff
-00 00 00 00 00 ff 00 00 00 00 2c ff 00 00 00 00 2c ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 ff ff
-00 00 00 00 00 ff ff 2c ff 00 00 00 ff 00 ff 2b 00 ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 ff ff
-00 00 00 00 00 ff 00 00 00 ff ff 00 00 ff 00 00 00 ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 ff ff
-00 00 ff ff ff ff 1e 1e 1e ff ff 1e 1e 2b 1e 1e ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff
-00 ff ff 00 ff ff 00 ff 2c 00 2b 00 00 00 ff 2b ff ff ff 00 ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff
-00 ff 00 00 ff ff 2c 00 00 00 ff 00 00 ff 00 00 00 ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff
-00 ff 00 00 ff ff 00 00 ff 2c ff 00 00 2c ff 00 ff ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 ff ff
-00 ff 00 00 ff ff 00 00 ff 00 00 2b 2c 00 00 2b 00 ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 ff ff
-00 ff 00 00 ff ff ff 1f 1f ff ff ff ff 1f 1f ff 1f ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 ff ff
-00 ff 00 00 ff ff ff 00 ff ff ff ff ff ff 00 2c 00 ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff
-00 ff 00 00 ff ff 00 2b 00 ff 2c 00 00 00 ff 00 00 ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff 00 00 00 ff
-00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff ff ff ff ff 00 00 00 ff
-00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 ff
-00 ff 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 ff
-00 ff 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff ff ff ff ff ff ff ff ff
-00 ff 00 00 ff ff ff ff ff ff ff 05 ff ff ff ff ff ff ff 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff ff 00 ff ff
-00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 ff 04 ff
-00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 00 ff ff ff
-00 ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff
-00 ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 ff ff ff ff ff
-00 00 00 00 00 00 ff ff ff 00 00 00 00 00 ff ff ff ff
-00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec 00 00 00 00 00 00 00 00 00 ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec 00 00 00 00 00 00 00 00 00 ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ec ec 00 00 00 00 00 00 00 00 00 ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec 00 00 00 00 00 00 00 00 00 ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec ec 00 00 00 00 00 00 00 ec ec ec 00 00 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec ec 00 00 00 00 00 00 00 ec ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec ec 00 00 00 00 00 00 00 ec ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec ec 00 00 00 00 00 00 00 ec ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec ec 00 00 00 00 00 00 00 ec ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec ec 00 00 00 00 00 00 00 ec ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ec ec ec ec ec ec 00 00 ec 00 00 ec ec ec ec ec ec 00 ff
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ec ec ec ec ec ec ec ec 00 00 00 ec ec ec ec ec ec ec ec
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ec ec ec ec ec ec ec ec 00 00 00 ec ec ec ec ec ec ec ec
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ec ec ec ec ec ec ec 00 00 00 ec ec ec ec ec ec ec
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff ff
+0 0 0 0 0 0 0 0 0 0 ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 8 ff ff
+0 0 0 0 0 ff ff ff ff ff ff 3 ff ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 0 ff 0 0 0 0 2b 0 2b 0 0 0 0 ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 0 ff 0 ff ff ff 0 2c 0 ff 0 ff 0 ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 0 0 0 0 ff 0 0 0 0 2c ff 0 0 0 0 2c ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 0 0 0 0 ff ff 2c ff 0 0 0 ff 0 ff 2b 0 ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 0 0 0 0 ff 0 0 0 ff ff 0 0 ff 0 0 0 ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 0 ff ff ff ff 1e 1e 1e ff ff 1e 1e 2b 1e 1e ff ff ff ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 ff ff 0 ff ff 0 ff 2c 0 2b 0 0 0 ff 2b ff ff ff 0 ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 ff 0 0 ff ff 2c 0 0 0 ff 0 0 ff 0 0 0 ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 ff 0 0 ff ff 0 0 ff 2c ff 0 0 2c ff 0 ff ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 ff 0 0 ff ff 0 0 ff 0 0 2b 2c 0 0 2b 0 ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 ff 0 0 ff ff ff 1f 1f ff ff ff ff 1f 1f ff 1f ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 ff 0 0 ff ff ff 0 ff ff ff ff ff ff 0 2c 0 ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff
+0 ff 0 0 ff ff 0 2b 0 ff 2c 0 0 0 ff 0 0 ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff ff ff ff ff ff ff ff ff 0 0 0 ff
+0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff ff ff ff ff 0 0 0 ff
+0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 ff
+0 ff 0 0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 ff
+0 ff 0 0 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ff ff ff ff ff ff ff ff ff
+0 ff 0 0 ff ff ff ff ff ff ff 5 ff ff ff ff ff ff ff 0 0 ff 0 0 0 0 0 0 0 0 0 0 ff ff 0 ff ff
+0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 ff 4 ff
+0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 0 0 0 0 0 0 0 0 ff ff ff
+0 ff ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff ff
+0 ff ff ff ff ff ff 0 0 0 0 0 0 0 0 0 ff ff ff ff ff
+0 0 0 0 0 0 ff ff ff 0 0 0 0 0 ff ff ff ff
+0 0 0 0 0 0 0 0 ff ff ff ff ff ff ff
 
 
 
@@ -99,9 +69,39 @@ ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff 00 00 ff 00 00 ff 00 00 00 00
 
 
 
-00 00 00 00 00 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec 0 0 0 0 0 0 0 0 0 ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec 0 0 0 0 0 0 0 0 0 ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 0 0 ec ec 0 0 0 0 0 0 0 0 0 ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec 0 0 0 0 0 0 0 0 0 ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec ec 0 0 0 0 0 0 0 ec ec ec 0 0 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec ec 0 0 0 0 0 0 0 ec ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec ec 0 0 0 0 0 0 0 ec ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec ec 0 0 0 0 0 0 0 ec ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec ec 0 0 0 0 0 0 0 ec ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec ec 0 0 0 0 0 0 0 ec ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff 0 ec ec ec ec ec ec 0 0 ec 0 0 ec ec ec ec ec ec 0 ff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ec ec ec ec ec ec ec ec 0 0 0 ec ec ec ec ec ec ec ec
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ec ec ec ec ec ec ec ec 0 0 0 ec ec ec ec ec ec ec ec
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ec ec ec ec ec ec ec 0 0 0 ec ec ec ec ec ec ec
 
 
 
 
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
+
+
+
+
+
+
+
+
+
+
+
+0 0 0 0 0 ff
+
+
+
+
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ff

@@ -183,6 +183,18 @@ fn used_names(
             sources.push(path.to_path_buf());
         }
     }
+    // Assembly imports, like C imports, come from today's catalog rather
+    // than a previous ROM build. Keep one include directory for this scan.
+    let imports = if ARCHIVES
+        .iter()
+        .any(|spec| spec.target == target.id.as_str() && root.join(spec.output).is_file())
+    {
+        let directory = tempfile::tempdir().map_err(|error| error.to_string())?;
+        build(root, target, directory.path())?;
+        Some(directory)
+    } else {
+        None
+    };
     let next = std::sync::atomic::AtomicUsize::new(0);
     let workers = std::thread::available_parallelism()
         .map_or(4, |count| count.get())
@@ -197,7 +209,12 @@ fn used_names(
                         let Some(path) = sources.get(index) else {
                             break;
                         };
-                        names.extend(selected_names(root, target, path)?);
+                        names.extend(selected_names(
+                            root,
+                            target,
+                            path,
+                            imports.as_ref().map(|directory| directory.path()),
+                        )?);
                     }
                     Ok::<_, String>(names)
                 })
@@ -219,6 +236,7 @@ fn selected_names(
     root: &Path,
     target: DecompTarget,
     path: &Path,
+    imports: Option<&Path>,
 ) -> Result<BTreeSet<String>, String> {
     let source =
         fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
@@ -240,7 +258,7 @@ fn selected_names(
             &crate::compiler::assembly_source::selected_includes(
                 &source,
                 target.edition_define,
-                &[root, &root.join(target.output_dir)],
+                &std::iter::once(root).chain(imports).collect::<Vec<_>>(),
             )
             .map_err(|error| format!("{}: {error}", path.display()))?,
         )
@@ -328,7 +346,7 @@ mod tests {
         assert!(!expanded.contains("enum { MsgKeptArray"));
         assert!(!expanded.contains("enum { MsgUnused"));
         assert_eq!(
-            selected_names(work.path(), target, &path).unwrap(),
+            selected_names(work.path(), target, &path, None).unwrap(),
             ["MsgImported".into(), "MsgKeptArray".into()].into()
         );
         let compiler =
@@ -379,7 +397,7 @@ mod tests {
             "#include \"text/MSG_IDS.H\"\nTEXT_MESSAGE_ENUM(MsgNotInCatalog);\n",
         )
         .unwrap();
-        let used = selected_names(work.path(), target, &path).unwrap();
+        let used = selected_names(work.path(), target, &path, None).unwrap();
         assert_eq!(
             missing_names("EN.PO", &used, &BTreeSet::new()),
             ["EN.PO: no message is named MsgNotInCatalog"]
@@ -423,6 +441,53 @@ mod tests {
     }
 
     #[test]
+    fn assembly_names_use_current_catalog_with_missing_or_stale_build_output() {
+        let work = tempfile::tempdir().unwrap();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
+        let spec = ARCHIVES
+            .iter()
+            .find(|spec| spec.target == "tbs-en")
+            .unwrap();
+        let catalog = work.path().join(spec.output);
+        fs::create_dir_all(catalog.parent().unwrap()).unwrap();
+        fs::copy(crate::compiler::routing::root().join(spec.output), &catalog).unwrap();
+        let sources = work.path().join("SRC");
+        fs::create_dir(&sources).unwrap();
+        fs::write(
+            sources.join("MESSAGES.S"),
+            ".include \"text/messages.inc\"\n.4byte MsgNotInCatalog\n",
+        )
+        .unwrap();
+        let named = text::catalog_names(&text::read_catalog(&catalog).unwrap()).unwrap();
+        let named = named
+            .iter()
+            .map(|(name, _)| name.as_str())
+            .collect::<BTreeSet<_>>();
+        let scan = || {
+            let (mut used, mut problems) = (BTreeSet::new(), Vec::new());
+            used_names(work.path(), target, &sources, &mut used, &mut problems).unwrap();
+            assert!(problems.is_empty());
+            assert_eq!(
+                missing_names(spec.output, &used, &named),
+                [format!(
+                    "{}: no message is named MsgNotInCatalog",
+                    spec.output
+                )]
+            );
+            used
+        };
+        let fresh = scan();
+        let stale = work.path().join(target.output_dir).join(INCLUDE);
+        fs::create_dir_all(stale.parent().unwrap()).unwrap();
+        fs::write(&stale, ".4byte MsgStaleBuildOnly\n").unwrap();
+        assert_eq!(scan(), fresh);
+        assert_eq!(
+            fs::read_to_string(stale).unwrap(),
+            ".4byte MsgStaleBuildOnly\n"
+        );
+    }
+
+    #[test]
     fn names_are_collected_from_source_and_refused_in_linker_scripts() {
         let directory = std::env::temp_dir().join(format!("alchemy-names-{}", std::process::id()));
         let _ = fs::remove_dir_all(&directory);
@@ -458,8 +523,10 @@ mod tests {
         let root = tempfile::tempdir().unwrap();
         let path = root.path().join("RANGE_PAGE.C");
         fs::write(&path, "#if defined(TBS_EDITION_JA)\nextern char MsgCanBeUsed[];\n#define CLOSE() Show(MsgCanBeUsed)\n#else\nextern char MsgHpRecover[];\n#endif\n/* MsgCommentOnly */\nconst char *plain = \"MsgStringOnly\";\n").unwrap();
-        let ja = selected_names(root.path(), target_for(DecompTargetId::TbsJa), &path).unwrap();
-        let en = selected_names(root.path(), target_for(DecompTargetId::TbsEn), &path).unwrap();
+        let ja =
+            selected_names(root.path(), target_for(DecompTargetId::TbsJa), &path, None).unwrap();
+        let en =
+            selected_names(root.path(), target_for(DecompTargetId::TbsEn), &path, None).unwrap();
         assert_eq!(ja, ["MsgCanBeUsed".into()].into());
         assert_eq!(en, ["MsgHpRecover".into()].into());
         assert!(missing_names("JA.PO", &ja, &["MsgCanBeUsed"].into()).is_empty());
@@ -471,11 +538,23 @@ mod tests {
         let assembly = root.path().join("MESSAGES.S");
         fs::write(&assembly, ".ifdef TBS_EDITION_JA\n.4byte MsgCanBeUsed\n.else\n.4byte MsgHpRecover\n.endif\n@ MsgCommentOnly\n.ascii \"@MsgStringOnly\"\n").unwrap();
         assert_eq!(
-            selected_names(root.path(), target_for(DecompTargetId::TbsJa), &assembly).unwrap(),
+            selected_names(
+                root.path(),
+                target_for(DecompTargetId::TbsJa),
+                &assembly,
+                None
+            )
+            .unwrap(),
             ja
         );
         assert_eq!(
-            selected_names(root.path(), target_for(DecompTargetId::TbsEn), &assembly).unwrap(),
+            selected_names(
+                root.path(),
+                target_for(DecompTargetId::TbsEn),
+                &assembly,
+                None
+            )
+            .unwrap(),
             en
         );
     }

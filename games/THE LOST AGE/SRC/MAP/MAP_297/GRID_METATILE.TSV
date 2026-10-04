@@ -1,5 +1,5 @@
 cell:u16	grid:128x128	fill:0	at:0,0
-0fff
+fff
 
 
 
@@ -15,4 +15,4 @@ cell:u16	grid:128x128	fill:0	at:0,0
 
 
 
-0000 0000 0000 4000
+0 0 0 4000

@@ -32,23 +32,19 @@ fn source_tokens(text: &str) -> Vec<regex::Match<'_>> {
         .collect()
 }
 
-fn dma_body() -> Option<&'static [String]> {
-    static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
-    BODY.get_or_init(|| {
-        let start = DMA_SOURCE.find("static __inline__")?;
-        let end = DMA_SOURCE.rfind('}')? + 1;
-        let tokens: Vec<String> = source_tokens(&DMA_SOURCE[start..end])
-            .iter()
-            .map(|token| token.as_str().to_owned())
-            .collect();
-        let hash = format!("{:x}", Sha256::digest(tokens.join("\n").as_bytes()));
-        (hash == DMA_BODY_SHA256).then_some(tokens)
-    })
-    .as_deref()
+fn reviewed_body(source: &str, digest: &str) -> Option<Vec<String>> {
+    let start = source.find("static __inline__")?;
+    let end = source.rfind('}')? + 1;
+    let tokens: Vec<String> = source_tokens(&source[start..end])
+        .iter()
+        .map(|token| token.as_str().to_owned())
+        .collect();
+    let hash = format!("{:x}", Sha256::digest(tokens.join("\n").as_bytes()));
+    (hash == digest).then_some(tokens)
 }
 
-fn mask_dma_body(text: &str) -> String {
-    let Some(body) = dma_body() else {
+fn mask_body(text: &str, body: Option<&[String]>) -> String {
+    let Some(body) = body else {
         return text.into();
     };
     let tokens = source_tokens(text);
@@ -66,44 +62,27 @@ fn mask_dma_body(text: &str) -> String {
             }
         }
     }
-    String::from_utf8(bytes).expect("only complete DMA token spans are masked")
+    String::from_utf8(bytes).expect("only complete reviewed token spans are masked")
+}
+
+fn dma_body() -> Option<&'static [String]> {
+    static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
+    BODY.get_or_init(|| reviewed_body(DMA_SOURCE, DMA_BODY_SHA256))
+        .as_deref()
 }
 
 fn iwram_call_body() -> Option<&'static [String]> {
     static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
-    BODY.get_or_init(|| {
-        let start = IWRAM_CALL_SOURCE.find("static __inline__")?;
-        let end = IWRAM_CALL_SOURCE.rfind('}')? + 1;
-        let tokens: Vec<String> = source_tokens(&IWRAM_CALL_SOURCE[start..end])
-            .iter()
-            .map(|token| token.as_str().to_owned())
-            .collect();
-        let hash = format!("{:x}", Sha256::digest(tokens.join("\n").as_bytes()));
-        (hash == IWRAM_CALL_BODY_SHA256).then_some(tokens)
-    })
-    .as_deref()
+    BODY.get_or_init(|| reviewed_body(IWRAM_CALL_SOURCE, IWRAM_CALL_BODY_SHA256))
+        .as_deref()
+}
+
+fn mask_dma_body(text: &str) -> String {
+    mask_body(text, dma_body())
 }
 
 fn mask_iwram_call_body(text: &str) -> String {
-    let Some(body) = iwram_call_body() else {
-        return text.into();
-    };
-    let tokens = source_tokens(text);
-    let mut bytes = text.as_bytes().to_vec();
-    for window in tokens.windows(body.len()) {
-        if window
-            .iter()
-            .zip(body)
-            .all(|(token, expected)| token.as_str() == expected)
-        {
-            for byte in &mut bytes[window[0].start()..window[window.len() - 1].end()] {
-                if *byte != b'\n' {
-                    *byte = b' ';
-                }
-            }
-        }
-    }
-    String::from_utf8(bytes).expect("only complete fixed-math token spans are masked")
+    mask_body(text, iwram_call_body())
 }
 
 const ABI: &str = "naked interrupt interrupt_handler isr long_call short_call pcs target target_clones regparm stdcall fastcall";

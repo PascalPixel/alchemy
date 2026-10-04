@@ -7,6 +7,12 @@
 #include "FRAME.H"
 #include "CARTBOOT.H"
 
+/* With auto-sleep on, the frames without a button held before the game sleeps:
+   three minutes. */
+#define SLEEP_IDLE_FRAMES 10800
+/* The backdrop colour while the game sleeps. */
+#define RGB_WHITE 0x7fff
+
 #define Io_Write16(value_, reg_) do { \
     /* FAKEMATCH: plain halfword stores pool the sleep constants; a word-valued temporary preserves their measured register construction. */ \
     u32 word_ = (u16)(value_); \
@@ -72,11 +78,11 @@ void WaitFrames(s32 frames)
                     {
                         /* FAKEMATCH: plain source shifts the idle limit before the volatile counter reload; this short boundary keeps the base and reload ready before the shift. */
                         u32 idle; u32 limit;
-                        limit = 0x2a30 >> 6;
+                        limit = SLEEP_IDLE_FRAMES >> 6;
                         idle = gIdleFrameCount;
                         /* FAKEMATCH: preserve the measured idle reload/limit shift order with unchanged live values. */
                         __asm__ volatile("" : "+r"(idle) : "r"(limit));
-                        if (idle > (limit << 6) + (0x2a30 & 63)) gSleepRequested = 1;
+                        if (idle > (limit << 6) + (SLEEP_IDLE_FRAMES & 63)) gSleepRequested = 1;
                     }
                 }
             }
@@ -86,7 +92,7 @@ void WaitFrames(s32 frames)
                 held = gInput.held;
                 /* FAKEMATCH: leave held unchanged while preserving its measured comparison-materialization order. */
                 __asm__ volatile("" : : "r"(held));
-                if (held == 0x304) gSleepRequested = 1;
+                if (held == (KEYS_SHOULDERS | KEY_SELECT)) gSleepRequested = 1;
             }
         }
         if (gDebugMode) {
@@ -97,14 +103,14 @@ void WaitFrames(s32 frames)
                         register u32 repeat __asm__("r3");
                         repeat = gInput.repeat;
                         /* FAKEMATCH: keep the current measured read/mask preparation boundary. */
-                        __asm__ volatile("" : "+r"(repeat) : "r"(7));
-                        repeat &= 7;
+                        __asm__ volatile("" : "+r"(repeat) : "r"(KEY_A | KEY_B | KEY_SELECT));
+                        repeat &= KEY_A | KEY_B | KEY_SELECT;
                         if (repeat) break;
                     }
-                    if (gInput.held & 0xf0) break;
-                    if (gInput.repeat & 8) { gDebugPaused = 0; break; }
+                    if (gInput.held & KEYS_DPAD) break;
+                    if (gInput.repeat & KEY_START) { gDebugPaused = 0; break; }
                 } else {
-                    if (gInput.held != 12) break;
+                    if (gInput.held != (KEY_START | KEY_SELECT)) break;
                     gDebugPaused = 1;
                 }
                 System_WaitForFrameInterrupt();
@@ -132,7 +138,7 @@ void WaitFrames(s32 frames)
             backdrop = PLTT_BACKDROP;
             if (gSleepRequested == 1) {
                 Io_Write16(0, &REG_DISPCNT);
-                Io_Write16(0x7fff, &PLTT_BACKDROP);
+                Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
                 for (j = 9; j >= 0; j--) System_WaitForFrameInterrupt();
                 while (gInput.held) System_WaitForFrameInterrupt();
                 gSleepActive = 1;
@@ -140,11 +146,11 @@ void WaitFrames(s32 frames)
                     u32 high; volatile u16 *key;
                     /* FAKEMATCH: the prior direct form loads the wake address before the genuine flag store; end its scratch-register reuse first. */
                     __asm__ volatile("" : : : "r5");
-                    high = 0xc304 >> 8;
+                    high = KEYCNT_SLEEP_WAKE >> 8;
                     key = &REG_KEYCNT;
                     /* FAKEMATCH: keep the measured address-before-shift handoff, with neither value changed. */
                     __asm__ volatile("" : "+r"(high) : "r"(key));
-                    *key = (high << 8) + (0xc304 & 255);
+                    *key = (high << 8) + (KEYCNT_SLEEP_WAKE & 255);
                 }
                 Bios_SoundBiasOff();
                 Bios_Stop();

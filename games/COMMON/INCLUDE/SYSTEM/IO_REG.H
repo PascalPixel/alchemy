@@ -111,6 +111,8 @@ enum KeyMask {
 
 /* KEYCNT: interrupt when A, B, Select and Start are all held (soft reset). */
 #define KEYCNT_SOFT_RESET 0xc00f
+/* KEYCNT: interrupt when L, R and Select are all held (wake from sleep). */
+#define KEYCNT_SLEEP_WAKE 0xc304
 
 /* WAITCNT: game pak wait states 3,1 with the prefetch buffer on. */
 #define WAITCNT_GAME 0x4014

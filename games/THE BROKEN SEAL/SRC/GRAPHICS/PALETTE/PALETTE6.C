@@ -13,6 +13,7 @@
 #include "IO_WRITE_QUEUE.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_WORK.H"
+#include "IO_REG.H"
 
 struct Spark {
     s32 pos[6];
@@ -27,14 +28,17 @@ struct Ring {
     s32 age;
 };
 
+/* The star field's work block in heap slot 39: the decoded ring sheet, the
+   sparks and rings, and BG2's reference point the effect moves. */
 struct SparkWork {
-    u8 padding0000[0x11c0];
+    u8 sheet[0x11c0];
     struct Spark sparks[16];
     struct Ring rings[3];
     s32 frames;
     s32 ready;
-    u8 padding13c4[8];
-    s32 unknown_13cc;
+    s32 origin_x;
+    s32 origin_y;
+    s32 origin_pending;
 };
 
 s32 BattleFx_UpdateStarField(void);
@@ -91,10 +95,10 @@ s32 BattleFx_InitializeStarField(s32 mode)
     }
     work->frames = 0;
     work->ready = 0;
-    work->unknown_13cc = 0;
+    work->origin_pending = 0;
     Iwram_ClearWords(gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], 0x4000);
     data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
-    Iwram_CopyWords((void *)0x05000000, data, 128);
+    Iwram_CopyWords(BG_PLTT, data, 128);
     data += 128;
     Resource_DecodeType01(data, work);
     switch (mode) {
@@ -111,7 +115,7 @@ s32 BattleFx_InitializeStarField(s32 mode)
         data = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
         break;
     }
-    Dma_Set(data, (void *)0x05000000, 0x84000020, (volatile u32 *)0x040000d4);
+    Dma_Set(data, BG_PLTT, 0x84000020, REG_DMA3);
     /* FAKEMATCH: the two one-pass blocks keep the BG2 origin and matrix writes in source order, the zero loaded first. */
     do {
         zero = 0;

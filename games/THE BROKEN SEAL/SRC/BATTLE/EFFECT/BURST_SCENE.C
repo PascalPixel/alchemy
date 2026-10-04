@@ -15,6 +15,7 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 
 extern u8 gBattleFxWork[];
@@ -286,9 +287,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     if (work->effect->variant == 0)
-        *(volatile u16 *)0x04000020 = 204;
+        REG_BG2PA = 204;
     else if (work->effect->variant == 1)
-        *(volatile u16 *)0x04000020 = 170;
+        REG_BG2PA = 170;
     if (work->effect->side == 1) {
         bias = 8;
         if (work->effect->variant == 0)
@@ -301,7 +302,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         bias = -16;
         offset = -12;
     }
-    *(volatile u32 *)0x04000028 =
+    REG_BG2X =
         RisingWall_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
     Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer, 1, 0);
     Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
@@ -362,8 +363,8 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
     draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-    *(volatile u16 *)0x04000050 = 0x3f46;
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDCNT = 0x3f46;
+    REG_BLDALPHA = 0x1010;
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -388,7 +389,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         dust->velocity_y = ((Random16() & 63) + 32) << 13;
         dust->variant = Random16() & 31;
     }
-    *(volatile u16 *)0x0400000c = 0x785;
+    REG_BG2CNT = 0x785;
     work->shake_frames = 250;
     for (frame = 0; frame != 192; frame++) {
         if (frame == 0)

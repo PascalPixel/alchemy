@@ -104,7 +104,15 @@ Func_080c8330:
 	.global Func_080c8338
 	.thumb_func
 Func_080c8338:
+.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayTransition_InitializeState
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayTransition_InitializeState
+.else
 	overlay_veneer Func_080d7240
+.endif
+.endif
 	.global Func_080c8340
 	.thumb_func
 Func_080c8340:
@@ -126,7 +134,7 @@ Func_080c8348:
 .ifdef TLA_EDITION_IT
 	overlay_veneer DisplayTransition_Finish
 .else
-	overlay_veneer Func_080d0bec
+	overlay_veneer DisplayTransition_InitializeState
 .endif
 .endif
 	.global Func_080c8350

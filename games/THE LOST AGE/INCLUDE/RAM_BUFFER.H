@@ -27,6 +27,7 @@ struct BattleSession;
 struct BattlePresentationTransition;
 struct MapWork;
 struct ObjectSystemWork;
+struct DisplayTransitionState;
 
 struct HeapSlots {
     void *unknown_00[2];
@@ -56,7 +57,11 @@ struct HeapSlots {
     void *unknown_64[2];
     /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
-    void *unknown_70[16];
+    void *unknown_70[3];
+    /* The display transition's state, which The Broken Seal keeps in its
+       slot 31 too. */
+    struct DisplayTransitionState *display_transition;
+    void *unknown_80[12];
     struct BattlePresentationTransition *transition_work;
     void *unknown_b4[6];
     /* The serial link runtime's work. */

@@ -3643,19 +3643,19 @@ DisplayTransition_Finish:
 	.type Func_080d01cc, %function
 	.thumb_func
 Func_080d01cc:
-	.incbin "baserom.gba", 0x000d9748, 0x000004a4
-	.section .rom.000d9bec, "ax"
-	.global Func_080d7240
-	.type Func_080d7240, %function
+	.incbin "baserom.gba", 0x000d9748, 0x000002e0
+	.global DisplayTransition_UpdateFrame
+	.type DisplayTransition_UpdateFrame, %function
 	.thumb_func
-Func_080d7240:
-	.incbin "baserom.gba", 0x000d9bec, 0x00000064
-	.section .rom.000d9c50, "ax"
-	.global BattleFx_ComputeBufferSteps
-	.type BattleFx_ComputeBufferSteps, %function
+DisplayTransition_UpdateFrame:
+	.incbin "baserom.gba", 0x000d9a28, 0x00000154
+	.global DisplayTransition_FillTilemapAndSolidTile
+	.type DisplayTransition_FillTilemapAndSolidTile, %function
 	.thumb_func
-BattleFx_ComputeBufferSteps:
-	.incbin "baserom.gba", 0x000d9c50, 0x000001cc
+DisplayTransition_FillTilemapAndSolidTile:
+	.incbin "baserom.gba", 0x000d9b7c, 0x00000070
+	.section .rom.000d9ca0, "ax"
+	.incbin "baserom.gba", 0x000d9ca0, 0x0000017c
 	.global BattleFx_BuildColorBuffers
 	.type BattleFx_BuildColorBuffers, %function
 	.thumb_func

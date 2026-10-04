@@ -3517,19 +3517,19 @@ Func_080d072c:
 	.type Func_080d0748, %function
 	.thumb_func
 Func_080d0748:
-	.incbin "baserom.gba", 0x000d0728, 0x000004a4
-	.section .rom.000d0bcc, "ax"
-	.global Func_080d0bec
-	.type Func_080d0bec, %function
+	.incbin "baserom.gba", 0x000d0728, 0x000002e0
+	.global DisplayTransition_UpdateFrame
+	.type DisplayTransition_UpdateFrame, %function
 	.thumb_func
-Func_080d0bec:
-	.incbin "baserom.gba", 0x000d0bcc, 0x00000064
-	.section .rom.000d0c30, "ax"
-	.global Func_080d0c50
-	.type Func_080d0c50, %function
+DisplayTransition_UpdateFrame:
+	.incbin "baserom.gba", 0x000d0a08, 0x00000154
+	.global DisplayTransition_FillTilemapAndSolidTile
+	.type DisplayTransition_FillTilemapAndSolidTile, %function
 	.thumb_func
-Func_080d0c50:
-	.incbin "baserom.gba", 0x000d0c30, 0x00000a34
+DisplayTransition_FillTilemapAndSolidTile:
+	.incbin "baserom.gba", 0x000d0b5c, 0x00000070
+	.section .rom.000d0c80, "ax"
+	.incbin "baserom.gba", 0x000d0c80, 0x000009e4
 	.section .rom.000d1664, "ax"
 	.global Func_080d1684
 	.type Func_080d1684, %function

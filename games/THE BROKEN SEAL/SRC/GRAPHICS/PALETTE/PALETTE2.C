@@ -173,10 +173,11 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 asm("" : "+r"(g));
                 if (r < 8)
                     r = 8;
-                if (b < 8)
+                if (b < 8) {
                     g = 8;
-                /* FAKEMATCH: retain second independent channel test by tied lifetime. */
-                asm("" : "+r"(b));
+                    /* FAKEMATCH: retain the second blue test on the clamped path; the other path threads past it. */
+                    asm("" : "+r"(b));
+                }
                 if (b < 8)
                     b = 8;
                 if (r > 28)

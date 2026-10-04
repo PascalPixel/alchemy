@@ -20,6 +20,25 @@ void DisplayBlend_EnableRunScript();
 void Object_RefreshSelectorById(s32 actor);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
 
+/* The event work pointer and the heap slot pointers that follow it. */
+struct EventSlots {
+    struct EventWork *event;
+    void *unknown_04[2];
+    struct FieldBlendWork *blend;
+};
+
+/* The blend registers take a word: the scene's values are computed as
+   ints and stored as halfwords. */
+static __inline__ void SetBlendTarget(u32 value)
+{
+    REG_BLDCNT = value;
+}
+
+static __inline__ void SetBlendAlpha(u32 value)
+{
+    REG_BLDALPHA = value;
+}
+
 extern const s32 gHaidiaBabiRampActor8Action[];
 extern const s32 gHaidiaBabiRampLeaderAction[];
 extern const s32 gHaidiaBabiRampActor8ActionB[];
@@ -103,14 +122,13 @@ void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);
 
 void FieldScene_RunPaletteRampSequence(void)
 {
-    struct FieldActor *p1;
+    struct FieldActor *actor;
     struct FieldSprite *sprite;
-    u32 i1;
-    /* FAKEMATCH: keep the alpha port in r5; the ordinary loops use r7. */
-    register volatile u16 *alpha_port asm("r5");
+    u32 i;
+    volatile u16 *alpha;
 
-    p1 = Object_GetById(10);
-    sprite = p1->sprite;
+    actor = Object_GetById(10);
+    sprite = actor->sprite;
     Engine_EventBegin();
     Engine_ActorSetPosition(11, 0, 0);
     Engine_ActorSetPosition(12, 0, 0);
@@ -121,15 +139,11 @@ void FieldScene_RunPaletteRampSequence(void)
     Actor_SetPosition(8, PIXELS(431), PIXELS(391));
     Engine_ActorSetPosition(10, PIXELS(463), PIXELS(404));
     Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-    p1->priority_flags &= 0xfe;
-    p1->motion_flags = 0;
+    actor->priority_flags &= 0xfe;
+    actor->motion_flags = 0;
     sprite->priority = 1;
     Engine_ActorEnableActionCallback(10, gHaidiaBabiRampActor10Action);
-    {
-        struct EventWork *scene = gEventWork;
-
-        scene->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-    }
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_MapCopyCellsTo(83, 15, 83, 19, 5, 4);
     Engine_MapCopyCellsTo(90, 16, 90, 20, 5, 4);
     Engine_MapCopyCellsTo(77, 23, 82, 23, 5, 7);
@@ -140,30 +154,15 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_MapCopyCellsTo(92, 28, 87, 23, 4, 4);
     Engine_MapCopyCellsTo(65, 53, 88, 24, 2, 2);
     DisplayBlend_EnableRunScript();
-    /* FAKEMATCH: retain the existing word/register carriers for these
-       halfword IO stores and the ramp add. Ordinary direct stores use
-       halfword literals, split the pool and enlarge this extent by 16 bytes. */
-    {
-        /* FAKEMATCH: keep the control word in r2; direct stores use ldrh. */
-        register u32 value asm("r2") = 0x3f42;
-        /* FAKEMATCH: retain control port r3; the direct store uses r2. */
-        register volatile u16 *port asm("r3") = &REG_BLDCNT;
-
-        /* FAKEMATCH: retain the word/port dependency instead of a halfword literal. */
-        __asm__("" : "+r"(value), "+r"(port));
-        *port = value;
-    }
+    SetBlendTarget(0x3f42);
+    /* FAKEMATCH: keep the initial value/port publication boundary. */
     do {
-        /* FAKEMATCH: retain initial alpha word r3; direct stores use ldrh. */
-        register u32 value asm("r3") = 0x100c;
+        s32 value = 0x100c;
 
-        alpha_port = &REG_BLDALPHA;
-        /* FAKEMATCH: retain initial word/port dependency and its single pool. */
-        __asm__("" : "+r"(value), "+r"(alpha_port));
-        *alpha_port = value;
+        SetBlendAlpha(value);
     } while (0);
     BattleFx_StartTwelveFrameBlend();
-    (*(struct FieldBlendWork **)((u8 *)&gEventWork + 12))->loud = 1;
+    ((struct EventSlots *)&gEventWork)->blend->loud = 1;
     BattleFx_SetBlock30Values12Zero();
     Engine_TaskWait(30);
     Engine_CameraFollowActor(8, 1);
@@ -200,34 +199,21 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_AudioPlayCue(234);
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(10, gHaidiaBabiRampActor10ActionB);
-    for (i1 = 0; i1 < 4; i1++) {
-        /* FAKEMATCH: retain the per-step word load in r2; plain C hoists it to r5. */
-        register u32 base asm("r2") = 0x100e;
-        /* FAKEMATCH: retain ramp-add result r3 with its existing word operands. */
-        register u32 value asm("r3");
-
-        /* FAKEMATCH: retain the measured add r3,r6,r2; ordinary C changes its registers. */
-        __asm__("add %0, %1, %2" : "=r"(value) : "r"(i1), "r"(base));
-        *alpha_port = value;
-        Engine_TaskWait(1);
-    }
+    alpha = &REG_BLDALPHA;
+    /* The rise is a backward jump rather than a loop: the reference
+       reloads its start value on every step, which GCC's loop pass
+       would hoist. */
+    i = 0;
+ramp:
+    *alpha = 0x100e + i;
+    Engine_TaskWait(1);
+    if (++i <= 3)
+        goto ramp;
     Engine_AudioPlayCue(202);
     Engine_TaskWait(10);
-    {
-        /* FAKEMATCH: retain ramp-base/port/counter initialization order;
-           loading the port inside the loop moves it after the counter zero. */
-        u32 start = 0x100f;
-
-        alpha_port = &REG_BLDALPHA;
-        for (i1 = 0; i1 < 16; i1++) {
-            /* FAKEMATCH: retain ramp-down word r3; ordinary C changes its operand registers. */
-            register u32 value asm("r3") = start - i1;
-
-            /* FAKEMATCH: retain word arithmetic; direct halfword folding splits the pool (+16 bytes). */
-            __asm__("" : "+r"(value));
-            *alpha_port = value;
-            Engine_TaskWait(1);
-        }
+    for (i = 0; i <= 15; i++) {
+        SetBlendAlpha(0x100f - i);
+        Engine_TaskWait(1);
     }
     Object_RefreshSelectorById(0);
     Engine_ActorSetAnimation(8, 1);
@@ -248,12 +234,8 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_CameraFollowActor(8, 1);
     Engine_ActorEnableActionCallback(8, gHaidiaBabiRampFinalAction);
     Object_SetActionCallbackAndRefreshById(ACTOR_PARTY_LEADER, gHaidiaBabiRampFinalAction);
-    {
-        struct EventWork *scene = gEventWork;
-
-        scene->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-        scene->transition_frames = 32;
-    }
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 32;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(21);

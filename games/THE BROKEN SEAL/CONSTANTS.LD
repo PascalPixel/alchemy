@@ -9,3 +9,4 @@ SentouKouka_TenkaiCodeSize = SentouKouka_TenkaiEnd - SentouKouka_Tenkai;
 Object_UpdateAllCodeSize = Object_UpdateAllEnd - Object_UpdateAll;
 Tile_BuildMetatilesCodeSize = Tile_BuildMetatilesEnd - Tile_BuildMetatiles;
 Transform_UpdateVerticesSize = Transform_UpdateVerticesEnd - Transform_UpdateVertices;
+UiText_DrawGlyphCodeSize = Tile_BuildMetatiles - Func_080155d0;

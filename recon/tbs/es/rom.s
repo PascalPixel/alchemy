@@ -217,6 +217,8 @@ Script_OperandHandlerTable:
 Map_LayeredScenes:
 	.incbin "baserom.gba", 0x00012f84, 0x0000107c
 	.section .rom.000145d0, "ax"
+	.global Func_080155d0
+Func_080155d0:
 	.incbin "baserom.gba", 0x000145d0, 0x000002f4
 	.global Tile_BuildMetatiles
 Tile_BuildMetatiles:
@@ -245,11 +247,6 @@ UiText_BuildRenderEntries:
 	.type UiText_MeasureEntryDimensions, %function
 UiText_MeasureEntryDimensions:
 	.incbin "baserom.gba", 0x000177d8, 0x000001f8
-	.section .rom.00017c34, "ax"
-	.balign 4
-	.global UiText_DrawGlyph
-UiText_DrawGlyph:
-	.incbin "baserom.gba", 0x00017c34, 0x00000250
 	.section .rom.00018154, "ax"
 	.global UiWork_AnimateSpriteSlots
 	.thumb_func
@@ -1083,12 +1080,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000cb438, 0x000013c8
-	.section .rom.000ce9a4, "ax"
-	.global BattleFx_RunFlippingBurst
-	.thumb_func
-	.type BattleFx_RunFlippingBurst, %function
-BattleFx_RunFlippingBurst:
-	.incbin "baserom.gba", 0x000ce9a4, 0x00000348
 	.section .rom.000cf40c, "ax"
 	.global BattleEffect_RunTileAndPaletteAnimation
 	.thumb_func

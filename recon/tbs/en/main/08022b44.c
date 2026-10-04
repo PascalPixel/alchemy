@@ -1,68 +1,32 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_UNIT.H"
-/*
- * 2026-10-04: callees renamed to the build's current names (Owner_GetStateFar,
- * Owner_RecalculateStatsFar, Runtime_BumpFree); score unchanged at 1565.
- * Not adoptable as is: Value_00000333 is a stand-in symbol for the plain
- * message number 0x333 (the ROM's pool holds the number) and the
- * _call_via_r3 declaration stands in for Iwram_CopyWords. With the plain
- * constant the score is 3480: the integer is a cheaper invariant than a
- * symbol address and changes the allocation of the whole list loop, where
- * the reference loads 0x333 at its use. A natural source for that late load
- * is still to be found, and the nested DjinnMenu_DrawStatArrow
- * (recon/tbs/raw/08022a7c.s) must match in the same object first.
- *
- * Draft: the parent matches but its nested arrow renderer does not yet, so the
- * unit links as assembly (recon/tbs/raw/08022a7c.s and 08022b44.s).
- *
- * 2026-09-28, why the zero moves: the byte stores to one5/one4 expand as
- * read-modify-write with a zero mask (every byte member store does with this
- * compiler), CSE reuses that zero pseudo for the tile clear, and its REG_EQUIV
- * doubles its live length. With the tile clear last (the reference store
- * order), r5's local ratio 2/34 falls below the static chain pseudo's 2/22,
- * so global.c's find_reg evicts the zero from r5 ("utilized poorly by
- * local-alloc") and hands r5 to the chain; with the clear right after the
- * entry pointer (this draft) the ratio is 2/20 and nothing moves. u8-cast
- * byte stores remove the mask, give the reference's late zero and its store
- * order, but then the zero takes r2 and the chain r7. All 360 orders of the
- * index, entry, zero, sentinel, x, y and word statements were scored.
- */
-/* DjinnMenu_ShowChangePreview (main:08022b44, 1588 bytes) is exact. Its
- * nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c) is emitted
- * first in the same object and is not exact yet, so the unit keeps it as
- * retained assembly (NONMATCHING) and links the parent alone; the parent's
- * calls to DjinnMenu_DrawStatArrow.0 are aliased to the retained owner. The nested
- * function is 198+2 bytes with 7 halfwords off: in the reference the
- * word/zero stores of the sprite attributes follow the sentinel and scale
- * stores through the entry pointer, and its zero is materialised late in r5;
- * written in that order here, the zero constant is hoisted above the slot
- * load into r8 and every callee-saved assignment shifts (89 halfwords).
- * Storing the zero through output->table right after entry is formed keeps
- * the allocation (r8 x, sl y, fp rising, r9 chain, r6 output, r7 entry) and
- * leaves only the store order and the zero's base register.
- * Cause, from the RTL dumps (alchemy build allocator): the byte stores
- * output->active/one4 = 1 expand as load/and 0/or 1/store, and CSE reuses that
- * and-mask zero (set before the slot-load call) for the later tile zero, so
- * it crosses the call and takes r8. Storing the bytes through a u8 cast
- * removes the mask and the hoist, but the static chain is then copied to r7
- * and x moves to r9.
- * Second pass (2026-09-24): the ROM needs a call-crossing zero in r5 so the
- * chain loses the low registers and stays in r9. The mask zero gets r5 from
- * local-alloc only while its use sits right after entry is formed (r7 is
- * the frame pointer to local-alloc, r4 is call-used); stored after the
- * attribute word it takes r8 or r9. Written in ROM order with
- * a zero pinned to r5 (zero = 0; entry->tile.value = zero), the
- * allocation and store order match and 3 halfwords remain: sched2 issues the
- * reload copy `adds r7, r6, #0` after the x/y halfword stores. In sched2 the
- * copy and both stores have priority 20; the stores win the tie on
- * dependant count (4 against 2) because they may alias the attribute word
- * and tile stores (RenderOutput has char members, so its alias set
- * conflicts with every set, and the union stores are set 0). Local bitfield
- * views of RenderOutput, flat sprite structs, u32 casts, the store order of
- * x/y/sentinel/word/zero (all 120 orders), a two-step entry and u8 casts on
- * one4/one5 moved nothing further. */
+/* 2026-10-04 sun finisher 8: DjinnMenu_ShowChangePreview (main:08022b44)
+ * with its nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c),
+ * one object, 1788 bytes (Japanese 1784). As written: 6 instructions off in
+ * the nested function only, the parent exact in all six TBS editions
+ * (Japanese stat columns at x 4/5 and the separator at 40; Spanish, French
+ * and Italian label tile 0xf005).
+ * Found: the stat labels as label = (s32)MsgPreviewStatLabel; label + k
+ * (the DJINN.C pattern; CSE keeps the adds from one base), the real message
+ * names (MsgAbilityName, MsgClassName, MsgPsynergyGained/Lost/Unchanged,
+ * MsgBattleAdditionalPsynergyHelp) and Iwram_CopyWords replace the old
+ * stand-in symbols; sentinel, x, y and then the attribute word in that order.
+ * Remaining: the tile clear. The ROM clears it through the entry pointer
+ * after the attribute word (str r5, [r7, #8], zero materialised late in r5).
+ * Written that way the clear reuses the zero of the s8 field stores' bit-field
+ * expansion (all s8 struct-field stores expand as read-modify-write here),
+ * global gives it r8 and x/chain move to r9/r5 (20). A tagged empty asm on a
+ * fresh zero fixes that (2 off): then only sched2 differs, placing the
+ * "adds r7, r6, #0" half of entry = output + 16 after the x/y stores: both
+ * have priority 20 and the x store wins the tie on dependants (it has four:
+ * the union word store and tile clear are alias set 0). Tried: every order
+ * of entry/clear/sentinel/x/y/word (both clear forms, with active and/or kind
+ * through u8 casts), field/u16/s16/u32 casts of x, y, word and clear, a
+ * separate bit-field struct, entry split across a barrier, a slot local. */
 #include "RENDER_INPUT.H"
+#include "IWRAM_CALL.H"
+#include "EDITION.H"
 
 /* Preview setting or resting one Djinn: toggle it on the live owner record,
  * recalculate, show the old and new class and stats with an arrow beside
@@ -70,14 +34,10 @@
  * restore the record from the snapshot. The arrow renderer is a GNU C nested
  * function (main:08022a7c) that reaches the window through the static chain.
  *
- * The six stat labels start at message 0x8ae and the
- * ability names another (Value_00000333); _call_via_r3,
  * UiText_RenderWideStringInWindow and UiWindow_DrawThreeTileColumn are
  * declared returning a value so r0 is set last at each call. The locals are
  * declared in the reference's spill-slot order. */
 
-/* The IWRAM block-copy routine _call_via_r3 is asked to drive. */
-#define VRAM_COPY_PROC 0x03001388
 
 /* Ability table entry returned by Ability_GetData. */
 struct AbilityData {
@@ -106,7 +66,6 @@ struct BattleUnitRecord {
 /* Callees the owner register already names, spelled the way types.h spells
  * its own aliases: the address symbol stays the ABI. */
 
-s32 _call_via_r3(void *dst, const void *src, s32 size, s32 proc);
 s32 UiText_RenderWideStringInWindow(s16 *text, struct RenderInput *win, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
 void UiWork_SetParamNibble(s32 nibble);
@@ -124,7 +83,13 @@ struct PreviewSprite {
 };
 struct RenderOutput *RenderOutput_AcquireFree(void);
 void RenderOutput_AppendToList(struct RenderInput *, struct RenderOutput *);
-extern u8 Value_00000333[];
+extern u8 MsgAbilityName[];
+extern u8 MsgPreviewStatLabel[];
+extern u8 MsgBattleAdditionalPsynergyHelp[];
+extern u8 MsgPsynergyGained[];
+extern u8 MsgPsynergyLost[];
+extern u8 MsgPsynergyUnchanged[];
+extern u8 MsgClassName[];
 extern u8 Data_080313a4[];
 extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
@@ -181,8 +146,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             entry = (struct PreviewSprite *)((u8 *)output + 16);
             output->table.value = 0;
             output->sentinel = 240;
-            output->y = 120;
             output->x = 120;
+            output->y = 120;
             entry->attributes.word = 0x40000400;
             entry->attributes.bits.x = win->x * 8 + x;
             entry->attributes.bits.y = win->y * 8 + y;
@@ -205,7 +170,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     buf = (s16 *)Runtime_BumpAllocate(128);
     snap = (struct BattleUnitRecord *)Runtime_BumpAllocate(332);
     list = (u16 *)Runtime_BumpAllocateAlternatePool(96);
-    _call_via_r3(snap, unit, 332, VRAM_COPY_PROC);
+    Iwram_CopyWords(snap, unit, 332);
 
     /* Apply the pending change to the live record, then recompute. */
     col = (code >> 8) & 15;
@@ -224,35 +189,61 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
     if (page == 0) {
         /* Stat labels down the left edge, then the pre-change column. */
-        UiText_DrawCharacterAtOffset(0x8ae, win, 0, 8);
-        UiText_DrawCharacterAtOffset(0x8ae + 1, win, 0, 16);
-        UiText_DrawCharacterAtOffset(0x8ae + 2, win, 0, 24);
-        UiText_DrawCharacterAtOffset(0x8ae + 3, win, 0, 32);
-        UiText_DrawCharacterAtOffset(0x8ae + 4, win, 0, 40);
-        UiText_DrawCharacterAtOffset(0x8ae + 5, win, 0, 48);
+        s32 label = (s32)MsgPreviewStatLabel;
+
+        UiText_DrawCharacterAtOffset(label, win, 0, 8);
+        UiText_DrawCharacterAtOffset(label + 1, win, 0, 16);
+        UiText_DrawCharacterAtOffset(label + 2, win, 0, 24);
+        UiText_DrawCharacterAtOffset(label + 3, win, 0, 32);
+        UiText_DrawCharacterAtOffset(label + 4, win, 0, 40);
+        UiText_DrawCharacterAtOffset(label + 5, win, 0, 48);
 
         oldHp = snap->hp;
         UiText_FormatNumberToHalfwords(buf, oldHp);
+#if !EDITION_INTERNATIONAL
+        UiText_RenderWideStringInWindow(buf + 7, win, 4, 1);
+#else
         UiText_RenderWideStringInWindow(buf + 7, win, 5, 1);
+#endif
         oldPp = snap->pp;
         UiText_FormatNumberToHalfwords(buf, oldPp);
+#if !EDITION_INTERNATIONAL
+        UiText_RenderWideStringInWindow(buf + 7, win, 4, 2);
+#else
         UiText_RenderWideStringInWindow(buf + 7, win, 5, 2);
+#endif
         oldAtk = snap->atk;
         UiText_FormatNumberToHalfwords(buf, oldAtk);
+#if !EDITION_INTERNATIONAL
+        UiText_RenderWideStringInWindow(buf + 7, win, 4, 3);
+#else
         UiText_RenderWideStringInWindow(buf + 8, win, 6, 3);
+#endif
         oldDef = snap->def;
         UiText_FormatNumberToHalfwords(buf, oldDef);
+#if !EDITION_INTERNATIONAL
+        UiText_RenderWideStringInWindow(buf + 7, win, 4, 4);
+#else
         UiText_RenderWideStringInWindow(buf + 8, win, 6, 4);
+#endif
         oldAgi = snap->agi;
         UiText_FormatNumberToHalfwords(buf, oldAgi);
+#if !EDITION_INTERNATIONAL
+        UiText_RenderWideStringInWindow(buf + 7, win, 4, 5);
+#else
         UiText_RenderWideStringInWindow(buf + 8, win, 6, 5);
+#endif
         UiText_FormatNumberToHalfwords(buf, snap->luk);
         UiText_RenderWideStringInWindow(buf + 8, win, 5, 6);
 
         UiWindow_DrawDividerLine(win, 0, 8, 19, 8);
         if (gained != 0 || lost != 0)
             UiWork_SetParamNibble(2);
-        UiText_DrawCharacterAtOffset(0x8ad, win, 24, 64);
+#if !EDITION_INTERNATIONAL
+        UiText_DrawCharacterAtOffset((s32)MsgBattleAdditionalPsynergyHelp, win, 40, 64);
+#else
+        UiText_DrawCharacterAtOffset((s32)MsgBattleAdditionalPsynergyHelp, win, 24, 64);
+#endif
         UiWork_SetParamNibble(15);
     }
 
@@ -283,25 +274,29 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             else
                 UiWork_SetParamNibble(15);
 
-            UiText_DrawCharacterAtOffset((list[i] & 0x3fff) + (s32)Value_00000333, win, 16, n * 16);
+            UiText_DrawCharacterAtOffset((list[i] & 0x3fff) + (s32)MsgAbilityName, win, 16, n * 16);
             UiWindow_SetTilemapEntry(win, 0xf01f, 11, n * 2, 0);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            UiWindow_SetTilemapEntry(win, 0xf005, 12, n * 2, 0);
+#else
             UiWindow_SetTilemapEntry(win, 0xf01e, 12, n * 2, 0);
+#endif
             UiText_DrawNumberInWindow(
                 Ability_GetData(list[i])->cost, 2, win, 104, n * 16);
         }
 
         if (gained != 0) {
             UiWork_SetParamNibble(4);
-            UiText_DrawCharacterAtOffset(0xba2, win, 32, 80);
+            UiText_DrawCharacterAtOffset((s32)MsgPsynergyGained, win, 32, 80);
             marks = 1;
         }
         if (lost != 0) {
             UiWork_SetParamNibble(2);
-            UiText_DrawCharacterAtOffset(0xba3, win, 32, marks * 8 + 80);
+            UiText_DrawCharacterAtOffset((s32)MsgPsynergyLost, win, 32, marks * 8 + 80);
             marks++;
         }
         if (marks == 0)
-            UiText_DrawCharacterAtOffset(0xba8, win, 32, 80);
+            UiText_DrawCharacterAtOffset((s32)MsgPsynergyUnchanged, win, 32, 80);
         UiWork_SetParamNibble(15);
         UiWork_SetParamNibble(15);
         UiWindow_DrawDividerLine(win, 0, 10, 19, 10);
@@ -309,8 +304,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
     if (page == 0) {
         /* Post-change column, with an arrow beside every cell that moved. */
-        UiText_DrawCharacterAtOffset(0x741 + snap->element, win, 0, 0);
-        UiText_DrawCharacterAtOffset(0x741 + unit->element, win, 80, 0);
+        UiText_DrawCharacterAtOffset((s32)MsgClassName + snap->element, win, 0, 0);
+        UiText_DrawCharacterAtOffset((s32)MsgClassName + unit->element, win, 80, 0);
         if (snap->element != unit->element)
             UiWindow_SetTilemapEntry(win, 0xf728, 9, 0, page);
         else
@@ -372,7 +367,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     }
 
     /* Put the record back the way it was and release the scratch blocks. */
-    _call_via_r3(unit, snap, 332, VRAM_COPY_PROC);
+    Iwram_CopyWords(unit, snap, 332);
     Runtime_BumpFree(list);
     Runtime_BumpFree(snap);
     Runtime_BumpFree(buf);

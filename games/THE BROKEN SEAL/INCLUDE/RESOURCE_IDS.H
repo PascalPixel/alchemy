@@ -14,6 +14,7 @@ extern char ResourceId_EffectFarCalls;
 extern char ResourceId_ResourceFarCalls;
 extern char ResourceId_ResourceFarCallsAlternate;
 extern char ResourceId_WindowTiles;
+extern char ResourceId_SmallFont;
 extern char ResourceId_NintendoLogo;
 extern char ResourceId_CamelotLogo;
 extern char ResourceId_GoldenSunLogo;

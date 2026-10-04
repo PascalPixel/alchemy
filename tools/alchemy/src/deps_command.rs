@@ -177,7 +177,13 @@ fn hex8(text: &str) -> Vec<u32> {
 fn drafts(root: &Path, game: &str, lang: &str, images: &[Image]) -> Vec<Draft> {
     let base = root.join("recon").join(game).join(lang);
     let mut files = Vec::new();
-    for dir in [base.clone(), base.join("main"), base.join("overlays")] {
+    // Drafts sit in the language folder, main/, overlays/ and one folder per
+    // overlay (overlays/resource_XXX/ADDRESS.c).
+    let mut dirs = vec![base.clone(), base.join("main"), base.join("overlays")];
+    if let Ok(entries) = fs::read_dir(base.join("overlays")) {
+        dirs.extend(entries.flatten().map(|e| e.path()).filter(|p| p.is_dir()));
+    }
+    for dir in dirs {
         if let Ok(entries) = fs::read_dir(&dir) {
             files.extend(
                 entries
@@ -188,7 +194,7 @@ fn drafts(root: &Path, game: &str, lang: &str, images: &[Image]) -> Vec<Draft> {
         }
     }
     files.sort();
-    let not_yet_c: BTreeMap<&str, Key> = images
+    let not_yet_c: BTreeMap<(&str, &str), Key> = images
         .iter()
         .enumerate()
         .flat_map(|(ii, image)| {
@@ -197,7 +203,7 @@ fn drafts(root: &Path, game: &str, lang: &str, images: &[Image]) -> Vec<Draft> {
                 .iter()
                 .enumerate()
                 .filter(|(_, (f, _))| f.origin == Origin::NotYetC)
-                .map(move |(fi, (f, _))| (f.name.as_str(), (ii, fi)))
+                .map(move |(fi, (f, _))| ((if image.main { "" } else { image.name.as_str() }, f.name.as_str()), (ii, fi)))
         })
         .collect();
     let at = |image: &str, address: u32| -> Option<Key> {
@@ -223,20 +229,26 @@ fn drafts(root: &Path, game: &str, lang: &str, images: &[Image]) -> Vec<Draft> {
             .file_stem()
             .map(|s| s.to_string_lossy().into_owned())
             .unwrap_or_default();
-        let overlay = file
-            .strip_prefix("resource_")
-            .and_then(|r| r.get(..3))
+        // The overlay from the file name or its folder (resource_XXX).
+        let place = path.strip_prefix(&base).map(|p| p.to_string_lossy().into_owned()).unwrap_or_default();
+        let overlay = place
+            .find("resource_")
+            .and_then(|at| place.get(at + 9..at + 12))
+            .filter(|id| id.chars().all(|c| c.is_ascii_hexdigit()))
             .map(|id| format!("resource_{id}"));
-        let mut key = hex8(&file)
-            .last()
-            .and_then(|&a| at(overlay.as_deref().unwrap_or(""), a));
+        let image = overlay.as_deref().unwrap_or("");
+        // Overlay drafts name the address without the overlay's 0x8000 link
+        // offset as often as with it.
+        let mut key = hex8(&file).last().and_then(|&a| {
+            at(image, a).or_else(|| (!image.is_empty()).then(|| at(image, a + 0x8000)).flatten())
+        });
         if key.is_none() {
             // Otherwise the not-yet-C function the draft defines.
             key = text
                 .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
                 .find_map(|w| {
                     not_yet_c
-                        .get(w)
+                        .get(&(image, w))
                         .copied()
                         .filter(|_| text.contains(&format!("{w}(")))
                 });

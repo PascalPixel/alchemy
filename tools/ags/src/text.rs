@@ -7,7 +7,7 @@ use super::asm::{Data, Label, Pointer};
 use encoding_rs::WINDOWS_1252;
 mod huffman;
 use huffman::encode_huffman_archive;
-use psynergy::assets::po::{self, Catalog};
+use crate::assets::po::{self, Catalog};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;

@@ -2,7 +2,7 @@
 //!
 //! A PNG built by a tile recipe (`.4bpp`, `.8bpp`, their OBJ-shaped
 //! `.4bppWxH` forms, directly or as a part of a `.parts` list) is decoded to
-//! the tiles the build makes, and Psynergy's finder picks the layout at which
+//! the tiles the build makes, and the layout finder in `ags::assets` picks the layout at which
 //! neighbouring tile edges agree most. When that layout beats the drawn one
 //! by a clear margin, the picture is banked (cut into strips, or its sprites
 //! set side by side in the wrong order) and the check refuses it. Sprite
@@ -20,7 +20,7 @@
 //! (`PART FORM MAP FIRST COUNT [frames]`), so a picture holds exactly the
 //! tiles its map shows. A tile part cut plainly beside a tilemap is refused;
 //! a drawn part's layout is the map's and the finder does not judge it.
-use psynergy::assets::image::{
+use ags::assets::image::{
     indexed_bitmap_png, sprite_runs, sprite_runs_score, tile_sheet_layout, tile_sheet_score,
     GbaBpp, SpriteRun, TileLayout,
 };
@@ -463,7 +463,7 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use psynergy::assets::image::png_from_bitmap;
+    use ags::assets::image::png_from_bitmap;
 
     /// An 80x16 picture: a band across its middle, crossing every tile seam.
     fn picture() -> Vec<u8> {

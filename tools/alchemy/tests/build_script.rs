@@ -4,7 +4,7 @@ mod build_script;
 use std::{fs, path::Path, process::Command};
 
 fn workspace(root: &Path) {
-    for name in ["alchemy", "psynergy", "ags"] {
+    for name in ["alchemy", "ags"] {
         let directory = root.join("tools").join(name);
         fs::create_dir_all(directory.join("src")).unwrap();
         fs::write(directory.join("src/lib.rs"), "pub fn producer() {}\n").unwrap();

@@ -4,7 +4,7 @@ use crate::compiler::build_io::{read, text, write};
 use crate::compiler::routing::{bundle, runtime_library_cflags, CompilerTarget};
 use crate::compiler::sha256;
 use fs2::FileExt;
-use psynergy::process::run;
+use crate::process::run;
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 

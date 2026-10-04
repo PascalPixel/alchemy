@@ -30,24 +30,10 @@ impl Origin {
             Origin::Other => "other",
         }
     }
-    pub fn parse(text: &str) -> Option<Origin> {
-        Some(match text {
-            "c" => Origin::C,
-            "assembly" => Origin::Assembly,
-            "not-yet-c" => Origin::NotYetC,
-            "other" => Origin::Other,
-            _ => return None,
-        })
-    }
 }
 
 #[derive(Clone, Debug)]
 pub struct Function {
-    /// The build the function was read from.
-    pub build: String,
-    /// The linked image within the build: the main image or one overlay,
-    /// which share load addresses with each other.
-    pub image: String,
     pub name: String,
     pub address: u32,
     /// Bytes from the function's start to the next function (pools included).
@@ -60,9 +46,6 @@ pub struct Function {
 /// One linked image: its ELF and the linker map that attributes each input
 /// section to the object it came from.
 pub struct Image<'a> {
-    pub build: &'a str,
-    /// The image's name within its build, such as its ELF's stem.
-    pub name: &'a str,
     pub elf: &'a Elf,
     pub map: &'a str,
 }
@@ -214,8 +197,6 @@ pub fn decoded(
                 .unwrap_or_else(|| format!("sub_{from:08x}"));
             out.push((
                 Function {
-                    build: image.build.to_string(),
-                    image: image.name.to_string(),
                     name,
                     address: from,
                     bytes: to - from,

@@ -169,7 +169,7 @@ fn clean_key(
 fn jobs(
     root: &Path,
     groups: Vec<Group>,
-    cache: Option<&psynergy::cache::Cache>,
+    cache: Option<&crate::cache::Cache>,
     imports: &BTreeMap<String, MessageImports>,
 ) -> (Vec<(Job, Vec<String>)>, usize) {
     let inputs = groups.iter().map(|(_, sources)| sources.len()).sum();
@@ -272,7 +272,7 @@ fn scan_preprocessed(
     root: &Path,
     target_ids: &[DecompTargetId],
 ) -> Result<(usize, usize, Vec<Finding>), String> {
-    let cache = psynergy::cache::Cache::open(&root.join("out/cache/no-asm.tsv")).ok();
+    let cache = crate::cache::Cache::open(&root.join("out/cache/no-asm.tsv")).ok();
     let imports = message_imports(root, target_ids)?;
     let (jobs, inputs) = jobs(
         root,

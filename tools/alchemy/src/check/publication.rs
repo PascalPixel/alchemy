@@ -1,9 +1,9 @@
 //! Fail-closed publication checks for staged changes, outgoing history and
 //! whole tracked trees. Only what pret would commit passes: editable build
 //! inputs, source and tooling, never presentation material made from the game.
-use psynergy::assets::image::{indexed_bitmap_png, PNG_SIGNATURE};
-use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
-use psynergy::assets::wav::wav_pcm8;
+use ags::assets::image::{indexed_bitmap_png, PNG_SIGNATURE};
+use ags::assets::midi::{midi_events, EventBody, MidiEvent};
+use ags::assets::wav::wav_pcm8;
 use std::collections::{BTreeMap, BTreeSet};
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
@@ -1217,7 +1217,7 @@ fn linker_assignment_reason(path: &str, text: &str) -> Option<&'static str> {
 }
 const RAW_ADDRESS_REASON: &str = "numeric call target or ROM/RAM literal-pool address in raw disassembly (O2): reference a label where its bytes are";
 fn numeric_word(text: &str) -> Option<u32> {
-    psynergy::assembly::addresses::integer(text)
+    crate::assembly::addresses::integer(text)
 }
 fn memory_address(word: u32) -> bool {
     // GBA address-space regions, including the Game Pak ROM's bus mirrors.
@@ -1457,12 +1457,12 @@ fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
             .expect("assembly literal pool load pattern")
     });
     let code = unquoted_source(text).to_ascii_lowercase();
-    if call.is_match(&code) || !psynergy::assembly::addresses::numeric_calls(&code).is_empty() {
+    if call.is_match(&code) || !crate::assembly::addresses::numeric_calls(&code).is_empty() {
         return Some(RAW_ADDRESS_REASON);
     }
-    if !psynergy::assembly::addresses::sites(
+    if !crate::assembly::addresses::sites(
         &[&code],
-        &psynergy::assembly::addresses::Types::default(),
+        &crate::assembly::addresses::Types::default(),
     )
     .is_empty()
     {
@@ -2424,7 +2424,7 @@ mod tests {
             hidden[1 + index] = row[index].wrapping_sub(left);
         }
         let hidden = fdeflate::compress_to_vec(&hidden);
-        let wave = psynergy::assets::wav::pcm8_wav(&[0; 64], 8000).unwrap();
+        let wave = ags::assets::wav::pcm8_wav(&[0; 64], 8000).unwrap();
         let listed_wave = [
             b"RIFF".as_slice(),
             &(wave.len() as u32 + 4).to_le_bytes(),
@@ -2436,7 +2436,7 @@ mod tests {
         let samples: Vec<u8> = logo.iter().map(|byte| byte.wrapping_sub(128)).collect();
         let midi = midi_fixture(&[], true);
         let meta = |kind: u8, payload: &[u8]| {
-            psynergy::assets::midi::append_conductor_meta(&midi, kind, payload).unwrap()
+            ags::assets::midi::append_conductor_meta(&midi, kind, payload).unwrap()
         };
         let base64: Vec<u8> = (b'A'..=b'Z')
             .chain(b'a'..=b'z')
@@ -2546,7 +2546,7 @@ mod tests {
             ),
             (
                 "games/THE BROKEN SEAL/SOUND/SAMPLE/LOGO.PCM8.WAV",
-                psynergy::assets::wav::pcm8_wav(&samples, 8000).unwrap(),
+                ags::assets::wav::pcm8_wav(&samples, 8000).unwrap(),
                 nintendo,
             ),
             (

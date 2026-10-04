@@ -20,7 +20,6 @@ pub struct Symbol {
 
 /// One linked image: its functions with their instructions, and its symbols.
 pub struct Image {
-    pub build: String,
     pub name: String,
     /// The main cartridge image, which overlays call into.
     pub main: bool,

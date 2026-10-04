@@ -34,8 +34,9 @@ sharing as much code between the games as possible.
   own `recon/<game>/<lang>/MAIN.LD`.
 - `recon/<game>/<lang>` holds that edition's ROM scaffold (`rom.s`,
   `overlays.s`) and its drafts (`main/`, `overlays/`).
-- `tools/` holds alchemy (build, checks, count), ags (encoders) and psynergy
-  (reading and analysis). `out/` and `tools/out/` are build output and are
+- `tools/` holds alchemy (build, checks, count, and the reports `deps` and
+  `worst`: one `alchemy` command for both games) and ags (asset encoders and
+  decoders). `out/` and `tools/out/` are build output and are
   ignored.
 
 ## Rules
@@ -212,9 +213,10 @@ never a file or a function.
   worktree is removed when its branch lands. Land on main with `make land`,
   which builds and compares all twelve editions and runs the tests.
   _Check: land._
-- **W3** Alchemy owns compilation, linking and verification; the ags crate owns
-  encoding (agsgfx, mid2ags, wav2ags, po2ags); Psynergy owns reading, decoding,
-  analysis and comparison. Look at how pret does something before inventing.
+- **W3** Alchemy owns compilation, linking, verification, reading and analysis,
+  behind one `alchemy` command for both games; the ags crate owns asset
+  encoding and decoding (agsgfx, mid2ags, wav2ags, po2ags). Look at how pret
+  does something before inventing.
 - **W4** Choose what to match from `make deps`: first the functions other
   unfinished functions call, with the structures they share, then the ones
   with nothing left to name, largest first.

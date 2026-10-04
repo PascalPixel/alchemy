@@ -14,7 +14,7 @@
 //! The assembler's mapping symbols (`$t`, `$a`, `$d`) in the linked ELF tell
 //! code from data; bytes before a section's first mapping symbol are data.
 use object::{Object, ObjectSection, ObjectSymbol, SectionFlags};
-use psynergy::decode::{decode_one, Kind};
+use crate::decode::{decode_one, Kind};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// The failure's closing line: what to do instead.

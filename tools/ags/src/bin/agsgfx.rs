@@ -5,7 +5,7 @@ use ags::graphics::metatiles;
 use ags::lz::{
     compress_general, compress_mtf4, compress_tagged, compress_tagged_palette, LzMachine,
 };
-use psynergy::assets::image::{bgr555_palette_from_png, indexed_png, GbaBpp};
+use ags::assets::image::{bgr555_palette_from_png, indexed_png, GbaBpp};
 use std::fs;
 use std::process::ExitCode;
 

@@ -1,22 +1,40 @@
 use std::process::ExitCode;
 
+mod assembly {
+    pub mod addresses;
+}
 mod bootstrap;
 mod build;
 mod build_rom;
 mod build_text;
+mod cache;
 mod check;
 mod compiler;
 mod coverage;
+mod decode;
+mod deps;
+mod deps_command;
 mod edition;
+mod elf;
 mod gate;
+mod process;
+mod similar;
 mod targets;
+mod thumb;
 mod verify;
+mod worst;
+mod worst_command;
 
-const USAGE: &str = "usage: alchemy <command> [args]\n\
-  bootstrap             install or validate the persistent compiler toolchain\n\
-  build                 build compilers, maintained source, assembly and ROMs\n\
-  verify                the gates of make verify, make land and the commit hooks\n\
-  check                 run repository contract checks";
+const USAGE: &str = r#"usage: alchemy <command> [args]  (both games, all twelve editions)
+Build and verify:
+  bootstrap   install or validate the persistent compiler toolchain
+  build       build compilers, maintained source, assembly and ROMs
+  verify      the gates of make verify, make land and the commit hooks
+  check       run repository contract checks
+Reports for people (nothing else reads them):
+  deps        dependency map of not-yet-C code: what unblocks the most
+  worst       maintained C ranked by how mechanical it reads
+Run any command with --help for its options."#;
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();
@@ -31,6 +49,8 @@ fn main() -> ExitCode {
         "build" => build::entry(rest),
         "verify" => verify::entry(rest),
         "check" => check::entry(rest),
+        "deps" => deps_command::entry(rest),
+        "worst" => result(worst_command::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

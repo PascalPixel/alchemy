@@ -182,13 +182,13 @@ progress:
 # A report for people only: the build and the count never read it. The listings
 # under recon/<game>/raw are the English builds' disassembly, so it reads those.
 deps:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml --bin psynergy -- deps --build out/tbs-en --build out/tla-en \
+	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- deps --build out/tbs-en --build out/tla-en \
 	    --out-dir out/reports $(DEPS_FLAGS)
 
 # Maintained C ranked by how mechanical it reads, worst first: what to
 # rewrite in Camelot's style next. A report for people only.
 worst:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml --bin psynergy-worst -- --out out/reports/worst.tsv
+	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- worst --out out/reports/worst.tsv
 
 clean:
 	@rm -rf out

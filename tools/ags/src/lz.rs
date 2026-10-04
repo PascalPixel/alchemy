@@ -2,7 +2,7 @@
 //! and their tagged choice, the tag-2 tile compressor, and arena streams.
 //! Every stream is compressed from its decoded bytes and the encoder's own
 //! settings alone: no plan, token or recorded choice reaches an encoder.
-use psynergy::assets::lz::{
+use crate::assets::lz::{
     encode_general, encode_mtf4_lz, encode_palette, GeneralToken, Mtf4LzToken, PaletteGroup,
     PaletteOperation,
 };
@@ -310,5 +310,5 @@ pub fn compress_mtf4(decoded: &[u8]) -> Result<Vec<u8>, String> {
 /// One arena stream, whose copies read from `arena`, the bytes before it in
 /// its container.
 pub fn compress_arena(decoded: &[u8], arena: &[u8]) -> Result<Vec<u8>, String> {
-    psynergy::assets::lz::compress_arena(decoded, arena).map_err(|error| error.to_string())
+    crate::assets::lz::compress_arena(decoded, arena).map_err(|error| error.to_string())
 }

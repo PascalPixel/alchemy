@@ -1,25 +1,17 @@
-//! `psynergy-worst`: maintained C ranked by how mechanical it reads, worst
+//! `alchemy worst`: maintained C ranked by how mechanical it reads, worst
 //! first, into a TSV for people choosing what to rewrite next.
 
-use psynergy::worst;
+use crate::worst;
 use std::fmt::Write as _;
 use std::path::PathBuf;
 
-const USAGE: &str = "usage: psynergy-worst --out FILE [--root DIR] [--show N]\n\
+const USAGE: &str = "usage: alchemy worst --out FILE [--root DIR] [--show N]\n\
 Ranks every function in ROOT/games/**/*.C by weighted mechanical signals\n\
 (FAKEMATCH devices, inline asm, byte-offset pointer arithmetic, placeholder\n\
 names, dereferenced casts, one-pass blocks, goto, volatile, hex literals,\n\
 value casts), writes them worst first to FILE and prints the first N.";
 
-fn main() {
-    if let Err(error) = run() {
-        eprintln!("{error}");
-        std::process::exit(1);
-    }
-}
-
-fn run() -> Result<(), String> {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
+pub fn run(arguments: &[String]) -> Result<(), String> {
     let (mut root, mut out, mut show) = (PathBuf::from("."), None, 30usize);
     let mut i = 0;
     while i < arguments.len() {

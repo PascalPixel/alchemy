@@ -20,7 +20,7 @@
 //! is a marker event of one line, such as `key_shift 0` or `goto loop_1`:
 //! the event's kind, then its integers and labels.
 use super::asm::{identifier, Data, Pointer};
-use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
+use crate::assets::midi::{midi_events, EventBody, MidiEvent};
 use std::collections::{BTreeSet, HashMap};
 use std::fmt;
 
@@ -958,7 +958,7 @@ pub fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
     ))
 }
 pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
-    let wave = psynergy::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
+    let wave = crate::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
     let last_sample = u32::try_from(
         wave.samples
             .len()

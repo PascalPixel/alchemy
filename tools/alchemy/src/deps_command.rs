@@ -1,17 +1,17 @@
-//! `psynergy deps`: the dependency map of linked builds, one TSV per view.
+//! `alchemy deps`: the dependency map of linked builds, one TSV per view.
 //! Rebuilt from the builds' ELF images and maps, the recon listings and the
 //! drafts on every run; a report for people that nothing else reads.
 
-use psynergy::deps::{self, Blocker, Image, Index, Key, Symbol, Target};
-use psynergy::elf::Elf;
-use psynergy::similar::{self, Origin};
+use crate::deps::{self, Blocker, Image, Index, Key, Symbol, Target};
+use crate::elf::Elf;
+use crate::similar::{self, Origin};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
 
 const USAGE: &str =
-    "usage: psynergy deps --build DIR [--build DIR]... --out-dir DIR [--root DIR]\n\
+    "usage: alchemy deps --build DIR [--build DIR]... --out-dir DIR [--root DIR]\n\
 Maps calls and references of every function in each build directory's linked\n\
 images (DIR/*.elf and DIR/overlays/*.elf with their maps), the recon listings\n\
 (ROOT/recon/GAME/raw) and drafts (ROOT/recon/GAME/LANG), for a build named\n\
@@ -57,7 +57,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     Ok(o)
 }
 
-fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
+fn load(root: &Path, build: &Path) -> Result<Vec<Image>, String> {
     let mut images = Vec::new();
     for elf_path in images_in(build)? {
         let data = fs::read(&elf_path).map_err(|e| format!("{}: {e}", elf_path.display()))?;
@@ -70,8 +70,6 @@ fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
             .map(|s| s.to_string_lossy().into_owned())
             .unwrap_or_default();
         let image = similar::Image {
-            build: name,
-            name: &stem,
             elf: &elf,
             map: &map,
         };
@@ -96,7 +94,6 @@ fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
             })
             .collect();
         images.push(Image {
-            build: name.to_string(),
             main: elf_path.parent() == Some(build),
             name: stem,
             functions,
@@ -280,7 +277,7 @@ fn report(o: &Options, build: &Path, out_dir: &Path) -> Result<String, String> {
         .map(|n| n.to_string_lossy().into_owned())
         .unwrap_or_default();
     let (game, lang) = name.split_once('-').unwrap_or((&name, "en"));
-    let images = load(&o.root, build, &name)?;
+    let images = load(&o.root, build)?;
     let ids = listing_ids(&o.root, game, &images);
     let index = Index::build(&images, &ids);
     let drafts = drafts(&o.root, game, lang, &images);
@@ -504,15 +501,7 @@ fn images_in(build: &Path) -> Result<Vec<PathBuf>, String> {
     Ok(elfs)
 }
 
-fn main() -> std::process::ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
-    let rest = match arguments.split_first() {
-        Some((command, rest)) if command == "deps" => rest,
-        _ => {
-            eprintln!("{USAGE}");
-            return std::process::ExitCode::from(2);
-        }
-    };
+pub fn entry(rest: &[String]) -> std::process::ExitCode {
     if rest == ["--help"] || rest == ["-h"] {
         println!("{USAGE}");
         return std::process::ExitCode::SUCCESS;

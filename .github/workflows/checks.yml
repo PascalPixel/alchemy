@@ -48,7 +48,9 @@ jobs:
           build_rom::tests::overlay_veneers_keep_their_targets_when_preceding_data_grows
 
       - name: Test asset encoders and analysis tools on synthetic inputs
-        run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p ags -p psynergy
+        run: |
+          cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p ags
+          cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --bin alchemy -- deps:: similar:: worst:: thumb:: decode:: elf:: cache:: process::
 
       - name: Test Alchemy commands and relocated build caches
         run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --test cli --test build_script

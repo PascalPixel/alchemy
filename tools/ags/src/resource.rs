@@ -18,7 +18,7 @@
 //!   icon as 8-bit tiles in the packer's palette LZ without its tag,
 //!   its stream zero-padded to a multiple of 32 bytes.
 //! - `.icon4`: one 4-bit icon, its pixels row by row in the 4-bit icon
-//!   coder (Psynergy's icon4), without a palette; its data source lists the
+//!   coder (`assets`'s icon4), without a palette; its data source lists the
 //!   icons of a table by label, as pret's item icon table does.
 //! - `.frames`: a sprite bank. The image is one square frame wide with its
 //!   frames stacked, a front and a back pose in turn. The bank is a table of
@@ -38,7 +38,7 @@
 //!   grid row from that cell, its cells in hex separated by spaces; the rest
 //!   of the row is fill, and an empty line a row of fill.
 //! - `.delta0`, `.delta1`, `.delta2`: the table's bytes as 16-bit tilemap
-//!   entries, delta-coded in that mode (Psynergy's tilemap delta).
+//!   entries, delta-coded in that mode (`assets`'s tilemap delta).
 //! - `.script`: a halfword command script, one command per line, its values
 //!   decimal or `0x` hex: `channel N` (0xfd00 | N), `jump N` (0xfe00 | N),
 //!   `stop` (0xfeff), `end` (0xffff), and the commands `frame SOURCE COUNT
@@ -76,7 +76,7 @@
 //!   line names a 32x32 icon image beside the list, or `-` for an empty
 //!   slot. The bank is a table of each slot's halfword offset, 0 when empty,
 //!   then each icon's 16-colour palette and its pixels, row by row, in the
-//!   4-bit icon coder (Psynergy's icon4), zero-padded to a word, or to the
+//!   4-bit icon coder (`assets`'s icon4), zero-padded to a word, or to the
 //!   hex boundary an `align` line gives (the Japanese ☀️ bank pads to 20).
 //!
 //! A block map reads its grid `STEM.TSV`, one line per row of hex words:
@@ -95,10 +95,10 @@
 //!   before it.
 use crate::graphics::{indices, metatiles, MapDrawing};
 use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
-use psynergy::assets::compression::{
+use crate::assets::compression::{
     encode_delta7, encode_icon4, encode_tilemap_delta, encode_zero_skip,
 };
-use psynergy::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
+use crate::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
 /// The resource packer's compressor, as the streams in both games show: the
 /// general ring's window, read-ahead and reach, and the palette ring's
@@ -717,7 +717,7 @@ fn obj_shape(name: &str) -> Option<(usize, usize)> {
         wide.parse::<usize>().ok()? / 8,
         high.parse::<usize>().ok()? / 8,
     );
-    (psynergy::assets::image::OBJ_SHAPES.contains(&shape)
+    (crate::assets::image::OBJ_SHAPES.contains(&shape)
         && format!("{}x{}", shape.0 * 8, shape.1 * 8) == name)
         .then_some(shape)
 }

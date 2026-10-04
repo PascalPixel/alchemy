@@ -41,9 +41,9 @@ use crate::asm::Data;
 use crate::graphics::indices;
 use crate::lz::compress_tagged;
 use crate::resource::PACKER;
-use psynergy::assets::compression::encode_zero_skip;
-use psynergy::assets::image::indexed_bitmap_png;
-use psynergy::assets::lz::compress_arena;
+use crate::assets::compression::encode_zero_skip;
+use crate::assets::image::indexed_bitmap_png;
+use crate::assets::lz::compress_arena;
 use std::collections::HashMap;
 use std::fmt::Write;
 

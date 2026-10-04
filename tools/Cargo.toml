@@ -1,8 +1,8 @@
 # One workspace, one lockfile, one shared artifact tree for every tool crate.
-# Alchemy owns project integration; Psynergy reads and analyses; ags encodes.
+# Alchemy builds, checks, counts and analyses; ags encodes and decodes assets.
 [workspace]
 resolver = "2"
-members = ["ags", "alchemy", "psynergy"]
+members = ["ags", "alchemy"]
 
 [workspace.package]
 version = "0.1.0"

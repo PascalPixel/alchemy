@@ -1,8 +1,8 @@
 //! Pixel layouts over decoded indexed images: frame atlases, GBA tiles in
 //! frame order, metatiles and the pictures a tilemap draws.
 //! Pixel codecs themselves (4/8bpp packing, zero-skip, MTF4, delta7, tilemap
-//! delta) are Psynergy's; this module arranges what they are given.
-use psynergy::assets::image::{GbaBpp, IndexedImage};
+//! delta) are in `assets`; this module arranges what they are given.
+use crate::assets::image::{GbaBpp, IndexedImage};
 
 fn tile_bytes(bpp: GbaBpp) -> usize {
     match bpp {

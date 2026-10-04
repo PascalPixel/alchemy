@@ -8,7 +8,7 @@ use crate::compiler::routing::{
 };
 use crate::targets::{decomp_target, DecompTarget};
 use ags::lz::{compress_tagged, LzMachine};
-use psynergy::process::run as command;
+use crate::process::run as command;
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;

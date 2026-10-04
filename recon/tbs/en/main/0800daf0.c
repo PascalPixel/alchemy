@@ -1,3 +1,9 @@
+/* 2026-10-04: fresh EN baseline 895; ordinary temporary reuse and step
+   assignment improve to 715 (50 register-only, one reordered, four
+   inserted instructions), still 500/492 bytes. Two 55-second searches
+   evaluated 19,060 candidates without another improvement. Explicit
+   bindings of bounds/y to r7/r6/r5 worsened to 4102 and were discarded.
+   Existing resident IWRAM entries now use their shared header names. */
 /* Draft, not exact: 500 bytes against 492. Written from the listing.
    The clamped x is in fp and z in a stack slot as in the ROM, once the
    whole-pixel z distance reuses dz as the x distance reuses dx.
@@ -53,8 +59,8 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
     s32 z;
     s32 dy;
     s32 dz;
-    s32 dist;
     s32 dx;
+    s32 dist;
     s32 step;
     s32 (*div)(s32, s32);
 
@@ -85,30 +91,32 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
             obj->y = y;
             obj->z = z;
         } else {
+            s32 tmp;
             dx = (x - obj->x) / 0x10000;
             dz = (z - obj->z) / 0x10000;
-            dist = ((s32 (*)(s32))0x030001d8)(dx * dx + dz * dz) << 16;
+            tmp = dx * dx + dz * dz;
+            dist = Iwram_Sqrt(tmp) << 16;
             dx = x - obj->x;
             dy = y - obj->y;
             dz = z - obj->z;
             if (dist < 0x400000)
                 dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-            step = dist / 8;
-            if (step > obj->speed_limit)
+            if ((step = dist / 8) > obj->speed_limit)
                 step = obj->speed_limit;
             if (dist < 0x4000) {
                 obj->x = x;
                 obj->z = z;
             } else {
                 if (dist > step) {
-                    div = (s32 (*)(s32, s32))0x0300013c;
+                    div = Iwram_RatioMulQ14;
                     dx = Iwram_MulQ16(div(dist, dx), step);
                     dz = Iwram_MulQ16(div(dist, dz), step);
                 }
                 obj->x += dx;
                 obj->z += dz;
             }
-            if ((dy < 0 ? -dy : dy) > 0x8000)
+            tmp = dy < 0 ? -dy : dy;
+            if (tmp > 0x8000)
                 dy /= 4;
             obj->y += dy;
         }

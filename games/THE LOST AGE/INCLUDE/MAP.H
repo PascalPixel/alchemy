@@ -28,11 +28,12 @@ struct MapCell {
 };
 
 /* A map layer: 56 bytes, eight more than The Broken Seal's, with the cell
-   array at 0x30. */
+   array at 0x30 and, after it, one byte per cell choosing the cell's
+   four-byte terrain record in gMapCollision. */
 struct MapLayer {
     u8 unknown_00[0x30];
     struct MapCell *cells;
-    u8 unknown_34[4];
+    u8 *terrain_ids;
 };
 
 /* The field map's work block (heap slot map_work). It follows The Broken

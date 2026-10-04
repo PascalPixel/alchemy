@@ -14,7 +14,10 @@ struct EventWork {
     u8 unknown_156[2];
     /* Set to 999 when a destination is chosen. */
     s16 countdown;
-    u8 unknown_15a[0x52];
+    u8 unknown_15a[0x30];
+    /* 3 while objects ignore the terrain's height. */
+    s8 terrain_mode;
+    u8 unknown_18b[0x21];
     s32 screen_effect;
     u8 unknown_1b0[2];
     s16 screen_status;

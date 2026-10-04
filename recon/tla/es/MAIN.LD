@@ -140,6 +140,7 @@
     "*/recon/tla/es/rom.o"(.rom.00015948)
     "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/STATE.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00016048)
+    "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/RELEASE_WORKSPACE.o"(.text)
     "*/games/THE LOST AGE/SRC/SYSTEM/LINK/SERIAL_QUEUE_COMMAND.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000161ac)
     "*/games/THE LOST AGE/SRC/SYSTEM/LINK/SIO_TIME.o"(.text)

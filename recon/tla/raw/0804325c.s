@@ -35,7 +35,7 @@ Func_0804325c:
 	cmp r1, #0
 	bge .L_08043288
 .L_0804329a:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r5, #0
 	pop {r5, r6, pc}
 	.2byte 0x0000

@@ -171,7 +171,7 @@
         "*/recon/tla/raw/0801601c.o"(.text)
         "*/recon/tla/raw/08016054.o"(.text)
         "*/recon/tla/raw/080160d4.o"(.text)
-        "*/recon/tla/raw/0801613c.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/RELEASE_WORKSPACE.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/LINK/SERIAL_QUEUE_COMMAND.o"(.text)
         "*/recon/tla/raw/08016180.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/LINK/SIO_TIME.o"(.text)

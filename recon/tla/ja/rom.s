@@ -424,7 +424,7 @@ Resource_DecodeType01:
 Resource_DecodeByteLzInRam:
 	.incbin "baserom.gba", 0x0001591c, 0x000006e0
 	.section .rom.0001601c, "ax"
-	.incbin "baserom.gba", 0x0001601c, 0x00000134
+	.incbin "baserom.gba", 0x0001601c, 0x00000120
 	.section .rom.00016180, "ax"
 	.global Func_08016180
 	.type Func_08016180, %function

@@ -153,6 +153,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0001591c)
     "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/STATE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0001601c)
+    "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/RELEASE_WORKSPACE.o"(.text)
     "*/games/THE LOST AGE/SRC/SYSTEM/LINK/SERIAL_QUEUE_COMMAND.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00016180)
     "*/games/THE LOST AGE/SRC/SYSTEM/LINK/SIO_TIME.o"(.text)

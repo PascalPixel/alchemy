@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
+#include "BATTLE_SESSION.H"
 #include "RAM_BUFFER.H"
+
+void Func_0811a5fc(s32 object_id);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 void ResetMotionRecordGroup(void *owner);
@@ -33,4 +36,30 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
             break;
         }
     }
+}
+
+/* GetBattleObjectSlot, which ⚓️ expands here: enemies (ids above 7) index
+   the session's slot table from 8, and 0xff marks a unit without a slot. */
+static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
+{
+    u8 *work = (u8 *)Ram_HeapSlots->battle_work;
+    struct BattleObjectSlot *slots = (struct BattleObjectSlot *)(work + 0x84);
+
+    if (id > 7)
+        id -= 0x78;
+    id += 0x74;
+    if (work[id] == 0xff)
+        return NULL;
+    return &slots[work[id]];
+}
+
+/* ☀️'s: release the unit's slot values, then mark its slot active. */
+s32 ActivateBattleObjectSlot(s32 object_id)
+{
+    struct BattleObjectSlot *slot;
+
+    Func_0811a5fc(object_id);
+    slot = BattleObject_FindSlot(object_id);
+    slot->active = 1;
+    return 0;
 }

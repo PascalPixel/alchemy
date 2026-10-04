@@ -5136,7 +5136,12 @@ Func_0811a39c:
 BattleMotion_GetSlotField14:
 	.incbin "baserom.gba", 0x0011a49c, 0x0000000c
 	.section .rom.0011a4f6, "ax"
-	.incbin "baserom.gba", 0x0011a4f6, 0x00000c8e
+	.incbin "baserom.gba", 0x0011a4f6, 0x0000011e
+	.global Func_0811a5fc
+	.type Func_0811a5fc, %function
+	.thumb_func
+Func_0811a5fc:
+	.incbin "baserom.gba", 0x0011a614, 0x00000b70
 	.section .rom.0011b198, "ax"
 	.incbin "baserom.gba", 0x0011b198, 0x00000114
 	.section .rom.0011b2dc, "ax"
@@ -5156,20 +5161,11 @@ BattleUnit_BuildStatusFlags:
 	.thumb_func
 Func_0811b75c:
 	.incbin "baserom.gba", 0x0011b774, 0x00000278
-	.section .rom.0011b9ec, "ax"
-	.global BattleActor_SpawnObjectsForList
-	.type BattleActor_SpawnObjectsForList, %function
-	.thumb_func
-BattleActor_SpawnObjectsForList:
-	.incbin "baserom.gba", 0x0011b9ec, 0x0000000c
 	.section .rom.0011ba14, "ax"
 	.incbin "baserom.gba", 0x0011ba14, 0x00000230
-	.section .rom.0011bc7c, "ax"
-	.global ActivateBattleObjectSlot
-	.type ActivateBattleObjectSlot, %function
-	.thumb_func
-ActivateBattleObjectSlot:
-	.incbin "baserom.gba", 0x0011bc7c, 0x000000ec
+	.section .rom.0011bcb0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0011bcb0, 0x000000b8
 	.section .rom.0011bd68, "ax"
 	.global Func_0811bd50
 	.type Func_0811bd50, %function

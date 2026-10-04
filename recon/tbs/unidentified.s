@@ -237,8 +237,8 @@ Menu_AnimatedCursorTiles:
 	.global Data_080366f8
 Data_080366f8:
 	.incbin "baserom.gba", 0x000366f8, 0x00000048
-	.global Data_08036740
-Data_08036740:
+	.global Menu_CursorBobOffsets
+Menu_CursorBobOffsets:
 	.incbin "baserom.gba", 0x00036740, 0x00000010
 	.global PaletteGlow_WaveTable
 PaletteGlow_WaveTable:

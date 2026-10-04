@@ -1,3 +1,4 @@
+#include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -24,6 +25,203 @@ void WaitFrames(s32);
 void Resource_ResetPendingTransfer(void);
 
 void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index);
+
+struct EffectPosition {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+extern s8 Menu_CursorBobOffsets[];
+extern u8 Menu_AnimatedCursorTiles[];
+
+extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *pos);
+
+void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index);
+
+/*
+ * Draws one frame of the selection menu: the row chain slides toward its
+ * targets and hands the selected row's position to the cursor; the transfer
+ * frame scales in around the selected node; the two side markers; the path
+ * chain moves and scales; the animated cursor closes half the distance to
+ * its target each frame. Ends by advancing the frame status counter.
+ */
+void MenuSelection_DrawFrame(void)
+{
+    struct SelectionScreen *state = gResQueueWork;
+    struct SelectionSprite *cursor_entry = &state->records[14].sprite;
+    struct SelectionNode *cursor = &state->records[14];
+    struct SelectionNode *transfer = &state->records[15];
+    struct SelectionNode *node;
+    struct SelectionSprite *e;
+    struct SelectionSprite *te;
+    s32 cnt = 0;
+    s32 slot;
+    s32 tmp;
+    struct EffectPosition pos;
+
+    /* 一列目: 項目の横移動と、選択中項目からのカーソル座標配布。 */
+    node = state->head;
+    while (node != 0) {
+        e = &node->sprite;
+        e->affine = 0;
+        e->param = 0;
+        e->x = node->x;
+        e->y = node->y;
+        slot = 240;
+        if (state->vertical_scroll != 0) {
+            e->y += state->vertical_scroll;
+        } else if (node->x != node->target_x) {
+            if (node->dx > 0) {
+                if (node->x + node->dx > node->target_x) {
+                    node->x = node->target_x;
+                } else {
+                    node->x = node->x + node->dx;
+                }
+            } else {
+                if (node->x + node->dx < node->target_x) {
+                    node->x = node->target_x;
+                } else {
+                    node->x = node->x + node->dx;
+                }
+            }
+            e->x = node->x;
+        } else if (cnt == state->cursor_index) {
+            slot = 241;
+            if (cursor->kind != 0) {
+                if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
+                    cursor->target_x = pos.x;
+                    cursor->target_y = pos.y;
+                    if (cursor->scale == 0) {
+                        cursor->x = pos.x;
+                        cursor->y = pos.y;
+                        cursor->scale = 1;
+                    }
+                }
+            }
+        }
+        if (node->scale != 0) {
+            if (GameFlag_IsSet(0x103) != 0) {
+                if (state->records[14].kind == 1) {
+                    e->mode = 1;
+                } else {
+                    e->mode = 0;
+                }
+                if (node->kind == 1) {
+                    e->mode = 1;
+                }
+            }
+            Runtime_PushSlotEntry((s32 *)e, slot);
+        }
+        node = node->next;
+        cnt++;
+    }
+    /* 二列目: 転送枠。選択中の節点に合わせて拡大縮小しながら描く。 */
+    if (transfer->kind != 0) {
+        node = NodeChain_GetNodeAtCount(state);
+        te = &transfer->sprite;
+        te->mode = 0;
+        te->affine = 0;
+        te->param = 0;
+        te->mosaic = 0;
+        te->colors = 1;
+        te->size = 2;
+        te->shape = 0;
+        te->priority = 0;
+        te->tile = transfer->tile;
+        te->x = node->x - 4;
+        te->y = node->y + (Menu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
+        if (transfer->scale != transfer->scale_end) {
+            state->matrix[0] = transfer->scale;
+            state->matrix[1] = transfer->scale;
+            state->matrix[2] = 0;
+            te->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
+            te->affine = 3;
+            te->x = te->x + 0xfff0;
+            te->y = te->y + 0xf0;
+            transfer->scale = transfer->scale + transfer->scale_step;
+        }
+        if (GameFlag_IsSet(0x103) != 0) {
+            te->mode = 1;
+        }
+        Runtime_PushSlotEntry((s32 *)te, 248);
+    }
+    MenuSelection_DrawSideMarker(state, 0);
+    MenuSelection_DrawSideMarker(state, 1);
+    /* 三列目: 縦横の移動と倍率を同時に進める節点鎖。 */
+    node = state->path;
+    while (node != 0) {
+        e = &node->sprite;
+        if (node->x != node->target_x) {
+            node->x = node->x + node->dx;
+        }
+        if (node->y != node->target_y) {
+            node->y = node->y + node->dy;
+        }
+        e->x = node->x;
+        e->y = node->y;
+        if (node->scale != node->scale_end) {
+            node->scale = node->scale + node->scale_step;
+            state->matrix[0] = node->scale;
+            state->matrix[1] = node->scale;
+            state->matrix[2] = 0;
+            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
+            e->affine = 3;
+            e->x = e->x + 0xfff8;
+            e->y = e->y + 0xf8;
+        } else {
+            e->affine = 0;
+            e->param = 0;
+        }
+        if (GameFlag_IsSet(0x103) != 0) {
+            if (state->records[14].kind == 1) {
+                e->mode = 1;
+            } else {
+                e->mode = 0;
+            }
+            if (node->kind == 1) {
+                e->mode = 1;
+            }
+        }
+        Runtime_PushSlotEntry((s32 *)e, 240);
+        node = node->next;
+    }
+    /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
+    if (cursor->kind != 0) {
+        cnt = (s32)Menu_AnimatedCursorTiles;
+        {
+            void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
+
+            cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
+        }
+        if (cursor->target_x != cursor->x) {
+            tmp = (cursor->target_x - cursor->x) >> 1;
+            if (tmp != 0) {
+                cursor->x = cursor->x + tmp;
+            } else {
+                cursor->x = cursor->target_x;
+            }
+        }
+        if (cursor->target_y != cursor->y) {
+            if ((tmp = (cursor->target_y - cursor->y) >> 1) != 0) {
+                cursor->y = cursor->y + tmp;
+            } else {
+                cursor->y = cursor->target_y;
+            }
+        }
+        cursor_entry->y = cursor->y + Menu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
+        cursor_entry->x = cursor->x - 4;
+        if (GameFlag_IsSet(0x103) != 0) {
+            if (state->records[14].kind == 1) {
+                cursor_entry->mode = 1;
+            } else {
+                cursor_entry->mode = 0;
+            }
+        }
+        Runtime_PushSlotEntry((s32 *)cursor_entry, 248);
+    }
+    state->status += 1;
+}
 
 /* menu/selection/set_node_coordinates.c */
 void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index)

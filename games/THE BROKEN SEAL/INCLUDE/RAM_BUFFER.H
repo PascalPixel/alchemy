@@ -41,7 +41,7 @@
 #define Ram_MapWork ((void **)0x03001e80) /* gMapWork */
 #define Ram_CameraWork ((void **)0x03001e90) /* gCameraWork */
 #define Ram_EventWork ((void **)0x03001ecc) /* gEventWork */
-#define Ram_DisplayWork ((void **)0x03001edc) /* Data_03001ecc */
+#define Ram_DisplayWork ((void **)0x03001edc) /* gDisplayTransition */
 #define Ram_WorkSlot ((void **)0x03001e60) /* gWorkSlot */
 #define Ram_ActorEffectWork ((void **)0x03001ef0) /* gActorEffectWork */
 #define Ram_Disp ((void **)0x03001f08) /* gDisp */
@@ -52,7 +52,7 @@
 #define Ram_MapWork ((void **)0x03001e70) /* gMapWork */
 #define Ram_CameraWork ((void **)0x03001e80) /* gCameraWork */
 #define Ram_EventWork ((void **)0x03001ebc) /* gEventWork */
-#define Ram_DisplayWork ((void **)0x03001ecc) /* Data_03001ecc */
+#define Ram_DisplayWork ((void **)0x03001ecc) /* gDisplayTransition */
 #define Ram_WorkSlot ((void **)0x03001e50) /* gWorkSlot */
 #define Ram_ActorEffectWork ((void **)0x03001ee0) /* gActorEffectWork */
 #define Ram_Disp ((void **)0x03001ef8) /* gDisp */

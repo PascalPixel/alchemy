@@ -66,7 +66,7 @@ struct IconSlot {
 extern u32 gFrameCount;
 extern u16 Data_080366f8[];
 extern struct IconSlot gVramBlockCache[];
-extern u8 *Data_03001ecc;
+extern u8 *gDisplayTransition;
 void AffineEffect_UpdateFrame(void)
 {
     struct ResourceMenuWork *work;
@@ -124,7 +124,7 @@ void AffineEffect_UpdateFrame(void)
         struct WindowBuffer *window;
         s32 span;
 
-        buffers = Data_03001ecc;
+        buffers = gDisplayTransition;
         if (buffers == 0 || work->count == 0)
             return;
         window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
@@ -156,7 +156,7 @@ void AffineEffect_UpdateFrame(void)
         s32 start;
         s32 span;
 
-        buffers = Data_03001ecc;
+        buffers = gDisplayTransition;
         if (buffers == 0 || work->count == 0)
             return;
         x = work->entries[work->selection].x;

@@ -10,7 +10,7 @@
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
 
-extern struct DisplayTransitionState *Data_03001ecc;
+extern struct DisplayTransitionState *gDisplayTransition;
 
 s32 GameFlag_IsSet(s32 flag);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
@@ -41,7 +41,7 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
-    struct DisplayTransitionState *work = Data_03001ecc;
+    struct DisplayTransitionState *work = gDisplayTransition;
     volatile u32 fill = 0xf000f000;
     Dma_Set(&fill, (void *)0x06002000, 0x85000140, (volatile u32 *)0x040000d4);
     if (color != -1) {

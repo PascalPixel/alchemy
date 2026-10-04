@@ -244,8 +244,8 @@ gParticleWork:
 	.global Data_03001ec8
 Data_03001ec8:
 	.space 0x00000004
-	.global Data_03001ecc
-Data_03001ecc:
+	.global gDisplayTransition
+gDisplayTransition:
 	.space 0x00000004
 	.global Data_03001ed0
 Data_03001ed0:

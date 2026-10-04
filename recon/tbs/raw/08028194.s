@@ -437,7 +437,7 @@ AffineEffect_UpdateFrame:
 .L_080284bc:
 	.4byte 0x80002000
 .L_080284c0:
-	.4byte Data_03001ecc
+	.4byte gDisplayTransition
 .L_080284c4:
 	.4byte 0x00000539
 .L_080284c8:

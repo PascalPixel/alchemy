@@ -30,6 +30,6 @@ BattleFx_StartBufferInterpolation:
 	adds r0, r4, r2
 	adds r2, r4, r3
 	adds r3, r5, #0
-	bl Func_080d0c50
+	bl BattleFx_InterpolateBuffers
 .L_080d17e6:
 	pop {r5, pc}

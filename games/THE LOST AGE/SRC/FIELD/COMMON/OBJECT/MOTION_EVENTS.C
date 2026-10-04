@@ -1,5 +1,6 @@
 #include "EVENTWRK.H"
 #include "OBJECT_RUNTIME.H"
+#include "OBJDISP.H"
 
 void Motion_SetModeAndWaitAnimation(u32 object_id, s32 action)
 {
@@ -28,4 +29,27 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
         }
         EventRuntime_Wait(event_id);
     }
+}
+
+/* Start one of the three variant motion scripts (128 bytes each, the
+   strongest first) on an object. */
+void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
+{
+    struct ObjectRuntime *object;
+    const u8 *scripts;
+
+    object = ObjectTable_Get(object_id);
+    if (object != NULL && variant > 0) {
+        if (variant > 3)
+            variant = 3;
+        scripts = Object_VariantMotionScripts;
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+            (u32)(scripts + ((3 - variant) << 7)));
+    }
+}
+
+void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant)
+{
+    ObjectMotion_SetVariantCallback(object_id, variant);
+    Object_RefreshSelectorById(object_id);
 }

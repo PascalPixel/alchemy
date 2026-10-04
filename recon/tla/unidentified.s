@@ -498,8 +498,8 @@ Item_DefinitionTable:
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
 	.incbin "baserom.gba", 0x000b7c14, 0x00002268
-	.global Data_080b9e7c
-Data_080b9e7c:
+	.global Enemy_DefinitionTable
+Enemy_DefinitionTable:
 	.incbin "baserom.gba", 0x000b9e7c, 0x000070d0
 	.global Owner_GrowthRecords
 Owner_GrowthRecords:
@@ -619,8 +619,8 @@ Data_080f02c6:
 	.global Data_080f0308
 Data_080f0308:
 	.incbin "baserom.gba", 0x000f0308, 0x000003d0
-	.global Data_080f06d8
-Data_080f06d8:
+	.global Object_VariantMotionScripts
+Object_VariantMotionScripts:
 	.incbin "baserom.gba", 0x000f06d8, 0x00000184
 	.global Data_080f085c
 Data_080f085c:

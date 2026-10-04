@@ -470,11 +470,6 @@ Func_080168f8:
 	.thumb_func
 Func_0801692c:
 	.incbin "baserom.gba", 0x0001692c, 0x00000024
-	.global BattleLink_ResetTransferState
-	.type BattleLink_ResetTransferState, %function
-	.thumb_func
-BattleLink_ResetTransferState:
-	.incbin "baserom.gba", 0x00016950, 0x00000040
 	.section .rom.00016990, "ax"
 	.global Func_08016990
 	.type Func_08016990, %function

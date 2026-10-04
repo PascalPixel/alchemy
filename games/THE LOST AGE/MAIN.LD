@@ -169,6 +169,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000168cc)
     "*/recon/tla/ja/rom.o"(.rom.000168f8)
     "*/recon/tla/ja/rom.o"(.rom.0001692c)
+    "*/games/THE LOST AGE/SRC/SYSTEM/LINK/RESET_TRANSFER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00016990)
     "*/recon/tla/ja/rom.o"(.rom.00016ca4)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST.o"(.text)

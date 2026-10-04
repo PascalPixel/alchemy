@@ -186,7 +186,7 @@
         "*/recon/tla/raw/080168cc.o"(.text)
         "*/recon/tla/raw/080168f8.o"(.text)
         "*/recon/tla/raw/0801692c.o"(.text)
-        "*/recon/tla/raw/08016950.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/LINK/RESET_TRANSFER.o"(.text)
         "*/recon/tla/raw/08016990.o"(.text)
         "*/recon/tla/raw/08016bd8.o"(.text)
         "*/recon/tla/raw/08016bdc.o"(.text)

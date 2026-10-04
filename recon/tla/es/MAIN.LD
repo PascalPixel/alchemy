@@ -156,6 +156,7 @@
     "*/recon/tla/es/rom.o"(.rom.000168f8)
     "*/recon/tla/es/rom.o"(.rom.00016924)
     "*/recon/tla/es/rom.o"(.rom.00016958)
+    "*/games/THE LOST AGE/SRC/SYSTEM/LINK/RESET_TRANSFER.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000169bc)
     "*/recon/tla/es/rom.o"(.rom.00016cd0)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST.o"(.text)

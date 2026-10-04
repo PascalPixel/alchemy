@@ -362,7 +362,7 @@ s32 LinkLobby_RunRoundResult(void)
 
     gLinkLobbyCallFrames = 0;
     gLinkLobbyWaitFrames = 0;
-    gEventWork->start_transition = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Sound_LoadPresetParameters(2);
     LinkLobby_DrawThreeDigitValue(gGameState.link_tallies[6]);
     {

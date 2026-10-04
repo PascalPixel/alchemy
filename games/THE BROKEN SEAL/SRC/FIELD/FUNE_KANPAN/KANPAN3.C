@@ -49,7 +49,7 @@ void FieldScene_CallPairWith10(s32 a, s32 b);
 extern u8 FuneKanpan_ClosingCrewScript[];
 extern u8 FuneKanpan_LeaveActions[];
 extern u8 MsgFuneHowWasRobinDidExplore[];
-void FieldScene_RunScene3af_02000bb8(void);
+void FuneKanpan_OpenFirstDoor(void);
 
 void FuneKanpan_ChooseSlotModes(void)
 {
@@ -497,7 +497,7 @@ void FuneKanpan_RunRobinTalk(void)
     }
     gEventWork->message++;
     Event_AskYesNo(0x2016, 0);
-    FieldScene_RunScene3af_02000bb8();
+    FuneKanpan_OpenFirstDoor();
     Actor_SetPosition(26, 0xd80000, 0x24c0000);
     Actor_SetSpeed(26, 0x13333, 0x9999);
     Actor_WalkToAndWait(26, 216, 0x254);

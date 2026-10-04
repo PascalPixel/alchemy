@@ -111,7 +111,9 @@ struct GameState {
     s16 retreat_entrance;
     s32 unknown_244;
     u8 unknown_248[2];
-    s16 unknown_24a;
+    /* The battle object an effect paused, resumed when the next one runs;
+       -1 when none is. */
+    s16 paused_object;
     /* Set while Cloak hides the party; no monsters appear. */
     s16 cloaked;
     u8 unknown_24e[0x56];

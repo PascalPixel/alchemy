@@ -42,7 +42,37 @@ struct ScriptTable {
 
 /* The three scripts a pillar effect may play. */
 extern struct ScriptTable GomaHashira_PillarScripts;
-void SceneEffect_AdvancePositionByAxisMode(u8 *o);
+/*
+ * A pillar effect drifts across one plane of the map by two rates a frame,
+ * keeping its target on its position.
+ */
+struct PillarEffect {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_14[0x1c];
+    s32 rate_first;
+    s32 rate_second;
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
+    u8 unknown_44[0x22];
+    s16 plane;
+};
+
+LAYOUT_OFFSET_GUARD(PillarEffect_RateFirst, struct PillarEffect, rate_first, 0x30);
+LAYOUT_OFFSET_GUARD(PillarEffect_TargetX, struct PillarEffect, target_x, 0x38);
+LAYOUT_OFFSET_GUARD(PillarEffect_Plane, struct PillarEffect, plane, 0x66);
+
+/* The plane a pillar effect drifts in, by the axes its two rates move. */
+enum PillarEffectPlane {
+    PLANE_XY = 0,
+    PLANE_XZ = 1,
+    PLANE_YZ = 2
+};
+
+void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect);
 
 struct Sprite389 {
     u8 pad[9];
@@ -61,28 +91,28 @@ void ConfigureActorThirteenSceneParameters(void)
     BattleFx_SetPhaseRequest(12, 40);
 }
 
-void SceneEffect_AdvancePositionByAxisMode(u8 *o)
+void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect)
 {
-    s16 v = *(s16 *)(o + 102);
+    s16 plane = effect->plane;
 
-    switch (v) {
-    case 0:
-        *(s32 *)(o + 8) += *(s32 *)(o + 48);
-        *(s32 *)(o + 56) = *(s32 *)(o + 8);
-        *(s32 *)(o + 12) += *(s32 *)(o + 52);
-        *(s32 *)(o + 60) = *(s32 *)(o + 12);
+    switch (plane) {
+    case PLANE_XY:
+        effect->x += effect->rate_first;
+        effect->target_x = effect->x;
+        effect->y += effect->rate_second;
+        effect->target_y = effect->y;
         break;
-    case 1:
-        *(s32 *)(o + 8) += *(s32 *)(o + 48);
-        *(s32 *)(o + 56) = *(s32 *)(o + 8);
-        *(s32 *)(o + 16) += *(s32 *)(o + 52);
-        *(s32 *)(o + 64) = *(s32 *)(o + 16);
+    case PLANE_XZ:
+        effect->x += effect->rate_first;
+        effect->target_x = effect->x;
+        effect->z += effect->rate_second;
+        effect->target_z = effect->z;
         break;
-    case 2:
-        *(s32 *)(o + 12) += *(s32 *)(o + 48);
-        *(s32 *)(o + 60) = *(s32 *)(o + 12);
-        *(s32 *)(o + 16) += *(s32 *)(o + 52);
-        *(s32 *)(o + 64) = *(s32 *)(o + 16);
+    case PLANE_YZ:
+        effect->y += effect->rate_first;
+        effect->target_y = effect->y;
+        effect->z += effect->rate_second;
+        effect->target_z = effect->z;
         break;
     }
 }

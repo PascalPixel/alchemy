@@ -512,13 +512,11 @@ done:
  * the actors near them. */
 s32 TakaraHashira_SetupArea(void)
 {
+    struct FieldActor *actor;
     u32 i;
-    u8 *record;
-    s32 v1;
-    s32 v2;
-    s32 base5_8;
-    s32 v5;
-    s32 v0;
+    u32 id;
+    s32 x;
+    s32 z;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (gGameState.scene == (s32)&SceneId_TakaraHashira2) {
@@ -527,24 +525,18 @@ s32 TakaraHashira_SetupArea(void)
         FieldScene_RedrawActorFootprint(10);
         FieldScene_RedrawActorFootprint(11);
         FieldScene_RedrawActorFootprint(12);
-    } else {
-        if (gGameState.scene == (s32)&SceneId_TakaraHashira3) {
-            Call6(Engine_MapCopyCells, 32, 0, 64, 32, 0, 64);
-            FieldScene_RedrawActorFootprint(8);
-            FieldScene_RedrawActorFootprint(9);
-            FieldScene_RedrawActorFootprint(10);
-            FieldScene_RedrawActorFootprint(11);
-            FieldScene_RedrawActorFootprint(12);
-            FieldScene_RedrawActorFootprint(13);
-            FieldScene_RedrawActorFootprint(14);
-            FieldScene_RedrawActorFootprint(15);
-            if (Engine_GameFlagIsSet(0x109) == 0) {
-                goto L_020029fa;
-            }
-            if (Engine_GameFlagIsSet(0x200) == 0) {
-                goto L_020029fa;
-            }
-            Call6(Engine_MapCopyCellsTo, 79, 34, 84, 24, 1, 2);
+    } else if (gGameState.scene == (s32)&SceneId_TakaraHashira3) {
+        Map_CopyCells(32, 0, 64, 32, 0, 64);
+        FieldScene_RedrawActorFootprint(8);
+        FieldScene_RedrawActorFootprint(9);
+        FieldScene_RedrawActorFootprint(10);
+        FieldScene_RedrawActorFootprint(11);
+        FieldScene_RedrawActorFootprint(12);
+        FieldScene_RedrawActorFootprint(13);
+        FieldScene_RedrawActorFootprint(14);
+        FieldScene_RedrawActorFootprint(15);
+        if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x200) != 0) {
+            Map_CopyCellsTo(79, 34, 84, 24, 1, 2);
             Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
             Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
             SceneActor_ApplyPlacementQueryAndTag(9);
@@ -554,100 +546,81 @@ s32 TakaraHashira_SetupArea(void)
             SceneActor_ApplyPlacementQueryAndTag(13);
             SceneActor_ApplyPlacementQueryAndTag(14);
             SceneActor_ApplyPlacementQueryAndTag(15);
-            Call6(Engine_MapCopyCellAttributes, 24, 3, 1, 1, 24, 8);
-            goto L_020029fa;
-        } else {
-            if (gGameState.scene != (s32)&SceneId_TakaraHashira4) {
-                goto L_02002922;
-            }
-            OverlayObject_CreateConfiguredObject(0x2480000, 0, 0xc80000, 223);
-            if (Engine_GameFlagIsSet(0x109) == 0) {
-                *((u8 *)Object_GetById(0) + 98) = 1;
-            }
-            BattleFx_StartFadeOverlay(0);
-            if (*((u8 *)Object_GetById(0) + 98) == 0) {
-                SceneState_ClearWord24AndObjectByte62();
-            }
-            OverlayObject_SetCallbackAndMode2(8);
-            OverlayObject_SetCallbackAndMode2(9);
-            OverlayObject_SetCallbackAndMode2(10);
-            OverlayObject_SetCallbackAndMode2(11);
-            {
-                s32 *entry = (s32 *)TakaraHashira_PillarSlots;
+            Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
+        }
+    } else if (gGameState.scene == (s32)&SceneId_TakaraHashira4) {
+        OverlayObject_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
+        if (Engine_GameFlagIsSet(0x109) == 0) {
+            Object_GetById(ACTOR_PARTY_LEADER)->rise_counter = 1;
+        }
+        BattleFx_StartFadeOverlay(0);
+        if (Object_GetById(ACTOR_PARTY_LEADER)->rise_counter == 0) {
+            SceneState_ClearWord24AndObjectByte62();
+        }
+        OverlayObject_SetCallbackAndMode2(8);
+        OverlayObject_SetCallbackAndMode2(9);
+        OverlayObject_SetCallbackAndMode2(10);
+        OverlayObject_SetCallbackAndMode2(11);
+        {
+            s32 *entry = (s32 *)TakaraHashira_PillarSlots;
 
-                for (v1 = 0; (u32)v1 <= 3; v1++) {
-                    entry[0] = 0;
-                    entry[1] = 0;
-                    entry[2] = 0;
-                    entry[4] = v1 + 0x200;
-                    entry += 5;
-                }
+            for (i = 0; i < 4; i++) {
+                entry[0] = 0;
+                entry[1] = 0;
+                entry[2] = 0;
+                entry[4] = i + 0x200;
+                entry += 5;
             }
-            TakaraHashira_UpdatePillarActors();
-            Engine_EventWait(1);
-            ((void (*)())Engine_TaskAddCallback)((s32)SceneActor_CheckActors8To11NearSlotZero, 0xc80);
-            if (Engine_GameFlagIsSet(0x109) == 0) {
-                goto L_020029fa;
-            }
-            for (base5_8 = 8; (u32)base5_8 <= 11; base5_8++) {
-                record = (u8 *)Object_GetById(base5_8);
-                v2 = *(s32 *)(record + 8) >> 20;
-                if (v2 == 37) {
-                    v0 = *(s32 *)(record + 16) >> 20;
-                    if (v0 == 9) {
-                        Engine_MapCopyCellAttributes(27, 8, 1, 1, v2, v0);
+        }
+        TakaraHashira_UpdatePillarActors();
+        Engine_EventWait(1);
+        Engine_TaskAddCallback(SceneActor_CheckActors8To11NearSlotZero, TASK_PRIORITY_SCENE);
+        if (Engine_GameFlagIsSet(0x109) != 0) {
+            for (id = 8; id < 12; id++) {
+                actor = Object_GetById(id);
+                x = actor->x.fixed >> 20;
+                if (x == 37) {
+                    z = actor->z.fixed >> 20;
+                    if (z == 9) {
+                        Engine_MapCopyCellAttributes(27, 8, 1, 1, x, z);
                         break;
                     }
                 }
             }
         }
-        goto L_020029fa;
-        L_02002922:;
-        if (gGameState.scene == (s32)&SceneId_TakaraHashira5) {
-            Engine_ActorSetAnimation(10, 2);
-            Engine_ActorSetChildValue(10, 6);
-            FieldScene_RedrawActorFootprint(8);
-            FieldScene_RedrawActorFootprint(9);
+    } else if (gGameState.scene == (s32)&SceneId_TakaraHashira5) {
+        Engine_ActorSetAnimation(10, 2);
+        Engine_ActorSetChildValue(10, 6);
+        FieldScene_RedrawActorFootprint(8);
+        FieldScene_RedrawActorFootprint(9);
 #if EDITION_INTERNATIONAL
-            v5 = 0;
-            *((u8 *)Object_GetById(8) + 85) = v5;
-            *((u8 *)Object_GetById(9) + 85) = v5;
+        Object_GetById(8)->motion_flags = 0;
+        Object_GetById(9)->motion_flags = 0;
 #endif
-            TakaraHashira_DropActorTen();
-            TakaraHashira_PrepLoweredActor(11);
-            TakaraHashira_PrepLoweredActor(12);
-            TakaraHashira_PrepLoweredActor(13);
-            FieldScene_RunScene3b3_0200263c(11);
-            FieldScene_RunScene3b3_0200263c(12);
-            FieldScene_RunScene3b3_0200263c(13);
-            record = (u8 *)Object_GetById(13);
-#if EDITION_INTERNATIONAL
-            *(s32 *)((s32)record + 108) = v5;
-#else
-            *(s32 *)((s32)record + 108) = 0;
-#endif
-            TakaraHashira_PrepLoweredActor(14);
-            {
-                u8 *record = (u8 *)Object_GetById(14);
-                /* FAKEMATCH: retain the flag read before its merge. */
-                u8 value = *(volatile u8 *)&record[89];
+        TakaraHashira_DropActorTen();
+        TakaraHashira_PrepLoweredActor(11);
+        TakaraHashira_PrepLoweredActor(12);
+        TakaraHashira_PrepLoweredActor(13);
+        FieldScene_RunScene3b3_0200263c(11);
+        FieldScene_RunScene3b3_0200263c(12);
+        FieldScene_RunScene3b3_0200263c(13);
+        actor = Object_GetById(13);
+        actor->update = 0;
+        TakaraHashira_PrepLoweredActor(14);
+        {
+            u8 *flags = &Object_GetById(14)->collision_flags;
+            /* FAKEMATCH: retain the flag read before its merge. */
+            u8 value = *(volatile u8 *)flags;
 
-                record[89] = (u8)(value | 8);
-            }
-            if (Engine_GameFlagIsSet(0x202) == 0) {
-                v5 = 192;
-                record = (u8 *)Object_GetById(13);
-                *(s32 *)((s32)record + 24) = (v5 << 9);
-                record = (u8 *)Object_GetById(13);
-                *(s32 *)((s32)record + 28) = (v5 << 9);
-                record = (u8 *)Object_GetById(13);
-                *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-                record = (u8 *)Object_GetById(14);
-                *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-                Call6(Engine_MapCopyCellAttributes, 26, 12, 1, 1, 22, 16);
-            }
+            *flags = (u8)(value | 8);
+        }
+        if (Engine_GameFlagIsSet(0x202) == 0) {
+            Object_GetById(13)->scale_x = 0x18000;
+            Object_GetById(13)->scale_y = 0x18000;
+            ((u8 *)Object_GetById(13)->sprite)[9] |= 12;
+            ((u8 *)Object_GetById(14)->sprite)[9] |= 12;
+            Map_CopyCellAttributes(26, 12, 1, 1, 22, 16);
         }
     }
-    L_020029fa:;
     return 0;
 }

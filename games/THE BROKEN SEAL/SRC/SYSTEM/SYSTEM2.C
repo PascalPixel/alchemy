@@ -68,13 +68,13 @@ void System_VBlankHandler(void)
        test after the write; the shared cell's declared type is unchanged. */
     *(volatile u32 *)&gKeysHeld = keys;
     if (keys == 0) {
-        Data_03001b00 = 19;
+        gKeyRepeatTimer = 19;
         gKeysRepeat = keys;
     } else if (gKeysHeld & (Data_03001d0c ^ 0xffff)) {
-        Data_03001b00 = -1;
+        gKeyRepeatTimer = -1;
         gKeysRepeat = keys;
-    } else if (Data_03001b00 > 0) {
-        Data_03001b00--;
+    } else if (gKeyRepeatTimer > 0) {
+        gKeyRepeatTimer--;
     }
     Data_03001d0c = keys;
     gFrameTick++;

@@ -47,11 +47,11 @@ gScanlinePitch:
 	.global gKeysPressedLatch
 gKeysPressedLatch:
 	.space 0x00000004
-	.global Data_03001afc
-Data_03001afc:
+	.global gKeysRepeatDirected
+gKeysRepeatDirected:
 	.space 0x00000004
-	.global Data_03001b00
-Data_03001b00:
+	.global gKeyRepeatTimer
+gKeyRepeatTimer:
 	.space 0x00000004
 	.global gKeysRepeat
 gKeysRepeat:
@@ -115,8 +115,8 @@ gBlendBrighten:
 	.global gProjection
 gProjection:
 	.space 0x00000014
-	.global Data_03001cf4
-Data_03001cf4:
+	.global gKeysHeldLast
+gKeysHeldLast:
 	.space 0x00000004
 	.global gBlendLayers
 gBlendLayers:
@@ -127,8 +127,8 @@ Data_03001cfc:
 	.global gObjAffineCount
 gObjAffineCount:
 	.space 0x00000004
-	.global Data_03001d04
-Data_03001d04:
+	.global gKeysDirection
+gKeysDirection:
 	.space 0x0000000c
 	.global gOptionMirror
 gOptionMirror:

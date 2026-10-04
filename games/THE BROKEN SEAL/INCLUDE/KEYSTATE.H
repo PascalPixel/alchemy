@@ -8,10 +8,14 @@ extern u32 gKeysHeld;
 extern u32 gKeyState;
 extern u32 gKeysRepeat;
 extern u32 gKeysPressedLatch;
-extern u32 Data_03001afc; /* Repeated keys with one direction selected. */
-extern u32 Data_03001d04; /* Previous direction mask. */
-extern u32 Data_03001cf4; /* Held keys at the previous input update. */
+/* The repeated keys with one direction kept. */
+extern u32 gKeysRepeatDirected;
+/* The direction kept from the last update, as a mask of the D-pad keys. */
+extern u32 gKeysDirection;
+/* The keys held at the last input update. */
+extern u32 gKeysHeldLast;
 extern u32 Data_03001d0c; /* Held keys at the previous VBlank. */
-extern s32 Data_03001b00; /* Key repeat timer. */
+/* The frames until held keys repeat. */
+extern s32 gKeyRepeatTimer;
 
 #endif

@@ -10,9 +10,10 @@
    previous direction mask. */
 void Input_UpdateKeyRepeatAndDirection(void)
 {
-    /* FAKEMATCH: the volatile accesses preserve the measured input-cell
-       rereads without giving the shared declarations conflicting types. */
-    s32 delay = Data_03001b00;
+    /* FAKEMATCH: the volatile reads and the repeat clear keep the measured
+       input-cell rereads without giving the shared declarations conflicting
+       types; the other stores need none (measured 2026-10-04). */
+    s32 delay = gKeyRepeatTimer;
     u32 keys;
     u32 axis = 0;
     u32 dirs;
@@ -23,9 +24,9 @@ void Input_UpdateKeyRepeatAndDirection(void)
         gKeysRepeat = gKeysHeld;
         keys = *(volatile u32 *)&gKeysRepeat;
         if (delay == 0)
-            *(volatile s32 *)&Data_03001b00 = KEY_REPEAT_NEXT;
+            gKeyRepeatTimer = KEY_REPEAT_NEXT;
         else
-            *(volatile s32 *)&Data_03001b00 = KEY_REPEAT_FIRST;
+            gKeyRepeatTimer = KEY_REPEAT_FIRST;
     } else {
         *(volatile u32 *)&gKeysRepeat = 0;
         keys = gKeysRepeat;
@@ -42,41 +43,41 @@ void Input_UpdateKeyRepeatAndDirection(void)
         if (keys & KEY_RIGHT)
             dirs++;
 
-        repeat = &Data_03001afc;
+        repeat = &gKeysRepeatDirected;
         *repeat = keys;
         switch (dirs) {
         default:
-            *(volatile u32 *)&Data_03001d04 = KEYS_HORIZONTAL;
+            gKeysDirection = KEYS_HORIZONTAL;
             mask = 0xffff & ~KEYS_DPAD;
             *repeat &= mask;
             break;
         case 0:
-            *(volatile u32 *)&Data_03001d04 = KEYS_HORIZONTAL;
+            gKeysDirection = KEYS_HORIZONTAL;
             break;
         case 1:
-            *(volatile u32 *)&Data_03001d04 = keys & KEYS_DPAD;
+            gKeysDirection = keys & KEYS_DPAD;
             break;
         case 2:
-            if ((*(volatile u32 *)&Data_03001d04 & *repeat) == 0)
-                *(volatile u32 *)&Data_03001d04 = KEYS_HORIZONTAL;
-            *repeat &= *(volatile u32 *)&Data_03001d04 ^ 0xffff;
+            if ((*(volatile u32 *)&gKeysDirection & *repeat) == 0)
+                gKeysDirection = KEYS_HORIZONTAL;
+            *repeat &= *(volatile u32 *)&gKeysDirection ^ 0xffff;
             break;
         case 3:
-            if (Data_03001d04 & KEYS_HORIZONTAL)
+            if (gKeysDirection & KEYS_HORIZONTAL)
                 axis = KEYS_HORIZONTAL;
-            if (*(volatile u32 *)&Data_03001d04 & KEYS_VERTICAL)
+            if (*(volatile u32 *)&gKeysDirection & KEYS_VERTICAL)
                 axis = KEYS_VERTICAL;
             mask = 0xffff ^ axis;
-            *(volatile u32 *)&Data_03001d04 = keys & mask;
+            gKeysDirection = keys & mask;
             *repeat &= mask;
             break;
         }
     } else {
-        *(volatile u32 *)&Data_03001afc = keys;
+        gKeysRepeatDirected = keys;
     }
 
     *(volatile u32 *)&gKeyState =
-        (gKeysHeld ^ Data_03001cf4)
+        (gKeysHeld ^ gKeysHeldLast)
         & *(volatile u32 *)&gKeysHeld;
-    *(volatile u32 *)&Data_03001cf4 = *(volatile u32 *)&gKeysHeld;
+    gKeysHeldLast = *(volatile u32 *)&gKeysHeld;
 }

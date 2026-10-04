@@ -1124,12 +1124,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000cb438, 0x000013c8
-	.section .rom.000ce9a4, "ax"
-	.global BattleFx_RunFlippingBurst
-	.type BattleFx_RunFlippingBurst, %function
-	.thumb_func
-BattleFx_RunFlippingBurst:
-	.incbin "baserom.gba", 0x000ce9a4, 0x00000348
 	.section .rom.000cf40c, "ax"
 	.global BattleEffect_RunTileAndPaletteAnimation
 	.type BattleEffect_RunTileAndPaletteAnimation, %function

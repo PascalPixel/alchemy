@@ -1389,7 +1389,7 @@
     "*/games/THE LOST AGE/SRC/SYSTEM/SCENE_STATE_SET_HALFWORD.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001a1294)
     "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/TITLE_WAIT.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.001a60c0)
+    "*/recon/tla/de/rom.o"(.rom.001a6154)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/INTERPOLATE_BUFFERS.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001a78e0)
     "*/games/THE LOST AGE/SRC/GRAPHICS/PALETTE/PALETTE4.o"(.text)

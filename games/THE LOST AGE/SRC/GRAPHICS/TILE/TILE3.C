@@ -1,9 +1,6 @@
 #include "TYPES.H"
+#include "BG_SCROLL.H"
 
-/* Each background's scroll offsets, as the display copies them. */
-struct BgScroll { u16 x, y; };
-
-extern struct BgScroll gBgScroll[];
 extern u32 gFrameTick;
 
 /* Scrolls backgrounds 2 and 3 one pixel left every fourth frame. */

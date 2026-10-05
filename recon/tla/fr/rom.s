@@ -5022,8 +5022,8 @@ Func_081a6020:
 	.thumb_func
 Func_081a6028:
 	.incbin "baserom.gba", 0x001a6028, 0x0000006c
-	.section .rom.001a60c0, "ax"
-	.incbin "baserom.gba", 0x001a60c0, 0x000017b0
+	.section .rom.001a6154, "ax"
+	.incbin "baserom.gba", 0x001a6154, 0x0000171c
 	.section .rom.001a78c0, "ax"
 	.global TitlePalette_UpdateFade
 	.type TitlePalette_UpdateFade, %function

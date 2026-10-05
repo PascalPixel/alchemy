@@ -2728,7 +2728,6 @@
         "*/recon/tla/raw/081a6028.o"(.text)
         "*/recon/tla/raw/081a6030.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/TITLE_WAIT.o"(.text)
-        "*/recon/tla/raw/081a60c0.o"(.text)
         "*/recon/tla/raw/081a6154.o"(.text)
         "*/recon/tla/raw/081a6638.o"(.text)
         "*/recon/tla/raw/081a6724.o"(.text)

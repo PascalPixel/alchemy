@@ -200,7 +200,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a62d2
 	b .L_081a6562
@@ -222,7 +222,7 @@ Func_081a6154:
 	adds r0, r5, #0
 	mov r11, r2
 	mov r8, r3
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a62fe
 	b .L_081a6562
@@ -240,7 +240,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a6322
 	b .L_081a6562
@@ -259,7 +259,7 @@ Func_081a6154:
 	str r6, [r5, #32]
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a6348
 	b .L_081a6562
@@ -276,7 +276,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a636a
 	b .L_081a6562
@@ -293,7 +293,7 @@ Func_081a6154:
 	str r7, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a638c
 	b .L_081a6562
@@ -311,7 +311,7 @@ Func_081a6154:
 	str r6, [r5, #32]
 	adds r0, r5, #0
 	mov r10, r4
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a63b0
 	b .L_081a6562
@@ -330,7 +330,7 @@ Func_081a6154:
 	str r6, [r5, #32]
 	adds r0, r5, #0
 	mov r9, r4
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a63d6
 	b .L_081a6562
@@ -348,7 +348,7 @@ Func_081a6154:
 	str r7, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a63fa
 	b .L_081a6562
@@ -392,7 +392,7 @@ Func_081a6154:
 	str r7, [r5, #32]
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a6452
 	b .L_081a6562
@@ -412,7 +412,7 @@ Func_081a6154:
 	adds r0, r5, #0
 	mov r11, r4
 	mov r10, r2
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r3, #10
@@ -430,7 +430,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r7, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	mov r2, r9
@@ -446,7 +446,7 @@ Func_081a6154:
 	str r7, [r5, #28]
 	str r7, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	mov r0, r8
@@ -463,7 +463,7 @@ Func_081a6154:
 	str r7, [r5, #32]
 	adds r0, r5, #0
 	mov r10, r2
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	mov r4, r8
@@ -479,7 +479,7 @@ Func_081a6154:
 	str r7, [r5, #28]
 	str r7, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r4, #2
@@ -499,7 +499,7 @@ Func_081a6154:
 	adds r0, r5, #0
 	mov r11, r2
 	mov r9, r4
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r0, #2
@@ -522,7 +522,7 @@ Func_081a6154:
 	str r7, [r5, #32]
 .L_081a6558:
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a6624
 .L_081a6562:
@@ -544,7 +544,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r3, #16
@@ -560,7 +560,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r2, #128

@@ -94,7 +94,7 @@ void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
 void BattlePresentation_WaitForPromptAt(s32 a, s32 b);
-void Battle_ClearSerialTransferPayload(void);
+s32 Battle_ClearSerialTransferPayload(void);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 a, s32 b);
 void UiText_ShowMessageAndWaitCoreFar(s32 id);

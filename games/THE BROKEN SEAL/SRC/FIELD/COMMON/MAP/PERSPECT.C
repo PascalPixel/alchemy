@@ -224,7 +224,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.y = 0;
     vector.z = far_plane;
     /* FAKEMATCH: Iwram_TransformVector's void call loads camera into r1 after the routine; the value-returning cast keeps r1 first. */
-    ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))0x03000250)(&vector, camera);
+    ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))Iwram_TransformVector)(&vector, camera);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
     /* FAKEMATCH: loop note orders the transform call's r1, routine, r0 */

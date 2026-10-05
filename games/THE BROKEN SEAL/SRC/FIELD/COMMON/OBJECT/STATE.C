@@ -84,24 +84,16 @@ void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
     void *p;
     u8 flags;
     u32 shape;
-    u32 dst_attr;
-    u32 merged;
 
     p = Object_GetById(source_id);
     p = ((struct ObjectRuntime *)p)->animation;
     flags = ((struct FieldSprite *)p)->vram_block;
-    shape = *(u16 *)((u8 *)p + 0x8);
+    shape = ((struct FieldSprite *)p)->tile;
 
     p = Object_GetById(target_id);
     p = ((struct ObjectRuntime *)p)->animation;
-    dst_attr = *(u16 *)((u8 *)p + 0x8);
     ((struct FieldSprite *)p)->vram_block = flags;
-    shape <<= 22;
-    shape >>= 22;
-    merged = 0xfffffc00;
-    merged &= dst_attr;
-    merged |= shape;
-    *(u16 *)((u8 *)p + 0x8) = merged;
+    ((struct FieldSprite *)p)->tile = shape;
 }
 
 void ObjectVisual_ReservedNoOp(void)

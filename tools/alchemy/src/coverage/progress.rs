@@ -92,7 +92,13 @@ fn run(argv: &[String]) -> Result<String, String> {
             )),
         };
     }
-    let games = measure_both(crate::compiler::routing::root())?;
+    let root = crate::compiler::routing::root();
+    let games = measure_both(&root)?;
+    for (id, game) in ["tbs", "tla"].iter().zip(&games) {
+        if let Ok(game) = game {
+            write_steered(&root, id, &game.english)?;
+        }
+    }
     let mut lines = Vec::new();
     for ((mark, game), state) in [("☀️", "The Broken Seal"), ("⚓️", "The Lost Age")]
         .iter()
@@ -102,6 +108,27 @@ fn run(argv: &[String]) -> Result<String, String> {
         lines.extend(edition_lines(mark, state));
     }
     Ok(lines.join("\n"))
+}
+
+/// out/reports/steered-GAME.tsv: each FAKEMATCH-steered function of the
+/// English build, largest first, with the tags that steer it; a function
+/// stops counting as steered only when every tag listed goes.
+fn write_steered(root: &std::path::Path, id: &str, english: &super::calcrom::Measurement) -> Result<(), String> {
+    let mut rows = english.steered_units.clone();
+    rows.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+    let mut text = String::from("bytes\ttags\tobject\tfunction\tsteered_by\n");
+    for ((_, object, function), bytes, roots) in rows {
+        let tags = roots.iter().cloned().collect::<Vec<_>>();
+        text.push_str(&format!(
+            "{bytes}\t{}\t{object}\t{}\t{}\n",
+            tags.len(),
+            function.unwrap_or_default(),
+            tags.join("; ")
+        ));
+    }
+    let path = root.join(format!("out/reports/steered-{id}.tsv"));
+    std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
+    std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))
 }
 
 pub fn entry(arguments: &[String]) {

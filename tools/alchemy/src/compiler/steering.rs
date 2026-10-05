@@ -1,10 +1,13 @@
 use super::c_syntax::{lex, matching, scan_definitions, Tok, Token};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Debug, Default)]
 pub(crate) struct Analysis {
     pub steered: BTreeSet<String>,
     pub whole_owners: BTreeSet<String>,
+    /// Why each steered function is steered: a tag as `file:line`, a
+    /// file-scope tag as `file`, or `via HELPER` for a steered inline helper.
+    pub reasons: BTreeMap<String, BTreeSet<String>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -146,22 +149,27 @@ fn pool_owners(tokens: &[Token], tag: usize) -> Option<BTreeSet<String>> {
     Some(owners)
 }
 
-fn names_any(body: &[Token], names: &BTreeSet<String>) -> bool {
-    body.iter().enumerate().any(|(at, token)| {
-        matches!(&token.tok, Tok::Ident(name) if names.contains(name))
-            && match body[..at]
-                .iter()
-                .rev()
-                .find(|token| !matches!(token.tok, Tok::Comment(_)))
-                .map(|token| &token.tok)
-            {
-                Some(Tok::Punct("." | "->")) => false,
-                Some(Tok::Ident(word)) => {
-                    ["return", "else", "do", "case", "sizeof"].contains(&word.as_str())
-                }
-                _ => true,
-            }
-    })
+fn names_used(body: &[Token], names: &BTreeSet<String>) -> BTreeSet<String> {
+    body.iter()
+        .enumerate()
+        .filter_map(|(at, token)| match &token.tok {
+            Tok::Ident(name) if names.contains(name) && is_use(body, at) => Some(name.clone()),
+            _ => None,
+        })
+        .collect()
+}
+
+fn is_use(body: &[Token], at: usize) -> bool {
+    match body[..at]
+        .iter()
+        .rev()
+        .find(|token| !matches!(token.tok, Tok::Comment(_)))
+        .map(|token| &token.tok)
+    {
+        Some(Tok::Punct("." | "->")) => false,
+        Some(Tok::Ident(word)) => ["return", "else", "do", "case", "sizeof"].contains(&word.as_str()),
+        _ => true,
+    }
 }
 
 pub(crate) fn analyze(text: &str, source: &str) -> Result<Analysis, String> {
@@ -176,14 +184,20 @@ pub(crate) fn analyze(text: &str, source: &str) -> Result<Analysis, String> {
     let mut result = Analysis::default();
     for (index, token) in tokens.iter().enumerate() {
         if matches!(&token.tok, Tok::Comment(comment) if comment.contains("FAKEMATCH")) {
-            let tag_owner = locations.get(token.line - 1).map(|(owner, _)| owner);
+            let location = locations.get(token.line - 1);
+            let tag_owner = location.map(|(owner, _)| owner);
+            let tag = location.map_or_else(String::new, |(owner, line)| format!("{owner}:{line}"));
             if let Some(def) = defs.iter().find(|def| {
                 tag_owner == Some(&def.owner) && (def.boundary..=def.close).contains(&index)
             }) {
                 result.steered.insert(def.name.clone());
+                result.reasons.entry(def.name.clone()).or_default().insert(tag);
             } else if let Some(owners) = pool_owners(&tokens, index) {
+                for owner in &owners {
+                    result.reasons.entry(owner.clone()).or_default().insert(tag.clone());
+                }
                 result.steered.extend(owners);
-            } else if let Some((owner, _)) = locations.get(token.line - 1) {
+            } else if let Some((owner, _)) = location {
                 result.whole_owners.insert(owner.clone());
             }
         }
@@ -193,6 +207,7 @@ pub(crate) fn analyze(text: &str, source: &str) -> Result<Analysis, String> {
             || std::path::Path::new(&def.owner).ends_with("games/COMMON/INCLUDE/LIB/CALL.H")
         {
             result.steered.insert(def.name.clone());
+            result.reasons.entry(def.name.clone()).or_default().insert(def.owner.clone());
         }
     }
     loop {
@@ -203,16 +218,18 @@ pub(crate) fn analyze(text: &str, source: &str) -> Result<Analysis, String> {
             .collect::<BTreeSet<_>>();
         let reached = defs
             .iter()
-            .filter(|def| {
-                !result.steered.contains(&def.name)
-                    && names_any(&tokens[def.open + 1..def.close], &relevant)
-            })
-            .map(|def| def.name.clone())
+            .filter(|def| !result.steered.contains(&def.name))
+            .map(|def| (def.name.clone(), names_used(&tokens[def.open + 1..def.close], &relevant)))
+            .filter(|(_, used)| !used.is_empty())
             .collect::<Vec<_>>();
         if reached.is_empty() {
             break;
         }
-        result.steered.extend(reached);
+        for (name, used) in reached {
+            let reasons = result.reasons.entry(name.clone()).or_default();
+            reasons.extend(used.into_iter().map(|helper| format!("via {helper}")));
+            result.steered.insert(name);
+        }
     }
     Ok(result)
 }
@@ -425,6 +442,15 @@ mod tests {
             ["Alias", "Help", "Tagged"].map(String::from).into()
         );
     }
+    #[test]
+    fn reasons_name_the_tag_or_the_steered_helper() {
+        let text = "static inline int Help(int x) { /* FAKEMATCH: measured. */ return x; }\nint Caller(void) { return Help(1); }\nint Tagged(void) {\n /* FAKEMATCH: own. */ return 2; }\n";
+        let result = analyze(text, "a.c").unwrap();
+        assert_eq!(result.reasons["Caller"], BTreeSet::from(["via Help".to_string()]));
+        assert_eq!(result.reasons["Tagged"].len(), 1);
+        assert!(result.reasons["Tagged"].iter().next().unwrap().ends_with("a.c:4"));
+    }
+
     #[test]
     fn cycles_and_macro_bodies_remain_function_specific() {
         let text = "static inline void A(void) { /* FAKEMATCH: measured. */ B(); }\nstatic inline void B(void) { A(); }\nvoid Expanded(void) { /* FAKEMATCH: preserved macro. */ A(); }\nvoid Plain(void) {}";

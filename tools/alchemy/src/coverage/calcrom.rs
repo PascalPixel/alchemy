@@ -81,12 +81,15 @@ pub(crate) struct Measurement {
     pub uncredited: i64,
     pub stray: i64,
     pub credits: BTreeMap<Unit, Counted>,
+    /// Each steered function with its bytes and the tags that steer it.
+    pub steered_units: Vec<(Unit, i64, BTreeSet<String>)>,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Mark {
     pub steered: Steered,
     pub veneer: bool,
+    pub reasons: BTreeMap<String, BTreeSet<String>>,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -110,9 +113,11 @@ fn source_mark(
     }) else {
         return Ok(Mark::default());
     };
+    let mut reasons = BTreeMap::new();
     let steered = if path.ends_with(".C") || path.ends_with(".c") {
         let expanded = expansion.fresh(&path)?;
         let analysis = crate::compiler::steering::analyze(&expanded, &path)?;
+        reasons = analysis.reasons.clone();
         if analysis
             .whole_owners
             .contains(&crate::compiler::steering::owner(&path))
@@ -128,10 +133,39 @@ fn source_mark(
     } else {
         Steered::None
     };
+    if steered == Steered::Whole {
+        reasons.insert(String::new(), BTreeSet::from([format!("{path} (whole file)")]));
+    }
     Ok(Mark {
         steered,
         veneer: builds_veneers(&text),
+        reasons,
     })
+}
+
+/// The tags behind a steered function: its own reasons, with each steered
+/// helper it uses replaced by that helper's tags.
+fn steering_roots(
+    reasons: &BTreeMap<String, BTreeSet<String>>,
+    names: &BTreeSet<String>,
+) -> BTreeSet<String> {
+    let mut roots = reasons.get("").cloned().unwrap_or_default();
+    let mut pending = names.iter().cloned().collect::<Vec<_>>();
+    let mut seen = BTreeSet::new();
+    while let Some(name) = pending.pop() {
+        if !seen.insert(name.clone()) {
+            continue;
+        }
+        for reason in reasons.get(&name).into_iter().flatten() {
+            match reason.strip_prefix("via ") {
+                Some(helper) => pending.push(helper.to_string()),
+                None => {
+                    roots.insert(reason.clone());
+                }
+            }
+        }
+    }
+    roots
 }
 
 /// Assembly that builds its entries with a veneer macro: the 8-byte far-call
@@ -508,7 +542,8 @@ fn tally(
             origin @ (Origin::CommonC | Origin::GameC) => {
                 let object_name = unit_object(object, output, overlay)
                     .ok_or_else(|| format!("{object}: credited outside the build directory"))?;
-                let steered = marked()?.steered;
+                let mark = marked()?;
+                let steered = mark.steered.clone();
                 for function in placed_c_functions(&placed)? {
                     let bytes = function.bytes;
                     let mut credit = Counted::default();
@@ -523,6 +558,11 @@ fn tally(
                         Steered::Functions(names) if !names.is_disjoint(&function.names) => bytes,
                         Steered::Functions(_) => 0,
                     };
+                    if credit.steered > 0 {
+                        let roots = steering_roots(&mark.reasons, &function.names);
+                        let unit = (image.to_string(), object_name.clone(), Some(function.name.to_string()));
+                        measurement.steered_units.push((unit, bytes, roots));
+                    }
                     let unit = (image.to_string(), object_name.clone(), Some(function.name));
                     measurement.done += credit.done;
                     measurement.steered += credit.steered;

@@ -166,31 +166,31 @@ s32 Map_InitializePerspectiveScene(void)
     work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), Ram_MapCollision + 0x1000);
     MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
-    Io_Set16(0x3f9e, (u16 *)0x04000050);
-    Io_Set16(0x1010, (u16 *)0x04000052);
+    Io_Set16(0x3f9e, (u16 *)&REG_BLDCNT);
+    Io_Set16(0x1010, (u16 *)&REG_BLDALPHA);
     REG_BLDY = 0;
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
     work->fade = 0x1f00;
     work->fade_step = 0x80;
-    Io_Set16(0xa80a, (u16 *)0x0400000e);
-    Io_Set16(0xaa0e, (u16 *)0x0400000c);
-    Io_Set16(0x0501, (u16 *)0x0400000a);
+    Io_Set16(0xa80a, (u16 *)&REG_BG3CNT);
+    Io_Set16(0xaa0e, (u16 *)&REG_BG2CNT);
+    Io_Set16(0x0501, (u16 *)&REG_BG1CNT);
     /* FAKEMATCH: loop note keeps BG2PA's constant after its address */
     do {
-        Io_Put16((u16 *)0x04000020, 0x100);
+        Io_Put16((u16 *)&REG_BG2PA, 0x100);
         REG_BG2PB = 0;
         REG_BG2PC = 0;
     } while (0);
     /* FAKEMATCH: loop notes keep BG2PD's constant late and r0 first below */
     do {
-        Io_Put16((u16 *)0x04000026, 0x100);
+        Io_Put16((u16 *)&REG_BG2PD, 0x100);
         REG_BG2X = 0;
         REG_BG2Y = 0;
-        Io_Put16((u16 *)0x04000030, 0x100);
+        Io_Put16((u16 *)&REG_BG3PA, 0x100);
         REG_BG3PB = 0;
         REG_BG3PC = 0;
-        Io_Put16((u16 *)0x04000036, 0x100);
+        Io_Put16((u16 *)&REG_BG3PD, 0x100);
         REG_BG3X = 0;
         REG_BG3Y = 0;
     } while (0);
@@ -256,7 +256,7 @@ s32 Map_InitializePerspectiveScene(void)
     REG_MOSAIC = 0;
     /* FAKEMATCH: loop notes keep the display writes in source order */
     do {
-        Io_Put16((u16 *)0x04000000, 0x42);
+        Io_Put16((u16 *)&REG_DISPCNT, 0x42);
     } while (0);
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
@@ -376,7 +376,7 @@ void MapAnimation_ApplyAffineFrame(void)
     u8 **pointers = &gMapAnimationPages;
     struct MapAffinePair (*lines)[160] = ((struct MapFrameWork *)*pointers++)->pages;
     s32 dispcnt = (s16)(REG_DISPCNT & 0xfff8);
-    u32 *dst = (u32 *)0x04000020;
+    u32 *dst = (u32 *)&REG_BG2PA;
     struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers++;
     volatile u16 *channel = REG_DMA0;
     u32 *src;
@@ -397,7 +397,7 @@ void MapAnimation_ApplyAffineFrame(void)
         *dst++ = *src++;
         *dst++ = *src++;
         *dst = *src++;
-        Dma_Set(src, (void *)0x04000020, 0xa6600008, (volatile u32 *)channel);
+        Dma_Set(src, (void *)&REG_BG2PA, 0xa6600008, (volatile u32 *)channel);
     }
     work->shown_top = work->window_top;
     work->shown_bottom = work->window_bottom;

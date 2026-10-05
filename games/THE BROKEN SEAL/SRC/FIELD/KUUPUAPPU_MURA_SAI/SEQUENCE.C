@@ -268,7 +268,7 @@ const u8 *SceneData_GetExtraTable(void)
 s32 SceneSetup_InitializeActorsAndFlags(void)
 {
 
-    u8 *actor;
+    struct FieldActor *actor;
     s16 *scene;
     s32 mode;
 
@@ -277,16 +277,16 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
     Engine_MapCopyCells(45, 41, 8, 45, 3, 3);
     Engine_TaskWait(1);
-    actor = (u8 *)Object_GetById(14);
-    *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
+    actor = Object_GetById(14);
+    actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
     {
-        u8 *actor = (u8 *)Object_GetById(14);
+        struct FieldActor *actor = Object_GetById(14);
         s32 mode = 1;
-        *(u16 *)(actor + 100) = mode;
+        actor->unknown_64 = mode;
     }
     mode = 0;
-    actor = (u8 *)Object_GetById(15);
-    *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
+    actor = Object_GetById(15);
+    actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
     Object_GetById(15)->unknown_64 = mode;
     if (Engine_GameFlagIsSet(0x858))
         Call3(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);

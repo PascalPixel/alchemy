@@ -1413,28 +1413,28 @@ void KareiMachi_AlternateDance(void)
         KareiMachi_DanceStep++;
         break;
     case 1:
-        if (*(s16 *)((u8 *)Object_GetById(21) + 100) != 0) {
+        if ((s16)Object_GetById(21)->unknown_64 != 0) {
             ClearStep((u8 *)Object_GetById(20));
             Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 2:
-        if (*(s16 *)((u8 *)Object_GetById(20) + 100) != 0) {
+        if ((s16)Object_GetById(20)->unknown_64 != 0) {
             ClearStep((u8 *)Object_GetById(20));
             Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptA);
             KareiMachi_DanceStep++;
         }
         break;
     case 3:
-        if (*(s16 *)((u8 *)Object_GetById(20) + 100) != 0) {
+        if ((s16)Object_GetById(20)->unknown_64 != 0) {
             ClearStep((u8 *)Object_GetById(21));
             Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 4:
-        if (*(s16 *)((u8 *)Object_GetById(21) + 100) != 0) {
+        if ((s16)Object_GetById(21)->unknown_64 != 0) {
             KareiMachi_DanceStep = 0;
         }
         break;

@@ -171,7 +171,7 @@ void FieldScene_RunScene372_02003e48(void)
 {
     u32 i;
     struct FieldActor *rec7;
-    s32 rec8;
+    struct FieldActor *rec8;
     s32 record;
 
     rec8 = Object_GetById(ACTOR_PARTY_LEADER);
@@ -182,7 +182,7 @@ void FieldScene_RunScene372_02003e48(void)
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(40);
-        if (*(s16 *)(rec8 + 6) >= 0) {
+        if ((s16)rec8->facing >= 0) {
             Engine_ActorSetAnimation(8, 7);
         } else {
             Engine_ActorSetAnimation(8, 8);
@@ -198,7 +198,7 @@ void FieldScene_RunScene372_02003e48(void)
         rec7->scale_x = 0x10000;
         rec7->scale_y = 0x10000;
         Actor_FaceDirection(8, 0x1000, 0);
-        if (*(s16 *)(rec8 + 6) >= 0) {
+        if ((s16)rec8->facing >= 0) {
             Engine_ActorSetAnimation(8, 7);
         } else {
             Engine_ActorSetAnimation(8, 8);
@@ -211,7 +211,7 @@ void FieldScene_RunScene372_02003e48(void)
         Engine_EventWait(80);
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(40);
-        if (*(s16 *)(rec8 + 6) >= 0) {
+        if ((s16)rec8->facing >= 0) {
             Engine_ActorSetAnimation(8, 7);
         } else {
             Engine_ActorSetAnimation(8, 8);

@@ -404,7 +404,7 @@ void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 
 void Scene_RunEventTransition(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     s32 none;
 
     if (GameFlag_IsSet(0x89a) == 0) {
@@ -415,21 +415,19 @@ void Scene_RunEventTransition(void)
         Event_ShowMessageAndWait(10, 0, 20);
         Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Engine_EventWait(20);
-        record = (void *)Object_GetById(0);
-        *(s32 *)((s32)record + 108) = (s32)OverlayObject_SetFacingTowardObject10;
-        record = (void *)Object_GetById(0);
-        if ((*(s32 *)((s32)record + 16) >> 20) == 13) {
+        record = Object_GetById(0);
+        record->update = (void (*)(union FieldObject *))OverlayObject_SetFacingTowardObject10;
+        record = Object_GetById(0);
+        if ((record->z.fixed >> 20) == 13) {
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
         }
         Actor_SetSpeed(10, 0x20000, 0x10000);
         Engine_ActorSetSpritePriority(10, 2);
         Actor_WalkToAndWait(10, 0x198, 216);
         {
-            u8 *record = (void *)Object_GetById(10);
-            u32 flag = 1;
+            struct FieldActor *record = Object_GetById(10);
 
-            flag = flag | record[35];
-            record[35] = (u8)flag;
+            record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
         }
         Engine_EventWait(10);
         Actor_FaceDirection(10, 0x8000, 20);
@@ -448,8 +446,8 @@ void Scene_RunEventTransition(void)
         Object_RefreshSelectorById(0);
         Engine_EventWait(10);
         none = 0;
-        record = (void *)Object_GetById(0);
-        *(s32 *)((s32)record + 108) = none;
+        record = Object_GetById(0);
+        record->update = (void (*)(union FieldObject *))none;
         Engine_EventWait(30);
         Engine_ActorRunRepeatedMotion(10, 2);
         Engine_EventWait(20);
@@ -609,10 +607,8 @@ void Scene_RunActorSequence(void)
     Event_ShowMessageAndWait(8, 0, 20);
     {
         struct FieldActor *record = Object_GetById(10);
-        u32 flag = ACTOR_FACES_MOTION;
 
-        flag = flag | record->steering_flags;
-        record->steering_flags = (u8)flag;
+        record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_WalkToAndWait(10, 168, 0x128);

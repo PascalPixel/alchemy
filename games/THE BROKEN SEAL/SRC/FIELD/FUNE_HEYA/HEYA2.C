@@ -1778,8 +1778,6 @@ void FieldScene_RunScene3b1_02003eec(void)
 
 void FieldScene_RunFlagBranchedSetupCascade(void)
 {
-    extern u8 *Data_03001ebc;
-
     Engine_EventBegin();
     Engine_ActorSetAnimation(9, 5);
     FieldScene_RunSceneStep(24, 1, 0);
@@ -1809,7 +1807,7 @@ void FieldScene_RunFlagBranchedSetupCascade(void)
     Engine_AudioPlayCue(0xbc);
     Engine_EventWait(30);
 
-    *(u32 *)(Data_03001ebc + (224 << 1)) = (224 << 1) + 67;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 
     FieldScene_RunSceneStep(9, 0, 0);
 

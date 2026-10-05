@@ -80,8 +80,6 @@ extern const s32 SceneAction_ActorThreeEntry[];
 extern const s32 SceneAction_GroupFinish[];
 extern u8 gKorimaKiEffectScript[];
 
-/* Main-image services reached through the overlay's import veneers, declared
- * old-style where call sites pass differing arguments. */
 void Battle_ResetEffectCounter();
 void Object_RefreshSelectorById();
 void Object_SetActionCallbackAndRefreshById();

@@ -1,3 +1,4 @@
+#include "FX_SCENE.H"
 #include "RUNTIME_MEM.H"
 #include "TASK.H"
 #include "TYPES.H"
@@ -151,11 +152,11 @@ void SceneState_StoreSlotTileXToWork832To848(void)
     Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
 }
 
-void SceneState_SetWorkByte35(void)
+void KorosseoKabe_EnableEffectChildMode(void)
 {
     u8 *record = *(u8 **)gEffectWork;
 
-    record[53] = 1;
+    ((struct BattleFxScene *)record)->child_mode = 1;
 }
 
 void KorosseoKabe_SpinActorAway(void)
@@ -244,14 +245,14 @@ void FieldScene_SetFlag333AndDrawTiles(void)
     }
 }
 
-void SceneState_SendWord250With6(void)
+void KorosseoKabe_RunSelectedActorRisingEffect(void)
 {
     s16 *tbl = gCell;
 
     BattleFx_RunRisingObjectSequence(*(s32 *)(tbl + 250), 6, 0);
 }
 
-void FieldScene_Forward4358(void)
+void KorosseoKabe_CheckLeaderAhead(void)
 {
     Engine_LeaderCheckAhead();
 }
@@ -535,7 +536,7 @@ void FieldScene_PlaceSpectatorRow(void)
     Engine_ActorSetAnimation(31, 10);
 }
 
-void SceneState_ApplyTable8715AndValue104(void)
+void KorosseoKabe_StartSupplementalSceneTask(void)
 {
     Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
     Engine_GameFlagClear(0x104);
@@ -971,7 +972,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             Engine_CameraWaitForMove();
             /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
             Value2(Engine_EventShowMessage, a0, 0);
-            SceneState_ApplyTable8715AndValue104();
+            KorosseoKabe_StartSupplementalSceneTask();
             Event_ShowMessage(a0, 0);
             Korosseo_FadeInCompetitor(0, 0x438, 0x108);
             Engine_EventWait(15);

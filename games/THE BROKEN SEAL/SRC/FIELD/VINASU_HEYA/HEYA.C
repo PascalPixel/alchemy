@@ -142,7 +142,7 @@ void RunStagedActorTransition(void)
     Object_SetMode(leader, 1);
 }
 
-s32 SceneState_FillGridCellByte2(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
+s32 VinasuHeya_FillCellCollisionCodes(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
 {
     u8 *g = gMapWork[0];
     u8 *base;
@@ -185,7 +185,7 @@ void SceneActor_ApplySlotsMatchingKind212(void)
     }
 }
 
-s32 OverlayObject_ApplyLowNibbleOfField100(struct FieldActor *obj)
+s32 VinasuHeya_UpdateChildFromTimer(struct FieldActor *obj)
 {
     ObjectGroup_SetChildValue(obj, obj->timer & 15);
     return 0;
@@ -324,12 +324,12 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     }
 }
 
-void SceneState_StoreLookupZeroToWord24(void)
+void VinasuHeya_AttachEffectLeader(void)
 {
     *(s32 *)(gActorEffectWork + 24) = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-void SceneState_ClearWorkspaceWord24(void)
+void VinasuHeya_ReleaseEffectLeader(void)
 {
     *(s32 *)(gActorEffectWork + 24) = 0;
 }

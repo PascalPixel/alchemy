@@ -36,7 +36,7 @@ extern u8 MsgTorebiShipsArentGoing[];
 extern u8 MsgTorebiWasteStuckHereWhenSuch[];
 extern u8 MsgTorebiHeyaBabiShowedHimselfAtFinals[];
 
-u8 *SceneData_GetTable8BB4(void)
+u8 *TorebiHeya_GetEntrances(void)
 {
     return Data_02008bb4;
 }
@@ -46,12 +46,12 @@ s32 TorebiHeya_GetDefaultResult(void)
     return 0;
 }
 
-u8 *SceneData_GetTable8dac(void)
+u8 *TorebiHeya_GetExits(void)
 {
     return Data_02008dac;
 }
 
-s32 SceneData_SelectTable8e00ByFlag(void)
+s32 TorebiHeya_SelectPlacements(void)
 {
     if (Engine_GameFlagIsSet(0x950) != 0) {
         return (s32)Data_02009040;
@@ -77,7 +77,7 @@ void SceneDialogue_AskBabiWasMissing(s32 subject)
 }
 #endif
 
-u8 *SceneData_SelectTable9310ByFlags(void)
+u8 *TorebiHeya_SelectEvents(void)
 {
     if (Engine_GameFlagIsSet(0x950) != 0) {
         return Data_020099d0;
@@ -88,7 +88,7 @@ u8 *SceneData_SelectTable9310ByFlags(void)
     return Data_02009310;
 }
 
-void SceneState_SetWork1c0AndRun(void)
+void TorebiHeya_StartWindowTransition(void)
 {
     extern u8 *Data_03001ebc;
 

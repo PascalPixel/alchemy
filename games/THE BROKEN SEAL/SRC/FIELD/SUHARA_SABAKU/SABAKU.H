@@ -51,9 +51,9 @@ void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 void SceneState_SendRequest15With45(void);
 
-s32 OverlayObject_ApplyZeroAndClearByte89(u8 *obj);
+s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj);
 
-s32 OverlayObject_ToggleField84Bit0(u8 *obj);
+s32 SuharaSabaku_ToggleActorActive(u8 *obj);
 
 s32 SceneData_ReturnZero(void);
 
@@ -87,7 +87,7 @@ void FieldScene_RunActorThirteenRestoration(void);
 
 void PlaceActorTwelveWhenFlagClear(void);
 
-void SceneState_SetStateByte52(void);
+void SuharaSabaku_EnableEffectChildOption(void);
 
 void EncounterPalette_Pulse(void);
 

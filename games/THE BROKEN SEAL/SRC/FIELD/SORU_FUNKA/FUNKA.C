@@ -571,7 +571,7 @@ void Resource381_NoOpCallbackB(void)
 {
 }
 
-s32 FieldScene_RunWhenWord225Is10(void)
+s32 SoruFunka_RunHostageSceneOnEntranceTen(void)
 {
     if (gGameState.entrance == 10) {
         FieldEffect_InitSparkles();

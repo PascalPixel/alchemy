@@ -7,6 +7,7 @@
 #include "CALL.H"
 #include "OBJECT_RUNTIME.H"
 
+extern u8 gKuupuappuDouRegions[];
 extern const struct SceneEntrance gKuupuappuDouEntrances1[];
 extern const struct SceneEntrance gKuupuappuDouEntrances2[];
 extern const struct SceneEntrance gKuupuappuDouEntrances3[];
@@ -52,7 +53,7 @@ extern const struct SceneEvent gKuupuappuDouEvents2[];
 extern const struct SceneEvent gKuupuappuDouEvents3[];
 extern const struct SceneEvent gKuupuappuDouEventsOther[];
 
-void SceneState_SetEntries16To21Byte35(void);
+void KuupuappuDou_EnableGroupAutomaticPriority(void);
 
 struct MapShake {
     u8 unknown_00[0x18];
@@ -123,9 +124,9 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /* Deliberate no-op callback. */
-u8 *SceneData_GetTable9C5C(void)
+u8 *KuupuappuDou_GetRegions(void)
 {
-    return (u8 *)0x02009c5c;
+    return gKuupuappuDouRegions;
 }
 
 /* Where each area's exits lead. */
@@ -537,7 +538,7 @@ void SceneState_DispatchByActorZeroDepth(void)
     if (p->f0c >= 0x100000) {
         KuupuappuDou_RaiseActorPriorities();
     } else {
-        SceneState_SetEntries16To21Byte35();
+        KuupuappuDou_EnableGroupAutomaticPriority();
     }
 }
 
@@ -556,7 +557,7 @@ void KuupuappuDou_RaiseActorPriorities(void)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /* Deliberate no-op callback. */
-void SceneState_SetEntries16To21Byte35(void)
+void KuupuappuDou_EnableGroupAutomaticPriority(void)
 {
     s32 index = 16;
     s32 flag = 1;

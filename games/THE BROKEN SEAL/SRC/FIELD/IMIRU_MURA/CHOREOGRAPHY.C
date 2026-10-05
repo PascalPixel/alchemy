@@ -5,7 +5,7 @@
 
 s32 __umodsi3();
 
-void ActorPresentation_ApplyTableA5ecToActorNine(void)
+void ImiruMura_ShowActorNineTurnMessage(void)
 {
     extern s32 ImiruMura_TurnScript[];
 
@@ -13,14 +13,14 @@ void ActorPresentation_ApplyTableA5ecToActorNine(void)
     Engine_EventShowMessage(9, 0);
 }
 
-void SceneState_StoreTable96adToWork(void)
+void ImiruMura_CastPsynergyAtActorNine(void)
 {
     u8 *work;
 
     Engine_PsynergyBegin(93, 1);
     work = *(u8 **)gEffectWork;
     Engine_PsynergySetTarget(3, 9);
-    *(s32 *)(work + 36) = (s32)ActorPresentation_ApplyTableA5ecToActorNine;
+    *(s32 *)(work + 36) = (s32)ImiruMura_ShowActorNineTurnMessage;
     Engine_PsynergyRaiseHands();
     Engine_PsynergyPlayEffect(1);
     Engine_PsynergyLowerHands();
@@ -226,7 +226,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_ActorWalkTo(0, 0x2b2, 200);
 
     /* Clear the byte at offset 85 of the returned record. */
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
     work = gEventWork;

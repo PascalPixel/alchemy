@@ -54,15 +54,15 @@ gEffectScripts:
 	.4byte .L_020093ec
 .L_02009430:
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyZeroAndClearByte89
+	.4byte SuharaSabaku_ClearActorSpriteAndCollisionFlags
 	.4byte 0x00000022
-	.4byte OverlayObject_ToggleField84Bit0
+	.4byte SuharaSabaku_ToggleActorActive
 	.4byte 0x00000010
 .L_02009444:
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyZeroAndClearByte89
+	.4byte SuharaSabaku_ClearActorSpriteAndCollisionFlags
 	.4byte 0x00000022
-	.4byte OverlayObject_ToggleField84Bit0
+	.4byte SuharaSabaku_ToggleActorActive
 	.4byte 0x00000010
 	.global gSuharaSabakuEntrancesOther
 gSuharaSabakuEntrancesOther:
@@ -394,19 +394,19 @@ gSuharaSabakuEventsOther:
 	.4byte 0x00500006
 	.4byte 0x10002115
 	.4byte 0x120f0008
-	.4byte SceneState_SetStateByte52
+	.4byte SuharaSabaku_EnableEffectChildOption
 	.4byte 0x10002115
 	.4byte 0x120f0009
-	.4byte SceneState_SetStateByte52
+	.4byte SuharaSabaku_EnableEffectChildOption
 	.4byte 0x10002115
 	.4byte 0x120f000a
-	.4byte SceneState_SetStateByte52
+	.4byte SuharaSabaku_EnableEffectChildOption
 	.4byte 0x10002115
 	.4byte 0x120f000b
-	.4byte SceneState_SetStateByte52
+	.4byte SuharaSabaku_EnableEffectChildOption
 	.4byte 0x10002115
 	.4byte 0x120f000c
-	.4byte SceneState_SetStateByte52
+	.4byte SuharaSabaku_EnableEffectChildOption
 	.4byte 0x00002115
 	.4byte 0x120f0008
 	.4byte SuharaSabaku_MeetActor

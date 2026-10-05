@@ -31,7 +31,7 @@ void SceneActor_MoveAndRedraw(struct ColumnProbe probe);
 s32 MakyuriHeya_StartPillarPush(void);
 void SceneEffect_SpawnParticleRowsByMode(s32 mode);
 void FieldScene_RunPrimarySequence(s32 mode);
-s32 SceneData_ApplyTableA2c5AndReturnZero(void);
+s32 MakyuriHeya_StopActorNinePositionCallback(void);
 void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
 void Engine_ActorStartAction(s32 actor);
 void Engine_EventBegin();

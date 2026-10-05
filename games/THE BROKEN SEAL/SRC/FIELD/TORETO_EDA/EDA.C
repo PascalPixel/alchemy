@@ -65,7 +65,7 @@ void State_SetActorEightValue3d(void)
     BattleFx_SetPhaseRequest(8, 0x3D);
 }
 
-u8 *SceneData_GetTable835c(void)
+u8 *ToretoEda_GetEntrances(void)
 {
     return ToretoEda_SceneTable0;
 }
@@ -76,12 +76,12 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTable844c(void)
+u8 *ToretoEda_GetExits(void)
 {
     return ToretoEda_SceneTable1;
 }
 
-u8 *SceneData_GetTable8474(void)
+u8 *ToretoEda_GetPlacements(void)
 {
     return ToretoEda_SceneTable2;
 }
@@ -148,7 +148,7 @@ void Scene_ApplyOffset0Neg6(void)
     Actor_ShiftObjectsByBlock(0, -6);
 }
 
-void State_SetValue123ThenCounter16c(void)
+void ToretoEda_PlayCueAndSelectTouchedExit(void)
 {
     u8 *state = gWork;
     s16 *cnt;
@@ -186,7 +186,7 @@ void Effect_SetAlphaBlendForScene9(void)
     }
 }
 
-u8 *SceneData_GetTable84a4(void)
+u8 *ToretoEda_GetEvents(void)
 {
     return ToretoEda_SceneTable3;
 }
@@ -215,7 +215,7 @@ void SceneData_InitHeader8590(void)
     SerialRuntime_PollAndTransfer(hdr, sTransferData);
 }
 
-s32 State_SetRuntimeWord448To256(void)
+s32 ToretoEda_InitializeBackdropTransition(void)
 {
     u8 **base = (u8 **)&gEventWork;
     u8 *work;

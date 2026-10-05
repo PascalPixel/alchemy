@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer GomaIriguchi_RestoreEntryState
-	overlay_veneer SceneData_GetTable92f8
-	overlay_veneer SceneData_GetTable9358
-	overlay_veneer SceneData_GetTable9368
-	overlay_veneer SceneData_GetTable9488
+	overlay_veneer GomaIriguchi_GetEntrances
+	overlay_veneer GomaIriguchi_GetExits
+	overlay_veneer GomaIriguchi_GetPlacements
+	overlay_veneer GomaIriguchi_GetEvents
 	overlay_veneer SceneData_ReturnZero

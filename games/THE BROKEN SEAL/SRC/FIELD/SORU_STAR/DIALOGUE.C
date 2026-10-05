@@ -221,7 +221,7 @@ void SceneDialogue_RunLine1072WithPair9And10(void)
     Engine_EventEnd();
 }
 
-void FieldScene_Forward72b4(void)
+void SoruStar_CheckLeaderAhead(void)
 {
     Engine_LeaderCheckAhead();
 }

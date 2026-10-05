@@ -171,7 +171,7 @@ void FieldScene_BuildActorPresentationGroup(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetRuntimeWord448To513(void)
+void KorashiamuIriguchi_ShowQualifyingTrialMessage(void)
 {
 
     Engine_EventBegin();
@@ -350,7 +350,7 @@ void FieldScene_DispatchBySelector(void)
         Engine_ActorSetAnimation(9, 2);
         if (Engine_GameFlagIsSet(0x109) != 0)
             break;
-        SceneState_SetRuntimeWord448To513();
+        KorashiamuIriguchi_ShowQualifyingTrialMessage();
         break;
     case 7:
         FieldScene_BuildActorPresentationGroup();

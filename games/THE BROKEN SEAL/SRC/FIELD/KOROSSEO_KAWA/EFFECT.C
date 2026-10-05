@@ -100,7 +100,7 @@ void Resource3ba_NoOpCallback(void)
 
 /* The river stage marks its start in the scene state's first halfword: 9
    once the stage is ready. */
-void SceneState_SetHalfword1000To9(void)
+void KorosseoKawa_MarkStageReady(void)
 {
     s16 *ready = (s16 *)gSceneState;
     /* FAKEMATCH: a word temporary; a halfword constant stored into the byte buffer is loaded from the literal pool instead. */
@@ -110,7 +110,7 @@ void SceneState_SetHalfword1000To9(void)
 }
 
 /* Wait a frame at a time until the stage is ready. */
-void SceneState_WaitUntilWord1000IsNine(void)
+void KorosseoKawa_WaitForStageReady(void)
 {
     s16 *ready = (s16 *)gSceneState;
 

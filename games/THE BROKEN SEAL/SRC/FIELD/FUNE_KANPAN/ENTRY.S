@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer FuneKanpan_ResetDeck
-	overlay_veneer SceneData_GetTablec994
-	overlay_veneer SceneData_GetTablecb64
+	overlay_veneer FuneKanpan_GetEntrances
+	overlay_veneer FuneKanpan_GetExits
 	overlay_veneer FuneKanpan_GetPlacements
 	overlay_veneer FuneKanpan_GetEvents
-	overlay_veneer SceneData_GetTablecb44
+	overlay_veneer FuneKanpan_GetRegions

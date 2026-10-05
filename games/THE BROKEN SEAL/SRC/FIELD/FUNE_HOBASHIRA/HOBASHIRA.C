@@ -187,27 +187,27 @@ s32 OverlayObject_ShrinkScaleThenStop(struct FieldActor *o)
     return 1;
 }
 
-u8 *SceneData_GetTable95c0(void)
+u8 *FuneHobashira_GetEntrances(void)
 {
     return FuneHobashira_SceneTableA;
 }
 
-u8 *SceneData_GetTable9680(void)
+u8 *FuneHobashira_GetRegions(void)
 {
     return FuneHobashira_SceneTableB;
 }
 
-u8 *SceneData_GetTable96a0(void)
+u8 *FuneHobashira_GetExits(void)
 {
     return FuneHobashira_SceneTableC;
 }
 
-u8 *SceneData_GetTable96C4(void)
+u8 *FuneHobashira_GetPlacements(void)
 {
     return FuneHobashira_SceneTableD;
 }
 
-u8 *SceneData_GetTable988c(void)
+u8 *FuneHobashira_GetEvents(void)
 {
     return FuneHobashira_SceneTableE;
 }
@@ -303,7 +303,7 @@ void FuneHobashira_SetupHiddenLeaderLookout(void)
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
     /* FAKEMATCH: keep y before x while capturing the store's zero in pan. */
     asm ("mov %0, #128\n\tmov %1, #164"
          : "=r" (y), "=r" (x), "=r" (pan));

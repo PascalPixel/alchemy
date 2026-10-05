@@ -24,6 +24,7 @@ extern u8 MsgBiribinoWasntCurseInKolimaHorrifying[];
 extern u8 MsgBiribinoWhenSpringComesWantGo[];
 
 /* The room's scene tables, where the overlay's data lies. */
+extern u8 gBiribinoHeyaPlacements[];
 extern u8 BiribinoHeya_PrimaryTable[];
 extern u8 BiribinoHeya_SecondaryTable[];
 extern u8 BiribinoHeya_TertiaryTable[];
@@ -48,10 +49,10 @@ u8 *SceneData_GetSecondaryTable(void)
     return BiribinoHeya_SecondaryTable;
 }
 
-s32 SceneData_PrepareTable86b0(void)
+s32 BiribinoHeya_PreparePlacements(void)
 {
-    ScenePlacement_ClipToView(0x020086B0);
-    return 0x020086B0;
+    ScenePlacement_ClipToView((s32)gBiribinoHeyaPlacements);
+    return (s32)gBiribinoHeyaPlacements;
 }
 
 void FieldScene_RunActor16MessageBranch(void)

@@ -7,7 +7,7 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer FieldScene_RunWhenWord225Is10
+	overlay_veneer SoruFunka_RunHostageSceneOnEntranceTen
 	overlay_veneer SceneData_GetScriptTable
 	overlay_veneer SceneData_GetMessageTable
 	overlay_veneer SceneData_GetActorTable

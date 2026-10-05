@@ -105,7 +105,7 @@ void SuharaHeya_AskBlownHere(s32 obj)
     Engine_EventShowMessage(obj, 0);
 }
 
-void State_ApplyCounter16cThenCall7b(void)
+void SuharaHeya_PlayCueAndRequestTouchedExit(void)
 {
     struct EventWork *state = gEventWork;
     s16 *cnt = (s16 *)&state->touched_trigger;

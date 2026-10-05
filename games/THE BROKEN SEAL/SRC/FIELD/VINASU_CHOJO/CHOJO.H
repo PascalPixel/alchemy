@@ -107,7 +107,7 @@ void OverlayObject_SetValue1(void *, s32);
 void SceneActor_ParkRecord(struct FieldActor *actor);
 s32 Object_CheckMovementCollision();
 void Vector_AddPolarOffset();
-void SceneActor_SetByte55ForActorZeroAnd12To17();
+void VinasuChojo_ConfigureGroupMotion();
 s32 SceneActor_FindNearestSlotOfKindF2(void);
 void SceneState_ForwardByRuntimeWordBits(s32 a);
 void Scene_RunScriptedActorPresentation(void);

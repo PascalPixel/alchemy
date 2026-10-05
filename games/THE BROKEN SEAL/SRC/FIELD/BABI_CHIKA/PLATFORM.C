@@ -85,7 +85,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 }
 
 /* Scene tables. */
-u8 *SceneData_GetTableB85c(void) { return Data_0200b85c; }
+u8 *BabiChika_GetExits(void) { return Data_0200b85c; }
 
 u8 *SceneData_SelectAndApplyTableBySceneId(void)
 {
@@ -197,7 +197,7 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
     }
 }
 
-void SceneActor_SetActor14Field98ByFlag200(void)
+void BabiChika_ConfigureActorFourteenRise(void)
 {
     u8 *p;
     u8 val;
@@ -388,7 +388,7 @@ void FieldScene_RunFourStepSequenceA(void)
     FieldScene_RunSupplementalSequenceOne();
 }
 
-void FieldScene_SetActor19TableB3B8(void)
+void BabiChika_InstallActorNineteenFlicker(void)
 {
     Engine_ActorEnableActionCallback(19, BabiChika_FlickerScript);
 }
@@ -849,7 +849,7 @@ void FieldScene_RunScriptedStep953(void)
     Engine_EventEnd();
 }
 
-s32 SceneData_SelectTableByWord224(void)
+s32 BabiChika_SelectEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_BabiChika1) {
         return (s32)Data_0200bc0c;

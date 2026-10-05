@@ -67,7 +67,7 @@ s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
     return 1;
 }
 
-u8 *SceneData_GetTableAfa0(void)
+u8 *HaidiaIe_GetEntrances(void)
 {
     return Data_0200afa0;
 }
@@ -215,7 +215,7 @@ void Villager_ShowOffPsynergy(void)
         Engine_AudioPlayCue(0x121);
         Scheduler_RemoveCallback((s32)FieldScene_RunStep17);
         Engine_TaskWait(1);
-        FieldScene_Forward4dac();
+        HaidiaIe_CleanupSceneObjects();
         Engine_ActorSetChildValue(17, 0);
         Engine_EventWait(40);
         Engine_EventSetMessage((s32)MsgHaidiaBeholdPowerPsynergy);
@@ -308,7 +308,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Actor_SetChildValue(15, 0);
     Actor_SetChildValue(20, 0);
     Engine_EventWait(40);
-    FieldScene_Forward4dac();
+    HaidiaIe_CleanupSceneObjects();
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 30);
     Event_ShowMessage(15, 0);
     Engine_EventEnd();
@@ -371,7 +371,7 @@ void Scene_PsynergyStoneIsGone(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetWork1c0AndRun(s32 no)
+void HaidiaIe_RequestBackdropExit(s32 no)
 {
     struct EventWork *p;
     if (Engine_GameFlagIsSet(0x834) != 0) {
@@ -388,7 +388,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
-    SceneState_SetWork1c0AndRun(1);
+    HaidiaIe_RequestBackdropExit(1);
 }
 
 /* Sets step 188, then runs a pair of 6-argument setup calls for indices 0
@@ -405,7 +405,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
-    SceneState_SetWork1c0AndRun(2);
+    HaidiaIe_RequestBackdropExit(2);
 }
 
 void FieldScene_RunSupplementalSequenceThree(void)
@@ -413,7 +413,7 @@ void FieldScene_RunSupplementalSequenceThree(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 43, 15);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
-    SceneState_SetWork1c0AndRun(3);
+    HaidiaIe_RequestBackdropExit(3);
 }
 
 void FieldScene_RunSupplementalSequenceFour(void)
@@ -421,7 +421,7 @@ void FieldScene_RunSupplementalSequenceFour(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 52, 18);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
-    SceneState_SetWork1c0AndRun(4);
+    HaidiaIe_RequestBackdropExit(4);
 }
 
 /* Runs a fixed sequence of four scripted calls: one keyed off Value_0200beb4
@@ -432,7 +432,7 @@ void FieldScene_RunSupplementalSequenceFive(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 41, 32);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
-    SceneState_SetWork1c0AndRun(5);
+    HaidiaIe_RequestBackdropExit(5);
 }
 
 /* Run the four steps of the house scene. */
@@ -441,7 +441,7 @@ void FieldScene_RunSupplementalSequenceSix(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 35, 36);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263); /* object_id 0, x 102, z 611 */
-    SceneState_SetWork1c0AndRun(6);
+    HaidiaIe_RequestBackdropExit(6);
 }
 
 void FieldScene_RunSupplementalSequenceSeven(void)
@@ -449,20 +449,20 @@ void FieldScene_RunSupplementalSequenceSeven(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 51, 39);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
-    SceneState_SetWork1c0AndRun(7);
+    HaidiaIe_RequestBackdropExit(7);
 }
 
 void FieldScene_RunStep7BThen8(void)
 {
     Engine_AudioPlayCue(123);
-    SceneState_SetWork1c0AndRun(8);
+    HaidiaIe_RequestBackdropExit(8);
 }
 
 void SceneState_ApplyFlag815Branch(void)
 {
     if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Engine_AudioPlayCue(123);
-        SceneState_SetWork1c0AndRun(10);
+        HaidiaIe_RequestBackdropExit(10);
     }
 }
 
@@ -1473,7 +1473,7 @@ void SceneState_ApplyPair140And0(void)
     Engine_PsynergyBegin(140, 0);
 }
 
-void FieldScene_Forward4dac(void)
+void HaidiaIe_CleanupSceneObjects(void)
 {
     BattleEffect_CleanupSceneObjects();
 }

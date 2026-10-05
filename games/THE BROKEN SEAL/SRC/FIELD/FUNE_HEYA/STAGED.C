@@ -119,14 +119,14 @@ s32 StagedActor_SetAngleByKind(struct FieldActor *o)
     return 1;
 }
 
-void StagedActor_AdvanceCounter98(u8 *o)
+void FuneHeya_AdvanceWalkerAfterRise(u8 *o)
 {
-    u8 *p = o + 98;
+    u8 *p = &((struct FieldActor *)o)->rise_counter;
     s32 n = *p + 1;
 
     *p = n;
     if ((u8)n > 80) {
-        *(u16 *)(o + 102) += 1;
+        ((struct FieldActor *)o)->work += 1;
     }
 }
 

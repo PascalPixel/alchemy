@@ -261,7 +261,7 @@ void SceneActor_SetPairZeroAndValue(s32 actor, s32 facing, s32 frames);
 void Event_SayThenWait(s32 speaker, s32 frames);
 void Object_SetActionCallbackAndRefreshById(s32 id, const u8 *callback);
 void Audio_PlayCueFromEventWork(void);
-void SceneActor_AlternateSlots13To16Field0c(void);
+void KorimaHashi_AlternateBridgePostHeights(void);
 
 extern u8 KorimaHashi_GeraldAction[];
 extern u8 KorimaHashi_IvanAction[];
@@ -506,7 +506,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorSetSpritePriority(ACTOR_IVAN, 3);
     Engine_ActorSetSpritePriority(ACTOR_MIA, 3);
     KorimaHashi_TriggerPending = 0;
-    Engine_TaskAddCallback(SceneActor_AlternateSlots13To16Field0c, 0xc80);
+    Engine_TaskAddCallback(KorimaHashi_AlternateBridgePostHeights, 0xc80);
     Audio_PlayCue(220);
     Object_GetById(13)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(13, 2);

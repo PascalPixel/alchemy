@@ -665,10 +665,10 @@ gTakaraHashiraEvents4:
 	.4byte TakaraHashira_PushPillar
 	.4byte 0x00000002
 	.4byte 0xffff0028
-	.4byte SceneState_LinkActorZeroToWork24
+	.4byte TakaraHashira_AttachPillarRider
 	.4byte 0x00000002
 	.4byte 0xffff0029
-	.4byte SceneState_ClearWord24AndObjectByte62
+	.4byte TakaraHashira_ReleasePillarRider
 	.4byte 0x00000013
 	.4byte 0x0eda0064
 	.4byte 0x00200309

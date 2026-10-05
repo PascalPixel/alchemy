@@ -271,6 +271,8 @@ gKuupuappuDouEntrances3:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKuupuappuDouRegions
+gKuupuappuDouRegions:
 	.4byte 0x002f01bf
 	.4byte 0x01cf030f
 	.4byte 0x031f003f

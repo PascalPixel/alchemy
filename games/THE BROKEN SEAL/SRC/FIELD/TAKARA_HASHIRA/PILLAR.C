@@ -32,7 +32,7 @@ extern const struct SceneEvent gTakaraHashiraEventsOther[];
 extern u8 TakaraHashira_PillarSlots[];
 void SceneActor_ApplyPlacementQueryAndTag();
 void BattleFx_StartFadeOverlay();
-void SceneState_ClearWord24AndObjectByte62();
+void TakaraHashira_ReleasePillarRider();
 void OverlayObject_SetCallbackAndMode2();
 void SceneActor_CheckActors8To11NearSlotZero(void);
 void TakaraHashira_PrepLoweredActor();
@@ -84,7 +84,7 @@ void TakaraHashira_RunStagedCellScene(void)
 }
 
 /* Link the scene and entity. */
-void SceneState_LinkActorZeroToWork24(void)
+void TakaraHashira_AttachPillarRider(void)
 {
     struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
     PILLAR_WORK->rider = obj;
@@ -92,7 +92,7 @@ void SceneState_LinkActorZeroToWork24(void)
 }
 
 /* The leader steps off the pillar it rode. */
-void SceneState_ClearWord24AndObjectByte62(void)
+void TakaraHashira_ReleasePillarRider(void)
 {
     struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -464,7 +464,7 @@ s32 TakaraHashira_SetupArea(void)
         }
         BattleFx_StartFadeOverlay(0);
         if (Object_GetById(ACTOR_PARTY_LEADER)->rise_counter == 0) {
-            SceneState_ClearWord24AndObjectByte62();
+            TakaraHashira_ReleasePillarRider();
         }
         OverlayObject_SetCallbackAndMode2(8);
         OverlayObject_SetCallbackAndMode2(9);

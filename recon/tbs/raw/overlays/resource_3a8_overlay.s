@@ -1271,7 +1271,7 @@ gKareiMachiEvents6:
 	.4byte FieldScene_DrawTilesAndRaiseActor11
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte SceneState_ClearWord24WhenFlag200
+	.4byte KareiMachi_ReleaseEffectLeader
 	.4byte 0x00000002
 	.4byte 0xffff000b
 	.4byte SceneState_LinkRecordZeroWhenFlag200Clear

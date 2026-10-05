@@ -40,7 +40,7 @@ void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
 s32 ArcTan2();
 void FieldScene_RunSplitTripleSteps();
-void SceneState_SetWord1c0To209AndRun();
+void KuupuappuHeya_OpenWindowTransition();
 void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
@@ -202,7 +202,7 @@ s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
         obj->velocity_y = 0x40000;
         *flags &= 0x7e;
         Engine_ActorSetSpriteFlags(obj, 0);
-        Engine_ActorMoveToAndWait(0, *(s16 *)((u8 *)pos + 2), *(s16 *)((u8 *)pos + 10));
+        Engine_ActorMoveToAndWait(0, ((union FieldCoordinate *)&pos->x)->part.pixel, ((union FieldCoordinate *)&pos->z)->part.pixel);
         ObjectDispatch_ApplyArgumentToChildren(obj, 6);
         Engine_ActorSetSpriteFlags(obj, 1);
         Engine_TaskWait(6);

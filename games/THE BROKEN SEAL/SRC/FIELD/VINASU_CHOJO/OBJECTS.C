@@ -3,7 +3,7 @@
 #include "CHOJO.H"
 
 
-void OverlayObject_SetRecordField1(struct FieldActor *actor, u32 value)
+void VinasuChojo_SetSpritePriority(struct FieldActor *actor, u32 value)
 {
     actor->sprite->priority = value;
 }

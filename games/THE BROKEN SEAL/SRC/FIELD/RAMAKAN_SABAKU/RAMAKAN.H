@@ -15,6 +15,6 @@ extern u8 *gWork;
 
 void BattleFx_RunPageEffectForSlot();
 void RamakanSabaku_UpdateTravelDust(void);
-void SceneState_SetHalfwordB030(u16 value);
+void RamakanSabaku_SetSandPhase(u16 value);
 void Vector_AddPolarOffset();
 #endif

@@ -59,7 +59,7 @@ void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 s32 PartyInventory_Remove();
 s32 PartyInventory_FindOwner();
-void FieldScene_ForwardValue81fc();
+void VinasuChojo_CleanupSceneObjects();
 void FieldScene_RunStep6(void);
 
 struct StagedVerticalEffect;
@@ -156,7 +156,7 @@ void Effect_MoveWithDrag(union FieldObject *object)
     object->effect.sprite->rotation += object->effect.spin;
 }
 
-void OverlayObject_DecayRecordField1e(struct FieldActor *actor)
+void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 {
     struct FieldSprite *sprite = actor->sprite;
     u16 rotation = sprite->rotation;
@@ -271,7 +271,7 @@ void InitializeActorZeroMotion(void)
     Vector_AddPolarOffset(0x200000, angle, position);
     if (Object_CheckMovementCollision(actor, position) == 0) {
         Engine_GameFlagClear(592);
-        SceneActor_SetByte55ForActorZeroAnd12To17();
+        VinasuChojo_ConfigureGroupMotion();
         Object_SetMode(actor, 6);
         Engine_TaskWait(6);
         Object_SetMode(actor, 7);
@@ -327,7 +327,7 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
     Engine_EventEnd();
 }
 
-void SceneActor_SetByte55ForActorZeroAnd12To17(void)
+void VinasuChojo_ConfigureGroupMotion(void)
 {
     s32 flags;
 
@@ -887,7 +887,7 @@ void Scene_RunActorEntrySequence(void)
     Engine_TaskWait(1);
     Actor_SetChildValue(6, 0);
     Engine_TaskWait(10);
-    FieldScene_ForwardValue81fc();
+    VinasuChojo_CleanupSceneObjects();
     Engine_ActorJump(6, 2, 40);
     VinasuChojo_ShowMessage(6);
     Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
@@ -1272,7 +1272,7 @@ void SceneState_ApplyPair140And0(void)
     Engine_PsynergyBegin(140, 0);
 }
 
-void FieldScene_ForwardValue81fc(s32 a)
+void VinasuChojo_CleanupSceneObjects(s32 a)
 {
     BattleEffect_CleanupSceneObjects(a);
 }

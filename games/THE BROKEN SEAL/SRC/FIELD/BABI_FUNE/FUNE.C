@@ -26,7 +26,7 @@ extern s32 BabiFune_Count;
 
 /* The overlay header exposes a scene table getter. */
 
-u8 *SceneData_GetTable96c8(void)
+u8 *BabiFune_GetEntrances(void)
 {
     return BabiFune_SceneTableA;
 }
@@ -41,12 +41,12 @@ s32 BabiFune_GetDefaultResult(void)
 }
 
 /* The overlay header exposes getters for the scene tables. */
-u8 *SceneData_GetTable9710(void)
+u8 *BabiFune_GetExits(void)
 {
     return BabiFune_SceneTableB;
 }
 
-u8 *SceneData_GetTable971c(void)
+u8 *BabiFune_GetPlacements(void)
 {
     return BabiFune_SceneTableC;
 }
@@ -63,7 +63,7 @@ void PlayWorkspaceCueAndClearPaletteZero(void)
     } while (0);
 }
 
-void FieldScene_Forward11fc(void)
+void BabiFune_LoadTablesAndStopDma(void)
 {
     SceneEffect_LoadTablesAndStopDma0();
 }
@@ -73,7 +73,7 @@ void FieldScene_ConfigureFixedPointValues(void)
     DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
-u8 *SceneData_GetTable97AC(void) { return BabiFune_SceneTableD; }
+u8 *BabiFune_GetEvents(void) { return BabiFune_SceneTableD; }
 
 /* Babi Fune: copy six colours of the cycling palette for the current step
  * into palette colours 116..121 and advance the step, wrapping after 35. */
@@ -99,7 +99,7 @@ void BabiFune_CyclePalette(void)
  * and upwards; when it ends and a trigger is pending, start its script. */
 void BabiFune_UpdateDriftingObject(u8 *obj)
 {
-    u16 *wait = (u16 *)(obj + 100);
+    u16 *wait = &((struct FieldActor *)obj)->timer;
     s32 left = *wait;
 
     if (*(s16 *)wait != 0) {
@@ -108,10 +108,10 @@ void BabiFune_UpdateDriftingObject(u8 *obj)
         *wait = left - 1;
         drift = Engine_RandomNext();
         drift -= Engine_RandomNext();
-        *(s32 *)(obj + 8) += drift;
-        *(s32 *)(obj + 12) += 0xcccc;
-    } else if (*(s16 *)(obj + 102) != 0) {
-        *(s16 *)(obj + 102) = 0;
+        ((struct FieldActor *)obj)->x.fixed += drift;
+        ((struct FieldActor *)obj)->y.fixed += 0xcccc;
+    } else if (*(s16 *)&((struct FieldActor *)obj)->work != 0) {
+        *(s16 *)&((struct FieldActor *)obj)->work = 0;
         Object_SetMode(obj, 1);
         {
             u16 *p = (u16 *)(obj + 94);

@@ -426,7 +426,7 @@ HaidiaArashi_GatherPath22:
 	.global HaidiaArashi_LookAroundScript
 HaidiaArashi_LookAroundScript:
 	.4byte 0x00000022
-	.4byte OverlayObject_SetField6OnCountdown
+	.4byte HaidiaArashi_RerollHeadingOnCountdown
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000

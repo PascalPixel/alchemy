@@ -43,16 +43,16 @@ void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
     if (actor != 0) {
         struct Half zero;
 
-        *(s32 *)(actor + 8) = *pos++;
-        *(s32 *)(actor + 12) = *pos++;
-        *(s32 *)(actor + 16) = *pos;
-        *(u16 *)(actor + 6) = dir;
+        ((struct FieldActor *)actor)->x.fixed = *pos++;
+        ((struct FieldActor *)actor)->y.fixed = *pos++;
+        ((struct FieldActor *)actor)->z.fixed = *pos;
+        ((struct FieldActor *)actor)->facing = dir;
         zero.v = 0;
-        actor[85] = zero.v;
-        (*(u8 **)(actor + 80))[38] = zero.v;
+        ((struct FieldActor *)actor)->motion_flags = zero.v;
+        ((struct FieldActor *)actor)->sprite->flags = zero.v;
         ObjectDispatch_ApplyValueToChildren(actor, value);
     }
-    sprite = *(u8 **)(actor + 80);
+    sprite = (u8 *)((struct FieldActor *)actor)->sprite;
     n = sprite[39];
     if (n != 0) {
         u32 mask = 255;
@@ -75,7 +75,7 @@ void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
     }
 }
 
-void OverlayObject_SetField54(s32 arg0, s32 arg1)
+void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1)
 {
     struct FieldActor *entry = Object_GetById(arg0);
 

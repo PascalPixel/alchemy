@@ -1,3 +1,4 @@
+#include "FX_SCENE.H"
 #include "IRIGUCHI.H"
 #include "TYPES.H"
 #include "CALL.H"
@@ -996,9 +997,9 @@ struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
     return StagedActor_FindAtTile(p, actor);
 }
 
-void SceneState_SetRuntimeByte34(void)
+void BabiIriguchi_EnableEffectChildOption(void)
 {
-    FIELD_AT_OFFSET(*(void **)gEffectWork, s8 *, 0x34) = 1;
+    ((struct BattleFxScene *)*(void **)gEffectWork)->child_option = 1;
 }
 
 void ActorPresentation_PlaceActorTwelveAtTile20And12(void)

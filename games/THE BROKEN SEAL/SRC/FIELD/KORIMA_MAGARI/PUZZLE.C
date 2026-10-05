@@ -42,7 +42,7 @@ extern u8 gBgScroll[];
 extern u32 KorimaMagari_ShakeScroll[];
 extern u32 KorimaMagari_ShakeChance;
 extern u8 MsgFieldFlippedSwitch[];
-void State_CopyPresetA0d0WithOffsetB0(void);
+void KorimaMagari_CaptureShakeScroll(void);
 void State_UpdateScrollRegistersWithPreset(void);
 void Scene_RepaintBoardRecords();
 extern u16 *gKorimaMagariReturned;
@@ -205,7 +205,7 @@ void State_UpdateScrollRegistersWithPreset(void)
     *destination = *source;
 }
 
-void State_CopyPresetA0d0WithOffsetB0(void)
+void KorimaMagari_CaptureShakeScroll(void)
 {
     u32 *dst;
     const u32 *src;
@@ -295,7 +295,7 @@ void Scene_RunKorimaMagariSequence(void)
     }
 
     KorimaMagari_ShakeChance = 0;
-    ((void (*)())Engine_TaskAddCallback)((s32)State_CopyPresetA0d0WithOffsetB0, 0xc80);
+    ((void (*)())Engine_TaskAddCallback)((s32)KorimaMagari_CaptureShakeScroll, 0xc80);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
     /* FAKEMATCH: the do/while (0) wrap keeps the flag and the counter address in r6 and r5. */
@@ -321,7 +321,7 @@ void Scene_RunKorimaMagariSequence(void)
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
     Engine_TaskWait(1);
-    ((void (*)())Engine_TaskRemoveCallback)((s32)State_CopyPresetA0d0WithOffsetB0);
+    ((void (*)())Engine_TaskRemoveCallback)((s32)KorimaMagari_CaptureShakeScroll);
     *(u16 *)gKorimaMagariLayout ^= 1;
     Scene_RepaintBoardRecords();
     Engine_MapRedraw();

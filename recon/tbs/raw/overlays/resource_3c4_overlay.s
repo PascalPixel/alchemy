@@ -846,7 +846,7 @@ Data_0200bc0c:
 	.4byte SceneActor_MirrorFlag201IntoSlot14
 	.4byte 0x00004e15
 	.4byte 0x02010010
-	.4byte SceneActor_SetActor14Field98ByFlag200
+	.4byte BabiChika_ConfigureActorFourteenRise
 	.4byte 0x00004e15
 	.4byte 0x09700011
 	.4byte SceneState_ApplyFlag970
@@ -864,7 +864,7 @@ Data_0200bc0c:
 	.4byte SceneActor_ConfigureSlot21AndSetFlag201
 	.4byte 0x10002115
 	.4byte 0x02020013
-	.4byte FieldScene_SetActor19TableB3B8
+	.4byte BabiChika_InstallActorNineteenFlicker
 	.4byte 0x00002115
 	.4byte 0x02020013
 	.4byte SceneState_SetValue202ThenCall

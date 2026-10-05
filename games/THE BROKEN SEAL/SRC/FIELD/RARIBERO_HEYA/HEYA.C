@@ -263,7 +263,7 @@ void FieldScene_RunThreeCallSequence(void)
     Engine_EventShowMessage(0xC, 0);
 }
 
-void SceneState_ForwardWord16cAndApply7b(void)
+void RariberoHeya_RequestTouchedExitAndPlayCue(void)
 {
     struct EventWork *work = gEventWork;
     s16 *p = (s16 *)&work->touched_trigger;

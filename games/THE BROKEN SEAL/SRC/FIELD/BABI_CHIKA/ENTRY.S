@@ -9,7 +9,7 @@
 	.balign 4
 	overlay_veneer FieldScene_InitializeActorGroups
 	overlay_veneer Scene_GetEntrances
-	overlay_veneer SceneData_GetTableB85c
+	overlay_veneer BabiChika_GetExits
 	overlay_veneer SceneData_SelectAndApplyTableBySceneId
-	overlay_veneer SceneData_SelectTableByWord224
+	overlay_veneer BabiChika_SelectEvents
 	overlay_veneer Scene_GetRegions

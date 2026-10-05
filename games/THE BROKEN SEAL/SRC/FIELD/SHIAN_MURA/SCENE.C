@@ -383,9 +383,9 @@ void ShianMura_ActivateActorTwentyPlatform(void)
     s32 x;
 
     Engine_EventBegin();
-    *(u8 *)((u8 *)Object_GetById(20) + 35) &= 253;
+    ((struct FieldActor *)Object_GetById(20))->priority_flags &= 253;
     v5 = 0;
-    *(u8 *)((u8 *)Object_GetById(20) + 85) = v5;
+    ((struct FieldActor *)Object_GetById(20))->motion_flags = v5;
     record = Object_GetById(20);
     x = *(s32 *)(record + 8);
     record = Object_GetById(20);
@@ -527,7 +527,7 @@ void ShianMura_WalkThroughExit(s32 a0)
     u32 i;
     s32 record;
 
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
+    ((struct FieldActor *)Object_GetById(0))->motion_flags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     if (a0 == 6) {
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);

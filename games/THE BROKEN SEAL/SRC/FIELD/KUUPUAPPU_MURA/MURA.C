@@ -226,9 +226,9 @@ void *SceneData_SelectActorTableByFlag855(void)
     return KuupuappuMura_Actors;
 }
 
-int OverlayObject_GetObject2Byte280(void)
+int KuupuappuMura_GetIwanVenusDjinnCount(void)
 {
-    return Owner_GetState(2)[280];
+    return ((struct BattleUnit *)Owner_GetState(2))->djinn_owned_counts[0];
 }
 
 /* Return the scene result while its flag is set. */
@@ -273,7 +273,7 @@ void KuupuappuMura_SayFarewellToIvan(void)
     Engine_EventSetMessage((s32)MsgKuupuappuLeavingImStillWorriedAbout);
     Event_ShowMessageAndWait(0x9002, 0, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    if (OverlayObject_GetObject2Byte280()!= 0) {
+    if (KuupuappuMura_GetIwanVenusDjinnCount()!= 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
         Event_ShowMessage(ACTOR_IVAN, 0);
         OverlayObject_RunObject2WhenFlagged();
@@ -294,7 +294,7 @@ void SceneState_SetFlags947And29dc(void)
     Engine_EventEnd();
 }
 
-void *SceneData_SelectTableA414ByFlag855(void)
+void *KuupuappuMura_SelectEvents(void)
 {
     if (Engine_GameFlagIsSet(0x855) != 0)
         return KuupuappuMura_ExtrasFlag855;

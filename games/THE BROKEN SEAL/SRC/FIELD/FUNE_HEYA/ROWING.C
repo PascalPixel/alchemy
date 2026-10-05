@@ -191,7 +191,7 @@ void FieldScene_CallPairWith10(s32 a, u16 b);
 
 static __inline__ void SetPose(u8 *rec, s32 pose)
 {
-    *(u16 *)(rec + 6) = pose;
+    ((struct FieldActor *)rec)->facing = pose;
 }
 
 extern u8 MsgFuneMonstersBelowdecks[];
@@ -649,7 +649,7 @@ void FieldScene_RunThreeActorPresentation(void)
         Engine_EventWait(20);
         Actor_FaceDirection(12, 0x4000, 0);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x26666, 0x13333);
-        *(u8 *)(Object_GetByIdFar(0) + 90) &= 254;
+        ((struct FieldActor *)Object_GetByIdFar(0))->steering_flags &= 254;
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 0x208);
         Engine_EventWait(1);
         {
@@ -1998,7 +1998,7 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
     if (Engine_GameFlagIsSet(0x929) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(1, 0);
         Engine_ActorSetPosition(obj, 0xeb << 17, 0xac << 16);
-        *(u32 *)(Object_GetByIdFar(obj) + 24) = 0xffff0000;
+        ((struct FieldActor *)Object_GetByIdFar(obj))->scale_x = 0xffff0000;
         FieldScene_RunSceneStep(7, obj, src);
         Engine_ActorSetPosition(11, 0, 0);
     } else {
@@ -2017,7 +2017,7 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
     if (Engine_GameFlagIsSet(0x92b) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(3, 0);
         Engine_ActorSetPosition(obj, 0xeb << 17, 0xcc << 16);
-        *(u32 *)(Object_GetByIdFar(obj) + 24) = 0xffff0000;
+        ((struct FieldActor *)Object_GetByIdFar(obj))->scale_x = 0xffff0000;
         FieldScene_RunSceneStep(7, obj, src);
         Engine_ActorSetPosition(13, 0, 0);
     } else {
@@ -2078,7 +2078,7 @@ void FieldScene_CallPairWith10(s32 a, u16 b)
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
     ObjectMotion_SetHorizontalPositionWithTerrain(a, b << 16, c << 16, d);
-    *(s16 *)((u8 *)Object_GetByIdFar(a) + 6) = d;
+    ((struct FieldActor *)Object_GetByIdFar(a))->facing = d;
 }
 
 void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
@@ -2346,7 +2346,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         Camera_MoveTo(-1, -1, -1, 0);
         Engine_TaskWait(1);
         if (arg != 0) {
-            *(u8 *)(Battle_GetWorkObject1e0() + 0x55) = 0;
+            ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
         }
         break;
     case 25:

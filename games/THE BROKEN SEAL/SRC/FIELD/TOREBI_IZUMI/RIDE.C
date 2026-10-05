@@ -3,7 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 
-void OverlayObject_SetField54(s32 actor, s32 value);
+void TorebiIzumi_SetActorActive(s32 actor, s32 value);
 
 /* The ride's work, laid out in order just past the overlay's image, with the
  * actor records FOUR_ACTORS.C sets up. */
@@ -95,14 +95,14 @@ void FieldScene_RunSecondaryScript(void)
                 if (ride->velocity.x == 0 && ride->velocity.z == 0) {
                     if (TorebiIzumi_RideSide == 1) {
                         Object_SetMode(Object_GetById(17), 2);
-                        OverlayObject_SetField54(15, 0);
-                        OverlayObject_SetField54(14, 0);
-                        OverlayObject_SetField54(13, 0);
+                        TorebiIzumi_SetActorActive(15, 0);
+                        TorebiIzumi_SetActorActive(14, 0);
+                        TorebiIzumi_SetActorActive(13, 0);
                     } else {
                         Object_SetMode(Object_GetById(12), 2);
-                        OverlayObject_SetField54(10, 0);
-                        OverlayObject_SetField54(9, 0);
-                        OverlayObject_SetField54(8, 0);
+                        TorebiIzumi_SetActorActive(10, 0);
+                        TorebiIzumi_SetActorActive(9, 0);
+                        TorebiIzumi_SetActorActive(8, 0);
                     }
                     {
                         s32 dx = (0x780000 - ride->trail[0].x) >> 16;
@@ -487,15 +487,15 @@ s32 TorebiIzumi_RunSpringRide(s32 side)
             if (TorebiIzumi_RideSide == 1) {
                 Object_SetMode(Object_GetById(16), 3);
                 Object_SetMode(Object_GetById(17), 0);
-                OverlayObject_SetField54(15, 1);
-                OverlayObject_SetField54(14, 1);
-                OverlayObject_SetField54(13, 1);
+                TorebiIzumi_SetActorActive(15, 1);
+                TorebiIzumi_SetActorActive(14, 1);
+                TorebiIzumi_SetActorActive(13, 1);
             } else {
                 Object_SetMode(Object_GetById(11), 3);
                 Object_SetMode(Object_GetById(12), 0);
-                OverlayObject_SetField54(10, 1);
-                OverlayObject_SetField54(9, 1);
-                OverlayObject_SetField54(8, 1);
+                TorebiIzumi_SetActorActive(10, 1);
+                TorebiIzumi_SetActorActive(9, 1);
+                TorebiIzumi_SetActorActive(8, 1);
             }
         }
         Engine_TaskWait(1);

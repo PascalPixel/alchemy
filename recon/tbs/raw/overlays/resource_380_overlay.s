@@ -346,10 +346,10 @@ Placement_Effects:
 	.4byte SceneDialogue_RunLine1072WithPair9And10
 	.4byte 0x00000602
 	.4byte 0xffff000a
-	.4byte FieldScene_Forward72b4
+	.4byte SoruStar_CheckLeaderAhead
 	.4byte 0x00004602
 	.4byte 0xffff000b
-	.4byte FieldScene_Forward72b4
+	.4byte SoruStar_CheckLeaderAhead
 	.4byte 0x00000003
 	.4byte 0x083c0002
 	.4byte Scene_BagVenusStar

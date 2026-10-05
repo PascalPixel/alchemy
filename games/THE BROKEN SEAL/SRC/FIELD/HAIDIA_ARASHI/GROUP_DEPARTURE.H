@@ -132,7 +132,7 @@ void BattleFx_SetBlock30ValuesMaxZero(void);
 
 s32 BattleFx_SetWeightedResult(s32, s32);
 
-void OverlayObject_ApplyIwramWord1e40(s32 o);
+void HaidiaArashi_CycleObjectPalettes(s32 o);
 
 void BattleFx_PlayQueuedSound();
 
@@ -152,16 +152,16 @@ void BattleEffect_CleanupSceneObjects(void);
 
 void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
 
-s32 OverlayObject_SetField6OnCountdown(struct Object *object);
+s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object);
 s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
-u8 *SceneData_GetTableD0E4(void);
+u8 *HaidiaArashi_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetTableD27c(void);
-u8 *SceneData_GetTableD2B8(void);
-u8 *SceneData_GetTableD558(void);
+u8 *HaidiaArashi_GetExits(void);
+u8 *HaidiaArashi_GetPlacements(void);
+u8 *HaidiaArashi_GetEvents(void);
 void SceneState_SetFlag210AndConfigureRegion40_84(void);
 void SceneState_SetFlag210AndConfigureRegion40_89(void);
-void SceneState_SetWork1c0AndRunObject(u8 *o);
+void HaidiaArashi_RequestBackdropExit(u8 *o);
 void FieldScene_SetupDescriptorD774(void);
 void SceneState_SetValue123Mode1(void);
 void SceneState_ApplyValues123And3(void);
@@ -204,7 +204,7 @@ void SceneState_SetValue140Mode0(void);
 void FieldScene_RunSingleStep(void);
 void FieldScene_RunFourPairedSteps(void);
 void SceneState_SetValue19ThenCall(void);
-void OverlayObject_CopyRecordField1ToSlots22And8(void);
+void HaidiaArashi_CopyLeaderSpritePriority(void);
 void SceneState_SetValueEe4(void);
 
 #endif

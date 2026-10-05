@@ -420,10 +420,10 @@ gTakaraAshibaEvents1:
 	.4byte FieldScene_RunIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff0035
-	.4byte SceneState_ResetCounter412OnHeading4000B
+	.4byte TakaraAshiba_ResetBlockedStepsForSelectorTwo
 	.4byte 0x00000002
 	.4byte 0xffff0036
-	.4byte SceneState_ResetCounter412OnHeading4000
+	.4byte TakaraAshiba_ResetBlockedStepsForSelectorThree
 	.4byte 0x00004602
 	.4byte 0xffff0035
 	.4byte FieldScene_CallHelper3500

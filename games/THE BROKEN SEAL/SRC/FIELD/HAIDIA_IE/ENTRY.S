@@ -8,7 +8,7 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer HaidiaIe_RestoreEntryState
-	overlay_veneer SceneData_GetTableAfa0
+	overlay_veneer HaidiaIe_GetEntrances
 	overlay_veneer SceneData_SelectTableByFlag834
 	overlay_veneer SceneData_SelectTableByFlags834And87a
 	overlay_veneer SceneData_SelectTableByFlags87a_815_834

@@ -51,7 +51,7 @@ s32 HaidiaDou_RunSceneScript(void)
     return 0;
 }
 
-void SceneAudio_PlayCue123AndDispatchWork364(void)
+void HaidiaDou_PlayCueAndRequestTouchedExit(void)
 {
     s32 val = gEventWork->touched_trigger;
 

@@ -110,7 +110,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTableA990(void)
+u8 *ImiruMura_GetExits(void)
 {
     return (u8 *)ImiruMura_SceneTable;
 }
@@ -138,7 +138,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gImiruMuraPlacements;
 }
 
-void FieldScene_Forward2188(void)
+void ImiruMura_RunHeadingProbe(void)
 {
     StagedActor_RunHeadingProbeStep();
 }
@@ -759,7 +759,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 10);
     Engine_ActorEnableActionCallback(9, tbl);
 
-    SceneState_StoreTable96adToWork();
+    ImiruMura_CastPsynergyAtActorNine();
     Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 40);
     Event_ShowMessageAndWait(9, 0, 20);

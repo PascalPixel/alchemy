@@ -83,7 +83,7 @@ void StagedActor_PushActorAhead(void);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
 void Resource3ba_NoOpCallback(void);
 s32 FieldScene_RunFlag211ApproachScene();
-void SceneState_WaitUntilWord1000IsNine(void);
+void KorosseoKawa_WaitForStageReady(void);
 void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0();
@@ -149,12 +149,12 @@ extern u8 MsgKorosseoTheyCallBrokenBridge[];
 s32 GameFlag_GetByteFar(s32);
 void SceneState_ResetCounterAndStartTask(void);
 void SceneState_SetMode66AndPassOpeningSequence(void);
-void SceneState_WaitUntilWordC41cIs22(void);
+void KorosseoKawa_WaitForCountdown(void);
 void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz);
 void SceneState_SendIdBySceneId(s32 a, s32 b);
 void SceneState_ReleaseTableAndResetC6a6(void);
 
-u8 *SceneData_GetTableC194(void)
+u8 *KorosseoKawa_GetEntrances(void)
 {
 
     return KorosseoKawa_SceneTableA;
@@ -165,13 +165,13 @@ s32 get_default_result(void)
     return 0;
 }
 
-u8 *SceneData_GetTablec1dc(void)
+u8 *KorosseoKawa_GetExits(void)
 {
 
     return KorosseoKawa_SceneTableB;
 }
 
-u8 *SceneData_GetTablec1f4(void)
+u8 *KorosseoKawa_GetPlacements(void)
 {
 
     return KorosseoKawa_SceneTableC;
@@ -234,7 +234,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
     Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
 }
 
-void SceneState_WaitUntilWordC41cIs22(void)
+void KorosseoKawa_WaitForCountdown(void)
 {
     extern u32 KorosseoKawa_Countdown;
 
@@ -549,7 +549,7 @@ void KorosseoKawa_RunStageStart(void)
     Resource3ba_NoOpCallback();
     Engine_EventBegin();
     approach = FieldScene_RunFlag211ApproachScene(120, 127);
-    SceneState_WaitUntilWord1000IsNine();
+    KorosseoKawa_WaitForStageReady();
     n = 9;
     do {
         Object_RefreshSelectorById(8);
@@ -594,7 +594,7 @@ void FieldScene_RunBranchedStep(void)
     }
 }
 
-u8 *SceneData_GetTablec420(void)
+u8 *KorosseoKawa_GetEvents(void)
 {
 
     return KorosseoKawa_SceneTableD;
@@ -1073,7 +1073,7 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
             Korosseo_FadeInCompetitor(0, 736, 200);
             /* FAKEMATCH: the discarded result sets r0 after both other arguments. */
             Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0, 0);
-            SceneState_WaitUntilWordC41cIs22();
+            KorosseoKawa_WaitForCountdown();
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
             Engine_EventWait(30);

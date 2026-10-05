@@ -16,11 +16,12 @@
 #include "ANIMSPR.H"
 #include "SCRIPT_MOTION.H"
 
+#define WaitFrames ((s32 (*)(s32))WaitFrames)
+
 #define Object_Destroy ((void (*)(void*))Object_Destroy)
 
 s32 ArcTan2(s32, s32);
 void Battle_WaitMode0(s32);
-s32 WaitFrames(s32 frames);
 
 extern u8 *gEventWork;
 void ObjectGroup_SetChildValue(struct DispatchObject *, s32);

@@ -14,7 +14,7 @@
 #include "CALL.H"
 #include "FIELD_SERVICE.H"
 
-union Slot {
+union KanpanSlot {
     s32 w;
     s16 h[2];
 };

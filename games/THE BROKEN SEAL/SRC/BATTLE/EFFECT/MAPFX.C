@@ -22,6 +22,8 @@
 
 #include "MAP_SCROLL.H"
 
+#define WaitFrames ((s32 (*)(s32))WaitFrames)
+
 #define gScanlinePitch ((u8 (*))&gScanlinePitch)
 
 
@@ -33,7 +35,6 @@ struct Work_080936a0 {
     u16 flags;
 };
 
-s32 WaitFrames(s32 frames);
 s16 *BattleAction_FindDescriptor(s16 action);
 
 struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);

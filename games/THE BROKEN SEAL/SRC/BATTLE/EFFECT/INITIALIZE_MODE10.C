@@ -1,4 +1,10 @@
 #include "TYPES.H"
+/* FAKEMATCH: this file reads BattleFx_PuffCells through its own declaration; the shop's changes its code. */
+#define OWN_BattleFx_PuffCells
+extern const u16 BattleFx_PuffCells[];
+/* FAKEMATCH: this file reads BattleFx_PuffSizes through its own declaration; the shop's changes its code. */
+#define OWN_BattleFx_PuffSizes
+extern const u8 BattleFx_PuffSizes[];
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -8,12 +14,6 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-/* FAKEMATCH: this file reads BattleFx_PuffCells through its own declaration; the shop's changes its code. */
-#define OWN_BattleFx_PuffCells
-extern const u16 BattleFx_PuffCells[];
-/* FAKEMATCH: this file reads BattleFx_PuffSizes through its own declaration; the shop's changes its code. */
-#define OWN_BattleFx_PuffSizes
-extern const u8 BattleFx_PuffSizes[];
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"

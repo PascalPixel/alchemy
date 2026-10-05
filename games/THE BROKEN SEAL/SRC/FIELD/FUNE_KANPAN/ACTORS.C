@@ -14,7 +14,7 @@
 
 s32 FuneKanpan_SlotDepth[8];
 
-union Slot {
+union KanpanSlot {
     s32 w;
     s16 h[2];
 };

@@ -15,7 +15,7 @@
 
 #define NULL ((void *)0)
 
-union Slot {
+union KanpanSlot {
     s32 w;
     u16 h[2];
     void *p;

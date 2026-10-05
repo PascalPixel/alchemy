@@ -20,7 +20,7 @@ void VinasuChojo_FlashScreen(void)
     Engine_TaskWait(1);
 }
 
-union OrbitEffect {
+union ChojoOrbitEffect {
     s32 words[26];
     struct {
         u8 unknown_00[8];
@@ -43,7 +43,7 @@ enum {
     ORBIT_CENTER_ACTOR = 24
 };
 
-void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
+void SceneEffect_UpdateOrbitAroundActor(union ChojoOrbitEffect *effect)
 {
     struct FieldActor *center = Object_GetById(ORBIT_CENTER_ACTOR);
     u16 angle = effect->orbit.angle;
@@ -89,7 +89,7 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 void SceneEffect_SpawnParticlesAboveActor(void)
 {
     struct FieldActor *center;
-    union OrbitEffect *effect;
+    union ChojoOrbitEffect *effect;
     struct FieldSprite *sprite;
     s32 angle;
 
@@ -98,12 +98,12 @@ void SceneEffect_SpawnParticlesAboveActor(void)
     }
     center = Actor_Get(ORBIT_CENTER_ACTOR);
     if (GameFlag_IsSet(0x236) != 0) {
-        effect = (union OrbitEffect *)Object_Create(
+        effect = (union ChojoOrbitEffect *)Object_Create(
             284, center->x.fixed,
             (s32)((u32)(Random_Next() << 8) >> 16 << 16) + center->y.fixed - 0x1c0000,
             center->z.fixed);
     } else {
-        effect = (union OrbitEffect *)Object_Create(
+        effect = (union ChojoOrbitEffect *)Object_Create(
             284, center->x.fixed,
             (s32)((u32)(Random_Next() << 6) >> 16 << 16) + center->y.fixed - 0x1c0000,
             center->z.fixed);

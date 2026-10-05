@@ -18,7 +18,6 @@
 #define BattleFx_ShrinkObjectScaleUntilHalf ((void (*)(void))BattleFx_ShrinkObjectScaleUntilHalf)
 #define BattleFx_CircleAnchor ((void (*)(void))BattleFx_CircleAnchor)
 
-struct EffectVector { s32 x, y, z; };
 
 struct EffectParticle {
     u8 reserved_00[6];

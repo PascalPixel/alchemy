@@ -20,7 +20,7 @@
 
 #define ObjectDispatch_SetSingleChildFlags ((void (*)(void*,s32))ObjectDispatch_SetSingleChildFlags)
 
-union Slot {
+union KanpanSlot {
     s32 w;
     s16 h[2];
 };

@@ -7,16 +7,16 @@ void ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-    u8 *state;
+    struct BattleUnit *state;
     s32 value;
 
     state = Owner_GetState(id);
     value = 1;
-    if (*(s16 *)(state + 56) != 0) {
-        if (state[316] != 0 || state[315] != 0 || state[325] != 0)
-            value = (state[298] != 1) * 4;
+    if (state->hp != 0) {
+        if (state->sleep != 0 || state->stun != 0 || state->cannot_move != 0)
+            value = (state->status_12a != 1) * 4;
     } else {
-        s32 changed = state[298] ^ value;
+        s32 changed = state->status_12a ^ value;
         value = (u32)(-changed | changed) >> 31;
         value = 5 - value;
     }

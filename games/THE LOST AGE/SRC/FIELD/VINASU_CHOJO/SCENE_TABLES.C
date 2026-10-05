@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
+#include "FIELD_EVENT.H"
 #include "PARTY_STATE.H"
 
 /* The opening's cast arrives through this entrance and stands apart. */
@@ -32,9 +33,9 @@ const u32 *Scene_GetExits(void)
 }
 
 /* Takes the low four bits of an actor's counter as its part attribute. */
-s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
+s32 SceneActor_ApplyCounterLowBitsAsMode(struct FieldActor *actor)
 {
-    Object_SetPartAttribute(actor, *(u16 *)(actor + 100) & 15);
+    Object_SetPartAttribute(actor, actor->timer & 15);
     return 0;
 }
 

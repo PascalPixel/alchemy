@@ -130,10 +130,7 @@ void BattleFx_UpdateStormFlash(void);
    mote on its frame. */
 void Unnamed_08094bbc(void)
 {
-    /* FAKEMATCH: the map work pointer is reached 84 bytes below the sparkle
-     * work pointer, so both loads share one pool address. The frame counter
-     * stays an unsigned long, a type no sparkle field shares, so its read
-     * does not keep the size store apart from the flip store. */
+    /* FAKEMATCH: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
     struct SparkleWork *work = gParticleWork;
     struct MapScrollWork *map = SparkleMap;
     u32 spawned = 0;
@@ -234,16 +231,11 @@ void FieldMotes_Start(void)
     Scheduler_AddOrUpdateCallback((s32)(Unnamed_08094bbc), 0xc80);
 }
 
-/* field/common/effect/sparkles.c */
-
 /* Draw the ground sparkles that twinkle around the leader, and every so often
    start a burst of four at a random spot nearby. */
 void FieldEffect_UpdateSparkles(void)
 {
-    /* FAKEMATCH: the map work pointer is reached 84 bytes below the sparkle
-     * work pointer, so both loads share one pool address. The frame counter
-     * stays an unsigned long, a type no sparkle field shares, so its read
-     * does not keep the size store apart from the flip store. */
+    /* FAKEMATCH: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
     struct SparkleWork *work;
     u32 spawned;
     u32 i;
@@ -397,10 +389,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     BattleFx_InterpolateBuffers(((struct FieldBlendWork *)work)->to, ((struct FieldBlendWork *)work)->from,
         ((struct FieldBlendWork *)work)->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
-    /* FAKEMATCH: the halfword constants pass through an int so GCC builds them
-       with mov instead of loading them from the pool, and the block pointer
-       itself advances to the enabled field. The typed halfword-pointer form
-       in 8f4c57e6 changes the final add/store from r5 to r2 in all six editions. */
+    /* FAKEMATCH: int constants avoid pool loads; advancing the block pointer keeps the final add/store in r5. */
     frames = (u16 *)&((struct FieldBlendWork *)work)->timer;
     value = 600;
     *frames = value;
@@ -454,8 +443,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
     frames = (u16 *)&work->timer;
-    /* FAKEMATCH: the halfword constants pass through an int so GCC builds
-       them with mov instead of loading them from the pool. */
+    /* FAKEMATCH: int temporaries build halfword constants with mov instead of pool loads. */
     value = 120;
     *frames = value;
     value = 0;

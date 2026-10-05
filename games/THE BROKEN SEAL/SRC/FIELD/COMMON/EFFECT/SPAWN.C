@@ -6,19 +6,16 @@
 extern const s32 *const gEffectScripts[];
 struct FieldActor *Object_CreateFar(s32 type, s32 x, s32 y, s32 z);
 
-/* The local body uses the existing overlay imports and their measured
-   inline call boundary. The resident script dispatcher takes an address word. */
+/* The resident script dispatcher takes an address word. */
 static inline struct FieldActor *Effect_CreateResident(s32 type, s32 x, s32 y, s32 z)
 {
-    /* FAKEMATCH: retain the existing inline result-copy lifetime; direct
-       create/script calls reduce the spawn frame from eight bytes to four. */
+    /* FAKEMATCH: the inline result-copy lifetime preserves the eight-byte spawn frame; direct calls use four. */
     return Object_CreateFar(type, x, y, z);
 }
 
 static inline void Effect_SetResidentScript(struct FieldActor *object, const s32 *script)
 {
-    /* FAKEMATCH: the inline script boundary keeps the table offset live
-       until scale setup; direct calls cache the script in a different register. */
+    /* FAKEMATCH: the inline script boundary keeps the table offset live until scale setup. */
     ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)script);
 }
 
@@ -29,8 +26,7 @@ enum {
     EFFECT_SCRIPT_REPEAT_COUNT = 3
 };
 
-/* Each overlay calls its import entries; the resident copy calls the main
-   far entries. Both compile this body with the same game options. */
+/* Overlays call their import entries; the resident copy calls the main far entries. */
 #define EFFECT_SPAWN(name, create, set_script, section_name) \
 void __attribute__((section(section_name))) name( \
     s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, \

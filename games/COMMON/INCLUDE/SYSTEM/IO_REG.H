@@ -98,6 +98,8 @@ enum DisplayControl {
 #define DMA_ENABLE 0x8000
 #define DMA_START_HBLANK_REPEAT 0x3a00
 #define DMA_32BIT 0x04000000
+/* The source address stays put: the transfer fills with one value. */
+#define DMA_SRC_FIXED32 0x01000000
 #define DMA_ENABLE32 0x80000000
 
 #define OAM ((void *)0x07000000)

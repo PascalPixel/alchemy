@@ -1286,7 +1286,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
             Engine_ActorSetAnimation(11, 5);
             Call6(Engine_MapCopyCellAttributes, 76, 16, 1, 1, 73, 17);
         } else {
-            Object_GetById(11)->priority_flags |= 2;
+            Object_GetById(11)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         }
         Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 #if EDITION_INTERNATIONAL
@@ -1307,7 +1307,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
         *(s32 *)&Object_GetById(10)->update = (s32)ArutamiraDou_MatchLeaderPriority;
         if (gGameState.entrance == 52) {
             zero = 0;
-            Dma_Set(&zero, ((void *)ArutamiraDou_ClearTarget), 0x85000003, (volatile u32 *)0x040000d4);
+            Dma_Set(&zero, ArutamiraDou_ClearTarget, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 3, REG_DMA3);
             if (!Engine_GameFlagIsSet(0x109)) {
                 u8 *race = gSceneState;
 
@@ -1345,8 +1345,8 @@ s32 ArutamiraDou_ApplyEntryState(void)
         Engine_ActorSetChildValue(20, 6);
         Object_GetById(16)->sprite->priority = 3;
         Object_GetById(20)->sprite->priority = 3;
-        Object_GetById(16)->priority_flags = 2;
-        Object_GetById(20)->priority_flags = 2;
+        Object_GetById(16)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        Object_GetById(20)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         Engine_ActorSetSpriteFlags(Object_GetById(16), 0);
         Engine_ActorSetSpriteFlags(Object_GetById(20), 0);
     }

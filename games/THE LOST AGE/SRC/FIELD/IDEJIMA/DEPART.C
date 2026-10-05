@@ -88,16 +88,8 @@ void Idejima_RunAlexDeparture(void)
         Call2(Engine_EventShowMessage, 0x2008, 0);
         ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
     } else {
-        struct EventWork *events = Ram_HeapSlots->event_work;
-        s32 message;
-        /* FAKEMATCH: retain the actor argument in r0 before advancing the dialogue row. */
-        register s32 actor asm("r0");
-        message = events->message_id;
-        actor = 8;
-        /* FAKEMATCH: the actor argument precedes the dialogue-row increment; ordinary C swaps those two instructions. */
-        asm volatile("" : "+r"(message) : "r"(actor));
-        events->message_id = message + 1;
-        Motion_SetModeAndWaitAnimation(actor, 3);
+        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        Motion_SetModeAndWaitAnimation(8, 3);
         Call2(Engine_EventShowMessage, 0x2008, 0);
     }
     ObjectMotion_ArmCallback(5, 0, 0);
@@ -223,16 +215,8 @@ void Idejima_RunAlexDeparture(void)
         Engine_EventShowMessage(5, 0);
         ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
     } else {
-        struct EventWork *events = Ram_HeapSlots->event_work;
-        s32 message;
-        /* FAKEMATCH: retain the actor argument in r0 before advancing the dialogue row. */
-        register s32 actor asm("r0");
-        message = events->message_id;
-        actor = 5;
-        /* FAKEMATCH: the actor argument precedes the dialogue-row increment; ordinary C swaps those two instructions. */
-        asm volatile("" : "+r"(message) : "r"(actor));
-        events->message_id = message + 1;
-        Engine_ActorSetAnimation(actor, 4);
+        ((struct EventWork *)Ram_HeapSlots->event_work)->message_id += 1;
+        Engine_ActorSetAnimation(5, 4);
         Engine_EventShowMessage(5, 0);
     }
     Value3(Engine_ActorShowEmote, 8, 0x109, 40);

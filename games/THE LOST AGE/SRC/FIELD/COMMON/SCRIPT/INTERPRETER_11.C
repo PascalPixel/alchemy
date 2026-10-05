@@ -29,8 +29,6 @@ s32 Script_CallWithOperand(struct ScriptInterpreter *interpreter)
     Func_080c88c8(interpreter, interpreter->script[interpreter->cursor + 1]);
     cursor = (u16)interpreter->cursor;
     done = 1;
-    /* FAKEMATCH: ⚓️ sets the result between the cursor load and store */
-    asm volatile("" : "+l"(done));
     interpreter->cursor = cursor + 2;
     return done;
 }

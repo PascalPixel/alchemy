@@ -193,8 +193,6 @@ void *Runtime_BumpAllocate(s32 size)
     /* FAKEMATCH: An unconstrained bound load changes the heap/head registers; capture the native bound in r4 and hand it to an ordinary local. */
     register u32 held asm("r4");
 
-    /* FAKEMATCH: The best plain shape swaps the heap-base shift and rounding add; retain the native address-first order. */
-    __asm__("" : : "r"(state), "r"(size));
     words = (u32)size + 3;
     address = state[1];
     /* FAKEMATCH: The best plain shape shifts before loading the heap head; retain the unshifted value and incoming size through that load. */
@@ -230,8 +228,6 @@ void *Runtime_BumpAllocateAlternatePool(s32 size)
     u32 address;
     u32 words;
 
-    /* FAKEMATCH: The best plain shape swaps the heap-base shift and rounding add; retain the native address-first order. */
-    __asm__("" : : "r"(state), "r"(size));
     words = (u32)size + 3;
     address = state[0];
     /* FAKEMATCH: The best plain shape shifts before loading the heap head; retain the unshifted value and incoming size through that load. */

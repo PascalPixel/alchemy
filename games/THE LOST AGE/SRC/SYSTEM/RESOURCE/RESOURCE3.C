@@ -182,8 +182,6 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
             value = (s32)work->scripts[no];
             work->kind = info->draw_kind;
             work->script = (u8 *)value;
-            /* FAKEMATCH: keeps the step's constant after both stores. */
-            __asm__("");
             work->step = 0x10;
             if (hi == 0) {
                 work->pos = hi;

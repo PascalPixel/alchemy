@@ -9,8 +9,6 @@ s32 Party_AdjustSixDigitCounterA(s32 amount)
     s32 value;
 
     value = gPartyState.coins;
-    /* FAKEMATCH: ⚓️ loads the 999999 limit ahead of the coins; plain C loads it after. */
-    __asm__("" : "+r"(value));
     value = (s32)((u32)value + (u32)amount);
     if (value > 0xf423f)
         value = 0xf423f;

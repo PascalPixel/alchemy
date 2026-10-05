@@ -1962,22 +1962,22 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
 void RunEventScript01(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     u8 *work;
     s32 base5_200d17c;
     u8 *actor12_record;
 
-    record = (s32)Object_GetById(12);
-    actor12_record = *(u8 **)(record + 80);
+    record = Object_GetById(12);
+    actor12_record = (u8 *)record->sprite;
     Engine_EventBegin();
     Actor_SetPosition(10, 0x3180000, 0x1a00000);
     Actor_SetPosition(11, 0x3200000, 0x1900000);
     Actor_SetPosition(12, 0x3080000, 0x1880000);
-    record = (s32)Object_GetById(10);
+    record = Object_GetById(10);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = (s32)Object_GetById(11);
+    record = Object_GetById(11);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = (s32)Object_GetById(12);
+    record = Object_GetById(12);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_ActorSetAnimation(10, 9);
     Engine_ActorSetAnimation(11, 9);

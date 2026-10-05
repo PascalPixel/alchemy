@@ -928,7 +928,7 @@ void HaidiaIe_RunScene015B4(void)
 {
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 v5;
 
     Engine_AudioPlayCue(17);
@@ -946,13 +946,13 @@ void HaidiaIe_RunScene015B4(void)
     Call3(Engine_ActorFaceDirection, 24, 0x8000, 0);
     Engine_ActorSetAnimation(0, 16);
     record = Object_GetById(0);
-    *(s32 *)(record + 24) = -0x10000;
+    record->scale_x = -0x10000;
     record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_ActorSetAnimation(25, 7);
     record = Object_GetById(25);
     {
-        u8 *motion = *(u8 **)(record + 80);
+        u8 *motion = (u8 *)record->sprite;
         s32 shown = 0x1555;
 
         *(u16 *)(motion + 30) = shown;
@@ -980,14 +980,14 @@ void HaidiaIe_RunScene015B4(void)
     Call3(Engine_ActorSetSpeed, 23, 0x26666, 0x13333);
     v5 = 128;
     record = Object_GetById(23);
-    *(s32 *)(record + 68) = 0x28f;
-    *(s32 *)(record + 72) = (v5 << 8);
+    record->bounce = 0x28f;
+    record->gravity = (v5 << 8);
     Engine_ActorEnableActionCallback(23, (s32)Data_0200aa48);
     Engine_EventWait(24);
     Engine_ActorSetSpeed(24, 0x26666, 0x13333);
     record = Object_GetById(24);
-    *(s32 *)(record + 68) = 0x28f;
-    *(s32 *)(record + 72) = (v5 << 8);
+    record->bounce = 0x28f;
+    record->gravity = (v5 << 8);
     Object_SetActionCallbackAndRefreshById(24, (s32)Data_0200ab2c);
     Engine_EventWait(40);
     BattleFx_SetBlock30ValuesMaxZero();

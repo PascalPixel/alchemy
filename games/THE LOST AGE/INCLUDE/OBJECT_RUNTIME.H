@@ -40,8 +40,9 @@ struct ObjectRuntime {
     s32 unknown_4c;
     void *animation;
     u8 animation_kind;
-    u8 flags;
+    /* Bit 0 keeps the object on the terrain height, bit 1 lets it fall. */
     u8 motion_flags;
+    u8 unknown_56;
     u8 unknown_57;
     /* Set to stop the object on its target, as ☀️'s motion object does. */
     u8 snap_to_target;

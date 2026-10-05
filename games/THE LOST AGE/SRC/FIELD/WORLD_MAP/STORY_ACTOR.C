@@ -16,7 +16,7 @@ s32 StoryActor_Initialize(struct ObjectRuntime *actor)
         return 0;
     }
     actor->update = WorldMap_UpdateBobbingMarker;
-    actor->flags = 0;
+    actor->motion_flags = 0;
     actor->action = 0;
     actor->unknown_66 = 0;
     actor->scale_x = 0x8000;

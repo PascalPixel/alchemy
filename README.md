@@ -7,7 +7,11 @@ form people can read, change and build on.
 
 ## Progress
 
-**☀️ 91.48% · ⚓️ 5.28%**
+**☀️ 94.78% · ⚓️ 6.15%**
+
+<img src="PROGRESS_CHART.png" width="838" alt="DONE by hour for The Broken Seal and The Lost Age since 16 July 2026">
+
+<img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
 
 FAKEMATCH marks C that needs a matching aid to reproduce the original
 compiler’s register choices or instruction order. Those bytes are already

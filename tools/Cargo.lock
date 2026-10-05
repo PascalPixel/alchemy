@@ -36,6 +36,7 @@ dependencies = [
  "fs2",
  "libc",
  "object",
+ "png",
  "regex",
  "sha1",
  "sha2",

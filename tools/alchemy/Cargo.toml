@@ -5,6 +5,7 @@ edition.workspace = true
 
 [dependencies]
 fdeflate = "0.3"
+png = "0.17"
 ags = { path = "../ags" }
 regex = "1"
 fs2 = "0.4"

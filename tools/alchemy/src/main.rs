@@ -59,6 +59,7 @@ Reports for people (nothing else reads them):
   similar     each not-yet-C function's nearest C twins in either game
   sizes       a draft's struct sizes, and the types that fill a frame gap
   worst       maintained C ranked by how mechanical it reads
+  figure      PROGRESS.png and PROGRESS_CHART.png from the verified count
   objects     linked objects and functions that differ from the reference ROM
   show        a built function beside the reference, instruction by instruction
 Run any command with --help for its options."#;
@@ -87,6 +88,7 @@ fn main() -> ExitCode {
         "similar" => similar_command::entry(rest),
         "sizes" => result(sizes::run(rest)),
         "worst" => result(worst_command::run(rest)),
+        "figure" => result(coverage::figures::run(rest)),
         "objects" => result(objects::run(rest)),
         "show" => result(show::run(rest)),
         "-h" | "--help" => {

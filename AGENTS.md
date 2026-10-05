@@ -231,6 +231,7 @@ make compare           # the Japanese base of ☀️; compare-tla for ⚓️
 make compare-editions  # all twelve editions
 make test
 make progress          # the count, with one line per edition
+make figure            # redraw PROGRESS.png and PROGRESS_CHART.png after a build
 make deps              # dependency map: what unblocks the most
 make worst             # maintained C ranked by how mechanical it reads
 tools/out/cargo-target/release/alchemy diff DRAFT.c   # a draft against its listing

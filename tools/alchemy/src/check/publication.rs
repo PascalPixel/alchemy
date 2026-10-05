@@ -734,6 +734,21 @@ fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'stati
     if data.is_empty() {
         return None;
     }
+    // The README figures are generated, but held to the indexed build-input
+    // standard: palette pixels and standard chunks, no text payloads. Only
+    // their size is exempt from the tile grid; like any other PNG they carry a
+    // real palette and never draw the cartridge logo.
+    if matches!(path, "PROGRESS.png" | "PROGRESS_CHART.png") {
+        if exact_indexed_stream(data).is_none() {
+            return Some("README figure is not an exact indexed PNG");
+        }
+        if grey_sheet(data) {
+            return Some(GREY_SHEET);
+        }
+        return logo
+            .is_some_and(|logo| indexed_png_bytes(data).is_none_or(|pixels| contains(&pixels, logo)))
+            .then_some(LOGO_REASON);
+    }
     let components: Vec<_> = path.split('/').collect();
     let (area, rest) = match components.as_slice() {
         ["games", _, area, rest @ ..] if !rest.is_empty() => (*area, rest.join("/")),
@@ -1831,7 +1846,7 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
          and SOUND/ sequences and samples",
     )
 }
-const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD and C drafts under an edition";
+const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD, C drafts under an edition and metrics/history.tsv";
 /// `recon/` fails closed as `games/` does: pret's scaffolding forms,
 /// nothing else. No JSON or TSV ledger, however
 /// it is named, may come back beside the scaffolding.
@@ -1858,6 +1873,8 @@ fn recon_path_reason(path: &str) -> Option<&'static str> {
             // An edition's own scaffold and the linker script that places it.
             [g, e, "MAIN.LD"] => game(g) && edition(e),
             [g, e, leaf] if named(leaf, &["s"]) => game(g) && edition(e),
+            // The published progress history the README figures draw.
+            ["tbs", "metrics", "history.tsv"] => true,
             [g, e, .., leaf] => game(g) && edition(e) && named(leaf, &["c", "h"]),
             _ => false,
         };

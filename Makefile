@@ -35,7 +35,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check coverage coverage-check
-.PHONY: progress deps similar worst clean
+.PHONY: progress figure deps similar worst clean
 
 help:
 	@printf '%s\n' \
@@ -48,6 +48,7 @@ help:
 	  'make land            on main, before committing a landing: make verify, then the count published' \
 	  'make coverage        measure once: README progress line and the decomp.dev report' \
 	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
+	  'make figure          redraw PROGRESS.png and PROGRESS_CHART.png from the verified count' \
 	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv' \
 	  'make similar         the nearest C twins of every not-yet-C function in either game, into out/reports/similar.tsv' \
 	  'make worst           rank maintained C by how mechanical it reads; the camelotized share' \
@@ -193,6 +194,10 @@ coverage-check:
 
 progress:
 	$(CHECK) progress
+
+# PROGRESS.png and PROGRESS_CHART.png from the verified count, for people.
+figure:
+	$(ALCHEMY_BIN) figure
 
 # A report for people only: the build and the count never read it. The listings
 # under recon/<game>/raw are the English builds' disassembly, so it reads those.

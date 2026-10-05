@@ -1,10 +1,21 @@
 //! DONE (AGENTS.md C2, C3): pret's calcrom over the linker maps of each
 //! game's six verified builds, published as README's progress line and the
 //! decomp.dev report from one measurement.
+pub(crate) mod boxtree;
 pub(crate) mod calcrom;
 pub(crate) mod decomp;
+pub(crate) mod figure;
+pub(crate) mod figures;
+pub(crate) mod history;
+pub(crate) mod jsnum;
+pub(crate) mod letters;
+pub(crate) mod model;
+pub(crate) mod palette;
 pub(crate) mod progress;
 pub(crate) mod publish;
+pub(crate) mod raster;
+pub(crate) mod sessions;
+pub(crate) mod tree;
 
 use crate::coverage::calcrom::Game;
 use crate::coverage::progress::GameDone;

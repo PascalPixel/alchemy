@@ -121,9 +121,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gKuupuappuDouEntrancesOther;
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
 u8 *KuupuappuDou_GetRegions(void)
 {
     return gKuupuappuDouRegions;
@@ -253,7 +250,7 @@ void SceneState_ApplyFlag300(void)
     Engine_GameFlagSet(0x300);
 }
 
-void SceneState_SetFlag953(void)
+void KuupuappuDou_ShowLockedDoorMessage(void)
 {
     Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }

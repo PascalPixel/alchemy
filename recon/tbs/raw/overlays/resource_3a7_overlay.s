@@ -544,7 +544,7 @@ gKuupuappuDouEvents1:
 	.4byte FieldScene_RunScene3a7SequenceB
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte SceneState_SetFlag953
+	.4byte KuupuappuDou_ShowLockedDoorMessage
 	.4byte 0x00000013
 	.4byte 0x0ef30064
 	.4byte 0x00500003
@@ -597,7 +597,7 @@ gKuupuappuDouEvents2:
 	.4byte 0x00100082
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte SceneState_SetFlag953
+	.4byte KuupuappuDou_ShowLockedDoorMessage
 	.4byte 0x00008c15
 	.4byte 0x09a90009
 	.4byte FieldScene_RunScene3a7SequenceA
@@ -659,7 +659,7 @@ gKuupuappuDouEvents3:
 	.4byte Resource3a7_NoOpCallback
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte SceneState_SetFlag953
+	.4byte KuupuappuDou_ShowLockedDoorMessage
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

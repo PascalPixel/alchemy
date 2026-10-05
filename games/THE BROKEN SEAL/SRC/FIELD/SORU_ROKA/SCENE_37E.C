@@ -1,8 +1,6 @@
-/*
- * Overlay resource_37e: in-image table getters and the scene entry that
- * posts the scene request and sets the camera zoom.
- */
 
+
+/* Scene table getters and the entry that posts the scene request and sets the camera zoom. */
 #include "TYPES.H"
 #include "SCENE.H"
 extern struct Resource37deSceneRuntime *gEventWork;
@@ -14,10 +12,6 @@ extern u8 SoruRoka_SceneTable2[];
 extern u8 SoruRoka_SceneTable3[];
 #include "RESOURCE_37DE_SCENE.H"
 
-/*
- * The eight-byte owner includes its one pool word, which holds the address
- * returned here. The word is loaded and returned, never dereferenced.
- */
 u8 *SceneData_GetScriptTable(void)
 {
     return SoruRoka_SceneTable0;
@@ -29,19 +23,16 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetMessageTable(void)
 {
     return SoruRoka_SceneTable1;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetActorTable(void)
 {
     return SoruRoka_SceneTable2;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetEffectTable(void)
 {
     return SoruRoka_SceneTable3;
@@ -50,11 +41,7 @@ u8 *SceneData_GetEffectTable(void)
 s32 Scene_InitSceneRequestAndCameraZoom(void)
 {
     struct Resource37deSceneRuntime *runtime;
-    /*
-     * The three scale values must stay locals rather than literals at the
-     * call, so each one is built in the entry block. Folded back into the
-     * argument list they collapse into one built value and two copies.
-     */
+
     s32 zoom_x = 0x10000;
     s32 zoom_y = 0x10000;
     s32 zoom_z = 0x10000;

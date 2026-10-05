@@ -52,17 +52,17 @@ s32 BattleParty_ListActorIds(s32 side_mask, u16 *unit_ids);
 /* Countdown bytes share the live BattleUnit record. The modifier bytes are
    signed; confusion and reflect are read as unsigned countdowns. */
 s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias);
-s32 BattleUnit_TickCounter132(s32 unit_id);
-s32 BattleUnit_TickCounter134(s32 unit_id);
-s32 BattleUnit_TickCounter136(s32 unit_id);
-s32 BattleUnit_TickCounter138(s32 unit_id);
-s32 BattleUnit_TickCounter139(s32 unit_id);
-s32 BattleUnit_TickCounter13a(s32 unit_id);
-s32 BattleUnit_TickCounter13b(s32 unit_id);
-s32 BattleUnit_TickCounter13c(s32 unit_id);
+s32 BattleUnit_TickAttackModifier(s32 unit_id);
+s32 BattleUnit_TickDefenseModifier(s32 unit_id);
+s32 BattleUnit_TickResistanceModifier(s32 unit_id);
+s32 BattleUnit_TickDelusion(s32 unit_id);
+s32 BattleUnit_TickConfusion(s32 unit_id);
+s32 BattleUnit_TickCharm(s32 unit_id);
+s32 BattleUnit_TickStun(s32 unit_id);
+s32 BattleUnit_TickSleep(s32 unit_id);
 s32 Battle_AdvanceCounterAndCheckChance(s32 unit_id);
-s32 BattleUnit_TickCounter13f(s32 unit_id);
-s32 BattleUnit_TickCounter146(s32 unit_id);
+s32 BattleUnit_TickReflect(s32 unit_id);
+s32 BattleUnit_TickAgilityModifier(s32 unit_id);
 s32 BattlePlacement_UpdateTimedEntries(void);
 s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 

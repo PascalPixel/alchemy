@@ -179,7 +179,7 @@ s32 DjinnMenu_ShowHelp(void)
             Resource_ResetEntry(work->glyph_resource);
             work->glyph_resource = 99;
         }
-        ((struct UiRenderWork *)gWindowWork[0])->unknown_after_result = 0;
+        ((struct UiRenderWork *)gWindowWork[0])->page_arrow_shown = 0;
         UiWindow_Clear(win_b);
         {
             struct UiWindow *window = channel->work;

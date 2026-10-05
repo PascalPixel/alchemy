@@ -189,7 +189,7 @@ void UiWork_AnimateSpriteSlots(void)
         while (output != NULL) {
             struct OutputSprite *sprite = &output->sprite;
 
-            if (window->unknown_12 == 4) {
+            if (window->effect == 4) {
                 output->frame = 2;
                 output->mode = 8;
             }

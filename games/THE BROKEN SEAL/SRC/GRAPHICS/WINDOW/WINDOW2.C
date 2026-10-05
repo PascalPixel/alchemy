@@ -58,7 +58,7 @@ loop:
             work->x = 0;
             work->y = 0;
             work->unknown_10 = 0;
-            work->unknown_12 = 0;
+            work->effect = 0;
             work->state = 0;
             work->flags = 0;
             work->frame = 0;

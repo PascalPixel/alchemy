@@ -41,7 +41,8 @@ struct UiRenderWork {
     u16 resource_ids[2];
     u16 output_ids[2];
     u16 result[2];
-    u8 unknown_after_result;
+    /* Set while the next-page arrow is drawn. */
+    u8 page_arrow_shown;
     u8 busy;
     u8 spacing_before;
     u8 spacing_after;

@@ -11,7 +11,9 @@ struct UiWindow {
     u16 x;                      /* 0x0c */
     u16 y;                      /* 0x0e */
     u16 unknown_10;
-    u16 unknown_12;
+    /* Set by a text command: 4 draws a border one tile outside the window
+       until the channel's countdown runs out. */
+    u16 effect;                 /* 0x12 */
     u16 state;                  /* 0x14 */
     u16 flags;                  /* 0x16 */
     u16 frame;                  /* 0x18 */
@@ -28,13 +30,15 @@ LAYOUT_OFFSET_GUARD(UiWindow_Frame, struct UiWindow, frame, 0x18);
 LAYOUT_OFFSET_GUARD(UiWindow_PreviousHeight, struct UiWindow, previous_height, 0x22);
 
 /* One of the three window text channels. Positions are 8.8 fixed point;
-   entry names a built text entry, and colours hold its four palette values. */
+   entry names a built text entry, and spacing holds the extra width a space
+   gets on each of its four lines, as measuring the entry gave it. */
 struct UiChannelSlot {
     struct UiWindow *work;
     u16 x;
     u16 y;
-    u16 colours[4];
-    u16 unknown_10;
+    u16 spacing[4];
+    /* The line of the page the text has reached, at most 3. */
+    u16 line;
     u16 entry;
     u16 countdown;
     u16 colour;
@@ -42,8 +46,10 @@ struct UiChannelSlot {
     u16 line_spacing;
     u16 transition;
     u16 start_x;
-    u16 unknown_20;
-    u16 unknown_22;
+    /* Set once the text has ended. */
+    u16 ended;
+    /* Frames to wait before the next glyph while no key is held. */
+    u16 glyph_delay;
     u16 flags;
     u16 unknown_26;
 };

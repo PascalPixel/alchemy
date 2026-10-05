@@ -163,20 +163,11 @@ extern u8 KuupuappuHeya_PairScriptK[];
 void KuupuappuHeya_StartActorStops(void);
 extern u8 MsgKuupuappuTheyreBack[];
 
-/* The "shown" halfword of an actor record. */
-#define ACTOR_SHOWN_OFFSET 100
 extern u8 MsgKuupuappuImSurrounded[];
 extern u8 MsgKuupuappuNowIvan[];
 extern u8 MsgKuupuappuTheresNowhereRun[];
 void KuupuappuHeya_RunScene021C8();
 void KuupuappuHeya_UpdateActorStops(void);
-
-struct SceneObjectFlags {
-    u8 unknown_000[9];
-    unsigned char unk_low : 2;
-    unsigned char mode : 2;
-    unsigned char unk_high : 4;
-};
 
 extern u8 MsgKuupuappuLearn[];
 extern u8 MsgKuupuappuLeave[];
@@ -191,12 +182,6 @@ void Engine_EventOpenScreen();
 void Engine_EventWaitForScreen();
 s32 Engine_UiWorkWaitThenFinalizeCapacity();
 void Engine_ActorStartRepeatedMotion();
-
-struct Flags9 {
-    u8 pad[9];
-    u8 low : 2;
-    u8 mode : 2;
-};
 
 extern u8 KuupuappuHeya_PairScriptA[];
 extern u8 KuupuappuHeya_PairScriptC[];
@@ -1123,13 +1108,13 @@ void FieldScene_ConfigurePairedActors(void)
         u8 *record = (u8 *)Object_GetById(24);
         s32 shown = 1;
 
-        *(u16 *)(record + ACTOR_SHOWN_OFFSET) = shown;
+        ((struct FieldActor *)record)->timer = shown;
     }
     {
         u8 *record = (u8 *)Object_GetById(25);
         s32 shown = 3;
 
-        *(u16 *)(record + ACTOR_SHOWN_OFFSET) = shown;
+        ((struct FieldActor *)record)->timer = shown;
     }
     Map_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
@@ -1204,12 +1189,12 @@ void FieldScene_SelectActorPair(void)
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(40);
     record = (u8 *)Object_GetById(0);
-    (*(struct SceneObjectFlags **)(record + 80))->mode = 1;
+    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
     record = (u8 *)Object_GetById(1);
-    (*(struct SceneObjectFlags **)(record + 80))->mode = 1;
+    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
     record = (u8 *)Object_GetById(2);
 
-    (*(struct SceneObjectFlags **)(record + 80))->mode = 1;
+    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
     gEventWork->transition_frames = 24;
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
@@ -1221,13 +1206,13 @@ void FieldScene_SelectActorPair(void)
         u8 *record = (u8 *)Object_GetById(24);
         s32 shown = 5;
 
-        *(u16 *)((s32)record + 100) = shown;
+        ((struct FieldActor *)record)->timer = shown;
     }
     {
         u8 *record = (u8 *)Object_GetById(25);
         s32 shown = 4;
 
-        *(u16 *)((s32)record + 100) = shown;
+        ((struct FieldActor *)record)->timer = shown;
     }
     Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -1255,11 +1240,11 @@ void KuupuappuHeya_RunScene021C8(void)
     Call3(Engine_ActorSetPosition, 2, 0x1080000, 0x2e80000);
     Engine_ActorSetPosition(1, 0xe80000, 0x2e80000);
     record = (u8 *)Object_GetById(0);
-    ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
+    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
     record = (u8 *)Object_GetById(1);
-    ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
+    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
     record = (u8 *)Object_GetById(2);
-    ((struct Flags9 *)(*(u8 **)(record + 80)))->mode = 1;
+    ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
     Engine_ActorFaceEachOther(0, 2, 0);
     FieldScene_RunSplitTripleSteps(1, 2, 30);
     Call3(Engine_ActorSetPosition, 24, 0x680000, 0x2b80000);
@@ -1272,8 +1257,8 @@ void KuupuappuHeya_RunScene021C8(void)
     {
         u8 *work = *(u8 **)&gEventWork;
 
-        *(s32 *)(work + 0x1c8) = 24;
-        *(s32 *)(work + 0x1c0) = 0x201;
+        ((struct EventWork *)work)->transition_frames = 24;
+        ((struct EventWork *)work)->start_transition = 0x201;
     }
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -1688,7 +1673,7 @@ void KuupuappuHeya_RunVaultEvent(void)
 
 s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
 {
-    return Owner_GetState(2)[0x118];
+    return ((struct BattleUnit *)Owner_GetState(2))->djinn_owned_counts[0];
 }
 
 /* After twenty placement updates, bit 0 of party member 2's word at +0xf8 triggers a Djinn transfer, cue 126 and stat recalculation for members 0 and 2. */
@@ -2435,7 +2420,7 @@ void OverlayObject_ConfigureObject22WithResource17(s32 a)
     z = 0;
     o = Object_CreateFar(22);
     if (o != 0) {
-        q = *(u8 **)(o + 0x50);
+        q = (u8 *)((struct FieldActor *)o)->sprite;
         p = q + 38;
         *p = z;
         p += 1;

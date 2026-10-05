@@ -56,9 +56,7 @@ void ObjectMotion_SetActionVariant(u32 object_id, s32 priority)
     }
 }
 
-/* Gives the target object the source's frames: its VRAM block and tile.
-   One pointer holds each object and then its sprite, as in ☀️; separate
-   locals load the sprite into another register. */
+/* Give the target object the source's VRAM block and frame tile. */
 void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
 {
     struct FieldSprite *sprite;

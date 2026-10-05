@@ -35,7 +35,7 @@ void EventRuntime_SetDestination(s32 scene, s32 entrance)
     struct PartyState *party;
 
     event->countdown = 999;
-    /* FAKEMATCH: plain source forms and 5,739 permutations retain the reordered literal load. Materialize the party pointer before building the scene offset, as the complete 44-byte listing does. */
+    /* FAKEMATCH: materialize the party pointer before building the scene offset. */
     asm volatile ("" : "=r" (party) : "0" (&gPartyState));
     party->scene = scene;
     party->entrance = entrance;
@@ -47,7 +47,7 @@ void EventRuntime_SetSavedDestination(s32 scene, s32 entrance)
     struct PartyState *party;
 
     event->countdown = 999;
-    /* FAKEMATCH: plain source forms retain the reordered literal load. Materialize the party pointer before building the saved-scene offset, as the complete 44-byte listing does. */
+    /* FAKEMATCH: materialize the party pointer before building the saved-scene offset. */
     asm volatile ("" : "=r" (party) : "0" (&gPartyState));
     party->saved_scene = scene;
     party->saved_entrance = entrance;

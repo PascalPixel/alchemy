@@ -23,8 +23,7 @@ void Animation_ApplyChildValuesToRecord(struct DispatchChild *record, u32 value)
 
     if (record != NULL) {
         for (i = 0; i < record->count; i++) {
-            /* FAKEMATCH: the layer's parameter written as a byte, so the store
-               may alias the count, which the native reads again after it. */
+            /* FAKEMATCH: the byte store may alias the count, forcing its reload. */
             u8 *layer = (u8 *)record->entries[i];
 
             if (layer[5] != 15)

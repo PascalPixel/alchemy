@@ -5,7 +5,6 @@
 
 void PaletteGlow_UpdateSine(void);
 
-/* ☀️'s pair, which ⚓️ builds in every edition with its own order. */
 void Scheduler_ScheduleCallbackAAfterFrames(void)
 {
     Scheduler_AddOrUpdateCallback((s32)PaletteGlow_UpdateSine, 0x480);

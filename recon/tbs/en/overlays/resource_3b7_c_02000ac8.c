@@ -1,4 +1,5 @@
-/* NONMATCHING: the spring game, 680 bytes; alchemy diff 42 (was 157 this morning).
+/* NONMATCHING: the spring game, 680 bytes; alchemy diff 2 with two tagged S2
+ * devices (42 without them; 157 on 2026-10-04 morning).
  * 2026-10-04 sun w3 finisher 1. Settled, each measured:
  *  - the prompt is a goto loop (prompt: ... goto prompt), not a for (;;): loop.c
  *    lifts the A-button exit block out of the key loop to the nearest barrier
@@ -36,7 +37,33 @@
  * available at the halving. The roll loop through a constant address
  * ((struct StateBytes *)&gGameState)->rest[i + 284] stops the PRE but the
  * halving then loads gGameState from the pool (cprop) and the roll loop
- * loses fp (53; 102 with every access spelled that way). */
+ * loses fp (53; 102 with every access spelled that way).
+ * 2026-10-05 sun deep finisher 4:
+ *  - the weights are a real GameState field at 0x11d (prize_weights, the
+ *    15 values CHARACTER.C initialises 4,4,4,8,...,64): state->prize_weights[i]
+ *    expands to exactly (state + 1) + (i + 284), the split StateBytes faked.
+ *    Spelling the sum loop that way too lets PRE hoist state + 1 into it (28,
+ *    wrong shape), so the sum loop keeps the u8 read at state + 285.
+ *  - -fno-gcse (diagnostic only) leaves just the halving's r0/r1 swap, so the
+ *    PRE reuse and the halving allocation are separate causes.
+ *  - __asm__("" : "+r"(state)) after the prize call stops the PRE (14); it adds
+ *    two references to state, which then outranks message in global
+ *    allocation (message fp, state r9: 30) unless state is assigned first
+ *    (right registers, wrong load order: 14) or message gets its own "+r"
+ *    (10). A copy t = state with the "+r" on t instead keeps message ahead
+ *    without a second device (t10 form: 4, t lands in r3, not tied to w).
+ *  - the halving swap is global-alloc priority: base state + 1 (3 refs, born
+ *    after the index) outranks i + 284 and takes r1. Base first (w = state + 1
+ *    then slot = i + 284) gives r0/r1 as the native but sched2 then keeps
+ *    adds r0, #1 before the index add (LUID order): the 2 left. Index first
+ *    (slot then w) schedules as the native but swaps r0/r1 again (10). Tried
+ *    and worse: slot as roll (24: the roll loop swaps roll and pointer),
+ *    sum (16), a block local (10), i += 284 (14), (state->rest + 284)[i],
+ *    *(rest + (i + 284)), (&rest[284])[i], w = state->rest then w[i + 284]
+ *    (all 79, combine folds to fp + i + 285), "+r" on slot (12, slot takes
+ *    r2), a "r" use of slot (12), "=r"(w) : "0"(state) then w++ (16), a
+ *    register asm pin (70, loop opts change), a "+h" copy (cc1 aborts).
+ *    devsearch from the 14 and the 2 forms (2100 iterations) found nothing. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "EDITION.H"
@@ -62,12 +89,6 @@ s32 Party_AdjustSixDigitCounterA(s32 amount);
 void UiWork_PushValueSlot(s32 value, s32 digits);
 s32 TorebiIzumi_RunSpringRide(s32 side);
 void TorebiIzumi_RevealPrize(s32 item);
-
-struct StateBytes {
-    u8 first;
-    s8 rest[15];
-    s32 coins;
-};
 
 
 #if defined(TBS_EDITION_EN) || !EDITION_INTERNATIONAL
@@ -102,12 +123,15 @@ s32 TorebiIzumi_RunSpringGame(void)
     s32 i;
     s32 roll;
     s32 message;
-    struct StateBytes *state;
+    struct GameState *state;
 
     Event_Begin();
     Battle_ResetEffectCounter();
     message = (s32)MsgTorebiThrow;
-    state = (struct StateBytes *)&gGameState;
+    state = &gGameState;
+    /* The halving device below raises state above message in priority. */
+    /* FAKEMATCH: keeps message in r9 and state in fp, as the native does. */
+    __asm__("" : "+r"(message));
 prompt:
         coins = state->coins;
         tickets = PartyInventory_CountItem(229);
@@ -216,7 +240,7 @@ play:
         }
         roll = (u32)(Random_Next() * sum) >> 16;
         for (i = 0; i < 15; i++) {
-            roll -= state->rest[i + 284];
+            roll -= state->prize_weights[i];
             if (roll < 0) {
                 break;
             }
@@ -225,8 +249,15 @@ play:
             i = 14;
         }
         TorebiIzumi_RevealPrize(Data_02001fd0[i]);
-        if (state->rest[i + 284] > 1) {
-            state->rest[i + 284] /= 2;
+        /* Without it GCSE PRE reuses the roll loop's state + 1 from r5. */
+        /* FAKEMATCH: the native recomputes state + 1 into r0 after the call. */
+        __asm__("" : "+r"(state));
+        {
+        s8 *w = (s8 *)state + 1;
+        s32 slot = i + 284;
+        if (w[slot] > 1) {
+            w[slot] /= 2;
+        }
         }
     }
 end:

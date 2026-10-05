@@ -3729,7 +3729,9 @@ Func_080eb2c8:
 	.type Func_080eb2d0, %function
 	.thumb_func
 Func_080eb2d0:
-	.incbin "baserom.gba", 0x000f82d0, 0x00000690
+	.incbin "baserom.gba", 0x000f82d0, 0x0000024c
+	.section .rom.000f8594, "ax"
+	.incbin "baserom.gba", 0x000f8594, 0x000003cc
 	.section .rom.000f8960, "ax"
 	.global Func_080eb960
 	.type Func_080eb960, %function
@@ -3815,7 +3817,16 @@ Object_LinkedMotionScript:
 	.incbin "baserom.gba", 0x00100780, 0x000001f4
 	.global BattleFx_UntargetedObjectScript
 BattleFx_UntargetedObjectScript:
-	.incbin "baserom.gba", 0x00100974, 0x0000168c
+	.incbin "baserom.gba", 0x00100974, 0x00000268
+	.global ColorBuffer_FadeStep1Map
+ColorBuffer_FadeStep1Map:
+	.incbin "baserom.gba", 0x00100bdc, 0x00000020
+	.global ColorBuffer_FadeStep2Map
+ColorBuffer_FadeStep2Map:
+	.incbin "baserom.gba", 0x00100bfc, 0x00000020
+	.global ColorBuffer_FadeStep3Map
+ColorBuffer_FadeStep3Map:
+	.incbin "baserom.gba", 0x00100c1c, 0x000013e4
 	.section .rom.00102028, "ax"
 	.global UiIcon_PrepareObjectFar
 	.type UiIcon_PrepareObjectFar, %function

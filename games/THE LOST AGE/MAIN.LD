@@ -981,6 +981,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000e71f4)
     "*/recon/tla/ja/rom.o"(.rom.000e7494)
     "*/recon/tla/ja/rom.o"(.rom.000e77c0)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COLOR_FADE_MAP.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000eb4d8)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SLOT_UPDATE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ebc68)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/HAS_REACHED_TARGET.o"(.text)

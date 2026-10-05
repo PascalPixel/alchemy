@@ -4366,7 +4366,9 @@ Func_080e74d8:
 	.type Func_080e7804, %function
 	.thumb_func
 Func_080e7804:
-	.incbin "baserom.gba", 0x000e77c0, 0x000043b4
+	.incbin "baserom.gba", 0x000e77c0, 0x00003ca0
+	.section .rom.000eb4d8, "ax"
+	.incbin "baserom.gba", 0x000eb4d8, 0x0000069c
 	.section .rom.000ebc68, "ax"
 	.global EffectSlot_UpdateMotion
 	.type EffectSlot_UpdateMotion, %function
@@ -4439,7 +4441,16 @@ Object_LinkedMotionScript:
 	.incbin "baserom.gba", 0x000f368c, 0x000001f4
 	.global BattleFx_UntargetedObjectScript
 BattleFx_UntargetedObjectScript:
-	.incbin "baserom.gba", 0x000f3880, 0x00004780
+	.incbin "baserom.gba", 0x000f3880, 0x00000268
+	.global ColorBuffer_FadeStep1Map
+ColorBuffer_FadeStep1Map:
+	.incbin "baserom.gba", 0x000f3ae8, 0x00000020
+	.global ColorBuffer_FadeStep2Map
+ColorBuffer_FadeStep2Map:
+	.incbin "baserom.gba", 0x000f3b08, 0x00000020
+	.global ColorBuffer_FadeStep3Map
+ColorBuffer_FadeStep3Map:
+	.incbin "baserom.gba", 0x000f3b28, 0x000044d8
 	.section .rom.000f8170, "ax"
 	.incbin "baserom.gba", 0x000f8170, 0x00000540
 	.section .rom.000f8830, "ax"

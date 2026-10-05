@@ -1074,6 +1074,8 @@
     "*/recon/tla/fr/rom.o"(.rom.000f028c)
     "*/recon/tla/fr/rom.o"(.rom.000f02bc)
     "*/recon/tla/fr/rom.o"(.rom.000f02c4)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COLOR_FADE_MAP.o"(.text)
+    "*/recon/tla/fr/rom.o"(.rom.000f0588)
     "*/recon/tla/fr/rom.o"(.rom.000f0954)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SLOT_UPDATE.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000f0d18)

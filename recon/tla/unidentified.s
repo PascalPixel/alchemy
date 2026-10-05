@@ -564,8 +564,8 @@ Encounter_AreaEntryTable:
 	.global Scene_CueRuleTable
 Scene_CueRuleTable:
 	.incbin "baserom.gba", 0x000ef094, 0x00000410
-	.global Data_080ef4a4
-Data_080ef4a4:
+	.global Scene_AreaNameRules
+Scene_AreaNameRules:
 	.incbin "baserom.gba", 0x000ef4a4, 0x00000378
 	.section .unidentified.080ef824,"a"
 	.global Party_PairResolveRules

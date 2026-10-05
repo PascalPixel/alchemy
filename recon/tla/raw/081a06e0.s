@@ -38,9 +38,9 @@ Func_081a06e0:
 	ldr r0, .L_081a0760
 	bl Func_081a0674
 	movs r0, #0
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	movs r0, #1
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	movs r2, #248
 	movs r3, #128
 	b .L_081a0764

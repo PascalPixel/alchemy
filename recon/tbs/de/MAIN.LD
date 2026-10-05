@@ -741,6 +741,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_DISPATCH.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_TABLES.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_COMMANDS.o"(.text .rodata .data .padding)
+    "*/games/COMMON/SRC/GRAPHICS/TILE/CLEAR_CHARACTER_BLOCK.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY6.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000f205c)

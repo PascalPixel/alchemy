@@ -41,9 +41,9 @@ Func_081a150c:
 	ldr r0, .L_081a15a8
 	bl Func_081a0674
 	movs r0, #0
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	movs r0, #1
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	movs r2, #248
 	movs r3, #128
 	lsls r2, r2, #5

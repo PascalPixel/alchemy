@@ -8,7 +8,7 @@
 	.global Func_080c8648
 	.thumb_func
 Func_080c8648:
-	overlay_veneer Func_080ca280
+	overlay_veneer Scene_GetAreaNameIndex
 	.global Func_080c8650
 	.thumb_func
 Func_080c8650:

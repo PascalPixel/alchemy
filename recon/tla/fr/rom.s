@@ -1729,8 +1729,9 @@ Func_08044c80:
 	.thumb_func
 Func_08044dc8:
 	.incbin "baserom.gba", 0x00044e50, 0x00000184
-	.section .rom.00045010, "ax"
-	.incbin "baserom.gba", 0x00045010, 0x000000c0
+	.section .rom.000450a0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000450a0, 0x00000030
 	.section .rom.000450d0, "ax"
 	.global RenderResource_LoadFrame
 	.type RenderResource_LoadFrame, %function
@@ -2566,12 +2567,8 @@ BattleFx_LookupResult:
 	.thumb_func
 Encounter_SelectEnemyGroup:
 	.incbin "baserom.gba", 0x000cefd8, 0x0000018c
-	.section .rom.000cf280, "ax"
-	.global Func_080ca280
-	.type Func_080ca280, %function
-	.thumb_func
-Func_080ca280:
-	.incbin "baserom.gba", 0x000cf280, 0x000000e8
+	.section .rom.000cf2fc, "ax"
+	.incbin "baserom.gba", 0x000cf2fc, 0x0000006c
 	.section .rom.000cf368, "ax"
 	.global Func_080ca368
 	.type Func_080ca368, %function
@@ -3819,8 +3816,8 @@ BattleFx_SnapScaleToFull:
 	.thumb_func
 UpdateRisingParticleBurst:
 	.incbin "baserom.gba", 0x000e265c, 0x00000ee8
-	.section .rom.000e3598, "ax"
-	.incbin "baserom.gba", 0x000e3598, 0x00000714
+	.section .rom.000e3648, "ax"
+	.incbin "baserom.gba", 0x000e3648, 0x00000664
 	.section .rom.000e3cac, "ax"
 	.global Func_080decb8
 	.type Func_080decb8, %function
@@ -4072,7 +4069,10 @@ Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000f3f48, 0x00000140
 	.global Scene_CueRuleTable
 Scene_CueRuleTable:
-	.incbin "baserom.gba", 0x000f4088, 0x00001100
+	.incbin "baserom.gba", 0x000f4088, 0x00000410
+	.global Scene_AreaNameRules
+Scene_AreaNameRules:
+	.incbin "baserom.gba", 0x000f4498, 0x00000cf0
 	.global BattleFx_ParticleScript
 BattleFx_ParticleScript:
 	.incbin "baserom.gba", 0x000f5188, 0x00000544
@@ -4572,8 +4572,8 @@ Camera_InitDefaultTransform:
 	.thumb_func
 BattleMotion_SetupEscapeObject:
 	.incbin "baserom.gba", 0x0011bee0, 0x000000d8
-	.section .rom.0011bfe8, "ax"
-	.incbin "baserom.gba", 0x0011bfe8, 0x000000a4
+	.section .rom.0011c034, "ax"
+	.incbin "baserom.gba", 0x0011c034, 0x00000058
 	.section .rom.0011c08c, "ax"
 	.global Func_0811c074
 	.type Func_0811c074, %function
@@ -4971,8 +4971,8 @@ Func_081a0020:
 	.thumb_func
 Func_081a0028:
 	.incbin "baserom.gba", 0x001a0028, 0x00000008
-	.section .rom.001a04d0, "ax"
-	.incbin "baserom.gba", 0x001a04d0, 0x00000db8
+	.section .rom.001a052c, "ax"
+	.incbin "baserom.gba", 0x001a052c, 0x00000d5c
 	.section .rom.001a1294, "ax"
 	.incbin "baserom.gba", 0x001a1294, 0x00004d6c
 	.global Resource_FarCall00B

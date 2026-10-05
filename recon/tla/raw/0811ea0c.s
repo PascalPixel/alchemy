@@ -270,7 +270,7 @@ Func_0811ea0c:
 	mov r3, r8
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_0811bfd0
+	bl BattleMotion_ResetObjectAtScaledAnchor
 	movs r0, #2
 	bl WaitFrames
 	movs r0, #4

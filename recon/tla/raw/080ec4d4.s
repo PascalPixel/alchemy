@@ -935,7 +935,7 @@ Func_080ec4d4:
 .L_080ecbdc:
 	ldr r0, [sp, #20]
 	ldr r1, [sp, #16]
-	bl Func_080ca280
+	bl Scene_GetAreaNameIndex
 	ldr r3, .L_080ece00
 	adds r0, r0, r3
 	str r0, [sp, #20]

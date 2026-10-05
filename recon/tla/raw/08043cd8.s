@@ -382,7 +382,7 @@ Func_08043cd8:
 	mov r1, r9
 	movs r2, #72
 	mov r0, r10
-	bl Func_08044f88
+	bl RenderResource_CreatePair
 	movs r5, #144
 	str r0, [sp, #16]
 	bl Func_080f8070

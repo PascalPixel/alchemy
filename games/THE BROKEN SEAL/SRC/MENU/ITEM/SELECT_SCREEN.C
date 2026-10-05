@@ -9,6 +9,7 @@
 #include "ANIMSPR.H"
 #include "UI.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "MENU_LIST.H"
 
 /* Where the accepted selection is published. */
 struct AssetSelectionResult {
@@ -46,7 +47,6 @@ void Link_DrawShiftedTilePairFar(void *address);
 void UiWork_SetAltFlagAndClearTableFar(s32);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
-void RenderOutput_ClearListFar(s32);
 void Menu_ResetTwoResourceEntries(void);
 void UiWindow_MarkVisibleTileAttributesFar(void);
 void UiWindow_EraseBorderRectFar(s32, s32, s32, s32);
@@ -103,7 +103,7 @@ s32 RunAssetSelectionScreen(void)
         selection->unknown_180 = (category << 10) | (index & ITEM_ID_MASK);
         selection->unknown_19a = screen->selected_slots[0];
     }
-    RenderOutput_ClearListFar((s32)screen->status_window);
+    RenderOutput_ClearListFar(screen->status_window);
     process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL];
     ((struct UiRenderWork *)*process)->menu_busy = 1;
     ItemMenu_Close();

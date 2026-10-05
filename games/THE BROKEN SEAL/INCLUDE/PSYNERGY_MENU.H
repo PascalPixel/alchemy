@@ -25,7 +25,7 @@ struct PsynergyMenuState {
     s32 psynergy_window;            /* 0x020 */
     s32 status_window;              /* 0x024 */
     s32 shortcut_window;            /* 0x028 */
-    void *info_window;              /* 0x02c */
+    struct UiWindow *info_window;   /* 0x02c */
     u8 unknown_030[4];
     s32 list_window;                /* 0x034 */
     u8 unknown_038[0x0c];

@@ -6,11 +6,11 @@
 #include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
 #include "UI.H"
+#include "MENU_LIST.H"
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
 extern struct CharacterMenuState *gMenuWork;
 void ItemMenu_Close(void);
-void RenderOutput_ClearListFar(s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 s32 Party_ListActiveOwnersFar(u16 *);
 void UiWindow_InitializeWork(s32);
@@ -48,7 +48,7 @@ s32 Menu_OpenCharacterSelector(void)
 
     result = CharacterSelector_Run();
 
-    RenderOutput_ClearListFar((s32)state->status_window);
+    RenderOutput_ClearListFar(state->status_window);
     ItemMenu_Close();
     gMenuCtrlWork->suspended = 0;
     WaitFrames(1);

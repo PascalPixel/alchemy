@@ -6,12 +6,12 @@
 #include "IWRAM_CALL.H"
 #include "UI.H"
 #include "CHARACTER_MENU.H"
+#include "MENU_LIST.H"
 /* Inventory: remove the first stack without the 0x200 flag from an owner's
    bag, one removal per unit it holds.  Returns 1 when the last removal
    reports 2 or when the bag ends before such a stack, 0 otherwise. */
 #include "INVENTORY.H"
 
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
 

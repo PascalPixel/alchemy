@@ -28,8 +28,6 @@ extern u8 MsgItemCounter;
 #define GIVE_ASK_Y    32
 #endif
 
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
-void RenderOutput_ClearListFar(void *window);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);

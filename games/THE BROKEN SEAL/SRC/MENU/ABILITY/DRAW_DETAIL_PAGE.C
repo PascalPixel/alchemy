@@ -3,13 +3,12 @@
 #include "SYSTEM.H"
 #include "UI.H"
 #include "PSYNERGY_MENU.H"
+#include "MENU_LIST.H"
 
 extern u8 MsgAbilityDescription;
 
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
-void RenderOutput_RedrawSavedRectFar(s32);
-void RenderOutput_ClearListFar(s32);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
@@ -38,9 +37,9 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
 
     if (GameFlag_TestFar(0x151) == 0) {
 #if EDITION_INTERNATIONAL
-        RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+        RenderOutput_RedrawSavedRectFar(menu->info_window);
 #else
-        RenderOutput_ClearListFar((s32)menu->info_window);
+        RenderOutput_ClearListFar(menu->info_window);
 #endif
         WaitFrames(1);
 

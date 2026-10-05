@@ -6,12 +6,12 @@
 #include "ITEM.H"
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
+#include "MENU_LIST.H"
 extern u8 MsgItemBroke[];
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 s32 InventoryMenu_ShowModalMessage(s32, s32, s32);
 s32 Audio_PlayCue(s32);
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 
 void ItemMenu_TryBreak(void)
 {

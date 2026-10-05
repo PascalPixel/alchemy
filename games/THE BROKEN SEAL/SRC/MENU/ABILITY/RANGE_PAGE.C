@@ -4,6 +4,7 @@
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "TBS_EDITION.H"
+#include "MENU_LIST.H"
 void UiWindow_Commit(s32 window);
 
 
@@ -38,8 +39,6 @@ extern u8 MsgCanBeUsed;
 #endif
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 struct BattleAction *BattleAction_Get(s32 action);
@@ -61,12 +60,12 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     menu = (struct PsynergyMenuState *)gMenuWork;
     state->selected_index = state->page * PAGE_ROWS + state->row;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
-    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
+    RenderOutput_RedrawSavedRectFar(menu->info_window);
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     /* Spanish and Italian clear the info window's top row instead. */
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
 #else
-    RenderOutput_ClearListFar((s32)menu->info_window);
+    RenderOutput_ClearListFar(menu->info_window);
 #endif
     WaitFrames(1);
     if (menu->psynergies[state->selected_index] != 0) {

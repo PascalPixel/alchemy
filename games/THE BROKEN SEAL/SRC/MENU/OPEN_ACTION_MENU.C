@@ -12,6 +12,7 @@
 #include "TBS_EDITION.H"
 #include "IO_REG.H"
 #include "INVENTORY_MENU.H"
+#include "MENU_LIST.H"
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
@@ -51,7 +52,6 @@ void FourObjectMotion_InitializeTopRow();
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
-void RenderOutput_ClearListFar(s32);
 void FourObjectMotion_ClearSlotsAndSchedule(void);
 
 /* Open the action menu: save palette bank 0-1 and BG character block 1, tint
@@ -106,7 +106,7 @@ s32 ActionMenu_Open(void)
     result = Menu_RunActionFlow();
 
     Menu_EnsureCancelSound();
-    RenderOutput_ClearListFar((s32)state->status_window);
+    RenderOutput_ClearListFar(state->status_window);
     FourObjectMotion_ClearSlotsAndSchedule();
     Scheduler_DisableOverlayCallbacksWithFlags();
     UiWindow_DrawFrameFar(0, 0, 30, 20);

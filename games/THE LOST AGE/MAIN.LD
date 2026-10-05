@@ -1108,7 +1108,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00119734)
     "*/games/THE LOST AGE/SRC/BATTLE/TUTORIAL_MESSAGE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001197f0)
-    "*/recon/tla/ja/rom.o"(.rom.0011a034)
+    "*/games/THE LOST AGE/SRC/BATTLE/PARTY/PREPARE_ACTIVE_OWNERS.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011a0ac)
     "*/games/THE LOST AGE/SRC/BATTLE/PARTY/LIST_LIVING_UNITS.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011a248)

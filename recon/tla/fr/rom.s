@@ -4473,18 +4473,12 @@ Func_08119734:
 	.thumb_func
 Func_081197f0:
 	.incbin "baserom.gba", 0x00119808, 0x00000848
-	.section .rom.0011a050, "ax"
-	.global BattleParty_PrepareActiveOwners
-	.type BattleParty_PrepareActiveOwners, %function
-	.thumb_func
-BattleParty_PrepareActiveOwners:
-	.incbin "baserom.gba", 0x0011a050, 0x00000078
 	.section .rom.0011a0c8, "ax"
 	.global BattleParty_PrepareReserveOwners
 	.type BattleParty_PrepareReserveOwners, %function
 	.thumb_func
 BattleParty_PrepareReserveOwners:
-	.incbin "baserom.gba", 0x0011a0c8, 0x000000d8
+	.incbin "baserom.gba", 0x0011a0c8, 0x0000007c
 	.section .rom.0011a264, "ax"
 	.incbin "baserom.gba", 0x0011a264, 0x000000d0
 	.section .rom.0011a3b4, "ax"

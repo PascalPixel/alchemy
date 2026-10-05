@@ -8,7 +8,6 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 
-
 /* Frames actor 13 has idled; ACTOR13_IDLE.C owns it. */
 extern s32 GomaHashira_Actor13Frames;
 
@@ -17,7 +16,6 @@ extern u8 GomaHashira_Scripts[];
 extern u8 GomaHashira_Messages[];
 extern u8 GomaHashira_Actors[];
 
-/* Imports this overlay shares with the staged-actor module, by its names. */
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 
@@ -25,11 +23,6 @@ void BattleFx_SetPhaseRequest(s32, s32);
 void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPillarSequence(void);
 void GomaHashira_DriveActor13Idle(void);
-
-/*
- * The event services under the names the staged-actor module gives their
- * imports, spelled as FIELD_EVENT.H spells its own.
- */
 
 static __inline__ void Goma_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {

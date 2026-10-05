@@ -71,15 +71,7 @@ extern s16 Data_02000240[];
 /* Frames actor 13 has idled, in the overlay's own work past its image. */
 s32 GomaHashira_Actor13Frames;
 
-/*
- * The pillar at the square: pushing it over, its fall and the burst of
- * pillar effects, and the steps that run them.
- *
- * This file does not include FIELD_EVENT.H: the staged-actor module names
- * the audio import Audio_PlayCue, which FIELD_EVENT.H spells as an inline
- * wrapper. The wrappers these steps use are spelled here with the names
- * this overlay's imports carry.
- */
+/* The pillar at the square: pushing it over, its fall, its burst of effects and the steps that run them. */
 void FieldScene_RunPillarSequence(void)
 {
     s32 kind;
@@ -269,8 +261,7 @@ void GomaHashira_DriveActor13Idle(void)
         Object_SetModeById(13, 4);
         break;
     }
-    /* FAKEMATCH: the 99 goes through the counter variable so it is built with
-     * movs instead of a halfword pool constant. */
+    /* FAKEMATCH: the 99 goes through the counter variable so it is built with movs instead of a halfword pool constant. */
     if (Data_02000240[282] == 0)
         *(u16 *)(work + 0x182) = t = 99;
 }

@@ -4,6 +4,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "PROJECT.H"
 #include "TYPES.H"
+#include "FRAME.H"
 #include "RAM_BUFFER.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
@@ -20,7 +21,6 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination)
 
 extern u32 gScanlinePitch;
 extern u32 gScanlineAngle;
-extern u32 Data_03001e40;
 extern void *Data_03001e50[];
 u32 Random16(void);
 s32 Trig_Cos(s32 angle);
@@ -165,7 +165,7 @@ void WorldMap_UpdateView(void)
         gScanlineAngle = 0;
         gScanlinePitch = view->pitch;
     }
-    ((s32 (*)(void *, s32 *, void *, void *))Data_03001e50[46])(cam, pos, map->scanlines, buffer[Data_03001e40 & 1]);
+    ((s32 (*)(void *, s32 *, void *, void *))Data_03001e50[46])(cam, pos, map->scanlines, buffer[gFrameCount & 1]);
 }
 
 /* The world map's window on its tiles: the camera position and a 16 by 16

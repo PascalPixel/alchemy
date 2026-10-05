@@ -1,6 +1,7 @@
 #include "GLOBAL_CELLS.H"
 #include "IMIRU.H"
 #include "CALL.H"
+#include "FRAME.H"
 
 s32 __umodsi3();
 
@@ -58,11 +59,10 @@ void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object)
 
 void FieldScene_RunScene399SequenceA(void)
 {
-    extern u32 Data_03001e40;
-    u32 *frame;
+    volatile u32 *frame;
     union FieldObject *object;
 
-    frame = &Data_03001e40;
+    frame = &gFrameCount;
     if (__umodsi3(*frame, 60) == 0) {
         object = (union FieldObject *)Value4(Engine_ObjectCreate, 222, 0x1cf0000, 0, 0x1240000);
         if (object != NULL) {

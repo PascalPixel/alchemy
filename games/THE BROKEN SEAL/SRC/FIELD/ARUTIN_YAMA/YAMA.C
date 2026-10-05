@@ -39,7 +39,6 @@ extern u8 MsgFieldFlippedSwitch[];
 
 void SceneState_SetValue14Mode23(void)
 {
-    extern s32 Data_03001e40;
 
     BattleFx_SetPhaseRequest(0xE, 0x17);
 }
@@ -309,7 +308,6 @@ void SceneActor_UpdateSlot10ByTileX(void)
  */
 void ActorPresentation_SetCellAndLowerActorEight(void)
 {
-    extern u32 Data_03001e40;
 
     s32 *p;
     s32 s0;
@@ -329,7 +327,6 @@ void ActorPresentation_SetCellAndLowerActorEight(void)
 
 void SceneState_ApplyRectAndSetActor9Byte55(void)
 {
-    extern s32 Data_03001e40;
 
     s32 *p;
     s32 s0;
@@ -381,7 +378,6 @@ void SceneActor_RaiseSlot9StepB(void)
 
 void SceneState_ApplyRectAndLowerActor9(void)
 {
-    extern s32 Data_03001e40;
 
     s32 *rec;
     s32 s0;
@@ -419,7 +415,6 @@ void SceneActor_RaiseSlot11AndSetFlag201(void)
 
 void SceneActor_AdjustSlot12AndSetFlag204(void)
 {
-    extern s32 Data_03001e40;
 
     s32 *p;
     s32 s0;
@@ -681,14 +676,12 @@ void FieldScene_RunScene3a4SequenceD(void)
 
 void SceneActor_SetActor10Byte23To3(void)
 {
-    extern u32 Data_03001e40;
 
     Object_GetById(10)->priority_flags = 3;
 }
 
 void SceneActor_SetActor10Byte23To1(void)
 {
-    extern u32 Data_03001e40;
 
     Object_GetById(10)->priority_flags = 1;
 }

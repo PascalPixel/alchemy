@@ -144,7 +144,7 @@ KorimaHiroba_Extras:
 	.4byte SceneActor_RunPlacementQuery
 	.4byte 0x00009415
 	.4byte 0x0fd3000b
-	.4byte FieldScene_SetupActor11Effect181
+	.4byte KorimaHiroba_AwardHiddenNut
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

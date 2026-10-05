@@ -2029,7 +2029,6 @@
         "*/games/THE LOST AGE/SRC/BATTLE/MOTION/GET_MOTION_RECORD.o"(.text)
         "*/recon/tla/raw/0811bddc.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RESET_MOTION_AT_ANCHOR.o"(.text)
-        "*/recon/tla/raw/0811bf16.o"(.text)
         "*/recon/tla/raw/0811bf18.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/MOTION/SET_OBJECT_POSITION.o"(.text)
         "*/recon/tla/raw/0811c01c.o"(.text)

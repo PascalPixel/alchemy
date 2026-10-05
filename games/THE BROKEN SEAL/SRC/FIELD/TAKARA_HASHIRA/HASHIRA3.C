@@ -6,7 +6,7 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 
-void FieldScene_RunScene3b3_02001fd4(void);
+void TakaraHashira_PushPillar(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
 void FieldEffect_UpdateGridPlacement(void);
 
@@ -36,11 +36,11 @@ void SceneState_ClearWord24AndObjectByte62();
 void OverlayObject_SetCallbackAndMode2();
 void SceneActor_CheckActors8To11NearSlotZero(void);
 void TakaraHashira_PrepLoweredActor();
-void FieldScene_RunScene3b3_0200263c();
+void TakaraHashira_RestoreFlaggedPillar();
 
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-void FieldScene_RunScene3b3_02001fd4(void)
+void TakaraHashira_PushPillar(void)
 {
     Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -77,7 +77,7 @@ void TakaraHashira_RunStagedCellScene(void)
     p[1] = leader->y.fixed;
     p[2] = leader->z.fixed + 0x100000;
     if (StagedActor_FindAtTile(p, leader) != NULL) {
-        FieldScene_RunScene3b3_02001fd4();
+        TakaraHashira_PushPillar();
     } else if (FieldScene_RunScene3b3SequenceD() == 0) {
         FieldEffect_UpdateGridPlacement();
     }
@@ -142,7 +142,7 @@ void FieldScene_RunActor12Step(void)
     TakaraHashira_RunActorAction(12);
 }
 
-void FieldScene_RunScene3b3_0200215c(void)
+void TakaraHashira_CheckLeaderOnPillar(void)
 {
     struct FieldActor *leader;
     struct FieldActor *pillar;
@@ -372,7 +372,7 @@ void TakaraHashira_PrepLoweredActor(s32 id)
     actor->sprite->priority = 2;
 }
 
-void FieldScene_RunScene3b3_0200263c(s32 a0)
+void TakaraHashira_RestoreFlaggedPillar(s32 a0)
 {
     struct FieldActor *actor;
 
@@ -510,9 +510,9 @@ s32 TakaraHashira_SetupArea(void)
         TakaraHashira_PrepLoweredActor(11);
         TakaraHashira_PrepLoweredActor(12);
         TakaraHashira_PrepLoweredActor(13);
-        FieldScene_RunScene3b3_0200263c(11);
-        FieldScene_RunScene3b3_0200263c(12);
-        FieldScene_RunScene3b3_0200263c(13);
+        TakaraHashira_RestoreFlaggedPillar(11);
+        TakaraHashira_RestoreFlaggedPillar(12);
+        TakaraHashira_RestoreFlaggedPillar(13);
         actor = Object_GetById(13);
         actor->update = 0;
         TakaraHashira_PrepLoweredActor(14);

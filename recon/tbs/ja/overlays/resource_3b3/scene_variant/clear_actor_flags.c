@@ -8,7 +8,7 @@
 #include "CALL.H"
 #include "FIELD_SCENE.H"
 
-void FieldScene_RunScene3b3_02001fd4(void);
+void TakaraHashira_PushPillar(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
 void FieldEffect_UpdateGridPlacement(void);
 
@@ -57,7 +57,7 @@ void SceneState_ClearWord24AndObjectByte62();
 void OverlayObject_SetCallbackAndMode2();
 void SceneActor_CheckActors8To11NearSlotZero(void);
 void TakaraHashira_PrepLoweredActor();
-void FieldScene_RunScene3b3_0200263c();
+void TakaraHashira_RestoreFlaggedPillar();
 
 s32 TakaraHashira_SetupArea(void)
 {
@@ -164,9 +164,9 @@ s32 TakaraHashira_SetupArea(void)
             TakaraHashira_PrepLoweredActor(11);
             TakaraHashira_PrepLoweredActor(12);
             TakaraHashira_PrepLoweredActor(13);
-            FieldScene_RunScene3b3_0200263c(11);
-            FieldScene_RunScene3b3_0200263c(12);
-            FieldScene_RunScene3b3_0200263c(13);
+            TakaraHashira_RestoreFlaggedPillar(11);
+            TakaraHashira_RestoreFlaggedPillar(12);
+            TakaraHashira_RestoreFlaggedPillar(13);
             record = (u8 *)Object_GetById(13);
             *(s32 *)((s32)record + 108) = v5;
             TakaraHashira_PrepLoweredActor(14);

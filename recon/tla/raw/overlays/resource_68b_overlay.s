@@ -253,7 +253,7 @@ Func_020001f0:
 	movs r2, #8
 	movs r1, #2
 	negs r2, r2
-	bl ObjectMotion_SnapHeadingAndOffset
+	bl ObjectMotion_CenterOnColumn
 	b .L_02008258
 .L_0200824e:
 	movs r2, #8

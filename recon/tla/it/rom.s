@@ -2677,10 +2677,10 @@ ObjectMotion_ResetAndSetPositionInMode2Far:
 	.thumb_func
 ObjectMotion_SetPositionAndResetFar:
 	.incbin "baserom.gba", 0x000c80d8, 0x00000008
-	.global ObjectMotion_SnapHeadingAndOffsetFar
-	.type ObjectMotion_SnapHeadingAndOffsetFar, %function
+	.global ObjectMotion_CenterOnColumnFar
+	.type ObjectMotion_CenterOnColumnFar, %function
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffsetFar:
+ObjectMotion_CenterOnColumnFar:
 	.incbin "baserom.gba", 0x000c80e0, 0x00000008
 	.global ObjectMotion_OffsetPositionAndResetMotionFar
 	.type ObjectMotion_OffsetPositionAndResetMotionFar, %function

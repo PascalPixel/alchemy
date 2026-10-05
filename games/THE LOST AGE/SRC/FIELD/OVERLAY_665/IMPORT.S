@@ -82,10 +82,10 @@ ObjectMotion_EnableActionAndResetMotion:
 	.thumb_func
 ObjectMotion_SetPositionAndReset:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_SnapHeadingAndOffset
+	.global ObjectMotion_CenterOnColumn
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffset:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+ObjectMotion_CenterOnColumn:
+	overlay_veneer ObjectMotion_CenterOnColumnFar
 	.global ObjectMotion_CommitCurrentPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:

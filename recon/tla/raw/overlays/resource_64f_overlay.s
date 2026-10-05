@@ -417,7 +417,7 @@ Func_02000308:
 	movs r1, #3
 	negs r2, r2
 	movs r0, #0
-	bl ObjectMotion_SnapHeadingAndOffset
+	bl ObjectMotion_CenterOnColumn
 	movs r0, #123
 	bl Func_02000aa0
 	adds r0, r6, #0

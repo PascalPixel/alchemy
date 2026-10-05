@@ -27,7 +27,7 @@ void ObjectMotion_ResetAndSetPosition(u32 object_id, s32 x, s32 z);
 void ObjectMotion_SetPositionAndCommit(u32 object_id, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPositionInMode2(u32 object_id, s32 x, s32 z);
 void ObjectMotion_SetPositionAndReset(u32 object_id, s32 x, s32 z);
-void ObjectMotion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset);
+void ObjectMotion_CenterOnColumn(u32 object_id, s32 action, s32 z_offset);
 void ObjectMotion_OffsetPositionAndResetMotion(u32 object_id, s32 x_offset, s32 z_offset);
 void ObjectMotion_OffsetPositionAndReset(u32 object_id, s32 x_offset, s32 z_offset);
 void ObjectMotion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_offset);

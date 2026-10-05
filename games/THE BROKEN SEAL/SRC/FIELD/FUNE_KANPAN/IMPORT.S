@@ -179,10 +179,10 @@ ObjectMotion_SetPositionAndReset:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_SnapHeadingAndOffset
+	.global ObjectMotion_CenterOnColumn
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffset:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+ObjectMotion_CenterOnColumn:
+	overlay_veneer ObjectMotion_CenterOnColumnFar
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
 	.global ObjectMotion_CommitCurrentPositionAndActivate

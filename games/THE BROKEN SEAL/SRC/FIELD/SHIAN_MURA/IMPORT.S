@@ -121,7 +121,7 @@ Engine_ActorWalkToAndWait:
 	.global Engine_ActorCenterAndWalk
 	.thumb_func
 Engine_ActorCenterAndWalk:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+	overlay_veneer ObjectMotion_CenterOnColumnFar
 	.global Engine_ActorSetDestinationOffset
 	.thumb_func
 Engine_ActorSetDestinationOffset:

@@ -166,10 +166,10 @@ Object_GetById:
 	.thumb_func
 ObjectMotion_SetSpeedParameters:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_SnapHeadingAndOffset
+	.global ObjectMotion_CenterOnColumn
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffset:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+ObjectMotion_CenterOnColumn:
+	overlay_veneer ObjectMotion_CenterOnColumnFar
 	.global ObjectMotion_OffsetPositionAndResetMotion
 	.thumb_func
 ObjectMotion_OffsetPositionAndResetMotion:

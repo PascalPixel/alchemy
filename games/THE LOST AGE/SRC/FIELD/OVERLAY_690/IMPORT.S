@@ -214,10 +214,10 @@ ObjectMotion_EnableActionAndSetCallback:
 	.thumb_func
 ObjectMotion_SetPositionAndCommit:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
-	.global ObjectMotion_SnapHeadingAndOffset
+	.global ObjectMotion_CenterOnColumn
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffset:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+ObjectMotion_CenterOnColumn:
+	overlay_veneer ObjectMotion_CenterOnColumnFar
 	.global ObjectMotion_OffsetPositionAndResetMotion
 	.thumb_func
 ObjectMotion_OffsetPositionAndResetMotion:

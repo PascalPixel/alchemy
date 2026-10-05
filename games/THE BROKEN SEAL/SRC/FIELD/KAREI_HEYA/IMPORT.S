@@ -53,7 +53,7 @@ Engine_ActorSetSpeed:
 	.global Engine_ActorCenterAndWalk
 	.thumb_func
 Engine_ActorCenterAndWalk:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+	overlay_veneer ObjectMotion_CenterOnColumnFar
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:

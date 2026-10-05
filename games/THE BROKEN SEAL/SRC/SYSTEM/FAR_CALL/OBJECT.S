@@ -125,10 +125,10 @@ ObjectMotion_ResetAndSetPositionInMode2Far:
 	.thumb_func
 ObjectMotion_SetPositionAndResetFar:
 	overlay_veneer ObjectMotion_SetPositionAndReset
-	.global ObjectMotion_SnapHeadingAndOffsetFar
+	.global ObjectMotion_CenterOnColumnFar
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffsetFar:
-	overlay_veneer ObjectMotion_SnapHeadingAndOffset
+ObjectMotion_CenterOnColumnFar:
+	overlay_veneer ObjectMotion_CenterOnColumn
 	.global ObjectMotion_OffsetPositionAndResetMotionFar
 	.thumb_func
 ObjectMotion_OffsetPositionAndResetMotionFar:

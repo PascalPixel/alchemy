@@ -1,10 +1,10 @@
 /*
- * Draft: ObjectMotion_SnapHeadingAndOffset does not yet match; 4 bytes differ from +0x44.
+ * Draft: ObjectMotion_CenterOnColumn does not yet match; 4 bytes differ from +0x44.
  * Links as recon/tla/raw/080d2f48.s.
  */
 #include "OBJECT_RUNTIME.H"
 
-void ObjectMotion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset)
+void ObjectMotion_CenterOnColumn(u32 object_id, s32 action, s32 z_offset)
 {
     struct ObjectRuntime *object;
     s16 current_angle;

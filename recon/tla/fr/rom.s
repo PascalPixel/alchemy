@@ -3130,10 +3130,10 @@ Func_080d2d70:
 ObjectMotion_ResetTargetsAndVelocity:
 	.incbin "baserom.gba", 0x000d7dd8, 0x00000038
 	.section .rom.000d7f3c, "ax"
-	.global ObjectMotion_SnapHeadingAndOffset
-	.type ObjectMotion_SnapHeadingAndOffset, %function
+	.global ObjectMotion_CenterOnColumn
+	.type ObjectMotion_CenterOnColumn, %function
 	.thumb_func
-ObjectMotion_SnapHeadingAndOffset:
+ObjectMotion_CenterOnColumn:
 	.incbin "baserom.gba", 0x000d7f3c, 0x00000080
 	.section .rom.000d8064, "ax"
 	.global Func_080d3070

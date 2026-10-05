@@ -369,7 +369,7 @@ Func_02000270:
 	movs r2, #4
 	movs r1, #2
 	negs r2, r2
-	bl ObjectMotion_SnapHeadingAndOffset
+	bl ObjectMotion_CenterOnColumn
 .L_020082fe:
 	movs r0, #10
 	bl Battle_WaitMode0

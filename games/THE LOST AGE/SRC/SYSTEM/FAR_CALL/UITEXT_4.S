@@ -28,7 +28,7 @@ Ability_LoadGlyphFar:
 	.global Func_080383b8
 	.thumb_func
 Func_080383b8:
-	overlay_veneer Func_080453d0
+	overlay_veneer Graphics_ExpandVramTilesByColorTable
 	.global Func_080383c0
 	.thumb_func
 Func_080383c0:

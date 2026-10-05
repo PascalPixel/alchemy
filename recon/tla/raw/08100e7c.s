@@ -118,7 +118,7 @@ Func_08100e7c:
 	movs r0, #0
 	bl Func_08100e34
 	movs r0, #14
-	bl Func_080f9108
+	bl Palette_LightenBankHighlight
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0

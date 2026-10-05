@@ -94,7 +94,7 @@ Func_080fe274:
 	mov lr, r10
 	.2byte 0xf800
 	movs r0, #14
-	bl Func_080f9108
+	bl Palette_LightenBankHighlight
 	movs r3, #128
 	movs r2, #128
 	lsls r3, r3, #19

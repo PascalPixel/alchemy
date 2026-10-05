@@ -765,7 +765,7 @@ Func_0817d724:
 	mov r7, r11
 	adds r0, r5, #0
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	cmp r7, #133
 	bgt .L_0817dd80
 	mov r3, r11

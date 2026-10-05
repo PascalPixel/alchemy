@@ -2142,7 +2142,7 @@ Func_081848ec:
 	bl Func_08196958
 	mov r0, r8
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r3, #170
 	movs r4, #1
 	lsls r3, r3, #7
@@ -3176,7 +3176,7 @@ Func_08185b9c:
 	adds r0, r7, #0
 	bl Func_08196a7c
 	movs r5, #170
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r0, #1
 	lsls r5, r5, #7
 	add r9, r0
@@ -4340,7 +4340,7 @@ Func_08185b9c:
 	bl Func_08196958
 	adds r0, r7, #0
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r3, .L_08186dc8
 	ldr r2, [sp, #60]
 	movs r1, #6

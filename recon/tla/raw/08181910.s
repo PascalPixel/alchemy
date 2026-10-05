@@ -537,7 +537,7 @@ Func_08181910:
 	bl Func_08196958
 	adds r0, r7, #0
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r3, .L_08181e8c
 	mov r4, r8
 	str r3, [r7, #8]
@@ -642,7 +642,7 @@ Func_08181910:
 	bl Func_08196958
 	adds r0, r7, #0
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r3, #128
 	lsls r3, r3, #7
 	adds r6, #1

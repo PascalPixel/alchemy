@@ -1473,7 +1473,7 @@ Func_08171bb0:
 	bl Func_08196958
 	mov r0, r11
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r3, #1
 	add r8, r3
 	mov r4, r8
@@ -1851,7 +1851,7 @@ Func_08171bb0:
 	bl Func_081969ac
 	mov r0, r11
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r3, #1
 	movs r2, #128
 	add r8, r3

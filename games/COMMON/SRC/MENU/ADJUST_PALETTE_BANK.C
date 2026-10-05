@@ -1,13 +1,7 @@
-/*
- * Draft: Graphics_AdjustPaletteBank does not yet match; ported from its ☀️ twin.
- * The copy of the mask for the red channel (adds r1, r7, #0) is scheduled
- * right after the colour load in the reference and after the green shift
- * here; operand order and permuting (120s) do not move it.
- * Links as recon/tla/raw/08100e5c.s.
- */
 #include "TYPES.H"
-#include "SCENE.H"
 
+/* Shifts each channel of palettes 15 and 5 by arg0 and of palette 7 by -12,
+   clamped to 0-31, storing each colour one palette lower. */
 void Graphics_AdjustPaletteBank(s32 arg0)
 {
     s32 iter;
@@ -33,7 +27,7 @@ void Graphics_AdjustPaletteBank(s32 arg0)
             color = ((u16 *)0x05000000)[idx];
             blue = (color >> 10) & mask;
             green = (color >> 5) & mask;
-            red = mask & color;
+            red = color & mask;
             blue += arg0;
             green += arg0;
             red += arg0;

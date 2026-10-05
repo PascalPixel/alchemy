@@ -94,7 +94,7 @@ Event_FindFacingTrigger:
 	beq .L_080ce076
 	mov r1, r8
 	str r4, [sp, #0]
-	bl Func_080cdf80
+	bl Item_MatchesFilter
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	beq .L_080ce08c

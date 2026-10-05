@@ -116,7 +116,7 @@ Func_080fb780:
 	movs r1, #0
 	bl UiWindow_DrawDividerLineFar
 	movs r0, #14
-	bl Func_080f9108
+	bl Palette_LightenBankHighlight
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080fb8a4

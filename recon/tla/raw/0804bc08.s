@@ -43,7 +43,7 @@ Func_0804bc08:
 	str r6, [sp, #92]
 	bl Resource_LoadIndexedIntoBuffer
 	ldr r0, .L_0804bd08
-	bl Func_080453d0
+	bl Graphics_ExpandVramTilesByColorTable
 	ldr r0, .L_0804bd0c
 	bl Func_08045330
 	bl Func_080451bc

@@ -16,7 +16,8 @@ struct GameState {
     /* Purchases earn credit toward the shop's gifts. */
     s32 shop_credit;
     s8 shop_gifts;
-    u8 unknown_11d[0x0f];
+    /* The odds of each spring prize; a prize won halves its weight. */
+    s8 prize_weights[0x0f];
     /* The prizes the last lucky wheels game won, ended by -1; -2 once handed out. */
     s8 won_prizes[0x10];
     u8 unknown_13c[0x84];

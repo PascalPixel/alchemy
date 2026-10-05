@@ -300,7 +300,7 @@ void SceneState_SetWords1c0And1c8AndRun(void)
 
     Engine_EventBegin();
     state = gEventWork;
-    state->start_transition = 0x200;
+    state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     state->transition_frames = 64;
     Engine_GameFlagSet(0x87c);
     BattleFx_SetWeightedResult(12, 2);
@@ -315,7 +315,7 @@ void SceneState_SetWorkWordsAndFlag87f(void)
 
     Engine_EventBegin();
     state = gEventWork;
-    state->start_transition = 0x200;
+    state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     state->transition_frames = 64;
     Engine_GameFlagSet(0x87f);
     BattleFx_SetWeightedResult(12, 3);
@@ -327,7 +327,7 @@ void SceneActor_SetModeByFrameBit1(s32 o)
 {
     s32 v;
 
-    if ((*(volatile s32 *)&gFrameCount & 2) != 0) {
+    if ((gFrameCount & 2) != 0) {
         Engine_ObjectSetPartPalettes(o, 7);
     } else {
         Engine_ObjectSetPartPalettes(o, 0);

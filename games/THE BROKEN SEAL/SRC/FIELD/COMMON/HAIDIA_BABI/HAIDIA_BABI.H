@@ -40,10 +40,4 @@ void FieldScene_RunSupplementalSequenceOne();
 void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);
 void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 #endif

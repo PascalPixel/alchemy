@@ -173,10 +173,10 @@ void Villager_ShowOffPsynergy(void)
         message = (s32)MsgHaidiaArentWorriedCrossing;
         Engine_EventSetMessage(message);
         if (Engine_GameFlagIsSet(2) != 0) {
-            bump_step(1);
+            gEventWork->message++;
         }
         if (Engine_GameFlagIsSet(3) != 0) {
-            bump_step(1);
+            gEventWork->message++;
         }
         Engine_EventOpenMessage(17, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -271,7 +271,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
 {
     u32 i;
     s32 p8;
-    u8 *rec8;
+    struct FieldActor *rec8;
     s32 record;
     s32 v2;
 
@@ -292,14 +292,14 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep20, 0xc80);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     rec8 = Object_GetById(20);
-    v2 = rec8[85];
-    rec8[85] = 0;
+    v2 = rec8->motion_flags;
+    rec8->motion_flags = 0;
     p8 = v2;
     for (i = 0; i < 40; i++) {
-        *(s32 *)(rec8 + 12) += 0x1800;
+        rec8->y.fixed += 0x1800;
         Engine_TaskWait(1);
     }
-    rec8[85] = p8;
+    rec8->motion_flags = p8;
     Scheduler_RemoveCallback((s32)FieldScene_RunStep15);
     Scheduler_RemoveCallback((s32)FieldScene_RunStep20);
     Engine_TaskWait(1);
@@ -377,7 +377,7 @@ void SceneState_SetWork1c0AndRun(s32 no)
         BattleFx_SetBlock30ValuesMaxZero();
     }
     p = gEventWork;
-    p->start_transition = 0x100;
+    p->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     p->transition_frames = 16;
     Engine_EventRequestExit(no);
 }
@@ -1322,8 +1322,8 @@ void Scene_RunExtendedActorSequence(void)
     Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(1, base5_200adf0);
     Engine_EventWait(60);
-    work = *(struct EventWork **)Data_03001ebc;
-    work->start_transition = 0x100;
+    work = gEventWork;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 60;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -1348,12 +1348,12 @@ void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 
 void OverlayObject_UpdateOnFrameBit1(s32 obj)
 {
-    if ((*(volatile s32 *)&gFrameCount & 2) != 0) {
+    if ((gFrameCount & 2) != 0) {
         Engine_ObjectSetPartPalettes(obj, 7);
     } else {
         Engine_ObjectSetPartPalettes(obj, 0);
     }
-    if ((*(volatile s32 *)&gFrameCount & 15) == 0) {
+    if ((gFrameCount & 15) == 0) {
         HaidiaIe_SpawnEffectPair(obj);
     }
 }

@@ -197,11 +197,11 @@ void FieldScene_RunScene3b9_0200039c(void)
             Engine_EventSetMessage((s32)MsgKorashiamuWantTryOutLuckyGuess);
             Event_OpenMessage(16, 0);
             if (Engine_EventChooseYesNo(0, 0) == 0) {
-                bump_step(1);
+                gEventWork->message++;
                 Actor_ShowEmote(16, 0x100, 40);
                 Event_OpenMessage(16, 0);
                 if (Engine_EventChooseYesNo(0, 0) == 0) {
-                    bump_step(1);
+                    gEventWork->message++;
                 }
                 Engine_EventWait(40);
                 Event_ShowMessage(16, 0);
@@ -345,7 +345,7 @@ void FieldScene_RunScene3b9_020006bc(void)
     Engine_EventSetMessage((s32)MsgKorashiamuYouReadyForFinals);
     Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0)
-        bump_step_now(1);
+        gEventWork->message++;
     Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }

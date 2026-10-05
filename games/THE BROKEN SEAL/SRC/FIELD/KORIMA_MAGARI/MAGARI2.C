@@ -460,7 +460,7 @@ s32 KorimaMagari_SetupBoard(void)
     actor->radius = 8;
     actor->scale_x = 0xc000;
     actor->scale_y = 0xc000;
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (Engine_GameFlagIsSet(0x845) == 0)
         Effect_AdjustPaletteColors(4);
     return 0;

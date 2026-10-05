@@ -603,14 +603,14 @@ void FieldScene_RunScene3b8SequenceA(void)
         if (GameFlag_IsSet(0x96a) == 0) {
             Event_ShowMessage(1, 0);
         } else {
-            AdvanceMessageCursor(1);
+            gEventWork->message++;
         }
         Actor_SetAnimationAndWait(2, 3);
         Event_Wait(10);
         if (GameFlag_IsSet(0x96a) == 0) {
             Event_ShowMessage(2, 0);
         } else {
-            AdvanceMessageCursor(1);
+            gEventWork->message++;
         }
         Event_Wait(20);
         Actor_FaceDirection(0, 0, 0);
@@ -631,14 +631,14 @@ void FieldScene_RunScene3b8SequenceA(void)
         if (GameFlag_IsSet(0x96a) == 0) {
             Event_ShowMessage(2, 0);
         } else {
-            AdvanceMessageCursor(1);
+            gEventWork->message++;
         }
         Actor_SetAnimationAndWait(3, 3);
         Event_Wait(10);
         if (GameFlag_IsSet(0x96a) == 0) {
             Event_ShowMessage(ACTOR_MIA, 0);
         } else {
-            AdvanceMessageCursor(1);
+            gEventWork->message++;
         }
         Actor_WalkByAndWait(1, 0, 32);
         Actor_WalkBy(1, -112, 0);
@@ -1285,9 +1285,9 @@ void FieldScene_RunMainCutsceneSequence(void)
         Actor_FaceDirection(20, 0x4000, 0);
         Event_Wait(20);
         Actor_SetSpeed(20, 0xcccc, 0x6666);
-        Actor_Get(20)->unknown_5a &= 0xfe;
+        Actor_Get(20)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_WalkByAndWait(20, 0, -16);
-        Actor_Get(20)->unknown_5a |= 1;
+        Actor_Get(20)->steering_flags |= ACTOR_FACES_MOTION;
         Actor_FaceDirection(14, 0x4000, 0);
         Event_Wait(40);
         Actor_SetSpeed(14, 0xcccc, 0x6666);
@@ -1305,9 +1305,9 @@ void FieldScene_RunMainCutsceneSequence(void)
         Actor_RunRepeatedMotion(14, 2);
         Event_Wait(20);
         Event_OpenMessage(14, 0);
-        AdvanceMessage(2);
+        gEventWork->message += 2;
     } else {
-        AdvanceMessage(5);
+        gEventWork->message += 5;
         Event_Wait(10);
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(20);
@@ -1330,12 +1330,12 @@ void FieldScene_RunMainCutsceneSequence(void)
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(20);
         Event_ShowMessage(20, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(20);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(20, 0);
     }
 
@@ -1424,12 +1424,12 @@ void FieldScene_RunMainCutsceneSequence(void)
         Actor_SetAnimationAndWait(14, 3);
         Event_Wait(30);
         Event_ShowMessage(14, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
         Actor_SetAnimationAndWait(14, 4);
         Event_Wait(20);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
 
@@ -1529,24 +1529,18 @@ void FieldScene_RunMainCutsceneSequence(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
         Event_ShowMessage(1, 0);
-        AdvanceMessage(3);
+        gEventWork->message += 3;
     } else {
-
         Event_Wait(10);
-
-        {
-            u8 **scene_address = (u8 **)&gEventWork;
-
-            AdvanceMessageAt(scene_address, 1);
-            Event_OpenMessage(1, 0);
-            if (Event_ChooseYesNo(0, 0) == 0) {
-                Event_Wait(20);
-                Event_ShowMessage(1, 0);
-                AdvanceMessageAt(scene_address, 1);
-            } else {
-                AdvanceMessageAt(scene_address, 1);
-                Event_ShowMessage(1, 0);
-            }
+        gEventWork->message++;
+        Event_OpenMessage(1, 0);
+        if (Event_ChooseYesNo(0, 0) == 0) {
+            Event_Wait(20);
+            Event_ShowMessage(1, 0);
+            gEventWork->message++;
+        } else {
+            gEventWork->message++;
+            Event_ShowMessage(1, 0);
         }
     }
 
@@ -1870,10 +1864,10 @@ void FieldScene_RunMainCutsceneSequence(void)
     if (Event_ChooseYesNo(14, 0) == 0) {
         Event_Wait(10);
         Event_ShowMessage(2, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(2, 0);
     }
 
@@ -1934,10 +1928,10 @@ void FieldScene_RunMainCutsceneSequence(void)
         Event_Wait(20);
         Actor_ShowEmote(1, 0x102, 40);
         Event_ShowMessage(1, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(1, 0);
     }
 
@@ -2005,11 +1999,11 @@ void FieldScene_RunMainCutsceneSequence(void)
         Event_Wait(20);
         Actor_ShowEmote(14, 0x100, 40);
         Event_ShowMessage(14, 0);
-        AdvanceMessage(1);
+        gEventWork->message++;
     } else {
         Event_Wait(10);
         Actor_ShowEmote(14, 0x100, 40);
-        AdvanceMessage(1);
+        gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
 
@@ -2339,7 +2333,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
         } else if (GameFlag_IsSet(0x962) && !GameFlag_IsSet(0x966)) {
             Actor_SetPosition(10, 0x780000, 0x480000);
         }
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         Actor_Get(9)->collision_flags |= 4;
         if (gGameState.entrance == 99) {
             Party_RestoreAll();

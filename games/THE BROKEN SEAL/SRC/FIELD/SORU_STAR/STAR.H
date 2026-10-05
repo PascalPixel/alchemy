@@ -120,12 +120,6 @@ void Engine_ActorFaceDirection();
  * and waits.
  */
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 struct ObjectRuntime;
 
 void Event_SayThenWait(s32 speaker, s32 frames);

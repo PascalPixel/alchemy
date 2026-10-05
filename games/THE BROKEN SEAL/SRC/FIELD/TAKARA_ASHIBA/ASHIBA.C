@@ -41,7 +41,6 @@ void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
 s32 ArcTan2(s32, s32);
 void ObjectDispatch_ApplyValueToChildren();
 
-s32 *Engine_GetTriggerActor(s32 slot);
 s32 Engine_TestTriggerFlag(s32 flag);
 void Engine_SetTriggerFlag(s32 flag);
 
@@ -236,22 +235,18 @@ void Resource3b4_EmptyHookB(void)
 {
 }
 
-/*
- * Complete 40-byte heading update: face the supplied entity towards entity 0,
- * store the resulting angle in its +6 halfword and report zero.
- */
-s32 SceneActor_FaceTowardActorZero(u8 *obj)
+/* Each frame, turns the actor to face the leader. */
+s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor)
 {
-    u8 *p = Engine_GetTriggerActor(0);
-    *(u16 *)(obj + 6) = (u16)ArcTan2(
-        *(s32 *)(p + 16) - *(s32 *)(obj + 16),
-        *(s32 *)(p + 8) - *(s32 *)(obj + 8));
+    struct FieldActor *leader = Object_GetById(0);
+
+    actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed, leader->x.fixed - actor->x.fixed);
     return 0;
 }
 
 void FieldScene_RunScene3b4_02000ad0(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x9c8) == 0) {
         GameFlag_Set(0x9c8);
@@ -265,8 +260,8 @@ void FieldScene_RunScene3b4_02000ad0(void)
         Engine_EventWait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
         Audio_PlayCue(152);
-        record = Engine_GetTriggerActor(15);
-        *(s32 *)(record + 40) = 0x80000;
+        record = Object_GetById(15);
+        record->velocity_y = 0x80000;
         Actor_WalkToAndWait(15, 0x248, 0x2a8);
         Actor_FaceDirection(15, 0x4000, 20);
         Engine_EventEnd();
@@ -275,9 +270,9 @@ void FieldScene_RunScene3b4_02000ad0(void)
 
 void FieldScene_RunScene3b4_02000b68(void)
 {
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 rec8;
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x9c8) != 0) {
         rec8 = GameFlag_IsSet(0x9c9);
@@ -293,8 +288,8 @@ void FieldScene_RunScene3b4_02000b68(void)
             Engine_EventWait(20);
             Actor_SetSpeed(15, 0x10000, 0x8000);
             Audio_PlayCue(152);
-            record = Engine_GetTriggerActor(15);
-            *(s32 *)(record + 40) = 0xa0000;
+            record = Object_GetById(15);
+            record->velocity_y = 0xa0000;
             Actor_WalkToAndWait(15, 0x248, 0x298);
             Actor_FaceDirection(15, 0x4000, 20);
             Actor_SetAttachedEffect(15, 0x102);
@@ -310,14 +305,14 @@ void FieldScene_RunScene3b4_02000b68(void)
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_EventWait(30);
             Actor_SetPosition(15, 0x3780000, 0x2980000);
-            rec7 = Engine_GetTriggerActor(15);
+            rec7 = Object_GetById(15);
             {
-                s32 target = *(s32 *)(rec7 + 80);
+                s32 target = *(s32 *)((u8 *)rec7 + 80);
                 s32 shown = 0xf800;
 
                 *(u16 *)(target + 30) = shown;
             }
-            *(u16 *)(rec7 + 6) = 0;
+            rec7->facing = 0;
             ObjectDispatch_ApplyValueToChildren(rec7, 0);
             Engine_ObjectSetScript(rec7, (s32)TakaraAshiba_ActorFifteenMotionScript);
             Engine_EventEnd();
@@ -327,25 +322,25 @@ void FieldScene_RunScene3b4_02000b68(void)
 
 void FieldScene_RunScene3b4_02000ccc(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x9c9) != 0 && GameFlag_IsSet(0x9ca) == 0) {
         GameFlag_Set(0x9ca);
         Engine_EventBegin();
-        record = (s32)Object_GetById(15);
-        *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
+        record = Object_GetById(15);
+        *(u16 *)(*(s32 *)((u8 *)record + 80) + 30) = 0;
         ObjectDispatch_ApplyValueToChildren(record, 16);
         Audio_PlayCue(152);
-        record = Engine_GetTriggerActor(15);
-        *(s32 *)(record + 40) = 0x80000;
+        record = Object_GetById(15);
+        record->velocity_y = 0x80000;
         Actor_FaceDirection(15, 0x8000, 30);
         Actor_SetAttachedEffect(15, 0x102);
         Engine_ActorRunRepeatedMotion(15, 2);
         Engine_EventWait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
         Audio_PlayCue(152);
-        record = Engine_GetTriggerActor(15);
-        *(s32 *)(record + 40) = 0x40000;
+        record = Object_GetById(15);
+        record->velocity_y = 0x40000;
         Actor_WalkToAndWait(15, 0x370, 0x2a8);
         Engine_EventWait(10);
         Actor_SetAttachedEffect(15, 0x101);
@@ -363,8 +358,8 @@ void FieldScene_RunScene3b4_02000ccc(void)
         Engine_EventWait(10);
         Actor_FaceDirection(15, 0xc000, 20);
         Actor_SetAttachedEffect(15, 0x100);
-        record = Engine_GetTriggerActor(15);
-        *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
+        record = Object_GetById(15);
+        *(s32 *)((u8 *)record + 108) = (s32)SceneActor_FaceTowardActorZero;
         Engine_EventEnd();
     }
 }
@@ -486,10 +481,10 @@ void FieldScene_RunScene3b4_02000fdc(s32 a0)
 void FieldScene_RunScene3b4SequenceC(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
-    record = Engine_GetTriggerActor(0);
-    if (*(u16 *)(record + 6) == 0xc000) {
+    record = Object_GetById(0);
+    if (record->facing == 0xc000) {
         if (GameFlag_IsSet(0x9c4) == 0) {
             if (PartyInventory_FindOwnerFar(243) != -1) {
                 GameFlag_Set(0x9c4);
@@ -503,10 +498,10 @@ void FieldScene_RunScene3b4SequenceC(void)
 /* Four sites of one import, so four names. */
 void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
 {
-    u8 *slot = Engine_GetTriggerActor(0);
+    struct FieldActor *slot = Object_GetById(0);
     s32 flag;
 
-    if (*(u16 *)(slot + 6) != 0xC000) {
+    if (slot->facing != 0xC000) {
         return;
     }
     flag = selector + 2496;
@@ -535,13 +530,13 @@ void SceneState_ResetCounter412OnHeading4000B(void)
 {
     extern u8 *Data_03001ebc;
 
-    u8 *slot;
+    struct FieldActor *slot;
     s16 *cnt;
     s32 reset;
 
     SceneState_SetSelectorFlagWhenFacingC000(2);
-    slot = Engine_GetTriggerActor(0);
-    if (*(u16 *)(slot + 6) == 0x4000) {
+    slot = Object_GetById(0);
+    if (slot->facing == 0x4000) {
         cnt = (s16 *)(Data_03001ebc + 412);
         if (*cnt > 12) {
             Engine_LeaderCheckAhead();
@@ -555,13 +550,13 @@ void SceneState_ResetCounter412OnHeading4000(void)
 {
     extern u8 *Data_03001ebc;
 
-    u8 *p;
+    struct FieldActor *p;
     s16 *cnt;
     s32 zero;
 
     SceneState_SetSelectorFlagWhenFacingC000(3);
-    p = Engine_GetTriggerActor(0);
-    if (*(u16 *)(p + 6) == 0x4000) {
+    p = Object_GetById(0);
+    if (p->facing == 0x4000) {
         cnt = (s16 *)(Data_03001ebc + 412);
         if (*cnt > 12) {
             Engine_LeaderCheckAhead();
@@ -668,15 +663,15 @@ void TakaraAshiba_RaiseTriggerOnStand(void)
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
     Actor_SetSpeed(8, 0x1e666, 0xf333);
     Audio_PlayCue(188);
-    record = Engine_GetTriggerActor(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(8, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(8);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
@@ -697,7 +692,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 void SceneState_TriggerColumnTen(void)
 {
     extern u8 *Data_03001ebc;
-    s32 *pos = Engine_GetTriggerActor(0);
+    s32 *pos = Object_GetById(0);
     s32 x = pos[2] / 0x100000;
     s32 z = pos[4] / 0x100000;
     u8 *work = Data_03001ebc;
@@ -713,15 +708,15 @@ void SceneState_TriggerColumnTen(void)
 void FieldScene_RunScene3b4SequenceA(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(9, 0x1b333, 0xd999);
     Audio_PlayCue(188);
-    record = Engine_GetTriggerActor(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(9, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(9);
 #if EDITION_INTERNATIONAL
@@ -742,7 +737,7 @@ void FieldScene_RunScene3b4SequenceA(void)
 void SceneActor_TrackOriginColumnForSlot(s32 no)
 {
 
-    s32 *pos = Engine_GetTriggerActor(0);
+    s32 *pos = Object_GetById(0);
     s32 col = pos[2] / 0x100000;   /* +8  */
     s32 row = pos[4] / 0x100000;      /* +16 */
     s32 slot = no + 10;
@@ -780,7 +775,7 @@ void FieldScene_RunLateIndexedStep2(void)
 void FieldScene_RunPrimarySequence(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 base3_2000240;
 
     base3_2000240 = (s32)Data_02000240;
@@ -789,9 +784,9 @@ void FieldScene_RunPrimarySequence(void)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
         Audio_PlayCue(188);
-        record = Engine_GetTriggerActor(0);
+        record = Object_GetById(0);
         if (record != 0) {
-            Actor_SetDestination(10, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(10, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(10);
     #if EDITION_INTERNATIONAL
@@ -868,7 +863,7 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
 void SceneState_TriggerColumnNineteen(void)
 {
     extern u8 *Data_03001ebc;
-    s32 *pos = Engine_GetTriggerActor(0);
+    s32 *pos = Object_GetById(0);
     s32 x = pos[2] / 0x100000;
     s32 z = pos[4] / 0x100000;
     u8 *work = Data_03001ebc;
@@ -884,15 +879,15 @@ void SceneState_TriggerColumnNineteen(void)
 void FieldScene_RunScene3b4SequenceB(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(12, 0x1b333, 0xd999);
     Audio_PlayCue(188);
-    record = Engine_GetTriggerActor(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(12);
 #if EDITION_INTERNATIONAL
@@ -947,7 +942,7 @@ void SceneEffect_SetBlendAlpha0607(void)
  */
 void FieldScene_DispatchBySlotZeroFacing(void)
 {
-    s32 *slot = Engine_GetTriggerActor(0);
+    s32 *slot = Object_GetById(0);
     u16 facing = *(u16 *)((u8 *)slot + 6);
 
     if (facing == 0xc000) {
@@ -978,14 +973,14 @@ void FieldScene_NoOpCallback(void) {}
 
 void SceneActor_MarkSlot13AndSetFlag200(void)
 {
-    u8 *slot = Engine_GetTriggerActor(13);
+    struct FieldActor *slot = Object_GetById(13);
     s32 fifth = 40;
     s32 sixth = 55;
 
     Engine_MapCopyCellAttributes(40, 54, 1, 1, fifth, sixth);
     if (slot != 0) {
         u8 *other = (u8 *)Object_GetById(13) + 85;
-        u8 *flags = slot + 35;
+        u8 *flags = &slot->priority_flags;
 
         *other = 0;
         *flags = 2;
@@ -1006,7 +1001,7 @@ void SceneActor_MarkSlot13AndSetFlag200(void)
 /* Slot record lookup, then the notification and step imports. */
 void SceneState_BranchOnActorZeroFacing(void)
 {
-    struct Slot *slot = Engine_GetTriggerActor(0);
+    struct Slot *slot = Object_GetById(0);
 
     if (slot->f06 == 0) {
         Engine_LeaderCheckAhead();
@@ -1111,8 +1106,8 @@ void TakaraAshiba_DispatchByActorEightColumn(void)
  */
 void SceneActor_BranchOnSlotZeroAtTile38(void)
 {
-    s32 *slot0 = Engine_GetTriggerActor(0);
-    s32 *slot8 = Engine_GetTriggerActor(8);
+    s32 *slot0 = Object_GetById(0);
+    s32 *slot8 = Object_GetById(8);
     s32 x0 = slot0[2] / 0x100000;
     s32 x8 = slot8[2] / 0x100000;
 
@@ -1156,7 +1151,7 @@ void FieldScene_RunScene3b4_02001bc4(void)
 
 void SceneActor_RunWhenActor9AtTile45x43(void)
 {
-    s32 *slot = Engine_GetTriggerActor(9);
+    s32 *slot = Object_GetById(9);
     s32 x = slot[2] / 0x100000;
     s32 z = slot[4] / 0x100000;
 
@@ -1246,7 +1241,7 @@ void FieldScene_RunThreeCallSequenceB(void)
 
 void FieldScene_DispatchByActorZeroFacing(void)
 {
-    struct Slot *slot = Engine_GetTriggerActor(0);
+    struct Slot *slot = Object_GetById(0);
 
     if (slot->f06 == 0x4000) {
         BattleFx_RunRisingObjectSequence(0, 6, 0);
@@ -1279,10 +1274,10 @@ void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
 
     SceneState_ApplyFourRectsAt48_55();
 
-    slot = Engine_GetTriggerActor(11);
+    slot = Object_GetById(11);
     tile = slot[2] / 0x100000;
     Engine_MapCopyCellAttributes(53, 55, 1, 1, tile, 55);
-    slot = Engine_GetTriggerActor(12);
+    slot = Object_GetById(12);
     tile = slot[2] / 0x100000;
     Engine_MapCopyCellAttributes(53, 55, 1, 1, tile, 55);
 }
@@ -1313,8 +1308,8 @@ void FieldScene_RunThreeStepSequence(void)
 
 void ActorPresentation_PlaceActorFourteenOnActorNine(void)
 {
-    struct Actor *target = Engine_GetTriggerActor(14);
-    struct Actor *source = Engine_GetTriggerActor(9);
+    struct Actor *target = Object_GetById(14);
+    struct Actor *source = Object_GetById(9);
 
     target->f0c = 0x200000;
     target->f08 = source->f08;
@@ -1323,44 +1318,38 @@ void ActorPresentation_PlaceActorFourteenOnActorNine(void)
 
 void SceneActor_PassActorNinePositionWithId107(void)
 {
-    struct Frame *frame = Engine_GetTriggerActor(9);
+    struct Frame *frame = Object_GetById(9);
 
     Engine_MapObjectSetPosition(107, frame->f08, frame->f10 + 0x10000);
 }
 
 /*
- * Publish one marker byte at +35 to slots 8, 10, 11 and 12 according to slot
- * 0's height word at +12.  The 156-byte owner includes its one pool word,
- * 0x000fffff, read by the tile division.  The marker local is what carries
- * the value 2 across the high path, which branches over the clear to 0.
- * Slot 11's record is fetched once on each path rather than once before
- * them, and that duplication is what reproduces the reference.
+ * While the leader stands up on the scaffold, the platforms 8, 10, 11 and
+ * 12 draw underfoot; back on the ground, platform 10 draws behind the
+ * leader once the leader is far enough down the map.
  */
 void SceneActor_PublishMarkerBySlotZeroHeight(void)
 {
-    s32 *slot0 = Engine_GetTriggerActor(0);
-    u8 marker;
+    struct FieldActor *leader = Object_GetById(0);
+    u8 priority;
 
-    if (slot0[3] > 0x100000) {                 /* +12 */
-        marker = 2;
-        ((u8 *)Engine_GetTriggerActor(8))[35] = marker;
-        if (Engine_GetTriggerActor(10)[3] == 0) {
-            ((u8 *)Engine_GetTriggerActor(10))[35] = marker;
-        }
-        ((u8 *)Engine_GetTriggerActor(11))[35] = marker;
+    if (leader->y.fixed > 0x100000) {
+        priority = ACTOR_PRIORITY_UNDERFOOT;
+        Object_GetById(8)->priority_flags = priority;
+        if (Object_GetById(10)->y.fixed == 0)
+            Object_GetById(10)->priority_flags = priority;
+        Object_GetById(11)->priority_flags = priority;
     } else {
-        if (Engine_GetTriggerActor(10)[3] == 0 &&
-            Engine_GetTriggerActor(0)[4] / 0x100000 > 56) {   /* +16 */
+        if (Object_GetById(10)->y.fixed == 0 && Object_GetById(0)->z.fixed / 0x100000 > 56) {
             Engine_ActorSetSpritePriority(10, 3);
         } else {
             Engine_ActorSetSpritePriority(10, 1);
-            ((u8 *)Engine_GetTriggerActor(10))[35] = 1;
+            Object_GetById(10)->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
         }
-        marker = 0;
-        ((u8 *)Engine_GetTriggerActor(11))[35] = marker;
+        priority = 0;
+        Object_GetById(11)->priority_flags = priority;
     }
-
-    ((u8 *)Engine_GetTriggerActor(12))[35] = marker;
+    Object_GetById(12)->priority_flags = priority;
 }
 
 /* The platforms' scene start, entry veneer 0: the screen opens through the

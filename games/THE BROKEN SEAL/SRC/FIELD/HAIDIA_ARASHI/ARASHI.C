@@ -199,7 +199,7 @@ void SceneState_SetWork1c0AndRunObject(u8 *o)
         BattleFx_SetBlock30ValuesMaxZero();
     }
     state = gEventWork;
-    state->start_transition = 0x100;
+    state->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     state->transition_frames = 16;
     Engine_EventRequestExit(o);
 }
@@ -1671,7 +1671,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
  * actor 22 follows the leader out. */
 void HaidiaArashi_RunRiverSearch(void)
 {
-    s32 entry;
+    struct FieldActor *entry;
     s32 record;
     s32 script;
     s32 north;
@@ -1710,15 +1710,15 @@ void HaidiaArashi_RunRiverSearch(void)
     /* For records 10, 24 and 25: fetch the record's entry pointer, fetch a
      * value from that record's own state, and store a derived value into
      * the entry's field at offset 100. */
-    entry = (s32)Actor_Get(10);
+    entry = Actor_Get(10);
     record = Engine_RandomNext();
-    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
-    entry = (s32)Actor_Get(24);
+    entry->unknown_64 = (Math_RemainderUnsigned(record, 90) + 60);
+    entry = Actor_Get(24);
     record = Engine_RandomNext();
-    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
-    entry = (s32)Actor_Get(25);
+    entry->unknown_64 = (Math_RemainderUnsigned(record, 90) + 60);
+    entry = Actor_Get(25);
     record = Engine_RandomNext();
-    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
+    entry->unknown_64 = (Math_RemainderUnsigned(record, 90) + 60);
     script = (s32)HaidiaArashi_ActorEightScript;
     Engine_ActorEnableActionCallback(10, (const u8 *)script);
     Engine_ActorEnableActionCallback(24, (const u8 *)script);

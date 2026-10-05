@@ -265,7 +265,7 @@ void FieldScene_RunActorEightApproach(void)
 {
 
     u32 i;
-    s32 actor;
+    struct FieldActor *actor;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -277,7 +277,7 @@ void FieldScene_RunActorEightApproach(void)
         /* Write 0xa000 to the halfword at +6 of the actor record. */
         s32 value = 0xa000;
 
-        *(u16 *)(actor + 6) = value;
+        actor->facing = value;
     }
     Engine_TaskWait(1);
     BattleFx_ScheduleRatioTransition(0x13333, 1);
@@ -550,7 +550,7 @@ void FieldScene_RunLateSequence(void)
     record = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
     sx = record->x.part.pixel;
     sy = record->z.part.pixel;
-    if ((u32)(*(volatile s32 *)&gFrameCount) % 3 == 0) {
+    if (gFrameCount % 3 == 0) {
         mode = (u32)(Random_Next() << 2) >> 16;
         switch (mode) {
         case 0:
@@ -674,18 +674,18 @@ void SceneActor_UpdateObjectByCounterBits(u8 *obj)
 /* Both frame-parity steps read the frame counter afresh at every use. */
 void OverlayObject_UpdateOnFrameParity(u8 *obj)
 {
-    if ((*(volatile u32 *)&gFrameCount & 1) != 0) {
-        Engine_ObjectSetPartPalettes(obj, __umodsi3((s32)(*(volatile u32 *)&gFrameCount >> 1), 6));
+    if ((gFrameCount & 1) != 0) {
+        Engine_ObjectSetPartPalettes(obj, __umodsi3((s32)(gFrameCount >> 1), 6));
     }
-    if ((*(volatile u32 *)&gFrameCount & 15) == 0) {
+    if ((gFrameCount & 15) == 0) {
         WorldMap_CreateLinkedEffects(obj);
     }
 }
 
 void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 {
-    if ((*(volatile s32 *)&gFrameCount & 1) != 0) {
-        s32 slot = ((u32)*(volatile s32 *)&gFrameCount >> 1) % 6;
+    if ((gFrameCount & 1) != 0) {
+        s32 slot = (gFrameCount >> 1) % 6;
 
         Engine_ObjectSetPartPalettes(arg0, slot);
     }

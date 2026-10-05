@@ -1562,7 +1562,7 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
         (*(s16 *)&actor->unknown_64)--;
         return;
     }
-    actor->unknown_5a = 0;
+    actor->steering_flags = 0;
     direction = gImiruFuchinKeyHeadings[(*(u32 *)gKeysHeld >> 4) & 15];
     if (direction == -1) {
         Object_SetMode(actor, 9);
@@ -1684,7 +1684,7 @@ finish_probe:
 
 blocked:
     subject->update = NULL;
-    subject->unknown_5a |= 1;
+    subject->steering_flags |= ACTOR_FACES_MOTION;
     /* 0x4000 is built by shifting, not loaded as a constant. */
     subject->acceleration = 0x4000;
 

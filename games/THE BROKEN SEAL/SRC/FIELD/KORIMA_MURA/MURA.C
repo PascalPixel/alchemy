@@ -422,7 +422,7 @@ void KorimaMura_RunObjectSpreadScene(void)
     Call3(Engine_ActorFaceDirection, 8, 0x9000, 20);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_EventWait(20);
-    Object_GetById(8)->unknown_5a &= 254;
+    Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Call3(Engine_ActorSetSpeed, 8, 0x20000, 0x10000);
     Engine_ActorJump(8, 2, 0);
     Engine_ObjectMotionSetPositionAndCommit(8, 224, 197);

@@ -8,7 +8,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
-s32 *Engine_GetTriggerActor(s32 slot);
+s32 *Object_GetById(s32 slot);
 
 void FieldScene_RunSupplementalSequenceOne(void)
 {
@@ -19,7 +19,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
     Actor_SetSpeed(8, 0x1e666, 0xf333);
     Audio_PlayCue(188);
-    record = Engine_GetTriggerActor(0);
+    record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

@@ -132,12 +132,6 @@ void FieldScene_RunDescentBurst(void);
 
 /* Field cleared to 0 on each actor record below. */
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 /* Newly named raw call sites: each engine function below was reached only
  * through an unresolved veneer island until its own source was read; the
  * per-site macro keeps the site's original calling form. */

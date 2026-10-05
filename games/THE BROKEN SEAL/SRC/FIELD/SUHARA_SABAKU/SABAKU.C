@@ -22,11 +22,6 @@ extern const struct ScenePlacement gSuharaSabakuPlacementsOther[];
 
 extern u8 MsgSuharaSandstorm[];
 
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
 extern u8 MsgSuharaNowhereFound[];
 
 void BattleFx_SetWeightedResult(s32 actor, s32 mode);
@@ -167,7 +162,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 {
     s32 p10;
     s32 rec2;
-    u8 *rec7;
+    struct FieldActor *rec7;
     struct FieldActor *record;
     u8 *p6;
     u8 *base;
@@ -189,11 +184,11 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         Engine_ActorWaitForMove((s32)p6);
         Audio_PlayCue(244);
         Engine_TaskAddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
-        rec7[85] = rec2;
-        Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12) + 0x200000, *(s32 *)(rec7 + 16));
+        rec7->motion_flags = rec2;
+        Engine_ObjectSetPosition((s32)rec7, rec7->x.fixed, rec7->y.fixed + 0x200000, rec7->z.fixed);
         Engine_ActorWaitForMove((s32)p6);
-        *(s32 *)(rec7 + 40) = rec2;
-        rec7[85] = 4;
+        rec7->velocity_y = rec2;
+        rec7->motion_flags = 4;
         *(u8 *)(base + 498) = 2;
         GameFlag_Set(0x20f);
         GameFlag_SetByte(0x218, p10);
@@ -291,12 +286,12 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
                 Engine_ActorSetPosition(13, record->x.fixed, record->z.fixed);
             }
             Call3(Engine_ActorFaceActor, 13, 0x4000, 0);
-            Object_GetById(13)->unknown_5a &= 254;
+            Object_GetById(13)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorWalkTo(13, p9, (p11 - 16));
-            Object_GetById(0)->unknown_5a &= 254;
+            Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorWalkToAndWait(0, (p9 + 8), (p11 - 40));
             Engine_EventWait(1);
-            SetFlagBits(&Object_GetById(0)->unknown_5a, 1);
+            Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_ActorSetAnimation(13, 1);
             Engine_ActorFaceDirection(0, 0x4000, 0);
             Engine_EventSetMessage((s32)MsgSuharaSandstorm);
@@ -617,7 +612,7 @@ s32 SuharaSabaku_RunSceneScript(void)
     u8 *map;
 
     map = (*(struct FieldGlobals *)gMapWork).map;
-    (*(struct FieldGlobals *)gMapWork).event->start_transition = 0x201;
+    (*(struct FieldGlobals *)gMapWork).event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     if (GameFlag_GetByte(0x210) != 0) {
         gGameState.movement_mode = 2;
         Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);

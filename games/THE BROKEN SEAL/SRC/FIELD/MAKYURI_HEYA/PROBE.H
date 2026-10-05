@@ -151,16 +151,11 @@ void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
 void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w);
 void MakyuriHeya_CastPsynergyAtActor11(void);
 void SceneState_SetRecordTableValue(s32, s32);
-void OverlayObject_SpawnKind24AtObject(u8 *src);
+void OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
 s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work);
 s32 SceneEffect_AdvanceScaleOverSixteenFrames(u8 *o);
 s32 OverlayObject_StepScaleUpSixteenFrames(u8 *o);
 void SceneState_ClearCurrentRecordAndReleaseTarget();
 void OverlayObject_ReleasePublishedAttachmentB(void);
-
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
 
 #endif

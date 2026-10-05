@@ -198,7 +198,7 @@ void SceneState_SetWord1c8To16AndForward16c(void)
 void Scene_RunPrimarySequence(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRariberoMoreTolbisSoldiersLayDefeated);
@@ -374,7 +374,7 @@ void Scene_RunPrimarySequence(void)
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
         /* Pass the record's s16 fields at +10 and +18 through to entity 22. */
-        Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(22);
     Actor_SetPosition(22, 0, 0);
@@ -594,9 +594,9 @@ void FieldScene_RunSecondarySequence(void)
     Engine_EventWait(10);
     /* Clear bit 0 of the actor flag byte, then set it back through a second
      * record accessor. */
-    ((struct FieldActor *)Actor_Get(22))->unknown_5a &= ~1;
+    ((struct FieldActor *)Actor_Get(22))->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkByAndWait(22, 0, -16);
-    ((struct FieldActor *)Actor_Get(22))->unknown_5a |= 1;
+    ((struct FieldActor *)Actor_Get(22))->steering_flags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(22, 0x4100, 0);
     Engine_EventWait(30);
     Engine_EventWait(10);
@@ -820,14 +820,14 @@ s32 Scene_Initialize(void)
             && !GameFlag_IsSet(FLAG_PRIMARY_SEQUENCE_SEEN)) {
             GameFlag_Set(FLAG_PRIMARY_SEQUENCE_SEEN);
             object = (union FieldObject *)Actor_Get(11);
-            object->actor.unknown_5b = 1;
+            object->actor.paused = 1;
             object = (union FieldObject *)Actor_Get(17);
-            object->actor.unknown_5b = 1;
+            object->actor.paused = 1;
             Scene_RunPrimarySequence();
             object = (union FieldObject *)Actor_Get(11);
-            object->actor.unknown_5b = 0;
+            object->actor.paused = 0;
             object = (union FieldObject *)Actor_Get(17);
-            object->actor.unknown_5b = 0;
+            object->actor.paused = 0;
         }
     }
     return 0;

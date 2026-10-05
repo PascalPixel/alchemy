@@ -342,7 +342,7 @@ void FieldScene_RunEarlySequence(void)
 {
     u32 i;
     u8 *work;
-    u8 *record;
+    struct FieldActor *record;
     s32 idx;
     u8 *tbl;
     s32 off;
@@ -354,9 +354,9 @@ void FieldScene_RunEarlySequence(void)
     work = (u8 *)gEventWork;
     Engine_EventBegin();
     for (i = 8; i <= 65; i++) {
-        record = (u8 *)Object_GetById(i);
+        record = Object_GetById(i);
         if (record != 0) {
-            record[85] = 0;
+            record->motion_flags = 0;
         }
     }
     tbl = ArutinMura_TriggerTable;
@@ -382,7 +382,7 @@ void FieldScene_RunEarlySequence(void)
         Map_AnimateCells(*(s32 *)(tbl + off), a, b);
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     if (idx == 6) {
@@ -587,49 +587,49 @@ placed:
 
 void FieldScene_RunScene3a3SequenceD(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     s32 facing;
 
     if (GameFlag_IsSet(0x240) == 0) {
         Actor_SetPosition(8, 0x3280000, 0x2d70000);
-        actor = (u8 *)Object_GetById(8);
+        actor = Object_GetById(8);
         facing = 0x3000;
-        *(u16 *)(actor + 6) = facing;
+        actor->facing = facing;
         Actor_SetPosition(9, 0x31a0000, 0x3390000);
     }
     if (GameFlag_IsSet(0x241) == 0) {
         Actor_SetPosition(10, 0x2300000, 0x2c60000);
-        actor = (u8 *)Object_GetById(10);
+        actor = Object_GetById(10);
         facing = 0x1000;
-        *(u16 *)(actor + 6) = facing;
+        actor->facing = facing;
         Actor_SetPosition(11, 0x2400000, 0x2c60000);
     }
     if (GameFlag_IsSet(0x242) == 0) {
         Actor_SetPosition(15, 0x1270000, 0x2e80000);
-        actor = (u8 *)Object_GetById(15);
+        actor = Object_GetById(15);
         facing = 0xb000;
-        *(u16 *)(actor + 6) = facing;
+        actor->facing = facing;
     } else {
         u8 flags;
 
-        actor = (u8 *)Object_GetById(15);
+        actor = Object_GetById(15);
         flags = 4;
-        flags |= actor[89];
-        actor[89] = flags;
+        flags |= actor->collision_flags;
+        actor->collision_flags = flags;
     }
-    actor = (u8 *)Object_GetById(17);
+    actor = Object_GetById(17);
     if (actor != 0) {
         u8 flags = 4;
 
-        flags |= actor[89];
-        actor[89] = flags;
+        flags |= actor->collision_flags;
+        actor->collision_flags = flags;
     }
-    actor = (u8 *)Object_GetById(16);
+    actor = Object_GetById(16);
     if (actor != 0) {
         u8 flags = 4;
 
-        flags |= actor[89];
-        actor[89] = flags;
+        flags |= actor->collision_flags;
+        actor->collision_flags = flags;
     }
 }
 

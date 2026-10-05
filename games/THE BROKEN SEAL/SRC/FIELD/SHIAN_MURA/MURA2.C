@@ -286,7 +286,7 @@ void FieldScene_RunPrimarySequence(void)
         Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgShianNowMustGetWaterAgain);
         if (GameFlag_IsSet(FLAG_SHIAN_WATER_SPILLED) == 0) {
-            bump_step(1);
+            gEventWork->message++;
             Event_ShowMessage(18, 0);
             Object_GetById(18)->unknown_64 = 0;
             record = Object_GetById(18);
@@ -309,12 +309,12 @@ void FieldScene_RunPrimarySequence(void)
         leader = Object_GetById(ACTOR_PARTY_LEADER);
         record = Actor_Get(18);
         if (leader->x.fixed < record->x.fixed) {
-            Object_GetById(0)->unknown_5a &= ~1;
+            Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
             record = Object_GetById(18);
             Actor_WalkTo(ACTOR_PARTY_LEADER, ((record->x.fixed >> 20) << 4) - 8, 232);
             moved = 1;
         } else {
-            Object_GetById(0)->unknown_5a &= ~1;
+            Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
             record = Object_GetById(18);
             Actor_WalkTo(ACTOR_PARTY_LEADER, ((record->x.fixed >> 20) << 4) + 24, 232);
         }
@@ -368,7 +368,7 @@ void FieldScene_RunPrimarySequence(void)
     if (moved != 0) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
-        Object_GetById(0)->unknown_5a &= ~1;
+        Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
         Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -382,7 +382,7 @@ void FieldScene_RunPrimarySequence(void)
     }
     Actor_WalkToAndWait(18, 0x118, 232);
     GameFlag_Set(FLAG_SHIAN_WATER_SPILLED);
-    Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
+    Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventEnd();
 }
 
@@ -436,7 +436,7 @@ void ShianMura_RunNpcMeetScene(void)
         Engine_EventSetMessage((s32)MsgShianHooWhaaaHachaaa);
         Engine_EventShowMessage(14, 0);
         Engine_ActorRunRepeatedMotion(0, 2);
-        Object_GetById(0)->unknown_5a &= 254;
+        Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
         pos[0] = flag;
         pos[1] = flag;
         pos[2] = flag;
@@ -445,7 +445,7 @@ void ShianMura_RunNpcMeetScene(void)
         Engine_ActorSetAnimation(0, 2);
         Engine_ActorSetDestinationOffset(0, pos[0] / 0x10000, pos[2] / 0x10000);
         Engine_ActorWaitForMove(0);
-        Object_GetById(0)->unknown_5a |= 1;
+        Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
         Engine_EventWait(30);
         Engine_ActorRunRepeatedMotion(14, 2);
         params.count = 1;
@@ -696,7 +696,7 @@ s32 ShianMura_SetupScene(void)
     u32 n;
     s32 x;
 
-    gEventWork->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     BattleFx_SetQueuedSoundAndPlay(169);
     if (gGameState.entrance > 9) {
         Engine_GameFlagClear(0x12f);

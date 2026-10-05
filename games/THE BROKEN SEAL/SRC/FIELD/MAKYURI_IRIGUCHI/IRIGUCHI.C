@@ -40,7 +40,7 @@ void Engine_CameraMoveToActor();
 void Engine_ActorWalkToAndWait();
 void Engine_CameraWaitForMove();
 void Engine_EventEnd();
-s32 SceneActor_FaceLeaderWhileGrounded(u8 *object);
+s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);
 
 /* Actor 8's action tables in the overlay's data. */
 extern const u8 MakyuriIriguchi_Actor8Path1[];
@@ -234,7 +234,7 @@ void MakyuriIriguchi_OpenEntrance(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(8, 2);
     Battle_WaitMode0(20);
-    gEventWork->start_transition = 0x200;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
     game = (s32)&gGameState;
     /* FAKEMATCH: the do/while loads the game state's address ahead of the
@@ -312,7 +312,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
     else
         Makyuri_ClearPalette();
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     switch (gGameState.entrance) {
     case 1:
         if (!GameFlag_IsSet(0x872))
@@ -412,7 +412,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_EventBegin();
         Engine_MapRedraw();
         WaitFrames(1);
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Battle_WaitMode0(120);
@@ -461,7 +461,7 @@ void MakyuriIriguchi_CrossDoorway(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_ActorRunRepeatedMotion(3, 1);
-    Object_GetById(8)->unknown_5a &= 254;
+    Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Battle_WaitMode0(20);
     mask = 254;
     zero = 0;
@@ -475,7 +475,7 @@ void MakyuriIriguchi_CrossDoorway(void)
         ivan = Object_GetById(3);
         /* FAKEMATCH: or-ing a zero kept from before the loop leaves the
          * reference's unread zero in sl. */
-        ivan->unknown_5a = (ivan->unknown_5a & mask) | zero;
+        ivan->steering_flags = (ivan->steering_flags & mask) | zero;
         Engine_ActorWalkTo(3, 136, 184);
         Battle_WaitMode0(10);
         Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path1);

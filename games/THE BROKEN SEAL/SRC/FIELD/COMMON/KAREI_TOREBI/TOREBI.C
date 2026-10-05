@@ -213,7 +213,7 @@ void FieldScene_RunScene3ae_02000260(void)
             GameFlag_Set(0x8a6);
             goto L_020002c2;
         }
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessage(11, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKareiPassMessageDaughter);
@@ -293,7 +293,7 @@ void SceneDialogue_RunActor12Event(void)
             Engine_ActorSetAnimationAndWait(12, 3);
             Actor_WalkToAndWait(12, 88, 0x508);
             Actor_FaceDirection(12, 0x4000, 0);
-            bump_step(1);
+            gEventWork->message++;
             Event_ShowMessage(12, 0);
             Inventory_Discard(owner, slot);
             GameFlag_Set(0x8a7);
@@ -354,7 +354,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             Event_ShowMessageAndWait(8, 0, 10);
         } else {
-            bump_step(1);
+            gEventWork->message++;
             UiWork_PushValueSlot(six00, 5);
             Event_OpenMessage(8, 0);
             rec7 = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
@@ -385,7 +385,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                 UiWork_Finalize(rec7, 2);
                 Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
                 Engine_EventWait(10);
-                bump_step(1);
+                gEventWork->message++;
                 Audio_PlayCue(113);
                 Event_ShowMessage(8, 0);
                 goto L_02000660;
@@ -394,7 +394,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             UiWork_Finalize(rec7, 2);
             Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Engine_EventWait(10);
-            bump_step(3);
+            gEventWork->message += 3;
             Event_ShowMessage(8, 0);
             Engine_PartyGiveItem(235, 0);
             GameFlag_Set(0x8a5);
@@ -451,7 +451,7 @@ void FieldScene_RunScene3ae_020006c8(void)
                 goto L_020007be;
             }
             Engine_EventWait(10);
-            bump_step(1);
+            gEventWork->message++;
             Event_ShowMessage(11, 0);
             Engine_EventWait(10);
             Actor_FaceDirection(11, 0, 0);
@@ -624,13 +624,12 @@ void SceneActor_SetMode3AndFlagBit1(s32 no)
 void FieldScene_RunScene3aeSequenceA(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Battle_ResetEffectCounter();
     Actor_SetPosition(8, 0x1480000, 0x5900000);
-    /* Set the flag byte at +91 of record 8. */
-    Object_GetById(8)->unknown_5b = 1;
+    Object_GetById(8)->paused = 1;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
@@ -691,26 +690,26 @@ void FieldScene_RunScene3aeSequenceA(void)
      * arguments. */
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_EventWait(20);
     /* Clear the flag byte at +91 of record 8. */
-    Object_GetById(8)->unknown_5b = 0;
+    Object_GetById(8)->paused = 0;
     Engine_ActorEnableActionCallback(8, 2);
     record = Object_GetById(8);
     /* Store the integer part of the 16.16 fixed-point fields at +8 and +16
      * into the halfwords at +100 and +102. */
     {
-        s32 shown = *(s32 *)(record + 8) / 0x10000;
+        s32 shown = record->x.fixed / 0x10000;
 
-        *(u16 *)(record + 100) = shown;
+        record->unknown_64 = shown;
     }
     {
-        s32 shown = *(s32 *)(record + 16) / 0x10000;
+        s32 shown = record->z.fixed / 0x10000;
 
-        *(u16 *)(record + 102) = shown;
+        record->unknown_66 = shown;
     }
     Engine_EventEnd();
 }
@@ -755,14 +754,14 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_WalkByAndWait(10, 16, 0);
     Engine_ActorJump(10, 7, 0);
     Actor_WalkByAndWait(10, 24, 0);
-    Object_GetById(10)->unknown_5a &= ~1;
+    Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkBy(10, -16, 0);
     Audio_PlayCue(153);
     Actor_SetSpeed(13, 0x26666, 0x13333);
     Actor_WalkByAndWait(13, 16, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(10, 1);
-    Object_GetById(10)->unknown_5a |= 1;
+    Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_SetAttachedEffect(13, 0x102);
     Engine_ActorStartRepeatedMotion(13, 2);
     Audio_PlayCue(155);
@@ -829,10 +828,10 @@ void FieldScene_RunScene3aeSequenceB(void)
     Event_ShowMessage(16, 0);
     Engine_EventWait(10);
     Actor_ShowEmote(10, 0x102, 50);
-    Object_GetById(10)->unknown_5a &= ~1;
+    Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_WalkByAndWait(10, -8, 0);
-    Object_GetById(10)->unknown_5a |= 1;
+    Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(10, 2);
     Engine_EventWait(20);
@@ -842,10 +841,10 @@ void FieldScene_RunScene3aeSequenceB(void)
     Engine_EventWait(20);
     Event_ShowMessage(16, 0);
     Engine_EventWait(10);
-    Object_GetById(10)->unknown_5a &= ~1;
+    Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_WalkByAndWait(10, -16, 0);
-    Object_GetById(10)->unknown_5a |= 1;
+    Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(10, FACING_EAST, 0);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(10, 4);
@@ -857,7 +856,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Audio_PlayCue(133);
     Engine_ActorJump(16, 6, 0);
     Engine_ActorEnableActionCallback(16, KareiTorebi_ActorSixteenScript);
-    Object_GetById(10)->unknown_5a &= ~1;
+    Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorJump(10, 6, 0);
     Actor_WalkByAndWait(10, -12, 4);
     actor = Actor_Get(10);
@@ -868,7 +867,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     actor->sprite->rotation = 0xc000;
     Actor_WalkByAndWait(10, -12, 4);
     Actor_FaceDirection(10, FACING_SOUTH, 0);
-    Object_GetById(10)->unknown_5a |= 1;
+    Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
     Audio_PlayCue(159);
     Engine_EventWait(20);
     Actor_ShowEmote(11, 0x102, 50);

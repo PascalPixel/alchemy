@@ -41,12 +41,6 @@ s32 PartyInventory_HasSpace(void);
 void SceneState_CheckPositionWindow(void);
 void OverlayObject_InitObject22(s32, s32, s32, s32);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 void SceneState_CheckPositionWindow(void)
 {
     s32 v1;
@@ -136,7 +130,7 @@ void FieldScene_RunActor16Sequence(void)
     Event_ShowMessageAndWait(16, 0, 30);
     Event_OpenMessage(16, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessageAndWait(16, 0, 20);
     GameFlag_Set(0x300);
@@ -197,7 +191,7 @@ void FieldScene_RunActor18FlaggedSequence(void)
         Engine_PartyGiveItem(ITEM_BONE, 0);
         GameFlag_Set(0x85b);
     } else {
-        bump_step(1);
+        gEventWork->message++;
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(18, 3);
         Engine_EventWait(20);

@@ -82,22 +82,6 @@ void Script_WaitForEventTimeout(struct FieldActor *);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
-static inline void InitializeActorZero(void)
-{
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-}
-
-static inline void InitializeSelectedActor(s32 actorId)
-{
-    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
-}
-
-/* Selects a later line in the current dialogue. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 /* Place the marker at x, y with a priority and start its task. */
 void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 {
@@ -171,7 +155,7 @@ void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
 
         o->speed = v;
         o->acceleration = v >> 1;
-        o->unknown_5b = z;
+        o->paused = z;
         ObjectDispatch_InitFromTable6(o);
         Object_SetMode(o, 5);
         Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);
@@ -188,7 +172,7 @@ void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
 
         o->speed = v;
         o->acceleration = v >> 1;
-        o->unknown_5b = z;
+        o->paused = z;
         ObjectDispatch_InitFromTable6(o);
         Object_SetMode(o, 5);
         Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);

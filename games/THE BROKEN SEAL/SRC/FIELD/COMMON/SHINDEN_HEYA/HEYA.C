@@ -11,13 +11,6 @@
 extern const s32 ShindenHeya_PlacementSequenceB[];
 void ShindenHeya_SpawnOwnerEffect();
 
-static __inline__ void bump_step(void)
-{
-    struct EventWork *work = gEventWork;
-
-    work->message = (u16)(work->message + 1);
-}
-
 s32 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 
@@ -446,7 +439,7 @@ void FieldScene_RunScene378SequenceB(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventShowMessage(9, 0);
     } else {
-        bump_step();
+        gEventWork->message++;
 #if EDITION_INTERNATIONAL
         Call11(Engine_EventShowTwoMessagesAndWait, 2, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
 #else
@@ -477,7 +470,7 @@ void FieldScene_RunActorTenCountStep(void)
 /* Sanctum entry: record the arrival, fade in, then restore the room or run the entrance's scene. */
 s32 ShindenHeya_ApplyEntryState(void)
 {
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_ColorBufferApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_EventWait(1);
@@ -750,7 +743,7 @@ void FieldScene_RunScriptedSceneSequence(void)
         Actor_FaceActor(0xa, ACTOR_PARTY_LEADER, 0);
         Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
         Engine_CameraWaitForMove();
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         gEventWork->transition_frames = 0x40;
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
@@ -763,7 +756,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Engine_EventWait(1);
     Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
     Engine_CameraWaitForMove();
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     FieldScene_RunPairedActorChoreography();
@@ -1265,7 +1258,7 @@ void FieldScene_RunActorUpdateSequence(void)
 {
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     Call2(Engine_ActorSetAttachedEffect, 1, 0x102);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
@@ -1372,10 +1365,10 @@ void FieldScene_RunActorUpdateSequence(void)
     for (i = 0; i < 32; i++) {
         ShindenHeya_SpawnActorSpark(13);
         Engine_EventWait(4);
-        record = (u8 *)Object_GetById(13);
-        *(s32 *)(record + 24) += -0x28f;
-        record = (u8 *)Object_GetById(13);
-        *(s32 *)(record + 28) += -0x28f;
+        record = Object_GetById(13);
+        record->scale_x += -0x28f;
+        record = Object_GetById(13);
+        record->scale_y += -0x28f;
     }
     Audio_PlayCue(0x120);
     Actor_SetChildValue(13, 0);

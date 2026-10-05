@@ -150,18 +150,18 @@ void FieldScene_RunExtendedActorPresentation(void)
     Actor_WalkByAndWait(9, 32, 32);
     Actor_FaceDirection(9, FACING_SOUTH, 0);
     Engine_EventWait(20);
-    Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
-    Actor_Get(ACTOR_GERALD)->unknown_5a &= ~1;
-    Actor_Get(ACTOR_MIA)->unknown_5a &= ~1;
-    Actor_Get(ACTOR_IVAN)->unknown_5a &= ~1;
+    Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_MIA)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_IVAN)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkBy(ACTOR_PARTY_LEADER, 0, 16);
     Actor_WalkBy(ACTOR_GERALD, 0, 16);
     Actor_WalkBy(ACTOR_MIA, 0, 16);
     Actor_WalkByAndWait(ACTOR_IVAN, 0, 16);
-    Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
-    Actor_Get(ACTOR_GERALD)->unknown_5a |= 1;
-    Actor_Get(ACTOR_MIA)->unknown_5a |= 1;
-    Actor_Get(ACTOR_IVAN)->unknown_5a |= 1;
+    Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_GERALD)->steering_flags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_MIA)->steering_flags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_IVAN)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Engine_ActorSetAnimation(ACTOR_GERALD, ANIM_STAND);
     Engine_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -1353,7 +1353,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
     if (Engine_GameFlagIsSet(0x200)) {
         SceneEffect_SetupBlendByFlag201();
     } else {
-        gEventWork->start_transition = 0x204;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
         gEventWork->transition_frames = 24;
     }
     return 0;

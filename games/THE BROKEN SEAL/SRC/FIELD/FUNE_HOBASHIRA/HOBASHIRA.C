@@ -103,28 +103,28 @@ s32 Object_PlaceFromCameraOffset(struct Object *object)
  * object + 6 is the facing angle.  What Random16 samples is not
  * established here.
  */
-s32 SceneActor_SetFacingFromSample(u8 *object)
+s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
 {
     u32 sample = (u32)(Random16() << 6) >> 16;   /* bits 10..15 */
 
     if (sample == 6) {
         s32 value = 0xd000;
 
-        *(u16 *)(object + 6) = value;
+        object->facing = value;
     } else if (sample == 9) {
         s32 value = 0xb000;
 
-        *(u16 *)(object + 6) = value;
+        object->facing = value;
     }
 
     return 1;
 }
 
-void OverlayObject_Add160ToFields18And1c(u8 *o)
+void OverlayObject_Add160ToFields18And1c(struct FieldActor *o)
 {
-    if (*(s32 *)(o + 24) < 0x10000) {
-        *(s32 *)(o + 24) += 160;
-        *(s32 *)(o + 28) += 160;
+    if (o->scale_x < 0x10000) {
+        o->scale_x += 160;
+        o->scale_y += 160;
     }
 }
 
@@ -242,7 +242,7 @@ s32 FuneHobashira_ApplyEntryState(void)
     struct FieldActor *leader;
 
     Engine_GameFlagSet(0x144);
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if ((Engine_GameFlagIsSet(0x927) != 0 || Engine_GameFlagIsSet(0x928) != 0)
         && Engine_GameFlagIsSet(0x93e) == 0 && Engine_GameFlagIsSet(0x8a0) == 0) {
         FuneHobashira_SwayX = (u16)Random16();
@@ -342,7 +342,7 @@ void FieldScene_RunScene3b0_02000468(void)
 
 void FieldScene_RunScene3b0_020004b0(void)
 {
-    gEventWork->start_transition = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
@@ -388,7 +388,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
     event = &(*(struct FieldGlobals *)gMapWork).event;
-    (*event)->start_transition = 0x203;
+    (*event)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
@@ -446,7 +446,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorJump(8, 6, 40);
     Engine_ActorStartRepeatedMotion(8, 3);
     Engine_EventShowMessageAndWait(8, 0, 20);
-    (*event)->start_transition = 0x202;
+    (*event)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(11);
@@ -474,7 +474,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     OverlayObject_InitWithRandomFields(14);
     OverlayObject_InitWithRandomFields(15);
     Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
-    gEventWork->start_transition = 0x203;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(120);
@@ -554,24 +554,24 @@ void FieldScene_RunActorNinePresentationCycles(void)
 
 void OverlayObject_InitWithRandomFields(s32 a)
 {
-    u8 *obj;
+    struct FieldActor *obj;
     u32 x;
 
-    obj = (u8 *)Object_GetById(a);
+    obj = Object_GetById(a);
     Engine_ActorSetSpritePriority(a, 1);
-    obj[0x55] = 0;
-    *(u16 *)(obj + 0x64) = Random16() >> 15;
-    *(u16 *)(obj + 0x66) = Random16() >> 15;
+    obj->motion_flags = 0;
+    obj->unknown_64 = Random16() >> 15;
+    obj->unknown_66 = Random16() >> 15;
     x = Random16();
     x <<= 2;
     x >>= 16;
     x <<= 16;
     x += 0x60000;
-    *(s32 *)(obj + 0xc) = x;
+    obj->y.fixed = x;
     x = Random16();
-    *(s32 *)(obj + 0x4c) = ((x * 3 << 13) >> 16) - 0x3000;
-    *(s32 *)(obj + 0x18) = 0x14000;
-    *(s32 *)(obj + 0x1c) = 0x14000;
+    obj->rise_base_y = ((x * 3 << 13) >> 16) - 0x3000;
+    obj->scale_x = 0x14000;
+    obj->scale_y = 0x14000;
     Engine_ActorEnableActionCallback(a, FuneHobashira_DriftActions);
 }
 

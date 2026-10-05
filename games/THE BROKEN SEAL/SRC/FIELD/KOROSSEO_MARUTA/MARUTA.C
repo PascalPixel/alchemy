@@ -695,7 +695,7 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
             s32 yes = msg + 1;
             Engine_EventSetMessage(lines + yes);
             Engine_EventShowMessage(a0, 0);
-            work->start_transition = 0x200;
+            work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
             work->transition_frames = 15;
             Engine_EventCloseScreen();
             Engine_EventWaitForScreen();
@@ -1139,7 +1139,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     }
     Engine_TaskWait(1);
     Engine_CameraFollowActor(0, 0);
-    gEventWork->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplyTarget(0x10001, 1);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();

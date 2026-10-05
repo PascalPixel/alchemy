@@ -77,15 +77,6 @@ void FieldScene_ResetActor9AndDrawTiles();
 s32 UiWindow_CreateWithSideObject();
 void UiText_OpenMessageWindow();
 
-static __inline__ void bump_step(s32 amount)
-{
-
-    /* The scene step counter is at 0x1d8 of the shared scene work record. */
-    u8 *work = (u8 *)gEventWork;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
     /* FAKEMATCH: a direct call changes ConfigureAndPlaceActorOneHundredTwo from mov r0, #102 to lsl r1, r1, #14 (24/24 assembly lines). */
@@ -96,29 +87,6 @@ static __inline__ void PlaceActor_02001104(s32 actor, s32 x, s32 y)
 {
     /* FAKEMATCH: a direct call changes HideActorOneHundredTwo from mov r1, #1 to mov r2, #1 (24/23 assembly lines). */
     Engine_MapObjectSetPosition(actor, x, y);
-}
-
-static __inline__ void bump_step_02000528(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-static __inline__ void bump_step_02000568(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-static __inline__ void bump_step_02000728(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-static __inline__ void bump_step_02000980(s32 amount)
-{
-
-    u8 *work = (u8 *)gEventWork;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
 void SceneState_SetValues31_2_4(void);

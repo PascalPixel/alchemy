@@ -93,7 +93,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 {
     u8 *workspace = *(u8 **)(gWorkSlot + WORK_SLOT_STAGE * 4);
     u8 *shared;
-    u8 *record;
+    struct FieldActor *record;
     s32 flag;
     s32 x;
     s32 z;
@@ -103,9 +103,9 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
     flag = Engine_GameFlagIsSet(0x211);
 
     shared = (u8 *)gCell;
-    record = (u8 *)Object_GetById(*(s32 *)(shared + 500));
+    record = Object_GetById(*(s32 *)(shared + 500));
 
-    if (*(s32 *)(workspace + 232) < *(s32 *)(record + 8)) {
+    if (*(s32 *)(workspace + 232) < record->x.fixed) {
         x = *(s32 *)(workspace + 232) + 0xc0000;
     } else {
         x = *(s32 *)(workspace + 232) - 0xc0000;
@@ -119,10 +119,10 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
         cuep = (u16 *)(workspace + 226);
     }
 
-    waitp = (s16 *)(record + 100);
+    waitp = (s16 *)&record->unknown_64;
     *waitp = *cuep;
-    *(s32 *)(record + 52) = 0x4000;
-    *(s32 *)(record + 48) = 0x10000;
+    record->acceleration = 0x4000;
+    record->speed = 0x10000;
 
     Engine_ObjectSetPosition(record, x, 0, z);
     Engine_GameFlagSet(0x211);

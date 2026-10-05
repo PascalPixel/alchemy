@@ -108,8 +108,8 @@ struct FieldActor {
     u8 motion_flags;
     u8 unknown_56[3];
     u8 collision_flags;
-    u8 unknown_5a;
-    u8 unknown_5b;
+    u8 steering_flags;
+    u8 paused;
     u8 unknown_5c;
     u8 unknown_5d[5];
     /* Counts the frames of a rise while rise_enabled is set. */

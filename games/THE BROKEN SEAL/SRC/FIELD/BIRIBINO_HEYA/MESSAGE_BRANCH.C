@@ -33,13 +33,6 @@ void ScenePlacement_ClipToView(s32 placements);
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-/* The workspace pointer this overlay reaches through. */
-static __inline__ void bump_step(s32 amount)
-{
-
-    gEventWork->message += amount;
-}
-
 u8 *SceneData_GetPrimaryTable(void)
 {
     return BiribinoHeya_PrimaryTable;
@@ -155,7 +148,7 @@ void FieldScene_RunActor24Sequence(void)
     Engine_EventWait(10);
     Event_OpenMessage(24, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(24, 0);
     Actor_FaceDirection(24, 0x4000, 10);
@@ -175,7 +168,7 @@ void FieldScene_RunActor27Sequence(void)
     Engine_EventWait(10);
     Event_OpenMessage(27, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(27, 0);
     Actor_FaceDirection(27, 0x4000, 10);
@@ -305,7 +298,7 @@ s32 FieldScene_SetupActor27OnEntry(void)
     u8 *record;
     s32 bits;
 
-    *(s32 *)((u8 *)gEventWork + 448) = 521;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     actor = (u8 *)Object_GetById(27);
     /*
      * The stored zero is also the mask's starting value: -13 is built by

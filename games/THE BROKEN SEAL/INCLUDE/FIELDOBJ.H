@@ -118,8 +118,11 @@ struct FieldActor {
     u8 motion_flags;
     u8 unknown_56[3];
     u8 collision_flags;
-    u8 unknown_5a;
-    u8 unknown_5b;
+    /* Whether the actor turns to face the way it moves; a script clears
+       ACTOR_FACES_MOTION to walk an actor without turning it. */
+    u8 steering_flags;
+    /* While set, the motion pass skips the actor's script and movement. */
+    u8 paused;
     u8 unknown_5c;
     u8 unknown_5d[5];
     /* Counts the frames of a rise while rise_enabled is set. */
@@ -140,6 +143,8 @@ LAYOUT_OFFSET_GUARD(FieldActor_ScaleY, struct FieldActor, scale_y, 0x1c);
 LAYOUT_OFFSET_GUARD(FieldActor_PriorityFlags, struct FieldActor, priority_flags, 0x23);
 LAYOUT_OFFSET_GUARD(FieldActor_MotionFlags, struct FieldActor, motion_flags, 0x55);
 LAYOUT_OFFSET_GUARD(FieldActor_CollisionFlags, struct FieldActor, collision_flags, 0x59);
+LAYOUT_OFFSET_GUARD(FieldActor_SteeringFlags, struct FieldActor, steering_flags, 0x5a);
+LAYOUT_OFFSET_GUARD(FieldActor_Paused, struct FieldActor, paused, 0x5b);
 LAYOUT_OFFSET_GUARD(FieldActor_RiseEnabled, struct FieldActor, rise_enabled, 0x63);
 LAYOUT_OFFSET_GUARD(FieldActor_Bounce, struct FieldActor, bounce, 0x44);
 LAYOUT_OFFSET_GUARD(FieldActor_Gravity, struct FieldActor, gravity, 0x48);
@@ -170,6 +175,13 @@ enum ActorMotionFlag {
     ACTOR_FOLLOWS_TERRAIN = 0x01,
     /* Pulls a raised actor back to the ground. */
     ACTOR_FALLS = 0x02
+};
+
+/* An actor's steering flags. */
+enum ActorSteeringFlag {
+    /* Each frame the motion pass turns the actor toward its velocity, by at
+       most a sixteenth of a turn. */
+    ACTOR_FACES_MOTION = 0x01
 };
 
 #endif

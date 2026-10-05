@@ -165,15 +165,15 @@ void ConfigureSceneActor12(void)
 {
 
     s32 actor_slot = 15;
-    u8 *actor;
+    struct FieldActor *actor;
 
     Map_CopyCellAttributeRect(15, 20, 1, 1, actor_slot, 22);
     Map_CopyCellAttributeRect(17, 23, 1, 3, actor_slot, 23);
     actor = Object_GetById(12);
     if (actor != 0) {
         Engine_ActorSetSpriteFlags(actor, 0);
-        actor[0x55] = 0;
-        actor[0x23] = 2;
+        actor->motion_flags = 0;
+        actor->priority_flags = 2;
     }
 }
 
@@ -2360,7 +2360,7 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_WalkTo(12, 0x160, 0x168);
     Battle_WaitMode0(20);
     Audio_PlayCue(17);
-    gEventWork->start_transition = 0x203;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Engine_EventCloseScreen();
     Battle_WaitMode0(1);
     Battle_WaitMode0(210);

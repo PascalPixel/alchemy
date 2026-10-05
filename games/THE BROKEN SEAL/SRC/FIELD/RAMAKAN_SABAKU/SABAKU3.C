@@ -62,12 +62,12 @@ void RamakanSabaku_UpdateTravelDust(void)
         }
         Effect_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0, 0x880001, &params);
     } else {
-        phase = *(volatile u32 *)&gFrameCount & 7;
+        phase = gFrameCount & 7;
         if (phase != 0) {
             return;
         }
         /* FAKEMATCH: the reference reads the frame counter again and discards it */
-        *(volatile u32 *)&gFrameCount;
+        gFrameCount;
         params.scale_x = 0xcccc;
         params.scale_y = 0xcccc;
         params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
@@ -82,7 +82,7 @@ void RamakanSabaku_FaceNearestActor(void)
 {
     struct FieldActor *target;
     struct FieldActor *actor;
-    u8 *record;
+    struct FieldActor *record;
     s32 id;
     s32 best;
     s32 min;
@@ -116,7 +116,7 @@ void RamakanSabaku_FaceNearestActor(void)
         }
     }
     Engine_ActorSetAnimation(0, 1);
-    Object_GetById(0)->unknown_5a &= 254;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorFaceActor(0, best, 0);
     Engine_EventWait(20);
     Actor_SetAttachedEffect(0, 0x102);
@@ -125,23 +125,23 @@ void RamakanSabaku_FaceNearestActor(void)
     Actor_SetAttachedEffect(0, 0x101);
     actor = Actor_Get(0);
     record = Object_GetById(0);
-    actor->facing = (*(u16 *)(record + 6) + 0x8000) & -0x1000;
+    actor->facing = (record->facing + 0x8000) & -0x1000;
     Engine_ActorSetAnimation(0, 5);
     Object_SetActionById(0, 24);
     Actor_SetSpeed(0, 0x1999, 0xccc);
     record = Object_GetById(0);
-    *(s32 *)(record + 108) = (s32)RamakanSabaku_EmitSandEffect;
+    *(s32 *)((u8 *)record + 108) = (s32)RamakanSabaku_EmitSandEffect;
     record = Actor_Get(best);
     if (record != 0) {
-        Engine_ActorSetDestination(0, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(0, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_EventWait(60);
     Actor_ShowEmote(best, 0x104, 0);
     Engine_EventWait(60);
     Actor_SetAttachedEffect(0, 0x100);
-    Object_GetById(0)->unknown_5a |= 1;
+    Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
     record = Object_GetById(0);
-    *(s32 *)(record + 108) = 0;
+    *(s32 *)((u8 *)record + 108) = 0;
     BattleFx_SetWeightedResult(53, 4);
 }
 
@@ -245,7 +245,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
             Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
             Engine_EventWait(40);
-            Object_GetById(0)->unknown_5a &= 254;
+            Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
             rect[0] = rec8;
             rect[1] = rec8;
             rect[2] = rec8;
@@ -256,7 +256,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000, rect[2] / 0x10000);
             Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
             Engine_EventWait(2);
-            Object_GetById(0)->unknown_5a |= 1;
+            Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_EventWait(30);
             Audio_PlayCue(148);
             Engine_ActorRunRepeatedMotion(8, 2);
@@ -282,7 +282,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
     gGameState.hazard_damage = 0x119;
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku4) {
     } else {
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         RamakanSabaku_ClaimSandEffectVram();
         Engine_TaskAddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
         if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {

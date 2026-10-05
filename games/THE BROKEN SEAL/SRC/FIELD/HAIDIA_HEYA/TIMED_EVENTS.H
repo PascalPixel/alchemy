@@ -78,10 +78,4 @@ s32 Object_SetActionCallbackAndRefreshById();
 void Scene_UpdateTimedActor(void);
 void Scene_GiveFarewellHerb(void);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 #endif

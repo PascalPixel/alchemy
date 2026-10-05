@@ -423,7 +423,7 @@ void FieldScene_RunGuardedStep9AA(void)
 
 void SceneState_ApplyRectAndMarkActor16(void)
 {
-    u8 *rec = Object_GetById(16);
+    struct FieldActor *rec = Object_GetById(16);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -435,7 +435,7 @@ void SceneState_ApplyRectAndMarkActor16(void)
     if (rec != 0) {
         /* The rec is reloaded with the same selector before this store. */
         Object_GetById(16)->motion_flags = 0;
-        rec[35] = 1;
+        rec->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x200);
@@ -443,7 +443,7 @@ void SceneState_ApplyRectAndMarkActor16(void)
 
 void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 {
-    u8 *rec = Object_GetById(17);
+    struct FieldActor *rec = Object_GetById(17);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -455,7 +455,7 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
     if (rec != 0) {
         /* The record is reloaded with the same selector before this store. */
         Object_GetById(17)->motion_flags = 0;
-        rec[35] = 1;
+        rec->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x201);
@@ -463,7 +463,7 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 
 void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 {
-    u8 *record = Object_GetById(18);
+    struct FieldActor *record = Object_GetById(18);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -475,7 +475,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
     if (record != 0) {
         /* The record is reloaded with the same selector before this store. */
         Object_GetById(18)->motion_flags = 0;
-        record[35] = 1;
+        record->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x202);
@@ -483,7 +483,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 
 void SceneState_ApplyRectAndSetupActor19(void)
 {
-    u8 *p = Object_GetById(19);
+    struct FieldActor *p = Object_GetById(19);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -496,7 +496,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
         Engine_ActorSetSpriteFlags(p, 0);
         /* The record is reloaded with the same selector before this store. */
         Object_GetById(19)->motion_flags = 0;
-        p[35] = 1;
+        p->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x203);
@@ -504,7 +504,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
 
 void SceneActor_SetupSlotTwenty(void)
 {
-    u8 *rec = Object_GetById(20);
+    struct FieldActor *rec = Object_GetById(20);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -517,7 +517,7 @@ void SceneActor_SetupSlotTwenty(void)
         Engine_ActorSetSpriteFlags(rec, 0);
         /* The rec is reloaded with the same selector before this store. */
         Object_GetById(20)->motion_flags = 0;
-        rec[35] = 1;
+        rec->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x204);
@@ -525,7 +525,7 @@ void SceneActor_SetupSlotTwenty(void)
 
 void SceneActor_MarkSlot21AndSetFlag205(void)
 {
-    u8 *record = Object_GetById(21);
+    struct FieldActor *record = Object_GetById(21);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -538,7 +538,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
         Engine_ActorSetSpriteFlags(record, 0);
         /* The record is reloaded with the same selector before this store. */
         Object_GetById(21)->motion_flags = 0;
-        record[35] = 1;
+        record->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x205);
@@ -703,11 +703,11 @@ s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
     s32 i;
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 flag;
     s32 index;
 
-    flag = Object_GetById(10)->unknown_5b;
+    flag = Object_GetById(10)->paused;
     if (flag == 0) {
         if (++KuupuappuDou_ScheduleTimer > 190) {
             KuupuappuDou_ScheduleTimer = 0;
@@ -715,20 +715,20 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         index = KuupuappuDou_ScheduleIndex;
         if (KuupuappuDou_ScheduleFrames[index] == KuupuappuDou_ScheduleTimer) {
             rec7 = Actor_Get((index + 11));
-            *(s32 *)(rec7 + 72) = 0xa3d;
+            rec7->gravity = 0xa3d;
             if (++KuupuappuDou_ScheduleIndex > 3) {
                 KuupuappuDou_ScheduleIndex = 0;
             }
         }
         for (i = 0; i <= 3; i++) {
             rec7 = Actor_Get((i + 11));
-            if (*(s32 *)(rec7 + 40) >= 0) {
-                if (*(s32 *)(rec7 + 12) <= 0xffff) {
+            if (rec7->velocity_y >= 0) {
+                if (rec7->y.fixed <= 0xffff) {
                     KuupuappuDou_SpawnPuffs();
-                    *(s32 *)(rec7 + 12) = 0xff0000;
-                    *(s32 *)(rec7 + 72) = 0;
-                    *(s32 *)(rec7 + 40) = 0;
-                    rec7[91] = 0;
+                    rec7->y.fixed = 0xff0000;
+                    rec7->gravity = 0;
+                    rec7->velocity_y = 0;
+                    rec7->paused = 0;
                     Audio_PlayCue(106);
                 }
             }
@@ -752,42 +752,42 @@ void FieldScene_RunScene3a7SequenceD(void)
 {
 
     s32 i;
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 record;
     s32 *selected;
 
-    rec7 = (u8 *)Object_GetById(10);
-    if (rec7[91] == 0) {
+    rec7 = Object_GetById(10);
+    if (rec7->paused == 0) {
         if ((++KuupuappuDou_TickCounter & 63) == 0) {
             selected = &KuupuappuDou_TickValue;
             record = Engine_RandomNext();
             record = Math_RemainderUnsigned(record, 6);
             *selected = record;
             rec7 = Object_GetById((record + 10));
-            *(s32 *)(rec7 + 72) = 0xa3d;
+            rec7->gravity = 0xa3d;
         }
         for (i = 0; i <= 5; i++) {
             rec7 = Object_GetById((i + 10));
             record = Engine_GameFlagIsSet((i + 0x200));
             if (record != 0) {
-                if (*(s32 *)(rec7 + 40) <= 0) {
-                    if (*(s32 *)(rec7 + 12) > 0x20ffff) {
+                if (rec7->velocity_y <= 0) {
+                    if (rec7->y.fixed > 0x20ffff) {
                         continue;
                     }
                 }
-                *(s32 *)(rec7 + 12) = 0xff0000;
-                *(s32 *)(rec7 + 72) = 0;
-                *(s32 *)(rec7 + 40) = 0;
+                rec7->y.fixed = 0xff0000;
+                rec7->gravity = 0;
+                rec7->velocity_y = 0;
                 Engine_AudioPlayCue(106);
             } else {
-                if (*(s32 *)(rec7 + 40) <= 0) {
-                    if (*(s32 *)(rec7 + 12) > 0xffff) {
+                if (rec7->velocity_y <= 0) {
+                    if (rec7->y.fixed > 0xffff) {
                         continue;
                     }
                 }
-                *(s32 *)(rec7 + 72) = record;
-                *(s32 *)(rec7 + 40) = record;
-                *(s32 *)(rec7 + 12) = 0xff0000;
+                rec7->gravity = record;
+                rec7->velocity_y = record;
+                rec7->y.fixed = 0xff0000;
                 Engine_AudioPlayCue(106);
             }
         }

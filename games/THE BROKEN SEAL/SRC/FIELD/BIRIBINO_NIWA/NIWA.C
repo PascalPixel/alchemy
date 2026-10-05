@@ -222,10 +222,10 @@ void BiribinoNiwa_RunGardenEvent(void)
         Engine_EventShowMessageAndWait(11, 0, 20);
         Call3(Engine_ActorFaceDirection, 11, 0xf000, 0);
         Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-        Object_GetById(12)->unknown_5a &= 0xfe;
+        Object_GetById(12)->steering_flags &= ~ACTOR_FACES_MOTION;
         Call3(Engine_ActorWalkToAndWait, 12, 0x15a, 0x107);
         Engine_EventWait(1);
-        Object_GetById(12)->unknown_5a |= 1;
+        Object_GetById(12)->steering_flags |= ACTOR_FACES_MOTION;
         Call3(Engine_ActorSetSpeed, 11, 0x9999, 0x4ccc);
         Call3(Engine_ActorWalkToAndWait, 11, 0x148, 0x107);
         Call3(Engine_ActorWalkToAndWait, 11, 0x148, 252);
@@ -276,7 +276,7 @@ s32 Scene_Initialize(void)
     u8 *fp;
     s32 zero;
 
-    work->start_transition = 256;            /* 128 << 1 */
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);            /* 128 << 1 */
 
     ent = (struct SceneEntity *)Object_GetById(8);
     fp = (u8 *)ent + 35;
@@ -419,7 +419,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_ActorSetPosition(11, 0, 0);
     Engine_ActorWaitForMove(0);
     Engine_ActorSetPosition(0, 0, 0);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(10);

@@ -2,6 +2,7 @@
 #include "YAMA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_EFFECT.H"
 #include "CALL.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
@@ -17,7 +18,6 @@ void Engine_ActorSetSpriteFlags();
 void Engine_ActorSetChildValue();
 void Engine_ActorSetAnimation();
 void Engine_MapCopyCellAttributes();
-void SceneState_StoreParamsAndInstallTask();
 void Engine_ObjectSetTargetAndCallback();
 void SceneActor_ClearCollisionFlagAndPlaceMarker();
 void SceneState_ForwardByRuntimeSelector();
@@ -145,7 +145,7 @@ void ArutinYama_ApplyEntryState(void)
             actor = Object_GetById(10);
             actor->facing = opened;
             Engine_ActorSetAnimation(10, 3);
-            SceneState_StoreParamsAndInstallTask(0x820000, 0, 0xa80000, 0);
+            ArutinYama_StartLeafGust(0x820000, 0, 0xa80000, 0);
             return;
         }
         if (Engine_GameFlagIsSet(0x904) == 0) {
@@ -204,7 +204,7 @@ void FieldScene_RunScene3a4_02002310(void)
             if (GameFlag_IsSet(0x8fe) == 0) {
                 Actor_SetChildValue(9, 2);
                 Engine_ActorSetAnimation(9, 3);
-                SceneState_StoreParamsAndInstallTask(0xee0000, 0, 0x1a20000, 0x8000);
+                ArutinYama_StartLeafGust(0xee0000, 0, 0x1a20000, 0x8000);
             }
         }
     }
@@ -256,7 +256,7 @@ void FieldScene_RunScene3a4_02002490(void)
         if (GameFlag_IsSet(0x907) == 0) {
             Actor_SetChildValue(10, 2);
             Engine_ActorSetAnimation(10, 3);
-            SceneState_StoreParamsAndInstallTask(0x2ec0000, 0x80000, 0x1180000, 0x8000);
+            ArutinYama_StartLeafGust(0x2ec0000, 0x80000, 0x1180000, 0x8000);
         }
     }
     SceneActor_ClearCollisionFlagAndPlaceMarker(9);
@@ -284,7 +284,7 @@ void FieldScene_RunScene3a4_020025c0(void)
     extern u8 ArutinYama_RiseTimer[];
 
     u32 i;
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     if (gGameState.entrance == 2) {
@@ -298,9 +298,9 @@ void FieldScene_RunScene3a4_020025c0(void)
         Engine_ActorSetAnimation(9, 5);
         Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
         {
-            u8 flags = rec7[35] | 2;
+            u8 flags = rec7->priority_flags | 2;
 
-            rec7[35] = flags;
+            rec7->priority_flags = flags;
         }
     }
     if (GameFlag_IsSet(0x907) != 0) {
@@ -453,173 +453,126 @@ void FieldScene_RunScene3a4_020029dc(void)
     }
 }
 
-/*
- * Clear the record byte at +0x55, then rewrite the handle flags at +9 as
- * (flags & ~0x0c) | 0x04 -- the mask is built from the zero already in v,
- * not spelled as a constant. The rate address is held in a local and
- * stored to both +24 and +28. The 50-byte owner includes its one pool
- * word.
- */
-void SceneActor_SetMode3AndRate4ccc(u8 *rec)
+/* A new leaf floats free of the ground at three tenths of full size. */
+void ArutinYama_InitLeaf(struct FieldActor *leaf)
 {
-    extern u32 Data_03001e40;
-
-    u8 *p = rec + 0x55;
-    s32 v = 0;
-    u8 *h;
-
-    *p = v;
-    h = *(u8 **)(rec + 80);
-    v -= 13;
-    v &= h[9];
-    v |= 4;
-    h[9] = (u8)v;
-    ObjectGroup_SetChildValue(rec, 3);
-    Engine_ActorSetSpriteFlags(rec, 0);
-    {
-        s32 rate = 0x4ccc;
-
-        *(s32 *)(rec + 24) = rate;
-        *(s32 *)(rec + 28) = rate;
-    }
+    leaf->motion_flags = 0;
+    leaf->sprite->priority = 1;
+    ObjectGroup_SetChildValue(leaf, 3);
+    Engine_ActorSetSpriteFlags(leaf, 0);
+    leaf->scale_x = 0x4ccc;
+    leaf->scale_y = 0x4ccc;
 }
 
 /* A drifting leaf: blown along the wind with a random wobble while its
  * timer runs, shrinking and settling once it is low, flickering to palette
  * 7 at random; released when its lifetime ends. */
-void ArutinYama_UpdateDriftingLeaf(struct FieldActor *object)
+void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 {
+    struct FieldActor *leaf = &object->actor;
+
     switch (ArutinYama_LeafMode) {
     case 0:
-        object->x.fixed += ((*(s16 *)&(object)->unknown_64) << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+        leaf->x.fixed += (*(s16 *)&leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
         break;
     case 0x8000:
-        object->x.fixed -= ((*(s16 *)&(object)->unknown_64) << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+        leaf->x.fixed -= (*(s16 *)&leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
         break;
     }
-    if ((*(s16 *)&(object)->unknown_64) <= 3) {
+    if (*(s16 *)&leaf->unknown_64 <= 3) {
         switch (ArutinYama_LeafMode) {
         case 0:
-            object->x.fixed += 0x8000;
+            leaf->x.fixed += 0x8000;
             break;
         case 0x8000:
-            object->x.fixed -= 0x8000;
+            leaf->x.fixed -= 0x8000;
             break;
         }
-        object->scale_x += 0x1999;
-        object->scale_y -= 0xccc;
+        leaf->scale_x += 0x1999;
+        leaf->scale_y -= 0xccc;
     } else {
-        object->z.fixed += 0x13333;
-        object->scale_x += 0x7ae;
-        object->scale_y += 0x7ae;
+        leaf->z.fixed += 0x13333;
+        leaf->scale_x += 0x7ae;
+        leaf->scale_y += 0x7ae;
     }
-    if ((u32)((*(s16 *)&(object)->unknown_64) * Engine_RandomNext()) >> 16 == 0)
-        ObjectGroup_SetChildValue(object, 7);
-    if ((*(s16 *)&(object)->unknown_64) != 0)
-        (*(s16 *)&(object)->unknown_64) -= 2;
+    if ((u32)(*(s16 *)&leaf->unknown_64 * Engine_RandomNext()) >> 16 == 0)
+        ObjectGroup_SetChildValue(leaf, 7);
+    if (*(s16 *)&leaf->unknown_64 != 0)
+        *(s16 *)&leaf->unknown_64 -= 2;
     else
-        (*(s16 *)&(object)->unknown_64) = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
-    if (--*(s32 *)object->unknown_68 == 0)
-        Engine_ObjectDispatchRelease(object);
+        *(s16 *)&leaf->unknown_64 = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
+    if (--object->effect.countdown == 0)
+        Engine_ObjectDispatchRelease(leaf);
 }
 
-void SceneEffect_SpawnObject222(void)
+/* Every fourth frame, a leaf leaves the origin the gust started from. */
+void ArutinYama_SpawnLeaf(void)
 {
-    extern s32 Data_03001e40;
+    union FieldObject *leaf;
 
-    u8 *obj;
-
-    if ((Data_03001e40 & 3) != 0) {
+    if ((gFrameCount & 3) != 0)
         return;
-    }
-    obj = (u8 *)Engine_ObjectCreate(222, ArutinYama_LeafOrigin[0], ArutinYama_LeafOrigin[1], ArutinYama_LeafOrigin[2]);
-    if (obj == 0) {
+    leaf = (union FieldObject *)Engine_ObjectCreate(222, ArutinYama_LeafOrigin[0], ArutinYama_LeafOrigin[1], ArutinYama_LeafOrigin[2]);
+    if (leaf == NULL)
         return;
-    }
-    {
-        u16 *p = (u16 *)(obj + 100);
-        u16 v = 30;
-        *p = v;
-    }
-    {
-        u16 *q = (u16 *)(obj + 102);
-        u16 w = 1;
-        *q = w;
-    }
-    *(s32 *)(obj + 104) = 20;
-    SceneActor_SetMode3AndRate4ccc(obj);
-    *(s32 *)(obj + 108) = (s32)ArutinYama_UpdateDriftingLeaf;
-    Object_SetMode(obj, 1);
+    leaf->actor.unknown_64 = 30;
+    leaf->actor.unknown_66 = 1;
+    leaf->effect.countdown = 20;
+    ArutinYama_InitLeaf(&leaf->actor);
+    leaf->effect.update = ArutinYama_UpdateDriftingLeaf;
+    Object_SetMode(&leaf->actor, 1);
 }
 
-void SceneState_StoreParamsAndInstallTask(s32 v0, s32 v1, s32 v2, s32 v3)
+/* Starts a gust of leaves from a point; the wind carries them along x
+   for facing 0 and back along it for facing 0x8000. */
+void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
 {
-    ArutinYama_LeafOrigin[0] = v0;
-    ArutinYama_LeafOrigin[1] = v1;
-    ArutinYama_LeafOrigin[2] = v2;
-    ArutinYama_LeafMode = v3;
+    ArutinYama_LeafOrigin[0] = x;
+    ArutinYama_LeafOrigin[1] = y;
+    ArutinYama_LeafOrigin[2] = z;
+    ArutinYama_LeafMode = facing;
 
     BattleFx_SetQueuedSoundAndPlay(170);
-    Engine_TaskAddCallback(SceneEffect_SpawnObject222, 0xc80);
+    Engine_TaskAddCallback(ArutinYama_SpawnLeaf, 0xc80);
 }
 
 void FieldScene_RunScene3a4SequenceG(void)
 {
-    extern u8 ArutinYama_RiseTimer[];
+    struct FieldActor *spark;
+    s32 scale;
+    volatile u32 *frame = &gFrameCount;
 
-    u32 i;
-    u8 *rec7;
-    s32 record;
-    s32 value;
-    s32 base6_3001e40;
-
-    base6_3001e40 = (u32)&gFrameCount;
-    if ((u32)(*(volatile s32 *)base6_3001e40) % 3 == 0) {
-        value = Engine_RandomNext();
-        rec7 = Value4(Engine_ObjectCreate, 200, ((((u32)(((value << 1) + value) << 4) >> 16) << 16) + 0x2fd0000), -0x400000, 0x2600000);
-        if ((s32)rec7 != 0) {
-            if ((u32)(*(volatile s32 *)base6_3001e40) % 9 == 0) {
-                {
-                    s32 v2 = Engine_RandomNext();
-                    if (((u32)(v2 << 1) >> 16) != 0) {
-                        Engine_AudioPlayCue(145);
-                    } else {
-                        Engine_AudioPlayCue(144);
-                    }
-                }
+    if (*frame % 3 == 0) {
+        spark = (struct FieldActor *)Value4(Engine_ObjectCreate, 200, (((u32)(Engine_RandomNext() * 48) >> 16) << 16) + 0x2fd0000, -0x400000, 0x2600000);
+        if (spark != NULL) {
+            if (*frame % 9 == 0) {
+                if ((u32)(Engine_RandomNext() << 1) >> 16 != 0)
+                    Engine_AudioPlayCue(145);
+                else
+                    Engine_AudioPlayCue(144);
             }
-            rec7[85] = 0;
-            {
-                s32 v3 = Engine_RandomNext();
-                s32 tmp2824 = (((u32)(v3 << 15) >> 16) + 0x4ccc);
-                *(s32 *)(rec7 + 72) = 0x6666;
-                *(s32 *)((s32)rec7 + 28) = tmp2824;
-                *(s32 *)((s32)rec7 + 24) = tmp2824;
-            }
-            rec7[97] = 1;
-            Engine_ActorSetSpriteFlags((s32)rec7, 0);
-            rec7[35] &= 254;
-            {
-                u8 *p80 = *(u8 **)(rec7 + 80);
-                s32 mask9 = -13;
-                p80[9] = (mask9 & p80[9]) | 4;
-            }
-            Object_SetMode((s32)rec7, 1);
-            Engine_ObjectSetScript((s32)rec7, ArutinYama_SparkScript);
-            value = Engine_RandomNext();
-            *(s32 *)(rec7 + 36) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
-            *(s32 *)(rec7 + 40) = 0x80000;
-            value = Engine_RandomNext();
-            *(s32 *)(rec7 + 44) = (((u32)(((value << 1) + value) << 9) >> 16) + -0x300);
+            spark->motion_flags = 0;
+            scale = ((u32)(Engine_RandomNext() << 15) >> 16) + 0x4ccc;
+            spark->gravity = 0x6666;
+            spark->scale_y = scale;
+            spark->scale_x = scale;
+            spark->unknown_5d[4] = 1;
+            Engine_ActorSetSpriteFlags(spark, 0);
+            spark->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+            spark->sprite->priority = 1;
+            Object_SetMode(spark, 1);
+            Engine_ObjectSetScript(spark, (const s32 *)ArutinYama_SparkScript);
+            spark->velocity_x = (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16;
+            spark->velocity_y = 0x80000;
+            spark->velocity_z = ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300;
         }
     }
 }
 
 void SceneState_ForwardByRuntimeSelector(s32 arg)
 {
-    extern s32 Data_03001e40;
 
-    s32 sel = Data_03001e40 & 7;
+    s32 sel = gFrameCount & 7;
 
     if (sel == 0) {
         ObjectGroup_SetChildValue(arg, 2);
@@ -779,9 +732,8 @@ void FieldScene_RunLateAuxiliarySequence(void)
  */
 void SceneActor_SetActor8ModeByCounterBit(void)
 {
-    extern u32 Data_03001e40;
 
-    if (((Data_03001e40 >> 1) & 1) != 0) {
+    if (((gFrameCount >> 1) & 1) != 0) {
         Engine_ActorSetChildValue(8, 7);
     } else {
         Engine_ActorSetChildValue(8, 6);
@@ -930,7 +882,6 @@ void ArutinYama_RequestPsynergy(void)
  */
 void SceneActor_SetActor12ModeByActorZeroHeight(void)
 {
-    extern u32 Data_03001e40;
 
     if (Object_GetById(0)->y.fixed > 0x00300000) {
         {
@@ -948,12 +899,12 @@ void SceneActor_SetActor12ModeByActorZeroHeight(void)
 
 void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
 {
-    u8 *record;
+    struct FieldActor *record;
 
     record = Object_GetById(no);
-    record[89] &= 0xfe;
+    record->collision_flags &= 0xfe;
 
-    SetMapCellCollision(0, *(s32 *)(record + 8), *(s32 *)(record + 16), 255);
+    SetMapCellCollision(0, record->x.fixed, record->z.fixed, 255);
 }
 
 /* Settles the pushed object on the centre of its cell, then lifts the leader
@@ -1186,7 +1137,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
     object->speed = 0x20000;
     object->acceleration = 0xccc;
     zero.v = 0;
-    object->unknown_5b = zero.v;
+    object->paused = zero.v;
     object->unknown_64 = object->y.fixed / 0x10000;
     object->unknown_66 = 0;
     pos[0].fixed = object->x.fixed;

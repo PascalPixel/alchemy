@@ -39,7 +39,6 @@ extern u8 MsgFieldFlippedSwitch[];
 
 void SceneState_SetValue14Mode23(void)
 {
-    extern s32 Data_03001e40;
 
     BattleFx_SetPhaseRequest(0xE, 0x17);
 }
@@ -82,30 +81,21 @@ s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst)
 }
 
 /*
- * Per-frame integrator for one actor record in resource_3a4. Advances the
- * position pair at +8 and +12, advances +24 and +28 by one shared velocity,
- * damps that velocity, and returns 0.
- *
- * The damping subtracts +72 from the value of +40 already held in a register,
- * not from a fresh load; v28 and v2c carry those earlier reads and must stay
- * locals rather than become repeated loads.
+ * Moves an actor by its velocity along x and y, grows it by its z velocity
+ * on both scale axes and pulls its y velocity down by its gravity.
  */
-s32 OverlayObject_IntegrateAndDamp(u8 *p)
+s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor)
 {
-    s32 v28;
-    s32 v2c;
+    s32 rise;
+    s32 growth;
 
-    *(s32 *)(p + 8) = *(s32 *)(p + 8) + *(s32 *)(p + 36);
-
-    v28 = *(s32 *)(p + 40);
-    *(s32 *)(p + 12) = *(s32 *)(p + 12) + v28;
-
-    v2c = *(s32 *)(p + 44);
-    *(s32 *)(p + 24) = *(s32 *)(p + 24) + v2c;
-    *(s32 *)(p + 28) = *(s32 *)(p + 28) + v2c;
-
-    *(s32 *)(p + 40) = v28 - *(s32 *)(p + 72);
-
+    actor->x.fixed += actor->velocity_x;
+    rise = actor->velocity_y;
+    actor->y.fixed += rise;
+    growth = actor->velocity_z;
+    actor->scale_x += growth;
+    actor->scale_y += growth;
+    actor->velocity_y = rise - actor->gravity;
     return 0;
 }
 
@@ -309,7 +299,6 @@ void SceneActor_UpdateSlot10ByTileX(void)
  */
 void ActorPresentation_SetCellAndLowerActorEight(void)
 {
-    extern u32 Data_03001e40;
 
     s32 *p;
     s32 s0;
@@ -329,7 +318,6 @@ void ActorPresentation_SetCellAndLowerActorEight(void)
 
 void SceneState_ApplyRectAndSetActor9Byte55(void)
 {
-    extern s32 Data_03001e40;
 
     s32 *p;
     s32 s0;
@@ -381,7 +369,6 @@ void SceneActor_RaiseSlot9StepB(void)
 
 void SceneState_ApplyRectAndLowerActor9(void)
 {
-    extern s32 Data_03001e40;
 
     s32 *rec;
     s32 s0;
@@ -419,7 +406,6 @@ void SceneActor_RaiseSlot11AndSetFlag201(void)
 
 void SceneActor_AdjustSlot12AndSetFlag204(void)
 {
-    extern s32 Data_03001e40;
 
     s32 *p;
     s32 s0;
@@ -681,14 +667,12 @@ void FieldScene_RunScene3a4SequenceD(void)
 
 void SceneActor_SetActor10Byte23To3(void)
 {
-    extern u32 Data_03001e40;
 
     Object_GetById(10)->priority_flags = 3;
 }
 
 void SceneActor_SetActor10Byte23To1(void)
 {
-    extern u32 Data_03001e40;
 
     Object_GetById(10)->priority_flags = 1;
 }
@@ -705,7 +689,7 @@ void FieldScene_RunScene3a4_02000c9c(void)
     Audio_PlayCue(185);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-    Object_GetById(10)->unknown_5a &= 254;
+    Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 0x190, 0x1a8);
     Actor_SetDestination(10, 0x198, 0x1a8);

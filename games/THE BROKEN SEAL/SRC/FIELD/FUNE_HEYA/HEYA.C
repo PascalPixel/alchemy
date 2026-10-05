@@ -178,14 +178,14 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0) {
             Object_SetMode(obj, 1);
             obj->rise_counter = 0;
-            if (leader->unknown_5b == 0) {
+            if (leader->paused == 0) {
                 obj->rise_enabled = 1;
             }
             walker->step++;
         }
         break;
     case 7:
-        if (leader->unknown_5b == 0) {
+        if (leader->paused == 0) {
             Object_SetMode(obj, 3);
             obj->rise_enabled = 2;
         }
@@ -199,7 +199,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         Call4(Engine_ObjectSetPosition, (s32)obj, 0x1e00000, 0x200000, 0x2580000);
         walker->countdown = 60;
         walker->step++;
-        if (leader->unknown_5b == 0) {
+        if (leader->paused == 0) {
             obj->rise_enabled = 3;
         }
         break;
@@ -519,7 +519,7 @@ void FieldScene_RunScene3b1_020007f8(void)
             Event_ShowMessage(8, 0);
             goto L_0200088e;
         }
-        bump_step(2);
+        gEventWork->message += 2;
         Event_ShowMessage(8, 0);
         Actor_FaceDirection(8, 0x3000, 0);
     } else {
@@ -701,7 +701,7 @@ void FieldScene_RunScene3b1SequenceA(void)
             }
             GameFlag_Set(0x930);
         } else {
-            bump_step(1);
+            gEventWork->message++;
             FieldScene_RunStepThen10(12);
         }
     }
@@ -757,7 +757,7 @@ void FieldScene_RunScene3b1SequenceB(void)
             }
             GameFlag_Set(0x92d);
         } else {
-            bump_step(1);
+            gEventWork->message++;
             FieldScene_RunStepThen10(9);
         }
     }

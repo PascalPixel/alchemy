@@ -356,10 +356,10 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_ActorRunRepeatedMotion(8, 2);
             FieldScene_CallPairWith10(8);
             Engine_ActorSetSpeed(8, 0x10000, 0x8000);
-            Object_GetById(8)->unknown_5a &= ~1;
+            Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorWalkToAndWait(8, 0x318, 72);
             Engine_EventWait(1);
-            Object_GetById(8)->unknown_5a |= 1;
+            Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
             SceneState_ForwardMaskedHalfwordWith10(8, 0);
             Engine_ActorStop(13);
             actor = Object_GetById(13);

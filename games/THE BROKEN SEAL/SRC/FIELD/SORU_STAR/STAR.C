@@ -63,18 +63,13 @@ extern u8 MsgSoruThankCooperation[];
 
 /* FAKEMATCH: the flag byte's or-assign goes through this helper, which
  * keeps the reference's register for the byte. */
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
 s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
 {
     struct OverlayObject *linked_object = object->linked_object;
     if (linked_object != NULL) {
         s32 angle_delta;
         u16 angle;
-        object->unknown_5a = object->unknown_5a & 0xFE;
+        object->steering_flags = object->steering_flags & 0xFE;
         angle_delta = (u16)CalculateAngleFromCoordinateDelta(
             linked_object->coordinate_10 - object->coordinate_10,
             linked_object->coordinate_08 - object->coordinate_08);
@@ -173,7 +168,7 @@ void Scene_BagVenusStar(void)
     Engine_MapCopyCellAttributes(0, 0, 1, 1, 41, 10);
     Engine_MapCopyCellsTo(87, 42, 41, 12, 1, 2);
     Engine_EventWait(40);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Call4(Engine_CameraMoveTo, 0x2c60000, -1, 0x1da0000, 0);
@@ -411,7 +406,7 @@ void Scene_BagJupiterStar(void)
 void FieldScene_StagePairedActors(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     Audio_PlayCue(17);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -429,7 +424,7 @@ void FieldScene_StagePairedActors(void)
      * for actor 0 exists. */
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x101, 0x1eb);
@@ -736,7 +731,7 @@ void Scene_OfferGuarantee(void)
 
 void Scene_UnmaskGarcia(void)
 {
-    u8 *obj;
+    struct FieldActor *obj;
     struct FieldActor *other;
     u16 *tbl;
     s32 left;
@@ -871,7 +866,7 @@ void Scene_UnmaskGarcia(void)
             Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
             Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
             obj = Object_GetById(ACTOR_PARTY_LEADER);
-            obj[90] &= 254;
+            obj->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(ACTOR_GERALD, 244, 0x1de);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
@@ -884,9 +879,9 @@ void Scene_UnmaskGarcia(void)
                 /* FAKEMATCH: a result temporary, not a compound or-assign: the
                  * reference merges the byte into the mask's register, which the
                  * two-address ORR does only when the result is its own object. */
-                u8 flags = obj[90] | 1;
+                u8 flags = obj->steering_flags | 1;
 
-                obj[90] = flags;
+                obj->steering_flags = flags;
             }
         } else {
             Engine_EventSetMessage((s32)MsgSoruWontLetGo);
@@ -904,33 +899,33 @@ void Scene_UnmaskGarcia(void)
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     obj = Object_GetById(ACTOR_GERALD);
-    obj[90] &= 254;
+    obj->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x1e2);
     {
         /* FAKEMATCH: a result temporary, not a compound or-assign: the
          * reference merges the byte into the mask's register, which the
          * two-address ORR does only when the result is its own object. */
-        u8 flags = obj[90] | 1;
+        u8 flags = obj->steering_flags | 1;
 
-        obj[90] = flags;
+        obj->steering_flags = flags;
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x116, 0x1e0);
-    *(s32 *)(obj + 48) = 0x30000;
-    *(s32 *)(obj + 52) = 0x20000;
+    obj->speed = 0x30000;
+    obj->acceleration = 0x20000;
     Audio_PlayCue(153);
-    *(s32 *)(obj + 40) = 0x60000;
+    obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x138, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
-    *(s32 *)(obj + 40) = 0x60000;
+    obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x156, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
-    *(s32 *)(obj + 40) = 0x60000;
+    obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
@@ -939,7 +934,7 @@ void Scene_UnmaskGarcia(void)
 void Scene_AlexTakesStars(void)
 {
     u32 i;
-    u8 *rec;
+    struct FieldActor *rec;
     s32 record;
     s32 none;
 
@@ -975,13 +970,13 @@ void Scene_AlexTakesStars(void)
     UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     rec = Object_GetById(ACTOR_GERALD);
-    rec[90] &= 254;
+    rec->steering_flags &= ~ACTOR_FACES_MOTION;
     /* FAKEMATCH: the zero is parked here, well before its one store, which
      * keeps it in the register the reference holds it in. */
     none = 0;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Engine_EventWait(30);
-    SetFlagBits(&rec[90], 1);
+    rec->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
     Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgSoruPermitRelieveElemental + 5);
@@ -997,13 +992,13 @@ void Scene_AlexTakesStars(void)
     record = Actor_Get(ACTOR_ALEX);
     Engine_ActorSetSpriteFlags(record, 0);
     rec = Object_GetById(ACTOR_ALEX);
-    rec[85] = none;
+    rec->motion_flags = none;
     Audio_PlayCue(220);
     for (i = 0; i != 30; i++) {
-        *(s32 *)(rec + 12) += 0x10000;
+        rec->y.fixed += 0x10000;
         Engine_EventWait(1);
     }
-    rec[85] = 5;
+    rec->motion_flags = 5;
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     Event_SayThenWait(1, 10);
     Actor_ShowEmote(ACTOR_ALEX, 0x101, 60);
@@ -1056,7 +1051,7 @@ void Scene_AlexTakesStars(void)
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
     Engine_EventWait(10);
     Event_SayThenWait(14, 30);
-    rec[85] = 0;
+    rec->motion_flags = 0;
     Actor_SetSpeed(ACTOR_ALEX, 0x26666, 0x13333);
     Call4(Object_SetMoveTarget, (s32)rec, 0x1cc0000, 0, 0x1680000);
     Engine_ActorWaitForMove(ACTOR_ALEX);
@@ -1071,23 +1066,23 @@ void Scene_AlexTakesStars(void)
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
     Engine_EventWait(20);
     rec = Object_GetById(ACTOR_GERALD);
-    SetFlagBits(&rec[90], 1);
-    *(s32 *)(rec + 48) = 0x30000;
-    *(s32 *)(rec + 52) = 0x20000;
+    rec->steering_flags |= ACTOR_FACES_MOTION;
+    rec->speed = 0x30000;
+    rec->acceleration = 0x20000;
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = 0x60000;
+    rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x156, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = 0x60000;
+    rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x138, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
-    *(s32 *)(rec + 40) = 0x60000;
+    rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x116, 0x1e0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);

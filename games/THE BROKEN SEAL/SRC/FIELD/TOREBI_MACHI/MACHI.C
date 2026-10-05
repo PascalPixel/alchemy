@@ -161,11 +161,11 @@ void FieldScene_RunScene3b5_02000224(void)
 {
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     record = Object_GetById(8);
     if ((s32)record != 0) {
-        record[89] = 0;
+        record->collision_flags = 0;
     }
     record = Object_GetById(8);
     Engine_ActorSetSpriteFlags((s32)record, 0);
@@ -484,7 +484,7 @@ void FieldScene_RunScene3b5SequenceA(void)
     Engine_EventSetMessage((s32)MsgTorebiWantTestLuck);
     Event_OpenMessage(28, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        bump_step(1);
+        gEventWork->message++;
         Engine_EventShowMessage(28, 0);
         Call3(Engine_ActorSetSpeed, 28, 0x10000, 0x8000);
         Call3(Engine_ActorWalkToAndWait, 28, 0x140, 0x130);

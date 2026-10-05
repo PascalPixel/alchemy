@@ -428,7 +428,7 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
     s32 rec8;
     s32 record;
 
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
     Engine_GameFlagSet(0x84b);
@@ -1010,7 +1010,7 @@ void ConfigureSecondarySceneChannels(void)
  * following call reloads its separate zero argument. */
 void RunEventScript02(void)
 {
-    u8 *buf;
+    struct FieldActor *buf;
     struct FieldActor *actor;
     s32 flag;
     u8 clear = 0;
@@ -1018,8 +1018,8 @@ void RunEventScript02(void)
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
-    buf = (u8 *)Engine_EventGetViewCenter();
-    buf[85] = clear;
+    buf = Engine_EventGetViewCenter();
+    buf->motion_flags = clear;
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1051,12 +1051,12 @@ void RunEventScript02(void)
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
         flag = 0;
     }
     Event_ShowMessage(19, 0);
     if (flag != 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
     }
 
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 1);
@@ -1099,24 +1099,24 @@ void RunEventScript02(void)
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
         flag = 0;
     }
     Engine_ActorRunRepeatedMotion(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 20);
     if (flag != 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
     }
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
         flag = 0;
     }
     Engine_ActorRunRepeatedMotion(18, 1);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     if (flag != 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
     }
 
     ConfigurePrimarySceneChannels();
@@ -1149,7 +1149,7 @@ void RunEventScript02(void)
         ConfigurePrimarySceneChannels();
         flag = 1;
         if (Engine_EventChooseYesNo(0, 0) != 0) {
-            AdvanceMessage(1);
+            gEventWork->message++;
             flag = 0;
         }
         Actor_FaceDirection(18, 0x5000, 0);
@@ -1157,11 +1157,11 @@ void RunEventScript02(void)
         Engine_EventWait(10);
         Event_ShowMessageAndWait(0x2012, 0, 10);
         if (flag != 0) {
-            AdvanceMessage(1);
+            gEventWork->message++;
         }
         Actor_ShowEmote(18, 258, 60);
     } else {
-        AdvanceMessage(4);
+        gEventWork->message += 4;
     }
 
     Event_OpenMessage(0x2012, 0);
@@ -1205,13 +1205,13 @@ void RunEventScript02(void)
     ConfigurePrimarySceneChannels();
     flag = 1;
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        AdvanceMessage(1);
+        gEventWork->message++;
         flag = 0;
     }
     ConfigureSecondarySceneChannels();
     Event_ShowMessageAndWait(0x2012, 0, 10);
     if (flag != 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
     }
 
     Actor_FaceDirection(18, 0x7000, 10);
@@ -1316,7 +1316,7 @@ void BiribinoKyuden_RunActorRowScene(void)
     Object_GetById(24)->y.fixed = -0x40000;
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    gEventWork->start_transition = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     gEventWork->transition_frames = 16;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();

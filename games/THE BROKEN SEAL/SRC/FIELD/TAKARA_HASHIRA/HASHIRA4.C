@@ -141,20 +141,20 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
  */
 void StagedActor_StepDownUntilClamp(s32 index)
 {
-    u8 *obj = Object_GetById(index);
+    struct FieldActor *obj = Object_GetById(index);
     u32 cnt;
 
-    obj[0x55] = 0;
+    obj->motion_flags = 0;
 
     cnt = 0;
     for (;;) {
         if (cnt > 31) return;
         WaitFrames(1);
-        *(s32 *)(obj + 28) += -0x1999;
-        *(s32 *)(obj + 12) += -0xcccc;
+        obj->scale_y += -0x1999;
+        obj->y.fixed += -0xcccc;
         cnt++;
-        if (*(s32 *)(obj + 28) <= 0x1998) {
-            *(s32 *)(obj + 28) = 0x1999;
+        if (obj->scale_y <= 0x1998) {
+            obj->scale_y = 0x1999;
             return;
         }
     }
@@ -164,7 +164,7 @@ void FieldScene_RunPrimarySequence(void)
 {
     s32 FieldScene_RunScene3b3SequenceD();
 
-    s32 rec;
+    struct FieldActor *rec;
     s32 flag;
     s32 p6;
     s32 p5;
@@ -183,12 +183,12 @@ void FieldScene_RunPrimarySequence(void)
         *(s32 *)(base + 8) = 0xb333;
         *(s32 *)(base + 12) = 0xb333;
         v1 = Engine_RandomNext();
-        p6 = *(s32 *)(rec + 8) + ((((u32)((v1 << 4) + v1) >> 16) - 8) << 16);
+        p6 = rec->x.fixed + ((((u32)((v1 << 4) + v1) >> 16) - 8) << 16);
         v2 = Engine_RandomNext();
-        p5 = *(s32 *)(rec + 16) + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
+        p5 = rec->z.fixed + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
         v3 = Engine_RandomNext();
         record = Math_Divide((((u32)((v3 << 2) + v3) >> 16) << 16) + 0x30000, 10);
-        Effect_Spawn(p6, *(s32 *)(rec + 12), p5, 0, record, flag, 0x90001, (s32)base);
+        Effect_Spawn(p6, rec->y.fixed, p5, 0, record, flag, 0x90001, (s32)base);
     }
 }
 

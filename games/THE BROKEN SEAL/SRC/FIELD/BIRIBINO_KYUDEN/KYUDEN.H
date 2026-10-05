@@ -37,10 +37,4 @@ void ConfigureSecondarySceneChannels(void);
 void RunEventScript02(void);
 void BiribinoKyuden_RunActorRowScene(void);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 #endif

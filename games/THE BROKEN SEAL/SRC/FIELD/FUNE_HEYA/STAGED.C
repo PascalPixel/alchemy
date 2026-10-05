@@ -108,16 +108,16 @@ block_5:
     return 1;
 }
 
-s32 StagedActor_SetAngleByKind(u8 *o)
+s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 {
     u32 v = (u32)(Random16(o) << 6) >> 16;
 
     if (v == 6) {
         s32 k = 0x3000;
-        *(u16 *)(o + 6) = k;
+        o->facing = k;
     } else if (v == 9) {
         s32 k = 0x5000;
-        *(u16 *)(o + 6) = k;
+        o->facing = k;
     }
     return 1;
 }

@@ -184,7 +184,7 @@ void FieldScene_RunScene38b_02000240(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoItsTreeButAlmostLooks);
     if (GameFlag_IsSet(0x301) != 0) {
-        bump_step_020001ec(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(9, 0);
     GameFlag_Set(0x301);
@@ -235,7 +235,7 @@ void FieldScene_RunEarlySequence(void)
 {
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
     s32 v5;
     u8 *tbl;
     u8 *tbl2;
@@ -248,9 +248,9 @@ void FieldScene_RunEarlySequence(void)
     p7 = *(u8 **)&gEventWork;
     Engine_EventBegin();
     for (i = 8; i < 66; i++) {
-        record = (u8 *)Object_GetById(i);
+        record = Object_GetById(i);
         if (record != 0) {
-            record[85] = 0;
+            record->motion_flags = 0;
         }
     }
     v5 = (s32)((s32)(*(u16 *)(p7 + 0x16c) - 3) << 16) >> 16;
@@ -268,7 +268,7 @@ void FieldScene_RunEarlySequence(void)
     Engine_MapAnimateCells(*(s32 *)(tbl2 + off), a1, a2);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Object_GetById(0)->motion_flags = 0;
-    gEventWork->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (v5 == 6) {
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
         Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
@@ -299,7 +299,7 @@ void FieldScene_RunScene38bSequenceC(void)
         Engine_EventWait(20);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
         Actor_SetSpeed(11, 0x3333, 0x1999);
-        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
+        Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
         rec7->motion_flags = 0;
         rec->scale_x = -0x10000;
         Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -320,7 +320,7 @@ void FieldScene_RunScene38bSequenceC(void)
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 132, 186);
         rec->scale_x = 0x10000;
-        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
+        Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
@@ -395,22 +395,22 @@ void FieldScene_RunScene38b_02000584(void)
             Engine_EventWait(20);
             Event_ShowMessage(14, 0);
             Actor_SetSpeed(14, 0x9999, 0x4ccc);
-            Object_GetById(14)->unknown_5a &= 254;
+            Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(14, 0x10a, 172);
             Engine_EventWait(1);
-            Object_GetById(14)->unknown_5a |= 1;
+            Object_GetById(14)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_EventWait(10);
             Engine_ActorSetAnimationAndWait(14, 3);
             Event_ShowMessageAndWait(14, 0, 10);
             Engine_MessageShowCentered((s32)MsgBiribinoJillGaveRobinSpecialGift, 1);
-            bump_step(1);
+            gEventWork->message++;
             Engine_ItemShowFound(ITEM_HARD_NUT, 3);
             Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
             Engine_ActorSetAnimationAndWait(14, 3);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
             Actor_SetSpeed(14, 0x10000, 0x8000);
-            Object_GetById(14)->unknown_5a &= 254;
+            Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(14, 0x106, 156);
             Engine_EventWait(1);
             {
@@ -638,7 +638,7 @@ void FieldScene_RunScene38bSequenceA(void)
  */
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     s32 tx;
     s32 tz;
     u32 i;
@@ -650,8 +650,8 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
      * to the 16-pixel tile grid.
      */
     actor = Object_GetById(8);
-    tx = *(s32 *)(actor + 0x08) >> 20;
-    tz = *(s32 *)(actor + 0x10) >> 20;
+    tx = actor->x.fixed >> 20;
+    tz = actor->z.fixed >> 20;
 
     /*
      * Ten fixed cells from the table, then the actor's own cell.  The table

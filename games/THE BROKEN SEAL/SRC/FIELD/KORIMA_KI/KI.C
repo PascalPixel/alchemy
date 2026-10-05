@@ -213,7 +213,7 @@ void RunEventScript01(void)
     gKorimaKiSparkSound = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-    Object_GetById(0)->unknown_5a &= 254;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Audio_PlayCue(133);
@@ -657,7 +657,7 @@ s32 KorimaKi_PrepareActors(void)
     second = Object_GetById(11);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(14, 15);
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     gGameState.retreat_scene = (s32)&SceneId_KorimaHashi;
     gGameState.retreat_entrance = 4;
     /* FAKEMATCH: the heights are cleared through a u8 local zero, which the

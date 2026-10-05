@@ -68,15 +68,15 @@ void SoruSekizo_OpenSeal(void)
                 Engine_CameraFollowActor(0, 1);
                 Object_GetById(0)->facing = scene->facing;
                 Call3(Engine_ActorSetSpeed, 0, 0x20000, 0x20000);
-                Object_GetById(0)->unknown_5a &= ~1;
+                Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
                 Engine_ActorJump(0, 4, 0);
                 Engine_ActorSetDestination(0, scene->dest_x, scene->dest_z);
                 COPY_CELLS(scene->stairs[0]);
                 COPY_CELLS(scene->stairs[1]);
                 COPY_CELLS(scene->stairs[2]);
-                Object_GetById(scene->actor)->unknown_5a &= ~1;
+                Object_GetById(scene->actor)->steering_flags &= ~ACTOR_FACES_MOTION;
                 Engine_ObjectMotionSetPositionAndCommit(scene->actor, scene->actor_x, scene->actor_z);
-                Object_GetById(0)->unknown_5a |= 1;
+                Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
                 Engine_GameFlagClear(scene->flag);
             }
         } else if (result == 0 && Engine_GameFlagIsSet(0x818)) {

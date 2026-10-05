@@ -217,13 +217,13 @@ void FieldScene_RunFallingRocksWarning(void)
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
         Engine_ActorJump(ACTOR_GERALD, 6, 0);
         Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
-        Object_GetById(ACTOR_GERALD)->unknown_5a &= 254;
+        Object_GetById(ACTOR_GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 110);
         Engine_EventWait(1);
-        Object_GetById(ACTOR_GERALD)->unknown_5a |= 1;
+        Object_GetById(ACTOR_GERALD)->steering_flags |= ACTOR_FACES_MOTION;
         Audio_PlayCue(161);
         Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
-        Object_GetById(ACTOR_GERALD)->unknown_5a &= 254;
+        Object_GetById(ACTOR_GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 120);
         Engine_EventWait(1);
         {
@@ -545,7 +545,7 @@ void ArutinYama_RunLeapSequence(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(20);
     Call3(Engine_ActorFaceDirection, 10, 0x5000, 40);
-    Object_GetById(10)->unknown_5a &= 254;
+    Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     record = Object_GetById(10);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -563,7 +563,7 @@ void ArutinYama_RunLeapSequence(void)
     Engine_EventWait(8);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(40);
-    Object_GetById(10)->unknown_5a |= 1;
+    Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
     Call3(Engine_ActorFaceDirection, 10, 0x3000, 20);
     Engine_ActorFaceDirection(10, 0, 40);
     actor->motion.active = 0;
@@ -586,7 +586,7 @@ void ArutinYama_RunLeapSequence(void)
     Engine_ActorRunRepeatedMotion(10, 2);
     Engine_EventWait(80);
     Engine_ActorSetAnimation(10, 3);
-    Call4(SceneState_StoreParamsAndInstallTask, 0x820000, 0, 0xa80000, 0);
+    Call4(ArutinYama_StartLeafGust, 0x820000, 0, 0xa80000, 0);
     Engine_EventWait(60);
     for (n = 0; n < 60 && gKeyState == 0; n++) {
         Engine_EventWait(1);

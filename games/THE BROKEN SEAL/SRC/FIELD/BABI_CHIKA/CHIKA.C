@@ -109,11 +109,11 @@ void SceneActor_PassActorZeroOffsetPoint(void)
  * has passed the row limit of the current area and story step. */
 void BabiChika_UpdateTrackedActor(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     u8 *work;
     s32 limit;
 
-    actor = (u8 *)Object_GetById(0);
+    actor = Object_GetById(0);
     work = gActorEffectWork;
     limit = 0;
     if (gGameState.scene == (s32)&SceneId_BabiChika1) {
@@ -134,7 +134,7 @@ void BabiChika_UpdateTrackedActor(void)
     } else if (gGameState.entrance == 12) {
         limit = 93;
     }
-    if ((*(s32 *)(actor + 16) >> 19) <= limit) {
+    if ((actor->z.fixed >> 19) <= limit) {
         *(s32 *)(work + 24) = 0;
     } else {
         *(s32 *)(work + 24) = (s32)actor;

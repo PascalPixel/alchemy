@@ -196,12 +196,6 @@ void Owner_RefreshActiveRatios();
  * The compiler's cross-call target pseudo, not pointer qualifiers alone,
  * changes the saved-register interference. Inline scopes are ruled out. */
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);

@@ -350,7 +350,7 @@ void SceneEffect_RotatePaletteEntries40To47(void)
     u16 *src;
     u32 front;
 
-    if ((*(volatile u32 *)&gFrameCount & 7) != 0) {
+    if ((gFrameCount & 7) != 0) {
         return;
     }
 
@@ -369,7 +369,7 @@ void SceneEffect_RotatePaletteEntries40To47(void)
 void FieldScene_RunActorThreeBranchSequence(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetSpeed(3, FX16_0_8, FX16_0_4);
@@ -380,15 +380,15 @@ void FieldScene_RunActorThreeBranchSequence(void)
     Actor_ShowEmote(3, 0x100, 60);
     Actor_FaceDirection(3, FX16_0_5, 20);
     Object_SetModeById(3, 16);
-    record = (s32)Object_GetById(3);
+    record = Object_GetById(3);
     /* Set the +24 field of actor 3's record to -1.0 in 16.16 fixed point. */
-    *(s32 *)(record + 24) = -FX16_1_0;
+    record->scale_x = -FX16_1_0;
     Battle_WaitMode0(20);
     Event_ShowMessageAndWait(3, 0, 20);
     Object_SetModeById(3, 1);
-    record = (s32)Object_GetById(3);
+    record = Object_GetById(3);
     /* Set the +24 field of actor 3's record to 1.0 in 16.16 fixed point. */
-    *(s32 *)(record + 24) = FX16_1_0;
+    record->scale_x = FX16_1_0;
     Battle_WaitMode0(20);
     Actor_FaceDirection(3, FX16_0_25, 20);
     Event_OpenMessage(3, 0);
@@ -487,7 +487,7 @@ void FieldScene_RunColumnChoreography(void)
         Engine_EventSetMessage((s32)MsgMakyuriDidThat);
         Engine_EventOpenMessage(3, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
-            *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+            gEventWork->message += 1;
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(3, 3);
             Engine_EventShowMessageAndWait(3, 0, 20);
@@ -495,7 +495,7 @@ void FieldScene_RunColumnChoreography(void)
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(3, 4);
             Event_ShowMessageAndWait(3, 0, 20);
-            *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+            gEventWork->message += 1;
         }
         Engine_ActorShowEmote(0, 0x100, 60);
         record = Object_GetById(1);
@@ -545,9 +545,9 @@ void FieldScene_RunColumnChoreography(void)
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(1, 3);
             Engine_EventShowMessageAndWait(1, 0, 20);
-            *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+            gEventWork->message += 1;
         } else {
-            *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+            gEventWork->message += 1;
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(1, 4);
             Engine_EventShowMessageAndWait(1, 0, 20);
@@ -626,7 +626,7 @@ void SceneEffect_RotatePaletteEntries97To103(void)
     u16 *src;
     u32 first;
 
-    if ((*(volatile u32 *)&gFrameCount & 7) != 0) {
+    if ((gFrameCount & 7) != 0) {
         return;
     }
 
@@ -679,14 +679,14 @@ void MakyuriHeya_SinkActorWithSparks(s32 actor)
 {
     struct EffectOptions params;
     struct EffectOptions *p;
-    u8 *rec;
+    struct FieldActor *rec;
     u32 i;
     s32 x;
     s32 y;
     s32 speed;
 
-    rec = (u8 *)Object_GetById(actor);
-    rec[85] = 0;
+    rec = Object_GetById(actor);
+    rec->motion_flags = 0;
     Engine_ActorSetSpriteFlags(rec, 0);
     Call2(Engine_ActorSetChildValue, actor, 0x100);
     Audio_PlayCue(221);
@@ -697,16 +697,16 @@ void MakyuriHeya_SinkActorWithSparks(s32 actor)
     p->script = MakyuriHeya_SparkBurstScript;
     for (i = 0; i <= 47; i++) {
         if (i <= 31)
-            SceneEffect_SpawnWithRandomOffset(*(s32 *)(rec + 8), *(s32 *)(rec + 12), *(s32 *)(rec + 16));
+            SceneEffect_SpawnWithRandomOffset(rec->x.fixed, rec->y.fixed, rec->z.fixed);
         if (i & 1) {
             Audio_PlayCue(246);
-            x = *(s32 *)(rec + 8) + ((((u32)Engine_RandomNext() * 24) >> 16) << 16) + -0xc0000;
-            y = *(s32 *)(rec + 12) + ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + -0x100000;
+            x = rec->x.fixed + ((((u32)Engine_RandomNext() * 24) >> 16) << 16) + -0xc0000;
+            y = rec->y.fixed + ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + -0x100000;
             speed = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + 0x8000;
-            Effect_Spawn(x, y, *(s32 *)(rec + 16), 0, speed, 0, 0x330000, p);
+            Effect_Spawn(x, y, rec->z.fixed, 0, speed, 0, 0x330000, p);
         }
-        *(s32 *)(rec + 12) += i * 0x1999;
-        *(s32 *)(rec + 60) = *(s32 *)(rec + 12);
+        rec->y.fixed += i * 0x1999;
+        rec->target_y = rec->y.fixed;
         WaitFrames(2);
     }
 }
@@ -1191,7 +1191,7 @@ s32 Scene_Initialize(void)
     Engine_GameFlagSet(0x111);
     gGameState.retreat_entrance = 11;
     gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     /* FAKEMATCH: the do/while and the held value keep the blend constant in a register ahead of its address load. */
     do {
         s32 blend = 0x3f40;
@@ -1450,7 +1450,7 @@ s32 Scene_Initialize(void)
             Object_GetById(8)->motion_flags = 0;
             Object_GetById(8)->bounce = 0;
             Object_GetById(8)->gravity = 0x4ccc;
-            gEventWork->start_transition = 0x100;
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
             Object_GetById(8)->motion_flags = 3;

@@ -317,7 +317,7 @@ void FuneKanpan_ArriveAtTolbi(void)
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Engine_TaskWait(1);
-    gEventWork->start_transition = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Actor_SetSpeed(21, 0xcccc, 0x6666);
@@ -550,7 +550,7 @@ void FuneKanpan_RunRobinTalk(void)
     FieldScene_CallPairWith10(ACTOR_PARTY_LEADER, 0xe000);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(20, 3);
-    gEventWork->start_transition = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(17);

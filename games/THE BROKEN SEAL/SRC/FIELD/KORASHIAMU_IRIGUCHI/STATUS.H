@@ -32,15 +32,4 @@ void InventorySnapshot_Take();
 
 void FieldScene_RunMiddleSequence(void);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-static __inline__ __attribute__((always_inline)) void bump_step_now(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 #endif

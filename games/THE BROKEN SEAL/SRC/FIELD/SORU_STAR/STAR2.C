@@ -538,7 +538,7 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_JASMINE, 0, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 30);
     Event_SayThenWait(ACTOR_SUKURETA, 30);
@@ -653,7 +653,7 @@ void Scene_EnterStarRoom(void)
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 4);
     Event_OpenMessage(0x8009, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 10);
@@ -675,7 +675,7 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 20);
     Event_OpenMessage(0x8009, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 1);
     Engine_EventWait(20);
@@ -736,7 +736,7 @@ void Scene_EnterStarRoom(void)
     Actor_MoveToAndWait(ACTOR_SUKURETA, 0x1d7, 0x18b);
     Engine_TaskWait(6);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x4ccc, 0x2666);
-    sukureta_flags = &rising->unknown_5a;
+    sukureta_flags = &rising->steering_flags;
     *sukureta_flags &= 254;
     Actor_SetDestination(ACTOR_SUKURETA, 0x1d9, 0x18b);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);

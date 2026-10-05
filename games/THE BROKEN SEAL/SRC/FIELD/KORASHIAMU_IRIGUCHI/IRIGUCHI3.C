@@ -183,7 +183,7 @@ void SceneState_SetRuntimeWord448To513(void)
 {
 
     Engine_EventBegin();
-    *(s32 *)((u8 *)gEventWork + 448) = 513;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -193,8 +193,8 @@ void SceneState_SetRuntimeWord448To513(void)
     Engine_EventSetMessage((s32)MsgKorashiamuHaveMakeThroughCountlessMatches);
 
     if (Engine_GameFlagIsSet(0x8a4) != 0) {
-        *(u16 *)((u8 *)gEventWork + 472) =
-            (u16)(*(u16 *)((u8 *)gEventWork + 472) + 1);
+        gEventWork->message =
+            (u16)(gEventWork->message + 1);
     }
 
     FieldScene_CallPairWith10(17);

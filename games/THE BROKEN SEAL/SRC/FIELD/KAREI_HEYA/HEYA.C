@@ -205,7 +205,7 @@ void FieldScene_RunArrivalPlacement(void)
     struct EventWork *work = gEventWork;
     u32 slot;
     s32 idx;
-    u8 *p;
+    struct FieldActor *p;
 
     Engine_EventBegin();
 
@@ -238,8 +238,8 @@ void FieldScene_RunArrivalPlacement(void)
 
     Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
-    p = (u8 *)Object_GetById(0);
-    p[85] = 0;
+    p = Object_GetById(0);
+    p->motion_flags = 0;
 
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);

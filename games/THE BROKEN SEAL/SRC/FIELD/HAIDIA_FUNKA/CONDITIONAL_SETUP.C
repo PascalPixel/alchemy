@@ -14,14 +14,6 @@ void BattleFx_SetBlock30Values12Zero();
 void BattleFx_StartBufferBlend();
 void Object_RefreshSelectorById();
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    struct EventWork *work = gEventWork;
-
-    work->message = (u16)(work->message + amount);
-}
-
 u8 *ConditionalSceneSetup_GetScriptData(void)
 {
     return HaidiaFunka_SceneTable0;
@@ -275,7 +267,7 @@ void RunEventScript01(void)
         Engine_EventWait(40);
         Engine_ActorRunRepeatedMotion(9, 1);
         Event_ShowMessage(9, 0);
-        bump_step(1);
+        gEventWork->message++;
     } else {
         Engine_EventWait(40);
         Engine_ActorFaceEachOther(8, 9, 0);
@@ -284,7 +276,7 @@ void RunEventScript01(void)
         Actor_FaceDirection(9, 0x8000, 0);
         Engine_EventWait(40);
         Engine_ActorRunRepeatedMotion(9, 1);
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessage(9, 0);
     }
     Engine_EventWait(30);

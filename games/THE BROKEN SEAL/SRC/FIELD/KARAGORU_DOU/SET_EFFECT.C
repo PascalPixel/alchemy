@@ -33,12 +33,6 @@ struct HeightTrackedObject {
 
 extern u8 LinkedMessage_DoYouWishCrossInto[];
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
     work->record->mode = mode;

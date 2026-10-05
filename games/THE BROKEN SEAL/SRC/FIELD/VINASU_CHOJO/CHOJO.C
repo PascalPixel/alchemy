@@ -332,16 +332,16 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
 
 void SceneActor_SetByte55ForActorZeroAnd12To17(void)
 {
-    s32 val;
+    s32 flags;
 
-    *((u8 *)Object_GetById(0) + 0x55) = 3;
-    val = 4;
-    *((u8 *)Object_GetById(12) + 0x55) = val;
-    *((u8 *)Object_GetById(13) + 0x55) = val;
-    *((u8 *)Object_GetById(14) + 0x55) = val;
-    *((u8 *)Object_GetById(15) + 0x55) = val;
-    *((u8 *)Object_GetById(16) + 0x55) = val;
-    *((u8 *)Object_GetById(17) + 0x55) = val;
+    Object_GetById(0)->motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    flags = 4;
+    Object_GetById(12)->motion_flags = flags;
+    Object_GetById(13)->motion_flags = flags;
+    Object_GetById(14)->motion_flags = flags;
+    Object_GetById(15)->motion_flags = flags;
+    Object_GetById(16)->motion_flags = flags;
+    Object_GetById(17)->motion_flags = flags;
 }
 
 s32 SceneData_GetTableE6ec(void)
@@ -470,7 +470,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(20);
     Actor_SetSpeed(18, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Object_GetById(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
+    Object_GetById(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetDestination(18, 580, 221);
     Actor_MoveToAndWait(0, 581, 171);
     Actor_SetDestination(18, 530, 211);
@@ -495,7 +495,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 1);
     Engine_ActorMoveToAndWait(0, 504, 148);
     Engine_EventWait(10);
-    Object_GetById(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
+    Object_GetById(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
     {
         /* FAKEMATCH: the facing held in a block temporary keeps the pool where
          * the reference has it; a plain store moves it (measured 2026-10-04). */
@@ -897,10 +897,10 @@ void Scene_RunActorEntrySequence(void)
     Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
     VinasuChojo_ShowMessage(0x2014);
     Engine_ActorRunRepeatedMotion(6, 2);
-    Object_GetById(6)->unknown_5a &= ~1;
+    Object_GetById(6)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(6, 250, 176);
     Engine_EventWait(1);
-    Object_GetById(6)->unknown_5a |= 1;
+    Object_GetById(6)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_ShowEmote(21, 0x103, 20);
     Engine_ActorFaceDirection(21, FACING_EAST, 20);
     VinasuChojo_ShowMessage(21);
@@ -909,10 +909,10 @@ void Scene_RunActorEntrySequence(void)
     Engine_ActorRunRepeatedMotion(6, 2);
     Engine_EventWait(40);
     Actor_SetSpeed(6, 0x9999, 0x4ccc);
-    Object_GetById(6)->unknown_5a &= ~1;
+    Object_GetById(6)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(6, 248, 172);
     Engine_EventWait(1);
-    Object_GetById(6)->unknown_5a |= 1;
+    Object_GetById(6)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(6, 3);
     Engine_EventWait(20);
@@ -1124,14 +1124,14 @@ void Scene_RunActorEntrySequence(void)
     owner = PartyInventory_FindOwner(65);
     GameFlag_Set(owner + 0x345);
     PartyInventory_Remove(65);
-    Object_GetById(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
-    Object_GetById(ACTOR_GERALD)->unknown_5a &= ~1;
-    Object_GetById(ACTOR_IVAN)->unknown_5a &= ~1;
-    Object_GetById(ACTOR_MIA)->unknown_5a &= ~1;
-    Object_GetById(ACTOR_SECOND_OF_PAIR)->unknown_5a &= ~1;
-    Object_GetById(ACTOR_FIRST_OF_PAIR)->unknown_5a &= ~1;
-    Object_GetById(21)->unknown_5a &= ~1;
-    Object_GetById(6)->unknown_5a &= ~1;
+    Object_GetById(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(ACTOR_GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(ACTOR_IVAN)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(ACTOR_MIA)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(ACTOR_SECOND_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(ACTOR_FIRST_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(21)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(6)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, SceneAction_EntryGroup);
     Engine_ActorEnableActionCallback(ACTOR_GERALD, SceneAction_EntryGroup);
     Engine_ActorEnableActionCallback(ACTOR_IVAN, SceneAction_EntryGroup);
@@ -1383,10 +1383,10 @@ void Scene_RunPairedActorEffectSequence(void)
     VinasuChojo_FaceActor(ACTOR_IVAN, FACING_NORTHWEST);
     Actor_RunRepeatedMotion(21, 2);
     Actor_SetSpeed(21, 0xcccc, 0x6666);
-    Actor_Get(21)->unknown_5a &= ~1;
+    Actor_Get(21)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(21, 0x118, 164);
     Event_Wait(1);
-    Actor_Get(21)->unknown_5a |= 1;
+    Actor_Get(21)->steering_flags |= ACTOR_FACES_MOTION;
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_IVAN, 0x102, 40);
     VinasuChojo_ShowMessage(ACTOR_IVAN);
@@ -1465,11 +1465,11 @@ void Scene_RunPairedActorEffectSequence(void)
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_OF_PAIR), 1);
     Actor_Jump(ACTOR_SECOND_OF_PAIR, 4, 40);
     Actor_SetSpeed(ACTOR_SECOND_OF_PAIR, 0x3333, 0x1999);
-    Actor_Get(ACTOR_SECOND_OF_PAIR)->unknown_5a &= ~1;
+    Actor_Get(ACTOR_SECOND_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_SECOND_OF_PAIR, 0x128, 186);
     Actor_SetSpeed(ACTOR_SECOND_OF_PAIR, 0x1999, 0xccc);
     Actor_WalkToAndWait(ACTOR_SECOND_OF_PAIR, 0x124, 186);
-    Actor_Get(ACTOR_SECOND_OF_PAIR)->unknown_5a |= 1;
+    Actor_Get(ACTOR_SECOND_OF_PAIR)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_Get(ACTOR_SECOND_OF_PAIR)->scale_x = -0x10000;
     Audio_PlayCue(161);
     Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 5);
@@ -1842,8 +1842,8 @@ void Scene_RunPairedActorEffectSequence(void)
     VinasuChojo_FlashScreen();
     Actor_SetSpeed(ACTOR_FIRST_OF_PAIR, 0x3333, 0x1999);
     Actor_SetSpeed(ACTOR_SECOND_OF_PAIR, 0x3333, 0x1999);
-    Actor_Get(ACTOR_FIRST_OF_PAIR)->unknown_5a &= ~1;
-    Actor_Get(ACTOR_SECOND_OF_PAIR)->unknown_5a &= ~1;
+    Actor_Get(ACTOR_FIRST_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_SECOND_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetDestination(ACTOR_FIRST_OF_PAIR, 0x126, 196);
     Actor_SetDestination(ACTOR_SECOND_OF_PAIR, 0x126, 196);
     Task_AddCallback(VinasuChojo_UpdateBeamActors, TASK_PRIORITY_SCENE);

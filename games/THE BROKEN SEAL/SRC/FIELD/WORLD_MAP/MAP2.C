@@ -135,15 +135,15 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x8000, 10);
     Engine_EventShowMessage(gWorldMapTriggerActor, 0);
     Engine_ActorFaceDirection(0, 0, 20);
-    Object_GetById(gWorldMapTriggerActor)->unknown_5a &= ~1;
+    Object_GetById(gWorldMapTriggerActor)->steering_flags &= ~ACTOR_FACES_MOTION;
     Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x178c, 0xd48);
     Engine_EventWait(1);
-    Object_GetById(gWorldMapTriggerActor)->unknown_5a |= 1;
+    Object_GetById(gWorldMapTriggerActor)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);
-    Object_GetById(gWorldMapTriggerActor)->unknown_5a &= ~1;
+    Object_GetById(gWorldMapTriggerActor)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 0x1794, 0xd48);
     Engine_EventWait(1);
-    Object_GetById(gWorldMapTriggerActor)->unknown_5a |= 1;
+    Object_GetById(gWorldMapTriggerActor)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ItemShowFound(242, 3);
     Engine_PartyGiveItem(242, 0);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
@@ -277,7 +277,7 @@ void WorldMap_UseBlackOrb(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     site = NULL;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    leader->unknown_5b = 0;
+    leader->paused = 0;
     ObjectDispatch_InitFromTable6(leader);
     if (leader->z.fixed > 0xd680000) {
         if (leader->x.fixed > 0x176e0000) {
@@ -352,7 +352,7 @@ void WorldMap_UseBlackOrb(void)
     Actor_RunRepeatedMotion(gWorldMapTriggerActor, 1);
     Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 20);
     Actor_SetSpeed(gWorldMapTriggerActor, 0x10000, 0x8000);
-    Object_GetById(SITE)->unknown_5a &= ~1;
+    Object_GetById(SITE)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetAnimation(SITE, 2);
     FieldObject_SetPosition(site, 0x176d0000, 0, 0xd600000);
     Engine_ObjectCommitPosition(site);

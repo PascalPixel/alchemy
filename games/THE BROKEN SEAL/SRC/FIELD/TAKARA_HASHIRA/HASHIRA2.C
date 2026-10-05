@@ -165,7 +165,7 @@ check:
 
 s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 {
-    u8 *obj = Object_GetById(no);
+    struct FieldActor *obj = Object_GetById(no);
     u32 out20, out16;
     s32 out12, out8;
     s32 rec[6];
@@ -182,7 +182,7 @@ s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
     Object_SetMode(obj, 4);
     mask = 2;
-    obj[0x23] = obj[0x23] | mask;
+    obj->priority_flags = obj->priority_flags | mask;
 
     if (out20 > out16) {
         Engine_MapCopyCellsTo(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
@@ -195,7 +195,7 @@ s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
 s32 SceneActor_ApplyPlacementQuery(u8 *no)
 {
-    u8 *obj = Object_GetById(no);
+    struct FieldActor *obj = Object_GetById(no);
     s32 out20, out16, out12, out8;
     s32 rec[6];
 
@@ -212,7 +212,7 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
     }
 
     Object_SetMode(obj, 1);
-    obj[0x23] &= 0xfd;
+    obj->priority_flags &= 0xfd;
 
     return 1;
 }

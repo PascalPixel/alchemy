@@ -95,7 +95,7 @@ void VinasuHeya_ShiftBridge(void)
             Engine_AudioPlayCue(188);
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_MapRenderWaitForValues();
-            gEventWork->start_transition = 0x202;
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
             Engine_EventRequestExit(11);
             Engine_EventEnd();
         }

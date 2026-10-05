@@ -446,14 +446,14 @@ void FieldScene_RunBranchingActorSequence(void)
         Engine_ActorSetAnimationAndWait(10, 3);
         Battle_WaitMode0(30);
         Event_ShowMessage(10, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
         Actor_FaceDirection(10, 0x8000, 0);
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(10, 4);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
@@ -489,12 +489,12 @@ void FieldScene_RunBranchingActorSequence(void)
         Engine_ActorSetAnimationAndWait(14, 4);
         Battle_WaitMode0(20);
         Event_ShowMessage(14, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(14, 4);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
     Battle_WaitMode0(10);
@@ -530,12 +530,12 @@ void FieldScene_RunBranchingActorSequence(void)
         Engine_ActorSetAnimationAndWait(10, 3);
         Battle_WaitMode0(30);
         Event_ShowMessage(10, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(10, 4);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
@@ -772,12 +772,12 @@ void FieldScene_RunActorEventSequence(void)
         Engine_ActorRunRepeatedMotion(14, 2);
         Battle_WaitMode0(20);
         Event_ShowMessage(14, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
         Engine_ActorRunRepeatedMotion(14, 2);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(14, 0);
     }
     Battle_WaitMode0(10);
@@ -812,14 +812,14 @@ void FieldScene_RunActorEventSequence(void)
         Engine_ActorSetAnimationAndWait(10, 3);
         Battle_WaitMode0(30);
         Event_ShowMessage(10, 0);
-        bump_step_02001238(1);
+        gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
         Actor_FaceDirection(10, 0x2000, 0);
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(10, 4);
         Battle_WaitMode0(20);
-        bump_step_02001238(1);
+        gEventWork->message++;
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
@@ -1324,8 +1324,8 @@ s32 BabiIriguchi_SetupScene(void)
             break;
         }
     } else if (scene == (s32)&SceneId_BabiIriguchi1) {
-        Object_GetById(8)->unknown_5a &= 0xfe;
-        Object_GetById(9)->unknown_5a &= 0xfe;
+        Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+        Object_GetById(9)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_SetSpeed(8, 0x10000, 0x8000);
         Actor_SetSpeed(9, 0x10000, 0x8000);
         if (GameFlag_IsSet(0x109) == 0) {

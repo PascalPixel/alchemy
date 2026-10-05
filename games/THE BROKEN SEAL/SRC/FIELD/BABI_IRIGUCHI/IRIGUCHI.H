@@ -127,10 +127,4 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
  * the first call.
  */
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step_02001238(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 #endif

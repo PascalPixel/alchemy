@@ -427,7 +427,7 @@ void ImiruMura_RunExitDoor(void)
         Engine_MapAnimateCells(ImiruMura_ExitCellSteps[exit - 1], x, y);
     }
     Call3((void (*)())Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
-    gEventWork->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (exit == 6) {
         Call3((void (*)())Engine_ActorSetSpeed, 0, 0x3333, 0x1999);
         Engine_ActorSetAnimation(0, 2);
@@ -611,7 +611,7 @@ s32 ImiruMura_ApplyEntryState(void)
 
     if (gGameState.scene == (s32)&SceneId_ImiruMura1) {
         leader = Object_GetById(0);
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         Engine_ActorSetAnimation(10, 9);
         if (Value1(Engine_GameFlagIsSet, 0x109)) {
             Engine_GameFlagClear(0x200);
@@ -629,7 +629,7 @@ s32 ImiruMura_ApplyEntryState(void)
             RunEventScript02();
         }
     } else if (gGameState.scene == (s32)&SceneId_ImiruMura2) {
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         entrance = gGameState.entrance;
         if (entrance == 1) {
             Engine_ActorSetChildValue(21, 15);
@@ -733,7 +733,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_TaskWait(1);
     Camera_SetSpeed(0x4ccc, 0x999);
     Camera_MoveTo(0x8c0000, -1, 0xa40000, 1);
-    work = *(struct EventWork **)Data_03001ebc;
+    work = gEventWork;
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 40;
     Engine_EventOpenScreen();
@@ -862,17 +862,17 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x40000, 0x20000);
     Actor_SetSpeed(ACTOR_IVAN, 0x40000, 0x20000);
     Audio_PlayCue(152);
-    ((struct FieldActor *)((s32)Object_GetById(0)))->unknown_5a &= 254;
-    ((struct FieldActor *)((s32)Object_GetById(1)))->unknown_5a &= 254;
-    ((struct FieldActor *)((s32)Object_GetById(2)))->unknown_5a &= 254;
+    ((struct FieldActor *)((s32)Object_GetById(0)))->steering_flags &= ~ACTOR_FACES_MOTION;
+    ((struct FieldActor *)((s32)Object_GetById(1)))->steering_flags &= ~ACTOR_FACES_MOTION;
+    ((struct FieldActor *)((s32)Object_GetById(2)))->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetDestination(ACTOR_PARTY_LEADER, 132, 206);
     Actor_SetDestination(ACTOR_GERALD, 136, 221);
     Actor_SetDestination(ACTOR_IVAN, 122, 238);
     Object_RefreshSelectorById(3);
     Engine_EventWait(80);
-    ((struct FieldActor *)((s32)Object_GetById(0)))->unknown_5a |= 1;
-    ((struct FieldActor *)((s32)Object_GetById(1)))->unknown_5a |= 1;
-    ((struct FieldActor *)((s32)Object_GetById(2)))->unknown_5a |= 1;
+    ((struct FieldActor *)((s32)Object_GetById(0)))->steering_flags |= ACTOR_FACES_MOTION;
+    ((struct FieldActor *)((s32)Object_GetById(1)))->steering_flags |= ACTOR_FACES_MOTION;
+    ((struct FieldActor *)((s32)Object_GetById(2)))->steering_flags |= ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
@@ -880,7 +880,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_ActorEnableActionCallback(ACTOR_GERALD, tbl);
     Object_SetActionCallbackAndRefreshById(2, tbl);
     Engine_EventWait(20);
-    work = *(struct EventWork **)Data_03001ebc;
+    work = gEventWork;
     work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     work->transition_frames = 24;
     Engine_GameFlagSet(0x82b);

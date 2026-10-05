@@ -158,13 +158,13 @@ void FieldScene_RunScene39e_02000414(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianHowDidGetHereBridge);
     if (GameFlag_IsSet(0x890) != 0) {
-        bump_step(4);
+        gEventWork->message += 4;
     }
     Event_OpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         GameFlag_Set(0x890);
     } else {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(8, 0);
     Engine_EventEnd();
@@ -270,7 +270,7 @@ void Scene_RunScene39eSequenceB(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 0x1f8);
         Engine_EventWait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
-        Object_GetById(8)->unknown_5b = 0;
+        Object_GetById(8)->paused = 0;
         Audio_PlayCue(152);
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
@@ -288,7 +288,7 @@ void Scene_RunScene39eSequenceB(void)
         Engine_EventWait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
         Audio_PlayCue(152);
-        Object_GetById(8)->unknown_5b = rec7;
+        Object_GetById(8)->paused = rec7;
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
         Engine_ActorSetAnimation(8, 1);
@@ -404,7 +404,7 @@ void FieldScene_RunRoofSceneExit(void)
 {
     Engine_EventBegin();
 
-    Object_GetById(12)->unknown_5b = 0;
+    Object_GetById(12)->paused = 0;
 
     goto testPendingWork;
 waitPendingWork:
@@ -420,7 +420,7 @@ testPendingWork:
 
     Object_GetById(12)->velocity_y = 0;
 
-    Object_GetById(12)->unknown_5b = 1;
+    Object_GetById(12)->paused = 1;
 
     Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
 
@@ -436,7 +436,7 @@ testPendingWork:
 
     Object_GetById(12)->facing = 128 << 7;
 
-    Object_GetById(12)->unknown_5b = 0;
+    Object_GetById(12)->paused = 0;
 
     Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
     Engine_EventEnd();
@@ -1521,7 +1521,7 @@ void ShianJiin_AskIfCurious(void)
     Engine_ActorStartRepeatedMotion(8, 2);
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
-    Object_GetById(8)->unknown_5b = 0;
+    Object_GetById(8)->paused = 0;
     Audio_PlayCue(152);
     record = Actor_Get(8);
     record->velocity_y = 0x80000;
@@ -1541,12 +1541,12 @@ void ShianJiin_AskIfCurious(void)
         Engine_ActorSetAnimationAndWait(8, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(8, 0, 20);
-        bump_step(2);
+        gEventWork->message += 2;
     } else {
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(20);
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessageAndWait(8, 0, 20);
         Engine_ActorSetAnimationAndWait(8, 3);
         Engine_EventWait(20);
@@ -1584,11 +1584,11 @@ void ShianJiin_AskIfCurious(void)
         Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(8, 0, 20);
-        bump_step(1);
+        gEventWork->message++;
     } else {
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(8, 2);
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessageAndWait(8, 0, 20);
     }
     Engine_ActorSetAnimationAndWait(8, 3);
@@ -2038,7 +2038,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(20);
     /* Clear bit 0 of the flag byte at +90. */
-    Object_GetById(0)->unknown_5a &= 0xfe;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
     Engine_EventWait(1);
     {
@@ -2124,12 +2124,10 @@ void FieldScene_RunRoofEnsembleSequence(void)
         Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
-        /* Same step counter as bump_step(), incremented inline here. */
-        gEventWork->message += 1;
+        gEventWork->message++;
     } else {
         Engine_EventWait(20);
-        /* Same step counter as bump_step(), incremented inline here. */
-        gEventWork->message += 1;
+        gEventWork->message++;
         Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
@@ -2169,7 +2167,7 @@ s32 ShianJiin_ApplyEntryState(void)
     s32 set;
 
     if (gGameState.scene == (s32)&SceneId_ShianJiin2) {
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         if (gGameState.entrance == 1) {
             if (Engine_GameFlagIsSet(0x88f)) {
                 Engine_ActorSetAnimation(8, 6);

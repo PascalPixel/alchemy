@@ -1207,7 +1207,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Engine_EventWait(20);
         Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
         Call3(Engine_ActorSetSpeed, 0, 0x4ccc, 0x2666);
-        actor->unknown_5a &= 254;
+        actor->steering_flags &= ~ACTOR_FACES_MOTION;
         /* FAKEMATCH: the zero goes through the sprite variable (r7). */
         sprite = 0;
         actor->motion_flags = (u32)sprite;
@@ -1242,9 +1242,9 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         {
             s32 m = 254;
 
-            m &= actor->unknown_5a;
+            m &= actor->steering_flags;
             base5_0 = 0;
-            actor->unknown_5a = m;
+            actor->steering_flags = m;
             actor->motion_flags = base5_0;
         }
         Engine_AudioPlayCue(201);
@@ -1266,7 +1266,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         } while (base5_0 != 60);
         Engine_ActorSetPosition(16, 0, 0);
         Engine_EventWait(80);
-        gEventWork->start_transition = 0x203;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
         gEventWork->transition_frames = 24;
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
@@ -1286,7 +1286,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
     s32 lit;
 
     Engine_TaskWait(1);
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     done = 0;
     if (Engine_GameFlagIsSet(0x809) != 0 && Engine_GameFlagIsSet(0x814) == 0
         && Engine_GameFlagIsSet(0x819) == 0) {
@@ -1501,16 +1501,16 @@ void SoruNichigetsu_RunLightScene(void)
     Call3((void (*)())Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
     Engine_EventWait(40);
     InitializeSceneRecordBuffer();
-    Object_GetById(0)->unknown_5a &= ~1;
-    Object_GetById(1)->unknown_5a &= ~1;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorJump(0, 4, 0);
     Engine_ActorJump(1, 4, 0);
     Call3((void (*)())Engine_ActorSetDestination, 0, 0x12c, 0x82);
     Engine_ActorSetDestination(1, 0x10a, 0x90);
     Engine_ActorWaitForMove(1);
     Engine_EventWait(40);
-    Object_GetById(0)->unknown_5a |= 1;
-    Object_GetById(1)->unknown_5a |= 1;
+    Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+    Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
     BattleFx_SetQueuedSoundAndPlay(141);
     Call3((void (*)())Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
     Engine_EventWait(40);
@@ -1535,7 +1535,7 @@ void SoruNichigetsu_RunLightScene(void)
     field[0x2a03] = 1;
     /* FAKEMATCH: the do/while keeps the backdrop-colour clear ahead of the event-work load. */
     do { PLTT_BACKDROP = 0; } while (0);
-    Data_03001ebc.event->start_transition = 0x204;
+    Data_03001ebc.event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Data_03001ebc.event->transition_frames = 16;
     Engine_EventEnd();
 }

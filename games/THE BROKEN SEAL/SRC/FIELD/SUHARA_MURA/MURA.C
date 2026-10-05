@@ -133,7 +133,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
     }
 
     work = gEventWork;
-    work->start_transition = 256;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 24;
 
     /* The dressing sequence and cue are unlocked by the shared event flag. */

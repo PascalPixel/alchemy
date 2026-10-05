@@ -78,10 +78,10 @@ s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
     struct EffectParams params;
     s32 phase;
 
-    if ((*(volatile u32 *)&gFrameCount & 7) == 0) {
+    if ((gFrameCount & 7) == 0) {
         Engine_AudioPlayCue(118);
     }
-    phase = *(volatile u32 *)&gFrameCount & 15;
+    phase = gFrameCount & 15;
     if (phase != 0) {
         return 0;
     }

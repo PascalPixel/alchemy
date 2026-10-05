@@ -2,12 +2,12 @@
 
 extern const s32 MakyuriHeya_RiseScript[];
 
-void OverlayObject_SpawnKind24AtObject(u8 *src)
+void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
     u8 *obj;
     u8 *rec;
 
-    obj = Engine_ObjectCreate(24, *(s32 *)(src + 8), *(s32 *)(src + 12), *(s32 *)(src + 16));
+    obj = Engine_ObjectCreate(24, src->x.fixed, src->y.fixed, src->z.fixed);
     if (obj == 0) {
         return;
     }

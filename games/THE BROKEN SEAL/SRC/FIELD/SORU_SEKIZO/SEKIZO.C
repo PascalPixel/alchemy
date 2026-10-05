@@ -286,7 +286,7 @@ void FieldScene_RunStagedActorScene(void)
 
     Engine_EventBegin();
     work = gEventWork;
-    work->start_transition = 0x100;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 32;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -460,7 +460,7 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorSetPosition(1, 0, 0);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     work = gEventWork;
-    work->start_transition = 0x204;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     work->transition_frames = 16;
     Engine_EventEnd();
 }
@@ -630,17 +630,17 @@ void FieldScene_RunPrimarySequenceHead(void)
 
 s32 Scene_RunGuardSequenceB(void)
 {
-    u8 *record;
+    struct FieldActor *record;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Scene_RunGuardSequenceC();
     GameFlag_Set(0x144);
-    record = (u8 *)Object_GetById(18);
-    record[89] = 0;
+    record = Object_GetById(18);
+    record->collision_flags = 0;
     {
-        u8 flags = record[35] | 2;
+        u8 flags = record->priority_flags | 2;
 
-        record[35] = flags;
+        record->priority_flags = flags;
     }
     Engine_ActorSetSpriteFlags((s32)Object_GetById(18), 0);
     Object_GetById(18)->priority_flags &= 254;
@@ -887,7 +887,7 @@ void SoruSekizo_RunStatueDropScene(void)
                 Call2(Engine_CameraSetSpeed, 0x20000, 0x4000);
                 Call4(Engine_CameraMoveTo, 0x11e0000, -1, 0x920000, 1);
                 Engine_CameraWaitForMove();
-                Object_GetById(17)->unknown_5a &= ~1;
+                Object_GetById(17)->steering_flags &= ~ACTOR_FACES_MOTION;
                 Call3(Engine_ActorSetSpeed, 17, 0x30000, 0x10000);
                 statue->motion_flags = 0;
                 Engine_ActorSetSpritePriority(17, 3);
@@ -950,7 +950,7 @@ void FieldScene_RunScene37bSequenceA(void)
             Audio_PlayCue(185);
             Actor_SetSpeed(17, 0x3333, 0x1999);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-            Object_GetById(17)->unknown_5a &= 254;
+            Object_GetById(17)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
             record = Object_GetById(0);
             Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel, 136);
@@ -1063,7 +1063,7 @@ void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
     Engine_AudioPlayCue(185);
     Call3(Engine_ActorSetSpeed, p9, 0x3333, 0x1999);
     Engine_ActorSetSpeed(0, 0x3333, 0x1999);
-    Object_GetById(p9)->unknown_5a &= 254;
+    Object_GetById(p9)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorSetAnimation(0, 8);
     Engine_ActorSetDestination(0, ((a3 << 4) + 8), ((a4 << 4) + 8));
     p8b = ((s32)p8 << 4);

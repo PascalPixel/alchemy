@@ -324,7 +324,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
 void FieldScene_RunActorElevenCellSetup(void)
 {
     u8 *obj = *(u8 **)gEffectWork;
-    u8 *p = (u8 *)Object_GetById(11);
+    struct FieldActor *p = Object_GetById(11);
     s32 t;
 
     obj += 0x35;
@@ -336,8 +336,8 @@ void FieldScene_RunActorElevenCellSetup(void)
         Engine_MapCopyCellAttributes(0x4c, 0x10, 1, 1, a, b);
         if (p != 0) {
             s32 c = 2;
-            p[0x55] = c;
-            p[0x23] = t;
+            p->motion_flags = c;
+            p->priority_flags = t;
         }
         Engine_GameFlagSet(0x211);
     }

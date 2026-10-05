@@ -1831,7 +1831,7 @@
         "*/recon/tla/raw/08101a54.o"(.text)
         "*/recon/tla/raw/08101ac8.o"(.text)
         "*/recon/tla/raw/08101c0c.o"(.text)
-        "*/recon/tla/raw/08101c18.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/PANEL_HIGHLIGHT.o"(.text)
         "*/recon/tla/raw/08101c40.o"(.text)
         "*/recon/tla/raw/08101c7c.o"(.text)
         "*/recon/tla/raw/08101d34.o"(.text)

@@ -1052,6 +1052,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00100e84)
     "*/games/COMMON/SRC/MENU/ADJUST_PALETTE_BANK.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00101640)
+    "*/games/THE LOST AGE/SRC/MENU/PANEL_HIGHLIGHT.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.00101c48)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_LOADED_RESOURCE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00104b2e)
     "*/recon/tla/ja/rom.o"(.rom.00104b30)

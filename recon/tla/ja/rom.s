@@ -4566,7 +4566,9 @@ ItemMenu_PosCategory:
 Func_08100e7c:
 	.incbin "baserom.gba", 0x00100e84, 0x00000734
 	.section .rom.00101640, "ax"
-	.incbin "baserom.gba", 0x00101640, 0x00003464
+	.incbin "baserom.gba", 0x00101640, 0x000005e0
+	.section .rom.00101c48, "ax"
+	.incbin "baserom.gba", 0x00101c48, 0x00002e5c
 	.section .rom.00104b2e, "ax"
 	.incbin "baserom.gba", 0x00104b2e, 0x00000002
 	.section .rom.00104b30, "ax"

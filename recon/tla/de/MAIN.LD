@@ -1147,6 +1147,8 @@
     "*/recon/tla/de/rom.o"(.rom.0010b048)
     "*/games/COMMON/SRC/MENU/ADJUST_PALETTE_BANK.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0010b804)
+    "*/games/THE LOST AGE/SRC/MENU/PANEL_HIGHLIGHT.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.0010be0c)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_LOADED_RESOURCE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0010ed22)
     "*/recon/tla/de/rom.o"(.rom.0010f284)

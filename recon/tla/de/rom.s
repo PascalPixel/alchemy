@@ -3952,7 +3952,9 @@ ItemMenu_PosCategory:
 Func_08100e7c:
 	.incbin "baserom.gba", 0x0010b048, 0x00000734
 	.section .rom.0010b804, "ax"
-	.incbin "baserom.gba", 0x0010b804, 0x00003494
+	.incbin "baserom.gba", 0x0010b804, 0x000005e0
+	.section .rom.0010be0c, "ax"
+	.incbin "baserom.gba", 0x0010be0c, 0x00002e8c
 	.section .rom.0010ed22, "ax"
 	.incbin "baserom.gba", 0x0010ed22, 0x00000002
 	.global UiIcon_CreateStatChangeArrow

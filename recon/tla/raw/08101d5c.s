@@ -122,7 +122,7 @@ Func_08101d5c:
 	movs r3, #6
 	mov r9, r0
 	mov r0, r8
-	bl Func_08101c18
+	bl UiPanel_SetRectHighlight
 	mov r3, r11
 	str r3, [sp, #0]
 	movs r3, #14
@@ -131,7 +131,7 @@ Func_08101d5c:
 	movs r1, #0
 	adds r2, r6, #0
 	movs r3, #6
-	bl Func_08101c18
+	bl UiPanel_SetRectHighlight
 	str r6, [sp, #12]
 	b .L_08101efa
 .L_08101e80:

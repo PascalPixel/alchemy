@@ -50,7 +50,7 @@ s32 DjinnMenu_ShowCurrentList(void)
         for (i = 0; i < 4; i++) {
             menu->slot_x[i] = 32 + i * 56;
             menu->slot_y[i] = 70;
-            menu->frames[i] = 30;
+            menu->owner_y[i] = 30;
         }
     }
     RenderOutput_RedrawSavedRectFar(window);

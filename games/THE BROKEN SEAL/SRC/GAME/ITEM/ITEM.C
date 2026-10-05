@@ -630,7 +630,7 @@ s32 DjinnMenu_RunScreen(void)
             FourObjectMotion_SetSlotPosition(0, menu->selected_column[0] * 56 + 48, 54, 0);
             result = DjinnMenu_SelectDjinn(1);
             for (i = 0; i < menu->owner_count; i++)
-                menu->frames[i] += 8;
+                menu->owner_y[i] += 8;
             if (result == -2)
                 done = 1;
             if (result < 0) {

@@ -189,7 +189,7 @@ UiWindow_DrawPartyStatusContents:
 	ldrh r1, [r5, #6]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl Func_0803a084
+	bl UiWindow_DrawFrame
 	mov r0, r9
 	mov r1, r10
 	bl Func_080426e0

@@ -203,7 +203,7 @@ Func_080addf0:
 	mov r2, r11
 	strb r6, [r3]
 	str r2, [r7]
-	bl Func_080add74
+	bl Runtime_GetBuildStampTime
 	movs r1, #182
 	lsls r1, r1, #2
 	adds r3, r7, r1

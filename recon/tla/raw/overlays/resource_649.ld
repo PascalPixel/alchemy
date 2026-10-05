@@ -8,7 +8,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_649/SCENE_TABLES.o"(.text)
         "*/resource_649_overlay.o"(.text.x0200805c)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_649/PREPARE.o"(.text)
-        "*/resource_649_overlay.o"(.text.x02008208)
         "*/resource_649_overlay.o"(.text.x02008278)
         "*/resource_649_overlay.o"(.text.x0200831c)
         "*/resource_649_overlay.o"(.text.x02008490)

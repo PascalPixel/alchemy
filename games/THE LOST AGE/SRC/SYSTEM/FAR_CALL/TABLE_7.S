@@ -24,7 +24,23 @@ Func_08020310:
 	.global Func_08020318
 	.thumb_func
 Func_08020318:
+.ifdef TLA_EDITION_DE
+	overlay_veneer Runtime_CheckRadiusOverlap
+.else
+.ifdef TLA_EDITION_ES
+	overlay_veneer Runtime_CheckRadiusOverlap
+.else
+.ifdef TLA_EDITION_FR
+	overlay_veneer Runtime_CheckRadiusOverlap
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Runtime_CheckRadiusOverlap
+.else
 	overlay_veneer Func_0802db64
+.endif
+.endif
+.endif
+.endif
 	.global Func_08020320
 	.thumb_func
 Func_08020320:

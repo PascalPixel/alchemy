@@ -59,17 +59,8 @@ extern void *Object_GetById(u32);
 extern void BattleFx_PlayQueuedSound(void);
 extern void Audio_PlayCue(s32);
 
-s32 Func_02000314(s32 *first_position, s32 *second_position)
-{
-    s32 delta_x = (*first_position++ - *second_position++) >> 16;
-    s32 delta_y = (*first_position++ - *second_position++) >> 16;
-    s32 delta_z = (*first_position - *second_position) >> 16;
-    s32 delta_x_squared = delta_x *delta_x;
-    s32 delta_y_squared = delta_y *delta_y;
-    s32 delta_z_squared = delta_z *delta_z;
-
-    return ((IwramIntegerSquareRoot) 0x030002D4)(delta_x_squared + delta_y_squared + delta_z_squared);
-}
+/* Func_02000314 is C: SceneActor_CalculateFixedPointDistance in
+   FIELD/VINASU_CHOJO/DISTANCE.C. */
 
 struct StagedActor *Func_0200034c(s32 *position, struct StagedActor *origin)
 {

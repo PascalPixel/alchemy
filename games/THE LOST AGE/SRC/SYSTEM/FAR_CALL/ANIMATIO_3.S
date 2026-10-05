@@ -32,7 +32,7 @@ Func_08020290:
 	.global Func_08020298
 	.thumb_func
 Func_08020298:
-	overlay_veneer Func_08024f20
+	overlay_veneer ScriptObject_CheckOverlap
 	.global Func_080202a0
 	.thumb_func
 Func_080202a0:

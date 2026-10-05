@@ -1,16 +1,11 @@
-/*
- * Draft: Runtime_GetBuildStampTime (☀️ CHARACTER.C) at its ⚓️ address. 4
- * instructions differ, two load delay slots the native fills (ldr r1 after
- * the first ldrb, asrs after the gDebugMode address load); it matches
- * exactly with -mtune=arm9tdmi. Needs DIRECTORY.S row 2 named BuildStamp.
- * Links as recon/tla/raw/080add74.s.
- */
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "FRAME.H"
 
 extern char ResourceId_BuildStamp;
 
+/* The build stamp's HHMMSS digits packed as hours, minutes and seconds in
+   one halfword; the top bit marks a debug build. */
 u16 Runtime_GetBuildStampTime(void)
 {
     u8 *digits;

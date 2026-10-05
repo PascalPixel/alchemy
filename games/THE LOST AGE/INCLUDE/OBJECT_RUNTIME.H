@@ -17,7 +17,9 @@ struct ObjectRuntime {
     s32 y;
     s32 z;
     s32 terrain_height;
-    u8 unknown_18[0x0a];
+    u8 unknown_18[0x08];
+    /* The collision radius, in pixels. */
+    u16 radius;
     u8 terrain_id;
     u8 unknown_23;
     s32 velocity_x;

@@ -115,7 +115,7 @@ Motion_CamBounds:
 	asrs r3, r3, #24
 	cmp r3, #3
 	beq .L_080d44f6
-	bl Func_08020120
+	bl Map_ApplyWorkOriginAndSpanFar
 	b .L_080d44f6
 .L_080d44ea:
 	adds r0, r5, #0

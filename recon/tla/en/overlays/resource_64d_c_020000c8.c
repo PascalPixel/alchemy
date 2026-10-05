@@ -1,0 +1,44 @@
+/*
+ * Draft: Func_020000c8, overlay 64D's sliding pass for object id between
+ * SCENE_TABLES.C (which now ends with Func_02000054 and Func_0200009c) and
+ * SCENE_EVENTS.C. 31 rows differ: ⚓️ keeps the id in r5, the object in r6
+ * and 0 in r8, and builds -96 afresh for each call; this C keeps -96 in a
+ * register across the first call. Links as resource_64d .text.x020080c8.
+ */
+#include "TYPES.H"
+#include "OBJECT_RUNTIME.H"
+
+struct ObjectRuntime *Object_GetById(u32 id);
+void Battle_WaitMode0(s32 frames);
+void ObjectMotion_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
+void Func_02002a34(s32 a, s32 b);
+void Func_02002a44(void);
+void Func_02002a4c(void);
+void Func_02002a54(void);
+void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
+void Func_02002a64(s32 cue);
+void Field_BeginPaletteTransition(s32 mode);
+void Field_EndActorSpriteEffect(s32 mode);
+void Func_020023a4(void *object);
+void Func_0200260c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_020026f4(struct ObjectRuntime *object);
+void Func_020027b0(void);
+
+void Func_0200009c(struct ObjectRuntime *object);
+
+void Func_020000c8(s32 id)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+    u8 *visible;
+
+    Func_020026f4(object);
+    *(void **)object->unknown_6c = Func_0200009c;
+    visible = &object->unknown_23;
+    *visible = 0;
+    ObjectMotion_CommitPositionAndActivate(id, 96, -96);
+    ObjectMotion_CommitPositionAndActivate(id, -96, 96);
+    *(void **)object->unknown_6c = 0;
+    *visible = 1;
+    Battle_WaitMode0(30);
+    Func_020027b0();
+}

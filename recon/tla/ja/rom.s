@@ -219,18 +219,6 @@ Resource_FindFreeEntry:
 	.thumb_func
 Scheduler_SetCallbackMask:
 	.incbin "baserom.gba", 0x0001471c, 0x00000040
-	.section .rom.0001489c, "ax"
-	.global Vector_AddPolarOffset
-	.type Vector_AddPolarOffset, %function
-	.thumb_func
-Vector_AddPolarOffset:
-	.incbin "baserom.gba", 0x0001489c, 0x0000004c
-	.section .rom.000148e8, "ax"
-	.global ArcTan2
-	.type ArcTan2, %function
-	.thumb_func
-ArcTan2:
-	.incbin "baserom.gba", 0x000148e8, 0x000000cc
 	.section .rom.000149f8, "ax"
 	.global Text_FormatHexToWork
 	.type Text_FormatHexToWork, %function
@@ -467,7 +455,10 @@ Func_08016dd0:
 	.section .rom.000178b4, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x000178b4, 0x0000023c
+	.incbin "baserom.gba", 0x000178b4, 0x00000136
+	.global Math_ArcTanTable
+Math_ArcTanTable:
+	.incbin "baserom.gba", 0x000179ea, 0x00000106
 	.global Ui_WindowPalette
 Ui_WindowPalette:
 	.incbin "baserom.gba", 0x00017af0, 0x00000020
@@ -722,20 +713,10 @@ Object_SetMoveTarget:
 	.incbin "baserom.gba", 0x00024d14, 0x0000004c
 	.section .rom.00024ec6, "ax"
 	.incbin "baserom.gba", 0x00024ec6, 0x0000000e
-	.section .rom.00024f1e, "ax"
-	.incbin "baserom.gba", 0x00024f1e, 0x00000002
-	.section .rom.00024f20, "ax"
-	.global Func_08024f20
-	.type Func_08024f20, %function
-	.thumb_func
-Func_08024f20:
-	.incbin "baserom.gba", 0x00024f20, 0x00000060
-	.section .rom.00024f80, "ax"
-	.global Func_08024f80
-	.type Func_08024f80, %function
-	.thumb_func
-Func_08024f80:
-	.incbin "baserom.gba", 0x00024f80, 0x00000140
+	.section .rom.00024fde, "ax"
+	.incbin "baserom.gba", 0x00024fde, 0x00000002
+	.section .rom.00024fe0, "ax"
+	.incbin "baserom.gba", 0x00024fe0, 0x000000e0
 	.section .rom.000250f2, "ax"
 	.incbin "baserom.gba", 0x000250f2, 0x00000042
 	.section .rom.00025160, "ax"
@@ -746,12 +727,6 @@ Func_08024f80:
 	.incbin "baserom.gba", 0x00025c8a, 0x00000002
 	.section .rom.00026320, "ax"
 	.incbin "baserom.gba", 0x00026320, 0x00000c60
-	.section .rom.00026f80, "ax"
-	.global Func_08026f80
-	.type Func_08026f80, %function
-	.thumb_func
-Func_08026f80:
-	.incbin "baserom.gba", 0x00026f80, 0x00000048
 	.section .rom.00026fc8, "ax"
 	.global Func_08026fc8
 	.type Func_08026fc8, %function
@@ -1084,14 +1059,6 @@ UiWindow_Create:
 	.incbin "baserom.gba", 0x00039254, 0x00000114
 	.section .rom.0003938e, "ax"
 	.incbin "baserom.gba", 0x0003938e, 0x00000002
-	.section .rom.0003940a, "ax"
-	.incbin "baserom.gba", 0x0003940a, 0x00000002
-	.section .rom.0003940c, "ax"
-	.global RenderOutput_RedrawSavedRect
-	.type RenderOutput_RedrawSavedRect, %function
-	.thumb_func
-RenderOutput_RedrawSavedRect:
-	.incbin "baserom.gba", 0x0003940c, 0x00000018
 	.section .rom.00039446, "ax"
 	.incbin "baserom.gba", 0x00039446, 0x00000002
 	.section .rom.00039448, "ax"
@@ -1128,18 +1095,13 @@ UiWork_ProcessDirectWork:
 	.section .rom.0003a016, "ax"
 	.incbin "baserom.gba", 0x0003a016, 0x00000002
 	.section .rom.0003a018, "ax"
-	.global Func_0803a084
-	.type Func_0803a084, %function
+	.global UiWindow_DrawFrame
+	.type UiWindow_DrawFrame, %function
 	.thumb_func
-Func_0803a084:
+UiWindow_DrawFrame:
 	.incbin "baserom.gba", 0x0003a018, 0x00000334
-	.section .rom.0003a378, "ax"
-	.balign 4
-	.global UiWork_IsIdle
-	.type UiWork_IsIdle, %function
-	.thumb_func
-UiWork_IsIdle:
-	.incbin "baserom.gba", 0x0003a378, 0x0000014c
+	.section .rom.0003a3da, "ax"
+	.incbin "baserom.gba", 0x0003a3da, 0x000000ea
 	.section .rom.0003a4c4, "ax"
 	.global Func_0803a530
 	.type Func_0803a530, %function
@@ -2275,11 +2237,7 @@ Func_080adc90:
 	.thumb_func
 Func_080add5c:
 	.incbin "baserom.gba", 0x000a8d5c, 0x00000018
-	.global Func_080add74
-	.type Func_080add74, %function
-	.thumb_func
-Func_080add74:
-	.incbin "baserom.gba", 0x000a8d74, 0x0000007c
+	.section .rom.000a8df0, "ax"
 	.global Func_080addf0
 	.type Func_080addf0, %function
 	.thumb_func
@@ -2350,10 +2308,10 @@ Item_AdjustCounter:
 	.incbin "baserom.gba", 0x000aa374, 0x00000028
 	.section .rom.000aa4e0, "ax"
 	.balign 4
-	.global Func_080af4e4
-	.type Func_080af4e4, %function
+	.global Owner_UpdateClassActions
+	.type Owner_UpdateClassActions, %function
 	.thumb_func
-Func_080af4e4:
+Owner_UpdateClassActions:
 	.incbin "baserom.gba", 0x000aa4e0, 0x00000210
 	.section .rom.000aa78e, "ax"
 	.incbin "baserom.gba", 0x000aa78e, 0x0000000a
@@ -2403,9 +2361,18 @@ Owner_GetDigitValues:
 	.type Owner_GetDefaultElement, %function
 	.thumb_func
 Owner_GetDefaultElement:
-	.incbin "baserom.gba", 0x000ab058, 0x0000022c
-	.section .rom.000ab294, "ax"
-	.incbin "baserom.gba", 0x000ab294, 0x0000003c
+	.incbin "baserom.gba", 0x000ab058, 0x00000028
+	.global Owner_BuildDigitTiles
+	.type Owner_BuildDigitTiles, %function
+	.thumb_func
+Owner_BuildDigitTiles:
+	.incbin "baserom.gba", 0x000ab080, 0x000000c0
+	.global Owner_DetermineClass
+	.type Owner_DetermineClass, %function
+	.thumb_func
+Owner_DetermineClass:
+	.incbin "baserom.gba", 0x000ab140, 0x00000144
+	.section .rom.000ab2d0, "ax"
 	.global Owner_RefreshClassActions
 	.type Owner_RefreshClassActions, %function
 	.thumb_func
@@ -2428,20 +2395,6 @@ Curve_LookupScaledValue:
 	.thumb_func
 Trade_CanOfferDjinn:
 	.incbin "baserom.gba", 0x000abbb4, 0x000000c0
-	.section .rom.000abc96, "ax"
-	.incbin "baserom.gba", 0x000abc96, 0x00000002
-	.section .rom.000abc98, "ax"
-	.global Djinn_Activate
-	.type Djinn_Activate, %function
-	.thumb_func
-Djinn_Activate:
-	.incbin "baserom.gba", 0x000abc98, 0x00000068
-	.section .rom.000abd00, "ax"
-	.global Djinn_Deactivate
-	.type Djinn_Deactivate, %function
-	.thumb_func
-Djinn_Deactivate:
-	.incbin "baserom.gba", 0x000abd00, 0x00000054
 	.section .rom.000abd54, "ax"
 	.global Trade_RemoveOffer
 	.type Trade_RemoveOffer, %function
@@ -3638,8 +3591,10 @@ Func_080d3214:
 	.thumb_func
 ObjectMotion_WaitForAnimationChange:
 	.incbin "baserom.gba", 0x000d3248, 0x00000050
-	.section .rom.000d331c, "ax"
-	.incbin "baserom.gba", 0x000d331c, 0x00000124
+	.section .rom.000d3356, "ax"
+	.incbin "baserom.gba", 0x000d3356, 0x00000002
+	.section .rom.000d3358, "ax"
+	.incbin "baserom.gba", 0x000d3358, 0x000000e8
 	.global Func_080d3460
 	.type Func_080d3460, %function
 	.thumb_func
@@ -3750,12 +3705,7 @@ Func_080d41fc:
 	.thumb_func
 Func_080d4330:
 	.incbin "baserom.gba", 0x000d4310, 0x00000054
-	.section .rom.000d4364, "ax"
-	.global Object_AttachWorkTargetToObject
-	.type Object_AttachWorkTargetToObject, %function
-	.thumb_func
-Object_AttachWorkTargetToObject:
-	.incbin "baserom.gba", 0x000d4364, 0x00000068
+	.section .rom.000d43cc, "ax"
 	.global Func_080d43ec
 	.type Func_080d43ec, %function
 	.thumb_func
@@ -4055,7 +4005,9 @@ FieldEvent_RunTypeHandler:
 	.type ObjectGroup_ApplyRandomChildValues, %function
 	.thumb_func
 ObjectGroup_ApplyRandomChildValues:
-	.incbin "baserom.gba", 0x000db8d8, 0x000000a4
+	.incbin "baserom.gba", 0x000db8d8, 0x00000058
+	.section .rom.000db962, "ax"
+	.incbin "baserom.gba", 0x000db962, 0x0000001a
 	.global Func_080db9c0
 	.type Func_080db9c0, %function
 	.thumb_func
@@ -4440,19 +4392,8 @@ UiIcon_PrepareObject:
 	.incbin "baserom.gba", 0x000f8c8e, 0x0000022a
 	.section .rom.000f8f14, "ax"
 	.incbin "baserom.gba", 0x000f8f14, 0x0000016c
-	.section .rom.000f919a, "ax"
-	.incbin "baserom.gba", 0x000f919a, 0x00000002
-	.global Render_SetTilemapFlagRect
-	.type Render_SetTilemapFlagRect, %function
-	.thumb_func
-Render_SetTilemapFlagRect:
-	.incbin "baserom.gba", 0x000f919c, 0x00000088
-	.section .rom.000f9224, "ax"
-	.global Palette_CopyObjectBankToBackground14
-	.type Palette_CopyObjectBankToBackground14, %function
-	.thumb_func
-Palette_CopyObjectBankToBackground14:
-	.incbin "baserom.gba", 0x000f9224, 0x000000c8
+	.section .rom.000f9254, "ax"
+	.incbin "baserom.gba", 0x000f9254, 0x00000098
 	.section .rom.000f933e, "ax"
 	.incbin "baserom.gba", 0x000f933e, 0x00000002
 	.section .rom.000f942a, "ax"
@@ -4818,12 +4759,6 @@ Func_08119734:
 	.thumb_func
 Func_081197f0:
 	.incbin "baserom.gba", 0x001197f0, 0x00000844
-	.section .rom.0011a034, "ax"
-	.global BattleParty_PrepareActiveOwners
-	.type BattleParty_PrepareActiveOwners, %function
-	.thumb_func
-BattleParty_PrepareActiveOwners:
-	.incbin "baserom.gba", 0x0011a034, 0x00000078
 	.section .rom.0011a0ac, "ax"
 	.global BattleParty_PrepareReserveOwners
 	.type BattleParty_PrepareReserveOwners, %function

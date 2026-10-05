@@ -70,7 +70,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
     REG_BG2X = (64 - first.x) << 8;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     rows = ShatterRocks_RockCounts[work->effect->variant];
     for (i = 0; i != rows; i++) {
         rock = &work->particles[i];
@@ -131,7 +131,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

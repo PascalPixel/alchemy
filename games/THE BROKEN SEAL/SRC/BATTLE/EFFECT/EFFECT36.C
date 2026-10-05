@@ -124,7 +124,7 @@ void BattleEffect_CleanupSceneObjects(void)
         } while (active != 0 && waited <= 29);
 
         runtime->teardown_state = 0;
-        Scheduler_RemoveCallback((s32)BattleFx_UpdateAllEffectSlots);
+        Scheduler_RemoveCallback(BattleFx_UpdateAllEffectSlots);
         Resource_ResetEntry((s16)scene->tile_slot);
         position->x = scene->saved_x;
         position->y = scene->saved_y;

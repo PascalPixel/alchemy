@@ -88,11 +88,11 @@ void RunBattleEffect16(void)
     }
     object->callback = NULL;
     object->angle = angle;
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateEffect16State), 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
     WaitFrames(15);
     Audio_PlayCue(0xae);
     WaitFrames(55);
-    Scheduler_RemoveCallback((u32)(BattleFx_UpdateEffect16State));
+    Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
     index = 147;
     if (*(s16 *)((u8 *)&gGameState + index * sizeof(s32)) != 0)
         ObjectDispatch_SetSingleChildField26Far(object, 2);

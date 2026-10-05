@@ -85,7 +85,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     position[0] = actor->x;
     position[1] = 0;
     position[2] = actor->z;
@@ -246,7 +246,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

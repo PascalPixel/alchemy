@@ -75,7 +75,7 @@ void DisplayTransition_UpdateFrame(void)
         if (state->step >= state->duration) {
             volatile u16 *dma0;
             state->duration = 0;
-            Scheduler_RemoveCallback((u32)DisplayTransition_UpdateFrame);
+            Scheduler_RemoveCallback(DisplayTransition_UpdateFrame);
             dma0 = REG_DMA0;
             dma0[5] &= 0xc5ff;
             dma0[5] &= 0x7fff;

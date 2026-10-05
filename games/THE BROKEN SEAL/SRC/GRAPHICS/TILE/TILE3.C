@@ -154,7 +154,7 @@ s32 DisplayScroll_RunSlideshow(void)
     gDebugTextEnabled = 0;
     gOptionMirror = 0;
     Scheduler_ResetTaskTable();
-    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_StepPositionEveryFourFrames, 0x480);
+    Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames, 0x480);
     Io_Write16(REG_DISPCNT, 0x40);
     DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
     DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);

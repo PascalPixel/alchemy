@@ -70,7 +70,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
         work->particles[j].variant = -1;
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(138);
     for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
         if (frame == 24)
@@ -158,7 +158,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

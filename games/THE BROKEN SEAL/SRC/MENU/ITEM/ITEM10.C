@@ -81,7 +81,7 @@ s32 ItemMenu_SelectItem(void)
             icon->sentinel = 240;
     }
 
-    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
+    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, (s32)menu->status_window, 64, -24);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 3, (s32)menu->status_window, 0, -24);
     ItemMenu_PosCategory();
@@ -170,7 +170,7 @@ s32 ItemMenu_SelectItem(void)
         s32 delay = 200;
 
         delay <<= 4;
-        Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), delay);
+        Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, delay);
     }
     return result;
 }

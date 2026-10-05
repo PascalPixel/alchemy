@@ -81,7 +81,7 @@ s32 ItemMenu_SelectTarget(s32 mode)
     UiWindow_SetBounds((struct RenderInput *)window, 13, 5, 17, 12);
     RenderOutput_RedrawSavedRectFar((s32)menu->item_window);
     Owner_GetStateFar(menu->owner_ids[menu->pane_index[0]]);
-    Scheduler_AddOrUpdateCallback((s32)EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
+    Scheduler_AddOrUpdateCallback(EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
     while (!GameFlag_TestFar(0x150)) {
         if (pending) {
             pending = 0;

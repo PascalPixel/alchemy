@@ -93,7 +93,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -205,7 +205,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -248,7 +248,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 50;
     draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -325,7 +325,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

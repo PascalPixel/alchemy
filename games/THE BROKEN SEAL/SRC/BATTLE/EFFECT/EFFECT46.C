@@ -104,7 +104,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(1, 0);
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(9, 379, 2);
@@ -308,7 +308,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     BattleEffect_SetupBlendedDisplay();
     for (i = 0; i != 15; i++)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -373,7 +373,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (j = 0; j != 40; j++) {
         struct EffectStep *ember = &work->particles[8 + j];
@@ -558,7 +558,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -624,7 +624,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     } while (i != 64);
 
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &origin);
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
 
@@ -702,6 +702,6 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

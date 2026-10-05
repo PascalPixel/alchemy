@@ -75,7 +75,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet + 0x2f8, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     for (i = 0; i != 32; i++) {
         step = &work->particles[i];
         step->x = Random16() & 63;
@@ -142,7 +142,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
         angle -= 0x800;
         frame++;
     } while (frame != 96);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -188,7 +188,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     burst_offset = 0;
     member = 0;
@@ -300,7 +300,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
         curtain_y += 8;
         frame++;
     } while (frame != 112);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -354,7 +354,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], spawn);
 
     for (i = 0; i != PARTICLE_COUNT; i++) {
@@ -433,7 +433,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -487,7 +487,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet + 0x65c0, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     actor = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0; i != 8; i++) {
@@ -603,7 +603,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

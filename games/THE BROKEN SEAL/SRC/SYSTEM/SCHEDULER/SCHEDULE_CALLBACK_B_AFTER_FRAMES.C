@@ -7,7 +7,7 @@
 
 void Scheduler_ScheduleCallbackBAfterFrames(void)
 {
-    Scheduler_AddOrUpdateCallback((s32)PaletteQueue_StepCycles, 0xc80);
+    Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
 }
 
 extern struct PaletteSnapshotWork *gPaletteWork;

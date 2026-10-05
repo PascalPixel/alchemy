@@ -91,7 +91,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
     BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
     work->fade_frames = 0;
     work->fade_step = 0;
-    Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 0xc80);
+    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
     QUEUE_DISPLAY_CONTROL(0x7341);
     WaitFrames(1);
     REG_BG2CNT = bg_control | 0x784;
@@ -194,7 +194,7 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
     BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 128);
     work->fade_frames = 24;
     work->fade_step = 0;
-    Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 0xc80);
+    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
     QUEUE_DISPLAY_CONTROL(0x1341);
     WaitFrames(1);
     REG_BG2CNT = bg_control | 0x784;
@@ -318,7 +318,7 @@ void BattleFx_EndCanvasLayer(void)
     gProjection.center_y = 120;
     REG_BG2CNT = 0x787;
     Iwram_ClearWords((void *)0x06004000, 0x4000);
-    Scheduler_RemoveCallback((s32)Palette_StepFadeTransfer);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     gBgScroll[1].y = 32;
     QUEUE_DISPLAY_CONTROL(0x7341);
     REG_BLDCNT = 0;

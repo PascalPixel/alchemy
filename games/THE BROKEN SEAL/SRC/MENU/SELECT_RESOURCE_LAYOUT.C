@@ -49,7 +49,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
     Menu_CenterResourceEntries(17, 5, 0);
 #endif
     if (mode != 0) {
-        Scheduler_AddOrUpdateCallback((s32)(Menu_DrawModeLabel), 0xc76);
+        Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
         work->previous_mode = 0xffff;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
         window = UiWindow_Create(7, 0, 17, 4, 2);
@@ -84,7 +84,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
         UiText_DrawResource(msg, work->lower_window, 0, 16);
 #endif
     } else {
-        Scheduler_AddOrUpdateCallback((s32)(Menu_DrawModeIndicator), 0xc76);
+        Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
         work->previous_mode = 0xffff;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
         window = UiWindow_Create(6, 0, 18, 4, 2);
@@ -112,9 +112,9 @@ s32 Menu_SelectResourceLayout(s32 mode)
     }
     result = Menu_RunResourceSelectionLoop(0);
     if (mode != 0)
-        Scheduler_RemoveCallback((u32)(Menu_DrawModeLabel));
+        Scheduler_RemoveCallback(Menu_DrawModeLabel);
     else
-        Scheduler_RemoveCallback((u32)(Menu_DrawModeIndicator));
+        Scheduler_RemoveCallback(Menu_DrawModeIndicator);
     RenderOutput_PrepareForRedraw(*upper);
     RenderOutput_PrepareForRedraw(work->lower_window);
     UiWork_Finalize(*upper, 2);

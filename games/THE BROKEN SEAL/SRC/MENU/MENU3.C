@@ -50,12 +50,12 @@ void Menu_InitializeSelectedWorkspace(void)
     work = Runtime_AllocateBlock(20, 0x628);
     zero = 0;
     Dma_Set(&zero, work, 0x8500018a, REG_DMA3);
-    Scheduler_AddOrUpdateCallback((s32)(Menu_RunSelectedWorkspaceEntry), 3200);
+    Scheduler_AddOrUpdateCallback(Menu_RunSelectedWorkspaceEntry, 3200);
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void)
 {
-    Scheduler_RemoveCallback((s32)&Menu_RunSelectedWorkspaceEntry);
+    Scheduler_RemoveCallback(&Menu_RunSelectedWorkspaceEntry);
     Runtime_ReleaseHeapBlock(0x14);
 }
 

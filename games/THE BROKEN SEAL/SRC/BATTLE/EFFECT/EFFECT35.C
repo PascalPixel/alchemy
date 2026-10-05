@@ -236,7 +236,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
         scene->unknown_cc0 = running;
     work->tile_slot = Resource_FindFreeEntry();
     VramBlock_LoadCached((s16)work->tile_slot, 256, Data_0809c410);
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateAllEffectSlots), 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
 
 void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)

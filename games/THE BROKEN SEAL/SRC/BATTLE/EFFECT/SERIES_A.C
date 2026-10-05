@@ -226,7 +226,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
         limit = 128;
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != total; frame++) {
         struct BattleCamera *camera = gCameraWork;
@@ -342,7 +342,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

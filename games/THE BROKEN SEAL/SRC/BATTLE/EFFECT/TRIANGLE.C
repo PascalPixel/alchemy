@@ -91,7 +91,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     Resource_DecodeType01(palette, work->sheet + 0x2000);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
     shift = 64 - anchor.x;
     REG_BG2X = shift << 8;
@@ -178,7 +178,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
 
@@ -228,7 +228,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     Resource_DecodeType01(palette, work->sheet + 0x1000);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
     shift = 64 - anchor.x;
     REG_BG2X = shift << 8;
@@ -302,6 +302,6 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

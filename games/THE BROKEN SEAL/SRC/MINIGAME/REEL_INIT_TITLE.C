@@ -171,7 +171,7 @@ void ReelGame_Run(void)
     sheet = Runtime_AllocateHeapBlock(41, 0x60e);
     canvas = Runtime_AllocateHeapBlock(40, 0x8000);
     work = Runtime_AllocateBlock(39, sizeof(struct BattleEffectWork));
-    state = (s32)Runtime_AllocateBlock(45, sizeof(struct ReelWork));
+    state = Runtime_AllocateBlock(45, sizeof(struct ReelWork));
     tiles = Ram_MapCellBuffer;
     save = (struct ReelSave *)((u8 *)&gGameState + 12);
     RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
@@ -327,8 +327,8 @@ void ReelGame_Run(void)
             UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
         }
         work->transfer_pending = 0;
-        Scheduler_AddOrUpdateCallback((s32)ReelGame_RunFrame, 0x480);
-        Scheduler_AddOrUpdateCallback((s32)BattlePres_ProcessPendingTileTransfer, 0x480);
+        Scheduler_AddOrUpdateCallback(ReelGame_RunFrame, 0x480);
+        Scheduler_AddOrUpdateCallback(BattlePres_ProcessPendingTileTransfer, 0x480);
 
         for (frame = 0; state->state != 10; frame++) {
             if (frame <= 16) {
@@ -451,8 +451,8 @@ void ReelGame_Run(void)
         }
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
-        Scheduler_RemoveCallback((u32)BattlePres_ProcessPendingTileTransfer);
-        Scheduler_RemoveCallback((u32)ReelGame_RunFrame);
+        Scheduler_RemoveCallback(BattlePres_ProcessPendingTileTransfer);
+        Scheduler_RemoveCallback(ReelGame_RunFrame);
         Runtime_ReleaseHeapBlock(45);
         Runtime_ReleaseHeapBlock(40);
         Runtime_ReleaseHeapBlock(39);

@@ -3,7 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
-s32 Scheduler_DisableCallbacks(u32 callback)
+s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
@@ -24,7 +24,7 @@ s32 Scheduler_DisableCallbacks(u32 callback)
             *ime = (u16)(u32)ime;
         }
         for (i = 0; i <= 23; i++, task++) {
-            if (callback == 0 || task->callback == callback) {
+            if (callback == 0 || task->callback == (u32)callback) {
                 TASK_STATE_HIGH(task) &= (u8)~1;
                 result = i;
             }

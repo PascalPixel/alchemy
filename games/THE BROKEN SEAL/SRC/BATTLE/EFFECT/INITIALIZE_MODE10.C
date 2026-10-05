@@ -111,7 +111,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     REG_BG2X = -0x2000;
 
     for (i = 0; i != 16; i++) {
@@ -422,7 +422,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
             work->transfer_mode = 2;
             work->transfer_value = 75;
             Scheduler_AddOrUpdateCallback(
-                (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+                BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
             for (i = 0; i != work->effect->count; i++) {
                 struct MotionObject *object =
                     GetBattleObjectSlotFar(work->effect->actors[i])->object;
@@ -492,7 +492,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleEventRuntime_BeginPhaseFar(134);
@@ -627,7 +627,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     PLTT_BACKDROP = 0;
     *(u16 *)0x05000002 = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     REG_WININ = 0x2137;
     BattleEffect_WipeCanvas(1, 0);
     REG_WIN0H = 0xf0f0;
@@ -674,12 +674,12 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
                     noise[n] = Random16() & 63;
                 }
                 *phase = 0;
-                Scheduler_AddOrUpdateCallback((s32)BattleFx_BuildWindowEdgeTable, 0x480);
+                Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 0x480);
             }
             *phase += step;
             step += 3;
             if (frame == 15) {
-                Scheduler_RemoveCallback((s32)BattleFx_BuildWindowEdgeTable);
+                Scheduler_RemoveCallback(BattleFx_BuildWindowEdgeTable);
             }
         }
 
@@ -996,7 +996,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
 
@@ -1083,7 +1083,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != work->effect->count * 20 + 56; frame++) {
         if (frame == 32)
@@ -1121,7 +1121,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

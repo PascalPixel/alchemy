@@ -92,10 +92,10 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 
     work->camera_delta = 0;
     work->camera_phase = 0;
-    Scheduler_AddOrUpdateCallback((s32)Camera_ApplyPhasedDelta, 0x480);
+    Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != (HomingEmbers_Counts[work->effect->variant] >> 1) + 132; frame++) {
         if (frame > 16 && frame < 80)
@@ -182,8 +182,8 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Scheduler_RemoveCallback((u32)Camera_ApplyPhasedDelta);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

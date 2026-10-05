@@ -120,7 +120,7 @@ void Shop_InitializeCursorWork(void)
     slot = Resource_FindFreeEntry();
     work->stat_up_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_SmallUpArrowTiles);
-    Scheduler_AddOrUpdateCallback((s32)Shop_StepCursor, 0xc80);
+    Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
 }
 
 void Inn_Cleanup(void)
@@ -128,7 +128,7 @@ void Inn_Cleanup(void)
     struct ShopRuntime *state;
 
     state = gMenuWork;
-    Scheduler_RemoveCallback((s32)Shop_StepCursor);
+    Scheduler_RemoveCallback(Shop_StepCursor);
     UiWork_FinalizePendingCoreFar();
     Resource_ResetEntry(state->cursor_icon);
     Resource_ResetEntry(state->previous_page_icon);

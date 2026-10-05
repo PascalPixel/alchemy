@@ -124,7 +124,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
         CopyPalette(Iwram_CopyWords, (void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (mode == 0)
         direction = 1;
     else if (work->effect->side == 1)
@@ -394,7 +394,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     if (mode == 0) {
@@ -440,7 +440,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     {
         struct Point2D focus;
         struct Point2D velocity;
@@ -599,7 +599,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
             WaitFrames(1);
         }
 
-        Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         BattleEffect_RunImpactBurst(1, focus.x, focus.y);

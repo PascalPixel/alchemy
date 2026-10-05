@@ -74,7 +74,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (variant == 1)
         BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0x80000);
     else
@@ -109,7 +109,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         WaitFrames(1);
     }
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
 
@@ -156,7 +156,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &position);
     REG_BG2X = (64 - position.x) << 8;
     for (i = 0, spark = work->particles; i != 16; i++) {
@@ -229,6 +229,6 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

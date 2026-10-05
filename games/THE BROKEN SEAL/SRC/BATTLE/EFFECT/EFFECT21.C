@@ -121,7 +121,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(palette), 128);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)(BattlePresentation_ProcessPendingGraphicsTransfer), 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
     actor = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (cnt = 0; cnt != 64; cnt++) {
@@ -176,7 +176,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)(BattlePresentation_ProcessPendingGraphicsTransfer));
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

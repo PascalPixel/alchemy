@@ -110,7 +110,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     REG16(0x05000000) = 0;
     REG16(0x05000002) = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(1, 0);
     BattleFx_SpawnObjects(9, 0x175, 1);
     gProjection.center_y = 240;
@@ -473,7 +473,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
         ResourceObject_ReleaseFar(work->objects[i]);
         i++;
     } while (i != 9);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

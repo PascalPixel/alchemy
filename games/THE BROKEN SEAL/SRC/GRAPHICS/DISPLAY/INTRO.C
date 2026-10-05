@@ -364,7 +364,7 @@ s32 Title_ShowIntro(s32 prompt)
         *ime = old;
     }
     Graphics_UpdatePaletteInterpolation(60);
-    Scheduler_AddOrUpdateCallback((s32)Title_PlaceIntroSprites, 0x480);
+    Scheduler_AddOrUpdateCallback(Title_PlaceIntroSprites, 0x480);
 
     for (;;) {
         s32 frame;
@@ -425,7 +425,7 @@ s32 Title_ShowIntro(s32 prompt)
             work->state = 0;
         } else if (next == 280) {
             Blend_SetBrightenTarget16(1);
-            Scheduler_RemoveCallback((u32)Title_PlaceIntroSprites);
+            Scheduler_RemoveCallback(Title_PlaceIntroSprites);
             gOamCopyEnabled = 1;
             WaitFrames(1);
             REG_BG2CNT = 0x681;

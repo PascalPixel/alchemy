@@ -77,7 +77,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(143);
     frame = 0;
     step = 1;
@@ -110,7 +110,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
         WaitFrames(1);
         frame++;
     } while (frame != 63);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
 

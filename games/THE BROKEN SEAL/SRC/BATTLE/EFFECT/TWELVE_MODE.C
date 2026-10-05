@@ -250,7 +250,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_position);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &alternate);
     target_position.y += (alternate.y - target_position.y) / 2;
@@ -459,6 +459,6 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

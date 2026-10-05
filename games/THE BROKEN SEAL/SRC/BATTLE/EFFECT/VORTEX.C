@@ -100,10 +100,10 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     }
     WORK_FIELD(work, 0x77ac) = 0;
     WORK_FIELD(work, 0x77b0) = 0;
-    Scheduler_AddOrUpdateCallback((s32)Camera_ApplyPhasedDelta, 0x480);
+    Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     AudioCommand_PlayFar(164);
 
     for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++) {
@@ -168,8 +168,8 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)Camera_ApplyPhasedDelta);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -221,7 +221,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
     }
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     REG_BLDALPHA = 0x1000;
     WaitFrames(1);
     AudioCommand_PlayFar(141);
@@ -284,6 +284,6 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

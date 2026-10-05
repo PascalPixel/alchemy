@@ -94,7 +94,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     draw = (DrawRectangle)gWorkSlot[46];
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
 
     for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
@@ -151,7 +151,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

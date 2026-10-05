@@ -125,7 +125,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     } else {
         work->transfer_value = 50;
     }
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(0x88);
     frame = 0;
     do {
@@ -176,7 +176,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
         frame += 1;
     } while (frame != 80);
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
 

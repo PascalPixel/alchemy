@@ -159,7 +159,7 @@ void Ui_FillBank15PaletteGrey(void)
     *p = 0x739C;
     p += 1;
     *p = 0x739C;
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg0HBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 0x480);
 }
 
 void Ui_SetBank15PaletteAndClearRenderMode(void)
@@ -167,7 +167,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
     void *work;
 
     work = gWindowWork[0];
-    Scheduler_RemoveCallback((s32)BattleFx_ArmBg0HBlankDma);
+    Scheduler_RemoveCallback(BattleFx_ArmBg0HBlankDma);
     *(volatile s16 *)0x050001E2 = 0x7FFF;
     *(s16 *)0x050001E6 = 0;
     *(volatile s16 *)0x050001F6 = 0x294A;

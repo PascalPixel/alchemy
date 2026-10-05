@@ -121,7 +121,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
     draw.upper = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     AudioCommand_PlayFar(140);
@@ -173,7 +173,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     }
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
@@ -297,20 +297,20 @@ void BattlePresentation_PrepareScene(s32 kind)
     work->frame = 0;
     work->transfer_mode = 3;
     work->transfer_value = 0x06060606;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_DrawStreaks, 0xC80);
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_DrawStreaks, 0xC80);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 }
 
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
 {
-    Scheduler_RemoveCallback((u32)BattlePresentation_DrawStreaks);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_DrawStreaks);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     {
         s32 (*transfer)(void *, s32) = Iwram_ClearWords;
 
         transfer((void *)0x06004000, 0x4000);
     }
-    Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
@@ -381,7 +381,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
     }
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
     if (work->effect->side == 0)
@@ -429,7 +429,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

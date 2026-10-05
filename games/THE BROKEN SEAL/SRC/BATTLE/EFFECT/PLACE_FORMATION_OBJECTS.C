@@ -125,7 +125,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + 0x59d8, 0, 0);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 64; i++) {
         s32 speed = (Random16() & 255) + 256;
@@ -229,7 +229,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     {
         /* FAKEMATCH: the routine's address is loaded before the size, as a
            call through a local makes it. */

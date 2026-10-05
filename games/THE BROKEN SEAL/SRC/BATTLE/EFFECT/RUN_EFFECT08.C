@@ -79,5 +79,5 @@ void RunBattleEffect08(void)
         work->frame = frame;
         frame++;
     } while (frame <= 18);
-    Scheduler_AddOrUpdateCallback((s32)(FieldEffect_WatchLeaderDistance), 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
 }

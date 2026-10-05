@@ -141,7 +141,7 @@ restart:
     }
 
     Map_BuildProbeRing(x, y, work);
-    Scheduler_AddOrUpdateCallback((s32)Battle_PlaceActorsByFormationKind, 3200);
+    Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 3200);
 
 next:
     WaitFrames(1);

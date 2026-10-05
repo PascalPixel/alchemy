@@ -216,7 +216,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     frame = 0;
     if (duration != 0) {
@@ -345,7 +345,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
             frame += 1;
         } while (frame != duration);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -394,7 +394,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     } while (i != 16);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     frame = 0;
     do {
         if (frame == 32) {
@@ -429,7 +429,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
         WaitFrames(1);
         frame++;
     } while (frame != 70);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -479,7 +479,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     work->transfer_mode = 1;
     work->transfer_value = 0;
     blit47 = ((DrawRectangle *)cache)[47 - 39];
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     total = BattleFxPillar_Counts[work->effect->variant] * 8 + 56;
 
     for (i = 0; i != 1024; i++) {
@@ -577,7 +577,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

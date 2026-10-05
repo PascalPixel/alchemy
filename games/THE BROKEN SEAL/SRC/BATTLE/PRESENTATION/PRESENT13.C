@@ -349,7 +349,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
         }
         if (plan->presentation_flags & 0x20000)
             work.side ^= 1;
-        Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
         if (plan->presentation_flags & 0x8000)
             BattleFx_InitializeModeFar((s32 *)&work);
         else if (plan->presentation_flags & 0x4000)

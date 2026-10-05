@@ -52,20 +52,20 @@ void Menu_CancelSoundTick(void)
     if (gKeyState & KEY_START) {
         Audio_PlayCue(SOUND_MENU_CANCEL);
         GameFlag_SetBitFar(0x150);
-        Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);
+        Scheduler_RemoveCallback(Menu_CancelSoundTick);
     }
 }
 
 void Menu_CancelSoundReset(void)
 {
     GameFlag_ClearBitFar(0x150);
-    Scheduler_AddOrUpdateCallback((s32)Menu_CancelSoundTick, 0xC80);
+    Scheduler_AddOrUpdateCallback(Menu_CancelSoundTick, 0xC80);
 }
 
 void Menu_EnsureCancelSound(void)
 {
     if (GameFlag_TestFar(0x150) == 0) {
-        Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);
+        Scheduler_RemoveCallback(Menu_CancelSoundTick);
     }
 }
 

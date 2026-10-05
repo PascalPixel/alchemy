@@ -94,7 +94,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
     draw[1] = heap_cache[8];
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 1024; i++)
         gChips[i].life = 0;
@@ -208,7 +208,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -272,10 +272,10 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
     draw.upper = heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
     draw.lower = heap_cache[8];
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 512; i++) {
         gSkulls[i].x = ((Random16() & 255) - 127) << 15;
@@ -339,8 +339,8 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -560,10 +560,10 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
         }
     }
 
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     AudioCommand_PlayFar(146);
 
     for (frame = 0; frame != MemberBurst_Counts[mode * 2 + 1] + work->effect->count * 20; frame++) {
@@ -622,9 +622,9 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     BattleFx_EndCanvasLayer();
 }

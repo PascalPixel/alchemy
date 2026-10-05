@@ -29,7 +29,7 @@ void BattleEffect_InitializeBuffers(void)
 
 void Runtime_ScheduleCallbackAndReleaseBlock32B(void)
 {
-    Scheduler_RemoveCallback((s32)&BattlePalette_UpdateBlend);
+    Scheduler_RemoveCallback(&BattlePalette_UpdateBlend);
     Runtime_ReleaseHeapBlock(0x20);
 }
 

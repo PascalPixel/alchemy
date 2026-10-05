@@ -108,7 +108,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_position);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0; i != 768; i++) {
         struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -214,7 +214,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
 
@@ -367,7 +367,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     REG_BLDALPHA = 0x1010;
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     for (i = 0; i != 11; i++) {
         struct EffectStep *rock = &work->particles[10 + i];
 
@@ -532,7 +532,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     for (i = 0; i != 11; i++)

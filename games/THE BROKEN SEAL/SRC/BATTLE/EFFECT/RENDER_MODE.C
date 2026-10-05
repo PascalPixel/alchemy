@@ -129,10 +129,10 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     else
         total = work->effect->count * 8 + 32;
     if (!(mode <= 1 || mode == 3))
-        Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+        Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
 
     for (frame = 0; frame != total; frame++) {
@@ -260,8 +260,8 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     if (!(mode <= 1 || mode == 3))
-        Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+        Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
     BattleFx_EndCanvasLayer();
 }

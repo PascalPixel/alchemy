@@ -186,7 +186,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     REG_BG2X = shift << 8;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (work->effect->side == 1)
         flags = 7;
     else
@@ -342,6 +342,6 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

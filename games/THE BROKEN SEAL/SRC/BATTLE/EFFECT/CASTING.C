@@ -265,7 +265,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     } else {
         work->transfer_value = 50;
     }
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     /* FAKEMATCH: Retain each output pointer while preparing its call. */
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], target_screen = &target_pos);
     EffectPosition_ApplyStepAndYOffset(work->effect->actor, caster_screen = &caster_pos);
@@ -403,8 +403,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->prelude = 0;
-        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
-        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         Object_SetMode(caster_actor, 3);
@@ -430,8 +430,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->prelude = 0;
-        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
-        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         command->variant = 3;
@@ -506,7 +506,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     }
     kind_from_two = kind - 2;
     if ((u32)kind_from_two <= 1 || kind == 12 || kind == 22 || kind == 29 || kind == 28) {
-        Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+        Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     }
     kind_from_four = kind - 4;
     if ((u32)kind_from_four <= 2 || kind == 23 || kind == 30 || kind == 27 || kind == 33 || kind == 34 || kind == 100) {
@@ -1073,16 +1073,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->prelude = 0;
-        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
-        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         BattleFx_RunPaletteRampMode1(command);
     } else {
         if (kind == 2 || kind == 3 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
-            Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+            Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
         }
-        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+        Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         BattleFx_EndCanvasLayer();

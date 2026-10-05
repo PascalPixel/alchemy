@@ -198,7 +198,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
         BattleParty_AssignMemberSlots();
         battle->battle_type = 0;
     }
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_UpdateCamera, 0xc7f);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0xc7f);
 
     cue = gGameState.scene_cue;
     if (cue != 0) {
@@ -243,7 +243,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     BattlePres_RunEntryTransition(object, enemy_group);
     transition->flag = 0;
     gCpuLoadDisplayEnabled = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattleActor_UpdateSpritePriorities, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleActor_UpdateSpritePriorities, 0xc80);
 
     for (;;) {
         Battle_ReservedNoOp9B2C();
@@ -378,7 +378,7 @@ finished:
     Battle_ReservedNoOpF674();
     BattlePlacement_UpdateTimedEntries();
     Battle_SetStart(0);
-    Scheduler_RemoveCallback((s32)BattleActor_UpdateSpritePriorities);
+    Scheduler_RemoveCallback(BattleActor_UpdateSpritePriorities);
     Runtime_ReleaseHeapBlock10();
     return result;
 }

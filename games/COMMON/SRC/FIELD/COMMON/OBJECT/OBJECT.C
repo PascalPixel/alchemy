@@ -194,13 +194,13 @@ void ObjectSystem_Initialize(s32 mode)
     fill = 0;
     Dma_Set((const void *)&fill, state, 0x85000017, (volatile u32 *)0x040000d4);
     if (mode == 4)
-        Scheduler_AddOrUpdateCallback((s32)(Object_UpdateAllMotion), 0xc8a);
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
     else
-        Scheduler_AddOrUpdateCallback((s32)(Object_UpdateAllThumb), 0xc8a);
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
     if ((u32)(mode - 3) <= 1) {
-        Scheduler_AddOrUpdateCallback((s32)(ObjectSystem_UpdateCameraFixed), 0xc80);
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
     } else {
-        Scheduler_AddOrUpdateCallback((s32)(ObjectSystem_UpdateCamera), 0xc80);
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
         Data_03001d1c = 0;
         Data_03001cc0 = 0;
     }
@@ -569,8 +569,8 @@ void Animation_ApplyChildValues(struct DispatchObject *obj, u32 value)
 
 void Graphics_EnableObjLayerAndCallbacks(void)
 {
-    Scheduler_EnableCallbacks((u32)ObjectSystem_UpdateCamera);
-    Scheduler_EnableCallbacks((u32)ObjectSystem_UpdateCameraFixed);
+    Scheduler_EnableCallbacks(ObjectSystem_UpdateCamera);
+    Scheduler_EnableCallbacks(ObjectSystem_UpdateCameraFixed);
     BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
     BattleFx_StartBufferInterpolationFar(1);
     WaitFrames(1);
@@ -579,8 +579,8 @@ void Graphics_EnableObjLayerAndCallbacks(void)
 
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
-    Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCamera);
-    Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCameraFixed);
+    Scheduler_DisableCallbacks(ObjectSystem_UpdateCamera);
+    Scheduler_DisableCallbacks(ObjectSystem_UpdateCameraFixed);
     REG_DISPCNT &= 0xE1FF;
 }
 

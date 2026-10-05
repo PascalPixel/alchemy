@@ -82,7 +82,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     /* Thirty-two flash records are seeded; sixteen are drawn. */
     i = 0;
@@ -380,7 +380,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
         frame++;
     } while (frame != 102);
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();

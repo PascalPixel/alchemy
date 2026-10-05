@@ -86,8 +86,8 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         state->value = 0;
         state->mask = 63;
         state->active = 1;
-        Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateScanlineTable), 0xc80);
-        Scheduler_AddOrUpdateCallback((s32)(BattleFx_StartWindowHBlankDma), 0x480);
+        Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
         WaitFrames(1);
         QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
         state->start = 0;
@@ -102,7 +102,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         state->value = 32;
         DisplayTransition_FillTilemapAndSolidTile(15);
         WaitFrames(1);
-        Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
+        Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
         QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
         state->start = 0;
         state->end = 32;
@@ -120,14 +120,14 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         display->second_line = 80;
         WaitFrames(1);
         if (value == 0) {
-            Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_Update), 0xc80);
+            Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 80;
             state->end = 0;
             state->duration = frames;
             state->step = 0;
         } else {
-            Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFromCentre), 0xc80);
+            Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 80;
             state->end = 0;
@@ -165,8 +165,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
         state->value = 32;
         state->mask = 63;
         state->active = 1;
-        Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateScanlineTable), 0xc80);
-        Scheduler_AddOrUpdateCallback((s32)(BattleFx_StartWindowHBlankDma), 0x480);
+        Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
+        Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
         WaitFrames(1);
         state->start = 32;
         state->end = 64;
@@ -180,7 +180,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
         state->value = 32;
         DisplayTransition_FillTilemapAndSolidTile(0);
         WaitFrames(1);
-        Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
+        Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
         state->start = 32;
         state->end = 64;
         state->duration = frames;
@@ -190,14 +190,14 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
     case 4: {
         struct DisplayTransitionState *state = DisplayTransition_AllocateAndClearState();
         if (value == 0) {
-            Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_Update), 0xc80);
+            Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 0;
             state->end = 80;
             state->duration = frames;
             state->step = 0;
         } else {
-            Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFromCentre), 0xc80);
+            Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 0;
             state->end = 80;
@@ -242,7 +242,7 @@ void DisplayTransition_Update(void)
 
         if (*step >= *duration) {
             *duration = 0;
-            Scheduler_RemoveCallback((u32)(DisplayTransition_Update));
+            Scheduler_RemoveCallback(DisplayTransition_Update);
             Runtime_SetIrqHandler(1, 0, 0);
             return;
         } else {
@@ -284,7 +284,7 @@ void DisplayTransition_UpdateFromCentre(void)
 
         if (*step >= *duration) {
             *duration = 0;
-            Scheduler_RemoveCallback((u32)(DisplayTransition_UpdateFromCentre));
+            Scheduler_RemoveCallback(DisplayTransition_UpdateFromCentre);
             Runtime_SetIrqHandler(1, 0, 0);
             return;
         } else {

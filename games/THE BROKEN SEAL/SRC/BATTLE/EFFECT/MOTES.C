@@ -91,7 +91,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (work->effect->side == 1)
         REG_BG2X = -0x7000;
 
@@ -260,6 +260,6 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

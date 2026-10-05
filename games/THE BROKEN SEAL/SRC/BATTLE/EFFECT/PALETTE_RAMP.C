@@ -141,7 +141,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw = callbacks);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != work->effect->count * 4 + 64; frame++) {
         camera = gCameraWork;
@@ -211,7 +211,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

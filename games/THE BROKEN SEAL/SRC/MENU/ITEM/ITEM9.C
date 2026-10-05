@@ -51,7 +51,7 @@ s32 Menu_SelectQuantity(s32 value)
     /* The Japanese window covers only the left of the screen. */
     window = UiWindow_CreateFar(0, 0, 13, 10, 2);
 #endif
-    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
+    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
     {
         struct RenderOutput *iconState = menu->cursor;
@@ -108,7 +108,7 @@ done:
     {
         s32 delay = 0xc80;
 
-        Scheduler_AddOrUpdateCallback((s32)((const void *)Menu_UpdateEntryObjectTransforms), delay);
+        Scheduler_AddOrUpdateCallback((const void *)Menu_UpdateEntryObjectTransforms, delay);
     }
 
     {

@@ -101,7 +101,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 origin_x, s32 origin_
     {
         s32 delay_frames = 200;
         delay_frames <<= 4;
-        Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), delay_frames);
+        Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, delay_frames);
     }
 }
 
@@ -125,7 +125,7 @@ void Menu_ReleaseEntryObjects(void)
             }
         } while (--i != 0);
     }
-    Scheduler_RemoveCallback((u32)((void (*)(void))Menu_UpdateEntryObjectTransforms));
+    Scheduler_RemoveCallback((void (*)(void))Menu_UpdateEntryObjectTransforms);
 }
 
 void Menu_UpdateEntryObjectTransforms(void)

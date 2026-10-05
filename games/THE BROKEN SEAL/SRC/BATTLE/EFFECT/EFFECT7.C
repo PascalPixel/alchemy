@@ -68,7 +68,7 @@ void BattleFx_RunBouncingSheep(void *object)
         REG_BG2X = -0x7000;
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
     for (frame = 0; frame != 148; frame++) {
         struct BattleCamera *camera;
@@ -115,7 +115,7 @@ void BattleFx_RunBouncingSheep(void *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -159,7 +159,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
     work->transfer_mode = 1;
     work->transfer_value = 0;
     draw[0] = (DrawRectangle)slot[6];
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     for (i = 0; i != work->effect->count; i++) {
         work->particles[i].variant = Random16() & 63;
     }
@@ -203,7 +203,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
         WaitFrames(1);
         frame += 1;
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

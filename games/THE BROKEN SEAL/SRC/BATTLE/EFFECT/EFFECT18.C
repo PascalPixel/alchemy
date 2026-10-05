@@ -206,7 +206,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         work->transfer_mode = 2;
         work->transfer_value = 75;
     }
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 64; i++) {
         SPARKS[i].tick = -1;
@@ -357,7 +357,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         frame += 1;
     } while (frame != 64);
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -404,7 +404,7 @@ void BattleFx_RunSwirlingStars(void *object)
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     record[0] = 0;
     record[1] = 160 << 15;
     record[2] = 0;
@@ -462,7 +462,7 @@ void BattleFx_RunSwirlingStars(void *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
@@ -506,7 +506,7 @@ void BattleFx_RunOrbitingSparks(void)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     draw[0] = (DrawRectangleFn)heap_cache[7];
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (work->effect->side == 0)
         x_offset = 0;
     else
@@ -562,7 +562,7 @@ void BattleFx_RunOrbitingSparks(void)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

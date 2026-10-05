@@ -103,7 +103,7 @@ void ResetSceneTransitionEffect(void)
 
     if (state->active != 0) {
         Audio_PlayCue(SOUND_SCENE_TRANSITION);
-        Scheduler_RemoveCallback((u32)(FieldEffect_WatchLeaderDistance));
+        Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
 
         zero = 0;
         state->active = zero;

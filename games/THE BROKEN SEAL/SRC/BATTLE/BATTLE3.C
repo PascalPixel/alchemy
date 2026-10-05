@@ -319,7 +319,7 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
     events->timer = frames;
     events->phase = BATTLE_PLAYBACK_DISPATCH;
     gBattleWork->plan.target_count = 0;
-    return Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+    return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
 }
 
 extern volatile u32 gFrameCount;

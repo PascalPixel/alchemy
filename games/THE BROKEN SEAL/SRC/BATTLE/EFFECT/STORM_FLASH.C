@@ -202,5 +202,5 @@ void Unnamed_08094ac8(void)
         *++blend = value;
         *++blend = 0;
     } while (0);
-    Scheduler_AddOrUpdateCallback((s32)Unnamed_08094820, 0xc80);
+    Scheduler_AddOrUpdateCallback(Unnamed_08094820, 0xc80);
 }

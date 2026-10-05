@@ -93,7 +93,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
     sparks = (struct EffectStep *)gMapCellBuffer;
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     count = LightningPillar_Counts[work->effect->variant];
 
     for (frame = 0; frame != count * 8 - count + 48; frame++) {
@@ -184,7 +184,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

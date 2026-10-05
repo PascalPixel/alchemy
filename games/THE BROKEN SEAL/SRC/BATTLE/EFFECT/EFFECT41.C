@@ -178,7 +178,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
     record->flag_b = 2;
     record->flag_a = 1;
     callback = CheckObjectMapTile;
-    Scheduler_AddOrUpdateCallback((s32)callback, 0xc80);
+    Scheduler_AddOrUpdateCallback(callback, 0xc80);
     gGameState.cloaked = 1;
     callback();
     if (state->psynergy_request == 0x2092) {

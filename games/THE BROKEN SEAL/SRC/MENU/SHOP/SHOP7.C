@@ -107,7 +107,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     AnimationObjects_SetField15OnActiveFar(shop->party_member_icons[member], 0);
     WaitFrames(20);
     callback_flags = 0xc80;
-    Scheduler_AddOrUpdateCallback((s32)(Shop_ResetEffects), callback_flags);
+    Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
 
     /* FAKEMATCH: the x store goes through a union with a halfword view so it
        may alias the member_z load, which keeps the reference schedule. */
@@ -168,7 +168,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
         }
     }
 
-    Scheduler_RemoveCallback((u32)(Shop_ResetEffects));
+    Scheduler_RemoveCallback(Shop_ResetEffects);
     AnimationObjects_SetField15OnActiveFar(shop->party_member_icons[member], 16);
     Shop_InitEffect();
     WaitFrames(30);

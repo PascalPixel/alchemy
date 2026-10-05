@@ -135,7 +135,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     {
@@ -228,7 +228,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
         }
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

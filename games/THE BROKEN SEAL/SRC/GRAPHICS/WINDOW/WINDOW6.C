@@ -84,7 +84,7 @@ void UiTimedNotice_Create(void)
     timer = &work->countdown;
     frames = 90; /* FAKEMATCH: a word temporary keeps 90 out of the HImode pool. */
     *timer = frames;
-    Scheduler_AddOrUpdateCallback((s32)(UiTimedNotice_Tick), 0xc80);
+    Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }
 
 void UiTimedNotice_Tick(void)
@@ -96,7 +96,7 @@ void UiTimedNotice_Tick(void)
     work->countdown = (count = work->countdown + 0xffff);
     if ((count << 16) == 0) {
         UiWork_Finalize(work->window, 2);
-        Scheduler_RemoveCallback((u32)UiTimedNotice_Tick);
+        Scheduler_RemoveCallback(UiTimedNotice_Tick);
     }
 }
 
@@ -107,7 +107,7 @@ void UiTimedNotice_CloseIfActive(void)
     window = ((struct TimedNoticeWork *)gEventWork)->window;
     if (window != NULL && window->flags != 0) {
         UiWork_Finalize(window, 2);
-        Scheduler_RemoveCallback((u32)UiTimedNotice_Tick);
+        Scheduler_RemoveCallback(UiTimedNotice_Tick);
     }
 }
 

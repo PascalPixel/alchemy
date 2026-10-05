@@ -67,7 +67,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (y = 0; y != 64; y++) {
         for (x = 0; x != 64; x++) {
@@ -116,7 +116,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 
     draw[0](canvas, work, 0, 0, 128, 128);
     work->transfer_pending = 1;
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
 
     for (frame = 0; frame != 96; frame++) {
         if (frame <= 8) {
@@ -167,8 +167,8 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((s32)BattleFx_ArmBg2AffineHBlankDma);
-    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
@@ -245,7 +245,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     life = &((struct EffectStep *)gMapCellBuffer)->variant;
     for (i = 0; i != 1024; i++) {
@@ -342,7 +342,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

@@ -146,8 +146,8 @@ void DisplayScroll_InitObjectTable(void)
     gScratchWord = 0;
     Flash_Layout = 0;
     Flash_Handler0 = 0;
-    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0x480);
-    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0xc80);
+    Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects, 0x480);
+    Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine, 0xc80);
     for (i = 0; i < 32; i++)
         DisplayScroll_DrawLine(DisplayScroll_LineTable[0], i * 24, 1);
 }

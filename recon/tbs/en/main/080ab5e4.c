@@ -1,3 +1,8 @@
+/* Draft: alchemy diff 2026-10-05: listing 2105, draft 2109, common 1352,
+   differ 1510. Use the message shop's linker symbols and MENU_LIST.H's
+   render-output prototypes; obsolete enum declarations no longer compile.
+   Remaining: control-flow/register allocation and whole message symbols
+   for the table-relative menu/tutorial references before adoption. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "TBS_EDITION.H"
@@ -8,10 +13,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_UNIT.H"
 #include "text/MSG_IDS.H"
-
-TEXT_MESSAGE_ENUM(MsgDjinnSetAll);
-TEXT_MESSAGE_ENUM(MsgDjinnTutorialGive);
-TEXT_MESSAGE_ENUM(MsgClassName);
 
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
@@ -46,8 +47,8 @@ enum DjinnTutorialMessage {
     TUTORIAL_MSG_SET_AGAIN = 0xd
 };
 
-#define DJINN_MESSAGE(n) (MsgDjinnSetAll + (n))
-#define TUTORIAL_MESSAGE(n) (MsgDjinnTutorialGive + (n))
+#define DJINN_MESSAGE(n) ((s32)MsgDjinnSetAll + (n))
+#define TUTORIAL_MESSAGE(n) ((s32)MsgDjinnTutorialGive + (n))
 
 extern struct DjinnMenuWork *gMenuWork;
 extern const char DjinnMenu_TextLevel[];
@@ -59,8 +60,6 @@ void Djinn_ActivateFar(s32 owner, s32 element, s32 number);
 void Djinn_DeactivateFar(s32 owner, s32 element, s32 number);
 void Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
 void Trade_AddOfferFar(s32 owner, s32 element, s32 number);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
@@ -185,7 +184,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             owner = Owner_GetStateFar(state->owners[x]);
             RenderOutput_RedrawSavedRectFar(window);
             UiText_DrawStringAtOffsetFar(owner->name, window, 0, 0);
-            UiText_DrawCharacterAtOffsetFar(owner->class_index + MsgClassName, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar(owner->class_index + (s32)MsgClassName, window, 0, 8);
             UiText_DrawStringAtOffsetFar(DjinnMenu_TextLevel, window, 48, 0);
             UiNumber_DrawAt(owner->level, 2, window, 72, 0);
             if (mode == 0)

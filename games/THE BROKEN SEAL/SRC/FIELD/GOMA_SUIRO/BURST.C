@@ -56,7 +56,6 @@ void Effect_Spawn();
 void Object_SetModeById(s32, s32);
 void Map_WaitWorkValuesBelow256(void);
 
-/* Mixed object and option views preserve the reference's alias ordering. */
 void SceneEffect_RunActorBurst(s32 no)
 {
     union SceneActor *work;

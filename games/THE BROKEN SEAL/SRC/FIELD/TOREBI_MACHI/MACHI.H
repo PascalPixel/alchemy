@@ -5,10 +5,7 @@
 /* Tolbi town (resource_3b5): the declarations, views and call helpers its
  * scene sources share. */
 
-/*
- * Overlay resource_3b5: shared scene work plus the actor setup, dialogue and
- * event sequences that drive this scene, in address order.
- */
+/* Shared scene work, actor setup, dialogue and event sequences. */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -93,15 +90,7 @@ void SceneState_SetValues31_2_4(void);
 
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b);
 
-/*
- * Per-frame actor callback, whose argument is the owning actor record. The
- * initialiser stores this address plus the Thumb bit into field +0x6c of
- * actors 16 and 17. It returns a constant zero.
- *
- * The owner's eight-byte literal pool follows its return and belongs to it.
- * 0x03001e8c is a table of pointers whose entry 12 is 0x03001ebc, the overlay
- * work pointer the rest of this overlay loads directly.
- */
+/* The per-frame callback for actors 16 and 17 receives its actor record and returns zero. */
 #include "TYPES.H"
 
 struct SceneActor {

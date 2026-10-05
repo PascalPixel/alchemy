@@ -92,18 +92,14 @@ s32 SceneActor_UpdatePartnerProximity(u8 *self)
 {
     u8 **globals = (u8 **)gWindowWork;
     struct TorebiSceneWork *scene = (struct TorebiSceneWork *)globals[0];
-    u8 *work = globals[12];        /* == *(u8 **)0x03001ebc */
+    u8 *work = globals[12];
     u16 *flags = (u16 *)(self + 100);
     s32 force = 0;
     s32 range = 18;
     u8 *partner;
     u8 *player;
 
-    /*
-     * Bit 0 of the actor's own flag halfword selects which partner to test.
-     * The branch must stay two calls: as a conditional expression the
-     * selector folds into arithmetic on the bit instead.
-     */
+    /* Bit 0 of the actor's flag halfword selects which partner to test. */
     if ((*flags & 1) != 0) {
         partner = Object_GetById(17);
     } else {
@@ -130,10 +126,6 @@ s32 SceneActor_UpdatePartnerProximity(u8 *self)
     return 0;
 }
 
-/*
- * The eight-byte owner includes its one pool word, which holds the address
- * returned here. The word is loaded and returned, never dereferenced.
- */
 u8 *TorebiMachi_GetEntrances(void)
 {
     return gTorebiMachiEntrances;
@@ -145,13 +137,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *TorebiMachi_GetExits(void)
 {
     return gTorebiMachiExits;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *TorebiMachi_GetPlacements(void)
 {
     return gTorebiMachiPlacements;
@@ -207,8 +197,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     s16 facing;
     s32 msg;
 
-    /* FAKEMATCH: the event work is read into a local before the actor
-     * lookup, where the reference loads it. */
+    /* FAKEMATCH: the event work is read into a local before the actor lookup, where the reference loads it. */
     work = gEventWork;
     actor = Object_GetById(16);
     facing = actor->facing;
@@ -249,8 +238,7 @@ void FieldScene_RunSiblingsTalk(void)
     s16 facing;
     s32 msg;
 
-    /* FAKEMATCH: the event work is read into a local before the actor
-     * lookup, where the reference loads it. */
+    /* FAKEMATCH: the event work is read into a local before the actor lookup, where the reference loads it. */
     work = gEventWork;
     actor = Object_GetById(17);
     facing = actor->facing;

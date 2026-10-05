@@ -1,3 +1,14 @@
+/* 2026-10-05 sun deep finisher 21: alchemy diff 378 -> 335.
+ * The party-panel pointer is its own IWRAM cell, Data_03001e90 (the
+ * native pool names it, read at offset 0), not gWindowWork[1]: 376. The
+ * exit reads it again directly instead of reusing the loop's cursor and
+ * icon_win, so both become block-local (r3, as natively): 364. The
+ * confirm handler is if (cnt != 0) { ... PlayFar(0x72); } else { ret = -1;
+ * break; }, which places the -1 block after the handler as natively: 335.
+ * Tried without change: two separate timer/is_used ifs, an explicit
+ * second 0x3e0000 mask (both fold away; the native's redundant
+ * `ands r5, r6` in the timer path is still unexplained).
+ */
 /* 2026-10-05 sun deep finisher 19: alchemy diff 869 -> 378 (frame 224).
  * The spill slots follow declaration order, so the declarations now run
  * slot, buf, then ctx, detail_win, prev_row, res, tbl, cnt, prev_page,
@@ -143,7 +154,8 @@ LAYOUT_OFFSET_GUARD(PartyStatusWindow_Flags, struct PartyStatusWindow, flags, 12
 
 /* Direct name for the same work cell accessed through slot 42 at setup. */
 #define MENU_STATE ((struct BattleMenuSelection *)gLinkCountdownWork)
-#define CURSOR_OWNER ((struct PartyStatusWindow *)gWindowWork[1])
+extern u8 Data_03001e90[];
+#define CURSOR_OWNER (*(struct PartyStatusWindow **)Data_03001e90)
 
 extern volatile u32 gKeysHeld;
 /* One 8x8 BG tile; the first copy blinks against palette-index 4. */
@@ -407,27 +419,28 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
         }
         if (trig & 1) {
             u32 code;
-            if (cnt == 0) {
+            if (cnt != 0) {
+                code = tbl[page + row];
+                if ((code & 0x3e0000) == 0) {
+                    if (is_used == 0) {
+                        menu->menu.page = page;
+                        menu->menu.row = row;
+                        menu->menu.preferred_row = saved_row;
+                        ret = (s32)code;
+                        break;
+                    }
+                } else if (is_used == 0) {
+                    Ui_FillVramBlockPattern();
+                    UiWork_ClearValueNameTables();
+                    UiWork_PushValueSlot((s32)((code & 0x3e0000) >> 17), 5);
+                    UiText_CopyMessageString(0x898, buf, 52);
+                    UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
+                }
+                AudioCommand_PlayFar(0x72);
+            } else {
                 ret = -1;
                 break;
             }
-            code = tbl[page + row];
-            if ((code & 0x3e0000) == 0) {
-                if (is_used == 0) {
-                    menu->menu.page = page;
-                    menu->menu.row = row;
-                    menu->menu.preferred_row = saved_row;
-                    ret = (s32)code;
-                    break;
-                }
-            } else if (is_used == 0) {
-                Ui_FillVramBlockPattern();
-                UiWork_ClearValueNameTables();
-                UiWork_PushValueSlot((s32)((code & 0x3e0000) >> 17), 5);
-                UiText_CopyMessageString(0x898, buf, 52);
-                UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
-            }
-            AudioCommand_PlayFar(0x72);
         }
 
         if (cnt != 0) {
@@ -569,10 +582,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
         WaitFrames(1);
     }
 
-    cursor = CURSOR_OWNER;
-    if (cursor->flags & 2) {
-        icon_win = cursor->window;
-        Ui_SetRectHighlight(icon_win->x + 1, icon_win->y + 1, 4, 4, 15);
+    if (CURSOR_OWNER->flags & 2) {
+        Ui_SetRectHighlight(CURSOR_OWNER->window->x + 1, CURSOR_OWNER->window->y + 1, 4, 4, 15);
     }
     Resource_ResetEntry(res);
     UiWork_Finalize(msg_win, 1);

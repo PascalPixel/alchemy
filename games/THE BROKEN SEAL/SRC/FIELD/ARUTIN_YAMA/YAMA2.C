@@ -175,7 +175,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
  * shared set piece. */
 void FieldScene_RunFallingRocksWarning(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     s32 msg;
 
     Engine_EventBegin();
@@ -189,7 +189,7 @@ void FieldScene_RunFallingRocksWarning(void)
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+            Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
         }
         Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
         Actor_WalkToAndWait(ACTOR_GERALD, 0x320, 140);
@@ -210,15 +210,15 @@ void FieldScene_RunFallingRocksWarning(void)
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 120);
         Engine_EventWait(1);
         {
-            u8 *record = (u8 *)Actor_Get(ACTOR_GERALD);
+            struct FieldActor *record = Actor_Get(ACTOR_GERALD);
             /* FAKEMATCH: a result temporary, not a compound or-assign: the
              * reference merges the byte into the mask's register, which the
              * two-address ORR does only when the result is its own object.
-             * 2026-10-02: both record[90] |= 1 and the plain assignment
-             * record[90] = record[90] | 1 put the result in r3, not r6. */
-            u8 merged = (u8)(record[90] | 1);
+             * 2026-10-02: both record->steering_flags |= 1 and the plain assignment
+             * record->steering_flags = record->steering_flags | 1 put the result in r3, not r6. */
+            u8 merged = (u8)(record->steering_flags | ACTOR_FACES_MOTION);
 
-            record[90] = merged;
+            record->steering_flags = merged;
         }
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_EventWait(80);

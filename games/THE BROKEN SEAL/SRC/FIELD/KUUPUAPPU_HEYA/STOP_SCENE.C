@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
+#include "FIELD_EVENT.H"
 
 extern u16 KuupuappuHeya_StopTimer;
 void KuupuappuHeya_UpdateActorStops(void);
@@ -10,19 +11,7 @@ struct Half {
     u16 v;
 };
 void FieldScene_ConfigurePairedActors();
-void Engine_GameFlagClear();
-void Engine_EventBegin();
-void Engine_EventEnd();
-void Engine_ActorSetSpeed();
-void Engine_ActorWalkTo();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorWaitForMove();
-void Engine_ActorSetPosition();
-void Engine_ActorSetAnimation();
-void Engine_ActorFaceDirection();
-void Engine_CameraMoveTo();
 void Map_SetWorkFourValues();
-void Engine_AudioPlayCue();
 
 void KuupuappuHeya_StartActorStops(void)
 {

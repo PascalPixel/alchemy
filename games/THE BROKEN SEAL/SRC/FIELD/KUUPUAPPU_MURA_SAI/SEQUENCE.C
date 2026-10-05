@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "INVENTORY.H"
 /*
  * Later scene steps and the scene initialiser: scene twelve, the flag 0x200
  * cells, actor 18's sequence and the actors placed on entry.
@@ -139,10 +140,8 @@ extern const u16 KuupuappuMuraSai_Scene12Cells[];
 
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
-s32 PartyInventory_FindOwner(s32 item);
 void ActorPresentation_MoveActorToPositionAndWait();
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
-void PartyInventory_Discard();
 s32 UpdateActorProximity(u8 *actor);
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 

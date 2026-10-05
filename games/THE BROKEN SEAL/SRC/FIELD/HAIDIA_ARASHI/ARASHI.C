@@ -1442,10 +1442,10 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorShowEmote, ACTOR_PARTY_LEADER, 0x100, 20);
     Call3(Engine_ActorWalkToAndWait, ACTOR_PARTY_LEADER, 150, 0x446);
     {
-        u8 *p;
-        p = (u8 *)Object_GetById(ACTOR_PARTY_LEADER);
+        struct FieldActor *p;
+        p = Object_GetById(ACTOR_PARTY_LEADER);
         if (p != 0) {
-            Engine_ActorSetPosition(22, *(s32 *)(p + 8), *(s32 *)(p + 16));
+            Engine_ActorSetPosition(22, p->x.fixed, p->z.fixed);
         }
     }
     Call3(Engine_ActorWalkToAndWait, 22, 132, 0x446);

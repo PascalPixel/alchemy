@@ -608,11 +608,11 @@ void Scene_RunActorSequence(void)
     Event_ShowMessageAndWait(8, 0, 30);
     Event_ShowMessageAndWait(8, 0, 20);
     {
-        u8 *record = (void *)Object_GetById(10);
-        u32 flag = 1;
+        struct FieldActor *record = Object_GetById(10);
+        u32 flag = ACTOR_FACES_MOTION;
 
-        flag = flag | record[90];
-        record[90] = (u8)flag;
+        flag = flag | record->steering_flags;
+        record->steering_flags = (u8)flag;
     }
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_WalkToAndWait(10, 168, 0x128);

@@ -2023,11 +2023,11 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
     Engine_EventWait(1);
     {
-        /* Set bit 0 of the flag byte at +90. */
-        u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 value = record[90] | 1;
+        /* Turn the leader to face the way it walks. */
+        struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
+        u8 value = record->steering_flags | ACTOR_FACES_MOTION;
 
-        record[90] = value;
+        record->steering_flags = value;
     }
     Engine_EventWait(20);
     FieldScene_RunParticleRain();

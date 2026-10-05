@@ -234,7 +234,7 @@ void FieldScene_RunScene3a4_02002490(void)
     extern u8 ArutinYama_RiseTimer[];
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x907) != 0) {
         *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
@@ -257,10 +257,10 @@ void FieldScene_RunScene3a4_02002490(void)
         Engine_ActorSetAnimation(9, 5);
         Map_CopyCellAttributes(23, 13, 1, 1, 25, 13);
         {
-            u8 *record = Actor_Get(9);
-            u8 flags = record[35] | 2;
+            struct FieldActor *record = Actor_Get(9);
+            u8 flags = record->priority_flags | ACTOR_PRIORITY_UNDERFOOT;
 
-            record[35] = flags;
+            record->priority_flags = flags;
         }
     }
     if (GameFlag_IsSet(0x325) != 0) {

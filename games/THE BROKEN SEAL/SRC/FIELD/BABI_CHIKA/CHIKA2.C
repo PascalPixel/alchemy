@@ -398,7 +398,7 @@ void FieldScene_RunFourStepSequenceA(void)
 
 void FieldScene_SetActor19TableB3B8(void)
 {
-    Engine_ActorEnableActionCallback(19, (s32)BabiChika_FlickerScript);
+    Engine_ActorEnableActionCallback(19, BabiChika_FlickerScript);
 }
 
 void SceneState_SetValue202ThenCall(void)
@@ -455,7 +455,7 @@ void SceneActor_InstallSlotNineHandler(void)
 
     u8 *owner;
 
-    Engine_ActorEnableActionCallback(8, (s32)BabiChika_FlickerScript);
+    Engine_ActorEnableActionCallback(8, BabiChika_FlickerScript);
     Engine_GameFlagSet(0x203);
     owner = Object_GetById(9);
     *(s32 *)(owner + 108) = (s32)SceneActor_CopyActor8PositionWhenAtRow10;

@@ -541,7 +541,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
             rec7->unknown_64 = shown;
-            Engine_ActorEnableActionCallback(21, (u32)FuneKanpan_RandomActorActions);
+            Engine_ActorEnableActionCallback(21, FuneKanpan_RandomActorActions);
         } else {
             Actor_ShowEmote(21, 0x103, 0);
             Engine_ActorStartRepeatedMotion(21, 3);
@@ -571,7 +571,7 @@ void FieldScene_RunScene3afSequenceA(void)
             record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
             rec7->unknown_64 = shown;
-            Engine_ActorEnableActionCallback(24, (u32)FuneKanpan_RandomActorActions);
+            Engine_ActorEnableActionCallback(24, FuneKanpan_RandomActorActions);
         } else {
             Actor_ShowEmote(24, 0x103, 0);
             Engine_ActorStartRepeatedMotion(24, 3);
@@ -944,12 +944,12 @@ void FuneKanpan_ApplyEntryState(void)
         Value2(Engine_TaskAddCallback, (s32)SceneState_ConfigureEntries8Through19, 0xc80);
         FuneKanpan_LayerScroll[1] = 0x200000;
         FuneKanpan_LayerSpeed[1] = 0x13333;
-        Engine_TaskAddCallback((s32)FuneKanpan_RockDeck, 0xc80);
+        Engine_TaskAddCallback(FuneKanpan_RockDeck, 0xc80);
     } else if (Engine_GameFlagIsSet(0x928) != 0) {
         SceneState_ApplyFiveRectsAtColumn78();
         FuneKanpan_LayerScroll[1] = flag;
         FuneKanpan_LayerSpeed[1] = flag;
-        Engine_TaskAddCallback((s32)FuneKanpan_RockDeck, 0xc80);
+        Engine_TaskAddCallback(FuneKanpan_RockDeck, 0xc80);
     }
     if (Engine_GameFlagIsSet(0x927) == 0) {
         SceneState_InitActorSlots8To19();
@@ -1570,11 +1570,11 @@ void FieldScene_RunActorSequence(void)
     }
     Engine_ActorSetPosition(20, 0, 0);
     Engine_ActorEnableActionCallback(24, FuneKanpan_DeckActionsA);
-    Engine_ActorEnableActionCallback(25, (s32)FuneKanpan_DeckActionsA);
+    Engine_ActorEnableActionCallback(25, FuneKanpan_DeckActionsA);
     Engine_ActorEnableActionCallback(26, FuneKanpan_DeckActionsB);
-    Engine_ActorEnableActionCallback(27, (s32)FuneKanpan_DeckActionsB);
+    Engine_ActorEnableActionCallback(27, FuneKanpan_DeckActionsB);
     Engine_ActorEnableActionCallback(28, FuneKanpan_DeckActionsC);
-    Engine_ActorEnableActionCallback(29, (s32)FuneKanpan_DeckActionsC);
+    Engine_ActorEnableActionCallback(29, FuneKanpan_DeckActionsC);
     Engine_ActorSetChildValue(24, 3);
     Engine_ActorSetChildValue(25, 3);
     Engine_ActorSetChildValue(26, 3);

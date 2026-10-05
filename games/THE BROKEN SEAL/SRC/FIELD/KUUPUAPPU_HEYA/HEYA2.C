@@ -894,9 +894,9 @@ void FieldScene_RunVaultClosingSequence(void)
     Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Engine_ActorFaceActor(2, 10, 0);
     Engine_ActorFaceActor(8, 10, 0);
-    Engine_ActorEnableActionCallback(11, (s32)KuupuappuHeya_Villager11ExitScript);
+    Engine_ActorEnableActionCallback(11, KuupuappuHeya_Villager11ExitScript);
     Engine_EventWait(40);
-    Engine_ActorEnableActionCallback(12, (s32)KuupuappuHeya_Villager12ExitScript);
+    Engine_ActorEnableActionCallback(12, KuupuappuHeya_Villager12ExitScript);
     Object_RefreshSelectorById(12);
     Actor_FaceDirection(11, 8192, 0);
     Actor_FaceDirection(12, 8192, 0);
@@ -1122,8 +1122,8 @@ void FieldScene_RunOpeningSequenceThird(void)
     SceneActor_SetModeZeroAndValue(24, 30);
     Actor_SetSpeed(24, 262144, 131072);
     Actor_SetSpeed(25, 229376, 114688);
-    Engine_ActorEnableActionCallback(25, (s32)KuupuappuHeya_PairScriptO);
-    Engine_ActorEnableActionCallback(24, (s32)KuupuappuHeya_PairScriptB);
+    Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptO);
+    Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
     Object_RefreshSelectorById(24);
     Map_CopyCellAttributes(14, 45, 3, 1, 14, 44); /* main:080091c0 */
     GameFlag_Set(2130);
@@ -2245,11 +2245,11 @@ void RunDialoguePromptScene(void)
     Actor_WalkTo(13, 0x2ea, 0x198);
     Actor_FaceDirection(9, 0xb000, 0);
     Actor_FaceDirection(14, 0xb000, 0);
-    Engine_ActorEnableActionCallback(11, (s32)KuupuappuHeya_VaultScriptB);
+    Engine_ActorEnableActionCallback(11, KuupuappuHeya_VaultScriptB);
     Engine_EventWait(20);
-    Engine_ActorEnableActionCallback(10, (s32)KuupuappuHeya_VaultScriptB);
+    Engine_ActorEnableActionCallback(10, KuupuappuHeya_VaultScriptB);
     Engine_EventWait(15);
-    Engine_ActorEnableActionCallback(12, (s32)KuupuappuHeya_VaultScriptB);
+    Engine_ActorEnableActionCallback(12, KuupuappuHeya_VaultScriptB);
     Engine_EventWait(35);
     Engine_ActorEnableActionCallback(8, KuupuappuHeya_VaultScriptA);
     Engine_EventWait(20);
@@ -2458,8 +2458,8 @@ void RunDialoguePromptScene(void)
     SceneActor_SetPairZeroAndValue(9, 14, 20);
     SceneActor_SetModeZeroAndValue(9, 20);
     Actor_WalkToAndWait(14, 0x358, 0x198);
-    Engine_ActorEnableActionCallback(9, (s32)KuupuappuHeya_VaultScriptE);
-    Engine_ActorEnableActionCallback(14, (s32)KuupuappuHeya_VaultScriptE);
+    Engine_ActorEnableActionCallback(9, KuupuappuHeya_VaultScriptE);
+    Engine_ActorEnableActionCallback(14, KuupuappuHeya_VaultScriptE);
     Actor_WalkTo(ACTOR_GERALD, 0x318, 0x1c8);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_WalkTo(ACTOR_IVAN, 0x308, 0x1b0);

@@ -50,7 +50,7 @@ extern u8 MsgGomaGotWowThatsPrettyImpressive[];
 
 void FieldScene_RunActor13Departure(void)
 {
-    Engine_TaskRemoveCallback((s32)GomaHashira_DriveActor13Idle);
+    Engine_TaskRemoveCallback(GomaHashira_DriveActor13Idle);
     Engine_EventBegin();
     Actor_ShowEmote(13, 0x100, 30);
     Engine_ActorRunRepeatedMotion(13, 2);

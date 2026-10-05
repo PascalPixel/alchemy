@@ -1872,7 +1872,7 @@ void FieldScene_RunScene3b1_02004198(void)
     SceneActor_SetFlagBit3ForActors28To35();
     FieldScene_RunSceneStep(19, 11, 12);
     Engine_ActorSetAnimation(10, 6);
-    Engine_ActorEnableActionCallback(12, (s32)FuneHeya_ActionScriptE);
+    Engine_ActorEnableActionCallback(12, FuneHeya_ActionScriptE);
     base5_200e8e4 = (s32)((u8 *)FuneHeya_EntryActionScript);
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
@@ -2607,8 +2607,8 @@ void FieldScene_RunPositionTransferPresentation(void)
     FieldScene_RunStepThen10(8);
     Actor_FaceDirection(8, 0, 20);
     ConfigureSceneMotionFlags(0x1b80000, -1, 0x860000, 0x10000000);
-    Engine_ActorEnableActionCallback(ACTOR_GERALD, (s32)FuneHeya_ProgressTableA);
-    Engine_ActorEnableActionCallback(2, (s32)FuneHeya_ProgressTableA);
+    Engine_ActorEnableActionCallback(ACTOR_GERALD, FuneHeya_ProgressTableA);
+    Engine_ActorEnableActionCallback(2, FuneHeya_ProgressTableA);
     Object_SetActionCallbackAndRefreshById(3, (s32)FuneHeya_ProgressTableA);
     Engine_EventWait(40);
     GameFlag_Set(0x301);

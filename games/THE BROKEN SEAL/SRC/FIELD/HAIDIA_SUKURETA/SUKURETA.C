@@ -775,7 +775,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         
             record->radius = shown;
         }
-        Engine_ActorEnableActionCallback(11, (s32)Sukureta_Actor11Actions);
+        Engine_ActorEnableActionCallback(11, Sukureta_Actor11Actions);
         if (Engine_GameFlagIsSet(0x839) != 0) {
             Engine_ActorSetPosition(11, 0, 0);
         }

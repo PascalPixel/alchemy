@@ -138,16 +138,16 @@ void Scene_RunBranchingActorPresentation(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(17, 3);
         FieldScene_CallPairWith10(17);
-        Engine_ActorEnableActionCallback(1, (s32)KorashiamuIriguchi_ActionTable1);
-        Engine_ActorEnableActionCallback(2, (s32)KorashiamuIriguchi_ActionTable1);
+        Engine_ActorEnableActionCallback(1, KorashiamuIriguchi_ActionTable1);
+        Engine_ActorEnableActionCallback(2, KorashiamuIriguchi_ActionTable1);
         Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable1);
         Engine_CameraSetSpeed(0x6666, 0xccc);
         Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
         Call3(Engine_ActorSetSpeed, 17, 0x10000, 0x8000);
-        Engine_ActorEnableActionCallback(17, (s32)KorashiamuIriguchi_ActionTable4);
+        Engine_ActorEnableActionCallback(17, KorashiamuIriguchi_ActionTable4);
         Engine_EventWait(10);
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-        Engine_ActorEnableActionCallback(0, (s32)KorashiamuIriguchi_ActionTable4);
+        Engine_ActorEnableActionCallback(0, KorashiamuIriguchi_ActionTable4);
         Engine_EventWait(80);
         gEventWork->transition_frames = 40;
         Engine_EventCloseScreen();
@@ -191,16 +191,16 @@ void Scene_RunBranchingActorPresentation(void)
         if (record == 0) {
             Engine_ActorSetAnimationAndWait(17, 3);
             FieldScene_CallPairWith10(17);
-            Engine_ActorEnableActionCallback(1, (s32)KorashiamuIriguchi_ActionTable1);
-            Engine_ActorEnableActionCallback(2, (s32)KorashiamuIriguchi_ActionTable1);
+            Engine_ActorEnableActionCallback(1, KorashiamuIriguchi_ActionTable1);
+            Engine_ActorEnableActionCallback(2, KorashiamuIriguchi_ActionTable1);
             Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable1);
             Engine_CameraSetSpeed(0x6666, 0xccc);
             Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
             Call3(Engine_ActorSetSpeed, 17, 0x10000, 0x8000);
-            Engine_ActorEnableActionCallback(17, (s32)KorashiamuIriguchi_ActionTable4);
+            Engine_ActorEnableActionCallback(17, KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(10);
             Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-            Engine_ActorEnableActionCallback(0, (s32)KorashiamuIriguchi_ActionTable4);
+            Engine_ActorEnableActionCallback(0, KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(80);
             gEventWork->transition_frames = 40;
             Engine_EventCloseScreen();
@@ -215,7 +215,7 @@ void Scene_RunBranchingActorPresentation(void)
             SceneState_ForwardMaskedHalfwordWith10(3, 0x8000);
             Engine_ActorSetAnimation(3, 3);
             FieldScene_CallPairWith10(3);
-            Engine_ActorEnableActionCallback(2, (s32)KorashiamuIriguchi_ActionTable2);
+            Engine_ActorEnableActionCallback(2, KorashiamuIriguchi_ActionTable2);
             Object_SetActionCallbackAndRefreshById(3, (s32)KorashiamuIriguchi_ActionTable2);
             Engine_EventWait(20);
             Object_SetActionCallbackAndRefreshById(0, (s32)KorashiamuIriguchi_ActionTable2);
@@ -226,10 +226,10 @@ void Scene_RunBranchingActorPresentation(void)
             Engine_CameraSetSpeed(0x6666, 0xccc);
             Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
             Call3(Engine_ActorSetSpeed, 17, 0x10000, 0x8000);
-            Engine_ActorEnableActionCallback(17, (s32)KorashiamuIriguchi_ActionTable4);
+            Engine_ActorEnableActionCallback(17, KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(10);
             Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
-            Engine_ActorEnableActionCallback(1, (s32)KorashiamuIriguchi_ActionTable4);
+            Engine_ActorEnableActionCallback(1, KorashiamuIriguchi_ActionTable4);
             Engine_EventWait(80);
             gEventWork->transition_frames = 40;
             Engine_EventCloseScreen();
@@ -305,8 +305,8 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Call3(Engine_ActorSetSpeed, 13, 0x19999, 0xcccc);
             Call3(Engine_ActorSetSpeed, 14, 0x19999, 0xcccc);
             Call3(Engine_ActorSetSpeed, 16, 0x19999, 0xcccc);
-            Engine_ActorEnableActionCallback(13, (s32)KorashiamuIriguchi_ActionTable5);
-            Engine_ActorEnableActionCallback(16, (s32)KorashiamuIriguchi_ActionTable7);
+            Engine_ActorEnableActionCallback(13, KorashiamuIriguchi_ActionTable5);
+            Engine_ActorEnableActionCallback(16, KorashiamuIriguchi_ActionTable7);
             Engine_EventWait(20);
             Engine_ActorFaceDirection(15, 0xd000, 0);
             Engine_ActorFaceDirection(17, 0xb000, 0);

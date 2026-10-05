@@ -1195,7 +1195,7 @@ void Scene_BoulderFalls(void)
         }
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
         Actor_SetSpeed(22, 0x20000, 0x10000);
-        Engine_ActorEnableActionCallback(0, (s32)HaidiaArashi_LeaderScript);
+        Engine_ActorEnableActionCallback(0, HaidiaArashi_LeaderScript);
         Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScript);
         Object_RefreshSelectorById(0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
@@ -1882,7 +1882,7 @@ void HaidiaArashi_RunScene02DEC(void)
             Engine_CameraSetSpeed(0x13333, 0x2666);
             Call4(Engine_CameraMoveTo, 0x650000, -1, 0x4ad0000, 1);
             Call3(Engine_ActorSetSpeed, 9, 0x16666, 0xb333);
-            Engine_ActorEnableActionCallback(9, (s32)HaidiaArashi_StormRunActions);
+            Engine_ActorEnableActionCallback(9, HaidiaArashi_StormRunActions);
             Engine_EventWait(60);
             Engine_CameraSetSpeed(0x9999, 0x1333);
             Call4(Engine_CameraMoveTo, 0xbb0000, -1, 0x5300000, 1);

@@ -438,7 +438,7 @@ void Scene_RunEventTransition(void)
         Actor_SetAttachedEffect(10, 0x102);
         Engine_EventWait(60);
         Event_ShowMessageAndWait(10, 0, 20);
-        Engine_ActorEnableActionCallback(10, (s32)YamaRama_HsuAction);
+        Engine_ActorEnableActionCallback(10, YamaRama_HsuAction);
         Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
         GameFlag_Set(0x8b0);
         Object_RefreshSelectorById(10);

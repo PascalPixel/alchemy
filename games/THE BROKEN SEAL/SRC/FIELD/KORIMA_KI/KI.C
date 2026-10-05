@@ -200,7 +200,7 @@ void RunEventScript01(void)
     Engine_TaskWait(40);
     Audio_PlayCue(17);
     gKorimaKiSparkSound = 1;
-    Engine_TaskAddCallback((s32)PaletteScene_SpawnEffect, 0xc80);
+    Engine_TaskAddCallback(PaletteScene_SpawnEffect, 0xc80);
     Engine_TaskWait(30);
     gKorimaKiSparkSound = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
@@ -222,7 +222,7 @@ void RunEventScript01(void)
     Audio_PlayCue(161);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
     Engine_EventWait(120);
-    Engine_TaskRemoveCallback((s32)PaletteScene_SpawnEffect);
+    Engine_TaskRemoveCallback(PaletteScene_SpawnEffect);
     Engine_TaskWait(40);
     rec8->bounce = 0x4000;
     {
@@ -298,7 +298,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_TaskWait(40);
     transitionState = &gKorimaKiTransitionStep;
     *transitionState = 0;
-    Engine_TaskAddCallback((s32)PaletteScene_AdvanceTransition, 0xc80);
+    Engine_TaskAddCallback(PaletteScene_AdvanceTransition, 0xc80);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
     Camera_SetSpeed(0x33333, 0x6666);
@@ -321,7 +321,7 @@ void PaletteScene_RunActorTransitionSequence(void)
             Engine_TaskWait(1);
         } while (*transitionState != 24);
     }
-    Engine_TaskRemoveCallback((s32)PaletteScene_AdvanceTransition);
+    Engine_TaskRemoveCallback(PaletteScene_AdvanceTransition);
     Engine_TaskWait(10);
     cycle = 0;
     do {

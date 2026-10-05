@@ -2017,7 +2017,7 @@ void FieldScene_RunScene3a8SequenceB(void)
         rec2->scale_x = 0x1999;
         rec2->scale_y = 0x1999;
         Actor_SetPosition(11, 0x960000, 0x2d80000);
-        Engine_ActorEnableActionCallback(11, (s32)KareiMachi_ActionScript01);
+        Engine_ActorEnableActionCallback(11, KareiMachi_ActionScript01);
         v6 = 1;
         Map_CopyCellsTo(67, 64, 71, 44, v6, v5);
         Map_CopyCellsTo(67, 64, 72, 44, v6, v5);

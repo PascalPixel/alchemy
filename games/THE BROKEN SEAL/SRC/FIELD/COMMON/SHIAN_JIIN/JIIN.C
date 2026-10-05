@@ -1267,7 +1267,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Engine_ActorSetAnimation(10, 5);
     Engine_ActorSetAnimation(11, 5);
     Engine_ActorWaitForMove(12);
-    Engine_ActorEnableActionCallback(12, (s32)ShianJiin_ActorTwelveScript);
+    Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
     Actor_SetSpeed(15, 0xcccc, 0x6666);
     Actor_WalkToAndWait(15, 216, 168);
     Actor_WalkToAndWait(15, 232, 168);

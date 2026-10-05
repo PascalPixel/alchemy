@@ -264,7 +264,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Engine_EventBegin();
             actor9_record = Object_GetById(9);
             ((struct SceneRecord *)actor9_record)->field_0x64 = 10;
-            Engine_ActorEnableActionCallback(9, (s32)ImiruMura_ActorScriptA);
+            Engine_ActorEnableActionCallback(9, ImiruMura_ActorScriptA);
             Engine_EventSetMessage((s32)MsgMakyuriOoohHelpMe);
             Engine_EventShowMessage(9, 0);
             Engine_ActorStop(8);
@@ -272,7 +272,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Actor_FaceDirection(8, 53248, 10);
             Engine_ActorStartRepeatedMotion(8, 2);
             Event_ShowMessageAndWait(8, 0, 20);
-            Engine_ActorEnableActionCallback(0, (s32)ImiruMura_ActorScriptC);
+            Engine_ActorEnableActionCallback(0, ImiruMura_ActorScriptC);
             Actor_SetSpeed(8, 104857, 52428);
             Object_SetActionCallbackAndRefreshById(8, (s32)ImiruMura_ActorScriptB);
             Engine_EventWait(40);
@@ -608,7 +608,7 @@ s32 ImiruMura_ApplyEntryState(void)
         leader->unknown_64 = 0;
         leader->unknown_66 = 0;
         Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene399SequenceA, 0xc80);
-        Engine_TaskAddCallback((s32)SceneState_UpdateZoneFlagsFromActorZero, 0xc80);
+        Engine_TaskAddCallback(SceneState_UpdateZoneFlagsFromActorZero, 0xc80);
         Engine_ActorSetSpritePriority(11, 1);
         if (Engine_GameFlagIsSet(0x203)) {
             SceneState_UpdateActor11WithFlag203();
@@ -798,7 +798,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_EventWait(40);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     ((struct Work_399 *)((s32)Object_GetById(3)))->f100 = 0;
-    Engine_ActorEnableActionCallback(ACTOR_MIA, (s32)ImiruMura_MiaScriptA);
+    Engine_ActorEnableActionCallback(ACTOR_MIA, ImiruMura_MiaScriptA);
     while (*(s16 *)(((s32)Object_GetById(3)) + ACTOR_DONE_OFFSET) == 0) {
         Engine_TaskWait(1);
     }
@@ -839,7 +839,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_ActorStop(ACTOR_IVAN);
     Actor_SetSpeed(ACTOR_MIA, 0x30000, 0x18000);
     ((struct Work_399 *)((s32)Object_GetById(3)))->f100 = 0;
-    Engine_ActorEnableActionCallback(ACTOR_MIA, (s32)ImiruMura_MiaScriptB);
+    Engine_ActorEnableActionCallback(ACTOR_MIA, ImiruMura_MiaScriptB);
     while (*(s16 *)(((s32)Object_GetById(3)) + ACTOR_DONE_OFFSET) == 0) {
         Engine_TaskWait(1);
     }

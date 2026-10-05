@@ -191,7 +191,7 @@ void FieldScene_RunScene372_02003e48(void)
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgHaidiaICantMoveGetHelp);
         Event_ShowMessage(8, 0);
-        Engine_ActorEnableActionCallback(8, (s32)HaidiaArashi_ActorEightScript);
+        Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
         Engine_ActorSetAnimation(8, 6);
     } else {
         Engine_ActorStop(8);
@@ -222,7 +222,7 @@ void FieldScene_RunScene372_02003e48(void)
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(20);
         Event_ShowMessage(8, 0);
-        Engine_ActorEnableActionCallback(8, (s32)HaidiaArashi_ActorEightScript);
+        Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
         Engine_ActorSetAnimation(8, 6);
         GameFlag_Set(0x305);
     }

@@ -540,7 +540,7 @@ void FieldScene_PlaceSpectatorRow(void)
 {
     KorosseoKabe_SpectatorTimer = 0;
     KorosseoKabe_SpectatorPhase = 0;
-    Engine_TaskRemoveCallback((s32)FieldScene_RunSupplementalSequenceOne);
+    Engine_TaskRemoveCallback(FieldScene_RunSupplementalSequenceOne);
     Actor_SetPosition(22, 0x3a80000, 0xd80000);
     Actor_SetPosition(23, 0x3c80000, 0xd80000);
     Actor_SetPosition(24, 0x3e80000, 0xd80000);
@@ -594,7 +594,7 @@ void SceneState_InstallTask8714AndApplyTwoRects(void)
     /* The task is published as its entry address with the Thumb bit set. The
      * `.thumb_set` alias the exact reconstruction emits for a Thumb symbol already carries
      * bit 0, so adding it again here overshoots by one. */
-    Engine_TaskRemoveCallback((s32)FieldScene_RunSupplementalSequenceOne);
+    Engine_TaskRemoveCallback(FieldScene_RunSupplementalSequenceOne);
 
     Engine_MapCopyCellAttributes(58, 28, 7, 1, 58, 13);
     Engine_MapCopyCellAttributes(57, 11, 1, 1, 58, 11);

@@ -332,8 +332,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Engine_EventWait(10);
-    Engine_ActorEnableActionCallback(0, (s32)ShindenHeya_LeaderCircleScript);
-    Engine_ActorEnableActionCallback(1, (s32)ShindenHeya_GeraldCircleScript);
+    Engine_ActorEnableActionCallback(0, ShindenHeya_LeaderCircleScript);
+    Engine_ActorEnableActionCallback(1, ShindenHeya_GeraldCircleScript);
     Object_RefreshSelectorById(0); /* main:0808a0a0 */
     Object_RefreshSelectorById(1); /* main:0808a0a0 */
     Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);

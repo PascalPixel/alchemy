@@ -280,10 +280,10 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Map_SetWorkFourValues
+	.global Map_SetViewBounds
 	.thumb_func
-Map_SetWorkFourValues:
-	overlay_veneer Map_SetWorkFourValuesFar
+Map_SetViewBounds:
+	overlay_veneer Map_SetViewBoundsFar
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:

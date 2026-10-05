@@ -1113,7 +1113,7 @@ void WorldMap_ShowDjinnTutorial(void)
 {
     Battle_ClearObjectFlag5bWhenMode3();
     BattleFx_ScheduleRatioTransition(0x10000, 6);
-    Event_WaitForDisplayField358Clear();
+    Event_WaitForZoomTransition();
     Battle_SetObjectFlag5bWhenMode3();
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventSetMessage((s32)MsgWorldMapAfterBringingDjinniIntoYour);
@@ -1191,7 +1191,7 @@ void WorldMap_MeetVenusDjinni(void)
         Event_ShowMessage(DJINNI, 0);
         Battle_ClearObjectFlag5bWhenMode3();
         BattleFx_ScheduleRatioTransition(0x13333, 6);
-        Event_WaitForDisplayField358Clear();
+        Event_WaitForZoomTransition();
         Battle_SetObjectFlag5bWhenMode3();
         djinni->motion_flags = 2;
         djinni->gravity = 0x4000;

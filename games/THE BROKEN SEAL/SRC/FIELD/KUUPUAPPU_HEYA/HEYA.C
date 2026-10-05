@@ -44,7 +44,7 @@ void SceneState_SetWord1c0To209AndRun();
 void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
-void Map_SetWorkFourValues();
+void Map_SetViewBounds();
 u8 *Owner_GetState(s32);
 void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);

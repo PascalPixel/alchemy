@@ -83,7 +83,7 @@ void Battle_SetObjectFlag5bWhenMode3();
 void Battle_ClearObjectFlag5bWhenMode3();
 void BattleFx_ScheduleRatioTransition();
 void BattleFx_SetWeightedResult();
-void Event_WaitForDisplayField358Clear();
+void Event_WaitForZoomTransition();
 void Event_SetPairWork1c0();
 void ItemMenu_Open();
 void Menu_AnimateSelectionToEntry();

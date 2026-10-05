@@ -11,13 +11,7 @@
 #include "FIXED_MATH.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
-struct State_080935b0 {
-    u8 filler0[0xEC];
-    s32 first;
-    s32 second;
-    s32 third;
-    s32 fourth;
-};
+#include "MAP_SCROLL.H"
 
 extern u8 gScanlinePitch[];
 s32 BattleFx_StepRatioTransition(void);
@@ -44,14 +38,14 @@ void Battle_WaitMode0(s32 state);
 extern const s32 BattleFx_LinkedObjectScript[];
 s32 BattleFx_CopyLinkedObjectPosition(void *obj);
 
-void Map_SetWorkFourValues(s32 first, s32 second, s32 third, s32 fourth)
+void Map_SetViewBounds(s32 first, s32 second, s32 third, s32 fourth)
 {
-    struct State_080935b0 *work = gMapWork[0];
+    struct MapScrollWork *work = gMapWork[0];
 
-    work->first = first;
-    work->second = second;
-    work->third = third;
-    work->fourth = fourth;
+    work->min_x = first;
+    work->min_y = second;
+    work->max_x = third;
+    work->max_y = fourth;
 }
 
 /* Ease the ratio from its start to end value over the transition duration,
@@ -111,7 +105,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 }
 
 /* Wait (at most 300 frames) for the display work's pending flag at +0x358 to clear. */
-void Event_WaitForDisplayField358Clear(void)
+void Event_WaitForZoomTransition(void)
 {
     s32 frames;
     u8 *work = gMapWork[0];

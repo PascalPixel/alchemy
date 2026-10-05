@@ -406,10 +406,10 @@ BattleFx_RunPageEffectForSlot:
 	.thumb_func
 BattleFx_ScheduleRatioTransition:
 	overlay_veneer BattleFx_ScheduleRatioTransitionFar
-	.global Event_WaitForDisplayField358Clear
+	.global Event_WaitForZoomTransition
 	.thumb_func
-Event_WaitForDisplayField358Clear:
-	overlay_veneer Event_WaitForDisplayField358ClearFar
+Event_WaitForZoomTransition:
+	overlay_veneer Event_WaitForZoomTransitionFar
 	.global ItemMenu_Open
 	.thumb_func
 ItemMenu_Open:

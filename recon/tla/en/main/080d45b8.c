@@ -11,7 +11,7 @@ struct State_080935b0 {
 
 extern struct State_080935b0 *gCam;
 
-void Map_SetWorkFourValues(s32 first, s32 second, s32 third, s32 fourth)
+void Map_SetViewBounds(s32 first, s32 second, s32 third, s32 fourth)
 {
     struct State_080935b0 *work = gCam;
 

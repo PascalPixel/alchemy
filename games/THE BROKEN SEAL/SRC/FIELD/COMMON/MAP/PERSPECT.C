@@ -204,7 +204,7 @@ s32 Map_InitializePerspectiveScene(void)
     distance = &work->distance;
     *distance = far_plane;
     work->zoom = 0x10000;
-    turn = &work->turn;
+    turn = &work->zoom_transition_frames;
     camera->unknown_18 = 0;
     camera->follow_pos = 0;
     *turn = 0;

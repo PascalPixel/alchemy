@@ -81,7 +81,7 @@ void FieldScene_RunActorPresentationSequence(void)
     ColorBuffer_ApplyTarget(0x10003, 1);
     gEventWork->transition_frames = 16;
     Engine_EventOpenScreen();
-    Event_WaitForDisplayField358Clear();
+    Event_WaitForZoomTransition();
     Battle_SetObjectFlag5bWhenMode3();
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);

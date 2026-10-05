@@ -30,7 +30,7 @@ void SceneState_SetWord1c0To209AndRun();
 void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
-void Map_SetWorkFourValues();
+void Map_SetViewBounds();
 u8 *Owner_GetState(s32);
 void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);
@@ -1247,7 +1247,7 @@ void KuupuappuHeya_RunScene021C8(void)
 
         record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
     }
-    Map_SetWorkFourValues(0x200000, 0x2400000, 0x1900000, 0x3a80000);
+    Map_SetViewBounds(0x200000, 0x2400000, 0x1900000, 0x3a80000);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);

@@ -273,10 +273,10 @@ Object_PlaceCurrentWithinCameraBoundsFar:
 	.thumb_func
 Battle_GetWorkObject1e0Far:
 	overlay_veneer Battle_GetWorkObject1e0
-	.global Map_SetWorkFourValuesFar
+	.global Map_SetViewBoundsFar
 	.thumb_func
-Map_SetWorkFourValuesFar:
-	overlay_veneer Map_SetWorkFourValues
+Map_SetViewBoundsFar:
+	overlay_veneer Map_SetViewBounds
 	.global Event_SetPairWork1c0Far
 	.global Func_0808a238
 	.thumb_func
@@ -678,10 +678,10 @@ ObjectTable_RestoreFar:
 	.thumb_func
 BattleFx_ScheduleRatioTransitionFar:
 	overlay_veneer BattleFx_ScheduleRatioTransition
-	.global Event_WaitForDisplayField358ClearFar
+	.global Event_WaitForZoomTransitionFar
 	.thumb_func
-Event_WaitForDisplayField358ClearFar:
-	overlay_veneer Event_WaitForDisplayField358Clear
+Event_WaitForZoomTransitionFar:
+	overlay_veneer Event_WaitForZoomTransition
 	.global Scene_GetAreaNameIndexFar
 	.thumb_func
 Scene_GetAreaNameIndexFar:

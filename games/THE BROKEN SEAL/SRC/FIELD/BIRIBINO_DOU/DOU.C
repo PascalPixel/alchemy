@@ -320,8 +320,7 @@ void RunGuardedSceneSetup(void)
 
 void SceneState_SetRuntimeWord448To516(void)
 {
-    /* 448 is built as 224 << 1 and the stored 516 as that same register plus
-     * 68; the two are not one running offset. */
+
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
     Engine_ActorSetAnimation(8, 1);

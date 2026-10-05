@@ -1,9 +1,12 @@
+/* 08090a5c: differ 180 of 812, draft 812; the native and draft use the same 40-byte frame. Remaining: red and green registers rotate through the channel transforms. Rebuilt from the current verified Graphics_TransformPaletteBuffer body, using the battle native 448-color count, half spans, palette-memory read and warm transform. Natural twin form differed 291; nonvolatile palette memory read 280; three localized clamp constraints 180 (without the first or second: 182, without the third: 284; third input-only remains 180). */
+/* Trials: legacy draft 1052; current IWRAM and division vocabulary 1049; Dma_Set 1062; shared palette source then resolves the global frame/register differences above. Ordinary color declaration orders stay 280 and register hints stay 180. Scoped warm/sepia/tint/blend locals give 186/658/180/252. A fixed sepia-red bridge adds an instruction (209); fixed-color variants 315-873 and extra tie operands do not help, so none remain. */
+
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
+#include "DMA.H"
+#include "PALBUF.H"
 
-typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
-
-s32 __divsi3(s32 numerator, s32 denominator);
 s32 BattleFx_ClampRgb555Channel(s32 value);
 s32 BattleFx_ClampRgb555Component(s32 value);
 
@@ -11,78 +14,63 @@ extern u16 Data_0809e92e[];
 extern u16 Data_0809e96e[];
 extern u16 Data_0809e9ae[];
 
-void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
+void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {
-    u32 *reg;
     u32 i;
-    u32 cnt;
+    u32 cnt = 448;
+    s32 r;
+    s32 b;
     u32 c;
+    s32 g;
 
-    cnt = 448;
-    if (mode == 0x8000)
-        mode = *(u16 *)0x05000000;
-
-    if (part == 1) {
+    if (mode == PALETTE_TRANSFORM_FROM_SOURCE)
+        mode = *(u16 *)BG_PLTT;
+    if (half == 1) {
         cnt = 224;
-    } else if (part == 2) {
+    } else if (half == 2) {
         dst += 672;
-        cnt = 224;
         src += 224;
+        cnt = 224;
     }
 
-    if (mode < 0x8000) {
+    if (mode < PALETTE_TRANSFORM_FROM_SOURCE) {
         *dst++ = mode & 0x7c00;
-        *dst++ = (mode & 0x3e0) << 5;
-        *dst++ = (mode & 0x1f) << 10;
-
-        reg = (u32 *)0x040000d4;
-        reg[0] = (u32)(dst - 3);
-        reg[1] = (u32)dst;
-        reg[2] = (((cnt - 1) * 3 * 2) >> 1) | 0x80000000;
-        return;
-    }
-
-    if (mode < 0x100000) {
+        *dst++ = (mode & 0x03e0) << 5;
+        *dst++ = (mode & 0x001f) << 10;
+        Dma_Set(dst - 3, dst, (((cnt - 1) * 6) >> 1) | DMA_ENABLE32, REG_DMA3);
+    } else if (mode < PALETTE_TRANSFORM_FLAGS) {
         switch (mode) {
-        case 0x10001: {
-            SignedDivide divide;
-            u16 *out;
-            s32 v;
-
-            divide = (SignedDivide)0x03000380;
-            out = dst;
+        case PALETTE_TRANSFORM_GREY:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                v = divide(((c << 11) & 0xf800) + ((c << 7) & 0x1f000) +
-                               (c & 0x7c00),
-                           7);
-                out[0] = (u16)v;
-                out[1] = (u16)v;
-                out[2] = (u16)v;
-                out += 3;
+                r = ((c << 11) & 0xf800);
+                g = ((c << 7) & 0x1f000);
+                b = (c & 0x7c00);
+                c = Iwram_SignedDivide(r + g + b, 7);
+                *dst++ = c;
+                *dst++ = c;
+                *dst++ = c;
             }
-            return;
-        }
-
-        case 0x10002: {
-            SignedDivide divide;
-            s32 v;
-            s32 r;
-            s32 g;
-            s32 b;
-
+            break;
+        case PALETTE_TRANSFORM_SEPIA:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                divide = (SignedDivide)0x03000380;
-                v = divide((s32)((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31)),
-                           10);
-                r = v * 4 + 5;
-                g = v * 3 + 5;
-                b = v * 3 + 5;
+                r = c & 31;
+                c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
+                r = c * 4 + 5;
+                b = c * 3 + 5;
+                /* FAKEMATCH: keep the native channel copy order after the ordinary shared-color form rotates r5-r7. */
+                __asm__("" : "+r" (r));
+                g = b;
+                /* FAKEMATCH: preserve separate native channel lower-clamp lifetimes; ordinary assignments merge their tests. */
+                __asm__("" : "+r" (g));
                 if (r < 8)
                     r = 8;
-                if (g < 8)
+                if (b < 8) {
                     g = 8;
+                    /* FAKEMATCH: retain the second native blue test on the clamped path after ordinary tests merge. */
+                    __asm__("" : : "r" (b));
+                }
                 if (b < 8)
                     b = 8;
                 if (r > 28)
@@ -95,44 +83,34 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
                 *dst++ = Data_0809e96e[g];
                 *dst++ = Data_0809e96e[r];
             }
-            return;
-        }
-
-        case 0x10003: {
-            u32 r;
-            u32 g;
-            u32 b;
-
+            break;
+        case PALETTE_TRANSFORM_WARM:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
                 g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
                 if ((r | g | b) != 0) {
-                    r = r - (r >> 1) + 10;
-                    g = (u32)((s32)g - __divsi3((s32)g, 3) + 8);
-                    b = b - 7;
-                    r = (u32)BattleFx_ClampRgb555Channel((s32)r);
-                    g = (u32)BattleFx_ClampRgb555Channel((s32)g);
-                    b = (u32)BattleFx_ClampRgb555Channel((s32)b);
+                    r -= (u32)r >> 1;
+                    g -= g / 3;
+                    r += 10;
+                    g += 8;
+                    b -= 7;
+                    r = BattleFx_ClampRgb555Channel(r);
+                    g = BattleFx_ClampRgb555Channel(g);
+                    b = BattleFx_ClampRgb555Channel(b);
                 }
                 *dst++ = Data_0809e9ae[b];
                 *dst++ = Data_0809e96e[g];
                 *dst++ = Data_0809e92e[r];
             }
-            return;
-        }
-
-        case 0x10004: {
-            s32 r;
-            s32 g;
-            s32 b;
-
+            break;
+        case PALETTE_TRANSFORM_MUTED:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                r = (s32)(c & 31);
-                g = (s32)((c >> 5) & 31);
-                b = (s32)((c >> 10) & 31);
+                r = c & 31;
+                g = (c >> 5) & 31;
+                b = (c >> 10) & 31;
                 if (r < 10)
                     r = 10;
                 if (g < 16)
@@ -145,8 +123,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
                     g = 24;
                 if (b > 26)
                     b = 26;
-                g = g + 2;
-                b = b + 2;
+                g += 2;
+                b += 2;
                 r = BattleFx_ClampRgb555Channel(r);
                 g = BattleFx_ClampRgb555Channel(g);
                 b = BattleFx_ClampRgb555Channel(b);
@@ -154,25 +132,19 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
                 *dst++ = Data_0809e92e[g];
                 *dst++ = Data_0809e92e[r];
             }
-            return;
-        }
-
-        case 0x10005: {
-            s32 r;
-            s32 g;
-            s32 b;
-            s32 v;
-
+            break;
+        case PALETTE_TRANSFORM_PALE:
             for (i = 0; i < cnt; i++) {
+                s32 mean;
+
                 c = *src++;
-                r = (s32)(c & 31);
-                g = (s32)((c >> 5) & 31);
-                b = (s32)((c >> 10) & 31);
-                v = BattleFx_ClampRgb555Channel(
-                    __divsi3(r + g + b, 3));
-                r = (r >> 1) + v;
-                g = (g >> 1) + v;
-                b = (b >> 1) + v;
+                r = c & 31;
+                g = (c >> 5) & 31;
+                b = (c >> 10) & 31;
+                mean = BattleFx_ClampRgb555Channel((r + g + b) / 3);
+                r = (r >> 1) + mean;
+                g = (g >> 1) + mean;
+                b = (b >> 1) + mean;
                 r = BattleFx_ClampRgb555Channel(r);
                 g = BattleFx_ClampRgb555Channel(g);
                 b = BattleFx_ClampRgb555Channel(b);
@@ -181,157 +153,109 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
                 dst[2] = Data_0809e9ae[r];
                 dst += 3;
             }
-            return;
-        }
-
-        case 0x10006: {
-            s32 r;
-            s32 g;
-            s32 b;
-
-            for (i = 0; i < cnt; i++) {
-                c = *src++;
-                g = (s32)((c >> 5) & 31);
-                b = (s32)((c >> 10) & 31);
-                r = (s32)(c & 31);
-                r = BattleFx_ClampRgb555Channel(r + ((g >> 3) + (b >> 3)));
-                g = g - __divsi3(g, 3);
-                b = b - __divsi3(b, 3);
-                dst[0] = Data_0809e92e[b];
-                dst[1] = Data_0809e92e[g];
-                dst[2] = Data_0809e96e[r];
-                dst += 3;
-            }
-            return;
-        }
-
-        case 0x10007: {
-            u32 r;
-            u32 g;
-            u32 b;
-
+            break;
+        case PALETTE_TRANSFORM_RED:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
                 g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
-                r = r - (r >> 1) + 6;
-                g = (u32)((s32)g - __divsi3((s32)g, 3) + 4);
-                b = b - 6;
-                r = (u32)BattleFx_ClampRgb555Channel((s32)r);
-                g = (u32)BattleFx_ClampRgb555Channel((s32)g);
-                b = (u32)BattleFx_ClampRgb555Channel((s32)b);
+                r = r + ((g >> 3) + (b >> 3));
+                r = BattleFx_ClampRgb555Channel(r);
+                g = g - g / 3;
+                b = b - b / 3;
+                dst[0] = Data_0809e92e[b];
+                dst[1] = Data_0809e92e[g];
+                dst[2] = Data_0809e96e[r];
+                dst += 3;
+            }
+            break;
+        case PALETTE_TRANSFORM_WARM2:
+            for (i = 0; i < cnt; i++) {
+                c = *src++;
+                r = c & 31;
+                g = (c >> 5) & 31;
+                b = (c >> 10) & 31;
+                r -= (u32)r >> 1;
+                g -= g / 3;
+                r += 6;
+                g += 4;
+                b -= 6;
+                r = BattleFx_ClampRgb555Channel(r);
+                g = BattleFx_ClampRgb555Channel(g);
+                b = BattleFx_ClampRgb555Channel(b);
                 dst[0] = Data_0809e9ae[b];
                 dst[1] = Data_0809e96e[g];
                 dst[2] = Data_0809e92e[r];
                 dst += 3;
             }
-            return;
-        }
-
-        default: {
-            u16 *out;
-
-            out = dst;
+            break;
+        default:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                out[0] = c & 0x7c00;
-                out[1] = (c & 0x3e0) << 5;
-                out[2] = (c & 0x1f) << 10;
-                out += 3;
+                dst[i * 3 + 0] = c & 0x7c00;
+                dst[i * 3 + 1] = (c & 0x03e0) << 5;
+                dst[i * 3 + 2] = (c & 0x001f) << 10;
             }
-            return;
+            break;
         }
-        }
-    }
+    } else if (mode & PALETTE_TRANSFORM_TINT) {
+        u32 tr;
+        u32 tg;
+        u32 tb;
 
-    if ((mode & 0x200000) != 0) {
-        SignedDivide divide;
-        s32 red;
-        s32 green;
-        s32 blue;
-        s32 k;
-        s32 rr;
-        s32 gg;
-        s32 bb;
-
-        red = (s32)(mode & 31);
-        green = (s32)((mode >> 5) & 31);
-        blue = (s32)((mode >> 10) & 31);
+        tr = mode & 31;
+        tg = (mode >> 5) & 31;
+        tb = (mode >> 10) & 31;
         for (i = 0; i < cnt; i++) {
             c = *src++;
-            divide = (SignedDivide)0x03000380;
-            k = divide(((c << 11) & 0xf800) + ((c << 7) & 0x1f000) +
-                           (c & 0x7c00),
-                       96);
-            rr = red * k;
-            gg = green * k;
-            bb = blue * k;
-            rr = BattleFx_ClampRgb555Component(rr);
-            gg = BattleFx_ClampRgb555Component(gg);
-            bb = BattleFx_ClampRgb555Component(bb);
-            dst[0] = (u16)bb;
-            dst[1] = (u16)gg;
-            dst[2] = (u16)rr;
+            r = ((c << 11) & 0xf800);
+            g = ((c << 7) & 0x1f000);
+            b = (c & 0x7c00);
+            c = Iwram_SignedDivide(r + g + b, 96);
+            r = c * tr;
+            g = c * tg;
+            b = c * tb;
+            r = BattleFx_ClampRgb555Component(r);
+            g = BattleFx_ClampRgb555Component(g);
+            b = BattleFx_ClampRgb555Component(b);
+            dst[0] = b;
+            dst[1] = g;
+            dst[2] = r;
             dst += 3;
         }
-        return;
-    }
+    } else if (mode & PALETTE_TRANSFORM_BLEND) {
+        u32 tr;
+        u32 tg;
+        u32 tb;
 
-    if ((mode & 0x400000) != 0) {
-        SignedDivide divide;
-        u32 red;
-        u32 green;
-        u32 blue;
-        s32 k;
-        u32 rr;
-        u32 gg;
-        u32 bb;
-
-        red = mode & 31;
-        green = (mode >> 5) & 31;
-        blue = (mode >> 10) & 31;
+        tr = mode & 31;
+        tg = (mode >> 5) & 31;
+        tb = (mode >> 10) & 31;
         for (i = 0; i < cnt; i++) {
             c = *src++;
-            divide = (SignedDivide)0x03000380;
-            k = divide((s32)(((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31))
-                             << 4),
-                       (s32)(red + green + blue));
-            rr = (u32)Iwram_MulQ16((s32)(((red * (u32)k) >> 4) << 16),
-                            (s32)(red << 16) >> 4);
-            gg = (u32)Iwram_MulQ16((s32)(((green * (u32)k) >> 4) << 16),
-                            (s32)(green << 16) >> 4);
-            bb = (u32)Iwram_MulQ16((s32)(((blue * (u32)k) >> 4) << 16),
-                            (s32)(blue << 16) >> 4);
-            rr = (u32)BattleFx_ClampRgb555Channel((s32)(rr >> 16));
-            gg = (u32)BattleFx_ClampRgb555Channel((s32)(gg >> 16));
-            bb = (u32)BattleFx_ClampRgb555Channel((s32)(bb >> 16));
-            *dst++ = Data_0809e92e[bb];
-            *dst++ = Data_0809e92e[gg];
-            *dst++ = Data_0809e92e[rr];
+            r = c & 31;
+            c = Iwram_SignedDivide((r + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4, tr + tg + tb);
+            r = Iwram_MulQ16(((c * tr) >> 4) << 16, (s32)(tr << 16) >> 4);
+            g = Iwram_MulQ16(((c * tg) >> 4) << 16, (s32)(tg << 16) >> 4);
+            b = Iwram_MulQ16(((c * tb) >> 4) << 16, (s32)(tb << 16) >> 4);
+            r = BattleFx_ClampRgb555Channel((u32)r >> 16);
+            g = BattleFx_ClampRgb555Channel((u32)g >> 16);
+            b = BattleFx_ClampRgb555Channel((u32)b >> 16);
+            *dst++ = Data_0809e92e[b];
+            *dst++ = Data_0809e92e[g];
+            *dst++ = Data_0809e92e[r];
         }
-        return;
-    }
-
-    if ((mode & 0x800000) != 0) {
-        u16 *out;
-
-        out = dst;
+    } else if (mode & PALETTE_TRANSFORM_SPLIT) {
         for (i = 0; i < cnt; i++) {
             c = *src++;
-            out[0] = c & 0x7c00;
-            out[1] = (c & 0x3e0) << 5;
-            out[2] = (c & 0x1f) << 10;
-            out += 3;
+            dst[i * 3 + 0] = c & 0x7c00;
+            dst[i * 3 + 1] = (c & 0x03e0) << 5;
+            dst[i * 3 + 2] = (c & 0x001f) << 10;
         }
-        return;
+    } else {
+        if (half == 2)
+            mode += 1344;
+        Dma_Set((const void *)mode, dst, ((cnt * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
     }
-
-    if (part == 2)
-        mode += 1344;
-
-    reg = (u32 *)0x040000d4;
-    reg[0] = mode;
-    reg[1] = (u32)dst;
-    reg[2] = ((cnt * 3) >> 1) | 0x84000000;
 }

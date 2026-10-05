@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 
 struct AnimationObject;
+struct AnimationEntry;
 
 struct DispatchChild {
     u8 unknown_00[5];
@@ -16,10 +17,14 @@ struct DispatchChild {
     u8 display_flag : 1;
     u8 unknown_11_high : 6;
     s16 value_12;
-    u8 unknown_14[6];
+    u8 unknown_14[5];
+    /* Set when the layers change. */
+    u8 dirty;
     u8 value_1a;
-    u8 unknown_1b[0x0d];
-    s16 *animation_index;
+    /* How many of the layers below are in use. */
+    u8 count;
+    u8 unknown_1c[0x0c];
+    struct AnimationEntry *entries[4];
 };
 
 struct FieldSprite;

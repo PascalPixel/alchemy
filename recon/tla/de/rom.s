@@ -606,18 +606,6 @@ Func_080237e8:
 	.thumb_func
 Func_0802254c:
 	.incbin "baserom.gba", 0x00022010, 0x00000790
-	.section .rom.000227a0, "ax"
-	.global Func_080227a0
-	.type Func_080227a0, %function
-	.thumb_func
-Func_080227a0:
-	.incbin "baserom.gba", 0x000227a0, 0x00000010
-	.section .rom.000227b0, "ax"
-	.global Animation_ApplyChildValuesToRecord
-	.type Animation_ApplyChildValuesToRecord, %function
-	.thumb_func
-Animation_ApplyChildValuesToRecord:
-	.incbin "baserom.gba", 0x000227b0, 0x00000030
 	.section .rom.000228e0, "ax"
 	.global InitializeAnimationObjects
 	.type InitializeAnimationObjects, %function

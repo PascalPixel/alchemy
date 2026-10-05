@@ -237,7 +237,7 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_ActorStop(ACTOR_ID);
-    Scheduler_RemoveCallback((s32)OverlayObject_CopyRecordField1ToSlots22And8);
+    Scheduler_RemoveCallback((s32)HaidiaArashi_CopyLeaderSpritePriority);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_FaceDirection(ACTOR_ID, 0x3000, 20);
@@ -353,7 +353,7 @@ void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
     }
 }
 
-void OverlayObject_ApplyIwramWord1e40(s32 o)
+void HaidiaArashi_CycleObjectPalettes(s32 o)
 {
     volatile s32 *p = (s32 *)&gFrameCount;
     s32 t;
@@ -495,10 +495,10 @@ void FieldScene_RunFourPairedSteps(void)
 void SceneState_SetValue19ThenCall(void)
 {
 
-    OverlayObject_ApplyIwramWord1e40((s32)Object_GetById(19));
+    HaidiaArashi_CycleObjectPalettes((s32)Object_GetById(19));
 }
 
-void OverlayObject_CopyRecordField1ToSlots22And8(void)
+void HaidiaArashi_CopyLeaderSpritePriority(void)
 {
     Ent *src;
     Ent *dst;

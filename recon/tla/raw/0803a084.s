@@ -40,7 +40,7 @@ UiWindow_DrawFrame:
 	b .L_0803a1ae
 .L_0803a0c4:
 	adds r3, r7, #0
-	bl Func_08041abc
+	bl UiWindow_ClearTileAttributesInRect
 	mov r2, r11
 	ldrb r3, [r2, #4]
 	cmp r3, #0

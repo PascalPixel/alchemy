@@ -974,25 +974,9 @@ Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f2dc, 0x00008d24
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x00000534
-	.section .rom.00038f40, "ax"
+	.section .rom.000391c4, "ax"
 	.balign 4
-	.global UiWork_InitializeWithResourceCounters
-	.type UiWork_InitializeWithResourceCounters, %function
-	.thumb_func
-UiWork_InitializeWithResourceCounters:
-	.incbin "baserom.gba", 0x00038f40, 0x000000c4
-	.section .rom.00039004, "ax"
-	.global UiWork_Initialize
-	.type UiWork_Initialize, %function
-	.thumb_func
-UiWork_Initialize:
-	.incbin "baserom.gba", 0x00039004, 0x00000118
-	.section .rom.0003911c, "ax"
-	.global UiWindow_EraseBorderRect
-	.type UiWindow_EraseBorderRect, %function
-	.thumb_func
-UiWindow_EraseBorderRect:
-	.incbin "baserom.gba", 0x0003911c, 0x00000144
+	.incbin "baserom.gba", 0x000391c4, 0x0000009c
 	.section .rom.00039260, "ax"
 	.global UiWindow_Create
 	.type UiWindow_Create, %function
@@ -1043,7 +1027,17 @@ UiWork_ProcessDirectWork:
 UiWindow_DrawFrame:
 	.incbin "baserom.gba", 0x0003a044, 0x00000334
 	.section .rom.0003a406, "ax"
-	.incbin "baserom.gba", 0x0003a406, 0x000000ea
+	.incbin "baserom.gba", 0x0003a406, 0x00000002
+	.global UiWork_InitCountersWithResourceAndScheduleRefresh
+	.type UiWork_InitCountersWithResourceAndScheduleRefresh, %function
+	.thumb_func
+UiWork_InitCountersWithResourceAndScheduleRefresh:
+	.incbin "baserom.gba", 0x0003a408, 0x00000068
+	.global UiWork_InitCountersAndScheduleRefresh
+	.type UiWork_InitCountersAndScheduleRefresh, %function
+	.thumb_func
+UiWork_InitCountersAndScheduleRefresh:
+	.incbin "baserom.gba", 0x0003a470, 0x00000080
 	.section .rom.0003a4f0, "ax"
 	.global Func_0803a530
 	.type Func_0803a530, %function
@@ -1143,12 +1137,9 @@ Func_0803c170:
 	.thumb_func
 Func_0803c198:
 	.incbin "baserom.gba", 0x0003c194, 0x000001e0
-	.section .rom.0003c374, "ax"
-	.global UiWindow_SetTilemapEntry
-	.type UiWindow_SetTilemapEntry, %function
-	.thumb_func
-UiWindow_SetTilemapEntry:
-	.incbin "baserom.gba", 0x0003c374, 0x000001d0
+	.section .rom.0003c408, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0003c408, 0x0000013c
 	.global UiWork_AnimateSpriteSlots
 	.type UiWork_AnimateSpriteSlots, %function
 	.thumb_func
@@ -1193,7 +1184,12 @@ Func_0803ce64:
 Func_0803d020:
 	.incbin "baserom.gba", 0x0003d074, 0x00000158
 	.section .rom.0003d218, "ax"
-	.incbin "baserom.gba", 0x0003d218, 0x0000012c
+	.incbin "baserom.gba", 0x0003d218, 0x0000010c
+	.global UiWork_SetTwoEntriesTo999
+	.type UiWork_SetTwoEntriesTo999, %function
+	.thumb_func
+UiWork_SetTwoEntriesTo999:
+	.incbin "baserom.gba", 0x0003d324, 0x00000020
 	.section .rom.0003d344, "ax"
 	.global Localization_LookupEntryId
 	.type Localization_LookupEntryId, %function
@@ -1408,7 +1404,12 @@ Func_080400e8:
 	.type UiText_RenderStringTiles, %function
 	.thumb_func
 UiText_RenderStringTiles:
-	.incbin "baserom.gba", 0x00041720, 0x0000049c
+	.incbin "baserom.gba", 0x00041720, 0x000003f0
+	.global UiWindow_ClearTileAttributesInRect
+	.type UiWindow_ClearTileAttributesInRect, %function
+	.thumb_func
+UiWindow_ClearTileAttributesInRect:
+	.incbin "baserom.gba", 0x00041b10, 0x000000ac
 	.section .rom.00041bbc, "ax"
 	.global Func_08041b68
 	.type Func_08041b68, %function
@@ -1594,9 +1595,8 @@ Func_080438c8:
 	.incbin "baserom.gba", 0x00043ab8, 0x00000188
 	.section .rom.00043d2c, "ax"
 	.incbin "baserom.gba", 0x00043d2c, 0x00000788
-	.section .rom.000444ec, "ax"
-	.incbin "baserom.gba", 0x000444ec, 0x000000c0
 	.section .rom.000445ac, "ax"
+	.balign 4
 	.global Func_08044558
 	.type Func_08044558, %function
 	.thumb_func

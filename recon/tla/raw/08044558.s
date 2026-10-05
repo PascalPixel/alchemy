@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_08044558
 	.thumb_func
 Func_08044558:
@@ -105,7 +106,7 @@ Func_08044558:
 	strb r3, [r0, #14]
 	ldr r1, [sp, #24]
 	ldr r0, [sp, #44]
-	bl Func_080444e8
+	bl UiText_DrawPaddedLabel
 	movs r1, #5
 	mov r8, r1
 	bl Resource_FindFreeEntry
@@ -172,7 +173,7 @@ Func_08044558:
 	strb r3, [r5, #25]
 	ldr r0, [sp, #28]
 	mov r9, r1
-	bl Func_08044498
+	bl UiText_SetRenderString
 	adds r1, r0, #0
 	adds r1, #70
 	mov r0, r9
@@ -188,7 +189,7 @@ Func_08044558:
 	bl RenderOutput_PrepareForRedraw
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #24]
-	bl Func_080444e8
+	bl UiText_DrawPaddedLabel
 	movs r0, #10
 	bl WaitFrames
 	b .L_08044a0c
@@ -290,7 +291,7 @@ Func_08044558:
 	movs r2, #0
 	ldr r0, [sp, #28]
 	str r2, [sp, #16]
-	bl Func_08044498
+	bl UiText_SetRenderString
 	adds r1, r0, #0
 	adds r1, #70
 	mov r0, r9
@@ -514,7 +515,7 @@ Func_08044558:
 	bl RenderOutput_PrepareForRedraw
 	ldr r1, [sp, #28]
 	ldr r0, [sp, #44]
-	bl Func_080444e8
+	bl UiText_DrawPaddedLabel
 	movs r1, #1
 	str r1, [sp, #16]
 	b .L_0804472a
@@ -602,7 +603,7 @@ Func_08044558:
 	bl RenderOutput_PrepareForRedraw
 	ldr r0, [sp, #44]
 	ldr r1, [sp, #28]
-	bl Func_080444e8
+	bl UiText_DrawPaddedLabel
 	movs r3, #1
 	str r3, [sp, #16]
 	b .L_0804472a

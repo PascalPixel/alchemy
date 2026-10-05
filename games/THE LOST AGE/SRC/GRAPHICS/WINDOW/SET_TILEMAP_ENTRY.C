@@ -1,9 +1,3 @@
-/*
- * Draft: UiWindow_SetTilemapEntry, ☀️'s source with ⚓️'s heap slot and
- * signed window position. 4 instructions differ, two load delay slots the
- * native fills; it matches exactly with -mtune=arm9tdmi.
- * Links as recon/tla/raw/0803c378.s.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "WINDOW.H"
@@ -23,7 +17,7 @@ enum {
 void UiWindow_SetTilemapEntry(
     struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode)
 {
-    u16 *map = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->tilemap;
+    u16 *map = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->tilemap[0];
     s32 palette;
     s32 index;
 

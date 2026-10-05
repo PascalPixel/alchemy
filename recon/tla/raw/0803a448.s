@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803a448
+	.global UiWork_InitCountersWithResourceAndScheduleRefresh
 	.thumb_func
-Func_0803a448:
+UiWork_InitCountersWithResourceAndScheduleRefresh:
 	push {r5, lr}
 	movs r3, #192
 	movs r1, #128

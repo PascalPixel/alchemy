@@ -975,13 +975,13 @@ dialogue:
         Engine_EventWait(0x14);
         Event_ShowMessage(0xc, 0);
         Engine_EventWait(0x14);
-        actor = (u8 *)Object_GetById(0xa);
-        actor += 0x23;
+        actor = &Object_GetById(0xa)->priority_flags;
         flags = 254;
         flags &= *actor;
         *actor = flags;
         actor = (u8 *)Object_GetById(0xa);
-        *(u32 *)(actor + 0x6c) = (u32)ShindenHeya_MatchLeaderPriority;
+        ((struct FieldActor *)actor)->update =
+            (void (*)(union FieldObject *))ShindenHeya_MatchLeaderPriority;
     }
     Engine_EventEnd();
 }

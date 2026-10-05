@@ -23,7 +23,17 @@ struct FieldActor {
     u8 unknown_18[0x0b];
     /* Bit 0 is cleared when a script sets the sprite priority. */
     u8 priority_flags;
-    u8 unknown_24[0x2c];
+    /* Movement per frame along each axis, in 16.16 fixed point. */
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    s32 speed;
+    s32 acceleration;
+    /* The fixed-point point the actor moves toward, or ACTOR_NO_TARGET. */
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
+    u8 unknown_44[0x0c];
     struct FieldSprite *sprite;
     u8 unknown_54 : 4;
     u8 unknown_54_high : 4;
@@ -36,6 +46,9 @@ struct FieldActor {
     /* Counts up while the object's update runs. */
     u16 timer;
 };
+
+/* The target an actor with nowhere to move toward holds. */
+#define ACTOR_NO_TARGET ((s32)0x80000000)
 
 void Task_Wait(s32 frames);
 void GameFlag_Set(s32 flag);

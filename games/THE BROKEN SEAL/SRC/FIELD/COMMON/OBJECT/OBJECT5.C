@@ -18,7 +18,6 @@ extern struct ObjectRuntime Data_02001124[32];
 void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *object, s32 value);
 void Object_ResetMotion(struct ObjectRuntime *object);
 
-/* object/table/ObjectTable_ClearBattleSlots.c */
 void ObjectTable_ClearBattleSlots(void)
 {
     s32 *current;

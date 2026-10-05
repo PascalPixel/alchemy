@@ -69,9 +69,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
         }
     }
     for (id = entry->sprite; (s16)id != -1 && slot <= 65; entry++, id = entry->sprite) {
-        /* FAKEMATCH: the ROM reads the row id once per step and extends it
-           again in the body; without this second read the compiler shares
-           the shifted id between the test and the body. */
+        /* FAKEMATCH: the second row-id read prevents sharing the shifted id between the test and body. */
         id = entry->sprite;
         if ((s16)id <= 7)
             index = (s16)id;

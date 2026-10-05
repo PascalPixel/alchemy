@@ -10,7 +10,6 @@ extern struct FourObjectMotionState *gMenuWork;
 
 extern u8 RomBytes_080ad40d[];
 
-/* object/motion/four_object/FourObjectMotion_InitializeTopRow.c */
 extern s32 RomBytes_080af304[];
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
@@ -45,8 +44,6 @@ void FourObjectMotion_InitializeTopRow(void)
     Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateAllPositions), 0xc80);
 }
 
-/* object/motion/four_object/FourObjectMotion_ClearSlotsAndSchedule.c */
-
 void FourObjectMotion_ClearSlotsAndSchedule(void)
 {
     struct FourObjectMotionState *state = gMenuWork;
@@ -64,7 +61,6 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
     Scheduler_RemoveCallback((u32)FourObjectMotion_UpdateAllPositions);
 }
 
-/* object/motion/four_object/FourObjectMotion_UpdateAllPositions.c */
 #define FIXED_ONE 0x10000u
 #define VERTICAL_ORIGIN 0x01e20000u
 

@@ -5,7 +5,6 @@
 #include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"
 
-
 /* Writes the object's position relative to the camera in whole units, x
    then z less height; sprite-mode objects are raised by their metadata
    offset. Returns -1 when there is no such object. */
@@ -20,8 +19,7 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 
     if (object == 0)
         return -1;
-    /* FAKEMATCH: separate named coordinate bases grow 136 to 140 bytes;
-       retain the existing adjacent coordinate-word read through the real owner. */
+    /* FAKEMATCH: the adjacent coordinate-word read avoids four bytes added by separate named bases. */
     camera = &((struct MapScrollWork *)gMapWork[0])->view_x;
     camera_x = camera[0] & 0xffff0000;
     camera_z = camera[1] & 0xffff0000;

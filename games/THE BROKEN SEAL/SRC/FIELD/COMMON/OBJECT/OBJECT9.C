@@ -60,9 +60,7 @@ s32 BattleFx_GetResourceId(s32 speaker);
 struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 style);
 s32 UiWindow_CreateWithSideObjectFar(s32 speaker, s32 mode, s32 x, s32 y);
 
-/* Low twelve bits name the actor; high bits place its message and portrait.
-   The Japanese edition measures the message once less and stays on its
-   scaffold for now. */
+/* Low twelve bits name the actor; high bits place its message and portrait. */
 struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 {
     struct UiRenderWork *win;
@@ -172,9 +170,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
                 column = x - margin - 2;
         }
         ret = Localization_LookupEntryIdFar(speaker);
-        /* FAKEMATCH: the ROM keeps -1 in a register of its own across the
-           measuring call and loads it again in the block after; a variable
-           holding it gives both. */
+        /* FAKEMATCH: the -1 local preserves its register across measurement and reloads it afterward. */
         none = -1;
         if (ret != none) {
             UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
@@ -185,9 +181,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
             if (tail < 0) {
                 tail = top + height;
             } else if (tail + 5 > 19) {
-                /* FAKEMATCH: written as top - 5 the compiler shares the
-                   first top - 5 through a register; the ROM subtracts
-                   again. */
+                /* FAKEMATCH: repeating the subtraction avoids sharing the first top - 5 through a register. */
                 tail = top;
                 tail -= 5;
             }
@@ -224,8 +218,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
             else
                 handle = UiText_OpenMessageWindowFar(message, left, top, (icon << 16) | 1);
         }
-        /* Both modes open the side window alike; the mode byte this test
-           reads is still loaded, in every edition. */
+        /* Both modes open the same side window. */
         if (win->mode != 0)
             side = UiWindow_CreateWithSideObjectFar(speaker, 0, column, tail);
         else

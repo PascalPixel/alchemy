@@ -66,10 +66,10 @@ s32 CharacterSelector_RunRearrange(void)
         work->row_y[i] = 0x80;
     }
     Palette_LightenBankHighlight(14);
-    Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
+    Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
+    Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
+    Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
     while (!GameFlag_TestFar(0x150)) {
         if (redraw) {
             redraw = 0;

@@ -63,7 +63,7 @@ void BattlePres_UpdateHBlankScroll(void)
             REG_BG2CNT = control;
         } while (0);
         Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, (volatile u32 *)0x040000b0);
-        Dma_Set(&records->affine, (void *)0x04000020, 0x84000004, (volatile u32 *)0x040000d4);
+        Dma_Set(&records->affine, (void *)0x04000020, 0x84000004, REG_DMA3);
     }
 }
 
@@ -71,7 +71,7 @@ void BattlePresentation_UploadTileVariant(void)
 {
     u32 variant = **(u32 **)gDisp - 1;
     if (variant <= 31)
-        Dma_Set(BattlePres_TileVariants + (variant >> 2) * 32, (void *)0x06005000, 0x84000008, (volatile u32 *)0x040000d4);
+        Dma_Set(BattlePres_TileVariants + (variant >> 2) * 32, (void *)0x06005000, 0x84000008, REG_DMA3);
 }
 
 /* Raise the curtain, turn the camera and reduce the transition zoom. */

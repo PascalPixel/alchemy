@@ -58,7 +58,7 @@ s32 PartyTalkMenu_Choose(void)
         ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 - 3, window->y * 8 + 9);
     }
     palette = (u16 *)0x050001c0;
-    Dma_Set((const void *)0x050001e0, palette, 0x84000008, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
     palette[4] = 0x6318;
     do {
         UiWindow_SetTileAttributeRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 14);

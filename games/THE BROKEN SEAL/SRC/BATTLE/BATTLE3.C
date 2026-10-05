@@ -5,6 +5,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
 #include "CHARACTER.H"
+#include "IO_REG.H"
 
 struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
 struct BattleAction *Ability_GetData(s32 action_id);
@@ -276,9 +277,9 @@ void BattleEvent_Playback(void);
    stored at 0x030000c4. */
 void Dma_StopAllThenRunHook(void)
 {
-    Dma_Set(0, 0, 0x84000000, (volatile u32 *)0x040000d4);
-    Dma_Set(0, 0, 0x84000000, (volatile u32 *)0x040000d4);
-    Dma_Set(0, 0, 0x84000000, (volatile u32 *)0x040000d4);
+    Dma_Set(0, 0, 0x84000000, REG_DMA3);
+    Dma_Set(0, 0, 0x84000000, REG_DMA3);
+    Dma_Set(0, 0, 0x84000000, REG_DMA3);
     _call_via_r0(*(u32 *)0x030000c4);
 }
 

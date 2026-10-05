@@ -8,6 +8,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_SLOT.H"
+#include "IO_REG.H"
 
 /* Party-state word 0x234 holds a pending Djinn event: the top nibble is the
    kind and the low bits the game flag. Flags 300-380 are the eighty Djinn,
@@ -102,7 +103,7 @@ void BattleFx_InitializeSlots(void)
     volatile u32 zero;
     work = Runtime_AllocateHeapBlock(56, sizeof(struct BattleFxScene));
     zero = 0;
-    Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), REG_DMA3);
     Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateAllSlots, 3200);
 }
 

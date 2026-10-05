@@ -605,9 +605,9 @@ void DebugMenu_SelectItem(void)
     item = 1;
     redraw = 1;
     Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Engine_TaskWait(1);
     for (;;) {
         if (redraw) {

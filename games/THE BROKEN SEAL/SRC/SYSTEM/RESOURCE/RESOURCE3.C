@@ -5,6 +5,7 @@
 #include "GLOBAL_CELLS.H"
 #include "METADATA_LOOKUP.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
 
@@ -402,14 +403,14 @@ void ObjectSystem_Configure(s32 mode)
     }
     PaletteDma_LoadBlock();
     zero = 0;
-    Dma_Set((const void *)&zero, objects, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject) / 4), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, objects, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject) / 4), REG_DMA3);
     zero = 0;
-    Dma_Set((const void *)&zero, states, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry) / 4), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, states, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry) / 4), REG_DMA3);
     VramBlock_LoadCached(93, 128, Object_ShadowTiles);
     size = (u32)Tile_CopyStridedCodeSize;
     table = Runtime_AllocateHeapBlock(53, size);
     Dma_Set((const void *)Func_0800a418, table, 0x84000000 | (size >> 2),
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
 }
 
 /* Takes the first free object of the 64 animation objects, one whose draw

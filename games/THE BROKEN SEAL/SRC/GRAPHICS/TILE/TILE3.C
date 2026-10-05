@@ -36,9 +36,9 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alternate)
         palette = 0x05000100;
     }
     fill = value;
-    Dma_Set((const void *)&fill, (void *)vram, 0x85001e00, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, (void *)vram, 0x85001e00, REG_DMA3);
     fill = 0;
-    Dma_Set((const void *)&fill, (void *)palette, 0x85000040, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, (void *)palette, 0x85000040, REG_DMA3);
 }
 
 /* Load character set `resource` into the background (or, when alternate, the
@@ -74,7 +74,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
     }
     size = (u32)SentouKouka_TenkaiCodeSize;
     decoder = Runtime_AllocateHeapBlock(49, size);
-    Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), REG_DMA3);
     ((PackedDecoder)((union HeapState *)gWorkSlot)->slots[49])(data + 256, vram, fill);
     Runtime_ReleaseHeapBlock(49);
 

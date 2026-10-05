@@ -50,9 +50,9 @@ s32 Title_ShowSplashScreen(s32 mode)
     result = 0;
     gBgScroll[2].y = result;
     data = Resource_GetTableEntry(resource);
-    Dma_Set(data, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
+    Dma_Set(data, (void *)0x05000000, 0x84000070, REG_DMA3);
     Resource_DecodeType01(data + 448, Ram_MapCellBuffer);
-    Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
+    Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, REG_DMA3);
     tile = 256;
     map = (u16 *)0x06003000;
     y = 0;
@@ -78,7 +78,7 @@ row:
         gBgScroll[y].y = 0;
         gBgScroll[y].x = 0;
     }
-    Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
+    Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
     REG_DISPCNT = 0x1540;

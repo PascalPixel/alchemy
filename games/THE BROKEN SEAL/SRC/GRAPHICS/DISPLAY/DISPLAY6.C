@@ -4,6 +4,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
 #include "LAYOUT_GUARD.H"
+#include "IO_REG.H"
 
 /* The scrolling credits keep 128 hardware OAM entries, two words each. */
 struct DisplayScrollObject {
@@ -61,7 +62,7 @@ void DisplayScroll_UpdateObjects(void)
                 tile = 0;
         }
     }
-    Dma_Set(gFlashNumRemainingBytes, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
+    Dma_Set(gFlashNumRemainingBytes, (void *)0x07000000, 0x84000100, REG_DMA3);
     if (Flash_Handler0 == 0 && (gFrameTick & 3) == 0)
         gScratchWord++;
 }
@@ -100,9 +101,9 @@ void DisplayScroll_InitObjectTable(void)
 
     *(void **)((u8 *)&gFlashNumRemainingBytes) = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
     fill = 0;
-    Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, REG_DMA3);
     fill = 0x11111111;
-    Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, REG_DMA3);
 
     entry = *(u32 **)((u8 *)&gFlashNumRemainingBytes);
     for (i = 0; i < 8; i++) {

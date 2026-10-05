@@ -336,7 +336,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_SetPositionImmediateFar(&caret, UiText_SetRenderString(input) + 70, 22);
     }
     pal = (u16 *)0x050001c0;
-    Dma_Set((void *)0x050001e0, pal, 0x84000008, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
     pal[4] = 0x6318;
     end = (u8 *)(original_length + (s32)input);
     for (;;) {

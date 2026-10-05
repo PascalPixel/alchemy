@@ -18,6 +18,7 @@
 #include "SCENE_IDS.H"
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 
 
@@ -211,7 +212,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
 
         work = Runtime_AllocateHeapBlock(56, sizeof *work);
         fill = running;
-        Dma_Set((const void *)&fill, work, 0x85000000 | (sizeof *work / 4), (volatile u32 *)0x040000d4);
+        Dma_Set((const void *)&fill, work, 0x85000000 | (sizeof *work / 4), REG_DMA3);
     } else {
         work = *(struct BattleFxScene **)(gWorkSlot + 56 * 4);
     }

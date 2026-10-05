@@ -93,7 +93,7 @@ s32 Sound_LoadPresetParameters(s32 preset)
         index = 0;
     }
     Dma_Set(Data_08000404 + index * SOUND_PRESET_SIZE, Data_03000bd8, 0x84000026,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     return 0;
 }
 

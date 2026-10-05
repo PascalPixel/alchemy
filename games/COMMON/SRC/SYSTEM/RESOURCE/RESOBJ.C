@@ -1,6 +1,7 @@
 #include "EDITION.H"
 #include "RESOURCE.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 /* Release and the adjacent resource-command metadata bank. The two games
    keep resource/flags at different positions in the same56-byte work extent. */
@@ -40,7 +41,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work)
             ResourceMetadata_ClearRecord(*child++);
         } while (--count >= 0);
         zero = 0;
-        Dma_Set(&zero, work, 0x85000000 | (sizeof(*work) / 4), (volatile u32 *)0x040000d4);
+        Dma_Set(&zero, work, 0x85000000 | (sizeof(*work) / 4), REG_DMA3);
     }
 }
 

@@ -13,6 +13,8 @@
 #include "RAM_BUFFER.H"
 #include "DMA.H"
 #include "GLOBAL_CELLS.H"
+#include "FRAME.H"
+#include "IO_REG.H"
 
 extern u8 gObjectSlots[];
 extern struct BattleFxScene *gEffectWork;
@@ -47,7 +49,6 @@ void BattleFx_CycleObjectValueByCounter();
 extern u8 MsgAbilityAnnounce[];
 
 
-extern s32 Data_03001e40;
 extern const s32 Data_080a0108[];
 s32 GameFlag_TestFar(s32);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
@@ -64,7 +65,6 @@ struct EffectVector {
 
 s32 Render_ProjectPoint(struct EffectVector *position, struct EffectVector *result);
 
-extern u8 gFrameCount[];
 void BattleFx_UpdateWaveScene(void);
 void BattleEffect_InitializeSharedScene(void);
 s32 __umodsi3(s32, s32);
@@ -192,12 +192,12 @@ void BattleEffect_InitializeSharedScene(void)
 
     scene = *(gWorkSlot + HEAP_SLOT_EVENT);
     work = *(gWorkSlot + 32);
-    Dma_Set(&work->target[0x2a0], scene + 0x776, 0x84000150, (volatile u32 *)0x040000d4);
+    Dma_Set(&work->target[0x2a0], scene + 0x776, 0x84000150, REG_DMA3);
     if (*(s16 *)(scene + 0xcb8) == 0)
-        Dma_Set(work->target, scene + 0x236, 0x84000150, (volatile u32 *)0x040000d4);
-    Dma_Set(work->target, work->current, 0x84000000 | (sizeof work->current / 4), (volatile u32 *)0x040000d4);
+        Dma_Set(work->target, scene + 0x236, 0x84000150, REG_DMA3);
+    Dma_Set(work->target, work->current, 0x84000000 | (sizeof work->current / 4), REG_DMA3);
 
-    no = Data_03001e40 & 7;
+    no = gFrameCount & 7;
     if (GameFlag_TestFar(0x148)) no = 0;
     if (GameFlag_TestFar(0x149)) no = 1;
     if (GameFlag_TestFar(0x14a)) no = 2;
@@ -264,8 +264,8 @@ void RunSceneTransitionEffect(s32 x, s32 y)
     work = Runtime_AllocateBlock(22, 0x298);
     BattleEffect_InitializeSharedScene();
     zero = 0;
-    Dma_Set((const void *)&zero, work, 0x850000a6, (volatile u32 *)0x040000d4);
-    *(u16 *)(work + 0x28e) = __umodsi3(*(s32 *)gFrameCount << 1, 360);
+    Dma_Set((const void *)&zero, work, 0x850000a6, REG_DMA3);
+    *(u16 *)(work + 0x28e) = __umodsi3(gFrameCount << 1, 360);
     BattleFx_AdvanceHueCycle();
     BattleFx_ApplyColorToTargetBuffer(((s8)work[0x28d] << 10) | ((s8)work[0x28c] << 5) |
                                       (s8)work[0x28b] | 0x200000, 1);

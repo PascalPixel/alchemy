@@ -99,7 +99,7 @@ void IoWriteQueue_FlushPending(void)
 
             routine = (QueueFlushRoutine)routine_bytes;
             Dma_Set((const void *)Func_08002cf4, (void *)routine,
-                    word_count | control, (volatile u32 *)0x040000d4);
+                    word_count | control, REG_DMA3);
             routine(queue, count);
             queue->count = zero;
         }

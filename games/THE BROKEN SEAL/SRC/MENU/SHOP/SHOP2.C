@@ -13,6 +13,7 @@
 #include "UI.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 extern struct ShopRuntime *gMenuWork;
 
@@ -100,7 +101,7 @@ void Shop_InitializeCursorWork(void)
     work = Runtime_AllocateHeapBlock(55, 0xa70);
     Battle_ResetEffectCounterFar();
     zero = 0;
-    Dma_Set((const void *)&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, work, 0x8500029c, REG_DMA3);
     work->mode = 12;
     work->party_member_count = Party_ListActiveOwnersFar(work->party_member_ids);
     slot = Resource_FindFreeEntry();

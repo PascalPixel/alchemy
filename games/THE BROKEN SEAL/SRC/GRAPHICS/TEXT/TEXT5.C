@@ -6,6 +6,7 @@
 #include "RESOURCE_IDS.H"
 #include "DMA.H"
 #include "TBS_EDITION.H"
+#include "IO_REG.H"
 
 u32 Resource_DecodeByteLz(const void *, void *);
 
@@ -73,7 +74,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
         }
         *dst++ = palette->slot[index];
     }
-    Dma_Set(remapped, (void *)(0x06004000 + tile * 64), 0x84000100, (volatile u32 *)0x040000d4);
+    Dma_Set(remapped, (void *)(0x06004000 + tile * 64), 0x84000100, REG_DMA3);
     Runtime_BumpFree(remapped);
     Runtime_ReleaseHeapBlock(17);
 }

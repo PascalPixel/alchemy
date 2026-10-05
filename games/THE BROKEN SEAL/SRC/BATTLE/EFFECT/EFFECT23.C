@@ -5,6 +5,7 @@
 #include "DMA.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE.H"
+#include "IO_REG.H"
 
 extern u8 *gBattleFxWork[2];
 
@@ -95,7 +96,7 @@ void BattlePres_ProcessPendingTileTransfer(void)
         buffer = gBattleFxWork[1];
         switch (work->transfer_mode) {
         case 1:
-            Dma_Set(buffer, (void *)0x06003500, 0x84002000, (volatile u32 *)0x040000d4);
+            Dma_Set(buffer, (void *)0x06003500, 0x84002000, REG_DMA3);
             FillWords(buffer, 0x8000, work->transfer_value);
             break;
         case 2:
@@ -165,7 +166,7 @@ void Palette_StepTowardResource(s32 resource_id)
     u16 *color = (u16 *)0x05000000;
     s32 i;
 
-    Dma_Set(Resource_GetTableEntry(resource_id), target, 0x84000020, (volatile u32 *)0x040000d4);
+    Dma_Set(Resource_GetTableEntry(resource_id), target, 0x84000020, REG_DMA3);
     for (i = 0; i != 64; i++, color++) {
         s32 red = *color & 0x1f;
         s32 green = (*color >> 5) & 0x1f;
@@ -188,7 +189,7 @@ void Palette_StepTowardResource(s32 resource_id)
             blue--;
         target[i] = (blue << 10) | (green << 5) | red;
     }
-    Dma_Set(target + 1, (void *)0x05000002, 0x8000003f, (volatile u32 *)0x040000d4);
+    Dma_Set(target + 1, (void *)0x05000002, 0x8000003f, REG_DMA3);
 }
 
 /* Draw a line into the effect canvas (8bpp tiles, 32 tiles to a row) with

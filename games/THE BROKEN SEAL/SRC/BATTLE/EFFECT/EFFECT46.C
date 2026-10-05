@@ -664,7 +664,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
         }
         if (frame == 8) {
             fill = 0x3f3f3f3f;
-            Dma_Set((void *)&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+            Dma_Set((void *)&fill, canvas, 0x85001000, REG_DMA3);
         }
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(transfer, transfer + 12);

@@ -34,7 +34,7 @@ s32 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
 
 void Sys_Free(void *buffer);
-#define DMA3 ((volatile u32 *)0x040000d4)
+#define DMA3 (REG_DMA3)
 
 
 static __inline__ void RestoreInterrupts(u32 saved)

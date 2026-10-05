@@ -7,6 +7,7 @@
 #include "GAME_STATE.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
+#include "IO_REG.H"
 
 struct BattleCommandRuntime {
     u8 pad000[0x170]; s16 result_code; u8 pad172[0x2c]; s16 battle_mode;
@@ -261,7 +262,7 @@ void Battle_PlaceMapMarkers(void)
     u32 row;
 
     fill = 0;
-    Dma_Set((void *)&fill, slot, 0x85000000 | (sizeof(struct MarkerSlot) * 10 / 4), (volatile u32 *)0x040000d4);
+    Dma_Set((void *)&fill, slot, 0x85000000 | (sizeof(struct MarkerSlot) * 10 / 4), REG_DMA3);
     if (list == NULL)
         return;
 

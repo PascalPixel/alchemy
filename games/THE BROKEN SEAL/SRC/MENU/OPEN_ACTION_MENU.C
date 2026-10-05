@@ -10,6 +10,7 @@
 #include "SYSTEM.H"
 #include "UI.H"
 #include "TBS_EDITION.H"
+#include "IO_REG.H"
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
@@ -82,10 +83,10 @@ s32 ActionMenu_Open(void)
     CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
 #endif
     Palette_LightenBankHighlight(14);
-    Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
+    Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
+    Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
+    Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
 #if EDITION_INTERNATIONAL
     CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
     FillWords(Iwram_FillWords, (void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);

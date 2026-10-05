@@ -133,7 +133,7 @@ void BattleFx_StartFadeOverlay(void *object)
     work = (u32 *)Runtime_AllocateBlock(36, 28);
     tiles = Runtime_AllocateHeapBlock(14, 0x400);
     fill = 0x11111111;
-    Dma_Set((const void *)&fill, tiles, 0x85000080, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, tiles, 0x85000080, REG_DMA3);
     VramBlock_LoadCached(94, 0x200, tiles);
     Runtime_ReleaseHeapBlock(14);
     Scheduler_AddOrUpdateCallback((s32)(Object_EffectSpawnCallback), 0xc80);
@@ -147,7 +147,7 @@ void BattleFx_StartFadeOverlay(void *object)
     value = 31;
     *++blend = value;
     fill = 0;
-    Dma_Set((const void *)&fill, work, 0x85000007, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, work, 0x85000007, REG_DMA3);
     if (object == NULL)
         object = ObjectTable_Get(Data_02000240.object_id);
     work[6] = (u32)object;

@@ -8,6 +8,7 @@
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 extern char MsgMonstersAttackLess;
 
@@ -254,7 +255,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
     volatile u32 zero;
 
     zero = 0;
-    Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), REG_DMA3);
     object = Func_08009030(kind);
     effect->object = object;
     if (object != NULL)
@@ -284,5 +285,5 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
     if (slot->object)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
     zero = 0;
-    Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), REG_DMA3);
 }

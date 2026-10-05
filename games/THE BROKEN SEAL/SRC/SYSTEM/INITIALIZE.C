@@ -47,7 +47,7 @@ void System_Initialize(void)
     /* FAKEMATCH: the do-while wraps pin the register writes in place. */
     do { u32 value = WAITCNT_GAME; REG_WAITCNT = value; } while (0);
     zero = 0;
-    Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, REG_DMA3);
     Runtime_InitializeHeap();
     Runtime_InstallIwramAndIrqs();
     /* Startup clears the count and its adjacent padding in one word. */

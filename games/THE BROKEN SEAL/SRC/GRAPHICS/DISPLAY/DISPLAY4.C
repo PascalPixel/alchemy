@@ -81,7 +81,7 @@ void DisplayBlend_StartScript(u16 *script)
     started = 0;
     zero = 0;
     state = &((struct MapState *)gMapWork[0])->blend;
-    Dma_Set((const void *)&zero, state, 0x85000003, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
     if (*script != 0xffff) {
         state->script = script;
         state->cursor = script;
@@ -148,7 +148,7 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count)
     entry->count = size;
     entry->source = source;
     entry->delay = delay;
-    Dma_Set(source, entry->colors, 0x80000000 | size, (volatile u32 *)0x040000d4);
+    Dma_Set(source, entry->colors, 0x80000000 | size, REG_DMA3);
     work->count++;
     return 0;
 }

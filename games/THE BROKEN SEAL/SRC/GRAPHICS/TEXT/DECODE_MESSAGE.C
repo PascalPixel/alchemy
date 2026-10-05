@@ -2,6 +2,7 @@
 #include "TEXT_READER.H"
 #include "HEAP_STATE.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 extern const u8 Func_08015430[];
 
@@ -33,7 +34,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
         size = (u32)Text_DecodeSymbolCodeSize;
         code = Runtime_AllocateHeapBlock(50, size);
         Dma_Set((const void *)Func_08015430, code,
-            0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+            0x84000000 | (size >> 2), REG_DMA3);
     }
     decode = (s32 (*)(struct TextReader *))((union HeapState *)&gWorkSlot)->slots[50];
     UiText_LookupMessage(&reader, message);

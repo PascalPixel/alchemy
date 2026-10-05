@@ -4,6 +4,7 @@
 #include "DMA.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "VRAM_BLOCK.H"
+#include "IO_REG.H"
 
 struct FxWindowEntry {
     u32 a;
@@ -57,7 +58,7 @@ void BattleFx_SetupResourcesAndWindow(void)
     object = Object_GetById(gGameState.object_id);
     work->tiles = Resource_FindFreeEntry();
     fill = 0;
-    Dma_Set((const void *)&fill, pal, 0x85000020, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, pal, 0x85000020, REG_DMA3);
     pal[0] = 255;
     pal[1] = 0x1ff;
     pal[2] = 272;

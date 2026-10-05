@@ -3,6 +3,7 @@
 #include "KEYSTATE.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
 #include "CARTBOOT.H"
+#include "IO_REG.H"
 
 extern u8 gMapCellBuffer[];
 extern const u8 Rom_Start[];
@@ -56,7 +57,7 @@ restart:
             } while (tick >= 0);
         }
         if (SERIAL_ACTIVE_B == 0) {
-            Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, (volatile u32 *)0x040000d4);
+            Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
             goto restart;
         }
         WaitFrames(1);

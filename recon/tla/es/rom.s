@@ -4608,7 +4608,10 @@ ItemMenu_PosCategory:
 Func_08100e7c:
 	.incbin "baserom.gba", 0x00106fd0, 0x00000734
 	.section .rom.0010778c, "ax"
-	.incbin "baserom.gba", 0x0010778c, 0x000005e4
+	.incbin "baserom.gba", 0x0010778c, 0x00000490
+	.global DjinnMenu_DrawPage
+DjinnMenu_DrawPage:
+	.incbin "baserom.gba", 0x00107c1c, 0x00000148
 	.section .rom.00107d98, "ax"
 	.incbin "baserom.gba", 0x00107d98, 0x00002e80
 	.section .rom.0010aca2, "ax"

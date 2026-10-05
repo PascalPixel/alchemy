@@ -472,7 +472,7 @@ mod tests {
         std::fs::create_dir_all(&include).unwrap();
         std::fs::create_dir_all(&source).unwrap();
         std::fs::write(include.join("IO_REG.H"), "").unwrap();
-        let file = source.join("SOUND2.C");
+        let file = source.join("ENGINE.C");
         std::fs::write(&file, "#include \"../../INCLUDE/SYSTEM/IO_REG.H\"\n").unwrap();
         let header = include.join("IO_REG.H");
         assert_eq!(spelling(&file, &header, &[]).as_deref(), Some("../../INCLUDE/SYSTEM/IO_REG.H"));

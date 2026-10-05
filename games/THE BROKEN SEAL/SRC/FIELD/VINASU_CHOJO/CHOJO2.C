@@ -59,7 +59,7 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor);
 void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 
 extern const s32 VinasuChojo_BesideParticleScript[];
-void FieldScene_RunScene3c9_02005b90(union FieldObject *object);
+void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
 
 /* Once the second actor stops, grow and slide the pair into their shared form. */
 void VinasuChojo_UpdateBeamActors(void)
@@ -1294,7 +1294,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     effect->timer = angle;
     effect->work = phase;
     *(struct FieldActor **)effect->unknown_68 = center;
-    effect->update = FieldScene_RunScene3c9_02005b90;
+    effect->update = VinasuChojo_UpdateOrbitingEffect;
     effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
     /* FAKEMATCH: the byte store outside the sprite record keeps the game's order. */
     *(u8 *)((u8 *)sprite + 38) = 0;
@@ -1302,7 +1302,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
 }
 
 /* The closing scene step. */
-void FieldScene_RunScene3c9_02005b90(union FieldObject *object)
+void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)
 {
     struct FieldEffect *anchor;
     s32 spin;

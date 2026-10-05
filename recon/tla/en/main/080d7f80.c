@@ -4,7 +4,7 @@
 
 extern u8 gEffectWork[];
 
-void BattleFx_AdvanceObjectField6WithRamp(void);
+void BattleFx_AdvanceAngleWithRamp(void);
 void BattleFx_ShrinkObjectAndDestroySlow(void);
 void BattleEffect_UpdatePhasedRadialParticle(void);
 void BattleFx_SetObjectAlternatingWords(void);
@@ -63,7 +63,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     Motion_SetVarCbAndRefresh(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
-    source_object->callback = (void *)BattleFx_AdvanceObjectField6WithRamp;
+    source_object->callback = (void *)BattleFx_AdvanceAngleWithRamp;
     source_object->timer = 0;
     WaitFrames(80);
     source_object->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;

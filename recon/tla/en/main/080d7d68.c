@@ -24,7 +24,7 @@ extern u32 BattleFx_PulseScales[];
 
 void Object_Destroy();
 
-void BattleFx_AdvanceObjectField6WithRamp(void *obj)
+void BattleFx_AdvanceAngleWithRamp(void *obj)
 {
     u32 step;
 

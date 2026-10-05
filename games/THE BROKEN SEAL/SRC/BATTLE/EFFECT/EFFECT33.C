@@ -129,7 +129,7 @@ struct LinkedCaptureObject {
 };
 
 void BattleFx_SetObjectAlternatingWords(u8 *object);
-void BattleFx_AdvanceObjectField6WithRamp(void *obj);
+void BattleFx_AdvanceAngleWithRamp(void *obj);
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
@@ -146,7 +146,7 @@ void BattleFx_SetObjectAlternatingWords(u8 *object)
     ((struct MotionObject *)object)->scale_y = value;
 }
 
-void BattleFx_AdvanceObjectField6WithRamp(void *obj)
+void BattleFx_AdvanceAngleWithRamp(void *obj)
 {
     u32 step;
 
@@ -285,7 +285,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     Motion_SetVarCbAndRefresh(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
-    source_object->callback = (void *)BattleFx_AdvanceObjectField6WithRamp;
+    source_object->callback = (void *)BattleFx_AdvanceAngleWithRamp;
     source_object->timer = 0;
     WaitFrames(80);
     source_object->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;

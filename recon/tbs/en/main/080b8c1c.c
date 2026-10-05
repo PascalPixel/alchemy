@@ -1,4 +1,10 @@
-/* 2026-10-05 (deep finisher 2), alchemy diff 60, was 82. The listed tail's
+/* 2026-10-05 (deep finisher 8), alchemy diff 0: the reset loop is the
+ * same plain for (i = 0; i != work.count; i++) as the first unit loop, and
+ * one do { } while (0) (tagged) wraps the four stages, the dispatch and
+ * Object_SetMode(object, 1). The tail's i = 0 then shares the stages' zero
+ * (r7); a do-while around Object_SetMode alone scores 2 (kind store before
+ * the dispatch argument), no barrier 103.
+ * 2026-10-05 (deep finisher 2), alchemy diff 60, was 82. The listed tail's
  * fresh &work (add r5, sp, #8) appears when a loop note sits between the
  * dispatch and the tail: a do { } while (0) around Object_SetMode(object, 1)
  * (tagged; 72) stops cse/gcse carrying the old &work (r6) in. (In
@@ -148,27 +154,26 @@ s32 BattlePres_RunUnitAction(s16 *action)
         for (j = 0; j != animation->count - 1; j++)
             work.params[i][j] = animation->entries[j]->param;
     }
-    i = 0;
-    work.kind = 0;
-    work.variant = 0;
-    BattleFx_RunIceFleckBurstFar(&work);
-    work.kind = 1;
-    BattleFx_RunIceFleckBurstFar(&work);
-    work.kind = 2;
-    BattleFx_RunIceFleckBurstFar(&work);
-    work.kind = 3;
-    BattleFx_RunIceFleckBurstFar(&work);
-    work.kind = 0;
-    BattleFx_DispatchModeFar(&work);
-    /* FAKEMATCH: the loop notes stop cse and gcse from carrying &work into the tail, which takes a fresh &work as listed. */
+    /* FAKEMATCH: a one-pass loop around the presentation stages; its loop
+       notes keep cse and gcse from carrying &work into the reset loop,
+       which takes a fresh &work and two spilled copies as listed, and
+       order the dispatch argument ahead of the kind store. */
     do {
+        work.kind = 0;
+        work.variant = 0;
+        BattleFx_RunIceFleckBurstFar(&work);
+        work.kind = 1;
+        BattleFx_RunIceFleckBurstFar(&work);
+        work.kind = 2;
+        BattleFx_RunIceFleckBurstFar(&work);
+        work.kind = 3;
+        BattleFx_RunIceFleckBurstFar(&work);
+        work.kind = 0;
+        BattleFx_DispatchModeFar(&work);
         Object_SetMode(object, 1);
     } while (0);
-    {
-        struct BattlePresentationWork *w = &work;
-        for (; i != w->count; i++)
-            Actor_ResetMotionAtAnchor(w->actors[i]);
-    }
+    for (i = 0; i != work.count; i++)
+        Actor_ResetMotionAtAnchor(work.actors[i]);
     Actor_ResetMotionAtAnchor(work.actor);
     return 0;
 }

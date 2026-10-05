@@ -33,8 +33,8 @@ void UiText_RenderGlyphTileAtWorkOffset(
 
         UiText_RenderStringTiles(
             buffer,
-            src,
-            dst,
+            (u16 *)src,
+            (u16 *)dst,
             0x06002000);
     }
 }

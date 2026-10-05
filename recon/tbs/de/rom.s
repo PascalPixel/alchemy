@@ -210,12 +210,6 @@ Tile_BuildMetatilesEnd:
 Func_08018038:
 UiText_BuildRenderEntries:
 	.incbin "baserom.gba", 0x00016c58, 0x000006ac
-	.section .rom.0001cb00, "ax"
-	.global UiText_RenderStringTiles
-	.type UiText_RenderStringTiles, %function
-	.thumb_func
-UiText_RenderStringTiles:
-	.incbin "baserom.gba", 0x0001cb00, 0x00000404
 	.section .rom.0001eee8, "ax"
 	.global SaveMenu_SelectSlot
 	.type SaveMenu_SelectSlot, %function
@@ -350,7 +344,13 @@ SideObject_ActorKindIdMap:
 	.incbin "baserom.gba", 0x00035634, 0x000000c8
 	.global UiSprite_CursorFrameTiles
 UiSprite_CursorFrameTiles:
-	.incbin "baserom.gba", 0x000356fc, 0x000008f0
+	.incbin "baserom.gba", 0x000356fc, 0x00000800
+	.global UiText_GlyphWidths
+UiText_GlyphWidths:
+	.incbin "baserom.gba", 0x00035efc, 0x000000e0
+	.global UiText_ColourPens
+UiText_ColourPens:
+	.incbin "baserom.gba", 0x00035fdc, 0x00000010
 	.global UiWindow_PartyColumnOffsets
 UiWindow_PartyColumnOffsets:
 	.incbin "baserom.gba", 0x00035fec, 0x0000001c

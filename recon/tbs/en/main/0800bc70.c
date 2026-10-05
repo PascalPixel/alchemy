@@ -1,3 +1,8 @@
+/* 0800bc70: differ 32 of 152 instructions. The only missing operations are
+ * movs r2,#1; negs r2,r2 after ResourceMetadata_Register; all other differences
+ * are pool and branch distances. A redundant return on a -1 registration
+ * result is eliminated entirely and does not recover the dead -1 carrier.
+ */
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"

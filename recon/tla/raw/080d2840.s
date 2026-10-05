@@ -108,7 +108,7 @@ Inventory_PromptAndSetObjectMode:
 	beq .L_080d2948
 	mov r0, r8
 	movs r1, #4
-	bl Func_080d2810
+	bl Object_WaitUntilChildValueDiffers
 	b .L_080d2948
 .L_080d2920:
 	movs r1, #3
@@ -126,7 +126,7 @@ Inventory_PromptAndSetObjectMode:
 	beq .L_080d2948
 	mov r0, r8
 	movs r1, #3
-	bl Func_080d2810
+	bl Object_WaitUntilChildValueDiffers
 .L_080d2948:
 	adds r0, r5, #0
 	pop {r3, r5, r6, r7}

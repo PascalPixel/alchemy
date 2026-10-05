@@ -2953,8 +2953,6 @@ Func_080d25c8:
 	.thumb_func
 PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x000d760c, 0x000001d4
-	.section .rom.000d77fe, "ax"
-	.incbin "baserom.gba", 0x000d77fe, 0x00000036
 	.section .rom.000d7834, "ax"
 	.global Inventory_PromptAndSetObjectMode
 	.type Inventory_PromptAndSetObjectMode, %function

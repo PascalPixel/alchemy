@@ -846,7 +846,7 @@
     "*/recon/tla/fr/rom.o"(.rom.000d75c8)
     "*/recon/tla/fr/rom.o"(.rom.000d760c)
     "*/games/COMMON/SRC/GAME/INVENTORY/TRY_ADD_AND_RETURN_OWNER.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000d77fe)
+    "*/games/THE LOST AGE/SRC/GAME/INVENTORY/INVENT.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d7834)
     "*/recon/tla/fr/rom.o"(.rom.000d7950)
     "*/recon/tla/fr/rom.o"(.rom.000d7960)

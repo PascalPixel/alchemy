@@ -3519,8 +3519,7 @@ EventRuntime_UpdateWaitMode:
 	.thumb_func
 Func_080d072c:
 	.incbin "baserom.gba", 0x000db5c8, 0x00000218
-	.section .rom.000db7fe, "ax"
-	.incbin "baserom.gba", 0x000db7fe, 0x00000036
+	.section .rom.000db834, "ax"
 	.global Inventory_PromptAndSetObjectMode
 	.type Inventory_PromptAndSetObjectMode, %function
 	.thumb_func

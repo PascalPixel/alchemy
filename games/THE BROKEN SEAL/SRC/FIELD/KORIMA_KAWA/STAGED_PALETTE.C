@@ -161,10 +161,10 @@ void SceneActor_ApplyOffsetObjectPosition(void)
     StagedActor_RunStepEffect(&pos);
 }
 
-u8 *SceneData_GetTable9098(void) { return Data_02009098; }
+u8 *KorimaKawa_GetEvents(void) { return Data_02009098; }
 
 /* Opens the scene with window transition 4, then runs its beat sequence. */
-s32 SceneState_SetRuntimeWord448To516(void)
+s32 KorimaKawa_PrepareWindowTransition(void)
 {
     struct EventWork *work = gEventWork;
 

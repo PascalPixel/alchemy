@@ -7,9 +7,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer SceneState_SetRuntimeWord448To516
+	overlay_veneer KorimaKawa_PrepareWindowTransition
 	overlay_veneer MapStagedScene_SelectPrimaryData
 	overlay_veneer MapStagedScene_SelectSecondaryData
 	overlay_veneer MapStagedScene_SelectTertiaryData
-	overlay_veneer SceneData_GetTable9098
+	overlay_veneer KorimaKawa_GetEvents
 	overlay_veneer MapStagedScene_GetEmptyData

@@ -1,22 +1,20 @@
-/* 2026-10-05 sixth wave, finisher 3: alchemy diff 6 (was 382). Left: in
- * each arm's third group the listing copies n out of r8 one slot earlier
- * (mov r1, r8 before adds r3, r0, #0); a scheduling difference only.
- * What moved it:
+/* 2026-10-05 sixth wave, finisher 3: EXACT (differ 0), no FAKEMATCH device.
  * - The object table is volatile (the OAM shadow the DMA copies). Combine
  *   runs with init_recog_no_volatile, so it cannot fold the first two
  *   groups' constant offsets into the stores, and each stays in a register
  *   (movs r1, #24; str r3, [r6, r1]) as listed (382 to 275; the whole work
  *   struct volatile instead scores 290).
- * - PLACE subtracts half from the column byte first and gives the line
- *   x + half - 104: the column load then lands in r3 and is copied to x,
- *   as listed (275 to 121).
+ * - PLACE takes x as the sprite's left edge (column byte minus half) and
+ *   measures the line from its centre: the column load lands in r3 and is
+ *   copied to x, as listed (275 to 121).
  * - No dist local: (top - base) is written in the line and GCSE keeps one
  *   copy of it in r9 (121 to 41).
  * - The OAM line at the end has its own local (41 to 6; reusing y 41,
  *   top 24, x 177, base 222).
- * Trials on this body: x as u8 313, s16 315, u16 534; n as s32 418, u8 391;
- * the line read twice from the table 385; y first in the word 24; the
- * shape term first or in the middle 6.
+ * - Each arm advances n after its last group, so that n += 4 is scheduled
+ *   in the arm's block and n is copied out of r8 one slot earlier (6 to 0).
+ * Trials: x as u8 313, s16 315, u16 534; n as s32 418, u8 391; the line
+ * read twice from the table 385; y first in the word 24.
  */
 /* DRAFT of Title_PlaceIntroSprites: the title intro frame callback lays the
    three sprite groups of the scrolling pictures along a perspective line,
@@ -52,7 +50,7 @@ extern const u8 Data_080f39ab[];
 
 #define PLACE(column, half) \
     x = Data_080f39ab[column] - (half); \
-    y = (top - base) * (x + (half) - 104) / 80 + base - (half); \
+    y = (top - base) * ((x + (half)) - 104) / 80 + base - (half); \
     WRAP256(y)
 
 #define QUAD(i, size, shape, tile) \
@@ -94,6 +92,7 @@ void Title_PlaceIntroSprites(void)
             n++;
             PLACE(4, 32);
             QUAD(n, 32, 0x80000000, 192);
+            n += 4;
         } else {
             PLACE(1, 16);
             QUAD(n, 16, 0x40000000, 232);
@@ -103,8 +102,8 @@ void Title_PlaceIntroSprites(void)
             n += 4;
             PLACE(5, 32);
             QUAD(n, 32, 0x80000000, 160);
+            n += 4;
         }
-        n += 4;
     }
     for (; n <= 119; n++)
         ENTRY(n, 0) = 0x400020a0;

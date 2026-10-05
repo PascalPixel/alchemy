@@ -66,23 +66,23 @@ void Audio_PlayCueFromEventWork();
 void SceneState_RunFlagGatedSetupCascade(void);
 void RunSceneSelectionChain(void);
 void FuneHeya_ApplyFlaggedLayout(void);
-void FieldScene_RunScene3b1_02003dec(void);
-void FieldScene_RunScene3b1_02003d10(void);
-void FieldScene_RunScene3b1_02003eec(void);
-void FieldScene_RunScene3b1_02003e34(void);
+void FuneHeya_AnnounceDeparture(void);
+void FuneHeya_CastOff(void);
+void FuneHeya_CallActorEighteenToRow(void);
+void FuneHeya_CallActorSixteenToRow(void);
 void FieldScene_RunFlagBranchedSetupCascade(void);
 void FuneHeya_AskAboutMonsters(void);
-void FieldScene_RunScene3b1_0200413c(void);
-void FieldScene_RunScene3b1_02004198(void);
+void FuneHeya_AnnounceTurn(void);
+void FuneHeya_SetupFirstRowingPair(void);
 void FieldScene_RunActors24And25Setup(void);
-void FieldScene_RunScene3b1_02005068(void);
+void FuneHeya_SetupReplacementRower(void);
 void FieldScene_RunActors24And25SetupWithValue929(void);
-void FieldScene_RunScene3b1_020056dc(void);
+void FuneHeya_SetupReplacementPair(void);
 void FieldScene_RunActors24And25SetupWithValue92a(void);
 void FieldScene_RunExtendedFormationPresentation(void);
 void RunActorsEightAndNineMapEvent(void);
 void Scene_RunFourActorProgressPresentation(void);
-void FieldScene_RunScene3b1_02006110(void);
+void FuneHeya_DismissReplacementRowers(void);
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -1204,16 +1204,16 @@ s32 FuneHeya_ApplyEntryState(void)
         break;
     case 10:
         if (Engine_GameFlagIsSet(0x928) != 0) {
-            FieldScene_RunScene3b1_02003dec();
+            FuneHeya_AnnounceDeparture();
         } else {
-            FieldScene_RunScene3b1_02003d10();
+            FuneHeya_CastOff();
         }
         break;
     case 11:
         if (Engine_GameFlagIsSet(0x928) != 0) {
-            FieldScene_RunScene3b1_02003eec();
+            FuneHeya_CallActorEighteenToRow();
         } else {
-            FieldScene_RunScene3b1_02003e34();
+            FuneHeya_CallActorSixteenToRow();
         }
         break;
     case 12:
@@ -1223,7 +1223,7 @@ s32 FuneHeya_ApplyEntryState(void)
         FuneHeya_AskAboutMonsters();
         break;
     case 14:
-        FieldScene_RunScene3b1_0200413c();
+        FuneHeya_AnnounceTurn();
         break;
     case 15:
         if (Engine_GameFlagIsSet(0x109) != 0) {
@@ -1238,7 +1238,7 @@ s32 FuneHeya_ApplyEntryState(void)
             Engine_ActorSetChildValue(38, 3);
             Engine_EventEnd();
         } else {
-            FieldScene_RunScene3b1_02004198();
+            FuneHeya_SetupFirstRowingPair();
         }
         break;
     case 16:
@@ -1253,7 +1253,7 @@ s32 FuneHeya_ApplyEntryState(void)
             Engine_ActorEnableActionCallback(37, FuneHeya_EntryActionScript);
             Engine_EventEnd();
         } else {
-            FieldScene_RunScene3b1_02005068();
+            FuneHeya_SetupReplacementRower();
         }
         break;
     case 18:
@@ -1270,7 +1270,7 @@ s32 FuneHeya_ApplyEntryState(void)
             Engine_ActorSetChildValue(37, 3);
             Engine_EventEnd();
         } else {
-            FieldScene_RunScene3b1_020056dc();
+            FuneHeya_SetupReplacementPair();
         }
         break;
     case 20:
@@ -1301,7 +1301,7 @@ s32 FuneHeya_ApplyEntryState(void)
         }
         break;
     case 24:
-        FieldScene_RunScene3b1_02006110();
+        FuneHeya_DismissReplacementRowers();
         break;
     case 30:
         FieldScene_RunSceneStep(20, 0x926, 0x92b);
@@ -1639,7 +1639,7 @@ void FieldScene_RunFourActorCoordinatePresentation(void)
     GameFlag_Set(0x926);
 }
 
-void FieldScene_RunScene3b1_02003d10(void)
+void FuneHeya_CastOff(void)
 {
     u32 i;
     s32 rec7;
@@ -1669,7 +1669,7 @@ void FieldScene_RunScene3b1_02003d10(void)
     FieldScene_RunSceneStep(9, 11, 0);
 }
 
-void FieldScene_RunScene3b1_02003dec(void)
+void FuneHeya_AnnounceDeparture(void)
 {
     u32 i;
     s32 record;
@@ -1683,7 +1683,7 @@ void FieldScene_RunScene3b1_02003dec(void)
     FieldScene_RunSceneStep(9, 11, 0);
 }
 
-void FieldScene_RunScene3b1_02003e34(void)
+void FuneHeya_CallActorSixteenToRow(void)
 {
     u32 i;
     s32 record;
@@ -1705,7 +1705,7 @@ void FieldScene_RunScene3b1_02003e34(void)
     FieldScene_RunSceneStep(9, 12, 0);
 }
 
-void FieldScene_RunScene3b1_02003eec(void)
+void FuneHeya_CallActorEighteenToRow(void)
 {
     u32 i;
     s32 record;
@@ -1789,7 +1789,7 @@ void FuneHeya_AskAboutMonsters(void)
 }
 
 /* Message ids. */
-void FieldScene_RunScene3b1_0200413c(void)
+void FuneHeya_AnnounceTurn(void)
 {
     u32 i;
     s32 record;
@@ -1805,7 +1805,7 @@ void FieldScene_RunScene3b1_0200413c(void)
     FieldScene_RunSceneStep(9, 15, 0);
 }
 
-void FieldScene_RunScene3b1_02004198(void)
+void FuneHeya_SetupFirstRowingPair(void)
 {
     u32 i;
     s32 record;
@@ -2426,7 +2426,7 @@ void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
     } while (i <= 8);
 }
 
-void FieldScene_RunScene3b1_02005068(void)
+void FuneHeya_SetupReplacementRower(void)
 {
     u32 i;
     s32 rec8;
@@ -2626,7 +2626,7 @@ void FieldScene_RunActors24And25SetupWithValue929(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1_020056dc(void)
+void FuneHeya_SetupReplacementPair(void)
 {
     u32 i;
     s32 rec2;
@@ -2962,7 +2962,7 @@ void Scene_RunFourActorProgressPresentation(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1_02006110(void)
+void FuneHeya_DismissReplacementRowers(void)
 {
     s32 rec2;
     s32 rec4;

@@ -412,7 +412,7 @@ u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
     return FuneHeya_SceneTable04;
 }
 
-void FieldScene_RunScene3b1_02000670(void)
+void FuneHeya_AskToSeeCaptain(void)
 {
     u32 i;
     s32 record;
@@ -450,7 +450,7 @@ void SceneDialogue_RunActor12Line(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1_02000728(void)
+void FuneHeya_TalkCaptainStatus(void)
 {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x928) != 0) {
@@ -476,7 +476,7 @@ void FieldScene_RunScene3b1_02000728(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1_020007f8(void)
+void FuneHeya_AskAboutWarriors(void)
 {
     u32 i;
     s32 record;

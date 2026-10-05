@@ -61,8 +61,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
         ((struct ObjectRuntime *)obj)->terrain_height = actor->terrain_height;
         anim = obj->sprite;
         Engine_ObjectSetScript(obj, Makyuri_PillarScript);
-        /* FAKEMATCH: the typed tail store moves past motion_flags and y in
-           the 394-byte body; retain its existing address-word alias lane. */
+        /* FAKEMATCH: address-word aliasing keeps the tail store before motion_flags and y. */
         *(s32 *)((u8 *)obj + (u32)&((struct MakyuriObject *)0)->owner) = (s32)actor;
         obj->motion_flags = 4;
         obj->y.fixed += -0x8000;
@@ -89,9 +88,7 @@ upper:
         obj->speed = 0x40000;
         if (anim != 0) {
             AnimationObjects_SelectAnimation((struct AnimationObject *)anim, 6);
-            /* FAKEMATCH: a one-halfword aggregate holds the zero frame, a
-             * halfword pool constant whose short pool range dumps the
-             * literal pool before the tail. */
+            /* FAKEMATCH: the halfword zero aggregate keeps the short-range literal pool before the tail. */
             {
                 struct Half {
                     u16 v;

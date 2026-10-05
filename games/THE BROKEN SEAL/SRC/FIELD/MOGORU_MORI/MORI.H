@@ -4,8 +4,6 @@
 
 #include "MAPCOPY.H"
 
-/* The forest links the staged-actor code, so its scenes reach the engine by
-   the names that code gives the imports. */
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -59,8 +57,6 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-/* Main-image code the import veneers reach, under the names the staged-actor
- * module gives those veneers in this overlay. */
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -75,39 +71,10 @@ void MogoruMori_SpawnPuffRing(s32 id);
 /* The scene table in the overlay's data. */
 extern u8 MogoruMori_SceneTable[];
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
 /* Copy the low two mode bits into the object's owner record. */
-
-/* 0x02003fb6 serves the two-argument presentation select and, twice later,
- * one-argument imports; the `_b` alias carries the two-argument one. */
-
-/* An EWRAM global, not overlay data: the module is linked above this address,
- * so it cannot be in-image. */
 
 /* Returns a slot record.  Its fields are named by position and not verified:
  * +8/+12/+16 read as the position and +10/+18 as signed halfwords. */
-
-/* Four register arguments plus four stack words. */
-
-/* 0x02004246 serves two imports: the one-argument post at site 5 and the
- * six-argument message at site 12. */
-
-/* 0x02004d98 serves two imports: the two-argument setter at site 7 and the
- * three-argument one at site 14. */
-
-/* 0x02004f28 serves two imports: the two-argument setter at site 7 and the
- * three-argument step at site 14. */
-
 
 /* The sources call one another across files. */
 void OverlayObject_SetOwnerMode(u8 *object, s32 mode);

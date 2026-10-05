@@ -11,7 +11,7 @@
 
 TEXT_MESSAGE_ENUM(MsgMogoruMoriBrokenSign);
 
-/* The IWRAM divide, reached through this overlay's import veneer. */
+/* Resident IWRAM division. */
 
 struct Vec {
     s32 x;
@@ -56,8 +56,7 @@ void SceneState_SetValue18Mode2(void)
 
 /* Mogall Forest: when the leader can step onto the next slot, play the hop
  * and move the leader there. */
-/* 0x02004918 serves two imports: the two-argument mode select and the
- * zero-argument bracket close. */
+
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 {
     struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
@@ -104,7 +103,7 @@ s32 OverlayObject_ApplyZero(s32 a)
 }
 
 /* Mogall Forest: slide an actor to a point with the swish of cue 152,
- * lifting it by the given height while it moves. */
+ * giving it the requested initial vertical velocity. */
 void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3)
 {
     struct FieldActor *rec7;
@@ -182,13 +181,11 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gMogoruMoriEntrancesOther;
 }
 
-/* Complete four-byte leaf: movs r0,#0 followed by bx lr. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/* Complete eight-byte literal-address getter, including its sole pool word. */
 u8 *SceneData_GetTableB5bc(void)
 {
     return MogoruMori_SceneTable;
@@ -240,9 +237,6 @@ void MogoruMori_RunProbedActorNineScene(void)
     Engine_EventEnd();
 }
 
-/* The five tile-painting calls take (layer, x, z, width, height, value) and
- * all reach the same routine, but each keeps its own call word: the encoding
- * is per site, so they must not be collapsed onto one alias. */
 void SceneActor_PassOffsetPointOfActorZero(void)
 {
     s32 v[3];
@@ -310,7 +304,6 @@ void FieldScene_RunActor10WaypointSequence(void)
 
     slot = Object_GetById(10);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(10, 1);
@@ -327,7 +320,7 @@ void FieldScene_RunActor10WaypointSequence(void)
     Engine_ActorSetAttachedEffect(10, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    /* Three waypoints, each at height 0x30000 (192 << 10). */
+    /* Each of the three hops starts with vertical velocity 3.0. */
     FieldScene_RunScene39f_02000d90(10, 88, 152, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Battle_WaitMode0(10);
@@ -344,19 +337,12 @@ void FieldScene_RunActor10WaypointSequence(void)
     Engine_ActorSetPosition(13, 0, 0);
     Engine_ActorSetPosition(10, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
 /* Mogall Forest: actor 11 hops out of the trees, greets the party and
  * hops back to the leader. */
-/*
- * A full cutscene beat for slot 11: opens the slot, places it at (408, 456),
- * publishes an eight-argument piece, runs the presentation, then re-places the
- * slot on the party's current heading readings and sets the engine byte at
- * gGameState + 0x22b to 3.  The 228-byte owner includes an alignment
- * halfword and its four pool words.
- */
+/* Present actor 11 at (408, 456), return it to the leader's position and set the area state to 3. */
 void FieldScene_RunActorElevenPresentationBeat(void)
 {
     struct FieldActor *slot;
@@ -364,8 +350,6 @@ void FieldScene_RunActorElevenPresentationBeat(void)
 
     slot = Object_GetById(11);
 
-    /* Reads the record left in r0 by the call above; it must not be respelled
-     * as a fresh fetch. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(11, 0);
@@ -394,14 +378,12 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     Engine_GameFlagSet(0x301);
     Engine_ActorSetPosition(14, 0, 0);
 
-    /* FAKEMATCH: the byte offset held in a forced temporary keeps the
-     * game-state address and the offset apart. */
+    /* FAKEMATCH: the byte offset held in a forced temporary keeps the game-state address and the offset apart. */
     offset = 0x22b;
     ((u8 *)&gGameState)[offset] = 3;
 
     BattleFx_SetWeightedResult(53, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -411,7 +393,6 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
 
     slot = Object_GetById(12);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(12, 1);
@@ -428,8 +409,7 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     Engine_ActorSetAttachedEffect(12, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    /* Three waypoints, each at height 0x30000 (192 << 10); the X literals are
-     * 146 << 2, 158 << 2 and 170 << 2 and the Z is the same 172 << 1. */
+    /* Each of the three hops starts with vertical velocity 3.0. */
     FieldScene_RunScene39f_02000d90(12, 584, 344, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
     Battle_WaitMode0(6);
@@ -445,7 +425,6 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     Engine_GameFlagSet(0x302);
     Engine_ActorSetPosition(15, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -469,7 +448,6 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
     s32 height;
     s32 value;
 
-    /* No argument register is written before this branch. */
     Engine_EventBegin();
 
     if (StagedActor_FindClearPosition(&probe) != 0) {
@@ -480,8 +458,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
             sixth = 68;
             Map_CopyCellAttributeRect(35, 67, 4, 1, fifth, sixth);
         } else if (probe.actor_slot == 10 && (probe.position_x >> 20) == 35) {
-            /* Written here, not at the call: the reference keeps it in a
-             * callee-saved register across the whole sequence. */
+
             value = 0;
             Engine_GameFlagSet(0x311);
             Object_SetModeById(10, 3);
@@ -500,7 +477,6 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
         }
     }
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -509,7 +485,6 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
     s32 x;
     s32 z;
 
-    /* No argument register is written before this branch. */
     Engine_EventBegin();
 
     /* Both coordinates are 16.16 fixed point reduced to whole tiles with
@@ -531,7 +506,6 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
         *(s32 *)(p + 12) = (s32)0xfffe0000;
     }
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -577,7 +551,6 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
 
     slot = Object_GetById(13);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(13, 1);
@@ -599,7 +572,7 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(13, 504, 136, 0x33333);       /* 252 << 1, pooled height */
+    FieldScene_RunScene39f_02000d90(13, 504, 136, 0x33333);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Battle_WaitMode0(6);
 
@@ -615,7 +588,6 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
     Engine_GameFlagSet(772);                         /* 193 << 2 */
     Engine_ActorSetPosition(16, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -644,7 +616,6 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
 
     slot = Object_GetById(14);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(14, 1);
@@ -662,7 +633,7 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
     Engine_ActorSetAttachedEffect(14, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    /* Four waypoints; Z is 132 << 2 and the height 192 << 10 throughout. */
+    /* Each of the four hops starts with vertical velocity 3.0. */
     FieldScene_RunScene39f_02000d90(14, 360, 528, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Battle_WaitMode0(6);
@@ -685,7 +656,6 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
     Engine_GameFlagSet(0x306);
     Engine_ActorSetPosition(17, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -761,7 +731,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     target[2] = Object_GetById(0)->z.fixed;
 
     if (SceneActor_TryRunSlotZeroMoveStep(target)!= 0) {
-        /* r0 still holds the nonzero result of the test above. */
+
         Engine_EventBegin();
 
         *mode = 0;
@@ -787,21 +757,12 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     }
 }
 
-/*
- * Parking step for actor slot 13 in resource_39f. It marks the actor's own
- * tile 0xff, clears the four orthogonally adjacent tiles, and once the actor
- * stands on tile (45, 6) clears the record's mode byte and writes -2.0 in
- * 16.16 into the words at +12 and +20.
- *
- * The 176-byte owner at 0x02001b84 runs past its code to include an alignment
- * halfword and the pool word 0xfffe0000 at 0x02001c30.
- */
+/* Mark actor 13's tile occupied and clear its four neighbours; at tile (45, 6), clear its mode and write -2.0 to the fields at +12 and +20. */
 void SceneActor_MarkActorThirteenTileAndPark(void)
 {
     s32 x;
     s32 z;
 
-    /* No argument register is written before this branch. */
     Engine_EventBegin();
 
     x = Object_GetById(13)->x.fixed >> 20;
@@ -821,7 +782,6 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
         *(s32 *)(record + 12) = (s32)0xfffe0000;
     }
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -858,10 +818,6 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 /* Mogall Forest: actor 15 hops out of the trees, greets the party and
  * hops back to the leader, then sets flag 0x307. */
-/*
- * Actor presentation beat for overlay resource_39f.  The twin at 0x02001d04
- * is the same beat for slot 15.
- */
 void FieldScene_RunScene39fSequenceA(void)
 {
 
@@ -890,12 +846,10 @@ void FieldScene_RunScene39fSequenceA(void)
     shown = first->x.part.pixel;
     second = Object_GetById(ACTOR_PARTY_LEADER);
     FieldScene_RunScene39f_02000d90(15, shown, second->z.part.pixel, 0x60000);
-    /* FAKEMATCH: called as returning a doubleword, the wait keeps the
-     * registers the game keeps across it. */
+    /* FAKEMATCH: called as returning a doubleword, the wait keeps the registers the game keeps across it. */
     ((s64 (*)())Battle_WaitMode0)(10);
     Engine_GameFlagSet(0x307);
-    /* FAKEMATCH: the game-state address held in a forced temporary keeps
-     * it apart from the byte offset. */
+    /* FAKEMATCH: the game-state address held in a forced temporary keeps it apart from the byte offset. */
     base3_2000240 = (s32)&gGameState;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
     BattleFx_SetWeightedResult(53, 0);
@@ -908,7 +862,6 @@ void FieldScene_RunSlot16WaypointSequence(void)
 
     slot = Object_GetById(16);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(16, 1);
@@ -926,7 +879,7 @@ void FieldScene_RunSlot16WaypointSequence(void)
     Engine_ActorSetAttachedEffect(16, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    /* Three waypoints at height 0x30000 (192 << 10). */
+    /* Each of the three hops starts with vertical velocity 3.0. */
     FieldScene_RunScene39f_02000d90(16, 448, 192, 0x30000);       /* 224 << 1 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 16, 0);
     Battle_WaitMode0(6);
@@ -945,7 +898,6 @@ void FieldScene_RunSlot16WaypointSequence(void)
     Engine_GameFlagSet(776);                         /* 194 << 2 */
     Engine_ActorSetPosition(20, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -955,7 +907,6 @@ void FieldScene_RunActor17CameraSequence(void)
 
     slot = Object_GetById(17);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(17, 1);
@@ -991,7 +942,6 @@ void FieldScene_RunActor17CameraSequence(void)
     Engine_GameFlagSet(0x309);
     Engine_ActorSetPosition(21, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -1020,7 +970,6 @@ void FieldScene_RunActorEighteenEffectSequence(void)
 
     slot = Object_GetById(18);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(18, 1);
@@ -1059,7 +1008,6 @@ void FieldScene_RunActorEighteenEffectSequence(void)
     Battle_WaitMode0(30);
     Engine_GameFlagSet(0x30b);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -1135,8 +1083,7 @@ void MogoruMori_RunClosingChoreography(void)
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
     for (i = 0; i <= 16; i++) {
         v = &dir;
-        /* FAKEMATCH: zero is set inside the loop (always entered) so it is
-         * materialized with the counter. */
+        /* FAKEMATCH: zero is set inside the loop (always entered) so it is materialized with the counter. */
         zero = 0;
         v->x = Engine_MathCos(i << 12);
         v->y = zero;
@@ -1159,8 +1106,7 @@ void MogoruMori_RunClosingChoreography(void)
         FieldScene_RunScene39f_02000d90(18, px, Object_GetById(0)->z.part.pixel - 16, 0x80000);
     }
     Battle_WaitMode0(10);
-    /* FAKEMATCH: an empty do-while here moves px into r1 after the
-     * other arguments of the call above. */
+    /* FAKEMATCH: an empty do-while here moves px into r1 after the other arguments of the call above. */
     do { } while (0);
     gGameState.battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);

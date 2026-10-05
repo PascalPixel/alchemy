@@ -234,8 +234,12 @@ make progress          # the count, with one line per edition
 make deps              # dependency map: what unblocks the most
 make worst             # maintained C ranked by how mechanical it reads
 tools/out/cargo-target/release/alchemy diff DRAFT.c   # a draft against its listing
-tools/out/cargo-target/release/alchemy adopt ADDR LABEL NAME   # then out of the scaffolding
+tools/out/cargo-target/release/alchemy adopt ADDR LABEL NAME [--into MODULE.C]   # then out of the scaffolding
 tools/out/cargo-target/release/alchemy queues --workers N --out-dir DIR   # work that cannot collide
+tools/out/cargo-target/release/alchemy objects EDITION      # after a build: what differs from the ROM, and where
+tools/out/cargo-target/release/alchemy show EDITION FUNCTION # one built function beside the ROM
+tools/out/cargo-target/release/alchemy keep [PATH...]       # keep only source edits that leave all twelve identical
+tools/out/cargo-target/release/alchemy sizes DRAFT.c [SIZE] # struct sizes; the locals that fill a frame gap
 make verify
 make land              # on main, before committing a landing
 ```

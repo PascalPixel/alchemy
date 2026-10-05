@@ -96,7 +96,7 @@ Func_0817cc30:
 	ldrsh r0, [r1, r4]
 	adds r1, r2, #0
 	str r2, [sp, #12]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	movs r3, #0
 	str r3, [sp, #8]
 	mov r11, r3

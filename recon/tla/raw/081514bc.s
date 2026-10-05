@@ -284,7 +284,7 @@ Func_081514bc:
 	muls r3, r0
 	mov r0, r11
 	str r3, [r0, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r1, r9
 	ldr r2, [r1]
 	movs r4, #6

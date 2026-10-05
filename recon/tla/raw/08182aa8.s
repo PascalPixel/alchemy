@@ -1600,7 +1600,7 @@ Func_08182aa8:
 	add r6, sp, #108
 	adds r1, r6, #0
 	adds r0, r7, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	movs r0, #10
 	ldrsh r3, [r6, r0]
 	movs r1, #50

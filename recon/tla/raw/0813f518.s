@@ -207,7 +207,7 @@ Func_0813f518:
 	ldr r5, [sp, #24]
 	mov r1, r9
 	ldr r0, [r5, #8]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	mov r0, r9
 	ldr r2, [r0]
 	movs r1, #128

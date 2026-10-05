@@ -21,6 +21,6 @@ Menu_AnimateSelectionToEntry:
 	bl Menu_SelectResource
 	adds r6, r0, #0
 	bl Menu_EndResourceSelection
-	bl Func_0803f810
+	bl UiWork_CloseAndRelease
 	adds r0, r6, #0
 	pop {r5, r6, pc}

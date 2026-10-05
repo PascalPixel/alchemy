@@ -385,7 +385,7 @@ Func_0814fab8:
 	ldrsh r0, [r4, r5]
 	add r5, sp, #116
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r0, [r5]
 	movs r1, #5
 	negs r0, r0
@@ -796,7 +796,7 @@ Func_0814fab8:
 	beq .L_08150170
 	mov r1, r8
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r2, r8
 	ldr r0, [r2]
 	movs r1, #5
@@ -894,7 +894,7 @@ Func_0814fab8:
 	add r4, sp, #92
 	adds r1, r4, #0
 	ldr r0, [sp, #28]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r0, [sp, #92]
 	movs r1, #5
 	lsls r0, r0, #2

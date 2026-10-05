@@ -106,7 +106,7 @@ BattleFx_RunSeriesA:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	adds r1, r5, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r2, [r5]
 	movs r3, #64
 	subs r3, r3, r2
@@ -1132,7 +1132,7 @@ BattleFx_RunSeriesA:
 	add r5, sp, #100
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	cmp r7, #0
 	beq .L_0814f7ea
 	cmp r7, #8

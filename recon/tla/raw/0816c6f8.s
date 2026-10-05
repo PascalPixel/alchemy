@@ -246,12 +246,12 @@ Func_0816c6f8:
 	ldr r1, [sp, #84]
 	ldr r0, [r1, #8]
 	ldr r1, [sp, #24]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r3, [sp, #84]
 	ldr r1, [sp, #28]
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	mov r1, r11
 	cmp r1, #11
 	bgt .L_0816c9b2

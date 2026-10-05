@@ -97,7 +97,7 @@ Func_0814e744:
 	ldr r3, [r5, #16]
 	mov r0, r9
 	str r3, [r4, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r0, r10
 	ldr r3, [r0]
 	movs r1, #0

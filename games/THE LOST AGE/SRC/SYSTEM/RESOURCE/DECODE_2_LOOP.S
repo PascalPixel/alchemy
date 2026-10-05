@@ -360,3 +360,5 @@ AlchemyUncreditedEnd_08013048:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.L_08012f7c
+	.global Resource_Decode2End
+Resource_Decode2End:

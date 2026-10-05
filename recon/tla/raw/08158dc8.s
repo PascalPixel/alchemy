@@ -484,7 +484,7 @@ Func_08158dc8:
 	lsls r3, r3, #16
 	str r3, [r6, #8]
 	str r2, [sp, #12]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	adds r7, #4
 	asrs r3, r3, #17
@@ -722,7 +722,7 @@ Func_08158dc8:
 	str r3, [r5, #8]
 	adds r1, r6, #0
 	mov r0, r10
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r6]
 	movs r0, #6
 	ldrsh r3, [r6, r0]

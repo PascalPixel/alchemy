@@ -267,7 +267,7 @@ void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_081180e8(s32);
 void Func_0815f000(s32, s32, s32, s32, s32, s32);
 void Func_08138086(struct Particle *, s32, s32);
-void Func_0815e20c(s32, struct Particle *);
+void EffectPosition_ApplyStepAndYOffset(s32, struct Particle *);
 void Func_08158d68(s32);
 void Func_081434f8(void);
 void Scheduler_RemoveCallback(void *);
@@ -1530,7 +1530,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     }
                     if (landed == 1) {
                         member->timer = 0;
-                        Func_0815e20c(arg->actors[i], member);
+                        EffectPosition_ApplyStepAndYOffset(arg->actors[i], member);
                         Func_081c0010(103);
                         for (j = 0; j != 16; j++) {
                             s32 angle = Random16() & 0x7fff;

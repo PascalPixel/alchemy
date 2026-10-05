@@ -22,7 +22,7 @@ Func_0802b998:
 	strh r3, [r2]
 	movs r0, #0
 	sub sp, #36
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	movs r1, #144
 	lsls r1, r1, #4
 	adds r1, #120

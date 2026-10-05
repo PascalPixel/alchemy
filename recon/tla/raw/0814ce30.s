@@ -917,7 +917,7 @@ Func_0814ce30:
 	str r3, [r6, #4]
 	ldr r3, [r2, #16]
 	str r3, [r6, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r2, r9
 	lsls r3, r2, #3
 	ldr r4, [sp, #64]
@@ -1454,7 +1454,7 @@ Func_0814ce30:
 	mov r8, r0
 	mov r1, r8
 	ldr r0, [sp, #28]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r1, r8
 	ldr r2, [r1]
 	lsls r5, r5, #5
@@ -1513,7 +1513,7 @@ Func_0814ce30:
 .L_0814d9cc:
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	asrs r2, r3, #1
 	str r2, [r6]

@@ -440,7 +440,7 @@ Func_0816729c:
 	add r5, sp, #164
 	ldr r0, [sp, #12]
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r0, [r5, #8]
 	movs r3, #60
 	negs r3, r3

@@ -101,7 +101,7 @@ Func_0802de8c:
 	lsls r2, r2, #19
 	strh r3, [r2]
 	movs r0, #1
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 .L_0802df54:
 	bl Runtime_InitializeHeap
 	bl Scheduler_ResetTaskTable

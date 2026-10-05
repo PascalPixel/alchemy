@@ -110,7 +110,7 @@ Func_081a76f8:
 	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	movs r0, #1
-	bl Func_08013f3c
+	bl Blend_SetBrightenTarget0
 	bl Blend_WaitForTransition
 	ldr r3, .L_081a7804
 	movs r2, #128

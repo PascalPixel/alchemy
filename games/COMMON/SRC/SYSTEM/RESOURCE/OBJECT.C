@@ -1,6 +1,5 @@
 #include "DMA.H"
 #include "ANIMSPR.H"
-#include "VRAM_BLOCK.H"
 #include "IO_REG.H"
 
 void ResourceMetadata_ClearRecord(void *destination)

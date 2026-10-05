@@ -1,3 +1,10 @@
+/*
+ * Draft: BattleFx_SetObjectAlternatingWords, the head of ☀️'s EFFECT33.C.
+ * differ 4: the native loads the scale table address before the tick and
+ * builds the 1 mask after it; this build does the reverse. Trial
+ * 2026-10-05: one-expression index and index-then-table orders both 6.
+ * Links as recon/tla/raw/080d7d48.s.
+ */
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"

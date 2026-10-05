@@ -104,7 +104,7 @@ Func_0813fd84:
 	ldr r0, [r3, #8]
 	adds r1, r7, #0
 	adds r5, #2
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	cmp r5, #96
 	ble .L_0813fe60
 	movs r5, #96

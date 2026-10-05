@@ -256,19 +256,19 @@ Blend_SetDarkenTarget16Far:
 	.global Func_080002b0
 	.thumb_func
 Func_080002b0:
-	overlay_veneer Func_08013eb4
+	overlay_veneer Blend_SetDarkenTarget0
 	.global Func_080002b8
 	.thumb_func
 Func_080002b8:
-	overlay_veneer Func_08013ef8
+	overlay_veneer Blend_SetBrightenTarget16
 	.global Func_080002c0
 	.thumb_func
 Func_080002c0:
-	overlay_veneer Func_08013f3c
+	overlay_veneer Blend_SetBrightenTarget0
 	.global Func_080002c8
 	.thumb_func
 Func_080002c8:
-	overlay_veneer Func_08013f80
+	overlay_veneer Blend_ConfigureTransition
 	.global Blend_WaitForTransitionFar
 	.thumb_func
 Blend_WaitForTransitionFar:

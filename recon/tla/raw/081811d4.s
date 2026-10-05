@@ -196,7 +196,7 @@ Func_081811d4:
 	ldr r1, [sp, #12]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r0, [sp, #48]
 	cmp r0, #31
 	bgt .L_0818136c

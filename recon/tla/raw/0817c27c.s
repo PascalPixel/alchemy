@@ -81,7 +81,7 @@ Func_0817c27c:
 	ldr r1, [sp, #24]
 	ldr r0, [r1, #8]
 	mov r1, r8
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [sp, #24]
 	ldr r3, [r2, #4]
 	cmp r3, #0

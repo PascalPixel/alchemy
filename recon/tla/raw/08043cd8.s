@@ -571,7 +571,7 @@ Func_08043cd8:
 	mov r0, r9
 	movs r1, #0
 	movs r3, #26
-	bl Func_080439e8
+	bl UiWindow_FillTilemapRect
 .L_08044142:
 	ldr r0, [sp, #16]
 	bl Func_08045018

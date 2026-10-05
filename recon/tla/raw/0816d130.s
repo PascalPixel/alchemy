@@ -207,7 +207,7 @@ Func_0816d130:
 	str r0, [r6, #4]
 	str r0, [r6, #8]
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]

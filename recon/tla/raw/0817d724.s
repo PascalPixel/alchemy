@@ -83,7 +83,7 @@ Func_0817d724:
 	movs r3, #36
 	ldrsh r0, [r4, r3]
 	str r7, [sp, #28]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [sp, #80]
 	mov r3, sp
 	adds r3, #92
@@ -91,7 +91,7 @@ Func_0817d724:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #24]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r4, [sp, #76]
 	movs r7, #224
 	lsls r7, r7, #3
@@ -607,13 +607,13 @@ Func_0817d724:
 	ldr r1, [sp, #28]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 .L_0817dbd6:
 	ldr r1, [sp, #80]
 	movs r7, #36
 	ldrsh r0, [r1, r7]
 	ldr r1, [sp, #24]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 .L_0817dbe2:
 	mov r3, r11
 	subs r3, #152

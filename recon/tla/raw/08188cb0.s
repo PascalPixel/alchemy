@@ -165,7 +165,7 @@ Func_08188cb0:
 	bne .L_08188e94
 	ldr r0, [r1, #8]
 	mov r1, r9
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	mov r2, r10
 	ldr r3, [r2, #4]
 	cmp r3, #0
@@ -254,7 +254,7 @@ Func_08188cb0:
 	movs r1, #36
 	ldrsh r0, [r2, r1]
 	mov r1, r9
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r3, [sp, #8]
 	cmp r3, #15
 	bhi .L_08188f3e
@@ -346,7 +346,7 @@ Func_08188cb0:
 	movs r2, #36
 	ldrsh r0, [r3, r2]
 	mov r1, r9
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	movs r0, #134
 	bl Func_081180e8
 	mov r6, r10

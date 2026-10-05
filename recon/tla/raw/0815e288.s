@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0815e288
+	.global BattleUnit_ProjectToScreen
 	.thumb_func
-Func_0815e288:
+BattleUnit_ProjectToScreen:
 	push {r5, r6, lr}
 	mov r6, r10
 	mov r5, r9

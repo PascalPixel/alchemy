@@ -3936,7 +3936,7 @@ Func_08185b9c:
 	ldr r3, [sp, #172]
 	ldr r1, [sp, #48]
 	ldrsh r0, [r6, r3]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r6, .L_081869fc
 	ldr r5, [sp, #24]
 	movs r4, #0

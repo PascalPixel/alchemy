@@ -943,7 +943,7 @@ Func_08168a40:
 	mov r2, r9
 	ldrsh r0, [r2, r4]
 	adds r1, r5, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r3, [r5]
 	ldr r7, [sp, #28]
 	cmp r3, r7

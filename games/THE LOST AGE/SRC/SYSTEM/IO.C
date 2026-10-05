@@ -34,7 +34,7 @@
             *destination++ = value;                                         \
             count++;                                                        \
             *destination++ = address;                                       \
-            *(u16 *)&q->count = count;                                      \
+            q->count = count;                                               \
             *destination = (delay);                                         \
         }                                                                   \
         *ime = saved;                                                       \

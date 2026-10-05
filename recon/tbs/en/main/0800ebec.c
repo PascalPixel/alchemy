@@ -1,4 +1,15 @@
-/* 2026-10-04 sun w3 finisher 4: unchanged at 253. Measured: the r6 copy of
+/* 2026-10-05 sun w5 finisher 2: still 253. The ROM also passes the first
+ * probe's 0x80000 as a fresh constant and only later holds it in r8, so
+ * CSE's path does end at the probe label in the ROM. But giving the debug
+ * block's L test a body ({ blocked = 0; goto tail; }) so that label has two
+ * uses (checked in the .jump dump; neither skip-blocks nor follow-jumps can
+ * pass it) leaves the output byte-identical at 253, so here the carried
+ * (u16)angle and 0x80000 do not come from that CSE path. A separate search
+ * base instead of the shared dir pseudo, written as a block local (386) or
+ * as (u16)angle inline in the deltas (287) or footprint (479), is worse:
+ * dir's second use at the footprint keeps it global in r8 where the ROM
+ * holds &posA. -fno-cse-skip-blocks overall scores 274.
+ * 2026-10-04 sun w3 finisher 4: unchanged at 253. Measured: the r6 copy of
  * (u16)angle reaching the second probe is CSE skip-blocks carrying it over
  * the debug block (-fno-cse-skip-blocks, diagnostic only, recomputes it in
  * r1 as the ROM does); the ROM's CSE did not skip that block, so its

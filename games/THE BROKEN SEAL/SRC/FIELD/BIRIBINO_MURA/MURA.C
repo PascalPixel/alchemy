@@ -68,7 +68,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -616,25 +616,10 @@ void FieldScene_RunScene38bSequenceA(void)
  * data lives in EWRAM and is deliberately not const.
  */
 
-/*
- * Slot accessor: Object_GetById(slot) returns the actor record, or NULL.
- * Typed as a byte pointer so the +0x08 and +0x10 field reads are explicit.
- */
+/* The cell renderer takes the tile's X and Z coordinates after its first four arguments. */
 
-/*
- * The six-argument renderer ABI: four register arguments plus two stack
- * words, here the tile x and tile z of the cell being repainted.  The two
- * names are separate per-site call words that reach the same renderer.
- */
+/* Repaint ten fixed collision cells, followed by actor 8's cell. */
 
-/*
- * Repaint ten fixed collision cells and then actor 8's own cell.  The
- * 92-byte owner includes the alignment halfword and the single pool word
- * that follows the code; that word holds the address of Mura_RepaintCells, which
- * is in-image data rather than a RAM global.  The two renderer calls must
- * keep their separate call words -- naming one renderer for both changes the
- * displacement emitted at each site.
- */
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 {
     struct FieldActor *actor;
@@ -652,11 +637,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
     tx = actor->x.fixed >> 20;
     tz = actor->z.fixed >> 20;
 
-    /*
-     * Ten fixed cells from the table, then the actor's own cell.  The table
-     * is walked by the byte index itself rather than by a 0..9 counter
-     * scaled by two, so the loop steps the byte offset directly.
-     */
+/* Ten fixed cells from the table, then the actor's own cell. */
     for (i = 0; i < 20; i += 2) {
         s32 x = (s32)Mura_RepaintCells[i];
         s32 z = (s32)Mura_RepaintCells[i + 1];

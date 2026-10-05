@@ -3,7 +3,7 @@
 #include "METADATA_LOOKUP.H"
 
 void ResourceMetadata_ClearRecord(void *record);
-s32 Func_08022c98(s32 id);
+s32 AnimationObject_Allocate(s32 id);
 s32 Animation_LookupValueByKey(s32 key);
 
 /* ☀️'s: set a layer up from its metadata, looking its frames up among the
@@ -77,7 +77,7 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
     }
     if (index == 4)
         return -1;
-    value = Func_08022c98(id);
+    value = AnimationObject_Allocate(id);
     if (value == 0)
         return 0;
     state->slots[index] = value;

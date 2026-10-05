@@ -581,10 +581,10 @@ Func_08022bd8:
 	.thumb_func
 Func_08022c84:
 	.incbin "baserom.gba", 0x00022c84, 0x00000014
-	.global Func_08022c98
-	.type Func_08022c98, %function
+	.global AnimationObject_Allocate
+	.type AnimationObject_Allocate, %function
 	.thumb_func
-Func_08022c98:
+AnimationObject_Allocate:
 	.incbin "baserom.gba", 0x00022c98, 0x00000084
 	.section .rom.00022d1c, "ax"
 	.global ResourceMetadata_ClearRecord
@@ -1009,11 +1009,11 @@ ResourceSlot_NumberTable:
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
 	.incbin "baserom.gba", 0x0002eac8, 0x000000fc
-	.global Data_0802ec48
-Data_0802ec48:
+	.global Script_MainScript
+Script_MainScript:
 	.incbin "baserom.gba", 0x0002ebc4, 0x0000027c
-	.global Data_0802eec4
-Data_0802eec4:
+	.global Curve_SampleIndexTable
+Curve_SampleIndexTable:
 	.incbin "baserom.gba", 0x0002ee40, 0x00000100
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
@@ -1289,10 +1289,10 @@ Func_0803d92c:
 	.section .rom.0003daee, "ax"
 	.incbin "baserom.gba", 0x0003daee, 0x00000002
 	.section .rom.0003daf0, "ax"
-	.global Func_0803d9bc
-	.type Func_0803d9bc, %function
+	.global UiIcon_BuildAbilityIconTiles
+	.type UiIcon_BuildAbilityIconTiles, %function
 	.thumb_func
-Func_0803d9bc:
+UiIcon_BuildAbilityIconTiles:
 	.incbin "baserom.gba", 0x0003daf0, 0x000000bc
 	.section .rom.0003dc88, "ax"
 	.balign 4
@@ -1809,17 +1809,17 @@ Func_0804e1d8:
 	.thumb_func
 Func_0804e3f4:
 	.incbin "baserom.gba", 0x0004e5f4, 0x00000764
-	.global Data_0804eb58
-Data_0804eb58:
+	.global UiIcon_ItemIconPointers
+UiIcon_ItemIconPointers:
 	.incbin "baserom.gba", 0x0004ed58, 0x000005cc
-	.global Data_0804f124
-Data_0804f124:
+	.global UiIcon_ItemIconPointersEnd
+UiIcon_ItemIconPointersEnd:
 	.incbin "baserom.gba", 0x0004f324, 0x000058f0
 	.global UiIcon_PsynergyIconPointers
 UiIcon_PsynergyIconPointers:
 	.incbin "baserom.gba", 0x00054c14, 0x00000410
-	.global Data_08054e24
-Data_08054e24:
+	.global UiIcon_PsynergyIconPointersEnd
+UiIcon_PsynergyIconPointersEnd:
 	.incbin "baserom.gba", 0x00055024, 0x000041cc
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
@@ -2446,8 +2446,8 @@ Owner_GrowthRecords:
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000bc4dc, 0x000000e8
 	.section .rom.000bc5c4, "ax"
-	.global Data_080c15f4
-Data_080c15f4:
+	.global Class_DefinitionTable
+Class_DefinitionTable:
 	.incbin "baserom.gba", 0x000bc5c4, 0x00005524
 	.global Battle_Effect90Classes
 Battle_Effect90Classes:
@@ -4788,10 +4788,10 @@ Func_0811a39c:
 	.incbin "baserom.gba", 0x0011a398, 0x000000b0
 	.section .rom.0011a4da, "ax"
 	.incbin "baserom.gba", 0x0011a4da, 0x0000011e
-	.global Func_0811a5fc
-	.type Func_0811a5fc, %function
+	.global BattleMotion_ReleaseObjectSlotByValue
+	.type BattleMotion_ReleaseObjectSlotByValue, %function
 	.thumb_func
-Func_0811a5fc:
+BattleMotion_ReleaseObjectSlotByValue:
 	.incbin "baserom.gba", 0x0011a5f8, 0x00000044
 	.section .rom.0011a670, "ax"
 	.incbin "baserom.gba", 0x0011a670, 0x00000af8
@@ -5031,8 +5031,8 @@ Summon_GetEntryByte4:
 	.incbin "baserom.gba", 0x00128190, 0x0000001c
 	.section .rom.001281e6, "ax"
 	.incbin "baserom.gba", 0x001281e6, 0x0000065a
-	.global Data_08128844
-Data_08128844:
+	.global BattlePlacement_StepPairs
+BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x00128840, 0x0000428c
 	.global Resource_SlotAssignments
 Resource_SlotAssignments:

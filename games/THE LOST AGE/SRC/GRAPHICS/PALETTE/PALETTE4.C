@@ -4,6 +4,7 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 /* ☀️'s title palette fade, its work in ⚓️'s heap block 32. */
 
@@ -15,9 +16,9 @@ void TitlePalette_InitializeBuffers(void)
 
     buffer = Runtime_AllocateBlock(128, sizeof(*buffer));
     zero = 0;
-    Dma_Set(&zero, buffer, 0x85000c01, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x05000000, buffer, 0x84000080, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, buffer, 0x85000c01, REG_DMA3);
+    Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
+    Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
     Graphics_TransformPaletteBuffer(0x10000, buffer->palette, buffer->target, 0);
     operation = 1152;
     Scheduler_AddOrUpdateCallback((s32)(TitlePalette_UpdateFade), operation);

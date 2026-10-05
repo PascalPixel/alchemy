@@ -5,6 +5,7 @@
 #include "SAVE_STATE.H"
 #include "RUNTIME_INTERFACES.H"
 #include "IRQ.H"
+#include "IO_REG.H"
 
 /* Reads the newest copy of record 3's summary into the workspace, with the
    four bytes its second sector keeps at 0x110; 1 when there is one. */
@@ -18,7 +19,7 @@ s32 SaveState_LoadExtraSummary(void)
     work = Ram_HeapSlots->serial_work;
     summary = &work->extra;
     zero = 0;
-    Dma_Set((const void *)&zero, summary, 0x85000010, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, summary, 0x85000010, REG_DMA3);
     index = SaveState_FindLatestSlot(3);
     if (index <= 14) {
         ReadFlash((u16)index, 0, (u8 *)summary, sizeof(*summary));

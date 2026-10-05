@@ -4,6 +4,7 @@
 #include "RENDER_INPUT.H"
 #include "RUNTIME_MEM.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 struct Record_080b06c0 {
     u8 filler0[4];
@@ -80,7 +81,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
     buf = Runtime_AllocateBlock(56, 0x400);
     sprite = 0;
-    Dma_Set(Shop_PriceTiles, buf, 0x84000040, (volatile u32 *)0x040000d4);
+    Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
     Shop_CopyGlyphs(value % 10, (s32)buf, 0);
     value = value / 10;
     if (value != 0) {
@@ -127,8 +128,8 @@ void Shop_RestoreSceneTiles(s32 layer)
     u8 *work = Ram_HeapSlots->block_32;
     u8 *saved = work + 0xe00;
 
-    Dma_Set(saved, map + 0x222, 0x84000150, (volatile u32 *)0x040000d4);
-    Dma_Set(saved, work + 0x380, 0x840002a0, (volatile u32 *)0x040000d4);
+    Dma_Set(saved, map + 0x222, 0x84000150, REG_DMA3);
+    Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     Func_080c8368(layer, 1);
     Func_080c8380(16);

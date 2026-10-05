@@ -16,4 +16,4 @@ Func_080382a8:
 	.global Func_080382b0
 	.thumb_func
 Func_080382b0:
-	overlay_veneer Func_0803d9bc
+	overlay_veneer UiIcon_BuildAbilityIconTiles

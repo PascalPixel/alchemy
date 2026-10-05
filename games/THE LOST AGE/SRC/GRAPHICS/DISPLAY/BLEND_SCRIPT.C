@@ -75,7 +75,7 @@ void DisplayBlend_StartScript(u16 *script)
     started = 0;
     zero = 0;
     state = &Ram_HeapSlots->map_work->blend;
-    Dma_Set((const void *)&zero, state, 0x85000003, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
     first = *script;
     /* FAKEMATCH: the plain order builds 0xffff before loading the first command. */
     __asm__("");

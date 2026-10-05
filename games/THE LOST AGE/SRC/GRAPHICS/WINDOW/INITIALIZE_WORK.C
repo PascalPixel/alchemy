@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 /* The parts of ⚓️'s item and Psynergy menu work this reset sets; the work
    is 0x33b words, larger than ☀️'s. */
@@ -19,7 +20,7 @@ void UiWindow_InitializeWork(s32 unused)
 {
     struct InventoryMenuState *work = Ram_HeapSlots->menu_runtime;
     volatile u32 zero = 0;
-    Dma_Set(&zero, work, 0x8500033b, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x8500033b, REG_DMA3);
     work->pane_index[0] = -1;
     work->pane_count[0] = 1;
     work->pane_count[1] = 1;

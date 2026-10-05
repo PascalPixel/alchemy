@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 /* A hardware sprite's attributes. */
 struct OamEntry {
@@ -27,7 +28,7 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y)
     volatile u32 zero;
 
     zero = 0;
-    Dma_Set((void *)&zero, &oam, 0x85000002, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)&zero, &oam, 0x85000002, REG_DMA3);
     oam.shape = 0;
     oam.size = 3;
     oam.colors256 = 1;
@@ -36,5 +37,5 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y)
     oam.tile = tile;
     oam.x = x - 32;
     oam.y = y + 224;
-    Dma_Set(&oam, (void *)(0x07000000 + ((u32)tile >> 4)), 0x84000002, (volatile u32 *)0x040000d4);
+    Dma_Set(&oam, (void *)(0x07000000 + ((u32)tile >> 4)), 0x84000002, REG_DMA3);
 }

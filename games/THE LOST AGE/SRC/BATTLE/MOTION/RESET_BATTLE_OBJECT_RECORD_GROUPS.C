@@ -3,7 +3,7 @@
 #include "BATTLE_SESSION.H"
 #include "RAM_BUFFER.H"
 
-void Func_0811a5fc(s32 object_id);
+void BattleMotion_ReleaseObjectSlotByValue(s32 object_id);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 void ResetMotionRecordGroup(void *owner);
@@ -58,7 +58,7 @@ s32 ActivateBattleObjectSlot(s32 object_id)
 {
     struct BattleObjectSlot *slot;
 
-    Func_0811a5fc(object_id);
+    BattleMotion_ReleaseObjectSlotByValue(object_id);
     slot = BattleObject_FindSlot(object_id);
     slot->active = 1;
     return 0;

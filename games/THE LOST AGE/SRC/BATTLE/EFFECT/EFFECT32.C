@@ -6,6 +6,7 @@
 #include "RAM_BUFFER.H"
 #include "MOTION_OBJECT.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 /* Heap slot 56: the battle effects' work, 24 screen-space slots after the
    effect's own state, in a 0x7f4-byte block. */
@@ -40,7 +41,7 @@ void BattleFx_InitializeSlots(void)
     volatile u32 zero;
     work = Runtime_AllocateHeapBlock(BATTLE_FX_SLOT, sizeof(struct BattleFxScene));
     zero = 0;
-    Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), REG_DMA3);
     Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateAllSlots, 1152);
 }
 

@@ -23,7 +23,8 @@ struct ObjectRuntime {
     /* The collision radius, in pixels. */
     u16 radius;
     u8 terrain_id;
-    u8 unknown_23;
+    /* Bit 0 keeps the sprite priority automatic. */
+    u8 priority_flags;
     s32 velocity_x;
     s32 velocity_y;
     s32 velocity_z;
@@ -43,7 +44,8 @@ struct ObjectRuntime {
     u8 motion_flags;
     u8 unknown_57;
     u8 unknown_58;
-    u8 unknown_59;
+    /* Bit 0 lets other objects collide with this one. */
+    u8 collision_flags;
     u8 action_flags;
     u8 movement_state;
     u8 unknown_5c[0x04];
@@ -60,8 +62,8 @@ typedef char ObjectRuntime_size[
     sizeof(struct ObjectRuntime) == 0x80 ? 1 : -1
 ];
 
-typedef char ObjectRuntime_unknown_59_offset[
-    (u32)&((struct ObjectRuntime *)0)->unknown_59 == 0x59 ? 1 : -1
+typedef char ObjectRuntime_collision_flags_offset[
+    (u32)&((struct ObjectRuntime *)0)->collision_flags == 0x59 ? 1 : -1
 ];
 
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);

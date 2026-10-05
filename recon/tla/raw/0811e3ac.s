@@ -351,7 +351,7 @@ Func_0811e3ac:
 	bl ReleaseBattleObjectRecords
 	subs r5, #1
 	ldrh r0, [r6, r7]
-	bl Func_0811a5fc
+	bl BattleMotion_ReleaseObjectSlotByValue
 	adds r6, #2
 	cmp r5, #0
 	bne .L_0811e666

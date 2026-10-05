@@ -17,9 +17,9 @@ extern char ResourceId_WindowTiles;
 void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     /* FAKEMATCH: the do-while block keeps the backdrop store's value
        before its address */
     do {
@@ -53,19 +53,19 @@ void Ui_LoadWindowGraphics(void)
         *pal = color;
     }
     Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
     volatile u32 zero = 0;
-    Dma_Set(&zero, work, 0x85000040, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x85000040, REG_DMA3);
     Ram_HeapSlots->next_iwram = gIwramHeap;
     Ram_HeapSlots->next_ewram = gEwramHeap;
 }

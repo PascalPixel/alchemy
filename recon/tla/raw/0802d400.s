@@ -12,4 +12,4 @@ Func_0802d400:
 	lsls r0, r0, #19
 	bx lr
 .L_0802d410:
-	.4byte Data_0802eec4
+	.4byte Curve_SampleIndexTable

@@ -182,4 +182,4 @@ Owner_DetermineClass:
 .L_080b0280:
 	.4byte Data_080c6604
 .L_080b0284:
-	.4byte Data_080c15f4
+	.4byte Class_DefinitionTable

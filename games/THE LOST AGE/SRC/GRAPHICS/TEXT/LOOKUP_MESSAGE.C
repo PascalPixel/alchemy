@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
+#include "IO_REG.H"
 
 extern const u8 Text_LookupSymbolCode[];
 extern u8 Text_LookupSymbolCodeSize[];
@@ -18,7 +19,7 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message)
         size = (u32)Text_LookupSymbolCodeSize;
     } while (0);
     routine = (void (*)(struct TextReader *, s32))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Text_LookupSymbolCode, routine, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)Text_LookupSymbolCode, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(reader, message);
     Sys_Free(routine);
 }

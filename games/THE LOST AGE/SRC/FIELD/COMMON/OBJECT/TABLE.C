@@ -4,6 +4,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "FIELD_SPRITE.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 /* The 32 objects ObjectTable_Snapshot saves; their indices sit in the 32
    bytes before them and their two frame bytes and priorities after. */
@@ -52,7 +53,7 @@ void ObjectTable_Snapshot(void)
         if (object == NULL)
             continue;
         *indices++ = i;
-        Dma_Set(object, copy, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), (volatile u32 *)0x040000d4);
+        Dma_Set(object, copy, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
         if (object->animation_kind == 1) {
             sprite = object->animation;
             frame = sprite->frame;

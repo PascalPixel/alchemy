@@ -97,8 +97,8 @@ Data_0802eb98:
 	.global Data_0802ebc8
 Data_0802ebc8:
 	.incbin "baserom.gba", 0x0002ebc8, 0x00000080
-	.global Data_0802ec48
-Data_0802ec48:
+	.global Script_MainScript
+Script_MainScript:
 	.incbin "baserom.gba", 0x0002ec48, 0x00000014
 	.global Data_0802ec5c
 Data_0802ec5c:
@@ -127,8 +127,8 @@ Data_0802ed34:
 	.global Data_0802edc4
 Data_0802edc4:
 	.incbin "baserom.gba", 0x0002edc4, 0x00000100
-	.global Data_0802eec4
-Data_0802eec4:
+	.global Curve_SampleIndexTable
+Curve_SampleIndexTable:
 	.incbin "baserom.gba", 0x0002eec4, 0x00000100
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
@@ -220,17 +220,17 @@ Data_0804e7dc:
 	.global UiIcon_OverlayPointerTable
 UiIcon_OverlayPointerTable:
 	.incbin "baserom.gba", 0x0004ea74, 0x000000e4
-	.global Data_0804eb58
-Data_0804eb58:
+	.global UiIcon_ItemIconPointers
+UiIcon_ItemIconPointers:
 	.incbin "baserom.gba", 0x0004eb58, 0x000005cc
-	.global Data_0804f124
-Data_0804f124:
+	.global UiIcon_ItemIconPointersEnd
+UiIcon_ItemIconPointersEnd:
 	.incbin "baserom.gba", 0x0004f124, 0x000058f0
 	.global UiIcon_PsynergyIconPointers
 UiIcon_PsynergyIconPointers:
 	.incbin "baserom.gba", 0x00054a14, 0x00000410
-	.global Data_08054e24
-Data_08054e24:
+	.global UiIcon_PsynergyIconPointersEnd
+UiIcon_PsynergyIconPointersEnd:
 	.incbin "baserom.gba", 0x00054e24, 0x000041d0
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
@@ -510,8 +510,8 @@ Summon_OrderList:
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000c150c, 0x000000e8
-	.global Data_080c15f4
-Data_080c15f4:
+	.global Class_DefinitionTable
+Class_DefinitionTable:
 	.incbin "baserom.gba", 0x000c15f4, 0x00005010
 	.global Data_080c6604
 Data_080c6604:
@@ -1008,8 +1008,8 @@ Data_08128828:
 	.global Data_08128836
 Data_08128836:
 	.incbin "baserom.gba", 0x00128836, 0x0000000e
-	.global Data_08128844
-Data_08128844:
+	.global BattlePlacement_StepPairs
+BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x00128844, 0x00000024
 	.global Data_08128868
 Data_08128868:

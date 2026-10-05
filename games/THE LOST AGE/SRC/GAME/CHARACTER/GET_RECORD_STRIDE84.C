@@ -1,16 +1,15 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
-extern const u8 Data_080c15f4[];
-
 s32 Inventory_GetEquippedItem(struct BattleUnit *owner, s32 type);
 s32 Owner_DetermineClass(s32 class_id, u32 *djinn, s32 item);
 void Owner_UpdateClassActions(s32 owner_no);
 void Owner_BuildDigitTiles(s32 owner_no, struct BattleElementStats *elements);
 
-s32 Owner_GetRecordStride84(s32 arg0)
+/* A class's row of the class table. */
+struct ClassDefinition *Owner_GetRecordStride84(s32 class_id)
 {
-    return (s32)(Data_080c15f4 + arg0 * 0x54);
+    return &Class_DefinitionTable[class_id];
 }
 
 /* Recomputes what an owner's class, Djinn and equipment decide: the class

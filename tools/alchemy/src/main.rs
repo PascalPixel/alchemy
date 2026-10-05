@@ -22,9 +22,12 @@ mod gate;
 mod integrate;
 mod keep;
 mod label;
+mod ld_map;
 mod merge;
+mod objects;
 mod process;
 mod queues;
+mod show;
 mod similar;
 mod similar_command;
 mod targets;
@@ -52,6 +55,8 @@ Reports for people (nothing else reads them):
   deps        dependency map of not-yet-C code: what unblocks the most
   similar     each not-yet-C function's nearest C twins in either game
   worst       maintained C ranked by how mechanical it reads
+  objects     linked objects and functions that differ from the reference ROM
+  show        a built function beside the reference, instruction by instruction
 Run any command with --help for its options."#;
 
 fn main() -> ExitCode {
@@ -77,6 +82,8 @@ fn main() -> ExitCode {
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),
         "worst" => result(worst_command::run(rest)),
+        "objects" => result(objects::run(rest)),
+        "show" => result(show::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

@@ -27,6 +27,23 @@
  * slot = resource) keep their store (43-97). A scan of the whole built
  * tbs-en.elf finds no matched C function with a dead "movs #1; negs" before
  * its epilogue, so no house idiom to copy.
+ * 2026-10-05 deep finisher 1, still 32. The -da dumps of the score-0
+ * self-store show the mechanism exactly: local-alloc gives the reloaded
+ * byte a REG_EQUIV to its own address, reload deletes the store back to
+ * it, flow2 deletes the now dead load, the post-reload jump pass keeps the
+ * branch over the emptied arm (its life notes are stale), and jump2 drops
+ * branch and compare but not the split -1 (two insns by then). So the arm
+ * has to be a read-and-write-back of the same byte after the call. Every
+ * no-op spelling of that matches (0): "found->dirty |= 0", "&= 0xff",
+ * "&= ~0x100" (a bit the u8 cannot hold), "= (u8)found->dirty", and
+ * "found->count = found->count"; flags (just stored before the call) is
+ * 29. None is used: each is code without effect, which S2 does not allow.
+ * A value read before the call and restored in the arm keeps its store
+ * (36: memory is not equivalent across the call), "found = entry" and
+ * "entry = found; return entry" arms keep a move (33, 35), a -1 arm
+ * returning entry is 34 and passing found to Register is 36. A duplicate
+ * return is merged by the first jump pass already (the cross-jump that
+ * would merge register-equal arms only runs in jump2).
  */
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"

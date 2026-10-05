@@ -594,8 +594,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.o"(.text)
     "*/games/COMMON/SRC/BATTLE/CHECK_STATUS_OR_SPECIAL_ID.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE3.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000c1868)
-    "*/recon/tbs/fr/rom.o"(.rom.000c18b0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE11.o"(.text)
     "*/games/COMMON/SRC/BATTLE/PARTY/IS_UNIT_LISTED.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/COUNT_VALID_ENTRIES.o"(.text)

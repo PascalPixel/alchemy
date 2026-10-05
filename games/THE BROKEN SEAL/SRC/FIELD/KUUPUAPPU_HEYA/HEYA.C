@@ -63,7 +63,6 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-extern struct EventRuntime *Data_03001ebc;
 
 void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 

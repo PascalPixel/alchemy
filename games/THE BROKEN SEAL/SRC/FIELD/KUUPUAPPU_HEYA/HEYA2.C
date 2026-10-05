@@ -42,7 +42,6 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-extern struct EventRuntime *Data_03001ebc;
 
 void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x);
 void SceneDialogue_PromptAndCountSkip(s32 x);
@@ -144,7 +143,6 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-#define SCENE_WORD_1C8 (*(u32 *)(*(u8 **)&gEventWork + 456))
 
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
@@ -1032,15 +1030,14 @@ void SceneState_SetValue123Mode11(void)
     Engine_EventRequestExit(11);
 }
 
-/* Sets up the opening sequence: two calls with fixed argument pairs, a
- * write to the scene work record, and two more calls with fixed args. */
+/* The leader walks out of the house, which closes over sixteen frames. */
 void FieldScene_RunOpeningSequenceHead(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384); /* object_id 0, speed_limit 32768, acceleration 16384 */
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408); /* object_id 0, x 728, z 408 */
-    SCENE_WORD_1C8 = 16;
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
+    gEventWork->transition_frames = 16;
     Audio_PlayCue(123);
-    Engine_EventRequestExit(15); /* main:0808a248 */
+    Engine_EventRequestExit(15);
 }
 
 /* The leader walks to the door; the first time, actor 8 groans before the
@@ -1290,9 +1287,9 @@ void FieldScene_SelectActorPair(void)
 {
     u8 *record;
     s32 actor;
-    u8 *work;
+    struct EventWork *work;
 
-    work = (u8 *)Data_03001ebc;
+    work = gEventWork;
     Engine_EventBegin();
     Scheduler_RemoveCallback((u32)((s32)KuupuappuHeya_UpdateActorStops));
     GameFlag_Clear(0x107);
@@ -1308,14 +1305,14 @@ void FieldScene_SelectActorPair(void)
     Actor_FaceActor(25, ACTOR_IVAN, 0);
     Engine_EventWait(10);
     actor = 24;
-    switch (*(s16 *)(((s32)work + 0x182))) {
+    switch (work->raised_trigger) {
     case 202:
     case 203:
         Engine_EventSetMessage((s32)MsgKuupuappuImSurrounded);
         Actor_SetAttachedEffect(25, 0x102);
         Engine_ActorRunRepeatedMotion(25, 2);
         SceneActor_SetModeZeroAndValue(25, 20);
-        if (*(s16 *)(((s32)work + 0x182)) == 202) {
+        if (work->raised_trigger == 202) {
             actor = 25;
             break;
         }
@@ -1362,8 +1359,8 @@ void FieldScene_SelectActorPair(void)
     record = (u8 *)Object_GetById(2);
 
     (*(struct SceneObjectFlags **)(record + 80))->mode = 1;
-    Data_03001ebc->value_1c8 = 24;
-    Data_03001ebc->value_1c0 = 0x201;
+    gEventWork->transition_frames = 24;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     KuupuappuHeya_RunScene021C8();
@@ -1382,7 +1379,7 @@ void FieldScene_SelectActorPair(void)
         *(u16 *)((s32)record + 100) = shown;
     }
     Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
-    Data_03001ebc->value_1c0 = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_EventEnd();
 }
 
@@ -1963,7 +1960,7 @@ void RunEventScript01(void)
 {
     u32 i;
     struct FieldActor *record;
-    u8 *work;
+    struct EventWork *work;
     s32 base5_200d17c;
     u8 *actor12_record;
 
@@ -2161,11 +2158,9 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
-    /* Write the field at +0x1c8, then the phase/status word at +0x1c0, of
-     * the shared scene work record. */
-    work = (u8 *)Data_03001ebc;
-    *(s32 *)(work + 0x1c8) = 30;
-    *(s32 *)(work + 0x1c0) = 0x201;
+    work = gEventWork;
+    work->transition_frames = 30;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(60);

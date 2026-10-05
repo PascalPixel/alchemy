@@ -499,7 +499,7 @@ MakyuriIriguchi_SceneTableD:
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x1875001f
-	.4byte FieldScene_CallHelper2e58
+	.4byte MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget
 	.4byte 0x00000a02
 	.4byte 0x18750015
 	.4byte FieldScene_RunSingleStep
@@ -511,7 +511,7 @@ MakyuriIriguchi_SceneTableD:
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x1875000b
-	.4byte FieldScene_CallHelper2d50
+	.4byte MakyuriIriguchi_TriggerPillarRise
 	.4byte 0x00000002
 	.4byte 0xffff000a
 	.4byte FieldScene_RunIndexedStep63

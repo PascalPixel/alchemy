@@ -19,7 +19,7 @@ void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 
 extern struct EventWork *gEventWork;
-void Object_Destroy(struct FieldActor *object);
+void ObjectDispatch_ReleaseFar(struct FieldActor *object);
 
 
 
@@ -31,7 +31,7 @@ struct EffectSprite {
     u8 flags : 7;
 };
 
-void Func_080090d0(struct FieldActor *object);
+void ObjectDispatch_ReleaseFar(struct FieldActor *object);
 s32 ObjectTable_FindLastActiveId(void);
 void Event_SpawnObjectTable(s32 event_id, s32 last_id);
 
@@ -111,7 +111,7 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
                     sprite = (u8 *)object->sprite;
                     flags = sprite[29];
                     sprite[29] = flags & mask;
-                    Object_Destroy(object);
+                    ObjectDispatch_ReleaseFar(object);
                     sprite = NULL;
                     *slot = (struct FieldActor *)sprite;
                 }
@@ -138,7 +138,7 @@ void BattleEffect_ClearAllObjects(void)
         if (object != 0) {
             object->active = 1;
             ((struct EffectSprite *)object->sprite)->enabled = 0;
-            Func_080090d0(object);
+            ObjectDispatch_ReleaseFar(object);
             runtime->placed_actors[i] = 0;
         }
     }

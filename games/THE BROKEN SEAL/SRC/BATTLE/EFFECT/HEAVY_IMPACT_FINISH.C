@@ -54,7 +54,7 @@ void BattleFx_FinishHeavyImpact(s32 id)
         pos.y = object->y;
         pos.z = object->z;
         Camera_WorldToScreen(&pos);
-        Object_Destroy(object);
+        ObjectDispatch_ReleaseFar(object);
         Audio_PlayCue(0xa4);
         slot = scene->slots;
         count = 23;

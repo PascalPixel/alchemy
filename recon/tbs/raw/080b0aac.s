@@ -516,7 +516,7 @@ Shop_SelBuy:
 	ldrh r0, [r6]
 	negs r1, r1
 	subs r5, #1
-	bl Ability_GetMaximum
+	bl Item_AdjustCounterFar
 	cmp r5, #0
 	bne .L_080b0ee4
 .L_080b0ef4:

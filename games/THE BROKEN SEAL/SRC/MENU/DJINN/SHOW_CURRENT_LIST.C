@@ -19,7 +19,7 @@ void Audio_PlayCue(s32 cue);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
-void Func_08015078(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
 s32 GameFlag_TestFar(s32 flag);
 
@@ -50,7 +50,7 @@ s32 DjinnMenu_ShowCurrentList(void)
     }
     RenderOutput_RedrawSavedRectFar(window);
     UiWindow_DrawDividerLineFar(window, 0, 11, 28, 11);
-    Func_08015078((s32)MsgCurrentDjinn, menu->help_window, -96, 132);
+    UiText_DrawResourceFar((s32)MsgCurrentDjinn, menu->help_window, -96, 132);
     for (row = 0; row < 4; row++) {
         for (col = 0; col < 7; col++) {
             s32 id = row * 20 + col;

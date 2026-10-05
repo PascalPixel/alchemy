@@ -20,7 +20,7 @@ extern char MsgDjinnInfoText;
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_Clear(s32 window);
 void UiWindow_MarkVisibleTileAttributesFar(void);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 UiText_OpenEntryMessageFar(s32 window, s32 message);
 s32 Menu_DrawAtWindowOffset(void *window, s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiMenu_PositionCursor(s32 x, s32 y);
@@ -138,7 +138,7 @@ s32 DjinnMenu_ShowHelp(void)
     } while (cnt <= 6);
     do {
         UiWindow_Clear(win_a);
-        UiText_DrawMessageAt(selection + (s32)&MsgDjinnInfoTopic, win_a, 0, 0);
+        UiText_DrawResourceFar(selection + (s32)&MsgDjinnInfoTopic, win_a, 0, 0);
         channel = (struct UiChannelSlot *)UiText_OpenEntryMessageFar(win_b, selection + (s32)&MsgDjinnInfoText);
         Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
         Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);

@@ -57,8 +57,8 @@ s32 Inventory_AddItemFar(s32 owner, s32 item);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 s32 GameFlag_TestFar(s32 flag);
-void Func_08077240(s32 item, s32 mode);
-void Func_080772c0(s32 owner);
+void Item_AdjustCounterFar(s32 item, s32 mode);
+void Owner_RefreshClassActionsFar(s32 owner);
 s32 BattleFx_HasTriggerFar(s32 item);
 void Event_ClearInvalidPackedValuesFar(void);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
@@ -346,7 +346,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 Owner_GetStateFar(command);
                 for (work = 0; work < result + 1; work++) {
                     Inventory_RemoveFar(command, menu->selected_slots[0]);
-                    Func_08077240(menu->selected_items[0] & ITEM_ID_MASK, 1);
+                    Item_AdjustCounterFar(menu->selected_items[0] & ITEM_ID_MASK, 1);
                 }
                 Owner_RecalculateStatsFar(command);
 #else
@@ -354,7 +354,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 Owner_GetStateFar(owner);
                 for (work = 0; work < result + 1; work++) {
                     Inventory_RemoveFar(owner, menu->selected_slots[0]);
-                    Func_08077240(menu->selected_items[0] & ITEM_ID_MASK, 1);
+                    Item_AdjustCounterFar(menu->selected_items[0] & ITEM_ID_MASK, 1);
                 }
                 Owner_RecalculateStatsFar(owner);
 #endif
@@ -435,8 +435,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             Owner_RecalculateStatsFar(menu->pane_owner[0]);
             Owner_RecalculateStatsFar(menu->pane_owner[1]);
-            Func_080772c0(menu->pane_owner[0]);
-            Func_080772c0(menu->pane_owner[1]);
+            Owner_RefreshClassActionsFar(menu->pane_owner[0]);
+            Owner_RefreshClassActionsFar(menu->pane_owner[1]);
             result = 1;
             if (aborted == 0) {
                 menu->pane_owner[0] = menu->pane_owner[1];
@@ -571,8 +571,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             } else {
                 Owner_RecalculateStatsFar(menu->pane_owner[0]);
                 Owner_RecalculateStatsFar(menu->pane_owner[1]);
-                Func_080772c0(menu->pane_owner[0]);
-                Func_080772c0(menu->pane_owner[1]);
+                Owner_RefreshClassActionsFar(menu->pane_owner[0]);
+                Owner_RefreshClassActionsFar(menu->pane_owner[1]);
                 ItemMenu_SetMsgWin5();
 #if EDITION_INTERNATIONAL
                 ItemMenu_SetMsgWin6();
@@ -633,7 +633,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 break;
             }
             Owner_RecalculateStatsFar(menu->pane_owner[0]);
-            Func_080772c0(menu->pane_owner[0]);
+            Owner_RefreshClassActionsFar(menu->pane_owner[0]);
             menu->pane_icons[0]->active = 13;
             menu->item_count = ItemMenu_Collect(
                 Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);
@@ -657,7 +657,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             Owner_GetStateFar(menu->pane_owner[0])->inventory[menu->selected_slots[0]]
                 &= 0xfdff;
             Owner_RecalculateStatsFar(menu->pane_owner[0]);
-            Func_080772c0(menu->pane_owner[0]);
+            Owner_RefreshClassActionsFar(menu->pane_owner[0]);
             menu->pane_icons[0]->active = 13;
             menu->item_count = ItemMenu_Collect(
                 Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);

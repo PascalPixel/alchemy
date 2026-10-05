@@ -36,7 +36,7 @@ void WaitFrames(s32);
 void Audio_PlayCue(s32);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
-void Object_Destroy(void *);
+void ObjectDispatch_ReleaseFar(void *);
 void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_ShrinkObjectScaleUntilHalf(void);
 void BattleFx_CircleAnchor(void);
@@ -118,7 +118,7 @@ void RunBattleEffect14(void)
     WaitFrames(30);
     Audio_PlayCue(0x88);
     WaitFrames(20);
-    Object_Destroy(object);
+    ObjectDispatch_ReleaseFar(object);
     BattleFx_PrepareBufferInterpolation();
 }
 

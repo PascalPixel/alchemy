@@ -22,7 +22,7 @@ extern u8 MsgItemPlainName;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_ClearListFar(void *window);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
@@ -48,7 +48,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
 #else
     /* Japanese clears the info window's list and names the item with
-       UiText_DrawMessageAt. */
+       UiText_DrawResourceFar. */
     RenderOutput_ClearListFar(menu->info_window);
 #endif
     WaitFrames(1);
@@ -58,7 +58,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
                 + (s32)&MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
 #else
-        UiText_DrawMessageAt((menu->items[state->selected_index] & ITEM_ID_MASK)
+        UiText_DrawResourceFar((menu->items[state->selected_index] & ITEM_ID_MASK)
                 + (s32)&MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
 #endif

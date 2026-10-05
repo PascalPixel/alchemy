@@ -71,8 +71,8 @@ extern struct ItemMenuDisplayState *gMenuCtrlWork;
 s32 GameFlag_TestFar(s32 flag);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 mode);
-void Func_080153e0(s32 value);
-void Func_080152a8(void);
+void UiWork_SetAltFlagAndClearTableFar(s32 value);
+void UiWindow_MarkVisibleTileAttributesFar(void);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 void Resource_LoadPairedBlocksIfAvailable(void);
@@ -531,7 +531,7 @@ s32 ItemMenu_Run(void)
         }
     }
     Scheduler_EnableOverlayCallbacksWithFlags();
-    Func_080153e0(1);
+    UiWork_SetAltFlagAndClearTableFar(1);
     Link_DrawShiftedTilePairFar((void *)0x06002500);
     menu->count = Party_ListActiveOwnersFar(menu->owners);
     Resource_LoadPairedBlocksIfAvailable();
@@ -553,8 +553,8 @@ s32 ItemMenu_Run(void)
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     gMenuCtrlWork->busy = 0;
-    Func_080152a8();
-    Func_080153e0(0);
+    UiWindow_MarkVisibleTileAttributesFar();
+    UiWork_SetAltFlagAndClearTableFar(0);
     Iwram_CopyWords((void *)0x06004000, saved->tiles, 0x2000);
     Iwram_CopyWords((void *)0x05000080, saved->palette, 128);
     WaitFrames(1);

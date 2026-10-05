@@ -43,7 +43,7 @@ extern void Audio_PlayCue(s32);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 s32 Object_CommitPosition();
 
-extern void Object_Destroy(void *object);
+extern void ObjectDispatch_ReleaseFar(void *object);
 
 extern u8 gObjectSlots[];
 
@@ -227,7 +227,7 @@ void UpdateRisingParticleBurst(void *object)
         }
     }
     Audio_PlayCue(131);
-    Object_Destroy(source);
+    ObjectDispatch_ReleaseFar(source);
 }
 
 /* Sets the draw parameter of every live object whose first animation is

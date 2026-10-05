@@ -297,16 +297,10 @@ Trade_ListFlaggedEntriesFar:
 	.thumb_func
 SummonDefinition_Get:
 	overlay_veneer SummonDefinition_GetNear
-	.global Func_080771e8
-	.thumb_func
-Func_080771e8:
 	.global Djinn_GetDefinitionHeaderFar
 	.thumb_func
 Djinn_GetDefinitionHeaderFar:
 	overlay_veneer Djinn_GetDefinitionHeader
-	.global Func_080771f0
-	.thumb_func
-Func_080771f0:
 	.global Party_AdvanceOwnerCountToTargetFar
 	.thumb_func
 Party_AdvanceOwnerCountToTargetFar:
@@ -350,12 +344,6 @@ Party_AdjustSixDigitCounterAFar:
 	.thumb_func
 Item_GetEquipmentGroupFar:
 	overlay_veneer Item_GetEquipmentGroup
-	.global Ability_GetMaximum
-	.thumb_func
-Ability_GetMaximum:
-	.global Func_08077240
-	.thumb_func
-Func_08077240:
 	.global Item_AdjustCounterFar
 	.thumb_func
 Item_AdjustCounterFar:
@@ -419,9 +407,6 @@ Func_080772a0:
 	.thumb_func
 Inventory_CheckDiscardFar:
 	overlay_veneer Inventory_CheckDiscard
-	.global Func_080772b0
-	.thumb_func
-Func_080772b0:
 	.global Inventory_DiscardFar
 	.thumb_func
 Inventory_DiscardFar:
@@ -433,9 +418,6 @@ BattleFx_IsReviveFar:
 	.thumb_func
 Func_080772b8:
 	overlay_veneer BattleFx_IsRevive
-	.global Func_080772c0
-	.thumb_func
-Func_080772c0:
 	.global Owner_RefreshClassActionsFar
 	.thumb_func
 Owner_RefreshClassActionsFar:

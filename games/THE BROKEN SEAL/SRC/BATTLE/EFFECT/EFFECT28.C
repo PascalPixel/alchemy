@@ -89,7 +89,7 @@ struct EfxObj {
 extern u8 *gEventWork;
 extern const u8 BattleFx_ParticleEmitterScript[];
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Object_Destroy(void *object);
+void ObjectDispatch_ReleaseFar(void *object);
 void ItemIcon_LoadTilesFar(s32 item);
 #define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
@@ -298,10 +298,10 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
         do {
             if (ent->data != 0) {
                 if (ent->proc == (void (*)(void))BattleFx_SpawnRandomParticleAtPosition) {
-                    Object_Destroy(ent);
+                    ObjectDispatch_ReleaseFar(ent);
                 }
                 if (ent->data == (s32)BattleFx_ParticleScript) {
-                    Object_Destroy(ent);
+                    ObjectDispatch_ReleaseFar(ent);
                 }
             }
             work--;
@@ -354,7 +354,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
 void Object_DestroyIfPresent(void *object)
 {
     if (object != 0)
-        Object_Destroy(object);
+        ObjectDispatch_ReleaseFar(object);
 }
 
 void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object)
@@ -439,7 +439,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 
         WaitFrames(80);
         Object_SetMode(resource, 1);
-        Object_Destroy(object);
+        ObjectDispatch_ReleaseFar(object);
     }
 }
 
@@ -463,7 +463,7 @@ struct ParticleSlot {
 
 extern u8 *gEventWork;
 
-void Object_Destroy(void *object);
+void ObjectDispatch_ReleaseFar(void *object);
 
 #define ParticlePool (*(struct ParticleSlot **)((u8 *)&gEventWork - 88))
 
@@ -476,7 +476,7 @@ void BattleFx_ClearRandomParticles(void)
         do {
             if (ent->script != 0) {
                 if (ent->script == (s32)BattleFx_ParticleScript)
-                    Object_Destroy(ent);
+                    ObjectDispatch_ReleaseFar(ent);
             }
             n--;
             ent++;

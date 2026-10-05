@@ -97,7 +97,7 @@ struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 ArcTan2(s32 dz, s32 dx);
 void UiWindow_Clear(s32 window);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
 
 #define QUEUE_IO_WRITE_DELAY2(address, value) do {                          \
@@ -311,7 +311,7 @@ markers:
             }
             if (cursor_y < 0)
                 cursor_y = 0;
-            UiText_DrawMessageAt(best_message, work->window, cursor_x, cursor_y);
+            UiText_DrawResourceFar(best_message, work->window, cursor_x, cursor_y);
         }
     }
     q = &gIoWriteQueue;

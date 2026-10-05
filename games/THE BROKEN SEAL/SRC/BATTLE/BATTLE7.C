@@ -101,7 +101,7 @@ struct MarkerWork {
 struct ScriptObjectRuntime *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildField26Far(struct ScriptObjectRuntime *object, s32 value);
 s32 GameFlag_TestFar(s32 flag);
-void Object_Destroy(struct ScriptObjectRuntime *object);
+void ObjectDispatch_ReleaseFar(struct ScriptObjectRuntime *object);
 void Object_SetMode(struct ScriptObjectRuntime *object, s32 mode);
 void Object_ResetMotion(struct ScriptObjectRuntime *object);
 
@@ -284,7 +284,7 @@ void Battle_PlaceMapMarkers(void)
                 ObjectDispatch_SetSingleChildField26Far(object, 0);
                 if (GameFlag_TestFar(event->condition)) {
                     if ((event->value & 0xfff00000) == 0x500000) {
-                        Object_Destroy(object);
+                        ObjectDispatch_ReleaseFar(object);
                         continue;
                     }
                     Object_SetMode(object, 2);

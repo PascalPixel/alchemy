@@ -167,7 +167,7 @@ s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiIcon_PrepareObject(struct RenderOutput *marker);
 void Audio_PlayCue(s32 cue);
 
@@ -250,7 +250,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
                         (s32)menu->info_window, 0, 0);
 #else
                     RenderOutput_ClearListFar((s32)menu->info_window);
-                    UiText_DrawMessageAt(
+                    UiText_DrawResourceFar(
                         (menu->pane_action[0] & 0x3fff) + (s32)&MsgAbilityDescription,
                         menu->info_window, 0, 0);
 #endif

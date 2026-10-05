@@ -19,7 +19,7 @@ extern struct DebugPartyEntry Data_080c3f34[];
 
 void Party_RemoveActiveOwnerFar(s32 owner);
 void Party_AddActiveOwnerFar(s32 owner);
-void Func_080771f0(s32 owner, s32 level);
+void Party_AdvanceOwnerCountToTargetFar(s32 owner, s32 level);
 void OwnerAction_AddFar(s32 owner, s32 action);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 djinn);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 djinn);
@@ -65,7 +65,7 @@ s32 DebugParty_LoadPreset(s32 preset)
             continue;
 
         Party_AddActiveOwnerFar(owner);
-        Func_080771f0(owner, Data_080c3f34[row].level);
+        Party_AdvanceOwnerCountToTargetFar(owner, Data_080c3f34[row].level);
         state = (struct BattleUnit *)Owner_GetStateFar(owner);
         for (i = 0; i < 4; i++) {
             state->djinn_owned_counts[i] = 0;

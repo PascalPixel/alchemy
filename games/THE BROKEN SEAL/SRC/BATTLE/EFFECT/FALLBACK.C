@@ -25,7 +25,7 @@ u32 Random16(void);
 void Vector_AddPolarOffset(s32, u32, s32 *);
 void EffectSlot_Initialize(struct EffectSlot *, s32, s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(struct MotionObject *, s32);
-void Object_Destroy(struct MotionObject *);
+void ObjectDispatch_ReleaseFar(struct MotionObject *);
 void BattleFx_UpdateRadialCamera(struct EffectSlot *);
 void BattleFx_PrepareBufferInterpolation(void);
 
@@ -98,7 +98,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
     position.y = object->y + 0x80000;
     position.z = object->z;
     WaitFrames(8);
-    Object_Destroy(object);
+    ObjectDispatch_ReleaseFar(object);
     WaitFrames(4);
     WaitFrames(30);
     BattleFx_PrepareBufferInterpolation();

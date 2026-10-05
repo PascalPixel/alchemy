@@ -18,7 +18,7 @@
 extern struct ShopRuntime *gMenuWork;
 
 /* ui/ability_menu/build_available_list.c */
-s32 Ability_GetMaximum(s32, s32);
+s32 Item_AdjustCounterFar(s32, s32);
 
 void Shop_StepCursor(void);
 void Battle_ResetEffectCounterFar(void);
@@ -72,7 +72,7 @@ s32 AbilityMenu_BuildAvailableList(void)
     do {
         mode = (s8)state->shop_type;
         if (mode == Item_GetEquipmentGroupFar(index) &&
-            Ability_GetMaximum(index, 0) != 0) {
+            Item_AdjustCounterFar(index, 0) != 0) {
             *output = index;
             count++;
             output++;

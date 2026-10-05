@@ -47,7 +47,6 @@ s32 FixedSqrt(s32 value);
 
 void AnimationObjects_SelectAnimationFar(void *, s32);
 
-void *Func_08009030(s32 kind);
 u32 Random16(void);
 
 
@@ -256,7 +255,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
 
     zero = 0;
     Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), REG_DMA3);
-    object = Func_08009030(kind);
+    object = ResourceObject_CreateFar(kind);
     effect->object = object;
     if (object != NULL)
         object[9] &= ~0x0c;

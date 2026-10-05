@@ -10,7 +10,7 @@
 
 extern struct BattleFxScene *gEffectWork;
 struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
-void Object_Destroy(struct ObjectRuntime *);
+void ObjectDispatch_ReleaseFar(struct ObjectRuntime *);
 void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
@@ -41,7 +41,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
     object = Object_CreateFar(kind, x, y, z);
     if (object != NULL) {
         if (object->animation_kind == 0) {
-            Object_Destroy(object);
+            ObjectDispatch_ReleaseFar(object);
             return NULL;
         }
         object->terrain_height = ((struct ObjectRuntime *)scene->main_object)->terrain_height;

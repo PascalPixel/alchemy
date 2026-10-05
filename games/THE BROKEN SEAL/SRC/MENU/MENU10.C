@@ -33,7 +33,7 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 }
 
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
-void Func_080153d8(void *);
+void Graphics_ExpandVramTilesByColorTableFar(void *);
 void *Runtime_GetLowTableAddress(void);
 void Graphics_AdjustPaletteBank(s32);
 void UiWork_SetParamNibbleFar(s32 value);
@@ -125,7 +125,7 @@ s32 Menu_OpenBackdropScreen(void)
     CopyWords(Iwram_CopyWords, backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
     FillWords(Iwram_FillWords, BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
     FillWords(Iwram_FillWords, (void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
-    Func_080153d8(BG_CHAR_BLOCK(1) + 0x1000);
+    Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
     CopyWords(Iwram_CopyWords, BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP,
               Menu_BackdropFrameTile, TILE_SIZE_4BPP);
     Dma_Set(Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(5, 0), 0x80000010, REG_DMA3);

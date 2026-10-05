@@ -51,7 +51,7 @@ void Func_080772a0(s32 value);
 extern s16 EventTable_AbilityLoadouts[][33];
 s32 GameFlag_TestFar(s32);
 s32 GameFlag_SetBitFar(s32);
-void Ability_GetMaximum(s32, s32);
+void Item_AdjustCounterFar(s32, s32);
 
 s32 Shop_SelUnit(void)
 {
@@ -341,7 +341,7 @@ void EventTable_ApplyRowAbilities(s32 row_no)
             row = EventTable_AbilityLoadouts[row_no];
             entry = row + 24;
             do {
-                Ability_GetMaximum(value, 1);
+                Item_AdjustCounterFar(value, 1);
                 count++;
                 if (count > 7)
                     break;

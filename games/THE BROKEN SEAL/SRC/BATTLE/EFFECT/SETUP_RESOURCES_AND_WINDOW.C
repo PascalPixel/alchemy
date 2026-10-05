@@ -37,7 +37,7 @@ extern struct FxWindowWork gMapCellBuffer;
 
 struct FxObject *Object_GetById(s32 id);
 s32 GameFlag_TestFar(s32 flag);
-u16 Func_080153b8(void);
+u16 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 
 void BattleFx_SetupResourcesAndWindow(void)
@@ -87,7 +87,7 @@ void BattleFx_SetupResourcesAndWindow(void)
         work->x = (((object->x - 0x10000000) >> 16) * 240 / 4096) << 16;
         work->y = ((object->y * 160) / 4096) << 16;
     }
-    work->window_slot = Func_080153b8();
+    work->window_slot = Resource_LoadFixedBlockBIntoFreeSlotFar();
     tile = gVramBlockCache[work->window_slot].offset;
     work->window = UiWindow_CreateFar(0, 0, 0, 0, 2);
     work->unknown_12 = 0xffff;

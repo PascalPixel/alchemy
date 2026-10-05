@@ -44,7 +44,7 @@ extern u8 MsgSellAnythingElse;
 extern u8 MsgNoItems;
 void UiWindow_Clear(s32 window);
 s32 Inventory_CountFar(s32 unit_id);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 s32 Shop_GetSelectionState(s32, s32);
 s32 Shop_SelectQuantity(s32, s32, s32);
@@ -54,7 +54,7 @@ extern char MsgHowManyToSell;
 extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
 extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];
 extern u8 MsgChangedMind[], MsgSold[], MsgKeepIt[];
-void Func_080772b0(s32 unit_id, s32 slot);
+void Inventory_DiscardFar(s32 unit_id, s32 slot);
 
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 {
@@ -376,9 +376,9 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
         UiWindow_Clear(window);
         if (Inventory_CountFar(unit_id) == 0) {
 #if defined(TBS_EDITION_IT)
-            UiText_DrawMessageAt((s32)&MsgNoItems, window, 20, 12);
+            UiText_DrawResourceFar((s32)&MsgNoItems, window, 20, 12);
 #else
-            UiText_DrawMessageAt((s32)&MsgNoItems, window, 8, 20);
+            UiText_DrawResourceFar((s32)&MsgNoItems, window, 8, 20);
 #endif
         } else {
             slot = 0;
@@ -498,7 +498,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
     }
     Audio_PlayCue(102);
     for (i = 0; i < count; i++)
-        Func_080772b0(unit_id, slot);
+        Inventory_DiscardFar(unit_id, slot);
     Party_AdjustSixDigitCounterAFar(total);
     Shop_DrawMoney();
     Shop_DrawUnitGrid(shop->item_window, unit_id);

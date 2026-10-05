@@ -26,7 +26,7 @@ void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 struct MotionObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 extern const u8 BattleFx_FragmentScript[];
-void Object_Destroy(void *object);
+void ObjectDispatch_ReleaseFar(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 
 void Object_SetMode(void *, s32);
@@ -77,8 +77,8 @@ void RunBattleEffect11(void)
         }
     }
 
-    Object_Destroy(anchors[0]);
-    Object_Destroy(anchors[1]);
+    ObjectDispatch_ReleaseFar(anchors[0]);
+    ObjectDispatch_ReleaseFar(anchors[1]);
     BattleFx_PrepareBufferInterpolation();
 }
 

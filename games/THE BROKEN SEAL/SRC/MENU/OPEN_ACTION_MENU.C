@@ -43,8 +43,8 @@ void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32);
 s32 Party_ListActiveOwnersFar(u16 *);
 void Palette_LightenBankHighlight(s32 index);
-void Func_080153e0(s32);
-void Func_080152a8(void);
+void UiWork_SetAltFlagAndClearTableFar(s32);
+void UiWindow_MarkVisibleTileAttributesFar(void);
 s32 Party_SumDjinnCountsFar(s32);
 /* The zero-argument definition ignores the extra words at this call boundary. */
 void FourObjectMotion_InitializeTopRow();
@@ -90,7 +90,7 @@ s32 ActionMenu_Open(void)
 #if EDITION_INTERNATIONAL
     CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
     FillWords(Iwram_FillWords, (void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
-    Func_080153e0(1);
+    UiWork_SetAltFlagAndClearTableFar(1);
 #endif
     state->selector_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < MENU_ROW_COUNT; index++)
@@ -114,8 +114,8 @@ s32 ActionMenu_Open(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
 #if EDITION_INTERNATIONAL
-    Func_080152a8();
-    Func_080153e0(0);
+    UiWindow_MarkVisibleTileAttributesFar();
+    UiWork_SetAltFlagAndClearTableFar(0);
     WaitFrames(1);
 #endif
     CopyWords(Iwram_CopyWords, (void *)0x05000000, palette, 64);

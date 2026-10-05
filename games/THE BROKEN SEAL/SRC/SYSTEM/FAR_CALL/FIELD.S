@@ -29,10 +29,8 @@ Object_InitializeMode:
 	overlay_veneer AnimationObjects_SelectAnimation
 	overlay_veneer AnimationObjects_SetHalfword02OnActive
 	.global ResourceObject_CreateFar
-	.global Func_08009030
 	.thumb_func
 ResourceObject_CreateFar:
-Func_08009030:
 	.global GetBattleEffectObject
 	.thumb_func
 GetBattleEffectObject:
@@ -116,9 +114,6 @@ Object_CreateFar:
 	.thumb_func
 Func_080090c8:
 	overlay_veneer FieldObject_Create
-	.global Func_080090d0
-	.thumb_func
-Func_080090d0:
 	.global Object_Destroy
 	.thumb_func
 Object_Destroy:
@@ -284,9 +279,6 @@ Func_080091e0:
 	.thumb_func
 Animation_SetStateField5Bits2To3Far:
 	overlay_veneer Animation_SetStateField5Bits2To3
-	.global Func_080091f0
-	.thumb_func
-Func_080091f0:
 	.global Runtime_SetWorkTripleIfNonNegativeFar
 	.thumb_func
 Runtime_SetWorkTripleIfNonNegativeFar:

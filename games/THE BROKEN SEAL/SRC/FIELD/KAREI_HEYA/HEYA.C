@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -14,7 +15,6 @@ typedef struct Placement {
     u16 y;
 } Placement;
 
-extern u8 KareiHeya_Exits[];
 
 extern const struct ScenePlacement gKareiHeyaPlacements1Entrance9[];
 extern const struct ScenePlacement gKareiHeyaPlacements1[];

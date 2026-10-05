@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -10,11 +11,7 @@ extern u8 *gWork;
 
 extern s16 Data_02000240[];
 
-extern s32 GomaHashira_Actor13Frames;
 
-extern u8 GomaHashira_Scripts[];
-extern u8 GomaHashira_Messages[];
-extern u8 GomaHashira_Actors[];
 
 void BattleFx_SetPhaseRequest(s32, s32);
 void GomaHashira_SpawnPillarEffect();

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_RUNTIME.H"
@@ -31,7 +32,6 @@ u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
 }
 
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
-extern u8 Encounter_AreaEntryTable[];
 unsigned char BattleFx_GetPhaseResult(s32 phase_index)
 {
   s32 entry_offset;

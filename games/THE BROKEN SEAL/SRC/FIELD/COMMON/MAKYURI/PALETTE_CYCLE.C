@@ -1,9 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
 extern s32 gFrameCount;
-extern s32 gPaletteCycleRed;
-extern s32 gPaletteCycleGreen;
-extern s32 gPaletteCycleBlue;
 
 void Makyuri_CyclePalette(void)
 {

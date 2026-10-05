@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
 #include "EVENT_RUNTIME.H"
@@ -5,7 +6,6 @@
 #include "text/MSG_IDS.H"
 
 struct EffectDescriptor;
-extern const u8 Field_TileMessageOffsets[];
 extern struct EventRuntime *gEventWork;
 
 

@@ -1,9 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
 
-extern u16 DisplayScroll_Position;
-extern s16 DisplayScroll_Busy;
-extern s16 DisplayScroll_LastPosition;
 
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
 

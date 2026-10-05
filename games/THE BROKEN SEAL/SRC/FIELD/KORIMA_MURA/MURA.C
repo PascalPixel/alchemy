@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -91,7 +92,6 @@ extern const struct SceneEntrance gKorimaMuraEntrances[];
 extern const struct SceneEntrance gKorimaMuraEntrances2[];
 extern const struct SceneEntrance gKorimaMuraEntrances3[];
 extern const struct SceneRegion gKorimaMuraRegions2[];
-extern const u32 gKorimaMuraExits[];
 extern const struct ScenePlacement gKorimaMuraPlacements[];
 extern const struct ScenePlacement gKorimaMuraPlacements1[];
 extern const struct ScenePlacement gKorimaMuraPlacements3[];
@@ -99,11 +99,8 @@ extern const struct SceneEvent gKorimaMuraEvents[];
 extern const struct SceneEvent gKorimaMuraEvents3[];
 extern u8 *gWork;
 
-extern u8 KorimaMura_SwitchCells[];
 void FieldScene_ConfigureActor0ThenRun();
 
-extern u8 KorimaMura_Actor8Path[];
-extern u8 KorimaMura_DebrisScript[];
 void Engine_MapCopyCellAttributes();
 void Object_SetTargetAndCallback();
 
@@ -113,15 +110,12 @@ struct Flags9 {
     u8 mode : 2;
 };
 
-extern u8 KorimaMura_EntryActions[];
-extern u8 KorimaMura_EntryScript[];
 void FieldScene_RunFlag845And847Branches(void);
 void FieldScene_RunExtendedActorSequence(void);
 void Event_CallWithLastActiveObjectId(u8 *script);
 extern s32 KorimaMura_PendingPose;
 extern s32 KorimaMura_LayoutFlag;
 
-extern u8 KorimaMura_RegionScript[];
 
 s32 KorimaMura_ApplyPendingPose(s32 arg0)
 {

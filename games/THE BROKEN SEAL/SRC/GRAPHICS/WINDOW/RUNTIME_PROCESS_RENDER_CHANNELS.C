@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "GLOBAL_CELLS.H"
@@ -90,9 +91,6 @@ void UiWork_ProcessRenderChannels(void)
 extern volatile u32 gKeysHeld;
 extern u32 gKeysPressedLatch;
 extern volatile u16 gLagFramesShown;
-extern const u8 UiText_SpeedDelays[3];
-extern const u8 UiText_SpeedSteps[3];
-extern const u8 UiText_SpeedCueGaps[3];
 
 void UiWork_ResetChannelTransition(struct UiChannelSlot *channel);
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);

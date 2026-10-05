@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -64,10 +65,6 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-extern u8 KorimaHiroba_Scripts[];
-extern u8 KorimaHiroba_Messages[];
-extern u8 KorimaHiroba_Actors[];
-extern u8 KorimaHiroba_Extras[];
 
 u8 *SceneData_GetScriptTable(void) { return KorimaHiroba_Scripts; }
 

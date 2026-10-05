@@ -1,7 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "INPUT.H"
 
-extern u16 BattleFx_CyclePatternWords[];
 
 u16 BattleFx_GetCycledTableWord(void)
 {
@@ -13,7 +13,6 @@ u16 BattleFx_GetCycledTableWord(void)
     return *(u16 *)((u8 *)words + (((input->held >> 4) & 15) << 1));
 }
 
-extern u16 BattleFx_EightWayHeadingWords[];
 
 u16 BattleFx_GetEightWayHeadingWord(void)
 {

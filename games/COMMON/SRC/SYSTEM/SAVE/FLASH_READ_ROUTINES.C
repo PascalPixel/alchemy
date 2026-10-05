@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 extern u8 *gFlash;
-extern volatile u8 gFlashTimerNum;
 extern u8 gFlashTimeoutFlag;
 extern u16 *volatile gFlashTimerReg;
 extern volatile u16 gFlashSavedIme;

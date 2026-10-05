@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "RESMENU.H"
 #include "TYPES.H"
@@ -8,7 +9,6 @@
 #include "RESOURCE_IDS.H"
 #include "text/MSG_IDS.H"
 
-extern u8 Menu_SelectionStepDelays[];
 void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacterAtOffset(s32 resource_id, void *work, s32 x, s32 y);
 void Audio_PlayCue(s32 sound_id);

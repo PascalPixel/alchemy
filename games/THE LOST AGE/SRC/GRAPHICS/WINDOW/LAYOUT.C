@@ -1,8 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "RAM_BUFFER.H"
-extern u8 Data_03001e90[];
-extern u8 Data_03001e8c[];
 
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
                    s32 value)

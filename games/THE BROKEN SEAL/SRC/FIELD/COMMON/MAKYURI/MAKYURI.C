@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "MAKYURI.H"
 #include "FIELD_EFFECT.H"
@@ -13,8 +14,6 @@ s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *actor);
 void Object_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
-extern s16 Makyuri_MoveAngles[];
-extern const s32 Makyuri_RampScript[];
 extern const s32 Makyuri_ScaleCounterScript[];
 extern u32 gKeyState;
 extern u32 gKeysHeld;

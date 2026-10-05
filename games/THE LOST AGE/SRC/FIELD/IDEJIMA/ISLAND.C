@@ -1,7 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern s16 gScanlineWavePage;
-extern s32 gScanlineWaveCount;
 
 void ScanlineWave_Reset(void)
 {

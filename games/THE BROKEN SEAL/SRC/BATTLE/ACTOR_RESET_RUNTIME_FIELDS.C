@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
@@ -65,7 +66,6 @@ struct AdvanceSprite {
     u16 attr3;
 };
 
-extern u8 BattlePres_AdvanceArrowTiles[];
 extern volatile u32 gFrameCount;
 extern volatile u32 gKeysHeld;
 void Audio_PlayCue(s32 cue);

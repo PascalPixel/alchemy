@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "FIELD_EVENT.H"
@@ -106,25 +107,13 @@ struct Actor_02000640 {
 
 extern u8 *gWork;
 
-extern const u8 KuupuappuMuraSai_Scripts[];
-extern const u8 KuupuappuMuraSai_Messages[];
-extern const u8 KuupuappuMuraSai_Actors[];
-extern const u8 KuupuappuMuraSai_Extras[];
 
-extern const u16 KuupuappuMuraSai_Scene5Cells[];
-extern const u16 KuupuappuMuraSai_Scene6Cells[];
-extern const u16 KuupuappuMuraSai_Scene7Cells[];
-extern const u16 KuupuappuMuraSai_Scene8Cells[];
-extern const u16 KuupuappuMuraSai_Scene9Cells[];
-extern const u16 KuupuappuMuraSai_Scene10Cells[];
-extern const u16 KuupuappuMuraSai_Scene12Cells[];
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
 void ActorPresentation_MoveActorToPositionAndWait();
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
 s32 UpdateActorProximity(u8 *actor);
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
-extern u8 *Data_03001e8c[];
 
 
 

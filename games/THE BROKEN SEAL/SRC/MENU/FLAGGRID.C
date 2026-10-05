@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "BATTLE_RUNTIME.H"
 
-extern const u8 Menu_HexDigitsString[];
 extern const u8 Menu_ColonString[];
 void RenderOutput_PrepareForRedraw(void);
 void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);

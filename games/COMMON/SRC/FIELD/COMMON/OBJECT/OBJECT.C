@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "OBJDISP.H"
@@ -28,7 +29,6 @@
 #include "VRAM_BLOCK.H"
 #include "IWRAM_CALL.H"
 
-extern u8 Map_TileDissolveOrder[];
 
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 
@@ -37,13 +37,10 @@ void Object_UpdateAllMotion(void);
 void Object_UpdateAllThumb(void);
 void ObjectSystem_UpdateCameraFixed(void);
 void ObjectSystem_UpdateCamera(void);
-extern s32 Data_03001d1c;
-extern s32 Data_03001cc0;
 
 extern struct ObjectRuntime *gObjectSlots;
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
-extern const u32 ObjectDispatch_DefaultScript[];
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *, s32);
@@ -662,8 +659,6 @@ struct FixedCamera {
 };
 
 extern u8 Render_DecodeFrame[];
-extern u8 Render_DecodeFrameCodeSize[];
-extern const s32 Camera_FixedViewMatrix[];
 void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale, u16 angle);
 s32 ArcTan2(s32 x, s32 y);
 void Render_ResetTransformState(void);

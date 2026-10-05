@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PARTY.H"
 #include "TYPES.H"
@@ -13,7 +14,6 @@
 #include "BATTLE_PRESENTATION.H"
 #include "FIXED_MATH.H"
 
-extern s8 Data_080c5c10[];
 
 void Graphics_AdvancePaletteCycle(void);
 void BattlePres_ClearAllActorRecordModes(void);
@@ -46,9 +46,6 @@ struct SparkWork {
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 height);
 
-extern s32 Data_080c3604[];
-extern u8 Data_080c3620[];
-extern s32 Data_080c3628[];
 s32 FixedSqrt(s32 value);
 u32 Random16(void);
 

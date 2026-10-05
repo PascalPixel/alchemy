@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
@@ -89,7 +90,6 @@ struct OutputSprite {
         } f;
     } attr2;
 };
-extern u16 Ui_BounceScales[];
 
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 {
@@ -150,10 +150,6 @@ struct SpriteOutput {
 };
 
 extern u32 gFrameTick;
-extern const u8 UiSprite_CursorFrameTiles[];
-extern const u8 UiSprite_CursorBobOffsets[];
-extern const s8 UiSprite_WobbleOffsets[][2];
-extern const s8 UiSprite_BounceOffsets[];
 
 u32 Random16(void);
 

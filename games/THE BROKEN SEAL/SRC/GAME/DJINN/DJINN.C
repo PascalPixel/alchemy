@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "INVENTORY.H"
 #include "BATTLE_RANDOM.H"
 #include "FIXED_MATH.H"
@@ -13,7 +14,6 @@
 s32 Owner_GetResistanceValue(s32, s32);
 s32 BattleRandomPercent(void);
 
-extern const u16 Djinn_DefinitionTable[];
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
 u32 GameFlag_SetBit(u32 flag);

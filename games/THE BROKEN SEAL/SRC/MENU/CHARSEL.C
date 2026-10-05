@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "IO_REG.H"
 #include "CHARACTER_MENU.H"
 #include "PSYNERGY_MENU.H"
@@ -12,7 +13,6 @@
 #include "text/MSG_IDS.H"
 
 struct InventoryMenuState;
-extern u8 CharacterMenu_CursorWidths[];
 extern volatile u32 gKeyState, gKeysRepeat;
 void Palette_LightenBankHighlight(s32 bank);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);

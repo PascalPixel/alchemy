@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -24,7 +25,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern const u8 LightningBolts_Sparks[][2];
 
 #define SPARK_COUNT 1024
 

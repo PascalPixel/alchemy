@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "IO_REG.H"
@@ -9,9 +10,6 @@
 
 extern u8 gMenuCtrlWork[];
 
-extern s32 Korosseo_CompetitorStartX;
-extern s32 Korosseo_CompetitorStartZ;
-extern s32 Korosseo_CompetitorStartAngle;
 
 struct CompetitorState {
     u8 unknown_00[6];

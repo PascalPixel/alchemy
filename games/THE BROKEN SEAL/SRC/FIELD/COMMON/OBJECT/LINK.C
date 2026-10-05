@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FACING_OBJECT.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
@@ -17,7 +18,6 @@ void Object_Destroy(void *);
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *);
 void ObjectGroup_SetChildValue(struct DispatchObject *, s32);
 extern u32 gFrameCount;
-extern u8 ObjectGroup_BlinkChildValues[];
 
 void ObjectMotion_SetAngleToward(s32 first_id, s32 second_id, s32 wait)
 {

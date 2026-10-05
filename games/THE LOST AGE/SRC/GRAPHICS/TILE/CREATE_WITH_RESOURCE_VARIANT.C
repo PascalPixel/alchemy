@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
@@ -5,7 +6,6 @@
 #include "text/MSG_IDS.H"
 
 void VramBlock_LoadResourceFar(s32 entry_no, s32 mode, s32 resource_id);
-extern char ResourceId_UiIconTiles;
 
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawNumberAtOffsetFar();

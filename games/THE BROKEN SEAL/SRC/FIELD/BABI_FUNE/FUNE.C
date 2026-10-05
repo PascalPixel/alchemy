@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -6,23 +7,15 @@
 #include "IWRAM_CALL.H"
 #include "FIXED_POINT_POSITION.H"
 
-extern u8 BabiFune_SceneTableA[];
 
 #define PALETTE ((volatile u16 *)0x05000000)
-extern u8 BabiFune_SceneTableB[];
-extern u8 BabiFune_SceneTableC[];
-extern u8 BabiFune_SceneTableD[];
 void DisplayScroll_InitializeHBlankDma(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void SceneEffect_LoadTablesAndStopDma0(void);
 
 s32 Math_DivideUnsigned();
-extern u16 BabiFune_PaletteStep;
-extern const u16 BabiFune_PaletteFrames[];
 
-extern const s32 BabiFune_DriftScript[];
 
 extern s32 BabiFune_CountTicks;
-extern s32 BabiFune_Count;
 
 u8 *BabiFune_GetEntrances(void)
 {
@@ -140,13 +133,8 @@ extern s32 BabiFune_ShimmerActive;
 extern s32 BabiFune_ShimmerPhase;
 extern s32 BabiFune_DriftActive;
 extern s32 BabiFune_SwellActive;
-extern s32 BabiFune_SwellPhase;
 extern s32 BabiFune_SwellLayerSixY;
 extern s32 BabiFune_SwellLayerSevenY;
-extern s32 BabiFune_StoredSlot0;
-extern s32 BabiFune_StoredRecord1;
-extern s32 BabiFune_StoredSlot3;
-extern s32 BabiFune_StoredRecord2;
 
 void BabiFune_UpdateDriftingObject(u8 *obj);
 

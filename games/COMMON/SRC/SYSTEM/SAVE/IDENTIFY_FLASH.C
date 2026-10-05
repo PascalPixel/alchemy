@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
@@ -11,8 +12,6 @@ extern const struct FlashChip *const Flash_Chips[];
 extern u32 Flash_Handler3;
 extern u32 Flash_Handler0;
 extern const void *gFlash;
-extern u32 Flash_Handler1;
-extern u32 Flash_Handler2;
 extern u32 Flash_Handler4;
 
 s32 IdentifyFlash(void)

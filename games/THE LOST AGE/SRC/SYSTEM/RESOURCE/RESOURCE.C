@@ -1,13 +1,11 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 
-extern void *Resource_DirectoryTable[];
 
-extern const u8 Resource_PatchThumbBranchCode[];
-extern u8 Resource_PatchThumbBranchCodeSize[];
 
 void Resource_ReservedNoOp(s32 count)
 {

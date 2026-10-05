@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
@@ -15,10 +16,6 @@
 #include "RAM_BUFFER.H"
 #include "CALL.H"
 
-extern u8 gTitleEntrances[];
-extern u8 gTitleExits[];
-extern u8 gTitlePlacements[];
-extern u8 gTitleEvents[];
 
 extern u32 gKeyState;
 extern u32 gKeysHeld;

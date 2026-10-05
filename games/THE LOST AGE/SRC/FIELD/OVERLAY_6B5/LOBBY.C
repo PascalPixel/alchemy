@@ -1,8 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
-extern const s32 LinkLobby_SlotValues[];
-extern const u8 LinkLobby_SlotColumns[];
 
 void LinkLobby_WriteSlotValue(s32 slot)
 {

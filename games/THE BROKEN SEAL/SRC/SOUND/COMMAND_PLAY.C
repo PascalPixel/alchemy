@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "AUDIO_ENGINE.H"
 
-extern u8 gMusicFadeRequested;
 
 void Audio_PlaySound(u16 id);
 

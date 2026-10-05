@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CHOJO.H"
 
 void VinasuChojo_FlashScreen(void)
@@ -76,7 +77,6 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
     }
 }
 
-extern const s32 VinasuChojo_OrbitParticleScript[];
 
 void SceneEffect_SpawnParticlesAboveActor(void)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -14,11 +15,7 @@
 extern s16 RamakanSabaku_SandVramSlot;
 extern s16 RamakanSabaku_SandCounter;
 extern s16 RamakanSabaku_SandPhase;
-extern s16 RamakanSabaku_SandLevel;
-extern s16 RamakanSabaku_SandFlash;
-extern const u16 RamakanSabaku_SandPalette[16];
 extern struct MenuSprite RamakanSabaku_SandWork[];
-extern u8 RamakanSabaku_SandTileBuffer[];
 extern u32 gFrameCount;
 
 void RamakanSabaku_RunSandstorm(void)

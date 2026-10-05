@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "AFFINE.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
@@ -16,17 +17,11 @@
 typedef void (*KeyCallbackFn)(void);
 
 extern u32 gRandomSeed;
-extern const u16 Math_ArcTanTable[];
 
-extern const u8 System_BasicColorPalette[];
 
-extern u8 gNumberTextBuffer[];
 
-extern const u8 RomBytes_0800795c[];
 
-extern u8 Text_PowersOfTen[];
 
-extern u16 *gDebugTextCursor;
 
 void Scheduler_ResetTaskTable(void)
 {

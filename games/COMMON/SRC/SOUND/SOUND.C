@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "AUDIO_ENGINE.H"
 #include "RAM_BUFFER.H"
 
@@ -18,7 +19,6 @@ void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
 extern struct SoundWork Sound_Work;
 extern struct CgbNote Sound_CgbNotes[4];
-extern u8 Sound_WorkBytes[];
 extern const struct PlayerSlot Sound_PlayerSlots[];
 extern const struct SongEntry Sound_SongTable[];
 

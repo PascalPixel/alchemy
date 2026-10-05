@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -17,14 +18,9 @@
 void SceneEffect_SpawnParticlesAboveActor(void);
 
 extern u8 VinasuChojo_BeamOpenAction[];
-extern u8 VinasuChojo_BeamEndAction[];
 void SceneEffect_SpawnParticlesAboveActor();
 void VinasuChojo_RunTransitionStep();
 
-extern s32 VinasuChojo_TransitionTimer;
-extern s32 VinasuChojo_TransitionStep;
-extern u8 VinasuChojo_BeamRiseAction[];
-extern u8 VinasuChojo_BeamCloseAction[];
 void Object_SetActionCallbackAndRefreshById();
 void Event_SetDestination();
 void ObjectTable_Snapshot();
@@ -38,22 +34,15 @@ void SceneEffect_SpawnParticlesBesideActor(void);
 
 
 void VinasuChojo_StepSpriteRotation(struct FieldActor *actor);
-extern u8 VinasuChojo_StepBackAction[];
-extern u8 VinasuChojo_LeapAction[];
 extern u8 VinasuChojo_ScaleStepAction[];
-extern u8 VinasuChojo_PartyHeadingAction[];
-extern u8 VinasuChojo_PartyExitAction[];
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
 void Graphics_EnableObjLayerAndCallbacks();
 void Object_RefreshSelectorById();
 
-extern const u8 VinasuChojo_RiseActionScript[];
-extern const s32 VinasuChojo_RiseParticleScript[];
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor);
 void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 
-extern const s32 VinasuChojo_BesideParticleScript[];
 void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
 
 void VinasuChojo_UpdateBeamActors(void)

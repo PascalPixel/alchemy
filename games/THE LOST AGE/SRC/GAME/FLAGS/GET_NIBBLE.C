@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u8 GameFlagBytes[];
 
 s32 GameFlag_GetNibble(u32 flag)
 {

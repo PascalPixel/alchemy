@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "FAR_RUNTIME.H"
@@ -359,10 +360,6 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
     return 1;
 }
 #else
-extern const u8 Menu_ShortcutLString[];
-extern const u8 Menu_ShortcutLColonString[];
-extern const u8 Menu_ShortcutRString[];
-extern const u8 Menu_ShortcutRColonString[];
 
 void UiText_DrawStringInWindowFar(const u8 *text, s32 *window, s32 x, s32 y);
 

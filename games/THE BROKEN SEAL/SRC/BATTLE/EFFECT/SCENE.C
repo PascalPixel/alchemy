@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "MAP_SCROLL.H"
@@ -49,7 +50,6 @@ void BattleFx_CycleObjectValueByCounter();
 #define CALLBACK_1      (u32)BattleFx_FlickerObjectAndTick
 #define CALLBACK_2      (u32)BattleFx_CycleObjectValueByCounter
 
-extern const s32 Data_080a0108[];
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 void BattleFx_StartBufferInterpolation(s32);
 

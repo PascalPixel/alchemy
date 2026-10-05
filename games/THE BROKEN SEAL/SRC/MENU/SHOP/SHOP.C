@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -21,16 +22,13 @@ s32 Menu_RunConfirmSelectionAtFar(s32, s32, s32);
 
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-extern u16 RomBytes_080b413c[];
 
 struct Record_080b06c0 {
     u8 filler0[4];
     u8 values[21];
 };
 
-extern u16 RomBytes_080b4100[];
 
-extern u8 Shop_GlyphBytes[];
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
 extern u8 gEventWork[];
 void BattleFx_ApplyColorToTargetBufferFar(s32, s32);

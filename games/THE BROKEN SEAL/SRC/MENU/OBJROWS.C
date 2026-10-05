@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CHARACTER_MENU.H"
 #include "ANIMSPR.H"
 #include "RENDER_INPUT.H"
@@ -36,7 +37,6 @@ void Menu_UpdateFirstObjectRowPositions(void);
 s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 extern struct FourObjectMotionState *gMenuWork;
-extern const s32 Menu_PartySpriteResourceIds[4];
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 void Menu_UpdateSecondObjectRowPositions(void);
 

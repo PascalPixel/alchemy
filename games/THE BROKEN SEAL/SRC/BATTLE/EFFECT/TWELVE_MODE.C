@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -23,17 +24,7 @@
 extern u8 gBattleFxWork[];
 
 extern u16 ParticleStreams_CellOffsets[];
-extern u16 BattleFx_GlintCellOffsets[];
-extern u8 BattleFx_GlintCellWidths[];
-extern u8 BattleFx_GlintCellHeights[];
 
-extern u8 TwelveMode_Records[];
-extern const u8 TwelveMode_StrikeWidths[];
-extern const u8 TwelveMode_StrikeHeights[];
-extern const u16 TwelveMode_StrikeOffsets[];
-extern const u8 TwelveMode_StrikeReach[];
-extern const u8 TwelveMode_ColumnStages[];
-extern const u8 TwelveMode_GlintDrawFlags[];
 
 #define gBlitters ((DrawRectangle *)gWorkSlot)
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)

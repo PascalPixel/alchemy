@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "PROBE.H"
 #include "CALL.H"
@@ -5,7 +6,6 @@
 #include "MAKYURI.H"
 #include "FIELD_EVENT.H"
 
-extern const u16 MakyuriHeya_FloorSwitchCloseCells[];
 
 void MakyuriHeya_WalkLeaderIn(void)
 {

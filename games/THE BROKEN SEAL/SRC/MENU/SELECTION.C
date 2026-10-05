@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESMENU.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -28,8 +29,6 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
-extern s8 Menu_TopEntryPositionByCommand[];
-extern s8 Menu_TopEntryCommandByPosition[];
 
 s32 Party_SumDjinnCountsFar(s32);
 void *AffineEffect_InitializeWork(void);
@@ -106,7 +105,6 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
     return arg1;
 }
 
-extern s8 Menu_SaveSlotActionByPosition[];
 
 s32 Menu_SelectSaveSlotAction(void)
 {

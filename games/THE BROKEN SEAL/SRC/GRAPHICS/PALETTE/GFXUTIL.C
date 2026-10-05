@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "PROJECT.H"
 #include "TYPES.H"
@@ -10,34 +11,10 @@
 #include "IO_REG.H"
 #include "FIXED_MATH.H"
 
-extern const u8 Resource_DecodeHalfwordLz[];
 
-extern u8 Resource_DecompressHalfwordsCodeSize[];
-extern const u8 Resource_DecodeType01Arm[];
-extern const u8 Resource_Decode2[];
-extern const u8 Resource_DecodeByteLzArm[];
 
-extern u8 Resource_DecodeType01CodeSize[];
-extern u8 Resource_Decode2CodeSize[];
-extern u8 Resource_DecodeByteLzCodeSize[];
 
-extern const u8 ColorBuffer_BrightenKernel[];
-extern const u8 ColorBuffer_DarkenKernel[];
-extern const u8 ColorBuffer_ScaleThreeQuartersKernel[];
-extern const u8 ColorBuffer_HalveKernel[];
-extern const u8 ColorBuffer_BrightenPartialKernel[];
-extern const u8 ColorBuffer_DarkenPartialKernel[];
-extern const u8 ColorBuffer_ScaleNonzeroThreeQuartersKernel[];
-extern const u8 ColorBuffer_HalveNonzeroKernel[];
 
-extern u8 ColorBuffer_BackupAndBrightenCodeSize[];
-extern u8 ColorBuffer_BackupAndDarkenCodeSize[];
-extern u8 ColorBuffer_BackupAndScaleThreeQuartersCodeSize[];
-extern u8 ColorBuffer_BackupAndHalveCodeSize[];
-extern u8 ColorBuffer_BackupAndBrightenPartialCodeSize[];
-extern u8 ColorBuffer_BackupAndDarkenPartialCodeSize[];
-extern u8 ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize[];
-extern u8 ColorBuffer_BackupAndHalveNonzeroCodeSize[];
 
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target)
 {

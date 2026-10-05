@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 
 #include "TYPES.H"
@@ -5,11 +6,7 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 
-extern s32 GomaHashira_Actor13Frames;
 
-extern u8 GomaHashira_Scripts[];
-extern u8 GomaHashira_Messages[];
-extern u8 GomaHashira_Actors[];
 
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);

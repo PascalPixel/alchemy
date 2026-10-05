@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
@@ -169,9 +170,6 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 
 void ObjectGroup_TickMemberTimers(void);
 
-extern const u8 BladeRain_CellWidths[];
-extern const u8 BladeRain_CellHeights[];
-extern const u16 BladeRain_CellSourceOffsets[];
 
 void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
 {
@@ -290,7 +288,6 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
 }
 
 extern DrawRectangle gWorkSlot[];
-extern u16 BattleFx6_FlareCells[];
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "EFFECT_STEP.H"
 #include "IWRAM_CALL.H"
@@ -137,11 +138,6 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
 }
 
 extern DrawRectangle gWorkSlot[];
-extern u16 BattleFx6_FlareCells[];
-extern u8 BeamSequence_CellWidths[];
-extern u8 BeamSequence_CellHeights[];
-extern u16 BeamSequence_CellSheetOffsets[];
-extern u8 BeamSequence_CellReaches[];
 
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleFx_SetupCanvasTileMap(void);

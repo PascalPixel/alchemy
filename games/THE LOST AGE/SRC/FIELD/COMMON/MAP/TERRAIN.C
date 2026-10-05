@@ -1,9 +1,9 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "MAP.H"
 
 extern u32 gMapBlocks[];
-extern const u8 WorldMap_TerrainBehaviorTable[];
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
 {

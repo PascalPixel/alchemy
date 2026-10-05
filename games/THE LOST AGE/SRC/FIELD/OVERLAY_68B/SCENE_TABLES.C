@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 
 extern const struct SceneEntrance gSceneEntrances[];
-extern const u32 gSceneExits[];
 extern const struct ScenePlacement gScenePlacements[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)

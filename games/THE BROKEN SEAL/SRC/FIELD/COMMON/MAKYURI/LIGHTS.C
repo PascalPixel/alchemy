@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
@@ -24,7 +25,6 @@ struct MakyuriLights {
 };
 
 extern const s32 Makyuri_PillarScript[];
-extern const s32 Makyuri_RampScript[];
 void *ObjectTable_Get();
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *anim, s32 animation);
 

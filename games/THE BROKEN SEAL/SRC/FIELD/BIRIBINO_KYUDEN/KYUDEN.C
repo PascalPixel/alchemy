@@ -1,10 +1,10 @@
+#include "GLOBAL.H"
 #include "KYUDEN.H"
 #include "TYPES.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
-extern u8 gBiribinoKyudenPlacements[];
 extern const struct ScenePlacement gBiribinoKyudenPlacementsOther[];
 extern const struct SceneEvent gBiribinoKyudenEvents[];
 extern const struct SceneEvent gBiribinoKyudenEventsOther[];

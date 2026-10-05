@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
@@ -13,10 +14,6 @@
 #include "IO_REG.H"
 #include "FIELD_SCENE.H"
 
-extern u8 Clear_ScriptTable[];
-extern u8 Clear_MessageTable[];
-extern u8 Clear_ActorTable[];
-extern u8 Clear_EffectTable[];
 
 extern u16 gBgScroll[];
 
@@ -38,7 +35,6 @@ struct ScrollPair {
 
 #define DMA3 (REG_DMA3)
 
-extern u16 Clear_BlendFrame;
 void Clear_UpdateBlend(void);
 
 static __inline__ void RestoreInterrupts(u32 saved)
@@ -70,14 +66,6 @@ static __inline__ void RestoreInterrupts(u32 saved)
     } while (0)
 
 extern volatile u32 gKeysHeld;
-extern s16 Clear_CodeUnlocked;
-extern s16 Clear_ExtraCodeUnlocked;
-extern s16 Clear_CodeProgress;
-extern s16 Clear_ExtraCodeProgress;
-extern s16 Clear_CodeHeld;
-extern s16 Clear_ExtraCodeHeld;
-extern u16 Clear_CodeSequence[];
-extern u16 Clear_ExtraCodeSequence[];
 
 u8 *SceneData_GetScriptTable(void)
 {

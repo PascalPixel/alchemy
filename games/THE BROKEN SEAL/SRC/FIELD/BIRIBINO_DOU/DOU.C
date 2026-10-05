@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "REGION.H"
 #include "TYPES.H"
@@ -9,7 +10,6 @@ extern const struct SceneEntrance gBiribinoDouEntrances2[];
 extern const struct SceneEntrance gBiribinoDouEntrances1[];
 extern const struct SceneEntrance gBiribinoDouEntrancesOther[];
 
-extern u8 gBiribinoDouExits[];
 
 extern const struct ScenePlacement gBiribinoDouPlacements3[];
 extern const struct ScenePlacement gBiribinoDouPlacements2[];

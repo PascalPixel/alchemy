@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -13,13 +14,6 @@
 #include "BATTLE_PRESENTATION.H"
 
 extern u8 gBattleFxWork[];
-extern u8 ShatterRocks_ShardOffsets[];
-extern s8 ShatterRocks_RockX[];
-extern u8 ShatterRocks_DropFrames[];
-extern u8 ShatterRocks_RockCounts[];
-extern u8 ShatterRocks_ShardWidths[];
-extern u8 ShatterRocks_ShardHeights[];
-extern u16 ShatterRocks_ShardCells[];
 
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);

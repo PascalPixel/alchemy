@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "FX_SCENE.H"
@@ -37,7 +38,6 @@ struct FxObject {
 };
 
 extern struct BattleFxScene *gEffectWork;
-extern const s32 BattleFx_SourceHoldScript[];
 extern const s32 BattleFx_FragmentScript[];
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;

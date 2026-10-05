@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "B5_CONTEXT.H"
 #include "FUNKA.H"
@@ -38,7 +39,6 @@ struct Ember {
     u8 motion_flags;
 };
 
-extern const s32 Funka_EmberScript[];
 extern s32 gEmberTimer;
 extern s32 gEmberState[16];
 extern s32 gEmberMask;
@@ -64,7 +64,6 @@ struct QuakeWork {
     s32 fading;
 };
 
-extern s32 Funka_ArcOrigins[][2];
 void SoruFunka_SpawnEffectPair();
 void SceneEffect_UpdateArcOverAnchor();
 void SceneEffect_UpdateAnchoredRiseArc();

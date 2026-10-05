@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "BATTLE_WORK.H"
@@ -17,12 +18,8 @@
 #define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
 s32 Runtime_GetLowTableAddress(void);
-extern const u8 Tile_BuildMetatiles[];
-extern const s8 UiWindow_PartyColumnOffsets[];
-extern u8 Tile_BuildMetatilesCodeSize[];
 typedef void (*RamRoutine)(void *dst, void *scene);
 
-extern u8 Data_03001e90[];
 
 struct PartyStatusWindow {
     struct UiWindow *window;

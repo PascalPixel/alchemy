@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u8 Runtime_ByteRemapTable[];
 
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 {

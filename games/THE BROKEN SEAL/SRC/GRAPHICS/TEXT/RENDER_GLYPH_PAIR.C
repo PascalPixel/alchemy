@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -6,7 +7,6 @@
 #include "GLYPH.H"
 #include "WINDOW.H"
 
-extern u8 UiText_SecondGlyphs[];
 
 #if EDITION_INTERNATIONAL
 s32 UiText_RenderGlyphPair(s32 code, u32 *out)

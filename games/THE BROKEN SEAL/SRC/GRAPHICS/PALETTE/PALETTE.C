@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GAME_STATE.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "TYPES.H"
@@ -12,7 +13,6 @@ struct MenuWorkspaceEntry {
 
 u16 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 red_scale, s32 green_scale, s32 blue_scale);
 
-extern const u8 PaletteGlow_WaveTable[];
 #define GLOW_PALETTE ((u16 *)0x050001e8)
 
 u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale, s32 blue_scale);

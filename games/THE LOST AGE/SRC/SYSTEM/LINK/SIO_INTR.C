@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
@@ -9,7 +10,6 @@ void SerialRuntime_RemoveIrqHandlers(void)
     Runtime_SetIrqHandler(6, 0, 0);
 }
 
-extern volatile u16 gLinkStatus;
 
 u32 SerialRuntime_WaitForStatusMask(s32 mask)
 {

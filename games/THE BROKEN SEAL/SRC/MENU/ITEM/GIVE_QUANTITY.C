@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
@@ -12,7 +13,6 @@
 #include "text/MSG_IDS.H"
 extern volatile s32 gKeysRepeat;
 extern volatile s32 gKeyState;
-extern const u8 Data_080af08c[];
 
 #if EDITION_INTERNATIONAL
 #define GIVE_CURSOR_X 128

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "OBJDISP.H"
@@ -9,7 +10,6 @@
 s32 GameFlag_TestFar();
 
 extern u8 gOverlayArea[];
-extern const u8 ObjectMotion_LinkedActionScript[];
 extern const s32 ObjectMotion_StepAngleScript[];
 
 struct EffectDescriptor {

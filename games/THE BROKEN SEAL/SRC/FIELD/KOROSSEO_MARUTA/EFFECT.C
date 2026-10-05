@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "LOG_ROLLING.H"
 #include "text/MSG_IDS.H"
 
 
-extern const s32 KorosseoMaruta_PlaceScript[];
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 void UiText_DrawQuantity(s32 value, s32 digits);
 void ObjectDispatch_WaitForValue16(struct FieldActor *object);

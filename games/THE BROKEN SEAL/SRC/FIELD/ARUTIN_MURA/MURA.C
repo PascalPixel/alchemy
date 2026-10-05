@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -11,9 +12,6 @@ extern const struct SceneEntrance gArutinMuraEntrancesOther[];
 
 extern u8 Placement_Messages[];
 
-extern u8 gArutinMuraPlacements1[];
-extern u8 gArutinMuraPlacements2[];
-extern u8 gArutinMuraPlacementsOther[];
 void FieldScene_PrepareActors(void *placements);
 
 extern const struct SceneEvent gArutinMuraEvents1[];

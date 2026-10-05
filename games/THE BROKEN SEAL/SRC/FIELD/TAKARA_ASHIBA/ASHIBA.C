@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "EDITION.H"
 #include "FIELD_EVENT.H"
@@ -73,10 +74,6 @@ void PartyInventory_RemoveFar();
 s32 PartyInventory_FindOwnerFar(s32);
 void TakaraAshiba_OpenPassage(s32);
 
-extern s32 TakaraAshiba_SlotColumns[];
-extern u8 TakaraAshiba_SceneTable[];
-extern const s32 TakaraAshiba_ActorFifteenMotionScript[];
-extern const s32 TakaraAshiba_ActorFifteenWalkTargets[];
 
 void Battle_Reset();
 void ObjectMotion_SetSpeedParameters();
@@ -112,7 +109,6 @@ void TakaraAshiba_UpdateBlockRects(void);
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
-extern s32 TakaraAshiba_IconTimer;
 
 void SceneActor_SetActor15ModeZero(void)
 {

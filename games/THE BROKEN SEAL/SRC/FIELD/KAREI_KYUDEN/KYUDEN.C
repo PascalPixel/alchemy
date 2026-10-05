@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -28,7 +29,6 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 
 extern u8 Placement_Messages[];
 
-extern u8 gKareiKyudenPlacements[];
 extern const struct ScenePlacement gKareiKyudenPlacementsOther[];
 void FieldScene_PrepareActors(u8 *placements);
 
@@ -38,7 +38,6 @@ extern const struct SceneEvent gKareiKyudenEventsOther[];
 
 void FieldScene_DispatchSceneByIndex(void);
 
-extern u8 KareiKyuden_PartyActions[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

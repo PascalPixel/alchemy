@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SAVE_STATE.H"
@@ -16,7 +17,6 @@ struct TextCursor {
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern volatile u32 gFrameTick;
-extern const s32 ShindenHeya_CursorBob[16];
 
 void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);
 void UiTextResource_Initialize(struct TextCursor *cursor, s32 *slot);

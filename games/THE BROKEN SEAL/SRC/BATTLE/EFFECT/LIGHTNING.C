@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
@@ -24,9 +25,6 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 extern u16 ParticleStreams_CellOffsets[];
-extern u16 LightningPillar_Sparks[];
-extern u8 LightningPillar_Columns[];
-extern u8 LightningPillar_Counts[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);

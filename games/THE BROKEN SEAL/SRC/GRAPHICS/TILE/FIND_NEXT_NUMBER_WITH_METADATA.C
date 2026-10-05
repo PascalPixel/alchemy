@@ -1,4 +1,5 @@
 
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "ANIMSPR.H"
@@ -15,9 +16,6 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_PARTY.H"
 #include "B5_CONTEXT.H"
-extern u8 gDecodeFillByte;
-extern struct AnimationObject *gSpriteObjects;
-extern const u8 FarCall_ResourceTable[];
 
 struct IconColumn {
     s16 no;

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "SUKURETA.H"
 #include "CALL.H"
 #include "TYPES.H"
@@ -7,12 +8,10 @@
 
 
 
-extern u8 Sukureta_StrangerActions[];
 void Object_SetTargetAndCallback();
 void Audio_PlayCueFromEventWork(void);
 
 
-extern u8 Sukureta_Actor11Actions[];
 s32 Effect_SoundAndFlash();
 void BattleFx_StartTwelveFrameBlend();
 void Engine_MapCopyCellAttributes();
@@ -20,7 +19,6 @@ void Scene_LeaveForMtAleph();
 struct GameState;
 extern struct GameState gGameState;
 
-extern u8 Sukureta_Actor11RockslideActions[];
 void Object_SetActionCallbackAndRefreshById();
 
 

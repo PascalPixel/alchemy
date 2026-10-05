@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -1607,7 +1608,6 @@ struct LampSpark {
     void (*update)();
 };
 
-extern const s32 Data_02003c54[];
 
 void MakyuriChojo_FlickerActorEight(void)
 {

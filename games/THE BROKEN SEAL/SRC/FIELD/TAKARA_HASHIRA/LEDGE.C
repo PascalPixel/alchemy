@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -37,7 +38,6 @@ extern const struct SceneEntrance gTakaraHashiraEntrances4[];
 extern const struct SceneEntrance gTakaraHashiraEntrances5[];
 extern const struct SceneEntrance gTakaraHashiraEntrancesOther[];
 
-extern const u32 gTakaraHashiraExits[];
 
 extern const struct ScenePlacement gTakaraHashiraPlacements1[];
 extern const struct ScenePlacement gTakaraHashiraPlacements2[];

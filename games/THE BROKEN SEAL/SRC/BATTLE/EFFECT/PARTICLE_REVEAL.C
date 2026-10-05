@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -30,10 +31,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern u8 PuffArc_CellWidths[];
-extern u8 PuffArc_CellHeights[];
-extern u8 PuffArc_CellBiasY[];
-extern u16 PuffArc_CellSourceOffsets[];
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -294,9 +291,6 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 extern struct EffectStep gMapCellBuffer[];
 #define PARTICLE_COUNT 64
 
-extern u8 ParticleReveal_CellWidths[];
-extern u8 ParticleReveal_CellHeights[];
-extern u16 ParticleReveal_CellSourceOffsets[];
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
@@ -421,12 +415,6 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 void BattleFx_StepPaletteToResource(s32 resource_id);
 void Render_ResetTransformState(void);
 
-extern u8 RockToss_ChipFlips[];
-extern u8 RockToss_ChipWidths[];
-extern u8 RockToss_ChipHeights[];
-extern u16 RockToss_ChipCells[];
-extern u8 RockToss_ChipX[];
-extern u8 RockToss_ChipY[];
 
 void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 {

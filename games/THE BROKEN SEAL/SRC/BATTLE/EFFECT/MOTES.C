@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -24,16 +25,6 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
 
 extern u16 BattleFx_PuffCells[];
 extern u8 BattleFx_PuffSizes[];
-extern u8 RisingMotes_ColumnSpots[];
-extern u8 RisingMotes_Timings[];
-extern u8 RisingMotes_MoteWidths[];
-extern u8 RisingMotes_MoteHeights[];
-extern u16 RisingMotes_MoteCells[];
-extern u16 RisingMotes_ColumnCells[];
-extern u8 RisingMotes_ColumnHeights[];
-extern u8 RisingMotes_EmberWidths[];
-extern u8 RisingMotes_EmberHeights[];
-extern u16 RisingMotes_EmberCells[];
 
 #define HI(v) (((s16 *)&(v))[1])
 

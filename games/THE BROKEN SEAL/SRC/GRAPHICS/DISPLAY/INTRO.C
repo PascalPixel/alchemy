@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -40,7 +41,6 @@ struct IntroWork {
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 
 extern u8 gDebugPaused;
-extern const u8 Data_080f39ab[];
 
 #define ENTRY(i, word) (work->area.objects[i][word])
 
@@ -271,8 +271,6 @@ back_rest_cell:
 extern volatile u32 gKeyState;
 extern u8 gOamCopyEnabled;
 extern volatile u8 gCpuLoadDisplayEnabled;
-extern const u8 Title_PromptTiles[];
-extern const u8 Title_PromptBlendLevels[];
 
 void Bg0_ClearTilemap(void);
 void Resource_InitializeTable(void);

@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
-extern u16 Graphics_ExpandNibbleTable[];
 
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 {

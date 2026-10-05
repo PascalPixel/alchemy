@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FXBLEND.H"
 #include "MAP_SCROLL.H"
 #include "HAIDIA_BABI.H"
@@ -290,9 +291,6 @@ s32 HaidiaBabi_RestoreEntryState(void)
 }
 
 
-extern const u8 gHaidiaBabiSharedAction[];
-extern const u8 gHaidiaBabiActorExitAction[];
-extern const u8 gHaidiaBabiLeaderExitAction[];
 
 struct SceneHalf {
     u16 value;

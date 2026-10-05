@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TEXT_READER.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
@@ -12,9 +13,7 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 ent
 s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct UiWindow *window);
 
-extern const u8 UiText_LookupMessageArm[];
 
-extern u8 UiText_LookupMessageCodeSize[];
 
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
 {

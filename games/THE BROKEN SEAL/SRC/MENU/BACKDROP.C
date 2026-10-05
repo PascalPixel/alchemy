@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
@@ -15,7 +16,6 @@
 #define FRAME_TILE 150
 extern u8 gMenuWork[];
 
-extern const u8 Menu_BackdropFrameTile[];
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 

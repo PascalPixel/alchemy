@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -50,10 +51,6 @@ typedef struct Scale {
 } Scale;
 
 extern const Scale BattleFx6_UnitScale;
-extern const u8 BattleFx6_ObjectX[];
-extern const u8 BattleFx6_ObjectY[];
-extern const s32 BattleFx6_Gravity[];
-extern u16 BattleFx6_FlareCells[];
 extern u16 ParticleStreams_CellOffsets[];
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)

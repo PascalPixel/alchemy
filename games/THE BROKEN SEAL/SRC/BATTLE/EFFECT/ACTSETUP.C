@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
 #include "RUNTIME_MEM.H"
@@ -97,7 +98,6 @@ struct BattleSceneState {
 
 extern u8 gWorkSlot[];
 
-extern const u8 Data_0809c410[];
 s32 ResourceTable_CountFreeBlocks(void);
 void BattleFx_SetupObjectPair(s32 first, s32 second);
 void BattleFx_UpdateAllEffectSlots(void);

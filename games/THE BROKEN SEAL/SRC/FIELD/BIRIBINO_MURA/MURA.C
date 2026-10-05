@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MURA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -27,7 +28,6 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
 void Scene_UpdatePuzzleActors(void);
 void FieldScene_DrawTilesByActor8Row(void);
 
-extern s32 BiribinoMura_FacingCellSteps[];
 
 void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
 

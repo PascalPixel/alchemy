@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
 #include "EDITION.H"
@@ -8,7 +9,6 @@
 
 extern struct CharacterMenuState *gMenuWork;
 extern const u8 Menu_LvString[];
-extern const u8 Menu_SlashString[];
 
 s32 Party_SumDjinnCountsFar(s32 side);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 unit, s32 mode);

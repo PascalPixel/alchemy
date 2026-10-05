@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "MAKYURI.H"
 #include "IWRAM_CALL.H"
@@ -33,7 +34,6 @@ struct EventSpawns {
     struct SpawnPoint *points[1];
 };
 
-extern s32 MakyuriHeya_SparkScript[];
 void MakyuriHeya_SpawnSparkPair(void);
 void WaitFrames(s32 frames);
 extern u8 Makyuri_PillarScript[];

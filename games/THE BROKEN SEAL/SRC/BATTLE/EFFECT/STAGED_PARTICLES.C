@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "BATTLE_PRESENTATION.H"
@@ -44,10 +45,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern u16 PuffArc_CellSourceOffsets[];
-extern u8 PuffArc_CellWidths[];
-extern u8 PuffArc_CellBiasY[];
-extern u8 PuffArc_CellHeights[];
 extern const Scale StagedParticles_UnitScale;
 
 #define OBJECTS (work->objects)

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -47,10 +48,6 @@ void BattlePresentation_DrawStreaks(void);
 
 extern u8 gBattleFxWork[];
 
-extern u16 BattleFx6_FlareCells[];
-extern s8 CornerSparks_X[];
-extern s8 CornerSparks_Y[];
-extern u8 CornerSparks_DrawFlags[];
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -300,11 +297,6 @@ void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 
-extern u8 TwoResource_CellWidths[];
-extern u8 TwoResource_CellHeights[];
-extern u16 TwoResource_CellSourceOffsets[];
-extern u8 TwoResource_CellX[];
-extern s8 TwoResource_CellBiasY[];
 
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 {

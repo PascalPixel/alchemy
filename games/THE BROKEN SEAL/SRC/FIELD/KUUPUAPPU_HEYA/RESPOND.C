@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
@@ -5,7 +6,6 @@
 
 extern const u8 KuupuappuHeya_PairScriptR[];
 extern const u8 KuupuappuHeya_PairScriptP[];
-extern const u8 *KuupuappuHeya_ResponseScripts[2][4];
 
 void Object_RefreshSelectorById(s32 actor);
 

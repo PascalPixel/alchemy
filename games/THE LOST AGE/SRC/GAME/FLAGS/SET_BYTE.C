@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u8 GameFlagBytes[];
 
 u32 GameFlag_SetByte(u32 flag, u8 value)
 {

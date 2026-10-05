@@ -1,13 +1,10 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
-extern u8 gBiribinoHeyaPlacements[];
-extern u8 BiribinoHeya_PrimaryTable[];
-extern u8 BiribinoHeya_SecondaryTable[];
-extern u8 BiribinoHeya_TertiaryTable[];
 
 void ScenePlacement_ClipToView(s32 placements);
 

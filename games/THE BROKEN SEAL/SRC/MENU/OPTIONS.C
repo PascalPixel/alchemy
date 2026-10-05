@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -13,11 +14,6 @@
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 extern const u8 Resource_FixedBlockBTiles[];
-extern const u8 WorkspaceOptions_SliderTiles[];
-extern const u16 WorkspaceOptions_SliderPalette[];
-extern s8 OptionMenu_SpeedFrames[];
-extern s8 OptionMenu_SpeechFrames[];
-extern s8 OptionMenu_SleepFrames[];
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
@@ -29,8 +25,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
-extern u8 OptionMenu_FirstColorPresets[];
-extern u8 OptionMenu_SecondColorPresets[];
 void OptionMenu_InitializeWork(void);
 struct RenderOutput *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);

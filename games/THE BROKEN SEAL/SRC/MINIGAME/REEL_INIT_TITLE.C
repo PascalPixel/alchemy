@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
@@ -63,11 +64,6 @@ struct ReelSave {
 extern u8 gBattleFxWork[];
 extern volatile u32 gKeysHeld;
 extern u8 gDebugPaused;
-extern const u8 ReelGame_TitleLetterWidths[];
-extern const u8 ReelGame_SymbolPrizes[];
-extern const u8 ReelGame_TitleLetterTiles[];
-extern const u8 ReelGame_FrameSpriteX[];
-extern const u8 ReelGame_FrameSpriteY[];
 
 struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, struct UiWindow *window, s32 x, s32 y);
@@ -649,7 +645,6 @@ void ReelGame_InitTitle(void)
 
 extern u8 gOamCopyEnabled;
 extern DrawRectangle gWorkSlot[];
-extern u16 ReelGame_SparkCellOffsets[];
 
 void RuntimeDispatch_NoOpHook(s32 resource);
 void FarCall_WindowTable(void);

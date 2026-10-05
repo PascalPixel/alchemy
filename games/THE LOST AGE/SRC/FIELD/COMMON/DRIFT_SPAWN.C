@@ -1,7 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern const u8 DriftScene_SpawnScript[];
 
 void DriftScene_SpawnObject(s32 x, s32 y, s32 z, s16 value)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "MENU_TEST.H"
 #include "CALL.H"
@@ -18,9 +19,6 @@ void BattleEv_RunWait(s32 mode, s32 frames);
 
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
 void Engine_AudioPlayCue(s32 cue);
-extern u8 gDebugItemPrompt[];
-extern u8 gDebugItemCapacityLabel[];
-extern u8 gDebugItemFullLabel[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);

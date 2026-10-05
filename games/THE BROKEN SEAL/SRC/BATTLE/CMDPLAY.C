@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "DMA.H"
 #include "BATTLE_WORK.H"
 #include "TYPES.H"
@@ -25,7 +26,6 @@ struct BattleAction *Ability_GetData(s32 action_id);
 s32 Battle_FindTaggedSlotByValue(s32 actor_id);
 s32 BattleTarget_SelectForAction(s32 actor_id, struct BattleAction *action);
 s32 BattleTarget_SelectRandomPosition(s32 side);
-extern u8 BattleCommand_SelectionWeights[3][8];
 
 struct BattleAutomaticState {
     unsigned initialized : 1;
@@ -315,7 +315,6 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
 extern volatile u32 gFrameCount;
 extern volatile s32 gFrameTick;
 extern volatile s32 gKeysPressedLatch;
-extern u8 BattlePres_AdvanceArrowTiles[];
 
 s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 target);
 void AudioCommand_PlayFar(s32 cue);

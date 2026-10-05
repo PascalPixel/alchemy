@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "STORY.H"
 #include "TYPES.H"
@@ -14,7 +15,6 @@ void Battle_SetObjectFlag5bWhenMode3(void);
 void Battle_ClearObjectFlag5bWhenMode3(void);
 void BattleFx_ScheduleRatioTransition(s32 speed, s32 frames);
 extern s32 gWorldMapTriggerActor;
-extern const u8 gBlackOrbLeaderScript[];
 
 void WorldMap_StopLeaderLeavingShip(void);
 

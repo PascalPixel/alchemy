@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "BATTLE_RUNTIME.H"
 #include "FIELDRUN.H"
 #include "SCENE.H"
@@ -14,7 +15,6 @@
 #include "text/MSG_IDS.H"
 
 extern u32 gFrameCount;
-extern u8 Animation_ChildPaletteCycle[];
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
 void *ObjectTable_Get(u32);

@@ -1,7 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u8 gDebugTextEnabled;
-extern u16 *gDebugTextCursor;
 
 void Runtime_WriteDebugTextTiles(const u8 *src)
 {

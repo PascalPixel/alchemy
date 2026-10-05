@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "OBJECT_RUNTIME.H"
 
-extern const u8 BattleFx_UntargetedObjectScript[];
 
 void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -14,9 +15,6 @@
 
 extern u8 gBattleFxWork[];
 
-extern u16 EarthWall_CellSourceOffsets[];
-extern u8 EarthWall_CellWidths[];
-extern u8 EarthWall_CellHeights[];
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 

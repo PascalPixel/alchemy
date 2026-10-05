@@ -1,7 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 
-extern const u32 gSceneExits[];
 
 const struct SceneRegion *Scene_GetRegions(void)
 {

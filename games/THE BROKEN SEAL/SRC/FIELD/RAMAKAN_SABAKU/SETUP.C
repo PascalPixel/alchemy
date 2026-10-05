@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RAMAKAN.H"
 #include "text/MSG_IDS.H"
 #include "TYPES.H"
@@ -29,7 +30,6 @@ extern const struct SceneEntrance gRamakanSabakuEntrances3[];
 extern const struct SceneEntrance gRamakanSabakuEntrances4[];
 extern const struct SceneEntrance gRamakanSabakuEntrancesOther[];
 
-extern const u32 RamakanSabaku_Exits[];
 
 extern const struct ScenePlacement gRamakanSabakuPlacements1[];
 extern const struct ScenePlacement gRamakanSabakuPlacements2[];
@@ -389,9 +389,6 @@ s32 RamakanSabaku_CalculatePlanarDistance(s32 *position_a, s32 *position_b)
 
     return Iwram_Sqrt(dx_squared + dz_squared);
 }
-extern const s32 RamakanSabaku_SafePoints1[];
-extern const s32 RamakanSabaku_SafePoints2[];
-extern const s32 RamakanSabaku_SafePointsOther[];
 
 struct SafePoint {
     s32 x;

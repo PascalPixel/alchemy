@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "AFFINE.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
@@ -15,10 +16,8 @@
 #include "OAM.H"
 
 extern void *Data_03001400[256];
-extern const u8 Render_BuildOamListKernel[];
 typedef void (*OamBuildRoutine)(void *work);
 
-extern u8 LoadedRuntime_Size[];
 
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 {

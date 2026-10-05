@@ -1,10 +1,9 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
 #include "RUNTIME_INTERFACES.H"
 #include "OWNER_STATE.H"
 
-extern const u16 Battle_Effect90Classes[47];
-extern const u16 Battle_Effect91Classes[29];
 
 s32 Battle_IsEffect90Class(s32 class_id)
 {

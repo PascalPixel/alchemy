@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
@@ -23,7 +24,6 @@ struct UiBobPairOutput {
 
 extern volatile u32 gFrameTick;
 extern volatile u32 gFrameCount;
-extern const u8 Ui_PairBobOffsets[];
 
 void Runtime_RemapBytesByTableFar(void *, s32);
 u32 Resource_DecodeByteLz(const void *, void *);
@@ -47,7 +47,6 @@ struct UiScaleSprite {
     u16 rest_22 : 2;
 };
 
-extern s32 Ui_ObjectPulseScales[];
 
 struct TileMask {
     u32 word0;
@@ -61,9 +60,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
 
 extern const struct TileMask Data_08037250[];
 
-extern u8 gRomShiftedTilePair[];
 
-extern u16 Graphics_ExpandNibbleTable[];
 
 void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 ItemIcon_Compose(s32, s32);

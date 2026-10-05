@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "WINDOW.H"
@@ -8,8 +9,6 @@
 #include "IWRAM_CALL.H"
 #include "TEXT_RENDER_RUNTIME.H"
 
-extern const u8 UiText_GlyphWidths[];
-extern const u8 UiText_ColourPens[];
 
 static __inline__ void ClearWords(void *dest, s32 size)
 {

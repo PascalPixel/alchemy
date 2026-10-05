@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -10,7 +11,6 @@ union Slot {
     s16 h[2];
 };
 
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 Math_RemainderUnsigned(s32, s16);
 

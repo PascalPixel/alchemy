@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -57,7 +58,6 @@ extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;
 
-extern const u8 Debug_PaletteSwatchTiles[];
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void WaitFrames(s32 count);
 void Ui_LoadWindowGraphics(void);

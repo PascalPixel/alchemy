@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "ANIMSPR.H"
@@ -12,7 +13,6 @@ struct ResourceSlotNumber {
 };
 
 extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
-extern u8 ResourceSlot_ConversionTables[][256];
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {

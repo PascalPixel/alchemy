@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MOTION_OBJECT.H"
 #include "FX_SCENE.H"
 #include "FIXED_MATH.H"
@@ -71,8 +72,6 @@ struct FxObject {
     void *callback;
 };
 
-extern const s32 BattleFx_SourceHoldScript[];
-extern const u8 Data_0809f118[];
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;

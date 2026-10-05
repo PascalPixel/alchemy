@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -14,7 +15,6 @@ union Slot {
     s16 h[2];
 };
 
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
@@ -25,22 +25,9 @@ struct FlyBy {
 
 s32 Engine_RandomNext();
 
-extern u8 FuneKanpan_SceneTableA[];
-extern u8 FuneKanpan_SceneTableB[];
-extern u8 FuneKanpan_SceneTableC[];
 
-extern u8 gFuneKanpanPlacementsFlag93e[];
-extern u8 gFuneKanpanPlacementsFlag927[];
-extern u8 gFuneKanpanPlacementsFlag928[];
-extern u8 gFuneKanpanPlacementsFlag911[];
-extern u8 gFuneKanpanPlacements[];
 
-extern u8 gFuneKanpanEventsFlag93e[];
-extern u8 gFuneKanpanEventsFlag8a0[];
-extern u8 gFuneKanpanEventsFlag928[];
-extern u8 gFuneKanpanEvents[];
 
-extern u8 FuneKanpan_RandomActorActions[];
 
 extern struct EventWork *gEventWork;
 void FuneKanpan_OpenFirstDoor();
@@ -52,17 +39,11 @@ void ObjectMotion_CenterOnColumn();
 void Event_SetExitRequest();
 void AudioCommand_Play();
 
-extern u8 FuneKanpan_PresentationActionsA[];
-extern u8 FuneKanpan_PresentationActionsB[];
 void Battle_ResetEffectCounter();
 void FuneKanpan_OpenSecondDoor(void);
 void FieldScene_RunStepThen10(s32 a);
 
 
-extern s32 FuneKanpan_WaveAngleX;
-extern s32 FuneKanpan_WaveAngleY;
-extern s32 FuneKanpan_LayerScroll[];
-extern s32 FuneKanpan_LayerSpeed[];
 void FuneKanpan_ApplyEntryState(void);
 
 void SceneState_ApplyFiveRectsAtColumn78(void);
@@ -95,14 +76,9 @@ void Engine_ActorSetPosition();
 s32 Math_RemainderUnsigned();
 void Engine_ActorEnableActionCallback();
 
-extern u8 FuneKanpan_LeadActionsA[];
-extern u8 FuneKanpan_LeadActionsB[];
-extern u8 FuneKanpan_LeadActionsC[];
-extern u8 FuneKanpan_CrewScript[];
 void Event_CallWithLastActiveObjectId();
 void FuneKanpan_PlaceLeaderOnDeck(void);
 
-extern u8 FuneKanpan_CrewScriptE[];
 void Engine_EventBegin();
 void Engine_TaskWait();
 void Engine_ActorDestroy();
@@ -132,16 +108,7 @@ void ObjectMotion_ResetAndSetPositionInMode2();
 void Ui_SetRenderResultFromObject();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
-extern u8 FuneKanpan_DeckEventActions[];
-extern u8 FuneKanpan_CrewScriptB[];
 
-extern u8 FuneKanpan_CrewActionsE[];
-extern u8 FuneKanpan_CrewScriptC[];
-extern u8 FuneKanpan_CrewActionsD[];
-extern u8 FuneKanpan_CrewActionsB[];
-extern u8 FuneKanpan_CrewActionsA[];
-extern u8 FuneKanpan_CrewActionsC[];
-extern u8 FuneKanpan_SailorActions[];
 void Engine_ActorSetChildValue();
 void Engine_ActorSetSpriteFlags();
 void Engine_ActorSetAnimation();
@@ -157,10 +124,6 @@ void Engine_EventCloseScreen();
 void Engine_ActorStop();
 void Engine_EventRequestExit();
 
-extern u8 FuneKanpan_CrewScriptD[];
-extern u8 FuneKanpan_DeckActionsA[];
-extern u8 FuneKanpan_DeckActionsB[];
-extern u8 FuneKanpan_DeckActionsC[];
 void ObjectDispatch_SetSingleChildFlagsFar(struct FieldActor *object, s32 value);
 void Event_FinishScreenTransitionFar();
 void Event_WaitTransitionFramesFar();
@@ -182,7 +145,6 @@ void Engine_ActorSetAttachedEffect();
 
 void FieldScene_RunStepThen10(s32 actor);
 void Engine_ActorStartAction(s32 actor);
-extern const u8 FuneKanpan_RosterActions[];
 
 struct MapLayer {
     u8 unknown_00[8];

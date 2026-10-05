@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -23,8 +24,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void Audio_PlayCue(s32 cue);
 
-extern const u16 RisingBurst_SparkCells[];
-extern const u16 RisingBurst_SparkSizes[];
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 #define HI(v) (((s16 *)&(v))[1])

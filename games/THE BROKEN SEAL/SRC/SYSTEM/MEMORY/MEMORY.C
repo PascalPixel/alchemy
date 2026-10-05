@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "LOW_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -10,11 +11,8 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-extern u16 *gDebugTextCursor;
 
-extern const u8 System_BasicColorPalette[];
 
-extern const u16 Ui_WindowPalette[];
 extern u8 gCartridgeResetMarker[];
 
 void Bg0_ClearTilemap(void)

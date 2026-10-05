@@ -1,15 +1,10 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
 
-extern const u8 Resource_Decode01Code[];
-extern const u8 Resource_Decode2Code[];
-extern const u8 Resource_DecodeByteLzCode[];
-extern u8 Resource_Decode01CodeSize[];
-extern u8 Resource_Decode2CodeSize[];
-extern u8 Resource_DecodeByteLzCodeSize[];
 
 s32 Resource_DecodeType01(const void *source, void *destination)
 {

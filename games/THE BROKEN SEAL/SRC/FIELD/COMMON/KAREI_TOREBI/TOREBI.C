@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TBS_EDITION.H"
 #include "KAREI.H"
@@ -33,8 +34,6 @@ extern const struct SceneEvent gKareiTorebiEventsOther[];
 
 
 
-extern const u16 KareiTorebi_LeaveCells1[];
-extern const u16 KareiTorebi_LeaveCells3[];
 
 void FieldScene_ConfigureFlaggedActors(void);
 
@@ -57,7 +56,6 @@ struct SpriteBytes {
     u8 flags;
 };
 
-extern u8 KareiTorebi_ActorSixteenScript[];
 
 void SceneState_ApplyValues14And0And5(void)
 {

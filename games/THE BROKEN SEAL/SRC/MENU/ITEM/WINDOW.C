@@ -1,8 +1,7 @@
+#include "GLOBAL.H"
 #include "INVENTORY_MENU.H"
 #include "M7_INTERFACES.H"
 
-extern u8 Menu_PlusSignString;
-extern u8 Menu_MinusSignString;
 
 void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "ENTRY_SETUP.H"
@@ -17,16 +18,8 @@ extern const struct SceneEntrance gVinasuHeyaEntrances5[];
 extern const struct SceneEntrance gVinasuHeyaEntrances6[];
 extern const struct SceneEntrance gVinasuHeyaEntrancesOther[];
 
-extern u8 gVinasuHeyaPlacements1[];
-extern u8 gVinasuHeyaPlacements2[];
-extern u8 gVinasuHeyaPlacements3[];
-extern u8 gVinasuHeyaPlacements4[];
-extern u8 gVinasuHeyaPlacements5[];
-extern u8 gVinasuHeyaPlacements6[];
-extern u8 gVinasuHeyaPlacementsOther[];
 void FieldScene_PrepareActors(u8 *placements);
 
-extern u8 gVinasuLeaderApproachScript[];
 s32 SceneEffect_SpawnRandomEveryEightFramesB();
 
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "FUNE.H"
 #include "TYPES.H"
@@ -47,13 +48,6 @@ struct FieldGlobals {
 };
 
 
-extern u8 FuneHobashira_EnsembleWalk9[];
-extern u8 FuneHobashira_EnsembleWalk10[];
-extern u8 FuneHobashira_EnsembleWalk11[];
-extern u8 FuneHobashira_EnsembleWalk12[];
-extern u8 FuneHobashira_EnsembleWalk13[];
-extern u8 FuneHobashira_EnsembleWalk14[];
-extern u8 FuneHobashira_EnsembleWalk15[];
 void OverlayObject_InitWithRandomFields(s32 object);
 s32 SceneData_GetDifferenceOfPairSums(void);
 

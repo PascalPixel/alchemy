@@ -1,18 +1,10 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
-extern u8 SuharaMura_Scripts[];
-extern u8 SuharaMura_Messages[];
-extern u8 SuharaMura_Actors[];
-extern u8 SuharaMura_ActorsFlag96f[];
 
 
-extern s16 SuharaMura_CellAnimationOrigins[];
-extern const u16 SuharaMura_CellSteps0[];
-extern const u16 SuharaMura_CellSteps1[];
-extern u8 SuharaMura_Extras[];
-extern u8 SuharaMura_ExtrasFlag96f[];
 
 u8 *SceneData_GetScriptTable(void)
 {

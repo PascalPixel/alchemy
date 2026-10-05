@@ -1,5 +1,5 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
-extern u8 gNumberTextBuffer[];
 
 void Text_FormatSignedDecimalToWork(s32 out);
 

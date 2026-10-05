@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "FIELD_SERVICE.H"
@@ -16,7 +17,6 @@ extern const struct ScenePlacement gTorebiKyudenPlacementsOther[];
 
 
 
-extern const u16 TorebiKyuden_CellSteps[];
 
 
 

@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern s32 Ui_FixedTileBlocks[];
 
 s32 Ui_GetTableWordZero(s32 index)
 {

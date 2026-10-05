@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "ANIMSPR.H"
 #include "FIELDOBJ.H"
 #include "OBJECT_RUNTIME.H"
@@ -14,7 +15,6 @@ struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
 void ObjectDispatch_ReleaseFar(struct ObjectRuntime *);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
-extern u8 gPlayerObjectId[];
 
 struct ArcObject {
     u8 pad00[8];

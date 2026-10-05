@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PARTY.H"
 #include "TYPES.H"
@@ -28,7 +29,6 @@ struct TransitionActorList {
     u16 ids[24];
 };
 
-extern const u8 BattlePres_CurtainTiles[];
 
 void BattlePres_AdvanceTransitionTimer(void);
 void BattlePres_DrawTransitionRows(void);

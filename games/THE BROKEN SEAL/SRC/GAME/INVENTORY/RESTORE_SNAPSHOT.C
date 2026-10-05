@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "INVENTORY.H"
 #include "CHARACTER.H"
@@ -6,7 +7,6 @@
 
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
-extern u16 gInventorySnapshot[];
 
 void Inventory_AddAndEquip(s32 owner, s32 target);
 void GameFlag_SetBit(s32 flag);

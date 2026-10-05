@@ -1,7 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u16 Data_02005830;
-extern u8 gSongFlags[];
 
 u16 Audio_GetBackgroundCue(void)
 {

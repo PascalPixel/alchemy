@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -42,8 +43,6 @@ void UiText_DrawQuantity(s32 value, s32 digits);
 void SerialRuntime_Initialize(void);
 void Owner_RefreshActiveRatios(s32 value);
 void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
-extern u32 gLinkLobbyCallFrames;
-extern s32 gLinkLobbyWaitFrames;
 void LinkLobby_PollPeerReady(void);
 
 s32 LinkLobby_RunChoicePrompt(s32 id)

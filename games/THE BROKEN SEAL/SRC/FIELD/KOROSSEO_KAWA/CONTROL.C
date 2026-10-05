@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
@@ -53,11 +54,9 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 Korosseo_GaugeGraphics[];
 extern u8 Korosseo_UpdatePathRival[];
 extern u8 HexDigits[];
-extern u32 KorosseoKawa_DirectionSteps[];
 typedef void(*SceneTask)(void);
 void Korosseo_DrawGauge(void);
 s32 Resource_GetTableEntryFar(void);

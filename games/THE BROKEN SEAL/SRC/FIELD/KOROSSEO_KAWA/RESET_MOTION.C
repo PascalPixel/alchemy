@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -50,7 +51,6 @@ typedef struct ActiveSubjectSlot {
 } ActiveSubjectSlot;
 
 extern s16 Korosseo_MarkerSlot;
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 HexDigits[];
 
 typedef void(*SceneTask)(void);

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -10,23 +11,6 @@
 #define BRANCH_FIELD(site, target) \
     ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
-extern const u32 SentouKouka_YomiGyaku[];
-extern const u32 SentouKouka_YomiJun[];
-extern const u32 SentouKouka_NuriJun[];
-extern const u32 SentouKouka_NuriGyaku[];
-extern const u32 SentouKouka_Nuri8Jun[];
-extern const u32 SentouKouka_Nuri8Gyaku[];
-extern const u32 SentouKouka_HikakuJun[];
-extern const u32 SentouKouka_HikakuGyaku[];
-extern const u32 SentouKouka_Hikaku4Jun[];
-extern const u32 SentouKouka_Hikaku4Gyaku[];
-extern const u32 SentouKouka_KasanJun[];
-extern const u32 SentouKouka_KasanGyaku[];
-extern const u32 SentouKouka_Mask[];
-extern const u32 SentouKouka_Gousei[];
-extern const u32 SentouKouka_IroJun[];
-extern const u32 SentouKouka_IroGyaku[];
-extern const u16 SentouKouka_BitOperands[];
 extern const u32 ParticleStreams_CellOffsets[];
 
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode)

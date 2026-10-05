@@ -1,9 +1,8 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RAMAKAN.H"
 #include "FIELD_EVENT.H"
 
-extern u8 RamakanSabaku_SandEffectTiles[];
-extern u8 RamakanSabaku_SandTileBuffer[];
 extern u16 RamakanSabaku_SandVramSlot;
 extern u16 RamakanSabaku_SandCounter;
 extern u16 RamakanSabaku_SandPhase;

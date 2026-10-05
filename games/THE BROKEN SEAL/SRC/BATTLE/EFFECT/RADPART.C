@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "ANIMSPR.H"
 #include "MOTION_OBJECT.H"
 #include "OBJECT_RUNTIME.H"
@@ -11,7 +12,6 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 extern u32 gFrameTick;
-extern u32 BattleFx_PulseScales[];
 void ObjectDispatch_ReleaseFar();
 
 struct EffectVector {

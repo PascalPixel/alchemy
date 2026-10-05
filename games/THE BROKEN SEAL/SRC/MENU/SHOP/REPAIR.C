@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
 #include "SOUND_IDS.H"
@@ -29,7 +30,6 @@ void Inventory_RepairFar(s32 unit_id, s32 slot);
 void Party_AdjustCoinsFar(s32 amount);
 #define SPECIAL_ITEM 228
 
-extern const s16 Shop_SpecialItemPrices[];
 void UiMessage_ShowAndWait(s32 message);
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
@@ -37,7 +37,6 @@ s32 Inventory_CountFar(s32 unit_id);
 void Party_AdjustSixDigitCounterBFar(s32 amount);
 void Party_AdjustCounterCappedAt28Far(s32 value);
 
-extern s16 EventTable_AbilityLoadouts[][33];
 s32 GameFlag_SetBitFar(s32);
 void Item_AdjustCounterFar(s32, s32);
 

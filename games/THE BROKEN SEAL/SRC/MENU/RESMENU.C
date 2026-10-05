@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "RESMENU.H"
@@ -22,7 +23,6 @@ struct WindowBuffer {
 };
 
 extern volatile u32 gFrameCount;
-extern u16 Ui_BounceScales[];
 extern u8 *gDisplayTransition;
 
 void AffineEffect_UpdateFrame(void)

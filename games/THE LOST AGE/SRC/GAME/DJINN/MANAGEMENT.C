@@ -1,10 +1,10 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 
 s32 GameFlag_Test(s32);
 void GameFlag_SetBit(s32 flag);
-extern const u16 Djinn_Definitions[][6];
 
 const u16 *Djinn_GetDefinition(u32 group, u32 index)
 {

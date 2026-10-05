@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "ENTRY_SETUP.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -6,12 +7,6 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
-extern u8 gVinasuHeyaEvents1[];
-extern u8 gVinasuHeyaEvents2[];
-extern u8 gVinasuHeyaEvents3[];
-extern u8 gVinasuHeyaEvents4[];
-extern u8 gVinasuHeyaEvents5[];
-extern u8 gVinasuHeyaEvents6[];
 
 void BattleFx_StartFadeOverlay(s32 mode);
 void BattleFx_SetQueuedSoundAndPlay(s32 cue);

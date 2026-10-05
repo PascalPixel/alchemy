@@ -1,9 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u8 Menu_ListOrderDefault[];
-extern u8 Menu_ListOrderMode0[];
-extern u8 Menu_ListOrderMode1[];
-extern u8 Menu_ListOrderMode2[];
 
 void Menu_CopyListOrder(s32 mode, u8 *order)
 {

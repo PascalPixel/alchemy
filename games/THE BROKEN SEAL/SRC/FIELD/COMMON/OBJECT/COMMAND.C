@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "OBJECT_RUNTIME.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
@@ -15,8 +16,6 @@
 
 s32 FixedSqrt(s32 value);
 
-extern u8 Object_UpdateAll[];
-extern u8 Object_UpdateAllCodeSize[];
 
 extern struct ScriptMotionObject *gObjectSlots;
 #define TARGET_UNSET ((s32)0x80000000)
@@ -28,7 +27,6 @@ void GameFlag_ClearBitFar(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
 s32 Audio_PlayCue(s32);
 s32 Object_IsTargetUnset(struct ObjectRuntime *);
-extern const s32 Script_MainScript[];
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 arg1, s32 *b, s32 arg3);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
 

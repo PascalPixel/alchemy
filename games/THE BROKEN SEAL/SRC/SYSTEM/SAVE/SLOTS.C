@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SAVE_STATE.H"
 #include "IWRAM_CALL.H"
@@ -11,9 +12,6 @@
 #include "text/MSG_IDS.H"
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
-extern s16 gSaveSlot;
-extern u8 gSaveBuffer[];
-extern u8 gSaveStamp[];
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);

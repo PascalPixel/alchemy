@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -10,7 +11,6 @@ extern const struct SceneEntrance gMakyuriHeyaEntrances3[];
 extern const struct SceneEntrance gMakyuriHeyaEntrances2[];
 extern const struct SceneEntrance gMakyuriHeyaEntrancesOther[];
 
-extern u8 MakyuriHeya_SceneTable[];
 
 extern const struct ScenePlacement gMakyuriHeyaPlacements1[];
 extern const struct ScenePlacement gMakyuriHeyaPlacements2[];

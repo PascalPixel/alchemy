@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "PROBE.H"
@@ -13,10 +14,6 @@
 #include "FIELD_EVENT.H"
 
 
-extern const u8 MakyuriHeya_PushScriptA[];
-extern const u8 MakyuriHeya_PushScriptB[];
-extern const u8 MakyuriHeya_PushScriptC[];
-extern const u8 MakyuriHeya_PushScriptD[];
 
 struct ColumnProbe {
     s32 word[6];
@@ -37,11 +34,9 @@ void SetEffectRecordMode();
 void MakyuriHeya_FadePaletteToWhite();
 void MakyuriHeya_CastPsynergyAtActor11(void);
 void SceneEffect_RotatePaletteEntries40To47(void);
-extern const u16 MakyuriHeya_ColumnCells[];
 void Engine_ActorSetChildValue(s32 actor, s32 value);
 void Audio_PlayCue(s32 cue);
 void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
-extern const s32 MakyuriHeya_SparkBurstScript[];
 void WaitFrames(s32 frames);
 void MakyuriHeya_FadePaletteToBlack();
 void SceneEffect_RotatePaletteEntries97To103(void);

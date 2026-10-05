@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -10,7 +11,6 @@ extern const struct SceneEntrance gKaragoruDouEntrances1[];
 extern const struct SceneEntrance gKaragoruDouEntrances2[];
 extern const struct SceneEntrance gKaragoruDouEntrances3[];
 extern const struct SceneEntrance gKaragoruDouEntrancesOther[];
-extern const u32 gKaragoruDouExits[];
 extern const struct ScenePlacement gKaragoruDouPlacements1[];
 extern const struct ScenePlacement gKaragoruDouPlacements1Flag96f[];
 extern const struct ScenePlacement gKaragoruDouPlacements2[];
@@ -61,7 +61,6 @@ enum StagedPairMessage {
     MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
 };
 
-extern u8 LinkedMessage_DoYouWishCrossInto[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

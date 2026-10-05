@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -33,10 +34,6 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
-extern u16 BattleFx_GlintCellOffsets[];
-extern u8 BattleFx_GlintCellWidths[];
-extern u8 BattleFx_GlintCellHeights[];
-extern u8 RenderMode_GlintFlips[];
 
 #define CONVERGES(mode) \
     ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)

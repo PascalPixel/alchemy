@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
@@ -26,28 +27,18 @@ struct Cell {
     u8 type;
 };
 
-extern s16 *gOv;
-extern s16 *gOv2;
-extern u16 *gOv3;
-extern u8 gUnk[];
 u32 Random16Far(void);
 s32 Math_DivideSigned();
 
-extern s16 *gKorimaMagariRecords;
-extern s16 *gKorimaMagariLayout;
 void State_StampRecordCells(s16 *records, s32 value);
 void State_ApplyRectByLayoutSelector(void);
 extern u8 gBgScroll[];
-extern u32 KorimaMagari_ShakeScroll[];
-extern u32 KorimaMagari_ShakeChance;
 void KorimaMagari_CaptureShakeScroll(void);
 void State_UpdateScrollRegistersWithPreset(void);
 void Scene_RepaintBoardRecords();
-extern u16 *gKorimaMagariReturned;
 void KorimaMagari_PlaceObjects();
 void Scene_RepaintBoardRecords(void);
 void Effect_AdjustPaletteColors(s32 amount);
-extern u16 KorimaMagari_DefaultRecords[];
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 struct IcePlacement {
@@ -68,9 +59,6 @@ struct TileRun2 {
     struct FieldActor *object;
 };
 
-extern const u8 KorimaMagari_PushAnimations[];
-extern const s8 KorimaMagari_PushStepX[];
-extern const s8 KorimaMagari_PushStepZ[];
 s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *point);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);

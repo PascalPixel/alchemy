@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "EDITION.H"
 #include "ABILITY_IDS.H"
@@ -20,10 +21,6 @@ void Engine_ActorJump(s32 actor, s32 height, s32 frames);
 void Engine_ActorFollow(s32 actor, s32 leader);
 void Engine_ActorStartAction(s32 actor);
 void Audio_PlayCueFromEventWork(void);
-extern const u8 gAltmillerActionA[];
-extern const u8 gAltmillerActionB[];
-extern const u8 gAltmillerActionC[];
-extern const u8 gAltmillerActionD[];
 
 static inline void Actor_StepOutFromLeader(s32 actor, s32 dx, s32 dz, s32 facing)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "DMA.H"
@@ -6,8 +7,6 @@
 #include "VRAM_BLOCK.H"
 #include "IO_REG.H"
 
-extern s16 BabiFune_FadeSlot;
-extern s16 BabiFune_FadeStep;
 
 struct Half {
     u16 v;

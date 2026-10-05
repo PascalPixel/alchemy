@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
@@ -18,7 +19,6 @@ struct ObjectPartList {
 };
 
 extern u32 gFrameCount;
-extern const u8 ObjectGroup_BlinkChildValues[4];
 
 void ObjectGroup_ApplyIndexedChildValue(struct ObjectRuntime *object)
 {

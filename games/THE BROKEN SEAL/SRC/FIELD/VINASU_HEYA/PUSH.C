@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -14,8 +15,6 @@ struct MapWork {
     struct ScrollLayer layer;
 };
 
-extern u8 gVinasuPushScript[];
-extern u8 gVinasuPushCells[];
 void Engine_MapCopyCellAttributes();
 s32 OverlayObject_PrepareObjectWithCommand15();
 void OverlayObject_WaitUntilIdle();

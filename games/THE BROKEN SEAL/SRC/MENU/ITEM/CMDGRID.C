@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -23,7 +24,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
 #if EDITION_INTERNATIONAL
-extern s32 ItemMenu_CommandColumnXTable[];
 
 s32 ItemMenu_CmdCursorX(s32 column, s32 row)
 {

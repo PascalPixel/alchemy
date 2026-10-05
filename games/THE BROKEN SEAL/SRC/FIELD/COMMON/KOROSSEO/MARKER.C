@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
 #include "VRAM_BLOCK.H"
@@ -18,7 +19,6 @@ extern union MarkerCoordinate Korosseo_MarkerStartY;
 extern s16 Korosseo_MarkerEndY;
 extern s16 Korosseo_MarkerBlink;
 extern s16 Korosseo_MarkerPriority;
-extern s32 Korosseo_MarkerOam[3];
 
 void Korosseo_UpdateMarker(void)
 {

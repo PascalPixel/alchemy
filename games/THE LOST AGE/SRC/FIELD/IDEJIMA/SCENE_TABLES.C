@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -8,7 +9,6 @@ enum {
 };
 
 extern const struct SceneEntrance gIdejimaEntrances[];
-extern const u32 gIdejimaExits[];
 extern const struct ScenePlacement gIdejimaPlacements[];
 extern const struct SceneEvent gIdejimaEvents[];
 extern const struct SceneEvent gIdejimaEventsEntrance1[];

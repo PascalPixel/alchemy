@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "ANIMSPR.H"
@@ -34,10 +35,6 @@ void ObjectGroup_TickMemberTimers(void);
 void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
-extern u8 PuffArc_CellWidths[];
-extern u8 PuffArc_CellHeights[];
-extern u8 PuffArc_CellBiasY[];
-extern u16 PuffArc_CellSourceOffsets[];
 
 struct Scale {
     s32 x;
@@ -45,10 +42,6 @@ struct Scale {
 };
 
 extern volatile u32 gKeysRepeat;
-extern u8 CirclingScene_ObjectColumns[];
-extern u8 CirclingScene_ObjectRows[];
-extern u16 CirclingScene_PuffSheetOffsets[];
-extern u16 CirclingScene_PuffSizes[];
 extern const struct Scale CirclingScene_UnitScale;
 
 void BattlePres_ConfigureEffectDisplay(void);

@@ -1,10 +1,9 @@
+#include "GLOBAL.H"
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
 
 extern u8 *Data_03001ed0;
-extern u8 KorimaPalette_First[];
-extern u8 KorimaPalette_Second[];
 
 void KorimaPalette_SaveFirst(void)
 {

@@ -1,7 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u8 UiIcon_ItemIconPointersEnd[];
-extern u8 UiIcon_ItemIconPointers[];
 
 s32 Ui_CountIconTableEntries(void)
 {

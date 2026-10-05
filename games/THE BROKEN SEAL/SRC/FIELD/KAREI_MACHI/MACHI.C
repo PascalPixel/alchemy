@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "EDITION.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -136,7 +137,6 @@ extern const struct SceneEntrance gKareiMachiEntrances5[];
 extern const struct SceneEntrance gKareiMachiEntrances6[];
 extern const struct SceneEntrance gKareiMachiEntrancesOther[];
 
-extern u8 KareiMachi_SceneTable01[];
 
 extern const struct ScenePlacement gKareiMachiPlacements1[];
 extern const struct ScenePlacement gKareiMachiPlacements2[];
@@ -164,14 +164,6 @@ extern struct DoorCells KareiMachi_DoorCells[];
 
 struct FieldActor *Object_GetByIdFar(s32 actor);
 
-extern const u32 SceneAction_GroupMotion[];
-extern const u32 SceneAction_GroupOffsetMotion[];
-extern u8 KareiMachi_StagedGroupScript[];
-extern u8 KareiMachi_DanceScriptB[];
-extern u8 KareiMachi_DanceScriptC[];
-extern u8 KareiMachi_DanceScriptD[];
-extern u8 KareiMachi_DanceScriptE[];
-extern u8 KareiMachi_DanceScriptF[];
 void KareiMachi_AlternateDance();
 void Event_CallWithLastActiveObjectId();
 void Ui_SetRenderResultFromObject();
@@ -201,7 +193,6 @@ struct SpriteBits {
     u8 b9_hi : 4;
 };
 
-extern u8 KareiMachi_Script01[];
 
 union GameStateRows {
     s16 halves[512][1];
@@ -212,9 +203,7 @@ void BattleFx_StartFadeOverlay();
 void BattleFx_SetQueuedSoundAndPlay();
 
 void KareiMachi_AlternateDance(void);
-extern s32 KareiMachi_DanceStep;
 
-extern u8 KareiMachi_DanceScriptA[];
 
 static __inline__ void ClearStep(u8 *a)
 {
@@ -223,11 +212,6 @@ static __inline__ void ClearStep(u8 *a)
     *(u16 *)(a + 100) = z;
 }
 
-extern const s32 KareiMachi_ActionScript01[];
-extern const s32 KareiMachi_Script02[];
-extern s32 KareiMachi_Data01[];
-extern const u8 KareiMachi_Data02[];
-extern const u8 KareiMachi_Data03[];
 void FieldScene_RunScene3a8SequenceB();
 s32 Object_CheckMovementCollision();
 void Object_SetPosition();

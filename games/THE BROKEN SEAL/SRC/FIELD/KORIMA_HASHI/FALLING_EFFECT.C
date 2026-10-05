@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -14,7 +15,6 @@ struct SceneEffectWork {
 s32 gFallingEffectOffset __attribute__((section(".bss")));
 s32 gFallingEffectWidth __attribute__((section(".bss")));
 u32 gFallingEffectState __attribute__((section(".bss")));
-extern const s32 gFallingEffectScript[];
 
 void FieldScene_UpdateFallingEffect(void)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -59,8 +60,6 @@ void BattleFx_RunFiveModeMode1B(struct BattleEffectArgument *effect)
     BattleFx_RunFiveMode(effect, 1);
 }
 
-extern s8 FiveMode_Records[];
-extern s8 FiveMode_Tremble[];
 
 void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 {

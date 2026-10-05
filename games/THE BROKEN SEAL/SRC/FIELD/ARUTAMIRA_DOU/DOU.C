@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "ARUTAMIRA.H"
 #include "TYPES.H"
 #include "EDITION.H"
@@ -34,7 +35,6 @@ struct Obj {
     s16 frame;
 };
 
-extern s32 ArutamiraDou_PulseScales[];
 
 void ArutamiraDou_UpdateScalePulse();
 

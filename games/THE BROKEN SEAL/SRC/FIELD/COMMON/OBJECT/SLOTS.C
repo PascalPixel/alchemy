@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FOUR_OBJECT_MOTION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -6,7 +7,6 @@
 #include "ANIMSPR.H"
 #include "RESOURCE.H"
 
-extern s32 FourObjectMotion_ResourceIds[];
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 void FourObjectMotion_UpdateBottomRow(void);
 

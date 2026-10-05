@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "INVENTORY.H"
 #include "BATTLE_RUNTIME.H"
 #include "ITEM.H"
@@ -7,8 +8,6 @@
 void Owner_RefreshClassActions(s32 owner);
 void Event_ClearInvalidPackedValuesFar(s32);
 
-extern u8 gItemCounters[128];
-extern u8 Item_ArtifactSlotTable[];
 
 extern struct BattleAction BattleAction_DefinitionTable[];
 

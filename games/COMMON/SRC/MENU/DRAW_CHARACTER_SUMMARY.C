@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
@@ -10,7 +11,6 @@ void UiText_DrawNumberAtOffset(s32, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32, s32, s32, s32);
 void *Text_FormatPlayTime(s32, u8 *);
 void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
-extern u8 StatusMenu_LevelLetterString[];
 
 #if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
 #define SUMMARY_LEVEL_X 64

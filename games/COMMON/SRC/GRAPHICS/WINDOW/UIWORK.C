@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
@@ -13,9 +14,6 @@
 
 void WaitFrames(s32);
 extern u8 RomBytes_08029a10[];
-extern u8 RomBytes_08029e00[];
-extern u8 RomBytes_0802de88[];
-extern u8 RomBytes_0802e108[];
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);

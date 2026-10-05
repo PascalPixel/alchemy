@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
@@ -15,8 +16,6 @@ struct RenderOutput *RenderOutput_CreateFromResourceFar(
     s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 #if !EDITION_INTERNATIONAL
-extern u8 ItemMenu_ArrangeKeysString[];
-extern u8 ItemMenu_EquipmentKeyString[];
 void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
 #endif
 void UiMenu_PositionCursor(s32 x, s32 y);

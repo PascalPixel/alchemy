@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -5,7 +6,6 @@
 #include "RAM_BUFFER.H"
 #include "ARC_EFFECT.H"
 
-extern const u8 BattleFx_ArcTiles[];
 
 void BattleFx_UpdateArcEffect(void);
 

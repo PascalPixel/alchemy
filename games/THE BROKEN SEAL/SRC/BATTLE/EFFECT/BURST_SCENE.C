@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "ANIMSPR.H"
@@ -30,7 +31,6 @@ void Render_ResetTransformState(void);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
-extern u8 BurstScene_Records[];
 extern u16 ParticleStreams_CellOffsets[];
 
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
@@ -219,13 +219,6 @@ void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, s32 *posi
     struct WallScale *scale, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
-extern u16 RisingWall_RowSheetOffsets[];
-extern u8 RisingWall_RowWidths[];
-extern u16 RisingWall_MoundSheetOffsets[];
-extern u8 RisingWall_MoundWidths[];
-extern u8 RisingWall_MoundHeights[];
-extern s8 RisingWall_Bg2Shifts[][3];
-extern u8 RisingWall_LateRockColumns[];
 extern const struct WallScale RisingWall_UnitScale;
 
 #define HI(v) (((s16 *)&(v))[1])

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
@@ -29,9 +30,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern u8 FirePillars_Counts[];
-extern s8 FirePillars_Depths[][4];
-extern u8 FirePillars_StartFrames[];
 
 void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 {

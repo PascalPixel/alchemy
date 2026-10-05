@@ -1,10 +1,10 @@
+#include "GLOBAL.H"
 #include "NIWA.H"
 #include "TYPES.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
-extern u8 gBiribinoNiwaPlacements[];
 extern const struct ScenePlacement gBiribinoNiwaPlacementsOther[];
 
 
@@ -17,7 +17,6 @@ extern struct EventWork *gEventWork;
 void Engine_ObjectSetTargetAndCallback();
 void FieldScene_OpenGate();
 
-extern u8 BiribinoNiwa_GuardScript[];
 
 void BiribinoNiwa_ApplyEntryState(void);
 

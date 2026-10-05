@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "DISPTRAN.H"
 #include "TYPES.H"
@@ -31,8 +32,6 @@ struct TransitionShape {
     struct TransitionSpan spans[3];
 };
 
-extern u8 DisplayTransition_NoiseWidths[];
-extern s8 DisplayTransition_EdgeOffsets[];
 extern struct TransitionShape DisplayTransition_Shapes[];
 
 void DisplayTransition_UpdateScanlineTable(void)

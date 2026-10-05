@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -119,20 +120,9 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
-extern u8 LinkedMessage_YouWereSuchGreatHelp[];
-extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
-extern u8 LinkedMessage_TheyreBack[];
-extern u8 LinkedMessage_YouRobinRightWontForget[];
-extern u8 LinkedMessage_IvanGotShamansRod[];
 #define RATIO_HI 52428
 #define RATIO_LO 26214
 void SceneActor_FaceActors24And25TowardActorZero(void);
-extern u8 KuupuappuHeya_PairScriptB[];
-extern u8 KuupuappuHeya_PairScriptO[];
-extern u8 KuupuappuHeya_PairScriptF[];
-extern u8 KuupuappuHeya_PairScriptG[];
-extern u8 KuupuappuHeya_PairScriptK[];
 void KuupuappuHeya_StartActorStops(void);
 
 void KuupuappuHeya_RunBranchingDialogueScene();
@@ -150,18 +140,7 @@ void Engine_EventWaitForScreen();
 s32 Engine_UiWorkWaitThenFinalizeCapacity();
 void Engine_ActorStartRepeatedMotion();
 
-extern u8 KuupuappuHeya_PairScriptA[];
-extern u8 KuupuappuHeya_PairScriptC[];
-extern u8 KuupuappuHeya_PairScriptD[];
-extern u8 KuupuappuHeya_PairScriptE[];
-extern u8 KuupuappuHeya_PairScriptH[];
-extern u8 KuupuappuHeya_PairScriptI[];
-extern u8 KuupuappuHeya_PairScriptJ[];
-extern u8 KuupuappuHeya_PairScriptL[];
-extern u8 KuupuappuHeya_PairScriptM[];
-extern u8 KuupuappuHeya_PairScriptN[];
 extern u8 KuupuappuHeya_PairScriptP[];
-extern u8 KuupuappuHeya_PairScriptQ[];
 extern u8 KuupuappuHeya_PairScriptR[];
 void SceneState_SetFlagByActorPosition(void);
 s32 Engine_GameFlagIsSet();
@@ -199,7 +178,6 @@ void SceneEffect_ApplyThreeValuesAndFinish(s32 actor, s32 animation, s32 frames)
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 first, s32 second);
-extern u8 KuupuappuHeya_ActionTable[];
 u8 *Owner_GetState(s32 owner);
 void Djinn_Transfer(s32 owner, s32 djinn, s32 element, s32 flags);
 void Owner_RecalculateStats(s32 owner);
@@ -207,13 +185,6 @@ void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, c
 
 s32 BattleFx_PlayCueAndStartEmitterOnTarget();
 void Party_RemoveOwnerRestored();
-extern u8 KuupuappuHeya_Villager11ExitScript[];
-extern u8 KuupuappuHeya_Villager12ExitScript[];
-extern u8 KuupuappuHeya_VaultScriptA[];
-extern u8 KuupuappuHeya_VaultScriptB[];
-extern u8 KuupuappuHeya_VaultScriptC[];
-extern u8 KuupuappuHeya_VaultScriptD[];
-extern u8 KuupuappuHeya_VaultScriptE[];
 
 static __inline__ void bump_halfword(s32 off, s32 amount)
 {
@@ -227,7 +198,6 @@ static __inline__ void bump_halfword(s32 off, s32 amount)
 
 s32 KuupuappuHeya_GetIwanVenusDjinnCount(void);
 s32 OverlayObject_RunObjectTwoWhenFlagged(void);
-extern u8 KuupuappuHeya_Stops[];
 
 struct Stop {
     u8 id;
@@ -2475,7 +2445,6 @@ void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p)
     Object_SetMoveTarget(a, (p[0] << 19) + 0x480000, 0, (p[1] << 19) + 0x2780000);
 }
 
-extern u16 KuupuappuHeya_StopTimer;
 u32 Random16(void);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *actor, s32 argument);
 

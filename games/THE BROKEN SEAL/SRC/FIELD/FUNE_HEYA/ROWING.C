@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -35,8 +36,6 @@ void Func_02008004();
 void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
 
-extern u8 FuneHeya_ActionScriptA[];
-extern u8 FuneHeya_ActionScriptB[];
 void UiText_ShowCenteredMessage();
 void Ui_SetRenderResultFromObject();
 void ConfigureSceneMotionFlags();
@@ -70,8 +69,6 @@ union GameStateRows {
     s16 halves[512][1];
 };
 
-extern const u8 FuneHeya_EntryActionScript[];
-extern s32 FuneHeya_CueTimer;
 
 void FuneHeya_RunWalkerStep();
 void UpdateActorNineEffectMode();
@@ -80,8 +77,6 @@ struct Half {
     u16 v;
 };
 
-extern const s32 FuneHeya_ActionScriptE[];
-extern const s32 FuneHeya_ActionScriptF[];
 
 enum ExtendedChoreographyMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
@@ -131,7 +126,6 @@ void Scene_RunConditionalActorPresentation();
 
 s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate);
 
-extern const s32 FuneHeya_Script01[];
 void SceneState_ApplyActor8FourFlags();
 
 void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt);
@@ -144,14 +138,9 @@ void FieldScene_RunStepThen10();
 
 enum { CabinSpeakerRequest = 0xa01b };
 
-extern struct FieldActor *FuneHeya_AnchorObject;
 
 void Object_SetActionById();
 
-extern const s32 FuneHeya_CellStepsA[];
-extern const s32 FuneHeya_CellStepsB[];
-extern const s32 FuneHeya_CellStepsC[];
-extern const s32 FuneHeya_CellStepsD[];
 void ObjectMotion_SetHorizontalPositionWithTerrain();
 void FuneHeya_PoseSceneActor();
 void ObjectMotion_WaitForAnimationChange();
@@ -166,21 +155,16 @@ static __inline__ void SetPose(u8 *rec, s32 pose)
     ((struct FieldActor *)rec)->facing = pose;
 }
 
-extern u8 FuneHeya_ProgressTableA[];
 void Object_SetActionCallbackAndRefreshById();
 void FieldScene_RunStepThen10(s32 a);
 void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags);
 
-extern u8 FuneHeya_ActionScriptC[];
-extern u8 FuneHeya_ActionScriptD[];
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 void FieldScene_InstallFlaggedActors10To17(u8 *src);
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
 void FieldScene_RunPositionTransferPresentation(void);
 
 extern struct EventWork *gEventWork;
-extern u8 FuneHeya_ProgressTableB;
-extern u8 FuneHeya_ProgressTableC;
 void SceneActor_SetFlagBit3ForActors28To35();
 void FieldScene_InstallFlaggedActors10To17();
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "ENTRY_SETUP.H"
 #include "TYPES.H"
@@ -154,10 +155,6 @@ struct SwitchEffect {
 };
 
 extern struct SwitchCell gVinasuPillarCells[8];
-extern s32 gVinasuFirstGateScript[];
-extern s32 gVinasuFirstGateOpenScript[];
-extern s32 gVinasuSecondGateScript[];
-extern u16 gVinasuGateCells[];
 
 struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
 void OverlayObject_WaitUntilIdle(struct FieldActor *object);

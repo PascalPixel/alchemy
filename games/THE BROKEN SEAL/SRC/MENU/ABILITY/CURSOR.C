@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "PSYNERGY_MENU.H"
@@ -38,8 +39,6 @@ struct MenuCursorSprite {
 
 void WaitFrames(s32 frames);
 
-extern u8 UiMenu_CursorBobX[];
-extern u8 UiMenu_CursorBobY[];
 extern volatile u32 gFrameCount;
 
 s32 UiMenu_CreateCursor(void *source)

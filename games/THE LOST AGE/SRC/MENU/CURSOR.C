@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "text/MSG_IDS.H"
 
-extern u8 CharacterMenu_CursorWidths[];
 void Render_SetTilemapFlagRect(const u8 *, s32, s32, s32, s32, u32);
 void UiText_DrawResourceFar(s32 message, s32 target, s32 x, s32 y);
 

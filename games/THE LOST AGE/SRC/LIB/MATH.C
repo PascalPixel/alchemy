@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 
-extern const u16 Math_ArcTanTable[];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position)
 {
@@ -125,7 +125,6 @@ s32 FixedSqrt(s32 value)
     return Iwram_Sqrt(value) << 8;
 }
 
-extern const u8 System_BasicColorPalette[];
 
 s32 Runtime_GetLowTableAddress(void)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "COLGAUGE.H"
 #include "RESOURCE.H"
@@ -32,7 +33,6 @@ struct PathWork {
 #define PATH_RECORDER ((struct PathRecorder *)gSceneState)
 #define PATH_WORK ((struct PathWork *)gKorosseoWork)
 
-extern const s32 Korosseo_RivalFinishScript[];
 
 void Korosseo_UpdatePathRival(void)
 {
@@ -116,7 +116,6 @@ void Korosseo_UpdatePathRival(void)
     }
 }
 
-extern u16 Korosseo_GaugePalette[];
 extern u8 Korosseo_GaugeGraphics[];
 
 void Korosseo_DrawGauge(void)

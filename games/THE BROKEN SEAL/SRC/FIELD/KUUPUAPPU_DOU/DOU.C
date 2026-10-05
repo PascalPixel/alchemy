@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
@@ -7,7 +8,6 @@
 #include "CALL.H"
 #include "OBJECT_RUNTIME.H"
 
-extern u8 gKuupuappuDouRegions[];
 extern const struct SceneEntrance gKuupuappuDouEntrances1[];
 extern const struct SceneEntrance gKuupuappuDouEntrances2[];
 extern const struct SceneEntrance gKuupuappuDouEntrances3[];
@@ -31,10 +31,6 @@ extern void KuupuappuDou_RaiseActorPriorities(void);
 
 extern
 
-extern const u32 gKuupuappuDouExits1[];
-extern const u32 gKuupuappuDouExits2[];
-extern const u32 gKuupuappuDouExits3[];
-extern const u32 gKuupuappuDouExitsOther[];
 extern const struct ScenePlacement gKuupuappuDouPlacements1[];
 extern const struct ScenePlacement gKuupuappuDouPlacements2[];
 extern const struct ScenePlacement gKuupuappuDouPlacements3[];
@@ -42,7 +38,6 @@ extern const struct ScenePlacement gKuupuappuDouPlacementsOther[];
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
-extern s32 KuupuappuDou_DirectionSteps[];
 
 extern const struct SceneEvent gKuupuappuDouEvents1[];
 extern const struct SceneEvent gKuupuappuDouEvents2[];
@@ -77,13 +72,7 @@ struct SceneActorRecord {
 
 #define TILE(position) ((position) / 0x100000)
 
-extern s32 KuupuappuDou_ScheduleFrames[];
-extern s32 KuupuappuDou_ScheduleTimer;
-extern s32 KuupuappuDou_ScheduleIndex;
-extern s32 KuupuappuDou_TickCounter;
-extern s32 KuupuappuDou_TickValue;
 
-extern const s32 KuupuappuDou_PuffScript[];
 
 void FieldScene_RunOpeningAuxiliarySequence(void);
 void FieldScene_RunScene3a7SequenceD(void);

@@ -1,4 +1,5 @@
 
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -11,10 +12,6 @@ struct Approach390Subject {
     u16 dir;
 };
 
-extern u8 EntryLayout_PrimaryTable[];
-extern u8 EntryLayout_SecondaryTable[];
-extern u8 EntryLayout_Records[];
-extern u8 EntryLayout_FourthTable[];
 
 void FieldScene_PrepareActors(u8 *);
 

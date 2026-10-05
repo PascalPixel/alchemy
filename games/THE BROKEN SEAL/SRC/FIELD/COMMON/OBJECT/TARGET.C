@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "IWRAM_CALL.H"
@@ -31,18 +32,10 @@ struct LinkedEffectObject {
 void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Object_Destroy(void *object);
 s32 BattleFx_CopyLinkedObjectPosition(void *);
-extern const u8 Data_0809fd38[];
 
 extern struct ObjectRuntime *gObjectSlots;
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 s32 ArcTan2(s32, s32);
-extern const u8 ObjectMotion_ActionKind1Script[];
-extern const u8 ObjectMotion_ActionKind2Script[];
-extern const u8 ObjectMotion_ActionKind3Script[];
-extern const u8 ObjectMotion_ActionKind4Script[];
-extern const u8 ObjectMotion_MoveTowardTargetScript[];
-extern const u8 ObjectMotion_TurnTowardLinkedScript[];
-extern const u8 ObjectMotion_ResetActionScript[];
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
 void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -9,7 +10,6 @@
 extern const struct SceneEntrance gGomaSuiroEntrances2[];
 extern const struct SceneEntrance gGomaSuiroEntrancesOther[];
 
-extern const u32 GomaSuiro_Exits[];
 
 extern const struct ScenePlacement gGomaSuiroPlacements2[];
 extern const struct ScenePlacement gGomaSuiroPlacementsOther[];

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
@@ -22,7 +23,6 @@ struct BurstPosition { s32 x, y, z; };
 void WaitFrames(s32 frames);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BurstPosition *pos);
 void Object_SetMode(struct FieldActor *object, s32 mode);
-extern const s32 BattleFx_BurstParticleObjectScript[];
 extern struct BattleFxScene *gEffectWork;
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct BurstPosition *pos);

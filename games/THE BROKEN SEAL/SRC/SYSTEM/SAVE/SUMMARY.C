@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -17,7 +18,6 @@ u8 *UiText_FormatNumber(u8 *, s32, s32);
 extern volatile u32 gKeysHeld;
 extern s16 gTitleExtraOptionEnabled;
 
-extern u8 gSaveBuffer[];
 extern u8 gSceneState[];
 extern u32 gLoadedStateWord;
 extern u8 gOptionMirror;
@@ -26,7 +26,6 @@ u32 Runtime_GetBuildStampTimeFar(s32);
 u8 Party_SumDjinnCountsFar(s32 element);
 void Party_ListActiveOwnersFar(u16 *owners);
 
-extern s16 gSaveSlot;
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 
 void UiWork_FinalizeAndReleaseBlock16(void)

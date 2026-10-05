@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -28,9 +29,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern u8 ParticleField_Counts[][3];
-extern u16 ParticleField_PuffCells[];
-extern u16 ParticleField_PuffSizes[];
 
 void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode);
 

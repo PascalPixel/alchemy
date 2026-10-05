@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
@@ -18,7 +19,6 @@ extern void *gWorkSlot[64];
 
 extern u8 gDisp[];
 
-extern const u8 BattlePres_TileVariants[];
 
 void BattlePresentation_BuildTilemap(s32 *destination)
 {

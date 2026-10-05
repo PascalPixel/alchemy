@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u8 GameFlagBytes[];
 
 u8 GameFlag_GetByte(s32 flag)
 {

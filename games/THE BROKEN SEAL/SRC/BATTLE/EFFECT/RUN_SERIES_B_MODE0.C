@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
@@ -36,7 +37,6 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void ObjectGroup_TickMemberTimers(void);
 
-extern u16 BattleFx6_FlareCells[];
 
 void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode);
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -19,10 +20,6 @@ void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 s32 ArcTan2(s32, s32);
 
-extern s32 BattleMotion_VariantAcceleration[];
-extern s32 BattleMotion_VariantSpeedLimit[];
-extern s32 BattleMotion_VariantVelocityY[];
-extern s32 BattleMotion_VariantDistancePercent[];
 
 void Camera_InitDefaultTransform(void)
 {

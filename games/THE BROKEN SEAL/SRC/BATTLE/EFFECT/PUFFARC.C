@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -16,10 +17,6 @@ void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 
-extern u8 PuffArc_CellWidths[];
-extern u8 PuffArc_CellHeights[];
-extern u8 PuffArc_CellBiasY[];
-extern u16 PuffArc_CellSourceOffsets[];
 
 typedef struct Puff {
     s32 x;

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -25,8 +26,6 @@ extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
-extern u8 EmberColumns_Columns[];
-extern s32 EmberColumns_Gravity[];
 
 struct BattleEffectTargetArgument;
 void BattleEventRuntime_BeginPhaseFar(s32 value);
@@ -36,13 +35,6 @@ void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 extern u8 gBattleFxWork[];
-extern u8 PaletteParticles_DropSpeeds[];
-extern u8 PaletteParticles_SparkPixels[];
-extern u8 PaletteParticles_DropSizes[];
-extern u8 PaletteParticles_StreakWidths[];
-extern u8 PaletteParticles_StreakHeights[];
-extern u8 PaletteParticles_StreakDrops[];
-extern u16 PaletteParticles_StreakOffsets[];
 
 #define gDrops ((struct EffectStep *)Ram_MapCellBuffer)
 

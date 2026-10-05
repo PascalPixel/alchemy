@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "OBJECT_RUNTIME.H"
@@ -28,9 +29,6 @@ void Object_CommitPosition(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
-extern const u8 ObjectMotion_LinkedActionScript[];
-extern u8 ObjectMotion_LaunchScript;
-extern const u8 ObjectMotion_VariantScripts[];
 
 void WaitFrames(s32);
 
@@ -57,8 +55,6 @@ struct BurstParticle {
 
 extern struct BurstParticle *Object_CreateFar(s32, s32, s32, s32);
 void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value);
-extern const u8 BattleFx_BurstParticleScriptA[];
-extern const u8 BattleFx_BurstParticleScriptB[];
 void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void BattleFx_PlayQueuedSound(void);
 void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle);

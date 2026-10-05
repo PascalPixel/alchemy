@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "ABILITY_IDS.H"
 #include "FIELD_EVENT.H"
@@ -61,7 +62,6 @@ enum {
 };
 
 extern const struct SceneEntrance gJailEntrances[];
-extern const u32 gJailExits[];
 extern const struct ScenePlacement gJailThiefPlacements[];
 extern const struct ScenePlacement gJailPrisonerPlacements[];
 extern const struct SceneEvent gJailThiefEvents[];

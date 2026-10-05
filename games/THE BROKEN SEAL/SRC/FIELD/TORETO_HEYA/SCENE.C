@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "HEYA.H"
@@ -11,7 +12,6 @@
 
 extern const struct SceneEntrance gToretoHeyaEntrances[];
 extern const struct SceneRegion gToretoHeyaRegions[];
-extern const u32 gToretoHeyaExits[];
 extern const struct ScenePlacement gToretoHeyaPlacements[];
 
 void Event_SetDestination(s32 scene, s32 entrance);
@@ -19,10 +19,6 @@ void Event_SetDestination(s32 scene, s32 entrance);
 extern const struct SceneEvent gToretoHeyaEvents[];
 
 
-extern const u8 ToretoHeya_TableActions0[];
-extern const u8 ToretoHeya_TableActions1[];
-extern const u8 ToretoHeya_TableActions2[];
-extern const u8 ToretoHeya_TableActions3[];
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);
 
@@ -36,8 +32,6 @@ extern struct BattleEffectBuffers *Data_03001ed0;
 
 extern u8 *gWork[];
 
-extern s32 ToretoHeya_TintIndex;
-extern s32 ToretoHeya_TintSteps[];
 
 void Vector_AddPolarOffset();
 
@@ -80,7 +74,6 @@ struct Vec3 {
     s32 z;
 };
 
-extern s16 ToretoHeya_MapPatches[];
 
 void ToretoHeya_AdvanceEffectMotion();
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
@@ -9,7 +10,6 @@
 void UiText_DrawNumberAtOffsetFar();
 void UiIcon_CreateStatChangeArrow();
 
-extern u8 UiIcon_ResourceTiles[];
 
 void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct BattleUnit *base, s32 work)
 {

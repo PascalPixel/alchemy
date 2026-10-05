@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "MAPCOPY.H"
 #include "STAGED_ACTOR.H"
@@ -11,7 +12,6 @@ extern u8 gMapCellBuffer[];
 
 extern u8 *gWork;
 extern s32 StagedActor_DirectionSteps[];
-extern s32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 
 extern void WaitFrames(s32);

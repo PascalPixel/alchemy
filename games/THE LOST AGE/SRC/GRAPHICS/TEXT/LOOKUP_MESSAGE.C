@@ -1,11 +1,10 @@
+#include "GLOBAL.H"
 #include "TEXT_READER.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 #include "IO_REG.H"
 
-extern const u8 Text_LookupSymbolCode[];
-extern u8 Text_LookupSymbolCodeSize[];
 
 void UiText_LookupMessage(struct TextReader *reader, s32 message)
 {

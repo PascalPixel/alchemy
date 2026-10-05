@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -22,7 +23,6 @@ void SceneTransform_RewindStack(void)
 #include "IWRAM_CALL.H"
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
-extern const u32 RelocatedQ16DotProduct[];
 s32 FixedSqrt(s32 value);
 
 void Render_ResetTransformState(void)

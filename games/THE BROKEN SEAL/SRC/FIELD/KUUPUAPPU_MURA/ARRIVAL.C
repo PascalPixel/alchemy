@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -22,7 +23,6 @@ struct SceneActor_0200113c {
 
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation);
 
-extern const u16 KuupuappuMura_Scene12Cells[];
 
 s32 ActorPresentation_UpdateEntityFromLeader();
 s32 SceneActor_UpdateProximityToLeader();
@@ -62,8 +62,6 @@ union DriftingObject {
 
 void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
 
-extern const s32 KuupuappuMura_DriftScriptA[];
-extern const s32 KuupuappuMura_DriftScriptB[];
 
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {

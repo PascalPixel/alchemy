@@ -1,7 +1,7 @@
+#include "GLOBAL.H"
 #include "OBJECT_RUNTIME.H"
 
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
-extern u8 gPlayerObjectId[];
 
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
                                   s32 group_mode, s32 action)

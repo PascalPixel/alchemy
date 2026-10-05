@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 #include "OBJECT_RUNTIME.H"
@@ -16,7 +17,6 @@ void Func_020023a4(void *object);
 void Func_0200260c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 extern const struct SceneEntrance gSceneEntrances[];
-extern const u32 gSceneExits[];
 extern const struct ScenePlacement gScenePlacements[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
@@ -40,11 +41,6 @@ struct SoruRingList {
     u16 count;
 };
 
-extern s32 Soru_RingOffsetX[];
-extern s32 Soru_RingOffsetZ[];
-extern u8 Soru_RingDrift[][3];
-extern u8 Soru_RingSwing[][3];
-extern s8 Soru_RingDirection[][3];
 
 u32 Engine_RandomNext(void);
 s32 Engine_MathSin(s32 angle);

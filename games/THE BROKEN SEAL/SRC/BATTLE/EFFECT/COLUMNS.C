@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -32,17 +33,6 @@ struct DualPuff {
     s32 age;
 };
 
-extern u8 DualTable_ColumnCounts[];
-extern u8 DualTable_ColumnX[];
-extern u8 DualTable_HeightLimits[];
-extern u8 DualTable_VineWidths[];
-extern u16 DualTable_VineCells[];
-extern u8 DualTable_PillarWidths[];
-extern u16 DualTable_PillarCells[];
-extern s8 DualTable_PillarHeights[];
-extern s8 DualTable_PuffWidths[];
-extern u8 DualTable_PuffHeights[];
-extern u16 DualTable_PuffCells[];
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 a, s32 b);
@@ -55,7 +45,6 @@ typedef struct Column {
 } Column;
 
 extern void *gWorkSlot[];
-extern s8 RisingColumns_ColumnOffsets[];
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void Audio_PlayCue(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
@@ -64,12 +53,6 @@ void Camera_ApplyShake(s32, s32);
 
 void WaitFrames(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
-extern u8 BattleFxPillar_Kinds[];
-extern s8 BattleFxPillar_X[];
-extern u8 BattleFxPillar_Counts[];
-extern s8 BattleFxPillar_PuffWidths[];
-extern u8 BattleFxPillar_PuffHeights[];
-extern u16 BattleFxPillar_PuffCells[];
 
 struct PillarWork {
     u8 sheet[0x7780];

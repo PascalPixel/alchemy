@@ -1,11 +1,8 @@
 
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 
-extern u8 SoruDou_SceneTable0[];
-extern u8 SoruDou_SceneTable1[];
-extern u8 SoruDou_SceneTable2[];
-extern u8 SoruDou_SceneTable3[];
 #include "RESOURCE_37C_RUNTIME.H"
 
 u8 *State_Run(void)

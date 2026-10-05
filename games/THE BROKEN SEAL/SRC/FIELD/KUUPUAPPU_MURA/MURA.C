@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -72,22 +73,9 @@ struct OverlayEffectMotion {
     s16 mode;
 };
 
-extern u8 *Data_03001e8c[];
 extern u8 *gWork;
 
-extern u8 KuupuappuMura_Scripts[];
-extern u8 KuupuappuMura_Messages[];
-extern u8 KuupuappuMura_Actors[];
-extern u8 KuupuappuMura_ActorsFlag855[];
-extern u8 KuupuappuMura_Extras[];
-extern u8 KuupuappuMura_ExtrasFlag855[];
 
-extern const u16 KuupuappuMura_Scene5Cells[];
-extern const u16 KuupuappuMura_Scene6Cells[];
-extern const u16 KuupuappuMura_Scene7Cells[];
-extern const u16 KuupuappuMura_Scene8Cells[];
-extern const u16 KuupuappuMura_Scene9Cells[];
-extern const u16 KuupuappuMura_Scene10Cells[];
 u8 *Owner_GetState();
 void Djinn_Transfer(int, int, int, int);
 s32 Owner_RecalculateStats(int);

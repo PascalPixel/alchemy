@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "CANVAS.H"
 #include "MAP_SCROLL.H"
@@ -80,7 +81,6 @@ void BattleFx_ArmWin0HBlankDma(void)
 
 extern u16 BattleFx_PuffCells[];
 extern u8 BattleFx_PuffSizes[];
-extern u8 FallingShards_Counts[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -255,8 +255,6 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     BattlePres_ConfigureEffectDisplay();
 }
 
-extern u16 BattleFx6_FlareCells[];
-extern u8 FallingBolts_Counts[];
 
 struct BoltSparkBuffer {
     u16 lines[160];

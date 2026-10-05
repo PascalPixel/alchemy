@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FIXED_MATH.H"
 #include "OBJECT_LOOKUP.H"
 #include "OBJECT_DISPATCH.H"
@@ -6,7 +7,6 @@
 #include "PARTY_STATE.H"
 #include "ANIMSPR.H"
 
-extern s8 BattleFx_RandomChildValues[];
 
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 

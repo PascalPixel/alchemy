@@ -1,7 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FRAME.H"
 
-extern u8 gRomShiftedTilePair[];
 
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift);
 

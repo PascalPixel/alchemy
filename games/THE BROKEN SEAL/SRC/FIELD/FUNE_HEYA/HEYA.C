@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -65,32 +66,10 @@ struct EffectRecord {
     u8 active;
 };
 
-extern u8 FuneHeya_SceneTable02[];
-extern u8 FuneHeya_SceneTable01[];
-extern u8 FuneHeya_SceneTable03;
 struct SceneActor *Object_GetByIdFar(s32 actor_id);
 
-extern u8 FuneHeya_StepScriptF[];
-extern u8 FuneHeya_StepScriptG[];
-extern u8 FuneHeya_StepScriptE[];
-extern u8 FuneHeya_StepScriptH[];
-extern u8 FuneHeya_StepScriptD[];
-extern u8 FuneHeya_StepScriptC[];
-extern u8 FuneHeya_StepScriptB[];
-extern u8 FuneHeya_StepScriptA[];
 extern u8 Data_02000240[];
 
-extern u8 FuneHeya_SceneTable04[];
-extern u8 FuneHeya_SceneTable05[];
-extern u8 FuneHeya_SceneTable06[];
-extern u8 FuneHeya_SceneTable07[];
-extern u8 FuneHeya_SceneTable08[];
-extern u8 FuneHeya_SceneTable09[];
-extern u8 FuneHeya_SceneTable10[];
-extern u8 FuneHeya_SceneTable11[];
-extern u8 FuneHeya_SceneTable12[];
-extern u8 FuneHeya_SceneTable13[];
-extern u8 FuneHeya_SceneTable14[];
 void Battle_ResetEffectCounterFar();
 void FieldScene_CallPairWith10(s32 a, u16 b);
 

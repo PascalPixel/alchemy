@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GATE.H"
 #include "FIELD_SCENE.H"
 #include "TYPES.H"
@@ -9,7 +10,6 @@ extern const struct SceneEntrance gSuharaGateEntrances2[];
 extern const struct SceneEntrance gSuharaGateEntrances3[];
 extern const struct SceneEntrance gSuharaGateEntrancesOther[];
 
-extern u8 SuharaGate_SceneTable[];
 
 extern const struct ScenePlacement gSuharaGatePlacements1[];
 extern const struct ScenePlacement gSuharaGatePlacements1Flagged[];

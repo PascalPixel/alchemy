@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "IMIRU_FUCHIN.H"
 #include "TYPES.H"
 #include "GLYPH.H"
@@ -38,7 +39,6 @@ s32 ImiruFuchin_TrackLeader;
 
 void ImiruFuchin_ApplyEntrySetup(void);
 void FieldScene_RunScene39aSequenceA(void);
-extern s32 ImiruFuchin_TrackLeader;
 void ImiruFuchin_ApplyRoomLayout(void);
 void ImiruFuchin_PlaceDragonsEye(void);
 struct FieldActor *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 sprite);

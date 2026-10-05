@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "RAM_BUFFER.H"
@@ -11,22 +12,14 @@ s32 Summon_IsEntryFlagged(s32 class_id);
 s32 Summon_GetEntryValue(s32 class_id);
 s32 Summon_GetEntryFlag1Field(s32 class_id);
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 value, u32 variant);
-extern u16 Resource_SlotAssignments[];
 s32 Inventory_FindEquippedFar(s32, s32);
-extern u16 RomBytes_080c2a1c[];
-extern u16 BattleUnit_WeaponAnimsClass1[];
-extern u16 BattleUnit_WeaponAnimsClass2[];
-extern u16 BattleUnit_WeaponAnimsClass3[];
-extern u16 BattleUnit_WeaponAnimsClass5[];
 
 struct MotionObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *owner, s32 type);
 s32 SummonSlot_RegisterActorSprites(s32);
 s32 BattleUnit_LookupWeaponValueByClass(s32);
 s32 ArcTan2(s32, s32);
-extern const s32 BattlePres_ActorObjectScript[];
 
-extern const s8 BattlePlacement_StepPairs[];
 s32 Resource_FindFreeSlot(s32 key);
 
 void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -13,15 +14,9 @@ union Slot {
     s16 h[2];
 };
 
-extern s32 FuneKanpan_FlagGroupEntries[];
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
-extern u16 FuneKanpan_SlotPhase[];
-extern u16 FuneKanpan_SlotValue[];
 void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot);
 void SceneEffect_SelectSlotValueAndPosition(s32 actor, s32 slot, s32 row);
 
-extern u32 FuneKanpan_SlotMode[];
-extern s32 FuneKanpan_SlotDepth[];
 void ObjectVisual_CopyAttributes(s32 actor, s32 source);
 
 struct SlotSprite {
@@ -31,16 +26,11 @@ struct SlotSprite {
 };
 
 void OverlayObject_ActivateSlotWithMode3(s32 actor);
-extern s32 FuneKanpan_LayerScroll[];
-extern s32 FuneKanpan_LayerSpeed[];
-extern u8 FuneKanpan_CrewScript[];
 void Event_CallWithLastActiveObjectId(u8 *script);
 void FieldScene_RunStepThen10(s32 step);
 void FieldScene_CallPairWith10(s32 actor, s32 facing);
 void FieldScene_RunStepThen10(s32 a);
 void FieldScene_CallPairWith10(s32 a, s32 b);
-extern u8 FuneKanpan_ClosingCrewScript[];
-extern u8 FuneKanpan_LeaveActions[];
 void FuneKanpan_OpenFirstDoor(void);
 
 void FuneKanpan_ChooseSlotModes(void)

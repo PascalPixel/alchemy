@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "MOTION_OBJECT.H"
@@ -23,7 +24,6 @@ struct Vector3 {
     s32 z;
 };
 
-extern u16 BattleFx6_FlareCells[];
 extern struct Vector3 SpinningTriangle_Vertex[];
 extern struct Vector3 TriangleStrike_Vertex[];
 

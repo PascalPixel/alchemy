@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u16 Resource_SlotAssignments[];
 
 s32 Resource_FindFreeSlot(s32 key)
 {

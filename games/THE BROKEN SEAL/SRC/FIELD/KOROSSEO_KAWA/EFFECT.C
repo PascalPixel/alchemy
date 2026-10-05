@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -6,7 +7,6 @@
 #include "OBJECT_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-extern const s32 KorosseoKawa_ApproachScript[];
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -53,10 +53,7 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
-extern u8 KorosseoKawa_ScriptB[];
 extern u8 HexDigits[];
-extern u8 KorosseoKawa_ScriptA[];
 typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);

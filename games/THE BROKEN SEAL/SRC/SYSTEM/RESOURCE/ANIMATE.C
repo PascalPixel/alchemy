@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
@@ -11,14 +12,10 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 
 void ResourceMetadata_ClearRecord(void *);
 
-extern u8 Tile_CopyStrided[];
 
-extern u8 Tile_CopyStridedCodeSize[];
 
-extern const u8 Object_ShadowTiles[];
 void PaletteDma_LoadBlock(void);
 
-extern struct AnimationEntry *gAnimationObjects[];
 s32 Animation_LookupValueByKey(s32 key);
 
 struct AnimationEntry *AnimationObject_Allocate(s32 id);
@@ -31,7 +28,6 @@ struct ResourceSlotNumber {
 enum { RESOURCE_SLOT_COUNT = 8, ANIMATION_OBJECT_COUNT = 64 };
 
 extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
-extern u8 ResourceSlot_ConversionTables[][256];
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {

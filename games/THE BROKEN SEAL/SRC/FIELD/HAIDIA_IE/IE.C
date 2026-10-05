@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "HAIDIA.H"
@@ -13,10 +14,6 @@
 
 
 
-extern u8 HaidiaIe_Actor23Actions[];
-extern u8 HaidiaIe_Actor24Actions[];
-extern u8 HaidiaIe_Actor25Actions[];
-extern u8 HaidiaIe_LeaderActions[];
 
 s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "CHARACTER_MENU.H"
 #include "INVENTORY_MENU.H"
@@ -16,7 +17,6 @@
 #endif
 
 extern u8 IwramCopyWords[];
-extern u8 Ui_LvString[];
 
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void WaitFrames(s32 frames);

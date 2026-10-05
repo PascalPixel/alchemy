@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "SELECT.H"
 #include "GLYPH.H"
@@ -9,23 +10,15 @@
 #include "RESOURCE_IDS.H"
 #include "IO_REG.H"
 
-extern u8 RomBytes_080308a0[];
 
 extern u8 *RomBytes_08029a10[];
 extern u8 *UiIcon_PsynergyIconPointers[];
 
 extern GlyphTransfer *gGlyphWork;
-extern u8 *UiIcon_MiscIconPointers[];
 
-extern const u8 Tile_Decompress4bpp[];
-extern const u8 Tile_ExpandMasked[];
-extern const u8 Tile_ExpandOpaque[];
 
 extern void *gWorkSlot[64];
 
-extern u8 Tile_Decompress4bppCodeSize[];
-extern u8 Tile_ExpandMaskedCodeSize[];
-extern u8 Tile_ExpandOpaqueCodeSize[];
 #define ROUTINE_BLOCK 49
 
 struct GlyphCursor { u16 unused; u16 cursor; };
@@ -40,7 +33,6 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
 
-extern struct SelectionScreen *gResQueueWork;
 
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
@@ -29,7 +30,6 @@ u32 Party_GetAverageLevel(void)
     return total;
 }
 
-extern const u8 Enemy_DefinitionTable[];
 
 const u8 *Owner_GetRecord(s32 selector)
 {

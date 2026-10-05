@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -35,19 +36,6 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32 x, s32 y);
 
-extern u8 ThornVines_ObjectPoses[];
-extern u16 ThornVines_ThornOffsets[];
-extern u8 ThornVines_ThornWidths[];
-extern u8 ThornVines_ThornHeights[];
-extern u16 ThornVines_LeafOffsets[];
-extern u8 ThornVines_LeafSizes[];
-extern u16 ThornVines_ChipOffsets[];
-extern u8 ThornVines_ChipWidths[];
-extern u8 ThornVines_ChipHeights[];
-extern u16 ThornVines_SparkOffsets[];
-extern u8 ThornVines_SparkSizes[];
-extern u16 ThornVines_EmberOffsets[];
-extern u16 ThornVines_EmberSizes[];
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -537,24 +525,6 @@ typedef struct Scale {
 } Scale;
 
 extern const Scale BattleFx10_UnitScale;
-extern const u8 BattleFx10_Points[][2];
-extern const s8 BattleFx10_ShakeOffsets[];
-extern const u16 BattleFx10_RockCells[];
-extern const u8 BattleFx10_RockWidths[];
-extern const u8 BattleFx10_RockHeights[];
-extern const u8 BattleFx10_Animations[];
-extern const u8 BattleFx10_DebrisWidths[];
-extern const u8 BattleFx10_DebrisHeights[];
-extern const u16 BattleFx10_DebrisCells[];
-extern const u8 BattleFx10_SprayWidths[];
-extern const u8 BattleFx10_SprayHeights[];
-extern const u16 BattleFx10_SprayCells[];
-extern const u16 BattleFx10_BoulderCells[];
-extern const u8 BattleFx10_BoulderWidths[];
-extern const u8 BattleFx10_BoulderHeights[];
-extern const u8 BattleFx10_FallWidths[];
-extern const u8 BattleFx10_FallHeights[];
-extern const u16 BattleFx10_FallCells[];
 extern const u16 BattleFx_PuffCells[];
 extern const u8 BattleFx_PuffSizes[];
 
@@ -987,7 +957,6 @@ s32 Battle_GetObjectTableValueFar(s32 member_id);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern s32 IceShardBursts_Gravities[];
 
 #define SHARDS_PER_MEMBER 128
 

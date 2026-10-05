@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLYPH.H"
@@ -7,7 +8,6 @@
 
 extern void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 slot);
 
-extern u8 *UiIcon_FramePointerTable[];
 extern u8 *UiIcon_ItemIconPointers[];
 
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
@@ -43,8 +43,6 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
 }
 
 extern GlyphTransfer *gGlyphWork;
-extern u8 *UiIcon_MarkPointers[];
-extern u8 *UiIcon_DigitPointers[];
 
 #define ICON_FRAME 1
 #define ICON_COUNT_ABOVE_ONE 2

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "SANCTUM.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
@@ -7,7 +8,6 @@
 #include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gSoruNichigetsuEntrances[];
-extern const u32 gSoruNichigetsuExits[];
 extern const struct ScenePlacement gSoruNichigetsuPlacements[];
 extern const struct SceneEvent gSoruNichigetsuEvents[];
 

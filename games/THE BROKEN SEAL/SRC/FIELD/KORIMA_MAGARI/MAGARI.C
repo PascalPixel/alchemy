@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -19,17 +20,8 @@ struct Cell {
     u8 type;
 };
 
-extern s16 *gOv;
-extern s16 *gOv2;
-extern u16 *gOv3;
-extern u8 gUnk[];
 s32 Math_DivideSigned();
 
-extern u8 gKorimaMagariEntrances[];
-extern u8 gKorimaMagariExits[];
-extern u8 gKorimaMagariPlacements[];
-extern u8 gKorimaMagariEvents[];
-extern s16 *gKorimaMagariRecords;
 void Scene_PushBlockAlongRun(s16 *records);
 void State_StampRecordCells(s16 *records, s32 value);
 void State_ApplyRectByLayoutSelector(void);

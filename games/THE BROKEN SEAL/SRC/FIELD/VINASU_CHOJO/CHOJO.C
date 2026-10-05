@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "CHOJO.H"
 #include "IWRAM_CALL.H"
@@ -12,7 +13,6 @@
 #include "B5_CONTEXT.H"
 #include "text/MSG_IDS.H"
 
-extern u8 VinasuChojo_PairActionScript[];
 void VinasuChojo_ShowMessage();
 void VinasuChojo_ShowPartyMember();
 void Engine_TaskWait();
@@ -49,8 +49,6 @@ void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
 void Engine_AudioPlayCue();
 
-extern const s32 SceneAction_EntryGroup[];
-extern const s32 SceneAction_EntryPair[];
 void BattleFx_SetWeightedResult();
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
@@ -1263,8 +1261,6 @@ void FieldScene_RunStep6(void)
 
 extern const u8 VinasuChojo_ScaleStepAction[];
 extern const u8 VinasuChojo_BeamOpenAction[];
-extern const u8 Data_020060ac[];
-extern const u8 Data_0200622c[];
 void SceneEffect_SpawnParticlesAboveActor(void);
 void Owner_RefreshRatiosOnFlag(void);
 

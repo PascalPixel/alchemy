@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GROUP_DEPARTURE.H"
 #include "TYPES.H"
 #include "CALL.H"
@@ -28,25 +29,13 @@ void ActorPresentation_SetEightSceneCells();
 void ObjectMotion_SetActionVariant();
 void FieldScene_DrawFiveTileBlocks();
 void Event_PrepareObjectAndApplyValue();
-extern u8 HaidiaArashi_ActorTwentyTwoScriptA[];
-extern u8 HaidiaArashi_ActorTwentyTwoScriptB[];
 
 
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
 
 void HaidiaArashi_RunRiverSearch(void);
-extern u8 HaidiaArashi_ActorNineScriptA[];
-extern u8 HaidiaArashi_ActorNineScriptB[];
-extern u8 HaidiaArashi_ActorNineScriptC[];
-extern u8 HaidiaArashi_ActorNineScriptD[];
-extern u8 HaidiaArashi_ActorTwentySixScriptA[];
-extern u8 HaidiaArashi_ActorTwentySixScriptB[];
-extern u8 HaidiaArashi_ActorTwentySixScriptC[];
-extern u8 HaidiaArashi_CellSteps4[];
-extern u8 HaidiaArashi_CellSteps5[];
 
-extern u8 HaidiaArashi_StormRunActions[];
 void Scene_RunActorGroupDepartureSequence();
 
 s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
@@ -1884,13 +1873,6 @@ void HaidiaArashi_RunReunionAndDeparture(void)
         }
     }
 }
-extern const u8 HaidiaArashi_ArriveScript[];
-extern const u8 HaidiaArashi_GatherPath8[];
-extern const u8 HaidiaArashi_GatherPath26[];
-extern const u8 HaidiaArashi_GatherPath0[];
-extern const u8 HaidiaArashi_GatherPath22[];
-extern const u8 HaidiaArashi_LookAroundScript[];
-extern const u8 HaidiaArashi_ActorNineteenRiseScript[];
 struct FieldActor *Battle_GetWorkObject1e0(void);
 void HaidiaArashi_UpdatePulsingGlow(void);
 void ActorPresentation_SelectActorTwentySevenState(void);

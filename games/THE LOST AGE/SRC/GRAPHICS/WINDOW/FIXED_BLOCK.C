@@ -1,10 +1,9 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RAM_BUFFER.H"
 #include "WINDOW.H"
 
-extern char ResourceId_UiIconTiles;
-extern char ResourceId_UiFixedBlockATiles;
 
 void VramBlock_LoadResourceFar(s32 entry_no, s32 size, s32 resource_id);
 s32 UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, s32 mode);

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "STAR.H"
 #include "CALL.H"
 #include "TYPES.H"
@@ -18,7 +19,6 @@ void Engine_HeapRelease(s32 slot);
 void Engine_AudioPlayCue(s32 cue);
 void Inventory_AddItem(s32 owner, s32 item);
 void Engine_ActorSetAnimation(s32 actor, s32 animation);
-extern const s32 SoruStar_PresentItemScript[];
 
 
 void Engine_ActorSetChildValue();

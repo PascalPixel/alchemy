@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "ITEM.H"
@@ -26,10 +27,6 @@ struct PasswordOwner {
 
 struct PasswordOwner *Owner_GetState(s32 owner);
 
-extern const s32 Clear_PasswordMembers[4];
-extern const u16 Clear_PasswordFlags[6];
-extern const u16 Clear_PasswordKeyItems[8];
-extern const u16 Clear_PasswordStackItems[23];
 
 s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 {

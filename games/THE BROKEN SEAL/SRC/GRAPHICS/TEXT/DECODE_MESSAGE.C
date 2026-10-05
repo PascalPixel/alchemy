@@ -1,12 +1,11 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TEXT_READER.H"
 #include "HEAP_STATE.H"
 #include "DMA.H"
 #include "IO_REG.H"
 
-extern const u8 Text_DecodeSymbol[];
 
-extern u8 Text_DecodeSymbolCodeSize[];
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)

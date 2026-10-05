@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -20,11 +21,6 @@ struct CameraWork {
 
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
-extern u8 Crystal_Counts[];
-extern u8 Crystal_ShardStarts[];
-extern u8 Crystal_ShardWidths[];
-extern u8 Crystal_ShardHeights[];
-extern s32 Crystal_ShardOffsets[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);

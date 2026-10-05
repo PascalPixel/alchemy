@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "ITEM.H"
 #include "EDITION.H"
@@ -16,8 +17,6 @@
 #include "MENU_RESULT.H"
 #include "text/MSG_IDS.H"
 
-extern u8 Data_080aebcc[];
-extern u8 Data_080aeb4c[];
 
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);

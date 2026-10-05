@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "FIXED_MATH.H"
@@ -10,7 +11,6 @@
 #include "OBJECT_EFFECT.H"
 #include "SYSTEM.H"
 
-extern s16 BattleFx_TargetRangeByMode[];
 
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
 

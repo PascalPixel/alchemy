@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "OWNER_STATE.H"
 #include "CHARACTER.H"
 #include "RUNTIME_MEM.H"
@@ -107,10 +108,8 @@ s32 Owner_RefreshClassActions(s32 owner)
     return 0;
 }
 
-extern s32 Character_StartingEquipOwnerIds[];
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 
-extern u32 Character_LevelExpTable[];
 
 struct LevelUpWork {
     s32 class_index;

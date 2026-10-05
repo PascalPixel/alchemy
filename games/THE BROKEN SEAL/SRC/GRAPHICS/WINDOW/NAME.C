@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -16,9 +17,7 @@
 
 extern u8 Resource_FixedBlockBTiles[];
 
-extern u8 RomBytes_080310a4[];
 
-extern const u8 RomBytes_080317e4[];
 
 void UiText_DrawString(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 
@@ -37,8 +36,6 @@ s32 Resource_ReturnTrue(void)
     return 1;
 }
 #else
-extern const u8 NameEntry_DakutenRanges[];
-extern const u8 NameEntry_HandakutenRanges[];
 
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
 {
@@ -222,11 +219,7 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input)
 #define NAME_END_KEY_WIDTH 3
 #endif
 
-extern s8 NameEntry_CaretWave[];
-extern const u8 NameEntry_KeyboardTilemap[];
 #if NAME_KEY_LABELS
-extern u8 NameEntry_DeleteKeyLabel[];
-extern u8 NameEntry_EndKeyLabel[];
 void UiText_DrawStringInWindow(u8 *str, struct RenderInput *window, s32 x, s32 y);
 #endif
 extern u32 gFrameTick;

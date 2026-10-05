@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -31,9 +32,6 @@ extern struct KeyMoveEventWork *gEventWork;
 extern volatile u32 gKeysHeld;
 extern u32 gKeysRepeat;
 extern volatile u8 gDebugMode;
-extern const s16 WorldMap_KeyHeadings[16];
-extern const s32 WorldMap_KeyYaws[16];
-extern const u8 WorldMap_FootprintActions[];
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
 s32 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
 void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
@@ -48,7 +46,6 @@ void Audio_PlayCue(s32 cue);
 extern struct ObjectRuntime *gObjectSlots;
 extern u8 ResourceBlockOwners[];
 
-extern u8 Runtime_ByteRemapTable[];
 
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 {

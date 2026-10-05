@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -31,7 +32,6 @@ struct HeightTrackedObject {
     s32 height;
 };
 
-extern u8 LinkedMessage_DoYouWishCrossInto[];
 
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {

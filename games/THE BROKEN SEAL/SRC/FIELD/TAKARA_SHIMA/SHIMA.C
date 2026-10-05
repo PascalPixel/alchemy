@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "EDITION.H"
 #include "FIELD_EVENT.H"
@@ -303,7 +304,6 @@ extern const struct SceneEntrance gTakaraShimaEntrances4[];
 extern const struct SceneEntrance gTakaraShimaEntrances5[];
 extern const struct SceneEntrance gTakaraShimaEntrancesOther[];
 
-extern const u32 gTakaraShimaExits[];
 
 extern const struct ScenePlacement gTakaraShimaPlacements1[];
 extern const struct ScenePlacement gTakaraShimaPlacements3[];
@@ -337,7 +337,6 @@ void SpawnRadialEffectBurst();
 void ObjectMotion_SetActionVariant();
 void Engine_MapCopyCellAttributes();
 
-extern u8 TakaraShima_EntranceCells[];
 
 void BattleFx_SetWeightedResult();
 

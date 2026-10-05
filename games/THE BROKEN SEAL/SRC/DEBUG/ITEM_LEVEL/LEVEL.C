@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "LEVEL.H"
 #include "FIELDOBJ.H"
 #include "CALL.H"
@@ -17,9 +18,6 @@ extern volatile u32 gKeyState;
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
 void Engine_AudioPlayCue(s32 cue);
 void Engine_TaskWait(s32 frames);
-extern u8 gItemLevelItemPrompt[];
-extern u8 gItemLevelItemHelp[];
-extern u8 gItemLevelItemFull[];
 extern volatile u32 gKeysRepeat;
 void RenderOutput_RedrawSavedRect(struct RenderInput *window);
 void Engine_DebugClearWindow(struct RenderInput *window);
@@ -28,8 +26,6 @@ void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window
 void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 #define ITEM_COUNT 270
 u8 *Engine_DebugGetAbility(s32 ability);
-extern u8 gItemLevelPsyPrompt[];
-extern u8 gItemLevelPsyHelp[];
 void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
 #define ABILITY_COUNT 270
 

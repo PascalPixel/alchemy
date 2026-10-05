@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
@@ -14,7 +15,6 @@ void Runtime_IdleForever(void)
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-extern const u8 Rom_LanguageCode;
 
 s32 System_GetLanguage(void)
 {

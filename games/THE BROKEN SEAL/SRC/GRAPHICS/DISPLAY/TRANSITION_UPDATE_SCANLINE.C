@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "GLOBAL_CELLS.H"
@@ -59,7 +60,6 @@ again:
     }
 }
 
-extern const u8 DisplayTransition_DitherTable[];
 
 void DisplayTransition_UpdateFrame(void)
 {

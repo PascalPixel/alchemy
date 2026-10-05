@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
@@ -9,7 +10,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-extern s16 Data_080371fe[];
 
 struct UiWindow *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
@@ -80,8 +80,6 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
     }
 }
 
-extern s16 Party_CharacterValues[];
-extern s16 Party_CharacterValuesFlag32[];
 
 s32 Party_LookupCharacterValueByFlag32(u32 index)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLYPH.H"
@@ -6,15 +7,11 @@
 #include "SCENE.H"
 #include "BATTLE_RUNTIME.H"
 
-extern u8 UiIcon_ItemIconPointersEnd[];
 extern u8 UiIcon_ItemIconPointers[];
 
-extern u8 UiIcon_PsynergyIconPointersEnd[];
 extern u8 UiIcon_PsynergyIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
-extern u8 *UiIcon_FramePointerTable[];
-extern u8 *UiIcon_OverlayPointerTable[];
 
 void UiIcon_BuildItemIconTiles(u32, s32, s32 *, s32 *, s32);
 

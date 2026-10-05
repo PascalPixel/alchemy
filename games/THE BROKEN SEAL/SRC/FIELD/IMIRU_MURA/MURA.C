@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "IMIRU.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -9,7 +10,6 @@
 extern const struct SceneEntrance gImiruMuraEntrances2[];
 extern const struct SceneEntrance gImiruMuraEntrancesOther[];
 
-extern u8 gImiruMuraPlacements2[];
 extern const struct ScenePlacement gImiruMuraPlacements[];
 extern const struct ScenePlacement gImiruMuraPlacementsFlag881[];
 void FieldScene_PrepareActors(u8 *placements);
@@ -18,10 +18,7 @@ extern const struct SceneEvent gImiruMuraEvents2[];
 extern const struct SceneEvent gImiruMuraEventsOther[];
 
 
-extern const u16 *ImiruMura_ExitCellSteps[];
-extern s16 ImiruMura_ExitCellPoints[][2];
 
-extern u8 ImiruMura_TurnScript[];
 void Object_SetActionCallbackAndRefreshById();
 
 
@@ -862,7 +859,6 @@ void SceneActor_UpdateCountdownArcPosition(T_0200154c *o)
     }
 }
 
-extern const s32 ImiruMura_SparkScript[];
 
 void ImiruMura_SwayAndSpark(struct FieldActor *actor)
 {

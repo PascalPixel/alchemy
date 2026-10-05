@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "STAR.H"
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
@@ -1058,7 +1059,6 @@ void Scene_AlexTakesStars(void)
     PartyInventory_Discard(223);
 }
 
-extern const s32 SoruStar_AngleScript[];
 
 struct StarFollower {
     u8 unknown_00[12];

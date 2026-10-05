@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "SCENE.H"
 #include "GAME_FLAGS.H"
 #include "INVENTORY.H"
@@ -10,7 +11,6 @@
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
-extern const u8 Character_ElementGroupTable[];
 void *Owner_GetState(s32);
 
 void Party_SetFlag32AndRefreshMembers(void)

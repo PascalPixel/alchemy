@@ -1,9 +1,9 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 
-extern u16 KuupuappuHeya_StopTimer;
 void KuupuappuHeya_UpdateActorStops(void);
 
 struct Half {

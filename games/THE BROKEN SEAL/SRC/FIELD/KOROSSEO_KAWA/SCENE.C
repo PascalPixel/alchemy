@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -6,9 +7,6 @@
 #include "KAWA.H"
 #include "CALL.H"
 
-extern u16 KorosseoKawa_RoundSpans[];
-extern u8 KorosseoKawa_ModeRecordTwo[];
-extern u8 KorosseoKawa_ModeRecordFour[];
 struct ModeRecord;
 extern struct ModeRecord KorosseoKawa_SpanA;
 extern struct ModeRecord KorosseoKawa_SpanB;
@@ -67,7 +65,6 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 HexDigits[];
 typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);

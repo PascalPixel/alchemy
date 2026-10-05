@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -45,7 +46,6 @@ struct ScrollWork {
 extern struct ScrollWork *gHBlankScrollWork;
 
 extern s16 gBgScroll[];
-extern const s16 BabiFune_WaveSine[256];
 
 static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 {

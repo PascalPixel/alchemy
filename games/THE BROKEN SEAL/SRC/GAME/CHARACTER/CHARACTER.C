@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "SCENE.H"
@@ -544,9 +545,7 @@ u32 Runtime_GetBuildStampTime(void)
 }
 
 extern u8 GameFlagBytes[];
-extern u8 gSaveStamp[];
 extern u8 gSceneState[];
-extern s16 gSaveSlot;
 
 struct SceneStateTail {
     u8 unknown_000[0x100];

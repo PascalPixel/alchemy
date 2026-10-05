@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -21,8 +22,6 @@ extern void *gBattleFxWork[];
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
 extern u16 ParticleStreams_CellOffsets[];
-extern const u8 FallingSword_FlashCells[];
-extern const s32 FallingSword_DustGravity[];
 
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);

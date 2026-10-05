@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "TYPES.H"
@@ -9,15 +10,7 @@
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
-extern s32 BabiFune_StoredSlot0;
-extern s32 BabiFune_StoredRecord1;
-extern s32 BabiFune_StoredSlot3;
-extern s32 BabiFune_StoredRecord2;
 
-extern const s32 BabiFune_ActionScriptA[];
-extern const s32 BabiFune_ActionScriptB[];
-extern const s32 BabiFune_ActionScriptC[];
-extern const s32 BabiFune_ActionScriptD[];
 void Engine_MapCopyCellAttributes();
 void Motion_LaunchFromFocusedObject();
 s32 UiText_OpenMessageAtObject();

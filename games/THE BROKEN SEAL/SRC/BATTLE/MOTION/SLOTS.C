@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "ANIMSPR.H"
 #include "TYPES.H"
@@ -15,7 +16,6 @@ s32 ObjectDispatch_ReleaseFar(s32);
 void Render_ResetTransformState(void);
 s32 Graphics_PrepareTransferAndRun(void *, void *);
 s32 Graphics_PrepareTransferInIwramWork(void *, void *);
-extern u8 Camera_FlagTransformWork[];
 
 s32 Render_ProjectPoint(const s32 *, s32 *);
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "WINDOW.H"
 #include "GAME_STATE.H"
 #include "OBJECT_RUNTIME.H"
@@ -16,7 +17,6 @@ s32 BattleFx_HueChannelRamp(s32, s32, s32);
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum);
 s32 Fixed_Remainder(s32 value, s32 divisor);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-extern const s32 BattleFx_UntargetedObjectScript[];
 
 void BattleFx_ArmBg0HBlankDma(void);
 extern void BattleFx_ArmBg0HBlankDma(void);

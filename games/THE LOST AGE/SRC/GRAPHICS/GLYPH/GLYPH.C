@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "GLYPH.H"
 #include "RESOURCE.H"
@@ -6,7 +7,6 @@
 #include "IO_REG.H"
 
 extern char ResourceId_Icons;
-extern u8 *UiIcon_MiscIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
 

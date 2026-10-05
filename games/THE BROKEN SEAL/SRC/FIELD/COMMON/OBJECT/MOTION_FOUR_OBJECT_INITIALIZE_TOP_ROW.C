@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
@@ -8,9 +9,7 @@
 s32 Object_ApplyProjectedPlacementFar(u32 object, u32 *request, u32 *motion, u32 limit);
 extern struct FourObjectMotionState *gMenuWork;
 
-extern u8 RomBytes_080ad40d[];
 
-extern s32 RomBytes_080af304[];
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 

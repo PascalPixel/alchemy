@@ -1,7 +1,7 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCRIPT.H"
 
-extern u16 Script_MainScript[];
 
 s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 {

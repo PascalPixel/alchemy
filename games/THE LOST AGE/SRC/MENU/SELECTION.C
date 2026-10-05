@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TLA_EDITION.H"
 
 #include "TYPES.H"
@@ -5,8 +6,6 @@
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
-extern s8 Menu_TopEntryPositionByCommand[];
-extern s8 Menu_TopEntryCommandByPosition[];
 
 s32 Party_SumDjinnCountsFar(s32);
 void *AffineEffect_InitializeWork(void);

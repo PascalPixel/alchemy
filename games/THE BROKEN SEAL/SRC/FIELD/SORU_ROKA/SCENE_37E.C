@@ -1,13 +1,10 @@
 
 
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 extern struct Resource37deSceneRuntime *gEventWork;
 
-extern u8 SoruRoka_SceneTable0[];
-extern u8 SoruRoka_SceneTable1[];
-extern u8 SoruRoka_SceneTable2[];
-extern u8 SoruRoka_SceneTable3[];
 #include "RESOURCE_37DE_SCENE.H"
 
 u8 *SceneData_GetScriptTable(void)

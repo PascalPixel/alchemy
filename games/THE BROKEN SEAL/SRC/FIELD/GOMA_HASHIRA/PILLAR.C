@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -14,7 +15,6 @@ s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPo
 void WaitFrames(s32 frames);
 #endif
 
-extern u8 GomaHashira_Extras[];
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Battle_WaitMode0(s32 frames);

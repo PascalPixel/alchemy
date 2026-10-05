@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -10,16 +11,11 @@ s32 ArcTan2(s32, s32);
 extern const struct SceneEntrance YamaRama_TempleEntrances[];
 extern const struct SceneEntrance YamaRama_Entrances[];
 
-extern const u32 YamaRama_Exits[];
 
 extern const struct ScenePlacement YamaRama_TemplePlacements[];
 extern const struct ScenePlacement YamaRama_Placements[];
 
 
-extern const u16 YamaRama_BoulderCells[];
-extern const u16 YamaRama_BoulderCellsBack[];
-extern const u8 YamaRama_HsuAction[];
-extern const u8 YamaRama_LeaderAction[];
 void Object_RefreshSelectorById();
 void BattleFx_PlayQueuedSound(void);
 s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor);
@@ -41,7 +37,6 @@ extern const struct SceneEvent YamaRama_TempleEvents[];
 extern const struct SceneEvent YamaRama_Events[];
 
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
-extern u8 YamaRama_ActorNineAction[];
 void ConfigureAndPlaceActorFourteen(void);
 void FieldScene_RunScene3a2SequenceA(void);
 void ActorPresentation_PrepareActorFourteenWithCallback(void);

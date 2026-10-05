@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_PARTY.H"
@@ -35,7 +36,6 @@ struct MoteWork {
     u8 unknown_408[8];
 };
 
-extern const u8 FieldFx_MoteTiles[];
 
 struct Sparkle {
     u8 padding00[4];
@@ -76,7 +76,6 @@ struct SparkleFrame {
 extern struct SparkleWork *gParticleWork;
 #define SparkleMap (*(struct MapScrollWork **)((u8 *)&gParticleWork - 84))
 
-extern unsigned long Data_03001e40;
 extern const struct SparkleFrame Data_0809f024[];
 u32 Random16(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
@@ -105,7 +104,6 @@ struct DustWork {
     u8 pad408[8];
 };
 
-extern const u8 Data_080a00b8[];
 void Resource_DecodeByteLz(const void *source, void *destination);
 void FieldEffect_UpdateSparkles(void);
 

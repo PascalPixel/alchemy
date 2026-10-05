@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "ANIMSPR.H"
@@ -40,7 +41,6 @@ typedef char ParticleEffectObject_child_offset[
 ];
 extern void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 extern void Object_SetMode(struct ObjectRuntime *, s32);
-extern const s32 BattleFx_ParticleScript[];
 
 struct EfxSrc {
     u8 pad0[6];
@@ -85,7 +85,6 @@ struct EfxObj {
 };
 
 extern u8 *gEventWork;
-extern const s32 BattleFx_ParticleEmitterScript[];
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_ReleaseFar(void *object);
 void ItemIcon_LoadTilesFar(s32 item);
@@ -95,7 +94,6 @@ void WaitFrames(s32);
 struct EffectObject_0808f1c0;
 
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-extern const s32 RomBytes_0809e75c[];
 
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 
@@ -141,7 +139,6 @@ struct Source_0808f28c {
 
 extern struct ObjectRuntime *Object_Spawn(s32, u32, u32, u32);
 
-extern const s32 BattleFx_MarkerParticleScript[];
 
 struct MapEventEntry {
     s32 flags;

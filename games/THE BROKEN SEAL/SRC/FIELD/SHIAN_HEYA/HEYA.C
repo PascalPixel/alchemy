@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -12,16 +13,10 @@ union Slot {
     void *p;
 };
 
-extern u8 ShianHeya_SceneTable0[];
-extern u8 ShianHeya_SceneTable1[];
-extern u8 ShianHeya_SceneTable2Entrance8[];
-extern u8 ShianHeya_SceneTable2[];
 void SceneTable_Prepare(void *);
 
 
 
-extern u8 ShianHeya_SceneTable3[];
-extern u8 ShianHeya_SceneTable3Entrance8[];
 void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type);
 
 s32 ShianHeya_GetEntrances(void)

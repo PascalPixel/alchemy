@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -5,7 +6,6 @@
 
 void Resource_DecodeByteLzInRam(void *source, void *destination);
 
-extern s32 RenderResource_PairSourceTable[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -25,12 +26,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern u16 BattleFx_GlintCellOffsets[];
-extern u8 BattleFx_GlintCellWidths[];
-extern u8 BattleFx_GlintCellHeights[];
-extern u8 LightningBolts_Counts[];
-extern u8 LightningBolts_GlintPalettes[];
-extern u8 LightningBolts_GlintModes[];
 
 void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 {

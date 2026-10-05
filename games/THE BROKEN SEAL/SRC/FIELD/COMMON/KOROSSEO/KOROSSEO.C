@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "AFFINE.H"
 #include "VRAM_BLOCK.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -12,8 +13,6 @@
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern s16 Korosseo_PortraitSlot;
-extern u8 Korosseo_PortraitPaletteOffsets[];
 
 static __inline__ void Dma_Wait(volatile u32 *dma)
 {
@@ -25,13 +24,13 @@ struct Sprite { u32 words[3]; };
 
 struct Half { u16 value; };
 
-extern s16 Korosseo_PortraitSlot, Korosseo_ModeTaskTimer, Korosseo_ModeMoveTarget, Korosseo_ModeMoveDuration;
-extern s16 Korosseo_ModeMoveStart, Korosseo_ModeMoveStep, Korosseo_ModeScaleTarget, Korosseo_ModeScaleStart;
-extern s16 Korosseo_ModeScaleDuration, Korosseo_ModeScaleStep, Korosseo_ModeBlendTarget, Korosseo_ModeBlendStart;
-extern s16 Korosseo_ModeBlendDuration, Korosseo_ModeBlendStep, Korosseo_ModeTaskMode, Korosseo_ModeTaskParam;
+extern s16 Korosseo_ModeTaskTimer;
+extern s16 Korosseo_ModeMoveTarget;
+extern s16 Korosseo_ModeMoveDuration;
+extern s16 Korosseo_ModeTaskMode;
+extern s16 Korosseo_ModeTaskParam;
 extern s32 Korosseo_ModeTaskPosition;
 extern s16 *Korosseo_ModeTaskScript;
-extern u32 Korosseo_ModeTaskSprites[];
 
 #define QueueRegister(address, value) \
 { \

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "SHIAN.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -57,8 +58,6 @@ struct SpawnParams {
 
 void SceneEffect_SpawnPeriodicEffect();
 void SceneEffect_AdvanceRotatingSprite();
-extern const s32 ShianMura_Actor19Motion[];
-extern const s32 ShianMura_EffectScript[];
 
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);

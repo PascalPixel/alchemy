@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -25,7 +26,6 @@ void UiText_ShowMessageAndWaitCoreFar(s32);
 void UiWork_FinalizeSharedSlotFar(void);
 void BattlePresentation_WaitForAdvance(void);
 
-extern s8 BattleParty_CenterOrderOffsets[];
 
 void BattlePresentation_UpdateCamera(void)
 {

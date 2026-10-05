@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -36,10 +37,6 @@ static s32 sSplitLine;
 static u16 sHofsAbove;
 static u16 sHofsBelow;
 
-extern u8 ToretoEda_SceneTable0[];
-extern u8 ToretoEda_SceneTable1[];
-extern u8 ToretoEda_SceneTable2[];
-extern u8 ToretoEda_SceneTable3[];
 void *Object_GetById(u32);
 void BattleFx_SetPhaseRequest(s32, s32);
 void ToretoEda_StartBg3Split(void);

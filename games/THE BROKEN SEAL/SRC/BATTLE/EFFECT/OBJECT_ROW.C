@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "ANIMSPR.H"
@@ -43,8 +44,6 @@ struct FxControl {
 
 extern u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
-extern const u8 ObjectRow_Columns[];
-extern const u8 ObjectRow_Rows[];
 extern const struct FxPair ObjectRow_SweepPair;
 extern const struct FxPair ObjectRow_RisePair;
 

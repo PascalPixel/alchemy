@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "MOTION_OBJECT.H"
@@ -20,11 +21,6 @@
 #define WORK_FIELD(work, offset) (*(s32 *)((u8 *)(work) + (offset)))
 
 extern u8 gMapCellBuffer[];
-extern u8 VortexMotes_Counts[];
-extern u8 Tornado_Shapes[];
-extern u16 BattleFx_GlintCellOffsets[];
-extern u8 BattleFx_GlintCellWidths[];
-extern u8 BattleFx_GlintCellHeights[];
 
 void Camera_ApplyPhasedDelta(void);
 void BattleEventRuntime_BeginPhaseFar(s32 value);

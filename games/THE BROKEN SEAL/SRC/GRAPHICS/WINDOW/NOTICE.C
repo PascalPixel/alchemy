@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "SYSTEM.H"
 #include "SELECT.H"
 #include "TYPES.H"
@@ -13,7 +14,6 @@
 s32 UiGlyph_ResetWorkState();
 void Resource_ClearOwnerListAndCounters(void);
 
-extern struct SelectionScreen *gResQueueWork;
 void MenuSelection_BuildEntries(u32);
 void Menu_SetupSelectionBothSides(void);
 void Menu_OpenSelectionWindow(u32, u32);

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GAME_STATE.H"
@@ -5,11 +6,8 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "BATTLE_RUNTIME.H"
 
-extern const s16 Party_PairResolveRules[];
 
-extern s32 RomWords_0809e270[];
 
-extern const u16 gBattleCueTable[];
 
 void Party_ResolveTablePair(void)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "STORY.H"
 #include "RUNTIME_MEM.H"
@@ -11,9 +12,6 @@
 #include "EVENT_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-extern u8 gPresentGuide9[];
-extern u8 gPresentGuide8[];
-extern u8 gPresentGuide5[];
 
 enum {
     TRANSITION_EFFECT_TYPE = 222,
@@ -23,17 +21,12 @@ enum {
     TRANSITION_EFFECT_DEPTH = 30
 };
 
-extern const s32 gTransitionSparkScript[];
 s32 __umodsi3(u32 value, s32 divisor);
 extern u32 gFrameCount;
-extern s32 gActorEightPuffScript[];
 
 void Event_SetDestination(s32 scene, s32 entrance);
 
 u16 gWorldMapBlend;
-extern const u8 gWorldMapPalettes[];
-extern const u8 gWorldMapPackedTiles[];
-extern const u8 gWorldMapPackedFrames[];
 void Map_ResumeAnimation(void);
 void Map_LoadAreaGraphics(void);
 void SceneEffect_RestoreBlendRegisters(void);

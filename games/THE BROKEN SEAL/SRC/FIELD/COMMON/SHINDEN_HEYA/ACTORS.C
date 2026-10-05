@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -12,8 +13,6 @@
 
 void ShindenHeya_RaiseItemIcon(s32 item);
 
-extern const s32 ShindenHeya_LeaderCircleScript[];
-extern const s32 ShindenHeya_GeraldCircleScript[];
 void ShindenHeya_SpawnOwnerEffect();
 
 s32 CalculateFacingAngle(s32, s32);
@@ -54,10 +53,7 @@ s32 UpdateFacingFromResolvedObject(struct FacingObject *object);
 void WaitFrames();
 void Ui_PrepareTransferForItem();
 
-extern const s32 ShindenHeya_ItemIconGrowScript[];
-extern const s32 ShindenHeya_ItemIconEndScript[];
 
-extern const s32 ShindenHeya_SparkEndScript[];
 
 s32 Math_RemainderUnsigned();
 void ShindenHeya_UpdateRisingSpark(union FieldObject *object);

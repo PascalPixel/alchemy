@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "FIXED_POINT_POSITION.H"
@@ -22,9 +23,7 @@ extern char ResourceId_DefaultMapCells;
 extern char ResourceId_DefaultMapAnimation;
 extern char ResourceId_DefaultMetatileAttributes;
 void Transform_UpdateVertices(void);
-extern u8 Transform_UpdateVerticesSize;
 
-extern u32 gScanlineAngle;
 extern u32 gScanlinePitch;
 extern u32 gFrameCount;
 void Blend_SetDarkenTarget0(s32);
@@ -55,7 +54,6 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);
-extern u32 Data_080132cc[][6];
 
 struct WorldCell {
     u32 tile : 24;

@@ -1,14 +1,9 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
 #include "IO_REG.H"
 
-extern u8 gBlendFramesLeft;
-extern volatile u8 gBlendTargetLevel;
-extern u8 gBlendStartLevel;
-extern volatile u8 gBlendDuration;
-extern u8 gBlendBrighten;
-extern u16 gBlendLayers;
 
 void BlendTransition_Update(void)
 {

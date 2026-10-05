@@ -1,9 +1,9 @@
+#include "GLOBAL.H"
 #include "EVENTWRK.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 #include "FIELD_SPRITE.H"
 
-extern const u8 ObjectMotion_StepAngleScript[];
 struct ObjectRuntime *Object_GetById(u32);
 
 void Object_ResetTargetAndSetMode1(u32 object_id)

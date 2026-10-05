@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
@@ -18,7 +19,6 @@ void UiWork_FinalizeFar(s32, s32);
 void Palette_LightenBankHighlight(s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
-extern u8 Menu_TimesString[], Menu_PointString[];
 void UiText_DrawStringInWindowFar(u8 *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 palette);

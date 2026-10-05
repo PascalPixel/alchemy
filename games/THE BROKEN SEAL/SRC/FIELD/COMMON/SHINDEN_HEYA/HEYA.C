@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -8,7 +9,6 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
-extern const s32 ShindenHeya_PlacementSequenceB[];
 void ShindenHeya_SpawnOwnerEffect();
 
 s32 CalculateFacingAngle(s32, s32);
@@ -18,23 +18,7 @@ struct FieldActor *GetActorState(s32 actor_id);
 extern s16 Data_02000240[];
 void Event_CallWithLastActiveObjectId();
 void AudioCommand_WaitForCompletion();
-extern u8 ShindenHeya_TableA;
-extern u8 ShindenHeya_TableB;
-extern u8 ShindenHeya_PlacementA[];
 
-extern u8 ShindenHeya_PlacementB[];
-extern u8 ShindenHeya_PlacementC[];
-extern u8 ShindenHeya_PlacementD[];
-extern u8 ShindenHeya_PlacementE[];
-extern u8 ShindenHeya_SceneTableA[];
-extern u8 ShindenHeya_SceneTableB[];
-extern u8 ShindenHeya_SceneTableC[];
-extern u8 ShindenHeya_SceneTableD[];
-extern u8 ShindenHeya_SceneTableE[];
-extern u8 ShindenHeya_SceneTableF[];
-extern u8 ShindenHeya_SceneTableG[];
-extern u8 ShindenHeya_SceneTableH[];
-extern u8 ShindenHeya_SceneTableI[];
 void FieldScene_RunActorUpdateSequence(void);
 
 void SceneState_ApplyTwoRects(void);
@@ -95,7 +79,6 @@ extern u32 gFrameCount;
 
 void SceneEffect_StepEllipseOrbit();
 
-extern const s32 ShindenHeya_OwnerEffectScript[];
 
 s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 {

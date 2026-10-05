@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
@@ -7,10 +8,6 @@
 #include "RESOURCE_393.H"
 #include "FIELDOBJ.H"
 
-extern u8 Data_02008fc8[];
-extern u8 Data_02009028[];
-extern u8 Data_02009038[];
-extern u8 Data_02009098[];
 
 struct SceneBeatSubject {
     u8 unknown_00[0x23];

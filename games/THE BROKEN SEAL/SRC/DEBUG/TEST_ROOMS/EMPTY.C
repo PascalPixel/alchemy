@@ -1,13 +1,10 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIELD_EVENT.H"
 
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, s32 effect);
 
-extern u8 TestRooms_Entrances[];
-extern u8 TestRooms_Exits[];
-extern u8 TestRooms_Placements[];
-extern u8 TestRooms_Events[];
 
 u8 *TestRooms_GetEntrances(void)
 {

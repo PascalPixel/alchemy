@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "DMA.H"
@@ -8,8 +9,6 @@
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
 
-extern const u8 SentouKouka_Tenkai[];
-extern u8 SentouKouka_TenkaiCodeSize[];
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
 
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
@@ -113,9 +112,7 @@ void DisplayScroll_StepPositionEveryFourFrames(void)
 
 extern u8 gOamCopyEnabled;
 extern u8 gCpuLoadDisplayEnabled;
-extern u8 gDebugTextEnabled;
 extern u8 gOptionMirror;
-extern const u32 DisplayScroll_SlideResources[];
 
 void DisplayScroll_InitObjectTable(void);
 void Ui_LoadWindowGraphics(void);

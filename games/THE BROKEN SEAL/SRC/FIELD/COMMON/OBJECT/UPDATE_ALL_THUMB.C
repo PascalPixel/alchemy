@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
@@ -9,7 +10,6 @@
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern ScriptCommandFn ScriptObject_CommandTable[];
-extern const s32 ScriptObject_CycleTable[];
 extern struct ScriptMotionObject *gObjectSlots;
 
 s32 Map_GetTerrainHeight(s32, s32, s32);

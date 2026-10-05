@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -22,10 +23,6 @@
 
 extern u8 gBattleFxWork[];
 
-extern u8 MemberBeam_MotePictures[];
-extern u16 MemberBeam_HeadOffsets[];
-extern u8 MemberBeam_HeadWidths[];
-extern u8 MemberBeam_HeadHeights[];
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 

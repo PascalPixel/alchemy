@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
@@ -23,9 +24,6 @@ void SceneTransform_ApplyPosition(s32 *position);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 
-extern u16 PaletteRamp_ShardCells[];
-extern u8 PaletteRamp_ShardWidths[];
-extern u8 PaletteRamp_ShardHeights[];
 
 void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode);
 

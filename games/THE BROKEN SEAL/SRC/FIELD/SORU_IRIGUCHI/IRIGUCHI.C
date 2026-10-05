@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -11,7 +12,6 @@ void Scene_RunActorFormation(s32 a0);
 extern const struct SceneEntrance gSoruIriguchiEntrances2[];
 extern const struct SceneEntrance gSoruIriguchiEntrances1[];
 extern const struct SceneEntrance gSoruIriguchiEntrancesOther[];
-extern const u32 SoruIriguchi_Exits[];
 extern const struct ScenePlacement gSoruIriguchiPlacementsOther[];
 extern const struct ScenePlacement gSoruIriguchiPlacements1[];
 extern const struct ScenePlacement gSoruIriguchiPlacements1Entrances11To13[];
@@ -24,7 +24,6 @@ extern const struct SceneEvent gSoruIriguchiEvents1Entrances14To16[];
 extern const struct SceneEvent gSoruIriguchiEvents2[];
 void FieldScene_PrepareActors(s32 placements);
 
-extern s32 gSoruPushSteps[];
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void Scene_UpdateOuterActor9Flags(void);
 void Scene_UpdateOuterActor10Flags(void);

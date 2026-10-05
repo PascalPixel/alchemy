@@ -1,9 +1,9 @@
+#include "GLOBAL.H"
 #include "SELECT.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern struct SelectionScreen *gResQueueWork;
 
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
 {

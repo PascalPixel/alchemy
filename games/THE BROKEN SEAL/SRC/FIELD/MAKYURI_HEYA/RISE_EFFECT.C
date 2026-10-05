@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "PROBE.H"
 
-extern const s32 MakyuriHeya_RiseScript[];
 
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {

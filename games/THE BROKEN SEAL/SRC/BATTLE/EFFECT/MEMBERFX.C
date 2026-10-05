@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -473,7 +474,6 @@ void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect)
     BattleFx_RunMemberBurst(effect, 2);
 }
 
-extern u8 MemberBurst_Counts[];
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GAME_STATE.H"
 #include "ANIMSPR.H"
@@ -14,7 +15,6 @@
 
 
 extern struct BattleFxScene *gEffectWork;
-extern const u8 BattleFx_ArcSparkTiles[];
 void WaitFrames(s32);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);

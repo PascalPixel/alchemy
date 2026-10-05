@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "LOBBY.H"
 #include "TYPES.H"
@@ -7,8 +8,6 @@
 #include "IWRAM_CALL.H"
 
 extern u16 gLinkStatus;
-extern const s32 LinkLobby_SlotValues[];
-extern const u8 LinkLobby_SlotColumns[];
 
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 

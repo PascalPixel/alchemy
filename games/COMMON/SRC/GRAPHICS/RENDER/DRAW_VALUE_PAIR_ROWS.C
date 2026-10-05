@@ -1,13 +1,9 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
 #if EDITION_INTERNATIONAL
-extern const u8 Ui_PpString[];
-extern const u8 Ui_SlashString[];
-extern const u8 Ui_HpString[];
 #else
-extern const u8 Ui_HpRowString[];
-extern const u8 Ui_EpRowString[];
 #endif
 
 void UiText_DrawStringAtOffsetFar(s32 image, s32 layer, s32 x, s32 y);

@@ -1,13 +1,9 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
-extern u8 HaidiaFunka_ActionScript[];
-extern u8 HaidiaFunka_SceneTable0[];
-extern u8 HaidiaFunka_SceneTable1[];
-extern u8 HaidiaFunka_SceneTable2[];
-extern u8 HaidiaFunka_SceneTable3[];
 
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_StartBufferBlend();

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "MOTION_OBJECT.H"
@@ -20,8 +21,6 @@ extern void *gBattleFxWork[];
 #define SPARK ((struct EffectStep *)Ram_MapCellBuffer)
 
 extern u16 ParticleStreams_CellOffsets[];
-extern const u8 FlameBlade_StrikeColumns[];
-extern const u8 FlameBlade_FlashCells[];
 
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);

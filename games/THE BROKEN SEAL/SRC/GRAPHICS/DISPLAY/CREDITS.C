@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
@@ -18,16 +19,12 @@ extern s16 Flash_Handler0;
 extern struct DisplayScrollObject *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
-extern s16 Flash_Layout;
-extern const void *DisplayScroll_LineTable[];
 
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
 void GameFlag_SetBitFar(s32 flag);
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
-extern const u8 DisplayScroll_GlyphWidths[];
-extern const u8 DisplayScroll_Font[];
 
 void DisplayScroll_UpdateObjects(void)
 {

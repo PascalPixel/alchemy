@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -11,21 +12,15 @@ void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 extern u8 Placement_Scripts[];
 extern u8 Placement_Messages[];
 extern u8 Placement_Actors[];
-extern u8 Placement_Actors9a7[];
 
-extern const u8 RariberoMachi_LamentActions[];
 
 
 #define NULL ((void *)0)
 
 #define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
 
-extern s16 RariberoMachi_DoorCells[][2];
-extern u8 RariberoMachi_GateOpenSteps[];
-extern u8 RariberoMachi_DoorOpenSteps[];
 
 extern u8 Placement_Effects[];
-extern u8 Placement_Effects9a7[];
 void Motion_LaunchFromFocusedObject(u32, s32, s32, s32);
 void FieldScene_RunScene3c6SequenceA(void);
 

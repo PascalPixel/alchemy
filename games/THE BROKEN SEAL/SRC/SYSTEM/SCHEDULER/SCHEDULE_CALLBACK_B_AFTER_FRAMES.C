@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "PALQUEUE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -9,7 +10,6 @@ void Scheduler_ScheduleCallbackBAfterFrames(void)
     Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
 }
 
-extern struct PaletteSnapshotWork *gPaletteWork;
 
 void PaletteQueue_StepCycles(void)
 {

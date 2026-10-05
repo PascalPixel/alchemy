@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -66,17 +67,6 @@ static __inline__ void FillWords(void *dest, u32 size, u32 value)
 }
 
 extern u16 ParticleStreams_CellOffsets[];
-extern u16 CastingImpact_OrbitCells[];
-extern u8 PuffArc_CellWidths[];
-extern u8 PuffArc_CellHeights[];
-extern u8 PuffArc_CellBiasY[];
-extern u16 PuffArc_CellSourceOffsets[];
-extern u16 BattleFx_GlintCellOffsets[];
-extern u8 BattleFx_GlintCellWidths[];
-extern u8 BattleFx_GlintCellHeights[];
-extern u8 CastingImpact_GlintDrawFlags[];
-extern u8 CastingImpact_ImageX[];
-extern u8 CastingImpact_ImageY[];
 
 static __inline__ void DrawImage(void *canvas, const void *pixels, s32 x, s32 y, s32 width, s32 height,
                                  RectangleBlit *draw)

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "GAME_FLAGS.H"
 #include "PARTY_STATE.H"
@@ -18,10 +19,8 @@ struct TradeFlags {
     u32 flags;
 };
 
-extern u8 Summon_OrderList[16];
 extern const struct SummonDefinition Summon_DefinitionTable[];
 
-extern s32 Data_08088db8[];
 extern struct PresetValues Enemy_ElementPresetTable[];
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
@@ -33,7 +32,6 @@ struct ElementLevelBonus {
 
 extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
 
-extern const s16 Element_PowerResistCurve[5][2];
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 
 s32 GameFlag_Test(s32 flag);

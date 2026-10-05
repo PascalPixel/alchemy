@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "HEYA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -16,7 +17,6 @@ void Shop_ConfirmAct(s32);
 
 void Inn_CheckIn(s32, s32);
 
-extern const u8 gRariberoPoseAction[];
 void Engine_ResetSceneEffectCounter(void);
 void Engine_ActorSetAnimationAndWait(s32 actor, s32 mode);
 void Engine_ActorRunRepeatedMotion(s32 actor, s32 mode);

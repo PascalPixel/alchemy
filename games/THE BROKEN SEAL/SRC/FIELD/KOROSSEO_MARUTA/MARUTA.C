@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "LOG_ROLLING.H"
 #include "CALL.H"
 
-extern s8 KorosseoMaruta_LogPattern[][6];
 
 void ColossoLogRollingStage_SceneTask(void)
 {
@@ -55,7 +55,6 @@ void BattleFx_SetWeightedResult(s32 kind, s32 weight);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 
-extern u8 KorosseoMaruta_Record30Script[];
 
 extern char ResourceId_RivalPathC;
 s32 Engine_GameFlagIsSet();

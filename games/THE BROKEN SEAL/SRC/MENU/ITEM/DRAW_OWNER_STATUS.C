@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
@@ -8,9 +9,6 @@
 
 
 extern const u8 Menu_LvString[];
-extern const u8 Menu_SlashString[];
-extern const u8 Menu_HpString[];
-extern const u8 Menu_PpString[];
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);

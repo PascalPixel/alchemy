@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
@@ -52,11 +53,8 @@ s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
 
 extern const struct SceneEntrance KorimaHashi_Entrances[];
-extern const u32 KorimaHashi_Exits[];
 extern const struct ScenePlacement KorimaHashi_Placements[];
 extern const struct SceneEvent KorimaHashi_Events[];
-extern u8 KorimaHashi_Object26Script[];
-extern u8 KorimaHashi_TriggerScript[];
 
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
@@ -250,14 +248,6 @@ void Object_SetActionCallbackAndRefreshById(s32 id, const u8 *callback);
 void Audio_PlayCueFromEventWork(void);
 void KorimaHashi_AlternateBridgePostHeights(void);
 
-extern u8 KorimaHashi_GeraldAction[];
-extern u8 KorimaHashi_IvanAction[];
-extern u8 KorimaHashi_MiaAction[];
-extern u8 KorimaHashi_PartyAction[];
-extern u8 KorimaHashi_ResetAction[];
-extern u8 KorimaHashi_FormationAction[];
-extern u8 KorimaHashi_FinishAction[];
-extern u8 KorimaHashi_EntryAction[];
 
 void FieldScene_RunBranchingFormationPresentation(void)
 {

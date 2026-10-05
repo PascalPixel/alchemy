@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "GLYPH.H"
 #include "SELECT.H"
@@ -10,7 +11,6 @@
 #include "TBS_EDITION.H"
 #include "NODE_CHAIN.H"
 
-extern struct SelectionScreen *gResQueueWork;
 void Resource_DecodeByteLz(void *source, void *destination);
 
 void UiWindow_OpenMode1AndWaitFrame(void);

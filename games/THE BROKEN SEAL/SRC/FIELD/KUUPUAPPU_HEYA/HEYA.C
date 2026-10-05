@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -15,18 +16,7 @@ void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode)
 
 void Owner_RecalculateStats();
 
-extern u8 KuupuappuHeya_Scripts[];
-extern u8 KuupuappuHeya_Messages[];
-extern u8 KuupuappuHeya_Regions[];
 
-extern u8 KuupuappuHeya_SceneTableB[];
-extern u8 KuupuappuHeya_SceneTableA[];
-extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
-extern u8 LinkedMessage_YouWereSuchGreatHelp[];
-extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
-extern u8 LinkedMessage_TheyreBack[];
-extern u8 LinkedMessage_YouRobinRightWontForget[];
-extern u8 LinkedMessage_IvanGotShamansRod[];
 s32 PartyInventory_HasSpace(void);
 void Battle_InitializeRenderObject(void);
 void BattleEffect_CleanupSceneObjects(void);
@@ -111,8 +101,6 @@ enum PromptMessage {
 
 
 
-extern s32 KuupuappuHeya_StepActions[];
-extern s32 KuupuappuHeya_IdleActions[];
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 

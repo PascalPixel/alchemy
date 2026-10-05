@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SAVE_STATE.H"
 #include "SCENE.H"
@@ -43,8 +44,6 @@ struct DebugMenuState {
 
 extern struct DebugMenuState *gMenuCtrlWork;
 extern volatile u32 gKeysRepeat;
-extern u8 Workspace_ItemTitle[], Workspace_EnergyTitle[], Workspace_StatusTitle[];
-extern u8 Workspace_PageLabel[], Workspace_RangeDash[];
 
 void WaitFrames(s32);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);

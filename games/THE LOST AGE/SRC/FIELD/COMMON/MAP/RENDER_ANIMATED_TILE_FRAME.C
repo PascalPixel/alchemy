@@ -1,9 +1,9 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 
 #include "VRAM_TAB.H"
-extern u8 Map_TileDissolveOrder[];
 
 struct AnimTrack {
     u8 unknown_00[0x10];

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 #include "FIELD_EVENT.H"
@@ -5,7 +6,6 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
-extern const u8 Idejima_ActorDepartureScript[];
 void GameFlag_SetBit();
 void Battle_WaitMode0();
 s32 Inventory_PromptAndSetObjectMode();

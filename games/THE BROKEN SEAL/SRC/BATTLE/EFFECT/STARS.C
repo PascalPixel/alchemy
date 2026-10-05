@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "MOTION_OBJECT.H"
@@ -25,7 +26,6 @@ struct Vector3 {
 
 extern u16 ParticleStreams_CellOffsets[];
 extern struct Vector3 RingBolts_Points[];
-extern u8 SpinningStars_Radii[];
 extern u8 gMapCellBuffer[];
 
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);

@@ -1,8 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern const u8 ColorBuffer_FadeStep1Map[32];
-extern const u8 ColorBuffer_FadeStep2Map[32];
-extern const u8 ColorBuffer_FadeStep3Map[32];
 
 void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count)
 {

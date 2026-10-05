@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -54,10 +55,6 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u8 KorosseoKawa_SceneTableA[];
-extern u8 KorosseoKawa_SceneTableB[];
-extern u8 KorosseoKawa_SceneTableC[];
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern volatile u32 Data_03001ae8;
 extern u8 HexDigits[];
 void Map_UpdateCellRect();
@@ -86,7 +83,6 @@ void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0();
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
-extern u8 KorosseoKawa_SceneTableD[];
 void Owner_RefreshActiveRatios();
 void FieldScene_RunTwoCallSequence(void);
 void FieldScene_RunLateSequence(s32 a0);

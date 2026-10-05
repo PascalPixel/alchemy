@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
@@ -6,8 +7,6 @@
 #include "IO_REG.H"
 #include "RESOURCE.H"
 
-extern const u16 Ui_WindowPalette[];
-extern const u8 System_BasicColorPalette[];
 extern char ResourceId_WindowTiles;
 
 void Ui_LoadWindowGraphics(void)

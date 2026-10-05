@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SYSTEM.H"
@@ -5,14 +6,10 @@
 #include "AUDIO_ENGINE.H"
 
 extern volatile u32 gKeysRepeat;
-extern s32 gSoundClipFlag;
 extern s32 Data_03007804;
 void AudioCommand_Play(s32 id);
 
 void Audio_Initialize(void);
-extern u8 RomBytes_02003000;
-extern u8 RomBytes_02003004;
-extern u8 gMusicFadeRequested;
 void Audio_StopAllPlayers(void);
 void Audio_ResumeAllPlayers(void);
 

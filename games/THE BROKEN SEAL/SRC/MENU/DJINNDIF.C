@@ -1,10 +1,10 @@
+#include "GLOBAL.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_RUNTIME.H"
 
-extern u8 gNumberTextBuffer[];
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 void Text_FormatSignedDecimalToWork(s32 out);
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAP_SCROLL.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -16,9 +17,7 @@ void SoundDriver_EnterMixer(void);
 
 #define SOUND_PRESET_COUNT 5
 #define SOUND_PRESET_SIZE 152
-extern u8 IwramCodeRecords[];
 
-extern u8 Data_03000bd8[];
 
 void System_VBlankHandler(void)
 {

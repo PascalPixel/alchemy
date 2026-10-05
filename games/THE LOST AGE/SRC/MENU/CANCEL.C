@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "INPUT.H"
 #include "FRAME.H"
@@ -6,7 +7,6 @@
 #include "IWRAM_CALL.H"
 #include "FIELD_EVENT.H"
 
-extern u8 Data_08105948[];
 
 typedef s32 (*CopyFn)(void *, const void *, s32);
 typedef s32 (*FillFn)(void *, s32, u32);

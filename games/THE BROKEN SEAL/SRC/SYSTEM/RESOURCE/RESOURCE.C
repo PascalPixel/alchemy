@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
@@ -14,10 +15,7 @@ struct ResourceWork {
 };
 
 extern struct ResourceWork Data_03007804;
-extern void *Resource_DirectoryTable[];
-extern const u8 Resource_PatchThumbBranch[];
 
-extern u8 Resource_PatchThumbBranchCodeSize[];
 
 void Resource_LoadWorkHeader(void)
 {

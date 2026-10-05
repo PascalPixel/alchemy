@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -51,8 +52,6 @@ void Resource_DecodeByteLz(const void *source, void *destination);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 
-extern const u8 FieldFx_GroundParticleTiles[];
-extern s16 FieldFx_GroundParticleFrames[];
 
 void FieldFx_UpdateGroundParticles(void)
 {

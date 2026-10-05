@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -10,10 +11,9 @@
 #include "text/MSG_IDS.H"
 
 extern u32 gFrameTick;
-extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
+extern u8 Menu_CursorObjectTiles[];
 extern s32 GameFlag_IsSet(s32 flag);
 
-extern struct SelectionScreen *gResQueueWork;
 void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
 void RenderOutput_PrepareForRedraw(struct UiWindow *);
 
@@ -30,7 +30,6 @@ struct EffectPosition {
     s32 z;
 };
 
-extern s8 Menu_CursorBobOffsets[];
 extern u8 Menu_AnimatedCursorTiles[];
 
 extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *pos);

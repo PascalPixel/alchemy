@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
 #include "MAPFRAME.H"
@@ -22,8 +23,6 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination)
 }
 
 extern u32 gScanlinePitch;
-extern u32 gScanlineAngle;
-extern void *Data_03001e50[];
 u32 Random16(void);
 void Map_UpdateCurrentTileBlockUntilBlocked(void);
 void Map_RenderPaletteMappedRow(u32 value);

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
@@ -19,8 +20,6 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     s32 give, s32 take, s32 mode, s32 page, s32 side);
 
 extern struct UiWork *gWindowWork;
-extern const char DjinnMenu_TextLevel[];
-extern const char DjinnMenu_TextSlash[];
 
 void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 window, s32 x, s32 y);

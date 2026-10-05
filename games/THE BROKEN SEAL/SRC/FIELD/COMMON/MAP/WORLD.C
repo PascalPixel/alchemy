@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "PROJECT.H"
 #include "MAP.H"
@@ -13,11 +14,8 @@
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
 
-extern u8 WorldMap_TerrainBehaviorTable[];
 
-extern const u8 TileMap_DrawRows[];
 
-extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 gDecodeBuffer[];
 
 typedef void (*TransformFn)(const s32 *source, s32 *destination);

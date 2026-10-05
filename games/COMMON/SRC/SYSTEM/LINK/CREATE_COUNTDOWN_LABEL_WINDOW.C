@@ -1,9 +1,9 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 void UiText_DrawStringAtOffset(u8 *s, s32 window, s32 x, s32 y);
-extern u8 Link_TimeLabelString[];
 s32 Link_CreateCountdownLabelWindow(void)
 {
     s32 handle = UiWindow_Create(0, 0, 6, 4, 6);

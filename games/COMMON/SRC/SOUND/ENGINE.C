@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "AUDIO_ENGINE.H"
 #include "TYPES.H"
 #include "../../INCLUDE/SYSTEM/IO_REG.H"
@@ -9,7 +10,6 @@ void Audio_EmptyCallback(void);
 void AudioEngine_SetPcmRate(u32 mode);
 void AudioEngine_SuspendDirectSound(void);
 void AudioEngine_ResumeDirectSound(void);
-extern const u16 Sound_FrameLengths[];
 extern SoundCommand Sound_CommandTable[36];
 
 void MusicPlayer_Tick(struct SoundPlayer *player);
@@ -18,13 +18,9 @@ void AudioEngine_SetMode(u32 mode);
 
 struct SoundPlayer;
 
-extern const u8 Sound_CgbPitchCodes[];
-extern const s16 Sound_CgbFrequencySteps[];
-extern const u8 Sound_NoisePitchCodes[];
 
 void CgbChannel_Mute(u8 channel);
 
-extern const u8 Sound_Cgb3LevelCodes[];
 
 void AudioEngine_Initialize(struct SoundWork *work)
 {

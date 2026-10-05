@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -15,7 +16,6 @@ struct Workspace {
     struct FieldActor actor;
 };
 
-extern const u16 TorebiIzumi_AlphaSteps[];
 
 void ObjectTable_Snapshot(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
@@ -144,8 +144,6 @@ void TorebiIzumi_PayToPlay(void)
 }
 
 #if EDITION_INTERNATIONAL
-extern u16 Data_0200200c[];
-extern s32 Data_02001fd0[];
 
 void Battle_ResetEffectCounter(void);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);

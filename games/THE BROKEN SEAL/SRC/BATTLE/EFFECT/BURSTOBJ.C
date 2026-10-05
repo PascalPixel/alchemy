@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FIELDOBJ.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
@@ -47,7 +48,6 @@ struct BurstParticleVector {
 
 void Vector_AddPolarOffset(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
-extern const s32 BattleFx_BurstParticleObjectScript[];
 
 struct BurstParticleVisual {
     u8 reserved_00[5];

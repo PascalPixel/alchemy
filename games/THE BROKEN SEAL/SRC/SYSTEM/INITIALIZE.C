@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
@@ -7,7 +8,6 @@
 
 void System_VBlankHandler(void);
 
-extern u8 gDebugTextEnabled;
 extern u8 gDebugMode;
 extern u8 gCpuLoadDisplayEnabled;
 extern s32 gCartridgeResetMarker;

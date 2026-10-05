@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "INVENTORY.H"
 
@@ -107,18 +108,7 @@ struct Actor_02000640 {
 
 extern u8 *gWork;
 
-extern const u8 KuupuappuMuraSai_Scripts[];
-extern const u8 KuupuappuMuraSai_Messages[];
-extern const u8 KuupuappuMuraSai_Actors[];
-extern const u8 KuupuappuMuraSai_Extras[];
 
-extern const u16 KuupuappuMuraSai_Scene5Cells[];
-extern const u16 KuupuappuMuraSai_Scene6Cells[];
-extern const u16 KuupuappuMuraSai_Scene7Cells[];
-extern const u16 KuupuappuMuraSai_Scene8Cells[];
-extern const u16 KuupuappuMuraSai_Scene9Cells[];
-extern const u16 KuupuappuMuraSai_Scene10Cells[];
-extern const u16 KuupuappuMuraSai_Scene12Cells[];
 
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);

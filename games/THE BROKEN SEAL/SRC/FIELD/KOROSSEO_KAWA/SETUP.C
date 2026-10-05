@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -66,7 +67,6 @@ typedef struct ActiveSubjectSlot {
 } ActiveSubjectSlot;
 
 extern s16 Korosseo_MarkerSlot;
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 HexDigits[];
 typedef void(*SceneTask)(void);
 void Scheduler_RemoveCallbackFar(u8 *);

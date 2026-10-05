@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
@@ -8,7 +9,6 @@
 #include "PALQUEUE.H"
 #include "IO_REG.H"
 
-extern struct PaletteSnapshotWork *gPaletteWork;
 
 void DisplayBlend_RunScript(void)
 {

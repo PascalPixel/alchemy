@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "RESOURCE.H"
@@ -10,8 +11,6 @@
 #include "EDITION.H"
 #include "TEXT_FONT.H"
 
-extern const u8 UiText_DrawGlyphArm[];
-extern u8 UiText_DrawGlyphCodeSize[];
 
 typedef s32 (*GlyphRoutine)(struct UiWindow *, s32, s32, s32, u8 *);
 

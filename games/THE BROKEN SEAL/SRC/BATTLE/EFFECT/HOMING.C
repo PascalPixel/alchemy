@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "MOTION_OBJECT.H"
@@ -28,11 +29,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern u8 HomingEmbers_Counts[];
-extern u8 HomingEmbers_FlareWidths[];
-extern u8 HomingEmbers_FlareHeights[];
-extern u8 HomingEmbers_FlareBiasY[];
-extern u16 HomingEmbers_FlareCells[];
 
 void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 {

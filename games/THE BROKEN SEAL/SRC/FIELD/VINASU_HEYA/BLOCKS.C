@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "ENTRY_SETUP.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -19,11 +20,7 @@ struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
 void OverlayObject_WaitUntilIdle(struct FieldActor *object);
 struct SwitchEffect *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, const void *script);
 extern struct SwitchCell gVinasuSwitchCells[];
-extern u8 gVinasuSettleScriptA[];
-extern u8 gVinasuSettleScriptB[];
-extern u16 gVinasuSettleCells[];
 
-extern s32 gVinasuBlockHeights[];
 
 void FieldScene_RunGuardedRectStep(void)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GLYPH.H"
 #include "ANIMSPR.H"
@@ -32,13 +33,6 @@ static __inline__ void SetBlendAlpha(u32 value)
     REG_BLDALPHA = value;
 }
 
-extern const s32 gHaidiaBabiRampActor8Action[];
-extern const s32 gHaidiaBabiRampLeaderAction[];
-extern const s32 gHaidiaBabiRampActor8ActionB[];
-extern const s32 gHaidiaBabiRampLeaderActionB[];
-extern const s32 gHaidiaBabiRampFinalAction[];
-extern const s32 gHaidiaBabiRampActor10Action[];
-extern const s32 gHaidiaBabiRampActor10ActionB[];
 
 
 extern struct EventWork *gEventWork;
@@ -47,10 +41,7 @@ void Map_ClearLayerEntryFlag();
 
 void Object_SetTargetAndCallback();
 
-extern s32 gHaidiaBabiActor8Departure[];
 
-extern s32 gHaidiaBabiBagLiftScript[];
-extern s32 gHaidiaBabiBagShowScript[];
 void ObjectDispatch_WaitForValue16();
 void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 

@@ -1,10 +1,10 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
 #include "ANIMSPR.H"
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
 
-extern struct AnimationObject *gSpriteObjects;
 extern volatile u32 gKeysHeld;
 extern s32 gFrameTick;
 

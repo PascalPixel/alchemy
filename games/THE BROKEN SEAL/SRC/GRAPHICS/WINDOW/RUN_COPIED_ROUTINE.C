@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
@@ -5,9 +6,7 @@
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
 
-extern const u8 Tile_Decompress4bpp[];
 
-extern u8 Tile_Decompress4bppCodeSize[];
 
 void Ui_RunCopiedRoutine(GlyphTransfer *work)
 {

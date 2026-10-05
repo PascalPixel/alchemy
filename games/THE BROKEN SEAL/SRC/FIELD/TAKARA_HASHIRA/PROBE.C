@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "HASHIRA.H"
 #include "STAGED_ACTOR.H"
@@ -5,7 +6,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-extern s32 StagedActor_FootprintKinds[];
 extern struct StagedActorFootprint StagedActor_FootprintBounds[];
 
 struct MapLayer {

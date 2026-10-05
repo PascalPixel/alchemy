@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -5,8 +6,6 @@
 #include "GLOBAL_CELLS.H"
 #include "INVENTORY_MENU.H"
 
-extern u8 Data_080aed4c[];
-extern u8 Data_080aedcc[];
 
 s32 Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 

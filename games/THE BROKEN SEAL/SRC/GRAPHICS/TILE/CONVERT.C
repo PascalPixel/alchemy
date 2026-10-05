@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "IWRAM_CALL.H"
@@ -7,9 +8,7 @@
 
 extern u8 gMapCellBuffer[];
 
-extern const u8 Tile_ConvertMap[];
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
-extern u8 Tile_ConvertMapCodeSize[];
 
 static __inline__ void CopyWords(void *dst, const void *src, s32 size)
 {

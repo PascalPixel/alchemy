@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "EDITION.H"
@@ -85,9 +86,6 @@ struct WorldMapVramBlock {
 extern struct WorldMapVramBlock gVramBlockCache[];
 extern u32 gFrameCount;
 extern u32 gKeysHeld;
-extern const u8 WorldMap_MarkerBlendCycle[];
-extern const u16 WorldMap_CursorDirectionAngles[];
-extern const s32 WorldMap_PlaceMarkers[];
 
 struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);

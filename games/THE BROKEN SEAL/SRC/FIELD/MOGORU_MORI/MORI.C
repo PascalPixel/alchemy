@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "EDITION.H"
 #include "MORI.H"
@@ -43,7 +44,6 @@ void WaitFrames();
 void InitializeOrbitingEffect();
 u8 *OverlayObject_SpawnConfiguredWithMode15(s32, s32, s32, s32);
 void FieldScene_RunSupplementalSequenceOne();
-extern u8 MogoruMori_ActorScript[];
 
 void SceneState_SetValue18Mode2(void)
 {

@@ -1,6 +1,7 @@
 /*----------------------------------------------------------
     ルンパ城  イベント
 ----------------------------------------------------------*/
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "FORTRESS.H"
@@ -15,9 +16,6 @@ extern const struct SceneEntrance gRunpaJoEntrances2[];
 extern const struct SceneEntrance gRunpaJoEntrances3[];
 extern const struct SceneEntrance gRunpaJoEntrancesOther[];
 
-extern const u32 gRunpaJoExits2[];
-extern const u32 gRunpaJoExits3And4[];
-extern const u32 gRunpaJoExitsOther[];
 
 extern const struct ScenePlacement gRunpaJoPlacementsRunpaDou[];
 extern const struct ScenePlacement gRunpaJoPlacements1[];
@@ -31,7 +29,6 @@ extern const struct SceneEvent gRunpaJoEvents2[];
 extern const struct SceneEvent gRunpaJoEvents3[];
 extern const struct SceneEvent gRunpaJoEventsOther[];
 
-extern s32 gRunpaJoSupportPairs[];
 
 
 

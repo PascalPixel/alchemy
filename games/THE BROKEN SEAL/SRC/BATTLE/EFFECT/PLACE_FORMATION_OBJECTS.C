@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -20,12 +21,6 @@ struct Placement { s32 x; s32 y; s32 z; s32 w; };
 
 extern const struct Scale Formation_NormalScale;
 extern const struct Scale Formation_SmallScale;
-extern const u8 Formation_TwelveX[];
-extern const u8 Formation_TwelveZ[];
-extern const u8 Formation_RightEightX[];
-extern const u8 Formation_RightEightZ[];
-extern const u8 Formation_SmallEightX[];
-extern const u8 Formation_SmallEightZ[];
 
 void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, struct Scale *scale, s32 flags);
 
@@ -76,9 +71,6 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 
 extern struct EffectStep gMapCellBuffer[];
 extern u16 ParticleStreams_CellOffsets[];
-extern u8 ImpactBurst_CellWidths[];
-extern u8 ImpactBurst_CellHeights[];
-extern u16 ImpactBurst_CellSourceOffsets[];
 
 #define HI(v) (((s16 *)&(v))[1])
 

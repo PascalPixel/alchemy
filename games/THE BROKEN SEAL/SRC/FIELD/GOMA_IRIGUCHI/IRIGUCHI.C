@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -35,10 +36,6 @@ struct OverlayActorState {
 };
 
 void BattleFx_PlayQueuedSound();
-extern u8 GomaIriguchi_SceneTableA[];
-extern u8 GomaIriguchi_SceneTableB[];
-extern u8 GomaIriguchi_SceneTableC[];
-extern u8 GomaIriguchi_SceneTableD[];
 
 void BattleFx_SetQueuedSoundAndPlay();
 void Engine_MapCopyCellAttributes();

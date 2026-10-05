@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -35,7 +36,6 @@ void AnimationObjects_SetActiveTimerStepsFar(struct AnimationObject *object, s32
 void Shop_InitEffect(void);
 void Shop_ResetEffects(void);
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
-extern s8 Data_080b4ab2[];
 
 extern struct EventRuntime *gEventWork;
 s32 Party_ListActiveOwnersFar(s16 *);
@@ -44,7 +44,6 @@ void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
 void Event_StartScreenTransitionFar(void);
-extern s8 Inn_PriceMultipliers[];
 
 enum InnMessageId {
     INN_MESSAGE_WELCOME = 0xd1c,

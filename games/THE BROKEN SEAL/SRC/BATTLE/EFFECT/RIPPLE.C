@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -185,11 +186,6 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 }
 
 extern u8 gMapCellBuffer[];
-extern u8 FireSwirl_CellWidths[];
-extern u8 FireSwirl_CellHeights[];
-extern u16 FireSwirl_CellSourceOffsets[];
-extern s8 FireSwirl_CellBiasX[];
-extern s8 FireSwirl_CellBiasY[];
 
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);

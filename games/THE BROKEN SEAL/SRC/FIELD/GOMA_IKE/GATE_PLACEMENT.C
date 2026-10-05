@@ -1,13 +1,10 @@
 
 
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
 extern struct Resource388Runtime *gEventWork;
 
-extern u8 GomaIke_SceneTable0[];
-extern u8 GomaIke_SceneTable1[];
-extern u8 GomaIke_SceneTable2[];
-extern u8 GomaIke_SceneTable3[];
 #include "RESOURCE_388_RUNTIME.H"
 
 extern void *Object_GetById(u32);

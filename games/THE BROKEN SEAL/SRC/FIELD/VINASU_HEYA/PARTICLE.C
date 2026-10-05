@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "ENTRY_SETUP.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -9,7 +10,6 @@ void SceneState_CallWith432And32(void);
 
 void FieldScene_CallWith560And44(void);
 
-extern const s32 gVinasuSprayScript[];
 
 struct FieldActor;
 s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor);
@@ -335,17 +335,8 @@ struct TrackSprite {
     struct TrackAnimation *animations[4];
 };
 
-extern const u8 gVinasuShapesPushedLeft[];
-extern const u8 gVinasuShapesPushedRight[];
-extern const u8 gVinasuShapesPushedUp[];
-extern const u8 gVinasuShapesPushedDown[];
-extern const s32 gVinasuRefusedPushScript[];
 extern struct SwitchCell gVinasuSwitchCells[];
 extern struct SwitchCell gVinasuPillarCells[];
-extern const u8 *gVinasuSwitchShapes[];
-extern const s32 **gVinasuSwitchPushScripts[];
-extern const u8 *gVinasuPillarShapes[];
-extern const s32 **gVinasuPillarPushScripts[];
 
 s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
 {

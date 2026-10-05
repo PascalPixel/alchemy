@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -13,18 +14,7 @@ typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
 extern const u8 Render_DecodeFrame[];
-extern const u8 Render_DecodeFrameBuffer[];
-extern u8 Render_DecodeFrameCodeSize[];
 
-extern const u8 AnimationFacing_Kind1[];
-extern const u8 AnimationFacing_Kind22[];
-extern const u8 AnimationFacing_Kind2[];
-extern const u8 AnimationFacing_Kind3[];
-extern const u8 AnimationFacing_Kind5[];
-extern const u8 AnimationFacing_Kind8[];
-extern const u8 AnimationFacing_Kind88[];
-extern const u8 AnimationFacing_Kind4[];
-extern const u8 AnimationFacing_Kind6[];
 
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 void Animation_SetWorkEntry(void *work, s32 no);

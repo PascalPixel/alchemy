@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "YAMA.H"
 #include "TYPES.H"
@@ -31,7 +32,6 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-extern s32 ArutinYama_RollRadii[];
 
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void ResourceMetadata_Register(struct FieldSprite *sprite, s32 mode);
@@ -51,11 +51,8 @@ struct Half {
 
 extern u16 *Data_03001ed0;
 
-extern s16 ArutinYama_PaletteHold;
 
-extern s16 ArutinYama_PaletteStep;
 
-extern s8 ArutinYama_PaletteScript[];
 
 void ArutinYama_StepPaletteAnim(void);
 

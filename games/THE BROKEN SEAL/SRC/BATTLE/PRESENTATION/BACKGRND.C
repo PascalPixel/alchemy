@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "SYSTEM.H"
@@ -33,7 +34,6 @@ void Runtime_ReleaseHeapBlock10(void)
 
 typedef void (*BitDecoder)(const u8 *source, void *destination);
 
-extern u8 BitDecoder_Size[];
 
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 void Graphics_BuildSequentialTileTable(void *destination);

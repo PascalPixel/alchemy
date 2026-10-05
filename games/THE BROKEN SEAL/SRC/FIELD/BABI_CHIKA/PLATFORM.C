@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "BABI.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -19,7 +20,6 @@ void BabiChika_RestorePlatformCells(void);
 
 s32 SceneActor_CopyActor8PositionWhenAtRow10();
 
-extern s32 Data_0200b350[];
 
 void BattleFx_StartFadeOverlay(s32 value);
 void FieldScene_RunLateSequenceHead(void);

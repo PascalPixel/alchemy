@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "RESOURCE.H"
@@ -11,10 +12,7 @@ struct Record_080b06c0 {
     u8 values[21];
 };
 
-extern u16 Shop_SelectorOffsets[];
 
-extern u8 Shop_GlyphBytes[];
-extern u16 Shop_GlyphRowOffsets[];
 
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {

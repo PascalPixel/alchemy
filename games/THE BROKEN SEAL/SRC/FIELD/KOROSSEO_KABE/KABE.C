@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FX_SCENE.H"
 #include "RUNTIME_MEM.H"
 #include "TASK.H"
@@ -12,7 +13,6 @@
 #include "text/MSG_IDS.H"
 
 extern const struct SceneEntrance gKorosseoKabeEntrances[];
-extern const u32 gKorosseoKabeExits[];
 extern const struct ScenePlacement gKorosseoKabePlacements[];
 void Object_CommitPosition();
 void Engine_MapCopyCellAttributes();
@@ -24,7 +24,6 @@ extern u32 gKeysHeld;
 void Object_CommitPosition(struct FieldActor *object);
 void ObjectDispatch_InitFromTable4WithArgument(s32 handle, struct FieldActor *object);
 
-extern u8 KorosseoKabe_RollLogScript[];
 void Object_RefreshSelectorById(s32 actor);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);

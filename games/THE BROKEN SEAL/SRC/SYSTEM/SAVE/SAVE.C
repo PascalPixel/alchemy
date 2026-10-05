@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "SAVE_STATE.H"
@@ -11,8 +12,6 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-extern s16 gSaveSlot;
-extern u8 gSaveBuffer[];
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
 s32 UiWork_IsComplete(void);
 s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);

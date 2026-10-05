@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "HASHIRA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -290,7 +291,6 @@ struct PillarActor {
     u8 motion_flags;
 };
 
-extern s32 TakaraHashira_ProbePosition[];
 
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src);

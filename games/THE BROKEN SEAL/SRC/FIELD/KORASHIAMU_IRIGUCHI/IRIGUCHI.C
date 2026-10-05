@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "STATUS.H"
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
@@ -6,7 +7,6 @@ extern const struct SceneEntrance gKorashiamuIriguchiEntrances1[];
 extern const struct SceneEntrance gKorashiamuIriguchiEntrances3[];
 extern const struct SceneEntrance gKorashiamuIriguchiEntrancesOther[];
 
-extern const u32 gKorashiamuIriguchiExits[];
 
 extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance5[];
 extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance7[];

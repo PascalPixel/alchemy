@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "SELECT.H"
 #include "NODE_CHAIN.H"
@@ -19,7 +20,6 @@
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
-extern struct SelectionScreen *gResQueueWork;
 extern u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);

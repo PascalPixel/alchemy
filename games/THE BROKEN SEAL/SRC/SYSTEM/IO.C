@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
@@ -18,11 +19,9 @@ void Input_HandleKeyInterrupt(void)
     }
 }
 
-extern const u8 Resource_ExecuteTransfer[];
 
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 
-extern u8 TransferCommandExecutor_Size[];
 
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
     void name(u32 address, u32 value)                                       \

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SYSTEM.H"
@@ -21,7 +22,6 @@ void UiWork_FinalizePendingCoreFar(void);
 s32 BattleFx_GetResourceId(u32 id);
 
 s32 ObjectTable_ReadActiveValue(s32 key);
-extern u8 Ui_RenderResultValues[];
 
 void Battle_ShowPairedUnitWorkAndWait(
     s32 first, s32 first_x, s32 first_y, s32 first_arg,

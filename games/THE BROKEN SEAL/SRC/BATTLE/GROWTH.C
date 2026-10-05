@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "BATTLE_PARTY.H"
 #include "RUNTIME_MEM.H"
@@ -28,7 +29,6 @@ struct FormationCandidate {
 };
 
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
-extern u16 RomBytes_080c73f8[];
 s32 GameFlag_GetByteFar(s32 id);
 
 struct BattleBaseStats {

@@ -665,7 +665,7 @@ void FuneKanpan_RunDeckStateEventFromEntry(void)
  * effects, then advances the shared scene phase. */
 void FieldScene_RunActorAndEffectPresentationSetup(void)
 {
-    u8 *record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x911) != 0) {
         Engine_EventBegin();
@@ -756,15 +756,15 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Camera_SetSpeed(0x10000, 0x2000);
         Camera_MoveTo(0xd80000, -1, 0x3160000, 1);
         {
-            /* Set the low bit of the flag byte at +35 of actor 20's record. */
-            u8 *record = (u8 *)Object_GetById(20);
+            /* Let actor 20 take its sprite priority from its place again. */
+            struct FieldActor *record = Object_GetById(20);
             /* FAKEMATCH: a result temporary, not a compound or-assign: the
              * reference merges the byte into the mask's register, which the
              * two-address ORR does only when the result is its own object. */
-            u8 bits = 1;
+            u8 bits = ACTOR_PRIORITY_AUTOMATIC;
 
-            bits |= record[35];
-            record[35] = bits;
+            bits |= record->priority_flags;
+            record->priority_flags = bits;
         }
         Actor_SetSpeed(20, 0x13333, 0x9999);
         Actor_WalkToAndWait(20, 182, 0x30e);
@@ -775,12 +775,11 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         FuneKanpan_OpenSecondDoor();
         Actor_WalkToAndWait(20, 216, 0x31e);
         Actor_SetPosition(20, 0, 0);
-        /* Set the fixed-point word at +24 of actor 20's record to 1.0. */
-        record = (u8 *)Object_GetById(20);
-        *(s32 *)(record + 24) = 0x10000;
-        /* Set the fixed-point word at +28 of actor 20's record to 1.0. */
-        record = (u8 *)Object_GetById(20);
-        *(s32 *)(record + 28) = 0x10000;
+        /* Draw actor 20 at full size again. */
+        record = Object_GetById(20);
+        record->scale_x = 0x10000;
+        record = Object_GetById(20);
+        record->scale_y = 0x10000;
         GameFlag_Set(0x920);
         Engine_EventEnd();
     }
@@ -1113,7 +1112,7 @@ void SceneActor_PlaceActors20To27(void)
 
 void FieldScene_RunScene3af_0200185c(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     u8 bits;
 
     Engine_EventBegin();
@@ -1122,22 +1121,22 @@ void FieldScene_RunScene3af_0200185c(void)
     Actor_SetPosition(20, 0, 0);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
     Actor_SetPosition(22, 0xcc0000, 0x2090000);
-    record = (u8 *)Object_GetById(22);
-    *(s32 *)(record + 12) = 0x100000;
+    record = Object_GetById(22);
+    record->y.fixed = 0x100000;
     bits = 128;
     {
-        u8 *record = Object_GetById(22);
-        u8 value = record[89];
+        struct FieldActor *record = Object_GetById(22);
+        u8 value = record->collision_flags;
 
-        record[89] = value | bits;
+        record->collision_flags = value | bits;
     }
     Actor_SetSpeed(22, 0x9999, 0x4ccc);
     Engine_ActorEnableActionCallback(22, FuneKanpan_LeadActionsA);
     {
-        u8 *record = (u8 *)Object_GetById(21);
+        struct FieldActor *record = Object_GetById(21);
 
-        bits |= record[89];
-        record[89] = bits;
+        bits |= record->collision_flags;
+        record->collision_flags = bits;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);
@@ -1149,7 +1148,7 @@ void FieldScene_RunScene3af_0200185c(void)
 
 void FieldScene_RunScene3af_02001920(void)
 {
-    u8 *record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
@@ -1157,19 +1156,19 @@ void FieldScene_RunScene3af_02001920(void)
     Actor_SetPosition(20, 0, 0);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
     Actor_SetPosition(22, 0x10c0000, 0x2a60000);
-    record = (u8 *)Object_GetById(22);
+    record = Object_GetById(22);
     {
         s32 shown = 0;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Engine_ActorEnableActionCallback(22, FuneKanpan_LeadActionsC);
     {
-        u8 *record = (u8 *)Object_GetById(21);
+        struct FieldActor *record = Object_GetById(21);
         u8 bits = 128;
 
-        bits |= record[89];
-        record[89] = bits;
+        bits |= record->collision_flags;
+        record->collision_flags = bits;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);

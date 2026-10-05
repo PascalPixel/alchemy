@@ -356,11 +356,12 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
     return object;
 }
 
-void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)
+/* Starts the object on a word-coded motion script from its first word. */
+void ObjectDispatch_Initialize(struct DispatchObject *object, const s32 *script)
 {
     if (object != 0) {
         object->value_04 = 0;
-        object->value_00 = value;
+        object->value_00 = (u32)script;
         object->value_5b = 0;
         object->value_5d = 0;
         object->value_57 = 0;
@@ -477,38 +478,38 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 val
 
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *object, s32 argument)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table5Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table5Script);
     object->argument = argument;
 }
 
 void ObjectDispatch_InitFromTable0(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table0Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table0Script);
 }
 
 void ObjectDispatch_InitFromTable1(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table1Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table1Script);
 }
 
 void ObjectDispatch_InitFromTable2(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table2Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table2Script);
 }
 
 void ObjectDispatch_InitFromTable3(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table3Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table3Script);
 }
 
 void ObjectDispatch_InitFromTable6(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table6Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table6Script);
 }
 
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s32 argument)
 {
-    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table4Script);
+    ObjectDispatch_Initialize(object, ObjectDispatch_Table4Script);
     if (argument != 0) {
         object->value_34 = 0x8000;
         object->value_30 = 0x40000;

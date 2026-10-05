@@ -104,13 +104,13 @@ s32 SpawnHeavyImpactEffect(struct MotionObject *source)
     if (object != NULL) {
         object->flags = 0;
         object->unknown_5e = 20;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
     }
 
     for (i = 0; i < 12; i++) {
         fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
         if (fragment != NULL) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)fragment, (u32)&BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)fragment, BattleFx_FragmentScript);
             fragment->speed_limit = Random16() + 0x10000;
             fragment->acceleration = 0x10000;
             fragment->flags = 0;

@@ -45,7 +45,7 @@ struct FieldActor *Object_CreateFar(
 void Object_SetMode(struct FieldActor *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Battle_WaitMode0(s32 state);
-extern const u8 BattleFx_LinkedObjectScript[];
+extern const s32 BattleFx_LinkedObjectScript[];
 s32 BattleFx_CopyLinkedObjectPosition(void *obj);
 
 void Map_SetWorkFourValues(s32 first, s32 second, s32 third, s32 fourth)
@@ -168,7 +168,7 @@ void BattleFx_SpawnLinked(
             Object_CreateFar(21, resource->x.fixed, resource->y.fixed, resource->z.fixed);
 
         if (object != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_LinkedObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_LinkedObjectScript);
             Object_SetMode(object, flags & 15);
             object->motion_flags = 0;
             object->unknown_64 = 0;

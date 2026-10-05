@@ -52,7 +52,7 @@ struct BurstParticleVector {
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
-extern const u8 BattleFx_BurstParticleObjectScript[];
+extern const s32 BattleFx_BurstParticleObjectScript[];
 
 struct BurstParticleVisual {
     u8 reserved_00[5];
@@ -74,7 +74,6 @@ struct BurstParticleVisualGroup {
 };
 
 
-extern u8 BattleFx_CommonParticleScript[];
 void BattleEffect_InitializeSharedScene(void);
 void Animation_ApplyChildValuesFar(struct FieldActor *, s32);
 u32 Random16(void);
@@ -175,7 +174,7 @@ void BattleFx_RunBurstParticles(void)
             p->values[2]
         );
         if (object != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_BurstParticleObjectScript);
             object->motion_flags = ACTOR_FALLS;
         }
         WaitFrames(((Random16() * 2) >> 16) + 2);
@@ -239,7 +238,7 @@ void BattleEffect_SpawnBurstParticleField(void)
             object->motion_flags = 0;
             Animation_ApplyChildValuesFar(object, 11);
             Object_SetMode(object, 7);
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)(BattleFx_CommonParticleScript + 4));
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript + 1);
             ObjectDispatch_SetSingleChildField26Far(object, 1);
 
             position[0] = state->x;
@@ -281,7 +280,7 @@ void BattleEffect_RunTargetedItemBreak(void)
 
     BattleEffect_InitializeSharedScene();
     *(void **)((u8 *)main_object + 0x68) = child;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)main_object, (u32)(BattleFx_CommonParticleScript + 12));
+    ObjectDispatch_InitializeFar((struct DispatchObject *)main_object, BattleFx_CommonParticleScript + 3);
 
     x = scene->x;
     position[0] = x;

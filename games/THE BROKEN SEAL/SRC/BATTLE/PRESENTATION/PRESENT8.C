@@ -24,7 +24,7 @@ s32 Inventory_GetEquippedItemFar(struct BattleUnit *owner, s32 type);
 s32 SummonSlot_RegisterActorSprites(s32);
 s32 BattleUnit_LookupWeaponValueByClass(s32);
 s32 ArcTan2(s32, s32);
-extern const u8 BattlePres_ActorObjectScript[];
+extern const s32 BattlePres_ActorObjectScript[];
 
 /* Step table for battle placement: signed bytes in (x, y) pairs. */
 extern const s8 BattlePlacement_StepPairs[];
@@ -307,7 +307,7 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
         object->scale_x = 0x10000;
         object->scale_y = 0x10000;
     }
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattlePres_ActorObjectScript);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattlePres_ActorObjectScript);
 }
 
 /*

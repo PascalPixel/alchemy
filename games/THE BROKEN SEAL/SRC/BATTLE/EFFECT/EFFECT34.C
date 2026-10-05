@@ -84,7 +84,7 @@ void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
     link = (struct FieldActor *)arc->linked_object;
     v = (s16)++arc->counter;
     if (v > 31) {
-        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
         return;
     }
     v = Trig_Sin(v << 10);
@@ -107,7 +107,7 @@ void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj)
     link = (struct FieldActor *)arc->linked_object;
     v = (s16)++arc->counter;
     if (v > 31) {
-        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
         return;
     }
     v = Trig_Sin(v << 10);

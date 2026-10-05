@@ -25,7 +25,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 struct MotionObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-extern const u8 BattleFx_FragmentScript[];
+extern const s32 BattleFx_FragmentScript[];
 void ObjectDispatch_ReleaseFar(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 
@@ -68,7 +68,7 @@ void RunBattleEffect11(void)
         position.z = scene->z;
         obj = Object_Spawn(0x11d, position.x, position.y, position.z);
         if (obj != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
             obj->speed_limit = Random16() + 0x20000;
             obj->acceleration = 0x20000;
             obj->motion_flags = 0;

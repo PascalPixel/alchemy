@@ -76,7 +76,7 @@ struct FxObject {
     void *callback;             /* 0x6c */
 };
 
-extern const u8 BattleFx_SourceHoldScript[];
+extern const s32 BattleFx_SourceHoldScript[];
 extern const u8 Data_0809f118[];
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
@@ -125,7 +125,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
         return;
     BattleEffect_InitializeSharedScene();
     source->linked = target;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)source, (u32)BattleFx_SourceHoldScript);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)source, BattleFx_SourceHoldScript);
     preview = BattleFx_StartItemBreak(source);
     if (preview == NULL) {
         BattleFx_PrepareBufferInterpolation();
@@ -241,7 +241,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
         break;
     }
     Animation_ApplyChildValuesFar(target, work->saved_palette);
-    ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->saved_script));
+    ObjectDispatch_InitializeFar((struct DispatchObject *)target, work->saved_script);
     target->callback = work->saved_callback;
     EffectRuntime_StopCurrentObject();
     if (moved == 1)
@@ -350,7 +350,7 @@ void *BattleFx_StartItemBreak(void *object)
     for (i = 7; i >= 0; i--) {
         child = Object_Spawn(0x11d, source->x, source->y + (16 << 16), source->z);
         if (child != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, BattleFx_FragmentScript);
             speed = Random16() + 0x10000;
             child->acceleration = 0x10000;
             child->speed_limit = speed;
@@ -414,7 +414,7 @@ void UpdateRisingParticleBurst(void *object)
         if (child != 0) {
             s32 speed;
 
-            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, BattleFx_FragmentScript);
             speed = Random16();
             child->acceleration = unit;
             child->speed_limit = speed + unit;

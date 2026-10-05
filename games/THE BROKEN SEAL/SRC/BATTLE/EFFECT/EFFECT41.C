@@ -198,7 +198,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
 
     if (FIELD_AT_OFFSET(object, s32 *, 0xC) <= FIELD_AT_OFFSET(object, s32 *, 0x14)) {
         FIELD_AT_OFFSET(object, s16 *, 0x5E) = phase;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
         p = NULL;
         FIELD_AT_OFFSET(object, void **, 0x6C) = p;
         for (i = 0; i <= 2; i++) {
@@ -216,7 +216,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
             pp = &FIELD_AT_OFFSET(p, s16 *, 0x5E);
             phase2 = 6;
             *pp = phase2;
-            ObjectDispatch_InitializeFar((struct DispatchObject *)p, (u32)BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)p, BattleFx_CommonParticleScript);
         }
     }
 }
@@ -232,7 +232,7 @@ void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *object)
     object->x += r - Random16();
     if (object->y <= object->terrain_height) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-            (u32)BattleFx_CommonParticleScript);
+            BattleFx_CommonParticleScript);
     }
 }
 void BattleFx_CallEffect05(void)

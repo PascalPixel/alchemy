@@ -83,7 +83,7 @@ struct SpreadPosition {
 void Audio_PlayCue(s32);
 
 void BattleFx_AdvanceSpinAngle(void);
-extern const u8 BattleFx_CommonParticleScript[];
+extern const s32 BattleFx_CommonParticleScript[];
 
 struct CaptureObject {
     u8 unknown_00[8];
@@ -578,7 +578,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
         Animation_ApplyChildValuesFar(djinni, 11);
         djinni->lifetime = 8;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, (u32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, BattleFx_CommonParticleScript);
     }
 
     WaitFrames(15);

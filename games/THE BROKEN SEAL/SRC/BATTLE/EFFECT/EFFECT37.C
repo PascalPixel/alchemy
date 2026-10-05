@@ -16,7 +16,7 @@ s32 BattleFx_HueChannelRamp(s32, s32, s32);
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum);
 s32 Fixed_Remainder(s32 value, s32 divisor);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-extern const u8 BattleFx_UntargetedObjectScript[];
+extern const s32 BattleFx_UntargetedObjectScript[];
 
 
 void BattleFx_ArmBg0HBlankDma(void);
@@ -127,7 +127,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target)
     if (tx == 0x80000000) {
         ty = target->target_y;
         if ((ty == tx) && (target->target_z == ty)) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)BattleFx_UntargetedObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)target, BattleFx_UntargetedObjectScript);
         }
     }
 }

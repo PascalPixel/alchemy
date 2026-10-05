@@ -10,7 +10,7 @@ s32 GameFlag_TestFar();
 extern u8 gOverlayArea[];
 extern char MsgPonderEllipsis;
 extern const u8 ObjectMotion_LinkedActionScript[];
-extern const u8 ObjectMotion_StepAngleScript[];
+extern const s32 ObjectMotion_StepAngleScript[];
 
 struct EffectDescriptor {
     s32 flags;
@@ -305,7 +305,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
                     ObjectMotion_SetActionCallback(object, (void *)ObjectMotion_LinkedActionScript);
                 } else if (action->mode == 1) {
                     object->saved_value = saved_value;
-                    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
+                    ObjectDispatch_InitializeFar((struct DispatchObject *)object, ObjectMotion_StepAngleScript);
                 }
             }
             object->busy_5b = 0;

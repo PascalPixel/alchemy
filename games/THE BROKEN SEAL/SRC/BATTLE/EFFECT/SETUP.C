@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "GAME_STATE.H"
 #include "TYPES.H"
@@ -19,7 +20,6 @@ void Object_DisableEffectSpawnCallback(void)
     Scheduler_DisableCallbacks(Object_EffectSpawnCallback);
 }
 
-extern struct BattleEffectEntry BattleFx_DefinitionTable[];
 
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id)
 {

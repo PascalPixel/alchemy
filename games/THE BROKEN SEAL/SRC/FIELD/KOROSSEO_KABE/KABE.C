@@ -13,8 +13,6 @@
 #include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gKorosseoKabeEntrances[];
-extern const struct ScenePlacement gKorosseoKabePlacements[];
 void Object_CommitPosition();
 void Engine_MapCopyCellAttributes();
 
@@ -29,7 +27,6 @@ void Object_RefreshSelectorById(s32 actor);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
-extern const struct SceneEvent gKorosseoKabeEvents[];
 void SceneState_ApplyRectsForActors15To17(void);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 void Korosseo_SelectSoloCompetitor(s32 index);

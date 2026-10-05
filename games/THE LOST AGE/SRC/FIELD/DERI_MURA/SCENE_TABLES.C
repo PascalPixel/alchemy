@@ -1,8 +1,8 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-extern const struct SceneEntrance gDeriMuraEntrances[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

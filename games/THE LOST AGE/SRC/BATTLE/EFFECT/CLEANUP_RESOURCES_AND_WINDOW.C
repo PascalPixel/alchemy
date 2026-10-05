@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 
@@ -7,7 +8,6 @@ struct WorldMapWork {
     u32 window;
 };
 
-extern struct WorldMapWork gWorldMapWork;
 
 extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 

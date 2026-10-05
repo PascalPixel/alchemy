@@ -35,7 +35,6 @@ struct RockWallHeights {
     s32 column[4];
 };
 
-extern const struct RockWallHeights RockWall_Heights;
 
 #define COLUMN_WIDTH 40
 

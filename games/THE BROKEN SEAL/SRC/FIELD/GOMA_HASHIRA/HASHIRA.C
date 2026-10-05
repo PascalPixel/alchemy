@@ -25,7 +25,6 @@ struct ScriptTable {
     u8 *script[3];
 };
 
-extern struct ScriptTable GomaHashira_PillarScripts;
 struct PillarEffect {
     u8 unknown_00[8];
     s32 x;

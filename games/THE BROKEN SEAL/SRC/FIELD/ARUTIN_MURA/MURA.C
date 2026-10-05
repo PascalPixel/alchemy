@@ -7,17 +7,11 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gArutinMuraEntrances1[];
-extern const struct SceneEntrance gArutinMuraEntrances2[];
-extern const struct SceneEntrance gArutinMuraEntrancesOther[];
 
 extern u8 Placement_Messages[];
 
 void FieldScene_PrepareActors(void *placements);
 
-extern const struct SceneEvent gArutinMuraEvents1[];
-extern const struct SceneEvent gArutinMuraEvents2[];
-extern const struct SceneEvent gArutinMuraEventsOther[];
 
 void FieldScene_RunMiddleSequence(void);
 

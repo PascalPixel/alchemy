@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "HAIDIA.H"
 #include "EDITION.H"
@@ -6,15 +7,8 @@
 #include "FIELD_EFFECT.H"
 #include "CALL.H"
 
-extern const struct SceneEntrance gHaidiaDouEntrances1[];
-extern const struct SceneEntrance gHaidiaDouEntrances2[];
-extern const struct SceneEntrance gHaidiaDouEntrances3[];
-extern const struct SceneEntrance gHaidiaDouEntrancesOther[];
 
 
-extern const struct ScenePlacement gHaidiaDouPlacements1[];
-extern const struct ScenePlacement gHaidiaDouPlacements2[];
-extern const struct ScenePlacement gHaidiaDouPlacements3[];
 
 struct FieldActor *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind);
 

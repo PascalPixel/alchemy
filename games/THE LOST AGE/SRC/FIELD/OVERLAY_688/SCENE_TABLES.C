@@ -2,8 +2,6 @@
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const struct ScenePlacement gScenePlacements[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

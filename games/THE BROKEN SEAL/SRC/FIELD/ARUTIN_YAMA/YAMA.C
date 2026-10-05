@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "GLOBAL_CELLS.H"
 #include "YAMA.H"
@@ -6,31 +7,7 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gArutinYamaEntrancesOther[];
-extern const struct SceneEntrance gArutinYamaEntrances1[];
-extern const struct SceneEntrance gArutinYamaEntrances2[];
-extern const struct SceneEntrance gArutinYamaEntrances3[];
-extern const struct SceneEntrance gArutinYamaEntrances4[];
-extern const struct SceneEntrance gArutinYamaEntrances5[];
-extern const struct SceneEntrance gArutinYamaEntrances6[];
-extern const struct SceneEntrance gArutinYamaEntrances7[];
-extern const struct SceneEntrance gArutinYamaEntrances8[];
-extern const struct SceneEntrance gArutinYamaEntrances9[];
-extern const struct SceneEntrance gArutinYamaEntrances10[];
-extern const struct SceneEntrance gArutinYamaEntrances11[];
-extern const struct SceneRegion gArutinYamaRegions9[];
-extern const struct SceneRegion gArutinYamaRegions10[];
 
-extern const struct ScenePlacement gArutinYamaPlacementsOther[];
-extern const struct ScenePlacement gArutinYamaPlacements1[];
-extern const struct ScenePlacement gArutinYamaPlacements3[];
-extern const struct ScenePlacement gArutinYamaPlacements5[];
-extern const struct ScenePlacement gArutinYamaPlacements6[];
-extern const struct ScenePlacement gArutinYamaPlacements7[];
-extern const struct ScenePlacement gArutinYamaPlacements8[];
-extern const struct ScenePlacement gArutinYamaPlacements9[];
-extern const struct ScenePlacement gArutinYamaPlacements10[];
-extern const struct ScenePlacement gArutinYamaPlacements11[];
 
 void Battle_ResetEffectCounter(void);
 void BattleFx_PlayQueuedSound(void);

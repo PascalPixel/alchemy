@@ -19,9 +19,7 @@ struct TradeFlags {
     u32 flags;
 };
 
-extern const struct SummonDefinition Summon_DefinitionTable[];
 
-extern struct PresetValues Enemy_ElementPresetTable[];
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
 
@@ -47,7 +45,6 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 #define ENEMY_SUFFIX_LAST 25
 #endif
 
-extern const struct EnemyDefinition Enemy_Definitions[];
 
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);

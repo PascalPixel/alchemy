@@ -12,29 +12,6 @@
 #include "FIELDRUN.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gImiruFuchinEntrances1[];
-extern const struct SceneEntrance gImiruFuchinEntrances2[];
-extern const struct SceneEntrance gImiruFuchinEntrances3[];
-extern const struct SceneEntrance gImiruFuchinEntrances4[];
-extern const struct SceneEntrance gImiruFuchinEntrances5[];
-extern const struct SceneEntrance gImiruFuchinEntrances6[];
-extern const struct SceneEntrance gImiruFuchinEntrances7[];
-extern const struct SceneEntrance gImiruFuchinEntrancesOther[];
-extern const struct ScenePlacement gImiruFuchinPlacements1[];
-extern const struct ScenePlacement gImiruFuchinPlacements2[];
-extern const struct ScenePlacement gImiruFuchinPlacements3[];
-extern const struct ScenePlacement gImiruFuchinPlacements4[];
-extern const struct ScenePlacement gImiruFuchinPlacements5[];
-extern const struct ScenePlacement gImiruFuchinPlacements7[];
-extern const struct ScenePlacement gImiruFuchinPlacementsOther[];
-extern const struct SceneEvent gImiruFuchinEvents1[];
-extern const struct SceneEvent gImiruFuchinEvents2[];
-extern const struct SceneEvent gImiruFuchinEvents3[];
-extern const struct SceneEvent gImiruFuchinEvents4[];
-extern const struct SceneEvent gImiruFuchinEvents5[];
-extern const struct SceneEvent gImiruFuchinEvents6[];
-extern const struct SceneEvent gImiruFuchinEvents7[];
-extern const struct SceneEvent gImiruFuchinEventsOther[];
 
 s32 ImiruFuchin_TrackLeader;
 

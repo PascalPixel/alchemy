@@ -6,11 +6,8 @@
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
-extern const struct ScenePlacement gBiribinoNiwaPlacementsOther[];
 
 
-extern const struct SceneEvent gBiribinoNiwaEvents[];
-extern const struct SceneEvent gBiribinoNiwaEventsOther[];
 
 
 extern struct EventWork *gEventWork;

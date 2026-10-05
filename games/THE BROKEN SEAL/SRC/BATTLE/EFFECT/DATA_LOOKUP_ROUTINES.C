@@ -58,7 +58,6 @@ struct SceneInteractionEntry {
     s16 result;
 };
 
-extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
 
 void Scene_ResolveInteractionResult(void)
 {
@@ -106,7 +105,6 @@ struct SceneAreaNameRule {
     s32 area_name_index;
 };
 
-extern const struct SceneAreaNameRule Scene_AreaNameRules[];
 
 s32 BattleFx_GetResourceGroup(s32 effect_id);
 

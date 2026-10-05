@@ -31,19 +31,8 @@ struct MapState {
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 
-extern const struct SceneEntrance gTakaraHashiraEntrances1[];
-extern const struct SceneEntrance gTakaraHashiraEntrances2[];
-extern const struct SceneEntrance gTakaraHashiraEntrances3[];
-extern const struct SceneEntrance gTakaraHashiraEntrances4[];
-extern const struct SceneEntrance gTakaraHashiraEntrances5[];
-extern const struct SceneEntrance gTakaraHashiraEntrancesOther[];
 
 
-extern const struct ScenePlacement gTakaraHashiraPlacements1[];
-extern const struct ScenePlacement gTakaraHashiraPlacements2[];
-extern const struct ScenePlacement gTakaraHashiraPlacements3[];
-extern const struct ScenePlacement gTakaraHashiraPlacements5[];
-extern const struct ScenePlacement gTakaraHashiraPlacementsOther[];
 
 extern u32 gBgScroll[];
 

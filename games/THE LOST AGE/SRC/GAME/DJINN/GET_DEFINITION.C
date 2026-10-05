@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "BATTLE_SUMMON.H"
 
-extern const struct SummonDefinition Summon_DefinitionTable[];
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
 {

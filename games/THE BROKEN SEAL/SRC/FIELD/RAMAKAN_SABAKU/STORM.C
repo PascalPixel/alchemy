@@ -16,7 +16,6 @@
 #define RamakanSabaku_SandCounter (*(s16 *)&RamakanSabaku_SandCounter)
 #define RamakanSabaku_SandPhase (*(s16 *)&RamakanSabaku_SandPhase)
 
-extern struct MenuSprite RamakanSabaku_SandWork[];
 extern u32 gFrameCount;
 
 void RamakanSabaku_RunSandstorm(void)

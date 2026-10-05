@@ -51,7 +51,6 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
     return word ^ mask;
 }
 
-extern const struct TileMask Data_08037250[];
 
 s32 ItemIcon_Compose(s32, s32);
 s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);

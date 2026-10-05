@@ -32,7 +32,6 @@ struct TransitionShape {
     struct TransitionSpan spans[3];
 };
 
-extern struct TransitionShape DisplayTransition_Shapes[];
 
 void DisplayTransition_UpdateScanlineTable(void)
 {

@@ -5,9 +5,6 @@
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
-extern const struct ScenePlacement gBiribinoKyudenPlacementsOther[];
-extern const struct SceneEvent gBiribinoKyudenEvents[];
-extern const struct SceneEvent gBiribinoKyudenEventsOther[];
 void FieldScene_PrepareActors(u8 *placements);
 
 struct SceneRecord {

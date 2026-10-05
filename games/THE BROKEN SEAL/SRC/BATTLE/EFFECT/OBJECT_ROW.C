@@ -45,8 +45,6 @@ struct FxControl {
 };
 
 extern u32 gKeysRepeat;
-extern const struct FxPair ObjectRow_SweepPair;
-extern const struct FxPair ObjectRow_RisePair;
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, struct FxPlacement *placement, struct FxPair *pair, s32 mode);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);

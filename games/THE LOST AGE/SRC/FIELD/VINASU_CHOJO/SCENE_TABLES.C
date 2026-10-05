@@ -8,9 +8,6 @@ enum {
     ENTRANCE_ALTERNATE_PLACEMENTS = 99
 };
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const struct ScenePlacement gScenePlacements[];
-extern const struct ScenePlacement gScenePlacementsEntrance99[];
 
 void ObjectDispatch_SetSingleChildFlags(void *object, s32 value);
 void Object_SetPartAttribute(void *object, s32 value);

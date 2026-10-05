@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "OWNERVAL.H"
 #include "BATTLE_STATUS_ICON.H"
@@ -18,7 +19,6 @@ struct BattleGroupOrder {
     s32 group[2];
 };
 
-extern const struct BattleGroupOrder BattleParty_RoundEndGroupOrder;
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 void Owner_RecalculateStatsFar(s32 unit_id);

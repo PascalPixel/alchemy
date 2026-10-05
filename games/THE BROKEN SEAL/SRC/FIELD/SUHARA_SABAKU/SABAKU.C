@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "FX_SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SABAKU.H"
@@ -11,15 +12,7 @@
 #include "SCENE_IDS.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gSuharaSabakuEntrances1[];
-extern const struct SceneEntrance gSuharaSabakuEntrances2[];
-extern const struct SceneEntrance gSuharaSabakuEntrances3[];
-extern const struct SceneEntrance gSuharaSabakuEntrancesOther[];
 
-extern const struct ScenePlacement gSuharaSabakuPlacements1[];
-extern const struct ScenePlacement gSuharaSabakuPlacements2[];
-extern const struct ScenePlacement gSuharaSabakuPlacements3[];
-extern const struct ScenePlacement gSuharaSabakuPlacementsOther[];
 
 
 
@@ -33,8 +26,6 @@ union GameStateRows {
 
 void Event_SetDestination(s32 scene, s32 entrance);
 
-extern const struct SceneEvent gSuharaSabakuEvents3[];
-extern const struct SceneEvent gSuharaSabakuEventsOther[];
 
 struct FieldGlobals {
     u8 *map;

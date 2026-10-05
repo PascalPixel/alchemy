@@ -7,13 +7,6 @@
 #include "KYUDEN.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gTorebiKyudenEntrances2[];
-extern const struct SceneEntrance gTorebiKyudenEntrancesOther[];
-
-extern const struct ScenePlacement gTorebiKyudenPlacements2[];
-extern const struct ScenePlacement gTorebiKyudenPlacementsAfterColosso[];
-extern const struct ScenePlacement gTorebiKyudenPlacementsColosso[];
-extern const struct ScenePlacement gTorebiKyudenPlacementsOther[];
 
 
 
@@ -22,12 +15,7 @@ extern const struct ScenePlacement gTorebiKyudenPlacementsOther[];
 
 
 
-extern const struct SceneEvent gTorebiKyudenEvents2AfterColosso[];
-extern const struct SceneEvent gTorebiKyudenEvents2Colosso[];
-extern const struct SceneEvent gTorebiKyudenEvents2[];
-extern const struct SceneEvent gTorebiKyudenEventsAfterColosso[];
-extern const struct SceneEvent gTorebiKyudenEventsColosso[];
-extern const struct SceneEvent gTorebiKyudenEventsOther[];
+
 
 
 struct OwnerState {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "FX_SCENE.H"
 #include "IRIGUCHI.H"
@@ -10,15 +11,6 @@
 
 void Effect_AdvanceMotion(struct MotionEffect *effect);
 void OverlayObject_WaitUntilIdle(s32 *obj);
-extern const struct SceneEntrance gBabiIriguchiEntrances3[];
-extern const struct SceneEntrance gBabiIriguchiEntrances2[];
-extern const struct SceneEntrance gBabiIriguchiEntrances1[];
-extern const struct SceneEntrance gBabiIriguchiEntrancesOther[];
-extern const struct SceneRegion gBabiIriguchiRegions3[];
-extern const struct ScenePlacement gBabiIriguchiPlacements3[];
-extern const struct ScenePlacement gBabiIriguchiPlacements2[];
-extern const struct ScenePlacement gBabiIriguchiPlacements1[];
-extern const struct ScenePlacement gBabiIriguchiPlacementsOther[];
 void SceneState_ApplyRectsAtActors8And9();
 
 extern s32 StagedActor_DirectionSteps[];
@@ -26,10 +18,6 @@ s32 Map_GetTerrainHeight(s32 mode, s32 x, s32 z);
 
 s32 battle_owner_69(void);
 s32 FieldEffect_UpdateGridPlacement(void);
-extern const struct SceneEvent gBabiIriguchiEvents3[];
-extern const struct SceneEvent gBabiIriguchiEvents2[];
-extern const struct SceneEvent gBabiIriguchiEvents1[];
-extern const struct SceneEvent gBabiIriguchiEventsOther[];
 
 void SceneState_SetValue8Mode66(void)
 {

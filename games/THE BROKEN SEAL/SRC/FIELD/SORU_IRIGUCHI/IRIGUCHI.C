@@ -10,19 +10,6 @@
 
 void Scene_RunActorFormation(s32 a0);
 
-extern const struct SceneEntrance gSoruIriguchiEntrances2[];
-extern const struct SceneEntrance gSoruIriguchiEntrances1[];
-extern const struct SceneEntrance gSoruIriguchiEntrancesOther[];
-extern const struct ScenePlacement gSoruIriguchiPlacementsOther[];
-extern const struct ScenePlacement gSoruIriguchiPlacements1[];
-extern const struct ScenePlacement gSoruIriguchiPlacements1Entrances11To13[];
-extern const struct ScenePlacement gSoruIriguchiPlacements1Entrances14To16[];
-extern const struct ScenePlacement gSoruIriguchiPlacements2[];
-extern const struct SceneEvent gSoruIriguchiEventsOther[];
-extern const struct SceneEvent gSoruIriguchiEvents1[];
-extern const struct SceneEvent gSoruIriguchiEvents1Entrances11To13[];
-extern const struct SceneEvent gSoruIriguchiEvents1Entrances14To16[];
-extern const struct SceneEvent gSoruIriguchiEvents2[];
 void FieldScene_PrepareActors(s32 placements);
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);

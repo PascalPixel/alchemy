@@ -61,11 +61,6 @@ enum {
     CELL_COLLISION_FLAGS = 0x14
 };
 
-extern const struct SceneEntrance gJailEntrances[];
-extern const struct ScenePlacement gJailThiefPlacements[];
-extern const struct ScenePlacement gJailPrisonerPlacements[];
-extern const struct SceneEvent gJailThiefEvents[];
-extern const struct SceneEvent gJailPrisonerEvents[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

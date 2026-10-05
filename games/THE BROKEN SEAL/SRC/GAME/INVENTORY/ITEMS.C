@@ -9,7 +9,6 @@ void Owner_RefreshClassActions(s32 owner);
 void Event_ClearInvalidPackedValuesFar(s32);
 
 
-extern struct BattleAction BattleAction_DefinitionTable[];
 
 s32 Inventory_GetQuantity(s32 owner, s32 slot)
 {

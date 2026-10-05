@@ -8,10 +8,6 @@
 #include "SCENE_IDS.H"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-extern const struct SceneEntrance gBabiChikaEntrances1[];
-extern const struct SceneEntrance gBabiChikaEntrances2[];
-extern const struct SceneEntrance gBabiChikaEntrancesOther[];
-extern const struct SceneRegion gBabiChikaRegions2[];
 
 
 

@@ -24,19 +24,9 @@ struct EffectParams {
     u8 pad24[4];
 };
 
-extern const struct SceneEntrance gRamakanSabakuEntrances1[];
-extern const struct SceneEntrance gRamakanSabakuEntrances2[];
-extern const struct SceneEntrance gRamakanSabakuEntrances3[];
-extern const struct SceneEntrance gRamakanSabakuEntrances4[];
-extern const struct SceneEntrance gRamakanSabakuEntrancesOther[];
 
 
-extern const struct ScenePlacement gRamakanSabakuPlacements1[];
-extern const struct ScenePlacement gRamakanSabakuPlacements2[];
-extern const struct ScenePlacement gRamakanSabakuPlacements3[];
-extern const struct ScenePlacement gRamakanSabakuPlacementsOther[];
 
-extern const struct SceneEvent RamakanSabaku_Events[];
 
 void Engine_GameFlagClear();
 void Engine_MapCopyCells();

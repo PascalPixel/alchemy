@@ -149,27 +149,11 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-extern const struct SceneEntrance gTakaraShimaEntrances1[];
-extern const struct SceneEntrance gTakaraShimaEntrances2[];
-extern const struct SceneEntrance gTakaraShimaEntrances3[];
-extern const struct SceneEntrance gTakaraShimaEntrances4[];
-extern const struct SceneEntrance gTakaraShimaEntrances5[];
-extern const struct SceneEntrance gTakaraShimaEntrancesOther[];
 
-extern const struct ScenePlacement gTakaraShimaPlacements1[];
-extern const struct ScenePlacement gTakaraShimaPlacements3[];
-extern const struct ScenePlacement gTakaraShimaPlacements6To14[];
-extern const struct ScenePlacement gTakaraShimaPlacementsOther[];
 
 void Party_SetFields1ceAnd1d0(s32 arg0, s32 arg1);
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1);
 
-extern const struct SceneEvent gTakaraShimaEvents1[];
-extern const struct SceneEvent gTakaraShimaEvents2[];
-extern const struct SceneEvent gTakaraShimaEvents3[];
-extern const struct SceneEvent gTakaraShimaEvents4[];
-extern const struct SceneEvent gTakaraShimaEvents5[];
-extern const struct SceneEvent gTakaraShimaEventsOther[];
 
 void Battle_Reset(s32 arg0);
 

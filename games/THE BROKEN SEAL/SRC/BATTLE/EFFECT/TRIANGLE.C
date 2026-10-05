@@ -20,8 +20,6 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
-extern struct Vector3 SpinningTriangle_Vertex[];
-extern struct Vector3 TriangleStrike_Vertex[];
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 a, s32 b, s32 c, s32 *x, s32 *y);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 a, s32 b);

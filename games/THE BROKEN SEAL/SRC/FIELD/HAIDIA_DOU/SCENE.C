@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "MAPCOPY.H"
 #include "HAIDIA.H"
@@ -7,10 +8,6 @@
 #include "CALL.H"
 #include "STAGED_ACTOR.H"
 
-extern const struct SceneEvent gHaidiaDouEvents1[];
-extern const struct SceneEvent gHaidiaDouEvents2[];
-extern const struct SceneEvent gHaidiaDouEvents3[];
-extern const struct SceneEvent gHaidiaDouEventsOther[];
 
 void WaitFrames();
 void HaidiaDou_ApplyEntryState();

@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "ITEM.H"
 
-extern struct ItemDefinition Item_DefinitionTable[];
 
 struct ItemDefinition *Item_GetDirect(s32 item_id)
 {

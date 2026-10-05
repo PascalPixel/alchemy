@@ -10,7 +10,6 @@
 #define SOUND_STRINGIFY(value) SOUND_STRINGIFY_IMPL(value)
 
 void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHeader *header);
-extern struct SoundWork Sound_Work;
 extern struct CgbNote Sound_CgbNotes[4];
 extern const struct PlayerSlot Sound_PlayerSlots[];
 extern const struct SongEntry Sound_SongTable[];

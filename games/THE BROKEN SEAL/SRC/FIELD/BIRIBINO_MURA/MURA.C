@@ -7,19 +7,6 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gBiribinoMuraEntrances1[];
-extern const struct SceneEntrance gBiribinoMuraEntrances2[];
-extern const struct SceneEntrance gBiribinoMuraEntrances3[];
-extern const struct SceneEntrance gBiribinoMuraEntrancesOther[];
-extern const struct SceneRegion gBiribinoMuraRegions2[];
-extern const struct ScenePlacement gBiribinoMuraPlacements1[];
-extern const struct ScenePlacement gBiribinoMuraPlacements2[];
-extern const struct ScenePlacement gBiribinoMuraPlacements3[];
-extern const struct ScenePlacement gBiribinoMuraPlacementsOther[];
-extern const struct SceneEvent gBiribinoMuraEvents1[];
-extern const struct SceneEvent gBiribinoMuraEvents2[];
-extern const struct SceneEvent gBiribinoMuraEvents3[];
-extern const struct SceneEvent gBiribinoMuraEventsOther[];
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
 

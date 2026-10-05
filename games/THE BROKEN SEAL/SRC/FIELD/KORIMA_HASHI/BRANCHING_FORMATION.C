@@ -53,9 +53,6 @@ s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
 s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
 
-extern const struct SceneEntrance KorimaHashi_Entrances[];
-extern const struct ScenePlacement KorimaHashi_Placements[];
-extern const struct SceneEvent KorimaHashi_Events[];
 
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);

@@ -1,10 +1,10 @@
+#include "GLOBAL.H"
 #include "STRUCT.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
 typedef s32 (*FlashVerifyCore)(s32 source, u8 *flash, u32 size);
 
-extern const struct FlashChipType Flash_ChipUnknown;
 
 s32 Flash_VerifySector(u16 sector, s32 source)
 {

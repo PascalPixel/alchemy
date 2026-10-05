@@ -5,8 +5,6 @@
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gKareiKyudenEntrances[];
-extern const struct SceneEntrance gKareiKyudenEntrancesOther[];
 
 enum PartyEventsMessage {
     MSG_WHEN_HEARD_WERE_BACK_IVAN = 0x1b21,
@@ -30,11 +28,8 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 
 extern u8 Placement_Messages[];
 
-extern const struct ScenePlacement gKareiKyudenPlacementsOther[];
 void FieldScene_PrepareActors(u8 *placements);
 
-extern const struct SceneEvent gKareiKyudenEvents[];
-extern const struct SceneEvent gKareiKyudenEventsOther[];
 
 
 

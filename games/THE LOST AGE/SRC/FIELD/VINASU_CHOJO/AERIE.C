@@ -12,10 +12,6 @@ enum {
     MSG_TRUE_ROAD_INSCRIPTION = 0x1618
 };
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const struct ScenePlacement gScenePlacements[];
-extern const struct ScenePlacement gScenePlacementsEntrance99[];
-extern const struct SceneEvent gSceneEvents[];
 
 void Object_SetSpritePriority(struct FieldActor *object, s32 priority)
 {

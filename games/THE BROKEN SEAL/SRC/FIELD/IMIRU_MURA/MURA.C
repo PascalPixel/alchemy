@@ -7,15 +7,9 @@
 #include "IWRAM_CALL.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gImiruMuraEntrances2[];
-extern const struct SceneEntrance gImiruMuraEntrancesOther[];
 
-extern const struct ScenePlacement gImiruMuraPlacements[];
-extern const struct ScenePlacement gImiruMuraPlacementsFlag881[];
 void FieldScene_PrepareActors(u8 *placements);
 
-extern const struct SceneEvent gImiruMuraEvents2[];
-extern const struct SceneEvent gImiruMuraEventsOther[];
 
 
 

@@ -1,7 +1,7 @@
+#include "GLOBAL.H"
 #include "INVENTORY.H"
 #include "BATTLE_TYPES.H"
 
-extern struct ActionDefinition BattleAction_DefinitionTable[];
 
 s32 Equipment_HasValue(s32 owner, s32 value);
 

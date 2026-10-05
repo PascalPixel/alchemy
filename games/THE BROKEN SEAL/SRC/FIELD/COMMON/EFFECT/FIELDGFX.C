@@ -76,7 +76,6 @@ struct SparkleFrame {
 extern struct SparkleWork *gParticleWork;
 #define SparkleMap (*(struct MapScrollWork **)((u8 *)&gParticleWork - 84))
 
-extern const struct SparkleFrame Data_0809f024[];
 u32 Random16(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 

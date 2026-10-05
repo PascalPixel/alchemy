@@ -8,11 +8,6 @@ enum {
     ENTRANCE_WAKE_AGAIN = 4
 };
 
-extern const struct SceneEntrance gIdejimaEntrances[];
-extern const struct ScenePlacement gIdejimaPlacements[];
-extern const struct SceneEvent gIdejimaEvents[];
-extern const struct SceneEvent gIdejimaEventsEntrance1[];
-extern const struct SceneEvent gIdejimaEventsWake[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

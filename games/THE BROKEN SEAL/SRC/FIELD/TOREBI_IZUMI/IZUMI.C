@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TOPIC.H"
 #include "FIELD_SCENE.H"
@@ -8,16 +9,12 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-extern const struct ScenePlacement gTorebiIzumiPlacements2[];
-extern const struct ScenePlacement gTorebiIzumiPlacementsOther[];
 
 
 void TorebiIzumi_RiseAndFadeIn();
 void TorebiIzumi_RunSpringGame();
 
 
-extern const struct SceneEvent gTorebiIzumiEvents2[];
-extern const struct SceneEvent gTorebiIzumiEventsOther[];
 
 extern u8 gOamCopyEnabled;
 void UiWork_PushValueSlot(s32 value, s32 digits);

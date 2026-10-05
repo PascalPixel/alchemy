@@ -6,19 +6,9 @@
 #include "SCENE_IDS.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gSuharaGateEntrances2[];
-extern const struct SceneEntrance gSuharaGateEntrances3[];
-extern const struct SceneEntrance gSuharaGateEntrancesOther[];
 
 
-extern const struct ScenePlacement gSuharaGatePlacements1[];
-extern const struct ScenePlacement gSuharaGatePlacements1Flagged[];
-extern const struct ScenePlacement gSuharaGatePlacements2[];
-extern const struct ScenePlacement gSuharaGatePlacementsOther[];
 
-extern const struct SceneEvent gSuharaGateEvents2[];
-extern const struct SceneEvent gSuharaGateEvents3[];
-extern const struct SceneEvent gSuharaGateEventsOther[];
 
 
 void Scene_SetActor13Value1A(void)

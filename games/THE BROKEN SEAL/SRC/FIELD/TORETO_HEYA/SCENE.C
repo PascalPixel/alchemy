@@ -11,13 +11,9 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gToretoHeyaEntrances[];
-extern const struct SceneRegion gToretoHeyaRegions[];
-extern const struct ScenePlacement gToretoHeyaPlacements[];
 
 void Event_SetDestination(s32 scene, s32 entrance);
 
-extern const struct SceneEvent gToretoHeyaEvents[];
 
 
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);

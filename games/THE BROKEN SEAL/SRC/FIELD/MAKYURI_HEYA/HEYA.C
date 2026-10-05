@@ -6,22 +6,9 @@
 #include "text/MSG_IDS.H"
 
 
-extern const struct SceneEntrance gMakyuriHeyaEntrances4[];
-extern const struct SceneEntrance gMakyuriHeyaEntrances3[];
-extern const struct SceneEntrance gMakyuriHeyaEntrances2[];
-extern const struct SceneEntrance gMakyuriHeyaEntrancesOther[];
 
 
-extern const struct ScenePlacement gMakyuriHeyaPlacements1[];
-extern const struct ScenePlacement gMakyuriHeyaPlacements2[];
-extern const struct ScenePlacement gMakyuriHeyaPlacements3[];
-extern const struct ScenePlacement gMakyuriHeyaPlacements4[];
-extern const struct ScenePlacement gMakyuriHeyaPlacementsOther[];
 
-extern const struct SceneEvent gMakyuriHeyaEvents1[];
-extern const struct SceneEvent gMakyuriHeyaEvents2[];
-extern const struct SceneEvent gMakyuriHeyaEvents3[];
-extern const struct SceneEvent gMakyuriHeyaEventsOther[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

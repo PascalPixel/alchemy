@@ -6,9 +6,6 @@
 #include "RESOURCE_3A9.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gKareiHeyaEntrances1[];
-extern const struct SceneEntrance gKareiHeyaEntrances2[];
-extern const struct SceneEntrance gKareiHeyaEntrancesOther[];
 
 typedef struct Placement {
     u32 destination;
@@ -17,14 +14,6 @@ typedef struct Placement {
 } Placement;
 
 
-extern const struct ScenePlacement gKareiHeyaPlacements1Entrance9[];
-extern const struct ScenePlacement gKareiHeyaPlacements1[];
-extern const struct ScenePlacement gKareiHeyaPlacements2[];
-extern const struct ScenePlacement gKareiHeyaPlacementsOther[];
-extern const struct SceneEvent gKareiHeyaEvents1Entrance9[];
-extern const struct SceneEvent gKareiHeyaEvents1[];
-extern const struct SceneEvent gKareiHeyaEvents2[];
-extern const struct SceneEvent gKareiHeyaEventsOther[];
 void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 
 extern Placement KareiHeya_ArrivalPlacements[];

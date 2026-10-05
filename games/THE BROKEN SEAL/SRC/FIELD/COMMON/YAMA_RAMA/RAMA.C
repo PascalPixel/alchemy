@@ -9,12 +9,8 @@
 
 s32 ArcTan2(s32, s32);
 
-extern const struct SceneEntrance YamaRama_TempleEntrances[];
-extern const struct SceneEntrance YamaRama_Entrances[];
 
 
-extern const struct ScenePlacement YamaRama_TemplePlacements[];
-extern const struct ScenePlacement YamaRama_Placements[];
 
 
 void Object_RefreshSelectorById();
@@ -32,8 +28,6 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
     gEventWork->message += amount;
 }
 
-extern const struct SceneEvent YamaRama_TempleEvents[];
-extern const struct SceneEvent YamaRama_Events[];
 
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
 

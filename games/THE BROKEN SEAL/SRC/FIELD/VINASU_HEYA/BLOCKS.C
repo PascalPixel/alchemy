@@ -9,7 +9,6 @@
 struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
 void OverlayObject_WaitUntilIdle(struct FieldActor *object);
 struct SwitchEffect *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, const void *script);
-extern struct SwitchCell gVinasuSwitchCells[];
 
 void FieldScene_RunGuardedRectStep(void)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -13,7 +14,6 @@ struct BattleLocationRule {
     s16 result;
 };
 
-extern const struct BattleLocationRule Battle_LocationRules[];
 s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SetSpecialFromTable(void);
 

@@ -140,4 +140,26 @@ extern volatile u16 gFlashTimerCount;
 extern u32 Flash_Handler4;
 #endif
 
+extern struct ActionDefinition BattleAction_DefinitionTable[];
+extern struct FlashInfo08007220 Flash_ChipAtmel;
+extern const struct FlashChipType Flash_ChipUnknown;
+extern const struct SceneEntrance gDeriMuraEntrances[];
+extern const struct SceneEntrance gIdejimaEntrances[];
+extern const struct SceneEvent gIdejimaEvents[];
+extern const struct SceneEvent gIdejimaEventsEntrance1[];
+extern const struct SceneEvent gIdejimaEventsWake[];
+extern const struct ScenePlacement gIdejimaPlacements[];
+extern const struct SceneEntrance gSceneEntrances[];
+extern const struct SceneEvent gSceneEvents[];
+extern const struct ScenePlacement gScenePlacements[];
+extern const struct ScenePlacement gScenePlacementsEntrance99[];
+extern const struct SceneRegion gSceneRegions[];
+extern struct ObjectRuntime gSnapshotObjects[];
+extern struct WorldMapWork gWorldMapWork;
+extern struct ItemDefinition Item_DefinitionTable[];
+extern const struct SceneAreaNameRule Scene_AreaNameRules[];
+extern const struct SceneCueRule Scene_CueRuleTable[];
+extern struct SoundWork Sound_Work;
+extern const struct SummonDefinition Summon_DefinitionTable[];
+
 #endif

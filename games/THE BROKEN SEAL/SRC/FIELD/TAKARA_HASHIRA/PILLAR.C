@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "EDITION.H"
 #include "HASHIRA.H"
@@ -23,12 +24,6 @@ struct Probe {
 void StagedActor_PlaceAtObjectTenCell();
 void TakaraHashira_DropActorTen();
 
-extern const struct SceneEvent gTakaraHashiraEvents1[];
-extern const struct SceneEvent gTakaraHashiraEvents2[];
-extern const struct SceneEvent gTakaraHashiraEvents3[];
-extern const struct SceneEvent gTakaraHashiraEvents4[];
-extern const struct SceneEvent gTakaraHashiraEvents5[];
-extern const struct SceneEvent gTakaraHashiraEventsOther[];
 
 extern u8 TakaraHashira_PillarSlots[];
 void SceneActor_ApplyPlacementQueryAndTag();

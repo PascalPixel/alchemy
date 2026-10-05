@@ -9,10 +9,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-extern const struct ScenePlacement gArutamiraDouPlacements2[];
-extern const struct ScenePlacement gArutamiraDouPlacements4[];
-extern const struct ScenePlacement gArutamiraDouPlacements6[];
-extern const struct ScenePlacement gArutamiraDouPlacementsOther[];
 
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 

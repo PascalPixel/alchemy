@@ -9,28 +9,8 @@
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 
-extern const struct SceneEntrance gKareiTorebiEntrances1[];
-extern const struct SceneEntrance gKareiTorebiEntrances2[];
-extern const struct SceneEntrance gKareiTorebiEntrances3[];
-extern const struct SceneEntrance gKareiTorebiEntrancesOther[];
 
-extern const struct ScenePlacement gKareiTorebiPlacements1[];
-extern const struct ScenePlacement gKareiTorebiPlacements1Flag93e[];
-extern const struct ScenePlacement gKareiTorebiPlacements2[];
-extern const struct ScenePlacement gKareiTorebiPlacements2Flag93e[];
-extern const struct ScenePlacement gKareiTorebiPlacements2Flag950[];
-extern const struct ScenePlacement gKareiTorebiPlacements3[];
-extern const struct ScenePlacement gKareiTorebiPlacements3Flag950[];
-extern const struct ScenePlacement gKareiTorebiPlacementsOther[];
 
-extern const struct SceneEvent gKareiTorebiEvents1[];
-extern const struct SceneEvent gKareiTorebiEvents1Flag93e[];
-extern const struct SceneEvent gKareiTorebiEvents2[];
-extern const struct SceneEvent gKareiTorebiEvents2Flag93e[];
-extern const struct SceneEvent gKareiTorebiEvents2Flag950[];
-extern const struct SceneEvent gKareiTorebiEvents3[];
-extern const struct SceneEvent gKareiTorebiEvents3Flag950[];
-extern const struct SceneEvent gKareiTorebiEventsOther[];
 
 
 

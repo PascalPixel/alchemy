@@ -68,15 +68,6 @@ void FieldScene_RunPairedStepB();
 void Object_SetActionCallbackAndRefreshById();
 void Audio_PlayCueFromEventWork();
 
-extern const struct SceneEntrance gKorimaMuraEntrances[];
-extern const struct SceneEntrance gKorimaMuraEntrances2[];
-extern const struct SceneEntrance gKorimaMuraEntrances3[];
-extern const struct SceneRegion gKorimaMuraRegions2[];
-extern const struct ScenePlacement gKorimaMuraPlacements[];
-extern const struct ScenePlacement gKorimaMuraPlacements1[];
-extern const struct ScenePlacement gKorimaMuraPlacements3[];
-extern const struct SceneEvent gKorimaMuraEvents[];
-extern const struct SceneEvent gKorimaMuraEvents3[];
 extern u8 *gWork;
 
 void FieldScene_ConfigureActor0ThenRun();

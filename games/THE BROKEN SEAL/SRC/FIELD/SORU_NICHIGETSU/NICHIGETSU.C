@@ -7,9 +7,6 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gSoruNichigetsuEntrances[];
-extern const struct ScenePlacement gSoruNichigetsuPlacements[];
-extern const struct SceneEvent gSoruNichigetsuEvents[];
 
 
 

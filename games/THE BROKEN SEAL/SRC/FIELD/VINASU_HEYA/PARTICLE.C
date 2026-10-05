@@ -327,7 +327,6 @@ struct TrackSprite {
     struct TrackAnimation *animations[4];
 };
 
-extern struct SwitchCell gVinasuSwitchCells[];
 extern struct SwitchCell gVinasuPillarCells[];
 
 s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)

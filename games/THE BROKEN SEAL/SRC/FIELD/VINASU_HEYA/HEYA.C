@@ -11,12 +11,6 @@
 
 extern u8 *gActorEffectWork;
 
-extern const struct SceneEntrance gVinasuHeyaEntrances1[];
-extern const struct SceneEntrance gVinasuHeyaEntrances3[];
-extern const struct SceneEntrance gVinasuHeyaEntrances4[];
-extern const struct SceneEntrance gVinasuHeyaEntrances5[];
-extern const struct SceneEntrance gVinasuHeyaEntrances6[];
-extern const struct SceneEntrance gVinasuHeyaEntrancesOther[];
 
 void FieldScene_PrepareActors(u8 *placements);
 

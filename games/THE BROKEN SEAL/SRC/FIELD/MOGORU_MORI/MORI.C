@@ -17,14 +17,6 @@ struct Vec {
     s32 z;
 };
 
-extern const struct SceneEntrance gMogoruMoriEntrances1[];
-extern const struct SceneEntrance gMogoruMoriEntrances2[];
-extern const struct SceneEntrance gMogoruMoriEntrances3[];
-extern const struct SceneEntrance gMogoruMoriEntrancesOther[];
-extern const struct ScenePlacement gMogoruMoriPlacements1[];
-extern const struct ScenePlacement gMogoruMoriPlacements2[];
-extern const struct ScenePlacement gMogoruMoriPlacements3[];
-extern const struct ScenePlacement gMogoruMoriPlacementsOther[];
 
 void FieldScene_RunSixCallSetupSequence();
 void MogoruMori_HopActorTo();
@@ -35,10 +27,6 @@ void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
 extern struct GameState gGameState;
 
-extern const struct SceneEvent gMogoruMoriEvents1[];
-extern const struct SceneEvent gMogoruMoriEvents2[];
-extern const struct SceneEvent gMogoruMoriEvents3[];
-extern const struct SceneEvent gMogoruMoriEventsOther[];
 extern struct EventWork *gEventWork;
 void WaitFrames();
 void InitializeOrbitingEffect();

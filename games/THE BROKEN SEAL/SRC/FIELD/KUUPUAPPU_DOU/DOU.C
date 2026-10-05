@@ -9,10 +9,6 @@
 #include "CALL.H"
 #include "OBJECT_RUNTIME.H"
 
-extern const struct SceneEntrance gKuupuappuDouEntrances1[];
-extern const struct SceneEntrance gKuupuappuDouEntrances2[];
-extern const struct SceneEntrance gKuupuappuDouEntrances3[];
-extern const struct SceneEntrance gKuupuappuDouEntrancesOther[];
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void KuupuappuDou_PushBlockAhead();
@@ -30,18 +26,10 @@ struct Actor {
 
 extern
 
-extern const struct ScenePlacement gKuupuappuDouPlacements1[];
-extern const struct ScenePlacement gKuupuappuDouPlacements2[];
-extern const struct ScenePlacement gKuupuappuDouPlacements3[];
-extern const struct ScenePlacement gKuupuappuDouPlacementsOther[];
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
 
-extern const struct SceneEvent gKuupuappuDouEvents1[];
-extern const struct SceneEvent gKuupuappuDouEvents2[];
-extern const struct SceneEvent gKuupuappuDouEvents3[];
-extern const struct SceneEvent gKuupuappuDouEventsOther[];
 
 
 struct MapShake {

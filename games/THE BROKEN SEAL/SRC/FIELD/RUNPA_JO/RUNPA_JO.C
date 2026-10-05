@@ -11,23 +11,9 @@
 #include "MAP_SCROLL.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gRunpaJoEntrances1[];
-extern const struct SceneEntrance gRunpaJoEntrances2[];
-extern const struct SceneEntrance gRunpaJoEntrances3[];
-extern const struct SceneEntrance gRunpaJoEntrancesOther[];
 
 
-extern const struct ScenePlacement gRunpaJoPlacementsRunpaDou[];
-extern const struct ScenePlacement gRunpaJoPlacements1[];
-extern const struct ScenePlacement gRunpaJoPlacements2[];
-extern const struct ScenePlacement gRunpaJoPlacements3[];
-extern const struct ScenePlacement gRunpaJoPlacements4[];
-extern const struct ScenePlacement gRunpaJoPlacementsOther[];
 
-extern const struct SceneEvent gRunpaJoEvents1[];
-extern const struct SceneEvent gRunpaJoEvents2[];
-extern const struct SceneEvent gRunpaJoEvents3[];
-extern const struct SceneEvent gRunpaJoEventsOther[];
 
 
 

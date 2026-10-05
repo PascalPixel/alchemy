@@ -8,17 +8,11 @@
 #include "CALL.H"
 #include "SCENE_IDS.H"
 
-extern const struct SceneEntrance gGomaSuiroEntrances2[];
-extern const struct SceneEntrance gGomaSuiroEntrancesOther[];
 
 
-extern const struct ScenePlacement gGomaSuiroPlacements2[];
-extern const struct ScenePlacement gGomaSuiroPlacementsOther[];
 
 void GameFlag_SetBit();
 
-extern const struct SceneEvent gGomaSuiroEvents2[];
-extern const struct SceneEvent gGomaSuiroEventsOther[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

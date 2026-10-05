@@ -5,20 +5,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-extern const struct SceneEntrance gBiribinoDouEntrances3[];
-extern const struct SceneEntrance gBiribinoDouEntrances2[];
-extern const struct SceneEntrance gBiribinoDouEntrances1[];
-extern const struct SceneEntrance gBiribinoDouEntrancesOther[];
 
 
-extern const struct ScenePlacement gBiribinoDouPlacements3[];
-extern const struct ScenePlacement gBiribinoDouPlacements2[];
-extern const struct ScenePlacement gBiribinoDouPlacements1[];
-extern const struct ScenePlacement gBiribinoDouPlacementsOther[];
-extern const struct SceneEvent gBiribinoDouEvents3[];
-extern const struct SceneEvent gBiribinoDouEvents2[];
-extern const struct SceneEvent gBiribinoDouEvents1[];
-extern const struct SceneEvent gBiribinoDouEventsOther[];
 
 void RunGuardedSceneSetup(void);
 void BiribinoDou_PrepareWindowTransition(void);

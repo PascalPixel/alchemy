@@ -40,20 +40,8 @@ static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
     *field = step;
 }
 
-extern const struct SceneEntrance gTakaraAshibaEntrances1[];
-extern const struct SceneEntrance gTakaraAshibaEntrances2[];
-extern const struct SceneEntrance gTakaraAshibaEntrances3[];
-extern const struct SceneEntrance gTakaraAshibaEntrancesOther[];
 
-extern const struct ScenePlacement gTakaraAshibaPlacements1[];
-extern const struct ScenePlacement gTakaraAshibaPlacements2[];
-extern const struct ScenePlacement gTakaraAshibaPlacements3[];
-extern const struct ScenePlacement gTakaraAshibaPlacementsOther[];
 
-extern const struct SceneEvent gTakaraAshibaEvents1[];
-extern const struct SceneEvent gTakaraAshibaEvents2[];
-extern const struct SceneEvent gTakaraAshibaEvents3[];
-extern const struct SceneEvent gTakaraAshibaEventsOther[];
 
 void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 

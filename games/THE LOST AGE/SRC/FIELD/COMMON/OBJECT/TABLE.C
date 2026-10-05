@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "EVENTWRK.H"
@@ -6,7 +7,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-extern struct ObjectRuntime gSnapshotObjects[];
 
 void ObjectTable_Clear(void)
 {

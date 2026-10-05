@@ -9,8 +9,6 @@
 #include "CALL.H"
 
 struct ModeRecord;
-extern struct ModeRecord KorosseoKawa_SpanA;
-extern struct ModeRecord KorosseoKawa_SpanB;
 
 extern u16 Korosseo_ModeTaskMode;
 extern u16 Korosseo_ModeTaskParam;

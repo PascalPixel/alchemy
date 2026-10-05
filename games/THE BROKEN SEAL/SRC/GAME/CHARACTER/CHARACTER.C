@@ -22,7 +22,6 @@
 
 s32 Game_ResetForNewGameFar(s32);
 
-extern const struct EnemyDefinition Enemy_Definitions[];
 
 struct ClassRecord {
     u8 unknown_00[8];

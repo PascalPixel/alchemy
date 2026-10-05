@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
@@ -10,7 +11,6 @@ enum {
     ENTRANCE_OPENING = 99
 };
 
-extern const struct SceneEvent gSceneEvents[];
 
 const struct SceneEvent *Scene_GetEvents(void)
 {

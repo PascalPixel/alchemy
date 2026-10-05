@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
@@ -77,9 +78,7 @@ struct ArticleTable {
     s8 *text[ARTICLE_KINDS];
 };
 
-extern const struct ArticleTable Data_08033e40;
 #if defined(TBS_EDITION_ES)
-extern const struct ArticleTable UiText_IndefiniteArticles;
 #endif
 #endif
 

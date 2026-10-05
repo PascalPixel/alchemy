@@ -102,9 +102,6 @@ enum PromptMessage {
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 
-extern const struct SceneEvent gKuupuappuHeyaEventsEntrances15To17[];
-extern const struct SceneEvent gKuupuappuHeyaEventsFlag855[];
-extern const struct SceneEvent gKuupuappuHeyaEvents[];
 
 
 u8 *SceneData_GetScriptTable(void)

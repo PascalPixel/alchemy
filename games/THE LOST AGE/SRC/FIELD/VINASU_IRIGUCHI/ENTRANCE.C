@@ -4,9 +4,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const struct ScenePlacement gScenePlacements[];
-extern const struct SceneEvent gSceneEvents[];
 
 
 const struct SceneEntrance *Scene_GetEntrances(void)

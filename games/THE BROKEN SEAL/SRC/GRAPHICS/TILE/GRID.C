@@ -118,7 +118,6 @@ struct Vec2 {
     s32 y;
 };
 
-extern struct Vec2 Battle_FormationPlacementScale;
 
 void Ui_SetGridColumnParameter(s32 slot, s32 value)
 {

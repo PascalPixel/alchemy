@@ -9,20 +9,6 @@
 #include "FIELD_EFFECT.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gKaragoruDouEntrances1[];
-extern const struct SceneEntrance gKaragoruDouEntrances2[];
-extern const struct SceneEntrance gKaragoruDouEntrances3[];
-extern const struct SceneEntrance gKaragoruDouEntrancesOther[];
-extern const struct ScenePlacement gKaragoruDouPlacements1[];
-extern const struct ScenePlacement gKaragoruDouPlacements1Flag96f[];
-extern const struct ScenePlacement gKaragoruDouPlacements2[];
-extern const struct ScenePlacement gKaragoruDouPlacements3[];
-extern const struct ScenePlacement gKaragoruDouPlacementsOther[];
-extern const struct SceneEvent gKaragoruDouEvents1[];
-extern const struct SceneEvent gKaragoruDouEvents1Flag96f[];
-extern const struct SceneEvent gKaragoruDouEvents2[];
-extern const struct SceneEvent gKaragoruDouEvents3[];
-extern const struct SceneEvent gKaragoruDouEventsOther[];
 
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);

@@ -8,8 +8,6 @@ struct ObjectRuntime *Object_GetById(u32 id);
 void Battle_WaitMode0(s32 frames);
 void Engine_AudioPlayCue(s32 cue);
 
-extern const struct SceneEntrance gSceneEntrances[];
-extern const struct ScenePlacement gScenePlacements[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

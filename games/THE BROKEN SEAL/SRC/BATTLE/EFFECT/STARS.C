@@ -20,7 +20,6 @@
 #include "MENU_LIST.H"
 #include "FIELD_EVENT.H"
 
-extern struct Vector3 RingBolts_Points[];
 extern u8 gMapCellBuffer[];
 
 void SceneTransform_ApplyPosition(void *position);

@@ -30,12 +30,6 @@ static inline void Actor_StepOutFromLeader(s32 actor, s32 dx, s32 dz, s32 facing
 
 
 
-extern const struct SceneEvent gArutamiraDouEvents2[];
-extern const struct SceneEvent gArutamiraDouEvents3[];
-extern const struct SceneEvent gArutamiraDouEvents4[];
-extern const struct SceneEvent gArutamiraDouEvents5[];
-extern const struct SceneEvent gArutamiraDouEvents6[];
-extern const struct SceneEvent gArutamiraDouEventsOther[];
 
 void SceneActor_PlaceFiveActorsInRow(s32 spacing);
 

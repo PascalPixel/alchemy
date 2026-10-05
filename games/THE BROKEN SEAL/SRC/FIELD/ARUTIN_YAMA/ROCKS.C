@@ -10,18 +10,6 @@
 #define ArutinYama_ActorScript (*(u8 *)&ArutinYama_ActorScript)
 
 
-extern const struct SceneEvent gArutinYamaEventsOther[];
-extern const struct SceneEvent gArutinYamaEvents1[];
-extern const struct SceneEvent gArutinYamaEvents2[];
-extern const struct SceneEvent gArutinYamaEvents3[];
-extern const struct SceneEvent gArutinYamaEvents4[];
-extern const struct SceneEvent gArutinYamaEvents5[];
-extern const struct SceneEvent gArutinYamaEvents6[];
-extern const struct SceneEvent gArutinYamaEvents7[];
-extern const struct SceneEvent gArutinYamaEvents8[];
-extern const struct SceneEvent gArutinYamaEvents9[];
-extern const struct SceneEvent gArutinYamaEvents10[];
-extern const struct SceneEvent gArutinYamaEvents11[];
 
 struct ActorMotion {
     u8 pad0[100];

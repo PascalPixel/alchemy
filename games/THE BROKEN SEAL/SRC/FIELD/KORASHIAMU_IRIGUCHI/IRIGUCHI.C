@@ -3,26 +3,8 @@
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
-extern const struct SceneEntrance gKorashiamuIriguchiEntrances1[];
-extern const struct SceneEntrance gKorashiamuIriguchiEntrances3[];
-extern const struct SceneEntrance gKorashiamuIriguchiEntrancesOther[];
 
 
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance5[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance7[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance8[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance12[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1Entrance66[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements1[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements3Flag950[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements3Flag962[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacements3[];
-extern const struct ScenePlacement gKorashiamuIriguchiPlacementsOther[];
-extern const struct SceneEvent gKorashiamuIriguchiEvents2[];
-extern const struct SceneEvent gKorashiamuIriguchiEvents1Entrance12[];
-extern const struct SceneEvent gKorashiamuIriguchiEvents1[];
-extern const struct SceneEvent gKorashiamuIriguchiEvents3[];
-extern const struct SceneEvent gKorashiamuIriguchiEventsOther[];
 
 void SceneState_ForwardMaskedHalfwordWith10();
 

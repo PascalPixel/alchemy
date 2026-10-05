@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -89,7 +90,6 @@ struct SceneHeader {
     s32 script;
 };
 
-extern struct SceneEntry Map_LayeredScenes[];
 extern u8 gMapLayerData[];
 
 void Tilemap_DecodeStagedBuffer(void);

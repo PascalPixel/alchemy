@@ -404,8 +404,6 @@
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FINALIZE.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0003939a)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FINALIZE_2.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.00039416)
-    "*/recon/tla/it/rom.o"(.rom.00039418)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FINALIZE_3.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00039452)
     "*/recon/tla/it/rom.o"(.rom.00039454)

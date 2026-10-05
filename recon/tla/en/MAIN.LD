@@ -550,8 +550,6 @@
         "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FINALIZE.o"(.text)
         "*/recon/tla/raw/0803939a.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FINALIZE_2.o"(.text)
-        "*/recon/tla/raw/08039416.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/08039418.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/FINALIZE_3.o"(.text)
         "*/recon/tla/raw/08039452.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08039454.o"(.text .rodata .data .padding)

@@ -8,7 +8,7 @@
 	.global UiWindow_DrawFrameFar
 	.thumb_func
 UiWindow_DrawFrameFar:
-	overlay_veneer Func_0803a084
+	overlay_veneer UiWindow_DrawFrame
 	.global UiWindow_EraseBorderRectFar
 	.thumb_func
 UiWindow_EraseBorderRectFar:

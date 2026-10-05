@@ -61,7 +61,7 @@ Func_0803cbf8:
 	ldrsh r1, [r3, r2]
 	ldrh r2, [r3, #8]
 	ldrh r3, [r3, #10]
-	bl Func_0803a084
+	bl UiWindow_DrawFrame
 	ldrh r2, [r5, #20]
 .L_0803cc70:
 	movs r1, #255

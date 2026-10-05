@@ -1078,14 +1078,6 @@ UiWindow_Create:
 	.incbin "baserom.gba", 0x00039260, 0x00000114
 	.section .rom.0003939a, "ax"
 	.incbin "baserom.gba", 0x0003939a, 0x00000002
-	.section .rom.00039416, "ax"
-	.incbin "baserom.gba", 0x00039416, 0x00000002
-	.section .rom.00039418, "ax"
-	.global RenderOutput_RedrawSavedRect
-	.type RenderOutput_RedrawSavedRect, %function
-	.thumb_func
-RenderOutput_RedrawSavedRect:
-	.incbin "baserom.gba", 0x00039418, 0x00000018
 	.section .rom.00039452, "ax"
 	.incbin "baserom.gba", 0x00039452, 0x00000002
 	.section .rom.00039454, "ax"
@@ -1112,10 +1104,10 @@ Ui_ClearVramBlock:
 	.section .rom.0003a04e, "ax"
 	.incbin "baserom.gba", 0x0003a04e, 0x00000002
 	.section .rom.0003a050, "ax"
-	.global Func_0803a084
-	.type Func_0803a084, %function
+	.global UiWindow_DrawFrame
+	.type UiWindow_DrawFrame, %function
 	.thumb_func
-Func_0803a084:
+UiWindow_DrawFrame:
 	.incbin "baserom.gba", 0x0003a050, 0x00000334
 	.section .rom.0003a412, "ax"
 	.incbin "baserom.gba", 0x0003a412, 0x000000ea

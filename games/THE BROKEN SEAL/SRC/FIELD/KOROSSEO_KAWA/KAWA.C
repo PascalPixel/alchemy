@@ -109,7 +109,7 @@ void FieldScene_RunScene3ba_02000974(s32 direction);
 void SceneState_InitControlWhenFlag109Clear(s32 value);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);
-void SceneState_SetStateHalfword386To99WhenMatched(void);
+void SceneState_RaiseTriggerOnPsynergyTarget(void);
 
 
 extern u8 MsgKorosseoAskAttendantsForExplanationsStages[];
@@ -834,7 +834,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
         SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
         break;
     case 2:
-        ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(SceneState_SetStateHalfword386To99WhenMatched, 0xc80);
+        ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
         Engine_ActorDestroy(24);
         Engine_ActorDestroy(25);
         if (!Engine_GameFlagIsSet(0x109)) {

@@ -18,7 +18,7 @@ void SceneState_RunActor13AtColumn42Setup(void)
         Engine_AudioPlayCue(188);
         obj->motion_flags = 0;
         val = 0xfffe0000;
-        obj->unknown_14 = val;
+        obj->terrain_height = val;
         obj->y = val;
         Engine_GameFlagSet(0x200);
         a = 3;

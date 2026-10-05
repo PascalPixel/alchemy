@@ -95,7 +95,7 @@ void Scene_LowerActor10AtColumn42(void)
         Audio_PlayCue(188);
         actor->unknown_55 = 0;
         value = -0x20000;
-        actor->unknown_14 = value;
+        actor->terrain_height = value;
         actor->y = value;
         GameFlag_Set(0x200);
         width = 3;

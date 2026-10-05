@@ -19,7 +19,7 @@ struct FieldActor {
     s32 x;
     s32 y;
     s32 z;
-    s32 unknown_14;
+    s32 terrain_height;
     u8 unknown_18[0x0b];
     /* Bit 0 is cleared when a script sets the sprite priority. */
     u8 priority_flags;

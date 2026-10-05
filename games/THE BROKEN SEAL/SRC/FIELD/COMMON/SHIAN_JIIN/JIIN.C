@@ -647,7 +647,7 @@ void ShianJiin_RunMasterScene(s32 mode)
 void ShianJiin_RunGatheringScene(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_ActorFaceActor(13, 19, 0);
     Engine_ActorFaceActor(14, 19, 0);
@@ -679,18 +679,18 @@ void ShianJiin_RunGatheringScene(void)
     Engine_ActorRunRepeatedMotion(15, 3);
     Call3(Engine_ActorSetPosition, 19, 0xe80000, 0xa80000);
     Engine_ActorSetPosition(20, 0xe80000, 0xa80000);
-    record = (s32)Object_GetById(19);
-    *(s32 *)(record + 12) = 0xc0000;
-    record = (s32)Object_GetById(19);
-    *(s32 *)(record + 60) = -0x80000000;
-    record = (s32)Object_GetById(19);
-    *(s32 *)(record + 24) = 0xcccc;
-    record = (s32)Object_GetById(19);
+    record = Object_GetById(19);
+    record->y.fixed = 0xc0000;
+    record = Object_GetById(19);
+    record->target_y = ACTOR_NO_TARGET;
+    record = Object_GetById(19);
+    record->scale_x = 0xcccc;
+    record = Object_GetById(19);
     {
-        s32 target = *(s32 *)(record + 80);
-        s32 shown = 0x8000;
-    
-        *(u16 *)(target + 30) = shown;
+        struct FieldSprite *sprite = record->sprite;
+        s32 rotation = 0x8000;
+
+        sprite->rotation = rotation;
     }
     Engine_AudioPlayCue(124);
     Engine_EventWait(40);
@@ -1089,18 +1089,18 @@ void FieldScene_RunSkippableStoryBeat(void)
 void FieldScene_RunEnsembleStoryBeat(void)
 {
     u32 i;
-    s32 actor;
+    struct FieldActor *actor;
 
     actor = Actor_Get(18);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     actor = Object_GetById(13);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     actor = Object_GetById(14);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     actor = Object_GetById(15);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     actor = Actor_Get(16);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     Engine_ActorSetAnimation(11, 1);
     Camera_SetSpeed(0x8000, 0x1000);
     Camera_MoveTo(0xe80000, -1, 0xc80000, 1);
@@ -1275,15 +1275,15 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Engine_ActorRunRepeatedMotion(15, 3);
     Actor_SetPosition(19, 0xe80000, 0xa80000);
     actor = Actor_Get(19);
-    *(s32 *)(actor + 12) = 0xc0000;
+    actor->y.fixed = 0xc0000;
     actor = Actor_Get(19);
-    *(s32 *)(actor + 60) = -0x80000000;
+    actor->target_y = ACTOR_NO_TARGET;
     actor = Actor_Get(19);
     {
-        s32 target = *(s32 *)(actor + 80);
-        s32 shown = 0x8000;
+        struct FieldSprite *sprite = actor->sprite;
+        s32 rotation = 0x8000;
 
-        *(u16 *)(target + 30) = shown;
+        sprite->rotation = rotation;
     }
     Audio_PlayCue(124);
     Engine_EventWait(40);

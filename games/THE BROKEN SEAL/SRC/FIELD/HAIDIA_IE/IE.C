@@ -234,8 +234,9 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             Engine_EventShowMessage(15, 0);
         } else {
-            u8 *p = (u8 *)gEventWork;
-            *(u16 *)(p + 472) = *(u16 *)(p + 472) + 1;
+            struct EventWork *work = gEventWork;
+
+            work->message = work->message + 1;
             Engine_EventAskYesNo(15, 0);
         }
     } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
@@ -960,9 +961,9 @@ void HaidiaIe_RunScene015B4(void)
     record = Object_GetById(25);
     Engine_ActorSetSpriteFlags(record, 0);
     {
-        u8 *work = (u8 *)gEventWork;
+        struct EventWork *work = gEventWork;
 
-        *(s32 *)(work + 0x1c0) = 0x100;
+        work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     }
     Engine_EventOpenScreen();
     BattleFx_SetBlock30Values128One();
@@ -999,7 +1000,7 @@ void HaidiaIe_RunScene015B4(void)
     Engine_TaskWait(20);
     BattleFx_SetBlock30ValuesMaxZero();
     Engine_EventWait(40);
-    *(s32 *)(((s32)gEventWork + 0x1c8)) = 120;
+    gEventWork->transition_frames = 120;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_GameFlagClear(0x834);

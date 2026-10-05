@@ -742,9 +742,7 @@ void FieldScene_RunExtendedActorPresentation(void)
         value = 0xc04;
         REG_BLDALPHA = value;
     }
-    /* FAKEMATCH: the reference loads r0 before r1 for this Camera_MoveToActor
-     * call; ordinary C loads them the other way (2 halfwords). The do/while
-     * block is a scheduling construct, not recovered source. */
+    /* FAKEMATCH: the reference loads r0 before r1 for this Camera_MoveToActor call; ordinary C loads them the other way (2 halfwords). The do/while block is a scheduling construct, not recovered source. */
     do {
         Engine_CameraMoveToActor(0, 1);
         Engine_CameraWaitForMove();
@@ -871,12 +869,7 @@ void FieldScene_RunExtendedActorPresentation(void)
     Engine_EventEnd();
 }
 
-/*
- * Every call site is written out separately and repeated calls must not be
- * folded: the sequence of distinct call words is what reproduces the
- * reference. The three record lookups near the end are null checked before
- * their stored coordinates are forwarded.
- */
+/* Check the three final actor lookups for null before forwarding their coordinates. */
 void FieldScene_RunBranchingCutsceneSequence(void)
 {
     struct FieldActor *leader;
@@ -884,7 +877,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     GameFlag_Set(0x960);
     Engine_AudioPlayCue(24);
     Engine_EventBegin();
-    Battle_ResetEffectCounter(); /* main:0808a460 */
+    Battle_ResetEffectCounter();
     Engine_EventSetMessage((s32)MsgArutamiraSee);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
@@ -915,7 +908,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(30);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
-    Actor_SetAttachedEffect(8, 0x102); /* main:0808a1f0 */
+    Actor_SetAttachedEffect(8, 0x102);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(30);
     Engine_EventShowMessage(8, 0);
@@ -976,7 +969,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
     Actor_ShowEmote(8, 0x102, 40);
-    Event_OpenMessage(8, 0); /* main:0808a178 */
+    Event_OpenMessage(8, 0);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -1300,8 +1293,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
         FieldScene_RedrawActorFootprint(8);
         FieldScene_RedrawActorFootprint(9);
         FieldScene_RedrawActorFootprint(10);
-        /* FAKEMATCH: the three callbacks are stored as s32, so the entrance read
-         * after them may alias them and stays below the last store. */
+        /* FAKEMATCH: the three callbacks are stored as s32, so the entrance read after them may alias them and stays below the last store. */
         *(s32 *)&Object_GetById(8)->update = (s32)ArutamiraDou_MatchLeaderPriority;
         *(s32 *)&Object_GetById(9)->update = (s32)ArutamiraDou_MatchLeaderPriority;
         *(s32 *)&Object_GetById(10)->update = (s32)ArutamiraDou_MatchLeaderPriority;

@@ -60,26 +60,8 @@ s32 BattleFx_HasReachedTarget(void *object);
 void BattleFx_ClearOwnedSlot(void *object);
 
 /*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
-/*
  * Primary cutscene script -- resource_3bd. A no-argument, void, almost-linear
  * sequence whose one branch rejoins after both arms.
- */
-
-/*
- * Each alias is the per-site call word the overlay image holds -- one word can
- * serve two sites with different targets -- and the macro names the engine
- * function the site reaches, keeping the site's own calling form. Names
- * without a binding elsewhere in the tree are provisional.
  */
 
 /* Signed coordinate halfwords in a placed-actor record, named by offset. */

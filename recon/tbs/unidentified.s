@@ -371,9 +371,15 @@ Workspace_PageLabel:
 Workspace_RangeDash:
 	.incbin "baserom.gba", 0x00037460, 0x00000004
 	.section .unidentified.08073808,"a"
-	.global Data_08073808
-Data_08073808:
-	.incbin "baserom.gba", 0x00073808, 0x0000000a
+	.global UiText_SpeedDelays
+UiText_SpeedDelays:
+	.incbin "baserom.gba", 0x00073808, 0x00000003
+	.global UiText_SpeedSteps
+UiText_SpeedSteps:
+	.incbin "baserom.gba", 0x0007380b, 0x00000003
+	.global UiText_SpeedCueGaps
+UiText_SpeedCueGaps:
+	.incbin "baserom.gba", 0x0007380e, 0x00000004
 	.global WorkspaceOptions_SliderPalette
 WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x00073812, 0x00000042

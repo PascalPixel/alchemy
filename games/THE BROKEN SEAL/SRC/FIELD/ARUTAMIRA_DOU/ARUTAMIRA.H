@@ -5,46 +5,10 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define RECORD_COORD_X_OFFSET 10
-#define RECORD_COORD_Y_OFFSET 18
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
-
-typedef struct {
-    u8 filler0[0x28];
-    s16 *unk28;
-} Sub;
-
-typedef struct {
-    u8 filler0[6];
-    u16 unk6;
-    s32 unk8;
-    s32 unkC;
-    s32 unk10;
-    u8 filler14[0x10];
-    s32 unk24;
-    u8 filler28[4];
-    s32 unk2C;
-    u8 filler30[8];
-    s32 unk38;
-    u8 filler3C[4];
-    s32 unk40;
-    u8 filler44[0xC];
-    Sub *unk50;
-} Ent;
-
-typedef struct {
-    s32 a, b, c, d, e, f;
-} S6;
-
-typedef struct {
-    u8 filler0[8];
-    s32 unk8;
-    s32 unkC;
-    s32 unk10;
-} Ent_02000d58;
 
 typedef struct {
     s32 x;
@@ -90,7 +54,7 @@ void ArutamiraDou_SettleActorOnCell(void);
 void DisplayTransition_InitializeBattleEffectState(s32);
 void ArutamiraDou_ApplyFadeBlend(void);
 void ArutamiraDou_SetFadeLevel(s32 level);
-s32 Object_CheckMovementCollision(Ent *, Vec *);
+s32 Object_CheckMovementCollision(struct FieldActor *actor, void *position);
 void Vector_AddPolarOffset(s32 first, s32 second, s32 *position);
 s32 BattleFx_HasReachedTarget(void *object);
 void BattleFx_ClearOwnedSlot(void *object);

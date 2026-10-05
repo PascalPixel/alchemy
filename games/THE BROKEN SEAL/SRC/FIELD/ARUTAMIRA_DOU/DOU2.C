@@ -879,7 +879,7 @@ void FieldScene_RunExtendedActorPresentation(void)
  */
 void FieldScene_RunBranchingCutsceneSequence(void)
 {
-    u8 *record;
+    struct FieldActor *leader;
     s32 line;
     GameFlag_Set(0x960);
     Engine_AudioPlayCue(24);
@@ -1121,26 +1121,26 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Engine_ActorSetAnimation(1, 2);
-    /* If the id-1 record lookup succeeds, forward its stored coordinates. */
-    record = Object_GetById(0);
-    if (record != 0) {
-        Engine_ActorSetDestination(1, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
+    /* Actor 1 walks to where the leader stands. */
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Engine_ActorSetDestination(1, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(1);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_ActorSetAnimation(2, 2);
-    /* If the id-2 record lookup succeeds, forward its stored coordinates. */
-    record = Object_GetById(0);
-    if (record != 0) {
-        Engine_ActorSetDestination(2, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
+    /* Actor 2 walks to where the leader stands. */
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Engine_ActorSetDestination(2, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(2);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Engine_ActorSetAnimation(3, 2);
-    /* If the id-3 record lookup succeeds, forward its stored coordinates. */
-    record = Object_GetById(0);
-    if (record != 0) {
-        Engine_ActorSetDestination(3, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
+    /* Actor 3 walks to where the leader stands. */
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Engine_ActorSetDestination(3, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(3);
     Actor_SetPosition(ACTOR_MIA, 0, 0);

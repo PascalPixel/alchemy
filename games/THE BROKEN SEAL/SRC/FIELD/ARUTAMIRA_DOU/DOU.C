@@ -308,12 +308,12 @@ void FieldScene_RunTwoCallSequence(void)
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)gEffectWork;
-    Ent_02000d58 *p = (Ent_02000d58 *)Object_GetById(11);
+    struct FieldActor *p = Object_GetById(11);
     Vec v;
 
-    v.x = p->unk8;
-    v.y = p->unkC;
-    v.z = p->unk10;
+    v.x = p->x.fixed;
+    v.y = p->y.fixed;
+    v.z = p->z.fixed;
 
     if (Object_CheckMovementCollision(p, &v) > 0) {
         obj[0x35] = 1;

@@ -29,13 +29,16 @@ struct DisplayTransitionWindow {
     u16 irq_phase;
 };
 
-/* The window/tile transition view of the 0x540-byte block. */
+/* The window/tile transition view of the 0x540-byte block. Each page is
+   two window control halfwords and 160 scanline pairs; the scanline table
+   fills the page the DMA is not reading and then flips page. */
 struct DisplayTransitionState {
     u16 pages[2][322];
     u32 solid_tile[8];
-    s16 mode;
-    s16 value;
-    u8 unknown_52c[8];
+    u16 mode;
+    u16 value;
+    s32 centre_x;        /* map position the stored-centre shapes draw around */
+    s32 centre_y;
     s16 mask;
     s16 active;
     u8 unknown_538;
@@ -44,6 +47,7 @@ struct DisplayTransitionState {
     s8 end;
     s8 duration;
     s8 step;
+    s8 next_mode;        /* mode taken at the last step; zero ends the effect */
 };
 
 LAYOUT_OFFSET_GUARD(DisplayTransitionFrame_Value, struct DisplayTransitionFrame, value, 0x52a);
@@ -57,7 +61,9 @@ LAYOUT_OFFSET_GUARD(DisplayTransitionState_Pages, struct DisplayTransitionState,
 LAYOUT_OFFSET_GUARD(DisplayTransitionState_SolidTile, struct DisplayTransitionState, solid_tile, 0x508);
 LAYOUT_OFFSET_GUARD(DisplayTransitionState_Page, struct DisplayTransitionState, page, 0x539);
 LAYOUT_OFFSET_GUARD(DisplayTransitionState_Mode, struct DisplayTransitionState, mode, 0x528);
+LAYOUT_OFFSET_GUARD(DisplayTransitionState_Centre, struct DisplayTransitionState, centre_x, 0x52c);
 LAYOUT_OFFSET_GUARD(DisplayTransitionState_Mask, struct DisplayTransitionState, mask, 0x534);
+LAYOUT_OFFSET_GUARD(DisplayTransitionState_NextMode, struct DisplayTransitionState, next_mode, 0x53e);
 LAYOUT_OFFSET_GUARD(DisplayTransitionState_Duration, struct DisplayTransitionState, duration, 0x53c);
 LAYOUT_SIZE_GUARD(DisplayTransitionState_Size, struct DisplayTransitionState, 0x540);
 

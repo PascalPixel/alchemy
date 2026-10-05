@@ -525,12 +525,6 @@ Djinn_DefinitionTable:
 	.thumb_func
 Func_0808c4f8:
 	.incbin "baserom.gba", 0x0008fb00, 0x0000097c
-	.section .rom.00092b98, "ax"
-	.global DisplayTransition_UpdateScanlineTable
-	.type DisplayTransition_UpdateScanlineTable, %function
-	.thumb_func
-DisplayTransition_UpdateScanlineTable:
-	.incbin "baserom.gba", 0x00092b98, 0x0000090c
 	.section .rom.000940c8, "ax"
 	.global BattleFx_BuildBuffer
 	.type BattleFx_BuildBuffer, %function
@@ -594,7 +588,13 @@ BattleFx_ParticleScript:
 	.incbin "baserom.gba", 0x000a1fe4, 0x00000024
 	.global BattleFx_MarkerParticleScript
 BattleFx_MarkerParticleScript:
-	.incbin "baserom.gba", 0x000a2008, 0x0000004e
+	.incbin "baserom.gba", 0x000a2008, 0x0000000c
+	.global DisplayTransition_NoiseWidths
+DisplayTransition_NoiseWidths:
+	.incbin "baserom.gba", 0x000a2014, 0x00000022
+	.global DisplayTransition_EdgeOffsets
+DisplayTransition_EdgeOffsets:
+	.incbin "baserom.gba", 0x000a2036, 0x00000020
 	.global DisplayTransition_DitherTable
 DisplayTransition_DitherTable:
 	.incbin "baserom.gba", 0x000a2056, 0x00000102
@@ -650,7 +650,10 @@ WorldMap_CursorDirectionAngles:
 	.incbin "baserom.gba", 0x000a2f58, 0x00000020
 	.global Data_0809f810
 Data_0809f810:
-	.incbin "baserom.gba", 0x000a2f78, 0x000003bc
+	.incbin "baserom.gba", 0x000a2f78, 0x00000030
+	.global DisplayTransition_Shapes
+DisplayTransition_Shapes:
+	.incbin "baserom.gba", 0x000a2fa8, 0x0000038c
 	.global ObjectMotion_LaunchScript
 ObjectMotion_LaunchScript:
 	.incbin "baserom.gba", 0x000a3334, 0x00000020

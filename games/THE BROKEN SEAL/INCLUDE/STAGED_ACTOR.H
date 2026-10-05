@@ -22,14 +22,15 @@ struct StagedActor {
     u8 unknown_14[0x0e];
     u8 transition_mode;
     u8 unknown_23;
-    s32 unknown_24;
-    s32 unknown_28;
-    s32 unknown_2c;
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
     s32 move_rate_x;
     s32 move_rate_z;
-    s32 unknown_38;
-    s32 unknown_3c;
-    s32 unknown_40;
+    /* The fixed-point point the actor moves toward, or ACTOR_NO_TARGET. */
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
     u8 unknown_44[0x0c];
     struct AnimationObject *animation;
     u8 unknown_54[5];

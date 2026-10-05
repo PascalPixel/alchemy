@@ -349,7 +349,7 @@ void StagedActorPairScene_RunSpinningLeap(s32 id)
         Engine_TaskWait(1);
         work->object.actor.sprite->rotation -= 0x100;
         work->object.actor.x.fixed -= Engine_MathCos(work->object.actor.sprite->rotation) / 2;
-        work->staged.unknown_38 = 0x80000000;
+        work->staged.target_x = 0x80000000;
     }
     work->object.actor.update = (void (*)(union FieldObject *))StagedActorPairScene_RotateActorPart;
     Engine_AudioPlayCue(136);

@@ -53,31 +53,19 @@ s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
     return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
-/*
- * CALL SYMBOLS ARE PER-SITE: the raw assembly spells each of these eight
- * calls as a direct `bl sub_020072xx` to an address inside this overlay's
- * own 0x0200xxxx range (verified via `arm-none-eabi-objdump -dr -M
- * force-thumb` on the assembled .o, which resolves the *ABS* targets before
- * linking) -- lifted verbatim, not the veneer-math final target names this
- * file used before. The one true indirect call (selector's local-effect
- * dispatch) is routed automatically through this overlay's own
- * `_call_via_rN` bank; SceneEffect_SpawnNineRadialEffects is correct for it, unchanged.
- */
-s32 *SceneData_FindSlotAtPosition(pos)
-    s32 *pos;
+/* The placed actor standing in the same cell as the position, or 0. */
+struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self)
 {
-    extern u8 *gWork;
-
-    s32 **slots = (s32 **)(gWork + 0x14);
+    struct FieldActor **actors = gEventWork->placed_actors;
+    struct FieldActor *actor;
     u32 i;
 
     for (i = 8; i <= 65; i++) {
-        s32 *p = slots[i];
-
-        if ((pos[0] >> 20) == (p[2] >> 20)
-            && (pos[1] >> 20) == (p[3] >> 20)
-            && (pos[2] >> 20) == (p[4] >> 20)) {
-            return p;
+        actor = actors[i - 8];
+        if (pos[0] >> 20 == actor->x.fixed >> 20
+            && pos[1] >> 20 == actor->y.fixed >> 20
+            && pos[2] >> 20 == actor->z.fixed >> 20) {
+            return actor;
         }
     }
     return 0;
@@ -143,12 +131,12 @@ void RunStagedActorTransition(void)
     BattleFx_PlayQueuedSound();
     actor->x.value = target_position[0];
     actor->z.value = target_position[2];
-    actor->unknown_24 = transition_busy;
-    actor->unknown_2c = transition_busy;
-    leader->unknown_38 = 0x80000000;
-    leader->unknown_40 = 0x80000000;
-    leader->unknown_24 = transition_busy;
-    leader->unknown_2c = transition_busy;
+    actor->velocity_x = transition_busy;
+    actor->velocity_z = transition_busy;
+    leader->target_x = ACTOR_NO_TARGET;
+    leader->target_z = ACTOR_NO_TARGET;
+    leader->velocity_x = transition_busy;
+    leader->velocity_z = transition_busy;
     leader->x.value = leader->x.parts.cell << 16;
     leader->z.value = leader->z.parts.cell << 16;
     Object_SetMode(leader, 1);
@@ -174,7 +162,7 @@ s32 SceneState_FillGridCellByte2(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
             u8 *p = base + (i << 9);
 
             for (j = 0; j < w; j++) {
-                p[2] = (u8)val;
+                p[2] = val;
                 p += 4;
             }
         }
@@ -182,42 +170,35 @@ s32 SceneState_FillGridCellByte2(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
     return 0;
 }
 
-/* Named shorthand for one fixed argument pair, in overlay resource_3c8. */
+/* Shows each placed actor whose timer holds 0x212 above its low four bits
+ * with the child value in those bits. */
 void SceneActor_ApplySlotsMatchingKind212(void)
 {
-    extern u8 *gWork;
-
-    s32 **slots = (s32 **)(gWork + 0x14);
+    struct FieldActor **actors = gEventWork->placed_actors;
+    struct FieldActor *actor;
     u32 i;
-    s32 lim = 0x212;
 
     for (i = 8; i <= 65; i++) {
-        s32 *p = slots[i];
-        u32 h = *(u16 *)((u8 *)p + 100);
-        s32 t = h << 16;
-
-        if ((t >> 20) == lim) {
-            s32 m = 15;
-            m &= h;
-            ObjectGroup_SetChildValue(p, m);
-        }
+        actor = actors[i - 8];
+        if ((s16)actor->timer >> 4 == 0x212)
+            ObjectGroup_SetChildValue(actor, actor->timer & 15);
     }
 }
 
-s32 OverlayObject_ApplyLowNibbleOfField100(void *obj)
+s32 OverlayObject_ApplyLowNibbleOfField100(struct FieldActor *obj)
 {
-    ObjectGroup_SetChildValue(obj, *(u16 *)((u8 *)obj + 100) & 15);
+    ObjectGroup_SetChildValue(obj, obj->timer & 15);
     return 0;
 }
 
 s32 OverlayObject_UpdateEveryFourFrames(void *obj)
 {
-    if ((*(u32 *)&gFrameCount & 3) == 0)
+    if ((gFrameCount & 3) == 0)
         ObjectGroup_SetChildValue(obj, 7);
     else
         ObjectGroup_SetChildValue(obj, 0);
 
-    if ((*(u32 *)&gFrameCount & 7) == 0)
+    if ((gFrameCount & 7) == 0)
         Engine_AudioPlayCue(138);
     return 0;
 }
@@ -226,7 +207,7 @@ s32 SceneEffect_SpawnRandomEveryEightFramesB(struct Object_020005e4 *object)
 {
     struct EffectParams_020005e4 params;
     s32 phase, x, y, speed;
-    phase = *(u32 *)&gFrameCount & 7;
+    phase = gFrameCount & 7;
     if (phase != 0) goto done;
     params.unk00 = 3 - (s32)((u32)(Engine_RandomNext() * 2) >> 16);
     params.color1 = 0x6666;
@@ -312,45 +293,32 @@ void SceneEffect_RunObjectZeroColorSequence(void)
     Engine_EventEnd();
 }
 
-/* Runs a guarded one-shot setup on an entry record: only fires the first
- * time (while a global 0x109 lookup is still unset), positions the entry
- * from its own stored coordinates, drives an effect/param sequence, then
- * writes a stage byte and an override field on the entry before returning. */
+/* The leader's first rise into the room (until flag 0x109 is set): it
+ * appears a step back, shimmers as it walks in trailing particles, and
+ * lands. */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    u32 i;
-    struct FieldActor *entry;
-    u8 *guard;
-    u8 *sub;
+    struct FieldActor *leader;
 
-    entry = Actor_Get(ACTOR_PARTY_LEADER);
-    guard = GameFlag_IsSet(0x109);
-    if (guard == 0) {
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    if (GameFlag_IsSet(0x109) == 0) {
         Engine_EventBegin();
         Camera_MoveTo(-1, -1, -1, 0);
-        /* Stage byte at +85 of the entry record. */
-        entry->motion_flags = guard;
-        /* Position, from the entry's own s16 coordinates at +10/+18
-         * (converted to 16.16 fixed point; the y term is offset by -16.0). */
-        Actor_SetPosition(ACTOR_PARTY_LEADER, (entry->x.part.pixel << 16), ((entry->z.part.pixel << 16) + -0x100000));
+        leader->motion_flags = 0;
+        Actor_SetPosition(ACTOR_PARTY_LEADER, leader->x.part.pixel << 16, (leader->z.part.pixel << 16) - 0x100000);
         Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-        sub = Actor_Get(ACTOR_PARTY_LEADER);
-        Engine_ActorSetSpriteFlags(sub, 0);
+        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Audio_PlayCue(228);
-        /* Override field at +108 of the entry record; holds an EWRAM
-         * address while the effect sequence below runs. */
-        *(s32 *)((u8 *)entry + 108) = (s32)SceneEffect_SpawnTwoRandomizedParticles;
+        leader->update = (void (*)(union FieldObject *))SceneEffect_SpawnTwoRandomizedParticles;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
         Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
         Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
-        sub = Actor_Get(ACTOR_PARTY_LEADER);
-        Engine_ActorSetSpriteFlags(sub, 1);
+        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
         Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
-        entry->motion_flags = 3;
-        /* Restore the +108 override field to the original (unset) value. */
-        *(s32 *)((u8 *)entry + 108) = guard;
+        leader->motion_flags = 3;
+        leader->update = 0;
         BattleFx_PlayQueuedSound();
         Engine_EventEnd();
     }

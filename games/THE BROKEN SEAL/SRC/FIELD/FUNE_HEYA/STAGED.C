@@ -73,11 +73,11 @@ s32 ResetStagedActorState(struct StagedActor *actor)
     actor->x.value = 0;
     actor->y = 0;
     actor->z.value = 0;
-    actor->unknown_24 = 0;
-    actor->unknown_28 = 0;
-    actor->unknown_2c = 0;
-    actor->unknown_3c = 0x80000000;
-    actor->unknown_38 = 0x80000000;
+    actor->velocity_x = 0;
+    actor->velocity_y = 0;
+    actor->velocity_z = 0;
+    actor->target_y = 0x80000000;
+    actor->target_x = 0x80000000;
     return 0;
 }
 

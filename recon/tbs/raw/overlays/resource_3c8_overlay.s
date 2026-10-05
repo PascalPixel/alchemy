@@ -84,8 +84,8 @@ gVinasuBlockHeights:
 	.4byte 0xffc00000
 	.4byte 0xffb00000
 	.4byte 0xffb00000
-	.global Data_02005164
-Data_02005164:
+	.global gVinasuPillarCells
+gVinasuPillarCells:
 	.4byte 0x0000000b
 	.4byte 0x00000027
 	.4byte 0x0000000e
@@ -102,17 +102,17 @@ Data_02005164:
 	.4byte 0x0000002e
 	.4byte 0x00000010
 	.4byte 0x0000002e
-	.global Data_020051a4
-Data_020051a4:
+	.global gVinasuShapesPushedLeft
+gVinasuShapesPushedLeft:
 	.4byte 0x00070605
-	.global Data_020051a8
-Data_020051a8:
+	.global gVinasuShapesPushedRight
+gVinasuShapesPushedRight:
 	.4byte 0x00080604
-	.global Data_020051ac
-Data_020051ac:
+	.global gVinasuShapesPushedUp
+gVinasuShapesPushedUp:
 	.4byte 0x00080703
-	.global Data_020051b0
-Data_020051b0:
+	.global gVinasuShapesPushedDown
+gVinasuShapesPushedDown:
 	.4byte 0x00050403
 .L_0200d1b4:
 	.4byte 0x00080706
@@ -385,8 +385,8 @@ gVinasuSettleScriptB:
 	.4byte 0x00000022
 	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
-	.global Data_02005564
-Data_02005564:
+	.global gVinasuRefusedPushScript
+gVinasuRefusedPushScript:
 .L_0200d564:
 	.4byte 0x00000015
 	.4byte 0x00000026
@@ -530,8 +530,8 @@ Data_02005564:
 	.4byte 0x00000022
 	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
-	.global Data_0200577c
-Data_0200577c:
+	.global gVinasuFirstGateScript
+gVinasuFirstGateScript:
 	.4byte 0x00000003
 	.4byte 0x00d80000
 	.4byte 0x00000000
@@ -551,8 +551,8 @@ Data_0200577c:
 	.4byte 0x00000000
 	.4byte 0x02f80000
 	.4byte 0x00000010
-	.global Data_020057c8
-Data_020057c8:
+	.global gVinasuFirstGateOpenScript
+gVinasuFirstGateOpenScript:
 	.4byte 0x00000003
 	.4byte 0x01080000
 	.4byte 0x00000000
@@ -750,8 +750,8 @@ Data_020057c8:
 	.4byte 0x00000022
 	.4byte VinasuHeya_DispatchPushScript
 	.4byte 0x00000010
-	.global Data_02005ac8
-Data_02005ac8:
+	.global gVinasuSecondGateScript
+gVinasuSecondGateScript:
 	.4byte 0x00000003
 	.4byte 0x00d80000
 	.4byte 0x00000000
@@ -917,8 +917,8 @@ gVinasuSettleCells:
 	.4byte 0x003b006f
 	.4byte 0x00020001
 	.4byte 0xffff0006
-	.global Data_02005d3c
-Data_02005d3c:
+	.global gVinasuGateCells
+gVinasuGateCells:
 	.4byte 0x003a0060
 	.4byte 0x00020001
 	.4byte 0x005f0006
@@ -2645,8 +2645,8 @@ gVinasuHeyaEvents6:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200772c
-Data_0200772c:
+	.global gVinasuSwitchShapes
+gVinasuSwitchShapes:
 	.4byte .L_0200d1b4
 	.4byte .L_0200d1b8
 	.4byte .L_0200d1bc
@@ -2671,14 +2671,14 @@ Data_0200772c:
 	.4byte .L_0200d70c
 	.4byte .L_0200d744
 	.4byte .L_0200d564
-	.global Data_0200777c
-Data_0200777c:
+	.global gVinasuSwitchPushScripts
+gVinasuSwitchPushScripts:
 	.4byte .L_0200f73c
 	.4byte .L_0200f74c
 	.4byte .L_0200f75c
 	.4byte .L_0200f76c
-	.global Data_0200778c
-Data_0200778c:
+	.global gVinasuPillarShapes
+gVinasuPillarShapes:
 	.4byte .L_0200d1c4
 	.4byte .L_0200d1c6
 	.4byte .L_0200d1c6 + 0x1
@@ -2711,8 +2711,8 @@ Data_0200778c:
 .L_0200f7e4:
 	.4byte .L_0200d824
 	.4byte .L_0200d564
-	.global Data_020077ec
-Data_020077ec:
+	.global gVinasuPillarPushScripts
+gVinasuPillarPushScripts:
 	.4byte .L_0200f7ac
 	.4byte .L_0200f7b4
 	.4byte .L_0200f7b8

@@ -106,7 +106,7 @@ void Korosseo_RestoreCompetitor(s32 id)
         gGameState.movement_mode = 0;
         Engine_ActorSetAnimation(id, 1);
     } else {
-        Call3(Engine_ActorFaceDirection, id, FACING_SOUTH, 30);
+        Actor_FaceDirection(id, FACING_SOUTH, 30);
         Engine_ActorSetAnimation(id, 3);
         Engine_EventWait(30);
     }

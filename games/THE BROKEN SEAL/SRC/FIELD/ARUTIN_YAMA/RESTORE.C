@@ -123,7 +123,7 @@ void ArutinYama_ApplyEntryState(void)
             Object_GetById(9)->motion_flags = opened;
             actor = Object_GetById(9);
             actor->y.fixed = 0x200000;
-            Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
+            Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
             Engine_ActorSetPosition(10, 0x780000, 0xd70000);
             actor = Object_GetById(10);
             actor->facing = opened;
@@ -140,8 +140,8 @@ void ArutinYama_ApplyEntryState(void)
         Object_GetById(9)->motion_flags = flag;
         actor = Object_GetById(9);
         actor->y.fixed = 0x200000;
-        Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
-        Call3(Engine_ActorSetPosition, 10, 0x1040000, 0xd70000);
+        Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
+        Actor_SetPosition(10, 0x1040000, 0xd70000);
         {
             u8 *script = ArutinYama_ActorScript;
 
@@ -150,12 +150,12 @@ void ArutinYama_ApplyEntryState(void)
     } else {
         map = gMapWork[0];
         Engine_ActorSetPosition(10, 0, 0);
-        Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 2, 3, 14);
+        Map_CopyCellAttributes(0, 0, 1, 2, 3, 14);
         *(u16 *)(map + 20) &= 0xfdff;
         SceneActor_ClearCollisionFlagAndPlaceMarker(8);
         if (Engine_GameFlagIsSet(0x200) != 0) {
             Engine_ActorSetAnimation(8, 5);
-            Call6(Engine_MapCopyCellAttributes, 7, 13, 1, 1, 9, 13);
+            Map_CopyCellAttributes(7, 13, 1, 1, 9, 13);
             actor = Object_GetById(8);
             actor->y.fixed = 0;
             actor->priority_flags |= 2;
@@ -163,7 +163,7 @@ void ArutinYama_ApplyEntryState(void)
         SceneActor_ClearCollisionFlagAndPlaceMarker(9);
         if (Engine_GameFlagIsSet(0x201) != 0) {
             Engine_ActorSetAnimation(9, 5);
-            Call6(Engine_MapCopyCellAttributes, 29, 1, 3, 1, 17, 13);
+            Map_CopyCellAttributes(29, 1, 3, 1, 17, 13);
             actor = Object_GetById(9);
             actor->y.fixed = 0x200000;
             actor->priority_flags |= 2;
@@ -333,7 +333,7 @@ void ArutinYama_RestoreAreaSeven(void)
     }
     Engine_TaskAddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);
     if (GameFlag_IsSet(0x327) != 0) {
-        Call6((void (*)())Engine_MapCopyCellAttributes, 30, 82, 1, 1, 29, 81);
+        Map_CopyCellAttributes(30, 82, 1, 1, 29, 81);
         Map_CopyCellsTo(46, 28, 29, 17, 1, 2);
     } else {
         Map_CopyCellAttributes(28, 82, 1, 1, 29, 81);
@@ -355,14 +355,14 @@ void ArutinYama_PlaceFlaggedActors(void)
     actor->sprite->rotation = 0x8000;
     Object_GetById(12)->motion_flags = 0;
     Object_GetById(12)->y.fixed = -0x1c0000;
-    if (Value1(Engine_GameFlagIsSet, 0x908)) {
+    if (GameFlag_IsSet(0x908)) {
         actor->x.fixed += 0xe0000;
         actor->y.fixed += -0x80000;
         actor->sprite->rotation = 0xc000;
     }
     if (Engine_GameFlagIsSet(0x908)) {
-        Call6(Engine_MapCopyCellsTo, 25, 36, 43, 36, 11, 9);
-        Call6(Engine_MapCopyCellAttributes, 25, 35, 10, 5, 43, 35);
+        Map_CopyCellsTo(25, 36, 43, 36, 11, 9);
+        Map_CopyCellAttributes(25, 35, 10, 5, 43, 35);
         Engine_MapRedraw();
         Engine_TaskWait(1);
     }
@@ -508,7 +508,7 @@ void FieldScene_RunScene3a4SequenceG(void)
     volatile u32 *frame = &gFrameCount;
 
     if (*frame % 3 == 0) {
-        spark = (struct FieldActor *)Value4(Engine_ObjectCreate, 200, (((u32)(Engine_RandomNext() * 48) >> 16) << 16) + 0x2fd0000, -0x400000, 0x2600000);
+        spark = (struct FieldActor *)Object_Create(200, (((u32)(Engine_RandomNext() * 48) >> 16) << 16) + 0x2fd0000, -0x400000, 0x2600000);
         if (spark != NULL) {
             if (*frame % 9 == 0) {
                 if ((u32)(Engine_RandomNext() << 1) >> 16 != 0)
@@ -1042,7 +1042,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
     ResourceMetadata_Register(object->sprite, 16);
     Engine_CameraFollowActor(id, 1);
     Engine_CameraWaitForMove();
-    Call2((void (*)())Engine_CameraSetSpeed, 0x100000, 0x20000);
+    Camera_SetSpeed(0x100000, 0x20000);
     object->facing = heading;
     object->speed = 0x20000;
     object->acceleration = 0xccc;

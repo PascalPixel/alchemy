@@ -276,18 +276,18 @@ void HaidiaBabi_RunSickbedVisit(void)
     s32 msg;
 
     Engine_EventBegin();
-    Call3(Engine_ActorSetSpeed, 0, 0x9999, 0x4ccc);
-    Call3(Engine_ActorWalkToAndWait, 0, 0x239, 0x189);
-    Call3(Engine_ActorFaceDirection, 0, 0x4000, 40);
+    Actor_SetSpeed(0, 0x9999, 0x4ccc);
+    Actor_WalkToAndWait(0, 0x239, 0x189);
+    Actor_FaceDirection(0, 0x4000, 40);
     Engine_ActorStartRepeatedMotion(8, 2);
     Engine_EventSetMessage((s32)MsgHaidiaCoughCoughWho);
     Engine_EventShowMessageAndWait(8, 0, 80);
-    Call3(Engine_ActorShowEmote, 8, 0x101, 60);
+    Actor_ShowEmote(8, 0x101, 60);
     Engine_ActorStartRepeatedMotion(8, 1);
     Engine_EventShowMessageAndWait(8, 0, 60);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(80);
-    Call3(Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
+    Actor_SetSpeed(8, 0xcccc, 0x6666);
     Engine_ActorSetDestination(8, 0x248, 0x196);
     Map_SetLayerEntryFlag(11);
     Map_ClearLayerEntryFlag(12);
@@ -296,11 +296,11 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(40);
     Engine_EventShowMessageAndWait(8, 0, 40);
-    Call3(Engine_ActorShowEmote, 8, 0x108, 40);
+    Actor_ShowEmote(8, 0x108, 40);
     Engine_EventShowMessageAndWait(8, 0, 40);
-    Call3(Engine_ActorShowEmote, 0, 0x105, 60);
+    Actor_ShowEmote(0, 0x105, 60);
     Engine_ActorSetAnimationAndWait(8, 13);
-    Call3(Engine_ActorShowEmote, 8, 0x103, 0);
+    Actor_ShowEmote(8, 0x103, 0);
     Engine_ActorSetAnimation(8, 11);
     Engine_EventWait(40);
     Engine_EventShowMessageAndWait(8, 0, 40);
@@ -309,18 +309,18 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventShowMessageAndWait(8, 0, 20);
     Engine_ActorSetAnimationAndWait(8, 12);
     Engine_EventWait(20);
-    Call3(Engine_ActorShowEmote, 0, 0x102, 60);
+    Actor_ShowEmote(0, 0x102, 60);
     Engine_ActorSetAnimation(8, 13);
     Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         gEventWork->message += 1;
     }
-    if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
-        Call3(Engine_ActorShowEmote, 8, 0x102, 60);
+    if (GameFlag_IsSet(0x81c) != 0) {
+        Actor_ShowEmote(8, 0x102, 60);
     }
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
-    Call3(Engine_ActorShowEmote, 8, 0x107, 60);
+    Actor_ShowEmote(8, 0x107, 60);
     msg = (s32)MsgHaidiaWhoToldIll;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(8, 0);
@@ -328,7 +328,7 @@ void HaidiaBabi_RunSickbedVisit(void)
         gEventWork->message += 1;
     }
     if (Engine_GameFlagIsSet(0x81c) != 0) {
-        Call3(Engine_ActorShowEmote, 8, 0x102, 60);
+        Actor_ShowEmote(8, 0x102, 60);
     }
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
@@ -349,24 +349,24 @@ void HaidiaBabi_RunSickbedVisit(void)
     record->facing = 0;
     Engine_TaskWait(1);
     Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
-    Call3(Engine_ActorSetDestination, 0, 0x22e, 0x184);
-    Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
+    Actor_SetDestination(0, 0x22e, 0x184);
+    Actor_SetSpeed(8, 0x13333, 0x9999);
     Engine_ActorSetAnimation(8, 14);
     Engine_ActorMoveToAndWait(8, 0x24a, 0x190);
     Engine_EventWait(40);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x244, 0x17e);
-    Call3(Engine_ActorFaceDirection, 8, 0x8000, 40);
+    Actor_WalkToAndWait(8, 0x244, 0x17e);
+    Actor_FaceDirection(8, 0x8000, 40);
     Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ActorFaceDirection(8, 0xc000, 8);
     Engine_ActorFaceDirection(8, 0, 8);
-    Call3(Engine_ActorFaceDirection, 8, 0x4000, 8);
-    Call3(Engine_ActorFaceDirection, 8, 0x8000, 10);
+    Actor_FaceDirection(8, 0x4000, 8);
+    Actor_FaceDirection(8, 0x8000, 10);
     Engine_ActorJump(8, 4, 20);
     Engine_ActorJump(8, 6, 40);
     Engine_ActorJump(8, 4, 20);
     Engine_EventShowMessageAndWait(8, 0, 40);
-    Call3(Engine_ActorSetSpeed, 8, 0x6666, 0x3333);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x23c, 0x180);
+    Actor_SetSpeed(8, 0x6666, 0x3333);
+    Actor_WalkToAndWait(8, 0x23c, 0x180);
     Engine_EventShowMessageAndWait(8, 0, 20);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(20);

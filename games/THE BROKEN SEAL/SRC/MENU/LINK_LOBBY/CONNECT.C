@@ -226,7 +226,7 @@ s32 LinkLobby_RunBattleApplication(void)
     if (LinkLobby_PeerSlotMatches(0) == 0) {
         LinkLobby_WriteSlotValue(5);
         LinkLobby_InitializeSerial();
-        if (!Value1(Engine_GameFlagIsSet, 0x173)) {
+        if (!GameFlag_IsSet(0x173)) {
             Engine_EventSetMessage(msg + 5);
             Engine_EventOpenMessage(8, 0);
             answer = Engine_EventChooseYesNo(0, 0);
@@ -252,7 +252,7 @@ s32 LinkLobby_RunBattleApplication(void)
             goto message;
         }
     } else {
-        if (Value1(Engine_GameFlagIsSet, 0x173)) {
+        if (GameFlag_IsSet(0x173)) {
             LinkLobby_WriteSlotValue(0);
             Engine_EventSetMessage((s32)MsgLobbyOpponentArrived);
             Engine_EventOpenMessage(8, 0);
@@ -267,7 +267,7 @@ message:
 open_message:
             Engine_EventOpenMessage(8, 0);
             goto done;
-        } else if (!Engine_GameFlagIsSet(0x201) && !Value1(Engine_GameFlagIsSet, 0x300)) {
+        } else if (!Engine_GameFlagIsSet(0x201) && !GameFlag_IsSet(0x300)) {
             Engine_EventSetMessage(msg);
             Engine_EventOpenMessage(8, 0);
             Engine_GameFlagSet(0x300);

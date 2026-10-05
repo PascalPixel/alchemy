@@ -257,7 +257,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     s32 mode;
 
     if (Engine_GameFlagIsSet(0x200))
-        Call6(Engine_MapCopyCellAttributes, 55, 26, 4, 2, 23, 26);
+        Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
     OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
     Engine_MapCopyCells(45, 41, 8, 45, 3, 3);
     Engine_TaskWait(1);
@@ -273,7 +273,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
     Object_GetById(15)->timer = mode;
     if (Engine_GameFlagIsSet(0x858))
-        Call3(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
+        Actor_SetPosition(18, 0xd80000, 0x1880000);
     if (gGameState.entrance <= 2 && !Engine_GameFlagIsSet(52)
 #if EDITION_INTERNATIONAL
         && !Engine_GameFlagIsSet(0x109)
@@ -281,7 +281,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
        )
         Engine_GameFlagClear(0x867);
     if (Engine_GameFlagIsSet(0x867) && !Engine_GameFlagIsSet(52))
-        Call3(Engine_ActorSetPosition, 21, 0x1980000, 0x780000);
+        Actor_SetPosition(21, 0x1980000, 0x780000);
     scene = (s16 *)&gGameState;
     if (scene[225] == 11)
         Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);

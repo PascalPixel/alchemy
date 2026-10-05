@@ -1,5 +1,6 @@
 #include "TOREBI.H"
 #include "CALL.H"
+#include "FIELD_EVENT.H"
 
 extern u8 MsgTorebiHeWontSailShipEven[];
 extern u8 MsgTorebiHeyWhatsThis[];
@@ -117,7 +118,7 @@ void FieldScene_RunPrimarySequence(void)
     p6 = p6 + 0x16c;
     n = *(s16 *)p6 - 14;
     Engine_AudioPlayCue(158);
-    Call3(Engine_MapAnimateCells, Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
+    Map_AnimateCells(Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
     Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -225,26 +226,26 @@ s32 Scene_InitFacingActors(void)
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if (Engine_GameFlagIsSet(0x950) != 0) {
-        Call6(Engine_MapCopyCellAttributes, 51, 47, 3, 1, 51, 45);
+        Map_CopyCellAttributes(51, 47, 3, 1, 51, 45);
         record = Object_GetById(31);
         record[35] = none = 0;
         (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
         record = Object_GetById(32);
         record[35] = none;
         (*(s8 **)(record + 80))[9] = ((-13 & (*(s8 **)(record + 80))[9]) | 8);
-        if (Value1(Engine_GameFlagIsSet, 0x8bc) != 0) {
-            Call3(Engine_ActorSetPosition, 25, 0x2300000, 0x2a80000);
-            Call3(Engine_ActorFaceDirection, 25, 0x8000, 0);
+        if (GameFlag_IsSet(0x8bc) != 0) {
+            Actor_SetPosition(25, 0x2300000, 0x2a80000);
+            Actor_FaceDirection(25, 0x8000, 0);
         }
         if (gGameState.entrance == 19) {
-            if (Value1(Engine_GameFlagIsSet, 0x8bc) == 0) {
+            if (GameFlag_IsSet(0x8bc) == 0) {
                 Engine_GameFlagSet(0x8bc);
                 Engine_EventOpenScreen();
                 FieldScene_RunScene3b6SequenceA();
             }
         }
         if (gGameState.entrance == 16) {
-            if (Value1(Engine_GameFlagIsSet, 0x300) == 0) {
+            if (GameFlag_IsSet(0x300) == 0) {
                 Engine_GameFlagSet(0x300);
                 Engine_EventOpenScreen();
                 FieldScene_RunActorsThirtyOneToThirtyThreeChoreography();

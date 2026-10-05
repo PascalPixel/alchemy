@@ -107,16 +107,16 @@ void HaidiaArashi_UpdatePulsingGlow(void)
     timer = &((struct Pulse *)source)->timer;
     if (*timer != 0) {
         if (*timer == 60) {
-            Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
+            Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
         }
         if (*timer == 40) {
-            Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
+            Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
         }
         if (*timer == 30) {
-            Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x20000, 0x10000);
+            Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
         }
         if (*timer == 20) {
-            Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         }
         (*timer)--;
     }

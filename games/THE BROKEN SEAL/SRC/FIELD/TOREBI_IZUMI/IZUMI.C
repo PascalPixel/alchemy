@@ -99,7 +99,7 @@ void TorebiIzumi_WalkLeaderToSpring(void)
 {
     s32 leader = gGameState.selected_actor;
 
-    if (Value1(Engine_GameFlagIsSet, 0x200) == 0) {
+    if (GameFlag_IsSet(0x200) == 0) {
         Engine_GameFlagSet(0x200);
         TorebiIzumi_RiseAndFadeIn();
     }

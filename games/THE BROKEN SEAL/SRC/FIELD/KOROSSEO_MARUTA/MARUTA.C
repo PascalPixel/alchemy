@@ -757,7 +757,7 @@ s32 StageSetup_BuildAndDispatch(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_GameFlagSet(324);
     Engine_TaskAddCallback(ColossoLogRollingStage_ShowActorPositionMessage, 3200);
-    Call6(Engine_MapCopyCellAttributes, 74, 60, 8, 6, 120, 60);
+    Map_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
     Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 
@@ -777,15 +777,15 @@ s32 StageSetup_BuildAndDispatch(void)
         actor->y.fixed = 4 << 16;
         actor = Object_GetById(11);
         actor->y.fixed = 32 << 16;
-        Call6(Engine_MapCopyCellAttributes, 15, 12, 1, 1, 13, 12);
+        Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
     } else {
         actor = Object_GetById(9);
         actor->scale_x = 0x18000;
         actor->scale_y = 0x18000;
         if (Engine_GameFlagIsSet(871) != 0) {
-            Call6(Engine_MapCopyCellAttributes, 0, 24, 1, 1, 9, 12);
+            Map_CopyCellAttributes(0, 24, 1, 1, 9, 12);
         } else {
-            Call6(Engine_MapCopyCellAttributes, 0, 25, 1, 1, 9, 12);
+            Map_CopyCellAttributes(0, 25, 1, 1, 9, 12);
         }
     }
 
@@ -812,7 +812,7 @@ s32 StageSetup_BuildAndDispatch(void)
     actor->x.fixed = (column << 20) + (8 << 16);
     actor->motion_flags = 0;
     actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-    Call6(Engine_MapCopyCellAttributes, 18, 10, 3, 1, 18, 11);
+    Map_CopyCellAttributes(18, 10, 3, 1, 18, 11);
     Engine_MapCopyCellAttributes(17, 11, 1, 1, column, 11);
 
     for (i = 15; i <= 17; i++) {
@@ -821,8 +821,8 @@ s32 StageSetup_BuildAndDispatch(void)
         if (actor->y.fixed == 0 && height == 0) {
             actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
             actor->motion_flags = height;
-            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
-            Call6(Engine_MapCopyCellAttributes, 83, 13, 1, 1, actor->x.fixed >> 20, (actor->z.fixed >> 20) + 52);
+            Map_CopyCellAttributes(83, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+            Map_CopyCellAttributes(83, 13, 1, 1, actor->x.fixed >> 20, (actor->z.fixed >> 20) + 52);
         }
     }
 
@@ -865,7 +865,7 @@ s32 StageSetup_BuildAndDispatch(void)
 
     if (Engine_GameFlagIsSet(864) != 0) {
         Engine_ActorSetAnimation(29, 4);
-        Call6(Engine_MapCopyCellAttributes, 47, 61, 1, 4, 49, 61);
+        Map_CopyCellAttributes(47, 61, 1, 4, 49, 61);
     }
 
     if (Engine_GameFlagIsSet(867) != 0) {
@@ -889,8 +889,8 @@ s32 StageSetup_BuildAndDispatch(void)
         Engine_MapCopyCellAttributes(86, 9, 1, 1, 84, 12);
     } else {
         actor = Object_GetById(31);
-        Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, actor->x.fixed >> 20, 9);
-        Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, actor->x.fixed >> 20, 61);
+        Map_CopyCellAttributes(85, 9, 1, 4, actor->x.fixed >> 20, 9);
+        Map_CopyCellAttributes(85, 9, 1, 4, actor->x.fixed >> 20, 61);
     }
 
     actor = Object_GetById(9);
@@ -912,7 +912,7 @@ s32 StageSetup_BuildAndDispatch(void)
     case 1:
         /* FAKEMATCH: called as returning s32 it sets r0 before the constants, as native does; the void call sets it after them. */
         ((s32 (*)())ColossoLogRollingStage_SetupSceneDescriptor)(0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
-        Call6(Engine_MapCopyCellsTo, 127, 0, 1, 2, 5, 2);
+        Map_CopyCellsTo(127, 0, 1, 2, 5, 2);
         Engine_ActorDestroy(32);
         Engine_ActorDestroy(33);
         Engine_ActorDestroy(34);
@@ -1064,7 +1064,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     }
     Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionA);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
-    Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
+    Actor_SetSpeed(1, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     Actor_SetPosition(ACTOR_GERALD, 0x5b80000, 0xb80000);
@@ -1112,7 +1112,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionB);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(20);
-    Call3(Engine_ActorWalkToAndWait, 1, 0x5e0, 176);
+    Actor_WalkToAndWait(1, 0x5e0, 176);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 10);
     Engine_ActorShowEmote(1, 0x100, 20);
     Event_ShowMessage(ACTOR_IVAN, 0);
@@ -1184,7 +1184,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Engine_EventWait(35);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(25);
-    Call3(Engine_ActorShowEmote, 2, 0x102, 60);
+    Actor_ShowEmote(2, 0x102, 60);
     Object_LinkObjectAndSetCallback(3, 2);
     Object_LinkObjectAndSetCallback(2, 3);
     Engine_EventWait(60);
@@ -1246,11 +1246,11 @@ void Korosseo_RunGreetScene(s32 a0)
     p9 = record->x.part.pixel;
     p10 = record->z.part.pixel;
     Engine_EventBegin();
-    Call3(Engine_ActorSetSpeed, a0, 0x10000, 0x8000);
-    Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-    Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
-    Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
-    Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
+    Actor_SetSpeed(a0, 0x10000, 0x8000);
+    Actor_SetSpeed(0, 0x10000, 0x8000);
+    Actor_SetSpeed(1, 0x10000, 0x8000);
+    Actor_SetSpeed(2, 0x10000, 0x8000);
+    Actor_SetSpeed(3, 0x10000, 0x8000);
     Engine_ActorSetPosition(0, (p9 << 16), ((p10 << 16) - 0x300000));
     Engine_ActorSetPosition(1, (p9 << 16) - 0x100000, (p10 << 16) - 0x280000);
     Engine_ActorSetPosition(2, (p9 << 16) + 0x100000, (p10 << 16) - 0x280000);
@@ -1457,7 +1457,7 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             ColossoLogRollingStage_WaitForSceneTask();
             /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
-            Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
+            Actor_SetSpeed(0, 0x18000, 0xc000);
             ColossoLogRollingStage_PositionScaledObject(0, 680, 200);
             if (work->raised_trigger != 5) {
                 do {
@@ -1469,9 +1469,9 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
             }
             ColossoLogRollingStage_ClampAndOffsetActiveActor();
             /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
-            Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
+            Actor_FaceDirection(0, 0xc000, 20);
             /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
-            Call3(Engine_ActorShowEmote, 0, 0x103, 60);
+            Actor_ShowEmote(0, 0x103, 60);
             Engine_EventShowMessage(scene, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(0, 0);

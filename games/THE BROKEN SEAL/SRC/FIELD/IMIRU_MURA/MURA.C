@@ -225,7 +225,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
     if (GameFlag_IsSet(2177) != 0) {
         Engine_EventBegin();
-        Call3(Engine_ActorFaceActor, 9, 0, 0);
+        Actor_FaceActor(9, 0, 0);
         Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgMakyuriReallySayDie);
         Event_AskYesNo(9, 0);
@@ -393,16 +393,16 @@ void ImiruMura_RunExitDoor(void)
 
         Engine_MapAnimateCells(ImiruMura_ExitCellSteps[exit - 1], x, y);
     }
-    Call3((void (*)())Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
+    Actor_SetSpeed(0, 0x8000, 0x4000);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (exit == 6) {
-        Call3((void (*)())Engine_ActorSetSpeed, 0, 0x3333, 0x1999);
+        Actor_SetSpeed(0, 0x3333, 0x1999);
         Engine_ActorSetAnimation(0, 2);
         Engine_ActorSetSpritePriority(0, 3);
-        Call3((void (*)())Engine_ActorSetDestinationOffset, 0, 0, -8);
+        Actor_SetDestinationOffset(0, 0, -8);
     } else {
         Object_GetById(0)->motion_flags = 0;
-        Call3((void (*)())Engine_ActorCenterAndWalk, 0, 3, -16);
+        Actor_CenterAndWalk(0, 3, -16);
     }
     Engine_EventWait(16);
     Engine_EventRequestExit(exit);
@@ -424,13 +424,13 @@ void ImiruMura_RunWeaponShop(void)
         Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgMakyuriCatchUpLostOpportunity);
         Engine_EventShowMessage(12, 0);
-        Call3(Engine_ActorFaceDirection, 12, 0x4000, 10);
+        Actor_FaceDirection(12, 0x4000, 10);
         Engine_EventEnd();
     } else {
         if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000) {
             Engine_EventBegin();
             Engine_CameraSetSpeed(0x60000, 0xc000);
-            Call4(Engine_CameraMoveTo, 0x1aa0000, -1, 0x1ec0000, 1);
+            Camera_MoveTo(0x1aa0000, -1, 0x1ec0000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(20);
             Object_SetActionCallbackAndRefreshById(12, (s32)ImiruMura_TurnScript);
@@ -458,13 +458,13 @@ void ImiruMura_RunArmorShop(void)
         Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgMakyuriShameStoreClosed);
         Engine_EventShowMessage(13, 0);
-        Call3(Engine_ActorFaceDirection, 13, 0x4000, 10);
+        Actor_FaceDirection(13, 0x4000, 10);
         Engine_EventEnd();
     } else {
         if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000) {
             Engine_EventBegin();
             Engine_CameraSetSpeed(0x60000, 0xc000);
-            Call4(Engine_CameraMoveTo, 0x1aa0000, -1, 0x1ec0000, 1);
+            Camera_MoveTo(0x1aa0000, -1, 0x1ec0000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(20);
             Object_SetActionCallbackAndRefreshById(13, (s32)ImiruMura_TurnScript);
@@ -491,7 +491,7 @@ void ImiruMura_RunItemShop(void)
         Engine_ActorFaceActor(15, 0, 0);
         Engine_EventSetMessage((s32)MsgMakyuriRecoveredThanksFountain);
         Engine_EventShowMessage(15, 0);
-        Call3(Engine_ActorFaceDirection, 15, 0x4000, 0);
+        Actor_FaceDirection(15, 0x4000, 0);
         Engine_EventEnd();
     } else {
         if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000) {
@@ -504,7 +504,7 @@ void ImiruMura_RunItemShop(void)
             Engine_ActorFaceActor(14, 0, 10);
             Engine_EventSetMessage((s32)MsgMakyuriDadLumberjack);
             Engine_EventShowMessage(14, 0);
-            Call3(Engine_ActorFaceDirection, 14, 0x5000, 10);
+            Actor_FaceDirection(14, 0x5000, 10);
         }
     }
 }
@@ -571,7 +571,7 @@ s32 ImiruMura_ApplyEntryState(void)
         leader = Object_GetById(0);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         Engine_ActorSetAnimation(10, 9);
-        if (Value1(Engine_GameFlagIsSet, 0x109)) {
+        if (GameFlag_IsSet(0x109)) {
             Engine_GameFlagClear(0x200);
             Engine_GameFlagClear(0x201);
         }
@@ -594,7 +594,7 @@ s32 ImiruMura_ApplyEntryState(void)
             Object_GetById(21)->collision_flags |= 8;
             Engine_ActorSetSpritePriority(21, 1);
             if (Engine_GameFlagIsSet(0x881)) {
-                Call6(Engine_MapCopyCellAttributes, 10, 7, 1, 1, 10, 8);
+                Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
                 Engine_MapCopyCellsTo(3, 125, 9, 69, 3, 3);
                 Engine_MapRedraw();
                 Engine_TaskWait(1);
@@ -605,13 +605,13 @@ s32 ImiruMura_ApplyEntryState(void)
                 Engine_ActorSetPosition(9, 0xae0000, 0xa40000);
                 Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
                 Engine_ActorSetAnimation(9, 5);
-                Call3(Engine_ActorSetPosition, 8, 0xa80000, 0x980000);
+                Actor_SetPosition(8, 0xa80000, 0x980000);
                 Object_GetById(8)->facing = 0x3000;
                 if (!Engine_GameFlagIsSet(0x82b)) {
                     FieldScene_RunPrimaryScriptChoreography();
                 }
             } else {
-                Call6(Engine_MapCopyCellAttributes, 10, 7, 1, 1, 10, 8);
+                Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
                 Engine_MapCopyCellsTo(3, 125, 9, 69, 3, 3);
                 Engine_MapRedraw();
                 Engine_TaskWait(1);
@@ -631,11 +631,11 @@ s32 ImiruMura_ApplyEntryState(void)
             }
         } else if (entrance == 4) {
             if (Engine_GameFlagIsSet(0x881)) {
-                Call3(Engine_ActorSetPosition, 12, 0x16c0000, 0x2420000);
+                Actor_SetPosition(12, 0x16c0000, 0x2420000);
                 Engine_ActorSetSpritePriority(12, 2);
                 Object_GetById(12)->collision_flags |= 4;
                 Engine_MapCopyCellsTo(6, 125, 22, 88, 3, 3);
-                Call3(Engine_ActorSetPosition, 13, 0x1ec0000, 0x2420000);
+                Actor_SetPosition(13, 0x1ec0000, 0x2420000);
                 Engine_ActorSetSpritePriority(13, 2);
                 Object_GetById(13)->collision_flags |= 4;
                 Engine_MapCopyCellsTo(9, 125, 28, 88, 3, 3);
@@ -648,14 +648,14 @@ s32 ImiruMura_ApplyEntryState(void)
             }
         } else if (entrance == 3) {
             if (Engine_GameFlagIsSet(0x881)) {
-                Call3(Engine_ActorSetPosition, 15, 0x1cc0000, 0x1020000);
+                Actor_SetPosition(15, 0x1cc0000, 0x1020000);
                 Engine_ActorSetSpritePriority(15, 2);
                 Object_GetById(15)->collision_flags |= 4;
                 Engine_ActorSetPosition(14, 0x1980000, 0x1080000);
                 Object_GetById(14)->facing = 0x1000;
                 Engine_MapCopyCellsTo(12, 125, 26, 70, 3, 3);
             } else {
-                Call3(Engine_ActorSetPosition, 14, 0x1cc0000, 0x1020000);
+                Actor_SetPosition(14, 0x1cc0000, 0x1020000);
                 Engine_ActorSetSpritePriority(14, 2);
                 Object_GetById(14)->collision_flags |= 4;
                 Object_GetById(15)->scale_x = -0x10000;
@@ -666,10 +666,10 @@ s32 ImiruMura_ApplyEntryState(void)
             if (Engine_GameFlagIsSet(0x881)) {
                 Object_GetById(20)->facing = 0x3000;
                 if (!Engine_GameFlagIsSet(0x82e)) {
-                    Call3(Engine_ActorSetPosition, 20, 0x28a0000, 0xa10000);
+                    Actor_SetPosition(20, 0x28a0000, 0xa10000);
                     FieldScene_RunThreeActorChoreography();
                 } else {
-                    Call3(Engine_ActorSetPosition, 20, 0x2840000, 0xa60000);
+                    Actor_SetPosition(20, 0x2840000, 0xa60000);
                 }
             }
         }
@@ -780,7 +780,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_EventWait(10);
     Event_ShowMessage(ACTOR_MIA, 0);
     Audio_PlayCue(131);
-    Call2(Engine_ColorBufferApplySource, 0x10000, 0);
+    ColorBuffer_ApplySource(0x10000, 0);
     ColorBuffer_ApplyTarget(0x207e9f, 0);
     Engine_ColorBufferInterpolate(10);
     Engine_TaskWait(1);

@@ -1391,7 +1391,7 @@ void MakyuriChojo_SinkActorPair(void)
     left = Object_GetById(22);
     right = Object_GetById(24);
     Engine_AudioPlayCue(190);
-    Call2(Engine_ActorSetChildValue, 22, 0x100);
+    Actor_SetChildValue(22, 0x100);
     Engine_ActorSetChildValue(24, 0x100);
     SetOverlayObjectMode(Object_GetById(22), 0);
     SetOverlayObjectMode(Object_GetById(24), 0);
@@ -1459,7 +1459,7 @@ void MakyuriChojo_RiseActorPair(void)
             Effect_Spawn(x, right->y.fixed + ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + 0x200000, right->z.fixed, 0, -0x40000, 0, 0x1b0000, p);
         }
         if (i == 20) {
-            Call2(Engine_ActorSetChildValue, 22, 0x100);
+            Actor_SetChildValue(22, 0x100);
             Engine_ActorSetChildValue(24, 0x100);
         }
     }

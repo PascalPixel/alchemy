@@ -209,7 +209,7 @@ void MogoruMori_RunProbedActorNineScene(void)
         if (probe.actor_slot == 9 && (probe.position_z >> 20) == 26) {
             Engine_GameFlagSet(0x310);
             Object_SetModeById(9, 3);
-            Call3(ObjectMotion_SetSpeedParameters, 9, 0x4000, 0x8000);
+            Actor_SetSpeed(9, 0x4000, 0x8000);
             ObjectMotion_OffsetPositionAndResetMotion(9, 0, -16);
             Battle_WaitMode0(45);
             Object_SetModeById(9, 8);
@@ -1019,21 +1019,21 @@ void MogoruMori_RunClosingChoreography(void)
     Engine_EventBegin();
     Engine_ActorSetChildValue(18, 15);
     Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
-    Call3(Engine_ActorSetPosition, 18, 0x880000, 0x1680000);
+    Actor_SetPosition(18, 0x880000, 0x1680000);
     Engine_CameraSetSpeed(0x8000, 0x1000);
-    Call4(Engine_CameraMoveTo, 0x880000, -1, 0x1880000, 1);
+    Camera_MoveTo(0x880000, -1, 0x1880000, 1);
     Engine_CameraWaitForMove();
     Battle_WaitMode0(60);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     MogoruMori_SpawnPuffRing(18);
     Engine_ActorStartRepeatedMotion(0, 2);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Engine_ActorFaceDirection(0, 0xc000, 20);
     Battle_WaitMode0(40);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     MogoruMori_SpawnPuffRing(18);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Battle_WaitMode0(40);
     MogoruMori_SpawnPuffRing(18);
@@ -1042,7 +1042,7 @@ void MogoruMori_RunClosingChoreography(void)
     Engine_ActorSetChildValue(18, 5);
     MogoruMori_HopActorTo(18, 136, 0x188, 0xf0000);
     Battle_WaitMode0(15);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     for (i = 0; i <= 16; i++) {
         v = &dir;
         /* FAKEMATCH: zero is set inside the loop (always entered) so it is materialized with the counter. */
@@ -1057,7 +1057,7 @@ void MogoruMori_RunClosingChoreography(void)
         Effect_Spawn(actor->x.fixed, 0, actor->z.fixed, x, v->y, z, 1, (const struct EffectOptions *)zero);
     }
     Battle_WaitMode0(30);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Audio_PlayCue(148);
     Engine_ActorRunRepeatedMotion(18, 2);
@@ -1109,19 +1109,19 @@ s32 FieldScene_RunSceneEntryHook(void)
         case 2:
         case 3:
         case 4:
-            if (Value1(Engine_GameFlagIsSet, 0x89c) == 0) {
+            if (GameFlag_IsSet(0x89c) == 0) {
                 Engine_EventBegin();
                 WaitFrames(1);
                 Engine_ActorSetChildValue(10, 1);
-                Call3(Engine_ActorSetPosition, 10, 0x5c0000, 0x780000);
-                Call3(Engine_ActorFaceDirection, 10, 0xd000, 0);
-                Call3(ObjectMotion_SetSpeedParameters, 0, 0x6666, 0x3333);
+                Actor_SetPosition(10, 0x5c0000, 0x780000);
+                Actor_FaceDirection(10, 0xd000, 0);
+                Actor_SetSpeed(0, 0x6666, 0x3333);
                 Engine_ActorWalkTo(0, 136, 64);
                 Engine_EventOpenScreen();
                 Engine_EventWaitForScreen();
                 ObjectMotion_CommitCurrentPositionAndActivate(0);
                 Battle_WaitMode0(30);
-                Call3(Engine_ActorShowEmote, 10, 256, 0);
+                Actor_ShowEmote(10, 256, 0);
                 Engine_ActorRunRepeatedMotion(10, 2);
                 Battle_WaitMode0(30);
                 MogoruMori_HopActorTo(10, 136, 116, 0x70000);
@@ -1139,7 +1139,7 @@ s32 FieldScene_RunSceneEntryHook(void)
                 break;
             }
             Engine_ActorSetChildValue(10, 15);
-            Call3(Engine_ActorSetPosition, 10, 0x880000, 0x740000);
+            Actor_SetPosition(10, 0x880000, 0x740000);
             break;
 
         case 7:
@@ -1170,9 +1170,9 @@ s32 FieldScene_RunSceneEntryHook(void)
                 break;
             }
             WaitFrames(1);
-            Call3(Engine_ActorSetPosition, 9, 0x2100000, 0x1980000);
+            Actor_SetPosition(9, 0x2100000, 0x1980000);
             Object_SetModeById(9, 4);
-            Call6(Map_CopyCellAttributeRect, 38, 27, 4, 2, 31, 25);
+            Map_CopyCellAttributes(38, 27, 4, 2, 31, 25);
             Object_GetById(9)->priority_flags = 2;
             break;
         }
@@ -1203,10 +1203,10 @@ s32 FieldScene_RunSceneEntryHook(void)
                 s32 attr = 0;
 
                 WaitFrames(1);
-                Call3(Engine_ActorSetPosition, 10, 0x2280000, 0x1fe0000);
+                Actor_SetPosition(10, 0x2280000, 0x1fe0000);
                 Object_SetModeById(10, 4);
                 Object_GetById(10)->priority_flags = 2;
-                Call6(Map_CopyCellAttributeRect, 44, 30, 2, 4, 34, 30);
+                Map_CopyCellAttributes(44, 30, 2, 4, 34, 30);
 #if EDITION_INTERNATIONAL
                 StagedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, attr);
 #endif
@@ -1228,8 +1228,8 @@ s32 FieldScene_RunSceneEntryHook(void)
             if (Engine_GameFlagIsSet(0x305) == 0) {
                 break;
             }
-            Call3(Engine_ActorSetPosition, 14, 0x1a80000, 0x1e00000);
-            Call3(Engine_ActorSetPosition, 17, 0x1a80000, 0x1e00000);
+            Actor_SetPosition(14, 0x1a80000, 0x1e00000);
+            Actor_SetPosition(17, 0x1a80000, 0x1e00000);
             break;
         }
     } else if (area == (s32)&SceneId_MogoruMori3) {
@@ -1284,9 +1284,9 @@ s32 FieldScene_RunSceneEntryHook(void)
                 Object_SetModeById(9, 4);
                 Engine_ActorSetPosition(9, 0x2ba0000, 0x18e0000);
                 Object_GetById(9)->priority_flags |= 2;
-                Call6(Map_CopyCellAttributeRect, 26, 20, 2, 4, 42, 23);
+                Map_CopyCellAttributes(26, 20, 2, 4, 42, 23);
                 Engine_GameFlagSet(532);
-                Call3(Engine_ActorSetPosition, 14, 0x2780000, 0x1b80000);
+                Actor_SetPosition(14, 0x2780000, 0x1b80000);
                 Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
             }
             if (Engine_GameFlagIsSet(0x313) == 0) {
@@ -1296,7 +1296,7 @@ s32 FieldScene_RunSceneEntryHook(void)
                 Object_SetModeById(11, 4);
                 Engine_ActorSetPosition(11, 0x29a0000, 0x2260000);
                 Object_GetById(11)->priority_flags = 2;
-                Call6(Map_CopyCellAttributeRect, 26, 20, 2, 4, 40, 32);
+                Map_CopyCellAttributes(26, 20, 2, 4, 40, 32);
             }
             pos = Object_GetById(14)->x.fixed;
             tmp = Object_GetById(14)->z.fixed;
@@ -1309,8 +1309,8 @@ s32 FieldScene_RunSceneEntryHook(void)
                 Engine_ActorSetChildValue(18, 15);
                 Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
                 if (Engine_GameFlagIsSet(0x30a) != 0) {
-                    Call3(Engine_ActorSetPosition, 22, 0x2e80000, 0x1f80000);
-                    Call3(Engine_ActorSetPosition, 18, 0x2e80000, 0x1f80000);
+                    Actor_SetPosition(22, 0x2e80000, 0x1f80000);
+                    Actor_SetPosition(18, 0x2e80000, 0x1f80000);
                 }
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             } else {

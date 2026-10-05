@@ -253,7 +253,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
         record->collision_flags = 8 | record->collision_flags;
     }
     if (Engine_GameFlagIsSet(0x865) != 0) {
-        Call6(Engine_MapCopyCellAttributes, 74, 11, 1, 1, 73, 11);
+        Map_CopyCellAttributes(74, 11, 1, 1, 73, 11);
     }
     if (Engine_GameFlagIsSet(0x860) != 0) {
         Engine_ActorSetPosition(8, 0x880000, 0xc40000);
@@ -264,12 +264,12 @@ s32 GomaIriguchi_RestoreEntryState(void)
         Engine_MapCopyCellAttributes(43, 11, 3, 1, v5, 11);
     }
     if (Engine_GameFlagIsSet(0x861) != 0) {
-        Call3(Engine_ActorSetPosition, 9, 0x1080000, 0x1380000);
-        Call6(Engine_MapCopyCellAttributes, 48, 18, 1, 2, 16, 18);
+        Actor_SetPosition(9, 0x1080000, 0x1380000);
+        Map_CopyCellAttributes(48, 18, 1, 2, 16, 18);
     } else {
         if (Engine_GameFlagIsSet(0x862) != 0) {
-            Call3(Engine_ActorSetPosition, 9, 0x1180000, 0x1380000);
-            Call6(Engine_MapCopyCellAttributes, 47, 18, 1, 2, 16, 18);
+            Actor_SetPosition(9, 0x1180000, 0x1380000);
+            Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
         }
     }
     if (Engine_GameFlagIsSet(0x863) != 0) {
@@ -279,7 +279,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
         Object_GetById(10)->motion_flags = v5;
         record = (s32)Object_GetById(10);
         Engine_ActorSetSpriteFlags((s32)record, 0);
-        Call6(Engine_MapCopyCellAttributes, 54, 17, 1, 1, 23, 17);
+        Map_CopyCellAttributes(54, 17, 1, 1, 23, 17);
     }
     return 0;
 }
@@ -567,7 +567,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
         actor->hover = 0x80000000;
     }
     actor->callback = (s32)OverlayObject_TurnStateByEighth;
-    Call3(Engine_ActorSetSpeed, id, 0x30000, 0x18000);
+    Actor_SetSpeed(id, 0x30000, 0x18000);
     Engine_ActorSetDestination(id, 160, 192);
     actor->accel = 0xcccc;
     actor->layer = 3;
@@ -575,9 +575,9 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     Engine_ActorWaitForMove(id);
     OverlayObject_WaitForHeight((s32)actor, 0x200000);
     Engine_AudioPlayCue(188);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Engine_AudioPlayCue(141);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     for (i = 0; i <= 16; i++) {
         v = &dir;
         /* FAKEMATCH: zero is set inside the loop (always entered) so it is materialized after the counter and the direction pointer. */

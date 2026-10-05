@@ -213,18 +213,18 @@ void BabiIriguchi_JumpFromLedge(void)
     if ((rec7->z.fixed >> 20) == 20) {
         rec7->target_x = -0x80000000;
         rec7->target_z = -0x80000000;
-        Call3(Engine_ActorShowEmote, 0, 0x100, 20);
-        Call3(ObjectMotion_SetSpeedParameters, 0, 0x20000, 0x10000);
+        Actor_ShowEmote(0, 0x100, 20);
+        Actor_SetSpeed(0, 0x20000, 0x10000);
         Engine_ActorJump(0, 4, 0);
 { u16 dir = rec7->facing; if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff) goto step_down; }
         ObjectMotion_OffsetPositionAndResetMotion(0, 16, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
-        Call3(Engine_ActorFaceDirection, 0, FACING_WEST, 20);
+        Actor_FaceDirection(0, FACING_WEST, 20);
         goto done;
         step_down:;
         Call3(ObjectMotion_OffsetPositionAndResetMotion, 0, 0, -16);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
-        Call3(Engine_ActorFaceDirection, 0, FACING_SOUTH, 20);
+        Actor_FaceDirection(0, FACING_SOUTH, 20);
     }
     done:;
     SceneState_ApplyRectsAtActors8And9();

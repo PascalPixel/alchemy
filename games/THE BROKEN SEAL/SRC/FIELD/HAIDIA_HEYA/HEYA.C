@@ -1,6 +1,7 @@
 #include "TIMED_EVENTS.H"
 #include "CALL.H"
 #include "FXBLEND.H"
+#include "FIELD_EVENT.H"
 
 extern u8 MsgHaidiaDidYouHearAboutDora[];
 extern u8 MsgHaidiaLetsScareSukuretasVisitors[];
@@ -487,7 +488,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_FaceDirection(10, 0x5000, 60);
     Engine_ActorStartRepeatedMotion(10, 2);
     Engine_ActorStartRepeatedMotion(11, 2);
-    Call11(Engine_EventShowTwoMessagesAndWait, 10, 11, 6, 6, 6, 11, 12, 1, 7, 1, v6);
+    Event_ShowTwoMessagesAndWait(10, 11, 6, 6, 6, 11, 12, 1, 7, 1, v6);
     Engine_EventWait(20);
     Camera_SetSpeed(0x19999, 0x3333);
     Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);

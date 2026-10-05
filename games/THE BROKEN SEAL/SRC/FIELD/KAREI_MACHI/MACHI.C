@@ -531,7 +531,7 @@ void KareiMachi_RunExitDoor(void)
     Engine_ActorSetSpeed(0, 0x8000, 0x4000);
     Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(0, 2);
-    Call3(Engine_ActorCenterAndWalk, 0, 2, -8);
+    Actor_CenterAndWalk(0, 2, -8);
     Engine_EventWait(10);
     Engine_EventRequestExit(*trigger);
     Engine_EventCloseScreen();
@@ -1102,7 +1102,7 @@ void KareiMachi_SetupEntryActors(void)
         Engine_GameFlagSet(0x321);
     }
     if (gGameState.entrance == 14) {
-        Call3(Engine_ActorSetPosition, 25, 0x1a80000, 0x580000);
+        Actor_SetPosition(25, 0x1a80000, 0x580000);
     }
     Engine_ActorSetChildValue(21, 2);
     found = Engine_GameFlagIsSet(0x916);
@@ -1368,8 +1368,8 @@ void KareiMachi_SpeedUpActors(s32 a0, s32 a1)
 
         KareiMachi_DanceStep = zero;
     }
-    Call3(Engine_ActorSetSpeed, 20, 0x19999, 0xcccc);
-    Call3(Engine_ActorSetSpeed, 21, 0x19999, 0xcccc);
+    Actor_SetSpeed(20, 0x19999, 0xcccc);
+    Actor_SetSpeed(21, 0x19999, 0xcccc);
     ((s32 (*)())Engine_TaskAddCallback)((s32)KareiMachi_AlternateDance, 0xc80);
 }
 
@@ -1547,7 +1547,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Call3((void (*)())Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
+    Actor_SetSpeed(8, 0xcccc, 0x6666);
     Engine_ActorSetSpeed(9, 0xcccc, 0x6666);
     actor = Actor_Get(8);
     actor->facing = 0;
@@ -2138,7 +2138,7 @@ void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
         Engine_ActorSetSpriteFlags((s32)rec7, 0);
         value = Random_Next();
         *(s32 *)((s32)rec7 + 36) = ((((u32)(value << 1) >> 16) - 1) << 16);
-        value = Value0(Engine_RandomNext);
+        value = Random_Next();
         *(s32 *)((s32)rec7 + 40) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
         {
             u16 *target = (u16 *)((s32)rec7 + 100);

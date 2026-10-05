@@ -5,6 +5,7 @@
 #include "IWRAM_CALL.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
+#include "FIELD_EVENT.H"
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 
@@ -435,7 +436,7 @@ s32 WorldMap_EnterScene(void)
         }
         switch (*entrance) {
         case 1:
-            if (Value1(Engine_GameFlagIsSet, 0x815) == 0) {
+            if (GameFlag_IsSet(0x815) == 0) {
                 Engine_GameFlagSet(0x815);
                 Engine_GameFlagSet(0x85c);
             }
@@ -444,7 +445,7 @@ s32 WorldMap_EnterScene(void)
             if (Engine_GameFlagIsSet(0x109) != 0) {
                 if (Engine_GameFlagIsSet(0x85d) == 0 && Engine_GameFlagIsSet(0x234) != 0) {
                     gWorldMapTriggerActor = 55;
-                    Call3(Engine_ActorSetPosition, 55, 0x17940000, 0xd480000);
+                    Actor_SetPosition(55, 0x17940000, 0xd480000);
                     Object_GetById(gWorldMapTriggerActor)->facing = 0x3000;
                     WorldMap_ActivateSite138(gWorldMapTriggerActor);
                 }

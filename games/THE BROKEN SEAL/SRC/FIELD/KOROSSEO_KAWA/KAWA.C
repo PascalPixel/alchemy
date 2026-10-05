@@ -327,7 +327,7 @@ void KorosseoKawa_RaisePlatformPair(void)
     ((struct FieldActor *)rec7)->acceleration = 0x6666;
     ((struct FieldActor *)rec7)->speed = 0xcccc;
     Call4(Object_SetMoveTarget, (s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x80000, ((struct FieldActor *)rec7)->z.fixed);
-    rec7 = Value1(Object_GetById, 14);
+    rec7 = Actor_Get(14);
     ((struct FieldActor *)rec7)->motion_flags = none;
     ((struct FieldActor *)rec7)->acceleration = 0x6666;
     ((struct FieldActor *)rec7)->speed = 0xcccc;
@@ -965,7 +965,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
         if (rec4 == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoAreaCalledPipeworks);
             Engine_CameraSetSpeed(0x30000, 0x6000);
-            Call4((void (*)())Engine_CameraMoveTo, 0x2500000, -1, 0x780000, 1);
+            Camera_MoveTo(0x2500000, -1, 0x780000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(60);
             Engine_CameraSetSpeed(0x18000, 0x3000);
@@ -996,7 +996,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             first->acceleration = 0x6666;
             first->speed = 0xcccc;
             Engine_ObjectSetPosition(first, first->x.fixed, 0x180000, first->z.fixed);
-            second = (struct FieldActor *)Value1((s32 (*)())Object_GetById, 14);
+            second = (struct FieldActor *)Actor_Get(14);
             second->motion_flags = 0;
             second->acceleration = 0x6666;
             second->speed = 0xcccc;

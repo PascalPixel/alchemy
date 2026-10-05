@@ -156,11 +156,11 @@ void Scene_RunTableTransition(void)
     Object_GetById(0)->motion_flags = 2;
     Engine_AudioPlayCue(158);
     if (no == 6) {
-        Call3(Engine_MapAnimateCells, (s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
-        Call3(Engine_ActorWalkBy, 0, 0, -16);
+        Map_AnimateCells((s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
+        Actor_WalkBy(0, 0, -16);
     } else {
-        Call3(Engine_MapAnimateCells, (s32)RariberoMachi_DoorOpenSteps, (u16)x, (u16)y);
-        Call3(Engine_ActorCenterAndWalk, 0, 2, -16);
+        Map_AnimateCells((s32)RariberoMachi_DoorOpenSteps, (u16)x, (u16)y);
+        Actor_CenterAndWalk(0, 2, -16);
     }
     Engine_EventWait(10);
     gEventWork->transition_frames = 16;
@@ -420,7 +420,7 @@ void FieldScene_RunSecondarySequence(void)
     Actor_SetSpeed(22, 0xcccc, 0x6666);
     Object_GetById(22)->motion_flags = 2;
     Engine_ActorSetSpritePriority(22, 2);
-    Call6(Engine_MapCopyCellsTo, 34, 0, 1, 2, 4, 18);
+    Map_CopyCellsTo(34, 0, 1, 2, 4, 18);
     Audio_PlayCue(158);
     Engine_EventWait(20);
     Actor_SetPosition(22, 0x480000, 0x1380000);
@@ -587,7 +587,7 @@ void FieldScene_RunSecondarySequence(void)
     Actor_WalkByAndWait(22, -16, 0);
     Actor_FaceDirection(22, 0xc000, 0);
     Engine_EventWait(20);
-    Call6(Engine_MapCopyCellsTo, 34, 0, 1, 2, 4, 18);
+    Map_CopyCellsTo(34, 0, 1, 2, 4, 18);
     Audio_PlayCue(158);
     Engine_EventWait(10);
     Actor_WalkByAndWait(22, 0, -16);

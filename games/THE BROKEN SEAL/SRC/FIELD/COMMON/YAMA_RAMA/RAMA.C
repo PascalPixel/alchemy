@@ -726,10 +726,10 @@ s32 YamaRama_ApplyEntryState(void)
         Engine_ActorSetAnimation(11, 5);
         Engine_ActorSetAnimation(12, 5);
         Engine_ActorSetAnimation(14, 2);
-        Call6(Engine_MapCopyCellAttributes, 21, 9, 1, 1, 21, 73);
+        Map_CopyCellAttributes(21, 9, 1, 1, 21, 73);
         ConfigureAndPlaceActorFourteen();
         if (Engine_GameFlagIsSet(0x8b2)) {
-            Call3(Engine_ActorSetPosition, 13, 0x880000, 0x1000000);
+            Actor_SetPosition(13, 0x880000, 0x1000000);
             Engine_ActorFaceDirection(13, 0, 0);
         }
         entrance = gGameState.entrance;
@@ -755,13 +755,13 @@ s32 YamaRama_ApplyEntryState(void)
         if (!Engine_GameFlagIsSet(0x89a) && !Engine_GameFlagIsSet(0x895) && !Engine_GameFlagIsSet(0x8b2)) {
             Engine_ActorSetPosition(10, 0, 0);
         }
-        if (!Value1(Engine_GameFlagIsSet, 0x8b2) && Engine_GameFlagIsSet(0x895) && gGameState.entrance == 2) {
+        if (!GameFlag_IsSet(0x8b2) && Engine_GameFlagIsSet(0x895) && gGameState.entrance == 2) {
             Engine_ActorSetPosition(11, 0, 0);
             Engine_GameFlagSet(0x8b2);
             Engine_GameFlagSet(0x8b3);
             Engine_ActorSetPosition(10, 0, 0);
         }
-        if (Value1(Engine_GameFlagIsSet, 0x8b2)) {
+        if (GameFlag_IsSet(0x8b2)) {
             Engine_MapCopyCellsTo(54, 21, 53, 21, 1, 2);
             Engine_MapCopyCellAttributes(18, 20, 1, 3, 17, 21);
             Engine_MapCopyCellsTo(44, 18, 43, 17, 1, 1);
@@ -770,16 +770,16 @@ s32 YamaRama_ApplyEntryState(void)
         if (Engine_GameFlagIsSet(0x895) && !Engine_GameFlagIsSet(0x8b2)) {
             Engine_ActorSetPosition(12, 0, 0);
             Engine_ActorSetPosition(13, 0, 0);
-            Call3(Engine_ActorSetPosition, 8, 0xc00000, 0x1080000);
-            Call3(Engine_ActorSetPosition, 9, 0xa40000, 0x1180000);
-            Call3(Engine_ActorSetPosition, 10, 0xb80000, 0x1300000);
-            Call3(Engine_ActorFaceDirection, 8, 0x5000, 0);
-            Call3(Engine_ActorFaceDirection, 10, 0xb000, 0);
+            Actor_SetPosition(8, 0xc00000, 0x1080000);
+            Actor_SetPosition(9, 0xa40000, 0x1180000);
+            Actor_SetPosition(10, 0xb80000, 0x1300000);
+            Actor_FaceDirection(8, 0x5000, 0);
+            Actor_FaceDirection(10, 0xb000, 0);
             Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
             Object_GetById(9)->scale_x = -0x10000;
         }
-        if (!Value1(Engine_GameFlagIsSet, 0x8b2)) {
-            Call3(Engine_ActorSetPosition, 9, 0xa40000, 0x1180000);
+        if (!GameFlag_IsSet(0x8b2)) {
+            Actor_SetPosition(9, 0xa40000, 0x1180000);
             Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
             Object_GetById(9)->scale_x = -0x10000;
         }

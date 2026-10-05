@@ -3,6 +3,7 @@
 #include "FIELD_SCENE.H"
 #include "KANPAN.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 
 union Slot {
     s32 w;
@@ -66,7 +67,7 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
         case 1:
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
-            Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0x10c0000, 0x140000, 0x2b40000);
+            FieldObject_SetPosition((s32)obj, 0x10c0000, 0x140000, 0x2b40000);
             GULL(obj)->step++;
             break;
         case 2:
@@ -94,9 +95,9 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
             break;
         case 5:
             if (GULL(obj)->right_side != 0)
-                Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0x11a0000, 0, 0x2920000);
+                FieldObject_SetPosition((s32)obj, 0x11a0000, 0, 0x2920000);
             else
-                Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0xfe0000, 0, 0x29c0000);
+                FieldObject_SetPosition((s32)obj, 0xfe0000, 0, 0x29c0000);
             GULL(obj)->step++;
             break;
         case 6:
@@ -151,7 +152,7 @@ s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
         case 1:
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
-            Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0x1000000, 0x140000, 0x2800000);
+            FieldObject_SetPosition((s32)obj, 0x1000000, 0x140000, 0x2800000);
             GULL(obj)->step++;
             break;
         case 2:
@@ -179,9 +180,9 @@ s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
             break;
         case 5:
             if (GULL(obj)->right_side != 0)
-                Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0x1080000, 0, 0x2580000);
+                FieldObject_SetPosition((s32)obj, 0x1080000, 0, 0x2580000);
             else
-                Call4((void (*)())Engine_ObjectSetPosition, (s32)obj, 0xf20000, 0, 0x25c0000);
+                FieldObject_SetPosition((s32)obj, 0xf20000, 0, 0x25c0000);
             GULL(obj)->step++;
             break;
         case 6:

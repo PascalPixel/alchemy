@@ -82,7 +82,7 @@ void KorimaKi_RunMessageScene(void)
     if (Engine_GameFlagIsSet(0x845) != 0) {
         Engine_EventSetMessage((s32)MsgKorimaForestKolimaAlive);
         Engine_EventShowMessage(9, 0);
-    } else if (Value1(Engine_GameFlagIsSet, 0x84c) != 0) {
+    } else if (GameFlag_IsSet(0x84c) != 0) {
         Engine_EventSetMessage((s32)MsgKorimaLeaveBeforeForest);
         Engine_EventShowMessage(9, 0);
     } else {

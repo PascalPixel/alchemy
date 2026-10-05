@@ -146,7 +146,7 @@ void FieldScene_RunActorPresentationSequence(void)
     Actor_SetAttachedEffect(ACTOR_JASMINE, 0x102);
     Engine_EventWait(40);
     Battle_SetObjectFlag5bWhenMode3();
-    Call11(Engine_EventShowTwoMessagesAndWait, 5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
+    Event_ShowTwoMessagesAndWait(5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
     Engine_EventWait(20);
     Map_LoadDefaultCellsAndUpdateBlock();
     Camera_SetSpeed(0x10000, 0x2000);

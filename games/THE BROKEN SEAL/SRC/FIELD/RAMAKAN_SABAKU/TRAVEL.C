@@ -173,7 +173,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
                      ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd, 0x800000, &params);
     }
     if (hit < 0) {
-        Call2((void (*)())Engine_ActorSetAttachedEffect, id, 0x102);
+        Actor_SetAttachedEffect(id, 0x102);
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + 0x80000);
         Object_SetMode(actor, 7);
         Engine_ObjectCommitPosition(actor);
@@ -281,7 +281,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
         RamakanSabaku_ClaimSandEffectVram();
         Engine_TaskAddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
         if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {
-            Call6(Engine_MapCopyCells, 22, 7, 4, 2, 64, 126);
+            Map_CopyCells(22, 7, 4, 2, 64, 126);
             Engine_MapCopyCells(8, 10, 4, 2, 68, 126);
             Engine_MapCopyCells(23, 21, 4, 2, 72, 126);
             Engine_MapCopyCells(16, 42, 4, 2, 76, 126);
@@ -291,7 +291,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
             if (gGameState.scene != (s32)&SceneId_RamakanSabaku2) {
                 goto third_area;
             }
-            Call6(Engine_MapCopyCells, 42, 5, 4, 2, 64, 126);
+            Map_CopyCells(42, 5, 4, 2, 64, 126);
             Engine_MapCopyCells(20, 11, 4, 2, 68, 126);
             Engine_MapCopyCells(14, 12, 4, 2, 72, 126);
             Engine_MapCopyCells(56, 18, 4, 2, 76, 126);

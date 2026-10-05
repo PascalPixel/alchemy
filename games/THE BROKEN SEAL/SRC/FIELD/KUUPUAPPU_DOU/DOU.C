@@ -844,11 +844,11 @@ s32 KuupuappuDou_ApplyEntryState(void)
         case 8:
         case 13:
             if (Engine_GameFlagIsSet(0x9a8) == 0) {
-                Call6((void (*)())Engine_MapCopyCellAttributes, 22, 29, 1, 1, 21, 29);
+                Map_CopyCellAttributes(22, 29, 1, 1, 21, 29);
             } else {
                 Engine_MapCopyCells(108, 27, 1, 1, 92, 27);
                 Engine_TaskWait(1);
-                Call6((void (*)())Engine_MapCopyCells, 19, 83, 15, 8, 19, 91);
+                Map_CopyCells(19, 83, 15, 8, 19, 91);
                 Engine_TaskWait(1);
                 Engine_MapCopyCells(2, 24, 1, 2, 25, 27);
             }
@@ -870,9 +870,9 @@ s32 KuupuappuDou_ApplyEntryState(void)
         case 3:
         case 4:
             if (Engine_GameFlagIsSet(0x9a8) == 0) {
-                Call6((void (*)())Engine_MapCopyCells, 5, 81, 11, 7, 5, 73);
+                Map_CopyCells(5, 81, 11, 7, 5, 73);
             } else {
-                Call6((void (*)())Engine_MapCopyCellAttributes, 5, 12, 1, 1, 6, 12);
+                Map_CopyCellAttributes(5, 12, 1, 1, 6, 12);
                 Engine_MapCopyCellAttributes(12, 10, 1, 1, 12, 11);
             }
             break;
@@ -910,7 +910,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
         case 11:
             if (Engine_GameFlagIsSet(0x9a9) != 0) {
                 SceneState_ApplyThreeRects();
-                Call3((void (*)())Engine_ActorSetPosition, 9, 0xf80000, 0x36c0000);
+                Actor_SetPosition(9, 0xf80000, 0x36c0000);
             }
             Object_GetById(8)->priority_flags = 2;
             break;
@@ -944,7 +944,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
             Object_GetById(9)->collision_flags = 1;
             if (Engine_GameFlagIsSet(0x9aa) != 0) {
                 SceneState_ApplyThreeRectsRows9And10();
-                Call3((void (*)())Engine_ActorSetPosition, 10, 0x1080000, 0xcc0000);
+                Actor_SetPosition(10, 0x1080000, 0xcc0000);
             }
             break;
         }

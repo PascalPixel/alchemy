@@ -527,7 +527,7 @@ void FieldScene_ConfigureFlaggedActors(void)
     u8 zero;
 
     FieldScene_PlaceSlots14And15();
-    if (Value1(Engine_GameFlagIsSet, 0x950)) {
+    if (GameFlag_IsSet(0x950)) {
         Engine_ActorSetChildValue(12, 2);
     }
     if (((union GameStateRows *)&gGameState)->halves[225][0] == 3) {
@@ -537,18 +537,18 @@ void FieldScene_ConfigureFlaggedActors(void)
         Engine_GameFlagClear(0x8aa);
     }
     if (Engine_GameFlagIsSet(0x8aa)) {
-        Call3(Engine_ActorSetPosition, 8, 0x1980000, 0x1280000);
-        Call3(Engine_ActorFaceDirection, 8, 0x8000, 0);
+        Actor_SetPosition(8, 0x1980000, 0x1280000);
+        Actor_FaceDirection(8, 0x8000, 0);
     }
     if (Engine_GameFlagIsSet(0x8ab)) {
-        Call3(Engine_ActorSetPosition, 13, 0x1180000, 0x1280000);
-        Call3(Engine_ActorFaceDirection, 13, 0xc000, 0);
-        Call3(Engine_ActorSetPosition, 16, 0x1200000, 0x1180000);
-        Call3(Engine_ActorFaceDirection, 16, 0xe000, 0);
-        Call3(Engine_ActorSetPosition, 10, 0xe80000, 0x1300000);
-        Call3(Engine_ActorFaceDirection, 10, 0x4000, 0);
-        Call3(Engine_ActorSetPosition, 11, 0xf00000, 0x1380000);
-        Call3(Engine_ActorFaceDirection, 11, 0xc000, 0);
+        Actor_SetPosition(13, 0x1180000, 0x1280000);
+        Actor_FaceDirection(13, 0xc000, 0);
+        Actor_SetPosition(16, 0x1200000, 0x1180000);
+        Actor_FaceDirection(16, 0xe000, 0);
+        Actor_SetPosition(10, 0xe80000, 0x1300000);
+        Actor_FaceDirection(10, 0x4000, 0);
+        Actor_SetPosition(11, 0xf00000, 0x1380000);
+        Actor_FaceDirection(11, 0xc000, 0);
         actor = Object_GetById(10);
         actor->collision_flags = 0;
         actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
@@ -562,7 +562,7 @@ void FieldScene_ConfigureFlaggedActors(void)
         ((u8 *)actor->sprite)[21] |= 12;
     }
     if (Engine_GameFlagIsSet(0x950)) {
-        Call6(Engine_MapCopyCellAttributes, 18, 18, 1, 1, 14, 18);
+        Map_CopyCellAttributes(18, 18, 1, 1, 14, 18);
         Engine_MapCopyCellAttributes(18, 18, 1, 1, 15, 18);
     }
 }

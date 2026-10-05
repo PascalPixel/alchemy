@@ -6,6 +6,7 @@
 #include "KANPAN.H"
 #include "CALL.H"
 #include "SCENE_IDS.H"
+#include "FIELD_SERVICE.H"
 
 union Slot {
     s32 w;
@@ -292,7 +293,7 @@ s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
         obj->velocity_y = 0x40000;
         obj->speed = 0x40000;
         obj->acceleration = 0x20000;
-        Call4(Engine_ObjectSetPosition, (s32)obj, 0x1080000, 0, 0x2960000);
+        FieldObject_SetPosition((s32)obj, 0x1080000, 0, 0x2960000);
         gull->step++;
         break;
     case 3:
@@ -303,14 +304,14 @@ s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
             gull->step++;
             Engine_AudioPlayCue(152);
             if (obj->rise_enabled != 0) {
-                Call3(Engine_ActorFaceDirection, 21, 0xb000, 0);
+                Actor_FaceDirection(21, 0xb000, 0);
             } else {
-                Call3(Engine_ActorFaceDirection, 21, 0x5000, 0);
+                Actor_FaceDirection(21, 0x5000, 0);
             }
             if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
                 Object_GetById(21)->velocity_y = 0x20000;
             } else {
-                Call3(Engine_ActorShowEmote, 21, 0x103, 0);
+                Actor_ShowEmote(21, 0x103, 0);
                 Object_GetById(21)->velocity_y = 0x60000;
             }
         }
@@ -324,9 +325,9 @@ s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
         obj->speed = 0x20000;
         obj->acceleration = 0x10000;
         if (obj->rise_enabled != 0) {
-            Call4(Engine_ObjectSetPosition, (s32)obj, 0xfc0000, 0, 0x2860000);
+            FieldObject_SetPosition((s32)obj, 0xfc0000, 0, 0x2860000);
         } else {
-            Call4(Engine_ObjectSetPosition, (s32)obj, 0x1000000, 0, 0x2ae0000);
+            FieldObject_SetPosition((s32)obj, 0x1000000, 0, 0x2ae0000);
         }
         break;
     case 7:
@@ -362,7 +363,7 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
         obj->velocity_y = 0x40000;
         obj->speed = 0x40000;
         obj->acceleration = 0x20000;
-        Call4(Engine_ObjectSetPosition, (s32)obj, 0xb00000, 0, 0x2b80000);
+        FieldObject_SetPosition((s32)obj, 0xb00000, 0, 0x2b80000);
         gull->step++;
         break;
     case 3:
@@ -373,14 +374,14 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
             gull->step++;
             Engine_AudioPlayCue(152);
             if (obj->rise_enabled != 0) {
-                Call3(Engine_ActorFaceDirection, 22, 0xd000, 0);
+                Actor_FaceDirection(22, 0xd000, 0);
             } else {
                 Engine_ActorFaceDirection(22, 0, 0);
             }
             if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
                 Object_GetById(22)->velocity_y = 0x20000;
             } else {
-                Call3(Engine_ActorShowEmote, 22, 0x103, 0);
+                Actor_ShowEmote(22, 0x103, 0);
                 Object_GetById(22)->velocity_y = 0x60000;
             }
         }
@@ -394,9 +395,9 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
         obj->speed = 0x20000;
         obj->acceleration = 0x10000;
         if (obj->rise_enabled != 0) {
-            Call4(Engine_ObjectSetPosition, (s32)obj, 0xb80000, 0, 0x2a00000);
+            FieldObject_SetPosition((s32)obj, 0xb80000, 0, 0x2a00000);
         } else {
-            Call4(Engine_ObjectSetPosition, (s32)obj, 0xca0000, 0, 0x2b40000);
+            FieldObject_SetPosition((s32)obj, 0xca0000, 0, 0x2b40000);
         }
         break;
     case 7:
@@ -617,7 +618,7 @@ void FuneKanpan_RunDeckStateEvent(void)
         break;
     }
     if (v5 != 0) {
-        Call3(ObjectMotion_SetSpeedParameters, 0, 0x9999, 0x4ccc);
+        Actor_SetSpeed(0, 0x9999, 0x4ccc);
         Call3(ObjectMotion_CenterOnColumn, 0, 1, -10);
         Battle_WaitMode0(10);
     } else {
@@ -632,7 +633,7 @@ void FuneKanpan_RunDeckStateEventFromEntry(void)
     /* FAKEMATCH: the measured Call3 spelling sets actor and x before shifting z; a direct call changes six bytes of argument setup. */
     if ((u16)(Object_GetById(ACTOR_PARTY_LEADER)->facing - 0x6001) <= 0x3ffe) {
         Engine_EventBegin();
-        Call3(Engine_ActorWalkTo, ACTOR_PARTY_LEADER, 214, 664);
+        Actor_WalkTo(ACTOR_PARTY_LEADER, 214, 664);
         ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
         FuneKanpan_RunDeckStateEvent();
     }
@@ -1027,7 +1028,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         }
         Engine_ActorEnableActionCallback(21, FuneKanpan_RandomActorActions);
         Engine_ActorSetPosition(24, 0xf80000, 0x2a80000);
-        a = Value1(Object_GetById, 24);
+        a = Actor_Get(24);
         record = Engine_RandomNext();
         a += 100;
         *(u16 *)a = (Math_RemainderUnsigned(record, 90) + 60);
@@ -1035,7 +1036,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         Engine_ActorSetPosition(22, 0, 0);
     } else {
         if (Engine_GameFlagIsSet(0x923) != 0) {
-            Call3(Engine_ActorSetPosition, 20, 0xf60000, 0x2000000);
+            Actor_SetPosition(20, 0xf60000, 0x2000000);
             record = (s32)Object_GetById(20);
             *(u16 *)(record + 6) = rec7;
         }
@@ -1148,15 +1149,15 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptE);
     Engine_TaskWait(1);
     Engine_ActorDestroy(24);
-    Call3(Engine_ActorSetPosition, 23, 0xee0000, 0x2720000);
+    Actor_SetPosition(23, 0xee0000, 0x2720000);
     v5 = 192;
     record = Object_GetById(23);
     record->facing = (v5 << 6);
     if (Engine_GameFlagIsSet(0x903) != 0) {
-        Call3(Engine_ActorSetPosition, 22, 0xa20000, 0x27a0000);
+        Actor_SetPosition(22, 0xa20000, 0x27a0000);
         record = Object_GetById(22);
         record->facing = (v5 << 6);
-        Call3(Engine_ActorSetPosition, 21, 0xa20000, 0x2a40000);
+        Actor_SetPosition(21, 0xa20000, 0x2a40000);
         record = Object_GetById(21);
         {
             s32 facing = 0xd000; /* FAKEMATCH: word temporary keeps the facing as movs+lsls */
@@ -1167,7 +1168,7 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
         Engine_ActorSetPosition(22, 0xa00000, 0x28c0000);
         record = Object_GetById(22);
         record->facing = (v5 << 6);
-        Call3(Engine_ActorSetPosition, 21, 0xa60000, 0x29c0000);
+        Actor_SetPosition(21, 0xa60000, 0x29c0000);
         record = Object_GetById(21);
         {
             s32 facing = 0xb000; /* FAKEMATCH: word temporary keeps the facing as movs+lsls */
@@ -1317,14 +1318,14 @@ void FieldScene_RunShipDeckEventScript(void)
     ObjectDispatch_SetSingleChildFlags(Object_GetById(0), 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_StartScreenTransition();
-    Call3(ObjectMotion_SetSpeedParameters, 21, 104857, 52428);
+    Actor_SetSpeed(21, 104857, 52428);
     Call3(ObjectMotion_SetPositionAndReset, 21, 242, 692);
     Call3(ObjectMotion_SetPositionAndReset, 21, 196, 678);
     Call3(ObjectMotion_SetPositionAndReset, 21, 182, 654);
     Motion_SetVarCbAndRefresh(21, 2);
     Event_SetMessageId((s32)MsgFuneNoUseLate);
     FieldScene_RunStepThen10(40981);
-    Call3(ObjectMotion_SetSpeedParameters, 0, 157286, 78643);
+    Actor_SetSpeed(0, 157286, 78643);
     Call3(ObjectMotion_ResetAndSetPosition, 0, 154, 609);
     AudioCommand_Play(146);
     v = 0;
@@ -1334,9 +1335,9 @@ void FieldScene_RunShipDeckEventScript(void)
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 24, 2097152, 31719424);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 25, 5505024, 32505856);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 26, 1048576, 39059456);
-    Call3(ObjectMotion_SetSpeedParameters, 24, 157286, 78643);
-    Call3(ObjectMotion_SetSpeedParameters, 25, 157286, 78643);
-    Call3(ObjectMotion_SetSpeedParameters, 26, 157286, 78643);
+    Actor_SetSpeed(24, 157286, 78643);
+    Actor_SetSpeed(25, 157286, 78643);
+    Actor_SetSpeed(26, 157286, 78643);
     v = (s32)FuneKanpan_DeckEventActions;
     ObjectMotion_EnableActionAndSetCallback(24, v);
     ObjectMotion_EnableActionAndSetCallback(25, v);
@@ -1381,13 +1382,13 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_ActorSetSpriteFlags(Object_GetById(27), 1);
     Engine_ActorSetSpriteFlags(Object_GetById(28), 1);
     Engine_ActorSetSpriteFlags(Object_GetById(29), 1);
-    Call3(Engine_ActorSetPosition, 22, 0x1000000, 0x2800000);
+    Actor_SetPosition(22, 0x1000000, 0x2800000);
     Engine_ActorEnableActionCallback(22, FuneKanpan_CrewActionsD);
-    Call3(Engine_ActorSetPosition, 21, 0x10c0000, 0x2b40000);
+    Actor_SetPosition(21, 0x10c0000, 0x2b40000);
     Engine_ActorEnableActionCallback(22, FuneKanpan_CrewActionsD);
-    Call3(Engine_ActorSetPosition, 24, 0xf20000, 0x25c0000);
-    Call3(Engine_ActorSetPosition, 25, 0x1080000, 0x2580000);
-    Call3(Engine_ActorSetPosition, 26, 0xfe0000, 0x29c0000);
+    Actor_SetPosition(24, 0xf20000, 0x25c0000);
+    Actor_SetPosition(25, 0x1080000, 0x2580000);
+    Actor_SetPosition(26, 0xfe0000, 0x29c0000);
     Engine_ActorSetPosition(27, 0x11a0000, 0x2920000);
     Object_GetById(24)->rise_enabled = 0;
     Object_GetById(25)->rise_enabled = 1;
@@ -1402,29 +1403,29 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(0x190);
-    Call3(Engine_ActorSetPosition, 28, 0xfe0000, 0x2e40000);
-    Call3(Engine_ActorSetPosition, 29, 0x180000, 0x24a0000);
-    Call3(Engine_ActorSetSpeed, 28, 0x19999, 0xcccc);
-    Call3(Engine_ActorSetSpeed, 29, 0x19999, 0xcccc);
-    Call3(Engine_ActorSetDestination, 29, 172, 0x284);
+    Actor_SetPosition(28, 0xfe0000, 0x2e40000);
+    Actor_SetPosition(29, 0x180000, 0x24a0000);
+    Actor_SetSpeed(28, 0x19999, 0xcccc);
+    Actor_SetSpeed(29, 0x19999, 0xcccc);
+    Actor_SetDestination(29, 172, 0x284);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 28, 200, 0x294);
-    Call3(Engine_ActorSetSpeed, 0, 0x40000, 0x20000);
-    Call3(Engine_ActorSetDestination, 0, 174, 0x26c);
+    Actor_SetSpeed(0, 0x40000, 0x20000);
+    Actor_SetDestination(0, 174, 0x26c);
     Engine_ObjectMotionSetPositionAndCommit(28, 180, 0x244);
     Engine_AudioPlayCue(146);
     Engine_ActorEnableActionCallback(28, FuneKanpan_CrewActionsC);
     Engine_ActorEnableActionCallback(29, FuneKanpan_CrewActionsC);
     Engine_AudioPlayCue(240);
-    Call3(Engine_ActorSetPosition, 31, 0x860000, 0x2520000);
+    Actor_SetPosition(31, 0x860000, 0x2520000);
     Engine_ActorEnableActionCallback(31, FuneKanpan_CrewActionsE);
     Engine_EventWait(10);
-    Call3(Engine_ActorSetPosition, 30, 0x860000, 0x2480000);
-    Call3(Engine_ActorSetSpeed, 30, 0x40000, 0x20000);
+    Actor_SetPosition(30, 0x860000, 0x2480000);
+    Actor_SetSpeed(30, 0x40000, 0x20000);
     Object_GetById(30)->velocity_y = 0x80000;
     Engine_ObjectMotionSetPositionAndCommit(30, 186, 0x264);
     Engine_ActorSetSpriteFlags(Object_GetById(30), 1);
     Engine_EventWait(10);
-    Call3(Engine_ActorSetSpeed, 30, 0x20000, 0x10000);
+    Actor_SetSpeed(30, 0x20000, 0x10000);
     Engine_ObjectMotionSetPositionAndCommit(30, 216, 0x258);
     FieldScene_CallPairWith10(30, 0xc000);
     FuneKanpan_OpenFirstDoor();
@@ -1483,11 +1484,11 @@ void FieldScene_RunActorSequence(void)
 
         record->facing = shown;
     }
-    Call3(Engine_ActorSetPosition, 24, 0xb80000, 0x2a00000);
-    Call3(Engine_ActorSetPosition, 25, 0xca0000, 0x2b40000);
-    Call3(Engine_ActorSetPosition, 26, 0xfc0000, 0x2860000);
-    Call3(Engine_ActorSetPosition, 27, 0x1000000, 0x2ae0000);
-    Call3(Engine_ActorSetPosition, 28, 0xac0000, 0x2780000);
+    Actor_SetPosition(24, 0xb80000, 0x2a00000);
+    Actor_SetPosition(25, 0xca0000, 0x2b40000);
+    Actor_SetPosition(26, 0xfc0000, 0x2860000);
+    Actor_SetPosition(27, 0x1000000, 0x2ae0000);
+    Actor_SetPosition(28, 0xac0000, 0x2780000);
     Engine_ActorSetPosition(29, 0x1000000, 0x26e0000);
     {
         /* FAKEMATCH: halfword zero retains the short literal-pool reach. */
@@ -1545,7 +1546,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetPosition(31, 0, 0);
     record = Object_GetById(30);
     Engine_ActorSetSpriteFlags(record, 1);
-    Call3(Engine_ActorSetSpeed, 0, 0x19999, 0xcccc);
+    Actor_SetSpeed(0, 0x19999, 0xcccc);
     rec8 = Object_GetById(0);
     {
         /* FAKEMATCH: halfword zero retains the short literal-pool reach. */
@@ -1554,13 +1555,13 @@ void FieldScene_RunActorSequence(void)
         zero.v = 0;
         rec8->motion_flags = zero.v;
     }
-    Call3(Engine_ActorSetDestination, 0, 216, 0x264);
-    Call3(Engine_ActorSetSpeed, 30, 0x19999, 0xcccc);
+    Actor_SetDestination(0, 216, 0x264);
+    Actor_SetSpeed(30, 0x19999, 0xcccc);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 196, 0x258);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 216, 0x258);
     Engine_ActorStop(28);
     Engine_TaskWait(1);
-    Call3(Engine_ActorSetSpeed, 28, 0x19999, 0xcccc);
+    Actor_SetSpeed(28, 0x19999, 0xcccc);
     base5_200c888 = FuneKanpan_SailorActions;
     Engine_ActorEnableActionCallback(28, base5_200c888);
     FieldScene_CallPairWith10(30, 0xd000);
@@ -1569,7 +1570,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorEnableActionCallback(30, base5_200c888);
     Engine_ActorStop(29);
     Engine_TaskWait(1);
-    Call3(Engine_ActorSetSpeed, 29, 0x19999, 0xcccc);
+    Actor_SetSpeed(29, 0x19999, 0xcccc);
     Object_SetActionCallbackAndRefreshById(29, base5_200c888);
     Engine_EventWait(20);
     Event_FinishScreenTransitionFar();
@@ -1935,14 +1936,14 @@ scene:
 
     for (index = 0; index <= 3; index++) {
         actor = matched[index];
-        Call3(Engine_ActorSetPosition, actor, 216 << 16, 146 << 18);
+        Actor_SetPosition(actor, 216 << 16, 146 << 18);
         if (category[index] == 20) {
-            Call3(Engine_ActorSetSpeed, actor, 0xcccc, 0x6666);
+            Actor_SetSpeed(actor, 0xcccc, 0x6666);
         } else {
-            Call3(Engine_ActorSetSpeed, actor, 128 << 9, 128 << 8);
+            Actor_SetSpeed(actor, 128 << 9, 128 << 8);
         }
-        Call3(Engine_ActorWalkToAndWait, actor, 216, 150 << 2);
-        Call3(Engine_ActorWalkToAndWait, actor, 192, 0x26a);
+        Actor_WalkToAndWait(actor, 216, 150 << 2);
+        Actor_WalkToAndWait(actor, 192, 0x26a);
         Engine_ActorWalkToAndWait(actor, 192, 164 << 2);
 
         switch (category[index]) {
@@ -1990,20 +1991,20 @@ scene:
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(0, 0);
     Engine_ActorSetSpriteFlags(Object_GetById(0), 1);
-    Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
-    Call3(Engine_ActorWalkToAndWait, 0, 216, 150 << 2);
-    Call3(Engine_ActorWalkToAndWait, 0, 190, 153 << 2);
+    Actor_SetSpeed(0, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(0, 216, 150 << 2);
+    Actor_WalkToAndWait(0, 190, 153 << 2);
     Engine_EventSetMessage((s32)MsgFuneThanksHardWork);
     FieldScene_RunStepThen10(20);
     Engine_ActorFaceDirection(0, 192 << 8, 0);
 
     Object_GetById(32)->motion_flags = 0;
-    Call3(Engine_ActorSetSpeed, 32, 128 << 10, 128 << 9);
-    Call3(Engine_ActorSetDestination, 32, 196, 141 << 2);
+    Actor_SetSpeed(32, 128 << 10, 128 << 9);
+    Actor_SetDestination(32, 196, 141 << 2);
 
-    Call3(Engine_ActorSetSpeed, 20, 0xcccc, 0x6666);
-    Call3(Engine_ActorWalkToAndWait, 20, 182, 0x22b);
-    Call3(Engine_ActorFaceDirection, 20, 192 << 6, 20);
+    Actor_SetSpeed(20, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(20, 182, 0x22b);
+    Actor_FaceDirection(20, 192 << 6, 20);
     Engine_ActorRunRepeatedMotion(20, 1);
     FieldScene_RunStepThen10(20);
     Engine_ActorSetAnimationAndWait(20, 3);
@@ -2014,7 +2015,7 @@ scene:
     FieldScene_RunStepThen10(20);
     Engine_ActorSetAnimationAndWait(20, 3);
     Engine_CameraFollowActor(0, 1);
-    Call3(Engine_ActorWalkToAndWait, 20, 188, 128 << 2);
+    Actor_WalkToAndWait(20, 188, 128 << 2);
     Engine_ActorFaceDirection(20, 192 << 6, 0);
     Engine_ActorSetPosition(32, 0, 0);
 

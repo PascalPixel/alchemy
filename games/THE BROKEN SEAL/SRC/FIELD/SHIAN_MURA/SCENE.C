@@ -428,8 +428,8 @@ void ShianMura_RunNpcMeetScene(void)
         Object_GetById(14)->velocity_y = 0x60000;
         Object_GetById(14)->gravity = 0x10000;
         Object_GetById(14)->bounce = 0;
-        Call3(Engine_ActorSetSpeed, 14, 0x30000, 0x18000);
-        Call3(Engine_ActorSetDestination, 14, 168, 0x138);
+        Actor_SetSpeed(14, 0x30000, 0x18000);
+        Actor_SetDestination(14, 168, 0x138);
         Engine_ActorWaitForMove(14);
         Engine_AudioPlayCue(134);
         Engine_ActorEnableActionCallback(19, (s32)ShianMura_Actor19Motion);
@@ -438,7 +438,7 @@ void ShianMura_RunNpcMeetScene(void)
         params.callback = (s32)ShianMura_EffectScript;
         params.facing = 0x4000;
         Effect_Spawn(0xa80000, 0, 0x14c0000, 0, 0, 0, 0x720000, &params);
-        Call3(Engine_ActorSetDestination, 14, 146, 0x138);
+        Actor_SetDestination(14, 146, 0x138);
         Engine_ActorWaitForMove(14);
         Engine_TaskRemoveCallback((void (*)(void))cb);
         Effect_Spawn(0x900000, 0, 0x1380000, 0, 0, 0, 0x20001, 0);
@@ -596,7 +596,7 @@ void Scene_RunActorNineteenScript(void)
     Engine_ActorRunRepeatedMotion(14, 2);
     Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgShianWhaWhaHappened);
-    if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x203)) {
+    if (GameFlag_IsSet(0x203)) {
         gEventWork->message++;
     }
     Engine_EventShowMessage(14, 0);
@@ -659,8 +659,8 @@ s32 ShianMura_SetupScene(void)
         Engine_GameFlagClear(0x12f);
     }
     if (Engine_GameFlagIsSet(0x895)) {
-        Call3((void (*)())Engine_ActorFaceDirection, 13, 0x8000, 0);
-        Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);
+        Actor_FaceDirection(13, 0x8000, 0);
+        Actor_SetPosition(14, 0x920000, 0x1380000);
         Engine_ActorFaceDirection(14, 0, 0);
         if (Engine_GameFlagIsSet(0x89a)) {
             Engine_ActorSetPosition(17, 0, 0);
@@ -683,7 +683,7 @@ s32 ShianMura_SetupScene(void)
         actor->priority_flags = (actor->priority_flags & 254) | 2;
     }
     if (Engine_GameFlagIsSet(0x202)) {
-        Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);
+        Actor_SetPosition(14, 0x920000, 0x1380000);
         Engine_ActorFaceDirection(14, 0, 0);
     }
     if (Engine_GameFlagIsSet(0x201)) {

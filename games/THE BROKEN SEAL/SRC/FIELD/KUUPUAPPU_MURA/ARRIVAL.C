@@ -165,7 +165,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
         Engine_EventRequestExit(14);
     }
     if (Engine_GameFlagIsSet(0x200) != 0) {
-        Call6(Engine_MapCopyCellAttributes, 55, 26, 4, 2, 23, 26);
+        Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
     }
     OverlayObject_CreateConfiguredObject(0x800000, 0, 0x1a40000, 223);
     v7 = 1;
@@ -179,7 +179,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
     do { } while (0);
     *(s32 *)((u8 *)record + 108) = (s32)SceneActor_UpdateProximityToLeader;
     if (Engine_GameFlagIsSet(0x858) != 0) {
-        Call3(Engine_ActorSetPosition, 19, 0xd80000, 0x1880000);
+        Actor_SetPosition(19, 0xd80000, 0x1880000);
     }
     rec7 = Engine_GameFlagIsSet(0x853);
     if (Engine_GameFlagIsSet(0x855) == 0) {
@@ -199,9 +199,9 @@ s32 KuupuappuMura_RestoreEntryState(void)
                         Engine_ActorSetPosition(2, record->x.fixed, record->z.fixed);
                     }
                     if (gGameState.entrance == 1) {
-                        Call3(Engine_ActorSetPosition, 2, 0x1900000, 0x1c00000);
+                        Actor_SetPosition(2, 0x1900000, 0x1c00000);
                     } else {
-                        Call3(Engine_ActorSetPosition, 2, 0xe00000, 0xa20000);
+                        Actor_SetPosition(2, 0xe00000, 0xa20000);
                     }
                     Engine_ActorFaceEachOther(2, 0, 0);
                     Engine_EventOpenScreen();
@@ -211,7 +211,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_EventSetMessage((s32)MsgKuupuappuWelcomeBackTwo);
                     Engine_EventShowMessageAndWait(2, 0, 20);
                     Engine_ActorSetAnimationAndWait(0, 3);
-                    Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
+                    Actor_SetSpeed(2, 0xcccc, 0x6666);
                     Engine_ActorSetAnimation(2, 2);
                     record = Object_GetById(0);
                     if (record != 0) {
@@ -226,14 +226,14 @@ s32 KuupuappuMura_RestoreEntryState(void)
         }
     }
     if (Engine_GameFlagIsSet(0x867) != 0) {
-        Call3(Engine_ActorSetPosition, 23, 0x1980000, 0x780000);
+        Actor_SetPosition(23, 0x1980000, 0x780000);
     }
     if (gGameState.entrance == 11) {
         if (Engine_GameFlagIsSet(0x855) == 0) {
             if (Engine_GameFlagIsSet(0x856) != 0) {
                 if (Engine_GameFlagIsSet(2) == 0) {
                     Engine_EventBegin();
-                    Call3(Engine_ActorSetPosition, 2, 0x280000, 0x1360000);
+                    Actor_SetPosition(2, 0x280000, 0x1360000);
                     Engine_ActorFaceEachOther(2, 0, 0);
                     Engine_EventOpenScreen();
                     Engine_EventWaitForScreen();
@@ -242,7 +242,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_EventSetMessage((s32)MsgKuupuappuWelcomeBackTwo);
                     Engine_EventShowMessageAndWait(2, 0, 20);
                     Engine_ActorSetAnimationAndWait(0, 3);
-                    Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
+                    Actor_SetSpeed(2, 0xcccc, 0x6666);
                     Engine_ActorSetAnimation(2, 2);
                     record = Object_GetById(0);
                     if (record != 0) {

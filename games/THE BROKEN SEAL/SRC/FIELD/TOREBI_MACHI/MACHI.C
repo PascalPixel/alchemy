@@ -1,6 +1,7 @@
 #include "MACHI.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
+#include "FIELD_EVENT.H"
 
 extern u8 MsgTorebiFaceAwayTolbi[];
 extern u8 MsgTorebiTossLuckyMedal[];
@@ -292,9 +293,9 @@ void FieldScene_RunPatientTalk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiPatientLittleGuy);
-    Call3(Engine_ActorFaceDirection, 25, 0xc000, 0);
+    Actor_FaceDirection(25, 0xc000, 0);
     Engine_EventShowMessage(25, 0);
-    Call3(Engine_ActorFaceDirection, 25, 0x8000, 0);
+    Actor_FaceDirection(25, 0x8000, 0);
     Engine_EventShowMessage(25, 0);
     Engine_EventEnd();
 }
@@ -305,7 +306,7 @@ void TorebiMachi_AskForSweets(void)
     s32 record;
 
     Engine_EventBegin();
-    Call3(Engine_ActorFaceDirection, 26, 0x4000, 0);
+    Actor_FaceDirection(26, 0x4000, 0);
     Engine_ActorStartRepeatedMotion(26, 2);
     Engine_EventSetMessage((s32)MsgTorebiWaahBuySweets);
     Engine_EventShowMessage(26, 0);
@@ -335,7 +336,7 @@ void TorebiMachi_ReceiveLeftovers(void)
     s32 record;
 
     Engine_EventBegin();
-    if (Value1(Engine_GameFlagIsSet, 0x8bf) == 0) {
+    if (GameFlag_IsSet(0x8bf) == 0) {
         Engine_GameFlagSet(0x8bf);
         Engine_EventSetMessage((s32)MsgTorebiLeftovers);
         Engine_EventShowMessage(19, 0);
@@ -366,12 +367,12 @@ void SceneScript_SetupActors(void)
     }
     index = work->touched_trigger - 1;
     Engine_AudioPlayCue(158);
-    Call3(Engine_MapAnimateCells, (s32)gTorebiMachiCellSteps[index].commands, gTorebiMachiCellSteps[index].first, gTorebiMachiCellSteps[index].second);
-    Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
+    Map_AnimateCells((s32)gTorebiMachiCellSteps[index].commands, gTorebiMachiCellSteps[index].first, gTorebiMachiCellSteps[index].second);
+    Actor_SetSpeed(0, 0x8000, 0x4000);
     Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(0, 2);
     if (index != 6) {
-        Call3(Engine_ActorCenterAndWalk, 0, 2, -8);
+        Actor_CenterAndWalk(0, 2, -8);
         Engine_EventWait(10);
     }
     Engine_EventRequestExit(work->touched_trigger);
@@ -400,7 +401,7 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
     s32 hidden;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Call3(Engine_ActorSetPosition, 16, 0x1600000, 0x1600000);
+    Actor_SetPosition(16, 0x1600000, 0x1600000);
     Engine_ActorEnableActionCallback(16, gTorebiMachiActor16Action);
     record = Object_GetById(16);
     handler = (s32)SceneActor_UpdatePartnerProximity;
@@ -415,7 +416,7 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
     record = Object_GetById(14);
     *(s32 *)(record + 108) = (s32)SceneActor_CopyPlayerModeToActor;
     if (Engine_GameFlagIsSet(0x8c1) != 0) {
-        Call3(Engine_ActorSetPosition, 28, 0x13c0000, 0x1480000);
+        Actor_SetPosition(28, 0x13c0000, 0x1480000);
     }
     if (Engine_GameFlagIsSet(0x201) != 0) {
         FieldScene_ResetActor9AndDrawTiles();
@@ -425,17 +426,17 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
         Engine_ActorSetAnimation(8, 4);
     }
     if (Engine_GameFlagIsSet(0x950) != 0) {
-        Call3(Engine_ActorSetPosition, 20, 0x2080000, 0x2300000);
-        Call3(Engine_ActorSetPosition, 21, 0x2080000, 0x2300000);
-        Call3(Engine_ActorSetPosition, 22, 0x2080000, 0x2300000);
-        Call3(Engine_ActorSetPosition, 24, 0x2080000, 0x2300000);
-        Call3(Engine_ActorSetPosition, 25, 0x2080000, 0x2300000);
-        Call3(Engine_ActorSetPosition, 26, 0x2080000, 0x2300000);
-        Call3(Engine_ActorSetPosition, 27, 0x2080000, 0x2300000);
+        Actor_SetPosition(20, 0x2080000, 0x2300000);
+        Actor_SetPosition(21, 0x2080000, 0x2300000);
+        Actor_SetPosition(22, 0x2080000, 0x2300000);
+        Actor_SetPosition(24, 0x2080000, 0x2300000);
+        Actor_SetPosition(25, 0x2080000, 0x2300000);
+        Actor_SetPosition(26, 0x2080000, 0x2300000);
+        Actor_SetPosition(27, 0x2080000, 0x2300000);
     } else {
         if (Engine_GameFlagIsSet(0x962) != 0) {
-            Call3(Engine_ActorSetPosition, 27, 0x1180000, 0x500000);
-            Call3(Engine_ActorFaceDirection, 27, 0x2000, 0);
+            Actor_SetPosition(27, 0x1180000, 0x500000);
+            Actor_FaceDirection(27, 0x2000, 0);
             Engine_ActorSetAnimation(27, 1);
         }
     }
@@ -449,7 +450,7 @@ void FieldScene_RunScene3b5SequenceA(void)
     s32 record;
 
     Engine_EventBegin();
-    Call3(Engine_ActorWalkToAndWait, 0, 0x130, 0x138);
+    Actor_WalkToAndWait(0, 0x130, 0x138);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorFaceDirection(28, 0x4000, 0);
     Engine_EventWait(20);
@@ -458,9 +459,9 @@ void FieldScene_RunScene3b5SequenceA(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         gEventWork->message++;
         Engine_EventShowMessage(28, 0);
-        Call3(Engine_ActorSetSpeed, 28, 0x10000, 0x8000);
-        Call3(Engine_ActorWalkToAndWait, 28, 0x140, 0x130);
-        Call3(Engine_ActorWalkToAndWait, 28, 0x13c, 0x148);
+        Actor_SetSpeed(28, 0x10000, 0x8000);
+        Actor_WalkToAndWait(28, 0x140, 0x130);
+        Actor_WalkToAndWait(28, 0x13c, 0x148);
         Engine_ActorFaceDirection(28, 0xa000, 0);
         Engine_GameFlagSet(0x8c1);
     } else {
@@ -488,19 +489,19 @@ void FieldScene_RunPrimarySequence(void)
     s32 base;
 
     Engine_EventBegin();
-    Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
-    Call3(Engine_ActorSetSpeed, 29, 0x10000, 0x8000);
+    Camera_MoveTo(-1, -1, -1, 0);
+    Actor_SetSpeed(29, 0x10000, 0x8000);
     Engine_ActorSetSpeed(30, 0x10000, 0x8000);
     base = (s32)MsgTorebiSeenAnyoneWho;
     Engine_EventSetMessage(base);
-    Call3(Engine_ActorSetPosition, 29, 0x480000, 0xd00000);
-    Call3(Engine_ActorSetPosition, 30, 0x380000, 0xd00000);
+    Actor_SetPosition(29, 0x480000, 0xd00000);
+    Actor_SetPosition(30, 0x380000, 0xd00000);
     Engine_ActorSetChildValue(32, 15);
     Engine_ActorSetSpriteFlags(Object_GetById(32), 0);
-    Call3(Engine_ActorSetPosition, 32, 0x5f0000, 0x280000);
+    Actor_SetPosition(32, 0x5f0000, 0x280000);
     Engine_ActorWalkTo(29, 72, 248);
     Engine_ActorWalkTo(30, 56, 248);
-    Call3(Engine_ActorWalkToAndWait, 0, 64, 0x108);
+    Actor_WalkToAndWait(0, 64, 0x108);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorWaitForMove(29);
     Engine_ActorSetAnimation(29, 1);
@@ -510,7 +511,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorFaceActor(30, 0, 0);
     Engine_EventWait(20);
     Actor_SetAttachedEffect(29, 0x102);
-    Call2(Engine_ActorSetAttachedEffect, 30, 0x102);
+    Actor_SetAttachedEffect(30, 0x102);
     Engine_ActorStartRepeatedMotion(29, 2);
     Engine_ActorRunRepeatedMotion(30, 2);
     Engine_EventWait(20);
@@ -532,14 +533,14 @@ void FieldScene_RunPrimarySequence(void)
         Engine_EventWait(30);
         Engine_EventShowMessage(29, 0);
         Engine_EventWait(20);
-        Call3(Engine_ActorFaceDirection, 29, 0x4000, 0);
+        Actor_FaceDirection(29, 0x4000, 0);
         Engine_ActorFaceDirection(30, 0x4000, 0);
         Engine_EventWait(30);
         Engine_ActorSetAnimation(29, 3);
         Engine_ActorSetAnimationAndWait(30, 3);
         Engine_EventWait(20);
-        Call3(Engine_ActorSetSpeed, 29, 0x1cccc, 0xe666);
-        Call3(Engine_ActorSetSpeed, 30, 0x1cccc, 0xe666);
+        Actor_SetSpeed(29, 0x1cccc, 0xe666);
+        Actor_SetSpeed(30, 0x1cccc, 0xe666);
         Actor_WalkTo(29, 232, 248);
         Engine_EventWait(2);
         Actor_WalkTo(30, 232, 248);
@@ -560,14 +561,14 @@ void FieldScene_RunPrimarySequence(void)
         gEventWork->message += 1;
         Engine_EventShowMessage(29, 0);
         Engine_EventWait(20);
-        Call3(Engine_ActorFaceDirection, 29, 0x4000, 0);
-        Call3(Engine_ActorFaceDirection, 30, 0x4000, 0);
+        Actor_FaceDirection(29, 0x4000, 0);
+        Actor_FaceDirection(30, 0x4000, 0);
         Engine_EventWait(30);
         Engine_ActorSetAnimation(29, 3);
         Engine_ActorSetAnimationAndWait(30, 3);
         Engine_EventWait(20);
-        Call3(Engine_ActorSetSpeed, 29, 0x19999, 0xcccc);
-        Call3(Engine_ActorSetSpeed, 30, 0x19999, 0xcccc);
+        Actor_SetSpeed(29, 0x19999, 0xcccc);
+        Actor_SetSpeed(30, 0x19999, 0xcccc);
         Engine_ActorWalkTo(29, 72, 184);
         Engine_ActorWalkToAndWait(30, 56, 184);
     }

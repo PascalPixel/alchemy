@@ -5,6 +5,7 @@
 #include "CALL.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+#include "FIELD_SERVICE.H"
 
 void TakaraHashira_PushPillar(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
@@ -160,9 +161,9 @@ void TakaraHashira_RaiseActorFourteen(void)
     ((struct FieldSpritePriority *)pillar->sprite)->priority = 2;
     pillar->acceleration = 0x6666;
     pillar->speed = 0xcccc;
-    Call4(Engine_ObjectSetPosition, pillar, pillar->x.fixed, 0x200000, pillar->z.fixed);
+    FieldObject_SetPosition(pillar, pillar->x.fixed, 0x200000, pillar->z.fixed);
     Engine_ActorWaitForMove(14);
-    Call6(Engine_MapCopyCellAttributes, 20, 14, 1, 1, 22, 16);
+    Map_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
 
 void SceneEffect_SpawnRandomizedParticle(void)
@@ -242,16 +243,16 @@ void TakaraHashira_RunMapShiftScene(void)
         Engine_CameraMoveTo(0x1380000, -1, 0xb80000, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(20);
-        Call6(Engine_MapCopyCellsTo, 73, 10, 60, 10, 1, 2);
+        Map_CopyCellsTo(73, 10, 60, 10, 1, 2);
         Engine_EventWait(20);
         Engine_TaskAddCallback((s32)SceneEffect_SpawnRandomizedParticle, 0xc80);
         Engine_EventWait(40);
-        if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
+        if (GameFlag_IsSet(0x201) != 0) {
             Object_GetById(12)->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEffectEveryEightFrames;
             Engine_ActorSetAnimation(12, 6);
             ObjectMotion_WaitForAnimationChange(12);
             Object_GetById(12)->update = (void (*)(union FieldObject *))set;
-            Call6(Engine_MapCopyCellAttributes, 17, 13, 1, 1, 18, 13);
+            Map_CopyCellAttributes(17, 13, 1, 1, 18, 13);
             Engine_GameFlagClear(0x201);
             Engine_ActorSetChildValue(12, 0);
             Engine_ActorEnableActionCallback(12, 1);
@@ -260,7 +261,7 @@ void TakaraHashira_RunMapShiftScene(void)
         }
         ((void (*)())Engine_TaskRemoveCallback)((s32)SceneEffect_SpawnRandomizedParticle);
         Engine_EventWait(20);
-        Call6(Engine_MapCopyCellsTo, 72, 10, 60, 10, 1, 2);
+        Map_CopyCellsTo(72, 10, 60, 10, 1, 2);
         Engine_EventWait(20);
         Engine_EventEnd();
     }
@@ -290,7 +291,7 @@ void TakaraHashira_DropActorTen(void)
     Engine_EventBegin();
     StagedActor_FillGridAttributeRectangle(2, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20), 1, 1, 255);
     if ((rec7->x.fixed >> 20) == 16) {
-        rec8 = Value1(Engine_GameFlagIsSet, 0x204);
+        rec8 = GameFlag_IsSet(0x204);
         if (rec8 == 0) {
             Engine_EventWait(10);
             Engine_AudioPlayCue(159);

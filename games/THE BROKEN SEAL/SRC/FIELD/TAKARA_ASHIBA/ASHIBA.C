@@ -539,7 +539,7 @@ void TakaraAshiba_RaiseTriggerOnStand(void)
     s32 z = leader->z.fixed / 0x100000;
     struct EventWork *event = gEventWork;
 
-    if (!Value1(Engine_GameFlagIsSet, 0x220) && gGameState.cloaked == 0
+    if (!GameFlag_IsSet(0x220) && gGameState.cloaked == 0
         && gGameState.paused_object != 8
         && (u32)(x - 21) <= 2 && z >= 10 && z <= 11) {
         Engine_GameFlagSet(0x220);
@@ -695,7 +695,7 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
 
     if (gGameState.paused_object != 11) {
         Battle_Reset();
-        Call3(ObjectMotion_SetSpeedParameters, 0, 0x1b333, 0xd999);
+        Actor_SetSpeed(0, 0x1b333, 0xd999);
         ObjectMotion_SetSpeedParameters(11, 0x1b333, 0xd999);
         AudioCommand_Play(188);
         v3 = Object_GetById(0)->x.fixed / 0x100000;
@@ -1000,7 +1000,7 @@ void TakaraAshiba_UpdateBlockRects(void)
     s32 x = block->x.fixed / 0x100000;
     s32 z = block->z.fixed / 0x100000;
 
-    if (!Value1(Engine_GameFlagIsSet, 0x300) && y <= 2) {
+    if (!GameFlag_IsSet(0x300) && y <= 2) {
         TakaraAshiba_RestoreActorTenLeftCell();
         Engine_GameFlagSet(0x300);
     }
@@ -1147,16 +1147,16 @@ void TakaraAshiba_UpdateItemIcons(void)
     switch (TakaraAshiba_IconTimer) {
     case 12:
         if (Engine_GameFlagIsSet(0xee7) == 0) {
-            Call3(Engine_ActorSetPosition, 8, 0xe80000, 0x3680000);
+            Actor_SetPosition(8, 0xe80000, 0x3680000);
         }
         if (Engine_GameFlagIsSet(0xee8) == 0) {
-            Call3(Engine_ActorSetPosition, 9, 0x1280000, 0x3380000);
+            Actor_SetPosition(9, 0x1280000, 0x3380000);
         }
         if (Engine_GameFlagIsSet(0xee9) == 0) {
-            Call3(Engine_ActorSetPosition, 10, 0x1480000, 0x2f80000);
+            Actor_SetPosition(10, 0x1480000, 0x2f80000);
         }
         if (Engine_GameFlagIsSet(0xeea) == 0) {
-            Call3(Engine_ActorSetPosition, 11, 0x1680000, 0x3680000);
+            Actor_SetPosition(11, 0x1680000, 0x3680000);
         }
         break;
     case 10:

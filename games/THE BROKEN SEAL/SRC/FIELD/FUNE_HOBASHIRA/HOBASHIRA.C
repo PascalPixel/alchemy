@@ -290,7 +290,7 @@ void FuneHobashira_SetupHiddenLeaderLookout(void)
     /* FAKEMATCH: keep y before x while capturing the store's zero in pan. */
     asm ("mov %0, #128\n\tmov %1, #164"
          : "=r" (y), "=r" (x), "=r" (pan));
-    Call4(Engine_CameraMoveTo, x << 16, y << 15, 0x1410000, pan);
+    Camera_MoveTo(x << 16, y << 15, 0x1410000, pan);
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -360,7 +360,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_EventWait(20);
     FuneHobashira_CameraOrigin[0] = *placement++;
     FuneHobashira_CameraOrigin[1] = *placement;
-    Call3((void (*)())Engine_ActorSetPosition, 9, 0x500000, 0xd20000);
+    Actor_SetPosition(9, 0x500000, 0xd20000);
     x = 0x500000;
     Object_GetById(9)->motion_flags = zero;
     FuneHobashira_CameraCenter[0] = x;
@@ -371,12 +371,12 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_GameFlagSet(0x8f0);
     Engine_ActorStop(8);
     Engine_TaskWait(1);
-    Call3((void (*)())Engine_ActorShowEmote, 8, 0x100, 0);
+    Actor_ShowEmote(8, 0x100, 0);
     Engine_ActorFaceDirection(8, 0xb000, 0);
     Engine_EventSetMessage((s32)MsgFuneAvast);
     Engine_EventShowMessageAndWait(8, 0, 10);
-    Call3((void (*)())Engine_ActorSetPosition, 10, x, 0xd20000);
-    Call3((void (*)())Engine_ActorSetPosition, 11, x, 0xd20000);
+    Actor_SetPosition(10, x, 0xd20000);
+    Actor_SetPosition(11, x, 0xd20000);
     Engine_ActorSetPosition(12, x, 0xd20000);
     Engine_ActorSetSpritePriority(10, 3);
     Engine_ActorSetSpritePriority(11, 3);
@@ -399,15 +399,15 @@ void Scene_RunFourActorStagingSequence(void)
     actor->scale_x = scale;
     actor->update = (void (*)(union FieldObject *))update;
     Engine_TaskWait(1);
-    Call3((void (*)())Engine_ActorSetSpeed, 10, 0x851e, 0x428f);
-    Call3((void (*)())Engine_ActorSetSpeed, 11, 0x7333, 0x3999);
-    Call3((void (*)())Engine_ActorSetSpeed, 12, 0x9999, 0x4ccc);
-    Call3((void (*)())Engine_ActorSetDestination, 10, 128, 345);
-    Call3((void (*)())Engine_ActorSetDestination, 11, 136, 330);
+    Actor_SetSpeed(10, 0x851e, 0x428f);
+    Actor_SetSpeed(11, 0x7333, 0x3999);
+    Actor_SetSpeed(12, 0x9999, 0x4ccc);
+    Actor_SetDestination(10, 128, 345);
+    Actor_SetDestination(11, 136, 330);
     Engine_ActorSetDestination(12, 156, 340);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(8, 2);
-    Call3((void (*)())Engine_ActorWalkToAndWait, 8, 164, 344);
+    Actor_WalkToAndWait(8, 164, 344);
     Engine_ActorJump(8, 4, 10);
     Engine_ActorJump(8, 6, 40);
     Engine_ActorStartRepeatedMotion(8, 3);

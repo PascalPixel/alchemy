@@ -31,7 +31,7 @@ s32 LinkLobby_CallIntoCircle(void)
         gLinkLobbyCallFrames = 0;
         Engine_GameFlagClear(0x200);
     }
-    set = Value1(Engine_GameFlagIsSet, 0x200);
+    set = GameFlag_IsSet(0x200);
     if (set != 0) {
         return set;
     }

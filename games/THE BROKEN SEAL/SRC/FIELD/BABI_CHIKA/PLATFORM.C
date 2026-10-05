@@ -250,7 +250,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         for (i = 0; i < 16; i++) {
             WaitFrames(3);
             Actor_Get(18)->y.fixed -= 0x10000;
-            rec7 = Value0(Engine_RandomNext);
+            rec7 = Random_Next();
             rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
             value = Engine_RandomNext();
             ((void (*)())Effect_Spawn)(rec7, 0, ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0, 0, 0x90000, frame);
@@ -485,8 +485,8 @@ void BabiChika_SettleSteps(s32 wait)
 {
     u32 i;
 
-    Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x8000, 0x4000);
-    Call3((void (*)())ObjectMotion_SetSpeedParameters, 11, 0x8000, 0x4000);
+    Actor_SetSpeed(10, 0x8000, 0x4000);
+    Actor_SetSpeed(11, 0x8000, 0x4000);
     if (wait != 0) {
         Audio_PlayCue(180);
     }
@@ -912,8 +912,8 @@ s32 FieldScene_InitializeActorGroups(void)
         case 1:
         case 2:
             if (Engine_GameFlagIsSet(0x982)) {
-                Call6((void (*)())Engine_MapCopyCellsTo, 121, 4, 74, 9, 5, 8);
-                Call6((void (*)())Engine_MapCopyCellsTo, 18, 83, 9, 73, 3, 2);
+                Map_CopyCellsTo(121, 4, 74, 9, 5, 8);
+                Map_CopyCellsTo(18, 83, 9, 73, 3, 2);
                 Engine_MapCopyCellsTo(18, 81, 9, 75, 3, 2);
                 Engine_MapCopyCellsTo(18, 83, 9, 77, 3, 2);
                 Engine_MapCopyCellsTo(18, 83, 9, 79, 3, 2);
@@ -922,8 +922,8 @@ s32 FieldScene_InitializeActorGroups(void)
             } else {
                 if (!Engine_GameFlagIsSet(0x983))
                     break;
-                Call6((void (*)())Engine_MapCopyCellsTo, 121, 13, 74, 9, 5, 8);
-                Call6((void (*)())Engine_MapCopyCellsTo, 18, 85, 11, 74, 3, 2);
+                Map_CopyCellsTo(121, 13, 74, 9, 5, 8);
+                Map_CopyCellsTo(18, 85, 11, 74, 3, 2);
                 Engine_MapCopyCellsTo(18, 83, 13, 75, 3, 2);
                 Engine_MapCopyCellsTo(18, 85, 11, 76, 3, 2);
                 Engine_MapCopyCellsTo(18, 83, 11, 78, 3, 2);
@@ -945,9 +945,9 @@ s32 FieldScene_InitializeActorGroups(void)
         case 6:
         case 7:
             if (Engine_GameFlagIsSet(0x982))
-                Call6((void (*)())Engine_MapCopyCells, 23, 17, 1, 2, 30, 8);
+                Map_CopyCells(23, 17, 1, 2, 30, 8);
             if (Engine_GameFlagIsSet(0x983))
-                Call6((void (*)())Engine_MapCopyCells, 23, 17, 1, 2, 32, 10);
+                Map_CopyCells(23, 17, 1, 2, 32, 10);
             break;
         case 8:
         case 9:
@@ -970,28 +970,28 @@ s32 FieldScene_InitializeActorGroups(void)
             Engine_ActorSetChildValue(20, 15);
             Engine_ActorSetChildValue(21, 15);
             if (Engine_GameFlagIsSet(0x971)) {
-                Call6((void (*)())Engine_MapCopyCellsTo, 59, 8, 49, 8, 1, 3);
+                Map_CopyCellsTo(59, 8, 49, 8, 1, 3);
                 Map_CopyCellAttributeRect(51, 8, 1, 1, 49, 8);
                 Object_GetById(18)->priority_flags |= 2;
                 Object_SetModeById(18, 3);
                 Map_CopyCellAttributeRect(45, 4, 1, 1, 46, 8);
-                Call3((void (*)())Engine_ActorSetPosition, 18, 186 << 18, 136 << 16);
+                Actor_SetPosition(18, 186 << 18, 136 << 16);
                 Object_GetById(18)->y.fixed = -0x100000;
-                Call3((void (*)())Engine_ActorSetPosition, 20, 186 << 18, 136 << 16);
+                Actor_SetPosition(20, 186 << 18, 136 << 16);
             }
             if (Engine_GameFlagIsSet(0x200)) {
                 Engine_ActorSetChildValue(20, 0);
                 Object_SetModeById(20, 5);
             }
-            if (Value1(Engine_GameFlagIsSet, 0x202))
+            if (GameFlag_IsSet(0x202))
                 Object_SetModeById(19, 2);
             if (Engine_GameFlagIsSet(0x972)) {
-                Call6((void (*)())Engine_MapCopyCellsTo, 59, 8, 45, 14, 1, 3);
+                Map_CopyCellsTo(59, 8, 45, 14, 1, 3);
                 Map_CopyCellAttributeRect(51, 8, 1, 1, 45, 14);
                 Object_GetById(19)->priority_flags |= 2;
                 Object_SetModeById(19, 3);
                 Map_CopyCellAttributeRect(45, 4, 1, 1, 48, 14);
-                Call3((void (*)())Engine_ActorSetPosition, 19, 194 << 18, 232 << 16);
+                Actor_SetPosition(19, 194 << 18, 232 << 16);
                 Object_GetById(19)->y.fixed = -0x100000;
                 Engine_ActorSetPosition(21, 194 << 18, 232 << 16);
                 Engine_GameFlagSet(0x202);
@@ -1031,9 +1031,9 @@ s32 FieldScene_InitializeActorGroups(void)
             Engine_ActorSetChildValue(17, 6);
             Engine_ActorSetChildValue(18, 6);
             if (Engine_GameFlagIsSet(0x974))
-                Call3((void (*)())Engine_ActorSetPosition, 17, 182 << 18, 156 << 17);
+                Actor_SetPosition(17, 182 << 18, 156 << 17);
             if (Engine_GameFlagIsSet(0x975))
-                Call3((void (*)())Engine_ActorSetPosition, 18, 186 << 18, 156 << 17);
+                Actor_SetPosition(18, 186 << 18, 156 << 17);
             BabiChika_MarkActorCells();
             break;
         case 6:
@@ -1083,11 +1083,11 @@ s32 FieldScene_InitializeActorGroups(void)
                 Object_GetById(11)->y.fixed = -0x400000;
                 Object_GetById(10)->timer = 2;
                 Object_GetById(11)->timer = 4;
-                Call3((void (*)())Engine_ActorSetPosition, 12, 200 << 16, 152 << 16);
+                Actor_SetPosition(12, 200 << 16, 152 << 16);
                 Object_GetById(12)->timer = 11;
                 Object_GetById(12)->update = ACTOR_UPDATE_PANEL;
                 Object_GetById(12)->priority_flags |= 2;
-                Call3((void (*)())Engine_ActorSetPosition, 13, 200 << 16, 152 << 16);
+                Actor_SetPosition(13, 200 << 16, 152 << 16);
                 Object_GetById(13)->timer = 12;
                 Object_GetById(13)->update = ACTOR_UPDATE_PANEL;
                 Object_GetById(13)->priority_flags |= 2;
@@ -1107,13 +1107,13 @@ s32 FieldScene_InitializeActorGroups(void)
         case 10:
         case 11:
             if (Engine_GameFlagIsSet(0x982))
-                Call6((void (*)())Engine_MapCopyCells, 10, 30, 1, 2, 16, 30);
+                Map_CopyCells(10, 30, 1, 2, 16, 30);
             if (Engine_GameFlagIsSet(0x983))
-                Call6((void (*)())Engine_MapCopyCells, 10, 30, 1, 2, 22, 30);
+                Map_CopyCells(10, 30, 1, 2, 22, 30);
             Engine_GameFlagSet(0x973);
             break;
         case 12:
-            Call6((void (*)())Map_CopyCellAttributeRect, 8, 49, 1, 1, 8, 113);
+            Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);
             FieldScene_RunLateSequenceHead();
             Engine_TaskAddCallback(SCENE_TASK, 0xc80);
             break;
@@ -1121,12 +1121,12 @@ s32 FieldScene_InitializeActorGroups(void)
         case 14:
             Battle_WaitMode0(1);
             if (Engine_GameFlagIsSet(0x984)) {
-                Call6((void (*)())Engine_MapCopyCells, 24, 59, 1, 2, 32, 46);
-                Call3((void (*)())Engine_ActorSetPosition, 19, 204 << 17, 198 << 18);
-                Call3((void (*)())Engine_ActorSetPosition, 20, 188 << 17, 198 << 18);
-                Call3((void (*)())Engine_ActorSetPosition, 21, 204 << 17, 190 << 18);
-                Call3((void (*)())Engine_ActorSetPosition, 22, 188 << 17, 190 << 18);
-                Call3((void (*)())Engine_ActorSetPosition, 23, 196 << 17, 194 << 18);
+                Map_CopyCells(24, 59, 1, 2, 32, 46);
+                Actor_SetPosition(19, 204 << 17, 198 << 18);
+                Actor_SetPosition(20, 188 << 17, 198 << 18);
+                Actor_SetPosition(21, 204 << 17, 190 << 18);
+                Actor_SetPosition(22, 188 << 17, 190 << 18);
+                Actor_SetPosition(23, 196 << 17, 194 << 18);
             }
             Object_GetById(19)->motion_flags &= 0xfe;
             Object_GetById(20)->motion_flags &= 0xfe;
@@ -1147,7 +1147,7 @@ s32 FieldScene_InitializeActorGroups(void)
             Map_CopyCellAttributeRect(20, 56, 1, 1, Object_GetById(23)->x.fixed >> 20, Object_GetById(23)->z.fixed >> 20);
             break;
         case 17:
-            Call6((void (*)())Map_CopyCellAttributeRect, 49, 43, 1, 1, 49, 107);
+            Map_CopyCellAttributes(49, 43, 1, 1, 49, 107);
             FieldScene_RunLateSequenceHead();
             break;
         }

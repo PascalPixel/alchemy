@@ -180,7 +180,7 @@ s32 LinkLobby_TalkByProgress(s32 actor)
     Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
     if (Engine_GameFlagIsSet(0x304)) {
 
-        Value1(Engine_GameFlagIsSet, 0x2f0);
+        GameFlag_IsSet(0x2f0);
         base = Engine_GameFlagIsSet(actor + 0x2f0);
         if (Engine_GameFlagIsSet(0x305)) {
             if (base)
@@ -248,7 +248,7 @@ s32 LinkLobby_TalkAlternating(s32 actor)
 
     Engine_EventBegin();
     Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
-    if (!Value1(Engine_GameFlagIsSet, 0x204)) {
+    if (!GameFlag_IsSet(0x204)) {
         if (Party_CountActiveOwners() <= 3)
             message = (s32)MsgLobbyThreeAlliesFightLinkedFinals;
         else
@@ -458,7 +458,7 @@ s32 LinkLobby_RunRoundResult(void)
         Engine_EventWaitForScreen();
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
-        if (Value1(Engine_GameFlagIsSet, 1000)) {
+        if (GameFlag_IsSet(1000)) {
             ew = gEventWork;
             Engine_GameFlagClear(1000);
             ew->raised_trigger = 2;

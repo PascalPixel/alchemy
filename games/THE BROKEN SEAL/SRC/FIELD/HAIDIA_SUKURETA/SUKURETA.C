@@ -654,10 +654,10 @@ void HaidiaSukureta_RunArrivalScene(void)
     u32 i;
     struct FieldActor *record;
 
-    if (Value1(Engine_GameFlagIsSet, 0x800) != 0) {
+    if (GameFlag_IsSet(0x800) != 0) {
     } else {
         Engine_EventBegin();
-        Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
+        Actor_SetSpeed(0, 0x10000, 0x8000);
         Engine_EventSetMessage((s32)MsgHaidiaWho);
         Engine_EventShowMessage(13, 0);
         record = Object_GetById(0);
@@ -668,22 +668,22 @@ void HaidiaSukureta_RunArrivalScene(void)
             Engine_ActorSetPosition(5, x << 16, y << 16);
             Engine_ActorSetPosition(1, x << 16, y << 16);
         }
-        Call3(Engine_ActorSetSpeed, 5, 0xcccc, 0x6666);
-        Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
-        Call3(Engine_ActorWalkTo, 5, 0x128, 0x148);
-        Call3(Engine_ActorWalkToAndWait, 1, 0x118, 0x148);
+        Actor_SetSpeed(5, 0xcccc, 0x6666);
+        Actor_SetSpeed(1, 0xcccc, 0x6666);
+        Actor_WalkTo(5, 0x128, 0x148);
+        Actor_WalkToAndWait(1, 0x118, 0x148);
         Engine_ActorSetAnimation(0, 0);
         Engine_ActorSetAnimation(5, 0);
         Engine_ActorSetAnimation(1, 0);
-        Call3(Engine_ActorFaceDirection, 5, 0xb000, 0);
-        Call3(Engine_ActorFaceDirection, 1, 0xb000, 0);
-        Call3(Engine_ActorFaceDirection, 0, 0xb000, 0);
+        Actor_FaceDirection(5, 0xb000, 0);
+        Actor_FaceDirection(1, 0xb000, 0);
+        Actor_FaceDirection(0, 0xb000, 0);
         Engine_CameraMoveTo(0xe80000, -1, 0xf00000, 1);
         Engine_CameraWaitForMove();
-        Call3(Engine_ActorFaceDirection, 13, FACING_WEST, 20);
+        Actor_FaceDirection(13, FACING_WEST, 20);
         Engine_ActorRunRepeatedMotion(13, 2);
         Engine_EventShowMessage(13, 0);
-        Call3(Engine_ActorSetSpeed, 13, 0x3333, 0x1999);
+        Actor_SetSpeed(13, 0x3333, 0x1999);
         Engine_ActorWalkToAndWait(13, 216, 232);
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(13, 1);
@@ -697,13 +697,13 @@ void HaidiaSukureta_RunArrivalScene(void)
         Engine_ActorRunRepeatedMotion(13, 2);
         Engine_EventWait(20);
         Engine_EventShowMessage(13, 0);
-        Call3(Engine_ActorShowEmote, 13, 0x101, 60);
+        Actor_ShowEmote(13, 0x101, 60);
         Engine_ActorRunRepeatedMotion(13, 1);
-        Call3(Engine_ActorFaceDirection, 13, FACING_WEST, 20);
+        Actor_FaceDirection(13, FACING_WEST, 20);
         Engine_EventShowMessageAndWait(13, 0, 2);
         Engine_ActorWalkToAndWait(13, 232, 232);
         Engine_EventWait(2);
-        Call3(Engine_ActorFaceDirection, 13, FACING_SOUTH, 4);
+        Actor_FaceDirection(13, FACING_SOUTH, 4);
         Engine_ActorRunRepeatedMotion(13, 2);
         Engine_EventWait(4);
         Engine_EventShowMessageAndWait(13, 0, 2);
@@ -747,7 +747,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
     if (*room == 5 || *room == 6) {
         Engine_GameFlagClear(0x12f);
     }
-    if (Value1(Engine_GameFlagIsSet, 0x109) != 0) {
+    if (GameFlag_IsSet(0x109) != 0) {
         Engine_GameFlagClear(0x242);
     }
     if (Engine_GameFlagIsSet(0x834) != 0) {
@@ -764,7 +764,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
 
             record->collision_flags = 8 | record->collision_flags;
         }
-        Call3(Engine_ActorSetPosition, 11, 0x530000, 0x1090000);
+        Actor_SetPosition(11, 0x530000, 0x1090000);
         Engine_ActorWalkToAndWait(11, 83, 0x111);
         Engine_ActorSetAnimation(11, 5);
         record = Object_GetById(11);
@@ -804,15 +804,15 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         Engine_ActorSetPosition(15, 0, 0);
     } else {
         if (Engine_GameFlagIsSet(0x808) != 0) {
-            Call3(Engine_ActorSetPosition, 14, 0x1880000, 0x1780000);
-            Call3(Engine_ActorSetPosition, 15, 0x1780000, 0x1780000);
+            Actor_SetPosition(14, 0x1880000, 0x1780000);
+            Actor_SetPosition(15, 0x1780000, 0x1780000);
             stranger_actions = (s32)Sukureta_StrangerActions;
             Call3(Object_SetTargetAndCallback, 14, 0x10000, stranger_actions);
             Call3(Object_SetTargetAndCallback, 15, 0x10000, stranger_actions);
         }
     }
     if (Engine_GameFlagIsSet(0x87a) != 0) {
-        Call3(Engine_ActorSetPosition, 16, 0x840000, 0x1080000);
+        Actor_SetPosition(16, 0x840000, 0x1080000);
     }
     Engine_EventEnd();
     L_0200171e:;
@@ -824,8 +824,8 @@ void HaidiaSukureta_RunActorSequence(void)
     struct FieldActor *record;
     s32 base;
 
-    if (Value1(Engine_GameFlagIsSet, 0x839) == 0) {
-        if (Value1(Engine_GameFlagIsSet, 0x82f) != 0) {
+    if (GameFlag_IsSet(0x839) == 0) {
+        if (GameFlag_IsSet(0x82f) != 0) {
             Engine_EventBegin();
             Engine_ActorRunRepeatedMotion(11, 2);
             Engine_EventSetMessage((s32)MsgHaidiaSaveYourselves);
@@ -838,16 +838,16 @@ void HaidiaSukureta_RunActorSequence(void)
             base = (s32)MsgHaidiaRockslideDestroyedFence;
             Engine_EventSetMessage(base);
             Engine_EventShowMessageAndWait(11, 0, 20);
-            Call3(Engine_ActorShowEmote, 0, 0x100, 30);
+            Actor_ShowEmote(0, 0x100, 30);
             Engine_CameraMoveTo(0x620000, -1, 0x11b0000, 1);
-            Call3(Engine_ActorWalkToAndWait, 0, 94, 0x125);
-            Call3(Engine_ActorFaceDirection, 0, FACING_NORTHWEST, 0);
+            Actor_WalkToAndWait(0, 94, 0x125);
+            Actor_FaceDirection(0, FACING_NORTHWEST, 0);
             record = Object_GetById(0);
             if (record != 0) {
                 Engine_ActorSetPosition(1, record->x.fixed, record->z.fixed);
             }
-            Call3(Engine_ActorWalkToAndWait, 1, 110, 0x117);
-            Call3(Engine_ActorFaceDirection, 1, FACING_NORTHWEST, 40);
+            Actor_WalkToAndWait(1, 110, 0x117);
+            Actor_FaceDirection(1, FACING_NORTHWEST, 40);
             Engine_ActorRunRepeatedMotion(11, 2);
             Engine_EventWait(40);
             Engine_EventOpenMessage(11, 0);
@@ -866,7 +866,7 @@ void HaidiaSukureta_RunActorSequence(void)
                 Engine_ActorSetAnimation(11, 1);
                 Engine_ActorJump(11, 4, 40);
                 Engine_ActorSetAnimation(11, 6);
-                Call3(Engine_ActorShowEmote, 11, 0x101, 40);
+                Actor_ShowEmote(11, 0x101, 40);
                 Engine_EventShowMessageAndWait(11, 0, 10);
                 Engine_ActorSetAnimation(11, 1);
                 Engine_EventWait(10);
@@ -878,9 +878,9 @@ void HaidiaSukureta_RunActorSequence(void)
                 Object_SetActionCallbackAndRefreshById(11, (s32)Sukureta_Actor11RockslideActions);
                 Engine_ActorStop(0);
                 Engine_ActorStop(1);
-                Call3(Engine_ActorFaceDirection, 0, FACING_SOUTH, 0);
-                Call3(Engine_ActorFaceDirection, 1, FACING_SOUTH, 60);
-                Call3(Engine_ActorShowEmote, 0, 0x105, 0);
+                Actor_FaceDirection(0, FACING_SOUTH, 0);
+                Actor_FaceDirection(1, FACING_SOUTH, 60);
+                Actor_ShowEmote(0, 0x105, 0);
                 Engine_ActorShowEmote(1, 0x105, 120);
                 Engine_GameFlagSet(0x839);
             }

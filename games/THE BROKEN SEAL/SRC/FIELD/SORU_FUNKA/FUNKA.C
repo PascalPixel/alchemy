@@ -662,10 +662,10 @@ void SoruFunka_StepEmbers(void)
     level = (u32)gEmberTimer / 10;
     if (level != 0) {
         *(s32 *)(work + 0x40c) = 0;
-        Call3((void (*)())Engine_WorkSetValuesIfNonNegative, level << 16, level << 16, 0x10000);
+        Work_SetValuesIfNonNegative(level << 16, level << 16, 0x10000);
     } else {
         *(s32 *)(work + 0x40c) = 1;
-        Call3((void (*)())Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     }
     t = gEmberTimer;
     if (t != 0)

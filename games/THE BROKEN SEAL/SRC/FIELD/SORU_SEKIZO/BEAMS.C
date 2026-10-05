@@ -32,7 +32,7 @@ struct SealScene {
 };
 
 struct SealScene gSealScene;
-#define COPY_CELLS(c) Call6(Engine_MapCopyCellsTo, (c).src_x, (c).src_y, (c).dest_x, (c).dest_y, (c).width, (c).height)
+#define COPY_CELLS(c) Map_CopyCellsTo((c).src_x, (c).src_y, (c).dest_x, (c).dest_y, (c).width, (c).height)
 
 void SoruSekizo_OpenSeal(void)
 {
@@ -64,7 +64,7 @@ void SoruSekizo_OpenSeal(void)
             if (!Engine_GameFlagIsSet(0x818)) {
                 Engine_CameraFollowActor(0, 1);
                 Object_GetById(0)->facing = scene->facing;
-                Call3(Engine_ActorSetSpeed, 0, 0x20000, 0x20000);
+                Actor_SetSpeed(0, 0x20000, 0x20000);
                 Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
                 Engine_ActorJump(0, 4, 0);
                 Engine_ActorSetDestination(0, scene->dest_x, scene->dest_z);
@@ -78,7 +78,7 @@ void SoruSekizo_OpenSeal(void)
             }
         } else if (result == 0 && Engine_GameFlagIsSet(0x818)) {
             if (Engine_GameFlagIsSet(0x80b) && Engine_GameFlagIsSet(0x80d) && Engine_GameFlagIsSet(0x80e)) {
-                if (!Value1(Engine_GameFlagIsSet, 0x80f)) {
+                if (!GameFlag_IsSet(0x80f)) {
                     Engine_GameFlagSet(0x80f);
                     SoruSekizo_RunSealOpenedSequence();
                 }

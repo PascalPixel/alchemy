@@ -146,9 +146,9 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
     Event_SetDestination((s32)&SceneId_ToretoHeya, entrance);
     Engine_ActorSetAnimation(leader, 27);
     Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
-    Call2(Engine_ActorSetAttachedEffect, leader, 0x101);
+    Actor_SetAttachedEffect(leader, 0x101);
     Engine_EventWait(30);
-    Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     actor->motion_flags = 2;
     actor->terrain_height = -0xa00000;
     actor->gravity = 0x8000;
@@ -230,9 +230,9 @@ void ToretoHeya_RunTableScene(void)
     Engine_EventSetMessage((s32)MsgToretoHmHrooom);
     Engine_EventShowMessageAndWait(0x8009, 0, 20);
     Engine_AudioPlayCue(29);
-    Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
-    Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
-    Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
+    Actor_SetSpeed(0, 0x10000, 0x8000);
+    Actor_SetSpeed(1, 0x10000, 0x8000);
+    Actor_SetSpeed(2, 0x10000, 0x8000);
     Engine_ActorSetSpeed(3, 0x10000, 0x8000);
     Object_GetById(3)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(3, 2);
@@ -257,34 +257,34 @@ void ToretoHeya_RunTableScene(void)
     ((s32 (*)())Engine_ActorEnableActionCallback)(1, (s32)ToretoHeya_TableActions1);
     Object_SetActionCallbackAndRefreshById(2, (s32)ToretoHeya_TableActions2);
     Engine_EventWait(10);
-    Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xc000, 40);
+    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_FaceDirection(1, 0xc000, 0);
+    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_FaceDirection(2, 0xc000, 40);
     Engine_ActorSetAnimation(8, 11);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(8, 8);
     Engine_EventWait(20);
     ToretoHeya_PlayGesture(8);
-    Call2(Engine_EventShowMessage, 0x8008, 0);
+    Event_ShowMessage(0x8008, 0);
     Engine_ActorStartRepeatedMotion(0, 2);
     Engine_ActorStartRepeatedMotion(1, 2);
     Engine_ActorStartRepeatedMotion(3, 2);
     Engine_ActorStartRepeatedMotion(2, 2);
-    Call3(Engine_ActorShowEmote, 0, 0x100, 0);
-    Call3(Engine_ActorShowEmote, 1, 0x100, 0);
-    Call3(Engine_ActorShowEmote, 3, 0x100, 0);
+    Actor_ShowEmote(0, 0x100, 0);
+    Actor_ShowEmote(1, 0x100, 0);
+    Actor_ShowEmote(3, 0x100, 0);
     Engine_ActorShowEmote(2, 0x100, 60);
     ToretoHeya_PlayGesture(11);
-    Call3(Engine_EventShowMessageAndWait, 0x8008, 0, 10);
+    Event_ShowMessageAndWait(0x8008, 0, 10);
     Engine_ActorStartRepeatedMotion(0, 1);
     Engine_ActorStartRepeatedMotion(1, 1);
     Engine_ActorStartRepeatedMotion(3, 1);
     Engine_ActorRunRepeatedMotion(2, 1);
-    Call2(Engine_EventShowMessage, 0x8008, 0);
-    Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
-    Call2(Engine_ActorSetAttachedEffect, 1, 0x102);
-    Call2(Engine_ActorSetAttachedEffect, 3, 0x102);
+    Event_ShowMessage(0x8008, 0);
+    Actor_SetAttachedEffect(0, 0x102);
+    Actor_SetAttachedEffect(1, 0x102);
+    Actor_SetAttachedEffect(3, 0x102);
     Engine_ActorSetAttachedEffect(2, 0x102);
     Engine_EventWait(40);
     ToretoHeya_PlayGesture(11);
@@ -547,7 +547,7 @@ s32 ToretoHeya_EnterRoom(void)
         Engine_ActorSetPosition(9, 0, 0);
         Engine_ActorSetPosition(8, 0, 0);
     }
-    if (Value1(Engine_GameFlagIsSet, 0x109))
+    if (GameFlag_IsSet(0x109))
         ToretoHeya_ApplyFlaggedMapPatches();
     globals = (u8 **)gMapWork;
     work = globals[0];
@@ -570,8 +570,8 @@ s32 ToretoHeya_EnterRoom(void)
         Engine_EventOpenScreen();
         Engine_ActorSetAnimation(leader, 27);
         Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
-        Call2(Engine_ActorSetAttachedEffect, leader, 0x101);
-        Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
+        Actor_SetAttachedEffect(leader, 0x101);
+        Camera_MoveTo(-1, -1, -1, 0);
         actor->motion_flags = 2;
         actor->y.fixed = 0x640000;
         actor->terrain_height = -0xa00000;
@@ -872,7 +872,7 @@ void ToretoHeya_RunLandingDustScene(void)
     s32 z;
 
     Engine_EventBegin();
-    Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Object_GetById(0)->y.fixed = 0x820000;
@@ -902,10 +902,10 @@ void ToretoHeya_RunLandingDustScene(void)
         Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, x, v->y, z, 0x1090001, p);
     }
     Engine_AudioPlayCue(188);
-    Call2(Engine_ActorSetAttachedEffect, 0, 0x101);
+    Actor_SetAttachedEffect(0, 0x101);
     Engine_ActorSetAnimation(0, 22);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Engine_ActorSetAttachedEffect(0, 0x100);
     Object_GetById(0)->gravity = 0x10000;

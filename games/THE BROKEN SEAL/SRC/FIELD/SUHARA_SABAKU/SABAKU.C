@@ -266,16 +266,16 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     Engine_GameFlagSet(0x340);
     if (Engine_GameFlagIsSet(0x9a0) == 0) {
     } else {
-        if (Value1(Engine_GameFlagIsSet, 0x9b6) != 0) {
+        if (GameFlag_IsSet(0x9b6) != 0) {
         } else {
             Engine_GameFlagSet(0x9b6);
-            Call3(Engine_ActorSetSpeed, 13, 0x10000, 0x8000);
-            Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
+            Actor_SetSpeed(13, 0x10000, 0x8000);
+            Actor_SetSpeed(0, 0x18000, 0xc000);
             record = Object_GetById(0);
             if ((s32)record != 0) {
                 Engine_ActorSetPosition(13, record->x.fixed, record->z.fixed);
             }
-            Call3(Engine_ActorFaceActor, 13, 0x4000, 0);
+            Actor_FaceActor(13, 0x4000, 0);
             Object_GetById(13)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorWalkTo(13, p9, (p11 - 16));
             Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -285,20 +285,20 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
             Engine_ActorSetAnimation(13, 1);
             Engine_ActorFaceDirection(0, 0x4000, 0);
             Engine_EventSetMessage((s32)MsgSuharaSandstorm);
-            Call3(Engine_ActorShowEmote, 13, 0x106, 60);
+            Actor_ShowEmote(13, 0x106, 60);
             Engine_EventShowMessage(13, 0);
-            Call3(Engine_ActorShowEmote, 13, 0x102, 60);
+            Actor_ShowEmote(13, 0x102, 60);
             Engine_EventShowMessage(13, 0);
-            Call3(Engine_ActorFaceDirection, 13, 0x2000, 0);
-            Call3(Engine_ActorShowEmote, 13, 0x101, 60);
+            Actor_FaceDirection(13, 0x2000, 0);
+            Actor_ShowEmote(13, 0x101, 60);
             Engine_EventShowMessage(13, 0);
             Engine_EventWait(10);
-            Call3(Engine_ActorFaceDirection, 13, 0xc000, 30);
+            Actor_FaceDirection(13, 0xc000, 30);
             Engine_ActorRunRepeatedMotion(13, 2);
             Engine_EventShowMessage(13, 0);
             Engine_ActorSetAnimationAndWait(13, 3);
             Engine_EventShowMessage(13, 0);
-            Call3(Engine_ActorSetSpeed, 13, 0x10000, 0x8000);
+            Actor_SetSpeed(13, 0x10000, 0x8000);
             Engine_ActorSetAnimation(13, 2);
             record = Object_GetById(0);
             if ((s32)record != 0) {

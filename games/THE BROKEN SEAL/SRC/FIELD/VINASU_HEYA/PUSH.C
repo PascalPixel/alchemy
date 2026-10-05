@@ -111,7 +111,7 @@ void VinasuHeya_RunCellPushScene(void)
     if ((2 & block->priority_flags) != 0) {
         Engine_MapCopyCellAttributes(45, 45, 1, 1, 46, row);
     } else {
-        Call6(Engine_MapCopyCellAttributes, 48, 42, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
+        Map_CopyCellAttributes(48, 42, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
     }
     x = block->x.fixed >> 20;
     if (x != 46) {
@@ -157,7 +157,7 @@ void VinasuHeya_RunCellPushScene(void)
                 Engine_EventWait(30);
                 Engine_AudioPlayCue(158);
                 Engine_MapAnimateCells(gVinasuPushCells, 110, 41);
-                Call6(Engine_MapCopyCellAttributes, 46, 41, 1, 1, x, 42);
+                Map_CopyCellAttributes(46, 41, 1, 1, x, 42);
                 Engine_GameFlagSet(0x301);
             }
         }

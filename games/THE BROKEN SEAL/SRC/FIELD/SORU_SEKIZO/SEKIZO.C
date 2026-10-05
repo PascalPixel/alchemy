@@ -267,9 +267,9 @@ void FieldScene_RunStagedActorScene(void)
     Engine_EventSetMessage((s32)MsgSoruWait);
     Event_SayThenWait(8, 6);
     Camera_SetSpeed(0xcccc, 0x1999);
-    Call4(Engine_CameraMoveTo, 0x23e0000, -1, 0xb40000, 1);
-    Call3(Engine_ActorSetSpeed, 8, 0x10000, 0x8000);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x240, 216);
+    Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
+    Actor_SetSpeed(8, 0x10000, 0x8000);
+    Actor_WalkToAndWait(8, 0x240, 216);
     Engine_EventWait(20);
     Engine_ActorJump(5, 2, 0);
     Engine_EventWait(30);
@@ -282,7 +282,7 @@ void FieldScene_RunStagedActorScene(void)
     Camera_MoveTo(0x11f0000, -1, 0xb00000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(60);
-    Call4(Engine_CameraMoveTo, 0x23e0000, -1, 0xb40000, 1);
+    Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(8, 3);
@@ -290,8 +290,8 @@ void FieldScene_RunStagedActorScene(void)
     Actor_FaceDirection(8, 0xc000, 0);
     Engine_EventWait(10);
     Engine_ActorJump(8, 6, 0);
-    Call3(Engine_ActorSetSpeed, 8, 0x30000, 0x20000);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x240, 184);
+    Actor_SetSpeed(8, 0x30000, 0x20000);
+    Actor_WalkToAndWait(8, 0x240, 184);
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(8, 3);
     Event_SayThenWait(8, 6);
@@ -316,31 +316,31 @@ void FieldScene_RunStagedActorScene(void)
     Actor_FaceActor(8, ACTOR_JASMINE, 0);
     Engine_EventWait(40);
     Engine_ActorJump(8, 6, 0);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x240, 216);
-    Call3(Engine_ActorFaceDirection, 8, 0x8000, 0);
+    Actor_WalkToAndWait(8, 0x240, 216);
+    Actor_FaceDirection(8, 0x8000, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
+    Actor_SetSpeed(8, 0x13333, 0x9999);
     ObjectMotion_ResetAndSetPositionInMode2(8, 0x1b0, 200);
     Engine_EventWait(20);
     Camera_SetSpeed(0x26666, 0x4ccc);
-    Call4(Engine_CameraMoveTo, 0x1200000, -1, 0xab0000, 1);
+    Camera_MoveTo(0x1200000, -1, 0xab0000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(80);
     Engine_ActorSetAnimation(8, 1);
-    Call4(Engine_CameraMoveTo, 0x23e0000, -1, 0xb40000, 1);
+    Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
     Engine_EventWait(20);
     Engine_ActorFaceDirection(8, 0, 0);
     Engine_EventWait(30);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x240, 216);
-    Call3(Engine_ActorFaceDirection, 8, 0xc000, 0);
+    Actor_WalkToAndWait(8, 0x240, 216);
+    Actor_FaceDirection(8, 0xc000, 0);
     Engine_EventWait(10);
-    Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
-    Call3(Engine_ActorFaceDirection, 5, 0x4000, 0);
+    Actor_FaceDirection(0, 0x4000, 0);
+    Actor_FaceDirection(5, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Engine_CameraMoveTo(0x23e0000, -1, 0xab0000, 1);
     Engine_ActorJump(8, 6, 0);
-    Call3(Engine_ActorSetSpeed, 8, 0x30000, 0x20000);
+    Actor_SetSpeed(8, 0x30000, 0x20000);
     Engine_ActorWalkToAndWait(8, 0x240, 184);
     Engine_EventWait(80);
     Event_SayThenWait(8, 6);
@@ -356,8 +356,8 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorFaceDirection(8, 0xc000, 0);
     Engine_EventWait(30);
     Event_SayThenWait(8, 6);
-    Call3(Engine_ActorShowEmote, 0, 0x101, 0);
-    Call3(Engine_ActorShowEmote, 1, 0x101, 0);
+    Actor_ShowEmote(0, 0x101, 0);
+    Actor_ShowEmote(1, 0x101, 0);
     Actor_ShowEmote(ACTOR_JASMINE, 0x101, 0);
     Engine_EventWait(60);
     Engine_ActorSetAnimationAndWait(8, 4);
@@ -367,9 +367,9 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorFaceEachOther(ACTOR_JASMINE, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(40);
     UiText_OpenMessageAtObject(8, 0);
-    Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
-    Call3(Engine_ActorFaceDirection, 5, 0x4000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0x4000, 0);
+    Actor_FaceDirection(0, 0x4000, 0);
+    Actor_FaceDirection(5, 0x4000, 0);
+    Actor_FaceDirection(1, 0x4000, 0);
     if (Inventory_PromptAndSetObjectMode(0, 0) == 0) {
         Engine_EventSetMessage((s32)MsgSoruHonestlyDoubtUnderstand);
     } else {
@@ -387,11 +387,11 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorFaceDirection(8, 0x4000, 0);
     Engine_EventWait(20);
     Engine_ActorJump(8, 6, 0);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x240, 216);
+    Actor_WalkToAndWait(8, 0x240, 216);
     Engine_EventWait(40);
     Engine_CameraSetSpeed(0xcccc, 0x1999);
-    Call4(Engine_CameraMoveTo, 0x23e0000, -1, 0xbf0000, 1);
-    Call3(Engine_ActorSetSpeed, 8, 0x10000, 0x8000);
+    Camera_MoveTo(0x23e0000, -1, 0xbf0000, 1);
+    Actor_SetSpeed(8, 0x10000, 0x8000);
     Engine_ActorWalkToAndWait(8, 0x240, 232);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(8, 2);
@@ -401,8 +401,8 @@ void FieldScene_RunStagedActorScene(void)
     Engine_EventWait(30);
     Event_SayThenWait(8, 6);
     Engine_ActorSetAnimationAndWait(8, 3);
-    Call4(Engine_CameraMoveTo, 0x2400000, -1, 0xd70000, 1);
-    Call3(Engine_ActorWalkToAndWait, 8, 0x23e, 0x143);
+    Camera_MoveTo(0x2400000, -1, 0xd70000, 1);
+    Actor_WalkToAndWait(8, 0x23e, 0x143);
     Engine_ActorSetPosition(8, 0, 0);
     Camera_SetSpeed(0x39999, 0x7333);
     Engine_CameraMoveTo(0x2400000, -1, 0x880000, 1);
@@ -413,8 +413,8 @@ void FieldScene_RunStagedActorScene(void)
     Event_SayThenWait(5, 6);
     Engine_ActorSetAnimation(1, 3);
     Engine_ActorSetAnimationAndWait(5, 3);
-    Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
-    Call3(Engine_ActorSetSpeed, 5, 0x10000, 0x8000);
+    Actor_SetSpeed(1, 0x10000, 0x8000);
+    Actor_SetSpeed(5, 0x10000, 0x8000);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
     record = Object_GetById(0);
     if (record != 0) {
@@ -840,24 +840,24 @@ void SoruSekizo_RunStatueDropScene(void)
             if (Engine_GameFlagIsSet(0x207) == 0) {
                 leader = Object_GetById(0);
                 if ((u32)(leader->z.fixed >> 19) <= 17) {
-                    Call3(Engine_ActorWalkToAndWait, 0, 0x121, 158);
+                    Actor_WalkToAndWait(0, 0x121, 158);
                     leader = Object_GetById(0);
                     leader->facing = FACING_NORTH;
                 }
             }
             if (Engine_GameFlagIsSet(0x816) != 0 && Engine_GameFlagIsSet(0x817) != 0) {
                 Engine_GameFlagSet(0x818);
-                Call2(Engine_CameraSetSpeed, 0x20000, 0x4000);
-                Call4(Engine_CameraMoveTo, 0x11e0000, -1, 0x920000, 1);
+                Camera_SetSpeed(0x20000, 0x4000);
+                Camera_MoveTo(0x11e0000, -1, 0x920000, 1);
                 Engine_CameraWaitForMove();
                 Object_GetById(17)->steering_flags &= ~ACTOR_FACES_MOTION;
-                Call3(Engine_ActorSetSpeed, 17, 0x30000, 0x10000);
+                Actor_SetSpeed(17, 0x30000, 0x10000);
                 statue->motion_flags = 0;
                 Engine_ActorSetSpritePriority(17, 3);
                 Engine_AudioPlayCue(189);
                 Engine_ActorSetDestination(17, 0x120, 178);
                 Engine_EventWait(8);
-                Call3(Engine_ActorSetPosition, 18, 0x1200000, 0xb20000);
+                Actor_SetPosition(18, 0x1200000, 0xb20000);
                 statue->target_x = ACTOR_NO_TARGET;
                 statue->target_y = ACTOR_NO_TARGET;
                 statue->target_z = ACTOR_NO_TARGET;
@@ -868,23 +868,23 @@ void SoruSekizo_RunStatueDropScene(void)
                 statue->velocity_y = 0;
                 statue->velocity_z = 0;
                 Engine_ActorSetPosition(17, 0, 0);
-                Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
+                Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
                 Engine_EventWait(10);
                 Engine_AudioPlayCue(141);
-                Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
+                Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
                 Engine_EventWait(10);
-                Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+                Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
                 Engine_EventWait(35);
-                Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
+                Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
                 Engine_EventWait(20);
-                Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
+                Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
                 Engine_EventWait(30);
-                Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x20000, 0x10000);
+                Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
                 Engine_EventWait(40);
                 Engine_AudioPlayCue(0x121);
-                Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
+                Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
                 Engine_EventWait(10);
-                Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+                Work_SetValuesIfNonNegative(-1, -1, 0xe666);
                 Engine_EventWait(60);
                 Engine_AudioPlayCue(188);
                 if (Engine_GameFlagIsSet(0x80b) != 0 && Engine_GameFlagIsSet(0x80c) != 0
@@ -1017,7 +1017,7 @@ void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
     p10 = a2;
     Engine_EventBegin();
     Engine_AudioPlayCue(185);
-    Call3(Engine_ActorSetSpeed, p9, 0x3333, 0x1999);
+    Actor_SetSpeed(p9, 0x3333, 0x1999);
     Engine_ActorSetSpeed(0, 0x3333, 0x1999);
     Object_GetById(p9)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorSetAnimation(0, 8);

@@ -3,6 +3,7 @@
 #include "CALL.H"
 #include "TYPES.H"
 #include "MAKYURI.H"
+#include "FIELD_EVENT.H"
 
 extern const u16 MakyuriHeya_FloorSwitchCloseCells[];
 
@@ -25,9 +26,9 @@ void MakyuriHeya_WalkLeaderIn(void)
         Actor_SetDestination(0, 248, 792);
     } else {
 #if EDITION_INTERNATIONAL
-        Call3(Engine_ActorMoveToAndWait, 0, 696, 592);
+        Actor_MoveToAndWait(0, 696, 592);
 #else
-        Call3(Engine_ActorSetDestination, 0, 696, 592);
+        Actor_SetDestination(0, 696, 592);
 #endif
 #if EDITION_INTERNATIONAL
         Actor_SetDestination(0, 696, 600);
@@ -80,7 +81,7 @@ void MakyuriHeya_TriggerSmallFloorSwitch(void)
     s32 z;
     struct FieldActor *actor;
 
-    if (Value1(Engine_GameFlagIsSet, 0x256) == 0) {
+    if (GameFlag_IsSet(0x256) == 0) {
         x = Object_GetById(0)->x.part.pixel;
         z = Object_GetById(0)->z.part.pixel;
         if ((u32)(x - 84) <= 7 && z > 211 && z <= 219) {
@@ -372,7 +373,7 @@ void MakyuriHeya_TriggerFloorSwitch(void)
     s32 x;
     s32 z;
 
-    if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x256) != 0)
+    if (GameFlag_IsSet(0x256) != 0)
         return;
     x = Object_GetById(0)->x.part.pixel;
     z = Object_GetById(0)->z.part.pixel;

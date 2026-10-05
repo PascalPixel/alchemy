@@ -1067,7 +1067,7 @@ void Scene_RunActorLeapSequence(void)
     zero = 0;
     *state = zero;
 #endif
-    Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     record = (s32)Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     {
@@ -1075,12 +1075,12 @@ void Scene_RunActorLeapSequence(void)
 
         rec7->facing = shown;
     }
-    Call3(Engine_ActorSetSpeed, 0, 0x30000, 0x18000);
+    Actor_SetSpeed(0, 0x30000, 0x18000);
     Engine_ActorMoveToAndWait(0, rec7->x.part.pixel, 0x228);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(0, 22);
     Engine_EventWait(30);
-    Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
+    Actor_SetAttachedEffect(0, 0x102);
     Engine_ActorRunRepeatedMotion(0, 2);
     Engine_EventWait(20);
     {

@@ -217,7 +217,7 @@ void Scene_RunKorimaMagariSequence(void)
     Engine_AudioPlayCue(232);
     if (*gKorimaMagariLayout != 0) {
     } else {
-        Call3(Engine_ActorSetPosition, 9, 0x1000000, 0x1ce0000);
+        Actor_SetPosition(9, 0x1000000, 0x1ce0000);
         Engine_MapCopyCells(77, 34, 1, 2, 83, 25);
         Engine_TaskWait(3);
         Engine_MapCopyCells(78, 34, 1, 2, 83, 25);
@@ -241,17 +241,17 @@ void Scene_RunKorimaMagariSequence(void)
         Engine_MapCopyCells(79, 38, 2, 1, v5, 29);
         Engine_TaskWait(8);
         Engine_MapCopyCells(65, 53, 2, 1, v5, 29);
-        Call6(Engine_MapCopyCells, 65, 40, 2, 4, 15, 28);
+        Map_CopyCells(65, 40, 2, 4, 15, 28);
         goto L_02000626;
     }
-    Call3(Engine_ActorSetPosition, 9, 0x1000000, 0x1e00000);
+    Actor_SetPosition(9, 0x1000000, 0x1e00000);
     Engine_MapCopyCells(78, 34, 1, 2, 83, 25);
     Engine_TaskWait(3);
     Engine_MapCopyCells(77, 34, 1, 2, 83, 25);
     Engine_TaskWait(3);
     Engine_MapCopyCells(76, 34, 1, 2, 83, 25);
     Engine_TaskWait(30);
-    Call6(Engine_MapCopyCells, 65, 45, 2, 4, 15, 28);
+    Map_CopyCells(65, 45, 2, 4, 15, 28);
     Engine_MapCopyCells(71, 50, 2, 5, 79, 25);
     Engine_ActorSetAnimation(9, 2);
     Engine_AudioPlayCue(230);
@@ -315,12 +315,12 @@ void KorimaMagari_RunReturnSequence(void)
     Engine_ActorSetAnimation(0, 8);
     Engine_EventWait(6);
     Engine_AudioPlayCue(239);
-    Call3(Engine_ActorSetSpeed, 8, 0x8000, 0x3333);
+    Actor_SetSpeed(8, 0x8000, 0x3333);
     Engine_ActorSetAnimation(8, 2);
     Engine_ActorSetDestination(8, 72, 176);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(0, 2);
-    Call3(Engine_ActorSetSpeed, 0, 0x4ccc, 0x3333);
+    Actor_SetSpeed(0, 0x4ccc, 0x3333);
     Engine_ActorSetDestinationOffset(0, -8, 0);
     Engine_EventWait(24);
     Engine_ActorSetAnimation(0, 1);
@@ -343,12 +343,12 @@ void KorimaMagari_RunDepartSequence(void)
     Engine_ActorSetAnimation(0, 8);
     Engine_EventWait(6);
     Engine_AudioPlayCue(239);
-    Call3(Engine_ActorSetSpeed, 8, 0x8000, 0x3333);
+    Actor_SetSpeed(8, 0x8000, 0x3333);
     Engine_ActorSetAnimation(8, 2);
     Engine_ActorSetDestination(8, 104, 176);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(0, 2);
-    Call3(Engine_ActorSetSpeed, 0, 0x4ccc, 0x3333);
+    Actor_SetSpeed(0, 0x4ccc, 0x3333);
     Engine_ActorSetDestinationOffset(0, 8, 0);
     Engine_EventWait(24);
     Engine_ActorSetAnimation(0, 1);

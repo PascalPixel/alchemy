@@ -6,6 +6,7 @@
 #include "MAKYURI.H"
 #include "FIELD_EFFECT.H"
 #include "IO_REG.H"
+#include "FIELD_EVENT.H"
 
 extern u8 MsgMakyuriWhoHonorsHeart[];
 
@@ -435,12 +436,12 @@ void MakyuriIriguchi_CrossDoorway(void)
     actor->scale_x = -0x10000;
     actor = Object_GetById(14);
     actor->scale_x = -0x10000;
-    Call3(Engine_ActorSetPosition, 3, 0x880000, 0xb80000);
-    Call3(Engine_ActorSetPosition, 0, 0x880000, 0x1280000);
-    Call3(Engine_ActorSetPosition, 8, 0x880000, 0x980000);
-    Call3(ObjectMotion_SetSpeedParameters, 3, 0x18000, 0xc000);
-    Call3(ObjectMotion_SetSpeedParameters, 8, 0x18000, 0xc000);
-    Call3(ObjectMotion_SetSpeedParameters, 0, 0xcccc, 0x6666);
+    Actor_SetPosition(3, 0x880000, 0xb80000);
+    Actor_SetPosition(0, 0x880000, 0x1280000);
+    Actor_SetPosition(8, 0x880000, 0x980000);
+    Actor_SetSpeed(3, 0x18000, 0xc000);
+    Actor_SetSpeed(8, 0x18000, 0xc000);
+    Actor_SetSpeed(0, 0xcccc, 0x6666);
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Engine_CameraMoveTo(0x880000, -1, 0xb80000, 0);
     Engine_EventOpenScreen();
@@ -455,7 +456,7 @@ void MakyuriIriguchi_CrossDoorway(void)
         Battle_WaitMode0(10);
         Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path3);
         ObjectMotion_CommitCurrentPositionAndActivate(3);
-        Call3(Engine_ActorFaceDirection, 3, 0xc000, 30);
+        Actor_FaceDirection(3, 0xc000, 30);
         Engine_ActorRunRepeatedMotion(3, 1);
         ivan = Object_GetById(3);
         /* FAKEMATCH: or-ing a zero kept from before the loop leaves the reference's unread zero in sl. */
@@ -487,9 +488,9 @@ void MakyuriIriguchi_CrossDoorway(void)
     actor->update = (void (*)(union FieldObject *))SceneActor_FaceLeaderWhileGrounded;
     Engine_CameraMoveToActor(0, 1);
     Battle_WaitMode0(30);
-    Call3(Engine_ActorWalkToAndWait, 0, 136, 0x108);
+    Actor_WalkToAndWait(0, 136, 0x108);
     Engine_CameraWaitForMove();
-    Call6(Map_CopyCellAttributeRect, 0, 0, 3, 3, 7, 9);
+    Map_CopyCellAttributes(0, 0, 3, 3, 7, 9);
     Engine_EventEnd();
 }
 

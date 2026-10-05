@@ -890,7 +890,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Call4(Motion_LaunchFromFocusedObject, 2, 16, 16, 0xc000);
     Engine_ActorWaitForMove(1);
     Engine_EventWait(20);
-    Call3(Engine_ActorShowEmote, 2, 0x102, 0);
+    Actor_ShowEmote(2, 0x102, 0);
     Engine_EventWait(40);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Engine_ActorRunRepeatedMotion(3, 2);
@@ -902,7 +902,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(10);
     Engine_ActorFaceEachOther(ACTOR_GERALD, ACTOR_IVAN, 50);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Actor_FaceDirection(2, 0xc000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(10);
@@ -913,7 +913,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(20);
     Engine_ActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Actor_FaceDirection(2, 0xc000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(2, 0);
     Engine_EventWait(10);
@@ -975,7 +975,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         Engine_EventWait(20);
         Actor_ShowEmote(ACTOR_GERALD, 0x100, 40);
         Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
-        Call3(Engine_ActorWalkByAndWait, 1, 0, -16);
+        Actor_WalkByAndWait(1, 0, -16);
         Engine_EventWait(10);
         Engine_ActorFaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
         Engine_EventShowMessage(1, 0);
@@ -983,7 +983,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         Engine_EventSetMessage((s32)MsgArutamiraDontTrustAnyone);
         Engine_EventWait(10);
         Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-        Call3(Engine_ActorWalkByAndWait, 1, 0, -16);
+        Actor_WalkByAndWait(1, 0, -16);
         Engine_EventWait(10);
         Engine_ActorFaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
         Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
@@ -995,7 +995,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventSetMessage(line);
     Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
     Actor_SetSpeed(ACTOR_IVAN, 0x20000, 0x10000);
-    Call3(Engine_ActorWalkByAndWait, 2, 0, -16);
+    Actor_WalkByAndWait(2, 0, -16);
     Engine_EventWait(10);
     Engine_ActorFaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
     Event_ShowMessage(ACTOR_IVAN, 0);
@@ -1028,7 +1028,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Actor_FaceDirection(2, 0xc000, 0);
     line += 7;
     Engine_EventSetMessage(line);
     Engine_EventWait(30);
@@ -1052,7 +1052,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(10);
     Engine_ActorFaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
+    Actor_FaceDirection(1, 0xc000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
@@ -1063,7 +1063,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventWait(10);
     Engine_ActorFaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
+    Actor_FaceDirection(1, 0xc000, 0);
     Engine_EventWait(30);
     Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
@@ -1233,7 +1233,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
         }
     }
     Engine_GameFlagSet(0x200);
-    Call1(Engine_GameFlagClear, 0x201);
+    GameFlag_Clear(0x201);
     if (gGameState.scene == (s32)&SceneId_ArutamiraDou1) {
         if (gGameState.entrance == 1) {
             if (!Engine_GameFlagIsSet(0x109)) {
@@ -1265,14 +1265,14 @@ s32 ArutamiraDou_ApplyEntryState(void)
         FieldScene_RedrawActorFootprint(10);
         if (Engine_GameFlagIsSet(0x211)) {
             Engine_ActorSetAnimation(11, 5);
-            Call6(Engine_MapCopyCellAttributes, 76, 16, 1, 1, 73, 17);
+            Map_CopyCellAttributes(76, 16, 1, 1, 73, 17);
         } else {
             Object_GetById(11)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         }
         Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 #if EDITION_INTERNATIONAL
         if (Engine_GameFlagIsSet(0x212)) {
-            Call6(Engine_MapCopyCellAttributes, 30, 20, 1, 1, 32, 20);
+            Map_CopyCellAttributes(30, 20, 1, 1, 32, 20);
         }
 #endif
     }
@@ -1298,8 +1298,8 @@ s32 ArutamiraDou_ApplyEntryState(void)
         }
         state = (s8 *)&gSceneState[1];
         if (state[0] == 99) {
-            Call6((void (*)())Engine_MapCopyCellsTo, 41, 55, 3, 2, 30, 55);
-            Call6(Engine_MapCopyCellAttributes, 42, 8, 1, 1, 31, 8);
+            Map_CopyCellsTo(41, 55, 3, 2, 30, 55);
+            Map_CopyCellAttributes(42, 8, 1, 1, 31, 8);
         }
         if (state[0] == 2) {
             SceneActor_PlaceFiveActorsInRow((state[1] << 16) / 5 + 0x4000);
@@ -1408,10 +1408,10 @@ void ArutamiraDou_ReleaseWallBurst(void)
         object += 72;
     }
     Engine_TaskWait(80);
-    Call6((void (*)())Engine_MapCopyCellsTo, 41, 55, 3, 2, 30, 55);
-    Call6((void (*)())Engine_MapCopyCellAttributes, 42, 8, 1, 1, 31, 8);
+    Map_CopyCellsTo(41, 55, 3, 2, 30, 55);
+    Map_CopyCellAttributes(42, 8, 1, 1, 31, 8);
     Engine_TaskWait(50);
-    Call3((void (*)())Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_TaskWait(30);
     {
         s32 mode = 2;

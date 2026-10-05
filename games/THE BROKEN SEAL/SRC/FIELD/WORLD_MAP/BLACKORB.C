@@ -97,8 +97,8 @@ void WorldMap_RunBlackOrbScene(void)
     if (leader != NULL) {
         Engine_ActorSetPosition(gWorldMapTriggerActor, leader->x.fixed, leader->z.fixed);
     }
-    Call3(Engine_ActorSetSpeed, gWorldMapTriggerActor, 0x19999, 0xcccc);
-    Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x1768, 0xd78);
+    Actor_SetSpeed(gWorldMapTriggerActor, 0x19999, 0xcccc);
+    Actor_WalkToAndWait(gWorldMapTriggerActor, 0x1768, 0xd78);
     Engine_ActorFaceDirection(gWorldMapTriggerActor, 0, 20);
     Engine_ActorShowEmote(gWorldMapTriggerActor, 0x100, 60);
     Engine_ActorStartRepeatedMotion(gWorldMapTriggerActor, 2);
@@ -116,10 +116,10 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor | 0x3000, 0, 40);
-    Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x1768, 0xd48);
+    Actor_WalkToAndWait(gWorldMapTriggerActor, 0x1768, 0xd48);
     Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 0x1794, 0xd48);
     Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x3000, 20);
-    Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
+    Actor_SetSpeed(0, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(0, gBlackOrbLeaderScript);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
@@ -127,7 +127,7 @@ void WorldMap_RunBlackOrbScene(void)
     while ((s16)Object_GetById(0)->timer == 0) {
         Engine_TaskWait(1);
     }
-    Call3(Engine_ActorFaceDirection, 0, 0x4000, 20);
+    Actor_FaceDirection(0, 0x4000, 20);
     Engine_ActorShowEmote(gWorldMapTriggerActor, 0x106, 0);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 2);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
@@ -135,7 +135,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_EventShowMessage(gWorldMapTriggerActor, 0);
     Engine_ActorFaceDirection(0, 0, 20);
     Object_GetById(gWorldMapTriggerActor)->steering_flags &= ~ACTOR_FACES_MOTION;
-    Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x178c, 0xd48);
+    Actor_WalkToAndWait(gWorldMapTriggerActor, 0x178c, 0xd48);
     Engine_EventWait(1);
     Object_GetById(gWorldMapTriggerActor)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);

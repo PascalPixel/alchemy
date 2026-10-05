@@ -4,6 +4,7 @@
 #include "STAGED_ACTOR.H"
 #include "HEYA.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 
 enum ExtendedChoreographyMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
@@ -163,7 +164,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         goto advance;
     case 4:
         Object_SetMode(obj, 2);
-        Call4(Engine_ObjectSetPosition, (s32)obj, 0x1d40000, 0x200000, 0x2780000);
+        FieldObject_SetPosition((s32)obj, 0x1d40000, 0x200000, 0x2780000);
         walker->countdown = 60;
         walker->step++;
         break;
@@ -189,7 +190,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         break;
     case 9:
         Object_SetMode(obj, 2);
-        Call4(Engine_ObjectSetPosition, (s32)obj, 0x1e00000, 0x200000, 0x2580000);
+        FieldObject_SetPosition((s32)obj, 0x1e00000, 0x200000, 0x2580000);
         walker->countdown = 60;
         walker->step++;
         if (leader->paused == 0) {
@@ -333,7 +334,7 @@ s32 FuneHeya_GetStepScript(void)
             return (s32)FuneHeya_StepScriptD;
         } else if (Engine_GameFlagIsSet(0x911) != 0) {
             if (Engine_GameFlagIsSet(0x922) != 0) {
-                if (Value1(Engine_GameFlagIsSet, 0x8a0) != 0) {
+                if (GameFlag_IsSet(0x8a0) != 0) {
                     FuneHeya_StepScriptC[46] = 1;
                 }
                 if (Engine_GameFlagIsSet(0x925) != 0) {
@@ -907,7 +908,7 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
     if (record != 0) {
         Engine_ActorSetPosition(a0, record->x.fixed, record->z.fixed);
     }
-    Call3(Engine_ActorSetSpeed, a0, 0x19999, 0xcccc);
+    Actor_SetSpeed(a0, 0x19999, 0xcccc);
     Engine_ActorSetAnimation(a0, 2);
     {
         s32 w = FuneHeya_TurnSteps[v6];

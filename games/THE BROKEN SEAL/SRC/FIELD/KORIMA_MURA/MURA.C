@@ -337,7 +337,7 @@ void KorimaMura_AnimateSwitchOrExit(void)
         break;
     case 9:
         Object_GetById(0)->motion_flags = 0;
-        Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
+        Actor_SetSpeed(0, 0x8000, 0x4000);
         Engine_ActorSetDestinationOffset(0, 0, 8);
         *(s32 *)(gWork + 0x1c8) = 16;
         Engine_EventRequestExit(9);
@@ -356,28 +356,28 @@ void KorimaMura_RunObjectSpreadScene(void)
     s32 v6;
 
     Engine_EventBegin();
-    Call2(Engine_CameraSetSpeed, 0x20000, 0x4000);
-    Call4(Engine_CameraMoveTo, 0xa80000, 0, 0xf60000, 1);
+    Camera_SetSpeed(0x20000, 0x4000);
+    Camera_MoveTo(0xa80000, 0, 0xf60000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Call3(Engine_ActorShowEmote, 8, 0x100, 40);
+    Actor_ShowEmote(8, 0x100, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventSetMessage((s32)MsgKorimaGoingCrossBridge);
     Engine_EventShowMessage(8, 0);
     Engine_CameraSetSpeed(0x6666, 0xccc);
-    Call4(Engine_CameraMoveTo, 0xa80000, 0, 0xea0000, 1);
-    Call3(Engine_ActorSetSpeed, 0, 0x9999, 0x4ccc);
-    Call3(Engine_ActorWalkToAndWait, 0, 174, 0x116);
-    Call3(Engine_ActorFaceDirection, 0, FACING_NORTHEAST, 20);
+    Camera_MoveTo(0xa80000, 0, 0xea0000, 1);
+    Actor_SetSpeed(0, 0x9999, 0x4ccc);
+    Actor_WalkToAndWait(0, 174, 0x116);
+    Actor_FaceDirection(0, FACING_NORTHEAST, 20);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(8, 3);
     Engine_EventShowMessage(8, 0);
-    Call3(Engine_ActorFaceDirection, 8, 0x9000, 20);
+    Actor_FaceDirection(8, 0x9000, 20);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_EventWait(20);
     Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
-    Call3(Engine_ActorSetSpeed, 8, 0x20000, 0x10000);
+    Actor_SetSpeed(8, 0x20000, 0x10000);
     Engine_ActorJump(8, 2, 0);
     Engine_ObjectMotionSetPositionAndCommit(8, 224, 197);
     Engine_AudioPlayCue(176);
@@ -392,7 +392,7 @@ void KorimaMura_RunObjectSpreadScene(void)
     Engine_EventWait(12);
     Engine_MapCopyCellsTo(91, 4, 72, 9, v5, v6);
     Engine_EventWait(9);
-    Call3(Engine_ActorFaceDirection, 0, FACING_NORTH, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
     Engine_MapCopyCellsTo(91, 8, 72, 9, v5, v5);
     Engine_EventWait(6);
     Engine_MapCopyCellsTo(91, 13, 72, 9, v5, 6);
@@ -419,13 +419,13 @@ void KorimaMura_RunObjectSpreadScene(void)
             Engine_ObjectSetScript((s32)obj, (s32)KorimaMura_DebrisScript);
         }
     }
-    Call6(Engine_MapCopyCellsTo, 91, 19, 72, 9, 5, 7);
-    Call6(Engine_MapCopyCellAttributes, 23, 11, 5, 7, 8, 11);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0, 0x40000, 0x10000);
+    Map_CopyCellsTo(91, 19, 72, 9, 5, 7);
+    Map_CopyCellAttributes(23, 11, 5, 7, 8, 11);
+    Work_SetValuesIfNonNegative(0, 0x40000, 0x10000);
     Engine_EventWait(10);
     Engine_ActorJump(0, 6, 0);
     Engine_EventWait(20);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Call3(Object_SetTargetAndCallback, 8, 0x10000, (s32)KorimaMura_Actor8Path);
     Engine_EventWait(60);
     Engine_ActorShowEmote(0, 0x102, 60);

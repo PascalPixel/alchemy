@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 
 struct SwitchCell {
     u32 x;
@@ -55,14 +56,14 @@ void VinasuHeya_SettlePushedBlocks(void)
     s32 priority;
 
     Engine_EventBegin();
-    Call6((void (*)())Engine_MapCopyCellAttributes, 108, 39, 13, 7, 44, 39);
+    Map_CopyCellAttributes(108, 39, 13, 7, 44, 39);
     for (id = 9; id <= 11; id++) {
         block = Object_GetById(id);
         flags = &block->priority_flags;
         if (*flags != 2) {
-            Call6((void (*)())Engine_MapCopyCellAttributes, 47, 39, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
+            Map_CopyCellAttributes(47, 39, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
         } else {
-            Call6((void (*)())Engine_MapCopyCellAttributes, 46, 39, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
+            Map_CopyCellAttributes(46, 39, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
         }
         slot = 5;
         for (i = 0; i <= 3; i++) {
@@ -97,7 +98,7 @@ void VinasuHeya_SettlePushedBlocks(void)
         block->motion_flags = 3;
         block->bounce = 0;
         block->gravity = 0x1999;
-        Call6((void (*)())Engine_MapCopyCellAttributes, 42, 41, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
+        Map_CopyCellAttributes(42, 41, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
         OverlayObject_WaitUntilIdle(block);
         Engine_AudioPlayCue(188);
         block->collision_flags = 0;
@@ -109,7 +110,7 @@ void VinasuHeya_SettlePushedBlocks(void)
 
             *flags = two;
         }
-        Call6((void (*)())Engine_MapCopyCellAttributes, 46, 39, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
+        Map_CopyCellAttributes(46, 39, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
         Engine_ActorSetSpritePriority(0, priority);
         Object_GetById(0)->priority_flags |= 1;
         if (marker != 0) {
@@ -130,7 +131,7 @@ void VinasuHeya_SettlePushedBlocks(void)
                 Engine_EventWait(30);
                 Engine_AudioPlayCue(158);
                 Engine_MapAnimateCells(gVinasuSettleCells, 109, 37);
-                Call6((void (*)())Engine_MapCopyCellAttributes, 45, 37, 1, 1, 45, 38);
+                Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
                 if (Object_GetById(9)->x.fixed >> 20 == gVinasuSwitchCells[0].x
                     && Object_GetById(9)->z.fixed >> 20 == gVinasuSwitchCells[0].z) {
                     Engine_GameFlagSet(0x302);
@@ -173,13 +174,13 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     struct FieldActor *b = Object_GetById(9);
     u32 i;
 
-    Call3((void (*)())Engine_ActorSetSpeed, 8, 0x8000, 0x4000);
+    Actor_SetSpeed(8, 0x8000, 0x4000);
     Engine_ActorSetSpeed(9, 0x8000, 0x4000);
     if (wait != 0) {
         Engine_AudioPlayCue(180);
     }
-    Call4((void (*)())Engine_ObjectSetPosition, (s32)a, a->x.fixed, gVinasuBlockHeights[(s16)a->timer], a->z.fixed);
-    Call4((void (*)())Engine_ObjectSetPosition, (s32)b, b->x.fixed, gVinasuBlockHeights[(s16)b->timer], b->z.fixed);
+    FieldObject_SetPosition((s32)a, a->x.fixed, gVinasuBlockHeights[(s16)a->timer], a->z.fixed);
+    FieldObject_SetPosition((s32)b, b->x.fixed, gVinasuBlockHeights[(s16)b->timer], b->z.fixed);
     Engine_ActorWaitForMove(8);
     Engine_ActorWaitForMove(9);
     a->y.fixed = gVinasuBlockHeights[(s16)a->timer];
@@ -191,7 +192,7 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
         struct FieldActor *actor = Object_GetById(i + 8);
 
         if (actor->y.fixed / 0x10000 < 0 && actor->y.fixed / 0x10000 > -30) {
-            Call6((void (*)())Engine_MapCopyCellAttributes, 4, 19, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+            Map_CopyCellAttributes(4, 19, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
         }
     }
     Engine_EventWait(wait);

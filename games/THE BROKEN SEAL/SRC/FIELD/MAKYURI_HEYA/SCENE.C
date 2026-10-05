@@ -10,6 +10,7 @@
 #include "FIELD_SCENE.H"
 #include "MAP_RENDER_WORK.H"
 #include "IO_REG.H"
+#include "FIELD_EVENT.H"
 
 TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
 TEXT_MESSAGE_ENUM(MsgImiruHermesHealingWaterFountain);
@@ -305,15 +306,15 @@ void MakyuriHeya_SyncBlockFlags(void)
     if (x == 57) {
         Engine_GameFlagSet(0x338);
         Engine_GameFlagClear(0x339);
-        Call6(Map_CopyCellAttributeRect, 53, 10, 1, 1, 58, 7);
+        Map_CopyCellAttributes(53, 10, 1, 1, 58, 7);
     } else if (x == 59) {
         Engine_GameFlagSet(0x339);
         Engine_GameFlagClear(0x338);
-        Call6(Map_CopyCellAttributeRect, 53, 10, 1, 1, 58, 7);
+        Map_CopyCellAttributes(53, 10, 1, 1, 58, 7);
     } else {
         Engine_GameFlagClear(0x338);
         Engine_GameFlagClear(0x339);
-        Call6(Map_CopyCellAttributeRect, 53, 11, 1, 1, 58, 7);
+        Map_CopyCellAttributes(53, 11, 1, 1, 58, 7);
     }
     Engine_EventEnd();
 }
@@ -469,7 +470,7 @@ void FieldScene_RunColumnChoreography(void)
         Battle_WaitMode0(20);
         Engine_ActorRunRepeatedMotion(3, 2);
         Battle_WaitMode0(20);
-        Call3(Engine_ActorFaceDirection, 3, 0xd000, 0);
+        Actor_FaceDirection(3, 0xd000, 0);
         Engine_ActorFaceDirection(0, 0x5000, 10);
         Engine_EventSetMessage((s32)MsgMakyuriDidThat);
         Engine_EventOpenMessage(3, 0);
@@ -489,27 +490,27 @@ void FieldScene_RunColumnChoreography(void)
         SetEffectRecordMode(record, 1);
         record = Object_GetById(2);
         SetEffectRecordMode(record, 1);
-        Call3(ObjectMotion_SetSpeedParameters, 1, 0xcccc, 0x6666);
-        Call3(ObjectMotion_SetSpeedParameters, 2, 0xcccc, 0x6666);
-        Call3(Engine_ActorSetPosition, 1, 0x3680000, 0x2580000);
-        Call3(Engine_ActorSetPosition, 2, 0x3680000, 0x2580000);
-        Call3(Engine_ActorWalkTo, 2, 0x378, 0x278);
+        Actor_SetSpeed(1, 0xcccc, 0x6666);
+        Actor_SetSpeed(2, 0xcccc, 0x6666);
+        Actor_SetPosition(1, 0x3680000, 0x2580000);
+        Actor_SetPosition(2, 0x3680000, 0x2580000);
+        Actor_WalkTo(2, 0x378, 0x278);
         Actor_WalkToAndWait(1, 0x370, 0x268);
-        Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
+        Actor_FaceDirection(1, 0x5000, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(2);
         Actor_FaceDirection(2, 0x8000, 0);
         Engine_ActorRunRepeatedMotion(1, 1);
         Battle_WaitMode0(20);
         Engine_EventShowMessageAndWait(1, 0, 20);
-        Call3(Engine_ActorShowEmote, 3, 0x101, 60);
+        Actor_ShowEmote(3, 0x101, 60);
         Event_ShowMessageAndWait(3, 0, 20);
-        Call3(Engine_ActorFaceDirection, 1, 0x3000, 0);
-        Call3(Engine_ActorFaceDirection, 2, 0xb000, 20);
+        Actor_FaceDirection(1, 0x3000, 0);
+        Actor_FaceDirection(2, 0xb000, 20);
         Object_SetModeById(1, 3);
         Engine_ActorSetAnimationAndWait(2, 3);
         Battle_WaitMode0(30);
-        Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
-        Call3(Engine_ActorFaceDirection, 2, 0x8000, 20);
+        Actor_FaceDirection(1, 0x5000, 0);
+        Actor_FaceDirection(2, 0x8000, 20);
         Engine_EventShowMessageAndWait(2, 0, 20);
         Engine_ActorSetAnimationAndWait(3, 3);
         Battle_WaitMode0(20);
@@ -522,7 +523,7 @@ void FieldScene_RunColumnChoreography(void)
         ObjectMotion_CommitCurrentPositionAndActivate(3);
         Battle_WaitMode0(10);
         Engine_EventShowMessageAndWait(3, 0, 20);
-        Call3(Engine_ActorFaceDirection, 3, 0xd000, 20);
+        Actor_FaceDirection(3, 0xd000, 20);
         Engine_EventShowMessageAndWait(3, 0, 20);
         Engine_ActorRunRepeatedMotion(1, 1);
         Battle_WaitMode0(20);
@@ -544,10 +545,10 @@ void FieldScene_RunColumnChoreography(void)
         Engine_ActorRunRepeatedMotion(3, 1);
         Battle_WaitMode0(20);
         Engine_EventShowMessageAndWait(3, 0, 20);
-        Call3(Engine_ActorWalkToAndWait, 3, 0x348, 0x278);
-        Call3(Engine_ActorFaceDirection, 0, 0x5000, 0);
-        Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
-        Call3(Engine_ActorFaceDirection, 2, 0x8000, 0);
+        Actor_WalkToAndWait(3, 0x348, 0x278);
+        Actor_FaceDirection(0, 0x5000, 0);
+        Actor_FaceDirection(1, 0x5000, 0);
+        Actor_FaceDirection(2, 0x8000, 0);
         Battle_WaitMode0(30);
         MakyuriHeya_CastPsynergyAtActor11();
         Battle_WaitMode0(50);
@@ -563,24 +564,24 @@ void FieldScene_RunColumnChoreography(void)
         WaitFrames(60);
         Audio_PlayCue(209);
         MakyuriHeya_FadePaletteToWhite();
-        Call6(Engine_MapCopyCellsTo, 126, 35, 116, 35, 1, 2);
+        Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
         Engine_MapAnimateCells((s32)MakyuriHeya_ColumnCells, 116, 35);
         Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries40To47);
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(3, 3);
         Battle_WaitMode0(20);
-        Call3(ObjectMotion_SetSpeedParameters, 3, 0x30000, 0x18000);
+        Actor_SetSpeed(3, 0x30000, 0x18000);
         Engine_ActorJump(3, 4, 0);
-        Call3(Engine_ActorWalkTo, 3, 0x348, 0x258);
+        Actor_WalkTo(3, 0x348, 0x258);
         ObjectMotion_CommitCurrentPositionAndActivate(3);
-        Call6(Map_CopyCellAttributeRect, 116, 36, 3, 4, 52, 36);
+        Map_CopyCellAttributes(116, 36, 3, 4, 52, 36);
         OverlayObject_PrepareSpawnedObject(0x3480000, 0x380000, 0x2600000, 223);
-        Call3(ObjectMotion_SetSpeedParameters, 3, 0xcccc, 0x6666);
-        Call3(Engine_ActorWalkToAndWait, 3, 0x348, 0x230);
+        Actor_SetSpeed(3, 0xcccc, 0x6666);
+        Actor_WalkToAndWait(3, 0x348, 0x230);
         Engine_ActorSetPosition(3, 0, 0);
         Battle_WaitMode0(20);
-        Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
-        Call3(Engine_ActorFaceDirection, 1, 0x8000, 0);
+        Actor_FaceDirection(0, 0x4000, 0);
+        Actor_FaceDirection(1, 0x8000, 0);
         Engine_ActorFaceDirection(2, 0xb000, 0);
         Battle_WaitMode0(10);
         Object_SetModeById(0, 3);
@@ -673,7 +674,7 @@ void MakyuriHeya_SinkActorWithSparks(s32 actor)
     rec = Object_GetById(actor);
     rec->motion_flags = 0;
     Engine_ActorSetSpriteFlags(rec, 0);
-    Call2(Engine_ActorSetChildValue, actor, 0x100);
+    Actor_SetChildValue(actor, 0x100);
     Audio_PlayCue(221);
     p = &params;
     p->priority = 1;
@@ -712,7 +713,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
     Battle_WaitMode0(20);
     MakyuriHeya_FadePaletteToBlack();
     Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
-    Call6(Engine_MapCopyCellsTo, 45, 77, 45, 73, 9, 4);
+    Map_CopyCellsTo(45, 77, 45, 73, 9, 4);
     Battle_WaitMode0(30);
     effect = &options;
     effect->mode_bits = 1;
@@ -769,7 +770,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
     } while ((u32)phase <= 15);
     Battle_WaitMode0(60);
     Audio_PlayCue(141);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Battle_WaitMode0(60);
     effect->mode = 7;
     effect->accum18 = 0xb333;
@@ -781,7 +782,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
     do {
         s32 speed;
 
-        Call6(Engine_MapCopyCellsTo, 59, (12 - phase), 48, (12 - phase), 3, 1);
+        Map_CopyCellsTo(59, (12 - phase), 48, (12 - phase), 3, 1);
         particle = 0;
         row_offset = (phase << 4);
         do {
@@ -796,7 +797,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         phase = (phase + 1);
     } while ((u32)phase <= 3);
     Audio_PlayCue(0x121);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     BattleFx_PlayQueuedSound();
     Battle_WaitMode0(30);
@@ -1184,7 +1185,7 @@ s32 Scene_Initialize(void)
         case 2:
         case 3:
             if (Engine_GameFlagIsSet(0x875))
-                Call6((void (*)())Map_CopyCellAttributeRect, 66, 5, 27, 23, 2, 5);
+                Map_CopyCellAttributes(66, 5, 27, 23, 2, 5);
             break;
         case 5:
         case 6:
@@ -1195,9 +1196,9 @@ s32 Scene_Initialize(void)
         case 4:
             if (Engine_GameFlagIsSet(0x876)) {
                 WaitFrames(1);
-                Call3((void (*)())Engine_ActorSetPosition, 9, 168 << 18, 128 << 16);
-                Call3((void (*)())Engine_ActorSetPosition, 10, 176 << 18, 192 << 16);
-                Call3((void (*)())Engine_ActorSetPosition, 11, 162 << 18, 240 << 16);
+                Actor_SetPosition(9, 168 << 18, 128 << 16);
+                Actor_SetPosition(10, 176 << 18, 192 << 16);
+                Actor_SetPosition(11, 162 << 18, 240 << 16);
             } else if (!Engine_GameFlagIsSet(0x109)) {
                 Engine_GameFlagClear(0x310);
                 Engine_GameFlagClear(0x311);
@@ -1222,11 +1223,11 @@ s32 Scene_Initialize(void)
         case 9:
         case 10:
             if (!Engine_GameFlagIsSet(0x873)) {
-                Call3((void (*)())Engine_ActorSetPosition, 3, 174 << 18, 158 << 18);
+                Actor_SetPosition(3, 174 << 18, 158 << 18);
                 Engine_ActorFaceDirection(3, 0, 0);
             } else {
-                Call3((void (*)())Engine_ActorSetPosition, 8, 194 << 18, 158 << 18);
-                Call6((void (*)())Map_CopyCellAttributeRect, 110, 39, 5, 1, 46, 39);
+                Actor_SetPosition(8, 194 << 18, 158 << 18);
+                Map_CopyCellAttributes(110, 39, 5, 1, 46, 39);
             }
             break;
         }
@@ -1240,7 +1241,7 @@ s32 Scene_Initialize(void)
             if (Engine_GameFlagIsSet(0x302)) {
                 WaitFrames(1);
                 Audio_PlayCue(211);
-                Call3((void (*)())Engine_ActorSetPosition, 8, 184 << 16, 132 << 18);
+                Actor_SetPosition(8, 184 << 16, 132 << 18);
                 Map_CopyCellAttributeRect(11, 31, 1, 4, 9, 31);
                 Map_CopyCellAttributeRect(7, 30, 1, 4, 11, 31);
                 Engine_MapCopyCellsTo(74, 58, 70, 32, 1, 2);
@@ -1267,7 +1268,7 @@ s32 Scene_Initialize(void)
                 Object_GetById(11)->target_y = Object_GetById(11)->y.fixed;
                 Engine_MapCopyCellsTo(9, 1, 9, 7, 1, 2);
                 Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
-                Call6((void (*)())Map_CopyCellAttributeRect, 9, 5, 1, 1, 9, 10);
+                Map_CopyCellAttributes(9, 5, 1, 1, 9, 10);
             }
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             Engine_TaskAddCallback(MakyuriHeya_UpdateLeaderEffectTarget, 0xc80);
@@ -1281,7 +1282,7 @@ s32 Scene_Initialize(void)
                 FieldScene_RunSupplementalSequenceOne(0);
                 Map_CopyCellAttributeRect(42, 41, 4, 1, 42, 39);
                 Map_CopyCellAttributeRect(42, 40, 4, 1, 42, 41);
-                Call3((void (*)())Engine_ActorSetPosition, 10, 176 << 18, 160 << 18);
+                Actor_SetPosition(10, 176 << 18, 160 << 18);
             }
             break;
         }
@@ -1309,18 +1310,18 @@ s32 Scene_Initialize(void)
                 flag += 2;
             }
             if (Engine_GameFlagIsSet(0x338)) {
-                Call3((void (*)())Engine_ActorSetPosition, 19, 230 << 18, 176 << 15);
-                Call6((void (*)())Map_CopyCellAttributeRect, 53, 10, 1, 1, 58, 7);
+                Actor_SetPosition(19, 230 << 18, 176 << 15);
+                Map_CopyCellAttributes(53, 10, 1, 1, 58, 7);
             } else if (Engine_GameFlagIsSet(0x339)) {
-                Call3((void (*)())Engine_ActorSetPosition, 19, 238 << 18, 176 << 15);
-                Call6((void (*)())Map_CopyCellAttributeRect, 53, 10, 1, 1, 58, 7);
+                Actor_SetPosition(19, 238 << 18, 176 << 15);
+                Map_CopyCellAttributes(53, 10, 1, 1, 58, 7);
             }
             break;
         case 10:
         case 11:
             if (Engine_GameFlagIsSet(0x348)) {
-                Call3((void (*)())Engine_ActorSetPosition, 20, 228 << 17, 164 << 17);
-                Call6((void (*)())Map_CopyCellAttributeRect, 29, 20, 1, 1, 31, 20);
+                Actor_SetPosition(20, 228 << 17, 164 << 17);
+                Map_CopyCellAttributes(29, 20, 1, 1, 31, 20);
             }
             break;
         case 3:
@@ -1346,7 +1347,7 @@ s32 Scene_Initialize(void)
                 Object_GetById(8)->target_y = Object_GetById(8)->y.fixed;
                 Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
                 Engine_MapCopyCellsTo(10, 28, 10, 18, 1, 2);
-                Call6((void (*)())Map_CopyCellAttributeRect, 10, 16, 1, 1, 10, 19);
+                Map_CopyCellAttributes(10, 16, 1, 1, 10, 19);
                 Engine_MapRedraw();
             }
             break;
@@ -1354,15 +1355,15 @@ s32 Scene_Initialize(void)
             WaitFrames(1);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             if (Engine_GameFlagIsSet(0x318))
-                Call3((void (*)())Engine_ActorSetPosition, 10, 204 << 18, 152 << 18);
+                Actor_SetPosition(10, 204 << 18, 152 << 18);
             if (Engine_GameFlagIsSet(0x31a))
-                Call3(Engine_ActorSetPosition, 11, 194 << 18, 144 << 18);
+                Actor_SetPosition(11, 194 << 18, 144 << 18);
             else if (Engine_GameFlagIsSet(0x319))
-                Call3(Engine_ActorSetPosition, 11, 190 << 18, 144 << 18);
+                Actor_SetPosition(11, 190 << 18, 144 << 18);
             else if (Engine_GameFlagIsSet(0x31b))
-                Call3(Engine_ActorSetPosition, 11, 214 << 18, 144 << 18);
+                Actor_SetPosition(11, 214 << 18, 144 << 18);
 #else
-            Call3((void (*)())Engine_ActorSetPosition, 10, 204 << 18, 152 << 18);
+            Actor_SetPosition(10, 204 << 18, 152 << 18);
             Engine_ActorSetPosition(11, 194 << 18, 144 << 18);
 #endif
             SetEffectRecordMode(Object_GetById(0), 1);
@@ -1429,8 +1430,8 @@ s32 Scene_Initialize(void)
             Battle_WaitMode0(32);
             Audio_PlayCue(188);
             SetEffectRecordMode(Object_GetById(8), 2);
-            Call3((void (*)())Engine_WorkSetValuesIfNonNegative, 192 << 10, 192 << 10, 128 << 9);
-            Call3((void (*)())Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+            Work_SetValuesIfNonNegative(192 << 10, 192 << 10, 128 << 9);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_MapRenderWaitForValues();
             Battle_WaitMode0(60);
             Engine_EventRequestExit(16);
@@ -1446,7 +1447,7 @@ s32 Scene_Initialize(void)
                 break;
             MakyuriHeya_ArriveWithSparks();
             BattleFx_SetQueuedSoundAndPlay(170);
-            Call2((void (*)())Engine_ColorBufferApplySource, 128 << 9, 0);
+            ColorBuffer_ApplySource(128 << 9, 0);
             Engine_ColorBufferApplyTarget(0x10003, 1);
             Engine_ColorBufferInterpolate(30);
             Engine_EventWaitForScreen();
@@ -1467,16 +1468,16 @@ s32 Scene_Initialize(void)
             Engine_ActorSetSpritePriority(16, 1);
             set = Engine_GameFlagIsSet(0x109);
             if (set) {
-                Call6((void (*)())Map_CopyCellAttributeRect, 104, 34, 5, 4, 40, 34);
-                Call6((void (*)())Engine_MapCopyCellsTo, 45, 91, 40, 91, 5, 4);
+                Map_CopyCellAttributes(104, 34, 5, 4, 40, 34);
+                Map_CopyCellsTo(45, 91, 40, 91, 5, 4);
                 break;
             }
-            Call3((void (*)())Engine_ActorSetPosition, 10, 206 << 18, 150 << 18);
-            Call6((void (*)())Map_CopyCellAttributeRect, 116, 36, 3, 4, 52, 36);
+            Actor_SetPosition(10, 206 << 18, 150 << 18);
+            Map_CopyCellAttributes(116, 36, 3, 4, 52, 36);
             Object_GetById(10)->motion_flags = set;
             SetEffectRecordMode(Object_GetById(10), 1);
             Engine_EventBegin();
-            Call4((void (*)())Engine_CameraMoveTo, -1, -1, -1, 0);
+            Camera_MoveTo(-1, -1, -1, 0);
             Engine_EventGetViewCenter()->motion_flags = set;
             Engine_ActorSetSpritePriority(0, 1);
             Engine_ActorSetSpritePriority(13, 1);
@@ -1488,7 +1489,7 @@ s32 Scene_Initialize(void)
             Battle_WaitMode0(1);
             SetEffectRecordMode(Object_GetById(0), 1);
         case 11:
-            Call6((void (*)())Map_CopyCellAttributeRect, 104, 34, 5, 4, 40, 34);
+            Map_CopyCellAttributes(104, 34, 5, 4, 40, 34);
             Engine_MapCopyCellsTo(45, 91, 40, 91, 5, 4);
             if (!Engine_GameFlagIsSet(0x881)) {
                 Engine_MapCopyCellsTo(30, 45, 50, 45, 5, 6);
@@ -1503,10 +1504,10 @@ s32 Scene_Initialize(void)
             Object_GetById(9)->scale_x = -0x10000;
             if (!Engine_GameFlagIsSet(0x82b)) {
                 Engine_ActorSetPosition(3, 0, 0);
-                Call3((void (*)())Engine_ActorSetPosition, 10, 206 << 18, 150 << 18);
+                Actor_SetPosition(10, 206 << 18, 150 << 18);
                 Engine_ActorSetSpritePriority(10, 1);
-                Call6((void (*)())Map_CopyCellAttributeRect, 116, 37, 3, 3, 52, 37);
-                Call6((void (*)())Engine_MapCopyCellsTo, 126, 35, 116, 35, 1, 2);
+                Map_CopyCellAttributes(116, 37, 3, 3, 52, 37);
+                Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
                 Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries40To47, 0xc80);
                 break;
             }
@@ -1515,16 +1516,16 @@ s32 Scene_Initialize(void)
                     Engine_ActorFaceDirection(3, 0, 0);
                     Object_SetModeById(3, 16);
                 } else {
-                    Call3((void (*)())Engine_ActorSetPosition, 3, 210 << 18, 158 << 18);
-                    Call3((void (*)())Engine_ActorFaceDirection, 3, 192 << 8, 0);
+                    Actor_SetPosition(3, 210 << 18, 158 << 18);
+                    Actor_FaceDirection(3, 192 << 8, 0);
                 }
                 SetEffectRecordMode(Object_GetById(3), 1);
-                Call6((void (*)())Engine_MapCopyCellsTo, 126, 35, 116, 35, 1, 2);
+                Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
                 Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries40To47, 0xc80);
             } else {
                 Engine_ActorSetPosition(3, 0, 0);
-                Call3((void (*)())Engine_ActorSetPosition, 10, 206 << 18, 150 << 18);
-                Call6((void (*)())Map_CopyCellAttributeRect, 116, 36, 3, 4, 52, 36);
+                Actor_SetPosition(10, 206 << 18, 150 << 18);
+                Map_CopyCellAttributes(116, 36, 3, 4, 52, 36);
                 Object_GetById(10)->collision_flags = 254;
                 Battle_WaitMode0(1);
             }

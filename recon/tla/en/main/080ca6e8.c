@@ -1,4 +1,4 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT3.C. */
+/* Ported from ☀️ games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/TABLE.C. */
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"

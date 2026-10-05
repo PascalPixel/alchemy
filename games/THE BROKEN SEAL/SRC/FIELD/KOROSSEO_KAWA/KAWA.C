@@ -8,7 +8,6 @@
 #include "CALL.H"
 #include "RESOURCE_IDS.H"
 
-
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -51,7 +50,6 @@ struct ModeRecord {
     u16 span;
 };
 
-
 /* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
@@ -76,8 +74,7 @@ void Script_WaitForEventTimeout(struct FieldActor *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
-/* The stage scenes call these without prototypes, as C89 allows, so they
- * return int here: the calls set r0 last, as an implicit declaration does. */
+
 s32 FieldScene_RunMiddleSequence();
 s32 SceneState_StoreParamsAndInitTable();
 s32 Korosseo_FadeInCompetitor();
@@ -110,7 +107,6 @@ void SceneState_InitControlWhenFlag109Clear(s32 value);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);
 void SceneState_RaiseTriggerOnPsynergyTarget(void);
-
 
 extern u8 MsgKorosseoAskAttendantsForExplanationsStages[];
 extern u8 MsgKorosseoRobinYoureContestantInFinals[];
@@ -158,36 +154,6 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz);
 void SceneState_SendIdBySceneId(s32 a, s32 b);
 void SceneState_ReleaseTableAndResetC6a6(void);
 
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
-
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
-
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
 u8 *SceneData_GetTableC194(void)
 {
 
@@ -219,26 +185,26 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
     switch ((u32)KorosseoKawa_Countdown) {
     case 66:
-        Map_UpdateCellRect(92, 31, 2, 2, 50, 38); /* main:080091c8 */
-        Map_UpdateCellRect(92, 31, 2, 2, 54, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 31, 2, 2, 50, 38);
+        Map_UpdateCellRect(92, 31, 2, 2, 54, 38);
         Engine_ActorSetAnimation(16, 10); /* object 16, action 10 */
         break;
     case 60:
-        Map_UpdateCellRect(92, 33, 2, 2, 50, 38); /* main:080091c8 */
-        Map_UpdateCellRect(92, 33, 2, 2, 54, 38); /* main:080091c8 */
-        Engine_MapCopyCellAttributes(50, 25, 6, 1, 50, 12); /* main:080091c0 */
+        Map_UpdateCellRect(92, 33, 2, 2, 50, 38);
+        Map_UpdateCellRect(92, 33, 2, 2, 54, 38);
+        Engine_MapCopyCellAttributes(50, 25, 6, 1, 50, 12);
         Engine_ActorSetAnimation(16, 11); /* object 16, action 11 */
         break;
     case 6:
-        Map_UpdateCellRect(92, 31, 2, 2, 50, 38); /* main:080091c8 */
-        Map_UpdateCellRect(92, 31, 2, 2, 54, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 31, 2, 2, 50, 38);
+        Map_UpdateCellRect(92, 31, 2, 2, 54, 38);
         Engine_ActorSetAnimation(16, 10); /* object 16, action 10 */
         break;
     case 0:
-        Map_UpdateCellRect(92, 29, 2, 2, 50, 38); /* main:080091c8 */
-        Map_UpdateCellRect(92, 29, 2, 2, 54, 38); /* main:080091c8 */
+        Map_UpdateCellRect(92, 29, 2, 2, 50, 38);
+        Map_UpdateCellRect(92, 29, 2, 2, 54, 38);
         Engine_ActorSetAnimation(16, 12); /* object 16, action 12 */
-        Engine_MapCopyCellAttributes(50, 24, 6, 1, 50, 12); /* main:080091c0 */
+        Engine_MapCopyCellAttributes(50, 24, 6, 1, 50, 12);
         KorosseoKawa_Countdown = 120;
         break;
     }
@@ -561,34 +527,6 @@ void KorosseoKawa_RaisePipes(void)
     Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
-
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
 void SceneState_ApplyValue768(void)
 {
 
@@ -634,12 +572,10 @@ void KorosseoKawa_RunStageStart(void)
     Engine_ActorSetAnimation(0, 16);
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
-    /* FAKEMATCH: base is 0 from the top of the function, so 0 - approach
-     * + 1 is not folded into 1 - approach. */
+    /* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is not folded into 1 - approach. */
     BattleFx_SetWeightedResult(72, base - approach + 1);
     state = (u8 *)&gGameState;
-    /* FAKEMATCH: the do-while keeps the stage flag store ahead of the
-     * scene's pool load. */
+    /* FAKEMATCH: the do-while keeps the stage flag store ahead of the scene's pool load. */
     do {
         state[0x22b] = 3;
     } while (0);
@@ -648,35 +584,6 @@ void KorosseoKawa_RunStageStart(void)
     GameFlag_Set(0x11a);
 }
 
-
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
-
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
 void FieldScene_RunBranchedStep(void)
 {
 
@@ -739,8 +646,7 @@ void SceneActor_MarkObjectAtTiles94To95(s32 actor)
 /* River arena entry: record the arrival, set the logs, ledges and item icons by the story flags, then start the entrance's opening scene. */
 s32 KorosseoKawa_ApplyEntryState(void)
 {
-    /* FAKEMATCH: the halfword row view retains the base-plus-index
-     * entrance address form also used by the wall stage. */
+    /* FAKEMATCH: the halfword row view retains the base-plus-index entrance address form also used by the wall stage. */
     union GameStateRows {
         u8 bytes[512][2];
         s16 halves[512][1];
@@ -861,34 +767,6 @@ s32 KorosseoKawa_ApplyEntryState(void)
     return 0;
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
-
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
 void FieldScene_RunCommandSequence(s32 a0)
 {
     struct FieldActor *actor;
@@ -1162,33 +1040,9 @@ void Korosseo_RunPipeworksIntro(s32 a0)
     }
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
-
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
 /* The Broken Bridge stage: the camera pans to the bridge, the competitor
  * fades in and walks to its end, then the stage opens. */
+
 void Korosseo_RunBrokenBridgeIntro(s32 scene)
 {
     s32 path;

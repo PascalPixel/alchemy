@@ -84,33 +84,6 @@ struct PathRecorder {
     s16 still;
 };
 
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
-
 /* allocate a record by (id, size) */
 
 /* reserve a graphics handle */
@@ -131,14 +104,8 @@ struct PathRecorder {
 
 /* re-attach the camera */
 
-/*
- * Seven arguments: four in registers, three from the caller's stack. The
- * 232-byte owner includes the six-word literal pool the body branches over.
- * The palette index stored at +216 is passed on sign-extended from sixteen
- * bits, so the narrowing is deliberate. Descriptor layout is asserted only
- * for the fields written here, and the actor records are touched at +8 and
- * +16 only on the flag-clear path.
- */
+/* The palette index is a signed sixteen-bit value; read actor coordinates only when the flag is clear. */
+
 void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)
 {

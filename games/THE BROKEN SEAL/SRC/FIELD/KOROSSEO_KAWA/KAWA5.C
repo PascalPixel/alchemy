@@ -74,48 +74,12 @@ void ObjectDispatch_WaitForValue16();
 
 extern u8 MsgKorosseoRobinGotItem[];
 
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
 
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
 
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
 
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
 
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
 
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
-
-/* veneer to Object_SetPosition */
-
-/* local thunk to Func_020020e8, site A */
-
-/* local thunk to Func_020020e8, site B */
-
-/* veneer to UiText_DrawQuantity, site A */
-
-/* veneer to UiText_DrawQuantity, site B */
-
-/* shared veneer, selector refresh + 0x96a */
-
-/* veneer to Func_08009148 */
 void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
     s32 i;
@@ -139,8 +103,7 @@ void Resource3ba_NoOpCallback(void)
 void SceneState_SetHalfword1000To9(void)
 {
     s16 *ready = (s16 *)gSceneState;
-    /* FAKEMATCH: a word temporary; a halfword constant stored into the byte
-       buffer is loaded from the literal pool instead. */
+    /* FAKEMATCH: a word temporary; a halfword constant stored into the byte buffer is loaded from the literal pool instead. */
     s32 nine = 9;
 
     *ready = nine;
@@ -156,48 +119,12 @@ void SceneState_WaitUntilWord1000IsNine(void)
     }
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
 
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
 
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
 
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
 
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
 
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
-
-/* veneer to Object_SetPosition */
-
-/* local thunk to Func_020020e8, site A */
-
-/* local thunk to Func_020020e8, site B */
-
-/* veneer to UiText_DrawQuantity, site A */
-
-/* veneer to UiText_DrawQuantity, site B */
-
-/* shared veneer, selector refresh + 0x96a */
-
-/* veneer to Func_08009148 */
 void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
 {
     s32 t[3];

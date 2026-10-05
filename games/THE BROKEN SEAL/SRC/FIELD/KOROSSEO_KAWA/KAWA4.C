@@ -108,34 +108,6 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
     Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3ba. */
-
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
 void SceneState_ReleaseTableAndResetC6a6(void)
 {
 

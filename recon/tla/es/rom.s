@@ -4082,7 +4082,9 @@ FieldEvent_RunTypeHandler:
 	.type Func_080d1df0, %function
 	.thumb_func
 Func_080d1df0:
-	.incbin "baserom.gba", 0x000e4910, 0x000000a4
+	.incbin "baserom.gba", 0x000e4910, 0x00000058
+	.section .rom.000e499a, "ax"
+	.incbin "baserom.gba", 0x000e499a, 0x0000001a
 	.section .rom.000e49b4, "ax"
 	.global Func_080eb2c8
 	.type Func_080eb2c8, %function

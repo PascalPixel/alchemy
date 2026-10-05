@@ -912,6 +912,8 @@
     "*/recon/tla/es/rom.o"(.rom.000e483c)
     "*/recon/tla/es/rom.o"(.rom.000e4878)
     "*/recon/tla/es/rom.o"(.rom.000e4910)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/POLAR_TARGET.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.000e499a)
     "*/recon/tla/es/rom.o"(.rom.000e49b4)
     "*/recon/tla/es/rom.o"(.rom.000e49c0)
     "*/recon/tla/es/rom.o"(.rom.000e4ccc)

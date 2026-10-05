@@ -3294,7 +3294,9 @@ FieldEvent_RunTypeHandler:
 	.type ObjectGroup_ApplyRandomChildValues, %function
 	.thumb_func
 ObjectGroup_ApplyRandomChildValues:
-	.incbin "baserom.gba", 0x000e891c, 0x000000a4
+	.incbin "baserom.gba", 0x000e891c, 0x00000058
+	.section .rom.000e89a6, "ax"
+	.incbin "baserom.gba", 0x000e89a6, 0x0000001a
 	.section .rom.000e89c0, "ax"
 	.global Func_080db9c0
 	.type Func_080db9c0, %function

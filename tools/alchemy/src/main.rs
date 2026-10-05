@@ -1,6 +1,7 @@
 use std::process::ExitCode;
 
 mod adopt;
+mod adopt_into;
 mod assembly {
     pub mod addresses;
 }
@@ -8,6 +9,7 @@ mod bootstrap;
 mod build;
 mod build_rom;
 mod build_text;
+mod c_items;
 mod cache;
 mod check;
 mod compiler;
@@ -26,6 +28,7 @@ mod process;
 mod queues;
 mod similar;
 mod similar_command;
+mod sizes;
 mod targets;
 mod thumb;
 mod verify;
@@ -49,6 +52,7 @@ Matching:
 Reports for people (nothing else reads them):
   deps        dependency map of not-yet-C code: what unblocks the most
   similar     each not-yet-C function's nearest C twins in either game
+  sizes       a draft's struct sizes, and the types that fill a frame gap
   worst       maintained C ranked by how mechanical it reads
 Run any command with --help for its options."#;
 
@@ -73,6 +77,7 @@ fn main() -> ExitCode {
         "diff" => result(diff::run(rest)),
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),
+        "sizes" => result(sizes::run(rest)),
         "worst" => result(worst_command::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

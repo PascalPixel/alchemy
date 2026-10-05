@@ -8,13 +8,20 @@ use crate::compiler::routing::root;
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = r#"usage: alchemy adopt ADDRESS LABEL [NEW_NAME] [--game tbs|tla] [--padding]
+                    [--into MODULE.C [--head]]
 After the function's C is in its module: removes recon/<game>/raw/ADDRESS.s,
 its line in recon/<game>/en/MAIN.LD and the draft recon/<game>/en/main/
 ADDRESS.c; in each other edition removes the rom.s section that holds
 exactly LABEL and its line in that edition's linker script (Japanese:
 games/<GAME>/MAIN.LD). --padding also removes a two-byte section directly
 before or after it. NEW_NAME renames LABEL across games/ and recon/. The
-game defaults to tbs. Then build all twelve editions."#;
+game defaults to tbs. Then build all twelve editions.
+--into first merges the draft into MODULE.C, its linker neighbour: the
+draft's missing includes after the module's top include block, then the
+declarations and functions the module lacks at its end, or with --head
+before its first function; the draft's audit header stays behind. A name
+the module or its headers already define otherwise refuses the merge.
+Nothing changes unless every step can be made."#;
 
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))
@@ -87,10 +94,16 @@ fn drop_lines(text: &str, keep: impl Fn(&str) -> bool) -> (String, usize) {
 pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut positional = Vec::new();
     let (mut game, mut padding) = ("tbs", false);
+    let (mut into, mut head) = (None, false);
     let mut i = 0;
     while i < arguments.len() {
         match arguments[i].as_str() {
             "--padding" => padding = true,
+            "--head" => head = true,
+            "--into" => {
+                i += 1;
+                into = Some(PathBuf::from(arguments.get(i).ok_or_else(|| USAGE.to_string())?));
+            }
             "--game" => {
                 i += 1;
                 game = match arguments.get(i).map(String::as_str) {
@@ -109,8 +122,14 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         [a, l, n] => (a.clone(), l.clone(), Some(n.clone())),
         _ => return Err(USAGE.into()),
     };
+    if head && into.is_none() {
+        return Err(USAGE.into());
+    }
     let root = root();
     let game_dir = if game == "tla" { "THE LOST AGE" } else { "THE BROKEN SEAL" };
+    // Every scaffold edit is worked out before any is written, so a
+    // refusal leaves the checkout as it was.
+    let mut edits: Vec<(PathBuf, String)> = Vec::new();
 
     // English: the raw listing, its linker line and the draft.
     let english = root.join(format!("recon/{game}/en/MAIN.LD"));
@@ -119,12 +138,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     if removed != 1 {
         return Err(format!("{}: {removed} lines link {object}", english.display()));
     }
-    write(&english, &text)?;
-    for file in [format!("recon/{game}/raw/{address}.s"), format!("recon/{game}/en/main/{address}.c")] {
-        if root.join(&file).exists() {
-            crate::process::run(&["git", "rm", "-q", "-f", &file], root)?;
-        }
-    }
+    edits.push((english, text));
 
     // The other editions: the section holding exactly the function.
     for lang in ["ja", "de", "es", "fr", "it"] {
@@ -135,12 +149,24 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             root.join(format!("recon/{game}/{lang}/MAIN.LD"))
         };
         let (text, sections) = remove_section(&read(&scaffold)?, &label, padding).map_err(|e| format!("{game}-{lang}: {e}"))?;
-        write(&scaffold, &text)?;
+        edits.push((scaffold, text));
         let (text, removed) = drop_lines(&read(&script)?, |l| !sections.iter().any(|s| l.contains(&format!("(.rom.{s})"))));
         if removed != sections.len() {
             return Err(format!("{}: expected {} section lines, removed {removed}", script.display(), sections.len()));
         }
-        write(&script, &text)?;
+        edits.push((script, text));
+    }
+
+    if let Some(module) = &into {
+        crate::adopt_into::run(root, game, &address, module, head)?;
+    }
+    for (path, text) in &edits {
+        write(path, text)?;
+    }
+    for file in [format!("recon/{game}/raw/{address}.s"), format!("recon/{game}/en/main/{address}.c")] {
+        if root.join(&file).exists() {
+            crate::process::run(&["git", "rm", "-q", "-f", &file], root)?;
+        }
     }
 
     if let Some(name) = new_name.filter(|n| *n != label) {

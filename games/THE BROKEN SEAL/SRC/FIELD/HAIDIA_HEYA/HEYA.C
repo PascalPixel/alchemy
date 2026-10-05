@@ -39,7 +39,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -60,13 +60,11 @@ s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
     return 0;
 }
 
-/* The eight-byte owner includes its one pool word. */
 void *SceneData_GetTable9478(void)
 {
     return gValeHouseEntrances;
 }
 
-/* A four-byte leaf that returns zero. */
 int SceneData_ReturnZero(void)
 {
     return 0;
@@ -105,7 +103,7 @@ void *SceneData_SelectTable9c00ByFlags(void)
     return gValeHouseEvents;
 }
 
-/* The 44-byte actor-15 scene owner includes its one pool word. */
+/* Run actor 15's scene. */
 void Villager_AskWhySukuretaCame(void)
 {
     Engine_EventBegin();
@@ -115,7 +113,7 @@ void Villager_AskWhySukuretaCame(void)
     Engine_EventEnd();
 }
 
-/* The 44-byte actor-19 scene owner includes its one pool word. */
+/* Run actor 19's scene. */
 void Villager_PlanToScareVisitors(void)
 {
     Engine_EventBegin();
@@ -147,7 +145,7 @@ void Scene_GiveFarewellHerb(void)
     Engine_EventEnd();
 }
 
-/* The 32-byte actor-16 dialogue owner includes its one pool word. */
+/* Show actor 16's dialogue. */
 void Villager_AskAboutStrangePowers(void)
 {
     Engine_EventBegin();
@@ -156,7 +154,7 @@ void Villager_AskAboutStrangePowers(void)
     Engine_EventEnd();
 }
 
-/* The 32-byte actor-10 dialogue owner includes its one pool word. */
+/* Show actor 10's dialogue. */
 void Villager_AskAboutDora(void)
 {
     Engine_EventBegin();
@@ -186,7 +184,7 @@ void SceneState_SetRuntimeWord448To521AndRun(s32 value)
     Engine_EventRequestExit(value);
 }
 
-/* Eight numbered-scene wrappers follow, each a twelve-byte owner. */
+/* Wrappers for the eight numbered scenes. */
 void FieldScene_RunIndexedStep1(void)
 {
     SceneState_SetRuntimeWord448To521AndRun(1);

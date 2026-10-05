@@ -6,6 +6,7 @@
 #include "CALL.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 void ArutinYama_ApplyEntryState(void);
 void ArutinYama_PlaceFlaggedActors(void);
@@ -1172,7 +1173,7 @@ void ArutinYama_StepPaletteAnim(void)
         }
         ArutinYama_PaletteHold = ArutinYama_PaletteScript[ArutinYama_PaletteStep++];
         palette += frame;
-        Dma_Set(palette, (void *)0x05000006, 0x80000009, (volatile u32 *)0x040000d4);
+        Dma_Set(palette, (void *)0x05000006, DMA_ENABLE32 | 9, REG_DMA3);
     }
     ArutinYama_PaletteHold--;
 }

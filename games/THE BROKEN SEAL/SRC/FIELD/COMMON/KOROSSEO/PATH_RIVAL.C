@@ -5,6 +5,7 @@
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "VRAM_BLOCK.H"
+#include "IO_REG.H"
 
 s32 Math_Atan2(s32 dy, s32 dx);
 
@@ -176,8 +177,7 @@ void Korosseo_DrawGauge(void)
         }
     } else if (gauge->level <= 1) {
         if (++gauge->level == 1) {
-            Dma_Set(Korosseo_GaugePalette, (void *)0x050003c0, 0x80000010,
-                    (volatile u32 *)0x040000d4);
+            Dma_Set(Korosseo_GaugePalette, (void *)0x050003c0, DMA_ENABLE32 | 0x10, REG_DMA3);
             buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
             Resource_DecodeType01(Korosseo_GaugeGraphics, buf);
             VramBlock_LoadCached(gauge->vram_block, 512, buf);

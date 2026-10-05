@@ -36,7 +36,7 @@ void MapAnimation_PresentFrame(void)
     do {
         REG_BG1CNT = control;
     } while (0);
-    Dma_Set((const void *)gMapCellBuffer, (void *)0x06006a00, 0x84002580, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)gMapCellBuffer, (void *)0x06006a00, DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
 /* Starts the map animation task, saves the second character block, and
@@ -52,7 +52,7 @@ void MapAnimation_Start(void)
 
     work->animation_active = one;
     Scheduler_EnableCallbacks((u32)(MapAnimation_Update));
-    Dma_Set((const void *)0x06004000, (void *)gDecodeBuffer, 0x84000800, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)0x06004000, (void *)gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
     WaitFrames(1);
     Resource_RunCopiedDecoder((s32)pages->pages[*(u32 *)&gFrameCount & one], (s32)gMapCellBuffer);
     work->window_top = 200;
@@ -88,7 +88,7 @@ void Map_LoadAreaGraphics(void)
     value = BG_PALETTE[0];
     Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = value;
-    Dma_Set(buffer, BG_PALETTE, 0x84000070, (volatile u32 *)0x040000d4);
+    Dma_Set(buffer, BG_PALETTE, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), (void *)gBgTileBuffer);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);

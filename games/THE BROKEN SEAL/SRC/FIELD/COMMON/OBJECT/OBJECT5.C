@@ -11,6 +11,7 @@
 #include "MAP_SCROLL.H"
 #include "ANIMSPR.H"
 #include "FIELD_EVENT.H"
+#include "IO_REG.H"
 
 extern struct ObjectRuntime Data_02001124[32];
 
@@ -72,7 +73,7 @@ void ObjectTable_Snapshot(void)
         if (object == NULL)
             continue;
         *indices++ = i;
-        Dma_Set(object, copy, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), (volatile u32 *)0x040000d4);
+        Dma_Set(object, copy, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
         if (object->animation_kind == 1) {
             frame = ((struct AnimationObject *)object->animation)->last_no;
             next = ((struct FieldSprite *)object->animation)->flags;
@@ -126,8 +127,7 @@ void ObjectTable_Restore(void)
         object = ObjectTable_Get(index);
         if (object != NULL) {
             sprite = object->animation;
-            Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
-                    (volatile u32 *)0x040000d4);
+            Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
             frame = *frames;
             if (frame != 0)
                 Object_SetMode(object, frame);

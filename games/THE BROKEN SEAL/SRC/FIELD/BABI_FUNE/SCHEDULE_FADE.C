@@ -4,6 +4,7 @@
 #include "RUNTIME_MEM.H"
 #include "CALL.H"
 #include "VRAM_BLOCK.H"
+#include "IO_REG.H"
 
 extern s16 BabiFune_FadeSlot;
 extern s16 BabiFune_FadeStep;
@@ -74,7 +75,7 @@ void BabiFune_ScheduleFade(void)
     buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
     BabiFune_FadeSlot = Resource_FindFreeEntry();
     fill = 0x11111111;
-    Dma_Set((const void *)&fill, buf, 0x85000040, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, buf, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x40, REG_DMA3);
     VramBlock_LoadCached(BabiFune_FadeSlot, 0x100, (s32)buf);
     /* The halfword constant comes from the literal pool (HImode move). */
     BabiFune_FadeStep = 0x30;

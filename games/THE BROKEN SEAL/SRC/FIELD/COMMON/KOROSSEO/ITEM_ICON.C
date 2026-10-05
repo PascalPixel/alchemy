@@ -3,6 +3,7 @@
 #include "ANIMSPR.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 u8 *Object_GetByIdFar(s32 id);
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
@@ -32,7 +33,7 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
             none = 0;
             base += 0x400;
             zero = none;
-            Dma_Set((const void *)&zero, (void *)base, 0x85000020, (volatile u32 *)0x040000d4);
+            Dma_Set((const void *)&zero, (void *)base, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x20, REG_DMA3);
             ItemIcon_LoadTilesFar(item);
             tile = VramBlock_LoadCached(spr->slot, 128, base);
             Runtime_ReleaseHeapBlock(17);

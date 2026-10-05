@@ -1,15 +1,9 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "RENDER_INPUT.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "RESOURCE.H"
-
-struct TableEntry {
-    u16 unused;
-    u16 value;
-};
-
-
 
 struct RenderOutput *RenderOutput_CreateWithTransform(
     s32 arg0,

@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
@@ -18,12 +19,6 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "MENU_LIST.H"
 #include "FIELD_EVENT.H"
-
-struct Vector3 {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 extern u16 ParticleStreams_CellOffsets[];
 extern struct Vector3 RingBolts_Points[];

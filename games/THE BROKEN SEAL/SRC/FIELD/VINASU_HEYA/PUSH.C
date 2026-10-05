@@ -1,14 +1,10 @@
+#include "STRUCT.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
 #include "CALL.H"
-
-struct ScrollLayer {
-    u8 unknown_00[8];
-    s32 x;
-};
 
 struct MapWork {
     u8 unknown_00[0x164];

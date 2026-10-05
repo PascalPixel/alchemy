@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "RESOURCE.H"
 #include "GROUP_DEPARTURE.H"
 #include "TYPES.H"
@@ -14,7 +15,6 @@ struct Pulse {
     s16 timer;
     s16 beat;
 };
-
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -42,11 +42,6 @@ struct PairWork {
 
 extern struct PairWork *gEffectWork;
 
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-
 extern struct WorldMapVramBlock gVramBlockCache[];
 s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
 void OverlayObject_UpdateArcFromParent(union FieldObject *object);
@@ -59,7 +54,6 @@ struct WorldMapOam {
     u16 affine_index : 5;
     u16 size : 2;
 };
-
 
 void HaidiaArashi_FlashLightning(void)
 {

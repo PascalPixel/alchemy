@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
@@ -28,7 +29,6 @@ extern volatile u32 gFrameCount;
 
 u32 Resource_DecodeByteLz(const void *, void *);
 
-
 void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
 
 struct UiScaleSprite {
@@ -46,20 +46,12 @@ struct UiScaleSprite {
     u16 rest_22 : 2;
 };
 
-
-struct TileMask {
-    u32 word0;
-    u32 word1;
-};
-
 static __inline__ u32 XorWord(u32 word, u32 mask)
 {
     return word ^ mask;
 }
 
 extern const struct TileMask Data_08037250[];
-
-
 
 s32 ItemIcon_Compose(s32, s32);
 s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);

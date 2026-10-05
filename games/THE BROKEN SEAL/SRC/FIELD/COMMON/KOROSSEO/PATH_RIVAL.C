@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -9,15 +10,6 @@
 #include "DMA.H"
 #include "VRAM_BLOCK.H"
 #include "IO_REG.H"
-
-
-struct PathRecorder {
-    s16 mode;
-    s16 mirror;
-    s16 actor;
-    u16 pos;
-    s16 still;
-};
 
 struct PathWork {
     u8 unknown_00[224];
@@ -32,7 +24,6 @@ struct PathWork {
 
 #define PATH_RECORDER ((struct PathRecorder *)gSceneState)
 #define PATH_WORK ((struct PathWork *)gKorosseoWork)
-
 
 void Korosseo_UpdatePathRival(void)
 {

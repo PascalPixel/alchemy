@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -16,7 +17,6 @@
 #include "VRAM_BLOCK.H"
 #include "RAM_BUFFER.H"
 #include "CALL.H"
-
 
 extern u32 gKeyState;
 extern u32 gKeysHeld;
@@ -66,11 +66,6 @@ static __inline__ void DecodeBackground(const u8 *res)
 struct TitleWork {
     u8 unknown_00[20];
     u16 mode;
-};
-
-struct ScrollPair {
-    u16 x;
-    u16 y;
 };
 
 u8 *Title_GetEntrances(void)

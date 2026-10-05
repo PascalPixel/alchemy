@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
@@ -15,11 +16,6 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 #include "MENU_LIST.H"
-
-struct CameraWork {
-    u8 unknown_00[0x36];
-    u16 scroll;
-};
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 

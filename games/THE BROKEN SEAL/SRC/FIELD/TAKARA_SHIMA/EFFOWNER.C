@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -40,25 +41,6 @@ struct Effect {
     u32 callback;
 };
 
-struct T {
-    u8 pad00[30];
-    u16 f1e;
-};
-
-struct S {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    u8 pad10[32];
-    s32 f30;
-    s32 f34;
-    s32 f38;
-    s32 f3c;
-    u8 pad40[16];
-    struct T *f50;
-};
-
 typedef struct Obj {
     s32 f00;
     s32 f04;
@@ -69,15 +51,6 @@ typedef struct Obj {
     s32 f30;
     s32 f34;
 } Obj;
-
-struct V6 {
-    s32 a;
-    s32 b;
-    s32 c;
-    s32 d;
-    s32 e;
-    s32 f;
-};
 
 struct S_02000474 {
     s32 f00;
@@ -99,16 +72,6 @@ struct V {
     s32 a;
     s32 b;
     s32 c;
-};
-
-struct S_020009dc {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-    u8 pad14[15];
-    u8 f23;
 };
 
 struct SceneObject {
@@ -135,118 +98,6 @@ typedef union {
 } RecWord;
 
 struct S_02001b14 { s32 pad[2]; s32 f08; s32 f0c; s32 f10; };
-
-struct S_02001bbc {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02001c84 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02001d2c {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02001de0 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02001e5c {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02001ef4 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02001f78 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02002004 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02002080 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_0200216c {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02002200 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_020022c8 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_020023c4 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-struct S_02002450 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
 
 typedef struct OrbitingSceneObjectSprite {
     u8 padding_00[5];

@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
@@ -22,7 +23,6 @@ void Engine_EventSetMessage();
 void Engine_EventShowMessageAndWait();
 void Engine_ActorWalkToAndWait();
 
-
 enum HouseActor {
     ACTOR_BOARD = 23,
     ACTOR_LAST_BOARD = 24
@@ -31,7 +31,6 @@ enum HouseActor {
 enum {
     ANIM_HAMMER = 11
 };
-
 
 void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
@@ -52,14 +51,7 @@ struct Flags38 {
     u8 flags;
 };
 
-struct Flags85 {
-    u8 pad[85];
-    u8 flags;
-};
-
-
 s32 ArcTan2(s32 z, s32 x);
-
 
 s32 MapStagedScene_SelectPrimaryData(void)
 {

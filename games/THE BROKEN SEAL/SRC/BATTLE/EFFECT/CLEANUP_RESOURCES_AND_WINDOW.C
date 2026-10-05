@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -77,11 +78,6 @@ struct MapObject {
     s32 x;
     u8 padding0c[4];
     union MapFixed z;
-};
-
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
 };
 
 extern struct WorldMapVramBlock gVramBlockCache[];

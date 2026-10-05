@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
@@ -21,30 +22,10 @@ struct EffectRecord {
     u8 flags_hi : 4;
 };
 
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
-struct OverlayActorPosition {
-    u8 pad00[8];
-    s32 depth_fixed;
-};
-
-struct OverlayActorState {
-    u8 pad00[35];
-    u8 flags;
-};
-
 void BattleFx_PlayQueuedSound();
 
 void BattleFx_SetQueuedSoundAndPlay();
 void Engine_MapCopyCellAttributes();
-
-struct Flags35 {
-    u8 pad[35];
-    u8 flags;
-};
 
 void GomaIriguchi_RunSpinningLeap();
 void GomaIriguchi_SetEntranceFlag();

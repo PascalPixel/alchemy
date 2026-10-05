@@ -1,13 +1,8 @@
+#include "STRUCT.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "FIELD_EVENT.H"
-
-struct ParticlePosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 struct ParticleEmitter {
     u8 padding[8];
@@ -16,16 +11,6 @@ struct ParticleEmitter {
     s32 travel_offset;
     u8 padding3[41];
     u8 active;
-};
-
-struct ParticleChild {
-    u8 padding[9];
-    u8 flags;
-};
-
-struct ParticleEffectObject {
-    u8 padding[80];
-    struct ParticleChild *child;
 };
 
 u32 Random16(void);

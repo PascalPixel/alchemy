@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -21,17 +22,6 @@ struct EffectRecord {
     u8 mode : 2;
     u8 flags_hi : 4;
 };
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
-struct HeightTrackedObject {
-    u8 pad00[12];
-    s32 height;
-};
-
 
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {

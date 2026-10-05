@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "EDITION.H"
@@ -32,27 +33,17 @@ struct Frame {
     s32 f10;
 };
 
-struct Slot {
-    u16 f00;
-    u16 f02;
-    u16 f04;
-    u16 f06;
-};
-
 void TakaraAshiba_OpenPassage();
 void Korosseo_ShowItemIcon();
 void TakaraAshiba_DispatchByActorEightColumn();
 void TakaraAshiba_UpdateBlockRects();
 void ObjectDispatch_ApplyValueToChildren();
 
-
-
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 {
     *field = step;
 }
 void FieldScene_RunSingleStep(void);
-
 
 void TakaraAshiba_InitializeScene1(void)
 {

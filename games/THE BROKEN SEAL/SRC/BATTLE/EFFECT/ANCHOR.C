@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
@@ -8,12 +9,6 @@
 #include "SOUND_IDS.H"
 #include "FIXED_MATH.H"
 #include "FIELD_SPRITE.H"
-
-struct ScatterPosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 extern struct BattleFxScene *gEffectWork;
 void Motion_SetTargetPositionFromMagnitudeAngle(

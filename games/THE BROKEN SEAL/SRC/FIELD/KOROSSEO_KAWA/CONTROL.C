@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
@@ -69,14 +70,6 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 void Script_WaitForEventTimeout(struct FieldActor *);
-
-struct PathRecorder {
-    s16 mode;
-    s16 mirror;
-    s16 actor;
-    u16 pos;
-    s16 still;
-};
 
 void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)

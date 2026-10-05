@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
@@ -29,7 +30,6 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void Object_SetModeById(s32 actor, s32 animation);
 
-
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -37,22 +37,10 @@ struct EffectRecord {
     u8 flags_hi : 4;
 };
 
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
-struct HeightTrackedObject {
-    u8 pad00[12];
-    s32 height;
-};
-
-
 union SpinningActor {
     union FieldObject object;
     struct StagedActor staged;
 };
-
 
 enum StagedPairMessage {
     MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
@@ -60,7 +48,6 @@ enum StagedPairMessage {
     MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
     MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
 };
-
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

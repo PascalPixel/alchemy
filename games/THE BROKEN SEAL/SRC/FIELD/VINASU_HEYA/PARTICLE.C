@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "ENTRY_SETUP.H"
@@ -7,8 +8,6 @@
 #include "SCENE_IDS.H"
 
 void BattleFx_SetQueuedSoundAndPlay(s32 cue);
-
-
 
 struct FieldActor;
 
@@ -316,11 +315,6 @@ void FieldScene_RunLeaderDropSequence(void)
     }
     Engine_EventRequestExit(21);
 }
-
-struct SwitchCell {
-    u32 x;
-    u32 z;
-};
 
 struct TrackAnimation {
     s16 id;

@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
@@ -29,7 +30,6 @@ void AudioCommand_PlayFar(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
-
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -486,7 +486,6 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 
 extern u8 gMapCellBuffer[];
 
-
 void WaitFrames(s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
@@ -497,12 +496,6 @@ void Camera_ApplyShake(s32, s32);
 
 extern volatile u32 gKeysRepeat;
 
-struct Cells03001ad0 {
-    u16 unk00;
-    u16 unk02;
-    u16 unk04;
-    u16 unk06;
-};
 extern struct Cells03001ad0 gBgScroll;
 
 typedef struct Scale {

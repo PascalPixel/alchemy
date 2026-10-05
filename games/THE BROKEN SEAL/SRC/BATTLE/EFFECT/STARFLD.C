@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
@@ -15,21 +16,12 @@
 #include "BATTLE_PRESENTATION.H"
 #include "FIXED_MATH.H"
 
-
 void QueueIoWriteDelay2(u32, u32);
 #include "BATTLE_WORK.H"
 
 struct Spark {
     s32 pos[6];
     s32 life;
-};
-
-struct Ring {
-    s32 x;
-    s32 y;
-    s32 vel_x;
-    s32 vel_y;
-    s32 age;
 };
 
 struct SparkWork {

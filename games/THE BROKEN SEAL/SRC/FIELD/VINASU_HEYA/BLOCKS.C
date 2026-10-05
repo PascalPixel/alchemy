@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "GLOBAL.H"
 #include "ENTRY_SETUP.H"
 #include "TYPES.H"
@@ -5,22 +6,10 @@
 #include "CALL.H"
 #include "FIELD_SERVICE.H"
 
-struct SwitchCell {
-    u32 x;
-    u32 z;
-};
-
-struct SwitchEffect {
-    s32 active;
-    u8 unknown_04[0x5f];
-    u8 finished;
-};
-
 struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
 void OverlayObject_WaitUntilIdle(struct FieldActor *object);
 struct SwitchEffect *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, const void *script);
 extern struct SwitchCell gVinasuSwitchCells[];
-
 
 void FieldScene_RunGuardedRectStep(void)
 {

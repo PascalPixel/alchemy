@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -19,14 +20,6 @@
 struct Spark {
     s32 pos[6];
     s32 life;
-};
-
-struct Ring {
-    s32 x;
-    s32 y;
-    s32 vel_x;
-    s32 vel_y;
-    s32 age;
 };
 
 struct SparkWork {
@@ -131,7 +124,6 @@ s32 BattleFx_InitializeStarField(s32 mode)
     Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_UpdateStarField, 0xc80);
     return Scheduler_AddOrUpdateCallback((SchedulerCallback)Graphics_UploadVramBlock, 0xc80);
 }
-
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused)
 {

@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
@@ -58,20 +59,6 @@ struct Sub {
     u8 f26;
 };
 
-struct Obj_02002608 {
-    u8 pad00[0x18];
-    s32 f18;
-    u8 pad1c[7];
-    u8 f23;
-    u8 pad24[12];
-    s32 f30;
-    s32 f34;
-    u8 pad38[24];
-    struct Sub *f50;
-    u8 pad54[1];
-    u8 f55;
-};
-
 extern u8 KorimaMura_Object26Script[];
 s32 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
@@ -105,16 +92,9 @@ void FieldScene_ConfigureActor0ThenRun();
 void Engine_MapCopyCellAttributes();
 void Object_SetTargetAndCallback();
 
-struct Flags9 {
-    u8 pad[9];
-    u8 low : 2;
-    u8 mode : 2;
-};
-
 void Event_CallWithLastActiveObjectId(u8 *script);
 extern s32 KorimaMura_PendingPose;
 extern s32 KorimaMura_LayoutFlag;
-
 
 s32 KorimaMura_ApplyPendingPose(s32 arg0)
 {

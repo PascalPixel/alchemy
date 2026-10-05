@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "GROUP_DEPARTURE.H"
@@ -15,26 +16,13 @@ void BattleFx_PlayQueuedSound();
 void HaidiaArashi_SetStormCellAttributes();
 void SceneActor_RunActor22PlacementSequence();
 
-struct Flags35 {
-    u8 pad[35];
-    u8 flags;
-};
-
-struct Flags9 {
-    u8 pad[9];
-    u8 low : 2;
-    u8 mode : 2;
-};
-
 void ActorPresentation_SetEightSceneCells();
 void ObjectMotion_SetActionVariant();
 void FieldScene_DrawFiveTileBlocks();
 void Event_PrepareObjectAndApplyValue();
 
-
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
-
 
 void Scene_RunActorGroupDepartureSequence();
 

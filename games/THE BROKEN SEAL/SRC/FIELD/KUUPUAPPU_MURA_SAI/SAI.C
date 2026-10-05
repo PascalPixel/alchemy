@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
@@ -16,11 +17,6 @@ struct EffectRecord {
     u8 flags_lo : 2;
     u8 mode : 2;
     u8 flags_hi : 4;
-};
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
 };
 
 union MotionWork {
@@ -55,68 +51,12 @@ struct SceneActor_02000350 {
     u8 active;
 };
 
-struct Actor_020007d4 {
-    u8 reserved00[91];
-    u8 accepted;
-};
-
-struct Presentation {
-    u8 reserved_00[9];
-    u8 flags;
-};
-
-struct SceneActor_020004b4 {
-    u8 reserved_00[35];
-    u8 state_23;
-    u8 reserved_24[44];
-    struct Presentation *presentation;
-};
-
-struct Presentation_02000c1c {
-    u8 unk_00[9];
-    u8 flags;
-};
-
-struct SceneActor_02000c1c {
-    u8 unk_00[35];
-    u8 state_23;
-    u8 unk_24[44];
-    struct Presentation_02000c1c *presentation;
-};
-
-struct SceneWork_02000e90 {
-    u8 reserved000[370];
-    u16 actor18_marker;
-};
-
-struct SceneWork_020006b4 {
-    u8 reserved000[472];
-    u16 branch_counter;
-};
-
-struct Actor_02000754 {
-    u8 reserved00[91];
-    u8 accepted;
-};
-
-struct Actor_02000640 {
-    u8 reserved00[6];
-    u16 facing;
-    u8 reserved08[92];
-    u16 state_flags;
-};
-
 extern u8 *gWork;
-
 
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
 void ActorPresentation_MoveActorToPositionAndWait();
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
-
-
-
-
 
 s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
 {

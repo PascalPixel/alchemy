@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "B5_CONTEXT.H"
@@ -8,7 +9,6 @@
 #include "IWRAM_CALL.H"
 #include "FIELD_EFFECT.H"
 #include "text/MSG_IDS.H"
-
 
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
@@ -93,11 +93,6 @@ struct PairWork {
 };
 
 extern struct PairWork *gEffectWork;
-
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
 
 extern struct WorldMapVramBlock gVramBlockCache[];
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);

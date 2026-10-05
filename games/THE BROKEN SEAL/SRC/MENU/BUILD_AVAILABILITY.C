@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
 #include "INVENTORY_MENU.H"
@@ -87,11 +88,6 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
     result->selected_index = value;
     return 1;
 }
-
-struct TileMask {
-    u32 word0;
-    u32 word1;
-};
 
 static __inline__ u32 XorWord(u32 word, u32 mask)
 {

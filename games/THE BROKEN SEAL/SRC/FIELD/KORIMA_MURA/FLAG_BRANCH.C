@@ -1,4 +1,5 @@
 
+#include "STRUCT.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -47,20 +48,6 @@ struct Sub {
     u8 f09;
     u8 pad0a[28];
     u8 f26;
-};
-
-struct Obj_02002608 {
-    u8 pad00[0x18];
-    s32 f18;
-    u8 pad1c[7];
-    u8 f23;
-    u8 pad24[12];
-    s32 f30;
-    s32 f34;
-    u8 pad38[24];
-    struct Sub *f50;
-    u8 pad54[1];
-    u8 f55;
 };
 
 extern u8 KorimaMura_Object26Script[];

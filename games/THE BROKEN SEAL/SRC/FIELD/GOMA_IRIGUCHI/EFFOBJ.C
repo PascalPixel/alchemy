@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "FIELDOBJ.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -7,16 +8,6 @@
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-
-struct OverlayActorPosition {
-    u8 pad00[8];
-    s32 depth_fixed;
-};
-
-struct OverlayActorState {
-    u8 pad00[35];
-    u8 flags;
-};
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {

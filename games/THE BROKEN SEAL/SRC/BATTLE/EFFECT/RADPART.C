@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "ANIMSPR.H"
@@ -14,12 +15,6 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 extern u32 gFrameTick;
 void ObjectDispatch_ReleaseFar();
-
-struct EffectVector {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 struct EffectOwner {
     u8 unknown_00[8];
@@ -124,7 +119,6 @@ struct LinkedCaptureObject {
     u8 padding014[84];
     struct LinkedCaptureObject *target;
 };
-
 
 void BattleFx_SetObjectAlternatingWords(u8 *object)
 {

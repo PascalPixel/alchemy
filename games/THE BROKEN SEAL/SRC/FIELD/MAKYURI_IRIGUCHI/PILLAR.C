@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
@@ -55,11 +56,6 @@ struct Sprite39b {
 struct Work {
     u8 pad[20];
     u8 *actors[1];
-};
-
-struct Flags85 {
-    u8 pad[85];
-    u8 flags;
 };
 
 struct Obj {

@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
@@ -30,23 +31,14 @@ struct Frame {
     s32 f10;
 };
 
-struct Slot {
-    u16 f00;
-    u16 f02;
-    u16 f04;
-    u16 f06;
-};
-
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
 s32 ArcTan2(s32, s32);
 void ObjectDispatch_ApplyValueToChildren();
-
 
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 {
     *field = step;
 }
-
 
 extern const struct SceneEntrance gTakaraAshibaEntrances1[];
 extern const struct SceneEntrance gTakaraAshibaEntrances2[];
@@ -70,7 +62,6 @@ void PartyInventory_RemoveFar();
 s32 PartyInventory_FindOwnerFar(s32);
 void TakaraAshiba_OpenPassage(s32);
 
-
 void Battle_Reset();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_OffsetPositionAndResetMotion();
@@ -92,7 +83,6 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 
 void Scheduler_RemoveCallbackFar();
 void TakaraAshiba_DispatchByActorEightColumn();
-
 
 void TakaraAshiba_UpdateBlockRects(void);
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);

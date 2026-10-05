@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -12,19 +13,6 @@ enum {
 typedef struct { s32 lo, hi; } Pair;
 
 typedef struct { s32 w0, w1, w2, w3; Pair tail; } Query;
-
-struct Particle_02000c4c {
-    u8 unknown_00[8];
-    s32 x;
-    s32 y;
-    u8 unknown_10[0x20];
-    s32 angle;
-    u8 unknown_34[4];
-    s32 base_x;
-    s32 base_y;
-    u8 unknown_40[0x10];
-    u16 *sprite;
-};
 
 typedef struct OrbitingSceneObjectSprite {
     u8 padding_00[5];
@@ -64,7 +52,6 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-
 
 u8 *SceneData_GetScriptTable(void) { return KorimaHiroba_Scripts; }
 

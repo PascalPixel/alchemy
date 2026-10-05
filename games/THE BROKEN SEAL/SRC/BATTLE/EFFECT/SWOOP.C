@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
@@ -24,13 +25,6 @@ void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
 extern volatile u32 gKeysRepeat;
-
-struct Cells03001ad0 {
-    u16 unk00;
-    u16 unk02;
-    u16 unk04;
-    u16 unk06;
-};
 
 extern struct Cells03001ad0 gBgScroll;
 

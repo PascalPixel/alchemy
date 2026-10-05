@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
@@ -9,20 +10,6 @@
 #include "INVENTORY.H"
 #include "B5_CONTEXT.H"
 #include "text/MSG_IDS.H"
-
-struct Presentation {
-    u8 reserved_00[9];
-    u8 flags;
-};
-
-struct SceneActor_0200113c {
-    u8 reserved_00[35];
-    u8 state_23;
-    u8 reserved_24[44];
-    struct Presentation *presentation;
-};
-
-
 
 s32 ActorPresentation_UpdateEntityFromLeader();
 s32 SceneActor_UpdateProximityToLeader();
@@ -40,28 +27,12 @@ struct SceneActor {
 
 extern s32 ArcTan2(s32, s32);
 
-struct OverlayEffectMotion {
-    u8 pad00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 pad14[28];
-    s32 horizontal_rate;
-    s32 vertical_rate;
-    s32 shadow_x;
-    s32 shadow_y;
-    s32 shadow_z;
-    u8 pad44[32];
-    s16 mode;
-};
-
 union DriftingObject {
     struct FieldActor actor;
     struct OverlayEffectMotion motion;
 };
 
 void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
-
 
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {

@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
@@ -15,7 +16,6 @@
 #include "IO_REG.H"
 #include "FIELD_SCENE.H"
 
-
 extern u16 gBgScroll[];
 
 static __inline__ void DecodeBackground(const u8 *res)
@@ -29,13 +29,7 @@ struct ClearWork {
     u16 mode;
 };
 
-struct ScrollPair {
-    u16 x;
-    u16 y;
-};
-
 #define DMA3 (REG_DMA3)
-
 
 static __inline__ void RestoreInterrupts(u32 saved)
 {

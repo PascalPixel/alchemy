@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
@@ -6,12 +7,6 @@
 #include "SYSTEM.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
-
-struct ScatterPosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 extern struct BattleFxScene *gEffectWork;
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);

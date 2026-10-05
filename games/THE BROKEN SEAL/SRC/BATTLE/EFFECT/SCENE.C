@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
@@ -53,12 +54,6 @@ void BattleFx_CycleObjectValueByCounter();
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 
 void BattleFx_ApplyColorToTargetBuffer(s32 arg0, s32 arg1);
-
-struct EffectVector {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 s32 Render_ProjectPoint(struct EffectVector *position, struct EffectVector *result);
 

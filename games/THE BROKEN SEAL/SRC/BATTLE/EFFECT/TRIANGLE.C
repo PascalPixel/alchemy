@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
@@ -18,12 +19,6 @@
 #include "IO_REG.H"
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
-
-struct Vector3 {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 extern struct Vector3 SpinningTriangle_Vertex[];
 extern struct Vector3 TriangleStrike_Vertex[];

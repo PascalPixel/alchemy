@@ -1,13 +1,6 @@
+#include "STRUCT.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
-
-struct FlashChipType {
-    u32 handlers[5];
-    u32 size;
-    u16 sector_size;
-    u16 unknown_1a;
-    u8 sector_shift;
-};
 
 typedef void (*FlashReadCore)(u32 source, u8 *destination, s32 size);
 

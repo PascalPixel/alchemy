@@ -1,3 +1,4 @@
+#include "STRUCT.H"
 #include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
@@ -14,11 +15,6 @@ struct EffectRecord {
     u8 flags_hi : 4;
 };
 
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
 struct SceneActor {
     u8 reserved_00[6];
     s16 temporary_state;
@@ -32,11 +28,6 @@ struct SceneActor_02000cfc {
 };
 
 struct SceneActor_02000d78 { u8 reserved_00[100]; u16 presentation_flags; };
-
-struct Presentation {
-    u8 reserved_00[9];
-    u8 flags;
-};
 
 struct SceneActor_02000fb4 {
     u8 reserved_00[35];
@@ -52,30 +43,7 @@ struct SceneActor_02001010 {
     struct Presentation *presentation;
 };
 
-struct SceneActor_0200113c {
-    u8 reserved_00[35];
-    u8 state_23;
-    u8 reserved_24[44];
-    struct Presentation *presentation;
-};
-
-struct OverlayEffectMotion {
-    u8 pad00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 pad14[28];
-    s32 horizontal_rate;
-    s32 vertical_rate;
-    s32 shadow_x;
-    s32 shadow_y;
-    s32 shadow_z;
-    u8 pad44[32];
-    s16 mode;
-};
-
 extern u8 *gWork;
-
 
 u8 *Owner_GetState();
 void Djinn_Transfer(int, int, int, int);
@@ -83,9 +51,6 @@ s32 Owner_RecalculateStats(int);
 void Party_RemoveOwnerRestored();
 s32 PartyInventory_FindOwner(s32);
 s32 SceneActor_CheckFacingAndRange();
-
-
-
 
 s32 SceneActor_UpdateProximityToLeader(u8 *self)
 {

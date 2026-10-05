@@ -17,13 +17,6 @@ TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksRobinSoulYe);
 TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksAfterAnswer);
 TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSeemsSpeakYourSoul);
 
-struct SceneObject {
-    u8 filler00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
 struct Vec {
     s32 x;
     s32 y;
@@ -37,33 +30,12 @@ struct EffectParams {
     s32 callback;
 };
 
-struct Actor {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-};
-
 struct Slot02000f10 {
     u8 head[8];
     s32 x;
     s32 y;
     s32 rank;
 };
-
-struct Actor_02000cc0 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-typedef struct Slot_02001f70 {
-    s32 pad0;
-    s32 pad4;
-    s32 w8;                /* +8, 12.20 fixed point */
-} Slot_02001f70;
 
 typedef struct Actor_02000cd0 {
     u8 pad0[6];
@@ -88,14 +60,6 @@ typedef struct Target_02000cd0 {
     union FieldCoordinate z;
 } Target_02000cd0;
 
-struct Actor_02000dc8 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
 typedef struct Record {
     s32 pad0;
     s32 pad4;
@@ -103,16 +67,6 @@ typedef struct Record {
     s32 w12;
     s32 w16;
 } Record;
-
-/*
- * resource_3c4: land an actor on the highest platform sharing its tile.
- */
-typedef struct Slot_02001c2c {
-    u8 pad0[8];
-    s32 x;                 /* +8,  12.20 fixed point */
-    s32 y;                 /* +12 */
-    s32 z;                 /* +16, 12.20 fixed point */
-} Slot_02001c2c;
 
 struct Actor_02000ec8 { u8 unknown_00[8]; s32 x; s32 y; s32 z; u8 unknown_14[0xf]; u8 flatla3; };
 
@@ -155,45 +109,6 @@ struct MotionEffect {
     u8 pad66[6];
     u32 callback;
 };
-
-typedef struct Slot_02002410 {
-    s32 pad0;
-    s32 pad4;
-    s32 column;            /* +8,  12.20 fixed point */
-    s32 pad12;
-    s32 row;               /* +16, 12.20 fixed point */
-} Slot_02002410;
-
-struct Actor02001424 {
-    u8 head[8];
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct Actor_02001510 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
-typedef struct Slot_02001a10 {
-    s32 pad0;
-    s32 pad4;
-    s32 col;            /* +8,  12.20 fixed point */
-    s32 pad12;
-    s32 row;               /* +16, 12.20 fixed point */
-} Slot_02001a10;
-
-typedef struct Slot_020023a0 {
-    s32 pad0;
-    s32 pad4;
-    s32 column;            /* +8,  12.20 fixed point */
-    s32 pad12;
-    s32 row;               /* +16, 12.20 fixed point */
-} Slot_020023a0;
 
 extern u8 Data_0200b8f4[];
 extern u8 Data_0200ba74[];

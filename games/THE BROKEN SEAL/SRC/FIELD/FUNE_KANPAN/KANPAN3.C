@@ -43,7 +43,6 @@ void FieldScene_CallPairWith10(s32 actor, s32 facing);
 extern u8 MsgFuneRobinDontTalkLikeShouldnt[];
 extern u8 MsgFuneRobinTalkedPassengersDidntTour[];
 extern u8 MsgFuneSeeYoureGoingGoFor[];
-#define ACTOR_FLAGS_OFFSET 90
 void FieldScene_RunStepThen10(s32 a);
 void FieldScene_CallPairWith10(s32 a, s32 b);
 extern u8 FuneKanpan_ClosingCrewScript[];
@@ -371,26 +370,25 @@ void FuneKanpan_ArriveAtTolbi(void)
  * at +90 on actors 21 and 22 before finishing the scene. */
 void FieldScene_RunThreeActorEncounter(void)
 {
-    u8 *record;
+    struct FieldActor *leader;
     u8 bits;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 180, 0x28e);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-    /* For each of actors 1, 2, and 3: fetch a source record, and if one
-     * exists, copy its fields at +8 and +16 into the actor. */
-    record = (s32)Object_GetById(0);
-    if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    /* Gerald, Ivan and Mia step out where the leader stands. */
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
     }
-    record = (s32)Object_GetById(0);
-    if (record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
-    record = (s32)Object_GetById(0);
-    if (record != 0) {
-        Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
@@ -412,8 +410,8 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_ShowEmote(22, 0x100, 20);
     Engine_ActorRunRepeatedMotion(22, 1);
     Event_OpenMessage(22, 0);
-    /* Gated on a condition read from actor 0: configure actors 2, 1, and 3,
-     * then spin, re-checking actor 0, while a condition on actor 2 holds. */
+    /* Yes to the sailor: Ivan and Mia speak up, and Ivan keeps asking for
+       as long as the answer is yes. */
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
         FieldScene_RunStepThen10(2);
@@ -423,12 +421,12 @@ void FieldScene_RunThreeActorEncounter(void)
         FieldScene_CallPairWith10(1, 0x6000);
         Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
         Event_OpenMessage(ACTOR_GERALD, 0);
-        L_02003dfa:;
+    ask_again:
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
             Engine_EventSetMessage((s32)MsgFuneRobinDontTalkLikeShouldnt);
             Event_OpenMessage(ACTOR_IVAN, 0);
-            goto L_02003dfa;
+            goto ask_again;
         }
     }
     Engine_EventWait(20);
@@ -437,33 +435,30 @@ void FieldScene_RunThreeActorEncounter(void)
     FieldScene_RunStepThen10(22);
     Actor_SetSpeed(22, 0x10000, 0x8000);
     Actor_SetSpeed(21, 0x10000, 0x8000);
-    /* Clear the low bit of the flag byte on actor 22. */
-    *(u8 *)((s32)Object_GetById(22) + ACTOR_FLAGS_OFFSET) &= 254;
+    /* The two sailors walk off without turning, then face their way again. */
+    Object_GetById(22)->steering_flags &= 254;
     Actor_WalkToAndWait(22, 162, 0x27a);
     Engine_EventWait(1);
-    bits = 1;
+    bits = ACTOR_FACES_MOTION;
     {
-        /* Set the low bit of the flag byte on actor 22. */
-        u8 *record = ((u8 *(*)())Object_GetById)(22);
-        u8 value = record[ACTOR_FLAGS_OFFSET];
+        struct FieldActor *actor = Object_GetById(22);
+        u8 value = actor->steering_flags;
 
-        record[ACTOR_FLAGS_OFFSET] = value | bits;
+        actor->steering_flags = value | bits;
     }
-    /* Clear the low bit of the flag byte on actor 21. */
-    *(u8 *)((s32)Object_GetById(21) + ACTOR_FLAGS_OFFSET) &= 254;
+    Object_GetById(21)->steering_flags &= 254;
     Actor_WalkToAndWait(21, 162, 0x2a4);
     Engine_EventWait(1);
     {
-        /* Set the low bit of the flag byte on actor 21. */
-        u8 *record = ((u8 *(*)())Object_GetById)(21);
+        struct FieldActor *actor = Object_GetById(21);
 
-        bits |= record[ACTOR_FLAGS_OFFSET];
-        record[ACTOR_FLAGS_OFFSET] = bits;
+        bits |= actor->steering_flags;
+        actor->steering_flags = bits;
     }
     Actor_FaceDirection(22, 0x3000, 0);
     FieldScene_CallPairWith10(21, 0xd000);
     FieldScene_RunStepThen10(22);
-    /* Finish actors 1, 2, and 3 with the same target values used earlier. */
+    /* Gerald, Ivan and Mia walk back into the leader. */
     Actor_WalkTo(ACTOR_GERALD, 180, 0x28e);
     Actor_WalkTo(ACTOR_IVAN, 180, 0x28e);
     Actor_WalkToAndWait(ACTOR_MIA, 180, 0x28e);

@@ -42,7 +42,7 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 s32 Field_CheckConfiguredKeys(void);
 s32 FixedSqrt(s32);
 struct ObjectRuntime *FieldObject_Create(s32, s32, s32, s32);
-s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 s32 ArcTan2(s32 y, s32 x);
 void Audio_PlayCue(s32 cue);
@@ -152,31 +152,31 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
         heading = angle;
         goto update_object;
     }
-    if (Func_080120dc(object, &position) != 0)
+    if (Map_CheckObjectStep(object, &position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
     Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
-    if (Func_080120dc(object, &test_position) != 0)
+    if (Map_CheckObjectStep(object, &test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
     Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
-    if (Func_080120dc(object, &test_position) != 0)
+    if (Map_CheckObjectStep(object, &test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
     Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
-    if (Func_080120dc(object, &test_position) != 0)
+    if (Map_CheckObjectStep(object, &test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
     Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
-    if (Func_080120dc(object, &test_position) != 0)
+    if (Map_CheckObjectStep(object, &test_position) != 0)
         goto choose_direction;
     heading = angle;
     goto push_objects;
@@ -196,31 +196,31 @@ choose_direction:
         position.y = object->y;
         position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading, &position);
-        if (Func_080120dc(object, &position) != 0)
+        if (Map_CheckObjectStep(object, &position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &test_position);
-        if (Func_080120dc(object, &test_position) != 0)
+        if (Map_CheckObjectStep(object, &test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &test_position);
-        if (Func_080120dc(object, &test_position) != 0)
+        if (Map_CheckObjectStep(object, &test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &test_position);
-        if (Func_080120dc(object, &test_position) != 0)
+        if (Map_CheckObjectStep(object, &test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &test_position);
-        if (Func_080120dc(object, &test_position) == 0)
+        if (Map_CheckObjectStep(object, &test_position) == 0)
             goto push_objects;
     }
     position.x = object->x;
@@ -260,21 +260,21 @@ push_objects:
         test_position.y = other->y;
         test_position.z = other->z;
         Vector_AddPolarOffset(0xa0000, direction, &test_position);
-        if (Func_080120dc(other, &test_position) != 0)
+        if (Map_CheckObjectStep(other, &test_position) != 0)
             goto blocked;
         test_position.x = other->x;
         test_position.y = other->y;
         test_position.z = other->z;
         Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
-        if (Func_080120dc(other, &test_position) != 0)
+        if (Map_CheckObjectStep(other, &test_position) != 0)
             goto blocked;
-        if (Func_080120dc(other, &test_position) != 0)
+        if (Map_CheckObjectStep(other, &test_position) != 0)
             goto blocked;
         test_position.x = other->x;
         test_position.y = other->y;
         test_position.z = other->z;
         Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
-        if (Func_080120dc(other, &test_position) != 0)
+        if (Map_CheckObjectStep(other, &test_position) != 0)
             goto blocked;
         Vector_AddPolarOffset(0x4000, direction, (struct FieldPosition *)&other->x);
         other->target_x = -0x80000000;

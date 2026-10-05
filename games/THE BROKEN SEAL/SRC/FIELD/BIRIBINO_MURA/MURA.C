@@ -289,8 +289,8 @@ void FieldScene_RunScene38bSequenceC(void)
     struct FieldActor *rec;
     struct FieldActor *rec7;
 
-    rec = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
-    rec7 = (struct FieldActor *)Object_GetById(11);
+    rec = Object_GetById(ACTOR_PARTY_LEADER);
+    rec7 = Object_GetById(11);
     if ((rec7->x.fixed >> 20) == 6) {
         Engine_EventBegin();
         Engine_ActorSetSpritePriority(11, 1);
@@ -695,17 +695,17 @@ void FieldScene_RunScene38b_02000d10(void)
     }
 }
 
-s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
+/* The placed actor (ids 8 to 65) standing on map cell x, z. */
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
-
-    s32 **tbl = (s32 **)((u8 *)gEventWork + 0x14);
+    struct FieldActor **actors = gEventWork->placed_actors - 8;
     u32 i;
 
     for (i = 8; i <= 65; i++) {
-        s32 *p = tbl[i];
+        struct FieldActor *actor = actors[i];
 
-        if (x == (p[2] >> 20) && z == (p[4] >> 20)) {
-            return p;
+        if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20) {
+            return actor;
         }
     }
     return 0;
@@ -727,7 +727,7 @@ void BiribinoMura_PushFacedBlock(void)
 
     leader = Object_GetById(0);
     dir = leader->facing >> 12;
-    block = (struct FieldActor *)SceneActor_FindAtTileXZ(
+    block = SceneActor_FindActorAtCell(
         (leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
         (leader->z.part.pixel + (s16)BiribinoMura_FacingCellSteps[dir]) >> 4);
     if (block != NULL) {

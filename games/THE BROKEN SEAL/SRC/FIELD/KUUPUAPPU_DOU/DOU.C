@@ -575,10 +575,10 @@ void SceneState_SetEntries16To21Byte35(void)
     s32 remaining = 5;
 
     do {
-        u8 *entry = Object_GetById(index);
+        struct FieldActor *entry = Object_GetById(index);
 
         remaining--;
-        entry[35] = flag;
+        entry->priority_flags = flag;
         index++;
     } while (remaining >= 0);
 }

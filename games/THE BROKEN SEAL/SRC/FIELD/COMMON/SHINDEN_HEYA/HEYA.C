@@ -1696,7 +1696,7 @@ void ShindenHeya_CopyActorPose(void)
         }
     }
     p5->dirty = 1;
-    ((struct FieldActor *)Object_GetById(14))->priority_flags &= 254;
+    Object_GetById(14)->priority_flags &= 254;
     ((struct FieldSprite *)p5)->priority = 2;
 }
 
@@ -1778,8 +1778,8 @@ void ShindenHeya_CopyActorPose(void)
  */
 void SceneState_ResetObject14Word108(void)
 {
-    u8 *state = (u8 *)Object_GetById(14);
-    *(s32 *)(state + 108) = 0;
+    struct FieldActor *state = Object_GetById(14);
+    state->update = 0;
     Engine_ActorSetPosition(14, 0, 0);
 }
 
@@ -1914,15 +1914,14 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
     u32 i;
     s32 p8;
     s32 p8b;
-    s32 rec;
+    struct FieldActor *rec;
     u8 *rec8;
-    s32 record;
     u8 *p5;
 
     p8 = a1;
-    rec = ((s32 (*)())Object_GetById)();
+    rec = Object_GetById(a0);
     if (rec != 0) {
-        rec8 = Value4(Engine_ObjectCreate, 0x11d, *(s32 *)(rec + 8), (*(s32 *)(rec + 12) + 0x2d0000), *(s32 *)(rec + 16));
+        rec8 = Value4(Engine_ObjectCreate, 0x11d, rec->x.fixed, rec->y.fixed + 0x2d0000, rec->z.fixed);
         if ((s32)rec8 != 0) {
             p5 = *(s32 *)((s32)rec8 + 80);
             Engine_ObjectSetScript((s32)rec8, (s32)ShindenHeya_OwnerEffectScript);
@@ -1944,9 +1943,9 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
                     u8 low : 2;
                     u8 priority : 2;
                 };
-                u8 priority = ((struct SpritePriorityByte *)(*(s32 *)(rec + 80)))->priority;
+                u8 priority = ((struct SpritePriorityByte *)(*(s32 *)&rec->sprite))->priority;
 
-                *(s32 *)((s32)rec8 + 104) = rec;
+                *(s32 *)((s32)rec8 + 104) = (s32)rec;
                 ((struct SpritePriorityByte *)p5)->priority = priority;
             }
         }

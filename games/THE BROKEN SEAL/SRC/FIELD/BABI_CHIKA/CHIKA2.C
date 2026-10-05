@@ -36,7 +36,7 @@ void BabiChika_UpdateTrackedActor(void);
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor)
 {
-    struct SceneObject *object;
+    struct FieldActor *object;
     struct Vec vec;
     struct EffectParams params;
     u32 i;
@@ -44,7 +44,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
     s32 x;
     s32 z;
 
-    object = (struct SceneObject *)Object_GetById(actor);
+    object = Object_GetById(actor);
     params.unk00 = 1;
     params.mode = 7;
     params.callback = (s32)Effect_AdvanceMotion;
@@ -57,7 +57,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
         vec.z = z;
         x = x + Math_Divide(x, 3);
         vec.x = x;
-        ((void (*)())Effect_Spawn)(object->x, object->y, object->z, x, vec.y, z, 0x01030001, &params);
+        ((void (*)())Effect_Spawn)(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
     }
 }
 
@@ -115,11 +115,11 @@ void SceneState_RunRect73x38Step(void)
 void SceneActor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
-    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    point[0] = actor->f08 + 0xFFE00000;
-    point[1] = actor->f0c;
-    point[2] = actor->f10;
+    point[0] = actor->x.fixed + 0xFFE00000;
+    point[1] = actor->y.fixed;
+    point[2] = actor->z.fixed;
     SceneActor_MoveActorZeroToTarget(point);
 }
 
@@ -143,11 +143,11 @@ void FieldScene_RunStepWith6(void)
 void SceneActor_PassPointTwoRightOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    pos[0] = actor->f08 + 0x200000;
-    pos[1] = actor->f0c;
-    pos[2] = actor->f10;
+    pos[0] = actor->x.fixed + 0x200000;
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed;
     SceneActor_MoveActorZeroToTarget(pos);
 }
 
@@ -166,12 +166,12 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
 /* Scene tables, layouts and supplemental sequences. */
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
-    struct Actor02001424 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
     s32 target[3];
 
-    target[0] = actor->x;
-    target[1] = actor->y;
-    target[2] = actor->z + 0x00200000;
+    target[0] = actor->x.fixed;
+    target[1] = actor->y.fixed;
+    target[2] = actor->z.fixed + 0x00200000;
     if (SceneActor_MoveActorZeroToTarget(target)!= 0) {
         SceneState_ApplyTwoRectsAndRunThree();
     }
@@ -193,10 +193,10 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
 
     Engine_GameFlagSet(0x200);
     if (Engine_GameFlagIsSet(0x201) != 0) {
-        ((u8* (*)())Object_GetById)(14)[98] = 0;
-        ((u8* (*)())Object_GetById)(14)[89] &= (u8)0xf7;
+        Object_GetById(14)->rise_counter = 0;
+        Object_GetById(14)->collision_flags &= (u8)0xf7;
     } else {
-        ((u8* (*)())Object_GetById)(14)[98] = 1;
+        Object_GetById(14)->rise_counter = 1;
         flags = Object_GetById(14);
         flags += 89;
         value = 8;
@@ -212,10 +212,10 @@ void SceneActor_SetActor14Field98ByFlag200(void)
 
     Engine_GameFlagSet(0x201);
     if (Engine_GameFlagIsSet(0x200) != 0) {
-        ((u8* (*)())Object_GetById)(14)[98] = 0;
-        ((u8* (*)())Object_GetById)(14)[89] &= (u8)0xf7;
+        Object_GetById(14)->rise_counter = 0;
+        Object_GetById(14)->collision_flags &= (u8)0xf7;
     } else {
-        ((u8* (*)())Object_GetById)(14)[98] = 1;
+        Object_GetById(14)->rise_counter = 1;
         p = Object_GetById(14);
         p += 89;
         val = 8;
@@ -231,18 +231,18 @@ void SceneState_ApplyFlag970(void)
 
 void SceneState_RunUnlessActorZeroAtTile32x50(void)
 {
-    struct Actor_02001510 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if ((actor->f08 >> 20) != 32 || (actor->f10 >> 20) != 50) {
+    if ((actor->x.fixed >> 20) != 32 || (actor->z.fixed >> 20) != 50) {
         SceneActor_ApplyPointLeftOfActorZero();
     }
 }
 
 void SceneState_RunUnlessActorZeroAt30_52(void)
 {
-    struct Actor_02000cc0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if ((actor->f08 >> 20) != 30 || (actor->f10 >> 20) != 52) {
+    if ((actor->x.fixed >> 20) != 30 || (actor->z.fixed >> 20) != 52) {
         SceneActor_PassActorZeroOffsetPoint();
     }
 }
@@ -260,7 +260,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     u8 *frame;
 
     Engine_EventBegin();
-    actor = (struct FieldActor *)Object_GetById(18);
+    actor = Object_GetById(18);
     if ((actor->x.fixed >> 20) == 46) {
         Battle_WaitMode0(30);
         rec2 = OverlayObject_CreateAndInitialize(0x2e80000, 0, 0xb80000, 253);
@@ -320,7 +320,7 @@ void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
     Object_SetModeById(20, 1);
     Engine_ActorSetChildValue(20, 0);
     Object_SetModeById(20, 2);
-    flags = ((u8* (*)())Object_GetById)(20) + 35;
+    flags = &Object_GetById(20)->priority_flags;
     *flags &= 0xFD;
     Engine_GameFlagSet(0x200);
 }
@@ -340,7 +340,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     u8 *slot;
 
     Engine_EventBegin();
-    actor = (struct FieldActor *)Object_GetById(19);
+    actor = Object_GetById(19);
     if ((actor->x.fixed >> 20) == 48) {
         if (GameFlag_IsSet(0x202) != 0) {
             Battle_WaitMode0(30);
@@ -398,7 +398,7 @@ void FieldScene_RunFourStepSequenceA(void)
 
 void FieldScene_SetActor19TableB3B8(void)
 {
-    Engine_ActorEnableActionCallback(19, (s32)BabiChika_FlickerScript);
+    Engine_ActorEnableActionCallback(19, BabiChika_FlickerScript);
 }
 
 void SceneState_SetValue202ThenCall(void)
@@ -414,7 +414,7 @@ void SceneActor_ConfigureSlot21AndSetFlag201(void)
     Object_SetModeById(21, 1);
     Engine_ActorSetChildValue(21, 0);
     Object_SetModeById(21, 2);
-    flags = ((u8* (*)())Object_GetById)(21) + 35;
+    flags = &Object_GetById(21)->priority_flags;
     *flags &= 0xFD;
     Engine_GameFlagSet(0x201);
 }
@@ -453,12 +453,12 @@ void SceneActor_InstallSlotNineHandler(void)
 {
     typedef s32(*Handler_02001a10)(struct Record_02000ec8 *record);
 
-    u8 *owner;
+    struct FieldActor *owner;
 
-    Engine_ActorEnableActionCallback(8, (s32)BabiChika_FlickerScript);
+    Engine_ActorEnableActionCallback(8, BabiChika_FlickerScript);
     Engine_GameFlagSet(0x203);
     owner = Object_GetById(9);
-    *(s32 *)(owner + 108) = (s32)SceneActor_CopyActor8PositionWhenAtRow10;
+    owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
 /*
@@ -484,14 +484,14 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
     Object_SetModeById(9, 2);
 
     {
-        u8 *flag = ((u8* (*)())Object_GetById)(9) + 35;
+        u8 *flag = &Object_GetById(9)->priority_flags;
         *flag &= (u8)0xfd;
     }
 
     Engine_GameFlagSet(0x204);
 
-    col = ((Slot_02001a10* (*)())Object_GetById)(9)->col;
-    row = ((Slot_02001a10* (*)())Object_GetById)(9)->row >> 20;
+    col = Object_GetById(9)->x.fixed;
+    row = Object_GetById(9)->z.fixed >> 20;
     Map_CopyCellAttributeRect(26, 8, 1, 1, col >> 20, row);
 
     desc = Object_GetById(9);
@@ -506,9 +506,9 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 s32 OverlayObject_SetYAboveLinkedActor(u8 *owner)
 {
     s16 *id = (s16 *)(owner + 100);
-    struct Actor *actor = Object_GetById(*id);
+    struct FieldActor *actor = Object_GetById(*id);
 
-    *(s32 *)(owner + 12) = actor->f0c + 0x100000;
+    *(s32 *)(owner + 12) = actor->y.fixed + 0x100000;
     return 0;
 }
 
@@ -556,7 +556,7 @@ void BabiChika_SettleSteps(s32 wait)
  */
 void SceneActor_LandOnHighestPlatform(s32 subject)
 {
-    s32 best = (s32)0xffb00000;
+    s32 best = -0x500000;
     u32 i;
 
     for (i = 0; i <= 4; i++) {
@@ -564,16 +564,16 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
 
         if (slot == subject) continue;
 
-        if ((((Slot_02001c2c* (*)())Object_GetById)(slot)->x >> 20) != (((Slot_02001c2c* (*)())Object_GetById)(subject)->x >> 20)) continue;
-        if ((((Slot_02001c2c* (*)())Object_GetById)(slot)->z >> 20) != (((Slot_02001c2c* (*)())Object_GetById)(subject)->z >> 20)) continue;
+        if ((Object_GetById(slot)->x.fixed >> 20) != (Object_GetById(subject)->x.fixed >> 20)) continue;
+        if ((Object_GetById(slot)->z.fixed >> 20) != (Object_GetById(subject)->z.fixed >> 20)) continue;
 
         /*
          * 0x00100000 is one whole unit above the candidate's own height. The
          * comparison is signed, and a tie updates the best.
          */
-        if (best > ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000) continue;
+        if (best > Object_GetById(slot)->y.fixed + 0x100000) continue;
 
-        best = ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000;
+        best = Object_GetById(slot)->y.fixed + 0x100000;
         Object_GetById(subject)->unknown_64 = (u16)slot;
     }
 
@@ -584,11 +584,11 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
      * fix the sequence, which argument evaluation order would not.
      */
     {
-        Slot_02001c2c *target = Object_GetById(subject);
-        Slot_02001c2c *from = Object_GetById(subject);
-        s32 z = ((Slot_02001c2c* (*)())Object_GetById)(subject)->z;
+        struct FieldActor *target = Object_GetById(subject);
+        struct FieldActor *from = Object_GetById(subject);
+        s32 z = Object_GetById(subject)->z.fixed;
 
-        Object_SetPosition(target, from->x, best, z);
+        Object_SetPosition(target, from->x.fixed, best, z);
     }
 
     ObjectMotion_CommitCurrentPositionAndActivate(subject);
@@ -606,7 +606,7 @@ void FieldScene_RunMiddleSequence(void)
 
     Engine_EventBegin();
     for (i = 0; i <= 2; i++) {
-        if (((struct FieldActor *)Object_GetById(i + 12))->sprite->priority == 3
+        if (Object_GetById(i + 12)->sprite->priority == 3
             && GameFlag_IsSet(i + 0x200) == 0) {
             Actor_Get(i + 12);
             SceneActor_WaitValueBelowLimit();
@@ -614,52 +614,52 @@ void FieldScene_RunMiddleSequence(void)
             GameFlag_Set(i + 0x200);
             break;
         }
-        if ((((struct FieldActor *)Object_GetById(i + 12))->z.fixed >> 20) == 9
+        if ((Object_GetById(i + 12)->z.fixed >> 20) == 9
             && GameFlag_IsSet(i + 0x200) == 0) {
-            *(s32 *)((u8 *)Object_GetById(i + 12) + 20) = 0;
-            ((struct FieldActor *)Object_GetById(i + 12))->velocity_y = 0;
-            *(s32 *)(((s32 (*)())Object_GetById)(i + 12) + 60) = -0x80000000;
-            ((struct FieldActor *)Actor_Get(i + 12))->motion_flags = 0;
-            *(u16 *)(((s32 (*)())Object_GetById)(i + 12) + 100) = 0;
+            Object_GetById(i + 12)->terrain_height = 0;
+            Object_GetById(i + 12)->velocity_y = 0;
+            Object_GetById(i + 12)->target_y = ACTOR_NO_TARGET;
+            Actor_Get(i + 12)->motion_flags = 0;
+            Object_GetById(i + 12)->unknown_64 = 0;
             found = i;
             for (j = 0; j < i; j++) {
                 if (GameFlag_IsSet(0x200 + j) == 0) {
-                    saved.x.fixed = ((struct FieldActor *)Object_GetById(i + 12))->x.fixed;
-                    saved.y.fixed = ((struct FieldActor *)Object_GetById(i + 12))->y.fixed;
-                    saved.z.fixed = ((struct FieldActor *)Object_GetById(i + 12))->z.fixed;
-                    ((struct FieldActor *)Actor_Get(i + 12))->x.fixed =
-                        ((struct FieldActor *)Object_GetById(j + 12))->x.fixed;
-                    ((struct FieldActor *)Object_GetById(i + 12))->y.fixed =
-                        ((struct FieldActor *)Object_GetById(j + 12))->y.fixed;
-                    ((struct FieldActor *)Object_GetById(i + 12))->z.fixed =
-                        ((struct FieldActor *)Object_GetById(j + 12))->z.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->x.fixed = saved.x.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->y.fixed = saved.y.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->z.fixed = saved.z.fixed;
+                    saved.x.fixed = Object_GetById(i + 12)->x.fixed;
+                    saved.y.fixed = Object_GetById(i + 12)->y.fixed;
+                    saved.z.fixed = Object_GetById(i + 12)->z.fixed;
+                    Actor_Get(i + 12)->x.fixed =
+                        Object_GetById(j + 12)->x.fixed;
+                    Object_GetById(i + 12)->y.fixed =
+                        Object_GetById(j + 12)->y.fixed;
+                    Object_GetById(i + 12)->z.fixed =
+                        Object_GetById(j + 12)->z.fixed;
+                    Actor_Get(j + 12)->x.fixed = saved.x.fixed;
+                    Actor_Get(j + 12)->y.fixed = saved.y.fixed;
+                    Actor_Get(j + 12)->z.fixed = saved.z.fixed;
                     found = j;
                     break;
                 }
             }
-            *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 20) = 0;
-            ((struct FieldActor *)Actor_Get(found + 12))->velocity_y = 0;
-            *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 60) = -0x80000000;
-            ((struct FieldActor *)Actor_Get(found + 12))->motion_flags = 0;
-            *(u16 *)(((s32 (*)())Object_GetById)(found + 12) + 100) = 0;
+            Object_GetById(found + 12)->terrain_height = 0;
+            Actor_Get(found + 12)->velocity_y = 0;
+            Object_GetById(found + 12)->target_y = ACTOR_NO_TARGET;
+            Actor_Get(found + 12)->motion_flags = 0;
+            Object_GetById(found + 12)->unknown_64 = 0;
             Engine_CameraSetSpeed(0x30000, 0x6000);
             ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
             Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
             Engine_CameraWaitForMove();
             SceneActor_LandOnHighestPlatform(found + 12);
-            if ((((struct FieldActor *)Object_GetById(found + 12))->x.fixed >> 20) == 8) {
-                (*(s16 *)(((s32 (*)())Object_GetById)(10) + 100))++;
-                (*(s16 *)(((s32 (*)())Object_GetById)(11) + 100))--;
+            if ((Object_GetById(found + 12)->x.fixed >> 20) == 8) {
+                Object_GetById(10)->unknown_64++;
+                (*(s16 *)&Object_GetById(11)->unknown_64)--;
             } else {
-                (*(s16 *)(((s32 (*)())Object_GetById)(10) + 100))--;
-                (*(s16 *)(((s32 (*)())Object_GetById)(11) + 100))++;
+                (*(s16 *)&Object_GetById(10)->unknown_64)--;
+                Object_GetById(11)->unknown_64++;
             }
-            ((struct FieldActor *)Actor_Get(found + 12))->update = (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
+            Actor_Get(found + 12)->update = (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
             BabiChika_SettleSteps(40);
-            ((struct FieldActor *)Actor_Get(found + 12))->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            Actor_Get(found + 12)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             GameFlag_Set(0x200 + found);
             break;
         }
@@ -680,13 +680,13 @@ void SceneState_SetSlot17And18Selectors(void)
 {
     Engine_EventBegin();
 
-    if ((((Slot_02001f70* (*)())Object_GetById)(17)->w8 >> 20) == 45) {
+    if ((Object_GetById(17)->x.fixed >> 20) == 45) {
         Engine_GameFlagSet(0x974);
     } else {
         Engine_GameFlagClear(0x974);
     }
 
-    if ((((Slot_02001f70* (*)())Object_GetById)(18)->w8 >> 20) == 46) {
+    if ((Object_GetById(18)->x.fixed >> 20) == 46) {
         Engine_GameFlagSet(0x975);
     } else {
         Engine_GameFlagClear(0x975);
@@ -892,14 +892,14 @@ void FieldScene_PlaceAndPinSlots8And9(void)
     SceneState_SwapSlotPairByRank(9, 8);
 
     {
-        s32 col = ((Slot_020023a0* (*)())Object_GetById)(8)->column >> 20;
-        row = ((Slot_020023a0* (*)())Object_GetById)(8)->row >> 20;
+        s32 col = Object_GetById(8)->x.fixed >> 20;
+        row = Object_GetById(8)->z.fixed >> 20;
         Map_CopyCellAttributeRect(2, 36, 1, 1, col, row);
     }
 
     {
-        s32 col = ((Slot_020023a0* (*)())Object_GetById)(9)->column >> 20;
-        row = ((Slot_020023a0* (*)())Object_GetById)(9)->row >> 20;
+        s32 col = Object_GetById(9)->x.fixed >> 20;
+        row = Object_GetById(9)->z.fixed >> 20;
         Map_CopyCellAttributeRect(2, 36, 1, 1, col, row);
     }
 }
@@ -915,14 +915,14 @@ void FieldScene_PlaceAndPinSlots10And11(void)
     SceneState_SwapSlotPairByRank(11, 10);
 
     {
-        s32 col20 = ((Slot_02002410* (*)())Object_GetById)(10)->column >> 20;
-        row = ((Slot_02002410* (*)())Object_GetById)(10)->row >> 20;
+        s32 col20 = Object_GetById(10)->x.fixed >> 20;
+        row = Object_GetById(10)->z.fixed >> 20;
         Map_CopyCellAttributeRect(2, 36, 1, 1, col20, row);
     }
 
     {
-        s32 col20 = ((Slot_02002410* (*)())Object_GetById)(11)->column >> 20;
-        row = ((Slot_02002410* (*)())Object_GetById)(11)->row >> 20;
+        s32 col20 = Object_GetById(11)->x.fixed >> 20;
+        row = Object_GetById(11)->z.fixed >> 20;
         Map_CopyCellAttributeRect(2, 36, 1, 1, col20, row);
     }
 }
@@ -934,7 +934,7 @@ void FieldScene_RunScene3c4_02002480(void)
 
     Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
     Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-    *(u8 *)(((s32 (*)())Object_GetById)(14) + 34) = 1;
+    Object_GetById(14)->terrain_id = 1;
     record = Object_GetById(12);
     p5 = record->x.fixed;
     record = Object_GetById(12);

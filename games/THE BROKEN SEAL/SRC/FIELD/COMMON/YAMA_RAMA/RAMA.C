@@ -390,7 +390,7 @@ void FieldScene_RunScene3a2_020008a8(void)
 void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 {
 
-    u32 heading = ((struct FieldActor *)Object_GetById(0))->facing;
+    u32 heading = Object_GetById(0)->facing;
 
     Engine_EventBegin();
     if (heading - 0xA001 <= 0x3FFE) {
@@ -404,7 +404,7 @@ void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 
 void Scene_RunEventTransition(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     s32 none;
 
     if (GameFlag_IsSet(0x89a) == 0) {
@@ -415,21 +415,19 @@ void Scene_RunEventTransition(void)
         Event_ShowMessageAndWait(10, 0, 20);
         Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Engine_EventWait(20);
-        record = (void *)Object_GetById(0);
-        *(s32 *)((s32)record + 108) = (s32)OverlayObject_SetFacingTowardObject10;
-        record = (void *)Object_GetById(0);
-        if ((*(s32 *)((s32)record + 16) >> 20) == 13) {
+        record = Object_GetById(0);
+        record->update = (void (*)(union FieldObject *))OverlayObject_SetFacingTowardObject10;
+        record = Object_GetById(0);
+        if ((record->z.fixed >> 20) == 13) {
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
         }
         Actor_SetSpeed(10, 0x20000, 0x10000);
         Engine_ActorSetSpritePriority(10, 2);
         Actor_WalkToAndWait(10, 0x198, 216);
         {
-            u8 *record = (void *)Object_GetById(10);
-            u32 flag = 1;
+            struct FieldActor *record = Object_GetById(10);
 
-            flag = flag | record[35];
-            record[35] = (u8)flag;
+            record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
         }
         Engine_EventWait(10);
         Actor_FaceDirection(10, 0x8000, 20);
@@ -438,7 +436,7 @@ void Scene_RunEventTransition(void)
         Actor_SetAttachedEffect(10, 0x102);
         Engine_EventWait(60);
         Event_ShowMessageAndWait(10, 0, 20);
-        Engine_ActorEnableActionCallback(10, (s32)YamaRama_HsuAction);
+        Engine_ActorEnableActionCallback(10, YamaRama_HsuAction);
         Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
         GameFlag_Set(0x8b0);
         Object_RefreshSelectorById(10);
@@ -448,8 +446,8 @@ void Scene_RunEventTransition(void)
         Object_RefreshSelectorById(0);
         Engine_EventWait(10);
         none = 0;
-        record = (void *)Object_GetById(0);
-        *(s32 *)((s32)record + 108) = none;
+        record = Object_GetById(0);
+        record->update = (void (*)(union FieldObject *))none;
         Engine_EventWait(30);
         Engine_ActorRunRepeatedMotion(10, 2);
         Engine_EventWait(20);
@@ -608,11 +606,9 @@ void Scene_RunActorSequence(void)
     Event_ShowMessageAndWait(8, 0, 30);
     Event_ShowMessageAndWait(8, 0, 20);
     {
-        u8 *record = (void *)Object_GetById(10);
-        u32 flag = 1;
+        struct FieldActor *record = Object_GetById(10);
 
-        flag = flag | record[90];
-        record[90] = (u8)flag;
+        record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_WalkToAndWait(10, 168, 0x128);
@@ -679,7 +675,7 @@ void SceneState_RunRect6x28Step(void)
 
 s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 {
-    if (((struct FieldActor *)Object_GetById(0))->y.fixed > actor->y.fixed) {
+    if (Object_GetById(0)->y.fixed > actor->y.fixed) {
         actor->priority_flags |= 2;
     } else {
         actor->priority_flags &= 0xFD;
@@ -767,7 +763,7 @@ s32 YamaRama_ApplyEntryState(void)
         }
     } else if (gGameState.scene == (s32)&SceneId_YamaRama1) {
         Engine_ActorSetSpriteFlags((struct FieldActor *)Object_GetById(14), 0);
-        ((struct FieldActor *)Object_GetById(14))->priority_flags |= 2;
+        Object_GetById(14)->priority_flags |= 2;
         if (Engine_GameFlagIsSet(0x200)) {
             Engine_ActorSetAnimation(14, 5);
             ActorPresentation_PrepareActorFourteenWithCallback();
@@ -803,12 +799,12 @@ s32 YamaRama_ApplyEntryState(void)
             Call3(Engine_ActorFaceDirection, 8, 0x5000, 0);
             Call3(Engine_ActorFaceDirection, 10, 0xb000, 0);
             Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
-            ((struct FieldActor *)Object_GetById(9))->scale_x = -0x10000;
+            Object_GetById(9)->scale_x = -0x10000;
         }
         if (!Value1(Engine_GameFlagIsSet, 0x8b2)) {
             Call3(Engine_ActorSetPosition, 9, 0xa40000, 0x1180000);
             Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
-            ((struct FieldActor *)Object_GetById(9))->scale_x = -0x10000;
+            Object_GetById(9)->scale_x = -0x10000;
         }
         if (gGameState.entrance == 5 && !Engine_GameFlagIsSet(0x8b1) && !Engine_GameFlagIsSet(0x109) && !Engine_GameFlagIsSet(0x8b2)) {
             Scene_RunActorExchange();

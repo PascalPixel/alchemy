@@ -234,8 +234,9 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             Engine_EventShowMessage(15, 0);
         } else {
-            u8 *p = (u8 *)gEventWork;
-            *(u16 *)(p + 472) = *(u16 *)(p + 472) + 1;
+            struct EventWork *work = gEventWork;
+
+            work->message = work->message + 1;
             Engine_EventAskYesNo(15, 0);
         }
     } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
@@ -826,7 +827,7 @@ void FieldScene_RunGroupChoreography(void)
 {
     extern u8 HaidiaIe_FaceTargetActions[];
 
-    s32 record;
+    struct FieldActor *record;
     s32 walk_speed;
     s32 turn_speed;
     s32 approach_speed;
@@ -928,7 +929,7 @@ void HaidiaIe_RunScene015B4(void)
 {
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 v5;
 
     Engine_AudioPlayCue(17);
@@ -946,13 +947,13 @@ void HaidiaIe_RunScene015B4(void)
     Call3(Engine_ActorFaceDirection, 24, 0x8000, 0);
     Engine_ActorSetAnimation(0, 16);
     record = Object_GetById(0);
-    *(s32 *)(record + 24) = -0x10000;
+    record->scale_x = -0x10000;
     record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_ActorSetAnimation(25, 7);
     record = Object_GetById(25);
     {
-        u8 *motion = *(u8 **)(record + 80);
+        u8 *motion = (u8 *)record->sprite;
         s32 shown = 0x1555;
 
         *(u16 *)(motion + 30) = shown;
@@ -960,9 +961,9 @@ void HaidiaIe_RunScene015B4(void)
     record = Object_GetById(25);
     Engine_ActorSetSpriteFlags(record, 0);
     {
-        u8 *work = (u8 *)gEventWork;
+        struct EventWork *work = gEventWork;
 
-        *(s32 *)(work + 0x1c0) = 0x100;
+        work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     }
     Engine_EventOpenScreen();
     BattleFx_SetBlock30Values128One();
@@ -980,14 +981,14 @@ void HaidiaIe_RunScene015B4(void)
     Call3(Engine_ActorSetSpeed, 23, 0x26666, 0x13333);
     v5 = 128;
     record = Object_GetById(23);
-    *(s32 *)(record + 68) = 0x28f;
-    *(s32 *)(record + 72) = (v5 << 8);
+    record->bounce = 0x28f;
+    record->gravity = (v5 << 8);
     Engine_ActorEnableActionCallback(23, (s32)Data_0200aa48);
     Engine_EventWait(24);
     Engine_ActorSetSpeed(24, 0x26666, 0x13333);
     record = Object_GetById(24);
-    *(s32 *)(record + 68) = 0x28f;
-    *(s32 *)(record + 72) = (v5 << 8);
+    record->bounce = 0x28f;
+    record->gravity = (v5 << 8);
     Object_SetActionCallbackAndRefreshById(24, (s32)Data_0200ab2c);
     Engine_EventWait(40);
     BattleFx_SetBlock30ValuesMaxZero();
@@ -999,7 +1000,7 @@ void HaidiaIe_RunScene015B4(void)
     Engine_TaskWait(20);
     BattleFx_SetBlock30ValuesMaxZero();
     Engine_EventWait(40);
-    *(s32 *)(((s32)gEventWork + 0x1c8)) = 120;
+    gEventWork->transition_frames = 120;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_GameFlagClear(0x834);
@@ -1011,7 +1012,7 @@ void Scene_RunExtendedActorSequence(void)
 {
     extern const u8 HaidiaIe_FaceTargetActions[];
 
-    u8 *record;
+    struct FieldActor *record;
     struct EventWork *work;
     const u8 *base5_200ac00;
     s32 v5;

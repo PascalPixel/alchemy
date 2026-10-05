@@ -42,7 +42,6 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-extern struct EventRuntime *Data_03001ebc;
 
 void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x);
 void SceneDialogue_PromptAndCountSkip(s32 x);
@@ -144,7 +143,6 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-#define SCENE_WORD_1C8 (*(u32 *)(*(u8 **)&gEventWork + 456))
 
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
@@ -560,7 +558,7 @@ void SceneDialogue_RunActorEighteenBranchedDialogue(void)
 void FieldScene_RunSetupSequence(void)
 {
 
-    u8 *record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
@@ -629,10 +627,10 @@ void FieldScene_RunSetupSequence(void)
         Scene_JoinRodSearch();
         GameFlag_Set(0x856);
         Engine_ActorSetAnimation(ACTOR_IVAN, 2);
-        record = ((void *(*)())Object_GetById)(0);
+        record = Object_GetById(0);
         if (record != 0) {
             /* Read the two s16 fields at +10 and +18 of the record. */
-            Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(ACTOR_IVAN);
         Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -640,10 +638,10 @@ void FieldScene_RunSetupSequence(void)
         Event_ShowMessage(ACTOR_IVAN, 0);
     }
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    record = ((u8 *(*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
         /* Read the two s16 fields at +10 and +18 of the record. */
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -894,9 +892,9 @@ void FieldScene_RunVaultClosingSequence(void)
     Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Engine_ActorFaceActor(2, 10, 0);
     Engine_ActorFaceActor(8, 10, 0);
-    Engine_ActorEnableActionCallback(11, (s32)KuupuappuHeya_Villager11ExitScript);
+    Engine_ActorEnableActionCallback(11, KuupuappuHeya_Villager11ExitScript);
     Engine_EventWait(40);
-    Engine_ActorEnableActionCallback(12, (s32)KuupuappuHeya_Villager12ExitScript);
+    Engine_ActorEnableActionCallback(12, KuupuappuHeya_Villager12ExitScript);
     Object_RefreshSelectorById(12);
     Actor_FaceDirection(11, 8192, 0);
     Actor_FaceDirection(12, 8192, 0);
@@ -1032,15 +1030,14 @@ void SceneState_SetValue123Mode11(void)
     Engine_EventRequestExit(11);
 }
 
-/* Sets up the opening sequence: two calls with fixed argument pairs, a
- * write to the scene work record, and two more calls with fixed args. */
+/* The leader walks out of the house, which closes over sixteen frames. */
 void FieldScene_RunOpeningSequenceHead(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384); /* object_id 0, speed_limit 32768, acceleration 16384 */
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408); /* object_id 0, x 728, z 408 */
-    SCENE_WORD_1C8 = 16;
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
+    gEventWork->transition_frames = 16;
     Audio_PlayCue(123);
-    Engine_EventRequestExit(15); /* main:0808a248 */
+    Engine_EventRequestExit(15);
 }
 
 /* The leader walks to the door; the first time, actor 8 groans before the
@@ -1122,8 +1119,8 @@ void FieldScene_RunOpeningSequenceThird(void)
     SceneActor_SetModeZeroAndValue(24, 30);
     Actor_SetSpeed(24, 262144, 131072);
     Actor_SetSpeed(25, 229376, 114688);
-    Engine_ActorEnableActionCallback(25, (s32)KuupuappuHeya_PairScriptO);
-    Engine_ActorEnableActionCallback(24, (s32)KuupuappuHeya_PairScriptB);
+    Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptO);
+    Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
     Object_RefreshSelectorById(24);
     Map_CopyCellAttributes(14, 45, 3, 1, 14, 44); /* main:080091c0 */
     GameFlag_Set(2130);
@@ -1139,21 +1136,21 @@ void FieldScene_RunOpeningSequenceThird(void)
  * them; the pair then take their places by the far wall. */
 void FieldScene_RunScene383SequenceB(void)
 {
-    s32 actor24;
-    s32 actor25;
+    struct FieldActor *actor24;
+    struct FieldActor *actor25;
     s32 base;
 
-    actor24 = ((s32 (*)())Object_GetById)(24);
-    actor25 = ((s32 (*)())Object_GetById)(25);
+    actor24 = Object_GetById(24);
+    actor25 = Object_GetById(25);
     Engine_EventBegin();
     Scheduler_RemoveCallback((u32)((s32)SceneActor_FaceActors24And25TowardActorZero));
     GameFlag_Clear(0x300);
-    if (*(s16 *)(actor24 + 100) <= 3) {
+    if ((s16)actor24->unknown_64 <= 3) {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptG);
     } else {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptF);
     }
-    if (*(s16 *)(actor25 + 100) <= 2) {
+    if ((s16)actor25->unknown_64 <= 2) {
         Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptK);
     } else {
         Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptF);
@@ -1290,9 +1287,9 @@ void FieldScene_SelectActorPair(void)
 {
     u8 *record;
     s32 actor;
-    u8 *work;
+    struct EventWork *work;
 
-    work = (u8 *)Data_03001ebc;
+    work = gEventWork;
     Engine_EventBegin();
     Scheduler_RemoveCallback((u32)((s32)KuupuappuHeya_UpdateActorStops));
     GameFlag_Clear(0x107);
@@ -1308,14 +1305,14 @@ void FieldScene_SelectActorPair(void)
     Actor_FaceActor(25, ACTOR_IVAN, 0);
     Engine_EventWait(10);
     actor = 24;
-    switch (*(s16 *)(((s32)work + 0x182))) {
+    switch (work->raised_trigger) {
     case 202:
     case 203:
         Engine_EventSetMessage((s32)MsgKuupuappuImSurrounded);
         Actor_SetAttachedEffect(25, 0x102);
         Engine_ActorRunRepeatedMotion(25, 2);
         SceneActor_SetModeZeroAndValue(25, 20);
-        if (*(s16 *)(((s32)work + 0x182)) == 202) {
+        if (work->raised_trigger == 202) {
             actor = 25;
             break;
         }
@@ -1362,8 +1359,8 @@ void FieldScene_SelectActorPair(void)
     record = (u8 *)Object_GetById(2);
 
     (*(struct SceneObjectFlags **)(record + 80))->mode = 1;
-    Data_03001ebc->value_1c8 = 24;
-    Data_03001ebc->value_1c0 = 0x201;
+    gEventWork->transition_frames = 24;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     KuupuappuHeya_RunScene021C8();
@@ -1382,7 +1379,7 @@ void FieldScene_SelectActorPair(void)
         *(u16 *)((s32)record + 100) = shown;
     }
     Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
-    Data_03001ebc->value_1c0 = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_EventEnd();
 }
 
@@ -1395,10 +1392,9 @@ void KuupuappuHeya_RunScene021C8(void)
     Engine_AudioPlaySceneCue();
     Engine_ActorSetSpritePriority(0, 1);
     {
-        u8 *record = (u8 *)Object_GetById(0);
-        u8 value = *(volatile u8 *)&record[35];
-    
-        record[35] = (u8)(value | 1);
+        struct FieldActor *record = Object_GetById(0);
+
+        record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
     }
     Map_SetWorkFourValues(0x200000, 0x2400000, 0x1900000, 0x3a80000);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
@@ -1575,24 +1571,24 @@ void KuupuappuHeya_PoseDialogueActors(void)
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc)
 {
-    u8 *rec = ((u8 *(*)())Object_GetById)(actor);
+    struct FieldActor *rec = Object_GetById(actor);
 
-    if (*(s16 *)(rec + 100) == expected) {
+    if ((s16)rec->unknown_64 == expected) {
         Engine_ActorEnableActionCallback(actor, desc);
-        *(u16 *)(rec + 100) = (u16)next;
+        rec->unknown_64 = (u16)next;
     }
 }
 
 void SceneState_SetFlagByActorPosition(void)
 {
-    u8 *p0 = ((u8 *(*)())Object_GetById)(0);
-    s32 rx = *(s32 *)(p0 + 8);
+    struct FieldActor *p0 = Object_GetById(0);
+    s32 rx = p0->x.fixed;
     s32 x;
     s32 z;
 
-    u8 *p1 = ((u8 *(*)())Object_GetById)(0);
+    struct FieldActor *p1 = Object_GetById(0);
     x = rx >> 20;
-    z = *(s32 *)(p1 + 16);
+    z = p1->z.fixed;
     x = x - 34;
     z = z >> 20;
 
@@ -1775,7 +1771,7 @@ void SceneActor_FaceActors24And25TowardActorZero(void)
 void FieldScene_RunLateSequence(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 v5;
 
     Engine_EventBegin();
@@ -1797,11 +1793,11 @@ void FieldScene_RunLateSequence(void)
     Object_GetById(0)->priority_flags = v5;
     Object_GetById(1)->priority_flags = v5;
     Object_GetById(2)->priority_flags = v5;
-    record = (s32)Object_GetById(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = (s32)Object_GetById(2);
+    record = Object_GetById(2);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = (s32)Object_GetById(1);
+    record = Object_GetById(1);
     Engine_ActorSetSpriteFlags(record, 0);
     Actor_FaceDirection(8, 0xb000, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -1963,22 +1959,22 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
 void RunEventScript01(void)
 {
     u32 i;
-    s32 record;
-    u8 *work;
+    struct FieldActor *record;
+    struct EventWork *work;
     s32 base5_200d17c;
     u8 *actor12_record;
 
-    record = (s32)Object_GetById(12);
-    actor12_record = *(u8 **)(record + 80);
+    record = Object_GetById(12);
+    actor12_record = (u8 *)record->sprite;
     Engine_EventBegin();
     Actor_SetPosition(10, 0x3180000, 0x1a00000);
     Actor_SetPosition(11, 0x3200000, 0x1900000);
     Actor_SetPosition(12, 0x3080000, 0x1880000);
-    record = (s32)Object_GetById(10);
+    record = Object_GetById(10);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = (s32)Object_GetById(11);
+    record = Object_GetById(11);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = (s32)Object_GetById(12);
+    record = Object_GetById(12);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_ActorSetAnimation(10, 9);
     Engine_ActorSetAnimation(11, 9);
@@ -2162,11 +2158,9 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
-    /* Write the field at +0x1c8, then the phase/status word at +0x1c0, of
-     * the shared scene work record. */
-    work = (u8 *)Data_03001ebc;
-    *(s32 *)(work + 0x1c8) = 30;
-    *(s32 *)(work + 0x1c0) = 0x201;
+    work = gEventWork;
+    work->transition_frames = 30;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(60);
@@ -2189,12 +2183,8 @@ void RunDialoguePromptScene(void)
     Engine_EventBegin();
     {
         struct FieldActor *actor = Object_GetById(12);
-        /* FAKEMATCH: a result temporary, not a compound or-assign: the
-         * reference merges the byte into the mask's register, which the
-         * two-address ORR does only when the result is its own object. */
-        u8 merged = actor->priority_flags | 1;
 
-        actor->priority_flags = merged;
+        actor->priority_flags = ACTOR_PRIORITY_AUTOMATIC | actor->priority_flags;
     }
     Actor_MoveToAndWait(15, 0x368, 0x1a9);
     Actor_MoveToAndWait(16, 0x368, 0x199);
@@ -2250,11 +2240,11 @@ void RunDialoguePromptScene(void)
     Actor_WalkTo(13, 0x2ea, 0x198);
     Actor_FaceDirection(9, 0xb000, 0);
     Actor_FaceDirection(14, 0xb000, 0);
-    Engine_ActorEnableActionCallback(11, (s32)KuupuappuHeya_VaultScriptB);
+    Engine_ActorEnableActionCallback(11, KuupuappuHeya_VaultScriptB);
     Engine_EventWait(20);
-    Engine_ActorEnableActionCallback(10, (s32)KuupuappuHeya_VaultScriptB);
+    Engine_ActorEnableActionCallback(10, KuupuappuHeya_VaultScriptB);
     Engine_EventWait(15);
-    Engine_ActorEnableActionCallback(12, (s32)KuupuappuHeya_VaultScriptB);
+    Engine_ActorEnableActionCallback(12, KuupuappuHeya_VaultScriptB);
     Engine_EventWait(35);
     Engine_ActorEnableActionCallback(8, KuupuappuHeya_VaultScriptA);
     Engine_EventWait(20);
@@ -2463,8 +2453,8 @@ void RunDialoguePromptScene(void)
     SceneActor_SetPairZeroAndValue(9, 14, 20);
     SceneActor_SetModeZeroAndValue(9, 20);
     Actor_WalkToAndWait(14, 0x358, 0x198);
-    Engine_ActorEnableActionCallback(9, (s32)KuupuappuHeya_VaultScriptE);
-    Engine_ActorEnableActionCallback(14, (s32)KuupuappuHeya_VaultScriptE);
+    Engine_ActorEnableActionCallback(9, KuupuappuHeya_VaultScriptE);
+    Engine_ActorEnableActionCallback(14, KuupuappuHeya_VaultScriptE);
     Actor_WalkTo(ACTOR_GERALD, 0x318, 0x1c8);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_WalkTo(ACTOR_IVAN, 0x308, 0x1b0);
@@ -2738,8 +2728,8 @@ void OverlayObject_ConfigureObject22WithResource17(s32 a)
 
 u8 *SceneData_FindEntryAtPosition(s32 *o)
 {
-    s32 x = (o[0] + (s32)0xFFC00000) >> 19;
-    s32 y = (o[2] + (s32)0xFD900000) >> 19;
+    s32 x = (o[0] - 0x400000) >> 19;
+    s32 y = (o[2] - 0x2700000) >> 19;
     u8 *e = KuupuappuHeya_Stops;
     u8 *ret = 0;
     u32 i;

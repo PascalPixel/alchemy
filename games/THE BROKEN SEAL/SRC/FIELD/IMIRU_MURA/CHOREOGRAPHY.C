@@ -237,7 +237,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
-    leader = (struct FieldActor *)Object_GetById(0);
+    leader = Object_GetById(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
@@ -288,10 +288,10 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_FaceDirection(19, 0x5000, 0);
     Actor_FaceDirection(20, 0x3000, 20);
     Actor_SetSpeed(20, 0x10000, 0x8000);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
+    Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(20, 0x290, 166);
     Engine_EventWait(1);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
+    Object_GetById(20)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4014, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
@@ -348,7 +348,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_EventWait(20);
     Actor_WalkToAndWait(ACTOR_MIA, 0x2b0, 200);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
+    Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(20, 0x284, 166);
     Engine_EventWait(1);
     *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
@@ -412,16 +412,16 @@ void StagedActor_RunHeadingProbeStep(void)
         heading = ImiruMura_SwayHeadings[(Data_03001ae8 >> 4) & 15];
         /* The test is on heading << 16 against 0xffff0000, that is on the
          * signed halfword -1, which means "no heading". */
-        if ((heading << 16) == (s32)0xffff0000) {
+        if ((heading << 16) == -0x10000) {
             return;
         }
         /* Nothing is placed in an argument register before this call. */
         Engine_EventBegin();
 
         /* The 0x80000 bias is built from an immediate and a shift. */
-        probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
+        probe[0] = (subject->x & 0xfff00000) + 0x80000;
         probe[1] = subject->y;
-        probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
+        probe[2] = (subject->z & 0xfff00000) + 0x80000;
         z = probe[2];
         x = probe[0];
         p = (u8 *)subject;

@@ -52,7 +52,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 void FieldScene_RunActor8AtCell24Sequence(void)
 {
     s32 *record;
-    u8 *target;
+    struct FieldActor *target;
     s32 value;
 
     record = (s32 *)Object_GetById(8);
@@ -61,7 +61,7 @@ void FieldScene_RunActor8AtCell24Sequence(void)
         SceneEffect_RunActorBurst(8);
         Object_GetById(8)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         Call6(Map_CopyCellAttributeRect, 19, 74, 9, 3, 19, 17);
-        target = (u8 *)Object_GetById(8);
+        target = Object_GetById(8);
         Engine_ActorSetSpriteFlags((s32)target, 0);
         GameFlag_SetBit(0x864);
     }

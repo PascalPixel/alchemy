@@ -5,6 +5,7 @@
 #include "MAP_SCROLL.H"
 #include "MAP.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 void MapAnimation_Update(void);
 
@@ -50,14 +51,14 @@ void MapAnimation_Update(void)
             (state->anim + i)->timer = script[1];
             if (state->wide_tiles == 0) {
                 if (op >= 0x600)
-                    Dma_Set(Ram_DecodeBuffer + op * 32, (void *)(dst * 32 + 0x06004000), (count * 8) | 0x84000000, (volatile u32 *)0x040000d4);
+                    Dma_Set(Ram_DecodeBuffer + op * 32, (void *)(dst * 32 + 0x06004000), DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
                 else
-                    Dma_Set((void *)(op * 32 + 0x06004000), (void *)(dst * 32 + 0x06004000), (count * 8) | 0x84000000, (volatile u32 *)0x040000d4);
+                    Dma_Set((void *)(op * 32 + 0x06004000), (void *)(dst * 32 + 0x06004000), DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
             } else {
                 if (op >= 0x200)
-                    Dma_Set(Ram_MapBlocks + op * 64, (void *)(dst * 64 + 0x06008000), (count * 16) | 0x84000000, (volatile u32 *)0x040000d4);
+                    Dma_Set(Ram_MapBlocks + op * 64, (void *)(dst * 64 + 0x06008000), DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
                 else
-                    Dma_Set((void *)(op * 64 + 0x06008000), (void *)(dst * 64 + 0x06008000), (count * 16) | 0x84000000, (volatile u32 *)0x040000d4);
+                    Dma_Set((void *)(op * 64 + 0x06008000), (void *)(dst * 64 + 0x06008000), DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
             }
             (state->anim + i)->cursor += 4;
             goto next;
@@ -99,7 +100,7 @@ void MapAnimation_StartChannels(const u16 *script)
     state = gMapWork[0];
     count = 0;
     zero = 0;
-    Dma_Set((const void *)&zero, state->anim, 0x85000030, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, state->anim, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x30, REG_DMA3);
     command = *script++;
     while (command != 0xffff) {
         if ((command & 0xff00) == 0xfd00) {

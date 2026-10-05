@@ -267,7 +267,7 @@ Map_SetWindowCellTileFar:
 Object_CheckMovementCollision:
 	.thumb_func
 Func_080091d8:
-	overlay_veneer Func_080120dc
+	overlay_veneer Map_CheckObjectStep
 	.global ObjectDispatch_SetSingleChildField26Far
 	.thumb_func
 ObjectDispatch_SetSingleChildField26Far:

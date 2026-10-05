@@ -581,10 +581,7 @@ void FieldScene_ConfigureFlaggedActors(void)
 
 void SceneState_SetRuntimeWord448To521AndSend303(void)
 {
-    u8 *state = Data_03001ebc;
-    s32 *slot = (s32 *)(state + 0x1C0);
-
-    *slot = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_GameFlagClear(0x12F);
 }
 
@@ -593,8 +590,8 @@ void FieldScene_PlaceSlots14And15(void)
     s32 pos14;
     s32 pos15;
 
-    pos14 = ((s32 *)Object_GetById(14))[2] >> 20;   /* [r0,#8], asrs #20 */
-    pos15 = ((s32 *)Object_GetById(15))[2] >> 20;
+    pos14 = Object_GetById(14)->x.fixed >> 20;
+    pos15 = Object_GetById(15)->x.fixed >> 20;
 
     Engine_MapCopyCellAttributes(5, 12, 5, 1, 5, 11);
     Engine_MapCopyCellAttributes(1, 0, 1, 1, pos15, 11);

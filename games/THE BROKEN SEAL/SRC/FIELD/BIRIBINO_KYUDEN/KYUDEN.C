@@ -1053,15 +1053,15 @@ void RunEventScript02(void)
     Engine_ActorEnableActionCallback(19, Kyuden_PacingActions);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetPosition(ACTOR_GERALD, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
     }
@@ -1224,17 +1224,17 @@ void RunEventScript02(void)
     Engine_EventWait(20);
 
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_IVAN, 2);
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_MIA, 2);
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }

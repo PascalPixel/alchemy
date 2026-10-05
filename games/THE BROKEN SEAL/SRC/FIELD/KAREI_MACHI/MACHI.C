@@ -53,15 +53,6 @@ typedef struct Effect {
     s8 state23;
 } Effect;
 
-struct SceneWork {
-    u8 unknown_000[0x1c0];
-    s32 request;
-    u8 unknown_1c4[4];
-    s32 setup;
-    u8 unknown_1cc[12];
-    u16 step;
-};
-
 struct Obj_020036f8 {
     u8 filler00[8];
     s32 f08;
@@ -113,14 +104,16 @@ typedef struct OrbitingSceneObject {
     u8 padding_00[8];
     s32 x;
     s32 y;
-    u8 padding_10[19];
+    s32 z;
+    u8 padding_14[15];
     u8 flags_23;
     u8 padding_24[12];
     s32 orbit_angle;
     u8 padding_34[4];
     s32 orbit_center_x;
     s32 orbit_center_y;
-    u8 padding_40[16];
+    s32 orbit_center_z;
+    u8 padding_44[12];
     OrbitingSceneObjectSprite *sprite;
     u8 padding_54;
     u8 mode;
@@ -177,7 +170,7 @@ struct DoorCells {
 
 extern struct DoorCells KareiMachi_DoorCells[];
 
-u8 *Object_GetByIdFar();
+struct FieldActor *Object_GetByIdFar(s32 actor);
 
 extern u8 MsgKareiOkListeningLets[];
 extern u8 MsgKareiDecideEnteringColosso[];
@@ -430,16 +423,16 @@ void SceneDialogue_RunActorNineteenDialogue(void)
     Engine_EventEnd();
 }
 
+/* Unless the leader faces between 0x1000 and 0x7000, actor 8 asks whether
+   to go up to the cave; a no skips to its other reply. */
 void FieldScene_RunSlotZeroFacingSequence(void)
 {
-    extern u8 *Data_03001ebc;
-
-    struct Obj *o;
+    struct FieldActor *leader;
     u32 v;
-    u16 *q;
+    u16 *message;
 
-    o = Object_GetById(ACTOR_PARTY_LEADER);
-    v = (o->f06 + 0xfffff000) << 16;
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    v = (leader->facing + 0xfffff000) << 16;
     if (v > 0x60000000) {
         Engine_EventBegin();
         Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
@@ -450,8 +443,8 @@ void FieldScene_RunSlotZeroFacingSequence(void)
             Engine_ActorSetAnimationAndWait(8, 4);
             Engine_EventShowMessage(8, 0);
         } else {
-            q = (u16 *)(Data_03001ebc + 472);
-            *q = *q + 1;
+            message = &gEventWork->message;
+            *message = *message + 1;
             Engine_ActorSetAnimationAndWait(8, 3);
             Engine_EventShowMessage(8, 0);
         }
@@ -567,7 +560,7 @@ void RunSceneArrivalSetup(void)
     Map_CopyCellsTo(39, 23, 43, 12, two, two);
     Engine_TaskWait(5);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(0)[85] = 0;
+    Object_GetByIdFar(ACTOR_PARTY_LEADER)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Actor_SetDestinationOffset(0, 0, -8);
     Engine_EventWait(10);
@@ -1057,31 +1050,31 @@ void SceneState_LinkRecordZeroWhenFlag200Clear(void)
     }
 }
 
-void SceneActor_SetActorZeroByte35Bit0(void)
+void SceneActor_SetLeaderPriorityAutomatic(void)
 {
     u8 *p;
     s32 v;
 
-    p = (u8 *)((s32)Object_GetByIdFar(0) + 35);
-    v = 1;
+    p = &Object_GetByIdFar(ACTOR_PARTY_LEADER)->priority_flags;
+    v = ACTOR_PRIORITY_AUTOMATIC;
     v |= *p;
     *p = v;
 }
 
-void SceneState_ClearRecordZeroBit0At35(void)
+void SceneState_ClearLeaderPriorityAutomatic(void)
 {
     u8 *p;
     s32 v;
 
-    p = (u8 *)((s32)Object_GetByIdFar(0) + 35);
-    v = 254;
+    p = &Object_GetByIdFar(ACTOR_PARTY_LEADER)->priority_flags;
+    v = (u8)~ACTOR_PRIORITY_AUTOMATIC;
     v &= *p;
     *p = v;
 }
 
 void SceneDialogue_RunActor181Line916(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)((u8 *)SceneEffect_UpdateLobeOrbitEffect26)));
+    Scheduler_RemoveCallback((u32)SceneEffect_UpdateLobeOrbitEffect26);
     Engine_TaskWait(1);
     Engine_ActorSetPosition(26, 0, 0);
     Engine_GameFlagSet(0x916);
@@ -1113,12 +1106,10 @@ s32 Scene_Initialize(void)
 
 void KareiMachi_SetupEntryActors(void)
 {
-    u32 i;
-    u8 *rec;
-    s32 rec2;
-    s32 rec7;
-    s32 record;
-    u8 *p6;
+    OrbitingSceneObject *nut;
+    s32 found;
+    u8 *heap;
+    OrbitingSceneObjectSprite *sprite;
 
     if (Engine_GameFlagIsSet(0x941) != 0) {
         Engine_GameFlagSet(0x321);
@@ -1133,29 +1124,30 @@ void KareiMachi_SetupEntryActors(void)
         Call3(Engine_ActorSetPosition, 25, 0x1a80000, 0x580000);
     }
     Engine_ActorSetChildValue(21, 2);
-    rec2 = Engine_GameFlagIsSet(0x916);
-    if (rec2 != 0) {
+    /* The nut actor 26 floats above its spot until the party takes it. */
+    found = Engine_GameFlagIsSet(0x916);
+    if (found != 0) {
         Engine_ActorSetPosition(26, 0, 0);
     } else {
-        rec = (s32)Object_GetById(26);
-        p6 = *(s32 *)((s32)rec + 80);
-        ((struct SpriteBits *)p6)->mode = 1;
-        ((struct SpriteBits *)p6)->hidden = 0;
-        ((struct SpriteBits *)p6)->b9_hi = 0;
-        p6[39] = rec2;
-        rec[92] = 1;
-        *(u8 *)((((s32)rec + 92) - 7)) = rec2;
-        *(s32 *)((s32)rec + 12) = 0xa0000;
-        rec[97] = 1;
-        rec7 = (s32)Engine_HeapAllocate(17, 0x608);
-        Engine_ItemLoadIcon(181);
-        Engine_VramLoad(p6[28], 128, (rec7 + 0x400));
+        nut = (OrbitingSceneObject *)Object_GetById(26);
+        sprite = nut->sprite;
+        sprite->flags_09_mode = 1;
+        sprite->flags_05_bit_5 = 0;
+        sprite->flags_09_high = 0;
+        sprite->state = found;
+        nut->active = 1;
+        nut->mode = found;
+        nut->y = 0xa0000;
+        nut->visible = 1;
+        heap = Engine_HeapAllocate(17, 0x608);
+        Engine_ItemLoadIcon(ITEM_NUT);
+        Engine_VramLoad(sprite->palette, 128, heap + 0x400);
         Engine_HeapRelease(17);
-        *(s32 *)((s32)rec + 48) = rec2;
-        *(s32 *)((s32)rec + 56) = *(s32 *)((s32)rec + 8);
-        *(s32 *)((s32)rec + 60) = *(s32 *)((s32)rec + 12);
-        *(s32 *)((s32)rec + 64) = *(s32 *)((s32)rec + 16);
-        ((void (*)())Engine_TaskAddCallback)((s32)SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
+        nut->orbit_angle = found;
+        nut->orbit_center_x = nut->x;
+        nut->orbit_center_y = nut->y;
+        nut->orbit_center_z = nut->z;
+        Engine_TaskAddCallback(SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
     }
 }
 
@@ -1262,8 +1254,8 @@ void FieldScene_RunMiddleSequence(void)
             Map_CopyCellAttributes(0, 0, 1, 1, v5, 14);
             Map_CopyCellAttributes(0, 0, 1, 1, v5, 45);
             {
-                u8 *p = Object_GetByIdFar(11) + 35;
-                s32 v = 2;
+                u8 *p = &Object_GetByIdFar(11)->priority_flags;
+                s32 v = ACTOR_PRIORITY_UNDERFOOT;
 
                 v |= *p;
                 *p = v;
@@ -1412,28 +1404,28 @@ void KareiMachi_AlternateDance(void)
         KareiMachi_DanceStep++;
         break;
     case 1:
-        if (*(s16 *)((u8 *)Object_GetById(21) + 100) != 0) {
+        if ((s16)Object_GetById(21)->unknown_64 != 0) {
             ClearStep((u8 *)Object_GetById(20));
             Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 2:
-        if (*(s16 *)((u8 *)Object_GetById(20) + 100) != 0) {
+        if ((s16)Object_GetById(20)->unknown_64 != 0) {
             ClearStep((u8 *)Object_GetById(20));
             Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptA);
             KareiMachi_DanceStep++;
         }
         break;
     case 3:
-        if (*(s16 *)((u8 *)Object_GetById(20) + 100) != 0) {
+        if ((s16)Object_GetById(20)->unknown_64 != 0) {
             ClearStep((u8 *)Object_GetById(21));
             Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 4:
-        if (*(s16 *)((u8 *)Object_GetById(21) + 100) != 0) {
+        if ((s16)Object_GetById(21)->unknown_64 != 0) {
             KareiMachi_DanceStep = 0;
         }
         break;
@@ -1625,11 +1617,10 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
 
 void FieldScene_RunSecondaryGroupSequence(void)
 {
-    extern struct SceneWork *Data_03001ebc;
 
     u8 *fieldActor;
     struct FieldActor *object;
-    struct SceneWork *work;
+    struct EventWork *work;
     u32 random;
     u32 motionPhase;
     const u8 *motionActions;
@@ -1813,7 +1804,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
-        Data_03001ebc->step += 3;
+        gEventWork->message += 3;
     } else {
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(11, 2);
@@ -1860,7 +1851,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_WalkToAndWait(10, 246, 148);
     Actor_WalkToAndWait(10, 246, 142);
     Actor_SetPosition(10, 0, 0);
-    Data_03001ebc->request = 514;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Actor_SetPosition(9, 0x1b80000, 0x1540000);
@@ -1904,27 +1895,26 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_WalkToAndWait(9, 0x1b8, 0x1f4);
     Actor_WalkTo(9, 0x1b8, 0x258);
     Audio_PlayCue(0x121);
-    work = Data_03001ebc;
-    work->setup = 24;
-    work->request = 0x100;
+    work = gEventWork;
+    work->transition_frames = 24;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(10);
     Engine_EventEnd();
 }
 
-s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
+/* The placed actor (ids 8 to 65) standing on map cell x, z. */
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
-    extern u8 *Data_03001ebc;
-
-    s32 **tbl = (s32 **)(Data_03001ebc + 0x14);
+    struct FieldActor **actors = gEventWork->placed_actors - 8;
     u32 i;
 
     for (i = 8; i <= 65; i++) {
-        s32 *p = tbl[i];
+        struct FieldActor *actor = actors[i];
 
-        if (x == (p[2] >> 20) && z == (p[4] >> 20)) {
-            return p;
+        if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20) {
+            return actor;
         }
     }
     return 0;
@@ -1947,7 +1937,7 @@ void FieldScene_RunLateSequence(void)
     idx = (s32)((u32)leader->facing >> 12);
     a = leader->x.part.pixel;
     w = KareiMachi_Data01[idx];
-    block = (struct FieldActor *)SceneActor_FindAtTileXZ((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s32)(s16)w) >> 4);
+    block = SceneActor_FindActorAtCell((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s32)(s16)w) >> 4);
     if (block != NULL) {
         zero = 0;
         block->terrain_id = 2;
@@ -2016,7 +2006,7 @@ void FieldScene_RunScene3a8SequenceB(void)
         rec2->scale_x = 0x1999;
         rec2->scale_y = 0x1999;
         Actor_SetPosition(11, 0x960000, 0x2d80000);
-        Engine_ActorEnableActionCallback(11, (s32)KareiMachi_ActionScript01);
+        Engine_ActorEnableActionCallback(11, KareiMachi_ActionScript01);
         v6 = 1;
         Map_CopyCellsTo(67, 64, 71, 44, v6, v5);
         Map_CopyCellsTo(67, 64, 72, 44, v6, v5);

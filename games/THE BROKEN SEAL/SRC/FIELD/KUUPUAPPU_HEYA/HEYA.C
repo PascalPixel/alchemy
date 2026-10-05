@@ -63,7 +63,6 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-extern struct EventRuntime *Data_03001ebc;
 
 void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 
@@ -629,7 +628,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
     Engine_EventShowMessage(24, 0);
     Engine_ActorSetSpeed(24, 0x40000, 0x20000);
     if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
-        q = (s16 *)((u8 *)p + 100);
+        q = (s16 *)&p->unknown_64;
         v = *q;
         if (v <= 2) {
             Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
@@ -637,7 +636,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
             goto clamp;
         }
     } else {
-        q = (s16 *)((u8 *)p + 100);
+        q = (s16 *)&p->unknown_64;
         v = *q;
         if (v > 2) {
             Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);

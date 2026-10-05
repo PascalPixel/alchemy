@@ -3,12 +3,12 @@ extern u8 MsgKorosseoMatchAboutBeginPleaseTake[];
 
 void KorosseoKabe_MarkSceneProgress(void)
 {
-    u8 *state = (u8 *)gEventWork;
+    struct EventWork *work = gEventWork;
     s32 v = gGameState.selected_actor;
 
-    if (v != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == v
+    if (v != 0 && (work->psynergy_request >> 10) == v
         && Engine_GameFlagIsSet(321) != 0) {
-        u16 *p = (u16 *)(state + 386);
+        u16 *p = (u16 *)&work->raised_trigger;
         s32 t = 99;
 
         *p = t;

@@ -80,16 +80,14 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-void SceneState_SetStateHalfword386To99WhenMatched(void)
+void SceneState_RaiseTriggerOnPsynergyTarget(void)
 {
-    extern u8 *Data_03001ebc;
-
-    u8 *state = Data_03001ebc;
+    struct EventWork *work = gEventWork;
     s32 sel = gGameState.selected_actor;
 
-    if (sel != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == sel
+    if (sel != 0 && (work->psynergy_request >> 10) == sel
         && Engine_GameFlagIsSet(321) != 0) {
-        u16 *p = (u16 *)(state + 386);
+        u16 *p = (u16 *)&work->raised_trigger;
         s32 val = 99;
 
         *p = val;

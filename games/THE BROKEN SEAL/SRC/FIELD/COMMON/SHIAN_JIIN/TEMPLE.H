@@ -6,7 +6,6 @@ extern struct EventWork *gEventWork;
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define ObjectMotion_CallThenWaitForAnimationChange_9(args...) ((void (*)())Engine_ActorSetAnimationAndWait)(args)
-#define ACTOR_FIELD_108(rec) (*(s32 *)((rec) + 108))
 
 struct SceneRecordHeading {
     u8 pad[6];
@@ -135,14 +134,6 @@ void FieldScene_RunDescentBurst(void);
 /* Newly named raw call sites: each engine function below was reached only
  * through an unresolved veneer island until its own source was read; the
  * per-site macro keeps the site's original calling form. */
-
-/* The scene step counter at +472 of the shared scene work record. */
-static __inline__ void Scene_BumpStep(s32 amount)
-{
-    u8 *work = *(u8 **)&gEventWork;
-
-    *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + amount);
-}
 
 void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6,
                           u32 flags, u8 *extra);

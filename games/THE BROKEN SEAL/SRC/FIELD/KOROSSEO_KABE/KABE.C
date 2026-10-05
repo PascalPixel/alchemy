@@ -452,7 +452,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 ya;
     s32 yb;
     s32 yd;
-    s32 record;
+    struct FieldActor *record;
 
     rec8 = Object_GetById(gGameState.selected_actor);
     for (i = 22; i <= 25; i++) {
@@ -507,23 +507,23 @@ void FieldScene_RunSupplementalSequenceOne(void)
     if (KorosseoKabe_SpectatorTimer == 0) {
         KorosseoKabe_SpectatorPhase ^= 1;
         if (KorosseoKabe_SpectatorPhase != 0) {
-            record = (s32)Object_GetById(22);
+            record = Object_GetById(22);
             Call4(Engine_ObjectSetPosition, record, 0x3a80000, 0, 0xb80000);
-            record = (s32)Object_GetById(23);
+            record = Object_GetById(23);
             Call4(Engine_ObjectSetPosition, record, 0x3c80000, 0, 0xf80000);
-            record = (s32)Object_GetById(24);
+            record = Object_GetById(24);
             Call4(Engine_ObjectSetPosition, record, 0x3e80000, 0, 0xb80000);
-            record = (s32)Object_GetById(25);
+            record = Object_GetById(25);
             Call4(Engine_ObjectSetPosition, record, 0x4080000, 0, 0xf80000);
             Engine_ActorSetAnimation(31, 11);
         } else {
-            record = (s32)Object_GetById(22);
+            record = Object_GetById(22);
             Call4(Engine_ObjectSetPosition, record, 0x3a80000, 0, 0xd80000);
-            record = (s32)Object_GetById(23);
+            record = Object_GetById(23);
             Call4(Engine_ObjectSetPosition, record, 0x3c80000, 0, 0xd80000);
-            record = (s32)Object_GetById(24);
+            record = Object_GetById(24);
             Call4(Engine_ObjectSetPosition, record, 0x3e80000, 0, 0xd80000);
-            record = (s32)Object_GetById(25);
+            record = Object_GetById(25);
             Call4(Engine_ObjectSetPosition, record, 0x4080000, 0, 0xd80000);
             Engine_ActorSetAnimation(31, 10);
         }
@@ -540,7 +540,7 @@ void FieldScene_PlaceSpectatorRow(void)
 {
     KorosseoKabe_SpectatorTimer = 0;
     KorosseoKabe_SpectatorPhase = 0;
-    Engine_TaskRemoveCallback((s32)FieldScene_RunSupplementalSequenceOne);
+    Engine_TaskRemoveCallback(FieldScene_RunSupplementalSequenceOne);
     Actor_SetPosition(22, 0x3a80000, 0xd80000);
     Actor_SetPosition(23, 0x3c80000, 0xd80000);
     Actor_SetPosition(24, 0x3e80000, 0xd80000);
@@ -594,7 +594,7 @@ void SceneState_InstallTask8714AndApplyTwoRects(void)
     /* The task is published as its entry address with the Thumb bit set. The
      * `.thumb_set` alias the exact reconstruction emits for a Thumb symbol already carries
      * bit 0, so adding it again here overshoots by one. */
-    Engine_TaskRemoveCallback((s32)FieldScene_RunSupplementalSequenceOne);
+    Engine_TaskRemoveCallback(FieldScene_RunSupplementalSequenceOne);
 
     Engine_MapCopyCellAttributes(58, 28, 7, 1, 58, 13);
     Engine_MapCopyCellAttributes(57, 11, 1, 1, 58, 11);

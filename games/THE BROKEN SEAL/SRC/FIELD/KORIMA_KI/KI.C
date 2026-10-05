@@ -200,7 +200,7 @@ void RunEventScript01(void)
     Engine_TaskWait(40);
     Audio_PlayCue(17);
     gKorimaKiSparkSound = 1;
-    Engine_TaskAddCallback((s32)PaletteScene_SpawnEffect, 0xc80);
+    Engine_TaskAddCallback(PaletteScene_SpawnEffect, 0xc80);
     Engine_TaskWait(30);
     gKorimaKiSparkSound = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
@@ -222,14 +222,12 @@ void RunEventScript01(void)
     Audio_PlayCue(161);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
     Engine_EventWait(120);
-    Engine_TaskRemoveCallback((s32)PaletteScene_SpawnEffect);
+    Engine_TaskRemoveCallback(PaletteScene_SpawnEffect);
     Engine_TaskWait(40);
     rec8->bounce = 0x4000;
     {
-        u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 flags = record[90] | 1;
-
-        record[90] = flags;
+        struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
+        record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
     Engine_EventWait(80);
     Engine_EventSetMessage((s32)MsgKorimaControlTretsHeartShallNot);
@@ -264,7 +262,6 @@ void PaletteScene_RunActorTransitionSequence(void)
     struct FieldActor *object;
     s32 *transitionState;
     s32 cycle;
-    s32 sceneWorkSlot;
     s32 effectCallback;
     const s32 *finalActions;
 
@@ -300,7 +297,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_TaskWait(40);
     transitionState = &gKorimaKiTransitionStep;
     *transitionState = 0;
-    Engine_TaskAddCallback((s32)PaletteScene_AdvanceTransition, 0xc80);
+    Engine_TaskAddCallback(PaletteScene_AdvanceTransition, 0xc80);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
     Camera_SetSpeed(0x33333, 0x6666);
@@ -323,7 +320,7 @@ void PaletteScene_RunActorTransitionSequence(void)
             Engine_TaskWait(1);
         } while (*transitionState != 24);
     }
-    Engine_TaskRemoveCallback((s32)PaletteScene_AdvanceTransition);
+    Engine_TaskRemoveCallback(PaletteScene_AdvanceTransition);
     Engine_TaskWait(10);
     cycle = 0;
     do {
@@ -399,8 +396,7 @@ void PaletteScene_RunActorTransitionSequence(void)
         Event_ShowMessage(0x4009, 0);
         Event_ShowMessage(0x8008, 0);
     } else {
-        sceneWorkSlot = (u32)&gEventWork;
-        *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 2;
+        gEventWork->message += 2;
         Actor_ShowEmote(ACTOR_MIA, 0x103, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 0);
         Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
@@ -410,7 +406,7 @@ void PaletteScene_RunActorTransitionSequence(void)
             Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
             Event_ShowMessage(ACTOR_MIA, 0);
         } else {
-            *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 1;
+            gEventWork->message += 1;
         }
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
         Event_ShowMessage(ACTOR_IVAN, 0);

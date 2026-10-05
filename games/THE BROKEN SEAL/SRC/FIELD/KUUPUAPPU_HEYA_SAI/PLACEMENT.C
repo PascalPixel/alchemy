@@ -7,6 +7,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "RESOURCE_386_STATE.H"
+#include "INVENTORY.H"
 extern u8 MsgKuupuappuDidSomeCookingNowIve[];
 extern u8 MsgKuupuappuDodonpasHenchmenNeverAttackedUs[];
 extern u8 MsgKuupuappuGeeAlwaysGetHungryWhen[];
@@ -37,7 +38,6 @@ extern u8 Placement_Actors[];
 extern u8 Placement_Effects[];
 
 void FieldScene_PrepareActors(u8 *);
-s32 PartyInventory_HasSpace(void);
 void SceneState_CheckPositionWindow(void);
 void OverlayObject_InitObject22(s32, s32, s32, s32);
 

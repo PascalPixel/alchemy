@@ -210,10 +210,10 @@ void FieldScene_RunArrivalPlacement(void)
     Engine_EventBegin();
 
     for (slot = 8; slot <= 65; slot++) {
-        u8 *rec = (u8 *)Object_GetById(slot);
+        struct FieldActor *rec = Object_GetById(slot);
 
         if (rec != 0) {
-            rec[85] = 0;
+            rec->motion_flags = 0;
         }
     }
 

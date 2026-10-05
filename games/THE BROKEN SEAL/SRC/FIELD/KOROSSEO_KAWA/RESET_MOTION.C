@@ -100,11 +100,10 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-void OverlayObject_ResetMotionFields(void)
+/* Stops an actor where it stands and restarts its dispatch table. */
+void OverlayObject_ResetMotionFields(s32 actor)
 {
-    /* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
-     * this file's code made before it shared the header's declaration. */
-    struct FieldActor *o = ((struct FieldActor * (*)(void))Object_GetById)();
+    struct FieldActor *o = Object_GetById(actor);
 
     ObjectDispatch_InitFromTable6(o);
     o->velocity_x = 0;

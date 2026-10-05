@@ -4,6 +4,7 @@
 #include "CALL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "IWRAM_CALL.H"
+#include "INVENTORY.H"
 
 struct Presentation {
     u8 reserved_00[9];
@@ -18,7 +19,6 @@ struct SceneActor_0200113c {
 };
 
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation);
-void PartyInventory_Discard();
 
 /* Map cell steps played as the leader arrives in scene twelve. */
 extern const u16 KuupuappuMura_Scene12Cells[];
@@ -26,24 +26,8 @@ extern const u16 KuupuappuMura_Scene12Cells[];
 s32 ActorPresentation_UpdateEntityFromLeader();
 s32 SceneActor_UpdateProximityToLeader();
 extern u8 MsgKuupuappuWelcomeBackTwo[];
-s32 Engine_GameFlagIsSet();
-void Engine_EventRequestExit();
 void Engine_MapCopyCellAttributes();
 void OverlayObject_CreateConfiguredObject();
-void Engine_ActorSetPosition();
-void Engine_EventBegin();
-void Engine_ActorFaceEachOther();
-void Engine_EventOpenScreen();
-void Engine_EventWaitForScreen();
-void Engine_EventWait();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventSetMessage();
-void Engine_EventShowMessageAndWait();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetAnimation();
-void Engine_ActorSetDestination();
-void Engine_ActorWaitForMove();
 void Event_PrepareObjectAndApplyValue();
 
 struct SceneActor {

@@ -1277,10 +1277,10 @@ gKareiMachiEvents6:
 	.4byte SceneState_LinkRecordZeroWhenFlag200Clear
 	.4byte 0x00000002
 	.4byte 0xffff0012
-	.4byte SceneState_ClearRecordZeroBit0At35
+	.4byte SceneState_ClearLeaderPriorityAutomatic
 	.4byte 0x00000002
 	.4byte 0xffff0013
-	.4byte SceneActor_SetActorZeroByte35Bit0
+	.4byte SceneActor_SetLeaderPriorityAutomatic
 	.4byte 0x00000013
 	.4byte 0x0f1c0064
 	.4byte 0x00100084

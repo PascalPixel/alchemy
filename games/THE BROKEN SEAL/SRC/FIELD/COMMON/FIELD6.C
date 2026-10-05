@@ -139,7 +139,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
             struct FieldPosition *position = (struct FieldPosition *)vector;
 
             position->x = object->x;
-            position->y = object->y + (s32)0xfff00000;
+            position->y = object->y - 0x100000;
             position->z = object->z;
             result = CheckMapPositionCellOccupiedFar((const s32 *)position);
             if (result != 0)
@@ -154,7 +154,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
             ObjectDispatch_SetSingleChildField26Far(object, 0);
             Object_SetMode(object, 13);
             Object_SetPosition(object, grid_x << 16,
-                object->y + (s32)0xfff00000, (grid_z << 16) + 0x100000);
+                object->y - 0x100000, (grid_z << 16) + 0x100000);
             ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selected_actor);
             gGameState.movement_mode = 1;
         } else {
@@ -241,7 +241,7 @@ s32 battle_owner_69(void)
         object->flags = 0;
         Object_SetMode(object, 11);
         Object_SetPosition(object, grid_x << 16, object->y + 0x80000,
-            (grid_z << 16) + (s32)0xfff00000);
+            (grid_z << 16) - 0x100000);
         ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selected_actor);
         object->flags = 3;
         child_mode |= 1;

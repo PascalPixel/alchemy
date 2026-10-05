@@ -259,24 +259,25 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
     }
 }
 
+/* Replaces the object the effect work holds with a fresh copy of it: the
+   actor it belongs to turns, and the old object stops and goes idle. */
 void ArutamiraDou_RespawnActorObject(void)
 {
-    s32 rec6;
-    s32 record;
-    u8 *p6;
-    u8 *p5;
+    u8 *work;
+    struct FieldActor *old;
+    struct FieldActor *copy;
 
-    p6 = *(s32 *)gEffectWork;
-    p5 = *(s32 *)((s32)p6 + 16);
-    Engine_ActorFaceDirection(*(s16 *)((s32)p6 + 24), 0x4000, 0);
-    Animation_ApplyChildValues((struct DispatchObject *)p5, 0);
+    work = *(u8 **)gEffectWork;
+    old = *(struct FieldActor **)(work + 16);
+    Engine_ActorFaceDirection(*(s16 *)(work + 24), 0x4000, 0);
+    Animation_ApplyChildValues((struct DispatchObject *)old, 0);
     Battle_WaitMode0(20);
-    rec6 = (s32)Engine_ObjectCreate(0, *(s32 *)((s32)p5 + 8), *(s32 *)((s32)p5 + 12), *(s32 *)((s32)p5 + 16));
-    if (rec6 != 0) {
-        Dma_Set((const void *)((s32)p5), (void *)(rec6), -0x7bffffe4, (volatile u32 *)(0x40000d4));
-        *(s32 *)((s32)p5 + 108) = 0;
-        *(s32 *)((s32)p6 + 16) = rec6;
-        p5[84] = 0;
+    copy = Engine_ObjectCreate(0, old->x.fixed, old->y.fixed, old->z.fixed);
+    if (copy != 0) {
+        Dma_Set(old, copy, DMA_ENABLE32 | DMA_32BIT | sizeof(struct FieldActor) / 4, REG_DMA3);
+        old->update = 0;
+        *(struct FieldActor **)(work + 16) = copy;
+        old->active = 0;
     }
 }
 
@@ -307,12 +308,12 @@ void FieldScene_RunTwoCallSequence(void)
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)gEffectWork;
-    Ent_02000d58 *p = (Ent_02000d58 *)Object_GetById(11);
+    struct FieldActor *p = Object_GetById(11);
     Vec v;
 
-    v.x = p->unk8;
-    v.y = p->unkC;
-    v.z = p->unk10;
+    v.x = p->x.fixed;
+    v.y = p->y.fixed;
+    v.z = p->z.fixed;
 
     if (Object_CheckMovementCollision(p, &v) > 0) {
         obj[0x35] = 1;
@@ -460,7 +461,7 @@ void ArutamiraDou_SpinActorWheel(void)
         s32 v = ((s8 *)gSceneState)[2];
         s32 r = Math_Divide(v << 16, 5);
         if ((unsigned int)(((p[3] - r) << 16) + 0xc2ff0000) <= 0x5fe0000) {
-            u8 *o;
+            struct FieldActor *o;
             s32 nv = r + 0x4000;
             p[3] = nv;
             {
@@ -469,8 +470,8 @@ void ArutamiraDou_SpinActorWheel(void)
                 p[0] = k;
                 p[4] = z;
             }
-            o = (u8 *)Object_GetById(v + 11);
-            *(s32 *)(o + 0x6c) = (s32)ArutamiraDou_UpdateScalePulse;
+            o = Object_GetById(v + 11);
+            o->update = (void (*)(union FieldObject *))ArutamiraDou_UpdateScalePulse;
         }
     } else if (state == 0x63) {
         flag = 0;

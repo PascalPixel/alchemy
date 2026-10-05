@@ -94,7 +94,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
 {
     switch (state->countdown) {
     case 6:
-        state->fixed_point_18 += (s32) 0xFFFFC000;
+        state->fixed_point_18 -= 0x4000;
         state->fixed_point_1c += 0x2000;
         break;
     case 4:
@@ -103,7 +103,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
         break;
     case 2:
         state->fixed_point_18 += 0x1000;
-        state->fixed_point_1c += (s32) 0xFFFFF800;
+        state->fixed_point_1c -= 0x800;
         break;
     case 0:
         state->fixed_point_18 = 0x10000;
@@ -650,7 +650,7 @@ void Scene_DoraSendsRobinToThePlaza(void)
 void HaidiaArashi_RunScene00D5C(void)
 {
     u32 i;
-    u8 *rec7;
+    struct FieldActor *rec7;
     struct FieldActor *record;
     s32 v3;
     s32 base5_396;
@@ -660,24 +660,24 @@ void HaidiaArashi_RunScene00D5C(void)
     } else {
         Engine_EventBegin();
         if (Value1(Engine_GameFlagIsSet, 0x830) == 0) {
-            rec7 = (u8 *)Object_GetById(11);
-            p6 = *(s32 *)((s32)rec7 + 80);
+            rec7 = Object_GetById(11);
+            p6 = (u8 *)rec7->sprite;
             Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
             Engine_AudioPlayCue(141);
             Engine_TaskWait(40);
             Engine_AudioPlayCue(145);
-            ((struct Flags35 *)rec7)->flags &= 254;
+            rec7->priority_flags &= 254;
             ((struct Flags9 *)p6)->mode = 1;
             Call3(Engine_ActorSetPosition, 11, 0x1d90000, 0x3a40000);
-            *(s32 *)((s32)rec7 + 48) = 0x18000;
-            *(s32 *)((s32)rec7 + 52) = 0x18000;
-            v3 = (*(s32 *)((s32)rec7 + 12) + 0xf00000);
-            *(s32 *)((s32)rec7 + 12) += 0xf00000;
-            *(s32 *)((s32)rec7 + 60) = v3;
-            *(s32 *)((s32)rec7 + 68) = 0x6666;
+            rec7->speed = 0x18000;
+            rec7->acceleration = 0x18000;
+            v3 = (rec7->y.fixed + 0xf00000);
+            rec7->y.fixed += 0xf00000;
+            rec7->target_y = v3;
+            rec7->bounce = 0x6666;
             Call3(Engine_ActorWalkToAndWait, 11, 0x158, 0x3a4);
             ((struct Flags9 *)p6)->mode = 3;
-            ((struct Flags35 *)rec7)->flags |= 1;
+            rec7->priority_flags |= 1;
             Engine_EventWait(40);
             Engine_AudioPlayCue(0x121);
             Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
@@ -1195,7 +1195,7 @@ void Scene_BoulderFalls(void)
         }
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
         Actor_SetSpeed(22, 0x20000, 0x10000);
-        Engine_ActorEnableActionCallback(0, (s32)HaidiaArashi_LeaderScript);
+        Engine_ActorEnableActionCallback(0, HaidiaArashi_LeaderScript);
         Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScript);
         Object_RefreshSelectorById(0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
@@ -1442,10 +1442,10 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorShowEmote, ACTOR_PARTY_LEADER, 0x100, 20);
     Call3(Engine_ActorWalkToAndWait, ACTOR_PARTY_LEADER, 150, 0x446);
     {
-        u8 *p;
-        p = (u8 *)Object_GetById(ACTOR_PARTY_LEADER);
+        struct FieldActor *p;
+        p = Object_GetById(ACTOR_PARTY_LEADER);
         if (p != 0) {
-            Engine_ActorSetPosition(22, *(s32 *)(p + 8), *(s32 *)(p + 16));
+            Engine_ActorSetPosition(22, p->x.fixed, p->z.fixed);
         }
     }
     Call3(Engine_ActorWalkToAndWait, 22, 132, 0x446);
@@ -1813,12 +1813,12 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
     Engine_ActorSetAnimation(10, 5);
     Engine_EventWait(10);
     {
-        u8 *rec;
+        struct FieldActor *rec;
         s32 v;
         rec = Object_GetById(10);
         v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
         tbl = HaidiaArashi_ActorEightScript;
-        *(u16 *)(rec + 0x64) = v;
+        rec->unknown_64 = v;
         Engine_ActorEnableActionCallback(10, tbl);
     }
     Engine_EventWait(20);
@@ -1829,8 +1829,8 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
 void HaidiaArashi_RunScene02DEC(void)
 {
     u32 i;
-    u8 *rec;
-    u8 *record;
+    struct FieldActor *rec;
+    struct FieldActor *record;
     s32 v5;
     u8 *p4;
 
@@ -1844,31 +1844,31 @@ void HaidiaArashi_RunScene02DEC(void)
             Call3(Engine_ActorSetSpeed, 26, 0x10000, 0x8000);
             Call3(Engine_ActorSetSpeed, 8, 0x10000, 0x8000);
             Call3(Engine_ActorWalkToAndWait, 0, 217, 0x557);
-            record = (s32)Object_GetById(0);
-            if ((s32)record != 0) {
-                Engine_ActorSetPosition(22, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+            record = Object_GetById(0);
+            if (record != 0) {
+                Engine_ActorSetPosition(22, record->x.fixed, record->z.fixed);
             }
             Call3(Engine_ActorWalkToAndWait, 22, 235, 0x557);
             Call3(Engine_ActorFaceDirection, 22, 0xb000, 0);
-            record = (s32)Object_GetById(0);
-            if ((s32)record != 0) {
-                Engine_ActorSetPosition(26, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+            record = Object_GetById(0);
+            if (record != 0) {
+                Engine_ActorSetPosition(26, record->x.fixed, record->z.fixed);
             }
             Call3(Engine_ActorWalkToAndWait, 26, 199, 0x557);
             Call3(Engine_ActorFaceDirection, 26, 0xd000, 0);
             Call3(Engine_ActorSetPosition, 25, 0xf70000, 0x4ba0000);
             Engine_ActorFaceDirection(25, 0x6000, 0);
-            record = (s32)Object_GetById(8);
-            p4 = *(s32 *)((s32)record + 80);
-            ((struct Flags35 *)record)->flags &= 254;
+            record = Object_GetById(8);
+            p4 = (u8 *)record->sprite;
+            record->priority_flags &= 254;
             ((struct Flags9 *)p4)->mode = 1;
-            rec = (s32)Object_GetById(0);
-            p4 = *(s32 *)((s32)rec + 80);
-            ((struct Flags35 *)rec)->flags &= 254;
+            rec = Object_GetById(0);
+            p4 = (u8 *)rec->sprite;
+            rec->priority_flags &= 254;
             ((struct Flags9 *)p4)->mode = 2;
-            record = (s32)Object_GetById(0);
-            if ((s32)record != 0) {
-                Engine_ActorSetPosition(8, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+            record = Object_GetById(0);
+            if (record != 0) {
+                Engine_ActorSetPosition(8, record->x.fixed, record->z.fixed);
             }
             Call3(Engine_ActorWalkToAndWait, 8, 221, 0x569);
             Call3(Engine_ActorFaceDirection, 8, 0xb000, 60);
@@ -1882,7 +1882,7 @@ void HaidiaArashi_RunScene02DEC(void)
             Engine_CameraSetSpeed(0x13333, 0x2666);
             Call4(Engine_CameraMoveTo, 0x650000, -1, 0x4ad0000, 1);
             Call3(Engine_ActorSetSpeed, 9, 0x16666, 0xb333);
-            Engine_ActorEnableActionCallback(9, (s32)HaidiaArashi_StormRunActions);
+            Engine_ActorEnableActionCallback(9, HaidiaArashi_StormRunActions);
             Engine_EventWait(60);
             Engine_CameraSetSpeed(0x9999, 0x1333);
             Call4(Engine_CameraMoveTo, 0xbb0000, -1, 0x5300000, 1);
@@ -1929,9 +1929,9 @@ void HaidiaArashi_RunScene02DEC(void)
             Engine_ActorSetAnimation(22, 3);
             v5 = 1;
             Engine_ActorSetAnimationAndWait(8, 3);
-            rec[35] |= v5;
-            record = (s32)Object_GetById(8);
-            record[35] |= v5;
+            rec->priority_flags |= v5;
+            record = Object_GetById(8);
+            record->priority_flags |= v5;
             Scene_RunActorGroupDepartureSequence();
             Engine_GameFlagSet(0x841);
             Engine_EventEnd();

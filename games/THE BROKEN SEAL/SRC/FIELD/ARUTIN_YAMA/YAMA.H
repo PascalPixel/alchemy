@@ -61,14 +61,6 @@ void Audio_PlayCueFromEventWork();
 s32 BattleFx_SetQueuedSoundAndPlay();
 void BattleFx_PlayQueuedSound();
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
 /* The set-piece sources call one another across files. */
 void SceneState_SetValue14Mode23(void);
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object);

@@ -429,7 +429,7 @@ s32 KorimaMagari_SetupBoard(void)
     Map_CopyCellAttributeRect(0, 0, 32, 32, 0, 64);
     Map_CopyCellAttributeRect(32, 0, 32, 32, 0, 32);
     if (Engine_GameFlagIsSet(0x109) == 0) {
-        Dma_Set(KorimaMagari_DefaultRecords, ((u16 *)gKorimaMagariRecords), 0x84000012, (volatile u32 *)0x040000d4);
+        Dma_Set(KorimaMagari_DefaultRecords, ((u16 *)gKorimaMagariRecords), DMA_ENABLE32 | DMA_32BIT | 0x12, REG_DMA3);
         *gKorimaMagariReturned = 0;
         *(*(u16 * *)&gKorimaMagariLayout) = 1;
     }

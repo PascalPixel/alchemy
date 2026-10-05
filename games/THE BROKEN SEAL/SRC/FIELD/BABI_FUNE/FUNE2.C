@@ -233,12 +233,12 @@ void Scene_RunExtendedPresentationSequence(void)
     Call3(Engine_ActorSetSpeed, 1, 78643, 39321);
     Call3(Engine_ActorSetSpeed, 2, 78643, 39321);
     Call3(Engine_ActorSetSpeed, 3, 78643, 39321);
-    Engine_ActorEnableActionCallback(0, (s32)BabiFune_ActionScriptA);
+    Engine_ActorEnableActionCallback(0, BabiFune_ActionScriptA);
     Engine_EventWait(50);
     Call4(Engine_CameraMoveTo, 17301504, -1, 13107200, 1);
-    Engine_ActorEnableActionCallback(1, (s32)BabiFune_ActionScriptB);
+    Engine_ActorEnableActionCallback(1, BabiFune_ActionScriptB);
     Engine_EventWait(50);
-    Engine_ActorEnableActionCallback(2, (s32)BabiFune_ActionScriptC);
+    Engine_ActorEnableActionCallback(2, BabiFune_ActionScriptC);
     Object_RefreshSelectorById(2);
     Call3(Engine_ActorFaceDirection, 0, 16384, 0);
     Call3(Engine_ActorFaceDirection, 1, 16384, 0);
@@ -249,7 +249,7 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_EventWait(60);
     Call3(Engine_ActorFaceDirection, 3, 32768, 0);
     Engine_EventWait(20);
-    Engine_ActorEnableActionCallback(3, (s32)BabiFune_ActionScriptD);
+    Engine_ActorEnableActionCallback(3, BabiFune_ActionScriptD);
     Object_RefreshSelectorById(3);
     Engine_ActorFaceDirection(3, 49152, 0);
     Engine_EventWait(20);

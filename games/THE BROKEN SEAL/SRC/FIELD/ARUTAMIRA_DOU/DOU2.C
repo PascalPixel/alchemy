@@ -879,7 +879,7 @@ void FieldScene_RunExtendedActorPresentation(void)
  */
 void FieldScene_RunBranchingCutsceneSequence(void)
 {
-    u8 *record;
+    struct FieldActor *leader;
     s32 line;
     GameFlag_Set(0x960);
     Engine_AudioPlayCue(24);
@@ -1121,26 +1121,26 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Engine_ActorSetAnimation(1, 2);
-    /* If the id-1 record lookup succeeds, forward its stored coordinates. */
-    record = Object_GetById(0);
-    if (record != 0) {
-        Engine_ActorSetDestination(1, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
+    /* Actor 1 walks to where the leader stands. */
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Engine_ActorSetDestination(1, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(1);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_ActorSetAnimation(2, 2);
-    /* If the id-2 record lookup succeeds, forward its stored coordinates. */
-    record = Object_GetById(0);
-    if (record != 0) {
-        Engine_ActorSetDestination(2, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
+    /* Actor 2 walks to where the leader stands. */
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Engine_ActorSetDestination(2, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(2);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Engine_ActorSetAnimation(3, 2);
-    /* If the id-3 record lookup succeeds, forward its stored coordinates. */
-    record = Object_GetById(0);
-    if (record != 0) {
-        Engine_ActorSetDestination(3, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
+    /* Actor 3 walks to where the leader stands. */
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+        Engine_ActorSetDestination(3, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(3);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -1286,7 +1286,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
             Engine_ActorSetAnimation(11, 5);
             Call6(Engine_MapCopyCellAttributes, 76, 16, 1, 1, 73, 17);
         } else {
-            Object_GetById(11)->priority_flags |= 2;
+            Object_GetById(11)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         }
         Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 #if EDITION_INTERNATIONAL
@@ -1307,7 +1307,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
         *(s32 *)&Object_GetById(10)->update = (s32)ArutamiraDou_MatchLeaderPriority;
         if (gGameState.entrance == 52) {
             zero = 0;
-            Dma_Set(&zero, ((void *)ArutamiraDou_ClearTarget), 0x85000003, (volatile u32 *)0x040000d4);
+            Dma_Set(&zero, ArutamiraDou_ClearTarget, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 3, REG_DMA3);
             if (!Engine_GameFlagIsSet(0x109)) {
                 u8 *race = gSceneState;
 
@@ -1345,8 +1345,8 @@ s32 ArutamiraDou_ApplyEntryState(void)
         Engine_ActorSetChildValue(20, 6);
         Object_GetById(16)->sprite->priority = 3;
         Object_GetById(20)->sprite->priority = 3;
-        Object_GetById(16)->priority_flags = 2;
-        Object_GetById(20)->priority_flags = 2;
+        Object_GetById(16)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        Object_GetById(20)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         Engine_ActorSetSpriteFlags(Object_GetById(16), 0);
         Engine_ActorSetSpriteFlags(Object_GetById(20), 0);
     }

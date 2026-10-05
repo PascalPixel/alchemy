@@ -81,7 +81,7 @@ s32 StopXianActor(void *actor)
 
 s32 FaceXianActorToPlayer(void *actor)
 {
-    void *player = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *player = Object_GetById(ACTOR_PARTY_LEADER);
     FIELD(actor, u16, 6) = ArcTan2Far(FIELD(player, s32, 0x10) - FIELD(actor, s32, 0x10), FIELD(player, s32, 8) - FIELD(actor, s32, 8));
     return 0;
 }
@@ -153,7 +153,6 @@ void FieldScene_RunScene39e_02000414(void)
 
 void FieldScene_RunFlag88FBranch(void)
 {
-    extern u8 *gWork;
 
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x88F) != 0) {
@@ -164,11 +163,11 @@ void FieldScene_RunFlag88FBranch(void)
         Engine_EventSetMessage((s32)MsgShianIsntNobleHimTrySave);
         Engine_EventOpenMessage(12, 0);
         if (Engine_EventChooseYesNo(0, 0) == 1) {
-            u16 *q = (u16 *)(gWork + 0x1D8);
+            u16 *q = &gEventWork->message;
             q[0] = q[0] + 1;
             Engine_EventOpenMessage(12, 0);
             if (Engine_EventChooseYesNo(0, 0) == 1) {
-                u16 *r = (u16 *)(gWork + 0x1D8);
+                u16 *r = &gEventWork->message;
                 r[0] = r[0] + 1;
             }
         }
@@ -535,7 +534,7 @@ void Scene_RunPrimarySequence(void)
         actor->x.fixed,
         actor->y.fixed,
         actor->z.fixed + 0xc0000,
-        (s32)0xffff3334,
+        -0xcccc,
         0,
         0x3333,
         0,
@@ -647,7 +646,7 @@ void ShianJiin_RunMasterScene(s32 mode)
 void ShianJiin_RunGatheringScene(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_ActorFaceActor(13, 19, 0);
     Engine_ActorFaceActor(14, 19, 0);
@@ -679,18 +678,18 @@ void ShianJiin_RunGatheringScene(void)
     Engine_ActorRunRepeatedMotion(15, 3);
     Call3(Engine_ActorSetPosition, 19, 0xe80000, 0xa80000);
     Engine_ActorSetPosition(20, 0xe80000, 0xa80000);
-    record = (s32)Object_GetById(19);
-    *(s32 *)(record + 12) = 0xc0000;
-    record = (s32)Object_GetById(19);
-    *(s32 *)(record + 60) = -0x80000000;
-    record = (s32)Object_GetById(19);
-    *(s32 *)(record + 24) = 0xcccc;
-    record = (s32)Object_GetById(19);
+    record = Object_GetById(19);
+    record->y.fixed = 0xc0000;
+    record = Object_GetById(19);
+    record->target_y = ACTOR_NO_TARGET;
+    record = Object_GetById(19);
+    record->scale_x = 0xcccc;
+    record = Object_GetById(19);
     {
-        s32 target = *(s32 *)(record + 80);
-        s32 shown = 0x8000;
-    
-        *(u16 *)(target + 30) = shown;
+        struct FieldSprite *sprite = record->sprite;
+        s32 rotation = 0x8000;
+
+        sprite->rotation = rotation;
     }
     Engine_AudioPlayCue(124);
     Engine_EventWait(40);
@@ -794,7 +793,7 @@ firstSceneComplete:
 void FieldScene_RunSecondEnsembleBeat(void)
 {
     s32 id;
-    u8 *rec;
+    struct FieldActor *rec;
 
     GameFlag_Set(0x89a);
     Engine_EventWait(30);
@@ -830,24 +829,13 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Engine_EventWait(20);
     Actor_SetSpeed(16, 192 << 9, 192 << 8);
     rec = Object_GetById(16);
-    rec[90] &= 0xfe;
+    rec->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(16, 154 << 1, 136 << 1);
     Engine_EventWait(1);
-    rec = ((u8 *)Value1(Object_GetById, 16));
-    {
-        /* FAKEMATCH: the result temporary selects the measured ORR destination.
-         * It replaces the compound or-assign the matching
-         * &= 0xfe case above uses. The reference writes the result into
-         * the mask register rather than the loaded value, and the
-         * two-address ORR only does that when the merged result is its
-         * own object; the compound form keeps the loaded value as
-         * destination. Same technique already adopted in the sibling
-         * owner resource_3bd:020013f8.
-         */
-        u8 merged = (u8)(rec[90] | 1);
-
-        rec[90] = merged;
-    }
+    rec = (struct FieldActor *)Value1(Object_GetById, 16);
+    /* The mask comes first: the reference merges the byte into the mask's
+       register. */
+    rec->steering_flags = ACTOR_FACES_MOTION | rec->steering_flags;
     Event_ShowMessageAndWait(16, 0, 50);
     Actor_SetPosition(17, 152 << 17, 216 << 16);
     Actor_WalkToAndWait(17, 152 << 1, 248);
@@ -994,18 +982,18 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Engine_EventWait(20);
     Actor_SetPosition(19, 232 << 16, 168 << 16);
     Actor_SetPosition(20, 232 << 16, 168 << 16);
-    rec = ((u8 *)Value1(Object_GetById, 19));
-    *(s32 *)(rec + 12) = 0xc0000;
-    rec = ((u8 *)Value1(Object_GetById, 19));
-    *(s32 *)(rec + 60) = -0x80000000;
-    rec = ((u8 *)Value1(Object_GetById, 19));
-    *(s32 *)(rec + 24) = 0xcccc;
-    rec = ((u8 *)Value1(Object_GetById, 19));
+    rec = (struct FieldActor *)Value1(Object_GetById, 19);
+    rec->y.fixed = 0xc0000;
+    rec = (struct FieldActor *)Value1(Object_GetById, 19);
+    rec->target_y = ACTOR_NO_TARGET;
+    rec = (struct FieldActor *)Value1(Object_GetById, 19);
+    rec->scale_x = 0xcccc;
+    rec = (struct FieldActor *)Value1(Object_GetById, 19);
     {
-        u8 *target = *(u8 **)(rec + 80);
-        s32 shown = 0x8000;
+        struct FieldSprite *sprite = rec->sprite;
+        s32 rotation = 0x8000;
 
-        *(u16 *)(target + 30) = shown;
+        sprite->rotation = rotation;
     }
     Audio_PlayCue(124);
     Event_ShowMessageAndWait(18, 0, 20);
@@ -1036,7 +1024,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     }
 
     /* Skipped once: bump the workspace skip counter and offer the beat again. */
-    Scene_BumpStep(1);
+    Event_SkipMessages(1);
     Engine_EventWait(20);
     Actor_ShowEmote(18, 0x105, 60);
     Actor_FaceDirection(18, 128 << 7, 20);
@@ -1057,7 +1045,7 @@ joinBeat:
     goto finish;
 
 skipTwice:
-    Scene_BumpStep(1);
+    Event_SkipMessages(1);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(18, 4);
     Engine_EventWait(20);
@@ -1074,9 +1062,7 @@ finish:
 
 void FieldScene_RunSkippableStoryBeat(void)
 {
-    extern u8 *gWork;
 
-    u8 *workspace;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianWarriorWillShowMeYour);
@@ -1088,8 +1074,7 @@ void FieldScene_RunSkippableStoryBeat(void)
         Engine_GameFlagSet(0x898);
         Engine_EventEnd();
     } else {
-        workspace = gWork;
-        *(u16 *)(workspace + 472) += 1;
+        gEventWork->message += 1;
         Engine_EventShowMessageAndWait(18, 0, 20);
         Engine_EventEnd();
     }
@@ -1100,18 +1085,18 @@ void FieldScene_RunSkippableStoryBeat(void)
 void FieldScene_RunEnsembleStoryBeat(void)
 {
     u32 i;
-    s32 actor;
+    struct FieldActor *actor;
 
     actor = Actor_Get(18);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     actor = Object_GetById(13);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     actor = Object_GetById(14);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     actor = Object_GetById(15);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     actor = Actor_Get(16);
-    ACTOR_FIELD_108(actor) = 0;
+    actor->update = 0;
     Engine_ActorSetAnimation(11, 1);
     Camera_SetSpeed(0x8000, 0x1000);
     Camera_MoveTo(0xe80000, -1, 0xc80000, 1);
@@ -1278,7 +1263,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Engine_ActorSetAnimation(10, 5);
     Engine_ActorSetAnimation(11, 5);
     Engine_ActorWaitForMove(12);
-    Engine_ActorEnableActionCallback(12, (s32)ShianJiin_ActorTwelveScript);
+    Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
     Actor_SetSpeed(15, 0xcccc, 0x6666);
     Actor_WalkToAndWait(15, 216, 168);
     Actor_WalkToAndWait(15, 232, 168);
@@ -1286,15 +1271,15 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Engine_ActorRunRepeatedMotion(15, 3);
     Actor_SetPosition(19, 0xe80000, 0xa80000);
     actor = Actor_Get(19);
-    *(s32 *)(actor + 12) = 0xc0000;
+    actor->y.fixed = 0xc0000;
     actor = Actor_Get(19);
-    *(s32 *)(actor + 60) = -0x80000000;
+    actor->target_y = ACTOR_NO_TARGET;
     actor = Actor_Get(19);
     {
-        s32 target = *(s32 *)(actor + 80);
-        s32 shown = 0x8000;
+        struct FieldSprite *sprite = actor->sprite;
+        s32 rotation = 0x8000;
 
-        *(u16 *)(target + 30) = shown;
+        sprite->rotation = rotation;
     }
     Audio_PlayCue(124);
     Engine_EventWait(40);
@@ -1439,7 +1424,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 void FieldScene_RunScene39eSequenceA(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 base5_200a5b9;
 
     Engine_EventBegin();
@@ -2023,11 +2008,9 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
     Engine_EventWait(1);
     {
-        /* Set bit 0 of the flag byte at +90. */
-        u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 value = record[90] | 1;
-
-        record[90] = value;
+        /* Turn the leader to face the way it walks. */
+        struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
+        record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
     Engine_EventWait(20);
     FieldScene_RunParticleRain();

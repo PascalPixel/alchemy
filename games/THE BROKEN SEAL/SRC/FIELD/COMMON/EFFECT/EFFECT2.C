@@ -11,6 +11,7 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "MAP_SCROLL.H"
 #include "FXBLEND.H"
+#include "IO_REG.H"
 
 void Resource_DecodeByteLz(const void *src, void *dst);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
@@ -116,7 +117,7 @@ static __inline__ void ClearDustWork(struct DustWork *work)
     register u32 value asm("r1") = 0;
 
     zero = value;
-    Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
 }
 
 s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mode);
@@ -208,7 +209,7 @@ void FieldMotes_Start(void)
     mote = work->motes;
     { register u32 z asm("r1") = 0; /* FAKEMATCH: the cleared word goes through r1 */
     zero = z; }
-    Dma_Set((void *)&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
     tiles = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(FieldFx_MoteTiles, tiles);
     work->resource = Resource_FindFreeEntry();
@@ -390,7 +391,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
     buffers = Data_03001ed0;
     zero = 0;
-    Dma_Set((const void *)&zero, work, 0x850007e2, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
     BattleFx_BuildBuffer(0x10003, buffers, work, 1);
     BattleFx_BuildBuffer(0x10005, buffers, ((struct FieldBlendWork *)work)->to, 1);
     BattleFx_InterpolateBuffers(((struct FieldBlendWork *)work)->to, ((struct FieldBlendWork *)work)->from,
@@ -446,7 +447,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
     buffers = Data_03001ed0;
     zero = 0;
-    Dma_Set((const void *)&zero, work, 0x850007e2, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
     BattleFx_BuildBuffer(from, buffers, work, 1);
     target = work->to;
     BattleFx_BuildBuffer(to, buffers, target, 1);

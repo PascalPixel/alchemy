@@ -11,6 +11,7 @@
 #include "MAP_SCROLL.H"
 #include "MAPFRAME.H"
 #include "HEAP_STATE.H"
+#include "IO_REG.H"
 
 extern u8 WorldMap_TerrainBehaviorTable[];
 
@@ -190,7 +191,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     /* FAKEMATCH: the do-whiles order the size load and the call. */
     do { size = (u32)TileMap_DrawRowsCodeSize; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
-    Dma_Set((const void *)TileMap_DrawRows, code, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)TileMap_DrawRows, code, DMA_ENABLE32 | DMA_32BIT | size >> 2, REG_DMA3);
     do { ((void (*)(s32, s32, void *, void *))((union HeapState *)gWorkSlot)->slots[49])(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
     Runtime_ReleaseHeapBlock(49);
 }

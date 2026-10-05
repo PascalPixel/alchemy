@@ -6,6 +6,7 @@
 #include "CALL.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 void ArutinYama_ApplyEntryState(void);
 void ArutinYama_PlaceFlaggedActors(void);
@@ -234,7 +235,7 @@ void FieldScene_RunScene3a4_02002490(void)
     extern u8 ArutinYama_RiseTimer[];
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x907) != 0) {
         *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
@@ -257,10 +258,8 @@ void FieldScene_RunScene3a4_02002490(void)
         Engine_ActorSetAnimation(9, 5);
         Map_CopyCellAttributes(23, 13, 1, 1, 25, 13);
         {
-            u8 *record = Actor_Get(9);
-            u8 flags = record[35] | 2;
-
-            record[35] = flags;
+            struct FieldActor *record = Actor_Get(9);
+            record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
     if (GameFlag_IsSet(0x325) != 0) {
@@ -291,9 +290,7 @@ void FieldScene_RunScene3a4_020025c0(void)
         Engine_ActorSetAnimation(9, 5);
         Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
         {
-            u8 flags = rec7->priority_flags | 2;
-
-            rec7->priority_flags = flags;
+            rec7->priority_flags = ACTOR_PRIORITY_UNDERFOOT | rec7->priority_flags;
         }
     }
     if (GameFlag_IsSet(0x907) != 0) {
@@ -313,7 +310,7 @@ void FieldScene_RunScene3a4_020026c0(void)
     extern u8 ArutinYama_RiseTimer[];
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     record = Actor_Get(9);
     Engine_ActorSetSpriteFlags((s32)record, 0);
@@ -323,10 +320,8 @@ void FieldScene_RunScene3a4_020026c0(void)
         Engine_ActorSetAnimation(9, 5);
         Map_CopyCellAttributes(0, 0, 1, 1, 26, 26);
         {
-            u8 *record = Actor_Get(9);
-            u8 flags = record[35] | 2;
-
-            record[35] = flags;
+            struct FieldActor *record = Actor_Get(9);
+            record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
     SceneActor_ClearCollisionFlagAndPlaceMarker(11);
@@ -334,10 +329,8 @@ void FieldScene_RunScene3a4_020026c0(void)
         Engine_ActorSetAnimation(11, 5);
         Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
         {
-            u8 *record = Actor_Get(11);
-            u8 flags = record[35] | 2;
-
-            record[35] = flags;
+            struct FieldActor *record = Actor_Get(11);
+            record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
     SceneActor_ClearCollisionFlagAndPlaceMarker(12);
@@ -345,10 +338,8 @@ void FieldScene_RunScene3a4_020026c0(void)
         Engine_ActorSetAnimation(12, 5);
         Map_CopyCellAttributes(1, 0, 1, 1, 26, 15);
         {
-            u8 *record = Actor_Get(12);
-            u8 flags = record[35] | 2;
-
-            record[35] = flags;
+            struct FieldActor *record = Actor_Get(12);
+            record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
     Engine_TaskAddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);
@@ -402,7 +393,7 @@ void FieldScene_RunScene3a4_02002934(void)
     extern u8 ArutinYama_RiseTimer[];
 
     s32 rec7;
-    s32 record;
+    struct FieldActor *record;
     s16 flag;
 
     rec7 = Engine_GameFlagIsSet(0x909);
@@ -437,7 +428,7 @@ void FieldScene_RunScene3a4_020029dc(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
-    s32 record;
+    struct FieldActor *record;
 
     record = Actor_Get(9);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -466,13 +457,13 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 
     switch (ArutinYama_LeafMode) {
     case 0:
-        leaf->x.fixed += (*(s16 *)&leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+        leaf->x.fixed += ((s16)leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
         break;
     case 0x8000:
-        leaf->x.fixed -= (*(s16 *)&leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+        leaf->x.fixed -= ((s16)leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
         break;
     }
-    if (*(s16 *)&leaf->unknown_64 <= 3) {
+    if ((s16)leaf->unknown_64 <= 3) {
         switch (ArutinYama_LeafMode) {
         case 0:
             leaf->x.fixed += 0x8000;
@@ -488,12 +479,12 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
         leaf->scale_x += 0x7ae;
         leaf->scale_y += 0x7ae;
     }
-    if ((u32)(*(s16 *)&leaf->unknown_64 * Engine_RandomNext()) >> 16 == 0)
+    if ((u32)((s16)leaf->unknown_64 * Engine_RandomNext()) >> 16 == 0)
         ObjectGroup_SetChildValue(leaf, 7);
-    if (*(s16 *)&leaf->unknown_64 != 0)
+    if ((s16)leaf->unknown_64 != 0)
         *(s16 *)&leaf->unknown_64 -= 2;
     else
-        *(s16 *)&leaf->unknown_64 = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
+        leaf->unknown_64 = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
     if (--object->effect.countdown == 0)
         Engine_ObjectDispatchRelease(leaf);
 }
@@ -739,20 +730,20 @@ void RunEventScript01(void)
 {
     u32 i;
     struct FieldActor *record;
-    u8 *work;
-    s32 addr_0200affd;
-    s32 addr_0200c0e4;
-    s32 addr_0200c12c;
+    struct EventWork *work;
+    s32 update;
+    s32 celebrate;
+    s32 party;
 
     Engine_EventBegin();
     Actor_SetPosition(8, 0x1480000, 0x580000);
     Actor_SetPosition(9, 0x1480000, 0x580000);
     Engine_ActorSetAnimation(8, 0);
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(work + 0x1c0) = 0x100;
-    *(s32 *)(work + 0x1c8) = 40;
+    work = gEventWork;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transition_frames = 40;
     Engine_EventOpenScreen();
-    Engine_EventWaitForScreen(); /* main:0808a370 */
+    Engine_EventWaitForScreen();
     Engine_EventWait(20);
     record = Object_GetById(0);
     if (record != 0) {
@@ -782,12 +773,12 @@ void RunEventScript01(void)
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-    Event_OpenMessage(ACTOR_IVAN, 0); /* main:0808a178 */
+    Event_OpenMessage(ACTOR_IVAN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     } else {
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
-        bump_step(1);
+        Event_SkipMessages(1);
     }
     Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -820,12 +811,12 @@ void RunEventScript01(void)
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
     Audio_PlayCue(103);
-    addr_0200affd = (s32)SceneActor_SetActor8ModeByCounterBit;
-    Call2(Engine_TaskAddCallback, addr_0200affd, 0xc80); /* main:080000d0 */
-    addr_0200c0e4 = (s32)ArutinYama_CelebrateScript;
-    Engine_ActorEnableActionCallback(9, addr_0200c0e4);
-    Object_SetActionCallbackAndRefreshById(8, addr_0200c0e4);
-    Engine_TaskRemoveCallback(addr_0200affd); /* main:080000d8 */
+    update = (s32)SceneActor_SetActor8ModeByCounterBit;
+    Call2(Engine_TaskAddCallback, update, 0xc80);
+    celebrate = (s32)ArutinYama_CelebrateScript;
+    Engine_ActorEnableActionCallback(9, celebrate);
+    Object_SetActionCallbackAndRefreshById(8, celebrate);
+    Engine_TaskRemoveCallback(update);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Engine_EventWait(20);
@@ -847,14 +838,14 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(ACTOR_IVAN, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     Engine_EventWait(20);
-    addr_0200c12c = (s32)ArutinYama_PartyScript;
-    Engine_ActorEnableActionCallback(ACTOR_GERALD, addr_0200c12c);
-    Engine_ActorEnableActionCallback(2, addr_0200c12c);
-    Object_SetActionCallbackAndRefreshById(3, addr_0200c12c);
+    party = (s32)ArutinYama_PartyScript;
+    Engine_ActorEnableActionCallback(ACTOR_GERALD, party);
+    Engine_ActorEnableActionCallback(2, party);
+    Object_SetActionCallbackAndRefreshById(3, party);
     Engine_EventWait(20);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 16;
+    gEventWork->transition_frames = 16;
     GameFlag_Set(0x909);
     Engine_EventEnd();
 }
@@ -939,14 +930,14 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     Engine_AudioPlayCue(152);
     leader->x.fixed = x;
     leader->velocity_y = 0x60000;
-    *(s32 *)((u8 *)leader + 72) = 0x10000;
+    leader->gravity = 0x10000;
     leader->z.fixed = center_z;
-    ((struct FieldSprite *)*(s32 *)((u8 *)(leader) + 0x50))->priority = 0;
+    leader->sprite->priority = 0;
     Object_SetMode(leader, 7);
     Engine_ObjectSetPosition(leader, x, leader->y.fixed, z + 0x180000);
     leader->facing = 0x4000;
     Engine_TaskWait(20);
-    ((struct FieldSprite *)*(s32 *)((u8 *)(leader) + 0x50))->priority = 2;
+    leader->sprite->priority = 2;
     Engine_AudioPlayCue(159);
 }
 
@@ -1182,7 +1173,7 @@ void ArutinYama_StepPaletteAnim(void)
         }
         ArutinYama_PaletteHold = ArutinYama_PaletteScript[ArutinYama_PaletteStep++];
         palette += frame;
-        Dma_Set(palette, (void *)0x05000006, 0x80000009, (volatile u32 *)0x040000d4);
+        Dma_Set(palette, (void *)0x05000006, DMA_ENABLE32 | 9, REG_DMA3);
     }
     ArutinYama_PaletteHold--;
 }

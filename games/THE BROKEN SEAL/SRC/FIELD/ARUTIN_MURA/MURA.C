@@ -341,7 +341,7 @@ void FieldScene_RunFacingGatedDialogue18(void)
 void FieldScene_RunEarlySequence(void)
 {
     u32 i;
-    u8 *work;
+    struct EventWork *work;
     struct FieldActor *record;
     s32 idx;
     u8 *tbl;
@@ -351,7 +351,7 @@ void FieldScene_RunEarlySequence(void)
     s32 b;
     s32 c;
 
-    work = (u8 *)gEventWork;
+    work = gEventWork;
     Engine_EventBegin();
     for (i = 8; i <= 65; i++) {
         record = Object_GetById(i);
@@ -360,7 +360,7 @@ void FieldScene_RunEarlySequence(void)
         }
     }
     tbl = ArutinMura_TriggerTable;
-    idx = ((s32)((s32)(*(u16 *)(work + 0x16c) - 2) << 16) >> 16);
+    idx = (s32)((*(u16 *)&work->touched_trigger - 2) << 16) >> 16;
     off = idx << 3;
     o4 = off + 4;
     a = *(s16 *)(tbl + o4);
@@ -396,7 +396,7 @@ void FieldScene_RunEarlySequence(void)
         }
     }
     Engine_EventWait(10);
-    Engine_EventRequestExit(*(s16 *)(work + 0x16c));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();
@@ -619,17 +619,11 @@ void FieldScene_RunScene3a3SequenceD(void)
     }
     actor = Object_GetById(17);
     if (actor != 0) {
-        u8 flags = 4;
-
-        flags |= actor->collision_flags;
-        actor->collision_flags = flags;
+        actor->collision_flags = 4 | actor->collision_flags;
     }
     actor = Object_GetById(16);
     if (actor != 0) {
-        u8 flags = 4;
-
-        flags |= actor->collision_flags;
-        actor->collision_flags = flags;
+        actor->collision_flags = 4 | actor->collision_flags;
     }
 }
 

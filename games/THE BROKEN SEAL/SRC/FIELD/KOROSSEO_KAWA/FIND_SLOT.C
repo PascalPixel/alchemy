@@ -120,9 +120,7 @@ void Script_WaitForEventTimeout(struct FieldActor *);              /* re-attach 
 
 struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
 {
-    extern u8 *Data_03001ebc;
-
-    struct FieldActor **slots = (struct FieldActor **)(Data_03001ebc + 0x14);
+    struct FieldActor **slots = gEventWork->placed_actors - 8;
     u32 i;
 
     for (i = 8; i <= 65; i++) {

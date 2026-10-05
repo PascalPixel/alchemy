@@ -366,17 +366,13 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_EventWait(60);
     if (Engine_GameFlagIsSet(0x84a) == 0) {
         Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-        ((u8 * (*)())Object_GetById)(12)[90] &= 254;
+        Object_GetById(12)->steering_flags &= 254;
         Engine_ActorWalkToAndWait(12, 0x15a, 0x107);
         Engine_EventWait(1);
         {
-            u8 *record = ((u8 * (*)())Object_GetById)(12);
-            /* FAKEMATCH: a result temporary, not a compound or-assign: the
-             * reference merges the byte into the mask's register, which the
-             * two-address ORR does only when the result is its own object. */
-            u8 merged = (u8)(record[90] | 1);
+            struct FieldActor *record = Object_GetById(12);
 
-            record[90] = merged;
+            record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
         }
     }
     Call3(Engine_ActorSetSpeed, 11, 0xcccc, 0x6666);

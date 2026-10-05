@@ -109,7 +109,7 @@ void FieldScene_RunScene3ba_02000974(s32 direction);
 void SceneState_InitControlWhenFlag109Clear(s32 value);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);
-void SceneState_SetStateHalfword386To99WhenMatched(void);
+void SceneState_RaiseTriggerOnPsynergyTarget(void);
 
 
 extern u8 MsgKorosseoAskAttendantsForExplanationsStages[];
@@ -133,7 +133,7 @@ void Engine_ActorShowEmote();
 void Engine_ActorFaceDirection();
 s32 OverlayObject_PlaceWithScale14000();
 void StagedActor_PushActorAhead();
-void OverlayObject_ResetMotionFields();
+void OverlayObject_ResetMotionFields(s32 actor);
 void Engine_ActorSetAnimation();
 void Korosseo_RestoreCompetitor();
 void Engine_CameraFollowActor();
@@ -834,7 +834,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
         SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
         break;
     case 2:
-        ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(SceneState_SetStateHalfword386To99WhenMatched, 0xc80);
+        ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
         Engine_ActorDestroy(24);
         Engine_ActorDestroy(25);
         if (!Engine_GameFlagIsSet(0x109)) {
@@ -909,7 +909,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     Actor_SetPosition(ACTOR_IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - 0x200000);
     Actor_SetPosition(a0, x << 16, (z << 16) - 0x500000);
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     actor->facing = 0xc000;
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Engine_EventOpenScreen();
@@ -994,17 +994,17 @@ void FieldScene_RunCommandSequence(s32 a0)
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_IVAN, 2);
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_MIA, 2);
-    actor = (struct FieldActor *)Object_GetById(0);
+    actor = Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }

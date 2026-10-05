@@ -6,6 +6,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "ANIMSPR.H"
 #include "MAP.H"
+#include "IO_REG.H"
 
 /* The light script's timer and anchor are a distinct motion-mode tail. */
 struct MakyuriObject {
@@ -46,7 +47,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
     flag = Engine_GameFlagIsSet(0x109);
     if (flag == 0) {
         cleared = flag;
-        Dma_Set((const void *)&cleared, st, 0x85000007, (volatile u32 *)0x040000d4);
+        Dma_Set((const void *)&cleared, st, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 7, REG_DMA3);
         st->region = region;
         return;
     }

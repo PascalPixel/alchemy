@@ -1,4 +1,4 @@
-/* 2026-10-05 sun deep finisher 19: alchemy diff 869 -> 434 (frame 224).
+/* 2026-10-05 sun deep finisher 19: alchemy diff 869 -> 378 (frame 224).
  * The spill slots follow declaration order, so the declarations now run
  * slot, buf, then ctx, detail_win, prev_row, res, tbl, cnt, prev_page,
  * msg_win, mask, saved_row, sub_sel, redraw, is_used as the native frame
@@ -7,14 +7,22 @@
  * again each frame, as ItemList_SelectEntry does: the native keeps that
  * address in the lowest slot ([sp+4]) and builds its fields with word
  * masks. The recovery-list search and the used-code search have their own
- * block-local index k (r1 in the native, not the long-lived i), and the
- * page redraw walks its own pointer (r8) instead of the table's pos (r5).
+ * block-local index k (r1 in the native, not the long-lived i), the page
+ * redraw walks its own pointer entry (r8) instead of the table's pos (r5),
+ * the confirm handler reads its own code (r6; cur stays r5 in the redraw),
+ * and the blinking page loop recomputes (cnt + 4) / 5 instead of storing
+ * pages, so the arrows reuse the loop's last quotient in r0.
  * Measured on the way: declarations reordered 739, CursorSprite 712, block
  * index 679, redraw pointer without the re-pointed cursor 744 (frame 220:
- * the cursor address lost its slot), with it 434. 500 random declaration
- * moves from 679 found nothing.
- * Remaining: mask = 0 versus menu_busy order at the redraw head, the r4
- * caller-saves in the row loop, and register choices in the input block.
+ * the cursor address lost its slot), with it 434, page quotient 415,
+ * confirm code 378. mask = 0 after menu_busy 444 (kept before); pos as
+ * tbl + cnt unchanged; 800 random declaration moves found nothing.
+ * Remaining: the five zero stores at entry take a fresh r6 = 0 natively
+ * (here the cnt zero and detail_win's slot); k starts from redraw's slot
+ * natively; the used and recovering message paths then share one
+ * CopyMessageString/Finalize tail here (the reload round robin differs),
+ * and the row-status SetParamNibble calls likewise; later register choices
+ * in the detail-window and input blocks follow from these.
  */
 /* 2026-10-04 H2 data-owner/flow pass: current EN score 11030
  * (197 register, 60 stack, 25 operand, 60 reordered, 32 inserted, 25 deleted).
@@ -355,7 +363,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
         }
 
         if (cnt > 5) {
-            for (j = 0; j < (pages = ((cnt + 4) / 5)); j++) {
+            for (j = 0; j < (cnt + 4) / 5; j++) {
                 tile = j + 0xf301;
                 if ((gKeysHeld & 0x100) || (gFrameCount & 15) <= 11) {
                     if (j == (page / 5)) {
@@ -366,10 +374,10 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                               list_win->width - ((cnt + 4) / 5) + j - 2, -1, 0);
             }
             if ((gKeysHeld & 0x100) == 0) {
-                UiWindow_SetTilemapEntry(list_win, 0xf334, list_win->width - pages - 3, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf334, list_win->width - (cnt + 4) / 5 - 3, -1, 0);
                 UiWindow_SetTilemapEntry(list_win, 0xf335, list_win->width - 2, -1, 0);
             } else {
-                UiWindow_SetTilemapEntry(list_win, 0xf011, list_win->width - pages - 3, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf011, list_win->width - (cnt + 4) / 5 - 3, -1, 0);
                 UiWindow_SetTilemapEntry(list_win, 0xf012, list_win->width - 2, -1, 0);
             }
             ctx->dirty |= (u8)(2 << ((u32)(list_win->y - 1) >> 2));
@@ -398,23 +406,24 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             break;
         }
         if (trig & 1) {
+            u32 code;
             if (cnt == 0) {
                 ret = -1;
                 break;
             }
-            cur = tbl[page + row];
-            if ((cur & 0x3e0000) == 0) {
+            code = tbl[page + row];
+            if ((code & 0x3e0000) == 0) {
                 if (is_used == 0) {
                     menu->menu.page = page;
                     menu->menu.row = row;
                     menu->menu.preferred_row = saved_row;
-                    ret = (s32)cur;
+                    ret = (s32)code;
                     break;
                 }
             } else if (is_used == 0) {
                 Ui_FillVramBlockPattern();
                 UiWork_ClearValueNameTables();
-                UiWork_PushValueSlot((s32)((cur & 0x3e0000) >> 17), 5);
+                UiWork_PushValueSlot((s32)((code & 0x3e0000) >> 17), 5);
                 UiText_CopyMessageString(0x898, buf, 52);
                 UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
             }

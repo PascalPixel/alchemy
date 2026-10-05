@@ -57,7 +57,7 @@ void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
 
 #include "TYPES.H"
 
-/* Message ids handed to the Func_0808a170 service; see the header note. */
+/* Message ids handed to the Engine_EventSetMessage service; see the header note. */
 
 /*
  * resource_37a owner 0x02000488..0x020009f3 (0x56c = 1388 bytes).
@@ -91,7 +91,7 @@ void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
  * Those calls are semantically right; they emit the direct long call instead
  * of this overlay's veneer word, and nothing else about them differs.
  *
- * The four ids handed to the Func_0808a170 message service are spelled as
+ * The four ids handed to the Engine_EventSetMessage message service are spelled as
  * `Data_00000<id>` externs, the convention the adopted overlay scene scripts
  * already use for this family (see
  * games/THE BROKEN SEAL/src/overlays/scene_primary_script/run_scene_372_sequence_a.c,

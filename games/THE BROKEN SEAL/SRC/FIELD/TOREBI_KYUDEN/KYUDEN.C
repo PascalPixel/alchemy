@@ -2125,7 +2125,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_WaitForMove(3);
     Actor_SetPosition(3, 0, 0);
     Event_Wait(10);
-    Audio_PlayCueFromEventWorkFar();
+    Audio_PlayCueFromEventWork();
     Event_End();
 }
 

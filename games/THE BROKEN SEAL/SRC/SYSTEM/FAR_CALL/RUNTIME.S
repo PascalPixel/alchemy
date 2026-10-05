@@ -58,9 +58,6 @@ Trig_CosFar:
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
 Vector_AddPolarOffsetFar:
-	.global Func_08000128
-	.thumb_func
-Func_08000128:
 	overlay_veneer Vector_AddPolarOffset
 	.global Runtime_SetIrqHandlerFar
 	.thumb_func

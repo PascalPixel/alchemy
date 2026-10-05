@@ -235,7 +235,7 @@ MakyuriChojo_EventTable:
 	.4byte RunScene58Sequence
 	.4byte 0x00000002
 	.4byte 0x02510006
-	.4byte FieldScene_RunScene39d_02002ddc
+	.4byte MakyuriChojo_BringLiftUp
 	.4byte 0x00000202
 	.4byte 0xffff000b
 	.4byte SceneActor_InitializeMotion
@@ -253,7 +253,7 @@ MakyuriChojo_EventTable:
 	.4byte 0x00300000
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene39d_02002eb8
+	.4byte MakyuriChojo_TakeLiftDown
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -152,9 +152,6 @@ GameFlag_SetBitFar:
 	.global GameFlag_ClearBitFar
 	.thumb_func
 GameFlag_ClearBitFar:
-	.global Func_080770d0
-	.thumb_func
-Func_080770d0:
 	overlay_veneer GameFlag_ClearBit
 	overlay_veneer GameFlag_Toggle
 	.global GameFlag_GetByteFar
@@ -372,9 +369,6 @@ Owner_RefreshActiveRatiosFar:
 	.global Owner_RefreshRatiosOnFlagFar
 	.thumb_func
 Owner_RefreshRatiosOnFlagFar:
-	.global Func_08077268
-	.thumb_func
-Func_08077268:
 	overlay_veneer Owner_RefreshRatiosOnFlag
 	.global Party_SetFlag32AndRefreshMembersFar
 	.thumb_func

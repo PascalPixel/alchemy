@@ -8,7 +8,7 @@ extern struct EventWork *gEventWork;
  */
 struct OwnerState;
 
-void Audio_PlayCueFromEventWorkFar(void);
+void Audio_PlayCueFromEventWork(void);
 void Battle_ResetEffectCounterFar(void);
 void DisplayTransition_InitializeBattleEffectStateFar(s32 first);
 void Event_SetStatus1c6Far(void);

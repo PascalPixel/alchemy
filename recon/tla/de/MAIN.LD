@@ -265,7 +265,6 @@
     "*/recon/tla/de/rom.o"(.rom.00022d40)
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00022f22)
-    "*/recon/tla/de/rom.o"(.rom.00022f24)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/MAP/RENDER_ANIMATED_TILE_FRAME.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00023088)
     "*/recon/tla/de/rom.o"(.rom.000230e0)

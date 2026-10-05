@@ -7,7 +7,7 @@ Func_080237e8:
 	cmp r0, #0
 	beq .L_080237f4
 	ldr r0, [r0, #80]
-	bl Func_08022f24
+	bl Animation_WaitForTrackEnd
 .L_080237f4:
 	pop {pc}
 	.2byte 0x0000

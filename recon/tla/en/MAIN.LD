@@ -313,7 +313,6 @@
         "*/recon/tla/raw/08022d40.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
         "*/recon/tla/raw/08022f22.o"(.text)
-        "*/recon/tla/raw/08022f24.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/MAP/RENDER_ANIMATED_TILE_FRAME.o"(.text)
         "*/recon/tla/raw/08023088.o"(.text)
         "*/recon/tla/raw/080230e0.o"(.text)

@@ -16,4 +16,12 @@ Func_08020330:
 	.global Func_08020338
 	.thumb_func
 Func_08020338:
+.ifdef TLA_EDITION_JA
+	overlay_veneer Animation_WaitForTrackEnd
+.else
+.ifdef TLA_EDITION_EN
+	overlay_veneer Animation_WaitForTrackEnd
+.else
 	overlay_veneer Func_08022f24
+.endif
+.endif

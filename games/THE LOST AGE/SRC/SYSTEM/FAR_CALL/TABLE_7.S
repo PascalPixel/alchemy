@@ -8,7 +8,15 @@
 	.global Func_08020308
 	.thumb_func
 Func_08020308:
+.ifdef TLA_EDITION_JA
 	overlay_veneer Func_0802d7b0
+.else
+.ifdef TLA_EDITION_EN
+	overlay_veneer Func_0802d7b0
+.else
+	overlay_veneer Animation_WaitForTrackEnd
+.endif
+.endif
 	.global Func_08020310
 	.thumb_func
 Func_08020310:

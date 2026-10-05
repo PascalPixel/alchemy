@@ -1,3 +1,21 @@
+/* 2026-10-05 sun deep finisher 19: alchemy diff 869 -> 434 (frame 224).
+ * The spill slots follow declaration order, so the declarations now run
+ * slot, buf, then ctx, detail_win, prev_row, res, tbl, cnt, prev_page,
+ * msg_win, mask, saved_row, sub_sel, redraw, is_used as the native frame
+ * places them (76 down to 24; sub_cnt's address takes 80). The cursor is a
+ * CursorSprite reached through cur_spr, pointed at it before the loop and
+ * again each frame, as ItemList_SelectEntry does: the native keeps that
+ * address in the lowest slot ([sp+4]) and builds its fields with word
+ * masks. The recovery-list search and the used-code search have their own
+ * block-local index k (r1 in the native, not the long-lived i), and the
+ * page redraw walks its own pointer (r8) instead of the table's pos (r5).
+ * Measured on the way: declarations reordered 739, CursorSprite 712, block
+ * index 679, redraw pointer without the re-pointed cursor 744 (frame 220:
+ * the cursor address lost its slot), with it 434. 500 random declaration
+ * moves from 679 found nothing.
+ * Remaining: mask = 0 versus menu_busy order at the redraw head, the r4
+ * caller-saves in the row loop, and register choices in the input block.
+ */
 /* 2026-10-04 H2 data-owner/flow pass: current EN score 11030
  * (197 register, 60 stack, 25 operand, 60 reordered, 32 inserted, 25 deleted).
  * All six TBS plans compile complete 2760-byte objects with a 224-byte frame;
@@ -136,31 +154,34 @@ struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 
 s32 Battle_SelectAbility(s32 owner, s32 unused)
 {
+    struct CursorSprite slot;
+    u16 buf[64];
     struct UiRenderWork *ctx;
+    struct UiWindow *detail_win;
+    s32 prev_row;
+    s32 res;
+    u32 *tbl;
+    s32 cnt;
+    s32 prev_page;
+    struct UiWindow *msg_win;
+    s32 mask;
+    s32 saved_row;
+    s32 sub_sel;
+    s32 redraw;
+    s32 is_used;
+    s32 sub_cnt;
     struct BattleMenuSelection *menu;
     struct BattleUnit *unit;
     struct DjinnRecoveryList *list;
-    struct UiWindow *msg_win;
     struct UiWindow *list_win;
-    struct UiWindow *detail_win;
     struct UiWindow *icon_win;
     struct PartyStatusWindow *cursor;
-    u32 *tbl;
     u32 *pos;
+    u32 *entry;
     u32 cur;
     u32 blink;
-    s32 res;
-    s32 cnt;
     s32 page;
     s32 row;
-    s32 saved_row;
-    s32 prev_page;
-    s32 prev_row;
-    s32 sub_sel;
-    s32 sub_cnt;
-    s32 redraw;
-    s32 is_used;
-    s32 mask;
     s32 ret;
     s32 pages;
     s32 tile;
@@ -173,8 +194,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     s32 y;
     s32 i;
     s32 j;
-    u16 buf[64];
-    struct MenuSprite slot;
+    struct CursorSprite *cur_spr;
 
     ctx = (struct UiRenderWork *)gWindowWork[0];
     detail_win = 0;
@@ -206,17 +226,18 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                 cnt++;
             } else if (unit->djinn_available[x] & (u32)(1 << y)) {
                 u32 code;
+                s32 k;
                 list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
-                for (i = 0; i < list->count; i++) {
-                    if (list->entries[i].unit_id == owner && list->entries[i].element == x &&
-                        list->entries[i].index == y) {
+                for (k = 0; k < list->count; k++) {
+                    if (list->entries[k].unit_id == owner && list->entries[k].element == x &&
+                        list->entries[k].index == y) {
                         break;
                     }
                 }
                 code = (u32)((x << 8) | y | 0x10000);
                 *pos = code;
-                if (list->entries[i].turns > 0) {
-                    code |= (u32)(list->entries[i].turns << 17);
+                if (list->entries[k].turns > 0) {
+                    code |= (u32)(list->entries[k].turns << 17);
                     *pos = code;
                 }
                 cnt++;
@@ -227,11 +248,12 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     tbl[cnt] = 0x80000000;
     ctx->dirty = 1;
 
+    cur_spr = &slot;
     for (;;) {
         if (page != prev_page || row != prev_row || redraw != 0) {
             cur = tbl[page + row];
-            ctx->menu_busy = 1;
             mask = 0;
+            ctx->menu_busy = 1;
             Ui_SetRectHighlight(list_win->x + 1, list_win->y + prev_row * 2 + 1,
                           list_win->width - 2, 1, 15);
             if (sub_sel != 0) {
@@ -241,10 +263,11 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             }
             redraw = 0;
             if (cnt != 0) {
+                s32 k;
                 UiWork_ClearValueNameTables();
                 is_used = 0;
-                for (i = 0; i <= 7; i++) {
-                    if ((u32)MENU_STATE->selected[i] == cur) {
+                for (k = 0; k <= 7; k++) {
+                    if ((u32)MENU_STATE->selected[k] == cur) {
                         is_used = 1;
                         break;
                     }
@@ -291,8 +314,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             if (page != prev_page) {
                 u32 code;
                 RenderOutput_RedrawSavedRect(list_win);
-                pos = &tbl[page];
-                code = *pos;
+                entry = &tbl[page];
+                code = *entry;
                 j = 0;
                 while (code != 0x80000000) {
                     UiWindow_SetTilemapEntry(list_win, (s32)((code & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
@@ -311,8 +334,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     if (j > 4) {
                         break;
                     }
-                    pos++;
-                    code = *pos;
+                    entry++;
+                    code = *entry;
                 }
                 prev_page = page;
             }
@@ -505,13 +528,14 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 
         cursor_pos.x = list_win->x * 8 - 2;
         cursor_pos.y = (row * 2 + list_win->y) * 8 + 20;
-        slot.oam.word.attr01 = 0x40000000;
-        slot.oam.word.attr23 = 0;
-        slot.oam.f.tile = Resource_GetBuffer(res, (s32)Resource_FixedBlockBTiles);
-        slot.oam.f.x = cursor_pos.x + (s32)((gFrameCount & 4) >> 1) + 0xfffa;
-        slot.oam.f.y = cursor_pos.y - (s32)((gFrameCount & 4) >> 2) + 248;
+        cur_spr = &slot;
+        ((u32 *)cur_spr)[1] = MENU_SPRITE_SIZE_16;
+        ((u32 *)cur_spr)[2] = 0;
+        cur_spr->tile = Resource_GetBuffer(res, (s32)Resource_FixedBlockBTiles);
+        cur_spr->x = cursor_pos.x + ((gFrameCount & 4) >> 1) - 6;
+        cur_spr->y = cursor_pos.y - ((gFrameCount & 4) >> 2) - 8;
         if (cnt != 0) {
-            Runtime_PushSlotEntry(&slot, 242);
+            Runtime_PushSlotEntry(cur_spr, 242);
         }
         cursor = CURSOR_OWNER;
         blink = gFrameCount & 4;

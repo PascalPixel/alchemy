@@ -1169,7 +1169,7 @@ void FieldScene_RunSequenceTail(void)
     Object_SetModeById(14, 5); /* object_id 14, action 5 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Engine_EventEnd();
-    Engine_EventOpenScreen(); /* main:0808a360 */
+    Engine_EventOpenScreen();
 }
 
 void InspectEmptySceneObject(void)
@@ -1744,8 +1744,7 @@ void FieldScene_RunMainScriptSequence(void)
     Object_SetModeById(13, 5);
     Engine_EventOpenScreen();
     Battle_WaitMode0(120);
-    /* Script line bases are overlay data symbols: an integer base would be
-     * constant-propagated into every offset instead of staying in r5. */
+
     script_a = (s32)MsgRunpaUhnnGetOff;
     Engine_EventSetMessage(script_a);
     Engine_EventShowMessage(13, 0);

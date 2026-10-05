@@ -206,7 +206,7 @@ void State_RunEmptyHook(void)
 {
 }
 
-void SceneData_InitHeader8590(void)
+void ToretoEda_ExchangeInputPacket(void)
 {
     u16 *hdr = sTransferHeader;
 

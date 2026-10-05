@@ -20,6 +20,7 @@ mod edition;
 mod elf;
 mod gate;
 mod integrate;
+mod keep;
 mod label;
 mod merge;
 mod process;
@@ -44,6 +45,7 @@ Matching:
   label       label English-only scaffold data in the other editions
   queues      split not-yet-C work into queues that cannot collide
   integrate   merge worker branches, reconcile, build and name what differs
+  keep        keep only the changed source that builds byte-identical
   merge-driver  git merge drivers for scaffolds and linker scripts, and
               links, which reconciles linker scripts after a merge
 Reports for people (nothing else reads them):
@@ -70,6 +72,7 @@ fn main() -> ExitCode {
         "label" => result(label::run(rest)),
         "queues" => result(queues::run(rest)),
         "integrate" => result(integrate::run(rest)),
+        "keep" => result(keep::run(rest)),
         "diff" => result(diff::run(rest)),
         "merge-driver" => result(merge::run(rest)),
         "similar" => similar_command::entry(rest),

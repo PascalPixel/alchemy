@@ -13,11 +13,11 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
 
     state = *(u8 **)&gEventWork;
     table = (s16 *)&gGameState;
-    slotValue = *(s32 *)&table[250];
+    slotValue = ((struct GameState *)table)->selected_actor;
     if (slotValue != 0) {
-        if ((s16)*(u16 *)(state + 382) >> 10 == slotValue) {
+        if ((s16)*(u16 *)&((struct EventWork *)state)->psynergy_request >> 10 == slotValue) {
             if (Engine_GameFlagIsSet(0x141) != 0) {
-                field = (u16 *)(state + 386);
+                field = (u16 *)&((struct EventWork *)state)->raised_trigger;
                 value = 99;
                 *field = value;
             }

@@ -173,10 +173,10 @@ void ColossoLogRollingStage_NudgeActorsLeft(void)
 {
     u8 *workspace = (u8 *)gEventWork;
     s16 *table = (s16 *)&gGameState;
-    s32 id = *(s32 *)&table[250];
-    StageObstacleActor *subject = *(StageObstacleActor **)(workspace + 480);
+    s32 id = ((struct GameState *)table)->selected_actor;
+    StageObstacleActor *subject = (StageObstacleActor *)((struct EventWork *)workspace)->view_center;
     StageObstacleActor *actor = Object_GetById(id);
-    s32 z = *(s16 *)((u8 *)actor + 0x12);
+    s32 z = ((struct FieldActor *)actor)->z.part.pixel;
 
     /* Nudge both records left while the actor occupies rows 183 through 186. */
     if ((u32)(z - 183) <= 3) {

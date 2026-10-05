@@ -79,15 +79,15 @@ void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
         s32 move_rate = 0x14000;
         u8 *state_byte = object;
         u8 zero = 0;
-        *(s32 *)(object + 0x30) = move_rate;
-        *(s32 *)(object + 0x34) = move_rate >> 1;
-        state_byte += 0x5b;
+        ((struct FieldActor *)object)->speed = move_rate;
+        ((struct FieldActor *)object)->acceleration = move_rate >> 1;
+        state_byte = &((struct FieldActor *)object)->paused;
         *state_byte = zero;
     }
 
     ObjectDispatch_InitFromTable6();
     Object_SetMode(object, 5);
-    Object_SetPosition(object, x << 16, *(s32 *)(object + 12), z << 16);
+    Object_SetPosition(object, x << 16, ((struct FieldActor *)object)->y.fixed, z << 16);
     Object_CommitPosition(object);
     Object_SetMode(object, 1);
 }

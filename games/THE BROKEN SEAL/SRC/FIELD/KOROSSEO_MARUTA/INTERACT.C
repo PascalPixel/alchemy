@@ -1,3 +1,4 @@
+#include "BATTLE_UNIT.H"
 /* Robin's look at the course, and clearing the saved actor positions. */
 #include "LOG_ROLLING.H"
 
@@ -249,7 +250,7 @@ void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item)
     Inventory_AddItem(handle, item);
 
     for (slot = 0; slot <= 14; slot++) {
-        if (*(u16 *)(record + 216 + slot * 2) == item) {
+        if (((struct BattleUnit *)record)->inventory[slot] == item) {
             Inventory_Equip(handle, slot);
         }
     }

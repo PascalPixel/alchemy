@@ -45,7 +45,16 @@
    (489); an empty asm on slot inside or before the loop (562, 568, not
    kept). In the k loop the ROM reduces k * 8 because k * 8 + 17 and
    frame - k * 8 combine into it; here they combine into frame - k * 8,
-   which is then not worth reducing, so k * 8 stays a shift. */
+   which is then not worth reducing, so k * 8 stays a shift.
+   The burst loop's own shape does come out when slot = k * 4 sits before
+   the exit test: i = 0; for (;;) { slot = k * 4; if (i == count) break;
+   burst = &gBursts[slot * 8 + i]; ... i++; } (or the same set in the for
+   condition) gives the ROM's unreduced (slot << 3) + i, * 28 and gBursts
+   reloaded each pass, 63 hoisted into r8 and k * 4 in a stack slot (554
+   overall, the allocation elsewhere moves). The test duplicated before
+   the loop then carries k * 4 ahead of the count test and the slot is
+   reloaded at the loop's foot, where the ROM has it after the test and
+   reloads it at the top; neither spelling reads like Camelot's. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"

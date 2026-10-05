@@ -2,6 +2,24 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
+ * 2026-10-05 sun deep finisher 2 (alchemy diff 14, was 76): item 1 found.
+ *    local-alloc never gives r7 (the Thumb hard frame pointer) to a
+ *    block-local pseudo, so the native zero in r7 is a global pseudo, and
+ *    only the result (r7 at the end) can be one. The result is now its own
+ *    variable (as the loop index alone: 88), set to 0 before the IWRAM clear
+ *    and read by the timer stores (tagged); sched2 sinks its set past the
+ *    calls, global-alloc gives it r7 first, and the scene and its vector
+ *    move to r10 and r9 as listed. i = 0 there instead scores 340 (i's life
+ *    grows past the work pointer's priority); handle = 0 scores 58 (its
+ *    tutorial uses take r7, listed r5); "s32 result = 0" at the top 157;
+ *    set after the IWRAM clear 88-108. With it the natural timer order
+ *    (field_18, field_1c, then DISPCNT) is best (18 of 720 orders), and the
+ *    defeat line reads gCell[504] (14). Remaining: the second and third
+ *    fills' ldr of the control word and src's copy (sched2, 4); the zero
+ *    for the camera block moves its movs/lsls and the scene's word-0 store
+ *    (4); gCell[0x22b] = 4 loads 0x22b into r2 before the link flag strb,
+ *    so the pool swaps gCell and 0x22b (6). Spellings *(gCell + 0x22b),
+ *    through off, dst, src or a cast score 58-146.
  * 2026-10-05 sun w5 finisher 1 (alchemy diff 76, was 86): item 3's copy
  *    is solved. src now holds the 12-byte block allocated at the top and
  *    dst the leader-byte pointer at the defeat line (either swap alone
@@ -205,6 +223,7 @@ s32 Battle_RunEncounter(s32 arg)
     u8 *dst;
     s32 cnt;
     s32 i;
+    s32 result;
     s32 delay;
     s32 handle;
     s32 wait;
@@ -222,14 +241,16 @@ s32 Battle_RunEncounter(s32 arg)
     Runtime_AllocateBlock(11, 0x280);
     cam = scene->pos;
     /* __call_via_r3 -> the IWRAM block clear at 0x03000164. */
+    /* FAKEMATCH: the setup's zero held in result, a global pseudo, so global allocation gives it r7 as listed. */
+    result = 0;
     Iwram_ClearWords(buf, 0x7c8);
     Scheduler_ResetTaskTable();
-    timer->frames = 0;
+    timer->frames = result;
     timer->value = 0x2000;
     timer->field_14 = 1;
-    timer->field_1c = 0;
+    timer->field_18 = result;
+    timer->field_1c = result;
     *(u16 *)0x04000000 = 1;
-    timer->field_18 = 0;
     GameFlag_SetBitFar(0x103);
     GameFlag_SetBitFar(0x169);
     Render_ResetTransformState();
@@ -288,10 +309,8 @@ s32 Battle_RunEncounter(s32 arg)
     }
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_UpdateCamera, 0xc7f);
 
-    {
-        off = 494;
-        cue = *(s16 *)(gCell + off);
-    }
+    off = 494;
+    cue = *(s16 *)(gCell + off);
     if (cue != 0) {
         AudioCommand_PlayFar(cue);
         if (GameFlag_IsSet(0x16c) != 0) {
@@ -431,14 +450,14 @@ resolved:
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);
     Blend_WaitForTransition();
-    i = work->field_538;
+    result = work->field_538;
     goto finished;
 
 aborted:
     Battle_ApplyValueToWork2224();
     Scheduler_EnableCallbacks(0);
     *(u16 *)0x04000000 = 1;
-    i = work->field_538;
+    result = work->field_538;
     GameFlag_SetBitFar(0x3e8);
     goto finished;
 
@@ -446,9 +465,7 @@ party_lost:
     Battle_ApplyValueToWork2224();
     AudioCommand_PlayFar(59);
     UiWork_ClearValueNameTablesFar();
-    off = 504;
-    dst = gCell + off;
-    UiWork_PushValueSlotFar(*dst, 1);
+    UiWork_PushValueSlotFar(gCell[504], 1);
     if (BattleParty_PrepareActiveOwners(0) == 1)
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgGoesDownInDefeat);
     else
@@ -456,7 +473,7 @@ party_lost:
     BattlePresentation_WaitForAdvance();
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);
-    i = -1;
+    result = -1;
     Blend_WaitForTransition();
     goto finished;
 
@@ -464,7 +481,7 @@ interrupted:
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);
     Blend_WaitForTransition();
-    i = 0x3e7;
+    result = 0x3e7;
 
 finished:
     BattleParty_ResetActiveRuntimeFields();
@@ -473,5 +490,5 @@ finished:
     gCell[0x22b] = 0;
     Scheduler_RemoveCallback((s32)Func_080b7738);
     Runtime_ReleaseHeapBlock10();
-    return i;
+    return result;
 }

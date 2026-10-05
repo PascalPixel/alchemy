@@ -2308,13 +2308,8 @@ Func_080ae868:
 	.thumb_func
 Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000aec74, 0x0000003c
-	.section .rom.000aee4c, "ax"
-	.global Func_080aee40
-	.type Func_080aee40, %function
-	.thumb_func
-Func_080aee40:
-	.incbin "baserom.gba", 0x000aee4c, 0x00000058
 	.section .rom.000aeea4, "ax"
+	.balign 4
 	.global Inventory_Find
 	.type Inventory_Find, %function
 	.thumb_func
@@ -3303,7 +3298,10 @@ Event_SpawnObjectTable:
 	.type Event_ReadSpawnCoordinates, %function
 	.thumb_func
 Event_ReadSpawnCoordinates:
-	.incbin "baserom.gba", 0x000ca9cc, 0x000002f4
+	.incbin "baserom.gba", 0x000ca9cc, 0x00000060
+	.global Func_080caa2c
+Func_080caa2c:
+	.incbin "baserom.gba", 0x000caa2c, 0x00000294
 	.global ObjectTable_FindLastActiveId
 	.type ObjectTable_FindLastActiveId, %function
 	.thumb_func
@@ -3393,20 +3391,12 @@ Func_080ce458:
 	.incbin "baserom.gba", 0x000ce458, 0x0000011c
 	.section .rom.000ce61c, "ax"
 	.incbin "baserom.gba", 0x000ce61c, 0x000004e0
-	.section .rom.000ceb58, "ax"
-	.global Func_080dca84
-	.type Func_080dca84, %function
-	.thumb_func
-Func_080dca84:
-	.incbin "baserom.gba", 0x000ceb58, 0x00000028
-	.global Func_080dcadc
-	.type Func_080dcadc, %function
-	.thumb_func
-Func_080dcadc:
 	.section .rom.000ceba8, "ax"
 	.incbin "baserom.gba", 0x000ceba8, 0x00000298
 	.section .rom.000cee80, "ax"
-	.incbin "baserom.gba", 0x000cee80, 0x00000250
+	.incbin "baserom.gba", 0x000cee80, 0x000000e8
+	.section .rom.000cf050, "ax"
+	.incbin "baserom.gba", 0x000cf050, 0x00000080
 	.section .rom.000cf158, "ax"
 	.incbin "baserom.gba", 0x000cf158, 0x00000024
 	.section .rom.000cf17c, "ax"
@@ -3868,9 +3858,8 @@ Func_080daecc:
 	.thumb_func
 ObjectEffect_PrepareContextEffect:
 	.incbin "baserom.gba", 0x000d5dd4, 0x00000070
-	.section .rom.000d5e56, "ax"
-	.incbin "baserom.gba", 0x000d5e56, 0x00000016
 	.section .rom.000d5e6c, "ax"
+	.balign 4
 	.global ObjectEffect_EndContextEffect
 	.type ObjectEffect_EndContextEffect, %function
 	.thumb_func
@@ -4599,7 +4588,10 @@ ItemMenu_PosCategory:
 Func_08100e7c:
 	.incbin "baserom.gba", 0x00100f98, 0x00000734
 	.section .rom.00101754, "ax"
-	.incbin "baserom.gba", 0x00101754, 0x000005e4
+	.incbin "baserom.gba", 0x00101754, 0x00000490
+	.global DjinnMenu_DrawPage
+DjinnMenu_DrawPage:
+	.incbin "baserom.gba", 0x00101be4, 0x00000148
 	.section .rom.00101d60, "ax"
 	.incbin "baserom.gba", 0x00101d60, 0x00002e80
 	.section .rom.00104c6a, "ax"
@@ -4959,9 +4951,9 @@ Func_0811b75c:
 	.incbin "baserom.gba", 0x0011b774, 0x00000278
 	.section .rom.0011ba14, "ax"
 	.incbin "baserom.gba", 0x0011ba14, 0x00000230
-	.section .rom.0011bcb0, "ax"
+	.section .rom.0011bd04, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011bcb0, 0x000000b8
+	.incbin "baserom.gba", 0x0011bd04, 0x00000064
 	.section .rom.0011bd68, "ax"
 	.global Func_0811bd50
 	.type Func_0811bd50, %function

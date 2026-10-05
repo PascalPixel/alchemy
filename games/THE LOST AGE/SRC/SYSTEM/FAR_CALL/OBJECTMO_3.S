@@ -66,7 +66,7 @@ ObjectEffect_BeginContextEffect26Far:
 	.global Func_080c8908
 	.thumb_func
 Func_080c8908:
-	overlay_veneer Func_080d5e64
+	overlay_veneer ObjectEffect_BeginContextEffect25
 	.global Func_080c8910
 	.thumb_func
 Func_080c8910:

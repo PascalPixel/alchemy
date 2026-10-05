@@ -40,27 +40,27 @@ Func_080c83e0:
 	.global Func_080c83e8
 	.thumb_func
 Func_080c83e8:
-	overlay_veneer Func_080ceffc
+	overlay_veneer ObjectEvent_GetObject
 	.global Func_080c83f0
 	.thumb_func
 Func_080c83f0:
-	overlay_veneer Func_080cefb4
+	overlay_veneer ObjectEvent_SetMode4WithCue
 	.global Func_080c83f8
 	.thumb_func
 Func_080c83f8:
-	overlay_veneer Func_080cef68
+	overlay_veneer ObjectEvent_SetMode5WithCue
 	.global Func_080c8400
 	.thumb_func
 Func_080c8400:
-	overlay_veneer Func_080cefd0
+	overlay_veneer ObjectEvent_SetMode2
 	.global Func_080c8408
 	.thumb_func
 Func_080c8408:
-	overlay_veneer Func_080cf00c
+	overlay_veneer ObjectEvent_PlaceOnGround
 	.global Func_080c8410
 	.thumb_func
 Func_080c8410:
-	overlay_veneer Func_080cf004
+	overlay_veneer ObjectEvent_Remove
 	.global Func_080c8418
 	.thumb_func
 Func_080c8418:
@@ -72,7 +72,7 @@ Object_SetWideSpriteFar:
 	.global Func_080c8428
 	.thumb_func
 Func_080c8428:
-	overlay_veneer Func_080ceec8
+	overlay_veneer Object_ReturnHome
 	.global Func_080c8430
 	.thumb_func
 Func_080c8430:

@@ -760,7 +760,7 @@ Func_081197f0:
 	strb r4, [r1]
 	bl Func_08124cc0
 	bl Func_08124e20
-	bl Func_0811bc98
+	bl BattleMotion_DestroyAllSlotObjects
 	ldr r5, [sp, #40]
 	subs r5, #74
 	cmp r5, #1

@@ -445,7 +445,7 @@ Func_0811d9cc:
 	movs r1, #0
 	bl BattlePres_SetActorModes
 .L_0811dd70:
-	bl Func_0811bc98
+	bl BattleMotion_DestroyAllSlotObjects
 	movs r0, #192
 	lsls r0, r0, #3
 	adds r0, #124

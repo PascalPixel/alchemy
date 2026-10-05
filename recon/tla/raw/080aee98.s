@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Inventory_Find
 	.thumb_func
 Inventory_Find:

@@ -12,7 +12,7 @@ Func_080ad2e8:
 	.global Func_080ad2f0
 	.thumb_func
 Func_080ad2f0:
-	overlay_veneer Func_080aee40
+	overlay_veneer PartyInventory_FindRoom
 	.global Func_080ad2f8
 	.thumb_func
 Func_080ad2f8:

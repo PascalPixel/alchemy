@@ -1,22 +1,22 @@
-/* Near miss, differ 2: the native loads the inventory entry before
-   building the item id mask; this draft builds the mask first (the
-   load-first gap). */
-#include "TYPES.H"
-#include "OWNER_STATE.H"
-#include "ITEM.H"
+/* Near miss: differ 2, the split-constant scheduling gap: the listing loads
+   the slot (ldrh r3, [r7, r6]) before building ITEM_ID_MASK; this build
+   starts the mask (movs r5, #128) first, as in Item_AdjustCounter. Goes
+   after Inventory_Discard in MUTATION.C, before Inventory_CheckDiscard. */
+#include "INVENTORY.H"
 
-/* Whether the owner's item in slot is equipped and cannot be taken off:
-   1 if so, 0 if not, 8 for an empty slot. */
-s32 Inventory_IsLockedEquipped(s32 owner, s32 slot)
+/* 8 for an empty slot, else 1 when the item is equipped and cannot be
+   taken off. */
+s32 Inventory_CheckUnequip(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *state = Owner_GetState(owner);
-    u32 item = state->inventory[slot] & ITEM_ID_MASK;
-    struct ItemDefinition *definition = Item_GetDirect(item);
-    s32 locked = 0;
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    s32 item_id = inv->inventory[slot] & ITEM_ID_MASK;
+    struct ItemDefinition *item = Item_GetDirect(item_id);
+    s32 result = 0;
 
-    if (item == 0)
+    if (item_id == 0)
         return 8;
-    if ((state->inventory[slot] & INVENTORY_EQUIPPED) && (definition->flags & ITEM_CANNOT_UNEQUIP))
-        locked = 1;
-    return locked;
+    if ((inv->inventory[slot] & INVENTORY_EQUIPPED) != 0 &&
+        (item->flags & ITEM_CANNOT_UNEQUIP) != 0)
+        result = 1;
+    return result;
 }

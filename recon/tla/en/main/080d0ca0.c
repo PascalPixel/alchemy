@@ -1,3 +1,10 @@
+/* Near miss: differ 12, ☀️'s BattlePalette_UpdateBlend (PALETTE5.C) with
+   ⚓️'s heap block 32 and GameFlag_Test; it goes at the end of ⚓️'s
+   GRAPHICS/PALETTE/PALETTE5.C. All four differences are load scheduling:
+   the listing reads the duration (ldrsb) before shifting the step, loads
+   the two pooled channel masks before building 0x7c00 and 0x1c0, loads the
+   queue address before the page arithmetic, and stores the first queue
+   entry before the count. */
 #include "TYPES.H"
 #include "PALBUF.H"
 #include "RAM_BUFFER.H"

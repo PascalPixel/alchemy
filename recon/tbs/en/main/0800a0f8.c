@@ -1,4 +1,7 @@
-/* 0800a0f8: ARM, compiled C (push starts at r5: -fcall-used-r4). Score in ARM mode: listing 161, draft 157, differ 222 */
+/* 0800a0f8: ARM draft; no admitted game ARM build route.
+   Stock agscc --arm: listing 157, draft 157, differ 214. Early-clobber
+   outputs remove invalid smull RdLo/Rm overlap (previously differ 216).
+   Established agbcc_arm library setting, analysis only: differ 144. */
 #include "PROJECT.H"
 
 struct FarCallStub {
@@ -45,8 +48,10 @@ static __inline__ s32 FixedMul(s32 a, s32 b)
     s32 lo;
     s32 hi;
 
+    /* FAKEMATCH: early-clobber both outputs; ordinary constraints let agscc
+       ARM overlap RdLo and Rm, which the assembler diagnoses as invalid. */
     CAMELOT_ASM("FixedMul: the ROM's smull puts RdHi in an input register, which GCC's early-clobber mulsidi3 never allocates")
-    asm volatile("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(a), "r"(b));
+    asm volatile("smull %0, %1, %2, %3" : "=&r"(lo), "=&r"(hi) : "r"(a), "r"(b));
     return (u32)lo >> 16 | hi << 16;
 }
 #define FIXED_MUL(a, b) FixedMul(a, b)

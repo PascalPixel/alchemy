@@ -144,7 +144,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKareiTorebiPlacementsOther;
 }
 
-void FieldScene_RunScene3ae_02000144(void)
+void KareiTorebi_MoveGuardAside(void)
 {
     u32 i;
     s32 record;
@@ -199,7 +199,7 @@ void KareiTorebi_AskGoToTolbi(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3ae_02000260(void)
+void KareiTorebi_AskCarryMessage(void)
 {
     u32 i;
     s32 record;
@@ -223,7 +223,7 @@ void FieldScene_RunScene3ae_02000260(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3ae_020002dc(void)
+void KareiTorebi_RemindBoardShip(void)
 {
     u32 i;
     s32 record;
@@ -419,7 +419,7 @@ void KareiTorebi_TalkSeasickTourists(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3ae_020006c8(void)
+void KareiTorebi_DeliverParentsMessage(void)
 {
     u32 i;
     s32 record;
@@ -493,7 +493,7 @@ s32 Scene_Initialize(void)
         Engine_GameFlagSet(0x950);
     }
     if (gGameState.scene == (s32)&SceneId_KareiTorebi1) {
-        FieldScene_RunScene3ae_020008cc();
+        KareiTorebi_PreparePort();
     } else {
         if (gGameState.scene == (s32)&SceneId_KareiTorebi3) {
             FieldScene_ConfigureFlaggedActors();
@@ -506,7 +506,7 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-void FieldScene_RunScene3ae_020008cc(void)
+void KareiTorebi_PreparePort(void)
 {
     u32 i;
     s32 record;

@@ -69,7 +69,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
     }
 }
 
-s32 BattlePlacement_UpdateEntries(void)
+s32 BattleParty_ReconcileDjinnRecovery(void)
 {
     u16 owners[10];
     s32 count;

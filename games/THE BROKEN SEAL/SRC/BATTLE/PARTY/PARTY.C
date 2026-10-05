@@ -68,7 +68,7 @@ void WaitFrames(s32 frames);
 s32 GameFlag_GetByteFar(s32 id);
 void BattleParty_CollectUnitList(void);
 void BattleUnit_RefreshPlacement(void);
-void BattlePlacement_UpdateEntries(void);
+void BattleParty_ReconcileDjinnRecovery(void);
 void BattleSummon_UpdateAvailability(void);
 s32 *Trade_GetOfferStateFar(s32 index);
 void UiWindow_CreateWithLayoutBoundsFar(s32 value);
@@ -214,7 +214,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 
     BattleParty_CollectUnitList();
     BattleUnit_RefreshPlacement();
-    BattlePlacement_UpdateEntries();
+    BattleParty_ReconcileDjinnRecovery();
     BattleSummon_UpdateAvailability();
     if (*Trade_GetOfferStateFar(0) != 0)
         battle->party_status_mode = 3;

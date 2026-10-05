@@ -38,7 +38,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
     Engine_TaskAddCallback(RamakanSabaku_RunSandstorm, 0xc76);
 }
 
-void SceneState_SetHalfwordB030(u16 value)
+void RamakanSabaku_SetSandPhase(u16 value)
 {
     RamakanSabaku_SandPhase = value;
 }

@@ -226,7 +226,7 @@ void RamakanSabaku_PlayStartledRetreat(void)
         rec8 = GameFlag_IsSet(0x200);
         if (rec8 == 0) {
             GameFlag_Set(0x200);
-            SceneState_SetHalfwordB030(1);
+            RamakanSabaku_SetSandPhase(1);
             shown_addr = (u16 *)(p5 + 0xcba);
             shown = 0x258;
             *shown_addr = shown;
@@ -265,7 +265,7 @@ void RamakanSabaku_PlayStartledRetreat(void)
             Actor_SetSpeed(8, 0x8000, 0x4000);
             Actor_WalkToAndWait(8, 168, 92);
             *shown_addr = shown;
-            SceneState_SetHalfwordB030(0);
+            RamakanSabaku_SetSandPhase(0);
         }
     }
 }

@@ -60,7 +60,7 @@ void FieldScene_ApplyActor13Values3And3(void) { BattleFx_RunPageEffectForSlot(13
  * body, after the call.  A post-decrement test would move the subtract ahead
  * of the call.
  */
-void OverlayObject_WaitUntilField12BelowLimit(u8 *o, s32 limit)
+void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
 {
     s32 frames = 60;
 
@@ -451,7 +451,7 @@ void RamakanSabaku_SweepBack(void)
     frames = 60;
     best = 0xf00000;
     GameFlag_Set(0x200);
-    SceneState_SetHalfwordB030(1);
+    RamakanSabaku_SetSandPhase(1);
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {
         count = 3;
         points = RamakanSabaku_SafePoints1;
@@ -487,7 +487,7 @@ void RamakanSabaku_SweepBack(void)
     Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
     Audio_PlayCue(152);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    OverlayObject_WaitUntilField12BelowLimit((u8 *)leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
+    RamakanSabaku_WaitForActorHeight((u8 *)leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
     Audio_PlayCue(241);
     {
         struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -541,5 +541,5 @@ void RamakanSabaku_SweepBack(void)
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(10);
     *(u16 *)(work + 0xcba) = frames;
-    SceneState_SetHalfwordB030(0);
+    RamakanSabaku_SetSandPhase(0);
 }

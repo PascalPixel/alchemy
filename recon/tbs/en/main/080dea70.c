@@ -3,8 +3,8 @@
 /*
  * Draft, not exact.
  *
- * 2026-10-05 deep finisher 20: alchemy diff 969 -> 623 (1605 listing
- * instructions, 1600 here; 103 once registers are ignored).
+ * 2026-10-05 deep finisher 20: alchemy diff 969 -> 612 (1605 listing
+ * instructions, 1599 here; 102 once registers are ignored).
  *   - The blitter routines are read as gWorkSlot[46] and [47] from
  *     HEAP_STATE.H, so the slot address is formed as gWorkSlot + 184 the
  *     way the native forms it: 909.
@@ -21,6 +21,9 @@
  *   - stagger, delay and height are declared in a block after steps: the
  *     native gives the mode * 4 temporary its spill slot (sp+84) before
  *     theirs (80, 76, 72), so their pseudos are numbered after it: 623.
+ *   - The impact shift is mode == 5 ? 12 : 11, which if-conversion turns
+ *     into the native eors/negs/orrs/lsrs into r2 (12 - (mode != 5) adds a
+ *     move): 612.
  *   - Tried: the sign test as (target->x < 0 ? shot->x < 0 : shot->x >= 0)
  *     and as shifts, != 0, == 1 or & 1 of it (783-789), and as a variable
  *     set in an if/else after the variant test (618, but the two 0/1 tails
@@ -342,7 +345,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                                 else
                                     BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 5);
                             }
-                            shift = 12 - (mode != 5);
+                            shift = mode == 5 ? 12 : 11;
                             for (k = 100; k != 512; k++) {
                                 struct EffectStep *mote = &gMotes[k];
 

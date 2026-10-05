@@ -90,7 +90,7 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
     return 0;
 }
 
-s32 OverlayObject_ApplyField100(s32 a)
+s32 MogoruMori_CopyTimerToChild(s32 a)
 {
     ObjectGroup_SetChildValue(a, *(s16 *)(a + 100));
     return 0;
@@ -186,7 +186,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTableB5bc(void)
+u8 *MogoruMori_GetExits(void)
 {
     return MogoruMori_SceneTable;
 }

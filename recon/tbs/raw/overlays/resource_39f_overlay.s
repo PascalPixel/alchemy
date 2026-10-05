@@ -111,7 +111,7 @@ gEffectScripts:
 	.4byte 0x00000023
 	.4byte 0x00000006
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyField100
+	.4byte MogoruMori_CopyTimerToChild
 	.4byte 0x00000010
 	.global MogoruMori_ActorScript
 MogoruMori_ActorScript:
@@ -126,7 +126,7 @@ MogoruMori_ActorScript:
 	.4byte 0x00000023
 	.4byte 0x0000000f
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyField100
+	.4byte MogoruMori_CopyTimerToChild
 	.4byte 0x00000022
 	.4byte OverlayObject_ApplyZero
 	.4byte 0x00000010

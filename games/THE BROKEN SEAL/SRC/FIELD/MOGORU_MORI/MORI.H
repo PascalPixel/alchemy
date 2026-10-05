@@ -82,13 +82,13 @@ u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind);
 u8 *OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind);
 void SceneState_SetValue18Mode2(void);
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg);
-s32 OverlayObject_ApplyField100(s32 a);
+s32 MogoruMori_CopyTimerToChild(s32 a);
 s32 OverlayObject_ApplyZero(s32 a);
 void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3);
 void FieldScene_RunSixCallSetupSequence(s32 no, s32 val);
 
 s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetTableB5bc(void);
+u8 *MogoruMori_GetExits(void);
 
 void SceneActor_PassOffsetPointOfActorZero(void);
 void SceneActor_BobActorZeroWhenAheadClear(void);

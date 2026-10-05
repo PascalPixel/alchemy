@@ -3,6 +3,11 @@
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 #include "IO_REG.H"
+#include "EDITION.H"
+#include "FIELD_SERVICE.H"
+#include "GAME_STATE.H"
+#include "INVENTORY.H"
+#include "MENU_LIST.H"
 
 struct Workspace {
     u8 unknown_000[356];
@@ -151,3 +156,189 @@ void TorebiIzumi_PayToPlay(void)
     }
     Engine_EventEnd();
 }
+
+#if EDITION_INTERNATIONAL
+/* The localized editions' spring game. The Japanese one, with its counter
+   marks beside both numbers, keeps other registers and stays on its
+   listing until its branch is written. */
+extern u8 MsgTorebiCoins[];
+extern u8 MsgTorebiThrow[];
+extern u8 MsgTorebiToss[];
+extern u8 MsgTorebiWonNumberCoin[];
+extern u16 Data_0200200c[];
+extern s32 Data_02001fd0[];
+
+void Battle_ResetEffectCounter(void);
+void UiText_DrawNumberInWindow(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
+s32 Menu_SelectEntry20To21(s32 choice);
+void UiWork_FinalizePendingCore(void);
+s32 Party_AdjustSixDigitCounterA(s32 amount);
+s32 TorebiIzumi_RunSpringRide(s32 side);
+void TorebiIzumi_RevealPrize(s32 item);
+
+#if defined(TBS_EDITION_EN)
+#define ASK_WIDTH 17
+#define NUMBER_X 72
+#define TOSS_X 20
+#define TOSS_WIDTH 9
+#else
+#define ASK_WIDTH 19
+#define NUMBER_X 88
+#define TOSS_X 19
+#define TOSS_WIDTH 10
+#endif
+
+/* Asks to throw a coin or a ticket into the spring, rides it, and pays a
+   coin prize or draws a weighted item prize, halving the drawn weight. */
+s32 TorebiIzumi_RunSpringGame(void)
+{
+    s32 choice = 0;
+    s32 text;
+    s32 cancel = -1;
+    s32 coins;
+    s32 tickets;
+    struct UiWindow *window;
+    s32 result;
+    s32 sum;
+    s32 i;
+    s32 roll;
+    s32 message;
+    struct GameState *state;
+
+    Event_Begin();
+    Battle_ResetEffectCounter();
+    message = (s32)MsgTorebiThrow;
+    state = &gGameState;
+    /* The halving device below raises state above message in priority. */
+    /* FAKEMATCH: keeps message in r9 and state in fp, as the native does. */
+    __asm__("" : "+r"(message));
+prompt:
+    coins = state->coins;
+    tickets = PartyInventory_CountItem(229);
+    Event_SetMessage(message);
+    Event_OpenMessage(-1, 0);
+    window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
+    {
+        text = (s32)MsgTorebiCoins;
+        UiText_DrawCharacterAtOffset(text, window, 0, 0);
+        UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
+        UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
+        UiText_DrawNumberInWindow(tickets, 6, window, NUMBER_X, 8);
+    }
+    choice = Menu_SelectEntry20To21(choice);
+    UiWork_Finalize(window, 2);
+    UiWork_FinalizePendingCore();
+    if (choice == cancel) {
+        goto end;
+    }
+    if (choice == 0) {
+        if (coins != 0) {
+            goto play;
+        }
+        Event_SetMessage(message + 1);
+        Event_ShowMessage(-1, 0);
+        Task_Wait(1);
+        goto prompt;
+    }
+    if (choice != 1) {
+        goto play;
+    }
+    if (tickets != 0) {
+        goto room;
+    }
+    Event_SetMessage(message + 2);
+    Event_ShowMessage(-1, 0);
+    Task_Wait(1);
+    goto prompt;
+room:
+    if (PartyInventory_CountFreeSlots() == 0) {
+        Event_SetMessage(message + 4);
+        Event_OpenMessage(-1, 0);
+        if (Event_ChooseYesNo(0, 0) != 0) {
+            goto end;
+        }
+    }
+play:
+    window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
+    {
+        text = (s32)MsgTorebiToss;
+        UiText_DrawCharacterAtOffset(text, window, 0, 0);
+        UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
+    }
+    Task_Wait(5);
+    Audio_PlayCue(116);
+    for (;;) {
+        if (gKeyState & KEY_A) {
+            Audio_PlayCue(112);
+            result = 0;
+            break;
+        }
+        if (gKeyState & KEY_B) {
+            Audio_PlayCue(113);
+            result = -1;
+            break;
+        }
+        Task_Wait(1);
+    }
+    UiWork_Finalize(window, 2);
+    if (result == cancel) {
+        goto end;
+    }
+    if (choice == 0) {
+        Party_AdjustSixDigitCounterA(-1);
+    } else if (choice == 1) {
+        PartyInventory_Remove(229);
+    }
+    result = TorebiIzumi_RunSpringRide(choice);
+    if (choice == 0) {
+        if (result != 4) {
+            Party_AdjustSixDigitCounterA(Data_0200200c[result]);
+            Audio_PlayCue(91);
+            UiWork_PushValueSlot(Data_0200200c[result], 5);
+            Event_SetMessage((s32)MsgTorebiWonNumberCoin);
+            Event_ShowMessage(-1, 0);
+        } else {
+            Audio_PlayCue(113);
+            Event_Wait(10);
+        }
+    } else {
+        sum = 0;
+        i = 0;
+        if (i < result * 3 + 3) {
+            do {
+                u8 w = ((u8 *)state)[i + 285];
+                sum += (s8)w;
+                i++;
+            } while (i < result * 3 + 3);
+        }
+        roll = (u32)(Random_Next() * sum) >> 16;
+        for (i = 0; i < 15; i++) {
+            roll -= state->prize_weights[i];
+            if (roll < 0) {
+                break;
+            }
+        }
+        if (i == 15) {
+            i = 14;
+        }
+        TorebiIzumi_RevealPrize(Data_02001fd0[i]);
+        /* Without it GCSE PRE reuses the roll loop's state + 1 from r5. */
+        /* FAKEMATCH: the native recomputes state + 1 into r0 after the call. */
+        __asm__("" : "+r"(state));
+        {
+            /* Computed first, so sched2 puts its add between mov r0, fp */
+            /* and adds r0, #1; as a pseudo it loses r1 to state + 1. */
+            /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. */
+            register s32 slot asm("r1") = i + 284;
+            s8 *w = (s8 *)state + 1;
+
+            if (w[slot] > 1) {
+                w[slot] /= 2;
+            }
+        }
+    }
+end:
+    Event_End();
+    return 0;
+}
+#endif

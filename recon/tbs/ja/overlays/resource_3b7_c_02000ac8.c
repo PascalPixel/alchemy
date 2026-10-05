@@ -1,4 +1,18 @@
-/* NONMATCHING: the spring game, 680 bytes; alchemy diff 2 with two tagged S2
+/* NONMATCHING (Japanese edition only): TorebiIzumi_RunSpringGame.
+ * 2026-10-05 sun deep finisher 7: the localized editions are adopted in
+ * IZUMI2.C (three tagged S2 devices; the third, slot pinned to r1 with a
+ * register variable, settles the last two: computed before state + 1 it
+ * keeps LUID order for sched2 and r1 for itself). The Japanese build of
+ * this same source still differs from its listing (about 208 of 290
+ * instructions by an opcode-and-register comparison against the
+ * .ifeq EDITION_INTERNATIONAL body of resource_3b7_overlay.s): the native
+ * keeps choice in r8, message in sl, MsgTorebiCoins (text) in r9, state in
+ * fp, coins in r7 and tickets in r5 with a 4-byte frame; this source spills
+ * (8-byte frame) and keeps text in r7 and the counter mark in r5. The two
+ * counter-mark calls change the pressure across the prompt, so the message
+ * and text devices need their own Japanese measurement. The earlier
+ * localized history follows. */
+/* Localized history: the spring game, 680 bytes; alchemy diff 2 with two tagged S2
  * devices (42 without them; 157 on 2026-10-04 morning).
  * 2026-10-04 sun w3 finisher 1. Settled, each measured:
  *  - the prompt is a goto loop (prompt: ... goto prompt), not a for (;;): loop.c
@@ -253,8 +267,9 @@ play:
         /* FAKEMATCH: the native recomputes state + 1 into r0 after the call. */
         __asm__("" : "+r"(state));
         {
+        /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. */
+        register s32 slot asm("r1") = i + 284;
         s8 *w = (s8 *)state + 1;
-        s32 slot = i + 284;
         if (w[slot] > 1) {
             w[slot] /= 2;
         }

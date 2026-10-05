@@ -19,12 +19,10 @@
 void GameState_InitDefaults(void);
 s32 Game_ResetForNewGameFar(s32);
 
-
 extern struct BattleUnit *gBattleOwnerStates;
 extern const struct EnemyDefinition Enemy_Definitions[];
 
-/* The existing byte-only multiplier prefix is used only at the stat store
-   boundary below; ClassDefinition remains the full table-row owner. */
+/* The stat-store view uses the byte multiplier prefix of ClassDefinition. */
 struct ClassRecord {
     u8 unknown_00[8];
     u8 hp;
@@ -210,8 +208,7 @@ void Owner_RecalculateStats(s32 owner)
             work->item = Item_GetDirect(st->inventory[i]);
             if (work->item->flags & ITEM_CURSED)
                 st->restraint |= 3;
-            /* FAKEMATCH: a do-while barrier keeps the defense load after the
-               item bonus load, as the ROM schedules it */
+            /* FAKEMATCH: a do-while barrier keeps the defense load after the item bonus load, as the ROM schedules it */
             do {
                 work->attack += work->item->primary_bonus;
             } while (0);
@@ -302,9 +299,7 @@ void Owner_RecalculateStats(s32 owner)
         }
 
         {
-            /* FAKEMATCH: the full ClassDefinition changes five multiplier-load
-               and stat-store orders in the same 2584-byte native module.
-               Keep the existing byte-only prefix at this alias boundary. */
+            /* FAKEMATCH: the byte-only class prefix preserves five multiplier-load/stat-store orders changed by the full definition. */
             struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->class_index);
 
             work->hp = work->hp * class->hp / 10;

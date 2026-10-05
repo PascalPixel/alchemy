@@ -47,7 +47,6 @@ void Party_ApplyStatePreset(void)
         s32 rate;
         s32 slot;
 
-        /* Keep both halfwords live through both stores for GCC's copy shape. */
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             unit->hp = unit->max_hp;

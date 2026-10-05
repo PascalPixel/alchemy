@@ -101,9 +101,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
         } else {
             Owner_GetStateFar(member);
             {
-                /* FAKEMATCH: the ROM loads the slot argument before the member.
-                   Only the English build, without the thirty-item check
-                   below, needs the copy; the direct call matches the rest. */
+                /* FAKEMATCH: the ROM loads the slot argument before the member. Only the English build, without the thirty-item check below, needs the copy; the direct call matches the rest. */
                 s32 s = slot;
 
                 count = Shop_GetSelectionState(member, s);

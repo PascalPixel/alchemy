@@ -138,8 +138,7 @@ s32 BattleFx_RollSuccess(
     s32 resistance_category,
     s32 effect_id,
     s32 success_scale) {
-    /* FAKEMATCH: retain the existing byte-status view and pointer setup;
-       direct adjacent members merge these native byte reads into wider loads. */
+    /* FAKEMATCH: the byte-status view and pointer setup prevent adjacent reads from merging into wider loads. */
     u8 *state = (u8 *)Owner_GetState(target);
     struct BattleUnit *unit = (struct BattleUnit *)state;
     s32 attempts = 1;
@@ -395,7 +394,7 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
 
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
-    /* FAKEMATCH: the existing scalar cursor selects an available-Djinn word; direct array accesses change the native operand order. */
+    /* FAKEMATCH: the scalar available-Djinn cursor preserves operand order changed by direct array access. */
     struct BattleUnit *state = Owner_GetState(source);
     s32 avail_off = index * sizeof(state->djinn_available[0])
         + ((u8 *)state->djinn_available - (u8 *)state);

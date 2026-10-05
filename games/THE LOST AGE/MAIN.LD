@@ -1303,7 +1303,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_2_COMMANDS.o"(.text .rodata .data .padding)
     "*/games/COMMON/SRC/GRAPHICS/TILE/CLEAR_CHARACTER_BLOCK.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001a052c)
-    "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/TILE3.o"(.text)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/SCROLL.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001a06e0)
     "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/CRAWL.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001a0a5c)

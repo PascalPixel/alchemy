@@ -1,9 +1,5 @@
+/* 0800a0f8: ARM, compiled C (push starts at r5: -fcall-used-r4). Score in ARM mode: listing 161, draft 157, differ 222 */
 #include "PROJECT.H"
-typedef unsigned short u16;
-typedef short s16;
-typedef int s32;
-typedef unsigned int u32;
-typedef long long s64;
 
 struct FarCallStub {
     u32 code;
@@ -92,7 +88,7 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
             u = FIXED_MUL(sn, x) / 256;
             v->v = u;
             out->b = u;
-            k = gProjection.scale;
+            k = gProjection.focal;
             a = k * ((s16)t << 8);
             b = -k * ((s16)u << 8);
             v->dx = -(a + FIXED_MUL(z, -sn));

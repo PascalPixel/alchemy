@@ -1,3 +1,4 @@
+/* 080e7338 and 080e73a0 are nested functions of this one; score with alchemy diff THIS 080e7338,080e73a0,080e7404 */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"

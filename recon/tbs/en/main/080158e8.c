@@ -1,3 +1,4 @@
+/* 080158e8: ARM, compiled C (push starts at r5: -fcall-used-r4). Score in ARM mode: listing 133, draft 133, differ 154 */
 typedef unsigned short u16;
 typedef int s32;
 typedef unsigned int u32;

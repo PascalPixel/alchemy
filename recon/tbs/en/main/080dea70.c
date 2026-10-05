@@ -1,3 +1,4 @@
+/* 080dea6e: two zero bytes before this function are alignment, not code: PROJECTILE_VOLLEY.o ends at 0x080dea6e and a C object aligns .text to 4, so the linker fills them. */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"

@@ -18,7 +18,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 object_id, s32 x, s32 z)
     if (object != NULL) {
         Object_ResetMotion(object);
         Object_SetPositionAndResetMotionFar(object, x, object->y, z);
-        if (object->flags & 1) {
+        if (object->motion_flags & 1) {
             terrain_height = Map_GetTerrainHeightFar(object->terrain_id, object->x, object->z);
             object->y = object->y - object->terrain_height + terrain_height;
             object->terrain_height = terrain_height;
@@ -36,7 +36,7 @@ void ObjectMotion_SetHorizontalPositionAndAngleWithTerrain(u32 object_id, s32 x,
         Object_ResetMotion(object);
         Object_SetPositionAndResetMotionFar(object, x, object->y, z);
         object->angle = angle;
-        if (object->flags & 1) {
+        if (object->motion_flags & 1) {
             terrain_height = Map_GetTerrainHeightFar(object->terrain_id, object->x, object->z);
             object->y = object->y - object->terrain_height + terrain_height;
             object->terrain_height = terrain_height;
@@ -54,7 +54,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z)
     if (object != NULL) {
         Object_ResetMotion(object);
         Object_SetPositionAndResetMotionFar(object, x, y, z);
-        if (object->flags & 1) {
+        if (object->motion_flags & 1) {
             terrain_height = Map_GetTerrainHeightFar(object->terrain_id, object->x, object->z);
             object->y = object->y - object->terrain_height + terrain_height;
             object->terrain_height = terrain_height;

@@ -45,7 +45,7 @@ Sys_Free:
 	.global Func_0200468c
 	.thumb_func
 Func_0200468c:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -65,7 +65,7 @@ Func_020046ac:
 	.global Func_020046b4
 	.thumb_func
 Func_020046b4:
-	overlay_veneer Func_080001f0
+	overlay_veneer Ui_LoadWindowGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -145,7 +145,7 @@ Func_0200473c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -165,7 +165,7 @@ Func_02004744:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -197,7 +197,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_0200475c
 	.thumb_func
 Func_0200475c:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02004764
 	.thumb_func
 Func_02004764:
@@ -417,7 +417,7 @@ Func_020048fc:
 	.global Func_02004904
 	.thumb_func
 Func_02004904:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

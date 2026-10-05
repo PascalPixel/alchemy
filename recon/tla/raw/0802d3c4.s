@@ -12,4 +12,4 @@ Func_0802d3c4:
 	bx lr
 	.2byte 0x0000
 .L_0802d3d4:
-	.4byte Data_0802eec4
+	.4byte Curve_SampleIndexTable

@@ -21,7 +21,7 @@ GameFlag_SetBit:
 	.global Func_02000970
 	.thumb_func
 Func_02000970:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_02000978
 	.thumb_func
 Func_02000978:
@@ -37,7 +37,7 @@ Func_02000978:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -137,11 +137,11 @@ Func_02000a30:
 	.global Func_02000a38
 	.thumb_func
 Func_02000a38:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02000a40
 	.thumb_func
 Func_02000a40:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02000a48
 	.thumb_func
 Func_02000a48:

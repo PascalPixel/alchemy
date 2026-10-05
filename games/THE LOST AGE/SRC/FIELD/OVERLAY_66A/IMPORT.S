@@ -49,7 +49,7 @@ Func_02001400:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif

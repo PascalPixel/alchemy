@@ -54,7 +54,6 @@ void Menu_CancelSoundTick(void)
     }
     input = &gInput;
     mask = 8;
-    asm volatile("" : "+l"(input), "+l"(mask)); /* FAKEMATCH: ⚓️ sets the mask between the address and its load */
     if (input->pressed & mask) {
         Audio_PlayCue(113);
         GameFlag_SetBit(0x150);

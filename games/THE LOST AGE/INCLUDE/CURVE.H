@@ -3,7 +3,7 @@
 
 #include "TYPES.H"
 
-extern u8 Data_0802eec4[];
+extern u8 Curve_SampleIndexTable[];
 
 enum {
     CURVE_VALUE_SHIFT = 19,

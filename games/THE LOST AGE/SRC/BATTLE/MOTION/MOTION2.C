@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "ANIMSPR.H"
 
 void Func_0811b75c(s16 *list, s32 refresh, s32 spawn);
 
@@ -9,25 +10,22 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
     Func_0811b75c(list, refresh, 1);
 }
 
-struct MotionRecordState {
-    u8 unknown_00[0x10];
-    s32 field10;
+/* The four animation entries ⚓️ keeps 0x28 into an animation object. */
+struct AnimationEntryGroup {
+    u8 unknown_00[0x28];
+    struct AnimationEntry *entries[4];
 };
 
+/* Stops the scripts of an animation object's four entries. */
 void ResetMotionRecordGroup(void *owner)
 {
-    s32 remaining;
-    s32 zero;
-    struct MotionRecordState **items;
+    struct AnimationEntryGroup *object = owner;
+    s32 i;
 
-    if (owner != NULL) {
-        zero = 0;
-        items = (struct MotionRecordState **)((u8 *)owner + 0x28);
-        for (remaining = 3; remaining >= 0; remaining--) {
-            struct MotionRecordState *item = *items++;
-            if (item != NULL) {
-                item->field10 = zero;
-            }
+    if (object != NULL) {
+        for (i = 0; i < 4; i++) {
+            if (object->entries[i] != NULL)
+                object->entries[i]->script = NULL;
         }
     }
 }

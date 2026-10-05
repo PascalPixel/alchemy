@@ -73,7 +73,7 @@ Animation_SetIndexAndInitObjects:
 	.global Func_02001ba4
 	.thumb_func
 Func_02001ba4:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
@@ -85,7 +85,7 @@ Func_02001bb4:
 	.global Func_02001bbc
 	.thumb_func
 Func_02001bbc:
-	overlay_veneer Func_080ad2e8
+	overlay_veneer Party_FindOwnerWithActionFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -225,7 +225,7 @@ Func_02001ccc:
 	.global Func_02001cd4
 	.thumb_func
 Func_02001cd4:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:

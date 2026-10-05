@@ -41,13 +41,13 @@ Func_080382f0:
 	.thumb_func
 Func_080382f8:
 	overlay_veneer Func_08044558
-	.global Func_08038300
+	.global Resource_CopyFixedBlockBFar
 	.thumb_func
-Func_08038300:
+Resource_CopyFixedBlockBFar:
 	overlay_veneer Resource_CopyFixedBlockB
-	.global Func_08038308
+	.global Resource_CopyFixedBlockAFar
 	.thumb_func
-Func_08038308:
+Resource_CopyFixedBlockAFar:
 	overlay_veneer Resource_CopyFixedBlockA
 	.global Func_08038310
 	.thumb_func

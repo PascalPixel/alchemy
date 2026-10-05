@@ -30,13 +30,9 @@ void Menu_AppendResourceEntry(s32 no)
     s32 flags;
 
     work = Ram_HeapSlots->menu_select_work;
-    /* Without the barrier the copy of no into r10 waits until after the
-       count is read; ⚓️ copies it straight after loading the work. */
-    /* FAKEMATCH: copy the argument to r10 right after loading the work. */
-    asm("");
     index = work->count;
     if (index <= 5) {
-        work->count = (u16)work->count + 1;
+        work->count++;
         entry = &work->entries[index];
         slot = Resource_FindFreeEntry();
         Menu_LoadResourceSlot(slot, no);

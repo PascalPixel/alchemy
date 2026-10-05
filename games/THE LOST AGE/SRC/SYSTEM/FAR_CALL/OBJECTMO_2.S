@@ -17,9 +17,9 @@ Event_ClearInvalidPackedValuesFar:
 	.thumb_func
 BattleFx_InitializeSlotsFar:
 	overlay_veneer BattleFx_InitializeSlots
-	.global Func_080c85e0
+	.global BattleFx_ClearActiveSlotsAndScheduleUpdatesFar
 	.thumb_func
-Func_080c85e0:
+BattleFx_ClearActiveSlotsAndScheduleUpdatesFar:
 	overlay_veneer BattleFx_ClearActiveSlotsAndScheduleUpdates
 	.global Func_080c85e8
 	.thumb_func
@@ -37,9 +37,9 @@ ObjectMotion_CommitPositionAndActivateFar:
 	.thumb_func
 Object_LinkObjectAndSetCallbackFar:
 	overlay_veneer Object_LinkObjectAndSetCallback
-	.global Func_080c8608
+	.global BattleEffect_PauseObjectFar
 	.thumb_func
-Func_080c8608:
+BattleEffect_PauseObjectFar:
 	overlay_veneer BattleEffect_PauseObject
 	.global Func_080c8610
 	.thumb_func

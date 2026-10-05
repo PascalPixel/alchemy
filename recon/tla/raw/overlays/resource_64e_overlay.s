@@ -52,7 +52,7 @@ Func_02000150:
 	adds r1, r5, #0
 .L_020081a0:
 	mov r3, r10
-	bl Func_02001b3c
+	bl Engine_ObjectCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ae

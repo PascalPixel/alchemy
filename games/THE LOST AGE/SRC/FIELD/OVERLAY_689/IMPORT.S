@@ -25,7 +25,7 @@ Func_02000454:
 	.global Func_0200045c
 	.thumb_func
 Func_0200045c:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -113,7 +113,7 @@ Func_02000504:
 	.global Func_0200050c
 	.thumb_func
 Func_0200050c:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:

@@ -16,7 +16,7 @@ void BattleFx_InitializeRisingObject(s32 slot)
     object->gravity = 0xAB85;
     object->bounce = 0;
     object->action_flags = 0;
-    object->unknown_58 = 1;
+    object->snap_to_target = 1;
     Object_ResetMotion(object);
     Object_SetPosition(object, context->anchor_x, 0, context->anchor_z);
     Object_SetMode(object, 1);

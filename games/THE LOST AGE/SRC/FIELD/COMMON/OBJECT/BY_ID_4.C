@@ -12,7 +12,7 @@ void ObjectMotion_CenterOnColumn(u32 object_id, s32 action, s32 z_offset)
 
     object = ObjectTable_Get(object_id);
     if (object != NULL) {
-        pixel_x = *(s16 *)((u8 *)object + 0x0a);
+        pixel_x = ((s16 *)&object->x)[1];
         cell_x = pixel_x;
         if (pixel_x < 0) {
             cell_x += 15;

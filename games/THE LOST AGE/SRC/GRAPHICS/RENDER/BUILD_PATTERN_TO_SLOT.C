@@ -1,18 +1,19 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#include "GLYPH.H"
 
 void Ui_PrepareTransferFromTableEntry(u32 index);
 
-s32 Ui_BuildPatternToSlot(s32 no, s32 arg1, s32 slot)
+/* ☀️'s: decodes a table pattern into the glyph transfer work and loads its
+   tiles into a VRAM slot; ⚓️ passes the heap slot's byte offset. */
+s32 Ui_BuildPatternToSlot(s32 no, s32 unused, s32 slot)
 {
-    s32 work;
+    GlyphTransfer *work;
 
-    work = (s32)Runtime_AllocateHeapBlock(0x44, 0x608);
+    work = Runtime_AllocateHeapBlock(0x44, sizeof(GlyphTransfer));
     Ui_PrepareTransferFromTableEntry(no);
-    VramBlock_LoadCached(slot, 0x80, work + 0x400);
+    VramBlock_LoadCached(slot, 0x80, work->tiles);
     Runtime_ReleaseHeapBlock(0x44);
     return 1;
 }

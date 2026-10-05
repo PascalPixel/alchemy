@@ -275,7 +275,7 @@ ItemIcon_Compose:
 .L_0803d89c:
 	.4byte UiIcon_BaseGlyphPointers
 .L_0803d8a0:
-	.4byte Data_0804eb58
+	.4byte UiIcon_ItemIconPointers
 .L_0803d8a4:
 	.4byte Data_0804e740
 .L_0803d8a8:

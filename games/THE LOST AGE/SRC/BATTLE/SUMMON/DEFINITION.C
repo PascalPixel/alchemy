@@ -36,8 +36,6 @@ s32 Summon_IsEntryFlagged(s32 index)
         return 0;
     flags = Summon_EntryTable[index].sprite_flags;
     result = 0;
-    /* FAKEMATCH: holds the shift until the result is cleared. */
-    asm volatile("" : "+l"(flags));
     if (flags << 31)
         result = 1;
     return result;

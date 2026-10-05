@@ -52,7 +52,7 @@ void ObjectMotion_SetActionVariant(u32 object_id, s32 priority)
 
         sprite->priority = priority;
         sprite->part_priority = priority;
-        object->unknown_23 &= ~1;
+        object->priority_flags &= ~1;
     }
 }
 

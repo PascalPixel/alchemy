@@ -105,7 +105,7 @@ Func_02002838:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -125,7 +125,7 @@ Func_02002840:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -165,7 +165,7 @@ Animation_SetStateFlags:
 	.global Func_02002868
 	.thumb_func
 Func_02002868:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02002870
 	.thumb_func
 Func_02002870:
@@ -177,7 +177,7 @@ Animation_ApplyChildValuesToRecord:
 	.global Func_02002880
 	.thumb_func
 Func_02002880:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global Animation_ApplyChildValue
 	.thumb_func
 Animation_ApplyChildValue:
@@ -265,11 +265,11 @@ Func_02002928:
 	.global Func_02002930
 	.thumb_func
 Func_02002930:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02002938
 	.thumb_func
 Func_02002938:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02002940
 	.thumb_func
 Func_02002940:

@@ -3,17 +3,12 @@
 s32 UiWork_IsComplete(void);
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 
-s32 UiText_ShowMessageAndWaitComplete(s32 arg0, s32 arg1, s32 arg2)
+s32 UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y)
 {
     s32 result;
 
-    result = UiText_OpenMessageWindow(arg0, arg1, arg2, 1);
-    goto check;
-again:
-    WaitFrames(1);
-check:
-    if (UiWork_IsComplete() == 0) {
-        goto again;
-    }
+    result = UiText_OpenMessageWindow(message, x, y, 1);
+    while (UiWork_IsComplete() == 0)
+        WaitFrames(1);
     return result;
 }

@@ -49,7 +49,7 @@ Func_02001914:
 	.global Func_0200191c
 	.thumb_func
 Func_0200191c:
-	overlay_veneer Func_08000370
+	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
 	.global Sound_LoadPresetParameters
 	.thumb_func
 Sound_LoadPresetParameters:
@@ -69,7 +69,7 @@ Func_0200193c:
 	.global Func_02001944
 	.thumb_func
 Func_02001944:
-	overlay_veneer Func_080003b8
+	overlay_veneer Scheduler_SetCallbackMaskFar
 	.global Owner_GetState
 	.thumb_func
 Owner_GetState:
@@ -101,7 +101,7 @@ Func_0200197c:
 	.global Func_02001984
 	.thumb_func
 Func_02001984:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_0200198c
 	.thumb_func
 Func_0200198c:
@@ -125,7 +125,7 @@ Func_0200199c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -249,7 +249,7 @@ Func_02001a84:
 	.global Func_02001a8c
 	.thumb_func
 Func_02001a8c:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:
@@ -297,4 +297,4 @@ Func_02001ad4:
 	.global Func_02001adc
 	.thumb_func
 Func_02001adc:
-	overlay_veneer Func_081c0090
+	overlay_veneer SongFlag_TestFar

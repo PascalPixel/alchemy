@@ -12,7 +12,7 @@ s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values)
     u8 *flags;
     struct ObjectRuntime *entry = Ram_HeapSlots->script_objects;
 
-    flags = &entry->unknown_59;
+    flags = &entry->collision_flags;
     for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
         if (entry->script != NULL && (1 & *flags) && entry != object) {
             if (Runtime_CheckRadiusOverlap(&entry->x, entry->radius - 2,
@@ -32,7 +32,7 @@ struct ObjectRuntime *ScriptObject_FindOverlappingEntry(
     u8 *flags;
     struct ObjectRuntime *entry = Ram_HeapSlots->script_objects;
 
-    flags = &entry->unknown_59;
+    flags = &entry->collision_flags;
     for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
         if (entry->script != NULL && (1 & *flags) && entry != object) {
             if (Runtime_CheckRadiusOverlap(&entry->x, entry->radius - 2,

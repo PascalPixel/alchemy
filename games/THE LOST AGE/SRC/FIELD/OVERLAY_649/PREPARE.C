@@ -2,11 +2,8 @@
 #include "FIELD_SCENE.H"
 #include "RESOURCE.H"
 #include "DMA.H"
-
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Sys_Free(void *block);
-s32 Resource_FindFreeEntry(void);
-void Func_02000594(const void *source, void *destination);
+#include "RUNTIME_MEM.H"
+#include "IO_REG.H"
 
 extern char ResourceId_IntroTilesB;
 extern s16 gTitleVramBlock;
@@ -28,10 +25,10 @@ void Title_LoadSprites(void)
     buffer = Runtime_BumpAllocateAlternatePool(0x520);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
-    Func_02000594(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
-    Dma_Set(buffer, (void *)0x050003e0, 0x84000008, (volatile u32 *)0x040000d4);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
+    Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
     VramBlock_LoadCached(gTitleVramBlock, 0x500, buffer + 32);
-    dma = (volatile s32 *)0x040000d4;
+    dma = (volatile s32 *)REG_DMA3;
     while (dma[2] < 0)
         ;
     Sys_Free(buffer);

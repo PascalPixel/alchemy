@@ -13,17 +13,17 @@ AudioEngine_SuspendDirectSoundFar:
 	.thumb_func
 Func_081c0088:
 	overlay_veneer Func_081c0e30
-	.global Func_081c0090
+	.global SongFlag_TestFar
 	.thumb_func
-Func_081c0090:
+SongFlag_TestFar:
 	overlay_veneer SongFlag_Test
-	.global Func_081c0098
+	.global SongFlag_SetFar
 	.thumb_func
-Func_081c0098:
+SongFlag_SetFar:
 	overlay_veneer SongFlag_Set
-	.global Func_081c00a0
+	.global SongFlag_ClearFar
 	.thumb_func
-Func_081c00a0:
+SongFlag_ClearFar:
 	overlay_veneer SongFlag_Clear
 	.global Func_081c00a8
 	.thumb_func

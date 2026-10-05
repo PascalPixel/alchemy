@@ -73,7 +73,7 @@ Func_02003990:
 	.global Func_02003998
 	.thumb_func
 Func_02003998:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_020039a0
 	.thumb_func
 Func_020039a0:
@@ -111,7 +111,7 @@ Func_020039a8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -123,7 +123,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_020039b8
 	.thumb_func
 Func_020039b8:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_020039c0
 	.thumb_func
 Func_020039c0:
@@ -267,7 +267,7 @@ Func_02003ad0:
 	.global Func_02003ad8
 	.thumb_func
 Func_02003ad8:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02003ae0
 	.thumb_func
 Func_02003ae0:

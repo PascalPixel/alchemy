@@ -20,7 +20,7 @@ void UiWork_ResetCounters(void)
 
     state->colour = 15;
     state->line_spacing = 10;
-    state->unknown_before_count = 9;
+    state->glyph_spacing = 9;
     state->outline = 0;
     state->unknown_after_line_spacing = 1;
 }

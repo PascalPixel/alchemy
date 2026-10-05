@@ -69,7 +69,7 @@ GameFlag_ClearBit:
 	.global Func_02002dcc
 	.thumb_func
 Func_02002dcc:
-	overlay_veneer Func_08000418
+	overlay_veneer Scheduler_FindCallbackFar
 	.global Func_02002dd4
 	.thumb_func
 Func_02002dd4:
@@ -101,7 +101,7 @@ Func_02002df4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -121,7 +121,7 @@ Func_02002dfc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -161,7 +161,7 @@ Animation_SetStateFlags:
 	.global Func_02002e24
 	.thumb_func
 Func_02002e24:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02002e2c
 	.thumb_func
 Func_02002e2c:
@@ -169,7 +169,7 @@ Func_02002e2c:
 	.global Func_02002e34
 	.thumb_func
 Func_02002e34:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -237,7 +237,7 @@ Func_02002eb4:
 	.global Func_02002ebc
 	.thumb_func
 Func_02002ebc:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:

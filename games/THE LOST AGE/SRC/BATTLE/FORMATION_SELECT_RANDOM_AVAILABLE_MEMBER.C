@@ -32,8 +32,6 @@ s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
             s32 id = *member_id;
 
             count++;
-            /* FAKEMATCH: the plain order counts the choice after storing it. */
-            __asm__("");
             *choice_cursor++ = id + 8;
         }
         remaining--;

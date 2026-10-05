@@ -37,7 +37,7 @@ Runtime_ReleaseHeapBlock:
 	.global Func_02000560
 	.thumb_func
 Func_02000560:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -81,7 +81,7 @@ Func_020005a0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -101,7 +101,7 @@ Func_020005a8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -145,7 +145,7 @@ Object_SetModeById:
 	.global Func_020005d8
 	.thumb_func
 Func_020005d8:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_020005e0
 	.thumb_func
 Func_020005e0:

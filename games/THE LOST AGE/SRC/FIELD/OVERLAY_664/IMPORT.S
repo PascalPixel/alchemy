@@ -45,7 +45,7 @@ Sys_Free:
 	.global Func_02005d24
 	.thumb_func
 Func_02005d24:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Func_02005d2c
 	.thumb_func
 Func_02005d2c:
@@ -53,7 +53,7 @@ Func_02005d2c:
 	.global Func_02005d34
 	.thumb_func
 Func_02005d34:
-	overlay_veneer Func_080001f0
+	overlay_veneer Ui_LoadWindowGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -105,7 +105,7 @@ Func_02005d94:
 	.global Func_02005d9c
 	.thumb_func
 Func_02005d9c:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -125,7 +125,7 @@ Func_02005dac:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -161,7 +161,7 @@ Animation_SetStateFlags:
 	.global Func_02005dcc
 	.thumb_func
 Func_02005dcc:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02005dd4
 	.thumb_func
 Func_02005dd4:
@@ -321,7 +321,7 @@ Func_02005ef4:
 	.global Func_02005efc
 	.thumb_func
 Func_02005efc:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02005f04
 	.thumb_func
 Func_02005f04:

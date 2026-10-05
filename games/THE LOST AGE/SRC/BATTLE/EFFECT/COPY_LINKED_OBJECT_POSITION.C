@@ -1,25 +1,26 @@
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
 #include "SCENE.H"
+#include "OBJECT_RUNTIME.H"
 
 s16 *BattleAction_FindDescriptor(s16 action);
 
 /* Snap an effect object onto the object it is linked to, raised by the
    linked descriptor's height. */
 
-s32 BattleFx_CopyLinkedObjectPosition(void *obj)
+s32 BattleFx_CopyLinkedObjectPosition(struct ObjectRuntime *object)
 {
-    void *link;
+    struct ObjectRuntime *link;
 
-    link = FIELD_AT_OFFSET(obj, void **, 0x68);
+    link = object->linked_object;
     if (link != NULL) {
-        FIELD_AT_OFFSET(obj, s8 *, 0x55) = 0;
-        FIELD_AT_OFFSET(obj, s32 *, 8) = FIELD_AT_OFFSET(link, s32 *, 8);
-        FIELD_AT_OFFSET(obj, s32 *, 0xc) = FIELD_AT_OFFSET(link, s32 *, 0xc)
-            + ((s8)Resource_GetMetadataRecordFarFar(*BattleAction_FindDescriptor(FIELD_AT_OFFSET(obj, s16 *, 0x66)))->box_x << 16)
+        object->motion_flags = 0;
+        object->x = link->x;
+        object->y = link->y
+            + ((s8)Resource_GetMetadataRecordFarFar(*BattleAction_FindDescriptor(object->unknown_66))->box_x << 16)
             + 0x80000;
-        FIELD_AT_OFFSET(obj, s32 *, 0x14) = FIELD_AT_OFFSET(link, s32 *, 0x14);
-        FIELD_AT_OFFSET(obj, s32 *, 0x10) = FIELD_AT_OFFSET(link, s32 *, 0x10);
+        object->terrain_height = link->terrain_height;
+        object->z = link->z;
     }
     return 0;
 }

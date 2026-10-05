@@ -69,7 +69,7 @@ Func_02000e44:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -81,11 +81,11 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02000e54
 	.thumb_func
 Func_02000e54:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02000e5c
 	.thumb_func
 Func_02000e5c:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:

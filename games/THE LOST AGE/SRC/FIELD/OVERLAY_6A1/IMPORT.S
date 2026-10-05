@@ -49,7 +49,7 @@ Sys_Free:
 	.global Func_02002118
 	.thumb_func
 Func_02002118:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -133,7 +133,7 @@ Func_020021a8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -153,7 +153,7 @@ Func_020021b0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -169,7 +169,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_020021c8
 	.thumb_func
 Func_020021c8:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_020021d0
 	.thumb_func
 Func_020021d0:
@@ -261,7 +261,7 @@ Func_02002268:
 	.global Func_02002270
 	.thumb_func
 Func_02002270:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:

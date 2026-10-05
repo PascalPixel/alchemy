@@ -210,7 +210,7 @@ s32 Scheduler_EnableCallbacks(u32 callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the block that runs once, as in Scheduler_FindCallback */
     do {
         {
             volatile u16 *ime = &REG_IME;
@@ -220,18 +220,16 @@ s32 Scheduler_EnableCallbacks(u32 callback)
             __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
-        do {
-            for (i = 0; i <= 23; i++, task++) {
-                if (callback != 0) {
-                    if (task->callback != callback)
-                        continue;
-                }
-                TASK_STATE_HIGH(task) |= 1;
-                /* FAKEMATCH: the result copy follows the state byte store, as in Scheduler_EnableUnmaskedOverlayCallbacks. */
-                __asm__ volatile("");
-                result = i;
+        for (i = 0; i <= 23; i++, task++) {
+            if (callback != 0) {
+                if (task->callback != callback)
+                    continue;
             }
-        } while (0);
+            TASK_STATE_HIGH(task) |= 1;
+            /* FAKEMATCH: the result copy follows the state byte store, as in Scheduler_EnableUnmaskedOverlayCallbacks. */
+            __asm__ volatile("");
+            result = i;
+        }
         REG_IME = saved_interrupt_master;
     } while (0);
     return result;

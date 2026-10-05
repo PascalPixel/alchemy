@@ -37,7 +37,7 @@ Sys_Free:
 	.global Func_02001f6c
 	.thumb_func
 Func_02001f6c:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -201,7 +201,7 @@ Func_020020ac:
 	.global Func_020020b4
 	.thumb_func
 Func_020020b4:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:

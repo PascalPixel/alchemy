@@ -241,7 +241,7 @@ Func_08125d74:
 	adds r3, #65
 	ldrb r0, [r3]
 	lsls r5, r5, #19
-	bl Func_08038128
+	bl UiWindow_CreateWithLayoutBoundsFar
 	adds r5, #8
 	movs r0, #20
 	bl WaitFrames
@@ -439,7 +439,7 @@ Func_08125d74:
 	lsls r5, r5, #19
 	ldrb r0, [r3]
 	adds r5, #8
-	bl Func_08038128
+	bl UiWindow_CreateWithLayoutBoundsFar
 	adds r0, r5, #0
 	movs r1, #2
 	bl QueueIoWriteDelay10

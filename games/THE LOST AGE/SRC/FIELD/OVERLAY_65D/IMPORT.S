@@ -21,7 +21,7 @@ Func_02000610:
 	.global Func_02000618
 	.thumb_func
 Func_02000618:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_02000620
 	.thumb_func
 Func_02000620:
@@ -41,7 +41,7 @@ Func_02000628:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -61,7 +61,7 @@ Func_02000630:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -133,7 +133,7 @@ ObjectMotion_ArmCallback:
 	.global Func_020006b8
 	.thumb_func
 Func_020006b8:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:

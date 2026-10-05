@@ -49,7 +49,7 @@ Sys_Free:
 	.global Func_02001bac
 	.thumb_func
 Func_02001bac:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -129,7 +129,7 @@ Func_02001c34:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -145,7 +145,7 @@ Animation_SetStateFlags:
 	.global Func_02001c4c
 	.thumb_func
 Func_02001c4c:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02001c54
 	.thumb_func
 Func_02001c54:
@@ -229,11 +229,11 @@ Func_02001cdc:
 	.global Func_02001ce4
 	.thumb_func
 Func_02001ce4:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02001cec
 	.thumb_func
 Func_02001cec:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:

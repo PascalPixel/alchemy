@@ -11,20 +11,16 @@ void BattleLink_ResetTransferState(void)
     u32 saved;
     u32 zero;
 
-    /* FAKEMATCH: the blocks keep the IME exchange ahead of the zero and
-       status constants, as in The Broken Seal's copy in SERIAL_RUNTIME.H. */
-    do {
-        state = &gSerialTransfer;
-        ime = &REG_IME;
-    } while (0);
+    state = &gSerialTransfer;
+    ime = &REG_IME;
+    /* FAKEMATCH: the one-pass block keeps the IME exchange ahead of the zero
+       and status constants, as in The Broken Seal's copy in SERIAL_RUNTIME.H. */
     do {
         saved = *ime;
         *ime = (u16)ime;
     } while (0);
-    do {
-        zero = 0;
-        state = &gSerialTransfer;
-    } while (0);
+    zero = 0;
+    state = &gSerialTransfer;
     state->status = 0x80;
     /* FAKEMATCH: each flag byte keeps its place among the volatile stores. */
     *(volatile u8 *)&state->peer_flags = zero;

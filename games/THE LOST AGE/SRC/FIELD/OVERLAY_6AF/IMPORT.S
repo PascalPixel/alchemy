@@ -53,7 +53,7 @@ Func_02000f94:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -89,7 +89,7 @@ Animation_SetStateFlags:
 	.global Func_02000fb4
 	.thumb_func
 Func_02000fb4:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02000fbc
 	.thumb_func
 Func_02000fbc:
@@ -141,7 +141,7 @@ Func_02001014:
 	.global Func_0200101c
 	.thumb_func
 Func_0200101c:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02001024
 	.thumb_func
 Func_02001024:

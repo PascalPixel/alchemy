@@ -25,13 +25,13 @@ Animation_ApplyChildValuesToRecordFar:
 	.thumb_func
 Func_08020288:
 	overlay_veneer Animation_ApplyChildValueToFirst
-	.global Func_08020290
+	.global ObjectDispatch_SetSpritePriorityFar
 	.thumb_func
-Func_08020290:
+ObjectDispatch_SetSpritePriorityFar:
 	overlay_veneer ObjectDispatch_SetSpritePriority
-	.global Func_08020298
+	.global ScriptObject_CheckOverlapFar
 	.thumb_func
-Func_08020298:
+ScriptObject_CheckOverlapFar:
 	overlay_veneer ScriptObject_CheckOverlap
 	.global Func_080202a0
 	.thumb_func

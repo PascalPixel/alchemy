@@ -3,6 +3,7 @@
 #include "RESOURCE.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern char ResourceId_Icons;
 extern u8 *UiIcon_MiscIconPointers[];
@@ -44,7 +45,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
         *slot = Resource_FindFreeEntry();
     *tile = VramBlock_LoadCached(*slot, 0x200, work->tiles);
     Runtime_ReleaseHeapBlock(68);
-    Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, (volatile u32 *)0x040000d4);
+    Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, REG_DMA3);
 }
 
 /* An empty routine between the glyph loader and decoder, as in ☀️;

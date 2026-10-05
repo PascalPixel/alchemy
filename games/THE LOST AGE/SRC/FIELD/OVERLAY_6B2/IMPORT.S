@@ -93,7 +93,7 @@ Func_020005c0:
 	.global Func_020005c8
 	.thumb_func
 Func_020005c8:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_020005d0
 	.thumb_func
 Func_020005d0:

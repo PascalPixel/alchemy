@@ -165,7 +165,7 @@ Func_08041350:
 	lsls r3, r3, #1
 	ldrsh r5, [r2, r3]
 	adds r0, r5, #0
-	bl Func_080ad2e8
+	bl Party_FindOwnerWithActionFar
 	cmp r0, r9
 	bne .L_080414b2
 	ldr r3, .L_0804159c

@@ -11,11 +11,11 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 
     dst = out;
     Text_FormatSignedDecimalToWork(value);
-    src = (u8 *)((u32)&gNumberTextBuffer);
+    src = gNumberTextBuffer;
     n = 0xD;
     do {
         n -= 1;
-        *dst = (s16)*src;
+        *dst = *src;
         src += 1;
         dst += 1;
     } while (n >= 0);

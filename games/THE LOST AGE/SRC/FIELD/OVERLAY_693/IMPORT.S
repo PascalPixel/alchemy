@@ -29,7 +29,7 @@ GameFlag_ClearBit:
 	.global Func_02000ff0
 	.thumb_func
 Func_02000ff0:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_02000ff8
 	.thumb_func
 Func_02000ff8:
@@ -45,7 +45,7 @@ Func_02000ff8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -173,7 +173,7 @@ Func_020010e8:
 	.global Func_020010f0
 	.thumb_func
 Func_020010f0:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:

@@ -44,16 +44,14 @@ void BattleFx_CycleObjectAndTick(s32 arg0)
 
 /* Sets how the object animates each frame: still (mode 0), flickering
    (mode 1) or cycling. */
-void BattleFx_SetObjectTickMode(s32 arg0, s32 mode)
+void BattleFx_SetObjectTickMode(struct DispatchObject *object, s32 mode)
 {
-    u8 *object = (u8 *)arg0;
-
     if (mode == 0) {
-        *(s32 *)(object + 108) = 0;
-        Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 0);
+        object->update = 0;
+        Animation_ApplyChildValuesFar(object, 0);
     } else if (mode == 1) {
-        *(s32 *)(object + 108) = (s32)BattleFx_FlickerObjectAndTick;
+        object->update = (void (*)(struct DispatchObject *))BattleFx_FlickerObjectAndTick;
     } else {
-        *(s32 *)(object + 108) = (s32)BattleFx_CycleObjectAndTick;
+        object->update = (void (*)(struct DispatchObject *))BattleFx_CycleObjectAndTick;
     }
 }

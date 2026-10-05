@@ -61,7 +61,7 @@ Func_0200517c:
 	.global Func_02005184
 	.thumb_func
 Func_02005184:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_0200518c
 	.thumb_func
 Func_0200518c:
@@ -77,7 +77,7 @@ Func_0200518c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -253,7 +253,7 @@ Func_020052bc:
 	.global Func_020052c4
 	.thumb_func
 Func_020052c4:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_020052cc
 	.thumb_func
 Func_020052cc:

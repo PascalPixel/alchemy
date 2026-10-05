@@ -333,7 +333,7 @@ Func_0200030c:
 	movs r0, #10
 	bl Object_SetModeById
 	movs r0, #165
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r1, #176
 	movs r2, #128
 	movs r3, #176
@@ -376,7 +376,7 @@ Func_0200030c:
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #165
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #10
 	bl ObjectMotion_CommitCurrentPositionAndActivate
 	movs r0, #11
@@ -405,7 +405,7 @@ Func_02000440:
 	movs r0, #0
 	bl Func_020029cc
 	movs r0, #165
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #10
 	movs r1, #3
 	bl Object_SetModeById
@@ -1458,7 +1458,7 @@ Func_02000510:
 	movs r1, #2
 	bl Func_02002a5c
 	movs r0, #178
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r1, #128
@@ -1470,7 +1470,7 @@ Func_02000510:
 	bl Battle_WaitMode0
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r1, #0
 	movs r0, #12
 	bl ObjectMotion_SetActionVariant
@@ -1920,7 +1920,7 @@ Func_02000510:
 	movs r0, #17
 	bl Object_SetModeById
 	movs r0, #133
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	ldr r3, [r7, #8]
 	movs r2, #128
 	lsls r2, r2, #12
@@ -1968,19 +1968,19 @@ Func_02000510:
 	movs r0, #17
 	bl Object_SetModeById
 	movs r0, #135
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Battle_WaitMode0
 	movs r0, #135
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Battle_WaitMode0
 	movs r0, #135
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Battle_WaitMode0
 	movs r0, #135
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Battle_WaitMode0
 	movs r0, #20
@@ -3355,7 +3355,7 @@ Func_02001fd0:
 	adds r3, r6, r0
 	strb r1, [r3]
 	movs r0, #134
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 .L_0200a0bc:
 	movs r3, #128
 	lsls r3, r3, #4
@@ -3461,7 +3461,7 @@ Func_02001fd0:
 	bne .L_0200a17c
 	movs r0, #155
 	lsls r0, r0, #1
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 .L_0200a17c:
 	movs r2, #0
 	ldrsh r3, [r5, r2]
@@ -3489,7 +3489,7 @@ Func_02001fd0:
 	cmp r3, #0
 	bne .L_0200a1c2
 	movs r0, #144
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r0, #192
 	movs r1, #192
 	movs r2, #128
@@ -3930,7 +3930,7 @@ Func_020023a4:
 .L_0200a524:
 	.4byte 0xfff40000
 .L_0200a528:
-	bl Func_02002a64
+	bl Engine_AudioPlayCue
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200a588

@@ -9,7 +9,7 @@ void Func_02002a44(void);
 void Func_02002a4c(void);
 void Func_02002a54(void);
 void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
-void Func_02002a64(s32 cue);
+void Engine_AudioPlayCue(s32 cue);
 void Field_BeginPaletteTransition(s32 mode);
 void Field_EndActorSpriteEffect(s32 mode);
 void Func_020023a4(void *object);
@@ -61,6 +61,6 @@ void Func_0200009c(struct ObjectRuntime *object)
 {
     Func_0200260c(object, object->x, object->y, object->z);
     if (++object->action % 8 == 0)
-        Func_02002a64(125);
+        Engine_AudioPlayCue(125);
 }
 

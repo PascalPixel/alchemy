@@ -41,7 +41,7 @@ Vector_AddPolarOffsetFar:
 	.global Func_02001fa8
 	.thumb_func
 Func_02001fa8:
-	overlay_veneer Func_08000130
+	overlay_veneer Runtime_SetIrqHandlerFar
 	.global Runtime_AllocateHeapBlockFar
 	.thumb_func
 Runtime_AllocateHeapBlockFar:
@@ -97,7 +97,7 @@ Func_02002010:
 	.global Func_02002018
 	.thumb_func
 Func_02002018:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -137,7 +137,7 @@ Func_02002030:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -269,7 +269,7 @@ Motion_CamBounds:
 	.global Func_02002110
 	.thumb_func
 Func_02002110:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02002118
 	.thumb_func
 Func_02002118:

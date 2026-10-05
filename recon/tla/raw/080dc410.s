@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dc410
+	.global BattleFx_LoadActionEffectResources
 	.thumb_func
-Func_080dc410:
+BattleFx_LoadActionEffectResources:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -203,7 +203,7 @@ Func_080dc410:
 	movs r1, #1
 	ldr r0, [r3]
 	negs r1, r1
-	bl Func_080dc62c
+	bl BattleFx_SetupObjectPair
 	movs r1, #30
 	ldrsh r3, [r6, r1]
 	ldrh r2, [r6, #30]

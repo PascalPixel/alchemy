@@ -192,17 +192,14 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
         }
         expired = 1;
         remaining = packed;
-        if (remaining != 0) {
-            if ((u32)remaining <= 7U &&
-                BattleUnit_RollCounterEarlyEnd(id, unit->psy_seal, 0x1E) != 0) {
-                unit->psy_seal = 0U;
-                return 1;
-            }
-            goto block_9;
+        if (remaining == 0)
+            return expired;
+        if ((u32)remaining <= 7U &&
+            BattleUnit_RollCounterEarlyEnd(id, unit->psy_seal, 0x1E) != 0) {
+            unit->psy_seal = 0U;
+            return 1;
         }
-        return expired;
     }
-block_9:
     expired = 0;
     return expired;
 }

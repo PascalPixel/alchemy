@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
 
 /* ☀️'s GRAPHICS/PALETTE/PALETTE5.C after its tilemap fill, which is still
    disassembly here, as is the battle palette blend that follows. */
@@ -14,11 +15,9 @@
 void DisplayTransition_InitializeState(s32 value)
 {
     struct DisplayTransitionState *state;
-    volatile u32 zero;
 
     state = Runtime_AllocateBlock(0x7c, sizeof(*state));
-    zero = 0;
-    Dma_Set(&zero, state, 0x85000000 | (sizeof(*state) / 4), (volatile u32 *)0x040000d4);
+    Dma_Fill32(0, state, sizeof(*state));
     DisplayTransition_FillTilemapAndSolidTile(0);
     state->mode = value;
     state->value = 0;

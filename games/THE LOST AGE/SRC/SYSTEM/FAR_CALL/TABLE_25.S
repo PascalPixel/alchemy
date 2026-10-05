@@ -9,17 +9,17 @@
 	.thumb_func
 Event_SetPairWork1c0Far:
 	overlay_veneer EventRuntime_SetDestination
-	.global Func_080c8270
+	.global EventRuntime_SetSavedDestinationFar
 	.thumb_func
-Func_080c8270:
+EventRuntime_SetSavedDestinationFar:
 	overlay_veneer EventRuntime_SetSavedDestination
-	.global Func_080c8278
+	.global EventRuntime_SetCountdownFar
 	.thumb_func
-Func_080c8278:
+EventRuntime_SetCountdownFar:
 	overlay_veneer EventRuntime_SetCountdown
-	.global Func_080c8280
+	.global BattleFx_SetWeightedResultFar
 	.thumb_func
-Func_080c8280:
+BattleFx_SetWeightedResultFar:
 	overlay_veneer BattleFx_SetWeightedResult
 	.global Func_080c8288
 	.thumb_func

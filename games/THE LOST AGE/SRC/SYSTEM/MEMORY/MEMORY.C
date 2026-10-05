@@ -4,12 +4,12 @@
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
+#include "RESOURCE.H"
 
 /* The window frame colours of background bank 15. */
 extern const u16 Ui_WindowPalette[];
 extern const u8 System_BasicColorPalette[];
 extern char ResourceId_WindowTiles;
-void *Resource_GetTableEntry(s32 id);
 
 /* Loads the shared window graphics: resource 0x13 into BG character block
    0, the window palette into background bank 15, the bank-15 frame colours
@@ -17,16 +17,16 @@ void *Resource_GetTableEntry(s32 id);
 void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
-            (volatile u32 *)0x040000d4);
-    /* FAKEMATCH: the two do-while blocks keep the value-before-address
-       order of the palette stores */
+            REG_DMA3);
+    /* FAKEMATCH: the do-while block keeps the backdrop store's value
+       before its address */
     do {
         s32 black = 0;
         PLTT_BACKDROP = black;
     } while (0);
-    do {
+    {
         volatile u16 *pal;
         s32 color;
 
@@ -51,21 +51,21 @@ void Ui_LoadWindowGraphics(void)
         color = 0x59e0;
         pal++;
         *pal = color;
-    } while (0);
+    }
     Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
-    volatile u32 zero = 0;
-    Dma_Set(&zero, work, 0x85000040, (volatile u32 *)0x040000d4);
+
+    Dma_Fill32(0, work, sizeof(struct HeapSlots));
     Ram_HeapSlots->next_iwram = gIwramHeap;
     Ram_HeapSlots->next_ewram = gEwramHeap;
 }
@@ -193,8 +193,6 @@ void *Runtime_BumpAllocate(s32 size)
     /* FAKEMATCH: An unconstrained bound load changes the heap/head registers; capture the native bound in r4 and hand it to an ordinary local. */
     register u32 held asm("r4");
 
-    /* FAKEMATCH: The best plain shape swaps the heap-base shift and rounding add; retain the native address-first order. */
-    __asm__("" : : "r"(state), "r"(size));
     words = (u32)size + 3;
     address = state[1];
     /* FAKEMATCH: The best plain shape shifts before loading the heap head; retain the unshifted value and incoming size through that load. */
@@ -230,8 +228,6 @@ void *Runtime_BumpAllocateAlternatePool(s32 size)
     u32 address;
     u32 words;
 
-    /* FAKEMATCH: The best plain shape swaps the heap-base shift and rounding add; retain the native address-first order. */
-    __asm__("" : : "r"(state), "r"(size));
     words = (u32)size + 3;
     address = state[0];
     /* FAKEMATCH: The best plain shape shifts before loading the heap head; retain the unshifted value and incoming size through that load. */

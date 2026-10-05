@@ -76,23 +76,19 @@ void WaitFrames(s32 frames)
                 else {
                     gIdleFrameCount++;
                     {
-                        /* FAKEMATCH: under the ARM9TDMI load schedule plain source shifts the idle limit before the volatile counter reload; native starts the limit, reloads the counter, then shifts. */
                         u32 idle; u32 limit;
                         limit = SLEEP_IDLE_FRAMES >> 6;
-                        /* FAKEMATCH: start the limit's base before the counter reload, value unchanged. */
-                        __asm__ ("" : "+r"(limit));
                         idle = gIdleFrameCount;
-                        /* FAKEMATCH: finish the reload before the limit's shift, with neither value changed. */
+                        /* FAKEMATCH: under the ARM9TDMI load schedule plain source shifts the idle limit before the volatile counter reload; finish the reload before the limit's shift, with neither value changed. */
                         __asm__ ("" : "+r"(idle) : "r"(limit));
                         if (idle > (limit << 6) + (SLEEP_IDLE_FRAMES & 63)) gSleepRequested = 1;
                     }
                 }
             }
             {
-                /* FAKEMATCH: plain source starts the sleep-button comparison constant before loading held buttons; the short capture puts that load first. */
                 u32 held;
                 held = gInput.held;
-                /* FAKEMATCH: leave held unchanged while preserving its measured comparison-materialization order. */
+                /* FAKEMATCH: plain source starts the sleep-button comparison constant before loading held buttons; leave held unchanged while the load goes first. */
                 __asm__ volatile("" : : "r"(held));
                 if (held == (KEYS_SHOULDERS | KEY_SELECT)) gSleepRequested = 1;
             }
@@ -142,8 +138,6 @@ void WaitFrames(s32 frames)
                     __asm__ volatile("" : : : "r5");
                     high = KEYCNT_SLEEP_WAKE >> 8;
                     key = &REG_KEYCNT;
-                    /* FAKEMATCH: keep the measured address-before-shift handoff, with neither value changed. */
-                    __asm__ volatile("" : "+r"(high) : "r"(key));
                     *key = (high << 8) + (KEYCNT_SLEEP_WAKE & 255);
                 }
                 Bios_SoundBiasOff();

@@ -4,6 +4,7 @@
 #include "RENDER_INPUT.H"
 #include "RUNTIME_MEM.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 struct Record_080b06c0 {
     u8 filler0[4];
@@ -41,15 +42,11 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 
 /* ☀️'s: copy a glyph's rows of bytes into a shop window cell, stopping at
    each row's first empty byte. */
-void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
+void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
 {
-    u8 *src = Shop_GlyphBytes + ((u32)arg0 << 5);
-    u32 offset = Shop_GlyphRowOffsets[arg2];
+    u8 *src = Shop_GlyphBytes + ((u32)digit << 5);
+    u8 *dst = tiles + Shop_GlyphRowOffsets[place] + 2;
     s32 count = 3;
-    u8 *dst;
-
-    asm volatile("" : "+l"(count)); /* FAKEMATCH: ⚓️ sets the count in the offset load's delay slot */
-    dst = (u8 *)((u32)arg1 + offset + 2);
 
     do {
         if (*src != 0) {
@@ -81,22 +78,22 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
     buf = Runtime_AllocateBlock(56, 0x400);
     sprite = 0;
-    Dma_Set(Shop_PriceTiles, buf, 0x84000040, (volatile u32 *)0x040000d4);
-    Shop_CopyGlyphs(value % 10, (s32)buf, 0);
+    Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
+    Shop_CopyGlyphs(value % 10, buf, 0);
     value = value / 10;
     if (value != 0) {
-        Shop_CopyGlyphs(value % 10, (s32)buf, 1);
+        Shop_CopyGlyphs(value % 10, buf, 1);
         value = value / 10;
         if (value != 0) {
-            Shop_CopyGlyphs(value % 10, (s32)buf, 2);
+            Shop_CopyGlyphs(value % 10, buf, 2);
             value = value / 10;
             if (value != 0) {
                 s32 last;
 
-                Shop_CopyGlyphs(value % 10, (s32)buf, 3);
+                Shop_CopyGlyphs(value % 10, buf, 3);
                 last = value / 10;
                 if (last != 0)
-                    Shop_CopyGlyphs(last % 10, (s32)buf, 4);
+                    Shop_CopyGlyphs(last % 10, buf, 4);
             }
         }
     }
@@ -128,8 +125,8 @@ void Shop_RestoreSceneTiles(s32 layer)
     u8 *work = Ram_HeapSlots->block_32;
     u8 *saved = work + 0xe00;
 
-    Dma_Set(saved, map + 0x222, 0x84000150, (volatile u32 *)0x040000d4);
-    Dma_Set(saved, work + 0x380, 0x840002a0, (volatile u32 *)0x040000d4);
+    Dma_Set(saved, map + 0x222, 0x84000150, REG_DMA3);
+    Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     Func_080c8368(layer, 1);
     Func_080c8380(16);

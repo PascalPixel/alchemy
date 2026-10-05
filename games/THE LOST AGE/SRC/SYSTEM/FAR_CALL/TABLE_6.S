@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08020228
+	.global Runtime_SetWorkTripleIfNonNegativeFar
 	.thumb_func
-Func_08020228:
+Runtime_SetWorkTripleIfNonNegativeFar:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegative
 	.global Func_08020230
 	.thumb_func

@@ -9,9 +9,9 @@
 	.thumb_func
 WaitFramesFar:
 	overlay_veneer WaitFrames
-	.global Func_080000c8
+	.global Scheduler_ResetTaskTableFar
 	.thumb_func
-Func_080000c8:
+Scheduler_ResetTaskTableFar:
 	overlay_veneer Scheduler_ResetTaskTable
 	.global Scheduler_AddOrUpdateCallbackFar
 	.thumb_func
@@ -21,17 +21,17 @@ Scheduler_AddOrUpdateCallbackFar:
 	.thumb_func
 Func_080000d8:
 	overlay_veneer Scheduler_RemoveCallback
-	.global Func_080000e0
+	.global Scheduler_EnableCallbacksFar
 	.thumb_func
-Func_080000e0:
+Scheduler_EnableCallbacksFar:
 	overlay_veneer Scheduler_EnableCallbacks
-	.global Func_080000e8
+	.global Scheduler_DisableCallbacksFar
 	.thumb_func
-Func_080000e8:
+Scheduler_DisableCallbacksFar:
 	overlay_veneer Scheduler_DisableCallbacks
-	.global Func_080000f0
+	.global Scheduler_RunCallbacksByKeyFar
 	.thumb_func
-Func_080000f0:
+Scheduler_RunCallbacksByKeyFar:
 	overlay_veneer Scheduler_RunCallbacksByKey
 	.global Func_080000f8
 	.thumb_func
@@ -45,9 +45,9 @@ ArcTan2Far:
 	.thumb_func
 Math_IntegerSqrtFar:
 	overlay_veneer Math_IntegerSqrt
-	.global Func_08000110
+	.global FixedSqrtFar
 	.thumb_func
-Func_08000110:
+FixedSqrtFar:
 	overlay_veneer FixedSqrt
 	.global Math_SineFar
 	.thumb_func
@@ -61,13 +61,13 @@ Math_CosineFar:
 	.thumb_func
 Func_08000128:
 	overlay_veneer Vector_AddPolarOffset
-	.global Func_08000130
+	.global Runtime_SetIrqHandlerFar
 	.thumb_func
-Func_08000130:
+Runtime_SetIrqHandlerFar:
 	overlay_veneer Runtime_SetIrqHandler
-	.global Func_08000138
+	.global Runtime_InitializeHeapFar
 	.thumb_func
-Func_08000138:
+Runtime_InitializeHeapFar:
 	overlay_veneer Runtime_InitializeHeap
 	.global Func_08000140
 	.thumb_func
@@ -81,13 +81,13 @@ Runtime_AllocateBlockFar:
 	.thumb_func
 Runtime_ReleaseHeapBlockFar:
 	overlay_veneer Runtime_ReleaseHeapBlock
-	.global Func_08000158
+	.global Runtime_GetRemainingIwramFar
 	.thumb_func
-Func_08000158:
+Runtime_GetRemainingIwramFar:
 	overlay_veneer Runtime_GetRemainingIwram
-	.global Func_08000160
+	.global Runtime_GetRemainingEwramFar
 	.thumb_func
-Func_08000160:
+Runtime_GetRemainingEwramFar:
 	overlay_veneer Runtime_GetRemainingEwram
 	.global Runtime_BumpAllocateFar
 	.thumb_func
@@ -101,29 +101,29 @@ Runtime_BumpAllocateAlternatePoolFar:
 	.thumb_func
 Sys_FreeFar:
 	overlay_veneer Sys_Free
-	.global Func_08000180
+	.global Runtime_WriteDebugTextTilesFar
 	.thumb_func
-Func_08000180:
+Runtime_WriteDebugTextTilesFar:
 	overlay_veneer Runtime_WriteDebugTextTiles
-	.global Func_08000188
+	.global Text_DrawHexRightAlignedFar
 	.thumb_func
-Func_08000188:
+Text_DrawHexRightAlignedFar:
 	overlay_veneer Text_DrawHexRightAligned
-	.global Func_08000190
+	.global Text_DrawSignedDecimalRightAlignedFar
 	.thumb_func
-Func_08000190:
+Text_DrawSignedDecimalRightAlignedFar:
 	overlay_veneer Text_DrawSignedDecimalRightAligned
 	.global Func_08000198
 	.thumb_func
 Func_08000198:
 	overlay_veneer Func_08014aa8
-	.global Func_080001a0
+	.global Resource_DecodeByteLzInRamFar
 	.thumb_func
-Func_080001a0:
+Resource_DecodeByteLzInRamFar:
 	overlay_veneer Resource_DecodeByteLzInRam
-	.global Func_080001a8
+	.global Resource_DecodeType01Far
 	.thumb_func
-Func_080001a8:
+Resource_DecodeType01Far:
 	overlay_veneer Resource_DecodeType01
 	.global Func_080001b0
 	.thumb_func
@@ -157,29 +157,29 @@ AffineMatrix_BuildForEffectFar:
 	.thumb_func
 Func_080001e8:
 	overlay_veneer Func_080140d8
-	.global Func_080001f0
+	.global Ui_LoadWindowGraphicsFar
 	.thumb_func
-Func_080001f0:
+Ui_LoadWindowGraphicsFar:
 	overlay_veneer Ui_LoadWindowGraphics
-	.global Func_080001f8
+	.global PaletteDma_LoadBlockFar
 	.thumb_func
-Func_080001f8:
+PaletteDma_LoadBlockFar:
 	overlay_veneer PaletteDma_LoadBlock
-	.global Func_08000200
+	.global Render_ResetTransformStateFar
 	.thumb_func
-Func_08000200:
+Render_ResetTransformStateFar:
 	overlay_veneer Render_ResetTransformState
 	.global Func_08000208
 	.thumb_func
 Func_08000208:
 	overlay_veneer Func_08014ee0
-	.global Func_08000210
+	.global Graphics_SaveTransferWorkOnceFar
 	.thumb_func
-Func_08000210:
+Graphics_SaveTransferWorkOnceFar:
 	overlay_veneer Graphics_SaveTransferWorkOnce
-	.global Func_08000218
+	.global Graphics_RestoreTransferWorkFar
 	.thumb_func
-Func_08000218:
+Graphics_RestoreTransferWorkFar:
 	overlay_veneer Graphics_RestoreTransferWork
 	.global Func_08000220
 	.thumb_func
@@ -189,9 +189,9 @@ Func_08000220:
 	.thumb_func
 SceneTransform_ApplyPitchFar:
 	overlay_veneer SceneTransform_ApplyPitch
-	.global Func_08000230
+	.global SceneTransform_ApplyYawFar
 	.thumb_func
-Func_08000230:
+SceneTransform_ApplyYawFar:
 	overlay_veneer SceneTransform_ApplyYaw
 	.global Func_08000238
 	.thumb_func
@@ -241,9 +241,9 @@ Runtime_ConstantZeroResultFar:
 	.thumb_func
 Resource_GetTableEntryFar:
 	overlay_veneer Resource_GetTableEntry
-	.global Func_08000298
+	.global Resource_ReservedNoOpFar
 	.thumb_func
-Func_08000298:
+Resource_ReservedNoOpFar:
 	overlay_veneer Resource_ReservedNoOp
 	.global Resource_LoadCodeFar
 	.thumb_func
@@ -301,57 +301,57 @@ Func_08000300:
 	.thumb_func
 Func_08000308:
 	overlay_veneer Func_08016348
-	.global Func_08000310
+	.global QueueIoWriteDelay1Far
 	.thumb_func
-Func_08000310:
+QueueIoWriteDelay1Far:
 	overlay_veneer QueueIoWriteDelay1
 	.global QueueIoWriteDelay2Far
 	.thumb_func
 QueueIoWriteDelay2Far:
 	overlay_veneer QueueIoWriteDelay2
-	.global Func_08000320
+	.global QueueIoWriteDelay3Far
 	.thumb_func
-Func_08000320:
+QueueIoWriteDelay3Far:
 	overlay_veneer QueueIoWriteDelay3
-	.global Func_08000328
+	.global QueueIoWriteDelay5Far
 	.thumb_func
-Func_08000328:
+QueueIoWriteDelay5Far:
 	overlay_veneer QueueIoWriteDelay5
-	.global Func_08000330
+	.global QueueIoWriteDelay6Far
 	.thumb_func
-Func_08000330:
+QueueIoWriteDelay6Far:
 	overlay_veneer QueueIoWriteDelay6
-	.global Func_08000338
+	.global QueueIoWriteDelay7Far
 	.thumb_func
-Func_08000338:
+QueueIoWriteDelay7Far:
 	overlay_veneer QueueIoWriteDelay7
-	.global Func_08000340
+	.global QueueIoWriteDelay9Far
 	.thumb_func
-Func_08000340:
+QueueIoWriteDelay9Far:
 	overlay_veneer QueueIoWriteDelay9
-	.global Func_08000348
+	.global QueueIoWriteDelay10Far
 	.thumb_func
-Func_08000348:
+QueueIoWriteDelay10Far:
 	overlay_veneer QueueIoWriteDelay10
-	.global Func_08000350
+	.global QueueIoWriteDelay11Far
 	.thumb_func
-Func_08000350:
+QueueIoWriteDelay11Far:
 	overlay_veneer QueueIoWriteDelay11
 	.global Runtime_SetMainState19Far
 	.thumb_func
 Runtime_SetMainState19Far:
 	overlay_veneer Runtime_SetMainState19
-	.global Func_08000360
+	.global Graphics_PrepareTransferAndRunFar
 	.thumb_func
-Func_08000360:
+Graphics_PrepareTransferAndRunFar:
 	overlay_veneer Graphics_PrepareTransferAndRun
-	.global Func_08000368
+	.global SerialRuntime_WaitForStatusMaskFar
 	.thumb_func
-Func_08000368:
+SerialRuntime_WaitForStatusMaskFar:
 	overlay_veneer SerialRuntime_WaitForStatusMask
-	.global Func_08000370
+	.global SerialRuntime_RemoveIrqHandlersFar
 	.thumb_func
-Func_08000370:
+SerialRuntime_RemoveIrqHandlersFar:
 	overlay_veneer SerialRuntime_RemoveIrqHandlers
 	.global Sound_LoadPresetParametersFar
 	.thumb_func
@@ -385,9 +385,9 @@ Func_080003a8:
 	.thumb_func
 Func_080003b0:
 	overlay_veneer Func_08016990
-	.global Func_080003b8
+	.global Scheduler_SetCallbackMaskFar
 	.thumb_func
-Func_080003b8:
+Scheduler_SetCallbackMaskFar:
 	overlay_veneer Scheduler_SetCallbackMask
 	.global Owner_GetStateFar
 	.thumb_func
@@ -433,9 +433,9 @@ GameFlag_GetNibbleFar:
 	.thumb_func
 Func_08000410:
 	overlay_veneer Func_08016dd0
-	.global Func_08000418
+	.global Scheduler_FindCallbackFar
 	.thumb_func
-Func_08000418:
+Scheduler_FindCallbackFar:
 	overlay_veneer Scheduler_FindCallback
 	.global Func_08000420
 	.thumb_func

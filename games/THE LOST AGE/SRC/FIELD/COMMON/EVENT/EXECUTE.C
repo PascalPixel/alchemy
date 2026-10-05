@@ -5,11 +5,11 @@
 
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-void Func_080dc410(s32 action, s32 flags);
-void Func_080dc62c(s32 actor, s32 target);
+void BattleFx_LoadActionEffectResources(s32 action, s32 flags);
+void BattleFx_SetupObjectPair(s32 actor, s32 target);
 void FieldEvent_RunTypeHandler(void);
-void Func_080dc7cc(void);
-void Func_080dc7e8(void);
+void EffectRuntime_StopCurrentObject(void);
+void BattleEffect_CleanupSceneObjects(void);
 
 /* Runs a packed action (id in the low ten bits, mode above it) with the
    pending events of its kind before and after the type handler. */
@@ -29,12 +29,12 @@ s32 EventRuntime_ExecutePackedAction(u32 packed)
         if (selector != -1 && (selector & 0x100))
             target = selector & 255;
     }
-    Func_080dc410(action, 0);
-    Func_080dc62c(EventRuntime_GetControlledOwner(), target);
+    BattleFx_LoadActionEffectResources(action, 0);
+    BattleFx_SetupObjectPair(EventRuntime_GetControlledOwner(), target);
     EventRuntime_RunPendingEvent(first, mode, target);
     FieldEvent_RunTypeHandler();
-    Func_080dc7cc();
+    EffectRuntime_StopCurrentObject();
     EventRuntime_RunPendingEvent(second, mode, target);
-    Func_080dc7e8();
+    BattleEffect_CleanupSceneObjects();
     return 0;
 }

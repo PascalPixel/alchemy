@@ -49,7 +49,7 @@ Sys_Free:
 	.global Func_02004aa8
 	.thumb_func
 Func_02004aa8:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -73,7 +73,7 @@ Func_02004ad0:
 	.global Func_02004ad8
 	.thumb_func
 Func_02004ad8:
-	overlay_veneer Func_080001f0
+	overlay_veneer Ui_LoadWindowGraphicsFar
 	.global Render_ProjectPoint
 	.thumb_func
 Render_ProjectPoint:
@@ -185,7 +185,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02004b78
 	.thumb_func
 Func_02004b78:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -445,11 +445,11 @@ Func_02004d38:
 	.global Func_02004d40
 	.thumb_func
 Func_02004d40:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02004d48
 	.thumb_func
 Func_02004d48:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02004d50
 	.thumb_func
 Func_02004d50:

@@ -61,7 +61,7 @@ Func_0200108c:
 	.global Func_02001094
 	.thumb_func
 Func_02001094:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -101,7 +101,7 @@ Func_020010ac:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -181,7 +181,7 @@ Object_AttachWorkTargetToObject:
 	.global Func_02001134
 	.thumb_func
 Func_02001134:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_0200113c
 	.thumb_func
 Func_0200113c:

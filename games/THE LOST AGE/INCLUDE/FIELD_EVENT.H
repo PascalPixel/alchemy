@@ -35,7 +35,8 @@ struct FieldActor {
     s32 target_z;
     u8 unknown_44[0x0c];
     struct FieldSprite *sprite;
-    u8 unknown_54 : 4;
+    /* What the sprite field holds: 1 for a field sprite, 0 for none. */
+    u8 animation_kind : 4;
     u8 unknown_54_high : 4;
     /* Keeps the actor on the terrain height and lets it fall; cleared to
        move it freely. */

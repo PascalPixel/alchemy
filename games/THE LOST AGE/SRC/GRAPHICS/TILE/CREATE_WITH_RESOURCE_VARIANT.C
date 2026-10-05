@@ -51,18 +51,14 @@ void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct Battle
    output from it; ☀️ passes the tiles' address where ⚓️ passes the resource. */
 s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
 {
-  s32 slot;
-  unsigned char copy_mode;
-  int resource_mode;
-  s32 icon;
-  icon = 0;
-  icon = 0;
-  slot = Resource_FindFreeEntry();
-  resource_mode = 0x80;
-  if (slot != 0)
-  {
-    VramBlock_LoadResourceFar(slot, copy_mode = resource_mode, (s32)&ResourceId_UiIconTiles);
-    icon = (s32)RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
-  }
-  return icon;
+    s32 slot;
+    s32 icon;
+
+    icon = 0;
+    slot = Resource_FindFreeEntry();
+    if (slot != 0) {
+        VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+        icon = (s32)RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
+    }
+    return icon;
 }

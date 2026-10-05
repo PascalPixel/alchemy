@@ -1,14 +1,7 @@
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
 #include "RUNTIME_INTERFACES.H"
-
-/* ⚓️'s class table rows: the three effects a class is weak to lie at 0x50. */
-struct ClassDefinition {
-    u8 unknown_00[0x50];
-    u8 weak_effects[4];
-};
-
-struct ClassDefinition *Owner_GetRecordStride84(s32 index);
+#include "OWNER_STATE.H"
 
 extern const u16 Battle_Effect90Classes[47];
 extern const u16 Battle_Effect91Classes[29];

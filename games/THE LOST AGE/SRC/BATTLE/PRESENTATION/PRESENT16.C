@@ -4,7 +4,6 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_PRESENTATION.H"
 
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 extern char MsgActorDefends;
 extern char MsgCannotEscape;
@@ -46,15 +45,15 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
 {
     s32 object_id;
     s32 result;
-    void *object;
+    struct BattleUnit *unit;
 
     object_id = *script;
-    object = Owner_GetState(object_id);
+    unit = Owner_GetState(object_id);
     if (BattleObject_IsValidId(object_id) < 0) {
         return -1;
     }
     result = 0;
-    if (FIELD(object, s16 *, 0x38) <= 0) {
+    if (unit->hp <= 0) {
         return result;
     }
     UiWork_ClearValueNameTablesFar();

@@ -2,6 +2,7 @@
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 
 extern void *Resource_DirectoryTable[];
 
@@ -83,7 +84,7 @@ void Resource_LoadCode(u32 index, void *destination)
         size = (u32)Resource_PatchThumbBranchCodeSize;
     } while (0);
     routine = (void (*)(void *, s32))Runtime_BumpAllocate(size);
-    Dma_Set(Resource_PatchThumbBranchCode, routine, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set(Resource_PatchThumbBranchCode, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(destination, end);
     Sys_Free(routine);
 }

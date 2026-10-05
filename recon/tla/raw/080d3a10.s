@@ -44,7 +44,7 @@ Func_080d3a10:
 	ldrb r0, [r3]
 	mov r10, r3
 	movs r3, #255
-	bl Func_080202c0
+	bl SetMapCellCollisionFar
 	movs r0, #128
 	lsls r0, r0, #13
 	mov r1, r8
@@ -55,7 +55,7 @@ Func_080d3a10:
 	movs r3, #255
 	ldr r1, [r5]
 	ldr r2, [r5, #8]
-	bl Func_080202c0
+	bl SetMapCellCollisionFar
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r8, r3

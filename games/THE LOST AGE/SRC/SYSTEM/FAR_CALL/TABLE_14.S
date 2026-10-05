@@ -29,25 +29,25 @@ UiWork_ClearValueNameTablesFar:
 	.thumb_func
 UiText_DrawQuantity:
 	overlay_veneer UiWork_PushValueSlot
-	.global Func_08038128
+	.global UiWindow_CreateWithLayoutBoundsFar
 	.thumb_func
-Func_08038128:
+UiWindow_CreateWithLayoutBoundsFar:
 	overlay_veneer UiWindow_CreateWithLayoutBounds
 	.global UiWindow_DrawPartyStatusContentsFar
 	.thumb_func
 UiWindow_DrawPartyStatusContentsFar:
 	overlay_veneer UiWindow_DrawPartyStatusContents
-	.global Func_08038138
+	.global UiWork_FinalizeAndReleaseBlock16Far
 	.thumb_func
-Func_08038138:
+UiWork_FinalizeAndReleaseBlock16Far:
 	overlay_veneer UiWork_FinalizeAndReleaseBlock16
 	.global UiWork_FinalizePendingCoreFar
 	.thumb_func
 UiWork_FinalizePendingCoreFar:
 	overlay_veneer UiWork_FinalizePendingCore
-	.global Func_08038148
+	.global UiWork_DrainPendingFar
 	.thumb_func
-Func_08038148:
+UiWork_DrainPendingFar:
 	overlay_veneer UiWork_DrainPending
 	.global Func_08038150
 	.thumb_func
@@ -73,9 +73,9 @@ Resource_ScheduleOwnerResetFar:
 	.thumb_func
 Menu_OpenSelectionWindowFar:
 	overlay_veneer Menu_OpenSelectionWindow
-	.global Func_08038180
+	.global Resource_ResetOwnerEntriesFar
 	.thumb_func
-Func_08038180:
+Resource_ResetOwnerEntriesFar:
 	overlay_veneer Resource_ResetOwnerEntries
 	.global Func_08038188
 	.thumb_func

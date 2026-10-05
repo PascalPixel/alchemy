@@ -17,7 +17,7 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
 
     object = ObjectTable_Get(object_id);
     if (object != NULL) {
-        object_flags = &object->flags;
+        object_flags = &object->motion_flags;
         updated_flags = *object_flags | 2;
         vertical_velocity = speed << 16;
         *object_flags = updated_flags;

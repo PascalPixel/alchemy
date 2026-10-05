@@ -1,7 +1,10 @@
 #include "TYPES.H"
-extern u8 Data_0804f124[];
-extern u8 Data_0804eb58[];
+
+extern u8 UiIcon_ItemIconPointersEnd[];
+extern u8 UiIcon_ItemIconPointers[];
+
+/* The number of item icons: one word pointer each up to the table's end. */
 s32 Ui_CountIconTableEntries(void)
 {
-    return (s32)((u32)Data_0804f124 - (u32)Data_0804eb58) >> 2;
+    return (UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers) >> 2;
 }

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 style);
 
@@ -12,8 +13,8 @@ void Palette_LightenBankHighlight(s32 bank)
     u32 green;
     u32 blue;
 
-    Dma_Set((const void *)0x050001e0, palette, 0x80000010, (volatile u32 *)0x040000d4);
-    Dma_Set((const void *)0x050001e0, palette, 0x84000008, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)0x050001e0, palette, 0x80000010, REG_DMA3);
+    Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
     blue = palette[4] >> 10;
     green = (palette[4] >> 5) & 31;
     red = palette[4] & 31;

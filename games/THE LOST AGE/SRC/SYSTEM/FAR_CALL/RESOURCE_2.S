@@ -9,13 +9,13 @@
 	.thumb_func
 ResourceMetadata_RegisterFar:
 	overlay_veneer ResourceMetadata_Register
-	.global Func_08020060
+	.global ResourceMetadata_UnregisterFar
 	.thumb_func
-Func_08020060:
+ResourceMetadata_UnregisterFar:
 	overlay_veneer ResourceMetadata_Unregister
-	.global Func_08020068
+	.global ResourceMetadata_ReleaseSlotFar
 	.thumb_func
-Func_08020068:
+ResourceMetadata_ReleaseSlotFar:
 	overlay_veneer ResourceMetadata_ReleaseSlot
 	.global ResourceMetadata_ClearRecordFar
 	.thumb_func

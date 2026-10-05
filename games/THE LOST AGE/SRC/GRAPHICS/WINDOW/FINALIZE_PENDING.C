@@ -26,8 +26,7 @@ void UiWork_FinalizePendingCore(void)
         if (work != NULL && work->pending_value == 0
             && work->flags != 0
             && work->state != 0) {
-            UiWork_Finalize((struct UiWindow *)work,
-                (s32)(u16)(2 & work->flags));
+            UiWork_Finalize((struct UiWindow *)work, work->flags & 2);
         }
         slot_index++;
         slot++;

@@ -16,7 +16,7 @@ Func_080d2cc4:
 	bl GameFlag_ClearBit
 	bl EventRuntime_End
 	movs r0, #136
-	bl Func_080ad2e8
+	bl Party_FindOwnerWithActionFar
 	movs r1, #1
 	negs r1, r1
 	cmp r0, r1

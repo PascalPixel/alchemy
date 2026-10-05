@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811a5fc
+	.global BattleMotion_ReleaseObjectSlotByValue
 	.thumb_func
-Func_0811a5fc:
+BattleMotion_ReleaseObjectSlotByValue:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

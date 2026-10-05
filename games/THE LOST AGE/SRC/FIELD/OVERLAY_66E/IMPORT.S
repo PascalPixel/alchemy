@@ -61,7 +61,7 @@ Party_AdjustSixDigitCounterA:
 	.global Func_020010d0
 	.thumb_func
 Func_020010d0:
-	overlay_veneer Func_080ad2e8
+	overlay_veneer Party_FindOwnerWithActionFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:

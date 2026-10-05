@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803d9bc
+	.global UiIcon_BuildAbilityIconTiles
 	.thumb_func
-Func_0803d9bc:
+UiIcon_BuildAbilityIconTiles:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

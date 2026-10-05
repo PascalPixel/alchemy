@@ -22,10 +22,10 @@ Runtime_BumpAllocateAlternatePool:
 	.thumb_func
 Sys_Free:
 	overlay_veneer Sys_FreeFar
-	.global Func_02000594
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02000594:
-	overlay_veneer Func_080001a8
+Resource_DecodeType01:
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -45,7 +45,7 @@ Resource_GetTableEntry:
 	.global Func_020005bc
 	.thumb_func
 Func_020005bc:
-	overlay_veneer Func_08000298
+	overlay_veneer Resource_ReservedNoOpFar
 	.global Blend_SetDarkenTarget16
 	.thumb_func
 Blend_SetDarkenTarget16:

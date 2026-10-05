@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08022c98
+	.global AnimationObject_Allocate
 	.thumb_func
-Func_08022c98:
+AnimationObject_Allocate:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

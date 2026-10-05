@@ -40,7 +40,9 @@ struct UiRenderWork {
     u16 outline;
     u16 colour;
     u16 entries[UI_TEXT_ENTRY_COUNT];
-    u16 unknown_before_count;
+    /* How far the pen moves right after each character, as line_spacing
+       moves it down after each line. */
+    u16 glyph_spacing;
     u16 count;
     u16 unknown_after_count;
     /* The glyph resource the text tiles come from, and their VRAM entry. */

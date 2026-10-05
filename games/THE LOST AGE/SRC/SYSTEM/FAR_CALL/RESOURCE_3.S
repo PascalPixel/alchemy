@@ -9,17 +9,17 @@
 	.thumb_func
 ResourceMetadata_SumCommandLengthsFar:
 	overlay_veneer ResourceMetadata_SumCommandLengths
-	.global Func_080202b0
+	.global GetWorldMapTerrainBehaviorFar
 	.thumb_func
-Func_080202b0:
+GetWorldMapTerrainBehaviorFar:
 	overlay_veneer GetWorldMapTerrainBehavior
 	.global ResourceSlot_LoadFar
 	.thumb_func
 ResourceSlot_LoadFar:
 	overlay_veneer ResourceSlot_Load
-	.global Func_080202c0
+	.global SetMapCellCollisionFar
 	.thumb_func
-Func_080202c0:
+SetMapCellCollisionFar:
 	overlay_veneer SetMapCellCollision
 	.global Animation_ApplyChildValueFar
 	.thumb_func
@@ -37,9 +37,9 @@ Map_EnableUpdateCallbackFar:
 	.thumb_func
 Map_DisableUpdateCallbackFar:
 	overlay_veneer Func_0802cd70
-	.global Func_080202e8
+	.global ScriptObject_FindOverlappingEntryFar
 	.thumb_func
-Func_080202e8:
+ScriptObject_FindOverlappingEntryFar:
 	overlay_veneer ScriptObject_FindOverlappingEntry
 	.global Func_080202f0
 	.thumb_func

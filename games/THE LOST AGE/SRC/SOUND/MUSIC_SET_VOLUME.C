@@ -5,7 +5,7 @@ void Audio_ResumeAllPlayers(void);
 
 void MusicCommand_SetVolume(s16 volume)
 {
-    MusicPlayer_SetVolume(&gMusicPlayerBgm, 0xff, (u16)volume);
+    MusicPlayer_SetVolume(&gMusicPlayerBgm, 0xff, volume);
     gMusicVolumeTarget = volume;
     gMusicVolume = volume;
 }

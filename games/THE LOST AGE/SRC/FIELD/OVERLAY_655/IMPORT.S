@@ -93,7 +93,7 @@ Func_02003bd8:
 	.global Func_02003be0
 	.thumb_func
 Func_02003be0:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -113,7 +113,7 @@ Func_02003bf0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -125,7 +125,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02003c00
 	.thumb_func
 Func_02003c00:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02003c08
 	.thumb_func
 Func_02003c08:
@@ -253,7 +253,7 @@ Func_02003cf8:
 	.global Func_02003d00
 	.thumb_func
 Func_02003d00:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02003d08
 	.thumb_func
 Func_02003d08:

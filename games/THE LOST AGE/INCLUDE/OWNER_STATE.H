@@ -57,6 +57,16 @@ struct TradeOfferState {
     u32 count;
 };
 
+/* A row of the class table: the three effects a class is weak to lie at
+   0x50. */
+struct ClassDefinition {
+    u8 unknown_00[0x50];
+    u8 weak_effects[4];
+};
+
+extern struct ClassDefinition Class_DefinitionTable[];
+
+LAYOUT_SIZE_GUARD(ClassDefinition_Size, struct ClassDefinition, 0x54);
 LAYOUT_OFFSET_GUARD(OwnerDjinn_Owned, struct OwnerDjinnState, flags.banks.owned, 0xf8);
 LAYOUT_OFFSET_GUARD(OwnerDjinn_Active, struct OwnerDjinnState, flags.banks.active, 0x108);
 LAYOUT_OFFSET_GUARD(OwnerDjinn_OwnedCounts, struct OwnerDjinnState, counts.banks.owned, 0x118);
@@ -67,6 +77,7 @@ LAYOUT_OFFSET_GUARD(TradeOfferState_Count, struct TradeOfferState, count, 0x128)
 
 void *Owner_GetState(s32 owner);
 void Owner_RefreshDerivedData(s32 owner);
+struct ClassDefinition *Owner_GetRecordStride84(s32 class_id);
 s32 Owner_SumDjinnCounts(s32 owner, s32 element);
 
 const u16 *Djinn_GetDefinition(u32 element, u32 djinn);

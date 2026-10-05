@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_081c0040
+	.global Audio_SetWorkPairAFar
 	.thumb_func
-Func_081c0040:
+Audio_SetWorkPairAFar:
 	overlay_veneer Audio_SetWorkPairA
 	.global Audio_Check
 	.thumb_func
@@ -17,13 +17,13 @@ Audio_Check:
 	.thumb_func
 Func_081c0050:
 	overlay_veneer Func_081c1014
-	.global Func_081c0058
+	.global AudioCommand_StopAllPlayersFar
 	.thumb_func
-Func_081c0058:
+AudioCommand_StopAllPlayersFar:
 	overlay_veneer AudioCommand_StopAllPlayers
-	.global Func_081c0060
+	.global AudioCommand_ResumeAllPlayersFar
 	.thumb_func
-Func_081c0060:
+AudioCommand_ResumeAllPlayersFar:
 	overlay_veneer AudioCommand_ResumeAllPlayers
 	.global AudioCommand_UpdateToggleMaskFar
 	.thumb_func

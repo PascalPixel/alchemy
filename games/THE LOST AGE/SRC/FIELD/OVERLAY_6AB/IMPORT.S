@@ -145,7 +145,7 @@ Func_0200420c:
 	.global Func_02004214
 	.thumb_func
 Func_02004214:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -205,7 +205,7 @@ Func_02004234:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -225,7 +225,7 @@ Func_0200423c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -265,7 +265,7 @@ Animation_SetStateFlags:
 	.global Func_02004264
 	.thumb_func
 Func_02004264:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_0200426c
 	.thumb_func
 Func_0200426c:
@@ -277,7 +277,7 @@ Animation_ApplyChildValues:
 	.global Func_0200427c
 	.thumb_func
 Func_0200427c:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global Func_02004284
 	.thumb_func
 Func_02004284:
@@ -473,7 +473,7 @@ Func_020043dc:
 	.global Func_020043e4
 	.thumb_func
 Func_020043e4:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

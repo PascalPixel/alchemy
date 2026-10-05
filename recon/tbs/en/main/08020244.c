@@ -58,6 +58,19 @@
  * constant-first order would need the add's operands reloaded swapped.
  * The Japanese extent is 0x5f8 bytes against 0x580 in the other five
  * editions.
+ *
+ * 2026-10-05 sun deep finisher 13: 98 to 0, plain. The area name's base
+ * is the message symbol MsgDebugEntryName (2459 in English, 2516 in
+ * Japanese, 3039 in the other four: the RENDER_RESOURCE_BASE values), the
+ * way MENU11.C draws area names, not a numeric constant. A constant is
+ * forced into a pseudo inside the loop and then folded back into the add
+ * by loop.c's single-use replacement, leaving it to reload (one reload
+ * more); a symbol stays in its own register (the ROM's r3, loaded before
+ * the ldrh), so reload's round robin lines up with the ROM from there on.
+ * Measured: a volatile asm keeping the constant in a pseudo gives 4 (only
+ * the barrier's reordering), the symbol 0. The four placeholder messages
+ * are written as u8 arrays like SAVE.C's, and the clear as
+ * 0x85000000 | (0xa70 / 4) through REG_DMA3, all still 0.
  */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -68,13 +81,15 @@
 #include "GAME_STATE.H"
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
+#include "IO_REG.H"
 
 extern volatile s32 gKeyState;
 extern volatile s32 gKeysRepeat;
-extern char MsgSaveNoData;
-extern char MsgSaveContinue;
-extern char MsgSaveNotCleared;
-extern char MsgSaveCorrupted;
+extern u8 MsgSaveNoData[];
+extern u8 MsgSaveContinue[];
+extern u8 MsgSaveNotCleared[];
+extern u8 MsgSaveCorrupted[];
+extern u8 MsgDebugEntryName[];
 
 u32 Runtime_GetBuildStampTimeFar(void);
 void WaitFrames(s32 frames);
@@ -167,23 +182,23 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     }
 
     zero = 0;
-    Dma_Set(&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
     Scheduler_ScheduleCallbackAAfterFrames();
     list = UiWindow_Create(1, 2, 28, 7, 2);
     summary = save->summary;
     y = 0;
     for (i = 0; i < 3; i++, y += 16, summary++) {
         if (summary->level == 0) {
-            UiText_DrawResource((s32)&MsgSaveNoData, list, 10, y);
+            UiText_DrawResource((s32)MsgSaveNoData, list, 10, y);
         } else if (summary->frames < stamp) {
-            UiText_DrawResource((s32)&MsgSaveContinue, list, 10, y);
+            UiText_DrawResource((s32)MsgSaveContinue, list, 10, y);
         } else if (summary->play_time != *(u32 *)summary->unknown_38) {
-            UiText_DrawResource((s32)&MsgSaveCorrupted, list, 10, y);
+            UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, y);
         } else if (mode == 5 && (s8)summary->send_flag == 0) {
-            UiText_DrawResource((s32)&MsgSaveNotCleared, list, 10, y);
+            UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, y);
         } else {
             UiText_DrawString(summary->name, list, 12, y);
-            UiText_DrawResource(summary->area + RENDER_RESOURCE_BASE, list, 62, y);
+            UiText_DrawResource(summary->area + (s32)MsgDebugEntryName, list, 62, y);
             render->dirty = 1;
         }
     }

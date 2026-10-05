@@ -1,4 +1,10 @@
-/* 2026-10-05 deep finisher 1: combined diff 34 (was 50), no device.
+/* 2026-10-05 deep finisher 1, later: MATCH (differ 0). Phase 5's head is
+ * declarations with initializers, the arrow's base taken into its own
+ * u8 * before the frame offset is added: entry, arrow, tiles, display,
+ * context, viewport, x = 0. Loading the Tiles symbol first keeps r1 busy
+ * across the frame arithmetic, which puts every later reload on the
+ * native round robin (with context before viewport; the reverse is 10).
+ * 2026-10-05 deep finisher 1: combined diff 34 (was 50), no device.
  * (1) Phase 11: the native's 255 is set after the records cursor's
  * sp+12, so the source had a pointer cursor set before the 0xff:
  * "for (n = 0, slot = records, none = 0xff; ...) *slot++ = record" (48).
@@ -284,19 +290,14 @@ void BattleEvent_Playback(void)
                 state->timer = gFrameTick;
             }
         } else if (state->phase == 5) {
-            struct BattleDisplayWork *display;
-            struct BattlePromptSprite *entry;
-            struct UiWindow *context;
-            struct BattleDisplayOffset *viewport;
-            s32 tiles;
-            s32 x;
+            struct BattlePromptSprite *entry = &state->display_entry;
+            u8 *arrow = BattlePres_AdvanceArrowTiles;
+            s32 tiles = (s32)arrow + ((gFrameCount >> 2) & 7) * 128;
+            struct BattleDisplayWork *display = gBattleDisplayWork;
+            struct UiWindow *context = display->window;
+            struct BattleDisplayOffset *viewport = display->offset;
+            s32 x = 0;
 
-            entry = &state->display_entry;
-            display = gBattleDisplayWork;
-            viewport = display->offset;
-            tiles = (s32)BattlePres_AdvanceArrowTiles + ((gFrameCount >> 2) & 7) * 128;
-            context = display->window;
-            x = 0;
             if (state->display_source == -1)
                 state->display_source = work->prompt_slot;
             UiWork_ClearValueNameTablesFar();

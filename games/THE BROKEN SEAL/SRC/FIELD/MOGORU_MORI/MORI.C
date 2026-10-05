@@ -428,7 +428,7 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunStepFD4WithActor181(s32 a)
+void MogoruMori_AwardHiddenNut(s32 a)
 {
     Engine_EventBegin();
     Engine_ActorSetPosition(16, 0, 0);

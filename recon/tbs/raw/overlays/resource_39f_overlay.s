@@ -822,7 +822,7 @@ gMogoruMoriEvents1:
 	.4byte SceneActor_RunActorTwelveThreeWaypointMotion
 	.4byte 0x00009415
 	.4byte 0x0fd40010
-	.4byte FieldScene_RunStepFD4WithActor181
+	.4byte MogoruMori_AwardHiddenNut
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

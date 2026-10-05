@@ -76,7 +76,10 @@ struct HeapSlots {
     void *block_32;
     void *unknown_84[11];
     struct BattlePresentationTransition *transition_work;
-    void *unknown_b4[6];
+    /* The battle canvas's pixel map: for each pixel of a 64-wide half, its
+       byte in the 8bpp tiles of battle_fx_work[1]. */
+    u16 *canvas_map;
+    void *unknown_b8[5];
     /* The serial link runtime's work. */
     void *serial_work;
     void *unknown_d0[3];

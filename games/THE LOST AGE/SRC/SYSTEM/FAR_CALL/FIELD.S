@@ -60,19 +60,51 @@ Func_080c87c0:
 	.global Func_080c87c8
 	.thumb_func
 Func_080c87c8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_StepVector2
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_StepVector2
+.else
 	overlay_veneer Func_080eb01c
+.endif
+.endif
 	.global Func_080c87d0
 	.thumb_func
 Func_080c87d0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_StepVector3
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_StepVector3
+.else
 	overlay_veneer Func_080eb298
+.endif
+.endif
 	.global Func_080c87d8
 	.thumb_func
 Func_080c87d8:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080eb2c8
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080eb2c8
+.else
+	overlay_veneer BattleFx_StepVector2
+.endif
+.endif
 	.global Func_080c87e0
 	.thumb_func
 Func_080c87e0:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080eb2d0
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080eb2d0
+.else
+	overlay_veneer BattleFx_StepVector3
+.endif
+.endif
 	.global Func_080c87e8
 	.thumb_func
 Func_080c87e8:

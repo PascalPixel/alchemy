@@ -174,6 +174,8 @@ pub(crate) fn git_log(root: &Path, since: Option<&str>) -> Result<String, String
     command.args([
         "log",
         "--all",
+        // A merge repeats its branch's commits and names no model of its own.
+        "--no-merges",
         &format!("--format={LOG}"),
         "--date=format:%Y-%m-%d",
     ]);

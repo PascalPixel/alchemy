@@ -1,3 +1,51 @@
+/* NONMATCHING (Japanese edition only, id gate): TorebiIzumi_RunSpringGame.
+ * 2026-10-05 sun deep finisher 18. This body matches the Japanese listing
+ * instruction for instruction (an opcode, register and offset compare of
+ * the .ifeq EDITION_INTERNATIONAL body of resource_3b7_overlay.s, 290 of
+ * 290, branch and pool offsets included), but the build's id gate refuses
+ * it: the counter word is written text + 2, loop.c hoists it and reload
+ * rematerializes it from its REG_EQUIV as the pool word MsgTorebiCoins + 2
+ * (the same 4052 as MsgTorebiCounterMarker; O3 wants the id whole).
+ * What the native needed, each measured:
+ *  - the menu is a for (;;) loop that runs on through the throw window, the
+ *    key loop and UiWork_Finalize and ends with break; the retries are
+ *    continue. loop.c moves the key loop's A-button exit block to the
+ *    nearest barrier before its target at the target's loop level; with
+ *    the target inside the menu loop that is the barrier after the retry's
+ *    back jump, as the native has it (the goto loop of the localized
+ *    editions gets it the same way at the outer level, but a goto loop has
+ *    no loop.c hoisting). With the loop ending before UiWork_Finalize: 72;
+ *    with the whole payout inside it the roll loop changes (55);
+ *  - text and state are assigned at the loop top and hoisted by loop.c in
+ *    that order (native order Throw, Coins, gCell); text assigned before
+ *    the loop lets GCSE PRE hoist text + 1 too;
+ *  - the throw window's text lives in result, a pseudo already global, so
+ *    result + 1 goes straight into r0 (a local toss variable is tied to
+ *    the sum: adds r5, #1; sharing text keeps the toss in r9);
+ *  - global allocation of the high registers goes 1st r8, 2nd r10, 3rd r9,
+ *    4th r11 (pass 0 reuses sl), so the priority order must be choice,
+ *    message, text, state, and the counter word last (rematerialized).
+ *    Refs/live: message 9/174, text 8/164 (the 8th is the hoisted
+ *    text + 2), state 8/194, counter 7/160;
+ *  - the halving: w pinned to r0 and an empty asm copying state into it
+ *    ("=r"(w) : "0"(state)) stops GCSE PRE's reuse of the roll loop's
+ *    state + 1 with one state reference instead of the localized "+r"
+ *    device's two (with those two state outranks text: o8 form, 26), and
+ *    the pin keeps w (8 refs, so it outranks the halved value) out of r2.
+ *    Without the pin: 14 (w r2, value r0); a separate copy t: 38 (t in r3
+ *    and a second spill register, r2, in the reload rotation).
+ * With the counter word as (s32)MsgTorebiCounterMarker the gate passes but
+ * text has 7 refs (.085) and loses to state (.138) and the counter (.0875):
+ * 20 (state r9, text rematerialized, counter fp). Tried and not matching:
+ * the counter hoisted first through a mark variable (18: text then beats
+ * the counter but not state), mark set before the loop (18), text also set
+ * before the loop (the earlier set is dead: 20), text pinned to r9 (loop.c
+ * leaves the Coins load in the loop: 8; set before the loop PRE spills
+ * text + 1: 21), a "+r"(message) device with an "r"(text) use (text 13
+ * refs outranks message: 40, 50), "+r"(text) in the loop (54), text++
+ * (67). The counter word needs one more reference to text before the loop
+ * than the whole id gives, or the gate's leave for that addend.
+ * The earlier Japanese history follows. */
 /* NONMATCHING (Japanese edition only): TorebiIzumi_RunSpringGame.
  * 2026-10-05 sun deep finisher 7: the localized editions are adopted in
  * IZUMI2.C (three tagged S2 devices; the third, slot pinned to r1 with a
@@ -157,9 +205,6 @@ s32 TorebiIzumi_RunSpringGame(void)
     Event_Begin();
     Battle_ResetEffectCounter();
     message = (s32)MsgTorebiThrow;
-    /* The halving device below raises state above message in priority. */
-    /* FAKEMATCH: keeps message in r9 and state in fp, as the native does. */
-    __asm__("" : "+r"(message));
     for (;;) {
         text = (s32)MsgTorebiCoins;
         state = &gGameState;
@@ -168,18 +213,12 @@ s32 TorebiIzumi_RunSpringGame(void)
         Event_SetMessage(message);
         Event_OpenMessage(-1, 0);
         window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
-      {
         UiText_DrawCharacterAtOffset(text, window, 0, 0);
         UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
-#if !EDITION_INTERNATIONAL
-        UiText_DrawCharacterAtOffset((s32)MsgTorebiCounterMarker, window, 104, 0);
-#endif
+        UiText_DrawCharacterAtOffset(text + 2, window, 104, 0);
         UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
         UiText_DrawNumberInWindow(tickets, 6, window, NUMBER_X, 8);
-#if !EDITION_INTERNATIONAL
-        UiText_DrawCharacterAtOffset((s32)MsgTorebiCounterMarker, window, 104, 8);
-#endif
-      }
+        UiText_DrawCharacterAtOffset(text + 2, window, 104, 8);
         choice = Menu_SelectEntry20To21(choice);
         UiWork_Finalize(window, 2);
         UiWork_FinalizePendingCore();
@@ -187,56 +226,49 @@ s32 TorebiIzumi_RunSpringGame(void)
             goto end;
         }
         if (choice == 0) {
-            if (coins != 0) {
-                goto play;
+            if (coins == 0) {
+                Event_SetMessage(message + 1);
+                Event_ShowMessage(-1, 0);
+                Task_Wait(1);
+                continue;
             }
-            Event_SetMessage(message + 1);
-            Event_ShowMessage(-1, 0);
+        } else if (choice == 1) {
+            if (tickets == 0) {
+                Event_SetMessage(message + 2);
+                Event_ShowMessage(-1, 0);
+                Task_Wait(1);
+                continue;
+            }
+            if (PartyInventory_CountFreeSlots() == 0) {
+                Event_SetMessage(message + 4);
+                Event_OpenMessage(-1, 0);
+                if (Event_ChooseYesNo(0, 0) != 0) {
+                    goto end;
+                }
+            }
+        }
+        window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
+        result = (s32)MsgTorebiToss;
+        UiText_DrawCharacterAtOffset(result, window, 0, 0);
+        UiText_DrawCharacterAtOffset(result + 1, window, 0, 8);
+        Task_Wait(5);
+        Audio_PlayCue(116);
+        for (;;) {
+            if (gKeyState & KEY_A) {
+                Audio_PlayCue(112);
+                result = 0;
+                break;
+            }
+            if (gKeyState & KEY_B) {
+                Audio_PlayCue(113);
+                result = -1;
+                break;
+            }
             Task_Wait(1);
-            continue;
         }
-        if (choice != 1) {
-            goto play;
-        }
-        if (tickets != 0) {
-            goto room;
-        }
-        Event_SetMessage(message + 2);
-        Event_ShowMessage(-1, 0);
-        Task_Wait(1);
+        UiWork_Finalize(window, 2);
+        break;
     }
-room:
-    if (PartyInventory_CountFreeSlots() == 0) {
-        Event_SetMessage(message + 4);
-        Event_OpenMessage(-1, 0);
-        if (Event_ChooseYesNo(0, 0) != 0) {
-            goto end;
-        }
-    }
-play:
-    window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
-    {
-        text = (s32)MsgTorebiToss;
-
-        UiText_DrawCharacterAtOffset(text, window, 0, 0);
-        UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
-    }
-    Task_Wait(5);
-    Audio_PlayCue(116);
-    for (;;) {
-        if (gKeyState & KEY_A) {
-            Audio_PlayCue(112);
-            result = 0;
-            break;
-        }
-        if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
-            result = -1;
-            break;
-        }
-        Task_Wait(1);
-    }
-    UiWork_Finalize(window, 2);
     if (result == cancel) {
         goto end;
     }
@@ -278,16 +310,17 @@ play:
             i = 14;
         }
         TorebiIzumi_RevealPrize(Data_02001fd0[i]);
-        /* Without it GCSE PRE reuses the roll loop's state + 1 from r5. */
-        /* FAKEMATCH: the native recomputes state + 1 into r0 after the call. */
-        __asm__("" : "+r"(state));
         {
-        /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. */
-        register s32 slot asm("r1") = i + 284;
-        s8 *w = (s8 *)state + 1;
-        if (w[slot] > 1) {
-            w[slot] /= 2;
-        }
+            /* FAKEMATCH: keeps state + 1 in r0 as the native does. */
+            register s8 *w asm("r0");
+            s32 slot = i + 284;
+
+            /* FAKEMATCH: the native recomputes state + 1 after the call. */
+            __asm__("" : "=r"(w) : "0"(state));
+            w++;
+            if (w[slot] > 1) {
+                w[slot] /= 2;
+            }
         }
     }
 end:

@@ -3,7 +3,7 @@
 /*
  * Draft, not exact.
  *
- * 2026-10-05 deep finisher 20: alchemy diff 969 -> 143 (1605 listing
+ * 2026-10-05 deep finisher 20: alchemy diff 969 -> 113 (1605 listing
  * instructions, 1600 here).
  *   - The blitter routines are read as gWorkSlot[46] and [47] from
  *     HEAP_STATE.H, so the slot address is formed as gWorkSlot + 184 the
@@ -39,9 +39,12 @@
  *     function line up with the native: 155.
  *   - shots * stagger in total and i * shots + j for the shot index in
  *     both loops, the operand orders the native multiplies in: 143.
+ *   - index advances in the shot loop header, j++, index++: its biv then
+ *     comes before j, as the native orders the shot loop spill slots: 113.
  * Remaining: the side test arms (above); the spill slots of the frame
- * loop hoists (camera + 12 at sp+48 in the native, sp+44 here, and the
- * shot loop offsets at 44/40/36); the mode 11 and 6 sheet loads (the
+ * loop hoists (camera + 12 at sp+48 in the native, sp+44 here, swapped
+ * with i * delay: GCSE PRE hoists camera + 12 into a new pseudo here,
+ * the native keeps the expansion one); the mode 11 and 6 sheet loads (the
  * native keeps their argument setup apart).
  */
 #include "TYPES.H"
@@ -294,7 +297,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
             for (i = 0; i != work->effect->count; i++) {
                 struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
-                for (j = 0; j != shots; j++) {
+                for (j = 0; j != shots; j++, index++) {
                     if (j * stagger + i * delay < frame) {
                         struct EffectStep *shot = &work->particles[i * shots + j];
                         struct EffectPosition *pos = &position;
@@ -411,7 +414,6 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                             draw.upper(canvas, work, pos->x - 20, pos->y - 32, 40, 64);
                         }
                     }
-                    index++;
                 }
             }
             if (mode == 0 || mode == 5 || mode == 8) {

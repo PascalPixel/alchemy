@@ -1060,7 +1060,7 @@
         "*/recon/tla/raw/080cb144.o"(.text)
         "*/recon/tla/raw/080cb1dc.o"(.text)
         "*/recon/tla/raw/080cb2b8.o"(.text)
-        "*/games/THE LOST AGE/SRC/BATTLE/PARTY/PARTY3.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PARTY/HEALTH.o"(.text)
         "*/recon/tla/raw/080cb82c.o"(.text)
         "*/recon/tla/raw/080cb8a4.o"(.text)
         "*/recon/tla/raw/080cb8e8.o"(.text)

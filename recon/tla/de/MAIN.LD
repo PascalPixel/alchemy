@@ -754,7 +754,7 @@
     "*/recon/tla/de/rom.o"(.rom.000d7e5c)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COUNTERS.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000d7fc4)
-    "*/games/THE LOST AGE/SRC/BATTLE/PARTY/PARTY3.o"(.text)
+    "*/games/THE LOST AGE/SRC/BATTLE/PARTY/HEALTH.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000d882c)
     "*/recon/tla/de/rom.o"(.rom.000d88a4)
     "*/recon/tla/de/rom.o"(.rom.000d954c)

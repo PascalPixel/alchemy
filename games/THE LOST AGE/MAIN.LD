@@ -776,7 +776,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000cae5c)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COUNTERS.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cafc4)
-    "*/games/THE LOST AGE/SRC/BATTLE/PARTY/PARTY3.o"(.text)
+    "*/games/THE LOST AGE/SRC/BATTLE/PARTY/HEALTH.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cb82c)
     "*/games/THE LOST AGE/SRC/DEBUG/DEBUG2.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cc9f4)

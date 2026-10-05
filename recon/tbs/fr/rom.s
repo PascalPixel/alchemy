@@ -999,16 +999,6 @@ BattleFx_RunSevenMode:
 	.thumb_func
 Unnamed_080d1714:
 	.incbin "baserom.gba", 0x000d4f14, 0x00000d38
-	.section .rom.000e226e, "ax"
-	.incbin "baserom.gba", 0x000e226e, 0x00000002
-	.section .rom.000e2270, "ax"
-	.global BattleFx_RunProjectileVolley
-	.type BattleFx_RunProjectileVolley, %function
-	.thumb_func
-BattleFx_RunProjectileVolley:
-	.incbin "baserom.gba", 0x000e2270, 0x00000e48
-	.section .rom.000e362a, "ax"
-	.incbin "baserom.gba", 0x000e362a, 0x00000002
 	.section .rom.000e4de8, "ax"
 	.global BattleFx_InitializeMode12
 	.type BattleFx_InitializeMode12, %function
@@ -1510,7 +1500,31 @@ LightningBolts_GlintPalettes:
 	.incbin "baserom.gba", 0x000f23e2, 0x00000004
 	.global LightningBolts_GlintModes
 LightningBolts_GlintModes:
-	.incbin "baserom.gba", 0x000f23e6, 0x00000074
+	.incbin "baserom.gba", 0x000f23e6, 0x00000003
+	.global Volley_CometHeights
+Volley_CometHeights:
+	.incbin "baserom.gba", 0x000f23e9, 0x00000003
+	.global Volley_Modes
+Volley_Modes:
+	.incbin "baserom.gba", 0x000f23ec, 0x0000003c
+	.global Volley_FlashWidths
+Volley_FlashWidths:
+	.incbin "baserom.gba", 0x000f2428, 0x00000007
+	.global Volley_FlashHeights
+Volley_FlashHeights:
+	.incbin "baserom.gba", 0x000f242f, 0x00000007
+	.global Volley_FlashSteps
+Volley_FlashSteps:
+	.incbin "baserom.gba", 0x000f2436, 0x00000007
+	.global Volley_FlashRises
+Volley_FlashRises:
+	.incbin "baserom.gba", 0x000f243d, 0x00000007
+	.global Volley_FlashOffsets
+Volley_FlashOffsets:
+	.incbin "baserom.gba", 0x000f2444, 0x0000000e
+	.global Volley_PelletOffsets
+Volley_PelletOffsets:
+	.incbin "baserom.gba", 0x000f2452, 0x00000008
 	.global MercuryDjinnFlames_LaunchFrames
 MercuryDjinnFlames_LaunchFrames:
 	.incbin "baserom.gba", 0x000f245a, 0x00000005

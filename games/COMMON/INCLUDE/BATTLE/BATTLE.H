@@ -39,7 +39,7 @@ void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
 void BattleFx_RunNoEffect(void);
 void BattleFx_RunOrbitingParticles(void);
-s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
+void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode);
 void *BattleFx_StartItemBreak(void *object);
 s32 BattleMotion_GetSlotPalette(s32 id);

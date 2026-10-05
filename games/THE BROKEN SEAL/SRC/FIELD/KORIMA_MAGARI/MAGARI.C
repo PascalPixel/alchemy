@@ -26,6 +26,10 @@ extern u8 gUnk[];
 s32 Math_DivideSigned();
 
 /* The board's records in the scene state, where the board setup points. */
+extern u8 gKorimaMagariEntrances[];
+extern u8 gKorimaMagariExits[];
+extern u8 gKorimaMagariPlacements[];
+extern u8 gKorimaMagariEvents[];
 extern s16 *gKorimaMagariRecords;
 void Scene_PushBlockAlongRun(s16 *records);
 void State_StampRecordCells(s16 *records, s32 value);
@@ -37,9 +41,9 @@ void State_ApplyRectByLayoutSelector(void);
 
   /* Set object motion state. */
 
-u8 *SceneData_GetTable9170(void)
+u8 *KorimaMagari_GetEntrances(void)
 {
-    return (u8 *)0x02009170;
+    return gKorimaMagariEntrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -47,19 +51,19 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTable91d0(void)
+u8 *KorimaMagari_GetExits(void)
 {
-    return (u8 *)0x020091d0;
+    return gKorimaMagariExits;
 }
 
-u8 *SceneData_GetTable91e0(void)
+u8 *KorimaMagari_GetPlacements(void)
 {
-    return (u8 *)0x020091e0;
+    return gKorimaMagariPlacements;
 }
 
-u8 *SceneData_GetTable9240(void)
+u8 *KorimaMagari_GetEvents(void)
 {
-    return (u8 *)0x02009240;
+    return gKorimaMagariEvents;
 }
 
 /* Redraw the board from its records: move the block along its run, restore

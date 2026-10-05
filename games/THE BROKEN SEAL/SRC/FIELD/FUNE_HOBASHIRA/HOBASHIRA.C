@@ -34,8 +34,8 @@ struct SwayActor {
 
 void battle_owner_69(void);
 void FuneHobashira_UpdateSway(void);
-void FieldScene_RunScene3b0_0200040c(void);
-void FieldScene_RunScene3b0_02000468(void);
+void FuneHobashira_SetupHiddenLeaderLookout(void);
+void FuneHobashira_SetupVisibleLeaderLookout(void);
 void Scene_RunFourActorStagingSequence(void);
 void FieldScene_RunActorNinePresentationCycles(void);
 void FieldScene_RunPrimarySequence(void);
@@ -263,9 +263,9 @@ s32 FuneHobashira_ApplyEntryState(void)
         break;
     case 10:
         if (Engine_GameFlagIsSet(0x928) != 0) {
-            FieldScene_RunScene3b0_02000468();
+            FuneHobashira_SetupVisibleLeaderLookout();
         } else {
-            FieldScene_RunScene3b0_0200040c();
+            FuneHobashira_SetupHiddenLeaderLookout();
         }
         break;
     case 11:
@@ -290,7 +290,7 @@ s32 FuneHobashira_ApplyEntryState(void)
     return 0;
 }
 
-void FieldScene_RunScene3b0_0200040c(void)
+void FuneHobashira_SetupHiddenLeaderLookout(void)
 {
     u32 i;
     s32 record;
@@ -311,11 +311,11 @@ void FieldScene_RunScene3b0_0200040c(void)
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    FieldScene_RunScene3b0_020004b0();
+    FuneHobashira_AnnounceClearCourse();
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b0_02000468(void)
+void FuneHobashira_SetupVisibleLeaderLookout(void)
 {
     u32 i;
     struct FieldActor *record;
@@ -328,11 +328,11 @@ void FieldScene_RunScene3b0_02000468(void)
     Engine_TaskWait(1);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    FieldScene_RunScene3b0_020004b0();
+    FuneHobashira_AnnounceClearCourse();
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b0_020004b0(void)
+void FuneHobashira_AnnounceClearCourse(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();

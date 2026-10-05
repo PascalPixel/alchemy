@@ -46,7 +46,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTableE614(void)
+u8 *MakyuriHeya_GetExits(void)
 {
     return MakyuriHeya_SceneTable;
 }
@@ -76,7 +76,7 @@ void FieldScene_CallHelper67e8(void)
     Makyuri_TickSpawnTimer();
 }
 
-void FieldScene_Forward646c(void)
+void MakyuriHeya_ClearSceneRecordAndTarget(void)
 {
     SceneState_ClearCurrentRecordAndReleaseTarget();
 }

@@ -33,7 +33,7 @@ void SceneActor_MoveAndRedraw(struct ColumnProbe probe);
 s32 MakyuriHeya_StartPillarPush(void);
 void SceneEffect_SpawnParticleRowsByMode(s32 mode);
 void MakyuriHeya_OpenStoneDoor(s32 mode);
-s32 SceneData_ApplyTableA2c5AndReturnZero(void);
+s32 MakyuriHeya_StopActorNinePositionCallback(void);
 void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
 void Engine_ActorStartAction(s32 actor);
 void Engine_EventBegin();
@@ -180,7 +180,7 @@ s32 SceneData_LoadBlockA2c5(void)
     return 0;
 }
 
-s32 SceneData_ApplyTableA2c5AndReturnZero(void)
+s32 MakyuriHeya_StopActorNinePositionCallback(void)
 {
     Engine_TaskRemoveCallback((s32)SceneActor_UseActorNinePositionWithYOffset);
     return 0;
@@ -231,7 +231,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
 
                 SceneEffect_SpawnParticleRowsByMode(2);
                 x = 210 << 18;
-                SceneData_ApplyTableA2c5AndReturnZero();
+                MakyuriHeya_StopActorNinePositionCallback();
                 MakyuriHeya_OpenStoneDoor(1);
                 Engine_ActorStartAction(9);
                 OverlayObject_PrepareSpawnedObject(x, 0, 0x3120000, 223);
@@ -250,7 +250,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 goto end;
             }
             SceneEffect_SpawnParticleRowsByMode(2);
-            SceneData_ApplyTableA2c5AndReturnZero();
+            MakyuriHeya_StopActorNinePositionCallback();
             MakyuriHeya_OpenStoneDoor(1);
             goto wait;
         } else if (column == 53) {

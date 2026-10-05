@@ -48,17 +48,17 @@ void MakyuriHeya_DropLeaderToColumn(s32 a0)
     Battle_WaitMode0(30);
 }
 
-void SceneState_ApplyWork16cMinus50A(void)
+void MakyuriHeya_RunExitThreeScene(void)
 {
     SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
-void SceneState_ApplyWork16cMinus50(void)
+void MakyuriHeya_RunExitThirteenScene(void)
 {
     SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
-void SceneState_ApplyWork16cMinus50B(void)
+void MakyuriHeya_RunExitFiveScene(void)
 {
     SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }

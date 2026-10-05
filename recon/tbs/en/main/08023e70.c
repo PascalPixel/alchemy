@@ -1,13 +1,30 @@
-/* 2026-10-05 sun deep finisher 21: alchemy diff 378 -> 335.
+/* 2026-10-05 sun deep finisher 21: alchemy diff 378 -> 160.
  * The party-panel pointer is its own IWRAM cell, Data_03001e90 (the
  * native pool names it, read at offset 0), not gWindowWork[1]: 376. The
  * exit reads it again directly instead of reusing the loop's cursor and
  * icon_win, so both become block-local (r3, as natively): 364. The
- * confirm handler is if (cnt != 0) { ... PlayFar(0x72); } else { ret = -1;
+ * confirm handler is if (cnt != 0) { ... PlayFar(0x72); } else { -1;
  * break; }, which places the -1 block after the handler as natively: 335.
+ * The native's redundant `ands r5, r6` in the timer path is a second mask
+ * of an already masked value: turns = sel & 0x3e0000 tested, then
+ * (turns & 0x3e0000) >> 17 pushed (CSE cannot fold an AND whose constant
+ * lives in a register; written in one expression the tree folder removes
+ * it): the mask stays in r6 and opts moves to r8, 340 alone. The auto
+ * input clears rep, then trig, then opts, so reload copies opts' zero
+ * from trig (mov r8, r1): 289. The detail-window page loop has its own
+ * tile (r1; the function-level one crossed the arrow loops' division
+ * calls in r6): 172; all three arrow loops now declare theirs. The result
+ * shares one u32 with the page redraw's entry code (natively r6 for both,
+ * which keeps the result out of r5): 160.
  * Tried without change: two separate timer/is_used ifs, an explicit
- * second 0x3e0000 mask (both fold away; the native's redundant
- * `ands r5, r6` in the timer path is still unexplained).
+ * double mask in one expression, k = redraw (CSE folds it to 0), other
+ * orders of the three input clears (340-342), the result as s32 (asrs
+ * for the code fields: 166).
+ * Remaining: the five entry zeros take a fresh r6 natively; k starts from
+ * redraw's slot natively; the used and recovering message tails merge
+ * here (0x666 in r1/r2 here, r3 natively); register choices around the
+ * menu_busy byte, the page redraw's entry pointer (r3 natively), the
+ * row-navigation page/row moves and two scheduled subtractions.
  */
 /* 2026-10-05 sun deep finisher 19: alchemy diff 869 -> 378 (frame 224).
  * The spill slots follow declaration order, so the declarations now run
@@ -202,9 +219,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     u32 blink;
     s32 page;
     s32 row;
-    s32 ret;
+    u32 code;
     s32 pages;
-    s32 tile;
     s32 pal;
     struct MenuPoint cursor_pos;
     s32 trig;
@@ -245,7 +261,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                 pos++;
                 cnt++;
             } else if (unit->djinn_available[x] & (u32)(1 << y)) {
-                u32 code;
+                u32 v;
                 s32 k;
                 list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
                 for (k = 0; k < list->count; k++) {
@@ -254,11 +270,11 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                         break;
                     }
                 }
-                code = (u32)((x << 8) | y | 0x10000);
-                *pos = code;
+                v = (u32)((x << 8) | y | 0x10000);
+                *pos = v;
                 if (list->entries[k].turns > 0) {
-                    code |= (u32)(list->entries[k].turns << 17);
-                    *pos = code;
+                    v |= (u32)(list->entries[k].turns << 17);
+                    *pos = v;
                 }
                 cnt++;
                 pos++;
@@ -332,7 +348,6 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
             prev_row = row;
             if (page != prev_page) {
-                u32 code;
                 RenderOutput_RedrawSavedRect(list_win);
                 entry = &tbl[page];
                 code = *entry;
@@ -361,7 +376,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             }
             if (cnt > 5) {
                 for (j = 0; j < (pages = ((cnt + 4) / 5)); j++) {
-                    tile = j + 0xf301;
+                    s32 tile = j + 0xf301;
                     if (j == (page / 5)) {
                         tile = j + 0xf30b;
                     }
@@ -376,7 +391,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 
         if (cnt > 5) {
             for (j = 0; j < (cnt + 4) / 5; j++) {
-                tile = j + 0xf301;
+                s32 tile = j + 0xf301;
                 if ((gKeysHeld & 0x100) || (gFrameCount & 15) <= 11) {
                     if (j == (page / 5)) {
                         tile = j + 0xf30b;
@@ -400,8 +415,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
         opts = (s32)gKeysHeld;
         menu = MENU_STATE;
         if (menu->menu.auto_enabled != 0) {
-            trig = 0;
             rep = 0;
+            trig = 0;
             opts = 0;
             if (menu->menu.auto_delay == 0) {
                 menu->menu.auto_delay = 60;
@@ -414,31 +429,33 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
         menu = MENU_STATE;
         if (menu->menu.active == 0 || (trig & 2)) {
             AudioCommand_PlayFar(0x71);
-            ret = -1;
+            code = (u32)-1;
             break;
         }
         if (trig & 1) {
-            u32 code;
+            u32 sel;
+            u32 turns;
             if (cnt != 0) {
-                code = tbl[page + row];
-                if ((code & 0x3e0000) == 0) {
+                sel = tbl[page + row];
+                turns = sel & 0x3e0000;
+                if (turns == 0) {
                     if (is_used == 0) {
                         menu->menu.page = page;
                         menu->menu.row = row;
                         menu->menu.preferred_row = saved_row;
-                        ret = (s32)code;
+                        code = sel;
                         break;
                     }
                 } else if (is_used == 0) {
                     Ui_FillVramBlockPattern();
                     UiWork_ClearValueNameTables();
-                    UiWork_PushValueSlot((s32)((code & 0x3e0000) >> 17), 5);
+                    UiWork_PushValueSlot((s32)((turns & 0x3e0000) >> 17), 5);
                     UiText_CopyMessageString(0x898, buf, 52);
                     UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
                 }
                 AudioCommand_PlayFar(0x72);
             } else {
-                ret = -1;
+                code = (u32)-1;
                 break;
             }
         }
@@ -465,7 +482,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             } else if (opts & 0x100) {
                 if (detail_win != 0) {
                     for (i = 0; i < sub_cnt; i++) {
-                        tile = i + 0xf301;
+                        s32 tile = i + 0xf301;
                         if ((gFrameCount & 15) <= 11 && i == sub_sel - 1) {
                             tile = sub_sel + 0xf30b;
                         }
@@ -593,5 +610,5 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     UiWork_SetAltFlagAndClearTable(0);
     Runtime_BumpFree(tbl);
     WaitFrames(1);
-    return ret;
+    return (s32)code;
 }

@@ -230,12 +230,12 @@ s32 BattleEffect_ApplyToTargets(
 
             switch (effect_id & 0x3fff) {
             case 0x104:
-                *(u16 *)&target->base_hp += amount + random_adjust;
+                target->base_hp += amount + random_adjust;
                 result_code = 0x10;
                 changed = 1;
                 break;
             case 0x105:
-                *(u16 *)&target->base_pp += amount + random_adjust;
+                target->base_pp += amount + random_adjust;
                 result_code = 0x11;
                 changed = 1;
                 break;

@@ -65,7 +65,7 @@ void BattleFx_RunBouncingSheep(void *object)
         one->variant = Random16() & 255;
     }
     if (work->effect->side == 1)
-        *(volatile s32 *)0x04000028 = -0x7000;
+        REG_BG2X = -0x7000;
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -149,11 +149,11 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
     work = slot[-1];
     work->effect = efx;
     BattleFx_BeginCanvasLayer(1);
-    *(s16 *)0x04000020 = 0x100;
-    *(s16 *)0x04000050 = 0;
+    REG_BG2PA = 0x100;
+    REG_BLDCNT = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work, 1, 1);
     if (work->effect->side == 1) {
-        *(s32 *)0x04000028 = -0x7000;
+        REG_BG2X = -0x7000;
     }
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     work->transfer_mode = 1;

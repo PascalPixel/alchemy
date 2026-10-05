@@ -441,7 +441,7 @@ s32 Trade_CountPendingOffers(u8 *counts)
         counts[0] = found;
     }
     index = 0;
-    if (*(u32 *)&base->list.count != 0) {
+    if (base->list.count != 0) {
         do {
             if (entry->turns == -1) {
                 if (counts != 0)
@@ -450,7 +450,7 @@ s32 Trade_CountPendingOffers(u8 *counts)
             }
             index++;
             entry++;
-        } while (index != (s32)*(u32 *)&base->list.count);
+        } while (index != (s32)base->list.count);
     }
     return found;
 }

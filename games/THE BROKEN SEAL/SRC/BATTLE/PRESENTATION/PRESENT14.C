@@ -72,10 +72,10 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
     if (result == 0) {
         BattleEv_RunWait(object_id, action_id);
         runtime = *(struct EventRuntime **)Data_03001ebc;
-        *(u16 *)&runtime->message += 1;
+        runtime->message += 1;
     } else {
         runtime = *(struct EventRuntime **)Data_03001ebc;
-        *(u16 *)&runtime->message += 1;
+        runtime->message += 1;
         BattleEv_RunWait(object_id, action_id);
     }
     return result;

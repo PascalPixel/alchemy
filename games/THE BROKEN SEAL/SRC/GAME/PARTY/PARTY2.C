@@ -53,8 +53,8 @@ void Party_ApplyStatePreset(void)
         /* Keep both halfwords live through both stores for GCC's copy shape. */
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
-            *(u16 *)&unit->hp = *(u16 *)&unit->max_hp;
-            *(u16 *)&unit->pp = *(u16 *)&unit->max_pp;
+            unit->hp = unit->max_hp;
+            unit->pp = unit->max_pp;
         } while (0);
         {
             s16 max_hp = unit->max_hp;
@@ -123,8 +123,8 @@ void Owner_RefreshActiveRatios(s32 arg0)
 
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
-            *(u16 *)&obj->hp = *(u16 *)&obj->max_hp;
-            *(u16 *)&obj->pp = *(u16 *)&obj->max_pp;
+            obj->hp = obj->max_hp;
+            obj->pp = obj->max_pp;
         } while (0);
 
         v34 = obj->max_hp;
@@ -202,7 +202,7 @@ void Owner_RefreshRatiosOnFlag(void)
         obj = Owner_GetState(ownerId);
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
-            *(u16 *)&obj->pp = *(u16 *)&obj->max_pp;
+            obj->pp = obj->max_pp;
         } while (0);
 
         v38 = obj->hp;

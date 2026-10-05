@@ -122,7 +122,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
         else
             offset = 0;
     }
-    *(volatile s32 *)0x04000028 = offset << 8;
+    REG_BG2X = offset << 8;
     work->transfer_mode = 2;
     work->transfer_value = 50;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

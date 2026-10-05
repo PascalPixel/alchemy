@@ -128,7 +128,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 
     for (frame = 0; frame != 56; frame++) {
         EffectPosition_ApplyStepAndYOffset(effect->actor, &ground);
-        *(volatile s32 *)0x04000028 = (64 - ground.x) << 8;
+        REG_BG2X = (64 - ground.x) << 8;
         if (frame > 49)
             REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
         if (frame == 26) {
@@ -273,8 +273,8 @@ void BattlePresentation_PrepareScene(s32 kind)
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
     BattleFx_BeginCanvasLayer(0);
     work->fade_frames = 24;
-    *(s16 *)0x04000020 = 0x100;
-    *(s16 *)0x04000052 = 0x1010;
+    REG_BG2PA = 0x100;
+    REG_BLDALPHA = 0x1010;
     switch (kind) {
     case 0:
         id = (s32)&ResourceId_YellowPaletteB;
@@ -387,9 +387,9 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
     object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
     if (work->effect->side == 0)
-        *(s32 *)0x04000028 = (16 - position.x) << 8;
+        REG_BG2X = (16 - position.x) << 8;
     else
-        *(s32 *)0x04000028 = (112 - position.x) << 8;
+        REG_BG2X = (112 - position.x) << 8;
     frames = 74;
     if (mode != 1)
         frames = 48;

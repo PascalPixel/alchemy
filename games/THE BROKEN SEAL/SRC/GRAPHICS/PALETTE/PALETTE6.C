@@ -119,8 +119,8 @@ s32 BattleFx_InitializeStarField(s32 mode)
     /* FAKEMATCH: the two one-pass blocks keep the BG2 origin and matrix writes in source order, the zero loaded first. */
     do {
         zero = 0;
-        *(s32 *)0x04000028 = zero;
-        *(s32 *)0x0400002c = zero;
+        REG_BG2X = zero;
+        REG_BG2Y = zero;
     } while (0);
     do {
         scale = 0x100;

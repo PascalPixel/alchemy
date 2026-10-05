@@ -158,7 +158,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &position);
-    *(volatile u32 *)0x04000028 = (64 - position.x) << 8;
+    REG_BG2X = (64 - position.x) << 8;
     for (i = 0, spark = work->particles; i != 16; i++) {
         spread = (Random16() & 0x1ff) + 128;
         angle = Random16() & 0xffff;

@@ -7,6 +7,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+#include "IO_REG.H"
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
@@ -93,8 +94,8 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     dst = (void *)*entry;
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
-    *(s16 *)0x04000050 = 0x3F46;
-    *(s16 *)0x04000052 = 0x100E;
+    REG_BLDCNT = 0x3F46;
+    REG_BLDALPHA = 0x100E;
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw = (DrawRectangle)cache[46 - 39];

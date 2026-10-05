@@ -13,6 +13,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "IO_REG.H"
 
 
 struct Vector3 {
@@ -79,7 +80,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(1);
     if (work->effect->prelude == 1)
         BattleFx_PrepareCanvasEffect(effect, 3, work->effect->side, 0, &origin_x, &origin_y);
-    *(s16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
     palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
     palette += 128;
@@ -94,7 +95,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
     shift = 64 - anchor.x;
-    *(s32 *)0x04000028 = shift << 8;
+    REG_BG2X = shift << 8;
     AudioCommand_PlayFar(142);
 
     for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
@@ -218,7 +219,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(s16 *)0x04000020 = 0x100;
+    REG_BG2PA = 0x100;
     palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
     palette += 128;
@@ -231,7 +232,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
     shift = 64 - anchor.x;
-    *(s32 *)0x04000028 = shift << 8;
+    REG_BG2X = shift << 8;
     AudioCommand_PlayFar(142);
 
     for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {

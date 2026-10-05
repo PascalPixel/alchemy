@@ -9,6 +9,7 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -114,13 +115,13 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &pos);
     if (mode == 0) {
-        *(s16 *)0x04000020 = 0x100;
+        REG_BG2PA = 0x100;
         x = 64 - pos.x;
-        *(s32 *)0x04000028 = x << 8;
+        REG_BG2X = x << 8;
     } else {
-        *(s16 *)0x04000020 = 0xcc;
+        REG_BG2PA = 0xcc;
         x = (-pos.x * 4) / 5 + 64;
-        *(s32 *)0x04000028 = x << 8;
+        REG_BG2X = x << 8;
     }
 
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);

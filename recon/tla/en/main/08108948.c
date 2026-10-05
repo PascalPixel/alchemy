@@ -7,6 +7,10 @@
  * listing except the active counter's increment, but the 0x1ff mask still
  * comes from the pool. The whole shop cursor run (08108948 to 08108af0)
  * waits for this one to reach SHOP.C.
+ * Trial 2026-10-05: the x field through SpriteAttr2 (u16 bit-fields) 16, an
+ * explicit (attr & ~0x1ff) | (x & 0x1ff) halfword store 27, byte and
+ * halfword stores for y and x 30. The native pool holds 0 and 0xfffffe00
+ * and builds 0x1ff inline; every form here loads 0x1ff from the pool.
  */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"

@@ -432,16 +432,16 @@ void SceneDialogue_RunActorNineteenDialogue(void)
     Engine_EventEnd();
 }
 
+/* Unless the leader faces between 0x1000 and 0x7000, actor 8 asks whether
+   to go up to the cave; a no skips to its other reply. */
 void FieldScene_RunSlotZeroFacingSequence(void)
 {
-    extern u8 *Data_03001ebc;
-
-    struct Obj *o;
+    struct FieldActor *leader;
     u32 v;
-    u16 *q;
+    u16 *message;
 
-    o = Object_GetById(ACTOR_PARTY_LEADER);
-    v = (o->f06 + 0xfffff000) << 16;
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    v = (leader->facing + 0xfffff000) << 16;
     if (v > 0x60000000) {
         Engine_EventBegin();
         Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
@@ -452,8 +452,8 @@ void FieldScene_RunSlotZeroFacingSequence(void)
             Engine_ActorSetAnimationAndWait(8, 4);
             Engine_EventShowMessage(8, 0);
         } else {
-            q = (u16 *)(Data_03001ebc + 472);
-            *q = *q + 1;
+            message = &gEventWork->message;
+            *message = *message + 1;
             Engine_ActorSetAnimationAndWait(8, 3);
             Engine_EventShowMessage(8, 0);
         }

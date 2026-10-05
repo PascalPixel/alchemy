@@ -265,31 +265,28 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     GameFlag_Set(0x842);
 }
 
-/* Each of the 15 placement calls below takes the same 6-argument shape:
- * two coordinate-like values, two more coordinate-like values, and a
- * trailing pair of small counts. The final call takes no arguments. */
 void FieldScene_BuildPlacementGrid(void)
 {
     u32 i;
     u8 *record;
 
-    Map_CopyCellsTo(16, 96, 11, 73, 6, 3); /* main:08009180 */
-    Map_CopyCellsTo(16, 96, 34, 68, 14, 10); /* main:08009180 */
-    Map_CopyCellsTo(16, 96, 64, 68, 7, 7); /* main:08009180 */
-    Map_CopyCellsTo(9, 95, 11, 73, 6, 3); /* main:08009180 */
-    Map_CopyCellsTo(40, 94, 34, 68, 14, 10); /* main:08009180 */
-    Map_CopyCellsTo(54, 94, 64, 68, 8, 7); /* main:08009180 */
-    Map_CopyCellsTo(72, 75, 72, 76, 1, 1); /* main:08009180 */
-    Map_CopyCellsTo(72, 75, 74, 76, 1, 1); /* main:08009180 */
-    Map_CopyCellAttributes(7, 75, 1, 1, 6, 75); /* main:080091c0 */
-    Map_CopyCellAttributes(8, 70, 3, 1, 8, 71); /* main:080091c0 */
-    Map_CopyCellAttributes(8, 70, 2, 1, 9, 72); /* main:080091c0 */
-    Map_CopyCellAttributes(8, 70, 2, 1, 9, 73); /* main:080091c0 */
-    Map_CopyCellAttributes(11, 66, 1, 1, 8, 73); /* main:080091c0 */
-    Map_CopyCellAttributes(12, 66, 1, 4, 11, 73); /* main:080091c0 */
-    Map_CopyCellAttributes(25, 0, 1, 1, 6, 74); /* main:080091c0 */
+    Map_CopyCellsTo(16, 96, 11, 73, 6, 3);
+    Map_CopyCellsTo(16, 96, 34, 68, 14, 10);
+    Map_CopyCellsTo(16, 96, 64, 68, 7, 7);
+    Map_CopyCellsTo(9, 95, 11, 73, 6, 3);
+    Map_CopyCellsTo(40, 94, 34, 68, 14, 10);
+    Map_CopyCellsTo(54, 94, 64, 68, 8, 7);
+    Map_CopyCellsTo(72, 75, 72, 76, 1, 1);
+    Map_CopyCellsTo(72, 75, 74, 76, 1, 1);
+    Map_CopyCellAttributes(7, 75, 1, 1, 6, 75);
+    Map_CopyCellAttributes(8, 70, 3, 1, 8, 71);
+    Map_CopyCellAttributes(8, 70, 2, 1, 9, 72);
+    Map_CopyCellAttributes(8, 70, 2, 1, 9, 73);
+    Map_CopyCellAttributes(11, 66, 1, 1, 8, 73);
+    Map_CopyCellAttributes(12, 66, 1, 4, 11, 73);
+    Map_CopyCellAttributes(25, 0, 1, 1, 6, 74);
     /* No-argument call that closes out the sequence started above. */
-    Engine_MapRedraw(); /* main:08009128 */
+    Engine_MapRedraw();
 }
 
 void SceneState_SetWords1c0And1c8AndRun(void)
@@ -447,9 +444,7 @@ void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;

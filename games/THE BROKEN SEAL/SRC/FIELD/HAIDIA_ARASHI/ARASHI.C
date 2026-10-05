@@ -317,9 +317,7 @@ void FieldScene_RunScene372_02000400(void)
 
 s32 FieldScene_RunFlagGatedActorSetup(void)
 {
-    /* FAKEMATCH: the coordinates, angles and tiles held in locals keep the
-       native register choice and pool order; inlining any one of them
-       changes the function. */
+    /* FAKEMATCH: the coordinates, angles and tiles held in locals keep the native register choice and pool order; inlining any one of them changes the function. */
     s32 x11 = 0x14E0000;
     s32 z11 = 0x3A40000;
     s32 x12 = 0xE00000;
@@ -1563,8 +1561,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         u8 *o;
         o = (u8 *)Object_GetById(26);
         o += 0x5A;
-        /* FAKEMATCH: the set bit first, so the or writes into the register
-           that holds it, as the ROM's does. */
+        /* FAKEMATCH: the set bit first, so the or writes into the register that holds it, as the ROM's does. */
         {
             u8 set = 1 | *o;
             *o = set;

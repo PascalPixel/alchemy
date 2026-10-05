@@ -100,7 +100,7 @@ extern u8 HaidiaArashi_ActorNineteenScript[];
 
 extern u8 HaidiaArashi_ActorEightScript[];
 
-/* The import veneer the actors' sprite priority goes through. */
+/* Set actor sprite priority. */
 void ObjectMotion_SetActionVariant(s32 actor, s32 priority);
 
 extern s32 HaidiaArashi_ShakeDone;
@@ -141,8 +141,6 @@ void Event_CallWithLastActiveObjectId();
 void Object_RefreshSelectorById();
 
 void Object_SetActionCallbackAndRefreshById();
-
-
 
 void Map_SetLayerEntryFlag();
 

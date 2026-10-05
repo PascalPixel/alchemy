@@ -27,7 +27,6 @@
 
 
 void Object_SetMode(void *object, s32 mode);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Audio_PlayCue(s32 cue);
 
 void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)

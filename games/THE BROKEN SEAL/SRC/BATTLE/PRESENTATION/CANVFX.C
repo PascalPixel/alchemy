@@ -44,7 +44,6 @@ struct StreakPoint {
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 struct BlitterPair {
     DrawRectangle upper;

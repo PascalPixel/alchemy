@@ -9,7 +9,6 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 
-struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void PsynergyMenu_InitializeEntryObjects();
 
 void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)

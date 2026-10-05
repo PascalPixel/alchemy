@@ -382,4 +382,19 @@ void UiIcon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
 void UiText_DrawStringInWindowFar(u8 *text, s32 arg1, u32 x, u32 y);
 #endif
 
+struct DispatchObject;
+struct RenderInput;
+struct RenderOutput;
+struct UiWindow;
+
+#ifndef OWN_ObjectDispatch_SetSingleChildFlags
+void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object, u32 value);
+#endif
+#ifndef OWN_RenderOutput_CreateFromResourceFar
+struct RenderOutput * RenderOutput_CreateFromResourceFar(s32 arg0, s32 arg1, struct RenderInput *arg2, s32 arg3, s32 arg4);
+#endif
+#ifndef OWN_UiWindow_SetTilemapEntry
+void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode);
+#endif
+
 #endif

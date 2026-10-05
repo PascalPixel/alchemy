@@ -22,7 +22,6 @@ extern u8 gMapCellBuffer[];
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void Audio_PlayCue(s32 cue);
 
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 #define HI(v) (((s16 *)&(v))[1])
 
 

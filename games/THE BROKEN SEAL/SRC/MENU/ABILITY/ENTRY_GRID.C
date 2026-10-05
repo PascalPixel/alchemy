@@ -6,7 +6,6 @@
 #define SideObject_CreateFar ((void * (*)(s32,s32,s32,s32,s32,s32))SideObject_CreateFar)
 
 void PsynergyMenu_InitializeEntryObjects();
-struct RenderOutput *RenderOutput_CreateFromResourceFar(s32, s32, struct RenderInput *, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)
 {

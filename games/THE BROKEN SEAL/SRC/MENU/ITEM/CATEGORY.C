@@ -6,7 +6,6 @@
 #include "OBJECT_FACTORY.H"
 #include "GLOBAL_CELLS.H"
 
-struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 
 
 void ItemMenu_PosCategory(void)

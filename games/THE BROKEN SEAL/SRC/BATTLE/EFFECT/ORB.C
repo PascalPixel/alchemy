@@ -28,7 +28,6 @@ typedef struct {
     u8 flag_b;
 } EffectSprite;
 
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
 void *Object_Spawn(s32, s32, s32, s32);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 

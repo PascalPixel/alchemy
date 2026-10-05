@@ -6,6 +6,8 @@
 #include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(struct FxObject*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
 #define BattleFx_SpawnItemBreakMode1 ((struct FxObject * (*)(s32,s32,s32,s32))BattleFx_SpawnItemBreakMode1)
 #define Object_SetMoveTargetFar ((void (*)(struct FxObject*,s32,s32,s32))Object_SetMoveTargetFar)
 #define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
@@ -60,7 +62,6 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position
 s32 Object_CheckMovementCollision(struct FxObject *object, struct FxPosition *position);
 struct FxObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 s32 Random16(void);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct FxObject *object, s32 magnitude, s32 angle);
 void ObjectDispatch_ReleaseFar(struct FxObject *object);
 void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
 

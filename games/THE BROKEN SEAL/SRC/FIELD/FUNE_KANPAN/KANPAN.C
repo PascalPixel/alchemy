@@ -11,6 +11,8 @@
 #include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
+#define ObjectDispatch_SetSingleChildFlags ((void (*)(void*,s32))ObjectDispatch_SetSingleChildFlags)
+
 union Slot {
     s32 w;
     s16 h[2];
@@ -69,7 +71,6 @@ void FuneKanpan_OpenFirstDoor(void);
 
 void FieldScene_RunStepThen10();
 void WaitFrames();
-void ObjectDispatch_SetSingleChildFlags(void *, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain();
 void ObjectGroup_ConfigureChildValue();
 void *ObjectMotion_SetPositionAndReset();

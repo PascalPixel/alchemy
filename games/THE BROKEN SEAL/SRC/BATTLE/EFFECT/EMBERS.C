@@ -32,7 +32,6 @@ extern volatile u32 gKeysRepeat;
 
 struct BattleEffectTargetArgument;
 void AudioCommand_PlayFar(s32 value);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 
 #define gDrops ((struct EffectStep *)Ram_MapCellBuffer)

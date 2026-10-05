@@ -14,7 +14,6 @@
 
 extern u8 gWorkSlot[];
 void Audio_PlayCue(s32);
-void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 
 
 typedef struct Puff {

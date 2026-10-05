@@ -285,8 +285,6 @@ extern DrawRectangle gWorkSlot[];
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
 void AudioCommand_PlayFar(s32 value);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 
 struct BlitterPair {
     DrawRectangle upper;

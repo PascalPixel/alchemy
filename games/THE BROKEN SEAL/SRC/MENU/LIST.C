@@ -8,11 +8,12 @@
 #include "text/MSG_IDS.H"
 #include "BATTLE_RUNTIME.H"
 
+#define UiWindow_DrawThreeTileColumn ((void (*)(struct UiWindow*,s32,s32,s32,s32))UiWindow_DrawThreeTileColumn)
+
 
 #define ACTION_ID_MASK 0x3fff
 
 
-void UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 x, s32 y, s32 range, s32 layer);
 
 s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 {

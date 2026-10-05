@@ -10,6 +10,9 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_SetTilemapEntry ((void (*)(struct RenderInput*,s32,s32,s32,s32))UiWindow_SetTilemapEntry)
+#define UiWindow_DrawThreeTileColumn ((s32 (*)(struct RenderInput*,s32,s32,s32,s32))UiWindow_DrawThreeTileColumn)
+
 #define Djinn_DeactivateFar ((void (*)(s32,s32,s32))Djinn_DeactivateFar)
 #define Ability_GetData ((struct AbilityData * (*)(s32))Ability_GetData)
 
@@ -37,8 +40,6 @@ struct BattleUnitRecord {
 s32 UiText_RenderWideStringInWindow(s16 *text, struct RenderInput *win, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
 void UiWork_SetParamNibble(s32 nibble);
-void UiWindow_SetTilemapEntry(struct RenderInput *win, s32 tile, s32 x, s32 y, s32 flags);
-s32 UiWindow_DrawThreeTileColumn(struct RenderInput *win, s32 x, s32 y, s32 tile, s32 flags);
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost);
 void Djinn_ActivateFar(s32 owner, s32 col, s32 row);

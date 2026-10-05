@@ -9,6 +9,8 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define Menu_FindShortcutEntries ((void (*)(u32*,u32*,const struct ShortcutListEntry*))Menu_FindShortcutEntries)
+
 #define Object_CollectResources ((s32 (*)(struct ShortcutListEntry*))Object_CollectResources)
 
 struct ShortcutListEntry {
@@ -21,7 +23,6 @@ extern volatile u32 gKeyState;
 extern const u8 Resource_FixedBlockBTiles[];
 
 s32 OwnerAction_AddFar(s32 owner, s32 action);
-void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index, const struct ShortcutListEntry *entries);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32 value, s32 digits, struct RenderInput *window, s32 x, s32 y);

@@ -34,9 +34,7 @@ void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
 extern struct MenuDefaults gGameState;
 extern volatile u32 gKeysHeld;
 struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
-void Menu_DrawSelectionRow(struct Work *work, s16 primary, const s16 *secondary);
 extern volatile u32 gKeysRepeat;
-void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second);
 
 
 void Scheduler_ScheduleCallbackCAfterFrames(void)

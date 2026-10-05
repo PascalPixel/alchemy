@@ -1911,4 +1911,53 @@ void UiWork_CloseAndRelease(void);
 void UiWork_FinalizeEntityMatchingLocalizedId(void);
 #endif
 
+struct AbilityListEntry;
+struct DispatchObject;
+struct EffectPosition;
+struct ObjectRuntime;
+struct RenderInput;
+struct RenderOutput;
+struct UiWindow;
+struct Work;
+
+#ifndef OWN_DjinnMenu_DrawStatPreview
+s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner, s32 give, s32 take, s32 mode, s32 page, s32 side);
+#endif
+#ifndef OWN_EffectPosition_ApplyAlternateStepAndYOffset
+void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
+#endif
+#ifndef OWN_Graphics_TransposeCopy
+void Graphics_TransposeCopy(const u8 *source_base, u8 *destination_base, s32 row_size, s32 column_count);
+#endif
+#ifndef OWN_Menu_DrawPageIndicator
+void Menu_DrawPageIndicator(s32 window, s32 item_count, s32 page_size, s32 selected_page, s32 right_edge);
+#endif
+#ifndef OWN_Menu_DrawSelectionRow
+void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second);
+#endif
+#ifndef OWN_Menu_FindShortcutEntries
+void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index, const struct AbilityListEntry *entries);
+#endif
+#ifndef OWN_Motion_SetTargetPositionFromMagnitudeAngle
+void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
+#endif
+#ifndef OWN_ObjectDispatch_SetSingleChildFlags
+void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object, u32 value);
+#endif
+#ifndef OWN_ObjectGroup_UpdateMembers
+void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value);
+#endif
+#ifndef OWN_RenderOutput_CreateFromResourceFar
+struct RenderOutput * RenderOutput_CreateFromResourceFar(s32 mode, s32 resource, struct RenderInput *input, s32 x, s32 y);
+#endif
+#ifndef OWN_UiIcon_BuildItemIconTiles
+void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32 reuse);
+#endif
+#ifndef OWN_UiWindow_DrawThreeTileColumn
+int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+#endif
+#ifndef OWN_UiWindow_SetTilemapEntry
+void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode);
+#endif
+
 #endif

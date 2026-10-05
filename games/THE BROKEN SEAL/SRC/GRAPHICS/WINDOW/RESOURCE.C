@@ -31,7 +31,6 @@ extern volatile u32 gFrameCount;
 
 u32 Resource_DecodeByteLz(const void *, void *);
 
-void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
 
 struct UiScaleSprite {
     u8 filler0[6];

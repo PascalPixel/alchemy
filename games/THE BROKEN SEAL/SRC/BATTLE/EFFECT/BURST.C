@@ -22,7 +22,6 @@
 
 
 void Graphics_PackTileRows(void *source, void *destination, s32 width, s32 rows);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 
 
 void BattleFx_RunParticleFieldVariant0(s32 effect)

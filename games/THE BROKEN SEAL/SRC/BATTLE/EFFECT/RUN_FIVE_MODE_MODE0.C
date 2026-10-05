@@ -23,7 +23,6 @@
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 
 void BattleFx_RunFiveModeMode0(struct BattleEffectArgument *effect)

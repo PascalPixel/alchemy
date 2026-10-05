@@ -38,7 +38,6 @@ static __inline__ void FillWords(void *destination, s32 size, s32 value)
 
 
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 {

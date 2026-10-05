@@ -12,6 +12,8 @@
 #include "EFFECT_SLOT.H"
 #include "SYSTEM.H"
 
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(struct CaptureObject*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
 #define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))ObjectGroup_SetChildValueUnlessFifteenFar)
 #define BattleFx_AdvanceSpinAngle ((void (*)(void))BattleFx_AdvanceSpinAngle)
 #define EffectSlot_Initialize ((void (*)(void*,s32,s32,s32))EffectSlot_Initialize)
@@ -108,7 +110,6 @@ void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s32 magnitude, s32 angle);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
 struct LinkedCaptureObject {

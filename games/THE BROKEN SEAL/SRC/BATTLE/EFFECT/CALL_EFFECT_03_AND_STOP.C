@@ -3,6 +3,8 @@
 #include "TYPES.H"
 #include "FX_SCENE.H"
 
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(struct BattleEffect03Object*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
 #define BattleFx_UpdateShrinkingOrbitObject ((void (*)(void))BattleFx_UpdateShrinkingOrbitObject)
 #define BattleFx_RunSparkEmitter ((void (*)(void))BattleFx_RunSparkEmitter)
 #define Object_ReplaceResourceEntry ((struct BattleEffect03Link * (*)(void*,struct BattleEffect03Link*))Object_ReplaceResourceEntry)
@@ -51,7 +53,6 @@ struct BattleEffect03Object *Object_Spawn(s32, s32, s32, s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct BattleEffect03Object *, s32, s32);
 void Object_CommitPosition(struct BattleEffect03Object *);
 void ObjectDispatch_ReleaseFar(struct BattleEffect03Object *);
 

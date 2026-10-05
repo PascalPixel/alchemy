@@ -34,7 +34,6 @@ void WaitFrames(s32);
 typedef s32 (*CopyWords)(void *, const void *, s32);
 
 void Audio_PlayCue(s32);
-void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 typedef struct BattleEffectArgument Efx;
 
 typedef struct Spark {

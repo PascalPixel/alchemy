@@ -26,7 +26,6 @@ extern u8 gWorkSlot[];
 
 void Object_SetMode(void *object, s32 mode);
 s32 BattleFx_RunSparkGroups(void *effect, s32 mode);
-void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value);
 void Graphics_PackTileRows();
 
 void Audio_PlayCue(s32 cue);

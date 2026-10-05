@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -13,7 +14,6 @@ extern u8 UiIcon_PsynergyIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
 
-void UiIcon_BuildItemIconTiles(u32, s32, s32 *, s32 *, s32);
 
 s32 Ui_CountIconTableEntries(void)
 {

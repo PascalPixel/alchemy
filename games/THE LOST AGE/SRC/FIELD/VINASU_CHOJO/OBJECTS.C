@@ -2,9 +2,10 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+#define ObjectDispatch_SetSingleChildFlags ((void (*)(struct FieldActor*,s32))ObjectDispatch_SetSingleChildFlags)
+
 #define Object_SetPartAttribute ((void (*)(struct FieldActor*,s32))Object_SetPartAttribute)
 
-void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 value);
 
 void ConfigureOverlayObject(struct FieldActor *object, s32 parameter)
 {

@@ -16,6 +16,8 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(void*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
 #define BattleFx_UpdateItemBreakFragment ((void (*)(void*))BattleFx_UpdateItemBreakFragment)
 #define Object_SetMoveTargetFar ((void (*)(struct FxObject*,s32,s32,s32))Object_SetMoveTargetFar)
 #define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
@@ -35,7 +37,6 @@ extern struct BattleFxScene *gEffectWork;
 void Object_SetMode(void *object, s32 mode);
 
 extern void *Object_Spawn(s32, s32, s32, s32);
-extern void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
 extern void Object_SetMode(void *, s32);
 
 extern void Audio_PlayCue(s32);

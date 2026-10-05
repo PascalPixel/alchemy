@@ -5,6 +5,8 @@
 #include "FIELD_EVENT.H"
 #include "PARTY_STATE.H"
 
+#define ObjectDispatch_SetSingleChildFlags ((void (*)(void*,s32))ObjectDispatch_SetSingleChildFlags)
+
 #define Object_SetPartAttribute ((void (*)(void*,s32))Object_SetPartAttribute)
 
 enum {
@@ -12,7 +14,6 @@ enum {
 };
 
 
-void ObjectDispatch_SetSingleChildFlags(void *object, s32 value);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

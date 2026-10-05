@@ -9,6 +9,8 @@
 #include "RESOURCE_393.H"
 #include "FIELDOBJ.H"
 
+#define ObjectDispatch_SetSingleChildFlags ((void (*)(u8*,s32))ObjectDispatch_SetSingleChildFlags)
+
 
 struct SceneBeatSubject {
     u8 unknown_00[0x23];
@@ -21,7 +23,6 @@ void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
 void Battle_WaitMode0(s32);
 u8 *Object_GetById();
 void GameFlag_SetBit(s32);
-void ObjectDispatch_SetSingleChildFlags(u8 *, s32);
 void BattleFx_FinishAction(void);
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor, struct StagedActorEffectRequest *request);
 s32 GameFlag_Test();

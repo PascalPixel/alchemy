@@ -26,7 +26,6 @@
 
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 
 
 #define CONVERGES(mode) \

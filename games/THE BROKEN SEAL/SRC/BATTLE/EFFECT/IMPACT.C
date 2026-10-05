@@ -31,7 +31,6 @@ struct ImpactPosition {
 
 void Audio_PlayCue(s32 cue);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 RunBattleEffect04();

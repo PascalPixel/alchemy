@@ -20,7 +20,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
-struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
 void RenderOutput_ClearListFar(s32 window);
 void RenderOutput_RedrawSavedRectFar(s32 window);

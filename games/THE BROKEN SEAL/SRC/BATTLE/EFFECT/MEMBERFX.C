@@ -28,7 +28,6 @@
 
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 
 
@@ -44,8 +43,6 @@ struct Chip {
 
 #define gChips ((struct Chip *)Ram_MapCellBuffer)
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void Object_ResetMotion(struct MotionObject *object);
 
 void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
@@ -204,7 +201,6 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 
 #define gSkulls ((struct EffectStep *)Ram_MapCellBuffer)
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 

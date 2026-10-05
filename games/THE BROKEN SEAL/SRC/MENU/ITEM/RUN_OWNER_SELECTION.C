@@ -14,7 +14,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 
-struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 #if !EDITION_INTERNATIONAL
 #endif

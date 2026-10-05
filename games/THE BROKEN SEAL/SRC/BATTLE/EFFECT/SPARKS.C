@@ -24,7 +24,6 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 extern void *gWorkSlot[];
 extern u8 gMapCellBuffer[];
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {

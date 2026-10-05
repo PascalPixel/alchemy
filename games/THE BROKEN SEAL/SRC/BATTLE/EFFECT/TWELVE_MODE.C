@@ -32,8 +32,6 @@
 #define gSparks ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 #define HI(v) (((s16 *)&(v))[1])
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 
 
 void BattleFx_RunTwelveModeMode6(struct BattleEffectArgument *effect)

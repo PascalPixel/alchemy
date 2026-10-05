@@ -18,8 +18,6 @@
 
 
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 
 
 void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)

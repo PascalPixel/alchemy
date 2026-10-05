@@ -8,8 +8,9 @@
 #include "SCENE.H"
 #include "SOUND_IDS.H"
 
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(void*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
 extern struct BattleFxScene *gEffectWork;
-void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 struct MotionObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);

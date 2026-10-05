@@ -23,7 +23,6 @@ extern struct DjinnMenuWork *gMenuWork;
 
 #define DJINN_ENTRY_SET (-0x8000)
 
-s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner, s32 give, s32 take, s32 mode, s32 page, s32 side);
 
 extern struct UiWork *gWindowWork;
 

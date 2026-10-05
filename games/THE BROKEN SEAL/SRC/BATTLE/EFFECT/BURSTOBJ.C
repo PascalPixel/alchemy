@@ -14,6 +14,8 @@
 #include "OBJECT_EFX.H"
 #include "MOTION_OBJECT.H"
 
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(void*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
 #define BattleFx_ApplyColorToTargetBuffer ((void (*)(u32,s32))BattleFx_ApplyColorToTargetBuffer)
 #define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
 
@@ -71,7 +73,6 @@ void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 
-void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 

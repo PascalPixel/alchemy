@@ -36,7 +36,6 @@ struct DualPuff {
     s32 age;
 };
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void WaitFrames(s32 frames);
 
 typedef struct Column {
@@ -47,7 +46,6 @@ typedef struct Column {
 extern void *gWorkSlot[];
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void Audio_PlayCue(s32);
-void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 #define WORK_EFFECT ((struct BattleEffectArgument *)work->effect)
 
 void WaitFrames(s32);

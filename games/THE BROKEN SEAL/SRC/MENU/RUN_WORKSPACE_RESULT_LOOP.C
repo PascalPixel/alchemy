@@ -49,7 +49,6 @@ void WaitFrames(s32);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(const u8 *, struct RenderInput *, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
-void UiIcon_BuildItemIconTiles(u32, s32, s32 *, s32 *, s32);
 
 s32 DebugMenu_BrowseIcons(void)
 {

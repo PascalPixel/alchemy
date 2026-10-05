@@ -5,6 +5,8 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_RUNTIME.H"
 
+#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(struct HopActor*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
 #define Object_ReplaceResourceEntry ((void * (*)(struct HopSprite*,void*))Object_ReplaceResourceEntry)
 
 void ObjectMotion_MoveHalfwayTowardTarget(void);
@@ -53,7 +55,6 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct HopActor *actor, s32 magnitude, s32 angle);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Object_CommitPosition(struct HopActor *actor);
 struct HopActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);

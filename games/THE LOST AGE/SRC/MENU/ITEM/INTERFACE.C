@@ -1,6 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "RENDER_INPUT.H"
+
+#define RenderOutput_CreateFromResourceFar ((void * (*)(s32,s32,s32,s32,s32))RenderOutput_CreateFromResourceFar)
 
 struct IconMenuState {
     u8 padding_000[0x24];
@@ -9,7 +12,6 @@ struct IconMenuState {
     void *entries[32];
 };
 
-void *RenderOutput_CreateFromResourceFar(s32 group, s32 index, s32 window, s32 x, s32 y);
 
 void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1)
 {

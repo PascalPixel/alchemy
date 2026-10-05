@@ -26,8 +26,6 @@
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
 
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void Audio_PlayCue(s32 cue);
 
 void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)

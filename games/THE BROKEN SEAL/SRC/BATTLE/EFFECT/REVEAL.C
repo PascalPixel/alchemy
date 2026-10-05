@@ -19,7 +19,6 @@
 
 extern u8 gMapCellBuffer[];
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Audio_PlayCue(s32 cue);
 void Object_SetPosition(void *object, s32 a, s32 b, s32 c);
 

@@ -190,8 +190,6 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 extern u8 gMapCellBuffer[];
 
 void Object_ResetMotion(struct MotionObject *object);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 {

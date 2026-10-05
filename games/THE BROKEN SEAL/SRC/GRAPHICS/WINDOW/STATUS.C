@@ -229,7 +229,6 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
 void UiWindow_DrawFrame(s32, s32, u32, u32);
 void UiText_DrawStringAtOffset(u8 *, struct RenderInput *, s32, s32);
 s32 __divsi3(s32, s32);
-void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
 s32 UiText_DrawPrefixedNumberAtOffset();
 s32 UiWindow_PutGlyph();
 

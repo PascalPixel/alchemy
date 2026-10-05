@@ -24,7 +24,6 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 {

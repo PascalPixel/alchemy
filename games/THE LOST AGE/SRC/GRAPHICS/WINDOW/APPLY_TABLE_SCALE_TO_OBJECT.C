@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "UIWINDOW.H"
-void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
 
 void UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {

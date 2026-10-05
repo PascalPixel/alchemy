@@ -815,7 +815,7 @@
     "*/recon/tla/es/rom.o"(.rom.000db834)
     "*/recon/tla/es/rom.o"(.rom.000db950)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_DRAW_QUANTITY_PAIR_WITH_CUE.o"(.text)
-    "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVENT2.o"(.text)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVWORK.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000dbb40)
     "*/games/THE LOST AGE/SRC/GAME/PARTY/SET_FIELD_PAIRS.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SET_DESTINATION.o"(.text)

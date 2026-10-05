@@ -840,7 +840,7 @@
     "*/recon/tla/fr/rom.o"(.rom.000d7950)
     "*/recon/tla/fr/rom.o"(.rom.000d7960)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_DRAW_QUANTITY_PAIR_WITH_CUE.o"(.text)
-    "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVENT2.o"(.text)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EVWORK.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d7b40)
     "*/games/THE LOST AGE/SRC/GAME/PARTY/SET_FIELD_PAIRS.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SET_DESTINATION.o"(.text)

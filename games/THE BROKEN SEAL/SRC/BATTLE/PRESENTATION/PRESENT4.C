@@ -136,7 +136,7 @@ void BattleParty_CollectUnitList(void)
     battle->party_units[count] = 0xff;
 
     count = BattleParty_ListPresentEnemies(buf);
-    kind = battle->unknown_042;
+    kind = battle->battle_type;
     /* Removing the original lower-bound test reduced the extent from
        200 to 196 bytes. Its source-level purpose remains unresolved. */
     if (kind >= 0) {

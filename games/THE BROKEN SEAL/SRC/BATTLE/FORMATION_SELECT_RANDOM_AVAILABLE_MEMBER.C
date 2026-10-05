@@ -136,8 +136,8 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         }
     } while (changed);
 
-    work->unknown_042 = record->battle_type;
-    switch (work->unknown_042) {
+    work->battle_type = record->battle_type;
+    switch (work->battle_type) {
     case 0:
         for (i = 0; i <= 4; i++)
             order[i] = i;

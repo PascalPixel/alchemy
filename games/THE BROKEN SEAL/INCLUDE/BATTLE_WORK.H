@@ -69,7 +69,7 @@ struct BattleSession {
     u16 defeat_state;               /* 0x03e */
     u8 summon_count;                /* 0x040 */
     u8 party_status_mode;           /* 0x041 */
-    u8 unknown_042;
+    u8 battle_type;                 /* 0x042, the formation's member order */
     u8 flags_043;                   /* 0x043, bit 1: an enemy challenged */
     u8 two_sided;                   /* 0x044, a linked battle */
     u8 encounter_mode;              /* 0x045 */

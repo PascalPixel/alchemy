@@ -6,8 +6,10 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
+/* The camera looks at pos from eye, which Iwram_TransformVector places at
+   distance from pos, turned by yaw and pitch. */
 struct BattleCamera {
-    u8 unknown_00[12];
+    s32 eye[3];
     s32 pos[3];
     s32 unknown_18;
     s32 *follow_pos;
@@ -32,6 +34,8 @@ struct BattlePresentationTransition {
     u8 unknown_08[8];
     s32 active;                    /* 0x10, an escape presentation is playing */
     s32 flag;
+    s32 unknown_18;
+    s32 unknown_1c;
 };
 
 /* The action effect prepared from a plan and consumed by the presentation
@@ -52,7 +56,7 @@ struct BattlePresentationWork {
     u8 params[8][4]; /* per-target child parameters */
 };
 
-LAYOUT_SIZE_GUARD(BattlePresentationTransition_Size, struct BattlePresentationTransition, 0x18);
+LAYOUT_SIZE_GUARD(BattlePresentationTransition_Size, struct BattlePresentationTransition, 0x20);
 LAYOUT_OFFSET_GUARD(BattlePresentationTransition_Active, struct BattlePresentationTransition, active, 0x10);
 LAYOUT_SIZE_GUARD(BattlePresentationWork_Size, struct BattlePresentationWork, 0x54);
 LAYOUT_OFFSET_GUARD(BattlePresentationWork_Actors, struct BattlePresentationWork, actors, 0x24);

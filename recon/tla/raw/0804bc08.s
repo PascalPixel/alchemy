@@ -334,7 +334,7 @@ Func_0804bc08:
 	adds r5, #228
 	adds r3, #65
 	ldrb r0, [r3]
-	bl Func_0804297c
+	bl UiWindow_DrawPartyStatusContents
 	bl BattleActor_CommitPlacementFar
 	ldr r4, [sp, #36]
 	movs r0, #130

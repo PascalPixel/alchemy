@@ -15,7 +15,7 @@
 Resource_DirectoryTable:
 	resource , Cartridge_Restart
 	resource , Resource_DirectoryTable
-	resource , Resource_Data002
+	resource BuildStamp, Resource_Data002
 	resource , Resource_FarCall003
 	resource , Resource_FarCall004
 	resource , Resource_FarCall005

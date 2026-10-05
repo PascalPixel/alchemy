@@ -14,7 +14,6 @@ void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 void TakaraAshiba_RaiseTriggerOnStand(void);
 void SceneState_TriggerColumnTen(void);
 void SceneState_TriggerColumnNineteen(void);
-/* CALL.H keeps each scheduled callback's original argument order. */
 
 enum {
     /* Message 0x182 + 243. */
@@ -51,17 +50,6 @@ void Korosseo_ShowItemIcon();
 void TakaraAshiba_DispatchByActorEightColumn();
 void TakaraAshiba_UpdateBlockRects();
 void ObjectDispatch_ApplyValueToChildren();
-
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
 
 void FieldScene_RunScene3b4_02000fdc(s32 a0);
 

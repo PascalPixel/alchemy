@@ -43,8 +43,9 @@ struct DjinnMenuWork {
     s32 second_window;
     u8 unknown_038[0xd4];
     s32 help_window;
-    u8 unknown_110[0x34];
-    u16 frames[8];
+    u8 unknown_110[0x24];
+    s16 owner_x[8];
+    s16 owner_y[8];
     u8 unknown_154[0x20];
     u16 selection[2];
     u16 pair_entries[2];
@@ -69,6 +70,8 @@ struct DjinnMenuWork {
 
 LAYOUT_OFFSET_GUARD(DjinnMenuWork_StatusWindow, struct DjinnMenuWork, status_window, 0x10);
 LAYOUT_OFFSET_GUARD(DjinnMenuWork_SelectedColumn, struct DjinnMenuWork, selected_column, 0x1c);
+LAYOUT_OFFSET_GUARD(DjinnMenuWork_OwnerX, struct DjinnMenuWork, owner_x, 0x134);
+LAYOUT_OFFSET_GUARD(DjinnMenuWork_OwnerY, struct DjinnMenuWork, owner_y, 0x144);
 LAYOUT_OFFSET_GUARD(DjinnMenuWork_Selection, struct DjinnMenuWork, selection, 0x174);
 LAYOUT_OFFSET_GUARD(DjinnMenuWork_Pending, struct DjinnMenuWork, pending, 0x220);
 LAYOUT_OFFSET_GUARD(DjinnMenuWork_PairIndex, struct DjinnMenuWork, pair_index, 0x254);

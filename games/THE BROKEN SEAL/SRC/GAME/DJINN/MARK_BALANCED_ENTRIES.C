@@ -67,7 +67,7 @@ s32 DjinnMenu_ShowOwnerStatus(void)
     __asm__("" : "+r" (result));
     cursor[1] = cursor[0] = result;
     for (side = 3; side >= 0; side--)
-        menu->frames[side] = 200;
+        menu->owner_y[side] = 200;
     RenderOutput_ClearListFar((struct UiWindow *)menu->list_window);
     WaitFrames(1);
     page = pages;

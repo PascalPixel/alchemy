@@ -57,7 +57,7 @@ s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
             if (facing_delta > 0x1000) {
                 facing_delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (facing_delta < -0x1000) {
                 facing_delta = -0x1000;
             }
@@ -383,8 +383,6 @@ void SceneState_SetWork1c0AndRun(s32 no)
     Engine_EventRequestExit(no);
 }
 
-/* Runs four fixed scene-helper calls in sequence, one of them passed the
- * address of Value_0200beb4 as its first argument. */
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     Audio_PlayCue(158);
@@ -410,23 +408,18 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     SceneState_SetWork1c0AndRun(2);
 }
 
-/* Runs four fixed scene-helper calls in sequence, one of them passed the
- * address of Value_0200beb4 as its first argument. */
 void FieldScene_RunSupplementalSequenceThree(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)&Value_0200beb4, 43, 15); /* main:08009178 */
+    Map_AnimateCells((s32)&Value_0200beb4, 43, 15);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
     SceneState_SetWork1c0AndRun(3);
 }
 
-/* Runs four scene calls in sequence: a single-argument call, a call that
- * passes the address of Value_0200beb4 with two more values, a call that
- * passes 0, 374, and 0x1a3, and a final single-argument call. */
 void FieldScene_RunSupplementalSequenceFour(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)&Value_0200beb4, 52, 18); /* main:08009178 */
+    Map_AnimateCells((s32)&Value_0200beb4, 52, 18);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
     SceneState_SetWork1c0AndRun(4);
 }
@@ -437,29 +430,24 @@ void FieldScene_RunSupplementalSequenceFour(void)
 void FieldScene_RunSupplementalSequenceFive(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)&Value_0200beb4, 41, 32); /* main:08009178 */
+    Map_AnimateCells((s32)&Value_0200beb4, 41, 32);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
     SceneState_SetWork1c0AndRun(5);
 }
 
-/* Runs four scripted calls with fixed literal arguments: a single-argument
- * call, a 3-argument call whose first argument is the address of
- * Value_0200beb4, another 3-argument call, and a closing single-argument
- * call. */
+/* Run the four steps of the house scene. */
 void FieldScene_RunSupplementalSequenceSix(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)&Value_0200beb4, 35, 36); /* main:08009178 */
+    Map_AnimateCells((s32)&Value_0200beb4, 35, 36);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263); /* object_id 0, x 102, z 611 */
     SceneState_SetWork1c0AndRun(6);
 }
 
-/* Runs four scripted scene calls in sequence, passing a byte's address and a
- * handful of small immediate constants to each. */
 void FieldScene_RunSupplementalSequenceSeven(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)&Value_0200beb4, 51, 39); /* main:08009178 */
+    Map_AnimateCells((s32)&Value_0200beb4, 51, 39);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
     SceneState_SetWork1c0AndRun(7);
 }
@@ -760,9 +748,6 @@ void FieldScene_RunElderAidEvent(void)
     }
 }
 
-/* NONMATCHING: 496 of 496 bytes, 11 halfword edits (2026-09-24). Script call run;
- * 0x8017 and 0x2018 are shared constants whose registers (r6/r8) and pool
- * order still differ from the reference. */
 void HaidiaIe_RunScriptScene(void)
 {
     u8 *rec7;
@@ -1456,9 +1441,7 @@ void HaidiaIe_SpawnEffectPair(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;

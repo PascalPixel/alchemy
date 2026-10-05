@@ -24,7 +24,7 @@ s32 BattleParty_AssignMemberSlots(void)
 }
 
 /* The uninitialized third argument is ignored by the clear entry. */
-char Battle_ApplyValueToWork2224(s16 arg2)
+char Battle_ClearSerialTransferPayload(s16 arg2)
 {
   s16 val;
   s16 val2;

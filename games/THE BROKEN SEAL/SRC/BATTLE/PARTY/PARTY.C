@@ -94,7 +94,7 @@ void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
 void BattlePresentation_WaitForPromptAt(s32 a, s32 b);
-void Battle_ApplyValueToWork2224(void);
+void Battle_ClearSerialTransferPayload(void);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 a, s32 b);
 void UiText_ShowMessageAndWaitCoreFar(s32 id);
@@ -321,7 +321,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     }
 
 resolved:
-    Battle_ApplyValueToWork2224();
+    Battle_ClearSerialTransferPayload();
     if (GameFlag_IsSet(FLAG_DJINN_TUTORIAL) == 0) {
         if (battle->two_sided != 0)
             AudioCommand_PlayFar(58);
@@ -344,7 +344,7 @@ resolved:
     goto finished;
 
 aborted:
-    Battle_ApplyValueToWork2224();
+    Battle_ClearSerialTransferPayload();
     Scheduler_EnableCallbacks(0);
     REG_DISPCNT = 1;
     result = battle->spoils.defeated;
@@ -352,7 +352,7 @@ aborted:
     goto finished;
 
 party_lost:
-    Battle_ApplyValueToWork2224();
+    Battle_ClearSerialTransferPayload();
     AudioCommand_PlayFar(59);
     UiWork_ClearValueNameTablesFar();
     UiWork_PushValueSlotFar(gGameState.active_owners[0], 1);

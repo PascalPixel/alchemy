@@ -143,7 +143,7 @@ void MapEvent_RunTileTriggerSequence(void)
     gGameState.cloaked = 0;
 }
 
-void BattleFx_ScheduleCallbackWhenValue24cSet(void)
+void BattleFx_ScheduleCloakedMapCheck(void)
 {
     if (gGameState.cloaked != 0) {
         Scheduler_AddOrUpdateCallback((SchedulerCallback)CheckObjectMapTile, 0xc80);

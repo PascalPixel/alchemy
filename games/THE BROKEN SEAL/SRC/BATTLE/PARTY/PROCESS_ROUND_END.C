@@ -221,7 +221,7 @@ s32 Battle_ProcessRoundEnd(void)
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureSeal);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter13e(id) != 0) {
+            if (BattleUnit_TickRefrain(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgRefrainEnd);

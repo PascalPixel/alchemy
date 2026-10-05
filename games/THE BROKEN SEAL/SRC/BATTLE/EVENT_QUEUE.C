@@ -6,7 +6,7 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_WORK.H"
-void BattleEv_SetRuntimeField8(void)
+void BattleEv_MarkDisplay(void)
 {
     gBattleDisplayWork->marked = 1;
 }

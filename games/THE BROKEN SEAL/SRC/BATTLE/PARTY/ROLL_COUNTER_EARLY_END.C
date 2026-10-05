@@ -209,7 +209,7 @@ block_9:
 }
 
 /* battle/unit/tick_counter_13e.c */
-s32 BattleUnit_TickCounter13e(s32 unit_id)
+s32 BattleUnit_TickRefrain(s32 unit_id)
 {
     u8 *value = &Owner_GetStateFar(unit_id)->refrain;
     if (*value != 0) {

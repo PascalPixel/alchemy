@@ -27,7 +27,7 @@ void UiText_ShowMessageAndWaitCoreFar(s32 message);
 void UiWork_ClearValueNameTablesFar(void);
 s32 GameFlag_IsSet(s32 flag);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
-void BattleEv_SetRuntimeField8(void);
+void BattleEv_MarkDisplay(void);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 s32 Djinn_IsActiveFar(s32 unit_id, s32 element, s32 index);
 s32 Trade_CanOfferDjinnFar(s32 unit_id, s32 element, s32 index);
@@ -238,7 +238,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(Inventory_GetEquippedItemFar(actor, 1), 2);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgWeaponHowls);
-            BattleEv_SetRuntimeField8();
+            BattleEv_MarkDisplay();
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgWeaponHowls + 1);
         }

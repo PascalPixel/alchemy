@@ -266,7 +266,7 @@ void Scene_FadeColorFromWhite(s32 scene);
 s32 ObjectEffect_RunPendingFlagEvent(void);
 void FieldObject_PlaceSceneActors(void);
 void Djinn_ResolvePendingEvent();
-void BattleFx_ScheduleCallbackWhenValue24cSet(void);
+void BattleFx_ScheduleCloakedMapCheck(void);
 void Map_ShowWorldMap(s32 picture);
 void BattleFx_RunVisibilityTransition(void);
 void AudioCommand_PlayFar(s32 cue);
@@ -369,7 +369,7 @@ s32 Field_RunScene(s32 entrance)
         gGameState.paused_object = -1;
         gGameState.cloaked = 0;
     }
-    BattleFx_ScheduleCallbackWhenValue24cSet();
+    BattleFx_ScheduleCloakedMapCheck();
     work->unknown_cc8 = 0xffff;
     gOverlayArea.start();
     code = work->exit;

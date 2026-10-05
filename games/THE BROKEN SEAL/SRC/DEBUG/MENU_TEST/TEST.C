@@ -757,8 +757,7 @@ s32 CommandTable_ConfigureCommandList(void)
     Item_AdjustCounter(130, 1);
     Item_AdjustCounter(140, 1);
     Item_AdjustCounter(151, 1);
-    /* FAKEMATCH: the typed void calls put the first three owner arguments
-     * before the target count; ordinary calls reverse their order. */
+    /* FAKEMATCH: the typed void calls put the first three owner arguments before the target count; ordinary calls reverse their order. */
 #if EDITION_INTERNATIONAL
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(ROBIN, 50);
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(JERARD, 30);

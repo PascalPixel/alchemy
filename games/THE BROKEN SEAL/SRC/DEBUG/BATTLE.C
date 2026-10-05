@@ -6,7 +6,6 @@
 #include "RESOURCE_IDS.H"
 #include "CALLBACK_SCHEDULER.H"
 
-
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 
@@ -72,9 +71,7 @@ restart:
                     Battle_ReservedNoOp2A08();
                 if ((gKeysRepeat & KEY_B) || locked) {
                     locked = 1;
-                    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the
-                     * 5 is loaded before the byte's address as in the
-                     * reference */
+                    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the 5 is loaded before the byte's address as in the reference */
                     do {
                         gGameState.battle_start = 5;
                     } while (0);

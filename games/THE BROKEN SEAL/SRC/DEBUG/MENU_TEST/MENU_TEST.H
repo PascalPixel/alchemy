@@ -51,35 +51,10 @@ s32 Menu_OpenCharacterSelector(void);
 
 /* Scene state, dialogue and command-table steps for resource_3ce. */
 
-/*
- * Table getter at 0x02000030. The eight-byte owner includes its one pool word
- * at 0x02000034, which holds 0x020093c8; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
-/*
- * Table getter at 0x0200003c. The eight-byte owner includes its one pool word
- * at 0x02000040, which holds 0x020093f8; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
-/*
- * Table getter at 0x02000044. The eight-byte owner includes its one pool word
- * at 0x02000048, which holds 0x020093fc; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
 /* Step by one until the query returns non-zero. The test sits at the bottom of
  * the loop and entry jumps to it. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Each symbol here is the per-site call word the overlay image holds -- one
- * word can serve two sites with different targets -- and the macro keeps the
- * site's own calling form. The names themselves are provisional. */
 
 /* Runs one setup call, then a long table of two-argument calls each passing
  * a slot index (0-3) and an associated code value, and finishes with a few

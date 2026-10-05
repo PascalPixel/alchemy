@@ -74,8 +74,7 @@ s32 DebugParty_LoadPreset(s32 preset)
             state->djinn_active[i] = 0;
         }
         for (i = 0; i < 32; i++)
-            /* FAKEMATCH: the halfword store through a u16 cast loads its zero
-               from the literal pool, as the reference does. */
+            /* FAKEMATCH: the halfword store through a u16 cast loads its zero from the literal pool, as the reference does. */
             *(u16 *)&((struct BattleUnit *)state)->action_slots[i] = 0;
         for (i = 0; i < 2; i++) {
             if (Debug_PartyPresets[row].actions[i] != 0)

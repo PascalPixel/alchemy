@@ -113,8 +113,7 @@ void Scene_AddToListedRecordCounts(s32 amount)
 void FieldScene_RunCountAdjustPanel(void)
 {
     u8 *record;
-    /* FAKEMATCH: reading the held keys through a volatile pointer loads
-     * them once per test, where the reference does not merge the tests. */
+    /* FAKEMATCH: reading the held keys through a volatile pointer loads them once per test, where the reference does not merge the tests. */
     volatile u32 *key;
     s32 win;
     s32 flag;
@@ -418,9 +417,7 @@ void SceneState_SetWorkWords1c0And1c8(void)
     Engine_EventRequestExit();
 }
 
-/* The overlay's entry driver, the target of the first entry veneer. Actor
- * 11 is fetched twice, once per store, and must not be folded into one
- * local. */
+/* Overlay entry driver. */
 s32 FieldScene_RunEntrySetup(void)
 {
     gEventWork->start_transition = 516;
@@ -440,8 +437,7 @@ s32 FieldScene_RunEntrySetup(void)
 #if !EDITION_INTERNATIONAL
 void ItemLevel_RunMotionTest(void)
 {
-    /* FAKEMATCH: Call3 places the actor argument before the coordinate shifts;
-     * the ordinary direct call schedules it after both shifts. */
+    /* FAKEMATCH: Call3 places the actor argument before the coordinate shifts; the ordinary direct call schedules it after both shifts. */
     Battle_Reset();
     Engine_ActorSetAnimation(10, 2);
     Engine_ActorSetAnimation(11, 4);
@@ -474,11 +470,7 @@ void SceneState_SetRecordFlag53(void)
     record[53] = 1;
 }
 
-/*
- * The return address is popped into r1, not r0, so r0 is live at return and
- * the wrapper hands its callee's result back; declaring the pair void would
- * compile pop {r0} / bx r0 instead.
- */
+/* The wrapper passes on its callee's result. */
 int SceneState_GetFarResult100c(void)
 {
     return DebugMenu_BrowseIcons();

@@ -26,7 +26,7 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
             for (flag = 0x300; flag <= 0x3ff; flag++)
                 GameFlag_ClearBitFar(flag);
             GameFlag_SetBitFar(0x12f);
-            gGameState.unknown_238 = 0;
+            gGameState.encounter_steps = 0;
             gGameState.hazard_steps = 0;
             GameFlag_ClearBitFar(0x110);
             GameFlag_ClearBitFar(0x111);

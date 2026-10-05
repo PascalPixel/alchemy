@@ -49,54 +49,45 @@ extern u8 MsgWorldMapNextIllShowHowCan[];
 extern u8 MsgWorldMapWeCantStayAnotherMinute[];
 
 /*
- * The progress word is game-state halfword 284 read as a whole word and the level
- * word is the workspace at +428; both offsets are built in one register, so
- * the order in which the locals are declared is what reproduces the
- * reference.
+ * Near the next random encounter (nine tenths of the way), the world map may
+ * raise one of its story events instead: the event clears the encounter's
+ * spread, and a missed chance brings the encounter on at the next step.
  */
 void StoryProgress_TriggerEvent0808(void)
 {
+    struct EventWork *work = gEventWork;
 
-    u8 *workspace = (u8 *)gEventWork;
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
+    if (gGameState.encounter_steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         if ((u32)Engine_RandomNext() < 0x8000) {
             BattleFx_SetPhaseRequest(0x808, 3);
-            *(s32 *)(workspace + 424) = 0;
+            work->encounter_bias = 0;
         } else {
-            *progress = *level;
+            gGameState.encounter_steps = work->encounter_threshold;
         }
     }
 }
 
 void StoryProgress_TriggerEvent0809(void)
 {
+    struct GameState *state = &gGameState;
+    s32 *steps = &state->encounter_steps;
+    struct EventWork *work = gEventWork;
 
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    u8 *workspace = (u8 *)gEventWork;
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
+    if (*steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         BattleFx_SetPhaseRequest(0x809, 42);
-        *(s32 *)(workspace + 424) = 0;
+        work->encounter_bias = 0;
     }
 }
 
 void StoryProgress_TriggerEvent080A(void)
 {
+    struct GameState *state = &gGameState;
+    s32 *steps = &state->encounter_steps;
+    struct EventWork *work = gEventWork;
 
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    u8 *workspace = (u8 *)gEventWork;
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
+    if (*steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         BattleFx_SetPhaseRequest(0x80a, 24);
-        *(s32 *)(workspace + 424) = 0;
+        work->encounter_bias = 0;
     }
 }
 

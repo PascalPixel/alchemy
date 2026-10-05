@@ -28,7 +28,13 @@ struct EventWork {
     u8 unknown_184[0x18];
     /* Frames the leader has pressed against something it cannot pass. */
     s16 blocked_steps;
-    u8 unknown_19e[0x22];
+    u8 unknown_19e[0x0a];
+    /* A random spread drawn once per encounter, which shifts how fast the
+       encounter steps grow until the next encounter clears it. */
+    s32 encounter_bias;
+    /* The encounter steps at which a random encounter comes. */
+    s32 encounter_threshold;
+    u8 unknown_1b0[0x10];
     /* How the screen opens when the scene starts. */
     s32 start_transition;
     u8 unknown_1c4[4];

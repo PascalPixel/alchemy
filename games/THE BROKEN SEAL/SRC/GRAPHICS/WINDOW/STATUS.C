@@ -28,15 +28,6 @@
 typedef void (*RamRoutine)(void *dst, void *scene);
 
 
-struct PartyStatusWindow {
-    struct UiWindow *window;
-    u16 x;
-    u16 y;
-    u16 width;
-    u16 height;
-    u16 flags;
-};
-
 extern s32 Party_CountActiveOwnersFar(void);
 
 void UiWindow_FillFromScene(void *dst)

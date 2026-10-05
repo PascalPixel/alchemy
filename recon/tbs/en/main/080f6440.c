@@ -1,14 +1,15 @@
-/* 2026-10-05 (deep finisher 16, later): alchemy diff 172. The lever's
- * height is its own block-local variable instead of y: with y shared by
- * the cursor objects and the lever the allocator put the cursor x and y
- * in r6 and r5 and the lever in r5 (listed: r5, r6, r4). The lever in x
- * gave 206, in cnt 176 (the lever matches but the settled count moves to
- * r4), in col 184, in all or held 198, in k or i 206, in v 297, in
- * coins 743. Row pointers in the other row loops (line check 259, pos
- * update 289 or 235 inside the held test, held markers 226, stop
- * countdown 251, settled count 241, stop start 278), the settled count
- * kept in k (230), col or all (331), and declaration order (226) were
- * tried on top of the cells' row pointer and are no better.
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 160. The settled
+ * count adds one in two places, if held, else if stopped on a cell
+ * boundary (jump2 merges the two increments): the extra references put
+ * the count in r1 ahead of the pos offset giv (r0), as listed.
+ * Still open in the spin's pos update loop: the listing keeps i, steps a
+ * row pointer and holds pos in a register through the += 8 (GCSE moves
+ * the load to the stop != 0 edge); the indexed reads here re-read pos for
+ * the 336 test. A row pointer declared inside the held test gives that
+ * loop but for a copy of the pointer and the block order (169); declared
+ * with the loop body 165-223. The state-11 branch computes &work->window
+ * before the phase store in the listing, after it here (phase set first
+ * 168, phase = hits 160).
  */
 /* 2026-10-04: column r10 binding trial scored 15310 vs 3720; rejected.
  * Use the existing ReelGame_Run saved-game view from GameState+12 instead
@@ -366,8 +367,9 @@ void ReelGame_RunFrame(void)
 
         cnt = 0;
         for (i = 0; i != 5; i++) {
-            if (work->row[i].held == 1 ||
-                (work->row[i].stop == 0 && (work->row[i].pos & 15) == 8))
+            if (work->row[i].held == 1)
+                cnt++;
+            else if (work->row[i].stop == 0 && (work->row[i].pos & 15) == 8)
                 cnt++;
         }
 

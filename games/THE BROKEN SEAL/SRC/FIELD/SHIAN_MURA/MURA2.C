@@ -79,22 +79,13 @@ s32 SceneEffect_CalculatePositionDistance( s32 *first_position, s32 *second_posi
 s32 ShianMura_WatchGateTrigger(struct FieldActor *self);
 s32 SceneActor_UpdateTracking( struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking);
 
-/* Plays page effect 22 for slot 1 with mode 2; all three arguments are
- * immediates, so the function carries no literal pool. */
+/* Play page effect 22 for slot 1 in mode 2. */
 void SceneEffect_RequestFixedEffect(void)
 {
     BattleFx_RunPageEffectForSlot(22, 1, 2);
 }
 
-/*
- * Shian village: toggle the presentation flag on actor 20. While the scene
- * counter has passed the threshold the flag is set; otherwise it is cleared.
- *
- * The local SceneState and Actor layouts are this overlay's own copies of the
- * scene counter record and the field actor record (presentation_flags at
- * 0x24). The offsets here are what the reference reads, so the spelling is
- * kept as-is.
- */
+/* Set actor 20's presentation flag while the scene counter exceeds the threshold; clear it otherwise. */
 void Actor_UpdatePresentationFlag(void)
 {
     struct SceneState *scene = (void *)Object_GetById(0);
@@ -105,7 +96,7 @@ void Actor_UpdatePresentationFlag(void)
     }
 }
 
-/* Complete entity-19 sprite-counter adjustment. */
+/* Adjust actor 19's sprite counter. */
 void SceneEffect_AdvanceRotatingSprite(void)
 {
     u8 *entity = Object_GetById(19);
@@ -135,16 +126,7 @@ void SceneEffect_SpawnPeriodicEffect(void)
     }
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
+/* Return the integer distance between two 16.16 positions. */
 s32 SceneEffect_CalculatePositionDistance(
     s32 *first_position,
     s32 *second_position)
@@ -494,11 +476,7 @@ void ShianMura_RunNpcMeetScene(void)
     }
 }
 
-/*
- * The 28-byte owner includes its one pool word: 0x17f7 is an identifier
- * passed as an argument, not an address.  The first and last calls are the
- * scene bracket and must stay in that order.
- */
+/* Show message 0x17f7 between the scene's opening and closing calls. */
 void SceneEffect_RunActorSceneMessage(void)
 {
     Engine_EventBegin();
@@ -715,8 +693,7 @@ s32 ShianMura_SetupScene(void)
     for (n = 0; n <= 2; n++) {
         struct FieldActor *actor;
         actor = Object_GetById(n + 23);
-        /* FAKEMATCH: one value spans priority and motion setup so the
-         * motion zero stays inside the loop and feeds the later actors. */
+        /* FAKEMATCH: one value spans priority and motion setup so the motion zero stays inside the loop and feeds the later actors. */
         x = 1;
         actor->sprite->priority = x;
         x = 0;

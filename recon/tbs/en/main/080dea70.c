@@ -3,9 +3,8 @@
 /*
  * Draft, not exact.
  *
- * 2026-10-05 deep finisher 20: alchemy diff 969 -> 783 (1605 listing
- * instructions, 1598 here; the structure differs in 131 once registers
- * are ignored).
+ * 2026-10-05 deep finisher 20: alchemy diff 969 -> 635 (1605 listing
+ * instructions, 1600 here).
  *   - The blitter routines are read as gWorkSlot[46] and [47] from
  *     HEAP_STATE.H, so the slot address is formed as gWorkSlot + 184 the
  *     way the native forms it: 909.
@@ -14,10 +13,18 @@
  *     one register over the whole loop nest, and mode loses r8 to it: 783
  *     (mode r8, steps r10 and pos r7 as in the native).
  *   - Ram_MapCellBuffer stays: the gMapCellBuffer symbol scores 1047.
- * Remaining: work is in r9 and height / 2 in r11, the native has them the
- * other way round; the native spills the mode * 4 temporary to sp+84 ahead
- * of stagger, delay and height (sp+80, 76, 72), here it is sp+72 after
- * them.
+ *   - One k for both spawn loops (765), and the two spawn loops read
+ *     position.x and .y directly, which gives the native its hoisted copies
+ *     of pos (r10 and r4); mode 6 counts its sparks in shift, the shift
+ *     variable of the impact loop: 635, with work in r11, k in r1, shift
+ *     in r2 and pos in r7 as in the native.
+ *   - Tried: the sign test as (target->x < 0 ? shot->x < 0 : shot->x >= 0)
+ *     and as shifts, != 0, == 1 or & 1 of it (783-789, the native forms
+ *     both store-flags lsrs #31 and mvns + lsrs #31 and tests them).
+ * Remaining: the native spills the mode * 4 temporary to sp+84 ahead of
+ * stagger, delay and height (sp+80, 76, 72), here it is sp+72 after them;
+ * reload register choices in the mode setup differ (r7 then r0..r4 in
+ * the native, r0..r4 and r6 here).
  */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -97,6 +104,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
     s32 delay;
     s32 height;
     struct MotionObject *source;
+    s32 k;
+    s32 shift;
 
     heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
@@ -277,20 +286,18 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                     shot->y += shot->velocity_y;
                     shot->z += shot->velocity_z;
                     if (mode == 6) {
-                        s32 spawned = 0;
-                        s32 k;
-
+                        shift = 0;
                         for (k = 512; k != 1024; k++) {
                             struct EffectStep *mote = &gMotes[k];
 
                             if (mote->variant == 0) {
-                                mote->x = pos->x << 16;
-                                mote->y = pos->y << 16;
+                                mote->x = position.x << 16;
+                                mote->y = position.y << 16;
                                 mote->velocity_x = ((Random16() & 255) - 128) << 11;
                                 mote->velocity_y = ((Random16() & 255) - 128) << 11;
                                 mote->variant = (Random16() & 7) + 32;
-                                spawned++;
-                                if (spawned == 2)
+                                shift++;
+                                if (shift == 2)
                                     break;
                             }
                         }
@@ -300,8 +307,6 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                         && abs(shot->x) >= abs(target->x)) {
                         s32 spawned = 0;
                         struct EffectStep *flash = &gMotes[index];
-                        s32 shift;
-                        s32 k;
 
                         shot->variant = 1;
                         if (mode == 5) {
@@ -337,8 +342,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                             struct EffectStep *mote = &gMotes[k];
 
                             if (mote->variant == 0) {
-                                mote->x = pos->x << 16;
-                                mote->y = pos->y << 16;
+                                mote->x = position.x << 16;
+                                mote->y = position.y << 16;
                                 mote->velocity_x = ((Random16() & 255) - 128) << shift;
                                 mote->velocity_y = ((Random16() & 255) - 128) << shift;
                                 mote->variant = (Random16() & 7) + 16;

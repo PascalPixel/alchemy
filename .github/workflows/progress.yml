@@ -1,29 +1,77 @@
-name: Decompilation progress
+name: Progress
 
+# make land measures both games from all twelve verified editions on a
+# machine that holds the ROMs; the pre-push hook uploads that measurement,
+# named by its commit, to the decomp-reports release. This job turns it
+# into the published progress: the history and both README figures on the
+# progress branch, and decomp.dev's report.
 on:
   push:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: progress
+  cancel-in-progress: false
 
 jobs:
-  report:
+  publish:
     if: github.repository == 'PascalPixel/alchemy'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_TARGET_DIR: ${{ github.workspace }}/tools/out/cargo-target
+      RUSTUP_TOOLCHAIN: 1.98.1
+      # The history's days and hours are Pascal's local calendar.
+      TZ: Europe/London
     steps:
-      # make land verifies locally; the pre-push hook uploads before this run starts.
-      - name: Download the verified report for this commit
+      - name: Check out main
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check out the published progress
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: progress
+          path: progress
+
+      - name: Download the verified measurement for this commit
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          REPORT_COMMIT: ${{ github.sha }}
-        run: gh release download decomp-reports --pattern "${REPORT_COMMIT}.pb" --output report.pb
+        run: >-
+          gh release download decomp-reports --dir measured
+          --pattern "${GITHUB_SHA}.tsv" --pattern "${GITHUB_SHA}.pb"
 
-      # decomp.dev splits the native combined report into twelve named versions.
-      - name: Upload all twelve editions
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - name: Build Alchemy
+        run: |
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+          cargo build --locked --release --manifest-path tools/Cargo.toml -p alchemy
+
+      - name: Record the measurement and draw both figures
+        run: >-
+          tools/out/cargo-target/release/alchemy check coverage
+          --publish "measured/${GITHUB_SHA}.tsv" progress
+
+      - name: Publish the progress branch
+        working-directory: progress
+        run: |
+          git add history.tsv PROGRESS.png PROGRESS_CHART.png
+          git diff --cached --quiet && exit 0
+          git -c user.name='github-actions[bot]' \
+            -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit --quiet -m "Progress for ${GITHUB_SHA::10}"
+          git push origin HEAD:progress
+
+      # decomp.dev splits the combined report into twelve named versions.
+      - name: Hand decomp.dev all twelve editions
+        run: cp "measured/${GITHUB_SHA}.pb" report.pb
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: combined_report
           path: report.pb

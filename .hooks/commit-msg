@@ -1,4 +1,0 @@
-#!/bin/sh
-# Main derives its DONE prefix from the current verified production builds.
-exec cargo run --offline --quiet --release \
-  --manifest-path tools/alchemy/Cargo.toml -- check commit-progress --write "$1"

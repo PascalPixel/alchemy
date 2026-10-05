@@ -1,13 +1,23 @@
 //! Publish locally verified measurements, never the private build inputs.
+//! `make land` prepares them; the pre-push hook uploads them by commit to
+//! the `decomp-reports` release, where CI draws the progress figures and
+//! hands decomp.dev its report.
 use super::decomp::REPORT;
 use sha2::{Digest, Sha256};
 use std::path::Path;
 use std::process::Command;
 
+/// Both games' DONE parts, as CI records them in the progress history.
+pub(crate) const MEASUREMENT: &str = "out/reports/decomp/measurement.tsv";
+
 const REPO: &str = "PascalPixel/alchemy";
 const RELEASE: &str = "decomp-reports";
 const RECEIPT: &str = "out/reports/decomp/publication.tsv";
-const STALE: &str = "decomp.dev report is stale or missing: run make land before committing main";
+const STALE: &str =
+    "progress measurement is stale or missing: run make land before committing main";
+/// What a push uploads: the decomp.dev report and the measurement, each
+/// named by the commit it measures.
+const ASSETS: [(&str, &str); 2] = [(REPORT, "pb"), (MEASUREMENT, "tsv")];
 
 fn command(root: &Path, program: &str, arguments: &[&str]) -> Result<String, String> {
     let output = Command::new(program)
@@ -28,8 +38,9 @@ fn digest(bytes: &[u8]) -> String {
     format!("sha256:{:x}", Sha256::digest(bytes))
 }
 
-fn receipt(tree: &str, bytes: &[u8]) -> String {
-    format!("{tree}\t{}\n", digest(bytes))
+fn receipt(tree: &str, files: &[Vec<u8>]) -> String {
+    let digests = files.iter().map(|bytes| digest(bytes)).collect::<Vec<_>>();
+    format!("{tree}\t{}\n", digests.join("\t"))
 }
 
 fn valid_id(id: &str) -> bool {
@@ -47,24 +58,31 @@ fn canonical_remote(remote: &str) -> bool {
     .any(|url| remote.eq_ignore_ascii_case(url))
 }
 
+fn read_assets(root: &Path) -> Result<Vec<Vec<u8>>, String> {
+    ASSETS
+        .iter()
+        .map(|(path, _)| std::fs::read(root.join(path)).map_err(|_| STALE.to_string()))
+        .collect()
+}
+
 /// Called only after make land's complete build, comparison and publication
-/// gates; the coverage gate wrote the report from their one measurement.
+/// gates; the coverage report gate wrote both files from their one measurement.
 pub(crate) fn prepare(root: &Path) -> Result<(), String> {
     let tree = command(root, "git", &["write-tree"])?;
-    let bytes = std::fs::read(root.join(REPORT)).map_err(|_| STALE.to_string())?;
-    std::fs::write(root.join(RECEIPT), receipt(&tree, &bytes))
+    let files = read_assets(root)?;
+    std::fs::write(root.join(RECEIPT), receipt(&tree, &files))
         .map_err(|error| error.to_string())?;
-    println!("decomp.dev report prepared for source tree {tree}");
+    println!("progress measurement prepared for source tree {tree}");
     Ok(())
 }
 
-fn prepared(root: &Path, tree: &str) -> Result<Vec<u8>, String> {
-    let bytes = std::fs::read(root.join(REPORT)).map_err(|_| STALE.to_string())?;
+fn prepared(root: &Path, tree: &str) -> Result<Vec<Vec<u8>>, String> {
+    let files = read_assets(root)?;
     let saved = std::fs::read_to_string(root.join(RECEIPT)).map_err(|_| STALE.to_string())?;
-    if !valid_id(tree) || saved != receipt(tree, &bytes) {
+    if !valid_id(tree) || saved != receipt(tree, &files) {
         return Err(STALE.into());
     }
-    Ok(bytes)
+    Ok(files)
 }
 
 fn needs_upload(remote_digest: &str, bytes: &[u8]) -> Result<bool, String> {
@@ -72,9 +90,24 @@ fn needs_upload(remote_digest: &str, bytes: &[u8]) -> Result<bool, String> {
         "" => Ok(true),
         value if value == digest(bytes) => Ok(false),
         _ => Err(
-            "existing report for this commit has a different digest; refusing to replace it".into(),
+            "existing measurement for this commit has a different digest; refusing to replace it"
+                .into(),
         ),
     }
+}
+
+fn remote_digest(root: &Path, name: &str) -> Result<String, String> {
+    let query = format!(".assets[] | select(.name == \"{name}\") | .digest");
+    command(
+        root,
+        "gh",
+        &[
+            "api",
+            &format!("repos/{REPO}/releases/tags/{RELEASE}"),
+            "--jq",
+            &query,
+        ],
+    )
 }
 
 pub(crate) fn upload(root: &Path, commit: &str, remote: &str) -> Result<(), String> {
@@ -85,24 +118,16 @@ pub(crate) fn upload(root: &Path, commit: &str, remote: &str) -> Result<(), Stri
         return Err("invalid source commit for report publication".into());
     }
     let tree = command(root, "git", &["rev-parse", &format!("{commit}^{{tree}}")])?;
-    let bytes = prepared(root, &tree)?;
-    let name = format!("{commit}.pb");
-    let query = format!(".assets[] | select(.name == \"{name}\") | .digest");
-    let remote_digest = command(
-        root,
-        "gh",
-        &[
-            "api",
-            &format!("repos/{REPO}/releases/tags/{RELEASE}"),
-            "--jq",
-            &query,
-        ],
-    )?;
-    if needs_upload(&remote_digest, &bytes)? {
-        let directory = root.join("out/reports/decomp/upload");
-        std::fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
-        let path = directory.join(name);
-        std::fs::write(&path, &bytes).map_err(|error| error.to_string())?;
+    let files = prepared(root, &tree)?;
+    let directory = root.join("out/reports/decomp/upload");
+    std::fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
+    for ((_, extension), bytes) in ASSETS.iter().zip(&files) {
+        let name = format!("{commit}.{extension}");
+        if !needs_upload(&remote_digest(root, &name)?, bytes)? {
+            continue;
+        }
+        let path = directory.join(&name);
+        std::fs::write(&path, bytes).map_err(|error| error.to_string())?;
         command(
             root,
             "gh",
@@ -115,20 +140,10 @@ pub(crate) fn upload(root: &Path, commit: &str, remote: &str) -> Result<(), Stri
                 REPO,
             ],
         )?;
-        let uploaded = command(
-            root,
-            "gh",
-            &[
-                "api",
-                &format!("repos/{REPO}/releases/tags/{RELEASE}"),
-                "--jq",
-                &query,
-            ],
-        )?;
-        if needs_upload(&uploaded, &bytes)? {
-            return Err("uploaded report is absent from the release".into());
+        if needs_upload(&remote_digest(root, &name)?, bytes)? {
+            return Err(format!("uploaded {name} is absent from the release"));
         }
     }
-    println!("decomp.dev report uploaded for {commit}; GitHub will publish it after the push");
+    println!("progress measurement uploaded for {commit}; CI publishes it after the push");
     Ok(())
 }

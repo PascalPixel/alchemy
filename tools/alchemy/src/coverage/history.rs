@@ -10,9 +10,8 @@
 use super::progress::GameDone;
 use super::sessions;
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-pub(crate) const PATH: &str = "recon/tbs/metrics/history.tsv";
 const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttla_done\ttla_executable\ttla_percent\tmodels\toverhaul";
 
 /// One game's value on one day: bytes when they were recorded, else the
@@ -123,12 +122,10 @@ impl History {
     }
 }
 
-pub(crate) fn path(root: &Path) -> PathBuf {
-    root.join(PATH)
-}
-pub(crate) fn load(root: &Path) -> Result<History, String> {
-    let text = std::fs::read_to_string(path(root)).map_err(|e| format!("{PATH}: {e}"))?;
-    parse(&text).map_err(|error| format!("{PATH}: {error}"))
+pub(crate) fn load_file(path: &Path) -> Result<History, String> {
+    let name = path.display();
+    let text = std::fs::read_to_string(path).map_err(|e| format!("{name}: {e}"))?;
+    parse(&text).map_err(|error| format!("{name}: {error}"))
 }
 pub(crate) fn text(history: &History) -> String {
     let mut text = format!(
@@ -424,66 +421,29 @@ pub(crate) fn record(
 }
 /// The label of a commit that names no model.
 pub(crate) const UNTAGGED: &str = "Untagged";
-/// `date`'s model counts from every branch of the local repository, each
-/// commit labelled as `sessions::label` names it.
-pub(crate) fn models_on(root: &Path, date: &str) -> Result<BTreeMap<String, u64>, String> {
-    let since = previous(date).unwrap_or_default();
-    let log = sessions::git_log(root, Some(&since))?;
-    if log.trim().is_empty() {
-        return Ok(BTreeMap::new());
+/// Pascal (2026-10-05): the per-day model counts approved through this date
+/// stay as recorded, a compatibility table for commits whose trailers do not
+/// name their model. Every later day is counted from main's commits alone.
+pub(crate) const FROZEN_THROUGH: &str = "2026-10-04";
+
+/// Count every day after [`FROZEN_THROUGH`] from its commits' trailers.
+pub(crate) fn derive_models(root: &Path, history: &mut History) -> Result<(), String> {
+    let log = sessions::git_log(root, Some(FROZEN_THROUGH))?;
+    for (date, models) in count_models(&sessions::commits(&log)) {
+        record_models(history, &date, &models);
     }
-    let (mut days, _) = sessions::tally(&log);
-    Ok(days.remove(date).unwrap_or_default())
+    Ok(())
 }
 
-/// Publication retains approved attribution and adds only the commits that
-/// have landed since that day's maintained count.
-pub(crate) fn publication_models(
-    root: &Path,
-    history: &History,
-    date: &str,
-) -> Result<BTreeMap<String, u64>, String> {
-    let mut models = history
-        .days
-        .iter()
-        .find(|row| row.date == date)
-        .map(|row| row.models.clone())
-        .unwrap_or_default();
-    let since = previous(date).unwrap_or_default();
-    let log = sessions::git_log(root, Some(&since))?;
-    let mut commits = sessions::commits(&log)
-        .into_iter()
-        .filter(|commit| commit.date == date)
-        .collect::<Vec<_>>();
-    commits.sort_by(|left, right| right.time.cmp(&left.time).then(right.sha.cmp(&left.sha)));
-    append_models(&mut models, &commits);
-    Ok(models)
-}
-
-fn append_models(models: &mut BTreeMap<String, u64>, commits: &[sessions::Commit]) {
-    let labels = commits
-        .iter()
-        .map(|commit| sessions::label(commit).0)
-        .collect::<Vec<_>>();
-    let total = labels.iter().map(|labels| labels.len() as u64).sum::<u64>();
-    let missing = total.saturating_sub(models.values().sum());
-    for model in labels.iter().flatten().take(missing as usize) {
-        *models.entry(model.clone()).or_default() += 1;
+fn count_models(commits: &[sessions::Commit]) -> BTreeMap<String, BTreeMap<String, u64>> {
+    let mut days = BTreeMap::<String, BTreeMap<String, u64>>::new();
+    for commit in commits.iter().filter(|c| c.date.as_str() > FROZEN_THROUGH) {
+        let day = days.entry(commit.date.clone()).or_default();
+        for model in sessions::label(commit) {
+            *day.entry(model).or_default() += 1;
+        }
     }
-}
-/// Relabel every day's commits from the whole log, returning how many
-/// commits changed label, from → to.
-pub(crate) fn relabel_models(
-    root: &Path,
-    history: &mut History,
-) -> Result<BTreeMap<(String, String), u64>, String> {
-    let log = sessions::git_log(root, None)?;
-    let (days, moved) = sessions::tally(&log);
-    let began = history.began.clone();
-    for (date, models) in days.iter().filter(|(date, _)| **date >= began) {
-        record_models(history, date, models);
-    }
-    Ok(moved)
+    days
 }
 /// Replace `date`'s model counts, adding the day's row if it lacks one.
 pub(crate) fn record_models(history: &mut History, date: &str, models: &BTreeMap<String, u64>) {
@@ -518,6 +478,7 @@ pub(crate) fn mark_drawn(history: &mut History, date: &str) {
 }
 
 /// Today's calendar date on this machine, `YYYY-MM-DD`.
+#[cfg(test)]
 pub(crate) fn today() -> String {
     this_hour()[..10].to_string()
 }
@@ -561,6 +522,7 @@ pub(crate) fn civil(day: i64) -> (i64, i64, i64) {
     (yoe + era * 400 + i64::from(m <= 2), m, d)
 }
 /// The day before `date`.
+#[cfg(test)]
 pub(crate) fn previous(date: &str) -> Option<String> {
     let (y, m, d) = civil(day_number(date)? - 1);
     Some(format!("{y:04}-{m:02}-{d:02}"))
@@ -694,36 +656,22 @@ mod tests {
     }
 
     #[test]
-    fn publication_keeps_approved_models_and_adds_actual_new_trailers() {
-        let mut models = BTreeMap::from([("Astra 6".into(), 17), ("Sol 6".into(), 9)]);
-        let old = |time| sessions::Commit {
-            time,
+    fn days_after_the_frozen_table_are_counted_from_commit_trailers() {
+        let commit = |date: &str, trailers: &str| sessions::Commit {
+            date: date.into(),
             author: "Pascal Pixel".into(),
+            trailers: trailers.into(),
             ..sessions::Commit::default()
         };
-        let mut commits = (0..26).map(|_| old(100)).collect::<Vec<_>>();
-        let mut new = old(200);
-        new.trailers = "Sol 6 <agent@example.com>".into();
-        commits.insert(0, new);
-        append_models(&mut models, &commits);
-        assert_eq!(
-            models,
-            BTreeMap::from([("Astra 6".into(), 17), ("Sol 6".into(), 10)])
-        );
-        append_models(&mut models, &commits);
-        assert_eq!(models["Sol 6"], 10);
-        assert!(!models.contains_key("Sol 5.6"));
-    }
-
-    #[test]
-    fn publication_keeps_new_commits_without_a_named_model_untagged() {
-        let mut models = BTreeMap::new();
-        let commit = sessions::Commit {
-            author: "Pascal Pixel".into(),
-            ..sessions::Commit::default()
-        };
-        append_models(&mut models, &[commit]);
-        assert_eq!(models, BTreeMap::from([(UNTAGGED.into(), 1)]));
+        let days = count_models(&[
+            commit(FROZEN_THROUGH, "Sol 6 <agent@example.com>"),
+            commit("2026-10-05", "Claude Opus 5.5 <noreply@anthropic.com>"),
+            commit("2026-10-05", "Claude Opus 5.5 <noreply@anthropic.com>"),
+            commit("2026-10-06", ""),
+        ]);
+        assert!(!days.contains_key(FROZEN_THROUGH));
+        assert_eq!(days["2026-10-05"], BTreeMap::from([("Opus 5.5".into(), 2)]));
+        assert_eq!(days["2026-10-06"], BTreeMap::from([(UNTAGGED.into(), 1)]));
     }
     fn done(bytes: i64) -> GameDone {
         GameDone {
@@ -784,10 +732,4 @@ mod tests {
         assert_eq!(previous("2026-09-01").as_deref(), Some("2026-08-31"));
         assert_eq!(today().len(), 10);
     }
-}
-#[test]
-fn the_tracked_history_reads_back_byte_for_byte() {
-    let path = path(crate::compiler::routing::root());
-    let tracked = std::fs::read_to_string(path).unwrap();
-    assert_eq!(text(&parse(&tracked).unwrap()), tracked);
 }

@@ -17,6 +17,9 @@
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
 #include "BATTLE_ACTOR.H"
+#include "BATTLE_EVENT.H"
+#include "BATTLE_WORK.H"
+#include "ANIMSPR.H"
 
 void UiWork_ClearValueNameTablesFar(void);
 s32 BattlePres_ShowMessageWhenField38Positive(const struct BattleActionRecord *);
@@ -33,6 +36,8 @@ void UiWork_PushValueSlotFar(s32, s32);
 
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *);
+void BattleFx_RunIceFleckBurstFar(struct BattlePresentationWork *);
+void BattleFx_DispatchModeFar(struct BattlePresentationWork *);
 
 /* Build the action order from agility: party members start with target
    priority 0x80, enemies with a random party target. Sort by descending
@@ -379,6 +384,81 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
     WaitFrames(4);
     BattleFx_DispatchByIdRangeFar(&work);
     Actor_ResetMotionAtAnchor(work.actors[0]);
+    Actor_ResetMotionAtAnchor(work.actor);
+    return 0;
+}
+
+s32 BattlePres_RunUnitAction(s16 *action)
+{
+    struct BattlePresentationWork work;
+    struct BattlePresentationTransition *transition = gTransitionWork;
+    struct MotionObject *object;
+    s32 facing;
+    s32 i;
+
+    if (action[0] > 4)
+        facing = -0x2000;
+    else
+        facing = 0x2000;
+    if (transition->target_yaw == facing) {
+        transition->frames = 40;
+        WaitFrames(40);
+    } else {
+        transition->target_yaw = facing;
+        transition->frames = 40;
+        WaitFrames(40);
+    }
+    work.kind = action[4];
+    work.initial_value = action[6];
+    work.actor = action[0];
+    work.first_target = action[5];
+    if (BattleObject_IsValidId(work.actor) < 0)
+        return -1;
+    if (work.first_target > 127)
+        work.count = BattleParty_ListLivingUnits(2, work.actors);
+    else
+        work.count = BattleParty_ListLivingUnits(1, work.actors);
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode & ~1);
+    object = GetBattleObjectSlot(work.actor)->object;
+    Object_SetMode(object, 3);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+    if ((u16)action[5] <= 7) {
+        work.side = 1;
+        BattleParty_ListLivingUnits(1, work.actors);
+        work.count = 1;
+    } else {
+        work.side = 0;
+        BattleParty_ListLivingUnits(2, work.actors);
+        work.count = 1;
+    }
+    for (i = 0; i != work.count; i++) {
+        struct AnimationObject *animation =
+            GetBattleObjectSlot(work.actors[i])->object->records;
+        s32 j;
+
+        for (j = 0; j != animation->count - 1; j++)
+            work.params[i][j] = animation->entries[j]->param;
+    }
+    /* FAKEMATCH: a one-pass loop around the presentation stages; its loop
+       notes keep cse and gcse from carrying &work into the reset loop,
+       which takes a fresh &work and two spilled copies as listed, and
+       order the dispatch argument ahead of the kind store. */
+    do {
+        work.kind = 0;
+        work.variant = 0;
+        BattleFx_RunIceFleckBurstFar(&work);
+        work.kind = 1;
+        BattleFx_RunIceFleckBurstFar(&work);
+        work.kind = 2;
+        BattleFx_RunIceFleckBurstFar(&work);
+        work.kind = 3;
+        BattleFx_RunIceFleckBurstFar(&work);
+        work.kind = 0;
+        BattleFx_DispatchModeFar(&work);
+        Object_SetMode(object, 1);
+    } while (0);
+    for (i = 0; i != work.count; i++)
+        Actor_ResetMotionAtAnchor(work.actors[i]);
     Actor_ResetMotionAtAnchor(work.actor);
     return 0;
 }

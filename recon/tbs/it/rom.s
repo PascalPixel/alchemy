@@ -863,12 +863,6 @@ Inn_PriceMultipliers:
 	.incbin "baserom.gba", 0x000b5204, 0x00000008
 	.section .rom.000b5218, "ax"
 	.incbin "baserom.gba", 0x000b5218, 0x00000040
-	.section .rom.000b8c34, "ax"
-	.global BattlePres_RunUnitAction
-	.type BattlePres_RunUnitAction, %function
-	.thumb_func
-BattlePres_RunUnitAction:
-	.incbin "baserom.gba", 0x000b8c34, 0x0000019c
 	.section .rom.000c2a22, "ax"
 	.incbin "baserom.gba", 0x000c2a22, 0x00000006
 	.global BattleParty_CenterOrderOffsets

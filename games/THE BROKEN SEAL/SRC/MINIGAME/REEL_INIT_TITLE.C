@@ -1,13 +1,13 @@
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
-#include "UI.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "GAME_STATE.H"
+#include "IO_REG.H"
 #include "IWRAM_CALL.H"
 #include "MAP_SCROLL.H"
 #include "RAM_BUFFER.H"
@@ -17,14 +17,23 @@
 #include "TBS_EDITION.H"
 #include "IO_REG.H"
 
-/* One of the five reels: where it stands, its twenty-one symbols, whether
-   it is held and where it is to stop. */
+/* One of the five reels: where it stands, sixteen units a symbol and 336
+   round, its twenty-one symbols, whether it is held and the frames left
+   before it stops (-1 while it turns freely). */
 struct Reel {
     s32 position;
     u8 symbols[21];
     u8 held;
-    u8 stop;
+    s8 stop;
 };
+
+/* One sprite of the frame's object buffer, written a word at a time. */
+struct ReelObject {
+    volatile u32 attr01;
+    volatile u32 attr2;
+};
+
+struct UiWindow;
 
 /* The reel game's state block, the seventh heap-cache cell. */
 struct ReelWork {
@@ -40,20 +49,534 @@ struct ReelWork {
     u8 unknown_0a4[4];
     s32 timer;
     s32 winning_lines[7];
-    u8 unknown_0c8[0x400];
-    s32 window;
-    s32 sub_window;
+    struct ReelObject obj[128];
+    struct UiWindow *window;
+    struct UiWindow *sub_window;
     u8 unknown_4d0[8];
     u16 scanline_offsets[160];
 #if EDITION_INTERNATIONAL
-    /* The localized editions' block is one word longer. */
-    s32 unknown_618;
+    /* The localized editions' block is one word longer: the prompt the
+       window shows, so that it is drawn once. */
+    s32 phase;
 #endif
 };
 
+/* The saved game from its fourth word on, as the reel game reads it. */
+struct ReelSave {
+    u8 unknown_000[0x120];
+    s8 won_prizes[16];
+};
+
 extern u8 gBattleFxWork[];
+extern volatile u32 gKeysHeld;
+extern u8 gDebugPaused;
 extern char MsgSlotsBet;
+extern char MsgSlotsStopReels;
+extern char MsgSlotsChooseHeld;
+extern char MsgSlotsPullLever;
+extern char MsgSlotsHold;
+extern char MsgSlotsRelease;
+extern char MsgSlotsStart;
+extern char MsgSlotsAllHeld;
+extern char MsgSlotsCannotPull;
 extern const u8 ReelGame_TitleLetterWidths[];
+extern const u8 ReelGame_SymbolPrizes[];
+extern const u8 ReelGame_TitleLetterTiles[];
+extern const u8 ReelGame_FrameSpriteX[];
+extern const u8 ReelGame_FrameSpriteY[];
+
+struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiText_DrawCharacterAtOffsetFar(s32 message, struct UiWindow *window, s32 x, s32 y);
+void UiWork_FinalizeFar(struct UiWindow *window, s32 style);
+void UiNumber_DrawAt(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
+s32 PartyInventory_RemoveFar(s32 item);
+s32 PartyInventory_CountItemFar(s32 item);
+void AudioCommand_PlayFar(s32 command);
+
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+/* One frame of the reel game, run by the scheduler: read the pad, run the
+   state machine that takes the bet, spins, holds and pays out, then rebuild
+   all 128 sprites and send them to OAM. Each reel is a ring of twenty-one
+   symbols scrolled sixteen units a symbol; once all five have settled the
+   seven lines (the five rows and the two diagonals) the bet covers are
+   tested. The Japanese prompts and the Spanish sparks differ and are not C
+   yet. */
+void ReelGame_RunFrame(void)
+{
+    struct ReelWork *work;
+    struct BattleEffectWork *fx;
+    volatile u16 *dma;
+    s32 n;
+    s32 blend;
+    u16 pad;
+    u32 held;
+    s32 coins;
+    s32 all;
+    s32 cnt;
+    s32 col;
+    s32 v;
+    s32 x;
+    s32 y;
+    s32 lever;
+    s32 k;
+    s32 i;
+
+    work = ((struct ReelWork **)gBattleFxWork)[6];
+    fx = ((struct BattleEffectWork **)gBattleFxWork)[0];
+    n = 0;
+    blend = 0x400;
+
+    Random16();
+
+    dma = REG_DMA0;
+    dma[5] &= 0xc5ff;
+    dma[5] &= 0x7fff;
+    dma[5];
+    Dma_Set(work->scanline_offsets, (void *)0x04000054, 0xa2600001,
+            (volatile u32 *)dma);
+
+    pad = gKeysHeld;
+    held = gKeysHeld & 0xf0;
+    work->pressed = pad & ~work->keys;
+    work->direction = held;
+    if ((work->keys & 0xf0) == work->direction) {
+        if (work->repeat > 12)
+            work->repeat = 12;
+        if (work->repeat == 0) {
+            work->repeat = 4;
+        } else {
+            work->repeat--;
+            work->direction = n;
+        }
+    } else {
+        work->repeat = 12;
+    }
+    work->keys = pad;
+
+    if (gDebugPaused != 0)
+        goto build_objects;
+
+    if (work->state == 0) {
+        coins = PartyInventory_CountItemFar(228);
+        UiNumber_DrawAt(coins - work->bet, REEL_COIN_DIGITS, work->sub_window, REEL_COIN_X, 0);
+        UiNumber_DrawAt(work->bet, 2, work->sub_window, 64, 8);
+        if (work->pressed & 2) {
+            struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
+
+            work->state = 10;
+            save->won_prizes[0] = 254;
+            UiWork_FinalizeFar(work->window, 1);
+            goto build_objects;
+        }
+        if (work->pressed & 0x40) {
+            if (work->bet <= 3 && coins > work->bet) {
+                work->bet++;
+                AudioCommand_PlayFar(111);
+            } else {
+                AudioCommand_PlayFar(113);
+            }
+        }
+        if (work->pressed & 0x80) {
+            if (work->bet > 1) {
+                work->bet--;
+                AudioCommand_PlayFar(111);
+            } else {
+                AudioCommand_PlayFar(113);
+            }
+        }
+        REG_BLDCNT = 0x3fd0;
+        REG_BLDALPHA = 0x10;
+        if (work->pressed & 1) {
+            work->state = 1;
+            fx->frame = 0;
+            UiWork_FinalizeFar(work->window, 1);
+            for (k = 0; k != work->bet; k++)
+                PartyInventory_RemoveFar(228);
+            UiWork_FinalizeFar(work->sub_window, 1);
+            AudioCommand_PlayFar(0x130);
+        }
+    } else if (work->state == 5) {
+        all = 0;
+        work->timer++;
+        for (k = 0; k != 5 && work->reels[k].held != 0; k++)
+            ;
+        if (k == 5)
+            all = 1;
+        if (work->pressed & 1) {
+            work->timer = 0;
+            fx->frame = 0;
+            if (work->spins == 4) {
+                work->spins = 0;
+                work->cursor = 0;
+                work->state = 0;
+                for (i = 0; i != 5; i++) {
+                    work->reels[i].held = 0;
+                    work->reels[i].stop = -1;
+                }
+            } else if (work->cursor <= 4) {
+                AudioCommand_PlayFar(0x131);
+                work->reels[work->cursor].held ^= 1;
+            } else if (all == 0) {
+                AudioCommand_PlayFar(0x130);
+                work->state = 1;
+                work->cursor = 0;
+                for (i = 0; i != 5; i++)
+                    work->reels[i].stop = -1;
+                work->spins++;
+            } else {
+                AudioCommand_PlayFar(113);
+            }
+        } else {
+            if (work->direction & 0x10) {
+                work->cursor = (work->cursor + 1) % 6;
+                AudioCommand_PlayFar(111);
+            }
+            if (work->direction & 0x20) {
+                work->cursor = (work->cursor + 5) % 6;
+                AudioCommand_PlayFar(111);
+            }
+        }
+
+        if (work->state == 5) {
+            if (work->cursor == 5) {
+                if (all != 0) {
+                    if (work->phase != 1 && work->phase != 2) {
+                        UiWork_FinalizeFar(work->window, 1);
+                        work->window = UiWindow_CreateFar(REEL_ALL_HELD_X, 0, REEL_ALL_HELD_WIDTH, 4, 6);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsAllHeld, work->window, 0, 0);
+                        work->phase = 1;
+                    } else if (work->phase == 1) {
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsCannotPull, work->window, 0, 8);
+                        work->phase = 2;
+                    }
+                } else {
+                    if (work->phase != 3) {
+                        UiWork_FinalizeFar(work->window, 1);
+                        work->window = UiWindow_CreateFar(REEL_START_X, 0, REEL_START_WIDTH, 3, 6);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsStart, work->window, 0, 0);
+                    }
+                    work->phase = 3;
+                }
+            } else if (work->reels[work->cursor].held == 0) {
+                if (work->phase != 4) {
+                    UiWork_FinalizeFar(work->window, 1);
+                    work->window = UiWindow_CreateFar(REEL_HOLD_X, 0, REEL_HOLD_WIDTH, 3, 6);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsHold, work->window, 0, 0);
+                }
+                work->phase = 4;
+            } else {
+                if (work->phase != 5) {
+                    UiWork_FinalizeFar(work->window, 1);
+                    work->window = UiWindow_CreateFar(REEL_RELEASE_X, 0, REEL_RELEASE_WIDTH, 3, 6);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsRelease, work->window, 0, 0);
+                }
+                work->phase = 5;
+            }
+        } else {
+            UiWork_FinalizeFar(work->window, 1);
+        }
+    } else if (work->state == 2) {
+        work->timer++;
+        blend = 0;
+        if (work->timer == 60) {
+            work->state = 3;
+            AudioCommand_PlayFar(93);
+            work->timer = 0;
+            REG_BLDCNT = 0x3f44;
+            REG_BLDALPHA = 0x1010;
+            fx->transfer_mode = 2;
+            fx->transfer_value = 75;
+        }
+    } else if (work->state == 3) {
+        work->timer++;
+        blend = 0;
+        if (work->pressed & 1) {
+            work->state = 10;
+            AudioCommand_PlayFar(112);
+        }
+    } else if (work->state == 11) {
+        if (work->phase == 0) {
+            work->phase = 1;
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsPullLever, work->window, 0, 8);
+        }
+        if (work->pressed & 1) {
+            work->state = 5;
+            work->phase = 0;
+            AudioCommand_PlayFar(112);
+            UiWork_FinalizeFar(work->window, 1);
+        }
+    } else if (work->state == 20) {
+        work->timer++;
+        if (work->timer == 45)
+            work->state = 10;
+    } else if (work->state != 10) {
+        /* Reels are turning. */
+        if (work->timer == 4) {
+            work->window = UiWindow_CreateFar(18, 17, 12, 3, 6);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsStopReels, work->window, 0, 0);
+        }
+        if (work->timer == 16)
+            AudioCommand_PlayFar(0x132);
+        if (work->timer > 56) {
+            if (fx->frame > 31 || (work->pressed & 0x100)) {
+                fx->frame = 0;
+                for (i = 0; i != 5; i++) {
+                    if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
+                        work->reels[i].stop = (Random16() & 3) + 4;
+                        AudioCommand_PlayFar(0x133);
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (i = 0; i != 5; i++) {
+            if (work->reels[i].stop > 0)
+                work->reels[i].stop--;
+        }
+
+        cnt = 0;
+        for (i = 0; i != 5; i++) {
+            if (work->reels[i].held == 1)
+                cnt++;
+            else if (work->reels[i].stop == 0 && (work->reels[i].position & 15) == 8)
+                cnt++;
+        }
+
+        if (cnt == 5) {
+            struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
+            s32 hits = 0;
+
+            for (col = 0; col != 7; col++) {
+                s32 mixed;
+                s32 found;
+
+                mixed = 0;
+                found = -1;
+                work->winning_lines[col] = 0;
+                if (col > 3 - work->bet && col < work->bet + 3) {
+                    for (i = 0; i != 5; i++) {
+                        s32 sym;
+
+                        if (col == 0)
+                            sym = work->reels[i].symbols[(i - work->reels[i].position / 16 + 22) % 21];
+                        else if (col == 6)
+                            sym = work->reels[i].symbols[(-i - work->reels[i].position / 16 + 26) % 21];
+                        else
+                            sym = work->reels[i].symbols[(col - work->reels[i].position / 16 + 21) % 21];
+                        if (sym != 5) {
+                            if (found == -1)
+                                found = sym;
+                            else if (found != sym)
+                                mixed = 1;
+                        }
+                    }
+                    if (mixed == 0) {
+                        work->winning_lines[col] = 1;
+                        save->won_prizes[0 + hits] = ReelGame_SymbolPrizes[found];
+                        hits++;
+                    }
+                }
+            }
+            work->timer = 0;
+            if (hits != 0) {
+                save->won_prizes[0 + hits] = -1;
+                work->state = 2;
+                AudioCommand_PlayFar(171);
+                fx->transfer_mode = 1;
+                fx->transfer_value = 0;
+                REG_BLDCNT = 0;
+                UiWork_FinalizeFar(work->window, 1);
+            } else {
+                work->state = 11;
+                work->phase = 0;
+                UiWork_FinalizeFar(work->window, 1);
+#if REEL_HINT_BEFORE_LAST_SPIN
+                if (work->spins <= 3)
+#endif
+                {
+                    work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsChooseHeld, work->window, 0, 0);
+                }
+                if (work->spins == 4) {
+                    s32 left = PartyInventory_CountItemFar(228);
+                    struct UiWindow *window;
+                    s32 message;
+
+                    if (left > 0)
+                        work->state = 20;
+                    else
+                        work->state = 20;
+                    if (work->bet > left)
+                        work->bet = left;
+                    work->spins = 0;
+                    work->cursor = 0;
+                    for (i = 0; i != 5; i++) {
+                        work->reels[i].held = 0;
+                        work->reels[i].stop = -1;
+                    }
+                    fx->transfer_mode = 1;
+                    fx->transfer_value = 0;
+                    REG_BLDCNT = 0;
+                    window = UiWindow_CreateFar(18, 0, 12, 4, 6);
+                    work->sub_window = window;
+                    message = (s32)&MsgSlotsBet;
+                    UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
+                    UiText_DrawCharacterAtOffsetFar(message - 1, work->sub_window, 0, 0);
+                }
+            }
+        }
+
+        if (work->state == 1) {
+            for (i = 0; i != 5; i++) {
+                struct Reel *reel = &work->reels[i];
+
+                if (reel->held == 0) {
+                    if (reel->stop != 0)
+                        reel->position += 8;
+                    else if ((reel->position & 15) != 8)
+                        reel->position += 8;
+                    if (reel->position == 336)
+                        reel->position = 0;
+                }
+            }
+        }
+        (fx->frame)++;
+        work->timer++;
+    }
+
+build_objects:
+    if (work->state == 5) {
+        x = work->cursor * 36 + 36;
+        y = 128;
+        v = 0;
+        if ((work->timer & 15) <= 7)
+            v = 1;
+        if (work->cursor == 5) {
+            x = 208;
+            y = 32;
+        }
+        work->obj[n].attr01 = ((x - 12) << 16) | blend | (y + 8) | 0x80006000;
+        work->obj[n].attr2 = (v << 4) + 0x2b0;
+        n++;
+        work->obj[n].attr01 = ((x + 12) << 16) | blend | (y + 8) | 0x90006000;
+        work->obj[n].attr2 = (v << 4) + 0x2b0;
+        n++;
+        work->obj[n].attr01 = (x << 16) | blend | y | 0x80002000;
+        work->obj[n].attr2 = 0x1f0;
+        n++;
+    }
+
+    if (work->state == 3) {
+        for (i = 0; i != 8; i++) {
+            struct EffectStep *p = &fx->particles[i];
+
+            work->obj[n].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | blend |
+                                  ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
+            work->obj[n].attr2 = ((ReelGame_TitleLetterTiles[i] << 4) + 0x370) | 0xf000;
+            p->y += p->velocity_y;
+            p->velocity_y += 0x4000;
+            if (work->timer % 256 == i * 4 + 200) {
+                p->velocity_y = 0x60000;
+                p->variant = 0;
+            }
+            if (p->y > 0x400000) {
+                p->y = 0x400000;
+                if (p->variant <= 1)
+                    p->velocity_y = -p->velocity_y / 2;
+                p->variant++;
+            }
+            n++;
+        }
+    }
+
+    for (k = 0; k != 14; k++) {
+        work->obj[n].attr01 = (ReelGame_FrameSpriteX[k] << 16) | blend | ReelGame_FrameSpriteY[k] | 0x80006000;
+        if (k <= 3)
+            work->obj[n].attr2 = 0x4e0;
+        else
+            work->obj[n].attr2 = 0x4e8;
+        n++;
+    }
+
+    for (i = 0; i != 5; i++) {
+        if (work->reels[i].held == 0) {
+            work->obj[n].attr01 = blend | ((i * 36 + 32) << 16) | 0x8000207c;
+            work->obj[n].attr2 = 0x460;
+        } else {
+            work->obj[n].attr01 = blend | ((i * 36 + 32) << 16) | 0x8000207c;
+            work->obj[n].attr2 = 0x480;
+        }
+        n++;
+    }
+
+    for (i = 0; i != 5; i++) {
+        work->obj[n].attr01 = blend | ((i * 16 + 32) << 16) | 0x80006003;
+        if (i == work->spins)
+            work->obj[n].attr2 = (i * 32 + 0x210) | 0x400;
+        else
+            work->obj[n].attr2 = (i * 32 + 0x220) | 0x400;
+        n++;
+    }
+
+    for (col = 0; col != 7; col++) {
+        work->obj[n].attr01 = (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) |
+                              blend | (col * 16 + 5) | 0x80002000;
+        if (col > 3 - work->bet && col < work->bet + 3)
+            work->obj[n].attr2 = 0x5d0;
+        else
+            work->obj[n].attr2 = 0x510;
+        n++;
+    }
+
+    for (i = 0; i != 5; i++) {
+        struct Reel *reel = &work->reels[i];
+
+        for (col = 0; col != 7; col++) {
+            work->obj[n].attr01 = (col * 16 + reel->position % 16 + 4) |
+                                  ((i * 32 + 40) << 16) | 0x80006000;
+            work->obj[n].attr2 = (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) | 0x800;
+            n++;
+        }
+    }
+
+    lever = 40;
+    if (work->state == 1) {
+        if (work->timer <= 47)
+            lever = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
+        else if (work->timer <= 55)
+            lever = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
+    }
+    work->obj[n].attr01 = lever | blend | 0x80d06000;
+    work->obj[n].attr2 = 0x500;
+    n++;
+
+    for (k = 0; k != 8; k++) {
+        work->obj[n].attr01 = blend | (k * 16 + 12) | 0x80ce6000;
+        if (k == 0)
+            work->obj[n].attr2 = 0x540;
+        else if (k == 1)
+            work->obj[n].attr2 = 0x550;
+        else if (k == 6)
+            work->obj[n].attr2 = 0x570;
+        else if (k == 7)
+            work->obj[n].attr2 = 0x580;
+        else
+            work->obj[n].attr2 = 0x560;
+        n++;
+    }
+
+    while (n != 128) {
+        work->obj[n].attr01 = 0x40f02000;
+        work->obj[n].attr2 = 0;
+        n++;
+    }
+
+    Dma_Set(work->obj, (void *)0x07000000, (n * 2) | 0x84000000, REG_DMA3);
+}
+#endif
+
 
 /* Reel game: clear every particle's variant, line the title letters
    up above the screen (each 0x80000 higher than the last, spaced by their
@@ -71,7 +594,7 @@ void ReelGame_InitTitle(void)
     s32 y;
     s32 i;
     s32 angle;
-    s32 window;
+    struct UiWindow *window;
     s32 message;
 
     state = ((struct ReelWork **)gBattleFxWork)[6];
@@ -116,11 +639,6 @@ void ReelGame_InitTitle(void)
     UiText_DrawCharacterAtOffsetFar(message - 1, state->sub_window, 0, 0);
 }
 
-/* The saved game from its fourth word on, as the reel game reads it. */
-struct ReelSave {
-    u8 unknown_000[0x120];
-    s8 won_prizes[16];
-};
 
 extern u8 gOamCopyEnabled;
 extern DrawRectangle gWorkSlot[];
@@ -133,7 +651,6 @@ void FarCall_WindowTable(void);
 void ReelGame_InitTitle(void);
 s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
 s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count);
-s32 PartyInventory_CountItemFar(s32 item);
 void Palette_DarkenSceneStep(void);
 void Palette_StepTowardResource(s32 resource);
 void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
@@ -313,12 +830,12 @@ void ReelGame_Run(void)
         Graphics_ScaleRgb555((u16 *)work, (u16 *)0x05000000, 0, 0x100);
         REG_DISPCNT = 0x3740;
         if (PartyInventory_CountItemFar(228) == 1) {
-            s32 window = UiWindow_CreateFar(6, 16, 18, 3, 6);
+            struct UiWindow *window = UiWindow_CreateFar(6, 16, 18, 3, 6);
 
             state->window = window;
             UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsControls, window, 0, 0);
         } else {
-            s32 window = UiWindow_CreateFar(REEL_HELP_WINDOW_X, 16, REEL_HELP_WINDOW_WIDTH, 4, 6);
+            struct UiWindow *window = UiWindow_CreateFar(REEL_HELP_WINDOW_X, 16, REEL_HELP_WINDOW_WIDTH, 4, 6);
             s32 message;
 
             state->window = window;

@@ -1750,16 +1750,22 @@ Palette_ChannelCurveContrast:
 	.thumb_func
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x000f5768, 0x00001e98
-	.section .rom.000f7a40, "ax"
-	.global ReelGame_RunFrame
-	.type ReelGame_RunFrame, %function
-	.thumb_func
-ReelGame_RunFrame:
-	.incbin "baserom.gba", 0x000f7a40, 0x00000edc
 	.section .rom.000f9cf8, "ax"
 	.global ReelGame_SparkCellOffsets
 ReelGame_SparkCellOffsets:
-	.incbin "baserom.gba", 0x000f9cf8, 0x0000003e
+	.incbin "baserom.gba", 0x000f9cf8, 0x00000014
+	.global ReelGame_SymbolPrizes
+ReelGame_SymbolPrizes:
+	.incbin "baserom.gba", 0x000f9d0c, 0x00000006
+	.global ReelGame_TitleLetterTiles
+ReelGame_TitleLetterTiles:
+	.incbin "baserom.gba", 0x000f9d12, 0x00000008
+	.global ReelGame_FrameSpriteX
+ReelGame_FrameSpriteX:
+	.incbin "baserom.gba", 0x000f9d1a, 0x0000000e
+	.global ReelGame_FrameSpriteY
+ReelGame_FrameSpriteY:
+	.incbin "baserom.gba", 0x000f9d28, 0x0000000e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:
 	.incbin "baserom.gba", 0x000f9d36, 0x000000ca

@@ -745,7 +745,6 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000f5768)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_LOAD.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT23.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000f7a40)
     "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SOUND/TRACK_SLOT_BUFFER.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000f9cf8)

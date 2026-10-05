@@ -10247,27 +10247,27 @@ msgctxt "MsgSlotsControls"
 msgid "02559"
 msgstr "{button_icon:1}:Jugar        {button_icon:2}:Salir"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "02560"
 msgstr "{button_icon:4}:Parar"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "02561"
 msgstr "Cuando hayas elegido cuáles"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "02562"
 msgstr "parar, tira de la palanca."
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "02563"
 msgstr "{button_icon:1}:Parar"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "02564"
 msgstr "{button_icon:1}:Girar"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "02565"
 msgstr "{button_icon:1}:Tirar"
 
@@ -10279,11 +10279,11 @@ msgctxt "message"
 msgid "02567"
 msgstr "{button_icon:2}:Salir"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "02568"
 msgstr "¡Si bloqueas todos los símbolos,"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "02569"
 msgstr "no puedes tirar de la palanca!"
 

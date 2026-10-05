@@ -10247,27 +10247,27 @@ msgctxt "MsgSlotsControls"
 msgid "02559"
 msgstr "{button_icon:1}:Aziona      {button_icon:2}:Esci"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "02560"
 msgstr "{button_icon:4}:Bloc. ruote"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "02561"
 msgstr "Dopo aver scelto le ruote da"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "02562"
 msgstr "bloccare, tira la leva!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "02563"
 msgstr "{button_icon:1}:Stop"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "02564"
 msgstr "{button_icon:1}:Gira"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "02565"
 msgstr "{button_icon:1}:Aziona"
 
@@ -10279,11 +10279,11 @@ msgctxt "message"
 msgid "02567"
 msgstr "{button_icon:2}:Esci"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "02568"
 msgstr "Se blocchi ogni ruota,"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "02569"
 msgstr "non puoi tirare la leva!"
 

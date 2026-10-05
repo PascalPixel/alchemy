@@ -9263,27 +9263,27 @@ msgctxt "MsgSlotsControls"
 msgid "02313"
 msgstr "{button_icon:1}:Start machine      {button_icon:2}:Quit"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "02314"
 msgstr "{button_icon:4}:Stop slots"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "02315"
 msgstr "When you've chosen which slots"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "02316"
 msgstr "to lock, pull the lever!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "02317"
 msgstr "{button_icon:1}:Stop"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "02318"
 msgstr "{button_icon:1}:Spin"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "02319"
 msgstr "{button_icon:1}:Start machine"
 
@@ -9295,11 +9295,11 @@ msgctxt "message"
 msgid "02321"
 msgstr "{button_icon:2}:Quit"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "02322"
 msgstr "If you lock all the slots,"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "02323"
 msgstr "you can't pull the lever!"
 

@@ -220,6 +220,48 @@
 #define REEL_JACKPOT_COPY      0x84000400
 #endif
 
+/* The reel game's prompt windows, each sized to its edition's words: the
+   warning that every reel is held, the lever's prompt and the hold and
+   release prompts. French and Italian count the coins in three digits from
+   further left, and give the hint to hold reels only before the last spin. */
+#if defined(TBS_EDITION_IT)
+#define REEL_ALL_HELD_X     10
+#define REEL_ALL_HELD_WIDTH 20
+#define REEL_START_X        21
+#define REEL_START_WIDTH    9
+#define REEL_HOLD_X         21
+#define REEL_HOLD_WIDTH     9
+#define REEL_RELEASE_X      21
+#define REEL_RELEASE_WIDTH  9
+#elif defined(TBS_EDITION_DE)
+#define REEL_ALL_HELD_X     11
+#define REEL_ALL_HELD_WIDTH 19
+#define REEL_START_X        16
+#define REEL_START_WIDTH    14
+#define REEL_HOLD_X         22
+#define REEL_HOLD_WIDTH     8
+#define REEL_RELEASE_X      21
+#define REEL_RELEASE_WIDTH  9
+#else
+#define REEL_ALL_HELD_X     11
+#define REEL_ALL_HELD_WIDTH 19
+#define REEL_START_X        16
+#define REEL_START_WIDTH    14
+#define REEL_HOLD_X         23
+#define REEL_HOLD_WIDTH     7
+#define REEL_RELEASE_X      23
+#define REEL_RELEASE_WIDTH  7
+#endif
+#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define REEL_COIN_DIGITS             3
+#define REEL_COIN_X                  56
+#define REEL_HINT_BEFORE_LAST_SPIN   1
+#else
+#define REEL_COIN_DIGITS             2
+#define REEL_COIN_X                  64
+#define REEL_HINT_BEFORE_LAST_SPIN   0
+#endif
+
 #if !EDITION_INTERNATIONAL
 #define RENDER_RESOURCE_BASE 0x9D4
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \

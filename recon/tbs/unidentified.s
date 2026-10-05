@@ -1736,17 +1736,17 @@ Data_080f541a:
 	.global ReelGame_SparkCellOffsets
 ReelGame_SparkCellOffsets:
 	.incbin "baserom.gba", 0x000f86f8, 0x00000014
-	.global Data_080f870c
-Data_080f870c:
+	.global ReelGame_SymbolPrizes
+ReelGame_SymbolPrizes:
 	.incbin "baserom.gba", 0x000f870c, 0x00000006
-	.global Data_080f8712
-Data_080f8712:
+	.global ReelGame_TitleLetterTiles
+ReelGame_TitleLetterTiles:
 	.incbin "baserom.gba", 0x000f8712, 0x00000008
-	.global Data_080f871a
-Data_080f871a:
+	.global ReelGame_FrameSpriteX
+ReelGame_FrameSpriteX:
 	.incbin "baserom.gba", 0x000f871a, 0x0000000e
-	.global Data_080f8728
-Data_080f8728:
+	.global ReelGame_FrameSpriteY
+ReelGame_FrameSpriteY:
 	.incbin "baserom.gba", 0x000f8728, 0x0000000e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:

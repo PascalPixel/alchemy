@@ -9271,27 +9271,27 @@ msgctxt "MsgSlotsControls"
 msgid "02315"
 msgstr "A スロットスタート Bやめる"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "02316"
 msgstr "R とめる"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "02317"
 msgstr "とめるスロットをえらんだら"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "02318"
 msgstr "みぎのレバーで スタート!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "02319"
 msgstr "A とめる     "
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "02320"
 msgstr "A まわす     "
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "02321"
 msgstr "A スロットスタート"
 
@@ -9303,7 +9303,7 @@ msgctxt "message"
 msgid "02323"
 msgstr "B やめる"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "02324"
 msgstr "すべてとめるとスタートできません"
 

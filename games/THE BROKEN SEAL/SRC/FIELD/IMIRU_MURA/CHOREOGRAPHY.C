@@ -230,7 +230,7 @@ void FieldScene_RunThreeActorChoreography(void)
     *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
-    work = *(struct EventWork **)Data_03001ebc;
+    work = gEventWork;
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 48;
     Engine_EventOpenScreen();
@@ -352,7 +352,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_WalkToAndWait(20, 0x284, 166);
     Engine_EventWait(1);
     *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
-    (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     GameFlag_Set(0x82e);
     GameFlag_Clear(0x82d);
     Engine_EventEnd();

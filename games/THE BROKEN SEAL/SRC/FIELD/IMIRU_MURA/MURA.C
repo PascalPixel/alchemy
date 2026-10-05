@@ -733,7 +733,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_TaskWait(1);
     Camera_SetSpeed(0x4ccc, 0x999);
     Camera_MoveTo(0x8c0000, -1, 0xa40000, 1);
-    work = *(struct EventWork **)Data_03001ebc;
+    work = gEventWork;
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 40;
     Engine_EventOpenScreen();
@@ -880,7 +880,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_ActorEnableActionCallback(ACTOR_GERALD, tbl);
     Object_SetActionCallbackAndRefreshById(2, tbl);
     Engine_EventWait(20);
-    work = *(struct EventWork **)Data_03001ebc;
+    work = gEventWork;
     work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     work->transition_frames = 24;
     Engine_GameFlagSet(0x82b);

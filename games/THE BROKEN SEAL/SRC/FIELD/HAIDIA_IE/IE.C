@@ -1322,7 +1322,7 @@ void Scene_RunExtendedActorSequence(void)
     Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(1, base5_200adf0);
     Engine_EventWait(60);
-    work = *(struct EventWork **)Data_03001ebc;
+    work = gEventWork;
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 60;
     Engine_EventCloseScreen();

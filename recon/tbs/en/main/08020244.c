@@ -44,9 +44,15 @@
  * round robin (reload1.c allocate_reload_reg), and from the dirty store on
  * the list loop (ROM: constant r1, render r3) and the main loop's tests
  * and constants are rotated by one against the ROM, so one reload more or
- * fewer happens somewhere before that store. devsearch seed 93 reached 60
- * with a "+r" lifetime device on status in the B-press branch (which puts
- * result in r2, not r5) and plain declaration swaps; not adopted.
+ * fewer happens at that store: a zero-instruction-count shift is needed
+ * between the area constant and the dirty store. Measured with devsearch
+ * (S2 devices, not adopted): a "+r"(status) before the list loop gives 50
+ * (everything from the store on matches, the list loop's setup through the
+ * area constant then rotates the other way) but costs an ldr/str pair;
+ * three "+r" devices in the searches and the up branch give 54; seed 93's
+ * best (45) pinned result to r2, where the ROM has r5. The list loop counts
+ * i from 0 up (loop.c reverses it to the ROM's 2..0 count; same 98);
+ * indexing save->summary[i] with y = i * 16 instead is 158.
  * The Japanese extent is 0x5f8 bytes against 0x580 in the other five
  * editions.
  */
@@ -163,7 +169,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     list = UiWindow_Create(1, 2, 28, 7, 2);
     summary = save->summary;
     y = 0;
-    for (i = 2; i >= 0; i--, y += 16, summary++) {
+    for (i = 0; i < 3; i++, y += 16, summary++) {
         if (summary->level == 0) {
             UiText_DrawResource((s32)&MsgSaveNoData, list, 10, y);
         } else if (summary->frames < stamp) {

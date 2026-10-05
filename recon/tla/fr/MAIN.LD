@@ -1118,7 +1118,7 @@
     "*/recon/tla/fr/rom.o"(.rom.00101438)
     "*/games/THE LOST AGE/SRC/MENU/ABILITY/RANGE_PAGE.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00101a9c)
-    "*/games/THE LOST AGE/SRC/MENU/ITEM/ITEM6.o"(.text)
+    "*/games/THE LOST AGE/SRC/MENU/ITEM/CATEGORY.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001026b0)
     "*/games/THE LOST AGE/SRC/MENU/PLACE_ENTRY_OBJECT_IN_GRID.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001027d0)

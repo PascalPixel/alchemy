@@ -1029,7 +1029,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000ff31c)
     "*/games/THE LOST AGE/SRC/MENU/ABILITY/RANGE_PAGE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ff980)
-    "*/games/THE LOST AGE/SRC/MENU/ITEM/ITEM6.o"(.text)
+    "*/games/THE LOST AGE/SRC/MENU/ITEM/CATEGORY.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00100548)
     "*/games/THE LOST AGE/SRC/MENU/PLACE_ENTRY_OBJECT_IN_GRID.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00100668)

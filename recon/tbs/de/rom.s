@@ -335,20 +335,20 @@ Menu_CursorBobOffsets:
 	.global PaletteGlow_WaveTable
 PaletteGlow_WaveTable:
 	.incbin "baserom.gba", 0x00035578, 0x00000079
-	.global Data_080367c9
-Data_080367c9:
+	.global OptionMenu_SpeedFrames
+OptionMenu_SpeedFrames:
 	.incbin "baserom.gba", 0x000355f1, 0x00000003
-	.global Data_080367cc
-Data_080367cc:
+	.global OptionMenu_SpeechFrames
+OptionMenu_SpeechFrames:
 	.incbin "baserom.gba", 0x000355f4, 0x00000002
-	.global Data_080367ce
-Data_080367ce:
+	.global OptionMenu_SleepFrames
+OptionMenu_SleepFrames:
 	.incbin "baserom.gba", 0x000355f6, 0x00000002
-	.global Data_080367d0
-Data_080367d0:
+	.global OptionMenu_FirstColorPresets
+OptionMenu_FirstColorPresets:
 	.incbin "baserom.gba", 0x000355f8, 0x00000006
-	.global Data_080367d6
-Data_080367d6:
+	.global OptionMenu_SecondColorPresets
+OptionMenu_SecondColorPresets:
 	.incbin "baserom.gba", 0x000355fe, 0x00000006
 	.global Menu_WorkspaceIconFrames
 Menu_WorkspaceIconFrames:

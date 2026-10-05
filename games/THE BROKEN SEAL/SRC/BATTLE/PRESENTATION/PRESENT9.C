@@ -283,7 +283,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         {
             /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
             do {
-                ime = (volatile u16 *)0x04000208;
+                ime = &REG_IME;
                 saved = *ime;
             } while (0);
             *ime = (u16)ime;

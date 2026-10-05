@@ -8,6 +8,7 @@
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+#include "IO_REG.H"
 
 extern u8 *gBattleBgFxWork;
 
@@ -27,7 +28,7 @@ void BattleFx_ArmBg0HBlankDma(void)
     u8 *work = gBattleBgFxWork;
     if (!work[660]) {
         u32 offset = work[650] * 324;
-        volatile u16 *channel = (volatile u16 *)0x040000b0;
+        volatile u16 *channel = REG_DMA0;
         channel[5] &= 0xc5ff;
         channel[5] &= 0x7fff;
         (void)channel[5];

@@ -3,6 +3,7 @@
 #include "SCENE.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+#include "IO_REG.H"
 
 extern struct BattleEffectWork *gBattleFxWork;
 
@@ -36,7 +37,7 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
 void BattleFx_ArmPaletteHBlankDma(void)
 {
     struct BattleEffectWork *work = gBattleFxWork;
-    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    volatile u16 *channel = REG_DMA0;
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];

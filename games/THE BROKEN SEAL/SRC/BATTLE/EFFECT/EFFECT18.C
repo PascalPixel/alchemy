@@ -75,7 +75,7 @@ void SceneTransform_ApplyRoll(s32 angle);
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {
     struct BattleEffectWork *work = *(void **)gBattleFxWork;
-    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    volatile u16 *channel = REG_DMA0;
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];

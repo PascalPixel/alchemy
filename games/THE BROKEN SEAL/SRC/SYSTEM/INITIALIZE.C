@@ -38,7 +38,7 @@ void System_Initialize(void)
     volatile u32 zero;
 
     {
-        volatile u16 *dma0 = (volatile u16 *)0x040000b0;
+        volatile u16 *dma0 = REG_DMA0;
 
         dma0[5] &= 0xc5ff;
         dma0[5] &= 0x7fff;

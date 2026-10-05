@@ -2,6 +2,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "SCROLL.H"
+#include "IO_REG.H"
 
 void DisplayScroll_DisarmHBlankDma(void)
 {
@@ -9,7 +10,7 @@ void DisplayScroll_DisarmHBlankDma(void)
 
     Scheduler_RemoveCallback((u32)DisplayScroll_ArmHBlankDma);
     Scheduler_RemoveCallback((u32)DisplayScroll_BuildAndSwapHBlankPage);
-    dma0 = (volatile u16 *)0x040000B0;
+    dma0 = REG_DMA0;
     dma0[5] = (u16)(0xC5FF & dma0[5]);
     dma0[5] = (u16)(0x7FFF & dma0[5]);
     (void)dma0[5];

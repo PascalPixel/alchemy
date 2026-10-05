@@ -4,6 +4,7 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_RANDOM.H"
 #include "BATTLE_RUNTIME.H"
+#include "IO_REG.H"
 
 extern s32 gRandomSeed;
 extern volatile u16 gLinkStatus;
@@ -156,7 +157,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
              * its notes keep the seed copy between the two writes and make
              * the state pointer reload after the first. */
             do {
-                ime = (volatile u16 *)0x04000208;
+                ime = &REG_IME;
                 saved = *ime;
                 *ime = (u16)(u32)ime;
             } while (0);

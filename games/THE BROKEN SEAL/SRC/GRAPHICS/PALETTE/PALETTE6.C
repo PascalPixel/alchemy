@@ -308,7 +308,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         BattleFx_InitializeStarField(kind);
         for (frame = 0, pos = &position; frame <= 44; frame++) {
             brightness = &session->brightness;
-            ime = (volatile u16 *)0x04000208;
+            ime = &REG_IME;
             work = gWorkSlot[39];
             if (frame <= 24)
                 Graphics_ScaleRgb555Clamped(session->palette, (u16 *)0x050000c0, *brightness = 0x10000 - frame * 1092, 128);

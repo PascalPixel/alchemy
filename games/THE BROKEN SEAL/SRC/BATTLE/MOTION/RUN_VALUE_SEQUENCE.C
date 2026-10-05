@@ -9,7 +9,7 @@
 #include "BATTLE_RUNTIME.H"
 void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
 void BattleMotion_SetRecordChildValues(void *object, s32 value);
-s32 BattleMotion_GetSlotField14(s32 id);
+s32 BattleMotion_GetSlotPalette(s32 id);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 void BattleMotion_RunValueSequence(s32 id)
@@ -34,7 +34,7 @@ void BattleMotion_RunValueSequence(s32 id)
 
         sel[0] = id;
         BattleLayout_HighlightPartyPanelsFar(sel);
-        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, BattleMotion_GetSlotField14(id));
+        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, BattleMotion_GetSlotPalette(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);

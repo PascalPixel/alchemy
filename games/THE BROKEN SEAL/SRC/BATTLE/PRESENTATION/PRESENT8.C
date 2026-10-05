@@ -32,7 +32,7 @@ s32 Resource_FindFreeSlot(s32 key);
 
 void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
 
-s32 BattleMotion_GetSlotField14(s32 id)
+s32 BattleMotion_GetSlotPalette(s32 id)
 {
     return GetBattleObjectSlot(id)->palette;
 }

@@ -49,7 +49,7 @@ Func_080b5058:
 	.thumb_func
 Summon_IsEntrySecondaryFlaggedFar:
 	overlay_veneer Summon_IsEntrySecondaryFlagged
-	overlay_veneer Battle_GetEntryField2HighBits
+	overlay_veneer Battle_GetSpriteFlagHighBits
 	overlay_veneer Summon_IsEntryFlagged
 	.global Battle_GetObjectTableValueFar
 	.global Func_080b5070
@@ -129,10 +129,10 @@ Func_080b50f8:
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesFar:
 	overlay_veneer BattlePlacement_UpdateTimedEntries
-	.global BattleMotion_GetSlotField14Far
+	.global BattleMotion_GetSlotPaletteFar
 	.thumb_func
-BattleMotion_GetSlotField14Far:
-	overlay_veneer BattleMotion_GetSlotField14
+BattleMotion_GetSlotPaletteFar:
+	overlay_veneer BattleMotion_GetSlotPalette
 	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesTwentyTimesFar:

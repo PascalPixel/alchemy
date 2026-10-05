@@ -45,7 +45,7 @@ s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts);
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 u32 BattleParty_IsUnitListed(u32 unit_id);
 s32 Item_GetEquippedElementFar(s32 unit_id);
-u32 Battle_GetEntryField2LowBits(u32 class_id);
+u32 Battle_GetSpriteFlagNibble(u32 class_id);
 s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *unit);
 void BattlePresentation_WaitForAdvance(void);
 
@@ -483,7 +483,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         plan->range_index = Item_GetEquippedElementFar(command->unit_id);
         plan->outcome = 2;
         if (actor->class_index == 0) {
-            plan->presentation_flags = Battle_GetEntryField2LowBits(actor->class_id) | 0x4000;
+            plan->presentation_flags = Battle_GetSpriteFlagNibble(actor->class_id) | 0x4000;
         } else {
             plan->presentation_flags = 0;
             switch (actor->class_id) {

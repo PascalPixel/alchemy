@@ -1,4 +1,24 @@
-/* 2026-10-04 (second-wave finisher 1), alchemy diff 82, unchanged: the
+/* 2026-10-05 (deep finisher 2), alchemy diff 60, was 82. The listed tail's
+ * fresh &work (add r5, sp, #8) appears when a loop note sits between the
+ * dispatch and the tail: a do { } while (0) around Object_SetMode(object, 1)
+ * (tagged; 72) stops cse/gcse carrying the old &work (r6) in. (In
+ * Battle_RunEncounter, adopted the same day, the listed order came from
+ * do-while (0) macros: their loop notes are scheduling barriers.) With a
+ * block-local w = &work for the tail loop, i takes r7, the fresh base r5
+ * and the offset r6, as listed (60; work. in the tail with the note: 72,
+ * i in r8). Without the note the w tail scores 73. Remaining: the tail's
+ * two spilled base copies (sp+0, sp+4) are missing, so the frame is 84,
+ * not 92 (the listed loop reads w->actors and w->count through two copies
+ * of the base in r2/r1); the party arm's 1 is in r5, listed r8 (copied to
+ * r3 for the shared count store), so object takes r8, listed r10.
+ * Tried on this base: do-while (0) around each run of up to 4 statements
+ * (an extra one around work.kind = 0 gives i r7 with work. in the tail,
+ * 56, but moves the fresh &work before the dispatch); tail as for/<, while,
+ * while with i++, if + do-while, an ids pointer (63-77); i = 0 at each
+ * statement from the stage block on (63-72); the count as a variable
+ * stored after the arms (136); the stage calls as a loop (92). An
+ * 800-iteration devsearch from the old 82 base reached 78.
+ * 2026-10-04 (second-wave finisher 1), alchemy diff 82, unchanged: the
  * draft now uses the shared BattlePresentationWork / Transition /
  * MotionObject types and indexes work.params[i][j] as the adopted
  * BattlePres_RunPsynergyCast does; the code is identical. Reading of the
@@ -138,9 +158,15 @@ s32 BattlePres_RunUnitAction(s16 *action)
     BattleFx_RunIceFleckBurstFar(&work);
     work.kind = 0;
     BattleFx_DispatchModeFar(&work);
-    Object_SetMode(object, 1);
-    for (; i != work.count; i++)
-        Actor_ResetMotionAtAnchor(work.actors[i]);
+    /* FAKEMATCH: the loop notes stop cse and gcse from carrying &work into the tail, which takes a fresh &work as listed. */
+    do {
+        Object_SetMode(object, 1);
+    } while (0);
+    {
+        struct BattlePresentationWork *w = &work;
+        for (; i != w->count; i++)
+            Actor_ResetMotionAtAnchor(w->actors[i]);
+    }
     Actor_ResetMotionAtAnchor(work.actor);
     return 0;
 }

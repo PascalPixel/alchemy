@@ -363,37 +363,37 @@ void FieldScene_DispatchBySelector(void)
         InventorySnapshot_Take();
         break;
     case 65:
-        FieldScene_RunScene3b9_020023e0();
+        KorashiamuIriguchi_EscortToEastExit();
         break;
     case 66:
-        FieldScene_RunScene3b9_020025f0();
+        KorashiamuIriguchi_WalkToEastExit();
         break;
     case 12:
         Engine_GameFlagSet(324);
         ActorPresentation_SetActorsTwelveToEighteen();
         if (Engine_GameFlagIsSet(0x109) != 0)
             break;
-        FieldScene_RunScene3b9_020024d8();
+        KorashiamuIriguchi_AnnounceFinals();
         break;
     case 21:
         Party_AddActiveOwner(1);
         Party_AddActiveOwner(2);
         Party_AddActiveOwner(3);
         Engine_GameFlagSet(0x90e);
-        FieldScene_RunScene3b9_02002668();
+        KorashiamuIriguchi_CelebrateAdvancement();
         break;
     case 67:
-        FieldScene_RunScene3b9_02002820();
+        KorashiamuIriguchi_EscortToWestExit();
         break;
     case 68:
-        FieldScene_RunScene3b9_02002904();
+        KorashiamuIriguchi_WalkToWestExit();
         break;
     case 31:
         Party_AddActiveOwner(1);
         Party_AddActiveOwner(2);
         Party_AddActiveOwner(3);
         Engine_GameFlagSet(0x90f);
-        FieldScene_RunScene3b9_02002964();
+        KorashiamuIriguchi_CelebrateBothWins();
         break;
     default:
         break;
@@ -631,7 +631,7 @@ void FieldScene_BuildActorPresentationSequence(void)
     Engine_EventRequestExit(64);
 }
 
-void FieldScene_RunScene3b9_020023e0(void)
+void KorashiamuIriguchi_EscortToEastExit(void)
 {
     u32 i;
     struct FieldActor *record;
@@ -667,7 +667,7 @@ void FieldScene_RunScene3b9_020023e0(void)
     }
 }
 
-void FieldScene_RunScene3b9_020024d8(void)
+void KorashiamuIriguchi_AnnounceFinals(void)
 {
     u32 i;
     struct FieldActor *rec7;
@@ -715,7 +715,7 @@ void FieldScene_RunScene3b9_020024d8(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_020025f0(void)
+void KorashiamuIriguchi_WalkToEastExit(void)
 {
     u32 i;
     s32 record;
@@ -736,7 +736,7 @@ void FieldScene_RunScene3b9_020025f0(void)
     }
 }
 
-void FieldScene_RunScene3b9_02002668(void)
+void KorashiamuIriguchi_CelebrateAdvancement(void)
 {
     u32 i;
     s32 record;
@@ -790,7 +790,7 @@ void FieldScene_RunScene3b9_02002668(void)
     Engine_EventRequestExit(67);
 }
 
-void FieldScene_RunScene3b9_02002820(void)
+void KorashiamuIriguchi_EscortToWestExit(void)
 {
     u32 i;
     struct FieldActor *record;
@@ -822,7 +822,7 @@ void FieldScene_RunScene3b9_02002820(void)
     Engine_EventRequestExit(21);
 }
 
-void FieldScene_RunScene3b9_02002904(void)
+void KorashiamuIriguchi_WalkToWestExit(void)
 {
     u32 i;
     s32 record;
@@ -839,7 +839,7 @@ void FieldScene_RunScene3b9_02002904(void)
     Engine_EventRequestExit(22);
 }
 
-void FieldScene_RunScene3b9_02002964(void)
+void KorashiamuIriguchi_CelebrateBothWins(void)
 {
     u32 i;
     s32 record;

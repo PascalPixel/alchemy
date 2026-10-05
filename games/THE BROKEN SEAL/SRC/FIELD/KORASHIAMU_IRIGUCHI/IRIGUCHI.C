@@ -163,7 +163,7 @@ void SceneDialogue_RunActor13MessageByFlag962(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_02000334(void)
+void KorashiamuIriguchi_TalkToActorFourteen(void)
 {
     u32 i;
     s32 record;
@@ -184,7 +184,7 @@ void FieldScene_RunScene3b9_02000334(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_0200039c(void)
+void KorashiamuIriguchi_TryLuckyGuess(void)
 {
     u32 i;
     s32 record;
@@ -218,7 +218,7 @@ void FieldScene_RunScene3b9_0200039c(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_02000468(void)
+void KorashiamuIriguchi_IntroduceSecondSeed(void)
 {
     u32 i;
     struct FieldActor *rec7;
@@ -248,7 +248,7 @@ void FieldScene_RunScene3b9_02000468(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_020004c8(void)
+void KorashiamuIriguchi_FrightenActorFourteen(void)
 {
     u32 i;
     s32 record;
@@ -277,7 +277,7 @@ void SceneDialogue_ShowLine2118WithActor15Steps(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_0200055c(void)
+void KorashiamuIriguchi_CheerForDekka(void)
 {
     u32 i;
     s32 record;
@@ -318,7 +318,7 @@ void FieldScene_RunActorSeventeenDialogueSteps(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_02000648(void)
+void KorashiamuIriguchi_IntroduceSeventhSeed(void)
 {
     u32 i;
     s32 record;
@@ -338,7 +338,7 @@ void FieldScene_RunScene3b9_02000648(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b9_020006bc(void)
+void KorashiamuIriguchi_AskReadyForFinals(void)
 {
     Engine_EventBegin();
     Engine_ActorFaceEachOther(8, ACTOR_PARTY_LEADER, 20);

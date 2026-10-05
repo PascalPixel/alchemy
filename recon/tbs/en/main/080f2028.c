@@ -1,3 +1,14 @@
+/* 2026-10-05 sixth wave, finisher 3: alchemy diff 275 (was 382). The
+ * object table is volatile (it is the OAM shadow the DMA copies): combine
+ * runs with init_recog_no_volatile, so it cannot fold the first two groups'
+ * constant offsets into volatile stores, and each stays in a register
+ * (movs r1, #24; str r3, [r6, r1]) as listed; the whole work struct
+ * volatile scores 290. Remaining: work and x swap r6 and r7 (the listing
+ * loads the column byte into r3 and copies it to x; here x takes the load
+ * and r3 a copy), the order of dist and the column load at each arm's
+ * start, and the tail (n += 4 compare register, the OAM count computation).
+ * Trials: x as u32 275, u8 313, s16 315, u16 534; n as s32 418, u8 391.
+ */
 /* Draft, not exact: score 9140, 215 instructions off (was 14545 and 327).
    Title intro frame callback: lays the three sprite groups of the scrolling
    pictures along a perspective line, parks the rest of the object table and
@@ -27,7 +38,7 @@ struct IntroWork {
     s32 tick;
     s32 state;
     s32 rise;
-    u32 objects[120][2];
+    volatile u32 objects[120][2];
 };
 
 extern u8 gDebugPaused;

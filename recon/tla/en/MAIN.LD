@@ -999,7 +999,6 @@
         "*/recon/tla/raw/080b0084.o"(.text)
         "*/recon/tla/raw/080b0144.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/CHARACTER/GET_RECORD_STRIDE84.o"(.text)
-        "*/recon/tla/raw/080b0298.o"(.text)
         "*/recon/tla/raw/080b02d4.o"(.text)
         "*/recon/tla/raw/080b02dc.o"(.text)
         "*/games/COMMON/SRC/BATTLE/RANDOM16.o"(.text)

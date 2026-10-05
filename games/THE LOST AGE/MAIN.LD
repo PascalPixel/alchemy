@@ -720,7 +720,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/CHARACTER3.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ab056)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/GET_RECORD_STRIDE84.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000ab294)
+    "*/recon/tla/ja/rom.o"(.rom.000ab2d0)
     "*/games/COMMON/SRC/BATTLE/RANDOM16.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/ITEM/GET_UNLEASH_RATE_BONUS.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ab4b6)

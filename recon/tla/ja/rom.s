@@ -2341,10 +2341,10 @@ Item_AdjustCounter:
 	.incbin "baserom.gba", 0x000aa374, 0x00000028
 	.section .rom.000aa4e0, "ax"
 	.balign 4
-	.global Func_080af4e4
-	.type Func_080af4e4, %function
+	.global Owner_UpdateClassActions
+	.type Owner_UpdateClassActions, %function
 	.thumb_func
-Func_080af4e4:
+Owner_UpdateClassActions:
 	.incbin "baserom.gba", 0x000aa4e0, 0x00000210
 	.section .rom.000aa78e, "ax"
 	.incbin "baserom.gba", 0x000aa78e, 0x0000000a
@@ -2394,13 +2394,18 @@ Owner_GetDigitValues:
 	.type Owner_GetDefaultElement, %function
 	.thumb_func
 Owner_GetDefaultElement:
-	.incbin "baserom.gba", 0x000ab058, 0x0000022c
-	.section .rom.000ab294, "ax"
-	.global Owner_RefreshDerivedData
-	.type Owner_RefreshDerivedData, %function
+	.incbin "baserom.gba", 0x000ab058, 0x00000028
+	.global Owner_BuildDigitTiles
+	.type Owner_BuildDigitTiles, %function
 	.thumb_func
-Owner_RefreshDerivedData:
-	.incbin "baserom.gba", 0x000ab294, 0x0000003c
+Owner_BuildDigitTiles:
+	.incbin "baserom.gba", 0x000ab080, 0x000000c0
+	.global Owner_DetermineClass
+	.type Owner_DetermineClass, %function
+	.thumb_func
+Owner_DetermineClass:
+	.incbin "baserom.gba", 0x000ab140, 0x00000144
+	.section .rom.000ab2d0, "ax"
 	.global Owner_RefreshClassActions
 	.type Owner_RefreshClassActions, %function
 	.thumb_func

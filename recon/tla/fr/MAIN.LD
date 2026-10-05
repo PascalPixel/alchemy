@@ -683,7 +683,7 @@
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/CHARACTER3.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b505a)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/GET_RECORD_STRIDE84.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b5298)
+    "*/recon/tla/fr/rom.o"(.rom.000b52d4)
     "*/games/COMMON/SRC/BATTLE/RANDOM16.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/ITEM/GET_UNLEASH_RATE_BONUS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b54ba)

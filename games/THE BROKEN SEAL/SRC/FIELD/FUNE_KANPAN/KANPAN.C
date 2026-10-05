@@ -1350,11 +1350,6 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
 
 void FieldScene_RunShipDeckEventScript(void)
 {
-    void *p8;
-    void *p10;
-    void *p21;
-    void *p22;
-    void *p23;
     s32 v;
 
     Battle_Reset();
@@ -1364,8 +1359,7 @@ void FieldScene_RunShipDeckEventScript(void)
     WaitFrames(1);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 21, 16252928, 47710208);
     ObjectGroup_ConfigureChildValue(0, 15);
-    p8 = (void *)Object_GetById(0);
-    ObjectDispatch_SetSingleChildField26(p8, 0);
+    ObjectDispatch_SetSingleChildField26(Object_GetById(0), 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_SetStatus1c6();
     Call3(ObjectMotion_SetSpeedParameters, 21, 104857, 52428);
@@ -1379,12 +1373,9 @@ void FieldScene_RunShipDeckEventScript(void)
     Call3(ObjectMotion_ResetAndSetPosition, 0, 154, 609);
     AudioCommand_Play(146);
     v = 0;
-    p21 = (void *)Object_GetById(24);
-    *(u16 *)((u8 *)(p21) + 100) = v;
-    p22 = (void *)Object_GetById(25);
-    *(u16 *)((u8 *)(p22) + 100) = v;
-    p23 = (void *)Object_GetById(26);
-    *(u16 *)((u8 *)(p23) + 100) = v;
+    Object_GetById(24)->unknown_64 = v;
+    Object_GetById(25)->unknown_64 = v;
+    Object_GetById(26)->unknown_64 = v;
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 24, 2097152, 31719424);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 25, 5505024, 32505856);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 26, 1048576, 39059456);
@@ -1400,8 +1391,7 @@ void FieldScene_RunShipDeckEventScript(void)
     ObjectGroup_ConfigureChildValue(26, 3);
     do {
         WaitFrames(1);
-        p10 = (void *)Object_GetById(24);
-    } while (*(s16 *)(p10 + 100) == 0);
+    } while (*(s16 *)&Object_GetById(24)->unknown_64 == 0);
     FuneKanpan_OpenFirstDoor();
     /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. */
     do {

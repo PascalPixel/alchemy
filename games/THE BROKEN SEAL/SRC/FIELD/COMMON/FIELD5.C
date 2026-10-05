@@ -205,13 +205,9 @@ loop:
  */
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
-    /* FAKEMATCH: retain the existing StepOwner read/byte-store prefix. The
-       full BattleUnit view moved the party-byte load before its index shift.
-       Signed lvalue/array views reduced frame 44 to 40; a second used base
-       grew it to 48. Scalar s16 interpretations keep the actual frame. */
+    /* FAKEMATCH: the StepOwner read prefix preserves the party-load order and the 44-byte frame. */
     struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
-    /* FAKEMATCH: the map work cell is reached as gEventWork[-19]; the ROM loads
-       0x03001ebc once and subtracts 76 to reach 0x03001e70. */
+    /* FAKEMATCH: gEventWork[-19] shares one pool load for the event and map work pointers. */
     struct MapState *map = ((struct MapState **)&gEventWork)[-19];
     s32 selected = gGameState.selected_actor;
     struct ObjectRuntime *actor = work->actors[selected];

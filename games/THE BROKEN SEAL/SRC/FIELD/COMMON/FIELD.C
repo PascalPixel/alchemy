@@ -49,7 +49,6 @@ void Audio_PlayCue(s32 cue);
 extern struct ObjectRuntime *gObjectSlots;
 extern u8 ResourceBlockOwners[];
 
-/* runtime/remap_bytes_by_table.c */
 extern u8 Runtime_ByteRemapTable[];
 
 /*
@@ -60,14 +59,13 @@ extern u8 Runtime_ByteRemapTable[];
  * footprints where the map keeps them. In debug mode, holding L slows the
  * frame and walks through walls, and with flag 350 set a resource pool
  * with fewer than 136 free blocks plays a warning cue.
- * The angle buffer's unused slots size the frame, as in the world map's.
  */
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 {
     struct FieldPosition position;
     struct FieldPosition test_position;
     struct FieldPosition contact;
-    s16 angle_offsets[22]; /* the ROM frame keeps 22 slots; 6 are used */
+    s16 angle_offsets[22];
     s32 collision;
     s32 pushed;
     s16 heading;
@@ -387,8 +385,7 @@ update_object:
  * The Japanese edition probes 0x80000 ahead and a twelfth of a turn to each
  * side at once and falls back to six headings; the others probe 0x70000
  * ahead, then a sixteenth and an eighth of a turn to each side one at a
- * time, and fall back to eight. The angle buffer's unused slots size the
- * ROM frames: 100 bytes in Japanese, 92 in the others.
+ * time, and fall back to eight.
  */
 #if EDITION_INTERNATIONAL
 #define WORLD_PROBE_RADIUS 0x70000
@@ -401,11 +398,11 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
     struct FieldPosition position;
 #if EDITION_INTERNATIONAL
     struct FieldPosition test_position;
-    s16 angle_offsets[28]; /* the ROM frame keeps 28 slots; 8 are used */
+    s16 angle_offsets[28];
 #else
     struct FieldPosition left_position;
     struct FieldPosition right_position;
-    s16 angle_offsets[22]; /* the ROM frame keeps 22 slots; 6 are used */
+    s16 angle_offsets[22];
 #endif
     s32 collision;
     s32 angle;
@@ -673,24 +670,6 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
  * refused where the next cell is occupied or changes height; with L or R
  * held it is refused where the ground rises or falls away too far. A step
  * the object cannot take counts as a blocked step in the event work.
- *
- * What placed the reference's registers (all from reload order and
- * local-alloc ties, no compiler steering):
- * - motion = 12 comes before the key lookup, so its constant is the first
- *   reload (r0) and the halfword load's scratch follows in r2.
- * - The no-key case is its own small THEN block, blocked = 4. ifcvt case 1
- *   hoists it above the branch after the angle's zero extension, so its
- *   constant takes r3 and 0xffff takes r2; the round robin then gives 14,
- *   15, 10 and the zeroed position r3, r0, r2, r3.
- * - Both ground heights share one variable, which spans blocks, so the
- *   difference ties to object->y (r3) instead of the call result.
- * - The refusal tail is written once (goto refused), as the reference's
- *   single tail shows; two tails merged later by cross-jumping shift the
- *   reload round robin (the -0x80000 constant would take r0, not r1).
- * - The zeroed position and the projection call are written out in the
- *   body, which puts the 0x80000 argument ahead of the angle in sched2.
- * The frame keeps the 68 unused bytes above the position; delta_z captures
- * the displacement before the two facing stores (both sign tests use it).
  */
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {

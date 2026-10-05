@@ -25,7 +25,6 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *actor
 void BattleFx_FinishAction(void);
 s32 Func_080091b0(s32 layer, s32 x, s32 z);
 
-
 /* The two tile-kind planes are addressed as fixed EWRAM tables. */
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 #define TILE_CELLS_TARGET ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
@@ -49,8 +48,7 @@ s32 Field_TryJumpForward(void)
     struct FieldPosition position;
     struct FieldPosition *pos;
     struct ObjectRuntime *target;
-    /* FAKEMATCH: one local holds the tile mask and then the descent step,
-       a second the lift; that split gives the reference its registers. */
+    /* FAKEMATCH: reusing the tile mask for descent and a separate lift local preserves register allocation. */
     s32 step;
     s32 lift;
 
@@ -132,9 +130,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
         s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
         if (TILE_CELLS[index].collision_code == TILE_CELLS_TARGET[index].collision_code) {
-            /* FAKEMATCH: retain the existing six-word probe buffer.
-               The real 12-byte position in 1a5404f7 changed only the
-               native SP adjustments from 24 to 12; only x/y/z are read. */
+            /* FAKEMATCH: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
             s32 vector[6];
             struct FieldPosition *position = (struct FieldPosition *)vector;
 
@@ -204,9 +200,7 @@ s32 battle_owner_69(void)
         s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
         if (TILE_CELLS[index].collision_code == TILE_CELLS_ABOVE[index].collision_code) {
-            /* FAKEMATCH: retain the existing six-word probe buffer.
-               The real 12-byte position in 1a5404f7 changed only the
-               native SP adjustments from 24 to 12; only x/y/z are read. */
+            /* FAKEMATCH: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
             s32 vector[6];
             struct FieldPosition *position = (struct FieldPosition *)vector;
 

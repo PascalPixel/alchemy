@@ -958,7 +958,7 @@ gHaidiaMuraEvents:
 	.4byte MsgHaidiaMtAlephIsASacredPeak
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte FieldScene_RunScene373_02000dc0
+	.4byte HaidiaMura_OpenExitEleven
 	.4byte 0x00000002
 	.4byte 0xffff0002
 	.4byte SceneState_ApplyFlag801Branch
@@ -973,10 +973,10 @@ gHaidiaMuraEvents:
 	.4byte SceneState_ApplyValues123And2
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte FieldScene_RunScene373_02000e54
+	.4byte HaidiaMura_OpenExitFive
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte FieldScene_RunScene373_02000e84
+	.4byte HaidiaMura_OpenExitSix
 	.4byte 0x0000c602
 	.4byte 0xffff0008
 	.4byte SceneDialogue_RunFlag815GatedStep
@@ -1101,7 +1101,7 @@ gHaidiaMuraEvents2:
 	.4byte MsgHaidiaThePeopleOfValeWillNever
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte FieldScene_RunScene373_02000dc0
+	.4byte HaidiaMura_OpenExitEleven
 	.4byte 0x00000002
 	.4byte 0xffff0002
 	.4byte SceneState_ApplyFlag801Branch
@@ -1116,10 +1116,10 @@ gHaidiaMuraEvents2:
 	.4byte SceneState_ApplyValues123And2
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte FieldScene_RunScene373_02000e54
+	.4byte HaidiaMura_OpenExitFive
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte FieldScene_RunScene373_02000e84
+	.4byte HaidiaMura_OpenExitSix
 	.4byte 0x0000c602
 	.4byte 0xffff0008
 	.4byte SceneDialogue_RunFlag815GatedStep
@@ -1253,7 +1253,7 @@ gHaidiaMuraEvents3:
 	.4byte MsgHaidiaHavingNoTravelersIsNoFun
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte FieldScene_RunScene373_02000dc0
+	.4byte HaidiaMura_OpenExitEleven
 	.4byte 0x00000002
 	.4byte 0xffff0002
 	.4byte SceneState_ApplyFlag801Branch
@@ -1268,10 +1268,10 @@ gHaidiaMuraEvents3:
 	.4byte SceneState_ApplyValues123And2
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte FieldScene_RunScene373_02000e54
+	.4byte HaidiaMura_OpenExitFive
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte FieldScene_RunScene373_02000e84
+	.4byte HaidiaMura_OpenExitSix
 	.4byte 0x0000c602
 	.4byte 0xffff0008
 	.4byte SceneDialogue_RunFlag815GatedStep

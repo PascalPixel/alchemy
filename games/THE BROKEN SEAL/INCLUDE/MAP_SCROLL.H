@@ -22,7 +22,8 @@ struct MapScrollWork {
     u8 *script;
     u16 flags;
     u8 wide_tiles;
-    u8 unknown_017;
+    /* Set where the party leaves footprints as it walks. */
+    u8 footprints;
     struct MapAnimation anim[16];
     struct BlendScriptState blend;
     s32 view_x, view_y;

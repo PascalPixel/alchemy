@@ -81,8 +81,6 @@ ResourceObject_Create:
 	.size ResourceObject_Create, .-ResourceObject_Create
 	.section .rom.0000c2ca, "ax"
 	.incbin "baserom.gba", 0x0000c2ca, 0x00000002
-	.section .rom.0000e3ec, "ax"
-	.incbin "baserom.gba", 0x0000e3ec, 0x0000070c
 	.section .rom.00012720, "ax"
 	.global Object_ShadowTiles
 Object_ShadowTiles:

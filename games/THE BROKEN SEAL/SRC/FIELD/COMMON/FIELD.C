@@ -13,6 +13,8 @@
 #include "FIELDRUN.H"
 #include "OBJECT_DISPATCH.H"
 #include "ANIMSPR.H"
+#include "BATTLE_RUNTIME.H"
+#include "SCRIPT_OBJECT_ENTRY.H"
 
 struct KeyMoveEventWork {
     u8 unknown_000[0x19c];
@@ -29,7 +31,7 @@ struct WorldMapSprite {
 extern struct KeyMoveEventWork *gEventWork;
 extern volatile u32 gKeysHeld;
 extern u32 gKeysRepeat;
-extern u8 gDebugMode;
+extern volatile u8 gDebugMode;
 extern const s16 WorldMap_KeyHeadings[16];
 extern const s32 WorldMap_KeyYaws[16];
 extern const u8 WorldMap_FootprintActions[];
@@ -40,9 +42,343 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 s32 Field_CheckConfiguredKeys(void);
 s32 FixedSqrt(s32);
 struct ObjectRuntime *FieldObject_Create(s32, s32, s32, s32);
+s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
+s32 ArcTan2(s32 y, s32 x);
+void Audio_PlayCue(s32 cue);
+extern struct ObjectRuntime *gObjectSlots;
+extern u8 ResourceBlockOwners[];
 
 /* runtime/remap_bytes_by_table.c */
 extern u8 Runtime_ByteRemapTable[];
+
+/*
+ * Field player movement, the field counterpart of Object_MoveOnWorldMap:
+ * pick the heading from the pad, probe 0x80000 ahead, then a sixteenth and
+ * an eighth of a turn to each side, fall back to six neighbouring headings,
+ * then push any solid object in the way, steer the object and drop
+ * footprints where the map keeps them. In debug mode, holding L slows the
+ * frame and walks through walls, and with flag 350 set a resource pool
+ * with fewer than 136 free blocks plays a warning cue.
+ * The angle buffer's unused slots size the frame, as in the world map's.
+ */
+s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
+{
+    struct FieldPosition position;
+    struct FieldPosition test_position;
+    struct FieldPosition contact;
+    s16 angle_offsets[22]; /* the ROM frame keeps 22 slots; 6 are used */
+    s32 collision;
+    s32 pushed;
+    s16 heading;
+    s32 angle;
+    s32 mode;
+    u16 direction;
+    s32 rotation;
+    s32 angle_index;
+    s32 count;
+    struct ObjectRuntime *other;
+
+    collision = 0;
+    pushed = 0;
+    if (gDebugMode != 0 && GameFlag_TestFar(350) != 0) {
+        s32 free;
+        s32 block;
+
+        free = 0;
+        for (block = 0; block < 512; block++) {
+            if (ResourceBlockOwners[block] == 0xff)
+                free++;
+        }
+        if (free - 136 < 0)
+            Audio_PlayCue(135);
+    }
+    if (gDebugMode != 0) {
+        s32 mask;
+
+        mask = KEY_L;
+        if (gKeysHeld & mask) {
+            s32 wait;
+
+            wait = mask;
+        wait_a:
+            --wait;
+            if (wait != 0)
+                goto wait_a;
+            wait = 95;
+        wait_b:
+            wait--;
+            if (wait >= 0)
+                goto wait_b;
+            wait = 63;
+        wait_c:
+            wait--;
+            if (wait >= 0)
+                goto wait_c;
+            wait = 63;
+        wait_d:
+            wait--;
+            if (wait >= 0)
+                goto wait_d;
+        }
+    }
+    if (gKeysHeld & gGameState.dash_keys) {
+        object->speed_limit = 0x18000;
+        object->acceleration = 0x4000;
+        mode = 5;
+    } else {
+        object->speed_limit = 0x10000;
+        object->acceleration = 0x4000;
+        mode = 2;
+    }
+    if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & KEY_B)) {
+        object->speed_limit = 0x40000;
+        object->acceleration = 0x10000;
+        mode = 5;
+    }
+
+    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+    if ((u16)angle == 0xffff) {
+        collision |= 4;
+        goto update_object;
+    }
+
+    collision = 0;
+    position.x = object->x;
+    position.y = object->y;
+    position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle, &position);
+    if (gDebugMode != 0 && (gKeysHeld & KEY_L)) {
+        heading = angle;
+        goto update_object;
+    }
+    if (Func_080120dc(object, &position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
+    if (Func_080120dc(object, &test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
+    if (Func_080120dc(object, &test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
+    if (Func_080120dc(object, &test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
+    if (Func_080120dc(object, &test_position) != 0)
+        goto choose_direction;
+    heading = angle;
+    goto push_objects;
+
+choose_direction:
+    direction = angle;
+    count = 0;
+    angle_offsets[count++] = direction + 0x1000;
+    angle_offsets[count++] = direction - 0x1000;
+    angle_offsets[count++] = direction + 0x2000;
+    angle_offsets[count++] = direction - 0x2000;
+    angle_offsets[count++] = direction + 0x3000;
+    angle_offsets[count++] = direction - 0x3000;
+    for (angle_index = 0; angle_index < count; angle_index++) {
+        heading = angle_offsets[angle_index];
+        position.x = object->x;
+        position.y = object->y;
+        position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading, &position);
+        if (Func_080120dc(object, &position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &test_position);
+        if (Func_080120dc(object, &test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &test_position);
+        if (Func_080120dc(object, &test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &test_position);
+        if (Func_080120dc(object, &test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &test_position);
+        if (Func_080120dc(object, &test_position) == 0)
+            goto push_objects;
+    }
+    position.x = object->x;
+    position.y = object->y;
+    position.z = object->z;
+    collision |= 1;
+
+push_objects:
+    contact.x = object->x;
+    contact.y = object->y;
+    contact.z = object->z;
+    Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
+    other = gObjectSlots;
+    for (angle_index = 63; angle_index >= 0; angle_index -= 1, other++) {
+        s32 radius;
+
+        radius = object->radius - 2;
+        if (other->script == 0)
+            continue;
+        if ((other->unknown_59 & 1) == 0)
+            continue;
+        if (other == object)
+            continue;
+        if (Runtime_CheckRadiusOverlap(&other->x, radius, &contact.x, other->radius - 2) < 0)
+            continue;
+        if ((other->unknown_59 & 2) == 0 || other->movement_state != 0)
+            goto blocked;
+        direction = ArcTan2(other->z - object->z, other->x - object->x);
+        test_position.x = other->x;
+        test_position.y = other->y;
+        test_position.z = other->z;
+        heading = direction;
+        Vector_AddPolarOffset(0x4000, direction, &test_position);
+        if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)other, (s32 *)&test_position))
+            goto blocked;
+        test_position.x = other->x;
+        test_position.y = other->y;
+        test_position.z = other->z;
+        Vector_AddPolarOffset(0xa0000, direction, &test_position);
+        if (Func_080120dc(other, &test_position) != 0)
+            goto blocked;
+        test_position.x = other->x;
+        test_position.y = other->y;
+        test_position.z = other->z;
+        Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
+        if (Func_080120dc(other, &test_position) != 0)
+            goto blocked;
+        if (Func_080120dc(other, &test_position) != 0)
+            goto blocked;
+        test_position.x = other->x;
+        test_position.y = other->y;
+        test_position.z = other->z;
+        Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
+        if (Func_080120dc(other, &test_position) != 0)
+            goto blocked;
+        Vector_AddPolarOffset(0x4000, direction, (struct FieldPosition *)&other->x);
+        other->target_x = -0x80000000;
+        other->target_y = -0x80000000;
+        other->target_z = -0x80000000;
+        pushed |= 1;
+        continue;
+    blocked:
+        collision |= 2;
+    }
+    if (collision == 0 && pushed != 0) {
+        object->speed_limit = 0x4000;
+        object->acceleration = 0x2000;
+    }
+
+update_object:
+    if (gEventWork != NULL) {
+        if (collision & 3)
+            gEventWork->blocked_steps++;
+        else
+            gEventWork->blocked_steps = 0;
+    }
+    if (pushed != 0) {
+        ObjectDispatch_ApplyArgumentToChildren(object, 8);
+    } else if (collision != 0) {
+        s32 action;
+
+        action = 9;
+        if (Owner_GetStateFar(gGameState.selected_actor)->hp == 0)
+            action = 22;
+        ObjectDispatch_ApplyArgumentToChildren(object, action);
+    } else {
+        ObjectDispatch_ApplyArgumentToChildren(object, mode);
+    }
+
+    if (collision != 0) {
+        object->target_x = -0x80000000;
+        object->target_y = -0x80000000;
+        object->target_z = -0x80000000;
+        object->velocity_x = 0;
+        object->velocity_z = 0;
+        if (collision & 3) {
+            s32 difference;
+
+            difference = (u16)angle - object->angle;
+            difference = (s16)difference;
+            if (difference > 0x1000)
+                difference = 0x1000;
+            if (difference < -0x1000)
+                difference = -0x1000;
+            object->angle += difference;
+        }
+        object->action = 0;
+        object->unknown_66 = 2;
+    } else {
+        s32 square;
+
+        Object_SetMoveTarget(object, position.x, position.y, position.z);
+        square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
+                           + Iwram_MulQ16(object->velocity_z, object->velocity_z));
+        object->velocity_x = 0;
+        object->velocity_z = 0;
+        Vector_AddPolarOffset(square, (u16)heading, (struct FieldPosition *)&object->velocity_x);
+        if (object->action != 0)
+            object->action--;
+    }
+
+    rotation = (u16)angle;
+    if (((struct MapScrollWork *)gMapWork[0])->footprints != 0
+        && object->action == 0 && collision == 0) {
+        struct ObjectRuntime *effect;
+
+        effect = FieldObject_Create(25, object->x, object->y, object->z);
+        if (effect != 0) {
+            struct FieldSprite *animation;
+
+            effect->terrain_height = object->terrain_height;
+            animation = effect->animation;
+            ObjectDispatch_Initialize((struct DispatchObject *)effect, (u32)WorldMap_FootprintActions);
+            effect->unknown_23 = 2;
+            effect->flags = collision;
+            if (animation != 0) {
+                AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
+                animation->flags = collision;
+                animation->rotation = rotation + 0x4000;
+                animation->priority = 3;
+            }
+            if (object->unknown_66 == 2) {
+                AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 2);
+                object->unknown_66 = collision;
+            }
+            if (object->unknown_66 != 0)
+                effect->angle = 0x8000;
+            if (mode == 5)
+                object->action = 12;
+            else
+                object->action = 18;
+            object->unknown_66 ^= 1;
+        }
+    }
+    Field_CheckConfiguredKeys();
+    object->step++;
+    return 1;
+}
 
 /*
  * World-map player movement: pick the heading from the pad, probe the map

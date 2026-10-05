@@ -74,44 +74,43 @@ extern u8 MsgHaidiaMomDadBack[];
 extern u8 HaidiaArashi_StormRunActions[];
 void Scene_RunActorGroupDepartureSequence();
 
-/* Configures actor 22 (position, pose, and movement/sprite flags) for the
- * scene. */
+/* Pick another heading when the actor's countdown reaches zero. */
 s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
 {
-    s32 loaded = object->counter;
+    s32 loaded = (*(s16 *)&((struct FieldActor *)object)->timer);
     s32 counter = (s16)loaded;
 
     if (loaded == 0) {
-        object->x = Engine_RandomNext();
+        ((struct FieldActor *)object)->facing = Engine_RandomNext();
         counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
-        object->counter = counter;
+        (*(s16 *)&((struct FieldActor *)object)->timer) = counter;
     }
-    object->counter = counter - 1;
+    (*(s16 *)&((struct FieldActor *)object)->timer) = counter - 1;
     return 1;
 }
 
 s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
 {
-    switch (state->countdown) {
+    switch ((*(s16 *)&((struct FieldActor *)state)->timer)) {
     case 6:
-        state->fixed_point_18 -= 0x4000;
-        state->fixed_point_1c += 0x2000;
+        ((struct FieldActor *)state)->scale_x -= 0x4000;
+        ((struct FieldActor *)state)->scale_y += 0x2000;
         break;
     case 4:
-        state->fixed_point_18 += 0x2000;
-        state->fixed_point_1c += -0x1000;
+        ((struct FieldActor *)state)->scale_x += 0x2000;
+        ((struct FieldActor *)state)->scale_y += -0x1000;
         break;
     case 2:
-        state->fixed_point_18 += 0x1000;
-        state->fixed_point_1c -= 0x800;
+        ((struct FieldActor *)state)->scale_x += 0x1000;
+        ((struct FieldActor *)state)->scale_y -= 0x800;
         break;
     case 0:
-        state->fixed_point_18 = 0x10000;
-        state->fixed_point_1c = 0x10000;
-        state->countdown = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+        ((struct FieldActor *)state)->scale_x = 0x10000;
+        ((struct FieldActor *)state)->scale_y = 0x10000;
+        (*(s16 *)&((struct FieldActor *)state)->timer) = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
-    state->countdown--;
+    (*(s16 *)&((struct FieldActor *)state)->timer)--;
     return 1;
 }
 
@@ -1677,9 +1676,7 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_ActorSetAnimation(10, 5);
     Engine_ActorSetAnimation(24, 6);
     Engine_ActorSetAnimation(25, 6);
-    /* For records 10, 24 and 25: fetch the record's entry pointer, fetch a
-     * value from that record's own state, and store a derived value into
-     * the entry's field at offset 100. */
+    /* Give the three waiting actors a random starting countdown. */
     entry = Actor_Get(10);
     record = Engine_RandomNext();
     entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
@@ -1736,8 +1733,6 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_ActorRunRepeatedMotion(9, 2);
     Event_OpenMessage(0x8009, 0);
     Actor_FaceDirection(22, 0, 0);
-    /* Branch on a condition; pass byte 4 or byte 5 of the 0xe9b
-     * table to the corresponding follow-up call. */
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(9, 3);
         Engine_EventSetMessage((north + 4));
@@ -1751,8 +1746,6 @@ void HaidiaArashi_RunRiverSearch(void)
     suppose = (s32)MsgHaidiaDontSupposeTwo;
     Engine_EventSetMessage(suppose);
     Event_OpenMessage(0x8009, 0);
-    /* Branch on a condition; each side reads a different byte of the
-     * 0xea1 table and runs its own follow-up sequence. */
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(9, 3);
         Engine_EventSetMessage((suppose + 1));
@@ -1777,8 +1770,7 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_ActorSetAnimationAndWait(22, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(22, 2);
-    /* If a record pointer is returned, pass its s16 fields at offsets 10
-     * and 18 through to the follow-up call. */
+    /* Walk actor 22 back to the leader. */
     record = (s32)Actor_Get(0);
     if (record != 0) {
         Actor_SetDestination(22, ((struct FieldActor *)record)->x.part.pixel, ((struct FieldActor *)record)->z.part.pixel);

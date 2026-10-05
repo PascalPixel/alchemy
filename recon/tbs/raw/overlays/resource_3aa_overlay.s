@@ -255,13 +255,13 @@ gKareiKyudenEvents:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte FieldScene_RunScene3aa_02000184
+	.4byte KareiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte FieldScene_RunScene3aa_02000184
+	.4byte KareiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte FieldScene_RunScene3aa_02000184
+	.4byte KareiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0005
 	.4byte 0x00000005
@@ -291,7 +291,7 @@ gKareiKyudenEvents:
 	.4byte 0x0000000d
 	.4byte 0x0000c602
 	.4byte 0xffff000e
-	.4byte FieldScene_RunScene3aa_02000184
+	.4byte KareiKyuden_LeaveThroughDoor
 	.4byte 0x00000000
 	.4byte 0x03210008
 	.4byte MsgKareiKyudenDodonpaIsAVeryShrewdMan

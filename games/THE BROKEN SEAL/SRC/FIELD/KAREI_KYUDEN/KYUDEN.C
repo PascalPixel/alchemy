@@ -123,7 +123,7 @@ void FieldScene_RunActorEightTurnDialogue(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3aa_02000184(void)
+void KareiKyuden_LeaveThroughDoor(void)
 {
     void Map_ClearLayerEntryFlag();
 

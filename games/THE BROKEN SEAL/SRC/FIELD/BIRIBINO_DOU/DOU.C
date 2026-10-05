@@ -423,16 +423,17 @@ void FieldScene_RunScene398SequenceC(void)
     }
 }
 
-s32 *SceneActor_FindSlotAtTile(s32 x, s32 z)
+/* The placed actor (ids 8 to 65) standing on map cell x, z. */
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
-    s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
+    struct FieldActor **actors = gEventWork->placed_actors - 8;
     u32 i;
 
     for (i = 8; i <= 65; i++) {
-        s32 *p = slots[i];
+        struct FieldActor *actor = actors[i];
 
-        if (x == (p[2] >> 20) && z == (p[4] >> 20)) {
-            return p;
+        if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20) {
+            return actor;
         }
     }
     return 0;
@@ -441,8 +442,8 @@ s32 *SceneActor_FindSlotAtTile(s32 x, s32 z)
 void StagedActor_PushActorAhead(void)
 {
     struct FieldActor *player;
-    u8 *target;
-    u8 *blocker;
+    struct FieldActor *target;
+    struct FieldActor *blocker;
     s32 heading;
     s32 tx;
     s32 tz;
@@ -455,22 +456,22 @@ void StagedActor_PushActorAhead(void)
         + (StagedActor_DirectionSteps[heading] >> 16)) >> 4;
     tz = (player->z.part.pixel
         + ((StagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
-    target = (u8 *)SceneActor_FindSlotAtTile(tx, tz);
+    target = SceneActor_FindActorAtCell(tx, tz);
     if (target == 0) return;
 
-    tx = (*(s16 *)(target + 10)
+    tx = (target->x.part.pixel
         + (StagedActor_DirectionSteps[heading] >> 16)) >> 4;
-    tz = (*(s16 *)(target + 18)
+    tz = (target->z.part.pixel
         + ((StagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
-    blocker = (u8 *)SceneActor_FindSlotAtTile(tx, tz);
+    blocker = SceneActor_FindActorAtCell(tx, tz);
     if (blocker != 0) return;
 
-    target[0x22] = 2;
+    target->terrain_id = 2;
 
-    pos[0] = *(s32 *)(target + 8)
+    pos[0] = target->x.fixed
         + (StagedActor_DirectionSteps[heading] & (s32)0xffff0000);
-    pos[1] = *(s32 *)(target + 12);
-    pos[2] = *(s32 *)(target + 16) + (StagedActor_DirectionSteps[heading] << 16);
+    pos[1] = target->y.fixed;
+    pos[2] = target->z.fixed + (StagedActor_DirectionSteps[heading] << 16);
 
     if (Object_CheckMovementCollision(target, pos) > 0) return;
 
@@ -478,8 +479,8 @@ void StagedActor_PushActorAhead(void)
     Engine_TaskWait(15);
     Engine_AudioPlayCue(185);
 
-    *(s32 *)(target + 48) = 0x3333;
-    *(s32 *)(target + 52) = 0x3333;
+    target->speed = 0x3333;
+    target->acceleration = 0x3333;
     Object_SetPosition(target, pos[0], pos[1], pos[2]);
 
     player->speed = 0x3333;
@@ -488,10 +489,10 @@ void StagedActor_PushActorAhead(void)
 
     Object_CommitPosition(target);
 
-    *(s32 *)(target + 8) = pos[0];
-    *(s32 *)(target + 16) = pos[2];
-    *(s32 *)(target + 36) = (s32)blocker;
-    *(s32 *)(target + 44) = (s32)blocker;
+    target->x.fixed = pos[0];
+    target->z.fixed = pos[2];
+    target->velocity_x = (s32)blocker;
+    target->velocity_z = (s32)blocker;
 
     Object_SetMode(player, 1);
     FieldScene_RunScene398SequenceB();

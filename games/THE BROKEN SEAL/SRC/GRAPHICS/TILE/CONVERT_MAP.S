@@ -7,8 +7,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.global Func_0800a37c
-Func_0800a37c:
+	.global Tile_ConvertMap
+Tile_ConvertMap:
 	push	{r5, r6, r7, r8}
 	mov	r5, #-16777216
 	orr	r5, r5, r5, lsr #4
@@ -52,4 +52,4 @@ Func_0800a37c:
 	pop	{r5, r6, r7, r8}
 	bx	lr
 	.global Tile_ConvertMapCodeSize
-	.set Tile_ConvertMapCodeSize, . - Func_0800a37c
+	.set Tile_ConvertMapCodeSize, . - Tile_ConvertMap

@@ -15,7 +15,7 @@ struct ResourceWork {
 
 extern struct ResourceWork Data_03007804;
 extern void *Resource_DirectoryTable[];
-extern const u8 Func_08002d5c[];
+extern const u8 Resource_PatchThumbBranch[];
 
 /* The bl-pair fixer (PATCH_THUMB_BRANCH.S) is ARM code that runs from a heap
    copy of itself; the copy length is a link-time symbol. */
@@ -102,7 +102,7 @@ void Resource_LoadCode(u32 index, void *destination)
         size = (u32)Resource_PatchThumbBranchCodeSize;
     } while (0);
     routine = (void (*)(void *, s32))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Func_08002d5c, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    Dma_Set((const void *)Resource_PatchThumbBranch, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(destination, end);
     Sys_Free(routine);
 }

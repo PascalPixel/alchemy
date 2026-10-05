@@ -4,7 +4,7 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-extern const u8 Func_08015430[];
+extern const u8 Text_DecodeSymbol[];
 
 extern u8 Text_DecodeSymbolCodeSize[];
 
@@ -33,7 +33,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
 
         size = (u32)Text_DecodeSymbolCodeSize;
         code = Runtime_AllocateHeapBlock(50, size);
-        Dma_Set((const void *)Func_08015430, code,
+        Dma_Set((const void *)Text_DecodeSymbol, code,
             0x84000000 | (size >> 2), REG_DMA3);
     }
     decode = (s32 (*)(struct TextReader *))((union HeapState *)&gWorkSlot)->slots[50];

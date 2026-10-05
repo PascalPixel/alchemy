@@ -204,8 +204,8 @@ Script_OperandHandlerTable:
 Map_LayeredScenes:
 	.incbin "baserom.gba", 0x00012f84, 0x0000107c
 	.section .rom.000145d0, "ax"
-	.global Func_080155d0
-Func_080155d0:
+	.global UiText_DrawGlyphArm
+UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000145d0, 0x000002f4
 	.global Tile_BuildMetatiles
 Tile_BuildMetatiles:

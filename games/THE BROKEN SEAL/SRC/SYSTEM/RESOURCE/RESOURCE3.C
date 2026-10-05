@@ -11,7 +11,7 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 
 void ResourceMetadata_ClearRecord(void *);
 
-extern u8 Func_0800a418[];
+extern u8 Tile_CopyStrided[];
 
 /* The strided tile copy runs from a heap copy of itself. */
 extern u8 Tile_CopyStridedCodeSize[];
@@ -409,7 +409,7 @@ void ObjectSystem_Configure(s32 mode)
     VramBlock_LoadCached(93, 128, Object_ShadowTiles);
     size = (u32)Tile_CopyStridedCodeSize;
     table = Runtime_AllocateHeapBlock(53, size);
-    Dma_Set((const void *)Func_0800a418, table, 0x84000000 | (size >> 2),
+    Dma_Set((const void *)Tile_CopyStrided, table, 0x84000000 | (size >> 2),
             REG_DMA3);
 }
 

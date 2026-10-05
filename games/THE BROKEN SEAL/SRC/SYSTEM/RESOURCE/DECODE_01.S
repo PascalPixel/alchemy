@@ -9,8 +9,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.global Func_08002544
-Func_08002544:
+	.global Resource_DecodeType01Arm
+Resource_DecodeType01Arm:
 	push	{r5, r6, r7, r9, lr}
 	ldrb	r2, [r0], #1
 	cmp	r2, #0
@@ -216,4 +216,4 @@ Func_08002544:
 	add	r3, r3, #16
 	b	.L_080027d8
 	.global Resource_DecodeType01CodeSize
-	.set Resource_DecodeType01CodeSize, . - Func_08002544
+	.set Resource_DecodeType01CodeSize, . - Resource_DecodeType01Arm

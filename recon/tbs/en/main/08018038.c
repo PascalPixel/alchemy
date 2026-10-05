@@ -35,7 +35,7 @@
 #define DMA_ENABLE  0x84000000
 #define TEXT_WORK_BLOCK 50
 
-extern const u8 Func_08015430[];
+extern const u8 Text_DecodeSymbol[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
 /* The maintained callee exposes a pointer word; this consumer interprets
@@ -91,7 +91,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
     } else {
         size = (u32)Text_DecodeSymbolCodeSize;
         buf = Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, size);
-        Dma_Set((const void *)Func_08015430, buf,
+        Dma_Set((const void *)Text_DecodeSymbol, buf,
                 DMA_ENABLE | (size >> 2),
                 (volatile u32 *)DMA3_REGS);
         decode = (s32 (*)(struct TextReader *))

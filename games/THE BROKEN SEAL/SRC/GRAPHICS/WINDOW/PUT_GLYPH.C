@@ -10,7 +10,7 @@
 #include "EDITION.H"
 #include "TEXT_FONT.H"
 
-extern const u8 Func_080155d0[];
+extern const u8 UiText_DrawGlyphArm[];
 extern u8 UiText_DrawGlyphCodeSize[];
 
 typedef s32 (*GlyphRoutine)(struct UiWindow *, s32, s32, s32, u8 *);
@@ -77,7 +77,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
 #endif
         size = (u32)UiText_DrawGlyphCodeSize;
         draw = (GlyphRoutine)Runtime_BumpAllocate(size);
-        Dma_Set(Func_080155d0, draw, 0x84000000 | (size >> 2), REG_DMA3);
+        Dma_Set(UiText_DrawGlyphArm, draw, 0x84000000 | (size >> 2), REG_DMA3);
         result = draw(window, character, x, y, font);
 #if !EDITION_INTERNATIONAL
         if ((u16)mark != 0)

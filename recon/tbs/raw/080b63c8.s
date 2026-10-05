@@ -684,7 +684,7 @@ Battle_RunEncounter:
 .L_080b6998:
 	.4byte gCpuLoadDisplayEnabled
 .L_080b699c:
-	.4byte Func_080b7738
+	.4byte BattleActor_UpdateSpritePriorities
 .L_080b69a0:
 	.4byte IwramClearWords
 .L_080b69a4:
@@ -766,4 +766,4 @@ Battle_RunEncounter:
 .L_080b6a58:
 	.4byte 0x0000022b
 .L_080b6a5c:
-	.4byte Func_080b7738
+	.4byte BattleActor_UpdateSpritePriorities

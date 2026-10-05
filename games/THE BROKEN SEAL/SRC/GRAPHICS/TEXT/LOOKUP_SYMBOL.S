@@ -9,8 +9,8 @@
 .syntax unified
 .text
 	.arm
-	.global Func_08015570
-Func_08015570:
+	.global UiText_LookupMessageArm
+UiText_LookupMessageArm:
 	lsr	r3, r1, #8
 	ldr	ip, [pc, #80]
 	add	ip, ip, r3, lsl #3
@@ -39,4 +39,4 @@ Func_08015570:
 	bx	lr
 	.4byte Text_MessageBanks
 	.global UiText_LookupMessageCodeSize
-	.set UiText_LookupMessageCodeSize, . - Func_08015570
+	.set UiText_LookupMessageCodeSize, . - UiText_LookupMessageArm

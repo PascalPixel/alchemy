@@ -12,7 +12,7 @@
 extern u16 gLinkStatus;
 void MusicPlayer_StepVolumeAndPitchTowardTargetsFar(void);
 void BlendTransition_Update(void);
-void Func_080006fc(void);
+void SoundDriver_EnterMixer(void);
 
 #define SOUND_PRESET_COUNT 5
 #define SOUND_PRESET_SIZE 152
@@ -80,7 +80,7 @@ void System_VBlankHandler(void)
     gFrameTick++;
     gLagFrameCount++;
     gVBlankDone = 1;
-    Func_080006fc();
+    SoundDriver_EnterMixer();
 }
 
 /* active sound parameters in IWRAM */

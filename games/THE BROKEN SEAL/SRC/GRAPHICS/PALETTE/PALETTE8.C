@@ -20,7 +20,7 @@ extern const u8 Resource_DecodeHalfwordLz[];
 
 /* Linker sizes determine the stack allocation for the copied ARM entries. */
 extern u8 Resource_DecompressHalfwordsCodeSize[];
-extern const u8 Func_08002544[];
+extern const u8 Resource_DecodeType01Arm[];
 extern const u8 Resource_Decode2[];
 extern const u8 Resource_DecodeByteLzArm[];
 
@@ -142,7 +142,7 @@ s32 Resource_DecodeType01(const void *source, void *destination)
         size = (u32)Resource_DecodeType01CodeSize;
     } while (0);
     routine = (s32 (*)(const void *, void *))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Func_08002544, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    Dma_Set((const void *)Resource_DecodeType01Arm, routine, 0x84000000 | (size >> 2), REG_DMA3);
     /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);

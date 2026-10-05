@@ -182,7 +182,7 @@ Func_08018038:
 .L_08018180:
 	.4byte 0x040000d4
 .L_08018184:
-	.4byte Func_08015430
+	.4byte Text_DecodeSymbol
 .L_08018188:
 	ldr r0, [sp, #44]
 	ldr r1, .L_080181d0

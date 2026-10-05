@@ -13,7 +13,7 @@
  * yaw is negative. One object, record and list variable serve the whole
  * function, which keeps the object in r5 and every record in r0; the
  * priorities are read from their array inside each loop. */
-void Func_080b7738(void)
+void BattleActor_UpdateSpritePriorities(void)
 {
     u16 ids[14];
     s32 priority[2];

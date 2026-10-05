@@ -23,7 +23,7 @@ void Input_HandleKeyInterrupt(void)
     }
 }
 
-extern const u8 Func_08002cf4[];
+extern const u8 Resource_ExecuteTransfer[];
 
 
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
@@ -98,7 +98,7 @@ void IoWriteQueue_FlushPending(void)
             u8 routine_bytes[word_count << 2];
 
             routine = (QueueFlushRoutine)routine_bytes;
-            Dma_Set((const void *)Func_08002cf4, (void *)routine,
+            Dma_Set((const void *)Resource_ExecuteTransfer, (void *)routine,
                     word_count | control, REG_DMA3);
             routine(queue, count);
             queue->count = zero;

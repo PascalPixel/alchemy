@@ -337,9 +337,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 six00;
 
 #if !EDITION_INTERNATIONAL
-    /* FAKEMATCH: one coin-label selector keeps its saved register through
-       the number draw. Separate whole enum arguments rematerialize the unit
-       label and shorten the complete Japanese callback by twelve bytes. */
+    /* FAKEMATCH: one coin-label selector preserves its saved register; separate arguments shorten the Japanese callback by twelve bytes. */
     s32 msg;
 #endif
 
@@ -683,8 +681,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_EventWait(30);
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    /* If a record is returned, pass its s16 fields at +10 and +18 back in as
-     * arguments. */
+    /* Walk Gerald to the leader's position. */
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
@@ -692,12 +689,11 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_EventWait(20);
-    /* Clear the flag byte at +91 of record 8. */
+    /* Resume actor 8's action. */
     Object_GetById(8)->paused = 0;
     Engine_ActorEnableActionCallback(8, 2);
     record = Object_GetById(8);
-    /* Store the integer part of the 16.16 fixed-point fields at +8 and +16
-     * into the halfwords at +100 and +102. */
+    /* Save actor 8's whole-pixel position for its action callback. */
     {
         s32 shown = record->x.fixed / 0x10000;
 

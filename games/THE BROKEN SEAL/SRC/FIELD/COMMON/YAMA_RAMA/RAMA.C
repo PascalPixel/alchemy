@@ -38,11 +38,6 @@ s32 OverlayObject_SetFacingTowardObject10(void *self);
 
 /* Two sites reach this one symbol with different arities; old-style so both
  * calls are legal. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
     void Engine_ActorSetPosition(s32, s32, s32);
@@ -236,9 +231,9 @@ void FieldScene_RunScene3a2SequenceA(void)
         Engine_EventWait(60);
         Actor_FaceDirection(ACTOR_GERALD, 0x8000, 20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
-        bump_step(2);
+        gEventWork->message += 2;
     } else {
-        bump_step(2);
+        gEventWork->message += 2;
         Engine_EventWait(20);
         Actor_FaceDirection(ACTOR_MIA, 0, 20);
         Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);

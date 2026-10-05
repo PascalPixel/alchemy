@@ -63,23 +63,7 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 extern struct EventRuntime *Data_03001ebc;
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step_020036f8(s32 off, s32 amount)
-{
-    u8 *work = (u8 *)Data_03001ebc;
-    u16 *slot = (u16 *)((s32)work + off);
-    s32 next = *slot + amount;
-
-    *slot = next;
-}
 
 void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 

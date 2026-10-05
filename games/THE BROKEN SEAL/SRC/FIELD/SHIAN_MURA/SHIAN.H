@@ -42,9 +42,3 @@ void BattleFx_RunPageEffectForSlot();
 void Effect_Spawn();
 void BattleFx_PlayQueuedSound();
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-

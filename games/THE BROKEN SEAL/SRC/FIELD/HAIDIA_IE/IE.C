@@ -173,10 +173,10 @@ void Villager_ShowOffPsynergy(void)
         message = (s32)MsgHaidiaArentWorriedCrossing;
         Engine_EventSetMessage(message);
         if (Engine_GameFlagIsSet(2) != 0) {
-            bump_step(1);
+            gEventWork->message++;
         }
         if (Engine_GameFlagIsSet(3) != 0) {
-            bump_step(1);
+            gEventWork->message++;
         }
         Engine_EventOpenMessage(17, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {

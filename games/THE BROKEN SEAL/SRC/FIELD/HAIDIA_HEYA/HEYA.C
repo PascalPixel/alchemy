@@ -536,7 +536,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_FaceDirection(ACTOR_IVAN, 0x7000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xb000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Camera_MoveTo(0x3090000, 0, 0x1ac0000, 1);
     Engine_EventWait(20);

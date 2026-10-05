@@ -142,12 +142,6 @@ s32 UpdateActorProximity(u8 *actor);
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 extern u8 *Data_03001e8c[];
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 extern u8 MsgKuupuappuWarriorGuy[];
 
 extern u8 MsgKuupuappuGreatEverythingSolved[];
@@ -467,7 +461,7 @@ void FieldScene_RunScene385SequenceA(void)
         Engine_ActorFaceEachOther(16, 0, 2);
         Event_OpenMessage(16, 0);
         if (Engine_EventChooseYesNo(0, 0) != 0) {
-            bump_step(1);
+            gEventWork->message++;
         }
         Event_ShowMessage(16, 0);
         *((u8 *)Actor_Get(16) + 91) = rec7;

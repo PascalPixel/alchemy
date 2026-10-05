@@ -42,10 +42,4 @@ extern const u16 Sukureta_GateCells[];
 s32 ArcTan2(s32, s32);
 void BattleFx_SetWeightedResult(s32, s32);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 #endif

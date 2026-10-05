@@ -19,14 +19,6 @@ void SceneChannel_ConfigureUniformAndHandoff(s32);
 void SceneChannel_ConfigureUniformAndHandoff();
 s32 Object_SetActionCallbackAndRefreshById();
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    void Map_ClearLayerEntryFlag();
-
-    gEventWork->message += amount;
-}
-
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 
@@ -410,12 +402,12 @@ void RunEventScript01(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     v5 = 1;
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
         v5 = 0;
     }
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
     if (v5 != 0) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 10);
     Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
@@ -441,11 +433,11 @@ void RunEventScript01(void)
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(8, 3);
         Event_ShowMessageAndWait(8, 0, 10);
-        bump_step(1);
+        gEventWork->message++;
     } else {
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(8, 4);
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessageAndWait(8, 0, 10);
     }
     SceneChannel_ConfigureUniformAndHandoff(20);
@@ -496,11 +488,11 @@ void RunEventScript01(void)
         Actor_SetAttachedEffect(8, 0x102);
         Engine_EventWait(40);
         Event_ShowMessageAndWait(8, 0, 10);
-        bump_step(2);
+        gEventWork->message += 2;
     } else {
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
         Actor_SetAttachedEffect(8, 0x102);
         Engine_EventWait(40);
@@ -642,11 +634,11 @@ void RunEventScript01(void)
         Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
         Engine_EventWait(10);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-        bump_step(2);
+        gEventWork->message += 2;
     } else {
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
         SceneChannel_ConfigureUniformAndHandoff(10);
         Engine_ActorSetAnimation(ACTOR_GERALD, 3);

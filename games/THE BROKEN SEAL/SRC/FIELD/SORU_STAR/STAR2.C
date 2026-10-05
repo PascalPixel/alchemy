@@ -538,7 +538,7 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_JASMINE, 0, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 30);
     Event_SayThenWait(ACTOR_SUKURETA, 30);
@@ -653,7 +653,7 @@ void Scene_EnterStarRoom(void)
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 4);
     Event_OpenMessage(0x8009, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 10);
@@ -675,7 +675,7 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 20);
     Event_OpenMessage(0x8009, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 1);
     Engine_EventWait(20);

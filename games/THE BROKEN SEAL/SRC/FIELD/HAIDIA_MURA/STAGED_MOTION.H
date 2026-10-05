@@ -218,12 +218,6 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p);
 
 void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 /* Newly identified engine calls: each macro below names the site's own
  * engine function from its reconstructed C source, and keeps the site's
  * own calling form. */

@@ -327,7 +327,7 @@ void Scene_PlanSanctumVisit(void)
             Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 3);
             Engine_EventWait(8);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-            bump_step(1);
+            gEventWork->message++;
         }
         Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
         Engine_EventWait(10);

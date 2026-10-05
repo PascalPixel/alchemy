@@ -75,14 +75,6 @@ void Battle_ResetEffectCounter();
 void Motion_LaunchFromFocusedObject();
 void Battle_ResetEffectCounter();
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
 /* Runs a fixed sequence of scene calls (positioning, timing, and animation
  * triggers) for scene 3ae, sequence A. */
 

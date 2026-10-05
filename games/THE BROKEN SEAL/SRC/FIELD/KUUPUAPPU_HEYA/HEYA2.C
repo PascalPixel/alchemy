@@ -41,23 +41,7 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 extern struct EventRuntime *Data_03001ebc;
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step_020036f8(s32 off, s32 amount)
-{
-    u8 *work = (u8 *)Data_03001ebc;
-    u16 *slot = (u16 *)((s32)work + off);
-    s32 next = *slot + amount;
-
-    *slot = next;
-}
 
 void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x);
 void SceneDialogue_PromptAndCountSkip(s32 x);
@@ -414,7 +398,7 @@ void FieldScene_RunScene383SequenceC(void)
         Engine_EventWait(30);
         SceneActor_SetPairZeroAndValue(0, 16, 20);
         SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
-        bump_step(1);
+        gEventWork->message++;
         if (PartyInventory_HasSpace() == 0) {
             Engine_EventSetMessage(((s32)MsgKuupuappuYouWereSuchGreatHelp + 3));
             SceneActor_SetModeZeroAndValue(16, 20);
@@ -428,7 +412,7 @@ void FieldScene_RunScene383SequenceC(void)
     Event_OpenMessage(16, 0);
     Engine_EventWait(20);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(16, 0);
     Engine_EventEnd();
@@ -494,7 +478,7 @@ void FieldScene_RunScene383_0200091c(void)
         Engine_PartyGiveItem(ITEM_BONE, 0);
         GameFlag_Set(0x85b);
     } else {
-        bump_step(1);
+        gEventWork->message++;
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(18, 3);
         Engine_EventWait(20);
@@ -1196,7 +1180,7 @@ void FieldScene_RunScene383SequenceB(void)
     SceneActor_SetPairZeroAndValue(0, 1, 10);
     Event_OpenMessage(ACTOR_GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        bump_step(1);
+        gEventWork->message++;
     }
     SceneActor_SetModeZeroAndValue(1, 30);
     Engine_EventSetMessage((base + 4));
@@ -2100,7 +2084,7 @@ void RunEventScript01(void)
         Engine_EventWait(20);
         SceneActor_SetModeZeroAndValue(1, 20);
     } else {
-        bump_step(1);
+        gEventWork->message++;
         Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
         Engine_EventWait(60);
         SceneActor_SetModeZeroAndValue(1, 20);

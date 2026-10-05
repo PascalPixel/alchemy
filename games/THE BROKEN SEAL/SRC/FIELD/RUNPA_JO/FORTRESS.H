@@ -45,12 +45,6 @@ static __inline__ void SetSceneValue(s16 *field, s32 value)
     *field = value;
 }
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 s32 GetEmptySceneData(void);
 
 void ConfigureSceneActor12(void);

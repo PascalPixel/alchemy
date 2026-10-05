@@ -464,7 +464,7 @@ void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
         Engine_GameFlagSet(0x300);
         Engine_GameFlagSet(a2);
     } else {
-        bump_step(1);
+        gEventWork->message++;
         FieldScene_RunStepThen10(a0);
     }
     Engine_EventEnd();

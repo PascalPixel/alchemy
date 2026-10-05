@@ -158,13 +158,13 @@ void FieldScene_RunScene39e_02000414(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianHowDidGetHereBridge);
     if (GameFlag_IsSet(0x890) != 0) {
-        bump_step(4);
+        gEventWork->message += 4;
     }
     Event_OpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         GameFlag_Set(0x890);
     } else {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(8, 0);
     Engine_EventEnd();
@@ -1541,12 +1541,12 @@ void ShianJiin_AskIfCurious(void)
         Engine_ActorSetAnimationAndWait(8, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(8, 0, 20);
-        bump_step(2);
+        gEventWork->message += 2;
     } else {
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(20);
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessageAndWait(8, 0, 20);
         Engine_ActorSetAnimationAndWait(8, 3);
         Engine_EventWait(20);
@@ -1584,11 +1584,11 @@ void ShianJiin_AskIfCurious(void)
         Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(8, 0, 20);
-        bump_step(1);
+        gEventWork->message++;
     } else {
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(8, 2);
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessageAndWait(8, 0, 20);
     }
     Engine_ActorSetAnimationAndWait(8, 3);
@@ -2124,12 +2124,10 @@ void FieldScene_RunRoofEnsembleSequence(void)
         Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
-        /* Same step counter as bump_step(), incremented inline here. */
-        gEventWork->message += 1;
+        gEventWork->message++;
     } else {
         Engine_EventWait(20);
-        /* Same step counter as bump_step(), incremented inline here. */
-        gEventWork->message += 1;
+        gEventWork->message++;
         Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
         Engine_EventWait(20);
         Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);

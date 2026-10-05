@@ -184,7 +184,7 @@ void FieldScene_RunScene38b_02000240(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoItsTreeButAlmostLooks);
     if (GameFlag_IsSet(0x301) != 0) {
-        bump_step_020001ec(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(9, 0);
     GameFlag_Set(0x301);
@@ -403,7 +403,7 @@ void FieldScene_RunScene38b_02000584(void)
             Engine_ActorSetAnimationAndWait(14, 3);
             Event_ShowMessageAndWait(14, 0, 10);
             Engine_MessageShowCentered((s32)MsgBiribinoJillGaveRobinSpecialGift, 1);
-            bump_step(1);
+            gEventWork->message++;
             Engine_ItemShowFound(ITEM_HARD_NUT, 3);
             Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
             Engine_ActorSetAnimationAndWait(14, 3);

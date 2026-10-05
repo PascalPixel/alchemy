@@ -34,23 +34,12 @@ void RunSceneTransitionEffect();
 void Object_SetTargetAndCallback();
 void AnimationObjects_SelectAnimation();
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 /* Shared cross-overlay scene-record block; +450 is the scene sub-state. */
 
 static __inline__ u16 ReadU16Elem(u16 *base, s32 idx)
 {
 
     return *(u16 *)(base + idx);
-}
-
-static __inline__ void bump_step_020001ec(s32 amount)
-{
-    gEventWork->message += amount;
 }
 
 #endif

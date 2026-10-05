@@ -111,7 +111,7 @@ void HaidiaBabi_RunHeyBoyScene(void)
     Engine_EventWait(20);
     Event_OpenMessage(16, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Engine_ActorStartRepeatedMotion(16, 1);
     Engine_EventWait(20);

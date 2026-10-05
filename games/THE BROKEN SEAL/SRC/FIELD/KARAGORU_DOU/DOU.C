@@ -51,12 +51,6 @@ struct HeightTrackedObject {
     s32 height;                 /* +12 */
 };
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 extern u8 MsgKaragoruWarriorsHaveBeenFightingWhile[];
 extern u8 MsgKaragoruWeMissedColossoBecauseWe[];
 
@@ -231,7 +225,7 @@ void KaragoruDou_AskToCross(void)
         }
         Engine_EventShowMessage(8, 0);
     } else {
-        bump_step(1);
+        gEventWork->message++;
         Engine_EventShowMessage(8, 0);
     }
 }

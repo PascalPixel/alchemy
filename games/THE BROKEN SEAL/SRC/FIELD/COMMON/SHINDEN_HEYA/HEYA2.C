@@ -16,13 +16,6 @@ extern const s32 ShindenHeya_LeaderCircleScript[];
 extern const s32 ShindenHeya_GeraldCircleScript[];
 void ShindenHeya_SpawnOwnerEffect();
 
-static __inline__ void bump_step(void)
-{
-    struct EventWork *work = gEventWork;
-
-    work->message = (u16)(work->message + 1);
-}
-
 s32 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 

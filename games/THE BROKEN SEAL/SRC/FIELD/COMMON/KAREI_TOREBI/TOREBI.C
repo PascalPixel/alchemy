@@ -213,7 +213,7 @@ void FieldScene_RunScene3ae_02000260(void)
             GameFlag_Set(0x8a6);
             goto L_020002c2;
         }
-        bump_step(1);
+        gEventWork->message++;
         Event_ShowMessage(11, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKareiPassMessageDaughter);
@@ -293,7 +293,7 @@ void SceneDialogue_RunActor12Event(void)
             Engine_ActorSetAnimationAndWait(12, 3);
             Actor_WalkToAndWait(12, 88, 0x508);
             Actor_FaceDirection(12, 0x4000, 0);
-            bump_step(1);
+            gEventWork->message++;
             Event_ShowMessage(12, 0);
             Inventory_Discard(owner, slot);
             GameFlag_Set(0x8a7);
@@ -354,7 +354,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             Event_ShowMessageAndWait(8, 0, 10);
         } else {
-            bump_step(1);
+            gEventWork->message++;
             UiWork_PushValueSlot(six00, 5);
             Event_OpenMessage(8, 0);
             rec7 = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
@@ -385,7 +385,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                 UiWork_Finalize(rec7, 2);
                 Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
                 Engine_EventWait(10);
-                bump_step(1);
+                gEventWork->message++;
                 Audio_PlayCue(113);
                 Event_ShowMessage(8, 0);
                 goto L_02000660;
@@ -394,7 +394,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             UiWork_Finalize(rec7, 2);
             Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Engine_EventWait(10);
-            bump_step(3);
+            gEventWork->message += 3;
             Event_ShowMessage(8, 0);
             Engine_PartyGiveItem(235, 0);
             GameFlag_Set(0x8a5);
@@ -451,7 +451,7 @@ void FieldScene_RunScene3ae_020006c8(void)
                 goto L_020007be;
             }
             Engine_EventWait(10);
-            bump_step(1);
+            gEventWork->message++;
             Event_ShowMessage(11, 0);
             Engine_EventWait(10);
             Actor_FaceDirection(11, 0, 0);

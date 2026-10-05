@@ -99,12 +99,6 @@ void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 void SceneActor_RunActorCommandWithFlag91(s32 x);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 extern u8 MsgFieldPeeredWell[];
 extern u8 MsgKuupuappuAccusingUsStealingHammetsTreasured[];
 extern u8 MsgKuupuappuCanHearWaterRumblingDown[];
@@ -325,7 +319,7 @@ void SceneDialogue_RunActor9LineAndAdvance(void)
     SceneActor_ApplyActorCueThenWait(9, 0, 2);
     Event_OpenMessage(9, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessage(9, 0);
     Actor_FaceDirection(9, 0x5000, 0);

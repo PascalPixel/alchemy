@@ -286,7 +286,7 @@ void FieldScene_RunPrimarySequence(void)
         Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgShianNowMustGetWaterAgain);
         if (GameFlag_IsSet(FLAG_SHIAN_WATER_SPILLED) == 0) {
-            bump_step(1);
+            gEventWork->message++;
             Event_ShowMessage(18, 0);
             Object_GetById(18)->unknown_64 = 0;
             record = Object_GetById(18);

@@ -1364,7 +1364,7 @@ void FieldScene_RunSecondaryActorSequence(void)
     Engine_ActorRunRepeatedMotion(8, 2);
     Event_OpenMessage(0x4008, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
         Engine_ActorStartRepeatedMotion(8, 1);
     }
     Event_ShowMessageAndWait(0x4008, 0, 40);
@@ -1458,7 +1458,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Actor_ShowEmote(ACTOR_GERALD, 0x105, 60);
     } else {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 10);
@@ -2190,7 +2190,7 @@ void Scene_RepairTheHouse(void)
     Event_OpenMessage(ACTOR_DORA, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
-        bump_step(1);
+        gEventWork->message++;
     } else {
         Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
     }
@@ -2204,7 +2204,7 @@ void Scene_RepairTheHouse(void)
     Actor_FaceDirection(ACTOR_DORA, 0x5000, 30);
     Event_OpenMessage(ACTOR_DORA, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
@@ -2342,7 +2342,7 @@ void Scene_RepairTheHouse(void)
     Event_OpenMessage(ACTOR_DORA, 0);
     none = 0; /* One zero shared by the placement call and the byte store. */
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        bump_step(1);
+        gEventWork->message++;
     }
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Engine_EventSetMessage((s32)MsgHaidiaAsStubbornAsYourFather);

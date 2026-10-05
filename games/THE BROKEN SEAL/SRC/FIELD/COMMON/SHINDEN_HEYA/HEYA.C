@@ -11,13 +11,6 @@
 extern const s32 ShindenHeya_PlacementSequenceB[];
 void ShindenHeya_SpawnOwnerEffect();
 
-static __inline__ void bump_step(void)
-{
-    struct EventWork *work = gEventWork;
-
-    work->message = (u16)(work->message + 1);
-}
-
 s32 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 
@@ -446,7 +439,7 @@ void FieldScene_RunScene378SequenceB(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventShowMessage(9, 0);
     } else {
-        bump_step();
+        gEventWork->message++;
 #if EDITION_INTERNATIONAL
         Call11(Engine_EventShowTwoMessagesAndWait, 2, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
 #else

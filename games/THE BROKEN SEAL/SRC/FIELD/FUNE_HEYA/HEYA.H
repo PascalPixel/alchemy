@@ -6,11 +6,6 @@
 #include "TYPES.H"
 
 #ifdef ALCHEMY_FIELD_EVENT_H
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
 #endif
 
 #endif

@@ -146,12 +146,6 @@ void PartyInventory_Discard();
 s32 UpdateActorProximity(u8 *actor);
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 void ActorPresentation_SetupActorZeroForSceneTwelve(void)
 {
     struct SceneActor_02000c1c *actor = Object_GetById(ACTOR_PARTY_LEADER);

@@ -818,12 +818,6 @@ CharacterMenu_CursorWidths:
 FourObjectMotion_ResourceIds:
 RomBytes_080af304:
 	.incbin "baserom.gba", 0x000b3b74, 0x0000048c
-	.section .rom.000b4aac, "ax"
-	.global Shop_SelBuy
-	.type Shop_SelBuy, %function
-	.thumb_func
-Shop_SelBuy:
-	.incbin "baserom.gba", 0x000b4aac, 0x000004f8
 	.section .rom.000b7940, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:

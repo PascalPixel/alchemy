@@ -133,6 +133,20 @@
 #define MENU_ROW_COUNT   8
 #endif
 
+/* The buy menu's money window, flush with the right edge, and its price
+   window: the international editions give each a column more, and the
+   German price window one more again. */
+#if !EDITION_INTERNATIONAL
+#define SHOP_MONEY_WIDTH 11
+#define SHOP_PRICE_WIDTH 14
+#elif defined(TBS_EDITION_DE)
+#define SHOP_MONEY_WIDTH 12
+#define SHOP_PRICE_WIDTH 16
+#else
+#define SHOP_MONEY_WIDTH 12
+#define SHOP_PRICE_WIDTH 15
+#endif
+
 /* The Djinni joining window: the Italian line takes two more columns, so its
    window starts a column further left. */
 #if defined(TBS_EDITION_IT)

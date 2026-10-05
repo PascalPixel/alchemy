@@ -539,7 +539,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SHOP.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOP2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOP.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000a7aac)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_STOCK_PAGE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_MONEY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_ITEM_PRICE.o"(.text)

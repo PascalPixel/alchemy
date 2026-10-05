@@ -40,7 +40,7 @@ void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
 s32 ArcTan2();
 void FieldScene_RunSplitTripleSteps();
-void SceneState_SetWord1c0To209AndRun();
+void KuupuappuHeya_OpenWindowTransition();
 void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();

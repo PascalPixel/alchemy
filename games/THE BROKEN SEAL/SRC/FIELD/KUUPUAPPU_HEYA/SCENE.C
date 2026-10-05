@@ -26,7 +26,7 @@ void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
 u16 ArcTan2(s32, s32);
 void FieldScene_RunSplitTripleSteps();
-void SceneState_SetWord1c0To209AndRun();
+void KuupuappuHeya_OpenWindowTransition();
 void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
@@ -240,7 +240,7 @@ struct ActorFlags {
 };
 
 extern u8 MsgKuupuappuTheseKidsNothingWorryAbout[];
-void SceneState_SetWord1c0To209AndRun(void);
+void KuupuappuHeya_OpenWindowTransition(void);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 extern u8 MsgKuupuappuWontGoAway[];
 void SceneActor_SetModeZeroAndValue(s32 actor, s32 frames);
@@ -280,7 +280,7 @@ static __inline__ void bump_halfword(s32 off, s32 amount)
     *slot = next;
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void);
+s32 KuupuappuHeya_GetIwanVenusDjinnCount(void);
 s32 OverlayObject_RunObjectTwoWhenFlagged(void);
 extern u8 KuupuappuHeya_Stops[];
 
@@ -1529,7 +1529,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
             break;
         }
         Engine_ActorSetAnimation(8, 7);
-        SceneState_SetWord1c0To209AndRun();
+        KuupuappuHeya_OpenWindowTransition();
         Engine_AudioPlayCue(17);
         Engine_EventSetMessage((s32)MsgKuupuappuUhnnUhnn);
         SceneActor_SetModeZeroAndValue(8, 10);
@@ -1607,7 +1607,7 @@ void FieldScene_RunLateSequence(void)
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Engine_CameraWaitForMove();
     Engine_MapRedraw();
-    SceneState_SetWord1c0To209AndRun();
+    KuupuappuHeya_OpenWindowTransition();
     Engine_EventWait(60);
     SceneEffect_ApplyThreeValuesAndFinish(10, 3, 20);
     Engine_EventSetMessage((s32)MsgKuupuappuTheseKidsNothingWorryAbout);
@@ -1654,7 +1654,7 @@ void KuupuappuHeya_RunVaultEvent(void)
     Engine_MapRedraw();
     Engine_TaskWait(1);
     gEventWork->transition_frames = 32;
-    SceneState_SetWord1c0To209AndRun();
+    KuupuappuHeya_OpenWindowTransition();
     Engine_EventWait(60);
     Engine_EventSetMessage((s32)MsgKuupuappuWontGoAway);
     Engine_ActorRunRepeatedMotion(11, 1);
@@ -1686,7 +1686,7 @@ void KuupuappuHeya_RunVaultEvent(void)
     } while (0);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
 {
     return Owner_GetState(2)[0x118];
 }
@@ -1751,7 +1751,7 @@ void RunEventScript01(void)
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Engine_CameraWaitForMove();
     Engine_MapRedraw();
-    SceneState_SetWord1c0To209AndRun();
+    KuupuappuHeya_OpenWindowTransition();
     Engine_ActorEnableActionCallback(11, base5_200d17c);
     Engine_EventWait(30);
     Engine_ActorEnableActionCallback(12, base5_200d17c);
@@ -2332,7 +2332,7 @@ void RunDialoguePromptScene(void)
         u16 *slot = &event->message;
         s32 saved = (s16)*slot;
 
-        if (OverlayObject_GetObjectTwoByte118()!= 0) {
+        if (KuupuappuHeya_GetIwanVenusDjinnCount()!= 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
             Event_ShowMessage(ACTOR_IVAN, 0);
             OverlayObject_RunObjectTwoWhenFlagged();
@@ -2371,7 +2371,7 @@ void RunDialoguePromptScene(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetWord1c0To209AndRun(void)
+void KuupuappuHeya_OpenWindowTransition(void)
 {
     struct EventWork *state;
 

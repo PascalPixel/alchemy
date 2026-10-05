@@ -41,8 +41,7 @@ struct SceneActor {
 
 extern s32 ArcTan2(s32, s32);
 
-/* The exact damping callback owns +30/+34 as drift rates and +64 as its
- * plane selector. Its scalar coordinates share the engine actor record. */
+/* Particle drift rates occupy +30 and +34, and +64 selects the plane. */
 struct OverlayEffectMotion {
     u8 pad00[8];
     s32 x;
@@ -184,8 +183,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
     *(s32 *)((u8 *)record + 108) = (s32)SceneActor_UpdateProximityToLeader;
     record = Object_GetById(15);
     record->timer = zero;
-    /* FAKEMATCH: the empty loop keeps the halfword store ahead of the
-     * script-pointer store, as in the reference schedule. */
+    /* FAKEMATCH: the empty loop keeps the halfword store ahead of the script-pointer store, as in the reference schedule. */
     do { } while (0);
     *(s32 *)((u8 *)record + 108) = (s32)SceneActor_UpdateProximityToLeader;
     if (Engine_GameFlagIsSet(0x858) != 0) {
@@ -276,17 +274,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
     return 0;
 }
 
-/*
- * Whether an actor should turn toward a target: the target is within range
- * (or a forced check), and it lies in the actor's facing half of the full
- * circle. A hit activates the actor and queues the face-toward motion; a miss
- * deactivates it and queues the fall-back motion.
- *
- * The local SceneActor layout is this overlay's own copy of the field actor
- * record (facing at 0x08, x/y/z words at 0x0C, active byte at 0x5B). It is
- * not the shared STAGED_ACTOR.H type: the offsets here are what the reference
- * reads, so the spelling is kept as-is.
- */
+/* Activate and turn an actor toward an in-range target in its forward half-circle, or use the fallback motion when the check fails. */
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
@@ -324,12 +312,6 @@ s32 SceneActor_CheckFacingAndRange(struct SceneActor *actor, struct SceneActor *
     return result;
 }
 
-/* Whole owner 020017ac..02001900: exact 340 bytes, including six pool words.
- * Coordinate inputs overlap through x/z loads; y begins after the x sum.
- * Explicit flag-store addresses recover the zero-copy order. Preparing the
- * callback value before the tagged address scope recovers literal/address/
- * publication order. Verified with the approved compiler on 2026-09-27.
- */
 void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
 {
     Engine_EventShowMessage(actor, 0);
@@ -408,8 +390,7 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     if (leaf == NULL)
         return;
     sprite = leaf->actor.sprite;
-    /* The exact burst-particle sibling dispatches the animation/script
-     * pair as one random variant, rather than as a boolean flag. */
+    /* Choose the animation and script together as one random particle variant. */
     switch (Engine_RandomNext() & 1) {
     case 1:
         Object_SetMode(&leaf->actor, 3);

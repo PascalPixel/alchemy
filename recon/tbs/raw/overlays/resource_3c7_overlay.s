@@ -501,34 +501,34 @@ gRariberoHeyaPlacements9a7:
 gRariberoEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0006
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0009
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte MsgRariberoHeyaOfCourseIHaveSeenActor
@@ -638,34 +638,34 @@ gRariberoEvents:
 gRariberoEvents9a7:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0006
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0009
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte MsgRariberoHeyaTheContinentBrokeApartAroundThe
@@ -775,34 +775,34 @@ gRariberoEvents9a7:
 gRariberoHeyaEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0017
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0018
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0019
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001a
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001b
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001c
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001d
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001e
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte MsgRariberoHeyaWeReceivedActorFromTheSky
@@ -867,34 +867,34 @@ gRariberoHeyaEvents:
 gRariberoHeyaEvents9a7:
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0017
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0018
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff0019
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001a
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001b
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001c
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001d
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001e
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte SceneState_ForwardWord16cAndApply7b
+	.4byte RariberoHeya_RequestTouchedExitAndPlayCue
 	.4byte 0x00000002
 	.4byte 0x09bc0033
 	.4byte FieldScene_RunSequenceA

@@ -6,6 +6,7 @@
 #include "FIELD_EFFECT.H"
 #include "TBS_EDITION.H"
 #include "B5_CONTEXT.H"
+#include "FIELD_SCENE.H"
 
 struct Pulse {
     u8 unknown_00[0x64];
@@ -254,7 +255,7 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
     Event_ShowMessageAndWait(0x1016, 0, 10);
-    Actor_FaceDirection(ACTOR_ID, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_ID, FACING_NORTH, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
     Event_ShowMessageAndWait(0x1016, 0, 10);
     Actor_FaceDirection(ACTOR_ID, 0x1000, 20);

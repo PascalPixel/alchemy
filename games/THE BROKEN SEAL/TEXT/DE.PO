@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 253\n"
 "X-Alchemy-Target: tbs-de\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(Keine Datei)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Von einem Heiligtum aus forts.)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(Noch nicht beendet)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(Die Datei ist fehlerhaft)"
 

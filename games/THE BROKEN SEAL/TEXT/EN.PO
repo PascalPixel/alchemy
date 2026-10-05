@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 123\n"
 "X-Alchemy-Target: tbs-en\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(No saved data)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Continue from a Sanctum)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(Not cleared yet)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(The data is corrupted)"
 

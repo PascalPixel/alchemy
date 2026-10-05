@@ -144,7 +144,7 @@ void FieldScene_RunActorPresentationSequence(void)
         Engine_ActorSetAnimation(10, 6);
         Engine_ActorSetAnimation(6, 8);
         Engine_TaskWait(1);
-    } while (*(s16 *)((u8 *)Object_GetById(5) + 100) == 0);
+    } while (*(s16 *)&((struct FieldActor *)Object_GetById(5))->timer == 0);
     Engine_EventWait(20);
     Actor_FaceDirection(9, 0x8000, 20);
     Actor_SetAttachedEffect(8, 0x102);

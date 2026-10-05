@@ -176,7 +176,6 @@ static inline void Psynergy_Cancel(void)
 
 static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
 {
-    /* FAKEMATCH: direct calls let GCC 2.96 share constant arguments between calls, changing instruction order. */
     return Engine_TaskAddCallback(callback, priority);
 }
 

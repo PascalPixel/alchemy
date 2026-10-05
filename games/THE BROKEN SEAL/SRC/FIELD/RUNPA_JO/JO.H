@@ -251,7 +251,6 @@ static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 h
 void Engine_MapSetWorkFlagBits9To11(s32 first);
 static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
 {
-    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
     return Engine_TaskAddCallback(callback, priority);
 }
 

@@ -211,7 +211,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_GLYPH_TILE_AT_WORK_OFFSET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_WIDE_STRING_IN_WINDOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_NUMBER.o"(.text)
-        "*/recon/tbs/raw/08018038.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/MEASURE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/MEASURE_STRING_VARIANT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/PUT_GLYPH.o"(.text)

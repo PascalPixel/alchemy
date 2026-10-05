@@ -52,7 +52,10 @@
  * three "+r" devices in the searches and the up branch give 54; seed 93's
  * best (45) pinned result to r2, where the ROM has r5. The list loop counts
  * i from 0 up (loop.c reverses it to the ROM's 2..0 count; same 98);
- * indexing save->summary[i] with y = i * 16 instead is 158.
+ * indexing save->summary[i] with y = i * 16 instead is 158. A probe with a
+ * spilled render pointer gives constant r3, render r1 for both
+ * render->dirty = 1 and *(u8 *)(0xea3 + (u32)render) = 1; the ROM's
+ * constant-first order would need the add's operands reloaded swapped.
  * The Japanese extent is 0x5f8 bytes against 0x580 in the other five
  * editions.
  */

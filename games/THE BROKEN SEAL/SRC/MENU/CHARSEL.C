@@ -463,7 +463,7 @@ s32 CharacterMenu_SelectCommand(void)
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
     u8 *entries, s32 invert)
 {
-    struct CharacterMenuState *state = *(struct CharacterMenuState *volatile *)&gMenuWork;
+    struct CharacterMenuState *state = (struct CharacterMenuState *)gMenuWork;
     u32 different;
     s32 count;
     s32 index;

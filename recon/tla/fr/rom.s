@@ -644,11 +644,7 @@ Animation_ApplyChildValuesToRecord:
 	.thumb_func
 Func_080227e0:
 	.incbin "baserom.gba", 0x000227e0, 0x000000dc
-	.global Animation_LookupValueByKey
-	.type Animation_LookupValueByKey, %function
-	.thumb_func
-Animation_LookupValueByKey:
-	.incbin "baserom.gba", 0x000228bc, 0x00000024
+	.section .rom.000228e0, "ax"
 	.global InitializeAnimationObjects
 	.type InitializeAnimationObjects, %function
 	.thumb_func
@@ -1282,13 +1278,8 @@ UiText_DecodeMessage:
 	.section .rom.0003cd4c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003cd4c, 0x00000114
-	.section .rom.0003ce60, "ax"
-	.global Func_0803ce1c
-	.type Func_0803ce1c, %function
-	.thumb_func
-Func_0803ce1c:
-	.incbin "baserom.gba", 0x0003ce60, 0x00000048
 	.section .rom.0003cea8, "ax"
+	.balign 4
 	.global Func_0803ce64
 	.type Func_0803ce64, %function
 	.thumb_func

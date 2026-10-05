@@ -801,7 +801,7 @@ void ConfigureSceneAndCheckActors(void)
 
 void ConfigureAlternateSceneAndCheckActors(void)
 {
-    ConfigureScene_02003a30(2, 23068672, 7340032, 0);
+    SoruSekizo_ConfigureAlternateCell(2, 23068672, 7340032, 0);
     if (SceneActor_IsActorAtTile(12, 21, 7) != 0) {
         Scene_ShineRightBeam();
     }

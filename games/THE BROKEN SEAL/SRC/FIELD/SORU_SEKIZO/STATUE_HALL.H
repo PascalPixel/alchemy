@@ -84,7 +84,7 @@ static __inline__ void ConfigureScene(s32 actor, s32 x, s32 y, s32 mode)
     SetMapCellCollision(actor, x, y, mode);
 }
 
-static __inline__ void ConfigureScene_02003a30(s32 actor, s32 x, s32 y, s32 mode)
+static __inline__ void SoruSekizo_ConfigureAlternateCell(s32 actor, s32 x, s32 y, s32 mode)
 {
     /* FAKEMATCH: a direct call changes ConfigureAlternateSceneAndCheckActors from mov r0, #2 to lsl r1, r1, #17 (22/22 assembly lines). */
     SetMapCellCollision(actor, x, y, mode);

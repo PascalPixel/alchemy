@@ -4,8 +4,7 @@
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-/* Only this complete wrapper is source-owned in TLA; its index and
-   attribute callees remain raw at their existing neighboring boundaries. */
+
 void Map_CopyCellsRect(
     s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
@@ -22,7 +21,6 @@ extern u8 gMapCellBuffer[];
 #define MAP_CELL_TILE_MASK 0x00000fff
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000
 
-
 /* Whole metatile positions of the three visible map layers. */
 struct TilePos { s32 x, y; };
 
@@ -31,9 +29,7 @@ struct TilePos { s32 x, y; };
 void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
     s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
-    /* FAKEMATCH: ordinary word/index lifetimes and scheduling recover all137
-       instructions; removing the consumed r3 binding scores825 with only
-       register/order changes, retaining the36-byte frame and304-byte extent. */
+    /* FAKEMATCH: the consumed r3 binding preserves register allocation and order without changing instruction count or the 36-byte frame. */
     s32 y = dst_y;
     u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
     u32 *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dst_x];
@@ -91,7 +87,7 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
                         u32 tmp10;
                         u32 tmp14;
                         u32 tmp16;
-                        /* FAKEMATCH: after ordinary lifetime trials, removing this consumed r3 binding scores825 with register/order differences only; all137 instructions,36-byte frame and304-byte extent remain. */
+                        /* FAKEMATCH: the consumed r3 binding preserves register allocation and order without adding instructions or changing the frame. */
                         register u32 bytes __asm__ ("r3") = cell * 8;
                         u32 tmp8;
                         register u32 tmp17;
@@ -167,10 +163,7 @@ void Map_CopyCellAttributeRect(
 void Map_CopyCellIndexRect(s32 src_x, s32 src_y,
     s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
-    /* FAKEMATCH: the word/index temporaries of the matched copies
-       (Map_CopyMetatileCellsRect above, Map_CopyMetatileIndicesRect in MAP.C) carried
-       over; the plain body scores 4584, allocated differently with a
-       40-byte frame, and these temporaries alone 70. */
+    /* FAKEMATCH: word/index temporaries preserve register allocation; the plain body allocates differently and uses a 40-byte frame. */
     s32 y;
     u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
     u32 *dst = &((u32 *)Ram_MapCellBuffer)[dst_y * 128 + dst_x];
@@ -236,7 +229,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y,
                         u32 tmp16;
                         {
                             tmp2 = 0x06002800;
-                            /* FAKEMATCH: removing this consumed-base input barrier scores70 (two register choices and one reordered load), with no instruction or frame change. */
+                            /* FAKEMATCH: the consumed-base barrier preserves two register choices and one load order without changing instruction count or frame. */
                             __asm__ __volatile__ ("" : : "l" (tmp2));
                             tmp = (u32 *)Ram_MapBlocks;
                             tiles = tmp;

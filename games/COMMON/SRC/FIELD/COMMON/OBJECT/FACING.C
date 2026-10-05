@@ -3,9 +3,7 @@
 
 s32 ArcTan2(s32, s32);
 
-/* The facing controller: turn toward the facing target by at most 0x1000
-   a frame. ☀️ builds it into the Haidia overlay ahead of the scene hooks;
-   ⚓️ builds it into the main image after the object actions. */
+/* Turn toward the facing target by at most 0x1000 per frame. */
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 {
     s32 delta;
@@ -23,7 +21,6 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* In ☀️'s overlay the loader relocates this pool word to -0x1000. */
             if (delta < -0x1000) {
                 delta = -0x1000;
             }

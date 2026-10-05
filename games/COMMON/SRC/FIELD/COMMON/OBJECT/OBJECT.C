@@ -10,8 +10,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "TRANSFORM.H"
 
-/* Object dispatch and its linker-neighbor bank. The TBS terminal camera bank
-   follows the dispatcher; TLA emits only the adjacent lookup/release prefix. */
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 #include "RAM_BUFFER.H"
 #else
@@ -32,7 +30,6 @@
 
 extern u8 Map_TileDissolveOrder[];
 
-/* map/shared/render_animated_tile_frames_for_object.c */
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 
 void ObjectSystem_Configure(s32 mode);
@@ -43,7 +40,6 @@ void ObjectSystem_UpdateCamera(void);
 extern s32 Data_03001d1c;
 extern s32 Data_03001cc0;
 
-/* object/dispatch/find_free_object.c */
 extern struct ObjectRuntime *gObjectSlots;
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
@@ -54,7 +50,7 @@ void AnimationObjects_SetField15OnActive(struct AnimationObject *, s32);
 s32 Animation_InitializeObjects(struct AnimationObject *);
 s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
-/* The existing packed lane of the animation child, used only by its bit setter. */
+/* Packed animation-child flags used by the bit setter. */
 struct ChildDisplayFlags {
     u8 padding[29];
     u8 unk_0 : 1;
@@ -213,8 +209,7 @@ void ResourceTable_ReservedNoOpC0C4(void)
 {
 }
 
-/* The second empty routine after the resource table code; nothing in the
-   image calls it. */
+/* Empty resource-table hook. */
 void ResourceTable_ReservedNoOp2(void)
 {
 }
@@ -232,7 +227,7 @@ void *ObjectDispatch_FindFreeObject(void)
     s32 index = 0;
 
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    /* FAKEMATCH: ordinary eight-form lookup 36/4 initializes its used zero result after the first script load; this initialized entry/result boundary retains the native register order without an added access. */
+    /* FAKEMATCH: the entry/result boundary initializes the zero result before the first script load without adding an access. */
     asm("" : "+r"(entry), "+r"(ret));
 #endif
     while (index <= 63) {
@@ -275,7 +270,7 @@ void ObjectDispatch_Release(struct DispatchObject *work)
         }
         src = &zero;
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-        /* FAKEMATCH: ordinary release 88/15 captures its real DMA-zero pointer after the store/setup; tie only initialized src before the actual zero store to retain native order, without reading the uninitialized word. */
+        /* FAKEMATCH: the pointer handoff captures the DMA source before its zero store without reading the uninitialized word. */
         asm("" : "+r"(src));
 #endif
         *src = 0;
@@ -555,8 +550,7 @@ void Animation_SetStateField5Bits2To3(struct DispatchObject *obj, u32 v)
 void Animation_SetStateField1dBit1(struct DispatchObject *obj, u32 v)
 {
     if (obj != 0 && obj->kind == 1) {
-        /* FAKEMATCH: the ordinary canonical byte mask keeps 40 bytes but
-           changes the mask/register order; retain the existing packed bit lane. */
+        /* FAKEMATCH: the packed bit access preserves mask/register order; a byte mask changes it at the same 40-byte size. */
         struct ChildDisplayFlags *state = obj->target.child;
         state->field_1 = v;
     }
@@ -586,8 +580,7 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void)
     REG_DISPCNT &= 0xE1FF;
 }
 
-/* A routine that only reports success, after the object dispatcher;
-   nothing in the image calls it by name. */
+/* Always reports success. */
 s32 ObjectDispatch_ReturnTrue(void)
 {
     return 1;
@@ -804,8 +797,7 @@ void ObjectSystem_UpdateCamera(void)
     Runtime_ReleaseHeapBlock(52);
 }
 
-/* A routine that only reports success, between the two camera updates;
-   nothing in the image calls it by name. */
+/* Always reports success. */
 s32 ObjectCamera_ReturnTrue(void)
 {
     return 1;

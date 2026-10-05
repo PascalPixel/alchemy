@@ -46,7 +46,7 @@ s16 Menu_RunSelection(void);
 
 void Scheduler_ScheduleCallbackCAfterFrames(void)
 {
-    Scheduler_AddOrUpdateCallback((s32)&Menu_RunSelection, 0xC80);
+    Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 0xC80);
 }
 
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second)

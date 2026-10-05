@@ -85,7 +85,7 @@ s32 BattleFx_StepRatioTransition(void)
     *(u32 *)gScanlinePitch = *(u16 *)(work + 0x118) + 1;
     if (*step == *duration) {
         *duration = 0;
-        Scheduler_RemoveCallback((u32)(BattleFx_StepRatioTransition));
+        Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StepRatioTransition);
     }
 }
 
@@ -112,7 +112,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     state->current = result;
     state->kind = arg1;
     state->flags = 0;
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_StepRatioTransition), 0xc94);
+    Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition, 0xc94);
 }
 
 /* Wait (at most 300 frames) for the display work's pending flag at +0x358 to clear. */

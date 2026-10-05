@@ -131,8 +131,8 @@ s32 BattleFx_InitializeStarField(s32 mode)
     } while (0);
     FarCall_EffectTable(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
     FarCall_EffectTable(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateStarField, 0xc80);
-    return Scheduler_AddOrUpdateCallback((s32)Graphics_UploadVramBlock, 0xc80);
+    Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_UpdateStarField, 0xc80);
+    return Scheduler_AddOrUpdateCallback((SchedulerCallback)Graphics_UploadVramBlock, 0xc80);
 }
 
 u32 Graphics_UploadVramBlock(void);
@@ -148,8 +148,8 @@ s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused)
     Runtime_ReleaseHeapBlock(40);
     Runtime_ReleaseHeapBlock(39);
     REG_DISPCNT = 0x1341;
-    Scheduler_RemoveCallback((u32)&Graphics_UploadVramBlock);
-    return Scheduler_RemoveCallback((u32)&BattleFx_UpdateStarField);
+    Scheduler_RemoveCallback((SchedulerCallback)Graphics_UploadVramBlock);
+    return Scheduler_RemoveCallback((SchedulerCallback)BattleFx_UpdateStarField);
 }
 
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count)

@@ -504,12 +504,6 @@ Djinn_DefinitionTable:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x00087a5c, 0x00000718
-	.section .rom.00089c60, "ax"
-	.global UiText_OpenMessageAtObject
-	.type UiText_OpenMessageAtObject, %function
-	.thumb_func
-UiText_OpenMessageAtObject:
-	.incbin "baserom.gba", 0x00089c60, 0x0000030c
 	.section .rom.00093404, "ax"
 	.global Data_0809c410
 Data_0809c410:

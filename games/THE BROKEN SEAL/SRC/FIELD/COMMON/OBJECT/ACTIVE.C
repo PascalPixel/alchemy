@@ -60,7 +60,6 @@ s32 ObjectTable_FindActiveByValue(s32 value)
     return result;
 }
 
-#if EDITION_INTERNATIONAL
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 void WaitFrames(s32 frames);
 struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 style);
@@ -88,6 +87,10 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
     s32 ret;
     s32 column;
     s32 none;
+#if !EDITION_INTERNATIONAL
+    /* FAKEMATCH: the Japanese clamp keeps top in r1; split subtraction shares r2. */
+    register s32 base asm("r1");
+#endif
 
     win = (struct UiRenderWork *)gWindowWork[0];
     work = ((struct WorkPointers *)gWindowWork)->event;
@@ -173,6 +176,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
             if (column + margin > 29)
                 column = x - margin - 2;
         }
+#if EDITION_INTERNATIONAL
         ret = Localization_LookupEntryIdFar(speaker);
         /* FAKEMATCH: the -1 local preserves its register across measurement and reloads it afterward. */
         none = -1;
@@ -203,6 +207,34 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
             extra = lines - height + 1;
             message = ret;
         }
+#else
+        none = Localization_LookupEntryIdFar(speaker);
+        ret = -1;
+        if (none != ret) {
+            UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
+            tail = top - 5;
+            /* FAKEMATCH: subtract before copying -1; source order alone reverses them. */
+            asm ("" : "+r" (ret) : "r" (tail));
+            message = ret;
+            base = top;
+            /* FAKEMATCH: keep both clamp copies; consuming base alone reverses their moves. */
+            asm ("" : "+r" (base), "+r" (message));
+            if (top <= y)
+                tail = top + height;
+            if (tail < 0)
+                tail = base + height;
+            else if (tail + 5 > 19) {
+                tail = base - 5;
+            }
+        }
+        if (top < y) {
+            s32 lines = height;
+
+            UiText_GetResourceDimensionsFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
+            message = -1;
+            extra = lines - height + 1;
+        }
+#endif
         if (column < 0)
             column = 0;
         else if (column + margin > 29)
@@ -234,4 +266,3 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
     work->message++;
     return handle;
 }
-#endif

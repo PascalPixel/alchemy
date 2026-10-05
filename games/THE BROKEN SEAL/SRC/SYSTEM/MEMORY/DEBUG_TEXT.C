@@ -1,11 +1,11 @@
 #include "TYPES.H"
 
-extern u8 Data_03001ac4[];
+extern u8 gDebugTextEnabled;
 extern u16 *gDebugTextCursor;
 
 void Runtime_WriteDebugTextTiles(const u8 *src)
 {
-    if (*(u8 *)((u32)&Data_03001ac4) != 0) {
+    if (gDebugTextEnabled != 0) {
         u32 addr = ((u32)&gDebugTextCursor);
         u32 c = *src;
         u16 *dst = *(u16 **)addr;

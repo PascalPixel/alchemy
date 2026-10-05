@@ -145,7 +145,7 @@ void DisplayScroll_StepPositionEveryFourFrames(void)
 
 extern u8 gOamCopyEnabled;
 extern u8 gCpuLoadDisplayEnabled;
-extern u8 Data_03001ac4;
+extern u8 gDebugTextEnabled;
 extern u8 gOptionMirror;
 extern const u32 DisplayScroll_SlideResources[];
 
@@ -175,7 +175,7 @@ s32 DisplayScroll_RunSlideshow(void)
 
     gOamCopyEnabled = 0;
     gCpuLoadDisplayEnabled = 0;
-    Data_03001ac4 = 0;
+    gDebugTextEnabled = 0;
     gOptionMirror = 0;
     Scheduler_ResetTaskTable();
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_StepPositionEveryFourFrames, 0x480);

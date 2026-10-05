@@ -7,7 +7,7 @@
 
 void System_VBlankHandler(void);
 
-extern u8 Data_03001ac4;
+extern u8 gDebugTextEnabled;
 extern u8 gDebugMode;
 extern u8 gCpuLoadDisplayEnabled;
 extern s32 gCartridgeResetMarker;
@@ -52,7 +52,7 @@ void System_Initialize(void)
     Runtime_InstallIwramAndIrqs();
     /* Startup clears the count and its adjacent padding in one word. */
     *(u32 *)&gIoWriteQueue.count = 0;
-    Data_03001ac4 = 0;
+    gDebugTextEnabled = 0;
     gDebugMode = 0;
     gCpuLoadDisplayEnabled = 0;
     Resource_LoadWorkHeader();

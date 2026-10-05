@@ -17,7 +17,7 @@ void AudioCommand_Play(s32 id);
 void Audio_Initialize(void);
 extern u8 RomBytes_02003000;
 extern u8 RomBytes_02003004;
-extern u8 Data_02003014;
+extern u8 gMusicFadeRequested;
 void Audio_StopAllPlayers(void);
 void Audio_ResumeAllPlayers(void);
 
@@ -94,7 +94,7 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicPitchTarget = 0x100;
     gMusicPitch = 0x100;
     gMusicPitchStep = 4;
-    Data_02003014 = 0;
+    gMusicFadeRequested = 0;
     Audio_CommandMask = 0;
     player_volume = (s16 *)gMusicPlayerVolumes;
     RomBytes_02003004 = 0;

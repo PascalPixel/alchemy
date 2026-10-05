@@ -309,8 +309,8 @@ Menu_CursorObjectTiles:
 	.global Menu_AnimatedCursorTiles
 Menu_AnimatedCursorTiles:
 	.incbin "baserom.gba", 0x0003488c, 0x00002000
-	.global Data_080366f8
-Data_080366f8:
+	.global Ui_BounceScales
+Ui_BounceScales:
 	.incbin "baserom.gba", 0x0003688c, 0x00000048
 	.global Menu_CursorBobOffsets
 Menu_CursorBobOffsets:
@@ -977,8 +977,8 @@ Data_080c3628:
 	.global BattlePres_AdvanceArrowTiles
 BattlePres_AdvanceArrowTiles:
 	.incbin "baserom.gba", 0x000c374c, 0x00000800
-	.global Data_080c3f34
-Data_080c3f34:
+	.global Debug_PartyPresets
+Debug_PartyPresets:
 	.incbin "baserom.gba", 0x000c3f4c, 0x00001a04
 	.global BattlePres_ActorObjectScript
 BattlePres_ActorObjectScript:

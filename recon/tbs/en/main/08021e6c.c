@@ -99,7 +99,7 @@ extern struct SelectionRender *gWindowWork;
 extern struct SelectionRuntime *gLinkCountdownWork;
 extern struct SelectionScroll gBgScroll;
 extern s32 gFrameCount, gKeyState, gKeysRepeat;
-extern u16 Data_080366f8[];
+extern u16 Ui_BounceScales[];
 extern volatile u16 RegIme;
 extern u8 Value_0000001f[];
 
@@ -197,7 +197,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
     for (;;) {
-        scale = ((s32)Data_080366f8[(gFrameCount * 2) & 31] - 256) / 4 + 304;
+        scale = ((s32)Ui_BounceScales[(gFrameCount * 2) & 31] - 256) / 4 + 304;
         work->affine.scale_x = scale;
         work->affine.scale_y = scale;
         gBgScroll.x = 0;

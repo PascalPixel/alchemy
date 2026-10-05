@@ -24,8 +24,8 @@ gSchedulerTaskTable:
 	.global gBlendFramesLeft
 gBlendFramesLeft:
 	.space 0x00000004
-	.global Data_03001ac4
-Data_03001ac4:
+	.global gDebugTextEnabled
+gDebugTextEnabled:
 	.space 0x0000000c
 	.global gBgScroll
 gBgScroll:

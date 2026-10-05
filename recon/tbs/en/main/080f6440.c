@@ -1,3 +1,11 @@
+/* 2026-10-05 (deep finisher 16): alchemy diff 226 (was 337). The reel
+ * cells loop reads each row through a row pointer, struct ReelRow *row =
+ * &work->row[i], declared in the row loop: the listing keeps that pointer
+ * in r5 and the cell offsets column by column, which the indexed
+ * work->row[i] reads did not give (they left an offset giv and work in two
+ * registers). A pointer stepped with row++ in the for header instead is
+ * worse (264).
+ */
 /* 2026-10-04: column r10 binding trial scored 15310 vs 3720; rejected.
  * Use the existing ReelGame_Run saved-game view from GameState+12 instead
  * of the unresolved gReelSave import. Native palette/data owners unchanged.
@@ -536,11 +544,13 @@ build_objects:
     }
 
     for (i = 0; i != 5; i++) {
+        struct ReelRow *row = &work->row[i];
+
         for (col = 0; col != 7; col++) {
-            work->obj[n].attr01 = (col * 16 + work->row[i].pos % 16 + 4) |
+            work->obj[n].attr01 = (col * 16 + row->pos % 16 + 4) |
                                   ((i * 32 + 40) << 16) | 0x80006000;
             work->obj[n].attr2 =
-                (work->row[i].cell[(col - work->row[i].pos / 16 + 21) % 21] << 4) | 0x800;
+                (row->cell[(col - row->pos / 16 + 21) % 21] << 4) | 0x800;
             n++;
         }
     }

@@ -18,7 +18,6 @@ struct Approach390Subject {
     u16 dir;                   /* 0x06, wrapped 16-bit */
 };
 
-extern u8 *gWork;
 
 /* The scene's tables, laid out after the code. */
 extern u8 EntryLayout_PrimaryTable[];
@@ -193,12 +192,12 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
     s32 Engine_GameFlagIsSet();
 
-    u8 *work = gWork;
+    struct EventWork *work = gEventWork;
     s32 id;
     s16 *sel_p;
     u32 sel;
 
-    *(s32 *)(work + 448) = 0x209;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
     if (Engine_GameFlagIsSet(0x845) == 0) {
         id = 8;

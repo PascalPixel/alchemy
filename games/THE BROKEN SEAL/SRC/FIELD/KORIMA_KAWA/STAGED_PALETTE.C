@@ -9,8 +9,8 @@
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
 #include "RESOURCE_393.H"
+#include "FIELDOBJ.H"
 
-extern u8 *gWork;
 extern u8 Data_02008fc8[];
 extern u8 Data_02009028[];
 extern u8 Data_02009038[];
@@ -172,13 +172,12 @@ void SceneActor_ApplyOffsetObjectPosition(void)
 
 u8 *SceneData_GetTable9098(void) { return Data_02009098; }
 
-/* Set workspace word 448 to 516, then run the scene's beat sequence. */
+/* Opens the scene with window transition 4, then runs its beat sequence. */
 s32 SceneState_SetRuntimeWord448To516(void)
 {
+    struct EventWork *work = gEventWork;
 
-    u8 *work = gWork;
-
-    *(s32 *)(work + 448) = 516;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldScene_RedrawActorFootprint(10);
 
     if (GameFlag_Test(0x201) != 0) {

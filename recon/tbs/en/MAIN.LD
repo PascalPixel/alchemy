@@ -200,7 +200,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/OUTPUT_LIST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_PROCESS_RENDER_CHANNELS.o"(.text)
-        "*/recon/tbs/raw/080168f4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW2.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/WINDOW/FILL_HALFWORDS_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/DRAW_FRAME.o"(.text)

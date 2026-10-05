@@ -306,8 +306,8 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         value = *(s32 *)object_pointer;
         ObjectGroup_SetChildValueUnlessFifteenFar(value, 10);
         value = Random16() / 3 + 0x10000;
-        *(s32 *)((u8 *)slot + 44) = value;
-        *(s32 *)((u8 *)slot + 40) = value;
+        ((struct EffectSlot *)slot)->scale_y = value;
+        ((struct EffectSlot *)slot)->scale_x = value;
         remaining--;
         WaitFrames(1);
         slot = (u8 *)slot + 72;
@@ -506,8 +506,8 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRadialSpread);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
-        *(s32 *)(slot + 40) = 0x8000;
-        *(s32 *)(slot + 44) = Random16() + 0x18000;
+        ((struct EffectSlot *)slot)->scale_x = 0x8000;
+        ((struct EffectSlot *)slot)->scale_y = Random16() + 0x18000;
         remaining--;
         WaitFrames(1);
         slot += 72;

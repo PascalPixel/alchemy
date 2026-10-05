@@ -75,21 +75,21 @@ s32 ArutinYama_RunAreaScene(void)
     if (gGameState.scene == (s32)&SceneId_ArutinYama1) {
         ArutinYama_ApplyEntryState();
     } else if (gGameState.scene == (s32)&SceneId_ArutinYama3) {
-        FieldScene_RunScene3a4_02002310();
+        ArutinYama_RestoreAreaThree();
     } else if (gGameState.scene == (s32)&SceneId_ArutinYama4) {
-        FieldScene_RunScene3a4_02002428();
+        ArutinYama_RestoreAreaFour();
     } else if (gGameState.scene == (s32)&SceneId_ArutinYama5) {
-        FieldScene_RunScene3a4_02002490();
+        ArutinYama_RestoreAreaFive();
     } else if (gGameState.scene == (s32)&SceneId_ArutinYama6) {
-        FieldScene_RunScene3a4_020025c0();
+        ArutinYama_RestoreAreaSix();
     } else if (gGameState.scene == (s32)&SceneId_ArutinYama7) {
-        FieldScene_RunScene3a4_020026c0();
+        ArutinYama_RestoreAreaSeven();
     } else if (gGameState.scene == (s32)&SceneId_ArutinYama9) {
         ArutinYama_PlaceFlaggedActors();
     } else if (gGameState.scene == (s32)&SceneId_ArutinYama10) {
-        FieldScene_RunScene3a4_02002934();
+        ArutinYama_RestoreAreaTen();
     } else if (gGameState.scene == (s32)&SceneId_ArutinYama11) {
-        FieldScene_RunScene3a4_020029dc();
+        ArutinYama_RestoreAreaEleven();
     }
     return 0;
 }
@@ -182,7 +182,7 @@ void ArutinYama_ApplyEntryState(void)
     }
 }
 
-void FieldScene_RunScene3a4_02002310(void)
+void ArutinYama_RestoreAreaThree(void)
 {
 
     if (GameFlag_IsSet(0x8fe) != 0) {
@@ -211,7 +211,7 @@ void FieldScene_RunScene3a4_02002310(void)
     }
 }
 
-void FieldScene_RunScene3a4_02002428(void)
+void ArutinYama_RestoreAreaFour(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
@@ -230,7 +230,7 @@ void FieldScene_RunScene3a4_02002428(void)
     }
 }
 
-void FieldScene_RunScene3a4_02002490(void)
+void ArutinYama_RestoreAreaFive(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
@@ -271,7 +271,7 @@ void FieldScene_RunScene3a4_02002490(void)
     }
 }
 
-void FieldScene_RunScene3a4_020025c0(void)
+void ArutinYama_RestoreAreaSix(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
@@ -305,7 +305,7 @@ void FieldScene_RunScene3a4_020025c0(void)
     }
 }
 
-void FieldScene_RunScene3a4_020026c0(void)
+void ArutinYama_RestoreAreaSeven(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
@@ -388,7 +388,7 @@ void ArutinYama_PlaceFlaggedActors(void)
     }
 }
 
-void FieldScene_RunScene3a4_02002934(void)
+void ArutinYama_RestoreAreaTen(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
@@ -424,7 +424,7 @@ void FieldScene_RunScene3a4_02002934(void)
 
 }
 
-void FieldScene_RunScene3a4_020029dc(void)
+void ArutinYama_RestoreAreaEleven(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 

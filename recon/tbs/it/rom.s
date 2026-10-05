@@ -90,8 +90,6 @@ ResourceObject_Create:
 	.size ResourceObject_Create, .-ResourceObject_Create
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
-	.section .rom.0000daf0, "ax"
-	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000ebec, "ax"
 	.incbin "baserom.gba", 0x0000ebec, 0x0000070c
 	.section .rom.00012518, "ax"

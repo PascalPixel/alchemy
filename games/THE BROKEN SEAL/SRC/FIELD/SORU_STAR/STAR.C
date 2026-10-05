@@ -411,7 +411,7 @@ void Scene_BagJupiterStar(void)
 void FieldScene_StagePairedActors(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     Audio_PlayCue(17);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -429,7 +429,7 @@ void FieldScene_StagePairedActors(void)
      * for actor 0 exists. */
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x101, 0x1eb);
@@ -736,7 +736,7 @@ void Scene_OfferGuarantee(void)
 
 void Scene_UnmaskGarcia(void)
 {
-    u8 *obj;
+    struct FieldActor *obj;
     struct FieldActor *other;
     u16 *tbl;
     s32 left;
@@ -871,7 +871,7 @@ void Scene_UnmaskGarcia(void)
             Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
             Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
             obj = Object_GetById(ACTOR_PARTY_LEADER);
-            obj[90] &= 254;
+            obj->unknown_5a &= 254;
             Actor_WalkToAndWait(ACTOR_GERALD, 244, 0x1de);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
@@ -884,9 +884,9 @@ void Scene_UnmaskGarcia(void)
                 /* FAKEMATCH: a result temporary, not a compound or-assign: the
                  * reference merges the byte into the mask's register, which the
                  * two-address ORR does only when the result is its own object. */
-                u8 flags = obj[90] | 1;
+                u8 flags = obj->unknown_5a | 1;
 
-                obj[90] = flags;
+                obj->unknown_5a = flags;
             }
         } else {
             Engine_EventSetMessage((s32)MsgSoruWontLetGo);
@@ -904,33 +904,33 @@ void Scene_UnmaskGarcia(void)
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     obj = Object_GetById(ACTOR_GERALD);
-    obj[90] &= 254;
+    obj->unknown_5a &= 254;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x1e2);
     {
         /* FAKEMATCH: a result temporary, not a compound or-assign: the
          * reference merges the byte into the mask's register, which the
          * two-address ORR does only when the result is its own object. */
-        u8 flags = obj[90] | 1;
+        u8 flags = obj->unknown_5a | 1;
 
-        obj[90] = flags;
+        obj->unknown_5a = flags;
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x116, 0x1e0);
-    *(s32 *)(obj + 48) = 0x30000;
-    *(s32 *)(obj + 52) = 0x20000;
+    obj->speed = 0x30000;
+    obj->acceleration = 0x20000;
     Audio_PlayCue(153);
-    *(s32 *)(obj + 40) = 0x60000;
+    obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x138, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
-    *(s32 *)(obj + 40) = 0x60000;
+    obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x156, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_EventWait(30);
     Audio_PlayCue(153);
-    *(s32 *)(obj + 40) = 0x60000;
+    obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(ACTOR_GERALD, 7);
     Actor_MoveToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);

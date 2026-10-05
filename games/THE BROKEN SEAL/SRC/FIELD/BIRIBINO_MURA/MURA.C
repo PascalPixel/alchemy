@@ -235,7 +235,7 @@ void FieldScene_RunEarlySequence(void)
 {
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
     s32 v5;
     u8 *tbl;
     u8 *tbl2;
@@ -248,9 +248,9 @@ void FieldScene_RunEarlySequence(void)
     p7 = *(u8 **)&gEventWork;
     Engine_EventBegin();
     for (i = 8; i < 66; i++) {
-        record = (u8 *)Object_GetById(i);
+        record = Object_GetById(i);
         if (record != 0) {
-            record[85] = 0;
+            record->motion_flags = 0;
         }
     }
     v5 = (s32)((s32)(*(u16 *)(p7 + 0x16c) - 3) << 16) >> 16;
@@ -638,7 +638,7 @@ void FieldScene_RunScene38bSequenceA(void)
  */
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     s32 tx;
     s32 tz;
     u32 i;
@@ -650,8 +650,8 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
      * to the 16-pixel tile grid.
      */
     actor = Object_GetById(8);
-    tx = *(s32 *)(actor + 0x08) >> 20;
-    tz = *(s32 *)(actor + 0x10) >> 20;
+    tx = actor->x.fixed >> 20;
+    tz = actor->z.fixed >> 20;
 
     /*
      * Ten fixed cells from the table, then the actor's own cell.  The table

@@ -110,21 +110,21 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void SceneActor_ClearActorModeAndSetState5(s32 no)
 {
-    u8 *p;
+    struct FieldActor *p;
     s32 mask;
 
     p = Object_GetById(no);
-    p[0x55] = 0;
+    p->motion_flags = 0;
     mask = 252;
-    mask &= p[0x59];
-    p[0x59] = mask;
+    mask &= p->collision_flags;
+    p->collision_flags = mask;
     Engine_ActorSetSpriteFlags(p, 0);
     Object_SetMode(p, 5);
     Engine_ActorSetSpritePriority(no, 3);
     {
         s32 v = 2;
-        v |= p[0x23];
-        p[0x23] = v;
+        v |= p->priority_flags;
+        p->priority_flags = v;
     }
 }
 

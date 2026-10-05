@@ -554,24 +554,24 @@ void FieldScene_RunActorNinePresentationCycles(void)
 
 void OverlayObject_InitWithRandomFields(s32 a)
 {
-    u8 *obj;
+    struct FieldActor *obj;
     u32 x;
 
-    obj = (u8 *)Object_GetById(a);
+    obj = Object_GetById(a);
     Engine_ActorSetSpritePriority(a, 1);
-    obj[0x55] = 0;
-    *(u16 *)(obj + 0x64) = Random16() >> 15;
-    *(u16 *)(obj + 0x66) = Random16() >> 15;
+    obj->motion_flags = 0;
+    obj->unknown_64 = Random16() >> 15;
+    obj->unknown_66 = Random16() >> 15;
     x = Random16();
     x <<= 2;
     x >>= 16;
     x <<= 16;
     x += 0x60000;
-    *(s32 *)(obj + 0xc) = x;
+    obj->y.fixed = x;
     x = Random16();
-    *(s32 *)(obj + 0x4c) = ((x * 3 << 13) >> 16) - 0x3000;
-    *(s32 *)(obj + 0x18) = 0x14000;
-    *(s32 *)(obj + 0x1c) = 0x14000;
+    obj->rise_base_y = ((x * 3 << 13) >> 16) - 0x3000;
+    obj->scale_x = 0x14000;
+    obj->scale_y = 0x14000;
     Engine_ActorEnableActionCallback(a, FuneHobashira_DriftActions);
 }
 

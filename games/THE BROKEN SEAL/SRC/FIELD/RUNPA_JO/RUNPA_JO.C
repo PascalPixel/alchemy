@@ -165,15 +165,15 @@ void ConfigureSceneActor12(void)
 {
 
     s32 actor_slot = 15;
-    u8 *actor;
+    struct FieldActor *actor;
 
     Map_CopyCellAttributeRect(15, 20, 1, 1, actor_slot, 22);
     Map_CopyCellAttributeRect(17, 23, 1, 3, actor_slot, 23);
     actor = Object_GetById(12);
     if (actor != 0) {
         Engine_ActorSetSpriteFlags(actor, 0);
-        actor[0x55] = 0;
-        actor[0x23] = 2;
+        actor->motion_flags = 0;
+        actor->priority_flags = 2;
     }
 }
 

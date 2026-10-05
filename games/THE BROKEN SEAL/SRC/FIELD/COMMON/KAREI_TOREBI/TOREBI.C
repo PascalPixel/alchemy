@@ -624,7 +624,7 @@ void SceneActor_SetMode3AndFlagBit1(s32 no)
 void FieldScene_RunScene3aeSequenceA(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Battle_ResetEffectCounter();
@@ -691,7 +691,7 @@ void FieldScene_RunScene3aeSequenceA(void)
      * arguments. */
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -703,14 +703,14 @@ void FieldScene_RunScene3aeSequenceA(void)
     /* Store the integer part of the 16.16 fixed-point fields at +8 and +16
      * into the halfwords at +100 and +102. */
     {
-        s32 shown = *(s32 *)(record + 8) / 0x10000;
+        s32 shown = record->x.fixed / 0x10000;
 
-        *(u16 *)(record + 100) = shown;
+        record->unknown_64 = shown;
     }
     {
-        s32 shown = *(s32 *)(record + 16) / 0x10000;
+        s32 shown = record->z.fixed / 0x10000;
 
-        *(u16 *)(record + 102) = shown;
+        record->unknown_66 = shown;
     }
     Engine_EventEnd();
 }

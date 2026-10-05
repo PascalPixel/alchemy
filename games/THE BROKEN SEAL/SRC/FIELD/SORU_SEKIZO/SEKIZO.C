@@ -630,17 +630,17 @@ void FieldScene_RunPrimarySequenceHead(void)
 
 s32 Scene_RunGuardSequenceB(void)
 {
-    u8 *record;
+    struct FieldActor *record;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Scene_RunGuardSequenceC();
     GameFlag_Set(0x144);
-    record = (u8 *)Object_GetById(18);
-    record[89] = 0;
+    record = Object_GetById(18);
+    record->collision_flags = 0;
     {
-        u8 flags = record[35] | 2;
+        u8 flags = record->priority_flags | 2;
 
-        record[35] = flags;
+        record->priority_flags = flags;
     }
     Engine_ActorSetSpriteFlags((s32)Object_GetById(18), 0);
     Object_GetById(18)->priority_flags &= 254;

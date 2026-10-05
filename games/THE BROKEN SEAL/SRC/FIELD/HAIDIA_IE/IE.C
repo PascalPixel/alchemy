@@ -271,7 +271,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
 {
     u32 i;
     s32 p8;
-    u8 *rec8;
+    struct FieldActor *rec8;
     s32 record;
     s32 v2;
 
@@ -292,14 +292,14 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep20, 0xc80);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     rec8 = Object_GetById(20);
-    v2 = rec8[85];
-    rec8[85] = 0;
+    v2 = rec8->motion_flags;
+    rec8->motion_flags = 0;
     p8 = v2;
     for (i = 0; i < 40; i++) {
-        *(s32 *)(rec8 + 12) += 0x1800;
+        rec8->y.fixed += 0x1800;
         Engine_TaskWait(1);
     }
-    rec8[85] = p8;
+    rec8->motion_flags = p8;
     Scheduler_RemoveCallback((s32)FieldScene_RunStep15);
     Scheduler_RemoveCallback((s32)FieldScene_RunStep20);
     Engine_TaskWait(1);

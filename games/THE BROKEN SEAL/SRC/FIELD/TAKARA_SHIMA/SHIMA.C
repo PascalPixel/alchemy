@@ -660,13 +660,13 @@ void FieldScene_HandleEscapeColumn(void)
     /* FAKEMATCH: the block-local two preserves the sprite-flag registers;
      * Japanese reuses a zero automatic across the waits and sprite reset.
      * Literal zero clears make its complete function 12 bytes shorter. */
-    u8 *entity;
+    struct FieldActor *entity;
     s16 *slot;
     s32 column;
     s32 zero;
 
-    entity = (u8 *)Object_GetById(8);
-    column = *(s32 *)(entity + 8) >> 20;    /* 16.16 -> 16-pixel tile grid */
+    entity = Object_GetById(8);
+    column = entity->x.fixed >> 20;    /* 16.16 -> 16-pixel tile grid */
     if (column != 40) {
         return;
     }
@@ -681,7 +681,7 @@ void FieldScene_HandleEscapeColumn(void)
     }
 #endif
 
-    entity[85] = 3;
+    entity->motion_flags = 3;
 #if !EDITION_INTERNATIONAL
     zero = 0;
 #endif
@@ -699,15 +699,15 @@ void FieldScene_HandleEscapeColumn(void)
     ObjectMotion_SetActionVariant(8, 3);
 
 #if EDITION_INTERNATIONAL
-    entity[85] = 0;
+    entity->motion_flags = 0;
 #else
-    entity[85] = zero;
+    entity->motion_flags = zero;
 #endif
     {
         s32 flags = 2;
 
-        flags |= entity[35];
-        entity[35] = flags;
+        flags |= entity->priority_flags;
+        entity->priority_flags = flags;
     }
 
     Engine_MapCopyCellAttributes(42, 10, 1, 1, column, 10);
@@ -833,10 +833,10 @@ void ConfigureSceneActor11(s32 actor_id)
 {
     s32 a = 0x1300000;
     s32 b = 0x1700000;
-    u8 *p = Object_GetById(11);
+    struct FieldActor *p = Object_GetById(11);
 
     if (p != 0) {
-        p[89] = 0;
+        p->collision_flags = 0;
     }
     Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
@@ -847,10 +847,10 @@ void ConfigureSceneActor12(s32 actor_id)
 {
     s32 a = 0x500000;
     s32 b = 0x1700000;
-    u8 *p = Object_GetById(12);
+    struct FieldActor *p = Object_GetById(12);
 
     if (p != 0) {
-        p[89] = 0;
+        p->collision_flags = 0;
     }
     Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
@@ -861,10 +861,10 @@ void ConfigureSceneActor13(s32 actor_id)
 {
     s32 a = 0x600000;
     s32 b = 0x1500000;
-    u8 *p = Object_GetById(13);
+    struct FieldActor *p = Object_GetById(13);
 
     if (p != 0) {
-        p[89] = 0;
+        p->collision_flags = 0;
     }
     Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
@@ -877,10 +877,10 @@ void ConfigureSceneActor14(s32 actor_id)
     s32 b = 0x1400000;
     s32 c = 0x2f00000;
     s32 d = 0x1400000;
-    u8 *p = Object_GetById(14);
+    struct FieldActor *p = Object_GetById(14);
 
     if (p != 0) {
-        p[89] = 0;
+        p->collision_flags = 0;
     }
     Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);

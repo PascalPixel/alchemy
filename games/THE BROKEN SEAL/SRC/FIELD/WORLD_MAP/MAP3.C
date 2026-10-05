@@ -265,7 +265,7 @@ void FieldScene_RunActorEightApproach(void)
 {
 
     u32 i;
-    s32 actor;
+    struct FieldActor *actor;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -277,7 +277,7 @@ void FieldScene_RunActorEightApproach(void)
         /* Write 0xa000 to the halfword at +6 of the actor record. */
         s32 value = 0xa000;
 
-        *(u16 *)(actor + 6) = value;
+        actor->facing = value;
     }
     Engine_TaskWait(1);
     BattleFx_ScheduleRatioTransition(0x13333, 1);

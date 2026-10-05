@@ -90,7 +90,7 @@ void FieldScene_RunPillarSequence(void)
     struct FieldActor *rec4;
     s32 r1, r2, r3, r4, r5, r6, r7;
     s32 rec7, v1, v2, v3, t, u, n;
-    u8 *p0;
+    struct FieldActor *p0;
 
     r1 = ((s32 (*)())Object_GetById)(9);
     kind = *(s32 *)(r1 + 8) / 0x100000;
@@ -98,7 +98,7 @@ void FieldScene_RunPillarSequence(void)
     if (kind == 25) {
         p0 = Object_GetById(11);
         zero = 0;
-        p0[34] = 1;
+        p0->terrain_id = 1;
         r2 = (s32)Object_GetById(11);
         Engine_ActorSetSpriteFlags(r2, 0);
         ObjectGroup_ConfigureChildValue(11, 14);

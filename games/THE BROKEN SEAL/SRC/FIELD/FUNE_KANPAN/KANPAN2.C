@@ -52,16 +52,16 @@ void SceneEffect_InitSlotsEightToNineteen(void)
 
 void OverlayObject_ActivateSlotWithMode3(s32 a)
 {
-    u8 *p = (u8 *)Object_GetById(a);
+    struct FieldActor *p = Object_GetById(a);
 
     if (p != 0) {
         Engine_ActorSetSpritePriority(a, 3);
         Engine_ActorSetSpriteFlags(p, 0);
-        p[89] = 0;
+        p->collision_flags = 0;
         {
             s32 c;
-            c = 2 | p[35];
-            p[35] = c;
+            c = 2 | p->priority_flags;
+            p->priority_flags = c;
         }
     }
 }

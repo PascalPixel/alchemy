@@ -114,9 +114,9 @@ void TakaraHashira_RunStagedCellScene(void)
 /* Complete scene/entity linker through return and its sole pool word. */
 void SceneState_LinkActorZeroToWork24(void)
 {
-    u8 *obj = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
     *(u8 **)(PILLAR_WORK + 24) = obj;
-    obj[98] = 1;
+    obj->rise_counter = 1;
 }
 
 /*
@@ -126,10 +126,10 @@ void SceneState_LinkActorZeroToWork24(void)
  */
 void SceneState_ClearWord24AndObjectByte62(void)
 {
-    u8 *obj = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 
     *(s32 *)(PILLAR_WORK + 24) = 0;
-    obj[0x62] = 0;
+    obj->rise_counter = 0;
 }
 
 /*
@@ -366,20 +366,20 @@ void StagedActor_PlaceAtObjectTenCell(void)
  * column 16 (flag 0x204), drop it into the floor with cue 159. */
 void TakaraHashira_DropActorTen(void)
 {
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 rec8;
 
-    rec7 = (s32)Object_GetById(10);
+    rec7 = Object_GetById(10);
     Engine_EventBegin();
-    StagedActor_FillGridAttributeRectangle(2, (*(s32 *)((s32)rec7 + 8) >> 20), (*(s32 *)((s32)rec7 + 16) >> 20), 1, 1, 255);
-    if ((*(s32 *)((s32)rec7 + 8) >> 20) == 16) {
+    StagedActor_FillGridAttributeRectangle(2, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20), 1, 1, 255);
+    if ((rec7->x.fixed >> 20) == 16) {
         rec8 = Value1(Engine_GameFlagIsSet, 0x204);
         if (rec8 == 0) {
             Engine_EventWait(10);
             Engine_AudioPlayCue(159);
-            rec7[85] = rec8;
-            *(s32 *)((s32)rec7 + 20) = -0x20000;
-            *(s32 *)((s32)rec7 + 12) = -0x20000;
+            rec7->motion_flags = rec8;
+            rec7->terrain_height = -0x20000;
+            rec7->y.fixed = -0x20000;
             Engine_GameFlagSet(0x204);
         }
     }

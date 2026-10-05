@@ -529,7 +529,7 @@ void Scene_SaturosTakesHostages(void)
 
 void FieldScene_RunScene381_02000e30(s32 a0)
 {
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 recA;
     s32 rec2;
     u8 i;
@@ -545,20 +545,20 @@ void FieldScene_RunScene381_02000e30(s32 a0)
     rec2 = Object_GetById(a0);
     Engine_ActorSetSpriteFlags(rec2, 0);
     Actor_SetChildValue(a0, 0x100);
-    rec7[85] = 0;
+    rec7->motion_flags = 0;
     Audio_PlayCue(201);
     i = 0;
     do {
-        *(s32 *)(rec7 + 12) += 0x8000;
+        rec7->y.fixed += 0x8000;
         Engine_EventWait(1);
         i++;
     } while (i != 60);
     Audio_PlayCue(190);
     i = 0;
     do {
-        *(s32 *)(rec7 + 12) += 0x1999;
-        *(s32 *)(rec7 + 24) -= 0x28f;
-        *(s32 *)(rec7 + 28) -= 0x28f;
+        rec7->y.fixed += 0x1999;
+        rec7->scale_x -= 0x28f;
+        rec7->scale_y -= 0x28f;
         *(s32 *)(recA + 24) -= 0x28f;
         *(s32 *)(recA + 28) -= 0x28f;
         Engine_EventWait(1);

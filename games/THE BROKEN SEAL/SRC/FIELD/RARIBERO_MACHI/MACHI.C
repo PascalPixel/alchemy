@@ -198,7 +198,7 @@ void SceneState_SetWord1c8To16AndForward16c(void)
 void Scene_RunPrimarySequence(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRariberoMoreTolbisSoldiersLayDefeated);
@@ -374,7 +374,7 @@ void Scene_RunPrimarySequence(void)
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
         /* Pass the record's s16 fields at +10 and +18 through to entity 22. */
-        Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(22);
     Actor_SetPosition(22, 0, 0);

@@ -423,7 +423,7 @@ void FieldScene_RunGuardedStep9AA(void)
 
 void SceneState_ApplyRectAndMarkActor16(void)
 {
-    u8 *rec = Object_GetById(16);
+    struct FieldActor *rec = Object_GetById(16);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -435,7 +435,7 @@ void SceneState_ApplyRectAndMarkActor16(void)
     if (rec != 0) {
         /* The rec is reloaded with the same selector before this store. */
         Object_GetById(16)->motion_flags = 0;
-        rec[35] = 1;
+        rec->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x200);
@@ -443,7 +443,7 @@ void SceneState_ApplyRectAndMarkActor16(void)
 
 void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 {
-    u8 *rec = Object_GetById(17);
+    struct FieldActor *rec = Object_GetById(17);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -455,7 +455,7 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
     if (rec != 0) {
         /* The record is reloaded with the same selector before this store. */
         Object_GetById(17)->motion_flags = 0;
-        rec[35] = 1;
+        rec->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x201);
@@ -463,7 +463,7 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 
 void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 {
-    u8 *record = Object_GetById(18);
+    struct FieldActor *record = Object_GetById(18);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -475,7 +475,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
     if (record != 0) {
         /* The record is reloaded with the same selector before this store. */
         Object_GetById(18)->motion_flags = 0;
-        record[35] = 1;
+        record->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x202);
@@ -483,7 +483,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 
 void SceneState_ApplyRectAndSetupActor19(void)
 {
-    u8 *p = Object_GetById(19);
+    struct FieldActor *p = Object_GetById(19);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -496,7 +496,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
         Engine_ActorSetSpriteFlags(p, 0);
         /* The record is reloaded with the same selector before this store. */
         Object_GetById(19)->motion_flags = 0;
-        p[35] = 1;
+        p->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x203);
@@ -504,7 +504,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
 
 void SceneActor_SetupSlotTwenty(void)
 {
-    u8 *rec = Object_GetById(20);
+    struct FieldActor *rec = Object_GetById(20);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -517,7 +517,7 @@ void SceneActor_SetupSlotTwenty(void)
         Engine_ActorSetSpriteFlags(rec, 0);
         /* The rec is reloaded with the same selector before this store. */
         Object_GetById(20)->motion_flags = 0;
-        rec[35] = 1;
+        rec->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x204);
@@ -525,7 +525,7 @@ void SceneActor_SetupSlotTwenty(void)
 
 void SceneActor_MarkSlot21AndSetFlag205(void)
 {
-    u8 *record = Object_GetById(21);
+    struct FieldActor *record = Object_GetById(21);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -538,7 +538,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
         Engine_ActorSetSpriteFlags(record, 0);
         /* The record is reloaded with the same selector before this store. */
         Object_GetById(21)->motion_flags = 0;
-        record[35] = 1;
+        record->priority_flags = 1;
     }
 
     Engine_GameFlagSet(0x205);

@@ -402,7 +402,7 @@ void FieldScene_RunActor10WaypointSequence(void)
  */
 void FieldScene_RunActorElevenPresentationBeat(void)
 {
-    u8 *slot;
+    struct FieldActor *slot;
     s32 offset;
 
     slot = Object_GetById(11);
@@ -414,8 +414,8 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     FieldScene_RunSixCallSetupSequence(11, 0);
     FieldScene_RunScene39f_02000d90(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
 
-    Effect_Spawn(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
-                  *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
+    Effect_Spawn(slot->x.fixed, slot->y.fixed,
+                  slot->z.fixed + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
     Engine_CameraFollowActor(11, 1);
@@ -873,13 +873,13 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
     s32 x;
     s32 y;
-    u8 *record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     record = Object_GetById(14);
-    x = *(s32 *)(record + 8);
+    x = record->x.fixed;
     record = Object_GetById(14);
-    y = *(s32 *)(record + 16);
+    y = record->z.fixed;
     x >>= 20;
     y >>= 20;
     StagedActor_FillGridAttributeRectangle(2, x, y, 1, 1, 255);
@@ -888,11 +888,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
     StagedActor_FillGridAttributeRectangle(2, x, y + 1, 1, 1, 0);
     StagedActor_FillGridAttributeRectangle(2, x, y - 1, 1, 1, 0);
     record = Object_GetById(14);
-    if ((*(s32 *)(record + 16) >> 20) == 27) {
+    if ((record->z.fixed >> 20) == 27) {
         record = Object_GetById(14);
-        record[85] = 0;
-        *(s32 *)(record + 20) = -0x20000;
-        *(s32 *)(record + 12) = -0x20000;
+        record->motion_flags = 0;
+        record->terrain_height = -0x20000;
+        record->y.fixed = -0x20000;
         Engine_GameFlagSet(0x214);
         StagedActor_FillGridAttributeRectangle(2, 43, 23, 1, 1, 255);
     }

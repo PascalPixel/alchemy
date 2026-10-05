@@ -1265,7 +1265,7 @@ void FieldScene_RunActorUpdateSequence(void)
 {
 
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
 
     Call2(Engine_ActorSetAttachedEffect, 1, 0x102);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
@@ -1372,10 +1372,10 @@ void FieldScene_RunActorUpdateSequence(void)
     for (i = 0; i < 32; i++) {
         ShindenHeya_SpawnActorSpark(13);
         Engine_EventWait(4);
-        record = (u8 *)Object_GetById(13);
-        *(s32 *)(record + 24) += -0x28f;
-        record = (u8 *)Object_GetById(13);
-        *(s32 *)(record + 28) += -0x28f;
+        record = Object_GetById(13);
+        record->scale_x += -0x28f;
+        record = Object_GetById(13);
+        record->scale_y += -0x28f;
     }
     Audio_PlayCue(0x120);
     Actor_SetChildValue(13, 0);

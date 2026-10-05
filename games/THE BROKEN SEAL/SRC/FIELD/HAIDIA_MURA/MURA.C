@@ -536,7 +536,7 @@ void SceneState_SetFlag204AndConfigureRegion49_46(void)
 void FieldScene_RunScene373SequenceE(void)
 {
     u32 i;
-    u8 *rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(22);
@@ -544,10 +544,10 @@ void FieldScene_RunScene373SequenceE(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 5, 0);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 215, 0x193);
-    rec7[90] |= 1;
+    rec7->unknown_5a |= 1;
     Actor_SetPosition(22, 0xa60000, 0x1770000);
     Actor_FaceDirection(22, 0x2000, 20);
-    rec7[90] = (rec7[90] ^ 1);
+    rec7->unknown_5a = (rec7->unknown_5a ^ 1);
     Actor_SetSpeed(22, 0x28000, 0x28000);
     Engine_ActorJump(22, 4, 0);
     Actor_WalkToAndWait(22, 202, 0x18b);
@@ -1330,7 +1330,7 @@ s32 HaidiaMura_ApplyEntryState(void)
  * the leader's tile and a story flag set. */
 void FieldScene_RunSecondaryActorSequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 msg;
 
     Engine_EventBegin();
@@ -1350,7 +1350,7 @@ void FieldScene_RunSecondaryActorSequence(void)
     record = Object_GetById(0);
     if (record != 0) {
         /* Copy the record's fields at +8 and +16 onto actor 1. */
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x192, 0x260);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
@@ -1396,7 +1396,7 @@ void FieldScene_RunSecondaryActorSequence(void)
     record = Object_GetById(0);
     if (record != 0) {
         /* Copy the record's fields at +10 and +18 onto actor 1. */
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -1406,7 +1406,7 @@ void FieldScene_RunSecondaryActorSequence(void)
 
 void FieldScene_RunPrimaryActorSequence(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Camera_MoveTo(0x1650000, -1, 0x2e20000, 1);
@@ -1415,7 +1415,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     record = Object_GetById(0);
     if (record != 0) {
         /* Copy the s32 coordinate pair at +8/+16 of the looked-up record. */
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x15a, 0x2e9);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
@@ -1475,7 +1475,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     record = Object_GetById(0);
     if (record != 0) {
         /* Copy the s16 coordinate pair at +10/+18 of the looked-up record. */
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -1941,7 +1941,7 @@ void FieldScene_RunLargeStagingSequence(void)
 
 void Scene_RepairTheHouse(void)
 {
-    u8 *scene;
+    struct FieldActor *scene;
     u8 *rec;
     u32 i;
     s32 turn_back;
@@ -2019,8 +2019,8 @@ void Scene_RepairTheHouse(void)
     Engine_ActorEnableActionCallback(1, (u32)gGeraldAction);
     Engine_EventWait(40);
     Engine_ActorEnableActionCallback(0, 1);
-    *(s32 *)(scene + 24) = 0x10000;
-    *(s32 *)(scene + 28) = 0x10000;
+    scene->scale_x = 0x10000;
+    scene->scale_y = 0x10000;
     Call3(Engine_ActorFaceDirection, 0, 0xb000, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(10);
@@ -2069,8 +2069,8 @@ void Scene_RepairTheHouse(void)
     Engine_EventWait(120);
     Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
     Engine_ActorEnableActionCallback(0, 1);
-    *(s32 *)(scene + 24) = 0x10000;
-    *(s32 *)(scene + 28) = 0x10000;
+    scene->scale_x = 0x10000;
+    scene->scale_y = 0x10000;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -2113,8 +2113,8 @@ void Scene_RepairTheHouse(void)
     Engine_EventWait(120);
     Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
     Engine_ActorEnableActionCallback(0, 1);
-    *(s32 *)(scene + 24) = 0x10000;
-    *(s32 *)(scene + 28) = 0x10000;
+    scene->scale_x = 0x10000;
+    scene->scale_y = 0x10000;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -2159,8 +2159,8 @@ void Scene_RepairTheHouse(void)
     FieldScene_RunSingleStep();
     Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
     Engine_ActorEnableActionCallback(0, 1);
-    *(s32 *)(scene + 24) = 0x10000;
-    *(s32 *)(scene + 28) = 0x10000;
+    scene->scale_x = 0x10000;
+    scene->scale_y = 0x10000;
     Engine_ActorJump(ACTOR_DORA, 2, 20);
     Engine_EventSetMessage((s32)MsgHaidiaGoodJob);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
@@ -2579,10 +2579,10 @@ void Scene_RepairTheHouse(void)
     GameFlag_Set(514);
     GameFlag_Clear(303);
 #if EDITION_INTERNATIONAL
-    scene[85] = 3;
-    *(s32 *)(scene + 12) = 0xa00000;
-    *(s32 *)(scene + 60) = 0x80000000;
-    *(s32 *)(scene + 40) = none;
+    scene->motion_flags = 3;
+    scene->y.fixed = 0xa00000;
+    scene->target_y = 0x80000000;
+    scene->velocity_y = none;
 #else
     Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 3;
 #endif
@@ -2876,16 +2876,16 @@ void FieldScene_RunScene373SequenceB(void)
 void SceneActor_SetFlagByteBySlotZeroPosition(void)
 {
     s32 *g = Object_GetById(ACTOR_PARTY_LEADER);
-    u8 *q;
+    struct FieldActor *q;
     if (Engine_GameFlagIsSet(0x87a) != 0)
         q = Object_GetById(21);
     else
         q = Object_GetById(20);
     if (q != 0) {
         if (g[3] > 0xc80000)
-            q[0x23] = 3;
+            q->priority_flags = 3;
         else
-            q[0x23] = 1;
+            q->priority_flags = 1;
     }
 }
 

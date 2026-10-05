@@ -79,10 +79,10 @@ s32 StopXianActor(void *actor)
     return 0;
 }
 
-s32 FaceXianActorToPlayer(void *actor)
+s32 FaceXianActorToPlayer(struct FieldActor *actor)
 {
     struct FieldActor *player = Object_GetById(ACTOR_PARTY_LEADER);
-    FIELD(actor, u16, 6) = ArcTan2Far(FIELD(player, s32, 0x10) - FIELD(actor, s32, 0x10), FIELD(player, s32, 8) - FIELD(actor, s32, 8));
+    actor->facing = ArcTan2Far(player->z.fixed - actor->z.fixed, player->x.fixed - actor->x.fixed);
     return 0;
 }
 

@@ -256,7 +256,7 @@ void SceneState_BranchOnActorEightOrNineTile(void)
 {
     s32 *p = Object_GetById(9);
 
-    if ((((s32 *)Object_GetById(0))[2] >> 20) <= 12) {
+    if ((Object_GetById(0)->x.fixed >> 20) <= 12) {
         p = Object_GetById(8);
         if ((p[2] >> 20) == 6) {
             if ((p[4] >> 20) == 20) {

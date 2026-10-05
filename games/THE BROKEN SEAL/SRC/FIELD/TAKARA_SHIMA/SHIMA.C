@@ -560,7 +560,7 @@ s32 Scene_Initialize(void)
         if (GameFlag_IsSet(0x240) != 0) {
             actor = Actor_Get(11);
             if (actor != 0) {
-                ((u8 *)actor)[89] = 0;
+                actor->collision_flags = 0;
                 Object_SetMode(actor, 4);
                 Engine_ActorSetSpriteFlags(actor, 0);
             }
@@ -569,7 +569,7 @@ s32 Scene_Initialize(void)
         if (GameFlag_IsSet(0x241) != 0) {
             actor = Actor_Get(12);
             if (actor != 0) {
-                ((u8 *)actor)[89] = 0;
+                actor->collision_flags = 0;
                 Object_SetMode(actor, 4);
                 Engine_ActorSetSpriteFlags(actor, 0);
             }
@@ -578,7 +578,7 @@ s32 Scene_Initialize(void)
         if (GameFlag_IsSet(0x242) != 0) {
             actor = Actor_Get(13);
             if (actor != 0) {
-                ((u8 *)actor)[89] = 0;
+                actor->collision_flags = 0;
                 Object_SetMode(actor, 4);
                 Engine_ActorSetSpriteFlags(actor, 0);
             }
@@ -587,7 +587,7 @@ s32 Scene_Initialize(void)
         if (GameFlag_IsSet(0x243) != 0) {
             actor = Actor_Get(14);
             if (actor != 0) {
-                ((u8 *)actor)[89] = 0;
+                actor->collision_flags = 0;
                 Object_SetMode(actor, 4);
                 Engine_ActorSetSpriteFlags(actor, 0);
             }

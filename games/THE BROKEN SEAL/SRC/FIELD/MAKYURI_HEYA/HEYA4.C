@@ -209,7 +209,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
             Engine_GameFlagClear(0x318);
         break;
     case 11:
-        start = ((s32 *)Object_GetById(11))[2] >> 20;
+        start = Object_GetById(11)->x.fixed >> 20;
         SceneActor_MoveAndRedraw(probe);
         column = probe.word[2] >> 20;
         if (column == 47) {
@@ -296,7 +296,7 @@ void MakyuriHeya_SyncBlockFlags(void)
 
     Engine_EventBegin();
     for (i = 0, flag = 0x330; i <= 3; i++, flag += 2) {
-        x = *(s32 *)((s32)Object_GetById(i + 15) + 8) / 0x100000;
+        x = Object_GetById(i + 15)->x.fixed / 0x100000;
         if (x == (i << 2) + 39) {
             Engine_GameFlagSet(flag);
             Engine_GameFlagClear(flag + 1);

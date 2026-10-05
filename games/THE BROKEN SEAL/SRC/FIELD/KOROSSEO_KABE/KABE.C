@@ -395,13 +395,13 @@ void SceneState_ApplyRectsForActors15To17(void)
 
     Engine_MapCopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-    field = ((s32 *)Object_GetById(15))[2] >> 20;
+    field = Object_GetById(15)->x.fixed >> 20;
     Engine_MapCopyCellAttributes(13, 28, 1, 4, field, 11);
 
-    field = ((s32 *)Object_GetById(16))[2] >> 20;
+    field = Object_GetById(16)->x.fixed >> 20;
     Engine_MapCopyCellAttributes(13, 28, 1, 4, field, 11);
 
-    field = ((s32 *)Object_GetById(17))[4] >> 20;
+    field = Object_GetById(17)->z.fixed >> 20;
     Engine_MapCopyCellAttributes(13, 28, 4, 1, 18, field);
 }
 

@@ -133,7 +133,7 @@ void RariberoHeya_RunItemShop(s32 keeper)
  */
 void Dialogue_HandleFacingBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_Run(33, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -152,7 +152,7 @@ void Dialogue_HandleFacingBranch(s32 no)
  */
 void Dialogue_HandleAlternateFacingBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_Run(34, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -170,7 +170,7 @@ void Dialogue_HandleAlternateFacingBranch(s32 no)
  */
 void Dialogue_HandleFacingAction(s32 no)
 {
-    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Shop_ConfirmAct(no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -189,7 +189,7 @@ void Dialogue_HandleFacingAction(s32 no)
  */
 void Dialogue_HandleFacingCueBranch(s32 no)
 {
-    u16 party_facing = (((u16 *)Object_GetById(0))[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
         Inn_CheckIn(11, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {

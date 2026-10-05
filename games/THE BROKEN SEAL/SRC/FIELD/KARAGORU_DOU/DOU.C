@@ -149,7 +149,7 @@ void FieldScene_RunScene3beSequenceB(void)
         ObjectMotion_SetSpeedParameters(11, 0x10000, 0x8000);
         leader = Actor_Get(ACTOR_PARTY_LEADER);
         if (leader != 0) {
-            Actor_SetPosition(11, *(s32 *)((u8 *)leader + 8), *(s32 *)((u8 *)leader + 16));
+            Actor_SetPosition(11, leader->x.fixed, leader->z.fixed);
         }
         ObjectMotion_OffsetPositionAndResetMotion(11, -8, 16);
         ObjectMotion_CommitCurrentPositionAndActivate(11);
@@ -172,7 +172,7 @@ void FieldScene_RunScene3beSequenceB(void)
             Object_SetModeById(11, 2);
             leader = Actor_Get(ACTOR_PARTY_LEADER);
             if (leader != 0) {
-                Actor_SetDestination(11, *(s16 *)((u8 *)leader + 10), *(s16 *)((u8 *)leader + 18));
+                Actor_SetDestination(11, leader->x.part.pixel, leader->z.part.pixel);
             }
             ObjectMotion_CommitCurrentPositionAndActivate(11);
             Actor_SetPosition(11, 0, 0);
@@ -294,7 +294,7 @@ void StagedActorPairScene_RunUpdate(void)
 void ActorPresentation_RunActorNineThresholdScene(void)
 {
     Engine_EventBegin();
-    if ((((s32 *)Object_GetById(9))[2] >> 20) > 42) {
+    if ((Object_GetById(9)->x.fixed >> 20) > 42) {
         s32 x = 107;
         s32 y = 17;
 

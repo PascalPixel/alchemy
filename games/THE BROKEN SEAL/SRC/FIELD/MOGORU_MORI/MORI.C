@@ -514,8 +514,8 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
 
     /* Both coordinates are 16.16 fixed point reduced to whole tiles with
      * `asrs #20`, i.e. 16 fractional bits plus a 16-unit tile pitch. */
-    x = ((s32 *)Object_GetById(11))[2] >> 20;
-    z = ((s32 *)Object_GetById(11))[4] >> 20;
+    x = Object_GetById(11)->x.fixed >> 20;
+    z = Object_GetById(11)->z.fixed >> 20;
 
     StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0xff);
     StagedActor_FillGridAttributeRectangle(2, x + 1, z, 1, 1, 0);
@@ -804,8 +804,8 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
     /* No argument register is written before this branch. */
     Engine_EventBegin();
 
-    x = ((s32 *)Object_GetById(13))[2] >> 20;
-    z = ((s32 *)Object_GetById(13))[4] >> 20;
+    x = Object_GetById(13)->x.fixed >> 20;
+    z = Object_GetById(13)->z.fixed >> 20;
 
     StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0xff);
     StagedActor_FillGridAttributeRectangle(2, x + 1, z, 1, 1, 0);

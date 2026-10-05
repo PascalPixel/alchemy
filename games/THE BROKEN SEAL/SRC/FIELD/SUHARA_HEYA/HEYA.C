@@ -63,7 +63,7 @@ void Dialogue_HandleFacingChoice(s32 no)
 
 void Dialogue_HandleFacingBranch(s32 no)
 {
-    u16 facing = (((u16 *)Object_GetById(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Engine_InnCheckIn(10, no);
     } else if (Engine_GameFlagIsSet(0x96f)) {
@@ -77,7 +77,7 @@ void Dialogue_HandleFacingBranch(s32 no)
 
 void Dialogue_HandleFacingAction(s32 no)
 {
-    u16 facing = (((u16 *)Object_GetById(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Engine_ShopConfirmAct(no);
     } else if (Engine_GameFlagIsSet(0x96f)) {

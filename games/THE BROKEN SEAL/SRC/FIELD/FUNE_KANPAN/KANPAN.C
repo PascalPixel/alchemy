@@ -1605,8 +1605,8 @@ void FieldScene_RunActorSequence(void)
 
         rec8->facing = shown;
     }
-    *(s32 *)((s32)rec8 + 68) = 0x6666;
-    *(s32 *)((s32)rec8 + 72) = 0x20000;
+    rec8->bounce = 0x6666;
+    rec8->gravity = 0x20000;
     Engine_EventWait(80);
     Engine_AudioPlayCue(147);
     Engine_ActorSetPosition(31, 0, 0);

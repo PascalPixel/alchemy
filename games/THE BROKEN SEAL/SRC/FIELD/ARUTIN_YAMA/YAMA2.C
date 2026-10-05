@@ -64,7 +64,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     actor9->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     actor9->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWithFixedY;
     Engine_ActorSetAnimation(8, 4);
-    *(s32 *)((u8 *)actor8 + 68) = 0x8000;
+    actor8->bounce = 0x8000;
     actor8->x.fixed = 0x3120000;
     actor8->y.fixed = 0x200000;
     actor8->z.fixed = 0x5a0000;
@@ -116,8 +116,8 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     actor9->z.fixed = 0x26a0000;
     actor9->y.fixed = -0x400000;
     Actor_SetSpeed(8, 0x19999, 0xcccc);
-    *(s32 *)((u8 *)actor8 + 68) = 0x1999;
-    *(s32 *)((u8 *)actor8 + 72) = 0x3333;
+    actor8->bounce = 0x1999;
+    actor8->gravity = 0x3333;
     actor8->velocity_y = 0x40000;
     Actor_MoveToAndWait(8, 0x312, 0x25c);
     Actor_SetSpeed(8, 0x33333, 0x19999);

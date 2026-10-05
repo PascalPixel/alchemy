@@ -52,15 +52,15 @@ void FieldScene_RunActorElevenAtTile5And13(void)
 {
     s32 x;
     s32 y;
-    u8 *p;
+    struct FieldActor *p;
 
-    x = FIELD_AT_OFFSET(Object_GetById(11), s32, 8) / 0x100000;
-    y = FIELD_AT_OFFSET(Object_GetById(11), s32, 16) / 0x100000;
+    x = Object_GetById(11)->x.fixed / 0x100000;
+    y = Object_GetById(11)->z.fixed / 0x100000;
     Engine_EventBegin();
     if (x == 5 && y == 13) {
-        FIELD_AT_OFFSET(Object_GetById(11), s32, 12) += 0xfffe0000;
+        Object_GetById(11)->y.fixed += 0xfffe0000;
         p = Object_GetById(11);
-        FIELD_AT_OFFSET(p, s32, 0x3c) = FIELD_AT_OFFSET(Object_GetById(11), s32, 12);
+        p->target_y = Object_GetById(11)->y.fixed;
         Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
         Audio_PlayCue(0xd9);
         Engine_MapAnimateCells(MakyuriHeya_GateCells, 9, 7);
@@ -89,7 +89,7 @@ void MakyuriHeya_TriggerSmallFloorSwitch(void)
             Battle_WaitMode0(5);
             Object_GetById(0)->y.fixed += -0x20000;
             actor = Object_GetById(0);
-            FIELD_AT_OFFSET(actor, s32, 0x3c) = Object_GetById(0)->y.fixed;
+            actor->target_y = Object_GetById(0)->y.fixed;
             Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
             Audio_PlayCue(217);
             Engine_MapAnimateCells((s32)MakyuriHeya_GateCells, 9, 7);
@@ -107,7 +107,7 @@ void MakyuriHeya_CloseFloorSwitch(void)
         GameFlag_Clear(0x256);
         Actor_Get(0)->y.fixed += 0x20000;
         actor = Actor_Get(0);
-        FIELD_AT_OFFSET(actor, s32, 0x3c) = Actor_Get(0)->y.fixed;
+        actor->target_y = Actor_Get(0)->y.fixed;
         Battle_WaitMode0(5);
         Map_CopyCellsTo(7, 2, 5, 11, 1, 1);
         Audio_PlayCue(217);
@@ -404,7 +404,7 @@ void FieldScene_RunScene39cSequenceA(void)
         GameFlag_Clear(0x256);
         Actor_Get(0)->y.fixed += 0x20000;
         actor = Actor_Get(0);
-        FIELD_AT_OFFSET(actor, s32, 0x3c) = Actor_Get(0)->y.fixed;
+        actor->target_y = Actor_Get(0)->y.fixed;
         Battle_WaitMode0(5);
         Map_CopyCellsTo(8, 29, 10, 23, 1, 1);
         Audio_PlayCue(217);

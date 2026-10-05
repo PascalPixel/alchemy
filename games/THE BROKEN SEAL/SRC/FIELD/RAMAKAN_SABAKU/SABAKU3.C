@@ -181,7 +181,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
         Engine_ObjectCommitPosition(actor);
         do {
             Engine_TaskWait(1);
-        } while (actor->y.fixed != *(s32 *)((u8 *)actor + 20));
+        } while (actor->y.fixed != actor->terrain_height);
         Object_SetMode(actor, 6);
         Engine_TaskWait(3);
         return;

@@ -158,8 +158,8 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
     Engine_EventWait(30);
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     actor->motion_flags = 2;
-    *(s32 *)((u8 *)actor + 20) = -0xa00000;
-    *(s32 *)((u8 *)actor + 72) = 0x8000;
+    actor->terrain_height = -0xa00000;
+    actor->gravity = 0x8000;
     Engine_AudioPlayCue(204);
     Engine_EventWait(3);
     actor->terrain_id = 2;
@@ -589,8 +589,8 @@ s32 ToretoHeya_EnterRoom(void)
         Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
         actor->motion_flags = 2;
         actor->y.fixed = 0x640000;
-        *(s32 *)((u8 *)actor + 20) = -0xa00000;
-        *(s32 *)((u8 *)actor + 72) = 0x8000;
+        actor->terrain_height = -0xa00000;
+        actor->gravity = 0x8000;
         Engine_AudioPlayCue(204);
         Event_SetPairWork1c0((s32)&SceneId_ToretoHeya, entrance - 10);
         Engine_EventWait(20);

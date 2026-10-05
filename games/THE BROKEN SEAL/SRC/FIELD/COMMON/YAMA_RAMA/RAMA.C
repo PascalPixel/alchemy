@@ -164,7 +164,7 @@ void FieldScene_RunPrimaryScript(void)
 {
     Audio_PlayCue(188);
     Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
-    *(u8 *)((void *)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->motion_flags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -545,8 +545,8 @@ void Scene_RunActorSequence(void)
     Engine_EventWait(20);
     mask = 254;
     Event_ShowMessageAndWait(8, 0, 20);
-    *(u8 *)((void *)Object_GetById(8) + 90) &= mask;
-    *(u8 *)((void *)Object_GetById(10) + 90) &= mask;
+    Object_GetById(8)->steering_flags &= mask;
+    Object_GetById(10)->steering_flags &= mask;
     Actor_SetSpeed(8, 0x3333, 0x1999);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Engine_ActorSetAnimation(8, 5);

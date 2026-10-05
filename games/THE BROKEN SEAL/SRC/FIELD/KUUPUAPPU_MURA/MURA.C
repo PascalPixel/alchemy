@@ -637,7 +637,7 @@ void ActorPresentation_RunActorNineteenScriptBranch(void)
 {
     void Engine_EventWait(int);
 
-    u8 *actor = Object_GetById(19); actor[91] = 1; Engine_EventBegin();
+    struct FieldActor *actor = Object_GetById(19); actor->paused = 1; Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuStealingInMidstVolcanicEruption); Engine_ActorSetAnimation(19, 0); Engine_EventWait(2);
     } else if (Engine_GameFlagIsSet(0x858) != 0) {
@@ -645,7 +645,7 @@ void ActorPresentation_RunActorNineteenScriptBranch(void)
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuIfBringMeBoneIll);
     }
-    Engine_EventShowMessage(19, 0); Engine_EventEnd(); actor[91] = 0;
+    Engine_EventShowMessage(19, 0); Engine_EventEnd(); actor->paused = 0;
 }
 
 void SceneDialogue_RunActor21Line(void) { Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuSneakWastingTime); SceneActor_RunActorCommandWithFlag91(21); Engine_EventEnd(); }

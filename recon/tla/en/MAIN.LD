@@ -1721,7 +1721,7 @@
         "*/recon/tla/raw/080fd8a0.o"(.text)
         "*/recon/tla/raw/080fd968.o"(.text)
         "*/recon/tla/raw/080fdad4.o"(.text)
-        "*/games/THE LOST AGE/SRC/MENU/ABILITY/ABILITY3.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/ABILITY/RESTRICT.o"(.text)
         "*/recon/tla/raw/080fe184.o"(.text)
         "*/recon/tla/raw/080fe240.o"(.text)
         "*/recon/tla/raw/080fe274.o"(.text)

@@ -1045,7 +1045,7 @@
     "*/games/THE LOST AGE/SRC/MENU/ITEM/WINDOW.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00101eb8)
     "*/recon/tla/es/rom.o"(.rom.00102b3c)
-    "*/games/THE LOST AGE/SRC/MENU/ABILITY/ABILITY3.o"(.text)
+    "*/games/THE LOST AGE/SRC/MENU/ABILITY/RESTRICT.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.001042b8)
     "*/recon/tla/es/rom.o"(.rom.001043a8)
     "*/games/THE LOST AGE/SRC/MENU/MENU8.o"(.text)

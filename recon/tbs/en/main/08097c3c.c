@@ -1,4 +1,13 @@
-/* 2026-10-04 third wave, finisher 2 (still 115): CSE's skip-block path
+/* 2026-10-05 fifth wave, finisher 3 (still 115): the native reloads source
+ * from [sp+20] into r2 and r3 for the two cell loads, which reload does
+ * when the mask's load took r2 between them in the pre-sched2 order, not
+ * only after a label. Cell tests through an inline same-cell helper (on
+ * the objects 192, on the cell values 343, early-return form 354) build
+ * booleans and are far worse. A 600-iteration device search (seed 53)
+ * reached 90 only with eleven devices (two pins, six barriers, three "+r"
+ * lifetimes, two moved stores), so nothing is kept.
+ *
+ * 2026-10-04 third wave, finisher 2 (still 115): CSE's skip-block path
  * carries the first test's mask into the nearby test. A volatile asm with
  * an empty operand list before the nearby test flushes CSE's table, and a
  * mask local with __asm__("" : "+r"(mask)) at the same point does the same

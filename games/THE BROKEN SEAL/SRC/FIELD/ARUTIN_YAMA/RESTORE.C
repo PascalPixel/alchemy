@@ -38,7 +38,7 @@ extern s32 ArutinYama_RollRadii[];
 
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void ResourceMetadata_Register(struct FieldSprite *sprite, s32 mode);
-void SceneState_SetRecordWord102AndPlayCue288();
+void ArutinYama_SetRollingStateAndPlayCue();
 void ArutinYama_TurnRollingObjectA(struct FieldActor *object);
 void ArutinYama_TurnRollingObjectB(struct FieldActor *object);
 void ArutinYama_SettleAndMountLeader(struct FieldActor *object);
@@ -998,7 +998,7 @@ void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
 }
 
 /* Set the actor's field at +102, then play cue 288. */
-void SceneState_SetRecordWord102AndPlayCue288(u16 *record)
+void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
 {
     record = (u16 *)((char *)record + 102);
     {
@@ -1114,7 +1114,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
             ArutinYama_TurnRollingObjectB(object);
             break;
         case 96:
-            SceneState_SetRecordWord102AndPlayCue288(object);
+            ArutinYama_SetRollingStateAndPlayCue(object);
             break;
         case 99:
             goto arrived;

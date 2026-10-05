@@ -3,7 +3,7 @@
 /*
  * Draft, not exact.
  *
- * 2026-10-05 deep finisher 20: alchemy diff 969 -> 155 (1605 listing
+ * 2026-10-05 deep finisher 20: alchemy diff 969 -> 143 (1605 listing
  * instructions, 1600 here).
  *   - The blitter routines are read as gWorkSlot[46] and [47] from
  *     HEAP_STATE.H, so the slot address is formed as gWorkSlot + 184 the
@@ -37,11 +37,12 @@
  *     native does, its ldrsh scratch has to take r7, r7 joins reload's
  *     spill registers, and the round-robin reload choices all over the
  *     function line up with the native: 155.
+ *   - shots * stagger in total and i * shots + j for the shot index in
+ *     both loops, the operand orders the native multiplies in: 143.
  * Remaining: the side test arms (above); the spill slots of the frame
  * loop hoists (camera + 12 at sp+48 in the native, sp+44 here, and the
  * shot loop offsets at 44/40/36); the mode 11 and 6 sheet loads (the
- * native keeps their argument setup apart); and the operand order of
- * total.
+ * native keeps their argument setup apart).
  */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -250,9 +251,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
         for (i = 0; i != 1024; i++)
             gMotes[i].variant = 0;
         if (mode == 6)
-            total = work->effect->count * delay + stagger * shots + 32;
+            total = work->effect->count * delay + shots * stagger + 32;
         else
-            total = work->effect->count * delay + stagger * shots + 16;
+            total = work->effect->count * delay + shots * stagger + 16;
 
         for (frame = 0; frame != total; frame++) {
             s32 index;
@@ -295,7 +296,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 
                 for (j = 0; j != shots; j++) {
                     if (j * stagger + i * delay < frame) {
-                        struct EffectStep *shot = &work->particles[shots * i + j];
+                        struct EffectStep *shot = &work->particles[i * shots + j];
                         struct EffectPosition *pos = &position;
 
                         EffectPosition_ApplyBaseAndYOffset((s32 *)shot, pos);

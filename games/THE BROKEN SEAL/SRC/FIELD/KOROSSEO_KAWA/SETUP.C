@@ -19,7 +19,7 @@ extern u16 Korosseo_MarkerStartX;
 extern u16 Korosseo_MarkerStartY;
 extern u16 Korosseo_MarkerStep;
 void Korosseo_UpdateMarker(void);
-void SceneState_InitHalfwordC6a6Once(void);
+void KorosseoKawa_EnsureMarkerSlot(void);
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -84,7 +84,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 /* Place the marker at x, y with a priority and start its task. */
 void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 {
-    SceneState_InitHalfwordC6a6Once();
+    KorosseoKawa_EnsureMarkerSlot();
 
     Korosseo_MarkerX = (u16)x;
     Korosseo_MarkerY = (u16)y;

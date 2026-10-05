@@ -80,7 +80,7 @@ void OverlayObject_ResetMotionFields(s32 actor)
     o->target_z = ACTOR_NO_TARGET;
 }
 
-void SceneState_InitHalfwordC6a6Once(void)
+void KorosseoKawa_EnsureMarkerSlot(void)
 {
 
     if (Korosseo_MarkerSlot == -1) {

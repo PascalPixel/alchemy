@@ -45,7 +45,7 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * into the 8bpp map cells at 0x02010000, 33 sheet pieces fly apart until
  * frame 50, and from frame 53 the flash burst cells scatter.
  *
- * Score: 167 (alchemy diff, listing 1051, draft 1052, common 968). The old
+ * Score: 173 (alchemy diff, listing 1051, draft 1052, common 965). The old
  * m2c draft scored 1312; the wave before last rewrote it as plain C (246).
  *
  * What moved it, in order (each measured against the previous):
@@ -101,6 +101,12 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  *         (885)
  *    167  the second octant keeps its unclamped x1 in its own left2 (native:
  *         lr for the first octant, r10 for the second)
+ *    173  IO_WRITE_QUEUE_PUSH closes a second one-pass block after the IME
+ *         restore (IO_WRITE_QUEUE.H; PRESENT7.C and PRESENT9.C still match).
+ *         All three pushes and the stores and fill call after them now match
+ *         the native exactly (it restores IME before loading their operands);
+ *         the loop depth it adds moves allocation elsewhere, so the total
+ *         rose by 6. Wrapping only the second push scored 163.
  *
  * Tried and worse: gMapCellBuffer[...] for the ring (1043 vs 910),
  * cells/map locals for 0x7800 and the buffer (the copies rematerialise but
@@ -109,7 +115,10 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * (best 226 with x loaded first; with temporaries the x chain wins r3),
  * goal = target[i] or battle->palette[i] (the giv increments at the loop end,
  * not after the load: 172-610), target pinned to r9 (599), every order of
- * the octant setup statements (167 at best),
+ * the octant setup statements (167 at best), u16/u32/s16 colour and goal
+ * fields in the fade (190+), hybrid temporary/piece-> forms of the particle
+ * loop in every order (173 at best), a whole-macro do { } while (0) (blocks
+ * the queue literal load from rising above the previous store: 175),
  * 96 - px + 1 (folds to 97 - px), shared left/left2 split (274 = same),
  * level shared across loops, piece++ pointer walks in the draw/scatter loops,
  * indexed start tables (eliminates the counter), indexed BG_PLTT for the fade,
@@ -128,8 +137,9 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  *  - Ring: reload picks round-robin spill registers, so the y1 = 60 - py
  *    inputs (native r5/r7) and the base reloads follow from every reload
  *    before them; the shape of each plot now matches.
- *  - After each IME restore the native stores first; the draft hoists the
- *    two pool loads above the store (priority 146 vs 144).
+ *  - Fade colour fields: the native ties color << 16 to color (red's AND
+ *    comes first), leaving r2 for green; here the shift gets its own
+ *    register, so green and goal_green swap r2/r4.
  */
 void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect)
 {

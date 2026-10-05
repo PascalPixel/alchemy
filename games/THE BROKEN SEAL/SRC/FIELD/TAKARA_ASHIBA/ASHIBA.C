@@ -105,11 +105,11 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 void Scheduler_RemoveCallbackFar();
 void TakaraAshiba_DispatchByActorEightColumn();
-void SceneState_ApplyFourRectsAndSetActor8Byte85(void);
+void TakaraAshiba_RestoreActorEightTerrain(void);
 void SceneActor_PassActorNinePositionWithId107(void);
 
-void SceneState_ApplyRectAndClearSlotTenByte85(void);
-void SceneState_ApplyRectAndClearActor10Byte85(void);
+void TakaraAshiba_RestoreActorTenLeftCell(void);
+void TakaraAshiba_RestoreActorTenRightCell(void);
 void SceneState_ApplyTwoRectsAtRow56(void);
 
 void TakaraAshiba_UpdateBlockRects(void);
@@ -444,7 +444,7 @@ void FieldScene_RunIndexedStep1(void)
     SceneState_SetSelectorFlagWhenFacingC000(1);
 }
 
-void SceneState_ResetCounter412OnHeading4000B(void)
+void TakaraAshiba_ResetBlockedStepsForSelectorTwo(void)
 {
     struct FieldActor *slot;
     s16 *cnt;
@@ -462,7 +462,7 @@ void SceneState_ResetCounter412OnHeading4000B(void)
     }
 }
 
-void SceneState_ResetCounter412OnHeading4000(void)
+void TakaraAshiba_ResetBlockedStepsForSelectorThree(void)
 {
     struct FieldActor *p;
     s16 *cnt;
@@ -870,7 +870,7 @@ void SceneState_BranchOnActorZeroFacing(void)
     }
 }
 
-void SceneState_ApplyFourRectsAndSetActor8Byte85(void)
+void TakaraAshiba_RestoreActorEightTerrain(void)
 {
     Engine_MapCopyCellAttributes(57, 42, 1, 1, 40, 42);
     Engine_MapCopyCellAttributes(57, 42, 1, 1, 41, 42);
@@ -888,7 +888,7 @@ void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
     Object_GetById(8)->priority_flags = 2;
 }
 
-void SceneState_ApplyRectAndSetActor8Byte35(void)
+void TakaraAshiba_RestoreRightUnderfootCell(void)
 {
     s32 w = 41;
     s32 h = 42;
@@ -897,7 +897,7 @@ void SceneState_ApplyRectAndSetActor8Byte35(void)
     Object_GetById(8)->priority_flags = 2;
 }
 
-void SceneState_ApplyRectAndSetSlotEightByte35(void)
+void TakaraAshiba_RestoreLeftUnderfootCell(void)
 {
     s32 width = 40;
     s32 height = 42;
@@ -921,15 +921,15 @@ void TakaraAshiba_DispatchByActorEightColumn(void)
     if (height == 0) {
         Object_GetById(8)->priority_flags = 2;
     }
-    SceneState_ApplyFourRectsAndSetActor8Byte85();
+    TakaraAshiba_RestoreActorEightTerrain();
     lowered = 0;
     Object_GetById(8)->motion_flags = 3;
     if (column == 40) {
-        SceneState_ApplyRectAndSetSlotEightByte35();
+        TakaraAshiba_RestoreLeftUnderfootCell();
     } else if (column == 42) {
         ActorPresentation_SetSceneCell58AndMarkActorEight();
     } else if (column == 41) {
-        SceneState_ApplyRectAndSetActor8Byte35();
+        TakaraAshiba_RestoreRightUnderfootCell();
     } else if (column == 39) {
         LiftBlock(column, lowered);
     } else if (column == 38) {
@@ -960,7 +960,7 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
         }
     }
 
-    SceneState_ApplyFourRectsAndSetActor8Byte85();
+    TakaraAshiba_RestoreActorEightTerrain();
     StagedActor_AdvancePair();
     TakaraAshiba_DispatchByActorEightColumn();
 }
@@ -1006,7 +1006,7 @@ void SceneState_ApplyTwoRectsAtRow56(void)
     Engine_MapCopyCellAttributes(42, 56, 1, 1, 42, base);
 }
 
-void SceneState_ApplyRectAndClearSlotTenByte85(void)
+void TakaraAshiba_RestoreActorTenLeftCell(void)
 {
     s32 width = 38;
     s32 height = 55;
@@ -1015,7 +1015,7 @@ void SceneState_ApplyRectAndClearSlotTenByte85(void)
     Object_GetById(10)->motion_flags = 0;
 }
 
-void SceneState_ApplyRectAndClearActor10Byte85(void)
+void TakaraAshiba_RestoreActorTenRightCell(void)
 {
     s32 w = 42;
     s32 h = 55;
@@ -1035,15 +1035,15 @@ void TakaraAshiba_UpdateBlockRects(void)
     s32 z = block->z.fixed / 0x100000;
 
     if (!Value1(Engine_GameFlagIsSet, 0x300) && y <= 2) {
-        SceneState_ApplyRectAndClearSlotTenByte85();
+        TakaraAshiba_RestoreActorTenLeftCell();
         Engine_GameFlagSet(0x300);
     }
     if (z == 55) {
         if (x == 42) {
-            SceneState_ApplyRectAndClearActor10Byte85();
+            TakaraAshiba_RestoreActorTenRightCell();
         }
         if (x == 38) {
-            SceneState_ApplyRectAndClearSlotTenByte85();
+            TakaraAshiba_RestoreActorTenLeftCell();
         }
     } else {
         SceneState_ApplyTwoRectsAtRow56();

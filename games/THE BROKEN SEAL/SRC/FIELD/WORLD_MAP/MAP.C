@@ -145,7 +145,7 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
         s32 zero_value = 0;
 
         *flags = zero_value;
-        ((StorySpawnRecord *)spawned_actor->sprite)->field = 1;
+        ((struct FieldSpritePriority *)spawned_actor->sprite)->priority = 1;
         Engine_ActorSetSpriteFlags(spawned_actor, 0);
         Object_SetMode(spawned_actor, 1);
         spawned_actor->unknown_64 = zero_value;

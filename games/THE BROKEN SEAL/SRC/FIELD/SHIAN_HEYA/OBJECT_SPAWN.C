@@ -3,70 +3,47 @@
 #include "FIELD_SCENE.H"
 
 /*
- * The Xian room's object helpers: set an entry sprite's two-bit field, and
+ * The Xian room's object helpers: set an object's sprite priority, and
  * create an object with its sprite flags, palette and blend configured.
  */
 
 #define NULL ((void *)0)
 
-typedef struct {
-    u8 pad[9];
-    u8 lo:2;
-    u8 field:2;
-    u8 hi:4;
-} EntrySprite;
-
-void OverlayObject_SetEntryField(void *arg0, s32 arg1)
+void OverlayObject_SetEntryField(struct FieldActor *object, s32 priority)
 {
-    EntrySprite *obj = *(EntrySprite **)((u8 *)arg0 + 0x50);
+    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)object->sprite;
 
-    obj->field = arg1;
+    sprite->priority = priority;
 }
 
-void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type)
 {
+    struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
-    u8 *ret = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
-
-    if (ret != NULL) {
-        u8 *obj = *(u8 **)(ret + 0x50);
-        s32 flags;
-        s32 mask = 13;
-
-        flags = obj[9];
-        mask = -mask;
-        mask &= flags;
-        obj[9] = mask;
-        ret[0x55] = 0;
-        ret[0x59] = 8;
-        Engine_ActorSetSpriteFlags(ret, 0);
-        ObjectGroup_SetChildValue(ret, 14);
-        Engine_ObjectSetBlendMode(ret, 1);
-        return ret;
+    if (object != NULL) {
+        ((struct FieldSpritePriority *)object->sprite)->priority = 0;
+        object->motion_flags = 0;
+        object->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(object, 0);
+        ObjectGroup_SetChildValue(object, 14);
+        Engine_ObjectSetBlendMode(object, 1);
+        return object;
     }
     return NULL;
 }
 
-void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type)
 {
-    u8 *ret = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
+    struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
-    if (ret != NULL) {
-        u8 *obj = *(u8 **)(ret + 0x50);
-        s32 flags;
-        s32 mask = 13;
-
-        flags = obj[9];
-        mask = -mask;
-        mask &= flags;
-        mask |= 4;
-        obj[9] = mask;
-        ret[0x55] = 0;
-        ret[0x59] = 8;
-        Engine_ActorSetSpriteFlags(ret, 0);
-        ObjectGroup_SetChildValue(ret, 15);
-        ret[0x23] = (ret[0x23] & 0xfe) | 2;
-        return ret;
+    if (object != NULL) {
+        ((struct FieldSpritePriority *)object->sprite)->priority = 1;
+        object->motion_flags = 0;
+        object->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(object, 0);
+        ObjectGroup_SetChildValue(object, 15);
+        object->priority_flags = (object->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
+        return object;
     }
     return NULL;
 }

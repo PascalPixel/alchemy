@@ -79,7 +79,7 @@ extern const u16 MakyuriHeya_FloorSwitchCells[];
 
 /* Engine imports called with the arities these scenes pass. */
 void Vector_AddPolarOffset(s32, s32, s32 *);
-void AnimationObjects_SelectAnimation(u8 *rec, s32 arg1);
+void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 void BattleFx_SetPhaseRequest(s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 void BattleFx_PlayQueuedSound();
@@ -153,8 +153,8 @@ void MakyuriHeya_CastPsynergyAtActor11(void);
 void SceneState_SetRecordTableValue(s32, s32);
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
 s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work);
-s32 SceneEffect_AdvanceScaleOverSixteenFrames(u8 *o);
-s32 OverlayObject_StepScaleUpSixteenFrames(u8 *o);
+s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o);
+s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o);
 void SceneState_ClearCurrentRecordAndReleaseTarget();
 void OverlayObject_ReleasePublishedAttachmentB(void);
 

@@ -8,15 +8,6 @@
 
 #define NULL ((void *)0)
 
-/* A sprite's priority bits, read and written through the byte that holds
-   them. */
-struct SpritePriorityByte {
-    u8 unknown_00[9];
-    u8 tile_high : 2;
-    u8 priority : 2;
-    u8 palette : 4;
-};
-
 extern const struct SceneEntrance gMakyuriChojoEntrances[];
 extern const u32 gMakyuriChojoExits[];
 extern const struct ScenePlacement gMakyuriChojoPlacements[];

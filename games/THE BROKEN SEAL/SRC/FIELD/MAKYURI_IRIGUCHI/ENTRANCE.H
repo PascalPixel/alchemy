@@ -91,10 +91,10 @@ void FieldScene_RunActor8StepWithTableA820(void);
 void MakyuriIriguchi_SendActor8ByLeaderColumn(void);
 void MakyuriIriguchi_ArriveWithSparks(void);
 void MakyuriIriguchi_RunDoorScene(void);
-void OverlayObject_SpawnKind24AtObject(u8 *src);
+void OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
 s32 SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work);
-s32 OverlayObject_RampWords24And28Over16Frames(u8 *obj);
-s32 OverlayObject_AdvanceScaleCounter(u8 *o);
+s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o);
+s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o);
 void OverlayObject_ReleasePublishedAttachment(void);
 void MakyuriIriguchi_CrossDoorway(void);
 

@@ -7,9 +7,9 @@
 
 void SetOverlayObjectRecordField1(struct OverlayObject *object, s32 priority)
 {
-    struct SpritePriorityByte *sprite;
+    struct FieldSpritePriority *sprite;
 
-    sprite = (struct SpritePriorityByte *)object->record;
+    sprite = (struct FieldSpritePriority *)object->record;
     sprite->priority = priority;
 }
 
@@ -21,7 +21,7 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 type)
 
     object = CreateOverlayObject(type, x, y, z);
     if (object != NULL) {
-        ((struct SpritePriorityByte *)object->sprite)->priority = 0;
+        ((struct FieldSpritePriority *)object->sprite)->priority = 0;
         object->motion_flags = 0;
         object->collision_flags = 8;
         SetOverlayObjectMode(object, 0);

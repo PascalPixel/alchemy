@@ -47,13 +47,6 @@ typedef struct {
     s32 v[6];
 } PlacementResult;
 
-typedef struct {
-    u8 pad[9];
-    u8 low : 2;
-    u8 mode : 2;
-    u8 rest : 4;
-} Handle;
-
 extern u8 gCell[][2];
 extern s32 TakaraHashira_ShakeChance;
 

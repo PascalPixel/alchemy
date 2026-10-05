@@ -46,5 +46,16 @@ LAYOUT_OFFSET_GUARD(FieldSprite_VramBlock, struct FieldSprite, vram_block, 0x1c)
 LAYOUT_OFFSET_GUARD(FieldSprite_Rotation, struct FieldSprite, rotation, 0x1e);
 LAYOUT_OFFSET_GUARD(FieldSprite_PartCount, struct FieldSprite, part_count, 0x27);
 
+/*
+ * The sprite's priority as scripts change it: through the byte of the third
+ * attribute word that holds it, leaving the tile and palette alone.
+ */
+struct FieldSpritePriority {
+    u8 unknown_00[9];
+    u8 tile_high : 2;
+    u8 priority : 2;
+    u8 palette : 4;
+};
+
 
 #endif

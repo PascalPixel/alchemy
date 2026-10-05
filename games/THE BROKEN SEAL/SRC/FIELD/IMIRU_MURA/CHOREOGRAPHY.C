@@ -226,7 +226,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_ActorWalkTo(0, 0x2b2, 200);
 
     /* Clear the byte at offset 85 of the returned record. */
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
     work = gEventWork;

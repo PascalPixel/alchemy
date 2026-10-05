@@ -4,6 +4,7 @@
 
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 
@@ -16,10 +17,10 @@ struct SpritePriorityByte {
     u8 palette : 4;
 };
 
-extern u8 MakyuriChojo_ScriptTable[];
-extern u8 MakyuriChojo_MessageTable[];
-extern u8 MakyuriChojo_ActorTable[];
-extern u8 MakyuriChojo_EventTable[];
+extern const struct SceneEntrance gMakyuriChojoEntrances[];
+extern const u32 gMakyuriChojoExits[];
+extern const struct ScenePlacement gMakyuriChojoPlacements[];
+extern const struct SceneEvent gMakyuriChojoEvents[];
 
 /* The pillar the leader last stepped onto. */
 extern s32 MakyuriChojo_NearestActor;

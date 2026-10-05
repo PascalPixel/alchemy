@@ -43,36 +43,36 @@ struct ActorTable {
 
 void MakyuriChojo_CollectBandSlots();
 
-void *SceneData_GetTableB938(void)
+const struct SceneEntrance *Scene_GetEntrances(void)
 {
-    return MakyuriChojo_ScriptTable;
+    return gMakyuriChojoEntrances;
 }
 
-s32 get_runtime_default_result(void)
+const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
 }
 
-void *SceneData_GetTableb9c8(void)
+const u32 *Scene_GetExits(void)
 {
-    return MakyuriChojo_MessageTable;
+    return gMakyuriChojoExits;
 }
 
-void *SceneData_GetTableB9d4AfterStateCheck(void)
+const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.entrance != 1) {
         Engine_GameFlagSet(0x253);
     }
-    return MakyuriChojo_ActorTable;
+    return gMakyuriChojoPlacements;
 }
 
-void *SceneData_GetTablebbe4(void)
+const struct SceneEvent *Scene_GetEvents(void)
 {
-    return MakyuriChojo_EventTable;
+    return gMakyuriChojoEvents;
 }
 
 /* Mercury Lighthouse aerie entry: set the entrance selector and, in the aerie's first scene, raise the sprite priorities, lift actors 14-19 and set up the scene for the entrance. */
-s32 MakyuriChojo_ApplyEntryState(void)
+s32 Scene_Initialize(void)
 {
     u32 i;
     s32 actor;

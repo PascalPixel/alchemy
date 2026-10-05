@@ -95,11 +95,12 @@ struct StagedVerticalEffect {
     s32 *f68;
 };
 
-extern unsigned char Data_0200e3d4[];
-extern unsigned char Data_0200e464[];
-extern unsigned char Data_0200e478[];
-extern unsigned char Data_0200e6ec[];
-extern Spr *Data_0200e6e8;
+extern const struct SceneEntrance gVinasuChojoEntrances[];
+extern const u32 gVinasuChojoExits[];
+extern const struct ScenePlacement gVinasuChojoPlacements[];
+extern const struct SceneEvent gVinasuChojoEvents[];
+/* The pillar the leader last stepped onto. */
+extern s32 VinasuChojo_NearestActor;
 
 s32 Math_RemainderUnsigned(s32, s32);
 void OverlayObject_SetValue1(void *, s32);

@@ -106,33 +106,33 @@ struct WorldMapOam {
 
 void VinasuChojo_FaceActor(s32 actor, s32 facing);
 
-s32 OverlayObject_StepScaleByCounter(Spr *s)
+s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
 {
-    s16 *p = (s16 *)((u8 *)s + 100);
+    s16 *counter = (s16 *)&actor->unknown_64;
 
-    switch (*p) {
+    switch (*counter) {
     case 6:
-        s->unk18 += -0x2000;
-        s->unk1c += 0x1000;
+        actor->scale_x += -0x2000;
+        actor->scale_y += 0x1000;
         break;
     case 4:
-        s->unk18 += 0x1000;
-        s->unk1c += -0x800;
+        actor->scale_x += 0x1000;
+        actor->scale_y += -0x800;
         break;
     case 2:
-        s->unk18 += 0x800;
-        s->unk1c += -0x400;
+        actor->scale_x += 0x800;
+        actor->scale_y += -0x400;
         break;
     case 0:
-        s->unk18 += 0x800;
-        s->unk1c += -0x400;
-        *p = Math_RemainderUnsigned(Engine_RandomNext(), 80) + 80;
+        actor->scale_x += 0x800;
+        actor->scale_y += -0x400;
+        *counter = Math_RemainderUnsigned(Engine_RandomNext(), 80) + 80;
         break;
     }
     {
-        s32 t = s->unk64;
+        s32 t = actor->unknown_64;
         t = t - 1;
-        s->unk64 = t;
+        actor->unknown_64 = t;
     }
     return 1;
 }
@@ -157,29 +157,29 @@ void Effect_MoveWithDrag(union FieldObject *object)
     object->effect.sprite->rotation += object->effect.spin;
 }
 
-void OverlayObject_DecayRecordField1e(Spr_02000400 *s)
+void OverlayObject_DecayRecordField1e(struct FieldActor *actor)
 {
-    Obj_02000400 *o = s->obj;
-    u16 h = o->unk1e;
+    struct FieldSprite *sprite = actor->sprite;
+    u16 rotation = sprite->rotation;
 
-    if ((s32)((h + 0xffff) << 16) < 0) {
+    if ((s32)((rotation + 0xffff) << 16) < 0) {
         {
-            s32 t = h + (s32)0xfffff600;
-            o->unk1e = t;
+            s32 t = rotation - 0xa00;
+            sprite->rotation = t;
         }
     }
 }
 
-s32 OverlayObject_UpdateHeadingTimer(Spr_02000424 *s)
+s32 OverlayObject_UpdateHeadingTimer(struct FieldActor *actor)
 {
-    u16 *q = (u16 *)((u8 *)s + 0x66);
+    u16 *q = &actor->unknown_66;
     s32 c = *q;
     s16 v = *(s16 *)q;
 
     if (v == 0) {
         {
             s32 t = ((u32)(Engine_RandomNext() << 15)) >> 16;
-            s->unk06 = s->unk06 + t;
+            actor->facing = actor->facing + t;
         }
         {
             s32 n = ((u32)(Engine_RandomNext() * 80)) >> 16;
@@ -196,24 +196,24 @@ out:
 }
 
 /* Contiguous unnamed leaf-owner run for resource_3c9. */
-s32 SceneData_GetTablee3d4(void)
+const struct SceneEntrance *Scene_GetEntrances(void)
 {
-    return (s32)Data_0200e3d4;
+    return gVinasuChojoEntrances;
 }
 
-s32 SceneData_ReturnZero(void)
+const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
 }
 
-s32 SceneData_GetTablee464(void)
+const u32 *Scene_GetExits(void)
 {
-    return (s32)Data_0200e464;
+    return gVinasuChojoExits;
 }
 
-s32 SceneData_GetTablee478(void)
+const struct ScenePlacement *Scene_GetPlacements(void)
 {
-    return (s32)Data_0200e478;
+    return gVinasuChojoPlacements;
 }
 
 s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
@@ -230,22 +230,22 @@ s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
 
 s32 SceneActor_FindNearestSlotOfKindF2(void)
 {
-    u8 *work = *(u8 **)&gEventWork;
-    Spr_020004bc **p;
+    struct EventWork *work = gEventWork;
+    struct FieldActor **p;
     s32 best = 0;
-    Spr_020004bc *ref;
+    struct FieldActor *ref;
     s32 limit;
     u32 i;
 
     limit = 640;
     ref = Object_GetById(ACTOR_PARTY_LEADER);
-    i = 8;
-    p = (Spr_020004bc **)(work + 0x34);
+    i = ACTOR_FIRST_PLACED;
+    p = work->placed_actors;
     do {
-        Spr_020004bc *spr = *p++;
-        if (spr != 0) {
-            if (*spr->obj->unk28 == 0xf2) {
-                s32 dist = MeasureFixedPointPositionDistance((u8 *)ref + 8, (u8 *)spr + 8);
+        struct FieldActor *actor = *p++;
+        if (actor != 0) {
+            if (*((Spr_020004bc *)actor)->obj->unk28 == 0xf2) {
+                s32 dist = MeasureFixedPointPositionDistance(&ref->x.fixed, &actor->x.fixed);
                 if (dist < limit) {
                     limit = dist;
                     best = i;
@@ -259,17 +259,17 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
 
 void InitializeActorZeroMotion(void)
 {
-    struct SceneActor *actor;
+    struct FieldActor *actor;
     s32 position[3];
     s32 angle;
     u8 flags;
 
     actor = Object_GetById(ACTOR_PARTY_LEADER);
-    angle = (actor->angle + 0x1000) & 0xe000;
-    flags = actor->flags55;
-    position[0] = (actor->x & 0xfff00000) + 0x80000;
-    position[1] = actor->y;
-    position[2] = (actor->z & 0xfff00000) + 0x80000;
+    angle = (actor->facing + 0x1000) & 0xe000;
+    flags = actor->motion_flags;
+    position[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
+    position[1] = actor->y.fixed;
+    position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
     Vector_AddPolarOffset(0x200000, angle, position);
     if (Object_CheckMovementCollision(actor, position) == 0) {
         Engine_GameFlagClear(592);
@@ -277,55 +277,54 @@ void InitializeActorZeroMotion(void)
         Object_SetMode(actor, 6);
         Engine_TaskWait(6);
         Object_SetMode(actor, 7);
-        actor->motion30 = 0x30000;
-        actor->motion34 = 0x20000;
+        actor->speed = 0x30000;
+        actor->acceleration = 0x20000;
         Engine_AudioPlayCue(152);
-        actor->motion28 = 0x40000;
-        actor->flags55 &= 0x7e;
+        actor->velocity_y = 0x40000;
+        actor->motion_flags &= 0x7e;
         Engine_ActorSetSpriteFlags(actor, 0);
-        Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, (s16)(position[0] >> 16),
-                         (s16)(position[2] >> 16));
+        Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position[0] >> 16, position[2] >> 16);
         Object_SetMode(actor, 6);
         Engine_ActorSetSpriteFlags(actor, 1);
-        actor->flags55 = flags;
+        actor->motion_flags = flags;
     }
 }
 
 void SceneEffect_SpawnAndBobWithActorZero(void)
 {
-    Spr_020005ec *a = Object_GetById(ACTOR_PARTY_LEADER);
-    Spr_020005ec *b;
-    Spr_020005ec *r;
+    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *pillar;
+    s32 id;
     s32 k;
 
     Engine_EventBegin();
-    r = SceneActor_FindNearestSlotOfKindF2();
-    Data_0200e6e8 = r;
-    if (r != 0) {
+    id = SceneActor_FindNearestSlotOfKindF2();
+    VinasuChojo_NearestActor = id;
+    if (id != 0) {
         Engine_GameFlagSet(592);
-        b = Object_GetById(Data_0200e6e8);
-        b->unk55 = 0;
-        a->unk55 &= 0xfe;
-        b->unk0c += (s32)0xfffd0000;
-        a->unk0c += (s32)0xfffd0000;
-        a->unk14 += (s32)0xfffd0000;
+        pillar = Object_GetById(VinasuChojo_NearestActor);
+        pillar->motion_flags = 0;
+        leader->motion_flags &= 0xfe;
+        pillar->y.fixed += -0x30000;
+        leader->y.fixed += -0x30000;
+        leader->terrain_height += -0x30000;
         Engine_TaskWait(2);
-        b->unk0c += (s32)0xfffe0000;
-        a->unk0c += (s32)0xfffe0000;
-        a->unk14 += (s32)0xfffe0000;
+        pillar->y.fixed += -0x20000;
+        leader->y.fixed += -0x20000;
+        leader->terrain_height += -0x20000;
         Engine_TaskWait(10);
         k = 0x20000;
-        b->unk0c += k;
-        a->unk0c += k;
-        a->unk14 += k;
+        pillar->y.fixed += k;
+        leader->y.fixed += k;
+        leader->terrain_height += k;
         Engine_TaskWait(4);
-        b->unk0c += k;
-        a->unk0c += k;
-        a->unk14 += k;
+        pillar->y.fixed += k;
+        leader->y.fixed += k;
+        leader->terrain_height += k;
         Engine_TaskWait(4);
-        b->unk0c += 0x10000;
-        a->unk0c += 0x10000;
-        a->unk14 += 0x10000;
+        pillar->y.fixed += 0x10000;
+        leader->y.fixed += 0x10000;
+        leader->terrain_height += 0x10000;
     }
     Engine_EventEnd();
 }
@@ -344,12 +343,12 @@ void SceneActor_SetByte55ForActorZeroAnd12To17(void)
     Object_GetById(17)->motion_flags = flags;
 }
 
-s32 SceneData_GetTableE6ec(void)
+const struct SceneEvent *Scene_GetEvents(void)
 {
-    return (s32)Data_0200e6ec;
+    return gVinasuChojoEvents;
 }
 
-s32 FieldScene_InitActorsAndDispatchBySubstate(void)
+s32 Scene_Initialize(void)
 {
     s32 v;
     u32 i;

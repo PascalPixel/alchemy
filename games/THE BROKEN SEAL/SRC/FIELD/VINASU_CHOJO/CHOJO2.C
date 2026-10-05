@@ -42,7 +42,7 @@ void SceneEffect_SpawnParticlesBesideActor(void);
 extern u8 MsgVinasuDespiteLongTiring[];
 extern u8 MsgVinasuWhyHappeningProtectVenusLighthouse[];
 
-void OverlayObject_DecayRecordField1e(u8 *);
+void OverlayObject_DecayRecordField1e(struct FieldActor *actor);
 extern u8 VinasuChojo_StepBackAction[];
 extern u8 VinasuChojo_LeapAction[];
 extern u8 VinasuChojo_ScaleStepAction[];

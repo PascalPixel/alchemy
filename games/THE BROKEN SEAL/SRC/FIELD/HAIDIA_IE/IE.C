@@ -72,7 +72,7 @@ u8 *SceneData_GetTableAfa0(void)
     return Data_0200afa0;
 }
 
-s32 Func_02000090(void)
+s32 HaidiaIe_GetDefaultResult(void)
 {
     return 0;
 }

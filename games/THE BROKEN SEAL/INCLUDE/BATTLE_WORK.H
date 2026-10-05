@@ -100,9 +100,11 @@ struct BattleSession {
     u8 unknown_652[2];
     struct BattlePlan plan;        /* 0x654 */
     struct BattleEventState events; /* 0x6b8 */
+    /* What the debug key adjuster raises and lowers. */
+    s32 debug_value;                /* 0x828 */
 };
 
-LAYOUT_SIZE_GUARD(BattleSession_Size, struct BattleSession, 0x828);
+LAYOUT_SIZE_GUARD(BattleSession_Size, struct BattleSession, 0x82c);
 
 LAYOUT_OFFSET_GUARD(
     BattleSession_PartyStatusMode,

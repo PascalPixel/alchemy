@@ -128,7 +128,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     volatile u32 fill;
 
     camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-    battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, 0x82c);
+    battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleSession));
     owner_states = Runtime_AllocateBlock(54, 0x7c8);
     transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
     Runtime_AllocateBlock(11, 0x280);
@@ -149,7 +149,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     Render_ResetTransformState();
 
     Dma3Fill(fill, camera, sizeof(struct BattleCamera));
-    Dma3Fill(fill, battle, 0x82c);
+    Dma3Fill(fill, battle, sizeof(struct BattleSession));
     battle->prompt_slot = -1;
     battle->enemy_group = enemy_group;
     display = Runtime_AllocateBlock(37, sizeof(struct BattleDisplayWork));

@@ -247,7 +247,7 @@ extern u8 gColossoParticleKinds[];
 /* The stage's variables after the overlay's image. */
 extern s32 gColossoParticleCount;
 
-/* The stage's per-frame tasks, still in the listing. */
+/* The stage's per-frame tasks. */
 void ColossoLogRollingStage_SceneTask(void);
 void BattleEffect_PauseObject(s32 id);
 void Korosseo_UpdateModeTask(void);

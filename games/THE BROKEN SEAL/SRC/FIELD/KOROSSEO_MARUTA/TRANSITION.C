@@ -37,18 +37,7 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
     Korosseo_ModeTaskPosition = 0;
 }
 
-/*
- * resource_3bc scripted transition owner at 0x02003468, 268 bytes including
- * alignment and its three-word pool.  Mode zero is the short opening; every
- * other mode runs the complete multi-stage transition and publishes flag
- * 0x123 when it closes.
- *
- * Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
- * target at every occurrence, including every repeated Func_0808a010,
- * Audio_PlayCue, Func_02002e54, ColossoLogRollingStage_InitializeModeTask, Func_0808a018/360/370/020
- * call) -- declared/named as the literal per-site targets, not the shared
- * ultimate-destination symbol.
- */
+/* Mode zero runs the short opening; other modes run the full transition and set flag 0x123 when it closes. */
 void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 {
     extern void Korosseo_LoadPortrait(s32 mode);

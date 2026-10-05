@@ -9,7 +9,6 @@ void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 void UiText_DrawQuantity(s32 value, s32 digits);
 void ObjectDispatch_WaitForValue16(struct FieldActor *object);
 
-/* Complete eight-byte state setter plus its sole four-byte pool word. */
 void WriteU32AsHex(u8 *hex_text, u32 value)
 {
     s32 digit_index;
@@ -33,8 +32,7 @@ void ColossoLogRollingStage_NoopSceneHook(void)
 void ColossoLogRollingStage_SetBalanceStateReady(void)
 {
     u16 *state = (u16 *)gSceneState;
-    /* FAKEMATCH: the forced temporary builds 9 with movs; stored directly,
-     * the halfword constant is loaded from the pool. */
+    /* FAKEMATCH: the forced temporary builds 9 with movs; stored directly, the halfword constant is loaded from the pool. */
     u16 ready = 9;
 
     *state = ready;

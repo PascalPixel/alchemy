@@ -4,12 +4,6 @@
 	.global Rom_Start
 Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
-	.section .rom.0000655c, "ax"
-	.global SerialRuntime_StepBlockTransfer
-	.type SerialRuntime_StepBlockTransfer, %function
-	.thumb_func
-SerialRuntime_StepBlockTransfer:
-	.incbin "baserom.gba", 0x0000655c, 0x0000023c
 	.section .rom.00007320, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:

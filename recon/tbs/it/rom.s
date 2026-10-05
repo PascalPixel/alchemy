@@ -7,12 +7,6 @@ Rom_Start:
 	.global Rom_LanguageCode
 Rom_LanguageCode:
 	.incbin "baserom.gba", 0x000000af, 0x00000011
-	.section .rom.0000659c, "ax"
-	.global SerialRuntime_StepBlockTransfer
-	.type SerialRuntime_StepBlockTransfer, %function
-	.thumb_func
-SerialRuntime_StepBlockTransfer:
-	.incbin "baserom.gba", 0x0000659c, 0x0000023c
 	.section .rom.00007360, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:

@@ -92,7 +92,6 @@ SECTIONS
     "*/games/COMMON/SRC/SYSTEM/LINK/SIO_XCHG.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_INTR.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0000655c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_TEST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/CPU_SET.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SOUND_VSYNC_ON.o"(.text .rodata .data .padding)

@@ -423,13 +423,13 @@ s32 FieldScene_RunEntrySetup(void)
     gEventWork->start_transition = 516;
     gEventWork->transition_frames = 24;
 #if EDITION_INTERNATIONAL
-    *(s32 *)(Object_GetById(11) + 28) = 0x19999;
-    *(s32 *)(Object_GetById(11) + 24) = 0x19999;
+    ((struct FieldActor *)Object_GetById(11))->scale_y = 0x19999;
+    ((struct FieldActor *)Object_GetById(11))->scale_x = 0x19999;
     Engine_ActorSetAnimation(13, 5);
     Engine_ActorSetAnimation(14, 2);
 #else
-    *(s32 *)(Object_GetById(11) + 28) = 0x1b333;
-    *(s32 *)(Object_GetById(11) + 24) = 0x1b333;
+    ((struct FieldActor *)Object_GetById(11))->scale_y = 0x1b333;
+    ((struct FieldActor *)Object_GetById(11))->scale_x = 0x1b333;
 #endif
     return 0;
 }

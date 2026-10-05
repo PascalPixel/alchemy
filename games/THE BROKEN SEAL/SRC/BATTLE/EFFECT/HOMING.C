@@ -46,7 +46,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
     void *canvas;
     s32 frame;
     s32 facing;
-    void *sheet;
+    u8 *sheet;
     s32 top;
     struct EffectPosition screen;
     DrawRectangle draw[2];
@@ -64,7 +64,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
         BattleFx_BeginCanvasLayer(1);
     else
         BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
     draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
@@ -123,7 +123,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
                 if (screen.depth > 799)
                     screen.depth = 799;
                 size = 10 - (screen.depth - 160) / 64;
-                draw[frame < start + 48 ? 1 : 0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[frame < start + 48 ? 1 : 0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     screen.x - size / 2, screen.y - size, size, size * 2);
                 ember->x += ember->velocity_x;
                 ember->y += ember->velocity_y;
@@ -166,7 +166,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
                 u32 width;
 
                 cel = ember->variant / 2;
-                draw[1](canvas, (u8 *)work + HomingEmbers_FlareCells[cel],
+                draw[1](canvas, work->sheet + HomingEmbers_FlareCells[cel],
                     ember->x - ((width = HomingEmbers_FlareWidths[cel]) >> 1),
                     ember->y + HomingEmbers_FlareBiasY[cel] - 56,
                     width, HomingEmbers_FlareHeights[cel]);

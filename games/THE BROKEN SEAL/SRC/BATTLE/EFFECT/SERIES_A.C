@@ -134,7 +134,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
         narrow = 1;
     }
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work->sheet, 0, 0);
     if (mode <= 1 || mode == 3 || mode == 4 || mode == 5) {
         if (work->effect->variant == 0)
             palette = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);

@@ -74,7 +74,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
     if (mode == 1) {
         for (i = 0; i != 64; i++) {
             s32 level = i / 2;
@@ -149,7 +149,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
                     screen.depth = 799;
                 size = 9 - (screen.depth - 160) / 64;
                 draw[0](canvas,
-                    (u8 *)work + (ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
+                    work->sheet + (ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
                     screen.x - size / 2, screen.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);
             }
@@ -167,7 +167,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
                         s32 cel = puff->variant / 3;
                         u32 width;
 
-                        draw[0](canvas, (u8 *)work + ParticleField_PuffCells[cel],
+                        draw[0](canvas, work->sheet + ParticleField_PuffCells[cel],
                             screen.x - ((width = ParticleField_PuffSizes[cel]) >> 1),
                             screen.y - (width >> 1), width, width);
                     }

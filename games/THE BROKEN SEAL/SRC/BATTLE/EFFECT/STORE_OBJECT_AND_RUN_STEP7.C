@@ -240,8 +240,8 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(0);
     REG_BG2PA = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet, (u8 *)work + 0x3e80, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet, work->sheet + 0x3e80, 1, 0);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 50;
@@ -292,12 +292,12 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
             if (cell > 6)
                 cell = 6;
             if (work->effect->side == 0) {
-                draw[0](canvas, (u8 *)work + FireSwirl_CellSourceOffsets[cell],
+                draw[0](canvas, work->sheet + FireSwirl_CellSourceOffsets[cell],
                     FireSwirl_CellBiasX[cell] + 30,
                     FireSwirl_CellBiasY[cell] + position.y - 60,
                     FireSwirl_CellWidths[cell], FireSwirl_CellHeights[cell]);
             } else {
-                draw[0](canvas, (u8 *)work + FireSwirl_CellSourceOffsets[cell],
+                draw[0](canvas, work->sheet + FireSwirl_CellSourceOffsets[cell],
                     -FireSwirl_CellBiasX[cell] - FireSwirl_CellWidths[cell] + 108,
                     FireSwirl_CellBiasY[cell] + position.y - 60,
                     FireSwirl_CellWidths[cell], FireSwirl_CellHeights[cell]);
@@ -331,7 +331,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
                     s32 sx = spark->x >> 16;
                     s32 sy = spark->y >> 16;
 
-                    draw[0](canvas, (u8 *)work + 0x3e80 + (((frame + i) / 4 % 6) << 8),
+                    draw[0](canvas, work->sheet + 0x3e80 + (((frame + i) / 4 % 6) << 8),
                         sx - 8, sy - 8, 16, 16);
                 }
             }

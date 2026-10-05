@@ -436,7 +436,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
     Resource_DecodeType01(palette, work);
     palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
     palette += 128;
-    Resource_DecodeType01(palette, (u8 *)work + 0x6e4);
+    Resource_DecodeType01(palette, work->sheet + 0x6e4);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
     work->transfer_mode = 2;
     work->transfer_value = 75;
@@ -536,9 +536,9 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
                 for (k = 0; k != 3; k++) {
                     s32 span = (frame * 16 - 256 + k * 25) % 104;
 
-                    draw[0](canvas, (u8 *)work + 0x6e4, EmberColumns_Columns[k * 2] - 17,
+                    draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
                         EmberColumns_Columns[k * 2 + 1] - span - 104, 34, 104);
-                    draw[0](canvas, (u8 *)work + 0x6e4, EmberColumns_Columns[k * 2] - 17,
+                    draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
                         EmberColumns_Columns[k * 2 + 1] - span, 34, span);
                 }
             }
@@ -604,7 +604,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
         Runtime_ReleaseHeapBlock(46);
         BattleEffect_RunImpactBurst(1, focus.x, focus.y);
         for (k = 0; k != 12; k++)
-            ResourceObject_ReleaseFar((struct ResourceObjectWork *)((void **)((u8 *)work + 0x77d8))[k]);
+            ResourceObject_ReleaseFar((struct ResourceObjectWork *)((void **)(work->sheet + 0x77d8))[k]);
     }
     BattleFx_EndCanvasLayer();
 }

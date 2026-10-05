@@ -465,7 +465,7 @@ void BattleFx_RunMemberOrbit(void *object)
                         slot = frame / 16;
                         ((DrawRectangleFn)rectangle_slot[slot & 1])(
                             canvas,
-                            (u8 *)work + (((frame / 4) - (slot * 4)) << 10),
+                            work->sheet + (((frame / 4) - (slot * 4)) << 10),
                             x - 16, y - 16, 32, 32);
                     }
                 }

@@ -54,7 +54,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
     void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
-    void *sheet;
+    u8 *sheet;
     void *cells;
     DrawRectangleFn rectangle[2];
     struct MotionObject *member_object;
@@ -79,11 +79,11 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
     REG_BLDALPHA = 0x1010;
     sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
     Iwram_CopyWords(BG_PLTT, sheet, 128);
-    sheet = (u8 *)sheet + 128;
+    sheet = sheet + 128;
     Resource_DecodeType01(sheet, work);
     cells = Ram_MapCellBuffer;
     sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
-    sheet = (u8 *)sheet + 128;
+    sheet = sheet + 128;
     Resource_DecodeType01(sheet, cells);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     rectangle[0] = (DrawRectangleFn)heap_cache[7];

@@ -48,7 +48,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
     void *canvas;
     s32 frame;
     s32 pillar;
-    void *sheet;
+    u8 *sheet;
     struct EffectPosition screen;
     DrawRectangle draw[2];
     struct MotionObject *object;
@@ -63,7 +63,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
-    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     /* FAKEMATCH: forwarded through Call3, each palette copy loads its routine
        before it shifts the destination, as the reference does. */
@@ -126,14 +126,14 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
                     draw[pillar & 1](canvas, work, screen.x - 17,
                         screen.y - scroll, 34, scroll);
                     if (frame & 1) {
-                        draw[0](canvas, (u8 *)work + 0xdd0, screen.x - 20,
+                        draw[0](canvas, work->sheet + 0xdd0, screen.x - 20,
                             screen.y - 24, 20, 37);
-                        draw[1](canvas, (u8 *)work + 0xdd0, screen.x,
+                        draw[1](canvas, work->sheet + 0xdd0, screen.x,
                             screen.y - 24, 20, 37);
                     } else {
-                        draw[0](canvas, (u8 *)work + 0x10b4, screen.x - 20,
+                        draw[0](canvas, work->sheet + 0x10b4, screen.x - 20,
                             screen.y - 24, 20, 37);
-                        draw[1](canvas, (u8 *)work + 0x10b4, screen.x,
+                        draw[1](canvas, work->sheet + 0x10b4, screen.x,
                             screen.y - 24, 20, 37);
                     }
                 }
@@ -199,7 +199,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 
                     if (size <= 0)
                         size = 1;
-                    draw[i & 1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         px - size / 2, py - size, size, size * 2);
                 }
             }

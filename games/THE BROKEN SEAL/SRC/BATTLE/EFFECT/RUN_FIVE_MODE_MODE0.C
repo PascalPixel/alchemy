@@ -113,7 +113,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
         BattleEffect_LoadWork(47, 7, 7, 7, 2);
         draw_lower = heap_cache[8];
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
     switch (mode) {
     case 0:
         resource = (s32)&ResourceId_EmberStreakSheet;

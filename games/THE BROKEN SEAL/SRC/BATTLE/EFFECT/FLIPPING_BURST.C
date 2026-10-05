@@ -63,7 +63,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     work->transfer_mode = 2;
     work->transfer_value = 75;
@@ -136,7 +136,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
                 angle = i << 12;
                 rx = screen.x + ((Trig_Sin(angle) * (frame - 46)) >> 16);
                 ry = ((Trig_Cos(angle) * (frame - 46)) >> 16) - frame + 100;
-                draw[0](canvas, (u8 *)work + (((frame - 56) / 2) << 11), rx - 16, ry, 32, 64);
+                draw[0](canvas, work->sheet + (((frame - 56) / 2) << 11), rx - 16, ry, 32, 64);
             }
         }
         if (frame == 64) {
@@ -215,7 +215,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
     draw[1] = (DrawRectangle)heap_cache[47 - 39];
     blit = draw;
-    Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -276,7 +276,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
                 speed = -drift;
             cell = speed >> 17;
             if (frame < i * 4 + 25) {
-                blit[(u32)drift >> 31](canvas, (u8 *)work + BladeRain_CellSourceOffsets[cell],
+                blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
                     (blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
                     (blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1),
                     wide, high);
@@ -285,7 +285,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
                     blade->y += blade->velocity_y;
                 }
             } else {
-                blit[(u32)drift >> 31](canvas, (u8 *)work + BladeRain_CellSourceOffsets[cell],
+                blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
                     (blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
                     (blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1),
                     wide, high -= 4);
@@ -362,7 +362,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
     work->fade_step = 0;
     REG_BLDALPHA = 0x100c;
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
     switch (work->effect->kind) {
     case 0:

@@ -121,7 +121,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
     BattleEffect_WipeCanvas(1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
     REG16(0x04000000) = 0x7741;
     REG16(0x04000020) = 0x80;
     REG16(0x04000052) = 0x100e;
@@ -286,7 +286,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             i = 0;
             y = 0;
             do {
-                blit(canvas, (u8 *)work + (Random16() & 3) * 0x600, 120 - rise, y, 48, 32);
+                blit(canvas, work->sheet + (Random16() & 3) * 0x600, 120 - rise, y, 48, 32);
                 i++;
                 y += 18;
             } while (i != 6);
@@ -444,7 +444,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             i = 0;
             y = -8;
             do {
-                blit(canvas, (u8 *)work + (Random16() & 3) * 0x600,
+                blit(canvas, work->sheet + (Random16() & 3) * 0x600,
                     jitter[i] - slide + 120, y, 48, 32);
                 i++;
                 y += 8;

@@ -131,7 +131,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet + 0x4e20, 0, 0);
     REG_DISPCNT = 0x7741;
     REG_BG2PA = 0x80;
@@ -440,7 +440,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], (struct EffectPosition *)seat);
         work->particles[i].x = seat[0] / 2;
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1, 1);
     Audio_PlayCue(0x121);
     REG_BG2PA = 0x80;
     REG_BLDALPHA = 0x1010;

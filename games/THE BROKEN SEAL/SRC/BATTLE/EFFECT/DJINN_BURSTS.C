@@ -43,7 +43,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
-    void *sheet;
+    u8 *sheet;
     DrawRectangle callbacks[2];
     DrawRectangle *draw;
     struct EffectStep *step;
@@ -63,10 +63,10 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters(0, draw);
     cells = Ram_MapCellBuffer;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
-    Graphics_TransposeCopy(cells, (u8 *)work + 0x2a8, 17, 104);
-    Graphics_TransposeCopy(cells + 0x6e8, (u8 *)work + 0x990, 34, 65);
+    Graphics_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
+    Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -82,7 +82,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
         for (i = 0; i != 5; i++) {
             step = &work->particles[i];
             if (step->variant != -1) {
-                callbacks[0](canvas, (u8 *)work + 0x990, step->x - 16, step->y - 17, 65, 34);
+                callbacks[0](canvas, work->sheet + 0x990, step->x - 16, step->y - 17, 65, 34);
                 step->x -= 12;
                 step->variant++;
                 if (step->variant == 5) {
@@ -134,7 +134,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
             if (mote->variant != -1) {
                 s32 size = mote->variant / 16 + 2;
 
-                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
                 mote->variant--;
@@ -163,7 +163,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
     void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
-    void *sheet;
+    u8 *sheet;
     DrawRectangle callbacks[2];
     DrawRectangle *draw;
     struct EffectStep *step;
@@ -184,8 +184,8 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
     draw = callbacks;
     BattleFx_FetchRectangleBlitters(0, draw);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet, (u8 *)work + 0x320, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet, work->sheet + 0x320, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -211,7 +211,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
         for (i = 0; i != 8; i++) {
             step = &work->particles[i];
             if (frame >= i * 4 + 8 && step->y <= 95) {
-                callbacks[0](canvas, (u8 *)work + 0x320, step->x - 20, step->y - 32, 40, 64);
+                callbacks[0](canvas, work->sheet + 0x320, step->x - 20, step->y - 32, 40, 64);
                 step->x -= 6;
                 step->y += 12;
                 if (step->y > 95) {
@@ -242,7 +242,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
             if (mote->variant != -1) {
                 s32 size = mote->variant / 16 + 1;
 
-                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
                 mote->variant--;

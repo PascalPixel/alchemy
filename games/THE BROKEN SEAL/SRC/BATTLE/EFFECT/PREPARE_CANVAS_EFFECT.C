@@ -55,7 +55,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw[2];
-    void *sheet;
+    u8 *sheet;
     s32 total;
     struct MotionObject *target;
     struct MotionObject *actor;
@@ -211,7 +211,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
                 if (position.depth > 634)
                     position.depth = 634;
                 size = 8 - (position.depth - 250) / 64;
-                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(spark, 60, 0);
                 if (frame >= i / 8 + 24) {
@@ -260,7 +260,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
                 if (mote->variant >= 0) {
                     s32 size = (mote->variant >> 3) + 2;
 
-                    draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                     EffectStep_AdvanceWithGravity2D(mote, 60, 0);
                     mote->variant--;

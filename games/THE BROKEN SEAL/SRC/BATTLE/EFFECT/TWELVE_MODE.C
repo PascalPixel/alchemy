@@ -169,7 +169,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
         BattleFx_BeginCanvasLayer(1);
     REG_BLDALPHA = 0x1010;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
     if (TwelveMode_Records[mode * 7] == 0)
         Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet + 0xc80, 0, 0);
     else

@@ -80,7 +80,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, (u8 *)work + 0x1e00, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, work->sheet + 0x1e00, 1, 1);
     /* FAKEMATCH: forwarded through Call3, the copy loads the buffer address
        straight into r0, so the loop below loads its own after the call. */
     Call3((void (*)())Iwram_CopyWords, (s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
@@ -89,7 +89,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
         for (col = 0; col != COLUMN_WIDTH; col++) {
             s32 pixel = CANVAS_PIXEL(col + 32, y);
 
-            ((u8 *)work)[row * COLUMN_WIDTH + col] = Ram_MapCellBuffer[pixel];
+            work->sheet[row * COLUMN_WIDTH + col] = Ram_MapCellBuffer[pixel];
         }
     }
     if (work->effect->side == 1) {
@@ -128,7 +128,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
                 if (height < 0)
                     height = -height;
                 top = 112 - height;
-                draw(canvas, (u8 *)work + 0x1e00, column * COLUMN_WIDTH + 8, top,
+                draw(canvas, work->sheet + 0x1e00, column * COLUMN_WIDTH + 8, top,
                     COLUMN_WIDTH, height);
                 draw(canvas, work, column * COLUMN_WIDTH + 8, 96 - height, COLUMN_WIDTH, 16);
                 for (member = 0; member != work->effect->count; member++) {

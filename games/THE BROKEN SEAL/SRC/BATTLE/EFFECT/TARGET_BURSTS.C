@@ -55,8 +55,8 @@ void BattleFx_RunTargetBursts(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage, (u8 *)work + 0x1b00, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage, work->sheet + 0x1b00, 0, 0);
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
@@ -119,12 +119,12 @@ void BattleFx_RunTargetBursts(void *object)
                     if (i == 5) {
                         EffectStep_AdvanceWithGravity3D(p, 62, 0x800);
                         ((DrawRectangleFn)rectangle_a)(canvas,
-                            (u8 *)work + cel * 0x480 + 0x1b00,
+                            work->sheet + cel * 0x480 + 0x1b00,
                             screen.x - 12, screen.y - 36, 24, 48);
                     } else {
                         EffectStep_AdvanceWithGravity3D(p, 60, 0x200);
                         ((DrawRectangleFn)rectangle_b)(canvas,
-                            (u8 *)work + cel * 0x480,
+                            work->sheet + cel * 0x480,
                             screen.x - 12, screen.y - 36, 24, 48);
                     }
                     p->variant += 1;

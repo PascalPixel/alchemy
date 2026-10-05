@@ -101,9 +101,9 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
     rectangle[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     rectangle[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1, 0);
     Graphics_PackTileRows(work, cells, 40, 288);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1, 1);
     switch (variant) {
     case 0:
         palette = (s32)&ResourceId_FirePillarSheetB;

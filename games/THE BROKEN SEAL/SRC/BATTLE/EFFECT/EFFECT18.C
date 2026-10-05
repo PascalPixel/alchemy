@@ -50,7 +50,7 @@ typedef struct Spark {
 } Spark;
 
 #define WORK_EFX ((Efx *)work->effect)
-#define SHEET ((u8 *)work + 0xC56)
+#define SHEET (work->sheet + 0xC56)
 #define SPARKS ((Spark *)work->particles)
 
 static __inline__ void CopyPalette(CopyWords copy, void *destination, const void *source, s32 size)
@@ -144,10 +144,10 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     s32 width;
     s32 height;
 
-    cache = (u32 *)(void **)((u8 *)&gBattleFxWork + sizeof(void *));
-    dst = (void *)cache[40 - 40];
-    work = (struct BattleEffectWork *)cache[39 - 40];
-    aux = (u8 *)cache[41 - 40];
+    cache = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+    dst = (void *)cache[0];
+    work = (struct BattleEffectWork *)cache[-1];
+    aux = (u8 *)cache[1];
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
     REG_BLDALPHA = 0x1010;
@@ -161,7 +161,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         BattleFx_FetchRectangleBlitters(WORK_EFX->side, blit);
     }
 
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
     if (mode == 5) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA, SHEET, 1, 1);
     } else if (mode == 7) {
@@ -390,7 +390,7 @@ void BattleFx_RunSwirlingStars(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
     BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw);
     for (i = 0; i != 256; i++) {
         star = &((struct EffectStep *)Ram_MapCellBuffer)[i];
@@ -445,7 +445,7 @@ void BattleFx_RunSwirlingStars(void *object)
                     pos.depth = 0x27a;
                 size = 9 - (pos.depth - 250) / 64;
                 draw[0](canvas,
-                    (u8 *)work + ((i & 3) * 770 + ParticleStreams_CellOffsets[size - 1]),
+                    work->sheet + ((i & 3) * 770 + ParticleStreams_CellOffsets[size - 1]),
                     pos.x - size / 2, pos.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(star, 60, 0);
                 if (frame > i / 4 + 30) {
@@ -555,7 +555,7 @@ void BattleFx_RunOrbitingSparks(void)
                     x = pos.x + ((Trig_Sin(spark->velocity_x + i * 0x5555) << 3) >> 16);
                     y = pos.y + ((Trig_Cos(spark->velocity_x + i * 0x5555) << 3) >> 16);
                     spark->velocity_x += 0x200;
-                    draw[0](canvas, (u8 *)work + i * 0x240, x - 12, y - 28, 24, 24);
+                    draw[0](canvas, work->sheet + i * 0x240, x - 12, y - 28, 24, 24);
                 }
             }
         }

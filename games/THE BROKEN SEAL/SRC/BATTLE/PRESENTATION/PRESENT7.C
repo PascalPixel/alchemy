@@ -124,7 +124,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2001);
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
     BattlePres_ConfigureEffectDisplay();
     REG_BLDCNT = 0x3f44;
@@ -222,7 +222,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 
                 if ((u32)(shard->variant - 1) <= 13) {
                     draw[work->effect->variant == 2 ? 1 : 0](canvas,
-                        (u8 *)work + 0x400 + ((shard->variant / 3) << 10), x, y, 32, 32);
+                        work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y, 32, 32);
                 }
                 if ((u32)(shard->variant - 9) <= 2) {
                     for (k = 0; k != 32; k++) {
@@ -313,8 +313,8 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2001);
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, (u8 *)work + 0x604, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet + 0x604, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0, 0);
     BattlePres_ConfigureEffectDisplay();
     REG_BLDCNT = 0x3f44;
     REG_WININ = 0x3337;
@@ -389,7 +389,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
             x = bolt->x / 8;
             y = bolt->y / 8;
             if (bolt->variant == -1) {
-                draw_bolt(canvas, (u8 *)work + 0x604, x, y, 24, 24);
+                draw_bolt(canvas, work->sheet + 0x604, x, y, 24, 24);
                 if (bolt->y <= 0x27f) {
                     if (work->effect->side == 0)
                         bolt->x -= 32;
@@ -417,9 +417,9 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
                 }
             } else {
                 if ((u32)bolt->variant <= 3)
-                    draw_bolt(canvas, (u8 *)work + 0x844, x, y, 24, 24);
+                    draw_bolt(canvas, work->sheet + 0x844, x, y, 24, 24);
                 else if (bolt->variant <= 7)
-                    draw_bolt(canvas, (u8 *)work + 0xa84, x - 9, y - 9, 42, 42);
+                    draw_bolt(canvas, work->sheet + 0xa84, x - 9, y - 9, 42, 42);
                 if (bolt->variant <= 14)
                     bolt->variant++;
             }
@@ -431,7 +431,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 
                 if (size > 6)
                     size = 6;
-                draw_spark(canvas, (u8 *)work + BattleFx6_FlareCells[size - 1],
+                draw_spark(canvas, work->sheet + BattleFx6_FlareCells[size - 1],
                     ((s16 *)&spark->x)[1] - size, ((s16 *)&spark->y)[1] - size,
                     size * 2, size * 2);
                 EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);

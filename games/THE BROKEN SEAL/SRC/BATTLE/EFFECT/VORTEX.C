@@ -125,7 +125,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
                     pos.depth = 160;
                 if (pos.depth > 0x31f)
                     pos.depth = 0x31f;
-                draw[0](canvas, (u8 *)work + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
+                draw[0](canvas, work->sheet + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
                 point->x += point->velocity_x;
                 point->y += point->velocity_y;
                 point->z += point->velocity_z;
@@ -153,9 +153,9 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
                 }
             }
             if ((u32)point->variant < 16) {
-                draw[0](canvas, (u8 *)work + ((point->variant / 2) % 3 << 10),
+                draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
                     point->x - 16, point->y - 56, 16, 64);
-                draw[1](canvas, (u8 *)work + ((point->variant / 2) % 3 << 10),
+                draw[1](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
                     point->x, point->y - 56, 16, 64);
                 point->variant++;
             }
@@ -247,14 +247,14 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
                     * Trig_Sin((frame << 11) + i * 0x4000) + wave) >> 16) + 40;
             y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
             segment = (frame / 2) % 3;
-            draw[0](canvas, (u8 *)work + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
-            draw[0](canvas, (u8 *)work + segment * 0x500 + 0x2a56, x, y + 48, 40, 32);
-            draw[0](canvas, (u8 *)work + segment * 0xa00 + 0x1156, x, y + 80, 40, 32);
+            draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
+            draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40, 32);
+            draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80, 40, 32);
             for (j = 0; j != 4; j++) {
                 point = &work->particles[i * 4 + j];
                 if (point->variant >= 0) {
                     cell = point->variant / 2 + (j / 2) * 3;
-                    draw[j & 1](canvas, (u8 *)work + BattleFx_GlintCellOffsets[cell],
+                    draw[j & 1](canvas, work->sheet + BattleFx_GlintCellOffsets[cell],
                         point->x + x, point->y + y,
                         BattleFx_GlintCellWidths[cell], BattleFx_GlintCellHeights[cell]);
                 }

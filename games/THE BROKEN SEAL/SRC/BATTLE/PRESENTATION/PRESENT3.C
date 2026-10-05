@@ -86,7 +86,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     work->fade_step = 0;
     REG_BLDALPHA = 0x100c;
     REG_BG2PA = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
     switch (work->effect->kind) {
     case 0:
@@ -370,7 +370,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 1);
         draw[0] = (DrawRectangle)heap[7];
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet, Ram_MapCellBuffer, 1, 0);
     if (mode == 0) {
         void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
@@ -395,7 +395,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
         cell = frame / 4;
         if (cell <= 5) {
             if (cell <= 3)
-                draw[0](canvas, (u8 *)work + TwoResource_CellSourceOffsets[cell],
+                draw[0](canvas, work->sheet + TwoResource_CellSourceOffsets[cell],
                     TwoResource_CellX[cell + work->effect->side * 6], TwoResource_CellBiasY[cell] + 32,
                     TwoResource_CellWidths[cell], TwoResource_CellHeights[cell]);
             else

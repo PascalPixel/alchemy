@@ -43,7 +43,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 member;
-    void *sheet;
+    u8 *sheet;
     DrawRectangle *draw;
     struct MotionObject *actor;
     struct MotionObject *goal;
@@ -65,7 +65,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     sheet = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw = callbacks);
     actor = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -141,7 +141,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
                 if (screen.depth > 634)
                     screen.depth = 634;
                 size = 9 - (screen.depth - 250) / 64;
-                callbacks[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                callbacks[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     screen.x - size / 2, screen.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(spark, 60, 0);
                 if (frame > i + 30) {
@@ -228,7 +228,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
                             cel = 3 - (view.depth - 314) / 128;
                             cel = (i * 4 + frame) % 9;
                             {
-                                u8 *cell = (u8 *)sheet + BattleFx_PuffCells[cel];
+                                u8 *cell = sheet + BattleFx_PuffCells[cel];
                                 u32 edge = BattleFx_PuffSizes[cel];
                                 u32 half = edge >> 1;
 

@@ -85,10 +85,10 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     palette += 128;
     Resource_DecodeType01(palette, work);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), (u8 *)work + 0x1000);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), work->sheet + 0x1000);
     palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
     palette += 128;
-    Resource_DecodeType01(palette, (u8 *)work + 0x2000);
+    Resource_DecodeType01(palette, work->sheet + 0x2000);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -110,16 +110,16 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
             BattleFx_FetchRectangleBlitters(work->effect->side, draw);
             if (frame > 32)
                 y = y - frame * 2 + 64;
-            draw[0](canvas, (u8 *)work + 0x2000, x, y, 40, 40);
+            draw[0](canvas, work->sheet + 0x2000, x, y, 40, 40);
             if (frame <= 3)
-                draw[1](canvas, (u8 *)work + 0x2000, x, y, 40, 40);
+                draw[1](canvas, work->sheet + 0x2000, x, y, 40, 40);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
         draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-        draw[1] = *(DrawRectangle *)((u8 *)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+        draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         if (frame > 16 && (frame & 15) == 0)
             work->transfer_value += 0x01010101;
         for (member = 0; member != 1; member++) {
@@ -161,7 +161,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
                             s32 y = from->velocity_y + k * (to->velocity_y - from->velocity_y) / 24;
 
                             draw[0](canvas,
-                                (u8 *)work + BattleFx6_FlareCells[size - 1] + 0x1000,
+                                work->sheet + BattleFx6_FlareCells[size - 1] + 0x1000,
                                 x - size, y - size, size * 2, size * 2);
                         }
                     }
@@ -225,7 +225,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     Resource_DecodeType01(palette, work);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
     palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
-    Resource_DecodeType01(palette, (u8 *)work + 0x1000);
+    Resource_DecodeType01(palette, work->sheet + 0x1000);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -243,7 +243,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
         draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-        draw[1] = *(DrawRectangle *)((u8 *)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+        draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         if (frame > 16 && (frame & 15) == 0)
             work->transfer_value += 0x01010101;
         for (member = 0; member != 1; member++) {
@@ -285,7 +285,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
                             s32 y = from->velocity_y + k * (to->velocity_y - from->velocity_y) / 24;
 
                             draw[0](canvas,
-                                (u8 *)work + BattleFx6_FlareCells[size - 1] + 0x1000,
+                                work->sheet + BattleFx6_FlareCells[size - 1] + 0x1000,
                                 x - size, y - size, size * 2, size * 2);
                         }
                     }

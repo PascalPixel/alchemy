@@ -171,9 +171,9 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
     if (mode == 1) {
-        Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet, 1, 1);
     } else {
-        Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
     }
     if (work->effect->side == 1) {
         REG_BG2X = -0x7000;
@@ -375,7 +375,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1, 1);
     EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[0], &first);
     EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[WORK_EFFECT->count - 1], &last);
     middle = first.x;
@@ -386,7 +386,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     draw[0] = (DrawRectangle)cache[7];
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
     draw[1] = (DrawRectangle)cache[8];
-    column = (Column *)((u8 *)work + 0x7080);
+    column = (Column *)(work->sheet + 0x7080);
     i = 0;
     do {
         column[i].x = RisingColumns_ColumnOffsets[i] + 64;
@@ -403,10 +403,10 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
                 ObjectGroup_UpdateMembers(WORK_EFFECT->actors[i], 7, 5, i, 16);
         }
         i = 0;
-        column = (Column *)((u8 *)work + 0x7080);
+        column = (Column *)(work->sheet + 0x7080);
         do {
             if (frame == i * 4 + 5)
-                *(s32 *)((u8 *)work + 0x77a8) = 2;
+                *(s32 *)(work->sheet + 0x77a8) = 2;
             offset = i * 2;
             if (frame > offset + 4) {
                 cell = (frame / 4 + i) % 5;
@@ -417,7 +417,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
                     height = 160 - (frame - offset) * 4;
                 }
                 if (height > 0)
-                    draw[i & 1](dst, (u8 *)work + (cell << 10), column->x - 16,
+                    draw[i & 1](dst, work->sheet + (cell << 10), column->x - 16,
                         (i & 7) - height + 104, 32, height);
             }
             i++;
@@ -469,7 +469,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
     REG_BLDALPHA = 0x1010;
-    Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
     if (work->effect->side == 1) {
         REG_BG2X = 0xffff9000;
     }

@@ -100,7 +100,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     s32 i;
     s32 j;
     s32 frame;
-    void *sheet;
+    u8 *sheet;
     s32 scroll_x;
     s32 path_x;
     s32 path_y;
@@ -124,7 +124,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     BattleEffect_WipeCanvas(0, 0);
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(9, 370, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -264,7 +264,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
                             screen.y = screen.y + y + 16;
 #endif
                             trail->x -= 4;
-                            draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[4],
+                            draw[1](canvas, sheet + ParticleStreams_CellOffsets[4],
                                 screen.x - 2, screen.y - 5, 5, 10);
                         }
                     }

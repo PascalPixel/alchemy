@@ -54,7 +54,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
-    void *sheet;
+    u8 *sheet;
     struct BattleCamera *camera;
     struct MotionObject *target;
     u8 *palette;
@@ -74,19 +74,19 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     if (work->effect->prelude == 1)
         BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side, 2, &screen_x, &screen_y);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1, 0);
     for (row = 0; row != 288; row++) {
         for (column = 0; column != 40; column++) {
             s32 source = row * 40 + column;
             s32 offset = row * 20 + column / 2 + 0x5100;
 
-            ((u8 *)work)[offset] = ((u8 *)work)[source];
+            work->sheet[offset] = work->sheet[source];
         }
     }
     if (BurstScene_Records[variant * 7] == 0)
-        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1, 1);
     else
-        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, Ram_MapCellBuffer + 0x5e00, 1, 0);
     switch (BurstScene_Records[variant * 7 + 1]) {
     case 0:
@@ -146,10 +146,10 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 
                 if ((i & 3) <= 1 || BurstScene_Records[variant * 7] == 1) {
                     if (work->effect->side == 0)
-                        draw[i & 1](canvas, (u8 *)work + step * 3456,
+                        draw[i & 1](canvas, work->sheet + step * 3456,
                             target_position.x / 2 - 16, target_position.y - 40, 48, 72);
                     else
-                        draw[i & 1](canvas, (u8 *)work + step * 3456,
+                        draw[i & 1](canvas, work->sheet + step * 3456,
                             target_position.x / 2 - 32, target_position.y - 40, 48, 72);
                 } else {
                     if (work->effect->side == 0)
@@ -178,7 +178,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
                     ((struct EffectStep *)Ram_MapCellBuffer)[i * 32 + j].variant = (Random16() & 7) + 15;
             }
             if (frame >= start + 2 && frame < start + 14)
-                draw[0](canvas, (u8 *)work + ((frame - start - 2) / 2) * 960 + 0x5100,
+                draw[0](canvas, work->sheet + ((frame - start - 2) / 2) * 960 + 0x5100,
                     target_position.x / 2 - 10, target_position.y - 24, 20, 48);
         }
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -199,7 +199,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
                 position.x /= 2;
                 size >>= 3;
                 size++;
-                draw[(i / 2) & 1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[(i / 2) & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
                 if (mote->y < 0x80000)
@@ -265,7 +265,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw[2];
-    void *sheet;
+    u8 *sheet;
     s32 bias;
     s32 offset;
     struct WallScale scale;
@@ -405,9 +405,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 
             if (cell > 2)
                 cell = (cell & 1) + 1;
-            draw[0](canvas, (u8 *)work + RisingWall_MoundSheetOffsets[cell], bias - RisingWall_MoundWidths[cell] + 64,
+            draw[0](canvas, work->sheet + RisingWall_MoundSheetOffsets[cell], bias - RisingWall_MoundWidths[cell] + 64,
                 116 - RisingWall_MoundHeights[cell], RisingWall_MoundWidths[cell], RisingWall_MoundHeights[cell]);
-            draw[1](canvas, (u8 *)work + RisingWall_MoundSheetOffsets[cell], bias + 64,
+            draw[1](canvas, work->sheet + RisingWall_MoundSheetOffsets[cell], bias + 64,
                 116 - RisingWall_MoundHeights[cell], RisingWall_MoundWidths[cell], RisingWall_MoundHeights[cell]);
         }
         if (frame >= 12 && frame <= 87) {
@@ -418,9 +418,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
             if (row > 7)
                 row = 7;
             for (i = 0; i != 4; i++) {
-                draw[0](canvas, (u8 *)work + RisingWall_RowSheetOffsets[row], bias - RisingWall_RowWidths[row] + 64,
+                draw[0](canvas, work->sheet + RisingWall_RowSheetOffsets[row], bias - RisingWall_RowWidths[row] + 64,
                     i * 32 - 12, RisingWall_RowWidths[row], 32);
-                draw[1](canvas, (u8 *)work + RisingWall_RowSheetOffsets[row], bias + 64,
+                draw[1](canvas, work->sheet + RisingWall_RowSheetOffsets[row], bias + 64,
                     i * 32 - 12, RisingWall_RowWidths[row], 32);
             }
         }
@@ -432,9 +432,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
             if (row > 7)
                 row = 7;
             for (i = 0; i != 4; i++) {
-                draw[0](canvas, (u8 *)work + RisingWall_RowSheetOffsets[row], bias - RisingWall_RowWidths[row] + 64,
+                draw[0](canvas, work->sheet + RisingWall_RowSheetOffsets[row], bias - RisingWall_RowWidths[row] + 64,
                     i * 32 - 12, RisingWall_RowWidths[row], 32);
-                draw[1](canvas, (u8 *)work + RisingWall_RowSheetOffsets[row], bias + 64,
+                draw[1](canvas, work->sheet + RisingWall_RowSheetOffsets[row], bias + 64,
                     i * 32 - 12, RisingWall_RowWidths[row], 32);
             }
         }
@@ -453,7 +453,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
                 if (dust->variant == 0) {
                     s32 size = (i & 3) + 5;
 
-                    draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                         HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
                     dust->y -= dust->velocity_y;
                     if (dust->y < 0 && frame <= 159)

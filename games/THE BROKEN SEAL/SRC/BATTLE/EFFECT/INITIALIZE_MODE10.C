@@ -616,10 +616,10 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     struct EffectStep *q;
     Scale scale;
 
-    cache = (u32 *)((u8 *)gWorkSlot + 40 * 4);
-    dst = (void *)cache[40 - 40];
-    work = (struct Mode10Work *)cache[39 - 40];
-    aux = (u8 *)cache[41 - 40];
+    cache = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+    dst = (void *)cache[0];
+    work = (struct Mode10Work *)cache[-1];
+    aux = (u8 *)cache[1];
     step = 1;
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
@@ -631,7 +631,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     REG_WININ = 0x2137;
     BattleEffect_WipeCanvas(1, 0);
     REG_WIN0H = 0xf0f0;
-    Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, aux, 0, 0);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     blit46 = (DrawRectangle)cache[46 - 40];
@@ -1021,7 +1021,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw;
-    void *sheet;
+    u8 *sheet;
     struct BattleCamera *camera;
     s32 point[3];
     struct EffectPosition screen;
@@ -1029,7 +1029,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    heap_cache = (void **)((u8 *)gWorkSlot + 39 * 4);
+    heap_cache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -1105,7 +1105,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
                         s32 size;
 
                         size = i % 3 + 1;
-                        draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                        draw(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                             HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
                         EffectStep_AdvanceWithGravity2D(shard, 62, IceShardBursts_Gravities[i & 3]);
                         shard->variant++;

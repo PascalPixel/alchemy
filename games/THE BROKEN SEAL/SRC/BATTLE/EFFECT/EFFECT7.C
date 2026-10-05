@@ -51,7 +51,7 @@ void BattleFx_RunBouncingSheep(void *object)
     BattleFx_BeginCanvasLayer(0);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     draw_a = (DrawRectangleFn)heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 15, 1);
@@ -96,10 +96,10 @@ void BattleFx_RunBouncingSheep(void *object)
 
                 cel = (one->variant / 16) & 7;
                 if (cel < 4)
-                    draw_a(canvas, (u8 *)work + (cel << 10),
+                    draw_a(canvas, work->sheet + (cel << 10),
                         (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
                 else
-                    draw_b(canvas, (u8 *)work + (cel << 10) - 0x1000,
+                    draw_b(canvas, work->sheet + (cel << 10) - 0x1000,
                         (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
                 one->y += one->velocity_y;
                 one->velocity_y += 0x2000;
@@ -151,7 +151,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1, 1);
     if (work->effect->side == 1) {
         REG_BG2X = -0x7000;
     }
@@ -188,12 +188,12 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
                 }
                 y = pos.y;
                 pos.y = y - 16;
-                draw[0](canvas, (u8 *)work + 1728, pos.x - 8, y - 20, 16, 20);
+                draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
                 if (frame < start) {
                     goto next;
                 }
                 cel = ((frame - start) + marker->variant) / 6 % 9;
-                draw[0](canvas, (u8 *)work + cel * 192, pos.x - 8, pos.y - 16, 16, 12);
+                draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16, 12);
             next:
                 marker++;
                 i++;

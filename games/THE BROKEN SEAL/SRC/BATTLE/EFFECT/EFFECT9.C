@@ -96,7 +96,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     BattleFx_BeginCanvasLayer(0);
     REG_BLDCNT = 0x3F46;
     REG_BLDALPHA = 0x100E;
-    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw = (DrawRectangle)cache[46 - 39];
     if (WORK_EFX->actors[0] > 127) {
@@ -109,7 +109,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     ang = -0x4000;
     i = 0;
     tick = 0;
-    puff = (Puff *)((u8 *)work + 0x7080);
+    puff = (Puff *)(work->sheet + 0x7080);
     do {
         puff->x = ((sign *((Trig_Sin(ang) << 5) >> 16)) + org) + 20;
         puff->y = ((Trig_Cos(ang) << 4) >> 16) + 40;
@@ -133,7 +133,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
             BattleEventRuntime_BeginPhaseFar(0x85);
         }
         i = 0;
-        cur = (Puff *)((u8 *)work + 0x7080);
+        cur = (Puff *)(work->sheet + 0x7080);
         do {
             /* Negative ticks stagger the puffs; the folded range test is
                what the reference's single unsigned compare came from. */
@@ -142,18 +142,18 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
                 /* wide is loaded once and reused for the centring shift and
                    the width argument, then reloaded per layer because the
                    call clobbers it. */
-                draw(dst, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                draw(dst, work->sheet + PuffArc_CellSourceOffsets[cell],
                     cur->x - ((wide = PuffArc_CellWidths[cell]) >> 1),
                     cur->y + PuffArc_CellBiasY[cell],
                     wide, PuffArc_CellHeights[cell]);
                 if (WORK_EFX->variant != 0) {
-                    draw(dst, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                    draw(dst, work->sheet + PuffArc_CellSourceOffsets[cell],
                         cur->x - ((wide = PuffArc_CellWidths[cell]) >> 1),
                         (cur->y + PuffArc_CellBiasY[cell]) - 16,
                         wide, PuffArc_CellHeights[cell]);
                 }
                 if (WORK_EFX->variant == 2) {
-                    draw(dst, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                    draw(dst, work->sheet + PuffArc_CellSourceOffsets[cell],
                         cur->x - ((wide = PuffArc_CellWidths[cell]) >> 1),
                         (cur->y + PuffArc_CellBiasY[cell]) - 32,
                         wide, PuffArc_CellHeights[cell]);

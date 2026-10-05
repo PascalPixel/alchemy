@@ -66,7 +66,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     REG_BLDALPHA = 0x1010;
-    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 50;
@@ -116,7 +116,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
                         cell = (j % 5) * 3 + (sparks[i * 16 + j].variant / 96) % 3;
                         spark = &sparks[i * 16 + j];
                         draw[j <= 2](canvas,
-                            (u8 *)work + Crystal_ShardOffsets[cell] + 0x800,
+                            work->sheet + Crystal_ShardOffsets[cell] + 0x800,
                             ((s16 *)&spark->x)[1] - Crystal_ShardWidths[cell] / 2,
                             ((s16 *)&spark->y)[1] - Crystal_ShardHeights[cell] / 2,
                             Crystal_ShardWidths[cell], Crystal_ShardHeights[cell]);

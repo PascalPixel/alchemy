@@ -61,7 +61,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     blit = heap_cache[7];
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
@@ -102,7 +102,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
                 for (j = 0; j != 21; j++) {
                     shard = &((struct EffectStep *)Ram_MapCellBuffer)[i * 21 + j];
                     cell = (j % 5) * 3 + shard->variant / 96 % 3;
-                    blit(canvas, (u8 *)work + ShatterRocks_ShardCells[cell] + 0x83c,
+                    blit(canvas, work->sheet + ShatterRocks_ShardCells[cell] + 0x83c,
                         HI(shard->x) - ((width = ShatterRocks_ShardWidths[cell]) >> 1),
                         HI(shard->y) - ((height = ShatterRocks_ShardHeights[cell]) >> 1),
                         width, height);

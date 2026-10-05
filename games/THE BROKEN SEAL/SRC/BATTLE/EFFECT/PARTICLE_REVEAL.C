@@ -51,7 +51,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     void *canvas;
     s32 frame;
     DrawRectangle draw[2];
-    void *sheet;
+    u8 *sheet;
     struct EffectStep *step;
     struct EffectStep *mote;
     s32 i;
@@ -71,8 +71,8 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     draw[0] = heap_cache[7];
     draw[1] = heap_cache[8];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, (u8 *)work + 0x2f8, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet + 0x2f8, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -98,7 +98,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
         for (i = 0; i != 10; i++) {
             step = &work->particles[i];
             if (frame >= i * 4 + 16) {
-                draw[0](canvas, (u8 *)work + 0x9e0, step->x - 17, step->y - 32, 34, 65);
+                draw[0](canvas, work->sheet + 0x9e0, step->x - 17, step->y - 32, 34, 65);
                 if (frame == i * 4 + 16) {
                     for (j = 0; j != 16; j++) {
                         s32 direction;
@@ -129,7 +129,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
             if (mote->variant != -1) {
                 s32 size = mote->variant / 16 + 2;
 
-                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                     HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
                 mote->variant--;
@@ -351,7 +351,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(0);
     BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screen_x, &screen_y);
     BattleFx_FetchRectangleBlitters(work->effect->side, routine);
-    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -483,8 +483,8 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
     else
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     draw[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, (u8 *)work + 0x65c0, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet + 0x65c0, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -518,9 +518,9 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
             else
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
             if (frame <= 3)
-                ((BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, (u8 *)work + 0x65c0, x, y, 20, 40);
+                ((BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + 0x65c0, x, y, 20, 40);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-            draw[0](canvas, (u8 *)work + 0x65c0, x, y, 20, 40);
+            draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
         }
         if ((frame & 1) == 0) {
             for (i = 0; i != 32; i++) {
@@ -546,11 +546,11 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
                     y = position.y - 24;
                     draw[0](canvas, work, x, y, 24, 48);
                     if ((frame & 3) <= 1)
-                        draw[0](canvas, (u8 *)work + RockToss_ChipCells[1],
+                        draw[0](canvas, work->sheet + RockToss_ChipCells[1],
                             x + RockToss_ChipX[1], y + RockToss_ChipY[1],
                             RockToss_ChipWidths[1], RockToss_ChipHeights[1]);
                     else
-                        draw[0](canvas, (u8 *)work + RockToss_ChipCells[2],
+                        draw[0](canvas, work->sheet + RockToss_ChipCells[2],
                             x + RockToss_ChipX[2], y + RockToss_ChipY[2],
                             RockToss_ChipWidths[2], RockToss_ChipHeights[2]);
                     for (j = 0; j != 4; j++) {
@@ -570,7 +570,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
                                 - RockToss_ChipY[chip->velocity_x] + 48;
                         else
                             chip_y = y + RockToss_ChipY[chip->velocity_x];
-                        draw[1](canvas, (u8 *)work + RockToss_ChipCells[chip->velocity_x],
+                        draw[1](canvas, work->sheet + RockToss_ChipCells[chip->velocity_x],
                             chip_x, chip_y, RockToss_ChipWidths[chip->velocity_x],
                             RockToss_ChipHeights[chip->velocity_x]);
                         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);

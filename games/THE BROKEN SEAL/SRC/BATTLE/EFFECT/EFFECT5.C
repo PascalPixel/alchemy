@@ -164,13 +164,13 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
                 cell = (cell & 1) + 1;
             if (frame <= 27) {
                 draw_a(canvas,
-                    (u8 *)work + EarthWall_CellSourceOffsets[cell],
+                    work->sheet + EarthWall_CellSourceOffsets[cell],
                     64 - EarthWall_CellWidths[cell],
                     (pos.y - EarthWall_CellHeights[cell]) + 8,
                     EarthWall_CellWidths[cell],
                     EarthWall_CellHeights[cell]);
                 draw_b(canvas,
-                    (u8 *)work + EarthWall_CellSourceOffsets[cell],
+                    work->sheet + EarthWall_CellSourceOffsets[cell],
                     64,
                     (pos.y - EarthWall_CellHeights[cell]) + 8,
                     EarthWall_CellWidths[cell],

@@ -74,7 +74,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &last);
     first.x += (last.x - first.x) / 2;
     REG_BG2X = (64 - first.x) << 8;
-    Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

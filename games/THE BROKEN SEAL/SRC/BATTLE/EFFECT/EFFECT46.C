@@ -129,7 +129,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
     BattleEffect_WipeCanvas(1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
     REG_DISPCNT = 0x7741;
     REG_BG2PA = 0x80;
     REG_BLDALPHA = 0x1010;
@@ -254,7 +254,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
                 if ((u32)puff->variant <= 23) {
                     s32 cell = puff->variant / 6 + 3;
 
-                    draw[0](canvas, (u8 *)work + CirclingScene_PuffSheetOffsets[cell],
+                    draw[0](canvas, work->sheet + CirclingScene_PuffSheetOffsets[cell],
                         HI(puff->x) - CirclingScene_PuffSizes[cell] / 2,
                         HI(puff->y) - CirclingScene_PuffSizes[cell] / 2,
                         CirclingScene_PuffSizes[cell], CirclingScene_PuffSizes[cell]);
@@ -354,7 +354,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     REG_BLDALPHA = 0x1010;
-    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1, 1);
     for (i = 1; i != 20; i++) {
         for (j = 0; j != 936; j++) {
             s32 shade = work->sheet[0x1680 + j];
@@ -600,7 +600,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     burst = Ram_MapCellBuffer;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burst, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
     BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0], 4, 0);
@@ -641,9 +641,9 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
             routine[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
             if (work->effect->side == 0)
-                routine[0](canvas, (u8 *)work + (frame - 6) * 0xd80, position.x / 2 - 24, position.y - 24, 48, 72);
+                routine[0](canvas, work->sheet + (frame - 6) * 0xd80, position.x / 2 - 24, position.y - 24, 48, 72);
             else
-                routine[0](canvas, (u8 *)work + (frame - 6) * 0xd80, position.x / 2, position.y - 24, 48, 72);
+                routine[0](canvas, work->sheet + (frame - 6) * 0xd80, position.x / 2, position.y - 24, 48, 72);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
         if ((u32)(frame - 16) <= 31) {

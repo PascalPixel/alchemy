@@ -42,7 +42,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw;
-    void *sheet;
+    u8 *sheet;
     struct BattleCamera *camera;
     struct EffectPosition screen;
     s32 alternate;
@@ -125,7 +125,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
                         EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
                         screen.x >>= 1;
                         size = 6;
-                        draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                        draw(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
                             screen.x - size / 2, screen.y - size, size, size * 2);
                         EffectStep_AdvanceWithGravity3D(mote, 62, 0);
                         if (frame > member * 20 + i + 10) {

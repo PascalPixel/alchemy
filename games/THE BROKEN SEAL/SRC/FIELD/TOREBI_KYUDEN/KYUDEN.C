@@ -93,12 +93,12 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gTorebiKyudenEntrancesOther;
 }
 
-s32 SceneData_GetTableca7c(void)
+s32 TorebiKyuden_GetRegions(void)
 {
     return (s32)TorebiKyuden_EmptyTable;
 }
 
-s32 SceneData_GetTableca8c(void)
+s32 TorebiKyuden_GetExits(void)
 {
     return (s32)TorebiKyuden_MessageTable;
 }

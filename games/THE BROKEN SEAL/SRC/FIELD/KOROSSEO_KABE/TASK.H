@@ -137,8 +137,6 @@ extern u16 Korosseo_MarkerStartX;
 extern u16 Korosseo_MarkerStartY;
 extern u16 Korosseo_MarkerStep;
 
-/* Import veneers, named by the main-image code each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void Vector_AddPolarOffset();
@@ -162,7 +160,7 @@ s32 Menu_OpenCharacterSelector();
 s32 AudioCommand_GetStateByte();
 void BattleFx_RunRisingObjectSequence();
 
-/* The stage's code still in the listing, and the shared Colosso code. */
+/* The stage tasks and shared Colosso services. */
 void KorosseoKabe_RollLogToCell();
 void Korosseo_SelectSoloCompetitor();
 void Korosseo_FinishSoloRound();

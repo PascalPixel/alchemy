@@ -51,10 +51,7 @@ void RunPartyCountInteractionCopyA(s32 actorId)
     Engine_EventEnd();
 }
 
-/*
- * Six steps, each clearing one game-state byte -- 896 through 936, eight
- * apart.  It reads no incoming argument, so it takes none.
- */
+/* Six steps clear the game-state fields at 896 through 936, eight bytes apart. */
 void FieldScene_RunSixSteps896To936(void)
 {
     GameFlag_SetByte(896, 0);
@@ -231,12 +228,7 @@ L_main:
     GameFlag_SetByte((obj << 4) + 888, sy);
 }
 
-/*
-* Look up an object by arg0, then scan the first 15 halfword
- * entries of its table at offset 0xd8 for one equal to arg1, calling a handler
-* with each matching index.  The callees are identified by call shape only, and
- * the table's role is inferred from this scan alone.
- */
+/* Scan the object's first fifteen halfword entries at +0xd8 and call the handler for each entry equal to arg1. */
 void OverlayObject_NotifyMatchingEntries(s32 no, s32 val)
 {
     u16 *tbl = Owner_GetState(no);

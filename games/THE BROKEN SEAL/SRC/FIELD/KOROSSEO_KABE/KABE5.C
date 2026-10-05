@@ -2,14 +2,7 @@
 #include "RUNTIME_MEM.H"
 #include "TASK.H"
 
-/*
- * Seven arguments: four in registers, three from the caller's stack; five are
- * stored as halfwords and two as words, which is how they are typed here. The
- * 232-byte owner includes the seven-word literal pool the body branches over.
- * When the story flag is clear, `second` is mirrored about `centre`. The
- * extent stored at +216 is passed back sign-extended from sixteen bits.
- * Descriptor layout is asserted only for the fields written here.
- */
+/* When the story flag is clear, mirror second about centre; pass the stored sixteen-bit extent as a signed value. */
 void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)
 {

@@ -19,7 +19,6 @@ void Text_WriteU32AsHex(u8 *buf, u32 value)
     }
 }
 
-/* Complete two-byte empty hook plus its alignment halfword. */
 void SceneState_EmptyHook(void)
 {
 }

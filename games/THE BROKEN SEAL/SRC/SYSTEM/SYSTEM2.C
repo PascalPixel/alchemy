@@ -70,13 +70,13 @@ void System_VBlankHandler(void)
     if (keys == 0) {
         gKeyRepeatTimer = 19;
         gKeysRepeat = keys;
-    } else if (gKeysHeld & (Data_03001d0c ^ 0xffff)) {
+    } else if (gKeysHeld & (gKeysHeldAtVBlank ^ 0xffff)) {
         gKeyRepeatTimer = -1;
         gKeysRepeat = keys;
     } else if (gKeyRepeatTimer > 0) {
         gKeyRepeatTimer--;
     }
-    Data_03001d0c = keys;
+    gKeysHeldAtVBlank = keys;
     gFrameTick++;
     gLagFrameCount++;
     gVBlankDone = 1;

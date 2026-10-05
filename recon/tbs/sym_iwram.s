@@ -131,8 +131,8 @@ gKeysDirection:
 	.global gOptionMirror
 gOptionMirror:
 	.space 0x00000004
-	.global Data_03001d0c
-Data_03001d0c:
+	.global gKeysHeldAtVBlank
+gKeysHeldAtVBlank:
 	.space 0x0000000c
 	.global gOamCopyEnabled
 gOamCopyEnabled:

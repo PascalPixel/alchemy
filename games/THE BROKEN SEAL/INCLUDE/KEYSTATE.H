@@ -14,7 +14,8 @@ extern u32 gKeysRepeatDirected;
 extern u32 gKeysDirection;
 /* The keys held at the last input update. */
 extern u32 gKeysHeldLast;
-extern u32 Data_03001d0c; /* Held keys at the previous VBlank. */
+/* The keys held at the previous VBlank. */
+extern u32 gKeysHeldAtVBlank;
 /* The frames until held keys repeat. */
 extern s32 gKeyRepeatTimer;
 

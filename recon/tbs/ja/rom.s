@@ -1088,11 +1088,11 @@ RockWall_Heights:
 	.global RisingWall_UnitScale
 RisingWall_UnitScale:
 	.incbin "baserom.gba", 0x000e4ab0, 0x00000008
-	.global Data_080edab8
-Data_080edab8:
+	.global Formation_NormalScale
+Formation_NormalScale:
 	.incbin "baserom.gba", 0x000e4ab8, 0x00000008
-	.global Data_080edac0
-Data_080edac0:
+	.global Formation_SmallScale
+Formation_SmallScale:
 	.incbin "baserom.gba", 0x000e4ac0, 0x00000008
 	.global CirclingScene_UnitScale
 CirclingScene_UnitScale:
@@ -1671,23 +1671,23 @@ FireSwirl_CellBiasX:
 	.global FireSwirl_CellBiasY
 FireSwirl_CellBiasY:
 	.incbin "baserom.gba", 0x000e5e17, 0x00000007
-	.global Data_080eee1e
-Data_080eee1e:
+	.global Formation_TwelveX
+Formation_TwelveX:
 	.incbin "baserom.gba", 0x000e5e1e, 0x0000000c
-	.global Data_080eee2a
-Data_080eee2a:
+	.global Formation_TwelveZ
+Formation_TwelveZ:
 	.incbin "baserom.gba", 0x000e5e2a, 0x0000000c
-	.global Data_080eee36
-Data_080eee36:
+	.global Formation_RightEightX
+Formation_RightEightX:
 	.incbin "baserom.gba", 0x000e5e36, 0x00000008
-	.global Data_080eee3e
-Data_080eee3e:
+	.global Formation_RightEightZ
+Formation_RightEightZ:
 	.incbin "baserom.gba", 0x000e5e3e, 0x00000008
-	.global Data_080eee46
-Data_080eee46:
+	.global Formation_SmallEightX
+Formation_SmallEightX:
 	.incbin "baserom.gba", 0x000e5e46, 0x00000008
-	.global Data_080eee4e
-Data_080eee4e:
+	.global Formation_SmallEightZ
+Formation_SmallEightZ:
 	.incbin "baserom.gba", 0x000e5e4e, 0x00000008
 	.global ImpactBurst_CellWidths
 ImpactBurst_CellWidths:

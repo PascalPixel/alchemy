@@ -19,14 +19,14 @@ extern u8 gBattleFxWork[];
 struct Scale { s32 x; s32 y; };
 struct Placement { s32 x; s32 y; s32 z; s32 w; };
 
-extern const struct Scale Data_080edab8;
-extern const struct Scale Data_080edac0;
-extern const u8 Data_080eee1e[];
-extern const u8 Data_080eee2a[];
-extern const u8 Data_080eee36[];
-extern const u8 Data_080eee3e[];
-extern const u8 Data_080eee46[];
-extern const u8 Data_080eee4e[];
+extern const struct Scale Formation_NormalScale;
+extern const struct Scale Formation_SmallScale;
+extern const u8 Formation_TwelveX[];
+extern const u8 Formation_TwelveZ[];
+extern const u8 Formation_RightEightX[];
+extern const u8 Formation_RightEightZ[];
+extern const u8 Formation_SmallEightX[];
+extern const u8 Formation_SmallEightZ[];
 
 
 void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, struct Scale *scale, s32 flags);
@@ -36,8 +36,8 @@ void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, stru
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
     struct BattleEffectWork *work = (struct BattleEffectWork *)*(void **)gBattleFxWork;
-    struct Scale normal = Data_080edab8;
-    struct Scale small = Data_080edac0;
+    struct Scale normal = Formation_NormalScale;
+    struct Scale small = Formation_SmallScale;
     struct Placement pos;
     s32 i;
 
@@ -53,22 +53,22 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
         break;
     case 1:
         for (i = 0; i != 12; i++) {
-            pos.x = (Data_080eee1e[i] << 16) + x - 0x100000;
-            pos.z = (Data_080eee2a[i] << 16) + z - 0x200000;
+            pos.x = (Formation_TwelveX[i] << 16) + x - 0x100000;
+            pos.z = (Formation_TwelveZ[i] << 16) + z - 0x200000;
             Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
         }
         break;
     case 2:
         for (i = 0; i != 8; i++) {
-            pos.x = (Data_080eee36[i] << 16) + x + 0x100000;
-            pos.z = (Data_080eee3e[i] << 16) + z;
+            pos.x = (Formation_RightEightX[i] << 16) + x + 0x100000;
+            pos.z = (Formation_RightEightZ[i] << 16) + z;
             Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
         }
         break;
     case 3:
         for (i = 0; i != 8; i++) {
-            pos.x = (Data_080eee46[i] << 16) + x;
-            pos.z = (Data_080eee4e[i] << 16) + z;
+            pos.x = (Formation_SmallEightX[i] << 16) + x;
+            pos.z = (Formation_SmallEightZ[i] << 16) + z;
             Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &small, 0);
         }
         break;

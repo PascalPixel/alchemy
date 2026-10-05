@@ -742,7 +742,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY6.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.080f0a5c)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080f2028.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SPLASH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/RESERVED_NO_OP.o"(.text)

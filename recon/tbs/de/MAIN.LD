@@ -742,7 +742,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY6.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000f205c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
-    "*/recon/tbs/de/rom.o"(.rom.000f3628)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SPLASH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/RESERVED_NO_OP.o"(.text)

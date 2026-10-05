@@ -1758,16 +1758,13 @@ DisplayScroll_LineTable:
 	.global DisplayScroll_Font
 DisplayScroll_Font:
 	.incbin "baserom.gba", 0x000f2de0, 0x00000820
-	.section .rom.000f3628, "ax"
-	.global Title_PlaceIntroSprites
-	.type Title_PlaceIntroSprites, %function
-	.thumb_func
-Title_PlaceIntroSprites:
-	.incbin "baserom.gba", 0x000f3628, 0x00000478
 	.section .rom.000f4ed0, "ax"
 	.global Title_PromptTiles
 Title_PromptTiles:
-	.incbin "baserom.gba", 0x000f4ed0, 0x000000fa
+	.incbin "baserom.gba", 0x000f4ed0, 0x000000f4
+	.global Data_080f39ab
+Data_080f39ab:
+	.incbin "baserom.gba", 0x000f4fc4, 0x00000006
 	.global Title_PromptBlendLevels
 Title_PromptBlendLevels:
 	.incbin "baserom.gba", 0x000f4fca, 0x0000003c

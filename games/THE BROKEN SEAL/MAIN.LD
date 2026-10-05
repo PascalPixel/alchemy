@@ -752,7 +752,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY6.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000e7a5c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
-    "*/recon/tbs/ja/rom.o"(.rom.000e9028)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SPLASH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/RESERVED_NO_OP.o"(.text)

@@ -5,7 +5,7 @@
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "AERIE.H"
 
-void SetOverlayObjectRecordField1(struct OverlayObject *object, s32 priority)
+void MakyuriChojo_SetSpritePriority(struct OverlayObject *object, s32 priority)
 {
     struct FieldSpritePriority *sprite;
 

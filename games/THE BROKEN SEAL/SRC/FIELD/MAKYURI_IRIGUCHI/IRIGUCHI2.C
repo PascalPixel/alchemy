@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "MAKYURI.H"
 #include "IWRAM_CALL.H"
+#include "FIELD_EVENT.H"
 
 #define FrameCounter gFrameCount
 s32 FixedSqrt(s32 value);
@@ -34,10 +35,8 @@ struct EventSpawns {
 };
 
 extern s32 MakyuriHeya_SparkScript[];
-void Engine_EventBegin(void);
 void MakyuriHeya_SpawnSparkPair(void);
 void WaitFrames(s32 frames);
-void Engine_EventEnd(void);
 extern u8 Makyuri_PillarScript[];
 
 /* The IWRAM work pointers: the event work, and 0x20 bytes on, the scene's. */

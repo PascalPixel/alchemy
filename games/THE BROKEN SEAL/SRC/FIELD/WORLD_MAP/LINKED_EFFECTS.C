@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "VRAM_BLOCK.H"
+#include "B5_CONTEXT.H"
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -26,9 +27,6 @@ struct PairWork {
     u8 unknown_00[70];
     u16 vram_block;
 };
-
-LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
-LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 
 extern struct PairWork *gEffectWork;
 void Effect_AnimateVerticalNegative(union FieldObject *object);

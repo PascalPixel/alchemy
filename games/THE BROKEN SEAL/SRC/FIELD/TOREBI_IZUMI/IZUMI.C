@@ -14,12 +14,8 @@ extern const struct ScenePlacement gTorebiIzumiPlacementsOther[];
 extern u8 MsgTorebiLuckyMedal[];
 extern u8 MsgTorebiYerFirstTime[];
 
-s32 Engine_GameFlagIsSet();
 void TorebiIzumi_RiseAndFadeIn();
-void Engine_EventBegin();
-void Engine_ActorWalkToAndWait();
 void TorebiIzumi_RunSpringGame();
-void Engine_EventEnd();
 
 extern u8 MsgTorebiLuckyWheelsPrizesPrizesDetermined[];
 extern u8 MsgTorebiLuckyWheelsRulesPullLever[];

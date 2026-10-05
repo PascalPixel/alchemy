@@ -21,9 +21,6 @@ extern struct MenuSprite RamakanSabaku_SandWork[];
 extern u8 RamakanSabaku_SandTileBuffer[];
 extern u32 gFrameCount;
 
-void Sys_Free(void *block);
-s32 Engine_VramLoad(s32 slot, s32 size, const void *data);
-
 /*
  * The sandstorm: while the storm flag is set it thins, otherwise it thickens.
  * Its strength shifts the screen's scanlines, warms three of the sand

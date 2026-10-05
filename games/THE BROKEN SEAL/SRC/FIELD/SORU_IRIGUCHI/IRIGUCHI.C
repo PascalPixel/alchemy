@@ -29,7 +29,6 @@ extern u8 MsgSoruSetSmallGem[];
 /* Each facing's push step: the x step in the high half, the z step in the low. */
 extern s32 gSoruPushSteps[];
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-void Engine_ObjectCommitPosition(struct FieldActor *object);
 void Scene_UpdateOuterActor9Flags(void);
 void Scene_UpdateOuterActor10Flags(void);
 void Scene_UpdateFormationActor9Flags(void);

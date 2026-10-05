@@ -22,10 +22,8 @@ extern u8 MsgTorebiComeAgain[];
 extern u8 MsgTorebiGetRidItems[];
 extern u8 MsgTorebiStepRightEnjoy[];
 extern u8 MsgTorebiStepRightTry[];
-s32 PartyInventory_CountItem(s32 item);
 void ObjectTable_Snapshot(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
-s32 PartyInventory_CountFreeSlots(void);
 void Event_SetPair1c0AndSetValue170(s32 a, s32 b);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 

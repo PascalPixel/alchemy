@@ -8,6 +8,7 @@
 #include "RAM_BUFFER.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
+#include "FIXED_MATH.H"
 
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
 {
@@ -23,8 +24,6 @@ extern u32 gScanlinePitch;
 extern u32 gScanlineAngle;
 extern void *Data_03001e50[];
 u32 Random16(void);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
 void Map_UpdateCurrentTileBlockUntilBlocked(void);
 void Map_RenderPaletteMappedRow(u32 value);
 void Map_RenderPaletteMappedColumn(u32 value);

@@ -1,4 +1,5 @@
 #include "RESOURCE.H"
+#include "B5_CONTEXT.H"
 /* Scene tables, the hostage scene and small callbacks. */
 #include "FUNKA.H"
 #include "CALL.H"
@@ -12,11 +13,7 @@ extern u8 MsgSoruJasmineWhatHappened[];
 extern u8 MsgSoruSomeoneIsLiftingIt[];
 extern u8 MsgSoruSukuretaCouldThatBeThe[];
 
-void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
-s32 Engine_RandomNext(void);
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
-s32 Engine_GameFlagIsSet(s32 flag);
-void Engine_AudioPlayCue(s32 cue);
 
 struct EmberSprite {
     u8 unknown_00[9];
@@ -116,8 +113,6 @@ struct PairWork {
     u16 vram_block;
 };
 
-LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
-LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *gEffectWork;
 
 struct WorldMapVramBlock {

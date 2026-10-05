@@ -36,18 +36,12 @@ extern void Vector_AddPolarOffsetFar(s32,s32,s32 *);
 extern s32 Object_CheckMovementCollision(struct SceneActor *,s32 *);
 extern void GameFlag_ClearBitFar(s32);
 extern void SceneActor_SetMode55OnSevenRecords(void);
-extern void Engine_TaskWait(s32);
-extern void Engine_AudioPlayCue(s32);
 extern void ObjectMotion_SetPositionAndCommitFar(s32,s32,s32);
 extern u8 MsgMakyuriLighthouseAlreadyLit[];
 void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
 extern u8 MsgMakyuriGot[];
-void Engine_AudioPlayCue(s32 cue);
-void Engine_ActorSetChildValue();
-void Engine_EventWait(s32 frames);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
-void Engine_ActorSetPosition(s32 actor, s32 x, s32 y);
 
 struct Actor {
     u8 pad[8];
@@ -81,15 +75,11 @@ struct RecList_39d {
 };
 
 void MakyuriChojo_CollectBandSlots();
-void Engine_AudioPlayCue();
-void Engine_TaskWait();
 
 struct Flags85 {
     u8 pad[85];
     u8 flags;
 };
-
-void Engine_MapRedraw();
 
 void *SceneData_GetTableB938(void)
 {

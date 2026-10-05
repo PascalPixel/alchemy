@@ -327,7 +327,6 @@ void Battle_Reset(s32 arg0);
 
 void InitializeEscapeSceneActors(void);
 void FieldScene_RunScene3b2_0200167c(void);
-s32 FieldScene_RedrawActorFootprint(s32 id);
 void InitializeSwayingSceneObject();
 void FieldScene_RunScene3b2SequenceA(void);
 void FieldScene_RunScene3b2_02001494(void);
@@ -337,20 +336,13 @@ union GameStateRows {
     s16 halves[512][1];
 };
 
-void Engine_EventWait();
 void SpawnRadialEffectBurst();
-void Engine_AudioPlayCue();
-void Engine_ActorSetSpriteFlags();
 void ObjectMotion_SetActionVariant();
 void Engine_MapCopyCellAttributes();
 
 extern u8 TakaraShima_EntranceCells[];
 
-void Engine_EventBegin();
 void BattleFx_SetWeightedResult();
-void Engine_EventEnd();
-void Engine_MapAnimateCells();
-void Engine_EventRequestExit();
 
 void Object_SetPosition(Obj *, s32, s32, s32);
 void Object_CommitPosition(Obj *);
@@ -360,7 +352,6 @@ void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute
 void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused);
 void SetMapCellCollision(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested);
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 void PositionSceneActorPair(s32 actor, s32 x, s32 z);
 

@@ -5,6 +5,8 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 #include "TBS_EDITION.H"
+#include "FIELD_EVENT.H"
+#include "INVENTORY.H"
 
 extern u8 MsgWorldMapLook[];
 extern u8 MsgWorldMapNowUseOnShip[];
@@ -247,8 +249,6 @@ void StoryScene_ShowRewardDialogue(void)
 
 extern u8 MsgWorldMapMatter[];
 void ObjectDispatch_InitFromTable6(struct FieldActor *object);
-void Engine_ObjectCommitPosition(struct FieldActor *object);
-void PartyInventory_Discard(s32 item);
 void StoryActor_ConfigureSpawnedObject(u8 *actor);
 
 #define SITE 55

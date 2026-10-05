@@ -1,5 +1,6 @@
 #include "RESOURCE.H"
 #include "RAMAKAN.H"
+#include "FIELD_EVENT.H"
 
 extern u8 RamakanSabaku_SandEffectTiles[];
 extern u8 RamakanSabaku_SandTileBuffer[];
@@ -7,8 +8,6 @@ extern u16 RamakanSabaku_SandVramSlot;
 extern u16 RamakanSabaku_SandCounter;
 extern u16 RamakanSabaku_SandPhase;
 
-s32 Engine_VramLoad();
-s32 Engine_TaskAddCallback();
 void RamakanSabaku_RunSandstorm(void);
 
 /* A one-halfword struct keeps the zero a register copy, not a halfword pool

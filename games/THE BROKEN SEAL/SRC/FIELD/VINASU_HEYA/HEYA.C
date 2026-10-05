@@ -38,22 +38,8 @@ extern u8 MsgVinasuStatueSpeaksRobinSoulYe[];
 extern u8 MsgVinasuThoughtIdExploreAfterDoor[];
 
 void OverlayObject_WaitUntilIdle();
-void Engine_ActorSetSpriteFlags();
-void Engine_EventBegin();
-void Engine_EventWait();
-void Engine_ActorSetSpeed();
 void Engine_MapCopyCellAttributes();
-void Engine_ActorMoveToAndWait();
-void Engine_ActorSetAnimation();
-void Engine_EventEnd();
-void Engine_ActorRunRepeatedMotion();
 void Object_SetActionById();
-void Engine_CameraMoveTo();
-void Engine_ActorSetAttachedEffect();
-void Engine_ActorSetChildValue();
-void Engine_EventRequestExit();
-void Engine_EventCloseScreen();
-void Engine_EventWaitForScreen();
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
 {

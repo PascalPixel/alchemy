@@ -27,12 +27,9 @@ extern s32 VinasuChojo_TransitionTimer;
 extern s32 VinasuChojo_TransitionStep;
 extern u8 VinasuChojo_BeamRiseAction[];
 extern u8 VinasuChojo_BeamCloseAction[];
-void Engine_EventWait();
-void VinasuChojo_ShowMessage();
 void Object_SetActionCallbackAndRefreshById();
 void Event_SetPairWork1c0();
 void ObjectTable_Snapshot();
-
 
 extern u8 MsgVinasuNoooo[];
 
@@ -54,7 +51,6 @@ extern u8 VinasuChojo_PartyExitAction[];
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
 void Graphics_EnableObjLayerAndCallbacks();
-void VinasuChojo_FaceActor();
 void Object_RefreshSelectorById();
 
 extern const u8 VinasuChojo_RiseActionScript[];

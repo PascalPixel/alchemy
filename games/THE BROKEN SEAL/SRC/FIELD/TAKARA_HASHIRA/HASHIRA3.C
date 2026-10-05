@@ -4,40 +4,22 @@
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 #include "FIELD_SCENE.H"
+#include "STAGED_ACTOR.H"
 
 void FieldScene_RunScene3b3_02001fd4(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
 void FieldEffect_UpdateGridPlacement(void);
 
-void Engine_ObjectSetPosition();
-void Engine_ActorWaitForMove();
 void Engine_MapCopyCellAttributes();
 
-s32 Engine_GameFlagIsSet();
-void Engine_EventBegin();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_EventWait();
-void Engine_MapCopyCellsTo();
-s32 Engine_TaskAddCallback();
-void Engine_ActorSetAnimation();
 void ObjectMotion_WaitForAnimationChange();
-void Engine_GameFlagClear();
-void Engine_ActorSetChildValue();
-void Engine_ActorEnableActionCallback();
-void Engine_EventEnd();
 void SceneEffect_SpawnRandomizedParticle();
-
-s32 StagedActor_FillGridAttributeRectangle();
-void Engine_AudioPlayCue();
 
 struct Probe {
     s32 word[6];
 };
 
 void StagedActor_PlaceAtObjectTenCell();
-void StagedActor_AdvancePair();
 void TakaraHashira_DropActorTen();
 
 extern const struct SceneEvent gTakaraHashiraEvents1[];

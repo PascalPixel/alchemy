@@ -24,7 +24,6 @@ s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
 
 extern struct EventWork *gEventWork;
 void RamakanSabaku_ClaimSandEffectVram();
-void Engine_MapCopyCells();
 void BattleFx_SetQueuedSoundAndPlay();
 void RamakanSabaku_RaiseQuarterTriggers(void);
 void RamakanSabaku_ApplyEntryState();

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "FIELD_EFFECT.H"
 
 extern u8 MsgShianDoPlanCrossDesertWarrior[];
 extern u8 MsgShianHsusInjuryTaughtGoodLesson[];
@@ -12,7 +13,6 @@ extern u8 MsgShianWeHaveFewCustomersThese[];
 extern u8 MsgShianXianHasMartialArtsBut[];
 extern u8 MsgShianXiansSpecialArmorNotSuited[];
 #define NULL ((void *)0)
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 
 union Slot {
     s32 w;

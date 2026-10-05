@@ -14,23 +14,12 @@ struct MapWork {
     struct ScrollLayer layer;
 };
 
-
 extern u8 gVinasuPushScript[];
 extern u8 gVinasuPushCells[];
-void Engine_EventBegin();
 void Engine_MapCopyCellAttributes();
-s32 Engine_GameFlagIsSet();
 s32 OverlayObject_PrepareObjectWithCommand15();
-void Engine_ActorSetSpritePriority();
-void Engine_ActorSetSpriteFlags();
 void OverlayObject_WaitUntilIdle();
-void Engine_AudioPlayCue();
-void Engine_ObjectDispatchRelease();
-void Engine_ActorEnableActionCallback();
 void Engine_ActorStartAction();
-void Engine_EventWait();
-void Engine_MapAnimateCells();
-void Engine_EventEnd();
 
 /* The first bridge slides beneath the leader while its map columns are
  * copied into place and dust trails along the moving edge. */

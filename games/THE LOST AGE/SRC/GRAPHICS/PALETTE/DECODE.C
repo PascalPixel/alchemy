@@ -13,8 +13,6 @@ extern u8 Resource_Decode01CodeSize[];
 extern u8 Resource_Decode2CodeSize[];
 extern u8 Resource_DecodeByteLzCodeSize[];
 
-/* The stream decoders of ☀️'s PALETTE8.C, over ⚓️'s decoder modules. */
-
 /* Decodes stream types 0 and 1 (DECODE_01.S). */
 s32 Resource_DecodeType01(const void *source, void *destination)
 {

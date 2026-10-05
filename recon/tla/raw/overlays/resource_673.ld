@@ -43,7 +43,7 @@ SECTIONS
         "*/resource_673_overlay.o"(.text.x02008d90)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_673/SCENE_TABLES.o"(.text)
         "*/resource_673_overlay.o"(.text.x02008db4)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_673/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_673/EXITS.o"(.text)
         "*/resource_673_overlay.o"(.text.x02008de4)
         "*/resource_673_overlay.o"(.text.x02008e58)
         "*/resource_673_overlay.o"(.text.x02008ecc)

@@ -40,7 +40,7 @@ void Engine_CameraMoveToActor();
 void Engine_ActorWalkToAndWait();
 void Engine_CameraWaitForMove();
 void Engine_EventEnd();
-s32 SceneActor_FaceLeaderWhileGrounded(u8 *object);
+s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);
 
 /* Actor 8's action tables in the overlay's data. */
 extern const u8 MakyuriIriguchi_Actor8Path1[];

@@ -40,13 +40,13 @@ void SceneActor_WaitActorDescent(struct FieldActor *actor)
 }
 
 /* Point an object toward actor zero using their fixed-point X/Z delta. */
-s32 SceneActor_FaceActorZero(u8 *obj)
+s32 SceneActor_FaceActorZero(struct FieldActor *obj)
 {
     struct FieldActor *target = Object_GetById(ACTOR_PARTY_LEADER);
-    s32 dz = target->z.fixed - *(s32 *)(obj + 16);
-    s32 dx = target->x.fixed - *(s32 *)(obj + 8);
+    s32 dz = target->z.fixed - obj->z.fixed;
+    s32 dx = target->x.fixed - obj->x.fixed;
 
-    *(s16 *)(obj + 6) = (s16)ArcTan2(dz, dx);
+    obj->facing = (s16)ArcTan2(dz, dx);
     return 0;
 }
 

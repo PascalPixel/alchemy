@@ -148,14 +148,14 @@ void SceneState_ClearWord24AndObjectByte62(void)
  * is cleared and then restored only if the actor is also above slot zero.
  * The function always returns zero.
  */
-s32 SceneActor_UpdateBit1ByPositionToSlotZero(u8 *actor)
+s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
 {
     struct FieldActor *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if (*(s32 *)(actor + 16) > ref->z.fixed) {
-        actor[35] = (u8)(actor[35] & 0xfd);
-        if (*(s32 *)(actor + 12) < ref->y.fixed)
-            actor[35] = (u8)(actor[35] | 2);
+    if (actor->z.fixed > ref->z.fixed) {
+        actor->priority_flags = (u8)(actor->priority_flags & 0xfd);
+        if (actor->y.fixed < ref->y.fixed)
+            actor->priority_flags = (u8)(actor->priority_flags | 2);
     }
 
     return 0;

@@ -43,7 +43,7 @@ struct Rec_3a6 {
 extern const u32 HaidiaDou_Exits[];
 extern const s32 HaidiaDou_WalkTargets[];
 
-s32 SceneActor_FaceActorZero(u8 *obj);
+s32 SceneActor_FaceActorZero(struct FieldActor *obj);
 
 /* Main-image services reached through the veneers the staged-actor module
    names. */

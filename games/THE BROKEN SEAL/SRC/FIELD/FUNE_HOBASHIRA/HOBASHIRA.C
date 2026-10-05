@@ -103,28 +103,28 @@ s32 Object_PlaceFromCameraOffset(struct Object *object)
  * object + 6 is the facing angle.  What Random16 samples is not
  * established here.
  */
-s32 SceneActor_SetFacingFromSample(u8 *object)
+s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
 {
     u32 sample = (u32)(Random16() << 6) >> 16;   /* bits 10..15 */
 
     if (sample == 6) {
         s32 value = 0xd000;
 
-        *(u16 *)(object + 6) = value;
+        object->facing = value;
     } else if (sample == 9) {
         s32 value = 0xb000;
 
-        *(u16 *)(object + 6) = value;
+        object->facing = value;
     }
 
     return 1;
 }
 
-void OverlayObject_Add160ToFields18And1c(u8 *o)
+void OverlayObject_Add160ToFields18And1c(struct FieldActor *o)
 {
-    if (*(s32 *)(o + 24) < 0x10000) {
-        *(s32 *)(o + 24) += 160;
-        *(s32 *)(o + 28) += 160;
+    if (o->scale_x < 0x10000) {
+        o->scale_x += 160;
+        o->scale_y += 160;
     }
 }
 

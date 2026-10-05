@@ -5,7 +5,7 @@
 UiWindow_OpenMode1AndWaitFrame:
 	push {lr}
 	movs r0, #1
-	bl Func_08042690
+	bl UiWindow_CreateWithLayoutBounds
 	movs r0, #1
 	bl WaitFrames
 	pop {pc}

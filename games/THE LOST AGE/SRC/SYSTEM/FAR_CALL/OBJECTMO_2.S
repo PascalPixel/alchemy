@@ -20,7 +20,7 @@ BattleFx_InitializeSlotsFar:
 	.global Func_080c85e0
 	.thumb_func
 Func_080c85e0:
-	overlay_veneer Func_080d7ab4
+	overlay_veneer BattleFx_ClearActiveSlotsAndScheduleUpdates
 	.global Func_080c85e8
 	.thumb_func
 Func_080c85e8:

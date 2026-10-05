@@ -1610,19 +1610,13 @@ Func_0804257c:
 	.thumb_func
 Func_08042588:
 	.incbin "baserom.gba", 0x000425d8, 0x00000074
-	.section .rom.00042680, "ax"
-	.incbin "baserom.gba", 0x00042680, 0x00000060
-	.section .rom.000426e0, "ax"
-	.global Func_08042690
-	.type Func_08042690, %function
-	.thumb_func
-Func_08042690:
-	.incbin "baserom.gba", 0x000426e0, 0x000002ec
+	.section .rom.00042730, "ax"
+	.incbin "baserom.gba", 0x00042730, 0x0000029c
 	.section .rom.000429cc, "ax"
-	.global Func_0804297c
-	.type Func_0804297c, %function
+	.global UiWindow_DrawPartyStatusContents
+	.type UiWindow_DrawPartyStatusContents, %function
 	.thumb_func
-Func_0804297c:
+UiWindow_DrawPartyStatusContents:
 	.incbin "baserom.gba", 0x000429cc, 0x00000430
 	.section .rom.00042e14, "ax"
 	.incbin "baserom.gba", 0x00042e14, 0x00000300
@@ -3527,12 +3521,8 @@ Func_080d7430:
 	.thumb_func
 Func_080d7788:
 	.incbin "baserom.gba", 0x000dc77c, 0x000002d0
-	.section .rom.000dcaa8, "ax"
-	.global Func_080d7ab4
-	.type Func_080d7ab4, %function
-	.thumb_func
-Func_080d7ab4:
-	.incbin "baserom.gba", 0x000dcaa8, 0x00000c58
+	.section .rom.000dcaf8, "ax"
+	.incbin "baserom.gba", 0x000dcaf8, 0x00000c08
 	.section .rom.000dd734, "ax"
 	.incbin "baserom.gba", 0x000dd734, 0x0000023c
 	.section .rom.000dd970, "ax"

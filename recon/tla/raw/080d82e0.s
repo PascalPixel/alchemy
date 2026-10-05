@@ -312,7 +312,7 @@ Func_080d82e0:
 	movs r0, #15
 	bl WaitFrames
 	bl Shop_InitEffectFar
-	bl Func_080d7ab4
+	bl BattleFx_ClearActiveSlotsAndScheduleUpdates
 .L_080d85a2:
 	add sp, #12
 	pop {r3, r5, r6}

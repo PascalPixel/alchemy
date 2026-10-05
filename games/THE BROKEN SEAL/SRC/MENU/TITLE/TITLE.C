@@ -33,9 +33,7 @@ void ScrollFar_Entry00(s32 mode);
 s32 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
 
-void Sys_Free(void *buffer);
 #define DMA3 (REG_DMA3)
-
 
 static __inline__ void RestoreInterrupts(u32 saved)
 {

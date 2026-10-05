@@ -58,7 +58,6 @@ struct LobbyPanel {
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
-void SerialRuntime_RemoveIrqHandlers(void);
 void SerialRuntime_Initialize(void);
 
 /* Frames the peers have been waited for; it follows the overlay's image. */

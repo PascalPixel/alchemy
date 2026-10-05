@@ -8,9 +8,9 @@
 #include "TBS_EDITION.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
+#include "BATTLE_RUNTIME.H"
 
 /* menu/character_menu/build_availability.c */
-struct BattleUnit *Owner_GetStateFar(s32 owner);
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {

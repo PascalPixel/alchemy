@@ -4,10 +4,10 @@
 #include "M7_INTERFACES.H"
 #include "TBS_EDITION.H"
 #include "GAME_STATE.H"
+#include "UI.H"
 
 /* ui/text/draw/draw_work_value_with_label.c */
 
-extern void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
 extern u8 MsgCoinsLabel[];
 

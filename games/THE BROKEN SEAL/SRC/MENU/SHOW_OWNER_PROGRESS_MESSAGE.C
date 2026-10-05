@@ -2,6 +2,7 @@
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
 #include "EDITION.H"
+#include "BATTLE_RUNTIME.H"
 /* NONMATCHING: 3 halfwords. Reload loads the 0x0be6 message base into r3; the
  * reference reloads it into r0, the call's own argument register. Spellings
  * of the sum (temporary, nested call, split add, base variable) move nothing.
@@ -9,7 +10,6 @@
 #include "TYPES.H"
 
 extern struct CharacterMenuState *gMenuWork;
-struct BattleUnit *Owner_GetStateFar(s32 owner_id);
 u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
 void UiWork_PushValueSlotFar(u32 quantity, s32 style);
 void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
@@ -24,7 +24,6 @@ extern u8 MsgProgressHelp;
 #else
 #define PROGRESS_TEXT_MAX 0x40
 #endif
-
 
 void StatusMenu_ShowOwnerProgressMessage(
     struct UiWindow *destination,

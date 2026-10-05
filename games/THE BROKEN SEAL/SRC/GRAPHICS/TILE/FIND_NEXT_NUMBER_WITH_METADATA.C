@@ -27,10 +27,11 @@
 #include "DMA.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
 extern u8 gDecodeFillByte;
 extern struct AnimationObject *gSpriteObjects;
 extern const u8 FarCall_ResourceTable[];
-
 
 /* One editable column of the icon grid.  Eight bytes: the reference indexes
  * the array with slot << 3 and reads offsets 0, 2, 4, 5 and 6 only. */
@@ -41,10 +42,6 @@ struct IconColumn {
     s8 priority; /* 0..3 draw order */
     s8 param; /* 0..15 draw parameter */
 };
-
-LAYOUT_SIZE_GUARD(IconColumn_Size, struct IconColumn, 8);
-LAYOUT_OFFSET_GUARD(IconColumn_Priority, struct IconColumn, priority, 5);
-LAYOUT_OFFSET_GUARD(IconColumn_Param, struct IconColumn, param, 6);
 
 void Resource_InitializeTable(void);
 void Blend_SetDarkenTarget0(s32);

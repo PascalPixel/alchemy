@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "ITEM.H"
 #include "GAME_STATE.H"
+#include "FIELD_EVENT.H"
 
 /* The stats a password carries for each party member. */
 struct PasswordStats {
@@ -25,7 +26,6 @@ struct PasswordOwner {
     u32 values[4];
 };
 
-s32 Engine_GameFlagIsSet(s32 flag);
 struct PasswordOwner *Owner_GetState(s32 owner);
 
 /* The four party members a password describes. */

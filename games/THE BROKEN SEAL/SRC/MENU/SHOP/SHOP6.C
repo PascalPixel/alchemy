@@ -26,7 +26,6 @@ extern u8 MsgSanctumFarewell[];
 struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowResolvedAndWait(s32 message);
 void Shop_InitializeCursorWork(void);
 void Inn_Cleanup(void);

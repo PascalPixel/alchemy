@@ -5,6 +5,7 @@
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
 #include "IO_REG.H"
+#include "MENU_LIST.H"
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
@@ -14,7 +15,6 @@ typedef s32 (*UiFillFn)(void *dst, s32 size, u32 value);
 void UiWork_ResetCounters();
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
-void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *work);
 void RenderOutput_Release(struct RenderOutput *node);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);

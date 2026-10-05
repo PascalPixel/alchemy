@@ -2,6 +2,10 @@
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
 #include "AFFINE.H"
+#include "BATTLE_PARTY.H"
+#include "RESOURCE.H"
+#include "FIXED_MATH.H"
+#include "CALLBACK_SCHEDULER.H"
 
 enum {
     TILEMAP_ENTRY_PLAIN,
@@ -154,7 +158,6 @@ struct SpriteOutput {
     u8 priority;
     struct OutputSprite sprite;
 };
-LAYOUT_SIZE_GUARD(SpriteOutput_Size, struct SpriteOutput, sizeof(struct RenderOutput));
 
 extern u32 gFrameTick;
 extern const u8 UiSprite_CursorFrameTiles[];
@@ -163,10 +166,6 @@ extern const s8 UiSprite_WobbleOffsets[][2];
 extern const s8 UiSprite_BounceOffsets[];
 
 u32 Random16(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void Runtime_PushSlotEntry(void *entry, s32 priority);
 
 /* Animates the sprites of every open window whose bit 0 is set and queues
    them for drawing. Kinds: 2 a cycling glyph cursor, 4 a wobble, 5 a

@@ -3,6 +3,7 @@
 #include "GLOBAL_CELLS.H"
 #include "DJINN_MENU.H"
 #include "BATTLE_UNIT.H"
+#include "BATTLE_RUNTIME.H"
 extern struct DjinnMenuWork *gMenuWork;
 s32 Djinn_CheckTurnBalance(s32, s32);
 void Djinn_CountTurns(u8 *);
@@ -72,8 +73,6 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 }
 
 /* djinn/count_turns.c */
-struct BattleUnit *Owner_GetStateFar(s32);
-
 
 void Djinn_CountTurns(u8 *counts)
 {

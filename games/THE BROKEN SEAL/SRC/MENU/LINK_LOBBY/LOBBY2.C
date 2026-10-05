@@ -19,7 +19,6 @@ extern u8 MsgLobbyLinkDisconnected[];
 
 extern u8 MsgEnemyLabel[];
 extern u8 gLinkStatus[];
-s32 SerialRuntime_GetActiveTransfers(void);
 u8 *Owner_GetState(s32 owner);
 void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
 

@@ -5,7 +5,6 @@
 #include "BATTLE_UNIT.H"
 
 /* menu/psynergy_menu/classify_selected_psynergy.c */
-struct BattleAction *BattleAction_Get(s32 action);
 s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)

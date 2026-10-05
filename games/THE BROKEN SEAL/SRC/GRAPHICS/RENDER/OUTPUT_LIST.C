@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
+#include "OUTPUT.H"
 
-void RenderOutput_ReleaseFree(struct RenderOutput *entry);
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 extern u8 *gWindowWork[];

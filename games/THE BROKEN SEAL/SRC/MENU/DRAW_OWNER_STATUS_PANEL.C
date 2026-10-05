@@ -5,6 +5,8 @@
 #include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "BATTLE_RUNTIME.H"
+#include "UI.H"
 
 /* Where the name and ailment labels start: the Japanese edition moves them right. */
 #if EDITION_INTERNATIONAL
@@ -26,18 +28,15 @@ extern u8 MsgPoisonLabel[], MsgVenomLabel[], MsgCurseLabel[], MsgHauntLabel[];
 extern u8 MsgExpLabel[], MsgCannotEquip[], MsgWillLearn[], MsgLearned[];
 extern u8 MsgPanelStatLabel[];
 
-struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void WaitFrames(s32 frames);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void RenderOutput_ClearListFar(s32 window);
 struct RenderOutput *SideObject_CreateFar(s32 owner, s32 position, s32 side, s32 window, s32 x, s32 y);
 void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window);
-s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 _call_via_r3(void *, void *, s32, void *);
 void Inventory_EquipFar(s32 owner, s32 slot);
 void Owner_RecalculateStatsFar(s32 owner);

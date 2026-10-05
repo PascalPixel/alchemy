@@ -1,10 +1,10 @@
 #include "EDITION.H"
 #include "SHOP.H"
 #include "PARTY_STATE.H"
+#include "UI.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 MsgYourCoins[];
 
-void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 s32 UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 void Shop_DrawMoney(void)
 {

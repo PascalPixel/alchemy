@@ -574,14 +574,14 @@ void Graphics_EnableObjLayerAndCallbacks(void)
     BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
     BattleFx_StartBufferInterpolationFar(1);
     WaitFrames(1);
-    *(u16 *)0x04000000 = (0xF1FF & *(u16 *)0x04000000) | 0x1000;
+    REG_DISPCNT = (REG_DISPCNT & 0xF1FF) | DISPCNT_OBJ_ON;
 }
 
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
     Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCamera);
     Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCameraFixed);
-    *(u16 *)0x04000000 &= 0xE1FF;
+    REG_DISPCNT &= 0xE1FF;
 }
 
 /* A routine that only reports success, after the object dispatcher;

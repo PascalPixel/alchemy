@@ -109,8 +109,6 @@ s32 Owner_RefreshClassActions(s32 owner)
 extern s32 Character_StartingEquipOwnerIds[];
 extern u8 MsgCharacterName;
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void Owner_RecalculateStats(s32);
-void Owner_RefreshDerivedData(s32);
 
 extern u32 Character_LevelExpTable[];
 
@@ -122,7 +120,6 @@ struct LevelUpWork {
 };
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
-void Owner_RecalculateStats(s32 owner);
 u32 Random16(void);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)

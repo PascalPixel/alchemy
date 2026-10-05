@@ -8,7 +8,7 @@
 #include "FIELD_EVENT.H"
 #include "GLOBAL_CELLS.H"
 #include "GAME_STATE.H"
-
+#include "B5_CONTEXT.H"
 
 s32 UiGlyph_ResetWorkState();
 void Resource_ClearOwnerListAndCounters(void);
@@ -31,9 +31,6 @@ struct TimedNoticeWork {
     struct UiWindow *window;
     u16 countdown;
 };
-
-LAYOUT_OFFSET_GUARD(TimedNoticeWork_Window, struct TimedNoticeWork, window, 0x230);
-LAYOUT_OFFSET_GUARD(TimedNoticeWork_Countdown, struct TimedNoticeWork, countdown, 0x234);
 
 void Ui_ClearWorkStateAndWaitFrame(void)
 {

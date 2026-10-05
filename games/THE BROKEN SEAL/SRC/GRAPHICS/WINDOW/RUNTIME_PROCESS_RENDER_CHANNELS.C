@@ -7,6 +7,7 @@
 #include "IWRAM_CALL.H"
 #include "GLYPH.H"
 #include "RESOURCE.H"
+#include "MENU_LIST.H"
 
 /* The sliding panel's tile pixels in VRAM: thirty rows of thirty-two words,
  * of which the last twenty-four are the panel. */
@@ -113,7 +114,6 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel);
 s32 UiWork_CheckCancelByInput(struct UiChannelSlot *channel);
 s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *channel);
-void AudioCommand_PlayFar(s32 cue);
 
 /* The message speed setting. */
 #define MESSAGE_SPEED gCell[0x20c]

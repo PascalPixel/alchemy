@@ -3,8 +3,6 @@
 #include "BATTLE_UNIT.H"
 #include "CHARACTER.H"
 
-void Owner_RecalculateRatios(s32);
-
 s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
 {
     struct BattleUnit *state = Owner_GetState(owner);

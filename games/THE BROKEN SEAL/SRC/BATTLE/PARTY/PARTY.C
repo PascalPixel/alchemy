@@ -10,6 +10,12 @@
 #include "BATTLE_PRESENTATION.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "MENU_LIST.H"
+#include "AUDIO_ENGINE_SYMBOLS.H"
+#include "UI.H"
+#include "BATTLE_CALC.H"
 
 struct BattleTimerWork {
     s32 value;                  /* 0x00 */
@@ -89,7 +95,6 @@ void BattleActor_UpdateSpritePriorities(void);
 
 /* The relocated IWRAM block clear this owner reaches through __call_via_r3. */
 
-void Scheduler_ResetTaskTable(void);
 void Render_ResetTransformState(void);
 void GameFlag_SetBitFar(s32 id);
 s32 Event_GetSpecialValueFar(void);
@@ -99,9 +104,6 @@ void UiWork_InitializeFar(s32 mode);
 s32 BattleFormation_BuildEnemyList(s32 value);
 void WaitFrames(s32 frames);
 s32 GameFlag_GetByteFar(s32 id);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
-void AudioCommand_PlayFar(s32 cue);
-s32 Sound_LoadPresetParameters(s32 value);
 void BattleParty_CollectUnitList(void);
 void BattleUnit_RefreshPlacement(void);
 void BattlePlacement_UpdateEntries(void);
@@ -109,11 +111,8 @@ void BattleSummon_UpdateAvailability(void);
 s32 *Trade_GetOfferStateFar(s32 index);
 void UiWindow_CreateWithLayoutBoundsFar(s32 value);
 void Camera_InitDefaultTransform(void);
-void BattleActor_CommitPlacement(void);
 void BattlePresentation_InitializeWorkAndResetState(void);
 void BattleBackground_Load(s32 a, s32 b, s32 c);
-void BattleCamera_SetRange(s32 a, s32 b, s32 c, s32 d, s32 e);
-void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
 void Summon_ClearWorkFields(void);
 s32 BattleRandom16Far(void);
@@ -126,17 +125,14 @@ s32 BattlePresentation_BuildActions(struct BattleActionSlot *slots);
 s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionSlot *slots);
 s32 BattlePresentation_DispatchAction(struct BattleActionSlot *slot, s32 delay);
 s32 BattlePres_RunAction(struct BattleActionSlot *slot);
-s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
 s32 BattlePres_SyncTurn(void);
 void Battle_ReservedNoOpF674(void);
 void Battle_ProcessRoundEnd(void);
 void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
-s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
 void BattlePresentation_WaitForPromptAt(s32 a, s32 b);
 void Battle_ApplyValueToWork2224(void);
-void BattleUnit_AssignFar(s32 a, s32 b, s32 c);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 a, s32 b);
 void UiText_ShowMessageAndWaitCoreFar(s32 id);
@@ -144,10 +140,7 @@ void BattlePresentation_WaitForAdvance(void);
 void Battle_AwardSpoils(void);
 void Blend_SetDarkenTarget16(s32 value);
 void Blend_WaitForTransition(void);
-void Scheduler_EnableCallbacks(s32 value);
-s32 BattleParty_PrepareActiveOwners(u16 *owners);
 void BattleParty_ResetActiveRuntimeFields(void);
-void Scheduler_RemoveCallback(s32 callback);
 void Runtime_ReleaseHeapBlock10(void);
 
 /* Allocates battle work, plays the opening, and runs rounds to completion. */
@@ -190,7 +183,7 @@ s32 Battle_RunEncounter(s32 arg)
     timer->field_14 = 1;
     timer->field_18 = result;
     timer->field_1c = result;
-    *(u16 *)0x04000000 = 1;
+    REG_DISPCNT = 1;
     GameFlag_SetBitFar(0x103);
     GameFlag_SetBitFar(0x169);
     Render_ResetTransformState();
@@ -237,7 +230,7 @@ s32 Battle_RunEncounter(s32 arg)
                 break;
             }
         }
-        work->field_50 = (u8)((*(u32 *)0x04000128 << 26) >> 30);
+        work->field_50 = (u8)((REG_SIOCNT << 26) >> 30);
         dst = gBattleOwnerStates;
         for (pos = 0; pos <= 0x7c7; pos++)
             *dst++ = gActorSpriteSlots[pos];
@@ -276,7 +269,7 @@ s32 Battle_RunEncounter(s32 arg)
     BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
     BattlePres_SetupTransitionScene(0, 0, 0, 190);
     Party_ReservedNoOp5B14(1);
-    *(u16 *)0x04000050 = 0;
+    REG_BLDCNT = 0;
     Summon_ClearWorkFields();
     work->field_54 = Resource_LoadIntoFreeSlot(128);
     work->field_45 = 0;
@@ -394,7 +387,7 @@ resolved:
 aborted:
     Battle_ApplyValueToWork2224();
     Scheduler_EnableCallbacks(0);
-    *(u16 *)0x04000000 = 1;
+    REG_DISPCNT = 1;
     result = work->field_538;
     GameFlag_SetBitFar(0x3e8);
     goto finished;

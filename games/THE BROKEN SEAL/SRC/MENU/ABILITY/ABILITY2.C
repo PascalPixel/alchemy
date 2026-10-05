@@ -3,18 +3,16 @@
 #include "PSYNERGY_MENU.H"
 #include "ANIMSPR.H"
 #include "FIELD_SPRITE.H"
+#include "RESOURCE.H"
 
 s32 UiWindow_UpdateOrCreate(s32 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y);
 
-
 s32 Party_ListActiveOwnersFar(u16 *out);
 s32 Party_RemapCharacterIdByFlagsFar(u16 value);
-void *ResourceObject_CreateFar(s32 value);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 value);
 void Menu_UpdateEntryObjectTransforms(void);
 
-void ResourceObject_ReleaseFar(void *);
 s32 Party_CountActiveOwnersFar(void);
 void Object_ApplyProjectedPlacementFar(void *, s32 *, s32 *, s32);
 

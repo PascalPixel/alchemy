@@ -6,7 +6,6 @@
 #include "WINDOW.H"
 #include "IO_REG.H"
 
-s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 s32 UiText_GetResourceDimensions(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry,
     s32 x, s32 y, u16 *colours, s32 flags);
@@ -84,7 +83,6 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message)
     routine(reader, message);
     Sys_Free(routine);
 }
-
 
 /* Per previous character: the code tree's bits, with the leaf values packed
    as 12-bit entries just before them, and the offsets of each tree. */

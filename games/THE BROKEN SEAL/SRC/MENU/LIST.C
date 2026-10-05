@@ -5,6 +5,7 @@
 #include "BATTLE_TYPES.H"
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
+#include "BATTLE_RUNTIME.H"
 
 TEXT_MESSAGE_ENUM(MsgBattleNoPsynergy);
 
@@ -42,7 +43,6 @@ extern u8 MsgAbilityDescription;
 void Ability_LoadGlyph(s32 action, s32 base, s32 *source, s32 *tile, s32 reuse);
 void UiWindow_DrawThreeTileColumn(
     struct UiWindow *window, s32 x, s32 y, s32 range, s32 layer);
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 struct BattleAction *Ability_GetData(s32 action);
 
 s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)

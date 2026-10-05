@@ -8,17 +8,13 @@
 #include "IWRAM_CALL.H"
 #include "INVENTORY_MENU.H"
 #include "ITEM.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_CALC.H"
+#include "UI.H"
 
 extern struct InventoryMenuState *gMenuWork;
-struct BattleUnit *Owner_GetStateFar(s32);
-struct ItemDefinition *Item_Get(s32);
 s32 Inventory_RemoveFar(s32, s32);
-s32 ItemMenu_Collect(struct BattleUnit *, u16 *, s32);
 s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
-void BattleUnit_Recalculate(s32);
-struct BattleAction *BattleAction_Get(s32);
-void Owner_RecalculateRatiosFar(s32);
-s32 Battle_CalcRestore(s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
 s32 Audio_PlayCueReturnOne(s32 cue);
 
@@ -68,7 +64,6 @@ struct ItemMenuWork {
 
 extern struct ItemMenuModeState gGameState;
 extern struct ItemMenuDisplayState *gMenuCtrlWork;
-s32 GameFlag_TestFar(s32 flag);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 mode);
 void UiWork_SetAltFlagAndClearTableFar(s32 value);
@@ -76,14 +71,11 @@ void UiWindow_MarkVisibleTileAttributesFar(void);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 void Resource_LoadPairedBlocksIfAvailable(void);
-void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns);
 void Palette_LightenBankHighlight(s32 palette);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
 void Func_080aa768(void);
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
 void Menu_ResetTwoResourceEntries(void);
-void ItemMenu_Close(void);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
 

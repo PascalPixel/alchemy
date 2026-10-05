@@ -8,15 +8,12 @@
 #include "CHARACTER.H"
 
 /* party/set_flag32_and_refresh_members.c */
-void Owner_RefreshDerivedData(s32 arg0);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
 /* party/apply_state_preset.c */
-s32 OwnerAction_Add(s32 id, s32 value);
 
 /* owner/Owner_RefreshActiveRatios.c */
-s32 Party_CountActiveOwners();
 
 extern const u8 Character_ElementGroupTable[];
 void *Owner_GetState(s32);

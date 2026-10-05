@@ -57,7 +57,6 @@ extern const struct EnemyDefinition Enemy_Definitions[];
 extern u8 MsgEnemyName;
 
 void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
-void Owner_RecalculateStats(s32 owner);
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 

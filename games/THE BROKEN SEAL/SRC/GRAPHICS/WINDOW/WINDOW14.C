@@ -12,6 +12,7 @@
 #include "DMA.H"
 #include "FIELD_SPRITE.H"
 #include "WORKSPACE_OPTIONS.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 Resource_FixedBlockBTiles[];
 
@@ -257,7 +258,6 @@ extern u32 gFrameTick;
 extern volatile u32 gKeysRepeat;
 extern u32 gKeyState;
 
-void *Owner_GetStateFar(s32 owner);
 void Ui_LoadWindowGraphics(void);
 s32 Localization_LookupEntryId(s32 entry);
 s32 UiWindow_CreateWithSideObject(s32 entry, s32 side, s32 x, s32 y);

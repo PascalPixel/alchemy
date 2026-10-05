@@ -3,6 +3,7 @@
 #include "TBS_EDITION.H"
 #include "INVENTORY_MENU.H"
 #include "BATTLE_RUNTIME.H"
+#include "UI.H"
 
 /* The Japanese item names and stats sit closer, and the page icons a little
    further right. */
@@ -21,7 +22,6 @@ extern u8 MsgStatLabel[];
 extern char MsgItemMenuEmpty;
 extern struct InventoryMenuState *gMenuWork;
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);

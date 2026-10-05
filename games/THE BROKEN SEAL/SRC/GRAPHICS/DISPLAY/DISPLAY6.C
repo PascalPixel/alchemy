@@ -5,14 +5,14 @@
 #include "IWRAM_CALL.H"
 #include "LAYOUT_GUARD.H"
 #include "IO_REG.H"
+#include "BATTLE_PARTY.H"
+#include "BATTLE_RUNTIME.H"
 
 /* The scrolling credits keep 128 hardware OAM entries, two words each. */
 struct DisplayScrollObject {
     u32 attr01;
     u32 attr2;
 };
-
-LAYOUT_SIZE_GUARD(DisplayScrollObject_Size, struct DisplayScrollObject, 8);
 
 /* The credits keep their scroll position in the shared scratch word. */
 extern u16 gScratchWord;
@@ -26,7 +26,6 @@ extern const void *DisplayScroll_LineTable[];
 
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
-s32 GameFlag_TestFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 

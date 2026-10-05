@@ -9,6 +9,10 @@
 #include "BATTLE_TYPES.H"
 #include "PARTY_STATE.H"
 #include "RUNTIME_MEM.H"
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
+#include "MENU_LIST.H"
+#include "BATTLE_RUNTIME.H"
 
 /* The eight-pixel row `up` rows above the bottom row of a background tile
    in the first character block. */
@@ -30,9 +34,6 @@ struct PartyStatusWindow {
     u16 height;
     u16 flags;
 };
-
-LAYOUT_SIZE_GUARD(PartyStatusWindow_Size, struct PartyStatusWindow, 16);
-LAYOUT_OFFSET_GUARD(PartyStatusWindow_Flags, struct PartyStatusWindow, flags, 12);
 
 extern s32 BattleParty_PrepareActiveOwnersFar(s32);
 extern s32 Party_CountActiveOwnersFar(void);
@@ -248,10 +249,7 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
 }
 
 void UiWindow_EraseBorderRect(s32, s32, u32, u32);
-void RenderOutput_RedrawSavedRect(struct UiWindow *);
 void UiWindow_DrawFrame(s32, s32, u32, u32);
-struct BattleUnit *Owner_GetStateFar(s32);
-void UiWork_SetParamNibble(s32);
 void UiText_DrawStringAtOffset(u8 *, struct RenderInput *, s32, s32);
 s32 BattlePlacement_CountValidEntriesFar(s32, u8 *);
 s32 __divsi3(s32, s32);

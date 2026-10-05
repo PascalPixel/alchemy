@@ -8,13 +8,9 @@
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 #include "IO_REG.H"
-
-s32 Trig_Sin(s32);
-s32 Trig_Cos(s32);
-
+#include "FIXED_MATH.H"
 
 /* camera/scene/set_angle_parameters.c */
-
 
 extern const u8 Resource_DecodeHalfwordLz[];
 

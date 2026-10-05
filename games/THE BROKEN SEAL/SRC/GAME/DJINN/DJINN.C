@@ -20,7 +20,6 @@ u32 GameFlag_SetBit(u32 flag);
 u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
 s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 s32 Trade_CanOfferDjinn(s32, s32, s32);
-void Owner_RefreshDerivedData(s32 owner);
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit);
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit);
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit);

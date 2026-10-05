@@ -1,8 +1,8 @@
 #include "EDITION.H"
 #include "FAR_RUNTIME.H"
 #include "SHOP.H"
+#include "UI.H"
 
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 extern u8 MsgItemName;
 extern u8 MsgCannotBuyThat[];

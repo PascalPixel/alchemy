@@ -7,6 +7,7 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_PARTY.H"
 #include "SERIAL_RUNTIME.H"
+#include "BATTLE_RUNTIME.H"
 void Party_Apply(s32, u16 *);
 void Party_Do(void *);
 
@@ -18,9 +19,6 @@ void Party_Do(void *);
 #define NAME_LIMIT 4
 #define APPEND_NAME_SPACE 0
 #endif
-
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
-void SerialRuntime_WaitForTransferA(void);
 
 void WaitFrames(s32);
 struct BattleUnit *Runtime_GetObject(s32);

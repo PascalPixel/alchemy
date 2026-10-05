@@ -4,9 +4,6 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-
-s32 UiText_BuildRenderEntries(s32 character, s32 count);
-u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, s32 y);
 

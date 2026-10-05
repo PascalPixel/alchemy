@@ -4,6 +4,7 @@
 #include "INVENTORY_MENU.H"
 #include "M7_INTERFACES.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 extern volatile u32 gKeyState;
 
@@ -11,7 +12,6 @@ void UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, s32 *width, s3
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void GameFlag_SetBitFar(s32 flag);
 /* The pointer-cell closer ignores the extra legacy caller word. */

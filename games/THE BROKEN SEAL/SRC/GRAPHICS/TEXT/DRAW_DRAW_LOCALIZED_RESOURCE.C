@@ -54,8 +54,6 @@ s32 UiText_DrawWaitingForOpponent(void)
 #if EDITION_INTERNATIONAL
     arg_size = 0x34;
     frame = captured - 1;
-    /* FAKEMATCH: The international message load follows the frame adjustment; the prior shape swapped that pair. */
-    __asm__("" : "+r"(frame) : : "r0");
     UiText_CopyMessageString((s32)MsgWaitingForOpponent, arg_buf, arg_size);
 #else
     {

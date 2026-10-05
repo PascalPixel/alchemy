@@ -1469,22 +1469,22 @@ void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
 void SceneEffect_StepEllipseOrbit(u8 *obj)
 {
     u8 *anchor = *(u8 **)(obj + 104);
-    u16 *angle = (u16 *)(obj + 100);
+    u16 *angle = &((struct FieldActor *)obj)->timer;
     u16 theta = *angle;
     s32 x;
     s32 z;
     s32 tmp;
 
-    x = *(s32 *)(anchor + 8) + Engine_MathCos(theta)* 14;
-    *(s32 *)(obj + 8) = x;
+    x = ((struct FieldActor *)anchor)->x.fixed + Engine_MathCos(theta)* 14;
+    ((struct FieldActor *)obj)->x.fixed = x;
 
-    z = *(s32 *)(anchor + 16) + Engine_MathSin(theta)* 10;
-    tmp = *(s32 *)(obj + 8);
-    *(s32 *)(obj + 16) = z;
-    *(s32 *)(obj + 64) = z;
-    *(s32 *)(obj + 56) = tmp;
+    z = ((struct FieldActor *)anchor)->z.fixed + Engine_MathSin(theta)* 10;
+    tmp = ((struct FieldActor *)obj)->x.fixed;
+    ((struct FieldActor *)obj)->z.fixed = z;
+    ((struct FieldActor *)obj)->target_z = z;
+    ((struct FieldActor *)obj)->target_x = tmp;
 
-    *angle = (u16)(*angle + *(u16 *)(obj + 102));
+    *angle = (u16)(*angle + ((struct FieldActor *)obj)->work);
 }
 
 /* Spawns the effect object above actor a0 with its script, zeroes its state and copies the owner's sprite mode. */

@@ -90,7 +90,7 @@ Func_0813e7e0:
 .L_0813e894:
 	.4byte 0x00000080
 .L_0813e898:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813e89c:
 	.4byte 0xfffff000
 .L_0813e8a0:
@@ -438,7 +438,7 @@ Func_0813e7e0:
 .L_0813eb58:
 	.4byte 0x01010101
 .L_0813eb5c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813eb60:
 	.4byte gInput
 .L_0813eb64:

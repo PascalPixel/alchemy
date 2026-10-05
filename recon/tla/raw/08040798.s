@@ -38,7 +38,7 @@ Func_08040798:
 	movs r0, #7
 	ldr r1, [sp, #16]
 	movs r2, #40
-	bl Func_08044f88
+	bl RenderResource_CreatePair
 	str r0, [sp, #8]
 	cmp r5, #0
 	beq .L_080407f8

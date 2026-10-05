@@ -155,7 +155,7 @@ Func_08168a40:
 .L_08168b7c:
 	.4byte 0x00000158
 .L_08168b80:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08168b84:
 	ldr r1, [sp, #64]
 	lsls r0, r0, #7
@@ -484,7 +484,7 @@ Func_08168a40:
 .L_08168dfc:
 	.4byte 0x00000784
 .L_08168e00:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08168e04:
 	.4byte Data_08196e7c
 .L_08168e08:
@@ -629,7 +629,7 @@ Func_08168a40:
 .L_08168f14:
 	.4byte 0x00000007
 .L_08168f18:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08168f1c:
 	ldr r0, .L_08168fc8
 	movs r3, #32
@@ -720,7 +720,7 @@ Func_08168a40:
 .L_08168fc4:
 	.4byte 0x000000f0
 .L_08168fc8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08168fcc:
 	.4byte gInput
 .L_08168fd0:

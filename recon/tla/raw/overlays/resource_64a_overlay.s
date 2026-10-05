@@ -41,7 +41,7 @@ Func_0200005c:
 .L_020080a4:
 	.4byte 0x00000022
 .L_020080a8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020080ac:
 	adds r0, r4, #0
 	ldr r1, .L_02008144
@@ -129,7 +129,7 @@ Func_0200005c:
 .L_02008150:
 	.4byte 0x06003000
 .L_02008154:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_02008158:
 	.4byte gPartyState
 	.section .text.x0200815c,"ax",%progbits

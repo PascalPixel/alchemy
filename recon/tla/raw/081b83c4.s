@@ -424,7 +424,7 @@ Func_081b83c4:
 .L_081b872c:
 	.4byte 0x05000200
 .L_081b8730:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081b8734:
 	movs r3, #128
 	ldr r1, .L_081b8770

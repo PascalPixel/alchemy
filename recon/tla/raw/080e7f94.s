@@ -34,7 +34,7 @@ Func_080e7f94:
 	adds r1, r6, #0
 	adds r0, r5, #0
 	mov r2, r11
-	bl Func_080eb2f0
+	bl BattleFx_PlotCanvasPixel
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5

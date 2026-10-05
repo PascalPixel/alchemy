@@ -249,7 +249,7 @@ Func_0814bee0:
 .L_0814c0d0:
 	.4byte 0x00000080
 .L_0814c0d4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814c0d8:
 	.4byte Func_08143000
 .L_0814c0dc:
@@ -425,7 +425,7 @@ Func_0814bee0:
 .L_0814c228:
 	.4byte 0xfffffc38
 .L_0814c22c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814c230:
 	adds r3, r0, r1
 	movs r1, #224
@@ -510,7 +510,7 @@ Func_0814bee0:
 .L_0814c2d4:
 	.4byte gCameraSceneParameters
 .L_0814c2d8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814c2dc:
 	mov r6, r8
 	ldrh r2, [r6]
@@ -1007,7 +1007,7 @@ Func_0814bee0:
 .L_0814c674:
 	.4byte 0x000000c6
 .L_0814c678:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814c67c:
 	.4byte Data_08196e0c
 .L_0814c680:
@@ -1342,7 +1342,7 @@ Func_0814bee0:
 .L_0814c918:
 	.4byte Data_08198cac
 .L_0814c91c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814c920:
 	.4byte gCameraSceneParameters
 .L_0814c924:

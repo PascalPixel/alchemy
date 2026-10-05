@@ -5921,7 +5921,7 @@ Func_02002cf0:
 .L_0200af78:
 	.4byte gPartyState
 .L_0200af7c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0200af80:
 	movs r1, #0
 	adds r0, #255
@@ -6126,7 +6126,7 @@ Func_02002cf0:
 .L_0200b160:
 	.4byte gPartyState
 .L_0200b164:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0200b168:
 	pop {r3, r5}
 	mov r8, r3
@@ -7035,7 +7035,7 @@ Func_02003654:
 .L_0200b8dc:
 	.4byte gPartyState
 .L_0200b8e0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0200b8e4:
 	movs r1, #0
 	adds r0, #255
@@ -7236,7 +7236,7 @@ Func_02003654:
 .L_0200bab4:
 	.4byte gPartyState
 .L_0200bab8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0200babc:
 	pop {r3, r5}
 	mov r8, r3

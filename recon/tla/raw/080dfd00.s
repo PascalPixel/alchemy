@@ -326,7 +326,7 @@ Func_080dfd00:
 	mov r3, r10
 	movs r1, #0
 	ldr r0, [r3, #16]
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	bl BattleFx_PrepareBufferInterpolation
 	adds r2, r7, #0
 	adds r2, #100
@@ -363,4 +363,4 @@ Func_080dfd00:
 .L_080dfff4:
 	.4byte Func_080dfb88
 .L_080dfff8:
-	.4byte Func_080dfffc
+	.4byte BattleFx_AgeAndCueAtEighty

@@ -51,7 +51,7 @@ BattleFx_DispatchRequestKind:
 	cmp r1, #6
 	bne .L_080db6d6
 	adds r0, r5, #0
-	bl Func_080de654
+	bl BattleFx_StartOrbitingParticles
 	b .L_080db840
 .L_080db6d6:
 	cmp r1, #12

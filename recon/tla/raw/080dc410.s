@@ -251,7 +251,7 @@ Func_080dc410:
 	adds r2, r7, r3
 	movs r3, #255
 	strb r3, [r2]
-	bl Func_080e15fc
+	bl BattleFx_StartArcEffect
 	movs r1, #144
 	ldr r0, .L_080dc628
 	lsls r1, r1, #3

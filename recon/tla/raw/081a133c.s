@@ -254,4 +254,4 @@ Func_081a133c:
 .L_081a1504:
 	.4byte 0x06008000
 .L_081a1508:
-	.4byte Data_03001120
+	.4byte gBgScroll

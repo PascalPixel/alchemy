@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080de688
+	.global BattleFx_RunOrbitingParticles
 	.thumb_func
-Func_080de688:
+BattleFx_RunOrbitingParticles:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -179,8 +179,8 @@ Func_080de688:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080de80c:
-	.4byte Func_080de5a4
+	.4byte BattleFx_UpdateOrbitingParticleLeft
 .L_080de810:
-	.4byte Func_080de5fc
+	.4byte BattleFx_UpdateOrbitingParticleRight
 .L_080de814:
 	.4byte BattleFx_UpdateOrbitingParticleMain

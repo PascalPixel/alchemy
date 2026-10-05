@@ -508,7 +508,7 @@ BattleEffect_RunParticleStreams:
 .L_081650b8:
 	.4byte gMapCellBuffer
 .L_081650bc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081650c0:
 	movs r3, #3
 	str r7, [sp, #0]
@@ -1172,7 +1172,7 @@ BattleEffect_RunParticleStreams:
 .L_081655cc:
 	.4byte Func_08143174
 .L_081655d0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081655d4:
 	.4byte 0xfffff000
 .L_081655d8:

@@ -5,6 +5,30 @@
 
 u32 Random16(void);
 
+/* The fields of a falling effect object this step reads. */
+struct FallingObject {
+    u8 unknown_00[0xc];
+    s32 y;
+    u8 unknown_10[4];
+    s32 floor;
+    u8 unknown_18[0x46];
+    s16 dispatch_state;
+    u8 unknown_60[0xc];
+    void *update;
+};
+
+/* Once the object reaches its floor, hands it to the common particle
+   script and stops this step. */
+void BattleFx_LandFallingObject(struct FallingObject *object)
+{
+    if (object->y <= object->floor) {
+        object->dispatch_state = 2;
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+            (u32)BattleFx_CommonParticleScript);
+        object->update = 0;
+    }
+}
+
 void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *object)
 {
     s32 r;

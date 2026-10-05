@@ -518,7 +518,7 @@ Func_080ed2a4:
 .L_080ed69c:
 	.4byte 0x01010100
 .L_080ed6a0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080ed6a4:
 	.4byte Data_0202a640
 .L_080ed6a8:
@@ -624,7 +624,7 @@ Func_080ed2a4:
 .L_080ed770:
 	.4byte 0x04000208
 .L_080ed774:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080ed778:
 	movs r0, #0
 	add sp, #56

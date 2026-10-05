@@ -1,22 +1,28 @@
+/* Near miss: DisplayScroll_UpdateObjects, ☀️'s grid over ⚓️'s intro crawl
+   cells, differ 2 under the ARM9TDMI schedule: the native steps the entry
+   pointer (adds r0, #8) before storing the tile word, this draft after.
+   ⚓️ advances the crawl every third frame with no busy check. Reordering
+   the entry step and the tile store, indexed stores and a 200-step device
+   search did not move it; the grid in 081a08c4 shares the same gap.
+   Joins DISPLAY6.C on a match. */
 #include "TYPES.H"
+#include "DMA.H"
 
-extern u16 gScratchWord;
-extern s16 Flash_Handler0;
-extern u32 *gFlashNumRemainingBytes;
+struct DisplayScrollObject {
+    u32 attr01;
+    u32 attr2;
+};
+
+extern u16 DisplayScroll_Position;
+extern struct DisplayScrollObject *DisplayScroll_Objects;
 extern u32 gFrameTick;
-
-/* Lay the 16 x 6 grid of wide text objects over the scroll position: each
-   row is eight pixels lower less the position's fine offset, and the tiles
-   continue from the position's line in the 0x300-tile ring. Copy the table
-   to OAM, then advance the position every fourth frame unless a line is
-   still being drawn. */
 
 void DisplayScroll_UpdateObjects(void)
 {
-    u32 frame = gScratchWord;
+    u32 frame = DisplayScroll_Position;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
-    u32 *entry = gFlashNumRemainingBytes + 48;
+    u32 *entry = (u32 *)(DisplayScroll_Objects + 24);
     s32 row;
 
     for (row = 0; row <= 15; row++) {
@@ -33,7 +39,7 @@ void DisplayScroll_UpdateObjects(void)
                 tile = 0;
         }
     }
-    Dma_Set(gFlashNumRemainingBytes, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
-    if (Flash_Handler0 == 0 && (gFrameTick & 3) == 0)
-        gScratchWord++;
+    Dma_Set(DisplayScroll_Objects, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
+    if (gFrameTick % 3 == 0)
+        DisplayScroll_Position++;
 }

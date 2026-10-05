@@ -52,7 +52,7 @@ Func_08044a58:
 	str r1, [sp, #0]
 	mov r1, r10
 	str r1, [sp, #4]
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	mov r2, r10
 	mov r3, r8
 	str r2, [r3]
@@ -88,7 +88,7 @@ Func_08044a58:
 	ldr r0, .L_08044b78
 	movs r5, #129
 	adds r0, r6, r0
-	bl Func_0803cf60
+	bl UiText_BuildRenderEntriesMode1
 	mov r2, r10
 	adds r1, r0, #0
 	str r2, [sp, #0]

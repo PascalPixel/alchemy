@@ -380,7 +380,7 @@ Func_0817d724:
 .L_0817da24:
 	.4byte IwramCopyWords
 .L_0817da28:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817da2c:
 	.4byte 0x04040404
 .L_0817da30:
@@ -567,7 +567,7 @@ Func_0817d724:
 	b .L_0817dbe2
 	.2byte 0x0000
 .L_0817db80:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817db84:
 	.4byte gCameraSceneParameters
 .L_0817db88:
@@ -765,7 +765,7 @@ Func_0817d724:
 	mov r7, r11
 	adds r0, r5, #0
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	cmp r7, #133
 	bgt .L_0817dd80
 	mov r3, r11

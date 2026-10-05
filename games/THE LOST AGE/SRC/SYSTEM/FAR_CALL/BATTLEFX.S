@@ -120,10 +120,10 @@ Func_080c8560:
 	.thumb_func
 Func_080c8568:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Audio_SelectPartyCueForArea
+	overlay_veneer Scene_ResolveInteractionResult
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Audio_SelectPartyCueForArea
+	overlay_veneer Scene_ResolveInteractionResult
 .else
 	overlay_veneer BattleFx_GetPhaseResult
 .endif
@@ -143,7 +143,15 @@ Func_080c8570:
 	.global Func_080c8578
 	.thumb_func
 Func_080c8578:
-	overlay_veneer Func_080ca1bc
+.ifdef TLA_EDITION_ES
+	overlay_veneer EffectSlot_Update
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer EffectSlot_Update
+.else
+	overlay_veneer Scene_ResolveInteractionResult
+.endif
+.endif
 	.global Func_080c8580
 	.thumb_func
 Func_080c8580:

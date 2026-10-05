@@ -24,7 +24,15 @@ Func_080c8630:
 	.global Func_080c8638
 	.thumb_func
 Func_080c8638:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Scene_GetAreaNameIndex
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Scene_GetAreaNameIndex
+.else
 	overlay_veneer Func_080d46a4
+.endif
+.endif
 	.global Func_080c8640
 	.thumb_func
 Func_080c8640:

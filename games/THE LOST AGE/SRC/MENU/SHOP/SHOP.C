@@ -125,7 +125,7 @@ void Func_080c8390(s32);
 void Shop_RestoreSceneTiles(s32 layer)
 {
     u8 *map = Ram_HeapSlots->event_work;
-    u8 *work = Ram_HeapSlots->unknown_80[0];
+    u8 *work = Ram_HeapSlots->block_32;
     u8 *saved = work + 0xe00;
 
     Dma_Set(saved, map + 0x222, 0x84000150, (volatile u32 *)0x040000d4);

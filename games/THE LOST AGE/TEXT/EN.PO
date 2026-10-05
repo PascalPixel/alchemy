@@ -17911,7 +17911,7 @@ msgctxt "message"
 msgid "04475"
 msgstr "password to enter."
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04476"
 msgstr "Levels"
 
@@ -17963,7 +17963,7 @@ msgctxt "message"
 msgid "04488"
 msgstr "Data transfer was interrupted"
 
-msgctxt "message"
+msgctxt "MsgIntroCrawl"
 msgid "04489"
 msgstr "Ages ago, or so the stories"
 

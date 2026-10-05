@@ -128,7 +128,7 @@ Func_0813fa88:
 .L_0813fb84:
 	.4byte 0x00000784
 .L_0813fb88:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813fb8c:
 	lsls r3, r2, #1
 	adds r3, r3, r2

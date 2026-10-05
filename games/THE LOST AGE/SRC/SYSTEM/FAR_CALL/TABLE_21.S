@@ -16,7 +16,7 @@ UiWindow_EraseBorderRectFar:
 	.global Link_DrawShiftedTilePairFar
 	.thumb_func
 Link_DrawShiftedTilePairFar:
-	overlay_veneer Func_08045330
+	overlay_veneer Link_DrawShiftedTilePair
 	.global Func_08038400
 	.thumb_func
 Func_08038400:

@@ -26,7 +26,12 @@ struct UiRenderWork {
     struct UiChannelSlot channels[3];
     struct RenderOutput outputs[UI_OUTPUT_COUNT];
     struct RenderOutputList free_outputs;
-    u8 unknown_before_entries[0x108];
+    u8 unknown_e38[0x100];
+    /* The text parameters a channel hands the renderer, as in ☀️. */
+    u16 line_spacing;
+    u16 unknown_f3a;
+    u16 outline;
+    u16 colour;
     u16 entries[UI_TEXT_ENTRY_COUNT];
     u16 unknown_before_count;
     u16 count;

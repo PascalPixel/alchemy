@@ -40,7 +40,7 @@ Func_080435fc:
 	bl UiWork_IsComplete
 	cmp r0, #0
 	beq .L_08043642
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 	cmp r5, #0
 	beq .L_08043666
 	ldr r0, .L_08043688

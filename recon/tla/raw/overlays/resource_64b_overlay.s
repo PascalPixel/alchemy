@@ -7864,7 +7864,7 @@ Func_020042e0:
 .L_0200c4f4:
 	.4byte 0x84000800
 .L_0200c4f8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0200c4fc:
 	.4byte gPartyState
 	.section .text.x0200c500,"ax",%progbits

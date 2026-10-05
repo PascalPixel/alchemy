@@ -54,7 +54,7 @@ Func_081a7518:
 .L_081a7584:
 	.4byte 0x00000020
 .L_081a7588:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a758c:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
@@ -149,7 +149,7 @@ Func_081a7518:
 .L_081a7644:
 	.4byte 0x06003000
 .L_081a7648:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a764c:
 	.4byte gInput
 .L_081a7650:

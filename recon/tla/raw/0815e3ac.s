@@ -608,7 +608,7 @@ Func_0815e3ac:
 	b .L_0815e8ca
 	.2byte 0x0000
 .L_0815e878:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815e87c:
 	.4byte Data_0819886c
 .L_0815e880:
@@ -794,4 +794,4 @@ Func_0815e3ac:
 .L_0815e9ec:
 	.4byte Func_08143000
 .L_0815e9f0:
-	.4byte Data_03001120
+	.4byte gBgScroll

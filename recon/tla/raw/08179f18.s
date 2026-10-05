@@ -228,7 +228,7 @@ Func_08179f18:
 .L_0817a0e4:
 	.4byte 0xfffffc00
 .L_0817a0e8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817a0ec:
 	.4byte Data_02014000
 .L_0817a0f0:
@@ -1220,7 +1220,7 @@ Func_08179f18:
 .L_0817a860:
 	.4byte 0xfffee000
 .L_0817a864:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817a868:
 	.4byte 0xfffa0000
 .L_0817a86c:
@@ -2657,7 +2657,7 @@ Func_08179f18:
 .L_0817b37c:
 	.4byte Func_0813baec
 .L_0817b380:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817b384:
 	.4byte 0x05000200
 .L_0817b388:

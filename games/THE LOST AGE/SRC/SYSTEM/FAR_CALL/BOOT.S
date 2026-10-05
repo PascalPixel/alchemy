@@ -180,7 +180,7 @@ Func_08000210:
 	.global Func_08000218
 	.thumb_func
 Func_08000218:
-	overlay_veneer Func_08014ea8
+	overlay_veneer Graphics_RestoreTransferWork
 	.global Func_08000220
 	.thumb_func
 Func_08000220:

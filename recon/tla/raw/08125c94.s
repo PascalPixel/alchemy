@@ -57,4 +57,4 @@ Func_08125c94:
 .L_08125cf6:
 	pop {pc}
 .L_08125cf8:
-	.4byte Data_03001120
+	.4byte gBgScroll

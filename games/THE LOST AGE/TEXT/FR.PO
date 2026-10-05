@@ -19803,7 +19803,7 @@ msgctxt "message"
 msgid "04948"
 msgstr "Le transfert a été interrompu."
 
-msgctxt "message"
+msgctxt "MsgIntroCrawl"
 msgid "04949"
 msgstr "D'après les légendes,"
 

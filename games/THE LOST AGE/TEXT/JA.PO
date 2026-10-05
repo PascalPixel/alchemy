@@ -17943,7 +17943,7 @@ msgctxt "message"
 msgid "04483"
 msgstr "つうしんが せつだんされました"
 
-msgctxt "message"
+msgctxt "MsgIntroCrawl"
 msgid "04484"
 msgstr "はるかむかし"
 

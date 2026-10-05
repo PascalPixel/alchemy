@@ -292,7 +292,7 @@ Game_ResetForNewGame:
 	movs r3, #0
 	ldrsh r0, [r2, r3]
 	bl Func_080c9c38
-	bl Func_080ca1bc
+	bl Scene_ResolveInteractionResult
 	adds r0, r5, #0
 	bl GameFlag_Test
 	cmp r0, #0

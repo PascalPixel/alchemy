@@ -442,7 +442,7 @@ Func_0815b764:
 .L_0815bad0:
 	.4byte 0x000000c7
 .L_0815bad4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815bad8:
 	.4byte 0x00000150
 .L_0815badc:
@@ -2128,7 +2128,7 @@ Func_0815b764:
 .L_0815c7fc:
 	.4byte 0x00000787
 .L_0815c800:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815c804:
 	.4byte gCameraSceneParameters
 .L_0815c808:

@@ -711,7 +711,7 @@ Func_02000318:
 .L_02008670:
 	.4byte 0x0000306e
 .L_02008674:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_02008678:
 	.4byte gMapCellBuffer
 .L_0200867c:

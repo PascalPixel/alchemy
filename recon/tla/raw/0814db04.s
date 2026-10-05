@@ -695,7 +695,7 @@ Func_0814db04:
 	adds r4, r0, #4
 	b .L_0814e0aa
 .L_0814e07c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814e080:
 	.4byte Data_08198280
 .L_0814e084:

@@ -55,7 +55,9 @@ struct HeapSlots {
     u8 *window_tiles;
     /* The party status window's handle and place. */
     void *window_layout;
-    void *unknown_44;
+    /* The glyph decoder's transfer work, which The Broken Seal keeps as
+       gGlyphWork. */
+    void *glyph_work;
     /* The menu screen work, which The Broken Seal keeps as gResQueueWork. */
     void *menu_work;
     void *unknown_4c[4];
@@ -68,9 +70,16 @@ struct HeapSlots {
     /* The display transition's state, which The Broken Seal keeps in its
        slot 31 too. */
     struct DisplayTransitionState *display_transition;
-    void *unknown_80[12];
+    /* Heap block 32, which each screen fills with its own work: the title
+       palette fade's (The Broken Seal keeps it in its own cell) or the
+       shop's. */
+    void *block_32;
+    void *unknown_84[11];
     struct BattlePresentationTransition *transition_work;
-    void *unknown_b4[6];
+    /* The battle canvas's pixel map: for each pixel of a 64-wide half, its
+       byte in the 8bpp tiles of battle_fx_work[1]. */
+    u16 *canvas_map;
+    void *unknown_b8[5];
     /* The serial link runtime's work. */
     void *serial_work;
     void *unknown_d0[3];
@@ -83,7 +92,10 @@ struct HeapSlots {
     /* The resource selection menu's work, which The Broken Seal keeps as
        gMenuSelectWork. */
     void *menu_select_work;
-    void *unknown_ec[5];
+    void *unknown_ec[3];
+    /* Heap block 62, the arc effect's work. */
+    void *block_62;
+    void *unknown_fc[1];
 };
 
 #define Ram_HeapSlots ((struct HeapSlots *)0x03000000) /* gHeapSlots */

@@ -562,7 +562,7 @@ Func_02000490:
 .L_020084d8:
 	.4byte 0x00000022
 .L_020084dc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020084e0:
 	adds r0, r4, #0
 	ldr r1, .L_02008560
@@ -639,7 +639,7 @@ Func_02000490:
 .L_0200856c:
 	.4byte 0x06003000
 .L_02008570:
-	.4byte Data_03001120
+	.4byte gBgScroll
 	.section .rodata.x0200864c,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:

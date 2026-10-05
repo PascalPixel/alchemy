@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_0803cfd0
 	.thumb_func
 Func_0803cfd0:
@@ -27,13 +28,13 @@ Func_0803cfd0:
 	adds r1, r6, r3
 	adds r0, r5, #0
 	movs r2, #1
-	bl Func_0803cfa0
+	bl UiText_PlotGlyphRows
 	movs r3, #192
 	lsls r3, r3, #1
 	adds r0, r5, #0
 	adds r1, r6, r3
 	movs r2, #15
-	bl Func_0803cfa0
+	bl UiText_PlotGlyphRows
 	mov r0, r8
 	pop {r3}
 	mov r8, r3

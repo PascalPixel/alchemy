@@ -158,7 +158,7 @@ Func_081848ec:
 .L_08184a0c:
 	.4byte 0xffc87150
 .L_08184a10:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08184a14:
 	ldr r3, .L_08184b38
 	ldr r2, .L_08184b3c
@@ -319,7 +319,7 @@ Func_081848ec:
 .L_08184b38:
 	.4byte 0xfffffe84
 .L_08184b3c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08184b40:
 	.4byte 0xfffffe87
 .L_08184b44:
@@ -2142,7 +2142,7 @@ Func_081848ec:
 	bl Func_08196958
 	mov r0, r8
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r3, #170
 	movs r4, #1
 	lsls r3, r3, #7
@@ -2585,7 +2585,7 @@ Func_08185b9c:
 .L_08185cd4:
 	.4byte gCameraSceneParameters
 .L_08185cd8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08185cdc:
 	.4byte 0x00000075
 .L_08185ce0:
@@ -3176,7 +3176,7 @@ Func_08185b9c:
 	adds r0, r7, #0
 	bl Func_08196a7c
 	movs r5, #170
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	movs r0, #1
 	lsls r5, r5, #7
 	add r9, r0
@@ -3606,7 +3606,7 @@ Func_08185b9c:
 .L_081864e8:
 	.4byte Data_08197410
 .L_081864ec:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081864f0:
 	ldr r2, .L_08186618
 	movs r3, #0
@@ -3750,7 +3750,7 @@ Func_08185b9c:
 .L_08186614:
 	.4byte 0x00000784
 .L_08186618:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0818661c:
 	.4byte gInput
 .L_08186620:
@@ -4237,7 +4237,7 @@ Func_08185b9c:
 .L_081869e4:
 	.4byte Data_02020202
 .L_081869e8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081869ec:
 	.4byte gCameraSceneParameters
 .L_081869f0:
@@ -4340,7 +4340,7 @@ Func_08185b9c:
 	bl Func_08196958
 	adds r0, r7, #0
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r3, .L_08186dc8
 	ldr r2, [sp, #60]
 	movs r1, #6
@@ -4736,6 +4736,6 @@ Func_08185b9c:
 .L_08186df0:
 	.4byte gCameraSceneParameters
 .L_08186df4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08186df8:
 	.4byte Func_08143000

@@ -27,3 +27,29 @@ s32 Party_SumDjinnCounts(s32 index)
     }
     return result;
 }
+
+s32 Trade_CanOfferDjinn(s32 owner, s32 element, s32 djinn);
+void BattlePlacement_UpdateTimedEntriesTwentyTimesFar(void);
+
+/* Sets every Djinni the active party members have offered back to work,
+   taking each out of the offer. */
+void Djinn_ActivateOfferedForParty(void)
+{
+    u16 owners[16];
+    s32 count = Party_ListActiveOwners((s16 *)owners);
+    s32 i;
+    s32 element;
+    s32 djinn;
+
+    BattlePlacement_UpdateTimedEntriesTwentyTimesFar();
+    for (i = 0; i < count; i++) {
+        for (element = 0; element <= 3; element++) {
+            for (djinn = 0; djinn <= 19; djinn++) {
+                if (Trade_CanOfferDjinn(owners[i], element, djinn)) {
+                    Djinn_Activate(owners[i], element, djinn);
+                    Trade_RemoveOffer(owners[i], element, djinn);
+                }
+            }
+        }
+    }
+}

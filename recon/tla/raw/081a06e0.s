@@ -38,9 +38,9 @@ Func_081a06e0:
 	ldr r0, .L_081a0760
 	bl Func_081a0674
 	movs r0, #0
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	movs r0, #1
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	movs r2, #248
 	movs r3, #128
 	b .L_081a0764
@@ -58,7 +58,7 @@ Func_081a06e0:
 .L_081a0754:
 	.4byte gAutoSleepEnabled
 .L_081a0758:
-	.4byte Func_081a06b4
+	.4byte DisplayScroll_StepPositionEveryFourFrames
 .L_081a075c:
 	.4byte 0x06007800
 .L_081a0760:
@@ -238,6 +238,6 @@ Func_081a06e0:
 .L_081a08b8:
 	.4byte Data_02007500
 .L_081a08bc:
-	.4byte Data_02007508
+	.4byte DisplayScroll_Busy
 .L_081a08c0:
 	.4byte gRenderOamEnabled

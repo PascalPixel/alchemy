@@ -1752,7 +1752,7 @@ Func_0815cde8:
 .L_0815db2c:
 	.4byte gMapCellBuffer
 .L_0815db30:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815db34:
 	.4byte 0xffc00000
 .L_0815db38:

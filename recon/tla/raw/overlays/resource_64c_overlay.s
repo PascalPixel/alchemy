@@ -477,7 +477,7 @@ Func_0200020c:
 	bl WaitFrames
 	b .L_0200855a
 .L_020083ec:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020083f0:
 	.4byte Data_02003d20
 .L_020083f4:
@@ -744,7 +744,7 @@ Func_0200020c:
 .L_020085f0:
 	.4byte Func_0200005c
 .L_020085f4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020085f8:
 	.4byte gIoWriteQueue
 .L_020085fc:
@@ -1450,7 +1450,7 @@ Func_0200020c:
 .L_02008b50:
 	.4byte 0x050001c0
 .L_02008b54:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_02008b58:
 	.4byte Func_0200005c
 .L_02008b5c:

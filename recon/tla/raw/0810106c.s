@@ -67,7 +67,7 @@ Func_0810106c:
 	b .L_08101510
 .L_08101102:
 	movs r0, #0
-	bl Func_08100e34
+	bl Menu_SetFirstObjectRowCoordinates
 	movs r0, #1
 	movs r1, #0
 	movs r2, #200
@@ -161,7 +161,7 @@ Func_0810106c:
 .L_081011b6:
 	movs r0, #8
 	negs r0, r0
-	bl Func_08100e34
+	bl Menu_SetFirstObjectRowCoordinates
 	movs r3, #28
 	ldrsb r3, [r7, r3]
 	movs r1, #129

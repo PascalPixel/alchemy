@@ -283,4 +283,4 @@ Func_0802ad84:
 .L_0802af94:
 	.4byte 0xfff00000
 .L_0802af98:
-	.4byte Data_03001120
+	.4byte gBgScroll

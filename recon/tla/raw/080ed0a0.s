@@ -275,4 +275,4 @@ Func_080ed0a0:
 .L_080ed29c:
 	.4byte IwramRatioMulQ14
 .L_080ed2a0:
-	.4byte Data_03001120
+	.4byte gBgScroll

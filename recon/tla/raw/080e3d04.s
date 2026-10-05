@@ -348,7 +348,7 @@ Func_080e3d04:
 	mov r1, r10
 	ldr r0, [r1, #16]
 	movs r1, #0
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	mov r3, r10
 	ldrh r2, [r3, #2]
 	movs r3, #192

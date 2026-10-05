@@ -93,15 +93,13 @@ s32 PartyInventory_RemoveFar(s32 item);
 s32 PartyInventory_CountItemFar(s32 item);
 void AudioCommand_PlayFar(s32 command);
 
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 /* One frame of the reel game, run by the scheduler: read the pad, run the
    state machine that takes the bet, spins, holds and pays out, then rebuild
    all 128 sprites and send them to OAM. Each reel is a ring of twenty-one
    symbols scrolled sixteen units a symbol; once all five have settled the
    seven lines (the five rows and the two diagonals) the bet covers are
-   tested. The Japanese prompts and the Spanish sparks differ and are not C
-   yet. */
+   tested. Japanese draws each prompt afresh every frame, without the
+   localized editions' record of the prompt shown. */
 void ReelGame_RunFrame(void)
 {
     struct ReelWork *work;
@@ -239,6 +237,7 @@ void ReelGame_RunFrame(void)
         }
 
         if (work->state == 5) {
+#if EDITION_INTERNATIONAL
             if (work->cursor == 5) {
                 if (all != 0) {
                     if (work->phase != 1 && work->phase != 2) {
@@ -273,6 +272,24 @@ void ReelGame_RunFrame(void)
                 }
                 work->phase = 5;
             }
+#else
+            UiWork_FinalizeFar(work->window, 1);
+            if (work->cursor == 5) {
+                if (all != 0) {
+                    work->window = UiWindow_CreateFar(12, 0, 18, 3, 6);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsAllHeld, work->window, 0, 0);
+                } else {
+                    work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsStart, work->window, 0, 0);
+                }
+            } else {
+                work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
+                if (work->reels[work->cursor].held == 0)
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsHold, work->window, 0, 0);
+                else
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsRelease, work->window, 0, 0);
+            }
+#endif
         } else {
             UiWork_FinalizeFar(work->window, 1);
         }
@@ -296,13 +313,17 @@ void ReelGame_RunFrame(void)
             AudioCommand_PlayFar(112);
         }
     } else if (work->state == 11) {
+#if EDITION_INTERNATIONAL
         if (work->phase == 0) {
             work->phase = 1;
             UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsPullLever, work->window, 0, 8);
         }
+#endif
         if (work->pressed & 1) {
             work->state = 5;
+#if EDITION_INTERNATIONAL
             work->phase = 0;
+#endif
             AudioCommand_PlayFar(112);
             UiWork_FinalizeFar(work->window, 1);
         }
@@ -313,7 +334,7 @@ void ReelGame_RunFrame(void)
     } else if (work->state != 10) {
         /* Reels are turning. */
         if (work->timer == 4) {
-            work->window = UiWindow_CreateFar(18, 17, 12, 3, 6);
+            work->window = UiWindow_CreateFar(REEL_STOP_X, 17, REEL_STOP_WIDTH, 3, 6);
             UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsStopReels, work->window, 0, 0);
         }
         if (work->timer == 16)
@@ -352,8 +373,8 @@ void ReelGame_RunFrame(void)
                 s32 mixed;
                 s32 found;
 
-                mixed = 0;
                 found = -1;
+                mixed = 0;
                 work->winning_lines[col] = 0;
                 if (col > 3 - work->bet && col < work->bet + 3) {
                     for (i = 0; i != 5; i++) {
@@ -390,6 +411,7 @@ void ReelGame_RunFrame(void)
                 UiWork_FinalizeFar(work->window, 1);
             } else {
                 work->state = 11;
+#if EDITION_INTERNATIONAL
                 work->phase = 0;
                 UiWork_FinalizeFar(work->window, 1);
 #if REEL_HINT_BEFORE_LAST_SPIN
@@ -399,6 +421,17 @@ void ReelGame_RunFrame(void)
                     work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
                     UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsChooseHeld, work->window, 0, 0);
                 }
+#else
+                UiWork_FinalizeFar(work->window, 1);
+                {
+                    s32 message;
+
+                    work->window = UiWindow_CreateFar(7, 16, 16, 4, 6);
+                    message = (s32)&MsgSlotsChooseHeld;
+                    UiText_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
+                }
+#endif
                 if (work->spins == 4) {
                     s32 left = PartyInventory_CountItemFar(228);
                     struct UiWindow *window;
@@ -469,12 +502,20 @@ build_objects:
     }
 
     if (work->state == 3) {
-        for (i = 0; i != 8; i++) {
+        for (i = 0; i != REEL_TITLE_LETTERS; i++) {
             struct EffectStep *p = &fx->particles[i];
 
-            work->obj[n].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | blend |
+#if defined(TBS_EDITION_ES)
+            /* The Spanish title opens with its closing exclamation mark
+               turned over, sixteen pixels left and eight down. */
+            if (i == 0)
+                work->obj[n].attr01 = (((*(s16 *)((u8 *)&p->x + 2) + 0x1f0) & 0x1ff) << 16) | blend |
+                                      ((*(s16 *)((u8 *)&p->y + 2) + 0x108) & 255) | 0xb0000000;
+            else
+#endif
+            work->obj[n].attr01 =(*(s16 *)((u8 *)&p->x + 2) << 16) | blend |
                                   ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
-            work->obj[n].attr2 = ((ReelGame_TitleLetterTiles[i] << 4) + 0x370) | 0xf000;
+            work->obj[n].attr2 = ((ReelGame_TitleLetterTiles[i] << 4) + REEL_TITLE_TILES) | 0xf000;
             p->y += p->velocity_y;
             p->velocity_y += 0x4000;
             if (work->timer % 256 == i * 4 + 200) {
@@ -575,8 +616,6 @@ build_objects:
 
     Dma_Set(work->obj, (void *)0x07000000, (n * 2) | 0x84000000, REG_DMA3);
 }
-#endif
-
 
 /* Reel game: clear every particle's variant, line the title letters
    up above the screen (each 0x80000 higher than the last, spaced by their

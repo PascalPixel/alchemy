@@ -207,24 +207,44 @@
 
 /* The reel game's two-line help window: the Japanese lines are shorter.
    Its jackpot picture is sixteen tiles longer in the localized editions and
-   so starts sixteen tiles earlier in the sprite tiles. */
+   so starts sixteen tiles earlier in the sprite tiles, and so do the title
+   letters. */
 #if EDITION_INTERNATIONAL
 #define REEL_HELP_WINDOW_X     2
 #define REEL_HELP_WINDOW_WIDTH 26
 #define REEL_JACKPOT_TILES     0x06016e00
 #define REEL_JACKPOT_COPY      0x84000480
+#define REEL_TITLE_TILES       0x370
 #else
 #define REEL_HELP_WINDOW_X     6
 #define REEL_HELP_WINDOW_WIDTH 18
 #define REEL_JACKPOT_TILES     0x06017000
 #define REEL_JACKPOT_COPY      0x84000400
+#define REEL_TITLE_TILES       0x380
 #endif
 
 /* The reel game's prompt windows, each sized to its edition's words: the
-   warning that every reel is held, the lever's prompt and the hold and
-   release prompts. French and Italian count the coins in three digits from
-   further left, and give the hint to hold reels only before the last spin. */
-#if defined(TBS_EDITION_IT)
+   prompt to stop the reels, the warning that every reel is held, the lever's
+   prompt and the hold and release prompts. French, Italian and Spanish count
+   the coins in three digits from further left, and give the hint to hold
+   reels only before the last spin. */
+#if !EDITION_INTERNATIONAL
+#define REEL_STOP_X         23
+#define REEL_STOP_WIDTH     7
+#elif defined(TBS_EDITION_ES)
+#define REEL_STOP_X         21
+#define REEL_STOP_WIDTH     9
+#define REEL_ALL_HELD_X     6
+#define REEL_ALL_HELD_WIDTH 24
+#define REEL_START_X        22
+#define REEL_START_WIDTH    8
+#define REEL_HOLD_X         22
+#define REEL_HOLD_WIDTH     8
+#define REEL_RELEASE_X      22
+#define REEL_RELEASE_WIDTH  8
+#elif defined(TBS_EDITION_IT)
+#define REEL_STOP_X         18
+#define REEL_STOP_WIDTH     12
 #define REEL_ALL_HELD_X     10
 #define REEL_ALL_HELD_WIDTH 20
 #define REEL_START_X        21
@@ -234,6 +254,8 @@
 #define REEL_RELEASE_X      21
 #define REEL_RELEASE_WIDTH  9
 #elif defined(TBS_EDITION_DE)
+#define REEL_STOP_X         18
+#define REEL_STOP_WIDTH     12
 #define REEL_ALL_HELD_X     11
 #define REEL_ALL_HELD_WIDTH 19
 #define REEL_START_X        16
@@ -243,6 +265,8 @@
 #define REEL_RELEASE_X      21
 #define REEL_RELEASE_WIDTH  9
 #else
+#define REEL_STOP_X         18
+#define REEL_STOP_WIDTH     12
 #define REEL_ALL_HELD_X     11
 #define REEL_ALL_HELD_WIDTH 19
 #define REEL_START_X        16
@@ -252,8 +276,9 @@
 #define REEL_RELEASE_X      23
 #define REEL_RELEASE_WIDTH  7
 #endif
-#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define REEL_COIN_DIGITS             3
+#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) || \
+    defined(TBS_EDITION_ES)
+#define REEL_COIN_DIGITS            3
 #define REEL_COIN_X                  56
 #define REEL_HINT_BEFORE_LAST_SPIN   1
 #else

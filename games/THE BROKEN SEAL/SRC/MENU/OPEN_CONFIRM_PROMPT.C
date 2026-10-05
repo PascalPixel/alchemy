@@ -291,12 +291,12 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 Ability_PlayUseAnimation(work->pane_action[0] & 0x3fff);
                 RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    *(s16 *)((u8 *)work + 0x25a) + (s32)&MsgItemUseResult, 0, -1);
+                    work->use_result + (s32)&MsgItemUseResult, 0, -1);
             } else {
                 Audio_PlayCue(114);
                 RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    *(s16 *)((u8 *)work + 0x25a) + (s32)&MsgItemUseResult,
+                    work->use_result + (s32)&MsgItemUseResult,
                     result,
                     result);
             }

@@ -54,7 +54,10 @@ struct PsynergyMenuState {
     u16 skip_slide;                /* 0x222, skip the next cursor slide */
     u8 unknown_224[0x18];
     s16 slot_y[4];                 /* 0x23c */
-    u8 unknown_244[0x1c];
+    u8 unknown_244[0x16];
+    /* Which of the use result messages the Psynergy's use shows. */
+    s16 use_result;                /* 0x25a */
+    u8 unknown_25c[4];
     s8 selected_index_by_owner[8]; /* 0x260 */
     u8 mode;                      /* 0x268 */
 };

@@ -1,3 +1,14 @@
+/* 2026-10-05 sun w5 finisher 5: still 253. Read in the -da dumps: with the
+ * debug block's L test given a body ({ blocked = 0; goto tail; }) CSE1 does
+ * stop at the join label and recomputes (u16)angle at the second probe, but
+ * GCSE then turns that probe's angle << 16 into a copy of the compare's,
+ * cprop and jump drop the redundant blocked = 0, the join label is back to
+ * one use, and CSE2 (skip-blocks) carries the compare's (u16)angle over the
+ * block again, so the output is unchanged. The ROM therefore had a boundary
+ * at that join in both CSE passes (its first probe's 0x80000 is fresh, the
+ * later ones share r8). Writing the debug block as while (...) { ...; break; }
+ * or as do { if (!gDebugMode) break; ... } while (0) changes nothing.
+ */
 /* 2026-10-05 sun w5 finisher 2: still 253. The ROM also passes the first
  * probe's 0x80000 as a fresh constant and only later holds it in r8, so
  * CSE's path does end at the probe label in the ROM. But giving the debug

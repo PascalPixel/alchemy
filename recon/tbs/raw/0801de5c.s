@@ -388,7 +388,7 @@ UiText_RenderStringTiles:
 .L_0801e158:
 	.4byte 0x00000eae
 .L_0801e15c:
-	.4byte Data_080368d4 + 0x8e0
+	.4byte UiSprite_CursorFrameTiles + 0x8e0
 .L_0801e160:
 	.4byte IwramFillWords
 .L_0801e164:
@@ -398,7 +398,7 @@ UiText_RenderStringTiles:
 .L_0801e16c:
 	.4byte .L_0801df14
 .L_0801e170:
-	.4byte Data_080368d4 + 0x800
+	.4byte UiSprite_CursorFrameTiles + 0x800
 .L_0801e174:
 	.4byte 0x0000f01d
 .L_0801e178:

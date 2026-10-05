@@ -20,7 +20,7 @@
  * and the tile loop, where the listing hoists 0xDA0 into ip and keeps the
  * cursor address in r7. UiText_GlyphWidths (0x080370d4, 0xe0 bytes) and
  * UiText_ColourPens (0x080371b4, 0x10 bytes) are the tail of
- * Data_080368d4 and still need their labels.
+ * UiSprite_CursorFrameTiles and still need their labels.
  */
 #include "TYPES.H"
 #include "WINDOW.H"

@@ -72,11 +72,20 @@ struct OutputSprite {
     u8 y;
     u8 affine : 2;
     u8 mode : 2;
-    u8 other : 4;
+    u8 mosaic : 1;
+    u8 colour : 1;
+    u8 shape : 2;
     u16 x : 9;
     u16 affine_index : 5;
-    u16 other_x : 2;
-    u16 tile;
+    u16 size : 2;
+    union {
+        u16 value;
+        struct {
+            u16 tile : 10;
+            u16 priority : 2;
+            u16 palette : 4;
+        } f;
+    } attr2;
 };
 extern u16 Ui_BounceScales[];
 
@@ -127,6 +136,166 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
             sprite->affine = 1;
             sprite->x = (u16)output->x;
             sprite->y = (u16)output->y;
+        }
+    }
+}
+
+/* A render output as its sprite animation sees it: the header's kind,
+   position and step counter, then the OAM entry it queues. */
+struct SpriteOutput {
+    struct SpriteOutput *next;
+    u8 unknown_04;
+    u8 mode;
+    u16 x;
+    u16 y;
+    u16 unknown_0a;
+    u16 frame;
+    u8 tile;
+    u8 priority;
+    struct OutputSprite sprite;
+};
+LAYOUT_SIZE_GUARD(SpriteOutput_Size, struct SpriteOutput, sizeof(struct RenderOutput));
+
+extern u32 gFrameTick;
+extern const u8 UiSprite_CursorFrameTiles[];
+extern const u8 UiSprite_CursorBobOffsets[];
+extern const s8 UiSprite_WobbleOffsets[][2];
+extern const s8 UiSprite_BounceOffsets[];
+
+u32 Random16(void);
+s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+void Runtime_PushSlotEntry(void *entry, s32 priority);
+
+/* Animates the sprites of every open window whose bit 0 is set and queues
+   them for drawing. Kinds: 2 a cycling glyph cursor, 4 a wobble, 5 a
+   jitter, 6 and 8 a shrinking pop, 7 a spin, 9-12 the scale table, 14-18
+   bounces; 13 is hidden. A window in state 4 turns its sprites into pops. */
+void UiWork_AnimateSpriteSlots(void)
+{
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    struct UiWindow *window = work->windows;
+    s32 no;
+    struct AffineTransform effect;
+
+    for (no = 0; no != WINDOW_COUNT; window++, no++) {
+        struct SpriteOutput *output;
+        u32 phase;
+
+        if (!(window->flags & 1))
+            continue;
+        output = (struct SpriteOutput *)window->output.head;
+        phase = (gFrameTick >> 2) & 7;
+        while (output != NULL) {
+            struct OutputSprite *sprite = &output->sprite;
+
+            if (window->unknown_12 == 4) {
+                output->frame = 2;
+                output->mode = 8;
+            }
+            switch (output->mode) {
+            case 2:
+                if (work->glyph_resource != 0x60) {
+                    const u8 *tiles = &UiSprite_CursorFrameTiles[phase * 128];
+
+                    sprite->attr2.f.tile = VramBlock_LoadCached(
+                        work->glyph_resource, 128, tiles);
+                    output->tile = sprite->attr2.f.tile;
+                    sprite->mode = 0;
+                    sprite->mosaic = 0;
+                    sprite->colour = 1;
+                    sprite->size = 0;
+                    sprite->shape = 2;
+                    sprite->y = output->y + UiSprite_CursorBobOffsets[gFrameTick % 80] + 2;
+                    sprite->affine = 0;
+                    sprite->affine_index = 0;
+                }
+                break;
+            case 5:
+                if (gFrameTick & 1) {
+                    sprite->x = output->x + (s32)(((Random16() * 3 >> 16) +
+                        (Random16() * 3 >> 16)) >> 1) - 1;
+                    sprite->y = output->y + (s32)(((Random16() * 3 >> 16) +
+                        (Random16() * 3 >> 16)) >> 1) - 1;
+                }
+                break;
+            case 6:
+                if (output->frame == 0)
+                    goto reset;
+                effect.scale_x = 512;
+                effect.scale_y = 512;
+                effect.angle = 0;
+                sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+                sprite->affine = 3;
+                sprite->x = output->x - 5;
+                sprite->y = output->y - 5;
+                output->frame--;
+                break;
+            case 7:
+                effect.scale_x = 256;
+                effect.scale_y = 256;
+                output->frame += 768;
+                effect.angle = output->frame;
+                sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+                sprite->affine = 1;
+                sprite->x = output->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
+                sprite->y = output->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
+                break;
+            case 4:
+                if (gFrameTick & 1)
+                    output->frame++;
+                sprite->x = output->x + UiSprite_WobbleOffsets[output->frame % 20][0];
+                sprite->y = output->y + UiSprite_WobbleOffsets[output->frame % 20][1] - 2;
+                break;
+            case 17:
+                output->frame++;
+                sprite->y = output->y - UiSprite_BounceOffsets[output->frame & 15];
+                break;
+            case 14:
+            case 15:
+            case 16:
+                output->frame++;
+                sprite->y = output->y + UiSprite_BounceOffsets[output->frame & 15];
+                break;
+            case 18:
+                output->frame++;
+                sprite->x = output->x - UiSprite_BounceOffsets[output->frame & 15];
+                sprite->y = output->y + UiSprite_BounceOffsets[output->frame & 15];
+                break;
+            case 8:
+                if (output->frame == 0)
+                    goto reset;
+                effect.scale_x = 320;
+                effect.scale_y = 320;
+                effect.angle = 0;
+                sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+                sprite->affine = 3;
+                sprite->x = output->x - 8;
+                sprite->y = output->y - 8;
+                output->frame--;
+                break;
+            reset:
+                sprite->affine_index = 0;
+                sprite->affine = 0;
+                sprite->x = output->x;
+                sprite->y = output->y;
+                break;
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+                RenderOutput_UpdateScaleAnimation((struct RenderOutput *)output);
+                break;
+            }
+            if (output->mode == 2) {
+                if (work->glyph_resource != 0x60)
+                    Runtime_PushSlotEntry(sprite, output->priority);
+            } else if (output->mode != 13) {
+                Runtime_PushSlotEntry(sprite, output->priority);
+            }
+            output = output->next;
+            phase = (gFrameTick >> 2) & 7;
         }
     }
 }

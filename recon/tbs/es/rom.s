@@ -225,12 +225,6 @@ UiWork_StepChannelScript:
 Func_08018038:
 UiText_BuildRenderEntries:
 	.incbin "baserom.gba", 0x00016fe0, 0x00000660
-	.section .rom.00018154, "ax"
-	.global UiWork_AnimateSpriteSlots
-	.type UiWork_AnimateSpriteSlots, %function
-	.thumb_func
-UiWork_AnimateSpriteSlots:
-	.incbin "baserom.gba", 0x00018154, 0x00000480
 	.section .rom.0001ce6c, "ax"
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function
@@ -315,7 +309,16 @@ Data_08033e40:
 	.incbin "baserom.gba", 0x000330d0, 0x00000030
 	.global UiText_IndefiniteArticles
 UiText_IndefiniteArticles:
-	.incbin "baserom.gba", 0x00033100, 0x000000c0
+	.incbin "baserom.gba", 0x00033100, 0x00000028
+	.global UiSprite_CursorBobOffsets
+UiSprite_CursorBobOffsets:
+	.incbin "baserom.gba", 0x00033128, 0x00000050
+	.global UiSprite_WobbleOffsets
+UiSprite_WobbleOffsets:
+	.incbin "baserom.gba", 0x00033178, 0x00000038
+	.global UiSprite_BounceOffsets
+UiSprite_BounceOffsets:
+	.incbin "baserom.gba", 0x000331b0, 0x00000010
 	.global Menu_CursorLeftObjectTiles
 Menu_CursorLeftObjectTiles:
 	.incbin "baserom.gba", 0x000331c0, 0x00000400
@@ -357,7 +360,10 @@ SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x00035aac, 0x00000028
 	.global SideObject_ActorKindIdMap
 SideObject_ActorKindIdMap:
-	.incbin "baserom.gba", 0x00035ad4, 0x000009b8
+	.incbin "baserom.gba", 0x00035ad4, 0x000000c8
+	.global UiSprite_CursorFrameTiles
+UiSprite_CursorFrameTiles:
+	.incbin "baserom.gba", 0x00035b9c, 0x000008f0
 	.global UiWindow_PartyColumnOffsets
 UiWindow_PartyColumnOffsets:
 	.incbin "baserom.gba", 0x0003648c, 0x0000001c
@@ -908,12 +914,6 @@ Battle_RunEncounter:
 	.thumb_func
 BattlePres_RunUnitAction:
 	.incbin "baserom.gba", 0x000bcc34, 0x0000019c
-	.section .rom.000bded8, "ax"
-	.global BattlePresentation_RunUnitTransition
-	.type BattlePresentation_RunUnitTransition, %function
-	.thumb_func
-BattlePresentation_RunUnitTransition:
-	.incbin "baserom.gba", 0x000bded8, 0x000003bc
 	.section .rom.000c1868, "ax"
 	.incbin "baserom.gba", 0x000c1868, 0x00000048
 	.section .rom.000c18b0, "ax"

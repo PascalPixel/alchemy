@@ -2,15 +2,16 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
- * 2026-10-05 sun w5 finisher 1 (alchemy diff 80, was 86): item 3's copy
- *    registers follow from the variables' other lives. src now holds the
- *    12-byte block allocated at the top and dst the leader-byte pointer at
- *    the defeat line (only one of the two swaps scores 250-264); the copy
- *    then has src in r1 and dst in r2 as listed. Left of item 3: sched2
- *    issues the src pool load before the dst load (ldr r2, [r3]); at that
- *    cycle the dst load is class 1 (data dependent on the address load) and
- *    the src load class 3 with the same priority. Moving the dst or src
- *    assignment above the field_50 store scores 264. Items 1 and 2 remain.
+ * 2026-10-05 sun w5 finisher 1 (alchemy diff 76, was 86): item 3's copy
+ *    is solved. src now holds the 12-byte block allocated at the top and
+ *    dst the leader-byte pointer at the defeat line (either swap alone
+ *    scores 250-264), which gives the copy dst in r2; and the copy reads
+ *    gActorSpriteSlots[pos], so loop.c makes the source pointer (r1) after
+ *    it hoists the 0x7c7 bound, as listed (with a src pointer sched2 put the
+ *    src load first: 80). The defeat line's gCell + off is still added into
+ *    a fresh register (dst is global); spelling it gCell[off],
+ *    *(gCell + off), through src or a block-local pointer moves the top's
+ *    allocation and the pool (248-253). Items 1 and 2 remain.
  * 2026-10-04 sun w3 finisher 6 (alchemy diff 86 for this body): the
  *    listing stores timer field_18 before field_1c and then DISPCNT, but
  *    that order here scores 111 (one fewer timer reload, allocation moves).
@@ -278,10 +279,9 @@ s32 Battle_RunEncounter(s32 arg)
             }
         }
         work->field_50 = (u8)((*(u32 *)0x04000128 << 26) >> 30);
-        src = gActorSpriteSlots;
         dst = gBattleOwnerStates;
         for (pos = 0; pos <= 0x7c7; pos++)
-            *dst++ = *src++;
+            *dst++ = gActorSpriteSlots[pos];
         object = GameFlag_GetByteFar(0x3f0);
         BattleParty_AssignMemberSlots();
         work->field_42 = 0;

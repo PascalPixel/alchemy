@@ -1,4 +1,22 @@
-/* Draft, not exact. 2026-10-05 sun deep finisher 6: alchemy diff 28 (was
+/* Draft, not exact. 2026-10-05 sun deep finisher 8: alchemy diff 12 (was
+   28). The class loop now takes a loop-invariant tb = cls->abilities and
+   cg = &tb[j] for the test and the OR, with cls->abilities[j] for the
+   level and the search: the tb-based giv has a different add value from
+   the index giv, so loop.c keeps both, both inits become copies of tb in
+   cse2, and tb's register goes to the index giv (lr) with r7 = lr for cg,
+   as the ROM has it. A nested-if spelling of the same loop scores the
+   same (12). Worse: cg = cls->abilities + j or a cast form (116, cse1
+   ties it to the index giv), tb[j] for test and OR without cg (198), tb[j]
+   for the level (85) or the search (201), (cls->abilities + j)-> for the
+   level and search (159), the level compare reversed (24), the search
+   compare reversed (141), cg set after the search (59).
+   Remaining (12): only the order of the two outer givs. loop.c walks the
+   giv list in reverse discovery order, and the inner loop's hoisted
+   4j + 16 offset (sl) is found after the level/search giv (lr), so sl's
+   init (movs r2, #16) and step come first; the ROM sets and steps lr
+   first (ldr r2, [sp, #4]; adds r2, #16 ... movs r3, #16; step lr, r7,
+   sl).
+   2026-10-05 sun deep finisher 6: alchemy diff 28 (was
    317). What changed, all measured against the listing:
    - the action slots are written through a plain u16 pointer, abil[i * 2]:
      a store to a u16 struct field (abil[i].encoded_action) goes through
@@ -53,7 +71,7 @@ s32 Owner_RefreshClassActions(s32 owner)
     s32 i;
     s32 j;
     u16 mask;
-    struct ClassAbility *ca;
+    struct ClassAbility *tb;
     struct ClassAbility *cg;
 
     st = Owner_GetState(owner);
@@ -84,11 +102,12 @@ s32 Owner_RefreshClassActions(s32 owner)
         abil[j * 2] = 0;
 
     mask = OWNER_ACTION_CLASS;
-    for (j = 0, ca = cls->abilities; j < 16; ca++, j++) {
-        cg = &cls->abilities[j];
-        if (ca->ability == 0)
+    tb = cls->abilities;
+    for (j = 0; j < 16; j++) {
+        cg = &tb[j];
+        if (cg->ability == 0)
             continue;
-        if (st->level < ca->level)
+        if (st->level < cls->abilities[j].level)
             continue;
         for (i = 0; i < 32; i++) {
             if (abil[i * 2] == cls->abilities[j].ability)

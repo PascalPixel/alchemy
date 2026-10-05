@@ -6,6 +6,7 @@
 #include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "EVENT_RUNTIME.H"
+#include "EDITION.H"
 
 extern u8 MsgKuupuappuDidThoseThievesComeFrom[];
 extern u8 MsgKuupuappuHeardDefeatedThoseThieves[];
@@ -22,7 +23,7 @@ void SceneActor_SetPairZeroAndValue();
 void Audio_PlayCueFromEventWork();
 void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
-s32 ArcTan2(s32, s32);
+u16 ArcTan2(s32, s32);
 void FieldScene_RunSplitTripleSteps();
 void SceneState_SetWord1c0To209AndRun();
 void SceneEffect_ApplyPairWithValue141();
@@ -2895,4 +2896,121 @@ s32 SceneActor_CheckTileFreeOfKinds(u8 *p)
 void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p)
 {
     Object_SetMoveTarget(a, (p[0] << 19) + 0x480000, 0, (p[1] << 19) + 0x2780000);
+}
+
+extern u16 KuupuappuHeya_StopTimer;
+u32 Random16(void);
+void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *actor, s32 argument);
+
+/*
+ * Moves the three actors of the stop puzzle one stop further when each stands
+ * still on a stop. Actor 2 flees the leader: it keeps the leader's facing
+ * while the leader pushes toward it from close by, and otherwise goes its own
+ * way (abroad, only while the leader is more than eight units off). Actors
+ * 24 and 25 wander at random, turning back when the way ahead is taken. Once
+ * the wanderers have been stuck for thirty frames, a trigger reports which.
+ */
+void KuupuappuHeya_UpdateActorStops(void)
+{
+    struct FieldActor *leader;
+    struct FieldActor *actor;
+    struct EventWork *work;
+    u8 *entry;
+    u8 *dest;
+    s32 dx;
+    s32 dz;
+    s32 blocked;
+    u16 angle;
+    s16 facing;
+    s16 d;
+
+    leader = Engine_ActorLookup(0);
+    blocked = 0;
+    work = gEventWork;
+    actor = Engine_ActorLookup(2);
+    entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
+    if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
+        dx = actor->x.fixed - leader->x.fixed;
+        dz = actor->z.fixed - leader->z.fixed;
+        facing = leader->facing;
+        angle = ArcTan2(dz, dx);
+        dx >>= 16;
+        dz >>= 16;
+        if (work->blocked_steps > 0 && dx * dx + dz * dz <= 400
+            && (d = (u16)facing - angle) > -0x1000 && d < 0x1000) {
+            /* FAKEMATCH: a dead store keeps this empty branch through the first jump optimization, as the native lays out its jumps. */
+            d = 0;
+#if EDITION_INTERNATIONAL
+        } else if (dx * dx + dz * dz > 64) {
+#else
+        } else {
+#endif
+            facing = actor->facing;
+        }
+        dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+        if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
+            SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+            ObjectDispatch_ApplyArgumentToChildren(actor, 2);
+        } else {
+            ObjectDispatch_ApplyArgumentToChildren(actor, 1);
+        }
+    }
+
+    actor = Engine_ActorLookup(24);
+    entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
+    if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
+        u32 turn = Random16() * 2 >> 16;
+        s32 f;
+
+        turn *= 0x60000000;
+        f = actor->facing;
+        facing = (turn - 0x30000000 >> 16) + f;
+        dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+        if (SceneActor_CheckTileFreeOfKinds(dest) != 0) {
+            facing = actor->facing + 0x8000;
+            dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+            if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
+                Engine_ActorSetAttachedEffect(24, 2);
+                goto move_first;
+            }
+            ObjectDispatch_ApplyArgumentToChildren(actor, 4);
+            blocked = 1;
+        } else {
+move_first:
+            SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+            ObjectDispatch_ApplyArgumentToChildren(actor, 2);
+        }
+    }
+
+    actor = Engine_ActorLookup(25);
+    entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
+    if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
+        u32 turn = Random16() * 3 >> 16;
+        s32 f;
+
+        turn *= 0x30000000;
+        f = actor->facing;
+        facing = (turn - 0x30000000 >> 16) + f;
+        dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+        if (SceneActor_CheckTileFreeOfKinds(dest) != 0) {
+            facing = actor->facing + 0x8000;
+            dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+            if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
+                Engine_ActorSetAttachedEffect(25, 2);
+                goto move_second;
+            }
+            ObjectDispatch_ApplyArgumentToChildren(actor, 4);
+            blocked += 2;
+        } else {
+move_second:
+            SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+            ObjectDispatch_ApplyArgumentToChildren(actor, 2);
+        }
+    }
+    if (blocked != 0) {
+        if ((u16)++KuupuappuHeya_StopTimer > 29)
+            work->raised_trigger = blocked + 200;
+    } else {
+        KuupuappuHeya_StopTimer = blocked;
+    }
 }

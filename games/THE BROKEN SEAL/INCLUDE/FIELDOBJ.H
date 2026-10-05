@@ -23,7 +23,10 @@ struct EventWork {
     u8 unknown_180[2];
     /* A trigger a script raises for the events that answer it. */
     s16 raised_trigger;
-    u8 unknown_184[0x3c];
+    u8 unknown_184[0x18];
+    /* Frames the leader has pressed against something it cannot pass. */
+    s16 blocked_steps;
+    u8 unknown_19e[0x22];
     /* How the screen opens when the scene starts. */
     s32 start_transition;
     u8 unknown_1c4[4];
@@ -42,6 +45,7 @@ LAYOUT_OFFSET_GUARD(EventWork_TouchedTrigger, struct EventWork, touched_trigger,
 LAYOUT_OFFSET_GUARD(EventWork_FacingTrigger, struct EventWork, facing_trigger, 0x17a);
 LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork, psynergy_request, 0x17e);
 LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raised_trigger, 0x182);
+LAYOUT_OFFSET_GUARD(EventWork_BlockedSteps, struct EventWork, blocked_steps, 0x19c);
 LAYOUT_OFFSET_GUARD(EventWork_StartTransition, struct EventWork, start_transition, 0x1c0);
 LAYOUT_OFFSET_GUARD(EventWork_TransitionFrames, struct EventWork, transition_frames, 0x1c8);
 LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, message, 0x1d8);

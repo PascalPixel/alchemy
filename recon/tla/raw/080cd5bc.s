@@ -82,7 +82,7 @@ Func_080cd5bc:
 .L_080cd654:
 	movs r0, #129
 	bl Audio_PlayCue
-	bl Func_080d5e64
+	bl ObjectEffect_BeginContextEffect25
 	b .L_080cd66a
 .L_080cd660:
 	movs r0, #123

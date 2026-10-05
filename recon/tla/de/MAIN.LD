@@ -931,8 +931,6 @@
     "*/recon/tla/de/rom.o"(.rom.000e2d70)
     "*/recon/tla/de/rom.o"(.rom.000e2de0)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BEGIN_CONTEXT_EFFECT_26.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000e2e62)
-    "*/recon/tla/de/rom.o"(.rom.000e2e64)
     "*/recon/tla/de/rom.o"(.rom.000e2e78)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/RUN_PENDING_FLAG_EVENT.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e2fd4)

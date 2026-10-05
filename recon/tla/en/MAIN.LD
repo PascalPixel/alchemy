@@ -1299,8 +1299,6 @@
         "*/recon/tla/raw/080d5d70.o"(.text)
         "*/recon/tla/raw/080d5de0.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BEGIN_CONTEXT_EFFECT_26.o"(.text)
-        "*/recon/tla/raw/080d5e62.o"(.text)
-        "*/recon/tla/raw/080d5e64.o"(.text)
         "*/recon/tla/raw/080d5e78.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/RUN_PENDING_FLAG_EVENT.o"(.text)
         "*/recon/tla/raw/080d5fd4.o"(.text)

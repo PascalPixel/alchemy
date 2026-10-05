@@ -10,3 +10,11 @@ void ObjectEffect_BeginContextEffect26(void)
     ObjectEffect_PrepareContextEffect(0x1A);
     GameFlag_SetBit(0x120);
 }
+
+/* Prepares context effect 25 and raises flag 0x121, which
+   ObjectEffect_RunPendingFlagEvent answers. */
+void ObjectEffect_BeginContextEffect25(void)
+{
+    ObjectEffect_PrepareContextEffect(0x19);
+    GameFlag_SetBit(0x121);
+}

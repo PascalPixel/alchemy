@@ -243,10 +243,10 @@ void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
  */
 s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
-    u8 *obj = (s32)Object_GetByIdFar(0);
+    struct FieldActor *obj = Object_GetByIdFar(0);
     u32 ofs = FuneHeya_TurnSteps[bucket];
-    s32 x = *(s16 *)(obj + 10) + ((s32)ofs >> 16);
-    s32 z = *(s16 *)(obj + 18) + (s32)(s16)ofs;
+    s32 x = obj->x.part.pixel + ((s32)ofs >> 16);
+    s32 z = obj->z.part.pixel + (s32)(s16)ofs;
 
     if (FindActorNearPosition(x, z) != 0) {
         return 0;
@@ -255,7 +255,7 @@ s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
     {
         s32 point[3];
         point[0] = x << 16;
-        point[1] = *(s32 *)(obj + 12);
+        point[1] = obj->y.fixed;
         point[2] = z << 16;
 
         if (Object_CheckMovementCollision(obj, point) != 0) {
@@ -425,7 +425,7 @@ void SceneDialogue_ShowLine1EDEOr1EDF(void)
 void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Engine_EventSetMessage(a1);
@@ -433,9 +433,9 @@ void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         FieldScene_RunStepThen10(a0);
         Engine_ActorSetAnimation(a0, 2);
-        record = (s32)Object_GetByIdFar(0);
+        record = Object_GetByIdFar(0);
         if (record != 0) {
-            Engine_ActorSetDestination(a0, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Engine_ActorSetDestination(a0, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(a0);
         Engine_ActorSetPosition(a0, 0, 0);
@@ -684,11 +684,11 @@ void FieldScene_RunThreeActorPresentation(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 0x208);
         Engine_EventWait(1);
         {
-            u8 *record = Object_GetByIdFar(0);
+            struct FieldActor *record = Object_GetByIdFar(0);
             u32 flag = 1;
 
-            flag = flag | record[90];
-            record[90] = (u8)flag;
+            flag = flag | record->steering_flags;
+            record->steering_flags = (u8)flag;
         }
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -949,7 +949,7 @@ void FieldScene_RunExtendedActorChoreography(void)
 
 void FieldScene_RunBranchingActorPresentation(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     s32 request_a;
     s32 request_b;
     s32 value;
@@ -1042,21 +1042,21 @@ void FieldScene_RunBranchingActorPresentation(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     record = Object_GetByIdFar(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x1e6, 0x270);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     record = Object_GetByIdFar(1);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_IVAN, 0x1e6, 0x280);
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
     record = Object_GetByIdFar(2);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_MIA, 0x1e6, 0x290);
@@ -1164,21 +1164,21 @@ void FieldScene_RunBranchingActorPresentation(void)
     Engine_ActorSetAnimation(ACTOR_MIA, 2);
     record = Object_GetByIdFar(2);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Engine_ActorSetAnimation(ACTOR_IVAN, 2);
     record = Object_GetByIdFar(1);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetByIdFar(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
@@ -1504,9 +1504,9 @@ void SceneActor_SetFlagBit3ForActors28To35(void)
     bit = 8;
     zero = 0;
     for (; i <= 35; i++) {
-        u8 *obj = Object_GetByIdFar(i);
-        u32 v = obj[0x59];
-        obj[0x59] = (u8)((v | bit) | zero);
+        struct FieldActor *obj = Object_GetByIdFar(i);
+        u32 v = obj->collision_flags;
+        obj->collision_flags = (u8)((v | bit) | zero);
     }
 }
 
@@ -1567,7 +1567,7 @@ void FuneHeya_PlaceFoundActors(s32 gated)
  */
 void FieldScene_RunFourActorCoordinatePresentation(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     s32 mode;
 
     Engine_EventBegin();
@@ -1597,21 +1597,21 @@ void FieldScene_RunFourActorCoordinatePresentation(void)
     FieldScene_CallPairWith10(27, 0xd000);
     record = Object_GetByIdFar(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_GERALD, 0x1b8, 148);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     record = Object_GetByIdFar(1);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_IVAN, 0x1c8, 148);
     Actor_FaceDirection(ACTOR_IVAN, 0x4000, 0);
     record = Object_GetByIdFar(2);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_MIA, 0x1d8, 148);
@@ -2219,9 +2219,9 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         break;
     case 5:
         {
-            u8 *rec;
+            struct FieldActor *rec;
 
-            rec = (void *)Object_GetByIdFar(arg);
+            rec = Object_GetByIdFar(arg);
             SetPose(rec, 0x5000);
         }
         Engine_ActorSetAnimation(arg, 5);
@@ -2229,20 +2229,20 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         break;
     case 6:
         {
-            u8 *rec;
+            struct FieldActor *rec;
 
-            rec = (void *)Object_GetByIdFar(arg);
+            rec = Object_GetByIdFar(arg);
             SetPose(rec, 0x5000);
-            *(s32 *)(rec + 24) = -0x10000;
+            rec->scale_x = -0x10000;
         }
         Engine_ActorSetAnimation(arg, 5);
         Object_SetActionById(arg, opt);
         break;
     case 7:
         {
-            u8 *rec;
+            struct FieldActor *rec;
 
-            rec = (void *)Object_GetByIdFar(arg);
+            rec = Object_GetByIdFar(arg);
             SetPose(rec, 0x5000);
         }
         FuneHeya_PoseSceneActor(arg);
@@ -2277,33 +2277,33 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         break;
     case 11:
         if (arg != 0) {
-            u8 *rec;
+            struct FieldActor *rec;
 
             Engine_ActorSetAnimation(13, 1);
-            rec = (void *)Object_GetByIdFar(13);
+            rec = Object_GetByIdFar(13);
             SetPose(rec, 0x3000);
-            rec = (void *)Object_GetByIdFar(13);
-            *(s32 *)(rec + 24) = 0x10000;
+            rec = Object_GetByIdFar(13);
+            rec->scale_x = 0x10000;
         }
         {
-            u8 *rec;
+            struct FieldActor *rec;
 
             Engine_ActorSetAnimation(14, 1);
-            rec = (void *)Object_GetByIdFar(14);
+            rec = Object_GetByIdFar(14);
             SetPose(rec, 0x5000);
             Engine_ActorSetAnimation(15, 1);
-            rec = (void *)Object_GetByIdFar(15);
+            rec = Object_GetByIdFar(15);
             SetPose(rec, 0x3000);
-            rec = (void *)Object_GetByIdFar(15);
-            *(s32 *)(rec + 24) = 0x10000;
+            rec = Object_GetByIdFar(15);
+            rec->scale_x = 0x10000;
             Engine_ActorSetAnimation(16, 1);
-            rec = (void *)Object_GetByIdFar(16);
+            rec = Object_GetByIdFar(16);
             SetPose(rec, 0x5000);
             Object_SetModeById(17, 1);
-            rec = (void *)Object_GetByIdFar(17);
+            rec = Object_GetByIdFar(17);
             SetPose(rec, 0x3000);
-            rec = (void *)Object_GetByIdFar(17);
-            *(s32 *)(rec + 24) = 0x10000;
+            rec = Object_GetByIdFar(17);
+            rec->scale_x = 0x10000;
         }
         Actor_SetPosition(28, 0x19a0000, 0xae0000);
         Actor_SetPosition(29, 0x1d60000, 0xae0000);
@@ -2324,16 +2324,16 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         break;
     case 12:
         {
-            u8 *rec;
+            struct FieldActor *rec;
 
-            rec = (void *)Object_GetByIdFar(arg);
+            rec = Object_GetByIdFar(arg);
             Engine_ActorSetAnimation(arg, 1);
             if (opt != 0) {
                 SetPose(rec, 0x3000);
             } else {
                 SetPose(rec, 0x5000);
             }
-            *(s32 *)(rec + 24) = 0x10000;
+            rec->scale_x = 0x10000;
         }
         break;
     case 13:

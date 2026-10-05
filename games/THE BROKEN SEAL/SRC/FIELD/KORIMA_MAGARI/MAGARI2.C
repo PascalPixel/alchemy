@@ -91,23 +91,12 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj);
 
 const struct TileRun *SceneData_FindTileRunAt( const struct TileRun *run, s32 x, s32 y);
 
-/* Old-style declarations: interfaces vary by call site across this overlay. */
-
   /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
 
   /* Place a fixture, second bank. */
 
   /* Set object motion state. */
 
-/*
- * One symbol per call site, named at the site's pc-relative-decoded address.
- * All three reach the same ARM-mode IWRAM helper that scales a channel by the
- * adjustment, and each still needs its own name.
- */
-
-/* 0x02000efa */
-
-/* 0x02000f08 */
 void State_ApplyRectByLayoutSelector(void)
 {
     if (**(s16 **)0x020092c4 == 1) {
@@ -121,14 +110,10 @@ void State_ApplyRectByLayoutSelector(void)
     }
 }
 
-/* Repaint the board for its layout: its cells and attributes, then each
-   record's piece, raised with its marker drawn in layout 1 and lowered in
-   the other, and the record cells stamped.
-   FAKEMATCH: forced temporaries; each copy's destination is set in a block
-   of its own so it is built after the other arguments, and the zero the
-   pieces take is held from before the loop. */
+/* Repaint the board for its layout: its cells and attributes, then each record's piece, raised with its marker drawn in layout 1 and lowered in the other, and the record cells stamped. */
 void Scene_RepaintBoardRecords(void)
 {
+    /* FAKEMATCH: forced temporaries; each copy's destination is set in a block of its own so it is built after the other arguments, and the zero the pieces take is held from before the loop. */
     s32 zero;
     s16 *record = gKorimaMagariRecords;
 
@@ -192,23 +177,12 @@ void Scene_RepaintBoardRecords(void)
     State_ApplyRectByLayoutSelector();
 }
 
-/* Old-style declarations: interfaces vary by call site across this overlay. */
-
   /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
 
   /* Place a fixture, second bank. */
 
   /* Set object motion state. */
 
-/*
- * One symbol per call site, named at the site's pc-relative-decoded address.
- * All three reach the same ARM-mode IWRAM helper that scales a channel by the
- * adjustment, and each still needs its own name.
- */
-
-/* 0x02000efa */
-
-/* 0x02000f08 */
 void State_UpdateScrollRegistersWithPreset(void)
 {
     u16 line;
@@ -324,8 +298,7 @@ void Scene_RunKorimaMagariSequence(void)
     ((void (*)())Engine_TaskAddCallback)((s32)State_CopyPresetA0d0WithOffsetB0, 0xc80);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
-    /* FAKEMATCH: the do/while (0) wrap keeps the flag and the counter
-     * address in r6 and r5. */
+    /* FAKEMATCH: the do/while (0) wrap keeps the flag and the counter address in r6 and r5. */
     do {
         Engine_AudioPlayCue(231);
     } while (0);
@@ -418,8 +391,7 @@ s32 KorimaMagari_SetupBoard(void)
 {
     struct FieldActor *actor;
 
-    /* FAKEMATCH: the one-pass loop keeps the third cell store ahead of the
-     * shared zero. */
+    /* FAKEMATCH: the one-pass loop keeps the third cell store ahead of the shared zero. */
     do {
         gKorimaMagariReturned = (u16 *)gSceneState;
         (*(u16 * *)&gKorimaMagariLayout) = (u16 *)gSceneState + 1;
@@ -474,15 +446,11 @@ void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
         actor->collision_flags = 0;
         actor->radius = 32;
         height = Map_GetTerrainHeightFar(0, actor->x.part.pixel, actor->z.part.pixel) << 16;
-        /* FAKEMATCH: y is updated through an s32 lvalue; the coordinate
-         * union has an s16 member, which would order the next entry load
-         * after this store. */
+        /* FAKEMATCH: y is updated through an s32 lvalue; the coordinate union has an s16 member, which would order the next entry load after this store. */
         *(s32 *)&actor->y += height;
         actor->terrain_height = height;
     }
 }
-
-/* Old-style declarations: interfaces vary by call site across this overlay. */
 
   /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
 
@@ -490,15 +458,6 @@ void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
 
   /* Set object motion state. */
 
-/*
- * One symbol per call site, named at the site's pc-relative-decoded address.
- * All three reach the same ARM-mode IWRAM helper that scales a channel by the
- * adjustment, and each still needs its own name.
- */
-
-/* 0x02000efa */
-
-/* 0x02000f08 */
 void State_StampRecordCells(s16 *records, s32 value)
 {
 
@@ -660,25 +619,12 @@ void Effect_AdjustPaletteColors(s32 amount)
     Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
-/* Old-style declarations: interfaces vary by call site across this overlay. */
-
   /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
 
   /* Place a fixture, second bank. */
 
   /* Set object motion state. */
 
-/*
- * One symbol per call site, named at the site's pc-relative-decoded address.
- * All three reach the same ARM-mode IWRAM helper that scales a channel by the
- * adjustment, and each still needs its own name.
- */
-
-/* 0x02000eec */
-
-/* 0x02000efa */
-
-/* 0x02000f08 */
 u16 Effect_AdjustColorChannels(u16 color, s32 adj)
 {
     s16 green = (s16)((color >> 5) & 31);
@@ -693,7 +639,7 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj)
     green = (s16)(green - Math_DivideSigned(green, adj));
     blue = (s16)(blue - Math_DivideSigned(blue, adj));
 
-    /* Only the increasing channel is explicitly saturated by this owner. */
+    /* Only the increasing colour channel is saturated. */
     if (red > 31)
         red = 31;
 

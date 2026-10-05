@@ -1,4 +1,5 @@
 #include "BATTLE.H"
+#include "FIELD_SERVICE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
 #include "GAME.H"
@@ -1457,11 +1458,6 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
     Object_SetMode(actor, 2);
     ObjectDispatch_ApplyValueToChildren(actor, 0x30);
 }
-static inline void SceneActor_AdvanceProbe(s32 radius, s32 heading, struct FieldPosition *probe)
-{
-    /* FAKEMATCH: the inline probe boundary preserves the second call's stack add instead of a register move. */
-    Vector_AddPolarOffset(radius, heading, probe);
-}
 
 void SceneActor_StepSubjectAlongHeading(void)
 {
@@ -1530,7 +1526,7 @@ continue_probe:
 
 advance_probe:
         /* FAKEMATCH: retain the measured second probe call's stack-address order. */
-        SceneActor_AdvanceProbe(0x100000, heading, &probe);
+        FieldVector_AddPolarOffset(0x100000, heading, &probe);
         marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
         if (marker != 255) {
             goto continue_probe;

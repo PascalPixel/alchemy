@@ -250,4 +250,32 @@ static inline void FieldMap_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3)
     Map_SetWindowCellTile(a0, a1, a2, a3);
 }
 
+void Motion_LaunchFromFocusedObject();
+
+static inline void FieldMotion_LaunchFromFocusedObject(s32 actor, s32 dx, s32 dz, s32 facing)
+{
+    Motion_LaunchFromFocusedObject(actor, dx, dz, facing);
+}
+
+struct FieldActor * Object_CreateFar();
+
+static inline struct FieldActor * FieldObject_CreateFar(s32 type, s32 x, s32 y, s32 z)
+{
+    return Object_CreateFar(type, x, y, z);
+}
+
+void Vector_AddPolarOffset();
+
+static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, struct FieldPosition *probe)
+{
+    Vector_AddPolarOffset(radius, heading, probe);
+}
+
+void Motion_LaunchFromFocusedObjectFar();
+
+static inline void FieldMotion_LaunchFromFocusedObjectFar(s32 first, s32 second, s32 third, s32 fourth)
+{
+    Motion_LaunchFromFocusedObjectFar(first, second, third, fourth);
+}
+
 #endif

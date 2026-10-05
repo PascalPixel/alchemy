@@ -136,14 +136,14 @@ void ConfigureAndPlaceActorOneHundredTwo(void)
 {
     s32 a = 3, b = 26;
     Engine_MapCopyCellAttributes(3, 32, 1, 1, a, b);
-    PlaceActor(102, 0x00380000, 0x01a80000);
+    MapObject_SetPosition(102, 0x00380000, 0x01a80000);
 }
 
 void HideActorOneHundredTwo(void)
 {
     s32 a = 3, b = 26;
     Engine_MapCopyCellAttributes(2, 25, 1, 1, a, b);
-    TorebiMachi_PlaceHiddenMapActor(102, -1, -1);
+    MapObject_SetPosition(102, -1, -1);
 }
 
 void SceneDialogue_RunMessage0e36(void)

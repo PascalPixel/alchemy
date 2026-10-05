@@ -505,7 +505,7 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_WalkToAndWait(0, 184, 120);
         Actor_FaceDirection(0, FACING_EAST, 0);
         Event_Wait(10);
-        Motion_LaunchFromFocusedObject(1, 16, 0, 0x8000);
+        FieldMotion_LaunchFromFocusedObjectFar(1, 16, 0, 0x8000);
         Object_RefreshSelectorByIdFar(1);
         Event_Wait(10);
         Event_ShowMessage(1, 0);
@@ -519,7 +519,7 @@ void FieldScene_RunScene3b8SequenceA(void)
         Event_Wait(20);
         Actor_FaceDirection(0, FACING_WEST, 0);
         Event_Wait(20);
-        Motion_LaunchFromFocusedObject(2, -16, 0, 0);
+        FieldMotion_LaunchFromFocusedObjectFar(2, -16, 0, 0);
         Object_RefreshSelectorByIdFar(2);
         Event_Wait(10);
         Event_ShowMessage(2, 0);
@@ -533,7 +533,7 @@ void FieldScene_RunScene3b8SequenceA(void)
         Event_Wait(20);
         Actor_FaceDirection(0, FACING_EAST, 0);
         Event_Wait(20);
-        Motion_LaunchFromFocusedObject(3, 16, 0, 0x8000);
+        FieldMotion_LaunchFromFocusedObjectFar(3, 16, 0, 0x8000);
         Object_RefreshSelectorByIdFar(3);
         Event_Wait(10);
         Event_ShowMessage(3, 0);
@@ -1192,9 +1192,9 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_WalkToAndWait(0, 208, 0x2f8);
     Event_Wait(10);
     Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
-    Motion_LaunchFromFocusedObject(1, -16, 16, 0xc000);
-    Motion_LaunchFromFocusedObject(3, 0, 24, 0xc000);
-    Motion_LaunchFromFocusedObject(2, 16, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObjectFar(1, -16, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObjectFar(3, 0, 24, 0xc000);
+    FieldMotion_LaunchFromFocusedObjectFar(2, 16, 16, 0xc000);
     Actor_WaitForMove(1);
     Event_Wait(30);
     Event_Wait(10);

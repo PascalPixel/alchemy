@@ -767,7 +767,7 @@ void FieldScene_RunGuardedStep15(void)
 
 void ConfigureSceneAndCheckActors(void)
 {
-    ConfigureScene(2, 0x00d00000, 0x00700000, 0);
+    Field_SetMapCellCollision(2, 0x00d00000, 0x00700000, 0);
     if (SceneActor_IsActorAtTile(10, 14, 7) != 0) {
         Scene_ShineLeftBeam();
     }
@@ -775,7 +775,7 @@ void ConfigureSceneAndCheckActors(void)
 
 void ConfigureAlternateSceneAndCheckActors(void)
 {
-    SoruSekizo_ConfigureAlternateCell(2, 23068672, 7340032, 0);
+    Field_SetMapCellCollision(2, 23068672, 7340032, 0);
     if (SceneActor_IsActorAtTile(12, 21, 7) != 0) {
         Scene_ShineRightBeam();
     }

@@ -313,14 +313,14 @@ void FieldScene_RunBranchingActorSequence(void)
     Engine_EventBegin();
     Battle_ResetEffectCounter();
     Engine_EventSetMessage((s32)MsgBabiYoureSureTheyWentThrough);
-    Iriguchi_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x160);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Battle_WaitMode0(10);
-    Call4(Motion_LaunchFromFocusedObject, 10, 16, 0, 0xc000);
-    Call4(Motion_LaunchFromFocusedObject, 1, -8, 16, 0xc000);
-    Call4(Motion_LaunchFromFocusedObject, 2, 8, 16, 0xc000);
-    Call4(Motion_LaunchFromFocusedObject, 3, 24, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(10, 16, 0, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(1, -8, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(2, 8, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(3, 24, 16, 0xc000);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
@@ -428,7 +428,7 @@ void FieldScene_RunBranchingActorSequence(void)
     }
     Battle_WaitMode0(10);
     Actor_ShowEmote(14, 0x101, 60);
-    Iriguchi_SetSpeed(14, 0x10000, 0x8000);
+    Actor_SetSpeed(14, 0x10000, 0x8000);
     Actor_WalkByAndWait(14, 0, 16);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
@@ -473,12 +473,12 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(13, 2);
     Battle_WaitMode0(20);
-    Iriguchi_SetSpeed(13, 0x14ccc, 0xa666);
+    Actor_SetSpeed(13, 0x14ccc, 0xa666);
     Actor_WalkByAndWait(13, 0, 16);
     Battle_WaitMode0(20);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(10);
-    Iriguchi_SetSpeed(12, 0x14ccc, 0xa666);
+    Actor_SetSpeed(12, 0x14ccc, 0xa666);
     Actor_WalkByAndWait(12, 0, 16);
     Battle_WaitMode0(20);
     Actor_ShowEmote(12, 0x107, 50);
@@ -527,8 +527,8 @@ void FieldScene_RunBranchingActorSequence(void)
     Object_SetModeById(12, 3);
     Engine_ActorSetAnimationAndWait(13, 3);
     Battle_WaitMode0(30);
-    Iriguchi_SetSpeed(12, 0x10000, 0x8000);
-    Iriguchi_SetSpeed(13, 0x10000, 0x8000);
+    Actor_SetSpeed(12, 0x10000, 0x8000);
+    Actor_SetSpeed(13, 0x10000, 0x8000);
     Actor_WalkBy(12, 32, 0);
     Actor_WalkByAndWait(13, 32, 0);
     Actor_WalkBy(12, 0, 16);
@@ -543,17 +543,17 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
-    Iriguchi_SetSpeed(14, 0x10000, 0x8000);
+    Actor_SetSpeed(14, 0x10000, 0x8000);
     Actor_WalkToAndWait(14, 0x148, 0x138);
     Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(30);
-    Iriguchi_SetSpeed(11, 0x10000, 0x8000);
+    Actor_SetSpeed(11, 0x10000, 0x8000);
     Actor_WalkToAndWait(11, 0x148, 0x148);
     Actor_FaceDirection(11, FACING_WEST, 0);
     Battle_WaitMode0(20);
-    Iriguchi_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Iriguchi_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-    Iriguchi_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Object_SetModeById(ACTOR_GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
@@ -587,12 +587,12 @@ void FieldScene_RunActorEventSequence(void)
     Engine_EventBegin();
     Battle_ResetEffectCounter();
     Engine_EventSetMessage((s32)MsgBabiTheDoor);
-    Iriguchi_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x138);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Battle_WaitMode0(10);
     Motion_LaunchFromFocusedObject(1, 0, 16, 0);
-    Call4(Motion_LaunchFromFocusedObject, 2, -16, -8, 0);
+    FieldMotion_LaunchFromFocusedObject(2, -16, -8, 0);
     Motion_LaunchFromFocusedObject(3, -16, 24, 0);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Battle_WaitMode0(20);
@@ -656,7 +656,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(10, 2);
     Battle_WaitMode0(20);
-    Iriguchi_SetSpeed(10, 0x10000, 0x8000);
+    Actor_SetSpeed(10, 0x10000, 0x8000);
     Actor_WalkByAndWait(10, 0, -40);
     Actor_FaceDirection(10, FACING_EAST, 0);
     Battle_WaitMode0(20);
@@ -827,9 +827,9 @@ void FieldScene_RunActorEventSequence(void)
     Object_SetModeById(ACTOR_MIA, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Battle_WaitMode0(30);
-    Iriguchi_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Iriguchi_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-    Iriguchi_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Object_SetModeById(ACTOR_GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
@@ -894,7 +894,7 @@ void BabiIriguchi_OpenTruthDoor(void)
         Actor_SetDestination(9, 0x148, 240);
         ObjectMotion_CommitCurrentPositionAndActivate(8);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
-        Iriguchi_CopyCellAttributes(81, 14, 4, 1, 17, 14);
+        Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
         Engine_EventEnd();
         if (GameFlag_IsSet(0x989) == 0) {
             FieldScene_RunActorEventSequence();
@@ -912,7 +912,7 @@ void BabiIriguchi_CloseTruthDoor(void)
         Actor_SetDestination(9, 0x138, 240);
         ObjectMotion_CommitCurrentPositionAndActivate(8);
         ObjectMotion_CommitCurrentPositionAndActivate(9);
-        Iriguchi_CopyCellAttributes(0, 14, 4, 1, 17, 14);
+        Map_CopyCellAttributes(0, 14, 4, 1, 17, 14);
         Engine_EventEnd();
         if (GameFlag_IsSet(0x301) != 0) {
             GameFlag_Clear(0x301);

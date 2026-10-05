@@ -1,4 +1,5 @@
 #include "BATTLE.H"
+#include "FIELD_SERVICE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
 #include "GAME.H"
@@ -30,11 +31,6 @@ void Motion_LaunchFromFocusedObject(s32 actor, s32 dx, s32 dz, s32 facing);
 void Engine_ActorStartAction(s32 actor);
 void Audio_PlayCueFromEventWork(void);
 
-static inline void Actor_StepOutFromLeader(s32 actor, s32 dx, s32 dz, s32 facing)
-{
-    /* FAKEMATCH: a direct call changes FieldScene_RunExtendedActorPresentation from bl Engine_ActorFaceDirection to mov r5, #192 (2402/2397 assembly lines). */
-    Motion_LaunchFromFocusedObject(actor, dx, dz, facing);
-}
 
 
 
@@ -77,9 +73,9 @@ void FieldScene_RunExtendedActorPresentation(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 264, 208);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_StepOutFromLeader(ACTOR_GERALD, -16, 16, FACING_NORTH);
-    Actor_StepOutFromLeader(ACTOR_MIA, 0, 16, FACING_NORTH);
-    Actor_StepOutFromLeader(ACTOR_IVAN, 16, 16, FACING_NORTH);
+    FieldMotion_LaunchFromFocusedObject(ACTOR_GERALD, -16, 16, FACING_NORTH);
+    FieldMotion_LaunchFromFocusedObject(ACTOR_MIA, 0, 16, FACING_NORTH);
+    FieldMotion_LaunchFromFocusedObject(ACTOR_IVAN, 16, 16, FACING_NORTH);
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Engine_EventWait(20);
     Engine_EventWait(10);
@@ -859,9 +855,9 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 192);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Call4(Motion_LaunchFromFocusedObject, 1, -16, 16, 0xc000);
-    Call4(Motion_LaunchFromFocusedObject, 3, 0, 16, 0xc000);
-    Call4(Motion_LaunchFromFocusedObject, 2, 16, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(1, -16, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(3, 0, 16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(2, 16, 16, 0xc000);
     Engine_ActorWaitForMove(1);
     Engine_EventWait(20);
     Actor_ShowEmote(2, 0x102, 0);

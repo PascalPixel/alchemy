@@ -11,4 +11,4 @@
 	overlay_veneer SceneData_GetPrimaryTable37c
 	overlay_veneer SceneData_GetSecondaryTable37c
 	overlay_veneer SceneData_GetTertiaryTable37c
-	overlay_veneer state_update_0432
+	overlay_veneer SoruDou_GetView

@@ -16,7 +16,7 @@ u8 *State_Run(void)
 }
 
 /* Table slot with no data: reads nothing and returns zero. */
-s32 state_update_0432(void)
+s32 SoruDou_GetView(void)
 {
     return 0;
 }

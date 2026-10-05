@@ -99,7 +99,7 @@ void BabiFune_CyclePalette(void)
  * and upwards; when it ends and a trigger is pending, start its script. */
 void BabiFune_UpdateDriftingObject(u8 *obj)
 {
-    u16 *wait = (u16 *)(obj + 100);
+    u16 *wait = &((struct FieldActor *)obj)->timer;
     s32 left = *wait;
 
     if (*(s16 *)wait != 0) {
@@ -108,10 +108,10 @@ void BabiFune_UpdateDriftingObject(u8 *obj)
         *wait = left - 1;
         drift = Engine_RandomNext();
         drift -= Engine_RandomNext();
-        *(s32 *)(obj + 8) += drift;
-        *(s32 *)(obj + 12) += 0xcccc;
-    } else if (*(s16 *)(obj + 102) != 0) {
-        *(s16 *)(obj + 102) = 0;
+        ((struct FieldActor *)obj)->x.fixed += drift;
+        ((struct FieldActor *)obj)->y.fixed += 0xcccc;
+    } else if (*(s16 *)&((struct FieldActor *)obj)->work != 0) {
+        *(s16 *)&((struct FieldActor *)obj)->work = 0;
         Object_SetMode(obj, 1);
         {
             u16 *p = (u16 *)(obj + 94);

@@ -75,7 +75,7 @@ void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
     }
 }
 
-void OverlayObject_SetField54(s32 arg0, s32 arg1)
+void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1)
 {
     struct FieldActor *entry = Object_GetById(arg0);
 

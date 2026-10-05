@@ -17,7 +17,10 @@ struct ObjectRuntime {
     s32 y;
     s32 z;
     s32 terrain_height;
-    u8 unknown_18[0x0a];
+    /* The sprite's scale, 0x10000 for full size. */
+    s32 scale_x;
+    s32 scale_y;
+    u8 unknown_20[2];
     u8 terrain_id;
     u8 unknown_23;
     s32 velocity_x;
@@ -45,9 +48,11 @@ struct ObjectRuntime {
     u8 unknown_5c[0x04];
     void *callback;
     s16 action;
-    u8 unknown_66[0x02];
+    u16 unknown_66;
     struct ObjectRuntime *linked_object;
-    u8 unknown_6c[0x14];
+    /* Runs every frame in place of the script, as ☀️'s update does. */
+    void (*update)(void);
+    u8 unknown_70[0x10];
 };
 
 typedef char ObjectRuntime_size[

@@ -203,11 +203,11 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 v
 s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;
-    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
-    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+    s32 *entry = (s32 *)work->script_address + index + 1;
+    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
-        callback(work, 0, *(s32 *)(entry + 4));
+        callback(work, 0, entry[1]);
     work->cursor += 3;
     return 1;
 }
@@ -215,11 +215,11 @@ s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;
-    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
-    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+    s32 *entry = (s32 *)work->script_address + index + 1;
+    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
-        callback(work, 1, *(s32 *)(entry + 4));
+        callback(work, 1, entry[1]);
     work->cursor += 3;
     return 1;
 }
@@ -227,11 +227,11 @@ s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;
-    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
-    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+    s32 *entry = (s32 *)work->script_address + index + 1;
+    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
-        callback(work, 2, *(s32 *)(entry + 4));
+        callback(work, 2, entry[1]);
     work->cursor += 3;
     return 1;
 }

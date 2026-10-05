@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
-/* ☀️'s, but ⚓️ reaches the owner's state with a direct call. */
 s32 Summon_FindSlot(void)
 {
     s32 i;

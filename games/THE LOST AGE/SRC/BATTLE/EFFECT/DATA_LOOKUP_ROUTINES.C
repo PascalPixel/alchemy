@@ -41,7 +41,7 @@ u16 BattleFx_GetPhaseResult(s32 phase)
 {
     u16 *entry = (u16 *)(Encounter_AreaEntryTable + phase * 4);
 
-    /* Exact GCC 2.96 output carries this call's result through r0. */
+    /* The return value is carried through r0 from this call. */
     BattleFx_GetWeightedResult(entry[0], entry[1]);
 }
 
@@ -103,12 +103,11 @@ struct SceneAreaNameRule {
 
 extern const struct SceneAreaNameRule Scene_AreaNameRules[];
 
+/* This caller consumes the unextended result; the definition returns s8. */
 s32 BattleFx_GetResourceGroup(s32 effect_id);
 
-/* Selects an area-name index by scene or scene group and entrance. A rule
-   with entrance -1 matches every entrance. The group routine returns s8 in
-   its own file, but this caller takes the result unextended, as from an
-   s32 prototype. */
+/* Select an area-name index by scene or scene group and entrance; -1 matches
+ * every entrance. */
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
     const struct SceneAreaNameRule *entry = Scene_AreaNameRules;

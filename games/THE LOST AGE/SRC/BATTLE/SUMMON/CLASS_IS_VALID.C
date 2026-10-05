@@ -1,6 +1,4 @@
-/* NONMATCHING: 3 halfwords; the reference sets i = 0 before the first
-   field load, here it is scheduled after. Declaration order and loop forms
-   do not move it. */
+
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "MOTION_OBJECT.H"

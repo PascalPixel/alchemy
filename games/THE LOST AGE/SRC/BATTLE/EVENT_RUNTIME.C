@@ -5,9 +5,7 @@
 void BattleEvent_Playback(void);
 u32 BattleEventRuntime_Reset(void);
 
-/* ☀️'s wait: start playback if it is idle, wait until it is ready, then
-   stop it and reset the runtime. BattleEventRuntime_Reset, just before
-   this, stays a draft. */
+/* Start idle playback, wait until it is ready, then stop and reset it. */
 s32 BattleEventRuntime_WaitForReady(void)
 {
     s32 state;

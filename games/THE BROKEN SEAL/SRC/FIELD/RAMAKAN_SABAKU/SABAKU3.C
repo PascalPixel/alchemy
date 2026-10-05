@@ -211,7 +211,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
     actor->z.fixed += 0x18000;
 }
 
-void FieldScene_RunScene3a5_020014b0(void)
+void RamakanSabaku_PlayStartledRetreat(void)
 {
     s32 rec8;
     struct FieldActor *record;

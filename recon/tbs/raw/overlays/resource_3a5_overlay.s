@@ -493,7 +493,7 @@ RamakanSabaku_Events:
 	.4byte RamakanSabaku_UpdateDustAndProbe
 	.4byte 0x00000002
 	.4byte 0xffff0028
-	.4byte FieldScene_RunScene3a5_020014b0
+	.4byte RamakanSabaku_PlayStartledRetreat
 	.4byte 0x00000000
 	.4byte 0x090a0008
 	.4byte RamakanSabaku_ReturnToArea3

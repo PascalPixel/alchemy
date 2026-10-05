@@ -69,7 +69,7 @@ void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
 s32 SceneActor_UpdatePlayerProximity();
 void SetMapCellCollision();
-void FieldScene_RunScene3b5_02000224();
+void TorebiMachi_OpenActorEightPassage();
 void FieldScene_ResetActor9AndDrawTiles();
 s32 UiWindow_CreateWithSideObject();
 void UiText_OpenMessageWindow();
@@ -80,7 +80,7 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Engine_MapObjectSetPosition(actor, x, y);
 }
 
-static __inline__ void PlaceActor_02001104(s32 actor, s32 x, s32 y)
+static __inline__ void TorebiMachi_PlaceHiddenMapActor(s32 actor, s32 x, s32 y)
 {
     /* FAKEMATCH: a direct call changes HideActorOneHundredTwo from mov r1, #1 to mov r2, #1 (24/23 assembly lines). */
     Engine_MapObjectSetPosition(actor, x, y);
@@ -123,7 +123,7 @@ u8 *TorebiMachi_GetExits(void);
 
 u8 *TorebiMachi_GetPlacements(void);
 
-void FieldScene_RunScene3b5_02000224(void);
+void TorebiMachi_OpenActorEightPassage(void);
 
 void ConfigureAndPlaceActorOneHundredTwo(void);
 
@@ -145,13 +145,13 @@ void SceneDialogue_RunActor24Message1f9d(void);
 
 void FieldScene_RunPatientTalk(void);
 
-void FieldScene_RunScene3b5_02000568(void);
+void TorebiMachi_AskForSweets(void);
 
 void SceneDialogue_RunActor27Message1fa3(void);
 
 void SceneDialogue_RunActor24Message235f(void);
 
-void FieldScene_RunScene3b5_020005dc(void);
+void TorebiMachi_ReceiveLeftovers(void);
 
 void SceneScript_SetupActors(void);
 

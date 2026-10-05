@@ -403,7 +403,7 @@ gTorebiMachiPlacements:
 gTorebiMachiEvents:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte FieldScene_RunScene3b5_02000224
+	.4byte TorebiMachi_OpenActorEightPassage
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte SceneScript_SetupActors
@@ -499,7 +499,7 @@ gTorebiMachiEvents:
 	.4byte FieldScene_RunPatientTalk
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte FieldScene_RunScene3b5_02000568
+	.4byte TorebiMachi_AskForSweets
 	.4byte 0x00000000
 	.4byte 0xffff001b
 	.4byte SceneDialogue_RunActor27Message1fa3
@@ -602,7 +602,7 @@ gTorebiMachiEvents:
 gTorebiMachiEvents2:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte FieldScene_RunScene3b5_02000224
+	.4byte TorebiMachi_OpenActorEightPassage
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte SceneScript_SetupActors
@@ -695,7 +695,7 @@ gTorebiMachiEvents2:
 	.4byte FieldScene_RunPatientTalk
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte FieldScene_RunScene3b5_02000568
+	.4byte TorebiMachi_AskForSweets
 	.4byte 0x00000000
 	.4byte 0xffff001b
 	.4byte MsgTorebiMachiTheFinalsStartTodayIWonder
@@ -793,7 +793,7 @@ gTorebiMachiEvents2:
 gTorebiMachiEvents3:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte FieldScene_RunScene3b5_02000224
+	.4byte TorebiMachi_OpenActorEightPassage
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte SceneScript_SetupActors
@@ -868,7 +868,7 @@ gTorebiMachiEvents3:
 	.4byte MsgTorebiMachiIllBeBackToDoBusiness
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte FieldScene_RunScene3b5_020005dc
+	.4byte TorebiMachi_ReceiveLeftovers
 	.4byte 0x00000000
 	.4byte 0x08c1001c
 	.4byte FieldScene_RunScene3b5SequenceA

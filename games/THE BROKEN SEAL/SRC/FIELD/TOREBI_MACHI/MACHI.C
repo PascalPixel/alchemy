@@ -147,7 +147,7 @@ u8 *TorebiMachi_GetPlacements(void)
     return gTorebiMachiPlacements;
 }
 
-void FieldScene_RunScene3b5_02000224(void)
+void TorebiMachi_OpenActorEightPassage(void)
 {
 
     u32 i;
@@ -174,7 +174,7 @@ void HideActorOneHundredTwo(void)
 {
     s32 a = 3, b = 26;
     Engine_MapCopyCellAttributes(2, 25, 1, 1, a, b);
-    PlaceActor_02001104(102, -1, -1);
+    TorebiMachi_PlaceHiddenMapActor(102, -1, -1);
 }
 
 void SceneDialogue_RunMessage0e36(void)
@@ -311,7 +311,7 @@ void FieldScene_RunPatientTalk(void)
 }
 
 /* Tolbi town: actor lines, the entry setup and the first sequence. */
-void FieldScene_RunScene3b5_02000568(void)
+void TorebiMachi_AskForSweets(void)
 {
     u32 i;
     s32 record;
@@ -340,7 +340,7 @@ void SceneDialogue_RunActor24Message235f(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b5_020005dc(void)
+void TorebiMachi_ReceiveLeftovers(void)
 {
 
     u32 i;
@@ -437,7 +437,7 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
         FieldScene_ResetActor9AndDrawTiles();
     }
     if (Engine_GameFlagIsSet(0x200) != 0) {
-        FieldScene_RunScene3b5_02000224();
+        TorebiMachi_OpenActorEightPassage();
         Engine_ActorSetAnimation(8, 4);
     }
     if (Engine_GameFlagIsSet(0x950) != 0) {

@@ -1,4 +1,38 @@
 /*
+ * 2026-10-05 (deep finisher 16): alchemy diff 36 (was 349), no register
+ * pins. The listing reuses function-scope variables across the loops, as
+ * one 2001 function would: i is the glyph row, the pack row and the tile
+ * count (r9 in all three), j the glyph column pair, the pack word and the
+ * slot search (r4), src the glyph and pack source (r5), dst the glyph
+ * destination, the pack destination and the tile copy source (r0), c the
+ * code, the pack's left word and (not yet) the tile, bits the glyph row
+ * and the pack's right word. The advance is x += 8 and x += 3 apart and
+ * w for the table or 1, so x has the refs that put it in r8 before the
+ * pen table. FillWords goes through an inline wrapper like ClearWords (the
+ * arms' argument order), the glyph source is set before the destination,
+ * count is signed so the pack loops are for (0..n) loops that loop.c
+ * reverses (j = count after the pre-test), and the slot search is
+ * for (j = 0; j <= mask && attributes[tile] != 0; j++), whose body does
+ * not end in a jump, so the exit test is rotated and duplicated and 0xDA0
+ * is shared by the first test and the store (ip) as listed. In the pack
+ * loop src += 2 precedes the store.
+ * Remaining: in the tile copy the listing has tile * 32 in r2 and each
+ * VRAM address in r1, here the reverse (local-alloc order of the address
+ * quantities and tile * 32), and i = count is scheduled last in the tile
+ * loop set-up there, first here.
+ * Tried this wave and worse: one w for every advance (406 with shared
+ * variables), every advance a separate x += (517: x outranks the
+ * hoisted 15 and takes r7), w for 3 too (391); the tile loop as
+ * for (0..count) (44: dst = canvas lands before the pre-test), the same
+ * inside if (count != 0) (105); tile as c (95-99); while (attr) with
+ * if (++j > mask) break (128: the body ends in a jump, so no rotation);
+ * the attribute test before j <= mask (48); a u32 count (208-238: the
+ * unsigned compare stops loop reversal); a and b as their own locals
+ * (208), c and w (222), c and code (543); the VRAM copy as
+ * ((u32 *)0x06000000)[tile * 8 + k], byte offsets or tile <<= 5 (38 each),
+ * through a vram pointer (58); c = *src++, bits = *src++ (61).
+ *
+ * Earlier waves (before the shared variables):
  * 2026-10-05 (deep finisher 8): alchemy diff 349 (was 395). The glyph
  * advance is a width variable w set in each arm (8, 3, the table, 1) and
  * added once, which gives the listing's shared add r8, r3 and its c - 32
@@ -51,36 +85,43 @@ static __inline__ void ClearWords(void *dest, s32 size)
     Iwram_ClearWords(dest, size);
 }
 
-s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 column)
+static __inline__ void FillWords(void *dest, s32 size, u32 value)
+{
+    Iwram_FillWords(dest, size, value);
+}
+
+s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 {
     /* FAKEMATCH: an unread 32-byte reserve, the native frame's extra bytes. */
     u32 reserve[8];
+    u8 pens[16];
+    struct UiRenderWork *work;
     u8 *canvas;
     u8 *glyphs;
     u32 attr;
-    u8 pens[16];
-    u8 *work;
+    u32 *src;
+    u8 *dst;
     u32 c;
     u32 code;
-    u32 count;
+    s32 count;
     u32 w;
-    /* FAKEMATCH: x pinned to r8, as the native allocates it. */
-    register s32 x asm("r8");
+    s32 i;
+    s32 j;
+    u32 bits;
 
-    x = column;
-    work = gWindowWork[0];
+    work = (struct UiRenderWork *)gWindowWork[0];
     canvas = Runtime_BumpAllocate(0x800);
     glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
-    attr = ((struct UiRenderWork *)work)->level << 12;
+    attr = work->level << 12;
     ClearWords(pens, 16);
     if (attr == 0xF000) {
-        pens[1] = UiText_ColourPens[((struct UiRenderWork *)work)->colour & 15];
+        pens[1] = UiText_ColourPens[work->colour & 15];
         pens[3] = 3;
-        Iwram_FillWords(canvas, 0x800, 0x04040404);
+        FillWords(canvas, 0x800, 0x04040404);
     } else {
-        pens[1] = (u8)((struct UiRenderWork *)work)->colour & 15;
+        pens[1] = (u8)work->colour & 15;
         pens[3] = 1;
-        Iwram_FillWords(canvas, 0x800, 0x0E0E0E0E);
+        FillWords(canvas, 0x800, 0x0E0E0E0E);
     }
     if (script != 0) {
         for (;;) {
@@ -91,14 +132,14 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 column)
             if (c <= 30) {
                 switch (c) {
                 case 8:
-                    ((struct UiRenderWork *)work)->colour = *script++;
-                    pens[1] = UiText_ColourPens[((struct UiRenderWork *)work)->colour & 15];
+                    work->colour = *script++;
+                    pens[1] = UiText_ColourPens[work->colour & 15];
                     break;
                 case 7:
                 case 9:
                 case 10:
-                    ((struct UiRenderWork *)work)->colour = 15;
-                    pens[1] = UiText_ColourPens[((struct UiRenderWork *)work)->colour];
+                    work->colour = 15;
+                    pens[1] = UiText_ColourPens[work->colour];
                     break;
                 case 3:
                     x += UiText_GlyphWidths[0];
@@ -115,97 +156,77 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 column)
                     break;
                 }
             } else {
-                /* FAKEMATCH: source pinned to r5, as the native allocates it. */
-                register u32 *source asm("r5");
-                u8 *dest;
-                s32 row;
-
                 c &= 0xFF;
-                dest = canvas + x;
-                source = (u32 *)(glyphs + c * 32);
-                for (row = 0; row < 8; row++) {
-                    u32 bits = *source++;
-                    s32 n;
-
-                    for (n = 3; n >= 0; n--) {
+                src = (u32 *)(glyphs + c * 32);
+                dst = canvas + x;
+                for (i = 0; i < 8; i++) {
+                    bits = *src++;
+                    for (j = 3; j >= 0; j--) {
                         u8 pen = pens[bits & 15];
 
                         if (pen != 0)
-                            *dest = pen;
+                            *dst = pen;
                         bits >>= 4;
                         pen = pens[bits & 15];
-                        dest++;
+                        dst++;
                         if (pen != 0)
-                            *dest = pen;
-                        dest++;
+                            *dst = pen;
+                        dst++;
                         bits >>= 4;
                     }
-                    dest += 248;
+                    dst += 248;
                 }
                 if (code == 0xF01D || code == 0xF01F)
-                    w = 8;
+                    x += 8;
                 else if (code == 0xF01E)
-                    w = 3;
-                else if (c > 31)
-                    w = UiText_GlyphWidths[c - 32];
-                else
-                    w = 1;
-                x += w;
+                    x += 3;
+                else {
+                    if (c > 31)
+                        w = UiText_GlyphWidths[c - 32];
+                    else
+                        w = 1;
+                    x += w;
+                }
             }
         }
     }
     count = (u32)(x + 7) >> 3;
-    {
-        u32 *dest = (u32 *)canvas;
-        u32 *source = (u32 *)canvas;
-        s32 row;
-
-        for (row = 7; row >= 0; row--) {
-            u32 n;
-
-            for (n = count; n != 0; n--) {
-                u32 a = source[0];
-                u32 b = source[1];
-
-                a |= a << 4;
-                b |= b >> 4;
-                a &= 0x0FF00FF0;
-                b &= 0x00FF00FF;
-                a |= a << 8;
-                b |= b >> 8;
-                *dest++ = (a << 4) >> 16 | b << 16;
-                source += 2;
-            }
-            source = (u32 *)((u8 *)source - count * 8 + 0x100);
-            dest = (u32 *)((u8 *)dest - count * 4 + 0x100);
+    src = (u32 *)canvas;
+    dst = canvas;
+    for (i = 0; i < 8; i++) {
+        for (j = 0; j < count; j++) {
+            c = src[0];
+            bits = src[1];
+            c |= c << 4;
+            bits |= bits >> 4;
+            c &= 0x0FF00FF0;
+            bits &= 0x00FF00FF;
+            c |= c << 8;
+            bits |= bits >> 8;
+            src += 2;
+            *(u32 *)dst = (c << 4) >> 16 | bits << 16;
+            dst += 4;
         }
+        dst = dst - count * 4 + 0x100;
+        src = (u32 *)((u8 *)src - count * 8 + 0x100);
     }
     if (count != 0) {
-        u32 *source = (u32 *)canvas;
-        u32 n = count;
-
+        dst = canvas;
+        i = count;
         do {
             u32 mask = 127;
             u32 tile;
 
-            if (((struct UiRenderWork *)work)->alt != 0)
+            if (work->alt != 0)
                 mask = 255;
             tile = *tiles & 0x3FF;
             if ((tile < 0x80 || tile > 0xFF) &&
-                (((struct UiRenderWork *)work)->alt == 0 || tile < 0x200 || tile > 0x27F)) {
-                u32 tried;
-
-                tile = ((struct UiRenderWork *)work)->tile_cursor & mask;
-                tried = 0;
-                if (((struct UiRenderWork *)work)->tile_attributes[tile] != 0) {
-                    do {
-                        tile = (tile + 1) & mask;
-                        if (++tried > mask)
-                            break;
-                    } while (((struct UiRenderWork *)work)->tile_attributes[tile] != 0);
-                }
-                ((struct UiRenderWork *)work)->tile_cursor = (tile + 1) & mask;
-                ((struct UiRenderWork *)work)->tile_attributes[tile] = 1;
+                (work->alt == 0 || tile < 0x200 || tile > 0x27F)) {
+                tile = work->tile_cursor & mask;
+                for (j = 0; j <= mask && work->tile_attributes[tile] != 0; j++)
+                    tile = (tile + 1) & mask;
+                work->tile_cursor = (tile + 1) & mask;
+                work->tile_attributes[tile] = 1;
                 if (tile > 127)
                     tile += 0x180;
                 else
@@ -213,18 +234,18 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 column)
                 *tiles = attr | tile;
                 *mirror = attr | tile;
             }
-            ((u32 *)(0x06000000 + tile * 32))[0] = source[0];
-            ((u32 *)(0x06000000 + tile * 32))[1] = source[0x40];
-            ((u32 *)(0x06000000 + tile * 32))[2] = source[0x80];
-            ((u32 *)(0x06000000 + tile * 32))[3] = source[0xC0];
-            ((u32 *)(0x06000000 + tile * 32))[4] = source[0x100];
-            ((u32 *)(0x06000000 + tile * 32))[5] = source[0x140];
-            ((u32 *)(0x06000000 + tile * 32))[6] = source[0x180];
-            ((u32 *)(0x06000000 + tile * 32))[7] = source[0x1C0];
+            ((u32 *)(0x06000000 + tile * 32))[0] = ((u32 *)dst)[0];
+            ((u32 *)(0x06000000 + tile * 32))[1] = ((u32 *)dst)[0x40];
+            ((u32 *)(0x06000000 + tile * 32))[2] = ((u32 *)dst)[0x80];
+            ((u32 *)(0x06000000 + tile * 32))[3] = ((u32 *)dst)[0xC0];
+            ((u32 *)(0x06000000 + tile * 32))[4] = ((u32 *)dst)[0x100];
+            ((u32 *)(0x06000000 + tile * 32))[5] = ((u32 *)dst)[0x140];
+            ((u32 *)(0x06000000 + tile * 32))[6] = ((u32 *)dst)[0x180];
+            ((u32 *)(0x06000000 + tile * 32))[7] = ((u32 *)dst)[0x1C0];
             tiles++;
             mirror++;
-            source++;
-        } while (--n != 0);
+            dst += 4;
+        } while (--i != 0);
     }
     Runtime_BumpFree(canvas);
     return count;

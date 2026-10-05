@@ -1,3 +1,4 @@
+#include "GAME_STATE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -149,6 +150,6 @@ void BattleFx_StartFadeOverlay(void *object)
     fill = 0;
     Dma_Set((const void *)&fill, work, 0x85000007, REG_DMA3);
     if (object == NULL)
-        object = ObjectTable_Get(Data_02000240.object_id);
+        object = ObjectTable_Get(gGameState.selected_actor);
     work[6] = (u32)object;
 }

@@ -10,14 +10,8 @@ struct BattleLocationRule {
     s16 result;
 };
 
-struct FieldLocation {
-    u8 unknown_000[448];
-    s16 map;
-    s16 room;
-};
 
 extern u8 *Data_03001ebc;
-extern struct FieldLocation Data_02000240;
 extern const struct BattleLocationRule Battle_LocationRules[];
 s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SetSpecialFromTable(void);
@@ -43,7 +37,10 @@ struct EncounterZone {
 };
 
 struct FieldPartyState {
-    u8 unknown_000[0x238];
+    u8 unknown_000[0x1c0];
+    s16 scene;
+    s16 entrance;
+    u8 unknown_1c4[0x74];
     s32 encounter_steps;
     u8 unknown_23c[8];
     s32 encounters_off;
@@ -83,8 +80,8 @@ void BattleFx_SelectLocationRule(s32 check)
     u32 i;
 
     work = Data_03001ebc;
-    map = Data_02000240.map;
-    room = Data_02000240.room;
+    map = gGameState.scene;
+    room = gGameState.entrance;
     out = work + 0x1a0;
     entry = Battle_LocationRules;
     track = 0;

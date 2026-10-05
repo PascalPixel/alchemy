@@ -9,7 +9,6 @@
 #include "FX_SCENE.H"
 #include "FIELDOBJ.H"
 
-extern s16 Data_02000240[];
 extern volatile s32 gKeysHeld;
 /* The shops' welcome lines open their blocks of messages; the menu steps
  * through a block as long as the distance between the first two. */

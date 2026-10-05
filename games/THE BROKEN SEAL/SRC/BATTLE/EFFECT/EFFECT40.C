@@ -213,7 +213,7 @@ wait_script:
     }
     event = BattleFx_FindMatchingEvent(0x50000005, 4, &event_context);
     if (event != 0)
-        BattleFx_RunEventAction((void *)event, Data_02000240.object_id, event_context);
+        BattleFx_RunEventAction((void *)event, gGameState.selected_actor, event_context);
     WaitFrames(10);
     BattleFx_PrepareBufferInterpolation();
     WaitFrames(20);

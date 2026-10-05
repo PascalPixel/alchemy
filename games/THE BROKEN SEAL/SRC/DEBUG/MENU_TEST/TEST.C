@@ -82,12 +82,11 @@ void SceneDialogue_ShowMessageAndWait(s32 arg0)
 
 void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 {
-    s16 *tbl = Data_02000240;
     volatile s32 *key;
     s32 token;
     s32 i;
 
-    *(u8 *)&tbl[262] = 2;
+    gGameState.message_speed = 2;
     token = UiWindow_CreateWithSideObject(125, 0, 0, 0);
     for (i = 0; i < cnt; i++) {
         key = &gKeysHeld;

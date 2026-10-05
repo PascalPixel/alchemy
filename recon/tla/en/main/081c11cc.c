@@ -1,5 +1,6 @@
-/* SongFlag_Clear: differ 2, the address load SongFlag_Set's draft (081c11ac)
-   also misplaces. */
+/* Near miss: differ 2, the same split-constant scheduling gap as
+   SongFlag_Set: the listing loads the flag bytes' address between the two
+   halves of 0x3ff. Goes after SongFlag_Set in SONG_FLAG.C. */
 #include "TYPES.H"
 
 extern u8 Data_02002f20[];
@@ -10,7 +11,7 @@ void SongFlag_Clear(s32 song)
     u8 *bytes;
 
     mask = 1 << (7 & song);
-    bytes = Data_02002f20;
     song = (song & 0x3ff) >> 3;
-    bytes[song] = (u8)(bytes[song] & ~mask);
+    bytes = Data_02002f20;
+    bytes[song] &= ~mask;
 }

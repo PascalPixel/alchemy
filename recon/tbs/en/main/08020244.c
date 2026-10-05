@@ -1,19 +1,23 @@
-/* 2026-10-04 canonical save-summary recovery; uncredited draft.
- * Removed four fabricated Value_* literal-address imports: the native pool
- * holds message ids 0, 1, 3 and 2. The two native __modsi3 calls are ordinary
- * signed C remainder operations, not a separately named Modulo function.
- * The actual workspace owns three SaveSummary records. Use SAVE_STATE.H,
- * its gSaveWorkspace, WINDOW.H and gWindowWork, and the real GameState
- * palette_glow fields; remove the private record and duplicate declarations.
- * The unknown word at summary+0x38 remains unnamed and read at word width.
- * EN diagnostic: prior17572 with five unresolved symbols; literal/remainder
- * repair18402; shared types/owners19112 with all imports resolved. Remaining
- * differences: 98 register,17 stack,90 operand,92 reorder,35 insert,75 delete.
- * Routing-only remeasure against this EN listing: JA19267 (three unresolved
- * old callback/window names), DE19282, ES/FR/IT19252. Those are diagnostics,
- * not proofs against each localized native extent. Native EN extent1408B.
- * No FAKEMATCH, compiler change, filler or adoption is introduced. Broad
- * control flow, allocation and localized callback contracts still need work.
+/* 2026-10-05 sun w5 finisher 5: rewritten plainly, 491 (the old macro and
+ * absolute-address draft scored 704). The workspace and the window work are
+ * both read as heap slots (51 and HEAP_SLOT_WINDOW), which is what makes the
+ * ROM form the window cell as "subs r3, #144" from the workspace slot's
+ * address. The flags the ROM tests sign-extended (lsl/asr 24) are read as s8;
+ * the djinn counts are summed as s8. The four placeholder messages are pool
+ * words in the ROM (message ids 0, 1, 3 and 2, "(No saved data)",
+ * "(Continue from a Sanctum)", "(The data is corrupted)", "(Not cleared
+ * yet)"), so they are catalogue names here (MsgSaveNoData, MsgSaveContinue,
+ * MsgSaveCorrupted, MsgSaveNotCleared) that the PO files do not give yet.
+ * Measured: the four slot searches written as while loops score 519; the
+ * loop optimizer then strength-reduces the slot address (adds #64) and reads
+ * the flag with ldrsb, which the ROM does not, so the ROM's searches are not
+ * loops to loop.c: written with a retry label they score 491, and as a
+ * "goto check" with the test at the bottom 489. Remaining: allocation (the
+ * ROM keeps slot in r8, the workspace in r7, the count in r6 and work in r5;
+ * here slot r6, workspace r8, count r4), the stack order of stamp, render
+ * and redraw (ROM sp+4, sp+8, sp+12), and the flag address formed from
+ * 0x105c + 20 in the ROM (here a fresh 0x1070 pool word). The Japanese
+ * extent is 0x5f8 bytes against 0x580 in the other five editions.
  */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -23,28 +27,18 @@
 #include "SAVE_STATE.H"
 #include "GAME_STATE.H"
 #include "WINDOW.H"
+#include "HEAP_STATE.H"
 
-/* Selects one of the three saved-game summaries. */
-
-/*
- * The three owner slots live at workspace + 0x1040 with a 0x40 stride. The
- * reference never keeps a table pointer live: every indexed read is formed
- * from the workspace byte pointer and a folded slot offset, so the scalar
- * probes below are spelled that way and only the record actually handed to
- * a callee is taken as the shared SaveSummary.
- */
-#define SLOT(i)         ((struct SaveSummary *)(base + 0x1040 + (i) * 0x40))
-#define SLOT_PRESENT(i) (base[(i) * 0x40 + 0x105C])
-#define SLOT_FLAG_A(i)  (SLOT(i)->send_flag)
-#define SLOT_FLAG_B(i)  (SLOT(i)->flag_count)
-#define SLOT_ICON(i)    (base[(i) * 0x40 + 0x1074])
-#define SLOT_ICON2(i)   (base[(i) * 0x40 + 0x1075])
-#define SLOT_COUNT(i,k) (((s8 *)base)[(i) * 0x40 + 0x1068 + (k)])
-
+extern u32 gKeyState;
+extern u32 gKeysRepeat;
+extern char MsgSaveNoData;
+extern char MsgSaveContinue;
+extern char MsgSaveNotCleared;
+extern char MsgSaveCorrupted;
 
 u32 Runtime_GetBuildStampTimeFar(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void PaletteGlow_Update(s32 icon, s32 icon_sub);
 void UiWindow_FillTilemapRect(void *win, s32 x, s32 y, s32 width, s32 height);
 void UiWindow_DrawDividerLine(void *win, s32 a, s32 b, s32 c, s32 d);
@@ -58,228 +52,193 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void);
 void Menu_SpawnFourObjectsAtOrigin(void *win, s32 x, s32 y);
 void Scheduler_ScheduleCallbackAAfterFrames(void);
 void Scheduler_ScheduleCallbackA(void);
-struct RenderOutput *RenderResource_CreatePair(s32 mode, struct RenderInput *win, s32 x, s32 y);
+struct RenderOutput *RenderResource_CreatePair(s32 mode, struct UiWindow *win, s32 x, s32 y);
 void Ui_ApplyTableOffsetToPair(void *pair);
 void RenderOutput_RedrawSavedRect(void *win);
 
-s32 SaveMenu_SelectSlot(s32 idx, s32 mode)
+s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {
-    struct SaveSummary *e;
-    u8 *base;
+    struct SaveWorkspace *save;
+    struct SaveSummary *summary;
+    struct UiWindow *list;
+    struct UiWindow *status;
+    struct UiWindow *djinn;
+    struct UiWindow *counts;
+    struct RenderOutput *cursor;
     u8 *render;
     void *work;
-    void *win;
-    struct RenderOutput *pair;
-    void *win1;
-    void *win2;
-    void *win3;
-    u32 limit;
+    u32 stamp;
     u32 zero;
-    s32 cnt;
-    s32 row;
     s32 redraw;
-    s32 msg;
     s32 result;
+    s32 i;
+    s32 y;
 
-    work = Runtime_AllocateHeapBlock(55, 0xA70);
-    base = (u8 *)gSaveWorkspace;
-    win1 = 0;
-    win2 = 0;
-    win3 = 0;
+    work = Runtime_AllocateHeapBlock(55, 0xa70);
+    save = *(gWorkSlot + 51);
+    status = NULL;
+    djinn = NULL;
+    counts = NULL;
     redraw = 1;
-    render = gWindowWork[0];
-    limit = Runtime_GetBuildStampTimeFar();
-    if (idx < 0) {
-        idx = 0;
-    }
-
+    render = *(gWorkSlot + HEAP_SLOT_WINDOW);
+    stamp = Runtime_GetBuildStampTimeFar();
+    if (slot < 0)
+        slot = 0;
     if (mode == 1) {
-        cnt = 0;
-        while (SLOT_PRESENT(idx) == 0 || SLOT_FLAG_A(idx) != 0) {
-            idx++;
-            if (idx == 3) {
-                idx = 0;
-            }
-            cnt++;
-            if (cnt > 2) {
-                break;
-            }
+        i = 0;
+    retry1:
+        if (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag != 0) {
+            slot++;
+            if (slot == 3)
+                slot = 0;
+            i++;
+            if (i <= 2)
+                goto retry1;
         }
     } else if (mode == 4) {
-        cnt = 0;
-        while (SLOT_PRESENT(idx) == 0 || SLOT_FLAG_B(idx) == 0) {
-            idx++;
-            if (idx == 3) {
-                idx = 0;
-            }
-            cnt++;
-            if (cnt > 2) {
-                break;
-            }
+        i = 0;
+    retry2:
+        if (save->summary[slot].level == 0 || (s8)save->summary[slot].flag_count == 0) {
+            slot++;
+            if (slot == 3)
+                slot = 0;
+            i++;
+            if (i <= 2)
+                goto retry2;
         }
     } else if (mode == 5) {
-        cnt = 0;
-        while (SLOT_PRESENT(idx) == 0 || SLOT_FLAG_A(idx) == 0) {
-            idx++;
-            if (idx == 3) {
-                idx = 0;
-            }
-            cnt++;
-            if (cnt > 2) {
-                break;
-            }
+        i = 0;
+    retry3:
+        if (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag == 0) {
+            slot++;
+            if (slot == 3)
+                slot = 0;
+            i++;
+            if (i <= 2)
+                goto retry3;
         }
-    } else if (mode == 0) {
-        goto ready;
-    } else {
-        cnt = 0;
-        while (SLOT_PRESENT(idx) == 0) {
-            idx++;
-            if (idx == 3) {
-                idx = 0;
-            }
-            cnt++;
-            if (cnt > 2) {
-                break;
-            }
+    } else if (mode != 0) {
+        i = 0;
+    retry4:
+        if (save->summary[slot].level == 0) {
+            slot++;
+            if (slot == 3)
+                slot = 0;
+            i++;
+            if (i <= 2)
+                goto retry4;
         }
     }
-    if (cnt == 3) {
-        result = -2;
-        goto done;
-    }
+    if (mode != 0 && i == 3)
+        return -2;
 
-ready:
     zero = 0;
-    Dma_Set(&zero, work, 0x8500029C, (volatile u32 *)0x040000D4);
+    Dma_Set(&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
     Scheduler_ScheduleCallbackAAfterFrames();
-
-    win = UiWindow_Create(1, 2, 28, 7, 2);
-    row = 0;
-    cnt = 2;
-    e = SLOT(0);
-    do {
-        if (e->level == 0) {
-            msg = 0;
-        } else if (e->frames < limit) {
-            msg = 1;
-        } else if (e->play_time != *(u32 *)e->unknown_38) {
-            msg = 3;
-        } else if (mode == 5 && e->send_flag == 0) {
-            msg = 2;
+    list = UiWindow_Create(1, 2, 28, 7, 2);
+    y = 0;
+    summary = save->summary;
+    for (i = 2; i >= 0; i--, y += 16, summary++) {
+        if (summary->level == 0) {
+            UiText_DrawResource((s32)&MsgSaveNoData, list, 10, y);
+        } else if (summary->frames < stamp) {
+            UiText_DrawResource((s32)&MsgSaveContinue, list, 10, y);
+        } else if (summary->play_time != *(u32 *)summary->unknown_38) {
+            UiText_DrawResource((s32)&MsgSaveCorrupted, list, 10, y);
+        } else if (mode == 5 && (s8)summary->send_flag == 0) {
+            UiText_DrawResource((s32)&MsgSaveNotCleared, list, 10, y);
         } else {
-            UiText_DrawString(e->name, win, 12, row);
-            UiText_DrawResource(e->area + RENDER_RESOURCE_BASE, win, 62, row);
+            UiText_DrawString(summary->name, list, 12, y);
+            UiText_DrawResource(summary->area + RENDER_RESOURCE_BASE, list, 62, y);
             render[RENDER_DIRTY_OFS] = 1;
-            goto next;
         }
-        UiText_DrawResource(msg, win, 10, row);
-    next:
-        cnt--;
-        row += 16;
-        e++;
-    } while (cnt >= 0);
+    }
+    UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
+    UiWindow_DrawDividerLine(list, 0, 4, 27, 4);
+    cursor = RenderResource_CreatePair(mode, list, 72, -24);
 
-    UiWindow_DrawDividerLine(win, 0, 2, 27, 2);
-    UiWindow_DrawDividerLine(win, 0, 4, 27, 4);
-    pair = RenderResource_CreatePair(mode, win, 72, -24);
-
-loop:
-    if (redraw != 0) {
-        redraw = 0;
-        if (SLOT_PRESENT(idx) != 0) {
-            e = SLOT(idx);
-            PaletteGlow_Update(SLOT_ICON(idx), SLOT_ICON2(idx));
-            if (win1 == 0) {
-                win1 = UiWindow_Create(1, 10, 14, 9, 2);
-            }
-            StatusMenu_DrawCharacterSummary(win1, e);
-            WaitFrames(1);
-            if (win2 == 0) {
-                win2 = UiWindow_Create(16, 10, 13, 3, 2);
-            }
-            Menu_ClearFirstObjectRowAndScheduleUpdate();
-            ObjectPlacement_CreateGroup(win2, 0, 0, e);
-            WaitFrames(1);
-            if (SLOT_COUNT(idx, 0) + SLOT_COUNT(idx, 1) + SLOT_COUNT(idx, 2)
-                    + SLOT_COUNT(idx, 3) != 0) {
-                if (win3 == 0) {
-                    win3 = UiWindow_Create(16, 14, 13, 5, 2);
+    while (1) {
+        if (redraw != 0) {
+            redraw = 0;
+            if (save->summary[slot].level != 0) {
+                summary = &save->summary[slot];
+                PaletteGlow_Update(summary->palette_glow[0], summary->palette_glow[1]);
+                if (status == NULL)
+                    status = UiWindow_Create(1, 10, 14, 9, 2);
+                StatusMenu_DrawCharacterSummary(status, summary);
+                WaitFrames(1);
+                if (djinn == NULL)
+                    djinn = UiWindow_Create(16, 10, 13, 3, 2);
+                Menu_ClearFirstObjectRowAndScheduleUpdate();
+                ObjectPlacement_CreateGroup(djinn, 0, 0, summary);
+                WaitFrames(1);
+                if ((s8)summary->djinn[0] + (s8)summary->djinn[1] + (s8)summary->djinn[2]
+                        + (s8)summary->djinn[3] != 0) {
+                    if (counts == NULL)
+                        counts = UiWindow_Create(16, 14, 13, 5, 2);
+                    UiText_DrawFourNumbersInRow(counts, summary);
+                    Menu_ClearSecondObjectRowAndScheduleUpdate();
+                    Menu_SpawnFourObjectsAtOrigin(counts, 0, 0);
+                } else {
+                    Menu_ClearSecondObjectRowAndScheduleUpdate();
+                    UiWork_Finalize(counts, 2);
+                    counts = NULL;
                 }
-                UiText_DrawFourNumbersInRow(win3, e);
-                Menu_ClearSecondObjectRowAndScheduleUpdate();
-                Menu_SpawnFourObjectsAtOrigin(win3, 0, 0);
             } else {
+                PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
                 Menu_ClearSecondObjectRowAndScheduleUpdate();
-                UiWork_Finalize(win3, 2);
-                win3 = 0;
+                Menu_ClearFirstObjectRowAndScheduleUpdate();
+                UiWork_Finalize(counts, 2);
+                UiWork_Finalize(djinn, 2);
+                UiWork_Finalize(status, 2);
+                counts = NULL;
+                djinn = NULL;
+                status = NULL;
             }
-        } else {
-            PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
-            Menu_ClearSecondObjectRowAndScheduleUpdate();
-            Menu_ClearFirstObjectRowAndScheduleUpdate();
-            UiWork_Finalize(win3, 2);
-            UiWork_Finalize(win2, 2);
-            UiWork_Finalize(win1, 2);
-            win3 = 0;
-            win2 = 0;
-            win1 = 0;
+            RenderOutput_RedrawSavedRect(list);
+            UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
+            UiWindow_DrawDividerLine(list, 0, 4, 27, 4);
+            UiWindow_FillTilemapRect(list, 0, slot * 2, 26, 1);
         }
-        RenderOutput_RedrawSavedRect(win);
-        UiWindow_DrawDividerLine(win, 0, 2, 27, 2);
-        UiWindow_DrawDividerLine(win, 0, 4, 27, 4);
-        UiWindow_FillTilemapRect(win, 0, idx * 2, 26, 1);
+        Ui_ApplyTableOffsetToPair(cursor);
+        WaitFrames(1);
+        if (gKeysRepeat & 0x40) {
+            AudioCommand_PlayFar(111);
+            redraw = 1;
+            do {
+                slot = (slot + 2) % 3;
+            } while (mode != 0 && (save->summary[slot].level == 0
+                || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
+                || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
+                || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
+        } else if (gKeysRepeat & 0x80) {
+            AudioCommand_PlayFar(111);
+            redraw = 1;
+            do {
+                slot = (slot + 4) % 3;
+            } while (mode != 0 && (save->summary[slot].level == 0
+                || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
+                || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
+                || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
+        } else if (gKeyState & 2) {
+            AudioCommand_PlayFar(113);
+            result = -1;
+            break;
+        } else if (gKeyState & 1) {
+            AudioCommand_PlayFar(112);
+            result = slot;
+            break;
+        }
     }
-    Ui_ApplyTableOffsetToPair(pair);
-    WaitFrames(1);
-
-    if ((*(volatile u32 *)0x03001B04 & 0x40) != 0) {
-        Audio_PlayCue(111);
-        redraw = 1;
-        do {
-            idx = (idx + 2) % 3;
-        } while (mode != 0
-                 && (SLOT_PRESENT(idx) == 0
-                     || (mode == 1 && SLOT_FLAG_A(idx) != 0)
-                     || (mode == 4 && SLOT_FLAG_B(idx) == 0)
-                     || (mode == 5 && SLOT_FLAG_A(idx) == 0)));
-        goto loop;
-    }
-    if ((*(volatile u32 *)0x03001B04 & 0x80) != 0) {
-        Audio_PlayCue(111);
-        redraw = 1;
-        do {
-            idx = (idx + 4) % 3;
-        } while (mode != 0
-                 && (SLOT_PRESENT(idx) == 0
-                     || (mode == 1 && SLOT_FLAG_A(idx) != 0)
-                     || (mode == 4 && SLOT_FLAG_B(idx) == 0)
-                     || (mode == 5 && SLOT_FLAG_A(idx) == 0)));
-        goto loop;
-    }
-    if ((*(volatile u32 *)0x03001C94 & 2) != 0) {
-        Audio_PlayCue(113);
-        result = -1;
-        goto teardown;
-    }
-    if ((*(volatile u32 *)0x03001C94 & 1) == 0) {
-        goto loop;
-    }
-    Audio_PlayCue(112);
-    result = idx;
-
-teardown:
     Menu_ClearSecondObjectRowAndScheduleUpdate();
     Menu_ClearFirstObjectRowAndScheduleUpdate();
-    UiWork_Finalize(win3, 2);
-    UiWork_Finalize(win2, 2);
-    UiWork_Finalize(win1, 2);
-    UiWork_Finalize(win, 2);
+    UiWork_Finalize(counts, 2);
+    UiWork_Finalize(djinn, 2);
+    UiWork_Finalize(status, 2);
+    UiWork_Finalize(list, 2);
     Scheduler_ScheduleCallbackA();
     Runtime_ReleaseHeapBlock(55);
     PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
     WaitFrames(1);
-
-done:
     return result;
 }

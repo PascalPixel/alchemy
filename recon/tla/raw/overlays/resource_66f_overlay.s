@@ -1370,8 +1370,8 @@ Func_02000af0:
 	bl Func_02000ad4
 	movs r0, #28
 	bl Func_02000ad4
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r0, .L_02008d7c
 	bl Func_02001104
 	movs r1, #4

@@ -170,10 +170,10 @@ Engine_ActorSetAttachedEffect:
 	.thumb_func
 Engine_CameraMoveTo:
 	overlay_veneer Motion_CamBoundsFar
-	.global Event_SetPairWork1c0
+	.global Event_SetDestination
 	.thumb_func
-Event_SetPairWork1c0:
-	overlay_veneer Event_SetPairWork1c0Far
+Event_SetDestination:
+	overlay_veneer Event_SetDestinationFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -185,11 +185,11 @@ BattleFx_SetPhaseRequest:
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_MapObjectSetPosition
 	.thumb_func
 Engine_MapObjectSetPosition:

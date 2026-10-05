@@ -277,18 +277,18 @@ Battle_GetWorkObject1e0Far:
 	.thumb_func
 Map_SetWorkFourValuesFar:
 	overlay_veneer Map_SetWorkFourValues
-	.global Event_SetPairWork1c0Far
+	.global Event_SetDestinationFar
 	.global Func_0808a238
 	.thumb_func
-Event_SetPairWork1c0Far:
+Event_SetDestinationFar:
 	.thumb_func
 Func_0808a238:
-	overlay_veneer Event_SetPairWork1c0
-	overlay_veneer Event_SetPair1c4AndResetValue170
-	.global Event_SetValue170Far
+	overlay_veneer Event_SetDestination
+	overlay_veneer Event_SetSavedDestination
+	.global Event_SetExitRequestFar
 	.thumb_func
-Event_SetValue170Far:
-	overlay_veneer Event_SetValue170
+Event_SetExitRequestFar:
+	overlay_veneer Event_SetExitRequest
 	.global BattleFx_SetWeightedResultFar
 	.thumb_func
 BattleFx_SetWeightedResultFar:
@@ -401,27 +401,27 @@ Func_0808a348:
 	overlay_veneer BattleFx_StartBufferInterpolation
 	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32B
 	overlay_veneer BattleFx_SetPrimaryBufferValue
-	.global Event_SetStatus1c6Far
+	.global Event_StartScreenTransitionFar
 	.global Func_0808a360
 	.thumb_func
-Event_SetStatus1c6Far:
+Event_StartScreenTransitionFar:
 	.thumb_func
 Func_0808a360:
-	overlay_veneer Event_SetStatus1c6
-	.global Event_ClearStatus1c6Far
+	overlay_veneer Event_StartScreenTransition
+	.global Event_FinishScreenTransitionFar
 	.thumb_func
-Event_ClearStatus1c6Far:
+Event_FinishScreenTransitionFar:
 	.global Func_0808a368
 	.thumb_func
 Func_0808a368:
-	overlay_veneer Event_ClearStatus1c6
-	.global Event_WaitValue1c8FramesFar
+	overlay_veneer Event_FinishScreenTransition
+	.global Event_WaitTransitionFramesFar
 	.thumb_func
-Event_WaitValue1c8FramesFar:
+Event_WaitTransitionFramesFar:
 	.global Func_0808a370
 	.thumb_func
 Func_0808a370:
-	overlay_veneer Event_WaitValue1c8Frames
+	overlay_veneer Event_WaitTransitionFrames
 	.global DisplayScroll_InitializeHBlankDmaFar
 	.thumb_func
 DisplayScroll_InitializeHBlankDmaFar:

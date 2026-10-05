@@ -1582,8 +1582,8 @@ Func_02000b64:
 	bl Func_020031e0
 	movs r0, #0
 	bl Func_02003280
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #78
 	bl Func_020032b8
 	movs r0, #128
@@ -3045,8 +3045,8 @@ Func_0200183c:
 	lsls r3, r3, #1
 	mov r1, r8
 	str r3, [r2, r1]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_0200168c
 	bl Func_020032a0
 	movs r0, #40

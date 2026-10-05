@@ -6671,8 +6671,8 @@ Func_020034b4:
 	movs r1, #6
 	movs r0, #14
 	bl Object_SetModeById
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #30
 	bl Battle_WaitMode0
 	ldr r0, .L_0200b7c4
@@ -6991,8 +6991,8 @@ Func_020037c8:
 	bl Object_GetById
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildField26
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #30
 	bl Battle_WaitMode0
 	ldr r0, .L_0200b8fc
@@ -7077,7 +7077,7 @@ Func_02003900:
 	ldr r1, .L_0200bd0c
 	movs r0, #14
 	bl ObjectMotion_EnableActionAndSetCallback
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r0, #128

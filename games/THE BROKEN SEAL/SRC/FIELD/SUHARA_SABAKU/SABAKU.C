@@ -33,7 +33,7 @@ union GameStateRows {
     s32 words[256];
 };
 
-void Event_SetPairWork1c0(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 extern const struct SceneEvent gSuharaSabakuEvents3[];
 extern const struct SceneEvent gSuharaSabakuEventsOther[];
@@ -531,9 +531,9 @@ void SuharaSabaku_DropAndLeave(void)
     Engine_EventEnd();
     Engine_GameFlagSet(0x122);
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && GameFlag_GetByte(0x218) == 11) {
-        Event_SetPairWork1c0((s32)&SceneId_WorldMap, 77);
+        Event_SetDestination((s32)&SceneId_WorldMap, 77);
     } else {
-        Event_SetPairWork1c0((s32)&SceneId_WorldMap, 27);
+        Event_SetDestination((s32)&SceneId_WorldMap, 27);
     }
 }
 

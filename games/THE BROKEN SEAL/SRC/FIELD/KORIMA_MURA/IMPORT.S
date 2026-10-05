@@ -233,7 +233,7 @@ Engine_CameraWaitForMove:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global Engine_ColorBufferApplyTarget
 	.thumb_func
 Engine_ColorBufferApplyTarget:
@@ -245,11 +245,11 @@ Engine_ColorBufferInterpolate:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_PsynergyPlayEffect
 	.thumb_func
 Engine_PsynergyPlayEffect:

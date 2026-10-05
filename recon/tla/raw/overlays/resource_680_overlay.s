@@ -1145,8 +1145,8 @@ Func_020006ec:
 	beq .L_020088f2
 	b .L_02008a36
 .L_020088f2:
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	movs r1, #3
 	bl ObjectMotion_SetVariantCallback

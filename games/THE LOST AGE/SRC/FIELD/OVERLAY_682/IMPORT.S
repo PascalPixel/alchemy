@@ -242,20 +242,20 @@ Func_02002b3c:
 	.thumb_func
 Func_02002b44:
 	overlay_veneer EventRuntime_SetCountdownFar
-	.global Event_ClearStatus1c6
+	.global Event_FinishScreenTransition
 	.thumb_func
-Event_ClearStatus1c6:
-	overlay_veneer Event_ClearStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_FinishScreenTransition:
+	overlay_veneer Event_FinishScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_02002b5c

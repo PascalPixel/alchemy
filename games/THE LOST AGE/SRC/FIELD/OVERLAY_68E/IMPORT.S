@@ -170,10 +170,10 @@ Func_020013d8:
 	.thumb_func
 ObjectMotion_ArmCallback:
 	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:

@@ -193,7 +193,7 @@ Func_02001188:
 	.global Func_02001190
 	.thumb_func
 Func_02001190:
-	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer Event_SetDestinationFar
 	.global Func_02001198
 	.thumb_func
 Func_02001198:
@@ -218,24 +218,24 @@ Party_SetFields1f2And1f4:
 	.thumb_func
 Func_020011c0:
 	overlay_veneer Func_080c82e0
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_ClearStatus1c6
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_FinishScreenTransition
 	.thumb_func
-Event_ClearStatus1c6:
-	overlay_veneer Event_ClearStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_FinishScreenTransition:
+	overlay_veneer Event_FinishScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_020011e0

@@ -4411,8 +4411,8 @@ Func_020022ac:
 	adds r3, r3, r2
 	subs r2, #172
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #204
 	bl Func_02003c54
 	movs r3, #3

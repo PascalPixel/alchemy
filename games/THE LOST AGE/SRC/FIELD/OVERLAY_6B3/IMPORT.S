@@ -85,7 +85,7 @@ Object_GetById:
 	.global Func_02000824
 	.thumb_func
 Func_02000824:
-	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer Event_SetDestinationFar
 	.global BattleFx_GetResourceId
 	.thumb_func
 BattleFx_GetResourceId:

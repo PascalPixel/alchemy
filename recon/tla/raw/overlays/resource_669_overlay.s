@@ -1571,8 +1571,8 @@ Func_02000c5c:
 	negs r1, r1
 	lsls r0, r0, #17
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r1, #3

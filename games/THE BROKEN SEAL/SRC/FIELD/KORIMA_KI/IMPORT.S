@@ -197,7 +197,7 @@ Engine_CameraWaitForMove:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global Engine_ColorBufferApplyTarget
 	.thumb_func
 Engine_ColorBufferApplyTarget:

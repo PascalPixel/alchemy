@@ -1692,7 +1692,7 @@ Func_02000e18:
 .L_02008e86:
 	cmp r5, #30
 	bne .L_02008e8e
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 .L_02008e8e:
 	movs r3, #128
 	lsls r3, r3, #7
@@ -3705,7 +3705,7 @@ Func_02001f04:
 	bl Func_02003d7c
 	movs r0, #0
 	bl Func_02003eac
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	adds r0, r6, #0
 	movs r1, #9
 	bl Animation_ApplyChildValues
@@ -5547,7 +5547,7 @@ Func_02002e34:
 .L_0200ae86:
 	cmp r5, #30
 	bne .L_0200ae8e
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 .L_0200ae8e:
 	ldr r3, [r6, #12]
 	ldr r2, .L_0200aed0
@@ -5707,8 +5707,8 @@ Func_02002f60:
 	bl ObjectDispatch_SetSingleChildField26
 	mov r3, r8
 	str r3, [r6, #108]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	mov r0, r10
 	bl Func_02003e5c
 	bl Func_02003d84
@@ -5774,7 +5774,7 @@ Func_02002ffc:
 	bl Object_GetById
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildField26
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #228
 	bl Func_02003ef4
 	ldr r3, .L_0200b0f0
@@ -5816,7 +5816,7 @@ Func_02002ffc:
 	strb r3, [r2]
 	str r7, [r6, #108]
 	bl Func_02003ed4
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	bl Func_02003d84
 .L_0200b0e2:
 	pop {r3}

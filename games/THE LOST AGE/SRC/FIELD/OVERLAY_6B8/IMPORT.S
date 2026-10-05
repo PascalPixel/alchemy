@@ -201,7 +201,7 @@ Func_02000eac:
 	.global Func_02000eb4
 	.thumb_func
 Func_02000eb4:
-	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer Event_SetDestinationFar
 	.global Func_02000ebc
 	.thumb_func
 Func_02000ebc:

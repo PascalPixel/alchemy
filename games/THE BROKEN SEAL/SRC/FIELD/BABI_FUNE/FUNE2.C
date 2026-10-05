@@ -26,7 +26,7 @@ void Object_RefreshSelectorById();
 void ObjectMotion_CommitPositionAndActivate();
 void MusicCommand_SetPitchAndUpdateFrequency();
 void BabiFune_ScheduleFade();
-void Event_SetPairWork1c0Far();
+void Event_SetDestinationFar();
 
 /* Keep field 12 of four records the scene reads back later. */
 s32 SceneState_StoreSlotZeroField12(void)
@@ -300,5 +300,5 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_GameFlagSet(282);
-    Event_SetPairWork1c0Far((s32)&SceneId_Title, 9);
+    Event_SetDestinationFar((s32)&SceneId_Title, 9);
 }

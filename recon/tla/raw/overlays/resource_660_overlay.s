@@ -874,8 +874,8 @@ Func_02000710:
 	bl Battle_WaitMode0
 	bl Func_020007d4
 	bl Func_020007bc
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r0, .L_020087a0
 	bl Func_02000844
 	movs r2, #10

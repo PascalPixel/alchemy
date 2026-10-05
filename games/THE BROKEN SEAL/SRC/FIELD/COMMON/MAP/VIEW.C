@@ -25,9 +25,9 @@ extern u8 gMapCellBuffer[];
 
 extern u8 MsgNotOnMap[];
 extern u32 gKeysRepeat;
-void Event_ClearStatus1c6(void);
-void Event_SetStatus1c6(void);
-void Event_WaitValue1c8Frames(void);
+void Event_FinishScreenTransition(void);
+void Event_StartScreenTransition(void);
+void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
 void BattleFx_SetupResourcesAndWindow(void);
 void BattleFx_CleanupResourcesAndWindow(void);
@@ -58,8 +58,8 @@ void Map_ShowWorldMap(s32 picture)
     ((struct ObjectRuntime *)field->view_center)->movement_state = 1;
     saved_status = field->transition_frames;
     field->transition_frames = 6;
-    Event_ClearStatus1c6();
-    Event_WaitValue1c8Frames();
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
     layer = map->anim;
     for (i = 0; i < 16; i++) {
         saved_flags[i] = layer->paused;
@@ -131,8 +131,8 @@ void Map_ShowWorldMap(s32 picture)
         layer++;
     }
     menu->suspended = 0;
-    Event_SetStatus1c6();
-    Event_WaitValue1c8Frames();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     field->transition_frames = saved_status;
     ((struct ObjectRuntime *)field->view_center)->movement_state = 0;
 }

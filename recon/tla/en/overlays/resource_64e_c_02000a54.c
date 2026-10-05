@@ -68,9 +68,9 @@ void Motion_CamBounds(s32, s32, s32, s32);
 void Object_LinkObjectAndSetCallback(u32, u32);
 void Object_LinkPair(s32, s32, s32);
 void Object_AttachWorkTargetToObject(s32, s32);
-void Event_SetStatus1c6(void);
-void Event_ClearStatus1c6(void);
-void Event_WaitValue1c8Frames(void);
+void Event_StartScreenTransition(void);
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
 void GameFlag_ClearBit(s32);
 void Party_RemoveActiveOwner(s32);
 
@@ -145,8 +145,8 @@ void Func_02000b2c(void)
     work = Ram_HeapSlots->event_work;
     work->screen_effect = 0x100;
     work->delay = 60;
-    Event_SetStatus1c6();
-    Event_WaitValue1c8Frames();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     Engine_EventWait(20);
     Motion_SetModeAndWaitAnimation(4, 3);
     Engine_EventWait(20);
@@ -610,7 +610,7 @@ void Func_02000d30(void)
     work = Ram_HeapSlots->event_work;
     work->delay = 60;
     work->screen_effect = 0x100;
-    Event_ClearStatus1c6();
-    Event_WaitValue1c8Frames();
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
     Func_02001c54(22);
 }

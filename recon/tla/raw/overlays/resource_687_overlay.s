@@ -2059,8 +2059,8 @@ Func_02001068:
 	movs r0, #1
 	bl Func_02002004
 .L_0200909a:
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001fb4
 	pop {pc}
 	.section .text.x020090a8,"ax",%progbits
@@ -2704,8 +2704,8 @@ Func_020015cc:
 	bl Func_02002044
 	movs r0, #4
 	bl Func_02002004
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001fb4
 	pop {pc}
 	.section .text.x020095ec,"ax",%progbits
@@ -2718,8 +2718,8 @@ Func_020015ec:
 	bl Func_02002044
 	movs r0, #5
 	bl Func_02002004
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001fb4
 	pop {pc}
 	.section .text.x0200960c,"ax",%progbits
@@ -3290,14 +3290,14 @@ Func_02001a14:
 	negs r1, r1
 	lsls r0, r0, #17
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_02009b18
 	bl Scheduler_AddOrUpdateCallback
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #21

@@ -106,20 +106,20 @@ Func_0200085c:
 	.thumb_func
 ObjectMotion_ArmCallback:
 	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_0200087c

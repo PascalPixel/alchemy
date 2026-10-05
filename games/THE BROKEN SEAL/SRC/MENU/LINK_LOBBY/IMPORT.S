@@ -210,10 +210,10 @@ Engine_EventOpenMessage:
 	.thumb_func
 Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
-	.global Event_SetPairWork1c0
+	.global Event_SetDestination
 	.thumb_func
-Event_SetPairWork1c0:
-	overlay_veneer Event_SetPairWork1c0Far
+Event_SetDestination:
+	overlay_veneer Event_SetDestinationFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -229,11 +229,11 @@ Event_SetPair1d4:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_SanctumOpen
 	.thumb_func
 Engine_SanctumOpen:

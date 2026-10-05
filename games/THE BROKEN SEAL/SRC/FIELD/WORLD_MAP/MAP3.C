@@ -29,7 +29,7 @@ s32 __umodsi3(u32 value, s32 divisor);
 extern u32 gFrameCount;
 extern s32 gActorEightPuffScript[];
 
-void Event_SetPairWork1c0(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 u16 gWorldMapBlend;
 extern const u8 gWorldMapPalettes[];
@@ -178,7 +178,7 @@ void FieldScene_RunActorPresentationSequence(void)
     ColorBuffer_ApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_TaskWait(120);
-    Event_SetPairWork1c0((s32)&SceneId_Title, 10);
+    Event_SetDestination((s32)&SceneId_Title, 10);
 }
 
 /* Stages the scene transition and arms the timed callback that drives it. */
@@ -522,7 +522,7 @@ void WorldMap_RaiseActors(void)
     Engine_EventWaitForScreen();
     Engine_EventEnd();
     GameFlag_Set(0x122);
-    Event_SetPairWork1c0((s32)&SceneId_WorldMap, 27);
+    Event_SetDestination((s32)&SceneId_WorldMap, 27);
 }
 
 /* Restore the blend registers using the active display bank's mask. */

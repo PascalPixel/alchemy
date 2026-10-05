@@ -2521,20 +2521,20 @@ Func_080c8350:
 Func_080c8368:
 	.incbin "baserom.gba", 0x000c8368, 0x00000010
 	.section .rom.000c83a8, "ax"
-	.global Event_SetStatus1c6Far
-	.type Event_SetStatus1c6Far, %function
+	.global Event_StartScreenTransitionFar
+	.type Event_StartScreenTransitionFar, %function
 	.thumb_func
-Event_SetStatus1c6Far:
+Event_StartScreenTransitionFar:
 	.incbin "baserom.gba", 0x000c83a8, 0x00000008
-	.global Event_ClearStatus1c6Far
-	.type Event_ClearStatus1c6Far, %function
+	.global Event_FinishScreenTransitionFar
+	.type Event_FinishScreenTransitionFar, %function
 	.thumb_func
-Event_ClearStatus1c6Far:
+Event_FinishScreenTransitionFar:
 	.incbin "baserom.gba", 0x000c83b0, 0x00000008
-	.global Event_WaitValue1c8FramesFar
-	.type Event_WaitValue1c8FramesFar, %function
+	.global Event_WaitTransitionFramesFar
+	.type Event_WaitTransitionFramesFar, %function
 	.thumb_func
-Event_WaitValue1c8FramesFar:
+Event_WaitTransitionFramesFar:
 	.incbin "baserom.gba", 0x000c83b8, 0x00000020
 	.global Func_080c83d8
 	.type Func_080c83d8, %function

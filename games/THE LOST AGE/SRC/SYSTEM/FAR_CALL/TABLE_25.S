@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Event_SetPairWork1c0Far
+	.global Event_SetDestinationFar
 	.thumb_func
-Event_SetPairWork1c0Far:
+Event_SetDestinationFar:
 	overlay_veneer EventRuntime_SetDestination
 	.global EventRuntime_SetSavedDestinationFar
 	.thumb_func

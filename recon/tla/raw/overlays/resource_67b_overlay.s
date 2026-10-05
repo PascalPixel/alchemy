@@ -2496,7 +2496,7 @@ Func_02001460:
 	bl Func_02002998
 	movs r0, #0
 	bl Func_02002a48
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	adds r0, r6, #0
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildField26
@@ -2597,7 +2597,7 @@ Func_0200153c:
 	bl Func_02002998
 	movs r0, #0
 	bl Func_02002a48
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	adds r0, r6, #0
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildField26
@@ -2783,8 +2783,8 @@ Func_0200169c:
 	movs r1, #0
 	movs r2, #0
 	bl Func_020029d8
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #184
 	bl Func_02002a70
 	movs r6, #17
@@ -2882,8 +2882,8 @@ Func_0200169c:
 	movs r3, #0
 	adds r0, #100
 	strh r3, [r0]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_SetBit
@@ -3842,7 +3842,7 @@ Func_02001f90:
 .L_02009fe2:
 	cmp r5, #30
 	bne .L_02009fea
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 .L_02009fea:
 	ldr r3, [r6, #12]
 	ldr r2, .L_0200a02c
@@ -4002,8 +4002,8 @@ Func_020020bc:
 	bl ObjectDispatch_SetSingleChildField26
 	mov r3, r8
 	str r3, [r6, #108]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	mov r0, r10
 	bl Func_02002a18
 	bl Func_020029a0
@@ -4069,7 +4069,7 @@ Func_02002158:
 	bl Object_GetById
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildField26
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #228
 	bl Func_02002a70
 	ldr r3, .L_0200a24c
@@ -4111,7 +4111,7 @@ Func_02002158:
 	strb r3, [r2]
 	str r7, [r6, #108]
 	bl Func_02002a60
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	bl Func_020029a0
 .L_0200a23e:
 	pop {r3}

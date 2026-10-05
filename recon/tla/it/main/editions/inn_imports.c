@@ -30,11 +30,11 @@ struct FieldObject {
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
 void Owner_RecalculateRatiosFar(s32);
-void Event_ClearStatus1c6Far(void);
-void Event_WaitValue1c8FramesFar(void);
+void Event_FinishScreenTransitionFar(void);
+void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
-void Event_SetStatus1c6Far(void);
+void Event_StartScreenTransitionFar(void);
 
 /* ☀️'s: pay for the room, restore every active member and play the night's
    fade and tune. */
@@ -62,13 +62,13 @@ void Inn_PlaySleep(s32 room_price)
     state->effect = 0x209;
     state->delay = 60;
     WaitFrames(20);
-    Event_ClearStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_FinishScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     Audio_PlayCue(86);
     AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
-    Event_SetStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_StartScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     WaitFrames(30);
     ((struct FieldEffectState *)Ram_HeapSlots->event_work)->delay = 16;
 }

@@ -1495,8 +1495,8 @@ Func_02000c8c:
 	bl ObjectMotion_CenterOnColumn
 	movs r0, #8
 	bl Battle_WaitMode0
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r3, #170
 	lsls r3, r3, #1
 	adds r6, r6, r3

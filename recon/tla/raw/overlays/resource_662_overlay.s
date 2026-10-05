@@ -1433,8 +1433,8 @@ Func_02000acc:
 	lsls r3, r3, #1
 	mov r1, r8
 	str r3, [r2, r1]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_0200091c
 	bl Func_02001950
 	movs r0, #40

@@ -78,7 +78,7 @@ Func_0804db74:
 	adds r0, r6, #0
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl Event_SetPairWork1c0Far
+	bl Event_SetDestinationFar
 	adds r0, r5, #0
 	b .L_0804dc56
 .L_0804dc1c:

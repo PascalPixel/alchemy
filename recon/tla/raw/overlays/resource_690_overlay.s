@@ -1582,8 +1582,8 @@ Func_02000c44:
 	bl Battle_WaitMode0
 	movs r0, #2
 	bl Func_02002110
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02002070
 	add sp, #8
 	pop {r5, pc}

@@ -67,8 +67,6 @@ extern const struct SceneEvent KorimaHashi_Events[];
 extern u8 KorimaHashi_Object26Script[];
 extern u8 KorimaHashi_TriggerScript[];
 
-/* The main-image services this bridge reaches through veneers the
-   staged-actor module names. */
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
@@ -76,8 +74,6 @@ void Object_SetModeById(s32 actor, s32 mode);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 
-/* Motion services in the shape of the engine header's, through the names
-   the staged-actor module gives their veneers. */
 static __inline__ void Actor_SetMotionSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: a direct call changes FieldScene_RunBranchingFormationPresentation from ldr r6, .L0 to ldr r7, .L0 (2674/2678 assembly lines). */

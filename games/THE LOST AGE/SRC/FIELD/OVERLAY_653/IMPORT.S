@@ -101,7 +101,7 @@ Func_02005168:
 	.global Func_02005170
 	.thumb_func
 Func_02005170:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_02005178
 	.thumb_func
 Func_02005178:
@@ -117,7 +117,7 @@ Func_02005178:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -137,7 +137,7 @@ Animation_SetStateFlags:
 	.global Func_02005198
 	.thumb_func
 Func_02005198:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_020051a0
 	.thumb_func
 Func_020051a0:
@@ -313,11 +313,11 @@ Func_020052f0:
 	.global Func_020052f8
 	.thumb_func
 Func_020052f8:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02005300
 	.thumb_func
 Func_02005300:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02005308
 	.thumb_func
 Func_02005308:

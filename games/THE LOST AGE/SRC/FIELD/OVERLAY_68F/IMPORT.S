@@ -53,7 +53,7 @@ Runtime_ReleaseHeapBlock:
 	.global Func_02002f40
 	.thumb_func
 Func_02002f40:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -117,7 +117,7 @@ Func_02002fb8:
 	.global Func_02002fc0
 	.thumb_func
 Func_02002fc0:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_02002fc8
 	.thumb_func
 Func_02002fc8:
@@ -165,7 +165,7 @@ Func_02002fe8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -181,7 +181,7 @@ Animation_SetStateFlags:
 	.global Func_02003000
 	.thumb_func
 Func_02003000:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02003008
 	.thumb_func
 Func_02003008:
@@ -321,7 +321,7 @@ Motion_CamBounds:
 	.global Func_020030e8
 	.thumb_func
 Func_020030e8:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_020030f0
 	.thumb_func
 Func_020030f0:

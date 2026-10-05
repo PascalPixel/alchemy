@@ -25,7 +25,7 @@ Sys_Free:
 	.global Func_020007ac
 	.thumb_func
 Func_020007ac:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -41,7 +41,7 @@ Func_020007c4:
 	.global Func_020007cc
 	.thumb_func
 Func_020007cc:
-	overlay_veneer Func_080001f0
+	overlay_veneer Ui_LoadWindowGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:

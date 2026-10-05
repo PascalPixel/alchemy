@@ -55,7 +55,7 @@ Sys_Free:
 	.global Func_02005420
 	.thumb_func
 Func_02005420:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -211,7 +211,7 @@ Func_020054e0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -231,7 +231,7 @@ Func_020054e8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -271,7 +271,7 @@ Animation_SetStateFlags:
 	.global Func_02005510
 	.thumb_func
 Func_02005510:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02005518
 	.thumb_func
 Func_02005518:
@@ -283,7 +283,7 @@ Animation_ApplyChildValues:
 	.global Func_02005528
 	.thumb_func
 Func_02005528:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global Func_02005530
 	.thumb_func
 Func_02005530:
@@ -431,7 +431,7 @@ Func_020055e8:
 	.global Func_020055f0
 	.thumb_func
 Func_020055f0:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_020055f8
 	.thumb_func
 Func_020055f8:

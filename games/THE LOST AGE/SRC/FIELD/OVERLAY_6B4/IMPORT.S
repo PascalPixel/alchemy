@@ -45,7 +45,7 @@ Sys_Free:
 	.global Func_02001454
 	.thumb_func
 Func_02001454:
-	overlay_veneer Func_080001f0
+	overlay_veneer Ui_LoadWindowGraphicsFar
 	.global Func_0200145c
 	.thumb_func
 Func_0200145c:
@@ -65,7 +65,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_0200147c
 	.thumb_func
 Func_0200147c:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02001484
 	.thumb_func
 Func_02001484:

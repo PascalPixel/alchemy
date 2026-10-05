@@ -73,7 +73,7 @@ Func_02002c28:
 	.global Func_02002c30
 	.thumb_func
 Func_02002c30:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_02002c38
 	.thumb_func
 Func_02002c38:
@@ -89,7 +89,7 @@ Func_02002c38:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -101,7 +101,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02002c48
 	.thumb_func
 Func_02002c48:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
@@ -249,11 +249,11 @@ Func_02002d68:
 	.global Func_02002d70
 	.thumb_func
 Func_02002d70:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02002d78
 	.thumb_func
 Func_02002d78:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

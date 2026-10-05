@@ -270,7 +270,7 @@ Func_081197f0:
 	bl Func_081185c4
 .L_08119a30:
 	movs r0, #9
-	bl Func_08038128
+	bl UiWindow_CreateWithLayoutBoundsFar
 	bl Camera_InitDefaultTransform
 	bl BattleActor_CommitPlacement
 	bl Func_081263c4

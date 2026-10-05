@@ -37,7 +37,7 @@ Sys_Free:
 	.global Func_02000c24
 	.thumb_func
 Func_02000c24:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -165,7 +165,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02000d04
 	.thumb_func
 Func_02000d04:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02000d0c
 	.thumb_func
 Func_02000d0c:

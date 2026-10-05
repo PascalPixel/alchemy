@@ -57,7 +57,7 @@ Sys_Free:
 	.global Func_02001f54
 	.thumb_func
 Func_02001f54:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -85,7 +85,7 @@ Render_ProjectPoint:
 	.global Func_02001f8c
 	.thumb_func
 Func_02001f8c:
-	overlay_veneer Func_08000298
+	overlay_veneer Resource_ReservedNoOpFar
 	.global QueueIoWriteDelay2
 	.thumb_func
 QueueIoWriteDelay2:
@@ -137,7 +137,7 @@ Animation_SetStateFlags:
 	.global Func_02001ff4
 	.thumb_func
 Func_02001ff4:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:

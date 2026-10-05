@@ -65,7 +65,7 @@ Func_02000dac:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -205,7 +205,7 @@ Func_02000eb4:
 	.global Func_02000ebc
 	.thumb_func
 Func_02000ebc:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02000ec4
 	.thumb_func
 Func_02000ec4:

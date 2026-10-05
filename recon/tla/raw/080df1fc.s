@@ -283,7 +283,7 @@ Func_080df1fc:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_08020298
+	bl ScriptObject_CheckOverlapFar
 	mov r8, r0
 	cmp r0, #0
 	bne .L_080df478

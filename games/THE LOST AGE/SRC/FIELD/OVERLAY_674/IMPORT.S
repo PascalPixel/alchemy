@@ -93,7 +93,7 @@ Func_02003e24:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -269,7 +269,7 @@ Func_02003f74:
 	.global Func_02003f7c
 	.thumb_func
 Func_02003f7c:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02003f84
 	.thumb_func
 Func_02003f84:

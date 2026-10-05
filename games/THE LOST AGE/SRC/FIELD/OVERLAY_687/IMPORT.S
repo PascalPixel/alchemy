@@ -69,7 +69,7 @@ Func_02001f6c:
 	.global Func_02001f74
 	.thumb_func
 Func_02001f74:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global ObjectDispatch_SetSingleChildField26
 	.thumb_func
 ObjectDispatch_SetSingleChildField26:
@@ -81,7 +81,7 @@ Animation_SetStateFlags:
 	.global Func_02001f8c
 	.thumb_func
 Func_02001f8c:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02001f94
 	.thumb_func
 Func_02001f94:
@@ -141,11 +141,11 @@ Func_02001ffc:
 	.global Func_02002004
 	.thumb_func
 Func_02002004:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_0200200c
 	.thumb_func
 Func_0200200c:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

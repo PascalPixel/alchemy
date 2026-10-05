@@ -73,7 +73,7 @@ Func_0200059c:
 	.global Func_020005a4
 	.thumb_func
 Func_020005a4:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:

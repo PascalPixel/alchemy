@@ -45,7 +45,7 @@ Runtime_ReleaseHeapBlock:
 	.global Func_02004384
 	.thumb_func
 Func_02004384:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -109,7 +109,7 @@ Func_020043fc:
 	.global Func_02004404
 	.thumb_func
 Func_02004404:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_0200440c
 	.thumb_func
 Func_0200440c:
@@ -157,7 +157,7 @@ Func_0200442c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -173,7 +173,7 @@ Animation_SetStateFlags:
 	.global Func_02004444
 	.thumb_func
 Func_02004444:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_0200444c
 	.thumb_func
 Func_0200444c:
@@ -353,7 +353,7 @@ Func_02004584:
 	.global Func_0200458c
 	.thumb_func
 Func_0200458c:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02004594
 	.thumb_func
 Func_02004594:

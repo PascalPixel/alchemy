@@ -93,7 +93,7 @@ Func_02003140:
 	.global Func_02003148
 	.thumb_func
 Func_02003148:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_02003150
 	.thumb_func
 Func_02003150:
@@ -141,7 +141,7 @@ Func_02003170:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -181,7 +181,7 @@ Animation_SetStateFlags:
 	.global Func_02003198
 	.thumb_func
 Func_02003198:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -189,7 +189,7 @@ Animation_ApplyChildValues:
 	.global Func_020031a8
 	.thumb_func
 Func_020031a8:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global Func_020031b0
 	.thumb_func
 Func_020031b0:
@@ -277,7 +277,7 @@ Func_02003230:
 	.global Func_02003238
 	.thumb_func
 Func_02003238:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02003240
 	.thumb_func
 Func_02003240:

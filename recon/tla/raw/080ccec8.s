@@ -208,7 +208,7 @@ Func_080ccec8:
 	adds r0, #255
 	bl BattleParty_ApplyDrain
 	movs r0, #1
-	bl Func_08038128
+	bl UiWindow_CreateWithLayoutBoundsFar
 	movs r0, #126
 	bl Audio_PlayCue
 	bl Party_CountActiveOwnersFar
@@ -223,7 +223,7 @@ Func_080ccec8:
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
 .L_080cd08e:
-	bl Func_08038138
+	bl UiWork_FinalizeAndReleaseBlock16Far
 	movs r3, #0
 	str r3, [r5, #108]
 	movs r1, #2
@@ -376,7 +376,7 @@ Func_080ccec8:
 	ldr r0, .L_080cd4a8
 	bl UiText_ShowPositionedMessageAndWaitFar
 	movs r0, #136
-	bl Func_080ad2e8
+	bl Party_FindOwnerWithActionFar
 	movs r1, #1
 	negs r1, r1
 	cmp r0, r1

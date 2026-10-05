@@ -49,7 +49,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02002814
 	.thumb_func
 Func_02002814:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Party_RemoveActiveOwner
 	.thumb_func
 Party_RemoveActiveOwner:

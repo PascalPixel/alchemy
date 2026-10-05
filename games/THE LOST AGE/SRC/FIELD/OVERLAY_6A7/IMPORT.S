@@ -45,7 +45,7 @@ Sys_Free:
 	.global Func_020009f0
 	.thumb_func
 Func_020009f0:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -93,7 +93,7 @@ Func_02000a38:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -125,7 +125,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02000a50
 	.thumb_func
 Func_02000a50:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -213,7 +213,7 @@ Func_02000af8:
 	.global Func_02000b00
 	.thumb_func
 Func_02000b00:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02000b08
 	.thumb_func
 Func_02000b08:

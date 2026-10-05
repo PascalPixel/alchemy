@@ -165,7 +165,7 @@ Func_02003218:
 	.global Func_02003220
 	.thumb_func
 Func_02003220:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

@@ -30,7 +30,7 @@ Func_080cf350:
 	bl Object_SetPosition
 	movs r1, #1
 	adds r0, r6, #0
-	bl Func_08020290
+	bl ObjectDispatch_SetSpritePriorityFar
 	movs r0, #3
 	bl WaitFrames
 	adds r0, r5, #0

@@ -165,7 +165,7 @@ Func_02004df4:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -185,7 +185,7 @@ Func_02004dfc:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -241,7 +241,7 @@ Animation_SetStateFlags:
 	.global Func_02004e24
 	.thumb_func
 Func_02004e24:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02004e2c
 	.thumb_func
 Func_02004e2c:
@@ -253,7 +253,7 @@ Animation_ApplyChildValues:
 	.global Func_02004e3c
 	.thumb_func
 Func_02004e3c:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
@@ -405,11 +405,11 @@ Func_02004f64:
 	.global Func_02004f6c
 	.thumb_func
 Func_02004f6c:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02004f74
 	.thumb_func
 Func_02004f74:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

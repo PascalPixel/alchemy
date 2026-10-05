@@ -214,7 +214,7 @@ Func_080dd054:
 	bgt .L_080dd266
 	mov r0, r10
 	adds r1, r6, #0
-	bl Func_080202e8
+	bl ScriptObject_FindOverlappingEntryFar
 	cmp r0, #0
 	beq .L_080dd286
 	cmp r0, r11

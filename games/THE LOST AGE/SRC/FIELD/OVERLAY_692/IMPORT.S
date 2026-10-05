@@ -53,7 +53,7 @@ Runtime_ReleaseHeapBlock:
 	.global Func_02004c58
 	.thumb_func
 Func_02004c58:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -117,7 +117,7 @@ Func_02004cd0:
 	.global Func_02004cd8
 	.thumb_func
 Func_02004cd8:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -137,7 +137,7 @@ Func_02004ce8:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -177,7 +177,7 @@ Animation_SetStateFlags:
 	.global Func_02004d10
 	.thumb_func
 Func_02004d10:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_02004d18
 	.thumb_func
 Func_02004d18:
@@ -317,7 +317,7 @@ Func_02004e20:
 	.global Func_02004e28
 	.thumb_func
 Func_02004e28:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02004e30
 	.thumb_func
 Func_02004e30:

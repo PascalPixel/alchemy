@@ -61,7 +61,7 @@ Sys_Free:
 	.global Func_02003f70
 	.thumb_func
 Func_02003f70:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -125,7 +125,7 @@ Func_02003fe8:
 	.global Func_02003ff0
 	.thumb_func
 Func_02003ff0:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -145,7 +145,7 @@ Func_02004000:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -305,11 +305,11 @@ Func_02004130:
 	.global Func_02004138
 	.thumb_func
 Func_02004138:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02004140
 	.thumb_func
 Func_02004140:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_02004148
 	.thumb_func
 Func_02004148:

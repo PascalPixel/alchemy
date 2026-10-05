@@ -21,11 +21,11 @@ Func_080201d0:
 	.thumb_func
 Func_080201d8:
 	overlay_veneer Func_0802d530
-	.global Func_080201e0
+	.global Map_CopyCellsRectFar
 	.thumb_func
-Func_080201e0:
+Map_CopyCellsRectFar:
 	overlay_veneer Map_CopyCellsRect
-	.global Func_080201e8
+	.global Map_CopyCellAttributeRectFar
 	.thumb_func
-Func_080201e8:
+Map_CopyCellAttributeRectFar:
 	overlay_veneer Map_CopyCellAttributeRect

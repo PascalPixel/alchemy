@@ -61,7 +61,7 @@ Sys_Free:
 	.global Func_02005770
 	.thumb_func
 Func_02005770:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ActivateEntry
 	.thumb_func
 Resource_ActivateEntry:
@@ -153,7 +153,7 @@ Func_02005810:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -173,7 +173,7 @@ Func_02005818:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -225,7 +225,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02005838
 	.thumb_func
 Func_02005838:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -254,7 +254,7 @@ Func_02005868:
 	.thumb_func
 Func_02005870:
 	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080ad2e8
+	overlay_veneer Party_FindOwnerWithActionFar
 	.else
 	overlay_veneer Func_080ad308
 	.endif
@@ -401,11 +401,11 @@ Func_02005988:
 	.global Func_02005990
 	.thumb_func
 Func_02005990:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02005998
 	.thumb_func
 Func_02005998:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_020059a0
 	.thumb_func
 Func_020059a0:

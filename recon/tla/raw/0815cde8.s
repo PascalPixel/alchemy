@@ -1562,7 +1562,7 @@ Func_0815cde8:
 .L_0815d9a8:
 	ldr r1, [r5, #36]
 	adds r0, r6, #0
-	bl Func_08020060
+	bl ResourceMetadata_UnregisterFar
 	adds r7, #1
 .L_0815d9b2:
 	ldr r0, [r5]

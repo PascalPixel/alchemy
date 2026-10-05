@@ -510,7 +510,7 @@ Func_02000490:
 .L_020084e0:
 	adds r0, r4, #0
 	ldr r1, .L_02008560
-	bl Func_02000594
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212

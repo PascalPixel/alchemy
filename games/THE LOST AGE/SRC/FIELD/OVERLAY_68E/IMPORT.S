@@ -53,7 +53,7 @@ ObjectDispatch_ApplyValueToChildren:
 	.global Func_020012f8
 	.thumb_func
 Func_020012f8:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:

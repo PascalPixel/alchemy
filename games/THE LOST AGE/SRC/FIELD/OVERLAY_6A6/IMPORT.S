@@ -29,7 +29,7 @@ Sys_Free:
 	.global Func_02001248
 	.thumb_func
 Func_02001248:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -77,7 +77,7 @@ Func_020012a0:
 	.global Func_020012a8
 	.thumb_func
 Func_020012a8:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_020012b0
 	.thumb_func
 Func_020012b0:
@@ -93,7 +93,7 @@ Func_020012b0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -125,7 +125,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_020012c8
 	.thumb_func
 Func_020012c8:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
@@ -257,7 +257,7 @@ Func_020013c8:
 	.global Func_020013d0
 	.thumb_func
 Func_020013d0:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:

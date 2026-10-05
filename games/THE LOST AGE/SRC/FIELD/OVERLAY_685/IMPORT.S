@@ -37,7 +37,7 @@ Runtime_ReleaseHeapBlock:
 	.global Func_020033dc
 	.thumb_func
 Func_020033dc:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -81,7 +81,7 @@ Func_0200341c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -113,7 +113,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02003434
 	.thumb_func
 Func_02003434:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Func_0200343c
 	.thumb_func
 Func_0200343c:
@@ -281,11 +281,11 @@ Func_0200356c:
 	.global Func_02003574
 	.thumb_func
 Func_02003574:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_0200357c
 	.thumb_func
 Func_0200357c:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

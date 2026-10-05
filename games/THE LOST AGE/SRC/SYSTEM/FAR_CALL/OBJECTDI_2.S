@@ -13,7 +13,7 @@ ObjectDispatch_InitializeFar:
 	.thumb_func
 Func_080200b0:
 	overlay_veneer Func_08023524
-	.global Func_080200b8
+	.global ObjectDispatch_FindFreeObjectFar
 	.thumb_func
-Func_080200b8:
+ObjectDispatch_FindFreeObjectFar:
 	overlay_veneer ObjectDispatch_FindFreeObject

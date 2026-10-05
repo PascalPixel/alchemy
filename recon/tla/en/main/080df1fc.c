@@ -88,7 +88,7 @@ void Func_080df174(void);
 void Audio_PlayCue(s32 cue);
 void Object_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position);
-s32 Func_08020298(struct FxObject *object, struct FxPosition *position);
+s32 ScriptObject_CheckOverlapFar(struct FxObject *object, struct FxPosition *position);
 s32 Func_08020210(struct FxObject *object, struct FxPosition *position);
 struct FxObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct FxObject *object, s32 magnitude, s32 angle);
@@ -208,7 +208,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         position.y = target->ground;
         position.z = target->z;
         Vector_AddPolarOffset(0x100000, angle, &position);
-        i = Func_08020298(target, &position);
+        i = ScriptObject_CheckOverlapFar(target, &position);
         /* FAKEMATCH: entering the blocked path from both tests keeps it ahead
            of the drop path, as the ROM lays them out. */
         if (i != 0)

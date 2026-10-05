@@ -5,13 +5,13 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08038390
+	.global Menu_RunConfirmSelectionAtFar
 	.thumb_func
-Func_08038390:
+Menu_RunConfirmSelectionAtFar:
 	overlay_veneer Menu_RunConfirmSelectionAt
-	.global Func_08038398
+	.global Resource_LoadFixedBlockBIntoFreeSlotFar
 	.thumb_func
-Func_08038398:
+Resource_LoadFixedBlockBIntoFreeSlotFar:
 	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlot
 	.global UiText_MeasureResourceEntriesFar
 	.thumb_func
@@ -25,9 +25,9 @@ Ui_SetRectHighlightFar:
 	.thumb_func
 Ability_LoadGlyphFar:
 	overlay_veneer Ability_LoadGlyph
-	.global Func_080383b8
+	.global Graphics_ExpandVramTilesByColorTableFar
 	.thumb_func
-Func_080383b8:
+Graphics_ExpandVramTilesByColorTableFar:
 	overlay_veneer Graphics_ExpandVramTilesByColorTable
 	.global Func_080383c0
 	.thumb_func

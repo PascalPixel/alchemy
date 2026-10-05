@@ -29,7 +29,7 @@ Func_080e8c9c:
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
-	bl Func_08020228
+	bl Runtime_SetWorkTripleIfNonNegativeFar
 	b .L_080e8cf8
 .L_080e8cd4:
 	ldr r3, [r0, #12]

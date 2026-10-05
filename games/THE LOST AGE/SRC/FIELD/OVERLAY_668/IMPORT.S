@@ -41,7 +41,7 @@ Runtime_ReleaseHeapBlock:
 	.global Func_020049d4
 	.thumb_func
 Func_020049d4:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -113,7 +113,7 @@ Func_02004a4c:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b0
 	.else
-	overlay_veneer Func_080201e0
+	overlay_veneer Map_CopyCellsRectFar
 	.endif
 	.endif
 	.endif
@@ -133,7 +133,7 @@ Func_02004a54:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -169,7 +169,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02004a74
 	.thumb_func
 Func_02004a74:
-	overlay_veneer Func_08020290
+	overlay_veneer ObjectDispatch_SetSpritePriorityFar
 	.global Func_02004a7c
 	.thumb_func
 Func_02004a7c:
@@ -177,7 +177,7 @@ Func_02004a7c:
 	.global Func_02004a84
 	.thumb_func
 Func_02004a84:
-	overlay_veneer Func_080ad2e8
+	overlay_veneer Party_FindOwnerWithActionFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -325,7 +325,7 @@ Func_02004ba4:
 	.global Func_02004bac
 	.thumb_func
 Func_02004bac:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02004bb4
 	.thumb_func
 Func_02004bb4:

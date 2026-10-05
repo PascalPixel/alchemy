@@ -37,7 +37,7 @@ Sys_Free:
 	.global Func_020021f8
 	.thumb_func
 Func_020021f8:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
@@ -45,7 +45,7 @@ Resource_FindFreeEntry:
 	.global Func_02002208
 	.thumb_func
 Func_02002208:
-	overlay_veneer Func_080001f0
+	overlay_veneer Ui_LoadWindowGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -61,7 +61,7 @@ Func_02002220:
 	.global Func_02002228
 	.thumb_func
 Func_02002228:
-	overlay_veneer Func_08000370
+	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
 	.global SerialRuntime_BeginTransferB
 	.thumb_func
 SerialRuntime_BeginTransferB:
@@ -169,11 +169,11 @@ Func_020022f8:
 	.global Func_02002300
 	.thumb_func
 Func_02002300:
-	overlay_veneer Func_08038300
+	overlay_veneer Resource_CopyFixedBlockBFar
 	.global Func_02002308
 	.thumb_func
 Func_02002308:
-	overlay_veneer Func_08038308
+	overlay_veneer Resource_CopyFixedBlockAFar
 	.global Func_02002310
 	.thumb_func
 Func_02002310:
@@ -185,7 +185,7 @@ Menu_RunConfirmSelection:
 	.global Func_02002320
 	.thumb_func
 Func_02002320:
-	overlay_veneer Func_080383b8
+	overlay_veneer Graphics_ExpandVramTilesByColorTableFar
 	.global Func_02002328
 	.thumb_func
 Func_02002328:

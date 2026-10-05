@@ -5,8 +5,6 @@
 #include "RUNTIME_MEM.H"
 #include "IO_REG.H"
 
-void Func_02000594(const void *source, void *destination);
-
 extern char ResourceId_IntroTilesB;
 extern s16 gTitleVramBlock;
 
@@ -27,10 +25,10 @@ void Title_LoadSprites(void)
     buffer = Runtime_BumpAllocateAlternatePool(0x520);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
-    Func_02000594(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
     Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
     VramBlock_LoadCached(gTitleVramBlock, 0x500, buffer + 32);
-    dma = (volatile s32 *)0x040000d4;
+    dma = (volatile s32 *)REG_DMA3;
     while (dma[2] < 0)
         ;
     Sys_Free(buffer);

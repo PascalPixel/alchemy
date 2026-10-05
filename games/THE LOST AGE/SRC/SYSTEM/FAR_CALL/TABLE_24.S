@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080ad2e8
+	.global Party_FindOwnerWithActionFar
 	.thumb_func
-Func_080ad2e8:
+Party_FindOwnerWithActionFar:
 	overlay_veneer Party_FindOwnerWithAction
 	.global Func_080ad2f0
 	.thumb_func
@@ -17,9 +17,9 @@ Func_080ad2f0:
 	.thumb_func
 Func_080ad2f8:
 	overlay_veneer Func_080aff94
-	.global Func_080ad300
+	.global Djinn_ActivateOfferedForPartyFar
 	.thumb_func
-Func_080ad300:
+Djinn_ActivateOfferedForPartyFar:
 	overlay_veneer Djinn_ActivateOfferedForParty
 	.global Func_080ad308
 	.thumb_func

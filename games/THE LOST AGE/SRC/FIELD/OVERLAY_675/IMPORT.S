@@ -65,7 +65,7 @@ Func_02001234:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080201b8
 	.else
-	overlay_veneer Func_080201e8
+	overlay_veneer Map_CopyCellAttributeRectFar
 	.endif
 	.endif
 	.endif
@@ -145,11 +145,11 @@ ObjectMotion_SetActionVariant:
 	.global Func_020012cc
 	.thumb_func
 Func_020012cc:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_020012d4
 	.thumb_func
 Func_020012d4:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Func_020012dc
 	.thumb_func
 Func_020012dc:

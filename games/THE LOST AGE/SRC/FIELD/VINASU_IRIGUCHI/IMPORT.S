@@ -45,7 +45,7 @@ Runtime_ReleaseHeapBlock:
 	.global Func_02002824
 	.thumb_func
 Func_02002824:
-	overlay_veneer Func_080001a8
+	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
@@ -101,7 +101,7 @@ ObjectDispatch_SetSingleChildField26:
 	.global Func_02002894
 	.thumb_func
 Func_02002894:
-	overlay_veneer Func_08020228
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Party_RemoveActiveOwner
 	.thumb_func
 Party_RemoveActiveOwner:
@@ -237,7 +237,7 @@ Func_0200299c:
 	.global Func_020029a4
 	.thumb_func
 Func_020029a4:
-	overlay_veneer Func_080c8280
+	overlay_veneer BattleFx_SetWeightedResultFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

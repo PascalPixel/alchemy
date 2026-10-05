@@ -29,11 +29,11 @@ Scheduler_RemoveCallbackFar:
 	.global Func_02001bf4
 	.thumb_func
 Func_02001bf4:
-	overlay_veneer Func_080000e0
+	overlay_veneer Scheduler_EnableCallbacksFar
 	.global Func_02001bfc
 	.thumb_func
 Func_02001bfc:
-	overlay_veneer Func_080000e8
+	overlay_veneer Scheduler_DisableCallbacksFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -41,7 +41,7 @@ Random16Far:
 	.global Func_02001c0c
 	.thumb_func
 Func_02001c0c:
-	overlay_veneer Func_08000130
+	overlay_veneer Runtime_SetIrqHandlerFar
 	.global Runtime_AllocateBlock
 	.thumb_func
 Runtime_AllocateBlock:
@@ -53,7 +53,7 @@ Runtime_ReleaseHeapBlock:
 	.global Func_02001c24
 	.thumb_func
 Func_02001c24:
-	overlay_veneer Func_080001a0
+	overlay_veneer Resource_DecodeByteLzInRamFar
 	.global VramBlock_LoadCached
 	.thumb_func
 VramBlock_LoadCached:
@@ -253,7 +253,7 @@ Func_02001d8c:
 	.global Func_02001d94
 	.thumb_func
 Func_02001d94:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02001d9c
 	.thumb_func
 Func_02001d9c:

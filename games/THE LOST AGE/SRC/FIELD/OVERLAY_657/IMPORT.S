@@ -81,7 +81,7 @@ Func_02001f24:
 	.global Func_02001f2c
 	.thumb_func
 Func_02001f2c:
-	overlay_veneer Func_08020178
+	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Func_02001f34
 	.thumb_func
 Func_02001f34:
@@ -249,7 +249,7 @@ Func_02002074:
 	.global Func_0200207c
 	.thumb_func
 Func_0200207c:
-	overlay_veneer Func_080c8278
+	overlay_veneer EventRuntime_SetCountdownFar
 	.global Func_02002084
 	.thumb_func
 Func_02002084:

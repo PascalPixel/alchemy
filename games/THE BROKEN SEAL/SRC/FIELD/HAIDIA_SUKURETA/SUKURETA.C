@@ -617,15 +617,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     record = Object_GetById(14);
     record->steering_flags |= ACTOR_FACES_MOTION;
     record = Object_GetById(15);
-    {
-        /* FAKEMATCH: a result temporary, not the compound or-assign the
-         * first occurrence above uses: the reference merges the byte into
-         * the mask's register, which the two-address ORR does only when
-         * the result is its own object. */
-        u8 merged = (u8)(record->steering_flags | 1);
-
-        record->steering_flags = merged;
-    }
+    record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
 
     Engine_ActorSetAnimation(ACTOR_SATUROS, 0);
     Engine_ActorSetAnimation(ACTOR_MENARDI, 0);
@@ -770,10 +762,9 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         Engine_ActorSetPosition(15, 0, 0);
         Engine_ActorSetPosition(5, 0, 0);
         {
-            u8 *record = (u8 *)Object_GetById(8);
-            u8 value = *(volatile u8 *)&record[89];
+            struct FieldActor *record = Object_GetById(8);
 
-            record[89] = (u8)(value | 8);
+            record->collision_flags = 8 | record->collision_flags;
         }
         Call3(Engine_ActorSetPosition, 11, 0x530000, 0x1090000);
         Engine_ActorWalkToAndWait(11, 83, 0x111);

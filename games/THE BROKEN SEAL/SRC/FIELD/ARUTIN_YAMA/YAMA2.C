@@ -211,14 +211,8 @@ void FieldScene_RunFallingRocksWarning(void)
         Engine_EventWait(1);
         {
             struct FieldActor *record = Actor_Get(ACTOR_GERALD);
-            /* FAKEMATCH: a result temporary, not a compound or-assign: the
-             * reference merges the byte into the mask's register, which the
-             * two-address ORR does only when the result is its own object.
-             * 2026-10-02: both record->steering_flags |= 1 and the plain assignment
-             * record->steering_flags = record->steering_flags | 1 put the result in r3, not r6. */
-            u8 merged = (u8)(record->steering_flags | ACTOR_FACES_MOTION);
 
-            record->steering_flags = merged;
+            record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
         }
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_EventWait(80);

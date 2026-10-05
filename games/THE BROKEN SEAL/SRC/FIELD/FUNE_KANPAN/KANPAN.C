@@ -758,13 +758,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         {
             /* Let actor 20 take its sprite priority from its place again. */
             struct FieldActor *record = Object_GetById(20);
-            /* FAKEMATCH: a result temporary, not a compound or-assign: the
-             * reference merges the byte into the mask's register, which the
-             * two-address ORR does only when the result is its own object. */
-            u8 bits = ACTOR_PRIORITY_AUTOMATIC;
-
-            bits |= record->priority_flags;
-            record->priority_flags = bits;
+            record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
         }
         Actor_SetSpeed(20, 0x13333, 0x9999);
         Actor_WalkToAndWait(20, 182, 0x30e);
@@ -1165,10 +1159,7 @@ void FieldScene_RunScene3af_02001920(void)
     Engine_ActorEnableActionCallback(22, FuneKanpan_LeadActionsC);
     {
         struct FieldActor *record = Object_GetById(21);
-        u8 bits = 128;
-
-        bits |= record->collision_flags;
-        record->collision_flags = bits;
+        record->collision_flags = 128 | record->collision_flags;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);
@@ -1807,10 +1798,7 @@ void FieldScene_ConfigureLeadActors(void)
     {
         /* Set the high bit of the flag byte at +89. */
         struct FieldActor *record = Object_GetById(21);
-        u8 bits = 128;
-
-        bits |= record->collision_flags;
-        record->collision_flags = bits;
+        record->collision_flags = 128 | record->collision_flags;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);

@@ -1395,10 +1395,9 @@ void KuupuappuHeya_RunScene021C8(void)
     Engine_AudioPlaySceneCue();
     Engine_ActorSetSpritePriority(0, 1);
     {
-        u8 *record = (u8 *)Object_GetById(0);
-        u8 value = *(volatile u8 *)&record[35];
-    
-        record[35] = (u8)(value | 1);
+        struct FieldActor *record = Object_GetById(0);
+
+        record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
     }
     Map_SetWorkFourValues(0x200000, 0x2400000, 0x1900000, 0x3a80000);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
@@ -2189,12 +2188,8 @@ void RunDialoguePromptScene(void)
     Engine_EventBegin();
     {
         struct FieldActor *actor = Object_GetById(12);
-        /* FAKEMATCH: a result temporary, not a compound or-assign: the
-         * reference merges the byte into the mask's register, which the
-         * two-address ORR does only when the result is its own object. */
-        u8 merged = actor->priority_flags | 1;
 
-        actor->priority_flags = merged;
+        actor->priority_flags = ACTOR_PRIORITY_AUTOMATIC | actor->priority_flags;
     }
     Actor_MoveToAndWait(15, 0x368, 0x1a9);
     Actor_MoveToAndWait(16, 0x368, 0x199);

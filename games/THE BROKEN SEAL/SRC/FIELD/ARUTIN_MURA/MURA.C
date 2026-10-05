@@ -619,17 +619,11 @@ void FieldScene_RunScene3a3SequenceD(void)
     }
     actor = Object_GetById(17);
     if (actor != 0) {
-        u8 flags = 4;
-
-        flags |= actor->collision_flags;
-        actor->collision_flags = flags;
+        actor->collision_flags = 4 | actor->collision_flags;
     }
     actor = Object_GetById(16);
     if (actor != 0) {
-        u8 flags = 4;
-
-        flags |= actor->collision_flags;
-        actor->collision_flags = flags;
+        actor->collision_flags = 4 | actor->collision_flags;
     }
 }
 

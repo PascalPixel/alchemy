@@ -227,9 +227,7 @@ void RunEventScript01(void)
     rec8->bounce = 0x4000;
     {
         struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 flags = record->steering_flags | ACTOR_FACES_MOTION;
-
-        record->steering_flags = flags;
+        record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
     Engine_EventWait(80);
     Engine_EventSetMessage((s32)MsgKorimaControlTretsHeartShallNot);

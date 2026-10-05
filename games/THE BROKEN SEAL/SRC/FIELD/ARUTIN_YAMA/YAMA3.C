@@ -258,9 +258,7 @@ void FieldScene_RunScene3a4_02002490(void)
         Map_CopyCellAttributes(23, 13, 1, 1, 25, 13);
         {
             struct FieldActor *record = Actor_Get(9);
-            u8 flags = record->priority_flags | ACTOR_PRIORITY_UNDERFOOT;
-
-            record->priority_flags = flags;
+            record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
         }
     }
     if (GameFlag_IsSet(0x325) != 0) {
@@ -291,9 +289,7 @@ void FieldScene_RunScene3a4_020025c0(void)
         Engine_ActorSetAnimation(9, 5);
         Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
         {
-            u8 flags = rec7->priority_flags | 2;
-
-            rec7->priority_flags = flags;
+            rec7->priority_flags = ACTOR_PRIORITY_UNDERFOOT | rec7->priority_flags;
         }
     }
     if (GameFlag_IsSet(0x907) != 0) {

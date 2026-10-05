@@ -926,11 +926,9 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
     v8 = 1;
     ObjectMotion_SetActionVariant(a0, 2);
     {
-        u8 *record = (u8 *)Object_GetById(a0);
-        /* FAKEMATCH: the flag byte is read through a volatile access. */
-        u8 value = *(volatile u8 *)&record[35];
+        struct FieldActor *record = Object_GetById(a0);
 
-        record[35] = (u8)(value | 1);
+        record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
     }
     v6 = (((rec4->facing + 0x4000) & 0xf000) >> 12);
     if (SceneActor_CheckBucketOffsetPoint((((rec4->facing + 0x4000) & 0xf000) >> 12)) != 0) {

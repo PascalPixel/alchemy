@@ -794,7 +794,7 @@ firstSceneComplete:
 void FieldScene_RunSecondEnsembleBeat(void)
 {
     s32 id;
-    u8 *rec;
+    struct FieldActor *rec;
 
     GameFlag_Set(0x89a);
     Engine_EventWait(30);
@@ -830,24 +830,13 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Engine_EventWait(20);
     Actor_SetSpeed(16, 192 << 9, 192 << 8);
     rec = Object_GetById(16);
-    rec[90] &= 0xfe;
+    rec->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(16, 154 << 1, 136 << 1);
     Engine_EventWait(1);
-    rec = ((u8 *)Value1(Object_GetById, 16));
-    {
-        /* FAKEMATCH: the result temporary selects the measured ORR destination.
-         * It replaces the compound or-assign the matching
-         * &= 0xfe case above uses. The reference writes the result into
-         * the mask register rather than the loaded value, and the
-         * two-address ORR only does that when the merged result is its
-         * own object; the compound form keeps the loaded value as
-         * destination. Same technique already adopted in the sibling
-         * owner resource_3bd:020013f8.
-         */
-        u8 merged = (u8)(rec[90] | 1);
-
-        rec[90] = merged;
-    }
+    rec = (struct FieldActor *)Value1(Object_GetById, 16);
+    /* The mask comes first: the reference merges the byte into the mask's
+       register. */
+    rec->steering_flags = ACTOR_FACES_MOTION | rec->steering_flags;
     Event_ShowMessageAndWait(16, 0, 50);
     Actor_SetPosition(17, 152 << 17, 216 << 16);
     Actor_WalkToAndWait(17, 152 << 1, 248);
@@ -994,18 +983,18 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Engine_EventWait(20);
     Actor_SetPosition(19, 232 << 16, 168 << 16);
     Actor_SetPosition(20, 232 << 16, 168 << 16);
-    rec = ((u8 *)Value1(Object_GetById, 19));
-    *(s32 *)(rec + 12) = 0xc0000;
-    rec = ((u8 *)Value1(Object_GetById, 19));
-    *(s32 *)(rec + 60) = -0x80000000;
-    rec = ((u8 *)Value1(Object_GetById, 19));
-    *(s32 *)(rec + 24) = 0xcccc;
-    rec = ((u8 *)Value1(Object_GetById, 19));
+    rec = (struct FieldActor *)Value1(Object_GetById, 19);
+    rec->y.fixed = 0xc0000;
+    rec = (struct FieldActor *)Value1(Object_GetById, 19);
+    rec->target_y = ACTOR_NO_TARGET;
+    rec = (struct FieldActor *)Value1(Object_GetById, 19);
+    rec->scale_x = 0xcccc;
+    rec = (struct FieldActor *)Value1(Object_GetById, 19);
     {
-        u8 *target = *(u8 **)(rec + 80);
-        s32 shown = 0x8000;
+        struct FieldSprite *sprite = rec->sprite;
+        s32 rotation = 0x8000;
 
-        *(u16 *)(target + 30) = shown;
+        sprite->rotation = rotation;
     }
     Audio_PlayCue(124);
     Event_ShowMessageAndWait(18, 0, 20);
@@ -2025,9 +2014,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     {
         /* Turn the leader to face the way it walks. */
         struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 value = record->steering_flags | ACTOR_FACES_MOTION;
-
-        record->steering_flags = value;
+        record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
     Engine_EventWait(20);
     FieldScene_RunParticleRain();

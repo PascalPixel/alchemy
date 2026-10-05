@@ -249,18 +249,16 @@ s32 GomaIriguchi_RestoreEntryState(void)
     Engine_EventWait(10);
     BattleFx_SetQueuedSoundAndPlay(170);
     Engine_ActorSetAnimation(11, 2);
-    ((struct Flags35 *)Object_GetById(11))->flags = 2;
+    Object_GetById(11)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
     {
-        u8 *record = (s32)Object_GetById(8);
-        u8 value = *(volatile u8 *)&record[89];
-    
-        record[89] = (u8)(value | 16);
+        struct FieldActor *record = Object_GetById(8);
+
+        record->collision_flags = 16 | record->collision_flags;
     }
     {
-        u8 *record = (s32)Object_GetById(15);
-        u8 value = *(volatile u8 *)&record[89];
-    
-        record[89] = (u8)(value | 8);
+        struct FieldActor *record = Object_GetById(15);
+
+        record->collision_flags = 8 | record->collision_flags;
     }
     if (Engine_GameFlagIsSet(0x865) != 0) {
         Call6(Engine_MapCopyCellAttributes, 74, 11, 1, 1, 73, 11);

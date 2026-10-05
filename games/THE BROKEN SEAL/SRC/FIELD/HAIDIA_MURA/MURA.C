@@ -2050,10 +2050,9 @@ void Scene_RepairTheHouse(void)
     Actor_MoveToAndWait(23, 400, 826);
     Engine_EventWait(20);
     {
-        u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 value = *(volatile u8 *)&record[35]; /* Keeps the byte in its own register. */
+        struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
 
-        record[35] = (u8)(value | 1);
+        record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
     }
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
@@ -2094,10 +2093,9 @@ void Scene_RepairTheHouse(void)
     Actor_MoveToAndWait(24, 377, 828);
     Engine_EventWait(20);
     {
-        u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 value = *(volatile u8 *)&record[35];
+        struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
 
-        record[35] = (u8)(value | 1);
+        record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
     }
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
@@ -2139,10 +2137,9 @@ void Scene_RepairTheHouse(void)
     Actor_MoveToAndWait(25, 360, 837);
     Engine_EventWait(20);
     {
-        u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 value = *(volatile u8 *)&record[35];
+        struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
 
-        record[35] = (u8)(value | 1);
+        record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
     }
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
@@ -2265,10 +2262,9 @@ void Scene_RepairTheHouse(void)
     Actor_WalkToAndWait(ACTOR_JASMINE, 408, 843);
     Engine_EventWait(1);
     {
-        u8 *record = Actor_Get(ACTOR_JASMINE);
-        u8 value = *(volatile u8 *)&record[90];
+        struct FieldActor *record = Actor_Get(ACTOR_JASMINE);
 
-        record[90] = (u8)(value | 1);
+        record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
     Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 0);
     Engine_ActorWaitForMove(ACTOR_GERALD);
@@ -2560,10 +2556,9 @@ void Scene_RepairTheHouse(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     {
-        u8 *record = Actor_Get(ACTOR_DORA);
-        u8 value = *(volatile u8 *)&record[90];
+        struct FieldActor *record = Actor_Get(ACTOR_DORA);
 
-        record[90] = (u8)(value | flag);
+        record->steering_flags = flag | record->steering_flags;
     }
     HaidiaMura_RunWalkScene03380(21, 6, 5, 0);
     Actor_WalkToAndWait(ACTOR_DORA, 373, 887);

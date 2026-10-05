@@ -1,4 +1,24 @@
-/* 2026-10-04 (third wave, finisher 3): combined diff 50 (was 176), 823/823
+/* 2026-10-05 deep finisher 1: combined diff 34 (was 50), no device.
+ * (1) Phase 11: the native's 255 is set after the records cursor's
+ * sp+12, so the source had a pointer cursor set before the 0xff:
+ * "for (n = 0, slot = records, none = 0xff; ...) *slot++ = record" (48).
+ * Separate statements n/slot/none before the for also give 48; the
+ * cursor declared with its initializer, or none set first, stay 50.
+ * (2) The native hoists the gFrameCount load for Trig_Sin above the x
+ * store and the BATTLE_OPTIONS load above the y store, so under
+ * -fstrict-aliasing the prompt sprite has no int-typed member: it is
+ * AnimationSpritePart's shape, a next pointer and u16 bit fields
+ * (BATTLE_WORK.H), with the attribute words written through a u32 view
+ * (40 to 34; an unsigned-int union, or a u32 first member, keeps 40).
+ * (3) A full permutation of phase 5's six head assignments (with both
+ * entry-store orders, both tiles spellings, display direct or through a
+ * local, and four more tiles spellings: array index, pointer sum, u32
+ * and pointer-first sums) bottoms at 34: entry, display, viewport, tiles,
+ * context, x = 0, with attributes stored before tile. Left (34, all in
+ * the phase 5 head): the native computes tiles first with the Tiles
+ * symbol in r1 (r2 here) and reads display, entry and context after it;
+ * every tiles-first order costs 2 to 12 more.
+ * 2026-10-04 (third wave, finisher 3): combined diff 50 (was 176), 823/823
  * instructions, no FAKEMATCH device. Phase 11 now ORs the entry's frame
  * with a 0xff held in a variable (old | none): a literal |= 0xff is folded
  * to a plain store in every form tried (u8, s8 cast, bitfield, -1, ~0,
@@ -272,22 +292,22 @@ void BattleEvent_Playback(void)
             s32 x;
 
             entry = &state->display_entry;
-            x = 0;
-            tiles = (s32)BattlePres_AdvanceArrowTiles + ((gFrameCount >> 2) & 7) * 128;
             display = gBattleDisplayWork;
-            context = display->window;
             viewport = display->offset;
+            tiles = (s32)BattlePres_AdvanceArrowTiles + ((gFrameCount >> 2) & 7) * 128;
+            context = display->window;
+            x = 0;
             if (state->display_source == -1)
                 state->display_source = work->prompt_slot;
             UiWork_ClearValueNameTablesFar();
             QueueIoWriteDelay10(0x0400004a, 4);
             QueueIoWriteDelay6(0x0400004a, 16);
-            entry->tile.word = x;
-            entry->attributes.word = 0xa000;
-            entry->tile.bits.tile = Resource_GetBuffer(state->display_source, tiles);
+            ((u32 *)entry)[1] = 0xa000;
+            ((u32 *)entry)[2] = x;
+            entry->tile = Resource_GetBuffer(state->display_source, tiles);
             x = context->x * 8 + (viewport->x >> 8) + 4;
-            entry->attributes.bits.x = x;
-            entry->attributes.bits.y = Trig_Sin(gFrameCount << 12) / 0x8000 + context->y * 8 + (viewport->y >> 8) + 6;
+            entry->x = x;
+            entry->y = Trig_Sin(gFrameCount << 12) / 0x8000 + context->y * 8 + (viewport->y >> 8) + 6;
             if ((BATTLE_OPTIONS & 2) || (gKeysPressedLatch & 0x303)
                 || ((u32)(gFrameTick - state->timer) > 10 && (BATTLE_OPTIONS & 0x303))) {
                 AudioCommand_PlayFar(111);
@@ -345,13 +365,14 @@ void BattleEvent_Playback(void)
                 if (frame == 6 || (state->timer & 7) == 0) {
                     struct AnimationObject *record;
                     s32 n;
-                    s32 none = 0xff;
+                    struct AnimationObject **slot;
+                    s32 none;
 
-                    for (n = 0; (record = GetMotionRecord(GetBattleObjectSlot(state->actor_id)->object, n)) != 0; n++) {
+                    for (n = 0, slot = records, none = 0xff; (record = GetMotionRecord(GetBattleObjectSlot(state->actor_id)->object, n)) != 0; n++) {
                         struct AnimationEntry *child;
                         u8 old;
 
-                        records[n] = record;
+                        *slot++ = record;
                         child = record->entries[0];
                         old = child->frame;
                         child->param = frame;

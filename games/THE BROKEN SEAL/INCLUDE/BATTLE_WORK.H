@@ -7,25 +7,17 @@
 #include "BATTLE_EVENT.H"
 #include "BATTLE_SESSION.H"
 
-/* The advance arrow as the session keeps it: an OAM entry in the making. */
+/* The advance arrow as the session keeps it: an OAM entry in the making,
+   its three attributes as halfword bit fields (as AnimationSpritePart). */
 struct BattlePromptSprite {
-    u32 unknown_00;
-    union {
-        u32 word;
-        struct {
-            unsigned y : 8;
-            unsigned flags : 8;
-            unsigned x : 9;
-            unsigned high : 7;
-        } bits;
-    } attributes;
-    union {
-        u32 word;
-        struct {
-            unsigned tile : 10;
-            unsigned high : 22;
-        } bits;
-    } tile;
+    struct BattlePromptSprite *next;
+    u16 y : 8;
+    u16 flags : 8;
+    u16 x : 9;
+    u16 size : 7;
+    u16 tile : 10;
+    u16 palette : 6;
+    u16 unknown_0a;
 };
 
 struct UiWindow;

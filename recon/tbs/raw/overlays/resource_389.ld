@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/HASHIRA.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/HASHIRA2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/PILLAR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/SEQUENCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

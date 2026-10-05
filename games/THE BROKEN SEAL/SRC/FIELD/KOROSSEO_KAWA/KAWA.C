@@ -133,7 +133,7 @@ void Engine_ActorShowEmote();
 void Engine_ActorFaceDirection();
 s32 OverlayObject_PlaceWithScale14000();
 void StagedActor_PushActorAhead();
-void OverlayObject_ResetMotionFields();
+void OverlayObject_ResetMotionFields(s32 actor);
 void Engine_ActorSetAnimation();
 void Korosseo_RestoreCompetitor();
 void Engine_CameraFollowActor();

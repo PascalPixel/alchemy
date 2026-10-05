@@ -161,7 +161,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             rec18 = Object_GetById(18);
 
             /* Clear the byte at +85 of the lookup result. */
-            *(u8 *)(Battle_GetWorkObject1e0() + 85) = ready_flag;
+            ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = ready_flag;
             Camera_SetSpeed(0x10000, 0x2000);
             Camera_MoveTo(rec18->x.fixed, rec18->y.fixed, rec18->z.fixed, 1); /* use_setter 1 */
             Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);

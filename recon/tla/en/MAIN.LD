@@ -778,7 +778,6 @@
         "*/recon/tla/raw/080438c8.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/PALETTE/GLOW_UPDATE_SINE.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW13.o"(.text)
-        "*/recon/tla/raw/080439e8.o"(.text)
         "*/recon/tla/raw/08043a64.o"(.text)
         "*/recon/tla/raw/08043b34.o"(.text)
         "*/recon/tla/raw/08043b70.o"(.text)

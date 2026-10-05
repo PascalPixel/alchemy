@@ -572,7 +572,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00043a0c)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/GLOW_UPDATE_SINE.o"(.text)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW13.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00043b2c)
+    "*/recon/tla/ja/rom.o"(.rom.00043ba8)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_FOUR_NUMBERS_IN_ROW.o"(.text)
     "*/games/COMMON/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00043e1c)

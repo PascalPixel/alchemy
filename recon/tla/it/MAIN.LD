@@ -539,7 +539,7 @@
     "*/recon/tla/it/rom.o"(.rom.0004392c)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/GLOW_UPDATE_SINE.o"(.text)
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW13.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.00043a4c)
+    "*/recon/tla/it/rom.o"(.rom.00043ac8)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_FOUR_NUMBERS_IN_ROW.o"(.text)
     "*/games/COMMON/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00043d3c)

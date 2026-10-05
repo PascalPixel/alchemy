@@ -26,7 +26,26 @@
    branch out of line (bne to a far block, b back), while 63 is hoisted
    into r8: consistent with loop.c moving only the cheap constant and
    leaving the giv unreduced, which a smaller benefit (one address use
-   per pass, here several) or a larger loop body would explain. */
+   per pass, here several) or a larger loop body would explain.
+   2026-10-05 sun deep finisher 17 (still 484): the reduction comes from
+   gcse, not loop.c alone. With slot = k * 4 inside the burst loop and
+   &gBursts[slot * 8 + i], CSE folds slot << 3 into k << 5 in the same
+   block, PRE then hoists both k << 2 and k << 5 to the loop's entry edge
+   (the ROM's place for k * 4, after the count test), and with k << 5
+   invariant the address is a giv loop.c reduces. Compiled with -fno-gcse
+   (an experiment only) the burst loop keeps k << 5 in the loop, not
+   reduced, as the ROM does with (k * 4) << 3. So the ROM's form lets PRE
+   (or loop.c) hoist k * 4 while the << 3 stays in the loop: the shift
+   must see a k * 4 that CSE cannot fold and that is not transparent to
+   PRE, i.e. one set inside the loop but outside the use's CSE block.
+   Tried, none better: slot = k * 4 at the top of the burst loop (486); an
+   explicit if (count != 0) { slot = k * 4; do ... while (++i != count); }
+   (486); start = k * 8 kept in a local for the three frame tests (486);
+   k * 8 <= frame (486); the step division split from its subtraction
+   (489); an empty asm on slot inside or before the loop (562, 568, not
+   kept). In the k loop the ROM reduces k * 8 because k * 8 + 17 and
+   frame - k * 8 combine into it; here they combine into frame - k * 8,
+   which is then not worth reducing, so k * 8 stays a shift. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"

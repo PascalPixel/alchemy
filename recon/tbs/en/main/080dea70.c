@@ -1,6 +1,24 @@
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
-/* Draft. */
+/*
+ * Draft, not exact.
+ *
+ * 2026-10-05 deep finisher 20: alchemy diff 969 -> 783 (1605 listing
+ * instructions, 1598 here; the structure differs in 131 once registers
+ * are ignored).
+ *   - The blitter routines are read as gWorkSlot[46] and [47] from
+ *     HEAP_STATE.H, so the slot address is formed as gWorkSlot + 184 the
+ *     way the native forms it: 909.
+ *   - The shot block reaches its position through a block pointer,
+ *     pos = &position; with &position itself, GCSE keeps the address in
+ *     one register over the whole loop nest, and mode loses r8 to it: 783
+ *     (mode r8, steps r10 and pos r7 as in the native).
+ *   - Ram_MapCellBuffer stays: the gMapCellBuffer symbol scores 1047.
+ * Remaining: work is in r9 and height / 2 in r11, the native has them the
+ * other way round; the native spills the mode * 4 temporary to sp+84 ahead
+ * of stagger, delay and height (sp+80, 76, 72), here it is sp+72 after
+ * them.
+ */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -14,9 +32,10 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
-extern u8 gWorkSlot[];
+#include "HEAP_STATE.H"
 extern u16 ParticleStreams_CellOffsets[];
 
 extern u8 Volley_CometHeights[];
@@ -33,7 +52,7 @@ extern u16 Volley_PelletOffsets[];
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 #define HI(v) (((s16 *)&(v))[1])
-#define SLOT47 (*(DrawRectangle *)(gWorkSlot + 47 * 4))
+#define SLOT47 ((DrawRectangle)gWorkSlot[47])
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
@@ -105,7 +124,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
         else
             BattleEffect_LoadWork(46, 7, 7, 3, 3);
     }
-    draw.upper = ((DrawRectangle *)gWorkSlot)[46];
+    draw.upper = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     if (mode == 0 || mode == 5 || mode == 8) {
         if (mode == 5)
@@ -119,19 +138,19 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
         else
             Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC, work->sheet + 0x1000, 1, 1);
         if (mode == 5)
-            Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
+            Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
         Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet, work->sheet + 0x2000, 1, 0);
         if (mode == 5)
-            Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
+            Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
         work->transfer_mode = 2;
         work->transfer_value = 75;
     } else if (mode == 1) {
         Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work, 1, 1);
-        *(u16 *)0x04000050 = 0;
+        REG_BLDCNT = 0;
         work->transfer_mode = 1;
         work->transfer_value = 0;
     } else if (mode == 2) {
-        Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
+        Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
         Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage, work, 0, 0);
         work->transfer_mode = 2;
         work->transfer_value = 50;
@@ -235,7 +254,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                 BattleEffect_LoadWork(47, 7, 7, 7, 3);
             else
                 BattleEffect_LoadWork(47, 7, 7, 3, 3);
-            draw.lower = ((DrawRectangle *)gWorkSlot)[47];
+            draw.lower = (DrawRectangle)gWorkSlot[47];
             if (frame <= 3)
                 draw.lower(canvas, work->sheet + 0x65c0, x, y, 20, 40);
             draw.lower(canvas, work->sheet + 0x65c0, x, y, 20, 40);
@@ -250,9 +269,10 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
             for (j = 0; j != shots; j++) {
                 if (j * stagger + i * delay < frame) {
                     struct EffectStep *shot = &work->particles[shots * i + j];
+                    struct EffectPosition *pos = &position;
 
-                    EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
-                    position.x >>= 1;
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)shot, pos);
+                    pos->x >>= 1;
                     shot->x += shot->velocity_x;
                     shot->y += shot->velocity_y;
                     shot->z += shot->velocity_z;
@@ -264,8 +284,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                             struct EffectStep *mote = &gMotes[k];
 
                             if (mote->variant == 0) {
-                                mote->x = position.x << 16;
-                                mote->y = position.y << 16;
+                                mote->x = pos->x << 16;
+                                mote->y = pos->y << 16;
                                 mote->velocity_x = ((Random16() & 255) - 128) << 11;
                                 mote->velocity_y = ((Random16() & 255) - 128) << 11;
                                 mote->variant = (Random16() & 7) + 32;
@@ -300,8 +320,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                             shot->velocity_x = -shot->velocity_x;
                         }
                         flash->variant = 1;
-                        flash->x = position.x;
-                        flash->y = position.y;
+                        flash->x = pos->x;
+                        flash->y = pos->y;
                         flash->z = 0;
                         if (mode != 7)
                             work->shake_frames = 2;
@@ -317,8 +337,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                             struct EffectStep *mote = &gMotes[k];
 
                             if (mote->variant == 0) {
-                                mote->x = position.x << 16;
-                                mote->y = position.y << 16;
+                                mote->x = pos->x << 16;
+                                mote->y = pos->y << 16;
                                 mote->velocity_x = ((Random16() & 255) - 128) << shift;
                                 mote->velocity_y = ((Random16() & 255) - 128) << shift;
                                 mote->variant = (Random16() & 7) + 16;
@@ -333,33 +353,33 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                             BattleEffect_LoadWork(47, 7, 7, 7, 2);
                         else
                             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                        SLOT47(canvas, work->sheet + 0x1000, position.x - 16,
-                            position.y - Volley_CometHeights[kind], 32, Volley_CometHeights[kind]);
+                        SLOT47(canvas, work->sheet + 0x1000, pos->x - 16,
+                            pos->y - Volley_CometHeights[kind], 32, Volley_CometHeights[kind]);
                         Runtime_ReleaseHeapBlock(47);
                         if (work->effect->side == 1)
                             BattleEffect_LoadWork(47, 7, 7, 15, 2);
                         else
                             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-                        SLOT47(canvas, work->sheet + 0x1000, position.x - 16,
-                            position.y, 32, Volley_CometHeights[kind]);
+                        SLOT47(canvas, work->sheet + 0x1000, pos->x - 16,
+                            pos->y, 32, Volley_CometHeights[kind]);
                         Runtime_ReleaseHeapBlock(47);
                     } else if (mode == 1) {
                         if (abs(shot->x) <= abs(target->x))
                             draw.upper(canvas, work->sheet + frame % 6 * 768,
-                                position.x - 16, position.y - 12, 32, 24);
+                                pos->x - 16, pos->y - 12, 32, 24);
                     } else if (mode == 7 || mode == 9 || mode == 10) {
                         draw.upper(canvas, work->sheet + Volley_PelletOffsets[j & 3],
-                            position.x - 4, position.y - 4, 8, 8);
+                            pos->x - 4, pos->y - 4, 8, 8);
                     } else if (mode == 2) {
-                        draw.upper(canvas, work->sheet + j % 6 * 128, position.x - 4, position.y - 8, 8, 16);
+                        draw.upper(canvas, work->sheet + j % 6 * 128, pos->x - 4, pos->y - 8, 8, 16);
                     } else if (mode == 3) {
-                        draw.upper(canvas, work->sheet + 96, position.x - 9, position.y - 7, 18, 13);
+                        draw.upper(canvas, work->sheet + 96, pos->x - 9, pos->y - 7, 18, 13);
                     } else if (mode == 4) {
-                        draw.upper(canvas, work, position.x - 6, position.y - 4, 12, 8);
+                        draw.upper(canvas, work, pos->x - 6, pos->y - 4, 12, 8);
                     } else if (mode == 11) {
-                        draw.upper(canvas, work->sheet + 330, position.x - 15, position.y - 12, 29, 23);
+                        draw.upper(canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29, 23);
                     } else {
-                        draw.upper(canvas, work, position.x - 20, position.y - 32, 40, 64);
+                        draw.upper(canvas, work, pos->x - 20, pos->y - 32, 40, 64);
                     }
                 }
                 index++;

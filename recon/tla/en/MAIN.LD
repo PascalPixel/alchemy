@@ -288,7 +288,7 @@
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/CHILD_VALUES.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE_SLOT.o"(.text)
         "*/recon/tla/raw/080228e0.o"(.text)
-        "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE3.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/ANIMATE.o"(.text)
         "*/recon/tla/raw/08022b80.o"(.text)
         "*/recon/tla/raw/08022bac.o"(.text)
         "*/recon/tla/raw/08022bd8.o"(.text)

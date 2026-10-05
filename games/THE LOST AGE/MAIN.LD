@@ -264,7 +264,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/CHILD_VALUES.o"(.text)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE_SLOT.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000228e0)
-    "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE3.o"(.text)
+    "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/ANIMATE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00022b80)
     "*/recon/tla/ja/rom.o"(.rom.00022bac)
     "*/recon/tla/ja/rom.o"(.rom.00022bd8)

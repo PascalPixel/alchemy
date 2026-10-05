@@ -52,7 +52,7 @@ void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 
 static __inline__ void Actor_SetMotionSpeed(s32 actor, s32 speed, s32 acceleration)
 {
-    /* FAKEMATCH: a direct call changes FieldScene_RunScene3a6_020014ac from sub sp, sp, #8 to ldr r6, .L0 (117/118 assembly lines). */
+    /* FAKEMATCH: a direct call changes HaidiaDou_ToppleActorNine from sub sp, sp, #8 to ldr r6, .L0 (117/118 assembly lines). */
     ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 

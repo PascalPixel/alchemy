@@ -33,7 +33,9 @@ void IoWriteQueue_FlushPending(void);
  *
  * FAKEMATCH: the same two odd constructs as IO.C: the one-pass block puts the
  * queue literal load first and the saved copy ahead of the IME store, and the
- * count is stored through its own u16 pointer.
+ * count is stored through its own u16 pointer. A second one-pass block closes
+ * after the IME restore, so the stores that follow the push stay behind it
+ * (the native code at 080cbc0c restores IME before loading their operands).
  */
 #define IO_WRITE_QUEUE_PUSH(address, value, delay)                         \
     {                                                                      \
@@ -44,19 +46,21 @@ void IoWriteQueue_FlushPending(void);
                                                                            \
         q = &gIoWriteQueue;                                                \
         do {                                                               \
-            ime = (volatile u16 *)0x04000208;                              \
-            saved = *ime;                                                  \
+            do {                                                           \
+                ime = (volatile u16 *)0x04000208;                          \
+                saved = *ime;                                              \
+            } while (0);                                                   \
+            *ime = (u16)ime;                                               \
+            count = q->count;                                              \
+            if (count <= 31) {                                             \
+                u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);      \
+                *(u16 *)&q->count = count + 1;                             \
+                *destination++ = (value);                                  \
+                *destination++ = (address);                                \
+                *destination = (delay);                                    \
+            }                                                              \
+            *ime = saved;                                                  \
         } while (0);                                                       \
-        *ime = (u16)ime;                                                   \
-        count = q->count;                                                  \
-        if (count <= 31) {                                                 \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);          \
-            *(u16 *)&q->count = count + 1;                                 \
-            *destination++ = (value);                                      \
-            *destination++ = (address);                                    \
-            *destination = (delay);                                        \
-        }                                                                  \
-        *ime = saved;                                                      \
     }
 
 #endif

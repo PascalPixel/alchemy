@@ -5,6 +5,9 @@
  * Shared counter: 30 lines differ; separate counter: 16. Signed counter: 17;
  * while loop: 150 and 12 bytes short; const pointer: 30. Fixed counter: 160
  * and 4 bytes long; fixed pointer: 159 and 8 bytes long; pointer barrier: 30.
+ * Normalized scaffold comparison: 720 native / 720 draft, differ 32.
+ * Reordered declarations, early counter init and combined loop tests: unchanged.
+ * Pointer r0 clobber: differ 22; loop counter barrier: differ 199.
  * Those failed steering trials are not retained.
  */
 #include "BATTLE.H"

@@ -263,7 +263,10 @@ UiText_SecondGlyphs:
 	.incbin "baserom.gba", 0x00033f6c, 0x0000003c
 	.global Data_08033e40
 Data_08033e40:
-	.incbin "baserom.gba", 0x00033fa8, 0x0000004c
+	.incbin "baserom.gba", 0x00033fa8, 0x0000003c
+	.global UiText_ItemPossessives
+UiText_ItemPossessives:
+	.incbin "baserom.gba", 0x00033fe4, 0x00000010
 	.global UiSprite_CursorBobOffsets
 UiSprite_CursorBobOffsets:
 	.incbin "baserom.gba", 0x00033ff4, 0x00000050
@@ -427,6 +430,8 @@ Workspace_PageLabel:
 Workspace_RangeDash:
 	.incbin "baserom.gba", 0x00037604, 0x00000004
 	.section .rom.00072c78, "ax"
+	.global UiText_ItemGenders
+UiText_ItemGenders:
 	.incbin "baserom.gba", 0x00072c78, 0x0000010d
 	.global UiText_SpeedDelays
 UiText_SpeedDelays:

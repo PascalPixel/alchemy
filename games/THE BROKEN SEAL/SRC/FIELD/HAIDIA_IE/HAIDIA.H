@@ -74,7 +74,7 @@ void FieldScene_RunStep15(void);
 void FieldScene_RunStep17(void);
 void FieldScene_RunStep20(void);
 void SceneState_ApplyPair140And0(void);
-void FieldScene_Forward4dac(void);
+void HaidiaIe_CleanupSceneObjects(void);
 void OverlayObject_UpdateOnFrameBit1(s32 obj);
 struct SceneVerticalEffect;
 void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect);

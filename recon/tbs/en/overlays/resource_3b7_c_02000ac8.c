@@ -26,7 +26,17 @@
  * the first read. Tried: a weight local (42), a pointer to the weight (79), the
  * state pointer reassigned (58) or gGameState spelled at the halving (38 but the
  * base comes from the pool), the roll loop as do/while (65) or through
- * (s8 *)state + 285 (51), the halving through (s8 *)state + 285 (79). */
+ * (s8 *)state + 285 (51), the halving through (s8 *)state + 285 (79).
+ * 2026-10-05 sun w5 finisher 1, measured with -da: the reuse is GCSE's PRE,
+ * not cse. jump.c's copy of the roll loop's exit test (the first read, before
+ * the loop) computes state + 1 into a pseudo; PRE then finds the halving's
+ * state + 1 (and the loop body's) fully redundant and copy-propagates that
+ * pseudo, which global gives r5 across the prize call. Every roll-loop
+ * spelling that still reads base state + 1 and index i + 284 keeps the copy
+ * available at the halving. The roll loop through a constant address
+ * ((struct StateBytes *)&gGameState)->rest[i + 284] stops the PRE but the
+ * halving then loads gGameState from the pool (cprop) and the roll loop
+ * loses fp (53; 102 with every access spelled that way). */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "EDITION.H"

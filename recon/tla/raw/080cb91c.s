@@ -191,11 +191,11 @@ Func_080cb91c:
 	movs r0, #32
 	adds r0, #255
 	bl GameFlag_ClearBit
-	bl Func_080d1684
+	bl BattleEffect_InitializeBuffers
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r2, #214
 	lsls r2, r2, #1
 	movs r3, #128

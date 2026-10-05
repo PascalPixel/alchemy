@@ -14,7 +14,7 @@ Func_080c8378:
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_InterpolateBuffers
 .else
-	overlay_veneer Func_080d170c
+	overlay_veneer BattleFx_ApplyColorToTargetBuffer
 .endif
 .endif
 	.global Func_080c8380

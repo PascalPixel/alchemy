@@ -16,7 +16,7 @@ Func_080d20fc:
 	movs r1, #0
 	lsls r0, r0, #9
 	sub sp, #8
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #24
 	bl BattleFx_StartBufferInterpolation
 	ldr r2, .L_080d2184

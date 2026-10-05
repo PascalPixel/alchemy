@@ -24,6 +24,26 @@ LAYOUT_OFFSET_GUARD(TitlePaletteWork_Delta, struct TitlePaletteWork, delta, 0x1c
 LAYOUT_OFFSET_GUARD(TitlePaletteWork_Packed, struct TitlePaletteWork, packed, 0x2800);
 LAYOUT_OFFSET_GUARD(TitlePaletteWork_Page, struct TitlePaletteWork, page, 0x3000);
 
+/* BattleEffect_InitializeBuffers allocates and clears this palette blend. */
+struct BattleEffectBuffers {
+    u16 palette[0x1c0];
+    u16 current[0x540];
+    u16 target[0x540];
+    u16 delta[0x540];
+    u16 packed[2][0x1c0];
+    u8 page;
+    s8 duration;
+    s8 step;
+    u8 padding_2a03;
+};
+
+LAYOUT_SIZE_GUARD(BattleEffectBuffers_Size, struct BattleEffectBuffers, 0x2a04);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Current, struct BattleEffectBuffers, current, 0x380);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Target, struct BattleEffectBuffers, target, 0xe00);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Delta, struct BattleEffectBuffers, delta, 0x1880);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Packed, struct BattleEffectBuffers, packed, 0x2300);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Page, struct BattleEffectBuffers, page, 0x2a00);
+
 /* Channel-index curves for the expanded palette work buffers. */
 extern u16 Palette_ChannelCurve[32];
 extern u16 Palette_ChannelCurveLight[32];

@@ -26,7 +26,7 @@ Func_080c8398:
 .ifdef TLA_EDITION_IT
 	overlay_veneer EventRuntime_StartScreen
 .else
-	overlay_veneer Func_080d16f8
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32B
 .endif
 .endif
 	.global Func_080c83a0
@@ -38,6 +38,6 @@ Func_080c83a0:
 .ifdef TLA_EDITION_IT
 	overlay_veneer EventRuntime_FinishScreen
 .else
-	overlay_veneer Func_080d174c
+	overlay_veneer BattleFx_SetPrimaryBufferValue
 .endif
 .endif

@@ -14,7 +14,7 @@ Field_BeginPaletteTransition:
 	adds r7, r0, #0
 	movs r1, #2
 	adds r0, r6, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r3, #192
 	lsls r3, r3, #4
 	adds r3, #164
@@ -27,12 +27,12 @@ Field_BeginPaletteTransition:
 	lsls r0, r0, #9
 	adds r0, #1
 	movs r1, #1
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	b .L_080dc284
 .L_080dc27c:
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 .L_080dc284:
 	movs r0, #132
 	lsls r0, r0, #1

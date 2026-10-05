@@ -3284,38 +3284,18 @@ DisplayTransition_UpdateFrame:
 DisplayTransition_FillTilemapAndSolidTile:
 	.incbin "baserom.gba", 0x000d0b5c, 0x00000070
 	.section .rom.000d0c80, "ax"
-	.incbin "baserom.gba", 0x000d0c80, 0x000009e4
-	.section .rom.000d1664, "ax"
-	.global Func_080d1684
-	.type Func_080d1684, %function
+	.global BattlePalette_UpdateBlend
+	.type BattlePalette_UpdateBlend, %function
 	.thumb_func
-Func_080d1684:
-	.incbin "baserom.gba", 0x000d1664, 0x00000074
-	.section .rom.000d16d8, "ax"
-	.global Func_080d16f8
-	.type Func_080d16f8, %function
+BattlePalette_UpdateBlend:
+	.incbin "baserom.gba", 0x000d0c80, 0x0000017c
+	.global BattleFx_BuildBuffer
+	.type BattleFx_BuildBuffer, %function
 	.thumb_func
-Func_080d16f8:
-	.incbin "baserom.gba", 0x000d16d8, 0x00000014
-	.section .rom.000d16ec, "ax"
-	.global Func_080d170c
-	.type Func_080d170c, %function
-	.thumb_func
-Func_080d170c:
-	.incbin "baserom.gba", 0x000d16ec, 0x00000020
-	.section .rom.000d170c, "ax"
-	.global BattleFx_ApplyColorToSourceBuffer
-	.type BattleFx_ApplyColorToSourceBuffer, %function
-	.thumb_func
-BattleFx_ApplyColorToSourceBuffer:
-	.incbin "baserom.gba", 0x000d170c, 0x00000020
-	.section .rom.000d172c, "ax"
-	.global Func_080d174c
-	.type Func_080d174c, %function
-	.thumb_func
-Func_080d174c:
-	.incbin "baserom.gba", 0x000d172c, 0x00000014
+BattleFx_BuildBuffer:
+	.incbin "baserom.gba", 0x000d0dfc, 0x00000868
 	.section .rom.000d1740, "ax"
+	.balign 4
 	.global Func_080d1760
 	.type Func_080d1760, %function
 	.thumb_func

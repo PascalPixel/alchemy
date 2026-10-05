@@ -194,6 +194,6 @@ Func_080c8370:
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_ApplyColorToSourceBuffer
 .else
-	overlay_veneer Func_080d1684
+	overlay_veneer BattleEffect_InitializeBuffers
 .endif
 .endif

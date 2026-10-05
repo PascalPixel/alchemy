@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d0e1c
+	.global BattleFx_BuildBuffer
 	.thumb_func
-Func_080d0e1c:
+BattleFx_BuildBuffer:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

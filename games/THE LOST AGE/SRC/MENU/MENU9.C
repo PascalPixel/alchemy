@@ -22,13 +22,13 @@ s32 UiWork_SetParamNibbleFar(s32);
 
 static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst, s32 size)
 {
-    /* FAKEMATCH: a direct call changes Menu_CancelSoundTick from ldr r1, .L0+4 to ldr r0, .L0+4 (67/67 assembly lines). */
+    /* FAKEMATCH: the wrapper keeps the load in r1 instead of r0. */
     copy(dst, src, size);
 }
 
 static __inline__ void FillWords(FillFn fill, void *dst, s32 size, u32 value)
 {
-    /* FAKEMATCH: a direct call changes Menu_CancelSoundTick from ldr r3, .L0+16 to ldr r0, .L0+12 (67/67 assembly lines). */
+    /* FAKEMATCH: the wrapper preserves the r3 load and literal-pool position. */
     fill(dst, size, value);
 }
 

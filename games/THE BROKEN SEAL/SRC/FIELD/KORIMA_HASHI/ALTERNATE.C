@@ -10,7 +10,7 @@ struct BridgePost {
 };
 
 
-void SceneActor_AlternateSlots13To16Field0c(void)
+void KorimaHashi_AlternateBridgePostHeights(void)
 {
     struct BridgePost *p;
 

@@ -12,8 +12,8 @@ const USAGE: &str = "usage: alchemy verify [--pre-commit | --land | --pre-push]\
   (none)        every gate, all twelve editions built and compared, publishing nothing\n\
   --pre-commit  the staged checks every commit runs; they build and publish nothing\n\
   --land        on main, before committing a landing: every gate, then one count writes\n\
-                README's progress line (staged) and the decomp.dev report\n\
-  --pre-push    checks outgoing commits and the publication of an outgoing main tip";
+                the measurement and decomp.dev report the push uploads for CI\n\
+  --pre-push    checks outgoing commits; a push of main uploads its tip's measurement";
 
 /// The checks every commit runs on what it stages.
 pub const STAGED: &[&str] = &[
@@ -34,12 +34,10 @@ pub const GATES: &[&str] = &[
     "compare-editions",
 ];
 
-const PUBLICATION_FILES: &[&str] = &["README.md"];
-
 pub fn entry(arguments: &[String]) -> ExitCode {
     let root = crate::compiler::routing::root();
     let result = match arguments {
-        [] => run(root, GATES, Some("coverage-check")),
+        [] => run(root, GATES, None),
         [flag] if flag == "--pre-commit" => run(root, STAGED, None),
         [flag] if flag == "--land" => land(root),
         [flag] if flag == "--pre-push" => pre_push(root).map(|()| true),
@@ -80,33 +78,6 @@ pub(crate) fn is_main(root: &Path) -> Result<bool, String> {
     Ok(output.stdout == b"refs/heads/main\n")
 }
 
-/// Main's subject prefix as `make land` published it in README, in the
-/// index (`revision` empty) or in a commit: each game's DONE or `pending`.
-pub(crate) fn published_subject(root: &Path, revision: &str) -> Result<String, String> {
-    let output = Command::new("git")
-        .args(["show", &format!("{revision}:README.md")])
-        .current_dir(root)
-        .output()
-        .map_err(|error| format!("cannot read README: {error}"))?;
-    String::from_utf8_lossy(&output.stdout)
-        .lines()
-        .find_map(|line| {
-            let inner = line.trim().strip_prefix("**☀️ ")?.strip_suffix("**")?;
-            let (sun, anchor) = inner.split_once(" · ⚓️ ")?;
-            Some(format!("☀️ {sun} ⚓️ {anchor} –"))
-        })
-        .ok_or_else(|| "README carries no progress line: run make land".into())
-}
-
-pub(crate) fn valid_subject(message: &str, expected: &str) -> bool {
-    message
-        .lines()
-        .next()
-        .unwrap_or("")
-        .strip_prefix(expected)
-        .is_some_and(|title| title.starts_with(' ') && !title.trim().is_empty())
-}
-
 fn outgoing_main(updates: &str) -> Result<Option<&str>, String> {
     let mut main = None;
     for line in updates.lines().filter(|line| !line.trim().is_empty()) {
@@ -129,44 +100,6 @@ fn outgoing_main(updates: &str) -> Result<Option<&str>, String> {
     Ok(main)
 }
 
-fn check_main_tip(root: &Path, executable: &Path, tip: &str) -> Result<(), String> {
-    let repair = "create or amend a commit on main after make land";
-    let unchanged = Command::new("git")
-        .args(["diff", "--quiet", "--ignore-submodules=none", tip, "--"])
-        .current_dir(root)
-        .status()
-        .map_err(|error| format!("cannot inspect outgoing main {tip}: {error}"))?;
-    if !unchanged.success() {
-        return Err(format!(
-            "outgoing main {tip} is not the current verified tree; {repair}"
-        ));
-    }
-    let expected = published_subject(root, tip).map_err(|error| format!("{error}; {repair}"))?;
-    let message = Command::new("git")
-        .args(["show", "-s", "--format=%B", tip])
-        .current_dir(root)
-        .output()
-        .map_err(|error| format!("cannot read outgoing main subject: {error}"))?;
-    if !message.status.success()
-        || !valid_subject(&String::from_utf8_lossy(&message.stdout), &expected)
-    {
-        return Err(format!(
-            "outgoing main {tip} lacks its verified {expected} prefix; {repair}"
-        ));
-    }
-    let coverage = Command::new(executable)
-        .args(["check", "coverage", "--check"])
-        .current_dir(root)
-        .status()
-        .map_err(|error| format!("cannot check outgoing main publication: {error}"))?;
-    if !coverage.success() {
-        return Err(format!(
-            "outgoing main {tip} publication is stale; {repair}"
-        ));
-    }
-    Ok(())
-}
-
 fn pre_push(root: &Path) -> Result<(), String> {
     let mut updates = String::new();
     std::io::stdin()
@@ -174,9 +107,6 @@ fn pre_push(root: &Path) -> Result<(), String> {
         .map_err(|error| error.to_string())?;
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
     let main = outgoing_main(&updates)?;
-    if let Some(tip) = main {
-        check_main_tip(root, &executable, tip)?;
-    }
     let mut publication = Command::new(executable)
         .args(["check", "publication", "--pre-push"])
         .current_dir(root)
@@ -204,8 +134,7 @@ fn pre_push(root: &Path) -> Result<(), String> {
 }
 
 /// A landing on main, run before its commit: every gate, then the count
-/// measured once into README's progress line, staged for the commit, and the
-/// decomp.dev report.
+/// measured once into the measurement and decomp.dev report its push uploads.
 fn land(root: &Path) -> Result<bool, String> {
     if !is_main(root)? {
         return Err("make land publishes main's progress: run it on main".into());
@@ -213,26 +142,9 @@ fn land(root: &Path) -> Result<bool, String> {
     if !run(root, GATES, None)? {
         return Ok(false);
     }
-    println!("{}", crate::coverage::publish_count(root)?);
-    stage(root, PUBLICATION_FILES)?;
+    println!("{}", crate::coverage::report(root)?);
     crate::coverage::publish::prepare(root)?;
     Ok(true)
-}
-
-fn stage(root: &Path, paths: &[&str]) -> Result<(), String> {
-    let output = Command::new("git")
-        .args(["add", "--"])
-        .args(paths)
-        .current_dir(root)
-        .output()
-        .map_err(|error| format!("cannot stage publication: {error}"))?;
-    if !output.status.success() {
-        return Err(format!(
-            "cannot stage publication: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        ));
-    }
-    Ok(())
 }
 
 /// Every gate at once, then `last` once they all pass.
@@ -399,11 +311,7 @@ mod tests {
     fn every_gate_is_a_makefile_target() {
         let makefile =
             std::fs::read_to_string(crate::compiler::routing::root().join("Makefile")).unwrap();
-        for gate in STAGED
-            .iter()
-            .chain(GATES)
-            .chain(&["coverage", "coverage-check"])
-        {
+        for gate in STAGED.iter().chain(GATES).chain(&["coverage-report"]) {
             assert!(
                 makefile
                     .lines()
@@ -415,7 +323,7 @@ mod tests {
                 "{gate} is not a Makefile target"
             );
         }
-        assert!(!GATES.contains(&"coverage") && !GATES.contains(&"coverage-check"));
+        assert!(!GATES.contains(&"coverage-report"));
     }
 
     #[test]
@@ -437,40 +345,5 @@ mod tests {
             std::fs::read_to_string(root.join("gates.log")).unwrap(),
             "pass\npass\ncount\n"
         );
-    }
-
-    #[test]
-    fn publication_stages_the_readme_without_staging_other_work() {
-        let directory = tempfile::tempdir().unwrap();
-        let root = directory.path();
-        assert!(Command::new("git")
-            .args(["init", "--quiet", "--initial-branch=main"])
-            .arg(root)
-            .status()
-            .unwrap()
-            .success());
-        for path in PUBLICATION_FILES.iter().copied().chain(["pending.c"]) {
-            let path = root.join(path);
-            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-            std::fs::write(path, "fixture\n").unwrap();
-        }
-        stage(root, PUBLICATION_FILES).unwrap();
-        let staged = Command::new("git")
-            .args(["diff", "--cached", "--name-only"])
-            .current_dir(root)
-            .output()
-            .unwrap();
-        let mut paths = String::from_utf8(staged.stdout)
-            .unwrap()
-            .lines()
-            .map(str::to_owned)
-            .collect::<Vec<_>>();
-        paths.sort();
-        let mut expected = PUBLICATION_FILES
-            .iter()
-            .map(|path| path.to_string())
-            .collect::<Vec<_>>();
-        expected.sort();
-        assert_eq!(paths, expected);
     }
 }

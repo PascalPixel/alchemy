@@ -38,9 +38,10 @@ sharing as much code between the games as possible.
   checks, the count, matching, camelotizing and reports; see Commands) and
   ags (asset encoders and decoders). `out/` and `tools/out/` are build
   output and are ignored.
-- `PROGRESS.png` (the repository by kind) and `PROGRESS_CHART.png` (DONE over
-  time, with the models that did the work) are README's figures, drawn by
-  `make figure` from `recon/tbs/metrics/history.tsv`.
+- `.github/workflows/progress.yml` publishes progress after each push to main:
+  the `progress` branch holds `history.tsv` and README's two figures, written
+  only by CI. `make figure` draws the same two figures locally from
+  `recon/tbs/metrics/history.tsv`, a private copy of that history.
 
 ## Rules
 
@@ -67,9 +68,13 @@ sharing as much code between the games as possible.
   Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only proven
   library, handwritten and veneer assembly counts as assembly. Whole aligned
   8-byte far-call stubs count as veneers. Padding a source marks as carrying
-  no credit does not count. _Check: coverage-check._
-- **C3** Main commits carry the verified percentage, README and both progress
-  figures, written by `make land`. _Check: commit-msg hook, coverage-check._
+  no credit does not count. _Check: coverage-report._
+- **C3** Every push to main carries its measurement: `make land` compares all
+  twelve editions and measures both games, and the pre-push hook uploads that
+  count by commit. CI records it on the `progress` branch, draws README's two
+  figures there and sends decomp.dev its report. Model credit comes from
+  main's commit trailers; days through 2026-10-04 keep their approved counts.
+  _Check: land, pre-push._
 
 ### The oracle stays out of the build
 
@@ -212,8 +217,8 @@ never a file or a function.
   whole game rather than listed by function; no public compiler of the time
   already explains it; and it is written as a plausible change by a Camelot
   engineer, in GCC's own style, with its evidence and reason recorded here and
-  in agscc's README. Pascal approves each. Every compiler binary is built
-  reproducibly from pinned source and its digest recorded.
+  in agscc's README. Pascal approves each. Every compiler is built from pinned
+  source, on any system, and the twelve editions judge what it produces.
   _Check: compiler-source-check, bundle validation, routing tests._
 
 ### Work

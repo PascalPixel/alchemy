@@ -7,17 +7,16 @@ form people can read, change and build on.
 
 ## Progress
 
-**☀️ 94.78% · ⚓️ 6.15%**
+<img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS_CHART.png" width="838" alt="How much of each game is rebuilt, day by day since 16 July 2026">
 
-<img src="PROGRESS_CHART.png" width="838" alt="How much of each game is rebuilt, day by day since 16 July 2026">
+<img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS.png" width="838" alt="A map of the project's files by size">
 
-<img src="PROGRESS.png" width="838" alt="A map of the project's files by size">
-
-The percentage is how much of each game’s code has been rewritten so that it
+The percentages are how much of each game’s code has been rewritten so that it
 rebuilds the original exactly, in all six languages (Japanese, English,
 German, Spanish, French and Italian). A piece only counts once every language
 that uses it comes out byte for byte identical. The Broken Seal comes first;
-The Lost Age has just started.
+The Lost Age has just started. Both pictures redraw themselves after every
+change.
 
 The chart shows that climb day by day, and the colours along the bottom show
 which AI models did the work. Sudden drops are honesty checks: when we find

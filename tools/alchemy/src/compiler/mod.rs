@@ -4,7 +4,7 @@
 pub(crate) mod assembly_source;
 pub(crate) mod build_io;
 pub(crate) mod bundle;
-mod bundle_data;
+pub(crate) mod bundle_data;
 pub(crate) mod c_syntax;
 pub(crate) mod no_asm;
 pub(crate) mod plan;

@@ -34,7 +34,7 @@ $(LIBGCC):
 .PHONY: help bootstrap merge-drivers fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
-.PHONY: publication-check publication-staged-check coverage coverage-check
+.PHONY: publication-check publication-staged-check coverage-report
 .PHONY: progress figure deps similar worst clean
 
 help:
@@ -45,8 +45,8 @@ help:
 	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
 	  'make test            the Rust tests' \
 	  'make verify          every check, the tests and all twelve editions compared' \
-	  'make land            on main, before committing a landing: make verify, then the count published' \
-	  'make coverage        measure once: README progress line and the decomp.dev report' \
+	  'make land            on main, before committing a landing: make verify, then the measurement the push uploads' \
+	  'make coverage-report measure both games for the push; CI draws the published figures' \
 	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
 	  'make figure          redraw PROGRESS.png and PROGRESS_CHART.png from the verified count' \
 	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv' \
@@ -152,9 +152,8 @@ verify:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 	@$(ALCHEMY_BIN) verify
 
-# On main, before committing a landing: make verify, then one measurement that
-# writes README's progress line, staged for the commit, and the decomp.dev
-# report; pre-push uploads it for the hosted reporting Action.
+# On main, before committing a landing: make verify, then one measurement and
+# the decomp.dev report; pre-push uploads both for CI, which publishes progress.
 land:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 	@$(ALCHEMY_BIN) verify --land
@@ -183,14 +182,11 @@ test:
 test-integration: toolchain-check
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml -- --ignored
 
-coverage:
-	$(CHECK) coverage --write
-
 # Source and build defaults are Japanese. Published coverage/progress count
 # each game's six editions together: the English build gives the bytes, and
 # an edition earns those of the objects its own verified build links.
-coverage-check:
-	$(CHECK) coverage --check
+coverage-report:
+	$(CHECK) coverage --report
 
 progress:
 	$(CHECK) progress

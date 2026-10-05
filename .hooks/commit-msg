@@ -1,4 +1,0 @@
-#!/bin/sh
-# On main the subject starts with the count make land staged in README.
-exec cargo run --offline --quiet --release \
-  --manifest-path tools/alchemy/Cargo.toml -- check commit-progress --write "$1"

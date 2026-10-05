@@ -17,7 +17,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     if arguments.iter().any(|a| a == "-h" || a == "--help") {
         return Err(USAGE.into());
     }
-    if let Some(unknown) = arguments.iter().find(|a| !matches!(a.as_str(), "--no-record" | "--times")) {
+    if let Some(unknown) = arguments
+        .iter()
+        .find(|a| !matches!(a.as_str(), "--no-record" | "--times"))
+    {
         return Err(format!("unknown option {unknown}\n{USAGE}"));
     }
     let record = !arguments.iter().any(|a| a == "--no-record");
@@ -45,8 +48,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let hour = history::this_hour();
         history::record(&mut table, &today, sun, anchor);
         history::record_hour(&mut table, &hour, sun, anchor);
-        let models = history::models_on(root, &today)?;
-        history::record_models(&mut table, &today, &models);
+        history::derive_models(root, &mut table)?;
         lap("history", &mut steps);
     }
     history::mark_drawn(&mut table, &today);

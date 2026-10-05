@@ -3329,12 +3329,6 @@ BattleFx_LookupResult:
 	.thumb_func
 Encounter_SelectEnemyGroup:
 	.incbin "baserom.gba", 0x000c9fd8, 0x0000018c
-	.section .rom.000ca1bc, "ax"
-	.global Audio_SelectPartyCueForArea
-	.type Audio_SelectPartyCueForArea, %function
-	.thumb_func
-Audio_SelectPartyCueForArea:
-	.incbin "baserom.gba", 0x000ca1bc, 0x000000c4
 	.section .rom.000ca280, "ax"
 	.global Func_080d46a4
 	.type Func_080d46a4, %function
@@ -4493,10 +4487,6 @@ Func_080db0b0:
 	.type EffectSlot_Update, %function
 	.thumb_func
 EffectSlot_Update:
-	.global Func_080ca1bc
-	.type Func_080ca1bc, %function
-	.thumb_func
-Func_080ca1bc:
 	.incbin "baserom.gba", 0x000ebc24, 0x00000240
 	.section .rom.000ebea8, "ax"
 	.align 2, 0
@@ -4519,6 +4509,8 @@ Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000eef48, 0x00000140
 	.global Audio_AreaCueTable
 Audio_AreaCueTable:
+	.global Scene_CueRuleTable
+Scene_CueRuleTable:
 	.incbin "baserom.gba", 0x000ef088, 0x00001100
 	.global BattleFx_ParticleScript
 BattleFx_ParticleScript:

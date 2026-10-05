@@ -739,7 +739,6 @@
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/PLAY_SAVED_MUSIC.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000c9de0)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000ca1bc)
     "*/recon/tla/it/rom.o"(.rom.000ca280)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/EFFECT25.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000ca4a8)

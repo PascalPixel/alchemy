@@ -772,7 +772,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000c9f2c)
     "*/recon/tla/ja/rom.o"(.rom.000c9fd8)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000ca1bc)
+    "*/recon/tla/ja/rom.o"(.rom.000ca280)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/EFFECT25.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ca4a8)
     "*/recon/tla/ja/rom.o"(.rom.000ca6e8)

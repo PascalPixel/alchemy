@@ -561,8 +561,8 @@ Data_080eef34:
 	.global Encounter_AreaEntryTable
 Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000eef54, 0x00000140
-	.global Data_080ef094
-Data_080ef094:
+	.global Scene_CueRuleTable
+Scene_CueRuleTable:
 	.incbin "baserom.gba", 0x000ef094, 0x00000410
 	.global Data_080ef4a4
 Data_080ef4a4:

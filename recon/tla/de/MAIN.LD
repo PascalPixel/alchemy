@@ -741,7 +741,6 @@
     "*/recon/tla/de/rom.o"(.rom.000d6f2c)
     "*/recon/tla/de/rom.o"(.rom.000d6fd8)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000d71bc)
     "*/recon/tla/de/rom.o"(.rom.000d7280)
     "*/recon/tla/de/rom.o"(.rom.000d7368)
     "*/recon/tla/de/rom.o"(.rom.000d73f4)

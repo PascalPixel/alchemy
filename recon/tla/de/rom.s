@@ -2275,12 +2275,6 @@ BattleFx_LookupResult:
 	.thumb_func
 Encounter_SelectEnemyGroup:
 	.incbin "baserom.gba", 0x000d6fd8, 0x0000018c
-	.section .rom.000d71bc, "ax"
-	.global Func_080ca1bc
-	.type Func_080ca1bc, %function
-	.thumb_func
-Func_080ca1bc:
-	.incbin "baserom.gba", 0x000d71bc, 0x000000c4
 	.section .rom.000d7280, "ax"
 	.global Func_080ca280
 	.type Func_080ca280, %function
@@ -3786,7 +3780,10 @@ Encounter_EnemyGroupTable:
 	.incbin "baserom.gba", 0x000faacc, 0x00001488
 	.global Encounter_AreaEntryTable
 Encounter_AreaEntryTable:
-	.incbin "baserom.gba", 0x000fbf54, 0x00001240
+	.incbin "baserom.gba", 0x000fbf54, 0x00000140
+	.global Scene_CueRuleTable
+Scene_CueRuleTable:
+	.incbin "baserom.gba", 0x000fc094, 0x00001100
 	.global BattleFx_ParticleScript
 BattleFx_ParticleScript:
 	.incbin "baserom.gba", 0x000fd194, 0x00000544

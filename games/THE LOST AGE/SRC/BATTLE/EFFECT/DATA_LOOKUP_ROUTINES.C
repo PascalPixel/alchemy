@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
+#include "PARTY_STATE.H"
 
 /* ☀️'s encounter lookups, reading ⚓️'s event work through its heap slot. */
 
@@ -42,4 +43,53 @@ u16 BattleFx_GetPhaseResult(s32 phase)
 
     /* Exact GCC 2.96 output carries this call's result through r0. */
     BattleFx_GetWeightedResult(entry[0], entry[1]);
+}
+
+s32 GameFlag_Test(s32 flag);
+
+/* A scene's cue: the scene or its area, an entrance (-1 for any) and a
+   flag (-1 for none) that must be set. */
+struct SceneCueRule {
+    s16 id;
+    s16 entrance : 15;
+    u16 by_scene : 1;
+    s16 flag;
+    s16 cue;
+};
+
+extern const struct SceneCueRule Scene_CueRuleTable[];
+
+/* Picks the cue of the first rule that matches the scene, or its area, and
+   the entrance; 79 when none does. */
+void Scene_ResolveInteractionResult(void)
+{
+    s16 cue = 79;
+    s16 scene = gPartyState.scene;
+    s16 entrance = gPartyState.entrance;
+    s16 group = gPartyState.scene_group;
+    const struct SceneCueRule *rule = Scene_CueRuleTable;
+
+    for (; rule->id != -1; rule++) {
+        if (rule->by_scene) {
+            if (rule->id != scene)
+                continue;
+            if (rule->entrance != -1 && rule->entrance != entrance)
+                continue;
+            if (rule->flag != -1 && GameFlag_Test(rule->flag) == 0)
+                continue;
+            cue = rule->cue;
+            break;
+        } else {
+            if (rule->id != group)
+                continue;
+            if (rule->entrance != -1 && rule->entrance != entrance)
+                continue;
+            if (rule->flag != -1 && GameFlag_Test(rule->flag) == 0)
+                continue;
+            cue = rule->cue;
+            break;
+        }
+    }
+
+    gPartyState.cue = cue;
 }

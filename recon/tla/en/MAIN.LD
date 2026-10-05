@@ -1075,7 +1075,6 @@
         "*/recon/tla/raw/080c9f2c.o"(.text)
         "*/recon/tla/raw/080c9fd8.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
-        "*/recon/tla/raw/080ca1bc.o"(.text)
         "*/recon/tla/raw/080ca280.o"(.text)
         "*/recon/tla/raw/080ca2fc.o"(.text)
         "*/recon/tla/raw/080ca368.o"(.text)

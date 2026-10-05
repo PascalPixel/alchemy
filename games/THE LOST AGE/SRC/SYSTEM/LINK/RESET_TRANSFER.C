@@ -13,8 +13,7 @@ void BattleLink_ResetTransferState(void)
 
     state = &gSerialTransfer;
     ime = &REG_IME;
-    /* FAKEMATCH: the one-pass block keeps the IME exchange ahead of the zero
-       and status constants, as in The Broken Seal's copy in SERIAL_RUNTIME.H. */
+    /* FAKEMATCH: the one-pass block keeps the IME exchange before the zero and status constants. */
     do {
         saved = *ime;
         *ime = (u16)ime;

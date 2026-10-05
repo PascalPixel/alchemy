@@ -71,9 +71,6 @@ void SoruSekizo_OpenSeal(void);
 
 /* Scene-record accessor. */
 
-/* Old-style: the interface is not established, and the call site passes five
- * arguments. */
-
 /* Argument shared by every configuration call below. */
 
 /* Condition code passed to the gating check; the body below runs only when

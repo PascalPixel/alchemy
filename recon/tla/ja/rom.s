@@ -1135,13 +1135,8 @@ Ui_ClearVramBlock:
 	.thumb_func
 Func_0803a084:
 	.incbin "baserom.gba", 0x0003a018, 0x00000334
-	.section .rom.0003a378, "ax"
-	.balign 4
-	.global UiWork_IsIdle
-	.type UiWork_IsIdle, %function
-	.thumb_func
-UiWork_IsIdle:
-	.incbin "baserom.gba", 0x0003a378, 0x0000014c
+	.section .rom.0003a3da, "ax"
+	.incbin "baserom.gba", 0x0003a3da, 0x000000ea
 	.section .rom.0003a4c4, "ax"
 	.global Func_0803a530
 	.type Func_0803a530, %function

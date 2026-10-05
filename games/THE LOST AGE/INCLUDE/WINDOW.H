@@ -26,7 +26,12 @@ struct UiRenderWork {
     struct UiChannelSlot channels[3];
     struct RenderOutput outputs[UI_OUTPUT_COUNT];
     struct RenderOutputList free_outputs;
-    u8 unknown_before_entries[0x108];
+    u8 unknown_before_entries[0x100];
+    /* The text pen: line spacing, outline and colour. */
+    u16 line_spacing;
+    u16 unknown_after_line_spacing;
+    u16 outline;
+    u16 colour;
     u16 entries[UI_TEXT_ENTRY_COUNT];
     u16 unknown_before_count;
     u16 count;
@@ -42,6 +47,8 @@ LAYOUT_OFFSET_GUARD(UiRenderWork_Outputs, struct UiRenderWork, outputs, 0x730);
 LAYOUT_OFFSET_GUARD(UiRenderWork_FreeHead, struct UiRenderWork, free_outputs.head, 0xe30);
 LAYOUT_OFFSET_GUARD(UiRenderWork_FreeTail, struct UiRenderWork, free_outputs.tail_link, 0xe34);
 
+LAYOUT_OFFSET_GUARD(UiRenderWork_LineSpacing, struct UiRenderWork, line_spacing, 0xf38);
+LAYOUT_OFFSET_GUARD(UiRenderWork_Colour, struct UiRenderWork, colour, 0xf3e);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Entries, struct UiRenderWork, entries, 0xf40);
 #if EDITION_INTERNATIONAL
 LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count, 0x1342);

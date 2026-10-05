@@ -429,7 +429,7 @@
     "*/recon/tla/it/rom.o"(.rom.0003a680)
     "*/recon/tla/it/rom.o"(.rom.0003a790)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/PROCESS_ALL.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.0003a8bc)
+    "*/recon/tla/it/rom.o"(.rom.0003a8e0)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/GET_WIDE_STRING_WIDTH.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0003aaae)
     "*/recon/tla/it/rom.o"(.rom.0003aab0)

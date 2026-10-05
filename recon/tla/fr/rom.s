@@ -1187,8 +1187,8 @@ UiText_OpenMessageWindow:
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
 	.incbin "baserom.gba", 0x0003a778, 0x0000011c
-	.section .rom.0003a8a4, "ax"
-	.incbin "baserom.gba", 0x0003a8a4, 0x000001cc
+	.section .rom.0003a8c8, "ax"
+	.incbin "baserom.gba", 0x0003a8c8, 0x000001a8
 	.section .rom.0003aa96, "ax"
 	.incbin "baserom.gba", 0x0003aa96, 0x00000002
 	.section .rom.0003aa98, "ax"

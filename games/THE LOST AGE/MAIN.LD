@@ -467,7 +467,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0003a630)
     "*/recon/tla/ja/rom.o"(.rom.0003a740)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/PROCESS_ALL.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0003a86c)
+    "*/recon/tla/ja/rom.o"(.rom.0003a890)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/GET_WIDE_STRING_WIDTH.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003aa84)
     "*/recon/tla/ja/rom.o"(.rom.0003ae38)

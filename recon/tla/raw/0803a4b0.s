@@ -66,4 +66,4 @@ Func_0803a4b0:
 .L_0803a528:
 	.4byte UiWork_ProcessAll
 .L_0803a52c:
-	.4byte Func_0803a8d8
+	.4byte UiWork_ProcessAllOrChannels

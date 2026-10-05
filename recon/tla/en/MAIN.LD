@@ -590,7 +590,6 @@
         "*/recon/tla/raw/0803a69c.o"(.text)
         "*/recon/tla/raw/0803a7ac.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/PROCESS_ALL.o"(.text)
-        "*/recon/tla/raw/0803a8d8.o"(.text)
         "*/recon/tla/raw/0803a8fc.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/TEXT/GET_WIDE_STRING_WIDTH.o"(.text)
         "*/recon/tla/raw/0803aae4.o"(.text)

@@ -1202,8 +1202,8 @@ UiText_OpenMessageWindow:
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
 	.incbin "baserom.gba", 0x0003a740, 0x0000011c
-	.section .rom.0003a86c, "ax"
-	.incbin "baserom.gba", 0x0003a86c, 0x000001d8
+	.section .rom.0003a890, "ax"
+	.incbin "baserom.gba", 0x0003a890, 0x000001b4
 	.section .rom.0003aa84, "ax"
 	.global UiText_RenderWideStringAtOffset
 	.type UiText_RenderWideStringAtOffset, %function

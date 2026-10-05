@@ -438,20 +438,20 @@ Menu_ColonString:
 	.global Menu_HexDigitsString
 Menu_HexDigitsString:
 	.incbin "baserom.gba", 0x000364ec, 0x00000014
-	.global Data_08037440
-Data_08037440:
+	.global Workspace_ItemTitle
+Workspace_ItemTitle:
 	.incbin "baserom.gba", 0x00036500, 0x00000008
-	.global Data_08037448
-Data_08037448:
+	.global Workspace_EnergyTitle
+Workspace_EnergyTitle:
 	.incbin "baserom.gba", 0x00036508, 0x00000008
-	.global Data_08037450
-Data_08037450:
+	.global Workspace_StatusTitle
+Workspace_StatusTitle:
 	.incbin "baserom.gba", 0x00036510, 0x00000008
-	.global Data_08037458
-Data_08037458:
+	.global Workspace_PageLabel
+Workspace_PageLabel:
 	.incbin "baserom.gba", 0x00036518, 0x00000008
-	.global Data_08037460
-Data_08037460:
+	.global Workspace_RangeDash
+Workspace_RangeDash:
 	.incbin "baserom.gba", 0x00036520, 0x00000004
 	.section .rom.00073a6c, "ax"
 	.incbin "baserom.gba", 0x00073a6c, 0x0000000a

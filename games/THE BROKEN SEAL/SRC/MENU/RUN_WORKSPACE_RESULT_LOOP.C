@@ -3,6 +3,7 @@
 #include "SCENE.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
+#include "IO_REG.H"
 s32 Menu_RunWorkspaceSelectionLoop(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 s32 Menu_RunWorkspaceOptions(void);
@@ -42,8 +43,8 @@ struct DebugMenuState {
 
 extern struct DebugMenuState *gMenuCtrlWork;
 extern volatile u32 gKeysRepeat;
-extern u8 Data_08037440[], Data_08037448[], Data_08037450[];
-extern u8 Data_08037458[], Data_08037460[];
+extern u8 Workspace_ItemTitle[], Workspace_EnergyTitle[], Workspace_StatusTitle[];
+extern u8 Workspace_PageLabel[], Workspace_RangeDash[];
 
 void WaitFrames(s32);
 void UiWork_Finalize(struct RenderInput *, s32);
@@ -76,25 +77,25 @@ s32 DebugMenu_BrowseIcons(void)
     WaitFrames(1);
 
     do {
-        if (gKeysRepeat & 0x20) {
+        if (gKeysRepeat & KEY_LEFT) {
             page--;
             redraw = 1;
         }
-        if (gKeysRepeat & 0x10) {
+        if (gKeysRepeat & KEY_RIGHT) {
             redraw = 1;
             page++;
         }
-        if (gKeysRepeat & 0x200) {
+        if (gKeysRepeat & KEY_L) {
             mode--;
             redraw = 1;
         }
-        if (gKeysRepeat & 0x100) {
+        if (gKeysRepeat & KEY_R) {
             redraw = 1;
             mode++;
         }
-        if (gKeysRepeat & 1)
+        if (gKeysRepeat & KEY_A)
             goto close;
-        if (gKeysRepeat & 2)
+        if (gKeysRepeat & KEY_B)
             goto close;
         if (redraw != 0) {
             redraw = 0;
@@ -103,16 +104,16 @@ s32 DebugMenu_BrowseIcons(void)
             UiWork_Finalize(window, 2);
             window = UiWindow_Create(10, 0, 18, 12, 2);
             if (mode == 0)
-                UiText_DrawStringInWindow(Data_08037440, window, 0, 0);
+                UiText_DrawStringInWindow(Workspace_ItemTitle, window, 0, 0);
             else if (mode == 1)
-                UiText_DrawStringInWindow(Data_08037448, window, 0, 0);
+                UiText_DrawStringInWindow(Workspace_EnergyTitle, window, 0, 0);
             else
-                UiText_DrawStringInWindow(Data_08037450, window, 0, 0);
-            UiText_DrawStringInWindow(Data_08037458, window, 0, 8);
+                UiText_DrawStringInWindow(Workspace_StatusTitle, window, 0, 0);
+            UiText_DrawStringInWindow(Workspace_PageLabel, window, 0, 8);
             UiText_DrawNumberInWindow(page, 0, window, 40, 8);
             base = page << 5;
             UiText_DrawNumberInWindow(base, 3, window, 64, 8);
-            UiText_DrawStringInWindow(Data_08037460, window, 88, 8);
+            UiText_DrawStringInWindow(Workspace_RangeDash, window, 88, 8);
             UiText_DrawNumberInWindow(base + 31, 3, window, 96, 8);
             for (i = 0; i <= 31; i++) {
                 slot = -1;

@@ -97,7 +97,7 @@ void Battle_ResetEffectCounter(void)
   void **cell;
   u8 *counter;
   int zero;
-  cell = (void **)((u32)&Data_03001ebc);
+  cell = (void **)&Data_03001ebc;
   runtime = *cell;
   counter = (u8 *)&((struct BattleRuntime *)runtime)->unknown_cb6;
   zero = 0;

@@ -158,7 +158,7 @@ void SceneState_ApplyBlockD77(void)
 
 void SceneState_ApplyBlockDa2(void)
 {
-    CommandTable_RunDirectionalInput((s32)MsgWarriorItemShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
+    CommandTable_RunDirectionalInput((s32)MsgWarriorItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 #endif
 

@@ -85,7 +85,7 @@ void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 heigh
 
 void UiWindow_BuildLayoutBounds(s32 flags)
 {
-    void **slot = (void **)((u32)&Data_03001e90);
+    void **slot = (void **)&Data_03001e90;
     struct PartyStatusWindow *state = *slot;
     struct UiRenderWork *work = slot[-1];
     s32 height = 4;

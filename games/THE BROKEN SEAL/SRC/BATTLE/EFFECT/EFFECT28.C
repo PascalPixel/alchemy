@@ -586,7 +586,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
                             actor = (struct ObjectRuntime *)Object_CreateFar(22, (x << 20) + 0x80000, 0, (z << 20) + 0x80000);
                             if (actor != 0) {
                                 ObjectDispatch_InitializeFar((struct DispatchObject *)actor, BattleFx_MarkerParticleScript);
-                                ObjectDispatch_SetSingleChildField26Far((s32)actor, 0);
+                                ObjectDispatch_SetSingleChildField26Far(actor, 0);
                                 *(s32 *)((u8 *)actor + 108) = (s32)BattleFx_SpawnRandomParticleAtPosition;
                             }
                         }

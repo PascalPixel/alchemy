@@ -164,7 +164,7 @@ void Resource_CopyFixedBlockB(s32 arg0)
 
 void Resource_CopyFixedBlockA(s32 arg0)
 {
-    VramBlock_LoadCached(arg0, 0x80, (s32)RomBytes_080317e4);
+    VramBlock_LoadCached(arg0, 0x80, RomBytes_080317e4);
 }
 
 /* The Japanese edition has neither of the two text helpers that follow. */

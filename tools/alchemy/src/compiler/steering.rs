@@ -480,7 +480,7 @@ mod tests {
     #[test]
     fn production_copy_adapter_parameter_permutations_are_forwarders() {
         let source = "static inline s32 CopyWords(const void *src, CopyFn copy, void *dst, s32 size) { return copy(dst, (const void *)src, size); }\nstatic inline s32 Duplicate(s32 a, s32 b) { return Target(a, a); }";
-        let found = forwarding_findings(source, "MENU9.C").unwrap();
+        let found = forwarding_findings(source, "CANCEL.C").unwrap();
         assert_eq!(
             found
                 .iter()

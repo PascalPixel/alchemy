@@ -599,7 +599,7 @@ s32 DjinnMenu_RunScreen(void)
         case 10:
             menu->owner = menu->owners[menu->selected_column[0]];
             menu->shown_owner[0] = menu->owners[menu->selected_column[0]];
-            result = Unnamed_080ae2f4();
+            result = DjinnMenu_ShowOwnerStatus();
             if (result == -2)
                 done = 1;
             state = 2;

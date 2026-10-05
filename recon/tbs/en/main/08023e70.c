@@ -1,4 +1,4 @@
-/* 08023e70: differ 145 of 1201. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
+/* 08023e70: differ 145 of 1201. Trial: initializing the search from redraw instead of 0 is unchanged (145). Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
 
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"

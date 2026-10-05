@@ -11643,7 +11643,7 @@ msgctxt "message"
 msgid "02908"
 msgstr "{button_icon:3}:Estado Pers."
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "02909"
 msgstr "Estado actual"
 

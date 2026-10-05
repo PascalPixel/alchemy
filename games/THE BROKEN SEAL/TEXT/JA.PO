@@ -13531,7 +13531,7 @@ msgctxt "message"
 msgid "03380"
 msgstr "L:キャラステータス"
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "03381"
 msgstr "げんざいのステータス"
 

@@ -1,4 +1,4 @@
-/* 080cbc0c: differ 45 of 1051. Remaining: CSE keeps 0x7800 and gMapCellBuffer in r5/r6 across the Iwram_CopyWords/Iwram_FillWords pair after the piece loop; the native rematerializes both (fill routine in r5), and the rest is that register shift plus literal-pool offsets. Variables for the size or buffer move the shift elsewhere (157-173). */
+/* 080cbc0c: differ 45 of 1051. Trials: copy wrapper differs 173; fill wrapper stays 45; consumed opaque destination/count operands differ 175; clobbering r5/r6 after copy differs 65. Remaining: CSE keeps 0x7800 and gMapCellBuffer in r5/r6 across the Iwram_CopyWords/Iwram_FillWords pair after the piece loop; the native rematerializes both (fill routine in r5), and the rest is that register shift plus literal-pool offsets. Variables for the size or buffer move the shift elsewhere (157-173). */
 #include "RUNTIME_MEM.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"

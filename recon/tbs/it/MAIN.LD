@@ -326,7 +326,6 @@
     "*/games/COMMON/SRC/GAME/ITEM/DEFINITION.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/GET_EQUIPMENT_GROUP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/INVENT2.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00078bf0)
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER2.o"(.text)
     "*/games/COMMON/SRC/GAME/PARTY/ADVANCE_OWNER_COUNT_TO_TARGET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/FLAGS/TEST.o"(.text)

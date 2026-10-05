@@ -467,12 +467,6 @@ NameEntry_KeyboardTilemap:
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x0007aa1c, 0x000003e4
-	.section .rom.0007c9f0, "ax"
-	.global Owner_RefreshClassActions
-	.type Owner_RefreshClassActions, %function
-	.thumb_func
-Owner_RefreshClassActions:
-	.incbin "baserom.gba", 0x0007c9f0, 0x00000238
 	.section .rom.0007e628, "ax"
 	.global Character_ElementGroupTable
 Character_ElementGroupTable:

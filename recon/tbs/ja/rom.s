@@ -451,12 +451,6 @@ Menu_PartySpriteResourceIds:
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x0006c594, 0x00000a6c
-	.section .rom.0006ebf0, "ax"
-	.global Owner_RefreshClassActions
-	.type Owner_RefreshClassActions, %function
-	.thumb_func
-Owner_RefreshClassActions:
-	.incbin "baserom.gba", 0x0006ebf0, 0x00000238
 	.section .rom.00070828, "ax"
 	.global Character_ElementGroupTable
 Character_ElementGroupTable:

@@ -32,7 +32,7 @@ void Menu_AppendResourceEntry(s32 no)
     work = Ram_HeapSlots->menu_select_work;
     index = work->count;
     if (index <= 5) {
-        work->count = (u16)work->count + 1;
+        work->count++;
         entry = &work->entries[index];
         slot = Resource_FindFreeEntry();
         Menu_LoadResourceSlot(slot, no);

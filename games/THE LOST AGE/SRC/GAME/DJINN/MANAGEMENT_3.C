@@ -80,7 +80,7 @@ s32 Trade_CountPendingOffers(u8 *counts)
             }
             index++;
             entry++;
-        } while (index != (s32)state->count);
+        } while (index != state->count);
     }
     return found;
 }

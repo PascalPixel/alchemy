@@ -16,7 +16,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
     if (interpreter->condition_result != 0) {
         interpreter->cursor = Script_FindLabel(interpreter, value);
     } else {
-        interpreter->cursor = (u16)interpreter->cursor + 2;
+        interpreter->cursor += 2;
     }
     return 1;
 }
@@ -30,7 +30,7 @@ u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter)
     if (interpreter->condition_result == 0) {
         interpreter->cursor = Script_FindLabel(interpreter, value);
     } else {
-        interpreter->cursor = (u16)interpreter->cursor + 2;
+        interpreter->cursor += 2;
     }
     return 1;
 }

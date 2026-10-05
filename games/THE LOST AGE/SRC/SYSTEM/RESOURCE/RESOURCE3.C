@@ -150,14 +150,14 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
     hi = 0x80 & no;
     if (work->scripts != 0) {
         info = Resource_GetMetadataRecordFar(work->anim_id);
-        if (no < (s32)info->animation_count) {
+        if (no < info->animation_count) {
             value = (s32)work->scripts[no];
             work->kind = info->draw_kind;
             work->script = (u8 *)value;
             work->step = 0x10;
             if (hi == 0) {
                 work->pos = hi;
-                work->timer = (s16)hi;
+                work->timer = hi;
             }
         }
     }

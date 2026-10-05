@@ -9,7 +9,7 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter)
     if (callback(interpreter)!= 0)
         return 0;
     if (interpreter->cursor == initial)
-        interpreter->cursor = (u16)interpreter->cursor + 2;
+        interpreter->cursor += 2;
     return 1;
 }
 

@@ -174,7 +174,7 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 v
 
 s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 {
-    s16 index = (s16)work->cursor;
+    s16 index = work->cursor;
     s32 *entry = (s32 *)work->script_address + index + 1;
     OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 
@@ -186,7 +186,7 @@ s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 {
-    s16 index = (s16)work->cursor;
+    s16 index = work->cursor;
     s32 *entry = (s32 *)work->script_address + index + 1;
     OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 
@@ -198,7 +198,7 @@ s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 {
-    s16 index = (s16)work->cursor;
+    s16 index = work->cursor;
     s32 *entry = (s32 *)work->script_address + index + 1;
     OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 

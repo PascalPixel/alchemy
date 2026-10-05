@@ -55,8 +55,8 @@ void UiText_DrawCharacterAtOffset(
         text = canvas->entries;
         UiText_RenderStringTiles(
             text,
-            (s32)((u8 *)canvas->tilemap + byte_offset),
-            vram_address,
+            (u16 *)((u8 *)canvas->tilemap + byte_offset),
+            (u16 *)vram_address,
             7 & offset_x);
     }
 }
@@ -119,9 +119,9 @@ void UiText_DrawStringAtOffset(
         src = (s32)canvas->tilemap + cell;
         phase = offset_x & 7;
         UiText_RenderStringTiles(
-            buffer,
-            src,
-            dst,
+            (u16 *)buffer,
+            (u16 *)src,
+            (u16 *)dst,
             phase);
         Runtime_BumpFree(buffer);
     }
@@ -225,9 +225,9 @@ void UiText_DrawPrefixedNumberAtOffset(
         src = (s32)canvas->tilemap + cell;
         phase = offset_x & 7;
         UiText_RenderStringTiles(
-            output,
-            src,
-            dst,
+            (u16 *)output,
+            (u16 *)src,
+            (u16 *)dst,
             phase);
     }
 }

@@ -1,3 +1,70 @@
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 110. The prompt
+ * field is an enum: its stores no longer share an alias set with the
+ * window reads, so sched2 computes &work->window before the prompt store
+ * in states 5 and 11, as listed (the window fields as pointers or long
+ * do the same; plain int does not). Everything from build_objects on now
+ * matches; the rest is state 0. There the listing puts the r8 =
+ * &work->spins edge insertion inline in the prize branch (its constant
+ * reloaded in r3) where this draft's matches the pressed & 1 join stub
+ * (r0) and jump2 merges the two; the prize store's save + 0x120 is summed
+ * into save's own reload register in the listing (adds r2, r2, r1), here
+ * into a third register, which shifts the reload rotation for the rest of
+ * state 0. Tried: prize before the state store (162), won_prizes[n] (190),
+ * -2 (110), a prize pointer (135), save set after work (160).
+ */
+/* Measured hint (devices, not kept): pinning coins to any low register
+ * (r0, r1, r2, r4) brings the draft to 40-52, all of it in the coins code
+ * that pin breaks; pinning it to its listed r9 gives 178. So the state-0
+ * cascade is the reload rotation: once a low register is unavailable
+ * there, the prize branch, the bet buttons and the pressed & 1 block all
+ * come out as listed. The source change that does this honestly is still
+ * to be found.
+ */
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 120. The spin's
+ * pos update loop works through a row pointer and adds 8 in two places,
+ * if (row->stop != 0) row->pos += 8; else if ((row->pos & 15) != 8)
+ * row->pos += 8; (jump2 merges the two adds): GCSE then moves the pos
+ * load onto the stop != 0 edge, keeps pos in a register for the 336 test,
+ * and leaves 15 and 336 in the loop, as listed. One || condition with the
+ * pointer gave 165-223 (15 hoisted, the edge block placed before the add).
+ * Remaining: state 0's prize branch (the listing sets r8 = &work->spins
+ * inline before its far jump to build_objects, this draft shares the join
+ * stub; the reload registers of the prize store differ), and state 11's
+ * &work->window, computed before the phase store in the listing.
+ */
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 160. The settled
+ * count adds one in two places, if held, else if stopped on a cell
+ * boundary (jump2 merges the two increments): the extra references put
+ * the count in r1 ahead of the pos offset giv (r0), as listed.
+ * Still open in the spin's pos update loop: the listing keeps i, steps a
+ * row pointer and holds pos in a register through the += 8 (GCSE moves
+ * the load to the stop != 0 edge); the indexed reads here re-read pos for
+ * the 336 test. A row pointer declared inside the held test gives that
+ * loop but for a copy of the pointer and the block order (169); declared
+ * with the loop body 165-223. The state-11 branch computes &work->window
+ * before the phase store in the listing, after it here (phase set first
+ * 168, phase = hits 160).
+ */
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 172. The lever's
+ * height is its own block-local variable instead of y: with y shared by
+ * the cursor objects and the lever the allocator put the cursor x and y
+ * in r6 and r5 and the lever in r5 (listed: r5, r6, r4). The lever in x
+ * gave 206, in cnt 176 (the lever matches but the settled count moves to
+ * r4), in col 184, in all or held 198, in k or i 206, in v 297, in
+ * coins 743. Row pointers in the other row loops (line check 259, pos
+ * update 289 or 235 inside the held test, held markers 226, stop
+ * countdown 251, settled count 241, stop start 278), the settled count
+ * kept in k (230), col or all (331), and declaration order (226) were
+ * tried on top of the cells' row pointer and are no better.
+ */
+/* 2026-10-05 (deep finisher 16): alchemy diff 226 (was 337). The reel
+ * cells loop reads each row through a row pointer, struct ReelRow *row =
+ * &work->row[i], declared in the row loop: the listing keeps that pointer
+ * in r5 and the cell offsets column by column, which the indexed
+ * work->row[i] reads did not give (they left an offset giv and work in two
+ * registers). A pointer stepped with row++ in the for header instead is
+ * worse (264).
+ */
 /* 2026-10-04: column r10 binding trial scored 15310 vs 3720; rejected.
  * Use the existing ReelGame_Run saved-game view from GameState+12 instead
  * of the unresolved gReelSave import. Native palette/data owners unchanged.
@@ -84,6 +151,17 @@ struct ReelObject {
     volatile u32 attr2;
 };
 
+/* The prompt the main window shows, by where the cursor is when it was
+   drawn; the settle prompt of state 11 reuses the first value. */
+enum ReelPrompt {
+    REEL_PROMPT_NONE,
+    REEL_PROMPT_ALL_HELD,   /* lever, every row held: first line */
+    REEL_PROMPT_ALL_HELD_2, /* lever, every row held: second line */
+    REEL_PROMPT_LEVER,      /* lever, some row free */
+    REEL_PROMPT_FREE_ROW,
+    REEL_PROMPT_HELD_ROW
+};
+
 struct ReelWork {
     struct ReelRow row[5];
     s32 state;
@@ -102,7 +180,7 @@ struct ReelWork {
     s32 sub_window;
     u8 unknown_4d0[8];
     u16 scanline_offsets[160];
-    s32 phase;        /* which prompt the window currently shows */
+    enum ReelPrompt phase;
 };
 
 struct ReelSave {
@@ -354,8 +432,9 @@ void ReelGame_RunFrame(void)
 
         cnt = 0;
         for (i = 0; i != 5; i++) {
-            if (work->row[i].held == 1 ||
-                (work->row[i].stop == 0 && (work->row[i].pos & 15) == 8))
+            if (work->row[i].held == 1)
+                cnt++;
+            else if (work->row[i].stop == 0 && (work->row[i].pos & 15) == 8)
                 cnt++;
         }
 
@@ -439,11 +518,15 @@ void ReelGame_RunFrame(void)
 
         if (work->state == 1) {
             for (i = 0; i != 5; i++) {
-                if (work->row[i].held == 0) {
-                    if (work->row[i].stop != 0 || (work->row[i].pos & 15) != 8)
-                        work->row[i].pos += 8;
-                    if (work->row[i].pos == 336)
-                        work->row[i].pos = 0;
+                struct ReelRow *row = &work->row[i];
+
+                if (row->held == 0) {
+                    if (row->stop != 0)
+                        row->pos += 8;
+                    else if ((row->pos & 15) != 8)
+                        row->pos += 8;
+                    if (row->pos == 336)
+                        row->pos = 0;
                 }
             }
         }
@@ -536,23 +619,28 @@ build_objects:
     }
 
     for (i = 0; i != 5; i++) {
+        struct ReelRow *row = &work->row[i];
+
         for (col = 0; col != 7; col++) {
-            work->obj[n].attr01 = (col * 16 + work->row[i].pos % 16 + 4) |
+            work->obj[n].attr01 = (col * 16 + row->pos % 16 + 4) |
                                   ((i * 32 + 40) << 16) | 0x80006000;
             work->obj[n].attr2 =
-                (work->row[i].cell[(col - work->row[i].pos / 16 + 21) % 21] << 4) | 0x800;
+                (row->cell[(col - row->pos / 16 + 21) % 21] << 4) | 0x800;
             n++;
         }
     }
 
-    y = 40;
-    if (work->state == 1) {
-        if (work->timer <= 47)
-            y = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
-        else if (work->timer <= 55)
-            y = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
+    {
+        s32 lever = 40;
+
+        if (work->state == 1) {
+            if (work->timer <= 47)
+                lever = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
+            else if (work->timer <= 55)
+                lever = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
+        }
+        work->obj[n].attr01 = lever | blend | 0x80d06000;
     }
-    work->obj[n].attr01 = y | blend | 0x80d06000;
     work->obj[n].attr2 = 0x500;
     n++;
 

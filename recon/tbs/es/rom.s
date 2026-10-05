@@ -211,12 +211,6 @@ Tile_BuildMetatilesEnd:
 Func_08018038:
 UiText_BuildRenderEntries:
 	.incbin "baserom.gba", 0x00016fe0, 0x00000660
-	.section .rom.0001ce6c, "ax"
-	.global UiText_RenderStringTiles
-	.type UiText_RenderStringTiles, %function
-	.thumb_func
-UiText_RenderStringTiles:
-	.incbin "baserom.gba", 0x0001ce6c, 0x00000410
 	.section .rom.00020ea6, "ax"
 	.incbin "baserom.gba", 0x00020ea6, 0x000008fe
 	.section .rom.000221b4, "ax"
@@ -343,7 +337,13 @@ SideObject_ActorKindIdMap:
 	.incbin "baserom.gba", 0x00035ad4, 0x000000c8
 	.global UiSprite_CursorFrameTiles
 UiSprite_CursorFrameTiles:
-	.incbin "baserom.gba", 0x00035b9c, 0x000008f0
+	.incbin "baserom.gba", 0x00035b9c, 0x00000800
+	.global UiText_GlyphWidths
+UiText_GlyphWidths:
+	.incbin "baserom.gba", 0x0003639c, 0x000000e0
+	.global UiText_ColourPens
+UiText_ColourPens:
+	.incbin "baserom.gba", 0x0003647c, 0x00000010
 	.global UiWindow_PartyColumnOffsets
 UiWindow_PartyColumnOffsets:
 	.incbin "baserom.gba", 0x0003648c, 0x0000001c

@@ -3,7 +3,7 @@
 
 #include "RENDER_INPUT.H"
 
-s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase);
+s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
 
 void UiText_DrawCharacterAtOffset(
     s32 character,

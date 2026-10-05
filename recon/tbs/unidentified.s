@@ -269,7 +269,13 @@ SideObject_ActorKindIdMap:
 	.incbin "baserom.gba", 0x0003680c, 0x000000c8
 	.global UiSprite_CursorFrameTiles
 UiSprite_CursorFrameTiles:
-	.incbin "baserom.gba", 0x000368d4, 0x000008f0
+	.incbin "baserom.gba", 0x000368d4, 0x00000800
+	.global UiText_GlyphWidths
+UiText_GlyphWidths:
+	.incbin "baserom.gba", 0x000370d4, 0x000000e0
+	.global UiText_ColourPens
+UiText_ColourPens:
+	.incbin "baserom.gba", 0x000371b4, 0x00000010
 	.global UiWindow_PartyColumnOffsets
 UiWindow_PartyColumnOffsets:
 	.incbin "baserom.gba", 0x000371c4, 0x0000001c

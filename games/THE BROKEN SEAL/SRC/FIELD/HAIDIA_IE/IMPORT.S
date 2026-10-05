@@ -266,9 +266,9 @@ Party_SetFields1ceAnd1d0:
 	.thumb_func
 Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
-	.global Unnamed_08094ac8
+	.global FieldFx_StartGroundParticles
 	.thumb_func
-Unnamed_08094ac8:
+FieldFx_StartGroundParticles:
 	overlay_veneer Func_0808a2c0
 	.global BattleFx_StartTwelveFrameBlend
 	.thumb_func

@@ -540,7 +540,7 @@ s32 HaidiaIe_RestoreEntryState(void)
         Engine_TaskWait(1);
     } else {
         if (Engine_GameFlagIsSet(0x834) != 0) {
-            Unnamed_08094ac8();
+            FieldFx_StartGroundParticles();
             BattleFx_StartTwelveFrameBlend();
             Call6(Scene_CopyCellAttributes, 21, 38, 1, 1, 18, 41);
             record = Engine_GameFlagIsSet(0x840);

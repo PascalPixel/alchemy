@@ -430,7 +430,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
    Kinds 0 and 1 are tall columns that slide outwards as they grow, kinds 2
    and 3 short stumps; odd kinds slide left.
  */
-void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
+void BattleFx_RaisePillars(struct BattleEffectArgument *efx)
 {
     void *dst;
     s32 frame;

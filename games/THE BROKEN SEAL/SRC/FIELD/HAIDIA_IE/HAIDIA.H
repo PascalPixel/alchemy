@@ -145,7 +145,7 @@ void Engine_MapCopyCellsTo();
 void Engine_MapRedraw();
 void Engine_TaskWait();
 void BattleFx_StartTwelveFrameBlend();
-void Unnamed_08094ac8();
+void FieldFx_StartGroundParticles();
 s32 Scene_CopyCellAttributes();
 void Object_SetTargetAndCallback();
 void Engine_ActorSetSpriteFlags();

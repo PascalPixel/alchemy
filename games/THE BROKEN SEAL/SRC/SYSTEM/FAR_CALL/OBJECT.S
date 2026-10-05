@@ -344,7 +344,7 @@ Battle_InitializeRenderObjectFar:
 	.global Func_0808a2c0
 	.thumb_func
 Func_0808a2c0:
-	overlay_veneer Unnamed_08094ac8
+	overlay_veneer FieldFx_StartGroundParticles
 	.global BattleFx_StartTwelveFrameBlendFar
 	.thumb_func
 BattleFx_StartTwelveFrameBlendFar:

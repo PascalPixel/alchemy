@@ -139,7 +139,7 @@ void MusicCommand_SetVolume(s16 volume)
     gMusicVolume = volume;
 }
 
-void Audio_SetWorkPairA(u16 primary, u16 secondary)
+void Audio_SetMusicVolumeTargetAndStep(u16 primary, u16 secondary)
 {
     gMusicVolumeTarget = primary;
     gMusicVolumeStep = secondary;

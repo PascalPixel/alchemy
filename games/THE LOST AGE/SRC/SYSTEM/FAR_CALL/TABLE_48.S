@@ -5,10 +5,10 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Audio_SetWorkPairAFar
+	.global Audio_SetMusicVolumeTargetAndStepFar
 	.thumb_func
-Audio_SetWorkPairAFar:
-	overlay_veneer Audio_SetWorkPairA
+Audio_SetMusicVolumeTargetAndStepFar:
+	overlay_veneer Audio_SetMusicVolumeTargetAndStep
 	.global Audio_Check
 	.thumb_func
 Audio_Check:

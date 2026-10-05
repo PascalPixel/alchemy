@@ -72,7 +72,7 @@ Func_08042e28:
 	bl UiText_DrawResource
 	movs r1, #30
 	movs r0, #0
-	bl Audio_SetWorkPairAFar
+	bl Audio_SetMusicVolumeTargetAndStepFar
 	movs r0, #149
 	lsls r0, r0, #1
 	bl Audio_PlayCue

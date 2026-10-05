@@ -179,7 +179,7 @@ void Scene_RunTableTransition(void)
     Engine_EventRequestExit(no);
 }
 
-void SceneState_SetWord1c8To16AndForward16c(void)
+void RariberoMachi_RequestTouchedExit(void)
 {
     struct EventWork *work = gEventWork;
     s16 *p = (s16 *)&work->touched_trigger;

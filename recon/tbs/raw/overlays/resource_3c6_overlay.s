@@ -485,7 +485,7 @@ Placement_Effects:
 	.4byte Scene_RunTableTransition
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte SceneState_SetWord1c8To16AndForward16c
+	.4byte RariberoMachi_RequestTouchedExit
 	.4byte 0x0000c602
 	.4byte 0xffff0009
 	.4byte Scene_RunTableTransition
@@ -494,7 +494,7 @@ Placement_Effects:
 	.4byte Scene_RunTableTransition
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte SceneState_SetWord1c8To16AndForward16c
+	.4byte RariberoMachi_RequestTouchedExit
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte MsgRariberoMachiUhhnnWeWereTakenBySurprise
@@ -607,7 +607,7 @@ Placement_Effects9a7:
 	.4byte Scene_RunTableTransition
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte SceneState_SetWord1c8To16AndForward16c
+	.4byte RariberoMachi_RequestTouchedExit
 	.4byte 0x0000c602
 	.4byte 0xffff0009
 	.4byte Scene_RunTableTransition
@@ -616,7 +616,7 @@ Placement_Effects9a7:
 	.4byte Scene_RunTableTransition
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte SceneState_SetWord1c8To16AndForward16c
+	.4byte RariberoMachi_RequestTouchedExit
 	.4byte 0x00000000
 	.4byte 0x09bb0012
 	.4byte SceneActor_SetupActor18Event

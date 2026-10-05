@@ -2,6 +2,9 @@
  * Draft: RenderOutput_UpdateScaleAnimation (☀️ SET_TILEMAP_ENTRY.C) on
  * ⚓️'s scale table. 12 instructions differ (8 with -mtune=arm9tdmi): load
  * scheduling and the literal pool order. Needs AFFINE.H in COMMON.
+ * 2026-10-05: still 8 with AffineTransform declared inline: three
+ * scheduling ties (a store before a load, the 31 mask, the 256 constant).
+ * Joins SET_TILEMAP_ENTRY.C after UiWindow_SetTilemapEntry.
  * Links as recon/tla/raw/0803c40c.s.
  */
 #include "TYPES.H"

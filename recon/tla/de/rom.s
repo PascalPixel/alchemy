@@ -1143,12 +1143,9 @@ Func_0803c170:
 	.thumb_func
 Func_0803c198:
 	.incbin "baserom.gba", 0x0003c194, 0x000001e0
-	.section .rom.0003c374, "ax"
-	.global UiWindow_SetTilemapEntry
-	.type UiWindow_SetTilemapEntry, %function
-	.thumb_func
-UiWindow_SetTilemapEntry:
-	.incbin "baserom.gba", 0x0003c374, 0x000001d0
+	.section .rom.0003c408, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0003c408, 0x0000013c
 	.global UiWork_AnimateSpriteSlots
 	.type UiWork_AnimateSpriteSlots, %function
 	.thumb_func

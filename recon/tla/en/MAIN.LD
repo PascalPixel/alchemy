@@ -592,7 +592,7 @@
         "*/recon/tla/raw/0803c170.o"(.text)
         "*/recon/tla/raw/0803c198.o"(.text)
         "*/recon/tla/raw/0803c274.o"(.text)
-        "*/recon/tla/raw/0803c378.o"(.text)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/SET_TILEMAP_ENTRY.o"(.text)
         "*/recon/tla/raw/0803c40c.o"(.text)
         "*/recon/tla/raw/0803c548.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/WINDOW/ADJUST_VALUE_WITHOUT_LIMIT.o"(.text)

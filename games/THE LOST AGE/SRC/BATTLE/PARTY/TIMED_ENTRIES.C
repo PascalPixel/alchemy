@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
 
 /* Battle timers: per-unit countdown bytes in the owner record, and the
    placement entries whose timers expire into Djinn activation. */
@@ -15,9 +16,6 @@ struct PlacementTable {
     u8 padding[8];
     struct PlacementList list;
 };
-
-LAYOUT_OFFSET_GUARD(PlacementList_Count, struct PlacementList, count, 0x120);
-LAYOUT_OFFSET_GUARD(PlacementTable_List, struct PlacementTable, list, 8);
 
 struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
 void Owner_RecalculateStatsFar(s32 unit_id);

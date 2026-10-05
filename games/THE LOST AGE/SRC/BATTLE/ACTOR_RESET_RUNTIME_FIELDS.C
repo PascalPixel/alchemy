@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OWNER_STATE.H"
+#include "BATTLE_STATUS_ICON.H"
 
-s32 BattleUnit_BuildStatusFlags(s32, s32);
 void Owner_RecalculateStatsFar(s32);
 s32 GetBattleObjectSlot(s32);
 

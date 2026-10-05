@@ -1,13 +1,13 @@
 #include "OWNER_STATE.H"
+#include "BATTLE_PARTY.H"
+#include "BATTLE_RUNTIME.H"
 /* Battle: clear the active and reserve party members' status bytes and stat
    modifiers; ⚓️ adds the reserve members ☀️ does not have.
    Returns int: its epilogue returns through r1. */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
-s32 BattleParty_PrepareActiveOwners(u16 *owners);
 s32 BattleParty_PrepareReserveOwners(u16 *owners);
-void BattleUnit_Recalculate(s32 owner);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {

@@ -1,11 +1,5 @@
 #include "OBJECT_RUNTIME.H"
-
-void ObjectMotion_SetActionVariant(u32, s32);
-
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-void Object_CommitPosition(struct ObjectRuntime *);
-void Object_SetMode(struct ObjectRuntime *, s32);
+#include "FIELD_EVENT.H"
 
 /* Centres an object on its 16-pixel column, plays an action, then moves
    it by z_offset; offset 0x0a is the whole-pixel half of x. */

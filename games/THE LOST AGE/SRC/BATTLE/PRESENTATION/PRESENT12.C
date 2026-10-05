@@ -2,6 +2,7 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_UNIT.H"
 #include "OWNER_STATE.H"
+#include "FIELD_EVENT.H"
 
 extern u8 MsgBitterBlow[];
 extern u8 MsgDmgP[];
@@ -9,7 +10,6 @@ extern u8 MsgCritical[];
 extern u8 MsgDmgE[];
 extern u8 MsgGoesDown[];
 extern u8 MsgDowned[];
-void Object_SetMode(void *actor, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32 value, s32 mode);

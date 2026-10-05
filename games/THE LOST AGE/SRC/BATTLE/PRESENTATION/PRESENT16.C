@@ -2,12 +2,12 @@
 #include "OWNER_STATE.H"
 #include "SYSTEM.H"
 #include "BATTLE_PARTY.H"
+#include "BATTLE_PRESENTATION.H"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 extern char MsgActorDefends;
 extern char MsgCannotEscape;
-s32 BattleObject_IsValidId(s32);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32 value, s32 mode);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
+#include "FIELD_EVENT.H"
 
 /* The battle effects' work, as far as the item break reads it. */
 struct BattleFxScene {
@@ -11,7 +12,6 @@ struct BattleFxScene {
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_StartItemBreak(void *object);
 void BattleFx_SnapScaleToFull(void *object);
-void Object_SetMode(void *object, s32 mode);
 void BattleFx_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
 

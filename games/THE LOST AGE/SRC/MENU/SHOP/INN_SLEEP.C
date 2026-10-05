@@ -2,6 +2,8 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
+#include "BATTLE_RUNTIME.H"
+#include "FIELD_EVENT.H"
 
 /* The event work's screen effect and its delay: ☀️ keeps them at 0x1c0 and
    0x1c8. */
@@ -22,10 +24,8 @@ struct FieldObject {
 
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
-void Owner_RecalculateRatiosFar(s32);
 void Event_ClearStatus1c6Far(void);
 void Event_WaitValue1c8FramesFar(void);
-void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
 void Event_SetStatus1c6Far(void);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)

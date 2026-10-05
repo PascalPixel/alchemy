@@ -1,6 +1,5 @@
 #include "TYPES.H"
-
-u8 *BattleAction_Get(u32 action);
+#include "BATTLE_RUNTIME.H"
 
 /* ⚓️'s ability records keep the restriction byte at 6; ☀️'s at 12. */
 s32 PsynergyMenu_IsActionRestricted(s32 no)

@@ -3,8 +3,8 @@
 #include "MOTION_OBJECT.H"
 #include "OWNER_STATE.H"
 #include "BATTLE_WORK.H"
+#include "FIELD_EVENT.H"
 
-void Object_SetMode(void *, s32);
 void BattleLayout_HighlightPartyPanelsFar(u16 *);
 void BattleMotion_SetRecordChildValues(void *, s32);
 s32 BattleMotion_GetSlotField14(s32);

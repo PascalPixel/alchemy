@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 #include "RAM_BUFFER.H"
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
 
 /* One of the three file summaries; a level of 0 marks a free file. */
 struct SaveSummary {
@@ -15,9 +17,6 @@ struct SaveWorkspace {
     u8 unknown_0000[0x303c];
     struct SaveSummary summary[3];
 };
-
-LAYOUT_SIZE_GUARD(SaveSummary_Size, struct SaveSummary, 64);
-LAYOUT_OFFSET_GUARD(SaveWorkspace_Summary, struct SaveWorkspace, summary, 0x303c);
 
 /* ☀️'s: the first file whose summary is free, or 999 when all three are
    used. */

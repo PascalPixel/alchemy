@@ -1,8 +1,7 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "RUNTIME_MEM.H"
-
-void UiWork_Finalize(void *, s32);
+#include "UIFLOW.H"
 
 /* ☀️'s: finishes the window that heap slot 16 holds and frees the slot. */
 void UiWork_FinalizeAndReleaseBlock16(void)

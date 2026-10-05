@@ -1,6 +1,5 @@
 #include "TYPES.H"
-
-s32 Resource_ResetEntry(u32);
+#include "RESOURCE.H"
 
 /* Frees VRAM block 93. */
 void VramBlock_Reset93(void)

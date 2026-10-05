@@ -4,6 +4,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
+#include "FIELD_EVENT.H"
 
 /* ☀️'s menu cancel sound and palette entries. ⚓️'s tick also blinks the
    cancel marker's tiles every fourth frame and waits for the window's
@@ -14,7 +15,6 @@ extern u8 Data_08105948[];
 typedef s32 (*CopyFn)(void *, const void *, s32);
 typedef s32 (*FillFn)(void *, s32, u32);
 
-void Audio_PlayCue(s32 cue);
 s32 GameFlag_Test(s32);
 s32 GameFlag_SetBit(s32);
 s32 GameFlag_ClearBit(s32);

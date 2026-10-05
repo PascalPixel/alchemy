@@ -6,7 +6,6 @@
 
 extern char ResourceId_CommandIcons;
 void Resource_DecodeByteLzInRam(void *source, void *destination);
-void Sys_Free(void *);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 void Menu_LoadResourceSlot(s32 slot, s32 index)

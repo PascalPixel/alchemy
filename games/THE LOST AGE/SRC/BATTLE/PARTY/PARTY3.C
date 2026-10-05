@@ -4,12 +4,12 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
+#include "BATTLE_CALC.H"
+#include "FIELD_EVENT.H"
 
 s32 Party_CountActiveOwnersFar(void);
-s16 Owner_AdjustSecondValueFar(s32 unit, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
-void Audio_PlayCue(s32 cue);
 
 /* ☀️'s: passes a health change to every active party member in turn. */
 void BattleParty_ApplyDrain(s32 amount)

@@ -4,12 +4,10 @@
 #include "FIXED_MATH.H"
 #include "OBJECT_EFFECT.H"
 #include "SYSTEM.H"
+#include "FIELD_EVENT.H"
 s32 BattleFx_StartRandomParticleEmitter(s32, s32);
 
-extern void Object_SetMode(struct ParticleEffectObject *, s32);
-
 s32 Object_GetById(u32);
-s32 Audio_PlayCue(s32);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 
 /* The object nearest SELF within EFFECT's reach, of the 81 objects; -1 when

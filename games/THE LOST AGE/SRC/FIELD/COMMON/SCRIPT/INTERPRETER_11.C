@@ -1,6 +1,5 @@
 #include "SCRIPT.H"
-
-s32 Audio_PlayCue(s32);
+#include "FIELD_EVENT.H"
 
 s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
 {

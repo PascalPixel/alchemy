@@ -3,7 +3,6 @@
 #include "TYPES.H"
 
 void Resource_DecodeByteLzInRam(void *source, void *destination);
-void Sys_Free(void *block);
 
 /* Decodes a resource into a scratch buffer and loads it into one of the 96
    VRAM block entries. */

@@ -1,8 +1,8 @@
 #include "OWNER_STATE.H"
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 s32 *GetBattleObjectSlot(s32);
-void Object_SetMode(s32, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 
 s32 BattlePres_SetActorModeAndAction(s32 id)

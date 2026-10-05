@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "MOTION_OBJECT.H"
+#include "FIELD_EVENT.H"
 
 /* Mode entries of the projectile volley effect: ☀️'s, with ⚓️'s further
    modes 12 to 18. */
 
-s32 Object_SetMode(s32, s32);
 s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 

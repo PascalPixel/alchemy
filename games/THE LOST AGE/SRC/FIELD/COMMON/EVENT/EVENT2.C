@@ -4,9 +4,7 @@
 #include "EVENTWRK.H"
 #include "PARTY_STATE.H"
 #include "OBJECT_RUNTIME.H"
-
-void DisplayTransition_Start(s32 mode, s32 frames);
-void DisplayTransition_Finish(s32 mode, s32 frames);
+#include "DISPTRAN.H"
 
 void EventRuntime_StartScreen(void)
 {

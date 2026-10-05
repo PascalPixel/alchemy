@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 s32 LuckyDice_Run();
-s32 Audio_PlayCue(s32);
 
 /* The interrupt master-enable word (IME) before and after the blanked frame. */
 #define REG_IME (*(volatile u16 *)0x04000000)

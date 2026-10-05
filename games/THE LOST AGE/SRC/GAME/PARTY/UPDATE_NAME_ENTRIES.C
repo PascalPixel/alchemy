@@ -6,7 +6,6 @@
 #include "TLA_EDITION.H"
 
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void Sys_Free(void *);
 void *Resource_FarCall005(s32);
 
 extern char MsgEnemyLabel;

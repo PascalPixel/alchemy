@@ -1,7 +1,7 @@
 #include "BATTLE_WORK.H"
 #include "SYSTEM.H"
+#include "CALLBACK_SCHEDULER.H"
 
-void Scheduler_RemoveCallback(u32);
 void BattleEvent_Playback(void);
 u32 BattleEventRuntime_Reset(void);
 

@@ -178,7 +178,7 @@ void HaidiaDou_ApplyEntryState(void)
             if (Engine_GameFlagIsSet(0x109) != 0) {
                 break;
             }
-            Call3(Engine_ActorSetPosition, 8, 0x3180000, 0x1180000);
+            Actor_SetPosition(8, 0x3180000, 0x1180000);
             Object_GetById(8)->update = SceneActor_FaceActorZero;
             break;
         case 8:

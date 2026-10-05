@@ -1,4 +1,5 @@
 #include "BATTLE.H"
+#include "FIELD_EVENT.H"
 #include "DEBUG.H"
 #include "FIELD.H"
 #include "GAME.H"
@@ -110,7 +111,7 @@ void HaidiaDou_SinkPillarColumn23(void)
 
     Engine_EventBegin();
     if (Object_GetById(9)->x.fixed >> 20 == 23) {
-        Call3((void (*)())Engine_ActorMoveToAndWait, 0, 360, 664);
+        Actor_MoveToAndWait(0, 360, 664);
         Engine_ActorFaceDirection(0, 0xe000, 10);
         Object_GetById(9)->x.fixed += 0x20000;
         left = OverlayObject_CreateConfigured(Object_GetById(9)->x.fixed, 0,

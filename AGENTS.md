@@ -24,6 +24,14 @@ assembly and 8-byte stubs) and shows the bytes of FAKEMATCH-steered code as
 their own number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%,
 sharing as much code between the games as possible.
 
+Matching is not the finish. The project is finished when the source also
+reads as Camelot's engineers wrote it in Japan in 2001 (S3), not as modern
+Western C: romaji names, Japanese comments, scenes in event commands and
+numbered events, values in their authors' units. Work need not reach that
+form at once, but every change moves toward it (W8), and the last pass
+before both games are declared finished, alongside removing FAKEMATCH (S2),
+camelotizes what remains.
+
 ## Where things are
 
 - `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT` and `games/COMMON` hold the
@@ -32,6 +40,9 @@ sharing as much code between the games as possible.
   one listing per function or run. `recon/<game>/en/MAIN.LD` is the English
   object order; German, Spanish, French and Italian follow it through their
   own `recon/<game>/<lang>/MAIN.LD`.
+- `games/THE BROKEN SEAL/INCLUDE/EVENT.H` is the scene command vocabulary
+  (S3); `FIELD_EVENT.H` and `FIELD_SERVICE.H` hold the script layer the
+  commands expand to.
 - `recon/<game>/<lang>` holds that edition's ROM scaffold (`rom.s`,
   `overlays.s`) and its drafts (`main/`, `overlays/`).
 - `tools/` holds alchemy (one `alchemy` command for both games: build,
@@ -130,13 +141,57 @@ or functions is exactly this cheating.
   `FIELD_EVENT.H`, `FIELD_SERVICE.H` and `RUNPA_JO/JO.H`) matches every scene
   where direct calls break 642 functions (Pascal, 2026-10-05). Never patch
   compiler output. _Check: no-asm (in lint-staged)._
-- **S3** Write it the way Camelot would have in 2001: `games/<GAME>/SRC`,
-  `INCLUDE`, `SOUND`, `TEXT`, with the same folder layout in both games and
-  `games/COMMON`; uppercase 8.3-style names, C89, `Subsystem_VerbObject`
-  functions, short locals, named struct fields and enums, Japanese character
-  names and romaji plus one area word for places. Shared code and declarations
-  live once in `games/COMMON`. Adopt a function into the module that holds its
-  linker neighbours, not into a new file of its own.
+- **S3** Camelotize: write it as Camelot's engineers wrote it, in Japan, in
+  2001, not merely as a person would. This is the target, and what
+  "camelotize" means everywhere in this file:
+
+  ```c
+  #include "EVENT.H"
+
+  #define BOUZU       8           /* 坊主 */
+
+  static void EV03_IDO()
+  {
+      ...
+      OBJ_POS_SET(BOUZU, 192, 264);       /* 井戸の前 */
+      ...
+  }
+  ```
+
+  - Layout: `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT`, the same folders
+    in both games and `games/COMMON`; uppercase 8.3 file names; C89.
+    Directives stay lowercase (`#include`): the preprocessor reads no other.
+    Shared code and declarations live once in `games/COMMON`; a function is
+    adopted into the module that holds its linker neighbours, not into a new
+    file of its own.
+  - Identifiers are ASCII, as C89 and GCC 2.96 demand: Japanese words in
+    romaji (`BOUZU`), characters by their Japanese names (`ROBIN`,
+    `GERALD`, `SUKURETA`), places in romaji plus one area word
+    (`RUNPA_JO`). Never an English word where theirs was Japanese.
+  - Japanese lives only in comments: short, beside the line, in their
+    register (`/* 坊主 */`, `/* 井戸の前 */`), and only for a fact we have
+    verified. Ours are UTF-8 where theirs were Shift-JIS. Game source carries
+    no English explanation; FAKEMATCH tags (S2) are ours and stay English.
+  - Numbers stay numbers until evidence names them; then a romaji `#define`
+    with its Japanese comment, not an invented enum.
+  - Values are written in the author's units, whatever the bytes store:
+    scene coordinates are pixels, and the command shifts them into fixed
+    point.
+  - Scenes are written in `EVENT.H` commands (`OBJ_POS_SET`, `MES_PUT`,
+    `WAIT`, `FLAG_CHK` ...), all-caps macros that expand to exactly the call
+    the bytes need: the scene script layer's inline helper (S2), or the
+    engine service itself where the native calls it directly.
+  - An event function is named `EV<id>_<SUBJECT>`: its decimal id from the
+    scene's event table, then one romaji noun for what it is about
+    (`EV08_KAGI` 鍵, `EV52_IDO` 井戸, `EV99_ROUYA` 牢屋), or a terse English
+    verb of the period where the code does not show the subject (`EV12_SET`,
+    `EV20_MAIN`, `EV94_MAIN`). It is `static` once the table that reaches it
+    lives in the same object. Engine functions keep our `Subsystem_VerbObject`
+    names; short locals; named struct fields.
+  - The bytes prove layers, units and calls; the ROM keeps no names (only
+    credits text and ⚓️'s build stamp `020610172024`). Names, numbering and
+    comments are reconstruction: never present them as recovered.
+  - The showcase is `games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO`, ルンパ城.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in
@@ -256,8 +311,9 @@ never a file or a function.
   (`git log --all -S`). When branches merge, an adoption wins over edits to
   its draft, and code that used an old name takes the new one. A worker
   commits only verified work; anything unverified at a stop is discarded.
-- **W8** A mechanical rewrite is `alchemy camelotize` followed by
-  `alchemy keep`; a rewrite by hand meets the same test. Message names stay
+- **W8** Camelotizing moves code toward S3's target and never away from
+  it. A mechanical rewrite is `alchemy camelotize` followed by `alchemy
+  keep`; a rewrite by hand meets the same test. Message names stay
   linker symbols: as an enum, small ids become immediate moves instead of
   literal-pool loads and the bytes change.
 
@@ -281,6 +337,14 @@ Not rules; what earlier work measured.
   German, Spanish, French and Italian far-call tables sometimes name a stub
   differently; `alchemy label` names a scaffold-only stub.
 - Nested functions adopt with their parent.
+- Scenes reach the engine through one inline layer: as direct calls the
+  services change 642 of 5,621 ☀️ English functions, through the layer all
+  match. Some scenes call a service directly, and those calls stay direct.
+- All 1,798 coordinate constants in ☀️ scene calls are whole pixels, and 769
+  of them fit no half-cell grid: the authors placed actors in pixels.
+- C89 and GCC 2.96 take only ASCII identifiers; Shift-JIS in comments and
+  strings was normal, minus the ダメ文字 (表, ソ, 能 ...) whose second byte is
+  `0x5C`, the backslash that escapes a quote or continues a line.
 
 ## Commands
 

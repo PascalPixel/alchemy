@@ -2,9 +2,11 @@
 #include "IWRAM_CALL.H"
 
 
+/* Fills which of the five recovery entries apply to an owner (fallen,
+   poisoned, venomed, restrained, haunted) and returns how many do. */
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
-    u8 *state;
+    struct BattleUnit *state;
     s32 i;
     s32 zero;
     s32 count;
@@ -16,12 +18,12 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         output[i] = zero;
 
     count = 0;
-    if (*(s16 *)(state + 56) == 0 && requested == 1) {
+    if (state->hp == 0 && requested == 1) {
         output[0] = requested;
         count = 1;
     }
 
-    mode = *(s8 *)(state + 0x131);
+    mode = state->poison;
     if (mode != 0) {
         if (mode == 1)
             output[1] = mode;
@@ -29,11 +31,11 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
             output[2] = 1;
         count++;
     }
-    if (*(s8 *)(state + 304) != 0) {
+    if (state->restraint != 0) {
         output[3] = 1;
         count++;
     }
-    if (state[320] != 0) {
+    if (state->evil_spirit != 0) {
         output[4] = 1;
         count++;
     }

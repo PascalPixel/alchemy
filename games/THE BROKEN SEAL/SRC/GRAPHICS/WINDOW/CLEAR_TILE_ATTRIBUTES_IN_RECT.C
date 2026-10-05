@@ -8,9 +8,9 @@
 #include "IWRAM_CALL.H"
 #include "TEXT_RENDER_RUNTIME.H"
 
-/* The Japanese edition renders its kana and voicing marks differently and
-   keeps its code in its scaffold for now. */
-#if EDITION_INTERNATIONAL
+/* Advance widths of the proportional glyphs from code 32 (the Japanese
+   table stops at 127; its kana and kanji are 8 wide) and the text colours'
+   pens. */
 extern const u8 UiText_GlyphWidths[];
 extern const u8 UiText_ColourPens[];
 
@@ -89,7 +89,11 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
                     pens[1] = UiText_ColourPens[work->colour];
                     break;
                 case 3:
+#if EDITION_INTERNATIONAL
                     x += UiText_GlyphWidths[0];
+#else
+                    x += 8;
+#endif
                     break;
                 case 14:
                 case 15:
@@ -98,12 +102,22 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
                 case 11:
                 case 12:
                 case 17:
+#if EDITION_INTERNATIONAL
                 case 29:
+#endif
                     script++;
                     break;
                 }
             } else {
                 c &= 0xFF;
+#if !EDITION_INTERNATIONAL
+                /* A voicing mark is drawn over the end of the kana
+                   before it. */
+                if (c == 222 || c == 223) {
+                    x -= 3;
+                    c += 32;
+                }
+#endif
                 src = (u32 *)(glyphs + c * 32);
                 dst = canvas + x;
                 for (i = 0; i < 8; i++) {
@@ -132,6 +146,14 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 #endif
                     x += 3;
                 else {
+#if !EDITION_INTERNATIONAL
+                    if (c > 128) {
+                        if (c == 254 || c == 255)
+                            w = 3;
+                        else
+                            w = 8;
+                    } else
+#endif
                     if (c > 31)
                         w = UiText_GlyphWidths[c - 32];
                     else
@@ -202,7 +224,6 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
     Runtime_BumpFree(canvas);
     return count;
 }
-#endif
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
 {

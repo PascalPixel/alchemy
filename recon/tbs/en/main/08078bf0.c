@@ -23,7 +23,19 @@
    free loops, all-index or all-ca class loops) are 300+ and superseded.
    Remaining (28): the ROM keeps the test and the OR on the copied pointer
    (r7 = lr) and the level and the search head on lr; here the test and
-   the level read lr and the search head reads r7. */
+   the level read lr and the search head reads r7. Why that is hard: the
+   search head is jump1's copy of the inner compare, so it is the same
+   index expression the inner loop reloads through the offset giv (a ca
+   form there is hoisted or reused by GCSE, 200+); cse1 gives the head and
+   the level one address register, so the level is an index read too; and
+   the test and the OR need a second register whose initial value copies
+   lr's. With ca for them (38) ca's user init precedes loop.c's giv init,
+   so cse2 makes lr the copy (mov lr, r7); with cg for them (116) the
+   DEST_REG giv absorbs the level/head giv. Also tried and worse: a second
+   counter k for the test and the OR (219), a loop-invariant tb =
+   cls->abilities indexed by j (198), (cls->abilities + j)-> (same as
+   index), ca set before the clears (199), a merged test-or-level
+   condition (28, same code), swapped compare operands (155). */
 #include "TYPES.H"
 #include "CHARACTER.H"
 #include "BATTLE_UNIT.H"

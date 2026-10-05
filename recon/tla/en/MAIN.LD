@@ -861,6 +861,8 @@
         "*/recon/tla/raw/0804d16c.o"(.text)
         "*/recon/tla/raw/0804d28c.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/MENU7.o"(.text)
+        "*/recon/tla/raw/0804d3e8.o"(.text)
+        "*/recon/tla/raw/0804d484.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/SELECTION.o"(.text)
         "*/recon/tla/raw/0804d570.o"(.text)
         "*/recon/tla/raw/0804d5ac.o"(.text)

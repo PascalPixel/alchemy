@@ -1128,6 +1128,7 @@ UiText_OpenMessageWindow:
 UiText_ShowPositionedMessageAndWait:
 	.incbin "baserom.gba", 0x0003a790, 0x0000011c
 	.section .rom.0003a8e0, "ax"
+	.balign 4
 	.incbin "baserom.gba", 0x0003a8e0, 0x000001a8
 	.section .rom.0003aaae, "ax"
 	.incbin "baserom.gba", 0x0003aaae, 0x00000002
@@ -1739,6 +1740,18 @@ Menu_EndResourceSelection:
 	.thumb_func
 Menu_RunResourceSelectionLoop:
 	.incbin "baserom.gba", 0x0004d360, 0x000001d8
+	.section .rom.0004d5dc, "ax"
+	.global Menu_CenterResourceEntries
+	.type Menu_CenterResourceEntries, %function
+	.thumb_func
+Menu_CenterResourceEntries:
+	.incbin "baserom.gba", 0x0004d5dc, 0x0000009c
+	.section .rom.0004d678, "ax"
+	.global Menu_LayoutResourceEntries
+	.type Menu_LayoutResourceEntries, %function
+	.thumb_func
+Menu_LayoutResourceEntries:
+	.incbin "baserom.gba", 0x0004d678, 0x00000074
 	.section .rom.0004d764, "ax"
 	.global Menu_AnimateSelectionToEntry
 	.type Menu_AnimateSelectionToEntry, %function

@@ -589,6 +589,8 @@
     "*/recon/tla/fr/rom.o"(.rom.0004d340)
     "*/recon/tla/fr/rom.o"(.rom.0004d394)
     "*/games/THE LOST AGE/SRC/MENU/MENU7.o"(.text)
+    "*/recon/tla/fr/rom.o"(.rom.0004d610)
+    "*/recon/tla/fr/rom.o"(.rom.0004d6ac)
     "*/games/THE LOST AGE/SRC/MENU/SELECTION.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0004d798)
     "*/recon/tla/fr/rom.o"(.rom.0004d7d4)

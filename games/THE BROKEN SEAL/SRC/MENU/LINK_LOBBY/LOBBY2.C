@@ -18,7 +18,7 @@ u32 gLinkLobbyCallFrames;
 extern u8 MsgLobbyLinkDisconnected[];
 
 extern u8 MsgEnemyLabel[];
-extern u8 gLinkStatus[];
+extern volatile u16 gLinkStatus;
 u8 *Owner_GetState(s32 owner);
 void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
 
@@ -117,7 +117,7 @@ wait1:
         goto done;
     }
     Engine_TaskWait(1);
-    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
         if (++tries > 24) {
                 result = -1;
                 goto done;
@@ -177,7 +177,7 @@ wait2:
         goto done;
     }
     Engine_TaskWait(1);
-    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
         if (++tries > 24) {
             result = -1;
         goto done;
@@ -293,7 +293,7 @@ s32 LinkLobby_SendPartyRecords(void)
         } while (0);
         while (SerialRuntime_GetActiveTransfers() != 0) {
             Engine_TaskWait(1);
-            if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+            if (--timeout < 0 || (gLinkStatus & 3) != 3) {
                 /* FAKEMATCH: a one-pass boundary keeps this failure inline,
                    so its -1 is reloaded here and jump2 merges it into the
                    offer's; moved out of the loop, it shifts every later
@@ -311,7 +311,7 @@ s32 LinkLobby_SendPartyRecords(void)
     goto next;
 wait:
     Engine_TaskWait(1);
-    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
         if (++tries > 24) {
             result = -1;
             goto done;
@@ -364,7 +364,7 @@ next:
         goto test3;
     wait3:
         Engine_TaskWait(1);
-        if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
+        if (--timeout < 0 || (gLinkStatus & 3) != 3) {
             if (++tries > 24) {
                 result = -1;
                 goto done;

@@ -117,7 +117,7 @@ Engine_ActorSetChildValue:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventShowMessageAndWait
 	.thumb_func
 Engine_EventShowMessageAndWait:

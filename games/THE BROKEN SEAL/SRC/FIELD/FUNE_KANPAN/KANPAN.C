@@ -138,7 +138,7 @@ void ObjectGroup_ConfigureChildValue();
 void *ObjectMotion_SetPositionAndReset();
 void ObjectMotion_ResetAndSetPosition();
 void Motion_SetVarCbAndRefresh();
-void Event_SetValue1d8();
+void Event_SetMessageId();
 void Graphics_EnableObjLayerAndCallbacks();
 void ObjectMotion_EnableActionAndSetCallback();
 void ObjectDispatch_StopCallbacksAndHideLayers();
@@ -1355,7 +1355,7 @@ void FieldScene_RunShipDeckEventScript(void)
     Call3(ObjectMotion_SetPositionAndReset, 21, 196, 678);
     Call3(ObjectMotion_SetPositionAndReset, 21, 182, 654);
     Motion_SetVarCbAndRefresh(21, 2);
-    Event_SetValue1d8((s32)MsgFuneNoUseLate);
+    Event_SetMessageId((s32)MsgFuneNoUseLate);
     FieldScene_RunStepThen10(40981);
     Call3(ObjectMotion_SetSpeedParameters, 0, 157286, 78643);
     Call3(ObjectMotion_ResetAndSetPosition, 0, 154, 609);

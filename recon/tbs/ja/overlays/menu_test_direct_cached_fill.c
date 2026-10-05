@@ -18,7 +18,7 @@ extern int MenuTest_BenchmarkCharacter;
 TEXT_MESSAGE_ENUM(MsgBattleAdditionalPsynergyHelp);
 TEXT_MESSAGE_ENUM(MsgHaidiaComeOnHurry);
 
-void Event_SetValue1d8(s16 message);
+void Event_SetMessageId(s16 message);
 void BattleEv_RunWait(s32 mode, s32 frames);
 s32 PartyInventory_GiveItem(s32 item);
 

@@ -79,7 +79,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         if (event->effect.id < 0x10000) {
             s32 objref = BattleEffect_SelectNearbyObject(gGameState.object_id);
             Battle_Reset();
-            Event_SetValue1d8(event->effect.id);
+            Event_SetMessageId(event->effect.id);
             BattleEv_RunWait(objref, 0);
             BattleFx_FinishAction();
         } else {

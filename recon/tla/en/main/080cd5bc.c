@@ -23,7 +23,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
         }
         if (desc->result < 0x10000) {
             Battle_Reset();
-            Event_SetValue1d8(desc->result);
+            Event_SetMessageId(desc->result);
             BattleEv_RunWait(-1, 0);
             ret = 0;
             BattleFx_FinishAction();

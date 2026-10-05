@@ -44,7 +44,7 @@ void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 s32 Object_CallSpawnRoutineAtOrigin(s32 mode);
 void UiWork_FinalizePendingCoreFar(void);
 void Battle_Reset(void);
-void Event_SetValue1d8(s32 effect_id);
+void Event_SetMessageId(s32 effect_id);
 
 void BattleEv_RunWait(s32 value, s32 flag);
 void BattleFx_FinishAction(void);
@@ -226,7 +226,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         if ((s32)event->value < 0x10000) {
             s32 objref = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
             Battle_Reset();
-            Event_SetValue1d8(event->value);
+            Event_SetMessageId(event->value);
             BattleEv_RunWait(objref, 0);
             BattleFx_FinishAction();
         } else {

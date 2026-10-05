@@ -232,13 +232,13 @@ ObjectGroup_ConfigureChildValue:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
-	.global Event_SetValue1d8
+	.global Event_SetMessageId
 	.thumb_func
-Event_SetValue1d8:
+Event_SetMessageId:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:

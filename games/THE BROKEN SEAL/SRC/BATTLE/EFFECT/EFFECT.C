@@ -52,7 +52,7 @@ void ResetSceneTransitionEffect(void);
 void MapEvent_RunTileTriggerSequence(void);
 void FieldEvent_ShowStatusMessage(void);
 
-void Event_SetValue1d8(s32);
+void Event_SetMessageId(s32);
 void BattleEv_RunWait(s32, s32);
 void BattleFx_FinishAction();
 void _call_via_r3(s32, s32);
@@ -266,7 +266,7 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
         if (resource != 0) {
             if (resource < 0x10000) {
                 Battle_Reset();
-                Event_SetValue1d8(FIELD_AT_OFFSET(arg0, s32 *, 8));
+                Event_SetMessageId(FIELD_AT_OFFSET(arg0, s32 *, 8));
                 BattleEv_RunWait(arg2, 0);
                 BattleFx_FinishAction();
             } else {

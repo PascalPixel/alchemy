@@ -192,10 +192,10 @@ ObjectGroup_SetChildValueFar:
 	.thumb_func
 Object_SetTargetAndCallbackFar:
 	overlay_veneer Object_SetTargetAndCallback
-	.global Event_SetValue1d8Far
+	.global Event_SetMessageIdFar
 	.thumb_func
-Event_SetValue1d8Far:
-	overlay_veneer Event_SetValue1d8
+Event_SetMessageIdFar:
+	overlay_veneer Event_SetMessageId
 	.global UiText_OpenMessageAtObjectFar
 	.thumb_func
 UiText_OpenMessageAtObjectFar:

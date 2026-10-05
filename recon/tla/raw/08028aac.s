@@ -718,7 +718,7 @@ Func_08028aac:
 	ldr r1, [r3]
 	mov r3, r8
 	ands r1, r3
-	bl ObjectDispatch_SetSingleChildField1a
+	bl ObjectDispatch_SetChildByteValue
 .L_0802903a:
 	movs r3, #192
 	lsls r3, r3, #18

@@ -63,14 +63,14 @@ union MotionWork {
     u8 bytes[102];
 };
 
-extern s32 Inventory_Count(s32 arg0);                         /* 0x02004352 -> 08077248 */
-extern s32 Inventory_Count(s32 arg0);                         /* 0x0200435c -> 08077248 */
-extern s32 Shop_PickUnitItem(s32 *out_first, s32 *out_second);  /* 0x02004372 -> 080b0058 */
+extern s32 Inventory_Count(s32 arg0);
+extern s32 Inventory_Count(s32 arg0);
+extern s32 Shop_PickUnitItem(s32 *out_first, s32 *out_second);
 s32 Inventory_Discard(s32 owner, s32 slot);
-extern void PartyInventory_Add(s32 arg0);                        /* 0x0200438a -> 08077030 */
-extern void PartyInventory_Add(s32 arg0);                        /* 0x02004390 -> 08077030 */
-extern void PartyInventory_Add(s32 arg0);                        /* 0x02004396 -> 08077030 */
-extern void PartyInventory_Add(s32 arg0);                        /* 0x0200439c -> 08077030 */
+extern void PartyInventory_Add(s32 arg0);
+extern void PartyInventory_Add(s32 arg0);
+extern void PartyInventory_Add(s32 arg0);
+extern void PartyInventory_Add(s32 arg0);
 
 s32 CalculateAngleFromCoordinateDelta(s32, s32);
 void Scene_UnmaskGarcia(void);
@@ -106,19 +106,9 @@ void Engine_ActorFaceDirection();
  * introduction scene.
  */
 
-/*
- * Callback for resource_380 that forwards to Engine_LeaderCheckAhead and nothing else.
- * A script record holds its Thumb pointer; nothing calls it directly. The
- * twelve-byte owner includes the zero alignment halfword after the return and
- * has no literal pool. Engine_LeaderCheckAhead takes no arguments -- nothing is loaded
- * into r0 before the call.
- */
+/* The script callback checks ahead of the leader. */
 
-/*
- * resource_380 owner at 0x02004248, 24 bytes including the trailing
- * alignment halfword: a two-call convenience wrapper.  It shows a line
- * and waits.
- */
+/* Show a line and wait. */
 
 struct ObjectRuntime;
 

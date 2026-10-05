@@ -1016,13 +1016,7 @@ s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
 
 /* The mythril bags. */
 
-/*
- * Drain until room: save the s16 counter at scene workspace + 472, prime two
- * channels, then loop while fewer than four of thirty slots are free,
- * requesting more and passing on any event pair that is not -1. On exit it
- * flushes four times with id 224 and restores the saved counter. The 148-byte
- * owner includes its three-word literal pool. Callee roles are not established.
- */
+/* Save the scene counter, prime both channels and drain events until four of the thirty slots are free, then flush four times with ID 224 and restore the counter. */
 void Scene_GiveMythrilBags(void)
 {
     u8 *work = (u8 *)gEventWork;

@@ -40,8 +40,7 @@ extern u8 MsgSoruDoubtHowFeel[];
 extern u8 MsgSoruPermitRelieveElemental[];
 extern u8 MsgSoruThankCooperation[];
 
-/* FAKEMATCH: the flag byte's or-assign goes through this helper, which
- * keeps the reference's register for the byte. */
+/* FAKEMATCH: the flag byte's or-assign goes through this helper, which keeps the reference's register for the byte. */
 s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
 {
     struct OverlayObject *linked_object = object->linked_object;
@@ -855,9 +854,7 @@ void Scene_UnmaskGarcia(void)
             Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 30);
             {
-                /* FAKEMATCH: a result temporary, not a compound or-assign: the
-                 * reference merges the byte into the mask's register, which the
-                 * two-address ORR does only when the result is its own object. */
+                /* FAKEMATCH: a result temporary, not a compound or-assign: the reference merges the byte into the mask's register, which the two-address ORR does only when the result is its own object. */
                 u8 flags = obj->steering_flags | 1;
 
                 obj->steering_flags = flags;
@@ -881,9 +878,7 @@ void Scene_UnmaskGarcia(void)
     obj->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x1e2);
     {
-        /* FAKEMATCH: a result temporary, not a compound or-assign: the
-         * reference merges the byte into the mask's register, which the
-         * two-address ORR does only when the result is its own object. */
+        /* FAKEMATCH: a result temporary, not a compound or-assign: the reference merges the byte into the mask's register, which the two-address ORR does only when the result is its own object. */
         u8 flags = obj->steering_flags | 1;
 
         obj->steering_flags = flags;
@@ -950,8 +945,7 @@ void Scene_AlexTakesStars(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     rec = Object_GetById(ACTOR_GERALD);
     rec->steering_flags &= ~ACTOR_FACES_MOTION;
-    /* FAKEMATCH: the zero is parked here, well before its one store, which
-     * keeps it in the register the reference holds it in. */
+    /* FAKEMATCH: the zero is parked here, well before its one store, which keeps it in the register the reference holds it in. */
     none = 0;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Engine_EventWait(30);

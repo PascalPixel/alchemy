@@ -45,7 +45,7 @@ BattleFx_DispatchRequestKind:
 	cmp r1, #5
 	bne .L_080db6ca
 	adds r0, r5, #0
-	bl Func_080dede0
+	bl BattleFx_CallEffect05
 	b .L_080db840
 .L_080db6ca:
 	cmp r1, #6
@@ -69,7 +69,7 @@ BattleFx_DispatchRequestKind:
 	cmp r1, #14
 	bne .L_080db6fa
 	adds r0, r5, #0
-	bl Func_080dfcf8
+	bl BattleFx_CallEffect14
 	b .L_080db840
 .L_080db6fa:
 	cmp r1, #13

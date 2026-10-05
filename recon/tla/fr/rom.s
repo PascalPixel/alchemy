@@ -3722,14 +3722,18 @@ BattleFx_RunOrbitingParticles:
 	.thumb_func
 Func_080decb8:
 	.incbin "baserom.gba", 0x000e3cac, 0x000000cc
-	.section .rom.000e3dd4, "ax"
-	.incbin "baserom.gba", 0x000e3dd4, 0x00000ac8
+	.section .rom.000e3ddc, "ax"
+	.global RunBattleEffect05
+RunBattleEffect05:
+	.incbin "baserom.gba", 0x000e3ddc, 0x00000ac0
 	.section .rom.000e48d2, "ax"
 	.incbin "baserom.gba", 0x000e48d2, 0x000001d6
 	.section .rom.000e4afe, "ax"
 	.incbin "baserom.gba", 0x000e4afe, 0x000001ca
-	.section .rom.000e4cec, "ax"
-	.incbin "baserom.gba", 0x000e4cec, 0x00000304
+	.section .rom.000e4cf4, "ax"
+	.global RunBattleEffect14
+RunBattleEffect14:
+	.incbin "baserom.gba", 0x000e4cf4, 0x000002fc
 	.section .rom.000e5014, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000e5014, 0x000002cc

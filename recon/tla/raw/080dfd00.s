@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dfd00
+	.global RunBattleEffect14
 	.thumb_func
-Func_080dfd00:
+RunBattleEffect14:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

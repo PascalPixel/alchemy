@@ -21,3 +21,8 @@ void BattleFx_ShrinkObjectScaleUntilHalf(void *obj)
         FIELD_AT_OFFSET(obj, s32 *, 0x6C) = 0;
     }
 }
+
+void BattleFx_CallEffect14(void)
+{
+    RunBattleEffect14();
+}

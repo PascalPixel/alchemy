@@ -1410,6 +1410,8 @@
     "*/recon/tla/fr/rom.o"(.rom.001a1294)
     "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/TITLE_WAIT.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001a6154)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/TITLE_LOGO_PIECE.o"(.text)
+    "*/recon/tla/fr/rom.o"(.rom.001a6b50)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/INTERPOLATE_BUFFERS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001a78c0)
     "*/games/THE LOST AGE/SRC/GRAPHICS/PALETTE/PALETTE4.o"(.text)

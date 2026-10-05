@@ -2732,7 +2732,7 @@
         "*/recon/tla/raw/081a6638.o"(.text)
         "*/recon/tla/raw/081a6724.o"(.text)
         "*/recon/tla/raw/081a68b4.o"(.text)
-        "*/recon/tla/raw/081a6ab4.o"(.text)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/TITLE_LOGO_PIECE.o"(.text)
         "*/recon/tla/raw/081a6b50.o"(.text)
         "*/recon/tla/raw/081a6ea0.o"(.text)
         "*/recon/tla/raw/081a71c8.o"(.text)

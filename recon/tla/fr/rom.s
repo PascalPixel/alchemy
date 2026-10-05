@@ -5023,7 +5023,9 @@ Func_081a6020:
 Func_081a6028:
 	.incbin "baserom.gba", 0x001a6028, 0x0000006c
 	.section .rom.001a6154, "ax"
-	.incbin "baserom.gba", 0x001a6154, 0x0000171c
+	.incbin "baserom.gba", 0x001a6154, 0x00000960
+	.section .rom.001a6b50, "ax"
+	.incbin "baserom.gba", 0x001a6b50, 0x00000d20
 	.section .rom.001a78c0, "ax"
 	.global TitlePalette_UpdateFade
 	.type TitlePalette_UpdateFade, %function

@@ -500,12 +500,6 @@ Element_PowerResistCurve:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008926c, 0x00000d94
-	.section .rom.0008f598, "ax"
-	.global DisplayTransition_UpdateScanlineTable
-	.type DisplayTransition_UpdateScanlineTable, %function
-	.thumb_func
-DisplayTransition_UpdateScanlineTable:
-	.incbin "baserom.gba", 0x0008f598, 0x0000090c
 	.section .rom.00090ac8, "ax"
 	.global BattleFx_BuildBuffer
 	.type BattleFx_BuildBuffer, %function
@@ -569,7 +563,13 @@ BattleFx_ParticleScript:
 	.incbin "baserom.gba", 0x0009e9d4, 0x00000024
 	.global BattleFx_MarkerParticleScript
 BattleFx_MarkerParticleScript:
-	.incbin "baserom.gba", 0x0009e9f8, 0x0000004e
+	.incbin "baserom.gba", 0x0009e9f8, 0x0000000c
+	.global DisplayTransition_NoiseWidths
+DisplayTransition_NoiseWidths:
+	.incbin "baserom.gba", 0x0009ea04, 0x00000022
+	.global DisplayTransition_EdgeOffsets
+DisplayTransition_EdgeOffsets:
+	.incbin "baserom.gba", 0x0009ea26, 0x00000020
 	.global DisplayTransition_DitherTable
 DisplayTransition_DitherTable:
 	.incbin "baserom.gba", 0x0009ea46, 0x00000102
@@ -625,7 +625,10 @@ WorldMap_CursorDirectionAngles:
 	.incbin "baserom.gba", 0x0009f948, 0x00000020
 	.global Data_0809f810
 Data_0809f810:
-	.incbin "baserom.gba", 0x0009f968, 0x000003bc
+	.incbin "baserom.gba", 0x0009f968, 0x00000030
+	.global DisplayTransition_Shapes
+DisplayTransition_Shapes:
+	.incbin "baserom.gba", 0x0009f998, 0x0000038c
 	.global ObjectMotion_LaunchScript
 ObjectMotion_LaunchScript:
 	.incbin "baserom.gba", 0x0009fd24, 0x00000020

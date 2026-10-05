@@ -505,11 +505,11 @@ BattleFx_ParticleScript:
 	.global BattleFx_MarkerParticleScript
 BattleFx_MarkerParticleScript:
 	.incbin "baserom.gba", 0x0009e8a0, 0x0000000c
-	.global Data_0809e8ac
-Data_0809e8ac:
+	.global DisplayTransition_NoiseWidths
+DisplayTransition_NoiseWidths:
 	.incbin "baserom.gba", 0x0009e8ac, 0x00000022
-	.global Data_0809e8ce
-Data_0809e8ce:
+	.global DisplayTransition_EdgeOffsets
+DisplayTransition_EdgeOffsets:
 	.incbin "baserom.gba", 0x0009e8ce, 0x00000020
 	.global DisplayTransition_DitherTable
 DisplayTransition_DitherTable:
@@ -576,8 +576,8 @@ WorldMap_CursorDirectionAngles:
 	.global Data_0809f810
 Data_0809f810:
 	.incbin "baserom.gba", 0x0009f810, 0x00000030
-	.global Data_0809f840
-Data_0809f840:
+	.global DisplayTransition_Shapes
+DisplayTransition_Shapes:
 	.incbin "baserom.gba", 0x0009f840, 0x0000038c
 	.global ObjectMotion_LaunchScript
 ObjectMotion_LaunchScript:

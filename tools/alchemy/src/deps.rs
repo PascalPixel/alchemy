@@ -16,6 +16,7 @@ pub struct Image {
     pub main: bool,
     pub functions: Vec<(Function, Vec<Ins>)>,
     pub symbols: Vec<Symbol>,
+    pub undecoded_arm: BTreeSet<u32>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -363,7 +364,15 @@ impl<'a> Index<'a> {
         for (ii, image) in self.images.iter().enumerate() {
             for (fi, (f, _)) in image.functions.iter().enumerate() {
                 if f.origin == Origin::NotYetC {
-                    out.insert((ii, fi), BTreeSet::new());
+                    let mut blockers = BTreeSet::new();
+                    if image.undecoded_arm.contains(&f.address) {
+                        blockers.insert(Blocker {
+                            kind: "arm-dependencies-not-decoded",
+                            scope: if image.main { String::new() } else { image.name.clone() },
+                            item: f.name.clone(),
+                        });
+                    }
+                    out.insert((ii, fi), blockers);
                 }
             }
         }

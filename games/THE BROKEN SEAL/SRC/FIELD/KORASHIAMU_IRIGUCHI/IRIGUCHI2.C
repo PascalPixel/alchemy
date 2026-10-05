@@ -8,14 +8,6 @@ extern u8 KorashiamuIriguchi_ActionTable1[];
 extern u8 KorashiamuIriguchi_ActionTable2[];
 extern u8 KorashiamuIriguchi_ActionTable4[];
 
-/* Moves the next dialogue line on by count messages. */
-static __inline__ void Event_SkipMessages(s32 count)
-{
-    u16 *message = &gEventWork->message;
-
-    *message = *message + count;
-}
-
 void FieldScene_CallPairWith10();
 void SceneState_ForwardMaskedHalfwordWith10();
 void Object_SetActionCallbackAndRefreshById();

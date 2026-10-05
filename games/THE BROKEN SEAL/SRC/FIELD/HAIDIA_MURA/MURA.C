@@ -353,8 +353,8 @@ void SceneDialogue_RunFlag815GatedStep(void)
             Engine_EventShowMessageAndWait(21, 0, 60);
             Engine_EventShowMessage(21, 0);
         } else {
-            u8 *b = *(u8 **)&gEventWork;
-            u16 *h = (u16 *)(b + 0x1d8);
+            u16 *h = &gEventWork->message;
+
             *h = *h + 2;
             Engine_EventWait(40);
             Engine_EventShowMessage(21, 0);

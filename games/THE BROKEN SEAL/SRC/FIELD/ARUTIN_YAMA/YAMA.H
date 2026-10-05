@@ -61,14 +61,6 @@ void Audio_PlayCueFromEventWork();
 s32 BattleFx_SetQueuedSoundAndPlay();
 void BattleFx_PlayQueuedSound();
 
-/* Skips the next messages of the scene's dialogue. */
-static __inline__ void Event_SkipMessages(s32 count)
-{
-    struct EventWork *work = gEventWork;
-
-    work->message = (u16)(work->message + count);
-}
-
 /* The set-piece sources call one another across files. */
 void SceneState_SetValue14Mode23(void);
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object);

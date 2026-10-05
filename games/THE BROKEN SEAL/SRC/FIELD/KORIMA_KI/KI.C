@@ -262,7 +262,6 @@ void PaletteScene_RunActorTransitionSequence(void)
     struct FieldActor *object;
     s32 *transitionState;
     s32 cycle;
-    s32 sceneWorkSlot;
     s32 effectCallback;
     const s32 *finalActions;
 
@@ -397,8 +396,7 @@ void PaletteScene_RunActorTransitionSequence(void)
         Event_ShowMessage(0x4009, 0);
         Event_ShowMessage(0x8008, 0);
     } else {
-        sceneWorkSlot = (u32)&gEventWork;
-        *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 2;
+        gEventWork->message += 2;
         Actor_ShowEmote(ACTOR_MIA, 0x103, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 0);
         Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
@@ -408,7 +406,7 @@ void PaletteScene_RunActorTransitionSequence(void)
             Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
             Event_ShowMessage(ACTOR_MIA, 0);
         } else {
-            *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 1;
+            gEventWork->message += 1;
         }
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
         Event_ShowMessage(ACTOR_IVAN, 0);

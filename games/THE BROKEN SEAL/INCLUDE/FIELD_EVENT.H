@@ -201,6 +201,14 @@ void Audio_PlayCue(s32 cue);
  * question that follows it, and choosing yes returns 0.
  */
 
+/* Moves the next dialogue line on by count messages. */
+static inline void Event_SkipMessages(s32 count)
+{
+    u16 *message = &gEventWork->message;
+
+    *message = *message + count;
+}
+
 static inline void Event_ShowMessage(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: Direct calls change FieldScene_RunFourActorEncounter (EN): mov	r0, #3 becomes mov	r7, r8. */

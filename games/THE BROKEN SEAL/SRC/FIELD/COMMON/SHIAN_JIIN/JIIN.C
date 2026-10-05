@@ -153,7 +153,6 @@ void FieldScene_RunScene39e_02000414(void)
 
 void FieldScene_RunFlag88FBranch(void)
 {
-    extern u8 *gWork;
 
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x88F) != 0) {
@@ -164,11 +163,11 @@ void FieldScene_RunFlag88FBranch(void)
         Engine_EventSetMessage((s32)MsgShianIsntNobleHimTrySave);
         Engine_EventOpenMessage(12, 0);
         if (Engine_EventChooseYesNo(0, 0) == 1) {
-            u16 *q = (u16 *)(gWork + 0x1D8);
+            u16 *q = &gEventWork->message;
             q[0] = q[0] + 1;
             Engine_EventOpenMessage(12, 0);
             if (Engine_EventChooseYesNo(0, 0) == 1) {
-                u16 *r = (u16 *)(gWork + 0x1D8);
+                u16 *r = &gEventWork->message;
                 r[0] = r[0] + 1;
             }
         }
@@ -1025,7 +1024,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     }
 
     /* Skipped once: bump the workspace skip counter and offer the beat again. */
-    Scene_BumpStep(1);
+    Event_SkipMessages(1);
     Engine_EventWait(20);
     Actor_ShowEmote(18, 0x105, 60);
     Actor_FaceDirection(18, 128 << 7, 20);
@@ -1046,7 +1045,7 @@ joinBeat:
     goto finish;
 
 skipTwice:
-    Scene_BumpStep(1);
+    Event_SkipMessages(1);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(18, 4);
     Engine_EventWait(20);
@@ -1063,9 +1062,7 @@ finish:
 
 void FieldScene_RunSkippableStoryBeat(void)
 {
-    extern u8 *gWork;
 
-    u8 *workspace;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianWarriorWillShowMeYour);
@@ -1077,8 +1074,7 @@ void FieldScene_RunSkippableStoryBeat(void)
         Engine_GameFlagSet(0x898);
         Engine_EventEnd();
     } else {
-        workspace = gWork;
-        *(u16 *)(workspace + 472) += 1;
+        gEventWork->message += 1;
         Engine_EventShowMessageAndWait(18, 0, 20);
         Engine_EventEnd();
     }

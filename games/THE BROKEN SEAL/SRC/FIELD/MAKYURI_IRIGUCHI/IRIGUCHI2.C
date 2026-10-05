@@ -185,8 +185,7 @@ void MakyuriIriguchi_RaisePillar(void)
     struct Sprite39b *spr;
     s32 step;
 
-    /* FAKEMATCH: the event work pointer is read as globals - 8, so the pool
-     * holds the scene pointer's address and the base is derived from it. */
+    /* FAKEMATCH: the event work pointer is read as globals - 8, so the pool holds the scene pointer's address and the base is derived from it. */
     {
         u8 **globals = &gWork.scene;
 

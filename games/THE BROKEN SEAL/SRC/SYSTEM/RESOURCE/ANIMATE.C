@@ -342,7 +342,7 @@ test_entry:
     return 0;
 }
 
-s32 AnimationObjects_SetHalfword02OnActive(struct AnimationObject *group, s32 val)
+s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *group, s32 val)
 {
     u8 n = group->count;
     struct AnimationEntry **p;
@@ -362,7 +362,7 @@ s32 AnimationObjects_SetHalfword02OnActive(struct AnimationObject *group, s32 va
     return 0;
 }
 
-void AnimationObjects_SetField15OnActive(struct AnimationObject *group, s32 val)
+void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group, s32 val)
 {
     u8 n = group->count;
     if (n != 0) {

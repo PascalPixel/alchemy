@@ -27,7 +27,7 @@ Func_08009020:
 	.thumb_func
 Object_InitializeMode:
 	overlay_veneer AnimationObjects_SelectAnimation
-	overlay_veneer AnimationObjects_SetHalfword02OnActive
+	overlay_veneer AnimationObjects_SetActiveFrameTimers
 	.global ResourceObject_CreateFar
 	.thumb_func
 ResourceObject_CreateFar:
@@ -352,10 +352,10 @@ ResourceSlot_LoadFar:
 	.thumb_func
 SetMapCellCollisionFar:
 	overlay_veneer SetMapCellCollision
-	.global AnimationObjects_SetField15OnActiveFar
+	.global AnimationObjects_SetActiveTimerStepsFar
 	.thumb_func
-AnimationObjects_SetField15OnActiveFar:
-	overlay_veneer AnimationObjects_SetField15OnActive
+AnimationObjects_SetActiveTimerStepsFar:
+	overlay_veneer AnimationObjects_SetActiveTimerSteps
 	.global Runtime_RemapBytesByTableFar
 	.thumb_func
 Runtime_RemapBytesByTableFar:

@@ -46,7 +46,7 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 extern const u32 ObjectDispatch_DefaultScript[];
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
-void AnimationObjects_SetField15OnActive(struct AnimationObject *, s32);
+void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *, s32);
 s32 Animation_InitializeObjects(struct AnimationObject *);
 s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
@@ -401,7 +401,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
     if (object != 0) {
         switch (object->kind & 0xf) {
         case 1:
-            AnimationObjects_SetField15OnActive(object->target.child, value);
+            AnimationObjects_SetActiveTimerSteps(object->target.child, value);
             return;
         case 2:
             children = object->target.children;
@@ -409,7 +409,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
             do {
                 child = *children++;
                 if (child != 0)
-                    AnimationObjects_SetField15OnActive(child, value);
+                    AnimationObjects_SetActiveTimerSteps(child, value);
                 count--;
             } while (count >= 0);
             break;
@@ -427,7 +427,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 arg1,
         switch (object->kind & 15) {
         case 1:
             AnimationObjects_SelectAnimation(object->target.child, arg1);
-            AnimationObjects_SetField15OnActive(object->target.child, arg2);
+            AnimationObjects_SetActiveTimerSteps(object->target.child, arg2);
             break;
         case 2:
             items = object->target.children;
@@ -435,7 +435,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 arg1,
                 item = *items++;
                 if (item != 0) {
                     AnimationObjects_SelectAnimation(item, arg1);
-                    AnimationObjects_SetField15OnActive(item, arg2);
+                    AnimationObjects_SetActiveTimerSteps(item, arg2);
                 }
             }
             break;

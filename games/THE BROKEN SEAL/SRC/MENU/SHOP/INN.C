@@ -31,7 +31,7 @@ void EffectSlot_SetCallbackFar(
 void EffectSlot_SetObjectModeFar(struct EffectSlot *effect, s32 value);
 void AudioCommand_WaitForStateByteClear(void);
 void BattleFx_ClearOwnedSlotFar(struct EffectSlot *effect);
-void AnimationObjects_SetField15OnActiveFar(struct AnimationObject *object, s32 arg);
+void AnimationObjects_SetActiveTimerStepsFar(struct AnimationObject *object, s32 arg);
 void Shop_InitEffect(void);
 void Shop_ResetEffects(void);
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
@@ -100,7 +100,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     shop->cursor.anchor->active = 13;
     Audio_PlayCue(Data_080b4ab2[shop->party_action]);
     Shop_RestoreSceneTiles(0x00202108);
-    AnimationObjects_SetField15OnActiveFar(shop->party_member_icons[member], 0);
+    AnimationObjects_SetActiveTimerStepsFar(shop->party_member_icons[member], 0);
     WaitFrames(20);
     callback_flags = 0xc80;
     Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
@@ -164,7 +164,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     }
 
     Scheduler_RemoveCallback(Shop_ResetEffects);
-    AnimationObjects_SetField15OnActiveFar(shop->party_member_icons[member], 16);
+    AnimationObjects_SetActiveTimerStepsFar(shop->party_member_icons[member], 16);
     Shop_InitEffect();
     WaitFrames(30);
     shop->cursor.anchor->active = saved_kind;

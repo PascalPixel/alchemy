@@ -3,7 +3,7 @@
 #include "SCENE.H"
 
 s32 AnimationObjects_SelectAnimation(void *, s32);
-void AnimationObjects_SetField15OnActive(void *, s32);
+void AnimationObjects_SetActiveTimerSteps(void *, s32);
 
 void Graphics_EnableObjLayerAndCallbacks(void)
 {

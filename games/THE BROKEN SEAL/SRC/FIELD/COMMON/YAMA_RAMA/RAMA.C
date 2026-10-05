@@ -701,8 +701,6 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
 
 void YamaRama_DisableActorCollision(void)
 {
-    u8 *slot;
-
     Engine_EventBegin();
     {
         s32 fifth = 21;
@@ -710,8 +708,7 @@ void YamaRama_DisableActorCollision(void)
 
         Engine_MapCopyCellAttributes(14, 6, 1, 2, fifth, sixth);
     }
-    slot = (void *)Object_GetById(15) + 89;
-    *slot = 254;
+    Object_GetById(15)->collision_flags = 254;
     Engine_GameFlagSet(0x201);
     Engine_EventEnd();
 }

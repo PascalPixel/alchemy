@@ -28,7 +28,7 @@ struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *
 void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 void Func_080b0038(void *object, s32 x, s32 y);
 
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
@@ -260,7 +260,7 @@ s32 Menu_RunWorkspaceOptions(void)
         Ui_ApplyTableOffsetToPair(pair);
         WaitFrames(1);
 
-        if (Data_03001c94 & 4) {
+        if (gKeyState & KEY_SELECT) {
             Audio_PlayCue(112);
             preset = &work->preset;
             n = *preset + 1;
@@ -274,12 +274,12 @@ s32 Menu_RunWorkspaceOptions(void)
             *pB = Data_080367d6[*preset];
             continue;
         }
-        if (Data_03001c94 & 9) {
+        if (gKeyState & (KEY_A | KEY_START)) {
             result = 0;
             Audio_PlayCue(112);
             break;
         }
-        if (Data_03001c94 & 2) {
+        if (gKeyState & KEY_B) {
             result = -1;
             Audio_PlayCue(113);
             break;

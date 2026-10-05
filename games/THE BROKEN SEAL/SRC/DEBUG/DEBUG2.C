@@ -54,8 +54,8 @@ struct MapScrollWork {
 extern struct ViewServices gOverlayArea;
 s32 GameFlag_TestFar(s32 flag);
 extern volatile u32 gKeysRepeat;
-extern volatile u32 Data_03001ae8;
-extern volatile u32 Data_03001e40;
+extern volatile u32 gKeysHeld;
+extern volatile u32 gFrameCount;
 
 /* The compressed swatch tiles, one filled with each colour index. */
 extern const u8 Debug_PaletteSwatchTiles[];
@@ -292,7 +292,7 @@ redraw:
             red = 0;
             for (;;) {
                 WaitFrames(1);
-                if (!(Data_03001ae8 & 8))
+                if (!(gKeysHeld & KEY_START))
                     break;
                 if (red == 0)
                     *colors = 0x7fff;
@@ -309,7 +309,7 @@ redraw:
         }
         if (gKeysRepeat & KEY_SELECT)
             break;
-        Data_03001e40;
+        gFrameCount;
         WaitFrames(1);
     }
     Ui_LoadWindowGraphics();

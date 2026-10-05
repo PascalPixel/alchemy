@@ -9,7 +9,7 @@ void Text_FormatHex(s32 value, s32 width, s32 buf);
 s32 GameFlag_TestFar(s32 flag);
 
 extern volatile u32 gKeysRepeat;
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeyState;
 s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
 void GameFlag_ClearBitFar(s32);
@@ -65,7 +65,7 @@ s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor)
             GameFlag_SetBitFar(flag);
         return 1;
     }
-    if ((Data_03001c94 & 2) || (gKeysRepeat & KEY_SELECT))
+    if ((gKeyState & KEY_B) || (gKeysRepeat & KEY_SELECT))
         return -1;
     if (gKeysRepeat & KEY_UP) {
         if (--*row < 0)

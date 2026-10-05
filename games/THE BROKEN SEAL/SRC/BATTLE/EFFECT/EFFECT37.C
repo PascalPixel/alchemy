@@ -18,7 +18,6 @@ s32 Fixed_Remainder(s32 value, s32 divisor);
 extern const u8 BattleFx_UntargetedObjectScript[];
 
 
-extern u8 Data_03001e8c[];
 void BattleFx_ArmBg0HBlankDma(void);
 extern void BattleFx_ArmBg0HBlankDma(void);
 extern s32 PaletteGlow_UpdateFar(s32, s32);

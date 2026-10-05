@@ -16,7 +16,6 @@
 extern u8 gBattleFxWork[];
 
 extern u8 gMapCellBuffer[];
-extern BattleEffectDrawRectangle Data_03001e50[];
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -85,7 +84,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 0);
     else
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 0);
-    draw[0] = Data_03001e50[46];
+    draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     Audio_PlayCue(212);
     for (frame = 0; frame != 21; frame++) {
         if (frame <= 3)

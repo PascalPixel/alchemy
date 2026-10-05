@@ -26,6 +26,7 @@ LAYOUT_OFFSET_GUARD(UiBobPairOutput_Destination, struct UiBobPairOutput, destina
 
 /* Frame counter advanced by the vertical-blank interrupt. */
 extern volatile u32 gFrameTick;
+extern volatile u32 gFrameCount;
 extern const u8 Ui_PairBobOffsets[];
 
 void Runtime_RemapBytesByTableFar(void *, s32);
@@ -69,7 +70,6 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
 
 extern const struct TileMask Data_08037250[];
 
-extern u8 Data_03001e40[];
 
 /* link/draw_shifted_tile_pair.c */
 extern u8 gRomShiftedTilePair[];
@@ -242,7 +242,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shi
 
 void Link_DrawShiftedTilePair(s32 offset)
 {
-    s32 phase = (*(u32 *)((u32)&Data_03001e40) >> 2) & 3;
+    s32 phase = (gFrameCount >> 2) & 3;
 
     if (phase > 2) {
         phase = 2;

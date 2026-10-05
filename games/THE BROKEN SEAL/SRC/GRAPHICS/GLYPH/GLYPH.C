@@ -23,7 +23,7 @@ extern const u8 Tile_ExpandMasked[];
 extern const u8 Tile_ExpandOpaque[];
 
 /* Heap block addresses, indexed by block number. */
-extern void *Data_03001e50[];
+extern void *gWorkSlot[64];
 
 /* ARM routines copied into heap block 49 before each call. */
 extern u8 Tile_Decompress4bppCodeSize[];
@@ -43,7 +43,6 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
 
-extern u8 Data_03001e98[];
 
 extern struct SelectionScreen *gResQueueWork;
 
@@ -142,7 +141,7 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         Dma_Set((const void *)Tile_Decompress4bpp, code,
             0x84000000 | size, REG_DMA3);
     }
-    ((void (*)(const void *, u8 *))Data_03001e50[ROUTINE_BLOCK])(
+    ((void (*)(const void *, u8 *))gWorkSlot[ROUTINE_BLOCK])(
         glyph->encoded, glyph->input);
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);
     if (outlined) {
@@ -162,7 +161,7 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         Dma_Set((const void *)Tile_ExpandOpaque, code,
             0x84000000 | size, REG_DMA3);
     }
-    ((void (*)(u8 *, u8 *, u32, u32))Data_03001e50[ROUTINE_BLOCK])(
+    ((void (*)(u8 *, u8 *, u32, u32))gWorkSlot[ROUTINE_BLOCK])(
         glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);
 }

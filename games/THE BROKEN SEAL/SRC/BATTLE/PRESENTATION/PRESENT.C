@@ -6,6 +6,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "MAP_SCROLL.H"
 #include "IO_REG.H"
+#include "HEAP_STATE.H"
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
@@ -14,7 +15,7 @@ static __inline__ void FillWords(void *dst, s32 size, s32 value)
 }
 
 /* Heap slot 44 holds the background view, slot 10 its scanline pages. */
-extern void *Data_03001e50[];
+extern void *gWorkSlot[64];
 
 extern u8 gDisp[];
 
@@ -53,8 +54,8 @@ void BattlePres_UpdateHBlankScroll(void)
     u16 *record;
     s32 control;
 
-    if (((struct BattleBackgroundView *)*(void **)((u8 *)Data_03001e50 + 44 * sizeof(void *)))->mode == 2) {
-        records = *(struct BattleAffineHdma **)&Data_03001e50[10];
+    if (((struct BattleBackgroundView *)*(void **)((u8 *)gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND * sizeof(void *)))->mode == 2) {
+        records = *(struct BattleAffineHdma **)&gWorkSlot[10];
         record = records->lines[records->page];
         control = record[0];
         /* FAKEMATCH: the do-while keeps the BG2CNT address load after the

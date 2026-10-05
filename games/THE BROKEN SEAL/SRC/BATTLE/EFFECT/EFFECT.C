@@ -50,7 +50,6 @@ void BattleFx_SetupObjectPair(s32 selected_object, s32 obj_id);
 void BattleEffect_PauseObject(s32 obj_id);
 void ResetSceneTransitionEffect(void);
 
-extern u8 Data_03001f30[];
 void MapEvent_RunTileTriggerSequence(void);
 void FieldEvent_ShowStatusMessage(void);
 
@@ -240,7 +239,7 @@ void FieldEvent_RunTypeHandler(void)
 {
     u32 type;
 
-    type = (s16)FIELD_AT_OFFSET(*(void **)((u32)&Data_03001f30), s16 *, 0x1E);
+    type = gEffectWork->animation;
     switch (type) {
     case 8:
         ResetSceneTransitionEffect();

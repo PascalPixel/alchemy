@@ -61,7 +61,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -288,8 +288,6 @@ void SceneActor_UpdateSlot10ByTileX(void)
  * rate into the record.
  */
 
-/* Declared without prototypes -- call sites vary in argument shape. */
-
 /*
  * resource_3a4: a published callback that sets the mode of actor record 8.
  */
@@ -298,6 +296,7 @@ void SceneActor_UpdateSlot10ByTileX(void)
  * Presentation callback for resource_3a4, published rather than called
  * directly from this overlay.
  */
+
 void ActorPresentation_SetCellAndLowerActorEight(void)
 {
 

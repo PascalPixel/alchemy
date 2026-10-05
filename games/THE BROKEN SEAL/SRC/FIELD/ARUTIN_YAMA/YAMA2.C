@@ -329,9 +329,6 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
         work->timer = 0;
 }
 
-/* The zero is a one-halfword struct, so its movhi pool load reaches 64 bytes
- * and the pool lands where the ROM has it; the motion callbacks are Value_
- * link symbols. */
 void FieldScene_BuildMultiPhasePresentation(void)
 {
     struct Half p10;

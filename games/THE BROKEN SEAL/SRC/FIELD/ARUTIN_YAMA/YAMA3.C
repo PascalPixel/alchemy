@@ -421,7 +421,7 @@ void FieldScene_RunScene3a4_02002934(void)
             RunEventScript01();
         }
     }
-    /* unlifted: 0x020029bc..0x020029c2 (2) */
+
 }
 
 void FieldScene_RunScene3a4_020029dc(void)
@@ -661,15 +661,7 @@ void FieldScene_RunScene3a4SequenceE(void)
  * a record as a plain word, so it runs as a published callback.
  */
 
-/* Plays a sound cue; the name is this site's own call word, not a runtime
- * address. */
-
-/*
- * The owner spans the code, one alignment halfword and its one pool word,
- * thirty-six bytes in all. Engine_AudioPlayCue names the loader-relocated call
- * word for the cue call, not a runtime address. The limit of sixty reads
- * as one second of frames, but nothing here fixes a frame rate.
- */
+/* Count sixty updates before the sound cue. */
 void SceneAudio_PlayCue183EverySixtyTicks(void)
 {
     ArutinYama_CueTicks = ArutinYama_CueTicks + 1;
@@ -706,14 +698,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
     BattleFx_SetWeightedResult(53, 3);
 }
 
-/*
- * Bit 1 of the runtime status word at 0x03001e40 selects mode 7 or mode 6
- * for record 8. That bit's meaning is unverified: other callbacks here mask
- * different bits of the same word. Both branches reach the same veneer, and
- * the declarations carry no parameter list because the arguments are set up
- * in registers at the call site. The owner spans 44 bytes -- the body, one
- * alignment halfword and one literal pool word.
- */
+/* Bit 1 of the runtime status word selects mode 7 or 6 for actor 8. */
 void SceneActor_SetActor8ModeByCounterBit(void)
 {
 
@@ -856,14 +841,7 @@ void ArutinYama_RequestPsynergy(void)
     gEventWork->psynergy_request = 0x1018;
 }
 
-/*
- * Compare record 0's field at +12 against a signed threshold and set record
- * 12's mode accordingly; the taller branch also sets bit 1 of record 11's
- * byte at +35.  Both offsets are named by position only and their roles are
- * unverified; +35 is read-modify-written as a flags byte.  The threshold is
- * kept as the value 0x00300000 the code builds, in no assumed fixed-point
- * unit.
- */
+/* Set actor 12's sprite priority by actor 0's height; above 48.0, also set bit 1 of actor 11's field at +35. */
 void SceneActor_SetActor12ModeByActorZeroHeight(void)
 {
 
@@ -1019,11 +997,7 @@ void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
     Engine_AudioPlayCue(233);
 }
 
-/*
- * Stamp a fixed value into the caller's record at +102, then play sound cue
- * 288. The owner at 0x02003724 in resource_3a4 is 20 bytes with no literal
- * pool.
- */
+/* Set the actor's field at +102, then play cue 288. */
 void SceneState_SetRecordWord102AndPlayCue288(u16 *record)
 {
     record = (u16 *)((char *)record + 102);

@@ -46,7 +46,6 @@ extern s32 ArutinYama_CueTicks;
 extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
 
-/* Main-image code the import veneers reach. */
 s32 ArcTan2(s32, s32);
 void Runtime_SetIrqHandler();
 void SetMapCellCollision();

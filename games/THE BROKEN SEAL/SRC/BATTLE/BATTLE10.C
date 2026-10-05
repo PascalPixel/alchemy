@@ -128,7 +128,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
         chance -= 2;
     if (chance < 0)
         chance = 0;
-    if ((0x20000 >> chance) > (s32)(BattleRandom16Far() & 0xffff)) {
+    if ((0x20000 >> chance) > (BattleRandom16Far() & 0xffff)) {
         lowest_slot = -1;
         lowest = 0x40000000;
         for (i = 0; i <= 3; i++) {

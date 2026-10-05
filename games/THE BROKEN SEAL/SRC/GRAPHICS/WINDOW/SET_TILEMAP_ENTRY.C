@@ -28,9 +28,9 @@ void UiWindow_SetTilemapEntry(
 
     y += 1;
     x += 1;
-    if ((u32)y > (u32)(window->height - 1))
+    if (y > (u32)(window->height - 1))
         return;
-    if ((u32)x > (u32)(window->width - 1))
+    if (x > (u32)(window->width - 1))
         return;
 
     switch (mode) {
@@ -122,8 +122,8 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
     if (scale == 256) {
         sprite->affine_index = 0;
         sprite->affine = 0;
-        sprite->x = (u16)output->x;
-        sprite->y = (u16)output->y;
+        sprite->x = output->x;
+        sprite->y = output->y;
     } else {
         effect.scale_x = scale;
         effect.scale_y = scale;
@@ -138,8 +138,8 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
             sprite->y = (u16)output->y - 8;
         } else {
             sprite->affine = 1;
-            sprite->x = (u16)output->x;
-            sprite->y = (u16)output->y;
+            sprite->x = output->x;
+            sprite->y = output->y;
         }
     }
 }

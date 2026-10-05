@@ -88,7 +88,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
         psynergy_id = *p++;
         if (psynergy_id != 0) {
             Resource_LoadByModeIntoSlotFar(
-                4, psynergy_id, (u8)(*icons)->index, 0);
+                4, psynergy_id, (*icons)->index, 0);
         }
         icons++;
         remaining--;

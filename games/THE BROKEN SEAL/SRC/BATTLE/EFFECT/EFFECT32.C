@@ -41,7 +41,7 @@ void Djinn_ResolvePendingEvent(s32 capture)
     struct GameState *st = &gGameState;
     s16 *pending = &st->pending_djinn_event;
     s32 kind = *pending & 0xf000;
-    s32 flag = (u16)*pending & 0xfff;
+    s32 flag = *pending & 0xfff;
 
     if (capture == 0) {
         if (kind == 0) {

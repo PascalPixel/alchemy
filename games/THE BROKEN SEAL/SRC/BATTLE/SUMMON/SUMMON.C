@@ -36,7 +36,7 @@ s32 Summon_IsEntryFlagged(s32 index)
     if ((u32)index > 171)
         return 0;
     result = 0;
-    if ((u32)Summon_EntryTable[index].sprite_flags << 31)
+    if (Summon_EntryTable[index].sprite_flags << 31)
         result = 1;
     return result;
 }

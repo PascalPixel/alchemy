@@ -50,7 +50,7 @@ void BattleFx_AdvanceScrollOnInterval(void)
     u32 *counter = (u32 *)&work->scroll_timer;
 
     (*counter)++;
-    if (*counter == (u32)work->scroll_interval) {
+    if (*counter == work->scroll_interval) {
         gBgScroll[1].x += work->scroll_step_x;
         gBgScroll[1].y += work->scroll_step_y;
         *counter = 0;

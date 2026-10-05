@@ -143,7 +143,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
         fire->x = (Random16() & 31) + 16;
         fire->y = ((Random16() & 31) + 48) << 16;
         fire->velocity_y = ((Random16() & 31) - 16) << 16;
-        fire->variant = (u32)Random16() % 48 + 2;
+        fire->variant = Random16() % 48 + 2;
         i++;
     } while (i != 64);
 

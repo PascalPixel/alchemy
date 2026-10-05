@@ -99,11 +99,11 @@ void WaitFrames(s32 frames)
 
     /* CAMELOT_ASM: reads the stack pointer */
     __asm__ volatile("mov %0, sp" : "=r"(base));
-    if ((u32)base < (u32)Ram_FrameWaitStackTop) {
-        gSavedStackSize = (u32)Ram_FrameWaitStackTop - (u32)base;
+    if (base < Ram_FrameWaitStackTop) {
+        gSavedStackSize = Ram_FrameWaitStackTop - base;
         Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
         /* CAMELOT_ASM: moves the stack pointer */
-        __asm__ volatile("mov sp, %0" : : "r"((u32)Ram_FrameWaitStackTop));
+        __asm__ volatile("mov sp, %0" : : "r"Ram_FrameWaitStackTop);
     }
     for (i = 0; i < frames; i++) {
         gSchedulerStatus = 1;

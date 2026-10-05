@@ -178,7 +178,7 @@ void BattleFx_RunBurstParticles(void)
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleObjectScript);
             object->motion_flags = ACTOR_FALLS;
         }
-        WaitFrames((((u32)Random16() * 2) >> 16) + 2);
+        WaitFrames(((Random16() * 2) >> 16) + 2);
         entry_count--;
     } while (entry_count >= 0);
     WaitFrames(0x1E);

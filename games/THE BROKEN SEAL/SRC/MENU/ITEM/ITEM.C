@@ -46,7 +46,7 @@ void EquipmentMenu_StartCompatibilityIndicators(void)
             member_index++;
         } while (member_index < menu->party_count);
     }
-    Scheduler_RemoveCallback((u32)((s32)&EquipmentMenu_UpdateCompatibilityIndicators));
+    Scheduler_RemoveCallback((s32)&EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
 s32 ItemMenu_IsSpecial(s32 item_id)

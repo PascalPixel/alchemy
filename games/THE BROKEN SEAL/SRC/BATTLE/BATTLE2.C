@@ -147,7 +147,7 @@ s32 BattleEscape_CheckSuccess(void)
         level_total = 0;
         for (unit_index = escaped; unit_index < living_count; unit_index++) {
             level_total += Owner_GetStateFar(
-                (s32)living_units[unit_index])->level;
+                living_units[unit_index])->level;
         }
         chance += level_total * 0x1F4 / living_count;
         living_count = BattleParty_ListLivingUnits(
@@ -156,11 +156,11 @@ s32 BattleEscape_CheckSuccess(void)
         level_total = 0;
         for (unit_index = 0; unit_index < living_count; unit_index++) {
             level_total += Owner_GetStateFar(
-                (s32)living_units[unit_index])->level;
+                living_units[unit_index])->level;
         }
         chance -= level_total * 0x1F4 / living_count;
         if ((chance > 0) &&
-            ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
+            (((0x2710 * Random16()) >> 0x10) < chance)) {
             escaped = 1;
         }
         *failed_attempts += 1;

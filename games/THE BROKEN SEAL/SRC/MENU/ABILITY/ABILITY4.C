@@ -86,7 +86,7 @@ s32 PsynergyMenu_SelectAction(void)
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         ItemMenu_PosCategory();
         RenderOutput_RedrawSavedRectFar(menu->status_window);
-        menu->psynergy_count = (u8)PsynergyMenu_CollectActions(
+        menu->psynergy_count = PsynergyMenu_CollectActions(
             (struct BattleUnit *)Owner_GetStateFar(menu->owner_ids[0]), menu->psynergies, 0);
         WaitFrames(1);
         Menu_BuildPageResult(&state, 0);

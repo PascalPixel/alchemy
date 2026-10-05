@@ -89,10 +89,10 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
         switch (base) {
         case 254:
             Animation_SetWorkEntry(e, arg);
-            obj->last_no = (u8)arg;
+            obj->last_no = arg;
             break;
         case 253:
-            e->pos = (u8)arg;
+            e->pos = arg;
             break;
         case 245:
             e->timer += arg << 4;
@@ -101,7 +101,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
             e->pos -= 2;
             goto framed;
         case 240:
-            e->kind = (u8)arg;
+            e->kind = arg;
             break;
         case 255:
             e->frame_base = 255;
@@ -125,7 +125,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
         case 252:
             break;
         default:
-            e->frame_base = (u8)base;
+            e->frame_base = base;
             e->timer += arg << 4;
             goto select_direction;
         }
@@ -137,26 +137,26 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
     select_direction:
         switch (e->kind) {
         case 1:
-            attr = AnimationFacing_Kind1[(u16)dir >> 13];
+            attr = AnimationFacing_Kind1[dir >> 13];
             break;
         case 2:
         case 20:
-            attr = AnimationFacing_Kind2[(u16)dir >> 13];
+            attr = AnimationFacing_Kind2[dir >> 13];
             break;
         case 22:
-            attr = AnimationFacing_Kind22[(u16)dir >> 13];
+            attr = AnimationFacing_Kind22[dir >> 13];
             break;
         case 3:
-            attr = AnimationFacing_Kind3[(u16)dir >> 12];
+            attr = AnimationFacing_Kind3[dir >> 12];
             break;
         case 4:
-            attr = AnimationFacing_Kind4[(u16)dir >> 10];
+            attr = AnimationFacing_Kind4[dir >> 10];
             break;
         case 5:
-            attr = AnimationFacing_Kind5[(u16)dir >> 12];
+            attr = AnimationFacing_Kind5[dir >> 12];
             break;
         case 6:
-            attr = AnimationFacing_Kind6[(u16)dir >> 10];
+            attr = AnimationFacing_Kind6[dir >> 10];
             break;
         case 8:
             attr = AnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
@@ -173,7 +173,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
             changed = 1;
         }
         if (e->frame != base) {
-            e->frame = (u8)base;
+            e->frame = base;
             obj->dirty = 1;
         }
     }
@@ -216,7 +216,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
                 }
             }
         insert:
-            order[k + 1] = (u16)key;
+            order[k + 1] = key;
             n++;
         }
         n++;

@@ -74,7 +74,7 @@ s32 UpdateNameEntries(void)
             name_entry->name[i] = name_entry->name[i - len];
         }
         for (i = 0; i < len; i++) {
-            name_entry->name[i] = (u8)name_text[i];
+            name_entry->name[i] = name_text[i];
         }
         name_entry->name[14] = 0;
         index += 1;

@@ -77,9 +77,9 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
     if (count > 136)
         count = 136;
     for (; i < count; i++)
-        *line++ = (u16)wrap | 0x478a;
+        *line++ = wrap | 0x478a;
     for (; i < 136; i++)
-        *line++ = (u16)wrap | 0x478e;
+        *line++ = wrap | 0x478e;
     for (; i < 160; i++)
         *line++ = 0x3f8e;
     work->page ^= 1;

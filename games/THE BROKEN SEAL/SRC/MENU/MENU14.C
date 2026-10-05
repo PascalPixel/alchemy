@@ -91,6 +91,6 @@ void OptionMenu_InitializeWork(void)
 
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)GraphicsPalette_LoadSelectionResourcesAndAdvance));
+    Scheduler_RemoveCallback((s32)GraphicsPalette_LoadSelectionResourcesAndAdvance);
     Runtime_ReleaseHeapBlock(0x14);
 }

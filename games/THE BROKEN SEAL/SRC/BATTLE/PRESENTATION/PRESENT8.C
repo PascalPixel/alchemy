@@ -98,9 +98,9 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
         if (pass == 0)
             result = (slot << 12) | sprite_value;
 
-        table->sprite_slots[slot] = (s16)unit;
+        table->sprite_slots[slot] = unit;
         if (!single_slot)
-            table->sprite_slots[slot + 1] = (s16)unit;
+            table->sprite_slots[slot + 1] = unit;
 
         if (sprite_value != 476 && sprite_value != 483)
             break;

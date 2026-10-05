@@ -84,7 +84,7 @@ s16 Menu_RunSelection(void)
         WaitFrames(1);
 
     for (;;) {
-        result = (s16)Menu_HandleSelectionRowInput(work, primary, &secondary, &mode);
+        result = Menu_HandleSelectionRowInput(work, primary, &secondary, &mode);
         if (result == -1) {
             UiTextResource_Release(resource);
             UiWork_Finalize(work, 2);

@@ -122,5 +122,5 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
     }
 
     /* The selected unit id keeps the existing signed halfword result. */
-    return (s16)living_units[(u32)(Random16() * living_count) >> 0x10];
+    return (s16)living_units[(Random16() * living_count) >> 0x10];
 }

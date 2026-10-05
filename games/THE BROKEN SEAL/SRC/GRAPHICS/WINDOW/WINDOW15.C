@@ -281,7 +281,7 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         count = BattleParty_PrepareActiveOwnersFar(0);
         y = -1;
         for (i = 0; i < count; i++) {
-            owners[i] = (u16)party->party_units[i];
+            owners[i] = party->party_units[i];
             if (owners[i] == 255)
                 break;
         }

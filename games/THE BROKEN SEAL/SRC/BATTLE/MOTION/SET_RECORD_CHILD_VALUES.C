@@ -77,7 +77,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
         transition->frames = 60;
     } else {
         struct MotionObject *actor = GetBattleObjectSlot(plan->actor_id)->object;
-        s32 angle = (u16)ArcTan2(actor->x, actor->z);
+        s32 angle = ArcTan2(actor->x, actor->z);
         s32 current;
 
         if (plan->actor_id <= 7)

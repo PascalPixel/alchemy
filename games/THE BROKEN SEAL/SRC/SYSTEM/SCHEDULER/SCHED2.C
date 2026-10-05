@@ -115,7 +115,7 @@ s32 Scheduler_FindCallback(u32 callback)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
@@ -146,11 +146,11 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (task->callback == (u32)callback) {
+                if (task->callback == callback) {
                     task->state = order;
                     index = i;
                     break;
@@ -194,7 +194,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
@@ -226,7 +226,7 @@ s32 Scheduler_EnableCallbacks(u32 callback)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
@@ -258,7 +258,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
@@ -288,7 +288,7 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
@@ -319,12 +319,12 @@ s32 Scheduler_DisableCallbacks(u32 callback)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if (callback == 0 || task->callback == callback) {
-                    TASK_STATE_HIGH(task)&= (u8)~1;
+                    TASK_STATE_HIGH(task)&= ~1;
                     result = i;
                 }
             }
@@ -349,12 +349,12 @@ s32 Scheduler_DisableOverlayCallbacks(void)
         {
             volatile u16 *ime = &REG_IME;
 
-            *ime = (u16)(u32)ime;
+            *ime = (u32)ime;
         }
         do {
             for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if ((task->callback >> 24) == 2) {
-                    TASK_STATE_HIGH(task)&= (u8)~1;
+                    TASK_STATE_HIGH(task)&= ~1;
                     result = i;
                 }
             }
@@ -514,7 +514,7 @@ s32 FixedSqrt(s32 value)
 {
     s32 (*root)(s32) = Iwram_Sqrt;
 
-    return (s32)((u32)root(value) << 8);
+    return root(value) << 8;
 }
 
 s32 Runtime_GetLowTableAddress(void)
@@ -561,20 +561,20 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     }
     word = *tbl++;
     count = 9;
-    if ((u32) val < word) {
+    if (val < word) {
         do {
             count -= 1;
             *out++ = 0x20;
             if (count == 0) break;
             word = *tbl++;
-        } while ((u32) val < word);
+        } while (val < word);
     }
     *out++ = sign;
     tbl -= 1;
     if (count != 0) {
         do {
             word = *tbl++;
-            result = (u32) val / word;
+            result = val / word;
             *out++ = result + 0x30;
             val -= result * word;
             count -= 1;

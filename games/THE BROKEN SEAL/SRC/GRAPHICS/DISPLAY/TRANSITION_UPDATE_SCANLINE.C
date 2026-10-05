@@ -114,7 +114,7 @@ void DisplayTransition_UpdateFrame(void)
         do {
             savedIme = *ime;
         } while (0);
-        *ime = (u16)(u32)ime;
+        *ime = (u32)ime;
         if ((count = queue->count) <= 31) {
             u32 *destination = queue->entries[count];
             /* FAKEMATCH: storing the count through a plain u16 pointer keeps it out of the entry stores' alias set, so sched2 finishes the entry address first. */

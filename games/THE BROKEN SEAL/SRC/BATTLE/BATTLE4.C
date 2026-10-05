@@ -76,7 +76,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 pick:
     if (count == 0)
         return 0;
-    return positions[(u32)(Random16() * count) >> 16];
+    return positions[(Random16() * count) >> 16];
 }
 
 struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
@@ -402,13 +402,13 @@ scan_complete:
             selected = 0;
             break;
         case 2:
-            roll = (u32)(11 * Random16()) >> 16;
+            roll = (11 * Random16()) >> 16;
             selected = 0;
             if (roll > 5)
                 selected = 1;
             break;
         case 3:
-            selected = (u32)(15 * Random16()) >> 16;
+            selected = (15 * Random16()) >> 16;
             if (selected <= 5)
                 selected = 0;
             else if (selected <= 10)
@@ -417,7 +417,7 @@ scan_complete:
                 selected = 2;
             break;
         case 4:
-            selected = (u32)(18 * Random16()) >> 16;
+            selected = (18 * Random16()) >> 16;
             if (selected <= 5)
                 selected = 0;
             else if (selected <= 10)
@@ -432,5 +432,5 @@ scan_complete:
         if (selected >= 0)
             return target_positions[selected];
     }
-    return target_positions[(u32)(Random16() * target_count) >> 16];
+    return target_positions[(Random16() * target_count) >> 16];
 }

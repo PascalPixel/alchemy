@@ -361,7 +361,7 @@ void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index)
         node = node->next;
     }
     if (node->kind == 1 || node->kind == 6) {
-        u32 first = (u16)node->message - (u32)&MsgCommandName;
+        u32 first = node->message - (u32)&MsgCommandName;
 
         value = node->slot;
         Ui_BuildPairedPatternsToSlot(first, 0, &value, &output, 1);
@@ -379,7 +379,7 @@ void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index)
         node = node->next;
     }
     if (node->kind == 1 || node->kind == 6) {
-        u32 id = (u16)node->message - (u32)&MsgCommandName;
+        u32 id = node->message - (u32)&MsgCommandName;
 
         value = node->slot;
         Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);

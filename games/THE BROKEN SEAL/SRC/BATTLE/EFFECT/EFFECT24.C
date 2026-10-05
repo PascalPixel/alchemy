@@ -195,7 +195,7 @@ encounter:
         sum += entry->weights[i];
     if (sum == 0)
         return 0;
-    pick = (u32)(Random16() * sum) >> 16;
+    pick = (Random16() * sum) >> 16;
     pick -= entry->weights[0];
     i = 0;
     if (pick >= 0) {

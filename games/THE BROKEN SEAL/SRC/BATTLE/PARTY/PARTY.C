@@ -194,7 +194,7 @@ s32 Battle_RunEncounter(s32 arg)
     work->field_00 = arg;
     src = (u8 *)Runtime_AllocateBlock(37, 12);
     Dma3Fill(fill, src, 12);
-    work->field_648 = (u16)Event_GetSpecialValueFar();
+    work->field_648 = Event_GetSpecialValueFar();
     Runtime_AllocateBlock(4, 0xe00);
     Runtime_AllocateBlock(3, 0x600);
     ObjectSystem_InitializeFar(4);
@@ -230,7 +230,7 @@ s32 Battle_RunEncounter(s32 arg)
                 break;
             }
         }
-        work->field_50 = (u8)((REG_SIOCNT << 26) >> 30);
+        work->field_50 = (REG_SIOCNT << 26) >> 30;
         dst = gBattleOwnerStates;
         for (pos = 0; pos <= 0x7c7; pos++)
             *dst++ = gActorSpriteSlots[pos];
@@ -476,7 +476,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
         entry_limit += 0x80;
         for (; id < entry_limit; id += 1) {
             if (Owner_GetStateFar(id)->status_12a != 0) {
-                *output = (s16)id;
+                *output = id;
                 entry_count += 1;
                 output += 1;
             }
@@ -535,9 +535,9 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         if (remaining < enemy_limit) {
             do {
                 unit = Owner_GetStateFar(remaining);
-                if ((unit->status_12a != 0) && ((s32)unit->hp > 0)) {
+                if ((unit->status_12a != 0) && (unit->hp > 0)) {
                     if (output != NULL) {
-                        *output = (u16)remaining;
+                        *output = remaining;
                         output += 1;
                     }
                     living_count += 1;

@@ -73,6 +73,6 @@ void SerialRuntime_PrepareSendPacket(void *payload)
         REG_TM3CNT_H = 0;
     state->send_index = -1;
     if (state->mode != 0 && state->transfer_enabled != 0)
-        REG_TM3CNT_H = (u32)0x000000c0;
+        REG_TM3CNT_H = 0x000000c0;
 }
 #endif

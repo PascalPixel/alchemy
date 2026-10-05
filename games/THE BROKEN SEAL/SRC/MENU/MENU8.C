@@ -499,7 +499,7 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
         width = 20;
     }
 
-    different = 1 ^ (u32)invert;
+    different = 1 ^ invert;
     last = 15 - (((0u - different) | different) >> 31);
     Render_SetTilemapFlagRect(state->status_window, x, y, width, 1, last);
 }

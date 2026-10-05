@@ -187,7 +187,7 @@ next:
             tbl = gSpriteObjects;
             flag = flag ^ 1;
             for (i = 0; i <= 9; i++) {
-                tbl->flags = (u8)flag;
+                tbl->flags = flag;
                 tbl++;
             }
         }

@@ -14,9 +14,9 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
     s32 ret;
 
     psynergy = BattleAction_Get(
-        (s32)(0x3fff &
+        0x3fff &
               gMenuWork
-                  ->pane_action[0]));
+                  ->pane_action[0]);
     if (BattleFx_HasMatchingEvent5Far(psynergy->type_0c) != 0) {
         return 0;
     }
@@ -25,7 +25,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
         u8 kind = psynergy->target_mode;
         diff = kind ^ 2;
         ret = (0 - diff) | diff;
-        ret = (s32)((u32)ret >> 0x1f);
+        ret = (u32)ret >> 0x1f;
         ret = 1 - ret;
     }
     return ret;
@@ -77,8 +77,8 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
     owner_id = *(u16 *)((u8 *)menu + table_offset);
     owner = Owner_GetStateFar(owner_id);
     actions = menu->psynergies;
-    badge = (u8)PsynergyMenu_CollectActions(owner, actions, 2);
-    menu->psynergy_count = (u8)badge;
+    badge = PsynergyMenu_CollectActions(owner, actions, 2);
+    menu->psynergy_count = badge;
     result = PsynergyMenu_SetupActionIcons(menu->owner_table, actions);
 
     icon_offset2 = party_slot * sizeof(menu->pane_icon[0]) +

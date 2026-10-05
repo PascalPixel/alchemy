@@ -46,7 +46,7 @@ void Graphics_AdjustPaletteBank(s32 arg0)
             value = blue << 10;
             value |= green << 5;
             value |= red;
-            ((s16 *)0x04FFFFE0)[idx] = (s16)value;
+            ((s16 *)0x04FFFFE0)[idx] = value;
         }
         if (iter == 0)
         {

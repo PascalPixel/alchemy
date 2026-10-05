@@ -266,7 +266,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     target->mode = 0;
     source->callback = 0;
     Animation_ApplyChildValuesFar(source, 0);
-    if ((s8)work->child_option != 0) {
+    if (work->child_option != 0) {
         for (i = 0; i < 90 && target->velocity_y >= 0; i++)
             WaitFrames(1);
         WaitFrames(1);

@@ -72,7 +72,7 @@ void UiWork_ProcessRenderChannels(void)
 
                         UiWork_Finalize(
                             entity,
-                            (u16)(entity->flags & 2)
+                            entity->flags & 2
                         );
                         channel->x = pending;
                         channel->y = pending;

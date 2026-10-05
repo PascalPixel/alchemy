@@ -227,7 +227,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                 if (ymax == ymin)
                     puff->velocity_y = ymin << 16;
                 else
-                    puff->velocity_y = (Random16() % (u32)(ymax - ymin) + ymin) << 16;
+                    puff->velocity_y = (Random16() % (ymax - ymin) + ymin) << 16;
                 puff->variant = (Random16() & 15) + 20;
             }
         }
@@ -250,7 +250,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
                     && frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35) {
                     puff->variant = 17;
                     puff->velocity_x = (Random16() & 127) << 16;
-                    puff->velocity_y = (Random16() % (u32)(ymax - ymin) + ymin) << 16;
+                    puff->velocity_y = (Random16() % (ymax - ymin) + ymin) << 16;
                 }
             }
         }

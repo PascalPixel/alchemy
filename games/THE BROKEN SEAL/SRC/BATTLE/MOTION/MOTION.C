@@ -72,7 +72,7 @@ void Actor_ResetMotionAtAnchor(s32 slot_id)
     if (z < 0)
         z += 7;
     object->angle =
-        (s16)(ArcTan2(z >> 3, slot->anchor_x) - 0x8000);
+        ArcTan2(z >> 3, slot->anchor_x) - 0x8000;
 }
 
 void BattleMotion_SetupEscapeObject(s32 object_id)

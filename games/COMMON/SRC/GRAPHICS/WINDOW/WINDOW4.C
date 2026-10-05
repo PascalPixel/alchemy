@@ -238,7 +238,7 @@ void UiWork_FinalizePendingCore(void)
             && work->flags != 0
             && work->state != 0) {
             UiWork_Finalize(work,
-                (s32)(u16)(2 & work->flags));
+                2 & work->flags);
         }
         slot_index++;
         slot++;

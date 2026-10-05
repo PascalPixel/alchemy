@@ -17,7 +17,7 @@ void Scheduler_ScheduleCallbackAAfterFrames(void)
 
 void Scheduler_ScheduleCallbackA(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)PaletteGlow_UpdateSine));
+    Scheduler_RemoveCallback((s32)PaletteGlow_UpdateSine);
 }
 
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height)

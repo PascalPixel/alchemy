@@ -21,9 +21,9 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
        bytes in all six editions (2026-10-03 attempt aadcc37dd). */
     entries = (u8 *)work;
     for (i = 0; i < work->count; i++) {
-        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = (u32)y << 3;
-        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 12) = (u32)x << 3;
-        x = (s32)((u32)x + 3);
+        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = y << 3;
+        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 12) = x << 3;
+        x = x + 3;
     }
     work->window = UiWindow_Create(x, y, work->width, 3, 2);
 }
@@ -268,7 +268,7 @@ void Menu_DrawModeIndicator(void)
 
     /* 値が変わった時だけ表示を更新する。 */
     if (*shown != *current) {
-        *shown = (u16)*current;
+        *shown = *current;
         RenderOutput_PrepareForRedraw(state->lower_window);
         /* The German help sits in whole character cells, a row apart. */
         if (*current == 0) {

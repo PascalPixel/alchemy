@@ -43,7 +43,7 @@ s32 Menu_RunActionFlow(void)
             state->owner_cursors[0]->active = 13;
             result = ItemMenu_SelectItem();
             /* Collapse every non-cancellation result to one. */
-            changed = (u32)~result;
+            changed = ~result;
             step = (-changed | changed) >> 31;
             break;
         default:

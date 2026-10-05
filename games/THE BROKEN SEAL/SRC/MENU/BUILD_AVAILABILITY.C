@@ -70,7 +70,7 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
     encoded = (s32)Owner_GetStateFar(menu->pane_owner[index]);
     limit = menu->item_count;
     value = menu->selected_index_by_owner[menu->pane_owner[index]];
-    if ((s32)(value + 1) > limit) {
+    if ((value + 1) > limit) {
         value = limit - 1;
     }
     if (limit == 0) {

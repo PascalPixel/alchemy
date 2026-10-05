@@ -100,7 +100,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
             else
                 menu->mode = 2;
             actions = Runtime_BumpAllocate(64);
-            found = (u8)PsynergyMenu_CollectActions((struct BattleUnit *)owner, actions, 1);
+            found = PsynergyMenu_CollectActions((struct BattleUnit *)owner, actions, 1);
             Runtime_BumpFree(actions);
             action_count = (s8)found;
             if (action_count == 0) {
@@ -298,7 +298,7 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
 {
     s32 id = psynergy & 0x3fff;
     s32 code =
-        (s32)(((u32)owner << 10) | (u32)id);
+        (owner << 10) | id;
 
     if (shortcut == 0) {
         gGameState.first_shortcut = code;

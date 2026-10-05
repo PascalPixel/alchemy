@@ -309,5 +309,5 @@ s32 Scene_GetModeMask(void)
         return 0;
     }
     mode = gGameState.scene ^ (s32)&SceneId_WorldMap;
-    return -(s32)((u32)(-mode | mode) >> 31);
+    return -((u32)(-mode | mode) >> 31);
 }

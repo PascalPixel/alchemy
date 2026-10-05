@@ -32,7 +32,7 @@ void TitlePalette_InitializeBuffers(void)
 
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)&TitlePalette_UpdateFade));
+    Scheduler_RemoveCallback((s32)&TitlePalette_UpdateFade);
     Runtime_ReleaseHeapBlock(0x20);
 }
 

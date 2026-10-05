@@ -217,7 +217,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
         point = &work->particles[j];
         point->x = Random16() & 31;
         point->y = (Random16() & 63) + 16;
-        point->variant = -(s32)(Random16() & 15);
+        point->variant = -(Random16() & 15);
     }
     work->transfer_mode = 2;
     work->transfer_value = 50;

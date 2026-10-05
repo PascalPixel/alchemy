@@ -55,7 +55,7 @@ void Menu_InitializeSelectedWorkspace(void)
 
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)&Menu_RunSelectedWorkspaceEntry));
+    Scheduler_RemoveCallback((s32)&Menu_RunSelectedWorkspaceEntry);
     Runtime_ReleaseHeapBlock(0x14);
 }
 

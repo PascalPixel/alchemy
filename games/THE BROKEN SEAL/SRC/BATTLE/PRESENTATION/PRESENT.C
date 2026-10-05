@@ -94,9 +94,9 @@ void BattlePres_AdvanceTransitionTimer(void)
     offset = (struct BgScroll *)Ram_BgScroll;
     if (scroll < 0)
         scroll = 0;
-    offset->y = (s16)scroll;
+    offset->y = scroll;
     if (frame <= 0x50U)
-        camera->yaw = (s16)(45 * frame * 8 + 0xaf80);
+        camera->yaw = 45 * frame * 8 + 0xaf80;
     next = (*timer = *timer + 1);
     if (next <= 0x50U) {
         BattlePres_SetupTransitionScene(0, 0, 0, 0xb4 - next);

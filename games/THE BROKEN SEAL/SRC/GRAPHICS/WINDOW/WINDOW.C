@@ -78,7 +78,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
             u32 column;
 
             if (*mode != 0) {
-                if ((u32)(y + row) > 16)
+                if ((y + row) > 16)
                     tile = 0xF07F;
                 else
                     tile = 0xF000;

@@ -844,7 +844,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         } else if (kind == 32) {
             scroll_pos = scroll_pos + scroll_speed;
             if (frame > 6) {
-                scroll_speed = (s32)((u32)scroll_speed * 48) / 64;
+                scroll_speed = (scroll_speed * 48) / 64;
             }
             {
                 s32 x = scroll_pos;

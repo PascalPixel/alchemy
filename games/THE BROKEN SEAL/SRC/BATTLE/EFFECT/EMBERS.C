@@ -152,7 +152,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
         else
             streak->x = (Random16() & 127) - 128;
         streak->y = (Random16() & 7) - 72;
-        streak->variant = -(s32)(Random16() & 31);
+        streak->variant = -(Random16() & 31);
     }
     for (i = 0; i != 512; i++)
         gDrops[i].variant = -1;
@@ -463,7 +463,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
             point = &work->particles[24 + k];
             point->x = Random16() & 127;
             point->y = (Random16() & 7) + 56;
-            point->variant = -(s32)(Random16() & 15);
+            point->variant = -(Random16() & 15);
         }
         life = &((struct EffectStep *)gMapCellBuffer)->variant;
         for (k = 0; k != 1024; k++) {
@@ -500,8 +500,8 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 
                         spark->x = ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
                         spark->y = ((Trig_Cos(angle) * radius) >> 2) + 0x600000;
-                        spark->velocity_x = ((s32)(Random16() & 63) - 32) << 14;
-                        spark->velocity_y = (-(s32)(Random16() & 63) - 8) << 13;
+                        spark->velocity_x = ((Random16() & 63) - 32) << 14;
+                        spark->velocity_y = (-(Random16() & 63) - 8) << 13;
                         spark->variant = 0;
                     }
                 }
@@ -517,8 +517,8 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 
                         spark->x = ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
                         spark->y = ((Trig_Cos(angle) * radius) >> 2) + 0x600000;
-                        spark->velocity_x = ((s32)(Random16() & 63) - 32) << 14;
-                        spark->velocity_y = (-(s32)(Random16() & 63) - 8) << 13;
+                        spark->velocity_x = ((Random16() & 63) - 32) << 14;
+                        spark->velocity_y = (-(Random16() & 63) - 8) << 13;
                         spark->variant = 0;
                         spawned++;
                         if (spawned == 16)

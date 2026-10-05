@@ -84,7 +84,7 @@ void UiMessage_ShowAndWait(s32 arg0)
     s8 mode;
 
     UiWork_FinalizePendingCoreFar();
-    mode = (s8)state->shop_type;
+    mode = state->shop_type;
     if (mode == 2)
         result += MsgArmorShopWelcome - MsgWeaponShopWelcome;
     if (mode == 0)
@@ -113,16 +113,16 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
     saved = (*slot)->active;
     no = message_id;
     variant = BattleFx_GetResourceIdFar(state->keeper_resource);
-    mode = (s8)state->shop_type;
+    mode = state->shop_type;
     if (mode == 2) {
-        no += (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome;
+        no += MsgArmorShopWelcome - MsgWeaponShopWelcome;
     }
     if (mode == 0) {
-        no += (s32)MsgItemShopWelcome - (s32)MsgWeaponShopWelcome;
+        no += MsgItemShopWelcome - MsgWeaponShopWelcome;
     }
     flag = state->warrior_shop;
     if (flag != 0) {
-        no += (s32)MsgWarriorShopWelcome - (s32)MsgWeaponShopWelcome;
+        no += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
     }
     (*slot)->active = 0xDU;
     UiWork_FinalizePendingCoreFar();
@@ -196,7 +196,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 /* 4行分の非0バイトを指定配置へ順にコピーする。 */
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
 {
-    u8 *src = Shop_GlyphBytes + ((u32)arg0 << 5);
+    u8 *src = Shop_GlyphBytes + (arg0 << 5);
     u8 *dst =
         arg1 + RomBytes_080b413c[arg2] + 2;
     s32 count = 3;
@@ -294,7 +294,7 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     if (kind == 0)
         return;
     sprite = cursor->anchor;
-    step = (s8)++cursor->active;
+    step = ++cursor->active;
     x = cursor->x + (cursor->target_x - (s16)cursor->x) * step / kind;
     sprite->x = x;
     ((struct SpriteAttr *)&sprite->packed)->x = x;
@@ -324,18 +324,18 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
             step = -step;
         if (delta > 0) {
             if (step != 0)
-                sprite->x = (u16)sprite->x - step;
+                sprite->x = sprite->x - step;
             else
                 sprite->x = (u16)sprite->x - 1;
         } else {
             if (delta >= 0)
                 goto move_y;
             if (step != 0)
-                sprite->x = (u16)sprite->x + step;
+                sprite->x = sprite->x + step;
             else
-                sprite->x = (u16)sprite->x + 1;
+                sprite->x = sprite->x + 1;
         }
-        ((struct SpriteAttr2 *)&sprite->packed)->x = (u16)sprite->x;
+        ((struct SpriteAttr2 *)&sprite->packed)->x = sprite->x;
 
 move_y:
         delta = (u16)sprite->y - cursor->target_y;
@@ -344,18 +344,18 @@ move_y:
             step = -step;
         if (delta > 0) {
             if (step != 0)
-                sprite->y = (u16)sprite->y - step;
+                sprite->y = sprite->y - step;
             else
                 sprite->y = (u16)sprite->y - 1;
         } else {
             if (delta >= 0)
                 return;
             if (step != 0)
-                sprite->y = (u16)sprite->y + step;
+                sprite->y = sprite->y + step;
             else
-                sprite->y = (u16)sprite->y + 1;
+                sprite->y = sprite->y + 1;
         }
-        *(u8 *)&sprite->packed = (u8)sprite->y;
+        *(u8 *)&sprite->packed = sprite->y;
     }
 }
 
@@ -367,8 +367,8 @@ void Shop_SetCursor(
 {
     struct RenderOutput *anchor = cursor->anchor;
 
-    cursor->x = (u16)anchor->x;
-    cursor->y = (u16)anchor->y;
+    cursor->x = anchor->x;
+    cursor->y = anchor->y;
     cursor->target_x = target_x;
     cursor->target_y = target_y;
     cursor->kind = kind;
@@ -418,5 +418,5 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
         &shop->cursor,
         cursor_x,
         cursor_y,
-        (s8)shop->mode);
+        shop->mode);
 }

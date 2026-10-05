@@ -46,7 +46,7 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
         }
         goto found;
 occupied:
-        pos += (u32)gVramBlockCache[ResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
+        pos += gVramBlockCache[ResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
     }
 found:
     result *= VRAM_BLOCK_BYTES;

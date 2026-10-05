@@ -206,7 +206,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect)
     speed = effect->speed + effect->acceleration;
     if (speed > effect->max_speed)
         speed = effect->max_speed;
-    angle = (s16)facing;
+    angle = facing;
     effect->speed = speed;
     effect->x += Iwram_MulQ16(Trig_Cos(angle), speed);
     effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
@@ -219,7 +219,7 @@ u32 BattleFx_HasReachedTarget(struct EffectSlot *effect)
     if (effect->stop_at_target == 0) {
         return 0;
     }
-    value = (u32)effect->target_x ^ 0x80000000;
+    value = effect->target_x ^ 0x80000000;
     return ((0u - value) | value) >> 31;
 }
 

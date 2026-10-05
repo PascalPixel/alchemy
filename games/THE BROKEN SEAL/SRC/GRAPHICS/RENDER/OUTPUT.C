@@ -24,7 +24,7 @@ struct RenderOutput *RenderOutput_Create(
 
     output = RenderOutput_AcquireFree();
     if (output == NULL) {
-        Resource_ResetEntry((u32)slot);
+        Resource_ResetEntry(slot);
         return 0;
     }
     x = offset_x + (input->x * 8) + 8;
@@ -38,8 +38,8 @@ struct RenderOutput *RenderOutput_Create(
     output->sentinel = 0xff;
     output->next = 0;
     output->x = x;
-    output->y = (s16)y;
-    output->index = (s8)slot;
+    output->y = y;
+    output->index = slot;
     output->kind = 1;
     output->active = 1;
     ((s32 (*)(struct RenderOutputList *, struct RenderOutput *))

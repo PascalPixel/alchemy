@@ -64,7 +64,7 @@ void UiWindow_SetTileAttributeBitRect(
         y <<= 6;
         x = y + (x << 1);
         do {
-            u16 *cell = (u16 *)((u32)x + (u32)work->tilemap);
+            u16 *cell = (u16 *)(x + (u32)work->tilemap);
             s32 remaining = width;
             while (remaining != 0) {
                 u32 value = *cell;

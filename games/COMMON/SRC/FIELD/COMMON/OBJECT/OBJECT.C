@@ -81,15 +81,15 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     count = (sprite->width * sprite->height) / 64;
     row = 0;
 
-    if (row < (u32)count) {
+    if (row < count) {
         table = Map_TileDissolveOrder;
         high_mask = 0xFF00;
         index_mask = 0x3F;
         offset_mask = 0x3E;
 
         /* 1行ごとに32セル進める。 */
-        for (; row < (u32)count; row++, destination += 32, position++) {
-            if ((u32)(position - 0x40) <= 0x3F) {
+        for (; row < count; row++, destination += 32, position++) {
+            if ((position - 0x40) <= 0x3F) {
                 u8 entry;
                 u16 *cell;
                 u32 parity;
@@ -720,11 +720,11 @@ void ObjectSystem_UpdateCamera(void)
     s32 height;
     u32 bits_val;
 
-    state = *(struct CameraState **)((u32)((u8 *)&gObjectSlots) + 12);
+    state = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
     cam = &state->x;
     cam_x = cam[0] & 0xffff0000;
     cam_z = cam[1] & 0xffff0000;
-    sync = *(struct CameraSync **)((u32)((u8 *)&gObjectSlots) + 4);
+    sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
     /* FAKEMATCH: the do-while keeps the copy between the runtime loads and the count reset. */
     do {
         size = (u32)Render_DecodeFrameCodeSize;
@@ -732,7 +732,7 @@ void ObjectSystem_UpdateCamera(void)
             (volatile u32 *)0x040000d4);
     } while (0);
     sync->count = 0;
-    obj = *(struct CameraObject **)(u32)((u8 *)&gObjectSlots);
+    obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
     for (cnt = 0; cnt < 64; cnt++, obj++) {
         if (obj->active == 0)
             continue;
@@ -834,8 +834,8 @@ void ObjectSystem_UpdateCameraFixed(void)
     /* FAKEMATCH: unused; the native frame keeps room for two points above the scales. */
     struct CameraPoint spare[2];
 
-    camera = *(struct FixedCamera **)((u32)((u8 *)&gObjectSlots) + 0x1c);
-    sync = *(struct CameraSync **)((u32)((u8 *)&gObjectSlots) + 4);
+    camera = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
+    sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
     /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
     do { size = (u32)Render_DecodeFrameCodeSize; } while (0);
     Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
@@ -856,7 +856,7 @@ void ObjectSystem_UpdateCameraFixed(void)
     } else {
         Graphics_PrepareTransferInIwramWork(eye, target);
     }
-    obj = *(struct CameraObject **)(u32)((u8 *)&gObjectSlots);
+    obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
     obj += 63;
     unit = 0x10000;
     for (cnt = 63; cnt >= 0; cnt--, obj--) {

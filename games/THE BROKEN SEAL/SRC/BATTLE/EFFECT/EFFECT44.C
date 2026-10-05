@@ -190,7 +190,7 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 
     if (work->transfer_pending == 1) {
         source = heap_cache[1];
-        switch ((u32)work->transfer_mode) {
+        switch (work->transfer_mode) {
         case 0:
             CopyWords((void *)0x06004000, source, 0x4000);
             break;

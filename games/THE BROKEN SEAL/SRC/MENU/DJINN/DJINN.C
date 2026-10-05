@@ -147,10 +147,10 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     menu = gMenuWork;
     give_element = menu->pair_element[give];
     give_index = menu->pair_index[give];
-    give_set = (u16)(menu->pair_entries[give] & 0x8000);
+    give_set = menu->pair_entries[give] & 0x8000;
     take_element = menu->pair_element[take];
     take_index = menu->pair_index[take];
-    take_set = (u16)(menu->pair_entries[take] & 0x8000);
+    take_set = menu->pair_entries[take] & 0x8000;
     saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(struct BattleUnit));
     Unit_Copy(saved, state);
 

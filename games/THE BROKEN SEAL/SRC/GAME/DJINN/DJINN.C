@@ -311,7 +311,7 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
             break;
     }
     if (i == table->count ||
-        ((status = (s8)table->entries[i].turns) <= 0 && status != -2))
+        ((status = table->entries[i].turns) <= 0 && status != -2))
         return 1;
     return 0;
 }
@@ -449,7 +449,7 @@ s32 Trade_CountPendingOffers(u8 *counts)
             }
             index++;
             entry++;
-        } while (index != (s32)base->list.count);
+        } while (index != base->list.count);
     }
     return found;
 }

@@ -528,7 +528,7 @@ u32 EffectRuntime_IsActive(void)
 
     if (runtime != NULL) {
         count = *(s16 *)((u8 *)runtime + 0xcb8);
-        active = (u32)((0 - count) | count);
+        active = (0 - count) | count;
         active >>= 31;
     }
     return active;

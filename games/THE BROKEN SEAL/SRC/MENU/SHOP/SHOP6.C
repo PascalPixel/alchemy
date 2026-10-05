@@ -78,7 +78,7 @@ s32 Shop_CanServe(s32 entry_no, s32 kind)
     if ((kind == 0 && entry->hp <= 0)
         || (kind == 1 && entry->poison != 0)
         || (kind == 2 && entry->evil_spirit != 0)
-        || (kind == 3 && (s8)entry->restraint != 0)) {
+        || (kind == 3 && entry->restraint != 0)) {
         result = 1;
     }
     return result;
@@ -312,7 +312,7 @@ s32 Sanctum_RunPartyService(void)
                 retry = 1;
                 continue;
             }
-            if ((u32)price > (u32)gGameState.coins) {
+            if (price > (u32)gGameState.coins) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 UiMessage_ShowResolvedAndRestoreState(message + 1);
                 retry = 1;

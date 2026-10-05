@@ -84,7 +84,7 @@ s32 LinkLobby_InitializeSerial(void)
 
     ime = &REG_IME;
     saved = *ime;
-    *ime = (u16)(u32)ime;
+    *ime = (u32)ime;
     SerialRuntime_RemoveIrqHandlers();
     SerialRuntime_Initialize();
     *ime = saved;
@@ -108,7 +108,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot)
     s32 id = -1;
 
     if ((gLinkStatus & 3) == 3) {
-        id = (u32)(REG_SIOCNT << 26) >> 30;
+        id = (REG_SIOCNT << 26) >> 30;
         Engine_GameFlagSet(0x303);
     } else {
         Engine_GameFlagClear(0x303);

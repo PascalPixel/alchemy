@@ -75,7 +75,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     limit = ItemMenu_Count(menu->pane_owner[index]);
     encoded = (s32)Owner_GetStateFar(menu->pane_owner[index]);
     value = menu->selected_index_by_owner[menu->pane_owner[index]];
-    if ((s32)(value + 1) > limit) {
+    if ((value + 1) > limit) {
         value = limit - 1;
     }
     quotient = value / 5;
@@ -237,7 +237,7 @@ s32 ItemMenu_RunList(s32 pane)
 
     while (done == 0 && GameFlag_IsSet(0x150) == 0) {
         owner = Owner_GetStateFar(menu->pane_owner[pane]);
-        menu->item_count = (u8)ItemMenu_Collect(owner, menu->items, 0);
+        menu->item_count = ItemMenu_Collect(owner, menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         menu->selected_item_icon->active = 13;
         ItemMenu_PageResult(&state, pane);
@@ -333,7 +333,7 @@ s32 ItemMenu_RunList(s32 pane)
                         menu->selected_owner = menu->owner_ids[tab];
                         menu->pane_owner[pane] = menu->owner_ids[tab];
                         menu->pane_index[pane] = tab;
-                        menu->item_count = (u8)ItemMenu_Collect(
+                        menu->item_count = ItemMenu_Collect(
                             Owner_GetStateFar(menu->pane_owner[pane]), menu->items, 0);
                     } while (menu->item_count == 0);
                     for (i = 0; i <= 3; i++) {

@@ -80,7 +80,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
             seed->velocity_x = (Random16() & 63) << 12;
         } else {
             x = ((Random16() & 31) + 8) << 16;
-            seed->velocity_x = -(s32)(Random16() & 63) << 12;
+            seed->velocity_x = -(Random16() & 63) << 12;
         }
         seed->x = x - seed->velocity_x * 18;
         seed->velocity_y = 0;
@@ -135,8 +135,8 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
                             spark = &sparks[i * 16 + j];
                             spark->x = ((Crystal_ShardStarts[j * 2] - 40) << 16) + point->x;
                             spark->y = Crystal_ShardStarts[j * 2 + 1] << 16;
-                            spark->velocity_x = ((s32)(Random16() & 127) - 64) << 11;
-                            spark->velocity_y = -(s32)(Random16() & 127) << 11;
+                            spark->velocity_x = ((Random16() & 127) - 64) << 11;
+                            spark->velocity_y = -(Random16() & 127) << 11;
                             if (i & 1) {
                                 spark->velocity_x *= 2;
                                 spark->velocity_y *= 2;

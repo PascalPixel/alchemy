@@ -156,7 +156,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         {
         s32 start = 0;
 
-        session->background = (u16)(u32)&ResourceId_VinasuChojoStormBackdrop;
+        session->background = (u32)&ResourceId_VinasuChojoStormBackdrop;
         list.count = BattleParty_ListActorIds(2, list.ids);
         list.ids[list.count] = 0xff;
         BattleActor_SpawnObjectsForList(list.ids, 0);

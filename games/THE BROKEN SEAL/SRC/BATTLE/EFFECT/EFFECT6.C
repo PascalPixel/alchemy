@@ -151,13 +151,13 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
             if (frame > 15) {
                 amp = (frame * 2) - 32;
                 REG_BLDALPHA =
-                    (s16)((31 - frame) | 0x1000);
+                    (31 - frame) | 0x1000;
             }
         } else if (frame <= 63) {
             if (frame > 47) {
                 amp = (frame * 2) - 96;
                 REG_BLDALPHA =
-                    (s16)((63 - frame) | 0x1000);
+                    (63 - frame) | 0x1000;
             }
         }
         if (amp < 0) {
@@ -195,34 +195,34 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
                 rectangle[work->effect->side](
                     canvas, work->sheet + 0x15d2, CounterReveal_PanelX[idx_a * 7 + 1],
                     CounterReveal_PanelY[idx_b * 7 + 1] + screen_y, 99, 69);
-                if ((u32)(frame - 88) <= 1U) {
+                if ((frame - 88) <= 1U) {
                     Iwram_FillWords(canvas, 0x4000, 0x3F3F3F3F);
                 }
-                if ((u32)(frame - 90) <= 1U) {
+                if ((frame - 90) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, work->sheet + 0x3081,
                         CounterReveal_PanelX[idx_a * 7 + 2],
                         CounterReveal_PanelY[idx_b * 7 + 2] + screen_y, 128, 91);
                 }
-                if ((u32)(frame - 92) <= 1U) {
+                if ((frame - 92) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, (void *)gMapCellBuffer,
                         CounterReveal_PanelX[idx_a * 7 + 3],
                         CounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
                 }
-                if ((u32)(frame - 94) <= 1U) {
+                if ((frame - 94) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, gMapCellBuffer + 0x2d80,
                         CounterReveal_PanelX[idx_a * 7 + 4],
                         CounterReveal_PanelY[idx_b * 7 + 4] + screen_y, 128, 59);
                 }
-                if ((u32)(frame - 96) <= 1U) {
+                if ((frame - 96) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, gMapCellBuffer + 0x4b00,
                         CounterReveal_PanelX[idx_a * 7 + 5],
                         CounterReveal_PanelY[idx_b * 7 + 5] + screen_y, 122, 29);
                 }
-                if ((u32)(frame - 98) <= 1U) {
+                if ((frame - 98) <= 1U) {
                     rectangle[work->effect->side](
                         canvas, gMapCellBuffer + 0x58d2,
                         CounterReveal_PanelX[idx_a * 7 + 6],

@@ -46,10 +46,10 @@ void Shop_DrawStock(s32 window, s32 selected)
             icon->unknown_0c = clear;
         }
         slot = 0;
-        if ((u32)first < (u32)item_count) {
-            item_id = (s16 *)((u32)(first * 2) + (u32)item_ids);
+        if (first < (u32)item_count) {
+            item_id = (s16 *)((first * 2) + (u32)item_ids);
             x = 16;
-            for (; (u32)slot <= 6 && (u32)first < (u32)item_count;
+            for (; (u32)slot <= 6 && first < (u32)item_count;
                  x += 32, slot++, item_id++, first++) {
                 stock_item = *item_id;
                 definition = Item_Get(stock_item);

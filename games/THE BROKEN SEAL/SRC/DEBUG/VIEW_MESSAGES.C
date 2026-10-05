@@ -119,7 +119,7 @@ void DebugBattle_ViewMessages(void)
                     index -= 10;
                 if (index < 0)
                     index = 0;
-                if ((u32)index >= (u32)DEBUG_VIEW_LIMIT)
+                if (index >= (u32)DEBUG_VIEW_LIMIT)
                     index = DEBUG_VIEW_LIMIT;
                 if (gKeysRepeat & (KEY_B | KEYS_DPAD | KEYS_SHOULDERS))
                     break;

@@ -81,7 +81,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
             pair[i * 2].z = z << 16;
             angle <<= 16;
             angle = (u32)angle >> 16;
-            Vector_AddPolarOffset(0x280000, (u16)angle, &out[0].x);
+            Vector_AddPolarOffset(0x280000, angle, &out[0].x);
             pair[i * 2 + 1].x = x << 16;
             {
                 s32 *point = &out[1].x;
@@ -89,14 +89,14 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
                 pair[i * 2 + 1].z = z << 16;
                 Vector_AddPolarOffset(0x280000, (u16)angle, point);
             }
-            angle = (angle + (u32)0x8000) << 16;
+            angle = (angle + 0x8000) << 16;
             i++;
             out += 2;
             angle >>= 16;
         }
         break;
     default:
-        angle = (s32)(((u32)angle << 16) + 0x20000000) >> 16;
+        angle = ((angle << 16) + 0x20000000) >> 16;
         for (i = 0; i < 4; i++) {
             angle <<= 16;
             angle = (u32)angle >> 16;

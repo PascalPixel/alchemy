@@ -144,7 +144,7 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
            the halfword operands, shortening the existing free-slot loop
            by four native bytes. Retain its scalar member-address walk. */
         for (index = 0; index <= 30; index++) {
-            s32 offset = index * (s32)sizeof(state->action_slots[0]) +
+            s32 offset = index * sizeof(state->action_slots[0]) +
                 (s32)&((struct BattleUnit *)0)->action_slots;
 
             if (*(u16 *)((u8 *)state + offset) == 0) {
@@ -212,7 +212,7 @@ void Owner_InitRecords(void)
         do {
             state = (struct BattleUnit *)Owner_GetState(*remote);
             if (state != 0) {
-                state->class_id = (u8)*remote;
+                state->class_id = *remote;
                 tmpl = Character_GetDefinition(state->class_id);
 
                 for (i = 14; i >= 0; i--)
@@ -250,7 +250,7 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level)
             return Character_LevelExpTable[state->class_id * 99 + level - 1];
         }
     }
-    return (u32)-1;
+    return -1;
 }
 
 /* Raises a party member one level: the gain of each statistic is the
@@ -282,7 +282,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         st->level++;
         res->level = level + 1;
         threshold = Owner_GetLevelThreshold(owner, st->level);
-        if (threshold != (u32)-1 && st->experience < threshold)
+        if (threshold != -1 && st->experience < threshold)
             st->experience = threshold;
         work->growth = Character_GetDefinition(owner);
         if (res->level == 1) {

@@ -74,7 +74,7 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s
         if (preserve == 0) {
             if (selected->y == 0) {
                 selected->y = 0xA00;
-            } else if ((u32)selected->y < 0xD00) {
+            } else if (selected->y < 0xD00) {
                 selected->y += 0xD00;
             } else {
                 UiWork_ResetChannelTransition(selected);

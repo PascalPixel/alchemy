@@ -145,7 +145,7 @@ u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
   result = 0;
   if (kind != 3)
   {
-    tmp = ((u32)value & 0xFFF00000) ^ 0x500000;
+    tmp = (value & 0xFFF00000) ^ 0x500000;
     result = tmp | (0U - tmp);
     result = result >> 0x1F;
   }
@@ -381,7 +381,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             case 32: Audio_PlayCue(0x80); ObjectEffect_BeginContextEffect26(); break;
             case 48: Audio_PlayCue(0x81); ObjectEffect_BeginContextEffect25(); break;
             }
-            work->queued_result = (s16)desc2->result;
+            work->queued_result = desc2->result;
 block_17:
             ret = 0;
         }

@@ -20,7 +20,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
     state = gMenuWork;
     cnt = 0;
     i = 0;
-    if (cnt < (s32)state->owner_count) {
+    if (cnt < state->owner_count) {
         p = tbl;
         do {
             *p = 0;
@@ -33,7 +33,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
             }
             i += 1;
             p += 1;
-        } while (i < (s32)state->owner_count);
+        } while (i < state->owner_count);
     }
     return cnt;
 }

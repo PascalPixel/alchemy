@@ -93,8 +93,8 @@ void UiIcon_PrepareObject(struct RenderOutput *object)
 {
     if (object != NULL) {
         object->active = 1;
-        ((struct UiIconAttributes *)&object->packed)->x = (u16)object->x;
-        ((struct UiIconAttributes *)&object->packed)->y = (u16)object->y;
+        ((struct UiIconAttributes *)&object->packed)->x = object->x;
+        ((struct UiIconAttributes *)&object->packed)->y = object->y;
         ((struct UiIconAttributes *)&object->packed)->matrix = 0;
         ((struct UiIconAttributes *)&object->packed)->affine_mode = 0;
     }

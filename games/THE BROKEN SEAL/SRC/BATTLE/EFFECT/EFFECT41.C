@@ -94,8 +94,8 @@ void CheckObjectMapTile(void)
             if (y < 0)
                 y += 0xfffff;
 
-            tile = (u8 *)((u32)tile +
-                ((tile_x + ((u32)(y >> 20) << 7)) << 2));
+            tile = (u8 *)(tile +
+                ((tile_x + ((y >> 20) << 7)) << 2));
         }
     }
 
@@ -196,7 +196,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
     s32 phase2;
     s16 *pp;
 
-    if ((s32)FIELD_AT_OFFSET(object, s32 *, 0xC) <= (s32)FIELD_AT_OFFSET(object, s32 *, 0x14)) {
+    if (FIELD_AT_OFFSET(object, s32 *, 0xC) <= FIELD_AT_OFFSET(object, s32 *, 0x14)) {
         FIELD_AT_OFFSET(object, s16 *, 0x5E) = phase;
         ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
         p = NULL;
@@ -210,7 +210,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
             FIELD_AT_OFFSET(p, s32 *, 0x18) = 0x8000;
             FIELD_AT_OFFSET(p, s8 *, 0x55) = 2;
             FIELD_AT_OFFSET(p, s32 *, 0x28) = 0x10000;
-            FIELD_AT_OFFSET(p, s32 *, 0x30) = (s32)(Random16() + 0x13333);
+            FIELD_AT_OFFSET(p, s32 *, 0x30) = Random16() + 0x13333;
             Motion_SetTargetPositionFromMagnitudeAngle(
                 p, 0x200000, Random16());
             pp = &FIELD_AT_OFFSET(p, s16 *, 0x5E);
@@ -227,7 +227,7 @@ void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *object)
 {
     s32 r;
 
-    object->y = (s32)((u32)object->y - 0x4ccc);
+    object->y = object->y - 0x4ccc;
     r = Random16();
     object->x += r - Random16();
     if (object->y <= object->terrain_height) {

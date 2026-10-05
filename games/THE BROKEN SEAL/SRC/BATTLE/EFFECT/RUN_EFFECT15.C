@@ -66,7 +66,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
         Camera_WorldToScreen(&position);
 
         effect->x = position.x;
-        effect->z = (s32)((u32)position.z + 0x80000);
+        effect->z = position.z + 0x80000;
         effect->origin_z = effect->z;
         effect->origin_x = effect->x;
         position.z = effect->origin_z;

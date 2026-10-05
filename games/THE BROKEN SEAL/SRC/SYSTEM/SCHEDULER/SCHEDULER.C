@@ -53,7 +53,7 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
             x_reciprocal = -reciprocal;
 
         matrix->rows[0] = (u16)x_reciprocal;
-        matrix->rows[1] = (u32)reciprocal << 16;
+        matrix->rows[1] = reciprocal << 16;
     } else {
         s32 sine;
         s32 cosine;

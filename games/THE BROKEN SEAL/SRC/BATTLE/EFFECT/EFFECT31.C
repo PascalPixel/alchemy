@@ -238,7 +238,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
 void FieldObject_PlaceSceneActors(void)
 {
     s32 flags = gGameState.pending_djinn_event & 0xf000;
-    u32 scene = (u16)gGameState.pending_djinn_event & 0xfff;
+    u32 scene = gGameState.pending_djinn_event & 0xfff;
     s32 id;
 
     if (GameFlag_TestFar(0x109) != 0 && flags == 0) {

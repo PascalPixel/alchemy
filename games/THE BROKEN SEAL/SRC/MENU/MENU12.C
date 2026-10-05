@@ -39,7 +39,7 @@ s32 Menu_OpenCharacterSelector(void)
     UiWindow_InitializeWork(0);
 
     state->party_count =
-        (u8)Party_ListActiveOwnersFar(state->owner_ids);
+        Party_ListActiveOwnersFar(state->owner_ids);
     Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
     state->selector_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < ROW_CNT; index++)

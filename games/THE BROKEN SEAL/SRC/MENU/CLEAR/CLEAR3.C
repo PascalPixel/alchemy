@@ -300,7 +300,7 @@ u16 SceneData_GetBufferCrc16(u32 count, u8 *p)
     crc = 0xFFFF;
     if (count != 0) {
         do {
-            crc ^= (u32)*p << 8;
+            crc ^= *p << 8;
             j = 0;
             do {
                 if ((crc & 0x8000) != 0) {

@@ -261,7 +261,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
         point->velocity_x = (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
         point->velocity_y = (target->y - point->y + 0x140000) / 12;
         point->velocity_z = (target->z - point->z) / 12;
-        point->variant = (s32)(Random16() & 15) + delay;
+        point->variant = (Random16() & 15) + delay;
         point++;
     }
 

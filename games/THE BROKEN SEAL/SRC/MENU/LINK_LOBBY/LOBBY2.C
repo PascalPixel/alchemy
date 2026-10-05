@@ -77,7 +77,7 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
          */
         u16 *p = (u16 *)((u32)work + 386);
         s32 val = 0;
-        *p = (u16)val;
+        *p = val;
     }
 
     Engine_EventSetMessage((s32)MsgLobbyLinkDisconnected);
@@ -106,7 +106,7 @@ s32 LinkLobby_ReceivePartyRecords(void)
     s32 i;
 
     size = 0x154;
-    heap = (s32)Runtime_BumpAllocateAlternatePool((s32)size);
+    heap = (s32)Runtime_BumpAllocateAlternatePool(size);
     result = 0;
     timeout = 900;
     slot = 0;
@@ -196,7 +196,7 @@ test2:
 second:
     Runtime_BumpFree(heap);
     size = 0x140;
-    heap = (s32)Runtime_BumpAllocateAlternatePool((s32)size);
+    heap = (s32)Runtime_BumpAllocateAlternatePool(size);
     tries = 0;
     if ((ret = SerialRuntime_BeginTransferB(Trade_GetOfferState(1))) != -1) {
         goto test2;
@@ -222,7 +222,7 @@ s32 SceneData_CopyUpToThreeEntries(u16 *dest)
         n = cnt;
         do {
             u8 c = *src++;
-            if (dest != 0) { *dest = (u16)c; dest++; }
+            if (dest != 0) { *dest = c; dest++; }
             n--;
         } while (n != 0);
     }
@@ -349,7 +349,7 @@ next:
         timeout = 600;
         for (j = 0; j < list->count; j++) {
             list->entries[j].owner = slots[list->entries[j].owner];
-            if ((s8)list->entries[j].owner == 0) {
+            if (list->entries[j].owner == 0) {
                 for (k = j; k < list->count - 1; k++) {
                     list->entries[k] = list->entries[k + 1];
                 }

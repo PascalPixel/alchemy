@@ -52,7 +52,7 @@ void SaveMenu_FillTileBlock(const struct RenderInput *window)
         s32 remaining = 15;
 
         do {
-            s16 value = (s16)(tile | -0x1000);
+            s16 value = tile | -0x1000;
 
             remaining--;
             *vram = value;

@@ -80,10 +80,10 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         entry->unit_id = unit_id;
         entry->priority = unit->agility >> 1;
         if (entry->priority != 0)
-            entry->priority += (u32)(Random16() * unit->agility) >> 16;
+            entry->priority += (Random16() * unit->agility) >> 16;
         entry->command = 0;
         entry->parameter = 0;
-        entry->target = (u32)(Random16() * priority_range) >> 16;
+        entry->target = (Random16() * priority_range) >> 16;
         count++;
         entry++;
     }
@@ -196,7 +196,7 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action)
     s32 member_slot;
 
     (void)action;
-    if (((u32)(Random16() << 4) >> 16) != 0) {
+    if (((Random16() << 4) >> 16) != 0) {
         party_size = BattleParty_ListLivingUnits(
             BATTLE_SIDE_PARTY,
             party_members);
@@ -361,7 +361,7 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
     if (BattleObject_IsValidId(work.actor) < 0)
         return -1;
 
-    work.actors[0] = ((u16)input->target);
+    work.actors[0] = input->target;
     if (BattleObject_IsValidId(work.actors[0]) < 0)
         return -1;
 

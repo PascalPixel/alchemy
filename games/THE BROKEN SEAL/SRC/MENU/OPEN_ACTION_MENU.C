@@ -94,7 +94,7 @@ s32 ActionMenu_Open(void)
     for (index = 0; index < MENU_ROW_COUNT; index++)
         state->owner_y[index] = 30;
     if (Party_SumDjinnCountsFar(-1) != 0)
-        FourObjectMotion_InitializeTopRow((s32)state->selector_window, 0);
+        FourObjectMotion_InitializeTopRow(state->selector_window, 0);
     for (index = 0; index < 4; index++) {
         state->row_x[index] = 130 + index * 32;
         state->row_y[index] = 0x80;

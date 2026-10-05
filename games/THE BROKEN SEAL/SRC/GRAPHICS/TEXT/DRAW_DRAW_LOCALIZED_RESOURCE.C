@@ -70,7 +70,7 @@ s32 UiText_DrawWaitingForOpponent(void)
     frame = captured - 1;
     /* FAKEMATCH: The international message load follows the frame adjustment; the prior shape swapped that pair. */
     __asm__("" : "+r"(frame) : : "r0");
-    UiText_CopyMessageString((s32)MsgWaitingForOpponent, arg_buf, (u32)arg_size);
+    UiText_CopyMessageString((s32)MsgWaitingForOpponent, arg_buf, arg_size);
 #else
     {
         s32 message = (s32)MsgWaitingForOpponent;

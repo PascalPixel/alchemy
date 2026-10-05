@@ -338,7 +338,7 @@ after_power:
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
-                    dmg += (u8)(target->level / 5) + 6;
+                    dmg += (target->level / 5) + 6;
                     if (pass == 0) {
                         BattleEv_Push(BATTLE_EVENT_MARK, 0);
                         {
@@ -917,7 +917,7 @@ after_power:
             if (target->hp != 0)
                 break;
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-            target->hp = (s16)(target->max_hp / 2);
+            target->hp = target->max_hp / 2;
             Owner_RecalculateRatiosFar(target_id);
             break;
 
@@ -925,7 +925,7 @@ after_power:
             if (target->hp != 0)
                 break;
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-            target->hp = (s16)(target->max_hp * 8 / 10);
+            target->hp = target->max_hp * 8 / 10;
             Owner_RecalculateRatiosFar(target_id);
             break;
 
@@ -1178,7 +1178,7 @@ after_power:
             break;
 
         case EFX_TEXT_NONE:
-            BattleEv_Push(BATTLE_EVENT_TEXT, (u32)-1);
+            BattleEv_Push(BATTLE_EVENT_TEXT, -1);
             break;
 
         default:

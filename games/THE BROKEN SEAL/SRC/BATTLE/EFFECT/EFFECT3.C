@@ -87,7 +87,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
     volatile u16 *blend_y;
 
     if (mode == 0) {
-        Scheduler_RemoveCallback((u32)((s32)Graphics_AdvancePaletteCycle));
+        Scheduler_RemoveCallback((s32)Graphics_AdvancePaletteCycle);
         REG_BLDY = mode;
         BattlePres_ClearAllActorRecordModes();
         WaitFrames(1);

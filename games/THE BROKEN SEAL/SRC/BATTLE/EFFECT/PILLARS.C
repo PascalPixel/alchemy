@@ -102,7 +102,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
         camera = gCameraWork;
         if (work->effect->variant == 2 && frame < 64) {
             if (work->effect->side == 0)
-                camera->yaw = (s16)camera->yaw + 192;
+                camera->yaw = camera->yaw + 192;
             else
                 camera->yaw = (s16)camera->yaw - 192;
         }

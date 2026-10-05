@@ -134,7 +134,7 @@ void Audio_SetWorkPairB(u16 primary, u16 secondary)
 
 void MusicCommand_SetVolume(s16 volume)
 {
-    MusicPlayer_SetVolume(&gMusicPlayerBgm, 0xFF, (u16)volume);
+    MusicPlayer_SetVolume(&gMusicPlayerBgm, 0xFF, volume);
     gMusicVolumeTarget = volume;
     gMusicVolume = volume;
 }

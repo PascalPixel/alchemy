@@ -548,7 +548,7 @@ u32 Runtime_GetBuildStampTime(void)
     shifted |= packed << 16;
     result = shifted >> 16;
     if (gDebugMode != 0) {
-        result |= (s32)0xffff8000;
+        result |= 0xffff8000;
     }
     return (u16)result;
 }

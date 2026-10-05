@@ -19,7 +19,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
     entry_count = menu->psynergy_count;
     owner = menu->owner_ids[index];
     selected_index = menu->selected_index_by_owner[owner];
-    if ((s32)(selected_index + 1) > entry_count) {
+    if ((selected_index + 1) > entry_count) {
         selected_index = entry_count - 1;
     }
     page = selected_index / 5;

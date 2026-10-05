@@ -67,5 +67,5 @@ void Resource_ScheduleOwnerResetDelayed(void)
 
 void Resource_ScheduleOwnerReset(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)MenuSelection_DrawFrame));
+    Scheduler_RemoveCallback((s32)MenuSelection_DrawFrame);
 }

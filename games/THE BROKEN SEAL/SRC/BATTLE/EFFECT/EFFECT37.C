@@ -47,17 +47,17 @@ void BattleFx_AdvanceHueCycle(void)
     u8 *p1;
     u8 *p2;
 
-    BattleFx_ComputeHueChannels((s32)(*(u16 *)(base + 0x28E)) << 16, &out1, &out2, &out3);
+    BattleFx_ComputeHueChannels((*(u16 *)(base + 0x28E)) << 16, &out1, &out2, &out3);
 
     offset = 0x28B;
     p0 = base + offset;
-    *p0 = (u8)((out1 >> 18) + 4);
+    *p0 = (out1 >> 18) + 4;
     offset += 1;
     p1 = base + offset;
-    *p1 = (u8)((out2 >> 18) + 4);
+    *p1 = (out2 >> 18) + 4;
     offset += 1;
     p2 = base + offset;
-    *p2 = (u8)((out3 >> 18) + 4);
+    *p2 = (out3 >> 18) + 4;
 
     *(u16 *)(base + 0x28E) += 4;
 
@@ -167,7 +167,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
     void *work;
 
     work = gWindowWork[0];
-    Scheduler_RemoveCallback((u32)((s32)BattleFx_ArmBg0HBlankDma));
+    Scheduler_RemoveCallback((s32)BattleFx_ArmBg0HBlankDma);
     *(volatile s16 *)0x050001E2 = 0x7FFF;
     *(s16 *)0x050001E6 = 0;
     *(volatile s16 *)0x050001F6 = 0x294A;

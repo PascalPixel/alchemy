@@ -236,9 +236,9 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
     u32 pos;
     u16 row;
 
-    if (y > (u32)(win->height - 2))
+    if (y > (win->height - 2))
         return;
-    if (x > (u32)(win->width - 2))
+    if (x > (win->width - 2))
         return;
     if (mode == 1) {
         s32 column;
@@ -296,9 +296,9 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
     u32 pos;
     u16 row;
 
-    if (y > (u32)(win->height - 2))
+    if (y > (win->height - 2))
         return;
-    if (x > (u32)(win->width - 2))
+    if (x > (win->width - 2))
         return;
     if (mode == 1) {
         s32 column;

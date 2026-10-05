@@ -94,7 +94,7 @@ void UiTimedNotice_Tick(void)
 
     work = (struct TimedNoticeWork *)gEventWork;
     work->countdown = (count = work->countdown + 0xffff);
-    if (((u32)count << 16) == 0) {
+    if ((count << 16) == 0) {
         UiWork_Finalize(work->window, 2);
         Scheduler_RemoveCallback((u32)UiTimedNotice_Tick);
     }

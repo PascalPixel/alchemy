@@ -210,7 +210,7 @@ s32 BattleEffect_ApplyToTargets(
             break;
 
         case 9:
-            random_adjust = ((u32)Random16() * 4) >> 16;
+            random_adjust = (Random16() * 4) >> 16;
             if (random_adjust == 0) {
                 random_adjust = -1;
             } else {

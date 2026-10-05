@@ -154,7 +154,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             do {
                 ime = &REG_IME;
                 saved = *ime;
-                *ime = (u16)(u32)ime;
+                *ime = (u32)ime;
             } while (0);
             gBattleRandomSeed = state->seed = gRandomSeed;
             do { /* FAKEMATCH: the one-pass restore, see above */
@@ -179,7 +179,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             struct BattleActionRecord *action = &actions[count + index];
 
             action->unit_id = action->slot;
-            action->target = (u16)action->target ^ 0x80;
+            action->target = action->target ^ 0x80;
         }
 
         Runtime_BumpFree(state);

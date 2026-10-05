@@ -149,7 +149,7 @@ top:
     } else if (state == 1) {
         if (BattleFx_HasReachedTarget(effect)!= 0)
             return;
-        *state_pointer = (u8)*state_pointer + 1;
+        *state_pointer = *state_pointer + 1;
         goto top;
     } else if (state == 2) {
         position.x = camera->x;
@@ -162,7 +162,7 @@ top:
         effect->max_turn_step = 0x1000;
         effect->flag42 = 1;
 advance:
-        *state_pointer = (u8)*state_pointer + 1;
+        *state_pointer = *state_pointer + 1;
         return;
     } else if (state == 3) {
         if (BattleFx_HasReachedTarget(effect) == 0)

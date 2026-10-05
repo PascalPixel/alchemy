@@ -187,7 +187,7 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 begin_transfer:
     ime = &REG_IME;
     saved_interrupt_master = *ime;
-    *ime = (u16)(u32)ime; /* its own address, 0x208: bit 0 clear */
+    *ime = (u32)ime; /* its own address, 0x208: bit 0 clear */
     do {
         state->status = 0x80;
         SERIAL_VALUE_A = transfer;
@@ -226,7 +226,7 @@ s32 SerialRuntime_BeginTransferB(void *destination)
 begin_transfer:
     ime = &REG_IME;
     saved_interrupt_master = *ime;
-    *ime = (u16)(u32)ime; /* its own address, 0x208: bit 0 clear */
+    *ime = (u32)ime; /* its own address, 0x208: bit 0 clear */
     /* FAKEMATCH: the one-pass block keeps the IME read and write ahead of
        the transfer stores, as in SerialRuntime_BeginTransferA. */
     do {

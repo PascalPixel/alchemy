@@ -558,7 +558,7 @@ gVinasuChojoEvents:
 	.4byte InitializeActorZeroMotion
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte SceneActor_SetByte55ForActorZeroAnd12To17
+	.4byte VinasuChojo_ConfigureGroupMotion
 	.4byte 0x00000202
 	.4byte 0xffff000a
 	.4byte InitializeActorZeroMotion

@@ -42,7 +42,7 @@ void SceneEffect_SpawnParticlesBesideActor(void);
 extern u8 MsgVinasuDespiteLongTiring[];
 extern u8 MsgVinasuWhyHappeningProtectVenusLighthouse[];
 
-void OverlayObject_DecayRecordField1e(struct FieldActor *actor);
+void VinasuChojo_StepSpriteRotation(struct FieldActor *actor);
 extern u8 VinasuChojo_StepBackAction[];
 extern u8 VinasuChojo_LeapAction[];
 extern u8 VinasuChojo_ScaleStepAction[];
@@ -825,7 +825,7 @@ void Scene_RunExtendedActorTransition(void)
     Actor_SetSpeed(21, 0x30000, 0x18000);
     Object_GetById(21)->steering_flags &= ~ACTOR_FACES_MOTION;
     actor = Object_GetById(21);
-    actor->update = (void (*)(union FieldObject *))OverlayObject_DecayRecordField1e;
+    actor->update = (void (*)(union FieldObject *))VinasuChojo_StepSpriteRotation;
     actor->facing = FACING_WEST;
     Actor_MoveToAndWait(21, 184, 237);
     Object_SetActionCallbackAndRefreshById(21, VinasuChojo_LeapAction);

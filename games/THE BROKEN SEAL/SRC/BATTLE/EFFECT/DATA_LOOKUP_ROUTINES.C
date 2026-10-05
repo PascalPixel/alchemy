@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_RUNTIME.H"
+#include "GAME_STATE.H"
 
 extern u8 *gEventWork;
 
@@ -50,8 +51,6 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
       weighted_row, *((u16 *)(((u8 *)entry_address) + 2)));
 }
 
-extern s16 gGameState[];
-
 struct SceneInteractionEntry {
     s16 id;
     s16 value : 15;
@@ -65,9 +64,9 @@ extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
 void Scene_ResolveInteractionResult(void)
 {
     s16 result = 18;
-    s16 progress = gGameState[224];
-    s16 sub = gGameState[225];
-    s16 alt = gGameState[230];
+    s16 progress = gGameState.scene;
+    s16 sub = gGameState.entrance;
+    s16 alt = gGameState.scene_group;
     const struct SceneInteractionEntry *entry = Scene_InteractionRuleTable;
 
     for (; entry->id != -1; entry++) {
@@ -98,7 +97,7 @@ void Scene_ResolveInteractionResult(void)
         }
     }
 
-    gGameState[248] = result;
+    gGameState.cue = result;
 }
 
 struct SceneAreaNameRule {

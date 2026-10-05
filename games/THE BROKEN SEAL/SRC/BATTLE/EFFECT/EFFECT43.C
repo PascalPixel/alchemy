@@ -52,7 +52,6 @@ void RunBattleEffect16(void)
     u32 angle;
     s32 slot;
     s32 count;
-    s32 index;
 
     scene = gEffectWork;
     object = scene->main_object;
@@ -93,8 +92,7 @@ void RunBattleEffect16(void)
     Audio_PlayCue(0xae);
     WaitFrames(55);
     Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
-    index = 147;
-    if (*(s16 *)((u8 *)&gGameState + index * sizeof(s32)) != 0)
+    if (gGameState.cloaked != 0)
         ObjectDispatch_SetSingleChildField26Far(object, 2);
     else
         ObjectDispatch_SetSingleChildField26Far(object, 1);

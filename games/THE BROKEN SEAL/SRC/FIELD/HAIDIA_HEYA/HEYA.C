@@ -420,7 +420,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Call3(Object_SetTargetAndCallback, 2, 0x1000a, base5_20092fc);
     Object_SetTargetAndCallback(3, 0x1000a, base5_20092fc);
     Engine_EventWait(0x12c);
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = v6;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = v6;
     Camera_SetSpeed(0x1999, 0x333);
     Camera_MoveTo(0x3120000, 0, 0x1ae0000, 1);
     Engine_EventWait(240);

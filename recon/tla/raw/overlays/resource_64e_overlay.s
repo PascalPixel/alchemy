@@ -237,38 +237,6 @@ Func_02000150:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008310:
 	.4byte 0xffff0000
-	.section .text.x02008314,"ax",%progbits
-	.global Func_02000314
-	.thumb_func
-Func_02000314:
-	push {r5, lr}
-	ldmia r0!, {r5}
-	ldmia r1!, {r3}
-	ldmia r0!, {r4}
-	subs r5, r5, r3
-	ldmia r1!, {r3}
-	asrs r5, r5, #16
-	ldr r2, [r1]
-	subs r4, r4, r3
-	ldr r3, [r0]
-	asrs r4, r4, #16
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	adds r0, r5, #0
-	muls r0, r5
-	adds r2, r4, #0
-	muls r2, r4
-	adds r1, r3, #0
-	muls r1, r3
-	adds r0, r0, r2
-	adds r3, r1, #0
-	adds r0, r0, r3
-	ldr r3, .L_02008348
-	mov lr, r3
-	.2byte 0xf800
-	pop {r5, pc}
-.L_02008348:
-	.4byte IwramFillWords + 0x74
 	.section .text.x0200834c,"ax",%progbits
 	.global Func_0200034c
 	.thumb_func

@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_64e_overlay.o"(.text.x0200814e)
         "*/resource_64e_overlay.o"(.text.x02008150)
-        "*/resource_64e_overlay.o"(.text.x02008314)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/DISTANCE.o"(.text)
         "*/resource_64e_overlay.o"(.text.x0200834c)
         "*/resource_64e_overlay.o"(.text.x0200838c)
         "*/resource_64e_overlay.o"(.text.x02008510)

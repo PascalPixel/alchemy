@@ -1415,7 +1415,7 @@ void Scene_RunExtendedEffectPresentation(void)
 }
 
 /* Scene steps, regions and arcing effects. */
-/* The IWRAM remainder, reached through an import veneer. */
+/* Resident IWRAM remainder. */
 void SoruFunka_PlaceBeforeStar(s32 actor)
 {
     struct FieldActor *object;
@@ -1598,8 +1598,7 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
     Ent_02002c1c *p;
 
-    /* FAKEMATCH: the view-centre import is passed the tile x it ignores, as
-     * the game passes it. */
+    /* FAKEMATCH: the view-centre import is passed the tile x it ignores, as the game passes it. */
     p = (Ent_02002c1c *)((s32 (*)())Engine_EventGetViewCenter)(a);
     b = b << 16;
     a = a << 16;
@@ -1757,9 +1756,7 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;

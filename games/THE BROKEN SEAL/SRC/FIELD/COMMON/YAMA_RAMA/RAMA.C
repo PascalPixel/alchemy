@@ -361,7 +361,7 @@ void ConfigureAndPlaceActorFourteen(void)
     PlaceActor(14, 0x01580000, 0x00980000);
 }
 
-void FieldScene_RunScene3a2_020008a8(void)
+void YamaRama_ClearActorPlacement(void)
 {
     u32 i;
     s32 record;

@@ -444,8 +444,6 @@ remove_character:
             u32 cell;
             u32 character;
 
-            /* FAKEMATCH: keeps the column term whole, as the native adds it. */
-            __asm__("" : "+r"(tx));
             cell = ((window->y + row + 1) << 5) + tx;
             character = work[cell * 2];
             if (length == 5)

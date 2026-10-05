@@ -1,16 +1,7 @@
 #include "TYPES.H"
 #include "PARTY_STATE.H"
+#include "FIELD_SCENE.H"
 
-/* A scene's row: its overlay's resource id, group, variant and map. */
-struct SceneRecord {
-    s16 resource_id;
-    s8 group;
-    s8 variant;
-    u16 map_index;
-    u16 reserved;
-};
-
-extern const struct SceneRecord Field_SceneTable[];
 extern u8 gOverlayArea[];
 
 void Resource_LoadCode(u32 index, void *destination);

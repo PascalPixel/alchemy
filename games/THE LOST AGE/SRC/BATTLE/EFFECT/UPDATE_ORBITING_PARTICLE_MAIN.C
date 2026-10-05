@@ -6,6 +6,7 @@
 #include "SYSTEM.H"
 #include "FRAME.H"
 #include "OBJECT_DISPATCH.H"
+#include "OBJECT_RUNTIME.H"
 
 struct OrbitingParticle;
 
@@ -22,19 +23,17 @@ s32 BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
     return 0;
 }
 
-void BattleFx_UpdateOrbitingParticleFade(void *object)
+/* Shrinks a particle each frame and hands it to the common particle
+   script once it is small enough. */
+void BattleFx_UpdateOrbitingParticleFade(struct ObjectRuntime *object)
 {
-  s32 primary_fade;
-  u8 *object_bytes;
-  if (object != ((void *) 0))
-  {
-    primary_fade = *((s32 *)(((u8 *)object) + 0x18));
-    primary_fade = primary_fade + 0xFFFFF000;
-    *((s32 *)((object_bytes = (u8 *)object) + 0x1C)) = (s32)((*((s32 *)(object_bytes + 0x1C))) + 0xFFFFF000);
-    *((s32 *)(object_bytes + 0x18)) = primary_fade;
-    if (primary_fade <= 0x1000)
-    {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+    s32 scale;
+
+    if (object != NULL) {
+        scale = object->scale_x - 0x1000;
+        object->scale_y -= 0x1000;
+        object->scale_x = scale;
+        if (scale <= 0x1000)
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
     }
-  }
 }

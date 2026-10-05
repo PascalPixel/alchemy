@@ -47,7 +47,8 @@ struct DispatchObject {
     s16 value_64;
     u8 unknown_66[2];
     s32 argument;
-    u8 unknown_6c[4];
+    /* Runs every frame in place of the script. */
+    void (*update)(struct DispatchObject *object);
 };
 
 s32 Animation_ApplyChildArgument(struct DispatchChild *, s32);

@@ -48,7 +48,6 @@ void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
     s32 count = 3;
     u8 *dst;
 
-    asm volatile("" : "+l"(count)); /* FAKEMATCH: ⚓️ sets the count in the offset load's delay slot */
     dst = (u8 *)((u32)arg1 + offset + 2);
 
     do {

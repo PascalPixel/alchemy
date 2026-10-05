@@ -27,7 +27,6 @@ s32 Summon_ClassValid(s32 arg0)
     retval = Summon_IsEntryFlagged(arg0);
     ptr = (struct Layout *)Ram_HeapSlots->battle_work;
     i = 0;
-    asm volatile("" ::: "memory"); /* FAKEMATCH: i is cleared before the first field load */
     for (; i < 6; i++) {
         if (ptr->field[i] != 0)
             continue;

@@ -29,11 +29,11 @@ u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
 
     row = arg0 * 14;
     table = Encounter_EnemyGroupTable;
-    asm volatile("" : "+l"(table), "+l"(row)); /* FAKEMATCH: ⚓️ loads the table between the row and the column */
+    /* FAKEMATCH: ⚓️ loads the table between the row and the column */
+    asm volatile("" : "+l"(table), "+l"(row));
     row += arg1;
     row <<= 1;
     row += 4;
-    asm volatile("" : "+l"(row)); /* FAKEMATCH: and indexes it with the whole offset */
     return *(u16 *)((u8 *)table + row);
 }
 

@@ -343,7 +343,8 @@ void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 opera
     } else {
         u8 current = state->comparison_result;
 
-        asm volatile("" : "+l"(current)); /* FAKEMATCH: ⚓️ loads the byte before narrowing the value */
+        /* FAKEMATCH: ⚓️ loads the byte before narrowing the value */
+        asm volatile("" : "+l"(current));
         result = 0;
         if (current == (u8)value)
             result = 1;

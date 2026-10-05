@@ -20,13 +20,13 @@ void Ui_LoadWindowGraphics(void)
             (volatile u32 *)0x040000d4);
     Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
             (volatile u32 *)0x040000d4);
-    /* FAKEMATCH: the two do-while blocks keep the value-before-address
-       order of the palette stores */
+    /* FAKEMATCH: the do-while block keeps the backdrop store's value
+       before its address */
     do {
         s32 black = 0;
         PLTT_BACKDROP = black;
     } while (0);
-    do {
+    {
         volatile u16 *pal;
         s32 color;
 
@@ -51,7 +51,7 @@ void Ui_LoadWindowGraphics(void)
         color = 0x59e0;
         pal++;
         *pal = color;
-    } while (0);
+    }
     Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
             (volatile u32 *)0x040000d4);
 }

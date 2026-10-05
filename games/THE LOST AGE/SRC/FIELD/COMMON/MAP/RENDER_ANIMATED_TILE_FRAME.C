@@ -117,7 +117,8 @@ void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
         if (cnt > 0) {
             pos1 = pos + 1;
             p = top;
-            asm volatile("" : "+l"(p)); /* FAKEMATCH: ⚓️ reloads the table between the first two positions */
+            /* FAKEMATCH: ⚓️ reloads the table between the first two positions */
+            asm volatile("" : "+l"(p));
             pos2 = pos + 2;
             pos3 = pos + 3;
             n = cnt;

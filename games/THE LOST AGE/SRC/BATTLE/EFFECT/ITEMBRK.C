@@ -27,10 +27,7 @@ void BattleFx_RunItemBreakSequence(void)
     scene = Ram_HeapSlots->effect_work;
     object = scene->main_object;
 
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling, as in ☀️. */
-    do {
-        BattleEffect_InitializeSharedScene();
-    } while (0);
+    BattleEffect_InitializeSharedScene();
     object = BattleFx_StartItemBreak(object);
     BattleFx_SnapScaleToFull(object);
     if (object != 0) {

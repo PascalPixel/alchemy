@@ -68,8 +68,7 @@ s32 Scheduler_DisableOverlayCallbacks(void)
 void Scheduler_RunCallbacksByKey(s32 arg)
 {
     s32 key;
-    /* FAKEMATCH: capture the incoming key in the native saved register, then use an ordinary local for its lifetime. */
-    register s32 held asm("r7");
+    s32 held;
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
     u32 cursor = (u32)gSchedulerTaskTable;
     struct SchedulerTask *task;
@@ -143,8 +142,7 @@ finish:
 void Scheduler_RunCallbacksBeforeBoundary(s32 arg)
 {
     s32 key;
-    /* FAKEMATCH: capture the incoming key in the native saved register, then use an ordinary local for its lifetime. */
-    register s32 held asm("r7");
+    s32 held;
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
     u32 cursor = (u32)gSchedulerTaskTable;
     struct SchedulerTask *task;

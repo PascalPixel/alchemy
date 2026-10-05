@@ -55,9 +55,9 @@ s32 Menu_SelectTopEntry(s32 sel)
         s8 *commands = Menu_TopEntryCommandByPosition;
         s32 index;
 
-        asm volatile("" : "+l"(commands)); /* FAKEMATCH: ⚓️ loads the table's address before forming the index */
+        /* FAKEMATCH: ⚓️ loads the table's address before forming the index */
+        asm volatile("" : "+l"(commands));
         index = ret + ofs + 1;
-        asm volatile("" : "+l"(index)); /* FAKEMATCH: and indexes it with the whole sum */
         ret = commands[index];
     }
 

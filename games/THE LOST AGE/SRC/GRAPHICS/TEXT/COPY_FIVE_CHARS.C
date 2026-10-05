@@ -15,7 +15,6 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
         u32 value = *source;
 
         source++;
-        asm volatile("" : "+l"(source)); /* FAKEMATCH: ⚓️ steps the source in the load's delay slot */
         *dst = value;
         dst++;
         if ((u8)value == 0)

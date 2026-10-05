@@ -12,7 +12,6 @@
 void WaitFrames();
 void HaidiaDou_ApplyEntryState();
 
-void WaitFrames(s32 frames);
 
 const struct SceneEvent *Scene_GetEvents(void)
 {

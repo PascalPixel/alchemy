@@ -37,7 +37,6 @@ struct SparkWork {
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 height);
 
-u32 Random16(void);
 
 
 #include "HEAP_STATE.H"

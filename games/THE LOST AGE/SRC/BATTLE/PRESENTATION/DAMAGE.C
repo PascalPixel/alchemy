@@ -73,7 +73,6 @@ struct BattleObjectAnimation {
 };
 
 s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
-s32 ActivateBattleObjectSlot(s32 unit_id);
 
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
 {

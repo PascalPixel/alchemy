@@ -37,7 +37,6 @@ struct EventSpawns {
     struct SpawnPoint *points[1];
 };
 
-void WaitFrames(s32 frames);
 
 struct WorkPointers {
     u8 *event;

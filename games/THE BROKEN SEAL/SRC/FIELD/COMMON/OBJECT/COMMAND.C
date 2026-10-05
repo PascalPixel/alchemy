@@ -29,7 +29,6 @@ void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
 s32 Audio_PlayCue(s32);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
 
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 {

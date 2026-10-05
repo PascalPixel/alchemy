@@ -22,7 +22,6 @@
 #define ColorBuffer_BackupAndBrighten ((void (*)(void*,s32,void*,s32))ColorBuffer_BackupAndBrighten)
 
 
-u32 Random16(void);
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {

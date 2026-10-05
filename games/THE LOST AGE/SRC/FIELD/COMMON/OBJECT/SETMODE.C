@@ -1,6 +1,5 @@
 #include "OBJECT_RUNTIME.H"
 
-void Object_SetMode(struct ObjectRuntime *, s32);
 
 void Object_SetModeById(u32 object_id, s32 action)
 {

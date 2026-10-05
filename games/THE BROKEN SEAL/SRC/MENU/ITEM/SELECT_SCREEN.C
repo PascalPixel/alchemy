@@ -38,7 +38,6 @@ static __inline__ s32 FillWords(FillFn fill, void *dst, s32 size, u32 value)
 }
 #endif
 
-void WaitFrames(s32 frames);
 s32 Party_ListActiveOwnersFar(void *session);
 void Event_ClearInvalidPackedValuesFar(void);
 

@@ -26,9 +26,7 @@ static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 siz
 }
 
 void Audio_PlayCue(s32);
-void WaitFrames(s32);
 
-void QueueIoWriteDelay2(u32 first, u32 second);
 
 #define QUEUE_DISPLAY_CONTROL(control) do { \
     /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \

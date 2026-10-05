@@ -25,7 +25,6 @@
 
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
-s32 ActivateBattleObjectSlot(s32 unit_id);
 void BattleMotion_DestroyAllSlotObjects(void);
 
 static __inline__ s32 DivQ16(s32 divisor, s32 value)

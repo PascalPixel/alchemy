@@ -18,7 +18,6 @@
 
 #define gTitleExtraOptionEnabled (*(s16 *)&gTitleExtraOptionEnabled)
 
-u8 *UiText_FormatNumber(u8 *, s32, s32);
 
 extern volatile u32 gKeysHeld;
 

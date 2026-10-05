@@ -26,7 +26,6 @@ extern volatile s32 gKeyState;
 #endif
 
 void UiText_DrawStringAtOffsetFar(u8 *text, s32 window, s32 x, s32 y);
-void WaitFrames(s32 frames);
 
 s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 {

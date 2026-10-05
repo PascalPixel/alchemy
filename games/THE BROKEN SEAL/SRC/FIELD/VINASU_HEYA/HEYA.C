@@ -19,7 +19,6 @@ extern u8 *gActorEffectWork;
 s32 SceneEffect_SpawnRandomEveryEightFramesB();
 
 
-void OverlayObject_WaitUntilIdle();
 void Engine_MapCopyCellAttributes();
 void Object_SetActionById();
 

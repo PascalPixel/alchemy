@@ -20,7 +20,6 @@
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
-void WaitFrames(s32 frames);
 
 
 void BattleFx_FetchRectangleBlitters(s32 alternate,

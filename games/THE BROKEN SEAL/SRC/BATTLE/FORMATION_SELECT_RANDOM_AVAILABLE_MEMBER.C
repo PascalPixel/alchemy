@@ -42,7 +42,6 @@ s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
     return choices[(Random16() * count) >> 16];
 }
 
-u32 Random16(void);
 
 s32 BattleFormation_BuildEnemyList(s32 record_id)
 {

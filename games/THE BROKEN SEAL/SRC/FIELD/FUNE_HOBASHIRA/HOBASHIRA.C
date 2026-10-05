@@ -20,7 +20,6 @@ struct Object {
     struct Other *other;
 };
 
-u32 Random16(void);
 
 struct SwayActor {
     u8 unknown_00[8];

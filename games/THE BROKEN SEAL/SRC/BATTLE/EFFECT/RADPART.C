@@ -32,7 +32,6 @@ struct EffectOwner {
 
 struct ObjectRuntime *Object_GetById(u32 actor);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
-u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
 
@@ -104,7 +103,6 @@ struct CaptureObject {
     void *callback;
 };
 
-void WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);

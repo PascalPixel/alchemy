@@ -10,7 +10,6 @@ extern volatile u32 gKeysRepeat;
 
 void UiWork_FinalizeFar(s32 window, s32 style);
 void PsynergyMenu_InitializeEntryObjectsFar();
-void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void Audio_PlayCue(s32 cue);
 
 s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
@@ -228,7 +227,6 @@ exit_loop:
 
 
 void RenderOutput_RedrawSavedRectFar(s32);
-s32 Shop_SalePrice(s32);
 void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)

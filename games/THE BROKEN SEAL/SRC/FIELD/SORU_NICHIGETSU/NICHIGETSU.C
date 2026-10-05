@@ -10,7 +10,6 @@
 
 
 
-void SetSolShindenActorStep();
 void Map_ClearLayerEntryFlag();
 void Object_LinkPair();
 void ObjectGroup_ConfigureChildValue();

@@ -23,7 +23,6 @@ void UiWork_FinalizeFar(s32, s32);
 void Audio_PlayCue(s32);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiWork_FinalizePendingCoreFar(void);
-void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Party_AdjustCoinsFar(s32 amount);
 #define SPECIAL_ITEM 228

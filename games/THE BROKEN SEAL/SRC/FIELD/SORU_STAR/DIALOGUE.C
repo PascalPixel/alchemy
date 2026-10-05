@@ -13,16 +13,10 @@ void Scene_EnterStarRoom();
 
 s32 PartyInventory_FindOwner(s32 item);
 s32 Inventory_Find(s32 owner, s32 item);
-void Engine_ItemLoadIcon(s32 item);
-s32 Engine_VramLoad(s32 block, s32 size, const void *data);
-void Engine_HeapRelease(s32 slot);
-void Engine_AudioPlayCue(s32 cue);
 void Inventory_AddItem(s32 owner, s32 item);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
 
 
 void Engine_ActorSetChildValue();
-void Engine_EventWait(s32 frames);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 
 struct Actor {

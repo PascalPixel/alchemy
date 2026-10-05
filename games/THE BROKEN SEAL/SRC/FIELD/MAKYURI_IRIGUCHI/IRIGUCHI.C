@@ -16,13 +16,9 @@
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
-void Makyuri_CyclePalette(void);
 void BattleFx_StartFadeOverlay(s32 value);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
-void MakyuriIriguchi_ArriveWithSparks(void);
-void MakyuriIriguchi_CrossDoorway(void);
-void MakyuriIriguchi_RunDoorScene(void);
 
 void Engine_EventBegin();
 void Engine_ActorSetPosition();
@@ -42,7 +38,6 @@ void Engine_CameraMoveToActor();
 void Engine_ActorWalkToAndWait();
 void Engine_CameraWaitForMove();
 void Engine_EventEnd();
-s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);
 
 
 void MakyuriIriguchi_TickSpawnTimer(void)

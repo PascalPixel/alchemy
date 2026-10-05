@@ -29,7 +29,6 @@ extern const u16 ParticleStreams_CellOffsets[];
 
 
 
-void WaitFrames(s32);
 
 typedef s32 (*CopyWords)(void *, const void *, s32);
 

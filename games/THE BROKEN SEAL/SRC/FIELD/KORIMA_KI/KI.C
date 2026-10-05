@@ -12,7 +12,6 @@
 
 #define Object_ReplaceResourceEntry ((s32 (*)(struct FieldSprite*,s32))Object_ReplaceResourceEntry)
 
-void KorimaKi_PlayGesture(s32 actor, s32 gesture);
 
 s32 gKorimaKiSparkOrigin[3] __attribute__((section(".bss")));
 s32 gKorimaKiSparkCount __attribute__((section(".bss")));

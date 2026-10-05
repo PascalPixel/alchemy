@@ -16,13 +16,8 @@ void BattleFx_SetQueuedSoundAndPlay(s32 cue);
 void DisplayBlend_EnableRunScript(void);
 void SceneActor_SetFlagBitByRelativeDepth(union FieldObject *object);
 void SceneState_MarkActorAndApplyRectAtTile();
-void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 mode);
-void OverlayObject_WaitUntilIdle();
 void FieldScene_RunSupplementalSequenceOne(void);
 void FieldScene_RunOpeningAuxiliarySequence(void);
-void VinasuHeya_RunCellPushScene(void);
-void Scene_RunScene3c8SequenceA(void);
-void VinasuHeya_SettlePushedBlocks(void);
 
 void Effect_Spawn();
 s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);

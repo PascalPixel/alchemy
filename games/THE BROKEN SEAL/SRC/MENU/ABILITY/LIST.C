@@ -17,7 +17,6 @@
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 
@@ -28,10 +27,6 @@ extern volatile u32 gKeysRepeat;
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 mode);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
-void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 pane);
-s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);
 void Audio_PlayCue(s32 cue);
 #define ACTION_ID_MASK 0x3fff
 #define LIST_PAGE_SIZE 5

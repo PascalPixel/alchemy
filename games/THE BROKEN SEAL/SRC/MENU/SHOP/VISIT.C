@@ -28,7 +28,6 @@ s32 UiWork_FinalizePendingCoreFar();
 
 struct ObjectRuntime *Object_GetByIdFar(s32 id);
 void UiWork_FinalizeFar(s32 window, s32 style);
-void WaitFrames(s32 frames);
 
 s32 Inventory_AddItemFar(s32, s32);
 

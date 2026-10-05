@@ -47,7 +47,6 @@ union SceneActor {
 struct Vector { s32 x, y, z; };
 
 union SceneActor *Object_GetById(s32);
-void WaitFrames(s32);
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_ResetAndSetPosition();
 void ObjectMotion_CommitCurrentPositionAndActivate(s32);

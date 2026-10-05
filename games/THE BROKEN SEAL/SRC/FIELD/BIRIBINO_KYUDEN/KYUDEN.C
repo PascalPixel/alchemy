@@ -22,8 +22,6 @@ struct SceneRecord {
 
 
 
-void Map_ClearLayerEntryFlag();
-void Map_SetLayerEntryFlag();
 
 
 

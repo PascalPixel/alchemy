@@ -34,7 +34,6 @@ void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void Audio_PlayCue(s32 cue);
 void BattlePresentation_WaitForAdvance(void);
-s32 BattleEventRuntime_SchedulePhase(s32 frames);
 
 s32 Battle_ProcessRoundEnd(void)
 {

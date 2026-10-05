@@ -8,9 +8,6 @@
 
 
 
-void RunGuardedSceneSetup(void);
-void BiribinoDou_PrepareWindowTransition(void);
-void FieldScene_RunScene398SequenceC(void);
 
 s32 Object_CheckMovementCollision();
 void Object_SetPosition();

@@ -12,7 +12,6 @@
 #include "text/MSG_IDS.H"
 
 void BattleFx_SetBlock30Values12Zero(void);
-void BattleFx_PlayQueuedSound();
 void HaidiaArashi_SetStormCellAttributes();
 void SceneActor_RunActor22PlacementSequence();
 
@@ -1862,8 +1861,6 @@ void HaidiaArashi_RunReunionAndDeparture(void)
     }
 }
 struct FieldActor *Battle_GetWorkObject1e0(void);
-void ActorPresentation_SelectActorTwentySevenState(void);
-void HaidiaArashi_CopyLeaderSpritePriority(void);
 
 static __inline__ void HaidiaArashi_PlaceActor(struct FieldActor *object, s32 pos, s32 depth)
 {

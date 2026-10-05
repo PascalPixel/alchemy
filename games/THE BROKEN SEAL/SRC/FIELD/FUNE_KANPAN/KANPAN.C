@@ -19,7 +19,6 @@ union Slot {
 };
 
 
-void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
 struct FlyBy {
     u8 unknown_00[0x64];

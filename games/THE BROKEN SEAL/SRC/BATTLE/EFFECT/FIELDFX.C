@@ -78,7 +78,6 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
-void WaitFrames(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 s32 Object_CheckMovementCollision(struct FxObject *object, struct Output_08097f80 *position);
 struct FxObject *Object_GetById(s32 id);

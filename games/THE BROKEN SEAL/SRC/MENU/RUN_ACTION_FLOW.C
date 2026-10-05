@@ -6,8 +6,6 @@
 
 extern struct CharacterMenuState *gMenuWork;
 
-s32 CharacterMenu_SelectOwner(s32 index);
-s32 CharacterMenu_SelectCommand(void);
 s32 ItemMenu_SelectItem(void);
 
 s32 Menu_RunActionFlow(void)
@@ -59,8 +57,6 @@ s32 Menu_RunActionFlow(void)
 }
 
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-s32 CharacterSelector_RunRearrange(void);
-void WaitFrames(s32 frames);
 
 s32 CharacterMenu_SelectOwner(s32 slot)
 {

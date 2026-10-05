@@ -68,10 +68,8 @@ struct BurstParticleVisualGroup {
 };
 
 void Animation_ApplyChildValuesFar(struct FieldActor *, s32);
-u32 Random16(void);
 void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 void Audio_PlayCue(s32);
-void WaitFrames(s32);
 
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);

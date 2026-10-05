@@ -26,7 +26,6 @@
 
 struct BurstPosition { s32 x, y, z; };
 
-void WaitFrames(s32 frames);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BurstPosition *pos);
 void Object_SetMode(struct FieldActor *object, s32 mode);
 extern struct BattleFxScene *gEffectWork;

@@ -24,7 +24,6 @@ s32 DebugParty_LoadPreset();
 
 s32 Party_CountActiveOwners(void);
 
-void SerialRuntime_RemoveIrqHandlers(void);
 s32 Sound_LoadPresetParameters(s32 preset);
 s32 Event_SetDestination(s32 scene, s32 entrance);
 void UiText_DrawQuantity();
@@ -32,9 +31,6 @@ s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 s32 UiWork_IsComplete(void);
 
 extern u8 gOptionMirror;
-s32 LinkLobby_DrawThreeDigitValue(s32 value);
-s32 LinkLobby_SaveBattleResults(void);
-s32 LinkLobby_SaveMonsterBattleResults(void);
 s32 Sound_LoadPresetParameters(s32 value);
 void Map_SetLayerEntryFlag(s32 value);
 s32 GameFlag_GetByte(s32 counter);

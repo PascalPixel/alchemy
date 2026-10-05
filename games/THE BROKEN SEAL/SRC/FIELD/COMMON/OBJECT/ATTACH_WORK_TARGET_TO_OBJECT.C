@@ -10,7 +10,6 @@
 #include "EVENT_RUNTIME.H"
 void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
 
-void WaitFrames(s32);
 
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 {

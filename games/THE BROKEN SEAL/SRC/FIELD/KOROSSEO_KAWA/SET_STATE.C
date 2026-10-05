@@ -32,7 +32,6 @@ typedef struct ActiveSubjectSlot {
 
 extern u8 HexDigits[];
 
-struct FieldActor *Object_GetById(s32);
 void GameFlag_SetByte();
 void GameFlag_SetByte(s32, s32);
 void Korosseo_SelectSoloCompetitor(s32);

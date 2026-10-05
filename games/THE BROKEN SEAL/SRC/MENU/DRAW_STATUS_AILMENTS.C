@@ -15,7 +15,6 @@
 extern struct CharacterMenuState *gMenuWork;
 
 s32 Party_SumDjinnCountsFar(s32 side);
-s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 flags, s32 unit);
 void UiText_DrawCharacterAtOffsetFar(s32 text, void *window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(void *window, s32 index, s32 x, s32 y, s32 tile);

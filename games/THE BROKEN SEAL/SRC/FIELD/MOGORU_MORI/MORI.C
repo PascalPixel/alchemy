@@ -24,13 +24,11 @@ void Effect_Spawn();
 
 void MogoruMori_SpawnPuffRing();
 void Party_SetFields1ceAnd1d0();
-void BattleFx_SetWeightedResult();
 extern struct GameState gGameState;
 
 extern struct EventWork *gEventWork;
 void WaitFrames();
 void InitializeOrbitingEffect();
-u8 *OverlayObject_SpawnConfiguredWithMode15(s32, s32, s32, s32);
 void FieldScene_RunSupplementalSequenceOne();
 
 void SceneState_SetValue18Mode2(void)

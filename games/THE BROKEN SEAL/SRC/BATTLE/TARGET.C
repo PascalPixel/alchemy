@@ -79,7 +79,6 @@ pick:
 }
 
 
-u32 Random16(void);
 
 #define COUNT_PARTIAL_CURES(unit, count)                                      \
     {                                                                         \

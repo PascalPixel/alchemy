@@ -65,8 +65,6 @@ extern struct PairWork *gEffectWork;
 void BattleEffect_CleanupSceneObjects(void);
 void OverlayObject_UpdateOnFrameParity(union FieldObject *object);
 
-void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);
-void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);
 
 void FieldScene_RunPaletteRampSequence(void)
 {

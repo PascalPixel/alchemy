@@ -492,8 +492,6 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 
 extern u8 gMapCellBuffer[];
 
-void WaitFrames(s32);
-u32 Random16(void);
 void Audio_PlayCue(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);

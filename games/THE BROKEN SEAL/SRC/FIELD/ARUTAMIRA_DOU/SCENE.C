@@ -19,9 +19,7 @@
 
 extern u8 gDisplayTransition[];
 void Battle_ResetEffectCounter(void);
-void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
 void Motion_LaunchFromFocusedObject(s32 actor, s32 dx, s32 dz, s32 facing);
-void Engine_ActorJump(s32 actor, s32 height, s32 frames);
 void Engine_ActorStartAction(s32 actor);
 void Audio_PlayCueFromEventWork(void);
 

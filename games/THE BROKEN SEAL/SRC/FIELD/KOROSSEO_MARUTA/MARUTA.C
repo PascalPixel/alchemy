@@ -47,9 +47,6 @@ void ColossoLogRollingStage_SceneTask(void)
 #include "text/MSG_IDS.H"
 
 
-void ColossoLogRollingStage_NoopSceneHook(void);
-s32 ColossoLogRollingStage_PositionActiveActor(s32 slot, s32 frames);
-void ColossoLogRollingStage_WaitForBalanceState(void);
 void Object_RefreshSelectorById(s32 object);
 void BattleFx_SetWeightedResult(s32 kind, s32 weight);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
@@ -82,9 +79,6 @@ void ColossoLogRollingStage_RunScriptedTransition();
 void FieldScene_RunMultiPhaseActorSequence();
 void Korosseo_RunGreetScene();
 void ColossoLogRollingStage_ClearSavedActorPositions();
-void ColossoLogRollingStage_ShowActorPositionMessage(void);
-void ColossoLogRollingStage_MarkSceneProgress(void);
-void ColossoLogRollingStage_SceneTask(void);
 
 
 void Engine_EventBegin();

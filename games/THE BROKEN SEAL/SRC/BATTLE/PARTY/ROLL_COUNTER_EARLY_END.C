@@ -5,7 +5,6 @@
 #include "SCENE.H"
 #include "BATTLE_UNIT.H"
 
-s32 BattleRandom16Far(void);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 {

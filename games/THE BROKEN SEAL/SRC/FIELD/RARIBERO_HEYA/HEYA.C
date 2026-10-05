@@ -11,19 +11,11 @@
 #define Inn_CheckIn ((void (*)(s32,s32))Inn_CheckIn)
 
 
-s32 Engine_GameFlagIsSet(s32);
-void Engine_EventSetMessage(s32);
-void Engine_EventShowMessage(s32, s32);
 
 
 void Shop_ConfirmAct(s32);
 
 
-void Engine_ResetSceneEffectCounter(void);
-void Engine_ActorSetAnimationAndWait(s32 actor, s32 mode);
-void Engine_ActorRunRepeatedMotion(s32 actor, s32 mode);
-void Engine_ActorWalkByAndWait(s32 actor, s32 x, s32 z);
-void Engine_ActorFaceDirection(s32 actor, s32 angle, s32 value);
 
 
 

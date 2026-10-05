@@ -16,8 +16,6 @@ s32 SceneActor_CopyActor8PositionWhenAtRow10();
 
 
 void BattleFx_StartFadeOverlay(s32 value);
-s32 SceneActor_SetFlagBitByRelativeDepth();
-s32 OverlayObject_SetYAboveLinkedActor();
 #define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 #define SCENE_TASK BabiChika_UpdateTrackedActor

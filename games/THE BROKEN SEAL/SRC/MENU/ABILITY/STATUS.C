@@ -29,7 +29,6 @@ extern volatile u32 gKeysRepeat;
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
-void PsynergyMenu_DrawPreparedPsynergyIcons(s32 window, s32 owner);
 void Audio_PlayCue(s32 cue);
 void ItemMenu_HideAllIcons(void);
 

@@ -26,13 +26,11 @@ s32 Inventory_AddItemFar(s32, s32);
 s32 Party_AdjustCoinsFar(s32);
 void Audio_PlayCue(s32);
 void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);
-void Shop_DrawUnitGrid(s32 value, s32 unit_id);
 void Audio_PlayCue(s32 cue);
 void UiWork_FinalizePendingCoreFar(void);
 s32 UiText_OpenMessageWindowFar(s32 a, s32 b, s32 c, s32 d);
 void UiWork_FinalizeFar(s32, s32);
 void PsynergyMenu_InitializeEntryObjectsFar();
-s32 Shop_SelectQuantity(s32, s32, s32);
 
 
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)

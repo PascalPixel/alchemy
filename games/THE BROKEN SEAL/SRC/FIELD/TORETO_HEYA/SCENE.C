@@ -69,7 +69,6 @@ struct Vec3 {
 };
 
 
-void ToretoHeya_AdvanceEffectMotion();
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 
 struct EffectParams {

@@ -38,14 +38,12 @@ void Vector_AddPolarOffset();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetDestinationOffset();
 void Engine_ActorWaitForMove();
-void Effect_Spawn();
 void Engine_AudioPlayCue();
 s32 Engine_TaskAddCallback();
 void Engine_ActorSetSpeed();
 void Engine_ActorSetDestination();
 void Object_RefreshSelectorById();
 void Engine_EventShowMessageAndWait();
-void BattleFx_PlayQueuedSound();
 
 struct SpawnParams {
     s32 count;
@@ -66,7 +64,6 @@ s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinat
 
 
 void BattleFx_SetQueuedSoundAndPlay(s32 music);
-void Actor_UpdatePresentationFlag(void);
 
 s32 SceneEffect_CalculatePositionDistance( s32 *first_position, s32 *second_position);
 s32 ShianMura_WatchGateTrigger(struct FieldActor *self);

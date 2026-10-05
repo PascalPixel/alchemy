@@ -93,7 +93,6 @@ struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_ReleaseFar(void *object);
 #define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
-void WaitFrames(s32);
 struct EffectObject_0808f1c0;
 
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);

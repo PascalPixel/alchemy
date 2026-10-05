@@ -25,7 +25,6 @@ void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 

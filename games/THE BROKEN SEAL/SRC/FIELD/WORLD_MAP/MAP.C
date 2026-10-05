@@ -22,10 +22,7 @@ extern u8 gDebugMode[];
 
 void Event_SetDestination(s32 a0, s32 a1);
 void PartyInventory_Discard(s32 item);
-void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
-s32 GameFlag_GetByte(s32 flag);
 void RunEventScript01(void);
-void StoryScene_UpdateSelectedActorProgress(void);
 
 
 void StoryProgress_TriggerEvent0808(void)

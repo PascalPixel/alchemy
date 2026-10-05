@@ -18,7 +18,6 @@ void TorebiIzumi_RunSpringGame();
 
 extern u8 gOamCopyEnabled;
 void UiWork_PushValueSlot(s32 value, s32 digits);
-void TorebiIzumi_OfferLuckyWheels(s32 mode);
 
 static __inline__ void Io_SetBlendControl(s32 value)
 {

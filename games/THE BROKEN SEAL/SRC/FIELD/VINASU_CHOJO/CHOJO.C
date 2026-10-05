@@ -14,7 +14,6 @@
 #include "B5_CONTEXT.H"
 #include "text/MSG_IDS.H"
 
-void VinasuChojo_ShowMessage();
 void VinasuChojo_ShowPartyMember();
 void Engine_TaskWait();
 void Engine_MapRedraw();

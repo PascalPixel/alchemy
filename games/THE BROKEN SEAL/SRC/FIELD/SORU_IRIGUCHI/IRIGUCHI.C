@@ -10,7 +10,6 @@
 
 #define FieldScene_PrepareActors ((void (*)(s32))FieldScene_PrepareActors)
 
-void Scene_RunActorFormation(s32 a0);
 
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);

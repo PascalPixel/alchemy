@@ -24,7 +24,6 @@ struct PairedObjectTable {
 extern volatile u8 gSchedulerStatus;
 
 void WaitFrames(s32 frames);
-struct BattleObjectSlot *GetBattleObjectSlot(s32 id);
 
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {

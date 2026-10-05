@@ -8,8 +8,6 @@ struct BlockProbe {
 
 s32 StagedActor_FindClearPosition(struct BlockProbe *probe);
 void SceneActor_MoveAndRedraw(struct BlockProbe probe);
-void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w);
-void MakyuriHeya_ExitWhenChannelsOpen(void);
 
 void SceneActor_RunActorZeroHandledMotion(s32 a)
 {

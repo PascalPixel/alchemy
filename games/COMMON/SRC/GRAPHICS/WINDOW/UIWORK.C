@@ -13,7 +13,6 @@
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 
-void WaitFrames(s32);
 extern u8 RomBytes_08029a10[];
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);

@@ -57,9 +57,7 @@ extern u8 gActorSpriteSlots[];
 extern u8 gCpuLoadDisplayEnabled;
 
 void GameFlag_SetBitFar(s32 id);
-void WaitFrames(s32 frames);
 s32 *Trade_GetOfferStateFar(s32 index);
-s32 BattleRandom16Far(void);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);

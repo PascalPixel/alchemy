@@ -32,12 +32,8 @@ enum {
     ANIM_HAMMER = 11
 };
 
-void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
-void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void PaletteGlow_Update(s32 a, s32 b);
-void HaidiaMura_OpenVillagerLane(void);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
-s32 SceneActor_RunStep18WhenTargetSet();
 
 void Engine_ActorSetSpeed();
 void Engine_ActorFaceDirection();

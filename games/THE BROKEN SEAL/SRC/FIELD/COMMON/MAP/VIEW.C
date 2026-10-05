@@ -24,7 +24,6 @@ extern u32 gKeysRepeat;
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void WaitFrames(s32 frames);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 
 extern u32 gKeysHeld;

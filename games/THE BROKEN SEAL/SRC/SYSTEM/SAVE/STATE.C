@@ -44,7 +44,6 @@ u32 SaveState_SelectWriteSlot(s32 mode)
 }
 
 s32 _call_via_r3(s32, s32, s32, s32);
-s32 Flash_VerifySector(u16, s32);
 
 u32 SaveState_WriteWorkspaceSlot(code)
 u16 code;

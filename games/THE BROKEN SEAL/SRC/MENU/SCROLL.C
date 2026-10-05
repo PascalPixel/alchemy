@@ -27,7 +27,6 @@ extern u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);
 
-void WaitFrames(s32 frames);
 
 
 s32 Menu_SelectionLoop(s32 mode)

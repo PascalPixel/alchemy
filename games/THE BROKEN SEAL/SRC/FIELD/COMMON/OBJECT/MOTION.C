@@ -31,7 +31,6 @@ void Object_CommitPosition(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
 
-void WaitFrames(s32);
 
 struct BurstParticle {
     u8 pad_00[8];

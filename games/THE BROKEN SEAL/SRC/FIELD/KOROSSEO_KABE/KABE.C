@@ -15,11 +15,9 @@
 
 #define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
 
-void Object_CommitPosition();
 void Engine_MapCopyCellAttributes();
 
 extern s16 gCell[];
-void SceneActor_MovePairByTileOffset(s32 actor, s32 dx, s32 dz);
 
 extern u32 gKeysHeld;
 void Object_CommitPosition(struct FieldActor *object);
@@ -28,29 +26,15 @@ void Object_RefreshSelectorById(s32 actor);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
-void SceneState_ApplyRectsForActors15To17(void);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 void Korosseo_SelectSoloCompetitor(s32 index);
-void SceneActor_PlacePartyAtSavedTiles(void);
-void KorosseoKabe_RunScriptedTransition(s32 value);
 void Korosseo_RunGreetScene(s32 actor);
-void FieldScene_RunSixSteps896To936(void);
-void FieldScene_RunPairedEntranceWalk(s32 direction);
-void FieldScene_RunSupplementalSequenceOne(void);
-void KorosseoKabe_MarkSceneProgress(void);
 void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
 
-void Korosseo_FinishSoloRound();
-s32 KorosseoKabe_RunStateInteraction();
-void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
-void Korosseo_RestoreCompetitor();
-void KorosseoKabe_ShowFollowUpPrompt();
-void BattleFx_RunRisingObjectSequence();
 void battle_owner_69();
 void Korosseo_FinishSoloRound(void);
 s32 KorosseoKabe_RunStateInteraction(s32 speaker, s32 base);
-void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Korosseo_RestoreCompetitor(s32 actor);
 void KorosseoKabe_ShowFollowUpPrompt(s32 speaker, s32 base);
 

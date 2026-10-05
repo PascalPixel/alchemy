@@ -46,8 +46,6 @@ struct PairWork {
 extern struct PairWork *gEffectWork;
 
 extern struct WorldMapVramBlock gVramBlockCache[];
-void OverlayObject_UpdateArcFromParent(union FieldObject *object);
-void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
 
 struct WorldMapOam {
     u8 unknown_00[4];

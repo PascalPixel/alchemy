@@ -36,7 +36,6 @@ struct DualPuff {
     s32 age;
 };
 
-void WaitFrames(s32 frames);
 
 typedef struct Column {
     s32 x;
@@ -48,7 +47,6 @@ void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void Audio_PlayCue(s32);
 #define WORK_EFFECT ((struct BattleEffectArgument *)work->effect)
 
-void WaitFrames(s32);
 
 struct PillarWork {
     u8 sheet[0x7780];

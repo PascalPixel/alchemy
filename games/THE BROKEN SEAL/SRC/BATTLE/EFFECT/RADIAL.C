@@ -31,9 +31,7 @@ struct EffectParticle {
 extern struct BattleFxScene *gEffectWork;
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(void *, s32);
-void WaitFrames(s32);
 void Audio_PlayCue(s32);
-u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 void ObjectDispatch_ReleaseFar(void *);
 

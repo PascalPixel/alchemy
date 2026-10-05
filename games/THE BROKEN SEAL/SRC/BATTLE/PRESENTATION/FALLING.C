@@ -26,7 +26,6 @@
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
 
-void WaitFrames(s32 frames);
 
 extern u8 gMapCellBuffer[];
 

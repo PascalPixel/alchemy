@@ -17,7 +17,6 @@ extern u32 gFrameCount;
 extern u8 Data_03001cfc[];
 extern u8 gDecodeBuffer[];
 
-void WaitFrames(s32 frames);
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 #define BG_PALETTE ((s16 *)0x05000000)

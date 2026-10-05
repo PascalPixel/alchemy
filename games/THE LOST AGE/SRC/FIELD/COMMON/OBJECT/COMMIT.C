@@ -1,7 +1,5 @@
 #include "OBJECT_RUNTIME.H"
 
-void Object_CommitPosition(struct ObjectRuntime *);
-void Object_SetMode(struct ObjectRuntime *, s32);
 
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 object_id)
 {

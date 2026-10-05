@@ -7,7 +7,6 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
-void UiWork_InitFreeList(void);
 
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 

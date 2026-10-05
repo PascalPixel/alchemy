@@ -4,7 +4,6 @@
 #include "CALL.H"
 #include "STATUE_HALL.H"
 
-s32 SceneEventRuntime_SelectInitialSceneByFlags(void);
 
 struct CellCopy {
     s32 src_x;

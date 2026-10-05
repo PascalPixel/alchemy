@@ -107,11 +107,7 @@ s32 Menu_OpenConfirmPrompt(void)
 }
 
 
-void WaitFrames(s32 frames);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
-s32 PsynergyMenu_SelectPartySlot(s32 unused);
-s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
-s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 void Audio_PlayCue(s32 cue);
 
 s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)

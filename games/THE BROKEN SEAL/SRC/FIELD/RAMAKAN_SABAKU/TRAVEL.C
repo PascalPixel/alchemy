@@ -21,7 +21,6 @@ struct DustParams {
 
 void Object_SetActionById();
 void BattleFx_SetWeightedResult();
-void RamakanSabaku_UpdateTravelDust(void);
 s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
 
 extern struct EventWork *gEventWork;

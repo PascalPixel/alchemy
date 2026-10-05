@@ -17,7 +17,6 @@
 
 
 
-void FieldScene_PlaceSlots14And15(void);
 
 union GameStateRows {
     u8 bytes[512][2];

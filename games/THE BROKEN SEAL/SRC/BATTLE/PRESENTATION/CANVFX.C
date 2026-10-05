@@ -16,7 +16,6 @@
 #include "SYSTEM.H"
 #include "MENU_LIST.H"
 
-u32 Random16(void);
 
 struct Streak {
     s32 head;

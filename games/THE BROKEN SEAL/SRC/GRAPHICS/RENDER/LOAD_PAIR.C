@@ -20,7 +20,6 @@ s32 Localization_LookupEntryId(s32);
 void UiWork_PushValueSlot(s32, s32);
 struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
-void WaitFrames(s32);
 
 extern volatile u32 gKeyState;
 

@@ -22,8 +22,6 @@
 
 union PositionWord { s32 w; s16 h[2]; };
 
-u32 Random16(void);
-void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 void EffectSlot_SetCallbackFar(
     struct EffectSlot *effect,

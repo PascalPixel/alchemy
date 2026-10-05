@@ -10,7 +10,6 @@
 extern struct EventWork *gEventWork;
 void Event_SayThenWait();
 void Engine_MapCopyCellAttributes();
-void UiWork_PushValueSlotFar();
 
 
 

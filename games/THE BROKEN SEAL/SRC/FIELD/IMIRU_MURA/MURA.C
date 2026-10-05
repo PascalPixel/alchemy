@@ -15,16 +15,9 @@
 
 
 
-void Object_SetActionCallbackAndRefreshById();
 
 
 
-void SceneState_UpdateActor11WithFlag203(void);
-void RunEventScript02(void);
-void FieldScene_RunPrimaryScriptChoreography(void);
-void FieldScene_RunThreeActorChoreography(void);
-void FieldScene_RunScene399SequenceA(void);
-void SceneState_UpdateZoneFlagsFromActorZero(void);
 
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj)
 {

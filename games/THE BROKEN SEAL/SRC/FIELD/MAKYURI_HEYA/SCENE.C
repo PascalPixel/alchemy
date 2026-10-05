@@ -24,40 +24,23 @@ struct ColumnProbe {
 
 s32 StagedActor_FindClearPosition(struct ColumnProbe *probe);
 void SceneActor_MoveAndRedraw(struct ColumnProbe probe);
-void SceneEffect_SpawnParticleRowsByMode(s32 mode);
-s32 MakyuriHeya_StopActorNinePositionCallback(void);
-void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
 void Engine_ActorStartAction(s32 actor);
 void Engine_EventBegin();
 void Engine_GameFlagClear();
 void Engine_EventEnd();
 void SetEffectRecordMode();
 void MakyuriHeya_FadePaletteToWhite();
-void MakyuriHeya_CastPsynergyAtActor11(void);
-void SceneEffect_RotatePaletteEntries40To47(void);
-void Engine_ActorSetChildValue(s32 actor, s32 value);
-void Audio_PlayCue(s32 cue);
-void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
-void WaitFrames(s32 frames);
 void MakyuriHeya_FadePaletteToBlack();
-void SceneEffect_RotatePaletteEntries97To103(void);
-void BattleFx_PlayQueuedSound();
 void MakyuriHeya_SinkActorWithSparks();
 void BattleFx_RunRisingObjectSequence();
 
-void Engine_MapCopyCellsTo(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h);
-void Battle_WaitMode0(s32 frames);
 void Makyuri_CyclePalette(void);
-void SceneActor_UseActorNinePositionWithYOffset(void);
 void BattleFx_StartFadeOverlay(s32 value);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 void DisplayBlend_EnableRunScript(void);
 void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
-void Engine_MapRenderWaitForValues(void);
 void FieldScene_RedrawActorFootprint(s32 actor);
 void FieldScene_RunSupplementalSequenceOne(s32 mode);
-void MakyuriHeya_ArriveWithSparks(void);
-void Engine_ColorBufferInterpolate(s32 frames);
 
 void Event_PrepareObjectAndApplyValue();
 s32 Djinn_AddToOwner();

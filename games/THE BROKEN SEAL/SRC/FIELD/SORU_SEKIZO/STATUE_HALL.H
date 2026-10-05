@@ -124,7 +124,7 @@ void SceneActor_RunSlot12ColumnStep(void);
 void Event_SayThenWait(s32 speaker, s32 frames);
 void FieldScene_SetupStagedActors(void);
 void FieldScene_RunStagedActorScene(void);
-void SoruSekizo_CheckTileTrigger0166C(void);
-void SoruSekizo_CheckTileTrigger016A4(void);
+void SoruSekizo_BlockLeftTriggerCell(void);
+void SoruSekizo_BlockRightTriggerCell(void);
 
 #endif

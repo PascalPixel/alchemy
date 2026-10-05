@@ -15,20 +15,10 @@ void BattleFx_StartBufferInterpolation(s32 frames);
 void BattleParty_ApplyDrain(s32 amount)
 {
     s32 target_count = Party_CountActiveOwnersFar();
+    s32 i;
 
-    if (target_count > 0) {
-        /* FAKEMATCH: the base-plus-offset cursor, as ☀️'s, retains the address
-           setup and operand order; a direct array address folds into the pool. */
-        u8 *base = (u8 *)&gPartyState;
-        s32 offset = (u32)&((struct PartyState *)0)->active_owners;
-        u8 *target_id = base + offset;
-        s32 remaining = target_count;
-
-        do {
-            Owner_AdjustSecondValueFar(*target_id++, amount);
-            remaining--;
-        } while (remaining != 0);
-    }
+    for (i = 0; i < target_count; i++)
+        Owner_AdjustSecondValueFar(gPartyState.active_owners[i], amount);
 }
 
 /* Passes a health change to every active party member: amount itself, or

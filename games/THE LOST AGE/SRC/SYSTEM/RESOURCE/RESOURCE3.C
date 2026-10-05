@@ -27,8 +27,8 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
             /* FAKEMATCH: ⚓️ clears the script before storing the lists. */
             asm("");
             animation = info->animation;
-            *(s32 *)&work->frames = value;
-            *(s32 *)&work->scripts = animation;
+            work->frames = (void **)value;
+            work->scripts = (u8 **)animation;
             /* FAKEMATCH: and the cursor straight after them. */
             asm("");
             work->pos = z;

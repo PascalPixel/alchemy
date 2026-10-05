@@ -1,4 +1,33 @@
-/* NONMATCHING: the spring game, 680 bytes; alchemy diff 2 with two tagged S2
+/* NONMATCHING (Japanese edition only): TorebiIzumi_RunSpringGame.
+ * 2026-10-05 sun deep finisher 7: the localized editions are adopted in
+ * IZUMI2.C (three tagged S2 devices; the third, slot pinned to r1 with a
+ * register variable, settles the last two: computed before state + 1 it
+ * keeps LUID order for sched2 and r1 for itself). Measured here by an
+ * opcode-and-register LCS against the .ifeq EDITION_INTERNATIONAL body of
+ * resource_3b7_overlay.s (290 instructions), compiled with
+ * -DTBS_EDITION_JA:
+ *  - the adopted localized source as it stands: 118 (spills, 8-byte frame);
+ *  - the native keeps choice r8, message sl, MsgTorebiCoins r9 loaded once
+ *    before the prompt, state fp, coins r7, tickets r5, and reloads the
+ *    counter mark from the pool at each use: a hoisted invariant that
+ *    lost allocation and is rematerialized from its REG_EQUIV;
+ *  - text assigned before the goto label: 68; GCSE PRE then hoists
+ *    text + 1 too (rematerialized as MsgTorebiCoins + 1), which the native
+ *    computes in the loop as mov r0, r9; adds r0, #1. Adding a mark
+ *    variable before the label: 24 (state and text swap fp/r9);
+ *  - the prompt as for (;;) with continue (this file, 16): loop.c hoists
+ *    text (r9) and, with text = MsgTorebiCoins; state = &gGameState; as
+ *    the loop's first statements, in the native order (text, then state).
+ *    Left: (1) the toss window reuses text's hoisted r9 where the native
+ *    loads MsgTorebiToss into r5 (a separate toss variable or the literal
+ *    symbols drop text's priority below the mark's: 30, 32); (2) loop.c
+ *    moves the A-button exit block of the key loop to the barrier after
+ *    Party_AdjustSixDigitCounterA(-1) instead of after the prompt's back
+ *    jump, because that barrier is now inside the prompt loop's notes
+ *    (the localized finding that forces the goto loop there);
+ *  - without the message device: 42 (as for (;;)).
+ * The earlier localized history follows. */
+/* Localized history: the spring game, 680 bytes; alchemy diff 2 with two tagged S2
  * devices (42 without them; 157 on 2026-10-04 morning).
  * 2026-10-04 sun w3 finisher 1. Settled, each measured:
  *  - the prompt is a goto loop (prompt: ... goto prompt), not a for (;;): loop.c
@@ -128,18 +157,18 @@ s32 TorebiIzumi_RunSpringGame(void)
     Event_Begin();
     Battle_ResetEffectCounter();
     message = (s32)MsgTorebiThrow;
-    state = &gGameState;
     /* The halving device below raises state above message in priority. */
     /* FAKEMATCH: keeps message in r9 and state in fp, as the native does. */
     __asm__("" : "+r"(message));
-prompt:
+    for (;;) {
+        text = (s32)MsgTorebiCoins;
+        state = &gGameState;
         coins = state->coins;
         tickets = PartyInventory_CountItem(229);
         Event_SetMessage(message);
         Event_OpenMessage(-1, 0);
         window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
       {
-        text = (s32)MsgTorebiCoins;
         UiText_DrawCharacterAtOffset(text, window, 0, 0);
         UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
 #if !EDITION_INTERNATIONAL
@@ -164,7 +193,7 @@ prompt:
             Event_SetMessage(message + 1);
             Event_ShowMessage(-1, 0);
             Task_Wait(1);
-            goto prompt;
+            continue;
         }
         if (choice != 1) {
             goto play;
@@ -175,7 +204,7 @@ prompt:
         Event_SetMessage(message + 2);
         Event_ShowMessage(-1, 0);
         Task_Wait(1);
-        goto prompt;
+    }
 room:
     if (PartyInventory_CountFreeSlots() == 0) {
         Event_SetMessage(message + 4);
@@ -253,8 +282,9 @@ play:
         /* FAKEMATCH: the native recomputes state + 1 into r0 after the call. */
         __asm__("" : "+r"(state));
         {
+        /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. */
+        register s32 slot asm("r1") = i + 284;
         s8 *w = (s8 *)state + 1;
-        s32 slot = i + 284;
         if (w[slot] > 1) {
             w[slot] /= 2;
         }

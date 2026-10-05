@@ -10,6 +10,16 @@ extern struct ShopRuntime *gMenuWork;
    the member window and keeps the result in r8), the stock-id address
    association, and the ROM's mid-function literal pool.
 
+   2026-10-05 sun deep finisher 7: alchemy diff 356 of 531 (360 before):
+   the cursor anchor's byte at +5 is the field now named active, as
+   ITEM_SELECTION.C and SHOP5.C write it; kind (+4) was a stale name.
+   Register roles still differ from the first window on: the native keeps
+   shop in sl, the stock count in r9, redraw in fp and spills the stock
+   window to sp+28 (36-byte frame); this draft gives shop r8 and the stock
+   window fp (32-byte frame). A devsearch run (seed 71, 410 iterations)
+   reached 209 only with nine devices, among them an unread 36-byte array
+   and two locals pinned to r6; not kept.
+
    Current owner closure repairs the stale GameState money name to coins.
    The previous current-source draft did not compile; no unchanged native
    baseline is claimed for this repair.
@@ -81,7 +91,7 @@ outer:
     {
         cursor = selected;
         stock_window = UiWindow_CreateFar(0, 12, 30, 4, 2);
-        shop->cursor.anchor->kind = 18;
+        shop->cursor.anchor->active = 18;
         shop->mode = 12;
         message_window = UiWindow_CreateFar(0, 17, 30, 3, 2);
         redraw = 1;
@@ -148,7 +158,7 @@ outer:
         ask_again = 0;
         member = 0;
         party_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
-        shop->cursor.anchor->kind = 4;
+        shop->cursor.anchor->active = 4;
         shop->mode = 12;
         PsynergyMenu_InitializeEntryObjectsFar(party_window, 2, 0, 8, result);
         item_window = UiWindow_CreateFar(16, 11, 14, 9, 2);

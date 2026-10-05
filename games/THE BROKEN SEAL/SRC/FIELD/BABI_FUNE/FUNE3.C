@@ -1,9 +1,5 @@
 #include "GLOBAL_CELLS.H"
-/* Sets up the scene: actor collision and sprite priorities, the BG priorities,
- * the blend, and lowers map layers 6 and 7. The sprite priorities are the
- * FieldSprite bitfields read through an s32 view of actor->sprite; the BG
- * priorities 2 and 3 are one-halfword structs, whose short pool reach puts
- * the pool after the blend registers as in the ROM. */
+/* Set actor collision and sprite priorities, background priorities and blending, then lower map layers 6 and 7. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
@@ -77,8 +73,7 @@ void BabiFune_UpdateWaves(void);
 void SceneState_CountDownEveryFortyTicks(void);
 void BabiFune_CyclePalette(void);
 
-
-/* The scheduler, which this overlay imports under its own name. */
+/* Scene task scheduler. */
 static inline void BabiFune_AddTask(void (*task)(void), s32 order)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
@@ -270,8 +265,7 @@ s32 BabiFune_SetupScene(void)
     {
         s32 v = 0x2648;
 
-        /* FAKEMATCH: a do-while(0) keeps the BG1CNT store ahead of the
-           BLDCNT address load, as in the reference */
+        /* FAKEMATCH: a do-while(0) keeps the BG1CNT store ahead of the BLDCNT address load, as in the reference */
         do {
             REG_BLDCNT = v;
             v = 0x810;
@@ -290,13 +284,7 @@ s32 BabiFune_SetupScene(void)
     return 0;
 }
 
-/*
- * Babi Fune: arm the BG3 hblank scroll DMA. It copies the scroll line for the
- * current page into the hblank DMA source, clears the DMA enable and done
- * bits in the status register, and fires a single 32-bit transfer. This is
- * the overlay's own copy of the routine the shared scroll initialiser
- * (GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.C) arms by this name.
- */
+/* Arm BG3 HBlank scrolling: copy the current page's scroll line, clear DMA enable and done status, then start one 32-bit transfer. */
 void DisplayScroll_ArmHBlankDma(void)
 {
     struct ScrollWork *work;

@@ -3,8 +3,8 @@
 /*
  * Draft, not exact.
  *
- * 2026-10-05 deep finisher 20: alchemy diff 969 -> 612 (1605 listing
- * instructions, 1599 here; 102 once registers are ignored).
+ * 2026-10-05 deep finisher 20: alchemy diff 969 -> 581 (1605 listing
+ * instructions, 1598 here).
  *   - The blitter routines are read as gWorkSlot[46] and [47] from
  *     HEAP_STATE.H, so the slot address is formed as gWorkSlot + 184 the
  *     way the native forms it: 909.
@@ -24,12 +24,15 @@
  *   - The impact shift is mode == 5 ? 12 : 11, which if-conversion turns
  *     into the native eors/negs/orrs/lsrs into r2 (12 - (mode != 5) adds a
  *     move): 612.
- *   - Tried: the sign test as (target->x < 0 ? shot->x < 0 : shot->x >= 0)
- *     and as shifts, != 0, == 1 or & 1 of it (783-789), and as a variable
- *     set in an if/else after the variant test (618, but the two 0/1 tails
- *     cross-jump instead of becoming the native lsrs #31 and mvns + lsrs
- *     #31 store-flags, which if-conversion makes only from separate arms).
- * Remaining: the sign test; the spill slots of the frame loop hoists
+ *   - The side test loads shot->x once into x (the native reads it once,
+ *     before testing target->x) and sets hit in an if/else after the
+ *     variant test; if-conversion then makes the native lsrs #31 and
+ *     mvns + lsrs #31 store-flags: 581. Still not exact: the native keeps
+ *     the two arms apart with a test in each, here x >= 0 is computed
+ *     ahead of the branch. Other spellings tried: the conditional
+ *     expression in the condition, with shifts, != 0, == 1 or & 1
+ *     (783-789), or with shot->x read in each arm (618).
+ * Remaining: the side test arms (above); the spill slots of the frame loop hoists
  * (camera + 12 at sp+48 in the native, sp+44 here, and the shot loop
  * offsets at 44/40/36); and reload registers, which reload hands out
  * round-robin over the spill registers: the native spills with r0..r7,
@@ -112,6 +115,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
     struct MotionObject *source;
     s32 k;
     s32 shift;
+    s32 hit;
+    s32 x;
 
     heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
@@ -310,54 +315,59 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
                                 }
                             }
                         }
-                        if (shot->variant == 0
-                            && ((target->x < 0 && shot->x < 0) || (target->x >= 0 && shot->x >= 0))
-                            && abs(shot->x) >= abs(target->x)) {
-                            s32 spawned = 0;
-                            struct EffectStep *flash = &gMotes[index];
+                        if (shot->variant == 0) {
+                            x = shot->x;
+                            if (target->x >= 0)
+                                hit = x >= 0;
+                            else
+                                hit = x < 0;
+                            if (hit && abs(x) >= abs(target->x)) {
+                                s32 spawned = 0;
+                                struct EffectStep *flash = &gMotes[index];
 
-                            shot->variant = 1;
-                            if (mode == 5) {
-                                BattleEventRuntime_BeginPhaseFar(134);
-                            } else if (mode != 6 && cooldown == 0) {
-                                cooldown = 8;
-                                AudioCommand_PlayFar(132);
-                            }
-                            if (mode == 2) {
-                                s32 kick = ((Random16() & 31) + 32) << 12;
+                                shot->variant = 1;
+                                if (mode == 5) {
+                                    BattleEventRuntime_BeginPhaseFar(134);
+                                } else if (mode != 6 && cooldown == 0) {
+                                    cooldown = 8;
+                                    AudioCommand_PlayFar(132);
+                                }
+                                if (mode == 2) {
+                                    s32 kick = ((Random16() & 31) + 32) << 12;
 
-                                if (Random16() & 1)
-                                    shot->velocity_y += kick;
-                                else
-                                    shot->velocity_y -= kick;
-                                shot->velocity_x = -shot->velocity_x;
-                            }
-                            flash->variant = 1;
-                            flash->x = pos->x;
-                            flash->y = pos->y;
-                            flash->z = 0;
-                            if (mode != 7)
-                                work->shake_frames = 2;
-                            ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 8);
-                            if (mode != 7 && mode != 9 && mode != 10) {
-                                if (mode == 5)
-                                    BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
-                                else
-                                    BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 5);
-                            }
-                            shift = mode == 5 ? 12 : 11;
-                            for (k = 100; k != 512; k++) {
-                                struct EffectStep *mote = &gMotes[k];
+                                    if (Random16() & 1)
+                                        shot->velocity_y += kick;
+                                    else
+                                        shot->velocity_y -= kick;
+                                    shot->velocity_x = -shot->velocity_x;
+                                }
+                                flash->variant = 1;
+                                flash->x = pos->x;
+                                flash->y = pos->y;
+                                flash->z = 0;
+                                if (mode != 7)
+                                    work->shake_frames = 2;
+                                ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 8);
+                                if (mode != 7 && mode != 9 && mode != 10) {
+                                    if (mode == 5)
+                                        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+                                    else
+                                        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 5);
+                                }
+                                shift = mode == 5 ? 12 : 11;
+                                for (k = 100; k != 512; k++) {
+                                    struct EffectStep *mote = &gMotes[k];
 
-                                if (mote->variant == 0) {
-                                    mote->x = position.x << 16;
-                                    mote->y = position.y << 16;
-                                    mote->velocity_x = ((Random16() & 255) - 128) << shift;
-                                    mote->velocity_y = ((Random16() & 255) - 128) << shift;
-                                    mote->variant = (Random16() & 7) + 16;
-                                    spawned++;
-                                    if (spawned == Volley_Modes[mode * 5 + 4])
-                                        break;
+                                    if (mote->variant == 0) {
+                                        mote->x = position.x << 16;
+                                        mote->y = position.y << 16;
+                                        mote->velocity_x = ((Random16() & 255) - 128) << shift;
+                                        mote->velocity_y = ((Random16() & 255) - 128) << shift;
+                                        mote->variant = (Random16() & 7) + 16;
+                                        spawned++;
+                                        if (spawned == Volley_Modes[mode * 5 + 4])
+                                            break;
+                                    }
                                 }
                             }
                         }

@@ -1,4 +1,4 @@
-/* Draft, not exact. 2026-10-05 sun deep finisher 6: alchemy diff 30 (was
+/* Draft, not exact. 2026-10-05 sun deep finisher 6: alchemy diff 28 (was
    317). What changed, all measured against the listing:
    - the action slots are written through a plain u16 pointer, abil[i * 2]:
      a store to a u16 struct field (abil[i].encoded_action) goes through
@@ -16,15 +16,14 @@
      hoisted 0x8000 in r11 (118, 52, 38);
    - the class loop: ca (pointer, stepped with j) tests the ability and the
      level, cls->abilities[j] the search, and cg = &cls->abilities[j] the
-     OR (30). Every mix of ca / index / cg / a second stepped pointer over
+     OR (30; stepping ca before j, 28). Every mix of ca / index / cg / a second stepped pointer over
      the four uses and four cg positions was scored: next best 38 (ca for
      test and OR, index for level and search), all others 38-230.
    Earlier spellings (struct field stores, Half zero struct, while/goto
    free loops, all-index or all-ca class loops) are 300+ and superseded.
-   Remaining (30): the ROM keeps the test and the OR on the copied pointer
+   Remaining (28): the ROM keeps the test and the OR on the copied pointer
    (r7 = lr) and the level and the search head on lr; here the test and
-   the level read lr and the search head reads r7, and the step order
-   differs (add sl before r7). */
+   the level read lr and the search head reads r7. */
 #include "TYPES.H"
 #include "CHARACTER.H"
 #include "BATTLE_UNIT.H"
@@ -73,7 +72,7 @@ s32 Owner_RefreshClassActions(s32 owner)
         abil[j * 2] = 0;
 
     mask = OWNER_ACTION_CLASS;
-    for (j = 0, ca = cls->abilities; j < 16; j++, ca++) {
+    for (j = 0, ca = cls->abilities; j < 16; ca++, j++) {
         cg = &cls->abilities[j];
         if (ca->ability == 0)
             continue;

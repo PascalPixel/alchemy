@@ -162,7 +162,7 @@ Func_0804e3f4:
 	add r2, sp, #20
 	add r3, sp, #16
 	movs r1, #0
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	movs r3, #0
 	adds r0, r5, #0
 	movs r1, #2

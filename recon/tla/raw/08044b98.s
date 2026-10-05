@@ -40,7 +40,7 @@ Func_08044b98:
 	str r1, [sp, #0]
 	movs r1, #0
 	str r6, [sp, #4]
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	ldr r3, .L_08044c74
 	str r6, [r7]
 	str r3, [sp, #20]

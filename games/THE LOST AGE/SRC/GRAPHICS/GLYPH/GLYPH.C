@@ -1,10 +1,27 @@
 #include "RUNTIME_MEM.H"
 #include "GLYPH.H"
 #include "RESOURCE.H"
+#include "DMA.H"
+#include "RAM_BUFFER.H"
 
+extern char ResourceId_Icons;
+extern u8 *UiIcon_MiscIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
 
+/* Decodes a 16x16 miscellaneous icon into the glyph work. */
+void Ui_PrepareTransferFromTableEntry(u32 index)
+{
+    GlyphTransfer *state = Ram_HeapSlots->glyph_work;
+
+    state->encoded = UiIcon_MiscIconPointers[index];
+    state->width = 2;
+    state->height = 2;
+    UiGlyph_DecodeWithHeapRoutines(state, 0);
+}
+
+/* Decodes icon into a free or the given VRAM slot, returning its tile in
+   tile, and loads its palette into object palette bank palette. */
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse)
 {
     GlyphTransfer *work;
@@ -12,7 +29,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
     u8 *entry;
     u32 index;
 
-    work = Runtime_AllocateHeapBlock(17, 0x608);
+    work = Runtime_AllocateHeapBlock(68, 0x608);
     table = Resource_GetTableEntry((s32)&ResourceId_Icons);
     if (icon <= 127)
         index = icon;
@@ -26,6 +43,12 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
     if (reuse == 0)
         *slot = Resource_FindFreeEntry();
     *tile = VramBlock_LoadCached(*slot, 0x200, work->tiles);
-    Runtime_ReleaseHeapBlock(17);
+    Runtime_ReleaseHeapBlock(68);
     Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, (volatile u32 *)0x040000d4);
+}
+
+/* An empty routine between the glyph loader and decoder, as in ☀️;
+   nothing in the main image calls it by name. */
+void UiGlyph_ReservedNoOp(void)
+{
 }

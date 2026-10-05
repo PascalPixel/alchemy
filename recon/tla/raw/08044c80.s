@@ -48,7 +48,7 @@ Func_08044c80:
 	movs r1, #0
 	adds r3, r5, #0
 	str r6, [sp, #4]
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	mov r3, r10
 	str r6, [r3]
 	ldr r3, .L_08044db8
@@ -68,7 +68,7 @@ Func_08044c80:
 	movs r1, #0
 	adds r3, r5, #0
 	str r6, [sp, #4]
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	ldr r3, .L_08044dbc
 	str r6, [r7]
 	str r3, [sp, #40]

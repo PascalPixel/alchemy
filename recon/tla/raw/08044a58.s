@@ -52,7 +52,7 @@ Func_08044a58:
 	str r1, [sp, #0]
 	mov r1, r10
 	str r1, [sp, #4]
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	mov r2, r10
 	mov r3, r8
 	str r2, [r3]

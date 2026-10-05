@@ -18,7 +18,7 @@ Func_08045528:
 	add r3, sp, #8
 	str r1, [sp, #4]
 	movs r1, #0
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 	ldr r0, [sp, #8]
 	add sp, #16
 	pop {pc}

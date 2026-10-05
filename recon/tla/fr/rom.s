@@ -1352,12 +1352,13 @@ Func_0803d92c:
 	.thumb_func
 Func_0803d9bc:
 	.incbin "baserom.gba", 0x0003da00, 0x000000bc
-	.section .rom.0003dabc, "ax"
-	.global Ui_PrepareTransferFromTableEntry
-	.type Ui_PrepareTransferFromTableEntry, %function
+	.section .rom.0003db98, "ax"
+	.balign 4
+	.global UiGlyph_DecodeWithHeapRoutines
+	.type UiGlyph_DecodeWithHeapRoutines, %function
 	.thumb_func
-Ui_PrepareTransferFromTableEntry:
-	.incbin "baserom.gba", 0x0003dabc, 0x000001a4
+UiGlyph_DecodeWithHeapRoutines:
+	.incbin "baserom.gba", 0x0003db98, 0x000000c8
 	.section .rom.0003dc60, "ax"
 	.global Func_0803dc1c
 	.type Func_0803dc1c, %function
@@ -1873,7 +1874,10 @@ UiIcon_PsynergyIconPointers:
 	.incbin "baserom.gba", 0x00054c38, 0x00000410
 	.global Data_08054e24
 Data_08054e24:
-	.incbin "baserom.gba", 0x00055048, 0x00004b50
+	.incbin "baserom.gba", 0x00055048, 0x000041cc
+	.global UiIcon_MiscIconPointers
+UiIcon_MiscIconPointers:
+	.incbin "baserom.gba", 0x00059214, 0x00000984
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00059b98, 0x00000c50

@@ -55,7 +55,9 @@ struct HeapSlots {
     u8 *window_tiles;
     /* The party status window's handle and place. */
     void *window_layout;
-    void *unknown_44;
+    /* The glyph decoder's transfer work, which The Broken Seal keeps as
+       gGlyphWork. */
+    void *glyph_work;
     /* The menu screen work, which The Broken Seal keeps as gResQueueWork. */
     void *menu_work;
     void *unknown_4c[4];

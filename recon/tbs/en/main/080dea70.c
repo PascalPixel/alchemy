@@ -3,8 +3,8 @@
 /*
  * Draft, not exact.
  *
- * 2026-10-05 deep finisher 20: alchemy diff 969 -> 581 (1605 listing
- * instructions, 1598 here).
+ * 2026-10-05 deep finisher 20: alchemy diff 969 -> 155 (1605 listing
+ * instructions, 1600 here).
  *   - The blitter routines are read as gWorkSlot[46] and [47] from
  *     HEAP_STATE.H, so the slot address is formed as gWorkSlot + 184 the
  *     way the native forms it: 909.
@@ -32,11 +32,16 @@
  *     ahead of the branch. Other spellings tried: the conditional
  *     expression in the condition, with shifts, != 0, == 1 or & 1
  *     (783-789), or with shot->x read in each arm (618).
- * Remaining: the side test arms (above); the spill slots of the frame loop hoists
- * (camera + 12 at sp+48 in the native, sp+44 here, and the shot loop
- * offsets at 44/40/36); and reload registers, which reload hands out
- * round-robin over the spill registers: the native spills with r0..r7,
- * this build only with r0..r4 and r6, so every later choice shifts.
+ *   - The mote loops pass size * 2 as the height, with no tall local:
+ *     the second loop then hoists the cell-offset table into r6 as the
+ *     native does, its ldrsh scratch has to take r7, r7 joins reload's
+ *     spill registers, and the round-robin reload choices all over the
+ *     function line up with the native: 155.
+ * Remaining: the side test arms (above); the spill slots of the frame
+ * loop hoists (camera + 12 at sp+48 in the native, sp+44 here, and the
+ * shot loop offsets at 44/40/36); the mode 11 and 6 sheet loads (the
+ * native keeps their argument setup apart); and the operand order of
+ * total.
  */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -449,10 +454,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 
                 if (mote->variant > 0) {
                     s32 size = (mote->variant >> 3) + 1;
-                    s32 tall = size * 2;
 
                     draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
-                        HI(mote->x) - size / 2, HI(mote->y) - size, size, tall);
+                        HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                     EffectStep_AdvanceWithGravity2D(mote, 60, 0x1000);
                     if (mote->y > 0x700000)
                         mote->velocity_y = -mote->velocity_y / 2;
@@ -464,10 +468,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 
                 if (mote->variant > 0) {
                     s32 size = (mote->variant >> 4) + 1;
-                    s32 tall = size * 2;
 
                     draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
-                        HI(mote->x) - size / 2, HI(mote->y) - size, size, tall);
+                        HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
                     EffectStep_AdvanceWithGravity2D(mote, 60, -0x4000);
                     mote->variant--;
                 }

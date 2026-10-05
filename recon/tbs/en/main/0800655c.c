@@ -1,3 +1,25 @@
+/* 2026-10-05 sixth wave, finisher 3: score 6 (from 117), three
+ * scheduling-only differences left, all a pool address load that the
+ * listing issues one slot earlier: in receive case 1 the listing loads
+ * &gSerialReceivedSize before the cursor's add, in the resend it loads
+ * &gSerialSendSize before the cursor store, and in the send DMA it loads
+ * the channel address before reading *send.
+ * What moved it: global allocation ranks pseudos by refs over live length,
+ * and update_equiv_regs doubles the length of the two cursor pointers
+ * (REG_EQUIV to their symbols). With the flag local reused for
+ * own->peer_flags, the flag outranked the peer packet and took r7; read
+ * peer->flags and own->peer_flags directly and the send cursor takes r7,
+ * src r0 and the reused peer->flags value lr, as listed. That needed, in
+ * the listing's order: the resend's cursor store before the size update,
+ * the cursor advance before the sequence update, and the sending branch
+ * writing own->active and advancing the cursor in each arm of the
+ * peer_flags test (cross-jumping merges the arms' tails and leaves the
+ * sequence address load in each, as listed). Trials on this body:
+ * one cursor for both stages 70; flag local reused 44; one.v replaced by
+ * 1 or a u16 local 105 (the HImode record still decides the pooled 1);
+ * the sequence advance also in each arm 201. Empty asm uses of the
+ * cursors were needed at 101 but are not once the arms are written out.
+ */
 /* 2026-10-04 sun w3 finisher 6 (alchemy diff 117 for this body):
  * - The listing's send stage stores the cursor (str [r7]) before the size
  *   and advances the cursor before the sequence; writing those two in the
@@ -129,31 +151,30 @@ void SerialRuntime_StepBlockTransfer(void)
         volatile s32 *send = &gSerialSendSource;
         s32 src = *send;
         if (src != 0) {
-            u8 flag;
-
-            flag = peer->flags;
-            if (flag == 1) {
+            if (peer->flags == 1) {
                 if (peer->active & 0x80) {
                     gap = (gSerialBlockSequence - peer->active) & 0x7f;
+                    *send = src - gap * 20;
                     gSerialSendSize += gap * 20;
                     gSerialBlockSequence -= gap;
-                    *send = src - gap * 20;
                     gSerialBlockSequence &= 0x7f;
                 }
                 if (gSerialSendSize != 0) {
                     Dma_Set((void *)*send, own->payload, 0x84000005, (volatile u32 *)0x040000d4);
                     gSerialSendSize += (u16)-20;
-                    if (gSerialSendSize != 0)
+                    if (gSerialSendSize != 0) {
                         own->peer_flags = 1;
-                    else
+                        own->active = gSerialBlockSequence & 0x7f;
+                        *send += 20;
+                    } else {
                         own->peer_flags = 2;
-                    own->active = gSerialBlockSequence & 0x7f;
+                        own->active = gSerialBlockSequence & 0x7f;
+                        *send += 20;
+                    }
                     gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
-                    *send += 20;
                 }
             }
-            flag = own->peer_flags;
-            if (flag == 2 && peer->flags == 2) {
+            if (own->peer_flags == 2 && peer->flags == 2) {
                 gSerialSendSource = 0;
                 own->peer_flags = 0;
                 own->active = 1;

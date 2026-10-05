@@ -527,7 +527,7 @@
     "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/LAYOUT.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00042730)
     "*/recon/tla/fr/rom.o"(.rom.000429cc)
-    "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/SAVE2.o"(.text)
+    "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/RELEASE.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00042e14)
     "*/recon/tla/fr/rom.o"(.rom.00043114)
     "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/FIND_FREE_SUMMARY_SLOT.o"(.text)

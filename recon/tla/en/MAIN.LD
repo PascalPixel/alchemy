@@ -750,7 +750,7 @@
         "*/recon/tla/raw/080426e0.o"(.text)
         "*/recon/tla/raw/08042808.o"(.text)
         "*/recon/tla/raw/0804297c.o"(.text)
-        "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/SAVE2.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/SAVE/RELEASE.o"(.text)
         "*/recon/tla/raw/08042dc4.o"(.text)
         "*/recon/tla/raw/08042e28.o"(.text)
         "*/recon/tla/raw/08042eec.o"(.text)

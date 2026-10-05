@@ -17,12 +17,13 @@
 #include "SERIAL_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define LinkLobby_PollPeerReady ((void (*)(void))LinkLobby_PollPeerReady)
 
 s32 SaveState_ProcessSelectedSlot(void);
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 s32 Engine_DebugCreateWindow();
 void RenderOutput_PrepareForRedraw();
 void UiText_DrawNumber();

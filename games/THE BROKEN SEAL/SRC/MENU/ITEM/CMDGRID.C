@@ -19,14 +19,15 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused1, s32 unused2);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
 void Audio_PlayCue(s32 cue);
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 
 #if EDITION_INTERNATIONAL
 

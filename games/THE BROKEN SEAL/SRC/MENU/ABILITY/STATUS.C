@@ -20,6 +20,11 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+
 struct PsynergyMenuIcon {
     u8 unknown_00[5];
     u8 state;
@@ -32,10 +37,6 @@ struct PsynergyMenuIcon {
 };
 
 struct BattleUnit;
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
 void Audio_PlayCue(s32 cue);
 void ItemMenu_HideAllIcons(void);

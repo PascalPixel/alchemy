@@ -27,6 +27,8 @@
 #include "SYSTEM.H"
 #include "TRANSFORM.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
 #define gBattleFxWork ((void *(*))&gBattleFxWork)
@@ -43,7 +45,6 @@ struct Scale {
     s32 y;
 };
 
-extern volatile u32 gKeysRepeat;
 extern const struct Scale CirclingScene_UnitScale;
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 animation);

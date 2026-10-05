@@ -45,10 +45,6 @@ struct ScrollPair {
     u16 x;
     u16 y;
 };
-struct TileMask {
-    u32 word0;
-    u32 word1;
-};
 extern u8 Clear_ActorTable[];
 extern u16 Clear_BlendFrame;
 extern s16 Clear_CodeHeld;

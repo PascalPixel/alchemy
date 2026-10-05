@@ -19,17 +19,18 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+
 #define UiText_GetResourceDimensionsFar ((s32 (*)(s32,s32*,s32*,s32*,s32*))UiText_GetResourceDimensionsFar)
 #define UiText_DrawStringInWindowFar ((void (*)(const u8*,s32*,s32,s32))UiText_DrawStringInWindowFar)
 
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
-void RenderOutput_ClearListFar(s32 window);
-void RenderOutput_RedrawSavedRectFar(s32 window);
 void GameFlag_ClearBitFar(s32 flag);
 void Audio_PlayCue(s32 cue);
 
@@ -160,12 +161,8 @@ struct PsynergyTargetMarker {
     struct PsynergyTargetAttributes attributes;
 };
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 void GameFlag_ClearBitFar(s32 flag);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
 void Audio_PlayCue(s32 cue);
 
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)

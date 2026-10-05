@@ -12,6 +12,10 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "DISPTRAN.H"
 
+#define Data_03001ebc (*(struct EffectGlobals *)&Data_03001ebc)
+#include "OBJECT_LOOKUP.H"
+#define ObjectTable_Get ((struct EffectTarget * (*)(s32))ObjectTable_Get)
+
 #define BattleFx_RunEventAction ((void (*)(s32,s32,s32))BattleFx_RunEventAction)
 
 struct EffectState {
@@ -37,8 +41,6 @@ struct EffectTarget {
     s32 y;
     s32 z;
 };
-extern struct EffectGlobals Data_03001ebc;
-struct EffectTarget *ObjectTable_Get(s32);
 void BattleFx_ApplyColorToSourceBuffer(s32, s32);
 void WaitFrames(s32);
 s32 BattleFx_FindMatchingEvent(s32, s32, s32 *);

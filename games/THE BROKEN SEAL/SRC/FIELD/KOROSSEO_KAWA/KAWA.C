@@ -18,6 +18,8 @@
 #include "RESOURCE_IDS.H"
 #include "text/MSG_IDS.H"
 
+#define Object_SetMoveTarget ((void (*)(struct FieldActor *, s32, s32, s32))Object_SetMoveTarget)
+
 #define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
 #define FieldScene_BuildSceneDescriptorAndInstallTask ((s32 (*)(s32,s32,s32,s32,s32,s32,s32))FieldScene_BuildSceneDescriptorAndInstallTask)
 
@@ -69,13 +71,11 @@ typedef struct ActiveSubjectSlot {
 extern volatile u32 Data_03001ae8;
 extern u8 HexDigits[];
 void Map_UpdateCellRect();
-void Object_SetMoveTarget();
 void Script_WaitForEventTimeout();
 typedef void(*SceneTask)(void);
 void Scheduler_RemoveCallbackFar(SceneTask);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 void GameFlag_SetByte(s32, s32);
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);

@@ -14,6 +14,11 @@
 #include "RAM_BUFFER.H"
 #include "BATTLE_RUNTIME.H"
 
+#include "OBJECT_LOOKUP.H"
+#define ObjectTable_Get ((struct Object * (*)(s32))ObjectTable_Get)
+#define gOverlayArea (*(struct ViewServices *)&gOverlayArea)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define BattleFx_FindDescriptor ((s32 (*)(s32,s32))BattleFx_FindDescriptor)
 
 struct Vec {
@@ -32,7 +37,6 @@ struct Object {
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
-struct Object *ObjectTable_Get(s32);
 
 struct EntranceView {
     s16 entrance;
@@ -62,8 +66,6 @@ struct MapScrollWork {
     s32 bottom;
 };
 
-extern struct ViewServices gOverlayArea;
-extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;
 

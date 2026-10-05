@@ -9,6 +9,9 @@
 #include "FIELDOBJ.H"
 #include "text/MSG_IDS.H"
 
+#include "CHARACTER.H"
+#define Owner_AdjustSecondValue ((s32 (*)())Owner_AdjustSecondValue)
+
 extern volatile s32 gKeysHeld;
 extern struct BattleFxScene *gEffectWork;
 extern u8 MenuTest_Events[];
@@ -36,7 +39,6 @@ void Party_AdvanceOwnerCountToTarget();
 s32 Inventory_AddItem();
 s32 Djinn_AddToOwner();
 s32 Djinn_Activate();
-s32 Owner_AdjustSecondValue();
 s32 Party_RemoveActiveOwner();
 s32 Party_AddActiveOwner();
 s32 Item_AdjustCounter();

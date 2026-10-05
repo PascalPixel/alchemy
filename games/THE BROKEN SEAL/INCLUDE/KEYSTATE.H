@@ -3,9 +3,11 @@
 
 #include "TYPES.H"
 
+#include "MENU_LIST.H"
+#define gKeyState (*(u32 *)&gKeyState)
+#define gKeysRepeat (*(u32 *)&gKeysRepeat)
+
 extern u32 gKeysHeld;
-extern u32 gKeyState;
-extern u32 gKeysRepeat;
 extern u32 gKeysPressedLatch;
 extern u32 gKeysRepeatDirected;
 extern u32 gKeysDirection;

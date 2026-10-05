@@ -21,12 +21,13 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
-extern volatile u32 gKeyState;
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_RedrawSavedRect ((void (*)(struct RenderInput *))RenderOutput_RedrawSavedRect)
+
 
 void Engine_AudioPlayCue(s32 cue);
 void Engine_TaskWait(s32 frames);
-extern volatile u32 gKeysRepeat;
-void RenderOutput_RedrawSavedRect(struct RenderInput *window);
 void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
 #define ITEM_COUNT 270

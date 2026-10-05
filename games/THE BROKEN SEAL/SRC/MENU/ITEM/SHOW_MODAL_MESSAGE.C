@@ -15,12 +15,13 @@
 #include "SYSTEM.H"
 #include "UI.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define RenderOutput_ClearListFar ((void (*)(void *))RenderOutput_ClearListFar)
+
 #define UiText_GetResourceDimensionsFar ((void (*)(s32,s32*,s32*,s32*,s32*))UiText_GetResourceDimensionsFar)
 
-extern volatile u32 gKeyState;
 
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
-void RenderOutput_ClearListFar(void *window);
 void GameFlag_SetBitFar(s32 flag);
 void UiWindow_CloseIfOpen();
 

@@ -20,6 +20,8 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define RenderOutput_RedrawSavedRect ((void (*)(void *))RenderOutput_RedrawSavedRect)
+
 #define UiWindow_FillTilemapRect ((void (*)(void*,s32,s32,s32,s32))UiWindow_FillTilemapRect)
 #define UiText_DrawFourNumbersInRow ((void (*)(void*,void*))UiText_DrawFourNumbersInRow)
 #define StatusMenu_DrawCharacterSummary ((void (*)(void*,void*))StatusMenu_DrawCharacterSummary)
@@ -46,7 +48,6 @@ void PaletteGlow_Update(s32 icon, s32 icon_sub);
 void UiWindow_DrawDividerLine(void *win, s32 a, s32 b, s32 c, s32 d);
 void UiText_DrawResource(s32 message, void *win, s32 x, s32 y);
 void UiText_DrawString(void *text, void *win, s32 x, s32 y);
-void RenderOutput_RedrawSavedRect(void *win);
 
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {

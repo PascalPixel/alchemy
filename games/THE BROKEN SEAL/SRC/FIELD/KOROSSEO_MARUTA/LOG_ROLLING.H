@@ -68,7 +68,7 @@ typedef struct SceneControl {
     s16 timer;
 } SceneControl;
 
-typedef struct SceneRecord {
+typedef struct MarutaSceneRecord {
     u8 pad_00[6];
     u16 facing;
     s32 x;
@@ -84,7 +84,7 @@ typedef struct SceneRecord {
     s32 rate_z;
     u8 pad_38[33];
     u8 flags;
-} SceneRecord;
+} MarutaSceneRecord;
 
 typedef struct Position3 {
     s32 x;

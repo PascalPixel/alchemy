@@ -14,9 +14,10 @@
 #include "BATTLE_MOTION.H"
 #include "FIXED_MATH.H"
 
-void Object_ResetMotion(struct MotionObject *);
-void Object_SetPosition(struct MotionObject *, s32, s32, s32);
-void Object_SetMode(struct MotionObject *, s32);
+#define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
+#define Object_SetPosition ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)
+#define Object_SetMode ((void (*)(struct MotionObject *, s32))Object_SetMode)
+
 
 
 void BattleMotion_ReservedNoOp83B0();

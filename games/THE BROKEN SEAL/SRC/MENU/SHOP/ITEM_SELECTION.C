@@ -13,8 +13,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
 extern struct ShopRuntime *gMenuWork;
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 
 void UiWork_FinalizeFar(s32 window, s32 style);
 void PsynergyMenu_InitializeEntryObjectsFar();
@@ -115,6 +113,10 @@ done:
 #include "SYSTEM.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
+
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 void UiWork_FinalizePendingCoreFar(void);
@@ -234,7 +236,6 @@ exit_loop:
 }
 
 
-void RenderOutput_RedrawSavedRectFar(s32);
 void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)

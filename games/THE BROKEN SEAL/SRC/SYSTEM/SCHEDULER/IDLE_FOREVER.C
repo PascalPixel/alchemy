@@ -12,7 +12,8 @@
 #include "RESOURCE.H"
 #include "SYSTEM.H"
 
-extern volatile u32 gKeyState;
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 
 void Runtime_IdleForever(void)
 {

@@ -28,10 +28,11 @@
 #include "SHOP.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Shop_FillSelector ((void (*)(s32,s32,void*))Shop_FillSelector)
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 
 void Audio_PlayCue(s32 cue);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);

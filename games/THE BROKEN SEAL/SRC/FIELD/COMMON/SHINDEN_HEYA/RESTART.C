@@ -17,13 +17,14 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 
 struct TextCursor {
     u8 storage[12];
 };
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 extern volatile u32 gFrameTick;
 
 void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);

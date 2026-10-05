@@ -19,7 +19,8 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-extern volatile u32 gKeysRepeat;
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 void Audio_PlayCue(s32 cue);
 void Runtime_SetMainState19(void);
 

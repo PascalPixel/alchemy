@@ -8,6 +8,11 @@
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 #include "FACING_OBJECT.H"
+
+#include "BATTLE_EFFECT_RUNTIME.H"
+#define Data_03001ebc ((u8 *)&Data_03001ebc)
+#include "OBJECT_LOOKUP.H"
+#define ObjectTable_Get ((struct Subject_02001fa4 * (*)())ObjectTable_Get)
 extern u8 gEffectWork[];
 extern u8 gKeysHeld[];
 
@@ -41,7 +46,7 @@ typedef struct {
     u16 unk64;
 } T;
 
-struct SceneRecord {
+struct MuraSceneRecord {
     u8 pad[100];
     u16 field_0x64;
 };
@@ -122,7 +127,6 @@ extern u8 Data_0200aad0[];
 extern u8 Data_0200adb8[];
 extern u8 Data_0200ac80[];
 extern u8 ImiruMura_CellStepsB[];
-extern u8 Data_03001ebc[];
 extern u8 ImiruMura_PrimaryScript[];
 extern u8 ImiruMura_PrimaryScript2[];
 extern s32 ImiruMura_ArcOrigin[];
@@ -151,7 +155,6 @@ void Object_SetActionCallbackAndRefreshById();
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void BattleEffect_CleanupSceneObjects(void);
 void SceneActor_TurnTowardTableAngle();
-struct Subject_02001fa4 *ObjectTable_Get();
 s32 GetMapCellCollision();
 void Vector_AddPolarOffset();
 s32 GetMapCellCollision();

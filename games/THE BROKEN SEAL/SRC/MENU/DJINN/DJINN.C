@@ -20,6 +20,8 @@
 #include "DJINN_MENU.H"
 #include "text/MSG_IDS.H"
 
+#define gWindowWork (*(struct UiWork * *)&gWindowWork)
+
 #define UiIcon_DrawVariantWithTileOffset ((void (*)(s32,s32,s32,s32))UiIcon_DrawVariantWithTileOffset)
 #define UiIcon_CreateWithLoadedResource ((void (*)(s32,s32,s32,s32))UiIcon_CreateWithLoadedResource)
 #define SideObject_CreateFar ((void (*)(s32,s32,s32,s32,s32,s32))SideObject_CreateFar)
@@ -31,7 +33,6 @@ extern struct DjinnMenuWork *gMenuWork;
 #define DJINN_ENTRY_SET (-0x8000)
 
 
-extern struct UiWork *gWindowWork;
 
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);

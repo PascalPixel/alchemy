@@ -16,6 +16,8 @@
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
 
+#define Object_SetMoveTarget ((void (*)(struct FieldActor *, s32, s32, s32))Object_SetMoveTarget)
+
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -80,9 +82,7 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 
 void Script_WaitForEventTimeout(struct FieldActor *);
 

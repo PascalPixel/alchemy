@@ -21,6 +21,8 @@
 #include "SYSTEM.H"
 #include "PALBUF.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 #define Graphics_TransformSmallPalette ((s32 (*)(s32,s32))Graphics_TransformSmallPalette)
 
 struct IntroSprite {
@@ -278,7 +280,6 @@ back_rest_cell:
 #define PROMPT_Y 124
 #endif
 
-extern volatile u32 gKeyState;
 extern u8 gOamCopyEnabled;
 extern volatile u8 gCpuLoadDisplayEnabled;
 

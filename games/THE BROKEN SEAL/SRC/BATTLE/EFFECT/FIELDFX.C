@@ -23,6 +23,8 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 #define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(void*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
 
 #define BattleFx_UpdateItemBreakFragment ((void (*)(void*))BattleFx_UpdateItemBreakFragment)
@@ -82,7 +84,6 @@ struct FxObject {
 };
 
 extern volatile u32 gKeysHeld;
-extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
 void AudioCommand_PlayFar(s32 cue);

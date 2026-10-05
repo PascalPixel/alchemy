@@ -10,6 +10,9 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+#include "BATTLE_EFFECT_RUNTIME.H"
+#define Data_03001ebc ((u8 *)&Data_03001ebc)
+
 enum {
     ITEM_FROST_JEWEL = 202
 };
@@ -22,7 +25,6 @@ struct Frame {
     s32 f10;
 };
 
-extern u8 Data_03001ebc[];
 
 extern u8 ArutinYama_StatueTable[];
 extern u8 ArutinYama_EarlyActorScript[];

@@ -17,8 +17,9 @@
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 extern u8 gOamCopyEnabled;
-extern volatile u32 gKeyState;
 
 void Audio_PlayCue(s32 cue);
 

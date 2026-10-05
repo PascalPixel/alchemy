@@ -17,8 +17,9 @@
 #include "RESOURCE_IDS.H"
 #include "text/MSG_IDS.H"
 
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, void *, s32, s32))UiText_DrawCharacterAtOffset)
+
 void RenderOutput_PrepareForRedraw(void *work);
-void UiText_DrawCharacterAtOffset(s32 resource_id, void *work, s32 x, s32 y);
 void Audio_PlayCue(s32 sound_id);
 
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)

@@ -74,7 +74,7 @@ typedef struct RaisedEffect {
     s16 f64;
 } RaisedEffect;
 
-typedef struct SceneRecord {
+typedef struct KabeSceneRecord {
     u8 pad_00[6];
     u16 facing;
     s32 x;
@@ -90,7 +90,7 @@ typedef struct SceneRecord {
     s32 rate_z;
     u8 pad_38[33];
     u8 flags;
-} SceneRecord;
+} KabeSceneRecord;
 
 typedef struct Position3 {
     s32 x;

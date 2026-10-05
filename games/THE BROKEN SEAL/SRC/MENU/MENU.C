@@ -18,11 +18,13 @@
 #include "NODE_CHAIN.H"
 #include "text/MSG_IDS.H"
 
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct UiWindow *, s32, s32))UiText_DrawCharacterAtOffset)
+#define Menu_AnimatedCursorTiles ((u8 *)&Menu_AnimatedCursorTiles)
+
 #define Menu_CursorObjectTiles ((u8 (*))&Menu_CursorObjectTiles)
 
 extern u32 gFrameTick;
 
-void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
 void RenderOutput_PrepareForRedraw(struct UiWindow *);
 
 struct Work;
@@ -35,7 +37,6 @@ struct EffectPosition {
     s32 z;
 };
 
-extern u8 Menu_AnimatedCursorTiles[];
 
 extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *pos);
 

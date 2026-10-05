@@ -19,6 +19,9 @@
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Inventory_FindEquippedFar ((s32 (*)(s32,u8))Inventory_FindEquippedFar)
 #define Party_AdjustSixDigitCounterBFar ((s32 (*)(s16))Party_AdjustSixDigitCounterBFar)
 #define Inventory_FindEquippedFar ((s32 (*)(s32,u8))Inventory_FindEquippedFar)
@@ -28,8 +31,6 @@
 #define Inventory_DiscardFar ((void (*)(s32,s32))Inventory_DiscardFar)
 
 extern struct ShopRuntime *gMenuWork;
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 s32 Inventory_AddItemFar(s32, s32);
 s32 Party_AdjustCoinsFar(s32);
 void Audio_PlayCue(s32);

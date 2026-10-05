@@ -22,6 +22,12 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define gLinkCountdownWork (*(struct LinkCountdownState * *)&gLinkCountdownWork)
+#define Ui_FillVramBlockPattern ((unsigned char (*)(void))Ui_FillVramBlockPattern)
+#define UiWindow_Create ((s32 (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+#define UiText_CopyMessageString ((s32 (*)(s32, s16 *, s32))UiText_CopyMessageString)
+#define UiText_DecodeMessage ((void (*)(s32, s16 *, s32))UiText_DecodeMessage)
+
 #define UiText_RenderWideStringAtOffset ((void (*)(s16*,s32,s32,s32))UiText_RenderWideStringAtOffset)
 
 #define COUNTDOWN_START_FRAMES 900
@@ -53,13 +59,10 @@ struct LinkCountdownState {
     s32 enabled;
 };
 
-extern struct LinkCountdownState *gLinkCountdownWork;
 extern struct LinkSignature gLinkPeerSignatures[];
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
 void Audio_PlayCue(s32 soundId);
 
-unsigned char Ui_FillVramBlockPattern(void);
-s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
 void UpdateLinkSessionCountdown(void)
 {
@@ -171,11 +174,9 @@ done:
 
 #if EDITION_INTERNATIONAL
 
-s32 UiText_CopyMessageString(s32, s16 *, s32);
 
 #else
 
-void UiText_DecodeMessage(s32, s16 *, s32);
 
 #endif
 

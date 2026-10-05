@@ -11,7 +11,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "OWNER_STATE.H"
 
-u8 *Item_Get(u16);
+#define Item_Get ((u8 * (*)(u16))Item_Get)
+
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {

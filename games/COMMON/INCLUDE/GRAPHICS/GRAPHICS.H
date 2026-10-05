@@ -103,6 +103,10 @@ extern u8 Data_03001400[];
 extern u8 Data_03001e90[];
 extern u8 Data_03001e9c[];
 extern const struct ArticleTable Data_08033e40;
+struct TileMask {
+    u32 word0;
+    u32 word1;
+};
 extern const struct TileMask Data_08037250[];
 extern const u8 Data_080f39ab[];
 extern const u8 DisplayScroll_Font[];

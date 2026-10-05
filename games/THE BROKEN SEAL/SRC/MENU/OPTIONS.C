@@ -19,6 +19,12 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define Resource_FixedBlockBTiles ((const u8 *)&Resource_FixedBlockBTiles)
+#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define RenderResource_CreateFrame ((void * (*)(s32,s32,struct RenderInput*,s32,s32))RenderResource_CreateFrame)
 #define ShopCursor_SetPositionImmediateFar ((void (*)(void*,s32,s32))ShopCursor_SetPositionImmediateFar)
 #define Shop_SetCursorFar ((void (*)(void*,s32,s32,s32))Shop_SetCursorFar)
@@ -27,13 +33,8 @@
 
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
-extern const u8 Resource_FixedBlockBTiles[];
-struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
 void WaitFrames(s32);

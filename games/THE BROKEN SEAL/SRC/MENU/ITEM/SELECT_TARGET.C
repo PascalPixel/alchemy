@@ -21,6 +21,11 @@
 #include "EQUIPMENT_MENU.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 
 struct TargetMarkerAttributes {
@@ -44,11 +49,7 @@ struct TargetMarker {
     struct TargetMarkerAttributes attributes;
 };
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 unused, s32 x, s32 y, s32 width);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);

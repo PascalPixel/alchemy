@@ -11,13 +11,14 @@
 #include "IO_REG.H"
 #include "BATTLE_RUNTIME.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 #define Text_FormatHex ((void (*)(s32,s32,s32))Text_FormatHex)
 
 void RenderOutput_PrepareForRedraw(void);
 void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 
-extern volatile u32 gKeysRepeat;
-extern volatile u32 gKeyState;
 void GameFlag_SetBitFar(s32);
 void GameFlag_ClearBitFar(s32);
 

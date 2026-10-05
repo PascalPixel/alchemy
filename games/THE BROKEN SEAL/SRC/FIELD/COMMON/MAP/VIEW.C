@@ -26,9 +26,10 @@
 #include "HEAP_STATE.H"
 #include "text/MSG_IDS.H"
 
+#define gKeysRepeat (*(u32 *)&gKeysRepeat)
+
 extern u8 gMapCellBuffer[];
 
-extern u32 gKeysRepeat;
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);

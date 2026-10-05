@@ -27,6 +27,8 @@
 #include "DISPTRAN.H"
 #include "BATTLE_RUNTIME.H"
 
+#define gOverlayArea (*(struct FieldMapState *)&gOverlayArea)
+
 #define EffectRuntime_GetCurrentObject ((s32 (*)(s32))EffectRuntime_GetCurrentObject)
 #define _call_via_r0 ((struct MapEventEntry * (*)(s32))_call_via_r0)
 
@@ -159,7 +161,6 @@ struct FieldMapState {
     s32 events;
 };
 
-extern struct FieldMapState gOverlayArea;
 
 extern struct DisplayTransitionState *gDisplayTransition;
 

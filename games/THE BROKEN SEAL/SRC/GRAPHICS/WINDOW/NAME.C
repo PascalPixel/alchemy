@@ -23,6 +23,9 @@
 #include "WORKSPACE_OPTIONS.H"
 #include "BATTLE_RUNTIME.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define gKeyState (*(u32 *)&gKeyState)
+
 #define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
 #define Shop_SetCursorFar ((void (*)(union MenuCursor*,s32,s32,s32))Shop_SetCursorFar)
 #define ShopCursor_AdvanceFar ((void (*)(union MenuCursor*))ShopCursor_AdvanceFar)
@@ -237,8 +240,6 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input)
 void UiText_DrawStringInWindow(u8 *str, struct RenderInput *window, s32 x, s32 y);
 #endif
 extern u32 gFrameTick;
-extern volatile u32 gKeysRepeat;
-extern u32 gKeyState;
 
 s32 Localization_LookupEntryId(s32 entry);
 s32 UiWindow_CreateWithSideObject(s32 entry, s32 side, s32 x, s32 y);

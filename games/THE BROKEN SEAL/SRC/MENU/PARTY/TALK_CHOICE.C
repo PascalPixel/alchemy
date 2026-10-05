@@ -16,19 +16,20 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define ShopCursor_AdvanceFar ((void (*)(union MenuCursor*))ShopCursor_AdvanceFar)
 #define Shop_SetCursorFar ((void (*)(union MenuCursor*,s32,s32,s32))Shop_SetCursorFar)
 #define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
 
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
 
 extern u8 Resource_FixedBlockBTiles[];
 
-extern volatile u32 gKeysRepeat;
 
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define TALK_WINDOW_X     7

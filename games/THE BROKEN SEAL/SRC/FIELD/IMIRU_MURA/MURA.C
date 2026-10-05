@@ -226,7 +226,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         } else {
             Engine_EventBegin();
             actor9_record = Object_GetById(9);
-            ((struct SceneRecord *)actor9_record)->field_0x64 = 10;
+            ((struct MuraSceneRecord *)actor9_record)->field_0x64 = 10;
             Engine_ActorEnableActionCallback(9, ImiruMura_ActorScriptA);
             Engine_EventSetMessage((s32)MsgMakyuriOoohHelpMe);
             Engine_EventShowMessage(9, 0);

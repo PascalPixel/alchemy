@@ -19,6 +19,9 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#include "OBJECT_LOOKUP.H"
+#define ObjectTable_Get ((struct MapObject * (*)(s32))ObjectTable_Get)
+
 extern u8 gMapCellBuffer[];
 
 extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
@@ -90,7 +93,6 @@ extern struct WorldMapVramBlock gVramBlockCache[];
 extern u32 gFrameCount;
 extern u32 gKeysHeld;
 
-struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 ArcTan2(s32 dz, s32 dx);
 

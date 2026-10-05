@@ -18,6 +18,9 @@
 #include "LAYOUT_GUARD.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Menu_OpenSelectionWindow ((void (*)(u16,u32))Menu_OpenSelectionWindow)
 
 #define SELECTION_FIXED 999
@@ -30,8 +33,6 @@
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
-extern u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);
 
 

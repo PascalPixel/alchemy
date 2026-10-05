@@ -5,6 +5,12 @@
 
 #include "TYPES.H"
 #include "EDITION.H"
+#include "OBJECT_RUNTIME.H"
+#if !GAME_TLA
+#include "FIELDRUN.H"
+#include "FIELD_SCENE.H"
+#include "MENU_LIST.H"
+#endif
 
 struct DispatchObject;
 struct EffectPosition;

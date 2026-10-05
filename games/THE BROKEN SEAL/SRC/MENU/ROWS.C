@@ -16,6 +16,9 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_Create ((struct Work * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Menu_ColonString ((u8 (*))&Menu_ColonString)
 
 void Event_SetDestinationFar(s16 primary, s16 secondary);
@@ -40,8 +43,6 @@ void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
 void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
 extern struct MenuDefaults gGameState;
 extern volatile u32 gKeysHeld;
-struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
-extern volatile u32 gKeysRepeat;
 
 
 void Scheduler_ScheduleCallbackCAfterFrames(void)

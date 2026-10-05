@@ -18,6 +18,9 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define ObjectTable_Get ((struct FieldActor * (*)(s32))ObjectTable_Get)
+#define Data_03001ed0 (*(u16 * *)&Data_03001ed0)
+
 
 void FieldScene_RunOpeningAuxiliarySequence();
 void ArutinYama_StartPaletteAnim();
@@ -30,7 +33,6 @@ extern u8 Data_02000240[];
 
 
 void ResourceMetadata_ClearRecord(s32 handle);
-struct FieldActor *ObjectTable_Get(s32 actor);
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 
@@ -49,7 +51,6 @@ struct Half {
     u16 v;
 };
 
-extern u16 *Data_03001ed0;
 
 
 

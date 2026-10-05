@@ -18,10 +18,11 @@
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 #define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
 
 extern volatile s32 gKeysRepeat;
-extern volatile u32 gKeyState;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWork_FinalizeFar(s32, s32);
 

@@ -27,13 +27,14 @@
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
 #define gTransitionWork (*(struct BattleBackgroundView * *)&gTransitionWork)
 
 
 extern u8 gMapCellBuffer[];
-extern volatile u32 gKeysRepeat;
 
 typedef struct Scale {
     s32 x;

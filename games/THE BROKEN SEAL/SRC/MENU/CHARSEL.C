@@ -20,21 +20,23 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+
 #define PsynergyMenu_CallIconRoutineWithValue ((void (*)(void*,s32))PsynergyMenu_CallIconRoutineWithValue)
 #define DjinnMenu_ShowCurrentList ((void (*)(void))DjinnMenu_ShowCurrentList)
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 
 struct InventoryMenuState;
-extern volatile u32 gKeyState, gKeysRepeat;
 void Audio_PlayCue(s32 cue);
 void PsynergyMenu_InitializeEntryObjects();
-void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 Party_AddActiveOwnerFar(s32 owner);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 s32 Party_RemoveActiveOwnerFar(s32 owner);
 void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
 s32 Party_SumDjinnCountsFar(s32 side);
-void RenderOutput_ClearListFar(s32 window);
 
 s32 CharacterSelector_RunRearrange(void)
 {

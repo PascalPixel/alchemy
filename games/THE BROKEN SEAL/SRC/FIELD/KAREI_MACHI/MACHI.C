@@ -1155,15 +1155,13 @@ void KareiMachi_StartWindowTransition(void)
 
 void FieldScene_RunMiddleSequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 rec7;
     struct FieldActor *record;
     s32 r0;
     s32 v5;
     u8 *p5;
-    u8 **base = (u8 **)Data_03001ebc;
+    u8 **base = (u8 **)&Data_03001ebc;
 
     *(s32 *)(base[0] + 0x1c0) = 0x204;
     BattleFx_StartFadeOverlay(0);

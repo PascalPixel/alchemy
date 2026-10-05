@@ -24,10 +24,11 @@
 #include "RAM_BUFFER.H"
 #include "CALL.H"
 
+#define gKeyState (*(u32 *)&gKeyState)
+
 #define RuntimeDispatch_NoOpHook ((void (*)(s32))RuntimeDispatch_NoOpHook)
 #define Title_ShowSplashScreen ((void (*)(s32))Title_ShowSplashScreen)
 
-extern u32 gKeyState;
 extern u32 gKeysHeld;
 void Event_SetDestination(s32 scene, s32 entrance);
 

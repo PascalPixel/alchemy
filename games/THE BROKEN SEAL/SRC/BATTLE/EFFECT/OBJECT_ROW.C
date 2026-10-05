@@ -25,6 +25,8 @@
 #include "RESOURCE.H"
 #include "FIXED_MATH.H"
 
+#define gKeysRepeat (*(u32 *)&gKeysRepeat)
+
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
 #define gBattleFxWork ((void *(*))&gBattleFxWork)
@@ -53,7 +55,6 @@ struct FxControl {
     s32 active;
 };
 
-extern u32 gKeysRepeat;
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, struct FxPlacement *placement, struct FxPair *pair, s32 mode);
 void Audio_PlayCue(s32 cue);

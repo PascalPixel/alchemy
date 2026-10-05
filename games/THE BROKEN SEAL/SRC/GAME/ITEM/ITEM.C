@@ -22,6 +22,8 @@
 #include "BATTLE_CALC.H"
 #include "UI.H"
 
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+
 #define Link_DrawShiftedTilePairFar ((void (*)(void*))Link_DrawShiftedTilePairFar)
 #define FourObjectMotion_InitializeBottomRow ((void (*)(s32,s32))FourObjectMotion_InitializeBottomRow)
 #define Djinn_DeactivateFar ((s32 (*)(s32,s32,s32))Djinn_DeactivateFar)
@@ -544,7 +546,6 @@ s32 ItemMenu_Run(void)
 }
 
 void AudioCommand_PlayFar(s32 cue);
-void RenderOutput_ClearListFar(s32 window);
 s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 index);
 

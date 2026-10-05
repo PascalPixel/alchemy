@@ -18,6 +18,8 @@
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 #define UiText_DrawStringInWindowFar ((void (*)(const void*,s32,s32,s32))UiText_DrawStringInWindowFar)
 #define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
@@ -33,7 +35,6 @@ extern u8 IwramCopyWords[];
 void WaitFrames(s32 frames);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void RenderOutput_ClearListFar(s32 window);
 s32 _call_via_r3(void *, void *, s32, void *);
 
 static inline void Owner_Copy(void *dst, void *src)

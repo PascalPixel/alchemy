@@ -17,8 +17,9 @@
 #include "GAME_STATE.H"
 #include "EVENT_RUNTIME.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 extern struct EventRuntime *gEventWork;
-extern volatile u32 gKeyState;
 s32 ObjectTable_ReadActiveValue(s32);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsIdleFar(s32);

@@ -4,6 +4,9 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
+#include "WINDOW.H"
+#define UiWindow_Create ((s32 (*)())UiWindow_Create)
+
 extern struct EventWork *gEventWork;
 extern u8 gEffectWork[];
 
@@ -29,7 +32,6 @@ void ObjectMotion_WaitForAnimationChange(u32 actor);
 void Engine_EventSetMessage();
 void Engine_EventShowMessage();
 void Engine_EventRequestExit();
-s32 UiWindow_Create();
 void UiWork_Finalize();
 void UiText_DrawResource();
 void UiText_DrawStringAtOffset();

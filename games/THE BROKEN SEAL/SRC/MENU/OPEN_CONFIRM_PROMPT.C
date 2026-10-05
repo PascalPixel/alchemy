@@ -22,12 +22,13 @@
 #include "BATTLE_CALC.H"
 #include "text/MSG_IDS.H"
 
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
 
 s32 Party_ListActiveOwnersFar(u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);
-void RenderOutput_ClearListFar(s32 screen_handle);
 void ItemMenu_Close(void);
 void Event_ClearInvalidPackedValuesFar(void);
 

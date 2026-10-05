@@ -15,6 +15,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gWindowWork (*(u8 * *)&gWindowWork)
+
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 
 #if EDITION_INTERNATIONAL
@@ -24,7 +26,6 @@
 #endif
 
 extern volatile s32 gKeysRepeat;
-extern u8 *gWindowWork;
 
 #if defined(TBS_EDITION_EN)
 #define DEBUG_SECOND_FORM ((s32)MsgBecameCursed)

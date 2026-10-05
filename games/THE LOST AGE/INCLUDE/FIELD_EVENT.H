@@ -5,6 +5,9 @@
 #include "FIELD_SPRITE.H"
 #include "EVENTWRK.H"
 
+#include "OBJECT_RUNTIME.H"
+#define Object_SetMode ((void (*)(struct FieldActor *, s32))Object_SetMode)
+
 struct FieldActor {
     u8 unknown_00[6];
     u16 facing;
@@ -46,7 +49,6 @@ void Actor_SetAnimation(s32 actor, s32 animation);
 s32 Party_GetLeaderActor(void);
 void Message_Show(s32 message, s32 flags);
 struct FieldActor *Object_Create(s32 type, s32 x, s32 y, s32 z);
-void Object_SetMode(struct FieldActor *object, s32 mode);
 void Object_SetScript(struct FieldActor *object, const void *script);
 void Object_SetPalette(struct FieldActor *object, s32 palette);
 void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags);

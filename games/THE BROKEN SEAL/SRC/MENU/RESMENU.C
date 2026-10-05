@@ -20,6 +20,10 @@
 #include "VRAM_TAB.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, void *, s32, s32))UiText_DrawCharacterAtOffset)
+
 struct WindowLine {
     u16 left;
     u16 span;
@@ -200,11 +204,9 @@ void Menu_EndResourceSelection(void)
 }
 
 
-extern volatile u32 gKeyState, gKeysRepeat;
 
 void RenderOutput_PrepareForRedraw(void *);
 
-void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 void Audio_PlayCue(s32);
 

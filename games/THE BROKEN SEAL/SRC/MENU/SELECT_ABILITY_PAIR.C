@@ -17,6 +17,13 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define Resource_FixedBlockBTiles ((const u8 *)&Resource_FixedBlockBTiles)
+#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
+#define RenderOutput_RedrawSavedRect ((void (*)(struct RenderInput *))RenderOutput_RedrawSavedRect)
+
 #define Menu_FindShortcutEntries ((void (*)(u32*,u32*,const struct ShortcutListEntry*))Menu_FindShortcutEntries)
 
 #define Object_CollectResources ((s32 (*)(struct ShortcutListEntry*))Object_CollectResources)
@@ -26,15 +33,9 @@ struct ShortcutListEntry {
     u16 ability;
 };
 
-extern volatile u32 gKeysRepeat;
-extern volatile u32 gKeyState;
-extern const u8 Resource_FixedBlockBTiles[];
 
 s32 OwnerAction_AddFar(s32 owner, s32 action);
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32 value, s32 digits, struct RenderInput *window, s32 x, s32 y);
-void RenderOutput_RedrawSavedRect(struct RenderInput *window);
 void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x, s32 y, s32 width, s32 style);
 void WaitFrames(s32 frames);
 void AudioCommand_PlayFar(s32 cue);

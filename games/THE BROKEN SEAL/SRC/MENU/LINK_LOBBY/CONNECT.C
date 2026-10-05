@@ -16,13 +16,14 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+#define UiWork_Finalize ((void (*)(s32, s32))UiWork_Finalize)
+
 #define LinkLobby_PollPeerReady ((void (*)(void))LinkLobby_PollPeerReady)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
 extern u8 gMapCellBuffer[];
 s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
-void UiWork_Finalize(s32 window, s32 flags);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(s32 layer);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);

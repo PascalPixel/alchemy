@@ -23,12 +23,14 @@
 #include "BATTLE_RUNTIME.H"
 #include "UIFLOW.H"
 
+#define gKeyState ((u8 *)&gKeyState)
+#define gKeysRepeat ((u8 *)&gKeysRepeat)
+#define gWindowWork (*(struct UiTileSlotWork * *)&gWindowWork)
+
 #define Shop_SetCursorFar ((void (*)(void*,s32,s32,s32))Shop_SetCursorFar)
 #define Ui_ApplyTableOffsetToPair ((void (*)(void*))Ui_ApplyTableOffsetToPair)
 #define UiIcon_PrepareObjectFar ((void (*)(void*))UiIcon_PrepareObjectFar)
 
-extern u8 gKeyState[];
-extern u8 gKeysRepeat[];
 
 extern u8 gDebugMode;
 
@@ -147,7 +149,6 @@ struct UiTileSlotWork {
     u16 next;
 };
 
-extern struct UiTileSlotWork *gWindowWork;
 
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap)
 {

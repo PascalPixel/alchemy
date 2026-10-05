@@ -31,6 +31,8 @@
 #include "DISPTRAN.H"
 #include "text/MSG_IDS.H"
 
+#define gOverlayArea (*(struct OverlayEntries *)&gOverlayArea)
+
 #define Map_LoadAreaGraphicsFar ((s32 (*)(void))Map_LoadAreaGraphicsFar)
 #define ObjectTable_ResetForObject ((void (*)(void))ObjectTable_ResetForObject)
 #define BattleFx_RunDescriptorAction ((void (*)(s32))BattleFx_RunDescriptorAction)
@@ -233,7 +235,6 @@ void Battle_ResetEffectCounter(void);
 void Djinn_ResolvePendingEvent();
 void AudioCommand_PlayFar(s32 cue);
 
-extern struct OverlayEntries gOverlayArea;
 extern u8 ResourceBlockOwners[];
 extern volatile u32 gKeysHeld;
 extern volatile u8 gDebugMode;

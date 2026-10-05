@@ -19,6 +19,8 @@
 #include "BATTLE_PARTY.H"
 #include "text/MSG_IDS.H"
 
+#define Object_SetMoveTarget ((void (*)(s32, s32, s32, s32))Object_SetMoveTarget)
+
 #define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement*))FieldScene_PrepareActors)
 
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
@@ -49,7 +51,6 @@ void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);
 void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
-void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 

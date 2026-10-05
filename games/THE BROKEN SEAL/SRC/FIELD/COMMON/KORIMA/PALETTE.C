@@ -11,7 +11,8 @@
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
 
-extern u8 *Data_03001ed0;
+#define Data_03001ed0 (*(u8 * *)&Data_03001ed0)
+
 
 void KorimaPalette_SaveFirst(void)
 {

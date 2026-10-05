@@ -10,7 +10,8 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 
-extern u8 Sound_CommandTable[];
+#define Sound_CommandTable ((u8 *)&Sound_CommandTable)
+
 
 
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)

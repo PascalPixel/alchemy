@@ -24,6 +24,10 @@
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+
 #define BattleFx_GetResourceIdFar ((s32 (*)(s32))BattleFx_GetResourceIdFar)
 #define UiIcon_PrepareObjectFar ((void (*)(void*))UiIcon_PrepareObjectFar)
 #define Shop_BuySpecialItem ((void (*)(s32,s32))Shop_BuySpecialItem)
@@ -405,10 +409,7 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
         shop->mode);
 }
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 void UiWork_FinalizeFar(s32 window, s32 style);
-void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);

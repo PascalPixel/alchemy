@@ -22,10 +22,11 @@
 #include "GAME_STATE.H"
 #include "PROJECT.H"
 
+#define gFrameCount (*(s32 *)&gFrameCount)
+
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
 #define Owner_RecalculateStatsFar ((void (*)(u16))Owner_RecalculateStatsFar)
 
-extern s32 gFrameCount;
 
 
 

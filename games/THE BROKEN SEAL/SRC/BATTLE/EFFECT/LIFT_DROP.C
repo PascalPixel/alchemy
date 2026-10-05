@@ -13,6 +13,8 @@
 #include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 #define Random16 ((s32 (*)(void))Random16)
 
 #define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(struct FxObject*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
@@ -59,7 +61,6 @@ struct FxObject {
 extern struct BattleFxScene *gEffectWork;
 extern const s32 BattleFx_FragmentScript[];
 extern volatile u32 gKeysHeld;
-extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
 void WaitFrames(s32 frames);

@@ -21,6 +21,8 @@
 #include "HEAP_STATE.H"
 #include "text/MSG_IDS.H"
 
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+
 #define Runtime_GetLowTableAddress ((void * (*)(void))Runtime_GetLowTableAddress)
 #define Djinn_ListOwnerEntries ((s16 (*)(void*,s32,s32))Djinn_ListOwnerEntries)
 
@@ -45,7 +47,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 void UiWork_SetParamNibbleFar(s32 value);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
 void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
-void RenderOutput_RedrawSavedRectFar(s32 window);
 #define ACTION_MASK 0x3fff
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000

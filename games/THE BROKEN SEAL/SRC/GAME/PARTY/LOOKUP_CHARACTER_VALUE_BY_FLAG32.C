@@ -18,6 +18,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 #define UiGlyph_LoadEntryWithPalette ((void (*)(s32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
 
 
@@ -28,7 +30,6 @@ struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 
-extern volatile u32 gKeyState;
 
 void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 {

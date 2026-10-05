@@ -5,6 +5,16 @@
 
 #include "TYPES.H"
 #include "EDITION.H"
+#include "BATTLE_SUMMON.H"
+#include "BATTLE_UNIT.H"
+#include "ITEM.H"
+#if !GAME_TLA
+#include "CHARACTER.H"
+#include "PRESET_TABLE.H"
+#endif
+#if GAME_TLA
+#include "BATTLE_TYPES.H"
+#endif
 
 struct ItemDefinition;
 struct SummonDefinition;

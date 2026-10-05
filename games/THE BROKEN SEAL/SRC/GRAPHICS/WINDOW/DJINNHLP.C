@@ -19,11 +19,12 @@
 #include "HEAP_STATE.H"
 #include "text/MSG_IDS.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+
 
 extern struct DjinnMenuWork *gMenuWork;
-extern volatile u32 gKeysRepeat;
-extern volatile u32 gKeyState;
-void RenderOutput_ClearListFar(s32 window);
 void Audio_PlayCue(s32 cue);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 

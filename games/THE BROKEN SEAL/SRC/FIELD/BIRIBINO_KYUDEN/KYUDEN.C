@@ -16,7 +16,7 @@
 #define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
 
 
-struct SceneRecord {
+struct KyudenSceneRecord {
     u8 unk_000[166];
     u8 field_166;
     u8 unk_167[23];
@@ -85,7 +85,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
         FieldScene_PrepareActors(p);
 
         if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
-            struct SceneRecord *rec = (struct SceneRecord *)p;
+            struct KyudenSceneRecord *rec = (struct KyudenSceneRecord *)p;
 
             rec->field_166 = 2;
             rec->field_190 = 0;

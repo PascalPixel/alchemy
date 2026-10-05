@@ -5,6 +5,9 @@
 
 #include "TYPES.H"
 #include "EDITION.H"
+#if !GAME_TLA
+#include "BATTLE_EFFECT_RUNTIME.H"
+#endif
 
 struct BattleActionRecord;
 struct BattleEffectArgument;

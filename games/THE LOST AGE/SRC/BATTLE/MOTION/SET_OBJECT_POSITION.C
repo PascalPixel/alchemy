@@ -12,9 +12,10 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_ACTOR.H"
 
-void Object_ResetMotion(struct MotionObject *);
-void Object_SetPosition(struct MotionObject *, s32, s32, s32);
-void Object_SetMode(struct MotionObject *, s32);
+#define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
+#define Object_SetPosition ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)
+#define Object_SetMode ((void (*)(struct MotionObject *, s32))Object_SetMode)
+
 s32 ArcTan2(s32, s32);
 
 

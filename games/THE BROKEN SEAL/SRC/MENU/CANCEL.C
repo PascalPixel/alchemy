@@ -15,11 +15,12 @@
 #include "SOUND_IDS.H"
 #include "BATTLE_RUNTIME.H"
 
-extern u8 *volatile gWindowWork;
 void Audio_PlayCue(s32 cue);
 
 #include "KEYSTATE.H"
 #include "IO_REG.H"
+
+#define gWindowWork (*(u8 *volatile *)&gWindowWork)
 
 s32 GameFlag_SetBitFar(s32);
 

@@ -15,7 +15,8 @@
 void Shop_DrawMsg(s32 window, s32 message);
 s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 #if !EDITION_INTERNATIONAL
-void RenderOutput_ClearListFar(s32);
+void RenderOutput_ClearListFar();
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 #endif
 
 void Shop_DrawMsg(s32 window, s32 message)

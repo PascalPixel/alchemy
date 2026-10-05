@@ -25,6 +25,8 @@
 #include "RAM_BUFFER.H"
 #include "TRANSFORM.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 #define Object_InitializeMode ((void (*)(void*,s32))Object_InitializeMode)
 
@@ -35,7 +37,6 @@ struct Point2D {
 
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
-extern volatile u32 gKeysRepeat;
 
 struct BattleEffectTargetArgument;
 void AudioCommand_PlayFar(s32 value);

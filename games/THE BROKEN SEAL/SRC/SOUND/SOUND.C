@@ -13,7 +13,8 @@
 #include "AUDIO_ENGINE_SYMBOLS.H"
 #include "AUDIO_ENGINE.H"
 
-extern volatile u32 gKeysRepeat;
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 void AudioCommand_Play(s32 id);
 
 

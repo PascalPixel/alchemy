@@ -14,7 +14,8 @@
 #include "OWNER_STATE.H"
 #include "UI.H"
 
-extern s32 gFrameCount;
+#define gFrameCount (*(s32 *)&gFrameCount)
+
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 

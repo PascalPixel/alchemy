@@ -34,7 +34,6 @@ extern const u8 BattleFx_PuffSizes[];
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-extern volatile u32 gKeysRepeat;
 
 void AudioCommand_PlayFar(s32 cue);
 
@@ -491,6 +490,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Object_InitializeMode ((s32 (*)(void*,s32))Object_InitializeMode)
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
@@ -502,7 +503,6 @@ void Audio_PlayCue(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
 
-extern volatile u32 gKeysRepeat;
 
 extern struct Cells03001ad0 gBgScroll;
 

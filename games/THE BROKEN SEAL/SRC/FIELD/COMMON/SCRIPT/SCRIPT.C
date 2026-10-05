@@ -21,6 +21,8 @@
 #include "GAME_STATE.H"
 #include "BATTLE_RUNTIME.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
 s32 ArcTan2(s32 y, s32 x);
@@ -217,7 +219,6 @@ static __inline__ void StoreHalfword(s16 *address, s32 value)
     *address = value;
 }
 
-extern volatile u32 gKeyState;
 
 void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32 value)
 {

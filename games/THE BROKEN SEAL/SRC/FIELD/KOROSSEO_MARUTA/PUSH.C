@@ -19,13 +19,13 @@ s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
 
 void ColossoLogRollingStage_PushStagedActor(void)
 {
-    extern s32 Object_CheckMovementCollision(SceneRecord *, Position3 *);
-    extern void Object_SetPosition(SceneRecord *, s32, s32, s32);
-    extern void Object_CommitPosition(SceneRecord *);
+    extern s32 Object_CheckMovementCollision(MarutaSceneRecord *, Position3 *);
+    extern void Object_SetPosition(MarutaSceneRecord *, s32, s32, s32);
+    extern void Object_CommitPosition(MarutaSceneRecord *);
 
-    SceneRecord *subject;
-    SceneRecord *target;
-    SceneRecord *blocker;
+    MarutaSceneRecord *subject;
+    MarutaSceneRecord *target;
+    MarutaSceneRecord *blocker;
     u32 step;
     u32 direction;
     Position3 position;

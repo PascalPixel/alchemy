@@ -14,6 +14,11 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define gWindowWork (*(struct GlyphWork * *)&gWindowWork)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
+
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 
 struct GlyphWork {
@@ -21,8 +26,6 @@ struct GlyphWork {
     u16 slot;
 };
 
-extern struct GlyphWork *gWindowWork;
-extern volatile u32 gKeysRepeat;
 
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
 #define DEBUG_GLYPH_NAME ((s32)MsgDebugGlyphName)
@@ -31,10 +34,8 @@ extern volatile u32 gKeysRepeat;
 #endif
 
 struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);
-struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void RenderOutput_PrepareForRedraw(struct RenderInput *);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
-void UiText_DrawCharacterAtOffset(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
 
 s32 DebugMenu_BrowseEntryGlyphs(void)

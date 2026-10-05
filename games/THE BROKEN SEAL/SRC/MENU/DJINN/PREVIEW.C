@@ -18,6 +18,9 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
+
 #define UiWindow_SetTilemapEntry ((void (*)(struct RenderInput*,s32,s32,s32,s32))UiWindow_SetTilemapEntry)
 #define UiWindow_DrawThreeTileColumn ((s32 (*)(struct RenderInput*,s32,s32,s32,s32))UiWindow_DrawThreeTileColumn)
 
@@ -53,8 +56,6 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const stru
 void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
 
 s32 __divsi3(s32 numerator, s32 denominator);
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, struct RenderInput *win, s32 x, s32 y);
 
 struct RenderInput *DjinnMenu_ShowChangePreview(

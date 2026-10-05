@@ -16,6 +16,9 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+
 #define gMenuCtrlWork (*(struct DebugMenuState * *)&gMenuCtrlWork)
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 
@@ -50,10 +53,8 @@ struct DebugMenuState {
     u16 active;
 };
 
-extern volatile u32 gKeysRepeat;
 
 void WaitFrames(s32);
-struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(const u8 *, struct RenderInput *, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
 

@@ -20,6 +20,9 @@
 #include "OBJECT_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define SideObject_CreateFar ((void (*)(s32,s32,s32,s32,s32,s32))SideObject_CreateFar)
 
 extern struct ShopRuntime *gMenuWork;
@@ -28,8 +31,6 @@ void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 void UiWork_FinalizeFar(s32 window, s32 style);
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 s32 Party_AdjustCoinsFar(s32 amount);
 void PsynergyMenu_InitializeEntryObjectsFar();

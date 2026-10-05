@@ -8,16 +8,18 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
+#include "TEXT_RENDER_RUNTIME.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
 
+#define UiText_DrawStringAtOffset ((void (*)(void *, s32, s32, s32))UiText_DrawStringAtOffset)
+#define UiText_DrawNumberAtOffset ((void (*)(s32, s32, s32, s32, s32))UiText_DrawNumberAtOffset)
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, s32, s32, s32))UiText_DrawCharacterAtOffset)
+
 void RenderOutput_PrepareForRedraw(void);
 void UiWindow_DrawDividerLine(s32, s32, s32, s32, s32);
-void UiText_DrawStringAtOffset(void *, s32, s32, s32);
 void UiText_DrawStringInWindow(s32, s32, s32, s32);
-void UiText_DrawNumberAtOffset(s32, s32, s32, s32, s32);
-void UiText_DrawCharacterAtOffset(s32, s32, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 
 #if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)

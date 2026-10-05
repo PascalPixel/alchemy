@@ -4,6 +4,9 @@
 #include "LAYOUT_GUARD.H"
 #include "TYPES.H"
 
+#include "BATTLE_EFFECT_RUNTIME.H"
+#define Data_03001ebc (*(struct BattleEffectCounterState * *)&Data_03001ebc)
+
 struct BattleEffectCounterState {
     u8 padding_000[0x16c];
     s16 counters[12];
@@ -17,6 +20,5 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_SIZE_GUARD(
     BattleEffectCounterState_Size, struct BattleEffectCounterState, 0x184);
 
-extern struct BattleEffectCounterState *Data_03001ebc;
 
 #endif

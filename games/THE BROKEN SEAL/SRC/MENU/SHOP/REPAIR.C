@@ -19,13 +19,14 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define Inventory_FindEquippedFar ((s32 (*)(s32,u8))Inventory_FindEquippedFar)
 #define Party_AdjustSixDigitCounterBFar ((void (*)(s32))Party_AdjustSixDigitCounterBFar)
 #define Item_AdjustCounterFar ((void (*)(s32,s32))Item_AdjustCounterFar)
 
 extern struct ShopRuntime *gMenuWork;
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 void UiWork_FinalizeFar(s32, s32);
 void Audio_PlayCue(s32);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);

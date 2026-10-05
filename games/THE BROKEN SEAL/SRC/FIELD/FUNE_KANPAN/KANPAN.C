@@ -126,7 +126,7 @@ void Engine_ActorFaceDirection();
 void Engine_ActorWalkTo();
 void Engine_ActorSetAttachedEffect();
 
-#define SCENE_PHASE (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0))
+#define SCENE_PHASE (*(s32 *)(*(u8 *volatile *)&Data_03001ebc + 0x1c0))
 
 void FieldScene_RunStepThen10(s32 actor);
 void Engine_ActorStartAction(s32 actor);
@@ -1680,8 +1680,6 @@ void FieldScene_ConfigureLeadActors(void)
 void FieldScene_ConfigureThreeActors(void)
 {
     /* FAKEMATCH: retained volatile pointer and halfword accesses preserve the current access ordering. */
-
-    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;

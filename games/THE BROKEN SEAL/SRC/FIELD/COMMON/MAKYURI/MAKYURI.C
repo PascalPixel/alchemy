@@ -16,6 +16,8 @@
 #include "FIELDRUN.H"
 #include "HEAP_STATE.H"
 
+#define gKeyState (*(u32 *)&gKeyState)
+
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
@@ -23,7 +25,6 @@ void OverlayObject_SpawnKind24AtObject(struct FieldActor *actor);
 void Object_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
 extern const s32 Makyuri_ScaleCounterScript[];
-extern u32 gKeyState;
 extern u32 gKeysHeld;
 
 struct PushState {

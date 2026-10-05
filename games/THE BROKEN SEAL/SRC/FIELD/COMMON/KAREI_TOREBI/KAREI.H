@@ -7,7 +7,6 @@
 
 #define NULL ((void *)0)
 
-extern u8 *Data_03001ebc;
 
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
@@ -21,7 +20,6 @@ extern s16 Data_02000240[];
 
 #include "TYPES.H"
 
-s32 UiWindow_Create();
 void UiWork_PushValueSlot();
 void UiText_DrawCharacterAtOffset();
 void UiText_DrawNumberInWindow();
@@ -47,6 +45,11 @@ void Engine_EventBegin(void);
 #include "TYPES.H"
 
 #include "TYPES.H"
+
+#include "BATTLE_EFFECT_RUNTIME.H"
+#define Data_03001ebc (*(u8 * *)&Data_03001ebc)
+#include "WINDOW.H"
+#define UiWindow_Create ((s32 (*)())UiWindow_Create)
 
 void SceneState_ApplyValues14And0And5(void);
 s32 SceneData_ReturnZero(void);

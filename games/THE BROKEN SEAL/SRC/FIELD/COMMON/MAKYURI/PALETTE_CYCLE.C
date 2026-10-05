@@ -9,7 +9,8 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 
-extern s32 gFrameCount;
+#define gFrameCount (*(s32 *)&gFrameCount)
+
 
 void Makyuri_CyclePalette(void)
 {

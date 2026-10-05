@@ -5,6 +5,7 @@
 
 #include "TYPES.H"
 #include "EDITION.H"
+#include "AUDIO_ENGINE_TYPES.H"
 
 struct SoundPlayer;
 struct SoundTrack;

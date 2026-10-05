@@ -19,6 +19,8 @@
 #include "IO_REG.H"
 #include "FLAG_IDS.H"
 
+#define Scheduler_AddOrUpdateCallback ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)
+
 #define Tilemap_DecodeStagedBuffer ((void (*)(void))Tilemap_DecodeStagedBuffer)
 #define DisplayBlend_StartScript ((void (*)(void*))DisplayBlend_StartScript)
 
@@ -103,7 +105,6 @@ struct SceneHeader {
 extern u8 gMapLayerData[];
 
 void GameFlag_ClearBitFar(s32 flag);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 key);
 
 static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
 {

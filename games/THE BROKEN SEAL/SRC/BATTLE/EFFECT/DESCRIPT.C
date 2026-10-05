@@ -15,13 +15,16 @@
 #include "SYSTEM.H"
 #include "text/MSG_IDS.H"
 
+#define gOverlayArea ((u8 *)&gOverlayArea)
+#include "OBJECT_LOOKUP.H"
+#define ObjectTable_Get ((struct EffectObject * (*)(s32))ObjectTable_Get)
+
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct BattleActionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 #define BattleFx_ResumeObject ((void (*)(s32))BattleFx_ResumeObject)
 #define Field_TryJumpForward ((void (*)(void))Field_TryJumpForward)
 
 s32 GameFlag_TestFar();
 
-extern u8 gOverlayArea[];
 extern const s32 ObjectMotion_StepAngleScript[];
 
 struct EffectDescriptor {
@@ -46,7 +49,6 @@ struct EffectObject {
     u16 reference;
 };
 
-extern struct EffectObject *ObjectTable_Get(s32 object);
 extern void *gEventWork;
 typedef s32 (*WorkEntryFn)(void);
 

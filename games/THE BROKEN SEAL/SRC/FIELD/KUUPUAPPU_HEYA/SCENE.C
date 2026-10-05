@@ -19,6 +19,9 @@
 #include "BATTLE_PARTY.H"
 #include "text/MSG_IDS.H"
 
+#define Object_SetMoveTarget ((void (*)(s32, s32, s32, s32))Object_SetMoveTarget)
+#define ObjectTable_Get ((struct Rec_383b * (*)())ObjectTable_Get)
+
 #define KuupuappuHeya_PairScriptP ((u8 (*))&KuupuappuHeya_PairScriptP)
 #define KuupuappuHeya_PairScriptR ((u8 (*))&KuupuappuHeya_PairScriptR)
 
@@ -45,7 +48,6 @@ void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);
 void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
-void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
@@ -221,7 +223,6 @@ struct Rec_383b {
     s32 f64;
 };
 
-struct Rec_383b *ObjectTable_Get();
 
 void SceneDialogue_RunActor10Line(void)
 {

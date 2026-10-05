@@ -15,6 +15,8 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define Data_03001ebc (*(struct EventGlobals *)&Data_03001ebc)
+
 
 
 
@@ -44,7 +46,6 @@ struct EventGlobals {
     u8 *field;
 };
 
-extern struct EventGlobals Data_03001ebc;
 
 
 const struct SceneEntrance *Scene_GetEntrances(void)

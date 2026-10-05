@@ -19,6 +19,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gFrameCount (*(volatile s32 *)&gFrameCount)
+
 #define BattleFx_MarkChildAndRunFallbackTransition ((void (*)(s32))BattleFx_MarkChildAndRunFallbackTransition)
 #define BattleEffect_RunTargetedItemBreak ((void (*)(s32))BattleEffect_RunTargetedItemBreak)
 #define BattleFx_CallEffect04 ((void (*)(s32))BattleFx_CallEffect04)
@@ -46,7 +48,6 @@ void _call_via_r3(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
 void Battle_Reset();
 
-extern volatile s32 gFrameCount;
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);

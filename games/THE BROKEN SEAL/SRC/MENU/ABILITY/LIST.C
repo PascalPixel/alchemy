@@ -21,17 +21,18 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 
-void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 
 struct AnimationObject;
 extern volatile u32 gKeysHeld;
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 mode);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);

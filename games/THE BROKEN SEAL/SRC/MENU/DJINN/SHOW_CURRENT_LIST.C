@@ -18,12 +18,13 @@ extern struct DjinnMenuWork *gMenuWork;
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
-extern struct UiWork *gWindowWork;
-extern volatile u32 gKeyState;
+#define gWindowWork (*(struct UiWork * *)&gWindowWork)
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
+#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
+
 
 void Audio_PlayCue(s32 cue);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
 

@@ -20,13 +20,14 @@
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
 
 void Event_SetMessageId(s16 message);
 
 
 void Engine_AudioPlayCue(s32 cue);
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);

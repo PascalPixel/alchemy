@@ -22,6 +22,9 @@ extern const s8 Menu_WorkspaceIconFrames[];
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define Resource_FixedBlockBTiles ((const u8 *)&Resource_FixedBlockBTiles)
+#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
+
 #define ShopCursor_AdvanceFar ((void (*)(void*))ShopCursor_AdvanceFar)
 #define Ui_ApplyTableScaleToObject ((void (*)(void*))Ui_ApplyTableScaleToObject)
 #define ShopCursor_SetPositionImmediateFar ((void (*)(void*,s32,s32))ShopCursor_SetPositionImmediateFar)
@@ -36,9 +39,7 @@ extern const s8 Menu_WorkspaceIconFrames[];
 #define RESOURCE_SLOTS 96
 
 extern u8 gDebugMode;
-extern const u8 Resource_FixedBlockBTiles[];
 
-struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
 

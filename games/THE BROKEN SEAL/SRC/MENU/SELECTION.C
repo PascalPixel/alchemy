@@ -36,6 +36,8 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
+#define UiText_DrawCharacterAtOffset ((void (*)(s32, void *, s32, s32))UiText_DrawCharacterAtOffset)
+
 #define UiWindow_ClearInteriorTiles ((void (*)(void*,s32,s32,s32,s32))UiWindow_ClearInteriorTiles)
 
 
@@ -159,7 +161,6 @@ s32 Menu_SelectSaveSlotAction(void)
     return ret;
 }
 
-extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 #if EDITION_INTERNATIONAL
 #define MODE_LABEL_X     18

@@ -21,6 +21,10 @@
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+#define RenderOutput_ClearListFar ((void (*)(void *))RenderOutput_ClearListFar)
+
 struct InventoryMenuIcon {
     struct InventoryMenuIcon *next;
     u8 unknown_04;
@@ -33,11 +37,8 @@ struct InventoryMenuIcon {
     u8 sentinel;
 };
 
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
-void RenderOutput_ClearListFar(void *window);
 void Audio_PlayCue(s32 cue);
 
 s32 ItemMenu_SelectItem(void)

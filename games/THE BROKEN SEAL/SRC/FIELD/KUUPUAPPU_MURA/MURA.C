@@ -14,6 +14,8 @@
 #include "BATTLE_PARTY.H"
 #include "text/MSG_IDS.H"
 
+#define Owner_RecalculateStats ((s32 (*)(int))Owner_RecalculateStats)
+
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -53,7 +55,6 @@ extern u8 *gWork;
 
 u8 *Owner_GetState();
 void Djinn_Transfer(int, int, int, int);
-s32 Owner_RecalculateStats(int);
 void Party_RemoveOwnerRestored();
 s32 PartyInventory_FindOwner(s32);
 s32 SceneActor_CheckFacingAndRange();

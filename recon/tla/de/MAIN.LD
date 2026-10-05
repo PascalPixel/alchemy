@@ -1097,7 +1097,7 @@
     "*/games/THE LOST AGE/SRC/MENU/TILEMAP_FLAG_RECT.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001032dc)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/DRAW_WORK_VALUE_WITH_LABEL.o"(.text)
-    "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/DRAW_DRAW_WORK_VALUE_WITH_LABEL_2.o"(.text)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/BOUNDS.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001033b6)
     "*/games/THE LOST AGE/SRC/MENU/MENU9.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001034a2)

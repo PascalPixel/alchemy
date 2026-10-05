@@ -1322,7 +1322,7 @@
     "*/recon/tla/it/rom.o"(.rom.001a052c)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/TILE3.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.001a06e0)
-    "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/DISPLAY6.o"(.text)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/CRAWL.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.001a0a70)
     "*/games/THE LOST AGE/SRC/SYSTEM/SCENE_STATE_SET_HALFWORD.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.001a1294)

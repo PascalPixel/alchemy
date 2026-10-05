@@ -2623,7 +2623,7 @@
         "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/TILE3.o"(.text)
         "*/recon/tla/raw/081a06e0.o"(.text)
         "*/recon/tla/raw/081a08c4.o"(.text)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/DISPLAY6.o"(.text)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/DISPLAY/CRAWL.o"(.text)
         "*/recon/tla/raw/081a0a70.o"(.text)
         "*/recon/tla/raw/081a0be8.o"(.text)
         "*/recon/tla/raw/081a0cac.o"(.text)

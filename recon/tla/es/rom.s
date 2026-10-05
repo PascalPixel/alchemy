@@ -3684,8 +3684,10 @@ Func_080d3214:
 	.thumb_func
 ObjectMotion_WaitForAnimationChange:
 	.incbin "baserom.gba", 0x000dc25c, 0x00000050
-	.section .rom.000dc330, "ax"
-	.incbin "baserom.gba", 0x000dc330, 0x00000124
+	.section .rom.000dc36a, "ax"
+	.incbin "baserom.gba", 0x000dc36a, 0x00000002
+	.section .rom.000dc36c, "ax"
+	.incbin "baserom.gba", 0x000dc36c, 0x000000e8
 	.section .rom.000dc454, "ax"
 	.global Func_080d3460
 	.type Func_080d3460, %function

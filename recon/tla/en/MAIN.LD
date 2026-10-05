@@ -1261,7 +1261,7 @@
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_ACTION_BY_ID.o"(.text)
         "*/recon/tla/raw/080d3268.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_EVENTS.o"(.text)
-        "*/recon/tla/raw/080d333c.o"(.text)
+        "*/recon/tla/raw/080d3376.o"(.text)
         "*/recon/tla/raw/080d3378.o"(.text)
         "*/recon/tla/raw/080d3460.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/LINK_PAIR_2.o"(.text)

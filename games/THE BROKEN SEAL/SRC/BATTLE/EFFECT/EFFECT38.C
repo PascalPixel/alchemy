@@ -10,9 +10,9 @@
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 #include "OBJECT_EFX.H"
+#include "MOTION_OBJECT.H"
 
 void ObjectDispatch_SetSingleChildField26Far(void *, s32);
-extern u8 Data_03001f30[];
 void ObjectDispatch_ApplyValueToKind200Children(s32 battle_value);
 s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 void BattleEffect_SpawnBurstParticleField(void);
@@ -82,16 +82,8 @@ void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 
-struct EffectChild {
-    u8 reserved_00[12];
-    s32 y;
-    u8 reserved_10[0x55 - 0x10];
-    u8 flag;
-    u8 reserved_56[0x6c - 0x56];
-    void (*callback)(void);
-};
 
-void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
+struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
@@ -140,23 +132,18 @@ void ResetSceneTransitionEffect(void)
 
 void BattleFx_RunBurstParticleMainObject(void)
 {
-    u8 *object;
-    u8 *flags;
-    u8 battle_value;
+    struct FieldActor *object;
 
-    object = FIELD_AT_OFFSET(*(void **)((u32)&Data_03001f30), u8 **, 0x14);
-    if (object != 0) {
+    object = gEffectWork->child;
+    if (object != NULL) {
         BattleEffect_SpawnBurstParticleField();
         Object_SetMode(object, 2);
-        object[0x59] = 0;
+        object->collision_flags = 0;
         ObjectDispatch_SetSingleChildField26Far(object, 0);
-        flags = object + 0x23;
-        battle_value = 2;
-        battle_value |= *flags;
-        *flags = battle_value;
-        WaitFrames(0xAU);
-        Audio_PlayCue(0x7E);
-        WaitFrames(0x28U);
+        object->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+        WaitFrames(10);
+        Audio_PlayCue(0x7e);
+        WaitFrames(40);
         BattleFx_PrepareBufferInterpolation();
     }
 }
@@ -173,7 +160,7 @@ void BattleFx_RunBurstParticles(void)
     p = &position;
     entry_count = 4;
     do {
-        void *object;
+        struct FieldActor *object;
         s32 random_value;
 
         p->values[0] = state->x;
@@ -189,7 +176,7 @@ void BattleFx_RunBurstParticles(void)
         );
         if (object != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleObjectScript);
-            *((u8 *)object + 0x55) = 2;
+            object->motion_flags = ACTOR_FALLS;
         }
         WaitFrames((((u32)Random16() * 2) >> 16) + 2);
         entry_count--;
@@ -279,8 +266,8 @@ void BattleEffect_RunTargetedItemBreak(void)
 {
     struct BattleFxScene *scene;
     void *main_object;
-    void *child;
-    void *anchors[2];
+    struct FieldActor *child;
+    struct MotionObject *anchors[2];
     s32 position[3];
     s32 x, y, z;
     s32 index;
@@ -289,7 +276,7 @@ void BattleEffect_RunTargetedItemBreak(void)
     scene = gEffectWork;
     child = scene->child;
     main_object = scene->main_object;
-    if (child == 0)
+    if (child == NULL)
         return;
 
     BattleEffect_InitializeSharedScene();
@@ -308,26 +295,25 @@ void BattleEffect_RunTargetedItemBreak(void)
 
     WaitFrames(15);
     for (index = 0; index < 2; index++) {
-        void *anchor = anchors[index];
-        if (anchor != 0)
-            Motion_SetTargetPositionFromMagnitudeAngle(
-                anchor, 0xe0000, *(u16 *)((u8 *)anchor + 6));
+        struct MotionObject *anchor = anchors[index];
+        if (anchor != NULL)
+            Motion_SetTargetPositionFromMagnitudeAngle(anchor, 0xe0000, anchor->angle);
     }
 
     Object_CommitPosition(anchors[0]);
-    ((struct EffectChild *)child)->callback = ObjectGroup_ApplyRandomChildValues;
+    child->update = (void (*)(union FieldObject *))ObjectGroup_ApplyRandomChildValues;
     Audio_PlayCue(130);
-    ((struct EffectChild *)child)->flag = 4;
+    child->motion_flags = 4;
 
-    start_y = ((struct EffectChild *)child)->y;
-    if (anchors[0] != 0 && anchors[1] != 0 &&
+    start_y = child->y.fixed;
+    if (anchors[0] != NULL && anchors[1] != NULL &&
         start_y <= start_y + 0x200000) {
         do {
-            *(s32 *)((u8 *)anchors[0] + 0xc) += 0x4000;
-            *(s32 *)((u8 *)anchors[1] + 0xc) += 0x4000;
-            ((struct EffectChild *)child)->y += 0x4000;
+            anchors[0]->y += 0x4000;
+            anchors[1]->y += 0x4000;
+            child->y.fixed += 0x4000;
             WaitFrames(1);
-        } while (((struct EffectChild *)child)->y <= start_y + 0x200000);
+        } while (child->y.fixed <= start_y + 0x200000);
     }
 
     UpdateRisingParticleBurst(anchors[0]);

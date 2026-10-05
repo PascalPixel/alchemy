@@ -11,6 +11,7 @@
 #include "SCENE.H"
 #include "SOUND_IDS.H"
 #include "FIXED_MATH.H"
+#include "FIELD_SPRITE.H"
 
 struct ScatterPosition {
     s32 x;
@@ -20,7 +21,7 @@ struct ScatterPosition {
 
 extern struct BattleFxScene *gEffectWork;
 void BattleEffect_InitializeSharedScene(void);
-void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
+struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
@@ -30,17 +31,15 @@ extern const u8 BattleFx_FragmentScript[];
 void Object_Destroy(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 
-/* battle/effects/item_break/spawn_mode_3.c */
-void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
 
 void RunBattleEffect07(void)
 {
     struct BattleFxScene *scene;
     struct MotionObject *obj;
-    void *anchors[2];
+    struct MotionObject *anchors[2];
     struct ScatterPosition position;
-    void **walk;
+    struct MotionObject **walk;
     s32 index;
     s32 magnitude;
 
@@ -60,7 +59,7 @@ void RunBattleEffect07(void)
         obj = *walk++;
         if (obj != 0)
             Motion_SetTargetPositionFromMagnitudeAngle(
-                obj, 0x180000, *(u16 *)((u8 *)obj + 6));
+                obj, 0x180000, obj->angle);
     }
 
     Object_CommitPosition(anchors[0]);
@@ -85,30 +84,32 @@ void RunBattleEffect07(void)
     BattleFx_PrepareBufferInterpolation();
 }
 
-void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle)
+/* Spawns an item-break anchor drawn above the background, grows it to full
+   size while it spins, then turns it to face the given angle. */
+struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle)
 {
-    u8 *obj;
-    s32 v;
+    struct MotionObject *obj;
+    s32 scale;
 
     Audio_PlayCue(SOUND_ITEM_BREAK);
     obj = Object_Spawn(215, x, y, z);
     if (obj != NULL) {
-        *(s32 *)(obj + 0x18) = *(s32 *)(obj + 0x1C) = 0x4000;
-        *(s32 *)(obj + 0x34) = *(s32 *)(obj + 0x30) = 0x30000;
-        *(s8 *)(*(u8 **)(obj + 0x50) + 9) &= ~0xC;
+        obj->scale_x = obj->scale_y = 0x4000;
+        obj->acceleration = obj->speed_limit = 0x30000;
+        ((struct FieldSprite *)obj->records)->priority = 0;
         Object_SetMode(obj, 3);
-        v = *(s32 *)(obj + 0x18);
-        if (v < 0x10000) {
+        scale = obj->scale_x;
+        if (scale < 0x10000) {
             do {
-                v += 0x800;
-                *(s32 *)(obj + 0x1C) = v;
-                *(s32 *)(obj + 0x18) = v;
-                *(u16 *)(obj + 6) += 0x2000;
+                scale += 0x800;
+                obj->scale_y = scale;
+                obj->scale_x = scale;
+                obj->angle += 0x2000;
                 WaitFrames(1);
-                v = *(s32 *)(obj + 0x18);
-            } while (v <= 0xFFFF);
+                scale = obj->scale_x;
+            } while (scale <= 0xffff);
         }
-        *(u16 *)(obj + 6) = (u16)angle;
+        obj->angle = angle;
     }
     return obj;
 }

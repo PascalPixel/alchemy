@@ -217,7 +217,7 @@ void Engine_ObjectCommitPosition();
 /* ImiruMura_SwayHeadings is this overlay's heading table.  Data_02000240 is a resident
  * table; its word at byte offset 500 selects the subject. */
 
-static __inline__ void AdvanceProbe_02001fa4(s32 heading, s32 *probe)
+static __inline__ void ImiruMura_AdvanceProbe(s32 heading, s32 *probe)
 {
     /* FAKEMATCH: a direct call reuses r5 after the shift; this boundary rebuilds sp+8 before completing 0x100000. */
     Vector_AddPolarOffset((s32)0x100000, heading, probe);
@@ -238,13 +238,13 @@ void SceneDialogue_RunActor12Line(void);
 void SceneDialogue_RunActor18Line(void);
 void SceneDialogue_RunActor20BranchScene(void);
 void SceneDialogue_RunActor20FlaggedLine(void);
-void FieldScene_RunScene399_020005dc(void);
+void ImiruMura_TalkAboutLighthouse(void);
 void SceneDialogue_RunActorEightBranchedDialogue(void);
 void FieldScene_RunSingleStep(void);
 void SceneDialogue_ShowLine156E(void);
 void SceneDialogue_ShowLine1573Or155A(void);
-void FieldScene_RunScene399_02000a3c(void);
-void FieldScene_RunScene399_02000abc(void);
+void ImiruMura_OpenInn(void);
+void ImiruMura_OpenSanctum(void);
 void FieldScene_RunPrimaryScriptChoreography(void);
 void SceneActor_UpdateCountdownArcPosition(T_0200154c *o);
 void ActorPresentation_ApplyTableA5ecToActorNine(void);

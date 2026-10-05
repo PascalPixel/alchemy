@@ -467,7 +467,7 @@ continueProbe:
         }
 
 advanceProbe:
-        AdvanceProbe_02001fa4(heading, probe);
+        ImiruMura_AdvanceProbe(heading, probe);
         marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
         if (marker != 255) {
             goto continueProbe;

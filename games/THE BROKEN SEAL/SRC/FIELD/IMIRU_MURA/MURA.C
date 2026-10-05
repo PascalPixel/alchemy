@@ -327,7 +327,7 @@ void SceneDialogue_RunActor20FlaggedLine(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene399_020005dc(void)
+void ImiruMura_TalkAboutLighthouse(void)
 {
     u32 i;
     s32 record;
@@ -530,7 +530,7 @@ void ImiruMura_RunItemShop(void)
     }
 }
 
-void FieldScene_RunScene399_02000a3c(void)
+void ImiruMura_OpenInn(void)
 {
     struct FieldActor *leader;
 
@@ -552,7 +552,7 @@ void FieldScene_RunScene399_02000a3c(void)
     }
 }
 
-void FieldScene_RunScene399_02000abc(void)
+void ImiruMura_OpenSanctum(void)
 {
     struct FieldActor *leader;
 

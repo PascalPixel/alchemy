@@ -63,7 +63,6 @@ extern const struct ScenePlacement gTakaraAshibaPlacements2[];
 extern const struct ScenePlacement gTakaraAshibaPlacements3[];
 extern const struct ScenePlacement gTakaraAshibaPlacementsOther[];
 
-extern s16 Data_02000240[];
 
 extern const struct SceneEvent gTakaraAshibaEvents1[];
 extern const struct SceneEvent gTakaraAshibaEvents2[];
@@ -80,6 +79,7 @@ void TakaraAshiba_OpenPassage(s32);
 extern s32 TakaraAshiba_SlotColumns[];
 extern u8 TakaraAshiba_SceneTable[];
 extern const s32 TakaraAshiba_ActorFifteenMotionScript[];
+/* Where actor 15 walks from each of the triggers 30 on: x, then z. */
 extern const s32 TakaraAshiba_ActorFifteenWalkTargets[];
 
 void Battle_Reset();
@@ -306,15 +306,10 @@ void FieldScene_RunScene3b4_02000b68(void)
             Engine_EventWait(30);
             Actor_SetPosition(15, 0x3780000, 0x2980000);
             rec7 = Object_GetById(15);
-            {
-                s32 target = *(s32 *)((u8 *)rec7 + 80);
-                s32 shown = 0xf800;
-
-                *(u16 *)(target + 30) = shown;
-            }
+            rec7->sprite->rotation = 0xf800;
             rec7->facing = 0;
             ObjectDispatch_ApplyValueToChildren(rec7, 0);
-            Engine_ObjectSetScript(rec7, (s32)TakaraAshiba_ActorFifteenMotionScript);
+            Engine_ObjectSetScript(rec7, TakaraAshiba_ActorFifteenMotionScript);
             Engine_EventEnd();
         }
     }
@@ -328,7 +323,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
         GameFlag_Set(0x9ca);
         Engine_EventBegin();
         record = Object_GetById(15);
-        *(u16 *)(*(s32 *)((u8 *)record + 80) + 30) = 0;
+        record->sprite->rotation = 0;
         ObjectDispatch_ApplyValueToChildren(record, 16);
         Audio_PlayCue(152);
         record = Object_GetById(15);
@@ -359,7 +354,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
         Actor_FaceDirection(15, 0xc000, 20);
         Actor_SetAttachedEffect(15, 0x100);
         record = Object_GetById(15);
-        *(s32 *)((u8 *)record + 108) = (s32)SceneActor_FaceTowardActorZero;
+        record->update = (void (*)(union FieldObject *))SceneActor_FaceTowardActorZero;
         Engine_EventEnd();
     }
 }
@@ -375,7 +370,7 @@ void FieldScene_CopyActorPosition(void)
 
     work = gEventWork;
     if (Engine_GameFlagIsSet(0x9ca) != 0) {
-        if (Data_02000240[293] != 15) {
+        if (gGameState.paused_object != 15) {
             idx = work->touched_trigger;
             dst = Object_GetById(15);
             src = Object_GetById(0);
@@ -528,8 +523,6 @@ void FieldScene_RunIndexedStep1(void)
 
 void SceneState_ResetCounter412OnHeading4000B(void)
 {
-    extern u8 *Data_03001ebc;
-
     struct FieldActor *slot;
     s16 *cnt;
     s32 reset;
@@ -537,7 +530,7 @@ void SceneState_ResetCounter412OnHeading4000B(void)
     SceneState_SetSelectorFlagWhenFacingC000(2);
     slot = Object_GetById(0);
     if (slot->facing == 0x4000) {
-        cnt = (s16 *)(Data_03001ebc + 412);
+        cnt = &gEventWork->blocked_steps;
         if (*cnt > 12) {
             Engine_LeaderCheckAhead();
             reset = 0;
@@ -548,8 +541,6 @@ void SceneState_ResetCounter412OnHeading4000B(void)
 
 void SceneState_ResetCounter412OnHeading4000(void)
 {
-    extern u8 *Data_03001ebc;
-
     struct FieldActor *p;
     s16 *cnt;
     s32 zero;
@@ -557,7 +548,7 @@ void SceneState_ResetCounter412OnHeading4000(void)
     SceneState_SetSelectorFlagWhenFacingC000(3);
     p = Object_GetById(0);
     if (p->facing == 0x4000) {
-        cnt = (s16 *)(Data_03001ebc + 412);
+        cnt = &gEventWork->blocked_steps;
         if (*cnt > 12) {
             Engine_LeaderCheckAhead();
             zero = 0;
@@ -632,18 +623,18 @@ void FieldScene_RunStep12ValueEeb(void)
     Engine_GameFlagSet(0xEEB);
 }
 
-/* Once the leader stands in cells x 21-23, z 10-11 while not cloaked (and the
- * game-state halfword at +0x24a is not 8), sets flag 0x220 and raises
- * trigger 91; flag 0x220 keeps it from firing again. */
+/* Once the leader stands in cells x 21-23, z 10-11 while not cloaked and
+ * actor 8 is not halted, sets flag 0x220 and raises trigger 91; flag 0x220
+ * keeps it from firing again. */
 void TakaraAshiba_RaiseTriggerOnStand(void)
 {
-    struct FieldActor *leader = (s32)Object_GetById(0);
+    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
     s32 x = leader->x.fixed / 0x100000;
     s32 z = leader->z.fixed / 0x100000;
     struct EventWork *event = gEventWork;
 
     if (!Value1(Engine_GameFlagIsSet, 0x220) && gGameState.cloaked == 0
-        && *(s16 *)((u8 *)&gGameState + 0x24a) != 8
+        && gGameState.paused_object != 8
         && (u32)(x - 21) <= 2 && z >= 10 && z <= 11) {
         Engine_GameFlagSet(0x220);
         event->raised_trigger = 91;
@@ -691,17 +682,16 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 void SceneState_TriggerColumnTen(void)
 {
-    extern u8 *Data_03001ebc;
-    s32 *pos = Object_GetById(0);
-    s32 x = pos[2] / 0x100000;
-    s32 z = pos[4] / 0x100000;
-    u8 *work = Data_03001ebc;
+    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+    s32 x = leader->x.fixed / 0x100000;
+    s32 z = leader->z.fixed / 0x100000;
+    struct EventWork *work = gEventWork;
 
     if (Value1(Engine_TestTriggerFlag, 0x220) == 0 &&
-        Data_02000240[0x24c / 2] == 0 && Data_02000240[0x24a / 2] != 9 &&
+        gGameState.cloaked == 0 && gGameState.paused_object != 9 &&
         x == 10 && (u32)(z - 16) <= 2) {
         Call1(Engine_SetTriggerFlag, 0x220);
-        SceneState_StoreStep((s16 *)(work + 386), 92);
+        SceneState_StoreStep(&work->raised_trigger, 92);
     }
 }
 
@@ -737,12 +727,12 @@ void FieldScene_RunScene3b4SequenceA(void)
 void SceneActor_TrackOriginColumnForSlot(s32 no)
 {
 
-    s32 *pos = Object_GetById(0);
-    s32 col = pos[2] / 0x100000;   /* +8  */
-    s32 row = pos[4] / 0x100000;      /* +16 */
+    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+    s32 col = leader->x.fixed / 0x100000;
+    s32 row = leader->z.fixed / 0x100000;
     s32 slot = no + 10;
 
-    if (Data_02000240[293] == slot) return;
+    if (gGameState.paused_object == slot) return;
     if (col == TakaraAshiba_SlotColumns[no]) return;
 
     Engine_ActorSetSpeed(slot, 0x48000, 0x24000);
@@ -774,12 +764,9 @@ void FieldScene_RunLateIndexedStep2(void)
 
 void FieldScene_RunPrimarySequence(void)
 {
-    u32 i;
     struct FieldActor *record;
-    s32 base3_2000240;
 
-    base3_2000240 = (s32)Data_02000240;
-    if (*(s16 *)((base3_2000240 + 0x24a)) != 10) {
+    if (gGameState.paused_object != 10) {
         Engine_EventBegin();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
@@ -811,11 +798,9 @@ void FieldScene_RunPrimarySequence(void)
 void TakaraAshiba_RunActorElevenFollowScene(void)
 {
     struct FieldActor *record;
-    s32 base3_2000240;
     s32 v3;
 
-    base3_2000240 = (s32)((u8 *)Data_02000240);
-    if (*(s16 *)((base3_2000240 + 0x24a)) != 11) {
+    if (gGameState.paused_object != 11) {
         Battle_Reset();
         Call3(ObjectMotion_SetSpeedParameters, 0, 0x1b333, 0xd999);
         ObjectMotion_SetSpeedParameters(11, 0x1b333, 0xd999);
@@ -850,29 +835,18 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
     }
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
 void SceneState_TriggerColumnNineteen(void)
 {
-    extern u8 *Data_03001ebc;
-    s32 *pos = Object_GetById(0);
-    s32 x = pos[2] / 0x100000;
-    s32 z = pos[4] / 0x100000;
-    u8 *work = Data_03001ebc;
-    s16 *state = Data_02000240;
+    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+    s32 x = leader->x.fixed / 0x100000;
+    s32 z = leader->z.fixed / 0x100000;
+    struct EventWork *work = gEventWork;
+    struct GameState *state = &gGameState;
 
-    if (state[0x24a / 2] != 12 && Value1(Engine_TestTriggerFlag, 0x220) == 0 &&
-        state[0x24c / 2] == 0 && x == 19 && (u32)(z - 15) <= 1) {
+    if (state->paused_object != 12 && Value1(Engine_TestTriggerFlag, 0x220) == 0 &&
+        state->cloaked == 0 && x == 19 && (u32)(z - 15) <= 1) {
         Call1(Engine_SetTriggerFlag, 0x220);
-        SceneState_StoreStep((s16 *)(work + 386), 96);
+        SceneState_StoreStep(&work->raised_trigger, 96);
     }
 }
 
@@ -942,8 +916,8 @@ void SceneEffect_SetBlendAlpha0607(void)
  */
 void FieldScene_DispatchBySlotZeroFacing(void)
 {
-    s32 *slot = Object_GetById(0);
-    u16 facing = *(u16 *)((u8 *)slot + 6);
+    struct FieldActor *slot = Object_GetById(ACTOR_PARTY_LEADER);
+    u16 facing = slot->facing;
 
     if (facing == 0xc000) {
         if (Engine_GameFlagIsSet(0x206) != 0) {
@@ -960,7 +934,7 @@ void FieldScene_DispatchBySlotZeroFacing(void)
         Engine_GameFlagSet(0x207);
         Engine_LeaderCheckAhead();
     } else if (facing == 0x8000) {
-        if (slot[3] == 0) {          /* +12 */
+        if (slot->y.fixed == 0) {
             SceneActor_BranchOnSlotZeroAtTile38();
         } else {
             Engine_LeaderCheckAhead();
@@ -979,7 +953,7 @@ void SceneActor_MarkSlot13AndSetFlag200(void)
 
     Engine_MapCopyCellAttributes(40, 54, 1, 1, fifth, sixth);
     if (slot != 0) {
-        u8 *other = (u8 *)Object_GetById(13) + 85;
+        u8 *other = &Object_GetById(13)->motion_flags;
         u8 *flags = &slot->priority_flags;
 
         *other = 0;
@@ -1023,33 +997,27 @@ void SceneState_ApplyFourRectsAndSetActor8Byte85(void)
 void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
 {
     s32 extent = 42;
-    u8 *entry;
 
     Engine_MapCopyCellAttributes(58, 41, 1, 1, extent, extent);
-    entry = (u8 *)Object_GetById(8) + 35;
-    *entry = 2;
+    Object_GetById(8)->priority_flags = 2;
 }
 
 void SceneState_ApplyRectAndSetActor8Byte35(void)
 {
     s32 w = 41;
     s32 h = 42;
-    u8 *p;
 
     Engine_MapCopyCellAttributes(44, 42, 1, 1, w, h);
-    p = (u8 *)Object_GetById(8) + 35;
-    *p = 2;
+    Object_GetById(8)->priority_flags = 2;
 }
 
 void SceneState_ApplyRectAndSetSlotEightByte35(void)
 {
     s32 width = 40;
     s32 height = 42;
-    u8 *entry;
 
     Engine_MapCopyCellAttributes(39, 42, 1, 1, width, height);
-    entry = (u8 *)Object_GetById(8) + 35;
-    *entry = 2;
+    Object_GetById(8)->priority_flags = 2;
 }
 
 /* Acts on the map column actor 8 stands in: marks it when it rests on the
@@ -1178,22 +1146,18 @@ void SceneState_ApplyRectAndClearSlotTenByte85(void)
 {
     s32 width = 38;
     s32 height = 55;
-    u8 *entry;
 
     Engine_MapCopyCellAttributes(40, 54, 1, 1, width, height);
-    entry = (u8 *)Object_GetById(10) + 85;
-    *entry = 0;
+    Object_GetById(10)->motion_flags = 0;
 }
 
 void SceneState_ApplyRectAndClearActor10Byte85(void)
 {
     s32 w = 42;
     s32 h = 55;
-    u8 *p;
 
     Engine_MapCopyCellAttributes(40, 54, 1, 1, w, h);
-    p = (u8 *)Object_GetById(10) + 85;
-    *p = 0;
+    Object_GetById(10)->motion_flags = 0;
 }
 
 /* Tracks block 10: once it has sunk to cell height 2 or below, applies its
@@ -1201,7 +1165,7 @@ void SceneState_ApplyRectAndClearActor10Byte85(void)
  * 42 and 38, and anywhere else the two rectangles at row 56. */
 void TakaraAshiba_UpdateBlockRects(void)
 {
-    struct FieldActor *block = (s32)Object_GetById(10);
+    struct FieldActor *block = Object_GetById(10);
     s32 y = block->y.fixed / 0x100000;
     s32 x = block->x.fixed / 0x100000;
     s32 z = block->z.fixed / 0x100000;

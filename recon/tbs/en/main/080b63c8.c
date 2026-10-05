@@ -2,6 +2,15 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
+ * 2026-10-05 sun w5 finisher 1 (alchemy diff 80, was 86): item 3's copy
+ *    registers follow from the variables' other lives. src now holds the
+ *    12-byte block allocated at the top and dst the leader-byte pointer at
+ *    the defeat line (only one of the two swaps scores 250-264); the copy
+ *    then has src in r1 and dst in r2 as listed. Left of item 3: sched2
+ *    issues the src pool load before the dst load (ldr r2, [r3]); at that
+ *    cycle the dst load is class 1 (data dependent on the address load) and
+ *    the src load class 3 with the same priority. Moving the dst or src
+ *    assignment above the field_50 store scores 264. Items 1 and 2 remain.
  * 2026-10-04 sun w3 finisher 6 (alchemy diff 86 for this body): the
  *    listing stores timer field_18 before field_1c and then DISPCNT, but
  *    that order here scores 111 (one fewer timer reload, allocation moves).
@@ -228,8 +237,8 @@ s32 Battle_RunEncounter(s32 arg)
     Dma3Fill(fill, work, 0x82c);
     work->field_54 = -1;
     work->field_00 = arg;
-    dst = (u8 *)Runtime_AllocateBlock(37, 12);
-    Dma3Fill(fill, dst, 12);
+    src = (u8 *)Runtime_AllocateBlock(37, 12);
+    Dma3Fill(fill, src, 12);
     work->field_648 = (u16)Event_GetSpecialValueFar();
     Runtime_AllocateBlock(4, 0xe00);
     Runtime_AllocateBlock(3, 0x600);
@@ -438,8 +447,8 @@ party_lost:
     AudioCommand_PlayFar(59);
     UiWork_ClearValueNameTablesFar();
     off = 504;
-    src = gCell + off;
-    UiWork_PushValueSlotFar(*src, 1);
+    dst = gCell + off;
+    UiWork_PushValueSlotFar(*dst, 1);
     if (BattleParty_PrepareActiveOwners(0) == 1)
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgGoesDownInDefeat);
     else

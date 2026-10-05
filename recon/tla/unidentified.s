@@ -51,8 +51,8 @@ Flash_ChipAtmelLayout:
 	.section .unidentified.08017fbc,"a"
 	.incbin "baserom.gba", 0x00017fbc, 0x00008044
 	.section .unidentified.080203a8,"a"
-	.global Data_080203a8
-Data_080203a8:
+	.global ResourceSlot_ConversionTables
+ResourceSlot_ConversionTables:
 	.incbin "baserom.gba", 0x000203a8, 0x00000500
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
@@ -64,8 +64,8 @@ Data_080209a8:
 	.global Data_0802e89c
 Data_0802e89c:
 	.incbin "baserom.gba", 0x0002e89c, 0x00000080
-	.global Data_0802e91c
-Data_0802e91c:
+	.global ResourceSlot_NumberTable
+ResourceSlot_NumberTable:
 	.incbin "baserom.gba", 0x0002e91c, 0x000001a8
 	.global Data_0802eac4
 Data_0802eac4:

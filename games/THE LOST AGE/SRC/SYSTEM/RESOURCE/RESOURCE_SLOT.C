@@ -1,21 +1,23 @@
-/* ☀️'s ResourceSlot_Load over ⚓️'s object-system heap slot: 4 differ, the metadata copy to r10 and the first number load swap. */
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"
 #include "RAM_BUFFER.H"
 
+enum { RESOURCE_SLOT_COUNT = 8 };
+
+/* Which resource holds each animation number, ended by number 0. */
 struct ResourceSlotNumber {
     u16 resource;
     s16 number;
 };
 
-enum { RESOURCE_SLOT_COUNT = 8 };
+extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
+extern u8 ResourceSlot_ConversionTables[][256];
 
-extern struct ResourceSlotNumber Data_0802e91c[];
-extern u8 Data_080203a8[][256];
-#define ResourceSlot_NumberTable Data_0802e91c
-#define ResourceSlot_ConversionTables Data_080203a8
+/* ☀️'s: loads animation number into the slot's buffer, relocating its
+   offset table and converting its text with one of five tables; returns
+   the frame's area. */
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
     struct AnimationMetadata *metadata;
@@ -78,4 +80,19 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
         }
     }
     return metadata->width * metadata->height;
+}
+
+/* The buffer of the loaded resource slot tagged key, or 0. */
+s32 Animation_LookupValueByKey(s32 key)
+{
+    struct ObjectSystemWork *work = Ram_HeapSlots->object_system;
+    u32 no;
+    struct ResourceSlot *p;
+
+    no = 0;
+    for (p = work->slots; no < RESOURCE_SLOT_COUNT; no++, p++) {
+        if (p->tag == key)
+            return (s32)p->buffer;
+    }
+    return 0;
 }

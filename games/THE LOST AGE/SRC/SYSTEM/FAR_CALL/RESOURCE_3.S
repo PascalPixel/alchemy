@@ -16,7 +16,7 @@ Func_080202b0:
 	.global ResourceSlot_LoadFar
 	.thumb_func
 ResourceSlot_LoadFar:
-	overlay_veneer Func_080227e0
+	overlay_veneer ResourceSlot_Load
 	.global Func_080202c0
 	.thumb_func
 Func_080202c0:

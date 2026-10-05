@@ -514,6 +514,8 @@ Flash_ChipAtmelLayout:
 	.section .rom.00017fe8, "ax"
 	.incbin "baserom.gba", 0x00017fe8, 0x00008018
 	.section .rom.00020010, "ax"
+	.global Render_ApplyProjectedPlacementFar
+Render_ApplyProjectedPlacementFar:
 	.incbin "baserom.gba", 0x00020010, 0x00000020
 	.global Animation_ApplyChildArgumentFar
 	.type Animation_ApplyChildArgumentFar, %function
@@ -599,6 +601,8 @@ Animation_SetDisplayFlagFar:
 	.section .rom.00020308, "ax"
 	.incbin "baserom.gba", 0x00020308, 0x00000030
 	.section .rom.000203a8, "ax"
+	.global ResourceSlot_ConversionTables
+ResourceSlot_ConversionTables:
 	.incbin "baserom.gba", 0x000203a8, 0x00000500
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
@@ -638,12 +642,6 @@ Func_080227a0:
 	.thumb_func
 Animation_ApplyChildValuesToRecord:
 	.incbin "baserom.gba", 0x000227b0, 0x00000030
-	.section .rom.000227e0, "ax"
-	.global Func_080227e0
-	.type Func_080227e0, %function
-	.thumb_func
-Func_080227e0:
-	.incbin "baserom.gba", 0x000227e0, 0x000000dc
 	.section .rom.000228e0, "ax"
 	.global InitializeAnimationObjects
 	.type InitializeAnimationObjects, %function
@@ -1040,7 +1038,10 @@ Func_0802dcd8:
 	.type Func_0802a650, %function
 	.thumb_func
 Func_0802a650:
-	.incbin "baserom.gba", 0x0002de8c, 0x00000cc0
+	.incbin "baserom.gba", 0x0002de8c, 0x00000a90
+	.global ResourceSlot_NumberTable
+ResourceSlot_NumberTable:
+	.incbin "baserom.gba", 0x0002e91c, 0x00000230
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
 	.incbin "baserom.gba", 0x0002eb4c, 0x000000fc
@@ -3738,12 +3739,7 @@ Func_080eb2d0:
 	.thumb_func
 Func_080eb960:
 	.incbin "baserom.gba", 0x000f8960, 0x000002d0
-	.section .rom.000f8c94, "ax"
-	.global BattleFx_DrawScaledObject
-	.type BattleFx_DrawScaledObject, %function
-	.thumb_func
-BattleFx_DrawScaledObject:
-	.incbin "baserom.gba", 0x000f8c94, 0x00000090
+	.section .rom.000f8d24, "ax"
 	.global EffectSlot_UpdateMotion
 	.type EffectSlot_UpdateMotion, %function
 	.thumb_func

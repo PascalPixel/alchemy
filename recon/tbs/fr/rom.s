@@ -893,12 +893,6 @@ Inn_PriceMultipliers:
 	.thumb_func
 DebugBattle_ViewMessages:
 	.incbin "baserom.gba", 0x000b9534, 0x000001ac
-	.section .rom.000ba3e0, "ax"
-	.global Battle_RunEncounter
-	.type Battle_RunEncounter, %function
-	.thumb_func
-Battle_RunEncounter:
-	.incbin "baserom.gba", 0x000ba3e0, 0x00000698
 	.section .rom.000bcc34, "ax"
 	.global BattlePres_RunUnitAction
 	.type BattlePres_RunUnitAction, %function

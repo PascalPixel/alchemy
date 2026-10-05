@@ -9407,7 +9407,7 @@ msgctxt "message"
 msgid "02349"
 msgstr "{argument_actor_name:1} schiva il colpo!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02350"
 msgstr "Sconfitta squadra di {argument_actor_name:1}!"
 
@@ -9431,7 +9431,7 @@ msgctxt "MsgItemGained"
 msgid "02355"
 msgstr "Hai ottenuto: {argument_item_name:1}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02356"
 msgstr "{argument_actor_name:1} è KO..."
 
@@ -12687,11 +12687,11 @@ msgctxt "message"
 msgid "03169"
 msgstr "Ora ti dimostro la{line_break}potenza del mio attacco,{line_break}{actor_name:1}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03170"
 msgstr "Visto? Appena mi hai{line_break}scatenato, ho attaccato{line_break}con questo colpo possente!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Dopo essere stati scatenati,{line_break}saremo in standby e potrai{line_break}usarci per l'evocazione.{end_now}"
 

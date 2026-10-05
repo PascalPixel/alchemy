@@ -138,7 +138,7 @@ extern s32 FuneHeya_TurnSteps[];
 void FuneHeya_TurnActorToOpenSide(s32 a0);
 
 s32 StagedActor_CountdownUntilPositionUnset(u8 *object);
-void StagedActor_AdvanceCounter98(u8 *object);
+void FuneHeya_AdvanceWalkerAfterRise(u8 *object);
 
 struct Walker {
     u8 unknown_00[0x4c];
@@ -209,7 +209,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
     case 6:
     case 8:
     case 11:
-        StagedActor_AdvanceCounter98((u8 *)obj);
+        FuneHeya_AdvanceWalkerAfterRise((u8 *)obj);
         break;
     case 12:
         walker->step = 0;
@@ -257,7 +257,7 @@ s32 StagedActor_SetReadyState(struct FieldActor *work)
  * Overlay resource_3b1. Picks the scene data table for the current scene
  * index, with two arms further narrowed by story flags.
  */
-s32 SceneData_SelectTableByWord224(void)
+s32 FuneHeya_SelectEntrances(void)
 {
     if (gGameState.scene == (s32)&SceneId_FuneHeya) {
         return (s32)FuneHeya_SceneTable02;
@@ -270,7 +270,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-s32 SceneData_GetTableEB94(void)
+s32 FuneHeya_GetExits(void)
 {
     return (s32)&FuneHeya_SceneTable03;
 }

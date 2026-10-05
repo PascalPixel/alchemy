@@ -139,7 +139,7 @@ void FieldScene_RunBracketedSceneWithFlag282(void)
 {
     Engine_EventBegin();
     FieldScene_RestageParty();
-    FieldScene_RunScene3c9_02004b28();
+    VinasuChojo_TryToPreventFall();
     /* The flag id is built as 141 << 1 rather than folded. */
     Engine_GameFlagSet(141 << 1);
 
@@ -749,7 +749,7 @@ void FieldScene_RestageParty(void)
     Engine_TaskWait(60);
 }
 
-void FieldScene_RunScene3c9_02004b28(void)
+void VinasuChojo_TryToPreventFall(void)
 {
     u32 i;
     s32 record;

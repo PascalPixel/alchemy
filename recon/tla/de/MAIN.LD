@@ -907,7 +907,7 @@
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/TABLE_RUN_IF_ACTIVE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e11fc)
     "*/recon/tla/de/rom.o"(.rom.000e1330)
-    "*/recon/tla/de/rom.o"(.rom.000e1384)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ATTACH_WORK_TARGET_TO_OBJECT.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e13ec)
     "*/recon/tla/de/rom.o"(.rom.000e140c)
     "*/recon/tla/de/rom.o"(.rom.000e150c)

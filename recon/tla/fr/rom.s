@@ -3253,12 +3253,6 @@ Func_080d41fc:
 	.thumb_func
 Func_080d4330:
 	.incbin "baserom.gba", 0x000d9324, 0x00000054
-	.section .rom.000d9378, "ax"
-	.global Object_AttachWorkTargetToObject
-	.type Object_AttachWorkTargetToObject, %function
-	.thumb_func
-Object_AttachWorkTargetToObject:
-	.incbin "baserom.gba", 0x000d9378, 0x00000068
 	.section .rom.000d93e0, "ax"
 	.global Func_080d43ec
 	.type Func_080d43ec, %function

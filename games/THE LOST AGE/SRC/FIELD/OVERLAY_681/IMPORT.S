@@ -113,7 +113,7 @@ Func_02004dbc:
 	.global Func_02004dc4
 	.thumb_func
 Func_02004dc4:
-	overlay_veneer Func_08020120
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Func_02004dcc
 	.thumb_func
 Func_02004dcc:

@@ -1290,7 +1290,7 @@
         "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/TABLE_RUN_IF_ACTIVE.o"(.text)
         "*/recon/tla/raw/080d41fc.o"(.text)
         "*/recon/tla/raw/080d4330.o"(.text)
-        "*/recon/tla/raw/080d4384.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ATTACH_WORK_TARGET_TO_OBJECT.o"(.text)
         "*/recon/tla/raw/080d43ec.o"(.text)
         "*/recon/tla/raw/080d440c.o"(.text)
         "*/recon/tla/raw/080d450c.o"(.text)

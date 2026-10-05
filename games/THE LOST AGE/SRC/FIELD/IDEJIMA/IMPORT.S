@@ -45,7 +45,7 @@ Engine_ObjectCreate:
 	.global Func_02003180
 	.thumb_func
 Func_02003180:
-	overlay_veneer Func_08020120
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Engine_MapCopyCellsTo
 	.thumb_func
 Engine_MapCopyCellsTo:

@@ -856,6 +856,8 @@
     "*/recon/tla/es/rom.o"(.rom.000dd1da)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/TABLE_RUN_IF_ACTIVE.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000dd1f0)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/ATTACH_WORK_TARGET_TO_OBJECT.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.000dd3e0)
     "*/recon/tla/es/rom.o"(.rom.000dd698)
     "*/recon/tla/es/rom.o"(.rom.000dd708)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COPY_LINKED_OBJECT_POSITION.o"(.text)

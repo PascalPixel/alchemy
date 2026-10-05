@@ -5,9 +5,9 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_08020120
+	.global Map_ApplyWorkOriginAndSpanFar
 	.thumb_func
-Func_08020120:
+Map_ApplyWorkOriginAndSpanFar:
 	overlay_veneer Func_0802aa74
 	.global Func_08020128
 	.thumb_func

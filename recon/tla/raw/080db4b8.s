@@ -36,12 +36,12 @@ BattleFx_Run:
 .L_080db4f6:
 	cmp r2, #5
 	bne .L_080db500
-	bl Func_080dede8
+	bl RunBattleEffect05
 	b .L_080db668
 .L_080db500:
 	cmp r2, #14
 	bne .L_080db50a
-	bl Func_080dfd00
+	bl RunBattleEffect14
 	b .L_080db668
 .L_080db50a:
 	cmp r2, #6

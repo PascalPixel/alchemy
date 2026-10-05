@@ -566,18 +566,6 @@ Func_080237e8:
 	.thumb_func
 Func_0802254c:
 	.incbin "baserom.gba", 0x00022010, 0x00000790
-	.section .rom.000227a0, "ax"
-	.global Func_080227a0
-	.type Func_080227a0, %function
-	.thumb_func
-Func_080227a0:
-	.incbin "baserom.gba", 0x000227a0, 0x00000010
-	.section .rom.000227b0, "ax"
-	.global Animation_ApplyChildValuesToRecord
-	.type Animation_ApplyChildValuesToRecord, %function
-	.thumb_func
-Animation_ApplyChildValuesToRecord:
-	.incbin "baserom.gba", 0x000227b0, 0x00000030
 	.section .rom.000228e0, "ax"
 	.global InitializeAnimationObjects
 	.type InitializeAnimationObjects, %function
@@ -3570,25 +3558,25 @@ Func_080d3070:
 	.incbin "baserom.gba", 0x000dc064, 0x0000008c
 	.section .rom.000dc10a, "ax"
 	.incbin "baserom.gba", 0x000dc10a, 0x00000002
-	.global Func_080d3118
-	.type Func_080d3118, %function
+	.global ObjectMotion_SetHorizontalPositionWithTerrain
+	.type ObjectMotion_SetHorizontalPositionWithTerrain, %function
 	.thumb_func
-Func_080d3118:
+ObjectMotion_SetHorizontalPositionWithTerrain:
 	.incbin "baserom.gba", 0x000dc10c, 0x0000004c
-	.global Func_080d3164
-	.type Func_080d3164, %function
+	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
+	.type ObjectMotion_SetHorizontalPositionAndAngleWithTerrain, %function
 	.thumb_func
-Func_080d3164:
+ObjectMotion_SetHorizontalPositionAndAngleWithTerrain:
 	.incbin "baserom.gba", 0x000dc158, 0x0000005c
-	.global Func_080d31c0
-	.type Func_080d31c0, %function
+	.global ObjectMotion_SetPositionWithTerrain
+	.type ObjectMotion_SetPositionWithTerrain, %function
 	.thumb_func
-Func_080d31c0:
+ObjectMotion_SetPositionWithTerrain:
 	.incbin "baserom.gba", 0x000dc1b4, 0x00000054
-	.global Func_080d3214
-	.type Func_080d3214, %function
+	.global ObjectMotion_MoveToObject
+	.type ObjectMotion_MoveToObject, %function
 	.thumb_func
-Func_080d3214:
+ObjectMotion_MoveToObject:
 	.incbin "baserom.gba", 0x000dc208, 0x0000002c
 	.section .rom.000dc25c, "ax"
 	.global ObjectMotion_WaitForAnimationChange
@@ -4183,14 +4171,18 @@ BattleFx_RunOrbitingParticles:
 	.thumb_func
 Func_080cd91c:
 	.incbin "baserom.gba", 0x000e7cac, 0x000000cc
-	.section .rom.000e7dd4, "ax"
-	.incbin "baserom.gba", 0x000e7dd4, 0x00000ac8
+	.section .rom.000e7ddc, "ax"
+	.global RunBattleEffect05
+RunBattleEffect05:
+	.incbin "baserom.gba", 0x000e7ddc, 0x00000ac0
 	.section .rom.000e88d2, "ax"
 	.incbin "baserom.gba", 0x000e88d2, 0x000001d6
 	.section .rom.000e8afe, "ax"
 	.incbin "baserom.gba", 0x000e8afe, 0x000001ca
-	.section .rom.000e8cec, "ax"
-	.incbin "baserom.gba", 0x000e8cec, 0x00000304
+	.section .rom.000e8cf4, "ax"
+	.global RunBattleEffect14
+RunBattleEffect14:
+	.incbin "baserom.gba", 0x000e8cf4, 0x000002fc
 	.section .rom.000e9014, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000e9014, 0x000002cc
@@ -4804,7 +4796,7 @@ ColorBuffer_Scale:
 	.type DebugParty_LoadPreset, %function
 	.thumb_func
 DebugParty_LoadPreset:
-	.incbin "baserom.gba", 0x00118738, 0x00000638
+	.incbin "baserom.gba", 0x00118738, 0x000005f4
 	.section .rom.00118e64, "ax"
 	.incbin "baserom.gba", 0x00118e64, 0x00000108
 	.section .rom.00118f6c, "ax"

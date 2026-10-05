@@ -145,7 +145,7 @@ Func_080d1f20:
 .L_080d203c:
 	adds r0, #8
 	movs r1, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #24
 	bl BattleFx_StartBufferInterpolation
 	ldrh r3, [r5]

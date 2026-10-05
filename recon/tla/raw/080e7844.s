@@ -841,7 +841,7 @@ Func_080e7844:
 	lsls r0, r0, #7
 	adds r0, #255
 	movs r1, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #100
 	bl BattleFx_StartBufferInterpolation
 .L_080e7ed6:
@@ -899,7 +899,7 @@ Func_080e7844:
 	movs r1, #0
 	ldr r0, [sp, #24]
 	movs r2, #0
-	bl Func_080d3118
+	bl ObjectMotion_SetHorizontalPositionWithTerrain
 .L_080e7f46:
 	ldr r3, [sp, #20]
 	cmp r3, #0

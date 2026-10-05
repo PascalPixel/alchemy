@@ -38,7 +38,7 @@ DisplayTransition_Finish:
 	movs r0, #128
 	lsls r0, r0, #8
 	movs r1, #0
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	mov r0, r10
 	bl BattleFx_StartBufferInterpolation
 	b .L_080d0718

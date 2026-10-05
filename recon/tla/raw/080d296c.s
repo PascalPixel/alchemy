@@ -51,7 +51,7 @@ Func_080d296c:
 	movs r2, #0
 	adds r0, r6, #0
 	movs r1, #0
-	bl Func_080d3118
+	bl ObjectMotion_SetHorizontalPositionWithTerrain
 	adds r0, r5, #0
 	movs r1, #3
 	bl Func_080cf424

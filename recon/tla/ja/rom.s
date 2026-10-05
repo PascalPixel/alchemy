@@ -497,18 +497,6 @@ Func_08022318:
 	.thumb_func
 Func_0802254c:
 	.incbin "baserom.gba", 0x0002254c, 0x00000254
-	.section .rom.000227a0, "ax"
-	.global Func_080227a0
-	.type Func_080227a0, %function
-	.thumb_func
-Func_080227a0:
-	.incbin "baserom.gba", 0x000227a0, 0x00000010
-	.section .rom.000227b0, "ax"
-	.global Animation_ApplyChildValuesToRecord
-	.type Animation_ApplyChildValuesToRecord, %function
-	.thumb_func
-Animation_ApplyChildValuesToRecord:
-	.incbin "baserom.gba", 0x000227b0, 0x00000030
 	.section .rom.000228e0, "ax"
 	.global InitializeAnimationObjects
 	.type InitializeAnimationObjects, %function
@@ -3236,38 +3224,18 @@ DisplayTransition_UpdateFrame:
 DisplayTransition_FillTilemapAndSolidTile:
 	.incbin "baserom.gba", 0x000d0b5c, 0x00000070
 	.section .rom.000d0c80, "ax"
-	.incbin "baserom.gba", 0x000d0c80, 0x000009e4
-	.section .rom.000d1664, "ax"
-	.global Func_080d1684
-	.type Func_080d1684, %function
+	.global BattlePalette_UpdateBlend
+	.type BattlePalette_UpdateBlend, %function
 	.thumb_func
-Func_080d1684:
-	.incbin "baserom.gba", 0x000d1664, 0x00000074
-	.section .rom.000d16d8, "ax"
-	.global Func_080d16f8
-	.type Func_080d16f8, %function
+BattlePalette_UpdateBlend:
+	.incbin "baserom.gba", 0x000d0c80, 0x0000017c
+	.global BattleFx_BuildBuffer
+	.type BattleFx_BuildBuffer, %function
 	.thumb_func
-Func_080d16f8:
-	.incbin "baserom.gba", 0x000d16d8, 0x00000014
-	.section .rom.000d16ec, "ax"
-	.global Func_080d170c
-	.type Func_080d170c, %function
-	.thumb_func
-Func_080d170c:
-	.incbin "baserom.gba", 0x000d16ec, 0x00000020
-	.section .rom.000d170c, "ax"
-	.global BattleFx_ApplyColorToSourceBuffer
-	.type BattleFx_ApplyColorToSourceBuffer, %function
-	.thumb_func
-BattleFx_ApplyColorToSourceBuffer:
-	.incbin "baserom.gba", 0x000d170c, 0x00000020
-	.section .rom.000d172c, "ax"
-	.global Func_080d174c
-	.type Func_080d174c, %function
-	.thumb_func
-Func_080d174c:
-	.incbin "baserom.gba", 0x000d172c, 0x00000014
+BattleFx_BuildBuffer:
+	.incbin "baserom.gba", 0x000d0dfc, 0x00000868
 	.section .rom.000d1740, "ax"
+	.balign 4
 	.global Func_080d1760
 	.type Func_080d1760, %function
 	.thumb_func
@@ -3479,28 +3447,6 @@ ObjectMotion_CenterOnColumn:
 	.thumb_func
 Func_080d3070:
 	.incbin "baserom.gba", 0x000d3050, 0x0000008c
-	.section .rom.000d30f6, "ax"
-	.incbin "baserom.gba", 0x000d30f6, 0x00000002
-	.global Func_080d3118
-	.type Func_080d3118, %function
-	.thumb_func
-Func_080d3118:
-	.incbin "baserom.gba", 0x000d30f8, 0x0000004c
-	.global Func_080d3164
-	.type Func_080d3164, %function
-	.thumb_func
-Func_080d3164:
-	.incbin "baserom.gba", 0x000d3144, 0x0000005c
-	.global Func_080d31c0
-	.type Func_080d31c0, %function
-	.thumb_func
-Func_080d31c0:
-	.incbin "baserom.gba", 0x000d31a0, 0x00000054
-	.global Func_080d3214
-	.type Func_080d3214, %function
-	.thumb_func
-Func_080d3214:
-	.incbin "baserom.gba", 0x000d31f4, 0x0000002c
 	.section .rom.000d3248, "ax"
 	.global ObjectMotion_WaitForAnimationChange
 	.type ObjectMotion_WaitForAnimationChange, %function
@@ -4100,14 +4046,18 @@ BattleFx_RunOrbitingParticles:
 	.thumb_func
 Func_080decb8:
 	.incbin "baserom.gba", 0x000dec74, 0x000000cc
-	.section .rom.000ded9c, "ax"
-	.incbin "baserom.gba", 0x000ded9c, 0x00000ac8
+	.section .rom.000deda4, "ax"
+	.global RunBattleEffect05
+RunBattleEffect05:
+	.incbin "baserom.gba", 0x000deda4, 0x00000ac0
 	.section .rom.000df89a, "ax"
 	.incbin "baserom.gba", 0x000df89a, 0x000001d6
 	.section .rom.000dfac6, "ax"
 	.incbin "baserom.gba", 0x000dfac6, 0x000001ca
-	.section .rom.000dfcb4, "ax"
-	.incbin "baserom.gba", 0x000dfcb4, 0x00000304
+	.section .rom.000dfcbc, "ax"
+	.global RunBattleEffect14
+RunBattleEffect14:
+	.incbin "baserom.gba", 0x000dfcbc, 0x000002fc
 	.section .rom.000dffdc, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000dffdc, 0x000002cc
@@ -4651,7 +4601,7 @@ ColorBuffer_Scale:
 	.type DebugParty_LoadPreset, %function
 	.thumb_func
 DebugParty_LoadPreset:
-	.incbin "baserom.gba", 0x00118738, 0x00000638
+	.incbin "baserom.gba", 0x00118738, 0x000005f4
 	.section .rom.00118e64, "ax"
 	.incbin "baserom.gba", 0x00118e64, 0x00000108
 	.section .rom.00118f6c, "ax"

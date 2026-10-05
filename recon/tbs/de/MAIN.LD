@@ -551,6 +551,7 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000b7b34)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/BATTLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT4.o"(.text)
+    "*/games/COMMON/SRC/BATTLE/PRESENTATION/TILE_PATTERN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/UPDATE_AVAILABILITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/UPDATE_NAME_ENTRIES.o"(.text)

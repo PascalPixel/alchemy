@@ -24,7 +24,7 @@ Animation_ApplyChildValuesToRecordFar:
 	.global Func_08020288
 	.thumb_func
 Func_08020288:
-	overlay_veneer Func_080227a0
+	overlay_veneer Animation_ApplyChildValueToFirst
 	.global Func_08020290
 	.thumb_func
 Func_08020290:

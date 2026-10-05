@@ -297,7 +297,7 @@ Func_081197f0:
 	movs r0, #0
 	bl BattlePres_SetupTransitionScene
 	movs r0, #1
-	bl Func_08118d6c
+	bl Party_ReservedNoOp5B14
 	ldr r5, .L_08119aac
 	movs r3, #128
 	lsls r3, r3, #19

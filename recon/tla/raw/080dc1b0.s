@@ -63,7 +63,7 @@ Func_080dc1b0:
 	lsls r0, r0, #14
 	orrs r0, r6
 	movs r1, #1
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #132
 	lsls r0, r0, #1
 	bl GameFlag_SetBit

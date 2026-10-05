@@ -89,7 +89,7 @@ Func_080dc978:
 	movs r3, #128
 	lsls r3, r3, #14
 	orrs r0, r3
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #8
 	bl BattleFx_StartBufferInterpolation
 	bl Func_080dca84

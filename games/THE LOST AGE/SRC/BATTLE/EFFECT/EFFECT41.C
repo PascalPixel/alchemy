@@ -4,6 +4,7 @@
 #include "OBJECT_EFX.H"
 
 u32 Random16(void);
+void RunBattleEffect05(void);
 
 /* The fields of a falling effect object this step reads. */
 struct FallingObject {
@@ -40,4 +41,10 @@ void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *object)
         ObjectDispatch_InitializeFar((struct DispatchObject *)object,
             (u32)BattleFx_CommonParticleScript);
     }
+}
+
+/* Effect 5 by its entry in the effect dispatch. */
+void BattleFx_CallEffect05(void)
+{
+    RunBattleEffect05();
 }

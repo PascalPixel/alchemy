@@ -79,7 +79,7 @@ DisplayTransition_Start:
 .L_080d026c:
 	strh r5, [r4]
 	movs r0, #0
-	bl Func_080d174c
+	bl BattleFx_SetPrimaryBufferValue
 	b .L_080d0506
 	.2byte 0x0000
 .L_080d0278:

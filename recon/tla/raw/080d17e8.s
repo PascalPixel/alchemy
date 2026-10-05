@@ -24,7 +24,7 @@ Func_080d17e8:
 	lsls r0, r0, #9
 	adds r1, r5, #0
 	movs r3, #1
-	bl Func_080d0e1c
+	bl BattleFx_BuildBuffer
 .L_080d1816:
 	pop {r5, pc}
 .L_080d1818:

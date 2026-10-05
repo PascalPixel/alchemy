@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d0ca0
+	.global BattlePalette_UpdateBlend
 	.thumb_func
-Func_080d0ca0:
+BattlePalette_UpdateBlend:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18

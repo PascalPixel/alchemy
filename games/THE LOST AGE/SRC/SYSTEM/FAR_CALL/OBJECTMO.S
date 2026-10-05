@@ -64,19 +64,19 @@ ObjectMotion_CommitCurrentPositionAndActivateFar:
 	.global Func_080c80f8
 	.thumb_func
 Func_080c80f8:
-	overlay_veneer Func_080d3118
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrain
 	.global Func_080c8100
 	.thumb_func
 Func_080c8100:
-	overlay_veneer Func_080d3164
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
 	.global Func_080c8108
 	.thumb_func
 Func_080c8108:
-	overlay_veneer Func_080d31c0
+	overlay_veneer ObjectMotion_SetPositionWithTerrain
 	.global Func_080c8110
 	.thumb_func
 Func_080c8110:
-	overlay_veneer Func_080d3214
+	overlay_veneer ObjectMotion_MoveToObject
 	.global Object_SetModeByIdFar
 	.thumb_func
 Object_SetModeByIdFar:

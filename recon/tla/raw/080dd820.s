@@ -44,7 +44,7 @@ Func_080dd820:
 	lsls r0, r0, #9
 	movs r1, #1
 	adds r0, #1
-	bl Func_080d170c
+	bl BattleFx_ApplyColorToTargetBuffer
 	movs r0, #1
 	bl BattleFx_StartBufferInterpolation
 	movs r2, #192

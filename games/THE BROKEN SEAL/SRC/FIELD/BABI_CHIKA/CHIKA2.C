@@ -556,7 +556,7 @@ void BabiChika_SettleSteps(s32 wait)
  */
 void SceneActor_LandOnHighestPlatform(s32 subject)
 {
-    s32 best = (s32)0xffb00000;
+    s32 best = -0x500000;
     u32 i;
 
     for (i = 0; i <= 4; i++) {

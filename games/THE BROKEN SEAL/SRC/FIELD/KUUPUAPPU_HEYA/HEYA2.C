@@ -2733,8 +2733,8 @@ void OverlayObject_ConfigureObject22WithResource17(s32 a)
 
 u8 *SceneData_FindEntryAtPosition(s32 *o)
 {
-    s32 x = (o[0] + (s32)0xFFC00000) >> 19;
-    s32 y = (o[2] + (s32)0xFD900000) >> 19;
+    s32 x = (o[0] - 0x400000) >> 19;
+    s32 y = (o[2] - 0x2700000) >> 19;
     u8 *e = KuupuappuHeya_Stops;
     u8 *ret = 0;
     u32 i;

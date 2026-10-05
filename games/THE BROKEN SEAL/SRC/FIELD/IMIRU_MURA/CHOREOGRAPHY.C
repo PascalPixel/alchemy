@@ -412,16 +412,16 @@ void StagedActor_RunHeadingProbeStep(void)
         heading = ImiruMura_SwayHeadings[(Data_03001ae8 >> 4) & 15];
         /* The test is on heading << 16 against 0xffff0000, that is on the
          * signed halfword -1, which means "no heading". */
-        if ((heading << 16) == (s32)0xffff0000) {
+        if ((heading << 16) == -0x10000) {
             return;
         }
         /* Nothing is placed in an argument register before this call. */
         Engine_EventBegin();
 
         /* The 0x80000 bias is built from an immediate and a shift. */
-        probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
+        probe[0] = (subject->x & 0xfff00000) + 0x80000;
         probe[1] = subject->y;
-        probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
+        probe[2] = (subject->z & 0xfff00000) + 0x80000;
         z = probe[2];
         x = probe[0];
         p = (u8 *)subject;

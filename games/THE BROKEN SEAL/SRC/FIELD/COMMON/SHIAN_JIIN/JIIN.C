@@ -535,7 +535,7 @@ void Scene_RunPrimarySequence(void)
         actor->x.fixed,
         actor->y.fixed,
         actor->z.fixed + 0xc0000,
-        (s32)0xffff3334,
+        -0xcccc,
         0,
         0x3333,
         0,

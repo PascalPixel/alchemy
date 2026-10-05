@@ -1604,16 +1604,16 @@ void SceneActor_StepSubjectAlongHeading(void)
          * The test is on heading << 16 against 0xffff0000, the signed
          * halfword -1 meaning "no heading".
          */
-        if ((heading << 16) == (s32)0xffff0000) {
+        if ((heading << 16) == -0x10000) {
             return;
         }
         /* No argument register is written before this branch. */
         Engine_EventBegin();
 
         /* The 0x80000 bias is built by shifting, not loaded as a constant. */
-        probe.x = (subject->x.fixed & (s32)0xfff00000) + 0x80000;
+        probe.x = (subject->x.fixed & 0xfff00000) + 0x80000;
         probe.y = subject->y.fixed;
-        probe.z = (subject->z.fixed & (s32)0xfff00000) + 0x80000;
+        probe.z = (subject->z.fixed & 0xfff00000) + 0x80000;
         z = probe.z;
         x = probe.x;
         goal = GetMapCellCollision(subject->terrain_id, x, z);

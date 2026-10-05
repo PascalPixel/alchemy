@@ -39,9 +39,9 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     u8 saved = actor->flags;
     s32 probe[3];
 
-    probe[0] = (actor->x & (s32)0xfff00000) + 0x00080000;
+    probe[0] = (actor->x & 0xfff00000) + 0x00080000;
     probe[1] = actor->y;
-    probe[2] = (actor->z & (s32)0xfff00000) + 0x00080000;
+    probe[2] = (actor->z & 0xfff00000) + 0x00080000;
 
     Vector_AddPolarOffset(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
 
@@ -207,10 +207,10 @@ s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 {
     Record *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if (ref->w12 > (s32)0xffd00000
+    if (ref->w12 > -0x300000
         && (Object_GetById(8)->z.fixed >> 20) == 10) {
         record->w8 = Object_GetById(8)->x.fixed;
-        record->w12 = (s32)0xffe00000;
+        record->w12 = -0x200000;
         record->w16 = Object_GetById(8)->z.fixed;
     } else {
         record->w8 = 0;

@@ -94,7 +94,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
 {
     switch (state->countdown) {
     case 6:
-        state->fixed_point_18 += (s32) 0xFFFFC000;
+        state->fixed_point_18 -= 0x4000;
         state->fixed_point_1c += 0x2000;
         break;
     case 4:
@@ -103,7 +103,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
         break;
     case 2:
         state->fixed_point_18 += 0x1000;
-        state->fixed_point_1c += (s32) 0xFFFFF800;
+        state->fixed_point_1c -= 0x800;
         break;
     case 0:
         state->fixed_point_18 = 0x10000;

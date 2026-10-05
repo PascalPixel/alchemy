@@ -130,7 +130,7 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *posi
     delta = height - object->terrain_height;
     if (delta > 0x80000)
         return 1;
-    if (delta < (s32)0xfff40000)
+    if (delta < -0xc0000)
         return -1;
     return 0;
 }

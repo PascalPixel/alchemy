@@ -469,7 +469,7 @@ void StagedActor_PushActorAhead(void)
     target->terrain_id = 2;
 
     pos[0] = target->x.fixed
-        + (StagedActor_DirectionSteps[heading] & (s32)0xffff0000);
+        + (StagedActor_DirectionSteps[heading] & 0xffff0000);
     pos[1] = target->y.fixed;
     pos[2] = target->z.fixed + (StagedActor_DirectionSteps[heading] << 16);
 

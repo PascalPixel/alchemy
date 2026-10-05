@@ -12,4 +12,4 @@
 	overlay_veneer Scene_GetExits
 	overlay_veneer Scene_GetPlacements
 	overlay_veneer Scene_GetEvents
-	overlay_veneer SceneData_GetTable9C5C
+	overlay_veneer KuupuappuDou_GetRegions

@@ -50,7 +50,7 @@ Resource_DirectoryTable:
 	resource , Title_LogoOnBlackPicture
 	resource , Resource_Data023
 	resource , Resource_Data024
-	resource , Resource_Data025
+	resource IntroTilesB, Resource_Data025
 	resource , Resource_Data026
 	resource , Battle_PurpleMoonBackdrop
 	resource , Battle_SuharaGateBackdrop

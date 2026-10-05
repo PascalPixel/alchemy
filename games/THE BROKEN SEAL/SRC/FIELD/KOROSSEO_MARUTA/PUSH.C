@@ -26,7 +26,6 @@ void ColossoLogRollingStage_PushStagedActor(void)
     extern void Object_SetPosition(SceneRecord *, s32, s32, s32);
     extern void Object_CommitPosition(SceneRecord *);
 
-
     SceneRecord *subject;
     SceneRecord *target;
     SceneRecord *blocker;
@@ -111,11 +110,10 @@ void ColossoLogRollingStage_PushStagedActor(void)
     Object_SetMode(subject, 1);
 }
 
-/* This overlay's own byte-exact occupancy lookup. */
+/* Look up the occupant in this stage. */
 s32 *ColossoLogRollingStage_FindActorAhead(void)
 {
     extern void Vector_AddPolarOffset();
-
 
     struct FieldActor *record;
     s32 facing;

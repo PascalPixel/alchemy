@@ -16,9 +16,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
     work->width = width + 2;
     work->resource_base = resource_base;
     work->row = y;
-    /* FAKEMATCH: the original byte span keeps each sprite base at +0.
-       Struct coordinate stores hoist +12 into the loop base and add four
-       bytes in all six editions (2026-10-03 attempt aadcc37dd). */
+    /* FAKEMATCH: the byte span keeps the sprite base at +0; struct coordinates hoist +12 into the loop and add four bytes. */
     entries = (u8 *)work;
     for (i = 0; i < work->count; i++) {
         *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = y << 3;

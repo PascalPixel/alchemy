@@ -11,7 +11,6 @@
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-/* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -126,19 +125,14 @@ struct Item_387 {
 s32 Inventory_AddItemFar(s32 member, s32 item);
 void Inventory_EquipFar(s32 member, s32 slot);
 
-/*
- * The owner exists for the argument shuffle: the frame count is saved before
- * the first call clobbers its register, so it survives to reach the second.
- * The twenty-two byte owner loads no literal and has no pool.
- */
+/* Run the first step, then wait the requested number of frames. */
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 {
     Engine_EventShowMessage(selector, 0);
     Engine_EventWait(frames);
 }
 
-/* Contiguous unnamed leaf-owner run for resource_387. */
-void *SceneData_GetTable92f8(void)
+void *GomaIriguchi_GetEntrances(void)
 {
     return GomaIriguchi_SceneTableA;
 }
@@ -148,12 +142,12 @@ int SceneData_ReturnZero(void)
     return 0;
 }
 
-void *SceneData_GetTable9358(void)
+void *GomaIriguchi_GetExits(void)
 {
     return GomaIriguchi_SceneTableB;
 }
 
-void *SceneData_GetTable9368(void)
+void *GomaIriguchi_GetPlacements(void)
 {
     return GomaIriguchi_SceneTableC;
 }
@@ -234,7 +228,7 @@ void FieldScene_RunStepWithValue866(void)
     Engine_EventEnd();
 }
 
-void *SceneData_GetTable9488(void)
+void *GomaIriguchi_GetEvents(void)
 {
     return GomaIriguchi_SceneTableD;
 }
@@ -591,8 +585,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     for (i = 0; i <= 16; i++) {
         v = &dir;
-        /* FAKEMATCH: zero is set inside the loop (always entered) so it is
-         * materialized after the counter and the direction pointer. */
+        /* FAKEMATCH: zero is set inside the loop (always entered) so it is materialized after the counter and the direction pointer. */
         zero = 0;
         v->x = Engine_MathCos(i << 12);
         v->y = zero;

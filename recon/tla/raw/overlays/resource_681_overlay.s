@@ -31,7 +31,7 @@ Func_020000d0:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #15
 	bl Object_SetPartAttribute
@@ -124,7 +124,7 @@ Func_0200015c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008334
 	mov r1, r9
 	str r3, [r6, #108]
@@ -420,8 +420,8 @@ Func_0200042c:
 	adds r3, r3, r4
 	lsls r2, r2, #1
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #204
 	bl Func_02005014
 	movs r3, #3
@@ -674,7 +674,7 @@ Func_02000678:
 	adds r3, #85
 	strb r6, [r3]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	ldr r1, .L_020086d8
 	bl Func_02004dac
@@ -878,7 +878,7 @@ Func_020007f4:
 	adds r3, #4
 	strb r5, [r3]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r6, #0
 	movs r1, #1
 	bl Func_02004d9c
@@ -2262,7 +2262,7 @@ Func_02001314:
 	bl Func_02004d9c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -2735,7 +2735,7 @@ Func_020015d0:
 	bl Func_02004d9c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -2852,7 +2852,7 @@ Func_020015d0:
 	bl Func_02004d9c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -2953,7 +2953,7 @@ Func_020015d0:
 	bl Func_02004d9c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -7730,7 +7730,7 @@ Func_02002f64:
 	movs r1, #0
 	movs r2, #0
 	bl Func_02004ebc
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #15
 	bl Battle_WaitMode0
 	movs r1, #168
@@ -7742,7 +7742,7 @@ Func_02002f64:
 	movs r0, #11
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #11
 	bl Object_GetById
 	adds r6, r0, #0
@@ -7756,7 +7756,7 @@ Func_02002f64:
 	cmp r5, #0
 	beq .L_0200c070
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, .L_0200c094
 	adds r0, r5, #0
 	bl Func_02004dac
@@ -7961,7 +7961,7 @@ Func_02002f64:
 	movs r0, #15
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #196
@@ -9161,7 +9161,7 @@ Func_02004a5c:
 	strb r3, [r1]
 	adds r0, r4, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
@@ -9373,7 +9373,7 @@ Func_02004af0:
 	bl Battle_WaitMode0
 	adds r0, r5, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #1
 	adds r0, r5, #0
 	bl Func_02004d9c

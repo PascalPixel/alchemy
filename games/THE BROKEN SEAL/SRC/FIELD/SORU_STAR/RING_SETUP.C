@@ -1,7 +1,5 @@
 #include "RUNTIME_MEM.H"
-/* The elemental rings of Mt. Aleph, linked into both overlays that show
- * them (380 and its twin 381). Engine_* bind at each overlay's runtime
- * import veneer; the ring tables are each overlay's own. */
+/* The elemental rings shared by the Mt. Aleph rooms and their adjoining area; each scene supplies its own ring tables. */
 #include "DMA.H"
 #include "IO_REG.H"
 

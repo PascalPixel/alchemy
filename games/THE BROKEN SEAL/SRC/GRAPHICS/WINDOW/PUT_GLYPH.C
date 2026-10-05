@@ -178,9 +178,6 @@ done:
 /* The glyph renderer. The Japanese one also joins a kana voicing mark to the
    kana before it, and draws its sprites two pixels lower. */
 
-
-
-
 struct SpriteAttr {
     u8 unk0[4];
     u8 y;
@@ -258,12 +255,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (win->x + (column + *(volatile u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 - 1;
-        /* FAKEMATCH: retain the existing embedded OAM glyph-mode view.
-           The canonical byte-span view and scalar field/address casts
-           reorder the packed and logical position stores in all six
-           editions, at the same 328-byte JA / 260-byte localized extent.
-           The original scalar link clear and unsigned active byte remain
-           in this wire view; allocation and list ownership are canonical. */
+        /* FAKEMATCH: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
         out->x = attr->x;
         out->y = attr->y;
         out->link_word = 0;
@@ -319,12 +311,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (left + (column + *(volatile u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 + 1;
-        /* FAKEMATCH: retain the existing embedded OAM glyph-mode view.
-           The canonical byte-span view and scalar field/address casts
-           reorder the packed and logical position stores in all six
-           editions, at the same 328-byte JA / 260-byte localized extent.
-           The original scalar link clear and unsigned active byte remain
-           in this wire view; allocation and list ownership are canonical. */
+        /* FAKEMATCH: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
         out->x = attr->x;
         out->y = attr->y;
         out->link_word = 0;

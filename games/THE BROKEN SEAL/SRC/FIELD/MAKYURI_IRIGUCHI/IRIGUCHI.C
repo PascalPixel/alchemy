@@ -47,12 +47,12 @@ extern const u8 MakyuriIriguchi_Actor8Path1[];
 extern const u8 MakyuriIriguchi_Actor8Path2[];
 extern const u8 MakyuriIriguchi_Actor8Path3[];
 
-void FieldScene_Forward31d4(void)
+void MakyuriIriguchi_TickSpawnTimer(void)
 {
     Makyuri_TickSpawnTimer();
 }
 
-void FieldScene_CallHelper2e58(void)
+void MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget(void)
 {
     SceneState_ClearCurrentRecordAndReleaseTarget();
 }
@@ -62,12 +62,11 @@ void FieldScene_RunSingleStep(void)
     Makyuri_RunActorMove();
 }
 
-void FieldScene_CallHelper2d50(void)
+void MakyuriIriguchi_TriggerPillarRise(void)
 {
     MakyuriIriguchi_RaisePillar();
 }
 
-/* Contiguous unnamed leaf-owner run for resource_39b. */
 void *SceneData_GetSceneTableA(void) { return MakyuriIriguchi_SceneTableA; }
 
 int SceneData_ReturnZero(void) { return 0; }
@@ -121,8 +120,6 @@ void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
     Actor_SetPosition(ACTOR_PARTY_LEADER, ((a0 << 19) + 0x80000), 0);
     Battle_WaitMode0(30);
 }
-
-/* Contiguous unnamed leaf-owner run for resource_39b. */
 
 /* Clear the scene flag and point actor 8 at its first local path. */
 void FieldScene_RunIndexedStep17(void)
@@ -203,7 +200,7 @@ void FieldScene_RunIndexedStep63(void)
     Engine_EventRequestExit(63);
 }
 
-void FieldScene_RunActor8StepWithTableA820(void)
+void MakyuriIriguchi_InstallActorEightPath(void)
 {
     Engine_GameFlagClear(0x205);
     Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path1);
@@ -237,8 +234,7 @@ void MakyuriIriguchi_OpenEntrance(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
     game = (s32)&gGameState;
-    /* FAKEMATCH: the do/while loads the game state's address ahead of the
-     * offset for the byte store. */
+    /* FAKEMATCH: the do/while loads the game state's address ahead of the offset for the byte store. */
     do {
         *(u8 *)(game + 0x22b) = 3;
         BattleFx_SetWeightedResult(36, 1);
@@ -293,8 +289,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
     s32 angle;
     s32 flag;
 
-    /* FAKEMATCH: the do/while and the held values keep the blend constants
-     * in registers ahead of their address loads, as in MAKYURI_HEYA. */
+    /* FAKEMATCH: the do/while and the held values keep the blend constants in registers ahead of their address loads, as in MAKYURI_HEYA. */
     do {
         s32 blend = 0x3f40;
         REG_BLDCNT = blend;
@@ -473,8 +468,7 @@ void MakyuriIriguchi_CrossDoorway(void)
         Call3(Engine_ActorFaceDirection, 3, 0xc000, 30);
         Engine_ActorRunRepeatedMotion(3, 1);
         ivan = Object_GetById(3);
-        /* FAKEMATCH: or-ing a zero kept from before the loop leaves the
-         * reference's unread zero in sl. */
+        /* FAKEMATCH: or-ing a zero kept from before the loop leaves the reference's unread zero in sl. */
         ivan->steering_flags = (ivan->steering_flags & mask) | zero;
         Engine_ActorWalkTo(3, 136, 184);
         Battle_WaitMode0(10);

@@ -1,6 +1,6 @@
 #include "HAIDIA.H"
 
-void FieldScene_RunScene3a6_020014ac(void)
+void HaidiaDou_ToppleActorNine(void)
 {
 
     u32 i;

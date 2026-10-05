@@ -1,3 +1,4 @@
+#include "FX_SCENE.H"
 #include "IRIGUCHI.H"
 #include "TYPES.H"
 #include "CALL.H"
@@ -52,17 +53,14 @@ void OverlayObject_WaitUntilIdle(s32 *obj)
     }
 }
 
-/*
- * The decay of the Z velocity stays a signed divide by sixteen: that shape is
- * what reproduces the negative bias and arithmetic shift in the reference.
- */
+/* Divide the Z velocity by sixteen, rounding toward zero. */
 void Effect_AdvanceMotion(struct MotionEffect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
 
-    /* This block orders the Z load after the Y store; do not flatten it. */
+
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity[0];
@@ -275,7 +273,6 @@ void SceneState_BranchOnActorEightOrNineTile(void)
     FieldEffect_UpdateGridPlacement();
 }
 
-/* resource_3c5 owner at 0x02001158, 42 bytes. */
 void ResetSceneParametersAndFinishSetup(void)
 {
     Camera_MoveTo(-1, -1, -1, 0);
@@ -962,9 +959,7 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
     seeing = (s16 *)(work + 0xcb8);
     if (seeing[0] != 0) {
         if (Engine_GameFlagIsSet(0x985) == 0) {
-            /* FAKEMATCH: forced temporaries; the destination stays in two
-               saved registers across both copies, where plain constants
-               are built again for each call. */
+            /* FAKEMATCH: forced temporaries; the destination stays in two saved registers across both copies, where plain constants are built again for each call. */
             s32 dest_x = 17, dest_y = 78;
 
             Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
@@ -982,9 +977,7 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
     Engine_EventEnd();
 }
 
-/* The terrain lookup consumes both computed coordinates, not just the mode.
- * Omitting x/z left their live argument registers unexplained in the draft.
- * Exact complete 72-byte owner, including both final pool words. */
+/* The terrain lookup uses both computed coordinates and the mode. */
 struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
 {
     s32 pos[3];
@@ -1004,9 +997,9 @@ struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
     return StagedActor_FindAtTile(p, actor);
 }
 
-void SceneState_SetRuntimeByte34(void)
+void BabiIriguchi_EnableEffectChildOption(void)
 {
-    FIELD_AT_OFFSET(*(void **)gEffectWork, s8 *, 0x34) = 1;
+    ((struct BattleFxScene *)*(void **)gEffectWork)->child_option = 1;
 }
 
 void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
@@ -1043,10 +1036,7 @@ void SceneActor_PushObjectAheadIfLevel(void)
     diff = q->y - p->y;
 
     if (diff >= 0) {
-        /* Written with an empty arm on purpose: the reference branches away on
-         * the *return* condition (`bge`), and spelling this as a plain
-         * `if (diff >= 0x80000) return;` inverts it to `blt`. Arm order
-         * decides the branch sense; no flag moves it. */
+
         if (diff < 0x80000) {
         } else {
             return;
@@ -1106,9 +1096,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void SceneState_ConfigureRegion82_7AndApply768(void)
 {
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 a = 18;
     s32 b = 7;
 

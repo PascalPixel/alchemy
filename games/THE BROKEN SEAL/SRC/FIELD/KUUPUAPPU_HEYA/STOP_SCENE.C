@@ -6,17 +6,17 @@
 extern u16 KuupuappuHeya_StopTimer;
 void KuupuappuHeya_UpdateActorStops(void);
 
-/* FAKEMATCH: a one-halfword struct keeps the zero a halfword pool constant. */
 struct Half {
     u16 v;
 };
 void FieldScene_ConfigurePairedActors();
-void Map_SetWorkFourValues();
+void Map_SetViewBounds();
 
 void KuupuappuHeya_StartActorStops(void)
 {
     u32 i;
     s32 record;
+    /* FAKEMATCH: a one-halfword struct keeps the zero a halfword pool constant. */
     struct Half zero;
 
     Engine_EventBegin();
@@ -36,7 +36,7 @@ void KuupuappuHeya_StartActorStops(void)
     Engine_ActorWaitForMove(0);
     Engine_ActorSetAnimation(1, 12);
     FieldScene_ConfigurePairedActors();
-    Call4(Map_SetWorkFourValues, 0x300000, 0x2400000, 0x1200000, 0x2e00000);
+    Call4(Map_SetViewBounds, 0x300000, 0x2400000, 0x1200000, 0x2e00000);
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 2, 0xc000, 0x6000);
     Call3(Engine_ActorSetSpeed, 24, 0x10000, 0x13333);

@@ -2,7 +2,6 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 
-
 void Graphics_FadeAlphaOut(void)
 {
     s32 alpha_step;
@@ -11,9 +10,7 @@ void Graphics_FadeAlphaOut(void)
     alpha_step = 1;
     do
     {
-      /* FAKEMATCH: removing this one-pass block changes instruction scheduling.
-       * 2026-10-02: a plain scope moves alpha_step's add before loading the
-       * WaitFrames argument into r0; the English translation unit differs. */
+      /* FAKEMATCH: the one-pass block keeps alpha_step addition after loading the WaitFrames argument into r0. */
       do
       {
         REG_BLDALPHA = 0x1010 - alpha_step;

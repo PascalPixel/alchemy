@@ -9,7 +9,7 @@
 	.balign 4
 	overlay_veneer TorebiKyuden_ApplyEntryState
 	overlay_veneer Scene_GetEntrances
-	overlay_veneer SceneData_GetTableca8c
+	overlay_veneer TorebiKyuden_GetExits
 	overlay_veneer Scene_GetPlacements
 	overlay_veneer Scene_GetEvents
-	overlay_veneer SceneData_GetTableca7c
+	overlay_veneer TorebiKyuden_GetRegions

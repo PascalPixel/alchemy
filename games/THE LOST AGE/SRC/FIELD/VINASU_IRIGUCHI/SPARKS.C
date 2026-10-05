@@ -18,7 +18,7 @@ void Func_0200258c(void);
 
 /* Stops the spark updater, frees the sparks' resource entry and releases
    their work block. */
-void Func_020027b0(void)
+void VinasuIriguchi_StopSparks(void)
 {
     struct SparkWork *work = Ram_HeapSlots->menu_runtime;
 

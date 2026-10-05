@@ -132,7 +132,7 @@ Func_080df1fc:
 	adds r0, r7, #0
 	strb r3, [r1]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r2, [sp, #20]
 	cmp r2, #0
 	beq .L_080df35c

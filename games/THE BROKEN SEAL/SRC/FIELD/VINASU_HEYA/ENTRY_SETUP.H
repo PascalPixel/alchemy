@@ -345,7 +345,7 @@ void RunStagedActorTransition(void);
 void SceneActor_SwapPositionsByDepth(s32 group, s32 index);
 s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void);
 
-/* Complete scene setup, including the two global halfword state writes. */
+/* Set up the scene and its two global halfword states. */
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor);
 

@@ -318,7 +318,7 @@ FuneKanpan_DeckActionsA:
 	.global FuneKanpan_DeckActionsC
 FuneKanpan_DeckActionsC:
 	.4byte 0x00000022
-	.4byte SceneActor_SetWord28RandomlyOneIn40
+	.4byte FuneKanpan_RandomlyStartActorHop
 	.global FuneKanpan_RosterActions
 FuneKanpan_RosterActions:
 	.4byte 0x0000001c
@@ -1418,10 +1418,10 @@ gFuneKanpanEvents:
 	.4byte FieldScene_RunActorAndEffectPresentationSetup
 	.4byte 0x00000002
 	.4byte 0x0923000b
-	.4byte FieldScene_RunScene3af_020010a0
+	.4byte FuneKanpan_WatchCrewmanLeaveRight
 	.4byte 0x00000002
 	.4byte 0x0923000c
-	.4byte FieldScene_RunScene3af_020011c8
+	.4byte FuneKanpan_WatchCrewmanLeaveLeft
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

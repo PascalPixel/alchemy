@@ -499,30 +499,30 @@ void Scene_SaturosTakesHostages(void)
     Actor_SetSpeed(ACTOR_MENARDI, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_ALEX, 0x8000, 0x4000);
     Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
-    FieldScene_RunScene381_02000e30(10);
+    SoruFunka_RaiseAndShrinkActor(10);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
-    FieldScene_RunScene381_02000e30(9);
+    SoruFunka_RaiseAndShrinkActor(9);
     Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-    FieldScene_RunScene381_02000e30(11);
+    SoruFunka_RaiseAndShrinkActor(11);
     Actor_FaceDirection(ACTOR_JASMINE, 0x9000, 40);
     Engine_ActorStartRepeatedMotion(ACTOR_JASMINE, 2);
     Event_ShowMessageAndWait(0x2005, 0, 40);
     Actor_FaceDirection(ACTOR_GARCIA, 0x3000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 30);
     Actor_FaceDirection(ACTOR_GARCIA, 0xe000, 0);
-    FieldScene_RunScene381_02000e30(5);
-    FieldScene_RunScene381_02000e30(13);
+    SoruFunka_RaiseAndShrinkActor(5);
+    SoruFunka_RaiseAndShrinkActor(13);
     Actor_FaceDirection(ACTOR_ALEX, 0x7000, 40);
     Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
-    FieldScene_RunScene381_02000e30(14);
+    SoruFunka_RaiseAndShrinkActor(14);
     Scene_RunExtendedEffectPresentation();
     Party_RemoveOwnerRestored(5);
 }
 
-void FieldScene_RunScene381_02000e30(s32 a0)
+void SoruFunka_RaiseAndShrinkActor(s32 a0)
 {
     struct FieldActor *rec7;
     struct FieldActor *recA;
@@ -571,7 +571,7 @@ void Resource381_NoOpCallbackB(void)
 {
 }
 
-s32 FieldScene_RunWhenWord225Is10(void)
+s32 SoruFunka_RunHostageSceneOnEntranceTen(void)
 {
     if (gGameState.entrance == 10) {
         FieldEffect_InitSparkles();
@@ -1407,7 +1407,7 @@ void Scene_RunExtendedEffectPresentation(void)
     quake->fading = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
-    FieldScene_CallHelper6620();
+    SoruFunka_CleanupSceneObjects();
     GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
     GameFlag_Set(FLAG_STAR_ROOM_COLLAPSED);
     Engine_EventRequestExit(5);
@@ -1415,7 +1415,7 @@ void Scene_RunExtendedEffectPresentation(void)
 }
 
 /* Scene steps, regions and arcing effects. */
-/* The IWRAM remainder, reached through an import veneer. */
+/* Resident IWRAM remainder. */
 void SoruFunka_PlaceBeforeStar(s32 actor)
 {
     struct FieldActor *object;
@@ -1598,8 +1598,7 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
     Ent_02002c1c *p;
 
-    /* FAKEMATCH: the view-centre import is passed the tile x it ignores, as
-     * the game passes it. */
+    /* FAKEMATCH: the view-centre import is passed the tile x it ignores, as the game passes it. */
     p = (Ent_02002c1c *)((s32 (*)())Engine_EventGetViewCenter)(a);
     b = b << 16;
     a = a << 16;
@@ -1757,9 +1756,7 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
@@ -1787,7 +1784,7 @@ void SceneState_SetValue140Mode0(void)
     Engine_PsynergyBegin(140, 0);
 }
 
-void FieldScene_CallHelper6620(void)
+void SoruFunka_CleanupSceneObjects(void)
 {
     BattleEffect_CleanupSceneObjects();
 }

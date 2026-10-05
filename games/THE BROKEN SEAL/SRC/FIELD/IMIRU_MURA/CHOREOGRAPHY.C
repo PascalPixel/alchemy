@@ -5,7 +5,7 @@
 
 s32 __umodsi3();
 
-void ActorPresentation_ApplyTableA5ecToActorNine(void)
+void ImiruMura_ShowActorNineTurnMessage(void)
 {
     extern s32 ImiruMura_TurnScript[];
 
@@ -13,14 +13,14 @@ void ActorPresentation_ApplyTableA5ecToActorNine(void)
     Engine_EventShowMessage(9, 0);
 }
 
-void SceneState_StoreTable96adToWork(void)
+void ImiruMura_CastPsynergyAtActorNine(void)
 {
     u8 *work;
 
     Engine_PsynergyBegin(93, 1);
     work = *(u8 **)gEffectWork;
     Engine_PsynergySetTarget(3, 9);
-    *(s32 *)(work + 36) = (s32)ActorPresentation_ApplyTableA5ecToActorNine;
+    *(s32 *)(work + 36) = (s32)ImiruMura_ShowActorNineTurnMessage;
     Engine_PsynergyRaiseHands();
     Engine_PsynergyPlayEffect(1);
     Engine_PsynergyLowerHands();
@@ -110,8 +110,6 @@ void FieldScene_RunScene399SequenceA(void)
     }
 }
 
-/* The flag setter is called through a void function type, as the three
- * call sites discard its result and the compiler keeps their tails apart. */
 void SceneState_UpdateZoneFlagsFromActorZero(void)
 {
     T_020018c4 *obj;
@@ -206,7 +204,7 @@ void RunEventScript02(void)
     u8 *record;
 
     Engine_EventBegin();
-    Engine_EventOpenScreen(); /* main:0808a360 */
+    Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 232, 204);
     Engine_EventEnd();
@@ -226,8 +224,9 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
     Engine_ActorWalkTo(0, 0x2b2, 200);
+
     /* Clear the byte at offset 85 of the returned record. */
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
     work = gEventWork;
@@ -415,10 +414,10 @@ void StagedActor_RunHeadingProbeStep(void)
         if ((heading << 16) == -0x10000) {
             return;
         }
-        /* Nothing is placed in an argument register before this call. */
+
         Engine_EventBegin();
 
-        /* The 0x80000 bias is built from an immediate and a shift. */
+
         probe[0] = (subject->x & 0xfff00000) + 0x80000;
         probe[1] = subject->y;
         probe[2] = (subject->z & 0xfff00000) + 0x80000;
@@ -427,8 +426,7 @@ void StagedActor_RunHeadingProbeStep(void)
         p = (u8 *)subject;
         p += 34;
         goal = GetMapCellCollision((s32)*p, x, z);
-        /* 0x100000 is built from an immediate and a shift.  The probe block is
-         * passed by address and is advanced by the callee. */
+        /* The probe advances the position block passed to it. */
         Vector_AddPolarOffset((s32)0x100000, heading, probe);
 
         marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
@@ -469,7 +467,7 @@ continueProbe:
         }
 
 advanceProbe:
-        AdvanceProbe_02001fa4(heading, probe);
+        ImiruMura_AdvanceProbe(heading, probe);
         marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
         if (marker != 255) {
             goto continueProbe;
@@ -487,7 +485,7 @@ finishProbe:
 blocked:
     subject->callback = NULL;
     subject->flags_090 |= 1;
-    /* 0x4000 is built from an immediate and a shift. */
+
     subject->state_052 = 0x4000;
 
 tail:

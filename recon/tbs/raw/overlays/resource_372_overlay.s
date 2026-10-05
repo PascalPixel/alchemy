@@ -426,7 +426,7 @@ HaidiaArashi_GatherPath22:
 	.global HaidiaArashi_LookAroundScript
 HaidiaArashi_LookAroundScript:
 	.4byte 0x00000022
-	.4byte OverlayObject_SetField6OnCountdown
+	.4byte HaidiaArashi_RerollHeadingOnCountdown
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -878,28 +878,28 @@ HaidiaArashi_SceneTable3:
 	.4byte FieldScene_RunStep7BAndCheckFlags841And842
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte FieldScene_SetupDescriptorD78a
+	.4byte HaidiaArashi_OpenBackdropExit5
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte FieldScene_RunScene372_02000278
+	.4byte HaidiaArashi_OpenGateRoute
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte FieldScene_SetupDescriptorD78aIfFlag205Clear
+	.4byte HaidiaArashi_OpenBackdropExit7
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte FieldScene_SetupWithDescriptorD7A0
+	.4byte HaidiaArashi_OpenBackdropExit8
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte FieldScene_SetupDescriptorD7b6
+	.4byte HaidiaArashi_OpenBackdropExit9
 	.4byte 0x0000c602
 	.4byte 0xffff000b
-	.4byte FieldScene_RunScene372_02000398
+	.4byte HaidiaArashi_OpenRouteTen
 	.4byte 0x0000c602
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene372_020003cc
+	.4byte HaidiaArashi_OpenRouteTwelve
 	.4byte 0x0000c602
 	.4byte 0xffff000d
-	.4byte FieldScene_RunScene372_02000400
+	.4byte HaidiaArashi_OpenRouteThirteen
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte FieldScene_RunScene372SequenceC
@@ -920,7 +920,7 @@ HaidiaArashi_SceneTable3:
 	.4byte MsgHaidiaMomDadGarsiaPleaseDontLeave
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte FieldScene_RunScene372_02003e48
+	.4byte HaidiaArashi_TryToFreeActorEight
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte MsgHaidiaRockCannotBeMoved
@@ -953,7 +953,7 @@ HaidiaArashi_SceneTable3:
 	.4byte SceneState_SetFlag210AndConfigureRegion40_89
 	.4byte 0x00000002
 	.4byte 0xffff0029
-	.4byte HaidiaArashi_RunScene00D5C
+	.4byte HaidiaArashi_RunStormTriggerScene
 	.4byte 0x00000002
 	.4byte 0xffff002a
 	.4byte HaidiaArashi_RunEventSequence
@@ -983,7 +983,7 @@ HaidiaArashi_SceneTable3:
 	.4byte FieldScene_RunFlagGatedActorSequence
 	.4byte 0x00000002
 	.4byte 0xffff0024
-	.4byte HaidiaArashi_RunScene02DEC
+	.4byte HaidiaArashi_RunReunionAndDeparture
 	.4byte 0x00000002
 	.4byte 0x087c0010
 	.4byte SceneState_SetWords1c0And1c8AndRun

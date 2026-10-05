@@ -6,10 +6,6 @@
 #include "IO_REG.H"
 #include "FIXED_MATH.H"
 
-/* Lost Age source currently covers rewind, push, pop and the two matrix copies.
-   Its reset and identity helpers remain raw until their C matches.
-   These game branches describe source presence; both games retain their
-   ordinary compiler and options, and each native bank keeps its order. */
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
@@ -240,8 +236,8 @@ void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale)
     Iwram_TransformMatrix(m);
 }
 
-/* Builds the look-at matrix from the eye and target, using the stack copy
-   of the native dot-product routine for normalization and row offsets. */
+/* Build the look-at matrix from the eye and target, using a stack copy
+ * of the dot-product routine for normalization and row offsets. */
 void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 {
     u32 code[7];

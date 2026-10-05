@@ -1,7 +1,5 @@
 #include "RESOURCE.H"
-/* Declarations shared by the Vale house scene's sources (resource_374). The
- * calls reach this overlay's import veneers by the names IMPORT.S gives
- * them, and its tables by the labels on the listing's data rows. */
+/* Declarations shared by the Vale house scenes. */
 #ifndef HAIDIA_H
 #define HAIDIA_H
 
@@ -46,14 +44,6 @@ struct SceneVerticalEffect {
     struct VerticalEffectAnchor *anchor;
 };
 
-/*
- * Exact 2026-09-23 (832 bytes), a tagged fake match. The callback passed
- * to the target-and-callback call (main Object_SetTargetAndCallback) is the
- * data symbol HaidiaIe_FaceTargetActions, as in HAIDIA_IE/ELDER_AID_EVENT.C; as a plain
- * integer its pool load was scheduled before the zero actor argument.
- * The do/while around the 0x22b area-state store holds the linked scene
- * load after the store, as in the reference.
- */
 struct SceneWork {
     u8 pad000[0x22b];
     u8 area_state;
@@ -84,7 +74,7 @@ void FieldScene_RunStep15(void);
 void FieldScene_RunStep17(void);
 void FieldScene_RunStep20(void);
 void SceneState_ApplyPair140And0(void);
-void FieldScene_Forward4dac(void);
+void HaidiaIe_CleanupSceneObjects(void);
 void OverlayObject_UpdateOnFrameBit1(s32 obj);
 struct SceneVerticalEffect;
 void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect);
@@ -145,7 +135,7 @@ void Engine_MapCopyCellsTo();
 void Engine_MapRedraw();
 void Engine_TaskWait();
 void BattleFx_StartTwelveFrameBlend();
-void Unnamed_08094ac8();
+void FieldFx_StartGroundParticles();
 s32 Scene_CopyCellAttributes();
 void Object_SetTargetAndCallback();
 void Engine_ActorSetSpriteFlags();
@@ -153,7 +143,7 @@ void Engine_ActorSetAnimation();
 void HaidiaIe_RunScriptScene();
 void Engine_EventOpenScreen();
 void Engine_EventWaitForScreen();
-void Event_SetPair1d4(const void *, s32);
+void Event_SetDefeatDestination(const void *, s32);
 void BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0(const void *, s32);
 struct FieldActor *Battle_GetWorkObject1e0(void);
@@ -179,22 +169,6 @@ s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 void Object_LinkObjectAndSetCallback();
 void ObjectMotion_Launch();
 void Owner_RefreshActiveRatios();
-
-/* Exact complete owner [020017c8,020022c8): 2816 bytes, pools included.
- * 2026-09-27 Sol H1: FieldActor lookup results own x/z, priority_flags and
- * motion_flags. The nullable lookup has a separate actor lifetime from the
- * earlier child records. This typed record model resolves all 639 differing
- * halfwords / 185 edits, preserving callback target reloads and table r5.
- * Complete normalized diff and literal pools read; candidate/reference cmp
- * is exact. This is not a constant spelling or register-allocation sweep.
- * Reuse sun-west's canonical s32 Party_GiveItem interface for both rewards;
- * that independently proven ABI correction is not the matching lever.
- * Historical baseline and closed axes:
- * Typed callback inline scopes reproduce the prior baseline bytes exactly;
- * they restore target-ID reloads and the r5 table but lose the direct-call
- * trial's shared-constant lifetimes (16 wrong instructions in 671ed82f4).
- * The compiler's cross-call target pseudo, not pointer qualifiers alone,
- * changes the saved-register interference. Inline scopes are ruled out. */
 
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 

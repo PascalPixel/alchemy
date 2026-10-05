@@ -16,8 +16,7 @@ void Runtime_InstallIwramAndIrqs(void)
 
     ime = &REG_IME;
     zero = 0;
-    /* FAKEMATCH: the do-while keeps the REG_IME store ahead of the IWRAM
-       address load. */
+    /* FAKEMATCH: the do-while keeps the REG_IME store ahead of the IWRAM address load. */
     do {
         *ime = zero;
     } while (0);

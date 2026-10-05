@@ -22,14 +22,6 @@ typedef struct {
 
 void WaitFrames(s32 frames);
 
-/* Shared 22-byte head leaf proved identical for this overlay family. */
-
-/* Contiguous unnamed leaf-owner run for resource_38a. */
-
-/* Complete four-byte leaf: movs r0,#0 followed by bx lr. */
-
-/* Complete eight-byte literal-address getter, including its sole pool word. */
-
 /* Wait at most sixty frames for the object to reach the requested height. */
 
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);

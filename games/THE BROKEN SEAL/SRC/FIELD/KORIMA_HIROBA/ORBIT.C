@@ -75,8 +75,6 @@ extern u8 KorimaHiroba_Messages[];
 extern u8 KorimaHiroba_Actors[];
 extern u8 KorimaHiroba_Extras[];
 
-/* Constant getter; the owner includes its own pool word. */
-
 s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
 {
     u16 *sprite = record->sprite;

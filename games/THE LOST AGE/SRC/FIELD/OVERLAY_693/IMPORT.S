@@ -50,10 +50,10 @@ Func_02000ff8:
 	.endif
 	.endif
 	.endif
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -174,20 +174,20 @@ Func_020010e8:
 	.thumb_func
 Func_020010f0:
 	overlay_veneer EventRuntime_SetCountdownFar
-	.global Event_ClearStatus1c6
+	.global Event_FinishScreenTransition
 	.thumb_func
-Event_ClearStatus1c6:
-	overlay_veneer Event_ClearStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_FinishScreenTransition:
+	overlay_veneer Event_FinishScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_02001108

@@ -118,10 +118,10 @@ Func_02000a40:
 	.endif
 	.endif
 	.endif
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Func_02000a50
 	.thumb_func
 Func_02000a50:
@@ -209,7 +209,7 @@ Func_02000af0:
 	.global Func_02000af8
 	.thumb_func
 Func_02000af8:
-	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer Event_SetDestinationFar
 	.global Func_02000b00
 	.thumb_func
 Func_02000b00:
@@ -250,28 +250,28 @@ Func_02000b18:
 	overlay_veneer Func_080c8390
 	.endif
 	.endif
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
+Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8398
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8398
 	.else
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.endif
 	.endif
-	.global Event_WaitValue1c8Frames
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Event_DelayEffectFramesFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_02000b30

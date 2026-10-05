@@ -714,7 +714,7 @@ Func_02000524:
 	movs r0, #14
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r5, .L_02008778
 	movs r3, #133
 	lsls r3, r3, #2
@@ -848,7 +848,7 @@ Func_02000524:
 	movs r0, #14
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #14
 	movs r1, #0
 	bl Func_02000a60
@@ -1040,7 +1040,7 @@ Func_0200086c:
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #11
 	movs r1, #2
 	bl ObjectMotion_SetActionVariant

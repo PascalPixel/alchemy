@@ -163,7 +163,7 @@ Func_0200012c:
 	bl Object_GetById
 	adds r0, #35
 	strb r5, [r0]
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r2, #241
 	lsls r2, r2, #1
 	adds r3, r6, r2

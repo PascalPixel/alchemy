@@ -560,7 +560,7 @@ gKareiTorebiEvents1:
 	.4byte MsgKareiTorebiYouCantTakeSilkRoadMuch
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte FieldScene_RunScene3ae_02000260
+	.4byte KareiTorebi_AskCarryMessage
 	.4byte 0x00000000
 	.4byte 0x0911000c
 	.4byte MsgKareiTorebiTodayThereAreSupposedToBe
@@ -590,7 +590,7 @@ gKareiTorebiEvents1:
 	.4byte 0x00000000
 	.4byte 0xffff000c
 .endif
-	.4byte FieldScene_RunScene3ae_020002dc
+	.4byte KareiTorebi_RemindBoardShip
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte FieldScene_RunActorThirteenFlagDialogue
@@ -669,7 +669,7 @@ gKareiTorebiEvents3:
 	.4byte KareiTorebi_LeaveScene
 	.4byte 0x00000002
 	.4byte 0x08aa0014
-	.4byte FieldScene_RunScene3ae_02000144
+	.4byte KareiTorebi_MoveGuardAside
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte KareiTorebi_TalkScaryTrip
@@ -681,7 +681,7 @@ gKareiTorebiEvents3:
 	.4byte KareiTorebi_TalkSeasickTourists
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte FieldScene_RunScene3ae_020006c8
+	.4byte KareiTorebi_DeliverParentsMessage
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte MsgKareiTorebiIfYoureGoingToTolbiKeep
@@ -693,7 +693,7 @@ gKareiTorebiEvents3:
 	.4byte MsgKareiTorebiItWasAHardCrossingVery
 	.4byte 0x00008d15
 	.4byte 0xffff040b
-	.4byte FieldScene_RunScene3ae_020006c8
+	.4byte KareiTorebi_DeliverParentsMessage
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte MsgKareiTorebiAfterSeeingTheLooksOnThe

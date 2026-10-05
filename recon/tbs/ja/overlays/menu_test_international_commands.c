@@ -21,7 +21,7 @@
 TEXT_MESSAGE_ENUM(MsgBattleAdditionalPsynergyHelp);
 TEXT_MESSAGE_ENUM(MsgHaidiaComeOnHurry);
 
-void Event_SetValue1d8(s16 message);
+void Event_SetMessageId(s16 message);
 void BattleEv_RunWait(s32 mode, s32 frames);
 s32 PartyInventory_GiveItem(s32 item);
 
@@ -58,9 +58,9 @@ extern u8 MsgDebugGotTreasure[];
 /* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
 
-u8 *SceneData_GetTable93c8(void)
+u8 *MenuTest_GetEntrances(void)
 {
-    return MenuTest_CommandTable;
+    return MenuTest_Entrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -68,14 +68,14 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTable93f8(void)
+u8 *MenuTest_GetExits(void)
 {
-    return MenuTest_CommandTableB;
+    return MenuTest_Exits;
 }
 
-u8 *SceneData_GetTable93fc(void)
+u8 *MenuTest_GetPlacements(void)
 {
-    return MenuTest_CommandTableC;
+    return MenuTest_Placements;
 }
 
 void SceneDialogue_ShowMessageAndWait(s32 arg0)
@@ -173,8 +173,8 @@ void SceneState_ApplyBlockDa2(void)
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void DebugMenu_RunMessageTest(void)
 {
-    Event_SetValue1d8(MsgBattleAdditionalPsynergyHelp);
-    Event_SetValue1d8(MsgHaidiaComeOnHurry);
+    Event_SetMessageId(MsgBattleAdditionalPsynergyHelp);
+    Event_SetMessageId(MsgHaidiaComeOnHurry);
     BattleEv_RunWait(-1, 0);
 }
 #endif
@@ -221,12 +221,12 @@ void DebugMenu_GiveItemToParty(void)
 }
 #endif
 
-s32 SceneData_GetTable9564(void)
+s32 MenuTest_GetEvents(void)
 {
-    return (s32)MenuTest_SlotValues;
+    return (s32)MenuTest_Events;
 }
 
-void FieldScene_ApplyTable9684ValueToFourSlots(void)
+void MenuTest_RaisePartyLevelTarget(void)
 {
     s32 *p;
 

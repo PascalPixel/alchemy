@@ -39,8 +39,7 @@ extern const struct SceneEvent gImiruFuchinEvents6[];
 extern const struct SceneEvent gImiruFuchinEvents7[];
 extern const struct SceneEvent gImiruFuchinEventsOther[];
 
-/* Raised by the entry setup in the scenes that track the leader. It follows
- * the overlay's image. */
+/* Raised by entry setup in scenes that track the leader. */
 s32 ImiruFuchin_TrackLeader;
 
 void ImiruFuchin_ApplyEntrySetup(void);
@@ -237,7 +236,6 @@ void SceneState_RunSlot8OffsetStep(void)
     DialogueLayout_ConfigureGroupOne();
 }
 
-/* Imports; the queried ones are typed for their return value. */
 void FieldScene_RunActor9Transition302(void)
 {
     Engine_AudioPlayCue(0xF1);
@@ -322,7 +320,7 @@ void FieldScene_RunActor8FlaggedSequence(void)
         Engine_GameFlagClear((s32) 0x305);
     } else {
         SceneActor_PlacePairAtOffset(8, 144, 0);
-        /* movs r0,#0xc1 / lsls r0,#2 builds 0x304. */
+
         Engine_GameFlagSet((s32) 0x304);
     }
 
@@ -366,12 +364,10 @@ void ActorPresentation_SetupActorTenForFlag307(void)
     DialogueLayout_ConfigureGroupTwo();
 }
 
-/* Three sites of one import, so three names. */
 void FieldScene_RunActorTenDepthSequence(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    /* r5 = -96 (movs #0x60 / negs), live across the first import call. */
     s32 depth = -96;
 
     Engine_AudioPlayCue((s32) 0xF1);
@@ -388,8 +384,7 @@ void FieldScene_PlaceActorEightByFlags(void)
 {
     Engine_AudioPlayCue((s32) 0xF1);
 
-    /* movs r0,#0xc4 / lsls r0,#2 builds 0x310. The second test is only reached
-     * when the first fails, and both truths take the same path. */
+    /* Either flag takes the same path; test the second only if the first is clear. */
     if (Engine_GameFlagIsSet((s32) 0x310) != 0 || Engine_GameFlagIsSet((s32) 0x30D) != 0) {
         SceneActor_PlacePairAtOffset(8, -48, 0);
         Engine_GameFlagClear((s32) 0x308);
@@ -420,7 +415,6 @@ void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    /* movs r0,#0xc4 / lsls r0,#2 builds 0x310. */
     if (Engine_GameFlagIsSet((s32) 0x310) != 0) {
         return;
     }
@@ -429,10 +423,10 @@ void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
     }
 
     Engine_AudioPlayCue((s32) 0xF1);
-    /* movs r0,#0xc2 / lsls r0,#2 builds 0x308. */
+
     Engine_GameFlagSet((s32) 0x308);
     Engine_GameFlagClear((s32) 0x309);
-    /* movs r1,#0x30 / negs r1,r1 */
+
     SceneActor_PlacePairAtOffset(8, -48, 0);
     Engine_AudioPlayCue((s32) 0x121);
     Engine_TaskWait(2);
@@ -495,24 +489,17 @@ void FieldScene_PlaceActorTenByFlags(void)
     DialogueLayout_ConfigureGroupThree();
 }
 
-/*
- * Scene step for resource_39a.  Nothing is returned; the five pool words
- * after the return belong to the owner.  The tail call shared by the first
- * three arms is written out in each arm rather than adding control flow the
- * reference does not have.  Imports are named by the address their call site
- * computes, and are old-style because arity varies between sites.
- */
 void FieldScene_RunFlag308DialogueBranch(void)
 {
     Engine_AudioPlayCue((s32)0xf1);
-    /* 0x308 is built by shifting. */
+
     if (Engine_GameFlagIsSet((s32)0x308) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 16);
         Engine_GameFlagClear((s32)0x30b);
         Engine_GameFlagSet((s32)0x30c);
         Engine_GameFlagClear((s32)0x30d);
         Engine_GameFlagClear((s32)0x30e);
-        /* 0x310 is built by shifting. */
+
     } else if (Engine_GameFlagIsSet((s32)0x310) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 16);
         Engine_GameFlagClear((s32)0x30b);
@@ -550,25 +537,17 @@ void FieldScene_RunActor10Transition30BTo30E(void)
     DialogueLayout_ConfigureGroupThree();
 }
 
-/*
- * Scene step for resource_39a.  Nothing is returned; the five pool words
- * after the return belong to the owner.  Engine_GameFlagClear serves both a query
- * and a setter, so its result is dropped at the setter site.  The tail call
- * shared by the first two arms is written out in each arm rather than adding
- * a flag the reference does not have.  Imports are named by the address their
- * call site computes, and are old-style because arity varies between sites.
- */
 void FieldScene_RunFlag311DialogueBranch(void)
 {
     Engine_AudioPlayCue((s32)0xf1);
     if (Engine_GameFlagIsSet((s32)0x311) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 48);
         Engine_GameFlagClear((s32)0x30b);
-        /* 0x30c is built by shifting; the result is unused. */
+
         Engine_GameFlagClear((s32)0x30c);
         Engine_GameFlagSet((s32)0x30d);
         Engine_GameFlagClear((s32)0x30e);
-        /* 0x310 is built by shifting. */
+
     } else if (Engine_GameFlagIsSet((s32)0x310) != 0) {
         SceneActor_PlacePairAtOffset(10, 0, 32);
         Engine_GameFlagClear((s32)0x30b);
@@ -639,24 +618,17 @@ void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
     DialogueLayout_ConfigureGroupThree();
 }
 
-/*
- * Field scene step for overlay resource_39a.  Imports are named by the address
- * their call site computes, not by a location in this image, and their
- * interfaces are left open.  Engine_GameFlagClear is reached both as a setter and as
- * a query, so its result is dropped at the setter site.  The first two arms
- * share one tail call, which is why Engine_GameFlagClear is spelled out in each arm.
- */
 void FieldScene_RunActorElevenFlaggedSteps(void)
 {
     Engine_AudioPlayCue((s32)0xf1);
-    /* 0x308 is built by shifting a small immediate, not loaded whole. */
+
     if (Engine_GameFlagIsSet((s32)0x308) != 0 || Engine_GameFlagIsSet((s32)0x30d) != 0) {
         SceneActor_PlacePairAtOffset(11, 0, -64);
         Engine_GameFlagClear((s32)0x30f);
         Engine_GameFlagClear((s32)0x310);
         Engine_GameFlagSet((s32)0x311);
         Engine_GameFlagClear((s32)0x312);
-        /* 0x30c is built by shifting a small immediate, not loaded whole. */
+
     } else if (Engine_GameFlagIsSet((s32)0x30c) != 0) {
         SceneActor_PlacePairAtOffset(11, 0, -112);
         Engine_GameFlagClear((s32)0x30f);
@@ -893,7 +865,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 }
 
 /* The service step and the cave's dialogue layouts. */
-void SceneState_SetServiceZeroValue06(void)
+void ImiruFuchin_TurnLeaderAndExit(void)
 {
     struct FieldActor *work;
 
@@ -924,7 +896,6 @@ void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
     }
 }
 
-/* Imports; the queried ones are typed for their return value. */
 void DialogueLayout_ConfigureGroupOne(void)
 {
     { s32 x = 8; s32 y = 29; Engine_MapCopyCellAttributes(8, 42, 15, 5,  x, y); }
@@ -1081,21 +1052,10 @@ void DialogueLayout_ConfigureGroupThree(void)
     }
 }
 
-/*
- * Four flag-branched layout steps.  Nothing is returned; the three pool words
- * after the return belong to the owner.  The eight bytes of frame are the
- * fifth and sixth arguments of the six-argument layout calls.  Imports are
- * named by the address their call site computes, and are old-style because
- * arity varies between sites.
- */
 void FieldScene_RunFlagBranchedLayoutSteps(void)
 {
 
-    /*
-     * The byte offset 450 is built by shifting, giving entry 225.  The test
-     * is (entry - 1) << 16 against 0x10000 with an unsigned compare, which
-     * selects exactly entries 1 and 2.
-     */
+    /* Entrances 1 and 2 use the upper layout. */
     if ((u32)((u32)((u16)gGameState.entrance - 1) << 16) <= (u32)0x10000) {
         { s32 x = 14; s32 y = 10; Engine_MapCopyCellAttributes(22, 20, 9, 8,  x, y); }
     } else {
@@ -1110,7 +1070,6 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
         { s32 x = 19; s32 y = 17; Engine_MapCopyCellAttributes(19, 11, 3, 1,  x, y); }
     }
 
-    /* 0x314 is built by shifting. */
     if (Engine_GameFlagIsSet((s32)0x314) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 14, 16);
         { s32 x = 22; s32 y = 15; Engine_MapCopyCellAttributes(16, 15, 1, 3,  x, y); }
@@ -1181,8 +1140,7 @@ void FieldScene_RunScene39aSequenceA(void)
 void ImiruFuchin_ApplyEntrySetup(void)
 {
     struct FieldActor *actor;
-    /* FAKEMATCH: retain the existing zero/address-word lifetime; separate
-       locals swap the zero and game-state registers and add a heap-cell add. */
+    /* FAKEMATCH: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. */
     s32 value;
 
     ImiruFuchin_ApplyRoomLayout();
@@ -1298,8 +1256,7 @@ void ImiruFuchin_PlaceDragonsEye(void)
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     GlyphTransfer *glyph;
-    /* FAKEMATCH: separate immediate clears select r1 instead of the
-       native r5 zero value at the same 128-byte extent. */
+    /* FAKEMATCH: the shared zero keeps r5 instead of r1. */
     s32 clear = 0;
 
     actor = Object_Create(22, 0xf80000, 0x80000, 0x980000);
@@ -1319,14 +1276,11 @@ void ImiruFuchin_PlaceDragonsEye(void)
     }
 }
 
-/* Returns a value: the reference sets r1 before r0 at this site. */
 void ImiruFuchin_TakeDragonsEye(void)
 {
 
     Engine_EventBegin();
 
-    /* r5 holds &gImiruFuchinDragonsEye across the calls; the word is reloaded before
-     * the second test. */
     if (gImiruFuchinDragonsEye != NULL) {
         Engine_RunRisingObjectSequence(gImiruFuchinDragonsEye, 3);
     }
@@ -1365,8 +1319,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     struct FieldEffect *obj;
     struct FieldSprite *spr;
     const s32 *script;
-    /* FAKEMATCH: retain the existing three-script copy and 12-byte frame;
-       direct table reads remove 16 bytes and cache the scale script early. */
+    /* FAKEMATCH: copying three scripts keeps the 12-byte frame and prevents an early scale-script load. */
     struct CaveEffectScripts scripts = *(const struct CaveEffectScripts *)gEffectScripts;
 
     obj = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
@@ -1459,7 +1412,7 @@ void FieldScene_RunFourPassCallbackSequence(void)
     }
 
     Engine_TaskWait(30);
-    /* 0xc80 is built by shifting a small immediate, not loaded whole. */
+
     Engine_TaskAddCallback(ImiruFuchin_BlowCaveMouthDust, 0xc80);
     Engine_TaskWait(40);
     Engine_ColorBufferApplyTarget((s32)0x201090, 1);
@@ -1467,16 +1420,16 @@ void FieldScene_RunFourPassCallbackSequence(void)
     Engine_TaskWait(80);
     Engine_TaskRemoveCallback(ImiruFuchin_BlowCaveMouthDust);
     Engine_TaskWait(20);
-    /* 0x10000 is built by shifting a small immediate, not loaded whole. */
+
     Engine_ColorBufferApplyTarget((s32)0x10000, 1);
     Engine_ColorBufferInterpolate(80);
-    /* Same import as in the loop, one argument here. */
+
     Engine_TaskWait(80);
-    /* 0x820 is built by shifting a small immediate, not loaded whole. */
+
     Engine_GameFlagSet((s32)0x820);
     PartyInventory_Discard(230);
     Audio_PlayCueFromEventWork();
-    /* Same import as the first call, no argument register written here. */
+
     Engine_EventEnd();
 }
 
@@ -1501,17 +1454,12 @@ void FieldScene_RunScriptedStep17E3(void)
     Engine_EventEnd();
 }
 
-/*
- * Branch on flag 0x820 -- resource_39a. One arm sets a record flag; the other
- * sets a different flag and writes workspace halfword 370. Nothing is
- * returned, and the owner extends through the three pool words that follow
- * the epilogue.
- */
+/* Show the dragon's eyes, or offer to place the Dragon's Eye when the party has it. */
 void SceneState_SetWorkspace370ByFlag820(void)
 {
 
     Engine_EventBegin();
-    /* movs r0,#0x82 / lsls r0,#4 builds 0x820. */
+
     if (Engine_GameFlagIsSet((s32)0x820) != 0) {
         Engine_MessageShowCentered((s32)MsgFuchinDragonRedEyes, 1);
     } else {
@@ -1580,8 +1528,7 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
  * marker and height before each step. */
 static inline void SceneActor_AdvanceProbe(s32 radius, s32 heading, struct FieldPosition *probe)
 {
-    /* FAKEMATCH: retain the existing inline probe boundary; the direct
-       second call uses a register move instead of the native stack add. */
+    /* FAKEMATCH: the inline probe boundary preserves the second call's stack add instead of a register move. */
     Vector_AddPolarOffset(radius, heading, probe);
 }
 
@@ -1600,27 +1547,20 @@ void SceneActor_StepSubjectAlongHeading(void)
 
     for (;;) {
         heading = gImiruFuchinHeadings[(*(u32 *)gKeysHeld >> 4) & 15];
-        /*
-         * The test is on heading << 16 against 0xffff0000, the signed
-         * halfword -1 meaning "no heading".
-         */
+        /* A heading of -1 means no direction is held. */
         if ((heading << 16) == -0x10000) {
             return;
         }
-        /* No argument register is written before this branch. */
+
         Engine_EventBegin();
 
-        /* The 0x80000 bias is built by shifting, not loaded as a constant. */
         probe.x = (subject->x.fixed & 0xfff00000) + 0x80000;
         probe.y = subject->y.fixed;
         probe.z = (subject->z.fixed & 0xfff00000) + 0x80000;
         z = probe.z;
         x = probe.x;
         goal = GetMapCellCollision(subject->terrain_id, x, z);
-        /*
-         * 0x100000 is built by shifting, not loaded as a constant.  The probe
-         * block is passed by address and is advanced by the callee.
-         */
+        /* Advance the probe to the next cell centre. */
         Vector_AddPolarOffset(0x100000, heading, &probe);
 
         marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
@@ -1631,17 +1571,14 @@ void SceneActor_StepSubjectAlongHeading(void)
             goto tail;
         }
 
-        /* Rewind the probe to the position it held before 0x02004392. */
+        /* Return the probe to the current cell centre. */
         probe.x = x;
         probe.z = z;
         subject->speed = 0x20000;
         subject->acceleration = 0x1999;
         subject->timer = 0;
         Object_SetPosition(subject, x, subject->y.fixed, z);
-        /*
-         * Same call word as the marker lookup, but a two-argument command, so
-         * it keeps its own declaration.
-         */
+
         Object_SetMode(subject, 2);
         ObjectDispatch_ApplyValueToChildren(subject, 48);
         Object_CommitPosition(subject);
@@ -1683,7 +1620,7 @@ finish_probe:
 blocked:
     subject->update = NULL;
     subject->steering_flags |= ACTOR_FACES_MOTION;
-    /* 0x4000 is built by shifting, not loaded as a constant. */
+
     subject->acceleration = 0x4000;
 
 tail:

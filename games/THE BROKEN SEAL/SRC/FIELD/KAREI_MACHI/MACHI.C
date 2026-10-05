@@ -200,7 +200,7 @@ void InitializeOrbitingRenderEffect(s32 id);
 void KareiMachi_SetupEntryActors(void);
 void SceneState_CheckFlags941And940(void);
 void SceneState_ApplyFlagGatedActorEightSetup(void);
-void SceneState_SetWork448AndRunFlag915Step(void);
+void KareiMachi_StartWindowTransition(void);
 void FieldScene_RunMiddleSequence(void);
 
 struct SpriteBits {
@@ -229,8 +229,6 @@ extern s32 KareiMachi_DanceStep;
 
 extern u8 KareiMachi_DanceScriptA[];
 
-/* Each clear builds its own zero; a shared zero variable would live in r5
- * across the calls. */
 static __inline__ void ClearStep(u8 *a)
 {
     s32 z = 0;
@@ -346,7 +344,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTablec6b8(void)
+u8 *KareiMachi_GetExits(void)
 {
     return KareiMachi_SceneTable01;
 }
@@ -548,7 +546,6 @@ void KareiMachi_RunExitDoor(void)
     Engine_EventEnd();
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3a8. */
 void RunSceneArrivalSetup(void)
 {
     s32 two = 2;
@@ -1031,7 +1028,7 @@ void FieldScene_RunStagedGroupSequence(void)
 
 /* Flag 0x200 records that the leader is linked into the actor effect
    work's word at +24. */
-void SceneState_ClearWord24WhenFlag200(void)
+void KareiMachi_ReleaseEffectLeader(void)
 {
     if (GameFlag_IsSet(0x200) != 0) {
         *(s32 *)(gActorEffectWork + 24) = 0;
@@ -1097,7 +1094,7 @@ s32 Scene_Initialize(void)
     } else if (v == (s32)&SceneId_KareiMachi3) {
         SceneState_ApplyFlagGatedActorEightSetup();
     } else if (v == (s32)&SceneId_KareiMachi5) {
-        SceneState_SetWork448AndRunFlag915Step();
+        KareiMachi_StartWindowTransition();
     } else if (v == (s32)&SceneId_KareiMachi6) {
         FieldScene_RunMiddleSequence();
     }
@@ -1185,7 +1182,7 @@ void SceneState_ApplyFlagGatedActorEightSetup(void)
     }
 }
 
-void SceneState_SetWork448AndRunFlag915Step(void)
+void KareiMachi_StartWindowTransition(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (Engine_GameFlagIsSet(0x915) != 0) {
@@ -1841,7 +1838,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Engine_EventWait(20);
     Actor_WalkToAndWait(8, 246, 198);
     Actor_FaceDirection(8, 0, 20);
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
     Camera_SetSpeed(0x9999, 0x1333);
     Camera_MoveTo(0xf80000, -1, 0xaa0000, 1);
     Actor_WalkToAndWait(10, 0x10e, 198);

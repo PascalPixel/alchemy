@@ -68,7 +68,7 @@ Func_02000098:
 	bl WaitFrames
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #0
 	strb r3, [r7]
 	pop {r5, r6, r7, pc}
@@ -359,7 +359,7 @@ Func_0200032c:
 	push {r5, lr}
 	movs r1, #0
 	adds r5, r0, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, [r5, #80]
 	movs r3, #13
 	ldrb r2, [r1, #9]
@@ -991,8 +991,8 @@ Func_0200087c:
 	movs r0, #0
 	movs r1, #39
 	bl Object_SetModeById
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #2
 	movs r0, #21
 	bl Motion_SetVarCbAndRefresh
@@ -1185,8 +1185,8 @@ Func_02000a24:
 	movs r0, #21
 	movs r1, #8
 	bl Object_SetModeById
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #2
 	movs r0, #20
 	bl Motion_SetVarCbAndRefresh
@@ -1531,8 +1531,8 @@ Func_02000d84:
 	movs r2, #0
 	ldrsh r0, [r3, r2]
 	bl Func_02001198
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001088
 	pop {r5, r6, pc}
 .L_02008e00:
@@ -1607,7 +1607,7 @@ Func_02000e04:
 	str r3, [r5, #8]
 	str r2, [r5, #12]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #38
 	movs r2, #19
 	str r3, [sp, #0]
@@ -1621,7 +1621,7 @@ Func_02000e04:
 	movs r0, #16
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #16
 	movs r1, #1
 	bl Object_SetModeById

@@ -4,7 +4,6 @@
    Owner_UpdateRatioPair in RATIOS.C. */
 #include "BATTLE_UNIT.H"
 
-
 void Owner_UpdateSecondInputAndRatios(
     struct BattleUnit *state, s32 input)
 {
@@ -19,8 +18,7 @@ void Owner_UpdateSecondInputAndRatios(
             clamped = input;
         }
     }
-    /* FAKEMATCH: a one-pass loop around the store orders it before the
-       ratio inputs are read, as in the ROM. */
+    /* FAKEMATCH: the one-pass loop keeps the store before the ratio-input reads. */
     do {
         state->pp = clamped;
     } while (0);

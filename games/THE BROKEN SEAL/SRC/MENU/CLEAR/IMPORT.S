@@ -206,22 +206,22 @@ Battle_WaitMode0:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global Event_SetPairWork1c0
+	.global Event_SetDestination
 	.thumb_func
-Event_SetPairWork1c0:
-	overlay_veneer Event_SetPairWork1c0Far
-	.global Event_SetStatus1c6
+Event_SetDestination:
+	overlay_veneer Event_SetDestinationFar
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_ClearStatus1c6
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_FinishScreenTransition
 	.thumb_func
-Event_ClearStatus1c6:
-	overlay_veneer Event_ClearStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_FinishScreenTransition:
+	overlay_veneer Event_FinishScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
-	overlay_veneer Event_WaitValue1c8FramesFar
+Event_WaitTransitionFrames:
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Object_CallSpawnRoutineAtOrigin
 	.thumb_func
 Object_CallSpawnRoutineAtOrigin:

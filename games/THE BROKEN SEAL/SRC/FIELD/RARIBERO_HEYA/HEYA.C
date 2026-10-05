@@ -105,8 +105,7 @@ void RariberoHeya_RunItemShop(s32 keeper)
 {
     struct FieldActor *leader = Object_GetById(0);
 
-    /* FAKEMATCH: the halfword cast of the masked facing keeps the
-     * reference's compare. */
+    /* FAKEMATCH: the halfword cast of the masked facing keeps the reference's compare. */
     if ((u16)((leader->facing + 0x2000) & 0xc000) == 0xc000) {
         Shop_Run(32, keeper);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
@@ -264,7 +263,7 @@ void FieldScene_RunThreeCallSequence(void)
     Engine_EventShowMessage(0xC, 0);
 }
 
-void SceneState_ForwardWord16cAndApply7b(void)
+void RariberoHeya_RequestTouchedExitAndPlayCue(void)
 {
     struct EventWork *work = gEventWork;
     s16 *p = (s16 *)&work->touched_trigger;

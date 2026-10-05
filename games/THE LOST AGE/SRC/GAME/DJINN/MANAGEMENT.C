@@ -70,7 +70,6 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
     return best_no;
 }
 
-/* ☀️'s; ⚓️ reads the owned word into a temporary before testing it. */
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 {
     struct OwnerDjinnState *state = Owner_GetState(owner);

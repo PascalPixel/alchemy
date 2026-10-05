@@ -151,8 +151,7 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void PsynergyMenu_CreateEntryGrid(void);
 void PsynergyMenu_CloseWindows(void);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-/* The definition returns s32. These legacy menu callers consume the low
- * byte; retaining that transport also preserves their native move form. */
+/* The definition returns s32; these menu callers consume its low byte. */
 u8 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode);
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 owner_index);
 s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);

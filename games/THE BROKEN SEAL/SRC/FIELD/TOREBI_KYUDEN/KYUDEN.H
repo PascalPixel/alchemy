@@ -2,17 +2,14 @@
 #define TOREBI_KYUDEN_KYUDEN_H
 extern struct EventWork *gEventWork;
 
-/*
- * The imports only the palace scene calls, by their own names; the launch
- * keeps an inline because its direct call changes the palace's bytes.
- */
+/* Services used by the palace scene. */
 struct OwnerState;
 
 void Audio_PlayCueFromEventWork(void);
 void Battle_ResetEffectCounterFar(void);
 void DisplayTransition_InitializeBattleEffectStateFar(s32 first);
-void Event_SetStatus1c6Far(void);
-void Event_WaitValue1c8FramesFar(void);
+void Event_StartScreenTransitionFar(void);
+void Event_WaitTransitionFramesFar(void);
 void Inn_PlaySleepFar(s32 first);
 void Engine_InventorySnapshotRestore(void);
 void Map_ClearLayerEntryFlagFar(s32 first);
@@ -55,10 +52,6 @@ extern s32 gKeysHeld;
 
 extern u8 TorebiKyuden_EmptyTable[];
 extern u8 TorebiKyuden_MessageTable[];
-
-/* Contiguous unnamed leaf-owner run for resource_3b8. */
-
-/* Contiguous unnamed leaf-owner run for resource_3b8. */
 
 extern u8 TorebiKyuden_MiddleActionScript[];
 

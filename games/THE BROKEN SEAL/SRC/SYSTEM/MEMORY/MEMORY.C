@@ -48,8 +48,7 @@ void Ui_LoadWindowGraphics(void)
             REG_DMA3);
     Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
             REG_DMA3);
-    /* FAKEMATCH: the two do-while blocks keep the value-before-address
-       order of the palette stores */
+    /* FAKEMATCH: the two do-while blocks keep the value-before-address order of the palette stores */
     do {
         s32 black = 0;
         PLTT_BACKDROP = black;

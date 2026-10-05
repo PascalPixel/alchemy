@@ -31,8 +31,6 @@ extern void Object_SetModeById(s32, s32);
 extern void BattleFx_PlayQueuedSound(void);
 extern void Audio_PlayCue(s32);
 
-/* Called through this helper, not directly: the copied arguments keep the
- * argument order the reference schedules. */
 static __inline__ void ConfigureStagedActorMotion(
     s32 actor_id, s32 movement_rate, s32 movement_step)
 {
@@ -331,8 +329,7 @@ found:
 
 void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
-    /* FAKEMATCH: the integer cell read keeps the incoming probe spills
-     * before the cache load; the native pointer read reorders them. */
+    /* FAKEMATCH: the integer cell read keeps incoming probe spills before the cache load. */
     struct MapScrollWork *workspace;
     struct StagedActor *actor;
     struct StagedActorProbePosition original_position;

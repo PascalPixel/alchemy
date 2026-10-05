@@ -238,7 +238,7 @@ Func_080e4730:
 	bl Object_GetById
 	mov r6, r11
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r1, #1
 	movs r5, #24
 	ldrsh r0, [r6, r5]

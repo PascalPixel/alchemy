@@ -688,7 +688,7 @@ Func_0200051c:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #128
 	movs r0, #14
 	lsls r1, r1, #5
@@ -855,8 +855,8 @@ Func_0200051c:
 	bl GameFlag_Test
 	cmp r0, #0
 	bne .L_0200878e
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #152
 	movs r2, #152
 	lsls r1, r1, #7
@@ -2023,7 +2023,7 @@ Func_02001230:
 	strb r3, [r1]
 	movs r1, #0
 	str r4, [sp, #0]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r4, [sp, #0]
 	lsls r6, r6, #16
 	lsls r4, r4, #16

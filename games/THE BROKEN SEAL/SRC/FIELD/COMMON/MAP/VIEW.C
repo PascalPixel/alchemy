@@ -1,0 +1,199 @@
+#include "RUNTIME_MEM.H"
+#include "RESOURCE.H"
+#include "BATTLE_RUNTIME.H"
+/* Field: show the world map. The map layers are hidden and the map picture
+   is decoded over BG1 until A or B is pressed, then the field comes back.
+   The field mode passes the picture's resource id; the body loads the same
+   id itself. */
+#include "TYPES.H"
+#include "DMA.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "IO_WRITE_QUEUE.H"
+#include "IO_REG.H"
+#include "RESOURCE_IDS.H"
+#include "OBJECT_LOOKUP.H"
+#include "GLOBAL_CELLS.H"
+#include "MAP.H"
+#include "FIELD_EVENT.H"
+#include "EVENT_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
+#include "ANIMSPR.H"
+#include "HEAP_STATE.H"
+
+void Map_UpdateWorldMapMarkers(void);
+extern u8 gMapCellBuffer[];
+
+extern u8 MsgNotOnMap[];
+extern u32 gKeysRepeat;
+void Event_FinishScreenTransition(void);
+void Event_StartScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void WaitFrames(s32 frames);
+void BattleFx_SetupResourcesAndWindow(void);
+void BattleFx_CleanupResourcesAndWindow(void);
+void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+void Map_LoadAreaGraphicsFar(void);
+
+extern u32 gKeysHeld;
+void Battle_InitializeRenderObject(void);
+void BattleFx_ScheduleRatioTransition(s32, s32);
+
+void Map_ShowWorldMap(s32 picture)
+{
+    /* FAKEMATCH: one-pass loops order display-control setup, the spilled layer load and the IME read; the count uses a halfword store. */
+    /* FAKEMATCH: the shared slot 8/6 word-cell reads preserve the saved-layer spill and avoid four extra bytes. */
+    struct MapState *map = *(struct MapState **)((u8 *)gWorkSlot + 8 * sizeof(void *));
+    struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
+    struct ObjectSystemWork *menu = *(struct ObjectSystemWork **)((u8 *)gWorkSlot + 6 * sizeof(void *));
+    s32 resource = (s32)&ResourceId_WorldMapPicture;
+    struct MapAnimation *layer;
+    u8 saved_flags[16];
+    s32 i;
+    u8 *graphics;
+    s32 saved_status;
+    s16 blend;
+
+    if (((struct EventRuntime *)field)->mode_19e != 3)
+        return;
+    ((struct ObjectRuntime *)field->view_center)->movement_state = 1;
+    saved_status = field->transition_frames;
+    field->transition_frames = 6;
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    layer = map->anim;
+    for (i = 0; i < 16; i++) {
+        saved_flags[i] = layer->paused;
+        layer->paused = 1;
+        layer++;
+    }
+    menu->suspended = 1;
+    WaitFrames(1);
+    blend = REG_BLDALPHA;
+    graphics = Resource_GetTableEntry(resource);
+    Dma_Set(graphics, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | (448 / 4), REG_DMA3);
+    BG_PLTT[0] = 0;
+    Resource_DecodeType01(graphics + 448, (void *)gMapCellBuffer);
+    Dma_Set((void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
+    {
+        /* FAKEMATCH: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
+        s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;
+        REG_BG1CNT = v;
+        v = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+        REG_DISPCNT = v;
+    }
+    BattleFx_SetupResourcesAndWindow();
+    Scheduler_AddOrUpdateCallback((s32)Map_UpdateWorldMapMarkers, 0xc80);
+    if (GameFlag_TestFar(284))
+        UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotOnMap, 1);
+    do {
+        WaitFrames(1);
+    } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
+    Scheduler_RemoveCallback((u32)Map_UpdateWorldMapMarkers);
+    BattleFx_CleanupResourcesAndWindow();
+    {
+        s32 v;
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        do {
+            v = DISPCNT_OBJ_1D_MAP;
+        } while (0);
+        REG_DISPCNT = v;
+    }
+    Map_LoadAreaGraphicsFar();
+    {
+        volatile u16 *ime;
+        struct IoWriteQueue *q;
+        u32 saved;
+        s32 count;
+
+        q = &gIoWriteQueue;
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        do {
+            ime = &REG_IME;
+            saved = *ime;
+        } while (0);
+        *ime = (u16)ime;
+        count = q->count;
+        if (count <= 31) {
+            u32 *destination = q->entries[count];
+            *(u16 *)&q->count = count + 1;
+            *destination++ = (u16)blend;
+            *destination++ = (u32)&REG_BLDALPHA;
+            *destination = 0x20000;
+        }
+        *ime = saved;
+    }
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+    do {
+        layer = map->anim;
+    } while (0);
+    for (i = 0; i < 16; i++) {
+        layer->paused = saved_flags[i];
+        layer++;
+    }
+    menu->suspended = 0;
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    field->transition_frames = saved_status;
+    ((struct ObjectRuntime *)field->view_center)->movement_state = 0;
+}
+
+void BattleFx_UpdateObjectVisibilityBounds(void)
+{
+    /* FAKEMATCH: the discarded object lookup remains before the runtime object address load. */
+    struct ObjectRuntime *object;
+    s32 x;
+    s32 y;
+    s32 left;
+    s32 right;
+    s32 top;
+    s32 bottom;
+    u32 id;
+
+    Object_GetById(gGameState.selected_actor);
+    object = (struct ObjectRuntime *)gEventWork->view_center;
+    x = object->x;
+    left = x + 0xFEC00000;
+    right = x + 0x01400000;
+    y = object->z;
+    top = y + 0xFDA80000;
+    bottom = y + 0x01900000;
+
+    id = 8;
+    do {
+        object = ObjectTable_Get(id);
+
+        if (object != 0) {
+            s32 ox = object->x;
+            s32 oy = object->z;
+
+            if (ox < left || ox > right ||
+                oy < top || oy > bottom) {
+                object->animation_kind = 0;
+            } else {
+                object->animation_kind = 1;
+            }
+        }
+        id++;
+    } while (id <= 65);
+}
+
+void BattleFx_RunVisibilityTransition(void)
+{
+  if (((struct EventRuntime *)Runtime_AllocateBlock(27, 0xccc))->mode_19e == 3)
+  {
+    Scheduler_EnableUnmaskedOverlayCallbacks();
+    BattleFx_UpdateObjectVisibilityBounds();
+    Battle_InitializeRenderObject();
+    BattleFx_ScheduleRatioTransition(0x9D89, 6);
+    if ((*((volatile u32 *) ((u32)&gKeysHeld))) & KEY_L)
+    {
+      do
+      {
+        WaitFrames(1);
+      }
+      while ((*((volatile u32 *) ((u32)&gKeysHeld))) & KEY_L);
+    }
+    BattleFx_ScheduleRatioTransition(0x10000, 6);
+    Scheduler_DisableOverlayCallbacks();
+  }
+}

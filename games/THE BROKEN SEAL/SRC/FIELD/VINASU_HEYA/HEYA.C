@@ -142,7 +142,7 @@ void RunStagedActorTransition(void)
     Object_SetMode(leader, 1);
 }
 
-s32 SceneState_FillGridCellByte2(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
+s32 VinasuHeya_FillCellCollisionCodes(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
 {
     u8 *g = gMapWork[0];
     u8 *base;
@@ -185,7 +185,7 @@ void SceneActor_ApplySlotsMatchingKind212(void)
     }
 }
 
-s32 OverlayObject_ApplyLowNibbleOfField100(struct FieldActor *obj)
+s32 VinasuHeya_UpdateChildFromTimer(struct FieldActor *obj)
 {
     ObjectGroup_SetChildValue(obj, obj->timer & 15);
     return 0;
@@ -324,12 +324,12 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     }
 }
 
-void SceneState_StoreLookupZeroToWord24(void)
+void VinasuHeya_AttachEffectLeader(void)
 {
     *(s32 *)(gActorEffectWork + 24) = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-void SceneState_ClearWorkspaceWord24(void)
+void VinasuHeya_ReleaseEffectLeader(void)
 {
     *(s32 *)(gActorEffectWork + 24) = 0;
 }
@@ -395,20 +395,14 @@ void OverlayObject_WaitUntilIdle(struct BusyObject *obj)
     }
 }
 
-/*
- * Owner at 0x0200096c.  Add the velocity at +68/+72/+76 into the position at
- * +8/+12/+16, decay the X and Z velocities, accumulate the rates at +48/+52
- * into +24/+28, and advance the sprite angle by the record's step.  The Z
- * decay must stay written as a signed divide by 16 -- the negative bias and
- * arithmetic shift are what that division compiles to.
- */
+/* Advance position, decay X and Z velocity, accumulate the two rates and advance the sprite angle; Z decay divides by sixteen toward zero. */
 void Effect_AdvanceMotion(struct Effect_0200096c *effect)
 {
     s32 velocity_z;
     struct Sprite_0200096c *sprite;
     s32 velocity_x;
 
-    /* The block keeps the Z load after the Y store. */
+
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity[0];
@@ -688,7 +682,7 @@ no_match:
     return (const struct ScenePlacement *)gVinasuHeyaPlacementsOther;
 }
 
-void SceneState_SetFlag953(void)
+void VinasuHeya_ShowLockedDoorMessage(void)
 {
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
@@ -1118,9 +1112,7 @@ void Scene_RunActorLeapSequence(void)
         OverlayObject_SpawnWithMode14(rec7->x.fixed, 0, z, 223);
     }
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    /* FAKEMATCH: the existing map adapter keeps destination setup and
-       zero/state scheduling; the direct Engine call changes nine instruction
-       bytes in this complete localized leap. */
+    /* FAKEMATCH: the existing map adapter keeps destination setup and zero/state scheduling; the direct Engine call changes nine instruction bytes in this complete localized leap. */
     Map_CopyCellAttributes(33, 35, 7, 1, 33, 34);
     *state = 3;
 #else

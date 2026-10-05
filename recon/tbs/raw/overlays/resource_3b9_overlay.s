@@ -1261,10 +1261,10 @@ gKorashiamuIriguchiEvents3:
 	.4byte SceneDialogue_RunActor13MessageByFlag962
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte FieldScene_RunScene3b9_02000334
+	.4byte KorashiamuIriguchi_TalkToActorFourteen
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte FieldScene_RunScene3b9_0200039c
+	.4byte KorashiamuIriguchi_TryLuckyGuess
 	.4byte 0x00008d15
 	.4byte 0x09620008
 	.4byte MsgKorashiamuIriguchiIWonderWhichWarriorWillBe
@@ -1332,25 +1332,25 @@ gKorashiamuIriguchiEvents1Entrance12:
 	.4byte MsgKorashiamuIriguchiIAmMorganIAmThe
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte FieldScene_RunScene3b9_02000468
+	.4byte KorashiamuIriguchi_IntroduceSecondSeed
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte FieldScene_RunScene3b9_020004c8
+	.4byte KorashiamuIriguchi_FrightenActorFourteen
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte SceneDialogue_ShowLine2118WithActor15Steps
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte FieldScene_RunScene3b9_0200055c
+	.4byte KorashiamuIriguchi_CheerForDekka
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte FieldScene_RunActorSeventeenDialogueSteps
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte FieldScene_RunScene3b9_02000648
+	.4byte KorashiamuIriguchi_IntroduceSeventhSeed
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte FieldScene_RunScene3b9_020006bc
+	.4byte KorashiamuIriguchi_AskReadyForFinals
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte MsgKorashiamuIriguchiYouCannotLeaveUntilTheFinals

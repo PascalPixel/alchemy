@@ -17,7 +17,7 @@ Func_080cf3b4:
 	beq .L_080cf3f0
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r1, .L_080cf41c
 	adds r0, r5, #0
 	bl ObjectDispatch_InitializeFar

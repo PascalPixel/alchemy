@@ -3,10 +3,7 @@
 #include "BATTLE_UNIT.H"
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
-/* NONMATCHING: 3 halfwords. Reload loads the 0x0be6 message base into r3; the
- * reference reloads it into r0, the call's own argument register. Spellings
- * of the sum (temporary, nested call, split add, base variable) move nothing.
- */
+
 #include "TYPES.H"
 
 extern struct CharacterMenuState *gMenuWork;
@@ -15,7 +12,6 @@ void UiWork_PushValueSlotFar(u32 quantity, s32 style);
 void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
 void UiText_RenderWideStringAtOffsetFar(void *buffer, struct UiWindow *destination, s32 offset, s32 terminator);
 
-/* The message id base is a link-time symbol, loaded from the literal pool. */
 extern u8 MsgProgressHelp;
 
 /* The characters of the help line: the Japanese line is shorter. */

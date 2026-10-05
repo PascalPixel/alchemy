@@ -27,7 +27,6 @@
 #define BRANCH_FIELD(site, target) \
     ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
-
 extern const u32 SentouKouka_YomiGyaku[];
 extern const u32 SentouKouka_YomiJun[];
 extern const u32 SentouKouka_NuriJun[];
@@ -83,11 +82,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 #undef MARK
 #undef PATCH
 
-    /* FAKEMATCH: each writing step is a do-while statement of its own. The
-       reference keeps every step's instructions together and in the order
-       of the list, though the scheduler moves instructions freely inside a
-       step and all through the counting pass; only the loop notes such a
-       statement leaves behind stop it. */
+    /* FAKEMATCH: one-pass blocks keep each writing step together and in list order while allowing scheduling within each step. */
 #define PUT(word) do { *dst++ = (word); } while (0)
 #define COPY(n) do { \
         Dma_Set(src, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \

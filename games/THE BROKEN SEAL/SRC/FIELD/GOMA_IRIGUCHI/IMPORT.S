@@ -47,11 +47,11 @@ Engine_ActorSetSpriteFlags:
 	.global SetOverlayObjectMode
 	.thumb_func
 SetOverlayObjectMode:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
@@ -178,7 +178,7 @@ SetOverlayObjectSlot:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:

@@ -126,7 +126,7 @@ Func_020000b8:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008278
 	mov r1, r9
 	str r3, [r6, #108]
@@ -951,7 +951,7 @@ Func_0200057c:
 	bl Engine_ObjectSetScript
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Object_SetPartAttribute
@@ -2647,8 +2647,8 @@ Func_02001380:
 	movs r2, #0
 	movs r0, #17
 	bl Func_02004934
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #158
 	lsls r0, r0, #4
 	bl GameFlag_SetBit
@@ -3138,8 +3138,8 @@ Func_02001880:
 	movs r1, #0
 	movs r2, #0
 	bl Func_02004934
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_020048b4
 	movs r0, #11
 	bl Func_02004a04
@@ -3368,8 +3368,8 @@ Func_02001aa4:
 	movs r1, #0
 	movs r2, #0
 	bl Func_02004934
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_020048b4
 	movs r0, #12
 	bl Func_02004a04
@@ -6966,8 +6966,8 @@ Func_02003b6c:
 	bl WaitFrames
 	movs r0, #123
 	bl Engine_AudioPlayCue
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r3, #170
 	lsls r3, r3, #1
 	add r3, r9
@@ -7087,8 +7087,8 @@ Func_02003ce4:
 	bl Func_02004a24
 	movs r0, #123
 	bl Engine_AudioPlayCue
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #13
 	bl Func_02004a04
 	b .L_0200bd2a
@@ -7145,8 +7145,8 @@ Func_02003d30:
 	movs r0, #1
 	bl WaitFrames
 	lsls r5, r5, #7
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #184
 	movs r2, #128
 	movs r0, #16
@@ -7391,8 +7391,8 @@ Func_02003f78:
 	bl Func_0200482c
 	movs r0, #1
 	bl WaitFrames
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r0, #128
@@ -7735,7 +7735,7 @@ Func_020041b8:
 	movs r0, #16
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	add sp, #8
 	pop {pc}
 	.2byte 0x0000
@@ -7825,7 +7825,7 @@ Func_0200430c:
 	adds r0, r6, #0
 	movs r1, #0
 	strb r5, [r7]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #8
 	str r3, [r6, #24]
@@ -8129,11 +8129,11 @@ Func_02004534:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl WaitFrames
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r5, #0
@@ -8199,7 +8199,7 @@ Func_02004534:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	bl Func_020048cc
 	movs r2, #241
 	lsls r2, r2, #1

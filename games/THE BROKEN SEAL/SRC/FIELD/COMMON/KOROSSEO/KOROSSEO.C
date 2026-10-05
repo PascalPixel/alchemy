@@ -80,8 +80,7 @@ void Korosseo_LoadPortrait(s32 id)
 
 void Korosseo_UpdateModeTask(void)
 {
-    /* FAKEMATCH: transfer the exact queue read boundary and count-store alias.
-     * Each publication owns its cursor; only the hardware pointers persist. */
+    /* FAKEMATCH: the queue read boundary and count-store alias keep separate cursors for each write. */
     /* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
     u32 *write = Korosseo_ModeTaskSprites;
     struct Sprite *sprite = (struct Sprite *)write;
@@ -269,6 +268,6 @@ render:
     }
     queue = &gIoWriteQueue;
     ime = &REG_IME;
-    QueueRegister(0x04000050, 0x3f00)
-    QueueRegister(0x04000052, ((16 - blend) << 8) | blend)
+    QueueRegister((u32)&REG_BLDCNT, 0x3f00)
+    QueueRegister((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend)
 }

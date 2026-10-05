@@ -6,7 +6,7 @@
 Func_02000038:
 	push {lr}
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {pc}
 	.section .text.x02008044,"ax",%progbits
@@ -344,7 +344,7 @@ Func_020002bc:
 	adds r6, r0, #0
 	movs r3, #2
 	ldrsh r5, [r7, r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r2, r8
 	lsls r0, r2, #16
 	lsrs r0, r0, #16
@@ -564,7 +564,7 @@ Func_02000414:
 	bl Func_02004bd0
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r1, r8
 	movs r2, #128
 	lsls r2, r2, #10
@@ -1777,7 +1777,7 @@ Func_02000e3c:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #0
 	movs r1, #128
 	str r3, [r6, #108]
@@ -1919,8 +1919,8 @@ Func_02000e3c:
 	adds r3, r3, r1
 	adds r2, #255
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	adds r0, r7, #0
 	bl Func_02004d30
 	pop {r5, r6, r7, pc}
@@ -1996,7 +1996,7 @@ Func_02000fe0:
 	ldr r0, [r3]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #0
 	mov r2, r8
 	movs r1, #128
@@ -2097,8 +2097,8 @@ Func_02000fe0:
 	adds r3, r3, r2
 	adds r2, #93
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #11
 	bl Func_02004d30
 	pop {r3, r5}
@@ -2274,7 +2274,7 @@ Func_02001234:
 	cmp r5, #0
 	beq .L_02009252
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r3, r5, #0
 	adds r3, #89
 	movs r2, #0
@@ -2759,8 +2759,8 @@ Func_0200138c:
 	movs r3, #2
 	orrs r3, r2
 	strb r3, [r0]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #18
 	bl Object_GetById
 	adds r3, r0, #0
@@ -3580,7 +3580,7 @@ Func_02001c44:
 	adds r3, #4
 	strb r6, [r3]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, .L_02009c70
 	adds r0, r5, #0
 	bl Func_02004bd0
@@ -3840,7 +3840,7 @@ Func_02001e1c:
 	strb r3, [r0, #9]
 	movs r1, #0
 	adds r0, r5, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, .L_02009e5c
 	adds r0, r5, #0
 	bl Func_02004bd0
@@ -4117,7 +4117,7 @@ Func_0200202c:
 	adds r3, #4
 	strb r6, [r3]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Func_02004bc0
@@ -4516,7 +4516,7 @@ Func_020022e4:
 	cmp r5, #0
 	beq .L_0200a372
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r3, r5, #0
 	movs r2, #128
 	adds r3, #98
@@ -5491,7 +5491,7 @@ Func_020029c8:
 	bl Func_02004bd0
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r1, r10
 	movs r2, #128
 	lsls r2, r2, #10
@@ -5657,7 +5657,7 @@ Func_02002b4c:
 	bl Func_02004bd0
 	movs r1, #0
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #160
 	lsls r3, r3, #9
 	adds r5, r5, r3
@@ -6146,7 +6146,7 @@ Func_02002f4c:
 	bl Func_02004bd0
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r3, r5, #0
 	adds r3, #85
 	movs r6, #0
@@ -7654,7 +7654,7 @@ Func_02003b30:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_0200bcf0
 	mov r1, r9
 	str r3, [r6, #108]
@@ -8443,7 +8443,7 @@ Func_02004160:
 	ldr r0, [r3]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #226
 	movs r3, #128
 	lsls r2, r2, #4
@@ -8518,8 +8518,8 @@ Func_02004160:
 	adds r3, r3, r2
 	adds r2, #93
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	add sp, #8
 	pop {r3, r5}
 	mov r8, r3
@@ -8585,8 +8585,8 @@ Func_020042f8:
 	adds r3, r3, r4
 	lsls r2, r2, #1
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #204
 	bl Func_02004de0
 	movs r3, #3
@@ -9337,8 +9337,8 @@ Func_020048e8:
 	lsls r3, r3, #1
 	mov r1, r8
 	str r3, [r2, r1]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02004738
 	bl Func_02004dc8
 	movs r0, #40
@@ -9402,7 +9402,7 @@ Func_02004970:
 	strb r3, [r1]
 	movs r1, #0
 	str r4, [sp, #0]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r4, [sp, #0]
 	lsls r6, r6, #16
 	lsls r4, r4, #16

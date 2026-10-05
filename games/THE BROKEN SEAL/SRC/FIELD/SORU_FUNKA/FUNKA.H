@@ -63,8 +63,6 @@ typedef struct {
     s32 unk40;
 } Ent_02002c1c;
 
-/* resource_381 owner at 0x02002e0c (80 bytes), the twin of resource_371:3fb4.
- * Ported from that byte-exact owner: same field layout, same two calls. */
 struct Actor_02002e0c {
     u8 filler00[8];
     s32 x;                          /* 0x08 */
@@ -79,8 +77,6 @@ struct Actor_02002e0c {
     struct Actor_02002e0c *anchor;  /* 0x68 */
 };
 
-/* resource_381 owner at 0x02002e5c (82 bytes), the twin of resource_371:4004.
- * Ported from that byte-exact owner: same field layout, same two calls. */
 struct Actor_02002e5c {
     u8 filler00[8];
     s32 x;                          /* 0x08 */
@@ -114,18 +110,13 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b);
 void SceneState_ConfigureEightCornerRegions(void);
 void FieldScene_RunStepByRuntimeBits(s32 a);
 void SceneState_SetValue140Mode0(void);
-void FieldScene_CallHelper6620(void);
+void SoruFunka_CleanupSceneObjects(void);
 void FieldScene_RunActor15TwoStep(void);
 void BattleEffect_CleanupSceneObjects(void);
 
-/*
- * Table getters published from the header words of overlay resource_381.
- * Only one overlay is resident at 0x02000000 at a time, so an address that
- * matches another overlay's names different bytes, not the same table.
- */
+/* The eruption scene's table getters. */
 
-/* Set up the scene actors, run the two presentation phases, and dismiss the
- * actors through the shared exit sequence. Retained pending an exact build. */
+/* Set up the scene actors, run both presentation phases and dismiss the actors. */
 
 void SceneEffect_AdvanceTenEntryTimers(void);
 

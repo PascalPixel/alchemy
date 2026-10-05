@@ -5,9 +5,7 @@
 #include "UI.H"
 #include "BATTLE_RUNTIME.H"
 
-/* The panel loads the "Exp" label from the literal pool and reaches the four
-   stat labels, which sit 23 messages before it, by subtracting; the
-   class-name base is loaded from the pool too. */
+/* The four stat labels precede "Exp" by 23 messages. */
 extern u8 MsgExpLabel[];
 extern u8 MsgClassName;
 

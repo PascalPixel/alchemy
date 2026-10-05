@@ -1,0 +1,129 @@
+#include "SHOP.H"
+#include "BATTLE_RUNTIME.H"
+#include "PARTY_STATE.H"
+#include "TBS_EDITION.H"
+#include "UI.H"
+
+extern u8 MsgYouHave;
+extern u8 MsgShopNoneInStock;
+void UiWindow_Clear(s32 window);
+s32 Item_FindSlot(s32 unit_id, s32 item_id);
+void UiWork_PushValueSlotFar(s32 kosuu, s32 style);
+struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
+
+extern struct ShopRuntime *gMenuWork;
+extern u8 MsgHowManyToBuy;
+extern void UiMessage_ShowAndWait(s32);
+extern s32 Item_FindSlot(s32, s32);
+extern s32 Item_AdjustCounterFar(s32, s32);
+
+/* Draw the member's inventory in three rows of five icons, with the
+   number already owned above them when the chosen item is in the bag. */
+void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
+{
+
+    u8 *unit;
+    s32 x;
+    s32 y;
+    s32 item_index;
+    s32 slot;
+    s32 off;
+    s32 first_offset;
+    s32 item_offset;
+    s32 next_offset;
+    u8 *icon;
+
+    unit = (u8 *)Owner_GetStateFar(unit_id);
+    x = 8;
+    y = 8;
+    if (window != 0) {
+        UiWindow_Clear(window);
+        slot = Item_FindSlot(unit_id, item_id);
+        if (slot != -1) {
+            off = slot * 2 + 216;
+            UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgYouHave, window, 0, 0);
+        } else {
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgShopNoneInStock, window, 0, 0);
+        }
+        item_index = 0;
+        first_offset = 216;
+        if (*(u16 *)(unit + first_offset) != 0) {
+            for (;;) {
+                item_offset = item_index * 2 + 216;
+                icon = (u8 *)UiIcon_Draw(*(u16 *)(unit + item_offset), 27,
+                                     window, x, y);
+                icon[15] = 252;
+                x += 16;
+                if (item_index == 4) {
+                    x = 8;
+                    y += 16;
+                }
+                if (item_index == 9) {
+                    x = 8;
+                    y += 16;
+                }
+                item_index++;
+                if (item_index > 14)
+                    break;
+                next_offset = item_index * 2 + 216;
+                if (*(u16 *)(unit + next_offset) == 0)
+                    break;
+            }
+        }
+    }
+}
+
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#define ACTION_Y 120
+#else
+#define ACTION_Y 128
+#endif
+
+s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
+{
+    struct ShopRuntime *shop;
+    struct BattleUnit *unit;
+    struct ItemDefinition *item;
+    s32 quantity;
+    s32 chance;
+    s32 slot;
+    s32 maximum;
+    s32 result;
+
+    shop = gMenuWork;
+    unit = Owner_GetStateFar(unit_id);
+    item = Item_Get(item_id);
+    result = 1;
+    if (item->flags & 0x10) {
+        UiMessage_ShowAndWait((s32)&MsgHowManyToBuy);
+        slot = Item_FindSlot(unit_id, item_id);
+        if (slot != -1) {
+            quantity = (unit->inventory[slot] >> 11) + 1;
+        } else {
+            quantity = 0;
+        }
+
+        chance = 30;
+        if (item->price != 0)
+            chance = (u32)(gGameState.coins) / item->price;
+
+        if (shop->party_action == 2) {
+            maximum = Item_AdjustCounterFar(item_id, 0);
+            if (chance > maximum)
+                maximum = Item_AdjustCounterFar(item_id, 0);
+            else
+                maximum = chance;
+            chance = maximum;
+        }
+
+        chance += quantity;
+        if (chance > 30)
+            chance = 30;
+
+        shop->mode = 12;
+        Shop_PlaceCursor(0, ACTION_Y, 0x30);
+        result = Shop_SelectQuantity(quantity, chance, item->price);
+    }
+    return result;
+}

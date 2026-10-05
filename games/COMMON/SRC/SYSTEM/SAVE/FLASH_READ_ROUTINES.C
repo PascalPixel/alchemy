@@ -56,11 +56,7 @@ check:
         goto loop;
 }
 
-/*
- * The routine in gFlashReadRoutine is invoked through the compiler's r1
- * indirect-call veneer, so it takes one real argument.  The explicit byte
- * narrowing mirrors the three byte-valued inputs at the call boundary.
- */
+/* Flash status polling callback. */
 typedef s32 (*FlashPollRoutine)(s32 argument);
 
 void StartFlashTimer(s32 timing_index);

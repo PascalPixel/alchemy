@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer Scene_RunEmptyScene
-	overlay_veneer SceneData_GetTable81a8
-	overlay_veneer SceneData_GetTable81d8
-	overlay_veneer SceneData_GetTable81ec
-	overlay_veneer SceneData_GetTable8264
+	overlay_veneer TestRooms_GetEntrances
+	overlay_veneer TestRooms_GetExits
+	overlay_veneer TestRooms_GetPlacements
+	overlay_veneer TestRooms_GetEvents
 	overlay_veneer SceneData_ReturnZero

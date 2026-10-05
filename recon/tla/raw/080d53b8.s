@@ -177,7 +177,7 @@ Func_080d53b8:
 	str r0, [sp, #4]
 	ldr r1, [sp, #4]
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r7, #48]
@@ -300,7 +300,7 @@ Func_080d53b8:
 	orrs r2, r6
 	adds r1, r2, #0
 	str r2, [sp, #4]
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r0, #4
 	bl EventRuntime_Wait
 	movs r3, #128

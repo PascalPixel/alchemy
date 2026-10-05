@@ -8,8 +8,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/CLEAR.o"(.text)
         "*/resource_370_overlay.o"(.text.x020083cc)
-        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/CLEAR2.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/CLEAR3.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/TILEGRID.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/PASSWORD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/IMPORT.o"(.text)
         "*/resource_370_overlay.o"(.rodata.x020094d4)
     }

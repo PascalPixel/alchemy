@@ -137,8 +137,6 @@ extern u16 Korosseo_MarkerStartX;
 extern u16 Korosseo_MarkerStartY;
 extern u16 Korosseo_MarkerStep;
 
-/* Import veneers, named by the main-image code each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void Vector_AddPolarOffset();
@@ -162,7 +160,7 @@ s32 Menu_OpenCharacterSelector();
 s32 AudioCommand_GetStateByte();
 void BattleFx_RunRisingObjectSequence();
 
-/* The stage's code still in the listing, and the shared Colosso code. */
+/* The stage tasks and shared Colosso services. */
 void KorosseoKabe_RollLogToCell();
 void Korosseo_SelectSoloCompetitor();
 void Korosseo_FinishSoloRound();
@@ -182,12 +180,12 @@ void FieldScene_RunSingleStep(void);
 void SceneState_ConfigureRegionByActorElevenColumn(void);
 void FieldScene_RunTwoStepSequence(void);
 void SceneState_StoreSlotTileXToWork832To848(void);
-void SceneState_SetWorkByte35(void);
+void KorosseoKabe_EnableEffectChildMode(void);
 void SceneState_SetFlag331AndConfigureRegion46_17(void);
 void FieldScene_SetFlag332AndDrawTiles(void);
 void FieldScene_SetFlag333AndDrawTiles(void);
-void SceneState_SendWord250With6(void);
-void FieldScene_Forward4358(void);
+void KorosseoKabe_RunSelectedActorRisingEffect(void);
+void KorosseoKabe_CheckLeaderAhead(void);
 void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2);
 void SceneState_ApplyRectsForActors15To17(void);
 void FieldScene_RunStep15At29By26(void);
@@ -198,9 +196,9 @@ void FieldScene_RunStep17At40By23(void);
 void FieldScene_RunStep17At40By25(void);
 void FieldScene_RunSupplementalSequenceOne(void);
 void FieldScene_PlaceSpectatorRow(void);
-void SceneState_ApplyTable8715AndValue104(void);
+void KorosseoKabe_StartSupplementalSceneTask(void);
 void SceneState_WaitForStatusWords(void);
-void SceneState_InstallTask8714AndApplyTwoRects(void);
+void KorosseoKabe_StopSpectatorCallbackAndRestoreCells(void);
 void FieldScene_RunPairedEntranceWalk(s32 a0);
 void FieldScene_RunSecondActorInteraction(s32 a0);
 void FieldScene_RunSceneThreeCoordinator(s32 a0);
@@ -232,7 +230,7 @@ struct StageControl {
     s16 f8;
 };
 
-void SceneState_SetHalfword1000To9(void);
+void KorosseoKabe_MarkStageReady(void);
 void SceneState_WaitUntilStatusNine(void);
 void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a);
 s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a);

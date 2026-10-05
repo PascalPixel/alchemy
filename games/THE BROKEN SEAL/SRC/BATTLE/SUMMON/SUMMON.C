@@ -6,7 +6,7 @@
 #include "GAME_STATE.H"
 #include "ITEM.H"
 
-u32 Summon_GetEntryByte3Kind(s32 index)
+u32 Summon_GetLayoutKind(s32 index)
 {
     u32 kind = Summon_EntryTable[index].layout_flags >> 5;
 
@@ -41,10 +41,9 @@ s32 Summon_IsEntryFlagged(s32 index)
     return result;
 }
 
-u32 Battle_GetEntryField2LowBits(u32 index)
+u32 Battle_GetSpriteFlagNibble(u32 index)
 {
-    /* FAKEMATCH: the existing result selection retains the separate extract
-       and return moves; a direct conditional expression changes their order. */
+    /* FAKEMATCH: separate result selection preserves extract/return move order; a conditional expression reorders them. */
     u32 value;
     u32 result;
 
@@ -58,10 +57,9 @@ u32 Battle_GetEntryField2LowBits(u32 index)
     return result;
 }
 
-u32 Battle_GetEntryField2HighBits(u32 index)
+u32 Battle_GetSpriteFlagHighBits(u32 index)
 {
-    /* FAKEMATCH: retain the existing zero-result selection; the direct shift
-       drops the native compare and return move. */
+    /* FAKEMATCH: zero-result selection retains the compare and return move removed by a direct shift. */
     u32 value;
     u32 result;
 

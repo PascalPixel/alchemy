@@ -49,7 +49,6 @@ struct ModeRecord {
     u16 span;
 };
 
-
 /* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
@@ -60,6 +59,7 @@ extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 Korosseo_GaugeGraphics[];
 extern u8 Korosseo_UpdatePathRival[];
 extern u8 HexDigits[];
+/* Sixteen packed direction steps: X in the high half and Z in the low half. */
 extern u32 KorosseoKawa_DirectionSteps[];
 
 typedef void(*SceneTask)(void);
@@ -70,45 +70,11 @@ s32 GetPartyMemberCount(void);
 
 void Vector_AddPolarOffset();
 
-/*
- * Scene setup for resource_3ba: allocates a scene descriptor, stamps its
- * parameter block, uploads image and palette, and installs the per-frame task.
- */
-
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay. */
-
-/* In-image data at file offset 0x3f14 (0x0200bf14 - 0x8000). */
-
-/* The per-frame task this owner installs: in-image code, published below as
- * its entry address plus the Thumb bit. */
-
-/* AUDITED GENERATED CALL SCRIPT for Korosseo_RunLumberWaterIntro:
- * A phase-two fast path, full and revisit branches, and all 42 calls across
- * the complete scene-four coordinator. */
-
-/* This overlay's own occupancy lookup for a cell. The record pointer the call
- * sites also load is spelled here, although the lookup itself uses only the
- * position. */
-
-/* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* A countdown word this overlay owns at KorosseoKawa_Countdown: each call decrements
- * it by one, and specific values select which sub-sequence runs this call.
- * Reaching 0 restarts the countdown at 120 after running its own branch. */
-
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
-
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
-
-
-
-
-
-
 
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);  /* terrain probe */
 
@@ -135,14 +101,7 @@ struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct Fiel
     return 0;
 }
 
-/*
- * The push interaction: probe the cell one step ahead of the subject and, if
- * something occupies it, slide it and the subject one step on. The 360-byte
- * owner includes its four-word literal pool, which ends where the next owner
- * begins. Record fields are asserted only where written -- facing at +6,
- * position at +8/+12/+16, state at +0x22, occupancy flag bit 0 at +0x59 -- and
- * the terrain probe is tested signed, so only a positive code refuses.
- */
+/* If the cells beyond and above the occupant are clear and terrain permits, move it and the subject toward the point one step beyond it. */
 void StagedActor_PushActorAhead(void)
 {
     extern s16 Data_02000240[];
@@ -232,19 +191,8 @@ void StagedActor_PushActorAhead(void)
     Object_SetMode(subject, 1);
 }
 
-/* Import veneers, named by the main-image function each one reaches.
- * Old-style declarations: arities vary between call sites in this overlay.
- * The occupancy lookups take the position block; the record pointer the call
- * sites also pass is not asserted as an argument. */
+/* Probe the two cells ahead and return the nearer occupant first; centre x and z in each cell while preserving y. */
 
-/*
- * Probe the two cells ahead of the active subject and return what occupies the
- * nearer one, else the further one, else zero. The 160-byte owner includes its
- * alignment bytes and two-word literal pool. Facing is the biased quadrant of
- * the halfword at +6, with no sign extension; each probe rounds x and z down to
- * whole units and re-centres them by half a unit, carrying y unrounded. Only
- * the record fields at +6, +8, +12 and +16 are asserted.
- */
 struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 {
     extern s16 Data_02000240[];

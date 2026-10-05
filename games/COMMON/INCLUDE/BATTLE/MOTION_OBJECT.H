@@ -4,10 +4,7 @@
 #include "TYPES.H"
 #include "BATTLE_SESSION.H"
 
-/*
- * Shared 0x70-byte object used by the motion engine.
- * Only fields whose roles are established by multiple callers are named.
- */
+/* Shared object used by the motion engine. */
 struct MotionObject {
     u8 unknown_00[0x06];
     u16 angle;
@@ -49,7 +46,6 @@ struct SpriteEntry {
     u8 priority;
 };
 
-/* Raw linker spellings stay here; reconstructed APIs are used by C bodies. */
 void ReleaseBattleObjectRecords(s32 object_id);
 void ResetMotionRecordGroup(void *record_group);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);

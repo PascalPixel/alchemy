@@ -55,11 +55,11 @@ extern u8 MsgVinasuLongLastTime[];
 extern const s32 SceneAction_EntryGroup[];
 extern const s32 SceneAction_EntryPair[];
 void BattleFx_SetWeightedResult();
-void Event_SetPair1d4(s32 scene, s32 entrance);
+void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 s32 PartyInventory_Remove();
 s32 PartyInventory_FindOwner();
-void FieldScene_ForwardValue81fc();
+void VinasuChojo_CleanupSceneObjects();
 void FieldScene_RunStep6(void);
 
 struct StagedVerticalEffect;
@@ -156,7 +156,7 @@ void Effect_MoveWithDrag(union FieldObject *object)
     object->effect.sprite->rotation += object->effect.spin;
 }
 
-void OverlayObject_DecayRecordField1e(struct FieldActor *actor)
+void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 {
     struct FieldSprite *sprite = actor->sprite;
     u16 rotation = sprite->rotation;
@@ -194,7 +194,6 @@ out:
     return 1;
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3c9. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     return gVinasuChojoEntrances;
@@ -272,7 +271,7 @@ void InitializeActorZeroMotion(void)
     Vector_AddPolarOffset(0x200000, angle, position);
     if (Object_CheckMovementCollision(actor, position) == 0) {
         Engine_GameFlagClear(592);
-        SceneActor_SetByte55ForActorZeroAnd12To17();
+        VinasuChojo_ConfigureGroupMotion();
         Object_SetMode(actor, 6);
         Engine_TaskWait(6);
         Object_SetMode(actor, 7);
@@ -328,7 +327,7 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
     Engine_EventEnd();
 }
 
-void SceneActor_SetByte55ForActorZeroAnd12To17(void)
+void VinasuChojo_ConfigureGroupMotion(void)
 {
     s32 flags;
 
@@ -495,8 +494,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(10);
     Object_GetById(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
     {
-        /* FAKEMATCH: the facing held in a block temporary keeps the pool where
-         * the reference has it; a plain store moves it (measured 2026-10-04). */
+        /* FAKEMATCH: the facing held in a block temporary keeps the pool where the reference has it; a plain store moves it (measured 2026-10-04). */
         s32 shown = FACING_SOUTH;
 
         leader->y.fixed = -PIXELS(32);
@@ -889,7 +887,7 @@ void Scene_RunActorEntrySequence(void)
     Engine_TaskWait(1);
     Actor_SetChildValue(6, 0);
     Engine_TaskWait(10);
-    FieldScene_ForwardValue81fc();
+    VinasuChojo_CleanupSceneObjects();
     Engine_ActorJump(6, 2, 40);
     VinasuChojo_ShowMessage(6);
     Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
@@ -1013,8 +1011,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_WalkToAndWait(21, 328, 186);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(21, 2);
-    /* The message is a link-time name, loaded from the literal pool after
-       the two preceding calls, as the game loads it. */
+
     message = (s32)MsgVinasuRobinHandedOverShamansRod;
     Engine_MessageShowCentered(message, 1);
     Actor_WalkToAndWait(21, 310, 192);
@@ -1138,22 +1135,15 @@ void Scene_RunActorEntrySequence(void)
     Engine_ActorEnableActionCallback(ACTOR_FIRST_OF_PAIR, SceneAction_EntryPair);
     Engine_ActorEnableActionCallback(21, SceneAction_EntryGroup);
     Object_SetActionCallbackAndRefreshById(6, SceneAction_EntryGroup);
-    /* FAKEMATCH: a plain store is scheduled into the last action call's
-     * argument setup; the one-pass block keeps it after the call. Measured
-     * 2026-10-04. */
+    /* FAKEMATCH: a plain store is scheduled into the last action call's argument setup; the one-pass block keeps it after the call. Measured 2026-10-04. */
     do {
         gGameState.battle_start = 3;
     } while (0);
     {
         s32 actor = (s32)&SceneId_VinasuChojo;
 
-        /*
-         * Through Call2 rather than called directly: the helper's parameter
-         * pseudos fix the order the two argument registers are materialised
-         * in, and direct calls here emit them the other way round.
-         */
         Call2(Party_SetFields1ceAnd1d0, actor, 2);
-        Call2(Event_SetPair1d4, actor, 9);
+        Call2(Event_SetDefeatDestination, actor, 9);
     }
     BattleFx_SetWeightedResult(98, 1);
     GameFlag_Set(0x350);
@@ -1174,8 +1164,7 @@ void SceneEffect_UpdateObjectByFrameParity(s32 a)
 
 void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
-    /* FAKEMATCH: the volatile frame-cell view retains three separate reads
-     * of gFrameCount. */
+    /* FAKEMATCH: the volatile frame-cell view retains three separate reads of gFrameCount. */
     volatile u32 *p = (u32 *)&gFrameCount;
 
     if (*p & 1) {
@@ -1250,9 +1239,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
@@ -1285,7 +1272,7 @@ void SceneState_ApplyPair140And0(void)
     Engine_PsynergyBegin(140, 0);
 }
 
-void FieldScene_ForwardValue81fc(s32 a)
+void VinasuChojo_CleanupSceneObjects(s32 a)
 {
     BattleEffect_CleanupSceneObjects(a);
 }
@@ -1859,7 +1846,7 @@ void Scene_RunPairedActorEffectSequence(void)
         gGameState.battle_start = 3;
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_VinasuChojo, 3);
-    Event_SetPair1d4((s32)&SceneId_VinasuChojo, 9);
+    Event_SetDefeatDestination((s32)&SceneId_VinasuChojo, 9);
     BattleFx_SetWeightedResult(98, 0);
     Owner_RefreshRatiosOnFlag();
     GameFlag_Set(0x351);

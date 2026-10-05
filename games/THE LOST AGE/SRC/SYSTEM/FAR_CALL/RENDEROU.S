@@ -21,10 +21,10 @@ Func_080380d8:
 	.thumb_func
 Ui_LoadCharacterEntryForSlotFar:
 	overlay_veneer Ui_LoadCharacterEntryForSlot
-	.global UiWork_SetByte5AndResetHalfwordCFar
+	.global RenderOutput_SetAnimationFar
 	.thumb_func
-UiWork_SetByte5AndResetHalfwordCFar:
-	overlay_veneer UiWork_SetByte5AndResetHalfwordC
+RenderOutput_SetAnimationFar:
+	overlay_veneer RenderOutput_SetAnimation
 	.global Func_080380f0
 	.thumb_func
 Func_080380f0:

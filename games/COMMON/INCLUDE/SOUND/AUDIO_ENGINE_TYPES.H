@@ -4,11 +4,7 @@
 #include "TYPES.H"
 #include "../LIB/LAYOUT_GUARD.H"
 
-/*
- * Sound driver work areas, laid out from the reads and writes of the driver
- * routines in the ROM. A field is named only where a reconstructed routine
- * uses it; the rest keep their offsets.
- */
+/* Sound driver work areas. */
 
 /* Written into every work area while it is idle; routines add to it while busy. */
 #define SOUND_LOCK 0x68736D53

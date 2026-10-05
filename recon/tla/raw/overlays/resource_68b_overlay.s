@@ -265,8 +265,8 @@ Func_020001f0:
 	bl Battle_WaitMode0
 	adds r0, r7, #0
 	bl Func_02001cd4
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001bd4
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -1471,7 +1471,7 @@ Func_02000bdc:
 	movs r0, #11
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #9
 	movs r1, #3
 	bl ObjectMotion_SetActionVariant
@@ -1651,7 +1651,7 @@ Func_02000bdc:
 	movs r0, #28
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #99

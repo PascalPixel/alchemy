@@ -2,7 +2,7 @@
 #include "SYSTEM.H"
 
 
-void UiWork_WaitUntilField1aClear(void *work)
+void UiWork_WaitWindowDuration(void *work)
 {
     /* 値が0になるまで更新処理を進める。 */
     if (!(2 & ((struct UiWindow *)work)->flags) && (((struct UiWindow *)work)->duration != 0)) {

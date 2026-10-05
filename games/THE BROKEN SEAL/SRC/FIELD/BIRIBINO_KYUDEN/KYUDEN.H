@@ -19,8 +19,6 @@ extern u8 Placement_Messages[];
 extern const u8 Kyuden_FacingActions[];
 extern const u8 Kyuden_PacingActions[];
 
-/* Main-image code reached through the overlay's import veneers. Old-style
- * declarations: the scenes pass their arguments as plain words. */
 s32 ArcTan2(s32, s32);
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();

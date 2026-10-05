@@ -291,7 +291,7 @@ Func_080e4a34:
 	ldrsh r0, [r1, r6]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r3, [sp, #44]
 	movs r1, #1
 	movs r2, #24

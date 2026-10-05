@@ -1,6 +1,6 @@
 #include "OBJECT_RUNTIME.H"
 
-/* The rest of ☀️'s position-by-id run from FIELD/COMMON/OBJECT/OBJECT16.C
+/* The rest of ☀️'s position-by-id run from FIELD/COMMON/OBJECT/MOTION.C
    after ObjectMotion_CommitCurrentPositionAndActivate, where ⚓️ asks the
    terrain height at an object's 16.16 position; ⚓️ adds the angle variant
    and the move to another object. */

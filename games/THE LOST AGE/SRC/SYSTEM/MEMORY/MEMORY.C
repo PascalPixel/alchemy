@@ -20,8 +20,7 @@ void Ui_LoadWindowGraphics(void)
             REG_DMA3);
     Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
             REG_DMA3);
-    /* FAKEMATCH: the do-while block keeps the backdrop store's value
-       before its address */
+    /* FAKEMATCH: the do-while keeps the backdrop store's value before its address. */
     do {
         s32 black = 0;
         PLTT_BACKDROP = black;
@@ -146,7 +145,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
     if (cached_address == 0) {
         aligned_size = (u32)size + 3;
         address = allocator_state[0];
-        /* FAKEMATCH: Three plain shapes shift alignment before loading the heap head; keep that load before the shift. */
+        /* FAKEMATCH: load the heap head before shifting the alignment value. */
         __asm__("" : : "r"(address), "r"(aligned_size));
         aligned_size = (aligned_size >> 2) * 4;
         next = address + aligned_size;
@@ -179,9 +178,7 @@ void Runtime_FillFreeHeapWords(u32 value)
     Iwram_FillWords((void *)address, 0x02040000U - address, value);
 }
 
-/* IWRAM-first bump allocation. All-six trials: separate/reused rounding
-   locals differed by 17 bytes; named words by 12; two order constraints by
-   4; an unconstrained bound by 11; the final tied handoff matched. */
+/* Allocate from IWRAM first, falling back to EWRAM. */
 void *Runtime_BumpAllocate(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
@@ -190,15 +187,15 @@ void *Runtime_BumpAllocate(s32 size)
     u32 address;
     u32 words;
     u32 limit;
-    /* FAKEMATCH: An unconstrained bound load changes the heap/head registers; capture the native bound in r4 and hand it to an ordinary local. */
+    /* FAKEMATCH: the r4 bound capture preserves the heap/head registers. */
     register u32 held asm("r4");
 
     words = (u32)size + 3;
     address = state[1];
-    /* FAKEMATCH: The best plain shape shifts before loading the heap head; retain the unshifted value and incoming size through that load. */
+    /* FAKEMATCH: keep the unshifted value and incoming size live through the heap-head load. */
     __asm__("" : : "r"(address), "r"(words), "r"(size));
     words >>= 2;
-    /* FAKEMATCH: After the head-order repair, the native bound load and final alignment shift remain swapped; capture the bound before that shift. */
+    /* FAKEMATCH: capture the bound before the final alignment shift. */
     __asm__("" : "=r"(held), "+r"(words) : "0"((u32)(Ram_IwramHeapEnd - 1)));
     limit = held;
     size = (s32)(words << 2);
@@ -217,9 +214,7 @@ finish:
     return (void *)address;
 }
 
-/* EWRAM-first bump allocation. All-six trials: separate/reused rounding
-   locals differed by 13 bytes; named words by 8; two order constraints
-   matched the complete 52-byte owner, excluding the following raw tail. */
+/* Allocate from EWRAM first, falling back to IWRAM. */
 void *Runtime_BumpAllocateAlternatePool(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
@@ -230,7 +225,7 @@ void *Runtime_BumpAllocateAlternatePool(s32 size)
 
     words = (u32)size + 3;
     address = state[0];
-    /* FAKEMATCH: The best plain shape shifts before loading the heap head; retain the unshifted value and incoming size through that load. */
+    /* FAKEMATCH: keep the unshifted value and incoming size live through the heap-head load. */
     __asm__("" : : "r"(address), "r"(words), "r"(size));
     words >>= 2;
     size = (s32)(words << 2);

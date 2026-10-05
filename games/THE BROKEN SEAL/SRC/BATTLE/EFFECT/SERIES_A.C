@@ -144,8 +144,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     } else {
         palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
     }
-    /* FAKEMATCH: forwarded through Call3, the palette copy loads its routine
-       before it shifts the destination, as the reference does. */
+    /* FAKEMATCH: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does. */
     Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT, (s32)palette, 128);
     if (narrow == 0) {
         if (mode == 6)

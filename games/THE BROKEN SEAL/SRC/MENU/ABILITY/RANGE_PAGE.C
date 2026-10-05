@@ -44,10 +44,8 @@ void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ACTION_ID_MASK 0x3fff
 
-/* The Psynergy page with the element and range icons: names the selected
-   entry and its targeting class (0xb13-0xb15), then redraws the page rows
-   with their range icons and highlights. The info window is held as a
-   pointer, which keeps its load independent of the page-state store. */
+/* Draw the Psynergy name, targeting class and element/range icons,
+ * then redraw the page rows and highlights. */
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 {
     struct PsynergyMenuState *menu;

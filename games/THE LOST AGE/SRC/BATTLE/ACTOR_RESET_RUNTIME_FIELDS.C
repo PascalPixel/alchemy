@@ -6,7 +6,6 @@
 void Owner_RecalculateStatsFar(s32);
 s32 GetBattleObjectSlot(s32);
 
-/* ☀️'s, but ⚓️ reaches the owner's state with a direct call. */
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
     u8 *state;

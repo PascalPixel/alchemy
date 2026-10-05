@@ -86,11 +86,11 @@ Object_CheckMovementCollision:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global SetMapCellCollision
 	.thumb_func
 SetMapCellCollision:
@@ -187,7 +187,7 @@ Engine_ActorSetSpritePriority:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -199,11 +199,11 @@ Party_SetFields1ceAnd1d0:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_ItemShowFound
 	.thumb_func
 Engine_ItemShowFound:

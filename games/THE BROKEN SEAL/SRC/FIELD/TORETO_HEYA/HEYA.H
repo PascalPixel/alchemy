@@ -39,10 +39,3 @@ void ToretoHeya_AdvanceEffectMotion();
 /* Return the overlay's presentation workspace block. */
 
 /* Clear the active story variant once the scene controller is idle. */
-
-/*
- * A loader-relocated call word rather than a runtime address; it turns a value
- * and a duration into a per-frame step. Declared without a prototype, and the
- * call site passes two arguments.
- */
-

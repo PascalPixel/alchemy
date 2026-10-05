@@ -24,10 +24,10 @@ struct FieldObject {
 
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
-void Event_ClearStatus1c6Far(void);
-void Event_WaitValue1c8FramesFar(void);
+void Event_FinishScreenTransitionFar(void);
+void Event_WaitTransitionFramesFar(void);
 void AudioCommand_WaitForStateByteClear(void);
-void Event_SetStatus1c6Far(void);
+void Event_StartScreenTransitionFar(void);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
 void Func_080c8398(void);
 void Func_080c83a0(void);
@@ -64,12 +64,12 @@ void Inn_PlaySleep(s32 room_price)
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     Func_080c83a0();
 #else
-    Event_ClearStatus1c6Far();
+    Event_FinishScreenTransitionFar();
 #endif
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     Event_DelayEffectFramesFar();
 #else
-    Event_WaitValue1c8FramesFar();
+    Event_WaitTransitionFramesFar();
 #endif
     Audio_PlayCue(86);
     AudioCommand_WaitForStateByteClear();
@@ -77,12 +77,12 @@ void Inn_PlaySleep(s32 room_price)
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     Func_080c8398();
 #else
-    Event_SetStatus1c6Far();
+    Event_StartScreenTransitionFar();
 #endif
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     Event_DelayEffectFramesFar();
 #else
-    Event_WaitValue1c8FramesFar();
+    Event_WaitTransitionFramesFar();
 #endif
     WaitFrames(30);
     ((struct FieldEffectState *)Ram_HeapSlots->event_work)->delay = 16;

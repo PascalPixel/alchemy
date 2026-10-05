@@ -261,9 +261,7 @@ void FieldScene_SetupStagedActors(void)
     Engine_EventEnd();
 }
 
-/* Staged scene for actors 8, 5, 1 and 0. The shared work pointer is fetched
- * again at the tail after the intervening calls. Runtime veneer bindings
- * belong to this module's translation-unit declaration. */
+/* Run the scene for actors 8, 5, 1 and 0. */
 void FieldScene_RunStagedActorScene(void)
 {
     struct EventWork *work;
@@ -768,28 +766,28 @@ void Scene_RunGuardSequenceC(void)
 void FieldScene_CallWhenCheck9_31_9(void)
 {
     if (SceneActor_IsActorAtTile(9, 31, 9) != 0) {
-        SceneData_InitTableA980();
+        SoruSekizo_OpenNorthwestSeal();
     }
 }
 
 void FieldScene_RunGuardedStep11(void)
 {
     if (SceneActor_IsActorAtTile(11, 40, 9) != 0) {
-        SceneData_FillTableA980();
+        SoruSekizo_OpenNortheastSeal();
     }
 }
 
 void FieldScene_RunGuardedStep13(void)
 {
     if (SceneActor_IsActorAtTile(13, 31, 12) != 0) {
-        SceneData_InitTableA980AndRunB();
+        SoruSekizo_OpenSouthwestSeal();
     }
 }
 
 void FieldScene_RunGuardedStep15(void)
 {
     if (SceneActor_IsActorAtTile(15, 40, 12) != 0) {
-        SceneData_BuildTableA980();
+        SoruSekizo_OpenSoutheastSeal();
     }
 }
 
@@ -803,7 +801,7 @@ void ConfigureSceneAndCheckActors(void)
 
 void ConfigureAlternateSceneAndCheckActors(void)
 {
-    ConfigureScene_02003a30(2, 23068672, 7340032, 0);
+    SoruSekizo_ConfigureAlternateCell(2, 23068672, 7340032, 0);
     if (SceneActor_IsActorAtTile(12, 21, 7) != 0) {
         Scene_ShineRightBeam();
     }
@@ -826,7 +824,7 @@ void FieldScene_RunClosingSequence(void)
     }
 }
 
-void SoruSekizo_CheckTileTrigger0166C(void)
+void SoruSekizo_BlockLeftTriggerCell(void)
 {
     s32 x = Object_GetById(0)->x.fixed >> 20;
     s32 y = Object_GetById(0)->z.fixed >> 20;
@@ -836,7 +834,7 @@ void SoruSekizo_CheckTileTrigger0166C(void)
     }
 }
 
-void SoruSekizo_CheckTileTrigger016A4(void)
+void SoruSekizo_BlockRightTriggerCell(void)
 {
     s32 x = Object_GetById(0)->x.fixed >> 20;
     s32 y = Object_GetById(0)->z.fixed >> 20;
@@ -950,25 +948,25 @@ void FieldScene_RunScene37bSequenceA(void)
 void FieldScene_RunFiveValueStep9(void)
 {
     SoruSekizo_RunEventSequence(9, 31, 9, 30, 9);
-    SceneData_InitTableA980();
+    SoruSekizo_OpenNorthwestSeal();
 }
 
 void FieldScene_RunFiveValueStep11(void)
 {
     SoruSekizo_RunEventSequence(11, 40, 9, 41, 9);
-    SceneData_FillTableA980();
+    SoruSekizo_OpenNortheastSeal();
 }
 
 void FieldScene_ApplyRect13_31_12_30_12(void)
 {
     SoruSekizo_RunEventSequence(13, 31, 12, 30, 12);
-    SceneData_InitTableA980AndRunB();
+    SoruSekizo_OpenSouthwestSeal();
 }
 
 void FieldScene_RunFiveValueStep15(void)
 {
     SoruSekizo_RunEventSequence(15, 40, 12, 41, 12);
-    SceneData_BuildTableA980();
+    SoruSekizo_OpenSoutheastSeal();
 }
 
 void FieldScene_ApplyRect10_14_7_13_7(void)
@@ -977,13 +975,7 @@ void FieldScene_ApplyRect10_14_7_13_7(void)
     Scene_ShineLeftBeam();
 }
 
-/*
- * Fetches scene record 10 and, when it exists, hands a coarse coordinate
- * derived from it to a five-argument routine, which receives both the
- * coordinate and the coordinate plus one; the fifth argument travels on the
- * stack. The `>> 20` reduction to a cell index is by analogy with the rest of
- * the tree and is not verified, and the repeated 13 is as written.
- */
+/* Move actor 10 and the leader between adjacent rows in column 13 when actor 10 is present. */
 void SceneActor_UseActorTenCellAndNext(void)
 {
     struct FieldActor *record = Object_GetById(10);
@@ -1073,7 +1065,7 @@ s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
     return 1;
 }
 
-void SceneData_InitTableA980(void)
+void SoruSekizo_OpenNorthwestSeal(void)
 {
     s32 *p = (s32 *)&gSealScene;
     p[0] = 0;
@@ -1128,7 +1120,7 @@ void SceneData_InitTableA980(void)
     SoruSekizo_OpenSeal();
 }
 
-void SceneData_FillTableA980(void)
+void SoruSekizo_OpenNortheastSeal(void)
 {
     s32 *p = (s32 *)&gSealScene;
     p[0] = 4;
@@ -1183,7 +1175,7 @@ void SceneData_FillTableA980(void)
     SoruSekizo_OpenSeal();
 }
 
-void SceneData_InitTableA980AndRunB(void)
+void SoruSekizo_OpenSouthwestSeal(void)
 {
     s32 *p = (s32 *)&gSealScene;
     p[0] = 0;
@@ -1238,7 +1230,7 @@ void SceneData_InitTableA980AndRunB(void)
     SoruSekizo_OpenSeal();
 }
 
-void SceneData_BuildTableA980(void)
+void SoruSekizo_OpenSoutheastSeal(void)
 {
     s32 *p = (s32 *)&gSealScene;
     p[0] = 4;

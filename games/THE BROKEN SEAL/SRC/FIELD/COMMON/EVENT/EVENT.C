@@ -21,8 +21,7 @@ s32 Equipment_HasValueFar(s32 group, s32 entry);
 s32 GameFlag_TestFar(s32 group);
 s32 Event_ValidatePackedId(u32 packed_id);
 
-/* An empty event hook ahead of the object hooks; nothing in the image
-   calls it by name. */
+/* Empty event hook. */
 void Event_NoOpHookA(void)
 {
 }
@@ -45,7 +44,7 @@ void Event_CallWithLastActiveObjectId(struct ScenePlacement *table)
     Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }
 
-void Event_SetWorkWord10(s32 value)
+void Event_SetSceneEvents(s32 value)
 {
     struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
 

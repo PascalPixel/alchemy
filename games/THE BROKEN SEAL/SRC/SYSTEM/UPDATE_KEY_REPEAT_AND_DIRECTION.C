@@ -10,9 +10,7 @@
    previous direction mask. */
 void Input_UpdateKeyRepeatAndDirection(void)
 {
-    /* FAKEMATCH: the volatile reads and the repeat clear keep the measured
-       input-cell rereads without giving the shared declarations conflicting
-       types; the other stores need none (measured 2026-10-04). */
+    /* FAKEMATCH: volatile reads and the repeat clear preserve separate input-cell rereads. */
     s32 delay = gKeyRepeatTimer;
     u32 keys;
     u32 axis = 0;

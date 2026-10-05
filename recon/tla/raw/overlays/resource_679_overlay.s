@@ -31,7 +31,7 @@ Func_020000d0:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #15
 	bl Object_SetPartAttribute
@@ -124,7 +124,7 @@ Func_0200015c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008334
 	mov r1, r9
 	str r3, [r6, #108]
@@ -1139,8 +1139,8 @@ Func_02000974:
 	movs r1, #16
 	movs r2, #0
 	bl ObjectMotion_SetAngleToward
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r2, #0
 	movs r0, #16
 	movs r1, #0
@@ -1490,8 +1490,8 @@ Func_02000c38:
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_02001d94
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001ccc
 	pop {r5, r6, pc}
 .L_02008cb0:
@@ -2388,7 +2388,7 @@ Func_02001338:
 .L_0200938a:
 	cmp r5, #30
 	bne .L_02009392
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 .L_02009392:
 	ldr r3, [r6, #12]
 	ldr r2, .L_020093d4
@@ -2545,11 +2545,11 @@ Func_02001464:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r3, r8
 	str r3, [r6, #108]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	mov r0, r10
 	bl Func_02001d94
 	bl Func_02001ccc
@@ -2614,8 +2614,8 @@ Func_02001500:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	bl Event_SetStatus1c6
+	bl ObjectDispatch_SetSingleChildFlags
+	bl Event_StartScreenTransition
 	movs r0, #228
 	bl Func_02001e2c
 	ldr r3, .L_020095f4
@@ -2639,7 +2639,7 @@ Func_02001500:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, [r6, #80]
 	movs r3, #13
 	ldrb r2, [r1, #9]
@@ -2657,7 +2657,7 @@ Func_02001500:
 	strb r3, [r2]
 	str r7, [r6, #108]
 	bl Func_02001df4
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	bl Func_02001ccc
 .L_020095e6:
 	pop {r3}

@@ -3,7 +3,7 @@ extern u8 gObjectSlots[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 ObjectDispatch_SetSingleChildField26Far(void *, s32);
+s32 ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 
 struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32 id)
 {

@@ -2018,10 +2018,10 @@ Owner_GetDigitValues:
 	.thumb_func
 Owner_GetDefaultElement:
 	.incbin "baserom.gba", 0x000bd05c, 0x00000028
-	.global Owner_BuildDigitTiles
-	.type Owner_BuildDigitTiles, %function
+	.global Owner_CalculateBaseElements
+	.type Owner_CalculateBaseElements, %function
 	.thumb_func
-Owner_BuildDigitTiles:
+Owner_CalculateBaseElements:
 	.incbin "baserom.gba", 0x000bd084, 0x000000c0
 	.global Owner_DetermineClass
 	.type Owner_DetermineClass, %function
@@ -2540,10 +2540,10 @@ Event_RunObjectHookAndWait:
 	.section .rom.000df3ca, "ax"
 	.incbin "baserom.gba", 0x000df3ca, 0x00000002
 	.section .rom.000df3cc, "ax"
-	.global Event_SetWorkWord10
-	.type Event_SetWorkWord10, %function
+	.global Event_SetSceneEvents
+	.type Event_SetSceneEvents, %function
 	.thumb_func
-Event_SetWorkWord10:
+Event_SetSceneEvents:
 	.incbin "baserom.gba", 0x000df3cc, 0x0000000c
 	.section .rom.000df5c8, "ax"
 	.global Func_080d25c8

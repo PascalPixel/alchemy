@@ -140,7 +140,7 @@ UiWindow_Create:
 	strh r0, [r5, #26]
 	strh r3, [r5, #24]
 	adds r0, r5, #0
-	bl UiWork_WaitUntilField1aClear
+	bl UiWork_WaitWindowDuration
 	movs r0, #1
 	bl WaitFrames
 .L_0803936c:

@@ -295,7 +295,7 @@ Func_0200020c:
 .L_02008270:
 	.4byte Data_02003dbe
 .L_02008274:
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r1, r11
 	cmp r1, #4
 	bne .L_02008282
@@ -357,7 +357,7 @@ Func_0200020c:
 	adds r3, r3, r2
 	movs r2, #64
 	str r2, [r3]
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	ldr r3, .L_02008404
 	movs r7, #0
 	ldrsh r2, [r3, r5]
@@ -1408,14 +1408,14 @@ Func_0200020c:
 	adds r3, r3, r0
 	movs r2, #64
 	str r2, [r3]
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 .L_02008afc:
 	movs r0, #1
 	adds r7, #1
 	bl WaitFrames
 	cmp r7, #124
 	bne .L_02008ad0
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	b .L_02008b16
 .L_02008b0e:
 	ldr r2, .L_02008b54
@@ -2640,8 +2640,8 @@ Func_02001400:
 	adds r3, r3, r2
 	movs r2, #16
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	mov r3, r10
 	cmp r3, #2
 	bne .L_02009470

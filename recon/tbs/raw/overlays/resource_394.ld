@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/MAGARI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/PANEL.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/MAGARI2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/PUZZLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KORIMA/PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/IMPORT.o"(.text)
         "*/resource_394_overlay.o"(.rodata.x0200911c)

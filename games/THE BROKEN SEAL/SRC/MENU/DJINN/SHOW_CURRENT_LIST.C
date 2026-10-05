@@ -85,6 +85,5 @@ s32 DjinnMenu_ShowCurrentList(void)
     menu->cursor->active = 1;
     menu->second_cursor->active = 1;
     Audio_PlayCue(113);
-    /* FAKEMATCH: the caller ignores the result, but the reference retains
-       a value-returning epilogue after this void audio call. */
+    /* FAKEMATCH: the caller ignores the result, but the reference retains a value-returning epilogue after this void audio call. */
 }

@@ -21,20 +21,12 @@ struct StoryDialogueWork {
     u16 story_result;
 };
 
-/* Complete prologue-less shared-state activation leaf through its pool. */
 struct StorySharedState {
     u8 reserved00[52];
     u8 active;
 };
 
-/*
- * Per-frame step of a thirty-two frame rise -- resource_371.  The halfword
- * counter at +0x64 is incremented in place and compared as a signed sixteen
- * bit value; past 31 the effect is handed off and nothing else happens.  The
- * anchor pointer at +0x68 is loaded before the frame test and must stay
- * there.  The angle is the frame shifted left by ten, and the callee that
- * turns it into a 16.16 amplitude is identified only by that use.
- */
+/* Raise the effect for thirty-two frames, then hand it off; each frame advances its angle by 0x400. */
 struct StoryVerticalEffectActor {
     u8 filler00[8];
     s32 x;                          /* 0x08 */
@@ -86,15 +78,13 @@ extern u8 gTransferLeaderTurn[];
 extern s32 gWorldMapTriggerActor;
 extern struct StorySharedState *gEffectWork;
 
-/* Main-image services reached through the overlay's import veneers. The
- * declarations stay old-style where call sites pass differing arguments. */
 void BattleFx_SetPhaseRequest();
 void Battle_SetObjectFlag5bWhenMode3();
 void Battle_ClearObjectFlag5bWhenMode3();
 void BattleFx_ScheduleRatioTransition();
 void BattleFx_SetWeightedResult();
-void Event_WaitForDisplayField358Clear();
-void Event_SetPairWork1c0();
+void Event_WaitForZoomTransition();
+void Event_SetDestination();
 void ItemMenu_Open();
 void Menu_AnimateSelectionToEntry();
 void PaletteGlow_Update();
@@ -112,14 +102,10 @@ void WorldMap_UpdateBobbingMarker();
 void WorldMap_SpawnActorEightPuff(void);
 void StoryScene_UpdateSelectedActorProgress(void);
 void StoryScene_UpdateTransitionEffect(void);
-void FieldScene_RunScene371_020017a4(void);
+void WorldMap_UpdateTransferredActorLanding(void);
 extern u8 gOpeningLeaderRise[];
 
-/*
- * Story-progress triggers -- resource_371.  Each fires one event once the
- * progress word has reached nine tenths of the level word; each seventy-two
- * byte owner includes its three pool words.
- */
+/* Each story trigger fires once progress reaches nine tenths of its level. */
 
 /* Actor callbacks for the story transfer scene. */
 

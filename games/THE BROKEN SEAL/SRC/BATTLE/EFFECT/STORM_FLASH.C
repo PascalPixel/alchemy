@@ -60,7 +60,7 @@ extern s16 FieldFx_GroundParticleFrames[];
 /* Each frame, draws the ground particles that are on screen and, when one
    runs out of frames, sets it down again at a random spot on the ground
    around the leader. Flag 0x166 holds every particle on its frame. */
-void Unnamed_08094820(void)
+void FieldFx_UpdateGroundParticles(void)
 {
     struct MapScrollWork *view = gMapWork[0];
     struct GroundParticleWork *work = gMapWork[21];
@@ -148,7 +148,7 @@ void BattleFx_UpdateStormFlash(void)
 /* Starts the ground particles: clears their work block, loads their tiles
    into VRAM, lays all 32 on the ground under the leader with staggered
    frames, sets the blend registers and schedules their update. */
-void Unnamed_08094ac8(void)
+void FieldFx_StartGroundParticles(void)
 {
     struct GroundParticleWork *work;
     s32 *leader;
@@ -159,10 +159,7 @@ void Unnamed_08094ac8(void)
     u32 i;
     s32 value;
 
-    /* FAKEMATCH: one cursor holds the fill value, then the tile buffer, then
-       each particle's first words, which gives the reference its register;
-       the blend writes are a block that runs once, which keeps the callback's
-       arguments behind them. */
+    /* FAKEMATCH: reusing the cursor preserves its register; one-pass blend writes keep callback argument setup after them. */
     work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
     leader = ((struct MapScrollWork *)gMapWork[0])->origin;
     BattleFx_SetQueuedSoundAndPlay(170);
@@ -200,5 +197,5 @@ void Unnamed_08094ac8(void)
         *++blend = value;
         *++blend = 0;
     } while (0);
-    Scheduler_AddOrUpdateCallback(Unnamed_08094820, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
 }

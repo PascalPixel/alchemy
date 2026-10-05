@@ -846,7 +846,7 @@ Func_020006b4:
 	cmp r5, #0
 	beq .L_02008706
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, .L_02008708
 	adds r0, r5, #0
 	bl Func_020057d0
@@ -2487,7 +2487,7 @@ Func_0200129c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_0200945c
 	mov r1, r9
 	str r3, [r6, #108]
@@ -6671,8 +6671,8 @@ Func_020034b4:
 	movs r1, #6
 	movs r0, #14
 	bl Object_SetModeById
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #30
 	bl Battle_WaitMode0
 	ldr r0, .L_0200b7c4
@@ -6978,21 +6978,21 @@ Func_020037c8:
 	movs r0, #4
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #7
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl ObjectDispatch_SetSingleChildFlags
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #30
 	bl Battle_WaitMode0
 	ldr r0, .L_0200b8fc
@@ -7077,7 +7077,7 @@ Func_02003900:
 	ldr r1, .L_0200bd0c
 	movs r0, #14
 	bl ObjectMotion_EnableActionAndSetCallback
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r0, #128
@@ -8125,7 +8125,7 @@ Func_02004224:
 	bl Object_GetById
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_Test
@@ -9142,7 +9142,7 @@ Func_02004a94:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r6, #0
 	movs r1, #2
 	bl Func_020057c8
@@ -9282,7 +9282,7 @@ Func_02004bc8:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r7, #0
 	movs r1, #2
 	bl Func_020057c8

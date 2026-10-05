@@ -26,7 +26,7 @@ extern u8 MsgYamaRobinDidLiftBoulder[];
 extern u8 MsgYamaYahhSilkRoadBouldersBlock[];
 extern u8 MsgYamaYoungWarriorsDoComeFrom[];
 
-/* Tables laid out after the code. */
+/* The mountain's scene tables. */
 extern const u16 YamaRama_BoulderCells[];
 extern const u16 YamaRama_BoulderCellsBack[];
 extern const u8 YamaRama_HsuAction[];
@@ -36,8 +36,6 @@ void BattleFx_PlayQueuedSound(void);
 s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor);
 s32 OverlayObject_SetFacingTowardObject10(void *self);
 
-/* Two sites reach this one symbol with different arities; old-style so both
- * calls are legal. */
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
     void Engine_ActorSetPosition(s32, s32, s32);
@@ -58,15 +56,14 @@ extern u8 YamaRama_ActorNineAction[];
 void ConfigureAndPlaceActorFourteen(void);
 void FieldScene_RunScene3a2SequenceA(void);
 void ActorPresentation_PrepareActorFourteenWithCallback(void);
-void FieldScene_SetSlot15Byte89AndRunStep(void);
+void YamaRama_DisableActorCollision(void);
 void Scene_RunActorExchange(void);
 
 /* Actor callbacks that open the mountain overlay. */
 s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor)
 {
     actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    /* FAKEMATCH: typed priority stores cache the sprite and shorten this
-       callback from 34 to 32 bytes; retain the two packed byte accesses. */
+    /* FAKEMATCH: packed byte accesses avoid caching the sprite, preserving the 34-byte callback. */
     ((u8 *)actor->sprite)[9] |= 0xc;
     ((u8 *)actor->sprite)[21] |= 0xc;
     return 0;
@@ -91,7 +88,7 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return YamaRama_Entrances;
 }
 
-/* The mountain's regions and exits, between its scene-dependent getters. */
+/* The mountain's regions and exits. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -110,19 +107,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return YamaRama_Placements;
 }
 
-/* Scene event steps for resource_3a2. */
-
-/* Value-returning: the reference sets r1 before r0 at this site. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/*
- * Prepare actor 14 at 0x020010b8: clear bit 1 of the bytes at +35 and +89,
- * clear the byte at +85, and install the callback at 0x02009061 in the record
- * at +0x6c -- that pool word is odd, so it is a Thumb entry and not data. The
- * zero stored at +85 is held in a local because a register carries it. The
- * callback drives the same bit-1 flag the clears here touch.
- */
 void SceneDialogue_RunMessage1958Step(void)
 {
 
@@ -377,7 +361,7 @@ void ConfigureAndPlaceActorFourteen(void)
     PlaceActor(14, 0x01580000, 0x00980000);
 }
 
-void FieldScene_RunScene3a2_020008a8(void)
+void YamaRama_ClearActorPlacement(void)
 {
     u32 i;
     s32 record;
@@ -692,6 +676,8 @@ void SceneActor_UpdateActorFourteenByDepth(void)
     }
 }
 
+/* Clear actor 14's automatic-priority and collision bits and its motion flags,
+ * then update its priority relative to the leader's height each frame. */
 void ActorPresentation_PrepareActorFourteenWithCallback(void)
 {
     u8 zero;
@@ -702,7 +688,7 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     Object_GetById(14)->priority_flags &= 0xfd;
     Object_GetById(14)->collision_flags &= 0xfd;
     Object_GetById(14)->motion_flags = zero;
-    *(void **)((void *)Object_GetById(14) + 108) = (void *)SceneActor_SetFlagBitByRankAgainstActorZero;
+    Object_GetById(14)->update = (void (*)(union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
 
     Engine_MapCopyCellAttributes(55, 16, 1, 1, 56, 18);
     Engine_MapCopyCellAttributes(55, 16, 1, 1, 20, 18);
@@ -713,10 +699,8 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     Engine_EventEnd();
 }
 
-void FieldScene_SetSlot15Byte89AndRunStep(void)
+void YamaRama_DisableActorCollision(void)
 {
-    u8 *slot;
-
     Engine_EventBegin();
     {
         s32 fifth = 21;
@@ -724,8 +708,7 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
 
         Engine_MapCopyCellAttributes(14, 6, 1, 2, fifth, sixth);
     }
-    slot = (void *)Object_GetById(15) + 89;
-    *slot = 254;
+    Object_GetById(15)->collision_flags = 254;
     Engine_GameFlagSet(0x201);
     Engine_EventEnd();
 }
@@ -770,7 +753,7 @@ s32 YamaRama_ApplyEntryState(void)
         }
         if (Engine_GameFlagIsSet(0x201)) {
             Engine_ActorSetAnimation(15, 4);
-            FieldScene_SetSlot15Byte89AndRunStep();
+            YamaRama_DisableActorCollision();
         }
         if (gGameState.entrance == 4 || gGameState.entrance == 5) {
             Engine_GameFlagClear(0x12f);

@@ -6,7 +6,6 @@
 #include "BATTLE_RANDOM.H"
 #include "BATTLE_TYPES.H"
 
-/* battle/random16.c */
 u32 BattleRandom16(void)
 {
     s32 battle_value;
@@ -15,13 +14,11 @@ u32 BattleRandom16(void)
     return (u32)(battle_value << 8) >> 16;
 }
 
-/* battle/random_percent.c */
 u32 BattleRandomPercent(void)
 {
     return (BattleRandom16() * 0x64) >> 0x10;
 }
 
-/* owner/scale_adjusted_amount.c */
 s32 Curve_LookupScaledValue(s32 selector, s32 mode);
 
 s32 Owner_ScaleAdjustedAmount(s32 amount, s32 reduction, s32 adjustment, s32 selector)
@@ -45,7 +42,6 @@ s32 Owner_ScaleAdjustedAmount(s32 amount, s32 reduction, s32 adjustment, s32 sel
     return result;
 }
 
-/* owner/scale_value_by_curve.c */
 s32 Owner_ScaleValueByCurve(s32 value, s32 selector, s32 multiplier)
 {
     s32 result;
@@ -57,7 +53,6 @@ s32 Owner_ScaleValueByCurve(s32 value, s32 selector, s32 multiplier)
     return result >> 16;
 }
 
-/* owner/scale_value_by_offset_curve.c */
 s32 Owner_ScaleValueByOffsetCurve(s32 value, s32 selector, s32 multiplier)
 {
     s32 result;
@@ -73,7 +68,6 @@ s32 Owner_ScaleValueByOffsetCurve(s32 value, s32 selector, s32 multiplier)
     return result >> 0x10;
 }
 
-/* item/get_equipped_element.c */
 s32 Owner_GetDefaultElement(void *state);
 
 s32 Item_GetEquippedElement(s32 owner_id)

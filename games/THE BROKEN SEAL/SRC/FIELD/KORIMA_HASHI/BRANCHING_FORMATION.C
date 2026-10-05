@@ -67,8 +67,6 @@ extern const struct SceneEvent KorimaHashi_Events[];
 extern u8 KorimaHashi_Object26Script[];
 extern u8 KorimaHashi_TriggerScript[];
 
-/* The main-image services this bridge reaches through veneers the
-   staged-actor module names. */
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
@@ -76,8 +74,6 @@ void Object_SetModeById(s32 actor, s32 mode);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 
-/* Motion services in the shape of the engine header's, through the names
-   the staged-actor module gives their veneers. */
 static __inline__ void Actor_SetMotionSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: a direct call changes FieldScene_RunBranchingFormationPresentation from ldr r6, .L0 to ldr r7, .L0 (2674/2678 assembly lines). */
@@ -265,7 +261,7 @@ void SceneActor_SetPairZeroAndValue(s32 actor, s32 facing, s32 frames);
 void Event_SayThenWait(s32 speaker, s32 frames);
 void Object_SetActionCallbackAndRefreshById(s32 id, const u8 *callback);
 void Audio_PlayCueFromEventWork(void);
-void SceneActor_AlternateSlots13To16Field0c(void);
+void KorimaHashi_AlternateBridgePostHeights(void);
 
 extern u8 KorimaHashi_GeraldAction[];
 extern u8 KorimaHashi_IvanAction[];
@@ -510,7 +506,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorSetSpritePriority(ACTOR_IVAN, 3);
     Engine_ActorSetSpritePriority(ACTOR_MIA, 3);
     KorimaHashi_TriggerPending = 0;
-    Engine_TaskAddCallback(SceneActor_AlternateSlots13To16Field0c, 0xc80);
+    Engine_TaskAddCallback(KorimaHashi_AlternateBridgePostHeights, 0xc80);
     Audio_PlayCue(220);
     Object_GetById(13)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(13, 2);

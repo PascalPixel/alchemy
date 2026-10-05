@@ -14,11 +14,7 @@ struct PeriodicEffectConfig {
     u16 id;
     u8 pad_1a[2];
     u8 *data;
-    /*
-     * The record is 40 bytes, not 32: the reference reserves `sub sp, #56' for
-     * 16 bytes of outgoing stack arguments plus this object, and only writes
-     * +0, +4, +24 and +28.  The trailing two words are never stored.
-     */
+    /* The record occupies 40 bytes; its final two words are unused. */
     u8 pad_20[8];
 };
 
@@ -41,4 +37,3 @@ extern u8 ShianMura_GateSteps5[];
 void BattleFx_RunPageEffectForSlot();
 void Effect_Spawn();
 void BattleFx_PlayQueuedSound();
-

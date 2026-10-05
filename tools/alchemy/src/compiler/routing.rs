@@ -612,7 +612,7 @@ mod target_tests {
                 assert_eq!(family_for_source(target, source), CompilerFamily::Game);
             }
             assert_eq!(
-                family_for_source(target, "games/COMMON/SRC/SOUND/SOUND2.C"),
+                family_for_source(target, "games/COMMON/SRC/SOUND/ENGINE.C"),
                 CompilerFamily::Agbcc
             );
             for source in [
@@ -663,7 +663,7 @@ mod target_tests {
             agbcc_flash_cflags()
         );
         for source in [
-            "games/COMMON/SRC/SOUND/SOUND2.C",
+            "games/COMMON/SRC/SOUND/ENGINE.C",
             "games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
         ] {
             assert_eq!(

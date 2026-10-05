@@ -154,7 +154,7 @@ Object_CheckMovementCollision:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:
@@ -316,7 +316,7 @@ Engine_ActorFaceEachOther:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -363,7 +363,7 @@ Engine_CameraWaitForMove:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -372,10 +372,10 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetPair1d4
+	.global Event_SetDefeatDestination
 	.thumb_func
-Event_SetPair1d4:
-	overlay_veneer Event_SetPair1d4Far
+Event_SetDefeatDestination:
+	overlay_veneer Event_SetDefeatDestinationFar
 	.global Engine_LeaderCheckAhead
 	.thumb_func
 Engine_LeaderCheckAhead:
@@ -383,15 +383,15 @@ Engine_LeaderCheckAhead:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_ActorLookup
 	.thumb_func
 Engine_ActorLookup:

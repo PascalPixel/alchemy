@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void ObjectDispatch_SetSingleChildField26(struct FieldActor *object, s32 value);
+void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 value);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 
 /* ☀️'s ConfigureOverlayObject, under ⚓️'s names for what it calls. */
@@ -9,7 +9,7 @@ void ConfigureOverlayObject(struct FieldActor *object, s32 parameter)
 {
     object->motion_flags = 0;
     object->collision_flags = 8;
-    ObjectDispatch_SetSingleChildField26(object, 0);
+    ObjectDispatch_SetSingleChildFlags(object, 0);
     Object_SetPartAttribute(object, parameter);
 }
 

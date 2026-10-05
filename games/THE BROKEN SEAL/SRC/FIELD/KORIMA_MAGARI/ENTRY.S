@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer KorimaMagari_SetupBoard
-	overlay_veneer SceneData_GetTable9170
-	overlay_veneer SceneData_GetTable91d0
-	overlay_veneer SceneData_GetTable91e0
-	overlay_veneer SceneData_GetTable9240
+	overlay_veneer KorimaMagari_GetEntrances
+	overlay_veneer KorimaMagari_GetExits
+	overlay_veneer KorimaMagari_GetPlacements
+	overlay_veneer KorimaMagari_GetEvents
 	overlay_veneer SceneData_ReturnZero

@@ -37,13 +37,13 @@ Func_020000c8:
 	strb r3, [r7]
 	movs r0, #30
 	bl Battle_WaitMode0
-	bl Func_020027b0
+	bl VinasuIriguchi_StopSparks
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200811c:
-	.4byte Func_0200009c
+	.4byte VinasuIriguchi_UpdateSparkTrail
 	.section .text.x02008128,"ax",%progbits
 	.global Func_02000128
 	.thumb_func
@@ -324,8 +324,8 @@ Func_0200030c:
 	negs r1, r1
 	lsls r0, r0, #17
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #4
@@ -1817,7 +1817,7 @@ Func_02000510:
 .L_02009220:
 	.4byte 0x00013333
 .L_02009224:
-	.4byte Func_0200009c
+	.4byte VinasuIriguchi_UpdateSparkTrail
 .L_02009228:
 	adds r3, r7, #0
 	adds r3, #100
@@ -2015,7 +2015,7 @@ Func_02000510:
 	movs r1, #0
 	movs r0, #17
 	bl Func_0200290c
-	bl Func_020027b0
+	bl VinasuIriguchi_StopSparks
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r1, #4
@@ -2918,7 +2918,7 @@ Func_02001c30:
 	bl Object_GetById
 	movs r5, #192
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	lsls r5, r5, #18
 	movs r1, #0
 	movs r0, #5
@@ -2929,8 +2929,8 @@ Func_02001c30:
 	adds r3, r3, r2
 	movs r2, #60
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r0, .L_02009fc8
@@ -2984,7 +2984,7 @@ Func_02001c30:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #50
 	movs r0, #5
 	movs r1, #6
@@ -3878,14 +3878,14 @@ Func_020023a4:
 	bl Func_0200285c
 	mov r0, r8
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r2, r8
 	adds r2, #35
 	movs r3, #2
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r2, [r6, #80]
 	movs r3, #128
 	lsls r3, r3, #7
@@ -4607,7 +4607,7 @@ gSceneEvents:
 	.4byte 0x00001608
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte Func_02000054
+	.4byte VinasuIriguchi_RunActorSparkBurst
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Func_020000c8

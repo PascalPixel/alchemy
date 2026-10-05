@@ -78,7 +78,7 @@ Func_020000b8:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008278
 	mov r1, r9
 	str r3, [r6, #108]
@@ -275,7 +275,7 @@ Func_020002a0:
 Func_020002b0:
 	push {lr}
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {pc}
 	.section .text.x020082bc,"ax",%progbits
@@ -649,7 +649,7 @@ Func_0200052c:
 	movs r0, #4
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #4
 	movs r1, #13
 	bl Object_SetModeById
@@ -930,7 +930,7 @@ Func_02000758:
 	strb r3, [r1, #9]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #8
 	str r3, [r5, #24]
@@ -1095,7 +1095,7 @@ Func_02000860:
 	mov r2, r8
 	strb r2, [r6, #27]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #92
 	adds r3, r3, r7
 	mov r2, r8
@@ -1582,8 +1582,8 @@ Func_02000c44:
 	bl Battle_WaitMode0
 	movs r0, #2
 	bl Func_02002110
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02002070
 	add sp, #8
 	pop {r5, pc}

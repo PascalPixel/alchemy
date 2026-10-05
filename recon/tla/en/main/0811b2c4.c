@@ -1,4 +1,4 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT8.C. */
+/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/LAYOUT.C. */
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "RAM_BUFFER.H"

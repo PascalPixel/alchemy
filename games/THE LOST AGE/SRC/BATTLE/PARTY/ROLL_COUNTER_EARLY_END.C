@@ -4,7 +4,6 @@
 #include "SCENE.H"
 #include "BATTLE_UNIT.H"
 
-/* battle/unit/roll_counter_early_end.c */
 s32 BattleRandom16Far(void);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
@@ -19,8 +18,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
     return 0;
 }
 
-/* battle/unit/tick_counter_132.c */
-s32 BattleUnit_TickCounter132(s32 unit_id)
+s32 BattleUnit_TickAttackModifier(s32 unit_id)
 {
     struct BattleUnit *state = Owner_GetState(unit_id);
 
@@ -43,8 +41,7 @@ s32 BattleUnit_TickCounter132(s32 unit_id)
     return 0;
 }
 
-/* battle/unit/tick_counter_134.c */
-s32 BattleUnit_TickCounter134(s32 unit_id)
+s32 BattleUnit_TickDefenseModifier(s32 unit_id)
 {
     struct BattleUnit *state = Owner_GetState(unit_id);
 
@@ -64,8 +61,7 @@ s32 BattleUnit_TickCounter134(s32 unit_id)
     return 0;
 }
 
-/* battle/unit/tick_counter_136.c */
-s32 BattleUnit_TickCounter136(s32 unit_id)
+s32 BattleUnit_TickResistanceModifier(s32 unit_id)
 {
     struct BattleUnit *state = Owner_GetState(unit_id);
 
@@ -85,8 +81,7 @@ s32 BattleUnit_TickCounter136(s32 unit_id)
     return 0;
 }
 
-/* battle/unit/tick_counter_138.c */
-s32 BattleUnit_TickCounter138(s32 unit_id)
+s32 BattleUnit_TickDelusion(s32 unit_id)
 {
     struct BattleUnit *state = Owner_GetState(unit_id);
     if (state->delusion != 0) {
@@ -101,8 +96,7 @@ s32 BattleUnit_TickCounter138(s32 unit_id)
     return 0;
 }
 
-/* battle/unit/tick_counter_139.c */
-s32 BattleUnit_TickCounter139(s32 unit_id)
+s32 BattleUnit_TickConfusion(s32 unit_id)
 {
     struct BattleUnit *state = Owner_GetState(unit_id);
     if ((u8)state->confusion != 0) {
@@ -117,8 +111,7 @@ s32 BattleUnit_TickCounter139(s32 unit_id)
     return 0;
 }
 
-/* battle/unit/tick_counter_13a.c */
-s32 BattleUnit_TickCounter13a(s32 unit_id)
+s32 BattleUnit_TickCharm(s32 unit_id)
 {
     struct BattleUnit *state = Owner_GetState(unit_id);
     if (state->charm != 0) {
@@ -133,8 +126,7 @@ s32 BattleUnit_TickCounter13a(s32 unit_id)
     return 0;
 }
 
-/* battle/unit/tick_counter_13b.c */
-s32 BattleUnit_TickCounter13b(s32 unit_id)
+s32 BattleUnit_TickStun(s32 unit_id)
 {
     struct BattleUnit *state = Owner_GetState(unit_id);
     if (state->stun != 0) {
@@ -149,8 +141,7 @@ s32 BattleUnit_TickCounter13b(s32 unit_id)
     return 0;
 }
 
-/* battle/unit/tick_counter_13c.c */
-s32 BattleUnit_TickCounter13c(s32 unit_id)
+s32 BattleUnit_TickSleep(s32 unit_id)
 {
     struct BattleUnit *state = Owner_GetState(unit_id);
     if (state->sleep != 0) {
@@ -164,8 +155,6 @@ s32 BattleUnit_TickCounter13c(s32 unit_id)
     }
     return 0;
 }
-
-/* battle/advance_counter_and_check_chance.c */
 
 s32 Battle_AdvanceCounterAndCheckChance(s32 id)
 {

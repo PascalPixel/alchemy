@@ -22,8 +22,6 @@ extern u8 MsgBiribinoMasterQuiteCranky[];
 extern u8 MsgBiribinoWhere[];
 extern struct EventWork *gEventWork;
 
-/* Main-image code reached through the overlay's import veneers, declared
- * old-style: the scene passes its arguments as plain words. */
 void Engine_ObjectSetTargetAndCallback();
 void FieldScene_OpenGate();
 
@@ -206,8 +204,7 @@ void BiribinoNiwa_RunGardenEvent(void)
         Call3(Engine_ActorWalkToAndWait, 11, 0x148, 246);
         /* FAKEMATCH: called without its prototype, the actor id loads after the two zeros. */
         ((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
-        /* FAKEMATCH: the do/while keeps this call after the argument setup
-         * of the previous one. */
+        /* FAKEMATCH: the do/while keeps this call after the argument setup of the previous one. */
         do {
             Engine_GameFlagSet(0x84a);
         } while (0);
@@ -221,7 +218,7 @@ done:
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene38e_0200045c(void)
+void BiribinoNiwa_LeaveThroughGate(void)
 {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x200) == 0) {
@@ -252,9 +249,7 @@ s32 Scene_Initialize(void)
 
     ent = (struct SceneEntity *)Object_GetById(8);
     fp = (u8 *)ent + 35;
-    /* FAKEMATCH: one register carries the stored zero and then, decremented
-       by 13, the ~0x0c handle mask, so the two are not folded into separate
-       constants. */
+    /* FAKEMATCH: one register carries the stored zero and then, decremented by 13, the ~0x0c handle mask, so the two are not folded into separate constants. */
     zero = 0;
     *fp = (u8)zero;
 

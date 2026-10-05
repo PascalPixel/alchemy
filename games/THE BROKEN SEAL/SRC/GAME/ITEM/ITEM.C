@@ -35,8 +35,7 @@ struct ItemMenuDisplayState {
     u16 busy;
 };
 
-/* The pointer at 0x2128 is cleared beside the variant; its pointer type
-   keeps the two stores apart for the scheduler. */
+/* This pointer is cleared alongside the variant. */
 struct ItemMenuSavedGraphics {
     u8 reserved_000[0xa8];
     u8 tiles[0x2000];
@@ -124,8 +123,8 @@ s32 Item_ReturnOne(void)
 /* Apply an item or ability effect to its target, or with range 0xff to
    every member of the menu's party list: restore HP or PP, raise a stat,
    revive or cure. Returns -1 and leaves the result message code when
-   nothing changed. The entry block reads the range before the list's first
-   count test, as the ROM does. */
+   nothing changed.
+ */
 s32 BattleEffect_ApplyToTargets(
     s32 effect_id,
     s32 source_id,
@@ -156,9 +155,7 @@ s32 BattleEffect_ApplyToTargets(
     else
         target = Owner_GetStateFar(0);
 
-    /* FAKEMATCH: dead range test; gcse reuses its read at the loop top.
-       2026-10-02: deleting this test delays the range load until after the
-       count guard and changes the target-index and power-load registers. */
+    /* FAKEMATCH: the dead test keeps the range load before the count guard and preserves target-index and power-load registers. */
     if (effect->range == 0xff && later_target != 0)
         result_code = 3;
 
@@ -714,7 +711,7 @@ s32 DjinnMenu_RunScreen(void)
                 s32 column;
                 s32 found;
                 u8 entry;
-            
+
                 column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
                 found = 0;
                 entry = menu->pair_entries[0];
@@ -766,7 +763,7 @@ s32 DjinnMenu_RunScreen(void)
                 s32 column;
                 s32 found;
                 u8 entry;
-            
+
                 column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
                 found = 0;
                 entry = menu->pair_entries[0];

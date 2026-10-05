@@ -2310,10 +2310,10 @@ Owner_GetDigitValues:
 	.thumb_func
 Owner_GetDefaultElement:
 	.incbin "baserom.gba", 0x000ab058, 0x00000028
-	.global Owner_BuildDigitTiles
-	.type Owner_BuildDigitTiles, %function
+	.global Owner_CalculateBaseElements
+	.type Owner_CalculateBaseElements, %function
 	.thumb_func
-Owner_BuildDigitTiles:
+Owner_CalculateBaseElements:
 	.incbin "baserom.gba", 0x000ab080, 0x000000c0
 	.global Owner_DetermineClass
 	.type Owner_DetermineClass, %function
@@ -2433,10 +2433,10 @@ Event_CallWithLastActiveObjectIdFar:
 	.thumb_func
 Scene_AssignViewFlagsFar:
 	.incbin "baserom.gba", 0x000c8038, 0x00000008
-	.global Event_SetWorkWord10Far
-	.type Event_SetWorkWord10Far, %function
+	.global Event_SetSceneEventsFar
+	.type Event_SetSceneEventsFar, %function
 	.thumb_func
-Event_SetWorkWord10Far:
+Event_SetSceneEventsFar:
 	.incbin "baserom.gba", 0x000c8040, 0x00000008
 	.global Event_PrepareObjectAndApplyValueFar
 	.type Event_PrepareObjectAndApplyValueFar, %function
@@ -2521,20 +2521,20 @@ Func_080c8350:
 Func_080c8368:
 	.incbin "baserom.gba", 0x000c8368, 0x00000010
 	.section .rom.000c83a8, "ax"
-	.global Event_SetStatus1c6Far
-	.type Event_SetStatus1c6Far, %function
+	.global Event_StartScreenTransitionFar
+	.type Event_StartScreenTransitionFar, %function
 	.thumb_func
-Event_SetStatus1c6Far:
+Event_StartScreenTransitionFar:
 	.incbin "baserom.gba", 0x000c83a8, 0x00000008
-	.global Event_ClearStatus1c6Far
-	.type Event_ClearStatus1c6Far, %function
+	.global Event_FinishScreenTransitionFar
+	.type Event_FinishScreenTransitionFar, %function
 	.thumb_func
-Event_ClearStatus1c6Far:
+Event_FinishScreenTransitionFar:
 	.incbin "baserom.gba", 0x000c83b0, 0x00000008
-	.global Event_WaitValue1c8FramesFar
-	.type Event_WaitValue1c8FramesFar, %function
+	.global Event_WaitTransitionFramesFar
+	.type Event_WaitTransitionFramesFar, %function
 	.thumb_func
-Event_WaitValue1c8FramesFar:
+Event_WaitTransitionFramesFar:
 	.incbin "baserom.gba", 0x000c83b8, 0x00000020
 	.global Func_080c83d8
 	.type Func_080c83d8, %function
@@ -3362,10 +3362,10 @@ Event_RunObjectHookAndWait:
 	.incbin "baserom.gba", 0x000d2378, 0x00000020
 	.section .rom.000d23aa, "ax"
 	.incbin "baserom.gba", 0x000d23aa, 0x00000002
-	.global Event_SetWorkWord10
-	.type Event_SetWorkWord10, %function
+	.global Event_SetSceneEvents
+	.type Event_SetSceneEvents, %function
 	.thumb_func
-Event_SetWorkWord10:
+Event_SetSceneEvents:
 	.incbin "baserom.gba", 0x000d23ac, 0x0000000c
 	.section .rom.000d25a8, "ax"
 	.global Func_080d25c8

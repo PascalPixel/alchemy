@@ -61,18 +61,15 @@ void InitializeSceneRecordBuffer();
 void BattleFx_SetQueuedSoundAndPlay();
 void SetMapCellCollision();
 void SoruSekizo_RunEventSequence(s32, s32, s32, s32, s32);
-void SceneData_InitTableA980(void);
-void SceneData_FillTableA980(void);
-void SceneData_BuildTableA980(void);
-void SceneData_InitTableA980AndRunB(void);
+void SoruSekizo_OpenNorthwestSeal(void);
+void SoruSekizo_OpenNortheastSeal(void);
+void SoruSekizo_OpenSoutheastSeal(void);
+void SoruSekizo_OpenSouthwestSeal(void);
 void Scene_ShineLeftBeam(void);
 void Scene_ShineRightBeam(void);
 void SoruSekizo_OpenSeal(void);
 
 /* Scene-record accessor. */
-
-/* Old-style: the interface is not established, and the call site passes five
- * arguments. */
 
 /* Argument shared by every configuration call below. */
 
@@ -87,7 +84,7 @@ static __inline__ void ConfigureScene(s32 actor, s32 x, s32 y, s32 mode)
     SetMapCellCollision(actor, x, y, mode);
 }
 
-static __inline__ void ConfigureScene_02003a30(s32 actor, s32 x, s32 y, s32 mode)
+static __inline__ void SoruSekizo_ConfigureAlternateCell(s32 actor, s32 x, s32 y, s32 mode)
 {
     /* FAKEMATCH: a direct call changes ConfigureAlternateSceneAndCheckActors from mov r0, #2 to lsl r1, r1, #17 (22/22 assembly lines). */
     SetMapCellCollision(actor, x, y, mode);
@@ -127,7 +124,7 @@ void SceneActor_RunSlot12ColumnStep(void);
 void Event_SayThenWait(s32 speaker, s32 frames);
 void FieldScene_SetupStagedActors(void);
 void FieldScene_RunStagedActorScene(void);
-void SoruSekizo_CheckTileTrigger0166C(void);
-void SoruSekizo_CheckTileTrigger016A4(void);
+void SoruSekizo_BlockLeftTriggerCell(void);
+void SoruSekizo_BlockRightTriggerCell(void);
 
 #endif

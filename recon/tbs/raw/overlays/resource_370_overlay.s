@@ -33,8 +33,8 @@ Func_020003cc:
 	ldr r2, [sp, #20]
 	adds r3, r3, r1
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r3, .L_020086c0
 	movs r0, #225
 	lsls r0, r0, #1
@@ -71,7 +71,7 @@ Func_020003cc:
 .L_02008450:
 	movs r0, #60
 	bl Battle_WaitMode0
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 	movs r0, #17
 	bl Engine_AudioPlayCue
 	movs r0, #150
@@ -79,7 +79,7 @@ Func_020003cc:
 	bl Battle_WaitMode0
 	ldr r0, .L_020086cc
 	movs r1, #72
-	bl Event_SetPairWork1c0
+	bl Event_SetDestination
 	bl .L_02008cbe
 .L_02008474:
 	movs r0, #112
@@ -666,7 +666,7 @@ Clear_LoadFourthSlot:
 	strb r3, [r2]
 	ldr r0, .L_0200887c
 	movs r1, #1
-	bl Event_SetPairWork1c0
+	bl Event_SetDestination
 	b .L_02008c96
 .L_020087aa:
 	movs r7, #1
@@ -1589,8 +1589,8 @@ Clear_FinalizeAndWait:
 	bl Battle_WaitMode0
 	movs r0, #17
 	bl Engine_AudioPlayCue
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #60
 	bl Battle_WaitMode0
 .L_02008cbe:

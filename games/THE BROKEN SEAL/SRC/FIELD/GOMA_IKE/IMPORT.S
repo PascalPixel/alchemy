@@ -13,7 +13,7 @@ Resource388_QueueSlotCommand:
 	.global Resource388_SetSlotOption
 	.thumb_func
 Resource388_SetSlotOption:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Resource388_TestSetupGate
 	.thumb_func
 Resource388_TestSetupGate:

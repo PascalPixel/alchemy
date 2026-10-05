@@ -2,8 +2,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "SYSTEM.H"
 
-/* The head of ☀️'s INVENT.C. An empty routine after the inventory
-   give-and-report code; nothing in the image calls it. */
+/* Empty inventory hook. */
 void Inventory_ReservedNoOp(void)
 {
 }

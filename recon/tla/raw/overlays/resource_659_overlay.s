@@ -650,7 +650,7 @@ Func_02000534:
 	movs r0, #26
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200856c:
 	pop {pc}
 	.2byte 0x0000
@@ -871,7 +871,7 @@ Func_02000624:
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	bl Object_GetById
 	ldr r1, [r0, #80]
@@ -980,8 +980,8 @@ Func_020007dc:
 	negs r1, r1
 	lsls r2, r2, #18
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -1279,7 +1279,7 @@ Func_020007dc:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, .L_02008c28
 	movs r0, #9
 	bl ObjectMotion_EnableActionAndSetCallback
@@ -1348,7 +1348,7 @@ Func_020007dc:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #128
 	lsls r1, r1, #7
 	movs r2, #0

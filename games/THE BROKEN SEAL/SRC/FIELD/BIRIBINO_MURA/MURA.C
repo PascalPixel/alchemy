@@ -31,9 +31,9 @@ extern u8 MsgBiribinoThankSavedMeFromBeing[];
 extern u8 MsgBiribinoThereTreeLooksLikePerson[];
 extern u8 MsgBiribinoWasTurnedIntoTreeFor[];
 extern u8 MsgBiribinoYoureGuy[];
-void FieldScene_RunScene38b_020008f0(void);
+void BiribinoMura_RestoreVillageActors(void);
 void FieldScene_RunScene38bSequenceA(void);
-void FieldScene_RunScene38b_02000d10(void);
+void BiribinoMura_RestoreRaisedEntrance(void);
 void BiribinoMura_UpdateCornerSpawn(void);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
@@ -68,7 +68,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -178,7 +178,7 @@ void SceneDialogue_RunLine1470(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene38b_02000240(void)
+void BiribinoMura_TalkAboutHumanTree(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoItsTreeButAlmostLooks);
@@ -335,12 +335,12 @@ void FieldScene_RunScene38bSequenceC(void)
     }
 }
 
-void FieldScene_CallHelper170c(void)
+void BiribinoMura_CheckLeaderAhead(void)
 {
     Engine_LeaderCheckAhead();
 }
 
-void FieldScene_RunScene38b_02000584(void)
+void BiribinoMura_ReceiveJillsGift(void)
 {
     u32 i;
     struct FieldActor *rec7;
@@ -442,21 +442,21 @@ s32 Scene_Initialize(void)
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (gGameState.scene == (s32)&SceneId_BiribinoMura1) {
-        FieldScene_RunScene38b_020008f0();
+        BiribinoMura_RestoreVillageActors();
     } else {
         if (gGameState.scene == (s32)&SceneId_BiribinoMura3) {
             FieldScene_RunScene38bSequenceA();
             ((void (*)())Engine_TaskAddCallback)((s32)BiribinoMura_UpdateCornerSpawn, 0xc80);
         } else {
             if (gGameState.scene == (s32)&SceneId_BiribinoMura2) {
-                FieldScene_RunScene38b_02000d10();
+                BiribinoMura_RestoreRaisedEntrance();
             }
         }
     }
     return 0;
 }
 
-void FieldScene_RunScene38b_020008f0(void)
+void BiribinoMura_RestoreVillageActors(void)
 {
 
     struct FieldActor *record;
@@ -616,25 +616,10 @@ void FieldScene_RunScene38bSequenceA(void)
  * data lives in EWRAM and is deliberately not const.
  */
 
-/*
- * Slot accessor: Object_GetById(slot) returns the actor record, or NULL.
- * Typed as a byte pointer so the +0x08 and +0x10 field reads are explicit.
- */
+/* The cell renderer takes the tile's X and Z coordinates after its first four arguments. */
 
-/*
- * The six-argument renderer ABI: four register arguments plus two stack
- * words, here the tile x and tile z of the cell being repainted.  The two
- * names are separate per-site call words that reach the same renderer.
- */
+/* Repaint ten fixed collision cells, followed by actor 8's cell. */
 
-/*
- * Repaint ten fixed collision cells and then actor 8's own cell.  The
- * 92-byte owner includes the alignment halfword and the single pool word
- * that follows the code; that word holds the address of Mura_RepaintCells, which
- * is in-image data rather than a RAM global.  The two renderer calls must
- * keep their separate call words -- naming one renderer for both changes the
- * displacement emitted at each site.
- */
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 {
     struct FieldActor *actor;
@@ -652,11 +637,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
     tx = actor->x.fixed >> 20;
     tz = actor->z.fixed >> 20;
 
-    /*
-     * Ten fixed cells from the table, then the actor's own cell.  The table
-     * is walked by the byte index itself rather than by a 0..9 counter
-     * scaled by two, so the loop steps the byte offset directly.
-     */
+/* Ten fixed cells from the table, then the actor's own cell. */
     for (i = 0; i < 20; i += 2) {
         s32 x = (s32)Mura_RepaintCells[i];
         s32 z = (s32)Mura_RepaintCells[i + 1];
@@ -670,7 +651,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
     Engine_MapCopyCellAttributes(0, 0, 1, 1, tx, tz);
 }
 
-void FieldScene_RunScene38b_02000d10(void)
+void BiribinoMura_RestoreRaisedEntrance(void)
 {
     /* FAKEMATCH: the inline halfword cell view remains pending a native field review. */
 

@@ -7,6 +7,7 @@
 #include "CALL.H"
 #include "OBJECT_RUNTIME.H"
 
+extern u8 gKuupuappuDouRegions[];
 extern const struct SceneEntrance gKuupuappuDouEntrances1[];
 extern const struct SceneEntrance gKuupuappuDouEntrances2[];
 extern const struct SceneEntrance gKuupuappuDouEntrances3[];
@@ -30,7 +31,7 @@ extern void KuupuappuDou_RaiseActorPriorities(void);
 TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
 TEXT_MESSAGE_ENUM(MsgFieldFlippedSwitch);
 
-extern 
+extern
 
 extern const u32 gKuupuappuDouExits1[];
 extern const u32 gKuupuappuDouExits2[];
@@ -52,7 +53,7 @@ extern const struct SceneEvent gKuupuappuDouEvents2[];
 extern const struct SceneEvent gKuupuappuDouEvents3[];
 extern const struct SceneEvent gKuupuappuDouEventsOther[];
 
-void SceneState_SetEntries16To21Byte35(void);
+void KuupuappuDou_EnableGroupAutomaticPriority(void);
 
 struct MapShake {
     u8 unknown_00[0x18];
@@ -120,12 +121,9 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gKuupuappuDouEntrancesOther;
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
-u8 *SceneData_GetTable9C5C(void)
+u8 *KuupuappuDou_GetRegions(void)
 {
-    return (u8 *)0x02009c5c;
+    return gKuupuappuDouRegions;
 }
 
 /* Where each area's exits lead. */
@@ -252,7 +250,7 @@ void SceneState_ApplyFlag300(void)
     Engine_GameFlagSet(0x300);
 }
 
-void SceneState_SetFlag953(void)
+void KuupuappuDou_ShowLockedDoorMessage(void)
 {
     Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }
@@ -422,16 +420,14 @@ void FieldScene_RunGuardedStep9AA(void)
 void SceneState_ApplyRectAndMarkActor16(void)
 {
     struct FieldActor *rec = Object_GetById(16);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 fifth = 23;
     s32 sixth = 32;
 
     Engine_MapCopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (rec != 0) {
-        /* The rec is reloaded with the same selector before this store. */
+
         Object_GetById(16)->motion_flags = 0;
         rec->priority_flags = 1;
     }
@@ -442,16 +438,14 @@ void SceneState_ApplyRectAndMarkActor16(void)
 void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 {
     struct FieldActor *rec = Object_GetById(17);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 p5 = 23;
     s32 p6 = 34;
 
     Engine_MapCopyCellAttributes(26, 30, 1, 1, p5, p6);
 
     if (rec != 0) {
-        /* The record is reloaded with the same selector before this store. */
+
         Object_GetById(17)->motion_flags = 0;
         rec->priority_flags = 1;
     }
@@ -462,16 +456,14 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 {
     struct FieldActor *record = Object_GetById(18);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 a = 24;
     s32 b = 34;
 
     Engine_MapCopyCellAttributes(26, 30, 1, 1, a, b);
 
     if (record != 0) {
-        /* The record is reloaded with the same selector before this store. */
+
         Object_GetById(18)->motion_flags = 0;
         record->priority_flags = 1;
     }
@@ -482,9 +474,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 void SceneState_ApplyRectAndSetupActor19(void)
 {
     struct FieldActor *p = Object_GetById(19);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 a5 = 26;
     s32 a6 = 32;
 
@@ -492,7 +482,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
 
     if (p != 0) {
         Engine_ActorSetSpriteFlags(p, 0);
-        /* The record is reloaded with the same selector before this store. */
+
         Object_GetById(19)->motion_flags = 0;
         p->priority_flags = 1;
     }
@@ -503,9 +493,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
 void SceneActor_SetupSlotTwenty(void)
 {
     struct FieldActor *rec = Object_GetById(20);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 fifth = 26;
     s32 sixth = 34;
 
@@ -513,7 +501,7 @@ void SceneActor_SetupSlotTwenty(void)
 
     if (rec != 0) {
         Engine_ActorSetSpriteFlags(rec, 0);
-        /* The rec is reloaded with the same selector before this store. */
+
         Object_GetById(20)->motion_flags = 0;
         rec->priority_flags = 1;
     }
@@ -524,9 +512,7 @@ void SceneActor_SetupSlotTwenty(void)
 void SceneActor_MarkSlot21AndSetFlag205(void)
 {
     struct FieldActor *record = Object_GetById(21);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 fifth = 28;
     s32 sixth = 33;
 
@@ -534,7 +520,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
 
     if (record != 0) {
         Engine_ActorSetSpriteFlags(record, 0);
-        /* The record is reloaded with the same selector before this store. */
+
         Object_GetById(21)->motion_flags = 0;
         record->priority_flags = 1;
     }
@@ -549,7 +535,7 @@ void SceneState_DispatchByActorZeroDepth(void)
     if (p->f0c >= 0x100000) {
         KuupuappuDou_RaiseActorPriorities();
     } else {
-        SceneState_SetEntries16To21Byte35();
+        KuupuappuDou_EnableGroupAutomaticPriority();
     }
 }
 
@@ -568,7 +554,7 @@ void KuupuappuDou_RaiseActorPriorities(void)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /* Deliberate no-op callback. */
-void SceneState_SetEntries16To21Byte35(void)
+void KuupuappuDou_EnableGroupAutomaticPriority(void)
 {
     s32 index = 16;
     s32 flag = 1;

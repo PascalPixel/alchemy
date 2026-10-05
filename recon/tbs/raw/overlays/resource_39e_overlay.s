@@ -423,7 +423,7 @@ gShianJiinEvents1:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte FieldScene_RunScene39e_02002778
+	.4byte ShianJiin_RunExitTransition
 	.4byte 0x00000002
 	.4byte 0xffff0003
 	.4byte FieldScene_RunScene39eSequenceA
@@ -447,10 +447,10 @@ gShianJiinEvents1:
 	.4byte FieldScene_RunFlag88FBranch
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte FieldScene_RunScene39e_02000414
+	.4byte ShianJiin_AskBridgeCrossing
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte FieldScene_RunScene39e_02000414
+	.4byte ShianJiin_AskBridgeCrossing
 	.4byte 0x00000000
 	.4byte 0x08910009
 	.4byte MsgShianJiinOmOmBlueLightsInThe

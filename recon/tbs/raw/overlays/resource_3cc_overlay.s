@@ -57,6 +57,8 @@
 	.4byte 0x00020003
 	.4byte 0x00000001
 	.4byte 0x00000000
+	.global TestRooms_Entrances
+TestRooms_Entrances:
 	.4byte 0xffff0000
 	.4byte 0x000000c0
 	.4byte 0x800000c0
@@ -69,11 +71,15 @@
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global TestRooms_Exits
+TestRooms_Exits:
 	.4byte 0x000000bf
 	.4byte 0x000000c0
 	.4byte 0x000000c1
 	.4byte 0x000000c2
 	.4byte 0x000001ff
+	.global TestRooms_Placements
+TestRooms_Placements:
 	.4byte 0x0030005a
 	.4byte 0x00000001
 	.4byte 0x01f00000
@@ -104,6 +110,8 @@
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global TestRooms_Events
+TestRooms_Events:
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte State_ApplyValues8And0And0Then30

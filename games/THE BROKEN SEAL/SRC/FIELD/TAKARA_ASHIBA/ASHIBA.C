@@ -63,7 +63,6 @@ extern const struct ScenePlacement gTakaraAshibaPlacements2[];
 extern const struct ScenePlacement gTakaraAshibaPlacements3[];
 extern const struct ScenePlacement gTakaraAshibaPlacementsOther[];
 
-
 extern const struct SceneEvent gTakaraAshibaEvents1[];
 extern const struct SceneEvent gTakaraAshibaEvents2[];
 extern const struct SceneEvent gTakaraAshibaEvents3[];
@@ -106,11 +105,11 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 void Scheduler_RemoveCallbackFar();
 void TakaraAshiba_DispatchByActorEightColumn();
-void SceneState_ApplyFourRectsAndSetActor8Byte85(void);
+void TakaraAshiba_RestoreActorEightTerrain(void);
 void SceneActor_PassActorNinePositionWithId107(void);
 
-void SceneState_ApplyRectAndClearSlotTenByte85(void);
-void SceneState_ApplyRectAndClearActor10Byte85(void);
+void TakaraAshiba_RestoreActorTenLeftCell(void);
+void TakaraAshiba_RestoreActorTenRightCell(void);
 void SceneState_ApplyTwoRectsAtRow56(void);
 
 void TakaraAshiba_UpdateBlockRects(void);
@@ -119,45 +118,15 @@ void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 extern s32 TakaraAshiba_IconTimer;
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
 /* resource_3b4 actor presentation: cell repaints for slots 11 and 12. */
 
-/*
- * Func_ names below are loader-relocated call words in this overlay's import
- * veneer table, not runtime addresses.  The declarations are old-style
- * because the same imports are reached with differing argument counts from
- * different call sites.
- */
 
-/*
- * Actor presentation for resource_3b4.
- *
- * A Func_ name in the import veneer band 0x02002468-0x0200261f names the
- * main-image address held in the veneer's trailing word, not a runtime
- * address the call reaches directly.  Declarations are old-style because
- * those imports are reached with differing argument counts from different
- * call sites.
- */
 
-/* Slot record lookup, then the mode imports. */
-
-/* Complete 16-byte actor-15 mode wrapper before the no-op leaf at 0x9ec. */
 void SceneActor_SetActor15ModeZero(void)
 {
     BattleFx_RunPageEffectForSlot(15, 0, 6);
 }
 
-/* Complete four-byte no-op leaf plus its alignment halfword. */
 void Resource3b4_EmptyHookA(void)
 {
 }
@@ -179,24 +148,11 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gTakaraAshibaEntrancesOther;
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
-/* Complete four-byte leaf: movs r0,#0 followed by bx lr. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/* Complete eight-byte literal-address getter, including its sole pool word. */
 u8 *SceneData_GetSceneTable(void)
 {
     return TakaraAshiba_SceneTable;
@@ -219,18 +175,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gTakaraAshibaPlacementsOther;
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
-/* Complete two-byte empty hook plus its alignment halfword. */
 void Resource3b4_EmptyHookB(void)
 {
 }
@@ -244,7 +188,7 @@ s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor)
     return 0;
 }
 
-void FieldScene_RunScene3b4_02000ad0(void)
+void TakaraAshiba_StartActorFifteenJump(void)
 {
     struct FieldActor *record;
 
@@ -268,7 +212,7 @@ void FieldScene_RunScene3b4_02000ad0(void)
     }
 }
 
-void FieldScene_RunScene3b4_02000b68(void)
+void TakaraAshiba_RunActorFifteenSprint(void)
 {
     struct FieldActor *rec7;
     s32 rec8;
@@ -315,7 +259,7 @@ void FieldScene_RunScene3b4_02000b68(void)
     }
 }
 
-void FieldScene_RunScene3b4_02000ccc(void)
+void TakaraAshiba_ReturnActorFifteen(void)
 {
     struct FieldActor *record;
 
@@ -387,7 +331,6 @@ void FieldScene_CopyActorPosition(void)
     }
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3b4. */
 void FieldScene_RunActor15ZeroStep(void)
 {
     Engine_EventBegin();
@@ -412,17 +355,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gTakaraAshibaEventsOther;
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-void FieldScene_CallHelper3500(void)
+void TakaraAshiba_CheckLeaderAhead(void)
 {
     Engine_LeaderCheckAhead();
 }
@@ -446,17 +379,7 @@ void TakaraAshiba_OpenPassage(s32 arg)
     Engine_MapCopyCellAttributes(column, 40, 1, 1, column, 42);
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-void FieldScene_RunScene3b4_02000fdc(s32 a0)
+void TakaraAshiba_OpenPlatformPassage(s32 a0)
 {
     u32 i;
     s32 record;
@@ -483,7 +406,7 @@ void FieldScene_RunScene3b4SequenceC(void)
         if (GameFlag_IsSet(0x9c4) == 0) {
             if (PartyInventory_FindOwnerFar(243) != -1) {
                 GameFlag_Set(0x9c4);
-                FieldScene_RunScene3b4_02000fdc(0x100);
+                TakaraAshiba_OpenPlatformPassage(0x100);
                 PartyInventory_RemoveFar(243);
             }
         }
@@ -521,7 +444,7 @@ void FieldScene_RunIndexedStep1(void)
     SceneState_SetSelectorFlagWhenFacingC000(1);
 }
 
-void SceneState_ResetCounter412OnHeading4000B(void)
+void TakaraAshiba_ResetBlockedStepsForSelectorTwo(void)
 {
     struct FieldActor *slot;
     s16 *cnt;
@@ -539,7 +462,7 @@ void SceneState_ResetCounter412OnHeading4000B(void)
     }
 }
 
-void SceneState_ResetCounter412OnHeading4000(void)
+void TakaraAshiba_ResetBlockedStepsForSelectorThree(void)
 {
     struct FieldActor *p;
     s16 *cnt;
@@ -641,16 +564,6 @@ void TakaraAshiba_RaiseTriggerOnStand(void)
     }
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     u32 i;
@@ -886,7 +799,7 @@ void SetBlendAlphaCoefficients(void)
     REG_BLDALPHA = coefficient;
 }
 
-/* Complete blend-alpha setter through return and its two pool words. */
+/* Set blend alpha. */
 void SceneEffect_SetBlendAlpha0607(void)
 {
     u16 value = 0x0607;
@@ -894,26 +807,9 @@ void SceneEffect_SetBlendAlpha0607(void)
     REG_BLDALPHA = value;
 }
 
-/*
- * Scene state interaction for resource_3b4.
- *
- * A Func_ name in the import veneer band 0x02002468-0x0200261f names the
- * main-image address held in the veneer's trailing word, not a runtime
- * address the call reaches directly.  Declarations are old-style because
- * those imports are reached with differing argument counts from different
- * call sites.
- */
 
-/* Slot record lookup, then the scene flag test, clear and set imports. */
 
-/*
- * Dispatch on slot 0's halfword at +6, the facing field, which takes the
- * values 0, 0x4000, 0x8000 and 0xc000.  The 160-byte owner includes its two
- * pool words, 0x206 and 0x207.  Two arms repaint one collision cell, but
- * only while scene flag 0x206 is set, and then move flag 0x207.  The 0x8000
- * arm does no flag work and branches on slot 0's height word at +12, read
- * from the record pointer already in hand rather than a fresh lookup.
- */
+/* Dispatch on the leader's facing: two directions repaint a cell when flag 0x206 is set and update flag 0x207; facing 0x8000 selects by height. */
 void FieldScene_DispatchBySlotZeroFacing(void)
 {
     struct FieldActor *slot = Object_GetById(ACTOR_PARTY_LEADER);
@@ -962,17 +858,7 @@ void SceneActor_MarkSlot13AndSetFlag200(void)
     Engine_GameFlagSet(512);
 }
 
-/*
- * Facing target scene for resource_3b4.
- *
- * A Func_ name in the import veneer band 0x02002468-0x0200261f names the
- * main-image address held in the veneer's trailing word, not a runtime
- * address the call reaches directly.  Declarations are old-style because
- * those imports are reached with differing argument counts from different
- * call sites.
- */
 
-/* Slot record lookup, then the notification and step imports. */
 void SceneState_BranchOnActorZeroFacing(void)
 {
     struct Slot *slot = Object_GetById(0);
@@ -984,7 +870,7 @@ void SceneState_BranchOnActorZeroFacing(void)
     }
 }
 
-void SceneState_ApplyFourRectsAndSetActor8Byte85(void)
+void TakaraAshiba_RestoreActorEightTerrain(void)
 {
     Engine_MapCopyCellAttributes(57, 42, 1, 1, 40, 42);
     Engine_MapCopyCellAttributes(57, 42, 1, 1, 41, 42);
@@ -1002,7 +888,7 @@ void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
     Object_GetById(8)->priority_flags = 2;
 }
 
-void SceneState_ApplyRectAndSetActor8Byte35(void)
+void TakaraAshiba_RestoreRightUnderfootCell(void)
 {
     s32 w = 41;
     s32 h = 42;
@@ -1011,7 +897,7 @@ void SceneState_ApplyRectAndSetActor8Byte35(void)
     Object_GetById(8)->priority_flags = 2;
 }
 
-void SceneState_ApplyRectAndSetSlotEightByte35(void)
+void TakaraAshiba_RestoreLeftUnderfootCell(void)
 {
     s32 width = 40;
     s32 height = 42;
@@ -1035,15 +921,15 @@ void TakaraAshiba_DispatchByActorEightColumn(void)
     if (height == 0) {
         Object_GetById(8)->priority_flags = 2;
     }
-    SceneState_ApplyFourRectsAndSetActor8Byte85();
+    TakaraAshiba_RestoreActorEightTerrain();
     lowered = 0;
     Object_GetById(8)->motion_flags = 3;
     if (column == 40) {
-        SceneState_ApplyRectAndSetSlotEightByte35();
+        TakaraAshiba_RestoreLeftUnderfootCell();
     } else if (column == 42) {
         ActorPresentation_SetSceneCell58AndMarkActorEight();
     } else if (column == 41) {
-        SceneState_ApplyRectAndSetActor8Byte35();
+        TakaraAshiba_RestoreRightUnderfootCell();
     } else if (column == 39) {
         LiftBlock(column, lowered);
     } else if (column == 38) {
@@ -1053,25 +939,7 @@ void TakaraAshiba_DispatchByActorEightColumn(void)
     }
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
-/*
- * Compare the X tiles of slots 0 and 8, each the word at +8 divided by
- * 0x100000.  The 100-byte owner includes its one pool word, 0x000fffff,
- * which that truncating signed division reads.  The special cases apply only
- * when slot 0 sits on tile 38 and slot 8 does not; then slot 0's halfword at
- * +6 selects one of two notifications.  Every other case, an unrecognised
- * halfword included, runs the three-step ordinary path.
- */
+/* When actor 0 is on tile 38 and actor 8 is not, actor 0's facing selects a notification; otherwise run the ordinary three-step path. */
 void SceneActor_BranchOnSlotZeroAtTile38(void)
 {
     s32 *slot0 = Object_GetById(0);
@@ -1082,10 +950,6 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
     if (x0 == 38 && x8 != 38) {
         u16 facing = ((u16 *)slot0)[3];
 
-        /*
-         * The facing value is still in r0 at both branches, but whether
-         * either callee reads it is unverified, so no argument is passed.
-         */
         if (facing == 0xc000) {
             battle_owner_69();
             return;
@@ -1096,12 +960,12 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
         }
     }
 
-    SceneState_ApplyFourRectsAndSetActor8Byte85();
+    TakaraAshiba_RestoreActorEightTerrain();
     StagedActor_AdvancePair();
     TakaraAshiba_DispatchByActorEightColumn();
 }
 
-void FieldScene_RunScene3b4_02001bc4(void)
+void TakaraAshiba_ReleaseActorNinePlatform(void)
 {
     u32 i;
     s32 record;
@@ -1124,7 +988,7 @@ void SceneActor_RunWhenActor9AtTile45x43(void)
     s32 z = slot[4] / 0x100000;
 
     if (x == 45 && z == 43) {
-        FieldScene_RunScene3b4_02001bc4();
+        TakaraAshiba_ReleaseActorNinePlatform();
     }
 }
 
@@ -1142,7 +1006,7 @@ void SceneState_ApplyTwoRectsAtRow56(void)
     Engine_MapCopyCellAttributes(42, 56, 1, 1, 42, base);
 }
 
-void SceneState_ApplyRectAndClearSlotTenByte85(void)
+void TakaraAshiba_RestoreActorTenLeftCell(void)
 {
     s32 width = 38;
     s32 height = 55;
@@ -1151,7 +1015,7 @@ void SceneState_ApplyRectAndClearSlotTenByte85(void)
     Object_GetById(10)->motion_flags = 0;
 }
 
-void SceneState_ApplyRectAndClearActor10Byte85(void)
+void TakaraAshiba_RestoreActorTenRightCell(void)
 {
     s32 w = 42;
     s32 h = 55;
@@ -1171,31 +1035,21 @@ void TakaraAshiba_UpdateBlockRects(void)
     s32 z = block->z.fixed / 0x100000;
 
     if (!Value1(Engine_GameFlagIsSet, 0x300) && y <= 2) {
-        SceneState_ApplyRectAndClearSlotTenByte85();
+        TakaraAshiba_RestoreActorTenLeftCell();
         Engine_GameFlagSet(0x300);
     }
     if (z == 55) {
         if (x == 42) {
-            SceneState_ApplyRectAndClearActor10Byte85();
+            TakaraAshiba_RestoreActorTenRightCell();
         }
         if (x == 38) {
-            SceneState_ApplyRectAndClearSlotTenByte85();
+            TakaraAshiba_RestoreActorTenLeftCell();
         }
     } else {
         SceneState_ApplyTwoRectsAtRow56();
     }
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
 void FieldScene_RunThreeCallSequenceB(void)
 {
     SceneState_ApplyTwoRectsAtRow56();
@@ -1224,13 +1078,7 @@ void SceneState_ApplyFourRectsAt48_55(void)
     Engine_MapCopyCellAttributes(48, 55, 1, 1, 52, base);
 }
 
-/*
- * Repaint the four cells, then one cell for each of slots 11 and 12 at that
- * slot's own X tile.  The 92-byte owner at 0x02001df8 includes two bytes of
- * alignment and the pool word 0x000fffff.  The tile divisions must stay
- * spelled `/ 0x100000': the reference biases a negative value before the
- * arithmetic shift, which is exactly this truncating signed division.
- */
+/* Repaint the four fixed cells and the cells beneath actors 11 and 12, converting X to tile coordinates with division toward zero. */
 void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
 {
     s32 *slot;
@@ -1258,7 +1106,7 @@ void FieldScene_RunThreeCallSequence(void)
     FieldScene_RunSingleStep();
 }
 
-void FieldScene_CallHelper3c70(void)
+void TakaraAshiba_RepaintActorCells(void)
 {
     ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
@@ -1267,7 +1115,7 @@ void FieldScene_RunThreeStepSequence(void)
 {
     SceneState_ApplyFourRectsAt48_55();
     StagedActor_AdvancePair();
-    FieldScene_CallHelper3c70();
+    TakaraAshiba_RepaintActorCells();
 }
 
 void ActorPresentation_PlaceActorFourteenOnActorNine(void)
@@ -1316,8 +1164,7 @@ void SceneActor_PublishMarkerBySlotZeroHeight(void)
     Object_GetById(12)->priority_flags = priority;
 }
 
-/* The platforms' scene start, entry veneer 0: the screen opens through the
- * window, and each platform runs its own opening. */
+/* Open the screen through the window transition, then run each platform's opening. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

@@ -113,7 +113,7 @@ void FieldScene_RunActorEightPromptDialogue(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinYourFirstTimeVisitAltin);
-    /* r1 is set before r0; the argument order is unchanged. */
+
     Engine_EventOpenMessage(8, 0);
 
     if (Engine_EventChooseYesNo(0, 0) == 1) {
@@ -159,8 +159,9 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         ready_flag = GameFlag_IsSet(0x8ff);
         if (ready_flag == 0) {
             rec18 = Object_GetById(18);
+
             /* Clear the byte at +85 of the lookup result. */
-            *(u8 *)(Battle_GetWorkObject1e0() + 85) = ready_flag;
+            ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = ready_flag;
             Camera_SetSpeed(0x10000, 0x2000);
             Camera_MoveTo(rec18->x.fixed, rec18->y.fixed, rec18->z.fixed, 1); /* use_setter 1 */
             Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -242,7 +243,7 @@ void FieldScene_RunActorFifteenFlagBranch(void)
     if (Engine_GameFlagIsSet(0x242) == 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgArutinDoWantWeapons);
-        /* r1 is set before r0 here; the argument order is unchanged. */
+
         Engine_EventAskYesNo(15, 0);
         Engine_EventEnd();
         return;
@@ -481,11 +482,7 @@ void SceneState_SetFlag906ByActorNineteenX(void)
     }
 }
 
-/*
- * Altin's scene start: mirror three progress flags into three scene flags,
- * then run the continuation of the area the party enters. Every call here
- * leaves through its own veneer, so the sites stay separate.
- */
+/* Mirror three Altin progress flags into scene flags, then continue the area the party enters. */
 s32 Scene_Initialize(void)
 {
     s16 scene;

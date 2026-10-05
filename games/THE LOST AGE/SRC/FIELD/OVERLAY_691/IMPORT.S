@@ -142,10 +142,10 @@ Func_02003aa4:
 	.thumb_func
 Func_02003aac:
 	overlay_veneer Func_08020210
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:
@@ -254,20 +254,20 @@ Func_02003b84:
 	.thumb_func
 Func_02003b8c:
 	overlay_veneer Func_080c82e0
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_WaitValue1c8Frames
+Event_StartScreenTransition:
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Field_DispatchTypeHandler

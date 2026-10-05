@@ -20,8 +20,6 @@ extern u8 gRariberoEvents9a7[];
 extern u8 gRariberoHeyaEvents[];
 extern u8 gRariberoHeyaEvents9a7[];
 
-/* Main-image services reached through the overlay's import veneers, declared
- * old-style where call sites pass differing arguments. */
 void Engine_ResetSceneEffectCounter(void);
 void Owner_RefreshActiveRatios();
 s32 Motion_LaunchFromFocusedObject();

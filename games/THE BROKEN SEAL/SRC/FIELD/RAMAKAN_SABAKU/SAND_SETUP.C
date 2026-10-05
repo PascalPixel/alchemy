@@ -10,8 +10,6 @@ extern u16 RamakanSabaku_SandPhase;
 
 void RamakanSabaku_RunSandstorm(void);
 
-/* A one-halfword struct keeps the zero a register copy, not a halfword pool
- * constant out of reach. */
 struct Half {
     u16 v;
 };
@@ -26,8 +24,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
 
     Resource_DecodeType01(RamakanSabaku_SandEffectTiles, RamakanSabaku_SandTileBuffer);
     slotp = &RamakanSabaku_SandVramSlot;
-    /* FAKEMATCH: the size temporary schedules the slot store after the
-     * call. */
+    /* FAKEMATCH: the size temporary schedules the slot store after the call. */
     slot = Resource_FindFreeEntry();
     {
         s32 size = 0x480;
@@ -41,7 +38,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
     Engine_TaskAddCallback(RamakanSabaku_RunSandstorm, 0xc76);
 }
 
-void SceneState_SetHalfwordB030(u16 value)
+void RamakanSabaku_SetSandPhase(u16 value)
 {
     RamakanSabaku_SandPhase = value;
 }

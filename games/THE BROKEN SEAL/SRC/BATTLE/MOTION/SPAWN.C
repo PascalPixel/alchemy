@@ -115,9 +115,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
         }
         BattlePres_SetActorModeAndAction(id);
     }
-    /* FAKEMATCH: the refresh loop is rotated by hand with a goto, which keeps
-     * the loop pass off it. Written as a for like the loop above it compiles
-     * to a pointer walk over the list instead of indexing it each time. */
+    /* FAKEMATCH: the goto rotation preserves indexed list reads; a for loop becomes a pointer walk. */
     if (refresh) {
         i = 0;
         if ((resource = list[0]) != 255) {

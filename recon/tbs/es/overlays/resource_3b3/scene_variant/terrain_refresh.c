@@ -8,7 +8,7 @@
 #include "CALL.H"
 #include "FIELD_SCENE.H"
 
-void FieldScene_RunScene3b3_02001fd4(void);
+void TakaraHashira_PushPillar(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
 void FieldEffect_UpdateGridPlacement(void);
 
@@ -53,13 +53,13 @@ extern const struct SceneEvent gTakaraHashiraEventsOther[];
 extern u8 TakaraHashira_PillarSlots[];
 void SceneActor_ApplyPlacementQueryAndTag();
 void BattleFx_StartFadeOverlay();
-void SceneState_ClearWord24AndObjectByte62();
+void TakaraHashira_ReleasePillarRider();
 void OverlayObject_SetCallbackAndMode2();
 void SceneActor_CheckActors8To11NearSlotZero(void);
 void TakaraHashira_PrepLoweredActor();
-void FieldScene_RunScene3b3_0200263c();
+void TakaraHashira_RestoreFlaggedPillar();
 
-void FieldScene_RunScene3b3_02001fd4(void)
+void TakaraHashira_PushPillar(void)
 {
     Engine_EventBegin();
     if (FieldScene_RunScene3b3SequenceD() == 0) {

@@ -1,7 +1,7 @@
 #include "AUDIO_ENGINE_TYPES.H"
 
 extern struct SoundPlayer gMusicPlayerBgm;
-/* Existing byte-prefix view of the full player, used only for its status. */
+/* Byte prefix used to access the player's status. */
 extern u8 gMusicPlayerFanfare[];
 
 extern u8 gMusicRestoreDelay;
@@ -16,9 +16,7 @@ void Sound_TickDmaRestartTimer(void);
 
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
 {
-    /* FAKEMATCH: retain the existing player byte-prefix declaration here.
-       A typed status field folds status+4 into the pool instead of using
-       the original byte displacement; no width or storage changes. */
+    /* FAKEMATCH: the player byte prefix keeps status+4 as a byte displacement; a typed field folds it into the literal. */
     s32 delta;
 
     if (gMusicRestoreDelay != 0) {

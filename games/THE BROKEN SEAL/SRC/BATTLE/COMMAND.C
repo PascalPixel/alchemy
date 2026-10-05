@@ -27,7 +27,7 @@ void UiText_ShowMessageAndWaitCoreFar(s32 message);
 void UiWork_ClearValueNameTablesFar(void);
 s32 GameFlag_IsSet(s32 flag);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
-void BattleEv_SetRuntimeField8(void);
+void BattleEv_MarkDisplay(void);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 s32 Djinn_IsActiveFar(s32 unit_id, s32 element, s32 index);
 s32 Trade_CanOfferDjinnFar(s32 unit_id, s32 element, s32 index);
@@ -45,7 +45,7 @@ s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts);
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 u32 BattleParty_IsUnitListed(u32 unit_id);
 s32 Item_GetEquippedElementFar(s32 unit_id);
-u32 Battle_GetEntryField2LowBits(u32 class_id);
+u32 Battle_GetSpriteFlagNibble(u32 class_id);
 s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *unit);
 void BattlePresentation_WaitForAdvance(void);
 
@@ -238,7 +238,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(Inventory_GetEquippedItemFar(actor, 1), 2);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgWeaponHowls);
-            BattleEv_SetRuntimeField8();
+            BattleEv_MarkDisplay();
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgWeaponHowls + 1);
         }
@@ -483,7 +483,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         plan->range_index = Item_GetEquippedElementFar(command->unit_id);
         plan->outcome = 2;
         if (actor->class_index == 0) {
-            plan->presentation_flags = Battle_GetEntryField2LowBits(actor->class_id) | 0x4000;
+            plan->presentation_flags = Battle_GetSpriteFlagNibble(actor->class_id) | 0x4000;
         } else {
             plan->presentation_flags = 0;
             switch (actor->class_id) {
@@ -506,8 +506,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         }
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
-        /* FAKEMATCH: the one-pass block keeps the native test order; the
-           same tests as one if condition change 44 instructions. */
+        /* FAKEMATCH: the one-pass block keeps the native test order; the same tests as one if condition change 44 instructions. */
         do {
             if (defender->hp == 0 || defender->sleep != 0 || defender->stun != 0
                 || defender->cannot_move != 0 || defender->charm != 0)

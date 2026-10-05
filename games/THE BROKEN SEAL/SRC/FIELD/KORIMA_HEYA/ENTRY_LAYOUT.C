@@ -18,7 +18,6 @@ struct Approach390Subject {
     u16 dir;                   /* 0x06, wrapped 16-bit */
 };
 
-
 /* The scene's tables, laid out after the code. */
 extern u8 EntryLayout_PrimaryTable[];
 extern u8 EntryLayout_SecondaryTable[];
@@ -53,10 +52,6 @@ void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
     } while (i <= 0xE);
 }
 
-/*
- * The eight-byte owner includes its one pool word, which holds the address
- * returned here. The word is loaded and returned, never dereferenced.
- */
 u8 *SceneData_GetPrimaryTable(void)
 {
     return EntryLayout_PrimaryTable;
@@ -68,7 +63,6 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetSecondaryTable(void)
 {
     return EntryLayout_SecondaryTable;
@@ -88,10 +82,7 @@ u8 *SceneData_GetPreparedRecords(void)
 
 void FieldScene_RunActor16MessageBranch(void)
 {
-    /*
-     * The local must stay wider than the halfword field; as a u16 it is
-     * reloaded signed and renormalised across the call.
-     */
+
     u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
@@ -108,10 +99,7 @@ void FieldScene_RunActor16MessageBranch(void)
 
 void FieldScene_RunActor17MessageBranch(void)
 {
-    /*
-     * The local must stay wider than the halfword field; as a u16 it is
-     * reloaded signed and renormalised across the call.
-     */
+
     u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
@@ -128,10 +116,7 @@ void FieldScene_RunActor17MessageBranch(void)
 
 void FieldScene_RunActor18MessageBranch(void)
 {
-    /*
-     * The local must stay wider than the halfword field; as a u16 it is
-     * reloaded signed and renormalised across the call.
-     */
+
     u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
@@ -151,10 +136,7 @@ void FieldScene_RunActor19MessageBranch(void)
     void Engine_InnOpen(s32, s32);
     void Engine_EventShowMessage(s32, s32);
 
-    /*
-     * The local must stay wider than the halfword field; as a u16 it is
-     * reloaded signed and renormalised across the call.
-     */
+
     u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
@@ -169,25 +151,12 @@ void FieldScene_RunActor19MessageBranch(void)
     Engine_EventEnd();
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetFourthTable(void)
 {
     return EntryLayout_FourthTable;
 }
 
-/*
- * Map entry step: publish phase 0x209, put every record from 8 to 22 into
- * presentation phase 0 the first time through, then repaint three tile
- * rectangles in one of two variants chosen by the map selector. It returns a
- * constant zero.
- *
- * Slot +448 of the workspace is the s32 scene phase id, and 0x209 is the
- * stored value; the displacement and the value are separate.
- *
- * The entrance selector, 450 bytes into the game state, is read both ways: signed for the
- * comparison against 7 and unsigned for the window test below. Which reading
- * the record intends is not established, so both are kept.
- */
+/* On map entry, set phase 0x209, set records 8 to 22 to presentation phase 0 on the first visit and repaint three rectangles for the selected map. */
 s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
     s32 Engine_GameFlagIsSet();

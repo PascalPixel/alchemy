@@ -548,7 +548,7 @@ KuupuappuMuraSai_Extras:
 	.4byte MsgKuupuappuThatsTheLastOfTheRoof
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte SceneState_SetFlag947AndValue29dc
+	.4byte KuupuappuMuraSai_InspectWell
 	.4byte 0x000000d3
 	.4byte 0x0f4a0065
 	.4byte 0x001000b5

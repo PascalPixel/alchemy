@@ -64,9 +64,7 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: the palette copies share the routine's address but build
-       the palette address again at each call, which only an inlined constant
-       argument compiles to; a direct call keeps it in a register. */
+    /* FAKEMATCH: the palette copies share the routine's address but build the palette address again at each call, which only an inlined constant argument compiles to; a direct call keeps it in a register. */
     copy(destination, source, size);
 }
 

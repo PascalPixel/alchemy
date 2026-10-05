@@ -2,9 +2,7 @@
 
 void AudioTrack_ResetSlotBuckets(void)
 {
-    /* FAKEMATCH: retain the original signed word stores at the node back-link
-       and slot lanes. Direct node fields change register allocation at the
-       same 60-byte TBS extent and shorten the TLA body from 60 to 56. */
+    /* FAKEMATCH: retain the original signed word stores at the node back-link and slot lanes. Direct node fields change register allocation at the same 60-byte TBS extent and shorten the TLA body from 60 to 56. */
     s32 index;
     s32 limit;
     s32 zero;
@@ -32,9 +30,7 @@ void AudioTrack_ResetSlotBuckets(void)
 
 void AudioTrack_InsertSlotNode(s32 index)
 {
-    /* FAKEMATCH: retain the existing address-word link stores and reloads.
-       A direct typed-node insertion shrinks 68 to 60 bytes and changes
-       the back-link store order. All offsets derive from the real owners. */
+    /* FAKEMATCH: address-word link stores preserve back-link store order and 68 bytes; typed insertion yields 60. */
     s32 base;
     s32 node_off;
     s32 tbl_off;
@@ -61,9 +57,7 @@ void AudioTrack_InsertSlotNode(s32 index)
 
 void AudioTrack_RemoveSlotNode(s32 slot)
 {
-    /* FAKEMATCH: retain the existing signed address-word back-link reads
-       and reload. Direct node pointers shorten TBS 44 to 40 and TLA 40
-       to 36 bytes; these views add no record or storage. */
+    /* FAKEMATCH: signed address-word reads retain the back-link reload; typed pointers remove four bytes in each game. */
     s32 next_node;
     s32 track_table;
     s32 slot_offset;
@@ -139,9 +133,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 
 void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
-    /* FAKEMATCH: retain the existing unsigned word views and byte cursor
-       at the output lanes. Typed direct accesses shrink 72 to 68 bytes
-       and reverse the two lane-base registers. */
+    /* FAKEMATCH: unsigned word views and the byte cursor preserve lane-base registers; direct accesses swap them and remove four bytes. */
     u32 cnt_off = (u32)&((struct AudioTrackSlotWork *)0)->out_cnt;
     u8 **base_p = (u8 **)&gScratchWord;
     u8 *base = *base_p;

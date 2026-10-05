@@ -19,7 +19,7 @@ void RenderOutput_ClearList(void *work);
 void RenderOutput_Release(struct RenderOutput *node);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void UiWork_DrawByAttributes(struct UiWindow *window);
-void UiWork_WaitUntilField1aClear(struct UiWindow *window);
+void UiWork_WaitWindowDuration(struct UiWindow *window);
 
 void UiWork_UploadDirtyBlocks(void)
 {
@@ -193,14 +193,14 @@ done:
         } else {
             found->duration = 8;
             found->frame = 7;
-            UiWork_WaitUntilField1aClear(found);
+            UiWork_WaitWindowDuration(found);
             WaitFrames(1);
         }
     }
     return found;
 }
 
-void UiWork_WaitUntilField1aClear(struct UiWindow *window)
+void UiWork_WaitWindowDuration(struct UiWindow *window)
 {
     /* 値が0になるまで更新処理を進める。 */
     if (!(2 & window->flags) && window->duration != 0) {

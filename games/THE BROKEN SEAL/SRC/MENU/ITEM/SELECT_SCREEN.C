@@ -25,9 +25,7 @@ typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ s32 CopyWords(CopyFn copy, void *dst, const void *src, s32 size)
 {
-    /* FAKEMATCH: the wrapper keeps the copier's address in a register for
-     * both copies and the tile address in the pool; called directly the
-     * tile address takes the register instead. */
+    /* FAKEMATCH: the wrapper keeps the copier's address in a register for both copies and the tile address in the pool; called directly the tile address takes the register instead. */
     return copy(dst, src, size);
 }
 

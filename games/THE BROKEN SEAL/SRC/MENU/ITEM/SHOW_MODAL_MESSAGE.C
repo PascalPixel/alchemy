@@ -14,7 +14,7 @@ void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void GameFlag_SetBitFar(s32 flag);
-/* The pointer-cell closer ignores the extra legacy caller word. */
+/* The pointer-cell closer ignores the extra caller word. */
 void UiWindow_CloseIfOpen();
 
 /* Show a message in the item menu: in the menu message window when y is -1,

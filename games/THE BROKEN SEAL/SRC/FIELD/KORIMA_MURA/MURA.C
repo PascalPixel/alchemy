@@ -139,7 +139,7 @@ extern u8 KorimaMura_RegionScript[];
 /*
  * Per-frame actor and effect callbacks, and the village's work variables.
  */
-s32 SceneState_FlushPendingWordB698(s32 arg0)
+s32 KorimaMura_ApplyPendingPose(s32 arg0)
 {
     if (KorimaMura_PendingPose != 0) {
         Object_SetMode(arg0, 2);

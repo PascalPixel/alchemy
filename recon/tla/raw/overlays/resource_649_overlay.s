@@ -455,8 +455,8 @@ Func_0200031c:
 	lsls r5, r5, #1
 	movs r3, #1
 	str r3, [r1, r5]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r2, [r6, #108]
 	movs r3, #60
 	str r3, [r2, r5]

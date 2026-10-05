@@ -164,7 +164,7 @@ Func_080cf554:
 	bl ObjectDispatch_InitializeFar
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	adds r0, r5, #0
 	movs r1, #1
 	bl Object_SetMode

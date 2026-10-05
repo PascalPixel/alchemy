@@ -11,7 +11,7 @@
 s32 UiMenu_CreateCursor(void *menu);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(
     s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
-/* The four-word void helper keeps the caller's extra legacy word. */
+/* This caller passes an extra word beyond the helper's four arguments. */
 void PsynergyMenu_InitializeEntryObjects();
 
 void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
@@ -111,7 +111,7 @@ void ItemMenu_HidePageIcons(void)
 }
 #endif
 
-/* The pointer-cell closer ignores the extra legacy caller word. */
+/* The pointer-cell closer ignores the extra caller word. */
 void UiWindow_CloseIfOpen();
 void Menu_ReleaseEntryObjects(void);
 

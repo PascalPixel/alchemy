@@ -37,8 +37,7 @@ void Korosseo_FinishSoloRound(s32 id)
     s32 res;
 
     work = gEventWork;
-    /* FAKEMATCH: the reference looks the speaker up twice here and drops
-     * both results; no use of them is recovered. */
+    /* FAKEMATCH: the speaker lookup is retained twice with both results unused. */
     Object_GetById(id);
     Object_GetById(id);
     slot = gGameState[125];
@@ -47,9 +46,7 @@ void Korosseo_FinishSoloRound(s32 id)
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);
     ((s32 (*)())Engine_EventOpenMessage)(id, 0);
-    /* FAKEMATCH: the choice list and its count go through one work pointer
-     * and word-sized locals, which keeps the reference's pool loads and
-     * halfword stores in its order. */
+    /* FAKEMATCH: one work pointer and word locals preserve the pool-load and halfword-store order. */
     {
         u8 *w = *(u8 **)&gEventWork;
         s32 v = (s32)MsgKorosseoCheeringChoices;

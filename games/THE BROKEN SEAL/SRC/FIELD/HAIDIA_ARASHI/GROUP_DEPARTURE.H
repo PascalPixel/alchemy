@@ -100,7 +100,7 @@ extern u8 HaidiaArashi_ActorNineteenScript[];
 
 extern u8 HaidiaArashi_ActorEightScript[];
 
-/* The import veneer the actors' sprite priority goes through. */
+/* Set actor sprite priority. */
 void ObjectMotion_SetActionVariant(s32 actor, s32 priority);
 
 extern s32 HaidiaArashi_ShakeDone;
@@ -132,7 +132,7 @@ void BattleFx_SetBlock30ValuesMaxZero(void);
 
 s32 BattleFx_SetWeightedResult(s32, s32);
 
-void OverlayObject_ApplyIwramWord1e40(s32 o);
+void HaidiaArashi_CycleObjectPalettes(s32 o);
 
 void BattleFx_PlayQueuedSound();
 
@@ -141,8 +141,6 @@ void Event_CallWithLastActiveObjectId();
 void Object_RefreshSelectorById();
 
 void Object_SetActionCallbackAndRefreshById();
-
-
 
 void Map_SetLayerEntryFlag();
 
@@ -154,29 +152,29 @@ void BattleEffect_CleanupSceneObjects(void);
 
 void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
 
-s32 OverlayObject_SetField6OnCountdown(struct Object *object);
+s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object);
 s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
-u8 *SceneData_GetTableD0E4(void);
+u8 *HaidiaArashi_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetTableD27c(void);
-u8 *SceneData_GetTableD2B8(void);
-u8 *SceneData_GetTableD558(void);
+u8 *HaidiaArashi_GetExits(void);
+u8 *HaidiaArashi_GetPlacements(void);
+u8 *HaidiaArashi_GetEvents(void);
 void SceneState_SetFlag210AndConfigureRegion40_84(void);
 void SceneState_SetFlag210AndConfigureRegion40_89(void);
-void SceneState_SetWork1c0AndRunObject(u8 *o);
-void FieldScene_SetupDescriptorD774(void);
+void HaidiaArashi_RequestBackdropExit(u8 *o);
+void HaidiaArashi_OpenBackdropExit11(void);
 void SceneState_SetValue123Mode1(void);
 void SceneState_ApplyValues123And3(void);
 void SceneState_SetValue123Mode4(void);
 void FieldScene_RunStep7BAndCheckFlags841And842(void);
-void FieldScene_SetupDescriptorD78a(void);
-void FieldScene_RunScene372_02000278(void);
-void FieldScene_SetupDescriptorD78aIfFlag205Clear(void);
-void FieldScene_SetupWithDescriptorD7A0(void);
-void FieldScene_SetupDescriptorD7b6(void);
-void FieldScene_RunScene372_02000398(void);
-void FieldScene_RunScene372_020003cc(void);
-void FieldScene_RunScene372_02000400(void);
+void HaidiaArashi_OpenBackdropExit5(void);
+void HaidiaArashi_OpenGateRoute(void);
+void HaidiaArashi_OpenBackdropExit7(void);
+void HaidiaArashi_OpenBackdropExit8(void);
+void HaidiaArashi_OpenBackdropExit9(void);
+void HaidiaArashi_OpenRouteTen(void);
+void HaidiaArashi_OpenRouteTwelve(void);
+void HaidiaArashi_OpenRouteThirteen(void);
 s32 FieldScene_RunFlagGatedActorSetup(void);
 void Scene_DoraSendsRobinToThePlaza(void);
 void HaidiaArashi_SetStormCellAttributes(void);
@@ -194,7 +192,7 @@ void ActorPresentation_SetFourActorsModeByBit(void);
 void SceneDialogue_RunActorTenFlag30dDialogue(void);
 void HaidiaArashi_FlashLightning(void);
 void ActorPresentation_SelectActorTwentySevenState(void);
-void FieldScene_RunScene372_02003e48(void);
+void HaidiaArashi_TryToFreeActorEight(void);
 void FieldScene_ConfigureActorTwentyTwoScene(void);
 void FieldScene_BuildPlacementGrid(void);
 void SceneState_SetWords1c0And1c8AndRun(void);
@@ -206,7 +204,7 @@ void SceneState_SetValue140Mode0(void);
 void FieldScene_RunSingleStep(void);
 void FieldScene_RunFourPairedSteps(void);
 void SceneState_SetValue19ThenCall(void);
-void OverlayObject_CopyRecordField1ToSlots22And8(void);
+void HaidiaArashi_CopyLeaderSpritePriority(void);
 void SceneState_SetValueEe4(void);
 
 #endif

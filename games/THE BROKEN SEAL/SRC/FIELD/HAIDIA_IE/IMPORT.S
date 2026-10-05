@@ -65,7 +65,7 @@ Scene_CopyCellAttributes:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetPartPalettes
 	.thumb_func
 Engine_ObjectSetPartPalettes:
@@ -201,7 +201,7 @@ Object_SetTargetAndCallback:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -253,7 +253,7 @@ Battle_GetWorkObject1e0:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -262,13 +262,13 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetPair1d4
+	.global Event_SetDefeatDestination
 	.thumb_func
-Event_SetPair1d4:
-	overlay_veneer Event_SetPair1d4Far
-	.global Unnamed_08094ac8
+Event_SetDefeatDestination:
+	overlay_veneer Event_SetDefeatDestinationFar
+	.global FieldFx_StartGroundParticles
 	.thumb_func
-Unnamed_08094ac8:
+FieldFx_StartGroundParticles:
 	overlay_veneer Func_0808a2c0
 	.global BattleFx_StartTwelveFrameBlend
 	.thumb_func
@@ -289,15 +289,15 @@ BattleFx_SetBlock30Values128One:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_PsynergyBegin
 	.thumb_func
 Engine_PsynergyBegin:

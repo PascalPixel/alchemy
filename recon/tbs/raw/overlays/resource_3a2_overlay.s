@@ -416,7 +416,7 @@ YamaRama_Events:
 	.4byte MsgYamaRamaForSomeReasonThesePeopleGive
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte FieldScene_RunScene3a2_020008a8
+	.4byte YamaRama_ClearActorPlacement
 	.4byte 0x40009085
 	.4byte 0xffff0000
 	.4byte ConfigureAndPlaceActorFourteen
@@ -514,7 +514,7 @@ YamaRama_TempleEvents:
 	.4byte ActorPresentation_PrepareActorFourteenWithCallback
 	.4byte 0x00000c15
 	.4byte 0x0201000f
-	.4byte FieldScene_SetSlot15Byte89AndRunStep
+	.4byte YamaRama_DisableActorCollision
 	.4byte 0x00000003
 	.4byte 0xffff0007
 	.4byte FieldScene_RunScriptedSteps0And1A12

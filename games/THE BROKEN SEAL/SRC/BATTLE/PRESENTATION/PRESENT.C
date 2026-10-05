@@ -58,8 +58,7 @@ void BattlePres_UpdateHBlankScroll(void)
         records = *(struct BattleAffineHdma **)&gWorkSlot[10];
         record = records->lines[records->page];
         control = record[0];
-        /* FAKEMATCH: the do-while keeps the BG2CNT address load after the
-           record read. */
+        /* FAKEMATCH: the do-while keeps the BG2CNT address load after the record read. */
         do {
             REG_BG2CNT = control;
         } while (0);

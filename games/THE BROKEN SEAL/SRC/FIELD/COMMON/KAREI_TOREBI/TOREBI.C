@@ -106,7 +106,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTable98a0(void)
+u8 *KareiTorebi_GetExits(void)
 {
     return KareiTorebi_SceneTable;
 }
@@ -144,7 +144,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKareiTorebiPlacementsOther;
 }
 
-void FieldScene_RunScene3ae_02000144(void)
+void KareiTorebi_MoveGuardAside(void)
 {
     u32 i;
     s32 record;
@@ -199,7 +199,7 @@ void KareiTorebi_AskGoToTolbi(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3ae_02000260(void)
+void KareiTorebi_AskCarryMessage(void)
 {
     u32 i;
     s32 record;
@@ -223,7 +223,7 @@ void FieldScene_RunScene3ae_02000260(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3ae_020002dc(void)
+void KareiTorebi_RemindBoardShip(void)
 {
     u32 i;
     s32 record;
@@ -337,9 +337,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 six00;
 
 #if !EDITION_INTERNATIONAL
-    /* FAKEMATCH: one coin-label selector keeps its saved register through
-       the number draw. Separate whole enum arguments rematerialize the unit
-       label and shorten the complete Japanese callback by twelve bytes. */
+    /* FAKEMATCH: one coin-label selector preserves its saved register; separate arguments shorten the Japanese callback by twelve bytes. */
     s32 msg;
 #endif
 
@@ -421,7 +419,7 @@ void KareiTorebi_TalkSeasickTourists(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3ae_020006c8(void)
+void KareiTorebi_DeliverParentsMessage(void)
 {
     u32 i;
     s32 record;
@@ -495,20 +493,20 @@ s32 Scene_Initialize(void)
         Engine_GameFlagSet(0x950);
     }
     if (gGameState.scene == (s32)&SceneId_KareiTorebi1) {
-        FieldScene_RunScene3ae_020008cc();
+        KareiTorebi_PreparePort();
     } else {
         if (gGameState.scene == (s32)&SceneId_KareiTorebi3) {
             FieldScene_ConfigureFlaggedActors();
         } else {
             if (gGameState.scene == (s32)&SceneId_KareiTorebi2) {
-                SceneState_SetRuntimeWord448To521AndSend303();
+                KareiTorebi_PrepareWindowTransition();
             }
         }
     }
     return 0;
 }
 
-void FieldScene_RunScene3ae_020008cc(void)
+void KareiTorebi_PreparePort(void)
 {
     u32 i;
     s32 record;
@@ -579,7 +577,7 @@ void FieldScene_ConfigureFlaggedActors(void)
     }
 }
 
-void SceneState_SetRuntimeWord448To521AndSend303(void)
+void KareiTorebi_PrepareWindowTransition(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_GameFlagClear(0x12F);
@@ -683,8 +681,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_EventWait(30);
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    /* If a record is returned, pass its s16 fields at +10 and +18 back in as
-     * arguments. */
+    /* Walk Gerald to the leader's position. */
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
@@ -692,12 +689,11 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_EventWait(20);
-    /* Clear the flag byte at +91 of record 8. */
+    /* Resume actor 8's action. */
     Object_GetById(8)->paused = 0;
     Engine_ActorEnableActionCallback(8, 2);
     record = Object_GetById(8);
-    /* Store the integer part of the 16.16 fixed-point fields at +8 and +16
-     * into the halfwords at +100 and +102. */
+    /* Save actor 8's whole-pixel position for its action callback. */
     {
         s32 shown = record->x.fixed / 0x10000;
 

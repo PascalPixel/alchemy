@@ -50,12 +50,12 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global ObjectDispatch_SetSingleChildField26Far
+	.global ObjectDispatch_SetSingleChildFlagsFar
 	.thumb_func
-ObjectDispatch_SetSingleChildField26Far:
-	.global ObjectDispatch_SetSingleChildField26
+ObjectDispatch_SetSingleChildFlagsFar:
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
+ObjectDispatch_SetSingleChildFlags:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
@@ -232,13 +232,13 @@ ObjectGroup_ConfigureChildValue:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
-	.global Event_SetValue1d8
+	.global Event_SetMessageId
 	.thumb_func
-Event_SetValue1d8:
+Event_SetMessageId:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -295,13 +295,13 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Event_SetValue170
+	.global Event_SetExitRequest
 	.thumb_func
-Event_SetValue170:
+Event_SetExitRequest:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetWeightedResult
 	.thumb_func
 BattleFx_SetWeightedResult:
@@ -310,29 +310,29 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
+Event_StartScreenTransition:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
-	.global Event_ClearStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
+	.global Event_FinishScreenTransitionFar
 	.thumb_func
-Event_ClearStatus1c6Far:
-	.global Event_ClearStatus1c6
+Event_FinishScreenTransitionFar:
+	.global Event_FinishScreenTransition
 	.thumb_func
-Event_ClearStatus1c6:
+Event_FinishScreenTransition:
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
 	overlay_veneer Func_0808a368
-	.global Event_WaitValue1c8FramesFar
+	.global Event_WaitTransitionFramesFar
 	.thumb_func
-Event_WaitValue1c8FramesFar:
-	.global Event_WaitValue1c8Frames
+Event_WaitTransitionFramesFar:
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:

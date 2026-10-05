@@ -1,6 +1,4 @@
-/* NONMATCHING: 3 halfwords; the reference sets i = 0 before the first
-   field load, here it is scheduled after. Declaration order and loop forms
-   do not move it. */
+
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "MOTION_OBJECT.H"
@@ -8,7 +6,7 @@
 extern s32 Summon_IsEntryFlagged(s32 index);
 
 /* The palette of a battle object's slot, as ☀️ reads it. */
-s32 BattleMotion_GetSlotField14(s32 id)
+s32 BattleMotion_GetSlotPalette(s32 id)
 {
     return GetBattleObjectSlot(id)->palette;
 }

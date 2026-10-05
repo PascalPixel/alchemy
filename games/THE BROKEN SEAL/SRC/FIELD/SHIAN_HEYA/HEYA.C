@@ -36,7 +36,7 @@ extern u8 ShianHeya_SceneTable3[];
 extern u8 ShianHeya_SceneTable3Entrance8[];
 void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type);
 
-s32 SceneData_GetTable8778(void)
+s32 ShianHeya_GetEntrances(void)
 {
     return (s32)ShianHeya_SceneTable0;
 }
@@ -46,12 +46,12 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-s32 SceneData_GetTable8868(void)
+s32 ShianHeya_GetExits(void)
 {
     return (s32)ShianHeya_SceneTable1;
 }
 
-s32 SceneData_SelectTable89c8Or8890(void)
+s32 ShianHeya_SelectPlacements(void)
 {
     if (gGameState.entrance == 8) {
         return (s32)ShianHeya_SceneTable2Entrance8;
@@ -179,7 +179,7 @@ void SceneDialogue_RunActor9MotionDialogue(void)
     Engine_EventEnd();
 }
 
-s32 SceneData_SelectTable8d4cOr8a28(void)
+s32 ShianHeya_SelectEvents(void)
 {
     if (gGameState.entrance == 8) {
         return (s32)ShianHeya_SceneTable3Entrance8;
@@ -187,7 +187,7 @@ s32 SceneData_SelectTable8d4cOr8a28(void)
     return (s32)ShianHeya_SceneTable3;
 }
 
-s32 SceneState_SetRuntimeWord448To521(void)
+s32 ShianHeya_PrepareWindowTransition(void)
 {
 
     s16 scene;

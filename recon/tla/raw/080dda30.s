@@ -39,7 +39,7 @@ Func_080dda30:
 	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	adds r3, r5, #0
 	adds r3, #89
 	strb r6, [r3]

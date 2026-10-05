@@ -27,7 +27,7 @@ Func_08009020:
 	.thumb_func
 Object_InitializeMode:
 	overlay_veneer AnimationObjects_SelectAnimation
-	overlay_veneer AnimationObjects_SetHalfword02OnActive
+	overlay_veneer AnimationObjects_SetActiveFrameTimers
 	.global ResourceObject_CreateFar
 	.thumb_func
 ResourceObject_CreateFar:
@@ -121,7 +121,7 @@ Object_Destroy:
 	.thumb_func
 ObjectDispatch_ReleaseFar:
 	overlay_veneer ObjectDispatch_Release
-	overlay_veneer ObjectDispatch_SetChildField1e
+	overlay_veneer ObjectDispatch_SetChildRotation
 	.global ObjectDispatch_InitFromTable4WithArgumentFar
 	.global Func_080090e0
 	.thumb_func
@@ -268,17 +268,17 @@ Object_CheckMovementCollision:
 	.thumb_func
 Func_080091d8:
 	overlay_veneer Map_CheckObjectStep
-	.global ObjectDispatch_SetSingleChildField26Far
+	.global ObjectDispatch_SetSingleChildFlagsFar
 	.thumb_func
-ObjectDispatch_SetSingleChildField26Far:
+ObjectDispatch_SetSingleChildFlagsFar:
 	.global Func_080091e0
 	.thumb_func
 Func_080091e0:
-	overlay_veneer ObjectDispatch_SetSingleChildField26
-	.global Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlags
+	.global ObjectDispatch_SetChildBlendModeFar
 	.thumb_func
-Animation_SetStateField5Bits2To3Far:
-	overlay_veneer Animation_SetStateField5Bits2To3
+ObjectDispatch_SetChildBlendModeFar:
+	overlay_veneer ObjectDispatch_SetChildBlendMode
 	.global Runtime_SetWorkTripleIfNonNegativeFar
 	.thumb_func
 Runtime_SetWorkTripleIfNonNegativeFar:
@@ -296,7 +296,7 @@ Graphics_EnableObjLayerAndCallbacksFar:
 	.thumb_func
 ObjectDispatch_StopCallbacksAndHideLayersFar:
 	overlay_veneer ObjectDispatch_StopCallbacksAndHideLayers
-	overlay_veneer Animation_SetStateField1dBit1
+	overlay_veneer ObjectDispatch_SetChildDisplayFlag1
 	.global CheckMapPositionCellOccupiedFar
 	.global Func_08009220
 	.thumb_func
@@ -352,10 +352,10 @@ ResourceSlot_LoadFar:
 	.thumb_func
 SetMapCellCollisionFar:
 	overlay_veneer SetMapCellCollision
-	.global AnimationObjects_SetField15OnActiveFar
+	.global AnimationObjects_SetActiveTimerStepsFar
 	.thumb_func
-AnimationObjects_SetField15OnActiveFar:
-	overlay_veneer AnimationObjects_SetField15OnActive
+AnimationObjects_SetActiveTimerStepsFar:
+	overlay_veneer AnimationObjects_SetActiveTimerSteps
 	.global Runtime_RemapBytesByTableFar
 	.thumb_func
 Runtime_RemapBytesByTableFar:

@@ -6,7 +6,7 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_WORK.H"
-void BattleEv_SetRuntimeField8(void)
+void BattleEv_MarkDisplay(void)
 {
     gBattleDisplayWork->marked = 1;
 }
@@ -17,12 +17,9 @@ struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 void BattleActor_RemoveFromLists(s32);
 
-/* Attempt: a void owner matches TLA; TBS differs only at the 64-byte
- * helper epilogue, changing pop r1 / bx r1 to pop r0 / bx r0. */
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
-    /* FAKEMATCH: the shared discard-only result type preserves TBS epilogue
-       register choice. No result is taken from the void destructor or returned. */
+    /* FAKEMATCH: the shared discard-only result type preserves TBS epilogue register choice. No result is taken from the void destructor or returned. */
     struct BattleUnit *creature;
     struct BattleObjectSlot *runtime;
 

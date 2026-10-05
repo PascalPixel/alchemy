@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_SESSION.H"
+#include "BATTLE_WORK.H"
 #include "RAM_BUFFER.H"
 
 void BattleMotion_ReleaseObjectSlotByValue(s32 object_id);
@@ -44,7 +45,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
 static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
 {
     u8 *work = (u8 *)Ram_HeapSlots->battle_work;
-    struct BattleObjectSlot *slots = (struct BattleObjectSlot *)(work + 0x84);
+    struct BattleObjectSlot *slots = ((struct BattleSession *)work)->slots;
 
     if (id > 7)
         id -= 0x78;

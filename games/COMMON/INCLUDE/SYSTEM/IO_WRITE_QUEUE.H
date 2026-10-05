@@ -27,18 +27,10 @@ void QueueIoWriteDelay10(u32 address, u32 value);
 void QueueIoWriteDelay11(u32 address, u32 value);
 void IoWriteQueue_FlushPending(void);
 
-/*
- * Queues a register write for the next flush with interrupts masked, written
- * out in place as the QueueIoWriteDelay functions in SYSTEM/IO.C are.
- *
- * FAKEMATCH: the same two odd constructs as IO.C: the one-pass block puts the
- * queue literal load first and the saved copy ahead of the IME store, and the
- * count is stored through its own u16 pointer. A second one-pass block closes
- * after the IME restore, so the stores that follow the push stay behind it
- * (the native code at 080cbc0c restores IME before loading their operands).
- */
+/* Queue a register write for the next flush with interrupts masked. */
 #define IO_WRITE_QUEUE_PUSH(address, value, delay)                         \
     {                                                                      \
+        /* FAKEMATCH: nested one-pass blocks keep queue/save loads before the IME store, the u16 count store, and following stores after the IME restore. */ \
         volatile u16 *ime;                                                 \
         struct IoWriteQueue *q;                                            \
         u32 saved;                                                         \

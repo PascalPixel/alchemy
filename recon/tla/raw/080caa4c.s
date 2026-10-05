@@ -231,7 +231,7 @@ Func_080caa4c:
 	strb r2, [r3]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r1, #12
 	adds r0, r5, #0
 	bl Object_SetMode

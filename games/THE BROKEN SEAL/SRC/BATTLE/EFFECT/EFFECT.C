@@ -52,7 +52,7 @@ void ResetSceneTransitionEffect(void);
 void MapEvent_RunTileTriggerSequence(void);
 void FieldEvent_ShowStatusMessage(void);
 
-void Event_SetValue1d8(s32);
+void Event_SetMessageId(s32);
 void BattleEv_RunWait(s32, s32);
 void BattleFx_FinishAction();
 void _call_via_r3(s32, s32);
@@ -252,11 +252,7 @@ void FieldEvent_RunTypeHandler(void)
 }
 
 /* battle/effects/run/run_event_action.c */
-/*
- * _call_via_r3 names a bx rN veneer slot, so this is an indirect call
- * through the register loaded just before it. The callee is whatever
- * BattleFx_FinishAction returned, not a fixed address.
- */
+/* Call the routine returned by BattleFx_FinishAction through the veneer. */
 s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
 {
     s32 resource;
@@ -266,7 +262,7 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
         if (resource != 0) {
             if (resource < 0x10000) {
                 Battle_Reset();
-                Event_SetValue1d8(FIELD_AT_OFFSET(arg0, s32 *, 8));
+                Event_SetMessageId(FIELD_AT_OFFSET(arg0, s32 *, 8));
                 BattleEv_RunWait(arg2, 0);
                 BattleFx_FinishAction();
             } else {

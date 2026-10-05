@@ -463,8 +463,8 @@ Func_02000368:
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_020005a4
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02000554
 	pop {r5, r6, pc}
 .L_020083f8:
@@ -559,15 +559,15 @@ Func_02000480:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #23
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #23
 	bl Object_GetById
 	ldr r3, .L_0200851c
@@ -603,7 +603,7 @@ Func_02000480:
 	movs r0, #24
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #25
 	bl Func_0200059c
 	movs r0, #0

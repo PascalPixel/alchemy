@@ -1154,7 +1154,7 @@ gKuupuappuHeyaEvents:
 	.4byte MsgKuupuappuYoureHelpingIvanYouDontLook
 	.4byte 0x00000000
 	.4byte 0x0856000f
-	.4byte FieldScene_RunScene383_02000428
+	.4byte KuupuappuHeya_TalkAboutIvan
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte MsgKuupuappuSinceYoureHelpingIvanIllTell
@@ -1382,7 +1382,7 @@ gKuupuappuHeyaEventsFlag855:
 	.4byte MsgKuupuappuYoureThePersonWhoGotOur
 	.4byte 0x00000000
 	.4byte 0x02500012
-	.4byte FieldScene_RunScene383_0200091c
+	.4byte KuupuappuHeya_OfferBone
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte FieldScene_RunActorNineteenAngleDialogue

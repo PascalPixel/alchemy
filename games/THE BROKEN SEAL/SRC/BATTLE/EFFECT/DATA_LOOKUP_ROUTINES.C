@@ -2,14 +2,15 @@
 #include "SCENE.H"
 #include "BATTLE_RUNTIME.H"
 #include "GAME_STATE.H"
+#include "EVENTWRK.H"
 
-extern u8 *gEventWork;
+extern struct EventWork *gEventWork;
 
 extern s32 Encounter_SelectEnemyGroup();
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
-    u8 *table = gEventWork + 0x1a0;
+    u8 *table = gEventWork->encounter_groups;
 
     /* 第2引数は呼出元のr1を引き継ぐ特殊な呼出規約。 */
     return Encounter_SelectEnemyGroup(table[index]);
@@ -46,7 +47,7 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
   weighted_row_address = entry;
   weighted_row = *((u16 *)weighted_row_address);
   entry_address = weighted_index_address;
-  /* Exact GCC 2.96 output carries this call's result through r0. */
+  /* The return value is carried through r0 from this call. */
   BattleFx_GetWeightedResult(
       weighted_row, *((u16 *)(((u8 *)entry_address) + 2)));
 }

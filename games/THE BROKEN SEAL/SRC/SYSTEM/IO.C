@@ -6,17 +6,13 @@
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
 
-
 /* The keypad interrupt requests a cartridge reset while sleep is inactive. */
 void Input_HandleKeyInterrupt(void)
 {
     u32 mask;
 
     if (gSleepActive == 0) {
-        /* FAKEMATCH: a direct halfword constant loads KEYCNT before the mask
-           and swaps the literal-pool order; this word mask preserves the
-           measured value preparation. The discarded address/cast and enable
-           temporaries were unnecessary. */
+        /* FAKEMATCH: the word mask loads before KEYCNT; a halfword constant reverses those loads and literal order. */
         mask = 0xc3ff;
         REG_KEYCNT = mask;
         gResetRequested = 1;
@@ -25,24 +21,12 @@ void Input_HandleKeyInterrupt(void)
 
 extern const u8 Resource_ExecuteTransfer[];
 
-
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 
 /* Linker-resolved absolute size of the transfer command executor. */
 extern u8 TransferCommandExecutor_Size[];
 
-/*
- * Queue a register write for the next flush with interrupts masked. Each
- * entry holds the value, the register address and the delay word.
- *
- * FAKEMATCH: two odd constructs. The loop that runs once around the IME read
- * is a scheduling barrier that puts the queue literal load first and the
- * saved copy ahead of the IME store. The count is stored through an explicit
- * u16 pointer before the entry is written: the cast gives the store its own
- * alias set, so the scheduler still places it after the value store, while
- * the earlier source position ends the queue pointer's lifetime soon enough
- * for it to be allocated r4 and the IME pointer r1.
- */
+/* Queue a value, register address and delay for the next flush with interrupts masked. */
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
     void name(u32 address, u32 value)                                       \
     {                                                                       \
@@ -51,7 +35,7 @@ extern u8 TransferCommandExecutor_Size[];
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        q = &gIoWriteQueue;                                                 \
+        q = &gIoWriteQueue; /* FAKEMATCH: the one-pass IME read and early u16 count store preserve queue-first loads and r4/r1 pointer allocation. */                                                 \
         do { \
             /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             ime = &REG_IME;                                                 \

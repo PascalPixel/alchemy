@@ -415,7 +415,7 @@ gBiribinoMuraEvents1:
 	.4byte FieldScene_RunEarlySequence
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte FieldScene_RunScene38b_02000240
+	.4byte BiribinoMura_TalkAboutHumanTree
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte SceneDialogue_ShowLine16BF
@@ -649,16 +649,16 @@ gBiribinoMuraEvents3:
 	.2byte 0x40
 	.4byte 0x00000002
 	.4byte 0x0849000d
-	.4byte FieldScene_RunScene38b_02000584
+	.4byte BiribinoMura_ReceiveJillsGift
 	.4byte 0x00008c15
 	.4byte 0x0848000b
 	.4byte FieldScene_RunScene38bSequenceC
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0x00008602
 	.4byte 0xffff000a
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0x00004602
 	.4byte 0xffff000a
 	.4byte BiribinoMura_PushFacedBlock
@@ -699,13 +699,13 @@ gBiribinoMuraEvents2:
 	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

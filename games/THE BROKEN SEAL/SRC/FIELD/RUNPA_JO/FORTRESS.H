@@ -148,7 +148,7 @@ void RunActorScriptedSequenceB(s32 handle);
 
 void RunActorScriptedSequenceC(s32 actor_id);
 
-void FieldScene_RunScene3bf_02001cf0(s32 a0);
+void RunpaJo_ActOutGuardShiftDialogue(s32 a0);
 
 void RunActorScriptedSequenceD(s32 actor_id);
 
@@ -188,13 +188,13 @@ void InspectBooks(void);
 
 void NoOpInteractionCallback(void);
 
-void FieldScene_RunScene3bf_0200252c(void);
+void RunpaJo_GatherPartyAroundActorTwelve(void);
 
-void FieldScene_RunScene3bf_020025f8(void);
+void RunpaJo_ActivateLeverTrap(void);
 
-void FieldScene_RunScene3bf_0200269c(void);
+void RunpaJo_RevealMonster(void);
 
-void FieldScene_RunScene3bf_02002718(void);
+void RunpaJo_PositionPartyForMonster(void);
 
 void PlayStoryScene(void);
 

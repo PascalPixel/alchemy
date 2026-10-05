@@ -8,9 +8,7 @@ extern struct SelectionScreen *gResQueueWork;
 /* resource/transfer/find_free_entry.c */
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
 {
-    /* FAKEMATCH: retain the existing two scalar scans and their separate
-       running addresses. A shared typed for-loop produces 56 rather than
-       88 bytes in all six editions (2026-10-03 attempt aadcc37dd). */
+    /* FAKEMATCH: the separate scalar scans retain their running addresses and 88 bytes; a shared typed loop produces 56. */
     s32 state;
     s32 off;
     s32 i;
@@ -23,7 +21,7 @@ struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
     state = (s32)gResQueueWork;
     if (kind != 0) {
         i = 0;
-        p = (u16 *)(state + 0x1DE);
+        p = &((struct SelectionScreen *)state)->records[9].kind;
         off = 0;
 loop_2:
         if (*p == 0) {
@@ -39,7 +37,7 @@ loop_2:
     }
     j = 0;
     ret = state + 0x68;
-    q = (u16 *)(state + 0x72);
+    q = &((struct SelectionScreen *)state)->records[2].kind;
 loop_7:
     v = *q;
     q += 0x1A;

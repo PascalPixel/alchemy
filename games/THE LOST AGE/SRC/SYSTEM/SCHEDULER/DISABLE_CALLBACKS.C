@@ -12,8 +12,7 @@ s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the block that runs once is meaningless. Without it, the
-     * interrupt-master register's address is loaded before the task table's. */
+    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
     do {
         {
             volatile u16 *ime = &REG_IME;
@@ -43,7 +42,7 @@ s32 Scheduler_DisableOverlayCallbacks(void)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the block that runs once, as in Scheduler_DisableCallbacks */
+    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
     do {
         {
             volatile u16 *ime = &REG_IME;
@@ -98,7 +97,7 @@ next_task:
     }
 }
 
-/* The disabled scheduler returns the shifted key, as the native routine does. */
+/* The disabled scheduler returns the shifted key. */
 s32 Scheduler_CountCallbacksByKey(s32 key)
 {
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */

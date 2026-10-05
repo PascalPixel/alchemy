@@ -138,7 +138,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
             copy->facing = djinni->facing;
             Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
             Object_SetMode(copy, 0);
-            ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)copy, 0);
+            ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
             resource = Object_ReplaceResourceEntry(copy->sprite, resource);
             copy->linked = previous;
             previous = copy;

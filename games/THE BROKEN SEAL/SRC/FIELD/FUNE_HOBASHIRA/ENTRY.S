@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer FuneHobashira_ApplyEntryState
-	overlay_veneer SceneData_GetTable95c0
-	overlay_veneer SceneData_GetTable96a0
-	overlay_veneer SceneData_GetTable96C4
-	overlay_veneer SceneData_GetTable988c
-	overlay_veneer SceneData_GetTable9680
+	overlay_veneer FuneHobashira_GetEntrances
+	overlay_veneer FuneHobashira_GetExits
+	overlay_veneer FuneHobashira_GetPlacements
+	overlay_veneer FuneHobashira_GetEvents
+	overlay_veneer FuneHobashira_GetRegions

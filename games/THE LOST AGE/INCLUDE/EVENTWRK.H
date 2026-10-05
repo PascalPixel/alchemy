@@ -1,69 +1,7 @@
 #ifndef TLA_EVENTWRK_H
 #define TLA_EVENTWRK_H
 
-#include "TYPES.H"
-#include "LAYOUT_GUARD.H"
-
-struct ObjectRuntime;
-
-struct EventWork {
-    u8 unknown_000[0x14];
-    struct ObjectRuntime *objects[80];
-    /* The exit the current event leaves by. */
-    s16 exit;
-    u8 unknown_156[2];
-    /* Set to 999 when a destination is chosen. */
-    s16 countdown;
-    u8 unknown_15a[0xa];
-    /* The next scripted battle's enemy group, from the encounter table. */
-    u16 battle_group;
-    u8 unknown_166[0x24];
-    /* 3 while the player controls an object other than the leader. */
-    s8 control_mode;
-    u8 unknown_18b[0x21];
-    s32 screen_effect;
-    u8 unknown_1b0[2];
-    s16 screen_status;
-    s32 delay;
-    /* The debug shoulder buttons disable event waits with -1. */
-    s32 wait_mode;
-    u8 unknown_1bc[8];
-    /* The dialogue row; message and choice commands advance it. */
-    u16 message_id;
-    u16 message_actor;
-    s16 choice;
-    s16 message_state;
-    /* The object the camera centres on. */
-    struct ObjectRuntime *view_center;
-    u8 unknown_1d0[0x10];
-    s32 current_owner;
-    s32 object_status;
-    u8 unknown_1e8[0xaba];
-    s16 action_counter;
-    s8 pending_first;
-    u8 unknown_ca5[7];
-    s8 pending_second;
-    u8 unknown_cad[3];
-    s16 unknown_cb0;
-    s16 unknown_cb2;
-    s16 unknown_cb4;
-    u8 unknown_cb6[2];
-    /* -1 while the sound test plays its cue pair. */
-    s16 cue_state;
-};
-
-LAYOUT_OFFSET_GUARD(EventWork_Objects, struct EventWork, objects, 0x14);
-LAYOUT_OFFSET_GUARD(EventWork_Exit, struct EventWork, exit, 0x154);
-LAYOUT_OFFSET_GUARD(EventWork_Countdown, struct EventWork, countdown, 0x158);
-LAYOUT_OFFSET_GUARD(EventWork_BattleGroup, struct EventWork, battle_group, 0x164);
-LAYOUT_OFFSET_GUARD(EventWork_ControlMode, struct EventWork, control_mode, 0x18a);
-LAYOUT_OFFSET_GUARD(EventWork_ScreenEffect, struct EventWork, screen_effect, 0x1ac);
-LAYOUT_OFFSET_GUARD(EventWork_Delay, struct EventWork, delay, 0x1b4);
-LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, message_id, 0x1c4);
-LAYOUT_OFFSET_GUARD(EventWork_CurrentOwner, struct EventWork, current_owner, 0x1e0);
-LAYOUT_OFFSET_GUARD(EventWork_ActionCounter, struct EventWork, action_counter, 0xca2);
-LAYOUT_OFFSET_GUARD(EventWork_PendingSecond, struct EventWork, pending_second, 0xcac);
-LAYOUT_OFFSET_GUARD(EventWork_CueState, struct EventWork, cue_state, 0xcb8);
+#include "../../COMMON/INCLUDE/FIELD/EVENTWRK.H"
 
 /* A pending event: twelve bytes, keyed by a packed filter; its action is a
    message below 0x10000 and otherwise a routine. */

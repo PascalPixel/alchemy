@@ -107,7 +107,7 @@ void OverlayObject_SetValue1(void *, s32);
 void SceneActor_ParkRecord(struct FieldActor *actor);
 s32 Object_CheckMovementCollision();
 void Vector_AddPolarOffset();
-void SceneActor_SetByte55ForActorZeroAnd12To17();
+void VinasuChojo_ConfigureGroupMotion();
 s32 SceneActor_FindNearestSlotOfKindF2(void);
 void SceneState_ForwardByRuntimeWordBits(s32 a);
 void Scene_RunScriptedActorPresentation(void);
@@ -124,6 +124,6 @@ void VinasuChojo_ShowMessage();
 
 s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position);
 
-void FieldScene_RunScene3c9_02004b28();
+void VinasuChojo_TryToPreventFall();
 
 #endif

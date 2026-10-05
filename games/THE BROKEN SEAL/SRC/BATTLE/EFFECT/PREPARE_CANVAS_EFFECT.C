@@ -20,7 +20,6 @@
 
 extern u8 gBattleFxWork[];
 
-
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
 void Graphics_RestoreTransferWork(void);
@@ -71,9 +70,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     sheet = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    /* FAKEMATCH: the canvas size sits in a local set here, well ahead of
-       the two clears that use it; as a literal at the calls GCC keeps it in
-       one register across them, where the ROM builds it at each call. */
+    /* FAKEMATCH: the canvas size sits in a local set here, well ahead of the two clears that use it; as a literal at the calls GCC keeps it in one register across them, where the ROM builds it at each call. */
     size = 0x4000;
     work->fade_frames = 24;
     work->fade_step = 0;

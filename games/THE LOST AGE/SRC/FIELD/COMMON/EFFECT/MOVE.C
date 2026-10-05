@@ -12,8 +12,7 @@ void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object)
     x = object->effect.x;
     velocity_x = object->effect.velocity_x;
     sprite = object->effect.sprite;
-    /* ⚓️ loads the sprite third, before the first store; ☀️'s statement
-       order leaves it after the scale stores. */
+
     object->effect.x = x + velocity_x;
     object->effect.y += object->effect.velocity_y;
     object->effect.z += object->effect.velocity_z;

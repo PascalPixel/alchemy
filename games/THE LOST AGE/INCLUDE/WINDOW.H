@@ -14,9 +14,8 @@ enum { UI_TEXT_ENTRY_COUNT = 512 };
 enum { UI_TEXT_ENTRY_COUNT = 256 };
 #endif
 
-/* The known tilemap, windows, text channels, output queues, entry ring and named values.
-   ☀️ keeps the eight header bytes after its tilemap; ⚓️ puts them first.
-   Fields not named here are not described. */
+/* The tilemap, windows, text channels, output queues, entry ring and named values.
+ * The Lost Age keeps the eight header bytes before its tilemap. */
 struct UiRenderWork {
     u8 unknown_00[3];
     /* Set when the tilemap needs copying to VRAM. */

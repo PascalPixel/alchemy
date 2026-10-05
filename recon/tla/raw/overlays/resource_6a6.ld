@@ -8,7 +8,7 @@ SECTIONS
         "*/resource_6a6_overlay.o"(.text.x02008038)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A6/SCENE_TABLES.o"(.text)
         "*/resource_6a6_overlay.o"(.text.x02008050)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A6/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A6/EXITS.o"(.text)
         "*/resource_6a6_overlay.o"(.text.x02008080)
         "*/resource_6a6_overlay.o"(.text.x020080ac)
         "*/resource_6a6_overlay.o"(.text.x0200812c)

@@ -39,7 +39,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -60,19 +60,17 @@ s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
     return 0;
 }
 
-/* The eight-byte owner includes its one pool word. */
-void *SceneData_GetTable9478(void)
+void *HaidiaHeya_GetEntrances(void)
 {
     return gValeHouseEntrances;
 }
 
-/* A four-byte leaf that returns zero. */
 int SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-void *SceneData_SelectTable9568ByFlag(void)
+void *HaidiaHeya_SelectExits(void)
 {
     if (Engine_GameFlagIsSet(0x834) != 0)
         return gValeHouseLateExits;
@@ -94,7 +92,7 @@ void *SceneData_SelectFlaggedTable(void)
     return tbl;
 }
 
-void *SceneData_SelectTable9c00ByFlags(void)
+void *HaidiaHeya_SelectEvents(void)
 {
     if (Engine_GameFlagIsSet(0x834) != 0)
         return gValeHouseLateEvents;
@@ -105,7 +103,7 @@ void *SceneData_SelectTable9c00ByFlags(void)
     return gValeHouseEvents;
 }
 
-/* The 44-byte actor-15 scene owner includes its one pool word. */
+/* Run actor 15's scene. */
 void Villager_AskWhySukuretaCame(void)
 {
     Engine_EventBegin();
@@ -115,7 +113,7 @@ void Villager_AskWhySukuretaCame(void)
     Engine_EventEnd();
 }
 
-/* The 44-byte actor-19 scene owner includes its one pool word. */
+/* Run actor 19's scene. */
 void Villager_PlanToScareVisitors(void)
 {
     Engine_EventBegin();
@@ -147,7 +145,7 @@ void Scene_GiveFarewellHerb(void)
     Engine_EventEnd();
 }
 
-/* The 32-byte actor-16 dialogue owner includes its one pool word. */
+/* Show actor 16's dialogue. */
 void Villager_AskAboutStrangePowers(void)
 {
     Engine_EventBegin();
@@ -156,7 +154,7 @@ void Villager_AskAboutStrangePowers(void)
     Engine_EventEnd();
 }
 
-/* The 32-byte actor-10 dialogue owner includes its one pool word. */
+/* Show actor 10's dialogue. */
 void Villager_AskAboutDora(void)
 {
     Engine_EventBegin();
@@ -174,7 +172,7 @@ void HaidiaHeya_TalkHopeDidntGetSick(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetRuntimeWord448To521AndRun(s32 value)
+void HaidiaHeya_RequestWindowExit(s32 value)
 {
     if (Engine_GameFlagIsSet(0x834) != 0)
         BattleFx_SetBlock30ValuesMaxZero();
@@ -186,45 +184,45 @@ void SceneState_SetRuntimeWord448To521AndRun(s32 value)
     Engine_EventRequestExit(value);
 }
 
-/* Eight numbered-scene wrappers follow, each a twelve-byte owner. */
+/* Wrappers for the eight numbered scenes. */
 void FieldScene_RunIndexedStep1(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(1);
+    HaidiaHeya_RequestWindowExit(1);
 }
 
 void FieldScene_RunIndexedStep2(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(2);
+    HaidiaHeya_RequestWindowExit(2);
 }
 
 void FieldScene_RunIndexedStep3(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(3);
+    HaidiaHeya_RequestWindowExit(3);
 }
 
 void FieldScene_RunIndexedStep4(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(4);
+    HaidiaHeya_RequestWindowExit(4);
 }
 
 void FieldScene_RunIndexedStep5(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(5);
+    HaidiaHeya_RequestWindowExit(5);
 }
 
 void FieldScene_RunIndexedStep6(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(6);
+    HaidiaHeya_RequestWindowExit(6);
 }
 
 void FieldScene_RunIndexedStep7(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(7);
+    HaidiaHeya_RequestWindowExit(7);
 }
 
 void FieldScene_RunIndexedStep8(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(8);
+    HaidiaHeya_RequestWindowExit(8);
 }
 
 s32 Scene_RunSupplementalSequenceOne(void)
@@ -309,7 +307,7 @@ void FieldScene_RunByActorDirectionAndFlags(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene376_0200055c(void)
+void HaidiaHeya_OpenArmorShop(void)
 {
     struct FieldActor *actor;
 
@@ -332,7 +330,7 @@ void FieldScene_RunScene376_0200055c(void)
     }
 }
 
-void FieldScene_RunScene376_020005d4(void)
+void HaidiaHeya_OpenItemShop(void)
 {
     struct FieldActor *actor;
 
@@ -422,7 +420,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Call3(Object_SetTargetAndCallback, 2, 0x1000a, base5_20092fc);
     Object_SetTargetAndCallback(3, 0x1000a, base5_20092fc);
     Engine_EventWait(0x12c);
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = v6;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = v6;
     Camera_SetSpeed(0x1999, 0x333);
     Camera_MoveTo(0x3120000, 0, 0x1ae0000, 1);
     Engine_EventWait(240);

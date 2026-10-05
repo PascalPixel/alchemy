@@ -9,7 +9,6 @@ struct Other {
     u16 x;
 };
 
-
 struct Object {
     u8 filler00[8];
     s32 x;
@@ -35,8 +34,8 @@ struct SwayActor {
 
 void battle_owner_69(void);
 void FuneHobashira_UpdateSway(void);
-void FieldScene_RunScene3b0_0200040c(void);
-void FieldScene_RunScene3b0_02000468(void);
+void FuneHobashira_SetupHiddenLeaderLookout(void);
+void FuneHobashira_SetupVisibleLeaderLookout(void);
 void Scene_RunFourActorStagingSequence(void);
 void FieldScene_RunActorNinePresentationCycles(void);
 void FieldScene_RunPrimarySequence(void);
@@ -95,14 +94,7 @@ s32 Object_PlaceFromCameraOffset(struct Object *object)
     return 0;
 }
 
-/*
- * The shift pair is a windowed extraction of bits 10..15 of the sample, giving
- * a value in 0..63; a plain right shift would let larger values reach the
- * comparisons.  The headings 0xd000 and 0xb000 are built from an immediate and
- * a shift, and the local in each arm is what forces that.  The halfword at
- * object + 6 is the facing angle.  What Random16 samples is not
- * established here.
- */
+/* Bits 10 to 15 of the sample select between headings 0xd000 and 0xb000; the actor's facing is the halfword at +6. */
 s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
 {
     u32 sample = (u32)(Random16() << 6) >> 16;   /* bits 10..15 */
@@ -120,7 +112,7 @@ s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
     return 1;
 }
 
-void OverlayObject_Add160ToFields18And1c(struct FieldActor *o)
+void FuneHobashira_GrowActorScale(struct FieldActor *o)
 {
     if (o->scale_x < 0x10000) {
         o->scale_x += 160;
@@ -195,32 +187,32 @@ s32 OverlayObject_ShrinkScaleThenStop(struct FieldActor *o)
     return 1;
 }
 
-u8 *SceneData_GetTable95c0(void)
+u8 *FuneHobashira_GetEntrances(void)
 {
     return FuneHobashira_SceneTableA;
 }
 
-u8 *SceneData_GetTable9680(void)
+u8 *FuneHobashira_GetRegions(void)
 {
     return FuneHobashira_SceneTableB;
 }
 
-u8 *SceneData_GetTable96a0(void)
+u8 *FuneHobashira_GetExits(void)
 {
     return FuneHobashira_SceneTableC;
 }
 
-u8 *SceneData_GetTable96C4(void)
+u8 *FuneHobashira_GetPlacements(void)
 {
     return FuneHobashira_SceneTableD;
 }
 
-u8 *SceneData_GetTable988c(void)
+u8 *FuneHobashira_GetEvents(void)
 {
     return FuneHobashira_SceneTableE;
 }
 
-void FieldScene_CallHelper14d0(void)
+void FuneHobashira_UpdateGridPlacement(void)
 {
     FieldEffect_UpdateGridPlacement();
 }
@@ -271,9 +263,9 @@ s32 FuneHobashira_ApplyEntryState(void)
         break;
     case 10:
         if (Engine_GameFlagIsSet(0x928) != 0) {
-            FieldScene_RunScene3b0_02000468();
+            FuneHobashira_SetupVisibleLeaderLookout();
         } else {
-            FieldScene_RunScene3b0_0200040c();
+            FuneHobashira_SetupHiddenLeaderLookout();
         }
         break;
     case 11:
@@ -298,7 +290,7 @@ s32 FuneHobashira_ApplyEntryState(void)
     return 0;
 }
 
-void FieldScene_RunScene3b0_0200040c(void)
+void FuneHobashira_SetupHiddenLeaderLookout(void)
 {
     u32 i;
     s32 record;
@@ -306,14 +298,12 @@ void FieldScene_RunScene3b0_0200040c(void)
     s32 y;
     s32 pan;
 
-    /* FAKEMATCH: r3 carries the preceding zero byte store into the
-       camera's fourth argument. Capturing it reorders the x/y setup;
-       these two moves preserve that setup with all four arguments present. */
+    /* FAKEMATCH: r3 carries the preceding zero byte store into the camera's fourth argument. Capturing it reorders the x/y setup; these two moves preserve that setup with all four arguments present. */
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = 0;
+    ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
     /* FAKEMATCH: keep y before x while capturing the store's zero in pan. */
     asm ("mov %0, #128\n\tmov %1, #164"
          : "=r" (y), "=r" (x), "=r" (pan));
@@ -321,11 +311,11 @@ void FieldScene_RunScene3b0_0200040c(void)
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    FieldScene_RunScene3b0_020004b0();
+    FuneHobashira_AnnounceClearCourse();
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b0_02000468(void)
+void FuneHobashira_SetupVisibleLeaderLookout(void)
 {
     u32 i;
     struct FieldActor *record;
@@ -338,11 +328,11 @@ void FieldScene_RunScene3b0_02000468(void)
     Engine_TaskWait(1);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    FieldScene_RunScene3b0_020004b0();
+    FuneHobashira_AnnounceClearCourse();
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b0_020004b0(void)
+void FuneHobashira_AnnounceClearCourse(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
@@ -367,7 +357,6 @@ void FieldScene_RunScene3b0_020004b0(void)
 /* Runs the record-8/record-9 pair through two near-identical setup-then-move
  * cycles (position waypoints, a movement flag reset, then animation/sound
  * calls), followed by a shorter closing cycle for record 8 alone. */
-
 
 /* Places the staging objects and starts the lookout's actions, saves the
  * camera position as the origin actor 9's camera-following actions measure
@@ -422,7 +411,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorSetChildValue(12, 3);
     actor = Object_GetById(10);
     scale = 0x8000;
-    update = (s32)OverlayObject_Add160ToFields18And1c;
+    update = (s32)FuneHobashira_GrowActorScale;
     actor->scale_y = scale;
     actor->scale_x = scale;
     actor->update = (void (*)(union FieldObject *))update;

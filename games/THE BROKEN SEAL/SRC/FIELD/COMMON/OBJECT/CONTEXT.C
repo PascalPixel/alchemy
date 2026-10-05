@@ -1,0 +1,212 @@
+#include "TYPES.H"
+#include "OBJECT_RUNTIME.H"
+#include "EVENT_RUNTIME.H"
+#include "OBJECT_LOOKUP.H"
+#include "SYSTEM.H"
+#include "DMA.H"
+#include "IO_REG.H"
+#include "GAME_STATE.H"
+#include "SCROLL.H"
+#include "ANIMSPR.H"
+#include "BATTLE_RUNTIME.H"
+#include "DISPTRAN.H"
+
+s32 ResourceMetadata_RegisterFar(struct AnimationObject *, s32);
+void Object_SetMode(struct ObjectRuntime *, s32);
+s32 GameFlag_SetBitFar(s32);
+void ObjectEffect_PrepareContextEffect(s32);
+
+void ResourceMetadata_ClearRecordFar(void *);
+void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+void Object_CommitPosition(struct ObjectRuntime *);
+void GameFlag_ClearBitFar(s32);
+void ObjectEffect_EndContextEffect(s32 arg0);
+void Motion_CamBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void Audio_PlayCue(s32);
+void Battle_WaitMode0(s32 arg0);
+void Object_AttachWorkTargetToObject(s32 arg0, s32 arg1);
+
+extern struct EventRuntime *gEventWork;
+
+/* Plays the scene's cue and two sound effects, whitens one palette colour
+ * (colour 243 in mode 3, the backdrop otherwise), finishes the display
+ * transition, then fades that colour from white to black over 16 frames. */
+s32 Scene_FadeColorFromWhite(void)
+{
+    struct EventRuntime *work = gEventWork;
+    s32 i;
+    s32 c;
+
+    Audio_PlayCue(gGameState.scene_cue);
+    Audio_PlayCue(288);
+    Audio_PlayCue(147);
+    if (work->mode_19e == 3) {
+        s32 color = 0x7fff;
+
+        do {
+            /* FAKEMATCH: the one-pass loop keeps the store before the call's arguments. */
+            *(u16 *)0x050001e6 = color;
+        } while (0);
+        DisplayTransition_Finish(0x401, 16);
+        work->status_1c6 = 0;
+        WaitFrames(16);
+        for (i = 0; i < 16; i++) {
+            c = 30 - i * 2;
+            color = (c << 10) | (c << 5) | c;
+            *(u16 *)0x050001e6 = color;
+            WaitFrames(1);
+        }
+    } else {
+        s32 color = 0x7fff;
+
+        PLTT_BACKDROP = color;
+        DisplayTransition_Finish(0x207, 16);
+        work->status_1c6 = 0;
+        WaitFrames(16);
+        for (i = 0; i < 16; i++) {
+            c = 30 - i * 2;
+            color = (c << 10) | (c << 5) | c;
+            PLTT_BACKDROP = color;
+            WaitFrames(1);
+        }
+    }
+}
+
+void ObjectEffect_PrepareContextEffect(s32 value)
+{
+    u32 zero;
+    u8 kind;
+    struct ObjectRuntime *object;
+    struct AnimationObject *context;
+    struct AnimationEntry *effect;
+
+    object = ObjectTable_Get(gGameState.selected_actor);
+    context = object->animation;
+    effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, 27);
+    zero = 0;
+    kind = 15;
+
+    context->flags = zero;
+    effect->param = kind;
+    object->x = (object->x & 0xFFF00000) + 0x80000;
+    object->z = (object->z & 0xFFF00000) + 0x100000;
+    object->velocity_x = zero;
+    object->velocity_z = zero;
+    object->target_x = 0x80000000;
+    object->target_z = 0x80000000;
+    Object_SetMode(object, value);
+    WaitFrames(18);
+}
+
+void ObjectEffect_BeginContextEffect26(void)
+{
+    ObjectEffect_PrepareContextEffect(0x1A);
+    GameFlag_SetBitFar(0x120);
+}
+
+void ObjectEffect_BeginContextEffect25(void)
+{
+    ObjectEffect_PrepareContextEffect(0x19);
+    GameFlag_SetBitFar(0x121);
+}
+
+void ObjectEffect_EndContextEffect(s32 arg0)
+{
+    s32 zero;
+    s32 mask;
+    struct ObjectRuntime *obj = ObjectTable_Get(gGameState.selected_actor);
+    struct AnimationObject *ctx = obj->animation;
+    struct AnimationEntry *eff = (struct AnimationEntry *)
+        ResourceMetadata_RegisterFar(ctx, 27);
+
+    zero = 0;
+    mask = 0xfff00000;
+    ctx->flags = zero;
+    eff->param = 15;
+    obj->x = (obj->x & mask) + 0x80000;
+    obj->z &= mask;
+    Object_SetMode(obj, arg0);
+    WaitFrames(30);
+    ctx->count = 1;
+    ResourceMetadata_ClearRecordFar(ctx->entries[1]);
+    ctx->entries[1] = (void *)zero;
+    ctx->flags = 1;
+    obj->acceleration = 0x10000;
+    obj->speed_limit = 0x10000;
+    Object_SetPosition(obj,
+        obj->x, obj->y, obj->z + 0x80000);
+    Object_CommitPosition(obj);
+}
+
+s32 ObjectEffect_RunPendingFlagEvent(void)
+{
+    s32 result = 0;
+    s32 flag = 0x120;
+
+    if (GameFlag_TestFar(flag) != 0) {
+        ObjectEffect_EndContextEffect(24);
+        GameFlag_ClearBitFar(flag);
+        result = 1;
+    } else {
+        flag = 0x121;
+        if (GameFlag_TestFar(flag) != 0) {
+            ObjectEffect_EndContextEffect(23);
+            GameFlag_ClearBitFar(flag);
+            result = 2;
+        } else {
+            flag = 0x122;
+            if (GameFlag_TestFar(flag) != 0) {
+                s32 id;
+                struct ObjectRuntime *obj;
+
+                GameFlag_ClearBitFar(flag);
+                id = gGameState.selected_actor;
+                obj = ObjectTable_Get(id);
+                obj->y += 0x00a00000;
+                Motion_CamBounds(-1, -1, -1, 0);
+                while (obj->y + obj->velocity_y >
+                       obj->terrain_height) {
+                    WaitFrames(1);
+                }
+                Audio_PlayCue(159);
+                obj->y = obj->terrain_height;
+                Object_SetMode(obj, 22);
+                Battle_WaitMode0(15);
+                Object_AttachWorkTargetToObject(id, 1);
+                result = 3;
+            }
+        }
+    }
+    return result;
+}
+
+void DisplayScroll_ArmHBlankDma(void)
+{
+    volatile u16 *dma;
+    struct DisplayScrollWork *state;
+    u32 *source;
+    u16 status;
+    u32 control;
+    volatile u32 *destination;
+
+    state = gHBlankScrollWork;
+    source = (u32 *)state->rows[state->page];
+
+    /* Stop channel 0 before the first scanline's words are written by hand. */
+    dma = REG_DMA0;
+    destination = (volatile u32 *)0x04000014;
+    status = dma[5];
+    control = status & (u16)~DMA_START_HBLANK_REPEAT;
+    dma[5] = control;
+    status = dma[5];
+    control = status & (u16)~DMA_ENABLE;
+    dma[5] = control;
+    (void)dma[5];
+
+    *destination = *source++;
+    *destination = *source++;
+    *destination = *source++;
+
+    control = 0xa6600003;
+    Dma_Set(source, destination, control, (volatile u32 *)dma);
+}

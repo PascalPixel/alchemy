@@ -78,9 +78,7 @@ s32 LinkLobby_InitializeSerial(void)
     volatile u16 *ime;
     u32 saved;
 
-    /* FAKEMATCH: this discard-only s32 boundary defines no result for callers.
-       The complete 28-byte void attempt changes only the return-address
-       scratch register from r1 to r0; both callers discard the result. */
+    /* FAKEMATCH: the ignored s32 result keeps the return-address scratch in r1; void selects r0. */
 
     ime = &REG_IME;
     saved = *ime;

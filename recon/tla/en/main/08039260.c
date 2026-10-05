@@ -27,7 +27,7 @@
 
 void UiWork_ResetCounters(void);
 void UiWork_DrawByAttributes(struct UiWindow *window);
-void UiWork_WaitUntilField1aClear(void *work);
+void UiWork_WaitWindowDuration(void *work);
 
 /* Open a window at a tile position and size in the first free record, with
    the attribute bits that choose its frame and drawing; a window drawn
@@ -86,7 +86,7 @@ done:
         } else {
             found->duration = 8;
             found->frame = 7;
-            UiWork_WaitUntilField1aClear(found);
+            UiWork_WaitWindowDuration(found);
             WaitFrames(1);
         }
     }

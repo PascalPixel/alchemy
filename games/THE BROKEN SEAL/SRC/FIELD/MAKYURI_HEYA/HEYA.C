@@ -46,7 +46,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTableE614(void)
+u8 *MakyuriHeya_GetExits(void)
 {
     return MakyuriHeya_SceneTable;
 }
@@ -71,12 +71,12 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gMakyuriHeyaPlacementsOther;
 }
 
-void FieldScene_CallHelper67e8(void)
+void MakyuriHeya_TickSpawnTimer(void)
 {
     Makyuri_TickSpawnTimer();
 }
 
-void FieldScene_Forward646c(void)
+void MakyuriHeya_ClearSceneRecordAndTarget(void)
 {
     SceneState_ClearCurrentRecordAndReleaseTarget();
 }
@@ -86,7 +86,7 @@ void FieldScene_RunSingleStep(void)
     Makyuri_RunActorMove();
 }
 
-void FieldScene_CallHelper6364(void)
+void MakyuriHeya_TriggerPillarRise(void)
 {
     MakyuriIriguchi_RaisePillar();
 }

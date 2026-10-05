@@ -1,13 +1,9 @@
 #ifndef ALCHEMY_RESOURCE_IDS_H
 #define ALCHEMY_RESOURCE_IDS_H
 
-/*
- * Resource numbers are rows of the resource directory
- * (SYSTEM/RESOURCE/DIRECTORY.S), which names each row after what it holds.
- * A name's value is its row number, so it is a link-time value: take its
- * address, and the compiler loads the number from the literal pool as the
- * game does. A switch cannot use one as a case label.
- */
+/* Resource numbers are rows of SYSTEM/RESOURCE/DIRECTORY.S. Each row's
+ * symbol has its index as a link-time value, read by taking its address.
+ * These values cannot be used as switch case labels. */
 extern char ResourceId_BuildStamp;
 extern char ResourceId_PaletteFarCalls;
 extern char ResourceId_EffectFarCalls;

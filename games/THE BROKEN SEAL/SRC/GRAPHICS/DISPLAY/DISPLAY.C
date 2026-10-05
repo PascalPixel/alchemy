@@ -15,8 +15,7 @@ s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 /* graphics/registers/set_bg1_priority3.c */
 void Graphics_SetBg1Priority3(void)
 {
-    /* FAKEMATCH: the pre-existing runtime mask keeps Thumb's negation; the
-       direct ~3 form in f4f9d28 adds halfword literal loads in all six editions. */
+    /* FAKEMATCH: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
     u32 mask = 4;
     u32 value = REG_BG1CNT;
 
@@ -28,8 +27,7 @@ void Graphics_SetBg1Priority3(void)
 
 void Graphics_ClearBg1ControlBit2(void)
 {
-    /* FAKEMATCH: the pre-existing runtime mask keeps Thumb's negation; the
-       direct ~3 form in f4f9d28 adds halfword literal loads in all six editions. */
+    /* FAKEMATCH: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
     u32 mask = 4;
     u32 value = REG_BG1CNT;
 

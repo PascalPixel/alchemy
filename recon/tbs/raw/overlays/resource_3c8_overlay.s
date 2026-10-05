@@ -149,14 +149,14 @@ gEffectScripts:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyLowNibbleOfField100
+	.4byte VinasuHeya_UpdateChildFromTimer
 	.4byte 0x00000010
 .L_0200d204:
 	.4byte 0x00000015
 	.4byte 0x00000023
 	.4byte 0x00002126
 	.4byte 0x00000022
-	.4byte OverlayObject_ApplyLowNibbleOfField100
+	.4byte VinasuHeya_UpdateChildFromTimer
 	.4byte 0x00000010
 	.global gVinasuLeaderApproachScript
 gVinasuLeaderApproachScript:
@@ -2323,10 +2323,10 @@ gVinasuHeyaEvents3:
 	.4byte SceneState_ApplyRectAt19_44AndRunThree
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte SceneState_ClearWorkspaceWord24
+	.4byte VinasuHeya_ReleaseEffectLeader
 	.4byte 0x00000002
 	.4byte 0xffff0020
-	.4byte SceneState_StoreLookupZeroToWord24
+	.4byte VinasuHeya_AttachEffectLeader
 	.4byte 0x00000202
 	.4byte 0xffff002d
 	.4byte FieldScene_RunGuardedThreeStepSetup
@@ -2412,7 +2412,7 @@ gVinasuHeyaEvents4:
 	.4byte FieldScene_RunGuardedRectStep
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00008c15
 	.4byte 0x03010009
 	.4byte VinasuHeya_RunCellPushScene
@@ -2486,7 +2486,7 @@ gVinasuHeyaEvents5:
 	.4byte SceneState_RunConditionalStep
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00000013
 	.4byte 0x0f350064
 	.4byte 0x00100052
@@ -2599,7 +2599,7 @@ gVinasuHeyaEvents6:
 	.4byte FieldScene_DrawTilesWhenCheckClear
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00000013
 	.4byte 0x0f360064
 	.4byte 0x00100009

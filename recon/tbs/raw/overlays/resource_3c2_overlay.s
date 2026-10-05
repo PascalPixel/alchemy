@@ -292,31 +292,31 @@ gSuharaHeyaPlacements96f:
 gSuharaHeyaEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte MsgSuharaHeyaMyFatherLovesPeopleSoMuch
@@ -386,31 +386,31 @@ gSuharaHeyaEvents96f:
 	.4byte Scene_RunPrimaryScript
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte State_ApplyCounter16cThenCall7b
+	.4byte SuharaHeya_PlayCueAndRequestTouchedExit
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte MsgSuharaHeyaTheWoundedAreSleepingSoDont

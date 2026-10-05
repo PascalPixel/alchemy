@@ -1,0 +1,182 @@
+#include "RUNTIME_MEM.H"
+#include "RESOURCE.H"
+#include "DMA.H"
+#include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "IO_WRITE_QUEUE.H"
+#include "IO_REG.H"
+#include "MAP_SCROLL.H"
+#include "HEAP_STATE.H"
+
+extern const u8 SentouKouka_Tenkai[];
+extern u8 SentouKouka_TenkaiCodeSize[];
+void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
+
+/* The decoder returns a value this caller ignores. */
+typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
+
+extern u32 gFrameTick;
+
+/* Load the background character block and its palette, or the second
+ * block/bank when alternate is set; resource 0 clears them. Copy the packed
+ * decoder to heap block 49 and run it there; queue the palette for next frame. */
+void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
+{
+    /* FAKEMATCH: the inline queue write keeps the one-pass IME read and u16 count-store scheduling. */
+    u8 *data;
+    u32 palette;
+    u32 fill;
+    u32 vram;
+    void *decoder;
+    u32 size;
+
+    if (resource == 0) {
+        Graphics_ClearCharacterBlockAndPalette(alternate);
+        return;
+    }
+    data = Resource_GetTableEntry(resource);
+    if (alternate == 0) {
+        fill = 0;
+        vram = 0x06000000;
+        palette = 0x05000000;
+    } else {
+        fill = 0x80808080;
+        vram = 0x06008000;
+        palette = 0x05000100;
+    }
+    size = (u32)SentouKouka_TenkaiCodeSize;
+    decoder = Runtime_AllocateHeapBlock(49, size);
+    Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), REG_DMA3);
+    ((PackedDecoder)((union HeapState *)gWorkSlot)->slots[49])(data + 256, vram, fill);
+    Runtime_ReleaseHeapBlock(49);
+
+    {
+        volatile u16 *ime;
+        struct IoWriteQueue *q;
+        u32 saved;
+        s32 count;
+
+        q = &gIoWriteQueue;
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        do {
+            ime = &REG_IME;
+            saved = *ime;
+        } while (0);
+        *ime = (u16)ime;
+        count = q->count;
+        if (count <= 31) {
+            u32 *destination = q->entries[count];
+            *(u16 *)&q->count = count + 1;
+            *destination++ = (u32)data;
+            *destination++ = palette;
+            *destination = 0x84000040;
+        }
+        *ime = saved;
+    }
+}
+
+void DisplayScroll_BuildHblankWordTable(u32 *arg0)
+{
+    s32 count;
+    u32 value = 0x01FF01FF;
+    u32 step = 0x10000;
+
+    count = 31;
+    do {
+        count--;
+        *arg0++ = value;
+    } while (count >= 0);
+    count = 239;
+    do {
+        count--;
+        *arg0++ = step;
+        step += 0x20002;
+    } while (count >= 0);
+    count = 47;
+    do {
+        count--;
+        *arg0++ = value;
+    } while (count >= 0);
+    step = 0;
+    count = 191;
+    do {
+        count--;
+        *arg0++ = step;
+    } while (count >= 0);
+}
+
+void DisplayScroll_StepPositionEveryFourFrames(void)
+{
+    if ((gFrameTick & 3) == 0) {
+        u32 decrement = 0xffff; /* one step back in the 16-bit positions */
+
+        gBgScroll[2].x += decrement;
+        gBgScroll[3].x += decrement;
+    }
+}
+
+extern u8 gOamCopyEnabled;
+extern u8 gCpuLoadDisplayEnabled;
+extern u8 gDebugTextEnabled;
+extern u8 gOptionMirror;
+extern const u32 DisplayScroll_SlideResources[];
+
+void DisplayScroll_InitObjectTable(void);
+void Ui_LoadWindowGraphics(void);
+void Bg0_ClearTilemap(void);
+void WaitFrames(s32 frames);
+
+/* FAKEMATCH: the int temporary and one-pass write keep word-value construction, register order and a single literal pool. */
+#define Io_Write16(reg, value) \
+    do { \
+        /* FAKEMATCH: the one-pass register-write boundary preserves measured instruction scheduling. */ \
+        /* FAKEMATCH: the register-write word temporary preserves measured value allocation. */ \
+        s32 value_ = (value); \
+        (reg) = value_; \
+    } while (0)
+
+/* Shows the 33 slides, crossfading each into the other background over 16
+   steps of four frames and holding it 267 frames, then restores the menu
+   display. */
+s32 DisplayScroll_RunSlideshow(void)
+{
+    u32 slide;
+    s32 alpha;
+
+    gOamCopyEnabled = 0;
+    gCpuLoadDisplayEnabled = 0;
+    gDebugTextEnabled = 0;
+    gOptionMirror = 0;
+    Scheduler_ResetTaskTable();
+    Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames, 0x480);
+    Io_Write16(REG_DISPCNT, 0x40);
+    DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
+    DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
+    Graphics_ClearCharacterBlockAndPalette(0);
+    Graphics_ClearCharacterBlockAndPalette(1);
+    Io_Write16(REG_BG2CNT, 0x1f8a);
+    Io_Write16(REG_BG3CNT, 0x0f83);
+    Io_Write16(REG_DISPCNT, 0x1c40);
+    Io_Write16(REG_BLDCNT, 0x2844);
+    DisplayScroll_InitObjectTable();
+    WaitFrames(300);
+    for (slide = 0; slide <= 32; slide++) {
+        Graphics_LoadCharacterBlockAndPalette(DisplayScroll_SlideResources[slide], (slide & 1) ^ 1);
+        for (alpha = 1; alpha <= 16; alpha++) {
+            if (slide & 1)
+                Io_Write16(REG_BLDALPHA, (alpha << 8) | (16 - alpha));
+            else
+                Io_Write16(REG_BLDALPHA, ((16 - alpha) << 8) | alpha);
+            WaitFrames(4);
+        }
+        WaitFrames(267);
+    }
+    Io_Write16(REG_BLDCNT, 0);
+    Io_Write16(REG_DISPCNT, 0x1040);
+    Ui_LoadWindowGraphics();
+    Bg0_ClearTilemap();
+    gOamCopyEnabled = 1;
+    return 0;
+}
+
+#undef Io_Write16

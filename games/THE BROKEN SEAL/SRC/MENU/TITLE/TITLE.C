@@ -23,7 +23,7 @@ extern u8 gTitleEvents[];
 
 extern u32 gKeyState;
 extern u32 gKeysHeld;
-void Event_SetPairWork1c0(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 void RuntimeDispatch_NoOpHook(s32 resource);
 void Blend_SetDarkenTarget16(s32 target);
 void Blend_WaitForTransition(void);
@@ -68,9 +68,7 @@ extern u16 gBgScroll[];
 
 static __inline__ void DecodeBackground(const u8 *res)
 {
-    /* FAKEMATCH: this call boundary keeps the source in r4 and reloads the
-       map-cell buffer after the decode; a direct call retains r5 and changes
-       the DMA literal pool. */
+    /* FAKEMATCH: this call boundary keeps the source in r4 and reloads the map-cell buffer after the decode; a direct call retains r5 and changes the DMA literal pool. */
     Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
 }
 
@@ -131,7 +129,7 @@ s32 Title_Run(void)
                     break;
             } while (gKeyState == 0);
         }
-        Event_SetPairWork1c0((s32)&SceneId_Title, 2);
+        Event_SetDestination((s32)&SceneId_Title, 2);
         return 0;
     }
     if (gGameState.entrance == 9) {
@@ -142,7 +140,7 @@ s32 Title_Run(void)
         Blend_WaitForTransition();
         Engine_EventWait(240);
         Engine_AudioPlayCue(19);
-        Event_SetPairWork1c0((s32)&SceneId_Clear, 2);
+        Event_SetDestination((s32)&SceneId_Clear, 2);
         return 0;
     }
     RuntimeDispatch_NoOpHook((s32)&ResourceId_PaletteFarCalls);
@@ -169,12 +167,12 @@ s32 Title_Run(void)
         }
         goto menu;
     chosen:
-        Event_SetPairWork1c0((s32)&SceneId_Clear, 1);
+        Event_SetDestination((s32)&SceneId_Clear, 1);
     } else {
         Engine_AudioPlayCue(64);
         PaletteFar_Entry00(0);
         Party_ApplyStatePreset();
-        Event_SetPairWork1c0((s32)&SceneId_HaidiaMura, 16);
+        Event_SetDestination((s32)&SceneId_HaidiaMura, 16);
         Engine_AudioPlayCue(17);
     }
     Engine_AudioPlayCue(17);
@@ -184,9 +182,6 @@ s32 Title_Run(void)
     Engine_AudioPlayCue(19);
     return 0;
 }
-
-/* The title sprites: decode their tiles and palette, then load the tiles
- * into the title's VRAM block. */
 
 /* Decode the title sprites' tiles and palette and load the tiles into the
  * title's VRAM block, finding one the first time. */
@@ -250,9 +245,7 @@ void Title_RevealSpriteRow(void)
         i = 0;
 localized_sprite:
         {
-            /* FAKEMATCH: the explicit inner boundary keeps the record writer
-               independent of the sprite pointer; a nested for loop adds a
-               saved register and twelve bytes. */
+            /* FAKEMATCH: the explicit inner boundary keeps the record writer independent of the sprite pointer; a nested for loop adds a saved register and twelve bytes. */
             *w++ = 0;
             *w++ = (i * 8 << 16) | y | 0x2400;
             *w++ = tile;
@@ -302,8 +295,7 @@ loop:
  * that clears over sixteen steps. */
 void Title_RevealScreen(s32 unused)
 {
-    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
-     * the count cast preserves the queue's original publication order. */
+    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking; the count cast preserves the queue's original publication order. */
     s32 i;
     struct IoWriteQueue *q;
 

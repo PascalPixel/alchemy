@@ -22,14 +22,7 @@ s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self)
     return 0;
 }
 
-/*
- * The push interaction: probe the tile one step ahead of the subject and, if
- * something occupies it, slide it and the subject one step on. Only the
- * occupant's position is committed. The 360-byte owner includes its four-word
- * literal pool. Record fields are asserted only where written: facing at +6,
- * position at +8/+12/+16, state at +34, occupancy flag bit 0 at +89, speeds
- * at +48/+52, and the words cleared at +36/+44.
- */
+/* Move the occupant and subject toward the point one step beyond the occupant, then commit the occupant's position. */
 void StagedActor_PushActorAhead(void)
 {
 
@@ -117,14 +110,7 @@ void StagedActor_PushActorAhead(void)
     Object_SetMode(subject, 1);
 }
 
-/*
- * Probe the two cells ahead of the active subject and return what occupies the
- * nearer one, else the further one, else zero. The 160-byte owner includes its
- * alignment bytes and two-word literal pool. Facing is the biased quadrant of
- * the halfword at +6, with no sign extension; each probe rounds x and z down to
- * whole units and re-centres them by half a unit, carrying y unrounded. Only
- * the record fields at +6, +8, +12 and +16 are asserted.
- */
+/* Probe the two cells ahead and return the nearer occupant first; centre x and z in each cell while preserving y. */
 s32 *SceneActor_FindOccupantAheadOfSubject(void)
 {
 

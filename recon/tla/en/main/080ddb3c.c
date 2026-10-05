@@ -11,7 +11,7 @@
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
-void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 extern u8 Data_03001f30[];
 void ObjectDispatch_ApplyValueToKind200Children(s32 battle_value);
 s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);

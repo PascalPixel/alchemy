@@ -159,56 +159,56 @@ s32 Battle_ProcessRoundEnd(void)
                     BattlePresentation_WaitForAdvance();
                 }
             }
-            if (BattleUnit_TickCounter146(id) != 0) {
+            if (BattleUnit_TickAgilityModifier(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgAgiNormal);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter132(id) != 0) {
+            if (BattleUnit_TickAttackModifier(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgAtkNormal);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter134(id) != 0) {
+            if (BattleUnit_TickDefenseModifier(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgDefNormal);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter136(id) != 0) {
+            if (BattleUnit_TickResistanceModifier(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgResNormal);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter138(id) != 0) {
+            if (BattleUnit_TickDelusion(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureDelusion);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter139(id) != 0) {
+            if (BattleUnit_TickConfusion(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgConscious);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter13a(id) != 0) {
+            if (BattleUnit_TickCharm(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgConscious2);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter13b(id) != 0) {
+            if (BattleUnit_TickStun(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 BattlePres_SetActorModeAndAction(id);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureStun);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter13c(id) != 0) {
+            if (BattleUnit_TickSleep(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 BattlePres_SetActorModeAndAction(id);
@@ -221,13 +221,13 @@ s32 Battle_ProcessRoundEnd(void)
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureSeal);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter13e(id) != 0) {
+            if (BattleUnit_TickRefrain(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgRefrainEnd);
                 BattlePresentation_WaitForAdvance();
             }
-            if (BattleUnit_TickCounter13f(id) != 0) {
+            if (BattleUnit_TickReflect(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgReflectEnd);

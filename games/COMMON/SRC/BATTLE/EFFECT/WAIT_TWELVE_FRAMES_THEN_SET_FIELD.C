@@ -1,22 +1,14 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 s32 BattleFx_RunSparkGroups(void *, s32);
 
-struct Object080eceac {
-  u8 padding_00[8];
-  s32 field_08;
-  u8 padding_0c[0xc];
-  s32 field_18;
-  u8 padding_1c[8];
-  s16 field_24;
-};
-
-void Object_WaitTwelveFramesThenSetField18(struct Object080eceac *obj)
+void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect)
 {
-  BattleMotion_ApproachTargetFar(obj->field_08, obj->field_24, 0x18, 0x73333);
-  WaitFrames(0xC);
-  obj->field_18 = 3;
-  BattleFx_RunSparkGroups(obj, 2);
+    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 0x18, 0x73333);
+    WaitFrames(0xC);
+    effect->variant = 3;
+    BattleFx_RunSparkGroups(effect, 2);
 }

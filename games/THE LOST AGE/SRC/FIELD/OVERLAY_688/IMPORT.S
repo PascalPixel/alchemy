@@ -22,10 +22,10 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global UiWork_Finalize
 	.thumb_func
 UiWork_Finalize:
@@ -93,45 +93,45 @@ Func_0200059c:
 	.global Func_020005a4
 	.thumb_func
 Func_020005a4:
-	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer Event_SetDestinationFar
 	.global Func_020005ac
 	.thumb_func
 Func_020005ac:
 	overlay_veneer EventRuntime_SetCountdownFar
-	.global Event_SetStatus1c6
+	.global Event_StartScreenTransition
 	.thumb_func
-Event_SetStatus1c6:
+Event_StartScreenTransition:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8398
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8398
 	.else
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.endif
 	.endif
-	.global Event_ClearStatus1c6
+	.global Event_FinishScreenTransition
 	.thumb_func
-Event_ClearStatus1c6:
+Event_FinishScreenTransition:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c83a0
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c83a0
 	.else
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
 	.endif
-	.global Event_WaitValue1c8Frames
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Event_WaitValue1c8Frames:
+Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Event_DelayEffectFramesFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Func_020005cc

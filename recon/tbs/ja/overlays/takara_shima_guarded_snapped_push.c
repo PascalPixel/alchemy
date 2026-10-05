@@ -331,11 +331,11 @@ extern const struct SceneEvent gTakaraShimaEventsOther[];
 void Battle_Reset(s32 arg0);
 
 void InitializeEscapeSceneActors(void);
-void FieldScene_RunScene3b2_0200167c(void);
+void TakaraShima_RestoreRoomActors(void);
 s32 FieldScene_RedrawActorFootprint(s32 id);
 void InitializeSwayingSceneObject();
 void FieldScene_RunScene3b2SequenceA(void);
-void FieldScene_RunScene3b2_02001494(void);
+void TakaraShima_LeaveClearedRoom(void);
 void SetMapCellCollision();
 
 union GameStateRows {

@@ -74,8 +74,7 @@ s32 Scheduler_FindCallback(SchedulerCallback callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the
-     * interrupt-master register's address is loaded before the task table's. */
+    /* FAKEMATCH: the one-pass blocks keep the task-table address load before IME's address. */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -106,7 +105,7 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order)
     task = gSchedulerTaskTable;
     (void)gSchedulerStatus; /* read and dropped */
     index = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the one-pass blocks keep the task-table address load before IME's address. */
     do {
         {
             volatile u16 *ime = &REG_IME;
@@ -178,7 +177,7 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the one-pass blocks keep the task-table address load before IME's address. */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -210,7 +209,7 @@ s32 Scheduler_EnableCallbacks(SchedulerCallback callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the block that runs once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
     do {
         {
             volatile u16 *ime = &REG_IME;
@@ -244,7 +243,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the block that runs once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
     do {
         {
             volatile u16 *ime = &REG_IME;

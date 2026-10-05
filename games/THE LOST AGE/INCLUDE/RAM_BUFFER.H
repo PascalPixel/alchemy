@@ -3,26 +3,19 @@
 
 #include "TYPES.H"
 
-/* Fixed RAM buffers that Camelot's code addressed as constants, as in TBS:
- * code the ROM shows folding a constant address reaches its buffer through
- * the entry here, and the build checks each entry against the object named
- * beside it. Everywhere else the label serves. */
+/* Fixed RAM buffers used by the engine. */
 
 #define Ram_MapCellBuffer ((u8 *)0x02010000) /* gMapCellBuffer */
 #define Ram_MapCollision ((u8 *)0x0202c000) /* gMapCollision */
 
-/* The IWRAM copy of the sound mixer, which the sound set-up fills from ROM.
- * Its label is a Thumb routine, so only a constant gives the even address
- * the copy writes to without an extra instruction. */
+/* Sound setup copies the mixer from ROM to this even IWRAM address. */
 #define Ram_SoundMixer ((u8 *)0x03006000) /* SoundDriver_Mixer */
 
 /* The end of the IWRAM the heap hands blocks out of; the sound mixer's
  * workspace follows it. */
 #define Ram_IwramHeapEnd ((u8 *)0x03006fc0) /* IwramSoundMixWorkspace */
 
-/* The heap's slot words, which hold the resident work blocks, open IWRAM.
- * GCC reaches a slot from the constant base with the slot's offset in the
- * load, as it does for a field of a structure at a constant address. */
+/* The heap's slot words hold the resident work blocks at the start of IWRAM. */
 struct BattleSession;
 struct BattlePresentationTransition;
 struct MapWork;

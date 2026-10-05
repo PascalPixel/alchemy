@@ -310,9 +310,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler);
 
 u32 SaveState_ReleaseWorkspace(void)
 {
-    /* FAKEMATCH: retain only the existing ignored-result definition. No
-       caller consumes a result; true void changes the return-address pop
-       from r1 to r0. The actual heap helper is void; no word is returned. */
+    /* FAKEMATCH: the ignored-result definition keeps the return-address pop in r1; void selects r0. */
     Runtime_SetIrqHandler(5, 0, NULL);
     Runtime_ReleaseHeapBlock(51);
 }

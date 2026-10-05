@@ -30,6 +30,8 @@ KorimaMagari_PushStepX:
 	.global KorimaMagari_PushStepZ
 KorimaMagari_PushStepZ:
 	.4byte 0xf8000800
+	.global gKorimaMagariEntrances
+gKorimaMagariEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000197
 	.4byte 0x80000114
@@ -54,10 +56,14 @@ KorimaMagari_PushStepZ:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorimaMagariExits
+gKorimaMagariExits:
 	.4byte 0x0000002b
 	.4byte 0x0010202a
 	.4byte 0x0020102c
 	.4byte 0x000001ff
+	.global gKorimaMagariPlacements
+gKorimaMagariPlacements:
 	.4byte 0xffff00cd
 	.4byte 0x00000007
 	.4byte 0x00680000
@@ -82,6 +88,8 @@ KorimaMagari_PushStepZ:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKorimaMagariEvents
+gKorimaMagariEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -90,7 +98,7 @@ KorimaMagari_PushStepZ:
 	.4byte 0x00000002
 	.4byte 0x00004602
 	.4byte 0xffff000a
-	.4byte Scene_CallHelper118c
+	.4byte KorimaMagari_TryJumpForward
 	.4byte 0x00000202
 	.4byte 0xffff000b
 	.4byte KorimaMagari_RedrawBoard

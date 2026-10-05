@@ -3,8 +3,8 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Release and the adjacent resource-command metadata bank. The two games
-   keep resource/flags at different positions in the same56-byte work extent. */
+/* Resource records occupy 56 bytes; the two games place their resource and
+ * flags fields at different offsets. */
 struct ResourceObjectWork {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
     u8 unknown_00[16];

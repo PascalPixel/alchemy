@@ -11,7 +11,6 @@ void *ObjectTable_Get(u32 object);
 void Object_EffectSpawnCallback(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-
 /* One sprite entry of the fade overlay, with its attribute words. */
 struct FadeMark {
     void *next;
@@ -61,9 +60,7 @@ extern struct FadeWork *gActorEffectWork;
 void Object_EffectSpawnCallback(void)
 {
     struct FadeWork *work = gActorEffectWork;
-    /* FAKEMATCH: the map work pointer is read 112 bytes below the effect
-       work pointer, so both loads share one pool address, as the field
-       effect module reaches it 84 bytes below the particle work. */
+    /* FAKEMATCH: the map work pointer is read 112 bytes below the effect work pointer, so both loads share one pool address, as the field effect module reaches it 84 bytes below the particle work. */
     s16 *camera = FADE_VIEW->camera;
     s32 camera_x = camera[1];
     s32 camera_z = camera[3];
@@ -77,8 +74,7 @@ void Object_EffectSpawnCallback(void)
     s32 height;
     s32 other;
     s32 row;
-    /* FAKEMATCH: nothing reads or writes these four bytes; the reference
-       frame holds them above the three values it keeps on the stack. */
+    /* FAKEMATCH: nothing reads or writes these four bytes; the reference frame holds them above the three values it keeps on the stack. */
     s16 unused[2];
 
     if (actor == 0)
@@ -138,8 +134,7 @@ void BattleFx_StartFadeOverlay(void *object)
     VramBlock_LoadCached(94, 0x200, tiles);
     Runtime_ReleaseHeapBlock(14);
     Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
-    /* FAKEMATCH: the blend values pass through an int and one register
-       pointer so GCC builds them with mov and steps the address. */
+    /* FAKEMATCH: the blend values pass through an int and one register pointer so GCC builds them with mov and steps the address. */
     value = 0x3f9e;
     blend = &REG_BLDCNT;
     *blend = value;

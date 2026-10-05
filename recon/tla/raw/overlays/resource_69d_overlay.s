@@ -403,7 +403,7 @@ Func_02000300:
 	strh r6, [r3]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Object_SetPartAttribute
@@ -505,7 +505,7 @@ Func_02000384:
 	str r3, [r6, #20]
 	str r3, [r6, #12]
 	mov r8, r1
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #10
 	bl Battle_WaitMode0
 	ldr r3, [r6, #12]
@@ -654,7 +654,7 @@ Func_020004fc:
 	movs r0, #19
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #6
@@ -939,7 +939,7 @@ Func_02000778:
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #99
 	adds r3, r3, r7
 	mov r8, r3
@@ -1025,7 +1025,7 @@ Func_02000778:
 	strb r3, [r2]
 	adds r0, r6, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	movs r1, #1
 	movs r2, #1
@@ -1438,7 +1438,7 @@ Func_02000b50:
 	bl Func_02001da8
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r3, r7, #0
 	movs r6, #0
 	adds r3, #85
@@ -2306,7 +2306,7 @@ Func_02001258:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02009418
 	mov r1, r9
 	str r3, [r6, #108]
@@ -3095,7 +3095,7 @@ Func_02001888:
 	ldr r0, [r3]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #226
 	movs r3, #128
 	lsls r2, r2, #4
@@ -3170,8 +3170,8 @@ Func_02001888:
 	adds r3, r3, r2
 	adds r2, #93
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	add sp, #8
 	pop {r3, r5}
 	mov r8, r3
@@ -3237,8 +3237,8 @@ Func_02001a20:
 	adds r3, r3, r4
 	lsls r2, r2, #1
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #204
 	bl Func_02001f08
 	movs r3, #3

@@ -24,8 +24,7 @@ void SceneState_SetValues8_3_4(void)
     BattleFx_RunPageEffectForSlot(8, 3, 4);
 }
 
-/* Give the actor at most sixty frames to descend to its target height, then
- * clamp the live height to the target so the following scene starts exact. */
+/* Give the actor at most sixty frames to descend, then clamp its height to the target. */
 void SceneActor_WaitActorDescent(struct FieldActor *actor)
 {
     s32 frames = 60;

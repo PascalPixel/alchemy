@@ -3,8 +3,6 @@
 
 #include "TYPES.H"
 
-/* Raw linkage names retained for the exact owner registry. */
-
 s32 GameFlag_Test();
 s32 GameFlag_Set();
 void GameFlag_Clear(s32 flag);

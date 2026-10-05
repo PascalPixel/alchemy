@@ -12,7 +12,7 @@ void FieldScene_RunScene3a2SequenceA();
 u8 * Object_GetById();
 void Engine_ActorSetSpriteFlags();
 void ActorPresentation_PrepareActorFourteenWithCallback();
-void FieldScene_SetSlot15Byte89AndRunStep();
+void YamaRama_DisableActorCollision();
 void Engine_GameFlagSet();
 void Engine_MapCopyCellsTo();
 s32 Engine_ActorEnableActionCallback();
@@ -103,7 +103,7 @@ s32 Func_020011b0(void)
             }
             if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
                 Engine_ActorSetAnimation(15, 4);
-                FieldScene_SetSlot15Byte89AndRunStep();
+                YamaRama_DisableActorCollision();
             }
             if ((u32)(((u16)Data_02000240_t[225][0] - 4) << 16) <= 0x10000) {
                 Call1(Engine_GameFlagClear, 0x12f);

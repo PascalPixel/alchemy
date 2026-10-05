@@ -5,17 +5,17 @@
 
 s32 __divsi3(s32, s32);
 
-s32 Object_ResetAndClearField59(struct ObjectRuntime *obj)
+s32 Object_ClearChildAndCollisionFlags(struct ObjectRuntime *obj)
 {
-    ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)obj, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
     obj->collision_flags = 0;
     return 0;
 }
 
 /* ⚓️ splits ☀️'s reset in two: the child field alone, and a flag bit. */
-s32 Object_ResetChildField26(struct ObjectRuntime *obj)
+s32 Object_ClearChildFlags(struct ObjectRuntime *obj)
 {
-    ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)obj, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
     return 0;
 }
 
@@ -24,7 +24,7 @@ struct ObjectFlags23 {
     u8 flags_23;
 };
 
-s32 Object_SetField23Bit5(struct ObjectFlags23 *obj)
+s32 Object_SetPriorityBit5(struct ObjectFlags23 *obj)
 {
     obj->flags_23 |= 0x20;
     return 0;

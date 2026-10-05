@@ -158,8 +158,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
         Iwram_ExpandBitRuns(input, buf + 32, colour);
         Iwram_ExpandBitRuns(input, buf + 33, colour);
         if (mark != 0) {
-            /* FAKEMATCH: assigning digits in the mark argument makes the
-               argument register compute buf + 7 before its loop copy. */
+            /* FAKEMATCH: assigning digits in the mark argument makes the argument register compute buf + 7 before its loop copy. */
             Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
             Iwram_ExpandBitRuns(mark, buf + 8, colour);
         }
@@ -170,8 +169,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
             Iwram_ExpandBitRuns(mark, buf + 24, transparent);
         Iwram_ExpandBitRuns(input, buf + 32, colour);
         if (mark != 0) {
-            /* FAKEMATCH: this mark path needs the same argument-before-loop
-               order as the outlined path. */
+            /* FAKEMATCH: this mark path needs the same argument-before-loop order as the outlined path. */
             Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
         }
     }

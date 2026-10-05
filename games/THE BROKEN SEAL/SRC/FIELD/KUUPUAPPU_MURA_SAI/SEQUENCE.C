@@ -16,7 +16,6 @@ extern u8 MsgKuupuappuRuffRrruff2[];
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-/* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -61,7 +60,7 @@ struct SceneActor_02000350 {
     u8 active;
 };
 
-/* Complete actor-13 temporary-acceptance dialogue wrapper through its pool. */
+/* Actor 13's dialogue temporarily enables acceptance. */
 struct Actor_020007d4 {
     u8 reserved00[91];
     u8 accepted;
@@ -91,29 +90,25 @@ struct SceneActor_02000c1c {
     struct Presentation_02000c1c *presentation;
 };
 
-/*
- * Complete actor-18 dialogue/restoration scene.  If cue 231 remains available
- * and its movement scene has not set flag 0x858, the shared scene marker at
- * +370 is enabled before the dialogue scene closes.
- */
+/* Actor 18's dialogue and restoration: if cue 231 is available and flag 0x858 is clear, enable the scene marker at +370 before closing. */
 struct SceneWork_02000e90 {
     u8 reserved000[370];
     u16 actor18_marker;
 };
 
-/* Complete actor-16 conditional-counter dialogue scene through its pool. */
+/* Actor 16's dialogue depends on the scene counter. */
 struct SceneWork_020006b4 {
     u8 reserved000[472];
     u16 branch_counter;
 };
 
-/* Complete actor-11 temporary-acceptance dialogue wrapper through its pool. */
+/* Actor 11's dialogue temporarily enables acceptance. */
 struct Actor_02000754 {
     u8 reserved00[91];
     u8 accepted;
 };
 
-/* Complete actor-15 facing-preserving dialogue scene through its two-word pool. */
+/* Actor 15's dialogue preserves facing. */
 struct Actor_02000640 {
     u8 reserved00[6];
     u16 facing;
@@ -252,7 +247,7 @@ void FieldScene_RunActorEighteenDialogue(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetFlag947AndValue29dc(void)
+void KuupuappuMuraSai_InspectWell(void)
 {
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);

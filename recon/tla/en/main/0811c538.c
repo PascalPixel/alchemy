@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 void UiWork_ClearValueNameTablesFar(void);
 extern u8 Data_03001ae8[];
-s32 BattlePres_ShowMessageWhenField38Positive(s16 *);
+s32 BattlePres_ShowDefendMessage(s16 *);
 s32 BattlePres_RunUnitAction(s16 *);
 s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *);
 void BattleMotion_SetupEscapeObject(s32);

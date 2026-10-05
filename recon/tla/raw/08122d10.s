@@ -347,7 +347,7 @@ BattleEvent_Playback:
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
 	ldr r0, [r7, r5]
-	bl BattleMotion_GetSlotField14
+	bl BattleMotion_GetSlotPalette
 	adds r1, r0, #0
 	ldr r0, [r6]
 	bl BattleMotion_SetRecordChildValues
@@ -645,7 +645,7 @@ BattleEvent_Playback:
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
 	ldr r0, [r5]
-	bl BattleMotion_GetSlotField14
+	bl BattleMotion_GetSlotPalette
 	adds r1, r0, #0
 	ldr r0, [r6]
 	bl BattleMotion_SetRecordChildValues
@@ -724,7 +724,7 @@ BattleEvent_Playback:
 	lsls r1, r1, #1
 	adds r3, r0, r1
 	ldrh r0, [r3]
-	bl Summon_GetEntryByte3Kind
+	bl Summon_GetLayoutKind
 	cmp r0, #0
 	blt .L_081232ce
 	subs r0, #1
@@ -765,7 +765,7 @@ BattleEvent_Playback:
 	lsls r2, r2, #1
 	adds r3, r0, r2
 	ldrh r0, [r3]
-	bl Summon_GetEntryByte3Kind
+	bl Summon_GetLayoutKind
 	cmp r0, #0
 	blt .L_08123316
 	adds r0, #146

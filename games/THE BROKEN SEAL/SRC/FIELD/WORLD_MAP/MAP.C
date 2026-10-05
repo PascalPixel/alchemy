@@ -19,7 +19,7 @@ enum {
 extern u8 gDebugMode[];
 
 void Scene_RunScene371SequenceA(s32 direction);
-void Event_SetPairWork1c0(s32 a0, s32 a1);
+void Event_SetDestination(s32 a0, s32 a1);
 void PartyInventory_Discard(s32 item);
 void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
 void Map_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3);
@@ -28,14 +28,14 @@ void WorldMap_ActivateSite138(s32 actor);
 void WorldMap_RunBlackOrbScene(void);
 void RunEventScript01(void);
 void FieldScene_RunActorTransferSequence(void);
-void FieldScene_RunScene371_020017fc(void);
-void FieldScene_RunScene371_02001888(void);
-void FieldScene_RunScene371_02001938(void);
-void FieldScene_RunScene371_020019e8(void);
-void FieldScene_RunScene371_02001a98(void);
-void FieldScene_RunScene371_02001b5c(void);
-void FieldScene_RunScene371_02002274(void);
-void FieldScene_RunScene371_0200357c(void);
+void WorldMap_TransferToExit102(void);
+void WorldMap_TransferToExit103(void);
+void WorldMap_TransferToExit104(void);
+void WorldMap_TransferToFuneHeya(void);
+void WorldMap_TransferToExit106(void);
+void WorldMap_CompleteTransfer(void);
+void WorldMap_DisembarkCarriage(void);
+void WorldMap_RunOpeningRise(void);
 void StoryScene_StartTransition(void);
 void FieldScene_RunActorEightApproach(void);
 void FieldScene_RunActorPresentationSequence(void);
@@ -445,10 +445,10 @@ s32 WorldMap_EnterScene(void)
     }
     if (*entrance == 90) {
         Scene_RunScene371SequenceA(0);
-        Event_SetPairWork1c0((s32)&SceneId_MakyuriChojo1, 1);
+        Event_SetDestination((s32)&SceneId_MakyuriChojo1, 1);
     } else if (*entrance == 91) {
         Scene_RunScene371SequenceA(1);
-        Event_SetPairWork1c0((s32)&SceneId_VinasuChojo, 93);
+        Event_SetDestination((s32)&SceneId_VinasuChojo, 93);
     } else if (*entrance == 78) {
         Engine_EventBegin();
         PartyInventory_Discard(242);
@@ -494,28 +494,28 @@ s32 WorldMap_EnterScene(void)
             }
             break;
         case 65:
-            FieldScene_RunScene371_020017fc();
+            WorldMap_TransferToExit102();
             break;
         case 66:
-            FieldScene_RunScene371_02001888();
+            WorldMap_TransferToExit103();
             break;
         case 67:
-            FieldScene_RunScene371_02001938();
+            WorldMap_TransferToExit104();
             break;
         case 68:
-            FieldScene_RunScene371_020019e8();
+            WorldMap_TransferToFuneHeya();
             break;
         case 69:
-            FieldScene_RunScene371_02001a98();
+            WorldMap_TransferToExit106();
             break;
         case 70:
-            FieldScene_RunScene371_02001b5c();
+            WorldMap_CompleteTransfer();
             break;
         case 71:
-            FieldScene_RunScene371_02002274();
+            WorldMap_DisembarkCarriage();
             break;
         case 72:
-            FieldScene_RunScene371_0200357c();
+            WorldMap_RunOpeningRise();
             break;
         case 73:
             StoryScene_StartTransition();
@@ -730,7 +730,7 @@ void FieldScene_RunActorTransferSequence(void)
     Battle_ClearObjectFlag5bWhenMode3();
     Audio_PlayCue(107);
     Camera_SetSpeed(0x40000, 0x40000);
-    FieldScene_RunScene371_0200155c();
+    WorldMap_ShakeTransferStartCamera();
     Audio_PlayCue(0x121);
     Actor_ShowEmote(8, 0x100, 0);
     Actor_ShowEmote(9, 0x100, 0);
@@ -758,7 +758,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_TaskWait(1);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
-    Engine_TaskAddCallback(FieldScene_RunScene371_020017a4, 0xc80);
+    Engine_TaskAddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
     do {
         Engine_TaskWait(1);
     } while ((s16)actor->timer == 0);
@@ -773,8 +773,8 @@ void FieldScene_RunActorTransferSequence(void)
     record->velocity_y = 0x60000;
     Audio_PlayCue(145);
     Camera_SetSpeed(0x40000, 0x40000);
-    FieldScene_RunScene371_02001680();
-    FieldScene_RunScene371_02001680();
+    WorldMap_ShakeTransferLandingCamera();
+    WorldMap_ShakeTransferLandingCamera();
     Engine_EventWait(60);
     Camera_SetSpeed(0x20000, 0x4000);
     Camera_MoveTo(0x16080000, -1, 0x6f80000, 1);
@@ -783,7 +783,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetAttachedEffect(9, 0x102);
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
-    Engine_TaskRemoveCallback(FieldScene_RunScene371_020017a4);
+    Engine_TaskRemoveCallback(WorldMap_UpdateTransferredActorLanding);
     Engine_TaskWait(1);
     Actor_SetPosition(14, 0, 0);
     Actor_SetPosition(15, 0, 0);
@@ -867,7 +867,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_0200155c(void)
+void WorldMap_ShakeTransferStartCamera(void)
 {
     Camera_MoveTo(0x160c0000, -1, 0x6f80000, 1);
     Engine_TaskWait(4);
@@ -895,7 +895,7 @@ void FieldScene_RunScene371_0200155c(void)
     Engine_TaskWait(4);
 }
 
-void FieldScene_RunScene371_02001680(void)
+void WorldMap_ShakeTransferLandingCamera(void)
 {
     Camera_MoveTo(0x15ec0000, -1, 0x6c80000, 1);
     Engine_TaskWait(4);
@@ -926,7 +926,7 @@ void FieldScene_RunScene371_02001680(void)
 /* Each frame of the transfer, keeps actor 15 over the guide (actor 14) and,
  * the first time it comes down to its landing height, lands it with a cue
  * and marks it landed for the scene that waits on it. */
-void FieldScene_RunScene371_020017a4(void)
+void WorldMap_UpdateTransferredActorLanding(void)
 {
     struct FieldActor *actor;
     struct FieldActor *guide;
@@ -946,7 +946,7 @@ void FieldScene_RunScene371_020017a4(void)
     }
 }
 
-void FieldScene_RunScene371_020017fc(void)
+void WorldMap_TransferToExit102(void)
 {
     struct FieldActor *actor;
 
@@ -968,7 +968,7 @@ void FieldScene_RunScene371_020017fc(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001888(void)
+void WorldMap_TransferToExit103(void)
 {
     struct FieldActor *actor;
 
@@ -996,7 +996,7 @@ void FieldScene_RunScene371_02001888(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001938(void)
+void WorldMap_TransferToExit104(void)
 {
     struct FieldActor *actor;
 
@@ -1024,7 +1024,7 @@ void FieldScene_RunScene371_02001938(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_020019e8(void)
+void WorldMap_TransferToFuneHeya(void)
 {
     struct FieldActor *actor;
 
@@ -1052,7 +1052,7 @@ void FieldScene_RunScene371_020019e8(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001a98(void)
+void WorldMap_TransferToExit106(void)
 {
     struct FieldActor *actor;
 
@@ -1084,7 +1084,7 @@ void FieldScene_RunScene371_02001a98(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001b5c(void)
+void WorldMap_CompleteTransfer(void)
 {
     struct FieldActor *actor;
 
@@ -1113,7 +1113,7 @@ void WorldMap_ShowDjinnTutorial(void)
 {
     Battle_ClearObjectFlag5bWhenMode3();
     BattleFx_ScheduleRatioTransition(0x10000, 6);
-    Event_WaitForDisplayField358Clear();
+    Event_WaitForZoomTransition();
     Battle_SetObjectFlag5bWhenMode3();
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventSetMessage((s32)MsgWorldMapAfterBringingDjinniIntoYour);
@@ -1191,7 +1191,7 @@ void WorldMap_MeetVenusDjinni(void)
         Event_ShowMessage(DJINNI, 0);
         Battle_ClearObjectFlag5bWhenMode3();
         BattleFx_ScheduleRatioTransition(0x13333, 6);
-        Event_WaitForDisplayField358Clear();
+        Event_WaitForZoomTransition();
         Battle_SetObjectFlag5bWhenMode3();
         djinni->motion_flags = 2;
         djinni->gravity = 0x4000;

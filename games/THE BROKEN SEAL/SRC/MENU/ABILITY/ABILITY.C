@@ -29,9 +29,7 @@ void Audio_PlayCue(s32 cue);
 /* Select the owner whose Psynergy is shown, or assign an L/R shortcut. */
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 {
-    /* FAKEMATCH: retain the existing low-byte CollectActions caller contract.
-       Its true s32 return with explicit u8 narrowing changes the native
-       adds r5,r0,#0 copy to mov r5,r0 before the same narrowing. */
+    /* FAKEMATCH: the low-byte CollectActions result keeps adds r5,r0,#0; explicit narrowing of s32 selects mov r5,r0. */
     struct PsynergyMenuState *menu;
     s32 selection;
     s32 count;
@@ -198,7 +196,7 @@ s32 PsynergyMenu_ReturnTrue(void)
     return 1;
 }
 
-/* An empty routine after it; nothing in the ROM refers to it. */
+/* Empty ability-menu hook. */
 void PsynergyMenu_NoOp(void)
 {
 }
@@ -207,9 +205,7 @@ void PsynergyMenu_NoOp(void)
  * the item-target selector's halfword position and nine-bit OAM x field. */
 s32 PsynergyMenu_SelectTarget(s32 mode)
 {
-    /* FAKEMATCH: retain the existing unsigned marker/OAM view. Direct
-       RenderOutput member/word casts remove the native halfword narrowing
-       before the nine-bit OAM assignment. */
+    /* FAKEMATCH: the unsigned marker/OAM view keeps halfword narrowing before the nine-bit assignment; direct casts remove it. */
     struct PsynergyMenuState *menu;
     s32 selection;
     s32 count;

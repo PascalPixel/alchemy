@@ -24,7 +24,7 @@ struct SceneBeatSubject {
 void Battle_Reset(void);
 void Object_SetModeById(s32, s32); void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
 void Battle_WaitMode0(s32); u8 *Object_GetById();
-void GameFlag_SetBit(s32); void ObjectDispatch_SetSingleChildField26(u8 *, s32);
+void GameFlag_SetBit(s32); void ObjectDispatch_SetSingleChildFlags(u8 *, s32);
 void BattleFx_FinishAction(void);
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor,
                          struct StagedActorEffectRequest *request);
@@ -36,10 +36,6 @@ void KorimaPalette_Capture(void);
 void KorimaPalette_SaveSecond(void);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 
-/*
- * Six-argument draw wrapper.  Inlining it here preserves the reference's
- * r2-before-r3 stacked-literal order at the call site.
- */
 
 void SceneEffect_AdjustPaletteColors(s32 a);
 
@@ -72,12 +68,7 @@ u8 *MapStagedScene_SelectSecondaryData(void) { return Data_02009028; }
 
 u8 *MapStagedScene_SelectTertiaryData(void) { return Data_02009038; }
 
-/*
- * Placement query followed by the tile-(10,12) scene transition.  The
- * six-word result is one aggregate and its two-word tail is forwarded by
- * value.  Keeping `zero' live across the draw is load-bearing: it lets the
- * dead result pointer be reused for the following stack slot.
- */
+/* Run actor 10's scene transition when its placement reaches column 12. */
 
 void FieldScene_RunActorTenPlacementScene(void)
 {
@@ -102,7 +93,7 @@ void FieldScene_RunActorTenPlacementScene(void)
             StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, zero);
             GameFlag_SetBit(0x201);
             actor = Object_GetById(10);
-            ObjectDispatch_SetSingleChildField26(actor, 0);
+            ObjectDispatch_SetSingleChildFlags(actor, 0);
         }
     }
     BattleFx_FinishAction();
@@ -127,10 +118,10 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         actor->move_rate_z = 0x20000;
         actor->elevation_rate = 0x40000;
         *flags &= 0x7e;
-        ObjectDispatch_SetSingleChildField26(actor, 0);
+        ObjectDispatch_SetSingleChildFlags(actor, 0);
         ObjectMotion_SetPositionAndCommit(0, request->cell_x, request->cell_z);
         Object_SetMode(actor, 6);
-        ObjectDispatch_SetSingleChildField26(actor, 1);
+        ObjectDispatch_SetSingleChildFlags(actor, 1);
         *flags = (u8)result;
         Object_SetModeById(10, 7);
         actor->position_x += 0xffff0000;
@@ -170,10 +161,10 @@ void SceneActor_ApplyOffsetObjectPosition(void)
     StagedActor_RunStepEffect(&pos);
 }
 
-u8 *SceneData_GetTable9098(void) { return Data_02009098; }
+u8 *KorimaKawa_GetEvents(void) { return Data_02009098; }
 
 /* Opens the scene with window transition 4, then runs its beat sequence. */
-s32 SceneState_SetRuntimeWord448To516(void)
+s32 KorimaKawa_PrepareWindowTransition(void)
 {
     struct EventWork *work = gEventWork;
 
@@ -186,7 +177,7 @@ s32 SceneState_SetRuntimeWord448To516(void)
         subj->marker = 2;
         DrawSceneBeat(32, 20, 2, 4, 11, 16);
         StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-        ObjectDispatch_SetSingleChildField26(Object_GetById(10), 0);
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
     }
 
     FieldScene_RedrawActorFootprint(8);
@@ -229,7 +220,7 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     green = (s16)(green - Math_DivideSigned(green, adj));
     blue = (s16)(blue - Math_DivideSigned(blue, adj));
 
-    /* Only the increasing channel is explicitly saturated by this owner. */
+    /* Only the increasing colour channel is saturated. */
     if (red > 31)
         red = 31;
 

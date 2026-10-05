@@ -58,7 +58,7 @@ Func_080e0dd4:
 	bl WaitFrames
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r5, .L_080e0e90
 	adds r3, r7, #0
 	adds r3, #85
@@ -87,7 +87,7 @@ Func_080e0dd4:
 .L_080e0e94:
 	.4byte ObjectGroup_ApplyRandomChildValues
 .L_080e0e98:
-	.4byte BattleFx_AdvanceObjectField6WithRamp
+	.4byte BattleFx_AdvanceAngleWithRamp
 .L_080e0e9c:
 	.4byte Func_080e0cac
 .L_080e0ea0:

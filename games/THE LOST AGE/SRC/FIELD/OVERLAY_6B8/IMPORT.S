@@ -70,10 +70,10 @@ Func_02000dac:
 	.endif
 	.endif
 	.endif
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -201,7 +201,7 @@ Func_02000eac:
 	.global Func_02000eb4
 	.thumb_func
 Func_02000eb4:
-	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer Event_SetDestinationFar
 	.global Func_02000ebc
 	.thumb_func
 Func_02000ebc:

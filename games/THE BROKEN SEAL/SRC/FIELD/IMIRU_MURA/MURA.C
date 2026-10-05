@@ -105,25 +105,17 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gImiruMuraEntrancesOther;
 }
 
-/* The whole four-byte owner. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/* The eight-byte owner includes its one pool word. */
-u8 *SceneData_GetTableA990(void)
+u8 *ImiruMura_GetExits(void)
 {
     return (u8 *)ImiruMura_SceneTable;
 }
 
-/*
- * The actors placed in Imil. The second area's table is prepared, then
- * patched in place once flag 0x881 is set: the overlay image is writable.
- * The coordinates are written as shifts, which is how a 16.16 whole number
- * is built here. The word at +0x4c is set only on this path and never read
- * back, so its meaning is unverified.
- */
+/* The second area's actor table is updated in place once flag 0x881 is set. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     u8 *script;
@@ -146,7 +138,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gImiruMuraPlacements;
 }
 
-void FieldScene_Forward2188(void)
+void ImiruMura_RunHeadingProbe(void)
 {
     StagedActor_RunHeadingProbeStep();
 }
@@ -335,7 +327,7 @@ void SceneDialogue_RunActor20FlaggedLine(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene399_020005dc(void)
+void ImiruMura_TalkAboutLighthouse(void)
 {
     u32 i;
     s32 record;
@@ -538,7 +530,7 @@ void ImiruMura_RunItemShop(void)
     }
 }
 
-void FieldScene_RunScene399_02000a3c(void)
+void ImiruMura_OpenInn(void)
 {
     struct FieldActor *leader;
 
@@ -560,7 +552,7 @@ void FieldScene_RunScene399_02000a3c(void)
     }
 }
 
-void FieldScene_RunScene399_02000abc(void)
+void ImiruMura_OpenSanctum(void)
 {
     struct FieldActor *leader;
 
@@ -766,8 +758,8 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_FaceDirection(8, 0x3000, 20);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 10);
     Engine_ActorEnableActionCallback(9, tbl);
-    /* SceneState_StoreTable96adToWork at 0x020016c8. */
-    SceneState_StoreTable96adToWork();
+
+    ImiruMura_CastPsynergyAtActorNine();
     Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 40);
     Event_ShowMessageAndWait(9, 0, 20);

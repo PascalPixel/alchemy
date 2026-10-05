@@ -48,8 +48,7 @@ void UiWindow_SetTilemapEntry(
         break;
     }
 
-    /* FAKEMATCH: byte-offset stores preserve the strh base and offset
-       register order; map[index] reverses them in both stores. */
+    /* FAKEMATCH: byte-offset stores preserve the strh base and offset register order; map[index] reverses them in both stores. */
     switch (mode) {
     case TILEMAP_ENTRY_NONE:
         return;
@@ -131,9 +130,7 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
         sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
         if (scale > 256) {
             sprite->affine = 3;
-            /* FAKEMATCH: preserve the original unsigned halfword read at
-               the logical x cell. Casting the signed member value swaps the
-               x load and -8 pool load at the same 460-byte module extent. */
+            /* FAKEMATCH: preserve the original unsigned halfword read at the logical x cell. Casting the signed member value swaps the x load and -8 pool load at the same 460-byte module extent. */
             sprite->x = *(u16 *)&output->x - 8;
             sprite->y = (u16)output->y - 8;
         } else {

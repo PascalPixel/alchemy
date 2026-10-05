@@ -61,7 +61,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta > 0x1000) {
                 delta = 0x1000;
             }
-            /* The loader relocates the stored pool word to -0x1000. */
+
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
@@ -155,7 +155,7 @@ const struct SceneRegion *Scene_GetRegions(void)
     return 0;
 }
 
-u8 *SceneData_GetTableC85c(void)
+u8 *ArutinYama_GetExits(void)
 {
     return ArutinYama_StatueTable;
 }
@@ -238,21 +238,21 @@ void ArutinYama_BeginRollingRide(s32 a0)
     BattleFx_PlayQueuedSound();
 }
 
-void SceneState_SetWorkByte22bTo3(void)
+void ArutinYama_StartAreaOneEncounter(void)
 {
     gGameState.battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama1, 99);
     BattleFx_SetWeightedResult(53, 2);
 }
 
-void SceneState_SetByte22bTo3(void)
+void ArutinYama_StartAreaThreeEncounter(void)
 {
     gGameState.battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama3, 99);
     BattleFx_SetWeightedResult(53, 2);
 }
 
-void SceneState_SetByte22bTo3AndSend51(void)
+void ArutinYama_StartAreaFiveEncounter(void)
 {
     gGameState.battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama5, 99);
@@ -288,8 +288,6 @@ void SceneActor_UpdateSlot10ByTileX(void)
  * rate into the record.
  */
 
-/* Declared without prototypes -- call sites vary in argument shape. */
-
 /*
  * resource_3a4: a published callback that sets the mode of actor record 8.
  */
@@ -298,6 +296,7 @@ void SceneActor_UpdateSlot10ByTileX(void)
  * Presentation callback for resource_3a4, published rather than called
  * directly from this overlay.
  */
+
 void ActorPresentation_SetCellAndLowerActorEight(void)
 {
 
@@ -317,7 +316,7 @@ void ActorPresentation_SetCellAndLowerActorEight(void)
     Engine_GameFlagSet(0x200);
 }
 
-void SceneState_ApplyRectAndSetActor9Byte55(void)
+void ArutinYama_RestoreFallingActorNine(void)
 {
 
     s32 *p;
@@ -666,19 +665,19 @@ void FieldScene_RunScene3a4SequenceD(void)
     Engine_EventEnd();
 }
 
-void SceneActor_SetActor10Byte23To3(void)
+void ArutinYama_SetActorTenUnderfootPriority(void)
 {
 
     Object_GetById(10)->priority_flags = 3;
 }
 
-void SceneActor_SetActor10Byte23To1(void)
+void ArutinYama_SetActorTenAutomaticPriority(void)
 {
 
     Object_GetById(10)->priority_flags = 1;
 }
 
-void FieldScene_RunScene3a4_02000c9c(void)
+void ArutinYama_PushMovableObject(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 

@@ -35,8 +35,6 @@ void TakaraHashira_JitterBackgroundScroll(void);
 s32 SceneActor_UpdateBit1ByPositionToSlotZero();
 s32 TakaraHashira_UpdateActorPriority();
 
-/* The veneers the shared staged-actor code names; the stage waits and sets
- * object modes through them too. */
 void WaitFrames(s32 frames);
 void Object_SetMode(struct FieldActor *object, s32 mode);
 
@@ -63,31 +61,6 @@ void TakaraHashira_UpdatePillarActors();
 void FieldScene_RunScene3b3SequenceE();
 int FieldScene_RunScene3b3SequenceD(void);
 void battle_owner_69();
-
-/*
- * Staged actor height wait for overlay resource_3b3. The callee name refers
- * to its own call word rather than to a shared runtime address.
- */
-
-/*
- * Steps a record down by a tenth of a unit per frame until it reaches the
- * clamp at 0x1999 -- resource_3b3.  The eighty-byte owner includes its
- * alignment halfword and four pool words: the clamp 0x1999, -0x1999,
- * -0xcccc and the loop bound 0x1998, which is one less than the clamp.
- * None of them is an address, and each is reached only through a
- * pc-relative load.
- */
-
-/* Apply the actor's low four counter bits as its animation mode. */
-
-/* Begin a scene, attempt the forward transition, and fall back to pushing the
- * obstructing actor when the transition cannot run.  Complete 28-byte owner
- * from the prologue at 0x02001528 through return/alignment at 0x02001543. */
-
-/* Record id used for the single record configured below in either branch. */
-
-/* Flag/id value passed to the query call and to the two closing calls, and
- * written into the flag byte at +85 when the query call returned zero. */
 
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin);
 

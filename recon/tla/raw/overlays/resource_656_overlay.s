@@ -553,8 +553,8 @@ Func_02000438:
 	bl WaitFrames
 	movs r0, #123
 	bl Func_02002de0
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r2, #170
 	lsls r2, r2, #1
 	adds r3, r7, r2
@@ -2582,7 +2582,7 @@ Func_020015c8:
 	lsls r3, r3, #8
 	str r3, [r5, #52]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #0
 	bl Func_02002bf0
@@ -2616,8 +2616,8 @@ Func_02001650:
 	bl Func_02002d18
 	movs r0, #78
 	bl Func_02002de0
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r2, .L_0200992c
 	movs r6, #133
 	mov r8, r2
@@ -2820,8 +2820,8 @@ Func_02001650:
 	adds r3, r3, r2
 	adds r2, #85
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #242
 	bl PartyInventory_Remove
 	movs r0, #144
@@ -2934,8 +2934,8 @@ Func_02001944:
 	str r3, [r5, #28]
 	movs r0, #1
 	bl WaitFrames
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r0, #103
@@ -2971,8 +2971,8 @@ Func_020019ac:
 	bl Func_02002c68
 	movs r0, #0
 	bl Func_02002da8
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	bl Func_02001a04
@@ -4819,7 +4819,7 @@ Func_02002970:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #128
 	lsls r0, r0, #2
 	adds r0, #2
@@ -4893,7 +4893,7 @@ Func_02002970:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_Test

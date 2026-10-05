@@ -22,8 +22,7 @@ extern u16 gBgScroll[];
 
 static __inline__ void DecodeBackground(const u8 *res)
 {
-    /* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and
-       reloads the cell buffer's address after it, as the game does. */
+    /* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and reloads the cell buffer's address after it, as the game does. */
     Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
 }
 
@@ -80,8 +79,6 @@ extern s16 Clear_ExtraCodeHeld;
 extern u16 Clear_CodeSequence[];
 extern u16 Clear_ExtraCodeSequence[];
 
-/* Each getter is eight bytes including the one pool word that holds the
- * table it returns. */
 u8 *SceneData_GetScriptTable(void)
 {
     return Clear_ScriptTable;
@@ -177,8 +174,7 @@ col:
 /* Fade the blend in step by step each frame; remove itself once full. */
 void Clear_UpdateBlend(void)
 {
-    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
-     * the count cast preserves the queue's original publication order. */
+    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking; the count cast preserves the queue's original publication order. */
     struct IoWriteQueue *q;
     s32 frame;
     s32 level;

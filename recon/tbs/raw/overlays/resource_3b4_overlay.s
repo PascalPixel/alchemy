@@ -420,16 +420,16 @@ gTakaraAshibaEvents1:
 	.4byte FieldScene_RunIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff0035
-	.4byte SceneState_ResetCounter412OnHeading4000B
+	.4byte TakaraAshiba_ResetBlockedStepsForSelectorTwo
 	.4byte 0x00000002
 	.4byte 0xffff0036
-	.4byte SceneState_ResetCounter412OnHeading4000
+	.4byte TakaraAshiba_ResetBlockedStepsForSelectorThree
 	.4byte 0x00004602
 	.4byte 0xffff0035
-	.4byte FieldScene_CallHelper3500
+	.4byte TakaraAshiba_CheckLeaderAhead
 	.4byte 0x00004602
 	.4byte 0xffff0036
-	.4byte FieldScene_CallHelper3500
+	.4byte TakaraAshiba_CheckLeaderAhead
 	.4byte 0x00000013
 	.4byte 0x0eca0064
 	.4byte 0x0020014d
@@ -546,13 +546,13 @@ gTakaraAshibaEvents3:
 	.4byte SceneState_BranchOnActorZeroFacing
 	.4byte 0x00000002
 	.4byte 0x00360014
-	.4byte FieldScene_RunScene3b4_02000ad0
+	.4byte TakaraAshiba_StartActorFifteenJump
 	.4byte 0x00000002
 	.4byte 0x00360015
-	.4byte FieldScene_RunScene3b4_02000b68
+	.4byte TakaraAshiba_RunActorFifteenSprint
 	.4byte 0x00000002
 	.4byte 0x00360016
-	.4byte FieldScene_RunScene3b4_02000ccc
+	.4byte TakaraAshiba_ReturnActorFifteen
 	.4byte 0x00000002
 	.4byte 0x0036001e
 	.4byte FieldScene_CopyActorPosition
@@ -612,7 +612,7 @@ gTakaraAshibaEvents3:
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00008c15
 	.4byte 0x0205000c
-	.4byte FieldScene_CallHelper3c70
+	.4byte TakaraAshiba_RepaintActorCells
 	.4byte 0x00000013
 	.4byte 0x0ed60068
 	.4byte 0x0020029a

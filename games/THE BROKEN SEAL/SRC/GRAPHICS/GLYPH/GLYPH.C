@@ -17,7 +17,6 @@ extern u8 *UiIcon_PsynergyIconPointers[];
 extern GlyphTransfer *gGlyphWork;
 extern u8 *UiIcon_MiscIconPointers[];
 
-
 extern const u8 Tile_Decompress4bpp[];
 extern const u8 Tile_ExpandMasked[];
 extern const u8 Tile_ExpandOpaque[];
@@ -42,7 +41,6 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 }
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
-
 
 extern struct SelectionScreen *gResQueueWork;
 
@@ -166,8 +164,7 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);
 }
 
-/* Complete 268-byte glyph-work initializer, including its literal pool.
- * The cursor subrecord is shared by the paired row resets. */
+/* The cursor subrecord is shared by the paired row resets. */
 void UiGlyph_ResetWorkState(void)
 {
     struct SelectionScreen *work;

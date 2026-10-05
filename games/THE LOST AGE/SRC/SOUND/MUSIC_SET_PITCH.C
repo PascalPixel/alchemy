@@ -6,9 +6,7 @@ void MusicCommand_SetPitch(s16 pitch)
     s32 mask;
     s16 value;
 
-    /* FAKEMATCH: retain the original one-pass block and local lifetimes;
-       both direct-call and local-only forms move the player literal load
-       after signed narrowing in this 24-byte wrapper. */
+    /* FAKEMATCH: the one-pass block and local lifetimes keep the player load before signed narrowing. */
     player = (u32)&gMusicPlayerBgm;
     do {
         value = pitch;

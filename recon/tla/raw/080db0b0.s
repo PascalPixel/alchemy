@@ -278,7 +278,7 @@ Func_080db0b0:
 	strb r3, [r4]
 	movs r1, #0
 	mov r0, r8
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r0, #5
 	bl WaitFrames
 	mov r0, r8
@@ -423,7 +423,7 @@ Func_080db0b0:
 	bl Object_SetMode
 	mov r0, r8
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	add r1, sp, #8
 	ldrb r1, [r1]
 	mov r2, r11

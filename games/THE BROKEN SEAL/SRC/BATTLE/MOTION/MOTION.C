@@ -226,9 +226,7 @@ void BattleMotion_ApproachTarget(
     object->acceleration = dist;
     object->speed_limit = dist;
     object->snap_to_target = 1;
-    /* Unresolved source: a single store, equal if/else arms, and a selected
-       local each reduce this 208-byte function to 192 bytes. The existing
-       conditional and following store remain pending reconstruction. */
+
     if (object->motion_flags & 4)
         object->velocity_y = initial_velocity_y;
     object->velocity_y = initial_velocity_y;

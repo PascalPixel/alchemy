@@ -19,8 +19,7 @@ void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
 
-/* The scene hooks the entry veneers export; the facing controller before
-   them is COMMON FIELD/COMMON/OBJECT/FACING.C. */
+/* The scene hooks exported by the overlay. */
 s32 *HaidiaBabi_GetEntrances(void)
 {
     return gHaidiaBabiEntrances;
@@ -138,7 +137,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetWork448To521AndRun(s32 object)
+void HaidiaBabi_CloseScreenAndExit(s32 object)
 {
     if (Engine_GameFlagIsSet(0x834) != 0) {
         BattleFx_SetBlock30ValuesMaxZero();
@@ -152,74 +151,73 @@ void SceneState_SetWork448To521AndRun(s32 object)
 void SceneState_SetValue123Mode1(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(1);
+    HaidiaBabi_CloseScreenAndExit(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(2);
+    HaidiaBabi_CloseScreenAndExit(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(3);
+    HaidiaBabi_CloseScreenAndExit(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(4);
+    HaidiaBabi_CloseScreenAndExit(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
     Engine_AudioPlayCue(0x80);
-    SceneState_SetWork448To521AndRun(5);
+    HaidiaBabi_CloseScreenAndExit(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(6);
+    HaidiaBabi_CloseScreenAndExit(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
     Engine_AudioPlayCue(0x80);
-    SceneState_SetWork448To521AndRun(7);
+    HaidiaBabi_CloseScreenAndExit(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
     Engine_AudioPlayCue(0x81);
-    SceneState_SetWork448To521AndRun(8);
+    HaidiaBabi_CloseScreenAndExit(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
     Engine_AudioPlayCue(0x81);
-    SceneState_SetWork448To521AndRun(9);
+    HaidiaBabi_CloseScreenAndExit(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(10);
+    HaidiaBabi_CloseScreenAndExit(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(11);
+    HaidiaBabi_CloseScreenAndExit(11);
 }
 
 /* The entry hook: how the house is set up for the entrance and the story. */
 s32 HaidiaBabi_RestoreEntryState(void)
 {
-    /* FAKEMATCH: retain the cached-cell base shared at +12 and the word
-     * value before the narrow target store. */
+    /* FAKEMATCH: the shared cached-cell base keeps the word read before the narrow store. */
     u32 i;
     s32 record;
     struct EventWork **control;
@@ -325,9 +323,7 @@ void BattleFx_SetBlock30Values128One();
    walk out of the house. */
 void FieldScene_RunComplexActorSequence(void)
 {
-    /* FAKEMATCH: a one-halfword record keeps the actor-flag zero in a halfword
-       register, which the reference reloads from the literal pool after the
-       actor lookup. */
+    /* FAKEMATCH: a halfword record keeps the actor-flag zero loaded from the pool after the actor lookup. */
     s32 base;
     struct FieldSprite *sprite;
     struct FieldActor *p12;

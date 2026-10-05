@@ -26,7 +26,7 @@ s32 Random16(void);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 a, s32 b, s32 c);
 void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
-void Runtime_ApplyValueToWork7818(void);
+void BattleFx_ClearActorTimers(void);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 set, s32 object, s32 group, s32 slot, s32 value);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *ent, s32 arg1, s32 arg2);
@@ -185,7 +185,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     battle = slots[0];
     view = slots[35];
     work->effect = effect;
-    Runtime_ApplyValueToWork7818();
+    BattleFx_ClearActorTimers();
     view->second_mode = 1;
     gBgScroll[1].y = 32;
     BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);

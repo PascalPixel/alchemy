@@ -119,7 +119,7 @@ BattleFx_DispatchRequestKind:
 	cmp r1, #25
 	bne .L_080db75e
 	adds r0, r5, #0
-	bl Func_080e306c
+	bl BattleFx_CallSpinEffect
 	b .L_080db840
 .L_080db75e:
 	cmp r1, #20

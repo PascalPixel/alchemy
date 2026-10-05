@@ -160,9 +160,7 @@ void Title_LoadIntroBackgrounds(void)
     Dma_Set(Ram_MapCellBuffer + 0x2940, (void *)0x06000000, 0x80002760, REG_DMA3);
     Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, REG_DMA3);
 
-    /* FAKEMATCH: goto loops and a tile counted in its high half keep the
-       increment's constant inside each strip, where the loop pass would
-       hoist it. */
+    /* FAKEMATCH: goto loops and a tile counted in its high half keep the increment's constant inside each strip, where the loop pass would hoist it. */
     blank = 0x1ff;
     map = (u16 *)0x0600f000;
     tile = 0x267;
@@ -335,10 +333,7 @@ s32 Title_ShowIntro(s32 prompt)
     gCpuLoadDisplayEnabled = result;
     Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
-    /* FAKEMATCH: retain the pre-existing ignored scalar-return call boundary.
-       The actual callee is void; its corrected declaration in f4f9d28 swaps
-       the two argument moves in five editions. Used-zero and block forms
-       still swap them, with no extent difference. */
+    /* FAKEMATCH: the ignored scalar-return call preserves argument-move order; the void callee declaration swaps the moves in five editions. */
     Graphics_TransformSmallPalette(2, 0);
     {
         volatile u16 *ime;
@@ -444,8 +439,7 @@ s32 Title_ShowIntro(s32 prompt)
         }
         WaitFrames(1);
     }
-    /* FAKEMATCH: the row is a goto loop, as in the background set-up; a for
-       loop frees a register and moves the parameter off the stack. */
+    /* FAKEMATCH: the row is a goto loop, as in the background set-up; a for loop frees a register and moves the parameter off the stack. */
     for (; i < 20; i++) {
         j = 0;
     cell:

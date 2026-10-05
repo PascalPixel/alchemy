@@ -308,14 +308,6 @@ void Scene_RunScene3c3SequenceA(void)
     Engine_EventEnd();
 }
 
-/*
- * Dialogue bracket at 0x02000730.  The 124-byte owner includes its four-word
- * literal pool at 0x0200079c-0x020007ab.  The tail is shared through a label
- * rather than copied into each arm: copying it would add a fourth call site
- * where there are three.  The skip-beat counter sits at byte offset 472 off
- * the gWork pointer cell, which costs one dereference.  The guard is
- * tested against zero at this site; the polarity is read per call site.
- */
 void Scene_RunActorNinePromptDialogue(void)
 {
     extern u8 *gWork;

@@ -55,7 +55,7 @@ void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 struct CaptureObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Object_SetMode(struct CaptureObject *object, s32 mode);
-void ObjectDispatch_SetSingleChildField26Far(struct CaptureObject *object, s32 value);
+void ObjectDispatch_SetSingleChildFlagsFar(struct CaptureObject *object, s32 value);
 struct CaptureResource *Object_ReplaceResourceEntry(struct CaptureSprite *sprite, struct CaptureResource *resource);
 void ObjectDispatch_ReleaseFar(struct CaptureObject *object);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
@@ -126,7 +126,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
             copy->facing = djinni->facing;
             Animation_ApplyChildValuesFar(copy, 9);
             Object_SetMode(copy, 0);
-            ObjectDispatch_SetSingleChildField26Far(copy, 0);
+            ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
             resource = Object_ReplaceResourceEntry(copy->sprite, resource);
             copy->linked = previous;
             previous = copy;

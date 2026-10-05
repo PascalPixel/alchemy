@@ -1,4 +1,4 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW5.C. */
+/* Ported from ☀️ games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SIDEOBJ.C. */
 #include "EDITION.H"
 #include "TYPES.H"
 #include "WINDOW.H"

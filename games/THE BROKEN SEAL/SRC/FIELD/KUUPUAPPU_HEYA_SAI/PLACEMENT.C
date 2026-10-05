@@ -55,10 +55,6 @@ void SceneState_CheckPositionWindow(void)
     Engine_GameFlagClear(0x250);
 }
 
-/*
- * The eight-byte owner includes its one pool word, which holds the address
- * returned here. The word is loaded and returned, never dereferenced.
- */
 u8 *SceneData_GetScriptTable(void)
 {
     return Placement_Scripts;
@@ -70,7 +66,6 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetMessageTable(void)
 {
     return Placement_Messages;
@@ -322,7 +317,6 @@ void SceneDialogue_RunActor18FlaggedLine(void)
     Engine_EventEnd();
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetEffectTable(void)
 {
     s32 Engine_GameFlagIsSet(s32);
@@ -347,10 +341,7 @@ s32 FieldScene_InitSceneStateByStep(void)
         s32 fifth = 4;
         s32 sixth = 3;
 
-        /*
-         * The fifth and sixth arguments go on the stack. The two locals
-         * are what put them there, so they must stay locals.
-         */
+
         Engine_MapCopyCellsTo(0, 120, 8, 67, fifth, sixth);
         zero = 0;
         Object_GetById(8)->motion_flags = zero;

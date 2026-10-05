@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer KorosseoKawa_ApplyEntryState
-	overlay_veneer SceneData_GetTableC194
-	overlay_veneer SceneData_GetTablec1dc
-	overlay_veneer SceneData_GetTablec1f4
-	overlay_veneer SceneData_GetTablec420
+	overlay_veneer KorosseoKawa_GetEntrances
+	overlay_veneer KorosseoKawa_GetExits
+	overlay_veneer KorosseoKawa_GetPlacements
+	overlay_veneer KorosseoKawa_GetEvents
 	overlay_veneer get_default_result

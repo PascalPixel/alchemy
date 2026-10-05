@@ -76,7 +76,7 @@ void Scene_RunActorGroupDepartureSequence();
 
 /* Configures actor 22 (position, pose, and movement/sprite flags) for the
  * scene. */
-s32 OverlayObject_SetField6OnCountdown(struct Object *object)
+s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
 {
     s32 loaded = object->counter;
     s32 counter = (s16)loaded;
@@ -115,7 +115,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
     return 1;
 }
 
-u8 *SceneData_GetTableD0E4(void)
+u8 *HaidiaArashi_GetEntrances(void)
 {
     return HaidiaArashi_SceneTable0;
 }
@@ -125,17 +125,17 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTableD27c(void)
+u8 *HaidiaArashi_GetExits(void)
 {
     return HaidiaArashi_SceneTable1;
 }
 
-u8 *SceneData_GetTableD2B8(void)
+u8 *HaidiaArashi_GetPlacements(void)
 {
     return HaidiaArashi_SceneTable2;
 }
 
-u8 *SceneData_GetTableD558(void)
+u8 *HaidiaArashi_GetEvents(void)
 {
     return HaidiaArashi_SceneTable3;
 }
@@ -163,7 +163,7 @@ void SceneState_SetFlag210AndConfigureRegion40_89(void)
     Engine_MapCopyCellAttributes(40, 89, 7, 4, a, b);
 }
 
-void SceneState_SetWork1c0AndRunObject(u8 *o)
+void HaidiaArashi_RequestBackdropExit(u8 *o)
 {
 
     struct EventWork *state;
@@ -177,34 +177,34 @@ void SceneState_SetWork1c0AndRunObject(u8 *o)
     Engine_EventRequestExit(o);
 }
 
-void FieldScene_SetupDescriptorD774(void)
+void HaidiaArashi_OpenBackdropExit11(void)
 {
     Engine_AudioPlayCue(0x9E);
     Engine_MapAnimateCells(HaidiaArashi_CellSteps0, 45, 11);
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1A4);
     Engine_EventWait(3);
-    SceneState_SetWork1c0AndRunObject(11);
+    HaidiaArashi_RequestBackdropExit(11);
 }
 
 void SceneState_SetValue123Mode1(void)
 {
 
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork1c0AndRunObject(1);
+    HaidiaArashi_RequestBackdropExit(1);
 }
 
 void SceneState_ApplyValues123And3(void)
 {
 
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork1c0AndRunObject(3);
+    HaidiaArashi_RequestBackdropExit(3);
 }
 
 void SceneState_SetValue123Mode4(void)
 {
 
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork1c0AndRunObject(4);
+    HaidiaArashi_RequestBackdropExit(4);
 }
 
 void FieldScene_RunStep7BAndCheckFlags841And842(void)
@@ -214,19 +214,19 @@ void FieldScene_RunStep7BAndCheckFlags841And842(void)
         && Engine_GameFlagIsSet(0x842) == 0) {
         FieldScene_ConfigureActorTwentyTwoScene();
     }
-    SceneState_SetWork1c0AndRunObject(2);
+    HaidiaArashi_RequestBackdropExit(2);
 }
 
-void FieldScene_SetupDescriptorD78a(void)
+void HaidiaArashi_OpenBackdropExit5(void)
 {
     Engine_AudioPlayCue(0x9E);
     Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 54, 32);
     Engine_ActorWalkTo(0, 0x196, 0x2d7);
     Engine_EventWait(3);
-    SceneState_SetWork1c0AndRunObject(5);
+    HaidiaArashi_RequestBackdropExit(5);
 }
 
-void FieldScene_RunScene372_02000278(void)
+void HaidiaArashi_OpenGateRoute(void)
 {
     u32 i;
     s32 record;
@@ -246,11 +246,11 @@ void FieldScene_RunScene372_02000278(void)
         L_020002b4:;
         Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
         Engine_EventWait(3);
-        SceneState_SetWork1c0AndRunObject(6);
+        HaidiaArashi_RequestBackdropExit(6);
     }
 }
 
-void FieldScene_SetupDescriptorD78aIfFlag205Clear(void)
+void HaidiaArashi_OpenBackdropExit7(void)
 {
     if (Engine_GameFlagIsSet(0x205) == 0) {
         Engine_AudioPlayCue(0x9E);
@@ -258,28 +258,28 @@ void FieldScene_SetupDescriptorD78aIfFlag205Clear(void)
     }
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x154, 0x378);
     Engine_EventWait(3);
-    SceneState_SetWork1c0AndRunObject(7);
+    HaidiaArashi_RequestBackdropExit(7);
 }
 
-void FieldScene_SetupWithDescriptorD7A0(void)
+void HaidiaArashi_OpenBackdropExit8(void)
 {
     Engine_AudioPlayCue(158);
     Engine_MapAnimateCells(HaidiaArashi_CellSteps2, 49, 69);
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x146, 0x466);
     Engine_EventWait(3);
-    SceneState_SetWork1c0AndRunObject(8);
+    HaidiaArashi_RequestBackdropExit(8);
 }
 
-void FieldScene_SetupDescriptorD7b6(void)
+void HaidiaArashi_OpenBackdropExit9(void)
 {
     Engine_AudioPlayCue(158);
     Engine_MapAnimateCells(HaidiaArashi_CellSteps3, 52, 76);
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
     Engine_EventWait(3);
-    SceneState_SetWork1c0AndRunObject(9);
+    HaidiaArashi_RequestBackdropExit(9);
 }
 
-void FieldScene_RunScene372_02000398(void)
+void HaidiaArashi_OpenRouteTen(void)
 {
     u32 i;
     s32 record;
@@ -288,10 +288,10 @@ void FieldScene_RunScene372_02000398(void)
     Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
     Engine_EventWait(3);
-    SceneState_SetWork1c0AndRunObject(10);
+    HaidiaArashi_RequestBackdropExit(10);
 }
 
-void FieldScene_RunScene372_020003cc(void)
+void HaidiaArashi_OpenRouteTwelve(void)
 {
     u32 i;
     s32 record;
@@ -300,10 +300,10 @@ void FieldScene_RunScene372_020003cc(void)
     Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
     Engine_EventWait(3);
-    SceneState_SetWork1c0AndRunObject(12);
+    HaidiaArashi_RequestBackdropExit(12);
 }
 
-void FieldScene_RunScene372_02000400(void)
+void HaidiaArashi_OpenRouteThirteen(void)
 {
     u32 i;
     s32 record;
@@ -312,14 +312,12 @@ void FieldScene_RunScene372_02000400(void)
     Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
     Engine_EventWait(3);
-    SceneState_SetWork1c0AndRunObject(13);
+    HaidiaArashi_RequestBackdropExit(13);
 }
 
 s32 FieldScene_RunFlagGatedActorSetup(void)
 {
-    /* FAKEMATCH: the coordinates, angles and tiles held in locals keep the
-       native register choice and pool order; inlining any one of them
-       changes the function. */
+    /* FAKEMATCH: the coordinates, angles and tiles held in locals keep the native register choice and pool order; inlining any one of them changes the function. */
     s32 x11 = 0x14E0000;
     s32 z11 = 0x3A40000;
     s32 x12 = 0xE00000;
@@ -449,7 +447,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Engine_ActorSetAnimation(8, 6);
         Object_GetById(22)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
         Object_GetById(8)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-        Scheduler_AddOrUpdateCallback(OverlayObject_CopyRecordField1ToSlots22And8, 0xC80);
+        Scheduler_AddOrUpdateCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xC80);
         Engine_ActorSetPosition(24, 0, 0);
         Engine_ActorSetPosition(25, 0, 0);
         Engine_ActorSetPosition(23, 0, 0);
@@ -647,7 +645,7 @@ void Scene_DoraSendsRobinToThePlaza(void)
     Engine_EventEnd();
 }
 
-void HaidiaArashi_RunScene00D5C(void)
+void HaidiaArashi_RunStormTriggerScene(void)
 {
     u32 i;
     struct FieldActor *rec7;
@@ -1563,8 +1561,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         u8 *o;
         o = (u8 *)Object_GetById(26);
         o += 0x5A;
-        /* FAKEMATCH: the set bit first, so the or writes into the register
-           that holds it, as the ROM's does. */
+        /* FAKEMATCH: the set bit first, so the or writes into the register that holds it, as the ROM's does. */
         {
             u8 set = 1 | *o;
             *o = set;
@@ -1826,7 +1823,7 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
     Engine_EventEnd();
 }
 
-void HaidiaArashi_RunScene02DEC(void)
+void HaidiaArashi_RunReunionAndDeparture(void)
 {
     u32 i;
     struct FieldActor *rec;
@@ -1948,7 +1945,7 @@ extern const u8 HaidiaArashi_ActorNineteenRiseScript[];
 struct FieldActor *Battle_GetWorkObject1e0(void);
 void HaidiaArashi_UpdatePulsingGlow(void);
 void ActorPresentation_SelectActorTwentySevenState(void);
-void OverlayObject_CopyRecordField1ToSlots22And8(void);
+void HaidiaArashi_CopyLeaderSpritePriority(void);
 
 /* Sets an actor and its target at once: x and height from one value, depth
    from the other. */
@@ -2284,7 +2281,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Actor_SetAnimation(8, 6);
     Object_GetById(22)->priority_flags &= 254;
     Object_GetById(8)->priority_flags &= 254;
-    Scheduler_AddOrUpdateCallback(OverlayObject_CopyRecordField1ToSlots22And8, 0xc80);
+    Scheduler_AddOrUpdateCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xc80);
     Actor_SetPosition(0, 0xb50000, 0x4f90000);
     work = Actor_Get(0);
     work->facing = 0xe000;

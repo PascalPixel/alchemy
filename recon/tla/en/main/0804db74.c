@@ -22,7 +22,7 @@ struct TextObject {
     u8 storage[12];
 };
 
-void Event_SetPairWork1c0Far(s16 primary, s16 secondary);
+void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
 void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
 void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
@@ -58,7 +58,7 @@ s16 Menu_RunSelection(void)
         if (result == -1) {
             UiTextResource_Release(resource);
             UiWork_Finalize(work, 2);
-            Event_SetPairWork1c0Far(primary, secondary);
+            Event_SetDestinationFar(primary, secondary);
             return result;
         }
         if (result == -2) {

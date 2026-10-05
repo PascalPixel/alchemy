@@ -2,7 +2,7 @@
 
 void Func_020023a4();
 void Func_020026f4();
-void Func_020027b0();
+void VinasuIriguchi_StopSparks();
 void Func_02002854();
 void Func_020028ac();
 void Func_020028b4();
@@ -532,7 +532,7 @@ void Scene_RunSoldierInterception(void)
     Func_0200290c(19, 0, 0);
     Func_0200290c(18, 0, 0);
     Func_0200290c(17, 0, 0);
-    Func_020027b0();
+    VinasuIriguchi_StopSparks();
     Func_020028ac(20);
     Func_0200291c(9, 4);
     Func_020028ac(10);

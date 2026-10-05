@@ -142,8 +142,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
     u32 saved;
     u32 zero;
 
-    /* FAKEMATCH: the blocks retain the IME write order; the second state
-     * assignment keeps its allocation priority above the IME pointer. */
+    /* FAKEMATCH: the blocks preserve IME write order; the repeated state assignment keeps its allocation priority above the IME pointer. */
     do {
         state = &gSerialTransfer;
         ime = &REG_IME;
@@ -160,9 +159,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
     gSerialSendSource = zero;
     gSerialSendSize = zero;
     gSerialReceiveDest = zero;
-    /* FAKEMATCH: after trimming the false trailer, order this byte pair
-       before the received-size store. Swapping ordinary statements still
-       reverses flags/size; a volatile flags lvalue alone reverses the pair. */
+    /* FAKEMATCH: the two volatile byte accesses keep their order before the received-size store; one volatile access reverses the pair. */
     *(volatile u8 *)&state->peer_flags = zero;
     *(volatile u8 *)&state->flags = zero;
     gSerialReceivedSize = zero;

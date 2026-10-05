@@ -17,7 +17,7 @@ void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 w
 
 /* BattleEffect_LoadWork builds a rectangle blitter into heap slot `slot`,
    for a canvas of 1 << width_shift by 1 << height_shift pixels, and returns
-   1 when it used its whole template. The name is older than the reading. */
+   1 when it used its whole template. */
 enum {
     GOUSEI_CLIP_X = 1, /* clip at the canvas sides; without it x wraps */
     GOUSEI_CLIP_Y = 2, /* clip at the canvas top and bottom */
@@ -33,9 +33,7 @@ enum {
 };
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
 
-/* The rectangle blitters return a value every caller ignores; declaring it
-   still matters, because a call that sets r0 changes how the scheduler
-   orders the argument loads. */
+/* Rectangle blitters return a value their callers ignore. */
 typedef s32 (*BattleEffectDrawRectangle)(
     void *destination, const void *source,
     s32 x, s32 y, s32 width, s32 height);

@@ -63,10 +63,7 @@ enum ActorAnimation {
     (src_x), (src_y), (width), (height), (frames)
 #define MAP_CELL_STEPS_END 0xffff
 
-/*
- * The engine entry points a scene overlay imports. Scripts call plain imports
- * directly; the tagged inline services below preserve measured compiler order.
- */
+/* Engine entry points imported by scene overlays. */
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);
@@ -187,12 +184,7 @@ void Engine_MapWaitWorkValuesBelow256(void);
 void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
-/*
- * An overlay that links the staged-actor code (FIELD/COMMON/OBJECT/
- * STAGED_ACTOR.C) names these imports as that code does, by the main image's
- * names, so each of its import veneers carries one name. Its scenes define
- * FIELD_STAGED_ACTOR_IMPORTS and reach the same imports by those names.
- */
+/* Staged-actor overlays share these main-image imports with their scene code. */
 void Battle_WaitMode0(s32 frames);
 void WaitFrames(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);

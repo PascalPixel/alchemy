@@ -1,13 +1,8 @@
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-/* Projects a sprite part pair to the screen. The four spill slots (flip,
-   half height, size, affine mode) are declared in reverse; the screen bounds
-   are four separate tests so GCC does not fold them into one unsigned range
-   check; the mode passes through as s32 and narrows at the call; the flip
-   branch sets the matrix index before negating the offset. The first part's
-   y store goes through sprite->part rather than part[0], which schedules the
-   half-height load before the screen y load as the ROM does. */
+/* Project a sprite part pair to the screen. Test all four screen bounds;
+ * when flipped, set the matrix index before negating the offset. */
 #include "TYPES.H"
 #include "ANIMSPR.H"
 #include "IWRAM_CALL.H"
@@ -33,9 +28,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
     s32 pz = *pos++;
     s32 pw = *pos;
     s32 slot;
-    /* FAKEMATCH: unused; they give the ROM's 68-byte frame.
-       2026-10-02: deleting both arrays changes only the stack allocation
-       and release from 68 to 44 bytes; the complete function then differs. */
+    /* FAKEMATCH: the two unused arrays supply 24 bytes of the 68-byte frame; removing them leaves 44 bytes. */
     s32 ground[3];
     s32 screen[3];
     struct AffineTransform effect;

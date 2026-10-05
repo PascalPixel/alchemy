@@ -89,10 +89,9 @@ s32 UpdateNameEntries(void)
     return named_count;
 }
 
-/* Sends this side's battle party over the link cable: one unit state per
- * transfer, padded to three, then the Djinn offer with its owners renamed to
- * the member slots the other side knows them by. It is declared to return a
- * value and returns none: the epilogue keeps r0 free for one. */
+/* Send this side's battle party over the link: one unit state per transfer,
+ * padded to three, then the Djinn offer with owners expressed as member
+ * slots. The integer result is unspecified. */
 s32 LinkBattle_SendParty(void)
 {
     u8 *buffer;
@@ -131,8 +130,7 @@ s32 LinkBattle_SendParty(void)
     size = LINK_PARTY_OFFER_BYTES;
     Runtime_BumpFree(buffer);
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's
-     * copy is emitted before the count's address as in the reference */
+    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference */
     do {
         Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
     } while (0);

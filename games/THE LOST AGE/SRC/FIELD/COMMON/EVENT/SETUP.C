@@ -27,7 +27,7 @@ void EventRuntime_PrepareCurrentObject(void)
     object->target_z = 0x80000000;
     object->velocity_x = 0;
     object->velocity_z = 0;
-    /* FAKEMATCH: eight ordinary forms reordered the zero stores and party-mode address construction; this boundary keeps the 72-byte order. */
+    /* FAKEMATCH: this boundary keeps the zero stores before party-mode address construction. */
     __asm__ volatile("" : : : "memory");
     if (gPartyState.render_mode == 2)
         Object_SetMode(object, 12);
@@ -54,7 +54,7 @@ void EventRuntime_Begin(void)
     GameFlag_ClearBit(0x132);
     {
         struct PartyState *party = &gPartyState;
-        /* FAKEMATCH: four ordinary forms loaded this pointer after the destination offset; its handoff preserves the 168-byte order. */
+        /* FAKEMATCH: the pointer handoff keeps its load before the destination offset. */
         __asm__ volatile("" : "+r"(party));
         state->current_owner = party->current_owner;
         state->object_status = 0;
@@ -66,7 +66,7 @@ void EventRuntime_End(void)
     Scheduler_RemoveCallback((u32)EventRuntime_UpdateWaitMode);
     {
         struct PartyState *party = &gPartyState;
-        /* FAKEMATCH: four ordinary forms built the override offset before loading this pointer; its handoff preserves the 64-byte order. */
+        /* FAKEMATCH: the pointer handoff keeps its load before the override offset. */
         __asm__ volatile("" : "+r"(party));
         if (party->owner_override == 0)
             Object_AttachWorkTargetToObject(party->current_owner, 1);

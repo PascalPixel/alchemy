@@ -2,9 +2,7 @@
 
 void AudioTrack_ResetSlotBuckets(void)
 {
-    /* FAKEMATCH: retain the original signed word stores at the node back-link
-       and slot lanes. Direct node fields change register allocation at the
-       same 60-byte TBS extent and shorten the TLA body from 60 to 56. */
+    /* FAKEMATCH: signed word stores preserve register allocation and the 60-byte body; typed fields use 56. */
     s32 index;
     s32 limit;
     s32 zero;

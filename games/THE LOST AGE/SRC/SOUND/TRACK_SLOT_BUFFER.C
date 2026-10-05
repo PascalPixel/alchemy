@@ -2,9 +2,7 @@
 
 void AudioTrack_RemoveSlotNode(s32 slot)
 {
-    /* FAKEMATCH: retain the existing signed address-word back-link reads
-       and reload. Direct node pointers shorten TBS 44 to 40 and TLA 40
-       to 36 bytes; these views add no record or storage. */
+    /* FAKEMATCH: signed back-link reads preserve the reload and 40-byte body; typed pointers use 36. */
     s32 next_node;
     s32 track_table;
     s32 slot_offset;

@@ -510,7 +510,6 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM6.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/ITEM.o"(.text)
-        "*/recon/tbs/raw/080aa768.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/MENU/ADJUST_PALETTE_BANK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU10.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW10.o"(.text)

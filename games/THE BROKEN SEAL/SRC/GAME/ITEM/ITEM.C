@@ -8,6 +8,7 @@
 #include "IWRAM_CALL.H"
 #include "INVENTORY_MENU.H"
 #include "ITEM.H"
+#include "DJINN_MENU.H"
 
 extern struct InventoryMenuState *gMenuWork;
 struct BattleUnit *Owner_GetStateFar(s32);
@@ -80,7 +81,7 @@ void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns);
 void Palette_LightenBankHighlight(s32 palette);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
-void Func_080aa768(void);
+s32 DjinnMenu_RunScreen(void);
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
 void Menu_ResetTwoResourceEntries(void);
 void ItemMenu_Close(void);
@@ -546,7 +547,7 @@ s32 ItemMenu_Run(void)
     menu->slot = 0;
     menu->target_slot = 0;
     FourObjectMotion_InitializeBottomRow(menu->window, 0);
-    Func_080aa768();
+    DjinnMenu_RunScreen();
     FourObjectMotion_ClearSlotsAndScheduleAlt();
     Menu_ResetTwoResourceEntries();
     WaitFrames(1);
@@ -565,4 +566,261 @@ s32 ItemMenu_Run(void)
     Event_ClearInvalidPackedValuesFar();
     gGameState.mode = old_mode;
     return 1;
+}
+
+/* The Djinn screen's commands, each a step of its loop. */
+void AudioCommand_PlayFar(s32 cue);
+void RenderOutput_ClearListFar(s32 window);
+void Owner_RecalculateStatsFar(s32 owner);
+s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
+s32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
+s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 index);
+s32 Trade_AddOfferFar(s32 owner, s32 element, s32 index);
+s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 target);
+s32 DjinnMenu_ShowHelp(void);
+s32 DjinnMenu_SelectDjinn(s32 mode);
+s32 Menu_OpenBackdropScreen(void);
+s32 FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 z);
+s32 OwnerAction_RunCompareLoop(s32 mode);
+s32 Unnamed_080ae2f4(void);
+void DjinnMenu_DrawElementList(struct DjinnListTable *tbl);
+s32 Menu_ComputeEntryValues(void *tbl);
+
+/* The Djinn screen: choose a Djinni and what to do with it (set it, put it
+   on standby, give it or trade it for another member's), until the screen
+   is closed. Returns -1 when it was cancelled from its first step. */
+s32 DjinnMenu_RunScreen(void)
+{
+    struct DjinnMenuWork *menu;
+    struct RenderOutput *cursor;
+    s32 result;
+    s32 state;
+    s32 ret;
+    s32 done;
+    s32 i;
+
+    done = 0;
+    result = 0;
+    ret = 0;
+    menu = (struct DjinnMenuWork *)gMenuWork;
+    cursor = menu->cursor;
+    cursor->active = 13;
+    cursor->unknown_0c = 0;
+    Menu_OpenBackdropScreen();
+    WaitFrames(1);
+    state = 2;
+    do {
+        switch (state) {
+        case 0:
+            if (result < 0) {
+                ret = -1;
+                done = 1;
+            }
+            state = 2;
+            break;
+        case 1:
+            break;
+        case 2:
+            Menu_SetFirstObjectRowCoordinates(0);
+            FourObjectMotion_SetSlotPosition(1, 0, 200, 0);
+            result = DjinnMenu_SelectDjinn(0);
+            state = 15;
+            if (result == 10)
+                break;
+            state = 0;
+            if (result < 0)
+                break;
+            menu->selection[1] = menu->selected_column[0];
+            state = 10;
+            if (result == 7)
+                break;
+            state = 3;
+            break;
+        case 10:
+            menu->owner = menu->owners[menu->selected_column[0]];
+            menu->shown_owner[0] = menu->owners[menu->selected_column[0]];
+            result = Unnamed_080ae2f4();
+            if (result == -2)
+                done = 1;
+            state = 2;
+            break;
+        case 15:
+            result = DjinnMenu_ShowHelp();
+            if (result == -2)
+                done = 1;
+            state = 2;
+            break;
+        case 8:
+            state = 0;
+            if (menu->pair_count == 0)
+                break;
+            result = DjinnMenu_SelectDjinn(1);
+            if (result == -2)
+                done = 1;
+            state = 4;
+            if (result < 0)
+                break;
+            state = 9;
+            break;
+        case 3:
+            DjinnMenu_DrawElementList(&menu->backdrop->list);
+            Menu_SetFirstObjectRowCoordinates(-8);
+            menu->owner = menu->owners[menu->selected_column[0]];
+            menu->shown_owner[0] = menu->owners[menu->selected_column[0]];
+            FourObjectMotion_SetSlotPosition(0, menu->selected_column[0] * 56 + 48, 54, 0);
+            result = DjinnMenu_SelectDjinn(1);
+            for (i = 0; i < menu->owner_count; i++)
+                menu->frames[i] += 8;
+            if (result == -2)
+                done = 1;
+            if (result < 0) {
+                state = 2;
+                break;
+            }
+            if (result == 3 || result == 4 || result == 8 || result == 9)
+                menu->shown_owner[1] = menu->owners[menu->selected_column[1]];
+            if (result < 0)
+                state = 2;
+            else if (result == 1)
+                state = 5;
+            else if (result == 2)
+                state = 6;
+            else if (result == 3) {
+                menu->pending = 2;
+                state = 7;
+            } else if (result == 4) {
+                menu->pending = 2;
+                state = 9;
+            } else if (result == 5)
+                state = 11;
+            else if (result == 6)
+                state = 12;
+            else if (result == 8) {
+                menu->pending = 2;
+                state = 13;
+            } else if (result == 9) {
+                menu->pending = 2;
+                state = 14;
+            }
+            break;
+        case 7:
+            result = OwnerAction_RunCompareLoop(1);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+        case 13:
+            AudioCommand_PlayFar(126);
+            result = Djinn_TransferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0], menu->shown_owner[1]);
+            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[1]);
+            menu->cursor->active = 13;
+            RenderOutput_ClearListFar(menu->list_window);
+            Menu_ComputeEntryValues(menu->backdrop);
+            {
+                s32 column;
+                s32 found;
+                u8 entry;
+            
+                column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
+                found = 0;
+                entry = menu->pair_entries[0];
+                for (i = 0; i < menu->backdrop->list.counts[column]; i++) {
+                    if (entry == (u8)menu->backdrop->list.ids[column][i]) {
+                        found = i;
+                        break;
+                    }
+                }
+                menu->selection[0] = column + found * DJINN_LIST_ROWS;
+                menu->cursor->active = 1;
+                /* FAKEMATCH: a barrier, so sched2 builds the selection address before found * 10. */
+                __asm__("");
+            }
+            state = 0;
+            break;
+        case 6:
+            result = OwnerAction_RunCompareLoop(2);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+        case 12:
+            AudioCommand_PlayFar(175);
+            Djinn_DeactivateFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
+            result = Trade_AddOfferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            menu->cursor->active = 13;
+            RenderOutput_ClearListFar(menu->list_window);
+            menu->cursor->active = 1;
+            state = 2;
+            break;
+        case 9:
+            result = OwnerAction_RunCompareLoop(0);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+        case 14:
+            AudioCommand_PlayFar(126);
+            Djinn_TransferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0], menu->shown_owner[1]);
+            result = Djinn_TransferFar(menu->shown_owner[1], menu->pair_element[1], menu->pair_index[1], menu->shown_owner[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[1]);
+            Menu_ComputeEntryValues(menu->backdrop);
+            {
+                s32 column;
+                s32 found;
+                u8 entry;
+            
+                column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
+                found = 0;
+                entry = menu->pair_entries[0];
+                for (i = 0; i < menu->backdrop->list.counts[column]; i++) {
+                    if (entry == (u8)menu->backdrop->list.ids[column][i]) {
+                        found = i;
+                        break;
+                    }
+                }
+                menu->selection[0] = column + found * DJINN_LIST_ROWS;
+                menu->cursor->active = 1;
+                /* FAKEMATCH: a barrier, so sched2 builds the selection address before found * 10. */
+                __asm__("");
+            }
+            state = 2;
+            break;
+        case 4:
+            if (result == -1) {
+                ret = result;
+                state = 2;
+            } else if (menu->pending & 1)
+                state = 8;
+            else if (menu->pending & 2)
+                state = 7;
+            break;
+        case 5:
+            result = OwnerAction_RunCompareLoop(3);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+        case 11:
+            AudioCommand_PlayFar(139);
+            Djinn_ActivateFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
+            result = Trade_RemoveOfferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
+            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            menu->cursor->active = 13;
+            RenderOutput_ClearListFar(menu->list_window);
+            menu->cursor->active = 1;
+            state = 2;
+            break;
+        default:
+            done = 1;
+            break;
+        }
+    } while (done == 0);
+    return ret;
 }

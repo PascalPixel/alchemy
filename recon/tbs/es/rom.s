@@ -723,14 +723,23 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x000a5290, 0x00000570
-	.section .rom.000aeff0, "ax"
-	.global Func_080aa768
-Func_080aa768:
-	.incbin "baserom.gba", 0x000aeff0, 0x0000051c
 	.section .rom.000afe6c, "ax"
+	.global DjinnMenu_SelectDjinn
+	.type DjinnMenu_SelectDjinn, %function
+	.thumb_func
+DjinnMenu_SelectDjinn:
 	.incbin "baserom.gba", 0x000afe6c, 0x000012fc
 	.section .rom.000b1f40, "ax"
-	.incbin "baserom.gba", 0x000b1f40, 0x00001040
+	.global OwnerAction_RunCompareLoop
+	.type OwnerAction_RunCompareLoop, %function
+	.thumb_func
+OwnerAction_RunCompareLoop:
+	.incbin "baserom.gba", 0x000b1f40, 0x00000c20
+	.global Unnamed_080ae2f4
+	.type Unnamed_080ae2f4, %function
+	.thumb_func
+Unnamed_080ae2f4:
+	.incbin "baserom.gba", 0x000b2b60, 0x00000420
 	.section .rom.000b32b8, "ax"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:

@@ -35,7 +35,10 @@ struct DjinnMenuBackdrop {
 
 /* The Djinn screen's view of the menu work cell. */
 struct DjinnMenuWork {
-    u8 unknown_000[0x10];
+    u8 unknown_000[8];
+    /* The member the current step acts for. */
+    s32 owner;
+    u8 unknown_00c[4];
     s32 status_window;
     struct RenderOutput *cursor;
     u8 unknown_018[4];
@@ -58,10 +61,15 @@ struct DjinnMenuWork {
     struct DjinnMenuBackdrop *backdrop;
     u8 unknown_188[0x80];
     u16 owners[DJINN_LIST_OWNERS];
-    u8 unknown_218;
+    /* Djinn chosen for the pair step; none sends the screen back. */
+    u8 pair_count;
     u8 owner_count;
     u8 shown_owner[2];
-    u8 unknown_21c[0x18];
+    u8 unknown_21c[4];
+    /* The pair command waiting for its second choice: bit 0 picks again,
+       bit 1 confirms. */
+    u16 pending;
+    u8 unknown_222[0x12];
     u16 slot_x[4];
     u16 slot_y[4];
     u8 unknown_244[0x10];
@@ -73,6 +81,8 @@ struct DjinnMenuWork {
 LAYOUT_OFFSET_GUARD(DjinnMenuWork_StatusWindow, struct DjinnMenuWork, status_window, 0x10);
 LAYOUT_OFFSET_GUARD(DjinnMenuWork_SelectedColumn, struct DjinnMenuWork, selected_column, 0x1c);
 LAYOUT_OFFSET_GUARD(DjinnMenuWork_Selection, struct DjinnMenuWork, selection, 0x174);
+LAYOUT_OFFSET_GUARD(DjinnMenuWork_Pending, struct DjinnMenuWork, pending, 0x220);
+LAYOUT_OFFSET_GUARD(DjinnMenuWork_PairIndex, struct DjinnMenuWork, pair_index, 0x254);
 LAYOUT_OFFSET_GUARD(DjinnMenuBackdrop_TutorialTimer, struct DjinnMenuBackdrop, tutorial_timer, 0x2128);
 LAYOUT_OFFSET_GUARD(DjinnMenuBackdrop_TutorialStep, struct DjinnMenuBackdrop, tutorial_step, 0x212c);
 

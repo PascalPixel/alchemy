@@ -51,11 +51,8 @@ void BattleFx_RunParticleFieldVariant3(s32 effect)
     BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 3);
 }
 
-/* BattleFx_RunParticleFieldVariant: draw the target's two panels, then a
-   64-particle burst and expanding rings from the map cell buffer, in one of
-   four palettes. The buffer is the checked constant Ram_MapCellBuffer,
-   held in a local, so each use reloads it from the pool. */
-/* Draw the target's two panels, then a 64-particle burst and expanding rings. */
+/* Draw the target's two panels, then a 64-particle burst and expanding rings
+   from the map cell buffer, in one of four palettes. */
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 variant)
 {
     /* FAKEMATCH: the blitter/camera declarations and independent store order preserve spill slots and loop preheader order. */

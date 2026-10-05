@@ -10,7 +10,7 @@ enum {
     WORK_SLOT_STAGE = 59
 };
 
-void SceneState_SetWorkHalfwordDc(s16 v)
+void Korosseo_SetGaugeHold(s16 v)
 {
     *(s16 *)(*(u8 **)(gWorkSlot + WORK_SLOT_STAGE * 4) + 0xdc) = v;
 }

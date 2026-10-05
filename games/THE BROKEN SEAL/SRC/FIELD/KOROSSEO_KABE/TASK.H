@@ -239,7 +239,7 @@ s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB);
 void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
 void SceneState_InitControlRecordAndStartTask(s32 resource);
-void SceneState_SetWorkHalfwordDc(s16 v);
+void Korosseo_SetGaugeHold(s16 v);
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self);
 void StagedActor_PushActorAhead(void);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);

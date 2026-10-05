@@ -40,7 +40,7 @@ Map_DisableUpdateCallbackFar:
 	.global Func_080202e8
 	.thumb_func
 Func_080202e8:
-	overlay_veneer Func_08024f80
+	overlay_veneer ScriptObject_FindOverlappingEntry
 	.global Func_080202f0
 	.thumb_func
 Func_080202f0:

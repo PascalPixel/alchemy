@@ -753,20 +753,10 @@ Object_SetMoveTarget:
 	.incbin "baserom.gba", 0x00024d14, 0x0000004c
 	.section .rom.00024ec6, "ax"
 	.incbin "baserom.gba", 0x00024ec6, 0x0000000e
-	.section .rom.00024f1e, "ax"
-	.incbin "baserom.gba", 0x00024f1e, 0x00000002
-	.section .rom.00024f20, "ax"
-	.global Func_08024f20
-	.type Func_08024f20, %function
-	.thumb_func
-Func_08024f20:
-	.incbin "baserom.gba", 0x00024f20, 0x00000060
-	.section .rom.00024f80, "ax"
-	.global Func_08024f80
-	.type Func_08024f80, %function
-	.thumb_func
-Func_08024f80:
-	.incbin "baserom.gba", 0x00024f80, 0x00000140
+	.section .rom.00024fde, "ax"
+	.incbin "baserom.gba", 0x00024fde, 0x00000002
+	.section .rom.00024fe0, "ax"
+	.incbin "baserom.gba", 0x00024fe0, 0x000000e0
 	.section .rom.000250f2, "ax"
 	.incbin "baserom.gba", 0x000250f2, 0x00000042
 	.section .rom.00025160, "ax"
@@ -777,12 +767,6 @@ Func_08024f80:
 	.incbin "baserom.gba", 0x00025c8a, 0x00000002
 	.section .rom.00026320, "ax"
 	.incbin "baserom.gba", 0x00026320, 0x00000c60
-	.section .rom.00026f80, "ax"
-	.global Func_08026f80
-	.type Func_08026f80, %function
-	.thumb_func
-Func_08026f80:
-	.incbin "baserom.gba", 0x00026f80, 0x00000048
 	.section .rom.00026fc8, "ax"
 	.global Func_08026fc8
 	.type Func_08026fc8, %function

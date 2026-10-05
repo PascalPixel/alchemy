@@ -791,7 +791,7 @@ Func_08023f9c:
 	ldr r4, [sp, #16]
 	adds r0, r7, #0
 	str r4, [r1, #8]
-	bl Func_08024f20
+	bl ScriptObject_CheckOverlap
 	cmp r0, #0
 	beq .L_0802457e
 	ldr r6, [sp, #0]

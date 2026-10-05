@@ -1183,7 +1183,6 @@
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT16.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0011c728)
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT12.o"(.text)
-    "*/games/THE LOST AGE/SRC/BATTLE/REPLACE_DEFEATED_TARGET.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0011cd92)
     "*/recon/tla/it/rom.o"(.rom.0011cd94)
     "*/games/THE LOST AGE/SRC/BATTLE/BATTLE2.o"(.text)

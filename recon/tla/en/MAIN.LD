@@ -2052,7 +2052,6 @@
         "*/recon/tla/raw/0811c984.o"(.text)
         "*/recon/tla/raw/0811ca54.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT12.o"(.text)
-        "*/games/THE LOST AGE/SRC/BATTLE/REPLACE_DEFEATED_TARGET.o"(.text)
         "*/recon/tla/raw/0811cd7a.o"(.text)
         "*/recon/tla/raw/0811cd7c.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/BATTLE2.o"(.text)

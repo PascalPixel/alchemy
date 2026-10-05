@@ -1175,7 +1175,6 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT16.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011c70c)
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT12.o"(.text)
-    "*/games/THE LOST AGE/SRC/BATTLE/REPLACE_DEFEATED_TARGET.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011cd76)
     "*/recon/tla/ja/rom.o"(.rom.0011cd78)
     "*/games/THE LOST AGE/SRC/BATTLE/BATTLE2.o"(.text)

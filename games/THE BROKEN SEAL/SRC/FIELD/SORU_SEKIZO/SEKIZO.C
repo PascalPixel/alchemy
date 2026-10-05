@@ -766,28 +766,28 @@ void Scene_RunGuardSequenceC(void)
 void FieldScene_CallWhenCheck9_31_9(void)
 {
     if (SceneActor_IsActorAtTile(9, 31, 9) != 0) {
-        SceneData_InitTableA980();
+        SoruSekizo_OpenNorthwestSeal();
     }
 }
 
 void FieldScene_RunGuardedStep11(void)
 {
     if (SceneActor_IsActorAtTile(11, 40, 9) != 0) {
-        SceneData_FillTableA980();
+        SoruSekizo_OpenNortheastSeal();
     }
 }
 
 void FieldScene_RunGuardedStep13(void)
 {
     if (SceneActor_IsActorAtTile(13, 31, 12) != 0) {
-        SceneData_InitTableA980AndRunB();
+        SoruSekizo_OpenSouthwestSeal();
     }
 }
 
 void FieldScene_RunGuardedStep15(void)
 {
     if (SceneActor_IsActorAtTile(15, 40, 12) != 0) {
-        SceneData_BuildTableA980();
+        SoruSekizo_OpenSoutheastSeal();
     }
 }
 
@@ -948,25 +948,25 @@ void FieldScene_RunScene37bSequenceA(void)
 void FieldScene_RunFiveValueStep9(void)
 {
     SoruSekizo_RunEventSequence(9, 31, 9, 30, 9);
-    SceneData_InitTableA980();
+    SoruSekizo_OpenNorthwestSeal();
 }
 
 void FieldScene_RunFiveValueStep11(void)
 {
     SoruSekizo_RunEventSequence(11, 40, 9, 41, 9);
-    SceneData_FillTableA980();
+    SoruSekizo_OpenNortheastSeal();
 }
 
 void FieldScene_ApplyRect13_31_12_30_12(void)
 {
     SoruSekizo_RunEventSequence(13, 31, 12, 30, 12);
-    SceneData_InitTableA980AndRunB();
+    SoruSekizo_OpenSouthwestSeal();
 }
 
 void FieldScene_RunFiveValueStep15(void)
 {
     SoruSekizo_RunEventSequence(15, 40, 12, 41, 12);
-    SceneData_BuildTableA980();
+    SoruSekizo_OpenSoutheastSeal();
 }
 
 void FieldScene_ApplyRect10_14_7_13_7(void)
@@ -1065,7 +1065,7 @@ s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
     return 1;
 }
 
-void SceneData_InitTableA980(void)
+void SoruSekizo_OpenNorthwestSeal(void)
 {
     s32 *p = (s32 *)&gSealScene;
     p[0] = 0;
@@ -1120,7 +1120,7 @@ void SceneData_InitTableA980(void)
     SoruSekizo_OpenSeal();
 }
 
-void SceneData_FillTableA980(void)
+void SoruSekizo_OpenNortheastSeal(void)
 {
     s32 *p = (s32 *)&gSealScene;
     p[0] = 4;
@@ -1175,7 +1175,7 @@ void SceneData_FillTableA980(void)
     SoruSekizo_OpenSeal();
 }
 
-void SceneData_InitTableA980AndRunB(void)
+void SoruSekizo_OpenSouthwestSeal(void)
 {
     s32 *p = (s32 *)&gSealScene;
     p[0] = 0;
@@ -1230,7 +1230,7 @@ void SceneData_InitTableA980AndRunB(void)
     SoruSekizo_OpenSeal();
 }
 
-void SceneData_BuildTableA980(void)
+void SoruSekizo_OpenSoutheastSeal(void)
 {
     s32 *p = (s32 *)&gSealScene;
     p[0] = 4;

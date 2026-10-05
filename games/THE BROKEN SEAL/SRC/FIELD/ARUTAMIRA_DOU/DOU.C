@@ -259,24 +259,25 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
     }
 }
 
+/* Replaces the object the effect work holds with a fresh copy of it: the
+   actor it belongs to turns, and the old object stops and goes idle. */
 void ArutamiraDou_RespawnActorObject(void)
 {
-    s32 rec6;
-    s32 record;
-    u8 *p6;
-    u8 *p5;
+    u8 *work;
+    struct FieldActor *old;
+    struct FieldActor *copy;
 
-    p6 = *(s32 *)gEffectWork;
-    p5 = *(s32 *)((s32)p6 + 16);
-    Engine_ActorFaceDirection(*(s16 *)((s32)p6 + 24), 0x4000, 0);
-    Animation_ApplyChildValues((struct DispatchObject *)p5, 0);
+    work = *(u8 **)gEffectWork;
+    old = *(struct FieldActor **)(work + 16);
+    Engine_ActorFaceDirection(*(s16 *)(work + 24), 0x4000, 0);
+    Animation_ApplyChildValues((struct DispatchObject *)old, 0);
     Battle_WaitMode0(20);
-    rec6 = (s32)Engine_ObjectCreate(0, *(s32 *)((s32)p5 + 8), *(s32 *)((s32)p5 + 12), *(s32 *)((s32)p5 + 16));
-    if (rec6 != 0) {
-        Dma_Set((const void *)((s32)p5), (void *)(rec6), -0x7bffffe4, (volatile u32 *)(0x40000d4));
-        *(s32 *)((s32)p5 + 108) = 0;
-        *(s32 *)((s32)p6 + 16) = rec6;
-        p5[84] = 0;
+    copy = Engine_ObjectCreate(0, old->x.fixed, old->y.fixed, old->z.fixed);
+    if (copy != 0) {
+        Dma_Set(old, copy, DMA_ENABLE32 | DMA_32BIT | sizeof(struct FieldActor) / 4, REG_DMA3);
+        old->update = 0;
+        *(struct FieldActor **)(work + 16) = copy;
+        old->active = 0;
     }
 }
 

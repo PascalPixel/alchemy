@@ -606,7 +606,7 @@ void FieldScene_RunMiddleSequence(void)
 
     Engine_EventBegin();
     for (i = 0; i <= 2; i++) {
-        if (((struct FieldActor *)Object_GetById(i + 12))->sprite->priority == 3
+        if (Object_GetById(i + 12)->sprite->priority == 3
             && GameFlag_IsSet(i + 0x200) == 0) {
             Actor_Get(i + 12);
             SceneActor_WaitValueBelowLimit();
@@ -614,52 +614,52 @@ void FieldScene_RunMiddleSequence(void)
             GameFlag_Set(i + 0x200);
             break;
         }
-        if ((((struct FieldActor *)Object_GetById(i + 12))->z.fixed >> 20) == 9
+        if ((Object_GetById(i + 12)->z.fixed >> 20) == 9
             && GameFlag_IsSet(i + 0x200) == 0) {
-            *(s32 *)((u8 *)Object_GetById(i + 12) + 20) = 0;
-            ((struct FieldActor *)Object_GetById(i + 12))->velocity_y = 0;
-            *(s32 *)(((s32 (*)())Object_GetById)(i + 12) + 60) = -0x80000000;
-            ((struct FieldActor *)Actor_Get(i + 12))->motion_flags = 0;
-            *(u16 *)(((s32 (*)())Object_GetById)(i + 12) + 100) = 0;
+            Object_GetById(i + 12)->terrain_height = 0;
+            Object_GetById(i + 12)->velocity_y = 0;
+            Object_GetById(i + 12)->target_y = ACTOR_NO_TARGET;
+            Actor_Get(i + 12)->motion_flags = 0;
+            Object_GetById(i + 12)->unknown_64 = 0;
             found = i;
             for (j = 0; j < i; j++) {
                 if (GameFlag_IsSet(0x200 + j) == 0) {
-                    saved.x.fixed = ((struct FieldActor *)Object_GetById(i + 12))->x.fixed;
-                    saved.y.fixed = ((struct FieldActor *)Object_GetById(i + 12))->y.fixed;
-                    saved.z.fixed = ((struct FieldActor *)Object_GetById(i + 12))->z.fixed;
-                    ((struct FieldActor *)Actor_Get(i + 12))->x.fixed =
-                        ((struct FieldActor *)Object_GetById(j + 12))->x.fixed;
-                    ((struct FieldActor *)Object_GetById(i + 12))->y.fixed =
-                        ((struct FieldActor *)Object_GetById(j + 12))->y.fixed;
-                    ((struct FieldActor *)Object_GetById(i + 12))->z.fixed =
-                        ((struct FieldActor *)Object_GetById(j + 12))->z.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->x.fixed = saved.x.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->y.fixed = saved.y.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->z.fixed = saved.z.fixed;
+                    saved.x.fixed = Object_GetById(i + 12)->x.fixed;
+                    saved.y.fixed = Object_GetById(i + 12)->y.fixed;
+                    saved.z.fixed = Object_GetById(i + 12)->z.fixed;
+                    Actor_Get(i + 12)->x.fixed =
+                        Object_GetById(j + 12)->x.fixed;
+                    Object_GetById(i + 12)->y.fixed =
+                        Object_GetById(j + 12)->y.fixed;
+                    Object_GetById(i + 12)->z.fixed =
+                        Object_GetById(j + 12)->z.fixed;
+                    Actor_Get(j + 12)->x.fixed = saved.x.fixed;
+                    Actor_Get(j + 12)->y.fixed = saved.y.fixed;
+                    Actor_Get(j + 12)->z.fixed = saved.z.fixed;
                     found = j;
                     break;
                 }
             }
-            *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 20) = 0;
-            ((struct FieldActor *)Actor_Get(found + 12))->velocity_y = 0;
-            *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 60) = -0x80000000;
-            ((struct FieldActor *)Actor_Get(found + 12))->motion_flags = 0;
-            *(u16 *)(((s32 (*)())Object_GetById)(found + 12) + 100) = 0;
+            Object_GetById(found + 12)->terrain_height = 0;
+            Actor_Get(found + 12)->velocity_y = 0;
+            Object_GetById(found + 12)->target_y = ACTOR_NO_TARGET;
+            Actor_Get(found + 12)->motion_flags = 0;
+            Object_GetById(found + 12)->unknown_64 = 0;
             Engine_CameraSetSpeed(0x30000, 0x6000);
             ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
             Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
             Engine_CameraWaitForMove();
             SceneActor_LandOnHighestPlatform(found + 12);
-            if ((((struct FieldActor *)Object_GetById(found + 12))->x.fixed >> 20) == 8) {
-                (*(s16 *)(((s32 (*)())Object_GetById)(10) + 100))++;
-                (*(s16 *)(((s32 (*)())Object_GetById)(11) + 100))--;
+            if ((Object_GetById(found + 12)->x.fixed >> 20) == 8) {
+                Object_GetById(10)->unknown_64++;
+                (*(s16 *)&Object_GetById(11)->unknown_64)--;
             } else {
-                (*(s16 *)(((s32 (*)())Object_GetById)(10) + 100))--;
-                (*(s16 *)(((s32 (*)())Object_GetById)(11) + 100))++;
+                (*(s16 *)&Object_GetById(10)->unknown_64)--;
+                Object_GetById(11)->unknown_64++;
             }
-            ((struct FieldActor *)Actor_Get(found + 12))->update = (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
+            Actor_Get(found + 12)->update = (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
             BabiChika_SettleSteps(40);
-            ((struct FieldActor *)Actor_Get(found + 12))->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            Actor_Get(found + 12)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             GameFlag_Set(0x200 + found);
             break;
         }

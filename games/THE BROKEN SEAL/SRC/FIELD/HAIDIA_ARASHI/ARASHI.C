@@ -226,7 +226,7 @@ void FieldScene_SetupDescriptorD78a(void)
     SceneState_SetWork1c0AndRunObject(5);
 }
 
-void FieldScene_RunScene372_02000278(void)
+void HaidiaArashi_OpenGateRoute(void)
 {
     u32 i;
     s32 record;
@@ -279,7 +279,7 @@ void FieldScene_SetupDescriptorD7b6(void)
     SceneState_SetWork1c0AndRunObject(9);
 }
 
-void FieldScene_RunScene372_02000398(void)
+void HaidiaArashi_OpenRouteTen(void)
 {
     u32 i;
     s32 record;
@@ -291,7 +291,7 @@ void FieldScene_RunScene372_02000398(void)
     SceneState_SetWork1c0AndRunObject(10);
 }
 
-void FieldScene_RunScene372_020003cc(void)
+void HaidiaArashi_OpenRouteTwelve(void)
 {
     u32 i;
     s32 record;
@@ -303,7 +303,7 @@ void FieldScene_RunScene372_020003cc(void)
     SceneState_SetWork1c0AndRunObject(12);
 }
 
-void FieldScene_RunScene372_02000400(void)
+void HaidiaArashi_OpenRouteThirteen(void)
 {
     u32 i;
     s32 record;

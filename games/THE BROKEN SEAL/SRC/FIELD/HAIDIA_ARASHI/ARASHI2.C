@@ -167,7 +167,7 @@ void ActorPresentation_SelectActorTwentySevenState(void)
     }
 }
 
-void FieldScene_RunScene372_02003e48(void)
+void HaidiaArashi_TryToFreeActorEight(void)
 {
     u32 i;
     struct FieldActor *rec7;

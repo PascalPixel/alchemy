@@ -286,7 +286,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
     for (frame = 0; frame != 70; frame++) {
         EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &position);
         REG_BG2X = (80 - position.x) << 8;
-        if ((u32)(frame - 8) <= 15) {
+        if (frame >= 8 && frame <= 23) {
             s32 cell = (frame - 8) / 2;
 
             if (cell > 6)
@@ -327,7 +327,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
                 EffectStep_AdvanceWithGravity2D(spark, 60, 0);
                 if (spark->y > 0x680000) {
                     spark->velocity_y = -spark->velocity_y / 2;
-                } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {
+                } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
                     s32 sx = spark->x >> 16;
                     s32 sy = spark->y >> 16;
 

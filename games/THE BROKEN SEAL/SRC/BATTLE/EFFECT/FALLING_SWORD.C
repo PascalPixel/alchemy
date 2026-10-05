@@ -169,7 +169,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
                 y = HI(flash->y);
                 x = HI(flash->x) + half;
                 life = flash->variant;
-                if ((u32)life <= 17) {
+                if (life >= 0 && life <= 17) {
                     routine[0](canvas,
                         (u8 *)work
                             + (FallingSword_FlashCells[life / 3] << 11)
@@ -206,7 +206,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 
         /* Frames 32..63 scan all 684 and seed at most sixteen more each. */
         step = frame - 32;
-        if ((u32)step <= 31) {
+        if (step >= 0 && step <= 31) {
             s32 cnt;
 
             cnt = 0;
@@ -236,7 +236,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 
         /* The same guard again: the 34x104 fire column, wrapping through
            its 104 rows. */
-        if ((u32)step <= 31) {
+        if (step >= 0 && step <= 31) {
             s32 phase = frame * 16;
             s32 x = half - 17;
             s32 width = 34;
@@ -342,7 +342,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
                         spark->velocity_y = -spark->velocity_y / 2;
                     } else {
                         x = spark->x;
-                        if ((u32)x <= 0x007EFFFF && y >= 0) {
+                        if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                             u8 *cell;
 
                             size = spark->variant / 5 + 1;

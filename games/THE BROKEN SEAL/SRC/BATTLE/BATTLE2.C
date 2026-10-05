@@ -57,11 +57,11 @@ void Palette_UpdatePulseBrightness(void)
         green += amount;
         blue += amount;
 
-        if ((u32)red > 31)
+        if (red < 0 || red > 31)
             red = 31;
-        if ((u32)green > 31)
+        if (green < 0 || green > 31)
             green = 31;
-        if ((u32)blue > 31)
+        if (blue < 0 || blue > 31)
             blue = 31;
 
         *palette++ = (red << 10) | (green << 5) | blue;

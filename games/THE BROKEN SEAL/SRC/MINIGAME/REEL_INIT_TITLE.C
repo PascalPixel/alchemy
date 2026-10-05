@@ -378,7 +378,7 @@ void ReelGame_Run(void)
 
                         spark->variant--;
                         x = spark->x;
-                        if ((u32)x <= 0xffffff) {
+                        if (x >= 0 && x <= 0xffffff) {
                             s32 y = spark->y;
 
                             if (y <= 0x7fffff) {

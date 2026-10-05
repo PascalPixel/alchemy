@@ -258,7 +258,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
     id = plan->actor_id;
     both_sides = 0;
     unit = Owner_GetStateFar(id);
-    list = &Trade_GetOfferStateFar((u32)id > 7)->list;
+    list = &Trade_GetOfferStateFar((id < 0 || id > 7))->list;
     for (best = 0; best < list->count; best++) {
         if (list->entries[best].unit_id == id && list->entries[best].turns == -1) {
             Djinn_DeactivateFar(id, list->entries[best].element, list->entries[best].index);
@@ -271,7 +271,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         s32 i;
         s32 owner;
         struct DjinnRecoveryList *pending;
-        pending = &Trade_GetOfferStateFar((u32)id > 7)->list;
+        pending = &Trade_GetOfferStateFar((id < 0 || id > 7))->list;
         for (i = 0; i < 4; i++) {
             counts[i] = 0;
         }
@@ -362,7 +362,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 s32 text;
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
-                if ((u32)id <= 7) {
+                if (id >= 0 && id <= 7) {
                     text = (s32)&MsgGoesDown;
                 } else {
                     text = (s32)&MsgStrengthExhausted;
@@ -391,7 +391,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 s32 text;
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
-                if ((u32)id <= 7) {
+                if (id >= 0 && id <= 7) {
                     text = (s32)&MsgGoesDown;
                 } else {
                     text = (s32)&MsgStrengthExhausted;
@@ -410,7 +410,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
-                if ((u32)id <= 7) {
+                if (id >= 0 && id <= 7) {
                     /* "goes down" and "strength is exhausted" are the rows
                        either side of the Reaper's call. */
                     BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls - 3);

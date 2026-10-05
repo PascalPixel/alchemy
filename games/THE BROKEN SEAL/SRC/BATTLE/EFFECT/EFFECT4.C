@@ -114,9 +114,9 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
             EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &position);
             position.x /= 2;
         }
-        if ((u32)(frame - 2) <= 1)
+        if (frame >= 2 && frame <= 3)
             draw[0](canvas, work, position.x - 16, position.y - 64, 32, 64);
-        if ((u32)(frame - 4) <= 11) {
+        if (frame >= 4 && frame <= 15) {
             for (i = 0; i != 16; i++) {
                 s32 x = position.x + (frame * Trig_Sin(i << 12) >> 16);
                 s32 y = position.y + (frame * Trig_Cos(i << 12) >> 16) - frame;
@@ -194,7 +194,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
                 chip->velocity_y = chip->velocity_y * 56 / 64 + 0x2000;
                 if (chip->y > 0x700000) {
                     chip->velocity_y = -chip->velocity_y / 2;
-                } else if ((u32)chip->x <= 0x7effff && chip->y >= 0) {
+                } else if ((chip->x >= 0 && chip->x <= 0x7effff) && chip->y >= 0) {
                     s32 size = chip->life / 8 + 1;
 
                     draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
@@ -610,7 +610,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
                             mote->velocity_x += dx;
                             mote->velocity_y += dy;
                             mote->velocity_z += dz;
-                            if ((u32)(dx + 0xfff) <= 0x1ffe && (u32)(dz + 0xfff) <= 0x1ffe)
+                            if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
                                 mote->variant = -1;
                         }
                     }

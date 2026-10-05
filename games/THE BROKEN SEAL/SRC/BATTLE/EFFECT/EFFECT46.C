@@ -251,7 +251,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
             struct EffectStep *puff = &work->particles[6 + i];
 
             if (puff->variant >= 0) {
-                if ((u32)puff->variant <= 23) {
+                if (puff->variant >= 0 && puff->variant <= 23) {
                     s32 cell = puff->variant / 6 + 3;
 
                     draw[0](canvas, work->sheet + CirclingScene_PuffSheetOffsets[cell],
@@ -541,7 +541,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
             for (i = 0; i != 8; i++) {
                 struct EffectStep *puff = &work->particles[i];
 
-                if ((u32)puff->variant <= 11) {
+                if (puff->variant >= 0 && puff->variant <= 11) {
                     s32 cell = puff->variant / 2;
 
                     draw[1](canvas, &work->sheet[0x3c00] + PuffArc_CellSourceOffsets[cell],
@@ -634,7 +634,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
         if (work->effect->variant != 0 && frame == 8)
             Audio_PlayCue(0xd4);
         EffectPosition_ApplyStepAndYOffset(work->effect->actor, &position);
-        if ((u32)(frame - 6) <= 5) {
+        if (frame >= 6 && frame <= 11) {
             if (work->effect->side == 0)
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
             else
@@ -646,7 +646,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                 routine[0](canvas, work->sheet + (frame - 6) * 0xd80, position.x / 2, position.y - 24, 48, 72);
             Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
-        if ((u32)(frame - 16) <= 31) {
+        if (frame >= 16 && frame <= 47) {
             s32 step = (frame - 16) / 2;
             s32 strip;
 

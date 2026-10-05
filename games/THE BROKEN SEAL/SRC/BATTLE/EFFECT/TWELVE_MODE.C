@@ -309,7 +309,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                     }
                 }
             }
-            if ((u32)(frame - 12) <= 19)
+            if (frame >= 12 && frame <= 31)
                 glint = 1;
         } else if (frame < length + 4) {
             s32 stage;
@@ -387,7 +387,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                 for (i = 0; i != 64; i++) {
                     struct EffectStep *step = &work->particles[i];
 
-                    if ((u32)step->variant <= 23) {
+                    if (step->variant >= 0 && step->variant <= 23) {
                         s32 picture = step->variant / 4;
 
                         draw[i & 1](canvas, work->sheet + picture * 1152 + wisp_sheet,
@@ -424,7 +424,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                             step->velocity_x += dx;
                             step->velocity_y += dy;
                             step->velocity_z += dz;
-                            if ((u32)(dx + 0xfff) <= 0x1ffe && (u32)(dz + 0xfff) <= 0x1ffe)
+                            if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
                                 step->variant = -1;
                         }
                     }

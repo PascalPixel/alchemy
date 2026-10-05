@@ -214,7 +214,7 @@ void BattleFx_EmitRandomParticle(void)
             dx = x - cx - 0x80000;
             cz = cell->z << 20;
             dz = z - cz - 0x80000;
-            if ((u32)(dx + 0xfffff) <= 0x1ffffe && (u32)(dz + 0xfffff) <= 0x1ffffe) {
+            if ((dx >= -0xfffff && dx <= 0xfffff) && (dz >= -0xfffff && dz <= 0xfffff)) {
                 object->x = cx + 0x80000;
                 object->z = cz + 0x80000;
                 Vector_AddPolarOffset(0x140000, (u16)ArcTan2(dz, dx), (struct ParticlePosition *)&object->x);
@@ -557,7 +557,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
             id = *list++;
             if (EffectRuntime_GetCurrentObject(id) != 0)
                 continue;
-            if ((u32)(id - 100) > 139)
+            if (id < 100 || id > 239)
                 continue;
             if (actor_x - x >= 0) {
                 if (actor_x - x > 8)

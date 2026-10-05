@@ -167,7 +167,7 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
     b = org[1] & 0xffff0000;
     x = obj->x - a;
     y = obj->z - b;
-    if ((u32)(x + 0x001fffff) <= 0x012ffffe && y > 0 && y < 0xe00000) {
+    if ((x >= -0x1fffff && x <= 0x10fffff) && y > 0 && y < 0xe00000) {
         *out++ = x >> 16;
         *out = y >> 16;
         return 0;
@@ -197,7 +197,7 @@ void ObjectSystem_Initialize(s32 mode)
         Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
     else
         Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
-    if ((u32)(mode - 3) <= 1) {
+    if (mode >= 3 && mode <= 4) {
         Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
     } else {
         Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);

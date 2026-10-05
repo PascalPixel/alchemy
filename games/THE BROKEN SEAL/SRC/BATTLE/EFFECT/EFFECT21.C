@@ -150,11 +150,11 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
             work->shake_frames = 8;
         }
         offset = frame - 8;
-        if ((u32)offset <= 11) {
+        if (offset >= 0 && offset <= 11) {
             s32 ring = offset / 2;
             rectangle[0](canvas, cells + ring * 0x3c0, origin.x / 2 - 16, screen.y - 40, 20, 48);
         }
-        if ((u32)offset <= 55) {
+        if (offset >= 0 && offset <= 55) {
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             for (cnt = 0; cnt != 64; cnt++) {

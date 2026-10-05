@@ -217,7 +217,7 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
         case 0:
         default: sprite = 300; break;
         }
-        if ((u32)unit > 7)
+        if (unit < 0 || unit > 7)
             actor_flag = 1;
     }
 

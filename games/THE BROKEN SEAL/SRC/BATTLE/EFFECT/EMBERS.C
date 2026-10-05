@@ -187,14 +187,14 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
             work->transfer_value = 0x02020202;
             palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
             Iwram_CopyWords((void *)0x05000000, palette, 128);
-        } else if ((u32)(frame - 160) <= 15) {
+        } else if (frame >= 160 && frame <= 175) {
             work->transfer_mode = 1;
             work->transfer_value = 0x10101010;
             if (frame > 173)
                 work->transfer_value = 0x3f3f3f3f;
             Palette_BrightenBgEntries(2, 2, 2);
         }
-        if ((u32)(frame - 33) <= 142) {
+        if (frame >= 33 && frame <= 175) {
             s32 spawned = 0;
             s32 limit = 1;
 
@@ -215,7 +215,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
                 }
             }
         }
-        if ((u32)(frame - 41) <= 86) {
+        if (frame >= 41 && frame <= 127) {
             s32 spawned = 0;
 
             if (frame & 1) {
@@ -247,7 +247,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
             AudioCommand_PlayFar(141);
         if (frame == 128)
             AudioCommand_PlayFar(145);
-        if ((u32)(frame - 129) <= 46) {
+        if (frame >= 129 && frame <= 175) {
             s32 spawned = 0;
 
             for (i = 0; i != 24; i++) {
@@ -333,7 +333,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
             work->shake_frames = 48;
         if (mode == 0 && frame == 48)
             work->shake_frames = 8;
-        if ((u32)(frame - 40) <= 7) {
+        if (frame >= 40 && frame <= 47) {
             focus.x += -0x80000;
             focus.y += 0x100000;
         }
@@ -363,7 +363,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
                 struct EffectStep *streak = &work->particles[24 + i];
 
                 if (streak->y > 55) {
-                    if ((u32)streak->variant <= 11) {
+                    if (streak->variant >= 0 && streak->variant <= 11) {
                         s32 picture = streak->variant / 2;
 
                         draw.upper(canvas, work->sheet + PaletteParticles_StreakOffsets[picture] + 0x3000,

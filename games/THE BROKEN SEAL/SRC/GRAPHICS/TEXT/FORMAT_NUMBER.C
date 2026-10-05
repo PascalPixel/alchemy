@@ -56,7 +56,7 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
         return buffer + offset;
     }
 
-    if ((u32)width > 12)
+    if (width < 0 || width > 12)
         width = 12;
     return buffer + 13 - width;
 }

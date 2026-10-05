@@ -161,7 +161,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
         for (i = 0; i != HomingEmbers_Counts[work->effect->variant]; i++) {
             struct EffectStep *ember = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
-            if ((u32)ember->variant < 12) {
+            if (ember->variant >= 0 && ember->variant < 12) {
                 s32 cel;
                 u32 width;
 

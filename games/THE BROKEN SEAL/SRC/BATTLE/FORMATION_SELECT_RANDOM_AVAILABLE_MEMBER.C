@@ -20,7 +20,7 @@ s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
     s32 remaining;
 
     count = 0;
-    if ((u32)record_id >= 380)
+    if (record_id < 0 || record_id >= 380)
         record_id = 1;
 
     choices_base = choices;
@@ -81,7 +81,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     list = list_buffer;
     if (GameFlag_TestFar(0x173))
         record_id = BattleFormation_SelectLevelMatchedCandidate(&margin);
-    if ((u32)record_id >= 380)
+    if (record_id < 0 || record_id >= 380)
         record_id = 1;
     record = &BattleFormation_Records[record_id];
     for (j = 0; j <= 4 && record->minimum_counts[j] == 0; j++)

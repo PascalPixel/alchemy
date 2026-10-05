@@ -305,7 +305,7 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
     if ((state->djinn_active[index] & (1 << bit)) != 0)
         return 0;
 
-    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((u32)owner > 7))->list;
+    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((owner < 0 || owner > 7)))->list;
     for (i = 0; i < table->count; i++) {
         if (index == table->entries[i].element && bit == table->entries[i].index)
             break;
@@ -363,7 +363,7 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit)
     s32 found = 0;
     s32 i;
 
-    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((u32)owner > 7))->list;
+    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((owner < 0 || owner > 7)))->list;
     for (i = 0; i < table->count; i++) {
         if (index == table->entries[i].element && bit == table->entries[i].index) {
             table->count--;

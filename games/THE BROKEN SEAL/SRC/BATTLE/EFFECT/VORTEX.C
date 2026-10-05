@@ -152,7 +152,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
                     AudioCommand_PlayFar(132);
                 }
             }
-            if ((u32)point->variant < 16) {
+            if (point->variant >= 0 && point->variant < 16) {
                 draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
                     point->x - 16, point->y - 56, 16, 64);
                 draw[1](canvas, work->sheet + ((point->variant / 2) % 3 << 10),

@@ -505,11 +505,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         }
     }
     kind_from_two = kind - 2;
-    if ((u32)kind_from_two <= 1 || kind == 12 || kind == 22 || kind == 29 || kind == 28) {
+    if ((kind_from_two >= 0 && kind_from_two <= 1) || kind == 12 || kind == 22 || kind == 29 || kind == 28) {
         Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
     }
     kind_from_four = kind - 4;
-    if ((u32)kind_from_four <= 2 || kind == 23 || kind == 30 || kind == 27 || kind == 33 || kind == 34 || kind == 100) {
+    if ((kind_from_four >= 0 && kind_from_four <= 2) || kind == 23 || kind == 30 || kind == 27 || kind == 33 || kind == 34 || kind == 100) {
         duration = 32;
     } else if (kind >= 0 && kind <= 3 || kind == 8 || kind == 9 || kind == 10 || kind == 22 || kind == 25 || kind == 29 || kind == 31 || kind == 14) {
         duration = 48;
@@ -665,7 +665,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                             step->velocity_x += dx;
                             step->velocity_y += dy;
                             step->velocity_z += dz;
-                            if ((u32)(dx + 0xfff) <= 0x1ffe && (u32)(dz + 0xfff) <= 0x1ffe)
+                            if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
                                 step->variant = -1;
                         }
                     }
@@ -712,7 +712,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             s32 scroll;
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
-            if ((u32)frame <= 23) {
+            if (frame >= 0 && frame <= 23) {
                 /* The rising column: two scrolling pieces over a wider base. */
                 RectangleBlit *draw;
                 s32 width;

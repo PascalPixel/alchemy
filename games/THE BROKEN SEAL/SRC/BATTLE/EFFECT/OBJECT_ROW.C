@@ -172,7 +172,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             break;
         }
 
-        if ((u32)(frame - 24) <= 31) {
+        if (frame >= 24 && frame <= 55) {
             shift++;
         }
         if (shift > 24) {
@@ -191,7 +191,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             if (frame > 103) {
                 lift = frame * 16 - 1664;
             }
-            if ((u32)(frame - 8) <= 23) {
+            if (frame >= 8 && frame <= 31) {
                 base_x = base_x + shift - 8;
             }
             if (frame > 7) {

@@ -17,14 +17,14 @@ u32 Summon_GetEntryByte3Kind(s32 index)
 
 s32 Summon_GetEntryValue(s32 index)
 {
-    if ((u32)index > 171)
+    if (index < 0 || index > 171)
         return Summon_EntryTable[0].animation;
     return Summon_EntryTable[index].animation;
 }
 
 s32 Summon_GetEntryFlag1Field(s32 index)
 {
-    if ((u32)index > 171)
+    if (index < 0 || index > 171)
         return Summon_EntryTable[0].animation;
     return ((u32)Summon_EntryTable[index].layout_flags << 27) >> 28;
 }
@@ -33,7 +33,7 @@ s32 Summon_IsEntryFlagged(s32 index)
 {
     s32 result;
 
-    if ((u32)index > 171)
+    if (index < 0 || index > 171)
         return 0;
     result = 0;
     if (Summon_EntryTable[index].sprite_flags << 31)
@@ -77,14 +77,14 @@ u32 Battle_GetEntryField2HighBits(u32 index)
 
 s32 Summon_IsEntrySecondaryFlagged(s32 index)
 {
-    if ((u32)index > 171)
+    if (index < 0 || index > 171)
         return 0;
     return ((u32)Summon_EntryTable[index].layout_flags << 31) >> 31;
 }
 
 s32 Summon_GetEntryByte4(s32 index)
 {
-    if ((u32)index > 171)
+    if (index < 0 || index > 171)
         return 0;
     return Summon_EntryTable[index].unknown_04[0];
 }

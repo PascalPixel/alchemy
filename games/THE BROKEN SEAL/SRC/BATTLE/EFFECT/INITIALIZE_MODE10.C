@@ -278,7 +278,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                     chip->x += chip->velocity_x;
                     chip->y += chip->velocity_y;
                     chip->velocity_y += 0x4000;
-                    if ((u32)chip->y > 0x780000 && frame <= 159) {
+                    if ((chip->y < 0 || chip->y > 0x780000) && frame <= 159) {
                         chip->x = (Random16() % 96) << 16;
                         chip->y = ((Random16() & 7) + 88) << 16;
                         chip->velocity_x = ((Random16() & 255) - 128) << 11;
@@ -972,7 +972,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
         if (frame > 72) {
             for (i = 0; i != 64; i++) {
-                if ((u32)PARTICLES[i].variant < 18) {
+                if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
                     s32 n = PARTICLES[i].variant / 2 % 9;
                     s32 sz = BattleFx_PuffSizes[n];
                     blit46(dst, aux + BattleFx_PuffCells[n], PARTICLES[i].x - sz / 2, PARTICLES[i].y - sz / 2, sz, sz);

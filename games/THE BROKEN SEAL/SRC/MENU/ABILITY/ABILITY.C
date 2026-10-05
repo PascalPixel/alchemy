@@ -345,7 +345,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
     UiText_GetResourceDimensionsFar(
         (gGameState.first_shortcut & 0x3ff) + (s32)&MsgAbilityName,
         &left, &top, &width, &height);
-    if ((u32)width > 10)
+    if (width < 0 || width > 10)
         wide = 1;
     else
         wide = 0;
@@ -363,7 +363,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
     UiText_GetResourceDimensionsFar(
         (gGameState.second_shortcut & 0x3ff) + (s32)&MsgAbilityName,
         &left, &top, &width, &height);
-    if ((u32)width > 10)
+    if (width < 0 || width > 10)
         wide = 1;
     else
         wide = 0;
@@ -409,7 +409,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
     UiText_GetResourceDimensionsFar(
         (gGameState.first_shortcut & 0x3ff) + (s32)&MsgAbilityName,
         &left, &top, &width, &height);
-    if ((u32)width > 11)
+    if (width < 0 || width > 11)
         wide = 1;
     else
         wide = 0;
@@ -436,7 +436,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
     UiText_GetResourceDimensionsFar(
         (gGameState.second_shortcut & 0x3ff) + (s32)&MsgAbilityName,
         &left, &top, &width, &height);
-    if ((u32)width > 11)
+    if (width < 0 || width > 11)
         wide = 1;
     else
         wide = 0;

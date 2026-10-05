@@ -148,12 +148,12 @@ done:
                     gap = 0;
                 gap = __divsi3(gap << 8, counts[i] - 1);
 #if EDITION_INTERNATIONAL
-                if ((u32)gap > 0xc00)
+                if (gap < 0 || gap > 0xc00)
                     gap = 0x200;
 #else
-                if ((u32)gap > 0x800)
+                if (gap < 0 || gap > 0x800)
                     gap = 0;
-                if ((u32)gap > 0x100)
+                if (gap < 0 || gap > 0x100)
                     gap = 0x100;
 #endif
                 *spacing++ = gap;
@@ -341,9 +341,9 @@ done:
                     gap = 0;
                 gap = (gap << 8) / (counts[j] - 1);
 #if !EDITION_INTERNATIONAL
-                if ((u32)gap > 0x800)
+                if (gap < 0 || gap > 0x800)
                     gap = 0;
-                if ((u32)gap > 0x100)
+                if (gap < 0 || gap > 0x100)
                     gap = 0x100;
 #endif
                 *spacing++ = gap;

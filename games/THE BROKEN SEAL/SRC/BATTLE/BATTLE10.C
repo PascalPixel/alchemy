@@ -78,7 +78,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     unit = Owner_GetStateFar(unit_id);
     formation = gBattleWork;
     spoils = &formation->spoils;
-    if ((u32)unit_id < 8)
+    if (unit_id >= 0 && unit_id < 8)
         return -1;
     if (unit->class_index != 0)
         return -2;

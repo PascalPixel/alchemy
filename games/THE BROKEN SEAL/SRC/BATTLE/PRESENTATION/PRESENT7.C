@@ -164,7 +164,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     if (work->effect->side == 0) {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
-            if ((u32)(i - 8) <= 95)
+            if (i >= 8 && i <= 103)
                 line[i] = (0xf0 - i) | ((0x70 - i) << 8);
             else if (i <= 135)
                 line[i] = 0x888;
@@ -174,7 +174,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     } else {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
-            if ((u32)(i - 8) <= 87)
+            if (i >= 8 && i <= 95)
                 line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
             else if (i <= 135)
                 line[i] = 0x78f8;
@@ -220,11 +220,11 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
                 s32 x = shard->x / 8;
                 s32 y = shard->y / 8;
 
-                if ((u32)(shard->variant - 1) <= 13) {
+                if (shard->variant >= 1 && shard->variant <= 14) {
                     draw[work->effect->variant == 2 ? 1 : 0](canvas,
                         work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y, 32, 32);
                 }
-                if ((u32)(shard->variant - 9) <= 2) {
+                if (shard->variant >= 9 && shard->variant <= 11) {
                     for (k = 0; k != 32; k++) {
                         puff = &work->particles[32 + k];
                         if (puff->variant == -1) {
@@ -346,7 +346,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     if (work->effect->side == 0) {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
-            if ((u32)(i - 8) <= 95)
+            if (i >= 8 && i <= 103)
                 line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
             else if (i <= 135)
                 line[i] = 0x80;
@@ -356,7 +356,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     } else {
         line = (u16 *)gMapCellBuffer;
         for (i = 0; i != 160; i++) {
-            if ((u32)(i - 8) <= 95)
+            if (i >= 8 && i <= 103)
                 line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);
             else if (i <= 135)
                 line[i] = 0x70f0;
@@ -416,7 +416,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
                         ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 2);
                 }
             } else {
-                if ((u32)bolt->variant <= 3)
+                if (bolt->variant >= 0 && bolt->variant <= 3)
                     draw_bolt(canvas, work->sheet + 0x844, x, y, 24, 24);
                 else if (bolt->variant <= 7)
                     draw_bolt(canvas, work->sheet + 0xa84, x - 9, y - 9, 42, 42);

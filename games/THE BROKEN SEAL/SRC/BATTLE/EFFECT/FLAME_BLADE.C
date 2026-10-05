@@ -199,7 +199,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
                     y = HI(flash->y);
                     x = HI(flash->x) + FlameBlade_StrikeColumns[n + work->effect->side * 3];
                     life = flash->variant;
-                    if ((u32)life <= 17) {
+                    if (life >= 0 && life <= 17) {
                         routine[0](canvas,
                             work->sheet + (FlameBlade_FlashCells[life / 3] << 11) + (128 << 6),
                             x - 16, y + 56, 32, 64);
@@ -227,7 +227,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
                             spark->velocity_y = -spark->velocity_y / 2;
                         } else {
                             x = spark->x;
-                            if ((u32)x <= 0x007EFFFF && y >= 0) {
+                            if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                                 u8 *cell;
                                 s32 lane;
                                 s32 py = y >> 16;

@@ -46,7 +46,7 @@ void Djinn_ResolvePendingEvent(s32 capture)
     if (capture == 0) {
         if (kind == 0) {
             flag &= 0x7ff;
-            if ((u32)(flag - 300) > 80)
+            if (flag < 300 || flag > 380)
                 return;
             if (st->scene_change_reason > 0 && st->scene_change_reason != 999)
                 return;
@@ -61,7 +61,7 @@ void Djinn_ResolvePendingEvent(s32 capture)
     }
     if (kind == 0) {
         flag &= 0x7ff;
-        if ((u32)(flag - 300) <= 80) {
+        if (flag >= 300 && flag <= 380) {
             flag &= 0x7ff;
             if (st->scene_change_reason > 0) {
                 s32 djinn = flag - 300;

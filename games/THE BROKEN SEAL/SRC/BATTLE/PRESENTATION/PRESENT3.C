@@ -135,9 +135,9 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
             AudioCommand_PlayFar(212);
             ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
         }
-        if ((u32)(frame - 28) <= 20)
+        if (frame >= 28 && frame <= 48)
             draw.upper(canvas, work->sheet + (frame - 28) / 3 * 2304 + 0x1400, 40, ground.y - 24, 48, 48);
-        if ((u32)frame <= 14) {
+        if (frame >= 0 && frame <= 14) {
             s32 picture = frame / 3 % 5;
             DrawRectangle *slot = &((DrawRectangle *)Ram_WorkSlot)[47];
 

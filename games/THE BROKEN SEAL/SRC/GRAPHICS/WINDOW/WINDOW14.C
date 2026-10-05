@@ -55,7 +55,7 @@ s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
 {
     const u8 *range;
 
-    if ((u32)(mark - 0xde) > 1)
+    if (mark < 0xde || mark > 223)
         return 1;
     if (mark == 0xde)
         range = NameEntry_DakutenRanges;
@@ -399,7 +399,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             column--;
             if (column == -1) {
                 column = 18;
-                if ((u32)(row - 4) > 1)
+                if (row < 4 || row > 5)
                     column = 16;
             } else if (column == 5 || column == 11 || column == 17) {
                 column--;
@@ -413,7 +413,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
                 column = 0;
             else if (column == 5 || column == 11 || column == 17)
                 column++;
-            if (column == 18 && (u32)(row - 4) > 1)
+            if (column == 18 && (row < 4 || row > 5))
                 column = 0;
         }
         if (gKeyState & KEY_START) {

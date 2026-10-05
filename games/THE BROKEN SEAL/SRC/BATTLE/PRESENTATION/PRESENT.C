@@ -116,7 +116,7 @@ void BattlePres_DrawTransitionRows(void)
     u16 *tiles;
 
     frame = **(s32 **)gDisp;
-    if ((u32)frame <= 79) {
+    if (frame >= 0 && frame <= 79) {
         tile = (7 & frame) + 0xf081;
         if (frame >= 0) {
             aligned = frame;

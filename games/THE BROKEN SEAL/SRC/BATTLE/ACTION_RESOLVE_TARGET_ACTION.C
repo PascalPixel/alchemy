@@ -165,7 +165,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     }
 
     /* 攻撃力。元素武器でなければ 100。 */
-    if ((u32)plan->range_index <= 3) {
+    if (plan->range_index >= 0 && plan->range_index <= 3) {
         cmd = &plan->command;
         if (*cmd != 2) {
             power = actor->elements[plan->range_index].power;
@@ -176,7 +176,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     power = 100;
 after_power:
 
-    if (plan->command == 5 && (u32)plan->range_index <= 3 && affinity > 0) {
+    if (plan->command == 5 && (plan->range_index >= 0 && plan->range_index <= 3) && affinity > 0) {
         s32 chance;
 
         chance = power - target->elements[plan->range_index].resist;
@@ -512,7 +512,7 @@ after_power:
                     s32 item;
 
                     item = action_id - 380;
-                    if ((u32)item <= 21) {
+                    if (item >= 0 && item <= 21) {
                         switch (item) {
                         case 0:
                         case 6:

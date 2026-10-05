@@ -304,7 +304,7 @@ s32 BattleTarget_SelectForAction(
         if (action->target_mode == 2 || action->target_mode == 4)
             opposing = 1;
 
-        if ((u32)actor_id > 7) {
+        if (actor_id < 0 || actor_id > 7) {
             if (opposing != 0)
                 goto scan_mirrored_order;
         } else if (opposing == 0) {

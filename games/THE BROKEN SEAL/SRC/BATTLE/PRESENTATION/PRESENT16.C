@@ -270,7 +270,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
     Random16();
     actor_record = GetBattleObjectSlot(actor_id)->object;
 
-    if ((u32)target_id <= 7) {
+    if (target_id >= 0 && target_id <= 7) {
         side_count = BattleParty_ListLivingUnits(2, visible_units);
         side_start = 0x80;
     } else {
@@ -320,7 +320,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
         context.actors[index] = visible_units[index];
     }
     context.count = living_count;
-    if ((u32)target_id <= 7) {
+    if (target_id >= 0 && target_id <= 7) {
         context.side = 1;
     } else {
         context.side = 0;

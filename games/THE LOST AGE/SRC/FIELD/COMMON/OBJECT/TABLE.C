@@ -8,7 +8,7 @@
 
 /* The 32 objects ObjectTable_Snapshot saves; their indices sit in the 32
    bytes before them and their two frame bytes and priorities after. */
-extern struct ObjectRuntime Data_02001024[];
+extern struct ObjectRuntime gSnapshotObjects[];
 
 /* Empties the event's object table. */
 void ObjectTable_Clear(void)
@@ -34,9 +34,9 @@ struct ObjectRuntime *ObjectTable_Get(u32 object_id)
    marks the unused index slots with 255. */
 void ObjectTable_Snapshot(void)
 {
-    struct ObjectRuntime *copy = Data_02001024;
-    u8 *indices = (u8 *)Data_02001024 - 32;
-    u8 *frames = (u8 *)&Data_02001024[32];
+    struct ObjectRuntime *copy = gSnapshotObjects;
+    u8 *indices = (u8 *)gSnapshotObjects - 32;
+    u8 *frames = (u8 *)&gSnapshotObjects[32];
     u8 *next_frames = frames + 32;
     u8 *priorities = frames + 64;
     u32 count = 0;

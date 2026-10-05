@@ -43,7 +43,8 @@ struct ObjectRuntime {
     u8 flags;
     u8 motion_flags;
     u8 unknown_57;
-    u8 unknown_58;
+    /* Set to stop the object on its target, as ☀️'s motion object does. */
+    u8 snap_to_target;
     /* Bit 0 lets other objects collide with this one. */
     u8 collision_flags;
     u8 action_flags;

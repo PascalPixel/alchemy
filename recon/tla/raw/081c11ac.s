@@ -18,4 +18,4 @@ SongFlag_Set:
 	strb r2, [r1, r0]
 	bx lr
 .L_081c11c8:
-	.4byte Data_02002f20
+	.4byte gSongFlags

@@ -5,7 +5,7 @@
    SongFlag_Clear (081c11cc) has the same difference. */
 #include "TYPES.H"
 
-extern u8 Data_02002f20[];
+extern u8 gSongFlags[];
 
 void SongFlag_Set(s32 song)
 {
@@ -13,7 +13,7 @@ void SongFlag_Set(s32 song)
     u8 *bytes;
 
     mask = 1 << (7 & song);
-    bytes = Data_02002f20;
+    bytes = gSongFlags;
     song = (song & 0x3ff) >> 3;
     bytes[song] = (u8)(bytes[song] | mask);
 }

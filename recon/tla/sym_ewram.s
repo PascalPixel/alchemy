@@ -61,8 +61,8 @@ Data_02000520:
 	.global Data_02001000
 Data_02001000:
 	.space 0x00000024
-	.global Data_02001024
-Data_02001024:
+	.global gSnapshotObjects
+gSnapshotObjects:
 	.space 0x00001068
 	.global gItemCounters
 gItemCounters:
@@ -73,8 +73,8 @@ gSceneState:
 	.global Data_020023c4
 Data_020023c4:
 	.space 0x00000b5c
-	.global Data_02002f20
-Data_02002f20:
+	.global gSongFlags
+gSongFlags:
 	.space 0x000000e0
 	.global gSleepActive
 gSleepActive:

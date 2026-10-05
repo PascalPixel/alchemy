@@ -136,4 +136,4 @@ Func_080cae5c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080caf68:
-	.4byte Data_02001024
+	.4byte gSnapshotObjects

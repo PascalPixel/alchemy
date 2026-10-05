@@ -2,43 +2,15 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_PRESENTATION.H"
 #include "IO_WRITE_QUEUE.H"
+#include "IO_REG.H"
+#include "IWRAM_CALL.H"
+#include "MAP_SCROLL.H"
+#include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
 
-/* The battle scene work gBattleWork points at. */
-struct BattleSceneWork {
-    u8 unknown_0000[0x4];
-    u16 field_0004;
-    u8 unknown_0006[0x3a];
-    u8 field_0040;
-    u8 field_0041;
-    u8 field_0042;
-    u8 unknown_0043[0x1];
-    u8 field_0044;
-    u8 field_0045;
-    u8 unknown_0046[0x9];
-    u8 field_004f;
-    u8 field_0050;
-    u8 unknown_0051[0x1];
-    u8 field_0052;
-    u8 unknown_0053[0x7];
-    s16 field_005a;
-    s16 field_005c;
-    u8 unknown_005e[0x8];
-    u16 field_0066;
-};
-
-/* The transition control gTransitionWork points at. */
-struct TransitionWork {
-    u32 field_0000;
-    u32 field_0004;
-    u8 unknown_0008[0x4];
-    u32 field_000c;
-    u32 field_0010;
-};
-
-extern struct BattleSceneWork *gBattleWork;
-extern struct TransitionWork *gTransitionWork;
-extern u16 gBgScroll[];
 extern u32 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 
@@ -47,50 +19,6 @@ extern u8 BattlePieceStartY[];
 extern u8 BattlePieceWidth[];
 extern u8 BattlePieceHeight[];
 extern u16 BattlePieceOffset[];
-
-/*
- * Blocking battle effect scene at 0x080cbc0c.
- *
- * Allocates three heap blocks (scene work 0x782c, a 0x4000 staging surface and
- * a 0x302 scratch), programs the background/window/blend registers, builds a
- * 16-row by 8-column screen-block tilemap at 0x06003800 (one palette bank per
- * row, tiles from 0x100 up) and loads the effect graphics, then
- * runs 0x80 frames.  Each frame it fades the object palette towards the table
- * at sys+0x544, rasterizes a growing ring into the 8bpp work buffer at
- * 0x02010000 (tile-major, 256 px wide), blits 0x21 sprite pieces through the
- * two routines published by BattleEffect_LoadWork, and finally releases everything.
- *
- * Still uncertain: the meaning of the 0x1c-byte particle records at
- * work+0x7080 (only offsets 0, 4, 0xc, 0x10 and 0x18 are touched here), the
- * exact roles of the scene flags at work+0x7780/0x7784/0x7824, and the source
- * tables at 0x080ee016 / 0x080ee037 / 0x080edf90 / 0x080edfb1 / 0x080edfd2.
- * The unit binds those five tables at their reference addresses, with byte
- * coordinates/dimensions and halfword offsets. This is a measured draft,
- * not an exact match; named tables alone do not restore its compiler shape.
- */
-
-/* Fixed IWRAM helpers reached through a register; the ROM calls them through
-   the _call_via_rN veneers, so they are modelled as typed indirect calls. */
-typedef void (*ClearFn)(void *dst, s32 size);
-typedef void (*FillFn)(void *dst, s32 size, u32 value);
-typedef void (*CopyFn)(void *dst, const void *src, s32 size);
-/* Rectangle blitter published in gWorkSlot by BattleEffect_LoadWork. */
-typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
-
-#define IWRAM_CLEAR ((ClearFn)0x03000164)
-#define IWRAM_FILL ((FillFn)0x03000168)
-#define IWRAM_COPY ((CopyFn)0x03001388)
-
-/* 8bpp tile-major work buffer, 32 tiles across. */
-#define WORK_PIXELS 0x02010000
-
-/*
- * A pixel offset inside that surface is (y / 8) * 0x800 + (x / 8) * 0x40
- * + (y & 7) * 8 + (x & 7).  The ring plotter builds the column part once per
- * column and the row part once per row, so the eight mirrored points of a
- * Bresenham step share four subexpressions.
- */
-#define PLOT_AT(off) (*(u8 *)(WORK_PIXELS + (off)) = 2)
 
 void WaitFrames(s32 arg0);
 s32 Scheduler_AddOrUpdateCallback(s32 entry, s32 arg1);
@@ -102,488 +30,400 @@ void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
 void Runtime_ApplyValueToWork7818(void);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 set, s32 object, s32 group, s32 slot, s32 value);
-void EffectStep_AdvanceWithGravity2D(void *ent, s32 arg1, s32 arg2);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *ent, s32 arg1, s32 arg2);
 void Audio_PlayCue(s32 id);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
-/* Only the m2c spellings this draft actually uses. */
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+#define PLOT(x, y) (Ram_MapCellBuffer[((x) & 7) + ((x) / 8 << 6) + ((y) & 7) * 8 + ((y) / 8 << 11)] = 2)
 
-void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
+/*
+ * Blocking battle effect scene at 0x080cbc0c, BattleEffect_RunTileAndPaletteAnimation.
+ *
+ * Allocates the effect work (slot 39), the canvas (slot 40) and a scratch
+ * block (slot 41), programs BG2 and the windows, builds a 16-row by 8-column
+ * tile map at 0x06003800, then runs 128 frames: the backdrop fades towards
+ * the session palette, frames 0..3 draw a two-pixel ring of growing radius
+ * into the 8bpp map cells at 0x02010000, 33 sheet pieces fly apart until
+ * frame 50, and from frame 53 the flash burst cells scatter.
+ *
+ * Score: 246 (alchemy diff, listing 1051, draft 1051, common 928). The old
+ * m2c draft scored 1312; this wave rewrote it as plain C.
+ *
+ * What moved it, in order (each measured against the previous):
+ *   1312  old m2c draft
+ *   1065  plain rewrite: IO_WRITE_QUEUE_PUSH, ResourceId_* literals,
+ *         (void **)&gBattleWork with [0] and [35] (native adds #140 from the
+ *         gBattleWork literal), draw blitters read through a cache pointer to
+ *         gWorkSlot ([46], [47]; native adds #184/#188 from the gWorkSlot
+ *         literal)
+ *   1043  unused struct EffectPosition local: the native frame is 56 bytes,
+ *         12 more than the spill slots need (sp+44..55 never accessed)
+ *    910  ring pixels through the constant Ram_MapCellBuffer instead of the
+ *         gMapCellBuffer label: the native reloads the base from the pool at
+ *         every plot (a label is hoisted out of the loop and spilled)
+ *    611  plot index (x & 7) + (x / 8 << 6) + (y & 7) * 8 + (y / 8 << 11);
+ *         768 other orders/groupings/shift-or-multiply spellings all score
+ *         worse (best 408)
+ *    531  declaration order work, canvas, frame, draw1, draw0, battle, ...,
+ *         rmax, r, d: the spill slots (40, 36, 32, 28, 24, 20, 16, 12, 8)
+ *         follow pseudo order
+ *    435  tile map: the byte offset i (+= 2) is the counter later loops use,
+ *         rows/columns are k/j, and the store is *(volatile s16 *)(0x06003800
+ *         + i) of an s16 entry (gives the native lsls/asrs pair and the
+ *         unreduced base + offset address)
+ *    433  i += 2 in the column loop's increment expression
+ *    404  start tables read through pointers start_x/start_y (the counter
+ *         stays a biv, as native)
+ *    390  palette fade reads both colours through volatile u16 pointers
+ *         (native ldrh + lsls #16/lsrs #21 for both; plain u16 gives ldrsh)
+ *    325  pieces addressed as piece = &work->particles[i] inside the draw
+ *         and scatter loops (native indexes the u16 offset table by i)
+ *    303  the 0x33 palette ramp level is a block-local v, not the shared level
+ *    281  same for the ring header and backdrop ramp levels; backdrop ramp
+ *         written frame >= 8 && frame <= 50
+ *    274  x1 = 96 - px; left = x1 (the unclamped copy is the second pseudo,
+ *         native keeps it in lr); same for the swapped half
+ *    246  plain-swap hill climb (declaration and independent statement order)
+ *
+ * Tried and worse: gMapCellBuffer[...] for the ring (1043 vs 910),
+ * 96 - px + 1 (folds to 97 - px), shared left/left2 split (274 = same),
+ * level shared across loops, piece++ pointer walks in the draw/scatter loops,
+ * indexed start tables (eliminates the counter), indexed BG_PLTT for the fade,
+ * x/y as u32 or s32 in the fade (687+).
+ *
+ * Remaining difference: register choice only, in four places.
+ *  - Copy/fill and clear constants: the native rematerialises 0x4000, 0x7800
+ *    and the map buffer address before each call (no shared pseudo), the
+ *    draft keeps them in r5/r6 across the call.
+ *  - The fade loop: native target pointer in r9, colour/goal fields in
+ *    r5,r2,r0 / r1,r4,r3; the draft uses sl and a different permutation.
+ *  - The ring plot: native forms (x / 8) << 6 after the y division and adds
+ *    it as the first operand ((x/8<<6) + (x&7)); in plots 2 and 4 the native
+ *    adds the row term first (adds r3, r6, r3). The draft shifts right after
+ *    the division.
+ *  - The 0x33 ramp: native pointer r0 / level r1, draft swapped.
+ */
+void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect)
+{
+    /* FAKEMATCH: never read; the native frame keeps 12 unused bytes at sp+44..55, exactly this struct. */
+    struct EffectPosition position;
     struct BattleEffectWork *work;
     void *canvas;
-    struct EffectStep *ent;
-    struct BattleSceneWork *sys;
-    struct TransitionWork *ctl;
-    ClearFn clr;
-    FillFn fill;
-    BlitFn draw0;
-    BlitFn draw1;
     s32 frame;
-    s32 rad;
-    s32 radMax;
-    s32 err;
-    s32 px;
-    s32 py;
-    s32 cnt;
-    s32 idx;
-    s32 col;
-    s32 row;
-    s32 pos;
-    s32 base;
-    s32 ent0;
-    s32 ent1;
-    s32 sx;
-    s32 sy;
-    s32 lvl;
-    s32 xa;
-    s32 xa0;
-    s32 xa2;
-    s32 xb;
-    s32 xb2;
-    s32 ya;
-    s32 yb;
-    s32 ua;
-    s32 ua0;
-    s32 ua2;
-    s32 ub;
-    s32 ub2;
-    s32 va;
-    s32 vb;
-    s32 oxa;
-    s32 oxb;
-    s32 hya;
-    s32 hyb;
-    s32 tya;
-    s32 tyb;
-    s32 oua;
-    s32 oub;
-    s32 hva;
-    s32 hvb;
-    s32 tva;
-    s32 tvb;
+    DrawRectangle draw1;
+    DrawRectangle draw0;
+    struct BattleSession *battle;
+    struct BattleBackgroundView *view;
+    void **slots;
+    void **cache;
+    s32 rmax;
+    struct EffectStep *piece;
     s32 r;
-    s32 g;
-    s32 b;
-    s32 tr;
-    s32 tg;
-    s32 tb;
-    u32 cur;
-    u32 tgt;
-    u32 span;
-    u8 *slot;
-    u8 *tblx;
-    u8 *tbly;
-    u16 *dst;
-    u16 *src;
-    s16 *pal;
-    s32 ime;
-    s32 qcnt;
+    s32 i;
+    s32 px;
+    s32 j;
+    s32 k;
+    s32 d;
+    s32 x1;
+    s32 py;
+    s32 left;
+    s32 x2;
+    s32 y1;
+    s32 y2;
+    u8 *start_y;
+    u8 *start_x;
 
-    work = Runtime_AllocateHeapBlock(0x27, 0x782C);
-    canvas = Runtime_AllocateHeapBlock(0x28, 0x4000);
-    Runtime_AllocateHeapBlock(0x29, 0x302);
-    sys = gBattleWork;
-    ctl = gTransitionWork;
-    work->effect = arg0;
+    work = Runtime_AllocateHeapBlock(39, 0x782c);
+    canvas = Runtime_AllocateHeapBlock(40, 0x4000);
+    Runtime_AllocateHeapBlock(41, 0x302);
+    slots = (void **)&gBattleWork;
+    battle = slots[0];
+    view = slots[35];
+    work->effect = effect;
     Runtime_ApplyValueToWork7818();
-    ctl->field_000c = 1;
-    gBgScroll[3] = 0x20;
-    BattlePresentation_ConfigurePaletteFadeFar(1, M2C_FIELD(sys, u16 *, 0x648), 0);
-    *(u16 *)0x0400000c = 0x784;
-    BattlePres_SetupTransitionSceneFar(0, 0, 0, 0x64);
-    idx = 0;
-    ctl->field_000c = 0;
-    *(s32 *)0x04000028 = 0;
-    *(s32 *)0x0400002C = 0xFFFFF000;
-    *(s16 *)0x04000020 = 0x80;
-    *(s16 *)0x04000022 = 0;
-    *(s16 *)0x04000024 = 0;
-    *(s16 *)0x04000026 = 0x100;
-    *(s16 *)0x04000040 = 0xF0;
-    *(s16 *)0x04000044 = 0x1088;
-    *(s16 *)0x04000042 = 0xF0;
-    *(s16 *)0x04000046 = 0x1088;
-    *(s16 *)0x04000048 = 0x3537;
-    *(s16 *)0x0400004A = 0x3F21;
+    view->second_mode = 1;
+    gBgScroll[1].y = 32;
+    BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
+    REG_BG2CNT = 0x784;
+    BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+    view->second_mode = 0;
+    REG_BG2X = 0;
+    REG_BG2Y = 0xfffff000;
+    REG_BG2PA = 0x80;
+    REG_BG2PB = 0;
+    REG_BG2PC = 0;
+    REG_BG2PD = 0x100;
+    REG_WIN0H = 0xf0;
+    REG_WIN0V = 0x1088;
+    REG_WIN1H = 0xf0;
+    REG_WIN1V = 0x1088;
+    REG_WININ = 0x3537;
+    REG_WINOUT = 0x3f21;
 
-    /* 16 rows of 8 map entries, one screen block at 0x06003800. */
-    pos = 0;
-    row = 0;
-    base = 0;
-    do {
-        ent0 = base + 0x100;
-        col = 0;
-        ent1 = idx * 2;
-        do {
-            col += 1;
-            *(s16 *)(0x06003800 + pos) = (s16) (ent0 | ent1);
-            ent0 += 0x200;
-            ent1 += 2;
-            pos += 2;
-        } while (col != 8);
-        row += 1;
-        base += 0x1000;
-        idx += 8;
-    } while (row != 0x10);
+    i = 0;
+    for (k = 0; k != 16; k++) {
+        for (j = 0; j != 8; j++, i += 2) {
+            s16 entry;
 
-    clr = IWRAM_CLEAR;
-    clr(canvas, 0x4000);
-    clr((void *)0x06004000, 0x4000);
-
-    ime = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x04000208;
-    qcnt = gIoWriteQueue.count;
-    if (qcnt <= 0x1F) {
-        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
-        gIoWriteQueue.count = qcnt + 1;
-        M2C_FIELD(slot, s32 *, 4) = 0x7741;
-        M2C_FIELD(slot, s32 *, 8) = 0x04000000;
-        M2C_FIELD(slot, s32 *, 12) = 0x20000;
+            entry = ((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
+            *(volatile s16 *)(0x06003800 + i) = entry;
+        }
     }
-    *(u16 *)0x04000208 = (u16) ime;
 
-    *(s16 *)0x04000052 = 0x1010;
-    *(s16 *)0x04000050 = 0;
-    Resource_LoadAndDecompress(0x44, work, 1, 1);
+    Iwram_ClearWords(canvas, 0x4000);
+    Iwram_ClearWords((void *)0x06004000, 0x4000);
+    IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+    REG_BLDALPHA = 0x1010;
+    REG_BLDCNT = 0;
+    Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    BattleEffect_LoadWork(0x2E, 7, 7, 3, 1);
-    draw0 = (BlitFn)gWorkSlot[46];
-    BattleEffect_LoadWork(0x2F, 7, 7, 3, 2);
-    draw1 = (BlitFn)gWorkSlot[47];
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    BattleEffect_LoadWork(46, 7, 7, 3, 1);
+    cache = (void **)gWorkSlot;
+    draw0 = cache[46];
+    BattleEffect_LoadWork(47, 7, 7, 3, 2);
+    draw1 = cache[47];
 
-    /* Seed the 0x21 pieces from the two byte tables of start coordinates. */
-    rad = 0;
-    tbly = BattlePieceStartY;
-    ent = (struct EffectStep *)((u8 *)work + 0x7080);
-    tblx = BattlePieceStartX;
-    cnt = 0;
-    do {
-        sx = *tblx << 0x10;
-        sy = *tbly << 0x10;
-        ent->x = sx;
-        ent->y = sy;
-        cnt += 1;
-        ent->velocity_x = (u32) ((s32) (sx + 0xFFE00000) >> 2);
-        ent->velocity_y = (u32) ((s32) (sy + 0xFFC40000) >> 2);
-        tblx += 1;
-        tbly += 1;
-        ent += 1;
-    } while (cnt != 0x21);
+    start_x = BattlePieceStartX;
+    start_y = BattlePieceStartY;
+    r = 0;
+    piece = work->particles;
+    for (i = 0; i != 33; i++) {
+        s32 y;
+        s32 x;
 
-    IWRAM_COPY(gMapCellBuffer, (void *)0x06008000, 0x7800);
-    fill = IWRAM_FILL;
-    fill(gMapCellBuffer, 0x7800, 0x01010101);
-    ctl->field_0010 = 1;
-    M2C_FIELD(work, s32 *, 0x77A0) = (s32) gBgScroll[2];
-    M2C_FIELD(work, s32 *, 0x77A4) = (s32) gBgScroll[3];
-    gBgScroll[2] = 0;
-
-    ime = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x04000208;
-    qcnt = gIoWriteQueue.count;
-    if (qcnt <= 0x1F) {
-        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
-        gIoWriteQueue.count = qcnt + 1;
-        M2C_FIELD(slot, s32 *, 4) = 0x1F81;
-        M2C_FIELD(slot, s32 *, 8) = (u32) (u16 *)0x0400000a;
-        M2C_FIELD(slot, s32 *, 12) = 0x20000;
+        y = *start_y++ << 16;
+        x = *start_x++ << 16;
+        piece->x = x;
+        piece->y = y;
+        piece->velocity_x = (x - 0x200000) >> 2;
+        piece->velocity_y = (y - 0x3c0000) >> 2;
+        piece++;
     }
-    *(u16 *)0x04000208 = (u16) ime;
 
-    fill((void *)0x050000C0, 0x100, 0x7FFF7FFF);
-    Audio_PlayCue(0xD4);
-    ObjectGroup_UpdateMembers(((struct BattleEffectArgument *)work->effect)->actors[0],
-                  7, 3, 0, 0x1E);
+    Iwram_CopyWords(gMapCellBuffer, (void *)0x06008000, 0x7800);
+    Iwram_FillWords(gMapCellBuffer, 0x7800, 0x01010101);
+    view->busy = 1;
+    work->saved_bg1_x = gBgScroll[1].x;
+    work->saved_bg1_y = gBgScroll[1].y;
+    gBgScroll[1].x = 0;
+    IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
+    Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
+    Audio_PlayCue(212);
+    ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 3, 0, 30);
 
-    frame = 0;
-    do {
-        if (frame == 2) {
-            Audio_PlayCue(0xD4);
-        }
-        if (frame == 3) {
-            Audio_PlayCue(0xD4);
-        }
-        if (frame == 0x1C) {
-            ObjectGroup_UpdateMembers(
-                ((struct BattleEffectArgument *)work->effect)->actors[0],
-                -1, 3, -1, 0);
-        }
-        if (frame == 0x20) {
-            Audio_PlayCue(0x95);
-        }
+    for (frame = 0; frame != 128; frame++) {
+        if (frame == 2)
+            Audio_PlayCue(212);
+        if (frame == 3)
+            Audio_PlayCue(212);
+        if (frame == 28)
+            ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 3, -1, 0);
+        if (frame == 32)
+            Audio_PlayCue(149);
         if (frame == 5) {
-            Audio_PlayCue(0x91);
-            gBgScroll[2] = (u16) M2C_FIELD(work, s32 *, 0x77A0);
-            BattleBackground_LoadFar(1, M2C_FIELD(sys, u16 *, 0x648), -1);
+            Audio_PlayCue(145);
+            gBgScroll[1].x = work->saved_bg1_x;
+            BattleBackground_LoadFar(1, battle->background, -1);
         }
 
-        /* Step every object-palette entry one level towards its target. */
         if (frame > 7) {
-            dst = (u16 *)0x050000C0;
-            cnt = 0;
-            src = (u16 *)((u8 *)sys + 0x544);
-            do {
-                cur = *dst;
-                r = cur & 0x1F;
-                cur <<= 0x10;
-                tgt = *src;
-                g = (cur >> 0x15) & 0x1F;
-                b = (cur >> 0x1A) & 0x1F;
-                tr = tgt & 0x1F;
-                tgt <<= 0x10;
-                span = tgt;
-                tg = (tgt >> 0x15) & 0x1F;
-                src += 1;
-                tb = (span >> 0x1A) & 0x1F;
-                if (r < tr) {
-                    r += 1;
-                } else if (r > tr) {
-                    r -= 1;
-                }
-                if (g < tg) {
-                    g += 1;
-                } else if (g > tg) {
-                    g -= 1;
-                }
-                if (b < tb) {
-                    b += 1;
-                } else if (b > tb) {
-                    b -= 1;
-                }
-                cnt += 1;
-                *dst = (b << 0xA) | (g << 5) | r;
-                dst += 1;
-            } while (cnt != 0x80);
+            volatile u16 *pal;
+            volatile u16 *target;
+
+            pal = &BG_PLTT[0x60];
+            target = battle->palette;
+            for (i = 0; i != 128; i++) {
+                u16 goal;
+                u16 color;
+                s32 red;
+                s32 blue;
+                s32 goal_green;
+                s32 green;
+                s32 goal_blue;
+                s32 goal_red;
+
+                color = *pal;
+                red = color & 0x1f;
+                green = (color >> 5) & 0x1f;
+                blue = (color >> 10) & 0x1f;
+                goal = *target++;
+                goal_red = goal & 0x1f;
+                goal_blue = (goal >> 10) & 0x1f;
+                goal_green = (goal >> 5) & 0x1f;
+                if (red < goal_red)
+                    red++;
+                else if (red > goal_red)
+                    red--;
+                if (green < goal_green)
+                    green++;
+                else if (green > goal_green)
+                    green--;
+                if (blue < goal_blue)
+                    blue++;
+                else if (blue > goal_blue)
+                    blue--;
+                *pal++ = (blue << 10) | (green << 5) | red;
+            }
         }
 
-        if (frame == 4) {
-            IWRAM_FILL((void *)0x06008000, 0x7800, 0x02020202);
-        }
+        if (frame == 4)
+            Iwram_FillWords((void *)0x06008000, 0x7800, 0x02020202);
 
-        /* Frames 0..3 rasterize the opening ring into the work buffer. */
         if (frame <= 3) {
-            lvl = (frame * 4) + 8;
-            radMax = frame << 5;
-            *(s16 *)0x05000004 = (lvl << 0xA) | (lvl << 5) | lvl;
-            if (rad != radMax) {
-                do {
-                    px = rad;
-                    py = 0;
-                    err = rad;
-                    if (px >= 0) {
-                        do {
-                            xa = 0x60 - px;
-                            ya = 0x3C - py;
-                            xb = px + 0x60;
-                            xa0 = xa;
-                            yb = py + 0x3C;
-                            if (ya < 0) {
-                                ya = 0;
-                            }
-                            if (yb > 0x77) {
-                                yb = 0x77;
-                            }
-                            if (xa < 0) {
-                                xa = 0;
-                            }
-                            if (xb > 0xFF) {
-                                xb = 0xFF;
-                            }
-                            oxb = (xb & 7) + ((xb / 8) << 6);
-                            hyb = (yb & 7) * 8;
-                            tyb = (yb / 8) << 0xB;
-                            PLOT_AT(hyb + oxb + tyb);
-                            hya = (ya & 7) * 8;
-                            tya = (ya / 8) << 0xB;
-                            PLOT_AT(tya + (hya + oxb));
-                            oxa = (xa & 7) + ((xa / 8) << 6);
-                            PLOT_AT(hyb + oxa + tyb);
-                            xa2 = xa0 + 1;
-                            PLOT_AT(tya + (hya + oxa));
-                            xb2 = px + 0x61;
-                            if (xa2 < 0) {
-                                xa2 = 0;
-                            }
-                            if (xb2 > 0xFF) {
-                                xb2 = 0xFF;
-                            }
-                            oxb = (xb2 & 7) + ((xb2 / 8) << 6);
-                            PLOT_AT(hyb + oxb + tyb);
-                            PLOT_AT(tya + (hya + oxb));
-                            oxa = (xa2 & 7) + ((xa2 / 8) << 6);
-                            PLOT_AT(hyb + oxa + tyb);
-                            PLOT_AT(tya + (hya + oxa));
+            s32 v;
 
-                            ua = 0x60 - py;
-                            ub = py + 0x60;
-                            ua0 = ua;
-                            vb = px + 0x3C;
-                            va = 0x3C - px;
-                            if (ua < 0) {
-                                ua = 0;
-                            }
-                            if (ub > 0xFF) {
-                                ub = 0xFF;
-                            }
-                            if (va < 0) {
-                                va = 0;
-                            }
-                            if (vb > 0x77) {
-                                vb = 0x77;
-                            }
-                            oub = (ub & 7) + ((ub / 8) << 6);
-                            hvb = (vb & 7) * 8;
-                            tvb = (vb / 8) << 0xB;
-                            PLOT_AT(hvb + oub + tvb);
-                            hva = (va & 7) * 8;
-                            tva = (va / 8) << 0xB;
-                            PLOT_AT(tva + (hva + oub));
-                            oua = (ua & 7) + ((ua / 8) << 6);
-                            PLOT_AT(hvb + oua + tvb);
-                            ua2 = ua0 + 1;
-                            PLOT_AT(tva + (hva + oua));
-                            ub2 = py + 0x61;
-                            if (ua2 < 0) {
-                                ua2 = 0;
-                            }
-                            if (ub2 > 0xFF) {
-                                ub2 = 0xFF;
-                            }
-                            oub = (ub2 & 7) + ((ub2 / 8) << 6);
-                            PLOT_AT(hvb + oub + tvb);
-                            PLOT_AT(tva + (hva + oub));
-                            oua = (ua2 & 7) + ((ua2 / 8) << 6);
-                            PLOT_AT(hvb + oua + tvb);
-                            PLOT_AT(tva + (hva + oua));
+            v = frame * 4 + 8;
+            rmax = frame * 32;
+            BG_PLTT[2] = (v << 10) | (v << 5) | v;
+            for (; r != rmax; r++) {
+                px = r;
+                py = 0;
+                d = r;
+                while (px >= py) {
+                    y1 = 60 - py;
+                    x2 = px + 96;
+                    x1 = 96 - px;
+                    left = x1;
+                    y2 = py + 60;
+                    if (y1 < 0)
+                        y1 = 0;
+                    if (y2 > 119)
+                        y2 = 119;
+                    if (x1 < 0)
+                        x1 = 0;
+                    if (x2 > 255)
+                        x2 = 255;
+                    PLOT(x2, y2);
+                    PLOT(x2, y1);
+                    PLOT(x1, y2);
+                    PLOT(x1, y1);
+                    x1 = left + 1;
+                    x2 = px + 97;
+                    if (x1 < 0)
+                        x1 = 0;
+                    if (x2 > 255)
+                        x2 = 255;
+                    PLOT(x2, y2);
+                    PLOT(x2, y1);
+                    PLOT(x1, y2);
+                    PLOT(x1, y1);
 
-                            err = (err - (py * 2)) - 1;
-                            if (err < 0) {
-                                err = (err + (px * 2)) - 2;
-                                px -= 1;
-                            }
-                            py += 1;
-                        } while (px >= py);
+                    y1 = 60 - px;
+                    x1 = 96 - py;
+                    x2 = py + 96;
+                    left = x1;
+                    y2 = px + 60;
+                    if (x1 < 0)
+                        x1 = 0;
+                    if (x2 > 255)
+                        x2 = 255;
+                    if (y1 < 0)
+                        y1 = 0;
+                    if (y2 > 119)
+                        y2 = 119;
+                    PLOT(x2, y2);
+                    PLOT(x2, y1);
+                    PLOT(x1, y2);
+                    PLOT(x1, y1);
+                    x1 = left + 1;
+                    x2 = py + 97;
+                    if (x1 < 0)
+                        x1 = 0;
+                    if (x2 > 255)
+                        x2 = 255;
+                    PLOT(x2, y2);
+                    PLOT(x2, y1);
+                    PLOT(x1, y2);
+                    PLOT(x1, y1);
+
+                    d -= py * 2 + 1;
+                    if (d < 0) {
+                        d += px * 2 - 2;
+                        px--;
                     }
-                    rad += 1;
-                } while (rad != radMax);
-            }
-            IWRAM_COPY((void *)0x06008000, gMapCellBuffer, 0x7800);
-        }
-
-        if (frame <= 0x32) {
-            cnt = 0;
-            ent = (struct EffectStep *)((u8 *)work + 0x7080);
-            do {
-                draw0(canvas,
-                      (u8 *)work + BattlePieceOffset[cnt],
-                      *(s16 *)((u8 *)&ent->x + 2), *(s16 *)((u8 *)&ent->y + 2),
-                      (s32) BattlePieceWidth[cnt],
-                      (s32) BattlePieceHeight[cnt]);
-                if (frame > 3) {
-                    EffectStep_AdvanceWithGravity2D(ent, 0x40, 0x4000);
+                    py++;
                 }
-                cnt += 1;
-                ent += 1;
-            } while (cnt != 0x21);
-        }
-
-        /* Frames 8..0x32 ramp the backdrop colour up to full white. */
-        span = frame - 8;
-        if (span <= 0x2AU) {
-            lvl = (s32) span;
-            if (lvl > 0x1F) {
-                lvl = 0x1F;
             }
-            *(s16 *)0x05000002 = (lvl << 0xA) | (lvl << 5) | lvl;
+            Iwram_CopyWords((void *)0x06008000, gMapCellBuffer, 0x7800);
         }
 
-        if (frame == 0x33) {
-            Resource_LoadAndDecompress(0x7D, work, 1, 0);
-            pal = (s16 *)0x05000002;
-            cnt = 1;
-            do {
-                lvl = cnt / 2;
-                if (lvl < 0) {
-                    lvl = 0;
-                }
-                cnt += 1;
-                *pal = (lvl << 0xA) | ((lvl / 2) << 5) | lvl;
-                pal += 1;
-            } while (cnt != 0x40);
-            *(u16 *)0x04000050 = 0x3F44;
-            cnt = 0;
-            ent = (struct EffectStep *)((u8 *)work + 0x7080);
-            do {
-                ent->x =
-                    (s32) (((Random16() & 0x1F) + 0x20) << 0x10);
-                ent->y = ((Random16() & 0x1F) + 0x50) << 0x10;
-                cnt += 1;
-                ent->velocity_x =
-                    ((0x1FF & Random16()) + 0xFFFFFF00) << 0xC;
-                ent->velocity_y = 0;
-                ent->variant = 0;
-                ent += 1;
-            } while (cnt != 0x20);
+        if (frame <= 50) {
+            for (i = 0; i != 33; i++) {
+                piece = &work->particles[i];
+                draw0(canvas, (u8 *)work + BattlePieceOffset[i],
+                      ((s16 *)&piece->x)[1], ((s16 *)&piece->y)[1],
+                      BattlePieceWidth[i], BattlePieceHeight[i]);
+                if (frame > 3)
+                    EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
+            }
+        }
+
+        if (frame >= 8 && frame <= 50) {
+            s32 v;
+
+            v = frame - 8;
+            if (v > 31)
+                v = 31;
+            BG_PLTT[1] = (v << 10) | (v << 5) | v;
+        }
+
+        if (frame == 51) {
+            Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 0);
+            for (i = 1; i != 64; i++) {
+                s32 v;
+
+                v = i / 2;
+                if (v < 0)
+                    v = 0;
+                BG_PLTT[i] = (v << 10) | ((v / 2) << 5) | v;
+            }
+            REG_BLDCNT = 0x3f44;
+            for (i = 0; i != 32; i++) {
+                piece = &work->particles[i];
+                piece->x = ((Random16() & 31) + 32) << 16;
+                piece->y = ((Random16() & 31) + 80) << 16;
+                piece->velocity_x = ((Random16() & 0x1ff) - 0x100) << 12;
+                piece->velocity_y = 0;
+                piece->variant = 0;
+            }
             work->transfer_mode = 2;
-            work->transfer_value = 0x32;
+            work->transfer_value = 50;
         }
 
-        /* After frame 0x34 the pieces scatter, one released every four
-           frames, each stepping through six 0x800-byte sprite phases. */
-        if (frame > 0x34) {
-            cnt = 0;
-            ent = (struct EffectStep *)((u8 *)work + 0x7080);
-            do {
-                if (frame >= (cnt / 4) + 0x34) {
-                    span = ent->variant;
-                    if ((s32) span <= 0x27) {
-                        lvl = (s32) span / 4;
-                        if (lvl > 5) {
-                            lvl = 5;
-                        }
-                        draw1(canvas, (u8 *)work + (lvl << 0xB),
-                              *(s16 *)((u8 *)&ent->x + 2) - 0x10,
-                              *(s16 *)((u8 *)&ent->y + 2) - 0x20, 0x20, 0x40);
-                        EffectStep_AdvanceWithGravity2D(ent, 0x3C, 0xFFFFF000);
-                        ent->variant += 1;
-                    }
+        if (frame > 52) {
+            for (i = 0; i != 32; i++) {
+                piece = &work->particles[i];
+                if (frame >= i / 4 + 52 && piece->variant <= 39) {
+                    s32 cell;
+
+                    cell = piece->variant / 4;
+                    if (cell > 5)
+                        cell = 5;
+                    draw1(canvas, (u8 *)work + (cell << 11),
+                          ((s16 *)&piece->x)[1] - 16, ((s16 *)&piece->y)[1] - 32, 32, 64);
+                    EffectStep_AdvanceWithGravity2D(piece, 60, -0x1000);
+                    piece->variant++;
                 }
-                cnt += 1;
-                ent += 1;
-            } while (cnt != 0x20);
+            }
         }
 
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         WaitFrames(1);
-        frame += 1;
-    } while (frame != 0x80);
-
-    Runtime_ReleaseHeapBlock(0x2F);
-    Runtime_ReleaseHeapBlock(0x2E);
-    Scheduler_RemoveCallback(0x080CD261);
-    ObjectGroup_UpdateMembers(((struct BattleEffectArgument *)work->effect)->actors[0],
-                  -1, 1, -1, 0);
-    gBgScroll[2] = (u16) M2C_FIELD(work, s32 *, 0x77A0);
-    gBgScroll[3] = 0x20;
-    BattlePresentation_ConfigurePaletteFadeFar(2, M2C_FIELD(sys, u16 *, 0x648), 0);
-    WaitFrames(1);
-
-    ime = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x04000208;
-    qcnt = gIoWriteQueue.count;
-    if (qcnt <= 0x1F) {
-        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
-        gIoWriteQueue.count = qcnt + 1;
-        M2C_FIELD(slot, s32 *, 4) = 0x7541;
-        M2C_FIELD(slot, s32 *, 8) = 0x04000000;
-        M2C_FIELD(slot, s32 *, 12) = 0x20000;
     }
-    *(u16 *)0x04000208 = (u16) ime;
 
-    Runtime_ReleaseHeapBlock(0x29);
-    Runtime_ReleaseHeapBlock(0x28);
-    Runtime_ReleaseHeapBlock(0x27);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 1, -1, 0);
+    gBgScroll[1].x = work->saved_bg1_x;
+    gBgScroll[1].y = 32;
+    BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
+    WaitFrames(1);
+    IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+    Runtime_ReleaseHeapBlock(41);
+    Runtime_ReleaseHeapBlock(40);
+    Runtime_ReleaseHeapBlock(39);
 }

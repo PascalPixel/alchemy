@@ -287,8 +287,6 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
         register s32 zero asm("r0");
         out[0] = ux;
         zero = 0;
-        /* FAKEMATCH: keep the used zero in r0 and delay the used axis copy into r1. */
-        asm("" : "+r"(zero) : : "r1");
         out[3] = zero;
         out[6] = uz;
         out[9] = -dot(ex, ux, ez, uz, zero, zero);

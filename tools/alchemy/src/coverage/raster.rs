@@ -230,6 +230,7 @@ impl Canvas {
     }
     /// The canvas as RGBA bytes, each pixel `scale` device pixels wide, a
     /// clear pixel all zero: exactly what its PNG decodes to.
+    #[cfg(test)]
     pub(crate) fn rgba(&self, scale: u32) -> Vec<u8> {
         let scale = scale as usize;
         let mut out = Vec::with_capacity(self.pixels.len() * scale * scale * 4);
@@ -337,6 +338,7 @@ impl Canvas {
     }
 }
 /// A PNG's pixels as RGBA bytes, with its width and height.
+#[cfg(test)]
 pub(crate) fn decode(bytes: &[u8]) -> Option<(u32, u32, Vec<u8>)> {
     let mut decoder = png::Decoder::new(std::io::Cursor::new(bytes));
     decoder.set_transformations(png::Transformations::EXPAND);
@@ -371,6 +373,7 @@ fn chunk(kind: &[u8; 4], body: &[u8]) -> Vec<u8> {
 }
 
 /// The date of a PNG's tIME chunk, `YYYY-MM-DD`.
+#[cfg(test)]
 pub(crate) fn png_date(bytes: &[u8]) -> Option<String> {
     let mut rest = bytes.get(8..)?;
     while rest.len() >= 12 {

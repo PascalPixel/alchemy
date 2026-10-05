@@ -28,7 +28,7 @@ pub const WAVES: &[&[&str]] = &[
         "prepare-inputs",
     ],
     &["compare", "compare-tla", "compare-other-editions"],
-    &["coverage-check"],
+    &["coverage-report"],
 ];
 
 const USAGE: &str = "usage: alchemy verify\n\
@@ -36,12 +36,12 @@ Runs every gate (make verify) in dependency waves, concurrently within a wave, o
 passing gate and the whole output of a failing one. Logs: out/verify/<gate>.log.\n\
        alchemy verify --land\n\
 On main, before committing a landing (make land): the staged checks, the tests, all twelve editions\n\
-built and compared, README and both progress figures written and staged, and the decomp.dev report prepared.\n\
+built and compared, and the progress measurement and decomp.dev report prepared for the push.\n\
        alchemy verify --pre-commit\n\
 The commit hooks' staged checks, on every branch; they build and publish nothing.\n\
        alchemy verify --pre-push\n\
-Checks commits absent from remotes, each pushed tree and the verified publication of an outgoing main tip.\n\
-For pushes to PascalPixel/alchemy, uploads the prepared report using authenticated GitHub CLI.";
+Checks commits absent from remotes and each pushed tree. For a push of main to PascalPixel/alchemy,\n\
+uploads the measurement make land prepared for its tip; CI draws the progress figures from it.";
 
 const STAGED: &[&str] = &[
     "index-sync-check",
@@ -50,13 +50,6 @@ const STAGED: &[&str] = &[
     "lint-staged",
     "tooling-index-check",
     "publication-staged-check",
-];
-
-const PUBLICATION_FILES: &[&str] = &[
-    "README.md",
-    "recon/tbs/metrics/history.tsv",
-    "PROGRESS_CHART.png",
-    "PROGRESS.png",
 ];
 
 pub fn entry(arguments: &[String]) -> ExitCode {
@@ -117,21 +110,6 @@ pub(crate) fn is_main(root: &Path) -> Result<bool, String> {
     Ok(output.stdout == b"refs/heads/main\n")
 }
 
-/// Main's subject prefix: each game's DONE in all six editions from their
-/// byte-identical builds, or `pending` while `rom.sha1` does not match one.
-pub(crate) fn verified_subject(root: &Path) -> Result<String, String> {
-    crate::coverage::progress::subject(root)
-}
-
-pub(crate) fn valid_subject(message: &str, expected: &str) -> bool {
-    message
-        .lines()
-        .next()
-        .unwrap_or("")
-        .strip_prefix(expected)
-        .is_some_and(|title| title.starts_with(' ') && !title.trim().is_empty())
-}
-
 fn outgoing_main(updates: &str) -> Result<Option<&str>, String> {
     let mut main = None;
     for line in updates.lines().filter(|line| !line.trim().is_empty()) {
@@ -154,53 +132,12 @@ fn outgoing_main(updates: &str) -> Result<Option<&str>, String> {
     Ok(main)
 }
 
-fn check_main_tip(root: &Path, executable: &Path, tip: &str) -> Result<(), String> {
-    let repair = "create or amend a commit on main; its hook builds and publishes both games";
-    let unchanged = Command::new("git")
-        .args(["diff", "--quiet", "--ignore-submodules=none", tip, "--"])
-        .current_dir(root)
-        .status()
-        .map_err(|error| format!("cannot inspect outgoing main {tip}: {error}"))?;
-    if !unchanged.success() {
-        return Err(format!(
-            "outgoing main {tip} is not the current verified tree; {repair}"
-        ));
-    }
-    let expected = verified_subject(root).map_err(|error| format!("{error}; {repair}"))?;
-    let message = Command::new("git")
-        .args(["show", "-s", "--format=%B", tip])
-        .current_dir(root)
-        .output()
-        .map_err(|error| format!("cannot read outgoing main subject: {error}"))?;
-    if !message.status.success()
-        || !valid_subject(&String::from_utf8_lossy(&message.stdout), &expected)
-    {
-        return Err(format!(
-            "outgoing main {tip} lacks its verified {expected} prefix; {repair}"
-        ));
-    }
-    let coverage = Command::new(executable)
-        .args(["check", "coverage", "--check"])
-        .current_dir(root)
-        .status()
-        .map_err(|error| format!("cannot check outgoing main publication: {error}"))?;
-    if !coverage.success() {
-        return Err(format!(
-            "outgoing main {tip} publication is stale; {repair}"
-        ));
-    }
-    Ok(())
-}
-
 fn pre_push(root: &Path) -> Result<(), String> {
     let mut updates = String::new();
     std::io::stdin()
         .read_to_string(&mut updates)
         .map_err(|error| error.to_string())?;
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
-    if let Some(tip) = outgoing_main(&updates)? {
-        check_main_tip(root, &executable, tip)?;
-    }
     let mut publication = Command::new(executable)
         .args(["check", "publication", "--pre-push"])
         .current_dir(root)
@@ -235,22 +172,6 @@ fn commit_waves(main: bool) -> Vec<&'static [&'static str]> {
         waves.extend_from_slice(&WAVES[1..]);
     }
     waves
-}
-
-fn stage_publication(root: &Path) -> Result<(), String> {
-    let output = Command::new("git")
-        .args(["add", "--"])
-        .args(PUBLICATION_FILES)
-        .current_dir(root)
-        .output()
-        .map_err(|error| format!("cannot stage publication: {error}"))?;
-    if !output.status.success() {
-        return Err(format!(
-            "cannot stage publication: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        ));
-    }
-    Ok(())
 }
 
 /// What a run of the gates is for.
@@ -294,16 +215,6 @@ fn run_waves(root: &Path, executable: &Path, pre_commit: bool, main: bool) -> Re
         WAVES.to_vec()
     };
     for wave in waves {
-        if pre_commit && wave.contains(&"coverage-check") {
-            println!("publication: {}", verified_subject(root)?);
-            let arguments = make_arguments(&executable, &finished, "coverage", true);
-            let outcome = run_gate(root, "coverage", &arguments, logs.join("coverage.log"))?;
-            if !report(&[outcome], root) {
-                return Ok(false);
-            }
-            stage_publication(root)?;
-            finished.push("coverage");
-        }
         let wave = wave
             .iter()
             .copied()
@@ -515,7 +426,7 @@ mod tests {
             .unwrap();
         let publication = main
             .iter()
-            .position(|wave| wave.contains(&"coverage-check"))
+            .position(|wave| wave.contains(&"coverage-report"))
             .unwrap();
         assert!(builds < publication);
         assert!(main[builds].contains(&"compare-tla"));
@@ -546,11 +457,10 @@ mod tests {
         )
         .unwrap();
         assert!(!is_main(root).unwrap());
-        assert!(verified_subject(root).is_err());
     }
 
-    /// A repository whose every gate records its name, `coverage` also
-    /// writing the publication, and whose `failing` gate fails.
+    /// A repository whose every gate records its name and whose `failing`
+    /// gate fails.
     fn landing_fixture(failing: &str) -> tempfile::TempDir {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
@@ -564,16 +474,11 @@ mod tests {
         let gates = STAGED
             .iter()
             .chain(WAVES.iter().flat_map(|wave| wave.iter()))
-            .chain(["test", "coverage"].iter())
+            .chain(["test"].iter())
             .copied()
             .collect::<BTreeSet<_>>();
         for gate in gates {
             makefile.push_str(&format!("{gate}:\n\t@echo {gate} >> gates.log\n"));
-            if gate == "coverage" {
-                for path in PUBLICATION_FILES {
-                    makefile.push_str(&format!("\t@echo published > '{path}'\n"));
-                }
-            }
             if gate == failing {
                 makefile.push_str("\t@false\n");
             }
@@ -599,17 +504,15 @@ mod tests {
     }
 
     #[test]
-    fn main_landing_builds_compares_publishes_then_checks_publication() {
+    fn main_landing_builds_compares_then_measures_without_staging() {
         let directory = landing_fixture("none");
         let root = directory.path();
-        assert_eq!(verified_subject(root).unwrap(), "☀️ pending ⚓️ pending –");
         assert!(run_waves(root, Path::new("/unused/alchemy"), true, true).unwrap());
         let ran = gates_run(root);
         let at = |gate: &str| ran.iter().position(|name| name == gate).unwrap();
         for gate in ["compare", "compare-tla"] {
-            assert!(at("test") < at(gate) && at(gate) < at("coverage"));
+            assert!(at("test") < at(gate) && at(gate) < at("coverage-report"));
         }
-        assert!(at("coverage") < at("coverage-check"));
         assert_eq!(
             &ran[ran.len() - 2..],
             ["index-sync-check", "publication-staged-check"]
@@ -619,13 +522,7 @@ mod tests {
             .current_dir(root)
             .output()
             .unwrap();
-        assert_eq!(
-            String::from_utf8(staged.stdout)
-                .unwrap()
-                .lines()
-                .collect::<BTreeSet<_>>(),
-            PUBLICATION_FILES.iter().copied().collect()
-        );
+        assert!(staged.stdout.is_empty());
     }
 
     #[test]
@@ -635,48 +532,13 @@ mod tests {
         assert!(!run_waves(root, Path::new("/unused/alchemy"), true, true).unwrap());
         let ran = gates_run(root);
         assert!(ran.iter().any(|gate| gate == "compare-tla"));
-        assert!(!ran.iter().any(|gate| gate == "coverage"));
+        assert!(!ran.iter().any(|gate| gate == "coverage-report"));
         assert!(!root.join("README.md").exists());
         // A branch commit runs only the staged checks.
         let directory = landing_fixture("compare-tla");
         let root = directory.path();
         assert!(run_waves(root, Path::new("/unused/alchemy"), true, false).unwrap());
         assert_eq!(gates_run(root).len(), STAGED.len());
-    }
-
-    #[test]
-    fn publication_stages_both_figures_without_staging_other_work() {
-        let directory = tempfile::tempdir().unwrap();
-        let root = directory.path();
-        assert!(Command::new("git")
-            .args(["init", "--quiet", "--initial-branch=main"])
-            .arg(root)
-            .status()
-            .unwrap()
-            .success());
-        for path in PUBLICATION_FILES.iter().copied().chain(["pending.c"]) {
-            let path = root.join(path);
-            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-            std::fs::write(path, "fixture\n").unwrap();
-        }
-        stage_publication(root).unwrap();
-        let staged = Command::new("git")
-            .args(["diff", "--cached", "--name-only"])
-            .current_dir(root)
-            .output()
-            .unwrap();
-        let paths = String::from_utf8(staged.stdout)
-            .unwrap()
-            .lines()
-            .map(str::to_owned)
-            .collect::<BTreeSet<_>>();
-        assert_eq!(
-            paths,
-            PUBLICATION_FILES
-                .iter()
-                .map(|path| path.to_string())
-                .collect()
-        );
     }
 
     /// Each Makefile rule's prerequisites, from `target: prerequisites`
@@ -776,7 +638,7 @@ mod tests {
         let arguments = make_arguments(
             Path::new("/repo/alchemy"),
             &["prepare-inputs", "compare"],
-            "coverage-check",
+            "coverage-report",
             false,
         );
         assert_eq!(
@@ -788,7 +650,7 @@ mod tests {
                 "prepare-inputs",
                 "-o",
                 "compare",
-                "coverage-check"
+                "coverage-report"
             ]
         );
     }

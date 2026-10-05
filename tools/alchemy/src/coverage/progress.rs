@@ -263,7 +263,7 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     let root = root();
     if action == "--subject" {
-        return crate::verify::verified_subject(&root);
+        return subject(&root);
     }
     if action.is_empty() {
         let mut lines = Vec::new();

@@ -17,10 +17,11 @@ use crate::coverage::progress::GameDone;
 use crate::coverage::tree::root;
 use std::path::Path;
 const USAGE: &str =
-    "usage: alchemy check coverage [--write [--publication]|--check|--models|--self-test]\n\
-Publishes README's progress line, today's progress history row, both figures and the decomp.dev\n\
-report from each game's six verified builds together (make compare-editions); a game without all six stays pending.\n\
---publication preserves approved model attribution; --check fails when any published value is stale.";
+    "usage: alchemy check coverage [--report|--publish MEASUREMENT DIRECTORY|--self-test]\n\
+Measures both games, each from its six verified builds together (make compare-editions); a game\n\
+without all six stays pending. --report writes that measurement and the decomp.dev report under\n\
+out/reports/decomp for make land and the push that follows. --publish is CI's: it records a\n\
+pushed measurement in DIRECTORY's history.tsv and draws both progress figures there.";
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read(path)
         .map(|b| String::from_utf8_lossy(&b).into_owned())
@@ -29,130 +30,78 @@ fn read(path: &Path) -> Result<String, String> {
 fn write(path: &Path, text: &str) -> Result<(), String> {
     std::fs::write(path, text).map_err(|e| format!("cannot write {}: {e}", path.display()))
 }
-#[derive(Default)]
-struct Options {
-    write: bool,
-    check: bool,
-    self_test: bool,
-    models: bool,
-    publication: bool,
-    help: bool,
-}
-fn parse(argv: &[String]) -> Result<Options, String> {
-    let mut o = Options::default();
-    for argument in argv {
-        match argument.as_str() {
-            "--write" => o.write = true,
-            "--check" => o.check = true,
-            "--self-test" => o.self_test = true,
-            "--models" => o.models = true,
-            "--publication" => o.publication = true,
-            "-h" | "--help" => {
-                o.help = true;
-                break;
-            }
-            other => return Err(format!("unrecognized argument: {other}")),
-        }
-    }
-    Ok(o)
-}
-/// The README status line under "## Progress": ☀️ The Broken Seal and
-/// ⚓️ The Lost Age, each DONE in all six of its editions together and
-/// pending until six byte-identical builds measure it. The parts of ⚓️
-/// (C, assembly and 8-byte stubs) are for `make progress`, not for fans.
+/// ☀️ The Broken Seal and ⚓️ The Lost Age, each DONE in all six of its
+/// editions together and pending until six byte-identical builds measure it.
 fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let show = |done: Option<GameDone>| {
         done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
     };
-    format!("**☀️ {} · ⚓️ {}**", show(sun), show(anchor))
+    format!("☀️ {} · ⚓️ {}", show(sun), show(anchor))
 }
-fn update_readme(text: &str, status: &str) -> String {
-    let mut out = text.to_string();
-    if let Some(start) = out.find("**☀️ ") {
-        if let Some(end) = out[start..].find('\n') {
-            out.replace_range(start..start + end, status);
+const MEASUREMENT_HEADER: &str =
+    "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers";
+/// The measurement a push carries to CI: each verified game's DONE parts.
+fn measurement_text(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
+    let mut text = format!("{MEASUREMENT_HEADER}\n");
+    for (game, done) in [("tbs", sun), ("tla", anchor)] {
+        if let Some(d) = done {
+            text.push_str(&format!(
+                "{game}\t{}\t{}\t{}\t{}\t{}\t{}\n",
+                d.common_asm, d.common_c, d.game_asm, d.game_c, d.executable, d.veneers
+            ));
         }
     }
-    out
+    text
+}
+fn parse_measurement(text: &str) -> Result<[Option<GameDone>; 2], String> {
+    let mut lines = text.lines();
+    if lines.next() != Some(MEASUREMENT_HEADER) {
+        return Err("measurement has an unexpected header".into());
+    }
+    let mut games = [None, None];
+    for line in lines {
+        let fields = line.split('\t').collect::<Vec<_>>();
+        let at = match fields.first() {
+            Some(&"tbs") => 0,
+            Some(&"tla") => 1,
+            _ => return Err(format!("measurement row names no game: {line}")),
+        };
+        let values = fields[1..]
+            .iter()
+            .map(|field| field.parse::<i64>())
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|_| format!("measurement row is not numeric: {line}"))?;
+        let [common_asm, common_c, game_asm, game_c, executable, veneers] = values[..] else {
+            return Err(format!("measurement row has the wrong width: {line}"));
+        };
+        if games[at].is_some() {
+            return Err(format!("measurement names {} twice", fields[0]));
+        }
+        games[at] = Some(GameDone {
+            common_asm,
+            common_c,
+            game_asm,
+            game_c,
+            executable,
+            veneers,
+        });
+    }
+    Ok(games)
 }
 #[cfg(test)]
 mod tests {
-    use super::{status_line, update_readme};
+    use super::{measurement_text, parse_measurement, status_line};
     use crate::coverage::progress::GameDone;
-    #[test]
-    #[ignore = "slow: writes and compresses both figures twice"]
-    fn figures_are_redrawn_with_each_count_and_match_the_readme() {
-        use super::{check_figures, figure, figure_date_current, history, write_figures};
-        let root = tempfile::tempdir().unwrap();
-        let root = root.path();
-        std::fs::create_dir_all(history::path(root).parent().unwrap()).unwrap();
-        std::fs::write(
-            history::path(root),
-            history::text(&history::History {
-                began: "2026-07-16".into(),
-                days: vec![history::Day {
-                    tbs: Some(history::Measure::published(1.0)),
-                    ..history::Day::new("2026-07-16")
-                }],
-                ..history::History::default()
-            }),
-        )
-        .unwrap();
-        assert!(std::process::Command::new("git")
-            .args(["init", "--quiet"])
-            .current_dir(root)
-            .status()
-            .unwrap()
-            .success());
-        let done = |bytes| GameDone {
-            game_c: bytes,
-            executable: 1000,
-            ..GameDone::default()
-        };
-        write_figures(root, Some(done(600)), None, false).unwrap();
-        let chart = std::fs::read(root.join(figure::CHART)).unwrap();
-        let map = std::fs::read(root.join(figure::MAP)).unwrap();
-        check_figures(root).unwrap();
-        // A later count the same day redraws the chart with it.
-        write_figures(root, Some(done(610)), None, false).unwrap();
-        assert_ne!(std::fs::read(root.join(figure::CHART)).unwrap(), chart);
-        let _ = map;
-        let recorded = history::load(root).unwrap();
-        let today = history::today();
-        let row = recorded.days.last().unwrap().clone();
-        let tbs = |row: &history::Day| row.tbs.as_ref().and_then(history::Measure::percent);
-        assert_eq!((row.date.as_str(), tbs(&row)), (today.as_str(), Some(61.0)));
-        assert_eq!(tbs(recorded.figures.as_ref().unwrap()), Some(61.0));
-        check_figures(root).unwrap();
-        // A README stating another number fails.
-        std::fs::write(root.join("README.md"), "**☀️ 60.00% · ⚓️ pending**\n").unwrap();
-        assert!(check_figures(root).is_err());
-        std::fs::write(root.join("README.md"), "**☀️ 61.00% · ⚓️ pending**\n").unwrap();
-        check_figures(root).unwrap();
-        // A tampered chart fails; yesterday's figures pass only until today has a row.
-        std::fs::write(root.join(figure::CHART), &map).unwrap();
-        assert!(check_figures(root).is_err());
-        let yesterday = history::previous(&today).unwrap();
-        assert!(figure_date_current(&today, &today, true));
-        assert!(figure_date_current(&yesterday, &today, false));
-        assert!(!figure_date_current(&yesterday, &today, true));
-        assert!(!figure_date_current(
-            &history::previous(&yesterday).unwrap(),
-            &today,
-            false
-        ));
-    }
 
     #[test]
-    fn readme_status_shows_each_verified_game_or_pending() {
+    fn status_shows_each_verified_game_or_pending() {
         let sun = GameDone {
             game_c: 250,
             game_asm: 340,
             executable: 1000,
             ..GameDone::default()
         };
-        let status = status_line(Some(sun), None);
-        assert_eq!(status, "**☀️ 59.00% · ⚓️ pending**");
+        assert_eq!(status_line(Some(sun), None), "☀️ 59.00% · ⚓️ pending");
         let anchor = GameDone {
             game_c: 10,
             game_asm: 50,
@@ -160,21 +109,28 @@ mod tests {
             executable: 1000,
             ..GameDone::default()
         };
-        assert_eq!(
-            status_line(Some(sun), Some(anchor)),
-            "**☀️ 59.00% · ⚓️ 6.00%**"
-        );
-        let updated = update_readme(
-            "# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**\n\nDetails\n",
-            &status,
-        );
-        assert_eq!(
-            updated,
-            "# Alchemy\n\n## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n\nDetails\n"
-        );
+        assert_eq!(status_line(Some(sun), Some(anchor)), "☀️ 59.00% · ⚓️ 6.00%");
+    }
+
+    #[test]
+    fn a_measurement_survives_its_trip_to_ci() {
+        let sun = GameDone {
+            common_asm: 1,
+            common_c: 2,
+            game_asm: 3,
+            game_c: 4,
+            executable: 100,
+            veneers: 1,
+        };
+        let text = measurement_text(Some(sun), None);
+        assert_eq!(parse_measurement(&text).unwrap(), [Some(sun), None]);
+        assert!(parse_measurement("game\n").is_err());
+        assert!(parse_measurement(&format!("{text}tbs\t1\t2\t3\t4\t100\t1\n")).is_err());
+        assert!(parse_measurement(&format!("{text}tla\t1\t2\n")).is_err());
     }
 }
-/// Both README figures as the history's recorded figure date draws them.
+/// Both figures as the history's recorded figure date draws them; the map
+/// draws the files `root` tracks.
 fn render_figures(
     root: &Path,
     history: &history::History,
@@ -183,157 +139,79 @@ fn render_figures(
     let chart = figure::chart(&letters, &history::as_drawn(history));
     Ok((chart, figure::map(&letters, root)))
 }
-/// Record today's verified counts and redraw both figures, so the chart
-/// always shows the numbers the README states.
-fn write_figures(
-    root: &Path,
-    sun: Option<GameDone>,
-    anchor: Option<GameDone>,
-    publication: bool,
-) -> Result<(), String> {
+/// CI: record a pushed measurement in `directory`'s history, count every
+/// day after the frozen model table from main's commits, and draw both
+/// figures beside it.
+fn publish_figures(root: &Path, measurement: &Path, directory: &Path) -> Result<String, String> {
+    let [sun, anchor] = parse_measurement(&read(measurement)?)?;
+    let path = directory.join("history.tsv");
+    let mut history = history::load_file(&path)?;
     let hour = history::this_hour();
     let today = hour[..10].to_string();
-    let mut history = history::load(root)?;
     history::record(&mut history, &today, sun, anchor);
     history::record_hour(&mut history, &hour, sun, anchor);
-    let models = if publication {
-        history::publication_models(root, &history, &today)?
-    } else {
-        history::models_on(root, &today)?
-    };
-    history::record_models(&mut history, &today, &models);
+    history::derive_models(root, &mut history)?;
     history::mark_drawn(&mut history, &today);
-    write(&history::path(root), &history::text(&history))?;
+    write(&path, &history::text(&history))?;
     let (chart, map) = render_figures(root, &history)?;
     let scale = letters::FIGURE_SCALE;
-    let (chart, map) = (chart.png(scale, &today)?, map.png(scale, &today)?);
-    std::fs::write(root.join(figure::CHART), chart)
-        .map_err(|e| format!("{}: {e}", figure::CHART))?;
-    std::fs::write(root.join(figure::MAP), map).map_err(|e| format!("{}: {e}", figure::MAP))
-}
-/// The committed figures are current when they carry the history's figure
-/// date, that date is today (or yesterday while today has no row), they show
-/// the latest recorded row and the README's progress line, the chart
-/// is exactly what that day's rows draw, and the map is exactly what the
-/// tracked files draw unless they changed since it was drawn that day.
-fn check_figures(root: &Path) -> Result<(), String> {
-    let stale = |why: &str| {
-        Err(format!(
-            "README figures are stale ({why}); run: make coverage"
-        ))
-    };
-    let history = history::load(root)?;
-    let figures = history.figures.clone().unwrap_or_default();
-    let date = figures.date.clone();
-    let today = history::today();
-    let has_today = history.days.iter().any(|row| row.date == today);
-    if !figure_date_current(&date, &today, has_today) {
-        return stale(&format!("drawn on {date:?}"));
+    for (name, canvas) in [(figure::CHART, chart), (figure::MAP, map)] {
+        std::fs::write(directory.join(name), canvas.png(scale, &today)?)
+            .map_err(|e| format!("{name}: {e}"))?;
     }
-    let latest = history.days.last();
-    let percent = |row: &history::Day, game| row.game(game).and_then(history::Measure::percent);
-    for game in ["tbs", "tla"] {
-        let shown = percent(&figures, game);
-        if latest.map(|row| percent(row, game)) != Some(shown) {
-            return stale(&format!("{game} is not the latest recorded row"));
-        }
-    }
-    let readme = std::fs::read_to_string(root.join("README.md")).unwrap_or_default();
-    for (icon, game) in [("☀️", "tbs"), ("⚓️", "tla")] {
-        if history.pending(game) {
-            if readme.contains("**☀️ ") && !readme.contains(&format!("{icon} pending")) {
-                return stale(&format!("{game} has no verified current measurement"));
-            }
-            continue;
-        }
-        if let Some(shown) = percent(&figures, game) {
-            // The README floors to hundredths, as the chart labels do.
-            let shown = (shown * 100.0 + 1e-9).floor() / 100.0;
-            if readme.contains("**☀️ ") && !readme.contains(&format!("{icon} {shown:.2}%")) {
-                return stale(&format!("{game} {shown:.2}% is not the README's progress"));
-            }
-        }
-    }
-    let chart =
-        std::fs::read(root.join(figure::CHART)).map_err(|e| format!("{}: {e}", figure::CHART))?;
-    let map = std::fs::read(root.join(figure::MAP)).map_err(|e| format!("{}: {e}", figure::MAP))?;
-    for (name, png) in [(figure::CHART, &chart), (figure::MAP, &map)] {
-        if raster::png_date(png).as_deref() != Some(date.as_str()) {
-            return stale(&format!("{name} does not carry {date}"));
-        }
-    }
-    // Compared by decoded pixels, so a check never has to deflate again.
-    let (expected_chart, expected_map) = render_figures(root, &history)?;
-    let scale = letters::FIGURE_SCALE;
-    let drawn = |canvas: &raster::Canvas| {
-        Some((
-            canvas.width as u32 * scale,
-            canvas.height as u32 * scale,
-            canvas.rgba(scale),
-        ))
-    };
-    if raster::decode(&chart) != drawn(&expected_chart) {
-        return stale(&format!("{} differs from its rows", figure::CHART));
-    }
-    if raster::decode(&map) != drawn(&expected_map) {
-        return stale(&format!("{} differs from the tracked files", figure::MAP));
-    }
-    Ok(())
-}
-fn figure_date_current(date: &str, today: &str, has_today: bool) -> bool {
-    date == today || (!has_today && history::previous(today).as_deref() == Some(date))
+    Ok(format!(
+        "published {} figures={},{}",
+        status_line(sun, anchor),
+        figure::CHART,
+        figure::MAP
+    ))
 }
 fn run(argv: &[String]) -> Result<String, String> {
-    let o = parse(argv)?;
-    if o.help {
-        return Ok(USAGE.into());
-    }
-    if o.self_test {
-        return Ok("self-test=ok coverage".into());
-    }
-    if o.publication && (!o.write || o.check || o.models) {
-        return Err("--publication requires --write; it cannot relabel models".into());
-    }
     let root = root();
-    if o.models {
-        // Relabel every day's commits by model from their trailers and authors.
-        let mut history = history::load(&root)?;
-        let moved = history::relabel_models(&root, &mut history)?;
-        write(&history::path(&root), &history::text(&history))?;
-        return Ok(moved
-            .iter()
-            .map(|((from, to), n)| format!("{n}\t{from} -> {to}"))
-            .collect::<Vec<_>>()
-            .join("\n"));
-    }
-    let games = [
-        progress::status(&root, "tbs-en")?,
-        progress::status(&root, "tla-en")?,
-    ];
-    let done =
-        |game: &Result<calcrom::Game, String>| game.as_ref().ok().map(|game| game.combined().done);
-    let (sun, anchor) = (done(&games[0]), done(&games[1]));
-    let status = status_line(sun, anchor);
-    let readme = read(&root.join("README.md"))?;
-    let updated = update_readme(&readme, &status);
-    if o.check {
-        if updated != readme {
-            return Err("README progress is stale; run: make coverage".into());
+    match argv {
+        [flag] if flag == "-h" || flag == "--help" => Ok(USAGE.into()),
+        [flag] if flag == "--self-test" => Ok("self-test=ok coverage".into()),
+        [flag, measurement, directory] if flag == "--publish" => {
+            publish_figures(&root, Path::new(measurement), Path::new(directory))
         }
-        check_figures(&root)?;
-        return Ok(format!("coverage=current {status}"));
+        [] | [_] => {
+            let report = match argv {
+                [] => false,
+                [flag] if flag == "--report" => true,
+                _ => {
+                    return Err(format!(
+                        "unrecognized arguments: {}\n{USAGE}",
+                        argv.join(" ")
+                    ))
+                }
+            };
+            let games = [
+                progress::status(&root, "tbs-en")?,
+                progress::status(&root, "tla-en")?,
+            ];
+            let done = |game: &Result<calcrom::Game, String>| {
+                game.as_ref().ok().map(|game| game.combined().done)
+            };
+            let (sun, anchor) = (done(&games[0]), done(&games[1]));
+            let status = status_line(sun, anchor);
+            if !report {
+                return Ok(status);
+            }
+            let decomp = decomp::write(&root, [("tbs", &games[0]), ("tla", &games[1])])?;
+            let path = root.join(publish::MEASUREMENT);
+            std::fs::create_dir_all(path.parent().expect("measurement directory"))
+                .map_err(|e| format!("{}: {e}", publish::MEASUREMENT))?;
+            write(&path, &measurement_text(sun, anchor))?;
+            Ok(format!(
+                "measured {status} {decomp} measurement={}",
+                publish::MEASUREMENT
+            ))
+        }
+        _ => Err(format!(
+            "unrecognized arguments: {}\n{USAGE}",
+            argv.join(" ")
+        )),
     }
-    if o.write {
-        write(&root.join("README.md"), &updated)?;
-        write_figures(&root, sun, anchor, o.publication)?;
-        let report = decomp::write(&root, [("tbs", &games[0]), ("tla", &games[1])])?;
-        return Ok(format!(
-            "published {status} figures={},{} {report}",
-            figure::CHART,
-            figure::MAP
-        ));
-    }
-    Ok(status)
 }
 pub fn entry(arguments: &[String]) {
     match run(arguments) {

@@ -1,12 +1,11 @@
 use std::process::ExitCode;
 
-mod commit_progress;
 mod layout;
 mod no_asm;
 mod publication;
 
 const USAGE: &str =
-    "usage: alchemy check <publication|commit-progress|coverage|layout|no-asm|progress|routes> [args]";
+    "usage: alchemy check <publication|coverage|layout|no-asm|progress|routes> [args]";
 
 /// Run a check body and report its error the way every check does.
 fn report(result: Result<(), String>) -> ExitCode {
@@ -41,7 +40,6 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     let rest = &arguments[1..];
     match command {
         "publication" => publication::entry(rest),
-        "commit-progress" => commit_progress::entry(rest),
         "layout" => layout::entry(rest),
         "coverage" => {
             crate::coverage::entry(rest);

@@ -36,7 +36,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-full build-rom
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check untracked-check
-.PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
+.PHONY: publication-tree-check publication-staged-check tooling-index-check coverage-report
 .PHONY: progress progress-subject progress-report progress-check prepare-inputs raw drafts similar deps clean
 
 help:
@@ -46,7 +46,7 @@ help:
 	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
 	  'make test            Rust tests, formatting and source policy' \
 	  'make verify          verify source, publication and both ROM compositions' \
-	  'make coverage        update README and both published figures' \
+	  'make coverage-report measure both games for the push; CI draws the figures' \
 	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
 	  'make raw             generate private disassembly under out/' \
 	  'make drafts         compile and score every draft against its listing' \
@@ -136,8 +136,8 @@ verify:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 	@$(ALCHEMY_BIN) verify
 
-# On main, before committing a landing: every gate, the tests and the
-# publication (README and both figures), staged for the commit.
+# On main, before committing a landing: every gate, the tests, all twelve
+# editions compared and the measurement the push uploads for CI.
 land:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 	@$(ALCHEMY_BIN) verify --land
@@ -212,14 +212,11 @@ test:
 	@$(MAKE) --no-print-directory -j4 rustfmt-check native-format-check publication-tree-check tool-tests
 	$(CHECK) no-asm --self-test
 
-coverage:
-	$(CHECK) coverage --write --publication
-
 # Source and build defaults are Japanese. Published coverage/progress count
 # each game's six editions together: the English build gives the bytes, and
 # an edition earns those of the objects its own verified build links.
-coverage-check:
-	$(CHECK) coverage --check
+coverage-report:
+	$(CHECK) coverage --report
 
 progress:
 	$(CHECK) progress

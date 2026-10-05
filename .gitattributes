@@ -1,4 +1,0 @@
-# The README figures are redrawn by `make coverage`; keep either side of a merge
-# (configure once with `git config merge.generated.driver true`).
-/PROGRESS.png merge=generated binary
-/PROGRESS_CHART.png merge=generated binary

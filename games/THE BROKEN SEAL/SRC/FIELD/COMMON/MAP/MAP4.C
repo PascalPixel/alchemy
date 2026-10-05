@@ -102,7 +102,7 @@ s32 Map_GetCellHighFlags(s32 x, s32 y)
  * above the object, -1 when it is more than three quarters of a tile
  * below, 0 when the object can step there or no map is loaded.
  */
-s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position)
+s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position)
 {
     struct MapState *state;
     s32 x;

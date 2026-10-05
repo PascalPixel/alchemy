@@ -14,7 +14,7 @@
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
-s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position);
+s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 ArcTan2(s32 y, s32 x);
 
 /*
@@ -59,7 +59,7 @@ retry:
         Vector_AddPolarOffset(radius, heading, &pos);
         if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
             goto retry;
-        if (Func_080120dc((struct ObjectRuntime *)object, &pos) != 0)
+        if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
             goto retry;
         radius += 0x80000;
         probe.x = object->x;
@@ -70,13 +70,13 @@ retry:
         probe.y = object->y;
         probe.z = object->z;
         Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-        if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
+        if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
             goto retry;
         probe.x = object->x;
         probe.y = object->y;
         probe.z = object->z;
         Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-        if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
+        if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
             goto retry;
         do {
             dx = pos.x / 0x10000 - object->home_x;
@@ -147,38 +147,38 @@ roam:
     pos.y = object->y;
     pos.z = object->z;
     Vector_AddPolarOffset(radius, heading, &pos);
-    if (Func_080120dc((struct ObjectRuntime *)object, &pos) != 0)
+    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     radius += 0x80000;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading, &probe);
-    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
+    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
+    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
+    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading + 0x4000, &probe);
-    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
+    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading - 0x4000, &probe);
-    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
+    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     dx = pos.x / 0x10000 - object->home_x;
     dz = pos.z / 0x10000 - object->home_z;
@@ -206,7 +206,7 @@ back:
     pos.y = object->y;
     pos.z = object->z;
     Vector_AddPolarOffset(radius, heading, &pos);
-    if (Func_080120dc((struct ObjectRuntime *)object, &pos) != 0)
+    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
         goto back;
     object->flags_59 &= ~2;
     Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);

@@ -113,7 +113,7 @@ extern struct CameraState *gMapWork;
 s32 GameFlag_TestFar(s32 flag);
 void Audio_PlayCue(s32 cue);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *pos);
-s32 Func_080120dc(struct FieldActor *actor, s32 *pos);
+s32 Map_CheckObjectStep(struct FieldActor *actor, s32 *pos);
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 ra, s32 *b, s32 rb);
 s32 ScriptObject_CheckOverlap(struct FieldActor *actor, s32 *pos);
 s32 ArcTan2(s32 y, s32 x);
@@ -222,31 +222,31 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
         if (gKeysHeld & KEY_L)
             goto tail;
     }
-    if (Func_080120dc(actor, posA) != 0)
+    if (Map_CheckObjectStep(actor, posA) != 0)
         goto search;
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
     Vector_AddPolarOffset(0x80000, 0x1000 + (u16)angle, posB);
-    if (Func_080120dc(actor, posB) != 0)
+    if (Map_CheckObjectStep(actor, posB) != 0)
         goto search;
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
     Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, posB);
-    if (Func_080120dc(actor, posB) != 0)
+    if (Map_CheckObjectStep(actor, posB) != 0)
         goto search;
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
     Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, posB);
-    if (Func_080120dc(actor, posB) != 0)
+    if (Map_CheckObjectStep(actor, posB) != 0)
         goto search;
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = ((s32 *)actor->pos)[2];
     Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, posB);
-    if (Func_080120dc(actor, posB) != 0)
+    if (Map_CheckObjectStep(actor, posB) != 0)
         goto search;
     facing = (s16)angle;
     goto move;
@@ -264,31 +264,31 @@ search:
         posA[1] = actor->pos[1];
         posA[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing, posA);
-        if (Func_080120dc(actor, posA) != 0)
+        if (Map_CheckObjectStep(actor, posA) != 0)
             continue;
         posB[0] = actor->pos[0];
         posB[1] = actor->pos[1];
         posB[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing + 0x1000, posB);
-        if (Func_080120dc(actor, posB) != 0)
+        if (Map_CheckObjectStep(actor, posB) != 0)
             continue;
         posB[0] = actor->pos[0];
         posB[1] = actor->pos[1];
         posB[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing - 0x1000, posB);
-        if (Func_080120dc(actor, posB) != 0)
+        if (Map_CheckObjectStep(actor, posB) != 0)
             continue;
         posB[0] = actor->pos[0];
         posB[1] = actor->pos[1];
         posB[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing + 0x2000, posB);
-        if (Func_080120dc(actor, posB) != 0)
+        if (Map_CheckObjectStep(actor, posB) != 0)
             continue;
         posB[0] = actor->pos[0];
         posB[1] = actor->pos[1];
         posB[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing - 0x2000, posB);
-        if (Func_080120dc(actor, posB) == 0)
+        if (Map_CheckObjectStep(actor, posB) == 0)
             goto move;
     }
     posA[0] = actor->pos[0];
@@ -328,21 +328,21 @@ move:
         posB[1] = entry->pos[1];
         posB[2] = entry->pos[2];
         Vector_AddPolarOffset(0xa0000, push, posB);
-        if (Func_080120dc(entry, posB) != 0)
+        if (Map_CheckObjectStep(entry, posB) != 0)
             goto push_blocked;
         posB[0] = entry->pos[0];
         posB[1] = entry->pos[1];
         posB[2] = entry->pos[2];
         Vector_AddPolarOffset(0xa0000, push + 0x1000, posB);
-        if (Func_080120dc(entry, posB) != 0)
+        if (Map_CheckObjectStep(entry, posB) != 0)
             goto push_blocked;
-        if (Func_080120dc(entry, posB) != 0)
+        if (Map_CheckObjectStep(entry, posB) != 0)
             goto push_blocked;
         posB[0] = entry->pos[0];
         posB[1] = (*entry).pos[1];
         posB[2] = entry->pos[2];
         Vector_AddPolarOffset(0xa0000, push - 0x1000, posB);
-        if (Func_080120dc(entry, posB) != 0)
+        if (Map_CheckObjectStep(entry, posB) != 0)
             goto push_blocked;
         Vector_AddPolarOffset(0x4000, push, entry->pos);
         entry->target[0] = 0x80000000;

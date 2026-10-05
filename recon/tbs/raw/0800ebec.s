@@ -183,7 +183,7 @@ FieldObject_UpdatePlayerControl:
 .L_0800ed38:
 	adds r0, r7, #0
 	mov r1, r11
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ee14
 	ldr r3, [r7, #8]
@@ -206,7 +206,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ee14
 	ldr r3, [r7, #8]
@@ -222,7 +222,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ee14
 	ldr r3, [r7, #8]
@@ -239,7 +239,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ee14
 	ldr r3, [r7, #8]
@@ -255,7 +255,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ee14
 	ldr r1, [sp, #4]
@@ -336,7 +336,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	mov r1, r8
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ef24
 	ldr r3, [r7, #8]
@@ -355,7 +355,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ef24
 	ldr r3, [r7, #8]
@@ -372,7 +372,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ef24
 	ldr r3, [r7, #8]
@@ -390,7 +390,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800ef24
 	ldr r3, [r7, #8]
@@ -407,7 +407,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	beq .L_0800ef44
 .L_0800ef24:
@@ -528,7 +528,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800f092
 	ldr r3, [r6]
@@ -546,12 +546,12 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800f092
 	mov r0, r8
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800f092
 	ldr r3, [r6]
@@ -568,7 +568,7 @@ FieldObject_UpdatePlayerControl:
 	bl Vector_AddPolarOffset
 	mov r0, r8
 	adds r1, r5, #0
-	bl Func_080120dc
+	bl Map_CheckObjectStep
 	cmp r0, #0
 	bne .L_0800f092
 	movs r0, #128

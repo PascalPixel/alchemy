@@ -3,42 +3,38 @@
    and serving the requests the field work block's slots post, until one
    posts an exit code.
 
-   2026-10-05 deep finisher 12: alchemy diff 106 (965 listing instructions,
-   963 here); every other difference is a pool offset shifted by the two
-   missing pool words below.  Earlier history: 724 at the start of this wave
-   (the old "2424 of 2428 bytes" was a size count, not a match).
-   What moved it, in order (each measured alone on top of the previous):
-   - result starts at 0 (s32 result = 0): the fill word is then stored from
-     result's register r7, as the reference does: 724 -> 686.
-   - every game state cell is a plain field access, no (*(T *)&field) cell
-     macros: the leader's address is then a hoisted pseudo that spills and is
-     rematerialised from the pool at each use, and the base takes r9:
-     686 -> 425 (leader), -> 250 (and 0x238), -> 108 with entrance too
-     (entrance plain was worse before the later fixes; turn is neutral).
-   - the loop's exit check uses its own block variable (next), separate from
-     the first check's code: 250 -> 240.
-   - found and the trigger tile share the function's mode variable, as the
-     reference keeps both in r6 with mode: 240 -> 223; found is
-     Find(...) != 0, which gives the reference's flag sequence exactly.
-   - Vitals_Ratio(1, max_hp) after hp = 1 keeps the numerator and the 0x4000
-     clamp in one register with the vitals in r6: 229 -> 198.
-   - the loop exit sets result before clearing exit: 108 -> 106.
-   Tried and worse: wrapping the body in do { } while (0) (651 from 724, but
-   it stops loop.c moving the exit block out of the loop); the hp and pp
-   ratios written out in place with block variables (258);
-   Vitals_Ratio(vitals->hp, ...) instead of 1 (137 at 106); Map_ShowWorldMap
-   declared with u16, s32, u8 or no prototype, or passed a local s16 (no
-   change).
+   2026-10-05 deep finisher 14: alchemy diff 10 (965 listing instructions,
+   965 here).  What moved it from 106:
+   - the two "spilled halfword constants" were link-time ids, loaded from
+     the literal pool as every id is: Map_ShowWorldMap is passed
+     ResourceId_WorldMapPicture (resource row 27; its body ignores it and
+     loads the same id itself) and the map compare is against
+     SceneId_Clear (row 1, the world map's map number; EFFECT35.C compares
+     the map with scene ids the same way): 106 -> 74 -> 12.
+   - the hp ratio is (vitals->hp << 14) / vitals->max_hp written out, with
+     the clamp an inline that sets 0x4000 in its own branch: CSE keeps the
+     shift of the stored 1 (a word constant costs more than a shift) and
+     reuses it as the clamped 0x4000; with the 0x4000 in its own block the
+     shift's register lives in two blocks, so loop.c no longer hoists it as
+     the constant 0x4000, and the 1 is the loop's hoisted constant,
+     rematerialised by reload (movs r1, #1).  The numerator is evaluated
+     before max_hp is loaded, as reload's register order shows: 12 -> 10.
+     Tried: Vitals_Ratio(vitals->hp, max) with either clamp (43, 64: the
+     inline evaluates max_hp before the shift), the clamp written out in
+     place (29, 87: the compare then uses the shift's register), the
+     inline taking field pointers (38).
    Remaining:
-   (1) the map compare: the reference compares with a pooled 1 (a spilled
-       halfword constant pseudo, like the busy = 1 stores) and stores the
-       perspective flag from a fresh 1; here CSE reuses the loaded map value.
-   (2) Map_ShowWorldMap is passed a pooled 27 (again a spilled halfword
-       constant); here movs r0, #27.  The adopted Map_ShowWorldMap takes no
-       argument, so the argument's source is unknown.
-   (3) the hp ratio's numerator: the reference shifts a register holding 1
-       (movs r1, #1; lsls r5, r1, #14), the spilled hoisted 1 that also
-       stores hp; here the constant 0x4000 is built as 128 << 7. */
+   (1) the map is loaded into r2 here, r0 in the reference (cmp r2, r3).
+   (2) sched2 order after Owner_GetStateFar: here movs r1, #1 and the
+       shift come before the hp store and the numerator copy after the
+       max_hp load; the reference stores hp first, then shifts, then copies.
+
+   Earlier history (deep finisher 12, 724 -> 106): result starts at 0; plain
+   game state field accesses (no cell macros); the loop's exit check uses its
+   own block variable; found and the trigger tile share the mode variable;
+   the loop exit sets result before clearing exit.  Tried and worse:
+   wrapping the body in do { } while (0); Map_ShowWorldMap declared with
+   u16, s32, u8 or no prototype (no change). */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "ITEMGIFT.H"
@@ -46,6 +42,8 @@
 #include "DMA.H"
 #include "GAME_STATE.H"
 #include "RAM_BUFFER.H"
+#include "RESOURCE_IDS.H"
+#include "SCENE_IDS.H"
 
 struct FieldActor {
     u8 unknown_00[6];
@@ -186,7 +184,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void);
 void FieldObject_PlaceSceneActors(void);
 void Djinn_ResolvePendingEvent();
 void BattleFx_ScheduleCallbackWhenValue24cSet(void);
-void Map_ShowWorldMap(s16 slot);
+void Map_ShowWorldMap(s32 picture);
 void BattleFx_RunVisibilityTransition(void);
 void AudioCommand_PlayFar(s32 cue);
 s32 AudioCommand_GetSecondaryStateByteFar(void);
@@ -197,16 +195,16 @@ extern volatile u32 gKeysHeld;
 extern struct MenuCtrl *gMenuCtrlWork;
 extern volatile u8 gDebugMode;
 
-static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
+static __inline__ s32 Vitals_Clamp(s32 ratio)
 {
-    s32 ratio = (value << 14) / max;
-    s32 clamped = 0x4000;
+    s32 clamped;
 
-    if (ratio <= 0x4000) {
+    if (ratio > 0x4000)
+        clamped = 0x4000;
+    else if (ratio < 0)
         clamped = 0;
-        if (ratio >= 0)
-            clamped = ratio;
-    }
+    else
+        clamped = ratio;
     return clamped;
 }
 
@@ -231,7 +229,7 @@ s32 Func_0808c4f8(void)
     gGameState.defeat_entrance = -1;
     Scheduler_ResetTaskTable();
     Djinn_ResolvePendingEvent(0);
-    if ((s16)gGameState.map == 1) {
+    if ((s16)gGameState.map == (s32)&SceneId_Clear) {
         Map_InitializePerspectiveSceneFar();
         gGameState.perspective_scene = 1;
         mode = 3;
@@ -360,10 +358,10 @@ s32 Func_0808c4f8(void)
                         UiText_ShowPositionedMessageAndWaitFar(0x91b, 1);
                         vitals = Owner_GetStateFar(gGameState.selected_actor);
                         vitals->hp = 1;
-                        vitals->hp_ratio = Vitals_Ratio(1, vitals->max_hp);
+                        vitals->hp_ratio = Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);
                         if (vitals->hp_ratio == 0 && vitals->hp != 0)
                             vitals->hp_ratio = 1;
-                        vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
+                        vitals->pp_ratio = Vitals_Clamp((vitals->pp << 14) / vitals->max_pp);
                         if (vitals->pp_ratio == 0 && vitals->pp != 0)
                             vitals->pp_ratio = 1;
                         gGameState.scene = gGameState.saved_scene;
@@ -375,7 +373,7 @@ s32 Func_0808c4f8(void)
                     Battle_ClearObjectFlag5bWhenMode3();
                 } else if (work->event == -888) {
                     Battle_InitializeRenderObject();
-                    Map_ShowWorldMap(27);
+                    Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
                 } else if (work->event == -889) {
                     Battle_InitializeRenderObject();
                     BattleFx_RunVisibilityTransition();

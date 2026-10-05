@@ -12,6 +12,59 @@
  * state 0. Tried: prize before the state store (162), won_prizes[n] (190),
  * -2 (110), a prize pointer (135), save set after work (160).
  */
+/* Measured hint (devices, not kept): pinning coins to any low register
+ * (r0, r1, r2, r4) brings the draft to 40-52, all of it in the coins code
+ * that pin breaks; pinning it to its listed r9 gives 178. So the state-0
+ * cascade is the reload rotation: once a low register is unavailable
+ * there, the prize branch, the bet buttons and the pressed & 1 block all
+ * come out as listed. The source change that does this honestly is still
+ * to be found.
+ */
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 120. The spin's
+ * pos update loop works through a row pointer and adds 8 in two places,
+ * if (row->stop != 0) row->pos += 8; else if ((row->pos & 15) != 8)
+ * row->pos += 8; (jump2 merges the two adds): GCSE then moves the pos
+ * load onto the stop != 0 edge, keeps pos in a register for the 336 test,
+ * and leaves 15 and 336 in the loop, as listed. One || condition with the
+ * pointer gave 165-223 (15 hoisted, the edge block placed before the add).
+ * Remaining: state 0's prize branch (the listing sets r8 = &work->spins
+ * inline before its far jump to build_objects, this draft shares the join
+ * stub; the reload registers of the prize store differ), and state 11's
+ * &work->window, computed before the phase store in the listing.
+ */
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 160. The settled
+ * count adds one in two places, if held, else if stopped on a cell
+ * boundary (jump2 merges the two increments): the extra references put
+ * the count in r1 ahead of the pos offset giv (r0), as listed.
+ * Still open in the spin's pos update loop: the listing keeps i, steps a
+ * row pointer and holds pos in a register through the += 8 (GCSE moves
+ * the load to the stop != 0 edge); the indexed reads here re-read pos for
+ * the 336 test. A row pointer declared inside the held test gives that
+ * loop but for a copy of the pointer and the block order (169); declared
+ * with the loop body 165-223. The state-11 branch computes &work->window
+ * before the phase store in the listing, after it here (phase set first
+ * 168, phase = hits 160).
+ */
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 172. The lever's
+ * height is its own block-local variable instead of y: with y shared by
+ * the cursor objects and the lever the allocator put the cursor x and y
+ * in r6 and r5 and the lever in r5 (listed: r5, r6, r4). The lever in x
+ * gave 206, in cnt 176 (the lever matches but the settled count moves to
+ * r4), in col 184, in all or held 198, in k or i 206, in v 297, in
+ * coins 743. Row pointers in the other row loops (line check 259, pos
+ * update 289 or 235 inside the held test, held markers 226, stop
+ * countdown 251, settled count 241, stop start 278), the settled count
+ * kept in k (230), col or all (331), and declaration order (226) were
+ * tried on top of the cells' row pointer and are no better.
+ */
+/* 2026-10-05 (deep finisher 16): alchemy diff 226 (was 337). The reel
+ * cells loop reads each row through a row pointer, struct ReelRow *row =
+ * &work->row[i], declared in the row loop: the listing keeps that pointer
+ * in r5 and the cell offsets column by column, which the indexed
+ * work->row[i] reads did not give (they left an offset giv and work in two
+ * registers). A pointer stepped with row++ in the for header instead is
+ * worse (264).
+ */
 /* 2026-10-04: column r10 binding trial scored 15310 vs 3720; rejected.
  * Use the existing ReelGame_Run saved-game view from GameState+12 instead
  * of the unresolved gReelSave import. Native palette/data owners unchanged.

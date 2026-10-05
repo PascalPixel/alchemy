@@ -432,7 +432,7 @@ Func_080457d0:
 .L_08045b0c:
 	.4byte 0xffffff00
 .L_08045b10:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08045b14:
 	ldr r0, [sp, #16]
 	movs r7, #0

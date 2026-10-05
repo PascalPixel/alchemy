@@ -1109,7 +1109,7 @@ Func_02000564:
 .L_020089b8:
 	.4byte 0x00003f42
 .L_020089bc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020089c0:
 	.4byte gIoWriteQueue
 .L_020089c4:

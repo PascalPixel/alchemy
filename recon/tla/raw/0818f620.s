@@ -1051,7 +1051,7 @@ Func_0818f620:
 .L_0818fe50:
 	.4byte 0x00000787
 .L_0818fe54:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0818fe58:
 	.4byte IwramClearWords
 .L_0818fe5c:

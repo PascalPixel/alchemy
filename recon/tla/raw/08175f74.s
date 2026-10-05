@@ -72,7 +72,7 @@ Func_08175f74:
 .L_08176000:
 	.4byte gMapCellBuffer
 .L_08176004:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08176008:
 	.4byte Func_08143000
 .L_0817600c:
@@ -4565,7 +4565,7 @@ Func_08175f74:
 	ldr r2, [r3, #24]
 	b .L_081782b0
 .L_081782a0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081782a4:
 	.4byte 0x0063ffff
 .L_081782a8:
@@ -5032,7 +5032,7 @@ Func_08175f74:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08178658:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817865c:
 	.4byte 0xffffc000
 .L_08178660:

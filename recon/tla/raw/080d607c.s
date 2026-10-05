@@ -475,7 +475,7 @@ Func_080d607c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d63fc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080d6400:
 	.4byte Data_080f08b0
 .L_080d6404:

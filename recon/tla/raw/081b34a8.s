@@ -287,7 +287,7 @@ Func_081b34a8:
 .L_081b36d4:
 	.4byte 0x00003f44
 .L_081b36d8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081b36dc:
 	strh r3, [r2]
 	ldr r3, .L_081b3714

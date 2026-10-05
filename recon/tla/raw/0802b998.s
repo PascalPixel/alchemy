@@ -413,7 +413,7 @@ Func_0802b998:
 .L_0802bcf8:
 	.4byte gFrameCount
 .L_0802bcfc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0802bd00:
 	.4byte Func_0802c240
 .L_0802bd04:

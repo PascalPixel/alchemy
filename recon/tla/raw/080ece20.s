@@ -90,7 +90,7 @@ Func_080ece20:
 .L_080ecec0:
 	.4byte 0x00000023
 .L_080ecec4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080ecec8:
 	lsrs r5, r5, #19
 	strh r2, [r3, #4]

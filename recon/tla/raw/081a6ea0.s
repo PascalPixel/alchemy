@@ -164,7 +164,7 @@ Func_081a6ea0:
 .L_081a6fe4:
 	.4byte 0x00000000
 .L_081a6fe8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a6fec:
 	subs r6, #1
 	strh r2, [r3, #2]
@@ -336,7 +336,7 @@ Func_081a6ea0:
 	cmp r0, #0
 	bne .L_081a7172
 	movs r0, #120
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	b .L_081a7172
 .L_081a715e:
 	movs r0, #0

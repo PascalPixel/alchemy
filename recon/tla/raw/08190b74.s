@@ -179,7 +179,7 @@ Func_08190b74:
 .L_08190cdc:
 	.4byte 0x0000001f
 .L_08190ce0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08190ce4:
 	.4byte IwramFillWords
 .L_08190ce8:
@@ -610,7 +610,7 @@ Func_08190b74:
 .L_08191040:
 	.4byte 0x00000072
 .L_08191044:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08191048:
 	.4byte 0x3f3f3f3f
 .L_0819104c:
@@ -1211,6 +1211,6 @@ Func_08190b74:
 .L_08191524:
 	.4byte Data_081991a4
 .L_08191528:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0819152c:
 	.4byte Func_08143000

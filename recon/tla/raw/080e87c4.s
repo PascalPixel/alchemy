@@ -216,7 +216,7 @@ Func_080e87c4:
 .L_080e8984:
 	.4byte 0x06002000
 .L_080e8988:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080e898c:
 	.4byte gCpuLoadDisplayEnabled
 .L_080e8990:

@@ -92,7 +92,7 @@ Func_081a71c8:
 .L_081a7290:
 	.4byte gRenderOamEnabled
 .L_081a7294:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a7298:
 	pop {r5, r6, pc}
 	.2byte 0x0000

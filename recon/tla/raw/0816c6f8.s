@@ -277,7 +277,7 @@ Func_0816c6f8:
 .L_0816c924:
 	.4byte Func_08143424
 .L_0816c928:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0816c92c:
 	.4byte IwramCopyWords
 .L_0816c930:
@@ -479,7 +479,7 @@ Func_0816c6f8:
 .L_0816caa8:
 	.4byte IwramClearWords
 .L_0816caac:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0816cab0:
 	mov r1, r11
 	cmp r1, #35
@@ -763,7 +763,7 @@ Func_0816c6f8:
 .L_0816ccd0:
 	.4byte 0x00000040
 .L_0816ccd4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0816ccd8:
 	lsrs r3, r7, #31
 	adds r3, r7, r3

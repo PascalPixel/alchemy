@@ -58,7 +58,7 @@ Func_081a06e0:
 .L_081a0754:
 	.4byte gAutoSleepEnabled
 .L_081a0758:
-	.4byte Func_081a06b4
+	.4byte DisplayScroll_StepPositionEveryFourFrames
 .L_081a075c:
 	.4byte 0x06007800
 .L_081a0760:

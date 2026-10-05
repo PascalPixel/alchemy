@@ -248,7 +248,7 @@ Func_081693d0:
 .L_081695cc:
 	.4byte 0xfffc0000
 .L_081695d0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081695d4:
 	lsls r5, r5, #18
 	str r3, [sp, #36]
@@ -1421,7 +1421,7 @@ Func_081693d0:
 .L_08169ea8:
 	.4byte 0x000000f0
 .L_08169eac:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08169eb0:
 	.4byte 0x05000200
 .L_08169eb4:

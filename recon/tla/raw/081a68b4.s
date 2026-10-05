@@ -28,7 +28,7 @@ Func_081a68b4:
 	b .L_081a6a9c
 .L_081a68e0:
 	ldr r0, [r5, #28]
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	beq .L_081a68ec
 	b .L_081a69f2
@@ -244,7 +244,7 @@ Func_081a68b4:
 	strh r3, [r5, #22]
 .L_081a6a80:
 	ldr r0, [r5, #28]
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a69f2
 	ldrh r3, [r5, #4]
@@ -265,7 +265,7 @@ Func_081a68b4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081a6aa8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a6aac:
 	.4byte 0x840001e0
 .L_081a6ab0:

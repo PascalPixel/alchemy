@@ -119,7 +119,7 @@ Func_0801399c:
 .L_08013a80:
 	.4byte gOamUsage
 .L_08013a84:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08013a88:
 	.4byte Data_030011f8
 .L_08013a8c:

@@ -54,7 +54,7 @@ Func_081a76f8:
 .L_081a7764:
 	.4byte 0x00000021
 .L_081a7768:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a776c:
 	.4byte gMapCellBuffer
 .L_081a7770:
@@ -140,7 +140,7 @@ Func_081a76f8:
 .L_081a7814:
 	.4byte 0x84001000
 .L_081a7818:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a781c:
 	.4byte gFrameCount
 .L_081a7820:

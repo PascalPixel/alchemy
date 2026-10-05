@@ -315,7 +315,7 @@ Func_08186dfc:
 .L_08187070:
 	.4byte gCameraSceneParameters
 .L_08187074:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08187078:
 	.4byte Func_08143114
 .L_0818707c:
@@ -1983,7 +1983,7 @@ Func_08186dfc:
 .L_08187d80:
 	.4byte Data_08199bf9
 .L_08187d84:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08187d88:
 	.4byte Data_08196f08
 .L_08187d8c:

@@ -210,7 +210,7 @@ LuckyDice_Run:
 .L_081ac30c:
 	.4byte 0x84001f00
 .L_081ac310:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081ac314:
 	movs r3, #128
 	ldr r1, .L_081ac350

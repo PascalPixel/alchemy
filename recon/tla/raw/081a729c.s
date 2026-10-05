@@ -59,7 +59,7 @@ Func_081a729c:
 .L_081a7314:
 	.4byte 0x00001440
 .L_081a7318:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a731c:
 	.4byte 0x00000016
 .L_081a7320:
@@ -198,7 +198,7 @@ Func_081a729c:
 .L_081a7430:
 	.4byte 0x06003000
 .L_081a7434:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a7438:
 	.4byte Data_081a8288
 .L_081a743c:

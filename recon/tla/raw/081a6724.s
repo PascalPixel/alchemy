@@ -166,7 +166,7 @@ Func_081a6724:
 	strh r3, [r2]
 	bl Graphics_UpdatePaletteInterpolation
 	movs r0, #60
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a68ac
 	movs r7, #128
@@ -180,20 +180,20 @@ Func_081a6724:
 .L_081a686c:
 	.4byte 0x00001000
 .L_081a6870:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a6874:
 	adds r3, r5, #0
 	orrs r3, r6
 	strh r3, [r7]
 	movs r0, #3
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a68ac
 	adds r5, #1
 	cmp r5, #16
 	ble .L_081a6874
 	movs r0, #150
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a68ac
 	movs r0, #2
@@ -202,7 +202,7 @@ Func_081a6724:
 	movs r0, #40
 	bl Graphics_UpdatePaletteInterpolation
 	movs r0, #60
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	beq .L_081a68b0
 .L_081a68ac:

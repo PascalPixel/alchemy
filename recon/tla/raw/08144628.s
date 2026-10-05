@@ -462,7 +462,7 @@ Func_08144628:
 .L_081449b8:
 	.4byte Data_08197864
 .L_081449bc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081449c0:
 	mvns r3, r3
 	lsrs r3, r3, #31

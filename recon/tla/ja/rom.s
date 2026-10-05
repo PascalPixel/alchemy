@@ -5341,7 +5341,9 @@ Func_081a0020:
 Func_081a0028:
 	.incbin "baserom.gba", 0x001a0028, 0x00000008
 	.section .rom.001a052c, "ax"
-	.incbin "baserom.gba", 0x001a052c, 0x00000d48
+	.incbin "baserom.gba", 0x001a052c, 0x00000188
+	.section .rom.001a06e0, "ax"
+	.incbin "baserom.gba", 0x001a06e0, 0x00000b94
 	.section .rom.001a1280, "ax"
 	.incbin "baserom.gba", 0x001a1280, 0x00004d80
 	.global Resource_FarCall00B
@@ -5361,7 +5363,9 @@ Func_081a6020:
 	.type Func_081a6028, %function
 	.thumb_func
 Func_081a6028:
-	.incbin "baserom.gba", 0x001a6028, 0x00001848
+	.incbin "baserom.gba", 0x001a6028, 0x0000006c
+	.section .rom.001a60c0, "ax"
+	.incbin "baserom.gba", 0x001a60c0, 0x000017b0
 	.section .rom.001a78c0, "ax"
 	.global TitlePalette_UpdateFade
 	.type TitlePalette_UpdateFade, %function

@@ -138,4 +138,4 @@ Func_0819253c:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_08192644:
-	.4byte Data_03001120
+	.4byte gBgScroll

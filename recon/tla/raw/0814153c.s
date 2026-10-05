@@ -289,7 +289,7 @@ Func_0814153c:
 .L_08141788:
 	.4byte 0x00003f44
 .L_0814178c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08141790:
 	.4byte Func_08143000
 .L_08141794:
@@ -1408,7 +1408,7 @@ Func_0814153c:
 .L_08142060:
 	.4byte Func_0813baec
 .L_08142064:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08142068:
 	.4byte IwramFillWords
 .L_0814206c:
@@ -2244,7 +2244,7 @@ Func_0814153c:
 .L_08142710:
 	.4byte 0x00000075
 .L_08142714:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08142718:
 	.4byte gCameraSceneParameters
 .L_0814271c:
@@ -2501,7 +2501,7 @@ Func_0814153c:
 .L_08142928:
 	.4byte 0x06004000
 .L_0814292c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08142930:
 	.4byte gCameraSceneParameters
 .L_08142934:

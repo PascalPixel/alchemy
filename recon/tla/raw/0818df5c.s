@@ -399,7 +399,7 @@ Func_0818df5c:
 .L_0818e294:
 	.4byte Func_0818ddfc
 .L_0818e298:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0818e29c:
 	movs r3, #7
 	mov r0, r10

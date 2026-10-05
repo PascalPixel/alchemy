@@ -67,7 +67,7 @@ Func_081a60c0:
 .L_081a612a:
 	movs r0, #1
 	str r1, [sp, #0]
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	ldr r1, [sp, #0]
 	cmp r0, #0
 	beq .L_081a613c
@@ -87,4 +87,4 @@ Func_081a60c0:
 .L_081a614c:
 	.4byte gFrameCount
 .L_081a6150:
-	.4byte Data_03001120
+	.4byte gBgScroll

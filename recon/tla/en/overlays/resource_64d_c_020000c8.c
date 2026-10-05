@@ -1,6 +1,6 @@
 /*
  * Draft: Func_020000c8, overlay 64D's sliding pass for object id between
- * SCENE_TABLES.C (which now ends with Func_02000054 and Func_0200009c) and
+ * SCENE_TABLES.C (which now ends with VinasuIriguchi_RunActorSparkBurst and VinasuIriguchi_UpdateSparkTrail) and
  * SCENE_EVENTS.C. 31 rows differ: ⚓️ keeps the id in r5, the object in r6
  * and 0 in r8, and builds -96 afresh for each call; this C keeps -96 in a
  * register across the first call. Links as resource_64d .text.x020080c8.
@@ -22,9 +22,9 @@ void Field_EndActorSpriteEffect(s32 mode);
 void Func_020023a4(void *object);
 void Func_0200260c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_020026f4(struct ObjectRuntime *object);
-void Func_020027b0(void);
+void VinasuIriguchi_StopSparks(void);
 
-void Func_0200009c(struct ObjectRuntime *object);
+void VinasuIriguchi_UpdateSparkTrail(struct ObjectRuntime *object);
 
 void Func_020000c8(s32 id)
 {
@@ -32,7 +32,7 @@ void Func_020000c8(s32 id)
     u8 *visible;
 
     Func_020026f4(object);
-    *(void **)object->unknown_6c = Func_0200009c;
+    *(void **)object->unknown_6c = VinasuIriguchi_UpdateSparkTrail;
     visible = &object->unknown_23;
     *visible = 0;
     ObjectMotion_CommitPositionAndActivate(id, 96, -96);
@@ -40,5 +40,5 @@ void Func_020000c8(s32 id)
     *(void **)object->unknown_6c = 0;
     *visible = 1;
     Battle_WaitMode0(30);
-    Func_020027b0();
+    VinasuIriguchi_StopSparks();
 }

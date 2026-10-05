@@ -40,7 +40,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gScenePlacements;
 }
 
-void Func_02000054(void *object)
+void VinasuIriguchi_RunActorSparkBurst(void *object)
 {
     Func_02002a34(8, 0x4084);
     Func_02002a44();
@@ -57,7 +57,7 @@ void Func_02000054(void *object)
 #endif
 }
 
-void Func_0200009c(struct ObjectRuntime *object)
+void VinasuIriguchi_UpdateSparkTrail(struct ObjectRuntime *object)
 {
     Func_0200260c(object, object->x, object->y, object->z);
     if (++object->action % 8 == 0)

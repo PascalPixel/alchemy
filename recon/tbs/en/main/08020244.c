@@ -8,16 +8,56 @@
  * "(Continue from a Sanctum)", "(The data is corrupted)", "(Not cleared
  * yet)"), so they are catalogue names here (MsgSaveNoData, MsgSaveContinue,
  * MsgSaveCorrupted, MsgSaveNotCleared) that the PO files do not give yet.
- * Measured: the four slot searches written as while loops score 519; the
- * loop optimizer then strength-reduces the slot address (adds #64) and reads
- * the flag with ldrsb, which the ROM does not, so the ROM's searches are not
- * loops to loop.c: written with a retry label they score 491, and as a
- * "goto check" with the test at the bottom 489. Remaining: allocation (the
- * ROM keeps slot in r8, the workspace in r7, the count in r6 and work in r5;
- * here slot r6, workspace r8, count r4), the stack order of stamp, render
- * and redraw (ROM sp+4, sp+8, sp+12), and the flag address formed from
- * 0x105c + 20 in the ROM (here a fresh 0x1070 pool word). The Japanese
- * extent is 0x5f8 bytes against 0x580 in the other five editions.
+ * Measured then: while loops 519, retry labels 491, "goto check" 489.
+ *
+ * 2026-10-05 sun deep finisher 9: 491 to 151, in measured steps.
+ * - The main loop names every field through save->summary[slot] (no
+ *   summary pointer there): the ROM keeps slot*64 in r5 across the calls
+ *   and the workspace in r7, slot in r8 (319).
+ * - Each search is "for (i = 0; i < 3 && (wanted); i++)" with the slot
+ *   step in the body: stmt.c rolls the test to the bottom, jump threading
+ *   enters past i < 3, and the default search (no "||") is the one loop.c
+ *   strength-reduces (adds #64), as in the ROM (297). A while loop ending
+ *   in "if (++i > 2) break" ends with a condjump instead (397).
+ * - Declarations in the order status, djinn, counts, summary, cursor,
+ *   redraw, render, stamp give the ROM's frame (sp+32 down to sp+4) (239).
+ * - "result = -2" goes to the common return (the ROM returns through r5),
+ *   and the i == 3 test sits in each branch: jump2 cross-jumps the four
+ *   copies into the ROM's one, entered straight from the searches; a single
+ *   test after the chain keeps a "mode != 0" test the ROM does not have
+ *   (235 with one test, 214 with "i = 0" first, 155 per branch).
+ * - zero is volatile u32 (as in EFFECT32.C): the ROM stores it through r0
+ *   after forming &zero (151).
+ * - The up/down searches are "do { step; if (mode == 0) break; } while
+ *   (wanted)": the ROM's tail is "bne check; b top" (125).
+ * - gKeyState and gKeysRepeat are volatile s32 (as MENU_LIST.H has them):
+ *   the ROM reads gKeyState twice (117).
+ * - "y = 0" after "summary = save->summary", and save declared after list
+ *   (105, found by devsearch, plain).
+ * - The ROM reads the second glow byte as [save + (slot*64 + 0x1074)] + 1,
+ *   the shape extract_bit_field gives a byte bit-field (a probe of eleven
+ *   array and pointer spellings never gave it). SaveSummary's two glow
+ *   bytes are u16 bit-fields palette_glow and palette_glow_sub here, and
+ *   SAVE2.C writes them by those names; all twelve editions still match
+ *   (98). The render work is struct UiRenderWork, render->dirty.
+ * Remaining (98): reload register choice. Reload hands out spill registers
+ * round robin (reload1.c allocate_reload_reg), and from the dirty store on
+ * the list loop (ROM: constant r1, render r3) and the main loop's tests
+ * and constants are rotated by one against the ROM, so one reload more or
+ * fewer happens at that store: a zero-instruction-count shift is needed
+ * between the area constant and the dirty store. Measured with devsearch
+ * (S2 devices, not adopted): a "+r"(status) before the list loop gives 50
+ * (everything from the store on matches, the list loop's setup through the
+ * area constant then rotates the other way) but costs an ldr/str pair;
+ * three "+r" devices in the searches and the up branch give 54; seed 93's
+ * best (45) pinned result to r2, where the ROM has r5. The list loop counts
+ * i from 0 up (loop.c reverses it to the ROM's 2..0 count; same 98);
+ * indexing save->summary[i] with y = i * 16 instead is 158. A probe with a
+ * spilled render pointer gives constant r3, render r1 for both
+ * render->dirty = 1 and *(u8 *)(0xea3 + (u32)render) = 1; the ROM's
+ * constant-first order would need the add's operands reloaded swapped.
+ * The Japanese extent is 0x5f8 bytes against 0x580 in the other five
+ * editions.
  */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -29,8 +69,8 @@
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
 
-extern u32 gKeyState;
-extern u32 gKeysRepeat;
+extern volatile s32 gKeyState;
+extern volatile s32 gKeysRepeat;
 extern char MsgSaveNoData;
 extern char MsgSaveContinue;
 extern char MsgSaveNotCleared;
@@ -58,18 +98,18 @@ void RenderOutput_RedrawSavedRect(void *win);
 
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {
-    struct SaveWorkspace *save;
-    struct SaveSummary *summary;
     struct UiWindow *list;
+    struct SaveWorkspace *save;
     struct UiWindow *status;
     struct UiWindow *djinn;
     struct UiWindow *counts;
+    struct SaveSummary *summary;
     struct RenderOutput *cursor;
-    u8 *render;
-    void *work;
-    u32 stamp;
-    u32 zero;
     s32 redraw;
+    struct UiRenderWork *render;
+    u32 stamp;
+    void *work;
+    volatile u32 zero;
     s32 result;
     s32 i;
     s32 y;
@@ -85,60 +125,54 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     if (slot < 0)
         slot = 0;
     if (mode == 1) {
-        i = 0;
-    retry1:
-        if (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag != 0) {
+        for (i = 0; i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag != 0); i++) {
             slot++;
             if (slot == 3)
                 slot = 0;
-            i++;
-            if (i <= 2)
-                goto retry1;
+        }
+        if (i == 3) {
+            result = -2;
+            goto done;
         }
     } else if (mode == 4) {
-        i = 0;
-    retry2:
-        if (save->summary[slot].level == 0 || (s8)save->summary[slot].flag_count == 0) {
+        for (i = 0; i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].flag_count == 0); i++) {
             slot++;
             if (slot == 3)
                 slot = 0;
-            i++;
-            if (i <= 2)
-                goto retry2;
+        }
+        if (i == 3) {
+            result = -2;
+            goto done;
         }
     } else if (mode == 5) {
-        i = 0;
-    retry3:
-        if (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag == 0) {
+        for (i = 0; i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag == 0); i++) {
             slot++;
             if (slot == 3)
                 slot = 0;
-            i++;
-            if (i <= 2)
-                goto retry3;
+        }
+        if (i == 3) {
+            result = -2;
+            goto done;
         }
     } else if (mode != 0) {
-        i = 0;
-    retry4:
-        if (save->summary[slot].level == 0) {
+        for (i = 0; i < 3 && (save->summary[slot].level == 0); i++) {
             slot++;
             if (slot == 3)
                 slot = 0;
-            i++;
-            if (i <= 2)
-                goto retry4;
+        }
+        if (i == 3) {
+            result = -2;
+            goto done;
         }
     }
-    if (mode != 0 && i == 3)
-        return -2;
 
     zero = 0;
     Dma_Set(&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
     Scheduler_ScheduleCallbackAAfterFrames();
     list = UiWindow_Create(1, 2, 28, 7, 2);
-    y = 0;
     summary = save->summary;
-    for (i = 2; i >= 0; i--, y += 16, summary++) {
+    y = 0;
+    for (i = 0; i < 3; i++, y += 16, summary++) {
         if (summary->level == 0) {
             UiText_DrawResource((s32)&MsgSaveNoData, list, 10, y);
         } else if (summary->frames < stamp) {
@@ -150,7 +184,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
         } else {
             UiText_DrawString(summary->name, list, 12, y);
             UiText_DrawResource(summary->area + RENDER_RESOURCE_BASE, list, 62, y);
-            render[RENDER_DIRTY_OFS] = 1;
+            render->dirty = 1;
         }
     }
     UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
@@ -161,22 +195,21 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
         if (redraw != 0) {
             redraw = 0;
             if (save->summary[slot].level != 0) {
-                summary = &save->summary[slot];
-                PaletteGlow_Update(summary->palette_glow[0], summary->palette_glow[1]);
+                PaletteGlow_Update(save->summary[slot].palette_glow, save->summary[slot].palette_glow_sub);
                 if (status == NULL)
                     status = UiWindow_Create(1, 10, 14, 9, 2);
-                StatusMenu_DrawCharacterSummary(status, summary);
+                StatusMenu_DrawCharacterSummary(status, &save->summary[slot]);
                 WaitFrames(1);
                 if (djinn == NULL)
                     djinn = UiWindow_Create(16, 10, 13, 3, 2);
                 Menu_ClearFirstObjectRowAndScheduleUpdate();
-                ObjectPlacement_CreateGroup(djinn, 0, 0, summary);
+                ObjectPlacement_CreateGroup(djinn, 0, 0, &save->summary[slot]);
                 WaitFrames(1);
-                if ((s8)summary->djinn[0] + (s8)summary->djinn[1] + (s8)summary->djinn[2]
-                        + (s8)summary->djinn[3] != 0) {
+                if ((s8)save->summary[slot].djinn[0] + (s8)save->summary[slot].djinn[1] + (s8)save->summary[slot].djinn[2]
+                        + (s8)save->summary[slot].djinn[3] != 0) {
                     if (counts == NULL)
                         counts = UiWindow_Create(16, 14, 13, 5, 2);
-                    UiText_DrawFourNumbersInRow(counts, summary);
+                    UiText_DrawFourNumbersInRow(counts, &save->summary[slot]);
                     Menu_ClearSecondObjectRowAndScheduleUpdate();
                     Menu_SpawnFourObjectsAtOrigin(counts, 0, 0);
                 } else {
@@ -207,7 +240,9 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
             redraw = 1;
             do {
                 slot = (slot + 2) % 3;
-            } while (mode != 0 && (save->summary[slot].level == 0
+                if (mode == 0)
+                    break;
+            } while ((save->summary[slot].level == 0
                 || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
                 || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
                 || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
@@ -216,7 +251,9 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
             redraw = 1;
             do {
                 slot = (slot + 4) % 3;
-            } while (mode != 0 && (save->summary[slot].level == 0
+                if (mode == 0)
+                    break;
+            } while ((save->summary[slot].level == 0
                 || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
                 || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
                 || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
@@ -240,5 +277,6 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
     Runtime_ReleaseHeapBlock(55);
     PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
     WaitFrames(1);
+done:
     return result;
 }

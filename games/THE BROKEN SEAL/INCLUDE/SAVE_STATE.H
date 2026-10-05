@@ -35,7 +35,8 @@ struct SaveSummary {
     u8 send_flag;
     u8 flag_count;
     u8 has_flag_20;
-    u8 palette_glow[2];
+    u16 palette_glow : 8;
+    u16 palette_glow_sub : 8;
     u16 frames;
     u8 unknown_38[4];
     u32 checksum;

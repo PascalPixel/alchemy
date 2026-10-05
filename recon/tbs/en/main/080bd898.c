@@ -13,7 +13,18 @@
  * and x stores and the r9/fp reloads; (2) phase 11, mov r8, r3 (the 255)
  * follows add r5, sp, #12 in the native, before it here; moving none's
  * assignment into the for initializer or before the loop does not move it.
- * Tried without gain: x = 0 at four other positions. */
+ * Tried without gain: x = 0 at four other positions.
+ * 2026-10-05 fifth wave, finisher 3 (still 50; dd counts 50 over both
+ * functions): the build runs no sched1 for Thumb, so the native order of
+ * phase 5 is sched2 working on reload's registers. x = 0 placed after the
+ * tiles line (61) puts the Tiles symbol in r1 as native but lets move2add
+ * turn the -1 into subs from x's zero in r2; native keeps -1 in r4, so its
+ * -1 is not reloaded next to x's zero. Twelve positions of x = 0 (50 to
+ * 118), with attributes before tile (62), seven spellings of the tiles
+ * sum (all 50, identical code), none as u32/u8, none first or last among
+ * the block's declarations, none | old, old as s32/u32 (all 50); pins of x
+ * to r8 (98), x/entry to r8/r9 (484), none to r8 (76). A 500-iteration
+ * device search (seed 31) found nothing below 50. */
 /* DRAFT: BattleEvent_Playback and its nested tile clearer, covering the
  * native 1948-byte bank: 72-byte clearer and 1876-byte playback, including
  * the jump table, literal pools and alignment. No production adoption.

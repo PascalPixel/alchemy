@@ -603,8 +603,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.o"(.text)
         "*/games/COMMON/SRC/BATTLE/CHECK_STATUS_OR_SPECIAL_ID.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE3.o"(.text)
-        "*/recon/tbs/raw/080bd850.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080bd898.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE11.o"(.text)
         "*/games/COMMON/SRC/BATTLE/PARTY/IS_UNIT_LISTED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/COUNT_VALID_ENTRIES.o"(.text)

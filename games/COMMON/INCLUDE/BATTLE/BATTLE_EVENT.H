@@ -40,7 +40,7 @@ LAYOUT_OFFSET_GUARD(
     count,
     0x144);
 
-/* Opcodes consumed by the event dispatcher at 0x080bd898. */
+/* Opcodes consumed by the event dispatcher, BattleEvent_Playback. */
 enum BattleEventOpcode {
     BATTLE_EVENT_UNIT = 0,
     BATTLE_EVENT_VALUE = 1,

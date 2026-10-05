@@ -1,4 +1,5 @@
 /* 08023e70: differ 145 of 1201. Trial: initializing the search from redraw instead of 0 is unchanged (145). Further trials: a consumed is_used constraint differs 183, empty barriers stay 145, and reversing the detail reset statements differs 150. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
+/* Shared PartyStatusWindow from the verified STATUS.C corpus leaves differ 145. Further search trials: combined initialization, is_used as index, while-loop and memory clobber remain 145; do-while 166; index-first initialization 155; initialization before the clear call 148. Redraw memory/output constraints range 447-722. Clobbering r1 reaches 120 but emits mov-zero rather than the native reload, so it was removed. */
 
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -17,18 +18,6 @@ struct BattleMenuSelection {
 
 LAYOUT_SIZE_GUARD(BattleMenuSelection_Size, struct BattleMenuSelection, 0x104);
 LAYOUT_OFFSET_GUARD(BattleMenuSelection_Selected, struct BattleMenuSelection, selected, 0xe4);
-
-struct PartyStatusWindow {
-    struct UiWindow *window;
-    u16 x;
-    u16 y;
-    u16 width;
-    u16 height;
-    u16 flags;
-};
-
-LAYOUT_SIZE_GUARD(PartyStatusWindow_Size, struct PartyStatusWindow, 16);
-LAYOUT_OFFSET_GUARD(PartyStatusWindow_Flags, struct PartyStatusWindow, flags, 12);
 
 #define MENU_STATE ((struct BattleMenuSelection *)gLinkCountdownWork)
 extern u8 Data_03001e90[];

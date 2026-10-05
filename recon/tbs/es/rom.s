@@ -281,7 +281,10 @@ Data_08033e40:
 	.incbin "baserom.gba", 0x000330d0, 0x00000030
 	.global UiText_IndefiniteArticles
 UiText_IndefiniteArticles:
-	.incbin "baserom.gba", 0x00033100, 0x00000028
+	.incbin "baserom.gba", 0x00033100, 0x00000020
+	.global UiText_ItemPossessives
+UiText_ItemPossessives:
+	.incbin "baserom.gba", 0x00033120, 0x00000008
 	.global UiSprite_CursorBobOffsets
 UiSprite_CursorBobOffsets:
 	.incbin "baserom.gba", 0x00033128, 0x00000050

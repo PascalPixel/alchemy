@@ -55,6 +55,18 @@ struct CursorSprite {
 
 #define MENU_SPRITE_SIZE_16 0x40000000
 
+struct PartyStatusWindow {
+    struct UiWindow *window;
+    u16 x;
+    u16 y;
+    u16 width;
+    u16 height;
+    u16 flags;
+};
+
+LAYOUT_SIZE_GUARD(PartyStatusWindow_Size, struct PartyStatusWindow, 16);
+LAYOUT_OFFSET_GUARD(PartyStatusWindow_Flags, struct PartyStatusWindow, flags, 12);
+
 struct MenuPoint {
     s32 x;
     s32 y;

@@ -1302,7 +1302,9 @@ Func_0803ce64:
 	.type Func_0803d020, %function
 	.thumb_func
 Func_0803d020:
-	.incbin "baserom.gba", 0x0003d080, 0x000002d0
+	.incbin "baserom.gba", 0x0003d080, 0x00000158
+	.section .rom.0003d224, "ax"
+	.incbin "baserom.gba", 0x0003d224, 0x0000012c
 	.section .rom.0003d350, "ax"
 	.global Localization_LookupEntryId
 	.type Localization_LookupEntryId, %function
@@ -1761,13 +1763,14 @@ RenderResource_LoadFrame:
 	.section .rom.00045188, "ax"
 	.incbin "baserom.gba", 0x00045188, 0x00000150
 	.section .rom.00045346, "ax"
-	.incbin "baserom.gba", 0x00045346, 0x00000076
-	.section .rom.000453bc, "ax"
-	.global Func_08045330
-	.type Func_08045330, %function
+	.incbin "baserom.gba", 0x00045346, 0x00000002
+	.global Graphics_MergeShiftedTileRows
+	.type Graphics_MergeShiftedTileRows, %function
 	.thumb_func
-Func_08045330:
-	.incbin "baserom.gba", 0x000453bc, 0x000000a0
+Graphics_MergeShiftedTileRows:
+	.incbin "baserom.gba", 0x00045348, 0x00000074
+	.section .rom.00045408, "ax"
+	.incbin "baserom.gba", 0x00045408, 0x00000054
 	.section .rom.000455b2, "ax"
 	.incbin "baserom.gba", 0x000455b2, 0x0000002a
 	.section .rom.000455f0, "ax"
@@ -1889,7 +1892,10 @@ RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x0005c360, 0x00003590
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
-	.incbin "baserom.gba", 0x0005f8f0, 0x00000138
+	.incbin "baserom.gba", 0x0005f8f0, 0x000000f8
+	.global gRomShiftedTilePair
+gRomShiftedTilePair:
+	.incbin "baserom.gba", 0x0005f9e8, 0x00000040
 	.global Graphics_ExpandNibbleTable
 Graphics_ExpandNibbleTable:
 	.incbin "baserom.gba", 0x0005fa28, 0x00000040

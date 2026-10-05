@@ -366,8 +366,8 @@ Data_0805f6e0:
 	.global Data_0805f700
 Data_0805f700:
 	.incbin "baserom.gba", 0x0005f700, 0x00000030
-	.global Data_0805f730
-Data_0805f730:
+	.global gRomShiftedTilePair
+gRomShiftedTilePair:
 	.incbin "baserom.gba", 0x0005f730, 0x00000040
 	.global Graphics_ExpandNibbleTable
 Graphics_ExpandNibbleTable:

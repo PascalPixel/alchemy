@@ -1,13 +1,15 @@
 #include "TYPES.H"
-#include "SCENE.H"
-#include "RESOURCE.H"
-extern u8 Data_03001e40[];
+#include "FRAME.H"
 
-/* graphics/tile/merge_shifted_tile_rows.c */
+extern u8 gRomShiftedTilePair[];
 
+void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift);
+
+/* Merges the ROM tile pair into offset, shifted two or three pixels in
+   opposite directions by a phase that steps every four frames. */
 void Link_DrawShiftedTilePair(s32 offset)
 {
-    s32 phase = (*(u32 *)((u32)&Data_03001e40) >> 2) & 3;
+    s32 phase = (gFrameCount >> 2) & 3;
 
     if (phase > 2) {
         phase = 2;

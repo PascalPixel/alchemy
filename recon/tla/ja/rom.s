@@ -4111,16 +4111,16 @@ BattleEffect_InitializeSharedScene:
 BattleFx_PrepareBufferInterpolation:
 	.incbin "baserom.gba", 0x000dc340, 0x0000008c
 	.section .rom.000dc3cc, "ax"
-	.global Func_080dc410
-	.type Func_080dc410, %function
+	.global BattleFx_LoadActionEffectResources
+	.type BattleFx_LoadActionEffectResources, %function
 	.thumb_func
-Func_080dc410:
+BattleFx_LoadActionEffectResources:
 	.incbin "baserom.gba", 0x000dc3cc, 0x0000021c
 	.section .rom.000dc5e8, "ax"
-	.global Func_080dc62c
-	.type Func_080dc62c, %function
+	.global BattleFx_SetupObjectPair
+	.type BattleFx_SetupObjectPair, %function
 	.thumb_func
-Func_080dc62c:
+BattleFx_SetupObjectPair:
 	.incbin "baserom.gba", 0x000dc5e8, 0x000000ac
 	.section .rom.000dc694, "ax"
 	.global Func_080dc6d8
@@ -4129,16 +4129,16 @@ Func_080dc62c:
 Func_080dc6d8:
 	.incbin "baserom.gba", 0x000dc694, 0x000000f4
 	.section .rom.000dc788, "ax"
-	.global Func_080dc7cc
-	.type Func_080dc7cc, %function
+	.global EffectRuntime_StopCurrentObject
+	.type EffectRuntime_StopCurrentObject, %function
 	.thumb_func
-Func_080dc7cc:
+EffectRuntime_StopCurrentObject:
 	.incbin "baserom.gba", 0x000dc788, 0x0000001c
 	.section .rom.000dc7a4, "ax"
-	.global Func_080dc7e8
-	.type Func_080dc7e8, %function
+	.global BattleEffect_CleanupSceneObjects
+	.type BattleEffect_CleanupSceneObjects, %function
 	.thumb_func
-Func_080dc7e8:
+BattleEffect_CleanupSceneObjects:
 	.incbin "baserom.gba", 0x000dc7a4, 0x00000190
 	.section .rom.000dc934, "ax"
 	.global Func_080dc978

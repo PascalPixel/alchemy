@@ -185,7 +185,7 @@ BattleFx_Run:
 	adds r1, r5, #0
 	movs r3, #24
 	ldrsh r0, [r6, r3]
-	bl Func_080dc62c
+	bl BattleFx_SetupObjectPair
 	adds r0, r5, #0
 	bl Func_080e011c
 	adds r0, r5, #0

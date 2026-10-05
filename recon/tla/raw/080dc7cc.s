@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dc7cc
+	.global EffectRuntime_StopCurrentObject
 	.thumb_func
-Func_080dc7cc:
+EffectRuntime_StopCurrentObject:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

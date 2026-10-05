@@ -436,7 +436,7 @@ Func_080ce61c:
 .L_080ce9b6:
 	mov r0, r9
 	movs r1, #0
-	bl Func_080dc410
+	bl BattleFx_LoadActionEffectResources
 	movs r1, #192
 	ldr r0, [sp, #12]
 	lsls r1, r1, #4
@@ -506,7 +506,7 @@ Func_080ce61c:
 .L_080cea3e:
 	bl EventRuntime_GetControlledOwner
 	mov r1, r10
-	bl Func_080dc62c
+	bl BattleFx_SetupObjectPair
 	bl Func_080dc6d8
 	adds r1, r7, #0
 	ldr r0, [sp, #8]
@@ -527,7 +527,7 @@ Func_080ce61c:
 .L_080cea74:
 	bl BattleFx_Run
 .L_080cea78:
-	bl Func_080dc7cc
+	bl EffectRuntime_StopCurrentObject
 	ldr r1, [sp, #12]
 	movs r2, #211
 	lsls r2, r2, #4
@@ -572,7 +572,7 @@ Func_080ce61c:
 	adds r3, r0, r1
 	movs r2, #0
 	strb r2, [r3]
-	bl Func_080dc7e8
+	bl BattleEffect_CleanupSceneObjects
 	adds r0, r5, #0
 	bl GameFlag_ClearBit
 	movs r0, #66

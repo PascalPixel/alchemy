@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080dc62c
+	.global BattleFx_SetupObjectPair
 	.thumb_func
-Func_080dc62c:
+BattleFx_SetupObjectPair:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18

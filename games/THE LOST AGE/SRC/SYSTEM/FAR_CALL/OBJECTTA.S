@@ -132,19 +132,19 @@ Field_DispatchTypeHandlerFar:
 	.global Func_080c84a0
 	.thumb_func
 Func_080c84a0:
-	overlay_veneer Func_080dc410
+	overlay_veneer BattleFx_LoadActionEffectResources
 	.global Func_080c84a8
 	.thumb_func
 Func_080c84a8:
-	overlay_veneer Func_080dc62c
+	overlay_veneer BattleFx_SetupObjectPair
 	.global Func_080c84b0
 	.thumb_func
 Func_080c84b0:
-	overlay_veneer Func_080dc7cc
+	overlay_veneer EffectRuntime_StopCurrentObject
 	.global Func_080c84b8
 	.thumb_func
 Func_080c84b8:
-	overlay_veneer Func_080dc7e8
+	overlay_veneer BattleEffect_CleanupSceneObjects
 	.global Func_080c84c0
 	.thumb_func
 Func_080c84c0:

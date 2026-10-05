@@ -439,7 +439,7 @@ Func_080dd054:
 	ldrsh r2, [r3, r4]
 	bl EventRuntime_RunPendingEvent
 .L_080dd3ec:
-	bl Func_080dc7cc
+	bl EffectRuntime_StopCurrentObject
 	ldr r0, [sp, #24]
 	cmp r0, #1
 	bne .L_080dd40a

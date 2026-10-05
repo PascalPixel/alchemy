@@ -1,4 +1,17 @@
 /*
+ * 2026-10-05 (deep finisher 8): alchemy diff 349 (was 395). The glyph
+ * advance is a width variable w set in each arm (8, 3, the table, 1) and
+ * added once, which gives the listing's shared add r8, r3 and its c - 32
+ * in r3 (355); in the pack loop the source steps back before the
+ * destination (349). Tried and worse: x += 8 kept apart with w for the
+ * rest (356), w = 1 as the default (358); while ((c = *script++) != 0)
+ * or code read first (377-379); source declared first, dest = source or
+ * source = dest, the source step before the store, a separate dest++,
+ * pointer arithmetic in u32 steps (349-389). Still open in the pack loop:
+ * the listing keeps the source in r5 (the canvas reload) and the
+ * destination in the copy r0, here the reverse, and the row counter is r9
+ * there, lr here.
+ *
  * Draft (2026-10-05, wave 3): rewritten from the listing in place of the
  * machine-translated draft. Normalized difference 315 of 402 instructions
  * (alchemy diff counts pool and branch offsets too and reads higher). The
@@ -50,6 +63,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 column)
     u32 c;
     u32 code;
     u32 count;
+    u32 w;
     /* FAKEMATCH: x pinned to r8, as the native allocates it. */
     register s32 x asm("r8");
 
@@ -129,13 +143,14 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 column)
                     dest += 248;
                 }
                 if (code == 0xF01D || code == 0xF01F)
-                    x += 8;
+                    w = 8;
                 else if (code == 0xF01E)
-                    x += 3;
+                    w = 3;
                 else if (c > 31)
-                    x += UiText_GlyphWidths[c - 32];
+                    w = UiText_GlyphWidths[c - 32];
                 else
-                    x += 1;
+                    w = 1;
+                x += w;
             }
         }
     }
@@ -161,8 +176,8 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 column)
                 *dest++ = (a << 4) >> 16 | b << 16;
                 source += 2;
             }
-            dest = (u32 *)((u8 *)dest - count * 4 + 0x100);
             source = (u32 *)((u8 *)source - count * 8 + 0x100);
+            dest = (u32 *)((u8 *)dest - count * 4 + 0x100);
         }
     }
     if (count != 0) {

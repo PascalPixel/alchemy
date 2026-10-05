@@ -456,12 +456,6 @@ NameEntry_KeyboardTilemap:
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x00072ee4, 0x0000411c
-	.section .rom.00078bf0, "ax"
-	.global Owner_RefreshClassActions
-	.type Owner_RefreshClassActions, %function
-	.thumb_func
-Owner_RefreshClassActions:
-	.incbin "baserom.gba", 0x00078bf0, 0x00000238
 	.section .rom.0007a828, "ax"
 	.global Character_ElementGroupTable
 Character_ElementGroupTable:
@@ -869,12 +863,6 @@ Inn_PriceMultipliers:
 	.incbin "baserom.gba", 0x000b5204, 0x00000008
 	.section .rom.000b5218, "ax"
 	.incbin "baserom.gba", 0x000b5218, 0x00000040
-	.section .rom.000b8c34, "ax"
-	.global BattlePres_RunUnitAction
-	.type BattlePres_RunUnitAction, %function
-	.thumb_func
-BattlePres_RunUnitAction:
-	.incbin "baserom.gba", 0x000b8c34, 0x0000019c
 	.section .rom.000c2a22, "ax"
 	.incbin "baserom.gba", 0x000c2a22, 0x00000006
 	.global BattleParty_CenterOrderOffsets

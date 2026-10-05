@@ -730,20 +730,20 @@ void RunEventScript01(void)
 {
     u32 i;
     struct FieldActor *record;
-    u8 *work;
-    s32 addr_0200affd;
-    s32 addr_0200c0e4;
-    s32 addr_0200c12c;
+    struct EventWork *work;
+    s32 update;
+    s32 celebrate;
+    s32 party;
 
     Engine_EventBegin();
     Actor_SetPosition(8, 0x1480000, 0x580000);
     Actor_SetPosition(9, 0x1480000, 0x580000);
     Engine_ActorSetAnimation(8, 0);
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(work + 0x1c0) = 0x100;
-    *(s32 *)(work + 0x1c8) = 40;
+    work = gEventWork;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transition_frames = 40;
     Engine_EventOpenScreen();
-    Engine_EventWaitForScreen(); /* main:0808a370 */
+    Engine_EventWaitForScreen();
     Engine_EventWait(20);
     record = Object_GetById(0);
     if (record != 0) {
@@ -773,12 +773,12 @@ void RunEventScript01(void)
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-    Event_OpenMessage(ACTOR_IVAN, 0); /* main:0808a178 */
+    Event_OpenMessage(ACTOR_IVAN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     } else {
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
-        bump_step(1);
+        Event_SkipMessages(1);
     }
     Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -811,12 +811,12 @@ void RunEventScript01(void)
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
     Audio_PlayCue(103);
-    addr_0200affd = (s32)SceneActor_SetActor8ModeByCounterBit;
-    Call2(Engine_TaskAddCallback, addr_0200affd, 0xc80); /* main:080000d0 */
-    addr_0200c0e4 = (s32)ArutinYama_CelebrateScript;
-    Engine_ActorEnableActionCallback(9, addr_0200c0e4);
-    Object_SetActionCallbackAndRefreshById(8, addr_0200c0e4);
-    Engine_TaskRemoveCallback(addr_0200affd); /* main:080000d8 */
+    update = (s32)SceneActor_SetActor8ModeByCounterBit;
+    Call2(Engine_TaskAddCallback, update, 0xc80);
+    celebrate = (s32)ArutinYama_CelebrateScript;
+    Engine_ActorEnableActionCallback(9, celebrate);
+    Object_SetActionCallbackAndRefreshById(8, celebrate);
+    Engine_TaskRemoveCallback(update);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Engine_EventWait(20);
@@ -838,14 +838,14 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(ACTOR_IVAN, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     Engine_EventWait(20);
-    addr_0200c12c = (s32)ArutinYama_PartyScript;
-    Engine_ActorEnableActionCallback(ACTOR_GERALD, addr_0200c12c);
-    Engine_ActorEnableActionCallback(2, addr_0200c12c);
-    Object_SetActionCallbackAndRefreshById(3, addr_0200c12c);
+    party = (s32)ArutinYama_PartyScript;
+    Engine_ActorEnableActionCallback(ACTOR_GERALD, party);
+    Engine_ActorEnableActionCallback(2, party);
+    Object_SetActionCallbackAndRefreshById(3, party);
     Engine_EventWait(20);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 16;
+    gEventWork->transition_frames = 16;
     GameFlag_Set(0x909);
     Engine_EventEnd();
 }

@@ -1038,6 +1038,8 @@
     "*/recon/tla/de/rom.o"(.rom.000ecb0a)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SHRINK_OBJECT_SCALE_UNTIL_HALF.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000eccf8)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/AGE_AND_CUE.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.000ed020)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/OBJECT_PAUSE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000ed35c)
     "*/games/COMMON/SRC/BATTLE/EFFECT/FILTER_OBJECT_ID.o"(.text)

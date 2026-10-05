@@ -4321,7 +4321,10 @@ Func_080cd91c:
 	.section .rom.000e8afe, "ax"
 	.incbin "baserom.gba", 0x000e8afe, 0x000001ca
 	.section .rom.000e8cec, "ax"
-	.incbin "baserom.gba", 0x000e8cec, 0x000005f4
+	.incbin "baserom.gba", 0x000e8cec, 0x00000304
+	.section .rom.000e9014, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000e9014, 0x000002cc
 	.section .rom.000e9350, "ax"
 	.global Func_080e035c
 	.type Func_080e035c, %function

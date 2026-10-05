@@ -1530,7 +1530,7 @@
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SHRINK_OBJECT_SCALE_UNTIL_HALF.o"(.text)
         "*/recon/tla/raw/080dfcf8.o"(.text)
         "*/recon/tla/raw/080dfd00.o"(.text)
-        "*/recon/tla/raw/080dfffc.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/AGE_AND_CUE.o"(.text)
         "*/recon/tla/raw/080e0020.o"(.text)
         "*/recon/tla/raw/080e011c.o"(.text)
         "*/recon/tla/raw/080e0134.o"(.text)

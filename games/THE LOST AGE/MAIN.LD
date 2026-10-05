@@ -959,6 +959,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000dfac6)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SHRINK_OBJECT_SCALE_UNTIL_HALF.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000dfcb4)
+    "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/AGE_AND_CUE.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000dffdc)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/OBJECT_PAUSE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000e0318)
     "*/games/COMMON/SRC/BATTLE/EFFECT/FILTER_OBJECT_ID.o"(.text)

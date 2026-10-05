@@ -363,4 +363,4 @@ Func_080dfd00:
 .L_080dfff4:
 	.4byte Func_080dfb88
 .L_080dfff8:
-	.4byte Func_080dfffc
+	.4byte BattleFx_AgeAndCueAtEighty

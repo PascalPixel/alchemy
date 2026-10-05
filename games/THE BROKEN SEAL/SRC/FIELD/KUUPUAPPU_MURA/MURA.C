@@ -286,7 +286,7 @@ void KuupuappuMura_SayFarewellToIvan(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetFlags947And29dc(void)
+void KuupuappuMura_InspectWell(void)
 {
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);

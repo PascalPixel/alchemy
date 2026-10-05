@@ -105,25 +105,17 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gImiruMuraEntrancesOther;
 }
 
-/* The whole four-byte owner. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/* The eight-byte owner includes its one pool word. */
 u8 *SceneData_GetTableA990(void)
 {
     return (u8 *)ImiruMura_SceneTable;
 }
 
-/*
- * The actors placed in Imil. The second area's table is prepared, then
- * patched in place once flag 0x881 is set: the overlay image is writable.
- * The coordinates are written as shifts, which is how a 16.16 whole number
- * is built here. The word at +0x4c is set only on this path and never read
- * back, so its meaning is unverified.
- */
+/* The second area's actor table is updated in place once flag 0x881 is set. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     u8 *script;
@@ -766,7 +758,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_FaceDirection(8, 0x3000, 20);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 10);
     Engine_ActorEnableActionCallback(9, tbl);
-    /* SceneState_StoreTable96adToWork at 0x020016c8. */
+
     SceneState_StoreTable96adToWork();
     Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 40);

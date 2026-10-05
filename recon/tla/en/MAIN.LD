@@ -2012,7 +2012,6 @@
         "*/games/THE LOST AGE/SRC/BATTLE/MOTION/MOTION2.o"(.text)
         "*/recon/tla/raw/0811b9fc.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RESET_BATTLE_OBJECT_RECORD_GROUPS.o"(.text)
-        "*/recon/tla/raw/0811bc98.o"(.text)
         "*/recon/tla/raw/0811bcec.o"(.text)
         "*/recon/tla/raw/0811bd10.o"(.text)
         "*/recon/tla/raw/0811bd50.o"(.text)

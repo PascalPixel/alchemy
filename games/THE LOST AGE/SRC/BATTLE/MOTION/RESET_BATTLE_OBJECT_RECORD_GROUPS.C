@@ -8,7 +8,8 @@ void Func_0811a5fc(s32 object_id);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 void ResetMotionRecordGroup(void *owner);
 s32 ActivateBattleObjectSlot(s32 object_id);
-void *BattleMotion_DestroyAllSlotObjects(void);
+void BattleMotion_DestroyAllSlotObjects(void);
+void Object_Destroy(void *object);
 
 void ResetBattleObjectRecordGroups(struct MotionObject *object)
 {
@@ -62,4 +63,28 @@ s32 ActivateBattleObjectSlot(s32 object_id)
     slot = BattleObject_FindSlot(object_id);
     slot->active = 1;
     return 0;
+}
+
+/* ☀️'s: destroys the object of every active unit slot and clears the
+   slot. */
+void BattleMotion_DestroyAllSlotObjects(void)
+{
+    s32 no;
+    s32 i;
+    struct BattleObjectSlot *slot;
+
+    i = 0;
+    do {
+        no = i + 0x78;
+        if (i <= 7) {
+            no = i;
+        }
+        slot = BattleObject_FindSlot(no);
+        if ((slot != NULL) && (slot->active != 0)) {
+            Object_Destroy(slot->object);
+            slot->object = NULL;
+            slot->active = 0;
+        }
+        i += 1;
+    } while (i <= 0xD);
 }

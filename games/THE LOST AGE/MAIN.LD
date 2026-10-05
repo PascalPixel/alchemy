@@ -1148,7 +1148,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/MOTION2.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011b9f8)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RESET_BATTLE_OBJECT_RECORD_GROUPS.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0011bc94)
+    "*/recon/tla/ja/rom.o"(.rom.0011bce8)
     "*/recon/tla/ja/rom.o"(.rom.0011bd4c)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/GET_MOTION_RECORD.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011bdd8)

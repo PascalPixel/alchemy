@@ -44,7 +44,7 @@ void Event_CallWithLastActiveObjectId(struct ScenePlacement *table)
     Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }
 
-void Event_SetWorkWord10(s32 value)
+void Event_SetSceneEvents(s32 value)
 {
     struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
 

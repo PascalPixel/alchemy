@@ -149,7 +149,7 @@ Object_SetTargetAndCallback:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
@@ -193,7 +193,7 @@ Engine_CameraWaitForMove:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global Engine_LeaderCheckAhead
 	.thumb_func
 Engine_LeaderCheckAhead:

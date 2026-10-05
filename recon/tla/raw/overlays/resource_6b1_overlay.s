@@ -891,8 +891,8 @@ Func_02000740:
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_02008846
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02000408
 	movs r0, #129
 	lsls r0, r0, #1

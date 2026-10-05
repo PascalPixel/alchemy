@@ -137,7 +137,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetWork448To521AndRun(s32 object)
+void HaidiaBabi_CloseScreenAndExit(s32 object)
 {
     if (Engine_GameFlagIsSet(0x834) != 0) {
         BattleFx_SetBlock30ValuesMaxZero();
@@ -151,67 +151,67 @@ void SceneState_SetWork448To521AndRun(s32 object)
 void SceneState_SetValue123Mode1(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(1);
+    HaidiaBabi_CloseScreenAndExit(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(2);
+    HaidiaBabi_CloseScreenAndExit(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(3);
+    HaidiaBabi_CloseScreenAndExit(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(4);
+    HaidiaBabi_CloseScreenAndExit(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
     Engine_AudioPlayCue(0x80);
-    SceneState_SetWork448To521AndRun(5);
+    HaidiaBabi_CloseScreenAndExit(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(6);
+    HaidiaBabi_CloseScreenAndExit(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
     Engine_AudioPlayCue(0x80);
-    SceneState_SetWork448To521AndRun(7);
+    HaidiaBabi_CloseScreenAndExit(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
     Engine_AudioPlayCue(0x81);
-    SceneState_SetWork448To521AndRun(8);
+    HaidiaBabi_CloseScreenAndExit(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
     Engine_AudioPlayCue(0x81);
-    SceneState_SetWork448To521AndRun(9);
+    HaidiaBabi_CloseScreenAndExit(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(10);
+    HaidiaBabi_CloseScreenAndExit(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
     Engine_AudioPlayCue(0x7B);
-    SceneState_SetWork448To521AndRun(11);
+    HaidiaBabi_CloseScreenAndExit(11);
 }
 
 /* The entry hook: how the house is set up for the entrance and the story. */

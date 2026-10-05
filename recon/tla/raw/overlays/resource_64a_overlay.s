@@ -404,8 +404,8 @@ Func_02000328:
 	adds r3, r3, r2
 	mov r1, r10
 	str r1, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r3, .L_020086ac
 	movs r2, #241
 	lsls r2, r2, #1
@@ -456,7 +456,7 @@ Func_02000328:
 .L_020083cc:
 	movs r0, #60
 	bl Battle_WaitMode0
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
@@ -1231,8 +1231,8 @@ Func_02000328:
 	bl Battle_WaitMode0
 	movs r0, #78
 	bl Func_02002408
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #60
 	bl Battle_WaitMode0
 .L_02008a2c:

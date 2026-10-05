@@ -5,7 +5,7 @@
 
 /* Turns the object by a step that grows by 0x50 each frame until it
    reaches 0x1000, on top of a constant 0x1000. */
-void BattleFx_AdvanceObjectField6WithRamp(struct ObjectRuntime *object)
+void BattleFx_AdvanceAngleWithRamp(struct ObjectRuntime *object)
 {
     u32 step;
 

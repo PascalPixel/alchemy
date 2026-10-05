@@ -1000,8 +1000,8 @@ Func_02000b2c:
 	adds r2, r1, r3
 	movs r3, #60
 	str r3, [r2]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Engine_EventWait
 	movs r1, #3
@@ -2485,8 +2485,8 @@ Func_02000d30:
 	adds r2, r1, r3
 	subs r3, #172
 	str r3, [r2]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #22
 	bl Func_02001c54
 	add sp, #8

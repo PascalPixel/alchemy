@@ -1058,8 +1058,8 @@ Func_02000184:
 	lsls r5, r5, #1
 	movs r3, #10
 	str r3, [r1, r5]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #128
 	movs r1, #0
 	lsls r0, r0, #9
@@ -1190,8 +1190,8 @@ Func_02000a98:
 	bl Object_SetModeById
 	movs r0, #123
 	bl Func_02001f10
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r2, #170
 	lsls r2, r2, #1
 	add r9, r2
@@ -1351,8 +1351,8 @@ Func_02000be8:
 	bl Func_02001d40
 	movs r0, #1
 	bl WaitFrames
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r5, .L_02008d34
 	movs r3, #133
 	lsls r3, r3, #2
@@ -2016,8 +2016,8 @@ Func_020010d4:
 	adds r3, r3, r2
 	lsls r5, r5, #1
 	str r5, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #40
 	bl Battle_WaitMode0
 	movs r2, #10
@@ -2533,8 +2533,8 @@ Func_020010d4:
 	adds r3, r3, r2
 	adds r2, #86
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_SetBit
@@ -2645,8 +2645,8 @@ Func_02001710:
 	subs r2, #172
 	str r2, [r3]
 	mov r8, r2
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #40
 	bl Battle_WaitMode0
 	movs r1, #208

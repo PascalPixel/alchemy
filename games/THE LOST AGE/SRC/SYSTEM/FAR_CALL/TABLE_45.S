@@ -12,7 +12,7 @@ Func_08118058:
 	.global Func_08118060
 	.thumb_func
 Func_08118060:
-	overlay_veneer Battle_GetEntryField2HighBits
+	overlay_veneer Battle_GetSpriteFlagHighBits
 	.global Func_08118068
 	.thumb_func
 Func_08118068:

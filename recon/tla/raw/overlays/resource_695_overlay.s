@@ -991,8 +991,8 @@ Func_0200087c:
 	movs r0, #0
 	movs r1, #39
 	bl Object_SetModeById
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #2
 	movs r0, #21
 	bl Motion_SetVarCbAndRefresh
@@ -1185,8 +1185,8 @@ Func_02000a24:
 	movs r0, #21
 	movs r1, #8
 	bl Object_SetModeById
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #2
 	movs r0, #20
 	bl Motion_SetVarCbAndRefresh
@@ -1531,8 +1531,8 @@ Func_02000d84:
 	movs r2, #0
 	ldrsh r0, [r3, r2]
 	bl Func_02001198
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001088
 	pop {r5, r6, pc}
 .L_02008e00:

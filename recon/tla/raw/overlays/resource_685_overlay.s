@@ -216,8 +216,8 @@ Func_0200016c:
 	bl Battle_WaitMode0
 	adds r0, r7, #0
 	bl Func_02003574
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02003464
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
@@ -2714,8 +2714,8 @@ Func_02001774:
 	ldr r0, [r5]
 	movs r1, #0
 	bl Object_AttachWorkTargetToObject
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #132
@@ -2747,8 +2747,8 @@ Func_02001774:
 	adds r2, r1, r3
 	adds r3, #93
 	str r3, [r2]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r2, #242
 	lsls r2, r2, #1
 	adds r3, r6, r2
@@ -2809,8 +2809,8 @@ Func_02001868:
 	lsls r2, r2, #16
 	lsls r0, r0, #18
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r2, #5

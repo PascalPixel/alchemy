@@ -63,11 +63,11 @@ void MapAnimation_Start(void)
 void Map_ShowBg1FromBuffer(void)
 {
     u32 mode = 0x501;
-    u16 *bg1cnt = (u16 *)0x0400000a;
+    u16 *bg1cnt = (u16 *)&REG_BG1CNT;
 
     do { *bg1cnt = mode; } while (0); /* FAKEMATCH: the wrap orders the store before the DMA operands. */
     Dma_Set((const void *)gBgTileBuffer, (void *)0x06008000, 0x84002000,
-            (volatile u32 *)((u8 *)bg1cnt + 0xca));
+            REG_DMA3);
 }
 
 /* Decodes the area's palette (keeping the backdrop colour) and its four tile

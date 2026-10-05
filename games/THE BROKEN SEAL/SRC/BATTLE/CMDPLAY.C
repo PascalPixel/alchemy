@@ -334,12 +334,12 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 flags);
 s32 BattleActor_ResetRuntimeFields(s32 unit_id);
 s32 Object_InitializeMode(struct AnimationObject *record, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-s32 BattleMotion_GetSlotField14(s32 unit_id);
+s32 BattleMotion_GetSlotPalette(s32 unit_id);
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value);
 s32 BattlePres_SetActorModeAndAction(s32 unit_id);
 void QueueIoWriteDelay6(u32 address, u32 value);
 s32 BattleLayout_HighlightPartyPanelsFar(u16 *selection);
-u32 Summon_GetEntryByte3Kind(s32 class_id);
+u32 Summon_GetLayoutKind(s32 class_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
 void render_animated_tile_frameFar(u8 *record, u32 frame);
 
@@ -464,7 +464,7 @@ void BattleEvent_Playback(void)
 
                             BattleUnit_BuildStatusFlags(state->queue.operands[i], GetBattleObjectSlot(state->queue.operands[i]));
                             slot = GetBattleObjectSlot(state->queue.operands[i]);
-                            BattleMotion_SetRecordChildValues(slot->object, BattleMotion_GetSlotField14(state->queue.operands[i]));
+                            BattleMotion_SetRecordChildValues(slot->object, BattleMotion_GetSlotPalette(state->queue.operands[i]));
                             BattlePres_SetActorModeAndAction(state->queue.operands[i]);
                         }
                         break;
@@ -521,7 +521,7 @@ void BattleEvent_Playback(void)
 
                     selection[0] = 0xff;
                     slot = GetBattleObjectSlot(state->actor_id);
-                    BattleMotion_SetRecordChildValues(slot->object, BattleMotion_GetSlotField14(state->actor_id));
+                    BattleMotion_SetRecordChildValues(slot->object, BattleMotion_GetSlotPalette(state->actor_id));
                 } else {
                     selection[0] = state->actor_id;
                     selection[1] = 0xff;
@@ -539,7 +539,7 @@ void BattleEvent_Playback(void)
                 s32 frame = 6;
 
                 if (state->timer == 0 && state->flags != 0) {
-                    s32 kind = Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
+                    s32 kind = Summon_GetLayoutKind(Owner_GetStateFar(state->actor_id)->class_id);
 
                     if (kind >= 0) {
                         kind--;
@@ -552,7 +552,7 @@ void BattleEvent_Playback(void)
                 if (state->timer > 0x41d)
                     state->timer = 0;
                 if (state->timer == 0) {
-                    s32 kind = Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
+                    s32 kind = Summon_GetLayoutKind(Owner_GetStateFar(state->actor_id)->class_id);
 
                     if (kind >= 0)
                         AudioCommand_PlayFar(kind + 146);

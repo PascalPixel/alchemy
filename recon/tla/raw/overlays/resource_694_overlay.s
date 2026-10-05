@@ -437,8 +437,8 @@ Func_02000328:
 	lsls r3, r3, #1
 	mov r1, r8
 	str r3, [r2, r1]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02000178
 	bl Func_02004284
 	movs r0, #40
@@ -3539,8 +3539,8 @@ Func_02001c5c:
 	bl WaitFrames
 	movs r0, #123
 	bl Func_020042b4
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	add sp, #8
 	pop {r3, r5, r6}
 	mov r8, r3
@@ -3611,8 +3611,8 @@ Func_02001d50:
 	bl Func_02004204
 	movs r0, #78
 	bl Func_020042b4
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r5, .L_0200a174
 	movs r2, #133
 	lsls r2, r2, #2
@@ -6771,8 +6771,8 @@ Func_02003a8c:
 	bl Func_0200406c
 	movs r0, #0
 	bl Func_02004204
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	cmp r5, #0
 	ble .L_0200bbbc
 	movs r2, #156
@@ -6796,8 +6796,8 @@ Func_02003a8c:
 	bl Func_0200406c
 	movs r0, #0
 	bl Func_02004204
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	cmp r5, #0
 	ble .L_0200bbbc
 	movs r1, #156
@@ -6858,8 +6858,8 @@ Func_02003a8c:
 	bl Func_0200406c
 	movs r0, #0
 	bl Func_02004204
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r3, #0

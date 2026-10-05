@@ -34,10 +34,10 @@ BattleFx_FinishAction:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global Event_SetValue170
+	.global Event_SetExitRequest
 	.thumb_func
-Event_SetValue170:
-	overlay_veneer Event_SetValue170Far
+Event_SetExitRequest:
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetPhaseRequest
 	.thumb_func
 BattleFx_SetPhaseRequest:

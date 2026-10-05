@@ -2462,10 +2462,10 @@ Event_CallWithLastActiveObjectIdFar:
 	.thumb_func
 Scene_AssignViewFlagsFar:
 	.incbin "baserom.gba", 0x000d1038, 0x00000008
-	.global Event_SetWorkWord10Far
-	.type Event_SetWorkWord10Far, %function
+	.global Event_SetSceneEventsFar
+	.type Event_SetSceneEventsFar, %function
 	.thumb_func
-Event_SetWorkWord10Far:
+Event_SetSceneEventsFar:
 	.incbin "baserom.gba", 0x000d1040, 0x00000008
 	.global Event_PrepareObjectAndApplyValueFar
 	.type Event_PrepareObjectAndApplyValueFar, %function
@@ -2815,15 +2815,15 @@ Func_080c8260:
 	.thumb_func
 Event_DelayEffectFramesFar:
 	.incbin "baserom.gba", 0x000d13b8, 0x00000008
-	.global Event_ClearStatus1c6Far
-	.type Event_ClearStatus1c6Far, %function
+	.global Event_FinishScreenTransitionFar
+	.type Event_FinishScreenTransitionFar, %function
 	.thumb_func
-Event_ClearStatus1c6Far:
+Event_FinishScreenTransitionFar:
 	.incbin "baserom.gba", 0x000d13c0, 0x00000008
-	.global Event_WaitValue1c8FramesFar
-	.type Event_WaitValue1c8FramesFar, %function
+	.global Event_WaitTransitionFramesFar
+	.type Event_WaitTransitionFramesFar, %function
 	.thumb_func
-Event_WaitValue1c8FramesFar:
+Event_WaitTransitionFramesFar:
 	.incbin "baserom.gba", 0x000d13c8, 0x00000008
 	.global Func_080c83c0
 	.type Func_080c83c0, %function

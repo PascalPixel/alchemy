@@ -2345,8 +2345,8 @@ Func_0200129c:
 	adds r3, r3, r0
 	adds r2, #255
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #3
 	bl Func_02003f7c
 	movs r0, #160
@@ -2947,8 +2947,8 @@ Func_020014e0:
 	adds r3, r3, r2
 	adds r2, #85
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02003fbc
 	movs r0, #3
 	bl Func_02003f7c
@@ -3119,8 +3119,8 @@ Func_02001a68:
 	adds r3, r3, r2
 	adds r2, #85
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02003fbc
 	movs r0, #4
 	bl Func_02003f7c
@@ -4569,8 +4569,8 @@ Func_0200267c:
 	bl WaitFrames
 	movs r0, #123
 	bl Func_02003ffc
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_02003f7c
@@ -4595,8 +4595,8 @@ Func_0200274c:
 	bl Func_020034ec
 	movs r0, #123
 	bl Func_02003ffc
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r3, #170
 	lsls r3, r3, #1
 	adds r5, r5, r3
@@ -4669,8 +4669,8 @@ Func_02002780:
 	bl WaitFrames
 	movs r0, #123
 	bl Func_02003ffc
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r2, #170
 	lsls r2, r2, #1
 	adds r3, r7, r2
@@ -4740,8 +4740,8 @@ Func_02002830:
 	mov r1, r11
 	adds r3, #85
 	str r3, [r2, r1]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #153
 	movs r2, #152
 	lsls r1, r1, #8
@@ -4909,7 +4909,7 @@ Func_020029c4:
 	adds r3, r3, r2
 	adds r2, #85
 	str r2, [r3]
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	b .L_0200aa48
 .L_0200aa3c:
 	.4byte 0x00000000
@@ -4918,7 +4918,7 @@ Func_020029c4:
 .L_0200aa44:
 	.4byte Func_02001278
 .L_0200aa48:
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -6086,13 +6086,13 @@ Func_0200329c:
 .L_0200b3dc:
 	cmp r3, #5
 	beq .L_0200b3fa
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_020034d8
 	b .L_0200b3fa
 .L_0200b3ee:
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_020034d8
 .L_0200b3fa:
 	bl Func_02003e6c
@@ -6431,8 +6431,8 @@ Func_02003620:
 	adds r3, r3, r2
 	adds r2, #93
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #3
 	bl Func_02003f7c
 	pop {r5, pc}

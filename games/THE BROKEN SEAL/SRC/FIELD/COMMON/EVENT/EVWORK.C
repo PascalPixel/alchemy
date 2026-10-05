@@ -8,7 +8,7 @@ s32 WaitFrames(s32);
 
 extern struct EventRuntime *gEventWork;
 
-void Event_SetStatus1c6(void)
+void Event_StartScreenTransition(void)
 {
     struct EventRuntime *runtime = gWork;
 
@@ -16,7 +16,7 @@ void Event_SetStatus1c6(void)
     runtime->status_1c6 = 1;
 }
 
-void Event_ClearStatus1c6(void)
+void Event_FinishScreenTransition(void)
 {
     struct EventRuntime *runtime = gWork;
 
@@ -24,19 +24,19 @@ void Event_ClearStatus1c6(void)
     runtime->status_1c6 = 0;
 }
 
-void Event_WaitValue1c8Frames(void)
+void Event_WaitTransitionFrames(void)
 {
     WaitFrames(gWork->value_1c8);
 }
 
-void Event_SetPairWork1c0(u16 first, u16 second)
+void Event_SetDestination(u16 first, u16 second)
 {
     gWork->value_170 = 999;
     gGameState.scene = first;
     gGameState.entrance = second;
 }
 
-void Event_SetPair1c4AndResetValue170(u16 first, u16 second)
+void Event_SetSavedDestination(u16 first, u16 second)
 {
     struct EventRuntime *state = gEventWork;
     state->value_170 = 999;
@@ -44,7 +44,7 @@ void Event_SetPair1c4AndResetValue170(u16 first, u16 second)
     gGameState.saved_entrance = second;
 }
 
-void Event_SetValue170(u16 value)
+void Event_SetExitRequest(u16 value)
 {
     struct EventRuntime *state = gEventWork;
     state->value_170 = value;

@@ -56,7 +56,7 @@ void Battle_Reset();
 void Battle_WaitMode0();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_CenterOnColumn();
-void Event_SetValue170();
+void Event_SetExitRequest();
 void AudioCommand_Play();
 
 extern u8 MsgFuneTheresNothingWeCanDo[];
@@ -138,17 +138,17 @@ void ObjectGroup_ConfigureChildValue();
 void *ObjectMotion_SetPositionAndReset();
 void ObjectMotion_ResetAndSetPosition();
 void Motion_SetVarCbAndRefresh();
-void Event_SetValue1d8();
+void Event_SetMessageId();
 void Graphics_EnableObjLayerAndCallbacks();
 void ObjectMotion_EnableActionAndSetCallback();
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
-void *Event_SetStatus1c6();
+void *Event_StartScreenTransition();
 void Object_RefreshSelectorById();
 void ObjectMotion_ResetAndSetPositionInMode2();
 void Ui_SetRenderResultFromObject();
-void Event_ClearStatus1c6();
-void Event_WaitValue1c8Frames();
+void Event_FinishScreenTransition();
+void Event_WaitTransitionFrames();
 extern u8 FuneKanpan_DeckEventActions[];
 extern u8 FuneKanpan_CrewScriptB[];
 
@@ -179,8 +179,8 @@ extern u8 FuneKanpan_DeckActionsA[];
 extern u8 FuneKanpan_DeckActionsB[];
 extern u8 FuneKanpan_DeckActionsC[];
 void ObjectDispatch_SetSingleChildFlagsFar(struct FieldActor *object, s32 value);
-void Event_ClearStatus1c6Far();
-void Event_WaitValue1c8FramesFar();
+void Event_FinishScreenTransitionFar();
+void Event_WaitTransitionFramesFar();
 
 extern struct GameState gGameState;
 
@@ -640,7 +640,7 @@ void FuneKanpan_RunDeckStateEvent(void)
     } else {
         AudioCommand_Play(123);
     }
-    Event_SetValue170(p6->touched_trigger);
+    Event_SetExitRequest(p6->touched_trigger);
 }
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -1347,13 +1347,13 @@ void FieldScene_RunShipDeckEventScript(void)
     ObjectGroup_ConfigureChildValue(0, 15);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(0), 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-    Event_SetStatus1c6();
+    Event_StartScreenTransition();
     Call3(ObjectMotion_SetSpeedParameters, 21, 104857, 52428);
     Call3(ObjectMotion_SetPositionAndReset, 21, 242, 692);
     Call3(ObjectMotion_SetPositionAndReset, 21, 196, 678);
     Call3(ObjectMotion_SetPositionAndReset, 21, 182, 654);
     Motion_SetVarCbAndRefresh(21, 2);
-    Event_SetValue1d8((s32)MsgFuneNoUseLate);
+    Event_SetMessageId((s32)MsgFuneNoUseLate);
     FieldScene_RunStepThen10(40981);
     Call3(ObjectMotion_SetSpeedParameters, 0, 157286, 78643);
     Call3(ObjectMotion_ResetAndSetPosition, 0, 154, 609);
@@ -1385,14 +1385,14 @@ void FieldScene_RunShipDeckEventScript(void)
     } while (0);
     Object_RefreshSelectorById(24);
     Battle_WaitMode0(10);
-    Event_ClearStatus1c6();
-    Event_WaitValue1c8Frames();
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
     Battle_WaitMode0(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
     UiText_ShowCenteredMessage((s32)MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
-    Event_SetValue170(12);
+    Event_SetExitRequest(12);
 }
 
 /* Ship deck: place the crew actors, run their action scripts and walk actor
@@ -1605,8 +1605,8 @@ void FieldScene_RunActorSequence(void)
     Call3(Engine_ActorSetSpeed, 29, 0x19999, 0xcccc);
     Object_SetActionCallbackAndRefreshById(29, base5_200c888);
     Engine_EventWait(20);
-    Event_ClearStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_FinishScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     Engine_ActorStop(24);
     Engine_ActorStop(25);
     Engine_ActorStop(26);

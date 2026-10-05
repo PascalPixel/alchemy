@@ -14,7 +14,7 @@ extern const struct SceneRegion gToretoHeyaRegions[];
 extern const u32 gToretoHeyaExits[];
 extern const struct ScenePlacement gToretoHeyaPlacements[];
 
-void Event_SetPairWork1c0(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 extern const struct SceneEvent gToretoHeyaEvents[];
 
@@ -152,7 +152,7 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
     Engine_MapCopyCells(src_x, src_y + 1, 1, 1, dest_x, dest_y);
     Engine_AudioPlayCue(206);
     Engine_EventBegin();
-    Event_SetPairWork1c0((s32)&SceneId_ToretoHeya, entrance);
+    Event_SetDestination((s32)&SceneId_ToretoHeya, entrance);
     Engine_ActorSetAnimation(leader, 27);
     Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
     Call2(Engine_ActorSetAttachedEffect, leader, 0x101);
@@ -591,7 +591,7 @@ s32 ToretoHeya_EnterRoom(void)
         actor->terrain_height = -0xa00000;
         actor->gravity = 0x8000;
         Engine_AudioPlayCue(204);
-        Event_SetPairWork1c0((s32)&SceneId_ToretoHeya, entrance - 10);
+        Event_SetDestination((s32)&SceneId_ToretoHeya, entrance - 10);
         Engine_EventWait(20);
         actor->terrain_id = 2;
         Engine_ActorSetSpritePriority(leader, 3);

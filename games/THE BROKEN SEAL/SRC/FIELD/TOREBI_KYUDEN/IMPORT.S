@@ -181,7 +181,7 @@ Engine_ActorFaceEachOther:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -217,18 +217,18 @@ Engine_CameraWaitForMove:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global DisplayTransition_InitializeBattleEffectStateFar
 	.thumb_func
 DisplayTransition_InitializeBattleEffectStateFar:
 	overlay_veneer Func_0808a300
-	.global Event_SetStatus1c6Far
+	.global Event_StartScreenTransitionFar
 	.thumb_func
-Event_SetStatus1c6Far:
+Event_StartScreenTransitionFar:
 	overlay_veneer Func_0808a360
-	.global Event_WaitValue1c8FramesFar
+	.global Event_WaitTransitionFramesFar
 	.thumb_func
-Event_WaitValue1c8FramesFar:
+Event_WaitTransitionFramesFar:
 	overlay_veneer Func_0808a370
 	.global Engine_ItemShowFound
 	.thumb_func

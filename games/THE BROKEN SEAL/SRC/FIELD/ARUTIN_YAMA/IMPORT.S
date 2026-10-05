@@ -233,7 +233,7 @@ Engine_ObjectSetTargetAndCallback:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -297,11 +297,11 @@ Party_SetFields1ceAnd1d0:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_ItemShowFound
 	.thumb_func
 Engine_ItemShowFound:

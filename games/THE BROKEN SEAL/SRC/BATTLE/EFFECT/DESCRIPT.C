@@ -78,7 +78,7 @@ extern struct ActionDescriptor *BattleAction_FindDescriptor(s32);
 extern struct BattleActionObject *Object_GetById(s32);
 extern s32 BattleFx_GetFlags(s32);
 extern void Battle_Reset(void);
-extern void Event_SetValue1d8(s32);
+extern void Event_SetMessageId(s32);
 extern void BattleEv_RunWait(s32, s32);
 extern void BattleFx_FinishAction(void);
 extern void ObjectDispatch_ApplyValueToChildrenFar(struct BattleActionObject *, s32);
@@ -257,7 +257,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
                 s32 message =
                     (s32)&MsgPonderEllipsis + index * 2 + (random * 2 >> 16);
                 Battle_Reset();
-                Event_SetValue1d8(message);
+                Event_SetMessageId(message);
                 BattleEv_RunWait(id, 0);
                 BattleFx_FinishAction();
                 goto finish;
@@ -290,7 +290,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
         if (descriptor->result < 0x10000) {
             UiWork_SetBusyFlagsFar(used_fallback);
             Battle_Reset();
-            Event_SetValue1d8(descriptor->result);
+            Event_SetMessageId(descriptor->result);
             BattleEv_RunWait(id, 0);
             BattleFx_FinishAction();
         } else {
@@ -334,7 +334,7 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
         if (val != 0) {
             if (val < 0x10000) {
                 Battle_Reset();
-                Event_SetValue1d8(*(s32 **)((u8 *)p + 8));
+                Event_SetMessageId(*(s32 **)((u8 *)p + 8));
                 BattleEv_RunWait(-1, 0);
                 ret = 0;
                 BattleFx_FinishAction();
@@ -364,7 +364,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
         }
         if (desc->result < 0x10000) {
             Battle_Reset();
-            Event_SetValue1d8(desc->result);
+            Event_SetMessageId(desc->result);
             BattleEv_RunWait(-1, 0);
             ret = 0;
             BattleFx_FinishAction();

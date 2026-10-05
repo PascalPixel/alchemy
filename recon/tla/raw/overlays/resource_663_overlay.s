@@ -655,8 +655,8 @@ Func_02000568:
 	bl ObjectMotion_ResetAndSetPositionInMode2
 	movs r0, #5
 	bl Battle_WaitMode0
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r0, [r5]
 	bl ObjectMotion_CommitCurrentPositionAndActivate
 	movs r0, #123
@@ -6931,8 +6931,8 @@ Func_02002ca0:
 	str r5, [sp, #0]
 	str r5, [sp, #4]
 	bl Func_02003b68
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02001f7c
 .L_0200ba66:
 	movs r0, #0

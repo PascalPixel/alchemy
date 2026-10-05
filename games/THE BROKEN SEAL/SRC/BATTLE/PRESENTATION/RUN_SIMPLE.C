@@ -29,7 +29,7 @@ void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 act
 
 void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *work);
 void BattleFx_DispatchModeFar(struct BattlePresentationWork *work);
-u32 Battle_GetEntryField2HighBits(u32 value);
+u32 Battle_GetSpriteFlagHighBits(u32 value);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 s32 BattleActor_SpawnObjectsForList(void *list, s32 mode);
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode);
@@ -95,7 +95,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
         work.actor,
         work.actors[0],
         divisor,
-        Battle_GetEntryField2HighBits(unit->class_id) << 16);
+        Battle_GetSpriteFlagHighBits(unit->class_id) << 16);
     ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.actor)->object, 16);
     GetBattleObjectSlot(work.actors[0]);
 

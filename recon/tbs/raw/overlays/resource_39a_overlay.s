@@ -543,7 +543,7 @@ gImiruFuchinEventsOther:
 gImiruFuchinEvents1:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte SceneState_SetServiceZeroValue06
+	.4byte ImiruFuchin_TurnLeaderAndExit
 	.4byte 0x00000002
 	.4byte 0xffff000a
 	.4byte FieldScene_RunSingleStep

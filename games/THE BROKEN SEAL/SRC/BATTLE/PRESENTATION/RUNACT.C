@@ -22,7 +22,7 @@
 #include "ANIMSPR.H"
 
 void UiWork_ClearValueNameTablesFar(void);
-s32 BattlePres_ShowMessageWhenField38Positive(const struct BattleActionRecord *);
+s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *);
 s32 BattlePres_RunUnitAction(s16 *);
 void BattleMotion_SetupEscapeObject(s32);
 
@@ -152,7 +152,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action)
         break;
     case 3:
         WaitFrames(45);
-        BattlePres_ShowMessageWhenField38Positive(action);
+        BattlePres_ShowDefendMessage(action);
         break;
     case 2:
         WaitFrames(45);
@@ -217,7 +217,7 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action)
     return 0;
 }
 
-s32 BattlePres_ShowMessageWhenField38Positive(const struct BattleActionRecord *action)
+s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action)
 {
     s32 object_id;
     s32 result;

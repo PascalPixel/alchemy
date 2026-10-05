@@ -409,8 +409,8 @@ Func_02000418:
 	adds r3, r3, r4
 	lsls r2, r2, #1
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #204
 	bl Func_02002eec
 	movs r3, #3
@@ -5111,7 +5111,7 @@ Func_02002438:
 	movs r2, #0
 	movs r0, #10
 	bl Func_02002e6c
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #15
 	bl Battle_WaitMode0
 	movs r0, #10

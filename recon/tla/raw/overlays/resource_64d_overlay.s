@@ -324,8 +324,8 @@ Func_0200030c:
 	negs r1, r1
 	lsls r0, r0, #17
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #4
@@ -2929,8 +2929,8 @@ Func_02001c30:
 	adds r3, r3, r2
 	movs r2, #60
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r0, .L_02009fc8

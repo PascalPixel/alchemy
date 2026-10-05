@@ -3,7 +3,7 @@
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 extern OperandFunc Script_OperandHandlerTable[];
 
-void Script_SetOrCompareByte58(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == 0) {
         state->byte_58 = value;
@@ -14,7 +14,7 @@ void Script_SetOrCompareByte58(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte59(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == 0) {
         state->byte_59 = value;
@@ -25,7 +25,7 @@ void Script_SetOrCompareByte59(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte5a(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == 0) {
         state->byte_5a = value;
@@ -36,7 +36,7 @@ void Script_SetOrCompareByte5a(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte5b(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation, s32 value)
 {
     if (operation == 0) {
         state->byte_5b = value;
@@ -47,7 +47,7 @@ void Script_SetOrCompareByte5b(struct ScriptOperands *state, s32 operation, s32 
     }
 }
 
-void Script_SetOrCompareByte5d(struct ScriptOperands *work, s32 operation, s32 value)
+void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation, s32 value)
 {
     s32 result;
 
@@ -123,7 +123,7 @@ void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation, s32 v
     work->comparison_result = result;
 }
 
-void Script_SetOrCompareWord6c(struct ScriptOperands *work, s32 operation, s32 value)
+void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation, s32 value)
 {
     s8 result;
 

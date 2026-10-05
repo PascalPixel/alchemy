@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Event_SetWorkWord10
+	.global Event_SetSceneEvents
 	.thumb_func
-Event_SetWorkWord10:
+Event_SetSceneEvents:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]

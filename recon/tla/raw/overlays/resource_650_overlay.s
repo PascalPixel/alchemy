@@ -610,8 +610,8 @@ Func_02000640:
 	bl Func_02003310
 	movs r0, #123
 	bl Engine_AudioPlayCue
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #3
 	bl Func_020032e8
 	pop {pc}
@@ -1557,7 +1557,7 @@ Func_020016d8:
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #153
 	movs r1, #152
 	lsls r0, r0, #8
@@ -2315,8 +2315,8 @@ Func_020016d8:
 	mov r1, r8
 	movs r2, #80
 	bl ObjectMotion_ArmCallback
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #11
 	bl Func_020032e8
 	pop {r3, r5, r6}
@@ -2430,8 +2430,8 @@ Func_02001ee0:
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #120
 	bl Battle_WaitMode0
 	ldr r0, .L_0200a2e8
@@ -2734,8 +2734,8 @@ Func_02001ee0:
 	adds r3, r3, r2
 	movs r2, #120
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #12
 	bl Func_020032e8
 	add sp, #28
@@ -2850,8 +2850,8 @@ Func_02002304:
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r0, .L_0200a710
@@ -3780,8 +3780,8 @@ Func_02002c64:
 	movs r0, #1
 	bl Task_Wait
 	bl FelixWake_EndStep
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #10
 	bl Task_Wait
 	bl FelixWake_WaitForButton

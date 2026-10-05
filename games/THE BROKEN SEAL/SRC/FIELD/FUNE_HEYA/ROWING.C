@@ -184,7 +184,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain();
 void FuneHeya_PoseSceneActor();
 void ObjectMotion_WaitForAnimationChange();
 void ObjectMotion_ArmCallback();
-void Event_WaitValue1c8FramesFar();
+void Event_WaitTransitionFramesFar();
 void Event_CallWithLastActiveObjectId();
 u8 *Battle_GetWorkObject1e0();
 void FieldScene_CallPairWith10(s32 a, u16 b);
@@ -2176,7 +2176,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
         Engine_EventOpenScreen();
         if (arg != 0) {
-            Event_WaitValue1c8FramesFar();
+            Event_WaitTransitionFramesFar();
         }
         Engine_EventWait(0);
         break;

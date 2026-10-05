@@ -33,7 +33,7 @@ extern u8 MsgLobbyWonToldCountOn[];
 s32 LinkLobby_PartyContains(s32 actor);
 void SerialRuntime_RemoveIrqHandlers(void);
 s32 Sound_LoadPresetParameters(s32 preset);
-s32 Event_SetPairWork1c0(s32 scene, s32 entrance);
+s32 Event_SetDestination(s32 scene, s32 entrance);
 extern u8 MsgLobbyBattleArenaOld[];
 extern u8 MsgLobbyChangeOrderParty[];
 extern u8 MsgLobbyThreeAlliesFight[];
@@ -218,7 +218,7 @@ s32 LinkLobby_StartExchange(void)
     Sound_LoadPresetParameters(2);
     /* FAKEMATCH: the do/while loads the scene number before the 1. */
     do {
-        return Event_SetPairWork1c0((s32)&SceneId_Clear, 1);
+        return Event_SetDestination((s32)&SceneId_Clear, 1);
     } while (0);
 }
 

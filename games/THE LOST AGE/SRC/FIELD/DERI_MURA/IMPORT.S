@@ -155,7 +155,7 @@ Engine_EventCloseScreen:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c83a0
 	.else
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.endif
 	.endif
 	.global Engine_EventWaitDelay
@@ -167,7 +167,7 @@ Engine_EventWaitDelay:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Event_DelayEffectFramesFar
 	.else
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
 	.endif
 	.global Object_SetWideSprite

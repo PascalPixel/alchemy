@@ -273,7 +273,7 @@ ObjectGroup_SetChildValue:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -313,7 +313,7 @@ Engine_EventGetViewCenter:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetPhaseRequest
 	.thumb_func
 BattleFx_SetPhaseRequest:
@@ -333,15 +333,15 @@ Engine_ColorBufferInterpolate:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_ItemShowFound
 	.thumb_func
 Engine_ItemShowFound:

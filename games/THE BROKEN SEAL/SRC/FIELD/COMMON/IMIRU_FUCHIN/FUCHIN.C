@@ -865,7 +865,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 }
 
 /* The service step and the cave's dialogue layouts. */
-void SceneState_SetServiceZeroValue06(void)
+void ImiruFuchin_TurnLeaderAndExit(void)
 {
     struct FieldActor *work;
 

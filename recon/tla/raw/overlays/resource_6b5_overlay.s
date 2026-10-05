@@ -2588,8 +2588,8 @@ Func_0200145c:
 	bl Func_02001a14
 	movs r0, #0
 	bl Func_02001ab4
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #5
 	bl LinkLobby_WriteSlotValue
 	movs r3, #177
@@ -2716,8 +2716,8 @@ Func_0200145c:
 	bl Func_02001a14
 	movs r0, #0
 	bl Func_02001ab4
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #5
 	bl LinkLobby_WriteSlotValue
 	movs r1, #133
@@ -2783,8 +2783,8 @@ Func_0200145c:
 	bl Func_02001a14
 	movs r0, #0
 	bl Func_02001ab4
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #0
 	bl LinkLobby_WriteSlotValue
 	movs r0, #4
@@ -2856,8 +2856,8 @@ Func_0200145c:
 	bl Func_02001a14
 	movs r0, #0
 	bl Func_02001ab4
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #0
 	bl LinkLobby_WriteSlotValue
 	movs r0, #4
@@ -2919,8 +2919,8 @@ Func_0200145c:
 	bl Func_02001a14
 	movs r0, #0
 	bl Func_02001ab4
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #133
 	lsls r1, r1, #2
 	adds r3, r6, r1

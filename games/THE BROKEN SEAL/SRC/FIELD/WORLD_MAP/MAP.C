@@ -19,7 +19,7 @@ enum {
 extern u8 gDebugMode[];
 
 void Scene_RunScene371SequenceA(s32 direction);
-void Event_SetPairWork1c0(s32 a0, s32 a1);
+void Event_SetDestination(s32 a0, s32 a1);
 void PartyInventory_Discard(s32 item);
 void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
 void Map_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3);
@@ -445,10 +445,10 @@ s32 WorldMap_EnterScene(void)
     }
     if (*entrance == 90) {
         Scene_RunScene371SequenceA(0);
-        Event_SetPairWork1c0((s32)&SceneId_MakyuriChojo1, 1);
+        Event_SetDestination((s32)&SceneId_MakyuriChojo1, 1);
     } else if (*entrance == 91) {
         Scene_RunScene371SequenceA(1);
-        Event_SetPairWork1c0((s32)&SceneId_VinasuChojo, 93);
+        Event_SetDestination((s32)&SceneId_VinasuChojo, 93);
     } else if (*entrance == 78) {
         Engine_EventBegin();
         PartyInventory_Discard(242);

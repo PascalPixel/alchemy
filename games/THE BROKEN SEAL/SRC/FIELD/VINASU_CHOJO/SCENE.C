@@ -28,7 +28,7 @@ extern s32 VinasuChojo_TransitionStep;
 extern u8 VinasuChojo_BeamRiseAction[];
 extern u8 VinasuChojo_BeamCloseAction[];
 void Object_SetActionCallbackAndRefreshById();
-void Event_SetPairWork1c0();
+void Event_SetDestination();
 void ObjectTable_Snapshot();
 
 extern u8 MsgVinasuNoooo[];
@@ -654,7 +654,7 @@ void VinasuChojo_RunActorTransition(void)
     Engine_EventWait(30);
     Engine_GameFlagSet(0x11a);
     ObjectTable_Snapshot();
-    Event_SetPairWork1c0((s32)&SceneId_WorldMap, 91);
+    Event_SetDestination((s32)&SceneId_WorldMap, 91);
     {
         /* FAKEMATCH: storing 0x7fff directly reuses the colour's earlier pool entry and moves the literal pool; measured 2026-10-04. */
         s32 white = 0x7fff;

@@ -77,7 +77,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 argum
     }
 }
 
-void ObjectDispatch_SetChildField12(struct DispatchObject *object, u32 value)
+void ObjectDispatch_SetChildSignedValue(struct DispatchObject *object, u32 value)
 {
     if (object != 0 && (object->kind & 0xf) == 1)
         object->target.child->value_12 = value;

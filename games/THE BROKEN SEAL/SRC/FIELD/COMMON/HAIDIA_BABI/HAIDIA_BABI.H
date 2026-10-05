@@ -34,7 +34,7 @@ extern s32 gHaidiaBabiEvents3[];
 extern s32 gHaidiaBabiEvents2[];
 extern s32 gHaidiaBabiEvents[];
 
-void SceneState_SetWork448To521AndRun(s32 exit);
+void HaidiaBabi_CloseScreenAndExit(s32 exit);
 void ActorPresentation_SetTwoSceneCells(void);
 void FieldScene_RunSupplementalSequenceOne();
 void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);

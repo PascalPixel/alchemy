@@ -143,7 +143,7 @@ void Engine_ActorSetAnimation();
 void HaidiaIe_RunScriptScene();
 void Engine_EventOpenScreen();
 void Engine_EventWaitForScreen();
-void Event_SetPair1d4(const void *, s32);
+void Event_SetDefeatDestination(const void *, s32);
 void BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0(const void *, s32);
 struct FieldActor *Battle_GetWorkObject1e0(void);

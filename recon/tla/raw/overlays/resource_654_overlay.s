@@ -985,8 +985,8 @@ Func_02000688:
 	adds r3, r3, r2
 	adds r2, #93
 	str r2, [r3]
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #3
 	bl Func_02003ad8
 	add sp, #8
@@ -1302,8 +1302,8 @@ Func_02000994:
 	adds r3, r3, r2
 	adds r2, #93
 	str r2, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r0, #128
 	movs r1, #128
 	movs r2, #128
@@ -1589,7 +1589,7 @@ Func_02000ce8:
 	adds r3, r3, r2
 	adds r2, #87
 	str r2, [r3]
-	bl Event_SetStatus1c6
+	bl Event_StartScreenTransition
 	movs r0, #128
 	movs r1, #128
 	movs r2, #128
@@ -1755,7 +1755,7 @@ Func_02000e38:
 	adds r3, r3, r2
 	adds r2, #87
 	str r2, [r3]
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 .L_02008f00:
 	adds r5, #1
 	cmp r5, #99

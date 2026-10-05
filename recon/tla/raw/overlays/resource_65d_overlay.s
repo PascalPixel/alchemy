@@ -125,8 +125,8 @@ Func_0200009c:
 	movs r3, #0
 	ldrsh r0, [r7, r3]
 	bl Func_020006b8
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_02000650
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

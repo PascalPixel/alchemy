@@ -10,7 +10,7 @@
 
 extern struct FieldStepWork *gEventWork;
 
-void Event_SetValue1d8(s16 value)
+void Event_SetMessageId(s16 value)
 {
     gWork->message = value;
 }

@@ -23,7 +23,7 @@ extern u8 gTitleEvents[];
 
 extern u32 gKeyState;
 extern u32 gKeysHeld;
-void Event_SetPairWork1c0(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 void RuntimeDispatch_NoOpHook(s32 resource);
 void Blend_SetDarkenTarget16(s32 target);
 void Blend_WaitForTransition(void);
@@ -129,7 +129,7 @@ s32 Title_Run(void)
                     break;
             } while (gKeyState == 0);
         }
-        Event_SetPairWork1c0((s32)&SceneId_Title, 2);
+        Event_SetDestination((s32)&SceneId_Title, 2);
         return 0;
     }
     if (gGameState.entrance == 9) {
@@ -140,7 +140,7 @@ s32 Title_Run(void)
         Blend_WaitForTransition();
         Engine_EventWait(240);
         Engine_AudioPlayCue(19);
-        Event_SetPairWork1c0((s32)&SceneId_Clear, 2);
+        Event_SetDestination((s32)&SceneId_Clear, 2);
         return 0;
     }
     RuntimeDispatch_NoOpHook((s32)&ResourceId_PaletteFarCalls);
@@ -167,12 +167,12 @@ s32 Title_Run(void)
         }
         goto menu;
     chosen:
-        Event_SetPairWork1c0((s32)&SceneId_Clear, 1);
+        Event_SetDestination((s32)&SceneId_Clear, 1);
     } else {
         Engine_AudioPlayCue(64);
         PaletteFar_Entry00(0);
         Party_ApplyStatePreset();
-        Event_SetPairWork1c0((s32)&SceneId_HaidiaMura, 16);
+        Event_SetDestination((s32)&SceneId_HaidiaMura, 16);
         Engine_AudioPlayCue(17);
     }
     Engine_AudioPlayCue(17);

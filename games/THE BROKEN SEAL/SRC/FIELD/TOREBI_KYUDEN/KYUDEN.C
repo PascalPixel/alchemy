@@ -398,8 +398,8 @@ void FieldScene_RunScene3b8SequenceB(void)
     Actor_FaceDirection(3, 0, 0);
     Actor_FaceDirection(2, 0xe000, 0);
     gEventWork->transition_frames = 60;
-    Event_SetStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_StartScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     Event_Wait(20);
     gEventWork->transition_frames = 24;
     Actor_SetSpeed(3, 0x10000, 0x8000);
@@ -971,8 +971,8 @@ void FieldScene_RunBranchingActorSequence(void)
     SetHalf((u16 *)(work + 0x52a), 0);
     SetHalf((u16 *)(work + 0x534), 0x1f1f);
     SetHalf((u16 *)(work + 0x536), 1);
-    Event_SetStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_StartScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     for (step = 1; step <= 5; step++) {
         Task_Wait(3);
         *(u16 *)(work + 0x52a) = step;
@@ -1217,8 +1217,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Audio_PlayCue(30);
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiWaitingCompanions);
-    Event_SetStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_StartScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
     Camera_WaitForMove();
     Event_Wait(20);

@@ -630,8 +630,8 @@ Func_020004cc:
 	movs r2, #0
 	ldrsh r0, [r3, r2]
 	bl Func_020052c4
-	bl Event_ClearStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
 	bl Func_020051b4
 	pop {r5, r6, r7, pc}
 .L_02008578:
@@ -1338,8 +1338,8 @@ Func_02000aa8:
 	lsls r2, r2, #1
 	adds r3, r3, r2
 	str r7, [r3]
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	b .L_02008bc0
 .L_02008b5e:
 	movs r3, #192
@@ -1457,7 +1457,7 @@ Func_02000be4:
 .L_02008c4a:
 	movs r0, #1
 	bl Func_020052d4
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	bl Func_0200538c
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1548,8 +1548,8 @@ Func_02000be4:
 	movs r0, #34
 	adds r0, #255
 	bl GameFlag_ClearBit
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r2, [r5, #108]
 	movs r3, #0
 	str r3, [r2, r6]
@@ -1600,7 +1600,7 @@ Func_02000d30:
 .L_02008d7e:
 	movs r0, #1
 	bl Func_020052d4
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	bl Func_0200538c
 	bl Func_020003d8
 	movs r0, #128
@@ -1689,7 +1689,7 @@ Func_02000e00:
 	bl Func_0200536c
 	movs r0, #1
 	bl Func_020052d4
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	pop {pc}
 .L_02008e50:
 	.4byte Func_02000a68

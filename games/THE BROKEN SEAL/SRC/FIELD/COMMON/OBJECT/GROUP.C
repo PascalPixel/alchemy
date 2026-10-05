@@ -6,7 +6,7 @@
 #include "ANIMSPR.H"
 
 void *GetMotionRecordFar(void *, s32);
-s32 BattleMotion_GetSlotField14Far(s32);
+s32 BattleMotion_GetSlotPaletteFar(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 extern struct BattleEffectWork *gBattleFxWork;
 
@@ -43,7 +43,7 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                         if (object != NULL && object != (struct AnimationEntry *)set->effect_entry
                             && object != (struct AnimationEntry *)set->animation_entry) {
                             if (object_value == 0)
-                                object->param = BattleMotion_GetSlotField14Far(set_id);
+                                object->param = BattleMotion_GetSlotPaletteFar(set_id);
                             else
                                 object->param = object_value;
                             object->frame = 0xff;

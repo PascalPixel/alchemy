@@ -22,11 +22,11 @@ s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
 struct FieldObject *Owner_GetStateFar(s32);
 void Owner_RecalculateRatiosFar(s32);
-void Event_ClearStatus1c6Far(void);
-void Event_WaitValue1c8FramesFar(void);
+void Event_FinishScreenTransitionFar(void);
+void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
-void Event_SetStatus1c6Far(void);
+void Event_StartScreenTransitionFar(void);
 
 extern s8 Inn_PriceMultipliers[];
 

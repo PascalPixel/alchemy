@@ -213,7 +213,7 @@ Engine_ObjectSetTargetAndCallback:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
@@ -261,7 +261,7 @@ Battle_GetWorkObject1e0:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global Engine_ColorBufferApplyTarget
 	.thumb_func
 Engine_ColorBufferApplyTarget:
@@ -277,15 +277,15 @@ Engine_ColorBufferInterpolate:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_StartScreenTransitionFar
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_FinishScreenTransitionFar
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Event_WaitTransitionFramesFar
 	.global ObjectTable_Get
 	.thumb_func
 ObjectTable_Get:

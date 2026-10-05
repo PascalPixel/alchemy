@@ -40,10 +40,10 @@ extern s8 Data_080b4ab2[];
 extern struct EventRuntime *gEventWork;
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
-void Event_ClearStatus1c6Far(void);
-void Event_WaitValue1c8FramesFar(void);
+void Event_FinishScreenTransitionFar(void);
+void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
-void Event_SetStatus1c6Far(void);
+void Event_StartScreenTransitionFar(void);
 extern s8 Inn_PriceMultipliers[];
 
 enum InnMessageId {
@@ -266,13 +266,13 @@ void Inn_PlaySleep(s32 room_price)
     state->value_1c0 = 0x209;
     state->value_1c8 = 60;
     WaitFrames(20);
-    Event_ClearStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_FinishScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     Audio_PlayCue(86);
     AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
-    Event_SetStatus1c6Far();
-    Event_WaitValue1c8FramesFar();
+    Event_StartScreenTransitionFar();
+    Event_WaitTransitionFramesFar();
     WaitFrames(30);
     gEventWork->value_1c8 = 16;
 }

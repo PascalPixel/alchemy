@@ -917,8 +917,8 @@ Func_020007d8:
 	bl Func_0200120c
 	movs r0, #0
 	bl Func_020012e4
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	ldr r5, .L_02008980
 	movs r3, #133
 	lsls r3, r3, #2
@@ -1065,7 +1065,7 @@ Func_020007d8:
 	lsls r1, r1, #2
 	lsls r2, r2, #1
 	bl ObjectMotion_SetPositionAndReset
-	bl Event_ClearStatus1c6
+	bl Event_FinishScreenTransition
 	movs r0, #123
 	bl Func_0200131c
 	movs r1, #128
@@ -1074,7 +1074,7 @@ Func_020007d8:
 	lsls r1, r1, #2
 	lsls r2, r2, #1
 	bl ObjectMotion_SetPositionAndReset
-	bl Event_WaitValue1c8Frames
+	bl Event_WaitTransitionFrames
 	movs r0, #1
 	bl Func_020012bc
 	pop {r5, pc}

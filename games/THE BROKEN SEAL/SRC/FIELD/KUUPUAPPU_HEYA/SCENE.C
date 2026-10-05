@@ -88,7 +88,7 @@ void Engine_ActorSetAttachedEffect();
 extern u8 MsgKuupuappuVaultCutFree[];
 extern u8 MsgKuupuappuVaultThievesCaught[];
 void Party_SetFields1ceAnd1d0();
-void Event_SetPair1d4();
+void Event_SetDefeatDestination();
 void BattleFx_SetWeightedResult();
 
 enum PromptMessage {
@@ -247,7 +247,7 @@ void SceneActor_SetModeZeroAndValue(s32 actor, s32 frames);
 void SceneActor_SetPairZeroAndValue(s32 actor, s32 other, s32 frames);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 actor, s32 animation, s32 frames);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void Event_SetPair1d4(s32 scene, s32 entrance);
+void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 first, s32 second);
 extern u8 KuupuappuHeya_ActionTable[];
 u8 *Owner_GetState(s32 owner);
@@ -918,7 +918,7 @@ void FieldScene_RunVaultClosingSequence(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     base = (s32)&SceneId_KuupuappuHeya;
     Party_SetFields1ceAnd1d0(base, 17);
-    Event_SetPair1d4(base, 16);
+    Event_SetDefeatDestination(base, 16);
     state = (u8 *)&gGameState;
     /* FAKEMATCH: the do-while puts the state's address in a block of its own, so it is loaded ahead of the byte's offset. */
     do {
@@ -1677,7 +1677,7 @@ void KuupuappuHeya_RunVaultEvent(void)
     Event_ShowMessage(10, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
-    Event_SetPair1d4((s32)&SceneId_KuupuappuHeya, 16);
+    Event_SetDefeatDestination((s32)&SceneId_KuupuappuHeya, 16);
     state = (u8 *)&gGameState;
     /* FAKEMATCH: the do-while puts the state's address in a block of its own, so it is loaded ahead of the byte's offset. */
     do {

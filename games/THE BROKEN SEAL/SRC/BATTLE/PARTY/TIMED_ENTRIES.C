@@ -10,7 +10,7 @@ void Owner_RecalculateStatsFar(s32 unit_id);
 s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 
-s32 BattleUnit_TickCounter13f(s32 id)
+s32 BattleUnit_TickReflect(s32 id)
 {
     u8 *value = (u8 *)&Owner_GetStateFar(id)->reflect;
     if (*value != 0) {
@@ -22,7 +22,7 @@ s32 BattleUnit_TickCounter13f(s32 id)
     return 0;
 }
 
-s32 BattleUnit_TickCounter146(s32 id)
+s32 BattleUnit_TickAgilityModifier(s32 id)
 {
     struct BattleUnit *unit = Owner_GetStateFar(id);
     u8 *value = &unit->agility_modifier_turns;

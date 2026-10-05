@@ -56,7 +56,7 @@ extern u8 YamaRama_ActorNineAction[];
 void ConfigureAndPlaceActorFourteen(void);
 void FieldScene_RunScene3a2SequenceA(void);
 void ActorPresentation_PrepareActorFourteenWithCallback(void);
-void FieldScene_SetSlot15Byte89AndRunStep(void);
+void YamaRama_DisableActorCollision(void);
 void Scene_RunActorExchange(void);
 
 /* Actor callbacks that open the mountain overlay. */
@@ -688,7 +688,7 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     Object_GetById(14)->priority_flags &= 0xfd;
     Object_GetById(14)->collision_flags &= 0xfd;
     Object_GetById(14)->motion_flags = zero;
-    *(void **)((void *)Object_GetById(14) + 108) = (void *)SceneActor_SetFlagBitByRankAgainstActorZero;
+    Object_GetById(14)->update = (void (*)(union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
 
     Engine_MapCopyCellAttributes(55, 16, 1, 1, 56, 18);
     Engine_MapCopyCellAttributes(55, 16, 1, 1, 20, 18);
@@ -699,10 +699,8 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     Engine_EventEnd();
 }
 
-void FieldScene_SetSlot15Byte89AndRunStep(void)
+void YamaRama_DisableActorCollision(void)
 {
-    u8 *slot;
-
     Engine_EventBegin();
     {
         s32 fifth = 21;
@@ -710,8 +708,7 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
 
         Engine_MapCopyCellAttributes(14, 6, 1, 2, fifth, sixth);
     }
-    slot = (void *)Object_GetById(15) + 89;
-    *slot = 254;
+    Object_GetById(15)->collision_flags = 254;
     Engine_GameFlagSet(0x201);
     Engine_EventEnd();
 }
@@ -756,7 +753,7 @@ s32 YamaRama_ApplyEntryState(void)
         }
         if (Engine_GameFlagIsSet(0x201)) {
             Engine_ActorSetAnimation(15, 4);
-            FieldScene_SetSlot15Byte89AndRunStep();
+            YamaRama_DisableActorCollision();
         }
         if (gGameState.entrance == 4 || gGameState.entrance == 5) {
             Engine_GameFlagClear(0x12f);

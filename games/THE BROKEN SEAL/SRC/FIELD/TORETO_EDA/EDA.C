@@ -155,7 +155,7 @@ void State_SetValue123ThenCounter16c(void)
 
     Audio_PlayCue(0x7B);
     cnt = (s16 *)(state + 0x16C);
-    Event_SetValue170(*cnt);
+    Event_SetExitRequest(*cnt);
 }
 
 void Effect_SetAlphaBlendForScene9(void)

@@ -980,8 +980,8 @@ Func_020007dc:
 	negs r1, r1
 	lsls r2, r2, #18
 	bl Motion_CamBounds
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8

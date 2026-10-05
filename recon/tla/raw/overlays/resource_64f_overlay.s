@@ -946,8 +946,8 @@ Func_02000800:
 	lsls r1, r1, #18
 	lsls r2, r2, #17
 	bl Func_020009d0
-	bl Event_SetStatus1c6
-	bl Event_WaitValue1c8Frames
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
 	movs r2, #10
 	movs r0, #9
 	movs r1, #0

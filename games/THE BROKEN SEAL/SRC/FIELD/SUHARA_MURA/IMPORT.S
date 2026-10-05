@@ -37,7 +37,7 @@ Engine_ActorSetAnimation:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
-	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer Event_SetMessageIdFar
 	.global Engine_EventOpenMessage
 	.thumb_func
 Engine_EventOpenMessage:
@@ -49,7 +49,7 @@ Engine_EventShowMessage:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
-	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetExitRequestFar
 	.global Engine_ActorWalkBy
 	.thumb_func
 Engine_ActorWalkBy:

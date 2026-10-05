@@ -6,7 +6,7 @@
 #include "SYSTEM.H"
 #include "UIFLOW.H"
 
-void Event_SetPairWork1c0Far(s16 primary, s16 secondary);
+void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
 
 /* menu/draw/draw_selection_row.c */
@@ -87,7 +87,7 @@ s16 Menu_RunSelection(void)
         if (result == -1) {
             UiTextResource_Release(resource);
             UiWork_Finalize(work, 2);
-            Event_SetPairWork1c0Far(primary, secondary);
+            Event_SetDestinationFar(primary, secondary);
             return result;
         }
         if (result == -2) {

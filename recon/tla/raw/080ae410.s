@@ -217,7 +217,7 @@ Func_080ae410:
 	add r8, r1
 	cmp r7, r10
 	blt .L_080ae530
-	bl Func_080b1004
+	bl Djinn_ActivateOfferedForParty
 	movs r0, #1
 	bl Func_080ae16c
 	ldr r2, [sp, #4]

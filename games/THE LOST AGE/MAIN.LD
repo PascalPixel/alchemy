@@ -743,7 +743,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_3.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/SUM_OWNER_COUNTS.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_4.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000abffe)
+    "*/recon/tla/ja/rom.o"(.rom.000ac068)
     "*/recon/tla/ja/rom.o"(.rom.000ad334)
     "*/recon/tla/ja/rom.o"(.rom.000bc4dc)
     "*/recon/tla/ja/rom.o"(.rom.000bc5c4)

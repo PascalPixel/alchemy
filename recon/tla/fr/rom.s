@@ -2483,7 +2483,12 @@ Curve_LookupScaledValue:
 	.align 2, 0
 	.incbin "baserom.gba", 0x000b575c, 0x00000338
 	.section .rom.000b5bb6, "ax"
-	.incbin "baserom.gba", 0x000b5bb6, 0x000000c2
+	.incbin "baserom.gba", 0x000b5bb6, 0x00000002
+	.global Trade_CanOfferDjinn
+	.type Trade_CanOfferDjinn, %function
+	.thumb_func
+Trade_CanOfferDjinn:
+	.incbin "baserom.gba", 0x000b5bb8, 0x000000c0
 	.section .rom.000b5c9a, "ax"
 	.incbin "baserom.gba", 0x000b5c9a, 0x00000002
 	.section .rom.000b5c9c, "ax"
@@ -2504,13 +2509,8 @@ Djinn_Deactivate:
 	.thumb_func
 Trade_RemoveOffer:
 	.incbin "baserom.gba", 0x000b5d58, 0x000000ac
-	.section .rom.000b6002, "ax"
-	.incbin "baserom.gba", 0x000b6002, 0x00000002
-	.global Func_080b1004
-	.type Func_080b1004, %function
-	.thumb_func
-Func_080b1004:
-	.incbin "baserom.gba", 0x000b6004, 0x00000084
+	.section .rom.000b606c, "ax"
+	.incbin "baserom.gba", 0x000b606c, 0x0000001c
 	.global Func_080b1088
 	.type Func_080b1088, %function
 	.thumb_func

@@ -2199,13 +2199,8 @@ Trade_RemoveOffer:
 	.incbin "baserom.gba", 0x000bdd58, 0x000000ac
 	.section .rom.000bdf5a, "ax"
 	.incbin "baserom.gba", 0x000bdf5a, 0x00000002
-	.section .rom.000be002, "ax"
-	.incbin "baserom.gba", 0x000be002, 0x00000002
-	.global Func_080b1004
-	.type Func_080b1004, %function
-	.thumb_func
-Func_080b1004:
-	.incbin "baserom.gba", 0x000be004, 0x00000084
+	.section .rom.000be06c, "ax"
+	.incbin "baserom.gba", 0x000be06c, 0x0000001c
 	.global Func_080b1088
 	.type Func_080b1088, %function
 	.thumb_func

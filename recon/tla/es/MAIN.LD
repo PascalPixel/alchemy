@@ -709,7 +709,7 @@
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_3.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/SUM_OWNER_COUNTS.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_4.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000ba00e)
+    "*/recon/tla/es/rom.o"(.rom.000ba078)
     "*/recon/tla/es/rom.o"(.rom.000bb370)
     "*/recon/tla/es/rom.o"(.rom.000ca518)
     "*/recon/tla/es/rom.o"(.rom.000ca600)

@@ -20,7 +20,7 @@ Func_080ad2f8:
 	.global Func_080ad300
 	.thumb_func
 Func_080ad300:
-	overlay_veneer Func_080b1004
+	overlay_veneer Djinn_ActivateOfferedForParty
 	.global Func_080ad308
 	.thumb_func
 Func_080ad308:

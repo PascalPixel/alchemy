@@ -711,7 +711,7 @@
     "*/recon/tla/de/rom.o"(.rom.000bdf5a)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/SUM_OWNER_COUNTS.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_4.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000be002)
+    "*/recon/tla/de/rom.o"(.rom.000be06c)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/EVENT.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/OBJECTMO.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_25.o"(.text .rodata .data .padding)

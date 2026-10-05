@@ -1018,8 +1018,6 @@
         "*/recon/tla/raw/080b0f5a.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/DJINN/SUM_OWNER_COUNTS.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_4.o"(.text)
-        "*/recon/tla/raw/080b1002.o"(.text)
-        "*/recon/tla/raw/080b1004.o"(.text)
         "*/recon/tla/raw/080b106c.o"(.text)
         "*/recon/tla/raw/080b1088.o"(.text)
         "*/recon/tla/raw/080b11f8.o"(.text)

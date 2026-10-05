@@ -478,7 +478,7 @@ gKaragoruDouEvents2:
 gKaragoruDouEvents3:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte FieldScene_RunScene3be_02001080
+	.4byte KaragoruDou_LeaveArena
 	.4byte 0x00000001
 	.4byte 0xffff0002
 	.4byte 0x00000002

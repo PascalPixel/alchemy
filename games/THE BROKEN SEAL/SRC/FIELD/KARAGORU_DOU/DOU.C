@@ -236,7 +236,7 @@ void ActorPresentation_SelectActorNineScript(void)
     Engine_EventShowMessage(9, 0);
 }
 
-void FieldScene_RunScene3be_02001080(void)
+void KaragoruDou_LeaveArena(void)
 {
     struct EventWork *work;
 

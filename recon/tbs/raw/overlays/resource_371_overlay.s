@@ -2118,10 +2118,10 @@ gWorldMapEvents:
 	.4byte 0x00100103
 	.4byte 0x00000000
 	.4byte 0xffff0037
-	.4byte FieldScene_RunScene371_0200281c
+	.4byte WorldMap_PromptBlackOrbUse
 	.4byte 0x00008d15
 	.4byte 0xffff0437
-	.4byte FieldScene_RunScene371_0200281c
+	.4byte WorldMap_PromptBlackOrbUse
 	.4byte 0x00000001
 	.4byte 0xffff000d
 	.4byte 0x0000000d

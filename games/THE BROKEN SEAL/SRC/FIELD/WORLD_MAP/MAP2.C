@@ -17,7 +17,7 @@ void BattleFx_ScheduleRatioTransition(s32 speed, s32 frames);
 extern s32 gWorldMapTriggerActor;
 extern const u8 gBlackOrbLeaderScript[];
 
-void FieldScene_RunScene371_02002858(void);
+void WorldMap_StopLeaderLeavingShip(void);
 
 extern u8 MsgWorldMapRobinWhereGoingSaidUse[];
 extern u8 MsgWorldMapWreckageShipScuttledOffCoast[];
@@ -170,7 +170,7 @@ void WorldMap_ActivateSite138(s32 actor)
     for (i = 0;; i++) {
         if (gWorldMapEvents[i].control == EVENT_EXIT && gWorldMapEvents[i].trigger == 138) {
             gWorldMapEvents[i].control = EVENT_TOUCH;
-            gWorldMapEvents[i].value = (u32)FieldScene_RunScene371_02002858;
+            gWorldMapEvents[i].value = (u32)WorldMap_StopLeaderLeavingShip;
         }
         /* FAKEMATCH: a goto past the loop, not a break, keeps the ROM's strength-reduced offsets. */
         if (gWorldMapEvents[i].control == SCENE_EVENTS_END)
@@ -204,7 +204,7 @@ void WorldMap_RestoreExitTrigger(void)
     }
 }
 
-void FieldScene_RunScene371_0200281c(void)
+void WorldMap_PromptBlackOrbUse(void)
 {
     Engine_EventBegin();
     Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
@@ -214,7 +214,7 @@ void FieldScene_RunScene371_0200281c(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02002858(void)
+void WorldMap_StopLeaderLeavingShip(void)
 {
     Engine_EventBegin();
     Battle_SetObjectFlag5bWhenMode3();

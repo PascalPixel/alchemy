@@ -33,9 +33,9 @@ void FieldScene_RunScene371_02001888(void);
 void FieldScene_RunScene371_02001938(void);
 void FieldScene_RunScene371_020019e8(void);
 void FieldScene_RunScene371_02001a98(void);
-void FieldScene_RunScene371_02001b5c(void);
+void WorldMap_CompleteTransfer(void);
 void FieldScene_RunScene371_02002274(void);
-void FieldScene_RunScene371_0200357c(void);
+void WorldMap_RunOpeningRise(void);
 void StoryScene_StartTransition(void);
 void FieldScene_RunActorEightApproach(void);
 void FieldScene_RunActorPresentationSequence(void);
@@ -509,13 +509,13 @@ s32 WorldMap_EnterScene(void)
             FieldScene_RunScene371_02001a98();
             break;
         case 70:
-            FieldScene_RunScene371_02001b5c();
+            WorldMap_CompleteTransfer();
             break;
         case 71:
             FieldScene_RunScene371_02002274();
             break;
         case 72:
-            FieldScene_RunScene371_0200357c();
+            WorldMap_RunOpeningRise();
             break;
         case 73:
             StoryScene_StartTransition();
@@ -730,7 +730,7 @@ void FieldScene_RunActorTransferSequence(void)
     Battle_ClearObjectFlag5bWhenMode3();
     Audio_PlayCue(107);
     Camera_SetSpeed(0x40000, 0x40000);
-    FieldScene_RunScene371_0200155c();
+    WorldMap_ShakeTransferStartCamera();
     Audio_PlayCue(0x121);
     Actor_ShowEmote(8, 0x100, 0);
     Actor_ShowEmote(9, 0x100, 0);
@@ -758,7 +758,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_TaskWait(1);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
-    Engine_TaskAddCallback(FieldScene_RunScene371_020017a4, 0xc80);
+    Engine_TaskAddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
     do {
         Engine_TaskWait(1);
     } while ((s16)actor->timer == 0);
@@ -773,8 +773,8 @@ void FieldScene_RunActorTransferSequence(void)
     record->velocity_y = 0x60000;
     Audio_PlayCue(145);
     Camera_SetSpeed(0x40000, 0x40000);
-    FieldScene_RunScene371_02001680();
-    FieldScene_RunScene371_02001680();
+    WorldMap_ShakeTransferLandingCamera();
+    WorldMap_ShakeTransferLandingCamera();
     Engine_EventWait(60);
     Camera_SetSpeed(0x20000, 0x4000);
     Camera_MoveTo(0x16080000, -1, 0x6f80000, 1);
@@ -783,7 +783,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetAttachedEffect(9, 0x102);
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
-    Engine_TaskRemoveCallback(FieldScene_RunScene371_020017a4);
+    Engine_TaskRemoveCallback(WorldMap_UpdateTransferredActorLanding);
     Engine_TaskWait(1);
     Actor_SetPosition(14, 0, 0);
     Actor_SetPosition(15, 0, 0);
@@ -867,7 +867,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_0200155c(void)
+void WorldMap_ShakeTransferStartCamera(void)
 {
     Camera_MoveTo(0x160c0000, -1, 0x6f80000, 1);
     Engine_TaskWait(4);
@@ -895,7 +895,7 @@ void FieldScene_RunScene371_0200155c(void)
     Engine_TaskWait(4);
 }
 
-void FieldScene_RunScene371_02001680(void)
+void WorldMap_ShakeTransferLandingCamera(void)
 {
     Camera_MoveTo(0x15ec0000, -1, 0x6c80000, 1);
     Engine_TaskWait(4);
@@ -926,7 +926,7 @@ void FieldScene_RunScene371_02001680(void)
 /* Each frame of the transfer, keeps actor 15 over the guide (actor 14) and,
  * the first time it comes down to its landing height, lands it with a cue
  * and marks it landed for the scene that waits on it. */
-void FieldScene_RunScene371_020017a4(void)
+void WorldMap_UpdateTransferredActorLanding(void)
 {
     struct FieldActor *actor;
     struct FieldActor *guide;
@@ -1084,7 +1084,7 @@ void FieldScene_RunScene371_02001a98(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001b5c(void)
+void WorldMap_CompleteTransfer(void)
 {
     struct FieldActor *actor;
 

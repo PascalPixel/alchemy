@@ -373,7 +373,7 @@ void WorldMap_SpawnActorEightPuff(void)
     Engine_ObjectSetScript(obj, (s32)gActorEightPuffScript);
 }
 
-void FieldScene_RunScene371_0200357c(void)
+void WorldMap_RunOpeningRise(void)
 {
     struct FieldActor *actor;
     s32 record;

@@ -102,7 +102,7 @@ void WorldMap_UpdateBobbingMarker();
 void WorldMap_SpawnActorEightPuff(void);
 void StoryScene_UpdateSelectedActorProgress(void);
 void StoryScene_UpdateTransitionEffect(void);
-void FieldScene_RunScene371_020017a4(void);
+void WorldMap_UpdateTransferredActorLanding(void);
 extern u8 gOpeningLeaderRise[];
 
 /* Each story trigger fires once progress reaches nine tenths of its level. */

@@ -393,7 +393,7 @@ void FieldScene_RunScene3a4_02002934(void)
     extern u8 ArutinYama_RiseTimer[];
 
     s32 rec7;
-    s32 record;
+    struct FieldActor *record;
     s16 flag;
 
     rec7 = Engine_GameFlagIsSet(0x909);
@@ -428,7 +428,7 @@ void FieldScene_RunScene3a4_020029dc(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
-    s32 record;
+    struct FieldActor *record;
 
     record = Actor_Get(9);
     Engine_ActorSetSpriteFlags(record, 0);

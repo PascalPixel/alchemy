@@ -461,7 +461,7 @@ void ArutamiraDou_SpinActorWheel(void)
         s32 v = ((s8 *)gSceneState)[2];
         s32 r = Math_Divide(v << 16, 5);
         if ((unsigned int)(((p[3] - r) << 16) + 0xc2ff0000) <= 0x5fe0000) {
-            u8 *o;
+            struct FieldActor *o;
             s32 nv = r + 0x4000;
             p[3] = nv;
             {
@@ -470,8 +470,8 @@ void ArutamiraDou_SpinActorWheel(void)
                 p[0] = k;
                 p[4] = z;
             }
-            o = (u8 *)Object_GetById(v + 11);
-            *(s32 *)(o + 0x6c) = (s32)ArutamiraDou_UpdateScalePulse;
+            o = Object_GetById(v + 11);
+            o->update = (void (*)(union FieldObject *))ArutamiraDou_UpdateScalePulse;
         }
     } else if (state == 0x63) {
         flag = 0;

@@ -337,7 +337,7 @@ void SceneState_SetRuntimeWord448To516(void)
 void FieldScene_RunScene398SequenceC(void)
 {
     u32 i;
-    u8 *record;
+    struct FieldActor *record;
     s32 v5;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

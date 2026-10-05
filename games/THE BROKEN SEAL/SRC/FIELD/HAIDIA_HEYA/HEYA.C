@@ -231,7 +231,7 @@ s32 Scene_RunSupplementalSequenceOne(void)
 {
     extern u8 *gWork;
 
-    u8 *record;
+    struct FieldActor *record;
     u8 **scene = (u8 **)&gWork;
 
     *(s32 *)(scene[0] + 0x1c0) = 0x209;
@@ -363,7 +363,7 @@ void FieldScene_RunLongPresentationSequence(void)
     void Camera_MoveTo();
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     struct FieldActor *actor;
     s32 v6;
     s32 base7_20090c1;

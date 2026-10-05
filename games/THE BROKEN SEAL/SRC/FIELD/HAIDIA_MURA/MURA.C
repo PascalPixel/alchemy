@@ -537,7 +537,7 @@ void FieldScene_RunScene373SequenceE(void)
 {
     u32 i;
     struct FieldActor *rec7;
-    s32 record;
+    struct FieldActor *record;
 
     rec7 = Object_GetById(22);
     Engine_EventBegin();
@@ -575,7 +575,7 @@ void FieldScene_RunScene373SequenceE(void)
     Engine_EventSetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
-    *(s32 *)(record + 108) = (s32)SceneActor_RunStep18WhenTargetSet;
+    record->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
     Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
     GameFlag_Set(0x823);
     Engine_EventEnd();
@@ -1488,7 +1488,7 @@ void FieldScene_RunPrimaryActorSequence(void)
 void FieldScene_RunCompanionActorSequence(void)
 {
     u32 i;
-    s32 actor_data;
+    struct FieldActor *actor_data;
     s32 shared_data;
 
     Engine_EventBegin();

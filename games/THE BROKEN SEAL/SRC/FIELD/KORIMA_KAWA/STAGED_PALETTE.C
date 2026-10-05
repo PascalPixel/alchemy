@@ -89,7 +89,7 @@ void FieldScene_RunActorTenPlacementScene(void)
     if (StagedActor_FindClearPosition(&result)) {
         SceneActor_MoveAndRedraw(result);
         if (result.actor_slot == 10 && (result.position_x >> 20) == 12) {
-            u8 *actor;
+            struct FieldActor *actor;
             s32 zero;
             Object_SetModeById(10, 3);
             ObjectMotion_OffsetPositionAndResetMotion(10, -18, 6);

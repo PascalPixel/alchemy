@@ -154,8 +154,8 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
     u16 *flags = (u16 *)(self + 100);
     s32 force = 0;
     s32 range = 18;
-    u8 *partner;
-    u8 *player;
+    struct FieldActor *partner;
+    struct FieldActor *player;
 
     /*
      * Bit 0 of the actor's own flag halfword selects which partner to test.
@@ -194,7 +194,7 @@ s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
     u8 *workspace = Data_03001e8c[12];
     s32 flag = 0;
     s32 selector = 18;
-    u8 *leader;
+    struct FieldActor *leader;
 
     if (*(s32 *)(entity + 56) == (s32)0x80000000)
         return 0;

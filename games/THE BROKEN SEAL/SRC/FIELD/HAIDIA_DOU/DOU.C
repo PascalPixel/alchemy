@@ -279,7 +279,7 @@ void FieldScene_RunScene3a6SequenceB(void)
 {
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x200) != 0) {
         if (GameFlag_IsSet(0x201) == 0) {
@@ -296,7 +296,7 @@ void FieldScene_RunScene3a6SequenceB(void)
             Battle_WaitMode0(10);
             Actor_FaceDirection(8, 0xc000, 20);
             record = Actor_Get(8);
-            *(s32 *)(record + 108) = (s32)SceneActor_FaceActorZero;
+            record->update = (void (*)(union FieldObject *))SceneActor_FaceActorZero;
             Engine_EventEnd();
         }
     }

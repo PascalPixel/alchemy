@@ -326,12 +326,12 @@ void FieldScene_RunScene3b0_0200040c(void)
 void FieldScene_RunScene3b0_02000468(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xa40000, 0x1410000);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    record = (u8 *)Object_GetById(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_TaskWait(1);
     Engine_MapRedraw();
@@ -456,12 +456,12 @@ void Scene_RunFourActorStagingSequence(void)
 void FieldScene_RunActorNinePresentationCycles(void)
 {
     u32 i;
-    u8 *rec9;
-    u8 *record;
+    struct FieldActor *rec9;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    record = (u8 *)Object_GetById(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_TaskWait(1);
     Event_CallWithLastActiveObjectId((s32)FuneHobashira_EnsembleObjects);
@@ -478,17 +478,16 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(120);
-    rec9 = (u8 *)Object_GetById(9);
+    rec9 = Object_GetById(9);
     Engine_ActorStop(9);
-    /* Reset record 9's waypoint/velocity fields: three fields to the
-     * minimum s32, then four fields to zero. */
-    RECORD_S32(rec9, 56) = -0x80000000;
-    RECORD_S32(rec9, 60) = -0x80000000;
-    RECORD_S32(rec9, 64) = -0x80000000;
-    RECORD_S32(rec9, 36) = 0;
-    RECORD_S32(rec9, 40) = 0;
-    RECORD_S32(rec9, 44) = 0;
-    RECORD_S32(rec9, 76) = 0;
+    /* Actor 9 stops where it is. */
+    rec9->target_x = ACTOR_NO_TARGET;
+    rec9->target_y = ACTOR_NO_TARGET;
+    rec9->target_z = ACTOR_NO_TARGET;
+    rec9->velocity_x = 0;
+    rec9->velocity_y = 0;
+    rec9->velocity_z = 0;
+    rec9->rise_base_y = 0;
     Engine_EventWait(20);
     Actor_SetSpeed(9, 0x80000, 0x40000);
     Call4(Object_SetPosition, rec9, 0xa40000, 0x900000, 0x1410000);
@@ -508,14 +507,13 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
     Engine_EventWait(120);
     Engine_ActorStop(9);
-    /* Same reset pattern on record 9 for the second cycle. */
-    RECORD_S32(rec9, 56) = -0x80000000;
-    RECORD_S32(rec9, 60) = -0x80000000;
-    RECORD_S32(rec9, 64) = -0x80000000;
-    RECORD_S32(rec9, 36) = 0;
-    RECORD_S32(rec9, 40) = 0;
-    RECORD_S32(rec9, 44) = 0;
-    RECORD_S32(rec9, 76) = 0;
+    rec9->target_x = ACTOR_NO_TARGET;
+    rec9->target_y = ACTOR_NO_TARGET;
+    rec9->target_z = ACTOR_NO_TARGET;
+    rec9->velocity_x = 0;
+    rec9->velocity_y = 0;
+    rec9->velocity_z = 0;
+    rec9->rise_base_y = 0;
     Engine_EventWait(20);
     Actor_SetSpeed(9, 0x80000, 0x40000);
     Call4(Object_SetPosition, rec9, 0xa40000, 0x900000, 0x1410000);

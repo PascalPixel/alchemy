@@ -2790,7 +2790,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
     s32 slot_b;
     s32 slot_c;
     s32 slot_a;
-    u8 *record;
+    struct FieldActor *record;
     s32 action;
 
     slot_a = FuneHeya_FindFirstSetFlag(0, 0);
@@ -2961,7 +2961,7 @@ void Scene_RunFourActorProgressPresentation(void)
     s32 rec2;
     s32 rec4;
     s32 rec7;
-    s32 record;
+    struct FieldActor *record;
     s32 v6 = 0;
     s32 base6_200e904;
     s32 base5_200e938;
@@ -2978,14 +2978,14 @@ void Scene_RunFourActorProgressPresentation(void)
     Call3(Engine_ActorSetPosition, 8, 0x1d80000, 0x980000);
     Call3(Engine_ActorSetPosition, 27, 0x1b80000, 0x860000);
     Engine_ActorSetChildValue(27, 15);
-    record = (s32)Object_GetById(27);
+    record = Object_GetById(27);
     Engine_ActorSetSpriteFlags(record, 0);
     FieldScene_InstallFlaggedActors10To17(16);
     Engine_ActorSetAnimation(9, 5);
     ConfigureSceneMotionFlags(0x1b60000, -1, 0xae0000, 0x1000001);
     FieldScene_RunSceneStep(8, 1, 20);
     Engine_ActorSetChildValue(27, 0);
-    record = (s32)Object_GetById(27);
+    record = Object_GetById(27);
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorSetSpeed, 27, 0x10000, 0x8000);
     Call3(Engine_ActorWalkToAndWait, 27, 0x198, 132);

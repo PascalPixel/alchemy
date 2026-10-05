@@ -826,7 +826,7 @@ void FieldScene_RunGroupChoreography(void)
 {
     extern u8 HaidiaIe_FaceTargetActions[];
 
-    s32 record;
+    struct FieldActor *record;
     s32 walk_speed;
     s32 turn_speed;
     s32 approach_speed;
@@ -1011,7 +1011,7 @@ void Scene_RunExtendedActorSequence(void)
 {
     extern const u8 HaidiaIe_FaceTargetActions[];
 
-    u8 *record;
+    struct FieldActor *record;
     struct EventWork *work;
     const u8 *base5_200ac00;
     s32 v5;

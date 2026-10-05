@@ -10,9 +10,6 @@ enum {
     ITEM_ANCHOR_CHARM = 232
 };
 
-/* A record's four-byte field at the given byte offset. */
-#define RECORD_S32(rec, off) (*(s32 *)((rec) + (off)))
-
 /* The mast's scene tables and the actor tables its scripts hand the engine,
    where the overlay's data lies. */
 extern u8 FuneHobashira_SceneTableA[];

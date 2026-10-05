@@ -453,12 +453,12 @@ void SceneActor_InstallSlotNineHandler(void)
 {
     typedef s32(*Handler_02001a10)(struct Record_02000ec8 *record);
 
-    u8 *owner;
+    struct FieldActor *owner;
 
     Engine_ActorEnableActionCallback(8, BabiChika_FlickerScript);
     Engine_GameFlagSet(0x203);
     owner = Object_GetById(9);
-    *(s32 *)(owner + 108) = (s32)SceneActor_CopyActor8PositionWhenAtRow10;
+    owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
 /*

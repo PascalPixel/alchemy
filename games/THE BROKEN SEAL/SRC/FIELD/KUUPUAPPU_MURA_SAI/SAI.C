@@ -205,8 +205,8 @@ s32 UpdateActorProximity(u8 *actor)
     u16 *flags = (u16 *)(actor + 100);
     s32 force = 0;
     s32 range = 18;
-    u8 *partner;
-    u8 *player;
+    struct FieldActor *partner;
+    struct FieldActor *player;
 
     if ((*flags & 1) != 0) {
         partner = Object_GetById(15);

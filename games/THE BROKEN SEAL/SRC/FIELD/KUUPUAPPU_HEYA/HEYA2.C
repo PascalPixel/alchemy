@@ -1774,7 +1774,7 @@ void SceneActor_FaceActors24And25TowardActorZero(void)
 void FieldScene_RunLateSequence(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 v5;
 
     Engine_EventBegin();
@@ -1796,11 +1796,11 @@ void FieldScene_RunLateSequence(void)
     Object_GetById(0)->priority_flags = v5;
     Object_GetById(1)->priority_flags = v5;
     Object_GetById(2)->priority_flags = v5;
-    record = (s32)Object_GetById(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = (s32)Object_GetById(2);
+    record = Object_GetById(2);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = (s32)Object_GetById(1);
+    record = Object_GetById(1);
     Engine_ActorSetSpriteFlags(record, 0);
     Actor_FaceDirection(8, 0xb000, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

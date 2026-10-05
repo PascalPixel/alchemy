@@ -81,7 +81,7 @@ s32 StopXianActor(void *actor)
 
 s32 FaceXianActorToPlayer(void *actor)
 {
-    void *player = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *player = Object_GetById(ACTOR_PARTY_LEADER);
     FIELD(actor, u16, 6) = ArcTan2Far(FIELD(player, s32, 0x10) - FIELD(actor, s32, 0x10), FIELD(player, s32, 8) - FIELD(actor, s32, 8));
     return 0;
 }
@@ -1428,7 +1428,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 void FieldScene_RunScene39eSequenceA(void)
 {
     u32 i;
-    s32 record;
+    struct FieldActor *record;
     s32 base5_200a5b9;
 
     Engine_EventBegin();

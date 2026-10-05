@@ -241,7 +241,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 {
 
     void *actor9_record;
-    void *actor8_record;
+    struct FieldActor *actor8_record;
 
     if (GameFlag_IsSet(2177) != 0) {
         Engine_EventBegin();

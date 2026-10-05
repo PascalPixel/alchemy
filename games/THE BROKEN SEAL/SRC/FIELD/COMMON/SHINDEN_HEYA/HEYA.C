@@ -1778,8 +1778,8 @@ void ShindenHeya_CopyActorPose(void)
  */
 void SceneState_ResetObject14Word108(void)
 {
-    u8 *state = (u8 *)Object_GetById(14);
-    *(s32 *)(state + 108) = 0;
+    struct FieldActor *state = Object_GetById(14);
+    state->update = 0;
     Engine_ActorSetPosition(14, 0, 0);
 }
 

@@ -372,8 +372,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
    display in the affine mode only while that window is on screen. */
 void MapAnimation_ApplyAffineFrame(void)
 {
-    /* FAKEMATCH: retain the existing adjacent slot-cell walk. Independent
-       gMapWork loads in 1a5404f7 added eight bytes in all six editions. */
+    /* FAKEMATCH: the adjacent slot-cell walk avoids the eight bytes added by separate gMapWork loads. */
     u8 **pointers = &gMapAnimationPages;
     struct MapAffinePair (*lines)[160] = ((struct MapFrameWork *)*pointers++)->pages;
     s32 dispcnt = (s16)(REG_DISPCNT & 0xfff8);

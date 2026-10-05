@@ -24,11 +24,8 @@ struct BattleEventState {
 LAYOUT_SIZE_GUARD(BattleEventState_Size, struct BattleEventState, 0x170);
 LAYOUT_OFFSET_GUARD(BattleEventState_PendingCue, struct BattleEventState, pending_cue, 0x168);
 
-/*
- * The Lost Age's battle session, which its heap slot 9 holds. It opens as
- * The Broken Seal's does; the summon queue and the event queue lie later.
- * Only the fields its battle code has shown are named.
- */
+/* The battle session in heap slot 9; the summon and event queues follow
+ * the unit slots. */
 struct BattleSession {
     s32 enemy_group;                /* 0x000 */
     u8 unknown_004[0x3d];

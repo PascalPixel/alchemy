@@ -1,7 +1,4 @@
-/*
- * Move an object toward the object linked at +0x68, stopping short of it
- * by a fixed margin.
- */
+/* Move toward the linked object, stopping sixteen pixels short. */
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "FIXED_MATH.H"
@@ -9,21 +6,8 @@ extern u8 IwramSqrt[];
 s32 _call_via_r3(s32, s32, s32, s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
 
-/*
- * _call_via_r3 names a `bx rN` slot, so the call is indirect through the
- * register that slot selects; the trailing argument is the callee address
- * loaded into that register, not a parameter of the callee. The callee
- * takes one argument and returns one; it is fed a sum of squares and its
- * result used as a length, which reads as a square root but is not
- * established.
- */
-
-/*
- * Copy the linked object's words at +0x30 and +0x34, then close the gap by
- * (len - 0x10) / len of it. The whole-pixel deltas feed the length call
- * while the unshifted deltas feed the ratios, and dx is taken through its
- * own local there.
- */
+/* Inherit the linked object's speed and acceleration; scale the move by the
+ * remaining distance, measured from whole-pixel deltas. */
 s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
 {
   s32 len;

@@ -7,9 +7,6 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
-/* ☀️'s GRAPHICS/PALETTE/PALETTE5.C after its tilemap fill, which is still
-   disassembly here, as is the battle palette blend that follows. */
-
 /* Allocate and clear the transition's state in heap slot 31, clear the
    screen, and start the per-frame update. */
 void DisplayTransition_InitializeState(s32 value)

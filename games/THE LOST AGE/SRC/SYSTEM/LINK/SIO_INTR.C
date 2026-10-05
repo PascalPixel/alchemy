@@ -2,9 +2,6 @@
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
 
-/* ☀️'s SYSTEM/LINK/SIO_INTR.C after its transfer interrupt, which is still
-   disassembly here. ⚓️'s compiler needs none of ☀️'s steering in the
-   handler remover. */
 void SerialRuntime_RemoveIrqHandlers(void)
 {
     gSerialExchangeActive = 0;

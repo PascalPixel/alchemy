@@ -29,9 +29,8 @@ void Object_AttachWorkTargetToObject(s32 arg0, s32 arg1);
 extern struct EventRuntime *gEventWork;
 
 /* Plays the scene's cue and two sound effects, whitens one palette colour
-   (colour 243 in mode 3, the backdrop otherwise), finishes the display
-   transition, then fades that colour from white to black over 16 frames.
-   It returns no value, but its epilogue is the value-returning one. */
+ * (colour 243 in mode 3, the backdrop otherwise), finishes the display
+ * transition, then fades that colour from white to black over 16 frames. */
 s32 Scene_FadeColorFromWhite(void)
 {
     struct EventRuntime *work = gEventWork;
@@ -45,8 +44,7 @@ s32 Scene_FadeColorFromWhite(void)
         s32 color = 0x7fff;
 
         do {
-            /* FAKEMATCH: the do/while (0) ends a scheduling region, which keeps
-               this store ahead of the call's arguments as the reference has it */
+            /* FAKEMATCH: the one-pass loop keeps the store before the call's arguments. */
             *(u16 *)0x050001e6 = color;
         } while (0);
         DisplayTransition_Finish(0x401, 16);

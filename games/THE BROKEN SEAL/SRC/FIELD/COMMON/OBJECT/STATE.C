@@ -87,8 +87,6 @@ void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
     u32 dst_attr;
     u32 merged;
 
-    /* Keep the existing opaque sprite and packed OAM-word boundary. The
-       typed sprite attempt changes register choice and read order. */
     p = Object_GetById(source_id);
     p = ((struct ObjectRuntime *)p)->animation;
     flags = ((struct FieldSprite *)p)->vram_block;

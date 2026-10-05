@@ -10,7 +10,7 @@ void BattleFx_SpinObject(struct MotionObject *object)
     object->angle += 0x1000;
 }
 
-void Func_080e306c(void)
+void BattleFx_CallSpinEffect(void)
 {
     Func_080e3074();
 }

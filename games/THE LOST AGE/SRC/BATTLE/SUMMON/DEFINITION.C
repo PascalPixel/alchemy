@@ -26,8 +26,7 @@ s32 Summon_GetEntryFlag1Field(s32 index)
 
 s32 Summon_IsEntryFlagged(s32 index)
 {
-    /* ☀️'s form and four plain reshapes keep the result in r0 or shift
-       before clearing it; ⚓️ clears r1 in the load's delay slot. */
+
     /* FAKEMATCH: the result lives in r1, as the native allocates it. */
     register s32 result asm("r1");
     u32 flags;
@@ -43,8 +42,7 @@ s32 Summon_IsEntryFlagged(s32 index)
 
 u32 Battle_GetEntryField2LowBits(u32 index)
 {
-    /* FAKEMATCH: the existing result selection retains the separate extract
-       and return moves; a direct conditional expression changes their order. */
+    /* FAKEMATCH: the result selection preserves the separate extract and return-move order. */
     u32 value;
     u32 result;
 
@@ -60,8 +58,7 @@ u32 Battle_GetEntryField2LowBits(u32 index)
 
 u32 Battle_GetEntryField2HighBits(u32 index)
 {
-    /* FAKEMATCH: retain the existing zero-result selection; the direct shift
-       drops the native compare and return move. */
+    /* FAKEMATCH: zero-result selection preserves the compare and return move. */
     u32 value;
     u32 result;
 

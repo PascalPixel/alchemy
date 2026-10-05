@@ -34,10 +34,10 @@ struct PushState {
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
-/* FAKEMATCH: the inline boundary rematerializes pos for the collision call. */
 static __inline__ s32 CheckMove(struct FieldActor *actor, union FieldCoordinate *pos)
 {
-    /* FAKEMATCH: a direct call changes Makyuri_RunActorMove from add r1, sp, #16 to mov r1, fp (403/403 assembly lines). */
+    /* FAKEMATCH: the inline boundary rematerializes pos for the collision call. */
+    /* FAKEMATCH: the inline call keeps add r1, sp, #16 instead of mov r1, fp. */
     return Object_CheckMovementCollision(actor, pos);
 }
 
@@ -64,8 +64,7 @@ void Makyuri_RunActorMove(void)
     u8 zero;
     union FieldCoordinate pos[3];
 
-    /* FAKEMATCH: direct slot-35 access adds a base load and a pool word
-       (832 to 836 bytes); retain the existing relative pointer-cell load. */
+    /* FAKEMATCH: the relative slot-35 load avoids an extra base load and pool word. */
     state = **(struct PushState ***)((u8 *)&gEventWork
         + (35 - HEAP_SLOT_EVENT) * sizeof(gWorkSlot[0]));
     work = (struct FieldStepWork *)gEventWork;
@@ -169,8 +168,7 @@ void Makyuri_TickSpawnTimer(void)
     struct SceneTimer *timer;
     struct FieldActor *point;
 
-    /* FAKEMATCH: direct bank indices change the 72-byte timer to 76 bytes;
-       retain the existing slot-35 address and derive the slot-27 cell from it. */
+    /* FAKEMATCH: deriving slot 27 from slot 35 keeps the timer at 72 bytes instead of 76. */
     {
         struct SceneTimer ***scene = (struct SceneTimer ***)((u8 *)&gEventWork
             + (35 - HEAP_SLOT_EVENT) * sizeof(gWorkSlot[0]));

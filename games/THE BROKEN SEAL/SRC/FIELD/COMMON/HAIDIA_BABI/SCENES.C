@@ -180,9 +180,7 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(10, gHaidiaBabiRampActor10ActionB);
     alpha = &REG_BLDALPHA;
-    /* The rise is a backward jump rather than a loop: the reference
-       reloads its start value on every step, which GCC's loop pass
-       would hoist. */
+
     i = 0;
 ramp:
     *alpha = 0x100e + i;
@@ -434,8 +432,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     GlyphTransfer *glyph;
-    /* FAKEMATCH: separate immediate clears select r2 instead of the
-       native r5 zero value before the glyph allocation. */
+    /* FAKEMATCH: a shared zero keeps r5 instead of r2 before the glyph allocation. */
     s32 clear;
 
     Engine_EventBegin();
@@ -584,9 +581,7 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: retain the existing byte view of this lane;
-                   the field store leaves a dead byte zero and moves the
-                   earlier motion/spin zero and address registers. */
+                /* FAKEMATCH: byte access avoids a dead byte zero and preserves the motion/spin zero and address registers. */
                 *(u8 *)&part->display_flags |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;

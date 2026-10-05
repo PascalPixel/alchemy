@@ -3,8 +3,7 @@
 
 #include "TYPES.H"
 
-/* Names are the msgctxt of each edition's TEXT/*.PO; the build defines their
-   numbers as link-time constants, referenced as pooled absolute symbols. */
+/* Message names come from each edition's text catalog. */
 extern char MsgHpRecover;
 extern char MsgPpRecover;
 extern char MsgHpFull;

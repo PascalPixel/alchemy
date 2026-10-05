@@ -1,9 +1,7 @@
 #include "OWNER_STATE.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
-/* Battle: clear the active and reserve party members' status bytes and stat
-   modifiers; ⚓️ adds the reserve members ☀️ does not have.
-   Returns int: its epilogue returns through r1. */
+/* Clear active and reserve party members' status bytes and stat modifiers. */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 

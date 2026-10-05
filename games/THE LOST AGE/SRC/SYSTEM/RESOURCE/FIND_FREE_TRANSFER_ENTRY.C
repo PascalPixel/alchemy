@@ -2,8 +2,6 @@
 #include "SCENE.H"
 #include "RAM_BUFFER.H"
 
-/* resource/transfer/find_free_entry.c */
-
 s32 Resource_FindFreeTransferEntry(s32 kind)
 {
     s32 state;

@@ -2,16 +2,9 @@
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 
-/*
- * ☀️'s queued register writes, as ⚓️ builds them: each queues a register
- * write for the next flush with interrupts masked, the entry holding the
- * value, the register address and the delay word, and stores the new count
- * after the value and the address.
- *
- * FAKEMATCH: ☀️'s loop that runs once around the IME read keeps the order of
- * the queue load, the saved copy and the IME store; the IME pointer is held
- * in r1 so that the queue gets r4, as ⚓️ allocates them.
- */
+/* Queue a register write for the next flush with interrupts masked; each
+ * entry holds the value, register address and delay. Update the count after
+ * writing the value and address. */
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
     void name(u32 address, u32 value)                                       \
     {                                                                       \
@@ -21,7 +14,7 @@
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        q = &gIoWriteQueue;                                                 \
+        q = &gIoWriteQueue; /* FAKEMATCH: the one-pass IME read preserves queue-load, saved-copy and IME-store order. */ \
         do {                                                                \
             /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             ime = &REG_IME;                                                 \

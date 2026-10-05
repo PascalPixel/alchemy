@@ -1,6 +1,5 @@
 #include "M7_INTERFACES.H"
 
-/* ui/window/set_bounds.c */
 void UiWindow_SetBounds(struct RenderInput *window, s32 x, s32 y,
     s32 width, s32 height)
 {

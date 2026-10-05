@@ -92,9 +92,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
     struct MotionObject *object;
     struct AnimationObject *info;
     s32 scale;
-    /* FAKEMATCH: retain the inherited unused vector. Its ordinary removal in
-       8f4c57e6 deletes both SP adjustments and changes the camera-load order
-       in all six editions; no used vector lifetime has been established. */
+    /* FAKEMATCH: the unused 12-byte vector preserves both stack adjustments and camera-load order. */
     s32 unused[3];
 
     camera = gCameraWork;

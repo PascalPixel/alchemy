@@ -4,8 +4,6 @@
 
 extern u8 ResourceBlockOwners[];
 
-/* object/replace_resource_entry.c */
-
 s32 ResourceTable_CountFreeBlocks(void)
 {
     u8 *marker = ResourceBlockOwners;
@@ -21,8 +19,6 @@ s32 ResourceTable_CountFreeBlocks(void)
     return free_count;
 }
 
-/* The explicit byte access preserves the existing packed resource flags.
-   Member access moves the flag read before the VRAM-block store. */
 void *Object_ReplaceResourceEntry(void *src, void *alt)
 {
     void *ret;

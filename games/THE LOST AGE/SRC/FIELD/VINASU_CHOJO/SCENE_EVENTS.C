@@ -58,10 +58,8 @@ void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 void Func_02000b2c(void);
 void Func_02000d30(void);
 
-/* Opens the aerie: through entrance 99 the opening plays out, otherwise
-   the lighthouse's ten beacon actors take part attribute 6. The
-   international editions also set the saved scene to 5, entrance 22, before
-   the opening; their build keeps the listing until that branch matches. */
+/* Entrance 99 plays the opening; otherwise the ten beacon actors use part
+ * attribute 6. International editions also save scene 5, entrance 22. */
 #if !EDITION_INTERNATIONAL
 s32 VinasuChojo_Start(void)
 {

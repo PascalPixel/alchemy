@@ -3,10 +3,7 @@
 
 #include "TYPES.H"
 
-/* The resident runtime's entries that ⚓️'s ROM code calls. They run in
- * IWRAM, beyond a ROM bl's reach, and ROM code reaches them as Camelot's
- * did: through their fixed entry addresses, loaded before the arguments.
- * The build checks each entry against the routine named beside it. */
+/* Resident IWRAM routines use fixed entries beyond a direct ROM call's reach. */
 #define Iwram_ClearWords ((s32 (*)(void *destination, s32 size))0x03000258) /* IwramClearWords */
 #define Iwram_FillWords ((s32 (*)(void *destination, s32 size, u32 value))0x03000260) /* IwramFillWords */
 #define Iwram_MulQ16 ((s32 (*)(s32 a, s32 b))0x0300021c) /* IwramMulQ16 */

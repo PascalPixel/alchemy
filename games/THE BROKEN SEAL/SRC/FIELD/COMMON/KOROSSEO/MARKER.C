@@ -7,14 +7,12 @@
 #include "TYPES.H"
 #include "VRAM_BLOCK.H"
 
-
 /* The marker's start is read both as a signed coordinate and as the raw
  * halfword the position is rebuilt from. */
 union MarkerCoordinate {
     s16 signed_value;
     u16 value;
 };
-
 
 extern s16 Korosseo_MarkerSlot;
 extern s16 Korosseo_MarkerSteps;
@@ -28,7 +26,6 @@ extern s16 Korosseo_MarkerEndY;
 extern s16 Korosseo_MarkerBlink;
 extern s16 Korosseo_MarkerPriority;
 extern s32 Korosseo_MarkerOam[3];
-
 
 void Korosseo_UpdateMarker(void)
 {
@@ -50,8 +47,7 @@ void Korosseo_UpdateMarker(void)
     steps = &Korosseo_MarkerSteps;
     total = *steps;
     if (total != 0) {
-        /* FAKEMATCH: the step is kept as the raw halfword and read signed,
-         * which keeps it out of the interpolation's registers. */
+        /* FAKEMATCH: the signed read of the raw halfword keeps the step out of the interpolation registers. */
         step = (u16)++Korosseo_MarkerStep;
         py = &Korosseo_MarkerX;
         sy = &Korosseo_MarkerStartX;

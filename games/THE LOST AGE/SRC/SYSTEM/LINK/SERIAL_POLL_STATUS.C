@@ -1,7 +1,5 @@
 #include "SERIAL_RUNTIME.H"
 
-/* ☀️'s SYSTEM/LINK/SERIAL_POLL_STATUS.C, with ⚓️'s send-index load ahead of
-   the -1 it is compared with. */
 s32 SerialRuntime_PollStatus(void)
 {
     volatile u32 *siocnt;
@@ -25,11 +23,7 @@ s32 SerialRuntime_PollStatus(void)
                 if (index == -1) {
                     u32 ie;
 
-                    /* FAKEMATCH: the do/while blocks and the separate enable
-                     * variable are meaningless. The blocks keep the IE address
-                     * load after the IME write and the mask constant after the IE
-                     * read; a fresh enable value lets the ~0x40 mask be derived
-                     * from the 1 still in r3, as the reference does. */
+                    /* FAKEMATCH: one-pass blocks preserve IE/IME load order; the enable local derives the mask from r3. */
                     do {
                         REG_IME = serial_error;
                     } while (0);

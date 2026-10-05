@@ -5,7 +5,7 @@ extern u16 Data_02005830;
    game's flags. */
 extern u8 gSongFlags[];
 
-u16 Func_081c117c(void)
+u16 Audio_GetBackgroundCue(void)
 {
     return Data_02005830;
 }

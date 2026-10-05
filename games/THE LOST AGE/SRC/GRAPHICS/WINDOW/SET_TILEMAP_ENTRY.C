@@ -43,8 +43,7 @@ void UiWindow_SetTilemapEntry(
         break;
     }
 
-    /* FAKEMATCH: byte-offset stores preserve the strh base and offset
-       register order; map[index] reverses them in both stores. */
+    /* FAKEMATCH: byte-offset stores preserve both strh base/offset register pairs. */
     switch (mode) {
     case TILEMAP_ENTRY_NONE:
         return;

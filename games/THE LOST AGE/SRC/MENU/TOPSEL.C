@@ -11,8 +11,8 @@ extern char ResourceId_CommandIcons;
 
 void Resource_DecodeByteLzInRam(void *source, void *destination);
 
-/* The head of ☀️'s MENU13.C over ⚓️'s heap: the selection screen in the
-   menu work slot and the command icon transfer in heap block 68. */
+/* The selection screen occupies the menu work slot; command icons transfer
+ * through heap block 68. */
 void Menu_LoadSelectedResource(void)
 {
     struct SelectionScreen *state = Ram_HeapSlots->menu_work;

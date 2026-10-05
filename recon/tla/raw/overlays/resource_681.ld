@@ -19,7 +19,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
         "*/resource_681_overlay.o"(.text.x0200842a)
         "*/resource_681_overlay.o"(.text.x0200842c)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_681/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_681/EXITS.o"(.text)
         "*/resource_681_overlay.o"(.text.x020085dc)
         "*/resource_681_overlay.o"(.text.x020085f8)
         "*/resource_681_overlay.o"(.text.x02008610)

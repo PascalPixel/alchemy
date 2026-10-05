@@ -12,8 +12,7 @@ struct EventWordWork {
     s32 word_10;
 };
 
-/* An empty event hook ahead of the object hooks; nothing in the image
-   calls it by name. */
+/* Spawn the table with the event's last active object as its subject. */
 
 void Event_CallWithLastActiveObjectId(s32 event_id)
 {

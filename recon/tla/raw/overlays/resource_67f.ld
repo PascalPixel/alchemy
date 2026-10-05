@@ -31,7 +31,7 @@ SECTIONS
         "*/resource_67f_overlay.o"(.text.x0200900c)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67F/SCENE_TABLES.o"(.text)
         "*/resource_67f_overlay.o"(.text.x02009070)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67F/SCENE_TABLES_2.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67F/EXITS.o"(.text)
         "*/resource_67f_overlay.o"(.text.x020090b0)
         "*/resource_67f_overlay.o"(.text.x020090f0)
         "*/resource_67f_overlay.o"(.text.x02009148)

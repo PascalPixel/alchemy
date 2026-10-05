@@ -24,8 +24,7 @@ void Debug_SelectAbilityPair(void);
 
 s32 Object_CollectResources(struct AbilityListEntry *output)
 {
-    /* FAKEMATCH: retain the initial byte-offset resource read and the integer
-     * output-cursor address while their native source form is unresolved. */
+    /* FAKEMATCH: retain the initial byte-offset resource read and integer output-cursor address. */
     u16 object_ids[14];
     s32 output_count = 0;
     s32 object_count = Party_ListActiveOwnersFar(object_ids);
@@ -85,9 +84,7 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct AbilityListEntry *entries)
 {
-    /* FAKEMATCH: keep the existing volatile shortcut view. The canonical
-       member-address attempt changes this module from 306 to 298 bytes and
-       the shortcut function from 132 to 124 bytes in all six editions. */
+    /* FAKEMATCH: the volatile shortcut view preserves the 132-byte function; direct member addresses shorten it by eight bytes. */
     s32 i;
     u16 first;
 

@@ -19,8 +19,7 @@ void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
 
-/* The scene hooks the entry veneers export; the facing controller before
-   them is COMMON FIELD/COMMON/OBJECT/FACING.C. */
+/* The scene hooks exported by the overlay. */
 s32 *HaidiaBabi_GetEntrances(void)
 {
     return gHaidiaBabiEntrances;
@@ -218,8 +217,7 @@ void SceneState_ApplyValues123And11(void)
 /* The entry hook: how the house is set up for the entrance and the story. */
 s32 HaidiaBabi_RestoreEntryState(void)
 {
-    /* FAKEMATCH: retain the cached-cell base shared at +12 and the word
-     * value before the narrow target store. */
+    /* FAKEMATCH: the shared cached-cell base keeps the word read before the narrow store. */
     u32 i;
     s32 record;
     struct EventWork **control;
@@ -325,9 +323,7 @@ void BattleFx_SetBlock30Values128One();
    walk out of the house. */
 void FieldScene_RunComplexActorSequence(void)
 {
-    /* FAKEMATCH: a one-halfword record keeps the actor-flag zero in a halfword
-       register, which the reference reloads from the literal pool after the
-       actor lookup. */
+    /* FAKEMATCH: a halfword record keeps the actor-flag zero loaded from the pool after the actor lookup. */
     s32 base;
     struct FieldSprite *sprite;
     struct FieldActor *p12;

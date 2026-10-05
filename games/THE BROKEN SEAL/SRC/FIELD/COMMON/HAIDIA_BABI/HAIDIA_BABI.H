@@ -15,7 +15,7 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 enum {
-    /* Message 0x182 + 224. */
+
     ITEM_MYTHRIL_BAG = 224
 };
 

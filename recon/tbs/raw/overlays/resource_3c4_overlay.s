@@ -834,13 +834,13 @@ Data_0200bc0c:
 	.4byte FieldScene_PlaceAndPinSlots10And11
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene3c4_02002480
+	.4byte BabiChika_RestorePlatformCells
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte FieldScene_RunScene3c4_02002480
+	.4byte BabiChika_RestorePlatformCells
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte FieldScene_RunScene3c4_02002480
+	.4byte BabiChika_RestorePlatformCells
 	.4byte 0x00004e15
 	.4byte 0x0200000f
 	.4byte SceneActor_MirrorFlag201IntoSlot14

@@ -16,7 +16,7 @@ void FieldScene_PlaceAndPinSlots8And9(void);
 
 void FieldScene_PlaceAndPinSlots10And11(void);
 
-void FieldScene_RunScene3c4_02002480(void);
+void BabiChika_RestorePlatformCells(void);
 
 s32 SceneActor_CopyActor8PositionWhenAtRow10();
 
@@ -159,7 +159,7 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
     Map_CopyCellAttributeRect(89, 49, 3, 2, 25, 49);
     Map_CopyCellAttributeRect(89, 51, 8, 5, 25, 51);
     StagedActor_AdvancePair();
-    FieldScene_RunScene3c4_02002480();
+    BabiChika_RestorePlatformCells();
     Engine_EventEnd();
 }
 
@@ -905,7 +905,7 @@ void FieldScene_PlaceAndPinSlots10And11(void)
     }
 }
 
-void FieldScene_RunScene3c4_02002480(void)
+void BabiChika_RestorePlatformCells(void)
 {
     struct FieldActor *record;
     s32 p5;
@@ -1043,7 +1043,7 @@ s32 FieldScene_InitializeActorGroups(void)
             break;
         case 12:
         case 13:
-            FieldScene_RunScene3c4_02002480();
+            BabiChika_RestorePlatformCells();
             Object_GetById(12)->motion_flags = 0;
             Object_GetById(13)->motion_flags = 0;
             Engine_ActorSetSpriteFlags(Object_GetById(15), 0);

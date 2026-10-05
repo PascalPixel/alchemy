@@ -16,7 +16,9 @@
  * 56, but moves the fresh &work before the dispatch); tail as for/<, while,
  * while with i++, if + do-while, an ids pointer (63-77); i = 0 at each
  * statement from the stage block on (63-72); the count as a variable
- * stored after the arms (136); the stage calls as a loop (92). An
+ * stored after the arms (136), count = work.side, side from the compare,
+ * or i as the shared 1 (130-136: the first loop then sees count 1); the
+ * stage calls as a loop (92). An
  * 800-iteration devsearch from the old 82 base reached 78.
  * 2026-10-04 (second-wave finisher 1), alchemy diff 82, unchanged: the
  * draft now uses the shared BattlePresentationWork / Transition /

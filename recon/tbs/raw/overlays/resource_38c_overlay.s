@@ -75,6 +75,8 @@ BiribinoHeya_SecondaryTable:
 	.4byte 0x0070801f
 	.4byte 0x0080701f
 	.4byte 0x000001ff
+	.global gBiribinoHeyaPlacements
+gBiribinoHeyaPlacements:
 	.4byte 0x0000006c
 	.4byte 0x00000001
 	.4byte 0x00680000

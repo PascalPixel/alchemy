@@ -1,3 +1,4 @@
+#include "BATTLE_UNIT.H"
 #include "TASK.H"
 
 extern u8 MsgKorosseoRobinDidGetGoodLook[];
@@ -236,7 +237,7 @@ void OverlayObject_NotifyMatchingEntries(s32 no, s32 val)
 
     Inventory_AddItem(no, val);
 
-    tbl = (u16 *)((char *)tbl + 0xd8);
+    tbl = ((struct BattleUnit *)tbl)->inventory;
     for (i = 0; i <= 14; i++) {
         if (tbl[i] == val) {
             Inventory_Equip(no, i);

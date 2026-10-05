@@ -1,4 +1,4 @@
-use crate::compiler::bundle_data::{HostDigests, AGBCC_ARM_EXPECTED, AGBCC_EXPECTED, EXPECTED};
+use crate::compiler::bundle_data::{source_record, SOURCE_RECORD};
 use crate::compiler::routing::{
     agbcc_arm_driver, agbcc_driver, bundle, bundle_for, root, CompilerTarget,
 };
@@ -115,27 +115,6 @@ fn ensure_compiler_bundle_access() -> Result<()> {
     ensure_canonical_bundle_root()?;
     acquire_compiler_bundle_shared_lock()
 }
-pub fn host_key() -> Option<&'static str> {
-    match (std::env::consts::OS, std::env::consts::ARCH) {
-        ("macos", "aarch64") => Some("darwin-arm64"),
-        ("macos", "x86_64") => Some("darwin-x64"),
-        ("linux", "x86_64") => Some("linux-x64"),
-        ("linux", "aarch64") => Some("linux-arm64"),
-        _ => None,
-    }
-}
-pub const UNSUPPORTED_HOST_MESSAGE: &str =
-    "compiler bundle supports darwin/linux on arm64/x86_64; this platform is none of those";
-pub fn host_admission_message(host: &str, what: &str) -> String {
-    [
-        format!("compiler bundle has no approved {what} digests for host {host} yet."),
-        "Executable admission requires Pascal's approval and reproduction evidence.".to_string(),
-        "`alchemy build compilers` builds source only; it does not admit hashes.".to_string(),
-        "`alchemy bootstrap --from BUNDLE` installs distributions already admitted".to_string(),
-        "in compiler/bundle_data.rs; it cannot approve a newly built toolchain.".to_string(),
-    ]
-    .join(" ")
-}
 fn validation_cache() -> &'static Mutex<Vec<String>> {
     static VALIDATED: OnceLock<Mutex<Vec<String>>> = OnceLock::new();
     VALIDATED.get_or_init(|| Mutex::new(Vec::new()))
@@ -184,12 +163,6 @@ fn smoke(argv: &[String]) -> std::result::Result<(), String> {
     };
     Err(detail.trim().to_string())
 }
-fn lookup<'a>(table: &'a [HostDigests], host: &str) -> Option<&'a [&'static str]> {
-    table
-        .iter()
-        .find(|(key, _)| *key == host)
-        .map(|(_, digests)| *digests)
-}
 pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
     ensure_compiler_bundle_access()?;
     if validation_cached(target.as_str()) {
@@ -201,30 +174,11 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
     Ok(())
 }
 fn validate_game_directory(bundle_dir: &Path, target: CompilerTarget) -> Result<()> {
-    let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
-    let entries = EXPECTED
-        .iter()
-        .find(|(key, _)| *key == host)
-        .and_then(|(_, targets)| targets.iter().find(|(key, _)| *key == target.as_str()))
-        .map(|(_, entries)| *entries)
-        .ok_or_else(|| host_admission_message(host, target.as_str()))?;
-    if entries.iter().all(|(_, expected)| expected.is_empty()) {
-        return Err(host_admission_message(host, target.as_str()));
-    }
-    for (name, expected) in entries {
-        let path = bundle_dir.join(name);
-        let missing = format!(
-            "compiler {} bundle is missing executable {name}",
-            target.as_str()
-        );
-        if executable_mode(&path) != Some(true) {
-            return Err(missing);
-        }
-        let bytes = fs::read(&path).map_err(|_| missing)?;
-        let actual = sha256::hex(&bytes);
-        if !expected.contains(&actual.as_str()) {
+    validate_source_record(bundle_dir)?;
+    for name in ["xgcc", "cpp0", "tradcpp0", "cc1", "as"] {
+        if executable_mode(&bundle_dir.join(name)) != Some(true) {
             return Err(format!(
-                "compiler {}/{name} has an unapproved digest",
+                "compiler {} bundle is missing executable {name}",
                 target.as_str()
             ));
         }
@@ -252,41 +206,33 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     if validation_cached("agbcc") {
         return Ok(());
     }
+    validate_source_record(&bundle())?;
     validate_agbcc_driver(&agbcc_driver())?;
     validate_agbcc_arm_driver(&agbcc_arm_driver())?;
     cache_validation("agbcc");
     Ok(())
 }
+/// A toolchain is admitted by the pinned source it was built from, on any
+/// system, never by the bytes one host's C compiler happened to produce.
+fn validate_source_record(directory: &Path) -> Result<()> {
+    let record = fs::read_to_string(directory.join(SOURCE_RECORD)).unwrap_or_default();
+    if record != source_record() {
+        return Err(format!(
+            "compiler toolchain at {} was not built from the pinned agbcc and agscc sources; run alchemy bootstrap --build",
+            directory.display()
+        ));
+    }
+    Ok(())
+}
 fn validate_agbcc_driver(driver: &Path) -> Result<()> {
-    validate_driver(
-        driver,
-        "agbcc/old_agbcc",
-        AGBCC_EXPECTED,
-        &["-mthumb-interwork", "-O2"],
-    )
+    validate_driver(driver, "agbcc/old_agbcc", &["-mthumb-interwork", "-O2"])
 }
 fn validate_agbcc_arm_driver(driver: &Path) -> Result<()> {
-    validate_driver(
-        driver,
-        "agbcc/agbcc_arm",
-        AGBCC_ARM_EXPECTED,
-        &["-mthumb-interwork", "-O2"],
-    )
+    validate_driver(driver, "agbcc/agbcc_arm", &["-mthumb-interwork", "-O2"])
 }
-fn validate_driver(driver: &Path, name: &str, table: &[HostDigests], flags: &[&str]) -> Result<()> {
-    let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
-    let missing = format!("compiler bundle is missing executable {name}");
-    if executable_mode(&driver) != Some(true) {
-        return Err(missing);
-    }
-    let bytes = fs::read(&driver).map_err(|_| missing)?;
-    let actual = sha256::hex(&bytes);
-    let expected = lookup(table, host).unwrap_or(&[]);
-    if expected.is_empty() {
-        return Err(host_admission_message(host, name));
-    }
-    if !expected.contains(&actual.as_str()) {
-        return Err(format!("compiler bundle {name} has an unapproved digest"));
+fn validate_driver(driver: &Path, name: &str, flags: &[&str]) -> Result<()> {
+    if executable_mode(driver) != Some(true) {
+        return Err(format!("compiler bundle is missing executable {name}"));
     }
     let mut command = vec![driver.to_string_lossy().into_owned(), "/dev/null".into()];
     command.extend(flags.iter().map(|flag| flag.to_string()));

@@ -6,7 +6,8 @@ use crate::compiler::{
 use fs2::FileExt;
 use std::{fs, path::Path, process::Command};
 
-const FILES: [&str; 7] = [
+const FILES: [&str; 8] = [
+    crate::compiler::bundle_data::SOURCE_RECORD,
     "xgcc",
     "cpp0",
     "tradcpp0",
@@ -120,9 +121,6 @@ fn verify_digest(path: &Path, expected: &str, name: &str) -> Result<(), String> 
 }
 
 fn build_from_sources() -> Result<(), String> {
-    if crate::compiler::bundle::host_key() != Some("darwin-arm64") {
-        return Err("source bootstrap is currently admitted only for Apple Silicon macOS".into());
-    }
     with_install_lock(|| {
         let toolchain = root().join("tools/out/compiler-build");
         let build = toolchain.join("build");
@@ -222,6 +220,13 @@ fn build_from_sources() -> Result<(), String> {
         fs::copy(
             root().join("agbcc/agbcc_arm"),
             stage.path().join("agbcc/agbcc_arm"),
+        )
+        .map_err(|e| e.to_string())?;
+        fs::write(
+            stage
+                .path()
+                .join(crate::compiler::bundle_data::SOURCE_RECORD),
+            crate::compiler::bundle_data::source_record(),
         )
         .map_err(|e| e.to_string())?;
         install(stage.path(), &bundle(), validate_installation)

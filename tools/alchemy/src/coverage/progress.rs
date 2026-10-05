@@ -126,7 +126,7 @@ pub fn measured(root: &Path, target: &str) -> Result<Option<GameDone>, String> {
 }
 
 /// A game's measurement, or why it is pending.
-fn status(root: &Path, target: &str) -> Result<Result<Game, String>, String> {
+pub(crate) fn status(root: &Path, target: &str) -> Result<Result<Game, String>, String> {
     measure_game(root, crate::targets::decomp_target(Some(target))?)
 }
 

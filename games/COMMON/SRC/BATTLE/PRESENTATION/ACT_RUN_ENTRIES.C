@@ -7,8 +7,7 @@ void BattlePres_SetActorModes(u16 *, s32);
 void BattlePresentation_WaitForAdvance(void);
 s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot);
 
-/* The epilogue pops into r1, so this owner was declared with a result,
-   though it returns none; its callers discard it. */
+/* Resolve each target action and dispatch its queued presentation events. */
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
 {
     s32 i;

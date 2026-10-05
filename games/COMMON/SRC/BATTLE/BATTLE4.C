@@ -60,9 +60,7 @@ void BattleActor_RemoveFromLists(s32 actor)
             break;
     }
 #endif
-    /* FAKEMATCH: the enemy scan is a goto loop inside a block that runs once,
-     * which keeps the loop pass off it. Written as a for like the party scan
-     * it compiles to a pointer walk with the 0xfe held in a register. */
+    /* FAKEMATCH: the goto loop avoids the pointer walk and saved 0xfe constant produced by a for loop. */
     do {
         j = 0;
 again:

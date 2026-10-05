@@ -2,7 +2,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-/* battle/classify_entry_kind.c */
 s32 Battle_ClassifyEntryKind(const struct BattleAction *entry)
 {
     s32 b3;

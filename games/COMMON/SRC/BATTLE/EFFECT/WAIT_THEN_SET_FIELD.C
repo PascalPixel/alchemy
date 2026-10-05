@@ -4,8 +4,6 @@
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 s32 BattleFx_RunSparkGroups(void *, s32);
 
-/* battle/effects/wait_then_set_field.c */
-
 void BattleFx_WaitThenSetField18To4(void *arg0)
 {
   unsigned int ofs;

@@ -100,16 +100,10 @@ void StoryProgress_TriggerEvent080A(void)
     }
 }
 
-void StoryActor_AdvanceTimer(u8 *actor)
+void StoryActor_AdvanceTimer(struct FieldActor *actor)
 {
-    u16 *timer = (u16 *)(actor + 0x64);
-
-    /*
-     * Arm order decides the branch sense: the fall-through is the increment
-     * and the taken branch is the call.  Swapping the arms inverts the test.
-     */
-    if (*(s16 *)timer <= 0) {
-        *timer = (u16)(*timer + 1);
+    if ((s16)actor->unknown_64 <= 0) {
+        actor->unknown_64++;
     } else {
         Engine_ObjectDispatchRelease(actor);
     }
@@ -119,8 +113,7 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 {
 
     s32 fixed_scale;
-    u8 *spawned_actor;
-    u8 *spawned_record;
+    struct FieldActor *spawned_actor;
 
     if ((gFrameCount & 4) != 0) {
         fixed_scale = 0x14ccc;
@@ -148,16 +141,15 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
     }
 
     {
-        u8 *spawned_flags = spawned_actor + 0x55;
+        u8 *flags = &spawned_actor->motion_flags;
         s32 zero_value = 0;
 
-        *spawned_flags = zero_value;
-        spawned_record = *(u8 **)(spawned_actor + 0x50);
-        ((StorySpawnRecord *)spawned_record)->field = 1;
+        *flags = zero_value;
+        ((struct FieldSpritePriority *)spawned_actor->sprite)->priority = 1;
         Engine_ActorSetSpriteFlags(spawned_actor, 0);
         Object_SetMode(spawned_actor, 1);
-        *(u16 *)(spawned_actor + 0x64) = zero_value;
-        *(s32 *)(spawned_actor + 0x6c) = (s32)StoryActor_AdvanceTimer;
+        spawned_actor->unknown_64 = zero_value;
+        spawned_actor->update = (void (*)(union FieldObject *))StoryActor_AdvanceTimer;
     }
 }
 
@@ -182,9 +174,8 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
     }
 }
 
-s32 StoryActor_Initialize(u8 *actor)
+s32 StoryActor_Initialize(struct FieldActor *actor)
 {
-    u8 *actor_flags;
     s32 fixed_scale;
 
     if (Engine_GameFlagIsSet(0x30) != 0) {
@@ -193,16 +184,13 @@ s32 StoryActor_Initialize(u8 *actor)
     if (Engine_GameFlagIsSet(0x16E) != 0) {
         return 0;
     }
-    *(s32 *)(actor + 0x6C) = (s32)WorldMap_UpdateBobbingMarker;
-    actor_flags = actor + 0x55;
-    *actor_flags = 0;
-    actor_flags += 0xF;
-    *(u16 *)actor_flags = 0;
-    actor_flags += 2;
-    *(u16 *)actor_flags = 0;
+    actor->update = (void (*)(union FieldObject *))WorldMap_UpdateBobbingMarker;
+    actor->motion_flags = 0;
+    actor->unknown_64 = 0;
+    actor->unknown_66 = 0;
     fixed_scale = 0x8000;
-    *(s32 *)(actor + 0x18) = fixed_scale;
-    *(s32 *)(actor + 0x1C) = fixed_scale;
+    actor->scale_x = fixed_scale;
+    actor->scale_y = fixed_scale;
     return 0;
 }
 
@@ -252,20 +240,22 @@ s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
     return 1;
 }
 
-s32 StoryActor_ResetPosition(u8 *actor)
+s32 StoryActor_ResetPosition(struct FieldActor *actor)
 {
     s32 zero;
+
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ObjectSetPartPalettes(actor, 10);
     {
-        u8 *mode_flags = actor + 0x59;
+        u8 *flags = &actor->collision_flags;
+
         zero = 0;
-        *mode_flags = zero;
+        *flags = zero;
     }
     if (Engine_GameFlagIsSet(0x8A0) != 0) {
         Engine_GameFlagSet(0x2f1);
-        *(s32 *)(actor + 8) = zero;
-        *(s32 *)(actor + 12) = zero;
+        actor->x.fixed = zero;
+        actor->y.fixed = zero;
     }
     return 0;
 }
@@ -348,49 +338,39 @@ struct ScenePlacement *StoryScene_SelectPlacementTable(void)
     return gWorldMapPlacements;
 }
 
-/* Publishes one of two branch values at +0x170 of the scene state, chosen by
- * comparing the other actor's x against the subject's. */
-void StoryScene_SetBranchValueFromX(
-    u8 *actor_object, s32 val_lower,
-    s32 val_other)
+/* Leaves by one of two exits, chosen by which side of the touched actor the
+ * selected actor stands on along x. */
+void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after)
 {
+    struct EventWork *work;
+    struct FieldActor *subject;
+    struct FieldActor *other;
 
-    u8 *scene_state;
-    s16 *scene_table;
-    struct Object *subject_actor;
-    struct Object *other_actor;
-
-    subject_actor = Object_GetById(actor_object - 0x64);
-    scene_table = (s16 *)&gGameState;
-    other_actor = Object_GetById(*(s32 *)&scene_table[250]);
-    scene_state = *(u8 **)&gEventWork;
-    if (other_actor->x < subject_actor->x) {
-        *(u16 *)(scene_state + 0x170) = val_lower;
+    subject = Object_GetById(trigger - CONTACT_TRIGGER_BASE);
+    other = Object_GetById(gGameState.selected_actor);
+    work = gEventWork;
+    if (other->x.fixed < subject->x.fixed) {
+        work->requested_exit = exit_before;
     } else {
-        *(u16 *)(scene_state + 0x170) = val_other;
+        work->requested_exit = exit_after;
     }
     Engine_AudioPlayCue(0x7B);
 }
 
-/* The same branch value, chosen on z instead of x. */
-void StoryScene_SetBranchValueFromZ(
-    u8 *actor_object, s32 val_lower,
-    s32 val_other)
+/* The same choice of exit, made along z instead of x. */
+void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after)
 {
+    struct EventWork *work;
+    struct FieldActor *subject;
+    struct FieldActor *other;
 
-    u8 *scene_state;
-    s16 *scene_table;
-    struct Object *subject_actor;
-    struct Object *other_actor;
-
-    subject_actor = Object_GetById(actor_object - 0x64);
-    scene_table = (s16 *)&gGameState;
-    other_actor = Object_GetById(*(s32 *)&scene_table[250]);
-    scene_state = *(u8 **)&gEventWork;
-    if (other_actor->z < subject_actor->z) {
-        *(u16 *)(scene_state + 0x170) = val_lower;
+    subject = Object_GetById(trigger - CONTACT_TRIGGER_BASE);
+    other = Object_GetById(gGameState.selected_actor);
+    work = gEventWork;
+    if (other->z.fixed < subject->z.fixed) {
+        work->requested_exit = exit_before;
     } else {
-        *(u16 *)(scene_state + 0x170) = val_other;
+        work->requested_exit = exit_after;
     }
     Engine_AudioPlayCue(0x7B);
 }
@@ -685,7 +665,7 @@ void RunEventScript01(void)
 
 void FieldScene_RunActorTransferSequence(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     struct FieldActor *record;
     s32 scale;
     s32 action;
@@ -825,22 +805,13 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetSpeed(14, 0x4ccc, 0x2666);
     Engine_ActorEnableActionCallback(14, gTransferGuide14);
     Engine_EventWait(160);
-    *(s32 *)(actor + 72) = 0x1999;
-    *(s32 *)(actor + 68) = 0x1999;
-    *(s32 *)(actor + 24) = 0x18000;
-    *(s32 *)(actor + 28) = 0x18000;
-    {
-        s32 shown = 0;
-
-        *(u16 *)(actor + 100) = shown;
-    }
-    *(s32 *)(actor + 12) = 0x400000;
-    {
-        u8 *target = *(u8 **)(actor + 80);
-        s32 shown = 0xf000;
-
-        *(u16 *)(target + 30) = shown;
-    }
+    actor->gravity = 0x1999;
+    actor->bounce = 0x1999;
+    actor->scale_x = 0x18000;
+    actor->scale_y = 0x18000;
+    actor->unknown_64 = 0;
+    actor->y.fixed = 0x400000;
+    actor->sprite->rotation = 0xf000;
     Engine_ActorSetSpriteFlags(actor, 0);
     Object_SetMode(actor, 2);
     Engine_TaskWait(1);
@@ -849,7 +820,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_TaskAddCallback((s32)FieldScene_RunScene371_020017a4, 0xc80);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(actor + 100) == 0);
+    } while ((s16)actor->unknown_64 == 0);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
     record = Actor_Get(14);
@@ -1099,7 +1070,7 @@ void FieldScene_RunScene371_02001888(void)
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)((u8 *)rec7 + 100) == 0);
+    } while ((s16)rec7->unknown_64 == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1134,7 +1105,7 @@ void FieldScene_RunScene371_02001938(void)
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)((u8 *)rec7 + 100) == 0);
+    } while ((s16)rec7->unknown_64 == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1169,7 +1140,7 @@ void FieldScene_RunScene371_020019e8(void)
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)((u8 *)rec7 + 100) == 0);
+    } while ((s16)rec7->unknown_64 == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1208,7 +1179,7 @@ void FieldScene_RunScene371_02001a98(void)
     }
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)((u8 *)rec7 + 100) == 0);
+    } while ((s16)rec7->unknown_64 == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);

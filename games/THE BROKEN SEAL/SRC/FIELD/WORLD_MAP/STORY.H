@@ -9,13 +9,6 @@
 #define SCENE_PHASE (gEventWork->start_transition)
 #define ACTOR 8
 
-typedef struct {
-    u8 pad[9];
-    u8 lo:2;
-    u8 field:2;
-    u8 hi:4;
-} StorySpawnRecord;
-
 struct Object {
     u8 filler00[8];
     s32 x;
@@ -114,7 +107,7 @@ void QueueIoWriteDelay2(u32 address, u32 value);
 
 /* The world map's own callbacks and scenes. */
 void WorldMap_CreateLinkedEffects();
-void StoryActor_AdvanceTimer(u8 *actor);
+void StoryActor_AdvanceTimer(struct FieldActor *actor);
 void WorldMap_UpdateBobbingMarker();
 void WorldMap_SpawnActorEightPuff(void);
 void StoryScene_UpdateSelectedActorProgress(void);

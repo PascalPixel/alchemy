@@ -51,8 +51,8 @@ gEffectScripts:
 	.4byte .L_0200b884
 	.4byte .L_0200b8bc
 	.4byte .L_0200b8f4
-	.global MakyuriChojo_ScriptTable
-MakyuriChojo_ScriptTable:
+	.global gMakyuriChojoEntrances
+gMakyuriChojoEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -89,13 +89,13 @@ MakyuriChojo_ScriptTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global MakyuriChojo_MessageTable
-MakyuriChojo_MessageTable:
+	.global gMakyuriChojoExits
+gMakyuriChojoExits:
 	.4byte 0x0000003a
 	.4byte 0x0010f039
 	.4byte 0x000001ff
-	.global MakyuriChojo_ActorTable
-MakyuriChojo_ActorTable:
+	.global gMakyuriChojoPlacements
+gMakyuriChojoPlacements:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -228,14 +228,14 @@ MakyuriChojo_ActorTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global MakyuriChojo_EventTable
-MakyuriChojo_EventTable:
+	.global gMakyuriChojoEvents
+gMakyuriChojoEvents:
 	.4byte 0x00000002
 	.4byte 0x08800005
 	.4byte RunScene58Sequence
 	.4byte 0x00000002
 	.4byte 0x02510006
-	.4byte FieldScene_RunScene39d_02002ddc
+	.4byte MakyuriChojo_BringLiftUp
 	.4byte 0x00000202
 	.4byte 0xffff000b
 	.4byte SceneActor_InitializeMotion
@@ -253,7 +253,7 @@ MakyuriChojo_EventTable:
 	.4byte 0x00300000
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene39d_02002eb8
+	.4byte MakyuriChojo_TakeLiftDown
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

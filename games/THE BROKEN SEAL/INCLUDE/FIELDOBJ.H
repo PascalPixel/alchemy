@@ -12,7 +12,9 @@ struct EventWork {
     u8 unknown_11c[0x50];
     /* The map trigger the leader has run into, handled on the next frame. */
     s16 touched_trigger;
-    u8 unknown_16e[4];
+    u8 unknown_16e[2];
+    /* The exit a script asks the scene to leave by. */
+    u16 requested_exit;
     u16 unknown_172;
     u8 unknown_174[6];
     /* The trigger tile just ahead of the leader. */
@@ -42,6 +44,7 @@ struct EventWork {
 
 LAYOUT_OFFSET_GUARD(EventWork_PlacedActors, struct EventWork, placed_actors, 0x34);
 LAYOUT_OFFSET_GUARD(EventWork_TouchedTrigger, struct EventWork, touched_trigger, 0x16c);
+LAYOUT_OFFSET_GUARD(EventWork_RequestedExit, struct EventWork, requested_exit, 0x170);
 LAYOUT_OFFSET_GUARD(EventWork_FacingTrigger, struct EventWork, facing_trigger, 0x17a);
 LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork, psynergy_request, 0x17e);
 LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raised_trigger, 0x182);

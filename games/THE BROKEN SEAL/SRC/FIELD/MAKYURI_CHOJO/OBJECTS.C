@@ -5,30 +5,29 @@
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "AERIE.H"
 
-void SetOverlayObjectRecordField1(struct OverlayObject *object, s32 value)
+void SetOverlayObjectRecordField1(struct OverlayObject *object, s32 priority)
 {
-    struct OverlayObjectRecordFieldView *record;
-    record = (struct OverlayObjectRecordFieldView *)object->record;
-    record->field_01 = value;
+    struct FieldSpritePriority *sprite;
+
+    sprite = (struct FieldSpritePriority *)object->record;
+    sprite->priority = priority;
 }
 
-void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth)
+/* Creates an object at a fixed-point position with its sprite in front of
+   every background layer, standing still and set going. */
+void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 type)
 {
-    void *obj;
-    void *rec;
-    s32 mask;
+    struct FieldActor *object;
 
-    obj = CreateOverlayObject(fourth, first, second, third);
-    if (obj != NULL) {
-        rec = FIELD_AT_OFFSET(obj, void *, 0x50);
-        mask = -0xD;
-        FIELD_AT_OFFSET(rec, u8, 9) = (u8)(mask & FIELD_AT_OFFSET(rec, u8, 9));
-        FIELD_AT_OFFSET(obj, u8, 0x55) = 0;
-        FIELD_AT_OFFSET(obj, u8, 0x59) = 8;
-        SetOverlayObjectMode(obj, 0);
-        SetOverlayObjectSlot(obj, 0xE);
-        RunOverlayObjectCommand1(obj, 1);
-        return obj;
+    object = CreateOverlayObject(type, x, y, z);
+    if (object != NULL) {
+        ((struct FieldSpritePriority *)object->sprite)->priority = 0;
+        object->motion_flags = 0;
+        object->collision_flags = 8;
+        SetOverlayObjectMode(object, 0);
+        SetOverlayObjectSlot(object, 14);
+        RunOverlayObjectCommand1(object, 1);
+        return object;
     }
     return NULL;
 }

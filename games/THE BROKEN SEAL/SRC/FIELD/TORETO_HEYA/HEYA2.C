@@ -45,7 +45,6 @@ extern s32 ToretoHeya_TintIndex;
 extern s32 ToretoHeya_TintSteps[];
 
 void Vector_AddPolarOffset();
-void Engine_ObjectDispatchRelease();
 
 struct Vec {
     s32 x;
@@ -92,22 +91,7 @@ struct Vec3 {
 extern s16 ToretoHeya_MapPatches[];
 
 void ToretoHeya_AdvanceEffectMotion();
-void Engine_EventBegin(void);
-void Engine_CameraMoveTo();
-void Engine_MapRedraw(void);
-void Engine_TaskWait(s32 frames);
-void Engine_EventOpenScreen(void);
-void Engine_EventWaitForScreen(void);
-void Engine_AudioPlayCue(s32 cue);
-void Engine_EventWait(s32 frames);
-s32 Engine_MathCos(s32 angle);
-s32 Engine_MathSin(s32 angle);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
-void Engine_ActorSetAttachedEffect();
-void Engine_ActorSetAnimation(s32 actor, s32 anim);
-void Engine_WorkSetValuesIfNonNegative();
-void Engine_MapWaitWorkValuesBelow256(void);
-void Engine_EventEnd(void);
 
 struct EffectParams {
     s32 count;
@@ -542,7 +526,6 @@ void SceneState_ApplyRectsByFlag844(s32 flag)
         Engine_MapCopyCellAttributes(11, 8, 1, 2, w1, w2);
     }
 }
-
 
 /* Enter the room: hide the lamps, drift the camera, set the room flags, and
  * finish the fall from the floor above when entered through entrance 20 to

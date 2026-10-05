@@ -345,8 +345,8 @@ VinasuChojo_PartyHeadingAction:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
-	.global Data_0200e3d4
-Data_0200e3d4:
+	.global gVinasuChojoEntrances
+gVinasuChojoEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000130
 	.4byte 0x300000d8
@@ -383,15 +383,15 @@ Data_0200e3d4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200e464
-Data_0200e464:
+	.global gVinasuChojoExits
+gVinasuChojoExits:
 	.4byte 0x000000bb
 	.4byte 0x00149002
 	.4byte 0x002630b4
 	.4byte 0x0090c0b3
 	.4byte 0x000001ff
-	.global Data_0200e478
-Data_0200e478:
+	.global gVinasuChojoPlacements
+gVinasuChojoPlacements:
 	.4byte 0xffff0102
 	.4byte 0x00000001
 	.4byte 0x00f80000
@@ -548,11 +548,11 @@ Data_0200e478:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200e6e8
-Data_0200e6e8:
+	.global VinasuChojo_NearestActor
+VinasuChojo_NearestActor:
 	.4byte 0x00000000
-	.global Data_0200e6ec
-Data_0200e6ec:
+	.global gVinasuChojoEvents
+gVinasuChojoEvents:
 	.4byte 0x00000202
 	.4byte 0xffff000b
 	.4byte InitializeActorZeroMotion

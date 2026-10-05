@@ -41,22 +41,7 @@ struct Ent SoruSekizo_SpriteRows[27];
 
 void SetMapCellCollision();
 extern u8 MsgSoruSomethingClicked[];
-void Engine_EventBegin();
-s32 Engine_GameFlagIsSet();
-void Engine_ActorWalkToAndWait();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_ActorSetSpritePriority();
-void Engine_AudioPlayCue();
-void Engine_ActorSetDestination();
-void Engine_ActorSetPosition();
-void Engine_WorkSetValuesIfNonNegative();
-void Engine_MessageShowCentered();
 void Engine_MapCopyCellAttributes();
-void Engine_EventEnd();
-void Engine_ActorSetAnimation();
-void Engine_ActorWaitForMove();
 
 u8 *SceneEventRuntime_GetScriptData(void)
 {

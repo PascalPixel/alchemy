@@ -104,13 +104,6 @@ struct V {
     s32 c;
 };
 
-struct Owner {
-    u8 unk0[9];
-    u8 unk9_0 : 2;
-    u8 mode : 2;
-    u8 unk9_4 : 4;
-};
-
 struct S_020009dc {
     s32 f00;
     s32 f04;
@@ -299,29 +292,26 @@ typedef struct OrbitingSceneObject {
 
                     /* scene entity by selector */
 
-/* Copy the low two mode bits into the object's owner record. */
-void SetEffectOwnerMode(u8 *object, s32 mode)
+/* Sets the object's sprite priority. */
+void SetEffectOwnerMode(struct FieldActor *object, s32 priority)
 {
-    struct Owner *owner = *(struct Owner **)(object + 80);
-    owner->mode = mode;
+    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)object->sprite;
+
+    sprite->priority = priority;
 }
 
 /* Spawn and configure the mode-14 object variant. */
 
 /* Spawn and configure the mode-15 object variant. */
 
-/* Returns the party record; only its presentation block at +80 is read. */
-u8 *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
+struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *object = Engine_ObjectCreate(kind, x, y, z);
+    struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
 
     if (object != 0) {
-        u8 *owner = *(u8 **)(object + 80);
-        s32 mask = ~12;
-        mask &= owner[9];
-        owner[9] = mask;
-        object[85] = 0;
-        object[89] = 8;
+        ((struct FieldSpritePriority *)object->sprite)->priority = 0;
+        object->motion_flags = 0;
+        object->collision_flags = 8;
         Engine_ActorSetSpriteFlags(object, 0);
         ObjectGroup_SetChildValue(object, 14);
         Engine_ObjectSetBlendMode(object, 1);
@@ -330,26 +320,17 @@ u8 *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
     return 0;
 }
 
-u8 *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
+struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *object = Engine_ObjectCreate(kind, x, y, z);
+    struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
 
     if (object != 0) {
-        u8 *owner = *(u8 **)(object + 80);
-        s32 mask = ~12;
-        mask &= owner[9];
-        mask |= 4;
-        owner[9] = mask;
-        object[85] = 0;
-        object[89] = 8;
+        ((struct FieldSpritePriority *)object->sprite)->priority = 1;
+        object->motion_flags = 0;
+        object->collision_flags = 8;
         Engine_ActorSetSpriteFlags(object, 0);
         ObjectGroup_SetChildValue(object, 15);
-        {
-            s32 mask2 = 254;
-            mask2 &= object[35];
-            mask2 |= 2;
-            object[35] = mask2;
-        }
+        object->priority_flags = (object->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
         return object;
     }
     return 0;

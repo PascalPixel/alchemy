@@ -45,7 +45,6 @@ extern const struct ScenePlacement gTakaraHashiraPlacements3[];
 extern const struct ScenePlacement gTakaraHashiraPlacements5[];
 extern const struct ScenePlacement gTakaraHashiraPlacementsOther[];
 
-s32 Engine_RandomNext();
 extern u32 gBgScroll[];
 
 /* Copy one map cell's attribute fields (all but the tile) from src into the

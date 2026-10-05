@@ -113,9 +113,6 @@ Func_0808a0b8:
 	.global ObjectMotion_SetPositionAndCommitFar
 	.thumb_func
 ObjectMotion_SetPositionAndCommitFar:
-	.global Func_0808a0c0
-	.thumb_func
-Func_0808a0c0:
 	overlay_veneer ObjectMotion_SetPositionAndCommit
 	.global ObjectMotion_ResetAndSetPositionInMode2Far
 	.thumb_func
@@ -182,9 +179,6 @@ ObjectMotion_SetAngleTowardFar:
 	.global Object_LinkPairFar
 	.thumb_func
 Object_LinkPairFar:
-	.global Func_0808a150
-	.thumb_func
-Func_0808a150:
 	overlay_veneer Object_LinkPair
 	.global ObjectGroup_ConfigureChildValueFar
 	.thumb_func
@@ -201,16 +195,10 @@ Object_SetTargetAndCallbackFar:
 	.global Event_SetValue1d8Far
 	.thumb_func
 Event_SetValue1d8Far:
-	.global Func_0808a170
-	.thumb_func
-Func_0808a170:
 	overlay_veneer Event_SetValue1d8
 	.global UiText_OpenMessageAtObjectFar
 	.thumb_func
 UiText_OpenMessageAtObjectFar:
-	.global Func_0808a178
-	.thumb_func
-Func_0808a178:
 	overlay_veneer UiText_OpenMessageAtObject
 	.global BattleEv_RunWaitFar
 	.thumb_func
@@ -284,9 +272,6 @@ Object_PlaceCurrentWithinCameraBoundsFar:
 	.global Battle_GetWorkObject1e0Far
 	.thumb_func
 Battle_GetWorkObject1e0Far:
-	.global Func_0808a228
-	.thumb_func
-Func_0808a228:
 	overlay_veneer Battle_GetWorkObject1e0
 	.global Map_SetWorkFourValuesFar
 	.thumb_func
@@ -513,9 +498,6 @@ EffectRuntime_StopCurrentObjectFar:
 	.global BattleEffect_CleanupSceneObjectsFar
 	.thumb_func
 BattleEffect_CleanupSceneObjectsFar:
-	.global Func_0808a440
-	.thumb_func
-Func_0808a440:
 	overlay_veneer BattleEffect_CleanupSceneObjects
 	.global EventObject_InitializeFar
 	.thumb_func
@@ -582,9 +564,6 @@ Object_CallSpawnRoutineAtOriginFar:
 	.global Audio_PlayCueFromEventWorkFar
 	.thumb_func
 Audio_PlayCueFromEventWorkFar:
-	.global Func_0808a4f0
-	.thumb_func
-Func_0808a4f0:
 	overlay_veneer Audio_PlayCueFromEventWork
 	.global BattleFx_RunPageEffectForSlotFar
 	.thumb_func

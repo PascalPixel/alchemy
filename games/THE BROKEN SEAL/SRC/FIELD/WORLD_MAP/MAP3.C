@@ -35,7 +35,6 @@ u16 gWorldMapBlend;
 extern const u8 gWorldMapPalettes[];
 extern const u8 gWorldMapPackedTiles[];
 extern const u8 gWorldMapPackedFrames[];
-void Sys_Free(void *buffer);
 void Map_ResumeAnimation(void);
 void Map_LoadAreaGraphics(void);
 void SceneEffect_RestoreBlendRegisters(void);

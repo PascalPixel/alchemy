@@ -242,10 +242,10 @@ Battle_ResetEffectCounterFar:
 	.thumb_func
 Engine_PsynergyCancel:
 	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlockFar
-	.global Audio_PlayCueFromEventWorkFar
+	.global Audio_PlayCueFromEventWork
 	.thumb_func
-Audio_PlayCueFromEventWorkFar:
-	overlay_veneer Func_0808a4f0
+Audio_PlayCueFromEventWork:
+	overlay_veneer Audio_PlayCueFromEventWorkFar
 	.global Motion_LaunchFromFocusedObjectFar
 	.thumb_func
 Motion_LaunchFromFocusedObjectFar:

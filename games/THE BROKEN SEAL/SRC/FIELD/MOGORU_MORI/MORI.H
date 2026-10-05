@@ -66,7 +66,7 @@ void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void Object_SetModeById(s32 actor, s32 mode);
-s32 Object_CheckMovementCollision(s32 *p, s16 *q);
+s32 Object_CheckMovementCollision(struct FieldActor *actor, s16 *position);
 void BattleFx_SetPhaseRequest(s32 a, s32 b);
 void BattleFx_SetWeightedResult();
 u8 *AllocateEffectTransfer(s32, s32);

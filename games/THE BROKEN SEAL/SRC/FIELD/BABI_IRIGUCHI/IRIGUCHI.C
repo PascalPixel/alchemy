@@ -996,7 +996,7 @@ struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
     return StagedActor_FindAtTile(p, actor);
 }
 
-void SceneState_SetRuntimeByte34(void)
+void BabiIriguchi_EnableEffectChildOption(void)
 {
     FIELD_AT_OFFSET(*(void **)gEffectWork, s8 *, 0x34) = 1;
 }

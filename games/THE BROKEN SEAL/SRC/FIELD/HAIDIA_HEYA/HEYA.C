@@ -60,7 +60,7 @@ s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
     return 0;
 }
 
-void *SceneData_GetTable9478(void)
+void *HaidiaHeya_GetEntrances(void)
 {
     return gValeHouseEntrances;
 }
@@ -70,7 +70,7 @@ int SceneData_ReturnZero(void)
     return 0;
 }
 
-void *SceneData_SelectTable9568ByFlag(void)
+void *HaidiaHeya_SelectExits(void)
 {
     if (Engine_GameFlagIsSet(0x834) != 0)
         return gValeHouseLateExits;
@@ -92,7 +92,7 @@ void *SceneData_SelectFlaggedTable(void)
     return tbl;
 }
 
-void *SceneData_SelectTable9c00ByFlags(void)
+void *HaidiaHeya_SelectEvents(void)
 {
     if (Engine_GameFlagIsSet(0x834) != 0)
         return gValeHouseLateEvents;
@@ -172,7 +172,7 @@ void HaidiaHeya_TalkHopeDidntGetSick(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetRuntimeWord448To521AndRun(s32 value)
+void HaidiaHeya_RequestWindowExit(s32 value)
 {
     if (Engine_GameFlagIsSet(0x834) != 0)
         BattleFx_SetBlock30ValuesMaxZero();
@@ -187,42 +187,42 @@ void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 /* Wrappers for the eight numbered scenes. */
 void FieldScene_RunIndexedStep1(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(1);
+    HaidiaHeya_RequestWindowExit(1);
 }
 
 void FieldScene_RunIndexedStep2(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(2);
+    HaidiaHeya_RequestWindowExit(2);
 }
 
 void FieldScene_RunIndexedStep3(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(3);
+    HaidiaHeya_RequestWindowExit(3);
 }
 
 void FieldScene_RunIndexedStep4(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(4);
+    HaidiaHeya_RequestWindowExit(4);
 }
 
 void FieldScene_RunIndexedStep5(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(5);
+    HaidiaHeya_RequestWindowExit(5);
 }
 
 void FieldScene_RunIndexedStep6(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(6);
+    HaidiaHeya_RequestWindowExit(6);
 }
 
 void FieldScene_RunIndexedStep7(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(7);
+    HaidiaHeya_RequestWindowExit(7);
 }
 
 void FieldScene_RunIndexedStep8(void)
 {
-    SceneState_SetRuntimeWord448To521AndRun(8);
+    HaidiaHeya_RequestWindowExit(8);
 }
 
 s32 Scene_RunSupplementalSequenceOne(void)

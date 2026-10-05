@@ -70,7 +70,7 @@ struct FieldActor {
     } flags;
     u8 unknown_5c[8];
     s16 step_timer;             /* 0x64 */
-    u16 step_phase;             /* 0x66 */
+    s16 step_phase;             /* 0x66 */
     u8 unknown_68[8];
 };
 
@@ -132,15 +132,16 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     s32 posA[3];
     register s32 posB[3];
     s32 posC[3];
-    s32 unused[8];
-    s16 deltas[6];
+    s16 deltas[22];
     s32 blocked;
     s32 handled;
     s16 facing;
     s32 angle;
     s32 mode;
+    u16 direction;
     s32 dir;
     s32 i;
+    s32 count;
     struct FieldActor *entry;
     s16 *timer;
 
@@ -212,15 +213,14 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
         blocked |= 4;
         goto tail;
     }
+    blocked = 0;
     posA[0] = actor->pos[0];
     posA[1] = actor->pos[1];
     posA[2] = actor->pos[2];
-    blocked = 0;
     Vector_AddPolarOffset(0x80000, (u16)angle, posA);
-    if (gDebugMode != 0) {
+    if (gDebugMode != 0 && (gKeysHeld & KEY_L)) {
         facing = (s16)angle;
-        if (gKeysHeld & KEY_L)
-            goto tail;
+        goto tail;
     }
     if (Func_080120dc(actor, posA) != 0)
         goto search;
@@ -251,14 +251,15 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     facing = (s16)angle;
     goto move;
 search:
-    dir = (u16)angle;
-    deltas[0] = dir + 0x1000;
-    deltas[1] = dir - 0x1000;
-    deltas[2] = dir + 0x2000;
-    deltas[3] = dir - 0x2000;
-    deltas[4] = dir + 0x3000;
-    deltas[5] = dir - 0x3000;
-    for (i = 0; i < 6; i++) {
+    direction = angle;
+    count = 0;
+    deltas[count++] = direction + 0x1000;
+    deltas[count++] = direction - 0x1000;
+    deltas[count++] = direction + 0x2000;
+    deltas[count++] = direction - 0x2000;
+    deltas[count++] = direction + 0x3000;
+    deltas[count++] = direction - 0x3000;
+    for (i = 0; i < count; i++) {
         facing = deltas[i];
         posA[0] = actor->pos[0];
         posA[1] = actor->pos[1];
@@ -315,36 +316,35 @@ move:
             continue;
         if ((entry->flags.word & 0xff000200) != 0x200)
             goto push_blocked;
-        push = ArcTan2(entry->pos[2] - actor->pos[2], entry->pos[0] - actor->pos[0]);
+        direction = ArcTan2(entry->pos[2] - actor->pos[2], entry->pos[0] - actor->pos[0]);
         posB[0] = entry->pos[0];
         posB[1] = entry->pos[1];
-        facing = push;
-        push = (u16)push;
         posB[2] = entry->pos[2];
-        Vector_AddPolarOffset(0x4000, push, posB);
+        facing = direction;
+        Vector_AddPolarOffset(0x4000, direction, posB);
         if (ScriptObject_CheckOverlap(entry, posB))
             goto push_blocked;
         posB[0] = entry->pos[0];
         posB[1] = entry->pos[1];
         posB[2] = entry->pos[2];
-        Vector_AddPolarOffset(0xa0000, push, posB);
+        Vector_AddPolarOffset(0xa0000, direction, posB);
         if (Func_080120dc(entry, posB) != 0)
             goto push_blocked;
         posB[0] = entry->pos[0];
         posB[1] = entry->pos[1];
         posB[2] = entry->pos[2];
-        Vector_AddPolarOffset(0xa0000, push + 0x1000, posB);
+        Vector_AddPolarOffset(0xa0000, direction + 0x1000, posB);
         if (Func_080120dc(entry, posB) != 0)
             goto push_blocked;
         if (Func_080120dc(entry, posB) != 0)
             goto push_blocked;
         posB[0] = entry->pos[0];
-        posB[1] = (*entry).pos[1];
+        posB[1] = entry->pos[1];
         posB[2] = entry->pos[2];
-        Vector_AddPolarOffset(0xa0000, push - 0x1000, posB);
+        Vector_AddPolarOffset(0xa0000, direction - 0x1000, posB);
         if (Func_080120dc(entry, posB) != 0)
             goto push_blocked;
-        Vector_AddPolarOffset(0x4000, push, entry->pos);
+        Vector_AddPolarOffset(0x4000, direction, entry->pos);
         entry->target[0] = 0x80000000;
         entry->target[1] = 0x80000000;
         entry->target[2] = 0x80000000;
@@ -423,13 +423,11 @@ tail:
                 sprite->angle = dir + 0x4000;
                 sprite->flags |= 0xc;
             }
-            flip = actor->step_phase;
-            if ((s16)actor->step_phase == 2) {
+            if (actor->step_phase == 2) {
                 AnimationObjects_SelectAnimation(sprite, 2);
                 actor->step_phase = blocked;
-                flip = 0;
             }
-            if (flip != 0)
+            if (actor->step_phase != 0)
                 print->facing = 0x8000;
             if (mode == 5)
                 actor->step_timer = 12;

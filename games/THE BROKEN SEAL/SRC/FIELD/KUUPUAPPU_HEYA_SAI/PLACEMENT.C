@@ -1,4 +1,5 @@
 
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -18,8 +19,6 @@ extern u8 Placement_Actors[];
 extern u8 Placement_Effects[];
 
 void FieldScene_PrepareActors(u8 *);
-void SceneState_CheckPositionWindow(void);
-void OverlayObject_InitObject22(s32, s32, s32, s32);
 
 void SceneState_CheckPositionWindow(void)
 {

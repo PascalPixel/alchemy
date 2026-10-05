@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_UNIT.H"
@@ -39,7 +40,6 @@ s32 UiWindow_DrawThreeTileColumn(
     struct RenderInput *win, s32 x, s32 y, s32 tile, s32 flags);
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost);
-s32 Djinn_IsActiveFar(s32 owner, s32 col, s32 row);
 void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
 void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
 

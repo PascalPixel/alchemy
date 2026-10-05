@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
@@ -11,7 +12,6 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor_and_flags);
 s32 UiWork_IsIdleFar(struct UiWindow *window);
 
 void Battle_WaitMode0(s32 mode);
-void BattleEv_RunWait(s32 action, s32 flag);
 extern struct EventRuntime *gEventWork;
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force);
 

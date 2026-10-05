@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "OWNER_STATE.H"
 
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
@@ -9,7 +10,6 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
     return (u32)(-value | value) >> 31;
 }
 
-s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit);
 
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {

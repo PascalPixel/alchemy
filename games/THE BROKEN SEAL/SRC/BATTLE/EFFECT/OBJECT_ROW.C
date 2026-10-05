@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -47,14 +48,7 @@ extern u16 ParticleStreams_CellOffsets[];
 extern const struct FxPair ObjectRow_SweepPair;
 extern const struct FxPair ObjectRow_RisePair;
 
-void BattlePres_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32 layer, s32 mode);
-void BattleBackground_LoadFar(s32 layer, s32 resource_id, s32 mode);
-void BattleEffect_SetupBlendedDisplay(void);
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, struct FxPlacement *placement, struct FxPair *pair, s32 mode);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "SCENE.H"
 #include "GAME_FLAGS.H"
@@ -9,7 +10,6 @@
 #include "CHARACTER.H"
 
 s32 GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 
 void *Owner_GetState(s32);
 

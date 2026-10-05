@@ -1,10 +1,7 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
-void *AffineEffect_InitializeWork(void);
-void Menu_EndResourceSelection(void);
-s32 Menu_RunResourceSelectionLoop(s32);
-void Menu_AppendResourceEntry(s32 arg0);
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 
 s32 Menu_SelectEntry11To14(s32 arg0)
@@ -74,7 +71,6 @@ s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     return arg3;
 }
 
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h);
 
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 sel)
 {

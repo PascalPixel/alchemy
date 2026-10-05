@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
@@ -29,7 +30,6 @@ void KorimaPalette_Capture(void);
 void KorimaPalette_SaveSecond(void);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 
-void SceneEffect_AdjustPaletteColors(s32 a);
 
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)

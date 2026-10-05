@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
@@ -110,7 +111,6 @@ void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
     }
 }
 
-void Animation_InitWorkFromMetadata(struct AnimationEntry *entry);
 void Render_ApplyProjectedPlacement(struct AnimationObject *object, s32 *position, s32 *scale, s32 mode);
 
 struct Vec2 {

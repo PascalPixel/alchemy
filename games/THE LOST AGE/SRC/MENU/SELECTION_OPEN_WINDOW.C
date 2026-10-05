@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
@@ -59,8 +60,6 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
     }
 }
 
-void Resource_ScheduleOwnerReset(void);
-void Resource_ResetPendingTransfer(void);
 
 void Resource_ResetOwnerEntries(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "TBS_EDITION.H"
@@ -35,7 +36,6 @@ extern const struct SceneEvent gKareiTorebiEventsOther[];
 
 
 
-void FieldScene_ConfigureFlaggedActors(void);
 
 void FieldScene_PlaceSlots14And15(void);
 

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -147,11 +148,8 @@ void TorebiIzumi_PayToPlay(void)
 
 void Battle_ResetEffectCounter(void);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
-s32 Menu_SelectEntry20To21(s32 choice);
 void UiWork_FinalizePendingCore(void);
 s32 Party_AdjustCoins(s32 amount);
-s32 TorebiIzumi_RunSpringRide(s32 side);
-void TorebiIzumi_RevealPrize(s32 item);
 
 #if defined(TBS_EDITION_EN)
 #define ASK_WIDTH 17

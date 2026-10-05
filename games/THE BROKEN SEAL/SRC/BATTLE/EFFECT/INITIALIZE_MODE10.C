@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -22,18 +23,11 @@
 extern u8 gBattleFxWork[];
 extern volatile u32 gKeysRepeat;
 
-void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
-void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
-void Render_ResetTransformState(void);
 void *GetMotionRecordFar(struct MotionObject *object, s32 index);
 s32 Object_InitializeMode(void *object, s32 mode);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 void AudioCommand_PlayFar(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
-void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32 x, s32 y);
 
 
@@ -492,20 +486,12 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 
 extern u8 gMapCellBuffer[];
 
-void BattleFx_BuildWindowEdgeTable(void);
 
 void WaitFrames(s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
-void BattlePres_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32, s32);
-void BattleBackground_LoadFar(s32, s32, s32);
-void Render_ResetTransformState(void);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleEventRuntime_BeginPhaseFar(s32);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *, s32, s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
 
@@ -954,7 +940,6 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 }
 
 s32 Battle_GetObjectTableValueFar(s32 member_id);
-void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
 

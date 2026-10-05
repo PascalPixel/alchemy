@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -12,12 +13,8 @@
 
 extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
-void Menu_UpdateEntryObjectTransforms(void);
-void Palette_CopyObjectBankToBackground14(void);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWork_FinalizeFar(s32, s32);
-void Palette_LightenBankHighlight(s32);
-void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
 void UiText_DrawStringInWindowFar(u8 *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);

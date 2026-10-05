@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "SELECT.H"
@@ -23,20 +24,10 @@
 extern u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);
-u32 Menu_ConfirmSelection(struct SelectionScreen *screen);
 void Menu_OpenSelectionWindow(u16 type, u32 value);
 
 void WaitFrames(s32 frames);
-void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
 
-void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
-void Menu_LoadSelectedResource(void);
-void BattlePres_SetActorModesFar(u16 *, s32);
-void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index);
-void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index);
-void Menu_StepRight(struct SelectionScreen *state);
-void Menu_StepLeft(struct SelectionScreen *state);
 
 s32 Menu_SelectionLoop(s32 mode)
 {
@@ -356,7 +347,6 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen)
     BattlePres_SetActorModesFar(data, 0);
 }
 
-struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
 {

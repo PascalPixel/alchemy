@@ -1,9 +1,9 @@
 
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "MOTION_OBJECT.H"
 
-extern s32 Summon_IsEntryFlagged(s32 index);
 
 s32 BattleMotion_GetSlotPalette(s32 id)
 {

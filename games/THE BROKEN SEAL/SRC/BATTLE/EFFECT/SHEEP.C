@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RUNTIME_MEM.H"
@@ -13,10 +14,8 @@
 #include "TRANSFORM.H"
 
 extern void *gBattleFxWork[];
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 extern void *gWorkSlot[];

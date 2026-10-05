@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "SELECT.H"
@@ -34,9 +35,6 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
 
 
-struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
-void Menu_LoadSelectedResource(void);
 
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
                    s32 *dst, s32 reuse)

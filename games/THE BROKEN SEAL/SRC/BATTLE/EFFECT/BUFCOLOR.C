@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -7,10 +8,8 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "IO_REG.H"
 
-void BattlePalette_UpdateBlend(void);
 void BattleFx_BuildBuffer(s32, s32, s32, s32);
 
-void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3);
 
 void BattleEffect_InitializeBuffers(void)
 {

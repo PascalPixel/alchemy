@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -36,7 +37,6 @@ extern const struct SceneEvent gKareiKyudenEvents[];
 extern const struct SceneEvent gKareiKyudenEventsOther[];
 
 
-void FieldScene_DispatchSceneByIndex(void);
 
 
 const struct SceneEntrance *Scene_GetEntrances(void)

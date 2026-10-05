@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -11,14 +12,10 @@
 #include "OBJECT_DISPATCH.H"
 #include "text/MSG_IDS.H"
 
-void ShindenHeya_RaiseItemIcon(s32 item);
 
 void ShindenHeya_SpawnOwnerEffect();
 
-s32 CalculateFacingAngle(s32, s32);
-struct FacingObject *ResolveFacingObject(s16);
 
-struct FieldActor *GetActorState(s32 actor_id);
 void Object_RefreshSelectorById();
 
 enum FacingGatedMessage {
@@ -48,7 +45,6 @@ enum FacingGatedMessage {
     MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP = 0x1ceb
 };
 
-s32 UpdateFacingFromResolvedObject(struct FacingObject *object);
 
 void WaitFrames();
 void Ui_PrepareTransferForItem();
@@ -56,7 +52,6 @@ void Ui_PrepareTransferForItem();
 
 
 s32 Math_RemainderUnsigned();
-void ShindenHeya_UpdateRisingSpark(union FieldObject *object);
 
 extern s16 Data_02000240[];
 void FieldScene_RunSupplementalSequenceOne(void);

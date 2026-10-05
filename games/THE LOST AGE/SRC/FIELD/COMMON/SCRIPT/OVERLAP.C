@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "OBJECT_RUNTIME.H"
 
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
 s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values)
 {

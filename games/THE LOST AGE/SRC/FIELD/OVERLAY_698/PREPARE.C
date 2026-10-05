@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 
-void Scene_SetArrivalFlags(s32 unused);
 
 s32 Scene_PrepareMap(void)
 {

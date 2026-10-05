@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "OWNER_STATE.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
@@ -5,7 +6,6 @@
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
 
-s32 Party_CountActiveOwnersFar(void);
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners)
 {

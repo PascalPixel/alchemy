@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -6,16 +7,12 @@
 #include "text/MSG_IDS.H"
 
 u32 FuneKanpan_SlotMode[8];
-s32 SceneState_FindFirstSetFlagOfGroup(u32 group);
-s32 SceneData_SelectTableEntryByFlagGroup(u32 group);
 
 union Slot {
     s32 w;
     s16 h[2];
 };
 
-void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot);
-void SceneEffect_SelectSlotValueAndPosition(s32 actor, s32 slot, s32 row);
 
 void ObjectVisual_CopyAttributes(s32 actor, s32 source);
 
@@ -25,7 +22,6 @@ struct SlotSprite {
     s16 tilt;
 };
 
-void OverlayObject_ActivateSlotWithMode3(s32 actor);
 void Event_CallWithLastActiveObjectId(u8 *script);
 void FieldScene_RunStepThen10(s32 step);
 void FieldScene_CallPairWith10(s32 actor, s32 facing);

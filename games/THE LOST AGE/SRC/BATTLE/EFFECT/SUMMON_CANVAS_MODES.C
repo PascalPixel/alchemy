@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "TYPES.H"
 
-void SummonFx_RunCanvasEffect(void *action, s32 mode);
 
 void SummonFx_RunCanvasMode0(void *action)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -26,13 +27,9 @@ extern u8 *gWindowWork;
 #define DEBUG_VIEW_LIMIT \
     ((s32)MsgRariberoHowDidSearchForSheba - (s32)MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5)
 
-void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void FarCall_WindowTable(void);
-void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32, s32);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
-void UiWork_DrainPendingFar(s32);
 void UiWork_FinalizeFar(s32, s32);
 void AudioCommand_PlayFar(s32);
 void WaitFrames(s32);

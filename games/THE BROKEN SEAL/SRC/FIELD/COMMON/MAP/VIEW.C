@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "BATTLE_RUNTIME.H"
@@ -17,7 +18,6 @@
 #include "HEAP_STATE.H"
 #include "text/MSG_IDS.H"
 
-void Map_UpdateWorldMapMarkers(void);
 extern u8 gMapCellBuffer[];
 
 extern u32 gKeysRepeat;
@@ -25,13 +25,10 @@ void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
-void BattleFx_SetupResourcesAndWindow(void);
-void BattleFx_CleanupResourcesAndWindow(void);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void Map_LoadAreaGraphicsFar(void);
 
 extern u32 gKeysHeld;
-void Battle_InitializeRenderObject(void);
 void BattleFx_ScheduleRatioTransition(s32, s32);
 
 void Map_ShowWorldMap(s32 picture)

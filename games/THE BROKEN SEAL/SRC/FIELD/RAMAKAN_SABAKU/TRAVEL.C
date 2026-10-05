@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
@@ -25,7 +26,6 @@ s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
 extern struct EventWork *gEventWork;
 void RamakanSabaku_ClaimSandEffectVram();
 void BattleFx_SetQueuedSoundAndPlay();
-void RamakanSabaku_RaiseQuarterTriggers(void);
 void RamakanSabaku_ApplyEntryState();
 
 void RamakanSabaku_UpdateTravelDust(void)

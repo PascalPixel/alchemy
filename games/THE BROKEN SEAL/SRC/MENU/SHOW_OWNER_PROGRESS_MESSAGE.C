@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
@@ -8,10 +9,7 @@
 #include "text/MSG_IDS.H"
 
 extern struct CharacterMenuState *gMenuWork;
-u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
 void UiWork_PushValueSlotFar(u32 quantity, s32 style);
-void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
-void UiText_RenderWideStringAtOffsetFar(void *buffer, struct UiWindow *destination, s32 offset, s32 terminator);
 
 
 #if EDITION_INTERNATIONAL

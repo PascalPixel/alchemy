@@ -1,19 +1,14 @@
+#include "PROTO.H"
 #include "RESMENU.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "text/MSG_IDS.H"
 
-void *AffineEffect_InitializeWork(void);
-void Menu_AppendResourceEntry(s32);
 void Menu_CenterResourceEntries(s32, s32, s32);
 void UiText_DrawResource(s32, struct UiWindow *, s32, s32);
-s32 Menu_RunResourceSelectionLoop(s32);
 void RenderOutput_PrepareForRedraw(struct UiWindow *);
 void WaitFrames(s32);
-void Menu_EndResourceSelection(void);
-void Menu_DrawModeLabel(void);
-void Menu_DrawModeIndicator(void);
 
 s32 Menu_SelectResourceLayout(s32 mode)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "CANVAS.H"
@@ -82,9 +83,7 @@ void BattleFx_ArmWin0HBlankDma(void)
 extern u16 BattleFx_PuffCells[];
 extern u8 BattleFx_PuffSizes[];
 
-void BattleEventRuntime_BeginPhaseFar(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 
 void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
@@ -263,7 +262,6 @@ struct BoltSparkBuffer {
 
 #define gBoltSparks ((struct BoltSparkBuffer *)Ram_MapCellBuffer)
 
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
 void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 {

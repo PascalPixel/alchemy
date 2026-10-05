@@ -1,10 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "M7_INTERFACES.H"
 
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 #include "PSYNERGY_MENU.H"
 
-void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns);
 
 void PsynergyMenu_RefreshOwnerEntriesDefault(void)
 {

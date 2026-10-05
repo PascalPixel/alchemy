@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FIELDOBJ.H"
 #include "TYPES.H"
@@ -14,9 +15,7 @@
 #include "MOTION_OBJECT.H"
 
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
-void ObjectDispatch_ApplyValueToKind200Children(s32 battle_value);
 s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
-void BattleEffect_SpawnBurstParticleField(void);
 
 typedef struct {
     u8  reserved000[0xcb8];
@@ -34,13 +33,10 @@ typedef struct {
 void *BattleFx_FindMatchingEvent(u32 kind, u32 entry_index, s32 *size);
 void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
 void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
-void BattleFx_StartBufferInterpolation(s32 battle_value);
 void Audio_PlayCue(s32 no);
-void FieldEffect_WatchLeaderDistance(void);
 extern struct BattleFxScene *gEffectWork;
 
 void Object_SetMode(void *, s32);
-void BattleFx_PrepareBufferInterpolation(void);
 
 struct BurstParticleVector {
     s32 values[3];
@@ -68,20 +64,17 @@ struct BurstParticleVisualGroup {
     struct BurstParticleVisual child;
 };
 
-void BattleEffect_InitializeSharedScene(void);
 void Animation_ApplyChildValuesFar(struct FieldActor *, s32);
 u32 Random16(void);
 void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 
-struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 void ObjectGroup_ApplyRandomChildValues(void);
-void UpdateRisingParticleBurst(void *effect);
 
 void ResetSceneTransitionEffect(void)
 {

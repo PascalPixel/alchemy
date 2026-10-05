@@ -1,11 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "EVENTWRK.H"
 #include "MAP.H"
 #include "OBJECT_RUNTIME.H"
 
-void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
-void Map_ApplyWorkOriginAndSpanFar(void);
 void WaitFrames(s32);
 
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)

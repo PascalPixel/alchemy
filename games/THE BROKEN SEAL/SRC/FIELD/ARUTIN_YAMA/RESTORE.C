@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "YAMA.H"
@@ -10,8 +11,6 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-void ArutinYama_ApplyEntryState(void);
-void ArutinYama_PlaceFlaggedActors(void);
 
 extern u8 ArutinYama_ActorScript[];
 void FieldScene_RunOpeningAuxiliarySequence();
@@ -36,10 +35,6 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void ResourceMetadata_Register(struct FieldSprite *sprite, s32 mode);
 void ArutinYama_SetRollingStateAndPlayCue();
-void ArutinYama_TurnRollingObjectA(struct FieldActor *object);
-void ArutinYama_TurnRollingObjectB(struct FieldActor *object);
-void ArutinYama_SettleAndMountLeader(struct FieldActor *object);
-void ArutinYama_AdvanceRollingObject(struct FieldActor *object);
 
 struct Byte {
     u8 v;
@@ -54,7 +49,6 @@ extern u16 *Data_03001ed0;
 
 
 
-void ArutinYama_StepPaletteAnim(void);
 
 s32 ArutinYama_RunAreaScene(void)
 {

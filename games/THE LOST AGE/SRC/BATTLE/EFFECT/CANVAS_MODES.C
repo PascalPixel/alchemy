@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "FIELD_EVENT.H"
 
 s32 ObjectDispatch_ApplyValueToChildrenFar(struct FieldActor *, s32);
-void Func_0818f620(void *effect, s32 mode);
 
 void BattleFx_RunCanvasModeByCount(s32 *effect)
 {

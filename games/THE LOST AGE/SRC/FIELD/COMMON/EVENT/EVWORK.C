@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
@@ -60,9 +61,6 @@ void EventRuntime_SetCountdown(u16 frames)
     event->countdown = frames;
 }
 
-u16 BattleFx_GetWeightedResult(s32 row, s32 column);
-s32 BattleFx_LookupResult(void *position);
-s32 BattleFx_SelectBattleCue(s32 row, s32 column);
 
 void BattleFx_SetWeightedResult(s32 row, s32 column)
 {

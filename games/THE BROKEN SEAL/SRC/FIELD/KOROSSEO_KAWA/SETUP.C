@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
@@ -19,7 +20,6 @@ extern u16 Korosseo_MarkerStartX;
 extern u16 Korosseo_MarkerStartY;
 extern u16 Korosseo_MarkerStep;
 void Korosseo_UpdateMarker(void);
-void KorosseoKawa_EnsureMarkerSlot(void);
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -18,11 +19,8 @@ void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
 void RenderOutput_PrepareForRedraw(struct UiWindow *);
 
 struct Work;
-void Resource_ScheduleOwnerReset(void);
 void WaitFrames(s32);
-void Resource_ResetPendingTransfer(void);
 
-void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index);
 
 struct EffectPosition {
     s32 x;
@@ -34,7 +32,6 @@ extern u8 Menu_AnimatedCursorTiles[];
 
 extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *pos);
 
-void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index);
 
 void MenuSelection_DrawFrame(void)
 {

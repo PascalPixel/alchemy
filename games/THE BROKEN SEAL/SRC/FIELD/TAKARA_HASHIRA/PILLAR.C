@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "HASHIRA.H"
 #include "TYPES.H"
@@ -7,7 +8,6 @@
 #include "STAGED_ACTOR.H"
 #include "FIELD_SERVICE.H"
 
-void TakaraHashira_PushPillar(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
 void FieldEffect_UpdateGridPlacement(void);
 
@@ -35,7 +35,6 @@ void SceneActor_ApplyPlacementQueryAndTag();
 void BattleFx_StartFadeOverlay();
 void TakaraHashira_ReleasePillarRider();
 void OverlayObject_SetCallbackAndMode2();
-void SceneActor_CheckActors8To11NearSlotZero(void);
 void TakaraHashira_PrepLoweredActor();
 void TakaraHashira_RestoreFlaggedPillar();
 

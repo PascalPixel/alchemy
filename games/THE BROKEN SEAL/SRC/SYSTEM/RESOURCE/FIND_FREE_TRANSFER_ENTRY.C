@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "SELECT.H"
 #include "TYPES.H"
@@ -52,7 +53,6 @@ block_10:
     goto loop_7;
 }
 
-void MenuSelection_DrawFrame(void);
 
 void Resource_ScheduleOwnerResetDelayed(void)
 {

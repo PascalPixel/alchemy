@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "LAYOUT_GUARD.H"
 #include "TYPES.H"
@@ -11,9 +12,7 @@
 extern struct ObjectSystemWork *gMenuCtrlWork;
 extern struct CharacterMenuState *gMenuWork;
 void ItemMenu_Close(void);
-void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 s32 Party_ListActiveOwnersFar(u16 *);
-void UiWindow_InitializeWork(s32);
 
 #if EDITION_INTERNATIONAL
 #define ROW_CNT 8

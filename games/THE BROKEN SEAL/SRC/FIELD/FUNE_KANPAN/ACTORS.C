@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -5,8 +6,6 @@
 #include "KANPAN.H"
 
 s32 FuneKanpan_SlotDepth[8];
-void OverlayObject_ActivateSlotWithMode3(s32 actor);
-void FuneKanpan_ChooseSlotModes(void);
 
 union Slot {
     s32 w;

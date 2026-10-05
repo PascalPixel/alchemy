@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
@@ -22,18 +23,11 @@ extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultMapCells;
 extern char ResourceId_DefaultMapAnimation;
 extern char ResourceId_DefaultMetatileAttributes;
-void Transform_UpdateVertices(void);
 
 extern u32 gScanlinePitch;
 extern u32 gFrameCount;
-void Blend_SetDarkenTarget0(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
-void SceneTransform_ApplyYaw(s32);
-void SceneTransform_ApplyPitch(s32);
-void MapAnimation_ApplyAffineFrame(void);
-void WorldMap_UpdateView(void);
 
 static __inline__ void Io_Set16(s32 value, u16 *reg)
 {
@@ -50,10 +44,8 @@ typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
-void Map_UpdateCurrentTileBlock(void);
 
 struct WorldCell {
     u32 tile : 24;

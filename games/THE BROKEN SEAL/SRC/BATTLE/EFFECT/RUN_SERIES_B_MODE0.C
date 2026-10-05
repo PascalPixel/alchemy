@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -25,20 +26,13 @@ extern u8 gBattleFxWork[];
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 side, s32 narrow, s32 *x, s32 *y);
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
-void ObjectGroup_TickMemberTimers(void);
 
 
-void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode);
 
 void BattleFx_RunSeriesBMode0(struct BattleEffectArgument *effect)
 {

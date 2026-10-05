@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
 #include "ITEM.H"
@@ -6,8 +7,6 @@
 
 extern struct ShopRuntime *gMenuWork;
 
-void RenderOutput_PrepareForRedrawFar(s32 window);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Inventory_FindEquippedFar(s32 unit_id, s32 kind);
 void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Owner_RecalculateStatsFar(s32 unit_id);

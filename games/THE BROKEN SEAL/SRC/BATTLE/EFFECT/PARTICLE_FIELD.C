@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -20,17 +21,12 @@
 
 extern u8 gBattleFxWork[];
 
-void Render_ResetTransformState(void);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
 
-void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleFx_RunParticleFieldMode1(struct BattleEffectArgument *effect)
 {

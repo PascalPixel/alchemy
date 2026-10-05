@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
@@ -14,11 +15,8 @@ void ResourceMetadata_ClearRecord(void *);
 
 
 
-void PaletteDma_LoadBlock(void);
 
-s32 Animation_LookupValueByKey(s32 key);
 
-struct AnimationEntry *AnimationObject_Allocate(s32 id);
 
 struct ResourceSlotNumber {
     u16 resource;

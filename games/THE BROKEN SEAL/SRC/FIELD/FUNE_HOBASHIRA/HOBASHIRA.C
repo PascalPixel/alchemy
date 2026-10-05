@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "FUNE.H"
@@ -33,13 +34,7 @@ struct SwayActor {
 };
 
 void battle_owner_69(void);
-void FuneHobashira_UpdateSway(void);
-void FuneHobashira_SetupHiddenLeaderLookout(void);
-void FuneHobashira_SetupVisibleLeaderLookout(void);
-void Scene_RunFourActorStagingSequence(void);
-void FieldScene_RunActorNinePresentationCycles(void);
 void FieldScene_RunPrimarySequence(void);
-void FieldScene_RunSevenActorEnsemble(void);
 
 struct FieldGlobals {
     s32 **map;
@@ -48,8 +43,6 @@ struct FieldGlobals {
 };
 
 
-void OverlayObject_InitWithRandomFields(s32 object);
-s32 SceneData_GetDifferenceOfPairSums(void);
 
 s32 FuneHobashira_DriftY __attribute__((section(".bss")));
 s32 FuneHobashira_DriftX __attribute__((section(".bss")));

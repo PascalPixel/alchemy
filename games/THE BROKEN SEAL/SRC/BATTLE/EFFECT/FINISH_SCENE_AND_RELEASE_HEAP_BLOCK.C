@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
@@ -60,17 +61,12 @@ extern struct WaveFxWork *gBattleBgFxWork;
 
 void Animation_ApplyChildPalette(struct FxObject *object, s32 palette);
 void Ui_SetBank15PaletteAndClearRenderMode(void);
-void BattleFx_PrepareBufferInterpolation(void);
-u32 __udivsi3(u32 numerator, u32 denominator);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 mode);
-void BattleFx_AdvanceHueCycle(void);
 s16 *BattleAction_FindDescriptor(s32 id);
 struct FxObject *Object_CreateFar(s32 sprite, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
 void BattleFx_SetCallbackWhenTargetUnset(void);
-void BattleFx_UpdateWaveScene(void);
 
 void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 {

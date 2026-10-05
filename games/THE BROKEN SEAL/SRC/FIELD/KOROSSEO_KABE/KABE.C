@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FX_SCENE.H"
 #include "RUNTIME_MEM.H"
@@ -52,7 +53,6 @@ void battle_owner_69();
 void Korosseo_FinishSoloRound(void);
 s32 KorosseoKabe_RunStateInteraction(s32 speaker, s32 base);
 void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
-void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row);
 void Korosseo_RestoreCompetitor(s32 actor);
 void KorosseoKabe_ShowFollowUpPrompt(s32 speaker, s32 base);
 

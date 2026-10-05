@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
@@ -31,18 +32,12 @@ enum {
     ANIM_HAMMER = 11
 };
 
-void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
 
 void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void PaletteGlow_Update(s32 a, s32 b);
-void FieldScene_RunLargeStagingSequence(void);
 void HaidiaMura_OpenVillagerLane(void);
-void Scene_RepairTheHouse(void);
-void SceneState_Send210AndApplyRectAt40x84(void);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
-void SceneActor_SetFlagByteBySlotZeroPosition(void);
-void FieldScene_RunScene373SequenceB(void);
 s32 SceneActor_RunStep18WhenTargetSet();
 extern u8 gHaidiaMuraActor22Actions[];
 
@@ -63,7 +58,6 @@ struct Flags85 {
 };
 
 
-s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
 s32 ArcTan2(s32 z, s32 x);
 
 

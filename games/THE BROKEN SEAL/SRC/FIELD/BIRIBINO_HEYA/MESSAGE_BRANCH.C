@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -6,7 +7,6 @@
 #include "text/MSG_IDS.H"
 
 
-void ScenePlacement_ClipToView(s32 placements);
 
 u8 *SceneData_GetPrimaryTable(void)
 {

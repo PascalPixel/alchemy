@@ -1,9 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "EVENTWRK.H"
 
-s32 Func_080cc67c(s32);
-s32 Func_080cc7c4(void);
 
 u32 Stream_ReadU16(u8 **cursor)
 {

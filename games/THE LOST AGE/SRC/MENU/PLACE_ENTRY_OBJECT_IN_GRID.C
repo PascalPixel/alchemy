@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "A9_MOTION.H"
 
-void UiIcon_PrepareObject(struct RenderOutput *arg0);
 
 void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
     s32 origin_x, s32 origin_y, s32 phase) {

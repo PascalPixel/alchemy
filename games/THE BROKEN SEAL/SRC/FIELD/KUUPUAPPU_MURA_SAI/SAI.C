@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -112,13 +113,9 @@ s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
 void ActorPresentation_MoveActorToPositionAndWait();
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
-s32 UpdateActorProximity(u8 *actor);
-void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 
 
 
-void ActorPresentation_RunActorModeOneThenZero(s32 actor);
-void SceneDialogue_RunActorFourteenFlagDialogue(void);
 
 
 s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)

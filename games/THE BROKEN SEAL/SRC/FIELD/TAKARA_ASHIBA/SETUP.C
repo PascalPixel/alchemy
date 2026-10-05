@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "EDITION.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -9,11 +10,6 @@
 #include "CALL.H"
 #include "IO_REG.H"
 s32 SceneActor_FaceTowardActorZero();
-void SceneActor_PublishMarkerBySlotZeroHeight(void);
-void ActorPresentation_PlaceActorFourteenOnActorNine(void);
-void TakaraAshiba_RaiseTriggerOnStand(void);
-void SceneState_TriggerColumnTen(void);
-void SceneState_TriggerColumnNineteen(void);
 
 enum {
     ITEM_RED_KEY = 243,
@@ -49,24 +45,14 @@ void TakaraAshiba_DispatchByActorEightColumn();
 void TakaraAshiba_UpdateBlockRects();
 void ObjectDispatch_ApplyValueToChildren();
 
-void TakaraAshiba_OpenPlatformPassage(s32 a0);
 
-s32 Engine_TestTriggerFlag(s32 flag);
-void Engine_SetTriggerFlag(s32 flag);
 
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 {
     *field = step;
 }
-void SceneActor_MarkSlot13AndSetFlag200(void);
-void SceneActor_RunWhenActor9AtTile45x43(void);
-void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void);
 void FieldScene_RunSingleStep(void);
-void TakaraAshiba_RepaintActorCells(void);
 
-void TakaraAshiba_InitializeScene1(void);
-void TakaraAshiba_InitializeScene2(void);
-void TakaraAshiba_InitializeScene3(void);
 
 void TakaraAshiba_InitializeScene1(void)
 {

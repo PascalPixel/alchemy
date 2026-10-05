@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -7,14 +8,9 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
-s32 LinkLobby_SendPartyRecords(void);
-s32 LinkLobby_ReceivePartyRecords(void);
 void GameFlag_SetByte(s32 flag, s32 value);
 
 extern u8 gMapCellBuffer[];
-s32 LinkLobby_PeerSlotMatches(s32 slot);
-void LinkLobby_WriteSlotValue(s32 slot);
-s32 LinkLobby_ExchangePartyRecords(void);
 void LinkLobby_PollPeerReady(void);
 s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 void UiWork_Finalize(s32 window, s32 flags);

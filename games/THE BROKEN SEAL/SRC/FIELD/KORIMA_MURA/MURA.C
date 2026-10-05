@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -110,8 +111,6 @@ struct Flags9 {
     u8 mode : 2;
 };
 
-void FieldScene_RunFlag845And847Branches(void);
-void FieldScene_RunExtendedActorSequence(void);
 void Event_CallWithLastActiveObjectId(u8 *script);
 extern s32 KorimaMura_PendingPose;
 extern s32 KorimaMura_LayoutFlag;

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -25,15 +26,6 @@ extern const struct SceneEvent gSoruIriguchiEvents2[];
 void FieldScene_PrepareActors(s32 placements);
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-void Scene_UpdateOuterActor9Flags(void);
-void Scene_UpdateOuterActor10Flags(void);
-void Scene_UpdateFormationActor9Flags(void);
-void Scene_UpdateFormationActor10Flags(void);
-void Scene_UpdateFormationActor11Flags(void);
-void Scene_UpdateFormationActor12Flags(void);
-void Scene_UpdateFormationActor13Flags(void);
-void Scene_UpdateFormationActor14Flags(void);
-void SoruIriguchi_ApplyEntryState(void);
 void FieldScene_RunSceneEntryHook(void);
 
 s32 SoruIriguchi_CueTimer __attribute__((section(".bss")));

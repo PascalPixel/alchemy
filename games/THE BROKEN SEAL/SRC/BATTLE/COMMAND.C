@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OWNERVAL.H"
 #include "BATTLE_EVENT.H"
@@ -19,14 +20,7 @@ struct BattleAction *Ability_GetData(s32 action);
 s32 Battle_GetTaggedSlotValue(s32 target);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
-void UiWork_ClearValueNameTablesFar(void);
 s32 GameFlag_IsSet(s32 flag);
-s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
-void BattleEv_MarkDisplay(void);
-s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
-s32 Djinn_IsActiveFar(s32 unit_id, s32 element, s32 index);
-s32 Trade_CanOfferDjinnFar(s32 unit_id, s32 element, s32 index);
-void BattlePres_SetActorModes(u16 *ids, s32 mode);
 void Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 void Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 void Trade_AddOfferFar(s32 unit_id, s32 element, s32 index);
@@ -36,12 +30,7 @@ void AudioCommand_PlayFar(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
 void BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 flag);
-s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts);
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-u32 BattleParty_IsUnitListed(u32 unit_id);
-s32 Item_GetEquippedElementFar(s32 unit_id);
-u32 Battle_GetSpriteFlagNibble(u32 class_id);
-s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *unit);
 void BattlePresentation_WaitForAdvance(void);
 
 s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePlan *plan)

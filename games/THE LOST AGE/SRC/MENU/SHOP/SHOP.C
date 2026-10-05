@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -97,11 +98,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 }
 
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-void Func_080c8368(s32, s32);
-void Func_080c8380(s32);
 #else
-void Func_080c8378(s32, s32);
-void Func_080c8390(s32);
 #endif
 
 void Shop_RestoreSceneTiles(s32 layer)

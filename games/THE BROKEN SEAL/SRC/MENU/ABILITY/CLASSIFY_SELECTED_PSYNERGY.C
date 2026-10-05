@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "SYSTEM.H"
 #include "BATTLE_UNIT.H"
 
-s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 {
@@ -30,8 +30,6 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
     return ret;
 }
 
-void UiMenu_SlideCursor(s32 x, s32 y);
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -31,21 +32,15 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
     return fill(dst, size, value);
 }
 
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
-void Graphics_ExpandVramTilesByColorTableFar(void *);
 void *Runtime_GetLowTableAddress(void);
-void Graphics_AdjustPaletteBank(s32);
 void UiWork_SetParamNibbleFar(s32 value);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
 void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
 void RenderOutput_RedrawSavedRectFar(s32 window);
-s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 djinn);
-s32 Djinn_IsActiveFar(s32 owner, s32 element, s32 djinn);
 #define ACTION_MASK 0x3fff
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000
 s16 Djinn_ListOwnerEntries(void *, s32, s32);
-void DjinnMenu_DrawElementList(struct DjinnListTable *tbl);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 

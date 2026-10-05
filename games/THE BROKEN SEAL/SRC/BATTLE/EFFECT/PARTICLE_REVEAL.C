@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -22,13 +23,9 @@
 extern u8 gBattleFxWork[];
 
 void Audio_PlayCue(s32 cue);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
 
@@ -295,11 +292,8 @@ extern struct EffectStep gMapCellBuffer[];
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
 void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
-void BattleEventRuntime_BeginPhaseFar(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
-void ObjectGroup_TickMemberTimers(void);
 
 void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 {
@@ -412,8 +406,6 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-void BattleFx_StepPaletteToResource(s32 resource_id);
-void Render_ResetTransformState(void);
 
 
 void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)

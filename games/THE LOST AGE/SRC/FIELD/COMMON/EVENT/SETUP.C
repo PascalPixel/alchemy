@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RAM_BUFFER.H"
 #include "EVENTWRK.H"
 #include "PARTY_STATE.H"
@@ -6,9 +7,6 @@
 #include "GAME_FLAGS.H"
 #include "SYSTEM.H"
 
-void UiTimedNotice_CloseIfActiveFar(void);
-void GameFlag_RefreshLureCapFar(void);
-void Object_AttachWorkTargetToObject(s32 object, s32 enabled);
 
 void EventRuntime_Wait(s32 frames)
 {

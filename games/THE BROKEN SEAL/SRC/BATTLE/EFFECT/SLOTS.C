@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GAME_STATE.H"
@@ -20,20 +21,16 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
 void UiText_DrawMessage(s32, s32);
 void Audio_PlayCue(s32);
-void BattleFx_UpdateEffect16State(void);
 void BattleFx_UpdatePairedArcSpawner(void);
 
-void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
 s32 ArcTan2(s32 x, s32 y);
-s32 FixedSqrt(s32 value);
 
 void AnimationObjects_SelectAnimationFar(void *, s32);
 
 u32 Random16(void);
 
-void BattleFx_DrawScaledObject(struct EffectSlot *object);
 
 void RunBattleEffect16(void)
 {

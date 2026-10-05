@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
@@ -10,8 +11,6 @@ struct ObjectSprite {
 };
 
 void GameFlag_SetBit(s32 flag);
-void Func_080cee80(u32 object_id);
-void Func_080e70f8(u32 object_id);
 
 s32 Object_GetSpriteShape(u32 object_id)
 {

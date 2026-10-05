@@ -1,12 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "WINDOW.H"
 
-void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void UiWork_DrawByAttributes(struct UiWindow *window);
 
 #define WINDOW_HALF(window, type, field) \
     (*(type *)((u8 *)(window) + (u32)&(((struct UiWindow *)0)->field)))
@@ -18,7 +16,6 @@ struct UiWindowInterpolationScratch {
 };
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
-u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 

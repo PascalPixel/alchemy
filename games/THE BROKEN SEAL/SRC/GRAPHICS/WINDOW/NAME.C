@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "RUNTIME_MEM.H"
@@ -226,7 +227,6 @@ extern u32 gFrameTick;
 extern volatile u32 gKeysRepeat;
 extern u32 gKeyState;
 
-void Ui_LoadWindowGraphics(void);
 s32 Localization_LookupEntryId(s32 entry);
 s32 UiWindow_CreateWithSideObject(s32 entry, s32 side, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x0, s32 y0, s32 x1, s32 y1);

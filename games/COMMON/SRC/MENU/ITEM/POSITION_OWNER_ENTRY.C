@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "M7_INTERFACES.H"
 
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 void ItemMenu_PosOwner(struct RenderOutput **slot, s32 index,
     s32 origin_x, s32 origin_y, s32 columns)

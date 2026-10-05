@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 
-void Text_FormatSignedDecimalToWork(s32 out);
 
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 {

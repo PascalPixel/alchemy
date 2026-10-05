@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
@@ -17,7 +18,6 @@
 #include "SAVE_STATE.H"
 #include "IO_REG.H"
 
-void GameState_InitDefaults(void);
 s32 Game_ResetForNewGameFar(s32);
 
 extern struct BattleUnit *gBattleOwnerStates;
@@ -56,7 +56,6 @@ struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
 
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_SetBit(s32 flag);
 
 extern u8 gDebugMode;
@@ -553,7 +552,6 @@ struct SceneStateTail {
     u8 unknown_104;
 };
 
-void Owner_InitRecords(void);
 void Party_AddActiveOwner(s32 owner);
 
 void GameState_InitDefaults(void)

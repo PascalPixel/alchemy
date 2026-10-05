@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "M7_INTERFACES.H"
 #include "RAM_BUFFER.H"
 
 
-void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
 
 void ItemMenu_DrawStat(

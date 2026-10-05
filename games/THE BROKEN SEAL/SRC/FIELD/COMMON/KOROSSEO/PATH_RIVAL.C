@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "COLGAUGE.H"
@@ -9,7 +10,6 @@
 #include "VRAM_BLOCK.H"
 #include "IO_REG.H"
 
-s32 Math_Atan2(s32 dy, s32 dx);
 
 struct PathRecorder {
     s16 mode;

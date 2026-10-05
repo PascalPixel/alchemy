@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "GAME_STATE.H"
@@ -10,7 +11,6 @@ struct AbilityListEntry {
     u16 ability;
 };
 
-struct BattleUnit *Runtime_GetObject(s32 object_id);
 void *Ability_GetData(s32 resource_id);
 
 struct ShortcutState {
@@ -19,7 +19,6 @@ struct ShortcutState {
     u16 second;
 };
 
-void Debug_SelectAbilityPair(void);
 
 s32 Object_CollectResources(struct AbilityListEntry *output)
 {

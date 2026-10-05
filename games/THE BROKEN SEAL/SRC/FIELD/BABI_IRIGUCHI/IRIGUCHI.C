@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "FX_SCENE.H"
 #include "IRIGUCHI.H"
 #include "TYPES.H"
@@ -19,14 +20,12 @@ extern const struct ScenePlacement gBabiIriguchiPlacements2[];
 extern const struct ScenePlacement gBabiIriguchiPlacements1[];
 extern const struct ScenePlacement gBabiIriguchiPlacementsOther[];
 void SceneState_ApplyRectsAtActors8And9();
-void FieldScene_RunActorEventSequence(void);
 
 extern s32 StagedActor_DirectionSteps[];
 s32 Map_GetTerrainHeight(s32 mode, s32 x, s32 z);
 
 s32 battle_owner_69(void);
 s32 FieldEffect_UpdateGridPlacement(void);
-void SceneActor_PushObjectAheadIfLevel(void);
 extern const struct SceneEvent gBabiIriguchiEvents3[];
 extern const struct SceneEvent gBabiIriguchiEvents2[];
 extern const struct SceneEvent gBabiIriguchiEvents1[];

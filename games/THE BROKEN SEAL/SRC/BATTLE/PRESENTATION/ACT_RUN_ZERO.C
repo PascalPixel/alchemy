@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
@@ -17,7 +18,6 @@ void Runtime_RemoveIrqHandlerSlot2(void)
     Runtime_SetIrqHandler(2, 0, 0);
 }
 
-struct EnemyDefinition *Owner_GetRecordFar(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 
 s32 Party_ComputeEligibleMemberAverage(s32 record_id)

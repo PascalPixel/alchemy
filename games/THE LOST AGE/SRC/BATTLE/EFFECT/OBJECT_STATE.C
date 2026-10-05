@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
-s32 Func_08020190(s32, s32, s32);
 
 void ObjectMotion_SnapToTerrain(void *object)
 {

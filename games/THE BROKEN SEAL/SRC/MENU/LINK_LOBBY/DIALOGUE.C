@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -21,7 +22,6 @@ s32 DebugParty_LoadPreset();
 
 s32 Party_CountActiveOwners(void);
 
-s32 LinkLobby_PartyContains(s32 actor);
 void SerialRuntime_RemoveIrqHandlers(void);
 s32 Sound_LoadPresetParameters(s32 preset);
 s32 Event_SetDestination(s32 scene, s32 entrance);
@@ -34,13 +34,10 @@ s32 LinkLobby_DrawThreeDigitValue(s32 value);
 s32 LinkLobby_SaveBattleResults(void);
 s32 LinkLobby_SaveMonsterBattleResults(void);
 s32 Sound_LoadPresetParameters(s32 value);
-void LinkLobby_WriteSlotValue(s32 mode);
 void Map_SetLayerEntryFlag(s32 value);
-s32 LinkLobby_PartyContains(s32 index);
 s32 GameFlag_GetByte(s32 counter);
 void GameFlag_SetByte(s32 counter, s32 value);
 void UiText_DrawQuantity(s32 value, s32 digits);
-void SerialRuntime_Initialize(void);
 void Owner_RefreshActiveRatios(s32 value);
 void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 void LinkLobby_PollPeerReady(void);

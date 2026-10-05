@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
@@ -14,9 +15,6 @@ void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ReleaseFar(void *object);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void UiText_DrawQuantity(s32 quantity, s32 slot);
-void UiWindow_CreateWithLayoutBoundsFar(s32 mode);
-void UiWork_FinalizeAndReleaseBlock16Far(void);
-s32 PartyInventory_AddFar(s32 item);
 s32 GameFlag_IsSet(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
@@ -24,19 +22,11 @@ void Party_AdjustCoinsFar(s32 coins);
 s32 BattleFx_GetWeightedResult(s32 weight, s32 group);
 void BattleFx_SelectBattleCue(s32 weight, s32 group);
 void BattleParty_ApplyDrain(s32 amount, s32 mode);
-s32 GameFlag_IsConditionActive(s32 condition);
 struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 tile);
-void EffectRuntime_SetMode5AndPlayCue(s32 tile);
-void EffectRuntime_SetMode7AndLaunch(s32 tile);
-void EffectRuntime_SetMode4AndPlayCue(s32 tile);
-void EffectRuntime_SetMode2(s32 tile);
 void *EffectRuntime_GetCurrentObject(s32 tile);
-void EffectRuntime_ClearCurrentFlags(s32 tile);
 void *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
-void Object_DestroyIfPresent(void *object);
 void EffectRuntime_PrepareRisingObject(void *object);
 void Battle_WaitMode0(s32 frames);
-void Battle_InitializeRenderObject(void);
 void Battle_Reset(void);
 void BattleFx_FinishAction(void);
 void BattleFx_PlayQueuedSound(void);

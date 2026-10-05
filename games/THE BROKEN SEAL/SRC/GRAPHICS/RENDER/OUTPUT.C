@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RENDER_INPUT.H"
 #include "WINDOW.H"
 #include "TYPES.H"
@@ -41,7 +42,6 @@ struct RenderOutput *RenderOutput_Create(
     return output;
 }
 
-s32 Resource_LoadByMode(s32 mode, s32 value);
 struct RenderOutput *RenderOutput_CreateFromResource(
     s32 mode,
     s32 resource,
@@ -58,7 +58,6 @@ struct RenderOutput *RenderOutput_CreateFromResource(
     return RenderOutput_Create(no, 0x40000000, input, x, y);
 }
 
-s32 UiIcon_CopyResourceToSlot(s32 code, s32 layers, s32 slot);
 struct RenderOutput *RenderOutput_CreateLoaded(
     s32 code,
     s32 layers,
@@ -78,7 +77,6 @@ struct RenderOutput *RenderOutput_CreateLoaded(
     return result;
 }
 
-void Ui_BuildPairedPatternsToSlot(s32 icon, s32 frame, s32 *slot, s32 *tile, s32 reuse);
 struct RenderOutput *RenderOutput_CreateWithTransform(
     s32 icon,
     struct RenderInput *input,

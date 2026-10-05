@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -28,9 +29,6 @@ extern const struct SceneEvent gTorebiKyudenEventsAfterColosso[];
 extern const struct SceneEvent gTorebiKyudenEventsColosso[];
 extern const struct SceneEvent gTorebiKyudenEventsOther[];
 
-void FieldScene_RunMainCutsceneSequence(void);
-void FieldScene_RunBranchingActorSequence(void);
-void FieldScene_RunScene3b8SequenceB(void);
 
 struct OwnerState {
     u8 unknown_00[0x34];

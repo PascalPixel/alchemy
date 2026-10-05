@@ -1,10 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"
 
-void ResourceMetadata_ClearRecord(void *record);
-s32 AnimationObject_Allocate(s32 id);
-s32 Animation_LookupValueByKey(s32 key);
 
 void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
 {

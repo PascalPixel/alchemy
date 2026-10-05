@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "FAR_RUNTIME.H"
 #include "SYSTEM.H"
@@ -6,7 +7,6 @@ void Shop_DrawMsg(s32 window, s32 message);
 s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 #if !EDITION_INTERNATIONAL
 void RenderOutput_ClearListFar(s32);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 #endif
 
 void Shop_DrawMsg(s32 window, s32 message)

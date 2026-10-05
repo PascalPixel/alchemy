@@ -1,10 +1,9 @@
+#include "PROTO.H"
 #include "SHOP.H"
 #include "FIXED_MATH.H"
 extern struct ShopRuntime *gMenuWork;
 
-void UiWindow_Clear(s32 window);
 struct RenderOutput *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
-struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y);
 
 void Shop_DrawStock(s32 window, s32 selected)
 {

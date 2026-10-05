@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
 #include "TYPES.H"
@@ -82,8 +83,6 @@ void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 }
 
 struct ArcParticle;
-void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle);
-void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle);
 
 struct ArcFrame {
     u8 padding00[22];

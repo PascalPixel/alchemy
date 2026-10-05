@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
@@ -7,7 +8,6 @@
 #include "ARC_EFFECT.H"
 
 
-void BattleFx_UpdateArcEffect(void);
 
 void BattleFx_StartArcEffect(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
@@ -23,10 +24,6 @@ void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);
 
 
-void ToretoPalette_CaptureBank(void);
-void ToretoHeya_ApplyFlaggedMapPatches(void);
-void SceneState_ApplyRectsByFlag844(s32 flag);
-void ToretoHeya_RunLandingDustScene(void);
 
 extern struct BattleEffectBuffers *Data_03001ed0;
 
@@ -87,7 +84,6 @@ struct EffectParams {
     s32 script;
 };
 
-void ToretoHeya_UpdateSwirlObject(struct Swirl *obj);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -67,7 +68,6 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 }
 
 void Audio_PlayCue(s32 cue);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
 extern struct EffectStep gMapCellBuffer[];
 extern u16 ParticleStreams_CellOffsets[];

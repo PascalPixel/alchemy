@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -21,7 +22,6 @@ struct SceneActor_0200113c {
     struct Presentation *presentation;
 };
 
-void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation);
 
 
 s32 ActorPresentation_UpdateEntityFromLeader();

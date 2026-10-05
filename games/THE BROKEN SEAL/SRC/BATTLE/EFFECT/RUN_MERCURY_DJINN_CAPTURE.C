@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
@@ -6,7 +7,6 @@
 extern struct BattleFxScene *gEffectWork;
 
 void BattleFx_HalveDistanceToTarget(void);
-void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *);
 
 struct CaptureSprite {
     u8 unknown_00[40];
@@ -42,8 +42,6 @@ struct CaptureResource {
 };
 
 struct CaptureObject *Object_GetById(s32 id);
-void BattleFx_InitializeSlots(void);
-void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
@@ -59,7 +57,6 @@ void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
 
 void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
-void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
 void BattleFx_RunMercuryDjinnCapture(s32 arg)

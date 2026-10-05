@@ -1,10 +1,9 @@
+#include "PROTO.H"
 #include "UIFLOW.H"
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *work);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void UiWindow_DrawFrame(s16 x, s16 y, u16 width, u16 height);
-void RenderOutput_ClearList(void *work);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 
 void UiWork_Finalize(struct UiWindow *work, s32 release)
 {

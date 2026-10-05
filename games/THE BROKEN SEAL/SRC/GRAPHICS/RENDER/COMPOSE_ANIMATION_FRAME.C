@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -16,7 +17,6 @@ typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 extern const u8 Render_DecodeFrame[];
 
 
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 void Animation_SetWorkEntry(void *work, s32 no);
 
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)

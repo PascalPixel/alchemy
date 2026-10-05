@@ -1,9 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "EFFECT_SLOT.H"
 #include "IWRAM_CALL.H"
 
-void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-void BattleFx_DrawScaledObject(struct EffectSlot *object);
 
 void EffectSlot_Update(struct EffectSlot *effect)
 {
@@ -27,7 +26,6 @@ struct ScaledSprite {
     s32 scale;
 };
 
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite, s32 *position, s32 *scale, s32 mode);
 
 void BattleFx_DrawScaledObject(struct EffectSlot *object)
 {

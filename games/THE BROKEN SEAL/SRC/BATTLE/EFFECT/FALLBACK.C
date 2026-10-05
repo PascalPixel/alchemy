@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "FX_SCENE.H"
@@ -13,7 +14,6 @@ extern struct BattleFxScene *gEffectWork;
 
 struct MotionObject *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
-void BattleEffect_InitializeSharedScene(void);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void Camera_WorldToScreen(s32 *);
@@ -22,8 +22,6 @@ void Vector_AddPolarOffset(s32, u32, s32 *);
 void EffectSlot_Initialize(struct EffectSlot *, s32, s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(struct MotionObject *, s32);
 void ObjectDispatch_ReleaseFar(struct MotionObject *);
-void BattleFx_UpdateRadialCamera(struct EffectSlot *);
-void BattleFx_PrepareBufferInterpolation(void);
 
 void BattleEffect_RunFallbackObjectTransition(void)
 {

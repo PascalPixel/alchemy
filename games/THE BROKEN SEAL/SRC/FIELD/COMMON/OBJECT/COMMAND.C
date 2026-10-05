@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "OBJECT_RUNTIME.H"
 #include "IWRAM_CALL.H"
@@ -14,7 +15,6 @@
 #include "IO_REG.H"
 #include "BATTLE_RUNTIME.H"
 
-s32 FixedSqrt(s32 value);
 
 
 extern struct ScriptMotionObject *gObjectSlots;
@@ -26,8 +26,6 @@ s32 GameFlag_SetBitFar(s32);
 void GameFlag_ClearBitFar(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
 s32 Audio_PlayCue(s32);
-s32 Object_IsTargetUnset(struct ObjectRuntime *);
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 arg1, s32 *b, s32 arg3);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);

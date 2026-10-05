@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -21,13 +22,7 @@
 extern u8 gBattleFxWork[];
 
 void Audio_PlayCue(s32 cue);
-void Render_ResetTransformState(void);
-void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
 extern u16 ParticleStreams_CellOffsets[];
 

@@ -1,11 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_PRESENTATION.H"
 #include "BATTLE_TYPES.H"
 #include "SYSTEM.H"
-void BattlePres_SetActorModes(u16 *, s32);
 void BattlePresentation_WaitForAdvance(void);
-s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot);
 
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
 {

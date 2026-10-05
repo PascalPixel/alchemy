@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -16,7 +17,6 @@
 #include "FIXED_POINT_POSITION.H"
 #include "text/MSG_IDS.H"
 
-void EffectSlot_UpdateFar(s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, u32);
 
 union PositionWord { s32 w; s16 h[2]; };
@@ -24,18 +24,9 @@ union PositionWord { s32 w; s16 h[2]; };
 u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
-void Shop_RestoreSceneTiles(s32 address);
-void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 mode, s32 x, s32 z);
 void EffectSlot_SetCallbackFar(
     struct EffectSlot *effect,
     void (*callback)(struct EffectSlot *));
-void EffectSlot_SetObjectModeFar(struct EffectSlot *effect, s32 value);
-void AudioCommand_WaitForStateByteClear(void);
-void BattleFx_ClearOwnedSlotFar(struct EffectSlot *effect);
-void AnimationObjects_SetActiveTimerStepsFar(struct AnimationObject *object, s32 arg);
-void Shop_InitEffect(void);
-void Shop_ResetEffects(void);
-void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
 
 extern struct EventRuntime *gEventWork;
 s32 Party_ListActiveOwnersFar(s16 *);
@@ -53,12 +44,6 @@ enum InnMessageId {
     INN_MESSAGE_REST_COMPLETE,
 };
 
-void Shop_InitializeCursorWork(void);
-void Inn_Cleanup(void);
-void UiMessage_ShowAndWait(s32 message_id);
-s32 UiMessage_ShowChoice(s32);
-s32 Inn_RoomPrice(s32);
-void Inn_PlaySleep(s32);
 void UiWork_FinalizeFar(s32, s32);
 s32 UiWindow_CreateWithSideObjectFar(u16, s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);

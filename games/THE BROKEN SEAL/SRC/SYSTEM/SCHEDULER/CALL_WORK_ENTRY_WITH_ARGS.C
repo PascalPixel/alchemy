@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 
 extern u8 Sound_CommandTable[];
 
-void _call_via_r2(s32 arg0, s32 arg1, s32 target);
 
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)
 {

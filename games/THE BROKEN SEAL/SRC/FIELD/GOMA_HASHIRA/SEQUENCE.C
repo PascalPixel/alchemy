@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MAPCOPY.H"
 
@@ -13,8 +14,6 @@ void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 
 void BattleFx_SetPhaseRequest(s32, s32);
 void GomaHashira_SpawnPillarEffect();
-void FieldScene_RunPillarSequence(void);
-void GomaHashira_DriveActor13Idle(void);
 
 static __inline__ void Goma_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {

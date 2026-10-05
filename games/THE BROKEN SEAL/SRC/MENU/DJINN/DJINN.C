@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -30,7 +31,6 @@ void UiIcon_CreateWithLoadedResource(s32 window, s32 x, s32 y, s32 icon);
 void UiWork_SetParamNibbleFar(s32 value);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x0, s32 y0, s32 x1, s32 y1);
 void SideObject_CreateFar(s32 owner, s32 a, s32 side, s32 window, s32 b, s32 c);
-s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 void Owner_RecalculateStatsFar(s32 owner);

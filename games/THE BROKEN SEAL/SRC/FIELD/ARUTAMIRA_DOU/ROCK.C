@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "ARUTAMIRA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -5,9 +6,6 @@
 #include "text/MSG_IDS.H"
 
 
-void SceneActor_SetPositionFromTransformedBase(s32 actor, s32 reach, s32 angle);
-void ArutamiraDou_SpinActorWheel(void);
-void ArutamiraDou_ReleaseWallBurst(void);
 
 void ArutamiraDou_TurnRock(s32 action)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "CHOJO.H"
@@ -55,7 +56,6 @@ void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 s32 PartyInventory_Remove();
 s32 PartyInventory_FindOwner();
 void VinasuChojo_CleanupSceneObjects();
-void FieldScene_RunStep6(void);
 
 struct StagedVerticalEffect;
 void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect);

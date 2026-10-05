@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RAMAKAN.H"
@@ -7,7 +8,6 @@ extern u16 RamakanSabaku_SandVramSlot;
 extern u16 RamakanSabaku_SandCounter;
 extern u16 RamakanSabaku_SandPhase;
 
-void RamakanSabaku_RunSandstorm(void);
 
 struct Half {
     u16 v;

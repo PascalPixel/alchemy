@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -7,7 +8,6 @@
 
 typedef void (*InterruptHandler)(void);
 void Runtime_SetIrqHandler(s32 index, s32 priority, InterruptHandler handler);
-void Graphics_ClearBg1ControlBit2(void);
 
 s32 UiWork_IsComplete(void);
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);

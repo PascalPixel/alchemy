@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "IO_REG.H"
 #include "FIXED_POINT_POSITION.H"
 #include "BATTLE_PRESENTATION.H"
@@ -9,10 +10,7 @@
 s32 LuckyDice_Run();
 s32 Audio_PlayCue(s32);
 
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
-void SceneTransform_ApplyYaw(s32);
-void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
 
 s32 Runtime_BlankDisplayAndRun(void)

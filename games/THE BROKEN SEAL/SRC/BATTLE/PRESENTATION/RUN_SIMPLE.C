@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
 #include "SCENE.H"
@@ -17,9 +18,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_ACTOR.H"
 #include "FIELD_EVENT.H"
-s32 ResourceMetadata_SumCommandLengthsFar(s32 battle_value, s32 second, s32 third);
-void BattlePres_SetActorModes(u16 *actors, s32 mode);
-void BattleMotion_ResetObjectAtScaledAnchor(s32 id);
 
 extern struct BattlePresentationTransition *gTransitionWork;
 
@@ -29,12 +27,8 @@ void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 act
 
 void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *work);
 void BattleFx_DispatchModeFar(struct BattlePresentationWork *work);
-u32 Battle_GetSpriteFlagHighBits(u32 value);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 s32 BattleActor_SpawnObjectsForList(void *list, s32 mode);
-void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode);
-void BattleParty_ListAllUnitsAndSubmit(void);
-void BattleEvent_Playback(void);
 
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 {
@@ -248,7 +242,6 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
 }
 
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
-s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 
 s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
                         struct BattleActionRecord *selection)

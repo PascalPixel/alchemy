@@ -1,7 +1,6 @@
+#include "PROTO.H"
 #include "INVENTORY_MENU.H"
 
-s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
-void Palette_CopyObjectBankToBackground14(void);
 
 s32 ItemMenu_OpenDetail(s32 item_index)
 {

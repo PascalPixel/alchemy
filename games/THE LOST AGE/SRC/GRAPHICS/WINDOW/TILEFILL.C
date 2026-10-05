@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RAM_BUFFER.H"
 #include "WINDOW.H"
 
-void PaletteGlow_UpdateSine(void);
 
 void Scheduler_ScheduleCallbackAAfterFrames(void)
 {

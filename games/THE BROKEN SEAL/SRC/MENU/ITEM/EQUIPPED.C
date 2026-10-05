@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
@@ -11,11 +12,6 @@
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
-extern void ItemMenu_PosCategory(void);
-void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
-void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
-void ItemMenu_PosCategory(void);
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 s32 Menu_ReservedStatusOne(void)
 {

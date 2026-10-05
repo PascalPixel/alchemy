@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "MAKYURI.H"
@@ -5,7 +6,6 @@
 #include "FIELD_EVENT.H"
 
 #define FrameCounter gFrameCount
-s32 FixedSqrt(s32 value);
 
 struct FollowDetail {
     u8 unknown_00[5];
@@ -34,7 +34,6 @@ struct EventSpawns {
     struct SpawnPoint *points[1];
 };
 
-void MakyuriHeya_SpawnSparkPair(void);
 void WaitFrames(s32 frames);
 extern u8 Makyuri_PillarScript[];
 

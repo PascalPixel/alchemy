@@ -1,10 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
-s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
-void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
-void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {

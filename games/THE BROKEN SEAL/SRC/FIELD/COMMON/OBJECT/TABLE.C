@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
@@ -22,16 +23,10 @@ void Object_Destroy(void *);
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
 extern const struct ScenePlacement Data_0809f810[2];
-void ObjectTable_ClearBattleSlots(void);
-void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, u32 value);
 struct ObjectRuntime *Object_CreateFar(s32 character, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitFromTable4WithArgumentFar(struct DispatchObject *object, s32 argument);
-s32 ResourceMetadata_RegisterFar(struct AnimationObject *sprite, s32 kind);
-s32 GameFlag_IsConditionActive(s32 condition);
-s32 Party_RemapCharacterIdByFlags(s32 id);
-void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object, s32 value);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 u32 Random16(void);
 u32 __umodsi3(u32 numerator, u32 denominator);

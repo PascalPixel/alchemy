@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "EDITION.H"
@@ -13,12 +14,10 @@
 #include "text/MSG_IDS.H"
 
 extern u8 gDisplayTransition[];
-s32 Engine_PartyRemoveItem(s32 item);
 void Battle_ResetEffectCounter(void);
 void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
 void Motion_LaunchFromFocusedObject(s32 actor, s32 dx, s32 dz, s32 facing);
 void Engine_ActorJump(s32 actor, s32 height, s32 frames);
-void Engine_ActorFollow(s32 actor, s32 leader);
 void Engine_ActorStartAction(s32 actor);
 void Audio_PlayCueFromEventWork(void);
 
@@ -39,14 +38,10 @@ extern const struct SceneEvent gArutamiraDouEvents6[];
 extern const struct SceneEvent gArutamiraDouEventsOther[];
 
 void SceneActor_PlaceFiveActorsInRow(s32 spacing);
-void SceneEffect_SetupBlendByFlag201(void);
 
 extern u8 gFrameTick[];
 
-void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
-void Shop_RestoreSceneTiles(s32 mode);
-void Shop_InitEffect(void);
 void Camera_WorldToScreen(s32 *pos);
 void EffectSlot_Initialize(u8 *object, s32 type, s32 x, s32 z);
 void EffectSlot_SetCallback(u8 *object, void (*update)());

@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "RENDER_INPUT.H"
 
-s32 Resource_LoadByMode(s32 mode, s32 value);
 
 struct RenderOutput *RenderOutput_CreateFromResource(
     s32 arg0,

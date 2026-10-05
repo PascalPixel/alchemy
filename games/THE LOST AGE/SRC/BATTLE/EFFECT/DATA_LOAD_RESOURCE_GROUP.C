@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 #include "FIELD_SCENE.H"
 
 extern u8 gOverlayArea[];
 
-void Resource_LoadCode(u32 index, void *destination);
 
 void BattleFx_LoadResourceGroup(void)
 {

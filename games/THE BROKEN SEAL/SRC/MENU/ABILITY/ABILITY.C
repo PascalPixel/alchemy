@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
@@ -16,16 +17,12 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
-s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
-void UiText_DrawWorkValueWithLabel(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void GameFlag_ClearBitFar(s32 flag);
-void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
@@ -132,7 +129,6 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
     return result;
 }
 
-void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 spacing);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 *, s32 x, s32 y);
 
 struct PsynergyTargetAttributes {
@@ -158,14 +154,10 @@ struct PsynergyTargetMarker {
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-void UiMenu_SlideCursor(s32 x, s32 y);
-void UiMenu_PositionCursor(s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 void GameFlag_ClearBitFar(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
-void UiIcon_PrepareObject(struct RenderOutput *marker);
 void Audio_PlayCue(s32 cue);
 
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)

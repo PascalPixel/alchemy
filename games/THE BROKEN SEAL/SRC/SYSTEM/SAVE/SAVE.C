@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -14,10 +15,8 @@
 
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
 s32 UiWork_IsComplete(void);
-s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
 void UiWork_FinalizePendingCore(void);
 void Audio_PlayCue(u8 mode);
-void SaveState_CaptureObjectTableFar(void);
 
 extern s32 gLoadedStateWord;
 extern u8 gOptionMirror;
@@ -37,11 +36,7 @@ void UiText_DrawString(void *text, void *win, s32 x, s32 y);
 void UiText_DrawFourNumbersInRow(void *win, void *entry);
 void StatusMenu_DrawCharacterSummary(void *win, void *entry);
 void ObjectPlacement_CreateGroup(void *win, s32 x, s32 y, void *entry);
-void Menu_ClearFirstObjectRowAndScheduleUpdate(void);
-void Menu_ClearSecondObjectRowAndScheduleUpdate(void);
 void Menu_SpawnFourObjectsAtOrigin(void *win, s32 x, s32 y);
-void Scheduler_ScheduleCallbackAAfterFrames(void);
-void Scheduler_ScheduleCallbackA(void);
 struct RenderOutput *RenderResource_CreatePair(s32 mode, struct UiWindow *win, s32 x, s32 y);
 void Ui_ApplyTableOffsetToPair(void *pair);
 void RenderOutput_RedrawSavedRect(void *win);

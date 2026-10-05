@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
@@ -15,7 +16,6 @@ void Audio_PlayCue(s32 cue);
 s32 GameFlag_SetBitFar(s32);
 
 s32 GameFlag_ClearBitFar(s32);
-void Menu_CancelSoundTick(void);
 
 s32 UiWork_SetParamNibbleFar(s32);
 

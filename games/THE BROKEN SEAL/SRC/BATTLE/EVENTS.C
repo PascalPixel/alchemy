@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "BATTLE_WORK.H"
 #include "SYSTEM.H"
 
-void BattleEvent_Playback(void);
 
 u32 BattleEventRuntime_Reset(void)
 {

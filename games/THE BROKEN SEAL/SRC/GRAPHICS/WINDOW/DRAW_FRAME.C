@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
-u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 {

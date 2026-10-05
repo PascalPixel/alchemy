@@ -1,8 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 
-s32 Map_DisableUpdateCallbackFar(void);
-s32 Map_EnableUpdateCallbackFar(void);
 s32 GameFlag_ClearBit(s32 flag_no);
 s32 GameFlag_SetBit(s32 flag_no);
 

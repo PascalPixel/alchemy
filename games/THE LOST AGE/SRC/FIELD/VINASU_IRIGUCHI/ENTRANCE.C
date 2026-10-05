@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -7,7 +8,6 @@ extern const struct SceneEntrance gSceneEntrances[];
 extern const struct ScenePlacement gScenePlacements[];
 extern const struct SceneEvent gSceneEvents[];
 
-void ParticleTrail_Spawn(struct FieldActor *actor, s32 x, s32 y, s32 z);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

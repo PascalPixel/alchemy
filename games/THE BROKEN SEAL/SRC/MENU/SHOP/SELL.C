@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "IO_REG.H"
 #include "EDITION.H"
 #include "SHOP.H"
@@ -17,29 +18,17 @@ s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_FindEquippedFar(s32, u8);
 s32 Party_AdjustCoinsFar(s32);
 s32 Party_AdjustSixDigitCounterBFar(s16);
-void UiMessage_ShowAndRestoreState(s32 message);
 void Audio_PlayCue(s32);
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
 void Inventory_EquipFar(s32 unit_id, s32 slot);
 void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);
-void UiMessage_ShowAndWait(s32 message);
-s32 UiMessage_ShowChoice(s32 value);
 void Shop_DrawUnitGrid(s32 value, s32 unit_id);
 void Audio_PlayCue(s32 cue);
 void UiWork_FinalizePendingCoreFar(void);
 s32 UiText_OpenMessageWindowFar(s32 a, s32 b, s32 c, s32 d);
-void Shop_SellItem(s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
-s32 Inventory_CountFar(s32);
 void PsynergyMenu_InitializeEntryObjectsFar();
-void Menu_ReleaseEntryObjectsFar(void);
-s32 Shop_SelSell(s32);
-void UiMessage_ShowAndWait(s32);
-void UiWindow_Clear(s32 window);
-s32 Inventory_CountFar(s32 unit_id);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
-s32 Shop_GetSelectionState(s32, s32);
 s32 Shop_SelectQuantity(s32, s32, s32);
 void UiIcon_PrepareObjectFar(void *);
 

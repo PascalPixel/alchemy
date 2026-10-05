@@ -1,14 +1,12 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 #include "text/MSG_IDS.H"
 
-void ItemMenu_PosCategory(void);
 void ItemMenu_HideAllIcons(void);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
-void ItemMenu_DrawEquippedItemNames(s32 window, u8 *items);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
-void ItemMenu_ArrangeCategoryItemIcons(u8 *items);
 
 struct CategoryMenuState {
     u8 unknown_000[0x1c4];

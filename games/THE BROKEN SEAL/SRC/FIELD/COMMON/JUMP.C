@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
@@ -18,14 +19,11 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *actor, s32 value);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *actor, s32 kind);
 void BattleFx_FinishAction(void);
-s32 Func_080091b0(s32 layer, s32 x, s32 z);
 
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 #define TILE_CELLS_TARGET ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
 #define TILE_CELLS_ABOVE ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
-s32 CheckMapPositionCellOccupiedFar(const s32 *position);
 void ObjectMotion_ArmCallback(s32, s32, s32);
 void Object_RefreshSelectorById(s32);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);

@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
 
 
-s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
 
 void DisplayScroll_RenderEnteringLine(void)
 {

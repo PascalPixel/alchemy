@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "TOPIC.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 
-void TorebiIzumi_SetActorActive(s32 actor, s32 value);
 
 struct SpringRide TorebiIzumi_Ride = { 0 };
 

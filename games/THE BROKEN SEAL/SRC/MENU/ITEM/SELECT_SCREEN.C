@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "ITEM.H"
 #include "EDITION.H"
@@ -35,18 +36,9 @@ static __inline__ s32 FillWords(FillFn fill, void *dst, s32 size, u32 value)
 }
 #endif
 
-void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void WaitFrames(s32 frames);
-void UiWindow_InitializeWork(s32);
 s32 Party_ListActiveOwnersFar(void *session);
-void Palette_LightenBankHighlight(s32);
 void Link_DrawShiftedTilePairFar(void *address);
-void UiWork_SetAltFlagAndClearTableFar(s32);
-void Menu_CancelSoundReset(void);
-void Menu_EnsureCancelSound(void);
-void Menu_ResetTwoResourceEntries(void);
-void UiWindow_MarkVisibleTileAttributesFar(void);
-void UiWindow_EraseBorderRectFar(s32, s32, s32, s32);
 void Event_ClearInvalidPackedValuesFar(void);
 
 s32 RunAssetSelectionScreen(void)

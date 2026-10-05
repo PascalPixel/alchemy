@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
 #include "MAP_SCROLL.H"
@@ -13,9 +14,7 @@
 #include "IO_REG.H"
 #include "RAM_BUFFER.H"
 
-void BattleFx_ClearActorTimers(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, u16, s32);
-void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 mode);
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 

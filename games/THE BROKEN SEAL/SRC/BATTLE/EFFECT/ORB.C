@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "SCRIPT_MOTION.H"
 #include "ANIMSPR.H"
 #include "EVENT_RUNTIME.H"
@@ -18,10 +19,8 @@ extern u8 gMapCellBuffer[];
 
 void Audio_PlayCue(s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
-void CheckObjectMapTile(void);
 
 void *ObjectTable_Get(u32);
-void MapEvent_RunTileTriggerSequence(void);
 
 typedef struct {
     u8 unknown_00[37];
@@ -33,9 +32,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
     struct ObjectRuntime *object, s32 magnitude, s32 angle);
 void *Object_Spawn(s32, s32, s32, s32);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-void RunBattleEffect05(void);
 
-void CheckObjectMapTile(void);
 
 void CheckObjectMapTile(void)
 {
@@ -275,8 +272,6 @@ void Vector_AddPolarOffset(s32, s32, struct Effect05Point *);
 void ObjectDispatch_ReleaseFar(struct Effect05Object *);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 void Animation_ApplyChildValuesFar(struct Effect05Object *, s32);
-void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
 void AudioCommand_PlayFar(s32);
 
 static __inline__ s32 Effect05_Interpolate(s32 start, s32 end, s32 step)

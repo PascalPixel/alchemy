@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FOUR_OBJECT_MOTION.H"
 #include "TYPES.H"
@@ -8,7 +9,6 @@
 #include "RESOURCE.H"
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-void FourObjectMotion_UpdateBottomRow(void);
 
 void FourObjectMotion_InitializeBottomRow(void)
 {

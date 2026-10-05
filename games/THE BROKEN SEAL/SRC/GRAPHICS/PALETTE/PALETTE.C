@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GAME_STATE.H"
 #include "WORKSPACE_OPTIONS.H"
@@ -11,11 +12,9 @@ struct MenuWorkspaceEntry {
     u8 unknown_0c[40];
 };
 
-u16 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 red_scale, s32 green_scale, s32 blue_scale);
 
 #define GLOW_PALETTE ((u16 *)0x050001e8)
 
-u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale, s32 blue_scale);
 
 void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
 {

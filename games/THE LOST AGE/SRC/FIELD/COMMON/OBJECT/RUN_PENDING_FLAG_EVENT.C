@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EVENTWRK.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -6,9 +7,7 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void ObjectEffect_EndContextEffect(s32 effect);
 void Motion_CamBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void Object_AttachWorkTargetToObject(s32 object_id, s32 mode);
 
 s32 ObjectEffect_RunPendingFlagEvent(void)
 {

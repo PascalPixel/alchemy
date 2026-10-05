@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation);
 
 void ActorDraw_SetupActorSceneCells(void)
 {

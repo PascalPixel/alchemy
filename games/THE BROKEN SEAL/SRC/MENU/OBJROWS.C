@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CHARACTER_MENU.H"
 #include "ANIMSPR.H"
@@ -9,7 +10,6 @@
 #include "SCENE.H"
 #include "RESOURCE.H"
 
-s32 Party_RemapCharacterIdIfEnabledFar(s8 kind, s8 variant);
 
 struct PlacementDescriptor {
     u8 pad_00[0x2c];
@@ -30,15 +30,12 @@ struct PlacementState {
 };
 
 extern struct PlacementState *Data_03001f2c_a;
-struct AnimationObject *GetBattleEffectObject(s32);
 s32 Object_InitializeMode(struct AnimationObject *, s32);
-void Menu_UpdateFirstObjectRowPositions(void);
 
 s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 extern struct FourObjectMotionState *gMenuWork;
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-void Menu_UpdateSecondObjectRowPositions(void);
 
 void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
                                  struct PlacementDescriptor *descriptor)

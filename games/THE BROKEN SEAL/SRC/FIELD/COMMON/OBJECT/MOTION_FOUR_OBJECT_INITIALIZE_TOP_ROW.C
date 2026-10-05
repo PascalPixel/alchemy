@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -13,8 +14,6 @@ extern struct FourObjectMotionState *gMenuWork;
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
-void FourObjectMotion_UpdateAllPositions(void);
-void FourObjectMotion_UpdateBottomRow(void);
 
 void FourObjectMotion_InitializeTopRow(void)
 {

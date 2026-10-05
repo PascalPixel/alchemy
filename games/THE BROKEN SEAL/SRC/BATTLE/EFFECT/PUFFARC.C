@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -13,9 +14,7 @@
 
 extern u8 gWorkSlot[];
 void Audio_PlayCue(s32);
-void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void ObjectGroup_TickMemberTimers(void);
 
 
 typedef struct Puff {

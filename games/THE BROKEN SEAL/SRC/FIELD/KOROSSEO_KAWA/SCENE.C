@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -78,7 +79,6 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param);
 
 void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 {

@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
 s32 Object_SetPositionAndResetMotionFar(void *, s32, s32, s32);
 s32 RunBattleEffect14();
 
-void BattleFx_CallEffect14(void);
 
 void BattleFx_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object)
 {

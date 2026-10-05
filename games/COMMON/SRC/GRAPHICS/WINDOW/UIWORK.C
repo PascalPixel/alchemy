@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "WINDOW.H"
@@ -16,7 +17,6 @@ void WaitFrames(s32);
 extern u8 RomBytes_08029a10[];
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 
 extern s32 gKeysHeld;
 extern s32 gKeyState;

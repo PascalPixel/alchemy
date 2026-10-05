@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "SCENE.H"
 #include "TYPES.H"
 #include "OBJECT_LOOKUP.H"
@@ -5,10 +6,8 @@
 #include "OBJECT_EFFECT.H"
 #include "SYSTEM.H"
 #include "FIELD_EVENT.H"
-s32 BattleFx_StartRandomParticleEmitter(s32, s32);
 
 s32 Object_GetById(u32);
-s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 
 s32 BattleFx_FindNearestObject(s32 self, s32 effect)
 {

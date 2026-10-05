@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "OWNER_STATE.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
-s32 BattleParty_PrepareReserveOwners(u16 *owners);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {

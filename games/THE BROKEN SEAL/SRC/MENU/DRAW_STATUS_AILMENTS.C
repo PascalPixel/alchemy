@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
@@ -11,10 +12,7 @@ extern struct CharacterMenuState *gMenuWork;
 extern const u8 Menu_LvString[];
 
 s32 Party_SumDjinnCountsFar(s32 side);
-void ItemMenu_DrawOwnerStatus(s32 window, s32 unit, s32 mode);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 flags, s32 unit);
-s32 CharacterMenu_UpdateSelectionIcons(const u8 *ailments);
-void ItemMenu_ApplyFlags(const u8 *ailments);
 void UiWindow_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 text, void *window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
@@ -23,7 +21,6 @@ void UiNumber_DrawAt(s32 value, s32 digits, void *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(void *window, s32 index, s32 x, s32 y, s32 tile);
 void UiWork_SetParamNibbleFar(s32 color);
 void WaitFrames(s32 frames);
-s32 Owner_GetResistanceValueFar(s32 unit, s32 element);
 
 void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mode)
 {

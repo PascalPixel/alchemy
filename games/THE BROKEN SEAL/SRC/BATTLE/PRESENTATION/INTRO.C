@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
@@ -15,15 +16,10 @@
 
 extern volatile u16 gLinkStatus;
 
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
-void SceneTransform_ApplyYaw(s32);
-void SceneTransform_ApplyPitch(s32);
 
-void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32);
-void UiWork_FinalizeSharedSlotFar(void);
 void BattlePresentation_WaitForAdvance(void);
 
 

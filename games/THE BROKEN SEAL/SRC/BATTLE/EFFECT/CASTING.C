@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -20,25 +21,15 @@
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
 
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 s32 Battle_GetObjectTableValueFar(s32 actor_id);
-void BattleMotion_ApplyVariantMotionFar(s32 actor_id, s32 motion);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void ObjectGroup_TickMemberTimers(void);
 s32 BattleFx_RunSparkGroups(void *effect, s32 mode);
 void BattleFx_RenderMode5(void *effect);
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s32 state_slot,
                                s32 state_value);
-void BattleFx_RunPaletteRampMode1(struct BattleEffectArgument *effect);
-s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 void Graphics_PackTileRows();
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
-void BattleFx_StepPaletteToResource(s32 resource_id);
 
 void Audio_PlayCue(s32 cue);
 

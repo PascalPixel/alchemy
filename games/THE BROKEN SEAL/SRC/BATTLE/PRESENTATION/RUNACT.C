@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "HEAP_STATE.H"
 #include "SCENE.H"
@@ -21,14 +22,9 @@
 #include "BATTLE_WORK.H"
 #include "ANIMSPR.H"
 
-void UiWork_ClearValueNameTablesFar(void);
-s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *);
-s32 BattlePres_RunUnitAction(s16 *);
-void BattleMotion_SetupEscapeObject(s32);
 
 extern struct BattlePresentationTransition *gTransitionWork;
 void UiText_ShowMessageAndWaitCoreFar(s32);
-void UiWork_ResetFreeChannelFar(void);
 
 void UiWork_PushValueSlotFar(s32, s32);
 

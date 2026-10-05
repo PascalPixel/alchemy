@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "SCENE.H"
@@ -9,8 +10,6 @@
 #include "SERIAL_RUNTIME.H"
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
-void Party_Apply(s32, u16 *);
-void Party_Do(void *);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -22,7 +21,6 @@ void Party_Do(void *);
 #endif
 
 void WaitFrames(s32);
-struct BattleUnit *Runtime_GetObject(s32);
 void *Trade_GetOfferStateFar(s32);
 
 

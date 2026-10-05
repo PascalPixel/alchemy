@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "INVENTORY.H"
 
-s32 Inventory_RemoveFar(s32 owner, s32 slot);
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner)
 {

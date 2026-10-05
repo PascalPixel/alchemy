@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "AUDIO_ENGINE.H"
 #include "TYPES.H"
@@ -5,21 +6,12 @@
 
 s32 __divsi3(s32 numerator, s32 denominator);
 void Sound_LoadCommandTable(SoundCommand *table);
-void MusicTrack_HandleNote(u32 command, struct SoundPlayer *player, struct SoundTrack *track);
-void Audio_EmptyCallback(void);
-void AudioEngine_SetPcmRate(u32 mode);
-void AudioEngine_SuspendDirectSound(void);
-void AudioEngine_ResumeDirectSound(void);
 extern SoundCommand Sound_CommandTable[36];
 
-void MusicPlayer_Tick(struct SoundPlayer *player);
-void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
-void AudioEngine_SetMode(u32 mode);
 
 struct SoundPlayer;
 
 
-void CgbChannel_Mute(u8 channel);
 
 
 void AudioEngine_Initialize(struct SoundWork *work)

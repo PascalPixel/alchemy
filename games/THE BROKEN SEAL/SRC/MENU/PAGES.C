@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CHARACTER_MENU.H"
 #include "INVENTORY_MENU.H"
 #include "WINDOW.H"
@@ -20,7 +21,6 @@ void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 style);
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s32 *page)
 {

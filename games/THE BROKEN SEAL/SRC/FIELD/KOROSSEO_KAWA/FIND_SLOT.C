@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -59,7 +60,6 @@ extern u8 HexDigits[];
 
 typedef void(*SceneTask)(void);
 void Korosseo_DrawGauge(void);
-s32 Resource_GetTableEntryFar(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 

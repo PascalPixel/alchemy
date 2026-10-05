@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -42,11 +43,8 @@ void UiWindow_DrawDividerLineFar(s32 window, s32 unused, s32 x, s32 y, s32 width
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 void GameFlag_ClearBitFar(s32 flag);
-void UiMenu_PositionCursor(s32 x, s32 y);
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 void Audio_PlayCue(s32 cue);
 
 s32 ItemMenu_SelectTarget(s32 mode)

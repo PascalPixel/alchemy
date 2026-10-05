@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -28,7 +29,6 @@ void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 
 extern Placement KareiHeya_ArrivalPlacements[];
 
-void SceneState_ClearSlotsBySubState(void);
 
 enum ArrivalMessage {
     MSG_CAN_LIVE_IN_PEACE_IN = 0x1a8f,

@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void RunBattleEffect03(void);
 
 void BattleFx_CallEffect03AndStop(void)
 {
@@ -45,7 +45,6 @@ extern struct BattleFxScene *gEffectWork;
 void BattleFx_UpdateShrinkingOrbitObject(void);
 void BattleFx_RunSparkEmitter(void);
 
-void BattleEffect_InitializeSharedScene(void);
 struct BattleEffect03Object *Object_Spawn(s32, s32, s32, s32);
 struct BattleEffect03Link *Object_ReplaceResourceEntry(void *, struct BattleEffect03Link *);
 void WaitFrames(s32);
@@ -54,7 +53,6 @@ void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct BattleEffect03Object *, s32, s32);
 void Object_CommitPosition(struct BattleEffect03Object *);
 void ObjectDispatch_ReleaseFar(struct BattleEffect03Object *);
-void BattleFx_PrepareBufferInterpolation(void);
 
 void RunBattleEffect03(void)
 {

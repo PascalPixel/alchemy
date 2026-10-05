@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -9,7 +10,6 @@
 #include "IO_REG.H"
 
 void Inventory_AddItemFar(s32 a, s32 b);
-void FieldScene_ConfigureFixedPointValues(void);
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -62,11 +62,6 @@ extern u32 BabiFune_SwellLayerSevenY;
 
 void Battle_ResetEffectCounter(void);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void AudioCommand_WaitForStateByteClear(void);
-void Scene_RunExtendedPresentationSequence(void);
-void BabiFune_UpdateWaves(void);
-void SceneState_CountDownEveryFortyTicks(void);
-void BabiFune_CyclePalette(void);
 
 static inline void BabiFune_AddTask(void (*task)(void), s32 order)
 {

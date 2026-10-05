@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -9,16 +10,10 @@
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 
-void GameState_InitDefaultsFar(void);
-void Ui_LoadWindowGraphics(void);
-void Bg0_ClearTilemap(void);
-void Resource_InitializeTable(void);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
-void DebugBattle_ViewMessages(void);
 s32 DebugParty_LoadPreset(s32 preset);
 void Battle_RunEncounter(s32 encounter);
-void Battle_ReservedNoOp2A08(void);
 void Owner_RecalculateStatsFar(s32 owner);
 
 void DebugBattle_RunMenu(void)

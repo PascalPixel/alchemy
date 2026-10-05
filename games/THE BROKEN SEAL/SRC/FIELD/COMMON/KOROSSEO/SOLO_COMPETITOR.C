@@ -1,12 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
 #include "BATTLE_UNIT.H"
 
-void Engine_PartyRemoveActiveOwner(s32 id);
 void Engine_PartyAddActiveOwner(s32 id);
-void Engine_ObjectAttachWorkTarget(s32 id, s32 target);
 struct BattleUnit *Engine_OwnerGetState(s32 id);
-void Engine_EventClearInvalidPackedValues(void);
 
 void Korosseo_SelectSoloCompetitor(s32 id)
 {

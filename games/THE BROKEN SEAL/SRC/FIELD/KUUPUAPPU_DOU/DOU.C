@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -15,7 +16,6 @@ extern const struct SceneEntrance gKuupuappuDouEntrancesOther[];
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void KuupuappuDou_PushBlockAhead();
-s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor);
 void KuupuappuDou_SpawnPuffs();
 s32 Math_RemainderUnsigned();
 
@@ -26,7 +26,6 @@ struct Actor {
     s32 f0c;
 };
 
-extern void KuupuappuDou_RaiseActorPriorities(void);
 
 
 extern
@@ -44,7 +43,6 @@ extern const struct SceneEvent gKuupuappuDouEvents2[];
 extern const struct SceneEvent gKuupuappuDouEvents3[];
 extern const struct SceneEvent gKuupuappuDouEventsOther[];
 
-void KuupuappuDou_EnableGroupAutomaticPriority(void);
 
 struct MapShake {
     u8 unknown_00[0x18];
@@ -57,7 +55,6 @@ struct MapShake {
 extern u32 gFrameCount;
 void QueueIoWriteDelay2(u32 address, s32 value);
 
-void KuupuappuDou_RunRumble(void);
 
 struct SceneActorRecord {
     u8 reserved_00[8];
@@ -75,19 +72,7 @@ struct SceneActorRecord {
 
 
 void FieldScene_RunOpeningAuxiliarySequence(void);
-void FieldScene_RunScene3a7SequenceD(void);
 
-void SceneActor_InitSlots10To15AndStartTask(void);
-void SceneState_ApplyRectAndMarkActor16(void);
-void SceneState_ConfigureRegion26_30AndMarkActor17(void);
-void SceneState_ConfigureRegion26_30AndClearActor18Mode(void);
-void SceneState_ApplyRectAndSetupActor19(void);
-void SceneActor_SetupSlotTwenty(void);
-void SceneActor_MarkSlot21AndSetFlag205(void);
-void SceneState_ApplyThreeRects(void);
-void SceneActor_SetupActors11To14AndInstallTask(void);
-void SceneState_ApplyThreeRectsRows9And10(void);
-void SceneState_DispatchByActorZeroDepth(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -19,13 +20,10 @@
 
 extern void *gWorkSlot[];
 
-void Render_ResetTransformState(void);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
 enum {
     TIMING_FRAMES,

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "STORY.H"
@@ -10,13 +11,11 @@
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
 
-void WorldMap_ActivateSite138(s32 actor);
 void Battle_SetObjectFlag5bWhenMode3(void);
 void Battle_ClearObjectFlag5bWhenMode3(void);
 void BattleFx_ScheduleRatioTransition(s32 speed, s32 frames);
 extern s32 gWorldMapTriggerActor;
 
-void WorldMap_StopLeaderLeavingShip(void);
 
 
 s32 gWorldMapTriggerActor;

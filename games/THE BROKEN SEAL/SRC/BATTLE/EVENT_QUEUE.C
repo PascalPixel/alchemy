@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "ITEM.H"
@@ -12,10 +13,8 @@ void BattleEv_MarkDisplay(void)
 }
 
 void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
-void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
-void BattleActor_RemoveFromLists(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
@@ -43,12 +42,8 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 void UiWork_PushValueSlotFar(u32, u32);
 void UiText_ShowMessageAndWaitCoreFar(u32);
 void BattlePresentation_WaitForAdvance(void);
-void UiWork_ClearValueNameTablesFar(void);
 void Audio_PlayCue(u32);
 void BattleMotion_RunValueSequence();
-s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned);
-s32 BattleActor_ResetRuntimeFields(s32 unit_id);
-void BattleMotion_InitializeActorRecords(s32 unit_id);
 void UiWindow_DrawPartyStatusContentsFar(u32);
 s32 BattlePres_SetActorModeAndAction(s32 unit_id);
 

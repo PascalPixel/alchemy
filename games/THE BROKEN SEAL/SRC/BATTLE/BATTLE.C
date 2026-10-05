@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_STATUS_ICON.H"
@@ -119,9 +120,6 @@ again:
     }
 }
 
-s32 ResourceMetadata_RegisterFar(struct AnimationObject *context, s32 effect_id);
-void ResourceMetadata_UnregisterFar(struct AnimationObject *context, s32 entry_handle);
-void Animation_SetWorkEntryFar(struct AnimationEntry *effect, s32 entry_index);
 
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *, s32);
 

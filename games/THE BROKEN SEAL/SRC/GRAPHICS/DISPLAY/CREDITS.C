@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
@@ -20,10 +21,7 @@ extern struct DisplayScrollObject *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
 
-void DisplayScroll_UpdateObjects(void);
-void DisplayScroll_RenderEnteringLine(void);
 void GameFlag_SetBitFar(s32 flag);
-s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
 
 void DisplayScroll_UpdateObjects(void)

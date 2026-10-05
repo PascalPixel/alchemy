@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 #include "OWNER_STATE.H"
@@ -15,9 +16,6 @@ struct OwnerVitals {
     u8 status;
 };
 
-s32 Event_ValidatePackedId(u32 packed);
-void Party_RemoveActiveOwnerFar(s32 owner);
-s32 Party_CountActiveOwnersFar(void);
 
 void Event_ClearValidPackedIds(void)
 {

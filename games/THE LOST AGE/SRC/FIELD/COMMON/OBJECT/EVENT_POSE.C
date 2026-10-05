@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "SYSTEM.H"
@@ -5,10 +6,7 @@
 
 struct DispatchObject;
 
-s32 Map_GetTerrainHeightFar(u8, s32, s32);
-s32 Func_08020190(s32, s32, s32);
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *, u32);
-void Func_080caa2c(u32 object_id);
 
 void ObjectEvent_SetMode5WithCue(u32 object_id)
 {

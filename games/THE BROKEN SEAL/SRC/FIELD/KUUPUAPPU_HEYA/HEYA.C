@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
@@ -18,7 +19,6 @@ void Owner_RecalculateStats();
 
 
 s32 PartyInventory_HasSpace(void);
-void Battle_InitializeRenderObject(void);
 void BattleEffect_CleanupSceneObjects(void);
 s32 PartyInventory_HasSpace();
 void Scene_JoinRodSearch();
@@ -40,8 +40,6 @@ void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);
 void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
-s32 KuupuappuHeya_IsActorNearPoint(s32, s32, s32);
-s32 KuupuappuHeya_IsRecordNearPoint(s32, s32, s32);
 void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);

@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
 #include "SCENE.H"
 #include "OBJECT_RUNTIME.H"
 
-s16 *BattleAction_FindDescriptor(s16 action);
 
 s32 BattleFx_CopyLinkedObjectPosition(struct ObjectRuntime *object)
 {

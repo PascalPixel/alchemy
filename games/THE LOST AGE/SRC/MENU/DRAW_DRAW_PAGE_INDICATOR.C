@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_REG.H"
 
-void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 style);
 
 void Palette_LightenBankHighlight(s32 bank)
 {

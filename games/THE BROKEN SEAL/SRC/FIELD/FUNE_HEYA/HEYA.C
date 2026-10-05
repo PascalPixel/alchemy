@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -74,7 +75,6 @@ void Battle_ResetEffectCounterFar();
 void FieldScene_CallPairWith10(s32 a, u16 b);
 
 s32 SceneState_ApplyLevelFromFlags(void);
-void FuneHeya_TurnActorToOpenSide(s32 actor);
 void FieldScene_RunStepThen10(s32 actor);
 void FieldScene_RunPrimarySequence(s32 actor, s32 message, s32 flag);
 
@@ -85,10 +85,8 @@ void FieldScene_CallPairWith10();
 void ObjectMotion_SetActionVariant();
 extern s32 FuneHeya_TurnSteps[];
 
-void FuneHeya_TurnActorToOpenSide(s32 a0);
 
 s32 StagedActor_CountdownUntilPositionUnset(u8 *object);
-void FuneHeya_AdvanceWalkerAfterRise(u8 *object);
 
 struct Walker {
     u8 unknown_00[0x4c];

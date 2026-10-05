@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GROUP_DEPARTURE.H"
 #include "TYPES.H"
@@ -34,7 +35,6 @@ void Event_PrepareObjectAndApplyValue();
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
 
-void HaidiaArashi_RunRiverSearch(void);
 
 void Scene_RunActorGroupDepartureSequence();
 
@@ -1874,7 +1874,6 @@ void HaidiaArashi_RunReunionAndDeparture(void)
     }
 }
 struct FieldActor *Battle_GetWorkObject1e0(void);
-void HaidiaArashi_UpdatePulsingGlow(void);
 void ActorPresentation_SelectActorTwentySevenState(void);
 void HaidiaArashi_CopyLeaderSpritePriority(void);
 

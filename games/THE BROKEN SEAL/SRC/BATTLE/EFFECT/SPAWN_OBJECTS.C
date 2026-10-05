@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "HEAP_STATE.H"
 #include "ANIMSPR.H"
@@ -7,7 +8,6 @@
 
 extern struct BattleEffectWork *gBattleFxWork;
 
-struct AnimationObject *GetBattleEffectObject(s32);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)

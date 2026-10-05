@@ -1,11 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 
-void UiWork_ResetChannelTransition(struct UiChannelSlot *);
-s32 Ui_ClearVramBlock(void);
 
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *spacing, s32 flags)
 {

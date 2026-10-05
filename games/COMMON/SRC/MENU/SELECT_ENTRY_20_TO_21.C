@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 
@@ -8,10 +9,6 @@
 #else
 #define PAIR_COLUMN 9
 #endif
-void *AffineEffect_InitializeWork(void);
-void Menu_EndResourceSelection(void);
-s32 Menu_RunResourceSelectionLoop(s32);
-void Menu_AppendResourceEntry(s32 arg0);
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 
 s32 Menu_SelectEntry20To21(s32 arg0)

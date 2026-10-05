@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "FIELDOBJ.H"
 #include "ANIMSPR.H"
@@ -6,9 +7,6 @@
 #include "IO_REG.H"
 
 u8 *Object_GetByIdFar(s32 id);
-void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void ItemIcon_LoadTilesFar(s32 item);
-void ResourceMetadata_ClearRecordFar(void *record);
 
 void Korosseo_ShowItemIcon(s32 id, s32 item)
 {

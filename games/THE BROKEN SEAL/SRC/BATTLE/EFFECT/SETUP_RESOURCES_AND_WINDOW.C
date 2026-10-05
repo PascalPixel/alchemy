@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GAME_STATE.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
@@ -38,7 +39,6 @@ struct FxObject {
 
 extern struct FxWindowWork gMapCellBuffer;
 
-u16 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 
 void BattleFx_SetupResourcesAndWindow(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -39,10 +40,7 @@ static u16 sHofsBelow;
 
 void *Object_GetById(u32);
 void BattleFx_SetPhaseRequest(s32, s32);
-void ToretoEda_StartBg3Split(void);
 
-void Effect_UpdateBg3HofsByVcount(void);
-void Effect_SetBg3HofsSplit(void);
 
 void State_SetActorEightValue3d(void)
 {

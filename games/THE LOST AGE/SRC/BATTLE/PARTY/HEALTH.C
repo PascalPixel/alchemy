@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OWNERVAL.H"
 #include "BATTLE_UNIT.H"
@@ -7,9 +8,6 @@
 #include "BATTLE_CALC.H"
 #include "FIELD_EVENT.H"
 
-s32 Party_CountActiveOwnersFar(void);
-void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 frames);
 
 void BattleParty_ApplyDrain(s32 amount)
 {

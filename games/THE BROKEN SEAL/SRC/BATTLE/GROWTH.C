@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "BATTLE_PARTY.H"
@@ -18,7 +19,6 @@
 
 extern struct BattleFormationRecord BattleFormation_Records[];
 
-struct EnemyDefinition *Owner_GetRecordFar(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 
 s32 GameFlag_ClearBitFar(s32 id);
@@ -28,8 +28,6 @@ struct FormationCandidate {
     s16 score;
 };
 
-s32 Party_ComputeEligibleMemberAverage(s32 record_id);
-s32 GameFlag_GetByteFar(s32 id);
 
 struct BattleBaseStats {
     s16 base_hp;

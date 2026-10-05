@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
@@ -5,7 +6,6 @@
 
 extern char ResourceId_CommandIcons;
 
-void Runtime_RemapBytesByTableFar(void *buffer, s32 size);
 void Resource_DecodeByteLzInRam(void *source, void *destination);
 
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)

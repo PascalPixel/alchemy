@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -87,7 +88,6 @@ struct EfxObj {
 extern u8 *gEventWork;
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_ReleaseFar(void *object);
-void ItemIcon_LoadTilesFar(s32 item);
 #define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
 void WaitFrames(s32);
@@ -123,8 +123,6 @@ struct EffectObject_0808f1c0 {
     void (*callback)(void);
 };
 
-void ItemIcon_LoadTilesFar(s32);
-void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter);
 
 struct Values_0808f28c {
     u32 first;
@@ -158,7 +156,6 @@ struct MapEventEntry *_call_via_r0(s32 resource);
 
 extern struct DisplayTransitionState *gDisplayTransition;
 
-void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source);
 
 #undef OBJECT_0808EEE4_OFFSET
 

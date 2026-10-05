@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "BATTLE_RUNTIME.H"
@@ -8,7 +9,6 @@
 
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *entry, s32 mode);
 
-s32 Djinn_GetDefinitionHeaderFar(s32 group, s32 index);
 
 static __inline__ void CopyWords(
     void *destination, const void *source, s32 size)

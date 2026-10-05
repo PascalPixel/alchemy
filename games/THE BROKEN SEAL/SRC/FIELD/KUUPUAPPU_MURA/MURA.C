@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -82,9 +83,6 @@ s32 Owner_RecalculateStats(int);
 void Party_RemoveOwnerRestored();
 s32 PartyInventory_FindOwner(s32);
 s32 SceneActor_CheckFacingAndRange();
-void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
-void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
-void SceneActor_RunActorCommandWithFlag91(s32 x);
 
 
 

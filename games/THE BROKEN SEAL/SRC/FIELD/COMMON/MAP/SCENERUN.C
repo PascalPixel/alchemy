@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -21,21 +22,11 @@ enum {
 
 extern u8 gDebugMode;
 
-void Resource_InitializeTable(void);
-void Bg0_ClearTilemap(void);
 void PaletteGlow_UpdateFar(s32 first, s32 second);
-void GameState_InitDefaultsFar(void);
 void GameFlag_ClearBitFar(s32 flag);
 void MapGroupTable_SelectEntry(void);
-void Party_SetReturnPoint(s32 reason);
 void BattleFx_LoadResourceGroup(s32 group);
-void Scene_ResetFlagsOnEnter(s32 scene, s32 keep);
 void Audio_PlayCueFromEventWork(void);
-void Scene_ResolveInteractionResult(void);
-s32 Field_RunScene(s32 entrance);
-s32 Battle_RunEncounterFar(s32 entrance);
-s32 FarCall_BlankRunTable(s32 entrance);
-s32 FarCall_BlankLoadTable(s32 entrance);
 void Audio_PlayCue(s32 cue);
 
 static __inline__ s32 Scene_RunTable(s32 entrance)

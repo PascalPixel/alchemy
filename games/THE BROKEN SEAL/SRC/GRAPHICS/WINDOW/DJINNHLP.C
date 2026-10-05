@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -10,23 +11,13 @@
 #include "HEAP_STATE.H"
 #include "text/MSG_IDS.H"
 
-void UiWindow_SetPaletteBitRectFar(s32, s32, s32, s32, s32);
 
 extern struct DjinnMenuWork *gMenuWork;
 extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeyState;
 void RenderOutput_ClearListFar(s32 window);
-void UiWindow_Clear(s32 window);
-void UiWindow_MarkVisibleTileAttributesFar(void);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
-s32 UiText_OpenEntryMessageFar(s32 window, s32 message);
-s32 Menu_DrawAtWindowOffset(void *window, s32 x, s32 y, s32 width, s32 height, s32 palette);
-void UiMenu_PositionCursor(s32 x, s32 y);
-s32 Menu_GetModuloOfSum(s32 value, s32 modulus);
 void Audio_PlayCue(s32 cue);
 void UiWork_FinalizeFar(s32 window, s32 mode);
-void Menu_UpdateEntryObjectTransforms(void);
-void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 
 s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "ENTRY_SETUP.H"
@@ -160,7 +161,6 @@ struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
 void OverlayObject_WaitUntilIdle(struct FieldActor *object);
 struct SwitchEffect *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, const void *script);
 void ObjectDispatch_WaitForValue16(struct SwitchEffect *effect);
-void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 mode);
 void Battle_ResetEffectCounter(void);
 
 void Scene_RunScene3c8SequenceA(void)

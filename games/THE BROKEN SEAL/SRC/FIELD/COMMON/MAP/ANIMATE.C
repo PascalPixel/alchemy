@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -7,7 +8,6 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-void MapAnimation_Update(void);
 
 void MapAnimation_Update(void)
 {

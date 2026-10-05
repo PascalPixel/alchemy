@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "SAVE_STATE.H"
@@ -15,7 +16,6 @@ typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
-s32 Menu_RunConfirmSelection(s32, s32, s32, s32);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 
 s32 UiWork_IsComplete(void);

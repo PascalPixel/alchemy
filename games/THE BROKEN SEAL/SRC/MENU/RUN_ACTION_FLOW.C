@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CHARACTER_MENU.H"
 #include "TYPES.H"
 #include "MENU_LIST.H"
@@ -7,7 +8,6 @@ extern struct CharacterMenuState *gMenuWork;
 
 s32 CharacterMenu_SelectOwner(s32 index);
 s32 CharacterMenu_SelectCommand(void);
-s32 PsynergyMenu_SelectAction(void);
 s32 ItemMenu_SelectItem(void);
 
 s32 Menu_RunActionFlow(void)
@@ -60,10 +60,7 @@ s32 Menu_RunActionFlow(void)
 
 s32 GameFlag_IsSet(s32 flag);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void UiMenu_SlideCursor(s32 x, s32 y);
-s32 PsynergyMenu_SelectOwner(void);
 s32 CharacterSelector_RunRearrange(void);
-void UiIcon_PrepareObject(struct RenderOutput *cursor);
 void WaitFrames(s32 frames);
 
 s32 CharacterMenu_SelectOwner(s32 slot)

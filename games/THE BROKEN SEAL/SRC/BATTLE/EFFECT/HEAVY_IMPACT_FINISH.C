@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
 #include "GAME_STATE.H"
@@ -8,7 +9,6 @@ extern struct BattleFxScene *gEffectWork;
 
 struct MotionObject *Object_GetById(s32 id);
 void BattleFx_AdvanceSpinAngle(struct MotionObject *object);
-void BattleFx_RunAngledApproachPhases(struct EffectSlot *);
 
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
 int ObjectMotion_ArmCallback();

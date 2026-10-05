@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "OWNER_STATE.H"
 #include "CHARACTER.H"
@@ -108,7 +109,6 @@ s32 Owner_RefreshClassActions(s32 owner)
     return 0;
 }
 
-void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 
 
 struct LevelUpWork {
@@ -118,7 +118,6 @@ struct LevelUpWork {
     u8 unknown_0c[0x20];
 };
 
-u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 u32 Random16(void);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)

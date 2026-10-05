@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -37,13 +38,9 @@ s32 Inventory_AddItemFar(s32 owner, s32 item);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 void Item_AdjustCounterFar(s32 item, s32 mode);
-void Owner_RefreshClassActionsFar(s32 owner);
-s32 BattleFx_HasTriggerFar(s32 item);
 void Event_ClearInvalidPackedValuesFar(void);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
 void InventoryMenu_ShowModalMessage(s32 message, s32 acknowledgement_mode, s32 window_mode);
-void UiText_DrawWorkValueWithLabel(s32 window);
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 enum ItemMenuStep {
     ITEM_STEP_OWNER = 0,

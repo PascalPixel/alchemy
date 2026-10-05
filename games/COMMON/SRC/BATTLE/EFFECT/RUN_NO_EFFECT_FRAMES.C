@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "TYPES.H"
 
-void BattleFx_RunNoEffect(void);
 
 void BattleFx_RunNoEffectFrames(s32 frame_count)
 {

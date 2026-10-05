@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "EDITION.H"
@@ -322,11 +323,7 @@ extern const struct SceneEvent gTakaraShimaEventsOther[];
 
 void Battle_Reset(s32 arg0);
 
-void InitializeEscapeSceneActors(void);
-void TakaraShima_RestoreRoomActors(void);
 void InitializeSwayingSceneObject();
-void FieldScene_RunScene3b2SequenceA(void);
-void TakaraShima_LeaveClearedRoom(void);
 void SetMapCellCollision();
 
 union GameStateRows {
@@ -344,15 +341,10 @@ void Object_SetPosition(Obj *, s32, s32, s32);
 void Object_CommitPosition(Obj *);
 void Vector_AddPolarOffset(s32 arg0, s32 arg1, struct V *arg2);
 s32 Object_CheckMovementCollision(struct S *arg0, struct V *arg1);
-void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused);
-void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused);
 void SetMapCellCollision(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested);
 
-void PositionSceneActorPair(s32 actor, s32 x, s32 z);
 
 u8 *Object_GetByIdFar();
-void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset);
 
 void NoOpEffectCallback(void) {}
 

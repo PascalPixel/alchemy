@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_REG.H"
@@ -10,12 +11,8 @@
 #include "IRQ.H"
 
 void WaitFrames(s32 frames);
-void Blend_SetDarkenTarget0(s32 duration);
-void Blend_SetDarkenTarget16(s32 duration);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
-void BattleFx_SetPrimaryBufferValue(u32 value);
-void BattleFx_StartBufferInterpolation(s32 frames);
 
 extern volatile u32 gFrameCount;
 

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GOMA.H"
 #include "CALL.H"
 #include "FIXED_MATH.H"
@@ -54,7 +55,6 @@ void Audio_PlayCue(s32);
 void Runtime_SetWorkTripleIfNonNegative();
 void Effect_Spawn();
 void Object_SetModeById(s32, s32);
-void Map_WaitWorkValuesBelow256(void);
 
 void SceneEffect_RunActorBurst(s32 no)
 {

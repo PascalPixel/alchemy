@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "ANIMSPR.H"
 
-void Func_0811b75c(s16 *list, s32 refresh, s32 spawn);
 
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {

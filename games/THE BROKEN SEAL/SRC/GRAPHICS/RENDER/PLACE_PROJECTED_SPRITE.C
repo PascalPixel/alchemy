@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -8,7 +9,6 @@
 extern u8 gMenuCtrlWork[];
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *sprite, u16 mode);
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
     s32 matrix;

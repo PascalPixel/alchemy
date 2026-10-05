@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -23,16 +24,10 @@ extern void *gBattleFxWork[];
 
 extern u16 ParticleStreams_CellOffsets[];
 
-void BattleFx_RunNoEffectFrames(s32 frames);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 speed, s32 mode);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
-void Render_ResetTransformState(void);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
-void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
 
@@ -44,14 +39,8 @@ struct Scale {
 extern volatile u32 gKeysRepeat;
 extern const struct Scale CirclingScene_UnitScale;
 
-void BattlePres_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32 mode, s32 layer);
-void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
-void BattleEffect_SetupBlendedDisplay(void);
-struct AnimationObject *GetBattleEffectObject(s32 kind);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 animation);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 

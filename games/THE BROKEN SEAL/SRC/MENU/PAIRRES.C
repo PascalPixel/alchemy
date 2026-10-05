@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -7,7 +8,6 @@
 #include "INVENTORY_MENU.H"
 
 
-s32 Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 
 void Resource_LoadPairedBlocksIfAvailable(void)
 {

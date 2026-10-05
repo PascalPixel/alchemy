@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
 
-void Blend_SetDarkenTarget16(s32 arg0);
 
 s32 BattlePres_RunMosaicFadeOut(void)
 {

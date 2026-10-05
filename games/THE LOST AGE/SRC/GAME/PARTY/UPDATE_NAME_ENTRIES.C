@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
@@ -6,8 +7,6 @@
 #include "TLA_EDITION.H"
 #include "text/MSG_IDS.H"
 
-void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void *Resource_FarCall005(s32);
 
 
 s32 UpdateNameEntries(void)

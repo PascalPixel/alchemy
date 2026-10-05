@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
@@ -31,7 +32,6 @@ struct LinkedEffectObject {
 
 void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Object_Destroy(void *object);
-s32 BattleFx_CopyLinkedObjectPosition(void *);
 
 extern struct ObjectRuntime *gObjectSlots;
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);

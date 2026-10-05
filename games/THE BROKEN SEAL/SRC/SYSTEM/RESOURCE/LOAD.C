@@ -1,17 +1,13 @@
+#include "PROTO.H"
 #include "VRAM_BLOCK.H"
 #include "SELECT.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "text/MSG_IDS.H"
 
-extern void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
-extern s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-extern s32 Ui_BuildPatternToSlot(s32 arg0, s32 arg1, s32 arg2);
 
-void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
                    s32 *result, s32 reuseSource);
-void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 
 s32 Resource_LoadByMode(s32 mode, s32 value)
 {

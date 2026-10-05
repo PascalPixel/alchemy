@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GAME_STATE.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -6,14 +7,12 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "FIELD_EVENT.H"
 
-void Object_EffectSpawnCallback(void);
 
 void Object_EnableEffectSpawnCallback(void)
 {
     Scheduler_EnableCallbacks(Object_EffectSpawnCallback);
 }
 
-void Object_EffectSpawnCallback(void);
 
 void Object_DisableEffectSpawnCallback(void)
 {
@@ -108,8 +107,6 @@ void Battle_InitializeRenderObject(void)
     Object_SetMode((s32)object, 1);
 }
 
-void UiTimedNotice_CloseIfActiveFar(void);
-void Battle_InitializeRenderObject(void);
 void Battle_ResetEffectCounter(void);
 u32 GameFlag_ClearBitFar(s32);
 
@@ -138,8 +135,6 @@ void Battle_Reset(void)
     }
 }
 
-void GameFlag_RefreshLureCapFar(void);
-void Object_AttachWorkTargetToObject(s32 value, s32 enabled);
 
 void BattleFx_FinishAction(void)
 {

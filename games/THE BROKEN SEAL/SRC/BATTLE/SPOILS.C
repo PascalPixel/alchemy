@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "RUNTIME_MEM.H"
@@ -9,7 +10,6 @@
 #include "CHARACTER.H"
 #include "BATTLE_RUNTIME.H"
 
-struct EnemyDefinition *Owner_GetRecordFar(s32);
 void GameFlag_SetBitFar(s32);
 u32 Random16(void);
 s32 Item_EncodeBankedId(s32);
@@ -49,14 +49,11 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(
 }
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
-void UiWork_ClearValueNameTablesFar(void);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
-s32 Owner_GetValueIfLevelThresholdReachedFar(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
-s32 PartyInventory_AddFar(s32 item);
 
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {

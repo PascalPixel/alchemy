@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "MENU_TEST.H"
@@ -14,20 +15,15 @@
 
 
 void Event_SetMessageId(s16 message);
-void BattleEv_RunWait(s32 mode, s32 frames);
 
 
-struct ItemDefinition *Engine_DebugGetItem(s32 item);
 void Engine_AudioPlayCue(s32 cue);
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Engine_DebugRedrawWindow(struct RenderInput *window);
-void Engine_DebugClearWindow(struct RenderInput *window);
 void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
-void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 
 enum { ROBIN, JERARD, IWAN, MEARI };

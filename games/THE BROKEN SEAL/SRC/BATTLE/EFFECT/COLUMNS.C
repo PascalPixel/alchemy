@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -33,10 +34,8 @@ struct DualPuff {
     s32 age;
 };
 
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 a, s32 b);
-void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
 typedef struct Column {
@@ -52,7 +51,6 @@ void Camera_ApplyShake(s32, s32);
 #define WORK_EFFECT ((struct BattleEffectArgument *)work->effect)
 
 void WaitFrames(s32);
-void BattleEventRuntime_BeginPhaseFar(s32);
 
 struct PillarWork {
     u8 sheet[0x7780];
@@ -67,7 +65,6 @@ struct PillarWork {
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleFx_RunDualTableMode0(struct BattleEffectArgument *effect)
 {

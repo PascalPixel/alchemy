@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "TYPES.H"
 
-s32 Djinn_AddToOwnerFar(s32, s32, s32);
 
 s32 GameFlag_SetBit(s32);
 

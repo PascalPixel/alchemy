@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -25,17 +26,11 @@ struct PsynergyMenuIcon {
 struct BattleUnit;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-void Menu_BuildPatternTiles(void);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
-s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
-void Menu_UpdateEntryObjectTransforms(void);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
-void ItemMenu_PosCategory(void);
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 window, s32 owner);
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *);
-s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *);
-void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 void ItemMenu_HideAllIcons(void);

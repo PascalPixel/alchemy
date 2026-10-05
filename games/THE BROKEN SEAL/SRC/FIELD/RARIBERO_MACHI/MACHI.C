@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -22,7 +23,6 @@ extern u8 Placement_Actors[];
 
 extern u8 Placement_Effects[];
 void Motion_LaunchFromFocusedObject(u32, s32, s32, s32);
-void FieldScene_RunScene3c6SequenceA(void);
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
@@ -35,11 +36,8 @@ void Runtime_ReleaseHeapBlock10(void)
 typedef void (*BitDecoder)(const u8 *source, void *destination);
 
 
-s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 void Graphics_BuildSequentialTileTable(void *destination);
 void BattlePresentation_BuildTilemap(void *destination);
-void BitDecoder_DecodeImage(void);
-void BattlePres_UpdateHBlankScroll(void);
 
 void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {

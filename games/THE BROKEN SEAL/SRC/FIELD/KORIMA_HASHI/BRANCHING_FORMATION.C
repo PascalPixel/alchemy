@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
@@ -208,7 +209,6 @@ void SceneActor_PassSubjectOffsetPosition(void)
 
 const struct SceneEvent *Scene_GetEvents(void) { return KorimaHashi_Events; }
 
-void FieldScene_RunBranchingFormationPresentation(void);
 
 s32 Scene_Initialize(void)
 {
@@ -246,7 +246,6 @@ void SceneActor_SetPairZeroAndValue(s32 actor, s32 facing, s32 frames);
 void Event_SayThenWait(s32 speaker, s32 frames);
 void Object_SetActionCallbackAndRefreshById(s32 id, const u8 *callback);
 void Audio_PlayCueFromEventWork(void);
-void KorimaHashi_AlternateBridgePostHeights(void);
 
 
 void FieldScene_RunBranchingFormationPresentation(void)

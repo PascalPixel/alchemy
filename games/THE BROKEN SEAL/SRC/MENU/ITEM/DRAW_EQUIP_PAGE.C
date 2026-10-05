@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
@@ -20,7 +21,6 @@
 
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 

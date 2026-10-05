@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
@@ -15,27 +16,18 @@ extern struct ShopRuntime *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void UiWork_FinalizeFar(s32, s32);
-s32 Inventory_CountFar(s32);
 void Audio_PlayCue(s32);
-void UiMessage_ShowAndWait(s32);
-void Shop_RepairItem(s32, s32);
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
-void UiMessage_ShowAndRestoreState(s32 message);
-s32 UiMessage_ShowChoice(s32 value);
 void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void Inventory_RepairFar(s32 unit_id, s32 slot);
 void Party_AdjustCoinsFar(s32 amount);
 #define SPECIAL_ITEM 228
 
-void UiMessage_ShowAndWait(s32 message);
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
-s32 Inventory_CountFar(s32 unit_id);
 void Party_AdjustSixDigitCounterBFar(s32 amount);
-void Party_AdjustCounterCappedAt28Far(s32 value);
 
 s32 GameFlag_SetBitFar(s32);
 void Item_AdjustCounterFar(s32, s32);

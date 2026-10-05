@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -15,10 +16,7 @@
 
 extern u8 gBattleFxWork[];
 
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 void Audio_PlayCue(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])

@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
 #include "SYSTEM.H"
 
-void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 
 s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
 {

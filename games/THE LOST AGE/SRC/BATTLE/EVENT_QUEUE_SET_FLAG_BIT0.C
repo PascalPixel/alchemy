@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "BATTLE_RUNTIME.H"
@@ -5,10 +6,8 @@
 #include "OWNER_STATE.H"
 
 void Object_Destroy(struct DispatchObject *object);
-void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
-s32 BattleActor_RemoveFromLists(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {

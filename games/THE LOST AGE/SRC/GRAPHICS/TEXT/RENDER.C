@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "TEXT_RENDER_RUNTIME.H"
 
-void UiText_RenderWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
 
 void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
 {

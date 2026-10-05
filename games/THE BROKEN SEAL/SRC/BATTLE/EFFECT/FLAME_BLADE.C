@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -24,13 +25,8 @@ extern u16 ParticleStreams_CellOffsets[];
 
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-void BattleFx_StepPaletteToResource(s32 resource_id);
 void Audio_PlayCue(s32 cue);
 
 void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)

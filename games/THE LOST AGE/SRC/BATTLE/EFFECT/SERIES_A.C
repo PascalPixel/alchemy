@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode);
 
 void BattleFx_RunSeriesAMode0(struct BattleEffectArgument *effect)
 {

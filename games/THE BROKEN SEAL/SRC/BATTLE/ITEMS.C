@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "BATTLE_RUNTIME.H"
 #include "FIELDRUN.H"
@@ -16,10 +17,8 @@
 
 extern u32 gFrameCount;
 
-s32 BattleFx_ExecutePackedAbilityEffect(s32);
 void *ObjectTable_Get(u32);
 s32 BattleEffect_SelectNearbyObject(u32 object_id);
-s32 GameFlag_IsConditionActive(s32 condition);
 s32 GetFocusedObjectCollision(void);
 
 extern struct BattleRuntime *gEventWork;
@@ -38,12 +37,10 @@ void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-s32 Object_CallSpawnRoutineAtOrigin(s32 mode);
 void UiWork_FinalizePendingCoreFar(void);
 void Battle_Reset(void);
 void Event_SetMessageId(s32 effect_id);
 
-void BattleEv_RunWait(s32 value, s32 flag);
 void BattleFx_FinishAction(void);
 
 s32 BattleFx_LoadActionEffectResources(s32 action_id, s32 mode);
@@ -54,7 +51,6 @@ u8 Inventory_RemoveFar(s32 actor, s32 slot);
 struct BattleAction *Ability_GetData(s32);
 void BattleFx_SetupObjectPair(s32, s32);
 s32 BattleFx_RunEventAction(void *, s32, s32);
-void FieldEvent_RunTypeHandler(void);
 void EffectRuntime_StopCurrentObject(void);
 
 void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette)

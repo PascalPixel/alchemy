@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "WINDOW.H"
@@ -22,7 +23,6 @@ typedef char BattleMessageSlotRange_InBank[
     HEAP_SLOT_BATTLE_DISPLAY < sizeof(((union HeapState *)0)->slots) / sizeof(void *) ? 1 : -1];
 
 void UiWindow_MapTextCanvasTiles(s32, s32, s32, s32, s32);
-struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *, s32, s32);
 
 void UiText_PrepareMessageWork(s32 argument)
 {

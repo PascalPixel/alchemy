@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "CHARACTER_MENU.H"
@@ -18,7 +19,6 @@
 
 extern u8 IwramCopyWords[];
 
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void WaitFrames(s32 frames);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
@@ -26,11 +26,9 @@ void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void RenderOutput_ClearListFar(s32 window);
 struct RenderOutput *SideObject_CreateFar(s32 owner, s32 position, s32 side, s32 window, s32 x, s32 y);
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window);
 s32 _call_via_r3(void *, void *, s32, void *);
 void Inventory_EquipFar(s32 owner, s32 slot);
 void Owner_RecalculateStatsFar(s32 owner);
-void UiText_DrawStatComparison(const struct BattleUnit *unit, const struct BattleUnit *backup, s32 window);
 
 static inline void Owner_Copy(void *dst, void *src)
 {

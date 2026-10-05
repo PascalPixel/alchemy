@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -11,14 +12,9 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
-s32 FindNearestF2Actor(void);
-void FieldScene_RunFourActorPresentation(void);
-void RunScene59Sequence(void);
-void MakyuriChojo_FlickerActorEight(void);
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, s32 *position);
-void SceneActor_SetMode55OnSevenRecords(void);
 void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);

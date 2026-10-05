@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -43,14 +44,11 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
-void BattleEffect_InitializeSharedScene(void);
 struct FxObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
-void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FxObject *object);
 void ObjectGroup_ApplyRandomChildValues(void);
-void BattleFx_SpawnFallingParticles(void);
 void AudioCommand_PlayFar(s32 cue);
 void ObjectDispatch_SetSingleChildFlagsFar(struct FxObject *object, s32 value);
 s32 BattleFx_GetCycledTableWord(u32 keys);

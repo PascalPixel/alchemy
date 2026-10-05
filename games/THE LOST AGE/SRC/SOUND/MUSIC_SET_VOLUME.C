@@ -1,7 +1,6 @@
+#include "PROTO.H"
 #include "AUDIO_ENGINE.H"
 
-void Audio_StopAllPlayers(void);
-void Audio_ResumeAllPlayers(void);
 
 void MusicCommand_SetVolume(s16 volume)
 {

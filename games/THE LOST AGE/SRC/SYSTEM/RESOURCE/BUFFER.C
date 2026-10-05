@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -47,11 +48,8 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
     } while (bank <= 1);
 }
 
-void Ui_PrepareTransferFromTableEntry(u32 index);
 
-s32 ItemIcon_Compose(s32, s32);
 
-void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
 
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
 {

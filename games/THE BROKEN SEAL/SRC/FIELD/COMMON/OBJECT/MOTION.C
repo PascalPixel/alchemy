@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
@@ -27,7 +28,6 @@ void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
-void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
 
 void WaitFrames(s32);
@@ -57,7 +57,6 @@ extern struct BurstParticle *Object_CreateFar(s32, s32, s32, s32);
 void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value);
 void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void BattleFx_PlayQueuedSound(void);
-void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle);
 
 struct ObjectRuntime *Object_GetById(u32 object_id);
 

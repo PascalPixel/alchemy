@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
@@ -98,9 +99,7 @@ struct BattleSceneState {
 
 extern u8 gWorkSlot[];
 
-s32 ResourceTable_CountFreeBlocks(void);
 void BattleFx_SetupObjectPair(s32 first, s32 second);
-void BattleFx_UpdateAllEffectSlots(void);
 
 void Vector_AddPolarOffset(s32, s32, void *);
 

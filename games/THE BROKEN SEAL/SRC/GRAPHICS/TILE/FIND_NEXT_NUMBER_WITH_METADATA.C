@@ -1,4 +1,5 @@
 
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -25,18 +26,8 @@ struct IconColumn {
     s8 param;
 };
 
-void Resource_InitializeTable(void);
-void Blend_SetDarkenTarget0(s32);
 s32 RuntimeDispatch_ReturnZero();
-void ObjectSystem_Initialize(s32);
-s32 ResourceSlot_Load(u32, u32 *, s32, u32);
 s32 ResourceMetadata_Register(struct AnimationObject *, s32);
-s32 Ui_FindNextNumberWithMetadata(s32, s32);
-void Ui_SetGridColumnParameter(s32, s32);
-void Ui_SetGridColumnPriority(s32, s32);
-void Ui_FillGridColumnFromMetadata(s32, s32);
-void Ui_SetGridColumnNumber(s32, s32);
-void Battle_PlaceActorsByFormationKind(void);
 
 void Ui_RunIconMonitor(void)
 {

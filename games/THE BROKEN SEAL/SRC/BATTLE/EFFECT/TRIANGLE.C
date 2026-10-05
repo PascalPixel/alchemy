@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -29,11 +30,6 @@ extern struct Vector3 TriangleStrike_Vertex[];
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 a, s32 b, s32 c, s32 *x, s32 *y);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 a, s32 b);
-void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
-void BattleEventRuntime_BeginPhaseFar(s32 value);
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale(struct Vector3 *scale);
 
 void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)

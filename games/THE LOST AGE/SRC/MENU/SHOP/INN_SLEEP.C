@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "OWNER_STATE.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -20,16 +21,9 @@ struct FieldObject {
     u16 y;
 };
 
-s32 Party_ListActiveOwnersFar(s16 *);
-void Party_AdjustCoinsFar(s32);
-void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
-void AudioCommand_WaitForStateByteClear(void);
 void Event_StartScreenTransitionFar(void);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-void Func_080c8398(void);
-void Func_080c83a0(void);
-void Event_DelayEffectFramesFar(void);
 #endif
 
 void Inn_PlaySleep(s32 room_price)

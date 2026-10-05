@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -12,11 +13,6 @@ extern u8 gOamCopyEnabled;
 extern volatile u32 gKeyState;
 
 void Audio_PlayCue(s32 cue);
-void Blend_SetDarkenTarget16(s32 frames);
-void Blend_SetDarkenTarget0(s32 frames);
-void Blend_WaitForTransition(void);
-void Bg0_ClearTilemap(void);
-void Ui_LoadWindowGraphics(void);
 
 void Title_NoOpPalette(void)
 {
@@ -120,7 +116,6 @@ row:
 }
 
 extern u32 gFrameCount;
-void Blend_SetBrightenTarget0(s32 frames);
 
 s32 Title_ShowAnimatedSplash(void)
 {

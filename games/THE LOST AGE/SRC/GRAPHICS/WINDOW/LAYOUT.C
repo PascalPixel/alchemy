@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
@@ -34,10 +35,7 @@ struct UiWindowBounds {
     u16 flags;
 };
 
-s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
-s32 Party_CountActiveOwnersFar(void);
 s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiWindow_DrawPartyStatusContents(s32 flags);
 
 void UiWindow_BuildLayoutBounds(s32 flags)
 {

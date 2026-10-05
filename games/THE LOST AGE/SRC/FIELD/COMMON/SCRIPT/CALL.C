@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "SCRIPT.H"
 #include "FIELD_EVENT.H"
 
@@ -9,7 +10,6 @@ s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
 }
 
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
-s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
 
 s32 Script_CallWithOperand(struct ScriptInterpreter *interpreter)
 {

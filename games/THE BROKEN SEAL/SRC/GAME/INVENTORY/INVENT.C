@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "ANIMSPR.H"
@@ -12,7 +13,6 @@
 #include "B5_CONTEXT.H"
 
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
-void Object_WaitUntilChildValueDiffers(s32, s32);
 
 struct EventPromptWork {
     struct EventRuntime event;
@@ -24,10 +24,8 @@ struct EventPromptWork {
 extern volatile s32 gKeyState;
 struct ActionDescriptor;
 struct ActionDescriptor *BattleAction_FindDescriptor(s32);
-s32 Inventory_RequestMode(s32, s32, s32, s32);
 void UiWork_FinalizePendingCoreFar(void);
 
-s32 Menu_RunConfirmSelectionFar(s32 value, s32 x, s32 y, s32 z);
 
 void Inventory_ReservedNoOp(void)
 {

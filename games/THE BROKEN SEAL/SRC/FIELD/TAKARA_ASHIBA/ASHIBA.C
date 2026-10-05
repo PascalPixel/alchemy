@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "EDITION.H"
@@ -40,17 +41,12 @@ void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
 s32 ArcTan2(s32, s32);
 void ObjectDispatch_ApplyValueToChildren();
 
-s32 Engine_TestTriggerFlag(s32 flag);
-void Engine_SetTriggerFlag(s32 flag);
 
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 {
     *field = step;
 }
 
-void TakaraAshiba_InitializeScene1(void);
-void TakaraAshiba_InitializeScene2(void);
-void TakaraAshiba_InitializeScene3(void);
 
 extern const struct SceneEntrance gTakaraAshibaEntrances1[];
 extern const struct SceneEntrance gTakaraAshibaEntrances2[];
@@ -86,7 +82,6 @@ void AudioCommand_Play();
 
 void battle_owner_69();
 void FieldEffect_UpdateGridPlacement();
-void SceneActor_BranchOnSlotZeroAtTile38(void);
 
 static __inline__ void LiftBlock(s32 column, u8 lowered)
 {
@@ -95,15 +90,9 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
     Object_GetById(8)->y.fixed = 0x200000;
 }
 
-void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 void Scheduler_RemoveCallbackFar();
 void TakaraAshiba_DispatchByActorEightColumn();
-void TakaraAshiba_RestoreActorEightTerrain(void);
-void SceneActor_PassActorNinePositionWithId107(void);
 
-void TakaraAshiba_RestoreActorTenLeftCell(void);
-void TakaraAshiba_RestoreActorTenRightCell(void);
-void SceneState_ApplyTwoRectsAtRow56(void);
 
 void TakaraAshiba_UpdateBlockRects(void);
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);

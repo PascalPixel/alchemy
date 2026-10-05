@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "MAPCOPY.H"
 #include "ENTRANCE.H"
 #include "CALL.H"
@@ -14,7 +15,6 @@ void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
 void Makyuri_SpawnLightObjects(s32 count, s32 base);
-void Makyuri_ClearPalette(void);
 void Makyuri_CyclePalette(void);
 void BattleFx_StartFadeOverlay(s32 value);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);

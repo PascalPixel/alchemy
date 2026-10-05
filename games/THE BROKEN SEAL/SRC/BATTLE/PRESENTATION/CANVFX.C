@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -16,11 +17,6 @@
 #include "MENU_LIST.H"
 
 u32 Random16(void);
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
-void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 struct Streak {
     s32 head;
@@ -38,8 +34,6 @@ struct StreakPoint {
     s32 z;
 };
 
-void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
-void BattlePresentation_DrawStreaks(void);
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
 #include "MOTION_OBJECT.H"
@@ -51,7 +45,6 @@ extern u8 gBattleFxWork[];
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 struct BlitterPair {
@@ -292,10 +285,7 @@ void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx)
     BattleFx_RunTwoResource(efx, 1);
 }
 
-void BattleEventRuntime_BeginPhaseFar(s32 cue);
-void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
-void ObjectGroup_TickMemberTimers(void);
 
 
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)

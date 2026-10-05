@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "BATTLE_WORK.H"
 #include "SYSTEM.H"
 #include "CALLBACK_SCHEDULER.H"
 
-void BattleEvent_Playback(void);
 u32 BattleEventRuntime_Reset(void);
 
 s32 BattleEventRuntime_WaitForReady(void)

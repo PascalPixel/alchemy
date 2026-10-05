@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "PROJECT.H"
 #include "DMA.H"
 #include "IO_REG.H"
@@ -7,7 +8,6 @@
 extern u16 gBgScroll[];
 
 void WaitFrames(s32 frames);
-void BattleBackground_LoadFar(s32 mode, s32 value, s32 size);
 
 void BattleEffect_SetupBlendedDisplay(void)
 {

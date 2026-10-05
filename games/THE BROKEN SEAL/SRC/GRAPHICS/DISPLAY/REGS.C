@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -10,7 +11,6 @@
 
 extern struct BattleEffectWork *gBattleFxWork;
 
-void Graphics_ScaleRgb555ClampedFar(void *, void *, s32, s32);
 #define FADE_BG_PALETTE ((void *)0x050000c0)
 #define FADE_STEP 1092
 

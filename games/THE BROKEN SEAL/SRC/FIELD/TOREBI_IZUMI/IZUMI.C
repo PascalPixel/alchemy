@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TOPIC.H"
 #include "FIELD_SCENE.H"
 #include "TYPES.H"
@@ -19,11 +20,8 @@ extern const struct SceneEvent gTorebiIzumiEvents2[];
 extern const struct SceneEvent gTorebiIzumiEventsOther[];
 
 extern u8 gOamCopyEnabled;
-void SceneState_InitFourActorRecordsAndInstallTask(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
-void AudioCommand_WaitForStateByteClear(void);
 void TorebiIzumi_OfferLuckyWheels(s32 mode);
-s32 SceneDialogue_PickTopicVariantId(s32 topic);
 
 static __inline__ void Io_SetBlendControl(s32 value)
 {

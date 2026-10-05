@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "SCENE.H"
@@ -6,7 +7,6 @@
 #include "OWNER_STATE.H"
 #include "BATTLE_RUNTIME.H"
 
-s32 Trade_CanOfferDjinnFar(s32 id, s32 element, s32 index);
 void Trade_AddOfferFar(s32 id, s32 element, s32 index);
 s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);

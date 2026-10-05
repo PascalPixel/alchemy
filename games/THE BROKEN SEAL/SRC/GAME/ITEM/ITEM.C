@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -17,11 +18,9 @@ extern struct InventoryMenuState *gMenuWork;
 s32 Inventory_RemoveFar(s32, s32);
 s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
-s32 Audio_PlayCueReturnOne(s32 cue);
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void Ability_PlayUseAnimation(s32 action);
 
 struct ItemMenuModeState {
     u8 reserved_000[0x20c];
@@ -61,22 +60,11 @@ struct ItemMenuWork {
 
 extern struct ItemMenuModeState gGameState;
 extern struct ItemMenuDisplayState *gMenuCtrlWork;
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_InitializeWork(s32 mode);
-void UiWork_SetAltFlagAndClearTableFar(s32 value);
-void UiWindow_MarkVisibleTileAttributesFar(void);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Party_ListActiveOwnersFar(u16 *owners);
-void Resource_LoadPairedBlocksIfAvailable(void);
-void Palette_LightenBankHighlight(s32 palette);
 void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
-s32 DjinnMenu_RunScreen(void);
-void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
-void Menu_ResetTwoResourceEntries(void);
-void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
 
-s32 Menu_SetFirstObjectRowCoordinates(s32 arg0);
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
@@ -551,15 +539,6 @@ s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 s32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 index);
 s32 Trade_AddOfferFar(s32 owner, s32 element, s32 index);
-s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 target);
-s32 DjinnMenu_ShowHelp(void);
-s32 DjinnMenu_SelectDjinn(s32 mode);
-s32 Menu_OpenBackdropScreen(void);
-s32 FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 z);
-s32 OwnerAction_RunCompareLoop(s32 mode);
-s32 Unnamed_080ae2f4(void);
-void DjinnMenu_DrawElementList(struct DjinnListTable *tbl);
-s32 Menu_ComputeEntryValues(void *tbl);
 
 s32 DjinnMenu_RunScreen(void)
 {

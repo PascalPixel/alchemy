@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -11,18 +12,12 @@
 
 void ShindenHeya_SpawnOwnerEffect();
 
-s32 CalculateFacingAngle(s32, s32);
-struct FacingObject *ResolveFacingObject(s16);
 
-struct FieldActor *GetActorState(s32 actor_id);
 extern s16 Data_02000240[];
 void Event_CallWithLastActiveObjectId();
 void AudioCommand_WaitForCompletion();
 
-void FieldScene_RunActorUpdateSequence(void);
 
-void SceneState_ApplyTwoRects(void);
-void FieldScene_RunScriptedSceneSequence(void);
 
 
 extern struct BattleEffectBuffers *Data_03001ed0;
@@ -35,14 +30,12 @@ struct ShrineWork {
 };
 
 void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
-s32 ShindenHeya_ChooseRestartOption(void);
 
 s32 ShindenHeya_MatchLeaderPriority();
 void ShindenHeya_CopyActorPose();
 void FieldScene_RunPairedActorChoreography();
 void ObjectMotion_WaitForAnimationChange();
 void ShindenHeya_SpawnActorSpark();
-void ShindenHeya_ResetActorUpdate(void);
 
 void ShindenHeya_FollowLeaderOffset();
 

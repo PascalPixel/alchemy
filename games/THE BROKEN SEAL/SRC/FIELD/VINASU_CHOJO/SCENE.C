@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -33,17 +34,13 @@ enum {
 void SceneEffect_SpawnParticlesBesideActor(void);
 
 
-void VinasuChojo_StepSpriteRotation(struct FieldActor *actor);
 extern u8 VinasuChojo_ScaleStepAction[];
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
 void Graphics_EnableObjLayerAndCallbacks();
 void Object_RefreshSelectorById();
 
-void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor);
-void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 
-void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
 
 void VinasuChojo_UpdateBeamActors(void)
 {

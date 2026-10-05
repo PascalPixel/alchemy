@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PARTY.H"
@@ -30,12 +31,7 @@ struct TransitionActorList {
 };
 
 
-void BattlePres_AdvanceTransitionTimer(void);
-void BattlePres_DrawTransitionRows(void);
-void Graphics_ClearBg0Vofs(void);
-void UiWindow_CreateWithLayoutBoundsFar(s32 terrain);
 void BattleActor_SpawnObjectsForList(u16 *ids, s32 mode);
-void BattleEffect_RunTileAndPaletteAnimationFar(struct TransitionActorList *list);
 
 void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 {
@@ -184,7 +180,6 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
     Runtime_ReleaseHeapBlock(42);
 }
 
-s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 
 extern u8 gTransitionWork[];
 
@@ -192,7 +187,6 @@ struct Half {
     u16 v;
 };
 
-void BattlePres_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *);
 void BattlePresentation_BuildTilemap(void *);
 

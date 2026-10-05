@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
@@ -44,29 +45,7 @@ void FuneKanpan_OpenSecondDoor(void);
 void FieldScene_RunStepThen10(s32 a);
 
 
-void FuneKanpan_ApplyEntryState(void);
 
-void SceneState_ApplyFiveRectsAtColumn78(void);
-void DialogueLayout_ConfigureTwoRegions(void);
-void SceneEffect_InitSlotsEightToNineteen(void);
-void SceneState_InitActorSlots8To19(void);
-void SceneState_ConfigureEntries8Through19(void);
-void FuneKanpan_RockDeck(void);
-void FuneKanpan_SetupVisibleLeaderDeparture(void);
-void FuneKanpan_SetupHiddenLeaderDeparture(void);
-void FieldScene_RunActorTwentyDialogueSequence(void);
-void FieldScene_RunShipDeckEventScript(void);
-void FuneKanpan_RunDeckCrewScene(void);
-void FieldScene_RunActorSequence(void);
-void FuneKanpan_RunJumpScene(void);
-void FieldScene_ConfigureLeadActors(void);
-void FieldScene_ConfigureThreeActors(void);
-void FieldScene_RunPartyRosterScene(void);
-void FuneKanpan_ArriveAtTolbi(void);
-void FuneKanpan_SetupDeckCrewman(void);
-void FuneKanpan_SetupRaisedCrewman(void);
-void SceneActor_PlaceActors20To27(void);
-void FuneKanpan_PlaceRandomDeckActors(void);
 
 extern s16 gCell[][1];
 
@@ -77,7 +56,6 @@ s32 Math_RemainderUnsigned();
 void Engine_ActorEnableActionCallback();
 
 void Event_CallWithLastActiveObjectId();
-void FuneKanpan_PlaceLeaderOnDeck(void);
 
 void Engine_EventBegin();
 void Engine_TaskWait();
@@ -173,8 +151,6 @@ s32 FuneKanpan_DeckSpare = 0;
 
 s32 FuneKanpan_LayerSpeed[2] = { 0 };
 
-void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1);
-s32 SceneState_FindFirstSetFlagOfGroup(u32 sel);
 
 s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {

@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
 #include "WINDOW.H"
 #include "IO_REG.H"
 
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 void UiWork_UploadDirtyBlocks(void)
 {

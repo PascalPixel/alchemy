@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "HEAP_STATE.H"
@@ -16,10 +17,7 @@ static __inline__ s32 DivQ16(s32 divisor, s32 value)
 }
 
 void Camera_StoreSceneParameters(s32, u32, s32);
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
-void SceneTransform_ApplyYaw(s32);
-void SceneTransform_ApplyPitch(s32);
 s32 Render_ProjectPoint();
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)

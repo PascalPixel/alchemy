@@ -1,9 +1,7 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 
-void Runtime_WriteDebugTextTiles(const u8 *src);
-void Text_FormatHexToWork(u32);
-void Text_FormatSignedDecimalToWork(s32);
 
 
 void Text_DrawHexRightAligned(u32 value, s32 width)

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -9,11 +10,7 @@
 #include "IO_REG.H"
 
 extern void UiWork_InitFreeList(void);
-extern void UiWork_SetTwoEntriesTo999(void);
-extern void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
-extern void UiWork_UploadDirtyBlocks(void);
 
-extern void UiWork_InitCountersAndScheduleRefresh(s32);
 
 #if !EDITION_INTERNATIONAL
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -158,7 +159,6 @@ void AffineEffect_UpdateFrame(void)
     }
 }
 
-void AffineEffect_UpdateFrame(void);
 
 void *AffineEffect_InitializeWork(void)
 {

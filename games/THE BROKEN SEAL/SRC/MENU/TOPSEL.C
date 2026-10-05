@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "GLYPH.H"
@@ -13,18 +14,10 @@
 
 void Resource_DecodeByteLz(void *source, void *destination);
 
-void UiWindow_OpenMode1AndWaitFrame(void);
-s32 Menu_SelectTopEntry(s32);
 s32 UiWork_CloseAndRelease(void);
 s32 ItemMenu_Open(void);
-s32 Menu_OpenActionFlow(void);
 extern u8 *gWork;
-s32 Object_GetTriggerTileAheadOfCurrentFar(void);
-s32 Menu_OpenConfirmPromptFar(void);
-s32 RunAssetSelectionScreenFar(void);
-void BattleFx_ClearRandomParticlesFar(void);
 
-void UiWindow_CreateWithLayoutBounds(s32);
 
 void Menu_LoadSelectedResource(void)
 {

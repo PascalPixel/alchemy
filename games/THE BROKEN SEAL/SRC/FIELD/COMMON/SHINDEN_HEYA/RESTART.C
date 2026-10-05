@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -21,7 +22,6 @@ extern volatile u32 gFrameTick;
 void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);
 void UiTextResource_Initialize(struct TextCursor *cursor, s32 *slot);
 void UiTextResource_SetPosition(struct TextCursor *cursor, s32 x, s32 y);
-void UiTextResource_Release(s32 slot);
 
 static inline void TextCursor_Initialize(struct TextCursor *cursor, s32 *slot)
 {

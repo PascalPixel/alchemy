@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -28,7 +29,6 @@ void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
 void ShopCursor_SetPositionImmediateFar(void *, s32, s32);
 void *RenderResource_CreateFrame(s32, s32, struct RenderInput *, s32, s32);
-void Menu_RunSelectedWorkspaceEntry(void);
 
 void Menu_RunSelectedWorkspaceEntry(void)
 {

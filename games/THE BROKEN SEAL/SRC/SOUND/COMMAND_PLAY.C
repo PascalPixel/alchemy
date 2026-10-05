@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "AUDIO_ENGINE.H"
 
 
-void Audio_PlaySound(u16 id);
 
 void AudioCommand_Play(s32 id)
 {

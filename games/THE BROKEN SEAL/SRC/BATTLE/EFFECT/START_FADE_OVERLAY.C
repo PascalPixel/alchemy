@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GAME_STATE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -8,7 +9,6 @@
 #include "IO_REG.H"
 
 void *ObjectTable_Get(u32 object);
-void Object_EffectSpawnCallback(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 struct FadeMark {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "BABI.H"
 #include "TYPES.H"
@@ -12,22 +13,15 @@ extern const struct SceneEntrance gBabiChikaEntrances2[];
 extern const struct SceneEntrance gBabiChikaEntrancesOther[];
 extern const struct SceneRegion gBabiChikaRegions2[];
 
-void FieldScene_PlaceAndPinSlots8And9(void);
 
-void FieldScene_PlaceAndPinSlots10And11(void);
 
-void BabiChika_RestorePlatformCells(void);
 
 s32 SceneActor_CopyActor8PositionWhenAtRow10();
 
 
 void BattleFx_StartFadeOverlay(s32 value);
-void FieldScene_RunLateSequenceHead(void);
-void BabiChika_MarkActorCells(void);
-void BabiChika_SettleSteps(s32 wait);
 s32 SceneActor_SetFlagBitByRelativeDepth();
 s32 OverlayObject_SetYAboveLinkedActor();
-void BabiChika_UpdateTrackedActor(void);
 #define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 #define SCENE_TASK BabiChika_UpdateTrackedActor

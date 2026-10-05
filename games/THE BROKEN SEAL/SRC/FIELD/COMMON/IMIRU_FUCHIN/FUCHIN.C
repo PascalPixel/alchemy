@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "IMIRU_FUCHIN.H"
 #include "TYPES.H"
@@ -37,17 +38,8 @@ extern const struct SceneEvent gImiruFuchinEventsOther[];
 
 s32 ImiruFuchin_TrackLeader;
 
-void ImiruFuchin_ApplyEntrySetup(void);
-void FieldScene_RunScene39aSequenceA(void);
-void ImiruFuchin_ApplyRoomLayout(void);
-void ImiruFuchin_PlaceDragonsEye(void);
 struct FieldActor *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 sprite);
 void BattleFx_StartFadeOverlay(s32 mode);
-void DialogueLayout_ConfigureGroupOne(void);
-void DialogueLayout_ConfigureGroupTwo(void);
-void DialogueLayout_ConfigureGroupThree(void);
-void FieldScene_RunFlagBranchedLayoutSteps(void);
-void OverlayObject_AdvancePositionByDelta(union FieldObject *object);
 
 extern const s32 *const gEffectScripts[3];
 

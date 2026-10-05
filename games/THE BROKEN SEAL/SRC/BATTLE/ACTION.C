@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "FIELDRUN.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -19,19 +20,14 @@ struct BattleCommandRuntime {
 extern struct BattleRuntime *gEventWork;
 
 void *ObjectTable_Get(s32);
-void Battle_InitializeRenderObject(void);
 void GameFlag_ClearBitFar(s32);
 void UiWork_PushValueSlotFar(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
-s32 Object_CallSpawnRoutineAtOrigin(s32);
 void UiWork_FinalizePendingCoreFar(void);
 
-s32 BattleFx_ExecutePackedAbilityEffect(s32);
 
 s32 BattleFx_FindMatchingEvent(s32, s32, void *);
 void GameFlag_SetBitFar(s32);
-s32 BattleEffect_SelectNearbyTargetObject(s32, s32);
-void BattleEffect_ClearOutOfBoundsObjects(void);
 void BattleFx_LoadActionEffectResources(s32, s32);
 void BattleFx_SetupObjectPair(s32, s32);
 void EventObject_Initialize(void);
@@ -40,9 +36,7 @@ s32 BattleFx_RunEventAction(void *, s32, s32);
 void BattleFx_DispatchRequestKind(void);
 void BattleFx_Run(void);
 void EffectRuntime_StopCurrentObject(void);
-void BattleFx_ClearChildValueOnMismatch(void);
 void BattleEffect_CleanupSceneObjects(void);
-void BattleEffect_ClearAllObjects(void);
 
 #define ACTION_ID(word)       ((word) & 0x3ff)
 #define ACTION_ACTOR(word)    (((word) >> 10) & 15)
@@ -57,7 +51,6 @@ void BattleEffect_ClearAllObjects(void);
     (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((action), 4), \
      UiText_ShowPositionedMessageAndWaitFar((s32)(msg), 1))
 
-s32 Event_FindFacingTrigger(s32);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 struct MarkerMap {

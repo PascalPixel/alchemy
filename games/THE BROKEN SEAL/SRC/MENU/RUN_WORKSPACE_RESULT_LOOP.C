@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "SAVE_STATE.H"
@@ -7,9 +8,7 @@
 #include "IO_REG.H"
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
-s32 Menu_RunWorkspaceSelectionLoop(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
-s32 Menu_RunWorkspaceOptions(void);
 
 extern u8 gSleepRequested;
 
@@ -51,7 +50,6 @@ void UiText_DrawStringInWindow(const u8 *, struct RenderInput *, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
 void UiIcon_BuildItemIconTiles(u32, s32, s32 *, s32 *, s32);
 void UiIcon_BuildAbilityIconTiles(u32, s32, s32 *, s32 *, s32);
-s32 Ui_BuildPatternToSlot(s32, s32, s32);
 
 s32 DebugMenu_BrowseIcons(void)
 {

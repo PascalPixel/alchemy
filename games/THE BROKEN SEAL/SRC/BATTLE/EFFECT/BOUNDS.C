@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "ANIMSPR.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -27,8 +28,6 @@ struct EffectSprite {
 };
 
 void ObjectDispatch_ReleaseFar(struct FieldActor *object);
-s32 ObjectTable_FindLastActiveId(void);
-void Event_SpawnObjectTable(struct ScenePlacement *table, s32 last_id);
 
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 {

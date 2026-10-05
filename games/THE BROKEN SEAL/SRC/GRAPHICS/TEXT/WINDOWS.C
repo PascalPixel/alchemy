@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "GLOBAL_CELLS.H"
@@ -8,13 +9,9 @@
 
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
-s32 Object_GetScreenPositionFar(s32 object, s32 *out);
 s32 UiWork_IsComplete(void);
-s32 UiWork_IsIdle(struct UiWindow *window);
 struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed);
 
-void UiWork_ProcessRenderChannels(void);
-void UiWork_ProcessDirectWork(void);
 s32 UiWork_AnimateSpriteSlots(void);
 
 void UiWork_SetBusyFlags(s32 flags)

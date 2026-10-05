@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -25,10 +26,8 @@ struct UiBobPairOutput {
 extern volatile u32 gFrameTick;
 extern volatile u32 gFrameCount;
 
-void Runtime_RemapBytesByTableFar(void *, s32);
 u32 Resource_DecodeByteLz(const void *, void *);
 
-void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 
 void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
 
@@ -62,9 +61,7 @@ extern const struct TileMask Data_08037250[];
 
 
 
-void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 ItemIcon_Compose(s32, s32);
-void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
 s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 
 void Ui_ApplyTableOffsetToPair(struct UiBobPairOutput *obj)

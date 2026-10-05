@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "EDITION.H"
@@ -25,11 +26,9 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
-void OptionMenu_InitializeWork(void);
 struct RenderOutput *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
 void UiIcon_PrepareObjectFar(struct RenderOutput *);
-void RenderResource_LoadFrame(s32 frame, s32 index, s32 dim);
 void Shop_SetCursorFar(void *cursor, s32 x, s32 y, s32 mode);
 void UiWindow_ClearInteriorTiles(struct RenderInput *, s32, s32, s32, s32);
 void PaletteGlow_Update(s32, s32);
@@ -37,7 +36,6 @@ void RenderOutput_ClearList(struct RenderInput *);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
 void Ui_ApplyTableOffsetToPair(void *);
 void Audio_PlayCue(s32);
-void Runtime_ScheduleCallbackAndReleaseBlock20B(void);
 
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {

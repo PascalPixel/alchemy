@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "AUDIO_ENGINE_TYPES.H"
 
 extern struct SoundPlayer gMusicPlayerBgm;
@@ -11,7 +12,6 @@ extern u16 gMusicPitchTarget;
 extern u16 gMusicVolumeTarget;
 extern u16 gMusicPitch;
 
-void Sound_TickDmaRestartTimer(void);
 
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
@@ -8,7 +9,6 @@
 
 s32 Audio_PlayCue(s32);
 s32 Item_Use(s32 slot, s32 owner, s32 target);
-void Item_PlayUseAnimation(u32 item);
 s32 InventoryMenu_ShowModalMessage(s32 message, s32 a, s32 b);
 void Owner_RecalculateStatsFar(s32 owner);
 

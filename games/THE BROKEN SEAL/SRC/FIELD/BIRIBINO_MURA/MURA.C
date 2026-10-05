@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MURA.H"
 #include "TYPES.H"
@@ -19,17 +20,9 @@ extern const struct SceneEvent gBiribinoMuraEvents1[];
 extern const struct SceneEvent gBiribinoMuraEvents2[];
 extern const struct SceneEvent gBiribinoMuraEvents3[];
 extern const struct SceneEvent gBiribinoMuraEventsOther[];
-void BiribinoMura_RestoreVillageActors(void);
-void FieldScene_RunScene38bSequenceA(void);
-void BiribinoMura_RestoreRaisedEntrance(void);
-void BiribinoMura_UpdateCornerSpawn(void);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
-void Scene_UpdatePuzzleActors(void);
-void FieldScene_DrawTilesByActor8Row(void);
 
 
-void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
 
 struct SpawnCounter {
     s16 frames;

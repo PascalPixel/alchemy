@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -6,8 +7,6 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-void BattlePalette_UpdateBlend(void);
-void BattleFx_BuildBuffer(s32 mode, struct BattleEffectBuffers *source, u16 *destination, s32 half);
 
 void BattleEffect_InitializeBuffers(void)
 {

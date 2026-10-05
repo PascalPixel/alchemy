@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "MOTION_OBJECT.H"
@@ -7,14 +8,8 @@
 #include "ANIMSPR.H"
 #include "EFFECT_STEP.H"
 
-s32 ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
-void Animation_SetWorkEntryFar(struct AnimationEntry *entry, s32 index);
 
-s32 Camera_ApplyTransformByFlag(void);
 s32 Render_ProjectPoint(const s32 *, s32 *);
-u32 Battle_GetObjectTableValue(s32);
-s32 Summon_IsEntryFlagged(s32);
-s32 Summon_GetEntryByte4(s32);
 
 void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 {

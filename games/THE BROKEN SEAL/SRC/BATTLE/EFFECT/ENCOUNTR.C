@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
@@ -16,7 +17,6 @@ extern const struct BattleLocationRule Battle_LocationRules[];
 s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SetSpecialFromTable(void);
 
-s32 GetWorldMapTerrainBehaviorFar(void *, s32 *);
 
 typedef struct Entry {
     s16 first;
@@ -26,7 +26,6 @@ typedef struct Entry {
 } Entry;
 
 extern Entry BattleFx_ResultRules[];
-void BattleFx_SelectResultPointer(s32 arg0);
 
 struct EncounterZone {
     u16 rate;
@@ -52,7 +51,6 @@ extern struct FieldPartyState gGameState;
 extern struct EncounterZone Encounter_EnemyGroupTable[];
 s32 GameFlag_IsSet(s32 flag);
 struct BattleUnit *Owner_GetStateFar(s32 unit);
-s32 Party_GetAverageLevelFar(void);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);
 

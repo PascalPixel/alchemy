@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RENDER_INPUT.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
@@ -8,9 +9,7 @@ struct TableEntry {
     u16 value;
 };
 
-s32 Resource_LoadByMode(s32 mode, s32 value);
 
-s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 struct RenderOutput *RenderOutput_CreateLoaded(
     s32 arg0,
     s32 arg1,

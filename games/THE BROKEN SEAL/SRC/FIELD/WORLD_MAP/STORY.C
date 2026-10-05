@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "STORY.H"
@@ -27,9 +28,6 @@ extern u32 gFrameCount;
 void Event_SetDestination(s32 scene, s32 entrance);
 
 u16 gWorldMapBlend;
-void Map_ResumeAnimation(void);
-void Map_LoadAreaGraphics(void);
-void SceneEffect_RestoreBlendRegisters(void);
 void FieldScene_RunLateSequence(void);
 
 /* FAKEMATCH: the one-pass read preserves the saved-IME copy before masking. */

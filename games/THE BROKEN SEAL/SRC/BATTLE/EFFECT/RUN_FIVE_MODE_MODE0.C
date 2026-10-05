@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -21,14 +22,9 @@
 
 extern u8 gBattleFxWork[];
 
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void Render_ResetTransformState(void);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
-void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleFx_RunFiveModeMode0(struct BattleEffectArgument *effect)
 {

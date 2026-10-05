@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "IO_REG.H"
 #include "CHARACTER_MENU.H"
@@ -14,30 +15,19 @@
 
 struct InventoryMenuState;
 extern volatile u32 gKeyState, gKeysRepeat;
-void Palette_LightenBankHighlight(s32 bank);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
-void UiMenu_PositionCursor(s32 x, s32 y);
-void UiMenu_SlideCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-void Menu_ReleaseEntryObjects(void);
 void PsynergyMenu_InitializeEntryObjects();
 void DjinnMenu_ShowCurrentList(void);
 void RenderOutput_RedrawSavedRectFar(s32 window);
-void Menu_PlaceEntryObjectsInGrid(s32 x, s32 y, s32 columns);
 s32 Party_AddActiveOwnerFar(s32 owner);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 s32 Party_RemoveActiveOwnerFar(s32 owner);
-s32 UiMenu_CreateCursor(void *menu);
 struct RenderOutput *SideObject_CreateFar(s32 owner, s32 position, s32 side, s32 window, s32 x, s32 y);
-s32 Menu_CreateEightEntryObjects(s32 window);
 void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
 s32 Party_SumDjinnCountsFar(s32 side);
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
-void Menu_UpdateEntryObjectTransforms(void);
-void ItemMenu_ResetCategory(void);
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 
 s32 CharacterSelector_RunRearrange(void)
 {

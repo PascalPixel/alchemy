@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "SYSTEM.H"
 #include "SELECT.H"
@@ -12,17 +13,11 @@
 #include "B5_CONTEXT.H"
 
 s32 UiGlyph_ResetWorkState();
-void Resource_ClearOwnerListAndCounters(void);
 
 void MenuSelection_BuildEntries(u32);
-void Menu_SetupSelectionBothSides(void);
 void Menu_OpenSelectionWindow(u32, u32);
-void Resource_ScheduleOwnerResetDelayed(void);
-u32 Menu_WaitForSelectionInput(u32);
-void Resource_ResetOwnerEntries(void);
 s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *height);
 void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
-void UiTimedNotice_Tick(void);
 s32 PartyInventory_RemoveFar(s32);
 
 struct TimedNoticeWork {

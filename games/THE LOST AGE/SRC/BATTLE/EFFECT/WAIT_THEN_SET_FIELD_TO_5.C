@@ -1,9 +1,8 @@
+#include "PROTO.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-s32 BattleFx_RunSparkGroups(void *, s32);
 
 void BattleFx_LongApproachThenSpark(struct BattleEffectArgument *effect)
 {

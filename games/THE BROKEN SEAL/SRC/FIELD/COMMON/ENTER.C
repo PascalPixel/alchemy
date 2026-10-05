@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIELDRUN.H"
@@ -5,7 +6,6 @@
 
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
-void GameFlag_RefreshLureCapFar(void);
 #define SCENE_RECORD(id) (&Field_SceneTable[id])
 
 extern void Audio_PlayCue(s16 arg0);

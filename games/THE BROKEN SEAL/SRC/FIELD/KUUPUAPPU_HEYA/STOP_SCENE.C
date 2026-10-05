@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 
-void KuupuappuHeya_UpdateActorStops(void);
 
 struct Half {
     u16 v;

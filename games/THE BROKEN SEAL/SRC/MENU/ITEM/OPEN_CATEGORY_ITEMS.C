@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "FAR_RUNTIME.H"
 #include "INVENTORY_MENU.H"
 
-void ItemMenu_PosCategory(void);
 
 void ItemMenu_OpenCategory(s32 owner_id)
 {

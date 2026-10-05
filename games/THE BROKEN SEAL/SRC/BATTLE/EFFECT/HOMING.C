@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -17,16 +18,11 @@
 #include "TRANSFORM.H"
 #include "BATTLE_PRESENTATION.H"
 
-void Camera_ApplyPhasedDelta(void);
-void Render_ResetTransformState(void);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
 

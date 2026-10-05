@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MAP_SCROLL.H"
 #include "TYPES.H"
@@ -11,9 +12,6 @@
 #include "KEYSTATE.H"
 
 extern u16 gLinkStatus;
-void MusicPlayer_StepVolumeAndPitchTowardTargetsFar(void);
-void BlendTransition_Update(void);
-void SoundDriver_EnterMixer(void);
 
 #define SOUND_PRESET_COUNT 5
 #define SOUND_PRESET_SIZE 152

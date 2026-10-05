@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "AUDIO_ENGINE.H"
 #include "RAM_BUFFER.H"
@@ -8,31 +9,12 @@
 #define SOUND_STRINGIFY_IMPL(value) #value
 #define SOUND_STRINGIFY(value) SOUND_STRINGIFY_IMPL(value)
 
-void Sound_Mixer(void);
-void AudioEngine_Initialize(struct SoundWork *work);
-void AudioEngine_SetMode(u32 mode);
-void AudioEngine_RunMixerTick(void);
-void MusicPlayer_Initialize(struct SoundPlayer *player, struct SoundTrack *tracks, u8 count);
 void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHeader *header);
-void MusicPlayer_Stop(struct SoundPlayer *player);
-void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
-void Audio_ResumePlayer(struct SoundPlayer *player);
 extern struct SoundWork Sound_Work;
 extern struct CgbNote Sound_CgbNotes[4];
 extern const struct PlayerSlot Sound_PlayerSlots[];
 extern const struct SongEntry Sound_SongTable[];
 
-void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetLfoSpeedFromCommand(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_SetModulationFromCommand(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_ReleaseKey(struct SoundPlayer *player, struct SoundTrack *track);
-void AudioEngine_SetPcmRate(u32 mode);
-void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicPlayer_StepFade(struct SoundPlayer *player);
-void MusicTrack_CalcOutput(struct SoundPlayer *player, struct SoundTrack *track);
-void Cgb_UpdateChannels(void);
-void CgbChannel_Mute(u8 channel);
-s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
 extern SoundCommand Sound_CommandTable[36];
 
 void Audio_ResumePlayer(struct SoundPlayer *player)

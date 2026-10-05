@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 
 s32 Func_0803dc1c();
-void Func_0803dd24(void);
 
 void Ui_ClearWorkStateAndWaitFrame(void)
 {

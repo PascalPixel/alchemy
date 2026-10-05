@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "WINDOW.H"
@@ -31,8 +32,6 @@ void UiWork_ShiftPanelRowsLeft(s32 step)
     }
 }
 
-s32 UiWork_StepChannelScript(struct UiChannelSlot *ch);
-void UiWork_AdvanceChannelTransition(struct UiChannelSlot *);
 
 void UiWork_ProcessRenderChannels(void)
 {
@@ -92,13 +91,8 @@ extern volatile u32 gKeysHeld;
 extern u32 gKeysPressedLatch;
 extern volatile u16 gLagFramesShown;
 
-void UiWork_ResetChannelTransition(struct UiChannelSlot *channel);
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
-void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel);
-s32 UiWork_CheckCancelByInput(struct UiChannelSlot *channel);
-s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *channel);
 
 enum {
     TEXT_END = 0,

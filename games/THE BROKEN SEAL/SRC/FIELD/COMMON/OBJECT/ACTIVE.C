@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
@@ -51,10 +52,7 @@ s32 ObjectTable_FindActiveByValue(s32 value)
 
 #if EDITION_INTERNATIONAL
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
-s32 Object_GetScreenPosition(s32 id, s32 *screen);
-s32 UiText_GetResourceDimensionsAltFar(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
 s32 UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
-s32 Localization_LookupEntryIdFar(u32 speaker);
 void WaitFrames(s32 frames);
 s32 BattleFx_GetResourceId(s32 speaker);
 struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 style);

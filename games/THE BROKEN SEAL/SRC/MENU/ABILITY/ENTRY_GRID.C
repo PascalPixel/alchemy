@@ -1,10 +1,9 @@
+#include "PROTO.H"
 #include "PSYNERGY_MENU.H"
 #include "GLOBAL_CELLS.H"
 #include "UI.H"
 
-s32 UiMenu_CreateCursor(void *menu);
 void PsynergyMenu_InitializeEntryObjects();
-s32 UiIcon_CreateWithResourceVariant(struct RenderInput *, s32, s32);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(s32, s32, struct RenderInput *, s32, s32);
 
@@ -57,7 +56,6 @@ void PsynergyMenu_CreateEntryGrid(void)
 }
 
 s32 UiWork_FinalizeFar(s32 window, s32 mode);
-void Menu_ReleaseEntryObjects(void);
 
 void PsynergyMenu_CloseWindows(void)
 {

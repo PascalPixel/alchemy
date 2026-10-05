@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {

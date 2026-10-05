@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
@@ -5,7 +6,6 @@
 #include "BATTLE_UNIT.H"
 #include "text/MSG_IDS.H"
 
-void VramBlock_LoadResourceFar(s32 entry_no, s32 mode, s32 resource_id);
 
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawNumberAtOffsetFar();

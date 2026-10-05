@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_FORMATION.H"
@@ -41,10 +42,7 @@ s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
     return choices[(Random16() * count) >> 16];
 }
 
-s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin);
-s32 Summon_IsEntryFlagged(s32 id);
 u32 Random16(void);
-s32 Owner_ApplyLevelGains(s32 owner, s32 levels);
 
 s32 BattleFormation_BuildEnemyList(s32 record_id)
 {

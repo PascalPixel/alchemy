@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "EDITION.H"
 #include "BATTLE_ESCAPE.H"
@@ -10,19 +11,12 @@
 #include "OWNER_STATE.H"
 
 extern struct BattlePresentationTransition *gTransitionWork;
-void BattleUnit_ResetGuardLevels(void);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
-void Camera_ConfigureScene(s32 scene);
-void UiWork_FinalizeSharedSlotFar(void);
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *actions);
-s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
-s32 BattlePres_WaitSync(void);
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *actions);
-void BattleQueue_SortByPriority(struct BattleActionRecord *actions, s32 count);
-void Camera_InitDefaultTransform(void);
 
 void Palette_CopyBanksWithBrightnessOffset(s32 offset)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
@@ -9,7 +10,6 @@
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1
-s32 BattleFx_HasTriggerFar(s32 item);
 
 void ItemMenu_BuildCmd(s8 *command_states)
 {

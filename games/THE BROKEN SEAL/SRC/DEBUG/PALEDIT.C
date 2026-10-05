@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -58,10 +59,7 @@ extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;
 
-void Resource_DecompressHalfwords(const void *source, void *destination);
 void WaitFrames(s32 count);
-void Ui_LoadWindowGraphics(void);
-void Bg0_ClearTilemap(void);
 #define PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define HEX_DIGIT 0xf0e0

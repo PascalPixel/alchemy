@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "DISPTRAN.H"
@@ -15,7 +16,6 @@
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 
-void UiWindow_FillFromSceneFar(u16 *lines);
 
 struct TransitionSpan {
     u16 cnt;

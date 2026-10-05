@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "BATTLE_EFFECT_COUNTERS.H"
 #include "TYPES.H"
 #include "MAP.H"
@@ -11,9 +12,7 @@
 void Vector_AddPolarOffset(s32, u32, struct FieldPosition *);
 extern struct EventRuntime *gEventWork;
 
-s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
-void Battle_InitializeRenderObject(void);
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 extern u8 gMapCellBuffer[];
@@ -44,12 +43,7 @@ void UpdateMapRegionAtPosition(s32 x, s32 y, s32 z);
 s32 BattleFx_ApplyLookupResult(void *motion, s32 speed);
 s32 EffectRuntime_LookupByTableEntry(s32 kind, s32 speed);
 void BattleParty_ApplyDrain(s32 steps, s32 unused);
-s32 BattlePlacement_UpdateTimedEntriesFar(void);
 void Audio_PlayCue(s32 cue);
-void Event_ClearInvalidPackedValues(void);
-s32 BattleParty_ApplyStatusDamage(void);
-void BattleFx_ConfigureLinkedObject(s32 actor, s32 event);
-void BattleParty_ApplyHealthDelta(s32 amount, s32 flags);
 
 void BattleFx_ResetCounters(void)
 {

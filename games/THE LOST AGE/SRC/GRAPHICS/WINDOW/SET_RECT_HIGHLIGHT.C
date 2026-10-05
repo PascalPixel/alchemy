@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "BATTLE_WORK.H"
@@ -54,7 +55,6 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
     }
 }
 
-s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {

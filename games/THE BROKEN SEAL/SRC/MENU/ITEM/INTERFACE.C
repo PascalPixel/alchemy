@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CHARACTER_MENU.H"
 #include "EDITION.H"
 #include "INVENTORY_MENU.H"
@@ -8,7 +9,6 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 
-s32 UiMenu_CreateCursor(void *menu);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(
     s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void PsynergyMenu_InitializeEntryObjects();
@@ -109,7 +109,6 @@ void ItemMenu_HidePageIcons(void)
 #endif
 
 void UiWindow_CloseIfOpen();
-void Menu_ReleaseEntryObjects(void);
 
 void ItemMenu_Close(void)
 {

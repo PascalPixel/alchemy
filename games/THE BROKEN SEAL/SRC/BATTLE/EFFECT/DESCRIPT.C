@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -34,8 +35,6 @@ struct EffectObject {
     u16 reference;
 };
 
-extern u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value);
-extern s32 GameFlag_IsConditionActive(s32 condition);
 extern struct EffectObject *ObjectTable_Get(s32 object);
 extern void *gEventWork;
 typedef s32 (*WorkEntryFn)(void);
@@ -78,12 +77,9 @@ extern struct BattleActionObject *Object_GetById(s32);
 extern s32 BattleFx_GetFlags(s32);
 extern void Battle_Reset(void);
 extern void Event_SetMessageId(s32);
-extern void BattleEv_RunWait(s32, s32);
 extern void BattleFx_FinishAction(void);
 extern void ObjectDispatch_ApplyValueToChildrenFar(struct BattleActionObject *, s32);
 extern void Object_LinkPair(s32, s32, s32);
-extern void UiWork_SetBusyFlagsFar(s32);
-extern void Battle_InitializeRenderObject(void);
 extern void ObjectMotion_SetActionCallback(struct BattleActionObject *, void *);
 extern void BattleFx_ResumeObject(s32);
 
@@ -98,8 +94,6 @@ typedef struct {
 } EffectDescriptorWorkView;
 
 void Audio_PlayCue(s32);
-void ObjectEffect_BeginContextEffect26(void);
-void ObjectEffect_BeginContextEffect25(void);
 
 struct RuntimeState_0808d8f0 {
     u8 padding0[0x19C];

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -30,8 +31,6 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void Render_ResetTransformState(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void SceneTransform_ApplyPosition(s32 *position);
 
@@ -41,7 +40,6 @@ static __inline__ void CopyPalette(WordCopy copy, void *destination, const void 
     copy(destination, source, size);
 }
 
-void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleFx_RunTwoModeAMode0(struct BattleEffectArgument *effect)
 {

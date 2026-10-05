@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "PALBUF.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -69,8 +70,6 @@ void TitlePalette_UpdateFade(void)
     QUEUE_PALETTE(bank + 256, 0x05000200);
 }
 
-s32 Graphics_ClampRgb555Channel(s32 val);
-s32 Graphics_ClampRgb555Component(s32 val);
 
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {

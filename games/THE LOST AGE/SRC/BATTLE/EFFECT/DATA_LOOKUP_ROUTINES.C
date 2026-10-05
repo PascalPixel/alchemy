@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "PARTY_STATE.H"
 
 extern s32 Encounter_SelectEnemyGroup();
-s32 BattleFx_LookupResult(void *);
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
 {

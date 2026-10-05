@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -35,9 +36,6 @@ extern const struct SceneEvent gShianJiinEvents[];
 
 
 
-void ShianJiin_AskIfCurious(void);
-void FieldScene_RunRoofEnsembleSequence(void);
-void *NewEffectObject(s32 x, s32 y, s32 z, s32 kind);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
 
 extern u8 gEffectWork[];

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "DMA.H"
 #include "TBS_EDITION.H"
 #include "TYPES.H"
@@ -16,10 +17,6 @@ void UiWork_ResetCounters();
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void RenderOutput_ClearList(void *work);
-void RenderOutput_Release(struct RenderOutput *node);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void UiWork_DrawByAttributes(struct UiWindow *window);
-void UiWork_WaitWindowDuration(struct UiWindow *window);
 
 void UiWork_UploadDirtyBlocks(void)
 {

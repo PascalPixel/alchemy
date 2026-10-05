@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "BATTLE_PARTY.H"
@@ -13,10 +14,7 @@ struct PlacementTable {
     struct PlacementList list;
 };
 
-struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
 void Owner_RecalculateStatsFar(s32 unit_id);
-s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
-s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 
 s32 BattleUnit_TickReflect(s32 id)
 {

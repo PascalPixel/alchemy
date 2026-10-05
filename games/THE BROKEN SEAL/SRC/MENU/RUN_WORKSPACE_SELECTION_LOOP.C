@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -17,15 +18,11 @@
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];
 void Shop_SetCursorFar(void *, s32, s32, s32);
-void Menu_InitializeSelectedWorkspace(void);
-void RenderResource_LoadFrame(s32, s32, s32);
 void Ui_ApplyTableOffsetToPair(void *);
-void Runtime_ScheduleCallbackAndReleaseBlock20A(void);
 
 extern u8 gDebugMode;
 extern s8 Menu_WorkspaceIconFrames[];
 
-struct RenderInput *Menu_CreateWorkspaceWindows(void);
 void UiIcon_PrepareObjectFar(void *);
 
 struct RenderOutput *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);

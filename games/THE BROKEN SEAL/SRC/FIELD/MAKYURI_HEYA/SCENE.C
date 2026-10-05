@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
@@ -21,9 +22,7 @@ struct ColumnProbe {
 
 s32 StagedActor_FindClearPosition(struct ColumnProbe *probe);
 void SceneActor_MoveAndRedraw(struct ColumnProbe probe);
-s32 MakyuriHeya_StartPillarPush(void);
 void SceneEffect_SpawnParticleRowsByMode(s32 mode);
-void MakyuriHeya_OpenStoneDoor(s32 mode);
 s32 MakyuriHeya_StopActorNinePositionCallback(void);
 void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
 void Engine_ActorStartAction(s32 actor);
@@ -47,14 +46,11 @@ void BattleFx_RunRisingObjectSequence();
 void Engine_MapCopyCellsTo(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h);
 void Battle_WaitMode0(s32 frames);
 void Makyuri_SpawnLightObjects(s32 count, s32 base);
-void Makyuri_ClearPalette(void);
 void Makyuri_CyclePalette(void);
 void SceneActor_UseActorNinePositionWithYOffset(void);
-void MakyuriHeya_RideLift(void);
 void BattleFx_StartFadeOverlay(s32 value);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 void DisplayBlend_EnableRunScript(void);
-void DisplayBlend_DisableRunScript(void);
 void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
 void Engine_MapRenderWaitForValues(void);
 void FieldScene_RedrawActorFootprint(s32 actor);

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -18,8 +19,6 @@ extern const struct ScenePlacement YamaRama_Placements[];
 
 void Object_RefreshSelectorById();
 void BattleFx_PlayQueuedSound(void);
-s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor);
-s32 OverlayObject_SetFacingTowardObject10(void *self);
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
@@ -37,11 +36,6 @@ extern const struct SceneEvent YamaRama_TempleEvents[];
 extern const struct SceneEvent YamaRama_Events[];
 
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
-void ConfigureAndPlaceActorFourteen(void);
-void FieldScene_RunScene3a2SequenceA(void);
-void ActorPresentation_PrepareActorFourteenWithCallback(void);
-void YamaRama_DisableActorCollision(void);
-void Scene_RunActorExchange(void);
 
 s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor)
 {

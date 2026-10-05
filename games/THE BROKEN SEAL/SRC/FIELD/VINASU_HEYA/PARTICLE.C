@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "ENTRY_SETUP.H"
 #include "TYPES.H"
@@ -6,13 +7,10 @@
 #include "SCENE_IDS.H"
 
 void BattleFx_SetQueuedSoundAndPlay(s32 cue);
-void SceneState_CallWith432And32(void);
 
-void FieldScene_CallWith560And44(void);
 
 
 struct FieldActor;
-s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor);
 
 static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
 {

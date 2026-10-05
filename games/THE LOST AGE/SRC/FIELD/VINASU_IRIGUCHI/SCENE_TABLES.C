@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
@@ -5,16 +6,7 @@
 
 struct ObjectRuntime *Object_GetById(u32 id);
 void Battle_WaitMode0(s32 frames);
-void Func_02002a34(s32 a, s32 b);
-void Func_02002a44(void);
-void Func_02002a4c(void);
-void Func_02002a54(void);
-void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
 void Engine_AudioPlayCue(s32 cue);
-void Field_BeginPaletteTransition(s32 mode);
-void Field_EndActorSpriteEffect(s32 mode);
-void Func_020023a4(void *object);
-void Func_0200260c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const struct ScenePlacement gScenePlacements[];

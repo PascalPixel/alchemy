@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "GAME_FLAGS.H"
@@ -13,7 +14,6 @@
 #include "text/MSG_IDS.H"
 
 s32 GameFlag_SetBit(s32);
-void GameFlag_ClearBit(s32);
 
 struct TradeFlags {
     u32 flags;
@@ -35,11 +35,9 @@ extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 
 s32 GameFlag_Test(s32 flag);
-s32 Owner_LookupFourColumnTable(s32 primary, s32 j);
 
 s32 Owner_RefreshClassActions(s32);
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
-s32 Owner_DetermineClass(s32 character, const u8 *djinn);
 
 #if EDITION_INTERNATIONAL
 #define ENEMY_SUFFIX_FIRST '1'
@@ -51,7 +49,6 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn);
 
 extern const struct EnemyDefinition Enemy_Definitions[];
 
-void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 

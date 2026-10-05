@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
@@ -36,11 +37,6 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position
 s32 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
 void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
-s32 Field_CheckConfiguredKeys(void);
-s32 FixedSqrt(s32);
-struct ObjectRuntime *FieldObject_Create(s32, s32, s32, s32);
-s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position);
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 s32 ArcTan2(s32 y, s32 x);
 void Audio_PlayCue(s32 cue);
 extern struct ObjectRuntime *gObjectSlots;

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -70,7 +71,6 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, struct UiWindow *window, s32 x
 void UiWork_FinalizeFar(struct UiWindow *window, s32 style);
 void UiNumber_DrawAt(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
 s32 PartyInventory_RemoveFar(s32 item);
-s32 PartyInventory_CountItemFar(s32 item);
 void AudioCommand_PlayFar(s32 command);
 
 void ReelGame_RunFrame(void)
@@ -647,15 +647,8 @@ extern u8 gOamCopyEnabled;
 extern DrawRectangle gWorkSlot[];
 
 void RuntimeDispatch_NoOpHook(s32 resource);
-void FarCall_WindowTable(void);
-void ReelGame_InitTitle(void);
 s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
 s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count);
-void Palette_DarkenSceneStep(void);
-void Palette_StepTowardResource(s32 resource);
-void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
-void ReelGame_RunFrame(void);
-void BattlePres_ProcessPendingTileTransfer(void);
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 

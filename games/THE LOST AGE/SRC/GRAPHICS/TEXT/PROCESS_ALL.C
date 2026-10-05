@@ -1,9 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
-void UiWork_ProcessDirectWork(void);
-void UiWork_ProcessRenderChannels(void);
-void UiWork_AnimateSpriteSlots(void);
 
 void UiWork_ProcessAll(void)
 {

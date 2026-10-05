@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
 
-s32 UiIcon_LoadResourceIntoSlot(s32 arg0, s32 arg1);
 
 s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s32 resource_id)
 {

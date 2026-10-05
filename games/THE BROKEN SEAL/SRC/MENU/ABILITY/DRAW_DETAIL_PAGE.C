@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -9,7 +10,6 @@
 
 
 void GameFlag_ClearBitFar(s32 flag);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #if EDITION_INTERNATIONAL

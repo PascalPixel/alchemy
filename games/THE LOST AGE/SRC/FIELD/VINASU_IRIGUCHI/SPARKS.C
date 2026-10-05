@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "RESOURCE.H"
@@ -11,7 +12,6 @@ struct SparkWork {
 };
 
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
-void Func_0200258c(void);
 
 void VinasuIriguchi_StopSparks(void)
 {

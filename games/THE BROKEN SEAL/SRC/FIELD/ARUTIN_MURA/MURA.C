@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -19,7 +20,6 @@ extern const struct SceneEvent gArutinMuraEvents2[];
 extern const struct SceneEvent gArutinMuraEventsOther[];
 
 void FieldScene_RunMiddleSequence(void);
-void FieldScene_RunScene3a3SequenceD(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

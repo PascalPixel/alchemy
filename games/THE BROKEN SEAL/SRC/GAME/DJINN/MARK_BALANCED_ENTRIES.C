@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -5,8 +6,6 @@
 #include "BATTLE_UNIT.H"
 #include "BATTLE_RUNTIME.H"
 extern struct DjinnMenuWork *gMenuWork;
-s32 Djinn_CheckTurnBalance(s32, s32);
-void Djinn_CountTurns(u8 *);
 
 s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
 {

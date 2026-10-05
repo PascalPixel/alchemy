@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "WINDOW.H"
@@ -7,10 +8,6 @@
 #include "IO_REG.H"
 
 void UiWork_InitFreeList(void);
-void UiWork_SetTwoEntriesTo999(void);
-void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
-void UiWork_InitCountersAndScheduleRefresh(s32 kind);
-void UiWork_UploadDirtyBlocks(void);
 
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 

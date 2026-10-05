@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "NIWA.H"
 #include "TYPES.H"
@@ -18,7 +19,6 @@ void Engine_ObjectSetTargetAndCallback();
 void FieldScene_OpenGate();
 
 
-void BiribinoNiwa_ApplyEntryState(void);
 
 void InitializeOrbitingSceneEntity();
 void BiribinoNiwa_RunGardenScene();

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EVENT.H"
@@ -26,12 +27,6 @@ struct SetupWork {
     s32 (*idle)(void);
 };
 
-void Func_02001c7c(s32, s32);
-void Func_02001c84(s32, s32);
-void Func_02001c8c(void);
-void Func_02001c94(void);
-void Func_02001c9c(void);
-void Field_DispatchTypeHandler(s32);
 
 void VinasuChojo_RunSetupStep(void)
 {
@@ -51,8 +46,6 @@ struct AerieEventWork {
 };
 
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
-void Func_02000b2c(void);
-void Func_02000d30(void);
 
 #if !EDITION_INTERNATIONAL
 s32 VinasuChojo_Start(void)

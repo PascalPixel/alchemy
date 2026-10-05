@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
@@ -14,9 +15,7 @@ extern struct DebugPartyEntry Debug_PartyPresets[];
 
 void Party_RemoveActiveOwnerFar(s32 owner);
 void Party_AddActiveOwnerFar(s32 owner);
-void Party_AdvanceOwnerCountToTargetFar(s32 owner, s32 level);
 void OwnerAction_AddFar(s32 owner, s32 action);
-s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 djinn);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 djinn);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 s32 Inventory_AddItemFar(s32 owner, s32 item);

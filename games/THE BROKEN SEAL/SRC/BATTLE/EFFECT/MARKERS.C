@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GAME_STATE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -27,17 +28,13 @@ struct EffectTarget {
     s32 z;
 };
 extern struct EffectGlobals Data_03001ebc;
-void ObjectDispatch_ApplyValueToKind200Children(s32);
 struct EffectTarget *ObjectTable_Get(s32);
 void BattleFx_ApplyColorToSourceBuffer(s32, s32);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
-void BattleFx_StartBufferInterpolation(s32);
 void WaitFrames(s32);
 s32 BattleFx_FindMatchingEvent(s32, s32, s32 *);
 void BattleFx_RunEventAction(s32, s32, s32);
 void Audio_PlayCue(s32);
-void FieldEffect_SpawnNearbyMarkers(void);
-void FieldEffect_WatchLeaderDistance(void);
 
 void RunBattleEffect08(void)
 {

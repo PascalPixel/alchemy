@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
@@ -10,7 +11,6 @@
 
 #define PALETTE ((volatile u16 *)0x05000000)
 void DisplayScroll_InitializeHBlankDma(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void SceneEffect_LoadTablesAndStopDma0(void);
 
 s32 Math_DivideUnsigned();
 
@@ -136,7 +136,6 @@ extern s32 BabiFune_SwellActive;
 extern s32 BabiFune_SwellLayerSixY;
 extern s32 BabiFune_SwellLayerSevenY;
 
-void BabiFune_UpdateDriftingObject(u8 *obj);
 
 void BabiFune_UpdateWaves(void)
 {

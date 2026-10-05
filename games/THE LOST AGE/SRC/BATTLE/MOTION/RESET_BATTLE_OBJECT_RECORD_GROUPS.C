@@ -1,15 +1,14 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_SESSION.H"
 #include "BATTLE_WORK.H"
 #include "RAM_BUFFER.H"
 
-void BattleMotion_ReleaseObjectSlotByValue(s32 object_id);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 void ResetMotionRecordGroup(void *owner);
 s32 ActivateBattleObjectSlot(s32 object_id);
-void BattleMotion_DestroyAllSlotObjects(void);
 void Object_Destroy(void *object);
 
 void ResetBattleObjectRecordGroups(struct MotionObject *object)

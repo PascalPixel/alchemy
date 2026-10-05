@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
@@ -35,7 +36,6 @@ struct ScrollPair {
 
 #define DMA3 (REG_DMA3)
 
-void Clear_UpdateBlend(void);
 
 static __inline__ void RestoreInterrupts(u32 saved)
 {

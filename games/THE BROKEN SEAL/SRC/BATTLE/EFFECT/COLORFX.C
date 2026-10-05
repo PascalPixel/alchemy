@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "HEAP_STATE.H"
 #include "GAME_STATE.H"
@@ -13,7 +14,6 @@ extern struct GameState gGameState;
 extern u8 gRandomSeed[];
 
 s32 Audio_PlayCue(s32);
-void ReelGame_Run(void);
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
@@ -21,8 +21,6 @@ static __inline__ void FillWords(void *dst, s32 size, s32 value)
     Iwram_FillWords(dst, size, value);
 }
 
-void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes);
-void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup, u32 bytes);
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 

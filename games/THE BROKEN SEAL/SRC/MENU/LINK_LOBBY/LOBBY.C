@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "LOBBY.H"
@@ -52,9 +53,6 @@ struct LobbyPanel {
     u8 unknown_00[24];
 };
 
-s32 LinkLobby_PeerSlotMatches(s32 slot);
-void LinkLobby_WriteSlotValue(s32 slot);
-void SerialRuntime_Initialize(void);
 
 s32 gLinkLobbyWaitFrames;
 

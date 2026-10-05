@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -29,20 +30,9 @@ typedef struct Scale {
     s32 y;
 } Scale;
 
-void BattleFx_AdvanceScrollOnInterval(void);
-void BattlePres_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32 mode, s32 layer);
-void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
-void BattleEffect_SetupBlendedDisplay(void);
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, const Scale *scale, s32 mode);
 void Audio_PlayCue(s32 cue);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
 extern const Scale StagedParticles_UnitScale;

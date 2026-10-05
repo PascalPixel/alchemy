@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -23,7 +24,6 @@ extern u8 gObjectSlots[];
 extern struct BattleFxScene *gEffectWork;
 void BattleFx_UpdateScaledArcObjectB(void);
 void BattleFx_UpdateScaledArcObjectA(void);
-void BattleFx_UpdateAllEffectSlots(void);
 
 struct BattleEffectRuntime {
     u8 reserved_000[0xcc0];
@@ -51,10 +51,8 @@ void BattleFx_CycleObjectValueByCounter();
 #define CALLBACK_2      (u32)BattleFx_CycleObjectValueByCounter
 
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
-void BattleFx_StartBufferInterpolation(s32);
 
 void BattleFx_ApplyColorToTargetBuffer(s32 arg0, s32 arg1);
-void BattleFx_StartBufferInterpolation(s32 value);
 
 struct EffectVector {
     s32 x;
@@ -64,13 +62,8 @@ struct EffectVector {
 
 s32 Render_ProjectPoint(struct EffectVector *position, struct EffectVector *result);
 
-void BattleFx_UpdateWaveScene(void);
-void BattleEffect_InitializeSharedScene(void);
 s32 __umodsi3(s32, s32);
-void BattleFx_AdvanceHueCycle(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 frames);
-void Ui_FillBank15PaletteGrey(void);
 
 void BattleEffect_CleanupSceneObjects(void)
 {

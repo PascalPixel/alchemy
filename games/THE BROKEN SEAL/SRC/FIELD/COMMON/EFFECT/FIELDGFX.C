@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
@@ -15,7 +16,6 @@
 
 void Resource_DecodeByteLz(const void *src, void *dst);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
-void FieldMotes_Update(void);
 
 struct Mote {
     s32 state;
@@ -105,7 +105,6 @@ struct DustWork {
 };
 
 void Resource_DecodeByteLz(const void *source, void *destination);
-void FieldEffect_UpdateSparkles(void);
 
 static __inline__ void ClearDustWork(struct DustWork *work)
 {
@@ -118,8 +117,6 @@ static __inline__ void ClearDustWork(struct DustWork *work)
 }
 
 s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mode);
-void BattleFx_InterpolateBuffers(s16 *from, s16 *to, s16 *step, s32 frames);
-void BattleFx_UpdateStormFlash(void);
 
 void FieldMotes_Update(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
@@ -29,7 +30,6 @@ struct MapState {
 
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
-void SceneActor_WaitHeightBelowLimit(struct FieldActor *actor, s32 limit);
 
 extern const struct SceneEntrance gTakaraHashiraEntrances1[];
 extern const struct SceneEntrance gTakaraHashiraEntrances2[];

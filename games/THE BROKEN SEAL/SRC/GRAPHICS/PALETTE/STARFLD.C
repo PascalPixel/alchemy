@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -39,8 +40,6 @@ struct SparkWork {
     s32 origin_pending;
 };
 
-s32 BattleFx_UpdateStarField(void);
-u32 Graphics_UploadVramBlock(void);
 extern s32 *gTransitionWork;
 s32 FarCall_EffectTable(s32 kind, s32 width, s32 height, s32 count, s32 mode);
 
@@ -133,8 +132,6 @@ s32 BattleFx_InitializeStarField(s32 mode)
     return Scheduler_AddOrUpdateCallback((SchedulerCallback)Graphics_UploadVramBlock, 0xc80);
 }
 
-u32 Graphics_UploadVramBlock(void);
-s32 BattleFx_UpdateStarField(void);
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused)
 {
@@ -208,13 +205,8 @@ struct EffectLaunch {
 extern void *gWorkSlot[];
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade);
-s32 BattleFx_InitializeStarField(s32 kind);
-s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 void BattleMotion_ProjectScaledPosition(s32 unit, struct EffectPosition *position);
 void BattleFx_RunIceFleckBurstFar(struct EffectLaunch *launch);
-void BattleFx_RunGatheringBurstFar(struct EffectLaunch *launch);
-void BattlePresentation_PrepareSceneFar(s32 kind);
-void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
 
 /* FAKEMATCH: the write goes through its own int, which loads each value as a word, and the do/while (0) ends a scheduling region after it, as in the slideshow's register writes. */
 #define Io_Write16(reg, value) \

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
 #include "BATTLE_WORK.H"
@@ -45,56 +46,28 @@ extern volatile u16 gLinkStatus;
 extern u8 *gBattleOwnerStates;
 extern u8 gActorSpriteSlots[];
 extern u8 gCpuLoadDisplayEnabled;
-void BattlePresentation_UpdateCamera(void);
-void BattleActor_UpdateSpritePriorities(void);
 
-void Render_ResetTransformState(void);
 void GameFlag_SetBitFar(s32 id);
-s32 Event_GetSpecialValueFar(void);
-void ObjectSystem_InitializeFar(s32 mode);
 s32 GameFlag_IsSet(s32 flag);
-void UiWork_InitializeFar(s32 mode);
-s32 BattleFormation_BuildEnemyList(s32 value);
 void WaitFrames(s32 frames);
-s32 GameFlag_GetByteFar(s32 id);
-void BattleParty_CollectUnitList(void);
-void BattleUnit_RefreshPlacement(void);
 void BattleParty_ReconcileDjinnRecovery(void);
 void BattleSummon_UpdateAvailability(void);
 s32 *Trade_GetOfferStateFar(s32 index);
-void UiWindow_CreateWithLayoutBoundsFar(s32 value);
-void Camera_InitDefaultTransform(void);
-void BattlePresentation_InitializeWorkAndResetState(void);
-void BattleBackground_Load(s32 a, s32 b, s32 c);
 void Party_ReservedNoOp5B14(s32 value);
-void Summon_ClearWorkFields(void);
 s32 BattleRandom16Far(void);
-void BattlePres_RunEntryTransition(s32 object, s32 arg);
-void Battle_ReservedNoOp9B2C(void);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void Runtime_GetRemainingIwram(void);
 void Runtime_GetRemainingEwram(void);
-s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions);
 s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *actions);
-s32 BattlePresentation_DispatchAction(struct BattleActionRecord *action, s32 delay);
-s32 BattlePres_RunAction(struct BattleActionRecord *action);
-s32 BattlePres_SyncTurn(void);
-void Battle_ReservedNoOpF674(void);
 void Battle_ProcessRoundEnd(void);
 void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
 void BattlePresentation_WaitForPromptAt(s32 a, s32 b);
-s32 Battle_ClearSerialTransferPayload(void);
-void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 a, s32 b);
 void UiText_ShowMessageAndWaitCoreFar(s32 id);
 void BattlePresentation_WaitForAdvance(void);
-void Battle_AwardSpoils(void);
-void Blend_SetDarkenTarget16(s32 value);
-void Blend_WaitForTransition(void);
 void BattleParty_ResetActiveRuntimeFields(void);
-void Runtime_ReleaseHeapBlock10(void);
 
 s32 Battle_RunEncounter(s32 enemy_group)
 {

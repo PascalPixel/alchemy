@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "FX_SCENE.H"
@@ -13,7 +14,6 @@ struct ScatterPosition {
 };
 
 extern struct BattleFxScene *gEffectWork;
-void BattleEffect_InitializeSharedScene(void);
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
@@ -22,7 +22,6 @@ void Audio_PlayCue(s32 sound);
 struct MotionObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 extern const s32 BattleFx_FragmentScript[];
 void ObjectDispatch_ReleaseFar(void *object);
-void BattleFx_PrepareBufferInterpolation(void);
 
 void Object_SetMode(void *, s32);
 

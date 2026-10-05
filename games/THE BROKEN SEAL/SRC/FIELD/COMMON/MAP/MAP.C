@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
@@ -10,7 +11,6 @@
 #include "IO_REG.H"
 #include "FLAG_IDS.H"
 
-void Map_SetCameraCenter(s32 x, s32 y);
 
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
@@ -43,7 +43,6 @@ static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32
     *(u16 *)(destination + 64) = *colors;
 }
 
-void Map_UpdateLayerScroll(void);
 
 static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
@@ -93,10 +92,7 @@ struct SceneHeader {
 extern struct SceneEntry Map_LayeredScenes[];
 extern u8 gMapLayerData[];
 
-void Blend_SetDarkenTarget0(s32 value);
-s32 Resource_DecodeType2(const void *source, void *destination);
 void Tilemap_DecodeStagedBuffer(void);
-void Tilemap_ConvertBuffer(void);
 void DisplayBlend_StartScript(void *script);
 s32 GameFlag_IsSet(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);

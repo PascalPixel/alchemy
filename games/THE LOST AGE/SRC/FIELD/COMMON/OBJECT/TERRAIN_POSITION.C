@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "OBJECT_RUNTIME.H"
 
 s32 Object_SetPositionAndResetMotionFar(struct ObjectRuntime *, s32, s32, s32);
-s32 Map_GetTerrainHeightFar(u8, s32, s32);
 
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 object_id, s32 x, s32 z)
 {

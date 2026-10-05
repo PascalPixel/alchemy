@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -18,7 +19,6 @@
 
 s32 BattleFx_GetResourceIdFar(s32);
 void UiIcon_PrepareObjectFar(void *);
-s32 Menu_RunConfirmSelectionAtFar(s32, s32, s32);
 
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
@@ -29,7 +29,6 @@ struct Record_080b06c0 {
 };
 
 
-void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
 extern u8 gEventWork[];
 void BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 void BattleFx_StartBufferInterpolationFar(s32);
@@ -403,16 +402,11 @@ void UiWork_FinalizeFar(s32 window, s32 style);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
-void Menu_ReleaseEntryObjectsFar(void);
-s32 Item_GetEquipmentGroupFar(s32 item);
-void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id);
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
-s32 Inventory_CountFar(s32 unit_id);
 s32 Item_IsCompatibleWithOwnerFar(s32 unit_id, s32 item_id);
 void Shop_BuySpecialItem(s32 window, s32 item_window);
 void Item_AdjustCounterFar(s32 item, s32 delta);
-s32 AbilityMenu_BuildAvailableList(void);
 void Audio_PlayCue(s32 cue);
 
 s32 Shop_SelBuy(void)

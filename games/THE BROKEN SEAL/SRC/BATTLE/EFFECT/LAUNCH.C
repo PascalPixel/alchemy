@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
@@ -93,8 +94,6 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
 }
 
 void Battle_Reset(void);
-void Motion_CamBounds(s32, s32, s32, s32);
-void BattleEffect_InitializeSharedScene(void);
 void ObjectMotion_ArmCallback(s32, s32, s32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
@@ -102,7 +101,6 @@ void Animation_ApplyChildValuesFar(void *, s32);
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 void EffectSlot_Initialize(void *, s32, s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, s32);
-void BattleFx_PrepareBufferInterpolation(void);
 void ObjectGroup_ApplyRandomChildValues(void);
 
 void BattleFx_RunEffect15(void)

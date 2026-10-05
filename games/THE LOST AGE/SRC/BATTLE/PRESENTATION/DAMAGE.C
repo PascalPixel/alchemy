@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_UNIT.H"
@@ -11,11 +12,6 @@
 #include "BATTLE_TARGET.H"
 #include "text/MSG_IDS.H"
 
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-void UiWork_ClearValueNameTablesFar(void);
-void UiText_DrawQuantity(s32 value, s32 mode);
-void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
-void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
 
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
@@ -77,7 +73,6 @@ struct BattleObjectAnimation {
 };
 
 s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
-s32 Map_RenderAnimatedTileFramesForObjectFar(void *object);
 s32 ActivateBattleObjectSlot(s32 unit_id);
 
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)

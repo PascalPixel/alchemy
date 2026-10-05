@@ -1,23 +1,17 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "IO_REG.H"
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
 extern struct ShopRuntime *gMenuWork;
-struct BattleUnit *Runtime_GetObject(s32);
-void UiWindow_Commit(s32);
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
 void UiWork_FinalizeFar(s32 window, s32 style);
 void PsynergyMenu_InitializeEntryObjectsFar();
-void Menu_ReleaseEntryObjectsFar(void);
-void Shop_InitializeCursorWork(void);
-void Inn_Cleanup(void);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
-s32 Shop_SelUse(s32 unit_id);
-s32 Inventory_CountFar(s32 unit_id);
 void Audio_PlayCue(s32 cue);
 
 s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
@@ -116,8 +110,6 @@ done:
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
-s32 Ability_GetAvailability(s32);
-s32 Inventory_CheckDiscardFar(s32, s32);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 void UiWork_FinalizePendingCoreFar(void);
 

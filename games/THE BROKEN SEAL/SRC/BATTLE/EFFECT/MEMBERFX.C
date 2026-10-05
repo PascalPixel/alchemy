@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -23,10 +24,8 @@ extern u8 gBattleFxWork[];
 
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
-void Render_ResetTransformState(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
-void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
 
 extern u16 ParticleStreams_CellOffsets[];
 
@@ -42,11 +41,7 @@ struct Chip {
 
 #define gChips ((struct Chip *)Ram_MapCellBuffer)
 
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void Render_ResetTransformState(void);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void Object_ResetMotion(struct MotionObject *object);
@@ -208,12 +203,8 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 
 #define gSkulls ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void Render_ResetTransformState(void);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void SceneTransform_ApplyPosition(s32 *position);
-void SceneTransform_ApplyPitch(s32 angle);
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
@@ -478,8 +469,6 @@ void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect)
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
 u32 Battle_GetObjectTableValueFar(s32 actor_id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void ObjectGroup_TickMemberTimers(void);
 
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 {

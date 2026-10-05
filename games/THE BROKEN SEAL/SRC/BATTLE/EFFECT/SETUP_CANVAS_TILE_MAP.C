@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
@@ -31,7 +32,6 @@ struct BattleLayer {
 };
 
 extern u16 gBgScroll[];
-void BattleFx_ClearActorTimers(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 fade, s32 arg);
 
 void BattleFx_SetupCanvasTileMap(void)

@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "TYPES.H"
 
-s32 BattleFx_RunSevenMode(s32, s32);
 
 void BattleFx_RunSevenModeMode4(s32 arg0)
 {

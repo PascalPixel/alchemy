@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "GAME_STATE.H"
@@ -70,15 +71,7 @@ struct MenuState {
 };
 
 void GameFlag_SetBitFar(void *);
-s32 Djinn_AddToLeastLoadedOwnerFar(s32, void *);
 void Battle_SetObjectFlag5bWhenMode3(void);
-void BattleEffect_ClearOutOfBoundsObjects(void);
-void BattleFx_RunVenusDjinnCapture(s32);
-void BattleFx_RunMercuryDjinnCapture(s32);
-void BattleEffect_RunPhasedRadialParticleSequence(s32);
-void BattleFx_FinishHeavyImpact(s32);
-void BattleEffect_ClearAllObjects(void);
-void Djinn_ShowJoinedMessageFar(s32, s32, void *);
 void Battle_ClearObjectFlag5bWhenMode3(void);
 
 struct ActorDescriptor {

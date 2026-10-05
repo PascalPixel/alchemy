@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -28,16 +29,9 @@ extern u16 ParticleStreams_CellOffsets[];
 extern struct Vector3 RingBolts_Points[];
 extern u8 gMapCellBuffer[];
 
-void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
-void BattleEventRuntime_BeginPhaseFar(s32 value);
-void Render_ResetTransformState(void);
-void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(void *position);
-void SceneTransform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale(struct Vector3 *scale);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
 void Object_ResetMotion(struct MotionObject *object);

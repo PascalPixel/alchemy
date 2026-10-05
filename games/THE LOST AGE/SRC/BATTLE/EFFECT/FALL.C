@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 #include "OBJECT_EFX.H"
 
 u32 Random16(void);
-void RunBattleEffect05(void);
 
 struct FallingObject {
     u8 unknown_00[0xc];

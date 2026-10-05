@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
@@ -5,9 +6,7 @@
 #include "WINDOW.H"
 
 
-void VramBlock_LoadResourceFar(s32 entry_no, s32 size, s32 resource_id);
 s32 UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, s32 mode);
-void UiText_DrawString(u8 *text, s32 output, s32 x, s32 y);
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CHARACTER_MENU.H"
 #include "HEAP_STATE.H"
 #include "WINDOW.H"
@@ -37,19 +38,10 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 #define SAVED_TILE_BYTES 0x800
 #endif
 
-void UiWindow_DrawFrameFar(s32, s32, s32, s32);
-void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_InitializeWork(s32);
 s32 Party_ListActiveOwnersFar(u16 *);
-void Palette_LightenBankHighlight(s32 index);
-void UiWork_SetAltFlagAndClearTableFar(s32);
-void UiWindow_MarkVisibleTileAttributesFar(void);
 s32 Party_SumDjinnCountsFar(s32);
 void FourObjectMotion_InitializeTopRow();
 void Link_DrawShiftedTilePairFar(s32 addr);
-void Menu_CancelSoundReset(void);
-void Menu_EnsureCancelSound(void);
-void FourObjectMotion_ClearSlotsAndSchedule(void);
 
 s32 ActionMenu_Open(void)
 {

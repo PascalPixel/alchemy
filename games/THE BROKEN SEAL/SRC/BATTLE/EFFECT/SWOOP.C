@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -16,24 +17,12 @@
 #include "RESOURCE.H"
 
 extern u8 gMapCellBuffer[];
-void Graphics_ResetBg2Pa(void);
-void Graphics_SetBg2AffineScaleHalf(void);
-void BattleFx_BuildWindowEdgeTable(void);
 void WaitFrames(s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
-void BattlePres_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32, s32);
-void BattleBackground_LoadFar(s32, s32, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
-void BattleEffect_SetupBlendedDisplay(void);
-void BattleEventRuntime_BeginPhaseFar(s32);
-void BattleMotion_ApplyVariantMotionFar(s32, s32);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *, s32, s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
-void BattleFx_DrawClippedCanvasLine(s32, s32, s32, s32, s32);
 extern volatile u32 gKeysRepeat;
 
 struct Cells03001ad0 {

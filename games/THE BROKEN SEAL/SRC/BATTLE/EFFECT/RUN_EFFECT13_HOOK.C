@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
 #include "MOTION_OBJECT.H"
@@ -8,14 +9,11 @@
 
 extern struct BattleFxScene *gEffectWork;
 
-void RunBattleEffect13(void);
 void Vector_AddPolarOffset(s32, s32, s32 *);
 struct MotionObject *Object_Spawn(s32, s32, s32, s32);
 void Object_SetPositionAndResetMotionFar(struct MotionObject *, s32, s32, s32);
 void Animation_ApplyChildValuesFar(struct MotionObject *, u32);
 void ObjectDispatch_ReleaseFar(struct MotionObject *);
-void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
 
 void BattleFx_RunEffect13Hook(void)
 {

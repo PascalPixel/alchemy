@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_SESSION.H"
@@ -6,7 +7,6 @@
 #include "ANIMSPR.H"
 
 void *GetMotionRecordFar(void *, s32);
-s32 BattleMotion_GetSlotPaletteFar(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 extern struct BattleEffectWork *gBattleFxWork;
 

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -25,11 +26,8 @@ typedef s32 (*CopyWords)(void *, const void *, s32);
 
 void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
 void Audio_PlayCue(s32);
-void BattleMotion_ApplyVariantMotionFar(s32, s32);
-void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
-void ObjectGroup_TickMemberTimers(void);
 typedef struct BattleEffectArgument Efx;
 
 typedef struct Spark {
@@ -53,12 +51,7 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
 }
 
 extern const u16 ParticleStreams_CellOffsets[];
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
-void Graphics_RestoreTransferWork(void);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
 
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {

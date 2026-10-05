@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
@@ -11,16 +12,13 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(
     s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 #if !EDITION_INTERNATIONAL
 void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
 #endif
-void UiMenu_PositionCursor(s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
-s32 InventoryMenu_SortByListOrder(u16 *items, s32 mode);
 void Audio_PlayCue(s32 cue);
 
 s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)

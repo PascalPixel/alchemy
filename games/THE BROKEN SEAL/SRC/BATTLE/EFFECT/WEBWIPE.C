@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -35,10 +36,8 @@ void ColorBuffer_BackupAndScaleThreeQuarters(void *source, void *destination, s3
 void ColorBuffer_BackupAndDarken(void *source, s32 amount, void *destination, s32 size);
 void ColorBuffer_BackupAndBrighten(void *source, s32 amount, void *destination, s32 size);
 
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void ObjectGroup_TickMemberTimers(void);
 
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 {

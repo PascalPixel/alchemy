@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "BATTLE_CALC.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -19,7 +20,6 @@ u32 BattleRandomPercent(void)
     return (BattleRandom16() * 0x64) >> 0x10;
 }
 
-s32 Curve_LookupScaledValue(s32 selector, s32 mode);
 
 s32 Owner_ScaleAdjustedAmount(s32 amount, s32 reduction, s32 adjustment, s32 selector)
 {

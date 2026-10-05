@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "EDITION.H"
@@ -175,11 +176,6 @@ void Audio_PlayCueFromEventWork();
 
 extern u8 *gActorEffectWork;
 
-void InitializeOrbitingRenderEffect(s32 id);
-void KareiMachi_SetupEntryActors(void);
-void SceneState_CheckFlags941And940(void);
-void SceneState_ApplyFlagGatedActorEightSetup(void);
-void KareiMachi_StartWindowTransition(void);
 void FieldScene_RunMiddleSequence(void);
 
 struct SpriteBits {
@@ -222,9 +218,7 @@ s32 Object_CreateFar();
 u8 *Battle_GetWorkObject1e0();
 void Object_Destroy(void);
 
-void SceneState_LinkRecordZeroWhenFlag200Clear(void);
 
-void SceneEffect_UpdateLobeOrbitEffect26(void);
 
 void SceneState_ApplyValues12And2And3(void)
 {

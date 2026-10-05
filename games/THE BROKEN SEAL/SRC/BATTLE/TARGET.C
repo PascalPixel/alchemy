@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "SYSTEM.H"
@@ -77,7 +78,6 @@ pick:
     return positions[(Random16() * count) >> 16];
 }
 
-struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
 
 u32 Random16(void);
 

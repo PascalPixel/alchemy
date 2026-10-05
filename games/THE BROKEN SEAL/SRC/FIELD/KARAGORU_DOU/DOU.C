@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -52,7 +53,6 @@ union SpinningActor {
     struct StagedActor staged;
 };
 
-void Map_WaitWorkValuesBelow256(void);
 
 enum StagedPairMessage {
     MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,

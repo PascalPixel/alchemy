@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
@@ -21,9 +22,7 @@ typedef struct
     u16 style : 6;
 } CharacterCell;
 
-void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
 
-s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
 
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
 {

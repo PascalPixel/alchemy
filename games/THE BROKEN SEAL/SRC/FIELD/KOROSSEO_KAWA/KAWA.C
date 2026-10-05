@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -76,31 +77,20 @@ s32 Korosseo_FadeInCompetitor();
 
 void StagedActor_PushActorAhead(void);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
-void Resource3ba_NoOpCallback(void);
 s32 FieldScene_RunFlag211ApproachScene();
-void KorosseoKawa_WaitForStageReady(void);
 void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0();
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Owner_RefreshActiveRatios();
-void FieldScene_RunTwoCallSequence(void);
 void FieldScene_RunLateSequence(s32 a0);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-s32 GameFlag_GetByteFar(s32 flag);
 void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 s32 FieldScene_BuildSceneDescriptorAndInstallTask(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 void Korosseo_SelectSoloCompetitor(s32 index);
-void SceneActor_PlaceSlots1To3FromWork(void);
-void FieldScene_RunTwoArmSequence(s32 arm);
-void FieldScene_RunCommandSequence(s32 actor);
-void FieldScene_RunSixSteps380To3A8(void);
-void KorosseoKawa_RunPostMatchScene(s32 direction);
-void SceneState_InitControlWhenFlag109Clear(s32 value);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);
-void SceneState_RaiseTriggerOnPsynergyTarget(void);
 
 void Korosseo_FinishSoloRound();
 void Engine_EventBegin();
@@ -117,7 +107,6 @@ void Engine_ActorShowEmote();
 void Engine_ActorFaceDirection();
 s32 OverlayObject_PlaceWithScale14000();
 void StagedActor_PushActorAhead();
-void OverlayObject_ResetMotionFields(s32 actor);
 void Engine_ActorSetAnimation();
 void Korosseo_RestoreCompetitor();
 void Engine_CameraFollowActor();
@@ -128,11 +117,6 @@ void SceneState_InitTableWordsAndLoad3200();
 void KorosseoKawa_ReleaseMarker();
 void Engine_ObjectSetPosition();
 
-s32 GameFlag_GetByteFar(s32);
-void SceneState_ResetCounterAndStartTask(void);
-void SceneState_SetMode66AndPassOpeningSequence(void);
-void KorosseoKawa_WaitForCountdown(void);
-void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz);
 void SceneState_SendIdBySceneId(s32 a, s32 b);
 void KorosseoKawa_ReleaseMarker(void);
 

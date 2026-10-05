@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
 #include "IWRAM_CALL.H"
@@ -18,12 +19,8 @@ struct PairedObjectTable {
 extern volatile u8 gSchedulerStatus;
 extern u8 *gMenuCtrlWork;
 
-s32 BattlePlacement_ContainsId(s16 *list, s32 id);
 void WaitFrames(s32 frames);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 id);
-struct AnimationObject *GetBattleEffectObject(s32 resource);
-s32 ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
-void Animation_SetWorkEntryFar(struct AnimationEntry *entry, s32 index);
 void BattlePres_SetActorModeAndAction(s32 id);
 
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)

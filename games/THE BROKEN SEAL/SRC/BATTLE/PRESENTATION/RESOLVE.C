@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "HEAP_STATE.H"
 #include "SCENE.H"
@@ -17,21 +18,13 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "TRANSFORM.H"
 
-void BattlePres_SetActorModes(u16 *, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
-void BattleMotion_SetupEscapeObject(s32 unit_id);
-void BattleActor_RemoveFromLists(s32 unit_id);
 s32 ActivateBattleObjectSlot(s32 unit_id);
 extern struct BattlePresentationTransition *gTransitionWork;
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
-void Render_ResetTransformState(void);
 void Camera_StoreSceneParameters(s32, u32, s32);
-s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode);
-s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
-s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 s32 BattlePres_RunItem(struct BattlePlan *plan, s32 mode, struct BattleActionRecord *request);
-s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 background, s32 level);
@@ -226,13 +219,11 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
     return completed;
 }
 
-void BattleEvent_Playback(void);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void Object_SetMode(void *object, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
 s32 BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
-void BattlePres_RunWithZeroArguments(void);
 void BattleActor_SpawnObjectsForList(s16 *actors, s32 mode);
 void BattleFx_DispatchByIdRangeFar(s32 *work);
 void BattleFx_DispatchModeFar(s32 *work);

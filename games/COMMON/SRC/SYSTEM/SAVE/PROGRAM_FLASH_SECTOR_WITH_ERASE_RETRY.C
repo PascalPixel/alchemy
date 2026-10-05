@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
@@ -13,7 +14,6 @@ extern struct FlashChipInfo *gFlash;
 extern u16 gFlashNumRemainingBytes;
 
 void CountRemainingErasedFlashBytes(void);
-s32 RunFlashEraseVerifier(u8 *, u8 *);
 
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
 {

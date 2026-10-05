@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -8,7 +9,6 @@
 #include "text/MSG_IDS.H"
 
 void Event_SetDestinationFar(s16 primary, s16 secondary);
-void UiTextResource_Release(s32 resource);
 
 struct Work;
 void RenderOutput_PrepareForRedraw();
@@ -36,9 +36,7 @@ void Menu_DrawSelectionRow(
     struct Work *work, s16 primary, const s16 *secondary);
 extern volatile u32 gKeysRepeat;
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second);
-s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode_arg);
 
-s16 Menu_RunSelection(void);
 
 void Scheduler_ScheduleCallbackCAfterFrames(void)
 {

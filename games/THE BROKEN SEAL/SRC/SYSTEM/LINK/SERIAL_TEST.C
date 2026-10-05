@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
 #include "KEYSTATE.H"
@@ -9,7 +10,6 @@ extern u8 gMapCellBuffer[];
 extern const u8 Rom_Start[];
 
 void Audio_PlayCue(s32 cue);
-void SerialRuntime_Initialize(void);
 
 void RuntimeWait_BusyLoopTick(void)
 {

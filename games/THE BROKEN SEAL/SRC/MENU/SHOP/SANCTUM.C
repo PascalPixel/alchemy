@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -12,37 +13,20 @@
 #include "text/MSG_IDS.H"
 
 extern struct ShopRuntime *gMenuWork;
-s32 Shop_CanServe(s32 selection, s32 variant);
 s32 BattleFx_GetResourceIdFar(u16);
 void UiWork_FinalizePendingCoreFar(void);
-s32 Shop_MsgByMode(s32 value);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-void UiMessage_ShowResolvedAndWait(s32 message);
-void Shop_InitializeCursorWork(void);
-void Inn_Cleanup(void);
-s32 Shop_CountUnits(void);
-s32 Menu_SelectEntry19To1cFar(s32 prev);
 void UiWork_FinalizeFar(s32 window, s32 style);
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
-s32 Shop_CanServe(s32 unit_id, s32 kind);
-s32 Shop_ServicePrice(s32 unit_id, s32 kind);
-void BattleUnit_ResetStateByMode(s32 unit_id, s32 mode);
-void Shop_HiliteUnit(s32 enabled, s32 selected);
-void Shop_DrawSelMsg(s32 target, s32 selection);
-void UiMessage_ShowResolvedAndRestoreState(s32 message);
-s32 UiMessage_ShowChoiceVariant(s32 arg0);
-void Shop_RunPartyMemberIconBurst(s32 member);
 s32 Party_AdjustCoinsFar(s32 amount);
 void PsynergyMenu_InitializeEntryObjectsFar();
-void Menu_ReleaseEntryObjectsFar(void);
 
-s32 Sanctum_RunPartyService(void);
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {

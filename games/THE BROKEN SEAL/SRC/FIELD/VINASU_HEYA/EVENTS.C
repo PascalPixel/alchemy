@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "ENTRY_SETUP.H"
 #include "TYPES.H"
@@ -13,26 +14,14 @@ void BattleFx_SetQueuedSoundAndPlay(s32 cue);
 void DisplayBlend_EnableRunScript(void);
 void SceneActor_SetFlagBitByRelativeDepth(union FieldObject *object);
 void SceneEffect_SpawnRandomizedParticleEveryFourFrames(union FieldObject *object);
-void SceneState_CallWith432And32(void);
-void FieldScene_CallWith560And44(void);
-void SceneState_ApplyStepToSlots15To18(void);
-void SceneActor_ApplySlotsMatchingKind212(void);
-void SceneActor_ClearActorModeAndSetState5(s32 actor);
-void SceneActor_ApplyPositionsOfActors11And12(void);
 void SceneState_MarkActorAndApplyRectAtTile();
 void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 mode);
 void OverlayObject_WaitUntilIdle();
 void FieldScene_RunSupplementalSequenceOne(void);
-void FieldScene_PlaceAndPinSlots8To10(void);
 void FieldScene_RunOpeningAuxiliarySequence(void);
 void VinasuHeya_RunCellPushScene(void);
-void Scene_RunParticleWaveSequence(void);
-void FieldScene_RunLeaderDropSequence(void);
 void Scene_RunScene3c8SequenceA(void);
-void Scene_RunPairedParticleWaveSequence(void);
-void Scene_RunEastParticleWaveSequence(void);
 void VinasuHeya_SettlePushedBlocks(void);
-void VinasuHeya_LowerFloatingBlocks(s32 mode);
 
 void Effect_Spawn();
 s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);

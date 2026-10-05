@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
@@ -15,7 +16,6 @@ extern const struct ScenePlacement gGomaSuiroPlacements2[];
 extern const struct ScenePlacement gGomaSuiroPlacementsOther[];
 
 void GameFlag_SetBit();
-void SceneEffect_RunActorBurst(s32 no);
 
 extern const struct SceneEvent gGomaSuiroEvents2[];
 extern const struct SceneEvent gGomaSuiroEventsOther[];

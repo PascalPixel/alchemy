@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
@@ -120,7 +121,6 @@ loop:
     WaitFrames(1);
 }
 
-s32 Ui_GetTableWordZeroFar(s32 index);
 
 s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 {

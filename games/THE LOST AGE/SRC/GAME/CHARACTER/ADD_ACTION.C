@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "OWNER_STATE.H"
 
-void Owner_RefreshClassActions(s32);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {

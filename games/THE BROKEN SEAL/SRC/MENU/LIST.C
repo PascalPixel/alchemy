@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -11,7 +12,6 @@
 #define ACTION_ID_MASK 0x3fff
 
 
-void Ability_LoadGlyph(s32 action, s32 base, s32 *source, s32 *tile, s32 reuse);
 void UiWindow_DrawThreeTileColumn(
     struct UiWindow *window, s32 x, s32 y, s32 range, s32 layer);
 struct BattleAction *Ability_GetData(s32 action);

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -16,7 +17,6 @@ s32 EffectRuntime_LookupByTableEntry(u32 index)
     return Encounter_SelectEnemyGroup(table[index]);
 }
 
-s32 BattleFx_LookupResult(void *);
 s32 Encounter_SelectEnemyGroup(s32, s32);
 
 s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)

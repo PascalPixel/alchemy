@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -13,7 +14,6 @@
 
 void Owner_RecalculateStats();
 s32 PartyInventory_HasSpace(void);
-void Battle_InitializeRenderObject(void);
 void BattleEffect_CleanupSceneObjects(void);
 s32 PartyInventory_HasSpace();
 void Scene_JoinRodSearch();
@@ -35,17 +35,12 @@ void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);
 void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
-s32 KuupuappuHeya_IsActorNearPoint(s32, s32, s32);
-s32 KuupuappuHeya_IsRecordNearPoint(s32, s32, s32);
 void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x);
-void SceneDialogue_PromptAndCountSkip(s32 x);
 
 
-void SceneState_RunGuardedActorStep(s32 x);
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
 void SceneState_SetValue2ThenFinish(void);
@@ -122,11 +117,8 @@ enum PromptMessage {
 
 #define RATIO_HI 52428
 #define RATIO_LO 26214
-void SceneActor_FaceActors24And25TowardActorZero(void);
-void KuupuappuHeya_StartActorStops(void);
 
 void KuupuappuHeya_RunBranchingDialogueScene();
-void KuupuappuHeya_UpdateActorStops(void);
 
 extern struct EventWork *gEventWork;
 void Engine_AudioPlaySceneCue();
@@ -142,7 +134,6 @@ void Engine_ActorStartRepeatedMotion();
 
 extern u8 KuupuappuHeya_PairScriptP[];
 extern u8 KuupuappuHeya_PairScriptR[];
-void SceneState_SetFlagByActorPosition(void);
 s32 Engine_GameFlagIsSet();
 void Engine_ActorFaceDirection();
 void Engine_ActorEnableActionCallback();
@@ -181,7 +172,6 @@ void BattleFx_SetWeightedResult(s32 first, s32 second);
 u8 *Owner_GetState(s32 owner);
 void Djinn_Transfer(s32 owner, s32 djinn, s32 element, s32 flags);
 void Owner_RecalculateStats(s32 owner);
-void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc);
 
 s32 BattleFx_PlayCueAndStartEmitterOnTarget();
 void Party_RemoveOwnerRestored();
@@ -196,8 +186,6 @@ static __inline__ void bump_halfword(s32 off, s32 amount)
     *slot = next;
 }
 
-s32 KuupuappuHeya_GetIwanVenusDjinnCount(void);
-s32 OverlayObject_RunObjectTwoWhenFlagged(void);
 
 struct Stop {
     u8 id;

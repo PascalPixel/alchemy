@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
 
 void BattleFx_RenderMode0Or1(struct BattleEffectArgument *effect)
 {

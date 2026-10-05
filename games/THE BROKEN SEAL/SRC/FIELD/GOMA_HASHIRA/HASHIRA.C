@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
@@ -15,8 +16,6 @@ extern s16 Data_02000240[];
 
 void BattleFx_SetPhaseRequest(s32, s32);
 void GomaHashira_SpawnPillarEffect();
-void FieldScene_RunPillarSequence(void);
-void GomaHashira_DriveActor13Idle(void);
 
 enum StagedPlacementMessage {
     MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
@@ -48,7 +47,6 @@ enum PillarEffectPlane {
     PLANE_YZ = 2
 };
 
-void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect);
 
 struct Sprite389 {
     u8 pad[9];

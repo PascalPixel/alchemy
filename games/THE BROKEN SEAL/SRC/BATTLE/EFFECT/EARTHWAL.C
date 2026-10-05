@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -19,14 +20,11 @@ extern u8 gBattleFxWork[];
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
 
-void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleFx_FetchRectangleBlitters(s32 alternate,
     BattleEffectDrawRectangle *output)

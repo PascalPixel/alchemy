@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "WINDOW.H"
@@ -30,10 +31,7 @@ struct PartyStatusWindow {
     u16 flags;
 };
 
-extern s32 BattleParty_PrepareActiveOwnersFar(s32);
 extern s32 Party_CountActiveOwnersFar(void);
-void UiWindow_BuildLayoutBounds(s32 flags);
-void UiWindow_DrawPartyStatusContents(s32);
 
 void UiWindow_FillFromScene(void *dst)
 {
@@ -229,10 +227,8 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
     }
 }
 
-void UiWindow_EraseBorderRect(s32, s32, u32, u32);
 void UiWindow_DrawFrame(s32, s32, u32, u32);
 void UiText_DrawStringAtOffset(u8 *, struct RenderInput *, s32, s32);
-s32 BattlePlacement_CountValidEntriesFar(s32, u8 *);
 s32 __divsi3(s32, s32);
 void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
 s32 UiText_DrawPrefixedNumberAtOffset();

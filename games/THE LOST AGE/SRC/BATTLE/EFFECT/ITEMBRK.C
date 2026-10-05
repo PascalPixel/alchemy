@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
@@ -8,11 +9,6 @@ struct BattleFxScene {
     void *volatile main_object;
 };
 
-void BattleEffect_InitializeSharedScene(void);
-void *BattleFx_StartItemBreak(void *object);
-void BattleFx_SnapScaleToFull(void *object);
-void BattleFx_PrepareBufferInterpolation(void);
-void UpdateRisingParticleBurst(void *object);
 
 void BattleFx_RunItemBreakSequence(void)
 {

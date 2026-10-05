@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -7,7 +8,6 @@
 #include "text/MSG_IDS.H"
 
 
-s32 Item_ClassifyUseAbility(s32 owner, s32 entry);
 
 enum BattleListTile {
     LIST_TILE_PAGE_NUMBER = 0xf301,
@@ -15,7 +15,6 @@ enum BattleListTile {
     LIST_TILE_PAGES_LEFT = 0xf334,
     LIST_TILE_PAGES_RIGHT = 0xf335
 };
-s32 Resource_LoadKind26EntryToBuffer(s32 entry, s32 handle);
 
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 {

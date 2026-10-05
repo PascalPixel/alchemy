@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 
@@ -28,8 +29,6 @@ s32 Party_SumDjinnCounts(s32 index)
     return result;
 }
 
-s32 Trade_CanOfferDjinn(s32 owner, s32 element, s32 djinn);
-void BattlePlacement_UpdateTimedEntriesTwentyTimesFar(void);
 
 void Djinn_ActivateOfferedForParty(void)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "EDITION.H"
@@ -43,7 +44,6 @@ void Engine_TaskRemoveCallback();
 void Field_TryJumpForward(void);
 void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPrimarySequence(void);
-void FieldScene_RunPillarBurst(void);
 
 #if EDITION_INTERNATIONAL
 static __inline__ void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)

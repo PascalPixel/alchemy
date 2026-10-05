@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -24,12 +25,8 @@ extern u8 gBattleFxWork[];
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
-void Render_ResetTransformState(void);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
 
@@ -213,7 +210,6 @@ struct WallScale {
     s32 y;
 };
 
-struct AnimationObject *GetBattleEffectObject(s32 kind);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 animation);
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, s32 *position,
     struct WallScale *scale, s32 mode);

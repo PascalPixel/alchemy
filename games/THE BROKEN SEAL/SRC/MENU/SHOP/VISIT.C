@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -20,30 +21,18 @@ extern struct ShopRuntime *gMenuWork;
 
 s32 Item_AdjustCounterFar(s32, s32);
 
-void Shop_StepCursor(void);
 void Battle_ResetEffectCounterFar(void);
 u8 Party_ListActiveOwnersFar(void *);
 s32 UiWork_FinalizePendingCoreFar();
 
-s32 EventTable_GetRowLimit(void);
-void EventTable_ApplyRowAbilities(s32 row);
-s32 EventTable_GetRowType(s32 row);
-s32 EventTable_CopyRowHeader(s32 row, s16 *items);
-void Shop_InitializeCursorWork(void);
 struct ObjectRuntime *Object_GetByIdFar(s32 id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 a, s32 b, s32 c);
-void UiMessage_ShowAndWait(s32 message);
-s32 Menu_SelectEntry11To14Far(s32 choice);
-s32 AbilityMenu_BuildAvailableList(void);
-s32 Shop_SelBuy(void);
 void UiWork_FinalizeFar(s32 window, s32 style);
-void Inn_Cleanup(void);
 void WaitFrames(s32 frames);
 
 void Inventory_EquipFar(s32, s32);
 s32 Inventory_AddItemFar(s32, s32);
 
-s32 Audio_Check(void);
 
 s32 Shop_Run(s32 row, s32 keeper_id);
 

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -8,7 +9,6 @@
 
 void UiText_DrawStringAtOffsetFar(s32 image, s32 layer, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(s32 image, s32 layer, s32 x, s32 y);
-void UiText_DrawNumberRightAlignedFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 s32 UiWork_SetParamNibbleFar(s32 color);

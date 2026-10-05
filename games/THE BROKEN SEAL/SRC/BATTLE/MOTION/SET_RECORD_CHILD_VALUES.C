@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
@@ -44,12 +45,9 @@ extern struct BattlePresentationTransition *gTransitionWork;
 u16 ArcTan2(s32 x, s32 y);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattleFx_PlayUnitElementEffect(s32 actor, s32 kind, s32 mode, s32 variant);
-void BattlePres_RunWithZeroArguments(void);
 void BattleFx_DispatchByIdRangeFar(s32 *work);
 void BattleFx_DispatchModeFar(s32 *work);
-void BattleEvent_Playback(void);
 
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
 {

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "INVENTORY.H"
@@ -8,9 +9,7 @@
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
 
-void Inventory_AddAndEquip(s32 owner, s32 target);
 void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void Owner_RefreshActiveRatios(s32 mode);
 
 void InventorySnapshot_Save(void)

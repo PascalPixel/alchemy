@@ -1,4 +1,4 @@
-void UiWork_FinalizeAndReleaseBlock16(void);
+#include "PROTO.H"
 
 void UiWork_CloseAndRelease(void)
 {

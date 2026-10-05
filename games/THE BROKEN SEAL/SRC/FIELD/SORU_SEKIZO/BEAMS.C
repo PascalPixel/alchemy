@@ -1,10 +1,10 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 #include "STATUE_HALL.H"
 
 s32 SceneEventRuntime_SelectInitialSceneByFlags(void);
-void SoruSekizo_RunSealOpenedSequence(void);
 
 struct CellCopy {
     s32 src_x;

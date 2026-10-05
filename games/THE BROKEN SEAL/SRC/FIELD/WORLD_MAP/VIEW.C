@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
@@ -24,14 +25,8 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination)
 
 extern u32 gScanlinePitch;
 u32 Random16(void);
-void Map_UpdateCurrentTileBlockUntilBlocked(void);
-void Map_RenderPaletteMappedRow(u32 value);
-void Map_RenderPaletteMappedColumn(u32 value);
 void Camera_StoreSceneParameters(s32 distance, s32 half, s32 twice);
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
 
 void Map_RenderPaletteMappedRow(u32 value)
 {
@@ -162,7 +157,6 @@ void WorldMap_UpdateView(void)
     ((s32 (*)(void *, s32 *, void *, void *))Data_03001e50[46])(cam, pos, map->scanlines, buffer[gFrameCount & 1]);
 }
 
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
 void Map_UpdateCurrentTileBlock(void)
 {

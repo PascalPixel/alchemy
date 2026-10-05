@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
@@ -15,7 +16,6 @@
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
@@ -30,21 +30,16 @@ extern volatile u32 gKeysRepeat;
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
-void UiMenu_PositionCursor(s32 x, s32 y);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 pane);
-s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *result);
 s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);
 void Audio_PlayCue(s32 cue);
 #define ACTION_ID_MASK 0x3fff
 #define LIST_PAGE_SIZE 5
 
-s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state);
 
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state)
 {

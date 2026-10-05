@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "TYPES.H"
@@ -12,7 +13,6 @@ void ShopCursor_AdvanceFar(void *);
 void ShopCursor_MoveTowardTargetFar(void *);
 void Ui_ApplyTableScaleToObject(void *);
 
-void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 {

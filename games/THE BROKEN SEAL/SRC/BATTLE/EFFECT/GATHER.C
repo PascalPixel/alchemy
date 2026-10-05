@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RUNTIME_MEM.H"
@@ -18,13 +19,10 @@
 
 extern void *gWorkSlot[];
 
-void Render_ResetTransformState(void);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
-void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
 

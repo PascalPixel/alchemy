@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "EFFECT_STEP.H"
@@ -24,21 +25,16 @@
 
 s32 Render_ProjectPoint(s32 *, s32 *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
-void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 
 void *GetMotionRecordFar(void *object, s32 mode);
 s32 Battle_GetObjectTableValueFar(s32 unit);
-void Render_ResetTransformState(void);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
 extern struct BattleEffectWork *gBattleFxWork;
 extern u8 gKeysHeld[];
 
-void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
-void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect);
 void *BattleFx_RunCastingImpact(s32 *);
 
-s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
@@ -139,17 +135,7 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
 
 extern DrawRectangle gWorkSlot[];
 
-void BattlePres_ConfigureEffectDisplay(void);
-void BattleFx_SetupCanvasTileMap(void);
-s32 Summon_IsEntrySecondaryFlaggedFar(s32 index);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleFx_SetTransitionFlagAndDisplay(void);
-void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
-void SceneTransform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
 void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
 
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)

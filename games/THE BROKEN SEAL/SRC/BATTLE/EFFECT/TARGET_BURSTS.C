@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "MOTION_OBJECT.H"
@@ -16,9 +17,7 @@
 
 extern u8 gBattleFxWork[];
 
-void Render_ResetTransformState(void);
 
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 
 void BattleFx_RunTargetBursts(void *object)

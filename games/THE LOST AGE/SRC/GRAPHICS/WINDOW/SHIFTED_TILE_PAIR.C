@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FRAME.H"
 
 
-void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift);
 
 void Link_DrawShiftedTilePair(s32 offset)
 {

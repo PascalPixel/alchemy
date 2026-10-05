@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "ANIMSPR.H"
@@ -33,11 +34,8 @@ s32 BattleFx_FindMatchingEvent(s32 flags, s32 group, s32 *context);
 s32 BattleFx_RunEventAction(void *event, s32 object, s32 context);
 struct AnimationObject *Object_ReplaceResourceEntry(struct AnimationObject *sprite, struct AnimationObject *resource);
 struct FieldActor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
 void Camera_WorldToScreen(struct BurstPosition *pos);
 void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
-void BattleFx_UpdateRadialBurst(struct EffectSlot *slot);
 void Audio_PlayCue(s32 cue);
 
 static __inline__ void RaisedPosition(struct FieldActor *object, struct BurstPosition *pos)
@@ -47,11 +45,6 @@ static __inline__ void RaisedPosition(struct FieldActor *object, struct BurstPos
     pos->z = object->z.fixed;
 }
 
-void BattleFx_RunOrbitingParticles(void);
-void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle);
-void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle);
-void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle);
-void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle);
 
 struct SparkObject {
     u8 unknown_00[8];
@@ -75,7 +68,6 @@ struct SparkObject {
     void (*update)(struct SparkObject *);
 };
 
-void BattleFx_SwayParticle(struct SparkObject *object);
 
 void RunBattleEffect04(void)
 {

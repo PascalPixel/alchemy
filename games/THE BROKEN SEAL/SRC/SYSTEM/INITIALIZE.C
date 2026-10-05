@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
@@ -6,7 +7,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "IRQ.H"
 
-void System_VBlankHandler(void);
 
 extern u8 gDebugMode;
 extern u8 gCpuLoadDisplayEnabled;
@@ -14,18 +14,12 @@ extern s32 gCartridgeResetMarker;
 extern u8 gOamCopyEnabled;
 extern u8 gSleepDisabled;
 
-void Resource_LoadWorkHeader(void);
 void WaitFrames(s32 frames);
-void Resource_InitializeTable(void);
-void Bg0_ClearTilemap(void);
-void Ui_LoadWindowGraphics(void);
 void Game_ResetForNewGameFar(s32);
-void Audio_InitializeRuntimeDefaultsFar(void);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define HALT_ON_GAMEPAK_IRQ 1
-void IwramHalt(void);
 #endif
 
 void System_Initialize(void)

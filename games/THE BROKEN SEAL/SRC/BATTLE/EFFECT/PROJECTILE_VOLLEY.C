@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
@@ -6,7 +7,6 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
-s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 
 void BattleFx_RunMode0(void *effect)
 {

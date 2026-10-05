@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "INVENTORY.H"
 
-void Event_ClearInvalidPackedValuesFar(s32);
 
 s32 Inventory_Discard(s32 owner, s32 slot)
 {

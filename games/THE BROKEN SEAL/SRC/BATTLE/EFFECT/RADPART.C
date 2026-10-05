@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "ANIMSPR.H"
 #include "MOTION_OBJECT.H"
@@ -104,11 +105,8 @@ struct CaptureObject {
     void *callback;
 };
 
-void BattleFx_InitializeSlots(void);
-void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void Runtime_SetWorkTripleIfNonNegativeFar(s32 x, s32 y, s32 z);
 void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
@@ -116,7 +114,6 @@ void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s32 magnitude, s32 angle);
-void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
 struct LinkedCaptureObject {
@@ -128,13 +125,6 @@ struct LinkedCaptureObject {
     struct LinkedCaptureObject *target;
 };
 
-void BattleFx_SetObjectAlternatingWords(u8 *object);
-void BattleFx_AdvanceAngleWithRamp(void *obj);
-void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
-void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
-void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
-void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
 
 void BattleFx_SetObjectAlternatingWords(u8 *object)
 {

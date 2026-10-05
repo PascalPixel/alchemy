@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
@@ -27,15 +28,8 @@ struct InventoryMenuIcon {
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
-void ItemMenu_PosCategory(void);
-void Menu_UpdateEntryObjectTransforms(void);
-s32 InventoryMenu_SortByListOrder(u16 *items, s32 mode);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
-s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state);
-s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
-void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 

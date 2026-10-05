@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -25,12 +26,8 @@ extern u16 ParticleStreams_CellOffsets[];
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void Render_ResetTransformState(void);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
-void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleFx_RunParticlePoolMode1(struct BattleEffectArgument *effect)
 {

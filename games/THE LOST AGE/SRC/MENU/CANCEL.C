@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "INPUT.H"
@@ -14,7 +15,6 @@ typedef s32 (*FillFn)(void *, s32, u32);
 s32 GameFlag_Test(s32);
 s32 GameFlag_SetBit(s32);
 s32 GameFlag_ClearBit(s32);
-s32 UiWork_SetParamNibbleFar(s32);
 
 static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst, s32 size)
 {

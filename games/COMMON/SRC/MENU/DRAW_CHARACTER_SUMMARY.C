@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -9,7 +10,6 @@ void UiText_DrawStringAtOffset(void *, s32, s32, s32);
 void UiText_DrawStringInWindow(s32, s32, s32, s32);
 void UiText_DrawNumberAtOffset(s32, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32, s32, s32, s32);
-void *Text_FormatPlayTime(s32, u8 *);
 void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 
 #if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)

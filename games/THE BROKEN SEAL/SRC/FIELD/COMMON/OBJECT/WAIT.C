@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "OBJECT_RUNTIME.H"
 
-s32 Object_IsTargetUnset(struct ObjectRuntime *object);
 
 void Script_WaitForEventTimeout(s32 arg0)
 {

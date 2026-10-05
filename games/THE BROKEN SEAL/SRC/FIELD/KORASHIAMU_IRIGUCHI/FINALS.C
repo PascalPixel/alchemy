@@ -1,11 +1,10 @@
+#include "PROTO.H"
 #include "STATUS.H"
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
 void SceneState_ForwardMaskedHalfwordWith10();
 
-void FieldScene_DispatchBySelector(void);
-void SceneState_ApplyRectsByFlatla384And962(void);
 
 
 void SceneState_ApplyFlags565And564(void)

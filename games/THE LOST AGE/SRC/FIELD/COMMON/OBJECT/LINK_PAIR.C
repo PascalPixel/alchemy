@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "EVENTWRK.H"
 #include "TYPES.H"
 
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct FacingObject *second);
 
 void Object_LinkPair(s32 first_id, s32 second_id, s32 wait)
 {

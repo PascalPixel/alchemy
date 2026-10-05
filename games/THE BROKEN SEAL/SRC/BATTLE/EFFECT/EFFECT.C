@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "HEAP_STATE.H"
 #include "ANIMSPR.H"
@@ -10,13 +11,9 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-s32 BattleEffect_SelectNearbyTargetObject(s32 obj_id, s32 battle_mode);
-s32 BattleFx_FindDescriptorWithOverride(s32 obj_id);
 void BattleFx_MarkChildAndRunFallbackTransition(s32 obj_id);
 void BattleEffect_RunFallbackObjectTransition(void);
-void BattleFx_SteerPushedTarget(s32);
 void BattleEffect_RunTargetedItemBreak(s32);
-void BattleFx_SteerLiftedTarget(s32);
 void BattleFx_CallEffect04(s32);
 void BattleFx_CallEffect05(s32);
 void BattleFx_StartOrbitingParticles(s32);
@@ -24,35 +21,17 @@ void BattleFx_RunBurstParticleMainObject(s32);
 void BattleFx_CallEffect03AndStop(s32);
 void BattleFx_CallEffect14(s32);
 void BattleFx_RunEffect13Hook(s32);
-void BattleFx_FinishSceneAndReleaseHeapBlock(void);
 
 extern struct BattleFxScene *gEffectWork;
-void BattleFx_RunItemBreakSequence(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
-void RunBattleEffect03(void);
 void RunBattleEffect04(void);
-void RunBattleEffect05(void);
-void BattleFx_RunOrbitingParticles(void);
-void RunBattleEffect07(void);
-void RunBattleEffect08(void);
-void BattleFx_RunFlashingCallbackSequence(void);
-void RunBattleEffect11(void);
-void BattleFx_RunBurstParticles(void);
-void RunBattleEffect13(void);
 void RunBattleEffect14(void);
-void BattleFx_RunEffect15(void);
-void RunBattleEffect16(void);
 void BattleFx_ResumeObject(s32 obj_id);
-s32 BattleFx_FilterObjectIdByFlags(s32 obj_id);
 void BattleFx_SetupObjectPair(s32 selected_object, s32 obj_id);
 void BattleEffect_PauseObject(s32 obj_id);
-void ResetSceneTransitionEffect(void);
 
-void MapEvent_RunTileTriggerSequence(void);
-void FieldEvent_ShowStatusMessage(void);
 
 void Event_SetMessageId(s32);
-void BattleEv_RunWait(s32, s32);
 void BattleFx_FinishAction();
 void _call_via_r3(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(s32, s32);

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -272,14 +273,7 @@ extern volatile u32 gKeyState;
 extern u8 gOamCopyEnabled;
 extern volatile u8 gCpuLoadDisplayEnabled;
 
-void Bg0_ClearTilemap(void);
-void Resource_InitializeTable(void);
-void Title_PlaceIntroSprites(void);
 s32 Graphics_TransformSmallPalette(s32 index, s32 transform);
-void Blend_SetBrightenTarget16(s32 frames);
-void Blend_SetBrightenTarget0(s32 frames);
-void Blend_WaitForTransition(void);
-void Ui_LoadWindowGraphics(void);
 
 s32 Title_ShowIntro(s32 prompt)
 {

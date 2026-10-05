@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "SYSTEM.H"
@@ -5,10 +6,6 @@
 #include "BATTLE_PRESENTATION.H"
 #include "text/MSG_IDS.H"
 
-void UiWork_ClearValueNameTablesFar(void);
-void UiText_DrawQuantity(s32 value, s32 mode);
-void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
-void BattleMotion_SetupEscapeObject(s32 unit);
 
 s32 BattleEscape_PlayRun(void *action)
 {

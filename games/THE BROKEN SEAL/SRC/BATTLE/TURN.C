@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
@@ -15,13 +16,9 @@
 
 extern s32 gFrameCount;
 
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
-void SceneTransform_ApplyYaw(s32);
-void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
 
-s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
 
 void Owner_RecalculateStatsFar(u16 id);
 

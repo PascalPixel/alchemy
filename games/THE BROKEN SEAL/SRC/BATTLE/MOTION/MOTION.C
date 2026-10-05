@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
@@ -11,10 +12,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "FIELD_EVENT.H"
 
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
-void SceneTransform_ApplyYaw(s32);
-void SceneTransform_ApplyPitch(s32);
 
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);

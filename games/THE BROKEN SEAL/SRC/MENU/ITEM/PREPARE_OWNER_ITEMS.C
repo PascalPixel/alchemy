@@ -1,10 +1,9 @@
+#include "PROTO.H"
 #include "INVENTORY_MENU.H"
 #include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
 #include "MENU_LIST.H"
 
-void UiMenu_SlideCursor(s32 x, s32 y);
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 s32 ItemMenu_PrepOwner(s32 pane)
 {

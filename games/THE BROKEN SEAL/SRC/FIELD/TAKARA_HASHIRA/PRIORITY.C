@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "HASHIRA.H"
 #include "TYPES.H"
@@ -10,7 +11,6 @@ extern u16 gBgScroll[];
 
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 
-s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *other);
 
 struct MapCell {
     u32 tile : 12;
@@ -37,7 +37,6 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
         ;
 }
 
-s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActor *actor);
 
 void CopyAndOffsetCoordinatePreset(void)
 {
@@ -293,11 +292,7 @@ struct PillarActor {
 
 
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
-void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src);
 void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, struct MapCell *dst);
-s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far);
-void SceneActor_WaitHeightBelowLimit(struct FieldActor *actor, s32 limit);
-void StagedActor_StepDownUntilClamp(s32 id);
 void OverlayObject_WaitUntilSettledAndReset(struct FieldActor *actor);
 
 void TakaraHashira_UpdatePillarActors(void)

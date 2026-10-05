@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "SCRIPT_MOTION.H"
 #include "MOTION_OBJECT.H"
 #include "TYPES.H"
@@ -26,7 +27,6 @@ struct OrbitEffect {
     void (*update)(struct OrbitEffect *);
 };
 
-void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 void Object_SetPositionAndResetMotionFar(void *, s32, s32, s32);

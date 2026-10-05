@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -24,9 +25,6 @@ extern volatile s32 gKeyState;
 #define GIVE_ASK_Y    32
 #endif
 
-void UiMenu_SlideCursor(s32 x, s32 y);
-void UiMenu_PositionCursor(s32 x, s32 y);
-void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(u8 *text, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);

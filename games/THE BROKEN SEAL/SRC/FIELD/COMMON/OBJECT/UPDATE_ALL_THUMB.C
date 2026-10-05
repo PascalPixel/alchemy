@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -13,7 +14,6 @@ extern ScriptCommandFn ScriptObject_CommandTable[];
 extern struct ScriptMotionObject *gObjectSlots;
 
 s32 Map_GetTerrainHeight(s32, s32, s32);
-s32 FixedSqrt(s32);
 s32 ArcTan2(s32, s32);
 
 static __inline__ s32 Square(s32 value)

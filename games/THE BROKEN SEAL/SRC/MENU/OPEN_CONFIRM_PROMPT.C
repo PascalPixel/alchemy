@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CHARACTER_MENU.H"
 #include "PSYNERGY_MENU.H"
 #include "HEAP_STATE.H"
@@ -17,18 +18,11 @@
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
 
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);
-void Palette_LightenBankHighlight(s32 index);
 void Link_DrawShiftedTilePairFar(s32 addr);
-void Menu_CancelSoundReset(void);
-s32 Menu_ResolveSelectedAction(s32 *, s32 *, s32 *);
-void Menu_EnsureCancelSound(void);
 void RenderOutput_ClearListFar(s32 screen_handle);
 void ItemMenu_Close(void);
-void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
@@ -36,8 +30,6 @@ void Event_ClearInvalidPackedValuesFar(void);
 #define PROMPT_SAVES_TILES 1
 #define PROMPT_TILES ((void *)0x06004000)
 #define PROMPT_TILES_SIZE 0x2000
-void UiWork_SetAltFlagAndClearTableFar(s32 enable);
-void UiWindow_MarkVisibleTileAttributesFar(void);
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
@@ -119,14 +111,10 @@ s32 Menu_OpenConfirmPrompt(void)
 void WaitFrames(s32 frames);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
 s32 PsynergyMenu_SelectPartySlot(s32 unused);
-void ItemMenu_PosCategory(void);
-s32 PsynergyMenu_RunList(s32 unused);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void InventoryMenu_ShowModalMessage(s32 message, s32 arg1, s32 arg2);
-s32 PsynergyMenu_SelectTarget(s32 unused);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 BattleEffect_ApplyToTargets(s32 action, s32 owner, s32 target, s32 flags);
-void Ability_PlayUseAnimation(s32 action);
 void Audio_PlayCue(s32 cue);
 
 s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)

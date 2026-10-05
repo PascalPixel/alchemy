@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "ANIMSPR.H"
@@ -15,7 +16,6 @@
 #include "MAP_SCROLL.H"
 
 extern u8 gScanlinePitch[];
-s32 BattleFx_StepRatioTransition(void);
 
 struct Work_080936a0 {
     u8 filler0[848];
@@ -36,7 +36,6 @@ struct FieldActor *Object_CreateFar(
 void Object_SetMode(struct FieldActor *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Battle_WaitMode0(s32 state);
-s32 BattleFx_CopyLinkedObjectPosition(void *obj);
 
 void Map_SetViewBounds(s32 first, s32 second, s32 third, s32 fourth)
 {

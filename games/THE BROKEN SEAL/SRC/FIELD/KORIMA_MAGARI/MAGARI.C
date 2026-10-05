@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
@@ -23,8 +24,6 @@ struct Cell {
 s32 Math_DivideSigned();
 
 void Scene_PushBlockAlongRun(s16 *records);
-void State_StampRecordCells(s16 *records, s32 value);
-void State_ApplyRectByLayoutSelector(void);
 
 u8 *KorimaMagari_GetEntrances(void)
 {

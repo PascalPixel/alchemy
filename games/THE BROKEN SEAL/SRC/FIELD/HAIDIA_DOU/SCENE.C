@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "MAPCOPY.H"
 #include "HAIDIA.H"
 #include "TYPES.H"
@@ -15,8 +16,6 @@ void WaitFrames();
 void HaidiaDou_ApplyEntryState();
 
 void WaitFrames(s32 frames);
-void *OverlayObject_CreateConfiguredB(s32 x, s32 y, s32 z, s32 kind);
-void DialogueLayout_ConfigureRowsByFlag301(void);
 
 const struct SceneEvent *Scene_GetEvents(void)
 {

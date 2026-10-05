@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "SCRIPT.H"
 #include "TYPES.H"
@@ -14,7 +15,6 @@
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
-s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 ArcTan2(s32 y, s32 x);
 
 s32 Object_Wander(struct ScriptObjectRuntime *object)

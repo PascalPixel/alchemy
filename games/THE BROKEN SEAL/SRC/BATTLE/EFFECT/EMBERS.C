@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -28,22 +29,15 @@ extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
 
 struct BattleEffectTargetArgument;
-void BattleEventRuntime_BeginPhaseFar(s32 value);
 void AudioCommand_PlayFar(s32 value);
-void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
-void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 extern u8 gBattleFxWork[];
 
 #define gDrops ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void Render_ResetTransformState(void);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 void Object_InitializeMode(void *object, s32 mode);
-void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 

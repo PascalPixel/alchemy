@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESMENU.H"
 #include "EDITION.H"
@@ -31,11 +32,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 
 
 s32 Party_SumDjinnCountsFar(s32);
-void *AffineEffect_InitializeWork(void);
-void Menu_AppendResourceEntry(s32 arg0);
 void Menu_CenterResourceEntries(s32, s32, s32);
-s32 Menu_RunResourceSelectionLoop(s32);
-void Menu_EndResourceSelection(void);
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
 {
@@ -80,8 +77,6 @@ s32 Menu_SelectTopEntry(s32 sel)
     return ret;
 }
 
-void UiWindow_OpenMode1AndWaitFrame(void);
-s32 Menu_SelectResource(s32, s32);
 void UiWork_CloseAndRelease(void);
 
 #if EDITION_INTERNATIONAL

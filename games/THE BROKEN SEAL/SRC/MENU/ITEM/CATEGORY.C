@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CHARACTER_MENU.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
@@ -5,13 +6,9 @@
 #include "OBJECT_FACTORY.H"
 #include "GLOBAL_CELLS.H"
 
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(
     s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
-void ItemMenu_ResetCategory(void);
 
-void Palette_CopyObjectBankToBackground14(void);
-void Palette_LightenBankHighlight(s32);
 
 void ItemMenu_PosCategory(void)
 {

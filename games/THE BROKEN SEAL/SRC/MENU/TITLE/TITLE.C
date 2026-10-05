@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -21,13 +22,7 @@ extern u32 gKeyState;
 extern u32 gKeysHeld;
 void Event_SetDestination(s32 scene, s32 entrance);
 void RuntimeDispatch_NoOpHook(s32 resource);
-void Blend_SetDarkenTarget16(s32 target);
-void Blend_WaitForTransition(void);
-void Party_ApplyStatePreset(void);
 void Title_ShowSplashScreen(s32 mode);
-void ScrollFar_Entry00(s32 mode);
-s32 PaletteFar_Entry00(s32 mode);
-void PaletteFar_Entry20(s32 mode);
 
 #define DMA3 (REG_DMA3)
 

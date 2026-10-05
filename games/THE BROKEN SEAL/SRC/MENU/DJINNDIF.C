@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
@@ -6,7 +7,6 @@
 #include "BATTLE_RUNTIME.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-void Text_FormatSignedDecimalToWork(s32 out);
 
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 {

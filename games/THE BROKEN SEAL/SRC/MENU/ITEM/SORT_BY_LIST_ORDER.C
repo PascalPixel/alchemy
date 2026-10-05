@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "ITEM.H"
 
-void Menu_CopyListOrder(s32 mode, u8 *order);
 
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode)
 {

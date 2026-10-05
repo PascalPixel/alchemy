@@ -1,8 +1,8 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
 
-s32 LuckyDice_Run(void);
 
 s32 Runtime_BlankDisplayAndRun(void)
 {

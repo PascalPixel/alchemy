@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
@@ -14,7 +15,6 @@
 
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
 
-s32 BattleFx_MapKeyThroughTable(s32 battleMode);
 
 s32 BattleFx_StartRandomParticleEmitter(s32, s32);
 

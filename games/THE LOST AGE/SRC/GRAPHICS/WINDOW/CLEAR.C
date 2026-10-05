@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "RENDER_INPUT.H"
 
-void RenderOutput_Release(struct RenderOutput *node);
 
 void RenderOutput_ClearList(void *work)
 {

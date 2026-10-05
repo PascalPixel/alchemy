@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FIXED_POINT_POSITION.H"
 #include "ANIMSPR.H"
@@ -10,16 +11,13 @@
 #include "BATTLE_PRESENTATION.H"
 #include "BATTLE_RUNTIME.H"
 
-s32 BattleMotion_ReleaseObjectSlotByValue(s32 value);
 s32 ObjectDispatch_ReleaseFar(s32);
 
-void Render_ResetTransformState(void);
 s32 Graphics_PrepareTransferAndRun(void *, void *);
 s32 Graphics_PrepareTransferInIwramWork(void *, void *);
 
 s32 Render_ProjectPoint(const s32 *, s32 *);
 
-s32 Camera_ApplyTransformByFlag(void);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id) {
     struct BattleSession *work = gBattleWork;

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "INVENTORY.H"
@@ -114,8 +115,6 @@ s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
 void ActorPresentation_MoveActorToPositionAndWait();
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
-s32 UpdateActorProximity(u8 *actor);
-void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 
 void ActorPresentation_SetupActorZeroForSceneTwelve(void)
 {

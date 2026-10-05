@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -49,7 +50,6 @@ void GomaIriguchi_RunSpinningLeap();
 void GomaIriguchi_SetEntranceFlag();
 void GomaIriguchi_GiveShamansRod();
 void Event_PrepareObjectAndApplyValue();
-void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames);
 
 extern u8 *gEffectWork;
 void BattleFx_LoadActionEffectResources();

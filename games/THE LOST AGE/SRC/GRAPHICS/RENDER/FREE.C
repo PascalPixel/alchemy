@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "WINDOW.H"
 #include "RAM_BUFFER.H"
 
-s32 Ui_ClearVramBlock(void);
 
 void UiWork_ResetFreeChannel(void)
 {

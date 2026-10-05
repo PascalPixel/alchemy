@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "GLYPH.H"
@@ -43,7 +44,6 @@ void Object_SetTargetAndCallback();
 
 
 void ObjectDispatch_WaitForValue16();
-void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 
 union PairObject {
     union FieldObject object;
@@ -65,7 +65,6 @@ s32 Object_InitializeMode(struct AnimationObject *object, s32 animation);
 
 void BattleEffect_CleanupSceneObjects(void);
 void OverlayObject_UpdateOnFrameParity(union FieldObject *object);
-void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object);
 
 void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);
 void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);

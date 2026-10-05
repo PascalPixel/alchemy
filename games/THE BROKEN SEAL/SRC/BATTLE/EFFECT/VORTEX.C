@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -22,13 +23,8 @@
 
 extern u8 gMapCellBuffer[];
 
-void Camera_ApplyPhasedDelta(void);
-void BattleEventRuntime_BeginPhaseFar(s32 value);
-void Render_ResetTransformState(void);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 s32 Battle_GetObjectTableValueFar(s32 id);
 
 void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)

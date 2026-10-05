@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL_CELLS.H"
 #include "STORY.H"
 #include "TYPES.H"
@@ -19,30 +20,12 @@ enum {
 
 extern u8 gDebugMode[];
 
-void Scene_RunScene371SequenceA(s32 direction);
 void Event_SetDestination(s32 a0, s32 a1);
 void PartyInventory_Discard(s32 item);
 void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
-void Map_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3);
 s32 GameFlag_GetByte(s32 flag);
-void WorldMap_ActivateSite138(s32 actor);
-void WorldMap_RunBlackOrbScene(void);
 void RunEventScript01(void);
-void FieldScene_RunActorTransferSequence(void);
-void WorldMap_TransferToExit102(void);
-void WorldMap_TransferToExit103(void);
-void WorldMap_TransferToExit104(void);
-void WorldMap_TransferToFuneHeya(void);
-void WorldMap_TransferToExit106(void);
-void WorldMap_CompleteTransfer(void);
-void WorldMap_DisembarkCarriage(void);
-void WorldMap_RunOpeningRise(void);
-void StoryScene_StartTransition(void);
-void FieldScene_RunActorEightApproach(void);
-void FieldScene_RunActorPresentationSequence(void);
-void MapActor_UpdateContact(void);
 void StoryScene_UpdateSelectedActorProgress(void);
-s32 StoryActor_ApplyMapRotation(struct FieldActor *actor);
 extern s32 gWorldMapTriggerActor;
 
 

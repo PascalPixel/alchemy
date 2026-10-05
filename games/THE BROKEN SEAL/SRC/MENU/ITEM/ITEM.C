@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EQUIPMENT_MENU.H"
 #include "ITEM.H"
 #include "FAR_RUNTIME.H"
@@ -8,7 +9,6 @@
 extern s32 gFrameCount;
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
-void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void)
 {

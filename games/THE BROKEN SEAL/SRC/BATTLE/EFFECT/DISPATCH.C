@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -20,16 +21,11 @@ void BattleEffect_RunEmberColumns(s32 *);
 void BattleFx_RunObjectRow(s32 *);
 void BattleEffect_RunStagedParticles(s32 *);
 void BattleFx_InitializeMode6(s32 *);
-void BattleFx_RenderAnimationMode0(s32 arg0);
-void Unnamed_080d1714(s32 *);
-void Unnamed_080ea0d8(s32 *);
 void BattleFx_InitializeMode10(s32 *);
-void BattleFx_InitializeMode12(s32 *);
 extern Callback BattleFx_ModeHandlers[];
 
 extern u8 gMapCellBuffer[];
 
-void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 
 void BattleFx_InitializeMode(s32 *arg0)
 {

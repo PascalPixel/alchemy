@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -16,11 +17,9 @@ s32 Party_LookupCharacterValueByFlag32(s32);
 s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
-s32 UiText_BuildRenderEntriesMode1(s32);
 struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
-s32 Audio_Check(void);
 
 extern volatile u32 gKeyState;
 

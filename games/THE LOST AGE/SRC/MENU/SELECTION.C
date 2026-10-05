@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TLA_EDITION.H"
 
@@ -7,12 +8,7 @@
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
 
-s32 Party_SumDjinnCountsFar(s32);
-void *AffineEffect_InitializeWork(void);
-void Menu_AppendResourceEntry(s32 arg0);
 void Menu_CenterResourceEntries(s32, s32, s32);
-s32 Menu_RunResourceSelectionLoop(s32);
-void Menu_EndResourceSelection(void);
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
 {

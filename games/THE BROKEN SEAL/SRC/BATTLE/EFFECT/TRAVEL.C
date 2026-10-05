@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
@@ -17,12 +18,7 @@
 
 extern u8 gBattleFxWork[];
 
-void Render_ResetTransformState(void);
-void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);

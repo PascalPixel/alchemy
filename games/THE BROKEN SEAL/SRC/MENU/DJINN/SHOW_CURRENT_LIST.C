@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SYSTEM.H"
@@ -12,12 +13,10 @@ extern struct DjinnMenuWork *gMenuWork;
 extern struct UiWork *gWindowWork;
 extern volatile u32 gKeyState;
 
-void ItemMenu_ResetCategory(void);
 void Audio_PlayCue(s32 cue);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
-void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
 
 s32 DjinnMenu_ShowCurrentList(void)

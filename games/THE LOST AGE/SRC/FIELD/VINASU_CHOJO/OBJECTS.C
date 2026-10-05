@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -12,8 +13,6 @@ void ConfigureOverlayObject(struct FieldActor *object, s32 parameter)
     Object_SetPartAttribute(object, parameter);
 }
 
-void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
-void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
 
 struct FieldActor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind)
 {

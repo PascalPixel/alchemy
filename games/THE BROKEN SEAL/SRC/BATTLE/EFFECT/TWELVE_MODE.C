@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -31,16 +32,10 @@ extern u16 ParticleStreams_CellOffsets[];
 #define gSparks ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 #define HI(v) (((s16 *)&(v))[1])
 
-void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void Render_ResetTransformState(void);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
-void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleFx_RunTwelveModeMode6(struct BattleEffectArgument *effect)
 {

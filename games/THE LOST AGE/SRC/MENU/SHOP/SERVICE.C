@@ -1,7 +1,7 @@
+#include "PROTO.H"
 #include "OWNER_STATE.H"
 #include "TYPES.H"
 
-s32 Shop_CanServe(s32 selection, s32 variant);
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {

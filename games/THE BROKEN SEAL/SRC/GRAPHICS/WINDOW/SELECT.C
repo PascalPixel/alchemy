@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -8,7 +9,6 @@
 #include "BATTLE_PARTY.H"
 #include "B5_CONTEXT.H"
 
-s32 UiWork_IsIdle(struct UiWindow *window);
 
 struct SelectionWorkspace {
     u8 unknown_000[0x46];

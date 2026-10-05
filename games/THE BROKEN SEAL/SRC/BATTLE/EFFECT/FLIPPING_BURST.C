@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -21,10 +22,8 @@
 
 extern u8 gBattleFxWork[];
 
-void Render_ResetTransformState(void);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
@@ -159,16 +158,13 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 
 extern u8 gBattleFxWork[];
 
-void Render_ResetTransformState(void);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 
-void ObjectGroup_TickMemberTimers(void);
 
 
 void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
@@ -292,8 +288,6 @@ extern DrawRectangle gWorkSlot[];
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
 void AudioCommand_PlayFar(s32 value);
-void Render_ResetTransformState(void);
-void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 

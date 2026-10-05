@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "FIELDOBJ.H"
 #include "TYPES.H"
@@ -24,11 +25,9 @@
 
 s32 Party_CountActiveOwnersFar(void);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
-void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-s32 Map_ResumeAnimationFar(void);
 
 s32 Map_LoadAreaGraphicsFar(void);
 
@@ -203,43 +202,15 @@ struct MenuCtrl {
 };
 
 void WaitFrames(s32 frames);
-void ObjectSystem_InitializeFar(s32 mode);
 void Object_SetMode(struct FieldActor *actor, s32 mode);
-void ObjectDispatch_InitFromTable2Far(struct FieldActor *actor);
-void ObjectDispatch_InitFromTable3Far(struct FieldActor *actor);
-void ObjectDispatch_InitFromTable1Far(struct FieldActor *actor);
-void ObjectDispatch_InitFromTable0Far(struct FieldActor *actor);
-s32 Map_LoadLayeredSceneFar(s32 index);
-void Map_InitializePerspectiveSceneFar(void);
-void Map_ApplyWorkOriginAndSpanFar(void);
-void Map_UpdateCurrentTileBlockFar(void);
-void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 void Object_ResetMotion(struct FieldActor *actor);
-void FarCall_WindowTable(void);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void UiText_DrawQuantity(s32 quantity, s32 mode);
-void Menu_RunTopSelectionFar(void);
-void UiTimedNotice_CreateFar(s32 scene);
-void UiTimedNotice_CloseIfActiveFar(void);
-void Menu_RunSelectionFar(void);
-void Menu_RunSelectionWithCursorObjectFar(void);
-void Menu_RunWorkspaceResultLoopFar(s32 mode);
 s32 GameFlag_IsSet(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
-void GameFlag_RefreshLureCapFar(void);
-void BattleFx_SelectLocationRule(s32 rule);
-void Party_ResolveTablePair(void);
 void ObjectTable_ResetForObject(void);
 void ObjectTable_Snapshot(void);
-void ObjectTable_Restore(void);
-void BattleFx_ResetCounters(void);
-s32 BattleFx_SumCounters(void);
-void Field_ProcessStep(s32 turn, s32 x, s32 y, s32 z);
-s32 Object_GetTriggerTileAheadOfCurrent(void);
-void BattleMap_ApplyEntranceView(void);
-void Debug_RunPaletteEditor(void);
-s32 BattleFx_FindDescriptorWithOverride(s32 object);
 void BattleFx_RunDescriptorAction(s32 descriptor);
 void BattleFx_RunKind6DescriptorAction(s32 event);
 void BattleAction_RunDescriptor(s32 action);
@@ -249,20 +220,10 @@ s32 BattleEffect_SelectNearbyObject(s32 actor);
 void Battle_ResetEffectCounter(void);
 void BattleCommand_ExecuteSelectedItem(s32 item, s32 argument);
 void BattleCommand_ExecuteSelectedAction(s32 command);
-void Battle_PlaceMapMarkers(void);
-void BattleEffect_InitializeBuffers(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
-void Battle_InitializeRenderObject(void);
-s32 Party_CheckMemberValueTotal(s32 item);
 void Scene_FadeColorFromWhite(s32 scene);
-s32 ObjectEffect_RunPendingFlagEvent(void);
-void FieldObject_PlaceSceneActors(void);
 void Djinn_ResolvePendingEvent();
-void BattleFx_ScheduleCloakedMapCheck(void);
-void Map_ShowWorldMap(s32 picture);
-void BattleFx_RunVisibilityTransition(void);
 void AudioCommand_PlayFar(s32 cue);
-s32 AudioCommand_GetSecondaryStateByteFar(void);
 
 extern struct OverlayEntries gOverlayArea;
 extern u8 ResourceBlockOwners[];

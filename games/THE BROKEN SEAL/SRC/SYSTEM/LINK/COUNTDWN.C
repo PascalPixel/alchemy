@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -13,9 +14,6 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
-void Camera_ConfigureSceneFar(s32 offset);
-void Link_DrawShiftedTilePair(s32 destination);
-s32 Link_CreateCountdownLabelWindow(void);
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 

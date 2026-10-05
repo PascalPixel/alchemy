@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "MOTION_OBJECT.H"
@@ -5,10 +6,6 @@
 #include "BATTLE_WORK.H"
 #include "FIELD_EVENT.H"
 
-void BattleLayout_HighlightPartyPanelsFar(u16 *);
-void BattleMotion_SetRecordChildValues(void *, s32);
-s32 BattleMotion_GetSlotPalette(s32);
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 void BattleMotion_RunValueSequence(s32 id)
 {

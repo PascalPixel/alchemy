@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -18,17 +19,12 @@ extern u8 gBattleFxWork[];
 
 extern u8 gMapCellBuffer[];
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
-void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
 void Audio_PlayCue(s32 cue);
 
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 #define HI(v) (((s16 *)&(v))[1])
 
-void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant);
 
 void BattleFx_RunRevealColumnMode1(s32 arg0)
 {

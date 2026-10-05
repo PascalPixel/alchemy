@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLYPH.H"
 
-void Ui_PrepareTransferFromTableEntry(u32 index);
 
 s32 Ui_BuildPatternToSlot(s32 no, s32 unused, s32 slot)
 {

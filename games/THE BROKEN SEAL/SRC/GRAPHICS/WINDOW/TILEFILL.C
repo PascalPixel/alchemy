@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #if EDITION_INTERNATIONAL
 #include "TYPES.H"
@@ -6,7 +7,6 @@
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 
-void PaletteGlow_UpdateSine(void);
 
 void Scheduler_ScheduleCallbackAAfterFrames(void)
 {

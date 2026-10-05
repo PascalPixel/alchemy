@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "SCENE.H"
@@ -98,7 +99,6 @@ struct OrbitingParticleChild {
     u8 flags;
 };
 
-void BattleFx_RunOrbitingParticles(void);
 
 void BattleFx_StartOrbitingParticles(void)
 {

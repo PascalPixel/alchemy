@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "EFFECT_STEP.H"
 
-void BattlePres_RunBurstScene(struct EffectStep *, s32);
 
 void EffectStep_RunAnimationMode6Or7Or8B(struct EffectStep *step)
 {

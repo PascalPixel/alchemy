@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL_CELLS.H"
 #include "YAMA.H"
 #include "TYPES.H"
@@ -31,7 +32,6 @@ extern const struct ScenePlacement gArutinYamaPlacements9[];
 extern const struct ScenePlacement gArutinYamaPlacements10[];
 extern const struct ScenePlacement gArutinYamaPlacements11[];
 
-void ArutinYama_RunRollingObject(s32 id, s32 heading);
 void Battle_ResetEffectCounter(void);
 void BattleFx_PlayQueuedSound(void);
 

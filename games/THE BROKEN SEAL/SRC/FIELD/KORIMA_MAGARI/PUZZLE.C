@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "MAPCOPY.H"
@@ -27,18 +28,12 @@ struct Cell {
     u8 type;
 };
 
-u32 Random16Far(void);
 s32 Math_DivideSigned();
 
-void State_StampRecordCells(s16 *records, s32 value);
-void State_ApplyRectByLayoutSelector(void);
 extern u8 gBgScroll[];
-void KorimaMagari_CaptureShakeScroll(void);
-void State_UpdateScrollRegistersWithPreset(void);
 void Scene_RepaintBoardRecords();
 void KorimaMagari_PlaceObjects();
 void Scene_RepaintBoardRecords(void);
-void Effect_AdjustPaletteColors(s32 amount);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 struct IcePlacement {
@@ -59,7 +54,6 @@ struct TileRun2 {
     struct FieldActor *object;
 };
 
-s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *point);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
@@ -67,7 +61,6 @@ void Object_CommitPosition(struct FieldActor *object);
 void KorimaPalette_SaveFirst(void);
 void KorimaPalette_SaveSecond(void);
 void KorimaPalette_Capture(void);
-u16 Effect_AdjustColorChannels(u16 color, s32 adj);
 
 const struct TileRun *SceneData_FindTileRunAt( const struct TileRun *run, s32 x, s32 y);
 

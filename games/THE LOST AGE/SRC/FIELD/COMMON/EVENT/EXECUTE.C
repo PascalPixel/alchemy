@@ -1,14 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_UNIT.H"
 #include "EVENTWRK.H"
 
-s32 Func_080ce31c(s32 kind);
-struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-void BattleFx_LoadActionEffectResources(s32 action, s32 flags);
-void BattleFx_SetupObjectPair(s32 actor, s32 target);
-void FieldEvent_RunTypeHandler(void);
-void EffectRuntime_StopCurrentObject(void);
 void BattleEffect_CleanupSceneObjects(void);
 
 s32 EventRuntime_ExecutePackedAction(u32 packed)

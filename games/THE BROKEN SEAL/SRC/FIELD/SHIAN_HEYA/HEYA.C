@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -13,7 +14,6 @@ union Slot {
     void *p;
 };
 
-void SceneTable_Prepare(void *);
 
 
 

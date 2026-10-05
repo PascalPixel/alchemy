@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -9,9 +10,6 @@ extern volatile u32 gKeysRepeat;
 extern s32 Data_03007804;
 void AudioCommand_Play(s32 id);
 
-void Audio_Initialize(void);
-void Audio_StopAllPlayers(void);
-void Audio_ResumeAllPlayers(void);
 
 void AudioTest_RunParameterController(void)
 {

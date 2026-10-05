@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "DMA.H"
 #include "BATTLE_WORK.H"
@@ -21,11 +22,9 @@
 #include "UI.H"
 #include "MENU_LIST.H"
 
-struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
 struct BattleAction *Ability_GetData(s32 action_id);
 s32 Battle_FindTaggedSlotByValue(s32 actor_id);
 s32 BattleTarget_SelectForAction(s32 actor_id, struct BattleAction *action);
-s32 BattleTarget_SelectRandomPosition(s32 side);
 
 struct BattleAutomaticState {
     unsigned initialized : 1;
@@ -276,7 +275,6 @@ done:
 
 void _call_via_r0(u32 routine);
 
-void BattleEvent_Playback(void);
 
 void Dma_StopAllThenRunHook(void)
 {
@@ -316,25 +314,15 @@ extern volatile u32 gFrameCount;
 extern volatile s32 gFrameTick;
 extern volatile s32 gKeysPressedLatch;
 
-s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 target);
 void AudioCommand_PlayFar(s32 cue);
-void Battle_SetRuntimeFlagBit0(struct BattleEventState *state, u32 value);
 void UiText_DrawQuantity(u32 value, u32 slot);
-void UiText_PrepareMessageWorkFar(s32 message);
-void UiWork_ClearValueNameTablesFar(void);
 void Object_SetMode(void *object, s32 mode);
-s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 flags);
-s32 BattleActor_ResetRuntimeFields(s32 unit_id);
 s32 Object_InitializeMode(struct AnimationObject *record, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-s32 BattleMotion_GetSlotPalette(s32 unit_id);
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value);
 s32 BattlePres_SetActorModeAndAction(s32 unit_id);
 void QueueIoWriteDelay6(u32 address, u32 value);
 s32 BattleLayout_HighlightPartyPanelsFar(u16 *selection);
-u32 Summon_GetLayoutKind(s32 class_id);
-void BattleActor_RemoveFromLists(s32 unit_id);
-void render_animated_tile_frameFar(u8 *record, u32 frame);
 
 void BattleEvent_Playback(void)
 {

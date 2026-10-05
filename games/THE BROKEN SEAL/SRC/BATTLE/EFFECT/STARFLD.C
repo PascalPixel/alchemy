@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PARTY.H"
@@ -15,8 +16,6 @@
 #include "FIXED_MATH.H"
 
 
-void Graphics_AdvancePaletteCycle(void);
-void BattlePres_ClearAllActorRecordModes(void);
 void QueueIoWriteDelay2(u32, u32);
 #include "BATTLE_WORK.H"
 
@@ -46,7 +45,6 @@ struct SparkWork {
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 height);
 
-s32 FixedSqrt(s32 value);
 u32 Random16(void);
 
 u32 ColorBuffer_BackupAndScaleThreeQuarters(void *, void *, u32);

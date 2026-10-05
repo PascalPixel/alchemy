@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
@@ -9,7 +10,6 @@
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
 
-void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
 
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
 
@@ -114,9 +114,6 @@ extern u8 gOamCopyEnabled;
 extern u8 gCpuLoadDisplayEnabled;
 extern u8 gOptionMirror;
 
-void DisplayScroll_InitObjectTable(void);
-void Ui_LoadWindowGraphics(void);
-void Bg0_ClearTilemap(void);
 void WaitFrames(s32 frames);
 
 /* FAKEMATCH: the int temporary and one-pass write keep word-value construction, register order and a single literal pool. */

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -6,7 +7,6 @@
 #include "TBS_EDITION.H"
 #include "BATTLE_WORK.H"
 
-void UiWork_ProcessAll(void);
 
 s32 UiWork_IsIdle(struct UiWindow *window)
 {

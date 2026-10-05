@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "EDITION.H"
 #include "BATTLE_PARTY.H"
@@ -12,7 +13,6 @@
 struct BattleUnit *Owner_GetState(s32);
 void Animation_ApplyChildArgumentFar(void *, s32);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 
 #if GAME_TLA
 s32 BattleActor_RemoveFromLists(s32 actor)

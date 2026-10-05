@@ -1,6 +1,6 @@
+#include "PROTO.H"
 #include "TYPES.H"
 
-void ObjectEffect_PrepareContextEffect(s32 effect);
 void GameFlag_SetBit(s32 flag);
 
 void ObjectEffect_BeginContextEffect26(void)

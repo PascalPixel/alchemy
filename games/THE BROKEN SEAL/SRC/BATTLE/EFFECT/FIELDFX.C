@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "MOTION_OBJECT.H"
 #include "FX_SCENE.H"
@@ -24,12 +25,7 @@ struct Output_08097f80 {
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 
 extern struct BattleFxScene *gEffectWork;
-void BattleEffect_InitializeSharedScene(void);
-void *BattleFx_StartItemBreak(void *object);
-void BattleFx_SnapScaleToFull(struct MotionObject *object);
 void Object_SetMode(void *object, s32 mode);
-void BattleFx_PrepareBufferInterpolation(void);
-void UpdateRisingParticleBurst(void *object);
 
 extern void *Object_Spawn(s32, s32, s32, s32);
 extern void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
@@ -81,9 +77,7 @@ void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
 void ObjectGroup_ApplyRandomChildValues(void);
 void AudioCommand_PlayFar(s32 cue);
 s32 BattleFx_GetCycledTableWord(u32 keys);
-struct FxObject *ScriptObject_FindOverlappingEntryFar(struct FxObject *object, struct Output_08097f80 *position);
 s32 Object_CheckMovementCollision(struct FxObject *object, struct Output_08097f80 *position);
-s32 Map_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
 struct FxObject *Object_GetById(s32 id);
 void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
 void EffectRuntime_StopCurrentObject(void);

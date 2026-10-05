@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
 #include "FIELDOBJ.H"
@@ -26,14 +27,12 @@ struct EffectParticle {
 
 extern struct BattleFxScene *gEffectWork;
 void *Object_Spawn(s32, s32, s32, s32);
-void BattleEffect_InitializeSharedScene(void);
 void Object_SetMode(void *, s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 void ObjectDispatch_ReleaseFar(void *);
-void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_ShrinkObjectScaleUntilHalf(void);
 void BattleFx_CircleAnchor(void);
 

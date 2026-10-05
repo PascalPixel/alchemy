@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
@@ -8,7 +9,6 @@
 #include "MAP_SCROLL.H"
 #include "EVENT_RUNTIME.H"
 void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
-void Map_ApplyWorkOriginAndSpanFar(void);
 
 void WaitFrames(s32);
 
@@ -112,7 +112,6 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
     }
 }
 
-void Motion_CamBounds(s32, s32, s32, s32);
 
 void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
 {

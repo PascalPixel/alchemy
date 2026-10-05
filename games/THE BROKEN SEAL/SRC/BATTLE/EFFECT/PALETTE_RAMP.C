@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -19,13 +20,10 @@
 
 extern u8 gBattleFxWork[];
 
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 
 
-void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleFx_RunPaletteRampMode0(struct BattleEffectArgument *effect)
 {

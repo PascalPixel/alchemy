@@ -58,7 +58,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
     result = 0;
     icon = *(struct RenderOutput **)((u8 *)menu + icon_offset);
     icon->active = 1;
-    icon->unknown_0c = result;
+    icon->anim_step = result;
     menu->cursor_icon->active = 13;
     counts = (u8 *)menu + ((u8 *)menu->tab_counts - (u8 *)menu->tab_index);
     tab = *(s8 *)((u8 *)menu + tab_offset);

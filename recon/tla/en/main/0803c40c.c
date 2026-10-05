@@ -34,18 +34,18 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 
     switch ((u8)output->active) {
     case 9:
-        scale = Data_0805e9c4[output->unknown_0c++ & 31];
+        scale = Data_0805e9c4[output->anim_step++ & 31];
         break;
     case 10:
-        scale = Data_0805e9c4[output->unknown_0c++ & 31] >> 1;
+        scale = Data_0805e9c4[output->anim_step++ & 31] >> 1;
         break;
     case 11:
-        if (output->unknown_0c <= 7)
-            scale = Data_0805e9c4[output->unknown_0c++ * 2 + 16];
+        if (output->anim_step <= 7)
+            scale = Data_0805e9c4[output->anim_step++ * 2 + 16];
         break;
     case 12:
-        if (output->unknown_0c <= 7)
-            scale = Data_0805e9c4[output->unknown_0c++ * 2 + 16] >> 1;
+        if (output->anim_step <= 7)
+            scale = Data_0805e9c4[output->anim_step++ * 2 + 16] >> 1;
         break;
     }
     if (scale == 256) {

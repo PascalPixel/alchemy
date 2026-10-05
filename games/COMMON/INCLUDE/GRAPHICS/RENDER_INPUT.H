@@ -47,7 +47,8 @@ struct RenderOutput {
     s16 x;
     s16 y;
     u16 unknown_0a;
-    u16 unknown_0c;
+    /* The step its animation (the active mode) has reached. */
+    u16 anim_step;
     s8 index;
     u8 sentinel;
     u8 unknown_10[4];
@@ -74,7 +75,7 @@ struct RenderOutput *RenderOutput_Create(
 struct RenderOutput *RenderOutput_CreateFar(
     s32 resource, s32 flags, struct RenderInput *window, s32 x, s32 y);
 
-LAYOUT_OFFSET_GUARD(RenderOutput_Unknown0c, struct RenderOutput, unknown_0c, 0x0c);
+LAYOUT_OFFSET_GUARD(RenderOutput_AnimStep, struct RenderOutput, anim_step, 0x0c);
 
 #define RENDER_OUTPUT_OFFSET(field) \
     ((u32)&(((struct RenderOutput *)0)->field))

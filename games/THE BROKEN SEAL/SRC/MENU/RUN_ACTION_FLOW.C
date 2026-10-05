@@ -82,7 +82,7 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     result = 0;
     cursor = menu->owner_cursors[slot];
     cursor->active = 1;
-    cursor->unknown_0c = 0;
+    cursor->anim_step = 0;
     RenderOutput_RedrawSavedRectFar(menu->owner_window);
     if (GameFlag_IsSet(0x172))
         UiWindow_DrawDividerLineFar((s32)menu->owner_window, 9, 1, 9, 3);

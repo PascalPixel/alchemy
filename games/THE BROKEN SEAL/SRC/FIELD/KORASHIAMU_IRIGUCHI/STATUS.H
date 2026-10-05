@@ -20,10 +20,6 @@ extern u8 KorashiamuIriguchi_ActionTable7[];
 extern u8 KorashiamuIriguchi_ActionTable8[];
 extern u8 KorashiamuIriguchi_ActionTable9[];
 
-/* Import veneers outside the engine vocabulary, named by the main-image code
- * each one reaches; the main image leaves the routine that stores the party's
- * items in gInventorySnapshot unnamed, so its veneer is named for that.
- * Old-style declarations: arities vary between call sites. */
 void Party_AddActiveOwner();
 void Party_RemoveActiveOwner();
 void Object_SetActionCallbackAndRefreshById();

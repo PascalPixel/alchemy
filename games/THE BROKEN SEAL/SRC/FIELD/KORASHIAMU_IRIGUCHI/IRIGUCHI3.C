@@ -13,14 +13,6 @@ extern u8 MsgKorashiamuRobinOnlyOneEnteringFinals[];
 extern u8 MsgKorashiamuSeeYouveMadeThroughYour[];
 extern u8 MsgKorashiamuWonBothMatches[];
 
-/*
- * The two flag ids are adjacent but spelled differently, and the spellings
- * are load-bearing.  565 is 0x235 and comes from the owner's single pool
- * word; 564 is built as movs #141 / lsls #2, so it must stay a plain decimal
- * value rather than another pool constant.  The 24-byte owner covers that
- * pool word and the alignment halfword after it.  What the pair gates is not
- * established.
- */
 void SceneState_ApplyFlags565And564(void)
 {
     Engine_GameFlagClear(0x235);
@@ -342,13 +334,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/*
- * The case order is load-bearing and it is not the selector order: the arms
- * are laid out in the order the reference places their bodies, and the jump
- * table stores their absolute addresses. Each callee name is keyed to the
- * address of the instruction that calls it, so an arm moved out of place
- * emits the wrong call word.
- */
 void FieldScene_DispatchBySelector(void)
 {
     s32 no;

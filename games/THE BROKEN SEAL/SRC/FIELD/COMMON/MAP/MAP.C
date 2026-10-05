@@ -12,10 +12,9 @@
 
 void Map_SetCameraCenter(s32 x, s32 y);
 
-/* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime,
-   following the independently matched neighbouring column renderer. */
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
+    /* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime. */
     u32 *tiles;
     u8 *dest;
     u32 index = (*map << 20) >> 19;
@@ -107,15 +106,13 @@ s32 GameFlag_IsSet(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 key);
 
-/* Iwram_Call2 (IWRAM_CALL.H) with r3 among the registers the routine may
-   change; the ROM keeps nothing in r3 across the two layer multiplies. */
 static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
 {
-    /* FAKEMATCH: the call's operands in their registers, as Iwram_Call2. */
-    register s32 result __asm__("r0") = left; /* FAKEMATCH: as above. */
+    /* FAKEMATCH: fixed registers place the call operands in r0 and r1. */
+    register s32 result __asm__("r0") = left; /* FAKEMATCH: the result shares the left operand's r0 register. */
     register s32 factor __asm__("r1") = right;
 
-    /* FAKEMATCH: the same call, with r3 listed as changed. */
+    /* FAKEMATCH: the inline call marks r3 as changed across layer multiplies. */
     __asm__ volatile(".align 2\n\tmov ip, pc\n\tbx %2\n\t"
                      : "+r"(result)
                      : "r"(factor), "r"(routine)
@@ -157,8 +154,7 @@ s32 Map_LoadLayeredScene(s32 index)
     src = (u8 *)header + header->tilemap;
     Resource_DecodeType01(src, Ram_MapCellBuffer);
     Tilemap_ConvertBuffer();
-    /* FAKEMATCH: the optional blocks' offsets pass through the pointer
-       variable, which keeps them in r0 as the ROM does. */
+    /* FAKEMATCH: passing optional offsets through the pointer keeps them in r0. */
     src = (u8 *)header->animation;
     if (src != 0) {
         Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1000);
@@ -218,8 +214,7 @@ s32 Map_LoadLayeredScene(s32 index)
         work->flags |= DISPCNT_BG1_ON;
     cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
     REG_BG3CNT = cnt;
-    /* FAKEMATCH: one-pass loops hold the second and third background
-       control writes in source order. */
+    /* FAKEMATCH: one-pass loops keep the second and third background-control writes in source order. */
     do {
         cnt = work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6);
         REG_BG2CNT = cnt;
@@ -476,9 +471,7 @@ struct TilePos { s32 x, y; };
 void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
     u32 dst_x, u32 dst_y, u32 width, u32 height)
 {
-    /* FAKEMATCH: measured ordinary rewrites retain the reference frame and
-       instruction stream; temporary sharing steers register allocation
-       and scheduling (score 2683 to 495, no added/deleted instructions). */
+    /* FAKEMATCH: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
     u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
     u32 *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
     register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
@@ -543,7 +536,7 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
                     u32 tmp16;
                     {
                         tmp2 = 0x06002800;
-                        /* FAKEMATCH: removing this consumed-base input barrier scores70 (two register choices and one reordered load), with no instruction or frame change. */
+                        /* FAKEMATCH: the consumed-base barrier preserves two register choices and one load's order. */
                         __asm__ __volatile__ ("" : : "l" (tmp2));
                         tmp = (u32 *)Ram_MapBlocks;
                         tiles = tmp;
@@ -595,16 +588,16 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
 {
     struct MapCopyCommand *record = (struct MapCopyCommand *)command;
     u32 source = record->source;
-    /* FAKEMATCH: native r3/ip choice; ordinary register choices score635 after record/cursor reshaping. */
+    /* FAKEMATCH: the fixed r3 sentinel preserves the r3/ip comparison registers. */
     register u32 end __asm__("r3") = 0xffff;
     /* FAKEMATCH: compare an ip snapshot and retain the entry in r0. */
     register u32 test __asm__("ip") = source;
 
-    /* FAKEMATCH: removing ip snapshot compares in r0 and drops its copy (score105), without field-load changes. */
+    /* FAKEMATCH: the ip snapshot prevents comparing in r0 and dropping the register copy. */
     __asm__ ("" : "+r" (test), "+r" (end));
 
     if (test != end) {
-        /* FAKEMATCH: native r9 sentinel; ordinary choice scores30 with six register-only differences. */
+        /* FAKEMATCH: the r9 sentinel preserves six register choices. */
         register u32 stop __asm__("r9") = end;
         s16 *args = (s16 *)(command + 1);
 
@@ -622,7 +615,7 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
             WaitFrames((u16)delay);
             source = record->source;
             test = source;
-            /* FAKEMATCH: removing post-wait ip snapshot compares in r0 and drops its register copy (score105). */
+            /* FAKEMATCH: the post-wait ip snapshot prevents comparing in r0 and dropping its register copy. */
             __asm__ ("" : "+r" (test));
             if (test == stop)
                 break;

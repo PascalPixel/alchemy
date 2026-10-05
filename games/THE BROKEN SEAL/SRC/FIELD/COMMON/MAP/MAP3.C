@@ -9,8 +9,6 @@
 
 void MapAnimation_Update(void);
 
-
-
 /* Steps the sixteen tile-animation channels. A channel whose timer has run
    out reads commands until one copies characters: 0xffff restarts the
    channel, 0xfeXX jumps to command XX (0xfeff stops it for this frame), and
@@ -19,8 +17,7 @@ void MapAnimation_Update(void);
  */
 void MapAnimation_Update(void)
 {
-    /* FAKEMATCH: retain indexed channel expressions. The local channel
-       pointer in 1a5404f7 swapped ip/lr and the sentinel/VRAM pool order. */
+    /* FAKEMATCH: indexed channel expressions preserve ip/lr allocation and the sentinel/VRAM pool order. */
     struct MapState *state = gMapWork[0];
     u32 i;
 
@@ -67,8 +64,6 @@ void MapAnimation_Update(void)
         }
     }
 }
-
-
 
 void Map_ClearLayerEntryFlag(u32 no)
 {

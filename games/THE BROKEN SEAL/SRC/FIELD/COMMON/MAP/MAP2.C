@@ -31,8 +31,7 @@ void MapAnimation_PresentFrame(void)
 {
     s32 control = 0x682;
 
-    /* FAKEMATCH: the do-while keeps the BG1CNT store ahead of the DMA
-       source and destination loads. */
+    /* FAKEMATCH: the do-while keeps the BG1CNT store before the DMA source and destination loads. */
     do {
         REG_BG1CNT = control;
     } while (0);
@@ -43,8 +42,7 @@ void MapAnimation_PresentFrame(void)
    decodes this frame's animation page into the buffer. */
 void MapAnimation_Start(void)
 {
-    /* FAKEMATCH: retain the existing adjacent slot-cell walk. Independent
-       gMapWork loads in 1a5404f7 added four bytes in all six editions. */
+    /* FAKEMATCH: the adjacent slot-cell walk avoids the four bytes added by separate gMapWork loads. */
     u8 **pointers = &gMapAnimationPages;
     struct MapFrameWork *pages = (struct MapFrameWork *)*pointers++;
     struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers;
@@ -98,9 +96,7 @@ void Map_LoadAreaGraphics(void)
     state->window_bottom = 159;
     WaitFrames(1);
     Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
-    /* FAKEMATCH: the byte flag is written from the halfword local cleared
-       before the call; the reference keeps that zero in r5 and loads it
-       from a short-range halfword pool placed before the epilogue. */
+    /* FAKEMATCH: the halfword local keeps zero in r5 and the short-range pool before the epilogue. */
     value = 0;
     Map_UpdateCurrentTileBlock();
     state->animation_active = value;
@@ -108,7 +104,6 @@ void Map_LoadAreaGraphics(void)
     WaitFrames(1);
 }
 
-/* map/shared/load_default_cells_and_update_block.c */
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
     struct PerspectiveWork *work = gMapWork[0];

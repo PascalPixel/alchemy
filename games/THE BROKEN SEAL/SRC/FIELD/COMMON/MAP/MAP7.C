@@ -40,15 +40,8 @@ void BattleFx_ScheduleRatioTransition(s32, s32);
 
 void Map_ShowWorldMap(s32 picture)
 {
-    /* FAKEMATCH: two one-pass loops act as scheduling barriers: one around
-     * the display-control value 64 so it is built before the register address,
-     * one around reloading the layer table so its spilled pointer loads first.
-     * The queued blend restore is QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C)
-     * written out inline with its one-pass loop around the IME read and its
-     * count stored through an explicit u16 pointer. */
-    /* FAKEMATCH: retain the existing slot 8/6 word-cell reads. Splitting
-       the map cell onto gMapWork added four bytes and changed
-       the saved layer pointer's spill, while both records stayed typed. */
+    /* FAKEMATCH: one-pass loops order display-control setup, the spilled layer load and the IME read; the count uses a halfword store. */
+    /* FAKEMATCH: the shared slot 8/6 word-cell reads preserve the saved-layer spill and avoid four extra bytes. */
     struct MapState *map = *(struct MapState **)((u8 *)gWorkSlot + 8 * sizeof(void *));
     struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
     struct ObjectSystemWork *menu = *(struct ObjectSystemWork **)((u8 *)gWorkSlot + 6 * sizeof(void *));
@@ -146,9 +139,7 @@ void Map_ShowWorldMap(s32 picture)
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
 {
-    /* FAKEMATCH: retain the discarded object lookup while its native source
-     * dataflow is unresolved; its result is unused before the runtime object
-     * address is loaded. */
+    /* FAKEMATCH: the discarded object lookup remains before the runtime object address load. */
     struct ObjectRuntime *object;
     s32 x;
     s32 y;

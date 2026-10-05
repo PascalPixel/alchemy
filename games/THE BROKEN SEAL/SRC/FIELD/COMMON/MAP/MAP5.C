@@ -15,20 +15,13 @@
 
 extern u8 WorldMap_TerrainBehaviorTable[];
 
-
-
 extern const u8 TileMap_DrawRows[];
 
 extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 gDecodeBuffer[];
 
-
-
-
 typedef void (*TransformFn)(const s32 *source, s32 *destination);
 
-/* The routine is the last argument, so its address is loaded before the
-   vectors, as at Iwram_Call2's call sites. */
 static __inline__ void Transform(const s32 *source, s32 *destination, TransformFn routine)
 {
     /* FAKEMATCH: a direct call holds the output vector in r9 instead of rematerializing sp+16. */
@@ -195,8 +188,6 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     do { ((void (*)(s32, s32, void *, void *))((union HeapState *)gWorkSlot)->slots[49])(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
     Runtime_ReleaseHeapBlock(49);
 }
-
-/* field/common/map/build_scanline_table.c */
 
 /* Fill the world map's 160 scanline rows from the camera's view of the
    ground plane at POSITION: a line that meets the plane gets a scale and a

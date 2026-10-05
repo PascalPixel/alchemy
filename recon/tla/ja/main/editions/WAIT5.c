@@ -17,7 +17,7 @@ struct SparkObject {
 };
 
 /* ⚓️ adds this step between ☀️'s two: a longer approach, then phase 5. */
-void BattleFx_WaitThenSetField18To5(struct SparkObject *obj)
+void BattleFx_LongApproachThenSpark(struct SparkObject *obj)
 {
     BattleMotion_ApproachTargetFar(obj->target, obj->angle, 0x18, 0xc3333);
     WaitFrames(26);

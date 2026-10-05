@@ -541,7 +541,7 @@ void FuneKanpan_RunDeckStateEvent(void)
     }
     if (v5 != 0) {
         Actor_SetSpeed(0, 0x9999, 0x4ccc);
-        Call3(ObjectMotion_CenterOnColumn, 0, 1, -10);
+        FieldObjectMotion_CenterOnColumn(0, 1, -10);
         Battle_WaitMode0(10);
     } else {
         AudioCommand_Play(123);
@@ -1248,7 +1248,7 @@ void FieldScene_RunShipDeckEventScript(void)
     Event_SetMessageId((s32)MsgFuneNoUseLate);
     FieldScene_RunStepThen10(40981);
     Actor_SetSpeed(0, 157286, 78643);
-    Call3(ObjectMotion_ResetAndSetPosition, 0, 154, 609);
+    FieldObjectMotion_ResetAndSetPosition(0, 154, 609);
     AudioCommand_Play(146);
     v = 0;
     Object_GetById(24)->timer = v;
@@ -1330,7 +1330,7 @@ void FuneKanpan_RunDeckCrewScene(void)
     Actor_SetSpeed(28, 0x19999, 0xcccc);
     Actor_SetSpeed(29, 0x19999, 0xcccc);
     Actor_SetDestination(29, 172, 0x284);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 28, 200, 0x294);
+    FieldObject_MotionSetPositionAndCommit(28, 200, 0x294);
     Actor_SetSpeed(0, 0x40000, 0x20000);
     Actor_SetDestination(0, 174, 0x26c);
     Engine_ObjectMotionSetPositionAndCommit(28, 180, 0x244);
@@ -1479,8 +1479,8 @@ void FieldScene_RunActorSequence(void)
     }
     Actor_SetDestination(0, 216, 0x264);
     Actor_SetSpeed(30, 0x19999, 0xcccc);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 196, 0x258);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 216, 0x258);
+    FieldObject_MotionSetPositionAndCommit(30, 196, 0x258);
+    FieldObject_MotionSetPositionAndCommit(30, 216, 0x258);
     Engine_ActorStop(28);
     Engine_TaskWait(1);
     Actor_SetSpeed(28, 0x19999, 0xcccc);

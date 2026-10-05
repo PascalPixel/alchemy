@@ -10,6 +10,7 @@
 #include "TYPES.H"
 #include "EDITION.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "FIELD_EFFECT.H"
@@ -375,7 +376,7 @@ s32 Scene_Initialize(void)
                 Object_SetMode(actor, 4);
                 Engine_ActorSetSpriteFlags(actor, 0);
             }
-            Call4(SetMapCellCollision, 0, 0x1300000, 0x1700000, 253);
+            Field_SetMapCellCollision(0, 0x1300000, 0x1700000, 253);
         }
         if (GameFlag_IsSet(0x241) != 0) {
             actor = Actor_Get(12);
@@ -384,7 +385,7 @@ s32 Scene_Initialize(void)
                 Object_SetMode(actor, 4);
                 Engine_ActorSetSpriteFlags(actor, 0);
             }
-            Call4(SetMapCellCollision, 0, 0x500000, 0x1700000, 253);
+            Field_SetMapCellCollision(0, 0x500000, 0x1700000, 253);
         }
         if (GameFlag_IsSet(0x242) != 0) {
             actor = Actor_Get(13);
@@ -393,7 +394,7 @@ s32 Scene_Initialize(void)
                 Object_SetMode(actor, 4);
                 Engine_ActorSetSpriteFlags(actor, 0);
             }
-            Call4(SetMapCellCollision, 0, 0x600000, 0x1500000, 253);
+            Field_SetMapCellCollision(0, 0x600000, 0x1500000, 253);
         }
         if (GameFlag_IsSet(0x243) != 0) {
             actor = Actor_Get(14);
@@ -402,8 +403,8 @@ s32 Scene_Initialize(void)
                 Object_SetMode(actor, 4);
                 Engine_ActorSetSpriteFlags(actor, 0);
             }
-            Call4(SetMapCellCollision, 0, 0x900000, 0x1400000, 253);
-            Call4(SetMapCellCollision, 0, 0x2f00000, 0x1400000, 253);
+            Field_SetMapCellCollision(0, 0x900000, 0x1400000, 253);
+            Field_SetMapCellCollision(0, 0x2f00000, 0x1400000, 253);
         }
         if (GameFlag_IsSet(0xfd7) != 0) {
             return 0;

@@ -10,6 +10,7 @@
 #include "TYPES.H"
 #include "EDITION.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
@@ -673,7 +674,7 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
         }
         v3 = Object_GetById(0)->x.fixed / 0x100000;
         if (v3 < Object_GetById(11)->x.fixed / 0x100000) {
-            Call3(ObjectMotion_OffsetPositionAndResetMotion, 11, -8, 0);
+            FieldObjectMotion_OffsetPositionAndResetMotion(11, -8, 0);
         }
         ObjectMotion_CommitCurrentPositionAndActivate(11);
         record = Object_GetById(0);

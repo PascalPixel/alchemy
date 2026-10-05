@@ -266,7 +266,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
         OverlayObject_UpdateOnFrameBit1(Object_GetById(15));
         Engine_TaskWait(1);
     }
-    Value2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunStep15, 0xc80);
+    FieldScheduler_AddOrUpdateCallback((s32)FieldScene_RunStep15, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep20, 0xc80);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     rec8 = Object_GetById(20);

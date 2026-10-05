@@ -417,7 +417,7 @@ s32 WorldMap_EnterScene(void)
         Engine_GameFlagClear(0x12f);
         Engine_TaskAddCallback(MapActor_UpdateContact, 0xc80);
         if (Engine_GameFlagIsSet(0x90a) == 0) {
-            Call4(Map_SetWindowCellTile, 128, 256, 176, 56);
+            FieldMap_SetWindowCellTile(128, 256, 176, 56);
         }
         switch (*entrance) {
         case 1:

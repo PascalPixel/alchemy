@@ -1186,7 +1186,7 @@ void Scene_BoulderFalls(void)
         steps = (s32)FieldScene_RunFourPairedSteps;
         HaidiaArashi_ShakeDone = 0;
         *phase = 0;
-        Value2(Scheduler_AddOrUpdateCallback, steps, 0xc80);
+        FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
         callback = (s32)SceneState_SetValue19ThenCall;
         Scheduler_AddOrUpdateCallback(callback, 0xc80);
         Engine_EventWait(40);

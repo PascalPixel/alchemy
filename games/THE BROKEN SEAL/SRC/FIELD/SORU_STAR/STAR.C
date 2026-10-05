@@ -12,6 +12,7 @@
 #include "BATTLE_UNIT.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
@@ -1006,7 +1007,7 @@ void Scene_AlexTakesStars(void)
     Event_SayThenWait(14, 30);
     rec->motion_flags = 0;
     Actor_SetSpeed(ACTOR_ALEX, 0x26666, 0x13333);
-    Call4(Object_SetMoveTarget, (s32)rec, 0x1cc0000, 0, 0x1680000);
+    FieldObject_SetMoveTarget((s32)rec, 0x1cc0000, 0, 0x1680000);
     Engine_ActorWaitForMove(ACTOR_ALEX);
     Actor_SetChildValue(ACTOR_ALEX, 0);
     record = Actor_Get(ACTOR_ALEX);

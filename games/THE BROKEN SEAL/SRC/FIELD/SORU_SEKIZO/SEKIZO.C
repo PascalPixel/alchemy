@@ -5,6 +5,7 @@
 #include "STATUE_HALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "text/MSG_IDS.H"
@@ -791,8 +792,8 @@ void FieldScene_RunClosingSequence(void)
     second = Object_GetById(0);
     if ((second->z.fixed >> 20) == 8) {
         if ((u32)(kind - 17) <= 1) {
-            Call4(SetMapCellCollision, 2, 0x1100000, 0x800000, 255);
-            Call4(SetMapCellCollision, 2, 0x1200000, 0x800000, 255);
+            Field_SetMapCellCollision(2, 0x1100000, 0x800000, 255);
+            Field_SetMapCellCollision(2, 0x1200000, 0x800000, 255);
         }
     }
 }
@@ -803,7 +804,7 @@ void SoruSekizo_BlockLeftTriggerCell(void)
     s32 y = Object_GetById(0)->z.fixed >> 20;
 
     if (y == 7 && (u32)(x - 13) <= 1) {
-        Call4(SetMapCellCollision, 2, 0xd00000, 0x700000, 255);
+        Field_SetMapCellCollision(2, 0xd00000, 0x700000, 255);
     }
 }
 
@@ -813,7 +814,7 @@ void SoruSekizo_BlockRightTriggerCell(void)
     s32 y = Object_GetById(0)->z.fixed >> 20;
 
     if (y == 7 && (u32)(x - 21) <= 1) {
-        Call4(SetMapCellCollision, 2, 0x1600000, 0x700000, 255);
+        Field_SetMapCellCollision(2, 0x1600000, 0x700000, 255);
     }
 }
 
@@ -824,8 +825,8 @@ void SoruSekizo_RunStatueDropScene(void)
     s32 z;
 
     statue = Object_GetById(17);
-    Call4(SetMapCellCollision, 2, 0x1100000, 0x800000, 0);
-    Call4(SetMapCellCollision, 2, 0x1200000, 0x800000, 0);
+    Field_SetMapCellCollision(2, 0x1100000, 0x800000, 0);
+    Field_SetMapCellCollision(2, 0x1200000, 0x800000, 0);
     if (statue != NULL) {
         z = statue->z.fixed;
         Engine_EventBegin();

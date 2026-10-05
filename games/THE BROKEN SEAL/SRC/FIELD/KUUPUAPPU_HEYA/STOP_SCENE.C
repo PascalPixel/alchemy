@@ -11,6 +11,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 
 
 struct Half {
@@ -54,7 +55,7 @@ void KuupuappuHeya_StartActorStops(void)
         zero.v = 0;
         *timer = zero.v;
     }
-    Call2(Scheduler_AddOrUpdateCallback, (s32)KuupuappuHeya_UpdateActorStops, 0xc94);
+    FieldScheduler_AddOrUpdateCallback((s32)KuupuappuHeya_UpdateActorStops, 0xc94);
     GameFlag_Clear(0x1ff);
     Engine_EventEnd();
     Engine_AudioPlayCue(9);

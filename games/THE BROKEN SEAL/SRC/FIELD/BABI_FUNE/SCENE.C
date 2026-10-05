@@ -16,6 +16,7 @@
 #include "MAP_SCROLL.H"
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
 
@@ -240,7 +241,7 @@ void Scene_RunExtendedPresentationSequence(void)
     Actor_FaceDirection(0, 16384, 0);
     Actor_FaceDirection(1, 16384, 0);
     Actor_FaceDirection(2, 16384, 0);
-    Call3(ObjectMotion_CommitPositionAndActivate, 3, 0, -32);
+    FieldObjectMotion_CommitPositionAndActivate(3, 0, -32);
     Engine_EventWait(30);
     Engine_ActorFaceDirection(3, 16384, 0);
     Engine_EventWait(60);

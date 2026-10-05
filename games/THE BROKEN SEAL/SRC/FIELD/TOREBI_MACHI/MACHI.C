@@ -2,6 +2,7 @@
 #include "IWRAM_CALL.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
 
@@ -127,7 +128,7 @@ void TorebiMachi_OpenActorEightPassage(void)
     }
     record = Object_GetById(8);
     Engine_ActorSetSpriteFlags((s32)record, 0);
-    Call4(SetMapCellCollision, 0, 0x2200000, 0x1200000, 253);
+    Field_SetMapCellCollision(0, 0x2200000, 0x1200000, 253);
     Engine_GameFlagSet(0x200);
 }
 

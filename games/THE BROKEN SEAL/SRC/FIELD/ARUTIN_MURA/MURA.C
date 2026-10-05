@@ -635,7 +635,7 @@ void SceneEffect_SpawnDriftingParticle(void)
 {
     struct SceneMotion *work;
     if ((gFrameCount & 3) == 0) {
-        work = ((struct SceneMotion *)Value4((struct SceneMotion *(*)(s32, s32, s32, s32))Engine_ObjectCreate, 222, 0x400000, 0, 0x1900000));
+        work = ((struct SceneMotion *)Object_Create(222, 0x400000, 0, 0x1900000));
         if (work != 0) {
             work->timer = 20;
             work->delay = 0;

@@ -13,6 +13,7 @@
 #include "CALL.H"
 #include "STAGED_ACTOR.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
@@ -212,7 +213,7 @@ void BabiIriguchi_JumpFromLedge(void)
         Actor_FaceDirection(0, FACING_WEST, 20);
         goto done;
         step_down:;
-        Call3(ObjectMotion_OffsetPositionAndResetMotion, 0, 0, -16);
+        FieldObjectMotion_OffsetPositionAndResetMotion(0, 0, -16);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
         Actor_FaceDirection(0, FACING_SOUTH, 20);
     }

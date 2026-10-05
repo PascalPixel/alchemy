@@ -11,6 +11,7 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
@@ -303,7 +304,7 @@ void KorosseoKawa_RaisePlatformPair(void)
     ((struct FieldActor *)rec7)->motion_flags = none;
     ((struct FieldActor *)rec7)->acceleration = 0x6666;
     ((struct FieldActor *)rec7)->speed = 0xcccc;
-    Call4(Object_SetMoveTarget, (s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x80000, ((struct FieldActor *)rec7)->z.fixed);
+    FieldObject_SetMoveTarget((s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x80000, ((struct FieldActor *)rec7)->z.fixed);
     rec7 = Actor_Get(14);
     ((struct FieldActor *)rec7)->motion_flags = none;
     ((struct FieldActor *)rec7)->acceleration = 0x6666;

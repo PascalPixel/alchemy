@@ -3,9 +3,7 @@
 
 #include "TYPES.H"
 
-/* TBS field scripts and the field loop pass a second zero through this
- * entry's veneers. The callee leaves that argument unused; no flag meaning
- * is established by its current consumers. */
+/* TBS field callers pass an unused second argument of zero. */
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
 s32 PartyInventory_GiveItemFar(s32 item, s32 unused);
 

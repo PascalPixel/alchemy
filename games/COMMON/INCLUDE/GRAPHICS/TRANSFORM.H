@@ -22,13 +22,7 @@ void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 /* Builds the look-at transform and applies it to the current one. */
 void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target);
 
-/* Loads the identity into the 12-word transform: coefficients 0, 4 and 8
-   are 0x10000; all other coefficients and the three translations are zero.
-   Eight routines (the transform stack's resets at
-   0x080049ac-0x08004d04 and the battle transition entries) store it through
-   the same fixed r0-r4, three stmia r0!, {r1, r2, r3, r4} after copying the
-   matrix address into r0, and use r4 without saving it. GCC 2.96 emits
-   neither for C stores or structure copies, so Camelot wrote this macro. */
+/* Set the 3x3 transform to the identity and clear its translation. */
 /* CAMELOT_ASM: eight routines share this fixed-register identity store */
 #define Transform_SetIdentity(matrix)                                          \
     {                                                                          \

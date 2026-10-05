@@ -17,7 +17,7 @@ struct AnimationMetadata {
     u8 box_y;
     u8 frame_codec;
     u8 reserved_0b;
-    /* The native initializers transport these list addresses as words. */
+    /* Initializers pass these list addresses as words. */
     s32 frames;
     s32 animation;
 };

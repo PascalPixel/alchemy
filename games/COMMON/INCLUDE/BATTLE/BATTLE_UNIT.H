@@ -43,11 +43,7 @@ enum BattleActionUse {
     ACTION_USABLE_IN_BATTLE = 0x80
 };
 
-/*
- * Live combatant record returned by Runtime_GetObject.  Only fields established
- * by multiple battle owners are named.  The unresolved condition bytes keep
- * offset-based names until their meanings are independently witnessed.
- */
+/* Live combatant record returned by Runtime_GetObject. */
 struct BattleUnit {
     u8 name[0x0f];                  /* 0x000 */
     u8 level;                       /* 0x00f */

@@ -24,7 +24,7 @@ struct ScriptInterpreter {
     u8 delay;
 };
 
-/* Script operand work. Mixed widths stay as placed in the image. */
+/* Mixed-width script operands share the same work block. */
 struct ScriptOperands {
     u32 script_address;      /* 0x00 */
     u16 cursor;              /* 0x04; cast to s16 for signed interpretation */

@@ -18,8 +18,7 @@ void Runtime_InitializeHeap(void);
 static __inline__ void *Runtime_CallAlternatePool(
     void *(*allocate)(s32), s32 size)
 {
-    /* FAKEMATCH: direct allocation shares the size across later calls,
-       growing the fade by 12 bytes and changing the gauge's registers. */
+    /* FAKEMATCH: the inline call prevents size sharing, avoiding 12 extra fade bytes and changed gauge registers. */
     return allocate(size);
 }
 

@@ -326,10 +326,10 @@ extern const struct SceneEvent gTakaraShimaEventsOther[];
 void Battle_Reset(s32 arg0);
 
 void InitializeEscapeSceneActors(void);
-void FieldScene_RunScene3b2_0200167c(void);
+void TakaraShima_RestoreRoomActors(void);
 void InitializeSwayingSceneObject();
 void FieldScene_RunScene3b2SequenceA(void);
-void FieldScene_RunScene3b2_02001494(void);
+void TakaraShima_LeaveClearedRoom(void);
 void SetMapCellCollision();
 
 union GameStateRows {
@@ -553,7 +553,7 @@ s32 Scene_Initialize(void)
     }
     current = gGameState.scene;
     if (current == (s32)&SceneId_TakaraShima1) {
-        FieldScene_RunScene3b2_0200167c();
+        TakaraShima_RestoreRoomActors();
         Actor_Get(8)->target_x = 0x810000;
         FieldScene_RedrawActorFootprint(9);
         FieldScene_RedrawActorFootprint(10);
@@ -612,7 +612,7 @@ s32 Scene_Initialize(void)
         if (current <= (s32)&SceneId_TakaraShima14) {
             FieldScene_RunScene3b2SequenceA();
             if (gGameState.entrance == 5) {
-                FieldScene_RunScene3b2_02001494();
+                TakaraShima_LeaveClearedRoom();
             }
         }
     }
@@ -783,7 +783,7 @@ void TakaraShima_RunAreaEntry(void)
 /* Return leg of the slot-16 transition beat: negated ids. */
 
 /* Outbound leg of the slot-16 transition beat. */
-void FieldScene_RunScene3b2_02001494(void)
+void TakaraShima_LeaveClearedRoom(void)
 {
     u32 i;
     s32 record;
@@ -884,7 +884,7 @@ void ShowSaveMyLifeMessage(void)
     Engine_GameFlagSet(2247);
 }
 
-void FieldScene_RunScene3b2_0200167c(void)
+void TakaraShima_RestoreRoomActors(void)
 {
     struct FieldActor *record;
 

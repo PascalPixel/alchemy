@@ -288,10 +288,10 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_FaceDirection(19, 0x5000, 0);
     Actor_FaceDirection(20, 0x3000, 20);
     Actor_SetSpeed(20, 0x10000, 0x8000);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
+    Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(20, 0x290, 166);
     Engine_EventWait(1);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
+    Object_GetById(20)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4014, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
@@ -348,7 +348,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_EventWait(20);
     Actor_WalkToAndWait(ACTOR_MIA, 0x2b0, 200);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
-    *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
+    Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(20, 0x284, 166);
     Engine_EventWait(1);
     *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;

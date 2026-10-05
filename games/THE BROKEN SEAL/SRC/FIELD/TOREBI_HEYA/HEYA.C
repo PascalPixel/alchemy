@@ -41,7 +41,7 @@ u8 *SceneData_GetTable8BB4(void)
     return Data_02008bb4;
 }
 
-s32 Func_02000038(void)
+s32 TorebiHeya_GetDefaultResult(void)
 {
     return 0;
 }
@@ -438,7 +438,7 @@ void SceneDialogue_RunActor25FlaggedLine(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b6_02000898(s32 a0)
+void TorebiHeya_ComplainAboutScam(s32 a0)
 {
     u32 i;
     s32 record;

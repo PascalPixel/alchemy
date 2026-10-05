@@ -100,22 +100,6 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-static inline void InitializeActorZero(void)
-{
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-}
-
-static inline void InitializeSelectedActor(s32 actorId)
-{
-    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
-}
-
-/* Selects a later line in the current dialogue. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 void OverlayObject_ResetMotionFields(void)
 {
     /* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call

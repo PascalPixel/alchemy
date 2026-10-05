@@ -82,22 +82,6 @@ void Script_WaitForEventTimeout(struct FieldActor *);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
-static inline void InitializeActorZero(void)
-{
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-}
-
-static inline void InitializeSelectedActor(s32 actorId)
-{
-    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
-}
-
-/* Selects a later line in the current dialogue. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 /* Place the marker at x, y with a priority and start its task. */
 void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 {

@@ -35,7 +35,7 @@ void MakyuriHeya_WalkLeaderIn(void)
 #endif
     }
     ObjectMotion_CommitCurrentPositionAndActivate(0);
-    SetFlagBits(&Object_GetById(0)->unknown_5a, 1);
+    Object_GetById(0)->unknown_5a |= 1;
     Engine_TaskRemoveCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame);
     Engine_EventEnd();
 }

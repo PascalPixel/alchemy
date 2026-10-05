@@ -51,25 +51,6 @@ static __inline__ void SetHalf(u16 *at, s32 value)
 extern u8 *gWork[];
 extern s32 gKeysHeld;
 
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    u8 *scene = *(u8 **)&gEventWork;
-
-    *(u16 *)(scene + 0x1d8) = (u16)(*(u16 *)(scene + 0x1d8) + amount);
-}
-static __inline__ void AdvanceMessageAt(
-    u8 **scene_address, s32 amount)
-{
-    u8 *scene = *scene_address;
-
-    *(u16 *)(scene + 0x1d8) = (u16)(*(u16 *)(scene + 0x1d8) + amount);
-}
-
-static __inline__ void AdvanceMessageCursor(s32 amount)
-{
-    AdvanceMessageAt((u8 **)gWork, amount);
-}
-
 /* Supplemental scene sequence of the resource_3b8 overlay. */
 
 extern u8 TorebiKyuden_EmptyTable[];

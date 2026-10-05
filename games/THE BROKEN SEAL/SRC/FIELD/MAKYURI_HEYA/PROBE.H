@@ -158,9 +158,4 @@ s32 OverlayObject_StepScaleUpSixteenFrames(u8 *o);
 void SceneState_ClearCurrentRecordAndReleaseTarget();
 void OverlayObject_ReleasePublishedAttachmentB(void);
 
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
 #endif

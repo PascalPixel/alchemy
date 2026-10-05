@@ -22,11 +22,6 @@ extern const struct ScenePlacement gSuharaSabakuPlacementsOther[];
 
 extern u8 MsgSuharaSandstorm[];
 
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
 extern u8 MsgSuharaNowhereFound[];
 
 void BattleFx_SetWeightedResult(s32 actor, s32 mode);
@@ -296,7 +291,7 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
             Object_GetById(0)->unknown_5a &= 254;
             Engine_ActorWalkToAndWait(0, (p9 + 8), (p11 - 40));
             Engine_EventWait(1);
-            SetFlagBits(&Object_GetById(0)->unknown_5a, 1);
+            Object_GetById(0)->unknown_5a |= 1;
             Engine_ActorSetAnimation(13, 1);
             Engine_ActorFaceDirection(0, 0x4000, 0);
             Engine_EventSetMessage((s32)MsgSuharaSandstorm);

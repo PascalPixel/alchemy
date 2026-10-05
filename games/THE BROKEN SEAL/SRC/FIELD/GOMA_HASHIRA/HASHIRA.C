@@ -30,12 +30,6 @@ enum StagedPlacementMessage {
     MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
 };
 
-/* Sets bits in an actor's flag byte. */
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
 struct ScriptTable {
     u8 *script[3];
 };

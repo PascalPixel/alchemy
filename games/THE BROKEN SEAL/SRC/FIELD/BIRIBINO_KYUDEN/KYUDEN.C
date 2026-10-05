@@ -1051,12 +1051,12 @@ void RunEventScript02(void)
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
         flag = 0;
     }
     Event_ShowMessage(19, 0);
     if (flag != 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
     }
 
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 1);
@@ -1099,24 +1099,24 @@ void RunEventScript02(void)
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
         flag = 0;
     }
     Engine_ActorRunRepeatedMotion(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 20);
     if (flag != 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
     }
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
         flag = 0;
     }
     Engine_ActorRunRepeatedMotion(18, 1);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     if (flag != 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
     }
 
     ConfigurePrimarySceneChannels();
@@ -1149,7 +1149,7 @@ void RunEventScript02(void)
         ConfigurePrimarySceneChannels();
         flag = 1;
         if (Engine_EventChooseYesNo(0, 0) != 0) {
-            AdvanceMessage(1);
+            gEventWork->message++;
             flag = 0;
         }
         Actor_FaceDirection(18, 0x5000, 0);
@@ -1157,11 +1157,11 @@ void RunEventScript02(void)
         Engine_EventWait(10);
         Event_ShowMessageAndWait(0x2012, 0, 10);
         if (flag != 0) {
-            AdvanceMessage(1);
+            gEventWork->message++;
         }
         Actor_ShowEmote(18, 258, 60);
     } else {
-        AdvanceMessage(4);
+        gEventWork->message += 4;
     }
 
     Event_OpenMessage(0x2012, 0);
@@ -1205,13 +1205,13 @@ void RunEventScript02(void)
     ConfigurePrimarySceneChannels();
     flag = 1;
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        AdvanceMessage(1);
+        gEventWork->message++;
         flag = 0;
     }
     ConfigureSecondarySceneChannels();
     Event_ShowMessageAndWait(0x2012, 0, 10);
     if (flag != 0) {
-        AdvanceMessage(1);
+        gEventWork->message++;
     }
 
     Actor_FaceDirection(18, 0x7000, 10);

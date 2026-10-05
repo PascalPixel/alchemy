@@ -82,22 +82,6 @@ s32 FieldScene_RunMiddleSequence();
 s32 SceneState_StoreParamsAndInitTable();
 s32 Korosseo_FadeInCompetitor();
 
-static inline void InitializeActorZero(void)
-{
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-}
-
-static inline void InitializeSelectedActor(s32 actorId)
-{
-    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
-}
-
-/* Selects a later line in the current dialogue. */
-static __inline__ void AdvanceMessage(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 void StagedActor_PushActorAhead(void);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
 void Resource3ba_NoOpCallback(void);

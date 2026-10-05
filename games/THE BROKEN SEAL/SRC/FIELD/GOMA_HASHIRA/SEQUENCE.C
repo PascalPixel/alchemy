@@ -48,12 +48,6 @@ static __inline__ void Goma_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, 
 #include "CALL.H"
 extern u8 MsgGomaGotWowThatsPrettyImpressive[];
 
-/* Sets bits in an actor's flag byte. */
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
 void FieldScene_RunActor13Departure(void)
 {
     Engine_TaskRemoveCallback((s32)GomaHashira_DriveActor13Idle);
@@ -71,7 +65,7 @@ void FieldScene_RunActor13Departure(void)
     Actor_WalkToAndWait(13, 0x258, 248);
     Actor_WalkToAndWait(13, 0x238, 0x128);
     Actor_SetPosition(13, 0, 0);
-    SetFlagBits(&Object_GetById(10)->priority_flags, ACTOR_PRIORITY_UNDERFOOT);
+    Object_GetById(10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(0x869);
     Engine_EventEnd();
 }
@@ -84,7 +78,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
     work = gEventWork;
     work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     work->transition_frames = 24;
-    SetFlagBits(&Object_GetById(9)->collision_flags, 16);
+    Object_GetById(9)->collision_flags |= 16;
     if (GameFlag_IsSet(0x302) != 0) {
         Actor_SetPosition(8, 0x1580000, 0x680000);
         Goma_CopyCellAttributes(24, 40, 6, 3, 18, 6);

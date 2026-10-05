@@ -63,11 +63,6 @@ extern u8 MsgSoruThankCooperation[];
 
 /* FAKEMATCH: the flag byte's or-assign goes through this helper, which
  * keeps the reference's register for the byte. */
-static __inline__ void SetFlagBits(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
-
 s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
 {
     struct OverlayObject *linked_object = object->linked_object;
@@ -981,7 +976,7 @@ void Scene_AlexTakesStars(void)
     none = 0;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Engine_EventWait(30);
-    SetFlagBits(&rec->unknown_5a, 1);
+    rec->unknown_5a |= 1;
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
     Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgSoruPermitRelieveElemental + 5);
@@ -1071,7 +1066,7 @@ void Scene_AlexTakesStars(void)
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
     Engine_EventWait(20);
     rec = Object_GetById(ACTOR_GERALD);
-    SetFlagBits(&rec->unknown_5a, 1);
+    rec->unknown_5a |= 1;
     rec->speed = 0x30000;
     rec->acceleration = 0x20000;
     Audio_PlayCue(153);

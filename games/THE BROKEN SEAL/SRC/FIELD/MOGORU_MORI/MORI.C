@@ -60,8 +60,8 @@ void SceneState_SetValue18Mode2(void)
  * zero-argument bracket close. */
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 {
-    s32 *p = Object_GetById(ACTOR_PARTY_LEADER);
-    u8 *f = (u8 *)p + 0x55;
+    struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
+    u8 *f = &p->motion_flags;
     s32 saved = *f;
 
     s32 r = Object_CheckMovementCollision(p, arg);
@@ -74,9 +74,9 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
         WaitFrames(6);
         Audio_PlayCue(152);
         Object_SetMode(p, 7);
-        p[12] = 0x30000;
-        p[13] = 0x20000;
-        p[10] = 0x40000;
+        p->speed = 0x30000;
+        p->acceleration = 0x20000;
+        p->velocity_y = 0x40000;
         m = 0x7e;
         m &= *f;
         *f = m;
@@ -253,9 +253,9 @@ void SceneActor_PassOffsetPointOfActorZero(void)
     v[1] = p[3];
     v[2] = (p[4] & 0xfff00000) + 0xffe80000;
 #else
-    v[0] = ((struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER))->x.fixed;
-    v[1] = ((struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER))->y.fixed;
-    v[2] = ((struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER))->z.fixed - 0x200000;
+    v[0] = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed;
+    v[1] = Object_GetById(ACTOR_PARTY_LEADER)->y.fixed;
+    v[2] = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed - 0x200000;
 #endif
     SceneActor_TryRunSlotZeroMoveStep(v);
 }
@@ -263,34 +263,34 @@ void SceneActor_PassOffsetPointOfActorZero(void)
 void SceneActor_BobActorZeroWhenAheadClear(void)
 {
     s32 pos[3];
-    s32 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-    u8 *fp = (u8 *)actor + 0x55;
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    u8 *fp = &actor->motion_flags;
     s32 saved = *fp;
 
 #if EDITION_INTERNATIONAL
-    pos[0] = (actor[2] & 0xfff00000) + 0x80000;
-    pos[1] = actor[3];
-    pos[2] = (actor[4] & 0xfff00000) + 0x280000;
+    pos[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
+    pos[1] = actor->y.fixed;
+    pos[2] = (actor->z.fixed & 0xfff00000) + 0x280000;
 #else
-    pos[0] = ((struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER))->x.fixed;
-    pos[1] = ((struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER))->y.fixed;
-    pos[2] = ((struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER))->z.fixed + 0x200000;
+    pos[0] = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed;
+    pos[1] = Object_GetById(ACTOR_PARTY_LEADER)->y.fixed;
+    pos[2] = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed + 0x200000;
 #endif
     if (SceneActor_TryRunSlotZeroMoveStep(pos)!= 0) {
         Engine_EventBegin();
         *fp = 0;
         Object_SetModeById(9, 7);
-        actor[3] += -0x10000;
-        actor[5] += -0x10000;
+        actor->y.fixed += -0x10000;
+        actor->terrain_height += -0x10000;
         WaitFrames(2);
-        actor[3] += -0x10000;
-        actor[5] += -0x10000;
+        actor->y.fixed += -0x10000;
+        actor->terrain_height += -0x10000;
         WaitFrames(10);
-        actor[3] += 0x10000;
-        actor[5] += 0x10000;
+        actor->y.fixed += 0x10000;
+        actor->terrain_height += 0x10000;
         WaitFrames(4);
-        actor[3] += 0x10000;
-        actor[5] += 0x10000;
+        actor->y.fixed += 0x10000;
+        actor->terrain_height += 0x10000;
         *fp = saved;
         Engine_EventEnd();
     }

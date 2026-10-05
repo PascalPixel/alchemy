@@ -3,6 +3,7 @@
 #include "FORTRESS.H"
 #include "SCENE_IDS.H"
 #include "TBS_EDITION.H"
+#include "MAP_SCROLL.H"
 
 extern const struct SceneEntrance gRunpaJoEntrances1[];
 extern const struct SceneEntrance gRunpaJoEntrances2[];
@@ -474,15 +475,16 @@ void FieldScene_UpdateActorPairInteraction(void)
 {
     struct ObjectRuntime *actor = Actor_Get(9);
     struct ObjectRuntime *other = Actor_Get(10);
-    s32 *work = (s32 *)(((u8 *)gMapWork[0]) + 0x164);
-    s16 *scene = *(s16 **)(((u8 *)gMapWork) + 0x4c);
+    struct MapLayerScroll *layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+    /* The event work, read as halfwords from the work cells after the map's. */
+    s16 *scene = *(s16 **)&gMapWork[19];
 
     if (gFrameCount & 1) {
-        work[6] = 1;
-        work[7] = 1;
+        layer->speed_x = 1;
+        layer->speed_y = 1;
     } else {
-        work[6] = -1;
-        work[7] = -1;
+        layer->speed_x = -1;
+        layer->speed_y = -1;
     }
     if (GameFlag_IsSet(0x106) || scene[191] != 0 || scene[192] != 0) {
         actor->movement_state = 1;
@@ -491,7 +493,7 @@ void FieldScene_UpdateActorPairInteraction(void)
         actor->movement_state = 0;
         other->movement_state = 0;
         if (!GameFlag_IsSet(0x214) && actor->movement_state == 0) {
-            work[8] = 8912896.0 - actor->x;
+            layer->phase_x = 8912896.0 - actor->x;
         }
         if (!IsPlayerInAccidentTriggerArea()) {
             if (gGameState.cloaked != 0) {
@@ -570,24 +572,25 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
 {
 
     struct ObjectRuntime *actor = Actor_Get(17);
-    s32 *work = (s32 *)(((u8 *)gMapWork[0]) + 0x164);
-    s16 *scene = *(s16 **)(((u8 *)gMapWork) + 0x4c);
+    struct MapLayerScroll *layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+    /* The event work, read as halfwords from the work cells after the map's. */
+    s16 *scene = *(s16 **)&gMapWork[19];
 
     Engine_EventGetViewCenter();
     if (gFrameCount & 1) {
-        work[6] = 1;
-        work[7] = 1;
+        layer->speed_x = 1;
+        layer->speed_y = 1;
     } else {
-        work[6] = -1;
-        work[7] = -1;
+        layer->speed_x = -1;
+        layer->speed_y = -1;
     }
     if (GameFlag_IsSet(0x106) || scene[191] != 0 || scene[192] != 0) {
         actor->movement_state = 1;
     } else if (!GameFlag_IsSet(0x214)) {
         actor->movement_state = 0;
         if (!GameFlag_IsSet(0x214) && actor->movement_state == 0) {
-            work[8] = 0x3400000 - actor->x;
-            work[9] = 0x2400000 - actor->z;
+            layer->phase_x = 0x3400000 - actor->x;
+            layer->phase_y = 0x2400000 - actor->z;
         }
         if (!AreSceneActorsInPassingLane()) {
             IsSceneActorWithinTriggerBox(17);
@@ -636,23 +639,24 @@ void FieldScene_UpdateActorEighteenInteraction(void)
 {
 
     struct ObjectRuntime *actor = Actor_Get(18);
-    s32 *work = (s32 *)(((u8 *)gMapWork[0]) + 0x164);
-    s16 *scene = *(s16 **)(((u8 *)gMapWork) + 0x4c);
+    struct MapLayerScroll *layer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+    /* The event work, read as halfwords from the work cells after the map's. */
+    s16 *scene = *(s16 **)&gMapWork[19];
 
     if (gFrameCount & 1) {
-        work[6] = 1;
-        work[7] = 1;
+        layer->speed_x = 1;
+        layer->speed_y = 1;
     } else {
-        work[6] = -1;
-        work[7] = -1;
+        layer->speed_x = -1;
+        layer->speed_y = -1;
     }
     if (GameFlag_IsSet(0x106) || scene[191] != 0 || scene[192] != 0) {
         actor->movement_state = 1;
     } else if (!GameFlag_IsSet(0x214)) {
         actor->movement_state = 0;
         if (!GameFlag_IsSet(0x214) && actor->movement_state == 0) {
-            work[8] = 0x2f00000 - actor->x;
-            work[9] = 0x1f00000 - actor->z;
+            layer->phase_x = 0x2f00000 - actor->x;
+            layer->phase_y = 0x1f00000 - actor->z;
         }
         if (!IsPlayerInSecondaryTriggerArea()) {
             if (IsSceneActorWithinFourSteps(18) && gGameState.cloaked != 0) {

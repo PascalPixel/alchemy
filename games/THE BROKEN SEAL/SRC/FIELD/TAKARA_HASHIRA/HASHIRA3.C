@@ -44,10 +44,10 @@ void FieldScene_RunScene3b3_02001fd4(void)
 {
     Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    ((struct FieldActor *)Object_GetById(0))->y.fixed = Map_GetTerrainHeightFar(
-        ((struct FieldActor *)Object_GetById(0))->terrain_id,
-        ((struct FieldActor *)Object_GetById(0))->x.fixed,
-        ((struct FieldActor *)Object_GetById(0))->z.fixed);
+    Object_GetById(0)->y.fixed = Map_GetTerrainHeightFar(
+        Object_GetById(0)->terrain_id,
+        Object_GetById(0)->x.fixed,
+        Object_GetById(0)->z.fixed);
 #endif
     if (FieldScene_RunScene3b3SequenceD() == 0) {
         Object_GetById(0)->motion_flags &= 254;

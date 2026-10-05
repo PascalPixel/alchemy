@@ -9,10 +9,9 @@
 #include "FIXED_MATH.H"
 #include "DMA.H"
 #include "IO_REG.H"
+#include "BATTLE_RUNTIME.H"
 
 extern char MsgMonstersAttackLess;
-
-
 
 extern struct BattleFxScene *gEffectWork;
 extern const u8 BattleFx_ArcSparkTiles[];
@@ -20,14 +19,12 @@ void WaitFrames(s32);
 void ObjectDispatch_SetSingleChildField26Far(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
 void UiText_DrawMessage(s32, s32);
-s32 GameFlag_TestFar(s32);
 void Audio_PlayCue(s32);
 void BattleFx_UpdateEffect16State(void);
 void BattleFx_UpdatePairedArcSpawner(void);
 
 /* battle/effects/runtime/update_slot.c */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
 s32 ArcTan2(s32 x, s32 y);
@@ -36,7 +33,6 @@ s32 FixedSqrt(s32 value);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 
 u32 Random16(void);
-
 
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
 

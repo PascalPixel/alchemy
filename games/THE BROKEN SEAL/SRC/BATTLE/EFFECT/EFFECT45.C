@@ -22,8 +22,6 @@
 void Runtime_ApplyValueToWork7818(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, u16, s32);
 void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 mode);
-void Palette_StepFadeTransfer(void);
-
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
@@ -32,7 +30,6 @@ static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 siz
     /* FAKEMATCH: direct calls share the size in r5 and move the routine to r6, changing the canvas tails. */
     clear(destination, size);
 }
-
 
 void Audio_PlayCue(s32);
 void WaitFrames(s32);

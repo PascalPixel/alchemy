@@ -9,6 +9,7 @@
 #include "STAGED_ACTOR.H"
 #include "TYPES.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 extern s32 StagedActor_FootprintKinds[];
 extern struct StagedActorFootprint StagedActor_FootprintBounds[];
@@ -226,9 +227,9 @@ void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
         u32 *cell = map->layers[layer].cells;
 
         cell += x + (y << 7);
-        Dma_Set(cell, dst, 0x84000001, (volatile u32 *)0x040000d4);
+        Dma_Set(cell, dst, 0x84000001, REG_DMA3);
         {
-            volatile u32 *dma = (volatile u32 *)0x040000d4;
+            volatile u32 *dma = REG_DMA3;
 
             while (dma[2] & 0x80000000)
                 ;

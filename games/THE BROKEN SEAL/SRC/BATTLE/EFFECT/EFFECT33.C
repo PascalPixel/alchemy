@@ -20,8 +20,6 @@ struct EffectVector {
     s32 z;
 };
 
-
-
 struct EffectOwner {
     u8 unknown_00[8];
     struct EffectVector position;   /* 0x08 */
@@ -30,7 +28,6 @@ struct EffectOwner {
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
-u32 BattleFx_HasReachedTarget(struct EffectSlot *effect);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
@@ -55,8 +52,6 @@ struct PhasedRadialSequenceObject {
     void *callback;
 };
 
-u32 BattleFx_HasReachedTarget(struct EffectSlot *);
-
 struct OrbitPosition {
     s32 x;
     s32 y;
@@ -78,7 +73,6 @@ struct SpreadPosition {
     s32 y;
     s32 z;
 };
-
 
 void Audio_PlayCue(s32);
 
@@ -124,7 +118,6 @@ void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s32 magnitude, s32 angle);
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
-
 
 struct LinkedCaptureObject {
     u8 padding000[8];

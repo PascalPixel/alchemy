@@ -28,7 +28,6 @@ extern volatile u32 gKeysRepeat;
 
 /* "{L}-{R}:Switch characters", then "{A}:Status". */
 extern u8 MsgSwitchCharacterHelp;
-s32 GameFlag_TestFar(s32 flag);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void ItemMenu_PosCategory(void);
 void Menu_UpdateEntryObjectTransforms(void);

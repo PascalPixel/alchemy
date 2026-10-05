@@ -6,6 +6,7 @@
 #include "IO_REG.H"
 #include "FX_SCENE.H"
 #include "OBJDISP.H"
+#include "CALLBACK_SCHEDULER.H"
 
 struct FxPosition {
     s32 x;
@@ -54,8 +55,6 @@ void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FxObject *object);
 void ObjectGroup_ApplyRandomChildValues(void);
 void BattleFx_SpawnFallingParticles(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 key);
-void Scheduler_RemoveCallback(void (*callback)(void));
 void AudioCommand_PlayFar(s32 cue);
 void ObjectDispatch_SetSingleChildField26Far(struct FxObject *object, s32 value);
 s32 BattleFx_GetCycledTableWord(u32 keys);

@@ -13,7 +13,6 @@
 #include "TRANSFORM.H"
 
 extern void *gBattleFxWork[];
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);

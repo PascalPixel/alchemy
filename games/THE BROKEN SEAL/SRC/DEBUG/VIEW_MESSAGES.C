@@ -3,6 +3,7 @@
 #include "IO_REG.H"
 #include "BATTLE_UNIT.H"
 #include "GAME_STATE.H"
+#include "BATTLE_RUNTIME.H"
 
 /* The German and French viewers start their second form one past the last
  * message of their catalogues, which has no name, and stay on scaffold. */
@@ -45,7 +46,6 @@ s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_DrainPendingFar(s32);
 void UiWork_FinalizeFar(s32, s32);
-struct BattleUnit *Owner_GetStateFar(s32);
 void AudioCommand_PlayFar(s32);
 void WaitFrames(s32);
 

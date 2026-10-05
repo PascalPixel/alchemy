@@ -9,8 +9,9 @@
 #include "MAP_SCROLL.H"
 #include "FXBLEND.H"
 #include "IO_REG.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_PARTY.H"
 
-s32 GameFlag_TestFar(s32);
 void Audio_PlayCue(s32);
 void BattleFx_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 
@@ -47,9 +48,6 @@ struct GroundParticleWork {
     struct GroundParticle particles[32];
     s32 unknown_408[2];
 };
-
-LAYOUT_SIZE_GUARD(GroundParticle_Size, struct GroundParticle, 0x20);
-LAYOUT_SIZE_GUARD(GroundParticleWork_Size, struct GroundParticleWork, 0x410);
 
 void Resource_DecodeByteLz(const void *source, void *destination);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
@@ -195,7 +193,7 @@ void Unnamed_08094ac8(void)
         particle++;
     }
     do {
-        blend = (volatile u16 *)0x04000050;
+        blend = &REG_BLDCNT;
         value = 0x3f00;
         *blend = value;
         value = 0x1008;

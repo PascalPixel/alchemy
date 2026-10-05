@@ -377,7 +377,7 @@ void FieldScene_RunScene3b5_020005dc(void)
 void SceneScript_SetupActors(void)
 {
 
-    u8 *work = ((u8*)gEventWork);
+    struct EventWork *work = gEventWork;
     u32 no;
     s32 index;
 
@@ -388,7 +388,7 @@ void SceneScript_SetupActors(void)
             actor[85] = 0;
         }
     }
-    index = *(s16 *)(work + 0x16c) - 1;
+    index = work->touched_trigger - 1;
     Engine_AudioPlayCue(158);
     Call3(Engine_MapAnimateCells, (s32)gTorebiMachiCellSteps[index].commands, gTorebiMachiCellSteps[index].first, gTorebiMachiCellSteps[index].second);
     Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
@@ -398,7 +398,7 @@ void SceneScript_SetupActors(void)
         Call3(Engine_ActorCenterAndWalk, 0, 2, -8);
         Engine_EventWait(10);
     }
-    Engine_EventRequestExit(*(s16 *)(work + 0x16c));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();
@@ -506,7 +506,7 @@ void SceneState_SetValue30ThenCall(void)
 void SceneState_PassWorkHalfword16C(void)
 {
 
-    s16 *cnt = (s16 *)(((u8*)gEventWork) + 0x16C);
+    s16 *cnt = &gEventWork->touched_trigger;
 
     Engine_EventRequestExit(*cnt);
 }

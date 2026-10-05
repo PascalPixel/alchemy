@@ -5,6 +5,7 @@
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 #include "PALETTE_SCENE.H"
+#include "IO_REG.H"
 
 extern u8 MsgKorimaWho[];
 extern u8 MsgKorimaForestKolimaAlive[];
@@ -61,12 +62,12 @@ u8 *KorimaKi_GetPlacements(void)
 
 void PaletteScene_Initialize(void)
 {
-    void *scene;
+    struct EventWork *scene;
 
-    scene = *(void **)&gEventWork;
+    scene = gEventWork;
     Engine_EventBegin();
     Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
-    Engine_EventRequestExit(FIELD_AT_OFFSET(scene, s16 *, 0x16C));
+    Engine_EventRequestExit(scene->touched_trigger);
     Engine_EventEnd();
 }
 
@@ -128,7 +129,7 @@ void FieldScene_RunScene395_02000158(void)
                 goto L_02000220;
             }
             {
-                u16 *target = (u16 *)((u8 *)gEventWork + 0x172);
+                u16 *target = &gEventWork->unknown_172;
                 s32 shown = 1;
 
                 *target = shown;
@@ -944,7 +945,7 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
 /* Applies the adjustment to palette RAM, skipping two protected windows. */
 void PaletteScene_AdjustPaletteWindow(s32 adjustment)
 {
-    volatile u16 *palette = (volatile u16 *)0x05000000;
+    volatile u16 *palette = BG_PLTT;
     u32 phase;
     u32 next_phase;
     KorimaPalette_SaveFirst();

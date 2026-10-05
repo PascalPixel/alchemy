@@ -74,7 +74,7 @@ void Korosseo_LoadPortrait(s32 id)
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering), buf);
     Dma_Set(buf + off, (void *)0x050003e0, DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
     Call3(VramBlock_LoadCached, Korosseo_PortraitSlot, 0x400, (id << 10) + (s32)buf + KOROSSEO_PALETTE_BYTES);
-    Dma_Wait((volatile u32 *)0x040000d4);
+    Dma_Wait(REG_DMA3);
     Runtime_BumpFree(buf);
 }
 

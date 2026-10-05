@@ -13,11 +13,10 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
 
 extern u8 gMapCellBuffer[];
 extern u8 gBattleFxWork[];
-void BattleFx_ArmBg2AffineHBlankDma(void);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 /* The two seven-byte-stride rectangle tables are plain, non-const arrays:
  * their element loads are ordered against the outgoing-argument stores at

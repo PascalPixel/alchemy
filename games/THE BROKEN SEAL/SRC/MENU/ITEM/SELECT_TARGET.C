@@ -47,7 +47,6 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
-s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void UiIcon_PrepareObject(struct RenderOutput *icon);

@@ -9,7 +9,7 @@
 #include "BATTLE_UNIT.H"
 #include "RUNTIME_INTERFACES.H"
 #include "WINDOW.H"
-
+#include "BATTLE_RUNTIME.H"
 
 u8 *UiText_FormatNumber(u8 *, s32, s32);
 
@@ -24,7 +24,6 @@ extern u32 GameFlagBytes[];
 u32 Runtime_GetBuildStampTimeFar(s32);
 u8 Party_SumDjinnCountsFar(s32 element);
 void Party_ListActiveOwnersFar(u16 *owners);
-s32 GameFlag_TestFar(s32 flag);
 
 extern s16 gSaveSlot;
 void UiText_ShowPositionedMessageAndWait(s32, s32);

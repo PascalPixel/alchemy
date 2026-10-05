@@ -11,6 +11,7 @@
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
+#include "FIXED_MATH.H"
 
 extern void *gBattleFxWork[];
 
@@ -26,8 +27,6 @@ extern u16 ParticleStreams_CellOffsets[];
 extern const u8 FallingSword_FlashCells[];
 extern const s32 FallingSword_DustGravity[];
 
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_TickMemberTimers(void);

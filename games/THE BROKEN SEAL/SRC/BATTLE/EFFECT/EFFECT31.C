@@ -2,6 +2,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "GAME_STATE.H"
 #include "GLOBAL_CELLS.H"
+#include "BATTLE_RUNTIME.H"
 
 void ObjectMotion_MoveHalfwayTowardTarget(void);
 
@@ -68,7 +69,6 @@ struct MenuState {
     s16 mode;
 };
 
-s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(void *);
 s32 Djinn_AddToLeastLoadedOwnerFar(s32, void *);
 void Battle_SetObjectFlag5bWhenMode3(void);
@@ -91,7 +91,6 @@ struct ActorDescriptor {
     s32 z;
 };
 
-s32 GameFlag_TestFar(s32 flag);
 struct ActorDescriptor *BattleAction_FindDescriptor(s32 action);
 
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *obj, s32 x, s32 y, s32 z);

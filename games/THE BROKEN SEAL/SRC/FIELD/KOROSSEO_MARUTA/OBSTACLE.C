@@ -30,7 +30,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     extern void GameFlag_SetByte();
 
 
-    u8 *state;
+    struct EventWork *state;
     s16 *table;
     StageActor *target;
     StageActor *actor;
@@ -45,7 +45,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     s32 base;
     s32 z;
 
-    state = *(u8 **)&gEventWork;
+    state = gEventWork;
     best_slot = 8;
     best = 0x100000;
     table = (s16 *)&gGameState;
@@ -82,9 +82,9 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     }
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Engine_EventShowMessage(best_slot, 0);
-    frame = (s32 *)(state + 448);
+    frame = &state->start_transition;
     *frame = 0x200;
-    *(s32 *)(state + 456) = 15;
+    state->transition_frames = 15;
     Engine_EventWait(20);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

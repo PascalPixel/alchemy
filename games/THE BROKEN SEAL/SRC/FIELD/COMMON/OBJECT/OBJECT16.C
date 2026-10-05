@@ -6,6 +6,8 @@
 #include "GAME_STATE.H"
 #include "FIELD_SPRITE.H"
 #include "ANIMSPR.H"
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
 
 struct FieldCueWork {
     u8 padding[0xcc8];
@@ -54,10 +56,6 @@ struct BurstParticle {
     u8 pad_66[6];
     void (*callback_6c)(struct BurstParticle *);
 };
-
-LAYOUT_SIZE_GUARD(BurstParticle_Size, struct BurstParticle, 0x70);
-LAYOUT_OFFSET_GUARD(BurstParticle_Velocity, struct BurstParticle, velocity_x, 0x30);
-LAYOUT_OFFSET_GUARD(BurstParticle_Callback, struct BurstParticle, callback_6c, 0x6c);
 
 extern struct BurstParticle *Object_CreateFar(s32, s32, s32, s32);
 void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value);

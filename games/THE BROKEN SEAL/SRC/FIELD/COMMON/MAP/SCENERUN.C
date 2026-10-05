@@ -5,6 +5,9 @@
 #include "SCENE_IDS.H"
 #include "FIELDRUN.H"
 #include "IO_REG.H"
+#include "IRQ.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "BATTLE_RUNTIME.H"
 
 /* Scenes past the table are not maps: a blank screen, the two table
    screens that draw over the last object palettes, and a battle. */
@@ -20,13 +23,10 @@ enum {
 
 extern u8 gDebugMode;
 
-void Runtime_SetIrqHandler(s32 index, s32 handler, s32 context);
 void Resource_InitializeTable(void);
-void Scheduler_ResetTaskTable(void);
 void Bg0_ClearTilemap(void);
 void PaletteGlow_UpdateFar(s32 first, s32 second);
 void GameState_InitDefaultsFar(void);
-s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void MapGroupTable_SelectEntry(void);
 void Party_SetReturnPoint(s32 reason);

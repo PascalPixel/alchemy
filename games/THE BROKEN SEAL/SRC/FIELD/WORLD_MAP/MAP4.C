@@ -9,6 +9,7 @@
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
+#include "TRANSFORM.H"
 
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
 {
@@ -32,7 +33,6 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Graphics_PrepareTransferInIwramWork(u8 *source, s32 *destination);
 
 void Map_RenderPaletteMappedRow(u32 value)
 {

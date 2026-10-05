@@ -7,6 +7,7 @@
 #include "RENDER_INPUT.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "TBS_EDITION.H"
+#include "UIFLOW.H"
 
 /* The object palette the slider graphics use. */
 #define SLIDER_PALETTE 14
@@ -50,7 +51,6 @@ void RenderOutput_ClearList(struct RenderInput *);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
 void Ui_ApplyTableOffsetToPair(void *);
 void Audio_PlayCue(s32);
-void UiWork_Finalize(struct RenderInput *, s32);
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void);
 
 /* Opens the workspace options window: four divider lines, six captions,

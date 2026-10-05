@@ -1,10 +1,10 @@
 #include "CHARACTER_MENU.H"
 #include "TYPES.H"
 #include "MENU_LIST.H"
+#include "BATTLE_RUNTIME.H"
 
 extern struct CharacterMenuState *gMenuWork;
 
-s32 GameFlag_TestFar(s32 flag);
 s32 CharacterMenu_SelectOwner(s32 index);
 s32 CharacterMenu_SelectCommand(void);
 s32 PsynergyMenu_SelectAction(void);

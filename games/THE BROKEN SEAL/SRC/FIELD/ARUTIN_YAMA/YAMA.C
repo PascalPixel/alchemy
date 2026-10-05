@@ -4,6 +4,7 @@
    level with it, then the rolling object starts. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "IO_REG.H"
 
 extern const struct SceneEntrance gArutinYamaEntrancesOther[];
 extern const struct SceneEntrance gArutinYamaEntrances1[];
@@ -427,7 +428,7 @@ void SceneState_SetDispcntBit9ByThreshold(void)
 {
     extern u16 ArutinYama_RiseTimer;
 
-    volatile u16 *reg = (volatile u16 *)0x04000000;
+    volatile u16 *reg = &REG_DISPCNT;
     s16 v = *reg & 0xfdff;
 
     if ((u32)(Engine_RandomNext() * 100) >> 16 >= ArutinYama_RiseTimer) {

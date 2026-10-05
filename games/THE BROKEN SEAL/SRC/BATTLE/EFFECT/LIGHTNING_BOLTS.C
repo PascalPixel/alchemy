@@ -10,10 +10,10 @@
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
+#include "BATTLE_PRESENTATION.H"
 
 extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,

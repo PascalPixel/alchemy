@@ -20,7 +20,6 @@
 
 extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
@@ -165,7 +164,6 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 
 extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
@@ -321,7 +319,6 @@ extern u16 BattleFx6_FlareCells[];
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
 void ObjectGroup_TickMemberTimers(void);

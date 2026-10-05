@@ -63,7 +63,7 @@ void BattlePres_UpdateHBlankScroll(void)
         do {
             REG_BG2CNT = control;
         } while (0);
-        Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, (volatile u32 *)0x040000b0);
+        Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, &REG_DMA0SAD);
         Dma_Set(&records->affine, (void *)0x04000020, 0x84000004, REG_DMA3);
     }
 }

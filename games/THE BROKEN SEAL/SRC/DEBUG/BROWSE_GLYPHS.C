@@ -2,6 +2,7 @@
 #include "IO_REG.H"
 #include "RENDER_INPUT.H"
 #include "TBS_EDITION.H"
+#include "UIFLOW.H"
 
 /* The German and French browsers name their entries from one past the last
    message of their catalogues, which has no name, and stay on scaffold. */
@@ -36,7 +37,6 @@ void UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
 void UiText_DrawCharacterAtOffset(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
-void UiWork_Finalize(struct RenderInput *, s32);
 
 /* The debug glyph browser: shows each character's and each actor kind's
    portrait glyph with its number and name. Left and right step, L and R

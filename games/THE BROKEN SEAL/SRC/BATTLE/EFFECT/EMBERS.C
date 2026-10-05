@@ -30,7 +30,6 @@ extern u8 EmberColumns_Columns[];
 /* By ember index modulo four: how fast it is pulled down. */
 extern s32 EmberColumns_Gravity[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 struct BattleEffectTargetArgument;
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void AudioCommand_PlayFar(s32 value);

@@ -5,6 +5,7 @@
 #include "RENDER_INPUT.H"
 #include "BATTLE_TYPES.H"
 #include "GAME_STATE.H"
+#include "UIFLOW.H"
 
 /* One entry of a collected ability list, in the parts of a shortcut. */
 struct ShortcutListEntry {
@@ -34,7 +35,6 @@ void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x, s32 y,
 struct BattleAction *Ability_GetData(s32 ability);
 void WaitFrames(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
-void UiWork_Finalize(struct RenderInput *window, s32 release);
 
 /* A debug screen that picks the two Psynergy shortcuts. It first hands a few
    abilities to the party, then lists every ability anyone knows: left and

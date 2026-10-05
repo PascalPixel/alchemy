@@ -2,6 +2,7 @@
 #include "BATTLE_UNIT.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 MsgPowerLabel[];
 extern u8 MsgNormalLabel, MsgDownLabel, MsgPoisonLabel, MsgVenomLabel, MsgCurseLabel, MsgHauntLabel, MsgDjinnLabel;
@@ -11,7 +12,6 @@ extern const u8 Menu_LvString[];
 extern const u8 Menu_SlashString[];
 
 s32 Party_SumDjinnCountsFar(s32 side);
-struct BattleUnit *Owner_GetStateFar(s32 unit);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 unit, s32 mode);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 flags, s32 unit);
 s32 CharacterMenu_UpdateSelectionIcons(const u8 *ailments);

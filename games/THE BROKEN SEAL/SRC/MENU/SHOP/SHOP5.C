@@ -49,7 +49,6 @@ void Party_AdjustSixDigitCounterBFar(s32 amount);
 void Party_AdjustCounterCappedAt28Far(s32 value);
 
 extern s16 EventTable_AbilityLoadouts[][33];
-s32 GameFlag_TestFar(s32);
 s32 GameFlag_SetBitFar(s32);
 void Item_AdjustCounterFar(s32, s32);
 

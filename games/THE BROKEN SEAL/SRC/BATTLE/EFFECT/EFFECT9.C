@@ -8,8 +8,7 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 #include "IO_REG.H"
-
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+#include "BATTLE_PRESENTATION.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40 and 46. */

@@ -122,7 +122,7 @@ void HaidiaBabi_RunHeyBoyScene(void)
 
 void SceneDialogue_RunActorFourteenDialogue11AA(void)
 {
-    void *work;
+    struct EventWork *work;
 
     Engine_EventBegin();
     Engine_ActorFaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
@@ -131,8 +131,8 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventShowMessage(0xE, 0);
     } else {
-        work = *(void **)&gEventWork;
-        FIELD_AT_OFFSET(work, u16 *, 0x1D8) = (u16)(FIELD_AT_OFFSET(work, u16 *, 0x1D8) + 1);
+        work = gEventWork;
+        work->message = (u16)(work->message + 1);
         Engine_EventAskYesNo(0xE, 0);
     }
     Engine_EventEnd();

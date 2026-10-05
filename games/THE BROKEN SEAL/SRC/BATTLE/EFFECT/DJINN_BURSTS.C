@@ -10,10 +10,10 @@
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
 
 extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Graphics_TransposeCopy(const u8 *source_base, u8 *destination_base,
     s32 row_size, s32 column_count);
 void Audio_PlayCue(s32 cue);

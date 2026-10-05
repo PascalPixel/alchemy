@@ -1,5 +1,6 @@
 #include "GOMA.H"
 #include "CALL.H"
+#include "FIXED_MATH.H"
 
 void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
 {
@@ -46,8 +47,6 @@ struct Vector { s32 x, y, z; };
 
 union SceneActor *Object_GetById(s32);
 void WaitFrames(s32);
-s32 Trig_Cos(s32);
-s32 Trig_Sin(s32);
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_ResetAndSetPosition();
 void ObjectMotion_CommitCurrentPositionAndActivate(s32);

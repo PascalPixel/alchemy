@@ -11,15 +11,15 @@
 #include "DMA.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
+#include "BATTLE_RUNTIME.H"
+#include "UIFLOW.H"
 
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];
-s32 GameFlag_TestFar(s32);
 void Shop_SetCursorFar(void *, s32, s32, s32);
 void Menu_InitializeSelectedWorkspace(void);
 void RenderResource_LoadFrame(s32, s32, s32);
 void Ui_ApplyTableOffsetToPair(void *);
-void UiWork_Finalize(void *, s32);
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void);
 
 /* menu/run_workspace_selection_loop.c */

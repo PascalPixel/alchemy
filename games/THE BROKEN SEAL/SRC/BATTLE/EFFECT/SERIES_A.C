@@ -19,7 +19,6 @@
 
 extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 side, s32 narrow, s32 *x, s32 *y);
 void Render_ResetTransformState(void);
@@ -166,7 +165,6 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     if (mode == 0 || mode == 6) {
         for (i = 0; i != 512; i++) {
             struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
-
 
             spark->x = ((Random16() & 0xff) - 127) << 15;
             spark->y = ((Random16() & 0x7f) + 64) << 15;

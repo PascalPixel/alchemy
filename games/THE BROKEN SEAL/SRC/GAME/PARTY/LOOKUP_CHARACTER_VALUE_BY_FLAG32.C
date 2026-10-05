@@ -5,7 +5,8 @@
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "WINDOW.H"
-
+#include "UIFLOW.H"
+#include "BATTLE_RUNTIME.H"
 
 extern s16 Data_080371fe[];
 extern u8 MsgVenusDjinnJoined[];
@@ -21,7 +22,6 @@ struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 s32 Audio_Check(void);
-void UiWork_Finalize(struct UiWindow *, s32);
 
 extern volatile u32 gKeyState;
 
@@ -86,7 +86,6 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 
 extern s16 Party_CharacterValues[];
 extern s16 Party_CharacterValuesFlag32[];
-s32 GameFlag_TestFar(s32);
 
 s32 Party_LookupCharacterValueByFlag32(u32 index)
 {

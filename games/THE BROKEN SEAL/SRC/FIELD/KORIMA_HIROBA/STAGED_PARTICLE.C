@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 
 #include "STAGED_ACTOR.H"
+#include "IO_REG.H"
 
 enum {
     /* Message 0x182 + 181. */
@@ -124,7 +125,7 @@ s32 FieldScene_SetupEntryActors8To11(void)
 /* Applies the adjustment to the protected palette window only. */
 void SceneEffect_AdjustPaletteWindow(s32 adj)
 {
-    volatile u16 *pal = (volatile u16 *)0x05000000;
+    volatile u16 *pal = BG_PLTT;
     u32 phase;
     u32 next;
     KorimaPalette_SaveFirst();

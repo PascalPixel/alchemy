@@ -3,6 +3,7 @@
  * them (380 and its twin 381). Engine_* bind at each overlay's runtime
  * import veneer; the ring tables are each overlay's own. */
 #include "DMA.H"
+#include "IO_REG.H"
 
 struct SoruRingObject {
     u8 pad00[8];
@@ -204,7 +205,7 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
     list = Runtime_AllocateBlock(33, 0x194);
     zero = 0;
     entry = list->entries;
-    Dma_Set((const void *)&zero, list, 0x85000065, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, list, 0x85000065, REG_DMA3);
     if (count > 10)
         count = 10;
     none = 0;

@@ -68,7 +68,7 @@ void SerialRuntime_HandleTransferInterrupt(void)
     volatile u32 *sio_control;
     s32 channel;
 
-    sio_control = (volatile u32 *)0x04000128;
+    sio_control = &REG_SIOCNT;
     *serial_snapshot =
         *(volatile union SerialDataRegisters *)REG_SIODATA32;
     send_state = &gSerialRuntime;

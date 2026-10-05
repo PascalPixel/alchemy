@@ -5,6 +5,7 @@
 #include "EVENT_RUNTIME.H"
 #include "ITEM.H"
 #include "ITEMGIFT.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 MsgCannotCarryMore;
 
@@ -40,8 +41,6 @@ extern u8 MsgWhatWillYouDrop;
 extern u8 MsgGaveItemToMember;
 
 s32 PartyInventory_AddFar(s32 item);
-struct ItemDefinition *Item_Get(s32 item);
-struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 Shop_GetSelectionState(s32 owner, s32 slot);
 s32 Inventory_DiscardFar(s32 owner, s32 slot);
 s32 Item_AdjustCounterFar(s32 item, s32 delta);

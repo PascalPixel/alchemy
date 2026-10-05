@@ -7,6 +7,7 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SYSTEM.H"
+#include "BATTLE_RUNTIME.H"
 
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 
@@ -22,7 +23,6 @@ void UiText_DrawWorkValueWithLabel(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void GameFlag_ClearBitFar(s32 flag);
-s32 GameFlag_TestFar(s32 flag);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 
@@ -163,7 +163,6 @@ extern char MsgAbilityDescription;
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
-s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);

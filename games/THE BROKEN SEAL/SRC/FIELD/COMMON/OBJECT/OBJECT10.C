@@ -8,6 +8,8 @@
 #include "GAME_STATE.H"
 #include "SCROLL.H"
 #include "ANIMSPR.H"
+#include "BATTLE_RUNTIME.H"
+#include "DISPTRAN.H"
 
 s32 ResourceMetadata_RegisterFar(struct AnimationObject *, s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
@@ -17,7 +19,6 @@ void ObjectEffect_PrepareContextEffect(s32);
 void ResourceMetadata_ClearRecordFar(void *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);
-s32 GameFlag_TestFar(s32);
 void GameFlag_ClearBitFar(s32);
 void ObjectEffect_EndContextEffect(s32 arg0);
 void Motion_CamBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -26,7 +27,6 @@ void Battle_WaitMode0(s32 arg0);
 void Object_AttachWorkTargetToObject(s32 arg0, s32 arg1);
 
 extern struct EventRuntime *gEventWork;
-void DisplayTransition_Finish(s32 mode, s32 frames);
 
 /* Plays the scene's cue and two sound effects, whitens one palette colour
    (colour 243 in mode 3, the backdrop otherwise), finishes the display

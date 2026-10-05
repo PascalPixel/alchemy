@@ -10,6 +10,7 @@
 #include "KEYSTATE.H"
 #include "GAME_STATE.H"
 #include "BATTLE_WORK.H"
+#include "UIFLOW.H"
 
 void Camera_ConfigureSceneFar(s32 offset);
 void Link_DrawShiftedTilePair(s32 destination);
@@ -51,7 +52,6 @@ void Audio_PlayCue(s32 soundId);
 unsigned char Ui_FillVramBlockPattern(void);
 void UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
-void UiWork_Finalize(struct Work *work, s32 release);
 extern char MsgNoTimeToRun;
 
 void UpdateLinkSessionCountdown(void)

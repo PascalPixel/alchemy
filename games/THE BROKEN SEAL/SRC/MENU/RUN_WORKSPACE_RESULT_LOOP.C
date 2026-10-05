@@ -4,6 +4,7 @@
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
 #include "IO_REG.H"
+#include "UIFLOW.H"
 s32 Menu_RunWorkspaceSelectionLoop(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 s32 Menu_RunWorkspaceOptions(void);
@@ -47,7 +48,6 @@ extern u8 Workspace_ItemTitle[], Workspace_EnergyTitle[], Workspace_StatusTitle[
 extern u8 Workspace_PageLabel[], Workspace_RangeDash[];
 
 void WaitFrames(s32);
-void UiWork_Finalize(struct RenderInput *, s32);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(const u8 *, struct RenderInput *, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);

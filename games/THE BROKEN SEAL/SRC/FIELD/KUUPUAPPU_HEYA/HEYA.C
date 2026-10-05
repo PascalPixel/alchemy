@@ -7,13 +7,12 @@
 #include "FIELD_SCENE.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TBS_EDITION.H"
+#include "BATTLE_PARTY.H"
 
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode);
 
-
 void Owner_RecalculateStats();
-
 
 /* The scene's tables, in the overlay's read-only data. */
 extern u8 KuupuappuHeya_Scripts[];
@@ -52,7 +51,6 @@ void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
 void Map_SetWorkFourValues();
 u8 *Owner_GetState(s32);
-void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);
 void Object_SetModeById(s32, s32, s32);
@@ -62,7 +60,6 @@ s32 KuupuappuHeya_IsRecordNearPoint(s32, s32, s32);
 void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
-
 
 void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 

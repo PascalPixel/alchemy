@@ -6,7 +6,6 @@
 #include "FIELDOBJ.H"
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
-u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
 /* Spins the object faster each frame until it turns a sixteenth of a
    circle more per frame than it started. */
@@ -97,7 +96,6 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
             BattleFx_ClearOwnedSlot(effect);
     }
 }
-
 
 void Battle_Reset(void);
 void Motion_CamBounds(s32, s32, s32, s32);

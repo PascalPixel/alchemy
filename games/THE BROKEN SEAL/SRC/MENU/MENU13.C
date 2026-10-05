@@ -8,11 +8,10 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+#include "NODE_CHAIN.H"
 
 extern struct SelectionScreen *gResQueueWork;
-struct SelectionNode *NodeChain_GetNodeAtCount(void *state);
 void Resource_DecodeByteLz(void *source, void *destination);
-
 
 void UiWindow_OpenMode1AndWaitFrame(void);
 s32 Menu_SelectTopEntry(s32);

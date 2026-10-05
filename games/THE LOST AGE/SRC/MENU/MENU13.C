@@ -5,10 +5,10 @@
 #include "RESOURCE.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
+#include "NODE_CHAIN.H"
 
 extern char ResourceId_CommandIcons;
 
-struct SelectionNode *NodeChain_GetNodeAtCount(void *state);
 void Resource_DecodeByteLzInRam(void *source, void *destination);
 
 /* The head of ☀️'s MENU13.C over ⚓️'s heap: the selection screen in the

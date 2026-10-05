@@ -8,6 +8,7 @@
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
 #include "IO_REG.H"
+#include "BATTLE_CALC.H"
 
 struct BattleCommandRuntime {
     u8 pad000[0x170]; s16 result_code; u8 pad172[0x2c]; s16 battle_mode;
@@ -28,7 +29,6 @@ extern u8 MsgNotEnoughPp[];
 void *ObjectTable_Get(s32);
 void Battle_InitializeRenderObject(void);
 void GameFlag_ClearBitFar(s32);
-s32 GameFlag_TestFar(s32);
 void UiWork_PushValueSlotFar(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
 s32 Object_CallSpawnRoutineAtOrigin(s32);
@@ -36,7 +36,6 @@ void UiWork_FinalizePendingCoreFar(void);
 
 /* Takes an s32 to match the definition of the packed effect argument. */
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
-s16 Owner_AdjustSecondValueFar(s32, s32);
 
 /*
  * Matches the shared prototype: s32-returning, with a void * out parameter.
@@ -100,7 +99,6 @@ struct MarkerWork {
 
 struct ScriptObjectRuntime *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildField26Far(struct ScriptObjectRuntime *object, s32 value);
-s32 GameFlag_TestFar(s32 flag);
 void ObjectDispatch_ReleaseFar(struct ScriptObjectRuntime *object);
 void Object_SetMode(struct ScriptObjectRuntime *object, s32 mode);
 void Object_ResetMotion(struct ScriptObjectRuntime *object);

@@ -4,6 +4,7 @@
 #include "SCENE.H"
 #include "RESOURCE_397.H"
 #include "IO_REG.H"
+#include "IRQ.H"
 
 extern struct EventWork *gEventWork;
 extern u8 gDisplayTransition[];
@@ -53,7 +54,6 @@ void ToretoEda_StartBg3Split(void);
 
 void Effect_UpdateBg3HofsByVcount(void);
 void Effect_SetBg3HofsSplit(void);
-void Runtime_SetIrqHandler(s32 slot, s32 mode, void (*handler)(void));
 
 /*
  * Overlay resource_397: a field scene that shifts its two tracked objects by

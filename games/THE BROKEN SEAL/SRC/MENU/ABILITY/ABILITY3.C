@@ -9,6 +9,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+#include "BATTLE_RUNTIME.H"
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
@@ -17,8 +18,6 @@ void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y)
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
-struct BattleUnit *Owner_GetStateFar(s32 owner);
-struct BattleAction *BattleAction_Get(s32 action);
 extern u8 MsgAbilityName;
 extern u8 MsgShortcutHelp[];
 extern u8 MsgChangeCharacterHelp[];
@@ -34,7 +33,6 @@ extern volatile u32 gKeysRepeat;
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-s32 GameFlag_TestFar(s32 message);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void UiIcon_PrepareObject(struct RenderOutput *icon);

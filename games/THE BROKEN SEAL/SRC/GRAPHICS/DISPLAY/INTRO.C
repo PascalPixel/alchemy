@@ -121,13 +121,13 @@ void Title_PlaceIntroSprites(void)
         ENTRY(n, 0) = 0x400020a0;
     REG_BLDCNT = 0x3f50;
     REG_BLDALPHA = 0x0e0e;
-    Dma_Set(&ENTRY(0, 0), (void *)0x07000000, ((n * 8) >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
+    Dma_Set(&ENTRY(0, 0), (void *)0x07000000, ((n * 8) >> 2) | 0x84000000, REG_DMA3);
     line = 32 - gBgScroll[1].y;
     WRAP256(line);
     ENTRY(12, 0) = line | 0xc05c2000;
     ENTRY(12, 1) = 0x800;
-    Dma_Set(&ENTRY(12, 0), (void *)(0x07000000 + n * 8), 0x84000002, (volatile u32 *)0x040000d4);
-    Dma_Set(&ENTRY(0, 0), (void *)0x07000000, 0x84000008, (volatile u32 *)0x040000d4);
+    Dma_Set(&ENTRY(12, 0), (void *)(0x07000000 + n * 8), 0x84000002, REG_DMA3);
+    Dma_Set(&ENTRY(0, 0), (void *)0x07000000, 0x84000008, REG_DMA3);
 }
 
 /* Title intro: load both scrolling pictures and lay out their tilemaps.

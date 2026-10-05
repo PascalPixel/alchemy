@@ -17,9 +17,11 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "SCENE_IDS.H"
+#include "BATTLE_CALC.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "DISPTRAN.H"
 
 s32 Party_CountActiveOwnersFar(void);
-s16 Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -209,7 +211,6 @@ struct MenuCtrl {
 };
 
 void WaitFrames(s32 frames);
-void Scheduler_ResetTaskTable(void);
 void ObjectSystem_InitializeFar(s32 mode);
 void Object_SetMode(struct FieldActor *actor, s32 mode);
 void ObjectDispatch_InitFromTable2Far(struct FieldActor *actor);
@@ -257,8 +258,6 @@ void Battle_ResetEffectCounter(void);
 void BattleCommand_ExecuteSelectedItem(s32 item, s32 argument);
 void BattleCommand_ExecuteSelectedAction(s32 command);
 void Battle_PlaceMapMarkers(void);
-void DisplayTransition_Start(s32 mode, s32 frames);
-void DisplayTransition_Finish(s32 mode, s32 frames);
 void BattleEffect_InitializeBuffers(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void Battle_InitializeRenderObject(void);
@@ -311,7 +310,7 @@ s32 Field_RunScene(s32 entrance)
 
     work = Runtime_AllocateBlock(27, sizeof(struct FieldWork));
     zero = 0;
-    Dma_Set(&zero, work, 0x85000000 | (sizeof(struct FieldWork) / 4), (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x85000000 | (sizeof(struct FieldWork) / 4), REG_DMA3);
     GameFlag_ClearBitFar(0x103);
     gGameState.default_scene = gGameState.scene;
     gGameState.default_entrance = gGameState.entrance;
@@ -384,7 +383,7 @@ s32 Field_RunScene(s32 entrance)
         if (work->transition_active == 0) {
             DisplayTransition_Start(work->transition, work->transition_frames);
             work->transition_active = 1;
-            *(u16 *)0x05000000 = 0;
+            PLTT_BACKDROP = 0;
             if (ObjectEffect_RunPendingFlagEvent() == 0)
                 WaitFrames((work->transition_frames + 1) / 2);
         }

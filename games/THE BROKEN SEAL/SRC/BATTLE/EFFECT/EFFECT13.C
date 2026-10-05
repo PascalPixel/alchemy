@@ -14,8 +14,6 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
-u32 BattleFx_HasReachedTarget(struct EffectSlot *);
-
 struct Output_08097f80 {
     s32 x;
     s32 y;
@@ -24,7 +22,6 @@ struct Output_08097f80 {
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
-
 
 extern struct BattleFxScene *gEffectWork;
 void BattleEffect_InitializeSharedScene(void);

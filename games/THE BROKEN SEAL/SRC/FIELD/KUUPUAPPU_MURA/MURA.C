@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TBS_EDITION.H"
+#include "BATTLE_PARTY.H"
 
 struct EffectRecord {
     u8 pad[9];
@@ -89,7 +90,6 @@ extern const u16 KuupuappuMura_Scene8Cells[];
 extern const u16 KuupuappuMura_Scene9Cells[];
 extern const u16 KuupuappuMura_Scene10Cells[];
 u8 *Owner_GetState();
-void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 void Djinn_Transfer(int, int, int, int);
 s32 Owner_RecalculateStats(int);
 void Party_RemoveOwnerRestored();

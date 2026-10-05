@@ -17,7 +17,7 @@ s32 BattlePres_RunMosaicFadeOut(void)
 
     bg0cnt = REG_BG0CNT;
     REG_BG0CNT = bg0cnt | 0x40;
-    reg = (volatile u16 *)0x04000008;
+    reg = &REG_BG0CNT;
     bg1cnt = *++reg;
     *reg = bg1cnt | 0x40;
     bg2cnt = *++reg;
@@ -39,7 +39,7 @@ s32 BattlePres_RunMosaicFadeOut(void)
 
     REG_DISPCNT = 1;
     WaitFrames(4);
-    reg = (volatile u16 *)0x04000008;
+    reg = &REG_BG0CNT;
     *reg++ = bg0cnt;
     *reg++ = bg1cnt;
     *reg++ = bg2cnt;

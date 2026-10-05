@@ -4,10 +4,10 @@
 #include "DMA.H"
 #include "RENDER_INPUT.H"
 #include "WORKSPACE_OPTIONS.H"
+#include "UIFLOW.H"
 
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window, s32 x, s32 y);
-void UiWork_Finalize(struct RenderInput *window, s32 mode);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 

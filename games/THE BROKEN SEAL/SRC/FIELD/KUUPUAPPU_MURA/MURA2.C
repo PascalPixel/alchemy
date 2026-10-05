@@ -5,6 +5,7 @@
 #include "FIXED_POINT_POSITION.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
+#include "B5_CONTEXT.H"
 
 struct Presentation {
     u8 reserved_00[9];
@@ -56,10 +57,6 @@ struct OverlayEffectMotion {
     u8 pad44[32];
     s16 mode;
 };
-
-LAYOUT_OFFSET_GUARD(Drift_HorizontalRate, struct OverlayEffectMotion, horizontal_rate, 0x30);
-LAYOUT_OFFSET_GUARD(Drift_VerticalRate, struct OverlayEffectMotion, vertical_rate, 0x34);
-LAYOUT_OFFSET_GUARD(Drift_Mode, struct OverlayEffectMotion, mode, 0x64);
 
 union DriftingObject {
     struct FieldActor actor;

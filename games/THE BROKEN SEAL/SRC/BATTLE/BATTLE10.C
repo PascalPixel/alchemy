@@ -7,9 +7,9 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_MSG.H"
 #include "CHARACTER.H"
+#include "BATTLE_RUNTIME.H"
 
 struct EnemyDefinition *Owner_GetRecordFar(s32);
-s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
 u32 Random16(void);
 s32 Item_EncodeBankedId(s32);

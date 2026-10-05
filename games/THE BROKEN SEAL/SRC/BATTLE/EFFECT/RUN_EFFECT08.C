@@ -1,6 +1,7 @@
 #include "GAME_STATE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "DISPTRAN.H"
 
 struct EffectState {
     u8 unknown_000[0x52a];
@@ -27,7 +28,6 @@ struct EffectTarget {
 };
 extern struct EffectGlobals Data_03001ebc;
 void ObjectDispatch_ApplyValueToKind200Children(s32);
-void DisplayTransition_InitializeBattleEffectState(s32);
 struct EffectTarget *ObjectTable_Get(s32);
 void BattleFx_ApplyColorToSourceBuffer(s32, s32);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);

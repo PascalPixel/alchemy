@@ -10,6 +10,7 @@
 #include "B5_CONTEXT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
 
 extern u8 gBattleFxWork[];
 extern u8 ShatterRocks_ShardOffsets[];
@@ -20,7 +21,6 @@ extern u8 ShatterRocks_ShardWidths[];
 extern u8 ShatterRocks_ShardHeights[];
 extern u16 ShatterRocks_ShardCells[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Camera_ApplyShake(s32 x, s32 y);

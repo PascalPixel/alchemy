@@ -11,6 +11,8 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 #include "RAM_BUFFER.H"
+#include "IRQ.H"
+#include "RESOURCE.H"
 
 extern u8 gMapCellBuffer[];
 void Graphics_ResetBg2Pa(void);
@@ -18,15 +20,11 @@ void Graphics_SetBg2AffineScaleHalf(void);
 void BattleFx_BuildWindowEdgeTable(void);
 void WaitFrames(s32);
 u32 Random16(void);
-s32 Trig_Sin(s32);
-s32 Trig_Cos(s32);
 void Audio_PlayCue(s32);
 void BattlePres_ConfigureEffectDisplay(void);
-void Runtime_SetIrqHandler(s32, s32, s32);
 void BattleEffect_WipeCanvas(s32, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
-void ResourceObject_ReleaseFar(void *);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void BattleMotion_ApplyVariantMotionFar(s32, s32);

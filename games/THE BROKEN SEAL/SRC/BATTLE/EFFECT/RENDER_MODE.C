@@ -22,7 +22,6 @@ extern u8 gBattleFxWork[];
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 
-void BattleFx_ArmBg2AffineHBlankDma(void);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);

@@ -6,6 +6,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "NODE_CHAIN.H"
 
 extern u32 gFrameTick;
 extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
@@ -14,10 +15,8 @@ extern s32 GameFlag_IsSet(s32 flag);
 extern struct SelectionScreen *gResQueueWork;
 extern u8 MsgItemNotHeld[];
 extern u8 MsgAbilityNotKnown[];
-struct SelectionNode *NodeChain_GetNodeAtCount(struct SelectionScreen *);
 void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
 void RenderOutput_PrepareForRedraw(struct UiWindow *);
-
 
 struct Work;
 void Resource_ScheduleOwnerReset(void);
@@ -365,7 +364,6 @@ void Menu_SetupSelectionBothSides(void)
     Menu_SetupSelectionSide(state, 0);
     Menu_SetupSelectionSide(state, 1);
 }
-
 
 void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 {

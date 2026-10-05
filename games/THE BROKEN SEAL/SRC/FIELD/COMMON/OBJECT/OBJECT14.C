@@ -11,6 +11,7 @@
 #include "SCRIPT_MOTION.H"
 #include "FIELDOBJ.H"
 #include "IO_REG.H"
+#include "BATTLE_RUNTIME.H"
 
 s32 FixedSqrt(s32 value);
 
@@ -23,7 +24,6 @@ extern struct ScriptMotionObject *gObjectSlots;
 
 s32 ArcTan2(s32, s32);
 
-s32 GameFlag_TestFar(s32);
 s32 GameFlag_SetBitFar(s32);
 void GameFlag_ClearBitFar(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);

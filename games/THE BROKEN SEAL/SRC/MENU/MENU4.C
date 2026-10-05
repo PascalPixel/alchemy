@@ -6,6 +6,7 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
+#include "RESOURCE.H"
 
 s32 Party_RemapCharacterIdIfEnabledFar(s8 kind, s8 variant);
 
@@ -33,14 +34,12 @@ s32 Object_InitializeMode(struct AnimationObject *, s32);
 void Menu_UpdateFirstObjectRowPositions(void);
 
 /* menu/entry/clear_first_object_row_and_schedule_update.c */
-void ResourceObject_ReleaseFar(void *);
 
 /* menu/update_first_object_row_positions.c */
 s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 extern struct FourObjectMotionState *gMenuWork;
 extern const s32 Menu_PartySpriteResourceIds[4];
-void *ResourceObject_CreateFar(s32);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 void Menu_UpdateSecondObjectRowPositions(void);
 

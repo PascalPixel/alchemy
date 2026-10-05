@@ -11,10 +11,10 @@
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
 
 extern u8 gMapCellBuffer[];
 extern u8 gBattleFxWork[];
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 /* A growing column of the dual-table effect, laid over one of the work
    block's particles. */
@@ -155,12 +155,10 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
     s32 n;
     s32 react_frame;
 
-
     s32 i;
     struct DualPuff *puff;
     s32 puff_age;
     s32 image;
-
 
     heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;

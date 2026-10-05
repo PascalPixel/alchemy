@@ -91,13 +91,13 @@ void SerialRuntime_StepBlockTransfer(void)
                     own->active = 0;
                     switch (peer->peer_flags) {
                     case 1:
-                        Dma_Set(peer->payload, (void *)dest, 0x84000005, (volatile u32 *)0x040000d4);
+                        Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
                         *receive += 20;
                         gSerialReceivedSize += 20;
                         own->status = (own->status + 1) | 0x80;
                         break;
                     case 2:
-                        Dma_Set(peer->payload, (void *)dest, 0x84000005, (volatile u32 *)0x040000d4);
+                        Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
                         gSerialReceivedSize += 20;
                         own->flags = 2;
                         own->status = 0;
@@ -135,7 +135,7 @@ void SerialRuntime_StepBlockTransfer(void)
                     gSerialBlockSequence &= 0x7f;
                 }
                 if (gSerialSendSize != 0) {
-                    Dma_Set((void *)*send, own->payload, 0x84000005, (volatile u32 *)0x040000d4);
+                    Dma_Set((void *)*send, own->payload, 0x84000005, REG_DMA3);
                     gSerialSendSize += -20;
                     if (gSerialSendSize != 0) {
                         own->peer_flags = 1;

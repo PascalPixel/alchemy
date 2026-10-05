@@ -4,7 +4,7 @@
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
-
+#include "UIFLOW.H"
 
 void Event_SetPairWork1c0Far(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
@@ -37,7 +37,6 @@ extern volatile u32 gKeysHeld;
 struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
 void Menu_DrawSelectionRow(
     struct Work *work, s16 primary, const s16 *secondary);
-void UiWork_Finalize(struct Work *work, s32 release);
 extern volatile u32 gKeysRepeat;
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second);
 s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode_arg);

@@ -36,8 +36,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-struct BattleAction *BattleAction_Get(s32 action);
-s32 GameFlag_TestFar(s32 message);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void UiIcon_PrepareObject(struct RenderOutput *icon);

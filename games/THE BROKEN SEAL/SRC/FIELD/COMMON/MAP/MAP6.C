@@ -15,6 +15,7 @@
 #include "IO_REG.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
+#include "TRANSFORM.H"
 
 extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultMapCells;
@@ -34,7 +35,6 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
-void Graphics_PrepareTransferInIwramWork(s32, s32);
 void MapAnimation_ApplyAffineFrame(void);
 void WorldMap_UpdateView(void);
 
@@ -185,14 +185,14 @@ s32 Map_InitializePerspectiveScene(void)
     /* FAKEMATCH: loop notes keep BG2PD's constant late and r0 first below */
     do {
         Io_Put16((u16 *)0x04000026, 0x100);
-        *(s32 *)0x04000028 = 0;
-        *(s32 *)0x0400002c = 0;
+        REG_BG2X = 0;
+        REG_BG2Y = 0;
         Io_Put16((u16 *)0x04000030, 0x100);
         REG_BG3PB = 0;
         REG_BG3PC = 0;
         Io_Put16((u16 *)0x04000036, 0x100);
-        *(s32 *)0x04000038 = 0;
-        *(s32 *)0x0400003c = 0;
+        REG_BG3X = 0;
+        REG_BG3Y = 0;
     } while (0);
 
     camera = Runtime_AllocateBlock(12, sizeof(struct BattleCamera));
@@ -379,7 +379,7 @@ void MapAnimation_ApplyAffineFrame(void)
     s32 dispcnt = (s16)(REG_DISPCNT & 0xfff8);
     u32 *dst = (u32 *)0x04000020;
     struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers++;
-    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    volatile u16 *channel = REG_DMA0;
     u32 *src;
     u32 mode;
     u32 top;

@@ -4,10 +4,10 @@
 #include "UI.H"
 #include "PSYNERGY_MENU.H"
 #include "MENU_LIST.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 MsgAbilityDescription;
 
-s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);

@@ -55,7 +55,6 @@ void Owner_RecalculateStatsFar(s32 owner);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
-s32 GameFlag_TestFar(s32 flag);
 void Item_AdjustCounterFar(s32 item, s32 mode);
 void Owner_RefreshClassActionsFar(s32 owner);
 s32 BattleFx_HasTriggerFar(s32 item);

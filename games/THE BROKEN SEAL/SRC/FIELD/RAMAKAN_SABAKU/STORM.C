@@ -10,6 +10,7 @@
 #include "MENU_LIST.H"
 #include "RAM_BUFFER.H"
 #include "VRAM_BLOCK.H"
+#include "IO_REG.H"
 
 extern s16 RamakanSabaku_SandVramSlot;
 extern s16 RamakanSabaku_SandCounter;
@@ -61,7 +62,7 @@ void RamakanSabaku_RunSandstorm(void)
     } else if (RamakanSabaku_SandCounter <= 1) {
         if (++RamakanSabaku_SandCounter == 1) {
             Dma_Set(RamakanSabaku_SandPalette, (void *)0x050003c0, 0x80000010,
-                    (volatile u32 *)0x040000d4);
+                    REG_DMA3);
         }
     }
     counter = RamakanSabaku_SandCounter;
@@ -82,7 +83,7 @@ void RamakanSabaku_RunSandstorm(void)
     }
 
     buffer = Runtime_BumpAllocate(0x900);
-    Dma_Set(RamakanSabaku_SandPalette, buffer, 0x80000010, (volatile u32 *)0x040000d4);
+    Dma_Set(RamakanSabaku_SandPalette, buffer, 0x80000010, REG_DMA3);
     colors = (s16 *)(buffer + 12);
     color = colors;
     for (i = 6; i < 12; i++) {
@@ -127,7 +128,7 @@ void RamakanSabaku_RunSandstorm(void)
         }
     }
 
-    Dma_Set(RamakanSabaku_SandTileBuffer, buffer, 0x84000240, (volatile u32 *)0x040000d4);
+    Dma_Set(RamakanSabaku_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
     if (RamakanSabaku_SandFlash <= 118) {
         column = (u32 *)(buffer + 80);
         fill = 0xeeeeeeee;

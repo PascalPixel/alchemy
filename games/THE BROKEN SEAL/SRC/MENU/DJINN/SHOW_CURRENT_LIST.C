@@ -4,6 +4,7 @@
 #include "SYSTEM.H"
 #include "UI.H"
 #include "DJINN_MENU.H"
+#include "BATTLE_RUNTIME.H"
 
 extern struct DjinnMenuWork *gMenuWork;
 #include "TBS_EDITION.H"
@@ -21,7 +22,6 @@ void RenderOutput_ClearListFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
-s32 GameFlag_TestFar(s32 flag);
 
 s32 DjinnMenu_ShowCurrentList(void)
 {

@@ -14,7 +14,6 @@
 #include "EVENT_RUNTIME.H"
 #include "FIXED_POINT_POSITION.H"
 
-
 /* shop/effect/reset.c */
 void EffectSlot_UpdateFar(s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, u32);
@@ -41,7 +40,6 @@ extern s8 Data_080b4ab2[];
 extern struct EventRuntime *gEventWork;
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
-void Owner_RecalculateRatiosFar(s32);
 void Event_ClearStatus1c6Far(void);
 void Event_WaitValue1c8FramesFar(void);
 void Audio_PlayCue(s32);

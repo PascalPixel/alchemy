@@ -8,6 +8,7 @@
 #include "SYSTEM.H"
 #include "GLOBAL_CELLS.H"
 #include "UI.H"
+#include "BATTLE_RUNTIME.H"
 
 struct InventoryMenuState;
 extern u8 MsgRearrangeHelp[], MsgDjinnListHelp[], MsgChooseCharacter;
@@ -15,7 +16,6 @@ extern u8 MsgSwitchCharacterHelp, MsgStatusNormal[];
 extern u8 MsgStatusAdvice[][2], CharacterMenu_CursorWidths[];
 extern volatile u32 gKeyState, gKeysRepeat;
 void Palette_LightenBankHighlight(s32 bank);
-s32 GameFlag_TestFar(s32 flag);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void UiMenu_SlideCursor(s32 x, s32 y);
@@ -24,7 +24,6 @@ void Menu_ReleaseEntryObjects(void);
 /* The portrait definition reads four words; these callers keep their extra word. */
 void PsynergyMenu_InitializeEntryObjects();
 void DjinnMenu_ShowCurrentList(void);
-struct BattleUnit *Owner_GetStateFar(s32 owner);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void Menu_PlaceEntryObjectsInGrid(s32 x, s32 y, s32 columns);
 s32 Party_AddActiveOwnerFar(s32 owner);

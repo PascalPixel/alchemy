@@ -7,6 +7,7 @@
 #include "CALL.H"
 #include "EVENT_RUNTIME.H"
 #include "EDITION.H"
+#include "BATTLE_PARTY.H"
 
 extern u8 MsgKuupuappuDidThoseThievesComeFrom[];
 extern u8 MsgKuupuappuHeardDefeatedThoseThieves[];
@@ -31,7 +32,6 @@ void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
 void Map_SetWorkFourValues();
 u8 *Owner_GetState(s32);
-void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);
 void Object_SetModeById(s32, s32, s32);
@@ -41,7 +41,6 @@ s32 KuupuappuHeya_IsRecordNearPoint(s32, s32, s32);
 void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
-
 
 void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x);
 void SceneDialogue_PromptAndCountSkip(s32 x);
@@ -142,7 +141,6 @@ enum PromptMessage {
     MSG_WANT_MORE_BONES = 0x1385,
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
-
 
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
@@ -1507,7 +1505,7 @@ void KuupuappuHeya_RunScene021C8(void)
 /* Pose actors 24 and 25 for dialogue steps 11 to 18. */
 void KuupuappuHeya_PoseDialogueActors(void)
 {
-    switch (*(s16 *)(*(u8 **)&gEventWork + 0x16c)) {
+    switch (gEventWork->touched_trigger) {
     case 11:
         SceneActor_UpdateAnimationOnStateMatch(24, 1, 2, (s32)KuupuappuHeya_PairScriptC);
         SceneActor_UpdateAnimationOnStateMatch(25, 3, 4, (s32)KuupuappuHeya_PairScriptR);
@@ -1602,7 +1600,7 @@ void SceneState_SetFlagByActorPosition(void)
 /* Place the room's actors and map cells for the current story state. */
 s32 KuupuappuHeya_ApplyEntryState(void)
 {
-    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
+    gEventWork->start_transition = 0x209;
     switch (gGameState.entrance) {
     case 5:
         {

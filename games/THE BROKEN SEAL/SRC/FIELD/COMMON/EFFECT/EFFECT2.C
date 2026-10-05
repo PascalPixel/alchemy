@@ -230,7 +230,7 @@ void FieldMotes_Start(void)
         mote->phase = (i & 15) + 1;
         mote++;
     }
-    do { s32 v; v = 0x3f00; reg = (volatile u16 *)0x04000050; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
+    do { s32 v; v = 0x3f00; reg = &REG_BLDCNT; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
     Scheduler_AddOrUpdateCallback((s32)(Unnamed_08094bbc), 0xc80);
 }
 

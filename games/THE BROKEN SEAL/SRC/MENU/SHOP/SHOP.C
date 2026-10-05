@@ -12,6 +12,7 @@
 #include "GAME_STATE.H"
 #include "SOUND_IDS.H"
 #include "TBS_EDITION.H"
+#include "ITEM.H"
 
 s32 BattleFx_GetResourceIdFar(s32);
 void UiIcon_PrepareObjectFar(void *);
@@ -434,7 +435,6 @@ extern u8 MsgPackFull[];
 extern u8 MsgCannotEquipStillWant[];
 extern u8 MsgCannotCarryItem[];
 extern u8 MsgBuyAnythingElse[];
-struct ItemDefinition *Item_Get(s32 item);
 void UiWork_FinalizeFar(s32 window, s32 style);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);

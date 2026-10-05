@@ -6,6 +6,7 @@
 #include "RAM_BUFFER.H"
 #include "GAME_STATE.H"
 #include "FIELDRUN.H"
+#include "BATTLE_RUNTIME.H"
 
 void Vector_AddPolarOffset(s32, u32, struct FieldPosition *);
 extern struct EventRuntime *gEventWork;
@@ -39,8 +40,6 @@ enum StepTileEvent {
 #define STEP_FLAG_DOUBLE_SPEED 0x167
 #define STEP_CUE_EFFECT 139
 s32 Party_CountActiveOwnersFar(void);
-struct BattleUnit *Owner_GetStateFar(s32 owner);
-s32 GameFlag_TestFar(s32 flag);
 void UpdateMapRegionAtPosition(s32 x, s32 y, s32 z);
 s32 BattleFx_ApplyLookupResult(void *motion, s32 speed);
 s32 EffectRuntime_LookupByTableEntry(s32 kind, s32 speed);

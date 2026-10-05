@@ -13,6 +13,8 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
+#include "RESOURCE.H"
+#include "FIXED_MATH.H"
 
 extern void *gBattleFxWork[];
 
@@ -48,7 +50,6 @@ struct FxControl {
     s32 active;
 };
 
-
 extern u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
 /* Each object's column and row in the formation. */
@@ -62,9 +63,6 @@ void BattleEffect_WipeCanvas(s32 layer, s32 mode);
 void BattleBackground_LoadFar(s32 layer, s32 resource_id, s32 mode);
 void BattleEffect_SetupBlendedDisplay(void);
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, struct FxPlacement *placement, struct FxPair *pair, s32 mode);
-void ResourceObject_ReleaseFar(struct AnimationObject *object);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_TickMemberTimers(void);

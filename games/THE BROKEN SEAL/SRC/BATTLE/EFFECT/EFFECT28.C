@@ -16,15 +16,13 @@
 #include "DMA.H"
 #include "IO_REG.H"
 #include "DISPTRAN.H"
+#include "BATTLE_RUNTIME.H"
 
 struct ParticlePosition {
     s32 x;
     s32 y;
     s32 z;
 };
-
-
-
 
 #define OBJECT_0808EEE4_OFFSET(type, field) \
     ((u32)&(((type *)0)->field))
@@ -98,7 +96,6 @@ struct EffectObject_0808f1c0;
 
 /* effect_runtime/prepare_rising_object.c */
 
-
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 extern const s32 RomBytes_0809e75c[];
 
@@ -146,12 +143,9 @@ struct Source_0808f28c {
     struct Values_0808f28c values;
 };
 
-
-
 extern struct ObjectRuntime *Object_Spawn(s32, u32, u32, u32);
 
 extern const s32 BattleFx_MarkerParticleScript[];
-
 
 /* One 12-byte map event record; the table ends at flags == -1. */
 struct MapEventEntry {
@@ -169,7 +163,6 @@ struct FieldMapState {
 extern struct FieldMapState gOverlayArea;
 s32 EffectRuntime_GetCurrentObject(s32 id);
 struct MapEventEntry *_call_via_r0(s32 resource);
-s32 GameFlag_TestFar(s32 flag);
 
 extern struct DisplayTransitionState *gDisplayTransition;
 

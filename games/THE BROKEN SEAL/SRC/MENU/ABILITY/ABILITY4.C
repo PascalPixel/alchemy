@@ -11,6 +11,7 @@
 #include "TBS_EDITION.H"
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
+#include "BATTLE_RUNTIME.H"
 
 /* Retained menu icon byte view; the shared owner is RenderOutput. */
 struct PsynergyMenuIcon {
@@ -34,7 +35,6 @@ void RenderOutput_ClearListFar(s32 window);
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
 void Menu_UpdateEntryObjectTransforms(void);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
-s32 GameFlag_TestFar(s32 flag);
 void ItemMenu_PosCategory(void);
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 window, s32 owner);
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *);

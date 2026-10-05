@@ -26,10 +26,8 @@ void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
 void UiWork_ClearValueNameTablesFar(void);
 s32 GameFlag_IsSet(s32 flag);
-u32 BattleEv_Push(u32 opcode, u32 operand);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 void BattleEv_SetRuntimeField8(void);
-struct ItemDefinition *Item_Get(s32 item);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 s32 Djinn_IsActiveFar(s32 unit_id, s32 element, s32 index);
 s32 Trade_CanOfferDjinnFar(s32 unit_id, s32 element, s32 index);
@@ -49,7 +47,6 @@ u32 BattleParty_IsUnitListed(u32 unit_id);
 s32 Item_GetEquippedElementFar(s32 unit_id);
 u32 Battle_GetEntryField2LowBits(u32 class_id);
 s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *unit);
-u32 Ability_CheckStatusOrSpecialId(s32 action);
 void BattlePresentation_WaitForAdvance(void);
 
 /* Resolve a queued command into the plan its presentation plays: who acts,

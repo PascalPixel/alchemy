@@ -23,7 +23,6 @@ void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 s32 InventoryMenu_SortByListOrder(u16 *items, s32 mode);
-s32 GameFlag_TestFar(s32 flag);
 void Audio_PlayCue(s32 cue);
 
 /* Choose whose items to list: left and right step through the party, R held

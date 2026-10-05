@@ -19,10 +19,10 @@ void BlendTransition_Update(void)
 
             if (gBlendBrighten != 0) {
                 control = gBlendLayers | 0x80;
-                blend_control = (volatile u16 *)0x04000050;
+                blend_control = &REG_BLDCNT;
             } else {
                 control = gBlendLayers | 0xc0;
-                blend_control = (volatile u16 *)0x04000050;
+                blend_control = &REG_BLDCNT;
             }
             *blend_control = control;
         }

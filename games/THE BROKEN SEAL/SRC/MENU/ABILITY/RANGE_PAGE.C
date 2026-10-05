@@ -7,7 +7,6 @@
 #include "MENU_LIST.H"
 void UiWindow_Commit(s32 window);
 
-
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 
 void PsynergyMenu_DrawRange(
@@ -41,7 +40,6 @@ extern u8 MsgCanBeUsed;
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
-struct BattleAction *BattleAction_Get(s32 action);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ACTION_ID_MASK 0x3fff
@@ -146,9 +144,7 @@ extern u8 MsgAbilityName;
 extern u8 MsgClassName;
 extern u8 Menu_LvString;
 
-
 #define ACT_ID_MASK 0x3fff
-
 
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(

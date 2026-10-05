@@ -11,6 +11,7 @@
 #include "TEXT_RENDER_RUNTIME.H"
 #include "ITEM.H"
 #include "EDITION.H"
+#include "UIFLOW.H"
 
 extern u8 MsgDebugWontStopYou[];
 extern u8 MsgDebugRaiseEveryonesLevel[];
@@ -25,7 +26,6 @@ extern u8 gItemLevelItemPrompt[];
 extern u8 gItemLevelItemHelp[];
 extern u8 gItemLevelItemFull[];
 extern volatile u32 gKeysRepeat;
-void UiWork_Finalize(struct RenderInput *window, s32 mode);
 void RenderOutput_RedrawSavedRect(struct RenderInput *window);
 void Engine_DebugClearWindow(struct RenderInput *window);
 void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);

@@ -1,13 +1,13 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "MOTION_OBJECT.H"
+#include "BATTLE_ACTOR.H"
 
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
 s32 ArcTan2(s32, s32);
 
-void Actor_ResetMotionAtAnchor(s32 slot_id);
 void BattleMotion_SetupEscapeObject(s32 object_id);
 void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot, struct BattleObjectSlot *end_slot, s32 progress);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id);

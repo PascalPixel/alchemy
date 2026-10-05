@@ -12,6 +12,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "OBJDISP.H"
 #include "IWRAM_CALL.H"
+#include "BATTLE_CALC.H"
 
 /* The two party groups in the order their round-end effects resolve. */
 struct BattleGroupOrder {
@@ -21,9 +22,7 @@ struct BattleGroupOrder {
 extern const struct BattleGroupOrder BattleParty_RoundEndGroupOrder;
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void Owner_RecalculateStatsFar(s32 unit_id);
-s16 Owner_AdjustSecondValueFar(s32 unit_id, s32 amount);
 s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 void Object_SetMode(struct MotionObject *object, s32 animation);

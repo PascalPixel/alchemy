@@ -724,14 +724,14 @@ void RunActor17SceneStep(void)
 void TriggerSceneStage95FromActor12(void)
 {
 
-    u8 *scene_state = ((u8*)gEventWork);
+    struct EventWork *scene_state = gEventWork;
 
     if (IsActorInteractionAvailable(12) != 0 && gGameState.cloaked == 0) {
         s16 *scene_stage;
         s32 next_stage;
 
         Engine_TaskRemoveCallback(TriggerSceneStage95FromActor12);
-        scene_stage = (s16 *)(scene_state + 386);
+        scene_stage = &scene_state->raised_trigger;
         next_stage = 95;
         *scene_stage = next_stage;
     }
@@ -883,7 +883,7 @@ void TriggerScene41AtVillagePath(void)
         s32 player_z = player->z / 0x100000;
 
         if (player_x == 43 && player_z > 28 && player_z <= 31) {
-            s16 *q = (s16 *)(((u8*)gEventWork) + 364);
+            s16 *q = &gEventWork->touched_trigger;
             s32 v = 41;
 
             *q = v;
@@ -903,7 +903,7 @@ void TriggerScene40AtVillagePath(void)
 
         if (player_x == 16 && player_z > 55 && player_z <= 58
             && (player->dir == 0xc000 || player->dir == 0x4000)) {
-            s16 *q = (s16 *)(((u8*)gEventWork) + 364);
+            s16 *q = &gEventWork->touched_trigger;
             s32 v = 40;
 
             *q = v;
@@ -2682,7 +2682,7 @@ void FinishActor20SceneSequence(void)
         Engine_EventSetMessage((s32)MsgRunpaMaybeMerchantReason);
         Engine_EventShowMessage(20, 0);
     } else {
-        s16 *q = (s16 *)(((u8*)gEventWork) + 382);
+        s16 *q = &gEventWork->psynergy_request;
 
         *q = 0;
         Engine_PsynergyCancel();

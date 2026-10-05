@@ -4,6 +4,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 *volatile gWindowWork;
 void Audio_PlayCue(s32 cue);
@@ -19,7 +20,6 @@ s32 GameFlag_ClearBitFar(s32);
 void Menu_CancelSoundTick(void);
 
 /* menu/input/ensure_cancel_sound.c */
-s32 GameFlag_TestFar(s32);
 
 /* ui/render/set_palette_color_15.c */
 s32 UiWork_SetParamNibbleFar(s32);

@@ -6,6 +6,7 @@
 #include "DMA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "IO_REG.H"
 
 /* The room's tables, which the entry veneers publish to the map engine. */
 extern const struct SceneEntrance gToretoHeyaEntrances[];
@@ -616,7 +617,7 @@ s32 ToretoHeya_EnterRoom(void)
 void ToretoPalette_CaptureBank(void)
 {
     Dma_Set((const void *)0x05000000, *(void **)&Data_03001ed0, 0x84000070,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
 }
 
 /* Every 32 frames, tint the background palette, weaker for later colours. */

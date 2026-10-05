@@ -10,6 +10,7 @@
 #include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
+#include "B5_CONTEXT.H"
 
 extern u8 VinasuChojo_PairActionScript[];
 void VinasuChojo_ShowMessage();
@@ -89,8 +90,6 @@ struct PairWork {
     u16 vram_block;
 };
 
-LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
-LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *Data_03001f30;
 
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);

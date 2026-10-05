@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "CALL.H"
 #include "FIELDOBJ.H"
+#include "GAME_FLAGS.H"
 extern u8 MsgKorosseoCheering[];
 extern u8 MsgKorosseoCheeringChoices[];
 extern struct EventWork *gEventWork;
@@ -13,7 +14,6 @@ s32 Engine_EventChooseYesNo();
 void Engine_EventShowMessage();
 void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
-void GameFlag_SetByte();
 void Engine_EventRequestExit();
 void Engine_GameFlagSet();
 void Korosseo_SelectSoloCompetitor();

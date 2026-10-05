@@ -7,6 +7,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+#include "ITEM.H"
 
 extern struct ShopRuntime *gMenuWork;
 extern volatile u32 gKeyState;
@@ -18,7 +19,6 @@ s32 Party_AdjustSixDigitCounterBFar(s16);
 void UiMessage_ShowAndRestoreState(s32 message);
 void Audio_PlayCue(s32);
 extern char MsgHereYouGo;
-s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
 void Inventory_EquipFar(s32 unit_id, s32 slot);
 void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);

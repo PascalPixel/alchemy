@@ -11,6 +11,7 @@
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
+#include "FIXED_MATH.H"
 
 extern void *gBattleFxWork[];
 
@@ -26,8 +27,6 @@ extern const u8 FlameBlade_StrikeColumns[];
 /* The flash cell for each third of a flash's life. */
 extern const u8 FlameBlade_FlashCells[];
 
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);

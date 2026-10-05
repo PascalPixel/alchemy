@@ -19,6 +19,7 @@
 #include "MAP_SCROLL.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 s32 Render_ProjectPoint(s32 *, s32 *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
@@ -27,7 +28,6 @@ void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 void *GetMotionRecordFar(void *object, s32 mode);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
 extern struct BattleEffectWork *gBattleFxWork;

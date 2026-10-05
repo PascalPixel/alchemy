@@ -5,6 +5,8 @@
 #include "IWRAM_CALL.H"
 #include "EDITION.H"
 #include "DJINN_PREVIEW.H"
+#include "BATTLE_RUNTIME.H"
+#include "UIFLOW.H"
 
 /* Preview setting or resting one Djinn: toggle it on the live owner record,
  * recalculate, show the old and new class and stats with an arrow beside
@@ -15,7 +17,6 @@
  * UiText_RenderWideStringInWindow and UiWindow_DrawThreeTileColumn are
  * declared returning a value so r0 is set last at each call. The locals are
  * declared in the reference's spill-slot order. */
-
 
 /* Ability table entry returned by Ability_GetData. */
 struct AbilityData {
@@ -65,11 +66,9 @@ void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
 void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
 
 s32 __divsi3(s32 numerator, s32 denominator);
-struct BattleUnitRecord *Owner_GetStateFar(s32 owner);
 struct AbilityData *Ability_GetData(s32 code);
 void Owner_RecalculateStatsFar(s32 owner);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
-void UiWork_Finalize(struct RenderInput *win, s32 mode);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
 void UiText_DrawNumberInWindow(
     s32 value, s32 digits, struct RenderInput *win, s32 x, s32 y);
@@ -99,7 +98,6 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     s32 tile;
     s32 val;
     s32 i;
-
 
     void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising)
     {

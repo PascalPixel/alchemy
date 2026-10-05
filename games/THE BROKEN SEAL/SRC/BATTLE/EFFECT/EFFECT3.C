@@ -99,7 +99,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
 
         battle->highlight_mode = mode;
         battle->highlight_step = zero;
-        blend_y = (volatile u16 *)0x04000054;
+        blend_y = &REG_BLDY;
         *blend_y = zero;
         sixteen = 16;
         /* Preserve the volatile register-store scheduling used by agbcc. */

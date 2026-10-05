@@ -335,7 +335,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
             {
                 volatile u16 *reg;
 
-                BG2_QUEUE_ORIGIN(reg, reg = (volatile u16 *)0x04000208, &work->origin_x);
+                BG2_QUEUE_ORIGIN(reg, reg = &REG_IME, &work->origin_x);
             }
             work->origin_pending = 1;
             WaitFrames(1);

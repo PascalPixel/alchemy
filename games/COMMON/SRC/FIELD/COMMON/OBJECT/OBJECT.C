@@ -8,6 +8,7 @@
 #include "IO_REG.H"
 #include "DMA.H"
 #include "BATTLE_RUNTIME.H"
+#include "TRANSFORM.H"
 
 /* Object dispatch and its linker-neighbor bank. The TBS terminal camera bank
    follows the dispatcher; TLA emits only the adjacent lookup/release prefix. */
@@ -190,9 +191,9 @@ void ObjectSystem_Initialize(s32 mode)
     objects = Runtime_AllocateBlock(5, 64 * sizeof(*objects));
     ObjectSystem_Configure(mode);
     fill = 0;
-    Dma_Set((const void *)&fill, objects, 0x85000700, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, objects, 0x85000700, REG_DMA3);
     fill = 0;
-    Dma_Set((const void *)&fill, state, 0x85000017, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, state, 0x85000017, REG_DMA3);
     if (mode == 4)
         Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
     else
@@ -321,7 +322,7 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
             object->animation_kind = kind;
             zero = 0;
             object->animation = entry;
-            Dma_Set(&zero, entry, 0x85000004, (volatile u32 *)0x040000d4);
+            Dma_Set(&zero, entry, 0x85000004, REG_DMA3);
             sprite = ResourceObject_Create(id);
             if (sprite != NULL) {
                 actor->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
@@ -689,8 +690,6 @@ extern const s32 Camera_FixedViewMatrix[];
 void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale, u16 angle);
 s32 ArcTan2(s32 x, s32 y);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferAndRun(struct CameraPoint *eye, struct CameraPoint *target);
-void Graphics_PrepareTransferInIwramWork(struct CameraPoint *eye, struct CameraPoint *target);
 void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);
 
 /* Objects inside the view are projected through their tile's layer bits;
@@ -730,7 +729,7 @@ void ObjectSystem_UpdateCamera(void)
     do {
         size = (u32)Render_DecodeFrameCodeSize;
         Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     } while (0);
     sync->count = 0;
     obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
@@ -840,7 +839,7 @@ void ObjectSystem_UpdateCameraFixed(void)
     /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
     do { size = (u32)Render_DecodeFrameCodeSize; } while (0);
     Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
-        (volatile u32 *)0x040000d4);
+        REG_DMA3);
     eye = &camera->eye;
     target = &camera->target;
     if (camera->eye_override != NULL)

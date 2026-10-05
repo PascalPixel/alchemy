@@ -396,8 +396,8 @@ s32 Scene_InitActorRecords(void)
     union SceneActor *work;
     if (gGameState.entrance == 90)
         Engine_GameFlagSet(0x96f);
-    ((s32 *)gEventWork)[112] = 521;
-    ((s32 *)gEventWork)[114] = 24;
+    gEventWork->start_transition = 521;
+    gEventWork->transition_frames = 24;
     ((union SceneActor *)Object_GetById(12))->bytes[89] |= 4;
     ((union SceneActor *)Object_GetById(13))->bytes[89] |= 4;
     work = (union SceneActor *)Object_GetById(20);

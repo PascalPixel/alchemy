@@ -80,7 +80,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
 
     CopyFlashReadRoutineToRam(ramCode);
 
-    waitcnt = (volatile u16 *)0x04000204;
+    waitcnt = &REG_WAITCNT;
     setting = *waitcnt & 0xFFFC;
     chip = gFlash;
     *waitcnt = setting | chip->wait;

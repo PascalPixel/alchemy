@@ -13027,11 +13027,11 @@ msgctxt "MsgWeaponShopWelcome"
 msgid "03254"
 msgstr "Entra, entra!{line_break}Dai un'occhiata alle{line_break}nostre belle armi!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "03255"
 msgstr "Quella è un'ottima{line_break}scelta, ma non hai{line_break}abbastanza denaro.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "03256"
 msgstr "Chi di voi avrà{line_break}quest'arma?{end_now}"
 
@@ -13039,7 +13039,7 @@ msgctxt "MsgPackFull"
 msgid "03257"
 msgstr "Il tuo zaino è pieno,{line_break}{argument_actor_name:1}. A chi vuoi{line_break}dare lo strumento?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "03258"
 msgstr "Non potrai metterlo in{line_break}uso, {argument_actor_name:1}. Va bene?{end_now}"
 
@@ -13075,7 +13075,7 @@ msgctxt "MsgWhatWouldYouLike"
 msgid "03266"
 msgstr "Cosa desideri?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "03267"
 msgstr "Qualcos'altro?{end_now}"
 

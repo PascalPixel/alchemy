@@ -14491,11 +14491,11 @@ msgctxt "MsgWeaponShopWelcome"
 msgid "03620"
 msgstr "おう いらっしゃい!{line_break}ウチの武器を 見てってくれよ。{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "03621"
 msgstr "おや せっかくだけど{line_break}お金がたりないようだぜ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "03622"
 msgstr "だれに わたすんだい?{end_now}"
 
@@ -14503,7 +14503,7 @@ msgctxt "MsgPackFull"
 msgid "03623"
 msgstr "おや {argument_actor_name:155}んは{line_break}もちものが いっぱいだぜ{line_break}だれに わたすんだい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "03624"
 msgstr "{argument_actor_name:155}んは そうびできないけど{line_break}それでも かまわないだろ?{end_now}"
 
@@ -14539,7 +14539,7 @@ msgctxt "MsgWhatWouldYouLike"
 msgid "03632"
 msgstr "どれを かってくれるんだい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "03633"
 msgstr "ほかにも かうかい?{end_now}"
 

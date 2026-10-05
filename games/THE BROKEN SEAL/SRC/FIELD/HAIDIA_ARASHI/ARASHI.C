@@ -814,8 +814,8 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             actor->speed = 0x18000;
             actor->acceleration = 0x18000;
             actor->y.fixed += 0x500000;
-            *(s32 *)((u8 *)actor + 0x3c) = actor->y.fixed;
-            *(s32 *)((u8 *)actor + 0x44) = 0x8000;
+            actor->target_y = actor->y.fixed;
+            actor->bounce = 0x8000;
             Actor_WalkToAndWait(13, 64, 0x2bf);
             Engine_EventWait(40);
             Audio_PlayCue(0x121);
@@ -1402,7 +1402,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         o = (u8 *)Object_GetById(10);
         v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
         tbl = HaidiaArashi_ActorEightScript;
-        *(u16 *)(o + 0x64) = v;
+        ((struct FieldActor *)o)->timer = v;
         Engine_ActorEnableActionCallback(10, (s32)tbl);
     }
     Call3(Engine_ActorSetPosition, 9, 0xC00000, 0x4A50000);
@@ -1415,7 +1415,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         s32 v;
         o = (u8 *)Object_GetById(24);
         v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-        *(u16 *)(o + 0x64) = v;
+        ((struct FieldActor *)o)->timer = v;
         Engine_ActorEnableActionCallback(24, (s32)tbl);
     }
     Call3(Engine_ActorSetPosition, 25, 0xFA0000, 0x4BE0000);
@@ -1426,7 +1426,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         s32 v;
         o = (u8 *)Object_GetById(25);
         v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-        *(u16 *)(o + 0x64) = v;
+        ((struct FieldActor *)o)->timer = v;
         Engine_ActorEnableActionCallback(25, (s32)tbl);
     }
     Call3(Engine_ActorSetPosition, 26, 0xE30000, 0x4A50000);
@@ -1477,22 +1477,22 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         o = (u8 *)Object_GetById(10);
-        *(s32 *)(o + 0x18) = 0x10000;
-        *(s32 *)(o + 0x1C) = 0x10000;
+        ((struct FieldActor *)o)->scale_x = 0x10000;
+        ((struct FieldActor *)o)->scale_y = 0x10000;
     }
     Engine_ActorSetAnimation(24, 1);
     {
         u8 *o;
         o = (u8 *)Object_GetById(24);
-        *(s32 *)(o + 0x18) = 0x10000;
-        *(s32 *)(o + 0x1C) = 0x10000;
+        ((struct FieldActor *)o)->scale_x = 0x10000;
+        ((struct FieldActor *)o)->scale_y = 0x10000;
     }
     Engine_ActorSetAnimation(25, 1);
     {
         u8 *o;
         o = (u8 *)Object_GetById(25);
-        *(s32 *)(o + 0x18) = 0x10000;
-        *(s32 *)(o + 0x1C) = 0x10000;
+        ((struct FieldActor *)o)->scale_x = 0x10000;
+        ((struct FieldActor *)o)->scale_y = 0x10000;
     }
     Engine_ActorStartRepeatedMotion(10, 2);
     Engine_ActorStartRepeatedMotion(9, 2);
@@ -1521,7 +1521,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         o = (u8 *)Object_GetById(23);
-        *(s32 *)(o + 0x28) = 0x20000;
+        ((struct FieldActor *)o)->velocity_y = 0x20000;
     }
     Engine_EventWait(6);
     Engine_ActorSetAnimation(23, 7);
@@ -1541,12 +1541,12 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         o = (u8 *)Object_GetById(25);
-        o[0x5A] &= 0xFE;
+        ((struct FieldActor *)o)->steering_flags &= 0xFE;
     }
     {
         u8 *o;
         o = (u8 *)Object_GetById(26);
-        o[0x5A] &= 0xFE;
+        ((struct FieldActor *)o)->steering_flags &= 0xFE;
     }
     Call3(Engine_ActorSetSpeed, 25, 0x9999, 0x4CCC);
     Call3(Engine_ActorSetSpeed, 26, 0x9999, 0x4CCC);
@@ -1555,12 +1555,12 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         o = (u8 *)Object_GetById(25);
-        o[0x5A] |= 1;
+        ((struct FieldActor *)o)->steering_flags |= 1;
     }
     {
         u8 *o;
         o = (u8 *)Object_GetById(26);
-        o += 0x5A;
+        o = &((struct FieldActor *)o)->steering_flags;
         /* FAKEMATCH: the set bit first, so the or writes into the register that holds it, as the ROM's does. */
         {
             u8 set = 1 | *o;
@@ -1781,7 +1781,7 @@ void HaidiaArashi_RunRiverSearch(void)
      * and 18 through to the follow-up call. */
     record = (s32)Actor_Get(0);
     if (record != 0) {
-        Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(22, ((struct FieldActor *)record)->x.part.pixel, ((struct FieldActor *)record)->z.part.pixel);
     }
     Engine_ActorWaitForMove(22);
     Actor_SetPosition(22, 0, 0);

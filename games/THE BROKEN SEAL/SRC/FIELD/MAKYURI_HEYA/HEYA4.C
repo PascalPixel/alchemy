@@ -19,7 +19,6 @@ TEXT_MESSAGE_ENUM(MsgMakyuriHeyaFountainFlowsWithWater);
 TEXT_MESSAGE_ENUM(MsgMakyuriHeyaFountainSeemsDry);
 TEXT_MESSAGE_ENUM(MsgMakyuriHeyaRobinGot);
 
-
 extern const u8 MakyuriHeya_PushScriptA[];
 extern const u8 MakyuriHeya_PushScriptB[];
 extern const u8 MakyuriHeya_PushScriptC[];
@@ -970,10 +969,6 @@ void FieldScene_RunActor184Sequence(void)
     Engine_EventEnd();
 }
 
-/* The rising sequence goes through Call3, which sets r0 and r1 before
- * negating the third argument, as the game does; a direct call negates it
- * first. */
-
 /* In the first room the leader walks to the stair, turns, and sinks out of
  * sight through the opened floor before the party leaves by exit 8; in the
  * others the leader only rises. */
@@ -1176,10 +1171,7 @@ void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
     } while (i <= 11);
 }
 
-/* The lighthouse rooms' scene start, entry veneer 0: sets the retreat to the
- * fourth room, the blend and the room lights, starts the palette cycle when
- * flag 0x875 is set, then per room and entrance restores the pushed
- * pillars, lifts and cells from the story flags. */
+/* Start the lighthouse room: set the retreat, blend and lights, start the palette cycle when flag 0x875 is set, then restore pillars, lifts and cells for the entrance. */
 s32 Scene_Initialize(void)
 {
     struct FieldActor *actor;

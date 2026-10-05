@@ -450,9 +450,8 @@ scale:
     note->pan_bits &= note->channel_bits;
 }
 
-/* Steps the envelope of every sounding CGB channel once per frame and writes
-   its registers. Every byte test goes through one mask register, as in the
-   ROM, where each test ands with 255 held in a register. */
+/* Step the envelope of every sounding CGB channel once per frame and write
+ * its registers. */
 void Cgb_UpdateChannels(void)
 {
     s32 channel;

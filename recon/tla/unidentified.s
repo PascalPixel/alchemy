@@ -2922,8 +2922,8 @@ Data_081a19a8:
 	.global Data_081a2059
 Data_081a2059:
 	.incbin "baserom.gba", 0x001a2059, 0x00000063
-	.global Data_081a20bc
-Data_081a20bc:
+	.global DisplayScroll_LineTable
+DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x001a20bc, 0x00000344
 	.global Data_081a2400
 Data_081a2400:

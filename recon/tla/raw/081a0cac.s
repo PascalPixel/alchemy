@@ -48,9 +48,9 @@ Func_081a0cac:
 .L_081a0cfc:
 	.4byte 0x0000001f
 .L_081a0d00:
-	.4byte Data_02007504
+	.4byte DisplayScroll_Position
 .L_081a0d04:
-	.4byte Data_02007510
+	.4byte DisplayScroll_Objects
 .L_081a0d08:
 	.4byte 0x40004000
 .L_081a0d0c:
@@ -102,10 +102,10 @@ Func_081a0cac:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_081a0d68:
-	.4byte Data_02007510
+	.4byte DisplayScroll_Objects
 .L_081a0d6c:
 	.4byte 0x84000100
 .L_081a0d70:
 	.4byte gFrameTick
 .L_081a0d74:
-	.4byte Data_02007504
+	.4byte DisplayScroll_Position

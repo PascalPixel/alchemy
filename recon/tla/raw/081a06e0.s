@@ -238,6 +238,6 @@ Func_081a06e0:
 .L_081a08b8:
 	.4byte Data_02007500
 .L_081a08bc:
-	.4byte Data_02007508
+	.4byte DisplayScroll_Busy
 .L_081a08c0:
 	.4byte gRenderOamEnabled

@@ -5314,7 +5314,14 @@ Func_081a0028:
 	.section .rom.001a052c, "ax"
 	.incbin "baserom.gba", 0x001a052c, 0x00000188
 	.section .rom.001a06e0, "ax"
-	.incbin "baserom.gba", 0x001a06e0, 0x00000b94
+	.incbin "baserom.gba", 0x001a06e0, 0x0000030c
+	.section .rom.001a0a5c, "ax"
+	.incbin "baserom.gba", 0x001a0a5c, 0x00000178
+	.global DisplayScroll_DrawMessageLine
+	.type DisplayScroll_DrawMessageLine, %function
+	.thumb_func
+DisplayScroll_DrawMessageLine:
+	.incbin "baserom.gba", 0x001a0bd4, 0x000006a0
 	.section .rom.001a1280, "ax"
 	.incbin "baserom.gba", 0x001a1280, 0x00004d80
 	.global Resource_FarCall00B

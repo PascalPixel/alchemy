@@ -180,11 +180,11 @@ Func_081a0e0c:
 .L_081a0f5c:
 	.4byte 0x00000000
 .L_081a0f60:
-	.4byte Data_081a20bc
+	.4byte DisplayScroll_LineTable
 .L_081a0f64:
-	.4byte Data_02007504
+	.4byte DisplayScroll_Position
 .L_081a0f68:
-	.4byte Data_02007510
+	.4byte DisplayScroll_Objects
 .L_081a0f6c:
 	.4byte 0x06010000
 .L_081a0f70:
@@ -202,9 +202,9 @@ Func_081a0e0c:
 .L_081a0f88:
 	.4byte 0x40004000
 .L_081a0f8c:
-	.4byte Data_0200750c
+	.4byte DisplayScroll_LastPosition
 .L_081a0f90:
-	.4byte Data_02007508
+	.4byte DisplayScroll_Busy
 .L_081a0f94:
 	.4byte Func_081a0cac
 .L_081a0f98:
@@ -214,7 +214,7 @@ Func_081a0e0c:
 	ldr r0, [r7]
 	movs r2, #1
 	adds r6, #1
-	bl Func_081a101c
+	bl DisplayScroll_DrawLine
 	adds r5, #24
 	cmp r6, #31
 	bls .L_081a0f9c

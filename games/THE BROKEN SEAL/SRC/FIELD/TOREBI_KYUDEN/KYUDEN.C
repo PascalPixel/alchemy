@@ -194,7 +194,7 @@ void RunOpeningAuxiliarySequence(s32 a)
     Event_End();
 }
 
-void FieldScene_RunScene3b8_02000264(s32 a0)
+void TorebiKyuden_OfferRest(s32 a0)
 {
     u32 i;
     s32 record;
@@ -288,7 +288,7 @@ void RunMiddleAuxiliarySequence(s32 a)
     Event_End();
 }
 
-void FieldScene_RunScene3b8_0200049c(s32 unused0, s32 a1)
+void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
 {
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiEvenIfEscapedBabiPalace);
@@ -2128,7 +2128,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_End();
 }
 
-void FieldScene_RunScene3b8_02003d40(void)
+void TorebiKyuden_LeaveThroughDoor(void)
 {
     struct EventWork *work;
 

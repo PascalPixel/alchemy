@@ -726,10 +726,10 @@ gTorebiKyudenEventsOther:
 	.4byte 0x00000005
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0008
 	.4byte 0x00000008
@@ -753,7 +753,7 @@ gTorebiKyudenEventsOther:
 	.4byte 0x00000010
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -789,13 +789,13 @@ gTorebiKyudenEventsOther:
 	.4byte 0x0000001d
 	.4byte 0x0000c602
 	.4byte 0xffff001e
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff001f
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0020
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0021
 	.4byte 0x00000021
@@ -822,7 +822,7 @@ gTorebiKyudenEventsOther:
 	.4byte 0x0000002b
 	.4byte 0x0000c602
 	.4byte 0xffff002c
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff002d
 	.4byte 0x0000002d
@@ -906,7 +906,7 @@ gTorebiKyudenEventsOther:
 	.4byte MsgTorebiKyudenActorIsNotPermittedToLeave
 	.4byte 0x00008d15
 	.4byte 0xffff0006
-	.4byte FieldScene_RunScene3b8_0200049c
+	.4byte TorebiKyuden_ReactToPalaceEscape
 	.4byte 0x00000003
 	.4byte 0x19690046
 	.4byte FieldScene_RunScene3b8SequenceA
@@ -963,10 +963,10 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x00000005
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0008
 	.4byte 0x00000008
@@ -990,7 +990,7 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x00000010
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -1026,13 +1026,13 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x0000001d
 	.4byte 0x0000c602
 	.4byte 0xffff001e
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff001f
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0020
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0021
 	.4byte 0x00000021
@@ -1059,7 +1059,7 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x0000002b
 	.4byte 0x0000c602
 	.4byte 0xffff002c
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff002d
 	.4byte 0x0000002d
@@ -1077,7 +1077,7 @@ gTorebiKyudenEventsColosso:
 	.4byte MsgTorebiKyudenTheFinalsAreAllThatsLeft
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte FieldScene_RunScene3b8_02000264
+	.4byte TorebiKyuden_OfferRest
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte MsgTorebiKyudenIHopeYoullAllDoWell
@@ -1161,10 +1161,10 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x00000005
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0008
 	.4byte 0x00000008
@@ -1188,7 +1188,7 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x00000010
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -1224,13 +1224,13 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x0000001d
 	.4byte 0x0000c602
 	.4byte 0xffff001e
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff001f
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0020
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff0021
 	.4byte 0x00000021
@@ -1257,7 +1257,7 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x0000002b
 	.4byte 0x0000c602
 	.4byte 0xffff002c
-	.4byte FieldScene_RunScene3b8_02003d40
+	.4byte TorebiKyuden_LeaveThroughDoor
 	.4byte 0x00000001
 	.4byte 0xffff002d
 	.4byte 0x0000002d

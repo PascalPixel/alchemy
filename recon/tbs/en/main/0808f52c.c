@@ -1,4 +1,11 @@
 #include "TYPES.H"
+#include "GAME_STATE.H"
+#include "IWRAM_CALL.H"
+#include "GLOBAL_CELLS.H"
+#include "IO_REG.H"
+#include "FRAME.H"
+#include "DISPTRAN.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /*
  * Per-frame scanline table builder for the screen transition effect that
@@ -23,15 +30,19 @@
  *   - the roles of the +0x539..+0x53e control bytes beyond what the code
  *     shows (a step counter, a step limit, a follow-on mode and a variant
  *     selector),
- *   - the identity of the two IWRAM routines called through the compiler's
- *     __call_via_rN veneer bank at 0x080072e4.  The argument shapes and the
- *     way their results are used make one an integer ratio and the other an
- *     integer square root, but neither has been read,
  *   - the three ROM tables, which are only indexed here,
  *   - the third, discarded read of DMA0CNT_H in the teardown path.  The
  *     reference loads DMA0CNT_H once more after the second read-modify-write
  *     and drops the value; the bare volatile read below reproduces it, but
  *     the statement it came from is a guess.
+ *
+ * 2026-10-05 deep finisher 12: no address constants left. The two IWRAM
+ * routines are IWRAM_CALL.H's fixed entries Iwram_SignedDivide and
+ * Iwram_Sqrt, the work cells are gMapWork[0] and [23] (GLOBAL_CELLS.H; the
+ * RAM_BUFFER.H constants Ram_MapWork and Ram_DisplayWork lose the reference's
+ * ldr r3, [r3, #92] and score 948), the frame word is gFrameCount, the two
+ * callbacks are removed by name and the game state cell is selected_actor.
+ * alchemy diff 939 (885 listing instructions, 870 here), unchanged.
  *
  * Not exact: 2276 of 2316 bytes.  One counter for every outer loop puts it in
  * r8 as the reference has it, and the mode 1 record is two halfwords and
@@ -41,33 +52,16 @@
  */
 
 /* Resolved project symbols. */
-void Scheduler_RemoveCallback(void *callback);  /* Scheduler_RemoveCallback */
 void UiWindow_FillFromSceneFar(void *lines);
 u32 Random16(void);             /* Random16 */
 s32 __divsi3(s32 num, s32 den); /* __divsi3 */
 void *ObjectTable_Get(s32 id);         /* ObjectTable_Get */
 
-struct BattleSelectionWork {
-    u8 unk_000[500];
-    s32 object_id;
-};
-extern struct BattleSelectionWork gGameState;
-extern u8 Data_03001e70_a[]; /* IWRAM cell table; [0] and [23] are used here */
 extern u8 Data_0809e8ac[];  /* 33 unsigned radii, indexed by the phase step */
 extern s8 Data_0809e8ce[];  /* 32 signed widths, indexed by a running counter */
 extern u8 Data_0809f840[];  /* 32 records of 28 bytes, see TransitionSpan */
 
-/* Called through the __call_via_rN veneer bank, so the target address is a
-   plain constant in the compiler's eyes rather than a linked symbol. */
-typedef s32 (*RatioProc)(s32 num, s32 den);
-typedef s32 (*SqrtProc)(s32 value);
 
-#define Runtime_Ratio ((RatioProc)0x03000380)
-#define Runtime_Sqrt ((SqrtProc)0x030001d8)
-
-#define REG_DISPCNT (*(volatile u16 *)0x04000000)
-#define REG_DMA0CNT_H (*(volatile u16 *)0x040000ba)
-#define FrameCounter (*(volatile u32 *)0x03001e40)
 
 /* One span of the mode 1 table: either `cnt` copies of `val`, or, when `val`
    is zero, `cnt` scanlines interpolating x0->x1 and y0->y1. */
@@ -139,8 +133,8 @@ void DisplayTransition_UpdateScanlineTable(void)
     s32 y0;
     u32 t;
 
-    sys = ((u8 **)Data_03001e70_a)[0];
-    p = (struct DisplayTransitionWork *)((u8 **)Data_03001e70_a)[23];
+    sys = (u8 *)gMapWork[0];
+    p = (struct DisplayTransitionWork *)gMapWork[23];
 
     if (p->field_53c != 0) {
         if (p->field_53d >= p->field_53c) {
@@ -151,8 +145,8 @@ void DisplayTransition_UpdateScanlineTable(void)
                 } else {
                     REG_DISPCNT &= 0x9fff;
                 }
-                Scheduler_RemoveCallback((void *)0x0808f499);
-                Scheduler_RemoveCallback((void *)0x0808f52d);
+                Scheduler_RemoveCallback((u32)BattleFx_StartWindowHBlankDma);
+                Scheduler_RemoveCallback((u32)DisplayTransition_UpdateScanlineTable);
                 REG_DMA0CNT_H &= 0xc5ff;
                 REG_DMA0CNT_H &= 0x7fff;
                 REG_DMA0CNT_H;
@@ -162,7 +156,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         } else {
             p->field_53d = p->field_53d + 1;
             p->phase = p->field_53a
-                + Runtime_Ratio(p->field_53d * (p->field_53b - p->field_53a),
+                + Iwram_SignedDivide(p->field_53d * (p->field_53b - p->field_53a),
                                 p->field_53c);
         }
     }
@@ -269,7 +263,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         rr = (r * r) << 16;
         for (i = 0; i < 160; i++) {
             d = i - 80;
-            h = Runtime_Sqrt(rr - ((d * d) << 16)) >> 8;
+            h = Iwram_Sqrt(rr - ((d * d) << 16)) >> 8;
             lo = 120 - h;
             hi = h + 120;
             if (lo < 0) {
@@ -314,10 +308,10 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)ObjectTable_Get(gGameState.object_id);
+        obj = (s32 *)ObjectTable_Get(gGameState.selected_actor);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 16;
-        FrameCounter;
+        gFrameCount;
         *dst++ = p->field_536;
         *dst++ = p->field_534;
         v = p->phase;
@@ -326,14 +320,14 @@ void DisplayTransition_UpdateScanlineTable(void)
         } else {
             r = v & 31;
         }
-        if (FrameCounter & 1) {
+        if (gFrameCount & 1) {
             r = 0;
         }
         r = r * 5;
         rr = (r * r) << 16;
         for (i = 0; i < 160; i++) {
             d = i - cy;
-            h = Runtime_Sqrt(rr - ((d * d * 3) << 15)) >> 8;
+            h = Iwram_Sqrt(rr - ((d * d * 3) << 15)) >> 8;
             lo = cx - h;
             hi = cx + h;
             if (lo < 0) {
@@ -361,7 +355,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         ay = cam[1] & 0xffff0000;
         cx = (p->field_52c - ax) / 0x10000;
         cy = (p->field_530 - ay) / 0x10000 - 16;
-        g = FrameCounter - cy * 2;
+        g = gFrameCount - cy * 2;
         *dst++ = p->field_534;
         *dst++ = p->field_536;
         v = p->phase;
@@ -374,7 +368,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         rr = (r * r) << 16;
         for (i = 0; i < 160; i++) {
             d = i - cy;
-            h = Runtime_Sqrt(rr - ((d * d * 3) << 15)) >> 8;
+            h = Iwram_Sqrt(rr - ((d * d * 3) << 15)) >> 8;
             lo = cx - h;
             hi = cx + h;
             if (lo < hi) {
@@ -410,10 +404,10 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)ObjectTable_Get(gGameState.object_id);
+        obj = (s32 *)ObjectTable_Get(gGameState.selected_actor);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 16;
-        FrameCounter;
+        gFrameCount;
         *dst++ = p->field_534;
         *dst++ = p->field_536;
         v = p->phase;
@@ -426,7 +420,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         rr = (r * r) << 16;
         for (i = 0; i < 160; i++) {
             d = i - cy;
-            h = Runtime_Sqrt(rr - ((d * d * 3) << 15)) >> 8;
+            h = Iwram_Sqrt(rr - ((d * d * 3) << 15)) >> 8;
             lo = cx - h;
             hi = cx + h;
             if (lo < 0) {
@@ -451,10 +445,10 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)ObjectTable_Get(gGameState.object_id);
+        obj = (s32 *)ObjectTable_Get(gGameState.selected_actor);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 8;
-        FrameCounter;
+        gFrameCount;
         *dst++ = p->field_534;
         *dst++ = p->field_536;
         v = p->phase;
@@ -467,7 +461,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         rr = (r * r) << 16;
         for (i = 0; i < 160; i++) {
             d = i - cy;
-            h = Runtime_Sqrt(rr - ((d * d * 3) << 14)) >> 8;
+            h = Iwram_Sqrt(rr - ((d * d * 3) << 14)) >> 8;
             lo = cx - h;
             hi = cx + h;
             if (lo < 0) {

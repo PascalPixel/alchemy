@@ -5015,13 +5015,10 @@ Func_0811bd50:
 	.thumb_func
 Camera_InitDefaultTransform:
 	.incbin "baserom.gba", 0x0011bdf4, 0x00000060
-	.section .rom.0011bede, "ax"
-	.incbin "baserom.gba", 0x0011bede, 0x00000002
-	.global BattleMotion_SetupEscapeObject
-	.type BattleMotion_SetupEscapeObject, %function
-	.thumb_func
-BattleMotion_SetupEscapeObject:
-	.incbin "baserom.gba", 0x0011bee0, 0x000000d8
+	.section .rom.0011bf2e, "ax"
+	.incbin "baserom.gba", 0x0011bf2e, 0x00000002
+	.section .rom.0011bf30, "ax"
+	.incbin "baserom.gba", 0x0011bf30, 0x00000088
 	.section .rom.0011bfe8, "ax"
 	.incbin "baserom.gba", 0x0011bfe8, 0x000000a4
 	.section .rom.0011c08c, "ax"

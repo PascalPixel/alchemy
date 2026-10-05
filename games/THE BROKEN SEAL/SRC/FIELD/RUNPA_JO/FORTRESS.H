@@ -45,31 +45,31 @@ s32 GetEmptySceneData(void);
 
 void ConfigureSceneActor12(void);
 
-void RunSceneObjectSetup(void);
+void EV70_INIT(void);
 
-void FieldScene_StartActorTwelveTransition(void);
+void EV50_START(void);
 
-void FieldScene_UpdateActorTwelveTransition(void);
+void EV12_MOVE(void);
 
 void PlaceActorTwelveAndFinishScene(void);
 
 void PlaceSceneObjectPairFromTableA(s32 table_index);
 
-void FieldScene_UpdateObjectPairA(void);
+void EV40_A(void);
 
-void FieldScene_UpdateObjectPairB(void);
+void EV40_B(void);
 
 void PlaceSceneObjectPairFromTableB(s32 table_index);
 
-void FieldScene_UpdateTableBObjectPair(void);
+void EV40_D(void);
 
 void PlaceSceneObjectPairFromTableC(s32 table_index);
 
-void FieldScene_UpdateObjectPairC(void);
+void EV40_C(void);
 
-void CellDoor_Touch(void);
+void EV99_ROUYA(void);
 
-void LockedDoor_Touch(void);
+void EV98_TOBIRA(void);
 
 void Actor8_Interact(void);
 
@@ -89,31 +89,31 @@ void NoOpSceneCallbackC(void);
 
 void NoOpSceneCallbackD(void);
 
-void CellKey_PickUp(void);
+void EV08_KAGI(void);
 
 s32 IsPlayerInAccidentTriggerArea(void);
 
 void FieldScene_UpdateActorPairInteraction(void);
 
-void ConfigureSceneActor9(void);
+void EV91_SET(void);
 
 s32 AreSceneActorsInPassingLane(void);
 
 void FieldScene_UpdateActorSeventeenInteraction(void);
 
-void ActivateSceneActor17(void);
+void EV92_ON(void);
 
 s32 IsPlayerInSecondaryTriggerArea(void);
 
 void FieldScene_UpdateActorEighteenInteraction(void);
 
-void ActivateSceneActor18(void);
+void EV93_ON(void);
 
 s32 IsPlayerOutsideSceneRectangle(void);
 
 void FieldScene_RunScene3bfSequenceA(void);
 
-void RunActor17SceneStep(void);
+void EV94_MAIN(void);
 
 void TriggerSceneStage95FromActor12(void);
 
@@ -149,19 +149,19 @@ void RunpaJo_ActOutGuardShiftDialogue(s32 a0);
 
 void RunActorScriptedSequenceD(s32 actor_id);
 
-void InspectOrdinaryObject(void);
+void EV33_SHIRABE(void);
 
-void InspectEmptyChest(void);
+void EV30_TAKARABAKO(void);
 
-void RunpaJo_RunGuardChallenge(void);
+void EV31_BANPEI(void);
 
 void FieldScene_RunSequenceTail(void);
 
-void InspectEmptySceneObject(void);
+void EV32_KARA(void);
 
-void RunActor12InteractionSequence(void);
+void EV50_MAIN(void);
 
-void RunActors13And21InteractionSequence(void);
+void EV51_MAIN(void);
 
 void ConfigureInteractionRegionA(void);
 
@@ -169,19 +169,19 @@ void ConfigureInteractionRegionB(void);
 
 void ConfigureInteractionRegionC(void);
 
-void InspectVillageWell(void);
+void EV52_IDO(void);
 
-void RunSecondaryMapInteraction(void);
+void EV51_SUB(void);
 
-void ConfigurePrimaryInteractionRegions(void);
+void EV00_HANTEI1(void);
 
-void ConfigureSecondaryInteractionRegions(void);
+void EV00_HANTEI2(void);
 
-void InspectWardrobe(void);
+void EV08_TANSU(void);
 
-void InspectFirewood(void);
+void EV09_MAKI(void);
 
-void InspectBooks(void);
+void EV10_HON(void);
 
 void NoOpInteractionCallback(void);
 
@@ -193,41 +193,41 @@ void RunpaJo_RevealMonster(void);
 
 void RunpaJo_PositionPartyForMonster(void);
 
-void PlayStoryScene(void);
+void EV20_DEMO(void);
 
 void FieldScene_RunMainScriptSequence(void);
 
-void FieldScene_SelectActorTwentyOneMessage(void);
+void EV21_MES(void);
 
-void FieldScene_RunActorTwentyOneSequence(void);
+void EV21_MAIN(void);
 
-void FieldScene_RunDonpaSleepingSequence(void);
+void EV25_DONPA(void);
 
-void SelectActor25SceneVariant(void);
+void EV25_SEL(void);
 
-void SelectActor24SceneVariant(void);
+void EV24_SEL(void);
 
-void FieldScene_RunSupplementalSequenceTwo(void);
+void EV24_MAIN(void);
 
-void ConfigureSceneActor26(void);
+void EV26_SET(void);
 
-void ConfigureSceneActor14(void);
+void EV14_SET(void);
 
-void ConfigureSceneActor13(void);
+void EV13_SET(void);
 
-void ConfigureSceneActor12Variant(void);
+void EV12_SET(void);
 
-void ConfigureSceneActor18(void);
+void EV18_SET(void);
 
-void RunActor20SceneSequence(void);
+void EV20_MAIN(void);
 
-void FinishActor20SceneSequence(void);
+void EV20_END(void);
 
 void NoOpActorCallback(void);
 
-void ConfigureActor13Interaction(void);
+void EV17_TALK(void);
 
-void ConfigureActor13SceneResource(void);
+void EV17_LOAD(void);
 
 #include "OBJECT_RUNTIME.H"
 

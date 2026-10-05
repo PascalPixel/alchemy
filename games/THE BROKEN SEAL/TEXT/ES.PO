@@ -2539,7 +2539,7 @@ msgctxt "message"
 msgid "00632"
 msgstr "{article_class:2}Anillo Clerical"
 
-msgctxt "message"
+msgctxt "MsgItemPluralName"
 msgid "00633"
 msgstr "???"
 

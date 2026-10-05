@@ -106,7 +106,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTable98a0(void)
+u8 *KareiTorebi_GetExits(void)
 {
     return KareiTorebi_SceneTable;
 }
@@ -499,7 +499,7 @@ s32 Scene_Initialize(void)
             FieldScene_ConfigureFlaggedActors();
         } else {
             if (gGameState.scene == (s32)&SceneId_KareiTorebi2) {
-                SceneState_SetRuntimeWord448To521AndSend303();
+                KareiTorebi_PrepareWindowTransition();
             }
         }
     }
@@ -577,7 +577,7 @@ void FieldScene_ConfigureFlaggedActors(void)
     }
 }
 
-void SceneState_SetRuntimeWord448To521AndSend303(void)
+void KareiTorebi_PrepareWindowTransition(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_GameFlagClear(0x12F);

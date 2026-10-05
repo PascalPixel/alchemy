@@ -9,7 +9,7 @@
 	.balign 4
 	overlay_veneer Scene_Initialize
 	overlay_veneer Scene_GetEntrances
-	overlay_veneer SceneData_GetTable98a0
+	overlay_veneer KareiTorebi_GetExits
 	overlay_veneer Scene_GetPlacements
 	overlay_veneer Scene_GetEvents
 	overlay_veneer SceneData_ReturnZero

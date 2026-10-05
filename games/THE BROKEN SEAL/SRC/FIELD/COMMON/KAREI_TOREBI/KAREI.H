@@ -54,7 +54,7 @@ s32 SceneData_ReturnZero(void);
 
 /* The scene table in the overlay's data. */
 extern u8 KareiTorebi_SceneTable[];
-u8 *SceneData_GetTable98a0(void);
+u8 *KareiTorebi_GetExits(void);
 void KareiTorebi_MoveGuardAside(void);
 void KareiTorebi_AskGoToTolbi(void);
 void KareiTorebi_AskCarryMessage(void);
@@ -67,7 +67,7 @@ void KareiTorebi_TalkSeasickTourists(void);
 void KareiTorebi_DeliverParentsMessage(void);
 s32 FieldScene_RunScene3ae_0200086c(void);
 void KareiTorebi_PreparePort(void);
-void SceneState_SetRuntimeWord448To521AndSend303(void);
+void KareiTorebi_PrepareWindowTransition(void);
 void FieldScene_PlaceSlots14And15(void);
 void SceneActor_SetMode3AndFlagBit1(s32 no);
 void FieldScene_RunScene3aeSequenceA(void);

@@ -1,11 +1,11 @@
 use crate::build_rom::c_steps;
-use crate::compiler::routing::root;
+use crate::compiler::routing::{family_for_source, root, CompilerFamily};
 use crate::process::run as command;
 use crate::targets::{decomp_target, DecompTarget};
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--show]
-       alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--edition EDITION] [--show]
+const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm] [--show]
+       alchemy diff OVERLAY_DRAFT.c [--overlay resource_XXX] [--symbol NAME] [--edition EDITION] [--arm] [--show]
 Compiles DRAFT.c for --edition (default: the game's English edition) with
 the build's own compiler and options, then compares its instructions with
 listing objects out/EDITION/obj/recon/<game>/raw/ADDRESS.o (build the
@@ -17,7 +17,13 @@ the draft. "differ 0" means the code matches instruction for instruction.
 An overlay draft (a path under overlays/) compares with the function of
 the same name, or --symbol, in out/EDITION/overlays/OVERLAY_overlay.o;
 the overlay defaults from the path (resource_XXX). Main-image scaffolds
-without a separate listing object are not supported."#;
+without a separate listing object are not supported.
+--arm is an explicit analysis-only study with the pinned game compiler:
+replace -mthumb with stock -marm, retaining every other game option. This
+is not an admitted build route and earns no credit, even at differ 0.
+Study output stays in obj/drafts/arm-study; no build routing is changed."#;
+
+const ARM_STUDY_NOTICE: &str = "ARM study only: pinned game compiler, -mthumb replaced by -marm; all other game options unchanged.\nNot an admitted build route; this comparison earns no credit.";
 
 struct Options {
     draft: PathBuf,
@@ -25,6 +31,7 @@ struct Options {
     game: &'static str,
     target: DecompTarget,
     show: bool,
+    arm_study: bool,
     overlay: Option<String>,
     symbol: Option<String>,
 }
@@ -35,12 +42,14 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut game = None;
     let mut target = None;
     let mut show = false;
+    let mut arm_study = false;
     let mut overlay = None;
     let mut symbol = None;
     let mut i = 0;
     while i < arguments.len() {
         match arguments[i].as_str() {
             "--show" => show = true,
+            "--arm" => arm_study = true,
             "--overlay" => {
                 i += 1;
                 overlay = Some(arguments.get(i).ok_or_else(|| USAGE.to_string())?.clone());
@@ -62,6 +71,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
                 }
             }
             "-h" | "--help" => return Err(USAGE.into()),
+            value if value.starts_with('-') => return Err(format!("unknown diff option: {value}\n{USAGE}")),
             value if draft.is_none() => draft = Some(PathBuf::from(value)),
             value if addresses.is_empty() => {
                 addresses = value.split(',').map(str::to_string).collect()
@@ -96,7 +106,57 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         "tbs"
     });
     let target = target.unwrap_or(decomp_target(Some(&format!("{game}-en")))?);
-    Ok(Options { draft, addresses, game, target, show, overlay, symbol })
+    Ok(Options { draft, addresses, game, target, show, arm_study, overlay, symbol })
+}
+
+fn draft_object(output: &Path, stem: &str, arm_study: bool) -> PathBuf {
+    let directory = if arm_study { "obj/drafts/arm-study" } else { "obj/drafts" };
+    output.join(directory).join(format!("{stem}.o"))
+}
+
+fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm_study: bool) -> Result<Vec<Vec<String>>, String> {
+    if arm_study && family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
+        return Err("--arm studies the pinned game compiler only; library compiler routes are unchanged".into());
+    }
+    let mut steps = c_steps(target, draft, object)?;
+    steps.pop();
+    if arm_study {
+        // This command-local experiment never changes the production plan or routing.
+        if steps.len() != 1 || steps[0].iter().filter(|flag| *flag == "-mthumb").count() != 1 {
+            return Err("--arm expected one canonical game compiler command with -mthumb".into());
+        }
+        for flag in &mut steps[0] {
+            if flag == "-mthumb" {
+                *flag = "-marm".into();
+            }
+        }
+    }
+    let mut assemble = vec!["arm-none-eabi-as".to_string(), "-mcpu=arm7tdmi".into()];
+    if target.compiler == crate::compiler::routing::CompilerTarget::Tbs {
+        assemble.push("-mthumb-interwork".into());
+    }
+    assemble.extend([
+        "-o".into(), object.to_string_lossy().into_owned(),
+        object.with_extension("s").to_string_lossy().into_owned(),
+    ]);
+    steps.push(assemble);
+    Ok(steps)
+}
+
+fn study_assembly(step: &[String], root: &Path) -> Result<String, String> {
+    // The assembler may succeed after diagnosing invalid ARM register overlap.
+    // Keep those diagnostics visible in this study; compiler commands still use
+    // the normal address-stable runner above.
+    let output = std::process::Command::new(&step[0])
+        .args(&step[1..])
+        .current_dir(root)
+        .output()
+        .map_err(|error| format!("ARM study assembler: {error}"))?;
+    let diagnostics = String::from_utf8_lossy(&output.stderr).into_owned();
+    if !output.status.success() {
+        return Err(format!("ARM study assembler failed: {}", diagnostics.trim()));
+    }
+    Ok(diagnostics)
 }
 
 pub(crate) fn normalize(objdump: &str) -> Vec<String> {
@@ -210,6 +270,9 @@ fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
     let options = parse(arguments)?;
+    if options.arm_study {
+        println!("{ARM_STUDY_NOTICE}");
+    }
     let root = root();
     let target = options.target;
     let stem = options
@@ -217,26 +280,20 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         .file_stem()
         .map(|s| s.to_string_lossy().into_owned())
         .unwrap_or_default();
-    let object = root
-        .join(target.output_dir)
-        .join("obj/drafts")
-        .join(format!("{stem}.o"));
+    let object = draft_object(&root.join(target.output_dir), &stem, options.arm_study);
     std::fs::create_dir_all(object.parent().unwrap()).map_err(|e| e.to_string())?;
     let draft = std::fs::canonicalize(&options.draft)
         .map_err(|e| format!("{}: {e}", options.draft.display()))?;
-    let mut steps = c_steps(target, &draft, &object)?;
-    steps.pop();
+    let mut steps = draft_steps(target, &draft, &object, options.arm_study)?;
+    let assemble = steps.pop().expect("draft plan ends with assembly");
     for step in steps {
         command(&step, root)?;
     }
-    let assembly = object.with_extension("s").to_string_lossy().into_owned();
-    let object_text = object.to_string_lossy().into_owned();
-    let mut assemble = vec!["arm-none-eabi-as", "-mcpu=arm7tdmi"];
-    if options.game == "tbs" {
-        assemble.push("-mthumb-interwork");
+    if options.arm_study {
+        eprint!("{}", study_assembly(&assemble, root)?);
+    } else {
+        command(&assemble, root)?;
     }
-    assemble.extend(["-o", &object_text, &assembly]);
-    command(&assemble, root)?;
     let mut listing = Vec::new();
     let mut draft_symbol = None;
     if let Some(overlay) = &options.overlay {
@@ -295,6 +352,102 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn arm_study_is_explicit_and_does_not_accept_other_codegen_options() {
+        let args = |items: &[&str]| items.iter().map(|item| item.to_string()).collect::<Vec<_>>();
+        let default = parse(&args(&["recon/tbs/en/main/0800a0f8.c"])).unwrap();
+        assert!(!default.arm_study);
+        let study = parse(&args(&["0800a0f8.c", "--arm", "--edition", "tbs-ja"])).unwrap();
+        assert!(study.arm_study);
+        assert_eq!(study.target.id.as_str(), "tbs-ja");
+        for flag in ["-O1", "-fomit-frame-pointer", "-marm", "--cflags"] {
+            assert!(parse(&args(&["0800a0f8.c", "--arm", flag])).is_err(), "{flag}");
+        }
+        let output = Path::new("out/tbs-ja");
+        assert_eq!(draft_object(output, "0800a0f8", false), output.join("obj/drafts/0800a0f8.o"));
+        assert_eq!(draft_object(output, "0800a0f8", true), output.join("obj/drafts/arm-study/0800a0f8.o"));
+        assert!(ARM_STUDY_NOTICE.contains("Not an admitted build route"));
+    }
+
+    #[test]
+    fn arm_study_changes_only_the_game_instruction_set() {
+        for edition in ["tbs-ja", "tbs-en", "tla-ja", "tla-it"] {
+            let target = decomp_target(Some(edition)).unwrap();
+            let source = root().join("recon").join(&edition[..3]).join("en/main/08000000.c");
+            let object = root().join(target.output_dir).join("obj/drafts/test.o");
+            let production = c_steps(target, &source, &object).unwrap();
+            let default = draft_steps(target, &source, &object, false).unwrap();
+            assert_eq!(default[..default.len() - 1], production[..production.len() - 1]);
+            let study = draft_steps(target, &source, &object, true).unwrap();
+            let mut expected = default.clone();
+            for flag in &mut expected[0] {
+                if flag == "-mthumb" {
+                    *flag = "-marm".into();
+                }
+            }
+            assert_eq!(study, expected);
+            assert_eq!(c_steps(target, &source, &object).unwrap(), production);
+        }
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        let library = root().join("games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C");
+        assert!(draft_steps(target, &library, Path::new("out/tbs-en/obj/drafts/test.o"), true)
+            .unwrap_err().contains("library compiler routes are unchanged"));
+    }
+
+    #[test]
+    fn study_compiles_arm_while_default_and_production_stay_thumb() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("study.c");
+        std::fs::write(&source, "\
+#if !defined(TBS_EDITION_JA) && !defined(TLA_EDITION_IT)
+#error wrong edition
+#endif
+#ifdef __thumb__
+int study(void) { return 23; }
+#else
+int study(void) { return 17; }
+#endif
+").unwrap();
+        for edition in ["tbs-ja", "tla-it"] {
+            let target = decomp_target(Some(edition)).unwrap();
+            for arm in [true, false] {
+                let object = draft_object(&work.path().join(edition), "study", arm);
+                std::fs::create_dir_all(object.parent().unwrap()).unwrap();
+                for step in draft_steps(target, &source, &object, arm).unwrap() {
+                    command(&step, root()).unwrap();
+                }
+                let elf = crate::elf::Elf::parse(&std::fs::read(&object).unwrap()).unwrap();
+                let mode = if arm { "$a" } else { "$t" };
+                assert!(elf.symbols.iter().any(|symbol| symbol.name == mode), "{edition}: {mode}");
+                let instructions = disassemble(&object, None).unwrap();
+                assert!(instructions.iter().any(|line| line.ends_with(if arm { "#17" } else { "#23" })), "{instructions:?}");
+                let production = c_steps(target, &source, &object).unwrap();
+                assert!(production[0].iter().any(|flag| flag == "-mthumb"));
+                assert!(!production[0].iter().any(|flag| flag == "-marm"));
+            }
+        }
+    }
+
+    #[test]
+    fn arm_study_keeps_successful_assembler_warnings_and_rejects_errors() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let assembly = work.path().join("overlap.s");
+        let object = work.path().join("overlap.o");
+        let step = vec![
+            "arm-none-eabi-as".into(), "-mcpu=arm7tdmi".into(),
+            "-o".into(), object.to_string_lossy().into_owned(),
+            assembly.to_string_lossy().into_owned(),
+        ];
+        std::fs::write(&assembly, ".arm\nsmull r0, r2, r0, r3\n").unwrap();
+        let diagnostics = study_assembly(&step, root()).unwrap();
+        assert!(object.exists());
+        assert!(diagnostics.contains("rdhi, rdlo and rm must all be different"), "{diagnostics}");
+        std::fs::write(&assembly, ".arm\nnot_an_instruction\n").unwrap();
+        assert!(study_assembly(&step, root()).unwrap_err().contains("ARM study assembler failed"));
+    }
 
     #[test]
     fn editions_select_the_existing_build_target() {

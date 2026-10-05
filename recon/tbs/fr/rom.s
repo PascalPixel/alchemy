@@ -194,16 +194,6 @@ Tile_BuildMetatiles:
 	.incbin "baserom.gba", 0x000148c4, 0x00000214
 	.global Tile_BuildMetatilesEnd
 Tile_BuildMetatilesEnd:
-	.section .rom.00016f5e, "ax"
-	.incbin "baserom.gba", 0x00016f5e, 0x00000002
-	.section .rom.00016f60, "ax"
-	.global Func_08018038
-	.global UiText_BuildRenderEntries
-	.type UiText_BuildRenderEntries, %function
-	.thumb_func
-Func_08018038:
-UiText_BuildRenderEntries:
-	.incbin "baserom.gba", 0x00016f60, 0x0000064c
 	.section .rom.00020e0e, "ax"
 	.incbin "baserom.gba", 0x00020e0e, 0x000008fe
 	.section .rom.0002211c, "ax"
@@ -278,7 +268,10 @@ UiText_SecondGlyphs:
 	.incbin "baserom.gba", 0x00032ecc, 0x0000002c
 	.global Data_08033e40
 Data_08033e40:
-	.incbin "baserom.gba", 0x00032ef8, 0x00000026
+	.incbin "baserom.gba", 0x00032ef8, 0x00000020
+	.global UiText_ItemPronoun
+UiText_ItemPronoun:
+	.incbin "baserom.gba", 0x00032f18, 0x00000006
 	.global UiSprite_CursorBobOffsets
 UiSprite_CursorBobOffsets:
 	.incbin "baserom.gba", 0x00032f1e, 0x00000050

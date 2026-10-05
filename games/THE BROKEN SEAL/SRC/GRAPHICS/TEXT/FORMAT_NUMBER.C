@@ -258,7 +258,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
 }
 #endif
 
-#if defined(TBS_EDITION_EN)
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_FR)
 #include "RUNTIME_MEM.H"
 #include "TEXT_READER.H"
 #include "TYPES.H"
@@ -282,20 +282,33 @@ extern char MsgItemName;
 extern char MsgAbilityName;
 extern char MsgClassName;
 extern char MsgDebugEntryName;
+#if defined(TBS_EDITION_FR)
+extern char MsgItemPluralName;
+extern s8 UiText_ItemPronoun[];
+#endif
 
 s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     u32 ch = 0;
+#if defined(TBS_EDITION_EN)
     s32 head = 1;
+#endif
     s32 quote = 0;
     u32 start = work->count;
     u32 cnt = 0;
     s32 plural = 0;
     s32 running = 1;
+#if defined(TBS_EDITION_EN)
     u32 pos = start;
     u32 prev;
     s32 suffix = 0;
+#else
+    s32 suffix = 2;
+    s8 *word;
+    s8 c8;
+    u32 pos = start;
+#endif
     u16 *entry = work->entries;
     s32 overflow = 0;
     s32 (*decode)(struct TextReader *);
@@ -334,7 +347,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
         UiText_LookupMessage(&st, script);
 
         do {
+#if defined(TBS_EDITION_EN)
             prev = ch;
+#endif
             ch = (u32)decode(&st);
             if (ch > 255)
                 ch = 64;
@@ -390,12 +405,16 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     }
                 }
             } else {
-                if (work->spacing_before != 0 && head == 0 &&
-                    ch != 222 && ch != 223) {
+                if (work->spacing_before != 0
+#if defined(TBS_EDITION_EN)
+                    && head == 0 && ch != 222 && ch != 223
+#endif
+                ) {
                     entry[pos] = ENTRY_NARROW_GAP;
                     pos = (pos + 1) & RENDER_ENTRY_MASK;
                 }
 
+#if defined(TBS_EDITION_EN)
                 if (work->spacing_after != 0 && head == 0 &&
                     ch != 222 && ch != 223 &&
                     prev <= 256 && prev > 127 &&
@@ -405,6 +424,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     pos = (pos + 1) & RENDER_ENTRY_MASK;
                 }
 
+#endif
                 if (ch > 31) {
                     if (work->spacing_before != 0 &&
                         (ch == 32 || cnt > 10)) {
@@ -425,7 +445,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     }
                     entry[pos] = (u16)ch;
                     pos = (pos + 1) & RENDER_ENTRY_MASK;
+#if defined(TBS_EDITION_EN)
                     head = 0;
+#else
+                    if (ch != ' ') {
+                        suffix = 0;
+                        if (ch == '.' || ch == '!' || ch == '?')
+                            suffix = 2;
+                        if (ch == 's' || ch == 'S')
+                            suffix = 1;
+                    }
+#endif
                 } else {
                     switch (ch) {
                     case 0:
@@ -467,8 +497,16 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 20:
                         no = decode(&st) - 1;
                         tmp = UiRender_LookupNamedValue(2, clear);
+#if defined(TBS_EDITION_FR)
+                        tmp &= RENDER_ENTRY_MASK;
+                        if (no == 2 || (no == 3 && plural != 0) || no == 4)
+                            UiText_DecodeMessage(tmp + (s32)&MsgItemPluralName, name, 24);
+                        else
+                            UiText_DecodeMessage(tmp + (s32)&MsgItemName, name, 24);
+#else
                         UiText_DecodeMessage((tmp & RENDER_ENTRY_MASK) + (s32)&MsgItemName,
                                              name, 24);
+#endif
                         pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
@@ -548,12 +586,24 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 24:
+#if defined(TBS_EDITION_FR)
+                        entry[pos] = ' ';
+#else
                         entry[pos] = 143;
+#endif
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         entry[pos] = '-';
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
+#if defined(TBS_EDITION_FR)
+                        entry[pos] = ' ';
+                        pos = (pos + 1) & RENDER_ENTRY_MASK;
+#endif
                         break;
+#if defined(TBS_EDITION_FR)
+                    case 13:
+#else
                     case 25:
+#endif
                         if (plural != 0) {
                             if (suffix != 0) {
                                 entry[pos] = 'e';
@@ -563,26 +613,47 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                             pos = (pos + 1) & RENDER_ENTRY_MASK;
                         }
                         break;
+#if defined(TBS_EDITION_FR)
+                    case 25:
+                        UiRender_LookupNamedValue(2, 0);
+                        word = UiText_ItemPronoun;
+                        for (i = 0; i < 16; i++) {
+                            if ((c8 = *word++) == 0)
+                                break;
+                            if (i == 0 && suffix == 2)
+                                c8 -= 0x20;
+                            entry[pos] = c8;
+                            pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        }
+                        suffix = 0;
+                        break;
+#endif
                     case 27:
+#if defined(TBS_EDITION_EN)
                         entry[pos] = '\'';
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         if (suffix == 0) {
                             entry[pos] = 's';
                             pos = (pos + 1) & RENDER_ENTRY_MASK;
                         }
+#endif
                         break;
                     case -1:
                         break;
                     case 1:
                     case 3:
+#if defined(TBS_EDITION_EN)
                         head = 1;
+#endif
                     default:
                         entry[pos] = (u16)ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
+#if defined(TBS_EDITION_EN)
                         if (ch == 's' || ch == 'S')
                             suffix = 1;
                         else
                             suffix = 0;
+#endif
                         break;
                     }
                 }

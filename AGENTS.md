@@ -195,8 +195,8 @@ never a file or a function.
   whole game rather than listed by function; no public compiler of the time
   already explains it; and it is written as a plausible change by a Camelot
   engineer, in GCC's own style, with its evidence and reason recorded here and
-  in agscc's README. Pascal approves each. Every compiler binary is built
-  reproducibly from pinned source and its digest recorded.
+  in agscc's README. Pascal approves each. Every compiler is built from pinned
+  source, on any system, and the twelve editions judge what it produces.
   _Check: compiler-source-check, bundle validation, routing tests._
 
 ### Work

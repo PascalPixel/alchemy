@@ -1,5 +1,6 @@
 pub(crate) mod boxtree;
 pub(crate) mod calcrom;
+pub(crate) mod decomp;
 pub(crate) mod figure;
 pub(crate) mod history;
 pub(crate) mod jsnum;
@@ -7,17 +8,18 @@ pub(crate) mod letters;
 pub(crate) mod model;
 pub(crate) mod palette;
 pub(crate) mod progress;
+pub(crate) mod publish;
 pub(crate) mod raster;
 pub(crate) mod sessions;
 pub(crate) mod tree;
 
-use crate::coverage::progress::{measured, GameDone};
+use crate::coverage::progress::GameDone;
 use crate::coverage::tree::root;
 use std::path::Path;
 const USAGE: &str =
     "usage: alchemy check coverage [--write [--publication]|--check|--models|--self-test]\n\
-Publishes README's progress line, today's progress history row and both figures from each game's\n\
-six verified builds together (make compare-editions); a game without all six stays pending.\n\
+Publishes README's progress line, today's progress history row, both figures and the decomp.dev\n\
+report from each game's six verified builds together (make compare-editions); a game without all six stays pending.\n\
 --publication preserves approved model attribution; --check fails when any published value is stale.";
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read(path)
@@ -304,7 +306,13 @@ fn run(argv: &[String]) -> Result<String, String> {
             .collect::<Vec<_>>()
             .join("\n"));
     }
-    let (sun, anchor) = (measured(&root, "tbs-en")?, measured(&root, "tla-en")?);
+    let games = [
+        progress::status(&root, "tbs-en")?,
+        progress::status(&root, "tla-en")?,
+    ];
+    let done =
+        |game: &Result<calcrom::Game, String>| game.as_ref().ok().map(|game| game.combined().done);
+    let (sun, anchor) = (done(&games[0]), done(&games[1]));
     let status = status_line(sun, anchor);
     let readme = read(&root.join("README.md"))?;
     let updated = update_readme(&readme, &status);
@@ -318,8 +326,9 @@ fn run(argv: &[String]) -> Result<String, String> {
     if o.write {
         write(&root.join("README.md"), &updated)?;
         write_figures(&root, sun, anchor, o.publication)?;
+        let report = decomp::write(&root, [("tbs", &games[0]), ("tla", &games[1])])?;
         return Ok(format!(
-            "published {status} figures={},{}",
+            "published {status} figures={},{} {report}",
             figure::CHART,
             figure::MAP
         ));

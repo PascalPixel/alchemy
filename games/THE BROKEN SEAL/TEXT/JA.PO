@@ -8419,7 +8419,7 @@ msgctxt "message"
 msgid "02102"
 msgstr "{argument_actor_name:234} すばやくかわした!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02103"
 msgstr "{argument_actor_name:224}ちは 戦いに やぶれた・・・"
 
@@ -8443,7 +8443,7 @@ msgctxt "MsgItemGained"
 msgid "02108"
 msgstr "{argument_item_name:134} 手に入れた"
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02109"
 msgstr "{argument_actor_name:234} 戦いに やぶれた・・・"
 
@@ -14151,11 +14151,11 @@ msgctxt "message"
 msgid "03535"
 msgstr "それでは {actor_name:1}に{line_break}ボクの きょうりょくないちげきを{line_break}さっそく 使ってもらいます。{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03536"
 msgstr "ほら! ボクをときはなって{line_break}きょうりょくないちげきが{line_break}発動したでしょ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03537"
 msgstr "ときはなたれると ボクらジンは{line_break}スタンバイのじょうたいになります{line_break}そして・・・{end_now}"
 

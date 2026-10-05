@@ -9407,7 +9407,7 @@ msgctxt "message"
 msgid "02349"
 msgstr "¡{argument_actor_name:1} esquiva el ataque!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02350"
 msgstr "¡El equipo de {argument_actor_name:1} cayó!"
 
@@ -9431,7 +9431,7 @@ msgctxt "MsgItemGained"
 msgid "02355"
 msgstr "Recibes {argument_item_name:10}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02356"
 msgstr "{argument_actor_name:1} cayó en la lucha..."
 
@@ -12687,11 +12687,11 @@ msgctxt "message"
 msgid "03169"
 msgstr "Déjame mostrarte el{line_break}poder de mi ataque,{line_break}{actor_name:1}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03170"
 msgstr "¿Ves? ¡Cuando liberaste{line_break}mi poder, ataqué con mi{line_break}poderosa piedra afilada!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Después de ser liberados,{line_break}estaremos listos para{line_break}ser invocados...{end_now}"
 

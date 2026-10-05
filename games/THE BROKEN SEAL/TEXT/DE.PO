@@ -9407,7 +9407,7 @@ msgctxt "message"
 msgid "02349"
 msgstr "{argument_actor_name:1} weicht dem Schlag aus!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02350"
 msgstr "Team  von {argument_actor_name:1} wurde besiegt!"
 
@@ -9431,7 +9431,7 @@ msgctxt "MsgItemGained"
 msgid "02355"
 msgstr "Du findest {argument_item_name:1}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02356"
 msgstr "{argument_actor_name:1} erleidet eine Niederlage..."
 
@@ -12687,11 +12687,11 @@ msgctxt "message"
 msgid "03169"
 msgstr "Lass mich dir eine Kost-{line_break}probe meiner Macht geben,{line_break}{actor_name:1}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03170"
 msgstr "Hast du gesehen? Als du{line_break}mich freigesetzt hast,{line_break}habe ich mit meiner{page_break}mächtigen, steinzer-{line_break}schmetternden Faust{line_break}angegriffen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Nachdem wir freigesetzt{line_break}worden sind, warten wir{line_break}Dschinns darauf, be-{page_break}schworen zu werden...{end_now}"
 

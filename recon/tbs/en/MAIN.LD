@@ -568,7 +568,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_NAME.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/WAIT_SYNC.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT15.o"(.text)
-        "*/recon/tbs/raw/080b63c8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY.o"(.text)
         "*/games/COMMON/SRC/BATTLE/ACTOR_COMMIT_PLACEMENT.o"(.text)
         "*/games/COMMON/SRC/BATTLE/PARTY/LIST_ALL_UNITS_AND_SUBMIT.o"(.text)

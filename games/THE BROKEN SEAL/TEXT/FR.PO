@@ -9407,7 +9407,7 @@ msgctxt "message"
 msgid "02349"
 msgstr "{argument_actor_name:1} esquive de justesse!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02350"
 msgstr "Le groupe de {argument_actor_name:1} a été mis KO!"
 
@@ -9431,7 +9431,7 @@ msgctxt "MsgItemGained"
 msgid "02355"
 msgstr "Vous trouvez: {argument_item_name:1}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02356"
 msgstr "{argument_actor_name:1} connaît une amère défaite..."
 
@@ -12687,11 +12687,11 @@ msgctxt "message"
 msgid "03169"
 msgstr "Laissez-moi vous{line_break}montrer mon pouvoir,{line_break}{actor_name:1}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03170"
 msgstr "Si vous m'utilisez,{line_break}j'attaque avec{line_break}mon fend-la-pierre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03171"
 msgstr "Après avoir été{line_break}utilisé, je serai prêt{line_break}à être invoqué...{end_now}"
 

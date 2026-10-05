@@ -8419,7 +8419,7 @@ msgctxt "message"
 msgid "02102"
 msgstr "{argument_actor_name:1} nimbly dodges the blow!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "02103"
 msgstr "{argument_actor_name:1}'s party has been defeated!"
 
@@ -8443,7 +8443,7 @@ msgctxt "MsgItemGained"
 msgid "02108"
 msgstr "You got {argument_item_name:2}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "02109"
 msgstr "{argument_actor_name:1} goes down in defeat..."
 
@@ -12579,11 +12579,11 @@ msgctxt "message"
 msgid "03142"
 msgstr "So, let me demonstrate{line_break}the power of my attack,{line_break}{actor_name:1}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTutorialUnleashed"
 msgid "03143"
 msgstr "See! When you unleashed{line_break}me, I attacked with my{line_break}mighty stone-cleaver!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTutorialStandby"
 msgid "03144"
 msgstr "After being unleashed,{line_break}we Djinn will then{line_break}stand by to be summoned...{end_now}"
 

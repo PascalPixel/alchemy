@@ -4313,7 +4313,7 @@ BattleFx_RunOrbitingParticles:
 	.type Func_080cd91c, %function
 	.thumb_func
 Func_080cd91c:
-	.incbin "baserom.gba", 0x000decac, 0x000000f0
+	.incbin "baserom.gba", 0x000decac, 0x000000cc
 	.section .rom.000dedd4, "ax"
 	.incbin "baserom.gba", 0x000dedd4, 0x00000ac8
 	.section .rom.000df8d2, "ax"

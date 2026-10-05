@@ -1512,7 +1512,6 @@
         "*/recon/tla/raw/080debd8.o"(.text)
         "*/recon/tla/raw/080dec8c.o"(.text)
         "*/recon/tla/raw/080decb8.o"(.text)
-        "*/recon/tla/raw/080ded84.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/EFFECT41.o"(.text)
         "*/recon/tla/raw/080dede0.o"(.text)
         "*/recon/tla/raw/080dede8.o"(.text)

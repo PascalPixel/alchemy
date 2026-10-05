@@ -437,7 +437,7 @@ Func_080dede8:
 .L_080df164:
 	.4byte 0xffe00000
 .L_080df168:
-	.4byte Func_080ded84
+	.4byte BattleFx_LandFallingObject
 .L_080df16c:
 	.4byte BattleFx_UpdateDriftingFallObject
 .L_080df170:

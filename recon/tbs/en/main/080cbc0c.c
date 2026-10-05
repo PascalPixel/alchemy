@@ -45,8 +45,8 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * into the 8bpp map cells at 0x02010000, 33 sheet pieces fly apart until
  * frame 50, and from frame 53 the flash burst cells scatter.
  *
- * Score: 173 (alchemy diff, listing 1051, draft 1052, common 965). The old
- * m2c draft scored 1312; the wave before last rewrote it as plain C (246).
+ * Score: 49 (alchemy diff, listing 1051, draft 1052, common 1027). The old
+ * m2c draft scored 1312; plain rewrites took it to 173.
  *
  * What moved it, in order (each measured against the previous):
  *   1312  old m2c draft
@@ -60,86 +60,68 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  *    910  ring pixels through the constant Ram_MapCellBuffer instead of the
  *         gMapCellBuffer label: the native reloads the base from the pool at
  *         every plot (a label is hoisted out of the loop and spilled)
- *    611  plot index (x & 7) + (x / 8 << 6) + (y & 7) * 8 + (y / 8 << 11);
- *         768 other orders/groupings/shift-or-multiply spellings all score
- *         worse (best 408)
+ *    611  plot index (x & 7) + (x / 8 << 6) + (y & 7) * 8 + (y / 8 << 11)
  *    531  declaration order work, canvas, frame, draw1, draw0, battle, ...,
  *         rmax, r, d: the spill slots (40, 36, 32, 28, 24, 20, 16, 12, 8)
  *         follow pseudo order
  *    435  tile map: the byte offset i (+= 2) is the counter later loops use,
  *         rows/columns are k/j, and the store is *(volatile s16 *)(0x06003800
- *         + i) of an s16 entry (gives the native lsls/asrs pair and the
- *         unreduced base + offset address)
- *    433  i += 2 in the column loop's increment expression
+ *         + i) of an s16 entry
  *    404  start tables read through pointers start_x/start_y (the counter
  *         stays a biv, as native)
- *    390  palette fade reads both colours through volatile u16 pointers
- *         (native ldrh + lsls #16/lsrs #21 for both; plain u16 gives ldrsh)
  *    325  pieces addressed as piece = &work->particles[i] inside the draw
- *         and scatter loops (native indexes the u16 offset table by i)
- *    303  the 0x33 palette ramp level is a block-local v, not the shared level
- *    281  same for the ring header and backdrop ramp levels; backdrop ramp
- *         written frame >= 8 && frame <= 50
- *    274  x1 = 96 - px; left = x1 (the unclamped copy is the second pseudo,
- *         native keeps it in lr); same for the swapped half
- *    246  plain-swap hill climb (declaration and independent statement order)
- *    236  the canvas size is a local set between the first two allocations
- *         and passed to the allocation and both clears (as EFFECT3.C does):
- *         GCSE propagates the constant into the clears, so each call builds
- *         0x4000 itself instead of sharing one register
- *    226  start_y assigned before start_x, and each piece written as
- *         piece->x = *start_x++ << 16 with the velocity read back through
- *         piece->x (the y pointer is the first pool entry, x values in r2)
- *    205  plain-swap hill climb again (x1/py/x2 declarations, the colour
- *         field order red after green, goal_red after goal_blue)
- *    171  plot through pointer arithmetic with multiplications:
- *         *(Ram_MapCellBuffer + (x & 7) + x / 8 * 64 + (y & 7) * 8
- *         + y / 8 * 2048). Expanded as an address sum, the products stay
- *         deferred until the address is forced, so x / 8 * 64 is formed after
- *         the y division and added as (x/8*64) + (x&7), as the native does;
- *         the same spelling as an array index lets fold factor the products
- *         (885)
- *    167  the second octant keeps its unclamped x1 in its own left2 (native:
- *         lr for the first octant, r10 for the second)
- *    173  IO_WRITE_QUEUE_PUSH closes a second one-pass block after the IME
- *         restore (IO_WRITE_QUEUE.H; PRESENT7.C and PRESENT9.C still match).
- *         All three pushes and the stores and fill call after them now match
- *         the native exactly (it restores IME before loading their operands);
- *         the loop depth it adds moves allocation elsewhere, so the total
- *         rose by 6. Wrapping only the second push scored 163.
+ *         and scatter loops
+ *    236  block-local ramp levels, x1 = 96 - px; left = x1, the canvas size
+ *         local (GCSE propagates it into the clears), hill climbs
+ *    173  plot through pointer arithmetic with multiplications; second
+ *         octant keeps its own left2; IO_WRITE_QUEUE_PUSH closes a second
+ *         one-pass block after the IME restore
+ *    141  fade fields read straight from the palette the way
+ *         STEP_PALETTE_TO_RESOURCE.C reads them: red = *pal & 0x1f,
+ *         green = (*pal >> 5) & 0x1f, ... through a plain u16 pointer. CSE
+ *         merges the three reads; the shortened u16 AND gives the native
+ *         ands on the raw ldrh value before the lsls #16.
+ *    107  goal fields read as battle->palette[i]: the address is a loop giv,
+ *         so its reduced register is a new (high-numbered) pseudo whose
+ *         initialisation follows the hoisted 31s, and with auto-increment
+ *         addressing loop.c increments it right after the load (native
+ *         add r9 in the first block). retry_global_alloc now visits the
+ *         goal << 16 temporary first: it gets r10 and the pointer r9, and
+ *         the preheader reloads rotate r2, r3, r4, r5/r7 as native. The
+ *         fade loop matches.
+ *    102  ring centre in locals cx = 96, cy = 60 set before the radius
+ *         loop: x1 = cx - px keeps the long-lived constant pseudo (GCSE
+ *         puts 96 straight into x2 = px + cx), global leaves it unallocated
+ *         and reload rematerialises it through the round-robin spill
+ *         registers, as the native movs r3, #96 / movs r5, #60 show
+ *     49  octant setup in the order x2, x1, left, y1, y2 and x2, x1, left2,
+ *         y2, y1 (each octant's round-robin reloads then land on r3/r4,
+ *         r5/r7 and r5/r7, r1/r3). The ring matches.
  *
- * Tried and worse: gMapCellBuffer[...] for the ring (1043 vs 910),
- * cells/map locals for 0x7800 and the buffer (the copies rematerialise but
- * the fill routine pointer lands in r6 because draw1 prefers r5: 287),
- * every order of the particle loop's six statements with x/y temporaries
- * (best 226 with x loaded first; with temporaries the x chain wins r3),
- * goal = target[i] or battle->palette[i] (the giv increments at the loop end,
- * not after the load: 172-610), target pinned to r9 (599), every order of
- * the octant setup statements (167 at best), u16/u32/s16 colour and goal
- * fields in the fade (190+), hybrid temporary/piece-> forms of the particle
- * loop in every order (173 at best), a whole-macro do { } while (0) (blocks
- * the queue literal load from rising above the previous store: 175),
- * 96 - px + 1 (folds to 97 - px), shared left/left2 split (274 = same),
- * level shared across loops, piece++ pointer walks in the draw/scatter loops,
- * indexed start tables (eliminates the counter), indexed BG_PLTT for the fade,
- * x/y as u32 or s32 in the fade (687+).
+ * Tried and worse before the fade/ring rewrite (scores of that time):
+ * gMapCellBuffer[...] for the ring (1043 vs 910), cells/map locals for
+ * 0x7800 and the buffer (the copies rematerialise but the fill routine
+ * pointer lands in r6: 287), every order of the particle loop's six
+ * statements with x/y temporaries (226), target pinned to r9 (599),
+ * u16/u32/s16 colour and goal fields in the fade (190+), a whole-macro
+ * do { } while (0) (175), 96 - px + 1 (folds to 97 - px), level shared
+ * across loops, piece++ pointer walks in the draw/scatter loops, indexed
+ * start tables (eliminates the counter), indexed BG_PLTT for the fade.
+ * After it: x/y temporaries in the particle loop (x loaded first: x wins
+ * r3, 189; velocity_y computed first: x/y right but the two hoisted
+ * velocity constants swap r5/r7, 177), map/cells locals set at the top for
+ * the copy and fill (both rematerialise; the fill routine then gets r6 and
+ * the velocity constants swap: 233), map local used by the plots too (820).
  *
  * Remaining difference: register choice and scheduling only.
- *  - Copy/fill constants: the native rematerialises 0x7800 and the buffer
- *    address before each call; the draft keeps them in r5/r6.
  *  - Particle loop: the native loads both start bytes before the first
- *    store; the piece->x form stores x first (a u8 load cannot pass it).
- *  - Fade loop: reload takes r7 from the target pointer and r3 from the
- *    goal << 16 temporary in the same pass, and retry_global_alloc visits
- *    them in pseudo order: target gets r10 and the temporary r9; the
- *    native has them the other way round. The search's colour field order
- *    (red after green) scores better overall but differs here.
- *  - Ring: reload picks round-robin spill registers, so the y1 = 60 - py
- *    inputs (native r5/r7) and the base reloads follow from every reload
- *    before them; the shape of each plot now matches.
- *  - Fade colour fields: the native ties color << 16 to color (red's AND
- *    comes first), leaving r2 for green; here the shift gets its own
- *    register, so green and goal_green swap r2/r4.
+ *    store (x in r2, y in r3); the piece->x form stores x first.
+ *  - Copy/fill: the native rematerialises 0x7800 and the buffer address
+ *    before each call (no hard register for the shared constants) and
+ *    keeps the fill routine in r5 for both fills; the draft keeps the
+ *    constants in r5/r6 and the routine in r7. The work reload after them
+ *    (native r7) follows: r5 is busy with the routine and r6 is never a
+ *    spill register.
  */
 void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect)
 {
@@ -172,6 +154,8 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     s32 y2;
     u8 *start_y;
     u8 *start_x;
+    s32 cx;
+    s32 cy;
 
     work = Runtime_AllocateHeapBlock(39, 0x782c);
     size = 0x4000;
@@ -265,29 +249,17 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
         }
 
         if (frame > 7) {
-            volatile u16 *pal;
-            volatile u16 *target;
+            u16 *pal;
 
-            pal = &BG_PLTT[0x60];
-            target = battle->palette;
+            pal = (u16 *)0x050000c0;
             for (i = 0; i != 128; i++) {
-                u16 goal;
-                u16 color;
-                s32 red;
-                s32 blue;
-                s32 goal_green;
-                s32 green;
-                s32 goal_blue;
-                s32 goal_red;
+                s32 red = *pal & 0x1f;
+                s32 green = (*pal >> 5) & 0x1f;
+                s32 blue = (*pal >> 10) & 0x1f;
+                s32 goal_red = battle->palette[i] & 0x1f;
+                s32 goal_green = (battle->palette[i] >> 5) & 0x1f;
+                s32 goal_blue = (battle->palette[i] >> 10) & 0x1f;
 
-                color = *pal;
-                green = (color >> 5) & 0x1f;
-                red = color & 0x1f;
-                blue = (color >> 10) & 0x1f;
-                goal = *target++;
-                goal_blue = (goal >> 10) & 0x1f;
-                goal_red = goal & 0x1f;
-                goal_green = (goal >> 5) & 0x1f;
                 if (red < goal_red)
                     red++;
                 else if (red > goal_red)
@@ -313,16 +285,18 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
             v = frame * 4 + 8;
             rmax = frame * 32;
             BG_PLTT[2] = (v << 10) | (v << 5) | v;
+            cx = 96;
+            cy = 60;
             for (; r != rmax; r++) {
                 px = r;
                 py = 0;
                 d = r;
                 while (px >= py) {
-                    y1 = 60 - py;
-                    x1 = 96 - px;
-                    x2 = px + 96;
+                    x2 = px + cx;
+                    x1 = cx - px;
                     left = x1;
-                    y2 = py + 60;
+                    y1 = cy - py;
+                    y2 = py + cy;
                     if (y1 < 0)
                         y1 = 0;
                     if (y2 > 119)
@@ -346,11 +320,11 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
                     PLOT(x1, y2);
                     PLOT(x1, y1);
 
-                    y1 = 60 - px;
-                    x1 = 96 - py;
-                    x2 = py + 96;
+                    x2 = py + cx;
+                    x1 = cx - py;
                     left2 = x1;
-                    y2 = px + 60;
+                    y2 = px + cy;
+                    y1 = cy - px;
                     if (x1 < 0)
                         x1 = 0;
                     if (x2 > 255)

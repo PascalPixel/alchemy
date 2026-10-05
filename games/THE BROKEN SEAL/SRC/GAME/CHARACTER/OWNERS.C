@@ -40,7 +40,7 @@ s32 GameFlag_Test(s32 flag);
 s32 Owner_LookupFourColumnTable(s32 primary, s32 j);
 
 s32 Owner_RefreshClassActions(s32);
-u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2]);
+u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 s32 Owner_DetermineClass(s32 character, const u8 *djinn);
 
 /* The mark after a repeated enemy's name: a letter from A in Japanese, a
@@ -129,7 +129,7 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->rewards = enemy->rewards;
     unit->class_index = 0;
     unit->class_id = enemy_id;
-    Owner_BuildDigitTiles(unit_id, (s16 (*)[2])unit->base_elements);
+    Owner_CalculateBaseElements(unit_id, (s16 (*)[2])unit->base_elements);
     Owner_RecalculateStats(unit_id);
     unit->status_12a = 1;
     switch (unit->class_id) {
@@ -363,7 +363,7 @@ s32 Owner_GetDefaultElement(struct BattleUnit *state)
     return Enemy_ElementPresetTable[value].first;
 }
 
-u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
+u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 {
     struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(owner);
     u32 index;
@@ -485,7 +485,7 @@ void Owner_RefreshDerivedData(s32 owner_no)
 
     owner->class_index = Owner_DetermineClass(owner->class_id, (u8 *)owner->djinn_available);
     Owner_RefreshClassActions(owner_no);
-    Owner_BuildDigitTiles(owner_no, (s16 (*)[2])owner->base_elements);
+    Owner_CalculateBaseElements(owner_no, (s16 (*)[2])owner->base_elements);
 }
 
 /* The elemental bonus for a power less resistance, read off the curve between

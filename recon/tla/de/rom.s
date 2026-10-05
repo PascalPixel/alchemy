@@ -2018,10 +2018,10 @@ Owner_GetDigitValues:
 	.thumb_func
 Owner_GetDefaultElement:
 	.incbin "baserom.gba", 0x000bd05c, 0x00000028
-	.global Owner_BuildDigitTiles
-	.type Owner_BuildDigitTiles, %function
+	.global Owner_CalculateBaseElements
+	.type Owner_CalculateBaseElements, %function
 	.thumb_func
-Owner_BuildDigitTiles:
+Owner_CalculateBaseElements:
 	.incbin "baserom.gba", 0x000bd084, 0x000000c0
 	.global Owner_DetermineClass
 	.type Owner_DetermineClass, %function

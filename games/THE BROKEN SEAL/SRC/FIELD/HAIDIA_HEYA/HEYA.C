@@ -307,7 +307,7 @@ void FieldScene_RunByActorDirectionAndFlags(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene376_0200055c(void)
+void HaidiaHeya_OpenArmorShop(void)
 {
     struct FieldActor *actor;
 
@@ -330,7 +330,7 @@ void FieldScene_RunScene376_0200055c(void)
     }
 }
 
-void FieldScene_RunScene376_020005d4(void)
+void HaidiaHeya_OpenItemShop(void)
 {
     struct FieldActor *actor;
 

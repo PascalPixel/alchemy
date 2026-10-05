@@ -325,7 +325,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
     return 0;
 }
 
-void FieldScene_RunScene3a5_02001874(void)
+void RamakanSabaku_ResetActorEightPosition(void)
 {
     u32 i;
     s32 record;

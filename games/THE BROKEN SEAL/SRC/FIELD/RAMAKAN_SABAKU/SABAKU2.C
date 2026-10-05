@@ -333,7 +333,7 @@ void RamakanSabaku_ReturnToArea3(void)
     BattleFx_SetWeightedResult(53, 5);
 }
 
-void FieldScene_RunScene3a5_02000c6c(s32 a0)
+void RamakanSabaku_ShowRandomPartyLine(s32 a0)
 {
     s32 i;
     s32 p8;

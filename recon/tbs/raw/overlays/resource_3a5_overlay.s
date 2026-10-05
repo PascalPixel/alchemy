@@ -529,13 +529,13 @@ RamakanSabaku_Events:
 	.4byte RamakanSabaku_ApplyEntryState
 	.4byte 0x00000006
 	.4byte 0x02010001
-	.4byte FieldScene_RunScene3a5_02000c6c
+	.4byte RamakanSabaku_ShowRandomPartyLine
 	.4byte 0x00000006
 	.4byte 0x02010002
-	.4byte FieldScene_RunScene3a5_02000c6c
+	.4byte RamakanSabaku_ShowRandomPartyLine
 	.4byte 0x00000006
 	.4byte 0x02010003
-	.4byte FieldScene_RunScene3a5_02000c6c
+	.4byte RamakanSabaku_ShowRandomPartyLine
 	.4byte 0x00000002
 	.4byte 0xffff0064
 	.4byte RamakanSabaku_UpdateTravelDust

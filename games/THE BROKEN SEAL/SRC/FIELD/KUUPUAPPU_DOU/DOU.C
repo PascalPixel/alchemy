@@ -30,7 +30,7 @@ extern void KuupuappuDou_RaiseActorPriorities(void);
 TEXT_MESSAGE_ENUM(MsgFieldDoorTightlyLocked);
 TEXT_MESSAGE_ENUM(MsgFieldFlippedSwitch);
 
-extern 
+extern
 
 extern const u32 gKuupuappuDouExits1[];
 extern const u32 gKuupuappuDouExits2[];
@@ -422,16 +422,14 @@ void FieldScene_RunGuardedStep9AA(void)
 void SceneState_ApplyRectAndMarkActor16(void)
 {
     struct FieldActor *rec = Object_GetById(16);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 fifth = 23;
     s32 sixth = 32;
 
     Engine_MapCopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (rec != 0) {
-        /* The rec is reloaded with the same selector before this store. */
+
         Object_GetById(16)->motion_flags = 0;
         rec->priority_flags = 1;
     }
@@ -442,16 +440,14 @@ void SceneState_ApplyRectAndMarkActor16(void)
 void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 {
     struct FieldActor *rec = Object_GetById(17);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 p5 = 23;
     s32 p6 = 34;
 
     Engine_MapCopyCellAttributes(26, 30, 1, 1, p5, p6);
 
     if (rec != 0) {
-        /* The record is reloaded with the same selector before this store. */
+
         Object_GetById(17)->motion_flags = 0;
         rec->priority_flags = 1;
     }
@@ -462,16 +458,14 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 {
     struct FieldActor *record = Object_GetById(18);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 a = 24;
     s32 b = 34;
 
     Engine_MapCopyCellAttributes(26, 30, 1, 1, a, b);
 
     if (record != 0) {
-        /* The record is reloaded with the same selector before this store. */
+
         Object_GetById(18)->motion_flags = 0;
         record->priority_flags = 1;
     }
@@ -482,9 +476,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 void SceneState_ApplyRectAndSetupActor19(void)
 {
     struct FieldActor *p = Object_GetById(19);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 a5 = 26;
     s32 a6 = 32;
 
@@ -492,7 +484,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
 
     if (p != 0) {
         Engine_ActorSetSpriteFlags(p, 0);
-        /* The record is reloaded with the same selector before this store. */
+
         Object_GetById(19)->motion_flags = 0;
         p->priority_flags = 1;
     }
@@ -503,9 +495,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
 void SceneActor_SetupSlotTwenty(void)
 {
     struct FieldActor *rec = Object_GetById(20);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 fifth = 26;
     s32 sixth = 34;
 
@@ -513,7 +503,7 @@ void SceneActor_SetupSlotTwenty(void)
 
     if (rec != 0) {
         Engine_ActorSetSpriteFlags(rec, 0);
-        /* The rec is reloaded with the same selector before this store. */
+
         Object_GetById(20)->motion_flags = 0;
         rec->priority_flags = 1;
     }
@@ -524,9 +514,7 @@ void SceneActor_SetupSlotTwenty(void)
 void SceneActor_MarkSlot21AndSetFlag205(void)
 {
     struct FieldActor *record = Object_GetById(21);
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 fifth = 28;
     s32 sixth = 33;
 
@@ -534,7 +522,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
 
     if (record != 0) {
         Engine_ActorSetSpriteFlags(record, 0);
-        /* The record is reloaded with the same selector before this store. */
+
         Object_GetById(21)->motion_flags = 0;
         record->priority_flags = 1;
     }

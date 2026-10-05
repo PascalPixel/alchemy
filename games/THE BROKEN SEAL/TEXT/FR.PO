@@ -2539,7 +2539,7 @@ msgctxt "message"
 msgid "00632"
 msgstr "Anneau clérical"
 
-msgctxt "message"
+msgctxt "MsgItemPluralName"
 msgid "00633"
 msgstr "???"
 

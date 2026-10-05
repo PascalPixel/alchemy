@@ -1,3 +1,4 @@
+/* 080ae2f4: differ 27 of 439. Remaining: the cursor zero init reuses frame's spilled 0 (native has a fresh movs r7,#0 and separate zeros for frame/phase), and sched order of the post-loop page[side] reload and the render+dirty offset load. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
@@ -75,8 +76,6 @@ s32 Unnamed_080ae2f4(void)
     struct UiRenderWork *render;
     u32 keys;
     u32 repeat;
-    u8 *preview;
-    s32 *sel;
     struct MenuActionWork *menu;
     struct BattleUnit *owner;
     struct UiWindow *window;
@@ -95,7 +94,6 @@ s32 Unnamed_080ae2f4(void)
     phase = 0;
     menu->cursor->state = 13;
     cursor[1] = cursor[0] = 0;
-    sel = cursor;
     for (side = 3; side >= 0; side--)
         menu->row_y[side] = 200;
     RenderOutput_ClearListFar(menu->list_window);
@@ -123,7 +121,6 @@ s32 Unnamed_080ae2f4(void)
     RenderOutput_RedrawSavedRectFar(menu->title_window);
     UiText_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->title_window, 0, 0);
     UiText_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus + 2, menu->title_window, 0, 16);
-    preview = &menu->preview_owner;
     side = 0;
     while (1) {
         render = (struct UiRenderWork *)gWindowWork[0];
@@ -133,8 +130,8 @@ s32 Unnamed_080ae2f4(void)
             render->menu_busy = 1;
             RenderOutput_PrepareForRedrawFar(menu->left_window);
             RenderOutput_PrepareForRedrawFar(menu->right_window);
-            DjinnMenu_DrawStatPreview(menu->left_window, 0, 0, *preview, 0, 0, 3, 0, 1);
-            DjinnMenu_DrawStatPreview(menu->right_window, 0, 0, *preview, 0, 0, 3, cursor[0] + 1, 1);
+            DjinnMenu_DrawStatPreview(menu->left_window, 0, 0, menu->preview_owner, 0, 0, 3, 0, 1);
+            DjinnMenu_DrawStatPreview(menu->right_window, 0, 0, menu->preview_owner, 0, 0, 3, cursor[0] + 1, 1);
             render->menu_busy = 0;
         }
         if (page[side] > 1) {
@@ -143,7 +140,7 @@ s32 Unnamed_080ae2f4(void)
                 tile = 0xf031 + i;
                 if (i > 9)
                     tile = 0xf030;
-                if (i == sel[side])
+                if (i == cursor[side])
                     tile -= 0x1000;
                 UiWindow_SetTilemapEntryFar(window, tile, window->width - page[side] + i - 2, -1, 0);
             }
@@ -179,17 +176,17 @@ s32 Unnamed_080ae2f4(void)
             break;
         }
         if (repeat & KEY_LEFT) {
-            sel[side]--;
-            sel[side] = Menu_GetModuloOfSum(sel[side], page[side]);
+            cursor[side]--;
+            cursor[side] = Menu_GetModuloOfSum(cursor[side], page[side]);
             AudioCommand_PlayFar(111);
             Runtime_SetMainState19();
             pending = 1;
         } else if (repeat & KEY_RIGHT) {
-            sel[side]++;
+            cursor[side]++;
             AudioCommand_PlayFar(111);
             Runtime_SetMainState19();
             pending = 1;
-            sel[side] = Menu_GetModuloOfSum(sel[side], page[side]);
+            cursor[side] = Menu_GetModuloOfSum(cursor[side], page[side]);
         }
         WaitFrames(1);
     }

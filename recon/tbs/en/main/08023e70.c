@@ -1,3 +1,4 @@
+/* 08023e70: differ 145 of 1201. Remaining: the native loads the is_used search index from the redraw slot (one extra reload) and keeps the 0x8ef branch separate; the reload registers after it rotate differently. */
 
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -97,6 +98,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     tbl = (u32 *)Runtime_BumpAllocateAlternatePool(0xa8 * 2);
     cnt = 0;
     prev_page = -1;
+    code = 0;
     mask = 0;
     sub_sel = 0;
     sub_cnt = 0;
@@ -179,8 +181,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                                       buf, 52);
                         if (detail_win != 0) {
                             UiWork_Finalize(detail_win, 1);
-                            detail_win = 0;
                             sub_sel = 0;
+                            detail_win = 0;
                         }
                     } else {
                         detail_win = DjinnMenu_ShowChangePreview(detail_win, owner, cur, sub_sel, &sub_cnt);

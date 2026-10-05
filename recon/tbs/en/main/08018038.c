@@ -1,3 +1,4 @@
+/* 08018038: differ 2 of 706 */
 #include "RUNTIME_MEM.H"
 #include "TEXT_READER.H"
 #include "TYPES.H"
@@ -26,28 +27,27 @@ extern char MsgDebugEntryName;
 s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    u32 ch = 0;
     s32 head = 1;
     s32 quote = 0;
     u32 start = work->count;
     u32 cnt = 0;
     s32 plural = 0;
     s32 running = 1;
-    s32 overflow = 0;
     u32 pos = start;
-    u16 *entry = work->entries;
-    u32 ch = 0;
     u32 prev;
     s32 suffix = 0;
+    u16 *entry = work->entries;
+    s32 overflow = 0;
     void *buf;
     u32 size;
     s32 (*decode)(struct TextReader *);
     u32 next;
     s32 no;
-    u32 off;
+    u32 j;
     u32 i;
     s32 value;
-    s32 icon;
-    u32 msg;
+    s32 tmp;
     s32 mag;
     u8 *num;
     u8 *src;
@@ -195,22 +195,22 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 19:
                         no = decode(&st) - 1;
-                        msg = UiRender_LookupNamedValue(3, clear);
-                        UiText_DecodeMessage(msg + (s32)&MsgClassName, name, 24);
+                        tmp = UiRender_LookupNamedValue(3, clear);
+                        UiText_DecodeMessage(tmp + (s32)&MsgClassName, name, 24);
                         pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
                     case 20:
                         no = decode(&st) - 1;
-                        msg = UiRender_LookupNamedValue(2, clear);
-                        UiText_DecodeMessage((msg & RENDER_ENTRY_MASK) + (s32)&MsgItemName,
+                        tmp = UiRender_LookupNamedValue(2, clear);
+                        UiText_DecodeMessage((tmp & RENDER_ENTRY_MASK) + (s32)&MsgItemName,
                                              name, 24);
                         pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
                     case 21:
-                        msg = UiRender_LookupNamedValue(4, clear);
-                        UiText_DecodeMessage(msg + (s32)&MsgAbilityName, name, 24);
+                        tmp = UiRender_LookupNamedValue(4, clear);
+                        UiText_DecodeMessage(tmp + (s32)&MsgAbilityName, name, 24);
                         p = name;
                         next = pos;
                         while (*p != 0) {
@@ -237,13 +237,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 16:
                         src = Owner_GetStateFar(gGameState.selected_actor)->name;
                         dst = name;
-                        off = 0;
+                        i = 0;
                         do {
                             *dst = *src;
-                            off++;
+                            i++;
                             src++;
                             dst++;
-                        } while (off <= 14);
+                        } while (i <= 14);
                         pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0,
                                             &suffix);
                         break;
@@ -252,35 +252,35 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         src = Owner_GetStateFar(
                             UiRender_LookupNamedValue(1, clear))->name;
                         dst = name;
-                        off = 0;
+                        j = 0;
                         do {
                             *dst = *src;
-                            off++;
+                            j++;
                             src++;
                             dst++;
-                        } while (off <= 14);
+                        } while (j <= 14);
                         pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
                     case 17:
-                        msg = decode(&st) - 1;
-                        src = Owner_GetStateFar(msg)->name;
+                        tmp = decode(&st) - 1;
+                        src = Owner_GetStateFar(tmp)->name;
                         dst = name;
-                        off = 0;
+                        j = 0;
                         do {
                             *dst = *src;
-                            off++;
+                            j++;
                             src++;
                             dst++;
-                        } while (off <= 14);
+                        } while (j <= 14);
                         pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0,
                                             &suffix);
                         break;
                     case 26:
-                        icon = ((decode(&st) - 1) << 1) + 128;
-                        entry[pos] = icon;
+                        tmp = ((decode(&st) - 1) << 1) + 128;
+                        entry[pos] = tmp;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
-                        entry[pos] = icon + 1;
+                        entry[pos] = tmp + 1;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 24:

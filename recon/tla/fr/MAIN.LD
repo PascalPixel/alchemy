@@ -1255,7 +1255,7 @@
     "*/recon/tla/fr/rom.o"(.rom.0011c728)
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT12.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0011cd94)
-    "*/games/THE LOST AGE/SRC/BATTLE/BATTLE2.o"(.text)
+    "*/games/THE LOST AGE/SRC/BATTLE/GUARD.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0011ceac)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/PRESENT6.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0011d7b4)

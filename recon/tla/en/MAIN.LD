@@ -2011,7 +2011,7 @@
         "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT12.o"(.text)
         "*/recon/tla/raw/0811cd7a.o"(.text)
         "*/recon/tla/raw/0811cd7c.o"(.text)
-        "*/games/THE LOST AGE/SRC/BATTLE/BATTLE2.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/GUARD.o"(.text)
         "*/recon/tla/raw/0811ce94.o"(.text)
         "*/recon/tla/raw/0811cfa4.o"(.text)
         "*/recon/tla/raw/0811cfd0.o"(.text)

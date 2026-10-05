@@ -1167,7 +1167,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0011c70c)
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/PRESENT12.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011cd78)
-    "*/games/THE LOST AGE/SRC/BATTLE/BATTLE2.o"(.text)
+    "*/games/THE LOST AGE/SRC/BATTLE/GUARD.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011ce90)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/PRESENT6.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011d798)

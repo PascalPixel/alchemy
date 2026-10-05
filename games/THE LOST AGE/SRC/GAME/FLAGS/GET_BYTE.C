@@ -4,9 +4,6 @@ extern u8 GameFlagBytes[];
 
 u8 GameFlag_GetByte(s32 flag)
 {
-    u32 byte_index;
-
-    byte_index = (u32)flag << 20;
-    flag = (u32)byte_index >> 23;
+    flag = ((u32)flag << 20) >> 23;
     return GameFlagBytes[flag];
 }

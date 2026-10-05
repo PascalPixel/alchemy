@@ -275,11 +275,11 @@ void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s
         return;
     }
     if (operation == 1) {
-        state->address_50 += (u32)value * 4;
+        state->address_50 += value * 4;
         return;
     }
     result = 0;
-    if (state->address_50 == (u32)value) {
+    if (state->address_50 == value) {
         result = 1;
     }
     state->comparison_result = result;
@@ -287,47 +287,34 @@ void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s
 
 void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    s32 result;
-
     if (operation == 0) {
         state->byte_54 = value;
     } else if (operation == 1) {
-        state->byte_54 = (u8)((u32)state->byte_54 + (u32)value);
+        state->byte_54 += value;
     } else {
-        result = 0;
-        if (state->byte_54 == (u8)value)
-            result = 1;
-        state->comparison_result = result;
+        state->comparison_result = state->byte_54 == (u8)value;
     }
 }
 
 void Script_SetOrCompareByte55(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    s32 result;
     if (operation == 0) {
         state->byte_55 = value;
     } else if (operation == 1) {
-        state->byte_55 = (u8)((u32)state->byte_55 + (u32)value);
+        state->byte_55 += value;
     } else {
-        result = 0;
-        if (state->byte_55 == (u8)value)
-            result = 1;
-        state->comparison_result = result;
+        state->comparison_result = state->byte_55 == (u8)value;
     }
 }
 
 void Script_SetOrCompareByte56(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    s32 result;
     if (operation == 0) {
         state->byte_56 = value;
     } else if (operation == 1) {
-        state->byte_56 = (u8)((u32)state->byte_56 + (u32)value);
+        state->byte_56 += value;
     } else {
-        result = 0;
-        if (state->byte_56 == (u8)value)
-            result = 1;
-        state->comparison_result = result;
+        state->comparison_result = state->byte_56 == (u8)value;
     }
 }
 

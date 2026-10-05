@@ -11,7 +11,7 @@ void Owner_RecalculateRatios(s32 owner_no)
     struct BattleUnit *owner;
 
     owner = Owner_GetState(owner_no);
-    first = (s32)((u32)(s32)owner->hp << 14) / owner->max_hp;
+    first = (owner->hp << 14) / owner->max_hp;
     first_value = 0x4000;
     if (first <= 0x4000) {
         first_value = 0;
@@ -20,11 +20,11 @@ void Owner_RecalculateRatios(s32 owner_no)
         }
     }
     owner->hp_gauge = first_value;
-    if ((((u32)first_value << 16) == 0) && (owner->hp != 0)) {
+    if (owner->hp_gauge == 0 && owner->hp != 0) {
         first_value = 1;
         owner->hp_gauge = first_value;
     }
-    second = (s32)((u32)(s32)owner->pp << 14) / owner->max_pp;
+    second = (owner->pp << 14) / owner->max_pp;
     second_value = 0x4000;
     if (second <= 0x4000) {
         second_value = 0;
@@ -33,7 +33,7 @@ void Owner_RecalculateRatios(s32 owner_no)
         }
     }
     owner->pp_gauge = second_value;
-    if ((((u32)second_value << 16) == 0) && (owner->pp != 0)) {
+    if (owner->pp_gauge == 0 && owner->pp != 0) {
         second_value = 1;
         owner->pp_gauge = second_value;
     }

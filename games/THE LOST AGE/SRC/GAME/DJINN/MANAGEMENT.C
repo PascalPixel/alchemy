@@ -64,7 +64,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
         return -2;
 
     Djinn_AddToOwner(best_no, index, bit);
-    Trade_AddOffer((u32)best_no, (u32)index, (u32)bit);
+    Trade_AddOffer(best_no, index, bit);
     GameFlag_SetBit(flag);
     return best_no;
 }

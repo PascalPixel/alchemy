@@ -51,7 +51,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     s32 unit_id;
     s16 hp;
     s32 active_count;
-    void *unit;
+    struct BattleUnit *unit;
 
     output = unit_ids;
     living_count = 0;
@@ -68,7 +68,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
             do {
                 unit_id = *member;
                 member += 1;
-                hp = FIELD_AT_OFFSET(Owner_GetState(unit_id), s16, 0x38);
+                hp = ((struct BattleUnit *)Owner_GetState(unit_id))->hp;
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;
@@ -86,9 +86,9 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         if (remaining < enemy_limit) {
             do {
                 unit = Owner_GetState(remaining);
-                if ((FIELD_AT_OFFSET(unit, u8, 0x12A) != 0) && ((s32)FIELD_AT_OFFSET(unit, s16, 0x38) > 0)) {
+                if (unit->status_12a != 0 && unit->hp > 0) {
                     if (output != NULL) {
-                        *output = (u16)remaining;
+                        *output = remaining;
                         output += 1;
                     }
                     living_count += 1;

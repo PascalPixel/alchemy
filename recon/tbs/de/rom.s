@@ -6,12 +6,6 @@ Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
-	.section .rom.0000658c, "ax"
-	.global SerialRuntime_StepBlockTransfer
-	.type SerialRuntime_StepBlockTransfer, %function
-	.thumb_func
-SerialRuntime_StepBlockTransfer:
-	.incbin "baserom.gba", 0x0000658c, 0x0000023c
 	.section .rom.00007350, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
@@ -546,12 +540,6 @@ DisplayTransition_UpdateScanlineTable:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x000940c8, 0x00000718
-	.section .rom.0009b2d8, "ax"
-	.global FunctionHead_08097c3c
-	.type FunctionHead_08097c3c, %function
-	.thumb_func
-FunctionHead_08097c3c:
-	.incbin "baserom.gba", 0x0009b2d8, 0x00000344
 	.section .rom.0009fb78, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -645,7 +633,10 @@ BattleFx_FragmentScript:
 	.incbin "baserom.gba", 0x000a283c, 0x00000024
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
-	.incbin "baserom.gba", 0x000a2860, 0x00000024
+	.incbin "baserom.gba", 0x000a2860, 0x00000020
+	.global Data_0809f118
+Data_0809f118:
+	.incbin "baserom.gba", 0x000a2880, 0x00000004
 	.global BattleFx_BurstParticleObjectScript
 BattleFx_BurstParticleObjectScript:
 	.incbin "baserom.gba", 0x000a2884, 0x00000044
@@ -1751,16 +1742,13 @@ DisplayScroll_LineTable:
 	.global DisplayScroll_Font
 DisplayScroll_Font:
 	.incbin "baserom.gba", 0x000f2de0, 0x00000820
-	.section .rom.000f3628, "ax"
-	.global Title_PlaceIntroSprites
-	.type Title_PlaceIntroSprites, %function
-	.thumb_func
-Title_PlaceIntroSprites:
-	.incbin "baserom.gba", 0x000f3628, 0x00000478
 	.section .rom.000f4ed0, "ax"
 	.global Title_PromptTiles
 Title_PromptTiles:
-	.incbin "baserom.gba", 0x000f4ed0, 0x000000fa
+	.incbin "baserom.gba", 0x000f4ed0, 0x000000f4
+	.global Data_080f39ab
+Data_080f39ab:
+	.incbin "baserom.gba", 0x000f4fc4, 0x00000006
 	.global Title_PromptBlendLevels
 Title_PromptBlendLevels:
 	.incbin "baserom.gba", 0x000f4fca, 0x0000003c

@@ -9,12 +9,6 @@ Rom_LanguageCode:
 	.incbin "baserom.gba", 0x000000af, 0x00000011
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
-	.section .rom.000065bc, "ax"
-	.global SerialRuntime_StepBlockTransfer
-	.type SerialRuntime_StepBlockTransfer, %function
-	.thumb_func
-SerialRuntime_StepBlockTransfer:
-	.incbin "baserom.gba", 0x000065bc, 0x0000023c
 	.section .rom.00007380, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
@@ -559,12 +553,6 @@ DisplayTransition_UpdateScanlineTable:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x00095ac8, 0x00000718
-	.section .rom.0009ccc8, "ax"
-	.global FunctionHead_08097c3c
-	.type FunctionHead_08097c3c, %function
-	.thumb_func
-FunctionHead_08097c3c:
-	.incbin "baserom.gba", 0x0009ccc8, 0x00000344
 	.section .rom.000a1568, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -658,7 +646,10 @@ BattleFx_FragmentScript:
 	.incbin "baserom.gba", 0x000a422c, 0x00000024
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
-	.incbin "baserom.gba", 0x000a4250, 0x00000024
+	.incbin "baserom.gba", 0x000a4250, 0x00000020
+	.global Data_0809f118
+Data_0809f118:
+	.incbin "baserom.gba", 0x000a4270, 0x00000004
 	.global BattleFx_BurstParticleObjectScript
 BattleFx_BurstParticleObjectScript:
 	.incbin "baserom.gba", 0x000a4274, 0x00000044
@@ -1758,16 +1749,13 @@ DisplayScroll_LineTable:
 	.global DisplayScroll_Font
 DisplayScroll_Font:
 	.incbin "baserom.gba", 0x000f47dc, 0x00000824
-	.section .rom.000f5028, "ax"
-	.global Title_PlaceIntroSprites
-	.type Title_PlaceIntroSprites, %function
-	.thumb_func
-Title_PlaceIntroSprites:
-	.incbin "baserom.gba", 0x000f5028, 0x00000478
 	.section .rom.000f68bc, "ax"
 	.global Title_PromptTiles
 Title_PromptTiles:
-	.incbin "baserom.gba", 0x000f68bc, 0x000000b3
+	.incbin "baserom.gba", 0x000f68bc, 0x000000ad
+	.global Data_080f39ab
+Data_080f39ab:
+	.incbin "baserom.gba", 0x000f6969, 0x00000006
 	.global Title_PromptBlendLevels
 Title_PromptBlendLevels:
 	.incbin "baserom.gba", 0x000f696f, 0x0000003d

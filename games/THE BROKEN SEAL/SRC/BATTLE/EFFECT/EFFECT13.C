@@ -12,6 +12,7 @@
 #include "SOUND_IDS.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
 
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
@@ -48,6 +49,206 @@ extern void ObjectDispatch_ReleaseFar(void *object);
 extern u8 gObjectSlots[];
 
 extern u8 *gEventWork;
+
+struct FxObject {
+    u8 unknown_00[8];
+    s32 x;                      /* 0x08 */
+    s32 y;
+    s32 z;
+    s32 ground;                 /* 0x14 */
+    u8 unknown_18[10];
+    u8 mode;                    /* 0x22 */
+    u8 unknown_23;
+    s32 velocity_x;             /* 0x24 */
+    s32 velocity_y;             /* 0x28 */
+    s32 velocity_z;             /* 0x2c */
+    s32 speed;                  /* 0x30 */
+    s32 lift;                   /* 0x34 */
+    u8 unknown_38[12];
+    s32 gravity;                /* 0x44 */
+    u8 unknown_48[13];
+    u8 flag;                    /* 0x55 */
+    u8 unknown_56[4];
+    u8 unknown_5a;
+    u8 unknown_5b;
+    u8 unknown_5c[12];
+    struct FxObject *linked;    /* 0x68 */
+    void *callback;             /* 0x6c */
+};
+
+extern const u8 BattleFx_SourceHoldScript[];
+extern const u8 Data_0809f118[];
+extern volatile u32 gKeysHeld;
+extern volatile u32 gKeyState;
+extern volatile u32 gFrameCount;
+
+void WaitFrames(s32 frames);
+void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
+void ObjectGroup_ApplyRandomChildValues(void);
+void AudioCommand_PlayFar(s32 cue);
+s32 BattleFx_GetCycledTableWord(u32 keys);
+struct FxObject *ScriptObject_FindOverlappingEntryFar(struct FxObject *object, struct Output_08097f80 *position);
+s32 Object_CheckMovementCollision(struct FxObject *object, struct Output_08097f80 *position);
+s32 Map_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
+struct FxObject *Object_GetById(s32 id);
+void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
+void EffectRuntime_StopCurrentObject(void);
+
+/* Lets the player push the target one step: a preview object shows the step
+   tried, and a step that fits moves the target, with the source object too
+   when the source stands in the way and its next cell is free. */
+void BattleFx_SteerPushedTarget(s32 target_id)
+{
+    struct Output_08097f80 position;
+    struct Output_08097f80 nearby;
+    struct BattleFxScene *work;
+    struct FxObject *source;
+    struct FxObject *target;
+    struct FxObject *preview;
+    struct FxObject *hit;
+    s32 x;
+    s32 z;
+    s32 angle;
+    s32 moved;
+    s32 direction;
+    s32 keys;
+    s32 cell_x;
+    s32 cell_z;
+    struct Output_08097f80 *p;
+
+    work = gEffectWork;
+    source = work->main_object;
+    target = work->child;
+    angle = work->angle + 0x8000;
+    moved = 0;
+    if (target == NULL)
+        return;
+    BattleEffect_InitializeSharedScene();
+    source->linked = target;
+    ObjectDispatch_InitializeFar((struct DispatchObject *)source, (u32)BattleFx_SourceHoldScript);
+    preview = BattleFx_StartItemBreak(source);
+    if (preview == NULL) {
+        BattleFx_PrepareBufferInterpolation();
+        return;
+    }
+    preview->linked = target;
+    p = &position;
+    p->x = target->x;
+    p->y = target->y + 0x100000;
+    p->z = target->z;
+    Vector_AddPolarOffset(0x100000, angle, p);
+    Object_SetMoveTargetFar(preview, p->x, p->y, p->z);
+    BattleFx_SnapScaleToFull((struct MotionObject *)preview);
+    preview->speed = 0x40000;
+    preview->lift = 0x8000;
+    preview->flag = 4;
+    target->callback = ObjectGroup_ApplyRandomChildValues;
+    target->speed = 0x6666;
+    target->lift = 0x3333;
+    target->unknown_5a = moved;
+    target->mode = 2;
+    for (;;) {
+        WaitFrames(1);
+        keys = gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS);
+        if (keys != 0)
+            break;
+        direction = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
+        if (direction == 0xffff) {
+            position.x = target->x;
+            position.y = target->y + 0x100000;
+            position.z = target->z;
+            Vector_AddPolarOffset(0x100000, angle, &position);
+            Object_SetMoveTargetFar(preview, position.x, position.y, position.z);
+            Object_SetMode(preview, 1);
+            preview->velocity_x = 0;
+            preview->velocity_y = 0;
+            preview->velocity_z = 0;
+            continue;
+        }
+        position.x = target->x;
+        position.y = target->y + 0x100000;
+        position.z = target->z;
+        Vector_AddPolarOffset(0x100000, angle, &position);
+        Vector_AddPolarOffset(0x20000, direction, &position);
+        Object_SetMoveTargetFar(preview, position.x, position.y, position.z);
+        Object_CommitPosition(preview);
+        position.x = target->x;
+        position.y = target->y;
+        position.z = target->z;
+        Vector_AddPolarOffset(0x100000, direction, &position);
+        nearby.x = target->x;
+        nearby.y = target->y;
+        nearby.z = target->z;
+        Vector_AddPolarOffset(0x200000, direction, &nearby);
+        if (Object_CheckMovementCollision(target, &position) > 0) {
+            Object_SetMode(preview, 4);
+            if ((gFrameCount & 15) == 0)
+                AudioCommand_PlayFar(114);
+            continue;
+        }
+        hit = ScriptObject_FindOverlappingEntryFar(target, p);
+        if (hit == NULL)
+            goto move;
+        if (hit != source) {
+            Object_SetMode(preview, 4);
+            if ((gFrameCount & 15) == 0)
+                AudioCommand_PlayFar(114);
+            continue;
+        }
+        cell_x = source->x & 0xfff00000;
+        cell_z = source->z & 0xfff00000;
+        if (cell_x == (p->x & 0xfff00000) && cell_z == (p->z & 0xfff00000)) {
+            Object_SetMode(preview, 4);
+            if ((gFrameCount & 15) == 0)
+                AudioCommand_PlayFar(114);
+            continue;
+        }
+        if (cell_x != (nearby.x & 0xfff00000) || cell_z != (nearby.z & 0xfff00000))
+            goto move;
+        if (Map_GetCellAttributeLowNibbleFar(source->mode, nearby.x, nearby.z) != 0) {
+            Object_SetMode(preview, 4);
+            if ((gFrameCount & 15) == 0)
+                AudioCommand_PlayFar(114);
+            continue;
+        }
+        moved = 1;
+    move:
+        AudioCommand_PlayFar(175);
+        x = position.x;
+        z = position.z;
+        Object_SetMode(preview, Data_0809f118[(u16)(angle - direction) >> 14]);
+        WaitFrames(15);
+        target->unknown_5b = 0;
+        target->speed = 0x3333;
+        target->lift = 0x3333;
+        Object_SetMoveTargetFar(target, position.x, position.y, position.z);
+        preview->flag = 0;
+        preview->speed = 0x3333;
+        preview->lift = 0x3333;
+        Vector_AddPolarOffset(0x100000, direction, &position);
+        Object_SetMoveTargetFar(preview, position.x, position.y + 0x100000, position.z);
+        if (moved == 1) {
+            Object_GetById(work->first_object_id)->unknown_5a &= 0xfe;
+            source->speed = 0x3333;
+            source->lift = 0x3333;
+            Object_SetMoveTargetFar(source, nearby.x, nearby.y, nearby.z);
+        }
+        Object_CommitPosition(target);
+        target->x = x;
+        target->z = z;
+        target->velocity_x = 0;
+        target->velocity_z = 0;
+        break;
+    }
+    Animation_ApplyChildValuesFar(target, work->saved_palette);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->saved_script));
+    target->callback = work->saved_callback;
+    EffectRuntime_StopCurrentObject();
+    if (moved == 1)
+        Object_GetById(work->first_object_id)->unknown_5a |= 1;
+    BattleFx_PrepareBufferInterpolation();
+    UpdateRisingParticleBurst(preview);
+}
 
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect)
 {

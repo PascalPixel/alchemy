@@ -115,9 +115,9 @@ extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
 /* Enables the per-VBlank payload exchange. */
 extern u16 gSerialExchangeActive;
-extern volatile s32 gSerialSendSource;
+extern s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
-extern volatile s32 gSerialReceiveDest;
+extern s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
 /* Four reserved payload slots; the exchange collects the first two.
    gSerialTransfer holds the payload this console sends. */

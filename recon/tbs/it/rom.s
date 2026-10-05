@@ -7,12 +7,6 @@ Rom_Start:
 	.global Rom_LanguageCode
 Rom_LanguageCode:
 	.incbin "baserom.gba", 0x000000af, 0x00000011
-	.section .rom.0000659c, "ax"
-	.global SerialRuntime_StepBlockTransfer
-	.type SerialRuntime_StepBlockTransfer, %function
-	.thumb_func
-SerialRuntime_StepBlockTransfer:
-	.incbin "baserom.gba", 0x0000659c, 0x0000023c
 	.section .rom.00007360, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
@@ -535,12 +529,6 @@ DisplayTransition_UpdateScanlineTable:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x00090ac8, 0x00000718
-	.section .rom.00097cc8, "ax"
-	.global FunctionHead_08097c3c
-	.type FunctionHead_08097c3c, %function
-	.thumb_func
-FunctionHead_08097c3c:
-	.incbin "baserom.gba", 0x00097cc8, 0x00000344
 	.section .rom.0009c568, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -634,7 +622,10 @@ BattleFx_FragmentScript:
 	.incbin "baserom.gba", 0x0009f22c, 0x00000024
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
-	.incbin "baserom.gba", 0x0009f250, 0x00000024
+	.incbin "baserom.gba", 0x0009f250, 0x00000020
+	.global Data_0809f118
+Data_0809f118:
+	.incbin "baserom.gba", 0x0009f270, 0x00000004
 	.global BattleFx_BurstParticleObjectScript
 BattleFx_BurstParticleObjectScript:
 	.incbin "baserom.gba", 0x0009f274, 0x00000044
@@ -1734,16 +1725,13 @@ DisplayScroll_LineTable:
 	.global DisplayScroll_Font
 DisplayScroll_Font:
 	.incbin "baserom.gba", 0x000f17ec, 0x00000814
-	.section .rom.000f2028, "ax"
-	.global Title_PlaceIntroSprites
-	.type Title_PlaceIntroSprites, %function
-	.thumb_func
-Title_PlaceIntroSprites:
-	.incbin "baserom.gba", 0x000f2028, 0x00000478
 	.section .rom.000f38bc, "ax"
 	.global Title_PromptTiles
 Title_PromptTiles:
-	.incbin "baserom.gba", 0x000f38bc, 0x000000cd
+	.incbin "baserom.gba", 0x000f38bc, 0x000000c7
+	.global Data_080f39ab
+Data_080f39ab:
+	.incbin "baserom.gba", 0x000f3983, 0x00000006
 	.global Title_PromptBlendLevels
 Title_PromptBlendLevels:
 	.incbin "baserom.gba", 0x000f3989, 0x0000003d

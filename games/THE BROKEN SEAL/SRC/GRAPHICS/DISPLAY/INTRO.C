@@ -22,7 +22,9 @@ struct IntroSprite {
     s32 tile;
 };
 
-/* The title intro's work block, heap slot 43. */
+/* The title intro's work block, heap slot 43. Behind the counters lies the
+   intro's object table, the OAM shadow its frame callback copies; the
+   prompt later lays its sprite list over the same bytes. */
 struct IntroWork {
     s32 back_rows;
     s32 front_rows;
@@ -30,11 +32,103 @@ struct IntroWork {
     s32 tick;
     s32 state;
     s32 rise;
-    u8 unknown_18[0x68];
-    struct IntroSprite sprites[8];
+    union {
+        volatile u32 objects[120][2];
+        struct {
+            u8 unknown_18[0x68];
+            struct IntroSprite sprites[8];
+        } prompt;
+    } area;
 };
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
+
+extern u8 gDebugPaused;
+extern const u8 Data_080f39ab[];
+
+/* Word N of object entry I. */
+#define ENTRY(i, word) (work->area.objects[i][word])
+
+#define WRAP256(v) \
+    while ((v) > 255) \
+        (v) -= 256; \
+    while ((v) < 0) \
+        (v) += 256
+
+/* x is the sprite's left edge; its centre's distance from line 104 sets
+   how far along the perspective line the sprite sits. */
+#define PLACE(column, half) \
+    x = Data_080f39ab[column] - (half); \
+    y = (top - base) * ((x + (half)) - 104) / 80 + base - (half); \
+    WRAP256(y)
+
+#define QUAD(i, size, shape, tile) \
+    ENTRY(i, 0) = ((x + 4) << 16) | y | ((shape) + 0x00002400); \
+    ENTRY((i) + 1, 0) = ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400); \
+    ENTRY((i) + 2, 0) = ((x + 4) << 16) | (u8)(y + (size)) | ((shape) + 0x20002400); \
+    ENTRY((i) + 3, 0) = ((x + 4 + (size)) << 16) | (u8)(y + (size)) | ((shape) + 0x30002400); \
+    ENTRY(i, 1) = (tile); \
+    ENTRY((i) + 1, 1) = (tile); \
+    ENTRY((i) + 2, 1) = (tile); \
+    ENTRY((i) + 3, 1) = (tile)
+
+/* Title intro frame callback: lays the three sprite groups of the scrolling
+   pictures along a perspective line, parks the rest of the object table and
+   copies it to OAM. */
+void Title_PlaceIntroSprites(void)
+{
+    struct IntroWork *work;
+    u32 n;
+    s32 base;
+    s32 top;
+    s32 x;
+    s32 y;
+    s32 line;
+
+    work = Ram_WorkSlot[43];
+    n = 0;
+    if (gDebugPaused == 0) {
+        if ((++work->tick & 3) == 0)
+            work->rise++;
+    }
+    base = 48 - gBgScroll[1].y;
+    top = 144 - work->rise;
+    if (work->frame < 0x118) {
+        if ((work->tick & 1) == 0) {
+            PLACE(0, 16);
+            QUAD(n, 16, 0x40000000, 232);
+            n += 4;
+            PLACE(2, 16);
+            ENTRY(n, 0) = ((x + 4) << 16) | y | 0x80002400;
+            ENTRY(n, 1) = 128;
+            n++;
+            PLACE(4, 32);
+            QUAD(n, 32, 0x80000000, 192);
+            n += 4;
+        } else {
+            PLACE(1, 16);
+            QUAD(n, 16, 0x40000000, 232);
+            n += 4;
+            PLACE(3, 16);
+            QUAD(n, 16, 0x40000000, 224);
+            n += 4;
+            PLACE(5, 32);
+            QUAD(n, 32, 0x80000000, 160);
+            n += 4;
+        }
+    }
+    for (; n <= 119; n++)
+        ENTRY(n, 0) = 0x400020a0;
+    REG_BLDCNT = 0x3f50;
+    REG_BLDALPHA = 0x0e0e;
+    Dma_Set(&ENTRY(0, 0), (void *)0x07000000, ((n * 8) >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
+    line = 32 - gBgScroll[1].y;
+    WRAP256(line);
+    ENTRY(12, 0) = line | 0xc05c2000;
+    ENTRY(12, 1) = 0x800;
+    Dma_Set(&ENTRY(12, 0), (void *)(0x07000000 + n * 8), 0x84000002, (volatile u32 *)0x040000d4);
+    Dma_Set(&ENTRY(0, 0), (void *)0x07000000, 0x84000008, (volatile u32 *)0x040000d4);
+}
 
 /* Title intro: load both scrolling pictures and lay out their tilemaps.
    Each map row is thirty running tiles and two blank ones; the rows below
@@ -371,7 +465,7 @@ s32 Title_ShowIntro(s32 prompt)
     Bg0_ClearTilemap();
     if (prompt != 0) {
         u8 *buffer = Runtime_AllocateBlock(14, 0x400);
-        struct IntroSprite *sprite = work->sprites;
+        struct IntroSprite *sprite = work->area.prompt.sprites;
 
         Resource_DecodeByteLz(Title_PromptTiles, buffer);
         for (i = 0; i < PROMPT_TILES; i++) {
@@ -394,7 +488,7 @@ s32 Title_ShowIntro(s32 prompt)
         limit = 300;
     for (i = 0; i < limit; i++) {
         if (prompt != 0) {
-            struct IntroSprite *sprite = work->sprites;
+            struct IntroSprite *sprite = work->area.prompt.sprites;
             u32 level;
             s32 x;
 #if defined(TBS_EDITION_DE)

@@ -62,7 +62,6 @@ struct OwnerState {
     u16 pp;
 };
 
-
 /* Restore the whole party: every owner's HP and PP to their maximums, and
  * the three companions back into the active party. */
 static __inline__ void Party_RestoreAll(void)
@@ -2281,7 +2280,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gTorebiKyudenEventsOther;
 }
 
-/* The palace's scene start, entry veneer 0. */
+/* Start the palace scene. */
 
 /* Babi's Palace entry: record the entrance flags, then outside the second scene restore the lighthouse-item scene and the guards, set the entrance selector and, arriving by entrance 99 or 98, restore the party and run its scene. */
 s32 TorebiKyuden_ApplyEntryState(void)

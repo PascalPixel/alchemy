@@ -2,10 +2,7 @@
 #define TOREBI_KYUDEN_KYUDEN_H
 extern struct EventWork *gEventWork;
 
-/*
- * The imports only the palace scene calls, by their own names; the launch
- * keeps an inline because its direct call changes the palace's bytes.
- */
+/* Services used by the palace scene. */
 struct OwnerState;
 
 void Audio_PlayCueFromEventWork(void);
@@ -55,10 +52,6 @@ extern s32 gKeysHeld;
 
 extern u8 TorebiKyuden_EmptyTable[];
 extern u8 TorebiKyuden_MessageTable[];
-
-/* Contiguous unnamed leaf-owner run for resource_3b8. */
-
-/* Contiguous unnamed leaf-owner run for resource_3b8. */
 
 extern u8 TorebiKyuden_MiddleActionScript[];
 

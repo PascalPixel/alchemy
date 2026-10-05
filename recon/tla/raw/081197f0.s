@@ -651,7 +651,7 @@ Func_081197f0:
 	.4byte 0x00000000
 .L_08119d40:
 	str r4, [sp, #4]
-	bl Func_08119374
+	bl BattlePres_SyncTurn
 	ldr r4, [sp, #4]
 	cmp r0, #0
 	bge .L_08119d4e
@@ -776,7 +776,7 @@ Func_081197f0:
 	ldrb r3, [r0]
 	cmp r3, #0
 	beq .L_08119e46
-	bl Func_08119374
+	bl BattlePres_SyncTurn
 	cmp r0, #0
 	bge .L_08119e4c
 	b .L_08119f4c

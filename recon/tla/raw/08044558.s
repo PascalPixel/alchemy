@@ -30,7 +30,7 @@ Func_08044558:
 	str r3, [sp, #20]
 	str r2, [sp, #16]
 	mov r11, r2
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	ldr r3, .L_080446f4
 	movs r0, #147
 	movs r1, #128

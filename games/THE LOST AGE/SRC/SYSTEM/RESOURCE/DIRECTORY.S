@@ -32,7 +32,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall010
 	resource , Resource_FarCall010
 	resource , Resource_Data012
-	resource , Ui_WindowTiles
+	resource WindowTiles, Ui_WindowTiles
 	resource , UiText_SmallFont
 	resource , Resource_Data015
 	resource , Title_ScreenPicture

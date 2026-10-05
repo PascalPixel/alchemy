@@ -100,7 +100,7 @@ Func_0200006c:
 .L_02008108:
 	.4byte LinkLobby_SlotValues
 .L_0200810c:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_02008110:
 	.4byte LinkLobby_SlotColumns
 	.section .text.x02008134,"ax",%progbits
@@ -303,7 +303,7 @@ Func_02000134:
 .L_020082cc:
 	.4byte Data_020022b8
 .L_020082d0:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_020082d4:
 	.4byte IwramClearWords
 	.section .text.x020082d8,"ax",%progbits

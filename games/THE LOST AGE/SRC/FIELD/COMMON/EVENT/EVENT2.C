@@ -73,11 +73,11 @@ s32 BattleFx_SelectBattleCue(s32 row, s32 column);
 void BattleFx_SetWeightedResult(s32 row, s32 column)
 {
     struct EventWork *event = Ram_HeapSlots->event_work;
-    s32 first = row;
-    s32 second = column;
 
-    event->battle_group = BattleFx_GetWeightedResult(first, second);
+    event->battle_group = BattleFx_GetWeightedResult(row, column);
+    /* FAKEMATCH: the ARM9 scheduling would address the control mode before storing the group. */
+    __asm__("");
     if (event->control_mode == 3)
         BattleFx_LookupResult((u8 *)ObjectTable_Get(EventRuntime_GetControlledOwner()) + 8);
-    BattleFx_SelectBattleCue(first, second);
+    BattleFx_SelectBattleCue(row, column);
 }

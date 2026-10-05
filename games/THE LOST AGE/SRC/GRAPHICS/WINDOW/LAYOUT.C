@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
+#include "RAM_BUFFER.H"
 extern u8 Data_03001e90[];
 extern u8 Data_03001e8c[];
 
@@ -22,4 +24,73 @@ void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 heigh
             dst += 32 - width;
         } while (row < height);
     }
+}
+
+/* The party status window's place, which its heap slot keeps. */
+struct UiWindowBounds {
+    s32 handle;
+    u16 left;
+    u16 top;
+    u16 right;
+    u16 height;
+    u16 flags;
+};
+
+s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
+s32 Party_CountActiveOwnersFar(void);
+s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiWindow_DrawPartyStatusContents(s32 flags);
+
+void UiWindow_BuildLayoutBounds(s32 flags)
+{
+    struct UiWindowBounds *state = Ram_HeapSlots->window_layout;
+    u8 *base = Ram_HeapSlots->window_tiles;
+    s32 height = 4;
+    s32 n;
+    s32 right;
+    s32 left;
+
+    if (base[5] != 0) {
+        n = BattleParty_PrepareActiveOwnersFar(0);
+        height = 3;
+    } else {
+        n = Party_CountActiveOwnersFar();
+        if ((u32)n > 4)
+            n = 4;
+    }
+    if (flags & 1)
+        height++;
+    else
+        flags &= -3;
+
+    n *= 6;
+    right = n + 1;
+    if (flags & 2)
+        right = n + 6;
+
+    left = 30;
+    left -= right;
+    state->left = left;
+    state->top = 0;
+    state->right = right;
+    state->height = height;
+    state->flags = flags;
+}
+
+
+void UiWindow_CreateWithLayoutBounds(s32 flags)
+{
+    s32 zero;
+    struct UiWindowBounds *window;
+    u8 *tiles;
+
+    window = Runtime_AllocateBlock(64, sizeof(struct UiWindowBounds));
+    tiles = Ram_HeapSlots->window_tiles;
+    zero = 0;
+    tiles[6] = 1;
+    UiWindow_BuildLayoutBounds(flags);
+    window->handle = UiWindow_Create(
+        window->left, window->top, window->right, window->height, 6);
+    UiWindow_DrawPartyStatusContents(flags);
+    tiles[6] = zero;
 }

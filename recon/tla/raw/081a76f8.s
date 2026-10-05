@@ -107,7 +107,7 @@ Func_081a76f8:
 	adds r2, #4
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	movs r0, #1
 	bl Func_08013f3c

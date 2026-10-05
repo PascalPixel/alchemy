@@ -42,7 +42,7 @@ Func_08016990:
 .L_080169d4:
 	.4byte 0x04000128
 .L_080169d8:
-	.4byte Data_02003870
+	.4byte gSerialPeerPayloads
 .L_080169dc:
 	.4byte gLinkStatus
 .L_080169e0:

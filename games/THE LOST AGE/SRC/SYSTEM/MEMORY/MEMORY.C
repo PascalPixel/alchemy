@@ -2,6 +2,73 @@
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
 #include "RUNTIME_MEM.H"
+#include "DMA.H"
+#include "IO_REG.H"
+
+/* The window frame colours of background bank 15. */
+extern const u16 Ui_WindowPalette[];
+extern const u8 System_BasicColorPalette[];
+extern char ResourceId_WindowTiles;
+void *Resource_GetTableEntry(s32 id);
+
+/* Loads the shared window graphics: resource 0x13 into BG character block
+   0, the window palette into background bank 15, the bank-15 frame colours
+   and the object palettes. */
+void Ui_LoadWindowGraphics(void)
+{
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
+            (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
+            (volatile u32 *)0x040000d4);
+    /* FAKEMATCH: the two do-while blocks keep the value-before-address
+       order of the palette stores */
+    do {
+        s32 black = 0;
+        PLTT_BACKDROP = black;
+    } while (0);
+    do {
+        volatile u16 *pal;
+        s32 color;
+
+        color = 0x4180;
+        pal = (volatile u16 *)0x050001e8;
+        *pal = color;
+        color = 0x3960;
+        pal++;
+        *pal = color;
+        color = 0x3140;
+        pal++;
+        *pal = color;
+        color = 0x2920;
+        pal++;
+        *pal = color;
+        color = 0x49a0;
+        pal++;
+        *pal = color;
+        color = 0x51c0;
+        pal++;
+        *pal = color;
+        color = 0x59e0;
+        pal++;
+        *pal = color;
+    } while (0);
+    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
+            (volatile u32 *)0x040000d4);
+}
+
+void PaletteDma_LoadBlock(void)
+{
+    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, (volatile u32 *)0x040000d4);
+}
+
+void Runtime_InitializeHeap(void)
+{
+    struct HeapSlots *work = Ram_HeapSlots;
+    volatile u32 zero = 0;
+    Dma_Set(&zero, work, 0x85000040, (volatile u32 *)0x040000d4);
+    Ram_HeapSlots->next_iwram = gIwramHeap;
+    Ram_HeapSlots->next_ewram = gEwramHeap;
+}
 
 /* The sound mixer's workspace, which the IWRAM heap ends at. */
 extern u8 IwramSoundMixWorkspace[];

@@ -103,7 +103,7 @@ Func_0802de8c:
 	movs r0, #1
 	bl Func_08013eb4
 .L_0802df54:
-	bl Func_08014c6c
+	bl Runtime_InitializeHeap
 	bl Scheduler_ResetTaskTable
 	movs r1, #160
 	movs r0, #36

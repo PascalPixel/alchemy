@@ -3,6 +3,10 @@
  * 0x1ff inline (split constant) where this C reloads it from the pool, and
  * loads target_x/x and active in a different order; follows Shop_InitEffect
  * at the end of ⚓️'s MENU/SHOP/SHOP.C.
+ * With -mtune=arm9tdmi (2026-10-05) score 16: the loads now follow the
+ * listing except the active counter's increment, but the 0x1ff mask still
+ * comes from the pool. The whole shop cursor run (08108948 to 08108af0)
+ * waits for this one to reach SHOP.C.
  */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"

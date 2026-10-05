@@ -24,11 +24,11 @@ Func_080ca9cc:
 	cmp r3, r0
 	bne .L_080caa0a
 	adds r0, r5, #0
-	bl Func_080cc994
+	bl Stream_ReadU16
 	lsls r0, r0, #16
 	str r0, [r6]
 	adds r0, r5, #0
-	bl Func_080cc994
+	bl Stream_ReadU16
 	lsls r0, r0, #16
 	str r0, [r6, #8]
 	movs r0, #0

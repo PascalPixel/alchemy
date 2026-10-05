@@ -334,7 +334,7 @@ Func_0804bc08:
 	adds r5, #228
 	adds r3, #65
 	ldrb r0, [r3]
-	bl Func_0804297c
+	bl UiWindow_DrawPartyStatusContents
 	bl BattleActor_CommitPlacementFar
 	ldr r4, [sp, #36]
 	movs r0, #130
@@ -483,7 +483,7 @@ Func_0804bc08:
 .L_0804bfc0:
 	.4byte gLinkStatus
 .L_0804bfc4:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_0804bfc8:
 	.4byte Func_0804b6a0
 .L_0804bfcc:
@@ -2208,6 +2208,6 @@ Func_0804bc08:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0804cda0:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_0804cda4:
 	.4byte gLinkStatus

@@ -12,8 +12,8 @@ Runtime_IrqHandlers:
 	.global Data_080179ea
 Data_080179ea:
 	.incbin "baserom.gba", 0x000179ea, 0x00000106
-	.global Data_08017af0
-Data_08017af0:
+	.global Ui_WindowPalette
+Ui_WindowPalette:
 	.incbin "baserom.gba", 0x00017af0, 0x00000020
 	.global System_BasicColorPalette
 System_BasicColorPalette:

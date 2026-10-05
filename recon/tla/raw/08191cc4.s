@@ -64,7 +64,7 @@ Func_08191cc4:
 	movs r3, #120
 	str r3, [r2, #12]
 	str r3, [r2, #16]
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #206
 	lsls r3, r3, #3
 	add r3, r9

@@ -629,8 +629,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_EventBegin();
     Battle_ResetEffectCounter();
     Actor_SetPosition(8, 0x1480000, 0x5900000);
-    /* Set the flag byte at +91 of record 8. */
-    Object_GetById(8)->unknown_5b = 1;
+    Object_GetById(8)->paused = 1;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
@@ -697,7 +696,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_EventWait(20);
     /* Clear the flag byte at +91 of record 8. */
-    Object_GetById(8)->unknown_5b = 0;
+    Object_GetById(8)->paused = 0;
     Engine_ActorEnableActionCallback(8, 2);
     record = Object_GetById(8);
     /* Store the integer part of the 16.16 fixed-point fields at +8 and +16

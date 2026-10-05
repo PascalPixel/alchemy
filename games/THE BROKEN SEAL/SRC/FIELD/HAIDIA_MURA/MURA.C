@@ -1280,7 +1280,7 @@ s32 HaidiaMura_ApplyEntryState(void)
                         Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
                     }
                 } else {
-                    Object_GetById(22)->unknown_5b = set;
+                    Object_GetById(22)->paused = set;
                     Engine_GameFlagClear(0x241);
                 }
                 if (gGameState.entrance != 16 && !Engine_GameFlagIsSet(0x87a)) {
@@ -2656,7 +2656,7 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     u32 dir;
 
     result = 0;
-    if (obj->unknown_5b == 1) {
+    if (obj->paused == 1) {
         if (obj->rise_counter == 0) {
             Object_SetMode(obj, 1);
             return 1;
@@ -2671,17 +2671,17 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
         dir = obj->facing & 0xf000;
         if (angle == dir || right == dir || left == dir || force != 0) {
             /* FAKEMATCH: plain-byte publication avoids synthetic QI masks. */
-            *(u8 *)&obj->unknown_5b = 1;
+            *(u8 *)&obj->paused = 1;
             Object_SetMode(obj, 1);
             result = 1;
             *(u8 *)&obj->rise_counter = result;
         } else {
-            *(u8 *)&obj->unknown_5b = 0;
+            *(u8 *)&obj->paused = 0;
             Object_SetMode(obj, 2);
             *(u8 *)&obj->rise_counter = 0;
         }
     } else {
-        *(u8 *)&obj->unknown_5b = 0;
+        *(u8 *)&obj->paused = 0;
         Object_SetMode(obj, 2);
         *(u8 *)&obj->rise_counter = 0;
     }
@@ -2862,11 +2862,11 @@ void FieldScene_RunScene373SequenceB(void)
         if (rec7 != 0) {
             goto L_02005a8a;
         }
-        Object_GetById(22)->unknown_5b = rec7;
+        Object_GetById(22)->paused = rec7;
         GameFlag_Clear(0x241);
     } else {
         if (GameFlag_IsSet(0x106) != 0) {
-            Object_GetById(22)->unknown_5b = 1;
+            Object_GetById(22)->paused = 1;
             GameFlag_Set(0x241);
         }
     }

@@ -820,14 +820,14 @@ s32 Scene_Initialize(void)
             && !GameFlag_IsSet(FLAG_PRIMARY_SEQUENCE_SEEN)) {
             GameFlag_Set(FLAG_PRIMARY_SEQUENCE_SEEN);
             object = (union FieldObject *)Actor_Get(11);
-            object->actor.unknown_5b = 1;
+            object->actor.paused = 1;
             object = (union FieldObject *)Actor_Get(17);
-            object->actor.unknown_5b = 1;
+            object->actor.paused = 1;
             Scene_RunPrimarySequence();
             object = (union FieldObject *)Actor_Get(11);
-            object->actor.unknown_5b = 0;
+            object->actor.paused = 0;
             object = (union FieldObject *)Actor_Get(17);
-            object->actor.unknown_5b = 0;
+            object->actor.paused = 0;
         }
     }
     return 0;

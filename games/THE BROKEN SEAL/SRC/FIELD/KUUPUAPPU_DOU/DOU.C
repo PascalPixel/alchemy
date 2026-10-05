@@ -707,7 +707,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 flag;
     s32 index;
 
-    flag = Object_GetById(10)->unknown_5b;
+    flag = Object_GetById(10)->paused;
     if (flag == 0) {
         if (++KuupuappuDou_ScheduleTimer > 190) {
             KuupuappuDou_ScheduleTimer = 0;
@@ -728,7 +728,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                     rec7->y.fixed = 0xff0000;
                     rec7->gravity = 0;
                     rec7->velocity_y = 0;
-                    rec7->unknown_5b = 0;
+                    rec7->paused = 0;
                     Audio_PlayCue(106);
                 }
             }
@@ -757,7 +757,7 @@ void FieldScene_RunScene3a7SequenceD(void)
     s32 *selected;
 
     rec7 = Object_GetById(10);
-    if (rec7->unknown_5b == 0) {
+    if (rec7->paused == 0) {
         if ((++KuupuappuDou_TickCounter & 63) == 0) {
             selected = &KuupuappuDou_TickValue;
             record = Engine_RandomNext();

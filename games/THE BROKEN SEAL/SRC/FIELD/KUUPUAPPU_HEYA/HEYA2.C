@@ -655,7 +655,7 @@ void Scene_JoinRodSearch(void)
     s32 mes;
 
     Engine_EventWait(20);
-    Object_GetById(2)->unknown_5b = 0;
+    Object_GetById(2)->paused = 0;
     Engine_ActorJump(2, 4, 0);
     Engine_EventWait(40);
     mes = (s32)MsgKuupuappuThankHelpBelieve;
@@ -2475,7 +2475,7 @@ void RunDialoguePromptScene(void)
     Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
     obj = Object_GetById(14);
     {
-        u8 *target = &obj->unknown_5b;
+        u8 *target = &obj->paused;
         /* FAKEMATCH: the flag goes through a word-sized local and a
          * pointer temporary, which keeps the reference's registers. */
         s32 shown = 1;

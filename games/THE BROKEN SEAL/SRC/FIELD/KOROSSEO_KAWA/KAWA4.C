@@ -155,7 +155,7 @@ void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
 
         o->speed = v;
         o->acceleration = v >> 1;
-        o->unknown_5b = z;
+        o->paused = z;
         ObjectDispatch_InitFromTable6(o);
         Object_SetMode(o, 5);
         Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);
@@ -172,7 +172,7 @@ void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
 
         o->speed = v;
         o->acceleration = v >> 1;
-        o->unknown_5b = z;
+        o->paused = z;
         ObjectDispatch_InitFromTable6(o);
         Object_SetMode(o, 5);
         Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);

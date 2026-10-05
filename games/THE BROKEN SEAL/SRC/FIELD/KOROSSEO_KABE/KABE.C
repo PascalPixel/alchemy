@@ -481,7 +481,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     rec8 = Object_GetById(gGameState.selected_actor);
     for (i = 22; i <= 25; i++) {
         rec7 = Object_GetById(i);
-        rec7->unknown_5b = 0;
+        rec7->paused = 0;
         xa = rec7->x.fixed;
         xb = rec8->x.fixed;
         xd = xa - xb;

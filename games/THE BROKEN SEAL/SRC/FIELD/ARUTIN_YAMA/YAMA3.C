@@ -1137,7 +1137,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
     object->speed = 0x20000;
     object->acceleration = 0xccc;
     zero.v = 0;
-    object->unknown_5b = zero.v;
+    object->paused = zero.v;
     object->unknown_64 = object->y.fixed / 0x10000;
     object->unknown_66 = 0;
     pos[0].fixed = object->x.fixed;

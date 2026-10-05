@@ -270,7 +270,7 @@ void Scene_RunScene39eSequenceB(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 0x1f8);
         Engine_EventWait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
-        Object_GetById(8)->unknown_5b = 0;
+        Object_GetById(8)->paused = 0;
         Audio_PlayCue(152);
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
@@ -288,7 +288,7 @@ void Scene_RunScene39eSequenceB(void)
         Engine_EventWait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
         Audio_PlayCue(152);
-        Object_GetById(8)->unknown_5b = rec7;
+        Object_GetById(8)->paused = rec7;
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
         Engine_ActorSetAnimation(8, 1);
@@ -404,7 +404,7 @@ void FieldScene_RunRoofSceneExit(void)
 {
     Engine_EventBegin();
 
-    Object_GetById(12)->unknown_5b = 0;
+    Object_GetById(12)->paused = 0;
 
     goto testPendingWork;
 waitPendingWork:
@@ -420,7 +420,7 @@ testPendingWork:
 
     Object_GetById(12)->velocity_y = 0;
 
-    Object_GetById(12)->unknown_5b = 1;
+    Object_GetById(12)->paused = 1;
 
     Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
 
@@ -436,7 +436,7 @@ testPendingWork:
 
     Object_GetById(12)->facing = 128 << 7;
 
-    Object_GetById(12)->unknown_5b = 0;
+    Object_GetById(12)->paused = 0;
 
     Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
     Engine_EventEnd();
@@ -1521,7 +1521,7 @@ void ShianJiin_AskIfCurious(void)
     Engine_ActorStartRepeatedMotion(8, 2);
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
-    Object_GetById(8)->unknown_5b = 0;
+    Object_GetById(8)->paused = 0;
     Audio_PlayCue(152);
     record = Actor_Get(8);
     record->velocity_y = 0x80000;

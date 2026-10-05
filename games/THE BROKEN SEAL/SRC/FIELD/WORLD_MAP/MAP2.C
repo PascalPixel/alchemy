@@ -277,7 +277,7 @@ void WorldMap_UseBlackOrb(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     site = NULL;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    leader->unknown_5b = 0;
+    leader->paused = 0;
     ObjectDispatch_InitFromTable6(leader);
     if (leader->z.fixed > 0xd680000) {
         if (leader->x.fixed > 0x176e0000) {

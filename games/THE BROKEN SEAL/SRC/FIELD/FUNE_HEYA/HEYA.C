@@ -178,14 +178,14 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0) {
             Object_SetMode(obj, 1);
             obj->rise_counter = 0;
-            if (leader->unknown_5b == 0) {
+            if (leader->paused == 0) {
                 obj->rise_enabled = 1;
             }
             walker->step++;
         }
         break;
     case 7:
-        if (leader->unknown_5b == 0) {
+        if (leader->paused == 0) {
             Object_SetMode(obj, 3);
             obj->rise_enabled = 2;
         }
@@ -199,7 +199,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         Call4(Engine_ObjectSetPosition, (s32)obj, 0x1e00000, 0x200000, 0x2580000);
         walker->countdown = 60;
         walker->step++;
-        if (leader->unknown_5b == 0) {
+        if (leader->paused == 0) {
             obj->rise_enabled = 3;
         }
         break;

@@ -501,7 +501,7 @@ void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 
 void SceneState_RunGuardedActorStep(s32 x)
 {
-    u8 *flag = &Object_GetById(x)->unknown_5b;
+    u8 *flag = &Object_GetById(x)->paused;
     s32 zero = 0;
 
     *flag = 1;

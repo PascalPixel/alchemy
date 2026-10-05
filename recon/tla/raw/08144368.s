@@ -206,7 +206,7 @@ Func_08144368:
 	add r5, sp, #44
 	str r3, [r2, #8]
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r3, r8
 	mov r11, r5
 	movs r7, #0

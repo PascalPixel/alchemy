@@ -1281,6 +1281,8 @@
     "*/recon/tla/es/rom.o"(.rom.0015a0bc)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES_2.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0015a110)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/EFFECT3.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.0015e22c)
     "*/recon/tla/es/rom.o"(.rom.0015e320)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/PARTICLE_STREAM_MODES.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00164c0a)

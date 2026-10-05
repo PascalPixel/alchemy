@@ -455,7 +455,7 @@ Func_0817bd88:
 	add r5, sp, #80
 	adds r1, r5, #0
 	ldr r0, [r2, #8]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	mov r3, r8
 	strb r3, [r6, #25]
 	ldr r0, [sp, #56]

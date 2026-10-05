@@ -306,7 +306,7 @@ Func_0817d174:
 	asrs r5, r5, #1
 	mov r0, r8
 	ands r5, r3
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r6]
 	lsls r1, r5, #3
 	asrs r2, r2, #1

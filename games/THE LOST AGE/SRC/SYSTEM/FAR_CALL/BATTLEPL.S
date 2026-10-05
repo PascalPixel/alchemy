@@ -21,13 +21,13 @@ GetBattleObjectSlotFar:
 	.thumb_func
 Func_081180a0:
 	overlay_veneer Func_081197f0
-	.global Func_081180a8
+	.global BattleMotion_ProjectPositionFar
 	.thumb_func
-Func_081180a8:
+BattleMotion_ProjectPositionFar:
 	overlay_veneer Func_0811bd50
-	.global Func_081180b0
+	.global BattleMotion_ProjectScaledPositionFar
 	.thumb_func
-Func_081180b0:
+BattleMotion_ProjectScaledPositionFar:
 	overlay_veneer Func_0811c2b4
 	.global Func_081180b8
 	.thumb_func

@@ -263,7 +263,7 @@ Func_08144044:
 	beq .L_081442c8
 	mov r1, r8
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r2, r8
 	ldr r5, [r2]
 	movs r1, #3

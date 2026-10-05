@@ -32,7 +32,7 @@ Func_0816bc70:
 	movs r3, #36
 	ldrsh r0, [r4, r3]
 	adds r1, r5, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r3, [r5]
 	movs r1, #19
 	lsrs r2, r3, #31
@@ -143,7 +143,7 @@ Func_0816bc70:
 	add r1, sp, #52
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 .L_0816bd98:
 	mov r4, r9
 	cmp r4, #20

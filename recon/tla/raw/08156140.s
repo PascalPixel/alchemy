@@ -1000,7 +1000,7 @@ BattleFx_RunProjectileVolley:
 	movs r7, #36
 	ldrsh r0, [r1, r7]
 	adds r1, r6, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	movs r2, #0
 	str r2, [sp, #136]
 	ldr r5, .L_08156c00
@@ -1323,7 +1323,7 @@ BattleFx_RunProjectileVolley:
 	add r6, sp, #152
 	adds r1, r6, #0
 	adds r0, r7, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	mov r1, r9
 	asrs r3, r3, #1

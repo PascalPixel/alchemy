@@ -227,7 +227,7 @@ Func_0816f080:
 	adds r1, r7, #0
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	movs r6, #0
 	movs r1, #0
 	mov r5, r10

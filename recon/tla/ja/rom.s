@@ -5136,7 +5136,13 @@ BattleFx_RunProjectileVolley:
 	.type BattlePres_RunBurstScene, %function
 	.thumb_func
 BattlePres_RunBurstScene:
-	.incbin "baserom.gba", 0x0015a110, 0x00004210
+	.incbin "baserom.gba", 0x0015a110, 0x00004060
+	.section .rom.0015e22c, "ax"
+	.incbin "baserom.gba", 0x0015e22c, 0x0000005c
+	.global BattleUnit_ProjectToScreen
+BattleUnit_ProjectToScreen:
+	.incbin "baserom.gba", 0x0015e288, 0x00000074
+	.incbin "baserom.gba", 0x0015e2fc, 0x00000024
 	.section .rom.0015e320, "ax"
 	.global Func_0815e320
 	.type Func_0815e320, %function

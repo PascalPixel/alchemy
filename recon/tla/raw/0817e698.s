@@ -192,7 +192,7 @@ Func_0817e698:
 	adds r3, #20
 	adds r1, r3, #0
 	str r3, [sp, #4]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r3, .L_0817e848
 	movs r2, #128
 	lsls r2, r2, #19

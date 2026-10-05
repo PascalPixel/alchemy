@@ -543,7 +543,7 @@ Func_08171bb0:
 	adds r1, r5, #0
 	str r3, [r6, #8]
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, [r5]
 	movs r1, #20
 	lsrs r3, r2, #31
@@ -932,7 +932,7 @@ Func_08171bb0:
 .L_081722ba:
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r2, .L_081724dc
 	lsls r0, r6, #1
 	subs r3, r0, #2
@@ -1275,7 +1275,7 @@ Func_08171bb0:
 	ldrsh r0, [r2, r1]
 	adds r1, r3, #0
 	str r3, [sp, #44]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r4, [sp, #68]
 	cmp r4, #16
 	bne .L_0817258a
@@ -1610,7 +1610,7 @@ Func_08171bb0:
 	mov r10, r4
 	ldr r0, [r3, #8]
 	mov r1, r10
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r5, [sp, #68]
 	cmp r5, #8
 	bne .L_0817280a

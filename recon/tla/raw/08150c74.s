@@ -333,7 +333,7 @@ Func_08150c74:
 	str r3, [r6, #4]
 	ldr r3, [r5, #16]
 	str r3, [r6, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r2, r9
 	ldr r3, [r2]
 	ldr r0, [sp, #44]

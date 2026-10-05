@@ -230,7 +230,7 @@ Func_0814a264:
 .L_0814a424:
 	mov r1, r9
 	ldr r0, [sp, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	mov r7, r9
 	ldr r3, [r7]
 	lsrs r2, r3, #31

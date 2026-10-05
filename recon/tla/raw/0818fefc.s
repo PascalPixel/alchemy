@@ -389,7 +389,7 @@ Func_0818fefc:
 	ldr r2, [sp, #96]
 	ldr r1, [sp, #20]
 	ldr r0, [r2, #8]
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r3, [sp, #84]
 	cmp r3, #3
 	bne .L_0819022c

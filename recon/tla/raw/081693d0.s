@@ -1468,7 +1468,7 @@ Func_081693d0:
 	ldr r1, [sp, #68]
 	ldrsh r0, [r7, r1]
 	adds r1, r6, #0
-	bl Func_0815e20c
+	bl EffectPosition_ApplyStepAndYOffset
 	ldr r3, [r6]
 	adds r7, #2
 	lsrs r2, r3, #31

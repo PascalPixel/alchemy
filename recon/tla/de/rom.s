@@ -4079,15 +4079,15 @@ GetBattleObjectSlotFar:
 	.thumb_func
 Func_081180a0:
 	.incbin "baserom.gba", 0x001180a0, 0x00000008
-	.global Func_081180a8
-	.type Func_081180a8, %function
+	.global BattleMotion_ProjectPositionFar
+	.type BattleMotion_ProjectPositionFar, %function
 	.thumb_func
-Func_081180a8:
+BattleMotion_ProjectPositionFar:
 	.incbin "baserom.gba", 0x001180a8, 0x00000008
-	.global Func_081180b0
-	.type Func_081180b0, %function
+	.global BattleMotion_ProjectScaledPositionFar
+	.type BattleMotion_ProjectScaledPositionFar, %function
 	.thumb_func
-Func_081180b0:
+BattleMotion_ProjectScaledPositionFar:
 	.incbin "baserom.gba", 0x001180b0, 0x00000008
 	.global Func_081180b8
 	.type Func_081180b8, %function
@@ -4621,7 +4621,13 @@ BattleFx_RunProjectileVolley:
 	.type BattlePres_RunBurstScene, %function
 	.thumb_func
 BattlePres_RunBurstScene:
-	.incbin "baserom.gba", 0x0015a110, 0x00004210
+	.incbin "baserom.gba", 0x0015a110, 0x00004060
+	.section .rom.0015e22c, "ax"
+	.incbin "baserom.gba", 0x0015e22c, 0x0000005c
+	.global BattleUnit_ProjectToScreen
+BattleUnit_ProjectToScreen:
+	.incbin "baserom.gba", 0x0015e288, 0x00000074
+	.incbin "baserom.gba", 0x0015e2fc, 0x00000024
 	.section .rom.0015e320, "ax"
 	.global Func_0815e320
 	.type Func_0815e320, %function

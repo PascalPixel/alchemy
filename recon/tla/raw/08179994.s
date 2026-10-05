@@ -122,7 +122,7 @@ Func_08179994:
 	mov r1, r11
 	ldr r0, [r1, #8]
 	ldr r1, [sp, #36]
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r2, [sp, #56]
 	cmp r2, #7
 	ble .L_08179aa2
@@ -393,7 +393,7 @@ Func_08179994:
 	mov r2, r11
 	ldrsh r0, [r7, r2]
 	ldr r1, [sp, #24]
-	bl Func_0815e1fc
+	bl EffectPosition_ApplyAnimationAndYOffset
 	mov r1, r11
 	ldrsh r0, [r7, r1]
 	movs r1, #4

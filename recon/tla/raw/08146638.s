@@ -261,7 +261,7 @@ Func_08146638:
 	lsls r0, r0, #2
 	adds r0, r0, r3
 	adds r1, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [sp, #44]
 	ldr r4, [sp, #12]
 	cmp r3, r0

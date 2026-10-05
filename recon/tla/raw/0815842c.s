@@ -65,7 +65,7 @@ Func_0815842c:
 	movs r2, #36
 	ldrsh r0, [r3, r2]
 	adds r1, r5, #0
-	bl Func_0815e21c
+	bl EffectPosition_ApplyAlternateStepAndYOffset
 	ldr r0, .L_081585a8
 	movs r4, #15
 	movs r1, #127

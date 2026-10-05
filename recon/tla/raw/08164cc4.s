@@ -910,7 +910,7 @@ BattleEffect_RunParticleStreams:
 	lsls r2, r2, #16
 	str r2, [r6, #8]
 	adds r0, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	movs r0, #2
 	ldrsh r2, [r5, r0]
 	movs r0, #153
@@ -1362,7 +1362,7 @@ BattleEffect_RunParticleStreams:
 	add r6, sp, #96
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r6]
 	ldr r2, [r6, #8]
 	asrs r3, r3, #1
@@ -1538,7 +1538,7 @@ BattleEffect_RunParticleStreams:
 	add r5, sp, #96
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	asrs r7, r3, #1
 	str r7, [r5]

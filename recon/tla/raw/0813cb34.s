@@ -290,7 +290,7 @@ Func_0813cb34:
 	adds r0, r7, #0
 	ldr r3, [r6, #8]
 	str r3, [r7, #8]
-	bl Func_0815e1ec
+	bl EffectPosition_ApplyBaseAndYOffset
 	ldr r3, [r5]
 	movs r1, #58
 	asrs r3, r3, #1

@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-/* Moves an effect by its velocity, grows it by its scale rates and turns its
-   sprite by its spin, as ☀️'s FIELD/COMMON/EFFECT/MOVE.C does. */
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object)
 {
     s32 x;

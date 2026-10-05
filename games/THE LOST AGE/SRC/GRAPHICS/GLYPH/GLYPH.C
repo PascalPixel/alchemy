@@ -10,7 +10,6 @@ extern u8 *UiIcon_MiscIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
 
-/* Decodes a 16x16 miscellaneous icon into the glyph work. */
 void Ui_PrepareTransferFromTableEntry(u32 index)
 {
     GlyphTransfer *state = Ram_HeapSlots->glyph_work;
@@ -21,8 +20,6 @@ void Ui_PrepareTransferFromTableEntry(u32 index)
     UiGlyph_DecodeWithHeapRoutines(state, 0);
 }
 
-/* Decodes icon into a free or the given VRAM slot, returning its tile in
-   tile, and loads its palette into object palette bank palette. */
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse)
 {
     GlyphTransfer *work;
@@ -48,8 +45,6 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
     Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, REG_DMA3);
 }
 
-/* An empty routine between the glyph loader and decoder, as in ☀️;
-   nothing in the main image calls it by name. */
 void UiGlyph_ReservedNoOp(void)
 {
 }

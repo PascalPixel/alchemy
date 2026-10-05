@@ -9,7 +9,6 @@ void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 #endif
 extern u8 MsgCoinsLabel[];
 
-/* Draws the party's coins, seven digits wide, and the coin label into a window. */
 void UiText_DrawWorkValueWithLabel(s32 work)
 {
     UiText_DrawNumberAtOffsetFar(gPartyState.coins, 7, work, 8, 0);

@@ -10,7 +10,6 @@
 
 extern u8 gKeysHeld[];
 
-/* battle/presentation/cam/shoulder_alt.c */
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
     struct BattleCamera *cam = *(gWorkSlot + HEAP_SLOT_CAMERA);
@@ -28,7 +27,6 @@ void BattlePres_AdjustCameraByShoulderKeysAlt(void)
     }
 }
 
-/* battle/runtime/reserved_no_op_b.c */
 void Battle_ReservedNoOp9B2C(void)
 {
 }

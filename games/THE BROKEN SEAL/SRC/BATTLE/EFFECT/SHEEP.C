@@ -21,10 +21,6 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 extern void *gWorkSlot[];
 
-/* Sleep: thirty-two sheep drop onto the scene from above and bounce once
-   they reach the floor, the first twelve drawn from frame i * 4; each
-   affected unit is lifted on frame i * 16 + 64. The flock lives in the
-   shared map cell buffer, which the code addresses as a constant. */
 void BattleFx_RunBouncingSheep(void *object)
 {
     void **heap_cache;
@@ -120,14 +116,6 @@ void BattleFx_RunBouncingSheep(void *object)
     BattleFx_EndCanvasLayer();
 }
 
-/*
- * Battle effect that pops a marker over each affected unit in turn. Unit i
- * appears on frame i * 16 with sound cue 143 and stays for 72 frames: a
- * fixed 16x20 cel from the effect sheet and above it a 16x12 cel that cycles
- * through nine frames of six ticks from a random starting phase. The far
- * side's canvas is shifted 112 pixels left, and the effect runs for
- * (count + 1) * 32 frames.
- */
 void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
 {
     void **slot;

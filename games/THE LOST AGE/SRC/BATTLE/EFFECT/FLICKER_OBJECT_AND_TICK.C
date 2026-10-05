@@ -4,7 +4,6 @@
 #include "RAM_BUFFER.H"
 #include "ARC_EFFECT.H"
 
-/* Waits until both arc groups are older than 31 frames, or 90 frames. */
 void BattleFx_WaitForArcGroups(void)
 {
     struct ArcEffectWork *work = Ram_HeapSlots->block_62;
@@ -18,8 +17,6 @@ void BattleFx_WaitForArcGroups(void)
     }
 }
 
-/* Flickers the object between child values 7 and 0 every two frames and
-   spawns its arc objects every sixteen. */
 void BattleFx_FlickerObjectAndTick(s32 arg0)
 {
     if ((gFrameCount & 2) != 0) {
@@ -32,8 +29,6 @@ void BattleFx_FlickerObjectAndTick(s32 arg0)
     }
 }
 
-/* Steps the object through its six child values every other frame and
-   spawns its arc objects every sixteen. */
 void BattleFx_CycleObjectAndTick(s32 arg0)
 {
     if (gFrameCount & 1)
@@ -42,8 +37,6 @@ void BattleFx_CycleObjectAndTick(s32 arg0)
         BattleFx_SpawnScaledArcObjects(arg0);
 }
 
-/* Sets how the object animates each frame: still (mode 0), flickering
-   (mode 1) or cycling. */
 void BattleFx_SetObjectTickMode(struct DispatchObject *object, s32 mode)
 {
     if (mode == 0) {

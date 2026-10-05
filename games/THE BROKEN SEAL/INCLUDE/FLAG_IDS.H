@@ -1,36 +1,17 @@
 #ifndef ALCHEMY_FLAG_IDS_H
 #define ALCHEMY_FLAG_IDS_H
 
-/* Game flags shared by more than one scene. */
 enum GameFlagId {
-    /* Every unit attacks without orders, enemies at a random member. */
     FLAG_AUTO_BATTLE = 0x16a,
-    /* The battle is fought over the link cable. */
     FLAG_LINK_BATTLE = 0x16c,
-    /* The battle that teaches unleashing and summoning Djinn. */
     FLAG_DJINN_TUTORIAL = 0x16e,
-    /*
-     * Set while the party keeps its position across a scene load: the loader
-     * skips the entrance's position and facing, and scenes skip their
-     * arrival scripts.
-     */
     FLAG_KEEP_PARTY_POSITION = 0x109,
-    /* Shows the location name when the next scene starts. */
     FLAG_SHOW_LOCATION_NAME = 0x12f,
-    /*
-     * Set for one layered scene load: the loader keeps the palette, tile
-     * sheets and layer data already in place, then clears the flag.
-     */
     FLAG_KEEP_LAYER_GRAPHICS = 0x170,
-    /* The Vault thieves are held in the jail. */
     FLAG_VAULT_THIEVES_JAILED = 0x855,
-    /* The Lunpa chef has told the party about the prisoner in the fortress. */
     FLAG_LUNPA_HEARD_OF_PRISONER = 0x940,
-    /* Lunpa's shops and inn trade with the party again. */
     FLAG_LUNPA_TRADE_REOPENED = 0x941,
-    /* Hammet and Bunza have met again in West Lunpa Cave. */
     FLAG_LUNPA_CAVE_REUNION_SEEN = 0x94d,
-    /* The party stayed behind when Hammet and Bunza left for Kalay. */
     FLAG_PARTY_STAYED_IN_LUNPA = 0x94f
 };
 

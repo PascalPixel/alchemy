@@ -3,13 +3,9 @@
 
 extern u8 gMenuWork[];
 
-/* The panel loads the "Exp" label from the literal pool and reaches the four
-   stat labels, which sit 23 messages before it, by subtracting; the
-   class-name base is loaded from the pool too. */
 extern u8 MsgExpLabel[];
 extern u8 MsgClassName;
 
-/* Fixed labels drawn with the panel. */
 extern const u8 Menu_LvString[];
 extern const u8 Data_080af230[];
 extern const u8 Data_080af234[];
@@ -23,11 +19,6 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 void UiWork_SetParamNibbleFar(s32 color);
 struct BattleUnit *Owner_GetStateFar(s32 owner);
 void WaitFrames(s32 frames);
-
-
-/* The owner's status panel: name, class, level, HP and PP against their
-   maxima and experience on the left, the four battle stats on the right.
-   Bit 8 of flags skips clearing the panel first. */
 
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {

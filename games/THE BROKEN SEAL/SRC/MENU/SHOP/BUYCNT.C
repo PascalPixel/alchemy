@@ -17,8 +17,6 @@ extern void UiMessage_ShowAndWait(s32);
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Item_AdjustCounterFar(s32, s32);
 
-/* Draw the member's inventory in three rows of five icons, with the
-   number already owned above them when the chosen item is in the bag. */
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {
 

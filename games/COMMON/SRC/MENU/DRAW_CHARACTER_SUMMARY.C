@@ -15,8 +15,6 @@ extern u8 StatusMenu_LevelLetterString[];
 extern u8 MsgCoins[];
 extern u8 MsgPiece[];
 
-/* Localized summaries move their level letters and coins labels to fit
-   their words. Spanish and French place the level letters at pixel offsets. */
 #if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
@@ -29,9 +27,6 @@ extern u8 MsgPiece[];
 #define SUMMARY_COINS_X 48
 #endif
 
-/* Draws one character entry into the summary surface: its name, the two-digit
- * value at +0x1c, the class message selected by +0x1d, the formatted value at
- * +0x20, the six-digit value at +0x24 and the closing label. */
 void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
 {
     u32 buf[4];
@@ -50,7 +45,6 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
         UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
         UiText_DrawCharacterAtOffset(st[29] + (s32)&MsgClassName, surface, 0, 16);
 #if !EDITION_INTERNATIONAL
-        /* The Japanese summary puts the coins above the play time. */
         extra = 32;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 24, extra);
         UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, 72, 32);
@@ -62,7 +56,6 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
         extra = 48;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
 #if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
-        /* French names a single coin as one piece. */
         if (*(u32 *)(st + 36) > 1)
             UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
         else

@@ -1,6 +1,3 @@
-@ Uncredited resource creator, reconstructed from the current owned
-@ TBS English ROM and current physical source operands. The sole ordinary
-@ C attempt omits the unsupported dead-result construction and remains a draft.
 	.syntax unified
 	.thumb
 	.text

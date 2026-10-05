@@ -1,12 +1,3 @@
-//! The tracked DONE history behind PROGRESS_CHART.png: daily summaries and
-//! hourly measurements, the last measurement of the hour winning. Historical
-//! hourly rows use main's published percentages where the day's closing value
-//! agrees with its maintained summary. Daily summaries and correction notes
-//! remain intact. Later rows retain bytes as published at the time: the English
-//! build's alone at first, and from the row whose note says so the sum over
-//! a game's six editions out of six times the English executable bytes.
-//! Current verification status is recorded separately from those historical
-//! values.
 use super::progress::GameDone;
 use super::sessions;
 use std::collections::BTreeMap;
@@ -14,8 +5,6 @@ use std::path::Path;
 
 const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttla_done\ttla_executable\ttla_percent\tmodels\toverhaul";
 
-/// One game's value on one day: bytes when they were recorded, else the
-/// percentage published at the time.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Measure {
     pub done: Option<u64>,
@@ -36,7 +25,6 @@ impl Measure {
             ..Measure::default()
         }
     }
-    /// The value as a percentage.
     pub(crate) fn percent(&self) -> Option<f64> {
         if let Some(percent) = self.percent {
             return Some(percent);
@@ -46,7 +34,6 @@ impl Measure {
     }
 }
 
-/// One calendar day's row.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Day {
     pub date: String,
@@ -62,14 +49,12 @@ impl Day {
             ..Day::default()
         }
     }
-    /// The day's value for `game`, `tbs` or `tla`.
     pub(crate) fn game(&self, game: &str) -> Option<&Measure> {
         match game {
             "tbs" => self.tbs.as_ref(),
             _ => self.tla.as_ref(),
         }
     }
-    /// Whether the row carries nothing but its date.
     fn is_empty(&self) -> bool {
         self.tbs.is_none()
             && self.tla.is_none()
@@ -78,8 +63,6 @@ impl Day {
     }
 }
 
-/// The current verification state: the day it was measured and whether each
-/// game still waits for a byte-identical build.
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Current {
     pub date: String,
@@ -87,7 +70,6 @@ pub(crate) struct Current {
     pub tla_pending: bool,
 }
 
-/// The whole history, and the row the committed figures were drawn from.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct History {
     pub began: String,
@@ -97,14 +79,12 @@ pub(crate) struct History {
     pub figures: Option<Day>,
 }
 impl History {
-    /// Whether `game` has no verified current measurement.
     pub(crate) fn pending(&self, game: &str) -> bool {
         self.current.as_ref().is_some_and(|current| match game {
             "tbs" => current.tbs_pending,
             _ => current.tla_pending,
         })
     }
-    /// The days whose credit rules grew stricter, with their notes.
     #[cfg(test)]
     pub(crate) fn stricter(&self) -> impl Iterator<Item = (&str, &str)> {
         self.days.iter().filter_map(|day| {
@@ -122,7 +102,6 @@ impl History {
     }
 }
 
-/// The local copy of the history that `alchemy figure` draws from.
 pub(crate) const PATH: &str = "recon/tbs/metrics/history.tsv";
 pub(crate) fn path(root: &Path) -> std::path::PathBuf {
     root.join(PATH)
@@ -326,7 +305,6 @@ fn measured(done: Option<GameDone>) -> Option<Measure> {
         .map(|done| Measure::bytes(done.bytes() as u64, done.executable as u64))
 }
 
-/// Store the last verified measurement in a local calendar hour.
 pub(crate) fn record_hour(
     history: &mut History,
     hour: &str,
@@ -351,7 +329,6 @@ pub(crate) fn record_hour(
     }
 }
 
-/// Hourly samples replace the daily summary only for games with samples that day.
 pub(crate) fn points(history: &History, game: &str) -> Vec<(i64, f64)> {
     let mut points = history
         .hours
@@ -376,7 +353,6 @@ pub(crate) fn points(history: &History, game: &str) -> Vec<(i64, f64)> {
     points
 }
 
-/// Calendar hours from the epoch; legacy daily rows retain their original position.
 pub(crate) fn hour_number(date: &str) -> Option<i64> {
     if !matches!(date.len(), 10 | 13) || !date.is_ascii() {
         return None;
@@ -401,8 +377,6 @@ pub(crate) fn hour_number(date: &str) -> Option<i64> {
     Some(day * 24 + hour)
 }
 
-/// Record `date`'s verified counts, replacing any earlier row of that day.
-/// A game without a verified count keeps what the day already had.
 pub(crate) fn record(
     history: &mut History,
     date: &str,
@@ -427,14 +401,9 @@ pub(crate) fn record(
         history.days.retain(|row| row.date != date);
     }
 }
-/// The label of a commit that names no model.
 pub(crate) const UNTAGGED: &str = "Untagged";
-/// Pascal (2026-10-05): the per-day model counts approved through this date
-/// stay as recorded, a compatibility table for commits whose trailers do not
-/// name their model. Every later day is counted from main's commits alone.
 pub(crate) const FROZEN_THROUGH: &str = "2026-10-04";
 
-/// Count every day after [`FROZEN_THROUGH`] from its commits' trailers.
 pub(crate) fn derive_models(root: &Path, history: &mut History) -> Result<(), String> {
     let log = sessions::git_log(root, Some(FROZEN_THROUGH))?;
     for (date, models) in count_models(&sessions::commits(&log)) {
@@ -453,15 +422,12 @@ fn count_models(commits: &[sessions::Commit]) -> BTreeMap<String, BTreeMap<Strin
     }
     days
 }
-/// Replace `date`'s model counts, adding the day's row if it lacks one.
 pub(crate) fn record_models(history: &mut History, date: &str, models: &BTreeMap<String, u64>) {
     if models.is_empty() {
         return;
     }
     history.day_mut(date).models = models.clone();
 }
-/// The history as the chart drawn on `date` saw it: every earlier day, and
-/// that day's row as recorded when the figures were drawn.
 pub(crate) fn as_drawn(history: &History) -> History {
     let mut drawn = history.clone();
     let Some(figures) = &history.figures else {
@@ -473,7 +439,6 @@ pub(crate) fn as_drawn(history: &History) -> History {
     }
     drawn
 }
-/// Keep the row a figure shows while the caller renders it.
 pub(crate) fn mark_drawn(history: &mut History, date: &str) {
     history.figures = Some(
         history
@@ -485,7 +450,6 @@ pub(crate) fn mark_drawn(history: &mut History, date: &str) {
     );
 }
 
-/// Today's calendar date on this machine, `YYYY-MM-DD`.
 pub(crate) fn today() -> String {
     this_hour()[..10].to_string()
 }
@@ -494,7 +458,6 @@ pub(crate) fn this_hour() -> String {
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map_or(0, |elapsed| elapsed.as_secs() as libc::time_t);
-    // SAFETY: localtime_r only writes the zeroed `tm` it is given.
     let mut tm: libc::tm = unsafe { std::mem::zeroed() };
     unsafe { libc::localtime_r(&now, &mut tm) };
     format!(
@@ -505,7 +468,6 @@ pub(crate) fn this_hour() -> String {
         tm.tm_hour
     )
 }
-/// Days from the civil date `YYYY-MM-DD` to 1970-01-01.
 pub(crate) fn day_number(date: &str) -> Option<i64> {
     let mut parts = date.splitn(3, '-').map(|part| part.parse::<i64>().ok());
     let (y, m, d) = (parts.next()??, parts.next()??, parts.next()??);
@@ -516,7 +478,6 @@ pub(crate) fn day_number(date: &str) -> Option<i64> {
     let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
     Some(era * 146_097 + doe - 719_468)
 }
-/// The civil date of a day number.
 pub(crate) fn civil(day: i64) -> (i64, i64, i64) {
     let mut day = day + 719_468;
     let era = day.div_euclid(146_097);
@@ -528,13 +489,11 @@ pub(crate) fn civil(day: i64) -> (i64, i64, i64) {
     let m = if mp < 10 { mp + 3 } else { mp - 9 };
     (yoe + era * 400 + i64::from(m <= 2), m, d)
 }
-/// The day before `date`.
 #[cfg(test)]
 pub(crate) fn previous(date: &str) -> Option<String> {
     let (y, m, d) = civil(day_number(date)? - 1);
     Some(format!("{y:04}-{m:02}-{d:02}"))
 }
-/// A day's short label, such as "Sep 1", and whether it starts a month.
 pub(crate) fn day_label(day: i64) -> (String, bool) {
     const MONTHS: [&str; 12] = [
         "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",

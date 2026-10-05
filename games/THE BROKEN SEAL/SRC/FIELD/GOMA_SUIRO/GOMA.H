@@ -1,8 +1,6 @@
 #ifndef ALCHEMY_GOMA_H
 #define ALCHEMY_GOMA_H
 
-/* The Goma waterway (resource_38a): what its files share. */
-
 #include "TYPES.H"
 
 #define NULL ((void *)0)
@@ -22,12 +20,8 @@ typedef struct {
 
 void WaitFrames(s32 frames);
 
-/* Wait at most sixty frames for the object to reach the requested height. */
-
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 
-/* The object is accessed through word fields and a linked record. Keep the
- * shared storage view so the record load follows the position stores. */
 union MotionWork {
     struct {
         u32 unk_00[2];

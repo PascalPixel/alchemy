@@ -1,9 +1,5 @@
 #include "EDITION.H"
 #include "INVENTORY.H"
-/*
- * Later scene steps and the scene initialiser: scene twelve, the flag 0x200
- * cells, actor 18's sequence and the actors placed on entry.
- */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -60,7 +56,6 @@ struct SceneActor_02000350 {
     u8 active;
 };
 
-/* Actor 13's dialogue temporarily enables acceptance. */
 struct Actor_020007d4 {
     u8 reserved00[91];
     u8 accepted;
@@ -90,25 +85,21 @@ struct SceneActor_02000c1c {
     struct Presentation_02000c1c *presentation;
 };
 
-/* Actor 18's dialogue and restoration: if cue 231 is available and flag 0x858 is clear, enable the scene marker at +370 before closing. */
 struct SceneWork_02000e90 {
     u8 reserved000[370];
     u16 actor18_marker;
 };
 
-/* Actor 16's dialogue depends on the scene counter. */
 struct SceneWork_020006b4 {
     u8 reserved000[472];
     u16 branch_counter;
 };
 
-/* Actor 11's dialogue temporarily enables acceptance. */
 struct Actor_02000754 {
     u8 reserved00[91];
     u8 accepted;
 };
 
-/* Actor 15's dialogue preserves facing. */
 struct Actor_02000640 {
     u8 reserved00[6];
     u16 facing;
@@ -118,13 +109,11 @@ struct Actor_02000640 {
 
 extern u8 *gWork;
 
-/* The scene's tables, laid out after the code. */
 extern const u8 KuupuappuMuraSai_Scripts[];
 extern const u8 KuupuappuMuraSai_Messages[];
 extern const u8 KuupuappuMuraSai_Actors[];
 extern const u8 KuupuappuMuraSai_Extras[];
 
-/* Map cell steps played as the leader arrives in each scene. */
 extern const u16 KuupuappuMuraSai_Scene5Cells[];
 extern const u16 KuupuappuMuraSai_Scene6Cells[];
 extern const u16 KuupuappuMuraSai_Scene7Cells[];

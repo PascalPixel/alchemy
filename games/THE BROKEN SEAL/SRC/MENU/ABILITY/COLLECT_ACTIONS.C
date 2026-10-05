@@ -4,7 +4,6 @@
 
 #define ACTION_ID_MASK 0x3FFF
 
-/* PsynergyMenu_CollectActions per games/THE BROKEN SEAL/INCLUDE/PSYNERGY_MENU.H. */
 s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode)
 {
     /* FAKEMATCH: the scalar cursor, offset clears and empty branches preserve operand order and 274 bytes; indexed clearing yields 266. */

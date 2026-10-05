@@ -9,8 +9,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_RUNTIME.H"
 
-/* Scenes past the table are not maps: a blank screen, the two table
-   screens that draw over the last object palettes, and a battle. */
 enum {
     SCENE_BLANK = 0x1fb,
     SCENE_TABLE_LOAD = 0x1fc,
@@ -40,8 +38,6 @@ s32 FarCall_BlankRunTable(s32 entrance);
 s32 FarCall_BlankLoadTable(s32 entrance);
 void Audio_PlayCue(s32 cue);
 
-/* The table screens borrow the last two object palettes; each keeps them
-   in a heap buffer while it runs and puts them back. */
 static __inline__ s32 Scene_RunTable(s32 entrance)
 {
     void *palette = OBJ_PALETTE_LAST;
@@ -68,13 +64,6 @@ static __inline__ s32 Scene_LoadTable(s32 entrance)
     return result;
 }
 
-/*
- * The game's scene loop, which never returns. It starts at the title, or
- * with the debug switch at one of two test scenes, and then runs scene
- * after scene: each pass resets the tasks, the heap and the resources, and
- * either runs one of the special scenes and lets its result choose where
- * the party goes next, or enters the map scene the game state names.
- */
 void Game_ResetForNewGame(s32 mode)
 {
     const struct SceneRecord *table;

@@ -1,13 +1,3 @@
-@ Relocated Thumb branch patcher, which rewrites BL pairs in place. Its loader
-@ (0x0801336c) allocates a 0x80-byte heap block, has DMA3 copy exactly this
-@ module there (size and source in its literal pool at 0x080133b8), calls the
-@ copy and frees it. Behind a 4-byte Thumb entry (bx pc) the ARM body saves
-@ r5 and r6 without lr and subtracts registers with sub (sub r3, r0, r6);
-@ GCC saves lr with any register and writes register subtraction as rsb.
-@ After that entry its 124-byte body equals TBS
-@ SYSTEM/RESOURCE/PATCH_THUMB_BRANCH.S (0x08002d5c) byte for byte.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, relocated Thumb branch patcher
 .syntax unified
 	.thumb
 	.global Resource_PatchThumbBranchCode

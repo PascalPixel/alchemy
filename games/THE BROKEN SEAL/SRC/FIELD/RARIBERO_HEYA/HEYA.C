@@ -71,7 +71,6 @@ u8 *RariberoHeya_GetEntrances(void)
     return gRariberoEntrances;
 }
 
-/* The sanctum has regions of its own; the house takes the town's. */
 u8 *RariberoHeya_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_RariberoHeya1) {
@@ -85,7 +84,6 @@ u8 *RariberoHeya_GetExits(void)
     return gRariberoExits;
 }
 
-/* The house places its actors anew once the aerie's events are done. */
 u8 *RariberoHeya_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
@@ -97,10 +95,6 @@ u8 *RariberoHeya_GetPlacements(void)
     return gRariberoPlacements;
 }
 
-/* The Lalivero shopkeeper: spoken to across the counter she opens shop 32;
- * otherwise she talks about the kidnapping, or about the rough sea once flag
- * 0x9a7 is set. The kidnapping question is loaded once and its two answers
- * are the lines after it. */
 void RariberoHeya_RunItemShop(s32 keeper)
 {
     struct FieldActor *leader = Object_GetById(0);
@@ -126,10 +120,6 @@ void RariberoHeya_RunItemShop(s32 keeper)
     }
 }
 
-/*
- * Raribero house: a face-toward branch. If the party faces the door (north)
- * the door line plays; otherwise a flag picks one of the two default lines.
- */
 void Dialogue_HandleFacingBranch(s32 no)
 {
     u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
@@ -144,11 +134,6 @@ void Dialogue_HandleFacingBranch(s32 no)
     }
 }
 
-/*
- * Raribero house: choose which dialogue branch to play. If the party faces
- * the door (north) the alternate line for this door runs; otherwise a flag
- * decides between the two default lines.
- */
 void Dialogue_HandleAlternateFacingBranch(s32 no)
 {
     u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
@@ -163,10 +148,6 @@ void Dialogue_HandleAlternateFacingBranch(s32 no)
     }
 }
 
-/*
- * Raribero house: a face-toward action. If the party faces the door (north)
- * the door line plays; otherwise a flag picks one of the two default lines.
- */
 void Dialogue_HandleFacingAction(s32 no)
 {
     u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
@@ -181,11 +162,6 @@ void Dialogue_HandleFacingAction(s32 no)
     }
 }
 
-/*
- * Raribero house: a face-toward cue branch. If the party faces the door
- * (north) the cue line plays; otherwise a flag picks one of the two default
- * lines.
- */
 void Dialogue_HandleFacingCueBranch(s32 no)
 {
     u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
@@ -272,7 +248,6 @@ void RariberoHeya_RequestTouchedExitAndPlayCue(void)
     Engine_AudioPlayCue(0x7B);
 }
 
-/* Both interiors answer differently once the aerie's events are done. */
 u8 *RariberoHeya_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
@@ -623,11 +598,6 @@ void FieldScene_RunPrimaryScript(void)
     Engine_EventEnd();
 }
 
-/*
- * "But tell me, what of the others?" Actor 11 asks, and the party and actor
- * 12 answer in turn, each beat an action on one actor and then a wait; the
- * last line stays open for the question that follows.
- */
 void FieldScene_RunSecondaryScript(void)
 {
     Engine_EventSetMessage((s32)MsgRariberoTellOthers);
@@ -689,16 +659,6 @@ void FieldScene_RunSecondaryScript(void)
     Engine_EventOpenMessage(0x2002, 0);
 }
 
-/* The action table actor 14 takes while flag 0x300 is set. */
-
-/*
- * Opens both Lalivero interiors. Arriving from the aerie by entrance 90 sets
- * flag 0x9a7. In the sanctum three actors take collision flag 4 and sprite
- * priority 2, and returning by entrance 12 records the sanctum as the scene
- * to come back to. In the house the resident is set up the same way, actor
- * 14 takes its action table while flag 0x300 is set, and arriving by
- * entrance 99 plays the report before the entrance becomes 21.
- */
 s32 Scene_Initialize(void)
 {
     s32 scene;

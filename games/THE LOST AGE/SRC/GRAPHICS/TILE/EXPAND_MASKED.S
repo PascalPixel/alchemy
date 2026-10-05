@@ -1,12 +1,3 @@
-@ Masked tile expander, copied and run as one 160-byte unit (size and source
-@ {0xa0, 0x08038d90} in its loader's literal pool at 0x0803dc0c). Behind a
-@ 4-byte Thumb entry (bx pc) the ARM body loads its masks from the three
-@ words after the code (EXPAND_MASKED_MASKS.S) with add sl, pc, #132 and
-@ saves r5-sl without lr; GCC saves lr with any register. After that entry
-@ its 144-byte body and the masks equal TBS GRAPHICS/TILE/EXPAND_MASKED.S
-@ (0x08015d74) and EXPAND_MASKED_MASKS.S byte for byte. The entry, which is
-@ TLA's own, and the mask table carry no credit.
-@ credit: library — TBS/TLA common ARM text and tile kernel bank, masked tile expander
 .syntax unified
 	.thumb
 	.global Tile_ExpandMaskedCode

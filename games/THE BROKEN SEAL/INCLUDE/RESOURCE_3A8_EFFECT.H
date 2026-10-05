@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* Fields independently observed at +0x06 and +0x66 in resource_3a8. */
 struct Resource3a8Effect {
     u8 unknown_00[0x06];
     u16 unknown_06;

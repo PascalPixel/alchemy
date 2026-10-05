@@ -14,16 +14,12 @@ static __inline__ void FillWords(void *dst, s32 size, s32 value)
     Iwram_FillWords(dst, size, value);
 }
 
-/* Heap slot 44 holds the background view, slot 10 its scanline pages. */
 extern void *gWorkSlot[64];
 
 extern u8 gDisp[];
 
-/* Eight 4bpp tiles of a bar that narrows by a column from one to the next. */
 extern const u8 BattlePres_TileVariants[];
 
-/* Builds the battle presentation tilemap: 256 blank words, 128 border words,
-   240 words of sequential tile pairs from 0x0201, then 640 border words. */
 void BattlePresentation_BuildTilemap(s32 *destination)
 {
     s32 entry;
@@ -43,11 +39,6 @@ void BattlePresentation_BuildTilemap(s32 *destination)
     FillWords(destination, 0x280, 0x03ff03ff);
 }
 
-/* While the presentation mode is 2, restart the H-blank DMA that feeds
-   the BG2 control register from the current scroll record, and copy
-   that record's affine parameters. */
-/* The HeapState rewrite retained 84 bytes but moved the initial cache
-   address and loads in all six editions. Keep the existing cache view. */
 void BattlePres_UpdateHBlankScroll(void)
 {
     struct BattleAffineHdma *records;
@@ -74,7 +65,6 @@ void BattlePresentation_UploadTileVariant(void)
         Dma_Set(BattlePres_TileVariants + (variant >> 2) * 32, (void *)0x06005000, 0x84000008, REG_DMA3);
 }
 
-/* Raise the curtain, turn the camera and reduce the transition zoom. */
 void BattlePres_AdvanceTransitionTimer(void)
 {
     s32 scroll;
@@ -104,7 +94,6 @@ void BattlePres_AdvanceTransitionTimer(void)
     BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
 }
 
-/* battle/presentation/trans/draw_rows.c */
 void BattlePres_DrawTransitionRows(void)
 {
     u32 i;

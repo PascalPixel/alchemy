@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* Message names come from each edition's text catalog. */
 extern char MsgHpRecover;
 extern char MsgPpRecover;
 extern char MsgHpFull;
@@ -58,7 +57,7 @@ extern char MsgCureStun;
 extern char MsgCureSpirit;
 extern char MsgCureCurse;
 extern char MsgBuffsReset;
-extern char MsgHpRegen; /* "recovered HP!", where The Broken Seal says Refrain blocks */
+extern char MsgHpRegen;
 extern char MsgAllResting;
 extern char MsgBlownAway;
 extern char MsgFieldBroken;

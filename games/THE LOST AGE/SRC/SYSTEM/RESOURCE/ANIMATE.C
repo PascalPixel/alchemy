@@ -6,8 +6,6 @@ void ResourceMetadata_ClearRecord(void *record);
 s32 AnimationObject_Allocate(s32 id);
 s32 Animation_LookupValueByKey(s32 key);
 
-/* ☀️'s: set a layer up from its metadata, looking its frames up among the
-   loaded slots when the metadata has none. */
 void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
 {
     s32 value;
@@ -40,8 +38,6 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
     }
 }
 
-/* ⚓️ keeps the slot count at 0x1b, where ☀️ keeps it at 0x27, and the
-   size and offsets from 0x0c. */
 struct MetadataSlotState {
     u8 unknown_00[0x0c];
     s32 scale;
@@ -56,8 +52,6 @@ struct MetadataSlotState {
     s32 slots[4];
 };
 
-/* ☀️'s: give the object its next free animation slot, taking the first
-   one's size and offsets from its metadata. */
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
 {
     s32 value = state->slots[0];
@@ -163,8 +157,6 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
     }
 }
 
-/* ⚓️'s animation object keeps its offsets, last animation and entry count
-   0x0c earlier than ☀️'s, and its entries at the same 0x28. */
 struct AnimationGroup {
     u8 unknown_00[0x16];
     s8 offset_x;

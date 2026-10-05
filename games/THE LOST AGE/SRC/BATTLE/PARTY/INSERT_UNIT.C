@@ -2,7 +2,6 @@
 #include "OWNER_STATE.H"
 #include "BATTLE_TYPES.H"
 
-/* Enemies 110 and 113 are left at one HP rather than defeated. */
 s32 BattleUnit_KeepsOneHp(s32 unit_id)
 {
     struct BattleUnit *unit = Owner_GetState(unit_id);
@@ -12,12 +11,6 @@ s32 BattleUnit_KeepsOneHp(s32 unit_id)
     return 0;
 }
 
-/*
- * Puts UNIT into a battle line of up to six entries: into the free place
- * (254) nearest the line's divider (128), else the first free place, else
- * at the end, where 255 closes the line again. The units on each side of
- * the divider are counted on the way.
- */
 void BattleParty_InsertUnitCentered(u16 *list, s32 unit)
 {
     s32 counts[2] = {0, 0};

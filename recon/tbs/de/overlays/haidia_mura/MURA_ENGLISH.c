@@ -1,5 +1,4 @@
 #include "RUNTIME_MEM.H"
-/* Near miss: English repair-scene landing lacks the localized two-pixel southward landing and explicit position commit; DE/JA/FR need sixteen more bytes, ES/IT also change entry setup. */
 #include "STAGED_MOTION.H"
 #include "TYPES.H"
 #include "CALL.H"
@@ -53,10 +52,6 @@ enum {
 
 void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
 
-/*
- * An actor climbs between the yard and the ledge in front of the house at
- * x 392, playing one animation for each half of the climb.
- */
 void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void PaletteGlow_Update(s32 a, s32 b);
@@ -368,34 +363,28 @@ void SceneDialogue_RunFlag815GatedStep(void)
     }
 }
 
-/* Runs four scene primitives in sequence: one single-argument call, one call
- * passing the address of gHaidiaMuraCellAnimB plus two small constants, one call
- * with a byte-flag-sized first argument (0) and two larger constants, and a
- * final single-argument call. */
 void FieldScene_RunPrimarySequence(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)gHaidiaMuraCellAnimB, 49, 69); /* main:08009178 */
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 0x466); /* object_id 0, x 326, z 0x466 */
-    Engine_EventRequestExit(8); /* main:0808a248 */
+    Map_AnimateCells((s32)gHaidiaMuraCellAnimB, 49, 69);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 0x466);
+    Engine_EventRequestExit(8);
 }
 
-/* Runs a short scripted step, then two 3-argument setup calls, then another
- * short scripted step; none of the callees' effects are visible here. */
 void FieldScene_RunScene373SequenceA(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76); /* main:08009178 */
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6); /* object_id 0, x 0x176, z 0x4d6 */
-    Engine_EventRequestExit(9); /* main:0808a248 */
+    Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
+    Engine_EventRequestExit(9);
 }
 
 void FieldScene_RunPrimarySequenceSecond(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)gHaidiaMuraCellAnimA, 35, 74); /* main:08009178 */
+    Map_AnimateCells((s32)gHaidiaMuraCellAnimA, 35, 74);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
-    Engine_EventRequestExit(10); /* main:0808a248 */
+    Engine_EventRequestExit(10);
 }
 
 void FieldScene_RunScene373SequenceC(void)
@@ -441,9 +430,6 @@ void FieldScene_RunScene373SequenceC(void)
     Engine_EventEnd();
 }
 
-/* Until flag 0x808 is set, raise the camera 40 steps above an actor while
- * MsgHaidiaRrruffRrrruff plays, show MsgHaidiaPuppiesPlayingOver, lower it again and return the
- * camera to its target. */
 void HaidiaMura_RunCameraRiseScene(void)
 {
     s32 **cam;
@@ -491,7 +477,6 @@ void HaidiaMura_RunCameraRiseScene(void)
     }
 }
 
-/* Until flag 0x808 is set, the two puppies bark and the leader walks on. */
 void FieldScene_RunPuppyBarks(void)
 {
     s32 msg;
@@ -656,12 +641,6 @@ void SceneState_RunTablePairByActor22State(void)
     }
 }
 
-/*
- * Outside Robin's house in Vale. He boards up three holes in the wall
- * while his mother Dora watches, then she talks with him about his father
- * until Gerald and Jasmine arrive to fetch him for the trip to Mt. Aleph with
- * Sukureta.
- */
 void HouseScene_RunRepairMorning(void)
 {
     struct FieldActor *leader;
@@ -704,7 +683,6 @@ void HouseScene_RunRepairMorning(void)
     Engine_ActorEnableActionCallback(ACTOR_JASMINE, gJasmineAction);
     Engine_ActorEnableActionCallback(ACTOR_GERALD, gGeraldAction);
 
-    /* The first hole. */
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
     leader->scale_x = 0x10000;
     leader->scale_y = 0x10000;
@@ -736,7 +714,6 @@ void HouseScene_RunRepairMorning(void)
     Engine_EventWait(200);
     Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
 
-    /* The second hole. */
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
     leader->scale_x = 0x10000;
     leader->scale_y = 0x10000;
@@ -764,7 +741,6 @@ void HouseScene_RunRepairMorning(void)
     Engine_EventWait(200);
     Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
 
-    /* The third hole. */
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
     leader->scale_x = 0x10000;
     leader->scale_y = 0x10000;
@@ -795,7 +771,6 @@ void HouseScene_RunRepairMorning(void)
     leader->scale_x = 0x10000;
     leader->scale_y = 0x10000;
 
-    /* His mother praises the work and talks about his father. */
     Engine_EventSetMessage((s32)MsgHaidiaGoodJob);
     Engine_ActorJump(ACTOR_DORA, 2, 20);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
@@ -876,7 +851,6 @@ void HouseScene_RunRepairMorning(void)
     Engine_EventWait(20);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
 
-    /* Gerald and Jasmine arrive. */
     Camera_SetSpeed(0x6666, 0xccc);
     Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
     Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);
@@ -995,7 +969,6 @@ void HouseScene_RunRepairMorning(void)
     Engine_EventWait(40);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 
-    /* She slips from the step; Gerald catches her. */
     Engine_EventSetMessage((s32)MsgHaidiaAsStubbornAsYourFather);
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
@@ -1170,7 +1143,6 @@ void HouseScene_RunRepairMorning(void)
     Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Engine_EventWait(60);
 
-    /* The three set off together. */
     actor = Actor_Get(ACTOR_GERALD);
     actor->unknown_5a |= 1;
     actor = Actor_Get(ACTOR_JASMINE);
@@ -1213,7 +1185,6 @@ void HouseScene_RunRepairMorning(void)
     Engine_EventEnd();
 }
 
-/* Vale entry: from entrance 16 run the staging scene; otherwise place the story actors and cells for the flags, start the village tasks and redraw. */
 s32 HaidiaMura_ApplyEntryState(void)
 {
     struct FieldActor *actor;
@@ -1295,9 +1266,6 @@ s32 HaidiaMura_ApplyEntryState(void)
     return 0;
 }
 
-/* Gerald's two talks beside the leader, with actor 8 and then actor 9. Each
- * places Gerald at the leader's position, and ends with him walking back to
- * the leader's tile and a story flag set. */
 void FieldScene_RunSecondaryActorSequence(void)
 {
     s32 record;
@@ -1319,7 +1287,6 @@ void FieldScene_RunSecondaryActorSequence(void)
     Actor_FaceDirection(8, 0x3000, 0);
     record = Object_GetById(0);
     if (record != 0) {
-        /* Copy the record's fields at +8 and +16 onto actor 1. */
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x192, 0x260);
@@ -1365,7 +1332,6 @@ void FieldScene_RunSecondaryActorSequence(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        /* Copy the record's fields at +10 and +18 onto actor 1. */
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
@@ -1384,7 +1350,6 @@ void FieldScene_RunPrimaryActorSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     record = Object_GetById(0);
     if (record != 0) {
-        /* Copy the s32 coordinate pair at +8/+16 of the looked-up record. */
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x15a, 0x2e9);
@@ -1444,7 +1409,6 @@ void FieldScene_RunPrimaryActorSequence(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        /* Copy the s16 coordinate pair at +10/+18 of the looked-up record. */
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
@@ -1453,8 +1417,6 @@ void FieldScene_RunPrimaryActorSequence(void)
     Engine_EventEnd();
 }
 
-/* Sets up actors 12, 13, 14 and 20 with shared data and movement/speed
- * parameters, then drives actor 11 through a further sequence of moves. */
 void FieldScene_RunCompanionActorSequence(void)
 {
     u32 i;
@@ -1582,9 +1544,9 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
 
             actor->flag55 = 0;
             Engine_ActorSetSpriteFlags(actor, 0);
-            actor->field08 = 0x01860000;   /* 0xc3 << 17. */
-            actor->field0c = 0x00a00000;   /* 0xa0 << 16. */
-            actor->field10 = 0x034a0000;   /* The literal pool word. */
+            actor->field08 = 0x01860000;
+            actor->field0c = 0x00a00000;
+            actor->field10 = 0x034a0000;
             selector++;
         }
         return;
@@ -1596,7 +1558,6 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
     }
 }
 
-/* Three years later: the opening of the repair morning. */
 void FieldScene_RunLargeStagingSequence(void)
 {
     u32 i;
@@ -1934,11 +1895,6 @@ void Scene_RepairTheHouse(void)
     Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
     Actor_SetPosition(ACTOR_DORA, 0x1880000, 0x3800000);
     turned = Actor_Get(ACTOR_DORA);
-    /*
-     * Overwritten at once, but the store must stay: its zero halfword
-     * temporary is what the record byte stores below reuse out of a high
-     * register.
-     */
     *(u16 *)(turned + 6) = 0;
     turn_back = 0xc000;
     *(u16 *)(turned + 6) = turn_back;
@@ -2002,7 +1958,6 @@ void Scene_RepairTheHouse(void)
         Engine_TaskWait(1);
     }
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-    /* Callback symbols are pooled loads that stay after the preceding call. */
     callback_a = (s32)SceneState_SetValue0ThenCall;
     Value2(Engine_TaskAddCallback, callback_a, 3200);
     callback_b = (s32)FieldScene_RunStep17;
@@ -2014,7 +1969,7 @@ void Scene_RepairTheHouse(void)
     Engine_EventWait(20);
     {
         u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 value = *(volatile u8 *)&record[35]; /* Keeps the byte in its own register. */
+        u8 value = *(volatile u8 *)&record[35];
 
         record[35] = (u8)(value | 1);
     }
@@ -2303,7 +2258,7 @@ void Scene_RepairTheHouse(void)
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
     Event_OpenMessage(ACTOR_DORA, 0);
-    none = 0; /* One zero shared by the placement call and the byte store. */
+    none = 0;
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         bump_step(1);
     }
@@ -2360,7 +2315,7 @@ void Scene_RepairTheHouse(void)
         *(s32 *)(rec + 28) += 0x1999;
         Engine_EventWait(1);
     }
-    none = 0; /* Refreshed after the loops for the closing scene store. */
+    none = 0;
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_FaceDirection(ACTOR_GERALD, 0x5000, 30);
@@ -2486,7 +2441,7 @@ void Scene_RepairTheHouse(void)
     Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
     Engine_EventWait(60);
     rec = Actor_Get(ACTOR_GERALD);
-    flag = 1; /* One shared mark bit for the three record flags. */
+    flag = 1;
     rec[90] |= flag;
     rec = Actor_Get(ACTOR_JASMINE);
     rec[90] |= flag;
@@ -2681,9 +2636,9 @@ void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
     Audio_PlayCue(154);
 
     for (frame_countdown = 30; frame_countdown >= 0; frame_countdown--) {
-        emitter->y += 0x10000;              /* 0x80 << 9. */
-        emitter->field06 = (u16)(emitter->field06 + 0x2000);  /* 0x80 << 6. */
-        emitter->field18 += -2048;          /* The pool word 0xfffff800. */
+        emitter->y += 0x10000;
+        emitter->field06 = (u16)(emitter->field06 + 0x2000);
+        emitter->field18 += -2048;
         emitter->field1c += -2048;
         Engine_TaskWait(1);
     }
@@ -2747,7 +2702,6 @@ void SceneState_ApplyRectAndRunTwo(void)
     HaidiaMura_OpenVillagerLane();
 }
 
-/* Opens the lane beside whichever villager stands in it: the cells copied depend on the villager's column, and the matching flag is set. */
 void HaidiaMura_OpenVillagerLane(void)
 {
     struct FieldActor *actor;

@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
-/* The distance in whole pixels between two (x, y, z) positions. */
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;

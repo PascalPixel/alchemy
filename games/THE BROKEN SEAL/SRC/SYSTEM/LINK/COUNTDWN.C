@@ -162,7 +162,6 @@ done:
 #define TEXT_COUNT 32
 #endif
 
-/* The Japanese edition decodes the message where the others copy it. */
 #if EDITION_INTERNATIONAL
 
 s32 UiText_CopyMessageString(s32, s16 *, s32);
@@ -203,7 +202,6 @@ active:
         UiText_DecodeMessage((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
 #endif
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
-        /* VBlank updates the pressed keys while this loop waits. */
         do {
             WaitFrames(1);
         } while ((*(volatile u32 *)&gKeyState & (KEY_A | KEY_B)) == 0 &&

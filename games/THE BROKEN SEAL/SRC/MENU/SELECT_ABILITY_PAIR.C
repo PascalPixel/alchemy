@@ -7,7 +7,6 @@
 #include "GAME_STATE.H"
 #include "UIFLOW.H"
 
-/* One entry of a collected ability list, in the parts of a shortcut. */
 struct ShortcutListEntry {
     u16 owner;
     u16 ability;
@@ -36,15 +35,6 @@ struct BattleAction *Ability_GetData(s32 ability);
 void WaitFrames(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 
-/* A debug screen that picks the two Psynergy shortcuts. It first hands a few
-   abilities to the party, then lists every ability anyone knows: left and
-   right step the entry on the cursor's row, up and down change the row, and
-   A, B or Start store both entries as the shortcuts and leave.
-
-   The labels are borrowed from the status panel: "HP/Max" is the title,
-   "Status" heads the list, and the two rows are "Attack" and "Defense", the
-   two messages before "Status". The line under the list is "You need more
-   PP." followed by the cost of the entry on the cursor's row. */
 void Debug_SelectAbilityPair(void)
 {
     struct ShortcutListEntry *list;
@@ -87,7 +77,6 @@ void Debug_SelectAbilityPair(void)
             cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
         }
         {
-            /* The labels are addressed relative to the "Status" message. */
             /* FAKEMATCH: pin the title's message to r5, where the plain form puts it. */
             register s32 message asm("r5") = (s32)MsgPanelHpMaxLabel;
 

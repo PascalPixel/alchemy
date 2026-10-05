@@ -20,14 +20,8 @@ void Korosseo_SelectSoloCompetitor();
 void Engine_EventOpenScreen();
 void Engine_EventEnd();
 
-/* The game state, read here as words: word 125 holds the solo competitor. */
 extern s32 gGameState[];
 
-/* Colosso: actor id asks whether the party is done cheering, its two answers
- * starting at MsgKorosseoCheeringChoices. On yes the solo competitor's
- * position is saved and the next one is chosen, or the party leaves after
- * the fourth; on no they are sent back to cheer. The same function sits in
- * each of the three Colosso trial overlays. */
 void Korosseo_FinishSoloRound(s32 id)
 {
     struct EventWork *work;

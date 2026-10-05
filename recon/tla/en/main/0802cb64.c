@@ -1,9 +1,3 @@
-/* Draft: MapAnimation_Update, The Broken Seal's MAP3.C over ⚓️'s MAP.H.
- * Differ 4 (dd): the two loop-invariant VRAM bases 0x06004000 and 0x06008000
- * load later in the prologue than the native code puts them. The decode
- * buffer and block table must fold as constants (Ram_DecodeBuffer and
- * Ram_MapBlocks in ☀️); with labels the allocation drifts (differ 48).
- */
 #include "TYPES.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"

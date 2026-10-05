@@ -6,7 +6,6 @@
 
 void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 
-/* ☀️'s, but ⚓️ borrows heap block 0x44 and reaches the glyph loader far. */
 s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
 {
     s32 resource_info;

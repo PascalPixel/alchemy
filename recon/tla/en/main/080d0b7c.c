@@ -1,4 +1,3 @@
-/* ☀️'s DisplayTransition_FillTilemapAndSolidTile over ⚓️'s heap slot 31: differ 2, the frame's sub sp comes before the work and fill loads instead of after them. Holding the fill in a register local, declaring it first or copying the colour did not move it. It would head ⚓️'s PALETTE5. */
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "DISPTRAN.H"

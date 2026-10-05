@@ -5,8 +5,6 @@
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000
 
-/* Lists all slots in b, marks those absent from a, then appends slots only in a. */
-
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                           u16 *out, s32 *first_count, s32 *second_count)
 {

@@ -8,33 +8,25 @@
 #include "BATTLE_RUNTIME.H"
 #include "UIFLOW.H"
 
-/* Preview setting or resting a Djinn: change the live owner record,
- * recalculate, show class and stat changes on page 0 or Psynergy changes
- * on later pages, then restore the snapshot. The nested arrow renderer
- * accesses the window through its captured frame. */
-
-/* Ability table entry returned by Ability_GetData. */
 struct AbilityData {
     u8 field_00[2];
-    u8 kind;    /* 0x02, 4 means "no category icon" */
+    u8 kind;
     u8 field_03[5];
-    u8 element; /* 0x08, 0xff means "none" */
-    u8 cost;    /* 0x09 */
+    u8 element;
+    u8 cost;
 };
 
-/* Party unit record returned by Runtime_GetObject.  Only the cells this
- * screen reads are named; the copied extent is 332 bytes. */
 struct BattleUnitRecord {
     u8 field_00[0x38];
-    s16 hp;                    /* 0x38 */
-    s16 pp;                    /* 0x3a */
-    u16 atk;                   /* 0x3c */
-    u16 def;                   /* 0x3e */
-    u16 agi;                   /* 0x40 */
-    u8 luk;                    /* 0x42 */
+    s16 hp;
+    s16 pp;
+    u16 atk;
+    u16 def;
+    u16 agi;
+    u8 luk;
     u8 field_43[0x58 - 0x43];
-    u8 grid[0x129 - 0x58];     /* 0x58, compared entry by entry */
-    u8 element;                /* 0x129 */
+    u8 grid[0x129 - 0x58];
+    u8 element;
 };
 
 s32 UiText_RenderWideStringInWindow(s16 *text, struct RenderInput *win, s32 x, s32 y);
@@ -135,7 +127,6 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     list = (u16 *)Runtime_BumpAllocateAlternatePool(96);
     Iwram_CopyWords(snap, unit, 332);
 
-    /* Apply the pending change to the live record, then recompute. */
     col = (code >> 8) & 15;
     row = code & 255;
     if (Djinn_IsActiveFar(owner, col, row) != 0)
@@ -151,7 +142,6 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         page = pages;
 
     if (page == 0) {
-        /* Stat labels down the left edge, then the pre-change column. */
         s32 label = (s32)MsgPreviewStatLabel;
 
         UiText_DrawCharacterAtOffset(label, win, 0, 8);
@@ -211,7 +201,6 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     }
 
     if (page > 0) {
-        /* Five list rows per page, clipped to whatever is left. */
         marks = 0;
         rows = total;
         if (total > 4)
@@ -266,7 +255,6 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     }
 
     if (page == 0) {
-        /* Post-change column, with an arrow beside every cell that moved. */
         UiText_DrawCharacterAtOffset((s32)MsgClassName + snap->element, win, 0, 0);
         UiText_DrawCharacterAtOffset((s32)MsgClassName + unit->element, win, 80, 0);
         if (snap->element != unit->element)
@@ -329,7 +317,6 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
     }
 
-    /* Put the record back the way it was and release the scratch blocks. */
     Iwram_CopyWords(unit, snap, 332);
     Runtime_BumpFree(list);
     Runtime_BumpFree(snap);

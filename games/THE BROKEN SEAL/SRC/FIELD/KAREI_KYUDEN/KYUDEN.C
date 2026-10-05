@@ -25,7 +25,6 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
     gEventWork->message += amount;
 }
 
-/* The scene's message table, laid out after the code. */
 extern u8 Placement_Messages[];
 
 extern u8 gKareiKyudenPlacements[];
@@ -45,7 +44,6 @@ extern u8 MsgKareiItsIvanHisCompanionsPerfect[];
 extern u8 MsgKareiWhenHeardWereBackIvan[];
 extern u8 KareiKyuden_PartyActions[];
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -56,7 +54,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gKareiKyudenEntrancesOther;
 }
 
-/* Signed halfword table in RAM; index 225 selects the scene. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -67,7 +64,6 @@ u8 *SceneData_GetMessageTable(void)
     return Placement_Messages;
 }
 
-/* The actors placed in the palace, prepared before they are returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_KareiKyuden) {
@@ -77,7 +73,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKareiKyudenPlacementsOther;
 }
 
-/* What the scene answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -88,7 +83,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKareiKyudenEventsOther;
 }
 
-/* Signed halfword table in RAM; index 225 selects the scene. */
 void SceneDialogue_RunActor13Message1b83(void)
 {
     Engine_EventBegin();
@@ -156,8 +150,6 @@ void KareiKyuden_LeaveThroughDoor(void)
     Engine_EventEnd();
 }
 
-/* The palace's scene start: open with the window transition and, in the
-   palace itself, run its scene. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -167,7 +159,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/* Signed halfword table in RAM; index 225 selects the scene. */
 void FieldScene_DispatchSceneByIndex(void)
 {
     struct FieldActor *rec;

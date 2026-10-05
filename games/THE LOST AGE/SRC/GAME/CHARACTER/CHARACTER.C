@@ -2,8 +2,6 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 
-/* ☀️'s: the trade offers are owner 0x83's, or else the party's own, which
-   ⚓️ keeps 12 bytes into the party state. */
 struct TradeOfferState *Trade_GetOfferState(s32 which)
 {
     if (which != 0) {
@@ -31,10 +29,8 @@ u32 Party_GetAverageLevel(void)
     return total;
 }
 
-/* The 76-byte definitions of the 1,000 enemies, numbered from owner 8. */
 extern const u8 Enemy_DefinitionTable[];
 
-/* ☀️'s: an enemy owner's definition, or the first one when out of range. */
 const u8 *Owner_GetRecord(s32 selector)
 {
     u32 record_index;

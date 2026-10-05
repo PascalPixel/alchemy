@@ -1,7 +1,6 @@
 #include "TOPIC.H"
 #include "TYPES.H"
 
-/* The saved game as bytes: the signed topic cursors lie at 308. */
 extern s8 gCell[];
 
 void ObjectDispatch_ApplyValueToChildren();
@@ -19,14 +18,12 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
         return 0;
     }
 
-    /* Topic 5 means "any": reduce a 16-bit random to 0..4. */
     if (topic == 5) {
         topic = (s32)((unsigned int)(Engine_RandomNext() * 5) >> 16);
     }
 
     cursor = gCell[308 + topic];
 
-    /* A coin flip from the same random source. */
     variant = (cursor + (s32)((unsigned int)(Engine_RandomNext() * 2) >> 16) + 4) % 3;
 
     gCell[308 + topic] = (s8)variant;

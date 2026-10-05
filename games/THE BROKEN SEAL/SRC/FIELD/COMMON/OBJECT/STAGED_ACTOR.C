@@ -9,9 +9,6 @@
 #include "MAP_SCROLL.H"
 extern u8 gMapCellBuffer[];
 
-/* Linked into several field overlays; each overlay has its own copy of the
- * footprint and direction tables. */
-
 extern u8 *gWork;
 extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintKinds[];

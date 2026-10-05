@@ -23,8 +23,6 @@ extern const struct SceneEvent gMakyuriHeyaEvents2[];
 extern const struct SceneEvent gMakyuriHeyaEvents3[];
 extern const struct SceneEvent gMakyuriHeyaEventsOther[];
 
-/* Where the party appears in each of the lighthouse rooms; the first takes
-   the table the other scenes take. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 selector = gGameState.scene;
@@ -51,7 +49,6 @@ u8 *MakyuriHeya_GetExits(void)
     return MakyuriHeya_SceneTable;
 }
 
-/* The actors placed in each of the lighthouse rooms. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 selector = gGameState.scene;
@@ -98,8 +95,6 @@ void SceneDialogue_RunLine1637(void)
     Engine_EventEnd();
 }
 
-/* What each lighthouse room answers; the fourth takes the table the other
-   scenes take. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 selector = gGameState.scene;

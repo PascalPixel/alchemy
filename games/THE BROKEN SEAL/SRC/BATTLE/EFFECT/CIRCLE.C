@@ -7,7 +7,6 @@
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 
-
 extern const s32 BattleFx_CommonParticleScript[];
 
 struct OrbitEffect {
@@ -26,7 +25,6 @@ struct OrbitEffect {
     struct OrbitEffect *anchor;
     void (*update)(struct OrbitEffect *);
 };
-
 
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
 
@@ -72,8 +70,6 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin)
     } while (i <= 16);
 }
 
-/* Drifts along a slowly turning heading with random pauses, then ends the
-   effect after 101 frames. */
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
 {
     s32 radius;
@@ -98,7 +94,6 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
         ObjectDispatch_InitializeFar((struct DispatchObject *)effect, BattleFx_CommonParticleScript);
 }
 
-/* Circles the anchor for 121 frames, then hands over to a random wander. */
 void BattleFx_CircleAnchor(struct OrbitEffect *effect)
 {
     struct OrbitEffect *anchor;
@@ -125,7 +120,6 @@ void BattleFx_CircleAnchor(struct OrbitEffect *effect)
     }
 }
 
-/* Battle effect 14: its object update and its entry. */
 void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj)
 {
     s32 scale;

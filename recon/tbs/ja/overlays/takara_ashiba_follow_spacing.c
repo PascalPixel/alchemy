@@ -1,9 +1,3 @@
-/* Draft: Treasure Isle scaffold following spacing.
- * 2026-10-01: International leader steps24px and first follower16px;
- * Japanese uses24px for both in the first sequence and16px for later leader steps. Five complete
- * owners differ at those immediate operands only after layout fixes.
- * Ordinary approved TBS flags.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

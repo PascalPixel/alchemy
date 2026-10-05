@@ -9,16 +9,6 @@
 #include "FLAG_IDS.H"
 #include "ITEM_IDS.H"
 
-/*
- * The rooms behind Lunpa's doors: three homes, the weapon and armor shop,
- * the item shop, the inn, the temple, and the house on the way to the
- * Suhalla Gate. Each room's door trigger, exit and entrance share the
- * room's number. Until Lunpa trades again the merchants and the inn turn
- * the party away; afterwards the shops, inn and sanctum open to anyone
- * facing their counter. Counters face south, so the party faces a counter
- * when it looks north.
- */
-
 enum InteriorRoom {
     ROOM_FIRST_HOME = 1,
     ROOM_SECOND_HOME,
@@ -33,7 +23,6 @@ enum InteriorRoom {
     ROOM_TEMPLE_SECOND_ENTRANCE
 };
 
-/* A room's door takes the party out through the exit of the same number. */
 #define ROOM_DOOR(room) { EVENT_EXIT, (room), CONDITION_ALWAYS, (room) }
 
 enum LunpaEntrance {
@@ -107,7 +96,6 @@ enum {
     INN_LUNPA = 8
 };
 
-/* Lines spoken while Lunpa is sealed, then after it trades again. */
 TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeASealed);
 TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBSealed);
 TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeASealedThoughts);
@@ -156,7 +144,6 @@ extern const struct SceneEvent gInteriorSealedEvents[];
 extern const struct SceneEvent gInteriorReopenedEvents[];
 extern const struct SceneEvent gSuharaGateHouseEvents[];
 
-/* Event scripts the tables reach in every run of the overlay's code. */
 void Innkeeper_Talk(void);
 void Chef_Talk(void);
 void Chef_ReadMind(void);

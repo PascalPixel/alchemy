@@ -23,14 +23,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
@@ -55,7 +52,6 @@ static inline void InitializeSelectedActor(s32 actorId)
     Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
-/* Selects a later line in the current dialogue. */
 static __inline__ void AdvanceMessage(s32 amount)
 {
     gEventWork->message += amount;
@@ -126,11 +122,6 @@ void FieldScene_RunSixSteps380To3A8(void)
     GameFlag_SetByte(936, 0);
 }
 
-/* A finals competitor's greeting. The river, the wall and the log-rolling
-   stage each announce their own finals match; a competitor whose flag
-   (0x200 plus its number) is set has nothing more to say, one already
-   met (0x208 plus its number) offers the talk menu, and the first meeting
-   offers to describe the match. */
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
 {
     s32 scene;
@@ -168,7 +159,6 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
     return Engine_EventChooseYesNo(0, 0);
 }
 
-/* The line after the stage's finals announcement. */
 void SceneState_SendIdBySceneId(s32 speaker, s32 competitor)
 {
     s32 scene;

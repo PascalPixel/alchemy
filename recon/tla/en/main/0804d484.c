@@ -1,10 +1,7 @@
-/* Draft: Menu_LayoutResourceEntries, demoted from SELECTION.C when ⚓️ moved to -mtune=arm9tdmi
-   (Pascal, 2026-10-05). Under the new tuning the row store and the count address tie at priority 43 in sched2 and the independent movs wins, 3 instructions from the listing; barriers, volatile stores, register pins and 2000 hill-climb steps did not fix it. */
 #include "TLA_EDITION.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
-/* ☀️'s, reaching the selection work through ⚓️'s heap slot. */
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 {
     u8 *state;

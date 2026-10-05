@@ -4,8 +4,6 @@
 
 void Resource_DecodeByteLzInRam(void *source, void *destination);
 
-/* Decodes a resource into a scratch buffer and loads it into one of the 96
-   VRAM block entries. */
 void VramBlock_LoadResource(s32 entry_no, s32 size, s32 resource_id)
 {
     void *source;

@@ -17,9 +17,6 @@
 #include "TBS_EDITION.H"
 #include "IO_REG.H"
 
-/* One of the five reels: where it stands, sixteen units a symbol and 336
-   round, its twenty-one symbols, whether it is held and the frames left
-   before it stops (-1 while it turns freely). */
 struct Reel {
     s32 position;
     u8 symbols[21];
@@ -27,7 +24,6 @@ struct Reel {
     s8 stop;
 };
 
-/* One sprite of the frame's object buffer, written a word at a time. */
 struct ReelObject {
     volatile u32 attr01;
     volatile u32 attr2;
@@ -35,7 +31,6 @@ struct ReelObject {
 
 struct UiWindow;
 
-/* The reel game's state block, the seventh heap-cache cell. */
 struct ReelWork {
     struct Reel reels[5];
     s32 state;
@@ -55,13 +50,10 @@ struct ReelWork {
     u8 unknown_4d0[8];
     u16 scanline_offsets[160];
 #if EDITION_INTERNATIONAL
-    /* The localized editions' block is one word longer: the prompt the
-       window shows, so that it is drawn once. */
     s32 phase;
 #endif
 };
 
-/* The saved game from its fourth word on, as the reel game reads it. */
 struct ReelSave {
     u8 unknown_000[0x120];
     s8 won_prizes[16];
@@ -93,13 +85,6 @@ s32 PartyInventory_RemoveFar(s32 item);
 s32 PartyInventory_CountItemFar(s32 item);
 void AudioCommand_PlayFar(s32 command);
 
-/* One frame of the reel game, run by the scheduler: read the pad, run the
-   state machine that takes the bet, spins, holds and pays out, then rebuild
-   all 128 sprites and send them to OAM. Each reel is a ring of twenty-one
-   symbols scrolled sixteen units a symbol; once all five have settled the
-   seven lines (the five rows and the two diagonals) the bet covers are
-   tested. Japanese draws each prompt afresh every frame, without the
-   localized editions' record of the prompt shown. */
 void ReelGame_RunFrame(void)
 {
     struct ReelWork *work;
@@ -332,7 +317,6 @@ void ReelGame_RunFrame(void)
         if (work->timer == 45)
             work->state = 10;
     } else if (work->state != 10) {
-        /* Reels are turning. */
         if (work->timer == 4) {
             work->window = UiWindow_CreateFar(REEL_STOP_X, 17, REEL_STOP_WIDTH, 3, 6);
             UiText_DrawCharacterAtOffsetFar((s32)&MsgSlotsStopReels, work->window, 0, 0);
@@ -506,8 +490,6 @@ build_objects:
             struct EffectStep *p = &fx->particles[i];
 
 #if defined(TBS_EDITION_ES)
-            /* The Spanish title opens with its closing exclamation mark
-               turned over, sixteen pixels left and eight down. */
             if (i == 0)
                 work->obj[n].attr01 = (((*(s16 *)((u8 *)&p->x + 2) + 0x1f0) & 0x1ff) << 16) | blend |
                                       ((*(s16 *)((u8 *)&p->y + 2) + 0x108) & 255) | 0xb0000000;
@@ -617,11 +599,6 @@ build_objects:
     Dma_Set(work->obj, (void *)0x07000000, (n * 2) | 0x84000000, REG_DMA3);
 }
 
-/* Reel game: clear every particle's variant, line the title letters
-   up above the screen (each 0x80000 higher than the last, spaced by their
-   widths), build the scanline offset curve (zero outside a cosine bump
-   mirrored about line 86), reset the state, cursor and spin count, and open
-   the two-line coin window. */
 void ReelGame_InitTitle(void)
 {
     struct ReelWork *state;
@@ -678,7 +655,6 @@ void ReelGame_InitTitle(void)
     UiText_DrawCharacterAtOffsetFar(message - 1, state->sub_window, 0, 0);
 }
 
-
 extern u8 gOamCopyEnabled;
 extern DrawRectangle gWorkSlot[];
 extern u16 ReelGame_SparkCellOffsets[];
@@ -696,14 +672,8 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 void ReelGame_RunFrame(void);
 void BattlePres_ProcessPendingTileTransfer(void);
 
-/* The sparks live at the start of the map cell buffer. */
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-/* The reel game. Builds the machine's two backgrounds and its sprites,
-   deals each reel twenty-one symbols with eight distinct places for the
-   ranked ones, fades in, and then draws the bet lines or the winning lines
-   and the win's sparks every frame until the game's state says it is over;
-   then fades out and frees everything. */
 void ReelGame_Run(void)
 {
     s32 picks[8];

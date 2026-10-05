@@ -48,7 +48,6 @@ void BattlePresentation_DrawStreaks(void);
 extern u8 gBattleFxWork[];
 
 extern u16 BattleFx6_FlareCells[];
-/* The four corner sparks: where each sits and how it is flipped. */
 extern s8 CornerSparks_X[];
 extern s8 CornerSparks_Y[];
 extern u8 CornerSparks_DrawFlags[];
@@ -63,9 +62,6 @@ struct BlitterPair {
     DrawRectangle lower;
 };
 
-/* Battle effect: four sparks flash at the corners of the actor, a ring of
-   motes closes in on it and a burst opens over it. The effect brings its own
-   work block, canvas and sheet. */
 void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 {
     struct EffectPosition ground;
@@ -180,14 +176,6 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/*
- * Frame callback that BattlePresentation_PrepareScene schedules at 0xc80.
- * On its first frame it seeds 256 streaks with a random length and a random
- * roll, pitch and yaw; every frame after that it draws the first 64 (one more
- * every four frames) as three lines from tail to head, both projected around
- * the screen point (64, 80), and pulls each streak four units closer to that
- * point. The line colour brightens as the tail reaches the centre.
- */
 void BattlePresentation_DrawStreaks(void)
 {
     struct BattleEffectWork *work = *(void **)gBattleFxWork;
@@ -244,11 +232,6 @@ void BattlePresentation_DrawStreaks(void)
     work->transfer_pending = 1;
 }
 
-/* battle/presentation/misc/prepare.c */
-/* Allocate the canvas and particle work blocks, reset presentation and
- * set BG2PA and blend coefficients. Copy the selected palette to palette
- * RAM, initialize the shared work and schedule its two frame callbacks. */
-
 void BattlePresentation_PrepareScene(s32 kind)
 {
     struct BattleEffectWork *work;
@@ -302,13 +285,11 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/* battle/effects/two_resource/run_mode0.c */
 void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *efx)
 {
     BattleFx_RunTwoResource(efx, 0);
 }
 
-/* battle/effects/two_resource/run_mode1.c */
 void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx)
 {
     BattleFx_RunTwoResource(efx, 1);
@@ -325,10 +306,6 @@ extern u16 TwoResource_CellSourceOffsets[];
 extern u8 TwoResource_CellX[];
 extern s8 TwoResource_CellBiasY[];
 
-/* Swirl and tail cells of a two-sheet effect: for the first 24 frames the
-   blitter draws one cell every four frames, the swirl from the work block,
-   the tail from the map cell buffer; in mode 1 the target is thrown up at
-   frame 13 and the camera shakes again at frame 65. */
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 {
     struct BattleEffectWork *work;

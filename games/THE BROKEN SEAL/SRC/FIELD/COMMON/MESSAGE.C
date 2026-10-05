@@ -1,4 +1,3 @@
-/* Field events: record the speaker, show the next event message in a window and wait for it, then advance the message. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "EVENT_RUNTIME.H"

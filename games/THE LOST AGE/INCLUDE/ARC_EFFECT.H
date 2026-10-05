@@ -3,9 +3,6 @@
 
 #include "TYPES.H"
 
-/* The arc effect's work in heap block 62: two groups of two 40-byte arc
-   objects, each group's age since it was spawned, the shared resource
-   entry, the group spawned next and the object it follows. */
 struct ArcEffectWork {
     u8 objects[2][80];
     s16 age[2];

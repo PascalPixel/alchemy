@@ -1,8 +1,3 @@
-/* 2026-10-03: ApplyChildValuesFar now uses OBJECT_DISPATCH.H's maintained
-   void(DispatchObject *, u32) declaration and explicit object views.
-   Still cannot compile: orbiting-particle views, gEffectWork and callbacks
-   are missing. Prior layout/declaration blockers remain; no new byte
-   comparison is possible. */
 #include "TYPES.H"
 #include "OBJECT_DISPATCH.H"
 #include "SCENE.H"
@@ -13,7 +8,6 @@ extern u8 Data_03001e40[];
 void BattleEffect_InitializeSharedScene(void);
 s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 
-/* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
 
 void BattleFx_RunOrbitingParticles(void)

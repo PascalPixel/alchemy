@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "BATTLE_SESSION.H"
 
-/* Shared object used by the motion engine. */
 struct MotionObject {
     u8 unknown_00[0x06];
     u16 angle;
@@ -13,7 +12,7 @@ struct MotionObject {
     s32 z;
     u8 unknown_14[0x04];
     s32 scale_x;
-    s32 scale_y; /* negated to draw the object upside down */
+    s32 scale_y;
     u16 height;
     u8 unknown_22[0x02];
     s32 velocity_x;
@@ -35,11 +34,9 @@ struct MotionObject {
     u8 unknown_59;
     u8 auto_face_motion;
     u8 unknown_5b[0x11];
-    /* Called each frame while set. */
     void (*update)();
 };
 
-/* The fields battle uses at the start of a 24-byte animation entry. */
 struct SpriteEntry {
     u8 unknown_00[5];
     u8 palette;

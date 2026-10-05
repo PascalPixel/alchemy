@@ -1,16 +1,3 @@
-@ Kernels 11 and 12 of the battle-effect bank described in
-@ RELOCATED_KERNELS.S, each behind a 4-byte Thumb entry (bx pc). Kernel 11,
-@ like kernels 1 to 3, clears bit 0 of its closing literal 0x080028a9
-@ (0x0813b994), the address of the reciprocal table at 0x080028a8, at run
-@ time (ldr fp, [pc, #484]; bic fp, fp, #1; str fp, [pc, #476]), loads it
-@ again as that table's address and multiplies with the flag-setting
-@ umulls. Kernel 12 saves r5-fp without lr (push {r5-fp}; pop {r5-fp};
-@ bx lr); its last word, 0x0300049c, is the literal it loads
-@ (ldr r4, [pc, #156]). GCC 2.96 never stores to a PC-relative address, has
-@ no flag-setting long multiply and pushes lr with any register it saves.
-@ The entries, which are TLA's own, and kernel 11's literal, a word
-@ rewritten at run time, carry no credit.
-@ credit: handwritten — relocated ARM kernels 11 and 12 of the battle-effect bank
 .syntax unified
 	.thumb
 	.global Data_0813b7a0

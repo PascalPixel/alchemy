@@ -39,8 +39,6 @@ struct Spark {
     u16 angle;
 };
 
-/* The tree's scene tables, which the main image asks for through the
- * overlay's entry veneers. */
 u8 *KorimaKi_GetEntrances(void)
 {
     return gKorimaKiEntrances;
@@ -255,9 +253,6 @@ void RunEventScript01(void)
     Engine_EventWait(20);
 }
 
-/* The scene's actor transition sequence. Actor three takes part only when the
- * saved flag reports it enabled, and the arms that skip it bump the step
- * counter instead. */
 void PaletteScene_RunActorTransitionSequence(void)
 {
     s32 actorThreeEnabled;
@@ -631,10 +626,6 @@ void PaletteScene_RunActorTransitionSequence(void)
     PaletteScene_SetRecordValue(184, 185);
 }
 
-/* Korima's tree: the overlay's first entry stages the tree actors and sets
- * Retreat to return the party to the Korima bridge. */
-
-/* Stage the tree actors: sizes, sprite flags and priorities, heights and collision. */
 s32 KorimaKi_PrepareActors(void)
 {
     struct FieldActor *first;
@@ -732,8 +723,6 @@ void PaletteScene_SpawnEffect(void)
     Engine_ObjectSetScript(effect, gKorimaKiEffectScript);
 }
 
-/* Steps the shared transition counter, firing at 0 and at 20 and wrapping at
- * 30. */
 void PaletteScene_AdvanceTransition(void)
 {
     s32 step = gKorimaKiTransitionStep;
@@ -752,7 +741,6 @@ void PaletteScene_AdvanceTransition(void)
     }
 }
 
-/* Play a numbered gesture: actor 10 selects actor 8's twelve, any other actor 9's six; then wait twelve frames. */
 void KorimaKi_PlayGesture(s32 actor, s32 gesture)
 {
     if (actor == 10) {
@@ -887,8 +875,6 @@ void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
     }
 }
 
-/* Every ten frames up to forty, ring the centre with six orbiting sparks; the
- * frame counter wraps after 120. */
 void KorimaKi_SpawnOrbitSparks(void)
 {
     struct FieldActor *spark;
@@ -927,8 +913,6 @@ void KorimaKi_SpawnOrbitSparks(void)
     }
 }
 
-/* Two lookups, each of which can fail with -1; on success stores the caller's
- * halfword into the table at +216 of the record the first index names. */
 void PaletteScene_SetRecordValue(s32 key, s32 value)
 {
     s32 slot = PartyInventory_FindOwner(key);
@@ -942,7 +926,6 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
     }
 }
 
-/* Applies the adjustment to palette RAM, skipping two protected windows. */
 void PaletteScene_AdjustPaletteWindow(s32 adjustment)
 {
     volatile u16 *palette = BG_PLTT;
@@ -965,7 +948,6 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
     KorimaPalette_Capture(); KorimaPalette_SaveSecond(); Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
-/* Adjust RGB555 colours by raising red and lowering green and blue. */
 u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
 {
     s16 green = (s16)((color >> 5) & 31);
@@ -980,7 +962,6 @@ u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
     green = (s16)(green - Math_Divide(green, adjustment));
     blue = (s16)(blue - Math_Divide(blue, adjustment));
 
-    /* Only the increasing colour channel is saturated. */
     if (red > 31)
         red = 31;
 

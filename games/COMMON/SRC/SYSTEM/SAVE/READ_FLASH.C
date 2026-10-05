@@ -1,7 +1,6 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-/* The flash chip description: its five handlers, then its geometry. */
 struct FlashChipType {
     u32 handlers[5];
     u32 size;
@@ -14,8 +13,6 @@ typedef void (*FlashReadCore)(u32 source, u8 *destination, s32 size);
 
 extern const struct FlashChipType Flash_ChipUnknown;
 
-/* Copies the byte read loop into a stack buffer, since it must run outside
-   the cartridge bus, and reads size bytes from offset in sector. */
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size)
 {
     u16 code[64];

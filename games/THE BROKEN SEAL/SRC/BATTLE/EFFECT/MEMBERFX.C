@@ -20,11 +20,6 @@
 
 extern u8 gBattleFxWork[];
 
-/*
- * Battle-presentation sub-effect: entry 34 of the effect callback table at
- * 0x080ee2b4.  The single argument is the effect state pointer, which the
- * owner republishes at work + 0x7828.
- */
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 void Render_ResetTransformState(void);
@@ -34,7 +29,6 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
 
 extern u16 ParticleStreams_CellOffsets[];
 
-/* A chip of debris: it flies on its own speed, slows, falls and bounces. */
 struct Chip {
     s32 x;
     s32 y;
@@ -57,8 +51,6 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
 
-/* Battle effect: the actor flares, leaps high across the field and comes
-   down on the target, which bursts into chips. */
 void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 {
     struct EffectPosition position;
@@ -235,8 +227,6 @@ struct BlitterPair {
     DrawRectangle lower;
 };
 
-/* Battle effect: eight skulls for each target start scattered around it and
-   close in, turning with the frame, while the background sways. */
 void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
 {
     struct EffectPosition position;
@@ -342,10 +332,6 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* Set the BG2 affine scale, load the palette and 32x32 sprite frames,
- * and prepare two rectangle blitters. Run member_count * 16 + 48 frames
- * of a sine-swept scanline table with four sprites orbiting each member
- * whose window is open. */
 void BattleFx_RunMemberOrbit(void *object)
 {
     void **heap_cache;
@@ -487,8 +473,6 @@ void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect)
     BattleFx_RunMemberBurst(effect, 2);
 }
 
-/* For each mode: how many motes burst from each member and how many frames
-   the effect runs after the last member's turn. */
 extern u8 MemberBurst_Counts[];
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
@@ -497,8 +481,6 @@ u32 Battle_GetObjectTableValueFar(s32 actor_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_TickMemberTimers(void);
 
-/* Battle effect: motes burst out of the actor, hang in the air and then
-   home in on each target in turn. */
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 {
     struct EffectPosition position;

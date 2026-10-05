@@ -41,7 +41,6 @@ extern u8 MsgKorashiamuWhoHaveComeQuestionMe[];
 extern u8 MsgKorashiamuYouReadyForFinals[];
 void SceneState_ForwardMaskedHalfwordWith10();
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -65,9 +64,6 @@ const u32 *Scene_GetExits(void)
     return gKorashiamuIriguchiExits;
 }
 
-/* The actors placed at the Colosso entrance. In the first scene the
-   entrance the party came by picks the table; in the third, flags 0x950
-   and 0x962. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     const struct ScenePlacement *table;
@@ -115,8 +111,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return table;
 }
 
-/* What the Colosso entrance answers; entrance 12 of the first scene has its
-   own events. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -136,7 +130,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKorashiamuIriguchiEventsOther;
 }
 
-/* The Colosso entrance's talk with its visitors and competitors. */
 void SceneDialogue_RunActor10MessageByFlag962(void)
 {
     Engine_EventBegin();

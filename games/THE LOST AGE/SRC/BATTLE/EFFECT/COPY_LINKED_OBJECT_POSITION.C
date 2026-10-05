@@ -5,9 +5,6 @@
 
 s16 *BattleAction_FindDescriptor(s16 action);
 
-/* Snap an effect object onto the object it is linked to, raised by the
-   linked descriptor's height. */
-
 s32 BattleFx_CopyLinkedObjectPosition(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *link;

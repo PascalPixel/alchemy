@@ -1,4 +1,3 @@
-//! PNG images, GBA tile packing and palette conversion.
 use super::{err, AssetError};
 use std::io::Cursor;
 pub(crate) type Rgb = [u8; 3];
@@ -39,8 +38,6 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     Ok(image)
 }
 
-/// An indexed PNG of any nonzero size, for pixels stored as a linear bitmap
-/// rather than as tiles.
 pub fn indexed_bitmap_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     let (output, bytes, info) = decode(data)?;
     if output.color_type != png::ColorType::Indexed
@@ -125,7 +122,6 @@ fn encode_png(
     Ok(output)
 }
 
-/// The GBA's packed, tile-major indexed-pixel formats.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum GbaBpp {
     Bpp4,
@@ -175,12 +171,10 @@ fn bgr555_palette(image: &IndexedImage) -> Result<Vec<u8>, AssetError> {
     Ok(palette)
 }
 
-/// Convert an opaque indexed PNG palette to little-endian, 15-bit BGR555 words.
 pub fn bgr555_palette_from_png(data: &[u8]) -> Result<Vec<u8>, AssetError> {
     bgr555_palette_of(&indexed_bitmap_png(data)?)
 }
 
-/// An indexed image's palette as little-endian BGR555.
 pub fn bgr555_palette_of(image: &IndexedImage) -> Result<Vec<u8>, AssetError> {
     if image.has_transparency {
         return err("GBA BGR555 palettes cannot represent transparent PNG entries");
@@ -238,9 +232,6 @@ fn image_shape(
     Ok((tiles_high, width, height))
 }
 
-/// Convert GBA tile-major 4bpp or 8bpp pixels and a LE BGR555 palette to PNG.
-/// A linear 8-bit bitmap, one palette index per byte, as an indexed PNG
-/// `width` pixels wide.
 pub fn png_from_bitmap(pixels: &[u8], palette: &[u8], width: usize) -> Result<Vec<u8>, AssetError> {
     let rgb = palette_rgb(palette, GbaBpp::Bpp8)?;
     if width == 0 || pixels.is_empty() || !pixels.len().is_multiple_of(width) {
@@ -259,7 +250,6 @@ pub fn png_from_bitmap(pixels: &[u8], palette: &[u8], width: usize) -> Result<Ve
     )
 }
 
-/// The GBA's twelve OBJ shapes in tiles, wide by high, plain tiles first.
 pub const OBJ_SHAPES: [(usize, usize); 12] = [
     (1, 1),
     (2, 2),
@@ -275,16 +265,12 @@ pub const OBJ_SHAPES: [(usize, usize); 12] = [
     (4, 8),
 ];
 
-/// How a tile sheet is drawn: tiles grouped in metatiles `meta` wide by
-/// high, each metatile's tiles row-major before the next one's (pret's
-/// gbagfx -mwidth/-mheight), laid out `tiles_wide` tiles to a row.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct TileLayout {
     pub meta: (usize, usize),
     pub tiles_wide: usize,
 }
 
-/// Reorder metatiled tiles into plain row-major tiles as `layout` draws them.
 pub fn tiles_from_metatiles(tiles: &[u8], bpp: GbaBpp, layout: TileLayout) -> Vec<u8> {
     let size = bpp.tile_bytes();
     let (mw, mh) = layout.meta;
@@ -300,26 +286,15 @@ pub fn tiles_from_metatiles(tiles: &[u8], bpp: GbaBpp, layout: TileLayout) -> Ve
         .collect()
 }
 
-/// The layout at which neighbouring tile edges agree most: pictures drawn
-/// across several tiles, or cut into OBJ-shaped metatiles one after another,
-/// line up again when drawn as the artist drew them. Every OBJ shape and
-/// every sheet width of whole metatiles that divides the tile count is
-/// tried; a seam counts where either side is inked and agrees where both
-/// are, and a metatile shape must beat the plain sheet clearly to be chosen.
 pub fn tile_sheet_layout(tiles: &[u8], bpp: GbaBpp) -> TileLayout {
     tile_sheet_layout_of(tiles, bpp, &OBJ_SHAPES)
 }
 
-/// How well neighbouring tile edges agree when `tiles` are drawn as
-/// `layout`: the share of inked seams inked on both sides, smoothed so a
-/// blank sheet scores one half.
 pub fn tile_sheet_score(tiles: &[u8], bpp: GbaBpp, layout: TileLayout) -> f64 {
     let (same, total) = tile_sheet_seams(tiles, bpp, layout);
     (same as f64 + 1.0) / (total as f64 + 2.0)
 }
 
-/// The same score for a stream drawn as its sprite runs, each run its own
-/// picture: seams are counted within runs only.
 pub fn sprite_runs_score(tiles: &[u8], bpp: GbaBpp, runs: &[SpriteRun]) -> f64 {
     let size = bpp.tile_bytes();
     let (same, total) = runs.iter().fold((0, 0), |(same, total), run| {
@@ -330,7 +305,6 @@ pub fn sprite_runs_score(tiles: &[u8], bpp: GbaBpp, runs: &[SpriteRun]) -> f64 {
     (same as f64 + 1.0) / (total as f64 + 2.0)
 }
 
-/// Inked seams inked on both sides, and all inked seams, of `layout`.
 fn tile_sheet_seams(tiles: &[u8], bpp: GbaBpp, layout: TileLayout) -> (usize, usize) {
     let count = tiles.len() / bpp.tile_bytes();
     let pixel = |tiles: &[u8], tile: usize, x: usize, y: usize| match bpp {
@@ -365,7 +339,6 @@ fn tile_sheet_seams(tiles: &[u8], bpp: GbaBpp, layout: TileLayout) -> (usize, us
     (same, total)
 }
 
-/// The best layout of `tiles` among metatiles of the given `shapes`.
 fn tile_sheet_layout_of(tiles: &[u8], bpp: GbaBpp, shapes: &[(usize, usize)]) -> TileLayout {
     let count = tiles.len() / bpp.tile_bytes();
     let score = |layout: TileLayout| tile_sheet_score(tiles, bpp, layout);
@@ -385,7 +358,6 @@ fn tile_sheet_layout_of(tiles: &[u8], bpp: GbaBpp, shapes: &[(usize, usize)]) ->
         }
         let metas = count / (mw * mh);
         for metas_wide in (1..=metas).filter(|wide| metas % wide == 0 && wide * mw <= 64) {
-            // One metatile column is the plain sheet of that width.
             if metas_wide == 1 && (mw, mh) != (1, 1) && shapes.len() > 1
                 || metas_wide * mw < 2 && count > 1
             {
@@ -409,16 +381,10 @@ fn tile_sheet_layout_of(tiles: &[u8], bpp: GbaBpp, shapes: &[(usize, usize)]) ->
     best.0
 }
 
-/// The price of one more picture, in seams: enough that a picture is not
-/// shattered into small pieces whose seams show nothing.
 const PICTURE_PRICE: i64 = 24;
 
-/// The most sprites of one shape a picture sets side by side.
 const PICTURE_SPRITES: usize = 8;
 
-/// One run of pictures in a sprite stream: `count` tiles from tile `first`,
-/// drawn as `layout`, each picture a row of sprites `layout.tiles_wide`
-/// tiles wide and the pictures stacked.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct SpriteRun {
     pub first: usize,
@@ -426,12 +392,6 @@ pub struct SpriteRun {
     pub layout: TileLayout,
 }
 
-/// Cut a stream of 1D-mapped OBJ tiles into consecutive pictures, each a
-/// row of up to eight sprites of one of the twelve OBJ shapes, each sprite
-/// starting at a multiple of its own size. Dynamic programming over the tile
-/// index picks the pictures whose inked seams agree most in total (a
-/// disagreeing seam counts against), less a small price per picture.
-/// Neighbouring pictures of one shape join a run.
 pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
     let count = tiles.len() / bpp.tile_bytes();
     let pixel = |tile: usize, x: usize, y: usize| match bpp {
@@ -461,7 +421,6 @@ pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
         }
         value
     };
-    // best[end]: the best score of the first `end` tiles, and its last picture.
     let mut best: Vec<Option<(i64, (usize, usize), usize)>> = vec![None; count + 1];
     best[0] = Some((0, (1, 1), 0));
     for end in 1..=count {
@@ -489,9 +448,6 @@ pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
         pictures.push((end, meta, sprites));
     }
     pictures.reverse();
-    // Neighbouring pictures of one sprite shape join a run, kept at their
-    // width when they share one, else read left to right in one row of at
-    // most 64 tiles, else drawn at the run's best width.
     let mut groups: Vec<(usize, usize, (usize, usize), Vec<usize>)> = Vec::new();
     for (first, meta, sprites) in pictures {
         let tiles_in = meta.0 * meta.1 * sprites;
@@ -519,7 +475,6 @@ pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
                 tile_sheet_layout_of(&tiles[first * size..(first + count) * size], bpp, &[meta])
                     .tiles_wide
             };
-            // One sprite wide, or of 8x8 sprites, is a plain sheet.
             let meta = if tiles_wide == meta.0 { (1, 1) } else { meta };
             SpriteRun {
                 first,

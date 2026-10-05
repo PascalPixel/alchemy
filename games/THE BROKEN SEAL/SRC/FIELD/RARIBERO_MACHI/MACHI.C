@@ -8,14 +8,11 @@
 extern u8 MsgRariberoOhhTheyTookShebaHeaded[];
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
-/* The scene's tables, laid out after the code; the actor table has an
- * alternate once flag 0x9a7 is set. */
 extern u8 Placement_Scripts[];
 extern u8 Placement_Messages[];
 extern u8 Placement_Actors[];
 extern u8 Placement_Actors9a7[];
 
-/* The lamenting villager's action table. */
 extern const u8 RariberoMachi_LamentActions[];
 
 extern u8 MsgRariberoLeavingLalivero[];
@@ -28,18 +25,12 @@ extern u8 MsgRariberoWhereGoingArentWeTaking[];
 extern u8 MsgRariberoWhereGoingRobinIodemAsked[];
 #define NULL ((void *)0)
 
-/* A signed 16-bit field of an actor record returned by one of the record
- * lookups. */
 #define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
 
-/* Each door's cell, by the trigger that opens it, and the cell animations
- * that open the doors. */
 extern s16 RariberoMachi_DoorCells[][2];
 extern u8 RariberoMachi_GateOpenSteps[];
 extern u8 RariberoMachi_DoorOpenSteps[];
 
-/* The effect tables, laid out after the code, with an alternate once flag
- * 0x9a7 is set. */
 extern u8 Placement_Effects[];
 extern u8 Placement_Effects9a7[];
 void Motion_LaunchFromFocusedObject(u32, s32, s32, s32);
@@ -84,8 +75,6 @@ enum {
     ITEM_ICON_TILE_BYTES = 128
 };
 
-/* Lalivero's scene tables and the first actor setups that precede
-   FLAGGED_CUE.C in the overlay. */
 void SceneActor_SetActor23Params2And6(void)
 {
     BattleFx_RunPageEffectForSlot(0x17, 2, 6);
@@ -131,7 +120,6 @@ void SceneActor_StartLament(s32 actor)
     Engine_ActorEnableActionCallback(actor, RariberoMachi_LamentActions);
 }
 
-/* Asks whether the party is leaving Lalivero, with a line for each answer. */
 void RariberoMachi_AskLeaving(s32 obj)
 {
     s32 msg = (s32)MsgRariberoLeavingLalivero;
@@ -189,12 +177,6 @@ void RariberoMachi_RequestTouchedExit(void)
     Engine_EventRequestExit(n);
 }
 
-/*
- * Runs the fixed call sequence for this scene: a paced series of setup and
- * per-entity calls -- position, pose and property triples keyed by entity id,
- * interleaved with timed single-argument steps -- ending with a record lookup
- * whose s16 fields at +10 and +18 feed the last positioning call.
- */
 void Scene_RunPrimarySequence(void)
 {
     u32 i;
@@ -373,7 +355,6 @@ void Scene_RunPrimarySequence(void)
     Engine_ActorSetAnimation(22, 2);
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        /* Pass the record's s16 fields at +10 and +18 through to entity 22. */
         Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(22);
@@ -382,11 +363,6 @@ void Scene_RunPrimarySequence(void)
     Engine_EventEnd();
 }
 
-/*
- * Drives actors 0 to 3, 22 and 25 through a long timed sequence of pose, move
- * and sprite-flag calls, gated by two condition checks that each pick one of
- * two call sequences and both bump the shared scene step counter.
- */
 void FieldScene_RunSecondarySequence(void)
 {
     u32 i;
@@ -406,8 +382,6 @@ void FieldScene_RunSecondarySequence(void)
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Engine_EventWait(10);
-    /* Either path bumps the step counter once, at a different point in its
-     * four calls. */
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
@@ -444,7 +418,6 @@ void FieldScene_RunSecondarySequence(void)
     Actor_FaceDirection(22, 0x4000, 0);
     Engine_EventWait(80);
     Actor_SetSpeed(22, 0xcccc, 0x6666);
-    /* Set the byte at offset 85 of actor 22's record to 2. */
     Object_GetById(22)->motion_flags = 2;
     Engine_ActorSetSpritePriority(22, 2);
     Call6(Engine_MapCopyCellsTo, 34, 0, 1, 2, 4, 18);
@@ -524,7 +497,6 @@ void FieldScene_RunSecondarySequence(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Engine_EventWait(20);
     Event_OpenMessage(ACTOR_GERALD, 0);
-    /* The same branch-and-bump shape as above. */
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(22, 4);
@@ -557,7 +529,6 @@ void FieldScene_RunSecondarySequence(void)
     Engine_ActorSetAnimationAndWait(22, 3);
     Engine_EventWait(30);
     Event_ShowMessage(22, 0);
-    /* One extra call, run only when GameFlag_IsSet(0x9bf) is non-zero. */
     if (GameFlag_IsSet(0x9bf) != 0) {
         FieldScene_RunScene3c6SequenceA();
     }
@@ -592,8 +563,6 @@ void FieldScene_RunSecondarySequence(void)
     gEventWork->message += 1;
     Engine_PartyGiveItem(242, 0);
     Engine_EventWait(10);
-    /* Clear bit 0 of the actor flag byte, then set it back through a second
-     * record accessor. */
     ((struct FieldActor *)Actor_Get(22))->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkByAndWait(22, 0, -16);
     ((struct FieldActor *)Actor_Get(22))->steering_flags |= ACTOR_FACES_MOTION;
@@ -675,8 +644,6 @@ void FieldScene_RunSecondarySequence(void)
     Engine_EventEnd();
 }
 
-/* A fixed, unbranching sequence of overlay calls with constant arguments: no
- * loop, no stored result, no use of the scene work record. */
 void FieldScene_RunScene3c6SequenceA(void)
 {
     u32 i;
@@ -741,15 +708,6 @@ s32 SceneData_SelectSecondaryTableByFlag9a7(void)
     return (s32)Placement_Effects;
 }
 
-/*
- * Lalivero's scene setup. Arriving from the aerie by entrance 90 or 91 sets
- * flag 0x9a7, and entrance 90 also sets flag 0x9bf. Actors 19 to 21 take
- * animation 3. Actor 25 is placed 10 pixels up and shows the Black Orb's icon.
- * While flag 0x9a7 is set, actor 24's sprite flags and collision are cleared,
- * three map cells are copied and flag 0x9bb moves actor 18. Otherwise actors 8
- * and 9 face north and south, five cells are copied, and arriving by entrance
- * 20 or 21 plays the primary sequence once, recorded by flag 0x9b8.
- */
 s32 Scene_Initialize(void)
 {
     union FieldObject *object;

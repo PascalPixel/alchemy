@@ -3,7 +3,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "VINASU.H"
-/* Bracketed scenes, the pair's defeat and the multi-actor presentation. */
 #include "CHOJO.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
@@ -22,7 +21,6 @@ extern u8 VinasuChojo_BeamEndAction[];
 void SceneEffect_SpawnParticlesAboveActor();
 void VinasuChojo_RunTransitionStep();
 
-/* The transition task's frame count and step, past the overlay's image. */
 extern s32 VinasuChojo_TransitionTimer;
 extern s32 VinasuChojo_TransitionStep;
 extern u8 VinasuChojo_BeamRiseAction[];
@@ -61,7 +59,6 @@ void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 extern const s32 VinasuChojo_BesideParticleScript[];
 void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
 
-/* Once the second actor stops, grow and slide the pair into their shared form. */
 void VinasuChojo_UpdateBeamActors(void)
 {
     struct FieldActor *first;
@@ -130,17 +127,11 @@ void FieldScene_RunThreeStepsInBracket(void)
     Engine_EventEnd();
 }
 
-/*
- * Brackets a scripted scene: opens it, runs two of this overlay's own
- * steps, sets the story flag, has the next scene open through a window
- * over 24 frames, then closes.
- */
 void FieldScene_RunBracketedSceneWithFlag282(void)
 {
     Engine_EventBegin();
     FieldScene_RestageParty();
     VinasuChojo_TryToPreventFall();
-    /* The flag id is built as 141 << 1 rather than folded. */
     Engine_GameFlagSet(141 << 1);
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
@@ -152,11 +143,6 @@ void FieldScene_RunBracketedSceneWithFlag282(void)
     Engine_EventEnd();
 }
 
-/*
- * Entrance 4: the summit after the pair's fall. The cells are restored, the
- * party stand at the edge with actors 21 and 6 behind them, the particles
- * rise beside actor 23, and the leap plays as the screen opens.
- */
 void VinasuChojo_RunLeapEntrance(void)
 {
     struct FieldActor *leader;
@@ -242,13 +228,6 @@ void VinasuChojo_RunLeapEntrance(void)
     Engine_EventRequestExit(2);
 }
 
-/*
- * The pair's defeat. Actors 0 to 3 are placed facing northwest, actors 21
- * and 6 between north and northeast, and the pair between south and
- * southeast. Actors 24 and 25 are prepared, the particle task starts and the
- * screen opens. The pair speak, then each falls away in three poses and is
- * removed.
- */
 void FieldScene_RunPairDefeat(void)
 {
     struct FieldActor *actor;
@@ -666,15 +645,6 @@ void VinasuChojo_RunActorTransition(void)
     Engine_EventWaitForScreen();
 }
 
-/* Restaging the party. */
-
-/*
- * Restages the aerie after the pair's defeat: both of the pair are removed,
- * map cells are copied, the camera and actors are refreshed, and actors 0 to
- * 3 are placed with their rise stopped. The rise counters of actors 21 and 6
- * are cleared, the particle task for actor 23 starts, and the palette is
- * blended in from white over 40 frames.
- */
 void FieldScene_RestageParty(void)
 {
     struct FieldActor *actor;
@@ -776,12 +746,6 @@ void VinasuChojo_TryToPreventFall(void)
     VinasuChojo_ShowMessage(6);
 }
 
-/*
- * Actor 21 leaps from the summit and the party rise after it. Either answer
- * to Gerald's question skips three lines of dialogue, at once or after the
- * reply. The screen then closes through a window and a centred message
- * closes the chapter.
- */
 void Scene_RunExtendedActorTransition(void)
 {
     struct FieldActor *actor;
@@ -1089,10 +1053,6 @@ void Scene_RunExtendedActorTransition(void)
     Engine_EventWait(80);
 }
 
-/* Parking an actor record. */
-
-/* Parks an actor where it stands: no target to move toward, no velocity
- * and its timer cleared. */
 void SceneActor_ParkRecord(struct FieldActor *actor)
 {
     actor->target_x = ACTOR_NO_TARGET;
@@ -1106,12 +1066,6 @@ void SceneActor_ParkRecord(struct FieldActor *actor)
     actor->timer = 0;
 }
 
-/*
- * The summit's rising transition, one step a frame: the flash and scroll
- * of its first steps, actor 23 rising from below the view while particles
- * stream up beside it, then the white flash and the flag that ends it. The
- * party's rise counters advance every frame.
- */
 void VinasuChojo_RunTransitionStep(void)
 {
     struct FieldActor *center;
@@ -1226,7 +1180,6 @@ void VinasuChojo_RunTransitionStep(void)
     SceneEffect_AdvanceGatedRiseCounter(Actor_Get(6));
 }
 
-/* The gated rise counter. */
 void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
 {
     if (actor->rise_enabled != 0) {
@@ -1244,11 +1197,6 @@ void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
     }
 }
 
-/*
- * Keeps actor 23 beside the view while the view is high enough, pulsing its
- * size on alternate frames, and every sixteenth frame releases a particle
- * that circles it.
- */
 void SceneEffect_SpawnParticlesBesideActor(void)
 {
     struct FieldActor *center;
@@ -1301,7 +1249,6 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     sprite->priority = center->sprite->priority;
 }
 
-/* The closing scene step. */
 void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)
 {
     struct FieldEffect *anchor;

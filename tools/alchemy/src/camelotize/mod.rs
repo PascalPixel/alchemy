@@ -1,6 +1,3 @@
-//! `alchemy camelotize`: mechanical readability rewrites of maintained C
-//! (AGENTS.md S3). Each rewrite only edits text; whether the bytes stay the
-//! same is `alchemy keep`'s question, run after it.
 mod barriers;
 mod declarations;
 mod fields;
@@ -26,7 +23,6 @@ Struct layouts and types come from the build's own compiler for each game
 the file builds in. Then run alchemy keep: it keeps only the files whose
 edits leave all twelve editions byte-identical."#;
 
-/// The games a source file builds in: its own, or both for COMMON.
 fn games(file: &Path) -> Vec<DecompTarget> {
     let text = file.to_string_lossy();
     let mut found = Vec::new();
@@ -39,7 +35,6 @@ fn games(file: &Path) -> Vec<DecompTarget> {
     found
 }
 
-/// The include search path the build gives a game's C.
 fn search(root: &Path, target: DecompTarget) -> Vec<PathBuf> {
     let mut paths = vec![root.join("games").join(target.game_dir()).join("INCLUDE")];
     paths.extend(
@@ -50,7 +45,6 @@ fn search(root: &Path, target: DecompTarget) -> Vec<PathBuf> {
     paths
 }
 
-/// Every identifier in the headers a file reaches.
 fn header_words(file: &Path, search: &[PathBuf]) -> (HashSet<String>, String) {
     let mut words = HashSet::new();
     let mut texts = String::new();
@@ -72,8 +66,6 @@ fn header_words(file: &Path, search: &[PathBuf]) -> (HashSet<String>, String) {
     (words, texts)
 }
 
-/// What every game the file builds in says about `spec`'s struct, its
-/// getters and its globals; None when a game cannot see the struct.
 fn unit(root: &Path, file: &Path, text: &str, spec: &fields::Spec) -> Result<Option<fields::Unit>, String> {
     let names: Vec<&str> = spec.getters.iter().chain(spec.globals).copied().collect();
     let probes: Vec<stabs::Probe> = names
@@ -116,7 +108,6 @@ fn unit(root: &Path, file: &Path, text: &str, spec: &fields::Spec) -> Result<Opt
     Ok(Some(fields::Unit { layouts, types: agreed.unwrap_or_default(), declared, macros }))
 }
 
-/// The register rewrite, with the headers its names need added.
 fn registers_in(root: &Path, file: &Path, text: &str) -> Result<(String, usize), String> {
     let mut all = Vec::new();
     for header in registers::HEADERS {

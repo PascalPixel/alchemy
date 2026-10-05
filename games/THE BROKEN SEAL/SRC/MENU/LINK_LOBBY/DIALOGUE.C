@@ -73,8 +73,6 @@ extern u32 gLinkLobbyCallFrames;
 extern s32 gLinkLobbyWaitFrames;
 void LinkLobby_PollPeerReady(void);
 
-/* Link lobby: ask for a choice in a small window, then answer with one of
- * three messages depending on the choice and its result. */
 s32 LinkLobby_RunChoicePrompt(s32 id)
 {
     s32 window;
@@ -138,7 +136,6 @@ s32 LinkLobby_RunChoicePrompt(s32 id)
     Engine_EventEnd();
 }
 
-/* The link lobby: a value applied through the shop confirmation. */
 s32 State_ApplyValueAndGetResult(s32 arg0)
 {
     Engine_EventBegin();
@@ -171,11 +168,8 @@ s32 LinkLobby_PartyContains(s32 id)
     return 0;
 }
 
-/* The link lobby: the callback that does nothing. */
-/* Deliberate no-op callback. */
 void State_NoOp(void) {}
 
-/* A lobby actor's line, one per actor from each base: with flag 0x304 set, by flag 0x305 and the actor's own flag 0x2f0 + actor; otherwise by what LinkLobby_PartyContains reports for actor 0 and for this actor. */
 s32 LinkLobby_TalkByProgress(s32 actor)
 {
     s32 base = (s32)MsgLobbyCantWaitLets;
@@ -210,8 +204,6 @@ s32 LinkLobby_TalkByProgress(s32 actor)
     Engine_EventEnd();
 }
 
-/* Leave the link lobby for the exchange: stop the serial interrupts, load
- * the sound preset and go to scene row 1's first entrance. */
 s32 LinkLobby_StartExchange(void)
 {
     SerialRuntime_RemoveIrqHandlers();
@@ -224,8 +216,6 @@ s32 LinkLobby_StartExchange(void)
 
 /* FAKEMATCH: Engine_EventEnd is declared returning s32 so each handler returns the last callee's r0, as the battle application does, and the game state is read through a word view for the selected actor. */
 
-/* The three lobby regulars face the leader and speak a line that moves on
- * with the lobby's progress flags. */
 s32 LinkLobby_TalkToAttendant(s32 actor)
 {
     s32 message;
@@ -252,8 +242,6 @@ s32 LinkLobby_TalkToAttendant(s32 actor)
     Engine_EventEnd();
 }
 
-/* The attendant alternates between explaining linked finals and the party
- * order. */
 s32 LinkLobby_TalkAlternating(s32 actor)
 {
     s32 message;
@@ -275,8 +263,6 @@ s32 LinkLobby_TalkAlternating(s32 actor)
     Engine_EventEnd();
 }
 
-/* Link lobby: face the speaker and report the stored count, or the empty
- * message when there is none. */
 s32 LinkLobby_ShowCountMessage(s32 id)
 {
     struct GameState *gs;
@@ -294,11 +280,8 @@ s32 LinkLobby_ShowCountMessage(s32 id)
     Engine_EventEnd();
 }
 
-/* The link lobby: its event table. */
 u8 *LinkLobby_GetEvents(void) { return gLinkLobbyEvents; }
 
-/* Saving the battle results between two message windows, and the
-   three-digit counter drawn into the map. */
 s32 LinkLobby_SaveBattleResults(void)
 {
     s32 window;
@@ -346,10 +329,6 @@ s32 LinkLobby_DrawThreeDigitValue(s32 value)
     Engine_MapRedraw();
 }
 
-/* Apply a link round's result: reset the lobby's frame counters, mark "TALK"
- * in the outgoing payload, record which party members stay, then by the
- * round's outcome update the win counts and records and reopen the lobby's
- * dialogue, and restart the peer poll. */
 s32 LinkLobby_RunRoundResult(void)
 {
     s32 i;

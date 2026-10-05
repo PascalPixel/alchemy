@@ -36,7 +36,6 @@ retry:
     return 0;
 }
 
-/* The debug icon browser: ITEM, ENERGY and STATUS pages of 32 icons. */
 struct DebugMenuState {
     u8 unknown_00[4];
     u16 active;

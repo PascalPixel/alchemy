@@ -3,8 +3,6 @@
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
-
-/* Starts a battle object rising from the ground below its slot's anchor. */
 void BattleFx_InitializeRisingObject(s32 slot)
 {
     struct BattleObjectSlot *context = GetBattleObjectSlotFar(slot);

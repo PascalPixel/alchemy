@@ -11,8 +11,6 @@ enum { FONT_GLYPH_ROWS = 15 };
 enum { FONT_GLYPH_ROWS = 12 };
 #endif
 
-/* Text fonts store their advance width followed by the monochrome rows.
-   Records are halfword aligned; the Japanese 26-byte stride has no tail pad. */
 struct FontGlyph {
     u16 width;
     u16 rows[FONT_GLYPH_ROWS];
@@ -23,7 +21,6 @@ LAYOUT_SIZE_GUARD(FontGlyph_Size, struct FontGlyph, 2 + FONT_GLYPH_ROWS * 2);
 
 extern const struct FontGlyph UiText_Glyphs[];
 
-/* The glyph loader decodes the input, then expands it into 4bpp tiles. */
 typedef struct {
     u8 input[0x400];
     u8 tiles[0x200];

@@ -367,8 +367,6 @@ void SceneState_RunWhenActor8AtTile10x23(void)
     Engine_EventEnd();
 }
 
-/* Once, when the leader stands in the cell block at x 164-171 and z
- * 372-379, lifts him by two pixels, opens the passage and animates it. */
 void MakyuriHeya_TriggerFloorSwitch(void)
 {
     s32 x;
@@ -413,7 +411,6 @@ void FieldScene_RunScene39cSequenceA(void)
     }
 }
 
-/* A random drift of about -0.8 to +0.8 in steps of 0.2. */
 static __inline__ s32 Door_DriftStep(void)
 {
     u32 drift = (u32)Engine_RandomNext();
@@ -421,8 +418,6 @@ static __inline__ s32 Door_DriftStep(void)
     return ((drift << 3) >> 16) * 0x3333;
 }
 
-/* Slides one of the three stone doors two cells open, a cell at a time, with
- * dust drifting off its moving edge. */
 void MakyuriHeya_OpenStoneDoor(s32 side)
 {
     struct EffectOptions params;

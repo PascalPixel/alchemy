@@ -191,9 +191,6 @@ s32 SaveState_ScanRecordFlags(void)
     return ret;
 }
 
-/* Save: fill the summary header at the start of the save image (leader name
-   and level, area, play time, coins, Djinn counts, party and progress
-   counters) and its checksum over the rest of the image. */
 u32 SaveState_BuildSummaryHeader(void)
 {
     u16 owners[14];

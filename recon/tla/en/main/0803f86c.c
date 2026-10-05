@@ -8,10 +8,6 @@ void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 void UiTimedNotice_Tick(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
-/* Show the text the party's scene and entrance select, centred in a
-   window, and let UiTimedNotice_Tick close it after 90 frames. The window
-   and its countdown live in the event work at +0x230 and +0x234. */
-
 void UiTimedNotice_Create(void)
 {
     u8 *work;

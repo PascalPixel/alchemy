@@ -1,14 +1,3 @@
-@ ARM list builder that runs from the stack. Its Thumb loader (raw
-@ 080019f4.S) reads {DMA3 register base, 0x080018b4, 0x84000050} from a PC-relative
-@ block with add r1, pc and ldmia r1, {r1, r2, r4}, has DMA3 copy these 320
-@ bytes into a 320-byte stack buffer and calls the copy; neither approved
-@ compiler emits an add rd, pc address form. Behind its bx pc entry the ARM
-@ body reads a PC-relative parameter block, walks lists with ldmdb r2!, enters
-@ a subroutine with movs; blne and links into IWRAM at 0x03000260 by hand with
-@ add lr, pc; bx r4, as the TBS object-attribute list builder
-@ (GRAPHICS/RENDER/BUILD_OAM_LIST.S, 0x08001dc8) does. The body is TLA's own.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: handwritten — stack-executed ARM list builder
 .syntax unified
 	.thumb
 	.global Render_BuildOamListKernel
@@ -103,7 +92,7 @@ AlchemyUncreditedEnd_080018b4:
 .L_080019d4:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.4byte	gOamBucketMasks + 32	@ past its eight words, walked downwards
+	.4byte	gOamBucketMasks + 32
 	.4byte	gObjAffineCount
 	.4byte	gOamUsage
 	.4byte	gOamBuckets

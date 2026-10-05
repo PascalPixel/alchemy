@@ -1,9 +1,3 @@
-/*
- * Draft: ItemMenu_ArrangeCategoryItemIcons, ported from its ☀️ twin with the
- * menu work from its heap slot and ⚓️'s icons at 0x4c. Remaining difference:
- * two scheduling swaps in the loop (the listing advances the item pointer
- * before copying the item, and spills r1 before masking the id).
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "ITEM.H"
@@ -17,7 +11,6 @@ struct CategoryItemIcon {
     s16 y;
 };
 
-/* ⚓️ keeps the item icons four bytes later than ☀️. */
 struct CategoryItemIconState {
     u8 reserved_00[76];
     struct CategoryItemIcon *icons[15];

@@ -260,13 +260,6 @@ u32 Random16(void);
         }                                                                     \
     }
 
-/* Picks the target of ACTOR_ID's action and returns its order position:
-   gathers the units on the side the target mode names, keeps those the
-   effect can still change (or, when it changes nothing, those its damage
-   class can reach), and picks one at random. A single-target action of
-   damage class 3 to 5 from a unit whose AI strategy is not 2 first sorts
-   them by current HP (strategy 0) or maximum HP and weights the pick toward
-   the first of up to four. -2: no unit on that side; -1: none qualifies. */
 s32 BattleTarget_SelectForAction(
     s32 actor_id,
     struct BattleAction *action)

@@ -1,23 +1,9 @@
-/* Declarations shared by the Sol Sanctum star room scene's sources (resource_380). */
 #ifndef STAR_H
 #define STAR_H
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
-/*
- * The Elemental Star Room of Sol Sanctum. Sukureta brings Robin, Gerald and
- * Jasmine in, explains the four Elemental Stars and hands out Mythril Bags,
- * and the party bags the Mercury, Mars and Jupiter Stars. Saturos and
- * Menardi then hold Sukureta and Jasmine hostage, Garcia takes off his mask
- * as their guarantee, and Alex takes the three Stars, leaving the party to
- * fetch the last one.
- *
- * The placed actors are named from what they say: Sukureta explains the
- * Stars, Garcia's masked actor is replaced by his unmasked one, Alex is the
- * one the party hands the Stars to, and in the collapse that follows Menardi
- * answers Saturos by name.
- */
 
 enum StarRoomActor {
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED + 1,
@@ -89,26 +75,6 @@ void Engine_CameraWaitForMove();
 void Engine_ActorSetSpeed();
 void Engine_EventWait();
 void Engine_ActorFaceDirection();
-
-/*
- * resource_380: the talk handler for actor 9, one of a bank of per-actor
- * published callbacks. The handler is published through a script record
- * rather than called, so nothing here reaches it by name.
- */
-
-/*
- * resource_380: the talk handler for actor 5, published through a script
- * record rather than called.
- */
-
-/*
- * Overlay resource_380: the per-actor talk handlers of the party
- * introduction scene.
- */
-
-/* The script callback checks ahead of the leader. */
-
-/* Show a line and wait. */
 
 struct ObjectRuntime;
 

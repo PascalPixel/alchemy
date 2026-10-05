@@ -1,7 +1,3 @@
-/*
- * Draft: Curve_LerpThreeSamplesByRatio does not yet match; 4 halfwords differ from ☀️'s C, first at +0xe (adds r1, r1, r2).
- * Links as recon/tla/raw/0802d2e0.s.
- */
 #include "CURVE.H"
 
 s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)

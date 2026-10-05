@@ -7,12 +7,7 @@
 #include "GLOBAL_CELLS.H"
 #include "IO_REG.H"
 
-
-
-
-
 extern struct TitlePaletteWork *Data_03001ed0;
-
 
 void TitlePalette_InitializeBuffers(void)
 {

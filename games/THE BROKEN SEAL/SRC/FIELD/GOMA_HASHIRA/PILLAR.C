@@ -68,10 +68,8 @@ void Object_SetModeById();
 extern u8 *gWork;
 extern s16 Data_02000240[];
 
-/* Frames actor 13 has idled, in the overlay's own work past its image. */
 s32 GomaHashira_Actor13Frames;
 
-/* The pillar at the square: pushing it over, its fall, its burst of effects and the steps that run them. */
 void FieldScene_RunPillarSequence(void)
 {
     s32 kind;
@@ -150,8 +148,6 @@ void FieldScene_RunPillarSequence(void)
     Engine_EventEnd();
 }
 
-/* Once the pushed pillar stands on cell (38, 14), it rises out of the
- * floor, throwing six bursts of effect around it. */
 void FieldScene_RunPillarBurst(void)
 {
     s32 x;
@@ -237,7 +233,6 @@ u8 *SceneData_GetExtraTable(void)
     return GomaHashira_Extras;
 }
 
-/* Drive actor 13's idle routine from a frame counter. */
 void GomaHashira_DriveActor13Idle(void)
 {
     u8 *work;

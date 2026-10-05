@@ -1,5 +1,3 @@
-//! Compiler runtime members built from the approved licensed agscc source.
-//! Ordinary archives supply the linker; generated provenance stays ignored.
 use crate::compiler::build_io::{read, text, write};
 use crate::compiler::routing::{bundle, runtime_library_cflags, CompilerTarget};
 use crate::compiler::sha256;
@@ -9,9 +7,7 @@ use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
 const CONTAINER: &str = "agscc";
-/// The container's target makefile fragment: generated sources and flags.
 const TARGET_RULES: &str = "gcc/config/arm/t-arm-elf";
-/// `LIBGCC2_CFLAGS` and `INTERNAL_CFLAGS` defines of the container's library build.
 const LIBRARY_DEFINES: &[&str] = &[
     "-DCROSS_COMPILE",
     "-DIN_GCC",
@@ -25,8 +21,6 @@ fn member_name(name: &str) -> bool {
             .bytes()
             .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
 }
-/// A generated library source and the container rule that writes it:
-/// `name:` followed by `echo '...' > name` and `cat $(srcdir)/path >> name`.
 fn generated_source(container: &Path, rules: &str, name: &str) -> Result<String, String> {
     let mut lines = rules.lines().skip_while(|line| {
         line.split_once(':')
@@ -62,7 +56,6 @@ fn generated_source(container: &Path, rules: &str, name: &str) -> Result<String,
     }
     Ok(output)
 }
-/// A makefile variable's words, as the target fragment assigns them.
 fn rule_variable(rules: &str, name: &str) -> Result<Vec<String>, String> {
     rules
         .lines()
@@ -74,11 +67,8 @@ fn rule_variable(rules: &str, name: &str) -> Result<Vec<String>, String> {
 }
 
 enum Source {
-    /// `-xassembler-with-cpp` source in the container.
     Assembly(PathBuf),
-    /// A fine-grained source a container rule generates.
     Generated(String),
-    /// C that includes the fixed ARM target headers.
     Target(PathBuf),
 }
 fn source_of(container: &Path, source: &str) -> Source {
@@ -91,7 +81,6 @@ fn source_of(container: &Path, source: &str) -> Source {
     }
 }
 
-/// The compile command of one member, without its output option.
 fn member_command(
     root: &Path,
     source: &str,
@@ -171,8 +160,6 @@ struct MemberReceipt {
 }
 
 impl ArchiveReceipt {
-    /// The receipt as TSV: its settings as `# name value` lines, then one
-    /// row per member under a header row.
     fn table(&self) -> Vec<u8> {
         let mut table = format!(
             "# format\t{}\n# compiler_sha256\t{}\n# ar_sha256\t{}\n# archive_sha256\t{}\nmember\tsource\tsource_sha256\tplan_sha256\tobject_sha256\n",
@@ -400,7 +387,6 @@ fn check_archive_members(ar: &Path, archive: &Path, objects: &[PathBuf]) -> Resu
     Ok(())
 }
 
-/// Build the requested archive in the given member order, without a game registry.
 pub fn build_archive(
     root: &Path,
     output: &Path,

@@ -84,8 +84,6 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *
     position->y -= 16;
 }
 
-/* Projects a battle unit's position to the screen and lifts it by its
-   scaled height. */
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
 {
     struct BattleCamera *camera;
@@ -140,8 +138,6 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
 
 extern DrawRectangle gWorkSlot[];
 extern u16 BattleFx6_FlareCells[];
-/* The third kind of beam, cut into six cells: how wide and tall each is,
-   where it starts in the sheet and how far it reaches from the actor. */
 extern u8 BeamSequence_CellWidths[];
 extern u8 BeamSequence_CellHeights[];
 extern u16 BeamSequence_CellSheetOffsets[];
@@ -160,10 +156,6 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
 
-/* Battle presentation: a beam strikes the target. The beam's picture runs
-   beside the actor, a flash plays on the target, and sparks fly from it and
-   fall under gravity. The effect's kind picks the beam sheet and how it is
-   cut into frames. */
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 {
     struct EffectPosition pos;
@@ -355,12 +347,6 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     BattleFx_SetTransitionFlagAndDisplay();
 }
 
-/* Battle presentation: a ring closes on the actor and bursts into sparks on
-   the target. When the effect's kind is above 199, sixty-four motes first
-   circle the actor on three random angles, each closing in by four a frame,
-   while the actor stands still and the palette fades. Then four full-canvas
-   pictures flash by two frames each, and sparks fly from the target and fall
-   under gravity. The background's palette level steps back up at the end. */
 void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 {
     struct EffectPosition pos;

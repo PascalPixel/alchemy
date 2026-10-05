@@ -1,4 +1,3 @@
-@ Exact source-built overlays; pending overlays and alignment stay uncredited.
 	.section .overlays,"a"
 	.global Resource_Overlay649
 Resource_Overlay649:

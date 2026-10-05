@@ -1,4 +1,3 @@
-/* Declarations shared by the Tolbi house scene's sources (resource_3b6). */
 #ifndef TOREBI_H
 #define TOREBI_H
 
@@ -16,7 +15,5 @@ extern u8 Data_020099d0[];
 extern u8 Data_02009670[];
 extern u8 Data_02009310[];
 extern struct Ent Data_02009dcc[];
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
 
 #endif

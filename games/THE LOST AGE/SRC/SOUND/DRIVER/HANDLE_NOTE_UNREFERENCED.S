@@ -1,12 +1,3 @@
-@ The TBS note-start routine as TLA still links it, though no literal pool
-@ names it and no call reaches it (the driver uses HANDLE_NOTE.S). It calls
-@ the stereo helper at 0x081c1bd8 through the private r4/r5 contract and the
-@ bx r3 epilogue stub at 0x081c1b84, and reuses flags without a compare.
-@ These 512 bytes equal TBS SOUND/DRIVER/HANDLE_NOTE.S (0x080f9f6c) apart from
-@ one relocated literal word.
-@ The zero halfword of alignment at 0x081c1dfe never runs and carries no
-@ credit.
-@ credit: library — TBS/TLA common sound driver note-start routine
 .syntax unified
 	.thumb
 	.global MusicTrack_HandleNoteUnreferenced

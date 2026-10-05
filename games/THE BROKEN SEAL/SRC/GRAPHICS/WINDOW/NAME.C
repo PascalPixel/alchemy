@@ -16,13 +16,10 @@
 
 extern u8 Resource_FixedBlockBTiles[];
 
-/* ui/window/copy_tilemap_region.c */
 extern u8 RomBytes_080310a4[];
 
-/* resource/copy_fixed_block_a.c */
 extern const u8 RomBytes_080317e4[];
 
-/* ui/text/draw/draw_padded_label.c */
 void UiText_DrawString(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
@@ -35,22 +32,14 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
 }
 
 #if EDITION_INTERNATIONAL
-/* A routine that only reports success, after the fixed resource block
-   loader; nothing in the image calls it by name. The Japanese edition checks
-   the name entry's voiced marks here instead. */
 s32 Resource_ReturnTrue(void)
 {
     return 1;
 }
 #else
-/* The letters that take the voiced and the semi-voiced mark, as pairs of
-   first and last codes ending at zero. */
 extern const u8 NameEntry_DakutenRanges[];
 extern const u8 NameEntry_HandakutenRanges[];
 
-/* Whether the name entry may put a mark after a letter: a voiced mark (0xde)
-   or semi-voiced mark (0xdf) only follows the letters in its ranges; any
-   other code follows anything. */
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
 {
     const u8 *range;
@@ -68,7 +57,6 @@ s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
     return 0;
 }
 
-/* The letters of a name, not counting its voiced and semi-voiced marks. */
 s32 NameEntry_CountLetters(const u8 *name)
 {
     s32 count;
@@ -82,7 +70,6 @@ s32 NameEntry_CountLetters(const u8 *name)
 }
 #endif
 
-/* ui/window/window_copy_tilemap_region.c */
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
@@ -113,7 +100,6 @@ void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *so
     Runtime_BumpFree(buffer);
 }
 
-/* ui/window/set_tile_attribute_rect.c */
 void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
     s32 x, s32 y, s32 width, s32 height, u32 field) {
     u8 *base = gWindowWork[0];
@@ -156,7 +142,6 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
     }
 }
 
-/* resource/copy_fixed_block_b.c */
 void Resource_CopyFixedBlockB(s32 arg0)
 {
     VramBlock_LoadCached(arg0, 0x80, RomBytes_080310a4);
@@ -167,10 +152,7 @@ void Resource_CopyFixedBlockA(s32 arg0)
     VramBlock_LoadCached(arg0, 0x80, RomBytes_080317e4);
 }
 
-/* The Japanese edition has neither of the two text helpers that follow. */
 #if EDITION_INTERNATIONAL
-/* ui/text/text_set_render_string.c */
-/* ui/text/misc/set_render_string.c */
 s32 UiText_SetRenderString(const u8 *str)
 {
     struct UiRenderWork *work;
@@ -222,18 +204,13 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input)
 }
 #endif
 
-/* The Japanese edition has its own kana editor, still on its scaffold. */
 #if EDITION_INTERNATIONAL
-/* Spanish and Italian names take one more column in the label window. */
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 #define NAME_LABEL_WIDTH 9
 #else
 #define NAME_LABEL_WIDTH 8
 #endif
 
-/* German, Spanish and French write the delete and end keys as text over the
-   keyboard; English and Italian draw them in the keyboard's tilemap. Both
-   keys are three columns wide, except the German ENDE key, which takes four. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
 #define NAME_KEY_LABELS 1
 #else
@@ -245,7 +222,6 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input)
 #define NAME_END_KEY_WIDTH 3
 #endif
 
-/* The cursor's sideways sway, eight frames long. */
 extern s8 NameEntry_CaretWave[];
 extern const u8 NameEntry_KeyboardTilemap[];
 #if NAME_KEY_LABELS
@@ -254,7 +230,6 @@ extern u8 NameEntry_EndKeyLabel[];
 void UiText_DrawStringInWindow(u8 *str, struct RenderInput *window, s32 x, s32 y);
 #endif
 extern u32 gFrameTick;
-/* Read again for every key test. */
 extern volatile u32 gKeysRepeat;
 extern u32 gKeyState;
 
@@ -269,8 +244,6 @@ void ShopCursor_AdvanceFar(union MenuCursor *cursor);
 void ShopCursor_MoveTowardTargetFar(union MenuCursor *cursor);
 void UiWork_FinalizeEntityMatchingLocalizedId(s32 entry);
 
-/* Edits an owner's name in place, five characters long, with the cursor
-   state the shop menus use. Returns -1 when cancelled. */
 s32 NameEntry_EditOwnerName(s32 entry)
 {
     struct RenderInput *label;

@@ -1,9 +1,3 @@
-//! `alchemy sizes`: the struct and union types a draft can see, laid out by
-//! the build's own compiler. Nothing here computes a layout: generated
-//! probes ask the compiler for each type's sizeof, its alignment as the
-//! offset of a member that follows a char, and with a frame gap, the stack
-//! one unused local of the type reserves, which is what S2's unused local
-//! of a real type has to explain. A report for people; nothing reads it.
 use crate::c_items::{aggregate_types, items, line_marker, Kind};
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::root;
@@ -60,8 +54,6 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     Ok(Options { draft, size, game })
 }
 
-/// Every struct and union type an expansion defines, in order, with the
-/// file that defines it.
 pub(crate) fn visible_types(expanded: &str) -> Vec<(String, String)> {
     let (mut file, mut seen, mut found) = (String::new(), HashSet::new(), Vec::new());
     for item in items(expanded) {
@@ -78,9 +70,6 @@ pub(crate) fn visible_types(expanded: &str) -> Vec<(String, String)> {
     found
 }
 
-/// The draft with each function body replaced by `;`: its types and
-/// declarations without code that may not compile yet. Every line keeps
-/// its number, so the compiler's complaints point into the draft.
 pub(crate) fn declarations_only(draft: &str) -> String {
     let (mut out, mut from) = (String::new(), 0);
     for item in items(draft) {
@@ -99,8 +88,6 @@ pub(crate) fn declarations_only(draft: &str) -> String {
     out
 }
 
-/// Two words per type: its sizeof, and its alignment as the offset of a
-/// member of the type that follows a char.
 pub(crate) fn layout_probe(types: &[&str]) -> String {
     let mut text = String::new();
     for (n, t) in types.iter().enumerate() {
@@ -114,7 +101,6 @@ pub(crate) fn layout_probe(types: &[&str]) -> String {
     text
 }
 
-/// One function per local, holding nothing else.
 pub(crate) fn frame_probe(locals: &[String]) -> String {
     locals
         .iter()
@@ -123,7 +109,6 @@ pub(crate) fn frame_probe(locals: &[String]) -> String {
         .collect()
 }
 
-/// The words the compiler wrote for `alchemy_probe`.
 pub(crate) fn probe_words(assembly: &str) -> Vec<u64> {
     let mut words = Vec::new();
     let mut lines = assembly.lines().map(str::trim).skip_while(|l| *l != "alchemy_probe:").skip(1);
@@ -136,8 +121,6 @@ pub(crate) fn probe_words(assembly: &str) -> Vec<u64> {
     words
 }
 
-/// The stack each `alchemy_frame_N` reserves: its `sub sp` immediates and
-/// any negative pool constant it adds to sp.
 pub(crate) fn frames(assembly: &str) -> HashMap<usize, u64> {
     let lines: Vec<&str> = assembly.lines().map(str::trim).collect();
     let mut pools: HashMap<&str, Vec<i64>> = HashMap::new();
@@ -184,10 +167,6 @@ pub(crate) fn frames(assembly: &str) -> HashMap<usize, u64> {
     found
 }
 
-/// Compile `source` to assembly as the build compiles the draft: its
-/// routing, options and edition, with the draft's own directory searched
-/// first as it is for the draft. Errors name the draft (`routing`), whose
-/// lines the probe keeps.
 fn compile(root: &Path, target: DecompTarget, routing: &str, includes: &[String], source: &str) -> Result<String, String> {
     let directory = tempfile::Builder::new().prefix("alchemy-sizes-").tempdir().map_err(|e| e.to_string())?;
     let input = directory.path().join("probe.c");
@@ -266,7 +245,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         }
         return Ok(());
     };
-    // Candidates by sizeof; the compiler's frame decides.
     let mut candidates = Vec::new();
     for (size, _, name, file) in layout.iter().filter(|(size, ..)| *size > 0 && gap % size == 0) {
         let count = gap / size;
@@ -335,7 +313,6 @@ mod tests {
         assert_eq!(frame_probe(&["struct A pad[2]".into()]), "void alchemy_frame_0(void)\n{\n    struct A pad[2];\n}\n");
     }
 
-    /// The compiler's own output for the probes (agscc, -O2 -mthumb).
     const LAYOUT: &str = "\t.global\talchemy_probe\n\t.section .rodata\n\t.align\t2\n\t.type\t alchemy_probe,object\nalchemy_probe:\n\t.word\t4\n\t.word\t1\n\t.word\t8\n\t.word\t4\n\t.size\t alchemy_probe,16\n";
     const FRAMES: &str = "alchemy_frame_0:\n\tbx\tlr\n.Lfe1:\n\t.size\t alchemy_frame_0,.Lfe1-alchemy_frame_0\nalchemy_frame_1:\n\tsub\tsp, sp, #24\n\tadd\tsp, sp, #24\n\tbx\tlr\n.Lfe2:\nalchemy_frame_2:\n\tmov\tip, r7\n\tldr\tr7, .L7\n\tldr\tr3, .L7+4\n\tadd\tsp, sp, r7\n\tadd\tsp, sp, r3\n\tmov\tr7, ip\n\tbx\tlr\n.L8:\n\t.align\t2\n.L7:\n\t.word\t-1036\n\t.word\t1036\n.Lfe3:\n";
 

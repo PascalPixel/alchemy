@@ -1,4 +1,3 @@
-/* The mode task and the scripted transitions between rounds. */
 #include "LOG_ROLLING.H"
 #include "CALL.H"
 
@@ -37,7 +36,6 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
     Korosseo_ModeTaskPosition = 0;
 }
 
-/* Mode zero runs the short opening; other modes run the full transition and set flag 0x123 when it closes. */
 void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 {
     extern void Korosseo_LoadPortrait(s32 mode);

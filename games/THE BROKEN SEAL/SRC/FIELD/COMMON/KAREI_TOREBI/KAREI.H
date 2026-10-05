@@ -1,4 +1,3 @@
-/* Declarations shared by Kalay's Tolbi-road sources (resource_3ae). */
 #ifndef KAREI_H
 #define KAREI_H
 
@@ -52,7 +51,6 @@ void Engine_EventBegin(void);
 void SceneState_ApplyValues14And0And5(void);
 s32 SceneData_ReturnZero(void);
 
-/* The scene table in the overlay's data. */
 extern u8 KareiTorebi_SceneTable[];
 u8 *KareiTorebi_GetExits(void);
 void KareiTorebi_MoveGuardAside(void);

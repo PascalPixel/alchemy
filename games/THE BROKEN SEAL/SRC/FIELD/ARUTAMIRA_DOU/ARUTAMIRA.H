@@ -18,14 +18,9 @@ typedef struct {
 
 extern u8 ArutamiraDou_SceneTableA[];
 extern u8 ArutamiraDou_SceneTableB[];
-/* The actor wheel's work, past the overlay's image; the scene start clears
-   it. */
 extern u16 *ArutamiraDou_ClearTarget;
 extern u16 gArutamiraActorWheelWork[6];
 
-/* The actor wheel's work read as its fields: the phase the wheel task is
-   in (99 once it has stopped), the ticks spent in it, the ring's angle and
-   turning speed, and the travel since the last cue. */
 struct ActorWheel {
     s16 phase;
     s16 ticks;
@@ -37,8 +32,6 @@ struct ActorWheel {
 
 #define ArutamiraDou_Wheel ((struct ActorWheel *)ArutamiraDou_ClearTarget)
 
-/* The rock puzzle's bytes in the scene state, after the count of rounds
-   won: how far the present round has come, and the rock the wheel chose. */
 struct RockPuzzle {
     u8 state;
     s8 chosen;
@@ -59,12 +52,6 @@ void Vector_AddPolarOffset(s32 first, s32 second, s32 *position);
 s32 BattleFx_HasReachedTarget(void *object);
 void BattleFx_ClearOwnedSlot(void *object);
 
-/*
- * Primary cutscene script -- resource_3bd. A no-argument, void, almost-linear
- * sequence whose one branch rejoins after both arms.
- */
-
-/* Signed coordinate halfwords in a placed-actor record, named by offset. */
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 #endif

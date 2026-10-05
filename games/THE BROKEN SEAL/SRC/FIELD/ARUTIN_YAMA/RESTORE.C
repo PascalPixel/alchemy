@@ -20,7 +20,6 @@ void SceneActor_ClearCollisionFlagAndPlaceMarker();
 void SceneState_ForwardByRuntimeSelector();
 extern u8 Data_02000240[];
 
-/* The way the wind blows the drifting leaves: 0 or 0x8000. */
 extern s32 ArutinYama_LeafMode;
 
 extern u8 MsgArutinGuardianStatuesWereCreatedLong[];
@@ -33,7 +32,6 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-/* Step lengths by height difference, centred on entry 16. */
 extern s32 ArutinYama_RollRadii[];
 
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
@@ -52,23 +50,16 @@ struct Half {
     u16 v;
 };
 
-/* The field palette buffer. */
 extern u16 *Data_03001ed0;
 
-/* Frames left before the next step of the animation. */
 extern s16 ArutinYama_PaletteHold;
 
-/* The position in the script below. */
 extern s16 ArutinYama_PaletteStep;
 
-/* Pairs of (first colour, frames to hold), ended by -1. */
 extern s8 ArutinYama_PaletteScript[];
 
 void ArutinYama_StepPaletteAnim(void);
 
-/* Altin Peak: open the screen with the window transition and run the entry
- * scene of the area the party enters; the second and fourth areas have
- * none. */
 s32 ArutinYama_RunAreaScene(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -94,8 +85,6 @@ s32 ArutinYama_RunAreaScene(void)
     return 0;
 }
 
-/* Altin Peak entry: run the opening at entrance 99 before flag 0x109, then
- * place the scene actors and restore the cells each story flag records. */
 void ArutinYama_ApplyEntryState(void)
 {
     s32 opened;
@@ -352,7 +341,6 @@ void ArutinYama_RestoreAreaSeven(void)
     }
 }
 
-/* Parks actors 8 and 9, poses actors 10 and 12, and moves them further along when flag 0x908 is set. */
 void ArutinYama_PlaceFlaggedActors(void)
 {
     struct FieldActor *actor;
@@ -437,7 +425,6 @@ void ArutinYama_RestoreAreaEleven(void)
     }
 }
 
-/* A new leaf floats free of the ground at three tenths of full size. */
 void ArutinYama_InitLeaf(struct FieldActor *leaf)
 {
     leaf->motion_flags = 0;
@@ -448,9 +435,6 @@ void ArutinYama_InitLeaf(struct FieldActor *leaf)
     leaf->scale_y = 0x4ccc;
 }
 
-/* A drifting leaf: blown along the wind with a random wobble while its
- * timer runs, shrinking and settling once it is low, flickering to palette
- * 7 at random; released when its lifetime ends. */
 void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 {
     struct FieldActor *leaf = &object->actor;
@@ -489,7 +473,6 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
         Engine_ObjectDispatchRelease(leaf);
 }
 
-/* Every fourth frame, a leaf leaves the origin the gust started from. */
 void ArutinYama_SpawnLeaf(void)
 {
     union FieldObject *leaf;
@@ -507,8 +490,6 @@ void ArutinYama_SpawnLeaf(void)
     Object_SetMode(&leaf->actor, 1);
 }
 
-/* Starts a gust of leaves from a point; the wind carries them along x
-   for facing 0 and back along it for facing 0x8000. */
 void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
 {
     ArutinYama_LeafOrigin[0] = x;
@@ -655,13 +636,6 @@ void FieldScene_RunScene3a4SequenceE(void)
     Engine_EventEnd();
 }
 
-/*
- * Overlay resource_3a4. Per-frame tick that counts to sixty, fires one
- * audio cue and rewinds itself. The address of this routine is stored in
- * a record as a plain word, so it runs as a published callback.
- */
-
-/* Count sixty updates before the sound cue. */
 void SceneAudio_PlayCue183EverySixtyTicks(void)
 {
     ArutinYama_CueTicks = ArutinYama_CueTicks + 1;
@@ -671,9 +645,6 @@ void SceneAudio_PlayCue183EverySixtyTicks(void)
     }
 }
 
-/* The late scene on the peak: the camera pans up, the leader walks to the
- * ledge while cue 183 repeats, actors 8 and 9 follow, and the party is sent
- * on to the tenth area when it next returns. */
 void FieldScene_RunLateAuxiliarySequence(void)
 {
     Engine_EventBegin();
@@ -698,7 +669,6 @@ void FieldScene_RunLateAuxiliarySequence(void)
     BattleFx_SetWeightedResult(53, 3);
 }
 
-/* Bit 1 of the runtime status word selects mode 7 or 6 for actor 8. */
 void SceneActor_SetActor8ModeByCounterBit(void)
 {
 
@@ -709,8 +679,6 @@ void SceneActor_SetActor8ModeByCounterBit(void)
     }
 }
 
-/* Record returned by Object_GetById/26/3a: a pair of s32 fields at +8 and
- * +16 that get forwarded straight into the matching setup call. */
 void RunEventScript01(void)
 {
     u32 i;
@@ -835,13 +803,11 @@ void RunEventScript01(void)
     Engine_EventEnd();
 }
 
-/* Asks the engine for psynergy request 0x1018 on the next frame. */
 void ArutinYama_RequestPsynergy(void)
 {
     gEventWork->psynergy_request = 0x1018;
 }
 
-/* Set actor 12's sprite priority by actor 0's height; above 48.0, also set bit 1 of actor 11's field at +35. */
 void SceneActor_SetActor12ModeByActorZeroHeight(void)
 {
 
@@ -869,9 +835,6 @@ void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
     SetMapCellCollision(0, record->x.fixed, record->z.fixed, 255);
 }
 
-/* Settles the pushed object on the centre of its cell, then lifts the leader
- * onto it: the leader hops up a cell and a half and turns to face along the
- * row, drawn in front of the background while it jumps. */
 void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
 {
     s32 x;
@@ -919,13 +882,10 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     Engine_AudioPlayCue(159);
 }
 
-/* Nothing calls this; it does nothing. */
 void ArutinYama_ReservedNoOp(void)
 {
 }
 
-/* Tile 97: swing the rolling object a quarter turn about the cell corner
- * beside it, sixteen steps of 0x400 from the grid-snapped pivot. */
 void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
 {
     union FieldCoordinate *p;
@@ -961,7 +921,6 @@ void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
     Engine_AudioPlayCue(233);
 }
 
-/* Tile 98: the same swing the other way. */
 void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
 {
     union FieldCoordinate *p;
@@ -997,7 +956,6 @@ void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
     Engine_AudioPlayCue(233);
 }
 
-/* Set the actor's field at +102, then play cue 288. */
 void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
 {
     record = (u16 *)((char *)record + 102);
@@ -1009,9 +967,6 @@ void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
     Engine_AudioPlayCue(288);
 }
 
-/* Rolls the object a step along its heading, sized by how far it sits
- * below its target height; counts down its rolling timer (cues at 20 and
- * 0) and then picks the animation from the slope ahead of it. */
 void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 {
     s32 angle = 0xc000;
@@ -1055,9 +1010,6 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
     }
 }
 
-/* The rolling-object driver: finds a heading whose step keeps the object
- * level, starts the roll, then dispatches on the tile under it each frame
- * until tile 99. */
 void ArutinYama_RunRollingObject(s32 id, s32 heading)
 {
     struct FieldActor *object = Object_GetById(id);
@@ -1127,9 +1079,6 @@ arrived:
     Engine_EventEnd();
 }
 
-/* Steps a palette animation: when the hold runs out, reads the next pair of
- * the script (restarting it at -1) and copies nine colours from that point of
- * the palette buffer to background palette colours 3-11. */
 void ArutinYama_StepPaletteAnim(void)
 {
     u16 *palette = Data_03001ed0;

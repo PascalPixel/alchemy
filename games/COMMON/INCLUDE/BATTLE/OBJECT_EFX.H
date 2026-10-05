@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* Word-coded motion scripts for the object dispatcher. */
 extern const s32 BattleFx_CommonParticleScript[];
 extern const s32 BattleFx_FragmentScript[];
 

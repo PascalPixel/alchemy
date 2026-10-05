@@ -1,9 +1,3 @@
-/* Near miss, differ 4 (Script_FindFreeObject, the third, matches): the
-   native starts each slot search's index as a copy of the zeroed result
-   (adds r1, r0, #0) where this draft builds a second zero. Initialiser
-   order, a comma initialiser, a chained assignment, an unsigned index and
-   a peeled first test did not reproduce it. The script work in heap slot
-   41 is described here as far as these three read it. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 

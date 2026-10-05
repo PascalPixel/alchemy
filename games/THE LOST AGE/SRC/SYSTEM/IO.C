@@ -2,9 +2,6 @@
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 
-/* Queue a register write for the next flush with interrupts masked; each
- * entry holds the value, register address and delay. Update the count after
- * writing the value and address. */
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
     void name(u32 address, u32 value)                                       \
     {                                                                       \

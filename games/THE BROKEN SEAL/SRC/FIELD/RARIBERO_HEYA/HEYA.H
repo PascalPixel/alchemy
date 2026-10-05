@@ -5,9 +5,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/* The scene tables of the Lalivero house and sanctum, in the overlay's data.
- * The sanctum and the house share one overlay; flag 0x9a7 selects the later
- * placements and events. */
 extern u8 gRariberoEntrances[];
 extern u8 gRariberoSanctumRegions[];
 extern u8 gRariberoRegions[];
@@ -25,9 +22,6 @@ void Owner_RefreshActiveRatios();
 s32 Motion_LaunchFromFocusedObject();
 void FieldScene_RunSecondaryScript();
 
-/* SCRIPT.C: the report the house plays when the party arrives to give it. */
 void FieldScene_RunPrimaryScript(void);
-
-/* The pose is the attached effect the actor carries. */
 
 #endif

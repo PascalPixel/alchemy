@@ -1,7 +1,5 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
-/* Complete 268-byte glyph-work initializer, including its literal pool.
- * The cursor subrecord is shared by the paired row resets. */
 #include "TYPES.H"
 
 struct GlyphCursor { u16 unused; u16 cursor; };
@@ -13,7 +11,6 @@ struct GlyphRow {
     u16 state;
     u8 unknown_14[32];
 };
-
 
 struct GlyphVisual {
     u8 unknown_00[5];

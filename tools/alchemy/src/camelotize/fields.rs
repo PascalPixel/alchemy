@@ -1,18 +1,3 @@
-//! The `actors` and `events` rewrites: byte offsets on a pointer to a
-//! struct written as the struct's members, `*(s16 *)((u8 *)actor + 10)` as
-//! `actor->x.part.pixel`. An access becomes a member when one of the same
-//! type sits at that offset, or, for a plain store, one of the same width,
-//! which stores the same bits. The pointer, the base, is one of:
-//! - a getter or global (`Object_GetById(id)`, `gEventWork`) whose type in
-//!   this file's compile is a pointer to the struct;
-//! - a local or parameter already declared as a pointer to the struct;
-//! - an integer or byte-pointer local set only from such a getter or
-//!   global, retyped as a pointer to the struct when every other use is a
-//!   test against zero or a whole argument;
-//! - for actors, an integer or byte-pointer parameter read only as the
-//!   struct, two or more of the reads its position, velocity or target,
-//!   retyped the same way, unless a header or the file declares the
-//!   function.
 use super::source::{
     closing, functions, identifier, is_ident, mask, next, normal_type, opening, postfix, previous,
     split_commas, store, text, trim, type_name, word_at, word_before, words, Function,
@@ -21,8 +6,6 @@ use super::stabs::{Int, Kind, Member, Pointee};
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::ops::Range;
 
-/// What a rewrite names: the struct, the calls and globals that return or
-/// hold a pointer to it, and whether parameters are retyped.
 pub(crate) struct Spec {
     pub tag: &'static str,
     pub getters: &'static [&'static str],
@@ -44,13 +27,9 @@ pub(crate) const EVENTS: Spec = Spec {
     parameters: false,
 };
 
-/// What the file's compile says, over every game it builds in.
 pub(crate) struct Unit {
-    /// The struct's members, one list per game.
     pub layouts: Vec<Vec<Member>>,
-    /// The getters' result types and the globals' types every game agrees on.
     pub types: HashMap<String, Kind>,
-    /// Names the file's headers mention.
     pub declared: HashSet<String>,
     pub macros: Vec<Macro>,
 }
@@ -68,8 +47,6 @@ impl Unit {
         found
     }
 
-    /// The member read or stored as `ty` at `offset`: one of that type, or
-    /// for a plain store one of that width.
     fn value(&self, offset: u32, ty: Int, store: bool) -> Option<&Member> {
         self.agreed(|layout| {
             let at = || layout.iter().filter(move |m| m.offset == offset);
@@ -79,8 +56,6 @@ impl Unit {
         })
     }
 
-    /// The member a pointer to `offset` points at: one of the pointer's
-    /// type, else the first there.
     fn address(&self, offset: u32, ty: Int) -> Option<&Member> {
         self.agreed(|layout| {
             let at = || layout.iter().filter(move |m| m.offset == offset);
@@ -92,16 +67,11 @@ impl Unit {
         matches!(self.types.get(name), Some(Kind::Pointer(Pointee::Record(t))) if t == tag)
     }
 
-    /// Whether a pointer to the struct may be set from `name`: anything but
-    /// a pointer to another struct.
     fn may_hold(&self, name: &str, tag: &str) -> bool {
         !matches!(self.types.get(name), Some(Kind::Pointer(Pointee::Record(t))) if t != tag)
     }
 }
 
-/// A function-like macro that reads a value at a byte offset, such as
-/// `#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))`;
-/// `pointer` when its type argument is the pointer type, `(*(type)(...))`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Macro {
     pub name: String,
@@ -111,7 +81,6 @@ pub(crate) struct Macro {
     pointer: bool,
 }
 
-/// The offset-reading macros a text defines.
 pub(crate) fn macros(text: &str) -> Vec<Macro> {
     let joined = text.replace("\\\n", " ");
     let mut found = Vec::new();
@@ -156,18 +125,12 @@ pub(crate) fn macros(text: &str) -> Vec<Macro> {
 
 #[derive(Clone, Debug, PartialEq)]
 enum Form {
-    /// `*(T *)(B + N)`, `((T *)B)[N]` or an offset macro: a T read or stored.
     Value { ty: Int, store: bool },
-    /// `B[N]` or `*(B + N)` on a byte pointer.
     Byte { store: bool },
-    /// `(T *)(B + N)`: a pointer into the struct.
     Address { cast: String, ty: Int },
-    /// `= B + N;`: a byte pointer into the struct.
     Bare,
 }
 
-/// One access at a constant offset: what it replaces, its base's core (an
-/// identifier or call), whether the base was cast to bytes first.
 #[derive(Clone, Debug)]
 struct Access {
     span: Range<usize>,
@@ -185,7 +148,6 @@ fn int_pointer(name: &str) -> Option<Int> {
     INTS.iter().find(|t| name.strip_suffix(" *") == Some(**t)).and_then(|t| Int::parse(t))
 }
 
-/// An integer literal, decimal or hexadecimal.
 fn literal(mask: &[u8], range: Range<usize>) -> Option<u32> {
     let digits = text(mask, range).trim_end_matches(['u', 'U', 'l', 'L']);
     match digits.strip_prefix("0x").or_else(|| digits.strip_prefix("0X")) {
@@ -195,7 +157,6 @@ fn literal(mask: &[u8], range: Range<usize>) -> Option<u32> {
     }
 }
 
-/// `B + N`, in any number of whole parentheses: the base's range and N.
 fn sum(mask: &[u8], range: Range<usize>) -> Option<(Range<usize>, u32)> {
     let mut range = trim(mask, range);
     while !range.is_empty() && mask[range.start] == b'(' && closing(mask, range.start) == Some(range.end - 1) {
@@ -217,8 +178,6 @@ fn sum(mask: &[u8], range: Range<usize>) -> Option<(Range<usize>, u32)> {
     Some((range.start..plus, literal(mask, trim(mask, plus + 1..range.end))?))
 }
 
-/// The core of a base, an identifier or a call, and whether it is cast to
-/// bytes or an integer first: `v`, `((u8 *)v)`, `(s32)Get(1)`, `*(s32 *)&g`.
 fn base(mask: &[u8], range: Range<usize>) -> Option<(Range<usize>, bool)> {
     let mut range = trim(mask, range);
     let mut cast = false;
@@ -253,7 +212,6 @@ fn base(mask: &[u8], range: Range<usize>) -> Option<(Range<usize>, bool)> {
     (identifier(mask, &name) && closing(mask, open) == Some(range.end - 1)).then_some((range, cast))
 }
 
-/// Whether the identifier at `at` names a member of something else.
 fn member_name(mask: &[u8], at: usize) -> bool {
     previous(mask, at).is_some_and(|p| mask[p] == b'.' || (mask[p] == b'>' && p > 0 && mask[p - 1] == b'-'))
 }
@@ -277,7 +235,6 @@ fn accesses(mask: &[u8], macros: &[Macro]) -> Vec<Access> {
     found
 }
 
-/// `*(T *)(B + N)` and `(T *)(B + N)`.
 fn cast_access(mask: &[u8], at: usize) -> Option<Access> {
     let (name, end) = type_name(mask, at)?;
     let ty = int_pointer(&name)?;
@@ -303,7 +260,6 @@ fn cast_access(mask: &[u8], at: usize) -> Option<Access> {
     })
 }
 
-/// `((T *)B)[N]` and, on an identifier, `B[N]`.
 fn index_access(mask: &[u8], at: usize) -> Option<Access> {
     let close = closing(mask, at)?;
     let index = literal(mask, trim(mask, at + 1..close))?;
@@ -327,7 +283,6 @@ fn index_access(mask: &[u8], at: usize) -> Option<Access> {
     Some(Access { span: word.start..close + 1, core: word, cast: false, offset: index, form: Form::Byte { store } })
 }
 
-/// `*(B + N)` on an identifier.
 fn byte_deref(mask: &[u8], at: usize) -> Option<Access> {
     if let Some(p) = previous(mask, at) {
         if is_ident(mask[p]) || mask[p] == b')' || mask[p] == b']' {
@@ -356,7 +311,6 @@ fn byte_deref(mask: &[u8], at: usize) -> Option<Access> {
     })
 }
 
-/// `= B + N;`.
 fn bare(mask: &[u8], at: usize) -> Option<Access> {
     if mask.get(at + 1) == Some(&b'=') || (at > 0 && b"=!<>+-*/%&|^".contains(&mask[at - 1])) {
         return None;
@@ -380,7 +334,6 @@ fn bare(mask: &[u8], at: usize) -> Option<Access> {
     })
 }
 
-/// An offset macro's use.
 fn macro_access(mask: &[u8], at: usize, m: &Macro) -> Option<Access> {
     let open = next(mask, at + m.name.len())?;
     if mask[open] != b'(' {
@@ -409,13 +362,11 @@ struct Edit {
     text: String,
 }
 
-/// Edits that stand or fall together, and the accesses among them.
 struct Group {
     edits: Vec<Edit>,
     count: usize,
 }
 
-/// An access written as the member it reaches from `base`.
 fn member_edit<'a>(access: &Access, base: &str, unit: &'a Unit) -> Option<(Edit, &'a Member)> {
     let (text, member) = match &access.form {
         Form::Value { ty, store } => {
@@ -442,18 +393,14 @@ fn member_edit<'a>(access: &Access, base: &str, unit: &'a Unit) -> Option<(Edit,
     Some((Edit { span: access.span.clone(), text }, member))
 }
 
-/// A declaration of a candidate base: a parameter, or a local directly in
-/// the function's body.
 struct Declaration {
     ty: String,
     name: Range<usize>,
-    /// The type through the name, or through the initializer.
     span: Range<usize>,
     init: Option<Range<usize>>,
     parameter: bool,
 }
 
-/// `TYPE NAME`, with TYPE one of the local types or `struct TAG *`.
 fn typed_name(mask: &[u8], range: Range<usize>) -> Option<(String, Range<usize>)> {
     let range = trim(mask, range);
     let name = word_before(mask, range.end)?;
@@ -508,7 +455,6 @@ fn declarations(mask: &[u8], function: &Function) -> Vec<Declaration> {
     found
 }
 
-/// How many declarations of `name` the function holds.
 fn declarations_of(mask: &[u8], function: &Function, name: &str) -> usize {
     let typed = |at: usize| {
         let Some(mut p) = previous(mask, at) else {
@@ -531,7 +477,6 @@ fn declarations_of(mask: &[u8], function: &Function, name: &str) -> usize {
         .count()
 }
 
-/// `NAME = EXPRESSION;` as a statement: the expression.
 fn assignment(mask: &[u8], at: usize, length: usize) -> Option<Range<usize>> {
     let equals = next(mask, at + length)?;
     if mask[equals] != b'=' || mask.get(equals + 1) == Some(&b'=') {
@@ -556,8 +501,6 @@ fn assignment(mask: &[u8], at: usize, length: usize) -> Option<Range<usize>> {
     None
 }
 
-/// A use that holds for any pointer: a test against zero, a negation, or
-/// a whole argument or condition.
 fn plain(mask: &[u8], at: usize, length: usize) -> bool {
     let (before, after) = (previous(mask, at), next(mask, at + length));
     if let Some(a) = after {
@@ -596,18 +539,14 @@ struct Context<'a> {
 }
 
 impl Context<'_> {
-    /// The access whose base is exactly the identifier at `at`.
     fn access(&self, at: usize, length: usize) -> Option<&Access> {
         self.all.iter().find(|a| a.core == (at..at + length))
     }
 
-    /// The uses of `name` in `range`, other structs' members left out.
     fn uses(&self, name: &str, range: Range<usize>) -> Vec<usize> {
         words(self.mask, name, range).into_iter().filter(|&at| !member_name(self.mask, at)).collect()
     }
 
-    /// What a local is set from, as written once it is a pointer to the
-    /// struct: one of the getters or globals, without the cast.
     fn source(&self, range: Range<usize>) -> Option<String> {
         let (core, _) = base(self.mask, range)?;
         let written = &self.text[core.clone()];
@@ -746,8 +685,6 @@ fn groups(text: &str, spec: &Spec, unit: &Unit) -> Vec<Group> {
     groups
 }
 
-/// The groups to apply together: where edits overlap, the group with the
-/// wider one waits for the next pass.
 fn select(groups: Vec<Group>) -> Vec<Group> {
     let mut alive = vec![true; groups.len()];
     let mut edits: Vec<(Range<usize>, usize)> = groups
@@ -783,8 +720,6 @@ fn apply(text: &str, mut edits: Vec<Edit>) -> String {
     out
 }
 
-/// The text with every access the rewrite can name written as a member,
-/// and how many accesses changed.
 pub(crate) fn rewrite(text: &str, spec: &Spec, unit: &Unit) -> (String, usize) {
     let mut text = text.to_string();
     let mut count = 0;
@@ -841,7 +776,6 @@ mod tests {
         assert!(out.contains("    Object_GetById(3)->x.part.pixel = 0;\n"));
         assert!(out.contains("    Object_GetById(3)->x.part.pixel = 1;\n"));
         assert!(out.contains("G(Object_GetById(2)->motion_flags);"));
-        // a read keeps its own signedness: no u16 member at 10
         assert!(out.contains("G(*(u16 *)((u8 *)Object_GetById(3) + 10));"));
     }
 
@@ -854,8 +788,6 @@ mod tests {
 
     #[test]
     fn a_dereference_never_swallows_the_parenthesis_that_closes_a_call() {
-        // `*(s32 *)(a) + 8` reads offset 0 and adds 8: no member access, and
-        // the call's own parenthesis stays where it is.
         let (out, count) = actors(
             "void F(void)\n{\n    s32 a = Object_GetById(1);\n    G(*(s32 *)(a) + 8);\n    G(*(s32 *)(a + 8));\n    G((*(s32 *)((a + 16))) + 8);\n}\n",
         );
@@ -876,7 +808,6 @@ mod tests {
         assert!(out.contains("a->velocity_x = a->x.fixed;"));
         assert!(out.contains("G(a, &a->z.fixed, b->motion_flags);"));
         assert!(out.contains("b->motion_flags = 0;"));
-        // another struct's member of the same name is left alone
         assert!(out.contains("    work->a = 3;\n"));
     }
 

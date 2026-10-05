@@ -1,4 +1,3 @@
-/* Declarations shared by McCoy's palace sources in Bilibin (resource_38d). */
 #ifndef KYUDEN_H
 #define KYUDEN_H
 
@@ -13,7 +12,6 @@ enum {
     FLAG_REWARD_TAKEN = 0x84e
 };
 
-/* The scene's tables and action tables, laid out after the code. */
 extern u8 Placement_Scripts[];
 extern u8 Placement_Messages[];
 extern const u8 Kyuden_FacingActions[];

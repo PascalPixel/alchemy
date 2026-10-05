@@ -65,8 +65,6 @@ void FieldScene_RunSingleStep(void)
     battle_owner_69();
 }
 
-/* Runs the scene when a staged actor stands in the cell a step further along z,
- * otherwise falls back to sequence D. */
 void TakaraHashira_RunStagedCellScene(void)
 {
     struct FieldActor *leader = Object_GetById(0);
@@ -83,7 +81,6 @@ void TakaraHashira_RunStagedCellScene(void)
     }
 }
 
-/* Link the scene and entity. */
 void TakaraHashira_AttachPillarRider(void)
 {
     struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
@@ -91,7 +88,6 @@ void TakaraHashira_AttachPillarRider(void)
     obj->rise_counter = 1;
 }
 
-/* The leader steps off the pillar it rode. */
 void TakaraHashira_ReleasePillarRider(void)
 {
     struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
@@ -99,12 +95,6 @@ void TakaraHashira_ReleasePillarRider(void)
     PILLAR_WORK->rider = NULL;
     obj->rise_counter = 0;
 }
-
-/*
- * Place a staged actor at object ten's grid cell -- resource_3b3.
- */
-
-/* While the actor's Z exceeds the leader's, set its underfoot priority only when its height is below the leader's. */
 
 s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
 {
@@ -159,8 +149,6 @@ void TakaraHashira_CheckLeaderOnPillar(void)
     }
 }
 
-/* Crossbone Isle: speed actor 13 up, switch the blend mode of actors 13 and
- * 14 and raise actor 14 before copying the map cells. */
 void TakaraHashira_RaiseActorFourteen(void)
 {
     struct FieldActor *pillar;
@@ -242,9 +230,6 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
     return 0;
 }
 
-/* Crossbone Isle: the first time (flag 0x203 clear) set flag 0x202, pan the
- * camera and shift the cells at column 73 while a task runs; with flag
- * 0x201, actor 12 plays its part and the cells at (17, 13) are copied. */
 void TakaraHashira_RunMapShiftScene(void)
 {
     s32 set;
@@ -281,7 +266,6 @@ void TakaraHashira_RunMapShiftScene(void)
     }
 }
 
-/* Place object 10 at its position converted to grid coordinates. */
 void StagedActor_PlaceAtObjectTenCell(void)
 {
     struct FieldActor *obj = Object_GetById(10);
@@ -297,8 +281,6 @@ void StagedActor_PlaceAtObjectTenCell(void)
     Engine_EventEnd();
 }
 
-/* Crossbone Isle: block actor 10's cell and, the first time it reaches
- * column 16 (flag 0x204), drop it into the floor with cue 159. */
 void TakaraHashira_DropActorTen(void)
 {
     struct FieldActor *rec7;
@@ -321,8 +303,6 @@ void TakaraHashira_DropActorTen(void)
     Engine_EventEnd();
 }
 
-/* Crossbone Isle: move the pushed actor when the probe finds room, otherwise
- * put it back on its cell and step the staged pair. */
 void TakaraHashira_RunPushScene(void)
 {
     struct Probe probe;
@@ -338,7 +318,6 @@ void TakaraHashira_RunPushScene(void)
     Engine_EventEnd();
 }
 
-/* What each of the pillar rooms answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -416,9 +395,6 @@ void SceneActor_CheckActors8To11NearSlotZero(void)
     }
 }
 
-/* The pillar rooms' setup: redraw the pillars' footprints, restore the map
- * the switches changed, and in the fourth room raise the pillars and watch
- * the actors near them. */
 s32 TakaraHashira_SetupArea(void)
 {
     struct FieldActor *actor;

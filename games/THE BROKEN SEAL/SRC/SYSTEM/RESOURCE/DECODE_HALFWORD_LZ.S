@@ -1,10 +1,3 @@
-@ Halfword LZ decoder that Resource_DecompressHalfwords (0x080052f4) copies
-@ onto the stack, exactly these 84 bytes, and calls there. It is ARM-state
-@ code whose flag word carries a sentinel bit, is tested with lsls and bcc
-@ and is refilled through the carry (adc r3, r2, r2), with no frame and a
-@ conditional bxeq return. GCC never branches on the carry out of a shift and
-@ uses adc only for 64-bit sums. Every TBS and TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM halfword-LZ decoder copied to the stack
 .syntax unified
 	.arm
 	.global Resource_DecodeHalfwordLz

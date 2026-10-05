@@ -1,4 +1,3 @@
-/* The four-step actor motion, actor placement and the opening sequence. */
 #include "LOG_ROLLING.H"
 #include "CALL.H"
 extern u8 MsgKorosseoAnotherLogRollingArea[];

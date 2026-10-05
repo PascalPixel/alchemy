@@ -1,8 +1,6 @@
 #include "RESOURCE.H"
 #include "VRAM_TAB.H"
 
-/* Frees every VRAM block resource ID owns; returns -1 when ID is out of
-   range or owned any, 0 otherwise. */
 s32 Resource_ClearSlotReferences(s32 resource_id)
 {
     s32 cleared_count = 0;

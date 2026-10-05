@@ -5,7 +5,6 @@
 #include "PARTY_STATE.H"
 #include "TLA_EDITION.H"
 
-/* The opening's cast arrives at the aerie through this entrance. */
 enum {
     ENTRANCE_OPENING = 99
 };
@@ -17,13 +16,11 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gSceneEvents;
 }
 
-/* The idle hook the setup step installs: nothing to do. */
 s32 VinasuChojo_Idle(void)
 {
     return 0;
 }
 
-/* The effect work in its heap slot keeps the scene's idle hook. */
 struct SetupWork {
     u8 unknown_00[0x24];
     s32 (*idle)(void);
@@ -48,7 +45,6 @@ void VinasuChojo_RunSetupStep(void)
     Func_02001c94();
 }
 
-/* The scene's event work. */
 struct AerieEventWork {
     u8 unknown_000[0x1ac];
     s32 mode;
@@ -58,8 +54,6 @@ void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 void Func_02000b2c(void);
 void Func_02000d30(void);
 
-/* Entrance 99 plays the opening; otherwise the ten beacon actors use part
- * attribute 6. International editions also save scene 5, entrance 22. */
 #if !EDITION_INTERNATIONAL
 s32 VinasuChojo_Start(void)
 {

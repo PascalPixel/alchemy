@@ -1,6 +1,3 @@
-/* SaveState_ProcessSelectedSlot: rewrite the selected save slot with the
-   current save stamp, reporting a missing backup chip or a failed read or
-   write as a negative code. */
 #include "TYPES.H"
 #include "SAVE_STATE.H"
 #include "IWRAM_CALL.H"
@@ -24,7 +21,6 @@ s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 s32 Menu_RunConfirmSelection(s32, s32, s32, s32);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 
-/* save/state/confirm_and_process_selected_slot.c */
 extern u8 MsgOverwriteConfirm;
 extern u8 MsgGameSaved;
 s32 UiWork_IsComplete(void);
@@ -34,7 +30,6 @@ extern u8 MsgLoadFailed;
 extern u8 MsgEraseFailed;
 extern u8 MsgFileCopied;
 
-/* save/state/delete_selected_slot.c */
 extern u8 MsgEraseConfirm;
 extern u8 MsgFileErased;
 
@@ -83,9 +78,6 @@ negate:
     return value;
 }
 
-/* save/state/copy_slot_pair.c */
-/* save/state/confirm_and_process_selected_slot.c */
-/* save/state/state_confirm_and_process_selected_slot.c */
 s32 SaveState_ConfirmAndProcessSelectedSlot(void)
 {
     s32 result;

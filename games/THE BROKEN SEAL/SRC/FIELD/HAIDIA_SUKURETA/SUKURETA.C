@@ -89,8 +89,6 @@ u8 *SceneData_GetActorTable(void)
     return Placement_Actors;
 }
 
-/* Picks one of three tables by story progress, testing flags 0x87a then
- * 0x834. */
 u8 *SceneData_SelectEffectTable(void)
 {
     if (Engine_GameFlagIsSet(0x87A) != 0) {
@@ -910,7 +908,7 @@ void SceneState_SetWorkAndFlag87d(void)
 
     Engine_GameFlagSet(0x87D);
     BattleFx_SetWeightedResult(12, 0);
-    Engine_GameFlagSet(0x900);   /* 144 << 4 */
+    Engine_GameFlagSet(0x900);
     Engine_EventEnd();
 }
 
@@ -926,7 +924,7 @@ void SceneState_SetWorkAndFlag87e(void)
 
     Engine_GameFlagSet(0x87E);
     BattleFx_SetWeightedResult(12, 1);
-    Engine_GameFlagSet(0x900);   /* 144 << 4 */
+    Engine_GameFlagSet(0x900);
     Engine_EventEnd();
 }
 

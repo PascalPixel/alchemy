@@ -1,4 +1,3 @@
-/* The nine radial effects. */
 #include "BABI.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -20,7 +19,6 @@ void BabiChika_RestorePlatformCells(void);
 
 s32 SceneActor_CopyActor8PositionWhenAtRow10();
 
-/* The floor height of each step, by the actor's step index. */
 extern s32 Data_0200b350[];
 
 void BattleFx_StartFadeOverlay(s32 value);
@@ -61,7 +59,6 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
     }
 }
 
-/* Where the party appears in each of the tunnel's two areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 v = gGameState.scene;
@@ -75,7 +72,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gBabiChikaEntrancesOther;
 }
 
-/* Only the second area has map regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_BabiChika2) {
@@ -84,7 +80,6 @@ const struct SceneRegion *Scene_GetRegions(void)
     return 0;
 }
 
-/* Scene tables. */
 u8 *BabiChika_GetExits(void) { return Data_0200b85c; }
 
 u8 *SceneData_SelectAndApplyTableBySceneId(void)
@@ -100,8 +95,6 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
     return tbl;
 }
 
-/* Copy the cell attributes at (73, 38) to (9, 38), advance the staged pair
-   and place and pin slots 8 and 9. */
 void SceneState_RunRect73x38Step(void)
 {
     Engine_EventBegin();
@@ -111,7 +104,6 @@ void SceneState_RunRect73x38Step(void)
     Engine_EventEnd();
 }
 
-/* The point left of actor zero. */
 void SceneActor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
@@ -123,8 +115,6 @@ void SceneActor_ApplyPointLeftOfActorZero(void)
     SceneActor_MoveActorZeroToTarget(point);
 }
 
-/* Copy the cell attributes at (93, 30) to (29, 30), advance the staged pair
-   and place and pin slots 10 and 11. */
 void FieldScene_RunLayoutAt93By30(void)
 {
     Engine_EventBegin();
@@ -134,7 +124,6 @@ void FieldScene_RunLayoutAt93By30(void)
     Engine_EventEnd();
 }
 
-/* A step and the point two right of actor zero. */
 void FieldScene_RunStepWith6(void)
 {
     BattleFx_RunRisingObjectSequence(0, 6, 0);
@@ -151,8 +140,6 @@ void SceneActor_PassPointTwoRightOfActorZero(void)
     SceneActor_MoveActorZeroToTarget(pos);
 }
 
-/* Copy two cell-attribute rectangles to column 25, advance the staged pair
-   and run the scene that follows. */
 void SceneState_ApplyTwoRectsAndRunThree(void)
 {
     Engine_EventBegin();
@@ -163,7 +150,6 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
     Engine_EventEnd();
 }
 
-/* Scene tables, layouts and supplemental sequences. */
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
     struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -177,7 +163,6 @@ void SceneActor_CheckTwoUnitsAboveActorZero(void)
     }
 }
 
-/* Set flag 0x200; flag 0x201 clears actor 14's rise counter and collision bit 3, otherwise both are set. */
 void SceneActor_MirrorFlag201IntoSlot14(void)
 {
     u8 *flags;
@@ -453,7 +438,6 @@ void SceneActor_InstallSlotNineHandler(void)
     owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
-/* Raise actor 9, clear its flag bit 1, set selector 0x204, place the overlay at its grid cell and install the relative-depth handler on actors 9 and 8. */
 void SceneActor_SetupSlotNineAndInstallHandler(void)
 {
     typedef s32(*Handler_02001a10)(struct Record_02000ec8 *record);
@@ -497,9 +481,6 @@ s32 OverlayObject_SetYAboveLinkedActor(u8 *owner)
     return 0;
 }
 
-/* Moves steps 10 and 11 to the floor heights their step indices name, then
- * marks the cell under each of actors 10 to 14 that has sunk below the
- * floor. */
 void BabiChika_SettleSteps(s32 wait)
 {
     u32 i;
@@ -529,9 +510,6 @@ void BabiChika_SettleSteps(s32 wait)
     Battle_WaitMode0(wait);
 }
 
-/* Platform landing and the late sequences. */
-
-/* Among actors 10 to 14 on the subject's tile, find the highest other actor and store its ID; if none matches, move to height -5.0 and leave the ID unchanged. */
 void SceneActor_LandOnHighestPlatform(s32 subject)
 {
     s32 best = -0x500000;
@@ -545,22 +523,14 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
         if ((Object_GetById(slot)->x.fixed >> 20) != (Object_GetById(subject)->x.fixed >> 20)) continue;
         if ((Object_GetById(slot)->z.fixed >> 20) != (Object_GetById(subject)->z.fixed >> 20)) continue;
 
-        /*
-         * 0x00100000 is one whole unit above the candidate's own height. The
-         * comparison is signed, and a tie updates the best.
-         */
         if (best > Object_GetById(slot)->y.fixed + 0x100000) continue;
 
         best = Object_GetById(slot)->y.fixed + 0x100000;
         Object_GetById(subject)->timer = (u16)slot;
     }
 
-    ObjectMotion_SetSpeedParameters(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
+    ObjectMotion_SetSpeedParameters(subject, 0x40000, 0x20000);
 
-    /*
-     * Three separate lookups of the same record, in this order. The locals
-     * fix the sequence, which argument evaluation order would not.
-     */
     {
         struct FieldActor *target = Object_GetById(subject);
         struct FieldActor *from = Object_GetById(subject);
@@ -684,24 +654,16 @@ void FieldScene_RunFourCallSequence(void)
     Engine_EventEnd();
 }
 
-/* Runs six queued setup calls for this scene: two paired 6-argument calls
- * whose last two args repeat the first two (72,49 / 113,43), two 3-argument
- * id calls (100, 101) with zeroed remaining args, and two more 3-argument
- * calls (id 15, 16) passing a start/end pair where the second call's start
- * value (198<<18) equals the first call's end value. */
 void FieldScene_RunLateSequenceHead(void)
 {
     Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
     Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
     MapObject_SetPosition(100, 0, 0);
     MapObject_SetPosition(101, 0, 0);
-    Actor_SetPosition(15, 8912896, 51904512); /* 136<<16, 198<<18 */
-    Actor_SetPosition(16, 51904512, 45613056); /* 198<<18, 174<<18 */
+    Actor_SetPosition(15, 8912896, 51904512);
+    Actor_SetPosition(16, 51904512, 45613056);
 }
 
-/* Two six-argument calls whose first and fifth arguments repeat the same id
- * (8 and 49 respectively), followed by four three-argument calls each keyed
- * by an id with a trailing pair of values (-1, -1 or 0, 0). */
 void FieldScene_RunLateSequenceSecond(void)
 {
     Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
@@ -930,7 +892,6 @@ void BabiChika_RestorePlatformCells(void)
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 }
 
-/* Copies the cell attributes back and marks the grid cells under actors 17 and 18. */
 void BabiChika_MarkActorCells(void)
 {
     Map_CopyCellAttributes(108, 19, 4, 1, 44, 19);
@@ -938,7 +899,6 @@ void BabiChika_MarkActorCells(void)
     StagedActor_FillGridAttributeRectangle(0, Object_GetById(18)->x.fixed >> 20, Object_GetById(18)->z.fixed >> 20, 1, 1, 0xff);
 }
 
-/* Entry setup for the underground passage: by area and entrance, restores the lift cells, pins and parks the paired actors and re-applies each flagged block. */
 s32 FieldScene_InitializeActorGroups(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

@@ -13,8 +13,6 @@ struct ItemMenuDisplayState {
     u16 busy;
 };
 
-/* The pointer at 0x2128 is cleared beside the variant; its pointer type
-   keeps the two stores apart for the scheduler. */
 struct ItemMenuSavedGraphics {
     u8 reserved_000[0xa8];
     u8 tiles[0x2000];
@@ -64,9 +62,6 @@ void Menu_ResetTwoResourceEntries(void);
 void ItemMenu_Close(void);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
-
-/* Open the item menu as a modal view, selecting its story variant, then
-   restore the saved graphics and the caller's menu mode. */
 
 s32 ItemMenu_Run(void)
 {

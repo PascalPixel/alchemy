@@ -1,5 +1,3 @@
-/* Draw a line in the 8bpp effect canvas, 16 tiles per row, clamping rows
- * to 0..127 and keeping the larger colour. */
 #include "TYPES.H"
 
 extern u8 gBattleFxWork[];

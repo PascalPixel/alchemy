@@ -1,4 +1,3 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/TABLE.C. */
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
@@ -17,11 +16,6 @@
 #include "OBJECT_DISPATCH.H"
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
-/* Registers a scene's object table in the first free of the work's four
-   table slots, then makes an object for each of its rows whose condition
-   holds: party rows (ids up to 7) take their own table index, the others the
-   next slot from `slot` up to 65. A row whose object already stands is moved
-   to its place instead. */
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 {
     struct FieldStepWork *work;

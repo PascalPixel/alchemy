@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-/* Character growth at levels 0, 20, 40, 60, 80 and 100. */
 struct OwnerGrowthRecord {
     u8 unknown_00[0x50];
     s16 hp[6];

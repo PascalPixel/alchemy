@@ -1,17 +1,9 @@
-/* Draft: BattleEffect_WipeCanvas, The Broken Seal's EFFECT44.C for ⚓️: the
- * canvas pair is heap slots 0x5c/0x60, the dirty flag sits at 0x78e8 and mode 3
- * leaves the canvas alone. Differ 11 (dd): the canvas address is built as
- * movs/add sp instead of add sp, #8 at the start, and the inner loops
- * subtract the delay one instruction earlier. Devsearch (300) reached 9.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
 
-/* Battle effect: wipe the 128 by 128 canvas with a ragged front, as The
-   Broken Seal's does; mode 3 leaves the canvas as it is. */
 void BattleEffect_WipeCanvas(s32 mode, s32 value)
 {
     u8 *work;

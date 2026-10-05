@@ -2,10 +2,6 @@
 #include "DMA.H"
 extern u8 gMapCellBuffer[];
 
-/* Builds the per-line WIN0H table for lines 8-135 (the edge at the start of
-   the map cell buffer less each line's inset, clamped to the screen; other
-   lines closed) and arms the H-blank DMA that feeds it to WIN0H. */
-
 void BattleFx_BuildWindowEdgeTable(void)
 {
     u16 *edge;

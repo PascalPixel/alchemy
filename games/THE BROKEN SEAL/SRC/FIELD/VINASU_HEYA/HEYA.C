@@ -53,7 +53,6 @@ s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
     return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
-/* The placed actor standing in the same cell as the position, or 0. */
 struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self)
 {
     struct FieldActor **actors = gEventWork->placed_actors;
@@ -170,8 +169,6 @@ s32 VinasuHeya_FillCellCollisionCodes(u32 no, s32 x, s32 y, u32 w, u32 h, s32 va
     return 0;
 }
 
-/* Shows each placed actor whose timer holds 0x212 above its low four bits
- * with the child value in those bits. */
 void SceneActor_ApplySlotsMatchingKind212(void)
 {
     struct FieldActor **actors = gEventWork->placed_actors;
@@ -293,9 +290,6 @@ void SceneEffect_RunObjectZeroColorSequence(void)
     Engine_EventEnd();
 }
 
-/* The leader's first rise into the room (until flag 0x109 is set): it
- * appears a step back, shimmers as it walks in trailing particles, and
- * lands. */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
     struct FieldActor *leader;
@@ -395,13 +389,11 @@ void OverlayObject_WaitUntilIdle(struct BusyObject *obj)
     }
 }
 
-/* Advance position, decay X and Z velocity, accumulate the two rates and advance the sprite angle; Z decay divides by sixteen toward zero. */
 void Effect_AdvanceMotion(struct Effect_0200096c *effect)
 {
     s32 velocity_z;
     struct Sprite_0200096c *sprite;
     s32 velocity_x;
-
 
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
@@ -618,7 +610,6 @@ s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
     return 0;
 }
 
-/* Where the party appears in each of the rooms; the second takes the table the other scenes take. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 v = gGameState.scene;
@@ -651,8 +642,6 @@ u8 *SceneData_GetPrimaryTable(void)
     return gVinasuHeyaPrimaryTable;
 }
 
-/* The actors placed in each room. Every room but the first has its table
-   prepared before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     u8 *ret;
@@ -742,7 +731,6 @@ void FieldScene_SetFlag987AtActorTwelveTile(void)
     Engine_EventEnd();
 }
 
-/* The relief chooses its line from the trigger in front. */
 void SceneDialogue_ReadRelief(void)
 {
 #if defined(TBS_EDITION_EN)
@@ -1004,7 +992,6 @@ void SceneState_RunActor13AtColumn42Setup(void)
     Engine_EventEnd();
 }
 
-/* Floor switch under actor 0 (pixel x 676 to 683, z 788 to 795): stepping on it sets flag 0x201, redraws the switch cell and the 3x5 cells at (41, 117), plays cue 161 and lowers the actor two pixels; standing off it clears the flag and restores them. */
 void VinasuHeya_UpdateFloorSwitch(void)
 {
     struct FieldActor *leader = Object_GetById(0);

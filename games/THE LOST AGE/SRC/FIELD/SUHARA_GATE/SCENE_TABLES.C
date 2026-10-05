@@ -3,7 +3,6 @@
 
 extern const u32 gSceneExits[];
 
-/* This scene declares no regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;

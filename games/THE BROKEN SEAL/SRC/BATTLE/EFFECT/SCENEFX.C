@@ -18,11 +18,7 @@
 #include "SYSTEM.H"
 #include "TRANSFORM.H"
 
-
 extern void *gBattleFxWork[];
-
-/* A battle object as its slot holds it: the world position follows two
-   words this effect does not read. */
 
 extern u16 ParticleStreams_CellOffsets[];
 
@@ -43,19 +39,14 @@ extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
 
-/* A scene object: two bits of its tenth byte pick its draw variant. */
-
-/* A pair of 16.16 values: a scale, or a point on the ground. */
 struct Scale {
     s32 x;
     s32 y;
 };
 
 extern volatile u32 gKeysRepeat;
-/* Where each of the seven sky objects stands, in whole pixels. */
 extern u8 CirclingScene_ObjectColumns[];
 extern u8 CirclingScene_ObjectRows[];
-/* The puff pictures in the blast sheet and how wide each square one is. */
 extern u16 CirclingScene_PuffSheetOffsets[];
 extern u16 CirclingScene_PuffSizes[];
 extern const struct Scale CirclingScene_UnitScale;
@@ -69,16 +60,10 @@ s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 anim
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
-/* The sparks of the last burst live at the start of the map cell buffer. */
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: an orb circles in over a desert sky, drops three times and
-   each time throws up puffs, while six rocks fall and bounce; then the orb
-   flies off, and a burst of five hundred sparks hits every target. A or B
-   skips to the end. */
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 {
     s32 position[4];
@@ -314,16 +299,11 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* Where one copy of the flame is drawn. */
 struct TrailPoint {
     s32 x;
     s32 y;
 };
 
-/* Battle effect: a flame flies along a stored path to the target and
-   bursts, then drops on it a second time. Nineteen fading copies trail
-   behind the flame; puffs mark where it starts, and embers and flashes fly
-   from each strike. The camera swings for the first sixty-four frames. */
 void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
 {
     struct TrailPoint trail[20];
@@ -564,13 +544,6 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* Battle effect: the actor closes on the first affected unit, a streak
-   crosses it on frames 6-11 (mirrored for the other side) and a burst strip
-   plays over it on frames 16-47, the second strip when the effect's variant
-   is set. Sixty-four shards seeded at the unit fly out under gravity from
-   frame 4, each living sixteen frames plus two for every four shards before
-   it. Frame 8 clears the canvas, starts phase 0x86 and makes the unit
-   react; its group is refreshed on frames 6 and 14. */
 void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

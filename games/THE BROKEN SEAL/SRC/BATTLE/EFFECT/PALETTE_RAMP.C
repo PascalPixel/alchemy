@@ -29,8 +29,6 @@ extern u8 PaletteRamp_ShardHeights[];
 
 void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode);
 
-/* Mode entries of the palette ramp effect. */
-
 void BattleFx_RunPaletteRampMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunPaletteRamp(effect, 0);
@@ -51,13 +49,9 @@ void BattleFx_RunPaletteRampMode3(struct BattleEffectArgument *effect)
     BattleFx_RunPaletteRamp(effect, 3);
 }
 
-/* The ramp image and its seven darker copies, one after another. */
 #define RAMP_IMAGE 0x2580
 #define RAMP_SIZE 696
 
-/* Battle effect: an emblem (a dagger in mode 0, a shield otherwise) flashes
-   over each affected unit in turn, four frames apart, and then two dozen
-   shards fly out of it, drawn from an image that darkens as they go. */
 void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
 {
     void **cursor;

@@ -1,5 +1,3 @@
-/* SongFlag_Clear: differ 2, the address load SongFlag_Set's draft (081c11ac)
-   also misplaces. */
 #include "TYPES.H"
 
 extern u8 gSongFlags[];

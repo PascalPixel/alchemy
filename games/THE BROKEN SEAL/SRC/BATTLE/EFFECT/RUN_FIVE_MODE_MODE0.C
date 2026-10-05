@@ -29,51 +29,39 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode);
 
-/* battle/effects/five_mode/run_mode0.c */
 void BattleFx_RunFiveModeMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunFiveMode(effect, 0);
 }
 
-/* battle/effects/five_mode/run_mode1.c */
 void BattleFx_RunFiveModeMode1(struct BattleEffectArgument *effect)
 {
     BattleFx_RunFiveMode(effect, 1);
 }
 
-/* battle/effects/five_mode/run_mode2.c */
 void BattleFx_RunFiveModeMode2(struct BattleEffectArgument *effect)
 {
     BattleFx_RunFiveMode(effect, 2);
 }
 
-/* battle/effects/five_mode/run_mode4.c */
 void BattleFx_RunFiveModeMode4(struct BattleEffectArgument *effect)
 {
     BattleFx_RunFiveMode(effect, 4);
 }
 
-/* battle/effects/five_mode/run_mode3.c */
 void BattleFx_RunFiveModeMode3(struct BattleEffectArgument *effect)
 {
     BattleFx_RunFiveMode(effect, 3);
 }
 
-/* battle/effects/five_mode/run_mode1_b.c */
 void BattleFx_RunFiveModeMode1B(struct BattleEffectArgument *effect)
 {
     BattleFx_RunFiveMode(effect, 1);
 }
 
-/* Four bytes for each mode: whether the streak flickers through three
-   sheets, whether the target is struck, which motion the target takes (-1
-   for none) and whether the target trembles. */
 extern s8 FiveMode_Records[];
-/* How far a trembling target moves on each of eight frames. */
 extern s8 FiveMode_Tremble[];
 
-/* Three streaks fly from the actor to each target in turn, one target
- * every 32 frames, while the background ripples. */
 void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 {
     struct EffectPosition position;

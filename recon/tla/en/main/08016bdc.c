@@ -21,7 +21,7 @@ void SerialTest_Run(void)
     SerialRuntime_Initialize();
     n = 19;
     tile = (u16 *)0x06002426;
-    value = (s16)0xf093; /* palette 15, tile 0x93, counting down */
+    value = (s16)0xf093;
     do {
         n--;
         *tile = value;

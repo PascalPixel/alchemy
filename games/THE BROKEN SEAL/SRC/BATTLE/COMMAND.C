@@ -1,7 +1,3 @@
-/* Turning a queued battle command into the plan its presentation plays:
-   who acts, with what, on whom, and how the first rolls fall. The target
-   selector is a nested function that reads the command, the plan and the
-   battle through the static chain. */
 #include "TYPES.H"
 #include "OWNERVAL.H"
 #include "BATTLE_EVENT.H"
@@ -16,7 +12,6 @@
 #include "MOTION_OBJECT.H"
 #include "ITEM.H"
 
-/* A Djinni in a command's parameter: element in bits 8-11, index below. */
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v)   ((v) & 255)
 
@@ -49,9 +44,6 @@ u32 Battle_GetSpriteFlagNibble(u32 class_id);
 s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *unit);
 void BattlePresentation_WaitForAdvance(void);
 
-/* Resolve a queued command into the plan its presentation plays: who acts,
- * with what, on whom, and how the first rolls fall. Returns -1 when the
- * command comes to nothing after a message, -2 when it was played out here. */
 s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePlan *plan)
 {
     struct BattleUnit *actor = Owner_GetStateFar(command->unit_id);
@@ -59,10 +51,6 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
     s32 target;
     s32 action;
 
-    /* Fill the plan's targets for an action: the chosen unit alone, or every
-     * listed unit within the command's range of its position on the chosen
-     * side. Defeated units count only for the reviving effects. Returns -1,
-     * after telling the player, when nobody is in range. */
     s32 BattleCommand_SelectTargets(s32 action_id)
     {
         struct BattleAction *action = Ability_GetData(action_id);

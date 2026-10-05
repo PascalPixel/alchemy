@@ -13,7 +13,6 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
 void Render_ResetTransformState(void);
@@ -36,20 +35,14 @@ extern u8 RisingMotes_EmberWidths[];
 extern u8 RisingMotes_EmberHeights[];
 extern u16 RisingMotes_EmberCells[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Per variant: how many motes circle, how many columns rise, and the frame
-   on which the motes fly up. */
 enum {
     RISE_MOTES,
     RISE_COLUMNS,
     RISE_FRAME
 };
 
-/* Battle effect: motes circle down around the middle of the screen while
-   columns rise one by one; on the variant's frame the motes shoot upwards,
-   embers scatter, and puffs open over the band the motes and embers span. */
 void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

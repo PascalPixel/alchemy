@@ -1,18 +1,12 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 
-/* A text window's glyph palette: the slot each font colour was given, 0xff
-   while unassigned, and the number of slots used. */
 struct GlyphPalette {
     u8 slot[256];
     s32 count;
 };
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
-
-/* Decodes one glyph of the font resource, remaps its colours through the
-   window's glyph palette (assigning and uploading new colours while slots
-   remain) and copies the tile to character block 1. */
 
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
 {

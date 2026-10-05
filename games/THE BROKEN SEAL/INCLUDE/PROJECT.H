@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* The projection Render_ProjectPoint applies after the scene transform. */
 struct Projection {
     s32 focal;
     s32 near;

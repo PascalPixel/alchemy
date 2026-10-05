@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* SPRITES.TSV emits these fields and the two list-address words. */
 struct AnimationMetadata {
     u8 width;
     u8 height;
@@ -17,7 +16,6 @@ struct AnimationMetadata {
     u8 box_y;
     u8 frame_codec;
     u8 reserved_0b;
-    /* Initializers pass these list addresses as words. */
     s32 frames;
     s32 animation;
 };

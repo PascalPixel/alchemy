@@ -1,6 +1,3 @@
-//! `alchemy similar`: rank functions of linked builds by the edit distance
-//! between their normalised instructions. The index is rebuilt from the
-//! builds' ELF images and linker maps on every run.
 
 use crate::elf::Elf;
 use crate::similar::{self, Function, Image, Interner, Origin};
@@ -104,7 +101,6 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     Ok(o)
 }
 
-/// The origin and reported source of an object path the linker map names.
 pub fn classify(root: &Path, object: &str) -> (Origin, String) {
     let file = object.rsplit('/').next().unwrap_or(object);
     let Some(at) = object.find("/obj/") else {
@@ -198,9 +194,6 @@ fn index(o: &Options) -> Result<Vec<Function>, String> {
     Ok(unique(all))
 }
 
-/// One function per place: a build's overlays share load addresses, so a
-/// place is its build, its image and its address, and twins in different
-/// overlays stay apart.
 fn unique(mut all: Vec<Function>) -> Vec<Function> {
     all.sort_by(|a, b| {
         (&a.build, &a.image, a.address, &a.name).cmp(&(&b.build, &b.image, b.address, &b.name))

@@ -6,7 +6,6 @@ extern struct FourObjectMotionState *Data_03001f2c;
 
 extern u8 RomBytes_080ad40d[];
 
-/* object/motion/four_object/FourObjectMotion_InitializeTopRow.c */
 extern s32 RomBytes_080af304[];
 
 void *ResourceObject_CreateFar(s32);

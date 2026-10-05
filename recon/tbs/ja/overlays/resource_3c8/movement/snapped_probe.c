@@ -1,8 +1,3 @@
-/* NONMATCHING: Japanese grid-centered Venus movement, 2026-10-01.
- * The complete two-tile movement owner compiles with approved TBS flags but
- * snaps its probes to grid centers and calls the polar-offset service. That
- * makes it twenty-four bytes longer than the Japanese direction-table form.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ENTRY_SETUP.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"

@@ -1,53 +1,7 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
-/* 2026-10-03: pass the item-list count explicitly. The current raw caller
- * moves its used count from r8 into argument r2 before ItemList_SelectEntry;
- * that selector consumes all three arguments. The two-argument declaration
- * and call depended on accidental r2 contents. Corrected draft scores 54312,
- * 1293 differing instructions; the two local helper names and Item_GetData
- * remain unresolved. No matching or edition credit is claimed.
- */
-/* NONMATCHING: 2043 differing halfwords; 1619 halfword edits.
- * Compiles to 4176 bytes against the complete 4224-byte owner.
- * WALL: reference indirect dispatch and later block topology still differ.
- */
 #include "TYPES.H"
 #include "IO_REG.H"
-
-/*
- * Battle_CollectPartyCommands (main:08027114, 4224 bytes).
- *
- * Collects one command per acting party member for a link ("VS") battle
- * round.  The caller supplies the output command array, the parallel array
- * of actor ids and the number of members; the member-count parameter is
- * reused as the result, so a link drop-out or a cancelled round returns -1.
- *
- * Evidence used, all from recon/tbs/raw/08027114.s and its literal pools:
- *   - The serial handshake writes 'V','S','S','T' into the local packet at
- *     0x02002224 and polls the peer packet at 0x02002024 + (side ^ 1) * 24,
- *     waiting for "VSST"/"EDVS" while "EXEC" keeps the wait alive.  The
- *     same 24-byte record, the same side/paused bytes at 0x50/0x52 of the
- *     0x03001e74 cell and the same 0x03001f64 status mask appear in
- *     games/COMMON/SRC/BATTLE/PRESENTATION/WAIT_SYNC.C and
- *     games/THE BROKEN SEAL/SRC/SYSTEM/LINK/UPDATE_SESSION_COUNTDOWN.C.
- *   - The 260-byte block taken from pool 57 is published at 0x03001f34 and
- *     is the countdown/panel state whose entries[3], entryActive[3],
- *     targetOffset, currentOffset, displayHandle, secondaryHandle, timer and
- *     enabled fields are already named by update_session_countdown.c.  The
- *     remaining fields (per-round element costs at 0x54, the selection index
- *     and id lists at 0x74/0x96, the hint counter/timer at 0xd8/0xdc, the
- *     current actor at 0xe0 and the per-round result words at 0xe4) are
- *     established here from the accesses this owner performs; the block ends
- *     exactly at 0x104 = 260.
- *   - The command dispatch is a 17-entry jump table at 0x080275b8: 0 fight,
- *     1 psynergy, 2 item, 3 defend, 15 summon, 16 djinn, everything else
- *     falls straight through to the commit tail.
- *
- * The two local helpers are reconstructed as GNU C nested functions. This restores
- * the reference frame size and its r9 static-chain setup. The remaining
- * residual is structural: local lifetimes and later block topology still
- * differ, so this remains a measured draft rather than credited C.
- */
 
 typedef s32 M2C_UNK;
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
@@ -55,87 +9,80 @@ typedef s32 M2C_UNK;
 #define LINK_LOCAL  ((struct LinkPacket *)0x02002224)
 #define LINK_PEERS  ((struct LinkPacket *)0x02002024)
 
-/* Serial record: the "EXEC" heartbeat tag followed by the phase code. */
 struct LinkPacket {
-    u16 tag[4];             /* 0x00 */
-    u16 code[4];            /* 0x08 */
-    u8 unk_10[8];           /* 0x10 */
+    u16 tag[4];
+    u16 code[4];
+    u8 unk_10[8];
 };
 
-/* The link runtime cell at 0x03001e74; only the bytes this owner reads. */
 struct LinkWork {
     u8 unk_00[0x44];
-    u8 enabled;             /* 0x44 */
+    u8 enabled;
     u8 unk_45[0x0b];
-    u8 side;                /* 0x50 */
+    u8 side;
     u8 unk_51;
-    u8 paused;              /* 0x52 */
+    u8 paused;
 };
 
-/* The 260-byte round state published at 0x03001f34. */
 struct LinkRoundState {
-    u8 entries[3][12];      /* 0x00 */
-    u8 entryActive[3];      /* 0x24 */
+    u8 entries[3][12];
+    u8 entryActive[3];
     u8 unk_27;
-    s32 targetOffset;       /* 0x28 */
-    s32 currentOffset;      /* 0x2c */
+    s32 targetOffset;
+    s32 currentOffset;
     s32 unk_30;
     s32 unk_34;
     s32 unk_38;
     s32 unk_3c;
     s32 unk_40;
-    s32 displayHandle;      /* 0x44 */
-    s32 secondaryHandle;    /* 0x48 */
-    s32 timer;              /* 0x4c */
-    s32 enabled;            /* 0x50 */
-    u8 cost[8][4];          /* 0x54 */
-    u8 pick[34];            /* 0x74 */
-    u16 list[33];           /* 0x96 */
-    s32 hintCount;          /* 0xd8 */
-    s32 hintTimer;          /* 0xdc */
-    s32 actorId;            /* 0xe0 */
-    u32 result[8];          /* 0xe4 */
+    s32 displayHandle;
+    s32 secondaryHandle;
+    s32 timer;
+    s32 enabled;
+    u8 cost[8][4];
+    u8 pick[34];
+    u16 list[33];
+    s32 hintCount;
+    s32 hintTimer;
+    s32 actorId;
+    u32 result[8];
 };
 
-/* One 16-byte queued command; the last four bytes are never written here. */
 struct BattleCommandEntry {
-    u16 actor;              /* 0x00 */
+    u16 actor;
     u16 unk_02;
-    u16 order;              /* 0x04 */
-    u16 command;            /* 0x06 */
-    u16 param;              /* 0x08 */
-    u16 target;             /* 0x0a */
-    u16 sub;                /* 0x0c */
+    u16 order;
+    u16 command;
+    u16 param;
+    u16 target;
+    u16 sub;
     u16 unk_0e;
 };
 
-/* The battle actor record returned by Runtime_GetObject. */
 struct BattleActorWork {
     u8 unk_000[0x3a];
-    s16 rank;               /* 0x3a */
+    s16 rank;
     u8 unk_03c[4];
-    u16 agility;            /* 0x40 */
+    u16 agility;
     u8 unk_042[0x16];
-    u16 ability[32][2];     /* 0x58: id then flags */
-    u16 item[15];           /* 0xd8 */
+    u16 ability[32][2];
+    u16 item[15];
     u8 unk_0f6[0x32];
-    u8 kind;                /* 0x128 */
+    u8 kind;
     u8 unk_129[0x14];
-    u8 flag_13d;            /* 0x13d */
+    u8 flag_13d;
 };
 
-/* Window work returned by UiWindow_Create; only the two placement fields. */
 struct UiWindowWork {
     u8 unk_00[12];
-    u16 field_0c;           /* 0x0c */
-    u16 field_0e;           /* 0x0e */
+    u16 field_0c;
+    u16 field_0e;
 };
 
-/* Djinn definition; the four element costs follow the id. */
 struct DjinnDefinition {
-    u16 id;                 /* 0x00 */
+    u16 id;
     u16 unk_02;
-    u8 cost[4];             /* 0x04 */
+    u8 cost[4];
 };
 
 extern struct LinkWork *gBattleWork;
@@ -379,7 +326,6 @@ handshake_done:
         off2 = 0;
 
         for (;;) {
-            /* Carry the previous member's element budget into this round. */
             if (i == 0) {
                 BattlePlacement_CountValidEntriesFar(0, state->cost[0]);
             } else {
@@ -437,7 +383,6 @@ mark_visible:
                 continue;
             }
 
-            /* A countdown that has run out forces the defend command. */
             if (gLinkCountdownWork->timer == 0) {
                 mode = 3;
             }
@@ -458,7 +403,6 @@ mark_visible:
             state->entryActive[0] = 1;
             switch (mode) {
             case 0:
-                /* Fight: pick a target directly. */
                 win = UiWindow_Create(11, 17, 11, 3, 6);
                 UiText_DrawCharacterAtOffset(31, win, 16, 0);
                 slot = state->entries[0];
@@ -476,7 +420,6 @@ mark_visible:
                 goto commit;
 
             case 1:
-                /* Psynergy: list the castable abilities, then target one. */
                 Audio_PlayCue(112);
 psynergy_menu:
                 gLinkCountdownWork->unk_34 = 0;
@@ -561,7 +504,6 @@ psynergy_menu:
                 goto store_target;
 
             case 2:
-                /* Item: usable entries first, then the rest. */
                 Audio_PlayCue(112);
 item_menu:
                 gLinkCountdownWork->unk_34 = 0;
@@ -647,12 +589,10 @@ item_menu:
                 goto store_target;
 
             case 3:
-                /* Defend: no submenu, only the command code. */
                 kind = 3;
                 goto commit;
 
             case 15:
-                /* Summon: pick an element and rank, then target. */
                 Audio_PlayCue(112);
 summon_menu:
                 gLinkCountdownWork->unk_34 = 0;
@@ -723,7 +663,6 @@ summon_menu:
                 }
 
             case 16:
-                /* Djinn: the four element costs gate the selection. */
                 Audio_PlayCue(112);
 djinn_menu:
                 gLinkCountdownWork->unk_34 = 0;

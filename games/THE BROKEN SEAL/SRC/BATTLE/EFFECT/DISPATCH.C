@@ -31,7 +31,6 @@ extern u8 gMapCellBuffer[];
 
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 
-
 void BattleFx_InitializeMode(s32 *arg0)
 {
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
@@ -108,9 +107,6 @@ void BattleFx_DispatchMode(s32 *state)
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/* Builds the per-line WIN0H table for lines 8-135 (the edge at the start of
-   the map cell buffer less each line's inset, clamped to the screen; other
-   lines closed) and arms the H-blank DMA that feeds it to WIN0H. */
 void BattleFx_BuildWindowEdgeTable(void)
 {
     u16 *edge;

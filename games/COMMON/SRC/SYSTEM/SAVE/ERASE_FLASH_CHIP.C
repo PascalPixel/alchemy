@@ -2,7 +2,6 @@
 #include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-/* gFlash が指すフラッシュ管理ブロック。control は待ち時間設定値。 */
 struct FlashChipInfo {
     u8 unknown_00[4];
     s32 size;
@@ -16,9 +15,6 @@ extern FlashWaitProc Flash_Handler3;
 
 s32 _call_via_r3(s32, u8 *, u8, s32);
 
-/* チップ全消去。WAITCNT の SRAM 待ちをフラッシュ側の値に替え、
-   0x5555/0x2aaa へ解除列と消去命令 0x10 を書き、完了待ちの結果を返す。
-   待ちは復帰前に 3 に戻す。 */
 u16 EraseFlashChip(void)
 {
     u8 savedCode[64];

@@ -20,11 +20,8 @@ struct CameraWork {
 
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
-/* By variant: how many crystals fall, and for how many frames. */
 extern u8 Crystal_Counts[];
-/* Sixteen x and y pairs: where each shard of a broken crystal starts. */
 extern u8 Crystal_ShardStarts[];
-/* By shard cell: its width, its height and where it sits in the sheet. */
 extern u8 Crystal_ShardWidths[];
 extern u8 Crystal_ShardHeights[];
 extern s32 Crystal_ShardOffsets[];
@@ -35,14 +32,6 @@ void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
-/*
- * Crystals fall one after another, eight frames apart, toward the affected
- * side. A crystal that reaches the ground breaks into sixteen shards that
- * fly apart, tumble through three cells each and slow down, while the
- * screen shakes and the affected units are knocked. The variant picks how
- * many crystals fall and how long the effect runs; the strongest also
- * scrolls the camera for its first 104 frames.
- */
 void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 {
     DrawRectangle draw[2];

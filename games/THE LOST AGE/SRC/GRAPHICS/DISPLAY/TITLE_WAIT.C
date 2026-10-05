@@ -4,8 +4,6 @@
 #include "FRAME.H"
 #include "BG_SCROLL.H"
 
-/* Waits up to frames frames, stirring the random number each frame;
-   returns 1 as soon as a button is pressed, else 0. */
 s32 Title_WaitFramesOrPress(u32 frames)
 {
     u32 i;
@@ -19,16 +17,12 @@ s32 Title_WaitFramesOrPress(u32 frames)
     return 0;
 }
 
-/* One step of the title's background scroll: how many frames it runs, the
-   amount BG1 and BG2 move down and across each frame, and for each a mask
-   of the frames it skips (0 for none). */
 struct TitleScrollStep {
     s32 frames;
     s32 speed[4];
     u32 mask[4];
 };
 
-/* Runs one scroll step; returns 0 if a button cut it short, else 1. */
 s32 Title_RunScrollStep(struct TitleScrollStep *step)
 {
     s32 i;

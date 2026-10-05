@@ -1,4 +1,3 @@
-/* Declarations shared by the Babi lighthouse underground scene's sources (resource_3c4). */
 #ifndef BABI_H
 #define BABI_H
 
@@ -39,17 +38,17 @@ struct Slot02000f10 {
 
 typedef struct Actor_02000cd0 {
     u8 pad0[6];
-    u16 tag;               /* +6  */
-    s32 x;                 /* +8,  12.20 fixed point */
-    s32 y;                 /* +12 */
-    s32 z;                 /* +16, 12.20 fixed point */
+    u16 tag;
+    s32 x;
+    s32 y;
+    s32 z;
     u8 pad20[20];
-    s32 speedZ;            /* +40 */
+    s32 speedZ;
     s32 pad44;
-    s32 speedX;            /* +48 */
-    s32 speedY;            /* +52 */
+    s32 speedX;
+    s32 speedY;
     u8 pad56[29];
-    u8 flags;              /* +85 */
+    u8 flags;
 } Actor_02000cd0;
 
 extern const s32 BabiChika_FlickerScript[];
@@ -81,13 +80,6 @@ struct Track02001038 {
     s32 mark;
 };
 
-/*
- * Per-frame integrator for an effect record -- resource_3c4. It adds the
- * velocity at +68/+72/+76 into the position at +8/+12/+16, decays two of the
- * three velocities, accumulates the rates at +48/+52, and turns the sprite.
- */
-
-/* Every field is named by offset; the layout is not verified. */
 struct MotionEffect {
     u8 pad00[8];
     s32 position[3];
@@ -122,19 +114,6 @@ void Func_0808b868(u8 *);
 s32 Battle_GetWorkObject1e0();
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 struct Record_02000ec8;
-
-/* Copy the low two mode bits into the object's owner record. */
-
-/*
- * Slot nine setup for overlay resource_3c4.
- */
-
-/*
- * Setup step in resource_3c4. One six-argument placement, then two identical
- * follow-ups that pin an overlay at the 12.20 grid cell of slots 8 and 9: the
- * slot's +8 and +16 words are each shifted right by 20 and passed as the two
- * stack arguments of the placement call.
- */
 
 struct Record_02000ec8;
 

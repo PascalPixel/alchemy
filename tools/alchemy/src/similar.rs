@@ -1,23 +1,13 @@
-//! Function similarity: normalise Thumb code so that only its shape remains
-//! (opcodes, registers and small constants), then rank functions by the edit
-//! distance between their normalised instruction sequences.
-//!
-//! The index is rebuilt from linked images on every run; nothing is stored.
 
 use crate::decode::{self, Ins, Kind};
 use crate::elf::Elf;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-/// Where a function's bytes come from in the build.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Origin {
-    /// Compiled from C source.
     C,
-    /// Maintained assembly source.
     Assembly,
-    /// Disassembly that has not been rewritten as source yet.
     NotYetC,
-    /// Anything else the image links (toolchain libraries and the like).
     Other,
 }
 
@@ -43,24 +33,16 @@ impl Origin {
 
 #[derive(Clone, Debug)]
 pub struct Function {
-    /// The build the function was read from.
     pub build: String,
-    /// The linked image within the build: the main image or one overlay,
-    /// which share load addresses with each other.
     pub image: String,
     pub name: String,
     pub address: u32,
-    /// Bytes from the function's start to the next function (pools included).
     pub bytes: u32,
     pub origin: Origin,
-    /// The source or object the linker placed the function from.
     pub source: String,
-    /// Normalised instructions, interned.
     pub tokens: Vec<u32>,
 }
 
-/// Branch, call and literal-pool addresses, and constants that are addresses,
-/// are masked; opcodes, registers and other constants stay.
 pub fn normalise(ins: &Ins) -> String {
     match &ins.kind {
         Kind::B { .. } => "b".into(),
@@ -78,12 +60,10 @@ pub fn normalise(ins: &Ins) -> String {
     }
 }
 
-/// Values in the GBA's memory map from EWRAM to the end of cartridge space.
 pub fn is_address(value: u32) -> bool {
     (0x0200_0000..0x0e00_0000).contains(&value)
 }
 
-/// Token ids shared by every function of one run.
 #[derive(Default)]
 pub struct Interner {
     ids: HashMap<String, u32>,
@@ -96,8 +76,6 @@ impl Interner {
     }
 }
 
-/// Levenshtein distance over token sequences, or `None` once it must exceed
-/// `limit` (only a band of width 2 * limit + 1 is computed).
 pub fn distance(a: &[u32], b: &[u32], limit: usize) -> Option<usize> {
     let (a, b) = if a.len() <= b.len() { (a, b) } else { (b, a) };
     if b.len() - a.len() > limit {
@@ -134,7 +112,6 @@ pub fn distance(a: &[u32], b: &[u32], limit: usize) -> Option<usize> {
     (previous[b.len()] <= limit).then_some(previous[b.len()])
 }
 
-/// A lower bound on the edit distance from the token multisets alone.
 fn multiset_bound(a: &[u32], b: &[u32]) -> usize {
     let (mut i, mut j, mut only_a, mut only_b) = (0, 0, 0, 0);
     while i < a.len() && j < b.len() {
@@ -163,13 +140,10 @@ pub struct Match {
     pub distance: usize,
 }
 
-/// A distance relative to the longer sequence: 0 is identical, 1 unrelated.
 pub fn ratio(distance: usize, a: usize, b: usize) -> f64 {
     distance as f64 / a.max(b).max(1) as f64
 }
 
-/// The `top` nearest candidates to `query` whose relative distance is at
-/// most `max_ratio`, nearest first.
 pub fn nearest(
     query: &Function,
     corpus: &[Function],
@@ -208,17 +182,13 @@ pub fn nearest(
     found
 }
 
-/// One linked image: its ELF and the linker map that attributes each input
-/// section to the object it came from.
 pub struct Image<'a> {
     pub build: &'a str,
-    /// The image's name within its build, such as its ELF's stem.
     pub name: &'a str,
     pub elf: &'a Elf,
     pub map: &'a str,
 }
 
-/// An input `.text*` section the map places: address, size and object path.
 pub fn map_text_sections(map: &str) -> Vec<(u32, u32, String)> {
     let mut placed = Vec::new();
     let mut pending: Option<()> = None;
@@ -262,8 +232,6 @@ fn preferred(names: &[&str]) -> String {
         .unwrap_or_default()
 }
 
-/// Decodes `[start, end)` in one linear pass, skipping the literal-pool words
-/// that earlier loads read. Linear time, whatever the number of functions.
 pub fn sweep(image: &[u8], base: u32, start: u32, end: u32) -> Vec<Ins> {
     let mut pool = BTreeSet::new();
     let mut out = Vec::new();
@@ -292,9 +260,6 @@ pub fn sweep(image: &[u8], base: u32, start: u32, end: u32) -> Vec<Ins> {
     out
 }
 
-/// Splits every placed text section of `image` into functions. `classify`
-/// turns an object path into the origin and source path to report; only
-/// sections whose origin is `wanted` are decoded.
 pub fn functions(
     image: &Image,
     interner: &mut Interner,
@@ -310,8 +275,6 @@ pub fn functions(
         .collect()
 }
 
-/// As `functions`, with each function's decoded instructions; its `tokens`
-/// are left empty.
 pub fn decoded(
     image: &Image,
     classify: &dyn Fn(&str) -> (Origin, String),
@@ -321,7 +284,6 @@ pub fn decoded(
     let mut thumb: BTreeSet<u32> = BTreeSet::new();
     let mut named: BTreeSet<u32> = BTreeSet::new();
     for symbol in &image.elf.symbols {
-        // Absolute symbols (the linker's `*ABS*` markers, ids) name no code.
         if symbol.section == 0
             || symbol.section == 0xfff1
             || symbol.name.is_empty()
@@ -345,7 +307,6 @@ pub fn decoded(
             continue;
         };
         let end = start + size;
-        // A section whose first symbol is an even untyped label is ARM code.
         if named.contains(&start) && !thumb.contains(&start) {
             continue;
         }

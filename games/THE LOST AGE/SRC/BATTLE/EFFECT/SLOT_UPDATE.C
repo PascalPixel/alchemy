@@ -5,8 +5,6 @@
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
 
-/* One frame of an effect slot: its age, its delayed callback, then its
-   motion and drawing while it stays active. */
 void EffectSlot_Update(struct EffectSlot *effect)
 {
     if (effect->active != 0) {
@@ -24,7 +22,6 @@ void EffectSlot_Update(struct EffectSlot *effect)
     }
 }
 
-/* The sprite object this draw reads: its own scale at 0xc. */
 struct ScaledSprite {
     u8 unknown_00[0xc];
     s32 scale;
@@ -32,9 +29,6 @@ struct ScaledSprite {
 
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite, s32 *position, s32 *scale, s32 mode);
 
-/* Draws an effect object at its position, scaled by its own and its
-   sprite's factors, when it lies near the screen; flag 4 mirrors it about
-   the floor line. */
 void BattleFx_DrawScaledObject(struct EffectSlot *object)
 {
     struct ScaledSprite *sprite;

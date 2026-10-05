@@ -29,14 +29,6 @@ struct BattleRenderObject {
 struct BattleRuntime {
     u8 unknown_000[0x1c8];
     s32 unknown_1c8;
-    /*
-     * Two-state, driven by the shoulder buttons off the 0x03001c94 latch:
-     * Battle_UpdateModeFromShoulderButtons sets it to 0 on L (0x200)
-     * and to -1 on R (0x100), and
-     * Battle_Reset initialises it to 0. Battle_WaitMode0 calls WaitFrames
-     * only while it is 0. That is the whole of the evidence -- what the two
-     * states mean is not established, so the name says mode and not more.
-     */
     s32 mode_1cc;
     u8 unknown_1d0[0x0a];
     u16 unknown_1da;

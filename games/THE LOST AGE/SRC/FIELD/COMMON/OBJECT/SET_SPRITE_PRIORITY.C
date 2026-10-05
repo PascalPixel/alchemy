@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* Sets both sprite priorities of a placed object and stops automatic priority. */
 void Object_SetSpritePriority(struct FieldActor *object, s32 priority)
 {
     struct FieldSprite *sprite;

@@ -3,7 +3,6 @@
 s32 Menu_SetupSelectionSide(s32, s32);
 extern u8 Data_03001e98[];
 
-/* menu/selection/set_node_coordinates.c */
 struct Node_0801b1ec {
     u8 filler0[4];
     struct Node_0801b1ec *next;

@@ -1,4 +1,3 @@
-/* Menu rows: step the value or its sub-value with the direction and shoulder keys, returning -1 on A and -2 on B. */
 #include "TYPES.H"
 #include "IO_REG.H"
 

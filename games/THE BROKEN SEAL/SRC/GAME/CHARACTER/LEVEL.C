@@ -251,9 +251,6 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level)
     return -1;
 }
 
-/* Raises a party member one level: the gain of each statistic is the
-   growth between the two surrounding twenty-level marks, spread over twenty
-   levels with a random remainder. Level 99 is the cap. */
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 {
     struct BattleUnit *st;

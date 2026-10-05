@@ -1,14 +1,8 @@
-/* Near miss: score 180. ☀️'s, with the remembered pair at gPartyState 0x1e8
-   and the held buttons from gInput. ⚓️ loads gPartyState's address before
-   building the field offset (ldr r2 before movs r1, #244), where agscc
-   builds the offset first; the same order shows in 080ae16c and 0804d4f8.
-   45 s of permuting found nothing. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "TLA_EDITION.H"
 #include "PARTY_STATE.H"
 
-/* The controller state the engine refreshes each frame. */
 struct InputState {
     u32 held;
     u32 pressed;
@@ -31,7 +25,6 @@ void UiWork_Finalize(struct Work *work, s32 release);
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second);
 s32 Menu_HandleSelectionRowInput(struct Work *work, s16 value, s16 *sub, s16 *mode);
 
-/* ☀️'s debug selection, starting from the pair ⚓️ keeps in gPartyState. */
 s16 Menu_RunSelection(void)
 {
     s32 resource;

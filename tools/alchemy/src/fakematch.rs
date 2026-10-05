@@ -1,9 +1,3 @@
-//! `alchemy fakematch`: every FAKEMATCH tag under `games/`, the device it
-//! marks and the family it belongs to, ranked by the bytes each family
-//! steers. Many tags share one root cause (a call wrapper standing in for a
-//! wrong declaration, a one-pass block standing in for a missing loop), so
-//! the largest families are where one real fix removes the most devices.
-//! A report for people under out/reports; nothing else reads it (O1).
 
 use crate::worst::{definition_name, strip_comment};
 use std::collections::{BTreeMap, BTreeSet};
@@ -32,7 +26,6 @@ pub(crate) struct Tag {
     pub count_suspect: bool,
 }
 
-/// The device a tag marks, from its reason and the code right after it.
 fn kind(reason: &str, code: &str) -> &'static str {
     let reason = reason.to_ascii_lowercase();
     let has = |needles: &[&str], text: &str| needles.iter().any(|n| text.contains(n));
@@ -101,8 +94,6 @@ fn is_call_wrapper(name: &str) -> bool {
         .is_some_and(|rest| !rest.is_empty() && rest.chars().all(|c| c.is_ascii_digit()))
 }
 
-/// The first function the code calls: a wrapper's name, or the helper a
-/// value is forwarded through.
 fn called(code: &str) -> Option<String> {
     const KEYWORDS: &[&str] = &[
         "if", "while", "for", "switch", "return", "sizeof", "do", "asm", "__asm__",
@@ -130,8 +121,6 @@ fn called(code: &str) -> Option<String> {
     None
 }
 
-/// Reasons that describe instructions appearing or vanishing, not their
-/// order or registers.
 fn count_suspect(reason: &str) -> bool {
     let reason = reason.to_ascii_lowercase();
     [
@@ -153,8 +142,6 @@ fn count_suspect(reason: &str) -> bool {
     .any(|needle| reason.contains(needle))
 }
 
-/// The subsystem a source belongs to: the game and the first two folders
-/// under SRC or INCLUDE, where one root cause tends to repeat.
 fn trench(file: &str) -> String {
     let parts = file.split('/').collect::<Vec<_>>();
     let game = parts.get(1).copied().unwrap_or("");
@@ -175,8 +162,6 @@ fn trench(file: &str) -> String {
     format!("{game}/{place}")
 }
 
-/// A tag's family: a call wrapper by the wrapper or helper it goes
-/// through, every other device by the subsystem it sits in.
 fn family(kind: &'static str, file: &str, code: &str) -> String {
     match (kind, called(code)) {
         ("call wrapper", Some(name)) if is_call_wrapper(&name) => format!("{kind}: {name}"),
@@ -184,7 +169,6 @@ fn family(kind: &'static str, file: &str, code: &str) -> String {
     }
 }
 
-/// Every FAKEMATCH tag in one C source, with the function it sits in.
 pub(crate) fn scan_source(file: &str, text: &str) -> Vec<Tag> {
     let lines = text.lines().collect::<Vec<_>>();
     let mut tags = Vec::new();
@@ -209,8 +193,6 @@ pub(crate) fn scan_source(file: &str, text: &str) -> Vec<Tag> {
                 .split_whitespace()
                 .collect::<Vec<_>>()
                 .join(" ");
-            // The one statement the tag marks: its lines up to the first that
-            // ends it or opens a block, at most three.
             let mut code = String::new();
             for l in lines[end + 1..]
                 .iter()
@@ -225,7 +207,6 @@ pub(crate) fn scan_source(file: &str, text: &str) -> Vec<Tag> {
                 }
             }
             let tail = raw[..at].to_string();
-            // A tag written after code on the same line marks that line.
             let code = if tail.trim_start().starts_with("/*") || tail.trim().is_empty() {
                 code
             } else {
@@ -270,7 +251,6 @@ pub(crate) fn scan_source(file: &str, text: &str) -> Vec<Tag> {
     tags
 }
 
-/// Each top-level function in a C source and the functions it calls.
 fn function_calls(text: &str) -> Vec<(String, BTreeSet<String>)> {
     let mut found = Vec::new();
     let (mut in_block, mut depth) = (false, 0i32);
@@ -332,8 +312,6 @@ fn sources(root: &Path) -> Result<Vec<PathBuf>, String> {
     Ok(found)
 }
 
-/// Each function's size in the built English image and its overlays,
-/// from `nm -S`; a name defined in several overlays adds up.
 fn sizes(root: &Path, game: &str) -> BTreeMap<String, u64> {
     let build = root.join(format!("out/{game}-en"));
     let mut elves = vec![build.join(format!("{game}-en.elf"))];
@@ -476,7 +454,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             f.example
         );
     }
-    // Tagged inline helpers in headers steer every function that calls them.
     let helpers = tags
         .iter()
         .filter(|t| t.file.ends_with(".H") && t.function != "(file scope)")

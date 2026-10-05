@@ -60,7 +60,6 @@ struct RenderOutput *CreateSideObject(
     if (object != 0) {
         s32 slotBits = slot << 4;
 
-        /* The top nibble of the packed table's second byte selects the slot. */
         ((u8 *)&object->table)[1] = (((u8 *)&object->table)[1] & 15) | slotBits;
         object->kind = 2;
     }

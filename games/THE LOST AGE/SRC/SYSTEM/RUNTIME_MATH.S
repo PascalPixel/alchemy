@@ -1,15 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Word clearing and filling, integer square root and bit-run expansion of
-@ TLA's resident runtime, each routine behind a 4-byte Thumb entry (bx pc).
-@ The clearer sets the fill value to zero and runs into the fill through the
-@ fill's entry, which ARM executes as andeq r4, r0, #0x1e00000; the fill
-@ jumps into its unrolled stmia run with add pc, pc, ip, lsr #3 and saves
-@ r5-r9 without lr; the square root returns early with bxmi lr; the
-@ expander stores r2 at the bytes that the set bits of 14 halfwords select,
-@ 16 bytes per halfword. GCC never jumps into unrolled code. Apart from the
-@ entries these 236 bytes equal TBS SYSTEM/RUNTIME_MATH.S (0x080008d4) byte
-@ for byte. The entries are TLA's own and carry no credit.
-@ credit: library — TBS/TLA common IWRAM runtime fill, square root and bit-run helpers
 .syntax unified
 	.thumb
 	.global IwramClearWords
@@ -86,7 +75,6 @@ AlchemyUncredited_080008cc:
 	.2byte	0x0200
 	.arm
 AlchemyUncreditedEnd_080008cc:
-@ Japanese glyph masks span twelve halfwords; localized masks span fourteen.
 	.ifeq EDITION_INTERNATIONAL
 	add	ip, r0, #24
 	.else

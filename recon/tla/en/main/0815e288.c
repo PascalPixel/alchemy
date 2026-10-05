@@ -9,9 +9,6 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
-/* Projects a battle unit's position to the screen and lifts it by its
-   scaled height. */
-
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
 {
     u8 *camera;

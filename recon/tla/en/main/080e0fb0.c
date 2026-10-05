@@ -1,10 +1,8 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_DESCENDING_ARC_PARTICLES.C. */
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
 #include "TYPES.H"
 #include "SCENE_IDS.H"
 
-/* The same fall on the negative z side, with the vertical scale negated. */
 void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 {
     struct ArcParticle *source;

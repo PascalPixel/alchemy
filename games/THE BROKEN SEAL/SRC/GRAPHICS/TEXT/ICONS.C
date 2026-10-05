@@ -78,7 +78,6 @@ s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
   return icon;
 }
 
-/* The object's packed OAM halfwords, separate from its logical position. */
 struct UiIconAttributes {
     u8 y;
     u8 affine_mode : 2;

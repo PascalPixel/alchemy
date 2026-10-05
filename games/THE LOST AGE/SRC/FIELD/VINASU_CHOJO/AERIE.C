@@ -2,12 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/*
- * The top of Venus Lighthouse at the start of The Lost Age: the scene's
- * tables, the carved inscriptions the party can read, and the map cells its
- * events rearrange.
- */
-
 enum {
     ENTRANCE_ALTERNATE_PLACEMENTS = 99
 };
@@ -23,7 +17,6 @@ extern const struct ScenePlacement gScenePlacements[];
 extern const struct ScenePlacement gScenePlacementsEntrance99[];
 extern const struct SceneEvent gSceneEvents[];
 
-/* Sets both sprite priorities of a placed object and stops automatic priority. */
 void Object_SetSpritePriority(struct FieldActor *object, s32 priority)
 {
     struct FieldSprite *sprite;
@@ -42,7 +35,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gSceneEntrances;
 }
 
-/* This scene declares no regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -53,7 +45,6 @@ const u32 *Scene_GetExits(void)
     return gSceneExits;
 }
 
-/* Steps the actor's palette with its timer. */
 s32 SceneActor_CyclePalette(struct FieldActor *actor)
 {
     Object_SetPalette(actor, actor->timer & 15);
@@ -66,7 +57,6 @@ s32 SceneActor_ClearSpriteFlags(struct FieldActor *actor)
     return 0;
 }
 
-/* Arriving by entrance 99 places a different set of actors. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gPartyState.entrance == ENTRANCE_ALTERNATE_PLACEMENTS) {
@@ -75,11 +65,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gScenePlacements;
 }
 
-/*
- * When actor 10 stands in map column 42: after half a second cue 188 plays,
- * the actor is set two pixels down, flag 0x200 is set and a block of map
- * cells is copied into place.
- */
 void Scene_LowerActor10AtColumn42(void)
 {
     struct FieldActor *actor;
@@ -170,13 +155,11 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gSceneEvents;
 }
 
-/* The event callback the scene installs; it does nothing. */
 s32 SceneEvent_Idle(void)
 {
     return 0;
 }
 
-/* The scene's last loader hook; the top of the lighthouse needs nothing. */
 s32 Scene_PrepareMap(void)
 {
     return 0;

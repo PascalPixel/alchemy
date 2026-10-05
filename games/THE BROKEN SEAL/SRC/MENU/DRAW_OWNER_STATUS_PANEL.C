@@ -8,18 +8,11 @@
 #include "BATTLE_RUNTIME.H"
 #include "UI.H"
 
-/* Where the name and ailment labels start: the Japanese edition moves them right. */
 #if EDITION_INTERNATIONAL
 #define STATUS_X 32
 #else
 #define STATUS_X 40
 #endif
-
-/* The status panel beside the item and ability lists: the owner's name,
-   ailments or level, then a page chosen by the low byte of mode (class and
-   stats, the stat change of equipping the selected item, whether its
-   Psynergy is already known, or the four current stats). Bit 8 redraws the
-   page without the window, name and side portrait. */
 
 extern u8 IwramCopyWords[];
 extern u8 Ui_LvString[];
@@ -158,7 +151,6 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
             }
         }
 #if defined(TBS_EDITION_ES)
-        /* The Spanish verdict sits above the Psynergy's name. */
         if (found) {
             UiText_DrawCharacterAtOffsetFar(id + (s32)MsgAbilityName, window, 0, 56);
             UiText_DrawCharacterAtOffsetFar((s32)MsgLearned, window, 0, 48);

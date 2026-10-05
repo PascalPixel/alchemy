@@ -1,28 +1,3 @@
-/* 2026-10-04: with the object byte store written as ☀️'s s8 store and unit
- * set before max_speed, differ 4 (dd): native stores max_speed between the
- * movs and the ldr of the object, then lsls; here movs, lsls of 1.0 precede
- * the store. Earlier header follows. */
-/* 2026-10-03 effect-slot suffix probe.
- * The existing draft could not compile: TYPES, EffectSlot and DMA owners
- * were not included, and its flag41 name no longer belongs to EffectSlot.
- * Current TBS EFFECT43 supplies the operation and statement order.
- * TLA creates a resource through ResourceObject_CreateFar and clears byte
- * 0x1a, already owned by FieldSprite, rather than TBS AnimationObject.flags.
- * EN native extent is 160 bytes, including its trailing alignment.
- * T0: unit before max_speed, 160-byte extent, score 360: four reordered
- * instructions, pending mode-call name, and standalone alignment.
- * T1: max_speed before unit, retained 160-byte extent, score 325:
- * five register choices, three reordered instructions, pending mode-call
- * name and standalone alignment. The natural group supplies alignment
- * and all six call relocations resolve to their native target owners.
- * STOP: the complete group retains 21 differing non-call bytes here;
- * object reload, origin stores and unit allocation still differ.
- * D0: the T0 used-object local plus an empty read/write-register and
- * memory constraint retained the 160-byte extent and all 75 instructions,
- * with identical mnemonic, store and branch counts, but 29 non-call
- * bytes still differed. The device did not match and is removed.
- * Axis stopped; two ordinary forms and one device tried. No adoption.
- */
 #include "TYPES.H"
 #include "EFFECT_SLOT.H"
 #include "FIELD_SPRITE.H"
@@ -32,8 +7,6 @@
 
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode);
 
-/* Clear the slot, attach a resource object, place it at x, z with unit
- * scale and acceleration, and start it active in mode 1. */
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
 {
     s32 unit;

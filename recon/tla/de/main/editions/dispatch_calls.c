@@ -1,12 +1,3 @@
-/* Canonical saved DE/ES/FR/IT attempt: the identical copies are
- * consolidated here. This path keeps DE as its draft-scoring edition. */
-/* 2026-10-03: removed the unused unary ApplyChildValuesToRecord declaration.
-   The complete edition object is unchanged; the older metadata-argument
-   draft limitation below remains outside this correction. */
-/* Draft: this dispatcher predates the typed metadata argument and the
- * repaired raw callee ownership. Two wrongly named call targets differed
- * when recorded; the owner correction now resolves them. The old omitted
- * argument prototype is retained as the measured source attempt. */
 #ifndef TLA_OBJECT_DISPATCH_H
 #define TLA_OBJECT_DISPATCH_H
 
@@ -64,7 +55,6 @@ extern const s32 ObjectDispatch_Table4[];
 extern const s32 ObjectDispatch_Table6[];
 
 #endif
-
 
 void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object, s32 argument)
 {

@@ -13,7 +13,6 @@ extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 Math_RemainderUnsigned(s32, s16);
 
-/* Briefly stretches the sprite, then waits before the next pulse. */
 s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
     /* FAKEMATCH: In-place signed accesses preserve the countdown's load and address scheduling. */
@@ -48,8 +47,6 @@ s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
     return 0;
 }
 
-/* A gull hovering over the deck: its flight step, its drift and the
-   directions it drifts in. */
 struct HoverGull {
     u8 unknown_00[0x4c];
     s32 drift;
@@ -62,9 +59,6 @@ struct HoverGull {
 
 #define GULL(obj) ((struct HoverGull *)(obj))
 
-/* The first hovering gull: it drifts about over the deck, and one frame in
- * a hundred starts down to land beside actor 21, who turns to it and hops
- * or starts back; then it flies up to hover again. */
 s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
 {
     if (GULL(obj)->step != 0) {
@@ -150,7 +144,6 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
     return 1;
 }
 
-/* The second gull does the same beside actor 22. */
 s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
 {
     if (GULL(obj)->step != 0) {

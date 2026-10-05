@@ -1,10 +1,4 @@
-/* Trial 2026-10-03: use the canonical signed owner parameter while keeping
- * native unsigned range checks. Complete object unchanged; EN score 700,
- * 7 differing rows. gGameState/gBattleOwnerStates remain unresolved, so
- * those references are compared by symbol name only.
- */
 #include "OWNER_STATE.H"
-/* Characters: return the state record for a party owner (0-7) or a battle owner (0x80-0x85), or NULL. */
 #include "TYPES.H"
 
 struct OwnerState {

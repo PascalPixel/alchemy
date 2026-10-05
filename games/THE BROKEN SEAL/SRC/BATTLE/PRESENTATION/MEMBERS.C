@@ -4,7 +4,6 @@
 #include "BATTLE_WORK.H"
 #include "IWRAM_CALL.H"
 
-/* Record the active party's member slots. */
 s32 BattleParty_AssignMemberSlots(void)
 {
     u16 active_members[8];

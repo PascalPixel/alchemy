@@ -1,7 +1,6 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-/* gFlash が指すフラッシュ機種表。 */
 struct FlashChipInfo {
     u8 unknown_00[4];
     s32 blockSize;
@@ -13,12 +12,9 @@ struct FlashChipInfo {
 extern struct FlashChipInfo *gFlash;
 extern u16 gFlashNumRemainingBytes;
 
-/* RAM 常駐の書き込み手続き。RunFlashEraseVerifier との差が複写長になる。 */
 void CountRemainingErasedFlashBytes(void);
 s32 RunFlashEraseVerifier(u8 *, u8 *);
 
-/* セクタ消去つき書き込み。RAM へ手続きを複写し、消去と検査が通るまで
-   最大 81 回やり直してから 1 バイトずつ書く。 */
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
 {
     u8 ramCode[96];

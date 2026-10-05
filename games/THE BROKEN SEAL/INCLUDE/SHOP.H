@@ -20,37 +20,37 @@ struct ShopCursor {
 
 struct ShopRuntime {
     u8 unknown_000[0x0c];
-    s32 money_window;                   /* 0x00c */
+    s32 money_window;
     u8 unknown_010[0x10];
-    s32 item_window;                    /* 0x020 */
+    s32 item_window;
     u8 unknown_024[0xf0];
-    struct AnimationObject *party_member_icons[8];        /* 0x114 */
-    s16 party_member_x[8];              /* 0x134 */
-    s16 party_member_y[8];              /* 0x144 */
-    s32 party_member_scale[8];          /* 0x154 */
+    struct AnimationObject *party_member_icons[8];
+    s16 party_member_x[8];
+    s16 party_member_y[8];
+    s32 party_member_scale[8];
     u8 unknown_174[0xf8];
-    s16 stock_item_ids[129];            /* 0x26c */
-    s16 party_member_ids[9];            /* 0x36e */
-    struct ShopCursor cursor;           /* 0x380 */
-    u16 cursor_icon;                    /* 0x390 */
-    u16 previous_page_icon;             /* 0x392 */
-    u16 next_page_icon;                 /* 0x394 */
-    u16 gem_icon;                       /* 0x396 */
-    u16 stat_up_icon;                   /* 0x398 */
-    u16 stat_down_icon;                 /* 0x39a */
+    s16 stock_item_ids[129];
+    s16 party_member_ids[9];
+    struct ShopCursor cursor;
+    u16 cursor_icon;
+    u16 previous_page_icon;
+    u16 next_page_icon;
+    u16 gem_icon;
+    u16 stat_up_icon;
+    u16 stat_down_icon;
     u16 unknown_39c;
-    u16 selected_item;                  /* 0x39e */
+    u16 selected_item;
     u8 unknown_3a0[4];
-    u16 keeper_resource;                /* 0x3a4 */
-    s8 stock_count;                     /* 0x3a6 */
-    s8 party_member_count;              /* 0x3a7 */
-    u8 mode;                            /* 0x3a8 */
-    u8 shop_type;                       /* 0x3a9 */
-    s8 party_action;                    /* 0x3aa */
-    s8 burst_member;                    /* 0x3ab, -1 when no member bursts */
-    u8 warrior_shop;                    /* 0x3ac */
+    u16 keeper_resource;
+    s8 stock_count;
+    s8 party_member_count;
+    u8 mode;
+    u8 shop_type;
+    s8 party_action;
+    s8 burst_member;
+    u8 warrior_shop;
     u8 unknown_3ad[3];
-    struct EffectSlot effects[24];       /* 0x3b0 */
+    struct EffectSlot effects[24];
 };
 
 LAYOUT_SIZE_GUARD(
@@ -127,8 +127,6 @@ LAYOUT_OFFSET_GUARD(ShopRuntime_BurstMember, struct ShopRuntime, burst_member, 0
 LAYOUT_OFFSET_GUARD(ShopRuntime_WarriorShop, struct ShopRuntime, warrior_shop, 0x3ac);
 LAYOUT_OFFSET_GUARD(ShopRuntime_Effects, struct ShopRuntime, effects, 0x3b0);
 
-/* The shop's 16 by 16 cursor sprites: the pointing hand, the gem, the small
-   and large up and down arrows. */
 extern const u8 Shop_HandTiles[];
 extern const u8 Shop_GemTiles[];
 extern const u8 Shop_SmallDownArrowTiles[];
@@ -136,8 +134,6 @@ extern const u8 Shop_SmallUpArrowTiles[];
 extern const u8 Shop_UpArrowTiles[];
 extern const u8 Shop_DownArrowTiles[];
 
-/* The blank price and quantity strips of eight tiles that the digits are
-   drawn over. */
 extern const u8 Shop_PriceTiles[];
 extern const u8 Shop_QuantityTiles[];
 

@@ -18,7 +18,6 @@ void BattleFx_SetSpecialFromTable(void);
 
 s32 GetWorldMapTerrainBehaviorFar(void *, s32 *);
 
-/* battle/effects/data/lookup_result.c */
 typedef struct Entry {
     s16 first;
     s16 second;
@@ -57,11 +56,6 @@ s32 Party_GetAverageLevelFar(void);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);
 
-/* Pick the current map/room rule; room -1 matches any room, and flag -1
- * always applies. Other rules apply while their flag is clear. Write zero
- * and seven consecutive results from the rule base, or all zero if none
- * applies. The shift bit moves the first result down one slot. Clear the
- * next two words and apply the special. */
 void BattleFx_SelectLocationRule(s32 check)
 {
     /* FAKEMATCH: the shift temporaries order the zero between the two stores. */

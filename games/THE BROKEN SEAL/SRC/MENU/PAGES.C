@@ -10,8 +10,6 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-/* Move a row or page using repeat keys. Return -1 for no input,
- * zero for a row change, or one for a page change. */
 extern volatile u32 gKeysRepeat;
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Audio_PlayCue(s32 cue);
@@ -103,8 +101,6 @@ done:
     return result;
 }
 
-/* Copies palette bank 15 over the given object bank, then lightens its
-   colour 4 by 9 in each channel, saturating at 31. */
 void Palette_LightenBankHighlight(s32 bank)
 {
     u16 *palette = (u16 *)(0x05000000 + (bank << 5));
@@ -209,19 +205,12 @@ void Render_SetTilemapFlagRect(
     }
 }
 
-/* Copies object palette bank 0 over background bank 14, then copies object
-   colour 4 of bank 0 into background bank 14's entry 14. */
 void Palette_CopyObjectBankToBackground14(void)
 {
     Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
     Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
 }
 
-/*
- * Hides every entry icon, then shows one page of them: up to page_size
- * icons from the first entry, placed in a column at (x, y), 16 pixels
- * apart, stopping at a missing icon or the end of the list.
- */
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y)
 {
     struct InventoryMenuState *menu = gMenuWork;

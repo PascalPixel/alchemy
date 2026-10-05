@@ -1,5 +1,3 @@
-//! mid2ags: a MIDI song to the sound driver's sequence assembly, as pret's
-//! mid2agb is for Pokémon. Every pointer in the output is a label.
 use std::fs;
 use std::process::ExitCode;
 

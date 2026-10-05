@@ -19,7 +19,6 @@ void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
 
-/* The scene hooks exported by the overlay. */
 s32 *HaidiaBabi_GetEntrances(void)
 {
     return gHaidiaBabiEntrances;
@@ -55,7 +54,6 @@ s32 HaidiaBabi_SelectPlacements(void)
     return (s32)tbl;
 }
 
-/* Asks whether the party knows Kraden, with a line for each answer. */
 void HaidiaBabi_AskAboutKraden(s32 object)
 {
     s32 msg = (s32)MsgHaidiaFolksSeemKnow;
@@ -71,7 +69,6 @@ void HaidiaBabi_AskAboutKraden(s32 object)
     Engine_EventShowMessage(object, 0);
 }
 
-/* The events hook, the villagers' scenes and the house's exits. */
 s32 HaidiaBabi_SelectEvents(void)
 {
     if (gGameState.entrance == 19) {
@@ -214,7 +211,6 @@ void SceneState_ApplyValues123And11(void)
     HaidiaBabi_CloseScreenAndExit(11);
 }
 
-/* The entry hook: how the house is set up for the entrance and the story. */
 s32 HaidiaBabi_RestoreEntryState(void)
 {
     /* FAKEMATCH: the shared cached-cell base keeps the word read before the narrow store. */
@@ -318,9 +314,6 @@ void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
 
-/* Haidia, the morning after the storm: the leader wakes in the house, the
-   view opens on the room, the two talk over the scene's messages, and both
-   walk out of the house. */
 void FieldScene_RunComplexActorSequence(void)
 {
     /* FAKEMATCH: a halfword record keeps the actor-flag zero loaded from the pool after the actor lookup. */

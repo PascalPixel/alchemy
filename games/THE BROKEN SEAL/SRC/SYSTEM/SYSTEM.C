@@ -33,14 +33,11 @@ static __inline__ void System_SoftReset(void)
     {                                                                          \
         gVBlankDone &= ~1;                                                     \
         do {                                                                   \
-            /* CAMELOT_ASM: Halt, which no C compiles to */                    \
+            CAMELOT_ASM("Halt, which no C compiles to")                    \
             __asm__ volatile("swi 2");                                         \
         } while (!(gVBlankDone & 1));                                          \
     }
 
-/* Installs or removes the handler for one interrupt with IME off: sets
-   the IE bit, the DISPSTAT enable (and the VCOUNT target for IRQ 2), and
-   the IWRAM table entry, which falls back to the no-op handler. */
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 {
     if (irq <= 13) {
@@ -82,8 +79,6 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
     }
 }
 
-/* Runs frame callbacks, rendering and input while preserving a caller's
-   active IWRAM stack across interrupt work. */
 void WaitFrames(s32 frames)
 {
     u32 i;
@@ -93,12 +88,12 @@ void WaitFrames(s32 frames)
     s16 dispcnt;
     s16 backdrop;
 
-    /* CAMELOT_ASM: reads the stack pointer */
+    CAMELOT_ASM("reads the stack pointer")
     __asm__ volatile("mov %0, sp" : "=r"(base));
     if (base < Ram_FrameWaitStackTop) {
         gSavedStackSize = Ram_FrameWaitStackTop - base;
         Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-        /* CAMELOT_ASM: moves the stack pointer */
+        CAMELOT_ASM("moves the stack pointer")
         __asm__ volatile("mov sp, %0" : : "r"Ram_FrameWaitStackTop);
     }
     for (i = 0; i < frames; i++) {
@@ -161,7 +156,7 @@ void WaitFrames(s32 frames)
                         break;
                     gDebugPaused = 1;
                 }
-                /* CAMELOT_ASM: Halt in VBlankIntrWait */
+                CAMELOT_ASM("Halt in VBlankIntrWait")
                 VBlankIntrWait();
                 Input_UpdateKeyRepeatAndDirection();
                 if (gResetRequested) {
@@ -172,7 +167,7 @@ void WaitFrames(s32 frames)
         }
         gLagFramesShown = gLagFrameCount;
         gLagFrameCount = 0;
-        /* CAMELOT_ASM: Halt in VBlankIntrWait */
+        CAMELOT_ASM("Halt in VBlankIntrWait")
         VBlankIntrWait();
         Runtime_ReleaseHeapBlock(52);
         Graphics_ResetFrameState();
@@ -191,12 +186,12 @@ void WaitFrames(s32 frames)
                 Io_Write16(0, &REG_DISPCNT);
                 Io_Write16(0x7fff, &PLTT_BACKDROP);
                 for (j = 0; j < 60; j++)
-                    /* CAMELOT_ASM: Halt in VBlankIntrWait */
+                    CAMELOT_ASM("Halt in VBlankIntrWait")
                     VBlankIntrWait();
                 gSleepActive = 1;
                 Io_Write16(KEYCNT_SHOULDERS_WAKE, &REG_KEYCNT);
                 Bios_SoundBiasOff();
-                /* CAMELOT_ASM: Stop, which no C compiles to */
+                CAMELOT_ASM("Stop, which no C compiles to")
                 __asm__ volatile("swi 3");
                 Bios_SoundBiasOn();
                 Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
@@ -204,7 +199,7 @@ void WaitFrames(s32 frames)
                 Io_Write16(dispcnt, &REG_DISPCNT);
                 Io_Write16(backdrop, &PLTT_BACKDROP);
                 for (j = 0; j < 10; j++)
-                    /* CAMELOT_ASM: Halt in VBlankIntrWait */
+                    CAMELOT_ASM("Halt in VBlankIntrWait")
                     VBlankIntrWait();
                 gSleepRequested = 0;
                 gPostLoadCounter = 0;
@@ -218,11 +213,11 @@ void WaitFrames(s32 frames)
         }
     }
     if (gSavedStackSize) {
-        /* CAMELOT_ASM: reads the stack pointer */
+        CAMELOT_ASM("reads the stack pointer")
         __asm__ volatile("mov %0, sp" : "+r"(base) : : "memory");
         base -= gSavedStackSize;
         /* FAKEMATCH: the operand-only asm flushes CSE, preserving the measured reload of the saved-stack-size address. */
-        /* CAMELOT_ASM: moves the stack pointer */
+        CAMELOT_ASM("moves the stack pointer")
         __asm__ volatile("mov sp, %0" : : "r"(base));
         Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
         while (DMA3->control & DMA_ENABLE32)

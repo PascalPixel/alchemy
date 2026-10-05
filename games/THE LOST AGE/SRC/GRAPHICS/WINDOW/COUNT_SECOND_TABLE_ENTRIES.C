@@ -3,7 +3,6 @@
 extern u8 UiIcon_PsynergyIconPointersEnd[];
 extern u8 UiIcon_PsynergyIconPointers[];
 
-/* The number of Psynergy icons: one word pointer each up to the table's end. */
 s32 Ui_CountSecondTableEntries(void)
 {
     return (UiIcon_PsynergyIconPointersEnd - UiIcon_PsynergyIconPointers) >> 2;

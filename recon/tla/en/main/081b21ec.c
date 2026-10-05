@@ -1,13 +1,6 @@
 #include "RESOURCE.H"
-/* Near miss: 204 bytes, score 160 (one reordered load, one alignment
-   halfword). The listing loads the pooled channel mask before the two
-   induction/mask seeds; this draft loads it after them. A 30-second permuter
-   search and local dependency variants found no improvement. An explicit
-   shared mask removes the required literal pool. */
 #include "DMA.H"
 
-/* Step background colours 1-63 one unit per channel towards the palette of
-   resource_id. */
 void Palette_StepTowardResource(s32 resource_id)
 {
     u16 target[64];

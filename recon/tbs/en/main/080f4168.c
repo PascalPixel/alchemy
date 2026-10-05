@@ -1,46 +1,11 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
-/* Draft, not exact: score 27233, 1016 differing instructions of 2045 (was
- * 32534 and 1127). One whole function (Lucky Dice, reached from
- * Runtime_BlankDisplayAndRun); the two bl into its own body are the
- * compiler's far jumps for the main loop's break and continue.
- * Found this pass:
- *  - no link-time constant symbols are needed. The display register values
- *    are halfword stores, which load their constant from the pool by
- *    themselves; 0x0c, 0x42 and 0x43 are resource directory rows
- *    (ResourceId_EffectFarCalls and the two dice rows, now named in
- *    DIRECTORY.S); 0x910 is a message id and still needs its name
- *    (MsgLuckyDiceHelp here, undefined).
- *  - the fixed objects are written through the running count from 0, not
- *    through literal indices: that is what gives the listing's
- *    movs rN, #offset; str rM, [sprites, rN] instead of hoisted addresses.
- *  - the frame is now 12 bytes short of the listing's 0x300 (it was 28 over):
- *    three more values live in stack slots there.
- * Remaining, first divergence first:
- *  - the tilemap fill keeps a byte offset in r11 (the register of i) and
- *    steps it by 2, with the column in r1, the row in r5, row * 30 in r4
- *    and a per-row copy of that in r0. i as a byte offset with x as the
- *    column and base = row * 30 gives that shape (r11 stepped by 2) but the
- *    other registers differ, and it scores 28325.
- *  - the listing walks each die loop with a pointer in a different register
- *    (r5 start-up, r6 throw, r7 physics with the other die in r9, r10 for
- *    the shadows), so there is not one die pointer for the function; indexing
- *    work->die[i] everywhere is much worse (50827), and one block-local
- *    pointer in the start-up loop is no better.
- *  - the pair count addresses results and matches from the frame top
- *    (sp + 768 minus a pooled offset).
- *  - registers and spill slots throughout; with the frame 12 bytes off every
- *    stack reference differs, so the score moves by hundreds on any change
- *    and is a poor guide until the frame is right. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "DMA.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 #include "UI.H"
-
-/* Lucky Dice in Tolbi: two dice thrown onto a board of six rows. The bet is
-   ten coins per party level; matching faces and rows pay out. */
 
 struct LuckyDiceDie {
     s32 x;

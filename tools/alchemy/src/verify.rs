@@ -1,7 +1,3 @@
-//! `alchemy verify`: the gates, each an ordinary `make` target run
-//! concurrently with the others. A passing gate prints one line, a failing
-//! gate its whole output; every gate's output is kept in
-//! `out/verify/<gate>.log`.
 
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -15,7 +11,6 @@ const USAGE: &str = "usage: alchemy verify [--pre-commit | --land | --pre-push]\
                 the measurement and decomp.dev report the push uploads for CI\n\
   --pre-push    checks outgoing commits; a push of main uploads its tip's measurement";
 
-/// The checks every commit runs on what it stages.
 pub const STAGED: &[&str] = &[
     "language-check",
     "compiler-source-check",
@@ -23,8 +18,6 @@ pub const STAGED: &[&str] = &[
     "lint-staged",
 ];
 
-/// `make verify` and `make land`: the checks over the whole tree, the tests
-/// and all twelve editions built and compared, all at once.
 pub const GATES: &[&str] = &[
     "language-check",
     "compiler-source-check",
@@ -133,8 +126,6 @@ fn pre_push(root: &Path) -> Result<(), String> {
     Ok(())
 }
 
-/// A landing on main, run before its commit: every gate, then the count
-/// measured once into the measurement and decomp.dev report its push uploads.
 fn land(root: &Path) -> Result<bool, String> {
     if !is_main(root)? {
         return Err("make land publishes main's progress: run it on main".into());
@@ -147,7 +138,6 @@ fn land(root: &Path) -> Result<bool, String> {
     Ok(true)
 }
 
-/// Every gate at once, then `last` once they all pass.
 fn run(root: &Path, gates: &[&'static str], last: Option<&'static str>) -> Result<bool, String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
     let logs = root.join("out/verify");
@@ -211,8 +201,6 @@ fn report(outcomes: &[Outcome], root: &Path) -> bool {
     passed
 }
 
-/// `make GATE` with this executable for every tool call; the edition builds
-/// run side by side.
 fn make_arguments(executable: &Path, gate: &str) -> Vec<String> {
     let mut arguments = vec![
         "--no-print-directory".to_string(),
@@ -239,8 +227,6 @@ fn run_gate(
     let started = Instant::now();
     let mut command = Command::new("make");
     if gate == "test" {
-        // A commit hook's git variables name the repository being committed;
-        // tests that make their own repositories must never inherit them.
         for (key, _) in std::env::vars_os() {
             if key.to_string_lossy().starts_with("GIT_") {
                 command.env_remove(key);
@@ -306,7 +292,6 @@ mod tests {
         assert!(land(root).is_err());
     }
 
-    /// Every gate is a Makefile target, and the count runs once, after them.
     #[test]
     fn every_gate_is_a_makefile_target() {
         let makefile =

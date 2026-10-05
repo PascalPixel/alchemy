@@ -5,7 +5,6 @@
 #include "GLOBAL_CELLS.H"
 extern struct SelectionScreen *gResQueueWork;
 
-/* resource/transfer/find_free_entry.c */
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
 {
     /* FAKEMATCH: the separate scalar scans retain their running addresses and 88 bytes; a shared typed loop produces 56. */
@@ -53,15 +52,12 @@ block_10:
     goto loop_7;
 }
 
-/* resource/Resource_ScheduleOwnerResetDelayed.c */
 void MenuSelection_DrawFrame(void);
 
 void Resource_ScheduleOwnerResetDelayed(void)
 {
     Scheduler_AddOrUpdateCallback(MenuSelection_DrawFrame, 0xC80);
 }
-
-/* resource/Resource_ScheduleOwnerReset.c */
 
 void Resource_ScheduleOwnerReset(void)
 {

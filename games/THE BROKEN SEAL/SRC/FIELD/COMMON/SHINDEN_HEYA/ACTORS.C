@@ -11,7 +11,6 @@
 
 void ShindenHeya_RaiseItemIcon(s32 item);
 
-/* The action-callback paths that walk the leader and Gerald in circles. */
 extern const s32 ShindenHeya_LeaderCircleScript[];
 extern const s32 ShindenHeya_GeraldCircleScript[];
 void ShindenHeya_SpawnOwnerEffect();
@@ -54,11 +53,9 @@ s32 UpdateFacingFromResolvedObject(struct FacingObject *object);
 void WaitFrames();
 void Ui_PrepareTransferForItem();
 
-/* The motion scripts that pop the icon in and delete it a second later. */
 extern const s32 ShindenHeya_ItemIconGrowScript[];
 extern const s32 ShindenHeya_ItemIconEndScript[];
 
-/* The motion script that deletes a spark once it has risen. */
 extern const s32 ShindenHeya_SparkEndScript[];
 
 s32 Math_RemainderUnsigned();
@@ -90,7 +87,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(15);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-    Engine_ActorStartRepeatedMotion(0, 1); /* object 0, variant 1 */
+    Engine_ActorStartRepeatedMotion(0, 1);
     ((struct FacingObject *)Object_GetById(0))->facing_flags &= ~1;
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 184, 168);
     ((struct FacingObject *)Object_GetById(1))->facing_flags &= ~1;
@@ -142,7 +139,6 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(15);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(10);
-    /* This scene supplies position words beyond the icon's named item argument. */
     ((void (*)())ShindenHeya_RaiseItemIcon)(222, 0xb80000, 0x1b0000, 0xa80000);
     Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
@@ -180,7 +176,6 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
     Engine_EventWait(10);
-    /* The engine ignores the facing callback's integer result. */
     Object_GetById(8)->timer = 1;
     Object_GetById(8)->update =
         (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
@@ -308,7 +303,6 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(60);
 }
 
-/* Shrine room: raises an item icon object, loads the item's icon into its sprite and clears its motion flags while it rises for sixty frames. */
 void ShindenHeya_RaiseItemIcon(s32 item)
 {
     struct FieldActor *obj;
@@ -344,8 +338,6 @@ void ShindenHeya_RaiseItemIcon(s32 item)
     }
 }
 
-/* Raise the spark and cycle through full, four-fifths and three-fifths size
- * every four frames until its timer expires. */
 void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
 {
     struct FieldActor *spark = &object->actor;
@@ -375,7 +367,6 @@ void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
         Engine_ObjectSetScript(spark, ShindenHeya_SparkEndScript);
 }
 
-/* Shrine room: spawns a spark effect at a random offset above an actor, with random delay and lifetime, on the actor's sprite layer. */
 void ShindenHeya_SpawnActorSpark(s32 id)
 {
     struct FieldActor *actor;
@@ -426,7 +417,6 @@ s32 IsActorFacingInward(void)
     return 0;
 }
 
-/* Facing inward opens the sanctum; otherwise the story flags select the dialogue. */
 void FieldScene_RunActorEightFacingDialogue(void)
 {
     if (IsActorFacingInward() != 0) {

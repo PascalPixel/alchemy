@@ -1,5 +1,4 @@
 
-/* object/group/tick_member_timers.c */
 extern u8 *gBattleFxWork;
 
 void ObjectGroup_TickMemberTimers(void)

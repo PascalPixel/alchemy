@@ -1,26 +1,8 @@
-/* Near miss: score 60. The canvas is ⚓️'s heap slot battle_fx_work[1].
-   Before the first line loop ⚓️ loads the ~0x100 mask from the pool ahead
-   of building 0x100 inline (ldr r7, =0xfffffeff before movs r3, #128); this
-   draft builds 0x100 first. Clearing the bit first and 90 s of permuting
-   did not fix it. Further equivalent expression, loop, carry/mask and
-   local scheduling variants did not improve score 60; a focused 45 s search
-   tested 12,997 candidates without improvement. All six editions share
-   this complete 388-byte extent.
-   2026-10-03: fresh EN baseline is 388B/score60. One used-mask local
-   with an empty read/write register constraint produced 388B/score1975:
-   50 register-only, 4 operand, 23 reordered, 1 inserted and 1 deleted.
-   Both have 188 instructions, 4 stores, 27 branches and 3 calls; equal
-   aggregate counts do not make changed instruction presence eligible.
-   The rejected device was removed and this axis stopped. */
 #include "TYPES.H"
 
 #include "RAM_BUFFER.H"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
-
-/* Draw a line into the effect canvas (8bpp tiles, 32 tiles to a row) with
-   an 8.8 fraction, keeping the larger of the existing and new colour. The
-   major axis is walked from its lower end. */
 
 void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 {

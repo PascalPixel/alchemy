@@ -20,11 +20,6 @@ s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 s32 Map_RenderAnimatedTileFramesForObjectFar(void *);
 s32 ActivateBattleObjectSlot(s32);
 
-/* Takes damage from a unit's HP, stopping at zero, and reports it with the
- * unit posed in mode 5: an optional opening line (a bitter blow for units 0
- * to 7, the party, and a critical hit for the others), the damage message,
- * and a downed message once HP reaches zero. The unit returns to mode 1 at
- * the end. */
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
     u8 local_context[4];

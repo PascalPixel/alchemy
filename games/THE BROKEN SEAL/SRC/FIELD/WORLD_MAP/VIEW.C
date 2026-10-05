@@ -78,9 +78,6 @@ void Map_RenderPaletteMappedColumn(u32 value)
     } while (counter <= 63);
 }
 
-/* Per-frame world map view: follow the target (with a decaying random
-   shake), redraw the palette-mapped column or row the view crossed, then
-   rebuild the camera transform and hand the frame to the renderer. */
 void WorldMap_UpdateView(void)
 {
     /* FAKEMATCH: retain the existing slot 12-relative cell reads. Loading slots 7/8 independently in 1a5404f7 added eight bytes in all editions. */
@@ -166,13 +163,8 @@ void WorldMap_UpdateView(void)
     ((s32 (*)(void *, s32 *, void *, void *))Data_03001e50[46])(cam, pos, map->scanlines, buffer[gFrameCount & 1]);
 }
 
-/* The world map's window on its tiles: the camera position and a 16 by 16
- * grid of tile numbers that wraps at its edges. */
-
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
-/* Redraws the 2 by 2 tiles around the camera's position on both layers,
- * the second layer's tiles 320 on from the first's. */
 void Map_UpdateCurrentTileBlock(void)
 {
     struct PerspectiveWork *window = gMapWork[0];
@@ -207,8 +199,6 @@ void Map_UpdateCurrentTileBlock(void)
     }
 }
 
-/* Brings the same 2 by 2 tiles up to date without forcing them, and stops
- * at the first one that had to be drawn, so a frame draws at most one. */
 void Map_UpdateCurrentTileBlockUntilBlocked(void)
 {
     struct PerspectiveWork *window = gMapWork[0];

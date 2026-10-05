@@ -15,19 +15,13 @@
 #include "FIELD_SCENE.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
-/* Robin's mother, as in the repair-morning scene of this overlay; the
-   villagers call her Dora. */
 enum {
     ACTOR_DORA = 21
 };
 
-/*
- * Reset or tear down a consecutive run of scene actors -- resource_373.
- */
 struct Resource373Actor {
     u8 unknown_00[8];
     s32 field08;
@@ -61,13 +55,12 @@ struct StagedParticle {
     u16 f5e;
 };
 
-/* Particle emitter state. */
 struct Resource373Emitter {
     u8 unknown_00[6];
     u16 field06;
-    s32 x;                          /* 0x08 */
-    s32 y;                          /* 0x0c */
-    s32 z;                          /* 0x10 */
+    s32 x;
+    s32 y;
+    s32 z;
     u8 unknown_14[4];
     s32 field18;
     s32 field1c;
@@ -83,7 +76,7 @@ struct Resource373Emitter {
 
 struct Resource373Particle {
     u8 unknown_00[0x28];
-    s32 lifetime;                   /* 0x28 */
+    s32 lifetime;
     u8 unknown_2c[4];
     s32 field30;
     s32 field34;
@@ -199,13 +192,6 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id);
 void WorldMap_CreateLinkedEffects(s32);
 s32 SceneEffect_UpdateOrbitPosition(s32 *p);
 
-/* Actor IDs the scene sets up: three actors share a common data pointer,
- * a fourth actor (11) is driven through its own sequence of position/speed
- * calls. */
-
-/* Shared data used for actors A, B, C. */
-
 void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
 
-/* The scene script and the particle, sound and vertical-motion effects it drives. */
 #endif

@@ -34,9 +34,6 @@ struct PathWork {
 
 extern const s32 Korosseo_RivalFinishScript[];
 
-/* The rival's recorded course: mode 2 records the actor's pixel position each
- * frame; mode 1 replays it, turning at most 0x1000 a frame, and at the end
- * walks the rival beside the finish and hands it to the finish script. */
 void Korosseo_UpdatePathRival(void)
 {
     struct PathWork *work = PATH_WORK;
@@ -119,17 +116,9 @@ void Korosseo_UpdatePathRival(void)
     }
 }
 
-
 extern u16 Korosseo_GaugePalette[];
 extern u8 Korosseo_GaugeGraphics[];
 
-
-/* Draws the race gauge each frame: it slides in while flag 0x106 is clear
- * and out once it is set, loading its palette and tiles as it first shows.
- * The gauge is two end caps and a middle joint around segments pieces on
- * each side, the right half mirrored; on eleven frames of every sixteen
- * the player and the rival are marked on it by how far each stands from
- * the finish. */
 void Korosseo_DrawGauge(void)
 {
     struct KorosseoGaugeWork *gauge = (struct KorosseoGaugeWork *)gKorosseoWork;

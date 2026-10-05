@@ -7,7 +7,6 @@ void UiText_DrawResourceFar(s32 message, s32 target, s32 x, s32 y);
 extern u8 MsgStatusAdvice[][2];
 extern u8 MsgStatusNormal[];
 
-/* ⚓️ keeps the cursor's tilemap object at 0x28; ☀️ at 0x24. */
 struct CursorMenuState {
     u8 padding[40];
     u8 *object;
@@ -56,9 +55,6 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
     Render_SetTilemapFlagRect(state->object, x, y, width, 1, last);
 }
 
-/* The selected status shows its two advice lines; an owner without any
-   status shows the normal-status line. ⚓️ calls the resource veneer that ☀️
-   also names UiText_DrawMessageAt. */
 void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     const u8 *entries)
 {

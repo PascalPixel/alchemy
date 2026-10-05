@@ -18,7 +18,6 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
-/* Writes one tile into a window's tilemap; modes 2-4 add palette bits. */
 void UiWindow_SetTilemapEntry(
     struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode)
 {
@@ -92,10 +91,6 @@ struct OutputSprite {
 };
 extern u16 Ui_BounceScales[];
 
-/* Steps the output's scale animation through the scale table (modes 9 and
-   10 loop, 11 and 12 play eight steps once, 10 and 12 at half size) and
-   sets the sprite's affine mode: none at 1.0 (256), double-size and moved
-   8 pixels up and left when larger, plain affine when smaller. */
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 {
     s32 scale = 256;
@@ -141,8 +136,6 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
     }
 }
 
-/* A render output as its sprite animation sees it: the header's kind,
-   position and step counter, then the OAM entry it queues. */
 struct SpriteOutput {
     struct SpriteOutput *next;
     u8 unknown_04;
@@ -164,10 +157,6 @@ extern const s8 UiSprite_BounceOffsets[];
 
 u32 Random16(void);
 
-/* Animates the sprites of every open window whose bit 0 is set and queues
-   them for drawing. Kinds: 2 a cycling glyph cursor, 4 a wobble, 5 a
-   jitter, 6 and 8 a shrinking pop, 7 a spin, 9-12 the scale table, 14-18
-   bounces; 13 is hidden. A window in state 4 turns its sprites into pops. */
 void UiWork_AnimateSpriteSlots(void)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];

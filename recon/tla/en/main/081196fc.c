@@ -1,8 +1,3 @@
-/*
- * Draft: BattleCamera_Create: allocates heap slot 48's 0x4c-byte camera and
- * sets its defaults. Score 23: the listing stores the 12..20 vector through a
- * temporary pointer first and builds 0x2800/0x5000 inline.
- */
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
@@ -18,7 +13,6 @@ struct SaveWork {
     u8 unknown_0000[0x303c];
     struct SaveSlotRecord slots[3];
 };
-
 
 void BattleCamera_Create(void)
 {

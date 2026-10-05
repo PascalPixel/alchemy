@@ -20,8 +20,6 @@
 
 extern u8 gBattleFxWork[];
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -40,20 +38,12 @@ extern u8 BattleFx_GlintCellWidths[];
 extern u8 BattleFx_GlintCellHeights[];
 extern u8 RenderMode_GlintFlips[];
 
-/* The modes whose particles close in on the unit; the others rise. */
 #define CONVERGES(mode) \
     ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
-/* Its mode entries, BattleFx_RenderMode0Or1 to BattleFx_RenderMode6, are COMMON's RENDER_MODE.C. */
-
-/* Where mode 3 decodes its tornado glints in work->sheet, after the
-   particle picture at the start. */
 enum { RENDER_MODE_TORNADO = 0x2580 };
 
-/* Battle effect: a cloud of particles around each affected unit, eight
-   frames apart, in one of eight modes that choose the picture, how many
-   particles there are and whether they close in on the unit or rise. */
 void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 {
     void **cursor;

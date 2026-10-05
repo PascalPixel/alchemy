@@ -46,7 +46,6 @@ struct Actor02000c0c {
     u8 state;
 };
 
-/* A cell pair for each of the village's exit triggers. */
 extern u8 ArutinMura_TriggerTable[];
 
 s32 Battle_GetWorkObject1e0();

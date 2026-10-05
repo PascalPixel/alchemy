@@ -3,7 +3,6 @@
 #include "UI.H"
 
 s32 UiMenu_CreateCursor(void *menu);
-/* The four-word portrait initializer retains this caller's extra word. */
 void PsynergyMenu_InitializeEntryObjects();
 s32 UiIcon_CreateWithResourceVariant(struct RenderInput *, s32, s32);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);

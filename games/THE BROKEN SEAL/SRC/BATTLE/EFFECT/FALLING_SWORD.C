@@ -15,11 +15,8 @@
 
 extern void *gBattleFxWork[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Two record tables share the map cell buffer: 684 dust records, then 340
-   sparks. */
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
@@ -37,9 +34,6 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *
 void BattleFx_StepPaletteToResource(s32 resource_id);
 void Audio_PlayCue(s32 cue);
 
-/* Battle effect: a sword slides down the screen through a column of fire
-   and strikes the ground, with sixteen radial flashes, a pool of 684 dust
-   records and 340 sparks. */
 void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 {
     void **heap;
@@ -55,8 +49,6 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
     s32 origin;
     s32 i;
 
-    /* The first two heap slots are read through a walking pointer; the
-       base itself serves the sheet and the two blitters. */
     heap = (void **)gBattleFxWork;
     p = heap;
     work = *p++;
@@ -83,7 +75,6 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    /* Thirty-two flash records are seeded; sixteen are drawn. */
     i = 0;
     do {
         struct EffectStep *flash = &work->particles[i];
@@ -97,7 +88,6 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
         i++;
     } while (i != 32);
 
-    /* Park the dust pool; the 340 records past it are seeded below. */
     i = 0;
     do {
         DUST[i].variant = -1;
@@ -179,7 +169,6 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
             } while (i != 16);
         }
 
-        /* Frame 28 seeds every still-parked record in the first 256. */
         if (frame == 28) {
             i = 0;
             do {
@@ -201,7 +190,6 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
             } while (i != 128 << 1);
         }
 
-        /* Frames 32..63 scan all 684 and seed at most sixteen more each. */
         step = frame - 32;
         if (step >= 0 && step <= 31) {
             s32 cnt;
@@ -231,8 +219,6 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
             } while (i != 171 << 2);
         }
 
-        /* The same guard again: the 34x104 fire column, wrapping through
-           its 104 rows. */
         if (step >= 0 && step <= 31) {
             s32 phase = frame * 16;
             s32 x = half - 17;
@@ -277,8 +263,6 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
                         HI(dust->y) - size,
                         size, size * 2);
 
-                    /* EffectStep_AdvanceWithGravity2D open-coded with a
-                       per-lane gravity and damping 62. */
                     dust->x += dust->velocity_x;
                     dust->y += dust->velocity_y;
                     if (frame > 80) {

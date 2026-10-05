@@ -1,7 +1,3 @@
-/* tla-de: the bodies this edition gives games/THE LOST AGE/MAIN.LD's output
-   sections, as pret links every version through one script: the game's own
-   lines it links from source, in the game's order, and between them its
-   rom.s scaffold of base-ROM ranges. */
 .rom_start :
 {
     "*/recon/tla/de/rom.o"(.rom.00000000)

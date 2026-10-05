@@ -1,4 +1,3 @@
-/* Move toward the linked object, stopping sixteen pixels short. */
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "FIXED_MATH.H"
@@ -6,8 +5,6 @@ extern u8 IwramSqrt[];
 s32 _call_via_r3(s32, s32, s32, s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
 
-/* Inherit the linked object's speed and acceleration; scale the move by the
- * remaining distance, measured from whole-pixel deltas. */
 s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
 {
   s32 len;

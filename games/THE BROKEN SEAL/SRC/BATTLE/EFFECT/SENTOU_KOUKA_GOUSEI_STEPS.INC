@@ -1,17 +1,9 @@
-/*
- * The steps that turn the Gousei template into one blitter.  `src` walks the
- * template; a step either takes the words under it or leaves them behind.
- * SENTOU_KOUKA_GOUSEI_BUILD.C runs this list twice: once with steps that
- * only count, once with steps that write.
- */
 
-    /* Save the registers, fetch width and height from the stack. */
     COPY(3);
     if (mode == GOUSEI_KASAN) {
         COPY_FROM(SentouKouka_Mask, 3);
     }
 
-    /* Where the source starts and how it moves on to the next row. */
     if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_X) {
         COPY_FROM(src, 3);
     }
@@ -29,7 +21,6 @@
     }
     src += 1;
 
-    /* Rows above the canvas are skipped, rows below it dropped. */
     if ((flags & GOUSEI_CLIP_Y) != 0) {
         PUT(src[0]);
         PUT(src[1]);
@@ -49,7 +40,6 @@
     MARK(no_rows);
     PUT(*src++);
 
-    /* Columns either wrap round the canvas or are clipped at its sides. */
     if ((flags & GOUSEI_CLIP_X) == 0) {
         PUT(src[0] + (1 << width_shift) - 1);
     }
@@ -80,7 +70,6 @@
     MARK(no_columns);
     PUT(*src++);
 
-    /* Split the row at cell boundaries and find the first cell. */
     COPY(6);
 
     PUT(*src++);
@@ -91,7 +80,6 @@
 
     COPY(5);
 
-    /* Each row: the address of its first pixel in the canvas. */
     MARK(row);
     PUT(src[0]);
     PUT(src[1] + (1 << (height_shift - 3)) - 1);
@@ -104,7 +92,6 @@
     }
     src += 1;
 
-    /* The pixels up to the first cell boundary, one at a time. */
     PUT(*src++);
     MARK(skip);
     PUT(*src++);
@@ -159,7 +146,6 @@
     src += 2;
     PATCH(skip);
 
-    /* The whole cells, eight pixels at a time. */
     PUT(*src++);
     MARK(skip);
     PUT(*src++);
@@ -215,7 +201,6 @@
     PUT_BRANCH(cell);
     PATCH(skip);
 
-    /* The pixels left after the last whole cell. */
     PUT(*src++);
     MARK(skip);
     PUT(*src++);
@@ -264,13 +249,11 @@
     PUT_BRANCH(run);
     PATCH(skip);
 
-    /* Next source row, next canvas row, until the last. */
     COPY(3);
 
     PUT_BRANCH(row);
     PATCH(no_rows);
     PATCH(no_columns);
 
-    /* Restore the registers and return. */
     PUT(*src++);
     PUT(*src++);

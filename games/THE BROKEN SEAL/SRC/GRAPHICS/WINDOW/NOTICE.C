@@ -25,7 +25,6 @@ void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 void UiTimedNotice_Tick(void);
 s32 PartyInventory_RemoveFar(s32);
 
-/* The field notice's mode-specific tail of the event allocation. */
 struct TimedNoticeWork {
     u8 unknown_000[0x230];
     struct UiWindow *window;
@@ -44,7 +43,6 @@ u32 Menu_RunSelectionForValue(u32 value)
     struct SelectionScreen *state = gResQueueWork;
     u32 result;
 
-    /* 値、使用中フラグの順に設定する。 */
     state->cursor_index = value;
     state->locked = 1;
     MenuSelection_BuildEntries(value);
@@ -56,9 +54,6 @@ u32 Menu_RunSelectionForValue(u32 value)
     return result;
 }
 
-/* Show the text the party's scene and entrance select, centred in a
-   window, and let UiTimedNotice_Tick close it after 90 frames. The window
-   and its countdown live in the event work at +0x230 and +0x234. */
 void UiTimedNotice_Create(void)
 {
     struct TimedNoticeWork *work;
@@ -117,8 +112,6 @@ s32 Item_CallHandler48(s32 arg0, s32 arg1)
     return 0;
 }
 
-/* A routine that only reports success; the window far-call table reaches
-   it through its stub. */
 s32 Item_ReturnTrue(void)
 {
     return 1;

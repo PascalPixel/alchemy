@@ -5,7 +5,6 @@
 
 u32 BattleRandom16(void);
 
-/* The battle's linear congruential generator state. */
 extern s32 gBattleRandomSeed;
 
 #endif

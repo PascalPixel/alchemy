@@ -11,11 +11,6 @@
 #include "OVERLAY_OBJECT.H"
 #include "STAGED_ACTOR.H"
 
-/*
- * Effect spawning for overlay resource_39f.  Every cutscene beat in the
- * overlay creates its effects through this routine.
- */
-
 struct Sprite {
     u8 pad00[9];
     u8 flags9;
@@ -249,9 +244,6 @@ typedef struct {
     s32 unkC;
 } Struct_22a4b;
 
-/*
- * Per-frame motion for an effect record in resource_3c8.
- */
 struct Sprite_0200096c {
     u8 pad00[9];
     u8 flags9;
@@ -344,8 +336,6 @@ void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void RunStagedActorTransition(void);
 void SceneActor_SwapPositionsByDepth(s32 group, s32 index);
 s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void);
-
-/* Set up the scene and its two global halfword states. */
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor);
 

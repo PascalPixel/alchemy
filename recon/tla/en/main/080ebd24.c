@@ -1,16 +1,8 @@
-/* Near miss: differ 2, one scheduling tie. ☀️'s EffectSlot_UpdateMotion
-   (EFFECT43.C) as it stands; it goes between SLOT_UPDATE.C and
-   HAS_REACHED_TARGET.C. The listing loads target_x before building
-   0x80000000 (movs r2, #128); this build builds it first. Writing the
-   constant first in the comparison leaves 2. */
 #include "TYPES.H"
 #include "EFFECT_SLOT.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 
-/* Steer an effect slot toward its target: snap to it once within 8.0,
-   otherwise turn by at most the slot's turn step, accelerate up to
-   the maximum speed and move along the heading. */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect)
 {
     s32 dx;

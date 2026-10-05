@@ -29,7 +29,6 @@ void EventRuntime_ResolvePendingActions(s32 skip)
         EventRuntime_ExecutePackedAction(0x208b);
 }
 
-/* The party member the player controls, or 8 while an override holds. */
 s32 EventRuntime_GetControlledOwner(void)
 {
     struct PartyState *state = &gPartyState;
@@ -43,8 +42,6 @@ s32 EventRuntime_GetControlledOwner(void)
     return actor;
 }
 
-/* Whether item_id passes the filter: the item itself, 0x1ff for any item,
-   or 0x1fe for an item of types 1 to 4. */
 s32 Item_MatchesFilter(s32 filter, s32 item_id)
 {
     if (filter == item_id)

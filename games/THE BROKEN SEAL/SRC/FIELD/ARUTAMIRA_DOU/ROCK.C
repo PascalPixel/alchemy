@@ -1,4 +1,3 @@
-/* The rock puzzle: turning one of the five rocks. */
 #include "ARUTAMIRA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -10,14 +9,6 @@ void SceneActor_SetPositionFromTransformedBase(s32 actor, s32 reach, s32 angle);
 void ArutamiraDou_SpinActorWheel(void);
 void ArutamiraDou_ReleaseWallBurst(void);
 
-/*
- * The party turns a rock; the action names which. A round is won by turning
- * the first rock, then the last, then the one the wheel chose: the second
- * step raises the ring of five actors, and a wrong third rock lowers it
- * again. Winning a round counts it, chooses another rock and spins the wheel
- * to show it. The third win instead stops the wheel, draws the ring in to
- * its centre and releases the wall burst.
- */
 void ArutamiraDou_TurnRock(s32 action)
 {
     s32 won = 0;

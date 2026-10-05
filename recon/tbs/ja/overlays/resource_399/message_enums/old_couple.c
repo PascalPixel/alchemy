@@ -1,8 +1,3 @@
-/* NONMATCHING: Japanese compile-known old-couple dialogue, 2026-10-01.
- * The complete branch scene compiles with approved TBS flags. Message 5856
- * uses a shifted byte in place of the original pool load and shortens this
- * owner by four bytes. Production uses the canonical PO symbol instead.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"

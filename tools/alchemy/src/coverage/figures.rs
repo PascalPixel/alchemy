@@ -1,7 +1,3 @@
-//! `alchemy figure`: README's two progress figures, PROGRESS_CHART.png (DONE
-//! over time from the history table) and PROGRESS.png (the repository as a
-//! treemap of what each file is), redrawn from the verified builds' count.
-//! Reports for people only (AGENTS.md O1); no commit runs it.
 use super::{figure, history, letters, measure_both};
 use crate::compiler::routing::root;
 use std::time::Instant;

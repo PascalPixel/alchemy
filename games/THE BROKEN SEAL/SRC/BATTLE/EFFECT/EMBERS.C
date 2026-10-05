@@ -25,9 +25,7 @@ extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
-/* Three x and y pairs: where each ember column stands. */
 extern u8 EmberColumns_Columns[];
-/* By ember index modulo four: how fast it is pulled down. */
 extern s32 EmberColumns_Gravity[];
 
 struct BattleEffectTargetArgument;
@@ -38,14 +36,9 @@ void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 extern u8 gBattleFxWork[];
-/* By drop index modulo four: how fast a drop leaves the ground. */
 extern u8 PaletteParticles_DropSpeeds[];
-/* The spark's two pixels. */
 extern u8 PaletteParticles_SparkPixels[];
-/* By drop index modulo four: which particle picture it is drawn with. */
 extern u8 PaletteParticles_DropSizes[];
-/* The streak's six pictures: width, height, how far below the streak each
-   is drawn and where it starts in the sheet. */
 extern u8 PaletteParticles_StreakWidths[];
 extern u8 PaletteParticles_StreakHeights[];
 extern u8 PaletteParticles_StreakDrops[];
@@ -73,14 +66,6 @@ struct BlitterPair {
     DrawRectangle lower;
 };
 
-/*
- * Sixteen streaks come down in steps and land; drops rise off the ground,
- * one a frame and then eight, sparks fly from the focus on odd frames, and
- * at the end bursts open there while the canvas brightens and fades. A held
- * button skips the middle. Mode 0 plays it on the formation objects it
- * spawns and ends in the impact burst; mode 1 plays it over the actor in
- * the lightning palette, mirrored for the far side.
- */
 void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 mode)
 {
     struct EffectPosition origin;
@@ -402,14 +387,6 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
     BattleFx_EndCanvasLayer();
 }
 
-/*
- * A scrolling band of spray rises while a focus point glides in from the
- * right and settles; from frame 28 embers burst around it, and for 48 frames
- * three columns of fire climb while sixteen more embers join each frame.
- * Embers grow, fall under a per-lane pull, and die once they drop past the
- * ground. A held button skips the middle of the effect. Afterwards the
- * impact burst plays at the focus point and the spawned objects are freed.
- */
 void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 {
     DrawRectangle draw[2];

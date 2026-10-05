@@ -1,9 +1,5 @@
 #include "TYPES.H"
 
-/* Step the selection cursor right; at the end of a long list, slide every
-   entry back to the top and restart, otherwise scroll one row when the
-   cursor reaches the fourth slot. */
-
 struct StepNode {
     u8 unk_00[4];
     struct StepNode *next;
@@ -31,8 +27,8 @@ struct StepMenu {
     u16 entry_ids[16];
     u16 entry_kinds[16];
     u16 count;
-    u16 base_y; /* read through MENU_BASE_Y */
-    u16 base_z; /* read through MENU_BASE_Z */
+    u16 base_y;
+    u16 base_z;
     u8 unk_39a[2];
     u16 top;
     u16 cursor;

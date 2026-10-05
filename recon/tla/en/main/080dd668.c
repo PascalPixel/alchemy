@@ -1,7 +1,3 @@
-/* Draft: UpdateRisingParticleBurst, ☀️'s body with child kind 0x2a1.
- * Differ 6 (dd): native loads -0x800 into r5 before the first cue call, and
- * sets the 0x2000 constant and the WaitFrames argument one load earlier. A
- * local for -0x800 set before the call rematerialises it in the loop (12). */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"

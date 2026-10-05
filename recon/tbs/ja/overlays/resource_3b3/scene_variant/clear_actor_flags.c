@@ -1,7 +1,3 @@
-/* NONMATCHING: localized scene source, 2026-10-01.
- * The complete 736-byte setup retains localized actor-eight/nine flag clears.
- * Japanese omits those clears; its complete setup is 716 bytes.
- */
 #include "HASHIRA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

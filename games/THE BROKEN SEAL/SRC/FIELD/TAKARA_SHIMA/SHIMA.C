@@ -8,12 +8,9 @@
 #include "SCENE_IDS.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
-/* Integrate position, velocity, rate and sprite angle for one scene effect.
-   Signed division preserves decay toward zero for negative Z velocity. */
 struct Sprite {
     u8 pad00[9];
     u8 flags9;
@@ -358,11 +355,8 @@ void PositionSceneActorPair(s32 actor, s32 x, s32 z);
 u8 *Object_GetByIdFar();
 void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset);
 
-/* Deliberate no-op callback. */
 void NoOpEffectCallback(void) {}
 
-/* Where the party appears on the island: its first five scenes have their
-   own entrances, every other scene shares one table. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -385,20 +379,16 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gTakaraShimaEntrancesOther;
 }
 
-/* The island has no regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
 }
 
-/* Every island scene leaves through one exit table. */
 const u32 *Scene_GetExits(void)
 {
     return gTakaraShimaExits;
 }
 
-/* The actors placed on the island: the first and third scenes have their
-   own, the sixth to the fourteenth share one table. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -421,7 +411,6 @@ void AdvanceEffectMotion(struct Effect *effect)
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
-
 
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
@@ -481,7 +470,6 @@ void InitializePrologueSceneState(void)
     Engine_EventEnd();
 }
 
-/* What the island answers, chosen as its entrances are. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -514,12 +502,6 @@ void StartScriptedSceneMessage(s32 message_id)
     Engine_EventEnd();
 }
 
-/* The island's scene start. The screen opens through a window. The escape
-   scene places its actors; the fifth scene clears two rocks until flag
-   0xef7 is set and opens its passage from entrance 5 or once flag 0x8d1
-   is set; the first scene hides the four statues whose flags 0x240 to
-   0x243 are set and sways the tree until flag 0xfd7; the sixth to the
-   fourteenth run the shared column sequence. */
 s32 Scene_Initialize(void)
 {
     struct FieldActor *actor;
@@ -655,7 +637,7 @@ void FieldScene_HandleEscapeColumn(void)
     s32 zero;
 
     entity = Object_GetById(8);
-    column = entity->x.fixed >> 20;    /* 16.16 -> 16-pixel tile grid */
+    column = entity->x.fixed >> 20;
     if (column != 40) {
         return;
     }
@@ -725,8 +707,6 @@ void StartSceneScript37(void)
     Engine_EventRequestExit(4);
 }
 
-/* Crossbone Isle: on the first visit to an area (flag 0x8c8 + area) show its
- * title card; later visits animate the entrance cells and leave. */
 void TakaraShima_RunAreaEntry(void)
 {
     if (Engine_GameFlagIsSet(gGameState.scene + (0x8c8 - (s32)&SceneId_TakaraShima6)) == 0) {
@@ -770,19 +750,6 @@ void TakaraShima_RunAreaEntry(void)
     }
 }
 
-/* Advance actor 18 and its companions along the Z-axis escape route.
-   Shared branches preserve the transition call sites used by multiple rows. */
-
-/* Advance actor 9 and its companions along the Z-axis escape route.
-   Shared branches preserve the transition call sites used by multiple rows. */
-
-/* Return leg of the slot-14 transition beat: negated ids. */
-
-/* Outbound leg of the slot-14 transition beat. */
-
-/* Return leg of the slot-16 transition beat: negated ids. */
-
-/* Outbound leg of the slot-16 transition beat. */
 void TakaraShima_LeaveClearedRoom(void)
 {
     u32 i;
@@ -1655,7 +1622,6 @@ void UpdateActor17NorthRoute(void)
 
 #define IN_COLUMNS(x) ((x) >= 6 && (x) <= 8)
 
-/* Crossbone Isle push block, northward: by the row actor 18 stopped in and whether actors 19, 14 and 16 stand in columns 6 to 8, slide its pair back to the matching offset, then move the block's cell attributes. */
 void TakaraShima_SettlePushedBlockNorth(void)
 {
     s32 cell_x;
@@ -1750,7 +1716,6 @@ void AdvanceActor18AlongEscapeRoute(void)
         if ((u32)(companion19Column - 6) <= 2) {
             goto transition80;
         }
-        /* This arm runs two transitions back to back. */
         PositionSceneActorPair(18, 0, 64);
         PositionSceneActorPair(18, 0, 96);
     } else if (row == 11) {
@@ -1793,7 +1758,6 @@ transition80:
 
 #define IN_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
-/* Crossbone Isle push block (actor 9), northward: by the row it stopped in and whether actors 19, 14 and 16 stand in columns 9 to 11, slide its pair back to the matching offset, then move the block's cell attributes. */
 void TakaraShima_SettleSecondBlockNorth(void)
 {
     s32 cell_x;
@@ -1894,7 +1858,6 @@ void AdvanceActor9AlongEscapeRoute(void)
         if ((u32)(companion19Column - 9) > 2) {
             PositionSceneActorPair(9, 0, 80);
         }
-        /* Falls through into the id-96 site from both paths. */
         PositionSceneActorPair(9, 0, 96);
     } else if (row == 11) {
         if ((u32)(companion14Column - 9) <= 2) {
@@ -1934,7 +1897,6 @@ transition48:
     Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
-/* Crossbone Isle push block, westward: by the column actor 19 stopped in and where actors 17, 18 and 9 stand, slide its pair back to the matching offset, then move the block's cell attributes. */
 void TakaraShima_SettlePushedBlockWest(void)
 {
     s32 cell_x;
@@ -2004,7 +1966,6 @@ void TakaraShima_SettlePushedBlockWest(void)
     Engine_MapCopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
 }
 
-/* Crossbone Isle push block: by the column actor 19 stopped in and where actors 18 and 9 stand, slide its pair to the matching offset, then move the block's cell attributes to its new column. */
 void TakaraShima_SettlePushedBlock(void)
 {
     s32 cell_x;

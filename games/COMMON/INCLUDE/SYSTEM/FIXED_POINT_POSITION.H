@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* Three 16.16 coordinates consumed by the shared distance helper. */
 struct FixedPointPosition {
     s32 x;
     s32 y;

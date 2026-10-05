@@ -14,7 +14,6 @@ void UiText_RenderWideStringAtOffsetFar(void *buffer, struct UiWindow *destinati
 
 extern u8 MsgProgressHelp;
 
-/* The characters of the help line: the Japanese line is shorter. */
 #if EDITION_INTERNATIONAL
 #define PROGRESS_TEXT_MAX 0x80
 #else

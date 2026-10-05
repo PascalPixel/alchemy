@@ -1,9 +1,5 @@
 #include "INVENTORY.H"
 
-/* Removes the first unequipped stack, one removal per unit it holds.
-   Returns 1 when the last removal
-   reports 2 or when the bag ends before such a stack, 0 otherwise. */
-
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner)

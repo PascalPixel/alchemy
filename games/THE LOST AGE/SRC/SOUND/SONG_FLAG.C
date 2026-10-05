@@ -1,8 +1,6 @@
 #include "TYPES.H"
 
 extern u16 Data_02005830;
-/* One bit for each of 1024 song numbers, kept as GameFlagBytes keeps the
-   game's flags. */
 extern u8 gSongFlags[];
 
 u16 Audio_GetBackgroundCue(void)

@@ -1770,7 +1770,6 @@ Data_02001490:
 	.4byte MsgFieldImSureThoseTwoWentTo
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	@ The whole message id, then the event flags halfword.
 	.2byte MsgDeriWellSeawater
 	.2byte 0x0040
 	.4byte 0xffffffff
@@ -1945,7 +1944,6 @@ Data_02001664:
 	.4byte Func_02000118
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	@ The whole message id, then the event flags halfword.
 	.2byte MsgDeriWellSeawater
 	.2byte 0x0040
 	.4byte 0xffffffff

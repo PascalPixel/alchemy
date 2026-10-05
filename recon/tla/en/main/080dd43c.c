@@ -8,7 +8,6 @@ struct Output_08097f80 {
     s32 z;
 };
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect)

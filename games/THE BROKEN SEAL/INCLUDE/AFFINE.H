@@ -4,8 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* Object scale is stored as halfwords and interpreted signed by the matrix
-   builder. The angle is unsigned; the final halfword has no known use. */
 struct AffineTransform {
     u16 scale_x;
     u16 scale_y;

@@ -43,14 +43,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
@@ -177,8 +174,6 @@ u8 *KorosseoKawa_GetPlacements(void)
     return KorosseoKawa_SceneTableC;
 }
 
-/* Runs one branch of a scripted auxiliary sequence selected by the current
- * countdown value, then advances (or, from 0, restarts) the countdown. */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
     extern s32 KorosseoKawa_Countdown;
@@ -187,23 +182,23 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     case 66:
         Map_UpdateCellRect(92, 31, 2, 2, 50, 38);
         Map_UpdateCellRect(92, 31, 2, 2, 54, 38);
-        Engine_ActorSetAnimation(16, 10); /* object 16, action 10 */
+        Engine_ActorSetAnimation(16, 10);
         break;
     case 60:
         Map_UpdateCellRect(92, 33, 2, 2, 50, 38);
         Map_UpdateCellRect(92, 33, 2, 2, 54, 38);
         Engine_MapCopyCellAttributes(50, 25, 6, 1, 50, 12);
-        Engine_ActorSetAnimation(16, 11); /* object 16, action 11 */
+        Engine_ActorSetAnimation(16, 11);
         break;
     case 6:
         Map_UpdateCellRect(92, 31, 2, 2, 50, 38);
         Map_UpdateCellRect(92, 31, 2, 2, 54, 38);
-        Engine_ActorSetAnimation(16, 10); /* object 16, action 10 */
+        Engine_ActorSetAnimation(16, 10);
         break;
     case 0:
         Map_UpdateCellRect(92, 29, 2, 2, 50, 38);
         Map_UpdateCellRect(92, 29, 2, 2, 54, 38);
-        Engine_ActorSetAnimation(16, 12); /* object 16, action 12 */
+        Engine_ActorSetAnimation(16, 12);
         Engine_MapCopyCellAttributes(50, 24, 6, 1, 50, 12);
         KorosseoKawa_Countdown = 120;
         break;
@@ -533,11 +528,6 @@ void SceneState_ApplyValue768(void)
     Engine_GameFlagSet(768);
 }
 
-/* The river stage's start: after the approach scene and once the stage is
-   ready, actor 8 and the leader walk to the start line and face each
-   other. The approach's outcome goes to the weighted result, the river's
-   scene is stored with entrance 4 and 5 in the two scene pairs, the stage
-   byte at 0x22b becomes 3 and flag 0x11a is set. */
 void KorosseoKawa_RunStageStart(void)
 {
     s32 approach;
@@ -643,7 +633,6 @@ void SceneActor_MarkObjectAtTiles94To95(s32 actor)
     }
 }
 
-/* River arena entry: record the arrival, set the logs, ledges and item icons by the story flags, then start the entrance's opening scene. */
 s32 KorosseoKawa_ApplyEntryState(void)
 {
     /* FAKEMATCH: the halfword row view retains the base-plus-index entrance address form also used by the wall stage. */
@@ -896,8 +885,6 @@ void FieldScene_RunCommandSequence(s32 a0)
     Engine_EventEnd();
 }
 
-/* Colosso river stage: unless the stage is already cleared, walk the player
- * through the introduction, push the pillars and hand over to the stage. */
 void KorosseoKawa_RunStageIntro(s32 scene)
 {
     s32 path;
@@ -964,9 +951,6 @@ void KorosseoKawa_RunStageIntro(s32 scene)
     }
 }
 
-/* The Pipeworks stage: actor a0 shows the course while actors 13 and 14 are
- * raised and lowered twice, then the stage opens. After a solo round the
- * question whether the party is done cheering comes instead. */
 void Korosseo_RunPipeworksIntro(s32 a0)
 {
     s32 rec4;
@@ -1040,9 +1024,6 @@ void Korosseo_RunPipeworksIntro(s32 a0)
     }
 }
 
-/* The Broken Bridge stage: the camera pans to the bridge, the competitor
- * fades in and walks to its end, then the stage opens. */
-
 void Korosseo_RunBrokenBridgeIntro(s32 scene)
 {
     s32 path;
@@ -1091,8 +1072,6 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
     }
 }
 
-/* The Lumber Water stage: the camera pans over the logs, the competitor
- * fades in and pushes the first log, then the stage opens. */
 void Korosseo_RunLumberWaterIntro(s32 scene)
 {
     s32 path;

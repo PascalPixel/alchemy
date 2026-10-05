@@ -3,11 +3,6 @@
 
 #include "TYPES.H"
 
-/*
- * target_offsets の絶対値で引く百分率。
- * 中心から離れるほど効果が落ちる。
- */
-
 extern u8 HitFalloff[];
 extern s32 PpLossFalloff[];
 extern s32 HpHealFalloff[];
@@ -17,8 +12,6 @@ extern s32 HpDmgFalloff8[];
 extern s32 HpDmgFalloff6[];
 extern s32 PpHealFalloff[];
 extern s32 HpDmgFalloff[];
-
-/* Shared arithmetic; callers must avoid divide-by-zero. */
 
 s32 Battle_HitCheck(s32 actor, s32 target, s32 range, s32 effect, s32 table);
 s32 Battle_CalcAttack(s32 amount, s32 reduction, s32 adjustment, s32 selector);

@@ -60,10 +60,8 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
     u8 packed_pixels;
     u32 result;
 
-    /* 1行64バイトで衝突判定タイル64個を表す。 */
     cell = (((u32)(y_step / 8) & 63) << 6) +
         ((u32)(x_step / 8) & 63);
-    /* 4×4ドット・4bppの衝突判定タイルは8バイト。 */
     pixel_offset = (((u32)(y_step / 2) & 3) << 1) +
         ((u32)(x_step / 4) & 1);
 
@@ -78,7 +76,6 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
             return result;
     }
 
-    /* 前面が空なら背面マップを調べる。 */
     tile = *(u8 *)(0x06004000 + cell);
     packed_pixels = *(Ram_MapCollision + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
@@ -172,8 +169,6 @@ done:
     work->shake_decay = 0;
 }
 
-/* Copies the ARM decoder TileMap_DrawRows to a heap block and runs the
-   decoder gWorkSlot holds on a and b. */
 void Resource_RunCopiedDecoder(s32 a, s32 b)
 {
     u8 *base;
@@ -189,9 +184,6 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     Runtime_ReleaseHeapBlock(49);
 }
 
-/* Fill the world map's 160 scanline rows from the camera's view of the
-   ground plane at POSITION: a line that meets the plane gets a scale and a
-   signed ground distance, any other line zeros. */
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *row)
 {
     s32 ground[3];

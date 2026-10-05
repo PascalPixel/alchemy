@@ -20,9 +20,6 @@ enum BattleSideMask {
     BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
 };
 
-/* A side's set-aside Djinn: element, index within the element, owner and
-   the turns left before it is set again. Summoning marks a Djinn -2 until
-   the turn ends and it joins the recovery order. */
 struct DjinnRecoveryEntry {
     u8 element;
     u8 index;
@@ -42,15 +39,12 @@ struct DjinnRecoveryTable {
     struct DjinnRecoveryList list;
 };
 
-
 s32 BattleParty_PrepareActiveOwners(u16 *unit_ids);
 s32 BattleParty_ListPresentEnemies(s16 *unit_ids);
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
 s32 BattleParty_AssignMemberSlots(void);
 s32 BattleParty_ListActorIds(s32 side_mask, u16 *unit_ids);
 
-/* Countdown bytes share the live BattleUnit record. The modifier bytes are
-   signed; confusion and reflect are read as unsigned countdowns. */
 s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias);
 s32 BattleUnit_TickAttackModifier(s32 unit_id);
 s32 BattleUnit_TickDefenseModifier(s32 unit_id);

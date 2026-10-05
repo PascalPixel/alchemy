@@ -1,5 +1,3 @@
-@ LuckyDice_Board: its 224-colour palette, then 600 tiles of 8-bit colour packed
-@ by the resource packer.
 	.section .rodata
 	.global LuckyDice_Board
 LuckyDice_Board:

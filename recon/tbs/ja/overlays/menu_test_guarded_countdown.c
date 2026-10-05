@@ -1,8 +1,3 @@
-/* Draft: Japanese debug command source alternative.
- * 2026-10-01: Compiled owner 668 bytes; clear/fill register allocation or scheduling differs from the 664-byte Japanese owner.
- * This reduced attempt includes its current source declaration context.
- * Ordinary TBS compiler and options; no scene placement or credit claimed.
- */
 #include "EDITION.H"
 #include "../../../../games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/MENU_TEST.H"
 #include "CALL.H"
@@ -51,9 +46,7 @@ void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
-
 
 void CommandTable_ConfigureCommandGroups(void)
 {

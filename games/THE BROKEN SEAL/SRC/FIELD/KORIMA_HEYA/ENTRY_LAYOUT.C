@@ -1,7 +1,3 @@
-/*
- * Overlay resource_390: table getters, four actor message branches, and the
- * entry step that lays out the map by selector.
- */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -15,10 +11,9 @@ extern u8 MsgKorimaWhenWasTreeLearnedAppreciate[];
 
 struct Approach390Subject {
     u16 unknown_00[3];
-    u16 dir;                   /* 0x06, wrapped 16-bit */
+    u16 dir;
 };
 
-/* The scene's tables, laid out after the code. */
 extern u8 EntryLayout_PrimaryTable[];
 extern u8 EntryLayout_SecondaryTable[];
 extern u8 EntryLayout_Records[];
@@ -26,7 +21,6 @@ extern u8 EntryLayout_FourthTable[];
 
 void FieldScene_PrepareActors(u8 *);
 
-/* Fill the fifteen record-table entries with their default field values. */
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
 {
     u32 i;
@@ -57,7 +51,6 @@ u8 *SceneData_GetPrimaryTable(void)
     return EntryLayout_PrimaryTable;
 }
 
-/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -136,7 +129,6 @@ void FieldScene_RunActor19MessageBranch(void)
     void Engine_InnOpen(s32, s32);
     void Engine_EventShowMessage(s32, s32);
 
-
     u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
@@ -156,7 +148,6 @@ u8 *SceneData_GetFourthTable(void)
     return EntryLayout_FourthTable;
 }
 
-/* On map entry, set phase 0x209, set records 8 to 22 to presentation phase 0 on the first visit and repaint three rectangles for the selected map. */
 s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
     s32 Engine_GameFlagIsSet();
@@ -193,7 +184,6 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
         Engine_MapCopyCellsTo(34, 94, 18, 76, arg4, arg5);
         Engine_MapCopyCellsTo(94, 34, 78, 16, arg4, arg5);
     } else if ((u32)((sel - 8) << 16) <= (128 << 9)) {
-        /* Shifted window test: the selector set is {8, 9}. */
         s32 arg5;
         s32 arg4;
         arg4 = 11;

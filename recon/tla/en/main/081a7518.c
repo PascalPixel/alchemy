@@ -21,10 +21,6 @@ void Blend_WaitForTransition(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
 
-/* Title: show the splash picture, fade it in and wait for A or START (or
-   time out), then fade it out. Mode 0 only waits for two seconds after the
-   fade-in. Returns -1 when a button cut it short. */
-
 s32 Title_ShowSplashScreen(s32 mode)
 {
     s32 result;

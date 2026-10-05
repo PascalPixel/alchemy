@@ -1,5 +1,3 @@
-@ tla-it's scaffold: the base-ROM ranges its MAIN.LD places between the
-@ lines it links from source, with a label where the source names a place.
 	.section .rom.00000000, "ax"
 	.global Cartridge_Restart
 Cartridge_Restart:
@@ -220,7 +218,6 @@ Runtime_WriteDebugTextTiles:
 Func_08014b70:
 	.incbin "baserom.gba", 0x00014b9c, 0x0000003c
 	.section .rom.00014e0c, "ax"
-	@ Uncredited four-byte tail; independent purpose is unproved.
 	.incbin "baserom.gba", 0x00014e0c, 0x00000004
 	.section .rom.00014e10, "ax"
 	.global Render_ResetTransformState
@@ -3042,14 +3039,12 @@ Func_080c85a0:
 	.thumb_func
 Func_080c85a8:
 	.incbin "baserom.gba", 0x000c85b8, 0x00000008
-@ Complete8-byte veneer reaches the verified96-byte world-to-screen camera routine.
 	.global Camera_WorldToScreenFar
 	.type Camera_WorldToScreenFar, %function
 	.thumb_func
 Camera_WorldToScreenFar:
 	.incbin "baserom.gba", 0x000c85c0, 0x00000008
 	.section .rom.000c8628, "ax"
-@ Complete8-byte far entry reaches the verified192-byte record snapshot builder.
 	.global Object_BuildRecordSnapshotFar
 	.type Object_BuildRecordSnapshotFar, %function
 	.thumb_func

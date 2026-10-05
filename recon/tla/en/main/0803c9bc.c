@@ -9,8 +9,6 @@ struct MessageWork {
 extern struct MessageWork *Data_03001e8c;
 s32 UiText_BuildRenderEntries(s32 key, s32 mode);
 
-/* Build the message, then copy at most capacity - 1 code units and terminate. */
-
 s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity)
 {
     struct MessageWork *work;

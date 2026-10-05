@@ -8,8 +8,6 @@ struct SerialWork {
     u16 state;
 };
 
-/* Queues a command word for the serial link: clears its progress and puts
-   the exchange in state 3. Without a serial runtime it does nothing. */
 void SerialRuntime_QueueCommand(u32 command)
 {
     struct SerialWork *work = Ram_HeapSlots->serial_work;

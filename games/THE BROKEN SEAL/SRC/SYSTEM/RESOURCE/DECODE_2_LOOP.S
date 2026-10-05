@@ -1,11 +1,3 @@
-@ Decode loop of the stream type 2 decoder (DECODE_2.S). It rebuilds
-@ nibbles by calling into a table of 32-byte code slots with mov lr, pc;
-@ add pc, r9, r8, lsl #5, tests code bits on the carry out of lsrs, and
-@ sets the return address of its refill subroutine by hand
-@ (sub lr, pc, #280). None of this is compiler output. The 50 nop words
-@ that fill the slots after their bx lr or branch never run and carry no
-@ credit. Every TBS and TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
 .L_08002850:
@@ -205,7 +197,6 @@ Resource_RefillType2Bits:
 	sub	r0, r1, r9
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-@ ニブル位置ごとの合成処理。各入口は三十二バイト間隔。
 .L_08002b08:
 	and	r8, ip, fp
 	bx	lr

@@ -1,9 +1,3 @@
-/* Draft: BattleFx_StartItemBreak, ☀️'s EFFECT13.C body with ⚓️'s object
- * kinds 0x116 and 0x2a1 and cue 138. Differ 10 (dd): the source loads, the
- * sl handoff before the 0x1c/0x18 stores and the jitter subtraction each sit
- * one load later than native, the ⚓️ pattern of loads scheduled earlier.
- * 300 devsearch iterations found nothing. BattleFx_FragmentScript is the
- * unlabelled Data_080f0e78 in ⚓️. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"

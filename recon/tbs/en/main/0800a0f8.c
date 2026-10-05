@@ -1,33 +1,4 @@
 #include "PROJECT.H"
-/* Transform_UpdateVertices draft (2026-09-29), not exact: 161 of 161 words,
- * branches and pool line up, remaining differences are register choice and
- * scheduling in the first loop and prologue.
- * Compiler: agscc (GCC 2.96) cannot produce this routine. It if-converts
- * signed x/256 and x/4 to add; movlt, while the reference has cmp; addlt,
- * which agbcc's own ARM compiler (agbcc/gcc_arm, built as pret's
- * agbcc_arm) emits for plain x/4 and x/256 at -O2 -fomit-frame-pointer.
- * That binary is not an approved digest, so this stays a draft.
- * CAMELOT_ASM proof for FixedMul: the ROM's smull puts RdHi in the same
- * register as an input (smull r3, r2, r1, r2), which GCC's own
- * early-clobber mulsidi3 pattern never allocates; an asm with plain "=r"
- * outputs does. */
-/* 2026-09-29 later: with agbcc_arm the draft is 161 of 161 words and the
- * register-blind shape differs in 34+34 words: the prologue loads, the
- * loop keeping gProjection's address hoisted in r9 where the reference
- * reloads 0x03001cec each pass, and the (s16) extension of t, which the
- * reference makes before the second smull. z-first argument temporaries
- * and a (s16) cast at the multiply were the steps that helped.
- * Evening (main's agbcc_arm route): reading the scale at 0x03001cec as its
- * own s32 symbol instead of gProjection's field 0x0c stops loop.c hoisting
- * gProjection into r9, and every long-lived register then matches the
- * reference (cs r5, sn sl, -sn r9, count r8, z r4). That points to a
- * separate IWRAM variable at 0x03001cec (gProjection+0x0c, center x = 120
- * in UPDATE_VIEW.C and END_CANVAS_LAYER.C); it needs its own label in
- * sym_iwram.s before adoption. The constant 0x8000 in a local assigned just
- * before the two FixedMul calls puts it in r1 as the reference does, and an
- * early-clobber lo output ("=&r") matches the ROM's RdLo choices. Left:
- * the (s16) extension of t before the second smull, the prologue load
- * order, and the loop tail order (subs before the struct copy). */
 typedef unsigned short u16;
 typedef short s16;
 typedef int s32;
@@ -68,7 +39,6 @@ struct VertexOut {
     struct VertexPair prev;
 };
 
-
 extern struct FarCallStub WaitFramesFar[];
 extern u32 gScanlineAngle;
 
@@ -79,7 +49,7 @@ static __inline__ s32 FixedMul(s32 a, s32 b)
     s32 lo;
     s32 hi;
 
-    /* CAMELOT_ASM: see header */
+    CAMELOT_ASM("FixedMul: the ROM's smull puts RdHi in an input register, which GCC's early-clobber mulsidi3 never allocates")
     asm volatile("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(a), "r"(b));
     return (u32)lo >> 16 | hi << 16;
 }

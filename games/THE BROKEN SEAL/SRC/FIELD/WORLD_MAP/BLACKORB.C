@@ -22,8 +22,6 @@ void WorldMap_StopLeaderLeavingShip(void);
 extern u8 MsgWorldMapRobinWhereGoingSaidUse[];
 extern u8 MsgWorldMapWreckageShipScuttledOffCoast[];
 
-/* The actor that speaks for the world map's triggers; the scene entry and the
- * Black Orb scene set it. */
 s32 gWorldMapTriggerActor;
 
 void WorldMap_DisembarkCarriage(void)
@@ -85,7 +83,6 @@ void WorldMap_DisembarkCarriage(void)
     Engine_EventEnd();
 }
 
-/* World-map Black Orb scene: the trigger actor walks up, the camera shows the site, and the party receives the Black Orb before the map is sent to the world map's entrance 78. */
 void WorldMap_RunBlackOrbScene(void)
 {
     struct FieldActor *leader;
@@ -162,7 +159,6 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_EventEnd();
 }
 
-/* Switch every exit event of trigger 138 to a touch event with the Robin dialogue as its value, then move placement 57 to (0x1794, 0xd48) facing 0x3000. The caller passes an actor it does not use. */
 void WorldMap_ActivateSite138(s32 actor)
 {
     s32 i;
@@ -226,8 +222,6 @@ void WorldMap_StopLeaderLeavingShip(void)
     Engine_EventEnd();
 }
 
-/* Runs dialogue 0x264c and publishes the story result when flag 0x234 is
- * set. */
 void StoryScene_ShowRewardDialogue(void)
 {
 
@@ -254,10 +248,6 @@ void StoryActor_ConfigureSpawnedObject(u8 *actor);
 #define SITE 55
 #define ITEM_BLACK_ORB 242
 
-/* The world map's Black Orb used at the wreck: the leader steps up and holds
- * the orb out, the guide explains it, the site's figure walks out and back,
- * and the orb is used up before the party carries on. The step up from the
- * west reads its height through the site pointer before that is set. */
 void WorldMap_UseBlackOrb(void)
 {
     struct FieldActor *site;

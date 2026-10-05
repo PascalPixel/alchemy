@@ -30,8 +30,6 @@ void ItemMenu_Close(void);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
 
-/* The European editions keep the 8 KB of background tiles at 0x06004000
-   aside while the prompt is open and fill that area with colour 3. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define PROMPT_SAVES_TILES 1
@@ -56,12 +54,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 }
 #endif
 
-/*
- * Open a modal menu screen and run its blocking interaction body.
- *
- * The saved event word at +0x17e remains unnamed; its producer is not
- * established by this menu. Renderer and event cells are real heap slots.
- */
 s32 Menu_OpenConfirmPrompt(void)
 {
     /* FAKEMATCH: the heap slice at slot 6 preserves renderer/event load order; a whole-bank base adds a literal word. */
@@ -122,8 +114,6 @@ s32 Menu_OpenConfirmPrompt(void)
     return result;
 }
 
-/* ItemMenu_Init seeds this Psynergy confirmation mode before its selectors run. */
-
 extern char MsgShortcutSetL;
 extern char MsgShortcutSetR;
 extern char MsgPsynergyChooseOwner;
@@ -146,16 +136,6 @@ s32 BattleEffect_ApplyToTargets(s32 action, s32 owner, s32 target, s32 flags);
 void Ability_PlayUseAnimation(s32 action);
 void Audio_PlayCue(s32 cue);
 
-/*
- * State machine that resolves the currently selected item/Psynergy command:
- * state 0 primes the category window and waits for the underlying selection
- * loop to finish; state 1 waits for a target/shortcut pick; state 2
- * classifies the selected Psynergy (immediate vs needs-target vs
- * needs-confirm); state 3 asks for a final confirmation; state 4 actually
- * applies the action, pays its PP cost, and reports success or failure. On
- * a clean finish (state 2's default) the acting owner and the selected
- * action id are written back through the two out-parameters.
- */
 s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 {
     struct PsynergyMenuState *work;

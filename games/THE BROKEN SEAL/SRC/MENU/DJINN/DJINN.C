@@ -12,7 +12,6 @@
 
 extern struct DjinnMenuWork *gMenuWork;
 
-/* A set Djinni's entry carries bit 15, spelled as the signed halfword flag. */
 #define DJINN_ENTRY_SET (-0x8000)
 
 s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
@@ -45,12 +44,6 @@ void Owner_RecalculateStatsFar(s32 owner);
 struct BattleAction *Ability_GetData(s32 action);
 s8 OwnerAction_DiffSlots(void *before, void *after, u16 *out, s32 *gained, s32 *lost);
 
-/*
- * Lists an owner's Djinn as packed halfword entries: element in bits 5-6,
- * index in bits 0-4 and, for set Djinn, bit 15. With element -1 every
- * element is listed and each entry also carries the owner in bits 8-14.
- * Returns the number of entries written.
- */
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
 {
     struct BattleUnit *state = Owner_GetStateFar(owner);

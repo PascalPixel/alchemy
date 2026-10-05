@@ -19,8 +19,6 @@ struct Object {
 
 u32 Random16(void);
 
-/* A swaying object: the actor record with its drift speed and the two sway
- * states (0 rising, 1 falling, 9 stopped) in the free words. */
 struct SwayActor {
     u8 unknown_00[8];
     s32 x;
@@ -43,7 +41,6 @@ void FieldScene_RunSevenActorEnsemble(void);
 extern u8 MsgFuneShipsCourseClear[];
 extern u8 MsgFuneAvast[];
 
-/* The IWRAM field globals: the map work first, the event work at +0x4c. */
 struct FieldGlobals {
     s32 **map;
     u8 unknown_04[0x48];
@@ -53,7 +50,6 @@ struct FieldGlobals {
 extern u8 MsgFuneMonsters2[];
 extern u8 MsgFuneLandHo[];
 
-/* Each actor's walk ashore, where the overlay's data lies. */
 extern u8 FuneHobashira_EnsembleWalk9[];
 extern u8 FuneHobashira_EnsembleWalk10[];
 extern u8 FuneHobashira_EnsembleWalk11[];
@@ -64,9 +60,6 @@ extern u8 FuneHobashira_EnsembleWalk15[];
 void OverlayObject_InitWithRandomFields(s32 object);
 s32 SceneData_GetDifferenceOfPairSums(void);
 
-/* The mast's own work, past its image: the drift the sway has added up, its
- * two angles, and the camera centre and origin the staging saves for the
- * camera-offset placement. */
 s32 FuneHobashira_DriftY __attribute__((section(".bss")));
 s32 FuneHobashira_DriftX __attribute__((section(".bss")));
 s32 FuneHobashira_SwayY __attribute__((section(".bss")));
@@ -75,8 +68,6 @@ s32 FuneHobashira_CameraCenter[2] __attribute__((section(".bss")));
 s32 FuneHobashira_CameraOrigin[2] __attribute__((section(".bss")));
 s32 FuneHobashira_SwayX __attribute__((section(".bss")));
 
-/* Places the object where the camera has moved relative to the staging's
- * saved camera origin, around the saved centre. */
 s32 Object_PlaceFromCameraOffset(struct Object *object)
 {
     s32 *position = *((s32 **)gMapWork[0]);
@@ -94,10 +85,9 @@ s32 Object_PlaceFromCameraOffset(struct Object *object)
     return 0;
 }
 
-/* Bits 10 to 15 of the sample select between headings 0xd000 and 0xb000; the actor's facing is the halfword at +6. */
 s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
 {
-    u32 sample = (u32)(Random16() << 6) >> 16;   /* bits 10..15 */
+    u32 sample = (u32)(Random16() << 6) >> 16;
 
     if (sample == 6) {
         s32 value = 0xd000;
@@ -120,8 +110,6 @@ void FuneHobashira_GrowActorScale(struct FieldActor *o)
     }
 }
 
-/* Sways the object back and forth by a random drift within its range and
- * bobs it up and down between heights 0 and one cell. */
 s32 FuneHobashira_SwayActor(struct SwayActor *actor)
 {
     s16 *state = &actor->x_state;
@@ -164,8 +152,6 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
     return 1;
 }
 
-/* Shrinks the object behind the background a step each frame; once it is
-   small it parks at the origin and stops. */
 s32 OverlayObject_ShrinkScaleThenStop(struct FieldActor *o)
 {
     u8 *t = (u8 *)o->sprite;
@@ -228,9 +214,6 @@ void FieldScene_RunActor232SceneWhenFlag923Or922(void)
     }
 }
 
-/* The mast on arrival: record the visit, start the deck's sway while the
- * voyage flags allow it, stand actor 8 by the rail, then run the scene the
- * entrance names. */
 s32 FuneHobashira_ApplyEntryState(void)
 {
     struct FieldActor *leader;
@@ -354,14 +337,6 @@ void FuneHobashira_AnnounceClearCourse(void)
     Engine_EventRequestExit(10);
 }
 
-/* Runs the record-8/record-9 pair through two near-identical setup-then-move
- * cycles (position waypoints, a movement flag reset, then animation/sound
- * calls), followed by a shorter closing cycle for record 8 alone. */
-
-/* Places the staging objects and starts the lookout's actions, saves the
- * camera position as the origin actor 9's camera-following actions measure
- * from, grows actors 10 to 12 in and walks them to their places, then the
- * lookout walks and leaps before the scene exits. */
 void Scene_RunFourActorStagingSequence(void)
 {
     s32 *placement = *(*(struct FieldGlobals *)gMapWork).map;
@@ -471,7 +446,6 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Engine_EventWait(120);
     rec9 = Object_GetById(9);
     Engine_ActorStop(9);
-    /* Actor 9 stops where it is. */
     rec9->target_x = ACTOR_NO_TARGET;
     rec9->target_y = ACTOR_NO_TARGET;
     rec9->target_z = ACTOR_NO_TARGET;
@@ -564,8 +538,6 @@ void OverlayObject_InitWithRandomFields(s32 a)
     Engine_ActorEnableActionCallback(a, FuneHobashira_DriftActions);
 }
 
-/* Drives ids 8 through 18 through position, scale, and flag updates in
- * sequence, stepping the shared scene phase at the start and end. */
 void FieldScene_RunPrimarySequence(void)
 {
     u32 i;
@@ -682,9 +654,6 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventEnd();
 }
 
-/* Land ho: the ensemble's seven actors drift in, then each walks its way
- * ashore while the lookout cheers, and the party leaves the mast for the
- * ship's cabin; the exit depends on which way the voyage went. */
 void FieldScene_RunSevenActorEnsemble(void)
 {
     Engine_EventBegin();
@@ -750,9 +719,6 @@ void FieldScene_RunSevenActorEnsemble(void)
     Engine_EventEnd();
 }
 
-/* Sway: add cos(SwayX) and 4 * sin(SwayY) to the point the map work's first
- * word names and to the drift totals, then advance both angles by small
- * random steps, kept to 16 bits. */
 void FuneHobashira_UpdateSway(void)
 {
     s32 *pos = *((s32 **)gMapWork[0]);

@@ -1,10 +1,3 @@
-@ Third to fifth 152-byte records of RESAMPLER_KERNELS.S. The third and
-@ fourth fill the whole slot with shifted sums over the loop's live
-@ registers; the fifth clears r1-r4 and branches to the slot's end over 132
-@ bytes of leftover instructions, which never run and are
-@ RESAMPLER_KERNELS_PAD_2.S. None has an entry or return of its own. TBS
-@ only.
-@ credit: handwritten — ARM sound-buffer records patched into the IWRAM runtime
 .syntax unified
 	.arm
 	.global IwramCodeRecord2

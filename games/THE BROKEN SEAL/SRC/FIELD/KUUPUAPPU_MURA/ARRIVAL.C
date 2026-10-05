@@ -21,7 +21,6 @@ struct SceneActor_0200113c {
 
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation);
 
-/* Map cell steps played as the leader arrives in scene twelve. */
 extern const u16 KuupuappuMura_Scene12Cells[];
 
 s32 ActorPresentation_UpdateEntityFromLeader();
@@ -41,7 +40,6 @@ struct SceneActor {
 
 extern s32 ArcTan2(s32, s32);
 
-/* Particle drift rates occupy +30 and +34, and +64 selects the plane. */
 struct OverlayEffectMotion {
     u8 pad00[8];
     s32 x;
@@ -64,14 +62,9 @@ union DriftingObject {
 
 void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
 
-/* The two animation scripts a drifting effect may play. */
 extern const s32 KuupuappuMura_DriftScriptA[];
 extern const s32 KuupuappuMura_DriftScriptB[];
 
-/*
- * Later scene steps: the leader's arrival for scene twelve and thirteen, and
- * the sequences of actors 23 and 19.
- */
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {
 
@@ -160,7 +153,6 @@ void FieldScene_RunActor19MotionSequence(void)
     Engine_EventEnd();
 }
 
-/* The saved game state; the entrance the party came in by is at +450. */
 s32 KuupuappuMura_RestoreEntryState(void)
 {
     u32 i;
@@ -274,7 +266,6 @@ s32 KuupuappuMura_RestoreEntryState(void)
     return 0;
 }
 
-/* Activate and turn an actor toward an in-range target in its forward half-circle, or use the fallback motion when the check fails. */
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
@@ -324,11 +315,6 @@ void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay)
     Engine_EventWait(delay);
 }
 
-/*
- * Per-frame step for a projectile. Advance x by its rate and mirror it into
- * the shadow copy, then either follow the vertical rate or fall at a fixed
- * rate depending on the mode word, and finally decay both rates.
- */
 void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect)
 {
     s32 horizontal_rate;
@@ -353,8 +339,6 @@ void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect)
     effect->vertical_rate = vertical_rate - Math_Divide(vertical_rate, 28);
 }
 
-/* Spawn a drifting effect near actor 19: bit 1 of flags picks its plane,
- * bit 0 its direction. */
 void KuupuappuMura_SpawnDriftingEffect(s32 flags)
 {
     union DriftingObject *leader;
@@ -390,7 +374,6 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     if (leaf == NULL)
         return;
     sprite = leaf->actor.sprite;
-    /* Choose the animation and script together as one random particle variant. */
     switch (Engine_RandomNext() & 1) {
     case 1:
         Object_SetMode(&leaf->actor, 3);

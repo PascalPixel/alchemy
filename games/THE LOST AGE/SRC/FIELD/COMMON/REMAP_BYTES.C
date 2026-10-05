@@ -2,7 +2,6 @@
 
 extern u8 Runtime_ByteRemapTable[];
 
-/* Replaces each of the CNT bytes at BUF with its entry in the remap table. */
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 {
     s32 n;

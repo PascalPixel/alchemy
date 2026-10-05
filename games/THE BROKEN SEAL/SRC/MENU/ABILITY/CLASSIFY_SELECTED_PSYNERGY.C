@@ -4,7 +4,6 @@
 #include "SYSTEM.H"
 #include "BATTLE_UNIT.H"
 
-/* menu/psynergy_menu/classify_selected_psynergy.c */
 s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
@@ -31,7 +30,6 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
     return ret;
 }
 
-/* Select the current party tab and build that owner's Psynergy icons. */
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiIcon_PrepareObject(struct RenderOutput *icon);
 

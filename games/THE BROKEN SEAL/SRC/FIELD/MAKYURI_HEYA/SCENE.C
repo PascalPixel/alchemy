@@ -83,7 +83,6 @@ s32 Djinn_AddToOwner();
 void Djinn_Activate();
 void Owner_RecalculateStats();
 
-/* The map layer the lift is drawn on, scrolled by its vertical offset. */
 struct LiftLayer {
     u8 unknown_00[12];
     s32 offset;
@@ -131,7 +130,6 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
     }
 }
 
-/* Mercury Lighthouse pillar push: pan the camera over the room and, by the pillar's cell and the story flags, start its push script; returns 1 when the last push begins. */
 s32 MakyuriHeya_StartPillarPush(void)
 {
     s32 cell_x;
@@ -186,10 +184,6 @@ s32 MakyuriHeya_StopActorNinePositionCallback(void)
     return 0;
 }
 
-/* Mercury Lighthouse: after actor 10 is pushed, set flag 0x318 when it stops
- * in row 38. After actor 11 is pushed, the column it stops in selects which
- * of flags 0x319..0x31b is set; column 48, once every column is lit, plays
- * the beam and leaves through exit 15. */
 void MakyuriHeya_RunColumnProbeScene(void)
 {
     struct ColumnProbe probe;
@@ -380,13 +374,11 @@ void FieldScene_RunActorThreeBranchSequence(void)
     Actor_FaceDirection(3, FX16_0_5, 20);
     Object_SetModeById(3, 16);
     record = Object_GetById(3);
-    /* Set the +24 field of actor 3's record to -1.0 in 16.16 fixed point. */
     record->scale_x = -FX16_1_0;
     Battle_WaitMode0(20);
     Event_ShowMessageAndWait(3, 0, 20);
     Object_SetModeById(3, 1);
     record = Object_GetById(3);
-    /* Set the +24 field of actor 3's record to 1.0 in 16.16 fixed point. */
     record->scale_x = FX16_1_0;
     Battle_WaitMode0(20);
     Actor_FaceDirection(3, FX16_0_25, 20);
@@ -428,7 +420,6 @@ void SceneDialogue_RunActor3TimedLine(void)
     Engine_EventEnd();
 }
 
-/* Fade palette entries 40 to 47 to white one step every two frames. */
 void MakyuriHeya_FadePaletteToWhite(void)
 {
     volatile u16 *pal;
@@ -462,9 +453,6 @@ void MakyuriHeya_FadePaletteToWhite(void)
     } while (done <= 7);
 }
 
-/* When actor 10 stands in tile column 51, plays the scripted actor
- * choreography; each of its two query branches advances the scene step counter
- * once. The closing call runs on every path. */
 void FieldScene_RunColumnChoreography(void)
 {
     struct FieldActor *record;
@@ -641,7 +629,6 @@ void SceneEffect_RotatePaletteEntries97To103(void)
     }
 }
 
-/* Fade palette entries 97 to 103 to black one step every five frames. */
 void MakyuriHeya_FadePaletteToBlack(void)
 {
     volatile u16 *pal;
@@ -673,7 +660,6 @@ void MakyuriHeya_FadePaletteToBlack(void)
     } while (done != 7);
 }
 
-/* The actor sinks away in a burst of sparks over 48 frames. */
 void MakyuriHeya_SinkActorWithSparks(s32 actor)
 {
     struct EffectOptions params;
@@ -710,8 +696,6 @@ void MakyuriHeya_SinkActorWithSparks(s32 actor)
     }
 }
 
-/* Raises three randomized particle fields, then stages the actors according
- * to whether the lighthouse event flag has already been set. */
 void FieldScene_RunRandomEffectActorSequence(void)
 {
     struct ConfiguredEffectOptions *effect;
@@ -969,9 +953,6 @@ void FieldScene_RunActor184Sequence(void)
     Engine_EventEnd();
 }
 
-/* In the first room the leader walks to the stair, turns, and sinks out of
- * sight through the opened floor before the party leaves by exit 8; in the
- * others the leader only rises. */
 void FieldScene_RunScene39cSequenceB(void)
 {
     Engine_EventBegin();
@@ -1050,7 +1031,6 @@ void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
     }
 }
 
-/* Open the three-step stair: each step throws dust along both of its edges. */
 void MakyuriHeya_OpenThreeStepStair(void)
 {
     struct EffectOptions params;
@@ -1171,7 +1151,6 @@ void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
     } while (i <= 11);
 }
 
-/* Start the lighthouse room: set the retreat, blend and lights, start the palette cycle when flag 0x875 is set, then restore pillars, lifts and cells for the entrance. */
 s32 Scene_Initialize(void)
 {
     struct FieldActor *actor;
@@ -1557,8 +1536,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/* Mercury Lighthouse: the girl the party saved asks for the truth until
- * it is told, then joins with her Djinni. */
 void MakyuriHeya_RunPartyScene(void)
 {
     s32 base;
@@ -1648,9 +1625,6 @@ void MakyuriHeya_RunPartyScene(void)
     Engine_EventEnd();
 }
 
-/* The lift rises into the room with the leader and actor 13 on it, easing to
- * a stop; the leader hops off onto the landing, and the lift sinks back down
- * the shaft, speeding up, before the landing's cells close over it. */
 void MakyuriHeya_RideLift(void)
 {
     struct LiftLayer *layer;

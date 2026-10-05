@@ -1,7 +1,5 @@
 #include "SCRIPT.H"
 
-/* The two games differ in the first command: TBS advances the current
-   pointer; TLA follows the pointer stored in the next operand. */
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)

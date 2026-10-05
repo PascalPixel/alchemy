@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-/* One entry of a scene's region table, which ends at id -1. */
 struct SceneRegionEntry {
     s16 id;
     s16 flag;
@@ -13,10 +12,6 @@ struct SceneRegionEntry {
 
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
-
-/* Give every entry without a flag of its own one of two fixed flags: 0x164,
-   kept clear, when its position lies inside the camera's bounds, and 0x165,
-   kept set, when it lies outside. */
 
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 {

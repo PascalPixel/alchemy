@@ -1,11 +1,3 @@
-/*
- * Draft: The save screen's row strip: steps the save workspace's counter at
- * 0x3140 (doubled while 0x3142 <= 3) and draws row min(counter, 6) of
- * Data_0805f5ec's 12-byte rows into BG tilemap 0x06002252. Score 6 with the
- * workspace barrier: the listing interleaves the table, VRAM and 0xf080 pool
- * loads with the row * 12 arithmetic. Goes after
- * UiWork_FinalizeAndReleaseBlock16 in ⚓️'s SYSTEM/SAVE/SAVE2.C.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "RUNTIME_MEM.H"

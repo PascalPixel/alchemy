@@ -1,7 +1,3 @@
-//! The `barriers` rewrite: empty asm barriers, `asm("");` and its
-//! `__asm__`/volatile spellings, each alone on its line, together with the
-//! FAKEMATCH comment directly above. Run when the compiler's schedule may no
-//! longer need them; `alchemy keep` puts back every file whose bytes move.
 use regex::Regex;
 use std::sync::OnceLock;
 
@@ -13,7 +9,6 @@ fn barrier() -> &'static Regex {
     })
 }
 
-/// The text without its tagged empty barriers, and how many went.
 pub(crate) fn rewrite(text: &str) -> (String, usize) {
     let mut out: Vec<&str> = Vec::new();
     let mut removed = 0;
@@ -22,7 +17,6 @@ pub(crate) fn rewrite(text: &str) -> (String, usize) {
             out.push(line);
             continue;
         }
-        // Only a barrier its own FAKEMATCH comment explains goes.
         let Some(end) = out.len().checked_sub(1).filter(|&k| out[k].trim_end().ends_with("*/")) else {
             out.push(line);
             continue;

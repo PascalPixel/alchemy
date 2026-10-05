@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
 {
     u8 buffer[5];

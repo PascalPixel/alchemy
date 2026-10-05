@@ -6,7 +6,6 @@
 #include "KAWA.H"
 #include "CALL.H"
 
-/* The mode task's records in the river overlay's data. */
 extern u16 KorosseoKawa_RoundSpans[];
 extern u8 KorosseoKawa_ModeRecordTwo[];
 extern u8 KorosseoKawa_ModeRecordFour[];
@@ -14,7 +13,6 @@ struct ModeRecord;
 extern struct ModeRecord KorosseoKawa_SpanA;
 extern struct ModeRecord KorosseoKawa_SpanB;
 
-/* The mode task's state in the overlay's work area. */
 extern u16 Korosseo_ModeTaskMode;
 extern u16 Korosseo_ModeTaskParam;
 extern u16 Korosseo_ModeTaskTimer;
@@ -59,14 +57,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
@@ -88,11 +83,6 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param);
 
-/*
- * The mode task's per-frame routine is installed as a callback.  The branch
- * chain picks one of five mode records by mode, consulting param only when
- * mode is 3.  The stores that follow reset the rest of the task's state.
- */
 void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 {
     s32 handler;

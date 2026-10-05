@@ -20,10 +20,6 @@ void SceneState_ApplyFlags565And564(void)
     Engine_GameFlagSet(564);
 }
 
-/* Reads flag record 0x8a4; when set, runs one short setup on record 17.
- * When clear, runs a longer setup on record 17 plus scene phase/field
- * updates, then checks flag record 0x8a3 to pick a final call. Either path
- * ends with Engine_EventEnd(). */
 void FieldScene_RunConditionalSceneSetup(void)
 {
     u32 i;
@@ -41,8 +37,6 @@ void FieldScene_RunConditionalSceneSetup(void)
         Engine_ActorStartRepeatedMotion(RECORD_17, 2);
         Engine_EventSetMessage((s32)MsgKorashiamuSilence);
         Event_ShowMessage(RECORD_17, 0);
-        /* Byte at +85 of the record returned by ((u8 *)Engine_EventGetViewCenter()); written
-         * with the (already known zero) flag value here. */
         *(u8 *)(((u8 *)Engine_EventGetViewCenter()) + 85) = flag_8a4;
         Engine_TaskWait(1);
         Camera_SetSpeed(0x66666, 0xcccc);
@@ -197,9 +191,6 @@ void KorashiamuIriguchi_ShowQualifyingTrialMessage(void)
     Engine_EventEnd();
 }
 
-/* Sets up actors 8-20 (position, pose, or movement/sprite flags), advances
- * two actor records' +24 fields, advances the shared scene phase, then runs
- * a long chain of per-actor moves, pose changes, and waits. */
 void FieldScene_RunMiddleSequence(void)
 {
 
@@ -272,8 +263,6 @@ void FieldScene_RunMiddleSequence(void)
     Actor_FaceDirection(15, 0x3000, 0);
     SceneState_ForwardMaskedHalfwordWith10(18, 0x3000);
     Actor_SetAttachedEffect(17, 0x101);
-    /* Clear the motion flags, then step the height up and back down
-     * 20 times, waiting between each step. */
     rec = Object_GetById(21);
     rec->motion_flags = 0;
     for (counter = 0; counter < 20; counter++) {
@@ -321,8 +310,6 @@ void FieldScene_RunMiddleSequence(void)
     Engine_EventEnd();
 }
 
-/* The Colosso entrance's scene start: the first and third scenes run their
-   own setup. */
 s32 Scene_Initialize(void)
 {
     s32 scene = gGameState.scene;
@@ -412,7 +399,6 @@ void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1)
     Engine_ActorFaceDirection(arg0, (u16)arg1, 10);
 }
 
-/* Two alternative layouts. */
 void SceneState_ApplyRectsByFlatla384And962(void)
 {
     s32 pair;

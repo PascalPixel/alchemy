@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 
-
 u32 BattleParty_IsUnitListed(u32 arg0)
 {
     u16 values[8];

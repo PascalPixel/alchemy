@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
-/* Sets one pixel of the 128-wide battle canvas, the right half 0x1000
-   bytes on. */
 void BattleFx_PlotCanvasPixel(s32 x, s32 y, s32 color)
 {
     u16 *map = Ram_HeapSlots->canvas_map;

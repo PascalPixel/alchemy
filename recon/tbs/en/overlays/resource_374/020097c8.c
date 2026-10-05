@@ -1,15 +1,5 @@
-/* NONMATCHING: named message-id attempt for Haidia Ie, 2026-10-01.
- * The approved TBS flags load MsgHaidiaWhysEveryoneHanging and
- * MsgHaidiaFarewell as table-owned symbols. The pool resolves to the same
- * ids, but allocation changes the opening stack-argument stores and the
- * two closing actor priority updates. Three finite C rewrites retained
- * those differences. Production IE.C now imports the canonical names as
- * PO-generated C enum constants and matches all six editions; this older
- * pointer-symbol attempt remains as the measured unsuccessful form.
- */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.H"
 
-/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
 static inline s32 Party_GiveItem(s32 item, s32 flags)
 {
     return Engine_PartyGiveItem(item, flags);

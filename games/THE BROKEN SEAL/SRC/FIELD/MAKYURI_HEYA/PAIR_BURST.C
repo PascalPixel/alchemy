@@ -7,8 +7,6 @@ void SceneState_ApplyPair12And21(void)
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-/* The later localizations stop the leader effect following an idle actor
- * in the narrow middle strip of this room. */
 struct LeaderEffectWork {
     u8 unknown_00[24];
     struct FieldActor *target;

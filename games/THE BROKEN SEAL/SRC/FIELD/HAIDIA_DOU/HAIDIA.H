@@ -3,8 +3,6 @@
 
 #include "MAPCOPY.H"
 
-/* The Vale sanctum (resource_3a6): what its files share. */
-
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -26,18 +24,16 @@ typedef struct Obj {
     s32 f34;
 } Obj;
 
-/* Actor position and flags used by the sanctum scene. */
 struct Rec_3a6 {
     u8 pad00[8];
-    s32 f8;                     /* +8  */
+    s32 f8;
     u8 pad0c[4];
-    s32 f16;                    /* +16 */
+    s32 f16;
     u8 pad14[14];
-    u8 f34;                     /* +34 */
-    u8 f35;                     /* +35 */
+    u8 f34;
+    u8 f35;
 };
 
-/* Tables laid out after the code. */
 extern const u32 HaidiaDou_Exits[];
 extern const s32 HaidiaDou_WalkTargets[];
 

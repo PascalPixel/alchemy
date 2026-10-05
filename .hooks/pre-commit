@@ -1,3 +1,2 @@
 #!/bin/sh
-# Every commit runs the staged checks; land main with `make land` first.
 exec make --no-print-directory precommit

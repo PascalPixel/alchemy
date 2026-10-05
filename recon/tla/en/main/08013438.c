@@ -1,16 +1,6 @@
-/* Remaining: 120/120 bytes including pool; score 60, one reordered mask
-   shift; physical names resolve.
-   Trials: natural zero340; word-zero temporary260; address-valued store180;
-   IME boundary60. Separate read/mask statements, direct/shared IE pointer
-   orders, a one-pass IE read and compound shift expression did not improve
-   60 (early pointer orders scored120). Retain the simpler mask expression. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IRQ.H"
-
-/* Installs or removes the handler for one interrupt with IME off: sets
-   the IE bit, the DISPSTAT enable (and the VCOUNT target for IRQ 2), and
-   the IWRAM table entry, which falls back to the no-op handler. */
 
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 {

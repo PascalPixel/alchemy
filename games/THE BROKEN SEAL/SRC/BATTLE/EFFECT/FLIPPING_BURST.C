@@ -29,12 +29,6 @@ void Object_ResetMotion(struct MotionObject *object);
 void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 
-/* Battle effect: the actor dashes 90% of the way to the first affected unit;
-   both hop (frame 0), are raised by their object-table offsets and flipped
-   at frame 11, and the actor springs back at frame 54 while the flash burst
-   sheet is drawn over it; from frame 56 sixteen burst cells ring the actor
-   on a widening circle for twelve frames, and at frame 64 the offsets and
-   flips are undone. The screen shakes throughout. */
 void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -175,17 +169,10 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 
 void ObjectGroup_TickMemberTimers(void);
 
-/* Per drift step 0..3: a blade cell's width and height and its offset in
-   the sword slash sheet. */
 extern const u8 BladeRain_CellWidths[];
 extern const u8 BladeRain_CellHeights[];
 extern const u16 BladeRain_CellSourceOffsets[];
 
-/* Battle effect: a rain of blades. Sixty-four blades are seeded at random
-   columns with a sideways drift set by the column; each of 120 frames draws
-   sixteen of them, falling once their turn comes and then shrinking, while
-   the screen shakes and the first target is hit every fourth frame from
-   frame 23 to 87. A blade drifting left is drawn by the second blitter. */
 void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
 {
     struct EffectPosition position;
@@ -256,9 +243,6 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
                 REG_BLDCNT = 0x3f44;
         }
         for (i = 15; i != -1; i--) {
-            /* The blitter index, drift >> 31, is computed before the call's
-               operands, so the allocator ranks the drift above the width and
-               height and rotates their three registers. */
             /* FAKEMATCH: the drift is pinned to r6, as the reference keeps it. */
             register s32 drift __asm__("r6");
             s32 speed;
@@ -321,9 +305,6 @@ struct BlitterPair {
     DrawRectangle lower;
 };
 
-/* Battle effect: a pillar rises over the actor in two mirrored halves while
-   flecks spiral up around it. The effect brings its own work block, canvas
-   and sheet. */
 void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 {
     struct EffectPosition ground;

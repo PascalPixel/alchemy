@@ -1,88 +1,12 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
-/*
- * main:08090a5c, 1816 bytes.
- *
- * Build the per-entry RGB555 "component" table a palette effect feeds to the
- * hardware.  The caller hands in a mode word, a BGR555 source palette, a
- * destination array of three u16 components per entry (stored blue, green,
- * red) and a part selector.
- *
- *   part == 0  whole 448-entry palette
- *   part == 1  first 224 entries
- *   part == 2  second 224 entries (source +224 entries, destination +224 triples)
- *
- * The mode word is interpreted in four ranges:
- *
- *   mode <  0x8000     a literal BGR555 colour.  One triple is expanded and
- *                      DMA3 replicates it over the remaining entries by
- *                      overlapping source and destination.
- *   mode == 0x8000     re-read as the current backdrop colour at 0x05000000
- *                      and then treated as one of the other cases.
- *   0x8000 <= mode
- *       <  0x100000    seven named recolour recipes (0x10001..0x10007);
- *                      anything else expands the source palette unchanged.
- *   otherwise          bit 21 / 22 / 23 select a tint, a saturation blend or
- *                      the plain expansion; with none of them set the mode
- *                      word is a pointer to an already-built table that DMA3
- *                      copies in 32-bit units.
- *
- * Uncertain, and left as evidence rather than interpretation:
- *  - The roles of the three 32-entry ramps at 0x0809e92e / 0x0809e96e /
- *    0x0809e9ae.  They are contiguous and are indexed by a clamped 0..31
- *    channel value, but no case uses one ramp per colour channel: 0x10002 and
- *    0x10004 drive all three components from a single ramp, and the other
- *    cases mix them.  They are declared separately here because that is all
- *    the reference proves; do not read them as "the red/green/blue ramp".
- *  - IwramMulQ16ReturnIp is a second ARM-mode IWRAM helper (IwramSignedDivide is the
- *    signed divide).  It takes two 16.16-looking operands and only the high
- *    halfword of its result is consumed, which is consistent with a scaling
- *    routine, but the operation itself is not established here.  The reference
- *    reaches it with "mov ip, pc / bx r3" rather than the "bl _call_via_rN"
- *    veneer it uses for the divide, and it does so with the callee already in
- *    r3 - the same register the veneer form uses two instructions earlier in
- *    the same loop.  That sequence does not set lr, so it is not an ordinary
- *    Thumb indirect call. IWRAM_CALL.H supplies that shared typed machine
- *    interface for all three sites.
- *  - The DMA count in the mode < 0x8000 case is written "* 3 * 2 >> 1"
- *    because the reference literally multiplies (cnt - 1) by six and then
- *    shifts right by one: the shift is a basic block it shares with the
- *    32-bit-unit path at the end of the function.  The transferred count is
- *    (cnt - 1) * 3 halfwords either way.
- *
- * Residual of this draft (1736 candidate bytes against 1816 reference,
- * 881 differing halfwords).  Control flow, calls, jump table, tables, access
- * widths, constants and side effects agree case by case: same 29 direct calls
- * and 7 indirect calls in the same cases, same 36 halfword stores, same 22
- * loop back-edges, and the same destination step per case (2 + 2 + 2 in cases
- * 0x10002..0x10004 and in the mode < 0x8000 expansion, one step of 6 in cases
- * 0x10005..0x10007, in the tint case and in both plain expansions).
- *
- * What is left is register allocation.  The reference holds the destination
- * pointer in r8 for the whole function, so most stores cost an extra
- * "mov rN, r8" and most advances an extra "mov r3, #2 / add r8, r3"; this
- * source lets it live in r4 instead.  That accounts for 35 of the 36
- * instructions the candidate is short (191 "movs" in the reference against
- * 156 here) and for the frame size (40 bytes against 36: the reference carries
- * one more spill slot, and this source reuses six stack stores the reference
- * does not).  No register was forced to chase it.
- *
- * Two smaller unexplained shapes: the reference's final DMA write is one
- * "stmia r3!, {r0,r1,r2}" reached from both paths, where three word stores
- * through a pointer are emitted here (spelling it as a 12-byte aggregate
- * assignment was tried and rejected - it produces an ldmia/stmia pair from a
- * larger frame, which the reference does not have); and two bit tests near
- * the end come out with beq/bne inverted against the reference.
- */
-
 typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
 
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 BattleFx_ClampRgb555Channel(s32 value);
 s32 BattleFx_ClampRgb555Component(s32 value);
 
-/* Three contiguous 32-entry ramps indexed by a clamped channel value. */
 extern u16 Data_0809e92e[];
 extern u16 Data_0809e96e[];
 extern u16 Data_0809e9ae[];
@@ -107,7 +31,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
     }
 
     if (mode < 0x8000) {
-        /* One expanded triple, then an overlapping DMA3 fill. */
         *dst++ = mode & 0x7c00;
         *dst++ = (mode & 0x3e0) << 5;
         *dst++ = (mode & 0x1f) << 10;
@@ -122,7 +45,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
     if (mode < 0x100000) {
         switch (mode) {
         case 0x10001: {
-            /* Grey: 1024 * (2R + 4G + B) / 7 written to all three components. */
             SignedDivide divide;
             u16 *out;
             s32 v;
@@ -143,7 +65,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
         }
 
         case 0x10002: {
-            /* Flat sepia ramp driven by the entry's brightness. */
             SignedDivide divide;
             s32 v;
             s32 r;
@@ -178,7 +99,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
         }
 
         case 0x10003: {
-            /* Warm shift; black stays black. */
             u32 r;
             u32 g;
             u32 b;
@@ -204,7 +124,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
         }
 
         case 0x10004: {
-            /* Wash: each channel is pushed into a narrow band before the ramp. */
             s32 r;
             s32 g;
             s32 b;
@@ -239,7 +158,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
         }
 
         case 0x10005: {
-            /* Desaturate halfway towards the entry's mean. */
             s32 r;
             s32 g;
             s32 b;
@@ -267,7 +185,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
         }
 
         case 0x10006: {
-            /* Push the other two channels into red. */
             s32 r;
             s32 g;
             s32 b;
@@ -289,7 +206,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
         }
 
         case 0x10007: {
-            /* Same shape as 0x10003 with a milder shift and no black guard. */
             u32 r;
             u32 g;
             u32 b;
@@ -314,7 +230,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
         }
 
         default: {
-            /* Plain expansion of the source palette. */
             u16 *out;
 
             out = dst;
@@ -331,7 +246,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
     }
 
     if ((mode & 0x200000) != 0) {
-        /* Tint: scale a fixed colour by the entry's brightness. */
         SignedDivide divide;
         s32 red;
         s32 green;
@@ -365,7 +279,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
     }
 
     if ((mode & 0x400000) != 0) {
-        /* Blend each entry towards a fixed colour, keeping its brightness. */
         SignedDivide divide;
         u32 red;
         u32 green;
@@ -401,7 +314,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
     }
 
     if ((mode & 0x800000) != 0) {
-        /* Plain expansion again, reached through the flag word. */
         u16 *out;
 
         out = dst;
@@ -415,7 +327,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
         return;
     }
 
-    /* The mode word is the address of a prepared table. */
     if (part == 2)
         mode += 1344;
 

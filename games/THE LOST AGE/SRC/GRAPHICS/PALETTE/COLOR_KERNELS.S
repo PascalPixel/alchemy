@@ -1,14 +1,3 @@
-@ Four colour-buffer kernels that save a backup copy as they go: 3/4 scaling
-@ and halving that write back only non-zero words, and partial darken and
-@ brighten that skip unchanged words, each run from the stack by its loader
-@ in COLOR_KERNEL_LOADERS.S. Three save their registers without lr
-@ (push {r5, r6} or {r5-r9}) and the partial darken pops its return address
-@ into ip for bx ip; GCC saves lr with any register and returns through lr.
-@ After each 4-byte Thumb entry (bx pc) the bodies equal the other four
-@ kernels of TBS GRAPHICS/PALETTE/COLOR_KERNELS.S (0x0800203c..0x08002298)
-@ byte for byte.
-@ Its four 4-byte Thumb entries, which are TLA's own, carry no credit.
-@ credit: library — TBS/TLA common ARM colour-buffer kernels copied to the stack
 .syntax unified
 	.thumb
 	.global ColorBuffer_ScaleNonzeroThreeQuartersKernelCode

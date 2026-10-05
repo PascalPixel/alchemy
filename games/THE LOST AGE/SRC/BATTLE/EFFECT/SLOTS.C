@@ -8,15 +8,12 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 
-/* Heap slot 56: the battle effects' work, 24 screen-space slots after the
-   effect's own state, in a 0x7f4-byte block. */
 struct BattleFxScene {
     u8 unknown_00[0x50];
     struct EffectSlot slots[24];
     u8 unknown_710[0xe4];
 };
 
-/* The heap slot's byte offset in the slot bank. */
 #define BATTLE_FX_SLOT 224
 
 void BattleFx_UpdateAllSlots(void)
@@ -46,8 +43,6 @@ void BattleFx_InitializeSlots(void)
 
 void BattleFx_ClearOwnedSlot(struct EffectSlot *);
 
-/* Unschedules the slot updates, clears every active slot and frees the
-   effects' work. */
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
 {
     struct BattleFxScene *scene = Ram_HeapSlots->effect_work;

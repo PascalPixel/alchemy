@@ -14,12 +14,8 @@ void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void GameFlag_SetBitFar(s32 flag);
-/* The pointer-cell closer ignores the extra caller word. */
 void UiWindow_CloseIfOpen();
 
-/* Show a message in the item menu: in the menu message window when y is -1,
-   otherwise in a window sized to the message at (x, y). Unless x is -1, wait
-   for A, B or Start and clear it; otherwise set flag 0x151. */
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
 {
     struct InventoryMenuState *menu = gMenuWork;
@@ -46,8 +42,6 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
     else
         UiText_DrawResourceFar(message, window, 0, 0);
 #else
-    /* The Japanese menu draws every message the same way and leaves the
-       sized window open. */
     UiText_DrawResourceFar(message, window, 0, 0);
 #endif
     if (x != -1) {

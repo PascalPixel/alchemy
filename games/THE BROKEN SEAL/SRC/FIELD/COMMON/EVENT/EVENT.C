@@ -21,14 +21,12 @@ s32 Equipment_HasValueFar(s32 group, s32 entry);
 s32 GameFlag_TestFar(s32 group);
 s32 Event_ValidatePackedId(u32 packed_id);
 
-/* Empty event hook. */
 void Event_NoOpHookA(void)
 {
 }
 
 void Event_NoOpHook(void)
 {
-    /* Event hook intentionally left empty. */
 }
 
 void Event_RunObjectHookAndWait(struct ScenePlacement *table)

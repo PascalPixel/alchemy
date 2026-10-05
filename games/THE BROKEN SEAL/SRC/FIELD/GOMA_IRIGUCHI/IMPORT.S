@@ -1,7 +1,3 @@
-@ Import veneers after the GOMA_IRIGUCHI overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — GOMA_IRIGUCHI overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"

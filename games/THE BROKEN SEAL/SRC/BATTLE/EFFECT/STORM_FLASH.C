@@ -17,8 +17,6 @@ void BattleFx_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 
 extern void *Data_03001ec8[];
 
-/* One ground particle: its sprite entry, its place on the map in 16.16
-   fixed point and the frames it has left. */
 struct GroundParticle {
     u8 unknown_00[4];
     u16 y : 8;
@@ -54,12 +52,8 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 
 extern const u8 FieldFx_GroundParticleTiles[];
-/* Per frame left: the sprite's offset from its place, its tile, shape and size. */
 extern s16 FieldFx_GroundParticleFrames[];
 
-/* Each frame, draws the ground particles that are on screen and, when one
-   runs out of frames, sets it down again at a random spot on the ground
-   around the leader. Flag 0x166 holds every particle on its frame. */
 void FieldFx_UpdateGroundParticles(void)
 {
     struct MapScrollWork *view = gMapWork[0];
@@ -105,8 +99,6 @@ void FieldFx_UpdateGroundParticles(void)
     }
 }
 
-/* Counts the storm timer down: at zero it re-arms at a random interval and
-   plays the thunder cue, then flashes the target buffer for two steps. */
 void BattleFx_UpdateStormFlash(void)
 {
     struct FieldBlendWork *work = Data_03001ec8[0];
@@ -145,9 +137,6 @@ void BattleFx_UpdateStormFlash(void)
     }
 }
 
-/* Starts the ground particles: clears their work block, loads their tiles
-   into VRAM, lays all 32 on the ground under the leader with staggered
-   frames, sets the blend registers and schedules their update. */
 void FieldFx_StartGroundParticles(void)
 {
     struct GroundParticleWork *work;

@@ -33,7 +33,6 @@ void Effect_AnimateVerticalNegative(union FieldObject *object);
 void Effect_AnimateVerticalPositive(union FieldObject *object);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
-/* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
     u16 attr0;
@@ -42,9 +41,6 @@ struct WorldMapOam {
     u16 size : 2;
 };
 
-/* Spawns two effect objects linked to the parent actor, one drifting down
- * and one up, sharing the effect work VRAM block. Built into resource_371
- * and resource_373. */
 void WorldMap_CreateLinkedEffects(union PairObject *parent)
 {
     union PairObject *pair[2];
@@ -81,7 +77,6 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
             }
         }
     }
-    /* Both final list entries must be non-null. */
     {
         union PairObject *p = pair[0];
         struct FieldSprite *sp = p->object.actor.sprite;

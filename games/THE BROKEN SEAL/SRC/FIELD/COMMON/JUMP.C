@@ -1,7 +1,3 @@
-/* Field: jump the leader two tiles forward when the tile ahead is blocked but
-   the one beyond is free: the leader hops over, lands, and a ledge target
-   in front shakes as it goes; landing on a hole tile repeats the jump.
-   Returns 0 after a jump, -1 when the way is blocked. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
@@ -26,7 +22,6 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *actor
 void BattleFx_FinishAction(void);
 s32 Func_080091b0(s32 layer, s32 x, s32 z);
 
-/* The two tile-kind planes are addressed as fixed EWRAM tables. */
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 #define TILE_CELLS_TARGET ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
 #define TILE_CELLS_ABOVE ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
@@ -177,11 +172,6 @@ failure:
     return -1;
 }
 
-/* Field: the leader takes a ladder from its foot, or steps off there.
-   Off the ladder, where the cell one row north is of the leader's kind and
-   nothing stands on the leader's tile, the leader hops onto the rungs; on
-   the ladder, the leader drops to the tile one row north. Returns 0 after
-   either, -1 when there is no ladder to take. */
 s32 battle_owner_69(void)
 {
     struct ObjectRuntime *object = Object_GetById(gGameState.selected_actor);

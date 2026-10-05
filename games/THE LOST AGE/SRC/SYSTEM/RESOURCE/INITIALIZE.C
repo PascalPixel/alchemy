@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
 
-
 s32 Resource_LoadIntoFreeSlot(s32 size)
 {
     s32 slot;

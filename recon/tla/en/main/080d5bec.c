@@ -15,11 +15,6 @@ struct ScreenObject {
     u8 flags;
 };
 
-
-/* Writes the object's position relative to the camera in whole units, x
-   then z less height; sprite-mode objects are raised by their metadata
-   offset. Returns -1 when there is no such object. */
-
 s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 {
     struct ScreenObject *object = (struct ScreenObject *)ObjectTable_Get(object_id);

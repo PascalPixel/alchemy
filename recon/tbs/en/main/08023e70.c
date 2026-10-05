@@ -1,111 +1,4 @@
-/* 2026-10-05 sun deep finisher 21: alchemy diff 378 -> 160.
- * The party-panel pointer is its own IWRAM cell, Data_03001e90 (the
- * native pool names it, read at offset 0), not gWindowWork[1]: 376. The
- * exit reads it again directly instead of reusing the loop's cursor and
- * icon_win, so both become block-local (r3, as natively): 364. The
- * confirm handler is if (cnt != 0) { ... PlayFar(0x72); } else { -1;
- * break; }, which places the -1 block after the handler as natively: 335.
- * The native's redundant `ands r5, r6` in the timer path is a second mask
- * of an already masked value: turns = sel & 0x3e0000 tested, then
- * (turns & 0x3e0000) >> 17 pushed (CSE cannot fold an AND whose constant
- * lives in a register; written in one expression the tree folder removes
- * it): the mask stays in r6 and opts moves to r8, 340 alone. The auto
- * input clears rep, then trig, then opts, so reload copies opts' zero
- * from trig (mov r8, r1): 289. The detail-window page loop has its own
- * tile (r1; the function-level one crossed the arrow loops' division
- * calls in r6): 172; all three arrow loops now declare theirs. The result
- * shares one u32 with the page redraw's entry code (natively r6 for both,
- * which keeps the result out of r5): 160.
- * Tried without change: two separate timer/is_used ifs, an explicit
- * double mask in one expression, k = redraw (CSE folds it to 0), other
- * orders of the three input clears (340-342), the result as s32 (asrs
- * for the code fields: 166).
- * Remaining: the five entry zeros take a fresh r6 natively; k starts from
- * redraw's slot natively; the used and recovering message tails merge
- * here (0x666 in r1/r2 here, r3 natively); register choices around the
- * menu_busy byte, the page redraw's entry pointer (r3 natively), the
- * row-navigation page/row moves and two scheduled subtractions.
- */
-/* 2026-10-05 sun deep finisher 19: alchemy diff 869 -> 378 (frame 224).
- * The spill slots follow declaration order, so the declarations now run
- * slot, buf, then ctx, detail_win, prev_row, res, tbl, cnt, prev_page,
- * msg_win, mask, saved_row, sub_sel, redraw, is_used as the native frame
- * places them (76 down to 24; sub_cnt's address takes 80). The cursor is a
- * CursorSprite reached through cur_spr, pointed at it before the loop and
- * again each frame, as ItemList_SelectEntry does: the native keeps that
- * address in the lowest slot ([sp+4]) and builds its fields with word
- * masks. The recovery-list search and the used-code search have their own
- * block-local index k (r1 in the native, not the long-lived i), the page
- * redraw walks its own pointer entry (r8) instead of the table's pos (r5),
- * the confirm handler reads its own code (r6; cur stays r5 in the redraw),
- * and the blinking page loop recomputes (cnt + 4) / 5 instead of storing
- * pages, so the arrows reuse the loop's last quotient in r0.
- * Measured on the way: declarations reordered 739, CursorSprite 712, block
- * index 679, redraw pointer without the re-pointed cursor 744 (frame 220:
- * the cursor address lost its slot), with it 434, page quotient 415,
- * confirm code 378. mask = 0 after menu_busy 444 (kept before); pos as
- * tbl + cnt unchanged; 800 random declaration moves found nothing.
- * Remaining: the five zero stores at entry take a fresh r6 = 0 natively
- * (here the cnt zero and detail_win's slot); k starts from redraw's slot
- * natively; the used and recovering message paths then share one
- * CopyMessageString/Finalize tail here (the reload round robin differs),
- * and the row-status SetParamNibble calls likewise; later register choices
- * in the detail-window and input blocks follow from these.
- */
-/* 2026-10-04 H2 data-owner/flow pass: current EN score 11030
- * (197 register, 60 stack, 25 operand, 60 reordered, 32 inserted, 25 deleted).
- * All six TBS plans compile complete 2760-byte objects with a 224-byte frame;
- * native extent 2756 includes all pools and also has a 224-byte frame.
- *
- * gWindowWork[42] and gLinkCountdownWork name the same EN pointer cell.
- * Native setup uses the former's base plus 168; later selected/auto/commit
- * paths load the named cell directly. Following those real accesses gives
- * 11085 from 13161, removing 16 inserted instructions, without new state.
- * Separate consumed build/row code locals give 11030, retained.
- * Runtime_BumpFree is the existing producer name paired with allocation.
- *
- * DjinnMenu_BlinkTile is the 32-byte BG tile copied to both adjacent VRAM
- * tiles, the first alternating with palette index 4. ElementXOffsets and
- * ElementYOffsets are four-byte tables consumed by the four highlight calls.
- * Names remain at their existing scaffold owner; this adds no data credit.
- * Independent current-tree/owned-ROM review found only this function's
- * three literals in main and no pointers in 96 active EN overlays.
- *
- * Ordinary trials from 11085: selection scope 11748; destructive message-code
- * consumption 11175; reversed row flags 11405; scoped consumption 11838.
- * From 11030: bounded row for-loop 11190; consumed timer local 11105;
- * flat available/timer branches 11030, no improvement.
- * Native 84 nonlocal calls versus candidate 81: the used/recovering paths
- * merge one CopyMessageString and Finalize pair; the row status paths merge
- * one SetParamNibble call. These are duplicated native sites, not omitted
- * source behavior. No barrier or other instruction-presence device added.
- * Broad register/stack/control/pool differences keep this draft uncredited.
- */
 
-/* Earlier H1 owner/API pass: EN score13161 (214 register,
- * 61 stack,29 operand,61 reordered,48 inserted,28 deleted).
- * All six TBS plans compile complete2780-byte objects with a224-byte frame;
- * native extent2756 includes every pool, with the same224-byte frame.
- * The former ordinary draft scored13657 and had a 216-byte frame.
- *
- * Shared UiWindow/MenuSprite/UiRenderWork, MenuCell, BattleUnit and
- * DjinnRecoveryList replace duplicate views. Current STATUS.C owns the
- * 16-byte party-panel shape retained locally here. The command collector
- * allocates260 bytes and writes actor/result fields ate0/e4; that tail
- * remains a guarded local view, not an extension invented for the frame.
- * Its native call also supplies unused argumentr1=1, represented explicitly.
- * Input cells and IWRAM helpers use real declarations. No status semantics
- * are inferred for the ignored fill/copy results.
- *
- * Owner normalization alone:13925/frame216. Ordinary trials:
- * - C division instead of explicit __divsi3 calls:13785.
- * - Both real cursor coordinates as the existing MenuPoint:13306.
- * - Both together:13161/frame224, retained. Each coordinate is consumed;
- *   the aggregate recovers the eight frame bytes without unread storage.
- * No new asm, binding, compiler option or instruction device was added.
- * Remaining broad allocation/control/pool differences keep this uncredited.
- * H2 above supplies the three formerly anonymous data names.
- */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -115,37 +8,6 @@
 #include "BATTLE_PARTY.H"
 #include "IWRAM_CALL.H"
 
-/*
- * Battle Djinn picker (owner main:08023e70, 2756 bytes).
- *
- * Builds a flat table of the acting unit's selectable Djinn out of two
- * 4 x 20 bit grids in the unit record, then runs a modal five-per-page list
- * until the player confirms an entry or cancels.  The return value is the
- * packed table code of the confirmed entry, or -1 on cancel.
- *
- * Packed table code, as used by every draw and commit site below:
- *   bits  0.. 7  row within the grid column (0..19)
- *   bits  8..11  grid column (0..3)
- *   bit  16      entry came from the second grid (djinn_available), so it carries
- *                a placement record and a detail sub-window
- *   bits 17..21  placement timer, when positive
- *   bit  31      table terminator (0x80000000)
- *
- * The single `bl` back into the middle of the owner at 0x0802489c is the
- * out-of-range back edge of the outer `for (;;)`, not a call.
- *
- * The shared 12-byte MenuSprite passed to Runtime_PushSlotEntry exposes
- * its two OAM words and the real narrow fields. The +0xfffa and +248
- * cursor biases preserve the native wrapped hardware coordinates.
- *
- * Earlier scalar-draft allocation trials had a216-byte frame and missing
- * duplicated call sites. H1 recovered the real consumed MenuPoint; H2
- * above records the current frame and the precise remaining call merges.
- */
-
-/* The command collector owns this 260-byte state. The common menu prefix
- * ends at 0xe0; the actor and eight selected Djinn codes are written by
- * Battle_CollectPartyCommands and read here to reject duplicate choices. */
 struct BattleMenuSelection {
     struct MenuCell menu;
     s32 actor_id;
@@ -155,8 +17,6 @@ struct BattleMenuSelection {
 LAYOUT_SIZE_GUARD(BattleMenuSelection_Size, struct BattleMenuSelection, 0x104);
 LAYOUT_OFFSET_GUARD(BattleMenuSelection_Selected, struct BattleMenuSelection, selected, 0xe4);
 
-/* Same producer-owned record as STATUS.C. It describes the party panel,
- * not a cursor sprite; leave this local until that owner is shared. */
 struct PartyStatusWindow {
     struct UiWindow *window;
     u16 x;
@@ -169,13 +29,11 @@ struct PartyStatusWindow {
 LAYOUT_SIZE_GUARD(PartyStatusWindow_Size, struct PartyStatusWindow, 16);
 LAYOUT_OFFSET_GUARD(PartyStatusWindow_Flags, struct PartyStatusWindow, flags, 12);
 
-/* Direct name for the same work cell accessed through slot 42 at setup. */
 #define MENU_STATE ((struct BattleMenuSelection *)gLinkCountdownWork)
 extern u8 Data_03001e90[];
 #define CURSOR_OWNER (*(struct PartyStatusWindow **)Data_03001e90)
 
 extern volatile u32 gKeysHeld;
-/* One 8x8 BG tile; the first copy blinks against palette-index 4. */
 extern const u8 DjinnMenu_BlinkTile[32];
 extern const u8 DjinnMenu_ElementXOffsets[4];
 extern const u8 DjinnMenu_ElementYOffsets[4];
@@ -252,7 +110,6 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     saved_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     unit = Owner_GetStateFar(owner);
 
-    /* Flatten the active and available Djinn grids into one page-ordered table. */
     for (x = 0; x <= 3; x++) {
         pos = &tbl[cnt];
         for (y = 0; y <= 19; y++) {

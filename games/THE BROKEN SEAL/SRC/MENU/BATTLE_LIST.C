@@ -5,8 +5,6 @@
 #include "MENU_LIST.H"
 #include "ITEM.H"
 
-/* The battle menu's paged lists. */
-
 extern u8 MsgItemName[];
 extern u8 MsgItemPlainName[];
 extern u8 MsgBattleItemUnavailable[];
@@ -16,8 +14,6 @@ extern u8 MsgBattleItemNoEffect[];
 
 s32 Item_ClassifyUseAbility(s32 owner, s32 entry);
 
-/* Window tiles of the page indicator, in palette 15: one number for each
-   page, lit for the page shown, between two edge tiles. */
 enum BattleListTile {
     LIST_TILE_PAGE_NUMBER = 0xf301,
     LIST_TILE_PAGE_NUMBER_LIT = 0xf30b,
@@ -26,17 +22,6 @@ enum BattleListTile {
 };
 s32 Resource_LoadKind26EntryToBuffer(s32 entry, s32 handle);
 
-/*
- * Item list of the battle menu.
- *
- * One page of at most five items from `entries` in a 15x11 window, a
- * description line in the message window, a page indicator when the list is
- * longer than a page, one icon sprite per row and the blinking cursor. Returns
- * the index of the chosen item, or -1 when the player backs out. An item the
- * owner cannot use, or one that is broken, is drawn in another colour and
- * answers a press with a buzzer and a reason. Japanese decodes its messages
- * into 32 characters; the other editions copy up to 52.
- */
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 {
     struct UiRenderWork *render;
@@ -211,7 +196,6 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 window, LIST_TILE_PAGES_LEFT, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
-            /* Same correction as the paired action selector. */
             /* FAKEMATCH: reload render work before its dirty-field offset. */
             __asm__ volatile ("" : : "r" (render));
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);

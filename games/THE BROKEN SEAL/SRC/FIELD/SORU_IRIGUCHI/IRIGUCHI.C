@@ -26,7 +26,6 @@ extern u8 MsgSoruMinotaurReliefBothEyes[];
 extern u8 MsgSoruMinotaurReliefOneEye[];
 extern u8 MsgSoruSetSmallGem[];
 
-/* Each facing's push step: the x step in the high half, the z step in the low. */
 extern s32 gSoruPushSteps[];
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void Scene_UpdateOuterActor9Flags(void);
@@ -40,7 +39,6 @@ void Scene_UpdateFormationActor14Flags(void);
 void SoruIriguchi_ApplyEntryState(void);
 void FieldScene_RunSceneEntryHook(void);
 
-/* The overlay's work, past its loaded image. */
 s32 SoruIriguchi_CueTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
@@ -58,7 +56,6 @@ extern u8 MsgSoruWrongSukureta[];
 extern u8 MsgFieldDoorTightlyLocked[];
 extern u8 MsgSoruMoreStatuesOutOfReach[];
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -72,8 +69,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gSoruIriguchiEntrancesOther;
 }
 
-/* The sanctum entrance's regions and exits, between its scene-dependent
-   getters. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -84,9 +79,6 @@ const u32 *Scene_GetExits(void)
     return SoruIriguchi_Exits;
 }
 
-/* The actors placed at the sanctum's entrance. In the first scene the
-   entrances 11 to 13 and 14 to 16 have their own tables; any other entrance
-   takes a table that is prepared first. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s32 table;
@@ -114,7 +106,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gSoruIriguchiPlacementsOther;
 }
 
-/* What the sanctum's entrance answers, chosen as its placements are. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s32 lo = 11;
@@ -260,7 +251,6 @@ void FieldScene_RunFlag821Dialogue(void)
     Engine_EventEnd();
 }
 
-/* Setting the small gem into the empty socket opens the gate. */
 void SoruIriguchi_SetSmallGem(void)
 {
     s32 message;
@@ -463,7 +453,6 @@ s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
     return 0;
 }
 
-/* Push the faced block and leader together, refresh the puzzle and update the entrance's flags. */
 void SoruIriguchi_PushFacedBlock(void)
 {
     struct FieldActor *leader;
@@ -525,8 +514,6 @@ void SoruIriguchi_PushFacedBlock(void)
     }
 }
 
-/* The sanctum entrance's scene start: each of its two scenes runs its own
-   entry setup. */
 s32 Scene_Initialize(void)
 {
     s32 scenario = gGameState.scene;
@@ -563,15 +550,6 @@ void SoruIriguchi_ApplyEntryState(void)
     }
 }
 
-/* Opens the scene with the window transition, playing sound 141 when flag
- * 0x814 is set, then prepares the entrance the party arrived by. Entrances 1
- * and 2 change the map once flag 0x81a is set. Entrance 3 clears actor 9's
- * sprite flags. Entrance 8 stores two game-state halfwords and runs a scene
- * until flag 0x802 is set. Entrances 11 to 13 clear the sprite flags of
- * actors 9 to 19, run a scene until flag 0x804 is set and place actors 9 and
- * 10 by flag. Entrances 14 to 16 clear those of actors 9 to 14, run a scene
- * until flag 0x825 is set, run one more step, set flag 0x234 and change the
- * map once flag 0x821 is set. */
 void FieldScene_RunSceneEntryHook(void)
 {
     s32 entrance;
@@ -736,8 +714,6 @@ void Scene_EnterSolSanctum(void)
     Engine_EventEnd();
 }
 
-/* Sukureta suspects a hidden passage at the sanctum entrance, and the party
- * decides whether to split up and search. */
 void Scene_SukuretaSuspectsHiddenPassage(void)
 {
     u8 *record;

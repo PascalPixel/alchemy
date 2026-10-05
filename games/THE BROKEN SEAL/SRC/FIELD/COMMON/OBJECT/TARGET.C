@@ -96,7 +96,6 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
     visual->flags = 0;
     child->resource = object;
 
-    /* Sprite priority is bits2-3 of the third attribute's high byte. */
     if (flags & 0x100) {
         s32 mask = 13;
         u8 visual_flags = ((u8 *)visual)[9];

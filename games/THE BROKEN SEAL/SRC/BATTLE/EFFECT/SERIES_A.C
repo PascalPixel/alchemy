@@ -38,7 +38,6 @@ extern u8 BattleFx_PuffSizes[];
 
 void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode);
 
-/* Mode entries of battle effect series A. */
 void BattleFx_RunSeriesAMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunSeriesA(effect, 0);
@@ -78,9 +77,6 @@ void BattleFx_RunSeriesAMode6(struct BattleEffectArgument *effect)
     BattleFx_RunSeriesA(effect, 6);
 }
 
-/* Battle effect: a djinni hovers over the acting side while a cloud of
-   sparks gathers on, or drifts past, every affected unit, eight frames
-   apart, in one of seven modes. */
 void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 {
     void **heap_cache;

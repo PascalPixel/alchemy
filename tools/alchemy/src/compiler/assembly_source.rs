@@ -1,5 +1,3 @@
-//! Source selection for explicit GAS edition wrappers, shared by discovery and
-//! diagnostic readers. Commands remain the authority that assemble the source.
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
@@ -11,7 +9,6 @@ struct Branch {
     else_seen: bool,
 }
 
-/// GAS @ comments and C block comments, with strings and line numbers intact.
 pub(crate) fn without_comments(text: &str) -> String {
     let mut bytes = text.as_bytes().to_vec();
     let (mut at, mut quote, mut block) = (0, false, false);
@@ -100,13 +97,6 @@ fn condition(
     }
 }
 
-/// Explicit edition conditionals, preserving line numbers. Unknown conditions
-/// fail rather than silently discovering an inactive stream or message name.
-/// Macro bodies are retained as definitions; stream includes inside macros are
-/// refused by stream discovery because it cannot infer their expansions.
-/// Read active source includes for predicate definitions. Their text remains
-/// an include in the result, so the source's line numbers and ownership stay
-/// intact. Unknown expressions and missing includes are never guessed.
 pub(crate) fn selected_includes(
     text: &str,
     edition: &str,

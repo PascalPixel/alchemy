@@ -1,17 +1,5 @@
-/* Draft: Japanese debug command source alternative.
- * 2026-10-01: Compiled owner 664 bytes; clear/fill register allocation or scheduling differs from the 664-byte Japanese owner.
- * This reduced attempt includes its current source declaration context.
- * 2026-10-03: HP declaration now comes from OWNERVAL.H; body unchanged.
- * The scorer has no listing label for CommandTable_ConfigureCommandGroups.
- * Current compilation is blocked by the existing private
- * UiText_DrawCharacterAtOffset declaration conflicting with
- * TEXT_RENDER_RUNTIME.H. The earlier 664-byte trial is retained; no new
- * byte proof or scene placement is claimed by this declaration correction.
- * Ordinary TBS compiler and options; no scene placement or credit claimed.
- */
 extern int MenuTest_BenchmarkCharacter[1];
 #include "EDITION.H"
-/* Declarations shared by the debug menu test's sources (resource_3ce). */
 #ifndef MENU_TEST_H
 #define MENU_TEST_H
 
@@ -22,8 +10,6 @@ extern int MenuTest_BenchmarkCharacter[1];
 
 extern s16 Data_02000240[];
 extern volatile s32 Data_03001ae8;
-/* The shops' welcome lines open their blocks of messages; the menu steps
- * through a block as long as the distance between the first two. */
 extern u8 MsgWeaponShopWelcome[];
 extern u8 MsgArmorShopWelcome[];
 extern u8 MsgItemShopWelcome[];
@@ -61,41 +47,6 @@ s32 DebugMenu_BrowseIcons(void);
 s32 Shop_ConfirmAct(void);
 s32 Menu_OpenCharacterSelector(void);
 
-/* Scene state, dialogue and command-table steps for resource_3ce. */
-
-/*
- * Table getter at 0x02000030. The eight-byte owner includes its one pool word
- * at 0x02000034, which holds 0x020093c8; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
-/*
- * Table getter at 0x0200003c. The eight-byte owner includes its one pool word
- * at 0x02000040, which holds 0x020093f8; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
-/*
- * Table getter at 0x02000044. The eight-byte owner includes its one pool word
- * at 0x02000048, which holds 0x020093fc; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
-
-/* Step by one until the query returns non-zero. The test sits at the bottom of
- * the loop and entry jumps to it. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Each symbol here is the per-site call word the overlay image holds -- one
- * word can serve two sites with different targets -- and the macro keeps the
- * site's own calling form. The names themselves are provisional. */
-
-/* Runs one setup call, then a long table of two-argument calls each passing
- * a slot index (0-3) and an associated code value, and finishes with a few
- * index-only calls. */
 static __inline__ void bump_step(s32 amount)
 {
     u8 *work = *(u8 **)Data_03001ebc;
@@ -103,7 +54,6 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-/* The sources call one another across files. */
 u8 *MenuTest_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *MenuTest_GetExits(void);
@@ -179,9 +129,7 @@ void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
-
 
 void CommandTable_ConfigureCommandGroups(void)
 {

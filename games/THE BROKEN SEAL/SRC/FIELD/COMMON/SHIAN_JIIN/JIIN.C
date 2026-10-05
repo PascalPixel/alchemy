@@ -86,7 +86,6 @@ s32 FaceXianActorToPlayer(struct FieldActor *actor)
     return 0;
 }
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -107,10 +106,6 @@ s32 GetXianMessageData(void)
     return (s32)ShianJiin_XianMessages;
 }
 
-/* The actors placed in the temple: the first scene and the third entrance
-   have their own tables. Once flag 0x895 is set, the gated actors of the
-   other table take that flag and one of them moves; that table is prepared
-   before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_ShianJiin1) {
@@ -457,7 +452,6 @@ void FieldScene_RunForwardArcBurst(void)
                   0xffff0000, 0x3333, 0, 0, 0);
 }
 
-/* Spin actor 19 out along a quickening spiral, lift it and throw three puffs. */
 void ShianJiin_SpinAway(void)
 {
     struct FieldActor *actor;
@@ -569,7 +563,6 @@ void Scene_RunPrimarySequence(void)
         0);
 }
 
-/* Walk actor 15 around the leader by the quadrant it faces, then turn it. */
 void ShianJiin_WalkByFacing(void)
 {
     u32 dir;
@@ -594,7 +587,6 @@ void ShianJiin_WalkByFacing(void)
     }
 }
 
-/* The master addresses his pupils, then walks up to actors 19 and 20 for training. */
 void ShianJiin_RunMasterScene(s32 mode)
 {
     s32 msg;
@@ -636,9 +628,6 @@ void ShianJiin_RunMasterScene(s32 mode)
     Call3((void (*)())Engine_ActorFaceDirection, 15, 0x2000, 30);
 }
 
-/* Xian: everyone turns to actor 19 and talks it through (MsgShianLookTreeFell
- * onward), actor 15 steps forward, actor 19 is lifted into place with cue
- * 124, and flag 0x301 is set. */
 void ShianJiin_RunGatheringScene(void)
 {
     u32 i;
@@ -786,7 +775,6 @@ firstSceneComplete:
     Engine_EventEnd();
 }
 
-/* Accepting either offer sets flag 0x898; declining both sets flag 0x899. */
 void FieldScene_RunSecondEnsembleBeat(void)
 {
     s32 id;
@@ -1019,7 +1007,6 @@ void FieldScene_RunSecondEnsembleBeat(void)
         goto joinBeat;
     }
 
-    /* Declining the first offer advances the dialogue to a second offer. */
     Event_SkipMessages(1);
     Engine_EventWait(20);
     Actor_ShowEmote(18, 0x105, 60);
@@ -1075,7 +1062,6 @@ void FieldScene_RunSkippableStoryBeat(void)
     }
 }
 
-/* Stop the gathering actors' update callbacks before the scene runs. */
 void FieldScene_RunEnsembleStoryBeat(void)
 {
     u32 i;
@@ -1338,8 +1324,6 @@ void FieldScene_ShowDialogue17DF(void)
     Engine_EventEnd();
 }
 
-/* What the temple answers: the first scene and the third entrance have
-   their own events. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_ShianJiin1) {
@@ -1464,8 +1448,6 @@ void ShianJiin_RunExitTransition(void)
     Engine_EventEnd();
 }
 
-/* The party walks in and actor 8, who can read minds, asks whether it is
- * curious. */
 void ShianJiin_AskIfCurious(void)
 {
     struct FieldActor *record;
@@ -1565,9 +1547,6 @@ void ShianJiin_AskIfCurious(void)
     Engine_EventEnd();
 }
 
-/* Long scripted sequence: sets up and steps a series of actors (indices 0-3,
- * 8-10, 17, 20) through position, pose, animation, wait, and flag-bit calls,
- * copying a couple of fields between some actors' records along the way. */
 void FieldScene_RunRoofEnsembleSequence(void)
 {
     u32 unused;
@@ -1595,7 +1574,6 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(20);
     Actor_FaceDirection(9, 0xd000, 0);
-    /* Place the other party members at the leader's position. */
     source_record = Actor_Get(ACTOR_PARTY_LEADER);
     if (source_record != 0) {
         Actor_SetPosition(ACTOR_GERALD, source_record->x.fixed, source_record->z.fixed);
@@ -1995,12 +1973,10 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Event_ShowMessageAndWait(8, 0, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(20);
-    /* Keep the actor's facing fixed during the move. */
     Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
     Engine_EventWait(1);
     {
-        /* Turn the leader to face the way it walks. */
         struct FieldActor *record = Actor_Get(ACTOR_PARTY_LEADER);
         record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
     }
@@ -2116,7 +2092,6 @@ void FieldScene_RunRoofEnsembleSequence(void)
     GameFlag_Set(0x895);
 }
 
-/* Temple entry: in the second scene set the entrance selector and, by entrance and story flags, stage the roof and gathering actors; elsewhere restore the opened passages. */
 s32 ShianJiin_ApplyEntryState(void)
 {
     struct FieldActor *actor;

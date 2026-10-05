@@ -6,12 +6,9 @@
 #include "FIELD_EFFECT.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
-/* Integrate position, velocity, rate and sprite angle for one scene effect.
-   Signed division preserves decay toward zero for negative Z velocity. */
 struct Sprite {
     u8 pad00[9];
     u8 flags9;
@@ -290,19 +287,12 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-                    /* scene entity by selector */
-
-/* Sets the object's sprite priority. */
 void SetEffectOwnerMode(struct FieldActor *object, s32 priority)
 {
     struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)object->sprite;
 
     sprite->priority = priority;
 }
-
-/* Spawn and configure the mode-14 object variant. */
-
-/* Spawn and configure the mode-15 object variant. */
 
 struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
 {

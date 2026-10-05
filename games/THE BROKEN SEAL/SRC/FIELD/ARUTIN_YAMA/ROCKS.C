@@ -170,9 +170,6 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     GameFlag_Set(0x908);
 }
 
-/* The falling-rocks sign on the mountain path. Unless flag 0x908 or 0xf14
- * is set, it sets flag 0x205 and plays Gerald's scene at the wall, then the
- * shared set piece. */
 void FieldScene_RunFallingRocksWarning(void)
 {
     struct FieldActor *record;
@@ -253,8 +250,6 @@ void FieldScene_RunFallingRocksWarning(void)
     Engine_EventEnd();
 }
 
-/* What each of Altin Peak's areas answers; the first area answers
-   differently once flag 0x8fd is set. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     const struct SceneEvent *table;
@@ -291,12 +286,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return table;
 }
 
-/*
- * Arutin mountain: a timed actor that bobs toward the ground. While a delay
- * is pending it counts down; with no vertical velocity it sinks one step per
- * tick and settles on the ground (firing the landing cue on first contact);
- * when the timer lapses it reactivates and starts the fall.
- */
 void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 {
     if (work->delay != 0) {
@@ -470,7 +459,6 @@ void FieldScene_BuildMultiPhasePresentation(void)
     Engine_EventEnd();
 }
 
-/* One object record, seen as the actor or as the leap it is making. */
 union TimedActor {
     struct FieldActor actor;
     struct SceneMotion motion;
@@ -478,9 +466,6 @@ union TimedActor {
 
 extern s32 gKeyState;
 
-/* Actor 10 comes down the mountain in three leaps, landing with a shake
- * each time, then waits up to a second for a key before the camera
- * returns to the leader. */
 void ArutinYama_RunLeapSequence(void)
 {
     union TimedActor *actor;

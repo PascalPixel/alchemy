@@ -1,8 +1,6 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-/* The chip description a detected flash ID selects: five handlers, then the
-   chip's geometry and timing, whose ID sits at offset 0x28. */
 struct FlashChip {
     u32 handlers[5];
     u8 layout[20];
@@ -17,7 +15,6 @@ extern u32 Flash_Handler1;
 extern u32 Flash_Handler2;
 extern u32 Flash_Handler4;
 
-/* Select and publish the configuration matching the detected cartridge ID. */
 s32 IdentifyFlash(void)
 {
     u16 missing;

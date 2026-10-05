@@ -4,7 +4,6 @@
 
 extern const u16 Math_ArcTanTable[];
 
-/* Moves an (x, y, z) position radius along angle in the x-z plane. */
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position)
 {
     *position++ += Iwram_MulQ16(radius, Trig_Sin(angle + 0x4000));
@@ -121,7 +120,6 @@ s32 Math_IntegerSqrt(s32 value)
     return result;
 }
 
-/* The square root of a Q16 value, in Q16. */
 s32 FixedSqrt(s32 value)
 {
     return Iwram_Sqrt(value) << 8;

@@ -6,10 +6,6 @@
 #include "IWRAM_CALL.H"
 #include "FIELD_EVENT.H"
 
-/* ☀️'s menu cancel sound and palette entries. ⚓️'s tick also blinks the
-   cancel marker's tiles every fourth frame and waits for the window's
-   pending transfers. */
-
 extern u8 Data_08105948[];
 
 typedef s32 (*CopyFn)(void *, const void *, s32);

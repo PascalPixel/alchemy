@@ -47,10 +47,6 @@ extern u8 MsgHaidiaCantGetAroundThisRock[];
 extern u8 MsgHaidiaNorthLeadsToMtAleph[];
 extern u8 MsgHaidiaTheBoulderIsFalling[];
 
-/*
- * The overlay's own work, after its image: whether the boulder has stopped
- * shaking, and the shift that slows the shaking.
- */
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
 
@@ -71,11 +67,9 @@ extern u8 MsgHaidiaOh[];
 extern u8 MsgHaidiaTwoDontEnough[];
 extern u8 MsgHaidiaMomDadBack[];
 
-/* Actor 9's action table for the run through the storm. */
 extern u8 HaidiaArashi_StormRunActions[];
 void Scene_RunActorGroupDepartureSequence();
 
-/* Pick another heading when the actor's countdown reaches zero. */
 s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
 {
     s32 loaded = (*(s16 *)&((struct FieldActor *)object)->timer);
@@ -550,9 +544,6 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     return 0;
 }
 
-/* The storm night: Dora sends Robin to the plaza. She asks Kyle whether the
- * Boulder can be stopped, asks Robin to go, and repeats her plea for as long
- * as he refuses; then Kyle and Dora leave for the plaza. */
 void Scene_DoraSendsRobinToThePlaza(void)
 {
     s32 message;
@@ -1338,9 +1329,6 @@ void Scene_BoulderFalls(void)
     }
 }
 
-/* Points every scripted layer of an animated actor at one frame mode:
-   mode - 1, or with mode 0 a mode taken from the frame count. The low four
-   bits of the active byte name the sprite kind; 1 is an animation object. */
 void Arashi_SetActorFrameMode(struct FieldActor *actor, s32 mode)
 {
     if ((actor->active & 15) == 1) {
@@ -1381,10 +1369,6 @@ void ActorPresentation_SetFourActorsModeByBit(void)
     }
 }
 
-/* The storm night at the river, until flag 0x83a is set: the villagers are
- * placed along the bank, actor 26 cries out for her brother, the leader and
- * actor 22 come down to look, actor 23 is swept away, and the river search
- * follows. */
 void FieldScene_RunFlagGatedActorSequence(void)
 {
     u8 *tbl;
@@ -1634,11 +1618,6 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Engine_EventEnd();
 }
 
-/* The storm night by the river: while the cells shake, actors 9 and 26
- * run their scripts, actors 10, 24 and 25 each get a random count of 60
- * to 149 and actor 8's script, actor 9 says she will look north and
- * sends the others to the plaza, and asks the party twice for help before
- * actor 22 follows the leader out. */
 void HaidiaArashi_RunRiverSearch(void)
 {
     struct FieldActor *entry;
@@ -1677,7 +1656,6 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_ActorSetAnimation(10, 5);
     Engine_ActorSetAnimation(24, 6);
     Engine_ActorSetAnimation(25, 6);
-    /* Give the three waiting actors a random starting countdown. */
     entry = Actor_Get(10);
     record = Engine_RandomNext();
     entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
@@ -1771,7 +1749,6 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_ActorSetAnimationAndWait(22, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(22, 2);
-    /* Walk actor 22 back to the leader. */
     record = (s32)Actor_Get(0);
     if (record != 0) {
         Actor_SetDestination(22, ((struct FieldActor *)record)->x.part.pixel, ((struct FieldActor *)record)->z.part.pixel);
@@ -1940,8 +1917,6 @@ void HaidiaArashi_UpdatePulsingGlow(void);
 void ActorPresentation_SelectActorTwentySevenState(void);
 void HaidiaArashi_CopyLeaderSpritePriority(void);
 
-/* Sets an actor and its target at once: x and height from one value, depth
-   from the other. */
 static __inline__ void HaidiaArashi_PlaceActor(struct FieldActor *object, s32 pos, s32 depth)
 {
     object->x.fixed = pos;
@@ -1952,8 +1927,6 @@ static __inline__ void HaidiaArashi_PlaceActor(struct FieldActor *object, s32 po
     object->target_z = depth;
 }
 
-/* The night of the storm, after the Boulder: the group gathers, the light
-   rises and bursts, and the scene is left set for the morning after. */
 void Scene_RunActorGroupDepartureSequence(void)
 {
     struct FieldSprite *actorVisual;

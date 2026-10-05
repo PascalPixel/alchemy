@@ -5,11 +5,9 @@
 #include "UI.H"
 #include "BATTLE_RUNTIME.H"
 
-/* The four stat labels precede "Exp" by 23 messages. */
 extern u8 MsgExpLabel[];
 extern u8 MsgClassName;
 
-/* Fixed labels drawn with the panel. */
 extern const u8 Menu_LvString[];
 extern const u8 Menu_SlashString[];
 extern const u8 Menu_HpString[];
@@ -22,8 +20,6 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 void UiWork_SetParamNibbleFar(s32 color);
 void WaitFrames(s32 frames);
 
-/* The Japanese panel gives its four battle stats a fourth digit, a column
-   further left. */
 #if EDITION_INTERNATIONAL
 #define STAT_DIGITS 3
 #define STAT_X      200
@@ -32,9 +28,6 @@ void WaitFrames(s32 frames);
 #define STAT_X      192
 #endif
 
-/* The owner's status panel: name, class, level, HP and PP against their
-   maxima and experience on the left, the four battle stats on the right.
-   Bit 8 of flags skips clearing the panel first. */
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
     struct InventoryMenuState *menu;

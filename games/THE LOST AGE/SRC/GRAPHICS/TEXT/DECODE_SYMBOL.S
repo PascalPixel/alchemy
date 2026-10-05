@@ -1,13 +1,3 @@
-@ Symbol decoder, copied and run as one 324-byte unit (size and source {0x144,
-@ 0x08038438} in the literal pools at 0x0803b1e0 and 0x0803cb04). Behind a
-@ 4-byte Thumb entry (bx pc) the ARM body reads tree and message bits with
-@ lsrs and bcs or bcc, refills each bit word through the carry with ldreq
-@ and rrxseq, and saves r5 and r6 without lr. GCC never branches on the carry
-@ out of a shift, never emits rrx and saves lr with any register. After that
-@ entry its 320-byte body equals TBS GRAPHICS/TEXT/DECODE_SYMBOL.S
-@ (0x08015430) apart from one relocated literal word.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM text and tile kernel bank, symbol decoder
 .syntax unified
 	.thumb
 	.global Text_DecodeSymbolCode

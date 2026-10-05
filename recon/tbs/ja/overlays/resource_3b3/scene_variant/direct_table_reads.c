@@ -1,7 +1,3 @@
-/* NONMATCHING: localized scene source, 2026-10-01.
- * The complete 316-byte direction-table probe has the correct operations,
- * but four instructions use r2 rather than r1 for the packed z-component.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "HASHIRA.H"
@@ -50,8 +46,6 @@ extern const struct ScenePlacement gTakaraHashiraPlacementsOther[];
 s32 Engine_RandomNext();
 extern u32 gBgScroll[];
 
-/* Copy one map cell's attribute fields (all but the tile) from src into the
- * cell at x, y of a map layer. */
 s32 FieldScene_RunScene3b3SequenceD(void)
 {
     s32 FieldScene_RunScene3b3SequenceD();

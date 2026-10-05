@@ -28,7 +28,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00000630)
 } > ROM
     iwram_slots 0x3000000 (NOLOAD) : { "*/recon/tla/sym_iwram.o"(.sym_iwram_slots) } > IWRAM
-    /* Startup copies this resident module bank to IWRAM with DMA3. */
     .iwram_runtime 0x3000100 :
     {
     "*/games/THE LOST AGE/SRC/SYSTEM/RUNTIME.o"(.text .rodata .data .padding)
@@ -1382,7 +1381,6 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/UMUL_HIGH.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/MIXER_ENTRY.o"(.text .rodata .data .padding)
 } > ROM
-    /* The sound mixer runs from IWRAM. */
     .iwram_mixer 0x3006000 :
     {
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/MIXER.o"(.text .rodata .data .padding)
@@ -4182,9 +4180,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00ec326d)
     "*/recon/tla/ja/overlays.o"(.overlays)
 } > ROM
-    /* Start-up copies the resident runtime from its ROM image. */
     IwramRuntime_Rom = LOADADDR(.iwram_runtime);
-    /* The sound mixer runs in IWRAM; its ROM copy is called in place for its return trampoline. */
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

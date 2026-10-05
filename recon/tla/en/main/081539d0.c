@@ -8,16 +8,6 @@
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
 
-/*
- * Battle effect: a cloud of 256 stars scattered through a cube around the
- * scene centre (only the first 64 are shown). For 160 frames star i appears
- * from frame i / 4, turned by a yaw, pitch or roll (or both of the last two,
- * by i & 3) that grows with the frame, and is drawn from one of four sheets
- * at a size of 1..9 pixels by depth. Thirty frames after it appears each
- * star is pulled back towards the centre.
- */
-
-/* Resource id the reference loads from its literal pool. */
 extern const u16 ParticleStreams_CellOffsets[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);

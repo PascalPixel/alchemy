@@ -1,6 +1,3 @@
-/* Draft: BattleFx_SnapScaleToFull, ☀️'s body. Differ 2 (dd): native emits
- * movs #255; ldr scale; lsls; adds, the load between the parts of the split
- * 0xffff; here the load follows the lsls. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"

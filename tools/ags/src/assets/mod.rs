@@ -1,4 +1,3 @@
-//! Byte-oriented asset codecs. Callers own file paths and game layouts.
 pub mod compression;
 pub mod image;
 pub mod lz;

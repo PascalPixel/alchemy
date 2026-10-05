@@ -44,8 +44,6 @@ void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ACTION_ID_MASK 0x3fff
 
-/* Draw the Psynergy name, targeting class and element/range icons,
- * then redraw the page rows and highlights. */
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 {
     struct PsynergyMenuState *menu;
@@ -58,7 +56,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
     RenderOutput_RedrawSavedRectFar(menu->info_window);
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-    /* Spanish and Italian clear the info window's top row instead. */
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
 #else
     RenderOutput_ClearListFar(menu->info_window);
@@ -91,7 +88,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
             UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, 96);
         }
 #else
-        /* Japanese lists each usable location before the closing phrase. */
         UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
         row = 0;
         if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
@@ -218,7 +214,6 @@ s32 PsynergyMenu_DrawListPage(
     UiText_DrawAt(
         owner->class_index + (s32)&MsgClassName, window, 0, 32);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
-    /* The Spanish and French level label is drawn at a pixel offset. */
     UiText_DrawStringAtOffsetFar(&Menu_LvString, (void *)window, 0, 48);
 #else
     UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);

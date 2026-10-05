@@ -35,7 +35,6 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
     }
 }
 
-/* Opcode 13: defeats from here on earn spoils. */
 void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 {
     runtime->flags |= 1;
@@ -46,8 +45,6 @@ void UiText_ShowMessageAndWaitCoreFar(u32);
 void BattlePresentation_WaitForAdvance(void);
 void UiWork_ClearValueNameTablesFar(void);
 void Audio_PlayCue(u32);
-/* The actual routine takes one actor id. This legacy call transports two
-   extra zero words; the definition and its argument count stay unchanged. */
 void BattleMotion_RunValueSequence();
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned);
 s32 BattleActor_ResetRuntimeFields(s32 unit_id);

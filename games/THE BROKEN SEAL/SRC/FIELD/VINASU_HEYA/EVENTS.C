@@ -67,7 +67,6 @@ void FieldScene_DrawTilesWhenCheckClear(void)
     Scene_RunScene3c8SequenceA();
 }
 
-/* Run the fixed scene setup sequence. */
 void FieldScene_RunApproachAndSpawnEffect(void)
 {
     Engine_EventBegin();
@@ -81,7 +80,6 @@ void FieldScene_RunApproachAndSpawnEffect(void)
     Engine_EventEnd();
 }
 
-/* What each room answers; other scenes take the second room's events. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s32 v = gGameState.scene;
@@ -138,8 +136,6 @@ void SceneState_ApplyStepToSlots15To18(void)
     } while (i <= 18);
 }
 
-/* The Vinasu rooms' entry setup: per room and entrance, which actors,
- * cells and effects are placed before the scene starts. */
 s32 Scene_RunEntrySetup(void)
 {
     struct FieldActor *actor;

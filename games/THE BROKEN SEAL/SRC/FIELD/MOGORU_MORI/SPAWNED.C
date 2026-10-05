@@ -8,7 +8,6 @@ void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
     actor->sprite->priority = mode;
 }
 
-/* Spawn a scene object with sprite priority zero and child value 14. */
 u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *ret;

@@ -5,9 +5,6 @@
 
 s32 UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
-/* Blanks the tiles inside a window's frame over a rectangle given in pixels
-   from the window's corner, rounded out to whole tiles, releases the glyph
-   tiles that stood there, and marks the tilemap dirty. */
 void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     u32 left, u32 top, u32 right, u32 bottom)
 {

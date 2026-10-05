@@ -18,8 +18,6 @@
 extern u8 Data_080aebcc[];
 extern u8 Data_080aeb4c[];
 
-/* menu/item_menu/page_result.c */
-
 extern u8 MsgItemPlainName;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
@@ -194,20 +192,10 @@ s32 InventoryMenu_ItemNamePageReturnTrue(void)
     return 1;
 }
 
-/* Empty name-page hook. */
 void InventoryMenu_ItemNamePageNoOp(void)
 {
 }
 
-/*
- * types.h already supplies WaitFrames, __modsi3, Audio_PlayCue, GameFlag_IsSet,
- * Ability_GetData, UiText_DrawCharacterAtOffsetFar, UiIcon_PrepareObject and
- * Object_InitializeMode; only the names it does not carry are declared here.
- */
-
-/* The item list loop, the counterpart of PsynergyMenu_RunList: browse the
-   owner's items, cycle owners with L and R in the first pane, and return
-   the chosen item or -1. */
 s32 ItemMenu_RunList(s32 pane)
 {
     struct InventoryMenuState *menu;

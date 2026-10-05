@@ -1,8 +1,3 @@
-//! The `declarations` rewrite: a C file's own top-level declarations of
-//! functions a header already declares give way to an include of that
-//! header, as Camelot's modules shared their prototypes. A header that
-//! declares the function differently fails the compile or changes the
-//! bytes, which `alchemy keep` then reverts.
 use crate::compiler::routing::COMMON_INCLUDE_MODULES;
 use crate::targets::DecompTarget;
 use regex::Regex;
@@ -10,8 +5,6 @@ use std::collections::BTreeMap;
 use std::path::Path;
 use std::sync::OnceLock;
 
-/// A one-line prototype of a Subsystem_Verb function, with its name and
-/// parameter list.
 fn declaration() -> &'static Regex {
     static PATTERN: OnceLock<Regex> = OnceLock::new();
     PATTERN.get_or_init(|| {
@@ -22,8 +15,6 @@ fn declaration() -> &'static Regex {
     })
 }
 
-/// Each function a game's headers declare with a prototype, and the first
-/// header (by path) that does.
 pub(crate) fn index(root: &Path, target: DecompTarget) -> Result<BTreeMap<String, String>, String> {
     let mut headers = Vec::new();
     let mut directories = vec![root.join("games").join(target.game_dir()).join("INCLUDE")];
@@ -48,7 +39,6 @@ pub(crate) fn index(root: &Path, target: DecompTarget) -> Result<BTreeMap<String
 fn add(found: &mut BTreeMap<String, String>, text: &str, header: &str) {
     for line in text.lines() {
         if let Some(c) = declaration().captures(line) {
-            // An empty list says nothing about the parameters.
             if !c[2].trim().is_empty() {
                 found.entry(c[1].to_string()).or_insert_with(|| header.to_string());
             }
@@ -56,8 +46,6 @@ fn add(found: &mut BTreeMap<String, String>, text: &str, header: &str) {
     }
 }
 
-/// The text without its own declarations of indexed functions, with the
-/// headers that declare them included, and how many declarations went.
 pub(crate) fn rewrite(text: &str, index: &BTreeMap<String, String>) -> (String, usize) {
     let mut needed: Vec<String> = Vec::new();
     let mut kept = Vec::new();

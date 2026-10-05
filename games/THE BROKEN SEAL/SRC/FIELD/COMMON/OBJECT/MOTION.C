@@ -34,8 +34,6 @@ extern const u8 ObjectMotion_VariantScripts[];
 
 void WaitFrames(s32);
 
-/* A burst uses the ordinary object allocation, but the motion-rate words
-   become particle velocities while its callback runs. */
 struct BurstParticle {
     u8 pad_00[8];
     s32 x;
@@ -497,7 +495,6 @@ void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle)
 
 }
 
-/* Spawns a rising fragment at the source, with a random outward speed. */
 void BattleFx_SpawnBurstParticle(struct BurstParticle *source, s32 optional)
 {
     struct BurstParticle *object;

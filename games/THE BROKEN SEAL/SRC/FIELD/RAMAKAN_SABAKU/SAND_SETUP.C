@@ -14,8 +14,6 @@ struct Half {
     u16 v;
 };
 
-/* Claim a VRAM slot for the sand effect, load its tiles, clear two
- * counters and start the effect task. */
 void RamakanSabaku_ClaimSandEffectVram(void)
 {
     s32 slot;

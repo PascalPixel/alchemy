@@ -18,8 +18,6 @@ struct MapState {
     struct MapLayer layers[1];
 };
 
-/* Wait at most sixty frames for the object's position to reach its target, then reset its motion state. */
-
 void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
     s32 cnt = 60;
@@ -40,7 +38,6 @@ void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
     *(u32 *)(obj + 12) = *(u32 *)(obj + 20);
 }
 
-/* Wait up to sixty ticks for the height to reach its target or limit, then clear the motion state. */
 void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
 {
     s32 cnt = 60;
@@ -63,7 +60,6 @@ void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
     obj->target_y = 0x80000000;
 }
 
-/* Convert the sprite footprint probe from fixed-point coordinates into map cells. */
 s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth, struct StagedActorProbe *probe, s32 *left, s32 *top)
 {
     u8 *map = gMapWork[0];
@@ -124,7 +120,6 @@ check:
     return 1;
 }
 
-/* Apply the actor's placement query outputs and tag it on success; leave it untouched on failure. */
 s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 {
     struct FieldActor *obj = Object_GetById(no);
@@ -179,7 +174,6 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
     return 1;
 }
 
-/* Copy the map cell at x, y of a layer to dst with DMA 3 and wait for it. */
 void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 {
     struct MapState *map = gMapWork[0];

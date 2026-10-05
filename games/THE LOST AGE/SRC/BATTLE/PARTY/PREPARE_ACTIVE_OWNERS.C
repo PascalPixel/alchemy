@@ -7,9 +7,6 @@
 
 s32 Party_CountActiveOwnersFar(void);
 
-/* Takes the first four active owners into battle, or three in a two-sided
-   battle: optionally lists them with a 0xff terminator, marks each
-   one's battle unit present and returns how many. */
 s32 BattleParty_PrepareActiveOwners(u16 *owners)
 {
     s32 limit;

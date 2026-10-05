@@ -4,17 +4,11 @@
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
-/* A menu cursor record (object pointer and cursor state). The union keeps
-   pointer stores ordered against the window reads that follow them;
-   the two affected callers record their measured steering reason. */
 union MenuCursor {
     struct RenderOutput *output;
     u8 data[0x10];
 };
 
-/* The workspace menu's block: the selected row and its row icons, and the
-   options page with five settings, each a value in 0..count-1, and the
-   menu objects that show them. */
 struct WorkspaceWork {
     u8 unknown_000[0x574];
     u16 page;

@@ -24,13 +24,6 @@ struct Owner {
     u8 unk9_4 : 4;
 };
 
-/*
- * Per-frame integrator for an effect record -- resource_3c5. It adds the
- * velocity at +68/+72/+76 into the position at +8/+12/+16, decays two of the
- * three velocities, accumulates the rates at +48/+52, and turns the sprite.
- */
-
-/* Every field is named by offset; the layout is not verified. */
 struct MotionEffect {
     u8 pad00[8];
     s32 position[3];
@@ -53,14 +46,11 @@ struct MotionEffect {
     u32 callback;
 };
 
-/* The entrance's exits, in the overlay's data. */
 extern u8 gBabiIriguchiExits[];
 
-/* DOOR.C: the door of truth's two leaves slide apart or together. */
 void BabiIriguchi_OpenTruthDoor(void);
 void BabiIriguchi_CloseTruthDoor(void);
 
-/* The occupant one square ahead of an actor. */
 struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor);
 
 void WaitFrames(s32 frames);
@@ -79,8 +69,6 @@ s32 FieldEffect_UpdateGridPlacement();
 s32 battle_owner_69();
 void BabiIriguchi_JumpFromLedge();
 
-/* Services used by the entrance scripts. */
-
 static __inline__ void Iriguchi_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
@@ -98,6 +86,5 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 {
     return dividend / divisor;
 }
-
 
 #endif

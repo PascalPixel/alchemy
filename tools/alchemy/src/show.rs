@@ -1,10 +1,3 @@
-//! `alchemy show`: one function as the build placed it, beside the
-//! reference ROM's bytes at the same place, instruction by instruction with
-//! the lines whose bytes differ marked. It ends where the function ends:
-//! the next symbol in its own section (or a static function the ELF
-//! names, or the ELF's size for it), else the section end. Thumb is read by
-//! alchemy's own decoder; ARM, which that decoder does not read, by
-//! arm-none-eabi-objdump as `alchemy diff` uses it. A report for people (O1).
 use crate::compiler::routing::root;
 use crate::decode::{decode_one, half_at, word_at, Kind};
 use crate::elf::Elf;
@@ -26,13 +19,11 @@ symbol in its section, a static function the ELF names or its ELF size, or
 the section end. Code that runs from IWRAM is read where the ROM holds it.
 ARM code is disassembled with arm-none-eabi-objdump."#;
 
-/// One instruction or data word on one side.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct Line {
     pub address: u32,
     pub bytes: Vec<u8>,
     pub text: String,
-    /// One 32-bit word (ARM, or data) rather than Thumb halfwords.
     pub wide: bool,
 }
 
@@ -50,7 +41,6 @@ impl Line {
     }
 }
 
-/// Symbol names by address, the preferred name for each.
 pub(crate) type Names = BTreeMap<u32, String>;
 
 fn names(map: &Map) -> Names {
@@ -65,7 +55,6 @@ fn names(map: &Map) -> Names {
     names
 }
 
-/// ` <Name>` when `value`, or the Thumb address it holds, names a symbol.
 fn named(names: &Names, value: u32) -> String {
     names
         .get(&value)
@@ -73,13 +62,10 @@ fn named(names: &Names, value: u32) -> String {
         .map_or(String::new(), |n| format!(" <{n}>"))
 }
 
-/// Halfwords the decoder leaves unknown that Thumb still defines.
 fn unknown(half: u16) -> String {
     match half >> 8 {
         0xdf => format!("swi {:#x}", half & 0xff),
         0xbe => format!("bkpt {:#x}", half & 0xff),
-        // The second half of a BL on its own calls lr plus its offset:
-        // how ⚓️'s -mthumb-call-via-lr calls through a register.
         _ if half & 0xf800 == 0xf800 => match half & 0x7ff {
             0 => "bl lr".to_string(),
             offset => format!("bl lr+{:#x}", offset << 1),
@@ -88,10 +74,6 @@ fn unknown(half: u16) -> String {
     }
 }
 
-/// Thumb from `start` to `end`, where `image[0]` is at `base`. Words a
-/// pc-relative load reads print as data, and so does a jump table such a
-/// word points to: words that point forward into the function, up to the
-/// first place they point to.
 pub(crate) fn thumb_lines(image: &[u8], base: u32, start: u32, end: u32, names: &Names) -> Vec<Line> {
     let mut lines = Vec::new();
     let mut pool = BTreeSet::new();
@@ -146,8 +128,6 @@ pub(crate) fn thumb_lines(image: &[u8], base: u32, start: u32, end: u32, names: 
     lines
 }
 
-/// objdump's ARM disassembly of `file` from `start` to `end`, where the
-/// file's first byte is at `base`.
 fn arm_lines(file: &Path, image: &[u8], base: u32, start: u32, end: u32) -> Result<Vec<Line>, String> {
     let file = file.to_string_lossy();
     let output = command(
@@ -167,7 +147,6 @@ fn arm_lines(file: &Path, image: &[u8], base: u32, start: u32, end: u32) -> Resu
     Ok(parse_objdump(&output, image, base))
 }
 
-/// Lines of `objdump -D -b binary`: ` 800a37c:\te92d01e0 \tpush\t{r5, r6}`.
 pub(crate) fn parse_objdump(output: &str, image: &[u8], base: u32) -> Vec<Line> {
     output
         .lines()
@@ -184,8 +163,6 @@ pub(crate) fn parse_objdump(output: &str, image: &[u8], base: u32) -> Vec<Line> 
         .collect()
 }
 
-/// Both sides by address: an instruction one side splits differently
-/// stands alone, and the next shared address lines up again.
 pub(crate) fn pair<'a>(built: &'a [Line], reference: &'a [Line]) -> Vec<(Option<&'a Line>, Option<&'a Line>)> {
     let (mut i, mut j, mut rows) = (0, 0, Vec::new());
     while i < built.len() || j < reference.len() {
@@ -208,7 +185,6 @@ pub(crate) fn pair<'a>(built: &'a [Line], reference: &'a [Line]) -> Vec<(Option<
     rows
 }
 
-/// The side-by-side listing and how many of its rows differ.
 pub(crate) fn render(built: &[Line], reference: &[Line]) -> (String, usize, usize) {
     let rows = pair(built, reference);
     let mut out = String::new();
@@ -223,8 +199,6 @@ pub(crate) fn render(built: &[Line], reference: &[Line]) -> (String, usize, usiz
     (out.lines().map(str::trim_end).collect::<Vec<_>>().join("\n") + "\n", differ, rows.len())
 }
 
-/// Where the function ends: the next symbol in its section, a static
-/// function, or its ELF size, whichever comes first, else the section end.
 pub(crate) fn function_end(section: &Placed, start: u32, statics: &[u32], size: Option<u32>) -> u32 {
     let mut end = section.end();
     for &address in section.symbols.iter().map(|(a, _)| a).chain(statics) {
@@ -244,9 +218,6 @@ fn is_mapping(name: &str) -> bool {
     name.starts_with('$')
 }
 
-/// The section, start and name FUNCTION gives: a map symbol, an ELF
-/// symbol (static functions are not in the map), or an address, which
-/// stands for the function that holds it. `functions` are the ELF's.
 pub(crate) fn resolve<'m>(map: &'m Map, elf: Option<&Elf>, functions: &[(u32, String)], wanted: &str) -> Result<(&'m Placed, u32, String), String> {
     if let Some((section, start)) = map.symbol(wanted) {
         return Ok((section, start, wanted.to_string()));
@@ -264,7 +235,6 @@ pub(crate) fn resolve<'m>(map: &'m Map, elf: Option<&Elf>, functions: &[(u32, St
         .flatten()
         .ok_or_else(|| format!("no symbol {wanted} in the map or the ELF"))?;
     let section = in_section(address)?;
-    // The function that holds the address: the last symbol at or before it.
     let start = section
         .symbols
         .iter()
@@ -280,8 +250,6 @@ pub(crate) fn resolve<'m>(map: &'m Map, elf: Option<&Elf>, functions: &[(u32, St
     Ok((section, start, name))
 }
 
-/// ARM when the ELF says the symbol is an even function, or the last
-/// mapping symbol at or before it in its section is `$a`.
 fn is_arm(elf: Option<&Elf>, section: &Placed, name: &str, start: u32) -> bool {
     let Some(elf) = elf else { return false };
     if let Some(symbol) = elf.symbols.iter().find(|s| s.name == name && s.kind == STT_FUNC) {
@@ -307,7 +275,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let built = read(&format!("{edition}.gba"))?;
     let reference = read("baserom.gba")?;
     let elf = read(&format!("{edition}.elf")).ok().and_then(|data| Elf::parse(&data).ok());
-    // The ELF's functions, static ones included, which the map does not list.
     let functions: Vec<(u32, String)> = elf
         .iter()
         .flat_map(|e| e.symbols.iter())
@@ -378,14 +345,14 @@ mod tests {
     #[test]
     fn reads_thumb_with_pools_calls_and_names() {
         let mut image = halves(&[
-            0xb510, // push {r4, lr}
-            0x4802, // ldr r0, [pc, #8] -> 0x0800000c
-            0xf000, 0xf804, // bl 0x08000010
-            0xbd10, // pop {r4, pc}
-            0xf800, // bl lr
+            0xb510,
+            0x4802,
+            0xf000, 0xf804,
+            0xbd10,
+            0xf800,
         ]);
         image.extend(0x0300_0164u32.to_le_bytes());
-        image.extend(halves(&[0x4770, 0x0000])); // bx lr at 0x08000010
+        image.extend(halves(&[0x4770, 0x0000]));
         let names: Names = [(0x0800_0010, "Next".to_string()), (0x0300_0164, "gWork".to_string())].into();
         let lines = thumb_lines(&image, ROM, ROM, ROM + 0x10, &names);
         assert_eq!(
@@ -405,13 +372,11 @@ mod tests {
 
     #[test]
     fn a_jump_table_reads_as_words() {
-        // As GCC lays a switch out: the table follows the dispatch, the pool
-        // word that holds its address comes after the cases.
-        let mut image = halves(&[0x4a05, 0x00bb, 0x589b, 0x469f]); // ldr r2, =table; lsls; ldr r3, [r3, r2]; mov pc, r3
-        image.extend(0x0800_0010u32.to_le_bytes()); // case 0
-        image.extend(0x0800_0014u32.to_le_bytes()); // case 1
+        let mut image = halves(&[0x4a05, 0x00bb, 0x589b, 0x469f]);
+        image.extend(0x0800_0010u32.to_le_bytes());
+        image.extend(0x0800_0014u32.to_le_bytes());
         image.extend(halves(&[0x2001, 0x4770, 0x2002, 0x4770]));
-        image.extend(0x0800_0008u32.to_le_bytes()); // the pool: the table
+        image.extend(0x0800_0008u32.to_le_bytes());
         let lines = thumb_lines(&image, ROM, ROM, ROM + 0x1c, &Names::new());
         assert_eq!(
             texts(&lines),
@@ -469,10 +434,7 @@ mod tests {
             symbols: vec![(0x0800_0100, "First".into()), (0x0800_0120, "Second".into())],
         };
         assert_eq!(function_end(&section, 0x0800_0100, &[], None), 0x0800_0120);
-        // The last function runs to the section end, not to whatever symbol
-        // comes next in the ROM.
         assert_eq!(function_end(&section, 0x0800_0120, &[0x0800_0200], None), 0x0800_0140);
-        // A static function the map does not list, and the ELF's size.
         assert_eq!(function_end(&section, 0x0800_0100, &[0x0800_0110], None), 0x0800_0110);
         assert_eq!(function_end(&section, 0x0800_0100, &[], Some(0x18)), 0x0800_0118);
     }

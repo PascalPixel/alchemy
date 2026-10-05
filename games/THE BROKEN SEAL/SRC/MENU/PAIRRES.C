@@ -10,8 +10,6 @@ extern u8 Data_080aedcc[];
 
 s32 Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 
-/* ui/icon/load_resource_into_slot.c */
-
 void Resource_LoadPairedBlocksIfAvailable(void)
 {
     s32 first_slot;
@@ -31,7 +29,6 @@ void Resource_LoadPairedBlocksIfAvailable(void)
     }
 }
 
-/* menu/res/reset_two_resource_entries.c */
 void Menu_ResetTwoResourceEntries(void)
 {
     struct InventoryMenuState *state;
@@ -41,7 +38,6 @@ void Menu_ResetTwoResourceEntries(void)
     Resource_ResetEntry((u16)state->resource_slots[1]);
 }
 
-/* ui/icon/icon_load_resource_into_slot.c */
 s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
 {
     s32 resource_info;

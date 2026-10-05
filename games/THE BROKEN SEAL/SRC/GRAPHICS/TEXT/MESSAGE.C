@@ -4,8 +4,6 @@
 #include "BATTLE_WORK.H"
 #include "HEAP_STATE.H"
 
-/* The message constructor allocates heap slot 37. This range starts at
-   the renderer's slot 15 and includes each actual intervening block cell. */
 enum { HEAP_SLOT_BATTLE_DISPLAY = 37 };
 
 struct BattleMessageSlotRange {

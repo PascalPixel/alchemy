@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-/* Mode entries of the particle stream effect. */
 void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect)
 {
     BattleEffect_RunParticleStreams(effect, 0);

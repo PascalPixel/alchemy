@@ -21,11 +21,8 @@ extern u8 gMapCellBuffer[];
 #define MAP_CELL_TILE_MASK 0x00000fff
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000
 
-/* Whole metatile positions of the three visible map layers. */
 struct TilePos { s32 x, y; };
 
-/* Copy complete cells, then refresh both tile words of the first visible
-   layer using the copied cell's low twelve bits. */
 void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
     s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
@@ -131,9 +128,6 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
     }
 }
 
-/* Copies a width by height block of map cells from (src_x, src_y) to
- * (dst_x, dst_y) in the 128-cell-wide map grid, replacing everything above
- * each destination cell's low 12 bits and keeping those. */
 void Map_CopyCellAttributeRect(
     s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
@@ -157,9 +151,6 @@ void Map_CopyCellAttributeRect(
     }
 }
 
-/* Copy each cell's metatile index (its low twelve bits) and keep the
-   destination cell's attributes, then refresh both tile words of the first
-   visible layer whose 16 by 12 metatile window holds the cell. */
 void Map_CopyCellIndexRect(s32 src_x, s32 src_y,
     s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
@@ -192,7 +183,6 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y,
                 u32 cell;
                 register u32 offset;
                 u32 tmp3;
-                /* Both destinations are VRAM: the display consumes each store. */
                 volatile u32 *dest;
                 u32 n;
                 register u32 *tiles;

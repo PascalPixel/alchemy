@@ -47,10 +47,6 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
     }
 }
 
-/* Flag grid input (debug menu): the cursor picks a flag on a 16x16 page (column,
-   row); A toggles it, B or Select leaves, the D-pad moves the cursor and L/R
-   turn pages, ten at a time with Start held. Returns 1 when the page or a
-   flag changed. */
 s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor)
 {
     s32 *row = &cursor[1];

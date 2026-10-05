@@ -23,7 +23,6 @@ enum {
     TRANSITION_EFFECT_DEPTH = 30
 };
 
-/* The motion script each transition effect runs. */
 extern const s32 gTransitionSparkScript[];
 s32 __umodsi3(u32 value, s32 divisor);
 extern u32 gFrameCount;
@@ -40,7 +39,6 @@ void Map_LoadAreaGraphics(void);
 void SceneEffect_RestoreBlendRegisters(void);
 void FieldScene_RunLateSequence(void);
 
-/* Each request preserves IME while publishing one complete DMA transfer. */
 /* FAKEMATCH: the one-pass read preserves the saved-IME copy before masking. */
 /* FAKEMATCH: the one-pass restore keeps subsequent callback setup outside the queue-publication control boundary. */
 #define QueueTransfer(source, destination, control) \
@@ -63,9 +61,6 @@ void FieldScene_RunLateSequence(void);
 
 #define QueueFrame(buffer, offset) QueueTransfer((buffer) + (offset), 0x06002000, 0x84000140)
 
-/* Entrance 80's scene: Jasmine and Sukureta talk on the world map until
-   actor 9 arrives and guides them off; it ends by sending the game to the
-   title scene's entrance 10. */
 void FieldScene_RunActorPresentationSequence(void)
 {
     PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
@@ -179,7 +174,6 @@ void FieldScene_RunActorPresentationSequence(void)
     Event_SetDestination((s32)&SceneId_Title, 10);
 }
 
-/* Stages the scene transition and arms the timed callback that drives it. */
 void StoryScene_StartTransition(void)
 {
     Engine_EventBegin();
@@ -213,11 +207,6 @@ void StoryScene_StartTransition(void)
     Engine_EventEnd();
 }
 
-/*
- * The timed callback the transition schedules. Each run places one effect at
- * a random point of a 40 by 30 pixel area with a random scale, and on every
- * third frame moves the camera to one of four nearby points chosen at random.
- */
 void StoryScene_UpdateTransitionEffect(void)
 {
     u32 x = (u32)Engine_RandomNext() * TRANSITION_EFFECT_WIDTH >> 16;
@@ -256,8 +245,6 @@ void StoryScene_UpdateTransitionEffect(void)
     }
 }
 
-/* Drives actor 8 through a series of position/threshold setup calls and
- * advances the shared scene phase before the scene runs. */
 void FieldScene_RunActorEightApproach(void)
 {
 
@@ -271,7 +258,6 @@ void FieldScene_RunActorEightApproach(void)
     Actor_SetPosition(ACTOR, 0x13080000, 0x3280000);
     actor = Actor_Get(ACTOR);
     {
-        /* Write 0xa000 to the halfword at +6 of the actor record. */
         s32 value = 0xa000;
 
         actor->facing = value;
@@ -299,7 +285,6 @@ void FieldScene_RunActorEightApproach(void)
     Engine_EventRequestExit(110);
 }
 
-/* Totals slots 0 and 2 against slots 1 and 3 and returns the difference. */
 s32 StoryScene_ComputeOpposingSlotDelta(void)
 {
     s32 positive_total = StoryReward_LookupBySelection(0);
@@ -336,7 +321,6 @@ s32 StoryReward_LookupBySelection(u32 selection)
     return 0;
 }
 
-/* Every sixteenth frame, drop a puff beside actor 8 at a random offset. */
 void WorldMap_SpawnActorEightPuff(void)
 {
     struct FieldActor *leader;
@@ -475,7 +459,6 @@ void StoryScene_ActivateSharedState(void)
     gEffectWork->active = 1;
 }
 
-/* Publish the actor-98 scene state and restore its selected actor. */
 void StoryScene_CompleteActor98(void)
 {
     struct FieldActor *selected_actor;
@@ -493,8 +476,6 @@ void StoryScene_CompleteActor98(void)
     selected_actor->motion_flags = 2;
 }
 
-/* The selected actor and actor 54 rise out of sight together; the map closes
-   and the party is sent to the world map's entrance 27. */
 void WorldMap_RaiseActors(void)
 {
     struct FieldActor *actor = Actor_Get(gGameState.selected_actor);
@@ -522,7 +503,6 @@ void WorldMap_RaiseActors(void)
     Event_SetDestination((s32)&SceneId_WorldMap, 27);
 }
 
-/* Restore the blend registers using the active display bank's mask. */
 void SceneEffect_RestoreBlendRegisters(void)
 {
     extern u16 gWorldMapBlend;
@@ -660,7 +640,6 @@ void SceneActor_UpdateObjectByCounterBits(u8 *obj)
     }
 }
 
-/* Both frame-parity steps read the frame counter afresh at every use. */
 void OverlayObject_UpdateOnFrameParity(u8 *obj)
 {
     if ((gFrameCount & 1) != 0) {

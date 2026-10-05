@@ -1,10 +1,3 @@
-@ The waves the voices play, in the engine's wave record: a word whose bit
-@ 30 loops the wave, the pitch at middle C in 1/1024 Hz, the loop start and
-@ the last sample index, then signed 8-bit samples padded to a word. Each
-@ sample is built from its WAV. A synthesised wave has no samples: its data
-@ is the mixer's synthesis marker 0x80 and its waveform, pulse (0), saw (1)
-@ or triangle (2), and a pulse adds its duty cycle and the speed, depth and
-@ starting phase of the sweep that modulates the duty (RUNTIME_MIX_RENDER.S).
 	.macro synth waveform:req
 	.4byte 1 << 30, 17140000, 0, 0
 	.byte 0x80, \waveform

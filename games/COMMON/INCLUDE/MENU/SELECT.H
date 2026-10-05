@@ -5,8 +5,6 @@
 #include "LAYOUT_GUARD.H"
 #include "WINDOW.H"
 
-/* The runtime links a sprite's three hardware attributes behind its next
-   pointer before copying them to OAM. */
 struct SelectionSprite {
     struct SelectionSprite *next;
     u8 y;
@@ -23,8 +21,6 @@ struct SelectionSprite {
     u16 palette : 4;
 };
 
-/* A list or path entry, also used for the side arrows, cursor, and enlarged
-   icon. Cursor scale is its initialized flag; other entries animate scale. */
 struct SelectionNode {
     struct SelectionNode *prev;
     struct SelectionNode *next;
@@ -47,9 +43,6 @@ struct SelectionNode {
     struct SelectionSprite sprite;
 };
 
-/* UiGlyph_ResetWorkState allocates all sixteen records together: two side
-   arrows, seven free list entries, five path entries, cursor, enlarged icon.
-   The lists link those records; the sixteen pending choices remain separate. */
 struct SelectionScreen {
     struct SelectionNode records[16];
     u16 matrix[4];

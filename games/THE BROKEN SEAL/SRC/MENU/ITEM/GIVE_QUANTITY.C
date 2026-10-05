@@ -15,8 +15,6 @@ extern const u8 Data_080af08c[];
 extern u8 MsgItemName;
 extern u8 MsgGiveHowMany;
 
-/* The Japanese panel is narrower, asks below the tiles and counts with a
-   counter word after each number. */
 #if EDITION_INTERNATIONAL
 #define GIVE_CURSOR_X 128
 #define GIVE_ASK_X    32
@@ -36,9 +34,6 @@ void UiText_DrawStringAtOffsetFar(u8 *text, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 s32 GameFlag_IsSet(s32 flag);
 
-/* Asks how many of the selected item to hand over, between base + 1 and
- * base + range, and returns the count less one, or -1 when cancelled. With
- * single clear the receiving unit's stock is shown beside the giver's. */
 s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 {
     s32 quantity = base;

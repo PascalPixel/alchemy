@@ -5,7 +5,6 @@
 
 #include "TYPES.H"
 
-/* Composite sprite selection used by enemy/class presentation. */
 struct BattleSpriteDefinition {
     u16 animation;
     u8 sprite_flags;
@@ -27,11 +26,10 @@ struct BattleSummonState {
     u32 available_mask;
 };
 
-/* 召喚（スタンバイ）。effect 50/51 の径路。 */
 const struct SummonDefinition *Summon_GetRecord(s32 summon_id);
 const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
-s32 Summon_FindSlot(void); /* 空きスロットを探す */
-s32 Summon_ClassValid(s32 class_id); /* クラスが有効か */
+s32 Summon_FindSlot(void);
+s32 Summon_ClassValid(s32 class_id);
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id);
 s32 BattleFormation_SelectRandomAvailableMember(s32 record_id);

@@ -28,12 +28,12 @@ typedef struct StageActor {
 
 typedef struct ScaledStageObject {
     u8 pad00[12];
-    s32 y;                      /* +12 */
+    s32 y;
     u8 pad10[32];
-    s32 scale_x;                /* +48 */
-    s32 scale_z;                /* +52 */
+    s32 scale_x;
+    s32 scale_z;
     u8 pad38[35];
-    u8 state;                   /* +91 */
+    u8 state;
 } ScaledStageObject;
 
 typedef struct StageEffect {
@@ -104,9 +104,9 @@ extern s32 Korosseo_ModeTaskScript;
 extern u16 Korosseo_ModeMoveTarget;
 extern u16 Korosseo_ModeMoveDuration;
 extern s32 Korosseo_ModeTaskPosition;
-extern s32 gColossoModeScriptDefault;   /* default handler (mode not 2/3/4) */
-extern s32 gColossoModeScript2;   /* handler for mode == 2 */
-extern s32 gColossoModeScript4;   /* handler for mode == 4 */
+extern s32 gColossoModeScriptDefault;
+extern s32 gColossoModeScript2;
+extern s32 gColossoModeScript4;
 extern struct ModeRecord gColossoModeScript3B;
 extern struct ModeRecord gColossoModeScript3A;
 extern s16 Korosseo_MarkerSlot;
@@ -126,13 +126,11 @@ extern u8 Korosseo_GaugeGraphics[];
 extern u32 StagedActor_DirectionSteps[];
 
 extern u8 gColossoMultiPhaseData[];
-/* The action scripts the multi-phase sequence gives actor 8 and the leader. */
 extern u8 KorosseoMaruta_Actor8Action[];
 extern u8 KorosseoMaruta_LeaderActionA[];
 extern u8 KorosseoMaruta_LeaderActionB[];
 extern u8 KorosseoMaruta_LeaderActionC[];
 
-/* COMMON/KOROSSEO/SOLO_COMPETITOR.C: enter one competitor's trial. */
 void Korosseo_SelectSoloCompetitor(s32 competitor);
 
 typedef struct StageObstacleActor {
@@ -169,7 +167,6 @@ typedef struct SceneParticle {
 
 typedef void (*SceneTaskEntry)(void);
 
-/* The scene task's status and state words. */
 extern s32 gColossoSceneTaskStatus;
 extern s32 gColossoSceneTaskState;
 
@@ -225,8 +222,6 @@ static inline void InitializeSelectedActor(s32 actorId)
     Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
@@ -234,9 +229,6 @@ struct ModeRecord {
 extern struct ModeRecord gColossoModeScript3A;
 extern struct ModeRecord gColossoModeScript3B;
 
-/* The stage's tables, scripts and state, in the overlay's read-only data:
- * the tables the entry hooks return, the scene task's status words, the
- * scene event effect and particle kinds, and the mode scripts. */
 extern s32 gKorosseoMarutaEntrances[];
 extern s32 gKorosseoMarutaExits[];
 extern s32 gKorosseoMarutaPlacements[];
@@ -244,10 +236,8 @@ extern s32 gKorosseoMarutaEvents[];
 extern u8 gColossoSceneEventEffect[];
 extern u8 gColossoParticleKinds[];
 
-/* The stage's variables after the overlay's image. */
 extern s32 gColossoParticleCount;
 
-/* The stage's per-frame tasks. */
 void ColossoLogRollingStage_SceneTask(void);
 void BattleEffect_PauseObject(s32 id);
 void Korosseo_UpdateModeTask(void);

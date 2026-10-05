@@ -1,11 +1,3 @@
-@ Bit commands that end the first decoder unit (0x081a0280). They share the
-@ decoder's registers (source r0, bit count r2, bit word r3, value r5 and
-@ the constant 7 in fp) instead of arguments, refill r3 from r0 when r2 runs
-@ out and return through mov pc, lr or movpl pc, lr. Updating r5 and
-@ reading fp without saving them are beyond both approved compilers. These
-@ 272 bytes equal TBS GRAPHICS/TILE/BIT_COMMANDS.S (0x080b5258) and
-@ BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_COMMANDS.S (0x080f0144).
-@ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, bit commands
 .syntax unified
 	.arm
 	.global SentouKouka_TenkaiCommands

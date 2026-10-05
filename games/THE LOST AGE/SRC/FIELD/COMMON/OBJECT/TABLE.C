@@ -6,11 +6,8 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* The 32 objects ObjectTable_Snapshot saves; their indices sit in the 32
-   bytes before them and their two frame bytes and priorities after. */
 extern struct ObjectRuntime gSnapshotObjects[];
 
-/* Empties the event's object table. */
 void ObjectTable_Clear(void)
 {
     struct EventWork *work = Ram_HeapSlots->event_work;
@@ -29,9 +26,6 @@ struct ObjectRuntime *ObjectTable_Get(u32 object_id)
     return work->objects[object_id];
 }
 
-/* Copies every live object of the table into the 32-entry snapshot beside
-   its index, with its sprite's two frame bytes and drawing priority, and
-   marks the unused index slots with 255. */
 void ObjectTable_Snapshot(void)
 {
     struct ObjectRuntime *copy = gSnapshotObjects;

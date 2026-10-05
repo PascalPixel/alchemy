@@ -1,14 +1,4 @@
-/* Trial 2026-10-03: use OWNER_STATE.H for the getter contract.
- * Complete object unchanged; fresh EN score 60, 1 differing row.
- */
 #include "OWNER_STATE.H"
-/* Near miss: score 60. ⚓️ loads the level byte (ldrb r1, [r0, #15]) before
-   forming the experience address; this draft after, also after 45 s more of
-   permuting. */
-/*
- * Draft: Owner_GetValueIfLevelThresholdReached does not yet match; ⚓️ loads the level before forming the experience address, and these temporaries keep the owner in r5 instead of r0.
- * Links as recon/tla/raw/080afb80.s.
- */
 #include "TYPES.H"
 
 struct Owner_080792c4 {

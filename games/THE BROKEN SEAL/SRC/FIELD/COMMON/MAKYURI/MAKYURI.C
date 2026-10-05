@@ -1,6 +1,3 @@
-/* Mercury Lighthouse: the leader hops one cell toward the held direction
- * over the water pillars. The same function sits in the entrance and the
- * rooms overlays. */
 #include "TYPES.H"
 #include "MAKYURI.H"
 #include "FIELD_EFFECT.H"
@@ -162,7 +159,6 @@ void Makyuri_RunActorMove(void)
     work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
 }
 
-/* Mercury Lighthouse spawn timer: count the scene timer down, and when it runs out spawn an object at the current spawn point and restart it at 10 to 39 frames. */
 void Makyuri_TickSpawnTimer(void)
 {
     struct SceneTimer *timer;

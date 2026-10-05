@@ -21,7 +21,6 @@ struct KeyMoveEventWork {
     u16 blocked_steps;
 };
 
-/* World-map sprites add a shadow pointer beyond the shared OAM record. */
 struct WorldMapSprite {
     struct FieldSprite sprite;
     u8 unknown_28[4];
@@ -51,15 +50,6 @@ extern u8 ResourceBlockOwners[];
 
 extern u8 Runtime_ByteRemapTable[];
 
-/*
- * Field player movement, the field counterpart of Object_MoveOnWorldMap:
- * pick the heading from the pad, probe 0x80000 ahead, then a sixteenth and
- * an eighth of a turn to each side, fall back to six neighbouring headings,
- * then push any solid object in the way, steer the object and drop
- * footprints where the map keeps them. In debug mode, holding L slows the
- * frame and walks through walls, and with flag 350 set a resource pool
- * with fewer than 136 free blocks plays a warning cue.
- */
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 {
     struct FieldPosition position;
@@ -378,15 +368,6 @@ update_object:
     return 1;
 }
 
-/*
- * World-map player movement: pick the heading from the pad, probe the map
- * ahead and to both sides, fall back to neighbouring headings, then steer
- * the object, smooth the map rotation and drop footprint effects.
- * The Japanese edition probes 0x80000 ahead and a twelfth of a turn to each
- * side at once and falls back to six headings; the others probe 0x70000
- * ahead, then a sixteenth and an eighth of a turn to each side one at a
- * time, and fall back to eight.
- */
 #if EDITION_INTERNATIONAL
 #define WORLD_PROBE_RADIUS 0x70000
 #else
@@ -665,12 +646,6 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
     return 1;
 }
 
-/*
- * Walks an object half a tile in the direction the pad is held. The step is
- * refused where the next cell is occupied or changes height; with L or R
- * held it is refused where the ground rises or falls away too far. A step
- * the object cannot take counts as a blocked step in the event work.
- */
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {
     struct FieldPosition pos;

@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 
-
 void Graphics_SetBg1Priority3(void)
 {
     u32 mask = 4;

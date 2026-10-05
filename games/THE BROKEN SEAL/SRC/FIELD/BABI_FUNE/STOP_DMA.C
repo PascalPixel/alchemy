@@ -3,7 +3,6 @@
 #include "SCROLL.H"
 #include "IO_REG.H"
 
-/* Remove the two hblank scroll callbacks and stop DMA 0. */
 void SceneEffect_LoadTablesAndStopDma0(void)
 {
     volatile u16 *reg;

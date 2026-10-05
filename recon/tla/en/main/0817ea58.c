@@ -177,8 +177,6 @@ void Func_08143bb8(void);
 void Func_08143000(void);
 void Func_0813baec(void);
 
-/* The admitted DMA primitive, shared from TBS until it moves to games/COMMON;
- * TLA's TYPES.H already declares the same fixed-width types. */
 #define ALCHEMY_TYPES_H
 #include "../../../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
 

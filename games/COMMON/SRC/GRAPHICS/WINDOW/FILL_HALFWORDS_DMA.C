@@ -2,7 +2,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Fills count halfwords with value by DMA and returns the end of the run. */
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count)
 {
     volatile u16 fill;

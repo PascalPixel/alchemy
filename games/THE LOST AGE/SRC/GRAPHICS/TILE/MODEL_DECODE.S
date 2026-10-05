@@ -1,16 +1,3 @@
-@ Model decoder, the first member of a 564-byte unit (size and source {0x234,
-@ 0x08118160} in a literal pool at 0x08126520) that is copied and run as a
-@ whole. Behind a 4-byte Thumb entry (bx pc) the ARM decoder rebuilds the
-@ dispatcher's jump table for the address it runs at from its own position
-@ (add r3, pc, #240; add r4, pc, #200) and calls the dispatcher with bl,
-@ keeping the decoder state in r2, r3, r5 and fp across those calls. Neither
-@ approved compiler relocates code at run time or passes state that way.
-@ After that entry these 204 bytes equal TBS GRAPHICS/TILE/DECODE.S
-@ (0x080b5138) byte for byte. The unit's data words (a 0x60606060 bias and
-@ the table's link address at 0x08118230, the runtime table and its eight
-@ case addresses at 0x08118244) stay outside the credited modules.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, model decoder
 .syntax unified
 	.thumb
 	.global Model_DecodeCode

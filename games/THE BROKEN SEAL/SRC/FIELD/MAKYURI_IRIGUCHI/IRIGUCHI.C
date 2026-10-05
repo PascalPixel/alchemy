@@ -42,7 +42,6 @@ void Engine_CameraWaitForMove();
 void Engine_EventEnd();
 s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);
 
-/* Actor 8's action tables in the overlay's data. */
 extern const u8 MakyuriIriguchi_Actor8Path1[];
 extern const u8 MakyuriIriguchi_Actor8Path2[];
 extern const u8 MakyuriIriguchi_Actor8Path3[];
@@ -75,7 +74,6 @@ void *SceneData_GetSceneTableB(void) { return MakyuriIriguchi_SceneTableB; }
 
 void *SceneData_GetSceneTableC(void) { return MakyuriIriguchi_SceneTableC; }
 
-/* Apply the overlay's common actor-0 presentation preset. */
 void FieldScene_RunStepWithValue1632(void)
 {
     Engine_EventBegin();
@@ -121,7 +119,6 @@ void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
     Battle_WaitMode0(30);
 }
 
-/* Clear the scene flag and point actor 8 at its first local path. */
 void FieldScene_RunIndexedStep17(void)
 {
     SceneActor_RunActorZeroHandledMotion(17);
@@ -223,7 +220,6 @@ void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
     }
 }
 
-/* The entrance opens: the scene restarts at its entrance 31. */
 void MakyuriIriguchi_OpenEntrance(void)
 {
     s32 game;
@@ -276,10 +272,6 @@ void MakyuriIriguchi_ArriveWithSparks(void)
     }
 }
 
-/* Mercury Lighthouse entrance: set the blend, lights and palette cycle and
- * record the retreat point, then prepare the scene for the entrance the
- * party came through; through the sixth entrance the first time, a burst
- * of light lifts the leader in. */
 s32 MakyuriIriguchi_ApplyEntryState(void)
 {
     struct EffectOptions options;
@@ -428,8 +420,6 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
     return 0;
 }
 
-/* Makyuri entrance event: Ivan crosses the doorway twice while the guard's action callbacks alternate, then shows an emote and the cells are copied. */
-/* Makyuri entrance event: an actor crosses the doorway twice while actor 8's action callbacks alternate, then shows an emote and the cells are copied. */
 void MakyuriIriguchi_CrossDoorway(void)
 {
     s32 i;

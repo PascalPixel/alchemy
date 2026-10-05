@@ -1,10 +1,3 @@
-/*
- * Draft: SceneEffect_SpawnRandomEveryEightFramesB, ☀️'s VINASU_HEYA twin
- * calling the overlay's own spawner; it follows the frame updater into
- * FIELD/VINASU_CHOJO/SCENE_TABLES.C. Near miss: the listing allocates its
- * frame after the frame-count mask and loads the source's x and y right
- * after each random draw; this C orders those loads later.
- */
 #include "TYPES.H"
 
 void Object_SetPartAttribute(void *object, s32 value);

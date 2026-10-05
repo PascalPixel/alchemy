@@ -1,4 +1,3 @@
-/* Declarations shared by the debug menu test's sources (resource_3ce). */
 #ifndef MENU_TEST_H
 #define MENU_TEST_H
 
@@ -10,8 +9,6 @@
 #include "FIELDOBJ.H"
 
 extern volatile s32 gKeysHeld;
-/* The shops' welcome lines open their blocks of messages; the menu steps
- * through a block as long as the distance between the first two. */
 extern u8 MsgWeaponShopWelcome[];
 extern u8 MsgArmorShopWelcome[];
 extern u8 MsgItemShopWelcome[];
@@ -49,22 +46,11 @@ s32 DebugMenu_BrowseIcons(void);
 s32 Shop_ConfirmAct(void);
 s32 Menu_OpenCharacterSelector(void);
 
-/* Scene state, dialogue and command-table steps for resource_3ce. */
-
-/* Step by one until the query returns non-zero. The test sits at the bottom of
- * the loop and entry jumps to it. */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Runs one setup call, then a long table of two-argument calls each passing
- * a slot index (0-3) and an associated code value, and finishes with a few
- * index-only calls. */
 static __inline__ void bump_step(s32 amount)
 {
     gEventWork->message += amount;
 }
 
-/* The sources call one another across files. */
 u8 *MenuTest_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *MenuTest_GetExits(void);

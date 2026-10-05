@@ -90,11 +90,6 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
     }
 }
 
-/* Battle palette blend, run each frame by the scheduler once
-   BattleEffect_InitializeBuffers has set it up: add the step table into the
-   working colours (on the last step, copy the targets in and stop), pack them
-   into the back palette buffer, flip buffers and queue both halves.
- */
 void BattlePalette_UpdateBlend(void)
 {
     /* FAKEMATCH: IME scopes and halfword count stores preserve queue order; direct packed-bank selection swaps queue/IME registers. */

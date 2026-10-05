@@ -8,7 +8,6 @@
 #include "MAP.H"
 #include "IO_REG.H"
 
-/* The light script's timer and anchor are a distinct motion-mode tail. */
 struct MakyuriObject {
     u8 unknown_00[0x64];
     u16 timer;
@@ -29,10 +28,6 @@ extern const s32 Makyuri_RampScript[];
 void *ObjectTable_Get();
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *anim, s32 animation);
 
-/* Mercury Lighthouse: remember the light state in heap block 35. Before
- * flag 0x109 the state is cleared and keeps only its region; after it, the
- * lower light rises above the party leader while lit, and the upper light
- * appears when the leader stands in the state's region. */
 void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
 {
     struct ObjectRuntime *actor;

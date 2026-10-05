@@ -5,8 +5,6 @@
 
 void TorebiIzumi_SetActorActive(s32 actor, s32 value);
 
-/* The ride's work, laid out in order just past the overlay's image, with the
- * actor records FOUR_ACTORS.C sets up. */
 struct SpringRide TorebiIzumi_Ride = { 0 };
 
 s32 TorebiIzumi_RideSide = 0;
@@ -19,11 +17,6 @@ s32 TorebiIzumi_RideFrame = 0;
 s32 TorebiIzumi_RideEnded = 0;
 s32 TorebiIzumi_RideResult = 0;
 
-/*
- * The ride's frame task: ages the trail, moves the body and keeps it inside
- * the fountain's trapezoid, moves the four actors and lets them strike the
- * body, then places everything.
- */
 void FieldScene_RunSecondaryScript(void)
 {
     struct SpringRide *ride;
@@ -59,7 +52,6 @@ void FieldScene_RunSecondaryScript(void)
         if (y <= 0) {
             ride->trail[0].y = 0;
             if (ride->velocity.y != 0) {
-                /* Landing frame. */
                 ride->velocity.y = 0;
                 if (TorebiIzumi_RideSide == 1) {
                     Object_SetMode(Object_GetById(17), 1);
@@ -73,7 +65,6 @@ void FieldScene_RunSecondaryScript(void)
                 s32 dz;
                 s32 len;
 
-                /* Chase the fixed target at (0x780000, 0x470000). */
                 dx = (0x780000 - ride->trail[0].x) >> 8;
                 dz = (0x470000 - ride->trail[0].z) >> 8;
                 len = Iwram_Sqrt(dx * dx + dz * dz);
@@ -83,7 +74,6 @@ void FieldScene_RunSecondaryScript(void)
                 ride->velocity.z = ride->velocity.z * 253 / 256;
                 ride->frames = ride->frames - 1;
             } else {
-                /* Budget spent: coast to a stop. */
                 ride->velocity.x = ride->velocity.x * 220 / 256;
                 ride->velocity.z = ride->velocity.z * 220 / 256;
                 if (ride->velocity.x > -1024 && ride->velocity.x < 1024) {
@@ -125,8 +115,6 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
 
-            /* Trapezoid bounds: the near and far edges pull the x limits in,
-             * the left and right edges pull the z limits in. */
             xlo = 0x300000;
             xhi = 0xc00000;
             zlo = 0x180000;
@@ -176,7 +164,6 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
 
-            /* Bounce off each edge with half the incoming speed. */
             if (ride->trail[0].x < xlo) {
                 ride->trail[0].x = xlo;
                 if (ride->velocity.x < 0) {
@@ -202,7 +189,6 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
         } else {
-            /* Still airborne: keep falling. */
             ride->velocity.y -= 0x4000;
         }
     }
@@ -219,7 +205,6 @@ void FieldScene_RunSecondaryScript(void)
         }
 
         if (i <= 1) {
-            /* Records 0 and 1 slide back and forth along x. */
             mode = rec->mode;
             step = 0x10000;
             if (mode == 1) {
@@ -263,7 +248,6 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
         } else if (i == 2) {
-            /* Record 2 turns clockwise on a 48 x 40 ellipse. */
             mode = rec->mode;
             step = -64;
             if (mode == 1) {
@@ -283,8 +267,6 @@ void FieldScene_RunSecondaryScript(void)
                 rec->hold = rec->hold + 1;
             }
         } else {
-            /* Record 3 turns the other way and rests for the last 128 counts
-             * of every 512-count lap. */
             phase = rec->hold & 511;
             mode = rec->mode;
             step = 64;
@@ -307,7 +289,6 @@ void FieldScene_RunSecondaryScript(void)
             rec->hold = rec->hold + 1;
         }
 
-        /* Contact test against the chased body. */
         if (rec->cool == 0 && ride->trail[0].y == 0) {
             s32 dx;
             s32 dz;
@@ -373,8 +354,6 @@ void FieldScene_RunSecondaryScript(void)
         i++;
     } while (i != 4);
 
-    /* Flattened copy of the current position, then publish the body and its
-     * three trailing samples. */
     ride->shadow.x = ride->trail[0].x;
     ride->shadow.y = 0;
     ride->shadow.z = ride->trail[0].z;
@@ -435,9 +414,9 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
         rec += 24;
     } while (i != 4);
 
-    ride->trail[0].x = (s32)0xffe20000;      /* -30.0 in 16.16 */
+    ride->trail[0].x = (s32)0xffe20000;
     ride->trail[0].y = 0;
-    ride->trail[0].z = 0x640000;             /* 200 << 15, i.e. 100.0 */
+    ride->trail[0].z = 0x640000;
     ride->velocity.x = 0;
     ride->velocity.y = 0;
     ride->velocity.z = 0;
@@ -446,7 +425,6 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     Object_SetMode(Object_GetById(20), 2);
     Object_SetMode(Object_GetById(21), 2);
 
-    /* The locals keep the task and its rate built rather than folded. */
     {
         s32 budget = 0xc83;
         void (*task)(void) = FieldScene_RunSecondaryScript;
@@ -455,9 +433,6 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     }
 }
 
-/* Launches the spring ride from side 0 or 1: plays the spring cue at frame
- * 50, starts the leader and the ride at frame 16, and waits for the ride to
- * report that it has ended; returns its result. */
 s32 TorebiIzumi_RunSpringRide(s32 side)
 {
     struct SpringRide *ride;

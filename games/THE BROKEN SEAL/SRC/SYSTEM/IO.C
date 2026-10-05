@@ -6,7 +6,6 @@
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
 
-/* The keypad interrupt requests a cartridge reset while sleep is inactive. */
 void Input_HandleKeyInterrupt(void)
 {
     u32 mask;
@@ -23,10 +22,8 @@ extern const u8 Resource_ExecuteTransfer[];
 
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 
-/* Linker-resolved absolute size of the transfer command executor. */
 extern u8 TransferCommandExecutor_Size[];
 
-/* Queue a value, register address and delay for the next flush with interrupts masked. */
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
     void name(u32 address, u32 value)                                       \
     {                                                                       \

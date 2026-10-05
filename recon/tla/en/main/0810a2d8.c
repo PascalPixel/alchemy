@@ -3,17 +3,11 @@
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
-/* Repairs one item for a party member at the shop: refuses items that
-   cannot be repaired, are not broken or cost more than the party has, and
-   otherwise takes the money, plays the smithing sounds and offers to equip
-   the mended item. */
-
 extern u8 MsgShopRepairConfirm[];
 extern u8 MsgCannotRepairKind[];
 extern u8 MsgNotDamaged[];
 extern u8 MsgCursedWontComeOff[];
 extern u8 MsgNotEnoughMoney[];
-
 
 struct ItemDefinition *Item_Get(s32 item);
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);

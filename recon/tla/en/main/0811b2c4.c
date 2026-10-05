@@ -1,4 +1,3 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/LAYOUT.C. */
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "RAM_BUFFER.H"
@@ -7,11 +6,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "INVENTORY.H"
 
-/*
- * Lays out the battle's enemy list again: collects up to six ids,
- * computes their standing positions and moves every unit still present
- * there.
- */
 s32 Summon_Refresh(void)
 {
     struct BattleSession *work = gBattleWork;

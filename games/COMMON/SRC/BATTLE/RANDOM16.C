@@ -79,7 +79,6 @@ s32 Item_GetEquippedElement(s32 owner_id)
     if (owner->class_index == 0) {
         return Owner_GetDefaultElement(owner);
     }
-    /* Each game's inventory header names the equipped-item owner record its own way. */
     item = Inventory_GetEquippedDefinition((void *)owner, 1);
     if (item != NULL) {
         return item->element;

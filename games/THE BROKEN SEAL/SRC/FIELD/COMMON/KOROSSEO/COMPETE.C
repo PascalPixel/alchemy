@@ -9,8 +9,6 @@
 
 extern u8 gMenuCtrlWork[];
 
-/* The competitor's starting position and facing, kept in the overlay's
- * variables while a round runs. */
 extern s32 Korosseo_CompetitorStartX;
 extern s32 Korosseo_CompetitorStartZ;
 extern s32 Korosseo_CompetitorStartAngle;
@@ -46,7 +44,6 @@ struct CompetitorState {
         *ime = saved; \
     } while (0)
 
-/* Save the competitor's starting position and fade in its sprite. */
 void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
 {
     struct CompetitorState *state;
@@ -94,9 +91,6 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     Engine_EventWait(20);
 }
 
-/* Colosso: put the competitor back at its stored start position and facing
- * after a round, replaying the fall animation unless the retry flag is set.
- * The same function sits in each of the three Colosso trial overlays. */
 void Korosseo_RestoreCompetitor(s32 id)
 {
     struct CompetitorState *state;

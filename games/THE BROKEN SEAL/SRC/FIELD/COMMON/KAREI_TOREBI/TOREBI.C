@@ -63,7 +63,6 @@ union GameStateRows {
     s32 words[256];
 };
 
-/* The sprite's attribute bytes as the scene scripts write them. */
 struct SpriteBytes {
     u8 unknown_00[9];
     u8 priority;
@@ -84,7 +83,6 @@ void SceneState_ApplyValues14And0And5(void)
     BattleFx_RunPageEffectForSlot(0xE, 0, 5);
 }
 
-/* Where the party appears in each of the road's three scenes. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -111,8 +109,6 @@ u8 *KareiTorebi_GetExits(void)
     return KareiTorebi_SceneTable;
 }
 
-/* The actors placed in each scene, which change as flags 0x93e and 0x950
-   are set. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 room = gGameState.scene;
@@ -159,7 +155,6 @@ void KareiTorebi_MoveGuardAside(void)
     Engine_EventEnd();
 }
 
-/* What each scene answers, which changes as flags 0x93e and 0x950 are set. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -247,10 +242,6 @@ void KareiTorebi_RemindBoardShip(void)
     }
 }
 
-/* The ticket taker at the gangway, actor 12. Before boarding he answers only
- * a leader facing him from the pier: with the ticket (item 235) in the party
- * he takes it, steps aside and lets the party aboard. Once aboard he offers
- * to let the party ashore, and after that asks them to come back aboard. */
 void SceneDialogue_RunActor12Event(void)
 {
     s32 owner;
@@ -530,7 +521,6 @@ void KareiTorebi_PreparePort(void)
     }
 }
 
-/* Places the flagged actors: the guards and posts moved by flags 0x8aa and 0x8ab, and the cells opened by flag 0x950. */
 void FieldScene_ConfigureFlaggedActors(void)
 {
     struct FieldActor *actor;
@@ -681,7 +671,6 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_EventWait(30);
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    /* Walk Gerald to the leader's position. */
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
@@ -689,11 +678,9 @@ void FieldScene_RunScene3aeSequenceA(void)
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_EventWait(20);
-    /* Resume actor 8's action. */
     Object_GetById(8)->paused = 0;
     Engine_ActorEnableActionCallback(8, 2);
     record = Object_GetById(8);
-    /* Save actor 8's whole-pixel position for its action callback. */
     {
         s32 shown = record->x.fixed / 0x10000;
 

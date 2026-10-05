@@ -1,60 +1,5 @@
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
-/* Draft, 342 rows off, nearly all register and stack-slot numbers. Two causes
-   remain: the ROM keeps the 0x40000 shot height in a stack slot (r4 is then
-   free as a reload register from the palette chain on), and in the frame loop
-   it strength-reduces k * 8 and hoists k * 4 for the burst index.
-   2026-10-04 (wave 3, alchemy diff 484): the frame difference is that k * 4
-   slot. The ROM's frame-loop slots are 12 k * 8, 16 shot, 20 camera + 12,
-   24 k * 4, 28 mode * 2, 32 &draw, 36 camera, 40 total, 44 k, 48 frame,
-   52 canvas, 56 effect, draw at 60 and position at 68; here the burst
-   index k * 32 is reduced as a k-loop induction ([sp, #12]) instead of
-   k * 8, there is no k * 4 slot, and everything above it sits 4 lower.
-   The ROM's burst loop is not strength-reduced at all: each pass computes
-   ((k * 4) << 3) + i, multiplies by 28 and reloads gBursts; only k * 4 and
-   the 63 mask are hoisted. Compiled with -fno-strength-reduce (an
-   experiment only) this draft gives that loop shape, but with k << 5
-   hoisted, because every spelling tried folds k * 4 * 8 (k * 4 << 3,
-   (u32)(k * 4) * 8, (s16)(k * 4) * 8, (k << 2) * 8, a [][8] view, which
-   gives k * 896). So the ROM's index keeps k * 4 apart in some form not
-   yet found, and that same form presumably defeats the reduction. A
-   device search reached 328 only by piling up barriers; not kept.
-   2026-10-05 sun deep finisher 7: a variable first = k * 4 set just before
-   the burst loop and &gBursts[first * 8 + i] (486) is still strength-
-   reduced to a pointer from [sp, #12]. In the ROM the burst loop reloads
-   the gBursts base from the pool every pass and places the 16-burst
-   branch out of line (bne to a far block, b back), while 63 is hoisted
-   into r8: consistent with loop.c moving only the cheap constant and
-   leaving the giv unreduced, which a smaller benefit (one address use
-   per pass, here several) or a larger loop body would explain.
-   2026-10-05 sun deep finisher 17 (still 484): the reduction comes from
-   gcse, not loop.c alone. With slot = k * 4 inside the burst loop and
-   &gBursts[slot * 8 + i], CSE folds slot << 3 into k << 5 in the same
-   block, PRE then hoists both k << 2 and k << 5 to the loop's entry edge
-   (the ROM's place for k * 4, after the count test), and with k << 5
-   invariant the address is a giv loop.c reduces. Compiled with -fno-gcse
-   (an experiment only) the burst loop keeps k << 5 in the loop, not
-   reduced, as the ROM does with (k * 4) << 3. So the ROM's form lets PRE
-   (or loop.c) hoist k * 4 while the << 3 stays in the loop: the shift
-   must see a k * 4 that CSE cannot fold and that is not transparent to
-   PRE, i.e. one set inside the loop but outside the use's CSE block.
-   Tried, none better: slot = k * 4 at the top of the burst loop (486); an
-   explicit if (count != 0) { slot = k * 4; do ... while (++i != count); }
-   (486); start = k * 8 kept in a local for the three frame tests (486);
-   k * 8 <= frame (486); the step division split from its subtraction
-   (489); an empty asm on slot inside or before the loop (562, 568, not
-   kept). In the k loop the ROM reduces k * 8 because k * 8 + 17 and
-   frame - k * 8 combine into it; here they combine into frame - k * 8,
-   which is then not worth reducing, so k * 8 stays a shift.
-   The burst loop's own shape does come out when slot = k * 4 sits before
-   the exit test: i = 0; for (;;) { slot = k * 4; if (i == count) break;
-   burst = &gBursts[slot * 8 + i]; ... i++; } (or the same set in the for
-   condition) gives the ROM's unreduced (slot << 3) + i, * 28 and gBursts
-   reloaded each pass, 63 hoisted into r8 and k * 4 in a stack slot (554
-   overall, the allocation elsewhere moves). The test duplicated before
-   the loop then carries k * 4 ahead of the count test and the slot is
-   reloaded at the loop's foot, where the ROM has it after the test and
-   reloads it at the top; neither spelling reads like Camelot's. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"
@@ -74,10 +19,7 @@
 extern u8 gBattleFxWork[];
 extern DrawRectangle gWorkSlot[];
 
-/* Two bytes for each mode; the first says whether the shot bursts into
-   shards (1) or into smoke (0). */
 extern s8 SevenMode_Records[];
-/* The shards' eighteen pictures: width, height and place in the sheet. */
 extern u8 SevenMode_ShardWidths[];
 extern u8 SevenMode_ShardHeights[];
 extern u16 SevenMode_ShardOffsets[];
@@ -104,8 +46,6 @@ static __inline__ void CopyPalette(WordCopy copy, void *destination, const void 
     copy(destination, source, size);
 }
 
-/* Battle effect: a shot flies from the actor to each target in turn and
-   bursts where it lands, into smoke or into shards as the mode says. */
 void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 {
     struct EffectPosition position;

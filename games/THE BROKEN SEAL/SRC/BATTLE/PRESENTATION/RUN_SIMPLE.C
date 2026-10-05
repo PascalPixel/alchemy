@@ -36,8 +36,6 @@ void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void BattleEvent_Playback(void);
 
-/* Play an actor's action against its first target: turn to face it, walk
-   up, run the action's effect and walk back. */
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 {
     struct BattlePresentationWork work;
@@ -252,11 +250,6 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 
-/* Presents an item used in battle: turns the camera toward the user's side,
-   darkens the background palette over twenty frames for an item effect and
-   runs it, then spends the item by its use type: 1 removes it (later queued
-   item commands of the same unit move down a slot), 2 breaks it one time in
-   eight, and 4 turns item 0xb8 into 0xb9. */
 s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
                         struct BattleActionRecord *selection)
 {

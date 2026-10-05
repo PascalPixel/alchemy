@@ -1,4 +1,3 @@
-/* ☀️'s DisplayScroll_DrawLine with ⚓️'s near flag calls and Sys_Free: 8 differ, four single scheduling swaps. */
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "IWRAM_CALL.H"

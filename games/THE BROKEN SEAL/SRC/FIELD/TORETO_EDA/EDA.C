@@ -9,7 +9,6 @@
 extern struct EventWork *gEventWork;
 extern u8 gDisplayTransition[];
 
-/* The two tracked scene objects share this coordinate and terrain prefix. */
 struct SceneObject {
     u8 unknown_00[8];
     s32 x;
@@ -20,7 +19,6 @@ struct SceneObject {
     u8 layer;
 };
 
-/* The split threshold and both scroll values share one work-record cell. */
 union SceneCell {
     s32 w;
     s16 h[2];
@@ -32,18 +30,12 @@ extern u32 gFrameCount;
 extern s32 gKeysHeld;
 extern s32 gKeysRepeat;
 
-/*
- * The scene's own work, after the overlay image: a transfer header and the
- * buffer it describes, and the scanline where the BG3 scroll switches between
- * the two values above and below it.
- */
 static u16 sTransferHeader[16];
 static u8 sTransferData[0x60];
 static s32 sSplitLine;
 static u16 sHofsAbove;
 static u16 sHofsBelow;
 
-/* The scene's tables, in the overlay's read-only data. */
 extern u8 ToretoEda_SceneTable0[];
 extern u8 ToretoEda_SceneTable1[];
 extern u8 ToretoEda_SceneTable2[];
@@ -55,11 +47,6 @@ void ToretoEda_StartBg3Split(void);
 void Effect_UpdateBg3HofsByVcount(void);
 void Effect_SetBg3HofsSplit(void);
 
-/*
- * Overlay resource_397: a field scene that shifts its two tracked objects by
- * whole blocks, blends the display for scene 9, and scrolls BG3 against the
- * vertical counter.
- */
 void State_SetActorEightValue3d(void)
 {
     BattleFx_SetPhaseRequest(8, 0x3D);
@@ -70,7 +57,6 @@ u8 *ToretoEda_GetEntrances(void)
     return ToretoEda_SceneTable0;
 }
 
-/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -94,7 +80,6 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     s32 dz = bz;
     s32 h;
 
-    /* Block coordinates become 16.16 fixed-point shifts of sixteen tiles. */
     obj = (struct SceneObject *)Object_GetById(gCell[125]);
     dx <<= 20;
     dz <<= 20;
@@ -107,7 +92,6 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
         obj->settled_y = h;
     }
 
-    /* Apply the same shift to the workspace's independently optional object. */
     obj = *(struct SceneObject **)(work + 480);
     if (obj != 0) {
         obj->x += dx;
@@ -162,7 +146,6 @@ void Effect_SetAlphaBlendForScene9(void)
 {
     u8 *disp;
 
-    /* Start the scene, then configure alpha blending for its display state. */
     DisplayTransition_InitializeBattleEffectState(9);
 
     REG_BLDCNT = 0x3f42;
@@ -197,7 +180,6 @@ void Scene_RunTwoCallSequence(void)
     BattleFx_FinishAction();
 }
 
-/* Two scene hooks that do nothing. */
 void State_RunEmptyHookFirst(void)
 {
 }
@@ -223,7 +205,6 @@ s32 ToretoEda_InitializeBackdropTransition(void)
     s32 off = 224;
     s32 *scene;
 
-    /* Reset the scene word at workspace + 448 before entering scene 9. */
     off <<= 1;
     work = *base;
     scene = (s32 *)(work + off);
@@ -270,7 +251,6 @@ void Effect_UpdateBg3HofsByVcount(void)
     REG_BG3HOFS = value;
 }
 
-/* Set the VCOUNT threshold and the BG3 horizontal offsets above and below it; set the split line to 192 minus the scene coordinate. */
 void Effect_SetBg3HofsSplit(void)
 {
     union SceneCell *work = (union SceneCell *)(((u8 *)gMapWork[0]) + 260);
@@ -281,8 +261,6 @@ void Effect_SetBg3HofsSplit(void)
     sHofsBelow = hofs - (gFrameCount >> 2);
 }
 
-/* Start the BG3 split: run the scroll update from the vertical-count
- * interrupt and schedule the task that prepares its values. */
 void ToretoEda_StartBg3Split(void)
 {
     Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);

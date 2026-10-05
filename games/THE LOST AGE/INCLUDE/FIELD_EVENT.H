@@ -5,50 +5,34 @@
 #include "FIELD_SPRITE.H"
 #include "EVENTWRK.H"
 
-/*
- * What a field scene's scripts ask of the engine. Each entry is reached
- * through one of the overlay's import veneers, which the scene's translation
- * unit binds by name.
- */
-
-/* The runtime object behind an actor or a spawned effect. */
 struct FieldActor {
     u8 unknown_00[6];
-    /* The direction the actor faces; 0xc000 faces up the screen. */
     u16 facing;
     s32 x;
     s32 y;
     s32 z;
     s32 terrain_height;
     u8 unknown_18[0x0b];
-    /* Bit 0 is cleared when a script sets the sprite priority. */
     u8 priority_flags;
-    /* Movement per frame along each axis, in 16.16 fixed point. */
     s32 velocity_x;
     s32 velocity_y;
     s32 velocity_z;
     s32 speed;
     s32 acceleration;
-    /* The fixed-point point the actor moves toward, or ACTOR_NO_TARGET. */
     s32 target_x;
     s32 target_y;
     s32 target_z;
     u8 unknown_44[0x0c];
     struct FieldSprite *sprite;
-    /* What the sprite field holds: 1 for a field sprite, 0 for none. */
     u8 animation_kind : 4;
     u8 unknown_54_high : 4;
-    /* Keeps the actor on the terrain height and lets it fall; cleared to
-       move it freely. */
     u8 motion_flags;
     u8 unknown_56[3];
     u8 collision_flags;
     u8 unknown_5a[0x0a];
-    /* Counts up while the object's update runs. */
     u16 timer;
 };
 
-/* The target an actor with nowhere to move toward holds. */
 #define ACTOR_NO_TARGET ((s32)0x80000000)
 
 void Task_Wait(s32 frames);
@@ -70,14 +54,9 @@ void Map_CopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s3
 void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Audio_PlayCue(s32 cue);
 
-/*
- * The engine entry points a scene overlay imports. Each is one of the
- * overlay's import veneers.
- */
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);
-/* Bits 0-2 skip the corresponding pending actions; 0 resolves all. */
 void Engine_EventResolvePendingActions(s32 skip);
 void Engine_EventSetMessage(s32 message);
 s32 Engine_EventOpenMessage(s32 speaker, s32 flags);
@@ -86,15 +65,12 @@ s32 Engine_EventChooseYesNo(s32 actor, s32 flags);
 void Engine_EventSetCountdown(u16 countdown);
 void Engine_EventCloseScreen(void);
 void Engine_EventWaitDelay(void);
-/* The actor that stands for the party: its leader. */
 s32 Engine_PartyGetLeaderActor(void);
 struct FieldActor *Engine_ActorGet(s32 actor);
 void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Engine_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
 void Engine_ActorSetAnimation(s32 actor, s32 animation);
 void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
-/* Answers a Psynergy search: in mode 2 sets the flag and puts the actor
-   back where the map placed it. */
 void Engine_ActorReturnHome(s32 mode, s32 actor, s32 flag);
 s32 Engine_GameFlagIsSet(s32 flag);
 void Engine_GameFlagSet(s32 flag);

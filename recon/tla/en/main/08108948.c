@@ -1,17 +1,3 @@
-/*
- * Draft: ShopCursor_Advance, ☀️'s SHOP.C body. Score 18: the listing builds
- * 0x1ff inline (split constant) where this C reloads it from the pool, and
- * loads target_x/x and active in a different order; follows Shop_InitEffect
- * at the end of ⚓️'s MENU/SHOP/SHOP.C.
- * With -mtune=arm9tdmi (2026-10-05) score 16: the loads now follow the
- * listing except the active counter's increment, but the 0x1ff mask still
- * comes from the pool. The whole shop cursor run (08108948 to 08108af0)
- * waits for this one to reach SHOP.C.
- * Trial 2026-10-05: the x field through SpriteAttr2 (u16 bit-fields) 16, an
- * explicit (attr & ~0x1ff) | (x & 0x1ff) halfword store 27, byte and
- * halfword stores for y and x 30. The native pool holds 0 and 0xfffffe00
- * and builds 0x1ff inline; every form here loads 0x1ff from the pool.
- */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "RAM_BUFFER.H"
@@ -28,9 +14,9 @@ struct ShopCursor {
 
 struct ShopRuntime {
     u8 unknown_000[0x4dc];
-    struct ShopCursor cursor;           /* 0x4dc */
+    struct ShopCursor cursor;
     u8 unknown_4ec[0x19];
-    u8 mode;                            /* 0x505 */
+    u8 mode;
 };
 
 struct SpriteAttr {
@@ -68,10 +54,6 @@ struct ShopCursorSprite3 {
 
 void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
 
-/* ShopCursor_Advance: step the cursor sprite one frame of a linear tween
-   from its position toward its target over kind frames, refreshing the
-   sprite's position and OAM coordinates, and stop when the tween ends.
- */
 void ShopCursor_Advance(struct ShopCursor *cursor)
 {
     struct RenderOutput *sprite;

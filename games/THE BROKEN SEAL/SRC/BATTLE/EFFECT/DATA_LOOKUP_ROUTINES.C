@@ -12,7 +12,6 @@ s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
     u8 *table = gEventWork->encounter_groups;
 
-    /* 第2引数は呼出元のr1を引き継ぐ特殊な呼出規約。 */
     return Encounter_SelectEnemyGroup(table[index]);
 }
 
@@ -47,7 +46,6 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
   weighted_row_address = entry;
   weighted_row = *((u16 *)weighted_row_address);
   entry_address = weighted_index_address;
-  /* The return value is carried through r0 from this call. */
   BattleFx_GetWeightedResult(
       weighted_row, *((u16 *)(((u8 *)entry_address) + 2)));
 }
@@ -112,10 +110,6 @@ extern const struct SceneAreaNameRule Scene_AreaNameRules[];
 
 s32 BattleFx_GetResourceGroup(s32 effect_id);
 
-/* Selects an area-name index by scene or scene group and entrance. A rule
-   with entrance -1 matches every entrance. The group routine returns s8 in
-   its own file, but this caller takes the result unextended, as from an
-   s32 prototype. */
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
     const struct SceneAreaNameRule *entry = Scene_AreaNameRules;

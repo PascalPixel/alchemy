@@ -1,98 +1,3 @@
-//! Resource directory files built from editable inputs. A built file's name
-//! is its recipe, as in pret's graphics rules: the stem names the input, the
-//! first extension its form, and an optional second extension the resource
-//! packer's codec. Image forms read the indexed image `STEM.PNG`:
-//!
-//! - `.gbapal`: the image's palette as little-endian BGR555.
-//! - `.bitmap`: the pixels row by row, one palette index per byte.
-//! - `.4bpp`, `.8bpp`: the pixels as GBA tiles, row-major.
-//! - `.4bppWxH`, `.8bppWxH`: the pixels as GBA tiles cut into metatiles of
-//!   one OBJ shape, W by H pixels, as pret's gbagfx -mwidth and -mheight:
-//!   each metatile's tiles row-major before the next one's. A sheet of 1D
-//!   sprites is drawn this way so each sprite reads whole.
-//! - `.glyphs`: 1-bit glyphs. The image is one glyph, 8 pixels, wide with its
-//!   glyphs stacked; each row is a byte, its leftmost pixel in bit 0 and any
-//!   non-zero index inked.
-//! - `.icons`: an icon bank. The image is one 32x32 icon wide with its icons
-//!   stacked. The bank is a table of each icon's halfword offset, then each
-//!   icon as 8-bit tiles in the packer's palette LZ without its tag,
-//!   its stream zero-padded to a multiple of 32 bytes.
-//! - `.icon4`: one 4-bit icon, its pixels row by row in the 4-bit icon
-//!   coder (`assets`'s icon4), without a palette; its data source lists the
-//!   icons of a table by label, as pret's item icon table does.
-//! - `.frames`: a sprite bank. The image is one square frame wide with its
-//!   frames stacked, a front and a back pose in turn. The bank is a table of
-//!   each frame's offset in that order, ending 0, then the back frames and
-//!   then the front frames, each zero-skip coded.
-//!
-//! A table reads its text `STEM.TSV`:
-//!
-//! - `.table`: records of little-endian fields. The first line names each
-//!   column and its type, such as `x:s16\ty:s16` (`u8`, `s8`, `u16`, `s16`,
-//!   `u32` or `s32`); each further line is a record of decimal or `0x` hex
-//!   values in those columns. Only the last record may stop short.
-//! - `.plane`: a grid plane of cells, such as a map's 128x128 grid. The
-//!   first line gives the cell type, the grid's size, the fill of every
-//!   cell not written and the top-left cell of the written rows:
-//!   `cell:u16\tgrid:128x128\tfill:fff\tat:2,0`. Each further line is one
-//!   grid row from that cell, its cells in hex separated by spaces; the rest
-//!   of the row is fill, and an empty line a row of fill.
-//! - `.delta0`, `.delta1`, `.delta2`: the table's bytes as 16-bit tilemap
-//!   entries, delta-coded in that mode (`assets`'s tilemap delta).
-//! - `.script`: a halfword command script, one command per line, its values
-//!   decimal or `0x` hex: `channel N` (0xfd00 | N), `jump N` (0xfe00 | N),
-//!   `stop` (0xfeff), `end` (0xffff), and the commands `frame SOURCE COUNT
-//!   DESTINATION DELAY`, `control BLDCNT` and `level VALUE DELAY`, written
-//!   as their halfwords.
-//!
-//! A font reads two inputs, `STEM.PNG` and its table `STEM.TSV`:
-//!
-//! - `.font`: one record per glyph, cut from the sheet's 16x16 cells in
-//!   code order: the table's halfwords for that glyph, the advance width
-//!   first, then its rows of sixteen pixels as little-endian halfwords, the
-//!   leftmost pixel highest. The
-//!   table names `first` (the first code), `top` (the cell row of the
-//!   record's first row) and `rows`, then one line per glyph: its code in
-//!   hex and its halfwords.
-//!
-//! A field sprite bank reads its record table `STEM.TSV` and each sprite's
-//! PNG and TSV beside it (see ags::sprite):
-//!
-//! - `.sprites`: the bank as assembler source, which a data source
-//!   `.include`s; its lists name the labels of the frames and scripts.
-//! - `.spriteblocks`: the same, laid out sprite by sprite in the order
-//!   `LAYOUT.TSV` beside it gives.
-//!
-//! A picture made of several reads its part list `STEM.TSV`:
-//!
-//! - `.parts`: each line names a part image beside the list and that part's
-//!   form, such as `BLUE_FLAME_COLUMN\tbitmap`, or `table` for a table beside
-//!   it; the parts are built in turn and joined. A tile part may add
-//!   `MAP FIRST COUNT`: its image is then the picture the tilemap table
-//!   `MAP` shows of tiles FIRST..FIRST + COUNT, or with a further `frames`
-//!   that run's animation frames stacked (see `MapPart`).
-//!
-//! - `.icons4`: an icon bank of 4-bit icons, each with its own palette. Each
-//!   line names a 32x32 icon image beside the list, or `-` for an empty
-//!   slot. The bank is a table of each slot's halfword offset, 0 when empty,
-//!   then each icon's 16-colour palette and its pixels, row by row, in the
-//!   4-bit icon coder (`assets`'s icon4), zero-padded to a word, or to the
-//!   hex boundary an `align` line gives (the Japanese ☀️ bank pads to 20).
-//!
-//! A block map reads its grid `STEM.TSV`, one line per row of hex words:
-//!
-//! - `.blocks`: the grid cut into 16x16 blocks, left to right and top to
-//!   bottom. The bank is a table of each block's word offset, then each
-//!   block's words, little-endian, in the packer's palette LZ without its tag.
-//!
-//! Either may then be packed:
-//!
-//! - `.lz`: the packer's LZ, the smaller of its general (tag 0) and
-//!   palette (tag 1) encodings, the palette one on ties.
-//! - or `.plz`: the packer's palette LZ without its tag byte.
-//! - or `.mtf`: the tag-2 tile compressor.
-//! - or `.d7`: the backdrop codec, each 7-bit pixel as a delta from the one
-//!   before it.
 use crate::graphics::{indices, metatiles, MapDrawing};
 use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
 use crate::assets::compression::{
@@ -100,18 +5,10 @@ use crate::assets::compression::{
 };
 use crate::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
-/// The resource packer's compressor, as the streams in both games show: the
-/// general ring's window, read-ahead and reach, and the palette ring's
-/// read-ahead. It packed every code overlay and every LZ data resource.
 pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 
-/// The codecs a built file may end in, after its form.
 pub(crate) const CODECS: &[&str] = &["lz", "plz", "mtf", "d7"];
 
-/// Whether `built` names a file this encoder builds: `STEM.FORM` or
-/// `STEM.FORM.CODEC` with a form and a codec it knows. The publication check
-/// admits exactly these, so a new form never needs a check of its own, as
-/// pret's gbagfx rules know every conversion their makefile names.
 pub fn is_recipe(built: &str) -> bool {
     let file = built.rsplit('/').next().unwrap_or(built);
     let mut parts = file.split('.');
@@ -135,7 +32,6 @@ pub fn is_recipe(built: &str) -> bool {
     !stem.is_empty() && form && codec.is_none_or(|codec| CODECS.contains(&codec))
 }
 
-/// Whether a form reads a table or tilemap rather than an image.
 fn data_form(form: &str) -> bool {
     matches!(
         form,
@@ -153,8 +49,6 @@ fn data_form(form: &str) -> bool {
     )
 }
 
-/// The input a built file name reads, relative to the same directory: the
-/// name up to its first extension, then `.TSV` for a data form or `.PNG`.
 pub fn input_name(built: &str) -> Result<String, String> {
     let (directory, file) = built.rsplit_once('/').unwrap_or(("", built));
     let (stem, rest) = file
@@ -172,10 +66,6 @@ pub fn input_name(built: &str) -> Result<String, String> {
     })
 }
 
-/// Where a recipe's further input `name` lies: beside its first input
-/// `input`; for `COMMON/NAME`, in games/COMMON's folder of the same path
-/// under `SRC`; and for `COMMON/DIR/.../NAME`, at that path under
-/// games/COMMON's `SRC`. There lives once what both games draw alike.
 pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::PathBuf, String> {
     let Some(shared) = name.strip_prefix("COMMON/") else {
         return Ok(input.with_file_name(name));
@@ -204,13 +94,10 @@ pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::Pa
     })
 }
 
-/// Build the file `built` names from the bytes of its input.
 pub fn build_file(built: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     build_file_with(built, input, &|name| Err(format!("{built} needs {name}")))
 }
 
-/// Build the file `built` names from its input, reading any second input,
-/// such as a font's table, by its file name beside the first.
 pub fn build_file_with(
     built: &str,
     input: &[u8],
@@ -256,7 +143,6 @@ pub fn build_file_with(
     }
 }
 
-/// The joined parts a part list names, each built from its image beside it.
 fn parts(
     built: &str,
     list: &[u8],
@@ -307,10 +193,6 @@ fn parts(
     Ok(output)
 }
 
-/// A part drawn by a tilemap: `PART\tFORM\tMAP\tFIRST\tCOUNT[\tframes]`
-/// names the tilemap table `MAP` beside the list and the run of tiles
-/// `FIRST..FIRST + COUNT` its picture, or with `frames` each of its stacked
-/// frames, holds (see `graphics::MapDrawing`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MapPart {
     pub map: String,
@@ -320,7 +202,6 @@ pub struct MapPart {
 }
 
 impl MapPart {
-    /// The drawing fields after a part's form.
     pub fn parse(built: &str, fields: &[&str]) -> Result<Self, String> {
         let number = |field: &str| {
             match field.strip_prefix("0x") {
@@ -342,7 +223,6 @@ impl MapPart {
         }
     }
 
-    /// Its layout, from its tilemap table beside the list.
     pub fn layout(
         &self,
         built: &str,
@@ -355,8 +235,6 @@ impl MapPart {
     }
 }
 
-/// A tilemap table's 16-bit entries and its width in cells: every column
-/// a u16.
 pub fn tilemap(built: &str, text: &[u8]) -> Result<(Vec<u16>, usize), String> {
     let header = std::str::from_utf8(text)
         .ok()
@@ -377,7 +255,6 @@ pub fn tilemap(built: &str, text: &[u8]) -> Result<(Vec<u16>, usize), String> {
     Ok((entries, wide))
 }
 
-/// A table's records, each field little-endian in its column's type.
 fn table(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(text).map_err(|_| format!("{built}: table is not text"))?;
     let mut lines = text.lines().filter(|line| !line.trim().is_empty());
@@ -432,7 +309,6 @@ fn table(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-/// A halfword command script, one command per line.
 fn script(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(text).map_err(|_| format!("{built}: script is not text"))?;
     let mut words: Vec<u16> = Vec::new();
@@ -472,10 +348,8 @@ fn script(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     Ok(words.iter().flat_map(|word| word.to_le_bytes()).collect())
 }
 
-/// A grid plane of cells, cropped to where it differs from its fill.
 fn plane(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(text).map_err(|_| format!("{built}: plane is not text"))?;
-    // Rows follow the header line by line; an empty row is all fill.
     let mut lines = text.lines();
     let header = lines
         .next()
@@ -526,7 +400,6 @@ fn plane(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
         .collect())
 }
 
-/// A bank of 16x16 blocks of words cut from a grid, each packed.
 fn block_map(built: &str, grid: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(grid).map_err(|_| format!("{built}: grid is not text"))?;
     let rows = text
@@ -564,7 +437,6 @@ fn block_map(built: &str, grid: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-/// A bank of 4-bit icons with their own palettes from its slot list.
 fn icon4_bank(
     built: &str,
     list: &[u8],
@@ -608,7 +480,6 @@ fn icon4_bank(
     Ok(output)
 }
 
-/// A font's glyph records from its sheet and table.
 fn font(built: &str, png: &[u8], table: &[u8]) -> Result<Vec<u8>, String> {
     let image = indexed_bitmap_png(png).map_err(|error| format!("{built}: {}", error.0))?;
     let text = std::str::from_utf8(table).map_err(|_| format!("{built}: table is not text"))?;
@@ -667,7 +538,6 @@ fn font(built: &str, png: &[u8], table: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-/// An icon bank of 32x32 icons stacked in one column.
 fn icon_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
     if width != 32 || !height.is_multiple_of(32) {
         return Err(format!("{built}: icons are 32 pixels square, stacked"));
@@ -684,7 +554,6 @@ fn icon_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<
     Ok(output)
 }
 
-/// A sprite bank of square frames stacked in one column.
 fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
     if width == 0 || !height.is_multiple_of(width) {
         return Err(format!("{built}: frames must be square and stacked"));
@@ -710,7 +579,6 @@ fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Resul
     Ok(output)
 }
 
-/// The OBJ shape `WxH` in pixels names, in tiles: one of the twelve.
 fn obj_shape(name: &str) -> Option<(usize, usize)> {
     let (wide, high) = name.split_once('x')?;
     let shape = (

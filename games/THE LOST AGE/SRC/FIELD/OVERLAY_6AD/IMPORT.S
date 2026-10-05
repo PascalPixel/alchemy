@@ -1,9 +1,3 @@
-@ Import veneers after the OVERLAY_6AD overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_6AD overlay import veneers
-@ The first localized replay exposed remaining main import targets.
-@ The edition branches below now select their actual physical main owners.
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -567,8 +561,6 @@ Func_02005648:
 	.global Func_02005650
 	.thumb_func
 Func_02005650:
-@ This existing ES/IT far spelling reaches the complete health-delta owner;
-@ the particle wording is legacy, not evidence of particle behavior here.
 	.ifdef TLA_EDITION_ES
 	overlay_veneer UpdateRisingParticleBurstFar
 	.else

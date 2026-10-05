@@ -4,8 +4,6 @@ s32 GameFlag_Test(s32);
 void GameFlag_ClearBit(s32);
 void GameFlag_SetBit(s32);
 
-/* Toggles the flag named by the operand, keeping its old state as the
-   condition result. */
 s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter)
 {
     s32 value;
@@ -23,7 +21,6 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter)
 struct DispatchObject;
 void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object, s32 argument);
 
-/* Passes the operand to the children of the object the interpreter runs. */
 s32 Script_ApplyArgumentToChildren(struct ScriptInterpreter *interpreter)
 {
     ObjectDispatch_ApplyArgumentToChildren((struct DispatchObject *)interpreter,

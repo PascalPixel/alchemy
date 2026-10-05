@@ -4,9 +4,6 @@
 s32 GameFlag_Test(s32 flag);
 void WorldMap_UpdateBobbingMarker(void);
 
-/* ☀️'s: unless either story flag is set, give the actor the bobbing marker's
-   update, clear its motion fields and set it to half scale. ⚓️ tests flags
-   0x37 and 0x16e. */
 s32 StoryActor_Initialize(struct ObjectRuntime *actor)
 {
     if (GameFlag_Test(0x37) != 0) {

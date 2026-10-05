@@ -10,16 +10,6 @@
 #include "BATTLE_RUNTIME.H"
 
 #if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
-/* main:080b8574 BattlePresentation_BuildSortedUnitEntries - exact (376 of
-   376 bytes, 2026-09-30 helper hF). Builds one entry per living party unit
-   (agility, priority 0x80) and per living enemy (half agility plus a random
-   share, random priority below the party count), then bubble-sorts the
-   entries by value, swapping through DMA. One function-scope unit pointer
-   shared by both scans makes the agility address its own register, as in
-   the ROM; the enemy scan indexes unit_ids so the hoisted zero is set
-   before the id pointer copy, which leaves entries spilled at [sp+12]. */
 
 struct BattleSortedUnitEntry {
     u16 unit_id;

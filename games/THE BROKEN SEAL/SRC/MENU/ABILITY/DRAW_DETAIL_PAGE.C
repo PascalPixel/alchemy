@@ -12,7 +12,6 @@ void GameFlag_ClearBitFar(s32 flag);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
-/* The Japanese rows' highlight starts a tile in and is a tile narrower. */
 #if EDITION_INTERNATIONAL
 #define DETAIL_ROW_X     0
 #define DETAIL_ROW_WIDTH 15
@@ -21,9 +20,6 @@ s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 #define DETAIL_ROW_WIDTH 14
 #endif
 
-/* The Psynergy counterpart of ItemMenu_DrawItemDetailPage: while flag
-   0x151 is clear it names the selected entry, otherwise it clears flag
-   0x2ff, then redraws the five row highlights. */
 s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
 {
     struct PsynergyMenuState *menu;

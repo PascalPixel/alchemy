@@ -38,13 +38,6 @@ extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *
 
 void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index);
 
-/*
- * Draws one frame of the selection menu: the row chain slides toward its
- * targets and hands the selected row's position to the cursor; the transfer
- * frame scales in around the selected node; the two side markers; the path
- * chain moves and scales; the animated cursor closes half the distance to
- * its target each frame. Ends by advancing the frame status counter.
- */
 void MenuSelection_DrawFrame(void)
 {
     struct SelectionScreen *state = gResQueueWork;
@@ -59,7 +52,6 @@ void MenuSelection_DrawFrame(void)
     s32 tmp;
     struct EffectPosition pos;
 
-    /* 一列目: 項目の横移動と、選択中項目からのカーソル座標配布。 */
     node = state->head;
     while (node != 0) {
         e = &node->sprite;
@@ -115,7 +107,6 @@ void MenuSelection_DrawFrame(void)
         node = node->next;
         cnt++;
     }
-    /* 二列目: 転送枠。選択中の節点に合わせて拡大縮小しながら描く。 */
     if (transfer->kind != 0) {
         node = NodeChain_GetNodeAtCount(state);
         te = &transfer->sprite;
@@ -147,7 +138,6 @@ void MenuSelection_DrawFrame(void)
     }
     MenuSelection_DrawSideMarker(state, 0);
     MenuSelection_DrawSideMarker(state, 1);
-    /* 三列目: 縦横の移動と倍率を同時に進める節点鎖。 */
     node = state->path;
     while (node != 0) {
         e = &node->sprite;
@@ -185,7 +175,6 @@ void MenuSelection_DrawFrame(void)
         Runtime_PushSlotEntry((s32 *)e, 240);
         node = node->next;
     }
-    /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
     if (cursor->kind != 0) {
         cnt = (s32)Menu_AnimatedCursorTiles;
         {
@@ -222,7 +211,6 @@ void MenuSelection_DrawFrame(void)
     state->status += 1;
 }
 
-/* menu/selection/set_node_coordinates.c */
 void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index)
 {
     u32 frame = (gFrameTick >> 2) & 7;
@@ -355,7 +343,6 @@ void Menu_SetNodeCoordinates(u32 first, u32 second)
     }
 }
 
-/* menu/selection/setup_both_sides.c */
 void Menu_SetupSelectionBothSides(void)
 {
     struct SelectionScreen *state;

@@ -1,8 +1,3 @@
-/* Draft: Japanese debug motion command with an ordinary direct call.
- * 2026-10-01: 50 instruction bytes plus 2 bytes alignment, matching owner size;
- * three argument-scheduling halfwords differ before the terrain-position call.
- * Ordinary TBS compiler and options; no scene placement or credit claimed.
- */
 #include "../../../../games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL.H"
 void ItemLevel_RunMotionTest(void)
 {

@@ -2,7 +2,6 @@
 #include "RUNTIME_MEM.H"
 #include "TASK.H"
 
-/* When the story flag is clear, mirror second about centre; pass the stored sixteen-bit extent as a signed value. */
 void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)
 {
@@ -13,7 +12,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     s32 extent;
 
     descriptor = Runtime_AllocateBlock(59, 0x7170);
-    handle = (s32)Runtime_BumpAllocateAlternatePool(512);                /* 128 << 2 */
+    handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
     *(u16 *)(descriptor + 222) = (u16)first;
     *(u16 *)(descriptor + 224) = (u16)second;
@@ -41,14 +40,11 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     *(u16 *)(descriptor + 216) = (u16)extent;
     Engine_VramLoad((s16)extent, 512, handle);
 
-    /* The stage task runs every frame. */
     Engine_TaskAddCallback(Korosseo_DrawGauge, 0xc76);
 
     Runtime_BumpFree(handle);
 }
 
-/* Decode the stage's resource into its descriptor, open the control record
- * unless the party's position is kept, and start the rival on its path. */
 void SceneState_InitControlRecordAndStartTask(s32 resource)
 {
     u8 *state = *(u8 **)(gWorkSlot + WORK_SLOT_STAGE * 4);

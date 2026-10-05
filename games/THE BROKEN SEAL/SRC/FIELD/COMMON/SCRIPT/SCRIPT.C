@@ -17,14 +17,6 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position
 s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 ArcTan2(s32 y, s32 x);
 
-/*
- * Script command: wander to a random point. The three arguments are the
- * base distance, the random extra distance and the leash radius around the
- * object's home cell. Up to seven headings within a quarter turn either
- * side of the facing are tried; each must be free of objects, and the point
- * a further half tile on, turned an eighth either side, must be walkable
- * and inside the leash. When none fits, the object turns round.
- */
 s32 Object_Wander(struct ScriptObjectRuntime *object)
 {
     struct FieldPosition pos;
@@ -93,16 +85,6 @@ found:
     return 1;
 }
 
-/*
- * Script command: wander about the object's home cell (+0x64, +0x66). The
- * three arguments are the base distance, the random extra distance and the
- * leash radius in whole units. Inside the leash, up to seven headings near
- * the stored heading are tried; the point must be free of objects, and five
- * probes half a tile further on, straight ahead and turned an eighth and a
- * quarter either side, must be walkable, and the point must stay inside the
- * leash. Outside the leash, the object heads back towards home and clears
- * the flag it sets while roaming.
- */
 s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
 {
     struct FieldPosition pos;
@@ -742,7 +724,6 @@ void ObjectDispatch_SetUpdateValue(void *raw, s32 value)
         *(s32 *)object->unknown_6c = value;
 }
 
-/* The Japanese edition tests the held keys where the others read the key state. */
 #if EDITION_INTERNATIONAL
 
 #define ASSIGNED_KEYS gKeyState
@@ -781,9 +762,6 @@ u32 Field_StoreAssignedKeyValue(u32 value)
     return request;
 }
 
-/* キー入力と設定表の照合。押下キーに対応する番号欄へ1を立てる。
-   該当が無ければ表の値を Field_StoreAssignedKeyValue へ渡す。
-   キー状態は割り込みで更新されるため、判定ごとに読み直す。 */
 s32 Field_CheckConfiguredKeys(void)
 {
     struct EventRuntime *work = gWork;

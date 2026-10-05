@@ -13,8 +13,6 @@ struct Half {
     u16 v;
 };
 
-/* A sprite as the slot entries take it: its attributes packed in the
-   second word and its tile in the third. */
 struct FadeSprite {
     u32 unused;
     u32 attributes;
@@ -23,9 +21,6 @@ struct FadeSprite {
 
 extern struct FadeSprite BabiFune_FadeSprites[24];
 
-/* Each frame of the Babi Fune fade: count the step down and push three
-   columns of eight wide sprites, the first sliding in from the left edge
-   and the other two from the right as the step shrinks. */
 void BabiFune_StepFade(void)
 {
     u32 *entry;
@@ -64,8 +59,6 @@ void BabiFune_StepFade(void)
         Runtime_PushSlotEntry(&BabiFune_FadeSprites[i], 255);
 }
 
-/* Babi Fune: fill a 256-byte scratch block with colour 1, load it into a
- * newly claimed VRAM slot, set the fade step to 48 and schedule the fade. */
 void BabiFune_ScheduleFade(void)
 {
     u8 *buf;

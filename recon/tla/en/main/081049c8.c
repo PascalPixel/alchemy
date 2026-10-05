@@ -4,8 +4,6 @@ extern u8 Data_03001f2c[];
 s32 Djinn_CheckTurnBalance(s32, s32);
 void Djinn_CountTurns(u8 *);
 
-/* djinn/mark_balanced_entries.c */
-
 void Djinn_CountTurns(u8 *counts)
 {
     u8 *work;

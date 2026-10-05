@@ -27,27 +27,15 @@ extern u16 BattleFx_GlintCellOffsets[];
 extern u8 BattleFx_GlintCellWidths[];
 extern u8 BattleFx_GlintCellHeights[];
 
-/* Seven bytes for each mode: 0 for the swinging strike and 1 for the
-   column, how many times it strikes, which particles fly (1 the wisps, 2 the
-   motes that gather on the actor, 4 the glints, 8 the sparks, 16 a harder
-   hit), the palette, how many frames one picture of the strike lasts, the
-   column's blitter argument and how many frames the effect lasts. */
 extern u8 TwelveMode_Records[];
-/* The six pictures of the swinging strike: size, place in the sheet and how
-   far the strike reaches towards the target. */
 extern const u8 TwelveMode_StrikeWidths[];
 extern const u8 TwelveMode_StrikeHeights[];
 extern const u16 TwelveMode_StrikeOffsets[];
 extern const u8 TwelveMode_StrikeReach[];
-/* Which picture of the column each step of a strike shows. */
 extern const u8 TwelveMode_ColumnStages[];
-/* The flip a glint is drawn with, picked at random. */
 extern const u8 TwelveMode_GlintDrawFlags[];
 
-/* The rectangle blitters BattleEffect_LoadWork leaves in heap slots 46 and
-   47. */
 #define gBlitters ((DrawRectangle *)gWorkSlot)
-/* The map cell buffer holds 128 motes for each target, then 512 sparks. */
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 #define gSparks ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 #define HI(v) (((s16 *)&(v))[1])
@@ -123,12 +111,6 @@ void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect)
     BattleFx_RunTwelveMode(effect, 0xB);
 }
 
-/* Battle effect: a strike falls on the target again and again, either a
-   blade swung across it or a column dropped onto it, as the mode's record
-   says. Each hit shakes the target and wakes sparks; wisps rise from the
-   ground, motes gather on the actor and glints flash around the target, each
-   only in the modes whose record asks for it.
- */
 void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 {
     /* FAKEMATCH: relative heap-cell loads preserve load and literal order; independent typed slots change both. */

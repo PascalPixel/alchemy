@@ -1,11 +1,3 @@
-@ Ends a tied note: reads the optional key byte, then marks the first sounding
-@ channel of that key as releasing. The leaf saves r4 and r5 without lr
-@ (push {r4, r5} ... bx lr). The sequence command table at 0x081c343c names
-@ it (entry 0x081c34b0), as does the literal word at 0x081c22e8. These 64
-@ bytes equal TBS SOUND/DRIVER/RELEASE_KEY.S (0x080fa16c) byte for byte; the
-@ 26 bytes after them stay the raw listing 081c1e48.s, as TBS keeps its
-@ twin in raw 080fa1ac.s.
-@ credit: library — TBS/TLA common sound driver end-of-tie command routine
 .syntax unified
 	.thumb
 	.global MusicTrack_ReleaseKey

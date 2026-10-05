@@ -9,58 +9,6 @@
 #include "IO_REG.H"
 #include "BATTLE_EFX.H"
 
-/*
- * Battle-presentation scene at 0x080d1714, a 400-frame sequence driven from
- * the shared cell window at gBattleFxWork.  Structure recovered against
- * recon/tbs/raw/080d1714.s; the neighbouring draft
- * recon/tbs/en/main/080d1350.c supplied the cell window, the
- * EffectRuntime offsets (0x7780 display pair, 0x77a8 impact mode, 0x7824
- * ready flag, 0x7828 argument pointer) and the indirect draw/copy idioms.
- *
- * The frame body is one do-while over `frame`; the reference reaches it with
- * a long `bl` back-branch because the body exceeds Thumb's short-branch
- * range.  Skip input (gKeysRepeat & 3) fast-forwards `frame` to 160 or 395.
- *
- * runtime->points[64] is one 28-byte record array that the scene reuses in
- * three disjoint ranges: [0..31] for the ring/burst particles, [32..59] for
- * the twenty-eight orbiting sparks, and [60..63] for the four ground panels.
- * The array bounds are fixed by the reference: 0x7080 + 64 * 28 lands exactly
- * on the 0x7780 display pair, 0x7400 is points[32] and 0x7710 is points[60].
- * Field roles are only partly established, so they keep offset names; the
- * same offset serves more than one purpose across phases (points[i].field_10
- * is an angle in the frame <= 159 pass and a velocity in the later ones).
- *
- * The owner is whole (0x080d1714-0x080d244c, 3384 bytes): the frame loop at
- * 0x080d18a8 used to be registered separately.  Facts established against the
- * whole listing: the frame <= 159 particle pass and the frame > 255 homing
- * pass put their short arm (field_18--, alive++) in the else branch; the
- * spark spawn stores an overwritten -(cos * speed) >> 6 into field_10; the
- * frame > 159 block first copies the {0x10000, 0x10000} rodata pair at
- * 0x080eda78 into `scale` and later stores the same values again; the panel
- * threshold is its own induction variable stepping by 12; the palette table
- * pointer advances in place (tbl += 0x80).  Spill slots already follow the
- * reference order (draw_destination, view, runtime, the two rectangle
- * helpers, frame, graphics, wave_y, wave_x, drift_y, drift_x).
- *
- * Residual (44.7% similar, 3404 against 3384 bytes): the candidate allocates
- * 372 stack bytes where the reference uses 356, four spill slots too many.
- * Known extra slots: the frame loop's per-target pass hoists
- * &runtime->argument into a spilled pseudo where the reference reloads
- * runtime and indexes it with a hoisted 0x7828 constant; the spark slot
- * offset (slot * 0xe00) is spilled where the reference keeps it in sl; the
- * ring counter in the panel pass is spilled where the reference uses fp.
- * The reference also reaches screen and work through base registers plus a
- * register offset (movs r5, #6; ldrsh r3, [r7, r5]) where the candidate
- * folds the halfword addresses to sp + constant.  Reopen with a spelling that
- * stops the &runtime->argument hoist first; the later slots follow from it.
- *
- * The points[] reset loop advances the shared RNG twice per point: the first
- * result is intentionally discarded, but the call itself is observable in the
- * following random sequence.  The later particle spawn uses only its final
- * vertical velocity assignment; the earlier trigonometric value was an
- * overwritten source-store artifact and is not retained here.
- */
-
 typedef void (*WordCopy)(void *destination, const void *source, s32 size);
 typedef s32 (*IntegerSquareRoot)(s32 value);
 
@@ -113,7 +61,6 @@ struct ScalePair {
     s32 y;
 };
 
-
 struct EffectRuntime {
     u8 unknown_0000[0x7080];
     struct Particle points[64];
@@ -128,14 +75,6 @@ struct EffectRuntime {
     struct EffectArgument *argument;
 };
 
-/*
- * Cell window shared by the battle-presentation scenes.  The owner walks it
- * from the destination cell: cell[-1] is the effect work block, cell[0] the
- * draw destination, cell[1] the graphics block, cell[6] and cell[7] the two
- * rectangle helpers, and the transfer window sits 112 bytes below.  The
- * neighbouring draft recon/tbs/en/main/080d1350.c walks the same
- * window from cell[-1] instead.
- */
 extern void *gBattleFxWork[];
 
 extern u32 gKeysRepeat;
@@ -272,7 +211,6 @@ void Unnamed_080d1714(struct EffectArgument *argument)
     do {
         point->field_08 = 120;
         point->field_04 = 0;
-        /* The reference discards this draw; kept so the sequence matches. */
         Random16();
         point->field_10 = 0;
         point->field_0c = 0;

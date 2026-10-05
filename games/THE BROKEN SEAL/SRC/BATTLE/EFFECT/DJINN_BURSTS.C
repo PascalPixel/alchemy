@@ -28,14 +28,8 @@ void ObjectGroup_TickMemberTimers(void);
 extern u16 ParticleStreams_CellOffsets[];
 extern u8 MercuryDjinnFlames_LaunchFrames[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: the small Mercury djinn sheet swings in on a shrinking arc
-   and, on five frames of its table, lets go of a blue flame that flies off
-   to the left; five frames later the flame bursts into thirty-two motes in
-   the map cell buffer, which fall under gravity while their life in variant
-   runs out. Six frames after each launch every affected unit reacts. */
 void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -152,11 +146,6 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* Battle effect: the small Jupiter djinn sheet swings in on a shrinking arc
-   while eight flameballs fall one after another; each one that reaches the
-   ground bursts into thirty-two motes in the map cell buffer, which fall
-   under gravity while their life in variant runs out, and makes every
-   affected unit react. */
 void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

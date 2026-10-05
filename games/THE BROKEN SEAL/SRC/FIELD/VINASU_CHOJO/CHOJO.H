@@ -1,4 +1,3 @@
-/* Declarations shared by the Venus lighthouse summit scene's sources (resource_3c9). */
 #ifndef CHOJO_H
 #define CHOJO_H
 
@@ -99,7 +98,6 @@ extern const struct SceneEntrance gVinasuChojoEntrances[];
 extern const u32 gVinasuChojoExits[];
 extern const struct ScenePlacement gVinasuChojoPlacements[];
 extern const struct SceneEvent gVinasuChojoEvents[];
-/* The pillar the leader last stepped onto. */
 extern s32 VinasuChojo_NearestActor;
 
 s32 Math_RemainderUnsigned(s32, s32);

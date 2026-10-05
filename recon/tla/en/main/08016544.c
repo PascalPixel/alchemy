@@ -1,7 +1,5 @@
 #include "SERIAL_RUNTIME.H"
 
-/* Exchange one packet pair, then report the same status as the poll paths. */
-
 void SerialRuntime_PrepareSendPacket(void *payload)
 {
     volatile struct SerialRuntime *state;

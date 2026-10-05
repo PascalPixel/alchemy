@@ -15,16 +15,12 @@
 
 extern void *gBattleFxWork[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Three tables of 340 sparks fill the map cell buffer. */
 #define SPARK ((struct EffectStep *)Ram_MapCellBuffer)
 
 extern u16 ParticleStreams_CellOffsets[];
-/* The strike column of each of the three strikes, for either side. */
 extern const u8 FlameBlade_StrikeColumns[];
-/* The flash cell for each third of a flash's life. */
 extern const u8 FlameBlade_FlashCells[];
 
 void Object_SetMode(void *object, s32 mode);
@@ -38,9 +34,6 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 void BattleFx_StepPaletteToResource(s32 resource_id);
 void Audio_PlayCue(s32 cue);
 
-/* Battle effect: a flame blade slides down beside the acting unit, then two
-   strikes eight frames apart each throw twelve flashes and 256 sparks and
-   make the affected units react six frames later. */
 void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 {
     void **heap;
@@ -54,8 +47,6 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    /* The first two heap slots are read through a walking pointer; the
-       base itself serves the sheet. */
     heap = (void **)gBattleFxWork;
     p = heap;
     work = *p++;
@@ -131,7 +122,6 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
             BattleEventRuntime_BeginPhaseFar(134);
         }
 
-        /* The blade: in from the top for ten frames, held, then sinking. */
         if (frame <= 39) {
             s32 high;
             s32 x;

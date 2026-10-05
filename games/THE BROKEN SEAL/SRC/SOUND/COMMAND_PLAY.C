@@ -1,9 +1,3 @@
-/* Sound: play one sound command. The low twelve bits pick the cue: 17 fades
-   the background music out once, 0x121 fades the second player, cues above
-   99 start a song on its player (player 7 falls back to the first idle one
-   of 7..4), 80..99 play a jingle at full-silence background volume, and the
-   rest start a background track, restoring its volume unless bit 12 asks
-   for a silent start. */
 #include "AUDIO_ENGINE.H"
 
 extern u8 gMusicFadeRequested;

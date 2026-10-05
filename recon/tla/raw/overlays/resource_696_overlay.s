@@ -1,18 +1,5 @@
-@ Shaman village: message ids are owned by the editable catalogs.
-@ Trial: the unlocalized source matched EN 25,420 completely; JA 280 and DE 283
-@ differing byte positions remained in full 25,420-byte loaded scenes.
-@ Trial: ES/IT status repairs built 25,420 bytes with nine differences in
-@ neighboring imports and one scale; the FR two-sprite worker built 25,452
-@ bytes with 16 animation-parameter differences before its measured scales.
-@ Current all-six scenes and encoded prefixes match completely. The raw
-@ worker and animation tables remain uncredited; only existing C and veneers
-@ are adopted in the final three editions.
 
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ The palette selector table below supplies five 32-byte banks in JA/EN.
-@ DE/ES/FR/IT give the eighth graphic its own sixth bank; tiles follow it.
-@ Graphics script command 0x1000 sets the horizontal 8.8 scale; each value
-@ below belongs to this scene animation, independent of its loaded position.
 	.set SHAMAN_GRAPHIC1_SCALE, 256
 	.set SHAMAN_GRAPHIC4_START_SCALE, 512
 	.set SHAMAN_GRAPHIC4_SMALL_SCALE, 256
@@ -5326,8 +5313,6 @@ Func_02002a20:
 	ble .L_0200ad5c
 	b .L_0200ae8e
 .L_0200adda:
-	@ French uses two 32x16 sprites for graphic 4; other editions
-	@ use one 64x32 sprite. Both forms use the existing graphic tile bank.
 	.ifdef TLA_EDITION_FR
 	movs r5, #0
 .L_shaman_french_graphic_loop:

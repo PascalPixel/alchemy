@@ -11,7 +11,6 @@ struct SceneEffectWork {
     struct SceneEffectOrigin *origin;
 };
 
-/* The spread of the falling effect, in the overlay's work past its image. */
 s32 gFallingEffectOffset __attribute__((section(".bss")));
 s32 gFallingEffectWidth __attribute__((section(".bss")));
 u32 gFallingEffectState __attribute__((section(".bss")));

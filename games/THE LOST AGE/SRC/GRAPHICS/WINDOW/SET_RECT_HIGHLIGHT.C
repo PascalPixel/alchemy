@@ -2,8 +2,6 @@
 #include "RAM_BUFFER.H"
 #include "BATTLE_WORK.H"
 
-/* The window tilemap The Lost Age keeps in its heap slot: a dirty byte, then
-   32 x 32 cells. */
 struct WindowTiles {
     u8 unknown_00[3];
     u8 dirty;
@@ -11,9 +9,6 @@ struct WindowTiles {
     u16 cells[32][32];
 };
 
-/* Sets (alt bit 0 = 1) or clears palette bit 12 on every tile of a
-   width x height rectangle of the 32 x 32 window tilemap, clipped to the
-   30 x 20 screen, and marks each touched group of four rows dirty. */
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 {
     struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->window_tiles;
@@ -61,9 +56,6 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 
 s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 
-/* Clears the highlight over the whole party panel strip, then highlights
-   the panel of every unit in the 0xff-terminated id list (at most four)
-   that stands in one of the battle's first four party places. */
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
     struct BattleSession *battle = Ram_HeapSlots->battle_work;

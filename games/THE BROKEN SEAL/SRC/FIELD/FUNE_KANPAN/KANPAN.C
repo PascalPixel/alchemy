@@ -27,14 +27,12 @@ extern u8 FuneKanpan_SceneTableA[];
 extern u8 FuneKanpan_SceneTableB[];
 extern u8 FuneKanpan_SceneTableC[];
 
-/* The deck's placements, chosen by the story flags the voyage has set. */
 extern u8 gFuneKanpanPlacementsFlag93e[];
 extern u8 gFuneKanpanPlacementsFlag927[];
 extern u8 gFuneKanpanPlacementsFlag928[];
 extern u8 gFuneKanpanPlacementsFlag911[];
 extern u8 gFuneKanpanPlacements[];
 
-/* The deck's events, chosen by the story flags the voyage has set. */
 extern u8 gFuneKanpanEventsFlag93e[];
 extern u8 gFuneKanpanEventsFlag8a0[];
 extern u8 gFuneKanpanEventsFlag928[];
@@ -69,8 +67,6 @@ void FieldScene_RunStepThen10(s32 a);
 
 extern u8 MsgFuneDidntDoAnything[];
 
-/* The map work pointer heads the field's IWRAM pointer block; the event
-   work pointer is its twentieth word. */
 extern s32 FuneKanpan_WaveAngleX;
 extern s32 FuneKanpan_WaveAngleY;
 extern s32 FuneKanpan_LayerScroll[];
@@ -99,7 +95,6 @@ void FuneKanpan_SetupRaisedCrewman(void);
 void SceneActor_PlaceActors20To27(void);
 void FuneKanpan_PlaceRandomDeckActors(void);
 
-/* The saved game as halfwords. */
 extern s16 gCell[][1];
 
 void Engine_ActorSetSpritePriority();
@@ -224,10 +219,6 @@ struct MapWork {
     struct MapLayer layers[8];
 };
 
-/* The deck's work, laid out in order just past the overlay's image: the
- * phases of the four drifting slots, the slot work the deck scenes keep and
- * the eight slot values whose bands pace them, the two wave angles, the
- * scroll of layer 5 and its speed. */
 u16 FuneKanpan_SlotPhase[4] = { 0 };
 
 s32 FuneKanpan_WaveAngleY = 0;
@@ -283,7 +274,6 @@ s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
     return 1;
 }
 
-/* A deck object's update: wait a random while, fly to its mark, make actor 21 turn and react, then fly off and start over. */
 s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
 {
     struct FlyBy *gull;
@@ -354,7 +344,6 @@ s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
     return 1;
 }
 
-/* A deck object's update: wait a random while, fly to its mark, make actor 22 turn and react, then fly off and start over. */
 s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
 {
     struct FlyBy *gull;
@@ -440,7 +429,6 @@ void OverlayObject_DecayFields24And28(struct FieldActor *actor)
     }
 }
 
-/* Counts down the wait timer; when it runs out, turns to a random heading and waits again. */
 s32 FuneKanpan_IdleTurn(u8 *actor)
 {
     /* FAKEMATCH: word heading temporaries retain movs/lsls formation before the halfword stores. */
@@ -481,8 +469,6 @@ u8 *FuneKanpan_GetExits(void)
     return FuneKanpan_SceneTableC;
 }
 
-/* The actors placed on the deck. Once flag 0x911 is set the table adjusts
- * three of its entries by flags 0x925 and 0x922 before it is used. */
 u8 *FuneKanpan_GetPlacements(void)
 {
     s32 v;
@@ -508,7 +494,6 @@ u8 *FuneKanpan_GetPlacements(void)
     return gFuneKanpanPlacements;
 }
 
-/* What the deck answers. */
 u8 *FuneKanpan_GetEvents(void)
 {
     if (Engine_GameFlagIsSet(0x93e))
@@ -588,8 +573,6 @@ void SceneDialogue_RunActor21Line(void)
     Engine_EventEnd();
 }
 
-/* The deck's two doors open once each: the map cells of the open door are
-   copied into place and a flag remembers it. */
 void FuneKanpan_OpenFirstDoor(void)
 {
     u32 i;
@@ -644,8 +627,6 @@ void FuneKanpan_RunDeckStateEvent(void)
 }
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-/* The localized deck entrance aligns a leader approaching from this sector
- * before running the requested deck state event. */
 void FuneKanpan_RunDeckStateEventFromEntry(void)
 {
     /* FAKEMATCH: the measured Call3 spelling sets actor and x before shifting z; a direct call changes six bytes of argument setup. */
@@ -658,9 +639,6 @@ void FuneKanpan_RunDeckStateEventFromEntry(void)
 }
 #endif
 
-/* Gated on scene condition 0x911; when set, configures actors 20, 22 and
- * 23 (position, pose, movement and sprite flags) and their attached
- * effects, then advances the shared scene phase. */
 void FieldScene_RunActorAndEffectPresentationSetup(void)
 {
     struct FieldActor *record;
@@ -754,7 +732,6 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Camera_SetSpeed(0x10000, 0x2000);
         Camera_MoveTo(0xd80000, -1, 0x3160000, 1);
         {
-            /* Let actor 20 take its sprite priority from its place again. */
             struct FieldActor *record = Object_GetById(20);
             record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
         }
@@ -767,7 +744,6 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         FuneKanpan_OpenSecondDoor();
         Actor_WalkToAndWait(20, 216, 0x31e);
         Actor_SetPosition(20, 0, 0);
-        /* Draw actor 20 at full size again. */
         record = Object_GetById(20);
         record->scale_x = 0x10000;
         record = Object_GetById(20);
@@ -894,8 +870,6 @@ void FuneKanpan_ConfrontCrewman(void)
     GameFlag_Set(0x923);
 }
 
-/* Restart the deck: reseed the two wave angles, stop layer 5's scroll and
-   apply the entry state again. */
 s32 FuneKanpan_ResetDeck(void)
 {
     u8 **base = ((u8 * *)gMapWork);
@@ -915,9 +889,6 @@ s32 FuneKanpan_ResetDeck(void)
     return 0;
 }
 
-/* The scroll of map layer 5 and its speed (ROCK.C). */
-
-/* Ship deck entry: record the arrival, set the deck by the voyage flags, then run the entrance's scene or place the deck crew. */
 void FuneKanpan_ApplyEntryState(void)
 {
     /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
@@ -1167,8 +1138,6 @@ void FuneKanpan_SetupDeckCrewman(void)
     Engine_EventEnd();
 }
 
-/* Ship deck: place actors 21 to 23 for the crossing, facing them by flag
- * 0x903, and close the encounter when the state is 6. */
 void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
 {
     struct FieldActor *record;
@@ -1395,8 +1364,6 @@ void FieldScene_RunShipDeckEventScript(void)
     Event_SetExitRequest(12);
 }
 
-/* Ship deck: place the crew actors, run their action scripts and walk actor
- * 30 and 31 through the deck sequence. */
 void FuneKanpan_RunDeckCrewScene(void)
 {
 
@@ -1621,13 +1588,6 @@ void FieldScene_RunActorSequence(void)
     Engine_EventRequestExit(14);
 }
 
-/* The ship's deck: the leader jumps to the deck below and the party follows,
- * then the scene sets where the party returns. The engine's calls are
- * declared here without prototypes, as the call sites pass them. */
-
-/* Runs the deck scene: the leader jumps and walks, actors 22 and 25 move
- * into place, and the scene sets where the party returns. The game state's
- * rows are written through a halfword row view. */
 void FuneKanpan_RunJumpScene(void)
 {
     struct FieldActor *actor;
@@ -1738,8 +1698,6 @@ void FuneKanpan_RunJumpScene(void)
     Engine_EventEnd();
 }
 
-/* Configures actors 20, 21, 22 and 23 (position, pose, and movement/sprite
- * flags) and advances the shared scene phase before the scene runs. */
 void FieldScene_ConfigureLeadActors(void)
 {
     struct FieldActor *record;
@@ -1752,14 +1710,12 @@ void FieldScene_ConfigureLeadActors(void)
     Actor_SetPosition(22, 0x10c0000, 0x2a60000);
     record = Object_GetById(22);
     {
-        /* Clear the facing value. */
         s32 shown = 0;
 
         record->facing = shown;
     }
     Engine_ActorEnableActionCallback(22, FuneKanpan_LeadActionsC);
     {
-        /* Set the high bit of the flag byte at +89. */
         struct FieldActor *record = Object_GetById(21);
         record->collision_flags = 128 | record->collision_flags;
     }
@@ -1798,8 +1754,6 @@ void FieldScene_ConfigureLeadActors(void)
     Engine_EventEnd();
 }
 
-/* Configures actors 20, 21 and 22 (position and movement/sprite flags) and
- * advances the shared scene phase before the scene runs. */
 void FieldScene_ConfigureThreeActors(void)
 {
     /* FAKEMATCH: retained volatile pointer and halfword accesses preserve the current access ordering. */
@@ -1818,7 +1772,6 @@ void FieldScene_ConfigureThreeActors(void)
     Actor_SetPosition(20, 0xc40000, 0x1f60000);
     record = (s32)Object_GetById(20);
     {
-        /* Set the visibility/active flag at +6. */
         s32 shown = 0xa000;
 
         *(volatile u16 *)(record + 6) = shown;
@@ -1826,7 +1779,6 @@ void FieldScene_ConfigureThreeActors(void)
     Actor_SetPosition(22, 0xb80000, 0x20c0000);
     record = (s32)Object_GetById(22);
     {
-        /* Set the visibility/active flag at +6. */
         s32 shown = 0xb000;
 
         *(volatile u16 *)(record + 6) = shown;
@@ -1835,7 +1787,6 @@ void FieldScene_ConfigureThreeActors(void)
     Actor_SetPosition(21, 0xb80000, 0x2780000);
     record = (s32)Object_GetById(21);
     {
-        /* Set the visibility/active flag at +6. */
         s32 shown = 0xb000;
 
         *(volatile u16 *)(record + 6) = shown;
@@ -1857,7 +1808,6 @@ void FieldScene_ConfigureThreeActors(void)
     Engine_EventRequestExit(15);
 }
 
-/* Walks up to four present party members in one at a time, each with a line chosen by who they are, then clears story flag 0x12f. */
 void FieldScene_RunPartyRosterScene(void)
 {
     s32 roster[4];
@@ -1875,7 +1825,6 @@ void FieldScene_RunPartyRosterScene(void)
         category[index] = 0;
     }
 
-/* Phase 2: nine search blocks. */
     member = 23;
     for (index = 0; index <= 3; index++) {
         if (roster[index] == member) {
@@ -1968,7 +1917,6 @@ void FieldScene_RunPartyRosterScene(void)
     }
 
 scene:
-    /* Phase 3 -- open the scene. */
     Engine_EventBegin();
     Engine_ActorSetChildValue(0, 15);
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
@@ -1985,7 +1933,6 @@ scene:
 
     Engine_EventWait(10);
 
-    /* Phase 4 -- one beat per matched member. */
     for (index = 0; index <= 3; index++) {
         actor = matched[index];
         Call3(Engine_ActorSetPosition, actor, 216 << 16, 146 << 18);
@@ -2037,7 +1984,6 @@ scene:
         Engine_ActorEnableActionCallback(actor, FuneKanpan_RosterActions);
     }
 
-    /* Phase 5 -- teardown. */
     Engine_ActorStartAction(actor);
     Engine_EventWait(40);
     Engine_ActorSetPosition(0, 216 << 16, 146 << 18);
@@ -2104,9 +2050,6 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
     return 0;
 }
 
-/* Rocks the ship's deck: sways the camera by the cosine and sine of two
- * slowly, randomly advancing angles and scrolls map layer 5 by its speed,
- * wrapping the scroll within two cells. */
 void FuneKanpan_RockDeck(void)
 {
     /* FAKEMATCH: the second angle sum is held across the first angle mask to retain the current store order. */

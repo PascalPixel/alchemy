@@ -1,7 +1,6 @@
 #include "SERIAL_RUNTIME.H"
 #include "IO_REG.H"
 
-/* Enables transfer timing only after the runtime has a mode. */
 void SerialRuntime_EnableTransferTimer(void)
 {
     struct SerialRuntime *state = &gSerialRuntime;

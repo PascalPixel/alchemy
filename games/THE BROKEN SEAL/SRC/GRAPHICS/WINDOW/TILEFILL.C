@@ -1,6 +1,5 @@
 #include "EDITION.H"
 #if EDITION_INTERNATIONAL
-/* These localization routines have no counterpart in Japanese TBS. */
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -8,7 +7,6 @@
 #include "GLOBAL_CELLS.H"
 
 void PaletteGlow_UpdateSine(void);
-
 
 void Scheduler_ScheduleCallbackAAfterFrames(void)
 {

@@ -7,7 +7,6 @@
 #include "IO_REG.H"
 #include "DISPTRAN.H"
 
-
 void DisplayTransition_UpdateScanline(void)
 {
     u32 line;
@@ -60,8 +59,6 @@ again:
     }
 }
 
-/* Advance the frame interpolation, toggle the dither phase and queue its
-   palette nibbles. Stop DMA and remove the callback at the final frame. */
 extern const u8 DisplayTransition_DitherTable[];
 
 void DisplayTransition_UpdateFrame(void)

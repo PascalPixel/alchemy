@@ -4,8 +4,6 @@
 
 extern u8 gMapCellBuffer[];
 
-/* The collision code of the cell under a 12.20 fixed-point position on one
-   of the four map layers; before the map work exists, the cell buffer's. */
 u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 {
     struct MapWork *state;

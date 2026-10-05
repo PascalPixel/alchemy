@@ -1,13 +1,3 @@
-@ Interpolation templates, sample fetch and channel mixing of TLA's
-@ resident mixer. IWRAM_RUNTIME_MIX_LANES.S copies the templates at its
-@ start into its loop; the fetch code returns two instructions past its
-@ call with addne pc, lr, #8; the block mixing copies two-word templates
-@ over the eight nop words of its own loop (add r1, pc, #52;
-@ sub r0, pc, #108) each time before the loop runs, so those nops never run
-@ as stored and carry no credit. It ends in Thumb,
-@ looping back to IWRAM_RUNTIME_MIX.S for the next channel. A return past
-@ the call and self-rewriting loops are beyond both approved compilers.
-@ credit: handwritten — TLA IWRAM runtime channel mixing
 .syntax unified
 	.thumb_func
 	.arm

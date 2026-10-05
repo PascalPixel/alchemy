@@ -31,10 +31,6 @@ void UiWork_FinalizePendingCoreFar(void);
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
 
-/*
- * Matches the shared prototype: s32-returning, with a void * out parameter.
- * Results are cast back to const struct SceneEvent * here.
- */
 s32 BattleFx_FindMatchingEvent(s32, s32, void *);
 void GameFlag_SetBitFar(s32);
 s32 BattleEffect_SelectNearbyTargetObject(s32, s32);
@@ -43,7 +39,6 @@ void BattleFx_LoadActionEffectResources(s32, s32);
 void BattleFx_SetupObjectPair(s32, s32);
 void EventObject_Initialize(void);
 
-/* All callers discard the result. */
 s32 BattleFx_RunEventAction(void *, s32, s32);
 void BattleFx_DispatchRequestKind(void);
 void BattleFx_Run(void);
@@ -52,7 +47,6 @@ void BattleFx_ClearChildValueOnMismatch(void);
 void BattleEffect_CleanupSceneObjects(void);
 void BattleEffect_ClearAllObjects(void);
 
-/* Encoded action word: action id, acting unit and a packed-effect bit. */
 #define ACTION_ID(word)       ((word) & 0x3ff)
 #define ACTION_ACTOR(word)    (((word) >> 10) & 15)
 #define ACTION_PACKED_EFFECT  0x2000
@@ -62,7 +56,6 @@ void BattleEffect_ClearAllObjects(void);
 #define FLAG_EFFECT_RUN       0x140
 #define FLAG_EFFECT_DISPATCH  0x141
 
-/* Names the actor and action, then shows a message. */
 #define Command_ShowActionMessage(who, action, msg) \
     (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((action), 4), \
      UiText_ShowPositionedMessageAndWaitFar((s32)(msg), 1))
@@ -72,20 +65,20 @@ s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 struct MarkerMap {
     u8 unknown_00[0x10];
-    u8 *markers;                    /* 0x10 */
+    u8 *markers;
 };
 
 struct MarkerSlot {
-    struct ScriptObjectRuntime *object;    /* 0x00 */
-    u8 id;                          /* 0x04 */
+    struct ScriptObjectRuntime *object;
+    u8 id;
     u8 unknown_05;
-    u8 column;                      /* 0x06 */
-    u8 row;                         /* 0x07 */
+    u8 column;
+    u8 row;
 };
 
 struct MarkerWork {
     u8 unknown_000[0x11c];
-    struct MarkerSlot slots[10];    /* 0x11c */
+    struct MarkerSlot slots[10];
 };
 
 struct ScriptObjectRuntime *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
@@ -150,7 +143,6 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     if (encodedAction & ACTION_PACKED_EFFECT)
         return BattleFx_ExecutePackedAbilityEffect(encodedAction);
 
-    /* Party members pay the action's PP cost up front. */
     if (actor <= ACTOR_LAST_PARTY) {
         cost = BattleAction_Get(actionId)->pp_cost;
         if (Owner_GetStateFar(actor)->pp < cost) {
@@ -229,13 +221,6 @@ void ObjectMotion_SnapToTerrain(void *object)
     state->terrain_height = height;
 }
 
-/*
- * Places the battle markers listed by the current map: each (column, row,
- * id) triplet names a map event; the first matching event of kind 19, or
- * of kind 3 with a clear flag, becomes an object at the centre of that
- * tile and is recorded in the event work's ten marker slots. The list ends
- * with column and row 255.
- */
 void Battle_PlaceMapMarkers(void)
 {
     u32 id;

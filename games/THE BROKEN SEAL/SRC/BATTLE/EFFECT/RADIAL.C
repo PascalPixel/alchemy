@@ -1,7 +1,3 @@
-/* Battle effect 14: an object grows as it glides from the scene's main
-   object to the scene position (offset in y) over eleven frames, then,
-   unless the scene suppresses it, sixteen particles circle it while the
-   secondary object shrinks away. */
 #include "TYPES.H"
 #include "FX_SCENE.H"
 #include "FIELDOBJ.H"
@@ -42,8 +38,6 @@ void BattleFx_ShrinkObjectScaleUntilHalf(void);
 void BattleFx_CircleAnchor(void);
 
 s32 BattleEffect_RunFallbackObjectTransition();
-
-/* battle/effects/radial_camera/update.c */
 
 extern void Camera_WorldToScreen(struct EffectVector *);
 
@@ -122,7 +116,6 @@ void RunBattleEffect14(void)
     BattleFx_PrepareBufferInterpolation();
 }
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect)
 {
     struct BattleFxScene *camera;
@@ -173,7 +166,6 @@ advance:
     }
 }
 
-/* battle/effects/misc/mark_child_and_run_fallback_transition.c */
 void BattleFx_MarkChildAndRunFallbackTransition(void)
 {
     struct FieldActor *child = gEffectWork->child;

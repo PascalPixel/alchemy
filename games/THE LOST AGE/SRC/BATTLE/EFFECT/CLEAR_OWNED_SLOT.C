@@ -4,7 +4,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Release the slot's object, if it has one, and clear the whole slot. */
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
 {
     if (slot->object)

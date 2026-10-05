@@ -26,22 +26,20 @@ struct StorySharedState {
     u8 active;
 };
 
-/* Raise the effect for thirty-two frames, then hand it off; each frame advances its angle by 0x400. */
 struct StoryVerticalEffectActor {
     u8 filler00[8];
-    s32 x;                          /* 0x08 */
-    s32 y;                          /* 0x0c, only ever advanced by 0x10000 */
-    s32 z;                          /* 0x10 */
+    s32 x;
+    s32 y;
+    s32 z;
     u8 filler14[4];
-    s32 amplitude_x;                /* 0x18 */
-    s32 amplitude_y;                /* 0x1c */
+    s32 amplitude_x;
+    s32 amplitude_y;
     u8 filler20[0x44];
-    u16 frame;                      /* 0x64 */
+    u16 frame;
     u8 filler66[2];
-    struct StoryVerticalEffectActor *anchor;  /* 0x68 */
+    struct StoryVerticalEffectActor *anchor;
 };
 
-/* The world map's scene tables, labelled where the overlay's data lies. */
 extern u8 gWorldMapEntrances[];
 extern u8 gWorldMapExits[];
 extern struct SceneEvent gWorldMapEvents[];
@@ -56,7 +54,6 @@ extern struct ScenePlacement gWorldMapPlacements73[];
 extern struct ScenePlacement gWorldMapPlacements80[];
 extern s32 gWorldMapRewards[];
 
-/* Action scripts the transfer scene hands its actors. */
 extern u8 gTransferArrive10[];
 extern u8 gTransferDepart10[];
 extern u8 gTransferReturn10[];
@@ -74,7 +71,6 @@ extern u8 gTransferGuide14[];
 extern u8 gTransferLeaderIdle[];
 extern u8 gTransferLeaderTurn[];
 
-/* The actor that speaks for the world map's triggers, past the image. */
 extern s32 gWorldMapTriggerActor;
 extern struct StorySharedState *gEffectWork;
 
@@ -95,7 +91,6 @@ s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 void QueueIoWriteDelay2(u32 address, u32 value);
 
-/* The world map's own callbacks and scenes. */
 void WorldMap_CreateLinkedEffects();
 void StoryActor_AdvanceTimer(struct FieldActor *actor);
 void WorldMap_UpdateBobbingMarker();
@@ -105,14 +100,6 @@ void StoryScene_UpdateTransitionEffect(void);
 void WorldMap_UpdateTransferredActorLanding(void);
 extern u8 gOpeningLeaderRise[];
 
-/* Each story trigger fires once progress reaches nine tenths of its level. */
-
-/* Actor callbacks for the story transfer scene. */
-
 s32 StoryScene_ComputeOpposingSlotDelta(void);
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
-
-/* The actor index every call in this scene step operates on. */
 
 #endif

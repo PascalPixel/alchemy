@@ -8,12 +8,6 @@
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "CONFIGURED_EFFECT_SPAWN.H"
 
-/*
- * Per-frame integrator for an effect record -- resource_396. It adds the
- * velocity at +68/+72/+76 into the position at +8/+12/+16, decays two of the
- * three velocities, accumulates the rates at +48/+52, and turns the sprite.
- */
-
 extern s16 *ToretoHeya_PaletteBuffer;
 extern u8 ToretoHeya_ActionTable2[];
 extern u8 ToretoHeya_ActionTable1[];
@@ -28,14 +22,3 @@ void ToretoHeya_SpawnSwirlSparks();
 void ToretoPalette_ApplyTint(void);
 void ToretoHeya_AdvanceEffectMotion();
 
-/* Return the overlay's first persistent workspace block. */
-
-/* Return the overlay's second persistent workspace block. */
-
-/* Return the overlay's third persistent workspace block. */
-
-/* Return the overlay's fourth persistent workspace block. */
-
-/* Return the overlay's presentation workspace block. */
-
-/* Clear the active story variant once the scene controller is idle. */

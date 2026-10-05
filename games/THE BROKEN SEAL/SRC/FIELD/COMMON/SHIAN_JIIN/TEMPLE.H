@@ -80,7 +80,6 @@ void FieldScene_RunDescentBurst(void);
 void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6,
                           u32 flags, u8 *extra);
 
-/* Scripts and cell steps in the temple overlay's data. */
 extern u8 ShianJiin_ActorTwelveScript[];
 extern u8 ShianJiin_CellStepsA[];
 extern u8 ShianJiin_CellStepsB[];

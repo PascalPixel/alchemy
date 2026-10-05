@@ -21,12 +21,6 @@ void Battle_RunEncounter(s32 encounter);
 void Battle_ReservedNoOp2A08(void);
 void Owner_RecalculateStatsFar(s32 owner);
 
-/* The debug battle menu. Entered with DOWN held it waits on a blank screen:
- * RIGHT and LEFT step the encounter by one, UP and DOWN by ten, R and L
- * step the party preset, which is loaded as it changes, and A starts the
- * battle on the Suhara gate backdrop; B locks byte 0x22b of the game state
- * to 5 for the rest of the session. Entered without DOWN, encounter 257 runs
- * again and again. */
 void DebugBattle_RunMenu(void)
 {
     s32 locked = 0;

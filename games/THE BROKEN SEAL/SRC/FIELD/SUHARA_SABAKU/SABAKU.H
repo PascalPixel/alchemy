@@ -1,9 +1,6 @@
 #ifndef SUHARA_SABAKU_SABAKU_H
 #define SUHARA_SABAKU_SABAKU_H
 
-/* The Suhara desert (resource_3c0): the declarations, views and call
- * helpers its scene sources share. */
-
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -30,7 +27,6 @@ struct SceneWork_02000400 {
 extern u8 gSuharaSabakuExits[];
 extern u8 gSuharaSabakuActor12Action[];
 
-/* The encounter palette's level, kept while the encounter pulses it. */
 extern u16 gSuharaSabakuShownLevel;
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
@@ -38,8 +34,6 @@ void BattleFx_SetPhaseRequest();
 void BattleFx_EmitRandomParticle();
 
 #define ACTOR_ID 13
-
-/* Actor id operated on throughout this scene. */
 
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 

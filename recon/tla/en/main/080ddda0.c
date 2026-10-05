@@ -1,11 +1,3 @@
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "SYSTEM.H"
@@ -40,11 +32,6 @@ void Audio_PlayCue(s32 sound);
 void ObjectGroup_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
 void BattleFx_PrepareBufferInterpolation(void);
-
-/* Links the scene child to the main object, spawns two mode-3 item-break
- * anchors on either side of the scene position, sends them outward, then
- * raises both anchors and the child together until the child has risen
- * 0x200000 before finishing both bursts. */
 
 void BattleEffect_RunTargetedItemBreak(void)
 {

@@ -1,15 +1,6 @@
-/*
- * Draft: SerialRuntime_FindLatestPeer does not yet match; the reference keeps
- * the best stamp in r0, the result in r5 and the index in r4, and steps the
- * stamp pointer by 6 bytes in r1.
- * Links as its recon/tla/raw listing.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
-/* Of the five peer records (three bytes each, a stamp every six bytes from
-   0x1e), the active one for the given id with the highest stamp; returns its
-   byte offset, or 15 when none is. */
 s32 SerialRuntime_FindLatestPeer(s32 id)
 {
     u8 *work;

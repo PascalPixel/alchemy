@@ -40,7 +40,6 @@ struct RadialBurstEffect {
 extern struct EffectRuntime *gEffectWork;
 
 s32 Random16(void);
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectPosition *output);
 void Camera_WorldToScreen(struct EffectPosition *value);
 s32 BattleFx_HasReachedTarget(struct RadialBurstEffect *effect);

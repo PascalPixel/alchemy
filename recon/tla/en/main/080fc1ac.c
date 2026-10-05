@@ -1,4 +1,3 @@
-/* Item menu: ask whether to drop the item and return the chosen row (1 when cancelled). */
 #include "TYPES.H"
 #include "IO_REG.H"
 

@@ -46,12 +46,6 @@ s32 Summon_IsEntryFlagged(s32 id);
 u32 Random16(void);
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels);
 
-/* Fills the enemy list for a formation record (level-matched while flag
-   0x173 is set): each member costs one of six slots if its summon entry is
-   flagged, else two; minimum counts are paid first and random extras fill
-   the rest. Battle type 0 shuffles the member groups, 1 draws members at
-   random, others keep record order. Units 128..133 are cleared and up to
-   six enemies assigned; returns how many. */
 s32 BattleFormation_BuildEnemyList(s32 record_id)
 {
     u16 *list;

@@ -1,6 +1,3 @@
-/* Draft: the complete 312-byte ES output has 4 differing import bytes.
- * All non-relocation instructions match; callee ownership must be proved
- * before a source call-target change. Preserved at the Japanese-base pivot. */
 #include "TYPES.H"
 #include "OWNERVAL.H"
 #include "BATTLE_UNIT.H"
@@ -13,11 +10,6 @@ void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
 
-/* Passes a health change to every active party member: amount itself, or
- * when scaled amount percent of the member's maximum HP, falling back to the
- * magnitude of amount when that rounds to zero. A loss first flashes the
- * screen and plays the heavy impact cue when it exceeds ten, a lighter hit
- * cue otherwise; a gain plays the recovery cue. */
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 {
     s32 count;
@@ -50,9 +42,6 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
         Owner_AdjustFirstValueFar(gPartyState.active_owners[i], value);
     }
 }
-
-/* Party-wide HP changes in battle: the poison and venom damage applied at
-   the end of a round. ⚓️ reads the active owners from gPartyState. */
 
 s32 BattleParty_ApplyStatusDamage(void)
 {

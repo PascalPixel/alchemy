@@ -6,12 +6,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/*
- * The Vale house scene: the hooks its entry veneers export, the villagers'
- * dialogue, the Mythril Bag scene and its sparkle effects, and the Psynergy
- * steps.
- */
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 enum {
@@ -19,7 +13,6 @@ enum {
     ITEM_MYTHRIL_BAG = 224
 };
 
-/* The scene's tables, in the overlay's read-only data. */
 extern s32 gHaidiaBabiEntrances[];
 extern s32 gHaidiaBabiExits2[];
 extern s32 gHaidiaBabiExits[];

@@ -1,10 +1,6 @@
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "BATTLE_RUNTIME.H"
-/* Field: show the world map. The map layers are hidden and the map picture
-   is decoded over BG1 until A or B is pressed, then the field comes back.
-   The field mode passes the picture's resource id; the body loads the same
-   id itself. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"

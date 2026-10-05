@@ -5,8 +5,6 @@
 #include "BATTLE_PRESENTATION.H"
 #include "TRANSFORM.H"
 
-
-
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 {
     struct BattleCamera *scene = gCameraWork;

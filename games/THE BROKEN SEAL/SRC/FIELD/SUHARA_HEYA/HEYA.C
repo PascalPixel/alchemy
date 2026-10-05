@@ -11,8 +11,6 @@ extern u8 MsgSuharaSupposeFolkBlown[];
 
 extern u8 MsgSuharaIodem[];
 
-/* The room's scene tables, which the main image asks for through the
- * overlay's entry veneers. */
 u8 *SuharaHeya_GetEntrances(void)
 {
     return gSuharaHeyaEntrances;
@@ -28,7 +26,6 @@ u8 *SuharaHeya_GetExits(void)
     return gSuharaHeyaExits;
 }
 
-/* Flag 0x96f selects the later placements. */
 s32 SuharaHeya_SelectPlacements(void)
 {
     if (Engine_GameFlagIsSet(0x96f) != 0) {
@@ -37,8 +34,6 @@ s32 SuharaHeya_SelectPlacements(void)
     return (s32)gSuharaHeyaPlacements;
 }
 
-/* The house's counters: a shop or the inn when the leader faces them,
- * otherwise a line chosen by flag 0x96f. */
 void Dialogue_HandleFacingChoice(s32 no)
 {
     u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
@@ -89,8 +84,6 @@ void Dialogue_HandleFacingAction(s32 no)
     }
 }
 
-/* Asks whether the party was blown here on the way to Babi Lighthouse, with a
- * line for each answer. */
 void SuharaHeya_AskBlownHere(s32 obj)
 {
     s32 msg = (s32)MsgSuharaSupposeFolkBlown;
@@ -114,11 +107,6 @@ void SuharaHeya_PlayCueAndRequestTouchedExit(void)
     Engine_AudioPlayCue(0x7B);
 }
 
-/*
- * Runs the primary script for this scene: a long fixed sequence driving
- * actors 10, 19, 20, 21, 30 and 40 through position, pose and timing steps,
- * guarded by an initial skip check.
- */
 void Scene_RunPrimaryScript(void)
 {
     struct FieldActor *record;
@@ -404,7 +392,6 @@ s32 Scene_InitActorRecords(void)
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     {
-        /* The mask is built in a local, not folded into the store. */
         struct SceneRecord *record = work->fields.record;
         s32 flags = ~12;
 

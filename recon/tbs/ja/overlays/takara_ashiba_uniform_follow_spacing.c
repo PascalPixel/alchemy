@@ -1,9 +1,3 @@
-/* Draft: First Treasure Isle following sequence.
- * 2026-10-01: Applying the other Japanese sequences16px leader step
- * here leaves one differing Thumb immediate (2 bytes); this first
- * leader and follower both step24px. Complete owner144 bytes.
- * Ordinary approved TBS flags.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

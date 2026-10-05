@@ -39,14 +39,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
@@ -68,7 +65,6 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-/* Stops an actor where it stands and restarts its dispatch table. */
 void OverlayObject_ResetMotionFields(s32 actor)
 {
     struct FieldActor *o = Object_GetById(actor);

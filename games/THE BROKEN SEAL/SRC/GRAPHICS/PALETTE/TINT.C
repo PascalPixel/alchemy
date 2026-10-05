@@ -27,7 +27,6 @@
         *ime = saved;                                                       \
     }
 
-/* Step the title palette channels toward the target and queue both banks. */
 void TitlePalette_UpdateFade(void)
 {
     /* FAKEMATCH: IME scopes, count stores and pointer lifetime preserve queue order; the byte-slot read avoids an extra add #128. */
@@ -69,26 +68,6 @@ void TitlePalette_UpdateFade(void)
     }
     QUEUE_PALETTE(bank + 256, 0x05000200);
 }
-
-/* Expands a 512-entry (or 256-entry half) BGR555 palette into the engine's
- * three-halfword-per-entry working buffer, applying one of several colour
- * treatments selected by `mode`.
- *
- *   < 0x8000              a literal BGR555 colour; every entry is filled with
- *                         it through a 16-bit DMA replicate.
- *   == 0x8000             take the mode from src[0] and dispatch on that.
- *   0x10001 .. 0x10007    fixed treatments (grey, warm ramp, tinted ramps).
- *   other, < 0x100000     plain channel split.
- *   & 0x200000            scale the tint colour's channels by the source
- *                         entry's weighted luminance.
- *   & 0x400000            fixed-point blend of the source entry towards the
- *                         tint colour.
- *   & 0x800000            plain channel split.
- *   otherwise             `mode` is the address of an already expanded
- *                         buffer, copied in by a 32-bit DMA.
- *
- * Each destination entry is three halfwords holding the blue, green and red
- * components, each scaled into bits 10..14. */
 
 s32 Graphics_ClampRgb555Channel(s32 val);
 s32 Graphics_ClampRgb555Component(s32 val);

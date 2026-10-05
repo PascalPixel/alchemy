@@ -9,7 +9,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gSceneEntrances;
 }
 
-/* This scene declares no regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;

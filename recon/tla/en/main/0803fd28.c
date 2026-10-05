@@ -2,7 +2,6 @@
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
-/* The object palette the slider graphics use. */
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 
@@ -25,11 +24,6 @@ struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *
 void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 s32 __divsi3(s32 numerator, s32 denominator);
 void Func_080b0038(void *object, s32 x, s32 y);
-
-/* Opens the workspace options window: four divider lines, six captions,
-   the selection cursor, the two value markers placed along their sliders
-   (value * 60 / step pixels in) and seven frame icons in three rows.
-   Caption ids come from the literal pool as link-time values. */
 
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {

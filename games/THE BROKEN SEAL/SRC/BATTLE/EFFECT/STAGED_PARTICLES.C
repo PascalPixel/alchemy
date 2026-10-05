@@ -23,8 +23,6 @@ extern struct BattleBackgroundView *gTransitionWork;
 extern u8 gMapCellBuffer[];
 extern volatile u32 gKeysRepeat;
 
-/* The battle presentation block in heap slot 44. */
-
 typedef struct Scale {
     s32 x;
     s32 y;
@@ -52,18 +50,12 @@ extern u8 PuffArc_CellBiasY[];
 extern u8 PuffArc_CellHeights[];
 extern const Scale StagedParticles_UnitScale;
 
-/* The nine scene objects the effect work keeps. */
 #define OBJECTS (work->objects)
-/* The spark trails and their saved transforms in the map cell buffer. */
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* The slash sheet's pictures in work->sheet, each as many bytes as its
-   width times its height: five flash frames, the last three in two or
-   three parts, then the falling slash's three parts. */
 enum SlashSheetCell {
     SLASH_FLASH_1 = 0x0000,
     SLASH_FLASH_2 = 0x0188,
@@ -80,11 +72,6 @@ enum SlashSheetCell {
     SLASH_BOTTOM = 0x1bf3
 };
 
-/* Battle effect: nine scene objects follow a recorded path across a violet
-   sky while sixteen slashes appear one after another, eight frames apart;
-   each gathers twenty-four sparks for sixteen frames, flashes through five
-   slash pictures and falls away. A or B skips the rest. Thirty-two slashes
-   then rain down on the targets and burst into embers. */
 void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 {
     s32 point[3];
@@ -260,7 +247,6 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 #else
                             EffectPosition_ApplyBaseAndYOffset(point, &screen);
                             screen.x = (screen.x >> 1) + x;
-                            /* The localized releases draw the trail sixteen pixels lower. */
                             screen.y = screen.y + y + 16;
 #endif
                             trail->x -= 4;

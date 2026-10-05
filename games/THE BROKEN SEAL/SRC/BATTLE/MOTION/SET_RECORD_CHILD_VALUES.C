@@ -12,11 +12,6 @@
 #include "BATTLE_ACTOR.H"
 #include "MENU_LIST.H"
 
-/*
- * Walks every motion record of an object: the first child of each record
- * takes the value, the others are cleared, and every child's frame
- * is reset to the selected-frame sentinel. The result is unused by every caller.
- */
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 {
     s32 index = 0;
@@ -25,7 +20,6 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
     struct AnimationObject *record;
     struct AnimationEntry *child;
     struct AnimationEntry **children;
-    /* Attempts: direct stores or |= 0xff shrink this extent from 94 to 82 bytes. */
     /* FAKEMATCH: cached compound assignment keeps 94 bytes but changes registers and store order. The cached byte read preserves allocation. */
     u8 mask = 0xff;
     u8 frame;
@@ -57,12 +51,6 @@ void BattleFx_DispatchByIdRangeFar(s32 *work);
 void BattleFx_DispatchModeFar(s32 *work);
 void BattleEvent_Playback(void);
 
-/*
- * Presents a Psynergy cast (plan outcomes 3, 6 and 8): turns the camera
- * toward the caster, plays the element effect unless the cast is scripted,
- * then either reports the failure or runs the effect and restores the
- * targets' motion.
- */
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
 {
     struct BattlePresentationWork work;
@@ -85,7 +73,6 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
             current = angle + 0x1800;
         current = (s16)current;
         current += ((plan->actor_id <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-        /* Both on the same side: face across the field instead. */
         if (!((plan->actor_id <= 7) ^ (plan->target_ids[0] <= 7)))
             current = plan->actor_id <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)

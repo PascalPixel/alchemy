@@ -1,4 +1,3 @@
-//! Ordinary-C policy of production verification.
 
 use regex::{Captures, Regex};
 use sha2::{Digest, Sha256};
@@ -7,9 +6,6 @@ use std::io;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
-// Reviewed shared machine-interface bodies are admitted only by exact token
-// identity, including constraints, instructions, operands and clobbers.
-// Compiler flags and ordinary caller C remain subject to the existing policy.
 const DMA_HEADER: &str = "games/COMMON/INCLUDE/SYSTEM/DMA.H";
 const DMA_SOURCE: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -129,13 +125,9 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
         .then(|| format!("ABI attribute {word}"))
 }
 
-/// Whether inline assembly on this line is admitted: a `/* CAMELOT_ASM: proof */`
-/// tag for assembly Camelot very likely wrote in their own C, or a
-/// `/* FAKEMATCH: reason */` tag for a temporary workaround until both games
-/// reach 100% (S2), on the same line or the line above.
 pub fn camelot_admitted(text: &str, line: usize) -> bool {
     static TAG: OnceLock<Regex> = OnceLock::new();
-    let tag = regex(&TAG, r"/\*\s*(?:CAMELOT_ASM|FAKEMATCH):\s*[^\s*]");
+    let tag = regex(&TAG, r#"/\*\s*FAKEMATCH:\s*[^\s*]|\bCAMELOT_ASM\("[^"]+"\)"#);
     let lines: Vec<&str> = text.lines().collect();
     [line.checked_sub(1), line.checked_sub(2)]
         .into_iter()
@@ -374,12 +366,12 @@ mod tests {
         let bare = "void f(void) {\n    asm(\"swi 0x5\");\n}\n";
         assert_eq!(find_forbidden("fixture.c", bare).len(), 1);
         let tagged =
-            "void f(void) {\n    /* CAMELOT_ASM: VBlankIntrWait swi */\n    asm(\"swi 0x5\");\n}\n";
+            "void f(void) {\n    CAMELOT_ASM(\"VBlankIntrWait swi\")\n    asm(\"swi 0x5\");\n}\n";
         assert!(find_forbidden("fixture.c", tagged).is_empty());
         let workaround =
             "void f(void) {\n    /* FAKEMATCH: keeps r9 until the struct is known */\n    asm(\"\");\n}\n";
         assert!(find_forbidden("fixture.c", workaround).is_empty());
-        let empty = "void f(void) {\n    /* CAMELOT_ASM: */\n    asm(\"swi 0x5\");\n}\n";
+        let empty = "void f(void) {\n    CAMELOT_ASM(\"\")\n    asm(\"swi 0x5\");\n}\n";
         let bare_fake = "void f(void) {\n    /* FAKEMATCH: */\n    asm(\"\");\n}\n";
         assert_eq!(find_forbidden("fixture.c", bare_fake).len(), 1);
         assert_eq!(find_forbidden("fixture.c", empty).len(), 1);

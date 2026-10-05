@@ -1,6 +1,5 @@
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
-/* Facing, scene tables and the villagers' first lines. */
 #include "HAIDIA.H"
 #include "MAP_SCROLL.H"
 #include "CALL.H"
@@ -34,7 +33,6 @@ extern u8 MsgHaidiaThePsynergyStoneIsGone[];
 extern u8 MsgHaidiaThisIsVale[];
 extern u8 MsgHaidiaYouCameBackHome[];
 
-/* The four actors' closing actions, where the overlay's data lies. */
 extern u8 HaidiaIe_Actor23Actions[];
 extern u8 HaidiaIe_Actor24Actions[];
 extern u8 HaidiaIe_Actor25Actions[];
@@ -156,11 +154,6 @@ void Villager_AskAboutTheTravelers(void)
     Engine_EventEnd();
 }
 
-/* The villager who shows off his psynergy by shaking the view. */
-
-/* Once the party has left the vale he only asks about the journey, one line
- * further for each of the two companions; before, he lifts the view up and
- * down for three seconds. */
 void Villager_ShowOffPsynergy(void)
 {
     u32 i;
@@ -224,7 +217,6 @@ void Villager_ShowOffPsynergy(void)
     Engine_EventEnd();
 }
 
-/* The psynergy stone falling on the hut. */
 void SceneDialogue_RunFlagGatedMessageStep(void)
 {
     Engine_EventBegin();
@@ -314,7 +306,6 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Engine_EventEnd();
 }
 
-/* The villager who points the way the others went. */
 void Villager_PointTheWay(void)
 {
     Engine_EventBegin();
@@ -329,7 +320,6 @@ void Villager_PointTheWay(void)
     Engine_EventEnd();
 }
 
-/* Return visits, supplemental sequences and the entry state. */
 void Villager_WelcomeBack(void)
 {
     u32 i;
@@ -391,10 +381,6 @@ void FieldScene_RunSupplementalSequenceOne(void)
     HaidiaIe_RequestBackdropExit(1);
 }
 
-/* Sets step 188, then runs a pair of 6-argument setup calls for indices 0
- * and 2 sharing the same trailing four values, followed by a pair of
- * 3-argument calls sharing the same leading two arguments, and a closing
- * 1-argument call. */
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
     Audio_PlayCue(188);
@@ -420,13 +406,10 @@ void FieldScene_RunSupplementalSequenceFour(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 52, 18);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3);
     HaidiaIe_RequestBackdropExit(4);
 }
 
-/* Runs a fixed sequence of four scripted calls: one keyed off Value_0200beb4
- * with two small numeric arguments, one with a 0x222 argument, and two plain
- * single-argument calls. */
 void FieldScene_RunSupplementalSequenceFive(void)
 {
     Audio_PlayCue(158);
@@ -435,12 +418,11 @@ void FieldScene_RunSupplementalSequenceFive(void)
     HaidiaIe_RequestBackdropExit(5);
 }
 
-/* Run the four steps of the house scene. */
 void FieldScene_RunSupplementalSequenceSix(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 35, 36);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263); /* object_id 0, x 102, z 611 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263);
     HaidiaIe_RequestBackdropExit(6);
 }
 
@@ -596,11 +578,6 @@ s32 HaidiaIe_RestoreEntryState(void)
     return 0;
 }
 
-/* Runs once flag 0x834 is set, until this event sets flag 0x840 at its end.
- * The dialogue starts at MsgHaidiaGoAidElders, urging the party to aid the elders,
- * while the actors move, turn and animate around it. After the prompt an
- * answer of 1 shows the next reply and skips the one after it; any other
- * answer skips straight to that second reply. */
 void FieldScene_RunElderAidEvent(void)
 {
     extern u8 HaidiaIe_FaceTargetActions[];
@@ -805,9 +782,6 @@ void HaidiaIe_RunScriptScene(void)
     Engine_EventEnd();
 }
 
-/* Stages the two moving actors around actor 25, sends actors 23, 24, 25 and
- * the leader off on their own actions, then advances the area's scene state
- * and records this house as the scene the party returns to. */
 void FieldScene_RunGroupChoreography(void)
 {
     extern u8 HaidiaIe_FaceTargetActions[];
@@ -909,7 +883,6 @@ void FieldScene_RunGroupChoreography(void)
     Engine_GameFlagSet(0x11a);
 }
 
-/* Scripted scenes and the paired effects they spawn. */
 void HaidiaIe_RunActorPairEffectScene(void)
 {
 
@@ -1319,7 +1292,6 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventEnd();
 }
 
-/* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
     Engine_EventShowMessage(speaker, 0);
@@ -1413,7 +1385,6 @@ void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
     effect->z = anchor->z - (offset * 4 + offset) + 0x100000;
 }
 
-/* Haidia house: spawns the linked pair of effect objects above the parent actor, with a cue, and gives the two their update routines and priorities. */
 void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];

@@ -1,11 +1,5 @@
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
-/* The casting and impact sequence shared by most battle effects. The acting
- * unit gathers particles for 32 frames, then the effect chosen by kind is
- * launched at the first affected unit: per-kind images are loaded into the map
- * cell buffer, a travelling orb is aimed at the target in six steps, and the
- * frame loop draws the kind's impact while the battle event advances. Kinds 15,
- * 17, 24, 26 and 35 hand over to their own routines after the gathering. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
@@ -41,7 +35,6 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s3
                                s32 state_value);
 void BattleFx_RunPaletteRampMode1(struct BattleEffectArgument *effect);
 s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
-/* This caller passes a height too; the packer itself uses 288 rows. */
 void Graphics_PackTileRows();
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 void BattleFx_StepPaletteToResource(s32 resource_id);
@@ -72,8 +65,6 @@ static __inline__ void FillWords(void *dest, u32 size, u32 value)
     Iwram_FillWords(dest, size, value);
 }
 
-/* Particle image offsets indexed by size; the remaining tables describe
- * individual impact images (offsets, dimensions and placement). */
 extern u16 ParticleStreams_CellOffsets[];
 extern u16 CastingImpact_OrbitCells[];
 extern u8 PuffArc_CellWidths[];
@@ -270,8 +261,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     BattleFx_FetchRectangleBlitters(work->effect->side, draw_pair = blitters);
     work->fade_frames = 24;
     work->fade_step = 0;
-    /* Gather particles around the acting unit for 32 frames. The same
-       * records later hold the sparks emitted at the target. */
     caster_actor = GetBattleObjectSlotFar(work->effect->actor)->object;
     {
         for (i = 0; i != 64; i++) {
@@ -279,7 +268,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             particle->x = (Random16() & 63) + 32;
             particle->y = 0;
             particle->z = 0;
-            /* Gathering reuses velocity fields as rotation angles. */
             particle->velocity_x = Random16() & 0xffff;
             particle->velocity_y = Random16() & 0xffff;
             particle->velocity_z = Random16() & 0xffff;
@@ -435,7 +423,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         BattleFx_RunSparkGroups(command, 2);
         return;
     }
-    /* Restore the caster and aim the travelling orb at the first target. */
     target_actor = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     motion = &velocity;
     motion->x = (target_actor->x - position->x) / 6;
@@ -519,7 +506,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     } else {
         duration = 80;
     }
-    /* Animate the selected impact and advance the battle event each frame. */
     frame = 0;
     while (frame != duration) {
         if (kind != 11) {
@@ -612,7 +598,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     s32 size = step->variant;
                     if (size > 0) {
                         EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-                        /* Remaining lifetime determines the particle's image size. */
                         size >>= 4;
                         size++;
                         projected.x /= 2;
@@ -710,7 +695,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
             if (frame >= 0 && frame <= 23) {
-                /* The rising column: two scrolling pieces over a wider base. */
                 RectangleBlit *draw;
                 s32 width;
                 s32 tile_height;
@@ -1064,7 +1048,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         WaitFrames(1);
         frame++;
     }
-    /* Hand off the follow-up effect, or release the canvas layer. */
     if (kind == 21) {
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);

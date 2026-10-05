@@ -1,14 +1,3 @@
-@ Compression format 0/1 decoder. Its loader (0x0801587c) allocates a
-@ 0x2c8-byte heap block, has DMA3 copy exactly this module there (size and
-@ source in its literal pool at 0x080158c4), calls the copy and frees it.
-@ Behind a 4-byte Thumb entry (bx pc) the ARM body tests each code bit with
-@ lsrs rN, rN, #1 and bcs or bcc, and reaches its refill subroutine through
-@ a second entry that points lr back into its loop by hand
-@ (sub lr, pc, #284). Branching on the carry out of a shift and rewriting lr
-@ are beyond both approved compilers. After that entry its 708-byte body
-@ equals TBS SYSTEM/RESOURCE/DECODE_01.S (0x08002544) byte for byte.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, compression format 0/1 decoder
 .syntax unified
 	.thumb
 	.global Resource_Decode01Code

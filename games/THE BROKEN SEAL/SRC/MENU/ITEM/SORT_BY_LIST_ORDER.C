@@ -1,7 +1,3 @@
-/* Item menu: sort a fifteen-slot inventory by a list mode. Each pass of the
-   mode order takes one item type (bit 7: equipped items only) and moves the
-   matching items into the sorted list, highest item id first; the emptied
-   tail stays zero. */
 #include "TYPES.H"
 #include "ITEM.H"
 

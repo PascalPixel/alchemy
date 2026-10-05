@@ -14,14 +14,9 @@ extern u16 *gDebugTextCursor;
 
 extern const u8 System_BasicColorPalette[];
 
-/* The window frame colours of background bank 15. */
 extern const u16 Ui_WindowPalette[];
 extern u8 gCartridgeResetMarker[];
 
-/* The debug text writer before this is DEBUG_TEXT.C, and the two number
-   drawers after it are COMMON's DEBUG_NUMBER.C. */
-
-/* Fill the BG0 screen block at 0x06002000 with blank tiles and home the cursor. */
 void Bg0_ClearTilemap(void)
 {
     volatile u32 fill;
@@ -39,9 +34,6 @@ void Bg0_ClearTilemap(void)
     }
 }
 
-/* Loads the shared window graphics: resource 0x13 into BG character block
-   0, the window palette into background bank 15, the bank-15 frame colours
-   and the object palettes. */
 void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,

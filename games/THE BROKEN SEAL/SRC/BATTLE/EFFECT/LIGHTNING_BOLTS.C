@@ -28,17 +28,10 @@ extern u16 ParticleStreams_CellOffsets[];
 extern u16 BattleFx_GlintCellOffsets[];
 extern u8 BattleFx_GlintCellWidths[];
 extern u8 BattleFx_GlintCellHeights[];
-/* Four counts per variant: sparks, glints, glint range and bolts. */
 extern u8 LightningBolts_Counts[];
 extern u8 LightningBolts_GlintPalettes[];
 extern u8 LightningBolts_GlintModes[];
 
-/* Battle effect: a lightning bolt strikes each affected unit in turn, eight
-   frames apart. The canvas flashes as a bolt starts; the bolt grows for two
-   frames and stays for sixteen, throws sparks from the ground into the map
-   cell buffer on its third frame and scatters glints around the unit for
-   twenty-two frames. The sparks bounce once and fade as their life in
-   variant runs out. The variant picks how many bolts, sparks and glints. */
 void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

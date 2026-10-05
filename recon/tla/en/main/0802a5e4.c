@@ -8,7 +8,6 @@ extern const u8 Func_0800a37c[];
 
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
-
 extern u8 Tile_ConvertMapCodeSize[];
 
 void Tilemap_ConvertBuffer(void)

@@ -1,14 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Word clearing and filling, integer square root and bit-run expansion of
-@ the resident runtime. IwramClearWords sets the fill value to zero and
-@ falls into the fill, which jumps into its unrolled stmia run with
-@ add pc, pc, ip, lsr #3 and saves r5-r9 without lr; IwramSqrt returns early
-@ with bxmi lr; IwramExpandBitRuns stores r2 at the bytes that the set bits
-@ of 14 halfwords (12 in the Japanese edition) select, 16 bytes per
-@ halfword. GCC never jumps into unrolled code. These 236 bytes equal TLA
-@ SYSTEM/IWRAM_RUNTIME_MATH.S (0x08000810), where a Thumb entry stub
-@ stands in front of each routine.
-@ credit: library — TBS/TLA common IWRAM runtime fill, square root and bit-run helpers
 .syntax unified
 	.arm
 

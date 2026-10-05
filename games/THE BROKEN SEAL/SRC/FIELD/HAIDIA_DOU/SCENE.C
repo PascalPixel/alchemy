@@ -18,7 +18,6 @@ void WaitFrames(s32 frames);
 void *OverlayObject_CreateConfiguredB(s32 x, s32 y, s32 z, s32 kind);
 void DialogueLayout_ConfigureRowsByFlag301(void);
 
-/* What each of the sanctum's three areas answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -146,9 +145,6 @@ void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
     }
 }
 
-/* Advance actor eleven through the two presentation states used at scene end. */
-
-/* Vale Cave entry: by the room and entrance, set the sprite priorities, spawn the stage objects and restore the opened cells and footprints the story flags record. */
 void HaidiaDou_ApplyEntryState(void)
 {
     s32 flag;

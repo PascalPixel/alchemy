@@ -8,8 +8,6 @@ static __inline__ void CopyWords(void *destination, const void *source, s32 size
     Iwram_CopyWords(destination, source, size);
 }
 
-/* Step every background colour one unit per channel towards the palette
-   of resource_id; colour 0 is forced to black. */
 void BattleFx_StepPaletteToResource(s32 resource_id)
 {
     u16 target[64];

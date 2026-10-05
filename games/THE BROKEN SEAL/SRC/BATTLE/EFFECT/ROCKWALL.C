@@ -16,7 +16,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
 void Render_ResetTransformState(void);
@@ -27,7 +26,6 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
-/* Per variant: how long it runs, how long each column stays up, its shake. */
 enum {
     TIMING_FRAMES,
     TIMING_RISE_FRAMES,
@@ -43,14 +41,9 @@ extern const struct RockWallHeights RockWall_Heights;
 
 #define COLUMN_WIDTH 40
 
-/* Where a pixel lies in a canvas of 8x8 tiles, 32 tiles to the row. */
 #define CANVAS_PIXEL(x, y) \
     (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
-/* Battle effect: three columns of rock, 40 pixels wide and four frames
-   apart, rise out of the ground and sink back, each capped with the strip of
-   ground it lifted (read back from the background tiles). A unit standing on
-   a rising column is thrown into the air, and reacts when it lands. */
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

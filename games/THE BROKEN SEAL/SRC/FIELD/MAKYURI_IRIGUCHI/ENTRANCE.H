@@ -2,7 +2,6 @@
 #ifndef ALCHEMY_ENTRANCE_H
 #define ALCHEMY_ENTRANCE_H
 
-/* Declarations shared by the Mercury Lighthouse entrance scene sources. */
 #include "TYPES.H"
 #include "MAKYURI.H"
 #include "FIELD_SCENE.H"
@@ -14,30 +13,27 @@
 
 #include "STAGED_ACTOR.H"
 
-/* A rising effect and the object it stays anchored to. */
 struct Src_39c {
     u8 pad00[8];
-    s32 f8;                     /* +8  */
+    s32 f8;
     u8 pad0c[4];
-    s32 f16;                    /* +16 */
+    s32 f16;
 };
 
 struct Work_39c {
     u8 pad00[8];
-    s32 f8;                     /* +8  */
-    s32 f12;                    /* +12 */
-    s32 f16;                    /* +16 */
+    s32 f8;
+    s32 f12;
+    s32 f16;
     u8 pad14[4];
-    s32 f24;                    /* +24 */
-    s32 f28;                    /* +28 */
+    s32 f24;
+    s32 f28;
     u8 pad20[68];
-    s16 f100;                   /* +100 */
+    s16 f100;
     u8 pad66[2];
-    struct Src_39c *f104;       /* +104 */
+    struct Src_39c *f104;
 };
 
-/* The IWRAM work pointers from gWork: the event work, and 0x20 bytes on, the
- * scene's. */
 struct WorkPointers {
     u8 *event;
     u8 *unknown_04[7];
@@ -46,7 +42,6 @@ struct WorkPointers {
 
 extern struct WorkPointers gWork;
 
-/* Actor 8's action tables, scripts and scene tables in the overlay's data. */
 extern const u8 MakyuriIriguchi_Actor8Path1[];
 extern const u8 MakyuriIriguchi_Actor8Path2[];
 extern const u8 MakyuriIriguchi_Actor8Path3[];
@@ -69,7 +64,6 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void);
 void MakyuriIriguchi_RaisePillar(void);
 void SceneActor_RunActorZeroHandledMotion(int page);
 
-/* Functions of the overlay's other sources. */
 void SetEffectRecordMode(struct FieldActor *work, s32 mode);
 void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth);
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);

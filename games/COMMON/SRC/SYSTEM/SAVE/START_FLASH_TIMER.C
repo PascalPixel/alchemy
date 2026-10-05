@@ -8,9 +8,6 @@ extern u8 gFlashTimeoutFlag;
 extern u16 gFlashTimerCount;
 extern u16 *volatile gFlashTimerReg;
 
-/* Arms the flash timeout timer: the chip's time limit for this operation
-   becomes the tick count, the timer's interrupt is enabled with interrupts
-   masked, and its reload and control halfwords are written. */
 void StartFlashTimer(u8 index)
 {
     u16 *limit = (u16 *)((u8 *)Flash_Handler4 + index * 6);

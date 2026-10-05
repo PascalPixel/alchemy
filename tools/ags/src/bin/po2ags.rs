@@ -1,6 +1,3 @@
-//! po2ags: an edition's PO catalog to its message archive and message
-//! numbers as assembly, the step pret's preproc and charmap take for
-//! Pokémon's text. Every pointer inside the archive names its own labels.
 use std::path::Path;
 use std::process::ExitCode;
 

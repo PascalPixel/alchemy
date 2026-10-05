@@ -24,9 +24,7 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 extern void *gWorkSlot[];
 extern u8 gMapCellBuffer[];
 extern u16 ParticleStreams_CellOffsets[];
-/* Five words by variant: sparks per group, groups, and each group's column. */
 extern u16 SparkGroups_Shapes[];
-/* By a ring flash's age in threes: which cell of the sheet it shows. */
 extern u8 SparkGroups_FlashCells[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
@@ -42,14 +40,6 @@ static __inline__ void CopyPalette(WordCopy copy, void *destination, const void 
     copy(destination, source, size);
 }
 
-/*
- * Groups of sparks burst one after another, eight frames apart. Each group
- * flashes for two frames, shows a ring of twelve fading flashes around its
- * column, then throws its sparks, which fall and bounce until they fade.
- * The variant picks how many groups there are, how many sparks each throws
- * and where each column stands; kind 0 and 1 burst at a fixed place and any
- * other kind at the acting unit, and kind 2 makes the sparks rise.
- */
 void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 {
     struct EffectPosition pos;

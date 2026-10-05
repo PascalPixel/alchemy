@@ -2,8 +2,6 @@
 
 extern u16 Resource_SlotAssignments[];
 
-/* Looks a key up in the 0xffff-terminated slot assignments (key in the low
-   nine bits, slot above them) and returns its slot, or 6 when it has none. */
 s32 Resource_FindFreeSlot(s32 key)
 {
     s32 index;

@@ -7,9 +7,6 @@
 void UiWork_ResetChannelTransition(struct UiChannelSlot *);
 s32 Ui_ClearVramBlock(void);
 
-/* Claims the first of the window work's three text render slots for a
-   built entry list, placing it at x, y (whole pixels) in window with the
-   given line spacing (or none) and flags. Returns the slot, or NULL. */
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *spacing, s32 flags)
 {
     struct UiChannelSlot *render = ((struct UiRenderWork *)gWindowWork[0])->channels;

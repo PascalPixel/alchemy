@@ -1,18 +1,3 @@
-@ Vector and matrix transforms of TLA's resident runtime against its current
-@ transform (IWRAM_RUNTIME_MATRIX.S, run 0x03000478), each behind a 4-byte
-@ Thumb entry (bx pc). Both form that matrix's address from the program
-@ counter (add r0, pc, #0x110; add r5, pc, #144, #128 and #112;
-@ add r1, pc, #64) and accumulate 64-bit products with smull and smlal. The
-@ matrix transform skips zero input coefficients (movs; beq), keeps its
-@ first three product rows in a 36-byte stack buffer, pops that buffer into
-@ r0 and r2-r9 (pop {r0, r2-r9}) and stores all four rows back over the
-@ matrix with stmdb r1, {r0, r2-r9, sl, fp, ip}. GCC 2.96 loads the address
-@ of data from a literal-pool word rather than adding an offset to pc, and
-@ does not read a stack buffer back by popping it. These are TLA's own
-@ variants of TBS SYSTEM/RUNTIME_TRANSFORM.S: the vector transform differs
-@ from TBS's only in the matrix offset. The entries are TLA's own and carry
-@ no credit.
-@ credit: handwritten — TLA IWRAM runtime vector and matrix transforms
 .syntax unified
 	.thumb
 	.global IwramTransformVector

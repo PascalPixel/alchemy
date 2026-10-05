@@ -37,7 +37,6 @@ const u32 *Scene_GetExits(void)
     return gCaveExits;
 }
 
-/* The cave's actors stand only in its own scene. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_RunpaDou) {
@@ -61,7 +60,6 @@ void HiddenPuddle_Freeze(void)
     }
 }
 
-/* The pillar raised from the south puddle changes the ground it stands on. */
 void SouthPuddle_Freeze(void)
 {
     struct FieldActor *puddle;
@@ -75,7 +73,6 @@ void SouthPuddle_Freeze(void)
     GameFlag_Set(FLAG_CAVE_SOUTH_PILLAR);
 }
 
-/* The gate rises onto the frozen pillar and stays there. */
 void Gate_DrawPropped(void)
 {
     struct FieldActor *pillar;
@@ -188,12 +185,6 @@ void RaisingSwitch_Flip(void)
     }
 }
 
-/* Bunza and Hammet meet again at the cave mouth once Hammet is free. */
-
-/*
- * Once Hammet is free, Bunza steps out from where he hid, Hammet and the
- * party gather around him, and the two recognize each other.
- */
 void Reunion_Begin(void)
 {
     struct FieldActor *leader;
@@ -312,7 +303,6 @@ void Reunion_Begin(void)
     }
 }
 
-/* Everyone gathers by the cave mouth and talks over how Hammet was saved. */
 void Reunion_Converse(void)
 {
     s32 reunion;
@@ -498,7 +488,6 @@ void Reunion_Converse(void)
     Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
     Engine_EventWait(30);
 
-    /* Bunza goes to look out of the cave, then hurries back. */
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
     Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | 0, 60);
     Actor_SetSpeed(ACTOR_BUNZA, 0x18000, 0xc000);
@@ -606,11 +595,6 @@ void Reunion_Converse(void)
     WagonChoice_Run();
 }
 
-/*
- * Bunza leads the way to his wagon and Gerald asks whether the party rides
- * too. The party questions an answer that seems to change its mind until
- * the choice is settled either way.
- */
 void WagonChoice_Run(void)
 {
     s32 wagon;
@@ -644,7 +628,6 @@ check_nothing_left:
                 goto ride;
             }
         }
-/* Bunza will not wait for the party any longer. */
         if (Bunza_CannotWait()) {
             goto stay;
         }
@@ -724,7 +707,6 @@ u8 Mia_AsksIfRidingAfterAll(void)
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* Bunza cannot wait any longer, and Mia asks whether the party stays. */
 u8 Bunza_CannotWait(void)
 {
     s32 warning;
@@ -752,12 +734,6 @@ u8 Gerald_AsksAboutThingsToDo(void)
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/* The party either stays behind in the cave or rides the wagon out. */
-
-/*
- * Hammet and Bunza say goodbye and leave for the wagon; the party watches
- * them go, then falls in behind the leader.
- */
 void Party_StaysBehind(void)
 {
     struct FieldActor *leader;
@@ -864,10 +840,6 @@ void Party_StaysBehind(void)
     GameFlag_Set(FLAG_PARTY_STAYED_IN_LUNPA);
 }
 
-/*
- * Everyone heads for the wagon: Hammet and Bunza lead, the party falls in
- * behind the leader, and the leader follows them out of the cave.
- */
 void Party_RidesWagon(void)
 {
     struct FieldActor *leader;
@@ -959,9 +931,6 @@ void Party_RidesWagon(void)
     Engine_EventRequestExit(CAVE_EXIT_BY_WAGON);
 }
 
-/* The cave's scene start: open with the window transition, hide the four
-   puddles, set the north one's scale, and redraw the gate and the pillars
-   its flags record. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

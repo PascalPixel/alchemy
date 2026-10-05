@@ -1,116 +1,8 @@
-/* 2026-10-04 H12: retained score 12967 in all six TBS compiler plans.
- * Reapplying only the previously
- * justified live-window r9 binding after H11 improves register allocation;
- * stack/operand/reordering/insertion/deletion counts stay unchanged and
- * the frame stays 324. Selection r10 alone scores 13139; both score 12989.
- * The window binding is the only fixed register retained.
- *
- * Native-led ordinary representation trials, not retained:
- * - Signed16, widened signed16 and unsigned16 sleep/psy-seal reads: 13137.
- *   Explicit reads of both real byte fields combined by OR: 14822.
- * - Cursor flags as an 8-bit field in byte/u32 containers: 13137; in a
- *   u16 container: 15853. Named tracking/active/delay in a size-guarded
- *   four-byte word/byte view: 14909. Nested containers changed the frame
- *   and scored 22180/22806; rejected, with no padding or reserve added.
- * These forms do not explain the native redundant masks/OR operations.
- * No instruction is added to force them. The function stays uncredited.
- *
- * H11: EN score 16188 -> 13137; retained score13137 in all
- * six TBS plans (465 register, 47 stack, 51 operand, 71 reordered,
- * 33 inserted, 19 deleted).
- * The native 324-byte frame now follows from consumed state; no reserve
- * or added instructions fill it. Both fixed-register bindings are removed.
- * Two bounded corrected-permuter searches: seeds61..64, 55s, 5132 candidates
- * gave13267; condition/window focus seeds101..104, 55s, 5672 gave13137.
- * Reviewed complete candidates, preserving both volatile input reads,
- * short-circuit guards, every live write and all loop exit paths.
- * All added register keywords and two unnecessary temporaries were removed
- * without loss. Shared SelectionSprite and EffectPosition replace duplicate
- * sprite/position records with the same score; MenuSprite's halfword-field
- * view scored13837 and is not retained.
- * Isolated unit-declaration movement scored21123; delaying selection until
- * first use scored20983. Neither alone explains the retained improvement.
- * The three remaining consumed temporaries carry local measured tags.
- * This is still a large near miss, unlinked and uncredited in every edition.
- *
- * 2026-10-03 ordinary owner/API attempt: consume the shared affine input
- * and canonical resource/allocator contracts. Earlier measurements are
- * prior checkpoints; H11 above is the fresh retained measurement. */
 #include "AFFINE.H"
 #include "SELECT.H"
 #include "EFFECT_STEP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-/* Earlier H9 checkpoint: EN score16188 (413 register-only,58 stack-only,
- * 97 operand,74 reordered,45 inserted,29 deleted); frame320 vs native324.
- * Every symbol resolves. Complete native extent3584 includes all pools.
- * Ordinary routed compilation emits3612 bytes including pools.
- * Its devices bound only the live window and selected combatant.
- * No frame storage, masks, compiler options or output bytes were added;
- * no adoption or edition credit is claimed.
- * 2026-10-02 continuation:
- * H4: unsigned eight-bit cursor flags: identical score21123/counts/frame320;
- * the field type alone changes no generated operation. Reverted.
- * H5: both six-record passes walk a pointer while their count descends:
- * score21171 (461 register,46 stack,88 operand,79 reordered,70 inserted,
- * 50 deleted), frame320. Worse; indexed passes restored.
- * H6: sleep/psy_seal as the low half of the four-byte condition group:
- * identical21123/counts/frame320. Retained; the mask excludes refrain and
- * reflect rather than redundantly masking an already unsigned halfword.
- * H7: sole live infoWin binding to native r9: score18857 (429 register,
- * 47 stack,108 operand,83 reordered,56 inserted,36 deleted), frame320.
- * Retained; fourteen inserted and fourteen deleted differences disappear.
- * H8: setup-mode copy bound to r8: identical18857/counts/frame320;
- * the compiler propagates the argument instead. Copy and binding removed.
- * H9: existing selected-combatant local bound to native setup r10:
- * score16188 (413 register,58 stack,97 operand,74 reordered,45 inserted,
- * 29 deleted), frame320. Retained with the live window r9 binding.
- * H10: separate setup and confirmation selections into their real scopes:
- * first compile exposed the confirmation use; with its ordinary local,
- * score17290 (412 register,55 stack,107 operand,82 reordered,44 inserted,
- * 34 deleted), frame320. Worse; single consumed selection restored.
- * Remaining: compiler spills/register order, native eligibility AND masks,
- * table/spread allocation, branches and complete literal-pool placement.
- */
-/* Previous bounded trials closed with H0 real-owner body and no devices.
- * H1: five pointers scoped inside case 4; identical score/counts/frame to H0.
- * H2: actual sleep/psy_seal pair as unsigned16 bitfield; identical to H0,
- * still no native mask/spill; removed the exploratory view.
- * H3: case-owned used pointer registers r7/r8/r10/r6, after scope failed:
- * score 21188 (442 register, 48 stack, 85 operand, 80 reordered,
- * 70 inserted, 51 deleted), frame still 320. Worse; all bindings removed.
- * No unused storage, dead instructions, compiler options or output edits.
- * Native complete English listing is 3584 bytes, including all pools.
- * The current candidate is not exact; no adoption or six-edition credit.
- */
-/* H0 result: score 21123 (450 register, 48 stack, 85 operand,
- * 80 reordered, 70 inserted, 50 deleted), frame 320; all symbols resolve.
- * The real-owner/interface repair is retained regardless of matching score.
- * EN status literals now use the existing physical OwnerStatus string names.
- */
-/* Current uncorrected EN baseline: score 21249 (446 register, 49 stack,
- * 89 operand, 78 reordered, 73 inserted, 49 deleted); frame 320 vs native
- * 324. Modulo was unresolved. H0 removes fabricated global/record owners,
- * imports shared declarations, uses real signed remainder and explicit
- * window/text/sprite boundary casts. No storage or steering device added.
- */
-/* 2026-10-02 source ownership and frame audit, before new scoring:
- * BATTLE_WORK.H owns the BattleSession pointer and its party_units/enemy_units
- * at +58/+66. The former bundled BattleGlobals conflates two named pointer
- * cells: the target-selection menu view belongs behind gLinkCountdownWork,
- * with slide offset +28, countdown +4c and auto input +d8/+dc.
- * BATTLE_UNIT.H owns the combatant/status fields; TEXT_RENDER_RUNTIME.H owns
- * byte-string render input. Shared declaration repairs are root-owned.
- * Native frame 324: efx 8; four projected positions 48; name 30 plus alignment
- * 2; selection slots 8 and ids 28; cursor records 24; sprites 72; base ids 16;
- * remaining 88 bytes are compiler spills. Each aggregate has a real use.
- * Case 4 keeps five used status pointers across UiWindow_Create: delusion r7,
- * stun r8, sleep r10, psy_seal at spill+40, death_count r6. The old candidate
- * header reports recomputation and one extra spill; remeasure after the
- * compiler cache is ready. Try actual used lifetimes, never frame filler.
- * Modulo has no current definition; native calls the signed remainder helper
- * __modsi3 at all three sites, which should be written as C remainder.
- */
 #include "TYPES.H"
 #include "BATTLE_WORK.H"
 #include "BATTLE_RUNTIME.H"
@@ -118,46 +10,19 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 
-/* Select a combatant, display its condition and animate the target markers.
- * Confirmation returns an encoded side/index; cancellation returns -1.
- *
- * Draft, not exact: `alchemy drafts` scores it 784 instructions off of
- * 1,585 (the field macro with a type argument kept it from scoring before).
- * Every call site is in the ROM's order. Proven from the ROM:
- * the id copies read runtime->party_units[i] directly (movs r3, #88; ldrsh);
- * the status search and the sel lookup both sit inside if (mode == 2), with
- * case 5 setting sel itself; the two per-frame tbl loops ascend (GCC counts
- * r7 down while the pointer walks up); the frame is 88 bytes of spills
- * below efx (sp+88), targetPos 96, namePos 108, name 120, pos 152,
- * selSlot 164, selIds 172, markPos 200, tbl 212, entries 236, ids 308.
- * Remaining: the candidate needs one more spill slot (every local sits 4
- * bytes higher); infoWin lives in r9 in the ROM; case 4 keeps the five
- * status-byte addresses in r7, r8, sl, [sp+40] and r6 across
- * UiWindow_Create where the candidate recomputes them; the 0xFFFF mask of
- * the sleep halfword is hoisted into r4 (ldrh; ands r3, r4); ids[cursor+i]
- * in the spread loop is indexed, not strength-reduced.
- */
-
-
-
-/* One tracked cursor position; index 0 is the cursor, 1..5 the side marks. */
 struct CursorSlot {
-    u8 x;                        /* 0x00 */
-    u8 y;                        /* 0x01 */
-    u8 flags;                    /* 0x02 bit0 = tracking, bit1 = in use */
-    s8 index;                    /* 0x03 signed step this slot follows */
+    u8 x;
+    u8 y;
+    u8 flags;
+    s8 index;
 };
 
-
-/* Same shape as games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/BUILD_MATRIX.C. */
-/* Views whose callee declarations have no shared owner yet. */
 s32 BattleMotion_ProjectConditionalPositionFar(s32 id, s32 *out);
 void BattlePres_SetActorModesFar(u16 *ids, s32 highlight);
 s32 UiText_GetWideStringWidth(u16 *text);
 void UiText_DrawNumberInWindow(
     s32 value, s32 digits, s32 work, s32 x, s32 y);
 void Ui_ClearVramBlock(void);
-
 
 s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
 {
@@ -476,7 +341,6 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
             if (unit->poison == 0)
                 goto no_condition;
             UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
-            /* 0x080267f6: b sub_08026b8c. */
             goto frame_tail;
         case 4:
             count = 0;

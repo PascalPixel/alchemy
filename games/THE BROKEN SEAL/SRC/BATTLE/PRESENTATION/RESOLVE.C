@@ -36,16 +36,12 @@ void BattleMotion_DestroyAllSlotObjects(void);
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 background, s32 level);
 
-/* Inline, so the divisor is built again for the camera call. */
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
     /* FAKEMATCH: a direct call keeps the divisor in r5 for the camera call; the reference builds it twice. */
     return Iwram_RatioMulQ14(divisor, value);
 }
 
-/* Plays one queued action: resolves it into the session plan, runs the
-   presentation its outcome selects, then ends the turn. Returns 1 when the
-   action stays queued, -1 when its actor is down. */
 s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 delay)
 {
     struct BattlePresentationTransition *view;
@@ -241,10 +237,6 @@ void BattleActor_SpawnObjectsForList(s16 *actors, s32 mode);
 void BattleFx_DispatchByIdRangeFar(s32 *work);
 void BattleFx_DispatchModeFar(s32 *work);
 
-/* Moves a unit across the field: turns the camera to the actor's side, fades
-   out every opposing unit, then either reports the failure or spawns the
-   actor's side and the targets and plays the effect, and fades the
-   opposing units back in. Returns 0. */
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
 {
     u16 units[14];

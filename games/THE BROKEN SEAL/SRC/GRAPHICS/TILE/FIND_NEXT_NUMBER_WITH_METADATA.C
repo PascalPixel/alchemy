@@ -1,11 +1,3 @@
-/* Debug animation viewer: ten sprites show four editable columns of
- * metadata, animation, priority and draw parameters. With Start held,
- * directions move the probe ring; otherwise up/down pick a column and
- * left/right pick its field. L/R step a field, A applies or toggles it,
- * Start toggles object flags, and Select restarts through the far-call
- * table, with B choosing the alternate row.
- * The Byte6 setter receives priority at offset 5; Byte5 receives param at
- * offset 6. The initial DMA fill clears one word of the 160-byte work block. */
 
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -27,13 +19,12 @@ extern u8 gDecodeFillByte;
 extern struct AnimationObject *gSpriteObjects;
 extern const u8 FarCall_ResourceTable[];
 
-/* One eight-byte editable column of the icon grid. */
 struct IconColumn {
-    s16 no;  /* metadata number displayed in this column */
-    s16 animation; /* 0..99 script index */
-    u8 on;   /* column applied */
-    s8 priority; /* 0..3 draw order */
-    s8 param; /* 0..15 draw parameter */
+    s16 no;
+    s16 animation;
+    u8 on;
+    s8 priority;
+    s8 param;
 };
 
 void Resource_InitializeTable(void);
@@ -156,9 +147,6 @@ next:
             }
             Map_BuildProbeRing(x, y, work);
         } else {
-            /* The cursor keys read the trigger cell by name, after one read
-               whose value is discarded; only the first test goes through the
-               pointer. */
             (void)*(volatile u32 *)&gKeysRepeat;
             if ((*repeat & KEY_UP) != 0) {
                 slot = (slot - 1) & 3;
@@ -331,7 +319,6 @@ next:
     }
 }
 
-/* ui/icon/find_next_number_with_metadata.c */
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 {
     /* FAKEMATCH: the cancelling step initializer preserves the incoming argument moves; a plain initializer reverses them. */

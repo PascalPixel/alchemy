@@ -1,19 +1,11 @@
-/* The per-frame pass over the 64 script objects: runs each object's hook
-   and script commands, accelerates or brakes it toward its target in three
-   axes or in the plane, follows the ground, bounces and cycles its height,
-   moves it unless the step would overlap another object, notices a reached
-   target and turns it to face its motion. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
 #include "SCRIPT_MOTION.H"
 #include "SCRIPT_OBJECT_ENTRY.H"
 
-/* An axis target holds this sentinel while no target is set. */
 #define TARGET_UNSET ((s32)0x80000000)
 
-/* The 64-entry script command dispatch table and the cycle table used by the
- * flag-8/flag-4 vertical motion. */
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern ScriptCommandFn ScriptObject_CommandTable[];
@@ -24,8 +16,6 @@ s32 Map_GetTerrainHeight(s32, s32, s32);
 s32 FixedSqrt(s32);
 s32 ArcTan2(s32, s32);
 
-/* The coarse squares go through a helper, so all of them are taken before
-   they are summed. */
 static __inline__ s32 Square(s32 value)
 {
     return value * value;
@@ -97,7 +87,6 @@ void Object_UpdateAllThumb(void)
 
         if (obj->frozen == 0) {
             if (obj->motion_flags == 0) {
-                /* Three-axis approach. */
                 if (obj->target_x != TARGET_UNSET) {
                     dx = (obj->target_x - px) / 65536;
                     dy = (obj->target_y - py) / 65536;
@@ -145,13 +134,9 @@ void Object_UpdateAllThumb(void)
                     }
                 }
             } else {
-                /* Planar approach: x and z only. */
                 if (obj->target_x != TARGET_UNSET) {
                     dx = (obj->target_x - px) / 65536;
                     dz = (obj->target_z - pz) / 65536;
-                    /* The coarse cell length is enough while the object is
-                     * far away; near the target the full-precision length is
-                     * recomputed instead. */
                     dist = Iwram_Sqrt(Square(dx) + Square(dz)) << 16;
                     if (dist <= 0x00ffffff) {
                         dx = obj->target_x - px;
@@ -191,8 +176,6 @@ void Object_UpdateAllThumb(void)
                     }
                 }
 
-                /* Flag 0x01: follow the ground under the next planar step and
-                 * bleed off speed proportional to the slope climbed. */
                 if ((obj->motion_flags & 1) != 0) {
                     vx = px + obj->velocity_x;
                     vz = pz + obj->velocity_z;
@@ -225,8 +208,6 @@ void Object_UpdateAllThumb(void)
                     obj->terrain_height = ground;
                 }
 
-                /* Flag 0x02: fall toward the stored ground height, then
-                 * rebound with the damping factor at +0x44. */
                 if ((obj->motion_flags & 2) != 0) {
                     ground = obj->terrain_height;
                     if (py > ground) {
@@ -239,8 +220,6 @@ void Object_UpdateAllThumb(void)
                     }
                 }
 
-                /* Flag 0x04: drive the vertical velocity straight off the
-                 * cycle table instead, at one of two scales. */
                 if ((obj->motion_flags & 4) != 0) {
                     phase = (u32)(obj->vertical.phase & 0x3f);
                     if ((obj->motion_flags & 8) != 0)
@@ -256,8 +235,6 @@ void Object_UpdateAllThumb(void)
         py += obj->velocity_y;
         pz += obj->velocity_z;
 
-        /* Flag 0x80 at +0x59: refuse a step that would overlap another
-         * entry, and count how many frames in a row it was refused. */
         if ((obj->collision_flags & 0x80) != 0) {
             pos[0] = px;
             pos[1] = py;
@@ -269,8 +246,6 @@ void Object_UpdateAllThumb(void)
             obj->refused = 0;
         }
 
-        /* Action kinds 16/17/18 watch one axis and report the frame in which
-         * the target is reached or passed. */
         switch (obj->arrival_axis) {
         case 16:
             if (px == obj->target_x ||
@@ -312,8 +287,6 @@ void Object_UpdateAllThumb(void)
         obj->y = py;
         obj->z = pz;
 
-        /* Flag 0x01 at +0x5a: steer the facing angle toward the direction of
-         * travel, at most 0x1000 of a 0x10000 turn per frame. */
         if ((obj->steering_flags & 1) != 0) {
             px = obj->velocity_x;
             pz = obj->velocity_z;

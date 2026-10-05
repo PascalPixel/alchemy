@@ -1,9 +1,6 @@
 #include "OWNER_STATE.H"
 #include "IWRAM_CALL.H"
 
-
-/* Fills which of the five recovery entries apply to an owner (fallen,
-   poisoned, venomed, restrained, haunted) and returns how many do. */
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
     struct BattleUnit *state;

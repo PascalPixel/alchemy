@@ -22,11 +22,6 @@ void UiText_DrawQuantity(s32 value, s32 mode);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
 
-/* Takes damage from a unit's HP, stopping at zero, and reports it with the
- * unit posed in mode 5: an optional opening line (a bitter blow for units 0
- * to 7, the party, and a critical hit for the others), the damage message,
- * and a downed message once HP reaches zero. The unit returns to mode 1 at
- * the end. */
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
     u8 local_context[4];
@@ -81,7 +76,6 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     Object_SetMode(slot->object, 1);
 }
 
-/* A battle object's animation records, whose first entry sits at 0x28. */
 struct BattleObjectAnimation {
     u8 unknown_00[0x28];
     struct AnimationEntry *entry;
@@ -91,8 +85,6 @@ s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
 s32 Map_RenderAnimatedTileFramesForObjectFar(void *object);
 s32 ActivateBattleObjectSlot(s32 unit_id);
 
-/* Poses a unit whose HP has run out in animation 5 on its sixth frame
-   parameter, with no frame selected, then reactivates its object slot. */
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
 {
     struct BattleObjectAnimation *animation;
@@ -110,8 +102,6 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
     }
 }
 
-/* The target of an action, or when it is down a living unit of its side
-   picked at random, or 0x100 when that side has none. */
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 {
     s16 living_units[14];

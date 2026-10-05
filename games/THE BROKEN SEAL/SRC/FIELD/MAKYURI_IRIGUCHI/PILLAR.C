@@ -20,7 +20,6 @@ struct FollowSprite {
 
 void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 mode);
 
-/* A spawn point: an object's position and its first update value. */
 struct SpawnPoint {
     u8 unknown_00[8];
     s32 x;
@@ -39,7 +38,6 @@ void MakyuriHeya_SpawnSparkPair(void);
 void WaitFrames(s32 frames);
 extern u8 Makyuri_PillarScript[];
 
-/* The IWRAM work pointers: the event work, and 0x20 bytes on, the scene's. */
 struct WorkPointers {
     u8 *event;
     u8 *unknown_04[7];
@@ -82,8 +80,6 @@ struct PillarState {
     u8 *pillar;
 };
 
-/* Glide the actor toward its leader, faster the farther behind it is, and
- * flicker its shadow. */
 s32 Makyuri_FollowLeader(struct FieldActor *actor)
 {
     struct FieldActor *leader;
@@ -131,8 +127,6 @@ s32 Makyuri_FollowLeader(struct FieldActor *actor)
     return 1;
 }
 
-/* Spawns the two sparks at the event's spawn point, one on each sprite layer,
- * and plays their cue. */
 void MakyuriHeya_SpawnSparkPair(void)
 {
     struct SpawnPoint *point;
@@ -171,11 +165,6 @@ void MakyuriHeya_SpawnSparkPair(void)
     Audio_PlayCue(130);
 }
 
-/* Linked into both Mercury Lighthouse overlays, each with its own copy of the
- * pillar script and of the spark routine. */
-/* The saved game as words: word 125 is the selected actor. */
-/* Raise the pillar under the party leader in the remaining steps, then record
- * the cell it now stands on. */
 void MakyuriIriguchi_RaisePillar(void)
 {
     struct PillarState *state;

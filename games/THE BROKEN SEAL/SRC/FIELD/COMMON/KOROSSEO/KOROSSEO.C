@@ -5,19 +5,9 @@
 #include "TBS_EDITION.H"
 #include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
-/* Colosso: decode the portrait sheet into a scratch block, copy portrait
- * id's palette into object palette 15 and its 1 KB of tiles into the cached
- * VRAM slot (claimed on first use). Portrait 8 shares tiles with 4. The same
- * function sits in each of the three Colosso trial overlays. */
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
 #include "CALL.H"
-/* Colosso: the trial overlays' scripted sprite task. Each frame it runs the
- * mode script's commands until a wait, interpolates the sprite's scale, the
- * blend and the horizontal position toward their targets, draws the mode's
- * sprites through an affine matrix and queues the blend registers. The same
- * function sits in each of the three Colosso trial overlays, with its
- * variables in each overlay's own work. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"

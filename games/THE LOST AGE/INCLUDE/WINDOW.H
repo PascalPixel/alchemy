@@ -14,37 +14,27 @@ enum { UI_TEXT_ENTRY_COUNT = 512 };
 enum { UI_TEXT_ENTRY_COUNT = 256 };
 #endif
 
-/* The tilemap, windows, text channels, output queues, entry ring and named values.
- * The Lost Age keeps the eight header bytes before its tilemap. */
 struct UiRenderWork {
     u8 unknown_00[3];
-    /* Set when the tilemap needs copying to VRAM. */
     u8 dirty;
     u8 unknown_04;
     u8 menu_state;
-    /* Holds the tilemap upload while a page is redrawn. */
     u8 menu_busy;
-    /* Text palette of the next string. */
     u8 level;
-    /* Twenty rows of 32 cells: the screen's 30 columns and two spare. */
     u16 tilemap[20][32];
     struct UiWindow windows[UI_WINDOW_COUNT];
     struct UiChannelSlot channels[3];
     struct RenderOutput outputs[UI_OUTPUT_COUNT];
     struct RenderOutputList free_outputs;
     u8 tile_attributes[0x100];
-    /* The text pen: line spacing, outline and colour. */
     u16 line_spacing;
     u16 unknown_after_line_spacing;
     u16 outline;
     u16 colour;
     u16 entries[UI_TEXT_ENTRY_COUNT];
-    /* How far the pen moves right after each character, as line_spacing
-       moves it down after each line. */
     u16 glyph_spacing;
     u16 count;
     u16 unknown_after_count;
-    /* The glyph resource the text tiles come from, and their VRAM entry. */
     u16 glyph_resource;
     u16 glyph_tiles;
     u8 unknown_before_values[2];

@@ -23,7 +23,6 @@ s32 PartyInventory_CountItem(s32 item_id)
     return item_count;
 }
 
-/* An action id's definition; ids past the table read the first entry. */
 struct ActionDefinition *BattleAction_GetDirect(s32 action_id)
 {
     u32 entry_index = action_id & 0x3fff;
@@ -35,7 +34,6 @@ struct ActionDefinition *BattleAction_GetDirect(s32 action_id)
     return &table[entry_index];
 }
 
-/* The first active party member who knows the action, or -1. */
 s32 Party_FindOwnerWithAction(s32 action)
 {
     s16 owners[10];

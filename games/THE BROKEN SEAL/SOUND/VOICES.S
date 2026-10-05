@@ -1,10 +1,3 @@
-@ The two voice banks the sequences select from, music and sound effects,
-@ as struct SoundVoice (AUDIO_ENGINE_TYPES.H): kind, base key, length, pan
-@ or sweep, target and the attack, decay, sustain and release envelope. A
-@ sampled or synthesised voice (kind bits 0-2 clear) and a CGB wave voice
-@ (kind 3) name the wave they play; the other CGB voices hold a duty or
-@ noise setting. The music bank's last voice is its drum kit (kind 0x80),
-@ whose table is indexed by key and whose voices follow the bank.
 	.macro voice kind:req, key:req, length:req, pan:req, target:req, attack:req, decay:req, sustain:req, release:req
 	.byte \kind, \key, \length, \pan
 	.4byte \target
@@ -143,7 +136,6 @@ Sound_BgmVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x80, 0, 0, 0, Sound_DrumVoices - 36 * 12, 0, 0, 0, 0
-	@ The drum kit's voices, from key 36.
 Sound_DrumVoices:
 	voice 0x08, 60, 0, 192, Sound_Wave14, 255, 0, 255, 216
 	voice 0x08, 60, 0, 192, Sound_Wave14, 255, 0, 255, 216

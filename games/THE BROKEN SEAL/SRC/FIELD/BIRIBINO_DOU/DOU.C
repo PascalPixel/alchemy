@@ -9,7 +9,6 @@ extern const struct SceneEntrance gBiribinoDouEntrances2[];
 extern const struct SceneEntrance gBiribinoDouEntrances1[];
 extern const struct SceneEntrance gBiribinoDouEntrancesOther[];
 
-/* The exits, in the overlay's read-only data. */
 extern u8 gBiribinoDouExits[];
 
 extern const struct ScenePlacement gBiribinoDouPlacements3[];
@@ -25,20 +24,16 @@ void RunGuardedSceneSetup(void);
 void BiribinoDou_PrepareWindowTransition(void);
 void FieldScene_RunScene398SequenceC(void);
 
-/* Moving a pushed statue: the collision probe, the move target and the
- * commit, through the overlay's import veneers. */
 s32 Object_CheckMovementCollision();
 void Object_SetPosition();
 void Object_CommitPosition();
 
-/* Hides an actor by clearing its sprite flags. */
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
     Engine_ActorSetSpriteFlags(no, 0);
     return 0;
 }
 
-/* Where the party appears in each of the cave's three areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 selector = gGameState.scene;
@@ -55,8 +50,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gBiribinoDouEntrancesOther;
 }
 
-/* Two of the scene hooks the entry veneers export: no follow-up, and the
- * cave's exits. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -67,7 +60,6 @@ u8 *BiribinoDou_GetExits(void)
     return gBiribinoDouExits;
 }
 
-/* The actors placed in each area. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 selector = gGameState.scene;
@@ -84,7 +76,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gBiribinoDouPlacementsOther;
 }
 
-/* What each area answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 selector = gGameState.scene;
@@ -101,8 +92,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gBiribinoDouEventsOther;
 }
 
-/* The cave's map regions and its gate, switch and statue scenes, up to the
- * overlay's exported entry. */
 void SceneState_ConfigureRegion1_0_21x14(void)
 {
     s32 w = 21;
@@ -290,7 +279,6 @@ void BiribinoDou_ClearMapWorkFlag(void)
     FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 0;
 }
 
-/* The cave's scene start: each of its three areas runs its own setup. */
 s32 Scene_Initialize(void)
 {
     s16 variant = gGameState.scene;
@@ -305,8 +293,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/* The entrance setups the exported entry dispatches to, and pushing a statue
- * one tile ahead of the leader. */
 void RunGuardedSceneSetup(void)
 {
     if (Engine_GameFlagIsSet(0x305) != 0) {
@@ -422,7 +408,6 @@ void FieldScene_RunScene398SequenceC(void)
     }
 }
 
-/* The placed actor (ids 8 to 65) standing on map cell x, z. */
 struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
     struct FieldActor **actors = gEventWork->placed_actors - 8;

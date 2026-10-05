@@ -4,7 +4,6 @@
 void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 value);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 
-/* ☀️'s ConfigureOverlayObject, under ⚓️'s names for what it calls. */
 void ConfigureOverlayObject(struct FieldActor *object, s32 parameter)
 {
     object->motion_flags = 0;
@@ -16,8 +15,6 @@ void ConfigureOverlayObject(struct FieldActor *object, s32 parameter)
 void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
 void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
 
-/* Creates one of the lighthouse top's objects at x, y, z with part
-   attribute 14 and its animation flag set. */
 struct FieldActor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
@@ -31,8 +28,6 @@ struct FieldActor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind)
     return 0;
 }
 
-/* Creates an object in front, with part attribute 15 and its second
-   priority flag set. */
 struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);

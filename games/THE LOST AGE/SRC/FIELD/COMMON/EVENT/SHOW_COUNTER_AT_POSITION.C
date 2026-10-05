@@ -6,8 +6,6 @@
 extern s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 extern s32 UiWork_IsIdleFar(s32);
 
-/* Show the current event message near a point on screen, then advance
-   to the next message after its window closes. */
 void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
     s32 x0 = x;

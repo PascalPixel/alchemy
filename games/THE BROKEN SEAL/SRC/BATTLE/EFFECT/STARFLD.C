@@ -54,8 +54,6 @@ u32 Random16(void);
 
 u32 ColorBuffer_BackupAndScaleThreeQuarters(void *, void *, u32);
 
-/* graphics/vram/Display_UploadBlock.c */
-
 #include "HEAP_STATE.H"
 
 void Graphics_AdvancePaletteCycle(void)

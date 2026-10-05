@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-/* The scanline wave on the sea around Idejima. */
-
 extern s16 gScanlineWavePage;
 extern s32 gScanlineWaveCount;
 

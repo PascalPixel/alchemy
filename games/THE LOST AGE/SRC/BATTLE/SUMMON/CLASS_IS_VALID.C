@@ -5,7 +5,6 @@
 
 extern s32 Summon_IsEntryFlagged(s32 index);
 
-/* The palette of a battle object's slot, as ☀️ reads it. */
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
     return GetBattleObjectSlot(id)->palette;

@@ -1,17 +1,3 @@
-@ A copy of the sound driver's note start in a leftover block of the TLA
-@ ROM. The only bl to it is at 0x081c0152, in a code fragment that begins at
-@ 0x081c00b0 without an entry of its own (it branches back to 0x081bff90 and
-@ 0x081bff98, which hold zero bytes), and no literal pool names it (the one
-@ ROM word equal to its address, at 0x08905964, lies outside the code). Its
-@ own calls follow that stale layout: the stereo-volume call lands on
-@ 0x081c0168 and the bx r3 call on 0x081c0114, both inside that fragment. It
-@ saves the high registers in ascending order, restores all eight through
-@ one pop {r0-r7} and reuses flags without a compare. These 512 bytes equal
-@ TBS SOUND/DRIVER/HANDLE_NOTE.S (0x080f9f6c) apart from its last literal,
-@ which is zero here where TBS has 0x080fba14; its bl offsets are the same
-@ as there, which is why its calls land in that fragment. The zero halfword
-@ before its literal pool is alignment and carries no credit.
-@ credit: library — TBS/TLA common sound driver note-start routine
 .syntax unified
 	.thumb
 	.global MusicTrack_HandleNoteLeftover

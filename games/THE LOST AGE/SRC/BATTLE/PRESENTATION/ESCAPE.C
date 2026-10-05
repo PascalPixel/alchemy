@@ -4,7 +4,6 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_PRESENTATION.H"
 
-
 extern char MsgActorDefends;
 extern char MsgCannotEscape;
 void UiWork_ClearValueNameTablesFar(void);
@@ -12,8 +11,6 @@ void UiText_DrawQuantity(s32 value, s32 mode);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattleMotion_SetupEscapeObject(s32 unit);
 
-/* The party tries to run: fifteen times in sixteen each living member turns
-   to flee in turn; otherwise they cannot get away. */
 s32 BattleEscape_PlayRun(void *action)
 {
     s16 party_members[14];

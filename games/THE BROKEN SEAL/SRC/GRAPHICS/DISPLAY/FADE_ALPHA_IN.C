@@ -2,8 +2,6 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 
-
-
 void Graphics_FadeAlphaIn(void)
 {
     s32 step;

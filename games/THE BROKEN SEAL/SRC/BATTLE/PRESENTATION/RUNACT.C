@@ -26,12 +26,10 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *);
 s32 BattlePres_RunUnitAction(s16 *);
 void BattleMotion_SetupEscapeObject(s32);
 
-/* battle/presentation/act/run.c */
 extern struct BattlePresentationTransition *gTransitionWork;
 void UiText_ShowMessageAndWaitCoreFar(s32);
 void UiWork_ResetFreeChannelFar(void);
 
-/* battle/presentation/misc/msg_field38.c */
 void UiWork_PushValueSlotFar(s32, s32);
 
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
@@ -39,9 +37,6 @@ void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *);
 void BattleFx_RunIceFleckBurstFar(struct BattlePresentationWork *);
 void BattleFx_DispatchModeFar(struct BattlePresentationWork *);
 
-/* Build the action order from agility: party members start with target
-   priority 0x80, enemies with a random party target. Sort by descending
-   agility, moving the complete command records through DMA. */
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries)
 {
@@ -175,7 +170,6 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action)
     return 0;
 }
 
-/* battle/object/is_valid_id.c */
 s32 BattleObject_IsValidId(u32 object_id)
 {
     if (object_id <= 7) {
@@ -187,7 +181,6 @@ s32 BattleObject_IsValidId(u32 object_id)
     return -1;
 }
 
-/* battle/escape/play_run.c */
 s32 BattleEscape_PlayRun(struct BattleActionRecord *action)
 {
     s16 party_members[14];

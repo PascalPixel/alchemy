@@ -15,7 +15,6 @@ extern char MsgItemWoreOff;
 void UiText_DrawQuantity(s32 arg0, s32 arg1);
 void UiText_DrawMessage(void *arg0, s32 arg1);
 
-/* Object updates of the paired arc effect (battle effect 16). */
 void BattleFx_UpdateEffect16State(void)
 {
     struct ArcEffectObject *object;
@@ -37,8 +36,6 @@ void BattleFx_UpdateEffect16State(void)
     }
 }
 
-/* Spawns the descending arc particles every seventh frame in the Clear
-   scene and every fifth frame elsewhere; in phase 1 the arc also spins. */
 void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *object)
 {
     s16 phase;

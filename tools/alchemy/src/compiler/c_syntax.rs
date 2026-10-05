@@ -1,6 +1,3 @@
-//! C tokens and the few facts the checks and the count read from them:
-//! function definitions and matching brackets.
-//! Comments are tokens; preprocessor lines are skipped.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum Tok {
     Ident(String),
@@ -42,7 +39,6 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, String> {
             continue;
         }
         if line_start && byte == b'#' {
-            // A preprocessor line, with its continuations.
             while index < bytes.len() && bytes[index] != b'\n' {
                 if bytes[index] == b'\\' && bytes.get(index + 1) == Some(&b'\n') {
                     line += 1;
@@ -133,7 +129,6 @@ pub(crate) fn lex(source: &str) -> Result<Vec<Token>, String> {
     Ok(tokens)
 }
 
-/// The bracket that closes the one at `open`.
 pub(crate) fn matching(tokens: &[Token], open: usize) -> Option<usize> {
     let (opening, closing) = match tokens[open].tok {
         Tok::Punct("(") => ("(", ")"),
@@ -157,9 +152,6 @@ pub(crate) fn matching(tokens: &[Token], open: usize) -> Option<usize> {
     None
 }
 
-/// Every top-level function definition: name, the token index where its
-/// declaration starts, its name, its parameter list's close and its body's
-/// open brace.
 pub(crate) fn scan_definitions(tokens: &[Token]) -> Vec<(String, usize, usize, usize, usize)> {
     let mut depth = 0usize;
     let mut boundary = 0usize;

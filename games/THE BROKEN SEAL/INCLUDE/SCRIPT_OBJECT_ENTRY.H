@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* スクリプト衝突判定が走査する0x70バイトのオブジェクト表。 */
 struct ScriptObjectEntry {
     void *data;
     u8 unknown_04[4];

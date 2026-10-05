@@ -1,25 +1,14 @@
-//! The `registers` rewrite: hardware register addresses written by the
-//! names IO_REG.H and AUDIO_ENGINE_TYPES.H give them. `*(vu16 *)0x04000000`
-//! of the define's own type becomes `REG_DISPCNT`, with or without
-//! `volatile`; a signed view of an unsigned register only as the target of
-//! a plain store, which stores the same bits. A volatile pointer becomes
-//! the header's pointer name, `REG_DMA3`, or the address of its register,
-//! `&REG_IME`. The header joins the includes when nothing included
-//! reaches it already.
 use super::source::{closing, is_ident, mask, next, previous, store, text, trim, type_name};
 use super::stabs::Int;
 use std::collections::{BTreeSet, HashMap};
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 
-/// The headers whose register names the rewrite uses.
 pub(crate) const HEADERS: [&str; 2] = [
     "games/COMMON/INCLUDE/SYSTEM/IO_REG.H",
     "games/COMMON/INCLUDE/SOUND/AUDIO_ENGINE_TYPES.H",
 ];
 
-/// One register define: `#define NAME (*(volatile T *)ADDRESS)`, or with
-/// `pointer`, `#define NAME ((volatile T *)ADDRESS)`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Register {
     pub name: String,
@@ -29,7 +18,6 @@ pub(crate) struct Register {
     pub header: PathBuf,
 }
 
-/// The register defines of a header's text, in order.
 pub(crate) fn defines(text: &str, header: &Path) -> Vec<Register> {
     let mut found = Vec::new();
     for line in text.lines() {
@@ -68,7 +56,6 @@ fn number(text: &str) -> Option<u32> {
     }
 }
 
-/// A register table: the first name for each type, address and form.
 pub(crate) struct Table {
     names: HashMap<(Int, u32, bool), Register>,
 }
@@ -86,7 +73,6 @@ impl Table {
         self.names.get(&(ty, address, pointer))
     }
 
-    /// The register a dereference reads or stores.
     fn value(&self, ty: Int, address: u32, store: bool) -> Option<&Register> {
         self.get(ty, address, false).or_else(|| {
             let other = Int { bytes: ty.bytes, signed: !ty.signed };
@@ -95,8 +81,6 @@ impl Table {
     }
 }
 
-/// An address literal at `at`, bare or in its own parentheses, and where
-/// it ends.
 fn address(mask: &[u8], at: usize) -> Option<(u32, usize)> {
     if mask[at] == b'(' {
         let close = closing(mask, at)?;
@@ -108,8 +92,6 @@ fn address(mask: &[u8], at: usize) -> Option<(u32, usize)> {
     Some((number(text(mask, at..end))?, end))
 }
 
-/// The text with every register address the table names written by name,
-/// how many changed, and the headers of the names used.
 pub(crate) fn rewrite(text_in: &str, table: &Table) -> (String, usize, BTreeSet<PathBuf>) {
     let mask = mask(text_in);
     let mut edits: Vec<(Range<usize>, String)> = Vec::new();
@@ -137,8 +119,6 @@ pub(crate) fn rewrite(text_in: &str, table: &Table) -> (String, usize, BTreeSet<
     (out, edits.len(), headers)
 }
 
-/// A pointer cast's integer type and whether it is volatile: `volatile u16
-/// *`, `u16 *`, or the `vu16 *` shorthand.
 fn pointer_type(name: &str) -> Option<(bool, Int)> {
     let pointee = name.strip_suffix(" *")?;
     match pointee.strip_prefix("volatile ") {
@@ -189,7 +169,6 @@ mod tests {
         );
         assert_eq!(count, 8);
         assert!(out.contains("    REG_DISPCNT = 0;\n    REG_DISPCNT = 1;\n    G(REG_DISPCNT);\n    REG_BG2X = 2;\n    REG_BLDCNT = 3;\n"));
-        // a signed read of an unsigned register stays
         assert!(out.contains("    G(*(s16 *)0x4000050);\n"));
         assert!(out.contains("Dma(REG_DMA3, &REG_IME, REG_DMA0);"));
         assert_eq!(headers.into_iter().collect::<Vec<_>>(), [PathBuf::from("IO_REG.H")]);

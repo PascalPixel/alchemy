@@ -1,11 +1,8 @@
-/* Choose each drifting slot's mode from the first set flag of its group,
-   or mode 3 when none is set. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KANPAN.H"
 
-/* The slots' modes, uninitialised work after the deck's block. */
 u32 FuneKanpan_SlotMode[8];
 s32 SceneState_FindFirstSetFlagOfGroup(u32 group);
 s32 SceneData_SelectTableEntryByFlagGroup(u32 group);
@@ -109,9 +106,6 @@ s32 SceneData_SelectTableEntryByFlagGroup(u32 sel)
     return 0;
 }
 
-/* The deck's slot actors 8 to 19: each of the four drifting slots takes a
-   phase step by the band its value falls in, and the eight standing slots
-   take their value and position. */
 void SceneState_ConfigureEntries8Through19(void)
 {
     SceneEffect_AdvanceSlotByValueBand(8, 0);
@@ -151,10 +145,6 @@ void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot)
     }
 }
 
-/* Place one deck slot actor: unless told to keep its value, take the phase
-   its mode selects and copy that drifting slot's look; then set its depth
-   and its sprite's tilt from the sine of its value, on the near or the far
-   side of its resting depth. */
 void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
 {
     struct FieldActor *actor = Object_GetById(id);
@@ -192,9 +182,6 @@ void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
     }
 }
 
-/* Set the deck's slot actors 8 to 19 out for the crossing: every slot
-   value to its top band, the slots active, the modes cleared, the standing
-   slots' depths kept, and each slot placed by its value. */
 void SceneState_InitActorSlots8To19(void)
 {
     struct FieldActor *actor;
@@ -297,8 +284,6 @@ void FieldScene_CallPairWith10(s32 a, s32 b)
     Engine_ActorFaceDirection(a, b, 10);
 }
 
-/* The ship reaches Tolbi: the crew gathers on deck, the captain announces
-   the landing and the party walks down the gangway. */
 void FuneKanpan_ArriveAtTolbi(void)
 {
     Engine_EventBegin();
@@ -365,9 +350,6 @@ void FuneKanpan_ArriveAtTolbi(void)
     Engine_EventRequestExit(16);
 }
 
-/* Sets up actors 1, 2, and 3 from three source records, runs their
- * animations and a wait loop gated on actor 0, then clears a flag byte
- * at +90 on actors 21 and 22 before finishing the scene. */
 void FieldScene_RunThreeActorEncounter(void)
 {
     struct FieldActor *leader;
@@ -377,7 +359,6 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 180, 0x28e);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-    /* Gerald, Ivan and Mia step out where the leader stands. */
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
         Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
@@ -410,8 +391,6 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_ShowEmote(22, 0x100, 20);
     Engine_ActorRunRepeatedMotion(22, 1);
     Event_OpenMessage(22, 0);
-    /* Yes to the sailor: Ivan and Mia speak up, and Ivan keeps asking for
-       as long as the answer is yes. */
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
         FieldScene_RunStepThen10(2);
@@ -435,7 +414,6 @@ void FieldScene_RunThreeActorEncounter(void)
     FieldScene_RunStepThen10(22);
     Actor_SetSpeed(22, 0x10000, 0x8000);
     Actor_SetSpeed(21, 0x10000, 0x8000);
-    /* The two sailors walk off without turning, then face their way again. */
     Object_GetById(22)->steering_flags &= 254;
     Actor_WalkToAndWait(22, 162, 0x27a);
     Engine_EventWait(1);
@@ -458,7 +436,6 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_FaceDirection(22, 0x3000, 0);
     FieldScene_CallPairWith10(21, 0xd000);
     FieldScene_RunStepThen10(22);
-    /* Gerald, Ivan and Mia walk back into the leader. */
     Actor_WalkTo(ACTOR_GERALD, 180, 0x28e);
     Actor_WalkTo(ACTOR_IVAN, 180, 0x28e);
     Actor_WalkToAndWait(ACTOR_MIA, 180, 0x28e);
@@ -469,8 +446,6 @@ void FieldScene_RunThreeActorEncounter(void)
     Engine_EventEnd();
 }
 
-/* On deck a sailor asks how the party found the ship; when Isaac does not
-   want to talk, the captain and the crew gather and the scene closes. */
 void FuneKanpan_RunRobinTalk(void)
 {
     Engine_EventBegin();

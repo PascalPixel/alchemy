@@ -18,8 +18,6 @@
 void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
-/* 行動1件の対象解決。コピーを取り、命中とダメージ種別を決めて効果を出す。 */
-
 #define CLAMP_MOD(v)                                                           \
     {                                                                          \
         if ((v) < -4)                                                          \
@@ -28,10 +26,8 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
             (v) = 4;                                                           \
     }
 
-/* Units 0 to 7 are the party; the rest are enemies. */
 #define IS_PARTY(id) ((id) >= 0 && (id) < 8)
 
-/* Power against the target's resistance in the action's element. */
 #define TAKE_BONUS()                                                           \
     {                                                                          \
         if (range != 4)                                                        \
@@ -46,7 +42,6 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
         BattleEv_Push(BATTLE_EVENT_TEXT, (enemy));                          \
 }
 
-/* Guard levels 1 and 2 cut the damage to a half and a tenth. */
 #define APPLY_GUARD()                                                         \
     {                                                                         \
         guard = target->guard_level;                                          \
@@ -75,13 +70,6 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
 {
-    /*
-     * 宣言順はスピルスロット順(先頭ほど高位)。参照の割付:
-     * offset=fp action=76 actor=72 actor_id=68 action_id=64 bonus=60
-     * work=56 half=52 adjust=48 dealt=44 crush=40 hit=36 modifier=32
-     * skip=28 nibble=24 affinity=20 copy=16 power=12 (temp)=8 cmd=4
-     * target=r7 target_id=sl range=r9 saved=84..
-     */
     s32 offset;
     struct BattleAction *action;
     struct BattleUnit *actor;
@@ -148,7 +136,6 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
         offset = 0;
     }
 
-    /* 属性相性。テーブルを二方向に走査して符号を決める。 */
     if (range != 4) {
         s32 i;
 
@@ -164,7 +151,6 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
             affinity = 1;
     }
 
-    /* 攻撃力。元素武器でなければ 100。 */
     if (plan->range_index >= 0 && plan->range_index <= 3) {
         cmd = &plan->command;
         if (*cmd != 2) {
@@ -293,17 +279,11 @@ after_power:
         }
     }
 
-    /* ダメージ種別。HP が残っているか、分類が非ゼロなら種別スイッチへ。 */
     if (skip == 0
         && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
 
-        /*
-         * -1 PPダメージ(別系)  1 HP回復  2 HPダメージ  3/4 武器攻撃
-         *  5/6/8 加算攻撃(アイテム・distance テーブル別)  10 PP吸収系  11 PP回復
-         *  0/7/9 は空。
-         */
         switch (nibble) {
         case BATTLE_DAMAGE_WEAPON:
         case BATTLE_DAMAGE_WEAPON_SCALED:
@@ -626,7 +606,6 @@ after_power:
         case 0:
         case 7:
         case 9:
-            /* 空スロット */
             break;
 
         case BATTLE_DAMAGE_HP_POWER:
@@ -673,8 +652,6 @@ after_power:
 
         }
     }
-
-    /* 付加効果 */
 
     BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
     if ((BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0
@@ -1184,7 +1161,6 @@ after_power:
         }
     }
 
-    /* 終了処理 */
     BattleEv_Push(BATTLE_EVENT_RESET, 0);
 
     if (target->hp != 0) {

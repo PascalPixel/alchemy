@@ -1,5 +1,3 @@
-/* The item and level debug room: its scene tables, actor 13's steps and the
- * record counts it adjusts. */
 #include "LEVEL.H"
 #include "FIELDOBJ.H"
 #include "CALL.H"
@@ -106,10 +104,6 @@ void Scene_AddToListedRecordCounts(s32 amount)
     }
 }
 
-/* The item and level debug room's level panel: a 30x9 window with three
- * caption lines and the current owner's name and level, looping on the
- * button latch until B closes it. Select and Start raise every listed owner
- * by five and A by one. */
 void FieldScene_RunCountAdjustPanel(void)
 {
     u8 *record;
@@ -158,7 +152,6 @@ void FieldScene_RunCountAdjustPanel(void)
             Engine_TaskWait(1);
             UiWork_Finalize(win, 1);
 
-            /* The refresh order 0, 1, 3, 2 is deliberate; do not sort it. */
             Owner_RecalculateStats(0);
             Owner_RecalculateStats(1);
             Owner_RecalculateStats(3);
@@ -170,9 +163,6 @@ void FieldScene_RunCountAdjustPanel(void)
     }
 }
 
-/* The item and level debug room's item browser: pick an item number, see its
- * name and details, and A adds it to the party's bag. Stepping skips the
- * numbers with no item icon. */
 void ItemLevel_SelectItem(void)
 {
     struct RenderInput *window;
@@ -298,10 +288,6 @@ done:
     UiWork_Finalize(details, 1);
 }
 
-/* The item and level debug room's Psynergy browser: pick an ability number
- * and see its name and description. Stepping skips the numbers whose
- * ability has no target range. It closes a details window it never opened,
- * as the item browser it was copied from does open one. */
 #if EDITION_INTERNATIONAL
 void ItemLevel_SelectAbility(void)
 {
@@ -408,8 +394,6 @@ done:
 }
 #endif
 
-/* The item and level debug room: its entry setup, the glyph caption window
- * and the far debug browsers. */
 void SceneState_SetWorkWords1c0And1c8(void)
 {
     gEventWork->start_transition = 0x201;
@@ -417,7 +401,6 @@ void SceneState_SetWorkWords1c0And1c8(void)
     Engine_EventRequestExit();
 }
 
-/* Overlay entry driver. */
 s32 FieldScene_RunEntrySetup(void)
 {
     gEventWork->start_transition = 516;
@@ -448,7 +431,6 @@ void ItemLevel_RunMotionTest(void)
 #endif
 
 #if EDITION_INTERNATIONAL
-/* The three glyph rows of the item and level caption window. */
 void FieldScene_DrawThreeCaptionWindow(void)
 {
     struct RenderInput *window;
@@ -462,7 +444,6 @@ void FieldScene_DrawThreeCaptionWindow(void)
 }
 #endif
 
-/* Set the flag byte at +53 of the record the effect work pointer holds. */
 void SceneState_SetRecordFlag53(void)
 {
     u8 *record = *(u8 **)gEffectWork;
@@ -470,7 +451,6 @@ void SceneState_SetRecordFlag53(void)
     record[53] = 1;
 }
 
-/* The wrapper passes on its callee's result. */
 int SceneState_GetFarResult100c(void)
 {
     return DebugMenu_BrowseIcons();

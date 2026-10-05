@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-/* Shifts each channel of palettes 15 and 5 by arg0 and of palette 7 by -12,
-   clamped to 0-31, storing each colour one palette lower. */
 void Graphics_AdjustPaletteBank(s32 arg0)
 {
     s32 iter;

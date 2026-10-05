@@ -38,8 +38,6 @@ void ItemMenu_DrawStat(
     }
 }
 
-/* The item menu's two windows in its work, which ⚓️ keeps in the heap
-   slot ☀️ names gMenuWork. */
 struct ItemMenuWindows {
     u8 unknown_00[0x24];
     struct RenderInput *item_window;

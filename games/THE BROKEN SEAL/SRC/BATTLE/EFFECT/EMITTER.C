@@ -94,15 +94,11 @@ void ItemIcon_LoadTilesFar(s32 item);
 void WaitFrames(s32);
 struct EffectObject_0808f1c0;
 
-/* effect_runtime/prepare_rising_object.c */
-
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 extern const s32 RomBytes_0809e75c[];
 
-/* effect_runtime/Effect_RunRisingObjectSequence.c */
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 
-/* battle/effects/objects/start_effect_22.c */
 struct EffectVisual_0808f1c0 {
     u8 unknown_00[5];
     u8 flags_a;
@@ -147,7 +143,6 @@ extern struct ObjectRuntime *Object_Spawn(s32, u32, u32, u32);
 
 extern const s32 BattleFx_MarkerParticleScript[];
 
-/* One 12-byte map event record; the table ends at flags == -1. */
 struct MapEventEntry {
     s32 flags;
     s16 id;
@@ -170,7 +165,6 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
 
 #undef OBJECT_0808EEE4_OFFSET
 
-/* One of the ten cells a scene lists at gEventWork + 0x11c, in tiles. */
 struct ParticleCell {
     u8 unknown_0[4];
     u8 active;
@@ -179,14 +173,8 @@ struct ParticleCell {
     u8 z;
 };
 
-/* The selected actor's object as this function moves it. */
-
 s32 ArcTan2(s32, s32);
 
-/* The Suhara desert calls this when a scene starts: the selected actor,
-   standing within a tile of the centre of one of the listed cells, is put
-   on that centre and pushed 0x140000 on along the angle it stood at from
-   it, with no move target. */
 void BattleFx_EmitRandomParticle(void)
 {
     struct ObjectRuntime *object = ObjectTable_Get(gGameState.selected_actor);
@@ -435,9 +423,6 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
     }
 }
 
-/* The European editions pause the random particles while the field's top
-   menu is open: the menu sets the event work's menu-open byte and clears the
-   particles already flying, and no new ones spawn until it closes. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 
@@ -527,9 +512,6 @@ u32 EffectRuntime_IsActive(void)
     return active;
 }
 
-/* Walks the area's (x, z, id) marker list, ending at 0xff 0xff, and for each
-   marker within 8 by 5 tiles of the leader spawns a kind-22 effect object
-   on every matching event whose flag is still clear. */
 void FieldEffect_SpawnNearbyMarkers(void)
 {
     u8 *list;

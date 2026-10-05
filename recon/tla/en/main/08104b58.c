@@ -1,4 +1,3 @@
-/* Status screens: create the up or down arrow beside a changed stat. */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
@@ -8,8 +7,6 @@ struct ArrowResources {
 };
 
 extern struct ArrowResources *gMenuWork;
-
-
 
 s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {

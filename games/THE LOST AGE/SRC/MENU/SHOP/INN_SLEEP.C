@@ -5,8 +5,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "FIELD_EVENT.H"
 
-/* The event work's screen effect and its delay: ☀️ keeps them at 0x1c0 and
-   0x1c8. */
 struct FieldEffectState {
     u8 padding0[0x1AC];
     s32 effect;
@@ -34,8 +32,6 @@ void Func_080c83a0(void);
 void Event_DelayEffectFramesFar(void);
 #endif
 
-/* ☀️'s: pay for the room, restore every active member and play the night's
-   fade and tune. */
 void Inn_PlaySleep(s32 room_price)
 {
     s16 objects[8];
@@ -60,7 +56,6 @@ void Inn_PlaySleep(s32 room_price)
     state->effect = 0x209;
     state->delay = 60;
     WaitFrames(20);
-    /* Spanish/Italian use the native table's set, clear and delay entries. */
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
     Func_080c83a0();
 #else

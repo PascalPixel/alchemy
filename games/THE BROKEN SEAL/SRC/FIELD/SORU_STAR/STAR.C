@@ -1,4 +1,3 @@
-/* Object angle and the scene tables. */
 #include "STAR.H"
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
@@ -22,7 +21,6 @@ extern u8 MsgSoruWhyDenyDont[];
 struct ObjectRuntime;
 void BattlePres_RunActionThenWaitIfModeZero();
 
-/* Moves the event's current message on by amount. */
 static __inline__ void SkipMessage(s32 amount)
 {
     gEventWork->message += amount;
@@ -93,7 +91,6 @@ s32 *SceneData_GetEffectTable(void)
     return Placement_Effects;
 }
 
-/* The party bags the Venus Star while its chamber changes around them. */
 void Scene_BagVenusStar(void)
 {
     u32 i;
@@ -289,7 +286,6 @@ void Scene_BagMercuryStar(void)
     Engine_EventEnd();
 }
 
-/* Handing over the stars, the Jupiter star and the paired actors. */
 void Scene_HandOverStars(void)
 {
     Engine_EventBegin();
@@ -377,10 +373,6 @@ void Scene_BagJupiterStar(void)
     Engine_MessageShowCentered((s32)MsgSoruJupiterStarBagged, 1);
 }
 
-/* Runs a sequence of position/scale/timing calls for actor pair 0 and 1,
- * copying a stored pair of 32-bit fields (offsets +8, +16) from actor 0's
- * record onto actor 1 partway through, then runs an analogous sequence for
- * actors 5, 9, 10 and 11. */
 void FieldScene_StagePairedActors(void)
 {
     u32 i;
@@ -398,8 +390,6 @@ void FieldScene_StagePairedActors(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 246, 0x1df);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
-    /* Copy actor 0's stored fields at +8 and +16 onto actor 1, if a record
-     * for actor 0 exists. */
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
@@ -440,9 +430,6 @@ void FieldScene_StagePairedActors(void)
     Engine_EventWait(40);
 }
 
-/* The demand for the Elemental Stars. Its dialogue starts at MsgSoruLooksLikeTheyveSpottedUs
- * while the actors move into place; a nonzero answer to the prompt skips one
- * reply, and the dialogue then continues from MsgSoruWhyDenyDont. */
 void FieldScene_RunElementalStarDemand(void)
 {
     u8 *motion_flags;
@@ -605,7 +592,6 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_ActorRunRepeatedMotion(9, 2);
 }
 
-/* Offering the guarantee. */
 void Scene_OfferGuarantee(void)
 {
     u32 i;
@@ -1087,7 +1073,6 @@ void Scene_AlexTakesStars(void)
 
 extern const s32 SoruStar_AngleScript[];
 
-/* An actor that turns with the leader, as this scene sets it up. */
 struct StarFollower {
     u8 unknown_00[12];
     s32 y;
@@ -1102,8 +1087,6 @@ struct StarFollower {
     struct FieldActor *leader;
 };
 
-/* Stands the party and the two thieves around the star's pedestal, each
- * turning with the leader. */
 void SoruStar_LineUpFollowers(void)
 {
     struct FieldActor *leader;

@@ -5,7 +5,6 @@
 #include "TBS_EDITION.H"
 #include "MENU_LIST.H"
 
-/* menu/item_menu/use.c */
 extern char MsgItemUseResult;
 s32 Audio_PlayCue(s32);
 s32 Item_Use(s32 slot, s32 owner, s32 target);

@@ -46,7 +46,6 @@ void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
 
 u8 *MenuTest_GetEntrances(void)
@@ -440,8 +439,6 @@ void CommandTable_ConfigureCommandGroups(void)
     s32 i;
     s32 j;
 
-    /* The Japanese debug command fills a buffer with successive characters,
-     * wrapping the scene's character counter from 96 back to 65. */
     for (i = 0; i < 16; i++) {
         for (j = 255; j >= 0; j--) {
             buf[j] = 0;

@@ -1,16 +1,10 @@
 #include "RUNTIME_MEM.H"
-/* Near miss: score 120. ⚓️ borrows heap block 0x44 and its two glyph tables
-   take names in its listings. It loads the Psynergy icon table's address
-   before setting the 2 x 2 size; this draft sets the size first. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
 
 extern u8 RomBytes_080308a0[];
 
-/* ui/icon/build_ability_icon_tiles.c */
-/* ui/icon/icon_build_ability_icon_tiles.c */
-/* ui/icon/build_ability_icon_tiles.c */
 typedef struct {
     u8 pad0[0x400];
     u8 f400;
@@ -21,7 +15,6 @@ typedef struct {
 } FontTransfer;
 
 extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
-
 
 extern s32 UiIcon_BaseGlyphPointers[];
 extern s32 UiIcon_PsynergyIconPointers[];

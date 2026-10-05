@@ -1,11 +1,3 @@
-@ Two track-byte setters (offsets 25 and 23 of the track in r1): each reads
-@ the next command byte, stores it and calls 0x080fa1ac when it is zero. They
-@ keep their return address in ip (mov ip, lr ... bx ip) and take the byte
-@ from r3 after bl; both approved compilers push lr and read results from r0.
-@ Every TBS and TLA edition has these bytes.
-@ The zero halfwords of alignment at 0x080fa1e6 and 0x080fa1fa never run and
-@ carry no credit.
-@ credit: library — TBS/TLA common sound command-byte reader and setters
 .syntax unified
 	.thumb
 

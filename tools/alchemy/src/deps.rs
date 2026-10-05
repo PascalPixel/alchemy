@@ -1,42 +1,28 @@
-//! Dependency map: who calls whom, what each not-yet-C function refers to,
-//! and which unresolved names block the most not-yet-C bytes.
-//!
-//! The index is rebuilt from linked images, listings and drafts on every run;
-//! nothing is stored, and nothing in the build or the count reads it.
 
 use crate::decode::{Ins, Kind};
 use crate::similar::{Function, Origin};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-/// A symbol of one linked image.
 #[derive(Clone, Debug)]
 pub struct Symbol {
     pub name: String,
     pub value: u32,
     pub size: u32,
-    /// Defined with an absolute value rather than in a section.
     pub absolute: bool,
 }
 
-/// One linked image: its functions with their instructions, and its symbols.
 pub struct Image {
     pub name: String,
-    /// The main cartridge image, which overlays call into.
     pub main: bool,
     pub functions: Vec<(Function, Vec<Ins>)>,
     pub symbols: Vec<Symbol>,
 }
 
-/// How a name that code refers to stands.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Class {
     Named,
-    /// `Func_`, `Data_`, `Value_`, `RomBytes_`, `Unnamed_` or `Region_` followed
-    /// by its address.
     Placeholder,
-    /// A message, scene or resource id.
     Id,
-    /// An address no symbol names.
     Raw,
 }
 
@@ -74,25 +60,21 @@ pub(crate) fn is_id(name: &str) -> bool {
     })
 }
 
-/// I/O registers, palette, VRAM and OAM: hardware, never a blocker.
 pub(crate) fn is_hardware(value: u32) -> bool {
     (0x0400_0000..0x0800_0000).contains(&value)
 }
 
-/// A value inside EWRAM, IWRAM or the cartridge: an address of code or data.
 pub(crate) fn is_memory(value: u32) -> bool {
     (0x0200_0000..0x0204_0000).contains(&value)
         || (0x0300_0000..0x0300_8000).contains(&value)
         || (0x0800_0000..0x0a00_0000).contains(&value)
 }
 
-/// A function in the index: image index and function index.
 pub type Key = (usize, usize);
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Target {
     Function(Key),
-    /// A call to an address where no function starts.
     Unnamed(u32),
 }
 
@@ -100,8 +82,6 @@ pub enum Target {
 pub struct Call {
     pub caller: Key,
     pub callee: Target,
-    /// `bl`, `veneer` (through an 8-byte far-call or overlay veneer) or
-    /// `pointer` (a Thumb function address in a literal pool).
     pub kind: &'static str,
     pub via: Option<String>,
 }
@@ -110,18 +90,13 @@ pub struct Call {
 pub struct Reference {
     pub function: Key,
     pub class: Class,
-    /// The symbol (with `+offset` inside an object) or the raw address.
     pub name: String,
     pub value: u32,
 }
 
-/// Something that must be named before a not-yet-C function can be C.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Blocker {
-    /// `placeholder`, `missing-label` or `unnamed-callee`; `named-callee`
-    /// lists named not-yet-C callees for information only.
     pub kind: &'static str,
-    /// Blank unless the item is local to one overlay.
     pub scope: String,
     pub item: String,
 }
@@ -180,7 +155,6 @@ fn prefer<'a>(symbols: &[&'a Symbol]) -> (&'a str, bool) {
     }
 }
 
-/// How `value` is named in an image, if it is an address worth reporting.
 fn classify_word(l: &Lookup, value: u32) -> Option<(Class, String)> {
     if is_hardware(value) || !is_memory(value) {
         return None;
@@ -213,7 +187,6 @@ fn classify_word(l: &Lookup, value: u32) -> Option<(Class, String)> {
     Some((Class::Raw, format!("{value:08x}")))
 }
 
-/// The target of an 8-byte `ldr rN, [pc, #0]; bx rN; .4byte target` veneer.
 pub(crate) fn veneer_target(f: &Function, ins: &[Ins]) -> Option<u32> {
     match (f.bytes, ins) {
         (8, [a, b]) => match (&a.kind, &b.kind) {
@@ -224,8 +197,6 @@ pub(crate) fn veneer_target(f: &Function, ins: &[Ins]) -> Option<u32> {
     }
 }
 
-/// The target of a veneer at `address` that no symbol starts, found in the
-/// instructions of the function around it.
 fn unlabeled_veneer(
     images: &[Image],
     lookups: &[Lookup],
@@ -242,13 +213,9 @@ fn unlabeled_veneer(
 }
 
 impl<'a> Index<'a> {
-    /// Resolves calls and references. `ids` are identifiers the listings use
-    /// for each function, by (image, address); those an image defines as
-    /// absolute message, scene or resource symbols become id references.
     pub fn build(images: &'a [Image], ids: &BTreeMap<(usize, u32), BTreeSet<String>>) -> Index<'a> {
         let lookups: Vec<Lookup> = images.iter().map(lookup).collect();
         let main = images.iter().position(|i| i.main);
-        // A function starting at `address` as seen from image `from`.
         let resolve = |from: usize, address: u32| -> Option<Key> {
             if let Some(&i) = lookups[from].starts.get(&address) {
                 return Some((from, i));
@@ -256,7 +223,6 @@ impl<'a> Index<'a> {
             let m = main.filter(|&m| m != from && address >= 0x0800_0000)?;
             lookups[m].starts.get(&address).map(|&i| (m, i))
         };
-        // Follows veneers (at most a few hops) to the code they reach.
         let through = |mut key: Key| -> (Key, Option<String>) {
             let mut via = None;
             for _ in 0..4 {
@@ -275,7 +241,6 @@ impl<'a> Index<'a> {
             for (fi, (f, ins)) in image.functions.iter().enumerate() {
                 let caller = (ii, fi);
                 if veneer_target(f, ins).is_some() {
-                    // A veneer's own word is its call, recorded at its callers.
                     continue;
                 }
                 let mut seen = BTreeSet::new();
@@ -297,8 +262,6 @@ impl<'a> Index<'a> {
                                     }
                                 }
                                 None => {
-                                    // An unlabeled veneer inside a larger section
-                                    // still says where it leads.
                                     let reached = unlabeled_veneer(images, &lookups, ii, *target)
                                         .and_then(|t| resolve(ii, t & !1))
                                         .map(|k| through(k).0);
@@ -333,7 +296,6 @@ impl<'a> Index<'a> {
                                 }
                             }
                             let own = (f.address..f.address + f.bytes).contains(&word);
-                            // IWRAM the overlay does not name itself is named by the main image.
                             let named = classify_word(&lookups[ii], word).map(|found| {
                                 match (found.0, main) {
                                     (Class::Raw, Some(m)) if m != ii && word >= 0x0300_0000 => {
@@ -455,7 +417,6 @@ impl<'a> Index<'a> {
         out
     }
 
-    /// Every blocker with the not-yet-C functions it blocks, most bytes first.
     pub fn ranked_blockers(&self) -> Vec<(&Blocker, Vec<Key>, u64)> {
         let mut by: BTreeMap<&Blocker, Vec<Key>> = BTreeMap::new();
         for (key, set) in &self.blockers {
@@ -483,7 +444,6 @@ impl<'a> Index<'a> {
         out
     }
 
-    /// Not-yet-C functions with nothing left to name, largest first.
     pub fn frontier(&self) -> Vec<Key> {
         let mut out: Vec<Key> = self
             .blockers
@@ -499,7 +459,6 @@ impl<'a> Index<'a> {
     }
 }
 
-/// What a draft's notes say is left: compiler choices or missing names.
 pub fn draft_status(notes: &str) -> &'static str {
     let lower = notes.to_ascii_lowercase();
     let count = |words: &[&str]| {
@@ -544,8 +503,6 @@ pub fn draft_status(notes: &str) -> &'static str {
     }
 }
 
-/// The remaining difference a draft header records, as its first
-/// `N halfword edits`, `N differing`, `N edits` or `N lines` figure.
 pub fn draft_score(notes: &str) -> Option<u32> {
     let words: Vec<&str> = notes.split_whitespace().chain(["", ""]).collect();
     for pair in words.windows(3) {
@@ -573,7 +530,6 @@ pub fn draft_score(notes: &str) -> Option<u32> {
     None
 }
 
-/// Comment text of a C draft (its header and notes).
 pub fn comments(source: &str) -> String {
     let mut out = String::new();
     let mut rest = source;
@@ -587,8 +543,6 @@ pub fn comments(source: &str) -> String {
     out
 }
 
-/// Identifiers each function label of an assembly listing uses in data
-/// words and calls: `(label, identifiers)` in listing order.
 pub fn listing_identifiers(listing: &str) -> Vec<(String, BTreeSet<String>)> {
     let mut out: Vec<(String, BTreeSet<String>)> = Vec::new();
     for line in listing.lines() {

@@ -6,7 +6,6 @@ extern const u8 Ui_PpString[];
 extern const u8 Ui_SlashString[];
 extern const u8 Ui_HpString[];
 #else
-/* The Japanese rows are labelled "HP    /" and "EP    /", slash included. */
 extern const u8 Ui_HpRowString[];
 extern const u8 Ui_EpRowString[];
 #endif
@@ -43,8 +42,6 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 layer)
     val = unit->max_pp;
     UiText_DrawNumberRightAlignedFar(val, layer, 88, 48);
 #else
-    /* The Japanese rows draw four-digit fields: the current value before
-       the slash, the maximum after it. */
     UiText_DrawStringInWindowFar((s32)Ui_HpRowString, layer, 0, 40);
     val = unit->max_hp;
     UiText_DrawNumberInWindowFar(val, 4, layer, 56, 40);

@@ -10,18 +10,11 @@
 #include "GAME_STATE.H"
 #include "MENU_LIST.H"
 
-/* The sliding panel's tile pixels in VRAM: thirty rows of thirty-two words,
- * of which the last twenty-four are the panel. */
 #define PANEL_TILE_ROWS ((u32 *)0x06002500)
 #define PANEL_ROW_COUNT 30
 #define PANEL_ROW_WORDS 32
 #define PANEL_ROW_LEAD 8
 
-/*
- * Slide the panel's pixels left by six words a step: every row's panel
- * words move down over the first ones and the words uncovered at the end
- * of the row are cleared.
- */
 void UiWork_ShiftPanelRowsLeft(s32 step)
 {
     s32 shift = step * 6;
@@ -97,8 +90,6 @@ void UiWork_ProcessRenderChannels(void)
 extern volatile u32 gKeysHeld;
 extern u32 gKeysPressedLatch;
 extern volatile u16 gLagFramesShown;
-/* Indexed by the message speed setting: frames to wait after a glyph,
-   glyphs drawn a frame, and glyphs between two voice cues. */
 extern const u8 UiText_SpeedDelays[3];
 extern const u8 UiText_SpeedSteps[3];
 extern const u8 UiText_SpeedCueGaps[3];
@@ -111,7 +102,6 @@ void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel);
 s32 UiWork_CheckCancelByInput(struct UiChannelSlot *channel);
 s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *channel);
 
-/* Text codes below 31 are commands; the rest are glyphs. */
 enum {
     TEXT_END = 0,
     TEXT_PAGE = 1,
@@ -132,12 +122,6 @@ enum {
     TEXT_HANDAKUTEN = 223
 };
 
-/*
- * Run one frame of a text channel's script: draw the next glyphs, or carry
- * out the command codes met on the way. Returns 8 when the text ended and 9
- * when a key wait was cancelled or, in Japanese, a glyph could not be
- * drawn; otherwise 0.
- */
 s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
@@ -355,7 +339,6 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
             pc = (pc + 1) & RENDER_ENTRY_MASK;
             next = work->entries[pc];
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
-            /* English keeps the Japanese voicing marks. */
             if (next == TEXT_DAKUTEN) {
                 code |= 0x4000;
                 ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
@@ -365,14 +348,12 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
             }
 #endif
 #if EDITION_INTERNATIONAL
-            /* Two narrow glyphs share one cell. */
 #if defined(TBS_EDITION_ES)
             if (!(ch->work->flags & 8) && code > TEXT_SPACE
                 && next > TEXT_SPACE) {
                 s16 pair = UiText_Glyphs[code - TEXT_SPACE].width
                     + UiText_Glyphs[next - TEXT_SPACE].width;
 
-                /* Outlined text leaves one pixel less. */
                 if (work->outline == 1) {
                     if ((u16)pair <= 14) {
                         code |= next << 8;
@@ -416,7 +397,6 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
                 ch->x += width;
             }
 #if !EDITION_INTERNATIONAL
-            /* Japanese closes the window at a glyph it cannot draw. */
             else
                 return 9;
 #endif

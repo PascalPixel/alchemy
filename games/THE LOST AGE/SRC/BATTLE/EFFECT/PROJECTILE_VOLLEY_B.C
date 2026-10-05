@@ -3,9 +3,6 @@
 #include "MOTION_OBJECT.H"
 #include "FIELD_EVENT.H"
 
-/* Mode entries of ⚓️'s second projectile volley, a copy of the first with
-   its own runner and mode numbering. */
-
 s32 ObjectDispatch_ApplyValueToChildrenFar(struct FieldActor *, s32);
 s32 BattleFx_RunProjectileVolleyB(void *effect, s32 mode);
 

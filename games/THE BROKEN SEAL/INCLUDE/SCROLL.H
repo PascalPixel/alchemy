@@ -4,7 +4,6 @@
 #include "MAP_SCROLL.H"
 #include "LAYOUT_GUARD.H"
 
-/* The idle scanline page is built while H-blank DMA reads the other page. */
 struct DisplayScrollWork {
     struct BgScroll rows[2][160][3];
     u8 page;

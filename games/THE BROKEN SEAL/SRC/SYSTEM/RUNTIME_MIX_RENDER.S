@@ -1,16 +1,3 @@
-@ Output stage of the resident mixer and its synthesised-channel loops.
-@ IwramSoundRenderFrame reads the mixed words of RUNTIME_MIX_WORKSPACE.S
-@ (add r0, pc, #656), branches into IwramSoundNormalizeChannels
-@ (RUNTIME_MIX_CHANNEL.S) when a mixed halfword overflows, which rejoins its
-@ loop with b, and ends with pop {r8, r9, sl, fp}; pop {r5, r6, r7, lr};
-@ bx lr, releasing a frame it did not build. Its loop body at
-@ 0x03000bd8..0x03000c70 holds the third record of
-@ SOUND/DRIVER/RESAMPLER_KERNELS.S (in RESAMPLER_KERNELS_2.S), which the
-@ selector at 0x080037d4 overwrites with the record it is given. The wave,
-@ noise and square loops after it are entered from RUNTIME_MIX.S and return
-@ into RUNTIME_MIX_INTERPOLATE.S with b. Branching between routine bodies and
-@ unwinding another routine's frame are beyond both approved compilers.
-@ credit: handwritten — IWRAM runtime frame renderer
 .syntax unified
 	.arm
 IwramSoundRenderFrame:

@@ -3,7 +3,6 @@
 #include "WINDOW.H"
 #include "RAM_BUFFER.H"
 
-/* A channel window's state, its frame and duration read as one word. */
 struct UiWindowState {
     u8 unknown_00[0x14];
     u16 state;
@@ -11,8 +10,6 @@ struct UiWindowState {
     s32 pending_value;
 };
 
-/* Finalizes each text channel's window that is open, flagged and no longer
-   animating, releasing it when its flags ask, then waits ten frames. */
 void UiWork_FinalizePendingCore(void)
 {
     s32 slot_index;

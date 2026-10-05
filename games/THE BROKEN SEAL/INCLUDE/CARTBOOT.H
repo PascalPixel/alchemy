@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* The hardware cartridge entry restarts in ARM state. */
-#define Cart_Restart ((u32)0x08000000) /* Rom_Start */
+#define Cart_Restart FIXED_ADDRESS((u32), 0x08000000, Rom_Start)
 
 #endif

@@ -2,8 +2,6 @@
 #include "BATTLE_FORMATION.H"
 #include "SYSTEM.H"
 
-/* Picks one of a formation's member kinds that may appear at all, at random,
-   and returns its unit id (kind + 8); out-of-range records read record 1. */
 s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
 {
     s32 *choices_base;

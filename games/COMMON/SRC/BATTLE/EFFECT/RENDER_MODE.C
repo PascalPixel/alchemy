@@ -3,7 +3,6 @@
 
 void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
 
-/* Mode entries of the battle render effect. */
 void BattleFx_RenderMode0Or1(struct BattleEffectArgument *effect)
 {
     if (effect->variant == 0) {

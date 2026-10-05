@@ -54,12 +54,10 @@ struct Struct288c {
     s32 field10;
 };
 
-/* The bridge's own work, past the overlay image. */
 s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
 s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
 
-/* Tables laid out after the code. */
 extern const struct SceneEntrance KorimaHashi_Entrances[];
 extern const u32 KorimaHashi_Exits[];
 extern const struct ScenePlacement KorimaHashi_Placements[];
@@ -99,7 +97,6 @@ static __inline__ void DrawPlacement(
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor,
                                   struct StagedActorEffectRequest *request);
 
-/* Clear the pending trigger after restoring the object's mode. */
 s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {
     s32 *pending = &KorimaHashi_TriggerPending;
@@ -128,7 +125,6 @@ const u32 *Scene_GetExits(void) { return KorimaHashi_Exits; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) { return KorimaHashi_Placements; }
 
-/* Placement query followed by the tile-(10,20) scene transition. */
 void FieldScene_RunTile10x20Transition(void)
 {
     struct StagedActorProbe res;
@@ -199,8 +195,6 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
     return 0;
 }
 
-/* Japanese scenes step from the leader's current position; international
-   scenes use the selected actor's cell centre before applying the offset. */
 void SceneActor_PassSubjectOffsetPosition(void)
 {
     u32 buf[3];
@@ -1089,7 +1083,6 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_EventEnd();
 }
 
-/* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
     Engine_EventShowMessage(speaker, 0);

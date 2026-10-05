@@ -33,9 +33,6 @@ struct AnimationObject *GetBattleEffectObject(s32);
 s32 Object_InitializeMode(struct AnimationObject *, s32);
 void Menu_UpdateFirstObjectRowPositions(void);
 
-/* menu/entry/clear_first_object_row_and_schedule_update.c */
-
-/* menu/update_first_object_row_positions.c */
 s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 extern struct FourObjectMotionState *gMenuWork;

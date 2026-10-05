@@ -1,9 +1,3 @@
-/* Draft: Crossbone Isle escape column and push destination.
- * 2026-10-01: International checks the saved escape flag before running
- * the sequence and computes a snapped forward push point; Japanese runs
- * the column sequence directly and checks the caller-provided destination.
- * Complete callbacks shrink28+60 bytes. Ordinary approved TBS flags.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -13,12 +7,9 @@
 #include "SCENE_IDS.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
-/* Integrate position, velocity, rate and sprite angle for one scene effect.
-   Signed division preserves decay toward zero for negative Z velocity. */
 struct Sprite {
     u8 pad00[9];
     u8 flags9;
@@ -372,11 +363,8 @@ void PositionSceneActorPair(s32 actor, s32 x, s32 z);
 u8 *Object_GetByIdFar();
 void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset);
 
-/* Deliberate no-op callback. */
 void NoOpEffectCallback(void) {}
 
-/* Where the party appears on the island: its first five scenes have their
-   own entrances, every other scene shares one table. */
 void FieldScene_HandleEscapeColumn(void)
 {
     u8 *entity;
@@ -384,7 +372,7 @@ void FieldScene_HandleEscapeColumn(void)
     s32 column;
 
     entity = (u8 *)Object_GetById(8);
-    column = *(s32 *)(entity + 8) >> 20;    /* 16.16 -> 16-pixel tile grid */
+    column = *(s32 *)(entity + 8) >> 20;
     if (column != 40) {
         return;
     }
@@ -394,7 +382,7 @@ void FieldScene_HandleEscapeColumn(void)
         slot = (s16 *) ((u8 *) ((s16 *)&gGameState) + off);
     }
     if ((u8 *)Engine_GameFlagIsSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6)) != 0) {
-        return;                             /* handled by 0x02001214 instead */
+        return;
     }
 
     entity[85] = 3;

@@ -1,7 +1,3 @@
-/* Battle effect 13: an object rises from above the scene's main object and
-   grows as it glides to the scene position (or a polar offset from the main
-   object) over eleven frames, bobs up and down while the secondary object is
-   sent away, then glides back shrinking and is released. */
 #include "TYPES.H"
 #include "FX_SCENE.H"
 #include "MOTION_OBJECT.H"

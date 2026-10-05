@@ -30,17 +30,9 @@ void Render_ResetTransformState(void);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
-/* Seven bytes for each burst scene: which burst sheet and palette it uses,
-   how many bursts strike, how many motes each wakes, how far apart they are,
-   how long the scene runs and whether a burst flashes the canvas. */
 extern u8 BurstScene_Records[];
 extern u16 ParticleStreams_CellOffsets[];
 
-/* Battle effect: bursts strike the target one after another. Each shows six
-   frames of the burst sheet (or, on its odd pairs, of the wide streak in the
-   map cell buffer), makes the target react on its third frame and wakes a
-   handful of the motes waiting above it, then leaves a fading column. The
-   motes fall, bounce and shrink until their life in variant runs out. */
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 {
     struct EffectPosition actor_position;
@@ -216,9 +208,6 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     BattleFx_EndCanvasLayer();
 }
 
-/* A rock of the rising wall: two bits of its tenth byte pick its draw
-   variant. */
-
 struct WallScale {
     s32 x;
     s32 y;
@@ -230,29 +219,17 @@ void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, s32 *posi
     struct WallScale *scale, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
-/* The wall sheet as it is repacked into the work block: where each of the
-   nine wall rows and the three mound cells starts, and how wide and tall
-   they are. */
 extern u16 RisingWall_RowSheetOffsets[];
 extern u8 RisingWall_RowWidths[];
 extern u16 RisingWall_MoundSheetOffsets[];
 extern u8 RisingWall_MoundWidths[];
 extern u8 RisingWall_MoundHeights[];
-/* BG2's horizontal start for each side and variant, in whole pixels. */
 extern s8 RisingWall_Bg2Shifts[][3];
-/* Where the six rocks that join later first fall. */
 extern u8 RisingWall_LateRockColumns[];
 extern const struct WallScale RisingWall_UnitScale;
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: a wall of earth. Two mirrored halves of a mound rise, a
-   column of wall rows scrolls up between them and later back down, the full
-   wall stands for seventy-two frames while dust falls in front of it, and
-   eleven rocks drop along it one after another, each respawning until the
-   wall goes. Every affected unit reacts while the wall stands.
- */
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

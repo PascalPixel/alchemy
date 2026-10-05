@@ -55,11 +55,6 @@ void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
 void FieldScene_ApplyActor13Values3And3(void) { BattleFx_RunPageEffectForSlot(13, 3, 3); }
 
-/*
- * The countdown is tested at the top of the loop and decremented inside the
- * body, after the call.  A post-decrement test would move the subtract ahead
- * of the call.
- */
 void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
 {
     s32 frames = 60;
@@ -71,8 +66,6 @@ void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
     }
 }
 
-/* Every eighth frame play the sand cue; every sixteenth spawn a sand effect
- * at the actor with a random heading. */
 s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {
     struct EffectParams params;
@@ -92,7 +85,6 @@ s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
     return 0;
 }
 
-/* Where the party appears in each of the desert's four areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 v = gGameState.scene;
@@ -112,7 +104,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gRamakanSabakuEntrancesOther;
 }
 
-/* The desert's regions and exits, between its scene-dependent getters. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -123,8 +114,6 @@ const u32 *Scene_GetExits(void)
     return RamakanSabaku_Exits;
 }
 
-/* The actors placed in each of the desert's areas. Entering the third area
-   by its fifth entrance sets flag 0x90a first. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku3) {
@@ -169,9 +158,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return RamakanSabaku_Events;
 }
 
-/* Lamakan Desert entry: clear flag 0x201, lay out the map cells for the
- * entrance taken, park the scene actors and, outside the fourth area
- * (SceneId_RamakanSabaku4), start the heat-shimmer scroll. */
 s32 RamakanSabaku_ApplyEntryState(void)
 {
     u32 i;
@@ -244,8 +230,6 @@ s32 RamakanSabaku_ApplyEntryState(void)
     return record;
 }
 
-/* Lamakan Desert: open the map cells and place the actors for the area
- * variant stored at +0x1c0 of the game state, then reset the map objects. */
 s32 RamakanSabaku_ConfigureAreaLayout(void)
 {
     s32 i;
@@ -320,8 +304,6 @@ s32 RamakanSabaku_ConfigureAreaLayout(void)
     return record;
 }
 
-/* Actor 8 repeats its motion, and the party is set to come back to the
-   desert's third area by its fifth entrance. */
 void RamakanSabaku_ReturnToArea3(void)
 {
     Engine_ActorRunRepeatedMotion(8, 2);
@@ -359,9 +341,6 @@ void RamakanSabaku_ShowRandomPartyLine(s32 a0)
     Engine_EventEnd();
 }
 
-/* The desert crossing in quarters: the percentage of the way the party has
-   come clears the quarter flags it has fallen back behind and raises the
-   trigger of each quarter it has newly passed. */
 void RamakanSabaku_RaiseQuarterTriggers(void)
 {
     struct EventWork *work = (struct EventWork *)gWork;
@@ -402,9 +381,6 @@ void RamakanSabaku_RaiseQuarterTriggers(void)
     }
 }
 
-/* The whole-pixel distance across the ground between two 16.16 positions of
-   three words each, x and z apart; the resident square root takes the sum
-   of the squares. */
 s32 RamakanSabaku_CalculatePlanarDistance(s32 *position_a, s32 *position_b)
 {
     s32 dx = (*position_b++ - *position_a++) >> 16;
@@ -414,7 +390,6 @@ s32 RamakanSabaku_CalculatePlanarDistance(s32 *position_a, s32 *position_b)
 
     return Iwram_Sqrt(dx_squared + dz_squared);
 }
-/* Where the sand leaves the party in each area, as x and z pairs. */
 extern const s32 RamakanSabaku_SafePoints1[];
 extern const s32 RamakanSabaku_SafePoints2[];
 extern const s32 RamakanSabaku_SafePointsOther[];
@@ -424,9 +399,6 @@ struct SafePoint {
     s32 z;
 };
 
-/* The sand has swallowed the leader: set it down at the nearest safe point
-   of this area, with a puff of sand as it lands, and hold the crossing's
-   progress down while the party recovers. */
 void RamakanSabaku_SweepBack(void)
 {
     u8 *work;
@@ -506,7 +478,6 @@ void RamakanSabaku_SweepBack(void)
     progress = &gGameState.hazard_steps;
     zero = 0;
     do {
-        /* The hold is set from a word local to the loop, as the game builds it there each pass. */
         s32 held = 600;
 
         *hold = held;

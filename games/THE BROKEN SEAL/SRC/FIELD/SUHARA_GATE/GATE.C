@@ -1,9 +1,5 @@
 #include "GATE.H"
 #include "FIELD_SCENE.H"
-/* The Suhara gate's scene start: once flag 0x89f is set the gate returns
- * the party to Lunpa's Suhara side at entrance 10; the first scene sets the
- * retreat point and the passage cells by the entrance used, and the second
- * poses the gate crew. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
@@ -33,7 +29,6 @@ void Scene_SetActor13Value1A(void)
     BattleFx_SetPhaseRequest(0xD, 0x1A);
 }
 
-/* Where the party appears on each side of the gate. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -59,8 +54,6 @@ u8 *SceneData_GetSceneTable(void)
     return SuharaGate_SceneTable;
 }
 
-/* The actors placed at the gate; the first row places others once flag
- * 0x96f is set. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -77,7 +70,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gSuharaGatePlacementsOther;
 }
 
-/* What each side of the gate answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -341,7 +333,6 @@ close:
     goto done;
 
 skip:
-    /* Skip-beat counter, two beats' worth. */
     work = gWork;
     *(u16 *)(work + 472) += 2;
     Engine_EventShowMessage(9, 0);

@@ -24,9 +24,7 @@ struct Vector3 {
 };
 
 extern u16 ParticleStreams_CellOffsets[];
-/* A ring's outer and inner point, by vertex parity. */
 extern struct Vector3 RingBolts_Points[];
-/* Outer and inner radius of a star outline, by vertex parity. */
 extern u8 SpinningStars_Radii[];
 extern u8 gMapCellBuffer[];
 
@@ -45,14 +43,6 @@ void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 val
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
 
-/*
- * Three rings leave the acting unit twelve frames apart and fly to the first
- * target in twelve steps, growing as they go, while the view scrolls for
- * the first 48 frames. Each ring is ten points spun about its centre and
- * joined by sixteen dots a side; on arrival it knocks the target back.
- * `base` is read before anything writes it: the sums it feeds are stored and
- * at once replaced, as the game's code has them.
- */
 void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 {
     struct EffectPosition pos;
@@ -210,12 +200,6 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/*
- * Eight star outlines leave the acting unit eight frames apart, fly to the
- * first target in twelve steps and bounce off the ground there, shaking the
- * screen and knocking every affected unit. Each outline is ten vertices
- * spun about its point and joined by twelve dots a side.
- */
 void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 {
     struct BattleEffectWork *work;

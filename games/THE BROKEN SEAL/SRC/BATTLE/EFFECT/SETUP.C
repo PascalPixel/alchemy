@@ -73,7 +73,6 @@ void Battle_UpdateModeFromShoulderButtons(void)
 {
     struct BattleRuntime *runtime = Data_03001ebc;
 
-    /* L and R set the mode to the two opposing values. */
     if (gDebugMode != 0) {
         if (gKeyState & KEY_L) {
             runtime->mode_1cc = 0;

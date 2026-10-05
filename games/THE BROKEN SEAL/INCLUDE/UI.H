@@ -5,7 +5,6 @@
 #include "TBS_EDITION.H"
 #include "LAYOUT_GUARD.H"
 
-/* The flags the menus set in the window work. */
 struct UiWork {
     u8 unknown_000[RENDER_DIRTY_OFS];
     unsigned dirty : 8;
@@ -13,7 +12,6 @@ struct UiWork {
     unsigned menu_busy : 8;
 };
 
-/* Cursor rows owned by the status screen's ROM tables. */
 struct OwnerStatusStatCursor {
     u8 entry;
     u8 column;
@@ -47,9 +45,6 @@ extern const u8 OwnerStatus_NvString[];
 extern const u8 OwnerStatus_KpString[];
 extern const u8 OwnerStatus_PvString[];
 #endif
-
-/* Window and text services the menus reach through the far-call table at
-   0x08015000. */
 
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 s32 UiWork_IsCompleteFar(void);

@@ -1,13 +1,9 @@
 #include "TYPES.H"
 
-/* Each maps colour c of the canvas onto colour 0xe0 + c less one, two or
-   three steps, 0 staying clear. */
 extern const u8 ColorBuffer_FadeStep1Map[32];
 extern const u8 ColorBuffer_FadeStep2Map[32];
 extern const u8 ColorBuffer_FadeStep3Map[32];
 
-/* Each moves count canvas bytes onto the fade colours, one, two or three
-   steps down, leaving clear bytes clear. */
 void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count)
 {
     if (count > 0) {

@@ -16,7 +16,6 @@ struct EffectPosition {
 
 extern struct BattleFxScene *gEffectWork;
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectPosition *output);
 void Camera_WorldToScreen(struct EffectPosition *value);
 
@@ -86,9 +85,6 @@ again:
         BattleFx_ClearOwnedSlot(effect);
 }
 
-/* Plays the heavy impact cue and spawns effect object 0x11b 32 units above
- * the source, then twelve 0x11d fragments at the source, each sent a random
- * distance at a random angle. */
 s32 SpawnHeavyImpactEffect(struct MotionObject *source)
 {
     struct ImpactPosition position;

@@ -31,7 +31,6 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 
 void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant);
 
-/* Mode entries of the column reveal effect. */
 void BattleFx_RunRevealColumnMode1(s32 arg0)
 {
     BattleFx_RunRevealColumn(arg0, 1);
@@ -42,12 +41,6 @@ void BattleFx_RunRevealColumnMode2(s32 arg0)
     BattleFx_RunRevealColumn(arg0, 2);
 }
 
-/* Battle effect: load one of three column pictures (by variant) into the
-   work canvas and gMapCellBuffer, move the actor towards its
-   target, then for 21 frames blit the four 120x120 quarters in turn, flood
-   the canvas with colour 0x3f for frames 16..19, start event phase 134 at
-   frame 18 and shake the target at frame 20, with the camera shaking
-   throughout. */
 void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
 {
     void **heap_cache;
@@ -113,13 +106,6 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     BattleFx_EndCanvasLayer();
 }
 
-/* Battle effect: sixteen sparks burst up from the target while the loaded
-   pillar blitter draws two columns of the lime column sheet beside it from
-   frame 8, growing for a while and then sinking again; at frame 10 the event
-   phase starts and the target reacts. A spark appears every other frame,
-   shrinks through seven cells of the blast sheet as it ages and falls under
-   gravity. The pillar blitter is kept in draw[0] as well as called through
-   its heap cell. */
 void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
 {
     void **heap_cache;

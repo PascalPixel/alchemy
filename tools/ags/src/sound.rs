@@ -1,30 +1,8 @@
-//! The sound encoders, as pret's mid2agb and wav2agb: engine sequences from
-//! sequence MIDI files, and PCM wave records from WAV files. A sequence's
-//! jumps, pattern calls, track list and tone bank are address words naming
-//! labels, so the linker places every sequence.
-//!
-//! A sequence MIDI's conductor track carries the sequence's skeleton as a
-//! text event, one segment per line:
-//!
-//! ```text
-//! smsh-sequence 1
-//! stream track_1
-//! align 4 0
-//! header sound_000 block_count=0 priority=0 reverb=178 tone_bank=Voices tracks=track_1
-//! ```
-//!
-//! and each stream track carries its notes and controls as MIDI events, as
-//! a MIDI editor shows them: tempo, program changes, volume, pan and
-//! modulation control changes, pitch bends, and the bend range and tuning
-//! registered parameters (see `MIDI_CONTROLS`). What MIDI has no event for
-//! is a marker event of one line, such as `key_shift 0` or `goto loop_1`:
-//! the event's kind, then its integers and labels.
 use super::asm::{identifier, Data, Pointer};
 use crate::assets::midi::{midi_events, EventBody, MidiEvent};
 use std::collections::{BTreeSet, HashMap};
 use std::fmt;
 
-/// One argument of a sequence event: an integer or a label.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum Arg {
     Int(i64),
@@ -49,7 +27,6 @@ impl From<&str> for Arg {
     }
 }
 
-/// One sequence event: its kind and arguments, written `kind arg arg`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Event {
     pub kind: String,
@@ -62,7 +39,6 @@ impl Event {
             args,
         }
     }
-    /// Read an event from its one-line text.
     pub fn parse(text: &str) -> Result<Self, String> {
         let mut words = text.split(' ');
         let kind = words.next().filter(|kind| identifier(kind));
@@ -91,14 +67,10 @@ impl fmt::Display for Event {
     }
 }
 
-/// One segment of a sequence's layout, in order.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum Segment {
-    /// A track's events under its label.
     Stream { label: String, events: Vec<Event> },
-    /// Padding to a power-of-two boundary with a fill byte.
     Align { boundary: i64, fill: i64 },
-    /// The song header: its exported label, settings, tone bank and tracks.
     Header {
         label: String,
         block_count: i64,
@@ -111,7 +83,6 @@ pub(crate) enum Segment {
 
 const SKELETON_ENGINE: &str = "smsh-sequence 1";
 
-/// Read a skeleton's text; streams come back without events.
 pub(crate) fn parse_skeleton(text: &str) -> Result<Vec<Segment>, String> {
     let mut lines = text.lines();
     if lines.next() != Some(SKELETON_ENGINE) {
@@ -395,10 +366,6 @@ fn encode_sequence_stream(events: &[Event]) -> Result<EncodedSequenceStream, Str
         pointers,
     })
 }
-/// An engine sequence from its layout: `header`, `stream` and `align`
-/// segments in order. The header's label is exported; the tone bank it names
-/// is linked from elsewhere, and every other symbol (tracks, jump, repeat and
-/// pattern targets) must be a label the sequence defines.
 pub(crate) fn build_sequence(layout: &[Segment]) -> Result<Data, String> {
     let mut data = Data::default();
     let mut tone_banks = BTreeSet::new();
@@ -479,11 +446,7 @@ pub(crate) fn build_sequence(layout: &[Segment]) -> Result<Data, String> {
     Ok(data)
 }
 
-/// Prefix of the retired per-event sequence sidecars. The converter derives
-/// every encoding choice, so a MIDI still carrying one is refused.
 const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
-/// Bar lines of a sequence MIDI: every time signature in the conductor track
-/// starts bars of its length at its tick; before the first one, MIDI's 4/4.
 fn sequence_meter(conductor: &[MidiEvent], division: u16) -> Result<Vec<(i64, i64)>, String> {
     let whole = i64::from(division) * 4;
     let mut meter = Vec::<(i64, i64)>::new();
@@ -510,8 +473,6 @@ fn sequence_meter(conductor: &[MidiEvent], division: u16) -> Result<Vec<(i64, i6
     }
     Ok(meter)
 }
-/// A rest as the converter writes it: cut at every bar line, then into the
-/// longest wait commands within each bar.
 fn rest_waits(start: i64, length: i64, meter: &[(i64, i64)]) -> Result<Vec<usize>, String> {
     if start < 0 || length < 0 {
         return Err("MIDI rest lies before the stream start".to_string());
@@ -549,11 +510,6 @@ struct MidiNode {
     event: Event,
 }
 
-/// The sequence controls a MIDI carries as its own events, as pret's mid2agb
-/// reads them: a tempo meta, a program change (`voice`), control changes 7
-/// (`volume`), 10 (`pan`) and 1 (`modulation_depth`), a pitch bend, and the
-/// registered parameters 0 (`pitch_bend_range`) and 1 (`tuning`). A marker
-/// never spells one, so a control lives once, where a MIDI editor shows it.
 const MIDI_CONTROLS: [&str; 8] = [
     "tempo",
     "voice",
@@ -565,12 +521,7 @@ const MIDI_CONTROLS: [&str; 8] = [
     "tuning",
 ];
 
-/// The engine tempo a tempo meta's microseconds per quarter note give. A
-/// MIDI quarter is 96 ticks, four of the engine's 24-tick beats, and the
-/// engine plays twice its tempo in beats a minute at the GBA's frame rate of
-/// 16,777,216 / 280,896 Hz against the 60 Hz it counts in.
 fn midi_tempo(micros: u32) -> Result<i64, String> {
-    // T = 60e6 * 120 / (frame rate * micros), rounded.
     let numerator = 7_200_000_000u128 * 280_896;
     let denominator = 16_777_216u128 * u128::from(micros);
     if micros == 0 {
@@ -579,10 +530,6 @@ fn midi_tempo(micros: u32) -> Result<i64, String> {
     Ok(((2 * numerator + denominator) / (2 * denominator)) as i64)
 }
 
-/// The control a channel event sets, if any. `parameter` is the registered
-/// parameter the stream has selected; `preamble` is whether no meta event or
-/// note has come yet, where a player's bank, reverb and default bend range
-/// set up playback and are not the sequence's.
 fn midi_control(
     status: u8,
     data: &[u8],
@@ -597,7 +544,6 @@ fn midi_control(
     let control = |kind: &str, value: i64| Ok(Some(Event::new(kind, vec![value.into()])));
     match status & 0xf0 {
         0xc0 => control("voice", value(0)?),
-        // The engine keeps a bend's high seven bits.
         0xe0 => control("pitch_bend", value(1)?),
         0xb0 => match value(0)? {
             7 => control("volume", value(1)?),
@@ -617,7 +563,6 @@ fn midi_control(
                 (Some(0), Some(1)) => control("tuning", value(1)?),
                 _ => Err("MIDI data entry names no registered parameter".to_string()),
             },
-            // Bank select, data entry's low byte and reverb set up playback.
             0 | 38 | 91 => Ok(None),
             other => Err(format!(
                 "MIDI control change {other} is no sequence command"
@@ -661,7 +606,6 @@ fn reconstruct_midi_stream(
             preamble = false;
         }
         if let Some(control) = derived {
-            // A control inside a pattern's inline copy belongs to the pattern.
             if depth == 0 {
                 grid.push(nodes.len());
                 nodes.push(MidiNode {
@@ -770,8 +714,6 @@ fn reconstruct_midi_stream(
         if node.compact_tick < cursor {
             return Err("MIDI event order moves backwards".to_string());
         }
-        // The rest ends at this event in played time; pattern calls before it
-        // have already advanced the bar position.
         let gap = node.compact_tick - cursor;
         for wait in rest_waits(node.raw_tick - gap, gap, meter)? {
             output.push(Event::new("wait", vec![(wait as i64).into()]));
@@ -781,13 +723,6 @@ fn reconstruct_midi_stream(
     }
     Ok(output)
 }
-/// The converter's encoding of a reconstructed stream. A note, or a control
-/// that sets running status, continues the running command only as the first
-/// event after a rest; chords and events after other commands repeat it. An
-/// end of tie that names a key continues a running end of tie. Key and
-/// velocity are written when they change. A label, pattern call, repeat or
-/// jump forgets the running command, key and velocity, because another path
-/// reaches the event after it; a pattern end changes nothing.
 fn default_sequence(events: &[Event]) -> Result<Vec<Event>, String> {
     let mut output = Vec::new();
     let mut running: Option<u8> = None;
@@ -872,13 +807,11 @@ fn default_sequence(events: &[Event]) -> Result<Vec<Event>, String> {
     }
     Ok(output)
 }
-/// A sequence MIDI's events by track, its stream skeleton and its bar lines.
 struct SequenceMidi {
     tracks: HashMap<usize, Vec<MidiEvent>>,
     skeleton: Option<Vec<Segment>>,
     meter: Vec<(i64, i64)>,
 }
-/// A MIDI file's events by track and its ticks per quarter note.
 fn midi_tracks(midi: &[u8]) -> Result<(HashMap<usize, Vec<MidiEvent>>, u16), String> {
     let report = midi_events(midi).map_err(|error| error.to_string())?;
     let mut tracks = HashMap::<usize, Vec<MidiEvent>>::new();
@@ -913,7 +846,6 @@ fn read_sequence_midi(midi: &[u8]) -> Result<SequenceMidi, String> {
         meter,
     })
 }
-/// The converter's reading of one MIDI stream track under the given bar lines.
 fn read_midi_stream(
     midi: &SequenceMidi,
     track: usize,
@@ -924,9 +856,6 @@ fn read_midi_stream(
         meter,
     )?)
 }
-/// The engine sequence a sequence MIDI encodes, as mid2agb converts one: its
-/// conductor track carries the layout skeleton and bar lines, and track `n`
-/// holds the events of the skeleton's `n`th stream.
 pub(crate) fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
     let midi = read_sequence_midi(midi)?;
     let skeleton = midi
@@ -948,9 +877,6 @@ pub(crate) fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
     }
     build_sequence(&layout)
 }
-/// The assembler source `build rom` assembles for a sequence MIDI, as pret's
-/// mid2agb writes one song's: the sequence in `.rodata`, its header label
-/// exported and every address word a label the linker resolves.
 pub fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
     Ok(format!(
         "\t.section .rodata\n{}",
@@ -994,9 +920,6 @@ pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
     Ok(bytes)
 }
 
-/// The bytes a sound data source reads for one editable input, as pret's
-/// wav2agb builds `.bin` files from `.wav`: a WAV's PCM wave record, or the
-/// sixteen bytes of a `.PCM4` CGB wave RAM pattern (32 four-bit samples).
 pub fn build_sound_file(name: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     let extension = name.rsplit_once('.').map_or("", |(_, suffix)| suffix);
     if extension.eq_ignore_ascii_case("wav") {

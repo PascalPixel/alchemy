@@ -1,8 +1,3 @@
-/* Trial 2026-10-04: this draft compiles to the listing exactly (no halfword
-   differs outside relocated words) with the TLA options plus -mtune=arm9tdmi,
-   which turns on GCC's Thumb load scheduling; with the approved options the
-   scheduler places one load or its first use later. Evidence for a K3
-   question, not a routing: the build never uses that option. */
 #include "SCRIPT.H"
 extern u8 gObjectSlots[];
 

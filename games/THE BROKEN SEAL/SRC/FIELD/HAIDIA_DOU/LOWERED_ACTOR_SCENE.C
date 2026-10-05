@@ -15,9 +15,6 @@ void ObjectMotion_OffsetPositionAndResetMotion();
 void Engine_EventEnd();
 void Audio_PlayCue();
 
-/* Haidia Cave: move the probed actor, lower actor 11 and fill the cleared
- * rectangle; at column 20 set flag 0x205, otherwise set 0x204 and copy the
- * opened cells. */
 void HaidiaDou_RunLoweredActorScene(void)
 {
     s32 record;

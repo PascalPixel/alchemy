@@ -16,14 +16,11 @@
 #include "IRQ.H"
 #include "BATTLE_INTRO.H"
 
-/* The first two display registers. */
 struct DisplayRegisters {
     u16 control;
     u16 green_swap;
 };
 
-/* The effect argument block as its callers allocate it: 84 bytes, with room
-   for 24 actors. */
 struct TransitionActorList {
     u8 unknown_00[20];
     s32 count;
@@ -31,7 +28,6 @@ struct TransitionActorList {
     u16 ids[24];
 };
 
-/* Seven 4bpp tiles of the curtain's rows. */
 extern const u8 BattlePres_CurtainTiles[];
 
 void BattlePres_AdvanceTransitionTimer(void);
@@ -41,14 +37,6 @@ void UiWindow_CreateWithLayoutBoundsFar(s32 terrain);
 void BattleActor_SpawnObjectsForList(u16 *ids, s32 mode);
 void BattleEffect_RunTileAndPaletteAnimationFar(struct TransitionActorList *list);
 
-/*
- * The battle-entry transition. The normal entry copies the seven curtain
- * tiles, fills two tile blocks, draws the curtain map and runs the timer and
- * row callbacks around the encounter announcement. Kind 0x15b (the linked
- * battle) hides the party objects that are not ready, shows the storm
- * backdrop, spawns both sides and fades the blend in over 16 frames. Both
- * paths restore the BG and display registers.
- */
 void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 {
     volatile u32 fill;
@@ -105,8 +93,6 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
                 *map++ = tile;
         }
         {
-        /* The timer's first value, kept across the calls for the scroll
-           reset as well. */
         s32 start = 0;
 
         gBgScroll[0].y = 32;
@@ -198,10 +184,6 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
     Runtime_ReleaseHeapBlock(42);
 }
 
-/* BattlePresentation_SetPaletteLevel: with IME off, copy the battle
-   palette to BG palette 6 (level 0) or darken it by level/60 into the
-   same place, recording the scale. */
-
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 
 extern u8 gTransitionWork[];
@@ -246,11 +228,6 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
     }
 }
 
-/* BattlePresentation_ConfigurePaletteFade: start the H-blank scroll
-   callback on first use and record the mode; mode 1 also queues a BG2
-   control write. Copy the backdrop palette, then either copy the battle
-   palette to BG palette 6 or darken each channel by fade into it, and
-   rebuild the tile table and tilemap. */
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
     /* FAKEMATCH: the IME save sits in one-pass loops, as in the IO write queue, and the green and blue mask is a one-halfword struct, which keeps it a pool constant held across the fade loop as in the ROM. */

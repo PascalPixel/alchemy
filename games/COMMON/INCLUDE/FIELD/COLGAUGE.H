@@ -4,8 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* The race gauge and its sprites: the work begins with their eighteen
- * records, and the stage scenes keep their own state after them. */
 struct KorosseoGaugeSprite {
     s32 link;
     s32 attr;
@@ -15,14 +13,12 @@ struct KorosseoGaugeSprite {
 struct KorosseoGaugeWork {
     struct KorosseoGaugeSprite sprites[18];
     s16 vram_block;
-    /* How far the gauge has slid in from the top, 0 to 2. */
     s16 level;
     s16 hold;
     s16 player_actor;
     s16 rival_actor;
     u16 finish_item_actor_a;
     u16 finish_item_actor_b;
-    /* Middle pieces on each side of the gauge. */
     s16 segments;
     s32 finish_x;
     s32 finish_z;

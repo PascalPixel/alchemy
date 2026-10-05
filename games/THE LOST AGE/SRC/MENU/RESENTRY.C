@@ -14,13 +14,11 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
     void *buffer = (void *)Runtime_BumpAllocate(size);
     u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-    /* 表内の相対位置から転送元を求める。 */
     Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
     VramBlock_LoadCached(slot, size, buffer);
     Sys_Free(buffer);
 }
 
-/* ☀️'s, reaching the selection work through ⚓️'s heap slot. */
 void Menu_AppendResourceEntry(s32 no)
 {
     struct ResourceMenuWork *work;
@@ -44,5 +42,3 @@ void Menu_AppendResourceEntry(s32 no)
     }
 }
 
-/* Lays the menu's entries out three tiles apart on the given tile row,
-   centred with the window for their text, and opens that window. */

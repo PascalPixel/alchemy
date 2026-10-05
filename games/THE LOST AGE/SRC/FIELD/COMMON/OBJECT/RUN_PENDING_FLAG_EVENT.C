@@ -10,9 +10,6 @@ void ObjectEffect_EndContextEffect(s32 effect);
 void Motion_CamBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Object_AttachWorkTargetToObject(s32 object_id, s32 mode);
 
-/* Answers the first raised context-effect flag: 0x120 ends effect 24,
-   0x121 ends effect 23, and 0x122 drops the current party member from
-   above onto the ground. Returns which flag it handled, or 0. */
 s32 ObjectEffect_RunPendingFlagEvent(void)
 {
     s32 result = 0;

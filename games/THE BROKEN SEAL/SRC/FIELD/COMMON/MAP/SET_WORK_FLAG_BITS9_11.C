@@ -2,8 +2,6 @@
 #include "TYPES.H"
 #include "MAP.H"
 
-
-
 void Map_SetWorkFlagBits9To11(u32 v)
 {
     struct MapState *state = ((void *volatile *)gMapWork)[0];

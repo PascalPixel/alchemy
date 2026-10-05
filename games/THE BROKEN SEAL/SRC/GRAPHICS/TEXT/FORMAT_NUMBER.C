@@ -61,12 +61,7 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
     return buffer + 13 - width;
 }
 
-/* Japanese names take no articles, and the Japanese edition has no article
-   routine; each other edition writes its own language's. */
 #if EDITION_INTERNATIONAL
-/* The articles by kind (in English "a ", "an ", "some ", "the "); Italian
-   has eleven kinds, and Spanish five definite ones ("el ", "la ", "los ",
-   "las ") and five indefinite ("un ", "una ", "unos ", "unas "). */
 #if defined(TBS_EDITION_IT)
 #define ARTICLE_KINDS     11
 #define ARTICLE_KIND_MASK 15
@@ -90,12 +85,6 @@ extern const struct ArticleTable UiText_IndefiniteArticles;
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-/* Append a name to the 512-entry render ring, preceded by the article of
-   the kind code 29 at its head selects unless no is 0 or 4 (Spanish takes
-   the indefinite article when no has bit 3 set); with *suffix 2 the article
-   is capitalised. A German name ending in s or z, or a Spanish or French
-   one ending in s (either case), sets *suffix. With mode set, the name is
-   wrapped in a space, two line breaks and a closing sequence. */
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
                              s32 no, s32 plural, s32 *suffix)
 {
@@ -188,11 +177,6 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
 #endif
 
 #if defined(TBS_EDITION_EN)
-/* Append a name to the 512-entry render ring, optionally preceded by an
-   article (code 29 and a kind at its head selects one; otherwise a vowel
-   takes "an ") and followed by a plural "s" or "es". A name ending in S or
-   s asks for "es". With mode set, the name is wrapped in a space, two
-   line breaks and a closing sequence. */
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
                              s32 no, s32 plural, s32 *suffix)
 {

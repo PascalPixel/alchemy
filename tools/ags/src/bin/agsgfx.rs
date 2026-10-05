@@ -1,6 +1,3 @@
-//! agsgfx: Golden Sun graphics conversion, as pret's gbagfx is for Pokémon.
-//! The conversion follows from the file extensions, and every encoder
-//! setting is an option on the command line, kept beside the asset.
 use ags::graphics::metatiles;
 use ags::lz::{
     compress_general, compress_mtf4, compress_tagged, compress_tagged_palette, LzMachine,

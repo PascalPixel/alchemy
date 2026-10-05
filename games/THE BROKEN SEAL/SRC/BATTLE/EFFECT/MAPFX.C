@@ -48,8 +48,6 @@ void Map_SetViewBounds(s32 first, s32 second, s32 third, s32 fourth)
     work->max_y = fourth;
 }
 
-/* Ease the ratio from its start to end value over the transition duration,
- * one step per frame, then unschedule this callback. Its result is unspecified. */
 s32 BattleFx_StepRatioTransition(void)
 {
     u8 *work;
@@ -78,12 +76,6 @@ s32 BattleFx_StepRatioTransition(void)
     }
 }
 
-/*
- * Record a ratio-driven transition on the battle effect work block and
- * schedule its callback.
- */
-
-/* the transition callback, Thumb address */
 void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 {
     struct Work_080936a0 *state = gMapWork[0];
@@ -104,7 +96,6 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition, 0xc94);
 }
 
-/* Wait at most 300 frames for the perspective zoom transition to finish. */
 void Event_WaitForZoomTransition(void)
 {
     s32 frames;
@@ -121,8 +112,6 @@ void Event_WaitForZoomTransition(void)
     }
 }
 
-/* Snap an effect object onto the object it is linked to, raised by the
-   linked descriptor's height. */
 s32 BattleFx_CopyLinkedObjectPosition(void *obj)
 {
     void *link;

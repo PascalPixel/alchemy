@@ -2,8 +2,6 @@
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
 
-/* ⚓️ clears the two flag bytes between the send source and size, where The
-   Broken Seal's inline SerialRuntime_ResetTransferState clears them last. */
 void BattleLink_ResetTransferState(void)
 {
     struct SerialTransferState *state;

@@ -20,9 +20,9 @@ extern u8 gMapCellBuffer[];
 
 struct StepOwner {
     u8 unknown_000[0x38];
-    s16 hp;                         /* 0x038 */
+    s16 hp;
     u8 unknown_03a[0x131 - 0x3a];
-    u8 poison;                      /* 0x131 */
+    u8 poison;
 };
 
 enum StepTileEvent {
@@ -193,14 +193,6 @@ loop:
     }
 }
 
-/*
- * Runs what one step of the party leader costs and triggers on the field:
- * reads the tile under the new position (its event byte opens map regions
- * and records the step and warp events), advances the encounter step
- * counter by the leader's speed, runs the step effects every whole count,
- * steps the poison and Avoid timers, and when the step effects knocked a
- * party member out, records who fell.
- */
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
     /* FAKEMATCH: the StepOwner read prefix preserves the party-load order and the 44-byte frame. */

@@ -1,14 +1,3 @@
-@ Metatile builder, copied and run as one 536-byte unit (size and source
-@ {0x218, 0x080388fc} in its loader's literal pool at 0x080425f4). It
-@ decodes the commands 0xf007 to 0xf01b of halfword command lists through two
-@ jump tables. It is kept as assembly without credit because after its
-@ 4-byte Thumb entry (bx pc) the body has the shape of GCC 2.96 ARM-mode
-@ output (each switch as cmp; ldrls pc, [pc, r3, lsl #2]; b default,
-@ halfword stores post-incremented by their size with the rest of the step
-@ as a separate add, lr saved with r5-sl while r4 stays free), and no
-@ approved route compiles ARM state. After that entry its 532-byte body
-@ equals TBS GRAPHICS/TILE/BUILD_METATILES.S (0x080158e8), which is likewise
-@ uncredited, apart from the 41 relocated case addresses of its tables.
 .syntax unified
 	.thumb
 	.global Tile_BuildMetatilesCode

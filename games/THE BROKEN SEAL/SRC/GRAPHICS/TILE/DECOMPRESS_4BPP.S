@@ -1,12 +1,3 @@
-@ Decodes 4bpp pixel data whose nibbles are coded through a move-to-front
-@ table kept in r2 and r3. This entry saves r5 and r6 without lr, loads
-@ the table's starting order from DECOMPRESS_4BPP_NIBBLES.S
-@ (add r5, pc, #40; ldm r5, {r2, r3}), primes the bit word of an unaligned
-@ source with rrx and jumps into DECOMPRESS_4BPP_LOOP.S. GCC saves lr with
-@ any register and never emits rrx. Two loaders copy the 632-byte block of
-@ this entry, the table and the loop to RAM and run it there. Every TBS and
-@ TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
 .text
 	.arm

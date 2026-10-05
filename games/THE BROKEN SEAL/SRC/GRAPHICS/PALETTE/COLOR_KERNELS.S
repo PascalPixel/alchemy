@@ -1,15 +1,3 @@
-@ Five colour-buffer kernels: saturating brighten, in-place 3/4 scaling and
-@ halving of non-zero colours, and partial darken and brighten that skip
-@ unchanged words. Each loader (0x0800543c, 0x0800562c, 0x0800567c, 0x080055d8,
-@ 0x08005584) copies exactly its kernel onto the stack and calls it there.
-@ They are ARM-state code built from per-lane masks and unrolled conditional
-@ stores; four save r5-r6 or r5-r9 without lr and the partial darken pops its
-@ return address into ip for bx ip, which GCC never does. Every TBS edition has
-@ these 736 bytes, and every TLA edition has all five bodies byte for byte, each
-@ behind a 4-byte Thumb entry, with brighten linked apart from the other four:
-@ TLA GRAPHICS/COLOR_BRIGHTEN_KERNEL.S (0x08001c08) and COLOR_KERNELS.S
-@ (0x08001d10).
-@ credit: library — TBS/TLA common ARM colour-buffer kernels copied to the stack
 .syntax unified
 	.arm
 	.global ColorBuffer_BrightenKernel

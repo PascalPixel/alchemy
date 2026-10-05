@@ -4,12 +4,8 @@
 #include "TBS_EDITION.H"
 #include "UIFLOW.H"
 
-/* The German and French browsers name their entries from one past the last
-   message of their catalogues, which has no name, and stay on scaffold. */
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 
-/* The window work's tile slot the glyph loader writes its entry to, the
-   halfword after the slot value. */
 struct GlyphWork {
     u8 unknown_00[RENDER_SLOT_VALUE_OFS + 2];
     u16 slot;
@@ -19,9 +15,6 @@ extern struct GlyphWork *gWindowWork;
 extern volatile u32 gKeysRepeat;
 extern s16 SideObject_CharacterIdMap[][2], SideObject_ActorKindIdMap[][2];
 
-/* The names the browser shows: the Japanese and English catalogues start
-   them at the first character's name; the Spanish and Italian ones point at
-   the empty message after the sample name, the end of their catalogues. */
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
 extern u8 MsgDebugGlyphName;
 #define DEBUG_GLYPH_NAME ((s32)&MsgDebugGlyphName)
@@ -38,9 +31,6 @@ void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
 void UiText_DrawCharacterAtOffset(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
 
-/* The debug glyph browser: shows each character's and each actor kind's
-   portrait glyph with its number and name. Left and right step, L and R
-   jump ten; A or B leaves. */
 s32 DebugMenu_BrowseEntryGlyphs(void)
 {
     struct GlyphWork *work;

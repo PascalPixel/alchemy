@@ -1,25 +1,3 @@
-/* 2026-10-03 child-call ownership correction: the native call at 080d83fe
-   reads the slot's first-word child pointer and passes value 11 to
-   Animation_ApplyChildValuesToRecordFar. Removed the stale unresolved
-   ObjectGroup_SetChildValueUnlessFifteenFar declaration and use the
-   maintained DispatchChild/u32 contract. EN score improves 1731/42 to
-   1711/41 solely by resolving that target name. All six candidate .text
-   sections remain identical at 728 bytes, and instruction/relocation
-   comparisons differ only in that target name; whole objects differ in
-   symbol metadata. Other unresolved names and matching gaps remain. */
-/* Earlier 2026-10-03 trial: ApplyChildValuesFar now uses OBJECT_DISPATCH.H's maintained
-   void(DispatchObject *, u32) declaration and an explicit object view.
-   Its imported SYSTEM.H also replaces the competing local Random16 return
-   declaration. The complete EN object and score 1731/42 are unchanged;
-   the same unresolved effect/slot/object names and globals remain. */
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "TYPES.H"
 #include "OBJECT_DISPATCH.H"
 #include "OBJDISP.H"
@@ -31,10 +9,6 @@ void BattleFx_ShrinkObjectAndDestroyFast(void);
 void BattleFx_UpdateRadialSpread(void);
 void BattleFx_UpdateDescendingOrbitObject(void);
 extern const u8 BattleFx_CommonParticleScript[];
-
-/* The Venus Djinni capture: the Djinni hops twice and leaps, a ring of
-   particles rises from it and falls back, then a burst above the leader
-   and eight sparks scattered around it close the scene. */
 
 struct CaptureObject {
     u8 unknown_00[8];

@@ -1,8 +1,3 @@
-/* Near miss: differ 2 (20/20 instructions), one ARM9 scheduling swap. The
-   listing loads attr0_high (ldrb r1, [r0, #5]) before building 8 for
-   y_offset (movs r3, #8); this draft builds 8 first. Writing the stores in
-   other orders, as plain assignments or with attr0 read into a local first
-   (18) does not move it. Goes before SPRITE_SHAPE.C's Object_GetSpriteShape. */
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
@@ -15,8 +10,6 @@ struct ObjectSprite {
     u8 y_offset;
 };
 
-/* Turns the object's sprite into a square of the next size, eight pixels
-   lower. */
 void Object_SetSquareSprite(u32 object_id)
 {
     struct ObjectRuntime *object;

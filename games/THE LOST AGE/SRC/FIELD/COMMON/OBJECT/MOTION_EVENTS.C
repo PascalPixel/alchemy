@@ -31,8 +31,6 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
     }
 }
 
-/* Start one of the three variant motion scripts (128 bytes each, the
-   strongest first) on an object. */
 void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
 {
     struct ObjectRuntime *object;
@@ -54,8 +52,6 @@ void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant)
     Object_RefreshSelectorById(object_id);
 }
 
-/* Moves an object by its two drift values, lifts it by 1/64 of a unit and
-   damps the drifts by 1/18 and 1/16. */
 void Object_DriftAndDamp(struct ObjectRuntime *object)
 {
     s32 drift_x;

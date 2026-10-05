@@ -19,7 +19,6 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
     *(u16 *)(base + offset) = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-    /* Render the completed entry list. */
     UiText_DrawWideString(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
 }
 
@@ -71,7 +70,6 @@ void UiText_DrawStringAtOffset(
     }
     *output = 0;
 
-    /* 座標を8ドット単位のセル番号へ変換する。 */
     cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5)
         + (work->x + ((u32)offset_x >> 3)) + 1;
     if (cell < 0x280) {
@@ -110,7 +108,6 @@ void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawString(Text_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
@@ -123,7 +120,6 @@ void UiText_DrawNumberAtOffset(
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawStringAtOffset(Text_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
@@ -131,7 +127,6 @@ void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawStringInWindow(Text_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 

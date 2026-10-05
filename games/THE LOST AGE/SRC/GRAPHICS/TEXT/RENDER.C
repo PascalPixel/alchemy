@@ -4,8 +4,6 @@
 
 void UiText_RenderWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
 
-/* ☀️'s: widen the string into a scratch buffer and draw it in the window
-   at the cell of pixel offset x, y. */
 void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
 {
     u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);

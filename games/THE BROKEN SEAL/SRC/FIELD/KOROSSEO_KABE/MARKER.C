@@ -32,7 +32,6 @@ void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration)
     }
 }
 
-/* Remove the marker task and release its selected display slot. */
 void SceneEffect_RemoveMarkerTask(void)
 {
     Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
@@ -59,7 +58,6 @@ void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z)
     }
 }
 
-/* Spawn an object and run its fixed setup sequence. */
 void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
 {
     struct FieldActor *obj = Engine_ActorLookup(no);

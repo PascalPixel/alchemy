@@ -1,8 +1,6 @@
 #ifndef ALCHEMY_RAMAKAN_H
 #define ALCHEMY_RAMAKAN_H
 
-/* The Lamakan desert (resource_3a5): what its files share. */
-
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

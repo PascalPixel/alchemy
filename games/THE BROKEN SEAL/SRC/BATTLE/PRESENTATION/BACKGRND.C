@@ -33,8 +33,6 @@ void Runtime_ReleaseHeapBlock10(void)
 
 typedef void (*BitDecoder)(const u8 *source, void *destination);
 
-/* The length of the tile bit decoder block copied to RAM, DECODE.S through
-   BIT_COMMANDS.S, as the linker script measures it. */
 extern u8 BitDecoder_Size[];
 
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
@@ -43,10 +41,6 @@ void BattlePresentation_BuildTilemap(void *destination);
 void BitDecoder_DecodeImage(void);
 void BattlePres_UpdateHBlankScroll(void);
 
-/* Decode a battle background's tiles through the bit decoder copied into
-   heap slot 49, keep its palette in the session and show it at the given
-   level (a negative level leaves the shown palette alone), then rebuild the
-   tile table and the tilemap and start the H-blank scroll on first use. */
 void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {
     struct BattleBackgroundView *view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);

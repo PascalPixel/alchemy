@@ -13,7 +13,6 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -25,14 +24,10 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-/* Per variant; the second column is how many sparks one bolt throws. */
 extern const u8 LightningBolts_Sparks[][2];
 
 #define SPARK_COUNT 1024
 
-/* Battle effect: for sixteen frames four lightning bolts strike down on an
-   arc that closes in on the middle of the screen, each throwing sparks from
-   where it lands; the sparks bounce on the ground and shrink as they age. */
 void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

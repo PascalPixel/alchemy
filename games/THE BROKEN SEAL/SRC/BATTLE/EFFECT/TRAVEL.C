@@ -31,9 +31,6 @@ extern u16 ParticleStreams_CellOffsets[];
 extern u16 BattleFx_PuffCells[];
 extern u8 BattleFx_PuffSizes[];
 
-/* Battle effect: sparks burst from the acting unit and are pulled back to
-   it while a djinni travels to the first target; then a cloud of 64 sparks
-   closes in on every affected unit, eight frames apart. */
 void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

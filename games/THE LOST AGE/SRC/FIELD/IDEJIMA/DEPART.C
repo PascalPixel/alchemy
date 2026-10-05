@@ -30,7 +30,6 @@ void Func_02003310();
 void Object_LinkObjectAndSetCallback();
 void Func_02003320();
 
-/* Alex leaves the drifting island while the reunited party discusses its escape. */
 void Idejima_RunAlexDeparture(void)
 {
     const u8 *script;

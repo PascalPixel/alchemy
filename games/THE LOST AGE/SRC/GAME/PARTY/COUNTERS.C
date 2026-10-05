@@ -1,9 +1,6 @@
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 
-/* The party's counters, each kept within its range as ☀️ keeps them. */
-
-/* Adds to the party's coins, kept within 0..999999. */
 s32 Party_AdjustCoins(s32 amount)
 {
     s32 value;
@@ -18,7 +15,6 @@ s32 Party_AdjustCoins(s32 amount)
     return value;
 }
 
-/* Adds to the party's second six-digit counter, kept within 0..999999. */
 s32 Party_AdjustSixDigitCounterB(s32 amount)
 {
     s32 value;
@@ -33,7 +29,6 @@ s32 Party_AdjustSixDigitCounterB(s32 amount)
     return value;
 }
 
-/* Adds to the party's small counter, kept within 0..28. */
 s32 Party_AdjustCounterCappedAt28(s32 amount)
 {
     s32 value;

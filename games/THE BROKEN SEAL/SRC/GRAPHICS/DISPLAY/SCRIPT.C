@@ -8,12 +8,8 @@
 #include "PALQUEUE.H"
 #include "IO_REG.H"
 
-
 extern struct PaletteSnapshotWork *gPaletteWork;
 
-
-/* Blend script runner: a halfword script in the map work that writes
-   BLDCNT and the alpha or brightness level on a frame delay. */
 void DisplayBlend_RunScript(void)
 {
     struct MapState *work = gMapWork[0];
@@ -70,8 +66,6 @@ tick:
     state->delay = value + 0xffff;
 }
 
-/* Clears the blend script state and, unless the script is empty (0xffff),
-   starts it and schedules DisplayBlend_RunScript. */
 void DisplayBlend_StartScript(u16 *script)
 {
     struct BlendScriptState *state;
@@ -126,8 +120,6 @@ void Runtime_AllocateAndClearQueue(void)
     queue->count = 0;
 }
 
-/* Queues up to four palette snapshots (the queue Runtime_AllocateAndClearQueue
-   clears): copies count colours of palette bank:index into the next slot. */
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count)
 {
     struct PaletteSnapshotWork *work;

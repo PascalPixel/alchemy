@@ -14,7 +14,6 @@
 #include "IWRAM_CALL.H"
 #include "BATTLE_CALC.H"
 
-/* The two party groups in the order their round-end effects resolve. */
 struct BattleGroupOrder {
     s32 group[2];
 };
@@ -36,10 +35,6 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 value, s32 arg);
 s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
 
-/* Round-end processing. Each side's set-aside Djinn count down and return
-   to their owners; then every listed unit ticks its counters, regenerates
-   HP and PP and recovers from expiring conditions, each with its message.
-   Declared int like its callers expect, though it returns nothing. */
 s32 Battle_ProcessRoundEnd(void)
 {
     struct BattleSession *work;
@@ -240,10 +235,6 @@ s32 Battle_ProcessRoundEnd(void)
 
 u32 Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
 
-/* End of one unit's turn. The Djinn it summoned with join its side's
-   recovery order and raise their element's level; the power each element
-   gains is announced. When both sides still stand, curse, poison and the
-   Grim Reaper's count then take their toll. */
 s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 {
     s32 id;
@@ -410,8 +401,6 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if (id >= 0 && id <= 7) {
-                    /* "goes down" and "strength is exhausted" are the rows
-                       either side of the Reaper's call. */
                     BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls - 3);
                 } else {
                     BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReaperCalls + 3);

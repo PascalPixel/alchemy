@@ -1,16 +1,3 @@
-/* 2026-10-03 child-call ownership correction: the native call at 080d8920
-   reads the slot's first-word child pointer and passes value 9 to
-   Animation_ApplyChildValuesToRecordFar. Removed the stale unresolved
-   ObjectGroup_SetChildValueUnlessFifteenFar declaration and use the
-   maintained DispatchChild/u32 contract. EN score improves 1770/37 to
-   1750/36 solely by resolving that target name. All six candidate .text
-   sections remain identical at 568 bytes, and instruction/relocation
-   comparisons differ only in that target name; whole objects differ in
-   symbol metadata. Other unresolved names and matching gaps remain. */
-/* Earlier 2026-10-03 trial: ApplyChildValuesFar and the adjacent child setter now use
-   OBJECT_DISPATCH.H and explicit DispatchObject views. The complete EN
-   object and score 1770/37 are unchanged. The same unresolved effect,
-   slot, object, resource and global names remain; no adoption is claimed. */
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "OBJECT_DISPATCH.H"
@@ -19,10 +6,6 @@ extern u8 gEffectWork[];
 
 void BattleFx_HalveDistanceToTarget(void);
 void BattleFx_UpdateRandomTargetParticle(void);
-
-/* The Mercury Djinni capture: the Djinni bounces three times, splits into
-   eight linked copies of itself, rises out of view, and a ring of slot
-   particles closes the scene. */
 
 struct CaptureSprite {
     u8 unknown_00[40];

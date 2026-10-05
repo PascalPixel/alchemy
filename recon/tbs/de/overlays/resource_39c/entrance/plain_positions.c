@@ -1,9 +1,3 @@
-/* NONMATCHING: localized room entry before call and callback refinements, 2026-10-01.
- * The complete 3444-byte initializer compiles with the approved TBS flags.
- * 10 instruction bytes differ: direct position calls schedule the
- * actor argument after the shifts. Production preserves
- * the measured Call3 spelling and registers the later callback on both paths.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PROBE.H"
 #include "TYPES.H"
 #include "MAKYURI.H"
@@ -78,7 +72,6 @@ s32 Djinn_AddToOwner();
 void Djinn_Activate();
 void Owner_RecalculateStats();
 
-/* The map layer the lift is drawn on, scrolled by its vertical offset. */
 struct LiftLayer {
     u8 unknown_00[12];
     s32 offset;

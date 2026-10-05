@@ -7,8 +7,6 @@
 #include "IRQ.H"
 #include "IO_REG.H"
 
-/* Reads the newest copy of record 3's summary into the workspace, with the
-   four bytes its second sector keeps at 0x110; 1 when there is one. */
 s32 SaveState_LoadExtraSummary(void)
 {
     struct SaveWorkspace *work;
@@ -27,7 +25,6 @@ s32 SaveState_LoadExtraSummary(void)
     return 0;
 }
 
-/* Removes the save's serial interrupt handler and frees its workspace. */
 void SaveState_ReleaseWorkspace(void)
 {
     Runtime_SetIrqHandler(5, 0, NULL);

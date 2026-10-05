@@ -147,7 +147,6 @@ struct Walker {
     s16 step;
 };
 
-/* Ship cabin walker: advance the actor's scripted walk one step, turning, walking and waiting on the leader between steps. */
 void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 {
     struct FieldActor *leader;
@@ -239,7 +238,6 @@ void UpdateActorNineEffectMode(struct EffectRecord *record)
     }
 }
 
-/* Places both sprite parts behind the foreground and clears automatic priority. */
 s32 StagedActor_SetReadyState(struct FieldActor *work)
 {
     struct FieldSprite *rec = work->sprite;
@@ -253,10 +251,6 @@ s32 StagedActor_SetReadyState(struct FieldActor *work)
     return 1;
 }
 
-/*
- * Overlay resource_3b1. Picks the scene data table for the current scene
- * index, with two arms further narrowed by story flags.
- */
 s32 FuneHeya_SelectEntrances(void)
 {
     if (gGameState.scene == (s32)&SceneId_FuneHeya) {
@@ -367,8 +361,6 @@ s32 FuneHeya_GetStepScript(void)
     }
     return (s32)script;
 }
-
-/* Message ids. */
 
 u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 {
@@ -519,8 +511,6 @@ void SceneDialogue_ShowLine1E19Or1D50(void)
     Engine_EventEnd();
 }
 
-/* Scene setup for resource_3b1: installs actors 10 through 17. */
-
 void SceneState_RunFlagBranchedActor8Setup(void)
 {
     if (Engine_GameFlagIsSet(0x300) != 0) {
@@ -579,12 +569,6 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
     }
 }
 
-/* What actor 11 says aboard, by how far the choice of who rows has come. */
-
-/* Once flag 0x8a0 is set actor 11 will not talk; once someone is picked
- * (flag 0x300) the picked actor walks back to the leader; otherwise actor 11
- * asks, and the flag its yes sets depends on which of 0x92b, 0x92a and 0x929
- * is set. */
 void FieldScene_RunActor11FlagDialogue(void)
 {
     if (Engine_GameFlagIsSet(0x8A0) != 0) {
@@ -621,7 +605,6 @@ void FieldScene_RunActor11FlagDialogue(void)
     }
 }
 
-/* Message ids. */
 void FieldScene_RunScene3b1SequenceA(void)
 {
     u32 i;

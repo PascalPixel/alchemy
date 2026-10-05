@@ -1,12 +1,9 @@
 #include "TYPES.H"
 
-/* The Psynergy list's range tiles. */
 #define RANGE_ICON_TILE 0xf300
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 
-/* Draws a range as three tiles: the outer tile of the range's pair,
-   mirrored, then the inner tile, then the outer tile again. */
 void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range)
 {
     s32 n;

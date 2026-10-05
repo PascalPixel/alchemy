@@ -3,8 +3,6 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-/* The parts of ⚓️'s item and Psynergy menu work this reset sets; the work
-   is 0x33b words, larger than ☀️'s. */
 struct InventoryMenuState {
     u8 unknown_000[0x1c];
     s8 pane_index[2];
@@ -14,8 +12,6 @@ struct InventoryMenuState {
     u8 row_count;
 };
 
-/* ☀️'s reset: clear the work, no pane selected, one pane of each kind and
-   a one-by-one grid. */
 void UiWindow_InitializeWork(s32 unused)
 {
     struct InventoryMenuState *work = Ram_HeapSlots->menu_runtime;

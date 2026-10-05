@@ -1,18 +1,9 @@
-//! An edition's linker script, derived from its game's, as pret links every
-//! version through one `ld_script`. The game's `MAIN.LD` gives the memory
-//! map, the output sections in their order and every assignment. An
-//! edition's `recon/<game>/<lang>/MAIN.LD` gives only the bodies of the
-//! output sections it places differently: the game's own lines it links, in
-//! the game's order, and between them its scaffold of base-ROM ranges.
 use crate::targets::DecompTarget;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 
-/// The script `target` links with: the game's `MAIN.LD` for Japanese, or for
-/// another edition the game's script with the edition's bodies, written
-/// beside the build as pret writes its preprocessed `ld_script.ld`.
 pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result<PathBuf, String> {
     let game = target.script();
     let Some(edition) = target.edition_script() else {
@@ -26,11 +17,6 @@ pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result
         .expect("an edition script has a directory")
         .to_string_lossy()
         .into_owned();
-    // English declares its native physical composition explicitly. Its object
-    // order also admits the shared international source objects, including
-    // those not reconstructed in Japanese yet. The other international
-    // editions retain the same subsequence and whole-object checks as before.
-    // These are source declarations; no reference image or report selects them.
     let product = target.id.as_str().split_once('-').unwrap().0;
     let international_path = Path::new("recon").join(product).join("en/MAIN.LD");
     let international = native(&read(&game)?, &read(&international_path)?)
@@ -49,8 +35,6 @@ pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result
     Ok(path)
 }
 
-/// One brace group at a level of a linker script: the line before its `{`,
-/// such as `.rom_main :`, and the text between its braces.
 #[derive(Debug)]
 struct Group {
     header: String,
@@ -58,7 +42,6 @@ struct Group {
 }
 
 impl Group {
-    /// The output section's name: the header's first word.
     fn name(&self) -> &str {
         self.header
             .split(|c: char| c.is_whitespace() || c == ':')
@@ -67,8 +50,6 @@ impl Group {
     }
 }
 
-/// The brace groups directly inside `range` of `text`, skipping comments
-/// and quoted names.
 fn groups(text: &str, range: Range<usize>) -> Result<Vec<Group>, String> {
     let bytes = text.as_bytes();
     let mut found = Vec::new();
@@ -105,8 +86,6 @@ fn groups(text: &str, range: Range<usize>) -> Result<Vec<Group>, String> {
             b'}' => {
                 depth = depth.checked_sub(1).ok_or("unbalanced '}'")?;
                 if depth == 0 {
-                    // Output section commands end without a `;`: what follows
-                    // one's `}` (`> ROM`) runs on its own line up to the next.
                     let header = statement.trim().lines().last().unwrap_or("");
                     found.push(Group {
                         header: header.trim().to_owned(),
@@ -127,7 +106,6 @@ fn groups(text: &str, range: Range<usize>) -> Result<Vec<Group>, String> {
     Ok(found)
 }
 
-/// A body line without its comments, trimmed; empty for a comment alone.
 fn statement(line: &str) -> String {
     let mut text = line.to_owned();
     while let Some(start) = text.find("/*") {
@@ -139,14 +117,12 @@ fn statement(line: &str) -> String {
     text.trim().to_owned()
 }
 
-/// The object a script line places, as `script_objects` reads it.
 fn object(line: &str) -> Option<&str> {
     let start = line.find("\"*/")? + 3;
     let end = start + line[start..].find(".o\"")?;
     Some(&line[start..end])
 }
 
-/// The game's output sections, inside its `SECTIONS` command.
 fn output_sections(text: &str) -> Result<Vec<Group>, String> {
     let top = groups(text, 0..text.len())?;
     let [sections] = top
@@ -159,10 +135,6 @@ fn output_sections(text: &str) -> Result<Vec<Group>, String> {
     groups(text, sections.body.clone())
 }
 
-/// A native language composition supplies its section bodies directly. The
-/// game's Japanese script owns the common memory map and section headers;
-/// the English declaration owns the international object's physical order.
-/// Native compositions cannot add sections or change those headers.
 fn native(game: &str, edition: &str) -> Result<String, String> {
     let sections = output_sections(game)?;
     let mut bodies = BTreeMap::new();
@@ -198,10 +170,6 @@ fn native(game: &str, edition: &str) -> Result<String, String> {
     Ok(text)
 }
 
-/// The game script `game` with each output section `edition` lists taking
-/// the edition's body. An edition body links the game's own lines of that
-/// section in the game's order, and any line naming `own`, its scaffold;
-/// every line of an object it links, in any section, comes with it.
 pub(crate) fn derive(game: &str, edition: &str, own: &str) -> Result<String, String> {
     let sections = output_sections(game)?;
     let mut bodies = BTreeMap::new();
@@ -251,8 +219,6 @@ pub(crate) fn derive(game: &str, edition: &str, own: &str) -> Result<String, Str
     for (range, body) in bodies.values().rev() {
         text.replace_range(range.clone(), body);
     }
-    // An object placed by one line and not another would leave its other
-    // sections to the linker's orphan placement.
     let placed: BTreeSet<String> = text.lines().map(statement).collect();
     let linked: BTreeSet<&str> = placed.iter().filter_map(|line| object(line)).collect();
     for line in game.lines().map(statement) {

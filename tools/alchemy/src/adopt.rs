@@ -1,9 +1,3 @@
-//! `alchemy adopt`: once a function's C is in its module, take its bytes
-//! out of every edition's scaffolding: the English raw listing and its
-//! linker line, the draft, and in each other edition the scaffold section
-//! that holds exactly that function and its linker line. Optionally drops a
-//! two-byte padding section beside it, which the compiler's own alignment
-//! supplies once the function is C, and renames the label everywhere.
 use crate::compiler::routing::root;
 use std::path::{Path, PathBuf};
 
@@ -39,7 +33,6 @@ fn is_label(line: &str) -> bool {
     line.ends_with(':') && !line.starts_with(['\t', ' ', '@', '.'])
 }
 
-/// The [start, end) line range of the scaffold section holding `label`.
 fn section_of(lines: &[&str], label: &str) -> Option<(usize, usize)> {
     let at = lines.iter().position(|l| *l == format!("{label}:"))?;
     let start = (0..=at).rev().find(|&i| section_name(lines[i]).is_some())?;
@@ -51,8 +44,6 @@ fn padding_section(lines: &[&str], start: usize, end: usize) -> bool {
     end - start == 2 && lines[start + 1].ends_with(", 0x00000002")
 }
 
-/// Remove `label`'s section (and, with `padding`, a two-byte neighbour)
-/// from one scaffold; returns the new text and the removed section names.
 pub(crate) fn remove_section(text: &str, label: &str, padding: bool) -> Result<(String, Vec<String>), String> {
     let lines: Vec<&str> = text.lines().collect();
     let (start, end) = section_of(&lines, label).ok_or_else(|| format!("no section holds {label}"))?;
@@ -127,11 +118,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     let root = root();
     let game_dir = if game == "tla" { "THE LOST AGE" } else { "THE BROKEN SEAL" };
-    // Every scaffold edit is worked out before any is written, so a
-    // refusal leaves the checkout as it was.
     let mut edits: Vec<(PathBuf, String)> = Vec::new();
 
-    // English: the raw listing, its linker line and the draft.
     let english = root.join(format!("recon/{game}/en/MAIN.LD"));
     let object = format!("\"*/recon/{game}/raw/{address}.o\"");
     let (text, removed) = drop_lines(&read(&english)?, |l| !l.contains(&object));
@@ -140,7 +128,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     edits.push((english, text));
 
-    // The other editions: the section holding exactly the function.
     for lang in ["ja", "de", "es", "fr", "it"] {
         let scaffold = root.join(format!("recon/{game}/{lang}/rom.s"));
         let script: PathBuf = if lang == "ja" {

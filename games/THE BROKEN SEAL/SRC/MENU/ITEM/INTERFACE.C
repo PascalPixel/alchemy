@@ -11,7 +11,6 @@
 s32 UiMenu_CreateCursor(void *menu);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(
     s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
-/* This caller passes an extra word beyond the helper's four arguments. */
 void PsynergyMenu_InitializeEntryObjects();
 
 void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
@@ -91,8 +90,6 @@ void ItemMenu_HideAllIcons(void)
 }
 
 #if EDITION_INTERNATIONAL
-/* Only the localised item menus hide the first icon of each page; the
-   Japanese edition has no such routine. */
 void ItemMenu_HidePageIcons(void)
 {
     struct InventoryMenuState *menu = gMenuWork;
@@ -111,7 +108,6 @@ void ItemMenu_HidePageIcons(void)
 }
 #endif
 
-/* The pointer-cell closer ignores the extra caller word. */
 void UiWindow_CloseIfOpen();
 void Menu_ReleaseEntryObjects(void);
 

@@ -10,9 +10,6 @@ extern s32 gFrameTick;
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *point);
 
-/* Lays out icon-monitor points around a position. The first sprite layer
-   selects the ring shape; holding B turns it with the frame counter. A ring
-   of fewer than ten points steps the cursor over the rest of the table. */
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
 {
     struct AnimationPosition *pair;

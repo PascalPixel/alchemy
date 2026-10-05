@@ -26,9 +26,6 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner)
     return sum;
 }
 
-/* Rolls the equipped weapon's unleash: its rate in fifths of a percent plus
-   the equipment's bonus against a 16-bit random number. Returns the
-   unleash's message, or 1 when there is none or the roll fails. */
 s32 RollWeaponUnleash(struct BattleUnit *owner)
 {
     struct ItemDefinition *item;

@@ -4,11 +4,6 @@
 #include "SCRIPT_MOTION.H"
 #include "FIELDOBJ.H"
 #include "FRAME.H"
-/*
- * Battle effect 4: a ring of twelve screen-space particles, then a growing
- * burst object and three copies launched at the target, which share one
- * resource entry until their scripts finish.
- */
 #include "TYPES.H"
 #include "GAME_STATE.H"
 #include "FX_SCENE.H"
@@ -23,8 +18,6 @@
 #include "IWRAM_CALL.H"
 
 struct BurstPosition { s32 x, y, z; };
-
-
 
 void WaitFrames(s32 frames);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BurstPosition *pos);
@@ -82,11 +75,8 @@ struct SparkObject {
     void (*update)(struct SparkObject *);
 };
 
-
 void BattleFx_SwayParticle(struct SparkObject *object);
 
-/* Twelve screen-space particles precede the main burst and its three
-   copies. All copies share one resource entry until their scripts finish. */
 void RunBattleEffect04(void)
 {
     struct FieldActor *child;
@@ -221,7 +211,6 @@ wait_script:
         Resource_ResetEntry(resource_id);
 }
 
-/* Alternates the main object's pose on even frames. */
 void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle)
 {
     s32 frame = gFrameCount & 7;
@@ -232,7 +221,6 @@ void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle)
     }
 }
 
-/* Shrinks the particle until it is nearly gone, then ends it. */
 void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle)
 {
     s32 scale;
@@ -246,7 +234,6 @@ void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle)
     }
 }
 
-/* Spirals the particle in to its orbit centre, turning one way. */
 void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle)
 {
     struct BurstPosition pos;
@@ -271,7 +258,6 @@ void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle)
     }
 }
 
-/* Spirals the particle in to its orbit centre, turning the other way. */
 void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle)
 {
     struct BurstPosition pos;
@@ -395,8 +381,6 @@ void BattleFx_RunOrbitingParticles(void)
 
     BattleFx_PrepareBufferInterpolation();
 }
-/* Sways the object four units either side of its anchor x, stepping a
-   128-step phase each frame. */
 void BattleFx_SwayParticle(struct SparkObject *object)
 {
     s16 *phase;
@@ -407,7 +391,6 @@ void BattleFx_SwayParticle(struct SparkObject *object)
     *phase = (*phase + 128) % 128;
 }
 
-/* Spirals the object in over the effect's centre until its life runs out. */
 void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *object)
 {
     struct BattleFxScene *scene = gEffectWork;
@@ -433,8 +416,6 @@ void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *object)
     }
 }
 
-/* Sways the emitter above its anchor and, every third frame, spawns a
-   swaying spark at a random offset around it. */
 void BattleFx_RunSparkEmitter(struct SparkObject *object)
 {
     struct BattleFxScene *scene;

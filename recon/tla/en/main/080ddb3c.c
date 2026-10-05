@@ -1,11 +1,3 @@
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six original incomplete-context compile failures remain.
- * No missing view, declaration or physical symbol was supplied.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "SCENE.H"
@@ -17,7 +9,6 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 battle_value);
 s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 void BattleEffect_SpawnBurstParticleField(void);
 
-/* battle/effects/scene_transition/reset.c */
 typedef struct {
     u8  reserved00[0x34];
     s8 field34;

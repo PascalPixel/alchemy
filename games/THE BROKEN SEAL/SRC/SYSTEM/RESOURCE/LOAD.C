@@ -80,10 +80,6 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
     return result;
 }
 
-/* Sprite record setup for the menu selection list. */
-
-/* Load the graphic through the selected tile loader, record its tile base,
- * source slot and tile index, then reset the node's render object. */
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse)
 {
     s32 src;

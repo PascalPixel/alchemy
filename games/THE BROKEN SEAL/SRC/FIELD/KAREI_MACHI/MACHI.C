@@ -9,7 +9,6 @@
 #define NULL ((void *)0)
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
@@ -313,7 +312,6 @@ done:
     return 1;
 }
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -349,7 +347,6 @@ u8 *KareiMachi_GetExits(void)
     return KareiMachi_SceneTable01;
 }
 
-/* The actors placed in the scene. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -387,7 +384,6 @@ void FieldScene_RunStepWithValueFd6(void)
     Engine_EventEnd();
 }
 
-/* What the scene answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -421,8 +417,6 @@ void SceneDialogue_RunActorNineteenDialogue(void)
     Engine_EventEnd();
 }
 
-/* Unless the leader faces between 0x1000 and 0x7000, actor 8 asks whether
-   to go up to the cave; a no skips to its other reply. */
 void FieldScene_RunSlotZeroFacingSequence(void)
 {
     struct FieldActor *leader;
@@ -509,7 +503,6 @@ void FieldScene_RunActorTwentyFourAngleDialogue(void)
     }
 }
 
-/* Kalay door exit: freeze the area's actors, open the touched door with its cell animation, walk the leader out and leave through that exit. */
 void KareiMachi_RunExitDoor(void)
 {
     struct EventWork *event;
@@ -567,11 +560,6 @@ void RunSceneArrivalSetup(void)
     Engine_EventEnd();
 }
 
-/*
- * The group bound for the Colosso: once flag 0x910 is set and until 0x911
- * is, they stop in Karei, argue over who will enter and move on; otherwise
- * the party leaves through the trigger it touched.
- */
 void FieldScene_RunStagedGroupSequence(void)
 {
     s32 message;
@@ -1026,8 +1014,6 @@ void FieldScene_RunStagedGroupSequence(void)
     Engine_EventEnd();
 }
 
-/* Flag 0x200 records that the leader is linked into the actor effect
-   work's word at +24. */
 void KareiMachi_ReleaseEffectLeader(void)
 {
     if (GameFlag_IsSet(0x200) != 0) {
@@ -1079,8 +1065,6 @@ void SceneDialogue_RunActor181Line916(void)
     Engine_PartyGiveItem(ITEM_NUT, 0);
 }
 
-/* Kalay's scene start: set flag 0x87a and run the setup of the scene the
-   party enters. */
 s32 Scene_Initialize(void)
 {
     s32 v;
@@ -1121,7 +1105,6 @@ void KareiMachi_SetupEntryActors(void)
         Call3(Engine_ActorSetPosition, 25, 0x1a80000, 0x580000);
     }
     Engine_ActorSetChildValue(21, 2);
-    /* The nut actor 26 floats above its spot until the party takes it. */
     found = Engine_GameFlagIsSet(0x916);
     if (found != 0) {
         Engine_ActorSetPosition(26, 0, 0);
@@ -1377,8 +1360,6 @@ void SceneEffect_SetSlotVariantAndDescriptor(s32 a)
     Engine_ObjectSetScript(p, (s32)KareiMachi_Script01);
 }
 
-/* Kalay: clear the step counter, speed actors 20 and 21 up and schedule the
- * per-frame task. */
 void KareiMachi_SpeedUpActors(s32 a0, s32 a1)
 {
 
@@ -1429,10 +1410,6 @@ void KareiMachi_AlternateDance(void)
     }
 }
 
-/* Kalay: the two guards (actors 8 and 9) at Lord Hammet's palace step out
- * to tell the party their lord is away and talk with Ivan. Afterwards the
- * doors open, Ivan, the leader and both guards walk in, and the scene leaves
- * by exit 5. */
 void FieldScene_RunTwoActorCutsceneSequence(void)
 {
     struct FieldActor *actor;
@@ -1901,7 +1878,6 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Engine_EventEnd();
 }
 
-/* The placed actor (ids 8 to 65) standing on map cell x, z. */
 struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
     struct FieldActor **actors = gEventWork->placed_actors - 8;

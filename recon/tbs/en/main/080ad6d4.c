@@ -5,42 +5,10 @@
 extern u8 gMenuWork[];
 extern u8 gWindowWork[];
 
-/*
- * Modal owner-action comparison loop for the shared 0x03001f2c scene work.
- *
- * The caller selects a mode (0 and 1 drive the two-owner compare, 2 and 3 the
- * single-owner variant). The routine lays out the head window plus the two
- * half-width list windows, swaps the palette/bank pair between the two owner
- * records so OwnerAction_DiffSlots can report how many action slots each side
- * would gain, then spins a frame loop that redraws the lists, animates the two
- * projection slots, services the scripted scene phases at scene+0x212c, and
- * reads the two input cells. It returns 1 when the confirm key is taken on the
- * first animation step, -1 for cancel and -2 for the secondary cancel.
- *
- * Uncertain, and left as evidenced offsets rather than invented names:
- *  - the shared work at 0x03001f2c is only partially described by
- *    games/THE BROKEN SEAL/INCLUDE/FOUR_OBJECT_MOTION.H; the fields this owner touches
- *    (0x134, 0x178, 0x184, 0x21a, 0x254..0x258) extend past that struct, so
- *    the file uses the FIELD_AT_OFFSET idiom of its exact sibling
- *    games/THE BROKEN SEAL/src/menu/sel/run_paired_entry_action.c instead of inventing a type.
- *  - the reference reaches the fixed IWRAM entry at 0x03000118 with the
- *    "mov ip, pc / bx rN" interface supplied by IWRAM_CALL.H.
- *  - _call_via_r3/f4/f8 take a fixed IWRAM helper entry as their last
- *    argument (0x03001388 word copy, 0x03000168 word fill); the reference also
- *    materialises that constant before the three-argument variants, which this
- *    draft does not reproduce.
- *  - UiWindow_CloseIfOpen and UiWindow_Close are called here with a second
- *    argument that the adopted definitions ignore; the declarations below
- *    match the reference call sites, not those definitions.
- */
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-/* Fixed IWRAM helper entries used as descriptors by the copy dispatcher. */
 #define IWRAM_WORD_COPY 0x03001388
 #define IWRAM_WORD_FILL 0x03000168
-
-/* The scaling entry the reference reaches through the ip-linked inline call. */
 
 #define VRAM_STRIP 0x060052c0
 
@@ -141,8 +109,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     count[1] = 1;
 
     if (mode <= 1) {
-        /* Two owners: give each side the other's palette/bank pair and count
-         * the action slots the swap would produce. */
         s16 *diff_work;
         s16 *unit_copy;
         u8 *unit;
@@ -200,7 +166,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Sys_Free(unit_copy);
         Sys_Free(diff_work);
     } else if (mode - 2 <= 1) {
-        /* One owner: mode 3 also applies the secondary entry. */
         s16 *diff_work;
         s16 *unit_copy;
         u8 *unit;
@@ -261,8 +226,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         UiText_DrawAt(0xbc1, FIELD_AT_OFFSET(state, s32, 0x10c), 128, 8);
     }
 
-    /* Primary class line: attribute halfword 0x178 supplies both the name
-     * string and the element tile. */
     step = (mode == 1);
     attr = FIELD_AT_OFFSET(state, u16, 0x178);
     if ((attr & 0x8000) == 0) {
@@ -277,7 +240,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     UiPalette_SetColor(15);
 
     if (mode == 0) {
-        /* Secondary class line comes from the partner attribute at 0x17a. */
         attr = FIELD_AT_OFFSET(state, u16, 0x17a);
         if ((attr & 0x8000) == 0) {
             UiPalette_SetColor(2);
@@ -290,8 +252,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             FIELD_AT_OFFSET(state, s32, 0x10c), ((attr & 0xe0) >> 5) + 0x5001, 5, 2, mode);
         UiPalette_SetColor(15);
     } else if (mode - 2 <= 1) {
-        /* Single-owner modes repeat the primary attribute on the lower line,
-         * and the reference takes the palette branch on the opposite sense. */
         attr = FIELD_AT_OFFSET(state, u16, 0x178);
         if ((attr & 0x8000) != 0) {
             UiPalette_SetColor(2);
@@ -313,8 +273,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         input_held = gKeysRepeat;
 
         if (FIELD_AT_OFFSET(scene, s32, 0x212c) != 0) {
-            /* A scripted phase owns the screen: input is suppressed and the
-             * render work is parked in a scratch copy across the message. */
             s16 *saved;
             s32 work;
 
@@ -438,8 +396,6 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         if (page <= 1) {
             list = FIELD_AT_OFFSET(state, u8 *, 0x34);
             if (count[page] > 1) {
-                /* Page pips along the bottom edge, the selected one taken from
-                 * the neighbouring bank. */
                 for (i = 0; i < count[page]; i++) {
                     s32 tile;
 

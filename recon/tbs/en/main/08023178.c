@@ -1,70 +1,6 @@
-/* 2026-10-04 fill-return contract: current EN score 14796 (326 register,106 stack,61 operand,83 reordered,41 inserted,25 deleted)
- * after MENU_LIST.H follows the native s32 Ui_FillVramBlockPattern ABI
- * instead of void (previous score 14696). Native08016738 preserves
- * the fill cursor in r0 with pop{r1}/bx r1; an isolated void-return
- * control uses pop{r0}/bx r0. Callers discard the result.
- * The truthful return contract is retained despite the larger residual.
- * Earlier header measurements below refer to the prior declaration.
- */
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-/* Draft, not exact: current EN score14696, all external symbols resolve.
- * Native3320/candidate3352 bytes including pools; frames352/344.
- * Every retained aggregate and bound pointer has real uses.
- */
-/* Not-yet-C: complete 3320-byte owner.
- * 2026-10-02 unchanged draft: score23698 (347 register, 93 stack,
- * 70 operand, 107 reordered, 76 inserted, 61 deleted), frame372 versus352;
- * six fake Value_000008* message symbols unresolved in that measurement.
- * Trial1 ownership cleanup: score18714 (307 register, 94 stack,
- * 59 operand, 90 reordered, 43 inserted, 59 deleted), frame344.
- * New data/message names still unresolved in the copied target context.
- * Trial2 nine consumed stat cases recover dense dispatch: score15950
- * (313 register, 95 stack, 69 operand, 87 reordered, 40 inserted,
- * 34 deleted), frame344. Six catalog symbols unresolved at measurement.
- * Trial3 shared initialized redraw for setup busy/finalize: identical15950
- * and frame344; ineffective body change reverted.
- * Naming-complete trial2 recheck: score15840 (315 register, 95 stack,
- * 63 operand, 87 reordered, 40 inserted, 34 deleted), frame344.
- * Trial4 live redraw in r10 retained: score15792 (329 register, 102 stack,
- * 61 operand, 92 reordered, 42 inserted, 28 deleted), frame344.
- * Every external symbol resolves against the refreshed byte-identical EN ELF.
- * Existing MenuSprite/UiWindow/MenuCell, BattleUnit/BattleSession,
- * VramBlockCacheEntry and typed Iwram_CopyWords replace local fake views,
- * fixed global addresses and a four-argument copier-veneer declaration.
- * Real native stack: cursor32 at96, name sprite12 at128, icon sprites132
- * at140, signed icon codes11 at272, natural alignment1, handles44 at284,
- * cursor sprite12 at328 and face sprite12 at340. Sp+0..95 is arguments and
- * compiler spills, never source storage. Every array element is consumed.
- * The three delta locals hold attack/defense/agility changes.
- * Formation trial5 consumed pointer bases: score14745 (322 register,
- * 70 stack, 65 operand, 85 reordered, 37 inserted, 27 deleted),
- * frame348 and complete compiled extent3348 versus native3320.
- * Trial6 natural redraw with pointer bases: score15510 (314 register,
- * 70 stack, 64 operand, 87 reordered, 41 inserted, 30 deleted), frame348;
- * measured redraw binding remains better.
- * Trial7 face lookup before stores: score14780 (322 register, 70 stack,
- * 66 operand, 82 reordered, 38 inserted, 28 deleted), frame348; reverted.
- * Trial8 owned IWRAM bank expression: unchanged14745/frame348; reverted.
- * Trial9 used-pointer inline wrapper: unchanged14745/frame348; reverted.
- * Trial10 scoped real copier pointer in r3: score14696 (326 register,
- * 106 stack, 61 operand, 83 reordered, 39 inserted, 26 deleted),
- * frame344 and extent3352; attack spill removed by the real register choice.
- * Trial11 plain shared owner-copy size: unchanged14696/frame344; reverted.
- * Trial12 consumed size in r8: score15041 (332 register, 71 stack,
- * 61 operand, 97 reordered, 36 inserted, 24 deleted), frame348; reverted.
- * Trial13 scoped condition value: score16016 (346 register, 101 stack,
- * 66 operand, 93 reordered, 39 inserted, 31 deleted), frame344; reverted.
- * Trial14 final redraw ablation with r3 copies: score14890 (348 register,
- * 110 stack, 60 operand, 83 reordered, 39 inserted, 27 deleted), frame344;
- * retained redraw binding improves the current body by194.
- * Final retained trial10: score14696, all external symbols resolved,
- * native3320/candidate3352 including pools; native frame352/candidate344.
- * Pointer/spill residual: native pixel coordinates occupy56/60; generated
- * x lives in r9 and y in outgoing sp+4, accounting for eight fewer spill bytes.
- * Remaining: compiler spills/lifetimes, register order, branch/layout and
- * literal-pool extent. Native frame352 versus retained344. */
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_WORK.H"
 #include "MENU_LIST.H"
@@ -74,7 +10,6 @@
 #include "RUNTIME_MEM.H"
 #include "IWRAM_CALL.H"
 
-/* One cursor position per selectable row; fields follow the native record. */
 struct StatusCursor {
     s8 pos[5];
     s32 entry;
@@ -105,8 +40,6 @@ s32 Owner_GetResistanceValueFar(s32 owner, s32 index);
 s32 Owner_GetLevelThresholdFar(s32 owner, s32 level);
 s32 Party_SumDjinnCountsFar(s32 request);
 
-/* Modal owner status screen. Cursor rows choose stats, equipment or conditions;
- * the active menu cell or cancellation closes the screen after releasing slots. */
 s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 {
     struct MenuSprite objFace;

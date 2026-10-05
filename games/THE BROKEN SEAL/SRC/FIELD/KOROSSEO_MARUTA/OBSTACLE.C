@@ -1,4 +1,3 @@
-/* Marking the stage's progress and choosing the nearest obstacle. */
 #include "LOG_ROLLING.H"
 extern u8 MsgKorosseoMatchAboutBeginPleaseTake[];
 
@@ -28,7 +27,6 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
 void ColossoLogRollingStage_SelectNearestObstacle(void)
 {
     extern void GameFlag_SetByte();
-
 
     struct EventWork *state;
     s16 *table;

@@ -29,8 +29,6 @@ extern const u8 Formation_SmallEightZ[];
 
 void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, struct Scale *scale, s32 flags);
 
-/* Places the battle objects of one of four formations around (x, z): a
-   3x3 grid, or the twelve- and eight-object layouts from the offset tables. */
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
     struct BattleEffectWork *work = (struct BattleEffectWork *)*(void **)gBattleFxWork;
@@ -82,13 +80,8 @@ extern u8 ImpactBurst_CellWidths[];
 extern u8 ImpactBurst_CellHeights[];
 extern u16 ImpactBurst_CellSourceOffsets[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: a flare opens at the impact point while thirty sparks
-   spray from it, two more every frame; from frame 36 a second, finer spray
-   of sixty motes follows and three flare shards fly apart. The formation's
-   objects stay placed around the point for the first 36 frames. */
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 {
     void **heap_cache;

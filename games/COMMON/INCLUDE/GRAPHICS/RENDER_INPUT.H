@@ -26,7 +26,6 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
 s32 Ui_CreateOutputFromResourceSlot(
     struct RenderInput *window, s32 x, s32 y, s32 resource);
 
-/* 描画登録1件。+0x18の下位10bitは表番号として扱う。 */
 union RenderTableValue {
     u32 value;
     struct {
@@ -47,7 +46,6 @@ struct RenderOutput {
     s16 x;
     s16 y;
     u16 unknown_0a;
-    /* The step its animation (the active mode) has reached. */
     u16 anim_step;
     s8 index;
     u8 sentinel;
@@ -56,7 +54,6 @@ struct RenderOutput {
     union RenderTableValue table;
 };
 
-/* The tail points at the next link to fill, or head when the list is empty. */
 struct RenderOutputList {
     struct RenderOutput *head;
     struct RenderOutput **tail_link;

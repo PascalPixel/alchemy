@@ -1,5 +1,4 @@
 #include "GLOBAL_CELLS.H"
-/* Declarations shared by Imil's village sources (resource_399). */
 #ifndef IMIRU_H
 #define IMIRU_H
 
@@ -56,7 +55,6 @@ struct Object {
     s16 mode;
 };
 
-/* Prepare scene service zero, set its halfword field and run the four follow-up services. */
 struct SceneService_02001990 {
     u16 unknown00[3];
     u16 value06;
@@ -71,8 +69,6 @@ typedef struct {
     u16 unk64;
 } T;
 
-/* Layout of the record returned for an actor: only the word at offset
- * 0x64 (100) is touched here. */
 struct SceneRecord {
     u8 pad[100];
     u16 field_0x64;
@@ -88,26 +84,25 @@ typedef struct {
     s16 unk66;
 } T_0200154c;
 
-/* Reset the actor's state, shown value and low flag bit, set its linked record's mode to 1 and centre both offsets on half a unit. */
 struct Rec_399 {
     u8 pad00[9];
     u8 lo : 2;
-    u8 mode : 2;                /* +9, bits 2..3 */
+    u8 mode : 2;
     u8 hi : 4;
 };
 
 struct Work_399 {
     u8 pad00[24];
-    s32 f24;                    /* +24 */
-    s32 f28;                    /* +28 */
+    s32 f24;
+    s32 f28;
     u8 pad20[3];
-    u8 f35;                     /* +35 */
+    u8 f35;
     u8 pad24[44];
-    struct Rec_399 *f80;        /* +80 */
+    struct Rec_399 *f80;
     u8 pad54[1];
-    u8 f85;                     /* +85 */
+    u8 f85;
     u8 pad56[14];
-    u16 f100;                   /* +100 */
+    u16 f100;
 };
 
 typedef struct {
@@ -159,7 +154,6 @@ extern u8 Data_03001ebc[];
 extern u8 ImiruMura_PrimaryScript[];
 extern u8 ImiruMura_PrimaryScript2[];
 extern s32 ImiruMura_ArcOrigin[];
-/* Scripts and tables in the overlay's data. */
 extern u8 ImiruMura_SceneTable[];
 extern u8 ImiruMura_CellStepsA[];
 extern u8 ImiruMura_ActorScriptA[];
@@ -201,29 +195,12 @@ s32 GetMapCellCollision();
 void Engine_ObjectSetPosition();
 void Engine_ObjectCommitPosition();
 
-/* Halfword at offset 100 of an actor record: the scene waits until it
- * becomes non-zero. */
-
-/* Scripted dialogue step. */
-
-/* The per-frame callback installed on the actor. */
-
-/* Byte offset of the flag byte on an actor record; bit 0 is cleared for
- * actors 0, 1 and 2 and set again after they are repositioned. */
-/* Byte offset of a flags field on the actor 8 record touched below; bit 1
- * of that byte is toggled at the end of the third branch. */
-/* Byte offset of a flags field on the actor records touched below; bit 0
- * of that byte is cleared and later set back for actors 20 (twice). */
-/* ImiruMura_SwayHeadings is this overlay's heading table.  Data_02000240 is a resident
- * table; its word at byte offset 500 selects the subject. */
-
 static __inline__ void ImiruMura_AdvanceProbe(s32 heading, s32 *probe)
 {
     /* FAKEMATCH: a direct call reuses r5 after the shift; this boundary rebuilds sp+8 before completing 0x100000. */
     Vector_AddPolarOffset((s32)0x100000, heading, probe);
 }
 
-/* The sources call one another across files. */
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj);
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 s32 SceneData_ReturnZero(void);

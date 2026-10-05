@@ -19,8 +19,6 @@ s32 Party_RemoveActiveOwner(s32 value)
     return Party_CountActiveOwners();
 }
 
-/* Copies the active party's members into owners, 0xff-terminated, and
-   returns how many there are. */
 s32 Party_ListActiveOwners(s16 *owners)
 {
     s32 count = 0;

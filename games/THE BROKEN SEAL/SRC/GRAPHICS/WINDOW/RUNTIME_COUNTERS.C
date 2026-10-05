@@ -6,14 +6,11 @@
 #include "TBS_EDITION.H"
 #include "BATTLE_WORK.H"
 
-
 void UiWork_ProcessAll(void);
-
 
 s32 UiWork_IsIdle(struct UiWindow *window)
 {
 #if !EDITION_INTERNATIONAL
-    /* The Japanese check counts a missing window as idle. */
     if (window == NULL)
         return 1;
 #endif

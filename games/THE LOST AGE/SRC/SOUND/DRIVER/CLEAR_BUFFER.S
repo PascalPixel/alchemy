@@ -1,9 +1,3 @@
-@ Clears 64 bytes of the sound buffer with four unrolled stmia of r1-r4. It
-@ keeps r4 by parking it in ip (mov ip, r4 ... mov r4, ip): the game route,
-@ with r4 call-used, would not preserve r4 at all, and a stock-ABI compiler
-@ would push it with lr; neither parks a register in ip. These 22 bytes equal
-@ TBS SOUND/DRIVER/CLEAR_BUFFER.S (0x080f9a18).
-@ credit: library — TBS/TLA common sound-driver mixer and clear-buffer module (clear buffer)
 .syntax unified
 	.thumb
 	.global SoundDriver_ClearBuffer

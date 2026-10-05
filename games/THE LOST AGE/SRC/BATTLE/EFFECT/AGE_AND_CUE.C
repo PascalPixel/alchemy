@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* The fields of an effect object this step reads. */
 struct TimedObject {
     u8 unknown_00[0x64];
     s16 age;
@@ -9,8 +8,6 @@ struct TimedObject {
     void *update;
 };
 
-/* Counts the object's age; at 80 frames it stops this step and plays cue
-   136. */
 void BattleFx_AgeAndCueAtEighty(struct TimedObject *object)
 {
     if (object->age == 80) {

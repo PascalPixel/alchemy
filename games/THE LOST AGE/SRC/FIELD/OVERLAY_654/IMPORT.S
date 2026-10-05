@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_654 overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_654 overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -77,8 +73,6 @@ Func_02003998:
 	.global Func_020039a0
 	.thumb_func
 Func_020039a0:
-	@ The localized scaffold exports this same complete resident routine
-	@ under its own source label.
 	.ifdef TLA_EDITION_DE
 	overlay_veneer Func_08020180
 	.else

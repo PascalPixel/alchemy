@@ -8,7 +8,6 @@
 
 struct MapCell;
 
-/* One row emitted by FIELD/SCENES.S. */
 struct SceneRecord {
     s16 resource_id;
     s8 group;
@@ -17,7 +16,6 @@ struct SceneRecord {
     u16 reserved;
 };
 
-/* A scene's rectangular volume and the event it raises when entered. */
 struct SceneRegion {
     s16 min_x, min_y, min_z;
     s16 max_x, max_y, max_z;
@@ -25,8 +23,6 @@ struct SceneRegion {
     s16 value;
 };
 
-/* ENTRY.S emits six 8-byte veneers. Each target follows its two Thumb
-   instructions; this is the loaded veneer bank, not a pointer table. */
 struct SceneEntries {
     u32 initialize_veneer;
     s32 (*initialize)(void);
@@ -42,17 +38,12 @@ struct SceneEntries {
     const struct SceneRegion *(*regions)(void);
 };
 
-/* Generic object-id services address slots after five opaque words.
-   This prefix declares neither the active mode nor allocation/capacity. */
 struct ObjectSlotTable {
     u8 unknown_00[0x14];
     struct ObjectRuntime *slots[0];
 };
 
-/* Field-mode step work. Its 66 actor slots cover the eight party ids and
-   the 58 placements; battle and menu lifetimes keep their own views. */
 struct FieldStepWork {
-    /* Four registered placement streams precede the event stream at +0x10. */
     const struct ScenePlacement *tables[4];
     const struct SceneEvent *events;
     struct ObjectRuntime *actors[66];
@@ -76,7 +67,6 @@ struct FieldStepWork {
     struct MapCell *previous_tile;
 };
 
-/* A three-coordinate 16.16 position passed to the field vector routines. */
 struct FieldPosition { s32 x, y, z; };
 
 LAYOUT_SIZE_GUARD(SceneRecord_Size, struct SceneRecord, 8);

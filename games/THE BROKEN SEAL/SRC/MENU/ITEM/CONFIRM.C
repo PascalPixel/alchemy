@@ -2,7 +2,6 @@
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "INVENTORY_MENU.H"
-/* Item menu: ask whether to drop the item and return the chosen row (1 when cancelled). */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IWRAM_CALL.H"
@@ -142,9 +141,6 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32
     return copy(dst, src, size);
 }
 
-/* Item menu: equip the item on its target for a preview, ask whether to
-   keep it, and put the target's saved state back unless the answer is yes.
-   Returns the chosen row, 1 when declined, cancelled or not equippable. */
 s32 Unnamed_080a5388(s32 unused)
 {
     s32 sel = 0;
@@ -165,8 +161,6 @@ s32 Unnamed_080a5388(s32 unused)
     if ((u32)(Inventory_EquipFar(menu->pane_owner[1], menu->selected_slots[1]) + 2) <= 1) {
         sel = 1;
     } else {
-        /* The Japanese menu stacks the two answers at the right; the
-           international menus set them side by side under the question. */
 #if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar((s32)MsgYes, (void *)win, 24, 24);
         UiText_DrawCharacterAtOffsetFar((s32)MsgYes + 1, (void *)win, 72, 24);

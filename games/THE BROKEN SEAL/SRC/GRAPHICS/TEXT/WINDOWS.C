@@ -6,7 +6,6 @@
 #include "SYSTEM.H"
 #include "GAME_STATE.H"
 
-
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 s32 Object_GetScreenPositionFar(s32 object, s32 *out);
@@ -33,10 +32,6 @@ void UiWork_SetBusyFlags(s32 flags)
     }
 }
 
-/* Build a message's render entries, fit a window for them on screen and
-   queue them there. Bits 16-27 of packed select the first entry; its low
-   bits choose the window's frame and blending. Returns the window, or
-   NULL when the message is empty or no window is free. */
 struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 {
     s32 entry;
@@ -81,14 +76,6 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
     return window;
 }
 
-/* Shows message no in a window centred across the screen and waits until it
- * has printed. Flag 8 places the window high and flag 0x40 lower; otherwise it
- * goes above or below the screen row of the object in game-state word 125.
- * Flag 1 is passed on to the window as its release flag, flag 2 marks text
- * rendering busy while the message shows, flag 0x20 sets the menu busy byte
- * once it has printed, and flag 4 leaves the window open instead of closing
- * it and waiting for it to finish. Ends by clearing the busy byte and the
- * result words and waiting three frames. */
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 {
     struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];

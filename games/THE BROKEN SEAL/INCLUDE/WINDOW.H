@@ -9,8 +9,6 @@
 
 enum { UI_OUTPUT_COUNT = 64 };
 
-/* Window tilemap, records, text channels and render queues. Japanese text
-   uses twelve windows and a 256-entry ring; other editions use eight and 512. */
 struct UiRenderWork {
     u16 tilemap[640];
     struct UiWindow windows[WINDOW_COUNT];
@@ -18,13 +16,13 @@ struct UiRenderWork {
     struct RenderOutput outputs[UI_OUTPUT_COUNT];
     struct RenderOutputList free_outputs;
     u8 tile_attributes[256];
-    u16 tile_cursor;            /* where the next free text tile is sought */
-    u8 alt;                     /* alternate text-canvas tiles are in use */
-    u8 dirty;                   /* rows of tiles to upload, one bit per four */
+    u16 tile_cursor;
+    u8 alt;
+    u8 dirty;
     u8 mode;
     u8 menu_state;
-    u8 menu_busy;               /* holds the upload while a page is redrawn */
-    u8 level;                   /* text palette of the next string */
+    u8 menu_busy;
+    u8 level;
     u16 line_spacing;
     u16 unknown_after_line_spacing;
     u16 outline;
@@ -41,13 +39,11 @@ struct UiRenderWork {
     u16 resource_ids[2];
     u16 output_ids[2];
     u16 result[2];
-    /* Set while the next-page arrow is drawn. */
     u8 page_arrow_shown;
     u8 busy;
     u8 spacing_before;
     u8 spacing_after;
 };
-
 
 LAYOUT_OFFSET_GUARD(UiRenderWork_Windows, struct UiRenderWork, windows, 0x500);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Channels, struct UiRenderWork, channels, RENDER_CHANNEL_OFS);

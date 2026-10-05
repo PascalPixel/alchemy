@@ -4,17 +4,13 @@
 #include "SYSTEM.H"
 #include "LAYOUT_GUARD.H"
 
-/* A selection that cannot be moved, only confirmed or cancelled. */
 #define SELECTION_FIXED 999
 
-/* The node window status while it scrolls, and once it has settled. */
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
 
-/* The node kind whose first entry confirms and whose others cancel. */
 #define NODE_KIND_YES_NO 6
 
-/* Rows visible in the selection list. */
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
@@ -56,8 +52,6 @@ s32 Menu_ConfirmSelection(struct SelectionScreen *screen);
 void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, u32 down);
 void Menu_OpenSelectionWindow(u16 type, u32 value);
-
-/* Runs the selection until it is confirmed, or cancelled when mode allows. */
 
 void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
 {

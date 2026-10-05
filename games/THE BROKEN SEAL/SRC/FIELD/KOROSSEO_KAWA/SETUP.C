@@ -7,7 +7,6 @@
 #include "KAWA.H"
 #include "OBJECT_RUNTIME.H"
 
-/* The marker task's state in the overlay's work area. */
 extern u16 Korosseo_MarkerX;
 extern u16 Korosseo_MarkerY;
 extern u16 Korosseo_MarkerPriority;
@@ -56,14 +55,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
@@ -81,7 +77,6 @@ void Script_WaitForEventTimeout(struct FieldActor *);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
-/* Place the marker at x, y with a priority and start its task. */
 void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 {
     KorosseoKawa_EnsureMarkerSlot();
@@ -95,7 +90,6 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
     Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
 }
 
-/* Move the marker from where it is to x, y over the given steps. */
 void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
 {
     Korosseo_MarkerEndX = (u16)x;

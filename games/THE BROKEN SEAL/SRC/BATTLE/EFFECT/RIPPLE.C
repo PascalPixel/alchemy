@@ -21,13 +21,6 @@ extern u8 gBattleFxWork[];
 
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 
-/*
- * Battle effect: a rippling disc. A 128 x 128 map of distances from a point
- * just below the centre is drawn once with a 63-colour ramp; for 96 frames
- * a sine wave bends the scanlines while the ramp rotates one colour a frame.
- * The blend level fades in over the first nine frames and out over the last
- * seven.
- */
 void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -192,8 +185,6 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 }
 
 extern u8 gMapCellBuffer[];
-/* The fire swirl's seven cells: size, place in the sheet and offset from
-   the caster. */
 extern u8 FireSwirl_CellWidths[];
 extern u8 FireSwirl_CellHeights[];
 extern u16 FireSwirl_CellSourceOffsets[];
@@ -210,11 +201,6 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 
-/*
- * Battle effect: the acting unit charges four fifths of the way to its
- * target while a fire swirl plays in front of it; on frame 18 the target is
- * hit and sixteen stars burst out, fall and bounce.
- */
 void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

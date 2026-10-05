@@ -10,8 +10,6 @@ s32 BattleFx_StartRandomParticleEmitter(s32, s32);
 s32 Object_GetById(u32);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 
-/* The object nearest SELF within EFFECT's reach, of the 81 objects; -1 when
-   none is. */
 s32 BattleFx_FindNearestObject(s32 self, s32 effect)
 {
     s32 nearest = 9999;

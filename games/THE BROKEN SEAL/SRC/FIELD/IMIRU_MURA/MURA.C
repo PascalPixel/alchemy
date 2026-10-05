@@ -96,7 +96,6 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
     return 1;
 }
 
-/* Where the party appears; the second area has its own entrances. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     if (gGameState.scene == (s32)&SceneId_ImiruMura2) {
@@ -115,7 +114,6 @@ u8 *ImiruMura_GetExits(void)
     return (u8 *)ImiruMura_SceneTable;
 }
 
-/* The second area's actor table is updated in place once flag 0x881 is set. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     u8 *script;
@@ -143,7 +141,6 @@ void ImiruMura_RunHeadingProbe(void)
     StagedActor_RunHeadingProbeStep();
 }
 
-/* What Imil answers; the second area has its own events. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_ImiruMura2) {
@@ -189,13 +186,6 @@ void SceneDialogue_RunActor9Line(void)
     Engine_EventEnd();
 }
 
-/*
- * One scripted section, bracketed by an open and a close call, in which story
- * flag 0x881 picks between two arms on channel 10.  The arms differ only in the
- * message id and one step call, and stay separate so that every call is written
- * once.  258 is a pose id, 0x3000 three sixteenths of a turn.  Engine_EventAskYesNo's
- * unused s32 return is what fixes that call's argument order.
- */
 void SceneDialogue_RunActorTenFlag881Dialogue(void)
 {
     Engine_EventBegin();
@@ -227,8 +217,6 @@ void SceneDialogue_RunActorTenFlag881Dialogue(void)
     Engine_EventEnd();
 }
 
-/* Picks one of three scripted call sequences depending on two condition
- * checks (codes 2177 and 2091), each acting on actor 9 and/or actor 8. */
 void FieldScene_RunSupplementalSequenceOne(void)
 {
 
@@ -378,7 +366,6 @@ void SceneDialogue_ShowLine1573Or155A(void)
     Engine_EventEnd();
 }
 
-/* Imil door exit: freeze the area's actors, open the door touched (trigger 50 + exit) with its cell animation, walk the leader out and request that exit. */
 void ImiruMura_RunExitDoor(void)
 {
     struct EventWork *event;
@@ -422,9 +409,6 @@ void ImiruMura_RunExitDoor(void)
     Engine_EventEnd();
 }
 
-/* Imil weapon shop: facing the counter with the village cured opens shop 10;
- * otherwise the keeper talks about being shut, or after recovery about catching
- * up on lost business. */
 void ImiruMura_RunWeaponShop(void)
 {
     s32 dir;
@@ -459,8 +443,6 @@ void ImiruMura_RunWeaponShop(void)
     }
 }
 
-/* Imil armor shop: facing the counter with the village cured opens shop 11;
- * otherwise the keeper talks about the cold that closed the store. */
 void ImiruMura_RunArmorShop(void)
 {
     s32 dir;
@@ -495,9 +477,6 @@ void ImiruMura_RunArmorShop(void)
     }
 }
 
-/* Imil item shop: with the village cured the mother keeps shop 12; while she is
- * sick her daughter sells across the counter, and the father talks about Kolima
- * when spoken to off-angle. */
 void ImiruMura_RunItemShop(void)
 {
     s32 dir;
@@ -583,7 +562,6 @@ void ImiruMura_OpenSanctum(void)
     }
 }
 
-/* Imil: entry setup for the two Imil areas, by entrance and story flags. */
 s32 ImiruMura_ApplyEntryState(void)
 {
     struct FieldActor *leader;
@@ -895,8 +873,6 @@ void SceneActor_UpdateCountdownArcPosition(T_0200154c *o)
 
 extern const s32 ImiruMura_SparkScript[];
 
-/* Sways the actor from side to side around the arc's origin and, every
- * third frame, throws a spark from a random point around it. */
 void ImiruMura_SwayAndSpark(struct FieldActor *actor)
 {
     s32 pos[3];

@@ -1,6 +1,5 @@
 #include "ENTRANCE.H"
 
-/* Clear the record's flags, reset and notify its linked object, then drop the link. */
 void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 {
     s32 *record = **(s32 ***)&gWork.scene;

@@ -1,8 +1,3 @@
-/* NONMATCHING: Japanese entrance before distinguishing the movement call, 2026-10-01.
- * The complete180-byte extent differs in one BL instruction byte: this
- * attempt waits for movement, while the Japanese game sets the destination
- * and commits it directly. Production keeps the corrected source branch.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PROBE.H"
 #include "CALL.H"
 

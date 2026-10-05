@@ -1,4 +1,3 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT13_HOOK.C. */
 #include "TYPES.H"
 #include "FX_SCENE.H"
 #include "MOTION_OBJECT.H"

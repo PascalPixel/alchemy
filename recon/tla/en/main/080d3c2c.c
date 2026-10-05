@@ -1,10 +1,3 @@
-/*
- * Draft: ObjectTable_FindActiveByValue, ported from its ☀️ twin with ⚓️'s 80
- * objects and the event work from its heap slot. Score 160: the listing
- * sets the -1 result (movs r5, #1; negs) between loading the event work and
- * loading object 8, where this C sets it after; 40 seconds of permuting
- * found nothing better.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
@@ -24,8 +17,6 @@ struct ObjectValueTable {
     struct ObjectValueEntry *objects[4096];
 };
 
-/* The index of the first active object from 8 on whose value matches, of
-   ⚓️'s 80; -1 when none does. */
 s32 ObjectTable_FindActiveByValue(s32 value)
 {
     struct ObjectValueTable *state = Ram_HeapSlots->event_work;

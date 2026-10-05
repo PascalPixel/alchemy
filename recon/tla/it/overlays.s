@@ -1,4 +1,3 @@
-@ Exact source-built overlays; pending overlays and alignment stay uncredited.
 	.section .overlays,"a"
 	.global Resource_Overlay649
 Resource_Overlay649:
@@ -243,7 +242,6 @@ Resource_Overlay695:
 	.global Resource_Overlay696
 Resource_Overlay696:
 	.incbin "overlays/resource_696.lz"
-	@ Uncredited inter-stream alignment.
 	.incbin "baserom.gba", 0x00f37df3, 0x00000001
 	.global Resource_Overlay697
 Resource_Overlay697:

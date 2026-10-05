@@ -1,8 +1,3 @@
-/* Draft: Japanese debug party setup with ordinary count calls.
- * 2026-10-01: Complete 216-byte owner; twelve argument-order bytes differ
- * before the first three count calls, including the coins-store boundary.
- * Ordinary TBS compiler and options; no scene placement or credit claimed.
- */
 extern int MenuTest_BenchmarkCharacter;
 #include "EDITION.H"
 #include "../../../../games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/MENU_TEST.H"
@@ -52,7 +47,6 @@ void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
 
 s32 CommandTable_ConfigureCommandList(void)

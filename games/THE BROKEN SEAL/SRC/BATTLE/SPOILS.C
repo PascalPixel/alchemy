@@ -58,10 +58,6 @@ void Party_AdjustCoinsFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
 s32 PartyInventory_AddFar(s32 item);
 
-/* Counts one defeated enemy toward the battle spoils: its coins and
-   experience (randomly raised in proportion to the enemy's level when the
-   party earned them), the formation slot it came from, and a chance at its
-   item drop, which replaces the least valuable drop so far. */
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {
     struct BattleUnit *unit;
@@ -144,10 +140,6 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     return 0;
 }
 
-/* Hands out the battle spoils: experience to every living party member,
-   with the level-up, newly learned Psynergy and stat-gain messages each
-   level brings, then the coins, then the most valuable dropped item that
-   still fits in someone's bag. */
 void Battle_AwardSpoils(void)
 {
     struct BattleSpoils *spoils;

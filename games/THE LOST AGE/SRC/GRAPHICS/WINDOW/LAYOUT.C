@@ -26,7 +26,6 @@ void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 heigh
     }
 }
 
-/* The party status window's place, which its heap slot keeps. */
 struct UiWindowBounds {
     s32 handle;
     u16 left;
@@ -76,7 +75,6 @@ void UiWindow_BuildLayoutBounds(s32 flags)
     state->height = height;
     state->flags = flags;
 }
-
 
 void UiWindow_CreateWithLayoutBounds(s32 flags)
 {

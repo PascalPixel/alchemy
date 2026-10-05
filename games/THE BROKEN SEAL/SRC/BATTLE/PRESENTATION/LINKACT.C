@@ -11,8 +11,6 @@ extern s32 gRandomSeed;
 extern volatile u16 gLinkStatus;
 extern volatile u16 gSerialReceivedSize;
 
-/* The header sent ahead of the actions: how many follow, a random check
- * value both sides must agree on, and the seed the battle continues from. */
 struct BattleLinkedActionState {
     s32 count;
     s32 check;
@@ -20,12 +18,6 @@ struct BattleLinkedActionState {
     u8 unknown_0c[28];
 };
 
-/* Exchange this turn's actions with the other side of a linked battle.
- * The party's actions are tagged with their member slots and sent in
- * 20-byte blocks behind a header; the other side's are received behind
- * `actions` and renamed to this side's unit ids. The side that leads sends
- * first and gives the seed; the other receives first and checks it. Returns
- * the number of actions received, or -1 once the link fails. */
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count)
 {
     struct BattleSession *battle = gBattleWork;
@@ -34,8 +26,6 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
     struct BattleLinkedActionState *state = (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
     s32 index;
 
-    /* Send the header, then the actions; give up after 300 frames or 25
-     * frames without both link lines up. */
     s32 BattleLink_SendActions(void)
     {
         s32 timeout;
@@ -76,7 +66,6 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
         return 0;
     }
 
-    /* Receive the header, then as many actions as it announces. */
     s32 BattleLink_ReceiveActions(void)
     {
         s32 timeout;

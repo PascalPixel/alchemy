@@ -11,7 +11,6 @@ void *ObjectTable_Get(u32 object);
 void Object_EffectSpawnCallback(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-/* One sprite entry of the fade overlay, with its attribute words. */
 struct FadeMark {
     void *next;
     u16 y : 8;
@@ -29,7 +28,6 @@ struct FadeMark {
     u8 unknown_0a[2];
 };
 
-/* The object the overlay follows. */
 struct FadeActor {
     u8 unknown_00[8];
     s32 x;
@@ -54,9 +52,6 @@ struct FadeView {
 extern struct FadeWork *gActorEffectWork;
 #define FADE_VIEW (*(struct FadeView **)((u8 *)&gActorEffectWork - 112))
 
-/* Each frame, lay a semi-transparent mark over the tile to either side of
-   the actor wherever the terrain a tile or two in front of it stands above
-   the actor's floor, so the actor shows through what it walks behind. */
 void Object_EffectSpawnCallback(void)
 {
     struct FadeWork *work = gActorEffectWork;

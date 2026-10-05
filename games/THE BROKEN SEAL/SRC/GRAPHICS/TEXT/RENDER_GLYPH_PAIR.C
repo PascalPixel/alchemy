@@ -8,9 +8,6 @@
 
 extern u8 UiText_SecondGlyphs[];
 
-/* The Japanese canvas combines a kana or fixed-width kanji with its voicing
-   mark. The localized canvas combines two variable-width glyphs. Both pack
-   the result into four 4bpp tiles and return its width. */
 #if EDITION_INTERNATIONAL
 s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 {

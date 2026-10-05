@@ -1,11 +1,7 @@
 #include "TYPES.H"
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_00000000[];
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
@@ -64,10 +60,6 @@ void Func_02006db2();
 
 void Func_02002ba8();
 void Func_02002d84();
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 static __inline__ s32 Value0(s32 (*f)())
 {
@@ -89,15 +81,12 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
     u8 *work = *(u8 **)gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
-
-
 
 void Func_02002ba8(s32 a0, s32 a1, s32 a2)
 {

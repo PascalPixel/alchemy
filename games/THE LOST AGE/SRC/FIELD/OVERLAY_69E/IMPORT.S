@@ -1,7 +1,3 @@
-@ Import veneers after the OVERLAY_69E overlay's code: fixed 8-byte veneers
-@ through which the overlay calls main-image code, each loading its target
-@ into r4 and branching, which the calling convention permits.
-@ credit: reconstructed_veneer — OVERLAY_69E overlay import veneers
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
@@ -137,8 +133,6 @@ Func_02002848:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
-	@ The localized scaffold exports this same complete resident routine
-	@ under its own source label.
 	.ifdef TLA_EDITION_DE
 	overlay_veneer Func_08020190
 	.else

@@ -1,7 +1,3 @@
-//! Link the whole ROM from the objects its linker script lists, in order, as
-//! pret links `ld_script.ld`. Every symbol resolves from its definition; the
-//! image is written for `sha1sum -c rom.sha1` and nothing is copied from a
-//! reference ROM except what the script's scaffolding reads explicitly.
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{
     assembly_command, compiler_assembly_command, is_arm, prefer_installed_binutils,
@@ -63,8 +59,6 @@ pub fn run(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-/// Without an index nothing in a build directory is reused, so whatever an
-/// older build left there goes, except make raw's private listings.
 fn clear_unindexed(output: &Path, root: &Path) {
     if output.join(INDEX).is_file() || !output.starts_with(root.join("out")) {
         return;
@@ -79,13 +73,11 @@ fn clear_unindexed(output: &Path, root: &Path) {
 
 pub(crate) struct Linked {
     pub objects: Vec<PathBuf>,
-    /// How many steps ran: every other product was reused.
     pub steps: usize,
     pub map: PathBuf,
     pub image: PathBuf,
 }
 
-/// Every object path the script names, in the order it first names them.
 pub(crate) fn script_objects(script: &str) -> Vec<String> {
     let pattern = regex::Regex::new(r#""\*/([^"*:]+)\.o""#).expect("static pattern");
     let mut seen = BTreeSet::new();
@@ -96,8 +88,6 @@ pub(crate) fn script_objects(script: &str) -> Vec<String> {
         .collect()
 }
 
-/// The maintained source an object path names: C, then assembly, then a
-/// sequence MIDI, which the build converts to assembly as pret's mid2agb does.
 fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
     ["C", "c", "S", "s", "MID"]
         .iter()
@@ -147,9 +137,6 @@ fn link_indexed(
     base_rom(root, target, output)?;
     prepare_assets(root, target, &sources, output, index)?;
     crate::build_text::build(root, target, output)?;
-    // Sources that read built overlay streams wait for the overlays, and the
-    // overlays link against the main image's symbols: a first pass links the
-    // main image with empty streams, which move nothing the overlays can see.
     let mut streamed = Vec::new();
     let mut direct = Vec::new();
     for source in &sources {
@@ -222,17 +209,21 @@ fn link_indexed(
         if !keep_going {
             index.record(&products, &key, Vec::new())?;
         }
+    } else {
+        // An overlay relinked to the same bytes leaves this image current:
+        // mark it confirmed, so its maps never read as newer than it.
+        fs::File::options()
+            .write(true)
+            .open(&image)
+            .and_then(|file| file.set_modified(std::time::SystemTime::now()))
+            .map_err(|error| format!("{}: {error}", image.display()))?;
     }
     if let Some(pass) = &symbols {
         same_addresses(root, pass, &elf)?;
     }
-    // Every build that links game code checks its fixed addresses; a
-    // build that is still only the original ROM places none of them.
     if links_game_code(&sources, &objects)? {
         checked_entries(root, target, &elf)?;
     }
-    // Only the assembler reads built assets: each is made again from its
-    // inputs when an object that reads it is next assembled.
     for directory in ["GRAPHICS", "MAP", "SOUND", "COMMON"] {
         let _ = fs::remove_dir_all(output.join(directory));
     }
@@ -246,8 +237,6 @@ fn link_indexed(
 
 const LIBGCC: &str = "tools/out/compiler-runtime/libgcc.a";
 
-/// A link's key: its command and script, the recorded digest of every
-/// object it reads, the toolchain and the compiler runtime.
 fn link_key(
     root: &Path,
     index: &Index,
@@ -269,8 +258,6 @@ fn link_key(
     Ok(format!("{:x}", hasher.finalize()))
 }
 
-/// Key text with the checkout's own path left out, so a worktree reuses
-/// the products `make worktree` cloned from the main checkout.
 fn portable(root: &Path, text: &[u8]) -> Vec<u8> {
     let prefix = format!("{}/", root.display());
     let prefix = prefix.as_bytes();
@@ -287,14 +274,8 @@ fn portable(root: &Path, text: &[u8]) -> Vec<u8> {
     kept
 }
 
-/// The build index's file in each build directory.
 const INDEX: &str = "cache.tsv";
 
-/// One index of every cached step of an edition's build, `cache.tsv` in its
-/// build directory, as pret's Makefile keeps one dependency file per object.
-/// Each row names a product from the build directory, the key of everything
-/// its step read, the digest of what it wrote and, for an asset, the files
-/// its encoder read.
 pub(crate) struct Index {
     output: PathBuf,
     rows: Mutex<BTreeMap<String, Row>>,
@@ -348,7 +329,6 @@ impl Index {
         self.rows.lock().unwrap().get(&self.name(product)).cloned()
     }
 
-    /// Whether `products` still hold what the step keyed `key` wrote.
     fn fresh(&self, products: &[PathBuf], key: &str) -> bool {
         self.row(&products[0]).is_some_and(|row| {
             row.key == key && products_digest(products).is_ok_and(|actual| actual == row.digest)
@@ -390,7 +370,6 @@ impl Index {
     }
 }
 
-/// Run `step` over `items` on every CPU, keeping their order.
 fn parallel<T: Sync, R: Send>(
     items: &[T],
     step: impl Fn(&T) -> Result<R, String> + Sync,
@@ -425,9 +404,6 @@ fn parallel<T: Sync, R: Send>(
         .collect())
 }
 
-/// Fill the image with zeros to the next power of two, the size of the ROM
-/// chip that holds it, as pret's `gbafix -p` pads a build to its cartridge
-/// (with 0xff there). The size follows from the image alone.
 fn pad_to_cartridge(image: &Path) -> Result<(), String> {
     let mut bytes = fs::read(image).map_err(|error| format!("{}: {error}", image.display()))?;
     let size = cartridge_size(bytes.len());
@@ -438,13 +414,10 @@ fn pad_to_cartridge(image: &Path) -> Result<(), String> {
     Ok(())
 }
 
-/// The smallest power-of-two cartridge that holds `length` bytes.
 fn cartridge_size(length: usize) -> usize {
     length.next_power_of_two()
 }
 
-/// Whether the link places any code: a C source, or an object with a
-/// non-empty `.text`. Pictures and data are not code.
 fn links_game_code(sources: &[PathBuf], objects: &[PathBuf]) -> Result<bool, String> {
     for (source, object) in sources.iter().zip(objects) {
         let bytes = fs::read(object).map_err(|error| format!("{}: {error}", object.display()))?;
@@ -467,7 +440,6 @@ fn carries_code(source: &Path, object: &[u8]) -> Result<bool, String> {
         .any(|section| section.name() == Ok(".text") && section.size() > 0))
 }
 
-/// The linker command for the whole image.
 fn link_command(
     root: &Path,
     script: &Path,
@@ -498,9 +470,6 @@ fn link_command(
     arguments
 }
 
-/// The main image's symbols linked with every stream-reading object empty,
-/// for the overlays' links: every symbol before the streams keeps its
-/// address. Only the symbol table is kept.
 #[allow(clippy::too_many_arguments)]
 fn symbols_pass(
     root: &Path,
@@ -519,10 +488,6 @@ fn symbols_pass(
         .filter(|source| !streamed.contains(source))
         .map(|source| output.join("obj").join(source).with_extension("o"))
         .collect();
-    // The streamed sources are left out. Their labels, such as the directory
-    // rows naming each overlay, stay unresolved here; each is a word whose
-    // size does not depend on its value, and the final link resolves them
-    // all and checks that no global moved.
     let elf = pass.join(format!("{name}.elf"));
     let mut arguments = link_command(root, script, text, &objects, &elf);
     arguments.insert(1, "--unresolved-symbols=ignore-all".to_owned());
@@ -545,8 +510,6 @@ fn symbols_pass(
     Ok(elf)
 }
 
-/// Every global symbol, the only kind the overlays can see, keeps its
-/// address in the final image.
 fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
     let table = |path: &Path| -> Result<std::collections::BTreeMap<String, String>, String> {
         let text = command(
@@ -587,26 +550,14 @@ fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
     }
 }
 
-/// A game header of Camelot's own fixed addresses: each `#define <prefix>X`
-/// spells one address its code used as a constant, beside the name the
-/// linker places there, and the build checks every entry against the link.
 struct EntryHeader {
-    /// The header, relative to the game directory.
     path: &'static str,
-    /// The prefix of every entry's macro name.
     prefix: &'static str,
-    /// The address digits an entry may spell, after `0x`.
     region: &'static str,
-    /// Digits, after `0x`, that no definition but an entry may spell.
     refused: &'static str,
-    /// Whether named offsets between linked places are admitted.
     offsets: bool,
 }
 
-/// ROM code calls the resident IWRAM routines through fixed entry addresses,
-/// as Camelot's did: a call through a label compiles to a direct `bl`, which
-/// cannot reach IWRAM. Some callers instead add a routine's offset to the
-/// bank's first label.
 const IWRAM_CALLS: EntryHeader = EntryHeader {
     path: "INCLUDE/IWRAM_CALL.H",
     prefix: "Iwram_",
@@ -615,9 +566,6 @@ const IWRAM_CALLS: EntryHeader = EntryHeader {
     offsets: true,
 };
 
-/// Camelot's code also reached fixed RAM buffers through constant addresses,
-/// which GCC folds with their offsets where it cannot fold a label: into
-/// strength-reduced loop bounds and literals shared between neighbours.
 const RAM_BUFFERS: EntryHeader = EntryHeader {
     path: "INCLUDE/RAM_BUFFER.H",
     prefix: "Ram_",
@@ -626,8 +574,6 @@ const RAM_BUFFERS: EntryHeader = EntryHeader {
     offsets: true,
 };
 
-/// The hardware cartridge entry is the sole ROM address admitted as a
-/// constant. It must name the ARM entry actually linked at the cartridge base.
 const CARTRIDGE_BOOT: EntryHeader = EntryHeader {
     path: "INCLUDE/CARTBOOT.H",
     prefix: "Cart_",
@@ -636,8 +582,6 @@ const CARTRIDGE_BOOT: EntryHeader = EntryHeader {
     offsets: false,
 };
 
-/// Every entry of the game's fixed-address headers must agree with where
-/// the linker put the names beside it.
 fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), String> {
     use object::{Object, ObjectSymbol};
 
@@ -651,8 +595,6 @@ fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), 
             .map_err(|error| format!("{}: {error}", header.display()))?;
         if !entries.is_empty() {
             if kind.path == CARTRIDGE_BOOT.path {
-                // nm clears Thumb function bits; a cartridge restart must
-                // retain the raw ELF value to verify its ARM-state target.
                 let bytes = fs::read(elf).map_err(|error| format!("{}: {error}", elf.display()))?;
                 let file = object::File::parse(bytes.as_slice())
                     .map_err(|error| format!("{}: {error}", elf.display()))?;
@@ -689,7 +631,6 @@ fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), 
     Ok(())
 }
 
-/// Each entry against `linked`, the address the link gave a name.
 fn entries_agree(
     entries: &[CheckedEntry],
     linked: impl Fn(&str) -> Option<u32>,
@@ -714,8 +655,6 @@ fn entries_agree(
     Ok(())
 }
 
-/// One checked entry: the named place's address, or its offset from another
-/// name when `from` names that one.
 #[derive(Debug, PartialEq)]
 struct CheckedEntry {
     name: String,
@@ -723,13 +662,6 @@ struct CheckedEntry {
     value: u32,
 }
 
-/// The `#define <prefix>X ((type)0x........) /* Name */` entries and the
-/// `#define <prefix>XOffset 0x.... /* Name - FromName */` offsets that apply
-/// when only `defined` macros are defined: an edition whose layout moves a
-/// buffer lists it under `#if defined(EDITION)` beside the others' entry.
-/// Any definition, in any branch, spelling an address the header refuses or
-/// an offset without its names is refused, as is a condition other than
-/// `defined` tests joined by `||`.
 fn entry_list(
     kind: &EntryHeader,
     text: &str,
@@ -737,19 +669,17 @@ fn entry_list(
 ) -> Result<Vec<CheckedEntry>, String> {
     let (prefix, region, refused) = (kind.prefix, kind.region, kind.refused);
     let entry = regex::Regex::new(&format!(
-        r"^#define\s+{prefix}\w+\s+\(\(.*\)\s*0x({region})\)\s*/\*\s*(\w+)\s*\*/\s*$"
+        r"^#define\s+{prefix}\w+\s+FIXED_ADDRESS\(\(.*\),\s*0x({region}),\s*(\w+)\)\s*$"
     ))
     .expect("static pattern");
     let offset = regex::Regex::new(&format!(
-        r"^#define\s+{prefix}\w+Offset\s+0x([0-9a-fA-F]+)\s*/\*\s*(\w+)\s*-\s*(\w+)\s*\*/\s*$"
+        r"^#define\s+{prefix}\w+Offset\s+FIXED_OFFSET\(0x([0-9a-fA-F]+),\s*(\w+),\s*(\w+)\)\s*$"
     ))
     .expect("static pattern");
     let address = regex::Regex::new(&format!("0x{refused}")).expect("static pattern");
     let offset_name =
         regex::Regex::new(&format!(r"^#define\s+{prefix}\w+Offset\b")).expect("static pattern");
     let mut entries = Vec::new();
-    // Each open conditional: whether its enclosing text applies, whether its
-    // current branch applies, and whether an earlier branch already did.
     let mut open: Vec<(bool, bool, bool)> = Vec::new();
     let applies = |open: &[(bool, bool, bool)]| open.last().is_none_or(|state| state.1);
     for line in text.lines() {
@@ -819,8 +749,6 @@ fn entry_list(
     Ok(entries)
 }
 
-/// A header condition: `defined(NAME)` or `defined NAME` tests, optionally
-/// negated with `!`, joined by `||`.
 fn condition(text: &str, defined: &[&str]) -> Result<bool, String> {
     let test = regex::Regex::new(r"^(!?)\s*defined\s*(?:\(\s*(\w+)\s*\)|\s(\w+))$")
         .expect("static pattern");
@@ -835,8 +763,6 @@ fn condition(text: &str, defined: &[&str]) -> Result<bool, String> {
     Ok(holds)
 }
 
-/// Scaffolding reads not-yet-sourced data from the builder's own verified ROM as
-/// `baserom.gba`, as early pret builds did; the ROM itself is never tracked.
 fn base_rom(root: &Path, target: DecompTarget, output: &Path) -> Result<(), String> {
     let rom = root.join(target.rom);
     let bytes = fs::read(&rom).map_err(|error| format!("{}: {error}", rom.display()))?;
@@ -850,8 +776,6 @@ fn base_rom(root: &Path, target: DecompTarget, output: &Path) -> Result<(), Stri
     std::os::unix::fs::symlink(&rom, &link).map_err(|error| error.to_string())
 }
 
-/// Compile or assemble every source into `output/obj`, reusing an object
-/// while the index holds it under the key of what its step reads now.
 fn compile_all(
     root: &Path,
     target: DecompTarget,
@@ -869,8 +793,6 @@ fn compile_all(
             .map_err(|error| format!("{}: {error}", source.display()))
     })?;
     let stale: Vec<Plan> = plans.into_iter().flatten().collect();
-    // Assets are made only for the objects assembled now; an asset two of
-    // them read is made once.
     let mut assets = Vec::new();
     for plan in &stale {
         for asset in source_assets(root, target, &plan.source)? {
@@ -889,19 +811,15 @@ fn compile_all(
     Ok(objects)
 }
 
-/// The steps that make one object, the key of everything they read, and
-/// the intermediate files to remove once the object is made.
 struct Plan {
     source: PathBuf,
     object: PathBuf,
     key: String,
     steps: Vec<Vec<String>>,
-    /// Assembly the build writes before the steps, from a sequence MIDI.
     assembly: Option<(PathBuf, String)>,
     scratch: Vec<PathBuf>,
 }
 
-/// The plan for `object`, or none when the index already holds it.
 fn plan(
     root: &Path,
     target: DecompTarget,
@@ -919,8 +837,6 @@ fn plan(
     let mut assembly = None;
     let mut scratch = Vec::new();
     let steps = if extension == Some("MID") {
-        // A sequence MIDI converts to assembly beside its object, as pret's
-        // mid2agb does; the converted text is the key.
         let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
         let text = ags::sound::sequence_assembly(&midi)?;
         let path = object.with_extension("s");
@@ -930,8 +846,6 @@ fn plan(
         assembly = Some((path, text));
         vec![step]
     } else if matches!(extension, Some("C" | "c")) {
-        // The routed compile reads its own preprocessed text, so the key is
-        // that text plus every command; headers are covered by preprocessing.
         let preprocessed = object.with_extension("i");
         let steps = c_steps(target, source, object)?;
         let preprocess = preprocessor_only(&steps, &source_text, &preprocessed)?;
@@ -1024,9 +938,6 @@ fn c_import_directory(object: &Path) -> Result<&Path, String> {
         .ok_or_else(|| format!("{} is not under a build's obj directory", object.display()))
 }
 
-/// What an assembly source reads: its text and includes, the code streams
-/// it embeds and the key of every asset it reads, which stands for the
-/// asset's bytes, so an unchanged asset need not be made again.
 fn assembly_inputs(
     hasher: &mut Sha256,
     root: &Path,
@@ -1050,8 +961,6 @@ fn assembly_inputs(
     Ok(())
 }
 
-/// Editable sound and resource files this source reads, in sound/resource order.
-/// SOUND uses incbin; GRAPHICS and MAP also allow generated assembly includes.
 fn asset_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
@@ -1071,7 +980,6 @@ fn asset_files(root: &Path, source: &Path) -> Vec<String> {
     sound
 }
 
-/// One built asset a source reads, and where its editable input lives.
 struct Asset {
     built: String,
     game: PathBuf,
@@ -1079,8 +987,6 @@ struct Asset {
     sound: bool,
 }
 
-/// The assets `source` reads. Graphics in a COMMON source belong to COMMON;
-/// sound belongs to the edition unless explicitly shared.
 fn source_assets(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec<Asset>, String> {
     let mut assets = Vec::new();
     for built in asset_files(root, source) {
@@ -1122,7 +1028,6 @@ fn source_assets(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec
     Ok(assets)
 }
 
-/// The primary input of an asset, from the checkout's root.
 fn asset_input(root: &Path, asset: &Asset) -> Result<PathBuf, String> {
     if !asset.sound {
         return Ok(asset
@@ -1144,7 +1049,6 @@ fn asset_input(root: &Path, asset: &Asset) -> Result<PathBuf, String> {
     }
 }
 
-/// Encode an asset, and name every further file its encoder read.
 fn encode(root: &Path, asset: &Asset) -> Result<(Vec<u8>, Vec<String>), String> {
     let input = asset_input(root, asset)?;
     let bytes = fs::read(root.join(&input))
@@ -1165,8 +1069,6 @@ fn encode(root: &Path, asset: &Asset) -> Result<(Vec<u8>, Vec<String>), String> 
     Ok((encoded, read.into_inner()))
 }
 
-/// An asset's key: the encoder, its recipe and every input it read, or none
-/// when one of them is gone.
 fn asset_key(root: &Path, asset: &Asset, inputs: &[String]) -> Option<String> {
     let mut hasher = Sha256::new();
     hasher.update(env!("ALCHEMY_ENCODER").as_bytes());
@@ -1183,9 +1085,6 @@ fn asset_key(root: &Path, asset: &Asset, inputs: &[String]) -> Option<String> {
     Some(format!("{:x}", hasher.finalize()))
 }
 
-/// Key every asset the sources read. An asset whose inputs are unchanged
-/// keeps its key without being made; any other is encoded now, to learn
-/// the inputs its encoder reads.
 fn prepare_assets(
     root: &Path,
     target: DecompTarget,
@@ -1215,7 +1114,6 @@ fn prepare_assets(
     Ok(())
 }
 
-/// Make the asset's file when the index does not already hold it.
 fn materialize(root: &Path, output: &Path, index: &Index, asset: &Asset) -> Result<(), String> {
     let path = output.join(&asset.built);
     match index.row(&path) {
@@ -1235,14 +1133,8 @@ fn write_asset(root: &Path, output: &Path, index: &Index, asset: &Asset) -> Resu
     index.record(&[path], &key, inputs)
 }
 
-/// The compressor Camelot's resource packer ran on every code overlay. Each
-/// overlay takes the smaller of the two encodings, the palette one on ties.
 const OVERLAY_MACHINE: LzMachine = ags::resource::PACKER;
 
-/// The code overlays an assembly source reads with
-/// `.incbin "overlays/resource_XXX.lz"`, each linked from the game's common
-/// listing directory and compressed, as pret builds compressed files its data
-/// sources read.
 pub(crate) fn stream_ids(
     root: &Path,
     target: DecompTarget,
@@ -1300,8 +1192,6 @@ pub(crate) fn stream_ids(
     Ok(found)
 }
 
-/// symbols_pass removes the whole stream owner, so it may carry only the
-/// terminal overlay section. Resident bytes must keep their own object.
 fn dedicated_stream_source(text: &str) -> Result<(), String> {
     let mut overlays = false;
     for row in text.lines().map(str::trim).filter(|row| !row.is_empty()) {
@@ -1370,8 +1260,6 @@ fn target_assembly_command(
     step
 }
 
-/// Link and compress every overlay `source` reads, and return each object
-/// the overlays link with its source: their maintained objects and listings.
 #[allow(clippy::too_many_arguments)]
 fn build_overlay_streams(
     root: &Path,
@@ -1386,8 +1274,6 @@ fn build_overlay_streams(
     let listings = overlay_listings(target);
     let directory = output.join("overlays");
     fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
-    // The sources each overlay's own script links beside its listing, compiled
-    // once for every overlay that shares them.
     let mut linked = Vec::with_capacity(ids.len());
     let mut sources = Vec::new();
     for id in ids {
@@ -1446,13 +1332,10 @@ fn build_overlay_streams(
     Ok(objects)
 }
 
-/// Each overlay's own script, beside its listing, places its objects.
 fn overlay_script(listings: &Path, id: &str) -> PathBuf {
     listings.join(format!("resource_{id}.ld"))
 }
 
-/// One code overlay's link: its listing, script and objects, and the main
-/// image's symbols (`table` is the digest of their listing).
 struct Overlay<'a> {
     root: &'a Path,
     target: DecompTarget,
@@ -1466,9 +1349,6 @@ struct Overlay<'a> {
     directory: &'a Path,
 }
 
-/// Link one overlay listing alone at its load address with its own script,
-/// and compress the image. The map and the ELF with the overlay's own
-/// symbols stay beside it for progress.
 fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     let Overlay {
         root,
@@ -1524,14 +1404,10 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     hasher.update(table.as_bytes());
     hasher.update(format!("{OVERLAY_MACHINE:?}").as_bytes());
     hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
-    // The packer belongs to the encoder; the steps between the commands (the
-    // names an overlay hides, the call transform) belong to this file.
     hasher.update(env!("ALCHEMY_ENCODER").as_bytes());
     hasher.update(env!("ALCHEMY_LINK_RULE").as_bytes());
     let key = format!("{:x}", hasher.finalize());
     let products = overlay_products(directory, id);
-    // The gates run on every build, on a reused link too: this one on the
-    // linked image, the id gate on the listing's object.
     if index.fresh(&products, &key) {
         return overlay_gate(&elf, &map);
     }
@@ -1540,9 +1416,6 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         materialize(root, output, index, &asset)?;
     }
     command(&assemble, root)?;
-    // The overlay's own names (its import veneers carry the names of the main
-    // functions they reach) hide the main image's: the linker sees one each.
-    // An overlay reaches only its own copies of the compiler library too.
     let mut own = BTreeSet::new();
     for path in std::iter::once(PathBuf::from(&object))
         .chain(objects.iter().cloned())
@@ -1572,8 +1445,6 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         })
     };
     fs::write(&names, list(&mut own.iter())).map_err(|error| error.to_string())?;
-    // The link reads only the main image's symbols, so the copy keeps none of
-    // its section contents and is gone once the overlay is linked.
     command(
         &[
             "arm-none-eabi-objcopy",
@@ -1587,8 +1458,6 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     let linked = command(&link, root);
     let _ = fs::remove_file(&own_symbols);
     linked?;
-    // The kept ELF carries the overlay's own symbols only: the main image's,
-    // which the link imported as absolute values, are dropped.
     let imported = imported_symbols(&elf, &own)?;
     fs::write(&names, list(&mut imported.iter())).map_err(|error| error.to_string())?;
     let stripped = command(
@@ -1615,8 +1484,6 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     index.record(&products, &key, Vec::new())
 }
 
-/// The global absolute symbols of a linked overlay that it does not define
-/// itself: the main image's, read through `-R`.
 fn imported_symbols(elf: &str, own: &BTreeSet<String>) -> Result<BTreeSet<String>, String> {
     use object::{Object, ObjectSymbol, SymbolSection};
     let bytes = fs::read(elf).map_err(|error| format!("{elf}: {error}"))?;
@@ -1637,8 +1504,6 @@ fn imported_symbols(elf: &str, own: &BTreeSet<String>) -> Result<BTreeSet<String
         .collect())
 }
 
-/// Every kept product of one overlay's link and compression, the stream
-/// first: the index row is the stream's.
 pub(crate) fn overlay_products(directory: &Path, id: &str) -> [PathBuf; 4] {
     [
         format!("resource_{id}.lz"),
@@ -1665,9 +1530,6 @@ fn products_digest(paths: &[PathBuf]) -> Result<String, String> {
     Ok(format!("{:x}", hasher.finalize()))
 }
 
-/// What an overlay's link reads besides its commands: the listing and its
-/// includes, the keys of its assets, its script and the recorded digest of
-/// every object it links.
 fn overlay_inputs(
     hasher: &mut Sha256,
     root: &Path,
@@ -1697,20 +1559,12 @@ fn overlay_inputs(
     Ok(())
 }
 
-/// Overlay code never branches straight into the main image: the gate reads
-/// the linked ELF and its map, before the packer's call transform.
 fn overlay_gate(elf: &str, map: &str) -> Result<(), String> {
     let image = fs::read(elf).map_err(|error| format!("{elf}: {error}"))?;
     let map = fs::read_to_string(map).map_err(|error| format!("{map}: {error}"))?;
     crate::gate::overlay::check(&image, &map)
 }
 
-/// The resource packer's form of a code block's Thumb calls: every bl pair
-/// holds its target as an offset from the block (less two) instead of from
-/// the call, and the loader's PATCH_THUMB_BRANCH kernel turns each pair back
-/// into a call from where the block lands. Pairs are found as the kernel finds
-/// them, a 0xf800 halfword after a 0xf000 halfword, so the kernel undoes this
-/// exactly.
 fn store_thumb_calls(block: &mut [u8]) {
     let half = |block: &[u8], at: usize| u32::from(u16::from_le_bytes([block[at], block[at + 1]]));
     let mut at = 2;
@@ -1730,8 +1584,6 @@ fn store_thumb_calls(block: &mut [u8]) {
     }
 }
 
-/// The plan's preprocessing step when it has one, or a `-E` run of the same
-/// driver command, so the cache key covers every included header.
 pub(crate) fn preprocessor_only(
     steps: &[Vec<String>],
     source: &str,
@@ -1765,9 +1617,6 @@ pub(crate) fn preprocessor_only(
     Ok(command)
 }
 
-/// Assembly text followed by every file it `.include`s, recursively, each
-/// found as the assembler finds it: in the first of `directories` (the
-/// working directory, then the build directory) that holds it.
 fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String> {
     let text = fs::read(source).map_err(|error| format!("{}: {error}", source.display()))?;
     let mut key = text.clone();
@@ -1776,7 +1625,6 @@ fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String
             continue;
         };
         let include = rest.trim().trim_matches('"');
-        // A built asset is keyed by its inputs instead of its bytes.
         if ["GRAPHICS/", "MAP/", "SOUND/", "COMMON/"]
             .iter()
             .any(|prefix| include.starts_with(prefix))

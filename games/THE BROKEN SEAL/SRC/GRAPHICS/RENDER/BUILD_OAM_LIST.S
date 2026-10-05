@@ -1,12 +1,3 @@
-@ Builds the object-attribute list from the linked object heads at 0x03001800,
-@ then writes the affine parameter words. The runtime copies these 224 bytes
-@ to a heap block, calls them and frees them (loader 0x08003e10).
-@ It is ARM-state code with an internal subroutine entered by conditional blne
-@ and left by bxeq lr, and it links into the IWRAM routine at 0x03000168 by
-@ hand (add lr, pc; bx r4). Neither form is compiler output. No TLA
-@ edition carries these bytes; TLA has its own revision (TLA
-@ GRAPHICS/BUILD_OAM_LIST.S).
-@ credit: handwritten — ARM object-attribute list builder copied to the heap
 .syntax unified
 	.arm
 	.global Render_BuildOamListKernel

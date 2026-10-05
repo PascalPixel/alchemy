@@ -1,4 +1,3 @@
-/* Declarations shared by the Bilibin palace garden's sources (resource_38e). */
 #ifndef NIWA_H
 #define NIWA_H
 
@@ -11,39 +10,37 @@
 #include "FACING_OBJECT.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
 struct SceneHandle {
     u8 unknown_00[9];
-    u8 flags09;                     /* 0x09 */
+    u8 flags09;
 };
 
 struct SceneEntity {
     u8 unknown_00[0x23];
-    u8 fp;                     /* 0x23 */
+    u8 fp;
     u8 unknown_24[0x2c];
-    struct SceneHandle *h;     /* 0x50 */
+    struct SceneHandle *h;
 };
 
-/* Entity and handle as the lobe-orbit callback reads them. */
 struct SceneHandle_0200090c {
     u8 unknown_00[30];
-    s16 field1e;                    /* 0x1e */
+    s16 field1e;
 };
 
 struct SceneEntity_0200090c {
     u8 unknown_00[8];
-    s32 x;                          /* 0x08 */
-    s32 y;                          /* 0x0c */
+    s32 x;
+    s32 y;
     u8 unknown_10[0x20];
-    s32 phase;                      /* 0x30 */
+    s32 phase;
     u8 unknown_34[4];
-    s32 origin_x;                    /* 0x38 */
-    s32 origin_y;                    /* 0x3c */
+    s32 origin_x;
+    s32 origin_y;
     u8 unknown_40[0x10];
-    struct SceneHandle_0200090c *handle;     /* 0x50 */
+    struct SceneHandle_0200090c *handle;
 };
 
 typedef struct OrbitingSceneObjectSprite {
@@ -85,8 +82,6 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-/* The scene's tables and the gate's animated cell steps, laid out after
- * the code. */
 extern u8 Placement_Scripts[];
 extern u8 Placement_Messages[];
 extern const u16 Niwa_GateCells[];

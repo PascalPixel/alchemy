@@ -56,8 +56,6 @@ extern const s32 BattleFx6_Gravity[];
 extern u16 BattleFx6_FlareCells[];
 extern u16 ParticleStreams_CellOffsets[];
 
-/* The effect's work block (heap slot 39). */
-
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -71,11 +69,6 @@ void Graphics_SetBg2AffineScaleHalf(void)
     REG_BG2PA = 0x80;
 }
 
-/* Battle effect mode 6: eight sprite objects swoop in over a cloud of
-   rising particles while sparks converge on a flare; A or B skips the
-   244-frame first phase after frame 16. In the 144-frame second phase five
-   columns fall one after another and burst into bouncing particles on
-   landing. */
 void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 {
     s32 pos[4];

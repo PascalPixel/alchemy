@@ -18,7 +18,6 @@
 extern u8 gMapCellBuffer[];
 extern u8 gBattleFxWork[];
 
-/* Two rectangle tables with a seven-byte stride. */
 extern u8 CounterReveal_PanelX[];
 extern u8 CounterReveal_PanelY[];
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -38,13 +37,6 @@ static __inline__ void CopyWords(WordCopy copy, void *destination,
 extern u8 gWorkSlot[];
 #define PIXEL_BUFFER Ram_MapCellBuffer
 
-/*
- * A counter reveal against the effect's first actor, 132 frames long. The
- * sheet swings on BG2 while each line's BG2X wobbles; at frames 32 and 64 it
- * jumps to a new place and fades back in through BLDALPHA, and from frame 88
- * the panels of the reveal are drawn one after another, two frames each,
- * while the actor is thrown up into the air.
- */
 void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 {
     void **heap_cache;
@@ -255,10 +247,6 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
     BattleFx_EndCanvasLayer();
 }
 
-/* Convert the tiled background through a blue palette ramp. Each screen
- * column begins after its random delay; the row budget grows each frame.
- * The second palette bank preserves the converted pixels after the sweep.
- */
 void Graphics_ConvertBackgroundToBlueRamp(void)
 {
     s32 i, x, y, row, end, speed;

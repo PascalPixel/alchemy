@@ -1,8 +1,3 @@
-/* 2026-10-03: ApplyChildValuesFar now uses OBJECT_DISPATCH.H's maintained
-   void(DispatchObject *, u32) declaration and an explicit object view.
-   Still cannot compile: BattleEffect_SetRandomTableValueOnObject is
-   undeclared. The existing no-argument ObjectTable_Get call is outside
-   this ABI correction; no new byte or behavior proof is claimed. */
 #include "FIXED_MATH.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
@@ -11,7 +6,6 @@
 
 extern s8 BattleFx_RandomChildValues[];
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 
 struct GlobalState {

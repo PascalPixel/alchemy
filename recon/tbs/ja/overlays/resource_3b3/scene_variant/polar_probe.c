@@ -1,8 +1,3 @@
-/* NONMATCHING: localized scene source, 2026-10-01.
- * The complete 328-byte probe uses rounded cell centers and polar steps.
- * Japanese probes from the actor position using its direction-step table
- * and has a complete 316-byte function.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "HASHIRA.H"
@@ -50,8 +45,6 @@ extern const struct ScenePlacement gTakaraHashiraPlacementsOther[];
 s32 Engine_RandomNext();
 extern u32 gBgScroll[];
 
-/* Copy one map cell's attribute fields (all but the tile) from src into the
- * cell at x, y of a map layer. */
 s32 FieldScene_RunScene3b3SequenceD(void)
 {
     s32 FieldScene_RunScene3b3SequenceD();

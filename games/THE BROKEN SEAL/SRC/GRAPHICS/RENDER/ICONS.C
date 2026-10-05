@@ -18,7 +18,6 @@ extern u8 *UiIcon_OverlayPointerTable[];
 
 void UiIcon_BuildItemIconTiles(u32, s32, s32 *, s32 *, s32);
 
-/* 2つの境界アドレス間を4バイト単位で数える。 */
 s32 Ui_CountIconTableEntries(void)
 {
     return (UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers) >> 2;

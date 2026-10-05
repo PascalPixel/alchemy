@@ -171,7 +171,6 @@ void FieldScene_RunStepThen10();
 
 enum { CabinSpeakerRequest = 0xa01b };
 
-/* The item object once it has been placed. */
 extern struct FieldActor *FuneHeya_AnchorObject;
 
 void Object_SetActionById();
@@ -227,11 +226,6 @@ void FieldScene_CallPairWith10(s32 a, u16 b);
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
 
-/* Actor placement check for resource_3b1. */
-
-/* Bucket offsets, packed as {s16 hi; s16 lo} per entry. */
-
-/* Offset the actor's position by the bucket's packed pair and accept it only if both placement checks pass. */
 s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
     struct FieldActor *obj = Object_GetByIdFar(0);
@@ -257,7 +251,6 @@ s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
     return 1;
 }
 
-/* Scene state helper for overlay resource_3b1. */
 s32 SceneState_ApplyLevelFromFlags(void)
 {
     s32 ret = 0;
@@ -515,7 +508,6 @@ void FieldScene_RunScene3b1SequenceD(void)
     }
 }
 
-/* Run this scene only when flag 0x922 is set. */
 void FieldScene_RunFlagGatedThreeActorSetup(void)
 {
     if (Engine_GameFlagIsSet(0x922) == 0)
@@ -1156,7 +1148,6 @@ void FieldScene_RunBranchingActorPresentation(void)
     Engine_EventEnd();
 }
 
-/* Ship cabins entry: record the arrival, set the companions' child values by the story flags, then run the entrance's scene. */
 s32 FuneHeya_ApplyEntryState(void)
 {
     Engine_TaskWait(1);
@@ -1475,7 +1466,6 @@ void SceneActor_SetFlagBit3ForActors28To35(void)
     }
 }
 
-/* Ship cabin: for each of four groups whose flag is set (all when not gated), place its first actor at the group's spot and hide the stand-in actor 10 to 13. */
 void FuneHeya_PlaceFoundActors(s32 gated)
 {
     s32 actor;
@@ -1509,8 +1499,6 @@ void FuneHeya_PlaceFoundActors(s32 gated)
         Engine_ActorSetPosition(13, 0, 0);
     }
 }
-
-/* Message ids. */
 
 void FieldScene_RunFourActorCoordinatePresentation(void)
 {
@@ -1774,7 +1762,6 @@ void FieldScene_RunFlagBranchedSetupCascade(void)
     }
 }
 
-/* Actor 8 hears of monsters aboard the ship. */
 void FuneHeya_AskAboutMonsters(void)
 {
     Engine_EventBegin();
@@ -1788,7 +1775,6 @@ void FuneHeya_AskAboutMonsters(void)
     FieldScene_RunSceneStep(9, 14, 0);
 }
 
-/* Message ids. */
 void FuneHeya_AnnounceTurn(void)
 {
     u32 i;
@@ -1840,7 +1826,6 @@ void FieldScene_RunActors24And25Setup(void)
     Engine_EventEnd();
 }
 
-/* Cabin dialogue and actor movement vary with the passenger story flags. */
 void Scene_RunConditionalActorPresentation(s32 a0)
 {
     u32 i;
@@ -1955,9 +1940,6 @@ void Scene_RunConditionalActorPresentation(s32 a0)
     L_02004592:;
 }
 
-/* Places the Anchor Charm (item 232) as object 22, drawing its item icon
- * into the object's VRAM block, the first time only (flag 0x200); returns
- * the object. */
 struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
 {
     s32 set = Value1(Engine_GameFlagIsSet, 0x200);
@@ -2030,7 +2012,6 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
     FieldScene_RunSceneStep(6, 17, src);
 }
 
-/* Pose one of the actors 18 to 26 for its scene role. */
 void FuneHeya_PoseSceneActor(s32 id)
 {
     switch (id) {
@@ -2094,7 +2075,6 @@ void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
     Engine_EventWait(selected);
 }
 
-/* Dispatches 26 scene steps; step 18 continues with step 14, and each step assigns its own roles to the two parameters. */
 void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 {
     extern const s32 FuneHeya_ActionScriptE[];
@@ -2366,8 +2346,6 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
     }
 }
 
-/* Return the actor id (from 8, or 18 for the alternate set) of the first of
- * nine consecutive flags of a group that is set, or 0 when none is. */
 s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate)
 {
     s32 flag = 0;
@@ -2407,10 +2385,6 @@ void SceneState_ApplyActor8FourFlags(void)
     SceneActor_RunFirstMatchingSlot(8, 0x990);
 }
 
-/*
- * Scan slots 0 through 8 inclusive.  On the first a1 that Engine_GameFlagIsSet
- * accepts, call Engine_ActorSetPosition and stop.  a0 and a1 advance together.
- */
 void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
 {
     unsigned int i = 0;
@@ -2452,11 +2426,6 @@ void FuneHeya_SetupReplacementRower(void)
     Engine_EventEnd();
 }
 
-/* The party comes aboard and hears there are monsters belowdecks. */
-
-/* The leader walks in and the three companions take their places beside
- * him; the shout about monsters comes up, actor 8 answers it and the
- * companions set off. */
 void FieldScene_RunPositionTransferPresentation(void)
 {
     struct FieldActor *record;
@@ -2497,7 +2466,6 @@ void FieldScene_RunPositionTransferPresentation(void)
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 40);
     Ui_SetRenderResultFromObject(10);
-    /* The shout is shown centred, and the line after it is spoken. */
     message = (s32)MsgFuneMonstersBelowdecks;
     UiText_ShowCenteredMessage(message, 1, 10);
     Engine_EventWait(10);
@@ -2798,13 +2766,6 @@ void FieldScene_RunExtendedFormationPresentation(void)
     Engine_EventEnd();
 }
 
-/*
- * Fune room: a one-shot cue timer. While the timer word is nonzero it counts
- * down, and exactly at 70 remaining it fires the cue. Once it hits zero, when
- * the scene's timer condition is met the cue plays and the timer is rearmed
- * to 80.
- */
-
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {
     s32 value;
@@ -2825,9 +2786,6 @@ void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
     }
 }
 
-/*
- * resource_3b1 helper: set bit 3 of the flags byte of actors 28 through 35.
- */
 void RunActorsEightAndNineMapEvent(void)
 {
     Engine_EventBegin();
@@ -3036,7 +2994,6 @@ void FuneHeya_DismissReplacementRowers(void)
     Engine_EventRequestExit(10);
 }
 
-/* Scan a and b for the first matching entries, then use each scan's miss count to index the other list. */
 void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 {
     s32 cnt_a = 0;

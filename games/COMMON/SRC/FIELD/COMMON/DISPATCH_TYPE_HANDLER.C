@@ -8,7 +8,6 @@ void FieldEvent_RunTypeHandler(void);
 
 void Field_DispatchTypeHandler(s32 kind)
 {
-    /* 種別0から3に対応する初期化処理を呼ぶ。 */
     if (kind == 0) {
         BattleFx_Run();
     } else if (kind == 1) {

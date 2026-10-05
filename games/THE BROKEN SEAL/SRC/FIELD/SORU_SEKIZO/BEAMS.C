@@ -6,7 +6,6 @@
 s32 SceneEventRuntime_SelectInitialSceneByFlags(void);
 void SoruSekizo_RunSealOpenedSequence(void);
 
-/* A map-cell copy as MapCopyCellsTo takes it. */
 struct CellCopy {
     s32 src_x;
     s32 src_y;
@@ -32,11 +31,9 @@ struct SealScene {
     s32 unknown_c4[3];
 };
 
-/* The seal scene the guarded steps fill in; the first of the overlay's own work. */
 struct SealScene gSealScene;
 #define COPY_CELLS(c) Call6(Engine_MapCopyCellsTo, (c).src_x, (c).src_y, (c).dest_x, (c).dest_y, (c).width, (c).height)
 
-/* Sol Sanctum seal: unless flag 0x80f is set, pan to the seal and pulse its cells twenty times, open it, then either walk the party onto the revealed stairs or, once the three statue flags are set, run the follow-up scene. */
 void SoruSekizo_OpenSeal(void)
 {
     struct SealScene *scene;
@@ -152,7 +149,6 @@ void Scene_ShineRightBeam(void)
     Engine_EventEnd();
 }
 
-/* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
     Engine_EventShowMessage(speaker, 0);

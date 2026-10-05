@@ -3,10 +3,6 @@
 #include "BATTLE_PARTY.H"
 #include "B5_CONTEXT.H"
 
-/* Battle timers: per-unit countdown bytes in the owner record, and the
-   placement entries whose timers expire into Djinn activation. */
-
-/* The Lost Age stores 72 entries; The Broken Seal stores 64. */
 struct PlacementList {
     struct DjinnRecoveryEntry entries[72];
     s32 count;

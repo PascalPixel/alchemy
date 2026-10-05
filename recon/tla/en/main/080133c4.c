@@ -3,17 +3,6 @@
 #include "IO_REG.H"
 #include "IRQ.H"
 
-/* Remaining: complete extent 112/116 bytes including the pool; fresh
-   score 695: 5 register-only, 4 operand, 3 reordered,
-   2 inserted and 2 deleted differences. The compiler retains IwramIrqMain
-   across the first DMA in r4, saves r5/r6 rather than r5, and shares the
-   bank's pool entry; vector/table loads and later stores also differ.
-   Trials: direct registers 2150 with unresolved names; ordinary TBS
-   locals 890; one-pass IME store 795; direct bank/void casts stayed 795;
-   one-pass vector store 695. On 2026-10-03, a direct volatile BIOS-vector
-   store and moving the boundary to the runtime-copy phase both scored
-   795; the latter compiled to 112/116 bytes including its pool. Restore
-   the stronger vector-boundary form. No flags or compiler changes. */
 void Runtime_InstallIwramAndIrqs(void)
 {
     volatile u16 *ime;

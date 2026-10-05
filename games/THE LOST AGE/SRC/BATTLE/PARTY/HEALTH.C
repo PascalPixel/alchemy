@@ -11,7 +11,6 @@ s32 Party_CountActiveOwnersFar(void);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 
-/* ☀️'s: passes a health change to every active party member in turn. */
 void BattleParty_ApplyDrain(s32 amount)
 {
     s32 target_count = Party_CountActiveOwnersFar();
@@ -21,11 +20,6 @@ void BattleParty_ApplyDrain(s32 amount)
         Owner_AdjustSecondValueFar(gPartyState.active_owners[i], amount);
 }
 
-/* Passes a health change to every active party member: amount itself, or
- * when scaled amount percent of the member's maximum HP, falling back to the
- * magnitude of amount when that rounds to zero. A loss first flashes the
- * screen and plays the heavy impact cue when it exceeds ten, a lighter hit
- * cue otherwise; a gain plays the recovery cue. */
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 {
     s32 count;
@@ -58,9 +52,6 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
         Owner_AdjustFirstValueFar(gPartyState.active_owners[i], value);
     }
 }
-
-/* Party-wide HP changes in battle: the poison and venom damage applied at
-   the end of a round. ⚓️ reads the active owners from gPartyState. */
 
 s32 BattleParty_ApplyStatusDamage(void)
 {

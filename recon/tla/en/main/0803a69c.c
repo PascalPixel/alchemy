@@ -1,12 +1,5 @@
-/* Near miss: score 160 beyond the trailing pad. The window work is ⚓️'s
-   heap slot 0x3c with its entries at 0xf40 and cursor at 0x1384. ⚓️ builds
-   the slot table's address before opening the frame (sub sp, #36) and loads
-   the work before spilling y; this draft opens the frame first. */
 #include "RENDER_INPUT.H"
 
-/* The window work's message state. Its leading records hold words: typed
-   as words, a store to the message cursor may alias the spilled x, so the
-   spill keeps its place ahead of the cursor store. */
 struct MessageWindowWork {
     s32 records[0xf40 / 4];
     u16 entries[(0x1384 - 0xf40) / 2];
@@ -24,11 +17,6 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 UiText_QueueRenderEntries(struct RenderInput *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
-
-/* Build a message's render entries, fit a window for them on screen and
-   queue them there. Bits 16-27 of packed select the first entry; its low
-   bits choose the window's frame and blending. Returns the window, or
-   NULL when the message is empty or no window is free. */
 
 struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 {

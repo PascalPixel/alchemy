@@ -7,8 +7,6 @@
 
 extern struct BattleEffectWork *gBattleFxWork;
 
-/* Brighten background palette entries 1-63 by per-channel deltas, clamping
-   each 5-bit channel at 31. */
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
 {
     u16 *color = (u16 *)0x05000002;
@@ -32,8 +30,6 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
     }
 }
 
-/* H-blank callback: feed the per-line backdrop colours in the battle work
-   area to palette entry 0. */
 void BattleFx_ArmPaletteHBlankDma(void)
 {
     struct BattleEffectWork *work = gBattleFxWork;

@@ -1,4 +1,3 @@
-/* Tolbi town: the page effect the scene starts. */
 #include "MACHI.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -38,8 +37,6 @@ void SceneState_SetValues31_2_4(void)
     BattleFx_RunPageEffectForSlot(0x1F, 2, 4);
 }
 
-/* Tolbi town: the distance between two actor positions, through the
- * resident square root. */
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
@@ -52,7 +49,6 @@ s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
     return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
-/* Tolbi town: actor proximity, the scene tables and the first dialogue steps. */
 s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
                                     struct SceneActor *target,
                                     s32 range, s32 force)
@@ -99,7 +95,6 @@ s32 SceneActor_UpdatePartnerProximity(u8 *self)
     u8 *partner;
     u8 *player;
 
-    /* Bit 0 of the actor's flag halfword selects which partner to test. */
     if ((*flags & 1) != 0) {
         partner = Object_GetById(17);
     } else {
@@ -111,10 +106,6 @@ s32 SceneActor_UpdatePartnerProximity(u8 *self)
 
     player = Object_GetById(0);
 
-    /*
-     * Widen the test when the scene counter at work + 376 is already
-     * running, or when the scene proximity flag is set.
-     */
     if (*(s16 *)(work + 376) != 0 || scene->widen_proximity != 0) {
         range = 26;
         if ((*flags & 2) != 0) {
@@ -131,7 +122,6 @@ u8 *TorebiMachi_GetEntrances(void)
     return gTorebiMachiEntrances;
 }
 
-/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -271,7 +261,6 @@ void FieldScene_RunSiblingsTalk(void)
     Engine_EventEnd();
 }
 
-/* Tolbi town: the event table by story progress and two actor lines. */
 u8 *TorebiMachi_SelectEvents(void)
 {
     if (Engine_GameFlagIsSet(0x950) != 0) {
@@ -310,7 +299,6 @@ void FieldScene_RunPatientTalk(void)
     Engine_EventEnd();
 }
 
-/* Tolbi town: actor lines, the entry setup and the first sequence. */
 void TorebiMachi_AskForSweets(void)
 {
     u32 i;
@@ -392,10 +380,6 @@ void SceneScript_SetupActors(void)
     Engine_EventEnd();
 }
 
-/*
- * Update callback: draw the object at the party leader's sprite priority, in
- * both places its sprite keeps it, and clear its priority flags.
- */
 void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
 {
     s32 priority;
@@ -535,7 +519,7 @@ void FieldScene_RunPrimarySequence(void)
     UiWindow_CreateWithSideObject(52, 0, 12, 7);
     UiText_OpenMessageWindow((base + 3), 11, 12, 2);
     SCENE_OBJECT_ID = 32;
-    if (Engine_EventChooseYesNo(0, 0) == 0) { /* object_id 0, force 0 */
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(30, 2);
         Engine_EventWait(30);
@@ -594,7 +578,6 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventEnd();
 }
 
-/* Tolbi town: actor 9's reset and its map tiles. */
 void FieldScene_ResetActor9AndDrawTiles(void)
 {
     struct Actor *actor = Object_GetById(9);

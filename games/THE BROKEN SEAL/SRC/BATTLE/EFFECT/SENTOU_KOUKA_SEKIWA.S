@@ -1,10 +1,3 @@
-@ Signed 16.16 fixed-point three-term dot product in ARM state: smull and
-@ smlal accumulate all three 64-bit products in ip (low) and r0 (high) before
-@ one combine. GCC's DImode multiply-accumulate needs a consecutive register
-@ pair, which ip and r0 are not. These 28 bytes equal LIB/Q16_DOT_PRODUCT.S;
-@ this copy sits in the battle-effect bank before the model decoder. Every
-@ TBS and TLA edition has it (TLA 0x08017cec, 0x081a0030 and 0x081a0280).
-@ credit: library — TBS/TLA common relocated ARM Q16 dot-product kernel, battle-effect bank copy
 .syntax unified
 .text
 	.arm

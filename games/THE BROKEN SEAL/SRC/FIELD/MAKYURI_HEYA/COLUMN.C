@@ -85,10 +85,6 @@ void MakyuriHeya_ExitWhenChannelsOpen(void)
     }
 }
 
-/* Mercury Lighthouse: after a block is pushed, open or close the water
- * cells it controls. Actor 9 in row 8 opens the first channel (flag 0x310),
- * actor 10 in row 12 the second (0x311, with a burst when the first is
- * open), and actor 11 in column 40 sets 0x312. */
 void MakyuriHeya_RunPushedBlockScene(void)
 {
     struct BlockProbe probe;

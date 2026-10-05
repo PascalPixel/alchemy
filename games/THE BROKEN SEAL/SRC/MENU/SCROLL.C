@@ -8,17 +8,13 @@
 #include "SYSTEM.H"
 #include "LAYOUT_GUARD.H"
 
-/* A selection that cannot be moved, only confirmed or cancelled. */
 #define SELECTION_FIXED 999
 
-/* The node window status while it scrolls, and once it has settled. */
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
 
-/* The node kind whose first entry confirms and whose others cancel. */
 #define NODE_KIND_YES_NO 6
 
-/* Rows visible in the selection list. */
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
@@ -42,7 +38,6 @@ void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index);
 void Menu_StepRight(struct SelectionScreen *state);
 void Menu_StepLeft(struct SelectionScreen *state);
 
-/* Runs the selection until it is confirmed, or cancelled when mode allows. */
 s32 Menu_SelectionLoop(s32 mode)
 {
     /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM loads in the right and left tests. */
@@ -69,7 +64,6 @@ s32 Menu_SelectionLoop(s32 mode)
     }
 }
 
-/* As Menu_SelectionLoop, with sound cues, returning the chosen row. */
 u32 Menu_WaitForSelectionInput(u32 mode)
 {
     /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM loads in the right and left tests. */
@@ -112,7 +106,6 @@ u32 Menu_WaitForSelectionInput(u32 mode)
     }
 }
 
-/* Moves the cursor down one row, scrolling the list at the bottom row. */
 void Menu_MoveSelectionForward(struct SelectionScreen *screen)
 {
     u32 end = screen->top + screen->cursor_index + 1;
@@ -141,7 +134,6 @@ void Menu_MoveSelectionForward(struct SelectionScreen *screen)
     WaitFrames(1);
 }
 
-/* Moves the cursor up one row, scrolling the list at the top row. */
 void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
 {
     u32 cursor;
@@ -172,9 +164,6 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
     WaitFrames(1);
 }
 
-/* Step the selection cursor right; at the end of a long list, slide every
-   entry back to the top and restart, otherwise scroll one row when the
-   cursor reaches the fourth slot. */
 void Menu_StepRight(struct SelectionScreen *state)
 {
     /* FAKEMATCH: the row targets are read as plain halfwords, not struct members, so GCC reloads them after every node store as the reference does. */
@@ -243,10 +232,6 @@ void Menu_StepRight(struct SelectionScreen *state)
     WaitFrames(1);
 }
 
-/* Selection lists: move the cursor up one entry, scrolling or wrapping the list to its end. */
-
-/* Mirror Menu_StepRight: step the cursor left, wrap a long list to its
- * last page, or scroll one row up at the first slot. */
 void Menu_StepLeft(struct SelectionScreen *state)
 {
     struct SelectionNode *node;
@@ -373,9 +358,6 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen)
 
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 
-/* Scrolls the visible list one row. A new entry grows in at the far end
-   while every entry slides 16 lines, two a frame, and the entry that
-   leaves shrinks away; then the entry that left is released. */
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
 {
     struct SelectionNode *p;

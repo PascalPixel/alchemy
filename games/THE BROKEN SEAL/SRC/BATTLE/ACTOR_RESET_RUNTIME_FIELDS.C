@@ -57,8 +57,6 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     return BattleUnit_BuildStatusFlags(actor, GetBattleObjectSlot(actor));
 }
 
-/* The arrow sprite queued each frame: the list link, then the three OAM
-   attribute halfwords and the unused fourth. */
 struct AdvanceSprite {
     struct AdvanceSprite *next;
     u16 attr0;
@@ -72,8 +70,6 @@ extern volatile u32 gFrameCount;
 extern volatile u32 gKeysHeld;
 void Audio_PlayCue(s32 cue);
 
-/* Draw the bobbing advance arrow beside the battle message until a button
-   is pressed (after 16 frames, a held button also counts). */
 s32 BattlePresentation_WaitForAdvance(void)
 {
     struct AdvanceSprite *spr;
@@ -126,8 +122,6 @@ loop:
 
 s32 Ui_GetTableWordZeroFar(s32 index);
 
-/* Draw the prompt arrow at (x, y), nudged up and left every fourth frame,
-   until A, B, L or R is pressed. */
 s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 {
     struct MenuPoint pos;

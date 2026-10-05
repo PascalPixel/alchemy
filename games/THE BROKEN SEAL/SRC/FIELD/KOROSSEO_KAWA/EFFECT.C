@@ -42,14 +42,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
@@ -74,12 +71,6 @@ void ObjectDispatch_WaitForValue16();
 
 extern u8 MsgKorosseoRobinGotItem[];
 
-
-
-
-
-
-
 void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
     s32 i;
@@ -98,8 +89,6 @@ void Resource3ba_NoOpCallback(void)
 {
 }
 
-/* The river stage marks its start in the scene state's first halfword: 9
-   once the stage is ready. */
 void KorosseoKawa_MarkStageReady(void)
 {
     s16 *ready = (s16 *)gSceneState;
@@ -109,7 +98,6 @@ void KorosseoKawa_MarkStageReady(void)
     *ready = nine;
 }
 
-/* Wait a frame at a time until the stage is ready. */
 void KorosseoKawa_WaitForStageReady(void)
 {
     s16 *ready = (s16 *)gSceneState;
@@ -118,12 +106,6 @@ void KorosseoKawa_WaitForStageReady(void)
         Engine_TaskWait(1);
     }
 }
-
-
-
-
-
-
 
 void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
 {

@@ -10,7 +10,6 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 
 enum {
     CONTACT_LAST_ACTOR = 65,
-    /* An actor's touch trigger is its id plus this base. */
     CONTACT_TRIGGER_BASE = 100,
     FLAG_CONTACT_PAUSED = 0x163,
     FLAG_CONTACT_BLOCKED = 0x104
@@ -48,11 +47,6 @@ extern u8 MsgWorldMapAfterBringingDjinniIntoYour[];
 extern u8 MsgWorldMapNextIllShowHowCan[];
 extern u8 MsgWorldMapWeCantStayAnotherMinute[];
 
-/*
- * Near the next random encounter (nine tenths of the way), the world map may
- * raise one of its story events instead: the event clears the encounter's
- * spread, and a missed chance brings the encounter on at the next step.
- */
 void StoryProgress_TriggerEvent0808(void)
 {
     struct EventWork *work = gEventWork;
@@ -100,8 +94,6 @@ void StoryActor_AdvanceTimer(struct FieldActor *actor)
     }
 }
 
-/* Pulses the actor's size with the frame counter and, every other pair of
- * frames, leaves a short-lived spark behind it with a cue. */
 void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 {
     struct FieldActor *spark;
@@ -133,8 +125,6 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
     spark->update = (void (*)(union FieldObject *))StoryActor_AdvanceTimer;
 }
 
-/* Blink the actor's palette with the frame counter and, while it is not held,
- * bob it on its sine path and advance the angle. */
 void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
 {
     s16 *angle;
@@ -195,7 +185,6 @@ s32 StoryActor_ApplyFlaggedMode(struct FieldActor *actor)
     return 1;
 }
 
-/* Turns the actor's sprite to the map's rotation. */
 s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
 {
     struct MapRenderWork *work = gMapWork[0];
@@ -206,7 +195,6 @@ s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
     return 1;
 }
 
-/* Sets the actor's first collision flag and turns its sprite to the map's rotation. */
 s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
 {
     struct MapRenderWork *work = gMapWork[0];
@@ -230,8 +218,6 @@ s32 StoryActor_ResetPosition(struct FieldActor *actor)
     return 0;
 }
 
-/* Flickers the actor out: on frames whose low bit is set, an active actor
- * turns inactive. */
 s32 StoryActor_ClearActiveFlag(struct FieldActor *actor)
 {
     if ((actor->active & 1) && (gFrameCount & 1))
@@ -239,12 +225,6 @@ s32 StoryActor_ClearActiveFlag(struct FieldActor *actor)
     return 1;
 }
 
-/*
- * Selects the placements for the entrance the party arrives by: only 49
- * through 80 have their own, and the others take the default placements
- * after setting flag 0x235. Entrances 49 and 64 have theirs only while
- * their story flags call for them.
- */
 struct ScenePlacement *StoryScene_SelectPlacementTable(void)
 {
     switch (gGameState.entrance) {
@@ -283,8 +263,6 @@ struct ScenePlacement *StoryScene_SelectPlacementTable(void)
     return gWorldMapPlacements;
 }
 
-/* Leaves by one of two exits, chosen by which side of the touched actor the
- * selected actor stands on along x. */
 void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after)
 {
     struct EventWork *work;
@@ -302,7 +280,6 @@ void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after
     Engine_AudioPlayCue(0x7B);
 }
 
-/* The same choice of exit, made along z instead of x. */
 void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after)
 {
     struct EventWork *work;
@@ -351,13 +328,6 @@ struct SceneEvent *WorldMap_GetEvents(void)
     return gWorldMapEvents;
 }
 
-/*
- * Marks each placed actor active while it stands inside a window around the
- * view centre: 160 pixels to either side, 300 pixels toward lower depth and
- * 200 toward higher depth. When an active actor comes within reach of the
- * selected actor, measured as the sum of the axis distances against both
- * scaled radii, its trigger is recorded as touched unless flag 0x104 is set.
- */
 void MapActor_UpdateContact(void)
 {
     struct FieldActor *leader;
@@ -432,7 +402,6 @@ void FieldScene_RunStep74(void)
     Engine_EventRequestExit(74);
 }
 
-/* World map entry: record the arrival and start the map's camera and tasks, then run the scene the entrance or the story flags call for. */
 s32 WorldMap_EnterScene(void)
 {
     struct GameState *state = &gGameState;
@@ -923,9 +892,6 @@ void WorldMap_ShakeTransferLandingCamera(void)
     Engine_TaskWait(4);
 }
 
-/* Each frame of the transfer, keeps actor 15 over the guide (actor 14) and,
- * the first time it comes down to its landing height, lands it with a cue
- * and marks it landed for the scene that waits on it. */
 void WorldMap_UpdateTransferredActorLanding(void)
 {
     struct FieldActor *actor;
@@ -1153,10 +1119,6 @@ void BattleFx_RunPageEffectForSlot(s32 actor, s32 a1, s32 a2);
 #define DJINNI 8
 #define FLAG_DJINNI_MET 0x16e
 
-/* The world map's Venus Djinni: on the first meeting it joins the leader, grows
- * from a speck and explains itself, pleading until the party agrees to listen;
- * later it offers to explain Djinn again. The pleas are counted apart from the
- * loops, which is what lets the growing loop count down from its own start. */
 void WorldMap_MeetVenusDjinni(void)
 {
     struct FieldActor *djinni;

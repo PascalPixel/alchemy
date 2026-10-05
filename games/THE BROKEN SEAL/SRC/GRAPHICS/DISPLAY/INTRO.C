@@ -12,7 +12,6 @@
 #include "SYSTEM.H"
 #include "PALBUF.H"
 
-/* One sprite of the "press start" prompt, as the slot list takes it. */
 struct IntroSprite {
     u32 unknown_0;
     u8 y;
@@ -22,9 +21,6 @@ struct IntroSprite {
     s32 tile;
 };
 
-/* The title intro's work block, heap slot 43. Behind the counters lies the
-   intro's object table, the OAM shadow its frame callback copies; the
-   prompt later lays its sprite list over the same bytes. */
 struct IntroWork {
     s32 back_rows;
     s32 front_rows;
@@ -46,7 +42,6 @@ s32 Resource_DecodeByteLz(const void *source, void *destination);
 extern u8 gDebugPaused;
 extern const u8 Data_080f39ab[];
 
-/* Word N of object entry I. */
 #define ENTRY(i, word) (work->area.objects[i][word])
 
 #define WRAP256(v) \
@@ -55,8 +50,6 @@ extern const u8 Data_080f39ab[];
     while ((v) < 0) \
         (v) += 256
 
-/* x is the sprite's left edge; its centre's distance from line 104 sets
-   how far along the perspective line the sprite sits. */
 #define PLACE(column, half) \
     x = Data_080f39ab[column] - (half); \
     y = (top - base) * ((x + (half)) - 104) / 80 + base - (half); \
@@ -72,9 +65,6 @@ extern const u8 Data_080f39ab[];
     ENTRY((i) + 2, 1) = (tile); \
     ENTRY((i) + 3, 1) = (tile)
 
-/* Title intro frame callback: lays the three sprite groups of the scrolling
-   pictures along a perspective line, parks the rest of the object table and
-   copies it to OAM. */
 void Title_PlaceIntroSprites(void)
 {
     struct IntroWork *work;
@@ -130,10 +120,6 @@ void Title_PlaceIntroSprites(void)
     Dma_Set(&ENTRY(0, 0), (void *)0x07000000, 0x84000008, REG_DMA3);
 }
 
-/* Title intro: load both scrolling pictures and lay out their tilemaps.
-   Each map row is thirty running tiles and two blank ones; the rows below
-   the first eleven start a second run. Both layers start 96 lines down,
-   behind a full-screen window, and the work block's counters are cleared. */
 void Title_LoadIntroBackgrounds(void)
 {
     struct IntroWork *work;
@@ -258,10 +244,6 @@ back_rest_cell:
     REG_BLDCNT = 0x3f44;
 }
 
-/* The prompt is five tiles. Japanese and French draw five sprites from
-   column 56, the Japanese ones two lines lower; the others draw three
-   from column 80. The German prompt is eight tiles, two rows of three
-   sprites from column 80, at lines 116 and 124. */
 #if defined(TBS_EDITION_DE)
 #define PROMPT_TILES 8
 #else
@@ -301,12 +283,6 @@ void Blend_SetBrightenTarget0(s32 frames);
 void Blend_WaitForTransition(void);
 void Ui_LoadWindowGraphics(void);
 
-/* Title intro: both pictures scroll up, the back one a line every third
-   tick and the front one every second, each loading a new row of tiles
-   every eight lines; A or START skips ahead to frame 239. On frame 0x118
-   the logo picture replaces them. With a prompt, its sprites then pulse
-   for up to a minute, otherwise the logo holds for five seconds; returns 1
-   when A or START ended the wait. */
 s32 Title_ShowIntro(s32 prompt)
 {
     struct IntroWork *work;

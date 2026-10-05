@@ -8,9 +8,6 @@ extern const u8 Text_DecodeSymbol[];
 
 extern u8 Text_DecodeSymbolCodeSize[];
 
-
-/* The European decoder also passes code 29's one argument through, and
-   biases each argument by a plain constant. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define DECODE_EUROPEAN

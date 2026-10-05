@@ -3,7 +3,6 @@
 #include "RAM_BUFFER.H"
 s32 BattlePres_SetupTransitionScene(s32, s32, s32, s32);
 
-/* battle/presentation/trans/timer.c */
 struct Display080c01bc {
   u8 padding_00[0x36];
   s16 field_36;

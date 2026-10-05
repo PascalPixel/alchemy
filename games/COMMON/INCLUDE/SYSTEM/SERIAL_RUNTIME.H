@@ -13,11 +13,8 @@ struct DmaRegisters {
     u32 control;
 };
 
-/* The checksum covers the first 28 bytes of this 32-byte buffer slot.
-   The interrupt cursors can also access the final four bytes. */
 struct SerialPacket {
     u8 sequence;
-    /* Previously received channels absent from this collection. */
     u8 missing_mask;
     u16 checksum;
     u8 payload[24];
@@ -68,7 +65,6 @@ struct SerialTransferState {
     u8 status;
     u8 flags;
     u8 peer_flags;
-    /* The block transfer's 20-byte body follows its four control bytes. */
     u8 payload[20];
 };
 
@@ -102,7 +98,6 @@ void SerialRuntime_EnableTransferTimer(void);
 void SerialRuntime_DisableTransfer(void);
 s32 SerialRuntime_BeginTransferA(void *source, s32 size);
 s32 SerialRuntime_BeginTransferB(void *destination);
-/* A wait can time out while its transfer is still active. */
 void SerialRuntime_WaitForTransferA(void);
 void SerialRuntime_WaitForTransferB(void);
 void SerialRuntime_WaitForTransfers(void);
@@ -113,19 +108,13 @@ void SerialRuntime_RemoveIrqHandlers(void);
 u32 SerialRuntime_WaitForStatusMask(s32 mask);
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
-/* Enables the per-VBlank payload exchange. */
 extern u16 gSerialExchangeActive;
 extern s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
 extern s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
-/* Four reserved payload slots; the exchange collects the first two.
-   gSerialTransfer holds the payload this console sends. */
 extern u8 gSerialPeerPayloads[4][24];
-/* The block transfer's seven-bit packet sequence number. */
 extern volatile u8 gSerialBlockSequence;
-/* A byte the link lobby's party-record exchange writes and serial start-up
-   clears, just past the runtime record. */
 extern u8 gLinkExchangeState;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)

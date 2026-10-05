@@ -8,48 +8,9 @@
 #include "BATTLE_RUNTIME.H"
 #include "SCENE.H"
 
-/*
- * Expands message glyphs, names, numbers and control codes into the render
- * ring. A message of -1 returns the previous message's starting position.
- * The cached decoder is an ARM routine called through a function pointer;
- * the compiler emits the interworking call.
- *
- * 2026-10-05, EN: 78 differ (alchemy diff; 76 with branch and pool offsets
- * ignored), from 553. What moved it:
- * - the heap slot table read once through gWindowWork: the decoder slot is
- *   gWindowWork[35] (heap slot 50), as the native adds 140 to the window
- *   slot's address; gWorkSlot[50] loads a second base;
- * - spilled locals declared in the native's stack-slot order (work, head,
- *   quote, start, cnt, plural, running, overflow), initialized at their
- *   declarations;
- * - the message bases as pooled absolute symbols (MsgClassName,
- *   MsgItemName, MsgAbilityName, MsgDebugEntryName, which is
- *   RENDER_RESOURCE_BASE in every edition): the native loads them from the
- *   pool, never splits 0x182, and ties the add to the symbol;
- * - one variable (msg) for codes 17, 19, 20 and 21's looked-up numbers, so
- *   code 17's owner number is not folded into the call;
- * - codes 21 and 23 copy the name through their own pointer and index
- *   (p, next), the native keeps that index in r0 and assigns pos after;
- * - the number loop of code 22 with its own index and the name copies of
- *   codes 16 to 18 counting an unsigned off up (bls, not reversed);
- * - code 26 as ((decode - 1) << 1) + 128 into a block-local, then + 1.
- * Still different, all register choices: the prologue's store order (two
- * swaps) and the allocator call's argument order; code 22's index (r0
- * against r4) and its biv is eliminated (cmp against an end pointer, the
- * native compares 16); msg in r3 against r2; in the copies off and dst
- * swap r2 and r4. Tried without gain: for loops and array indexing for the
- * copies (the allocator moves ch to r8, 700+), off shared by code 22 and
- * the copies (off takes r0, 135), next or value or mag for code 22's
- * index, msg in place of value for code 22, any order of the uninitialized
- * declarations (60 swaps, no change).
- */
-
-
-/* The two spacing entries themselves. */
 #define ENTRY_NARROW_GAP 5
 #define ENTRY_WIDE_GAP   222
 
-/* The decoder is copied into its cached heap block by DMA3. */
 #define DMA3_REGS   0x040000D4
 #define DMA_ENABLE  0x84000000
 #define TEXT_WORK_BLOCK 50
@@ -57,7 +18,6 @@
 extern const u8 Text_DecodeSymbol[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
-/* The first message of each name table, from the edition's catalog. */
 extern char MsgItemName;
 extern char MsgAbilityName;
 extern char MsgClassName;
@@ -116,7 +76,6 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 ch = 64;
 
             if (overflow != 0) {
-                /* 行が溢れた後は制御コードだけを読み飛ばす。 */
                 if (ch < 32) {
                     switch (ch) {
                     case 19:
@@ -185,7 +144,6 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 if (ch > 31) {
                     if (work->spacing_before != 0 &&
                         (ch == 32 || cnt > 10)) {
-                        /* 収まらない行は三点リーダで打ち切る。 */
                         entry[pos] = '.';
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         entry[pos] = '.';
@@ -354,7 +312,6 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 1:
                     case 3:
                         head = 1;
-                        /* 続けて通常文字と同じ処理へ落ちる。 */
                     default:
                         entry[pos] = (u16)ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;

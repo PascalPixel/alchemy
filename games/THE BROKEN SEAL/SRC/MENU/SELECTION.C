@@ -85,7 +85,6 @@ void UiWindow_OpenMode1AndWaitFrame(void);
 s32 Menu_SelectResource(s32, s32);
 void UiWork_CloseAndRelease(void);
 
-/* The Japanese list of four entries is centred two rows higher. */
 #if EDITION_INTERNATIONAL
 #define ANIMATE_ENTRIES_ROW 7
 #else
@@ -163,7 +162,6 @@ s32 Menu_SelectSaveSlotAction(void)
 extern void UiWindow_ClearInteriorTiles(void *, s32, s32, s32, s32);
 extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
-/* The Japanese mode labels start further left in a narrower cleared box. */
 #if EDITION_INTERNATIONAL
 #define MODE_LABEL_X     18
 #define MODE_LABEL_RIGHT 144
@@ -227,7 +225,6 @@ void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 extern u8 MsgPasswordTransferHelp;
 extern u8 MsgCableTransferHelp;
 
-/* The Japanese password help starts at the window edge. */
 #if EDITION_INTERNATIONAL
 #define PASSWORD_HELP_X 16
 #else
@@ -237,8 +234,6 @@ extern u8 MsgCableTransferHelp;
 #if defined(TBS_EDITION_FR)
 void RenderOutput_ClearList(void *);
 
-/* The French help clears its list in each branch and draws the cable help
-   only when it follows the password help. */
 void Menu_DrawModeIndicator(void)
 {
     struct ResourceMenuWork *state = gMenuSelectWork;
@@ -264,11 +259,9 @@ void Menu_DrawModeIndicator(void)
     s16 *shown = &state->previous_mode;
     s16 *current = &state->selection;
 
-    /* 値が変わった時だけ表示を更新する。 */
     if (*shown != *current) {
         *shown = *current;
         RenderOutput_PrepareForRedraw(state->lower_window);
-        /* The German help sits in whole character cells, a row apart. */
         if (*current == 0) {
 #if defined(TBS_EDITION_DE)
             UiText_DrawCharacterAtOffset((s32)&MsgPasswordTransferHelp,

@@ -12,8 +12,6 @@ void UiWork_ProcessAll(void)
     UiWork_AnimateSpriteSlots();
 }
 
-/* Runs every UI work while the work in heap slot 57 is up, else only the
-   text channels. */
 void UiWork_ProcessAllOrChannels(void)
 {
     if (Ram_HeapSlots->unknown_e4[0] != 0) {

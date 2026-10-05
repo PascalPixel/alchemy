@@ -4,16 +4,13 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* TLA expanded the same task record to twenty-four entries. */
 enum SchedulerTaskLimits {
     SCHEDULER_TBS_TASK_COUNT = 20,
     SCHEDULER_TLA_TASK_COUNT = 24
 };
 
-/* A routine the scheduler calls each frame, in order of its task's state. */
 typedef void (*SchedulerCallback)(void);
 
-/* The callback is kept as its address: an overlay's lies in EWRAM. */
 struct SchedulerTask {
     u32 callback;
     u16 state;
@@ -31,7 +28,6 @@ extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerTaskCount;
 extern struct SchedulerTask gSchedulerTaskTable[];
 
-/* Render entries have different tails; only their first-word link is shared. */
 void Runtime_PushSlotEntry(void *entry, s32 priority);
 
 void Runtime_InvokeCallbacksByKey(s32 key);

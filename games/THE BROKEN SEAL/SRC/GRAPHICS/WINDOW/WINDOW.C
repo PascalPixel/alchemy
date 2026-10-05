@@ -109,7 +109,6 @@ void UiWork_DrawByAttributes(struct UiWindow *window)
     UiFillFn fill;
     struct UiRenderWork *work;
 
-    /* 描画属性に従い転送方法を切り替える。 */
     work = (struct UiRenderWork *)gWindowWork[0];
     value = window->height;
     flags = window->flags;
@@ -137,10 +136,6 @@ void UiWork_DrawByAttributes(struct UiWindow *window)
     work->dirty = 1;
 }
 
-/* Open a window at a tile position and size in the first free record, with
-   the attribute bits that choose its frame and drawing; a window drawn
-   through its attributes appears at once, any other one opens over eight
-   frames. Returns the record, or 0 when every record is in use. */
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 {
     struct UiWindow *slot;
@@ -169,7 +164,7 @@ done:
         found->output.tail_link = &slot->output.head;
         found->unknown_10 = 1;
         found->flags = 1;
-        UiWork_ResetCounters(x); /* the reset ignores the x it is passed */
+        UiWork_ResetCounters(x);
         if (attrs & 8) {
             found->flags |= 8;
         }
@@ -202,7 +197,6 @@ done:
 
 void UiWork_WaitWindowDuration(struct UiWindow *window)
 {
-    /* 値が0になるまで更新処理を進める。 */
     if (!(2 & window->flags) && window->duration != 0) {
         do {
             WaitFrames(1);
@@ -251,7 +245,6 @@ void UiWork_Finalize(struct UiWindow *work, s32 release)
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *window)
 {
-    /* 属性0x8がない時だけ描画と子リストを解放する。 */
     if (!(8 & window->flags)) {
         RenderOutput_RedrawSavedRect(window);
         RenderOutput_ClearList(window);
@@ -260,7 +253,6 @@ void RenderOutput_PrepareForRedraw(struct UiWindow *window)
 
 void RenderOutput_RedrawSavedRect(struct UiWindow *window)
 {
-    /* 保存済みの矩形を再描画する。 */
     UiWindow_DrawFrame(window->x, window->y, window->width, window->height);
 }
 

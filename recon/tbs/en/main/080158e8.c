@@ -1,17 +1,3 @@
-/* Draft, not exact (2026-09-29): ARM route (agscc -O2 -marm -mthumb-interwork
-   -mcpu=arm7tdmi -nostdinc -fcall-used-r4 -mno-apcs-frame), 133 of 133 words,
-   90 differing. Both switches, their jump tables, case order and the fall
-   into the default stub line up. Remaining: the reference keeps the row in
-   r1 and its successor in r9, and b and f in ip and r2 (here swapped), which
-   shifts the zero chain, the column increment order and the tail stores.
-   Declaration order does not move it (all 720 orders tried).
-   2026-09-29 evening, unchanged C on main's agbcc_arm route: every register
-   and the first 110 words match; only the row tail's schedule differs. The
-   reference computes b + (a << 8) before the second dst++, and moves
-   src += 2, row = next and the row compare up among the six repeated
-   stores, where agbcc_arm leaves them after the fifth and sixth. Moving
-   those statements, the loop form (do/while, for, while, ++row) and
-   indexed stores (dst[0..10], a six-pass loop) do not change it. */
 typedef unsigned short u16;
 typedef int s32;
 typedef unsigned int u32;

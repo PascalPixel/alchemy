@@ -12,7 +12,6 @@
 
 struct OrbitingParticle;
 
-/* ☀️'s main orbit step, which in ⚓️ returns 0 to its dispatcher. */
 s32 BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
 {
     s32 phase = gFrameCount & 7;
@@ -25,8 +24,6 @@ s32 BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
     return 0;
 }
 
-/* Shrinks a particle each frame and hands it to the common particle
-   script once it is small enough. */
 void BattleFx_UpdateOrbitingParticleFade(struct ObjectRuntime *object)
 {
     s32 scale;
@@ -48,8 +45,6 @@ struct OrbitingParticleVector {
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct OrbitingParticleVector *pos);
 
-/* Counts the particle's life down, placing it on a shrinking orbit around its
-   centre that turns one way; at zero it fades. */
 void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle)
 {
     struct OrbitingParticleVector pos;
@@ -74,7 +69,6 @@ void BattleFx_UpdateOrbitingParticleLeft(struct ObjectRuntime *particle)
     }
 }
 
-/* The same orbit turning the other way. */
 void BattleFx_UpdateOrbitingParticleRight(struct ObjectRuntime *particle)
 {
     struct OrbitingParticleVector pos;
@@ -106,8 +100,6 @@ struct OrbitingParticleChild {
 
 void BattleFx_RunOrbitingParticles(void);
 
-/* Starts the orbit: enables the scene when its child runs a mode, marks
-   the child and runs the particles. */
 void BattleFx_StartOrbitingParticles(void)
 {
     struct BattleFxScene *state = Ram_HeapSlots->effect_work;

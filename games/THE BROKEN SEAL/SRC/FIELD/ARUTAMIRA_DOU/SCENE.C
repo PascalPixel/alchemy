@@ -75,7 +75,6 @@ void EffectSlot_SetObjectMode(u8 *object, s32 mode);
 s32 Math_DivideUnsigned(s32 value, s32 divisor);
 void OverlayObject_UpdateThreeStateMotion();
 
-/* The overlay object records (72 bytes each), from +88. */
 extern u8 *gEffectWork;
 
 void FieldScene_RunExtendedActorPresentation(void)
@@ -869,7 +868,6 @@ void FieldScene_RunExtendedActorPresentation(void)
     Engine_EventEnd();
 }
 
-/* Check the three final actor lookups for null before forwarding their coordinates. */
 void FieldScene_RunBranchingCutsceneSequence(void)
 {
     struct FieldActor *leader;
@@ -1114,7 +1112,6 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Engine_ActorSetAnimation(1, 2);
-    /* Actor 1 walks to where the leader stands. */
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
         Engine_ActorSetDestination(1, leader->x.part.pixel, leader->z.part.pixel);
@@ -1122,7 +1119,6 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_ActorWaitForMove(1);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_ActorSetAnimation(2, 2);
-    /* Actor 2 walks to where the leader stands. */
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
         Engine_ActorSetDestination(2, leader->x.part.pixel, leader->z.part.pixel);
@@ -1130,7 +1126,6 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_ActorWaitForMove(2);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Engine_ActorSetAnimation(3, 2);
-    /* Actor 3 walks to where the leader stands. */
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
         Engine_ActorSetDestination(3, leader->x.part.pixel, leader->z.part.pixel);
@@ -1141,8 +1136,6 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Engine_EventEnd();
 }
 
-/* Actor 8 asks whether the party forgot the order of the rock colours; each
- * answer is a line after the question, yes first. */
 void ArutamiraDou_AskAboutRockOrder(void)
 {
     s32 question;
@@ -1185,7 +1178,6 @@ void FieldScene_RunFlagGatedActorEightDialogue(void)
     Engine_EventEnd();
 }
 
-/* What the scene answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -1216,10 +1208,6 @@ void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor)
     }
 }
 
-/* A pointer to the words the entry clears when the party arrives by entrance
-   52 of the cave's last area. */
-
-/* Altmiller Cave entry: number the entrance by area, then per area restore the lifts, the cells and the row of five actors from the story flags; open with the blend or the plain transition. */
 s32 ArutamiraDou_ApplyEntryState(void)
 {
     s8 *state;
@@ -1389,9 +1377,6 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
     }
 }
 
-/* Releases 24 objects (type 284) one per frame from a point by the cave
- * wall, each with a random frame and speed, opens the wall's cells, then
- * marks every object still active once the screen has faded. */
 void ArutamiraDou_ReleaseWallBurst(void)
 {
     u8 *work;

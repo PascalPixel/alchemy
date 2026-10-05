@@ -1,8 +1,3 @@
-/* Battle effect: set up the canvas tile layer. Fade the battle palette,
-   clear the canvas tiles and fill the window map, lay out the 16 by 16
-   canvas tile map (columns past 15 blank), then set the display, window and
-   blend registers and clear the canvas buffers.
- */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"

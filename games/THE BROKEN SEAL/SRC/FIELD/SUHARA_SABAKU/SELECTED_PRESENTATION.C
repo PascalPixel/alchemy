@@ -1,5 +1,4 @@
 #include "FIELDOBJ.H"
-/* The Suhara desert: the effect record mode and the configured overlay objects. */
 #include "SABAKU.H"
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
@@ -25,10 +24,6 @@ void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     return NULL;
 }
 
-/*
- * As CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC, through the services this
- * overlay's veneers are named for.
- */
 void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);

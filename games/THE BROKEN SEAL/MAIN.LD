@@ -25,7 +25,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/SOUND/DRIVER/RESAMPLER_KERNELS_PAD_2.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SOUND/DRIVER/CHANNEL_UPDATE_ENTRY.o"(.text .rodata .data .padding)
 } > ROM
-    /* Startup copies this resident module bank to IWRAM with DMA3. */
     .iwram_runtime :
     {
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME.o"(.text .rodata .data .padding)
@@ -556,7 +555,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_DISPATCH.o"(.text .rodata .data .padding)
     "*/recon/tbs/ja/rom.o"(.rom.000ac218)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
-    /* The tile bit decoder block BattleBackground_Load copies to RAM, DECODE.S to BIT_COMMANDS.S. */
     BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/VIEW_MESSAGES.o"(.text)
@@ -766,7 +764,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/SOUND/DRIVER/UMUL_HIGH.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SOUND/DRIVER/MIXER_ENTRY.o"(.text .rodata .data .padding)
 } > ROM
-    /* The sound mixer runs from the top of IWRAM. */
     .iwram_mixer 0x3007000 :
     {
     "*/games/THE BROKEN SEAL/SRC/SOUND/DRIVER/MIXER.o"(.text .rodata .data .padding)
@@ -2433,9 +2430,7 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.007711ff)
     "*/recon/tbs/ja/overlays.o"(.overlays)
 } > ROM
-    /* Startup copies the resident runtime bank to IWRAM from its ROM image. */
     IwramRuntime_Rom = LOADADDR(.iwram_runtime);
-    /* The sound mixer runs in IWRAM; its ROM copy is called in place for its return trampoline. */
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn) *(.ARM.attributes) *(.comment) *(.note*) }

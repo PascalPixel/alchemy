@@ -10,24 +10,17 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
-   This owner reads kinds 39 (its work block), 40 and 46. */
 extern u8 gWorkSlot[];
 void Audio_PlayCue(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 
-/* Six animation cells, one entry each: width, height, vertical bias, and the
-   byte offset of the cell inside the kind-39 work block.  The three byte
-   tables sit six apart and every cell's width * height matches its source
-   span, so the cells are 8bpp and the widths are also the source pitch. */
 extern u8 PuffArc_CellWidths[];
 extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
 
-/* One 28-byte record; the array starts at work + 0x7080. */
 typedef struct Puff {
     s32 x;
     s32 y;
@@ -49,12 +42,6 @@ typedef struct {
     s16 values[1];
 } BattleEffectIndexWindow;
 
-/* Cached kind-46 rectangle blitter: destination, source cell, x, y, width, height. */
-
-/* Nine puffs arranged on a sine/cosine arc animate over eighty frames.
- * Each plays six cells, four frames per cell, staggered four frames apart,
- * with one to three draws according to the layer count.
- * The rectangle blitter is cached in work slot 46. */
 void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
 {
     u32 *cache;
@@ -120,12 +107,8 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
         i = 0;
         cur = (Puff *)(work->sheet + 0x7080);
         do {
-            /* Negative ticks stagger the puffs. */
             if ((cur->tick >= 0) && (cur->tick <= 23)) {
                 cell = cur->tick / 4;
-                /* wide is loaded once and reused for the centring shift and
-                   the width argument, then reloaded per layer because the
-                   call clobbers it. */
                 draw(dst, work->sheet + PuffArc_CellSourceOffsets[cell],
                     cur->x - ((wide = PuffArc_CellWidths[cell]) >> 1),
                     cur->y + PuffArc_CellBiasY[cell],

@@ -11,7 +11,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "MENU_LIST.H"
 
-/* Where the accepted selection is published. */
 struct AssetSelectionResult {
     s32 unknown_000[0x60];
     u16 unknown_180;
@@ -50,8 +49,6 @@ void UiWindow_MarkVisibleTileAttributesFar(void);
 void UiWindow_EraseBorderRectFar(s32, s32, s32, s32);
 void Event_ClearInvalidPackedValuesFar(void);
 
-/* Runs the modal item selection screen over the saved tile memory and
- * publishes the accepted selection. */
 s32 RunAssetSelectionScreen(void)
 {
 #if EDITION_INTERNATIONAL

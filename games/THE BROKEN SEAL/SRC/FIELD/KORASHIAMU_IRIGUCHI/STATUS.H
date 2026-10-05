@@ -1,15 +1,12 @@
 #ifndef KORASHIAMU_IRIGUCHI_STATUS_H
 #define KORASHIAMU_IRIGUCHI_STATUS_H
 
-/* Declarations shared by the Colosso entrance's scene code. */
-
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
 #define RECORD_17 17
 
-/* The scene's action tables, in the overlay's read-only data. */
 extern u8 KorashiamuIriguchi_ActionTable1[];
 extern u8 KorashiamuIriguchi_ActionTable2[];
 extern u8 KorashiamuIriguchi_ActionTable3[];

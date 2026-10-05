@@ -12,7 +12,6 @@ void Graphics_ClearBg1ControlBit2(void);
 s32 UiWork_IsComplete(void);
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 
-/* graphics/registers/set_bg1_priority3.c */
 void Graphics_SetBg1Priority3(void)
 {
     /* FAKEMATCH: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
@@ -36,8 +35,6 @@ void Graphics_ClearBg1ControlBit2(void)
     REG_BG1CNT = value;
 }
 
-/* Clears BG0's vertical offset and installs Graphics_ClearBg1ControlBit2 as
-   the V-count interrupt at line 136. */
 void Graphics_InstallBg1VCountHandler(void)
 {
     u32 address = 0x04000012;

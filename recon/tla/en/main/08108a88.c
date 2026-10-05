@@ -1,10 +1,3 @@
-/*
- * Draft: Shop_SetCursor, ☀️'s SHOP.C body. Score 6: the listing issues the
- * zero pool load before the anchor x load and interleaves target stores. The
- * rest is load scheduling: the native issues loads (and fills their delay)
- * earlier than agscc at -mcpu=arm7tdmi; with -mtune=arm9tdmi added it scores
- * 0.
- */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "RAM_BUFFER.H"
@@ -21,9 +14,9 @@ struct ShopCursor {
 
 struct ShopRuntime {
     u8 unknown_000[0x4dc];
-    struct ShopCursor cursor;           /* 0x4dc */
+    struct ShopCursor cursor;
     u8 unknown_4ec[0x19];
-    u8 mode;                            /* 0x505 */
+    u8 mode;
 };
 
 struct SpriteAttr {

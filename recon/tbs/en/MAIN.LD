@@ -1,6 +1,3 @@
-/* English native section bodies. Their source-object order also declares
-   the shared international composition; Japanese owns the game MAIN.LD.
-   This declaration is source only and never reads reference output. */
 .rom_start :
 {
         "*/recon/tbs/unidentified.o"(.unidentified.08000000)
@@ -546,7 +543,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_DISPATCH.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.080b5218)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
-        /* The tile bit decoder block BattleBackground_Load copies to RAM, DECODE.S to BIT_COMMANDS.S. */
         BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
         "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/VIEW_MESSAGES.o"(.text)

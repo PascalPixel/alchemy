@@ -16,8 +16,6 @@
 extern u8 gMapCellBuffer[];
 extern u8 gBattleFxWork[];
 
-/* A growing column of the dual-table effect, laid over one of the work
-   block's particles. */
 struct DualColumn {
     s32 x;
     s32 y;
@@ -27,7 +25,6 @@ struct DualColumn {
     s32 start;
 };
 
-/* A puff of dust, one of 512 in the map cell buffer; age -1 is free. */
 struct DualPuff {
     s32 x;
     s32 y;
@@ -35,19 +32,14 @@ struct DualPuff {
     s32 age;
 };
 
-/* Per variant: how many columns rise. Per column: where it stands and,
-   by thirds, how tall it may grow. */
 extern u8 DualTable_ColumnCounts[];
 extern u8 DualTable_ColumnX[];
 extern u8 DualTable_HeightLimits[];
-/* The three vine and three pillar images: width and sheet offset. A
-   pillar column is also cut to its height by its place in eight. */
 extern u8 DualTable_VineWidths[];
 extern u16 DualTable_VineCells[];
 extern u8 DualTable_PillarWidths[];
 extern u16 DualTable_PillarCells[];
 extern s8 DualTable_PillarHeights[];
-/* The dust puff's seven images by age: width, height and sheet offset. */
 extern s8 DualTable_PuffWidths[];
 extern u8 DualTable_PuffHeights[];
 extern u16 DualTable_PuffCells[];
@@ -94,25 +86,16 @@ struct PillarWork {
 
 void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode);
 
-/* The vines. */
 void BattleFx_RunDualTableMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunDualTable(effect, 0);
 }
 
-/* The green pillars. */
 void BattleFx_RunDualTableMode1(struct BattleEffectArgument *effect)
 {
     BattleFx_RunDualTable(effect, 1);
 }
 
-/* Vines (mode 0) or green pillars (mode 1) shoot up from the ground in a
-   row of columns, as many as the effect's variant asks for. Each column
-   starts four frames after the last and grows eight lines a frame up to its
-   height; four frames after it starts the targets react, and on that frame
-   and four frames later a puff of dust rises at its foot. The puffs live in
-   a 512-slot pool in the map cell buffer, age -1 marking a free slot.
- */
 void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 {
     void **heap_cache;
@@ -340,10 +323,6 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
     BattleFx_EndCanvasLayer();
 }
 
-/* Sixteen columns grow and retract in staggered windows. Five image cells
- * cycle with frame and column, using the alternating cached blitters.
- * Position-query outputs are separate from the two three-word coordinates.
- */
 void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 {
     u32 *cache, *entry;
@@ -424,12 +403,6 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* Battle effect: a row of pillars rises out of the ground one after another,
-   eight frames apart, each kicking up a puff of dust and shaking the camera
-   while the targets flinch; the screen fades back over the last 16 frames.
-   Kinds 0 and 1 are tall columns that slide outwards as they grow, kinds 2
-   and 3 short stumps; odd kinds slide left.
- */
 void BattleFx_RaisePillars(struct BattleEffectArgument *efx)
 {
     void *dst;

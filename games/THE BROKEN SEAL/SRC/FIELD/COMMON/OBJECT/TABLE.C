@@ -19,8 +19,6 @@
 
 void Object_Destroy(void *);
 
-/* One cell of the field map's 128-cell-wide collision grid in EWRAM. */
-
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
 extern const struct ScenePlacement Data_0809f810[2];
@@ -41,11 +39,6 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action);
 
 extern struct FieldStepWork *gWork;
 
-/* Registers a scene's object table in the first free of the work's four
-   table slots, then makes an object for each of its rows whose condition
-   holds: party rows (ids up to 7) take their own table index, the others the
-   next slot from `slot` up to 65. A row whose object already stands is moved
-   to its place instead. */
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 {
     struct FieldStepWork *work;
@@ -141,10 +134,6 @@ void ObjectTable_DestroyAtIndex(s32 index)
     }
 }
 
-/* Rebuild the object table for a new scene: copy the player template, spawn
- * the leader and the scene's own objects, put the leader on a ladder when
- * the map cell and the one north of it are both ladder cells (kind 0xfd),
- * and create the camera object that follows it. */
 void ObjectTable_ResetForObject(struct ScenePlacement *table)
 {
     struct FieldStepWork *work;
@@ -159,7 +148,6 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
 
     work = (struct FieldStepWork *)gEventWork;
     leader = gGameState.selected_actor;
-    /* The scene loader keeps its two mutable player rows at +0x200. */
     entry = (struct ScenePlacement *)((u8 *)work + 0x200);
     entry[0] = Data_0809f810[0];
     entry[1] = Data_0809f810[1];

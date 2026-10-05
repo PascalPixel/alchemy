@@ -21,7 +21,6 @@ void UiMenu_PositionCursor(s32 x, s32 y);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 void Menu_ReleaseEntryObjects(void);
-/* The portrait definition reads four words; these callers keep their extra word. */
 void PsynergyMenu_InitializeEntryObjects();
 void DjinnMenu_ShowCurrentList(void);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -41,8 +40,6 @@ void RenderOutput_ClearListFar(s32 window);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 
-/* Pick a party member, rearranging the order with L and R; returns 1 when
- * one was chosen, -1 when cancelled. */
 s32 CharacterSelector_RunRearrange(void)
 {
     struct CharacterMenuState *work;
@@ -150,9 +147,6 @@ s32 CharacterSelector_RunRearrange(void)
     return result;
 }
 
-/* Choose whose Psynergy to list: left and right step through the party,
-   redrawing that member's Psynergy page; A returns 1 and B -1, and the
-   chosen member is stored as the selected owner. */
 s32 PsynergyMenu_SelectOwner(void)
 {
     struct PsynergyMenuState *menu = gMenuWork;
@@ -315,11 +309,6 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame)
     CharacterMenu_DrawStatusAilments((struct UiWindow *)handle, resource, 0);
 }
 
-/*
- * The character menu's command selection: shows the selected character's
- * status and available commands across two panes, switches characters on
- * request, and returns 1 when a command is confirmed or -1 when cancelled.
- */
 s32 CharacterMenu_SelectCommand(void)
 {
     struct CharacterMenuState *menu;

@@ -1,6 +1,5 @@
 #include "RESOURCE.H"
 #include "B5_CONTEXT.H"
-/* Scene tables, the hostage scene and small callbacks. */
 #include "FUNKA.H"
 #include "CALL.H"
 #include "TYPES.H"
@@ -42,7 +41,6 @@ struct Ember {
     u8 motion_flags;
 };
 
-/* The embers' animation script, laid out after the code. */
 extern const s32 Funka_EmberScript[];
 extern s32 gEmberTimer;
 extern s32 gEmberState[16];
@@ -59,31 +57,25 @@ extern u8 MsgSoruWellTurnedBadly[];
 
 enum {
     ACTOR_WISE_ONE = 15,
-    /* The actors SoruFunka_StepEmbers moves. */
     ACTOR_FIRST_ROCK = 16,
     ROCK_COUNT = 16
 };
 
 enum {
     OBJECT_ELEMENTAL_STAR = 22,
-    /* Its name is MsgItemName + 222. */
     ITEM_MARS_STAR = 222
 };
 
 enum {
-    /* Set as the party leaves the collapsing chamber. */
     FLAG_SOL_SANCTUM_ERUPTED = 0x814,
     FLAG_STAR_ROOM_COLLAPSED = 0x83f
 };
 
-/* The quake's work: once fading is set, the shake keeps its strength
-   and dies away instead of holding steady. */
 struct QuakeWork {
     u8 unknown_000[0x40c];
     s32 fading;
 };
 
-/* The ten arcing effects' origins, laid out after the code. */
 extern s32 Funka_ArcOrigins[][2];
 void SoruFunka_SpawnEffectPair();
 void SceneEffect_UpdateArcOverAnchor();
@@ -123,7 +115,6 @@ struct WorldMapVramBlock {
 extern struct WorldMapVramBlock gVramBlockCache[];
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
-/* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
     u16 attr0;
@@ -586,8 +577,6 @@ s32 OverlayObject_SetRecordAngleFromHeading(Ent *p)
     return 1;
 }
 
-/* Gather actors 16 to 31 at the crater, fling them out in a ring, then
- * reset them once they land. */
 void SoruFunka_ThrowEruptionRing(void)
 {
     struct FieldActor *actor;
@@ -642,7 +631,6 @@ void SoruFunka_ThrowEruptionRing(void)
     }
 }
 
-/* The scene's state words and slots. */
 void SceneState_InitStateWordsAndSlots(void)
 {
     s32 *p;
@@ -658,9 +646,6 @@ void SceneState_InitStateWordsAndSlots(void)
     }
 }
 
-/* Sixteen-actor effect step (actors 16..31): sets the work values from the
- * effect timer, ages the actors that have come to rest, and when the frame
- * mask allows, launches the first idle one on a random bearing. */
 void SoruFunka_StepEmbers(void)
 {
     u8 *work;
@@ -742,7 +727,6 @@ void SoruFunka_StepEmbers(void)
     }
 }
 
-/* The random timer level. */
 void SceneState_UpdateRandomTimerLevel(void)
 {
     u32 v;
@@ -777,13 +761,6 @@ void SceneState_UpdateRandomTimerLevel(void)
     }
 }
 
-/* The star chamber's collapse and escape (Scene_RunExtendedEffectPresentation). */
-
-/*
- * The Elemental Star chamber collapses around the party leader and Gerald.
- * The Wise One appears, has the Mars Star put back in its bag, and
- * helps them out as the volcano erupts.
- */
 void Scene_RunExtendedEffectPresentation(void)
 {
     struct QuakeWork *quake;
@@ -841,7 +818,6 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ColorBufferInterpolate(40);
     Engine_EventWait(40);
 
-    /* The two spin apart. */
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     gerald = Actor_Get(ACTOR_GERALD);
     leader_sprite = leader->sprite;
@@ -1026,7 +1002,6 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_GERALD, 0);
 
-    /* The Wise One arrives. */
     Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(110), PIXELS(152));
     Engine_TaskWait(1);
     Actor_SetSpeed(ACTOR_WISE_ONE, 0x13333, 0x9999);
@@ -1199,7 +1174,6 @@ void Scene_RunExtendedEffectPresentation(void)
         Engine_EventWait(40);
     }
 
-    /* The Elemental Star rises from the party leader. */
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     star = Object_Create(OBJECT_ELEMENTAL_STAR, actor->x.fixed, actor->y.fixed + PIXELS(36),
                          actor->z.fixed);
@@ -1414,8 +1388,6 @@ void Scene_RunExtendedEffectPresentation(void)
     GameFlag_Set(0x100);
 }
 
-/* Scene steps, regions and arcing effects. */
-/* Resident IWRAM remainder. */
 void SoruFunka_PlaceBeforeStar(s32 actor)
 {
     struct FieldActor *object;
@@ -1728,7 +1700,6 @@ void SceneEffect_UpdateAnchoredRiseArc(struct Actor_02002e5c *obj)
     obj->z = anchor->z - (0x10000 - amp) * 5 + 0x100000;
 }
 
-/* Soru volcano: spawns the linked pair of effect objects above the parent actor, with a cue, and gives them actor 15's sprite priority. */
 void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];
@@ -1778,7 +1749,6 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
     }
 }
 
-/* Small scene steps. */
 void SceneState_SetValue140Mode0(void)
 {
     Engine_PsynergyBegin(140, 0);

@@ -34,15 +34,12 @@ s32 Menu_SelectResourceLayout(s32 mode)
         Menu_AppendResourceEntry(47);
         Menu_AppendResourceEntry(48);
 #if defined(TBS_EDITION_ES)
-        /* Only the Spanish password list is centred; its transfer list keeps
-           its place. */
         Menu_CenterResourceEntries(17, 5, 0);
 #endif
     }
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
     Menu_CenterResourceEntries(17, 7, 0);
 #elif defined(TBS_EDITION_ES)
-    /* The password list was centred above; the transfer list keeps its place. */
 #elif defined(TBS_EDITION_FR)
     Menu_CenterResourceEntries(17, 9, 0);
 #else
@@ -76,7 +73,6 @@ s32 Menu_SelectResourceLayout(s32 mode)
         msg += 3;
         UiText_DrawResource(msg, work->lower_window, 8, 22);
 #else
-        /* The Japanese password help takes two lines. */
         window = UiWindow_Create(5, 4, 21, 12, 2);
         work->lower_window = window;
         UiText_DrawResource(msg + 1, window, 0, 4);

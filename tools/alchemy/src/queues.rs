@@ -1,9 +1,3 @@
-//! `alchemy queues`: split a game's not-yet-C functions into work queues
-//! that cannot collide. Each queue owns whole groups: a run of neighbouring
-//! raw listings between two C objects in the English linker order (one
-//! module's worth of adoptions), or a whole overlay. Functions another
-//! local branch has already adopted are left out. Queues are balanced by
-//! bytes and ordered as `make deps` ranks them: what unblocks the most first.
 use crate::compiler::routing::root;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
@@ -25,8 +19,6 @@ pub struct Function {
     pub callers: u64,
 }
 
-/// Group key per listing: the index of its run of raw listings between C
-/// objects in the English linker script.
 pub(crate) fn runs(script: &str, game: &str) -> BTreeMap<String, usize> {
     let mut run = 0;
     let mut in_raw = false;
@@ -48,7 +40,6 @@ pub(crate) fn runs(script: &str, game: &str) -> BTreeMap<String, usize> {
     out
 }
 
-/// Balance groups across `workers` queues, largest group first.
 pub(crate) fn balance(groups: BTreeMap<String, Vec<Function>>, workers: usize) -> Vec<Vec<Function>> {
     let mut groups: Vec<(String, Vec<Function>)> = groups.into_iter().collect();
     groups.sort_by_key(|(_, fs)| std::cmp::Reverse(fs.iter().map(|f| f.bytes).sum::<u64>()));
@@ -92,7 +83,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let script = std::fs::read_to_string(root.join(&script_path)).map_err(|e| e.to_string())?;
     let run_of = runs(&script, game);
 
-    // Listings other local branches no longer link: already adopted there.
     let current = crate::process::run(&["git", "branch", "--show-current"], root)?.trim().to_string();
     let branches = crate::process::run(&["git", "branch", "--format=%(refname:short)"], root)?;
     let mut taken = BTreeSet::new();
@@ -137,7 +127,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let queues = balance(groups, workers);
     std::fs::create_dir_all(&out_dir).map_err(|e| e.to_string())?;
     for (k, mut queue) in queues.into_iter().enumerate() {
-        // Most callers first: what other unfinished code waits on.
         queue.sort_by(|a, b| b.callers.cmp(&a.callers).then(a.address.cmp(&b.address)));
         let mut tsv = String::from("image\taddress\tname\tbytes\tdraft\tlisting\n");
         let bytes: u64 = queue.iter().map(|f| f.bytes).sum();

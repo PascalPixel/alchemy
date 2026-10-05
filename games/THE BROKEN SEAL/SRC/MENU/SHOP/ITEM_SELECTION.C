@@ -13,7 +13,6 @@ extern u8 MsgCannotDropIt[];
 extern u8 MsgCannotRemoveIt[];
 
 void UiWork_FinalizeFar(s32 window, s32 style);
-/* This caller passes an extra word beyond the helper's four arguments. */
 void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 void Shop_InitializeCursorWork(void);
@@ -23,7 +22,6 @@ s32 Shop_SelUse(s32 unit_id);
 s32 Inventory_CountFar(s32 unit_id);
 void Audio_PlayCue(s32 cue);
 
-/* Select a party member and then an item owned by that member. */
 s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 {
     struct ShopRuntime *shop;
@@ -262,7 +260,6 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         UiText_DrawCharacterAtOffsetFar(masked + (s32)&MsgItemName, window, 0, 0);
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);
-        /* The Japanese notes start a character in. */
         if (result == -4) {
 #if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 0, 8);
@@ -282,8 +279,6 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
             qty = Shop_SalePrice(unit->inventory[item_id]);
             total = mult *qty;
 
-/* The price line: the Japanese edition counts the coins with the word
-   before the heading, the others name them with MsgCoins, five before. */
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
             UiText_DrawCharacterAtOffsetFar((s32)&MsgPriceHeading, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);

@@ -1,10 +1,4 @@
-/* Battle effect: close the canvas layer an effect opened. Restore the scroll
-   pair saved in the work block, recentre the projection, clear the canvas
-   tiles, stop the canvas transfer callback, switch the display back through
-   the next-frame queue, and fade the battle palette back in over eight
-   frames.
-
-   FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
+/* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
    (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
    constructs, the one-pass loop around the IME read and the count stored
    through an explicit u16 pointer, plus a one-pass loop around everything

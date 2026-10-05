@@ -47,14 +47,12 @@ void UiWork_Finalize(struct UiWindow *work, s32 release)
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *work)
 {
-    /* 属性0x8がない時だけ描画と子リストを解放する。 */
     if (!(8 & work->flags)) {
         RenderOutput_RedrawSavedRect(work);
         RenderOutput_ClearList(work);
     }
 }
 
-/* Redraws a window's frame where it stands. */
 void RenderOutput_RedrawSavedRect(struct UiWindow *window)
 {
     UiWindow_DrawFrame(window->x, window->y, window->width, window->height);

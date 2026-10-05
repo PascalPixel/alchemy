@@ -16,7 +16,6 @@ void Shop_DrawMsg(s32 window, s32 message)
         RenderOutput_RedrawSavedRectFar(window);
         UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
 #else
-        /* The Japanese shop clears the window and waits a frame first. */
         RenderOutput_ClearListFar(window);
         WaitFrames(1);
         UiText_DrawResourceFar(message, window, 0, 0);

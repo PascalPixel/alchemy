@@ -5,7 +5,6 @@
 
 struct BattleUnit;
 
-/* The upper five bits of an inventory word store its count minus one. */
 enum InventoryEncoding {
     ITEM_ID_MASK = 0x1ff,
     INVENTORY_EQUIPPED = 0x200,
@@ -43,8 +42,8 @@ enum ItemEffectKind {
 };
 
 struct ItemEffect {
-    u8 kind;                        /* 0x00 */
-    s8 amount;                      /* 0x01 */
+    u8 kind;
+    s8 amount;
     u8 reserved_02[2];
 };
 
@@ -53,21 +52,21 @@ LAYOUT_OFFSET_GUARD(ItemEffect_Kind, struct ItemEffect, kind, 0x00);
 LAYOUT_OFFSET_GUARD(ItemEffect_Amount, struct ItemEffect, amount, 0x01);
 
 struct ItemDefinition {
-    s16 price;                      /* 0x00 */
-    u8 type;                        /* 0x02 */
-    u8 flags;                       /* 0x03 */
-    u16 equip_mask;                 /* 0x04 */
-    u16 icon;                       /* 0x06 */
-    s16 primary_bonus;              /* 0x08 */
-    s8 secondary_bonus;             /* 0x0a */
-    u8 secondary_flags;             /* 0x0b */
-    u8 use_type;                    /* 0x0c */
+    s16 price;
+    u8 type;
+    u8 flags;
+    u16 equip_mask;
+    u16 icon;
+    s16 primary_bonus;
+    s8 secondary_bonus;
+    u8 secondary_flags;
+    u8 use_type;
     u8 reserved_0d;
-    u16 description_message;        /* 0x0e */
+    u16 description_message;
     u8 reserved_10[4];
-    s32 element;                    /* 0x14, read as a word */
-    struct ItemEffect effects[4];   /* 0x18 */
-    u16 action_id;                  /* 0x28 */
+    s32 element;
+    struct ItemEffect effects[4];
+    u16 action_id;
     u8 reserved_2a[2];
 };
 
@@ -141,7 +140,6 @@ LAYOUT_OFFSET_GUARD(
 struct ItemDefinition *Item_Get(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
-/* The selected battle action: normal attack (1) or the weapon's unleash. */
 s32 RollWeaponUnleash(struct BattleUnit *owner);
 s32 RollWeaponUnleashFar(struct BattleUnit *owner);
 

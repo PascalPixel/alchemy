@@ -9,7 +9,6 @@
 #include "TBS_EDITION.H"
 #include "MENU_LIST.H"
 
-/* The equipment slots' highlight: the Japanese slot names are narrower. */
 #if EDITION_INTERNATIONAL
 #define EQUIP_SLOT_X     1
 #define EQUIP_SLOT_WIDTH 12
@@ -27,9 +26,6 @@ void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ITEM_ID_MASK 0x1ff
 
-/* The item page for equipment: names the selected item, draws each row's
-   element icon and highlight, then marks the equipment slot the selected
-   item fits when it is equipped (bit 9). */
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
 {
     struct InventoryMenuState *menu;
@@ -43,11 +39,8 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
     RenderOutput_RedrawSavedRectFar(menu->info_window);
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-    /* Spanish and Italian clear the info window's top row instead. */
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
 #else
-    /* Japanese clears the info window's list and names the item with
-       UiText_DrawResourceFar. */
     RenderOutput_ClearListFar(menu->info_window);
 #endif
     WaitFrames(1);

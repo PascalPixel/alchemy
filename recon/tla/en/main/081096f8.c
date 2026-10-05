@@ -20,10 +20,6 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 s32 WaitFrames(s32 frames);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 
-/* Spins a quantity from minimum + 1 to maximum with left and right, redrawing
-   the count and its total price; returns the chosen count, or -1 when
-   cancelled. */
-
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
 {
     void *buffer;

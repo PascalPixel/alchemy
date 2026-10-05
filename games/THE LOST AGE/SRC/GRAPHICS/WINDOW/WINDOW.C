@@ -6,8 +6,6 @@
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
-/* Copies each dirty quarter of the window tilemap to VRAM, unless a page
-   is being redrawn. */
 void UiWork_UploadDirtyBlocks(void)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
@@ -34,9 +32,6 @@ void UiWork_UploadDirtyBlocks(void)
     }
 }
 
-/* Blanks a window's rectangle of the tilemap, at least two cells and at
-   most thirty each way; with the menu state set, rows below 16 take the
-   menu's lower blank. */
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 {
     struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;

@@ -286,13 +286,13 @@ struct StopRecord {
 
 struct Rec_383b {
     u8 pad00[8];
-    s32 f8;                     /* +8  */
+    s32 f8;
     u8 pad0c[4];
-    s32 f16;                    /* +16 */
+    s32 f16;
     u8 pad14[36];
-    s32 f56;                    /* +56 */
+    s32 f56;
     u8 pad3c[4];
-    s32 f64;                    /* +64 */
+    s32 f64;
 };
 
 struct Rec_383b *ObjectTable_Get();
@@ -321,8 +321,6 @@ void SceneDialogue_RunActor14Line(void)
     Engine_EventEnd();
 }
 
-/* Actor 16 thanks the party once with a Water of Life, when the party has
- * room for it, and then asks where they are heading. */
 void FieldScene_RunScene383SequenceC(void)
 {
     Engine_EventBegin();
@@ -462,11 +460,6 @@ void SceneDialogue_RunActorEighteenBranchedDialogue(void)
     Engine_EventEnd();
 }
 
-/* Configures actors 0, 1, 2 (position, movement, and animation timing), then
- * branches on whether actor 0 is already set up: one path sets up actors 0-2
- * with poses and movement, the other only advances actor 2's animation. Both
- * paths converge to check actor 0's record and, depending on that check,
- * configure either actor 2 or actor 1 from it before the scene finishes. */
 void FieldScene_RunSetupSequence(void)
 {
 
@@ -541,7 +534,6 @@ void FieldScene_RunSetupSequence(void)
         Engine_ActorSetAnimation(ACTOR_IVAN, 2);
         record = Object_GetById(0);
         if (record != 0) {
-            /* Read the two s16 fields at +10 and +18 of the record. */
             Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(ACTOR_IVAN);
@@ -552,7 +544,6 @@ void FieldScene_RunSetupSequence(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        /* Read the two s16 fields at +10 and +18 of the record. */
         Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
@@ -719,11 +710,6 @@ void Scene_JoinRodSearch(void)
     Engine_EventShowMessage(2, 0);
 }
 
-/* The Vault's closing scene after the thieves are caught: the party is cut
- * free, the mayor and the villagers talk it over, one question decides who
- * speaks next, and the scene closes back into the house at entrance 17,
- * with entrance 16 kept as the one to return to. The two runs of lines
- * start at MsgKuupuappuVaultCutFree and MsgKuupuappuVaultThievesCaught. */
 void FieldScene_RunVaultClosingSequence(void)
 {
     s32 base;
@@ -919,7 +905,6 @@ void SceneState_SetValue123Mode11(void)
     Engine_EventRequestExit(11);
 }
 
-/* The leader walks out of the house, which closes over sixteen frames. */
 void FieldScene_RunOpeningSequenceHead(void)
 {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -929,8 +914,6 @@ void FieldScene_RunOpeningSequenceHead(void)
     Engine_EventRequestExit(15);
 }
 
-/* The leader walks to the door; the first time, actor 8 groans before the
- * room is left through exit 14. */
 void FieldScene_RunOpeningSequenceSecond(void)
 {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
@@ -946,9 +929,6 @@ void FieldScene_RunOpeningSequenceSecond(void)
     Engine_EventRequestExit(14);
 }
 
-/* Third scene step: sets up actors 24 and 25 (fetching each one's record),
- * runs a shared series of configuration calls touching actors 0-2, 10, 14,
- * 20, 24 and 25, then marks the two fetched records with a byte flag. */
 void FieldScene_RunOpeningSequenceThird(void)
 {
 
@@ -986,14 +966,11 @@ void FieldScene_RunOpeningSequenceThird(void)
     GameFlag_Set(2130);
     GameFlag_Set(768);
     Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
-    /* Starting movement steps for the two thieves. */
     ((struct FieldActor *)actor24)->timer = 1;
     ((struct FieldActor *)actor25)->timer = 3;
     Engine_EventEnd();
 }
 
-/* Ivan finds actors 24 and 25 suspicious and the party agrees to follow
- * them; the pair then take their places by the far wall. */
 void FieldScene_RunScene383SequenceB(void)
 {
     struct FieldActor *actor24;
@@ -1082,8 +1059,6 @@ void FieldScene_RunSteps107And250(void)
     KuupuappuHeya_StartActorStops();
 }
 
-/* Actors 24 and 25 come back: one line, then each takes up its script and
- * its shown state. */
 void FieldScene_ConfigurePairedActors(void)
 {
     Engine_EventWait(30);
@@ -1152,7 +1127,6 @@ void FieldScene_SelectActorPair(void)
             actor = 25;
             break;
         }
-        /* fall through */
     case 201:
         Engine_EventSetMessage((s32)MsgKuupuappuTheresNowhereRun);
         Actor_SetAttachedEffect(24, 0x102);
@@ -1340,7 +1314,6 @@ void KuupuappuHeya_RunBranchingDialogueScene(void)
     Engine_ActorSetPosition(2, 0, 0);
 }
 
-/* Pose actors 24 and 25 for dialogue steps 11 to 18. */
 void KuupuappuHeya_PoseDialogueActors(void)
 {
     switch (gEventWork->touched_trigger) {
@@ -1383,7 +1356,6 @@ void KuupuappuHeya_PoseDialogueActors(void)
     }
 }
 
-/* Update the actor's animation descriptor when its state matches the expected state. */
 void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc)
 {
     struct FieldActor *rec = Object_GetById(actor);
@@ -1414,7 +1386,6 @@ void SceneState_SetFlagByActorPosition(void)
     }
 }
 
-/* Place the room's actors and map cells for the current story state. */
 s32 KuupuappuHeya_ApplyEntryState(void)
 {
     gEventWork->start_transition = 0x209;
@@ -1545,7 +1516,6 @@ s32 KuupuappuHeya_ApplyEntryState(void)
     return 0;
 }
 
-/* Turn actors 24 and 25 toward the leader. */
 void SceneActor_FaceActors24And25TowardActorZero(void)
 {
     struct FieldActor *origin = Object_GetById(0);
@@ -1612,10 +1582,6 @@ void FieldScene_RunLateSequence(void)
     Engine_EventEnd();
 }
 
-/* The Vault house scene in which the three villagers will not go away:
-   they and the party are placed and turned, the screen opens, the three
-   argue in turn, and the scene closes back into the same house, entrance
-   17, with entrance 16 kept as the one to return to. */
 void KuupuappuHeya_RunVaultEvent(void)
 {
     u8 *state;
@@ -1676,7 +1642,6 @@ s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
     return ((struct BattleUnit *)Owner_GetState(2))->djinn_owned_counts[0];
 }
 
-/* After twenty placement updates, bit 0 of party member 2's word at +0xf8 triggers a Djinn transfer, cue 126 and stat recalculation for members 0 and 2. */
 s32 OverlayObject_RunObjectTwoWhenFlagged(void)
 {
     u8 *state;
@@ -1691,10 +1656,6 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
     }
 }
 
-/* Sets up actors 10, 11, 12 (position, pose, flags) and actors 0-2 and 8-9 and
- * 13-14 in several later waves, moving and animating them through a long
- * scripted sequence, branches once on an actor-12 state check, then advances
- * the shared scene phase twice before returning. */
 void RunEventScript01(void)
 {
     u32 i;
@@ -1718,9 +1679,7 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(10, 9);
     Engine_ActorSetAnimation(11, 9);
     Engine_ActorSetAnimation(12, 9);
-    /* Clear the low bit of the flag byte at +35. */
     Object_GetById(12)->priority_flags &= 254;
-    /* Set flag bits 0x0c of the byte at +9. */
     actor12_record[9] |= 12;
     base5_200d17c = (s32)KuupuappuHeya_ActionTable;
     Engine_ActorEnableActionCallback(10, base5_200d17c);
@@ -1906,8 +1865,6 @@ void RunEventScript01(void)
     Engine_EventEnd();
 }
 
-/* The room's closing scene: Ivan is given the Shaman's Rod and the party
- * takes its leave. */
 void RunDialoguePromptScene(void)
 {
     s32 off1d8;
@@ -2462,8 +2419,6 @@ u8 *SceneData_FindEntryAtPosition(s32 *o)
     return ret;
 }
 
-/* Snap *pos to the nearest used stop of the set and return that stop's record,
- * or return null when every stop is unused. */
 struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos)
 {
     struct Stop *stop;
@@ -2496,7 +2451,6 @@ struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos
     return &((struct StopRecord *)KuupuappuHeya_Stops)[id];
 }
 
-/* Test an eight-unit radius, using the current position when the target is unset. */
 s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
 {
     struct Rec_383b *rec = ObjectTable_Get(id);
@@ -2520,8 +2474,6 @@ s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
     return 0;
 }
 
-/* Whether the actor's destination, or its position when it has none, lies
- * within 16 pixels of the point (x, z). */
 s32 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id)
 {
     struct FieldActor *actor = Engine_ActorLookup(id);
@@ -2567,14 +2519,6 @@ extern u16 KuupuappuHeya_StopTimer;
 u32 Random16(void);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *actor, s32 argument);
 
-/*
- * Moves the three actors of the stop puzzle one stop further when each stands
- * still on a stop. Actor 2 flees the leader: it keeps the leader's facing
- * while the leader pushes toward it from close by, and otherwise goes its own
- * way (abroad, only while the leader is more than eight units off). Actors
- * 24 and 25 wander at random, turning back when the way ahead is taken. Once
- * the wanderers have been stuck for thirty frames, a trigger reports which.
- */
 void KuupuappuHeya_UpdateActorStops(void)
 {
     struct FieldActor *leader;

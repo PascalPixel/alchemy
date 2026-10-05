@@ -55,8 +55,6 @@ jobs:
       - name: Test Alchemy commands and relocated build caches
         run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --test cli --test build_script
 
-      # These suites need neither ROMs nor the installed game compilers.
-      # Compiler execution and the complete preprocessed C audit remain in make land.
       - name: Test publication, routing, parsing and guarded rewrites
         run: >-
           cargo test --locked --offline --release --manifest-path tools/Cargo.toml
@@ -65,9 +63,6 @@ jobs:
           compiler::routing::target_tests::only_ compiler::no_asm:: compiler::steering:: compiler::c_syntax::
           verify::tests::
 
-      # The publication scan checks tracked formats/content and editable asset
-      # layout. Its optional local-ROM logo comparison cannot run here.
-      # ROM equality, executable coverage and game-compiler checks stay local.
       - name: Check public source and pinned compiler provenance
         run: >-
           make ALCHEMY=tools/out/cargo-target/release/alchemy

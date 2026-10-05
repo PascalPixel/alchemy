@@ -57,18 +57,15 @@ struct OrbitingPaletteEffect {
 
 struct PaletteSceneRecord {
     u8 pad00[216];
-    u16 values[1];                 /* +216 */
+    u16 values[1];
 };
 
-/* The tree's scene tables, in the overlay's data. */
 extern u8 gKorimaKiEntrances[];
 extern u8 gKorimaKiRegions[];
 extern u8 gKorimaKiExits[];
 extern u8 gKorimaKiPlacements[];
 extern u8 gKorimaKiEvents[];
 
-/* The overlay's own work, past its image: where the sparks gather, how long
- * they have run, whether each spawn sounds, and the transition's step. */
 extern s32 gKorimaKiSparkOrigin[3];
 extern s32 gKorimaKiSparkCount;
 extern s32 gKorimaKiSparkSound;
@@ -89,7 +86,6 @@ s32 Inventory_Find();
 struct PaletteSceneRecord *Owner_GetState();
 void Audio_PlayCueFromEventWork();
 
-/* The tree's own scenes, callbacks and palette helpers. */
 void KorimaKi_PlayGesture(s32 actor, s32 gesture);
 void KorimaKi_SpawnOrbitSparks(void);
 void KorimaPalette_SaveFirst(void);

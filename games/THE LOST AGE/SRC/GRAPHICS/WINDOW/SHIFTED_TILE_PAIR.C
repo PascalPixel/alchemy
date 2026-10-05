@@ -5,8 +5,6 @@ extern u8 gRomShiftedTilePair[];
 
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift);
 
-/* Merges the ROM tile pair into offset, shifted two or three pixels in
-   opposite directions by a phase that steps every four frames. */
 void Link_DrawShiftedTilePair(s32 offset)
 {
     s32 phase = (gFrameCount >> 2) & 3;

@@ -1,9 +1,3 @@
-//! `alchemy diff`: compile one C draft exactly as the build compiles game
-//! code and compare its instructions, one by one, with the English raw
-//! listing it would replace, as pret's matching workflow compares a
-//! function before it moves into source. Registers, stack offsets and
-//! branch distances count; call targets and literal pool words do not
-//! (the build's comparison of the whole ROM is the final judge).
 use crate::build_rom::c_steps;
 use crate::compiler::routing::root;
 use crate::process::run as command;
@@ -29,7 +23,6 @@ struct Options {
     addresses: Vec<String>,
     game: &'static str,
     show: bool,
-    /// An overlay draft: the overlay (resource_XXX) and the listing symbol.
     overlay: Option<String>,
     symbol: Option<String>,
 }
@@ -94,8 +87,6 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     Ok(Options { draft, addresses, game, show, overlay, symbol })
 }
 
-/// One disassembled object as comparable lines: addresses dropped, branch
-/// targets as distances, call and pool targets as `<t>`, padding removed.
 pub(crate) fn normalize(objdump: &str) -> Vec<String> {
     objdump
         .lines()
@@ -121,7 +112,6 @@ pub(crate) fn normalize(objdump: &str) -> Vec<String> {
                     s
                 })
             };
-            // Call targets and pool references: the linker decides them.
             if let Some(cut) = out.find(" <") {
                 out.truncate(cut);
                 if !is_branch(mnemonic) {
@@ -147,7 +137,6 @@ fn is_branch(mnemonic: &str) -> bool {
             .contains(&&base[1..]))
 }
 
-/// The longest common subsequence table, and the edit script it gives.
 pub(crate) fn compare(listing: &[String], draft: &[String]) -> (usize, Vec<String>) {
     let (n, m) = (listing.len(), draft.len());
     let mut table = vec![vec![0u32; m + 1]; n + 1];
@@ -188,14 +177,12 @@ fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<String>, Strin
     Ok(normalize(&command(&arguments, root())?))
 }
 
-/// The overlay a draft belongs to, from its path: resource_XXX.
 fn resource_name(path: &str) -> Option<String> {
     let at = path.find("resource_")?;
     let id = &path[at + 9..at + 12];
     id.chars().all(|c| c.is_ascii_hexdigit()).then(|| format!("resource_{id}"))
 }
 
-/// Text symbols an object defines.
 fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
     let listing = command(&["arm-none-eabi-nm", "--defined-only", &object.to_string_lossy()], root())?;
     Ok(listing
@@ -225,8 +212,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     std::fs::create_dir_all(object.parent().unwrap()).map_err(|e| e.to_string())?;
     let draft = std::fs::canonicalize(&options.draft)
         .map_err(|e| format!("{}: {e}", options.draft.display()))?;
-    // The routed compile, then GNU as, which marks literal pools as data so
-    // they disassemble as words rather than as instructions.
     let mut steps = c_steps(target, &draft, &object)?;
     steps.pop();
     for step in steps {

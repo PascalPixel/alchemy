@@ -4,8 +4,6 @@ void Runtime_WriteDebugTextTiles(const u8 *src);
 void Text_FormatHexToWork(u32);
 void Text_FormatSignedDecimalToWork(s32);
 
-/* The ends of the formatted number text: eight hex digits or ten decimal
-   digits, each followed by its terminator. */
 extern u8 gNumberTextHexEnd[];
 extern u8 gNumberTextDecimalEnd[];
 

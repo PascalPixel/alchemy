@@ -17,7 +17,6 @@
 
 extern struct ShopRuntime *gMenuWork;
 
-/* ui/ability_menu/build_available_list.c */
 s32 Item_AdjustCounterFar(s32, s32);
 
 void Shop_StepCursor(void);
@@ -87,9 +86,6 @@ void Shop_StepCursor(void)
     ShopCursor_Advance(&gMenuWork->cursor);
 }
 
-/* Shop work block (heap kind 55): clear it, set up the cursor state at
-   +0x380 and cache the six cursor sprite frames before the cursor task
-   Shop_StepCursor starts. */
 void Shop_InitializeCursorWork(void)
 {
     struct ShopRuntime *work;
@@ -139,9 +135,6 @@ void Inn_Cleanup(void)
     Runtime_ReleaseHeapBlock(0x37);
 }
 
-/* Runs a shop visit: set up the shop from its event-table row, show the
-   keeper's window, then loop over the buy, sell, artifact and repair
-   choices until the player leaves. */
 s32 Shop_Run(s32 row, s32 keeper_id)
 {
     struct ShopRuntime *shop;
@@ -213,7 +206,6 @@ done:
 #define FINAL_ARG 2
 #endif
 
-/* 固定値を設定し、3つの項目フラグを1にする。 */
 s32 Battle_ApplyPresetItemsAndFlags(void)
 {
     gGameState.coins = 0x30d40;

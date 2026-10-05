@@ -1,7 +1,3 @@
-/* Draft: Torebi palace room keeper, IT.
- * 2026-10-01: The complete opening owner is 16 bytes short: the European room keeper returns to (56,120) after the four-bed dialogue. The preserved earlier spelling omits that semantic reset.
- * Approved TBS agscc and ordinary game flags; no output edits.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

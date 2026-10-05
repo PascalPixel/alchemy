@@ -4,8 +4,6 @@
 
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 style);
 
-/* Copies palette bank 15 over the given object bank, then lightens its
-   colour 4 by 9 in each channel, saturating at 31. */
 void Palette_LightenBankHighlight(s32 bank)
 {
     u16 *palette = (u16 *)(0x05000000 + (bank << 5));

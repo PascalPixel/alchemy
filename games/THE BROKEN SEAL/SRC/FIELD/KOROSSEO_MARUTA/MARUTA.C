@@ -1,17 +1,9 @@
 #include "RUNTIME_MEM.H"
-/* The log-rolling stage: its scene task, grid and object setup, the
- * opening, closing and final sequences, the obstacle checks and the scene
- * event. */
 #include "LOG_ROLLING.H"
 #include "CALL.H"
 
-/* The four rows of log kinds the stage cycles through, one per log. */
 extern s8 KorosseoMaruta_LogPattern[][6];
 
-/* The stage's per-frame task. Every eighteenth frame it advances the log
- * pattern, animating the five logs and their shadows and opening or closing
- * the floor under each; in between, a selected actor standing in a log's
- * column on row 11 or 12 raises that log's trigger. */
 void ColossoLogRollingStage_SceneTask(void)
 {
     struct EventWork *work = gEventWork;
@@ -48,11 +40,6 @@ void ColossoLogRollingStage_SceneTask(void)
     }
 }
 
-/* The log-rolling stage's setup: publish the scene phase, install its
- * per-frame task and lay out the stage's props, drifting obstacles, the
- * two banks of paired actors and the presentation extras, choosing among
- * alternative layouts by the story flags; then run the beat the scene's
- * sub-state names. The overlay's exported entry. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
@@ -68,10 +55,8 @@ void BattleFx_SetWeightedResult(s32 kind, s32 weight);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 
-/* The object script record 30 runs. */
 extern u8 KorosseoMaruta_Record30Script[];
 
-/* The stage picture the scene control decodes. */
 extern char ResourceId_RivalPathC;
 s32 Engine_GameFlagIsSet();
 s32 GameFlag_GetByte();
@@ -156,7 +141,6 @@ void ColossoLogRollingStage_WaitForSceneTask(void)
 {
     s32 polls;
 
-    /* 素直な while ループ。goto 版では初回の読みがテストへ沈む。 */
     Engine_TaskWait(10);
 
     polls = 0;
@@ -178,7 +162,6 @@ void ColossoLogRollingStage_NudgeActorsLeft(void)
     StageObstacleActor *actor = Object_GetById(id);
     s32 z = ((struct FieldActor *)actor)->z.part.pixel;
 
-    /* Nudge both records left while the actor occupies rows 183 through 186. */
     if ((u32)(z - 183) <= 3) {
         subject->x += -0xcccc;
         actor->x += -0xcccc;
@@ -596,8 +579,6 @@ void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
     Engine_GameFlagSet(0x363);
 }
 
-/* Pause object 28, raise flag 0x361, then wait until the scene task reports
- * status 1 or 3 before dropping it from the task list. */
 void ColossoLogRollingStage_WaitForSceneEventTask(void)
 {
     extern void BattleEffect_PauseObject(s32);
@@ -611,7 +592,6 @@ void ColossoLogRollingStage_WaitForSceneEventTask(void)
     Engine_TaskRemoveCallback(ColossoLogRollingStage_SceneTask);
 }
 
-/* Offsetting the active actor, clamped or not. */
 void ColossoLogRollingStage_OffsetActiveActor(void)
 {
     extern void Object_SetPosition(StageObstacleActor *, s32, s32, s32);
@@ -665,9 +645,6 @@ void ColossoLogRollingStage_NoopSceneEventHook(void)
 {
 }
 
-/* A competitor's question at entrance 2. Each competitor has three lines, the
- * question and its two answers, counted from MsgKorosseoDidntThinkBattles; a
- * yes closes the screen and selects that competitor. */
 void KorosseoMaruta_RunCompetitorTalk(s32 a0)
 {
     struct EventWork *work;
@@ -706,9 +683,6 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
     }
 }
 
-/* The log-rolling stage's start: the leader and the competitor walk out onto
- * the logs, face each other and take their places, the result is weighted
- * by the leader's place, and the stage records where the party returns. */
 void KorosseoMaruta_RunStageStart(void)
 {
     s32 place;
@@ -751,7 +725,6 @@ void KorosseoMaruta_RunStageStart(void)
     Engine_GameFlagSet(0x11a);
 }
 
-/* The scene event's state hooks. */
 void ColossoLogRollingStage_RunSceneEventIfReady(void)
 {
     if (ColossoLogRollingStage_FindActorAhead() == 0) {
@@ -773,8 +746,6 @@ s32 ColossoLogRollingStage_GetSceneEventState(void)
     return (s32)gKorosseoMarutaEvents;
 }
 
-/* Builds the log-rolling stage, then runs the beat the entrance names.
- * Returns 0 on every path. */
 s32 StageSetup_BuildAndDispatch(void)
 {
     struct FieldActor *actor;
@@ -844,9 +815,6 @@ s32 StageSetup_BuildAndDispatch(void)
     Call6(Engine_MapCopyCellAttributes, 18, 10, 3, 1, 18, 11);
     Engine_MapCopyCellAttributes(17, 11, 1, 1, column, 11);
 
-    /* The three drifting obstacles: any one still at rest and clear of the
-     * grid is planted and drawn twice, once on its own row and once 52 rows
-     * further down. */
     for (i = 15; i <= 17; i++) {
         actor = Object_GetById(i);
         height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
@@ -858,9 +826,6 @@ s32 StageSetup_BuildAndDispatch(void)
         }
     }
 
-    /* Two banks of five paired actors, 18..22 and 23..27.  The cleared arm
-     * also puts each pair on the grid; the uncleared arm only prepares the
-     * records and installs the second per-frame task. */
     if (Engine_GameFlagIsSet(865) != 0) {
         s32 still;
         s32 underfoot;
@@ -1004,7 +969,6 @@ s32 StageSetup_BuildAndDispatch(void)
     return 0;
 }
 
-/* The periodic particles and the multi-phase actor sequence. */
 s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle)
 {
     particle->x += particle->velocity_x << 8;
@@ -1094,7 +1058,6 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
     record = Object_GetById(0);
     {
-        /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
         record->facing = shown;
@@ -1109,21 +1072,18 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Actor_SetPosition(ACTOR_MIA, 0x5a80000, 0xc00000);
     record = Object_GetById(1);
     {
-        /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
         record->facing = shown;
     }
     record = Object_GetById(2);
     {
-        /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
         record->facing = shown;
     }
     record = Object_GetById(3);
     {
-        /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
         record->facing = shown;
@@ -1276,13 +1236,6 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Engine_EventEnd();
 }
 
-/* The third finals' greeting: the site announcement the other trial
-   overlays share, with this stage's line. */
-
-/* Colosso: line the other competitors up around actor a0, show its message
- * and walk it back to its place while the others gather on actor 0. */
-/* Colosso: the competitors are greeted before a trial. The same scene sits
- * in the wall and log-rolling trial overlays. */
 void Korosseo_RunGreetScene(s32 a0)
 {
     s32 p10;
@@ -1419,7 +1372,6 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
     Engine_EventEnd();
 }
 
-/* The second competitor's arrival. */
 void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
     s32 state;
@@ -1477,9 +1429,6 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     Engine_EventEnd();
 }
 
-/* Colosso log stage: unless the stage is already cleared, show the
- * introduction, wait up to 240 frames for the log to settle and hand over to
- * the stage. */
 void KorosseoMaruta_RunStageIntro(s32 scene)
 {
     struct EventWork *work;

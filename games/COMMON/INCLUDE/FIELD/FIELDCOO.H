@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* A 16.16 fixed-point map coordinate; its high half is the whole pixel. */
 union FieldCoordinate {
     s32 fixed;
     struct {

@@ -6,7 +6,6 @@
 #include "FIXED_MATH.H"
 #include "MENU_LIST.H"
 
-/* battle/effects/scene_transition/finish_and_release_heap_block.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 struct FxVector {
@@ -19,32 +18,30 @@ struct FxSprite {
     u32 unknown_00[2];
     u8 unknown_08;
     u32 unknown_09_0 : 2;
-    u32 mode : 2;               /* 0x09, bits 2-3 */
+    u32 mode : 2;
     u32 unknown_09_4 : 4;
     u8 unknown_0a[0x1c];
-    u8 palette;                 /* 0x26 */
+    u8 palette;
 };
 
 struct FxObject {
     u16 unknown_00[3];
-    u16 angle;                  /* 0x06 */
+    u16 angle;
     s32 x;
     s32 y;
     s32 z;
     u32 unknown_14[7];
-    s32 scale_x;                /* 0x30 */
+    s32 scale_x;
     s32 scale_y;
     u32 unknown_38[6];
-    struct FxSprite *sprite;    /* 0x50 */
+    struct FxSprite *sprite;
     u32 unknown_54 : 8;
-    u32 visible : 8;            /* 0x55 */
+    u32 visible : 8;
     u32 unknown_56 : 16;
     u32 unknown_58[5];
-    void *callback;             /* 0x6c */
+    void *callback;
 };
 
-/* The wave scene's work: two pages of per-line offsets, the hue the buffer
-   is tinted with, and the two objects its bolts run between. */
 struct WaveFxWork {
     u16 lines[2][162];
     u16 phase;
@@ -87,11 +84,6 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void)
     Runtime_ReleaseHeapBlock(0x16);
 }
 
-/* The wave scene's frame callback: refills the hidden page of line offsets
-   with a sine that advances four steps a frame and swaps the pages, steps
-   the hue on every other frame, and on frames 0, 8 and 16 of each 61-frame
-   round sends a bolt from the source object to the target, turned to face
-   along the way. */
 void BattleFx_UpdateWaveScene(void)
 {
     struct WaveFxWork *work = gBattleBgFxWork;

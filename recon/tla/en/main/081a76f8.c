@@ -1,10 +1,3 @@
-/* Draft, differ 36: ☀️'s Title_ShowAnimatedSplash over ⚓️'s names (the
-   OAM flag, gBgScroll, gInput's pressed buttons, resource 0x21) with the
-   empty palette callback after it, as in ☀️. ⚓️ always returns 0. The
-   native zeroes gBgScroll[2].y through r5 before reusing r5 for the
-   decode buffer and rebuilds the DMA base at each copy; ☀️'s register
-   pins no longer fit. Resource 0x21 needs naming in DIRECTORY.S (as
-   CamelotLogo) and the three callees their ⚓️ labels. */
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -73,7 +66,6 @@ s32 Title_ShowAnimatedSplash(void)
     return 0;
 }
 
-/* Empty callback in the title's palette entry table. */
 void Title_NoOpPalette(void)
 {
 }

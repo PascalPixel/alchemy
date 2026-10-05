@@ -1,7 +1,5 @@
-/* Read the flash chip ID from RAM while the chip is in ID mode. */
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 
-/* Flash-byte reader copied to RAM and entered in Thumb mode. */
 typedef u8 (*FlashByteRead)(s32 address);
 
 s32 ReadFlashId(void)

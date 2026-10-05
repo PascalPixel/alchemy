@@ -1,5 +1,3 @@
-/* Near miss: score 120: two reordered instructions, adds r2, #33 and str
-   r2, [sp, #0], around the bit characters' store. */
 #include "TYPES.H"
 extern const u8 Menu_HexDigitsString[];
 

@@ -1,9 +1,3 @@
-/*
- * Draft: Event_GetActorTable: the event work's table for the current owner,
- * or its slot 13 while the party state's owner override is set. Score 6: the
- * listing indexes with the 20-byte offset added to the scaled owner ([r0,
- * r3]) where this C folds it into the load.
- */
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
@@ -19,7 +13,6 @@ struct SaveWork {
     u8 unknown_0000[0x303c];
     struct SaveSlotRecord slots[3];
 };
-
 
 void *Event_GetActorTable(void)
 {

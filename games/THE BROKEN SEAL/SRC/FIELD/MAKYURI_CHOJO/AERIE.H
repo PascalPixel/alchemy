@@ -1,4 +1,3 @@
-/* Declarations shared by the Mercury Lighthouse aerie's sources. */
 #ifndef MAKYURI_CHOJO_AERIE_H
 #define MAKYURI_CHOJO_AERIE_H
 
@@ -13,7 +12,6 @@ extern const u32 gMakyuriChojoExits[];
 extern const struct ScenePlacement gMakyuriChojoPlacements[];
 extern const struct SceneEvent gMakyuriChojoEvents[];
 
-/* The pillar the leader last stepped onto. */
 extern s32 MakyuriChojo_NearestActor;
 
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);

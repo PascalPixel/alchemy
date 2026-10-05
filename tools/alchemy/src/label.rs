@@ -1,8 +1,3 @@
-//! `alchemy label`: give a place the English scaffold already names the
-//! same label in the other five editions' scaffolds, as their incbins are
-//! written: find the English bytes in each edition's ROM (the copy nearest
-//! the English address when there are several) and split that edition's
-//! incbin there. Scaffolding only; the build never reads where it came from.
 use crate::compiler::routing::root;
 
 const USAGE: &str = r#"usage: alchemy label NAME ENGLISH_ADDRESS LENGTH [--game tbs|tla]
@@ -12,7 +7,6 @@ splits that edition's recon/<game>/<lang>/rom.s incbin there with
 ".global NAME" and "NAME:". For data adopted C references that only the
 English scaffold labelled. The game defaults to tbs."#;
 
-/// Every even offset where `needle` occurs in `haystack`.
 pub(crate) fn find_all(haystack: &[u8], needle: &[u8]) -> Vec<usize> {
     if needle.is_empty() || needle.len() > haystack.len() {
         return Vec::new();
@@ -23,8 +17,6 @@ pub(crate) fn find_all(haystack: &[u8], needle: &[u8]) -> Vec<usize> {
         .collect()
 }
 
-/// Split the incbin covering `offset` and label it; None when no incbin
-/// covers it or the label is already there.
 pub(crate) fn split_at(text: &str, offset: u32, name: &str) -> Option<String> {
     if text.lines().any(|l| l == format!("{name}:")) {
         return None;

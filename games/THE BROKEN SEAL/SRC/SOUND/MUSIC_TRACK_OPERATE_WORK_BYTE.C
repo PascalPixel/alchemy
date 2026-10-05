@@ -2,11 +2,6 @@
 
 extern SoundCommand Sound_JumpCommand;
 
-/*
- * Reads an operation, a work byte index and an operand from the track. The
- * first six operations write the byte; the rest compare it and either take
- * the jump command that follows or step over its four-byte target.
- */
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track)
 {
     u32 op;

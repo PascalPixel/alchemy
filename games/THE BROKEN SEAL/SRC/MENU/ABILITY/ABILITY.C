@@ -26,7 +26,6 @@ void GameFlag_ClearBitFar(s32 flag);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 
-/* Select the owner whose Psynergy is shown, or assign an L/R shortcut. */
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 {
     /* FAKEMATCH: the low-byte CollectActions result keeps adds r5,r0,#0; explicit narrowing of s32 selects mov r5,r0. */
@@ -196,13 +195,10 @@ s32 PsynergyMenu_ReturnTrue(void)
     return 1;
 }
 
-/* Empty ability-menu hook. */
 void PsynergyMenu_NoOp(void)
 {
 }
 
-/* Select the party member targeted by the current Psynergy. The marker shares
- * the item-target selector's halfword position and nine-bit OAM x field. */
 s32 PsynergyMenu_SelectTarget(s32 mode)
 {
     /* FAKEMATCH: the unsigned marker/OAM view keeps halfword narrowing before the nine-bit assignment; direct casts remove it. */
@@ -236,8 +232,6 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
                 PsynergyMenu_CallIconRoutineWithValue(
                     (s32)menu, menu->owner_table[selection]);
                 if (!GameFlag_TestFar(0x151) && !shown) {
-/* The Japanese edition clears the info window and draws the description
-   as a message; the others redraw the saved window and draw it in place. */
 #if EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
                     UiText_DrawCharacterAtOffsetFar(
@@ -319,10 +313,6 @@ extern char MsgShortcutNameR;
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 
-/* Fill the shortcut window: its heading, then a row for L and a row for R.
-   A set shortcut's row message takes the Psynergy name as its argument, and
-   the owner's name follows when the Psynergy name is short enough to leave
-   room for it. */
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 {
     s32 left;
@@ -383,10 +373,6 @@ extern const u8 Menu_ShortcutRColonString[];
 
 void UiText_DrawStringInWindowFar(const u8 *text, s32 *window, s32 x, s32 y);
 
-/* Fill the shortcut window: its heading, then a row for L and a row for R.
-   Each row starts with the button's letter, followed by a colon when the
-   Psynergy name is short; a set shortcut then shows the Psynergy name and
-   its owner's name. */
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 {
     s32 left;

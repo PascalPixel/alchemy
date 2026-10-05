@@ -1,7 +1,3 @@
-//! The twelve shipped message archives as ordinary GNU gettext PO catalogs,
-//! as pret's preproc turns its text into data: each catalog is encoded into a
-//! context-modelled Huffman archive whose internal addresses are words naming
-//! the archive's own label, so the linker places it.
 
 use super::asm::{Data, Label, Pointer};
 use encoding_rs::WINDOWS_1252;
@@ -24,8 +20,6 @@ pub struct ArchiveSpec {
 }
 
 impl ArchiveSpec {
-    /// The edition's alphabet from its font's character map: one character
-    /// per code from 0x20, U+FFFD for a slot that draws no character.
     pub(crate) fn characters(&self) -> Option<String> {
         self.charmap.map(|charmap| {
             charmap
@@ -41,8 +35,6 @@ impl ArchiveSpec {
     }
 }
 
-/// Each edition's catalog and alphabet; the alphabets map font slots,
-/// retaining unused and duplicate glyphs for lossless PO conversion.
 pub static ARCHIVES: [ArchiveSpec; 12] = [
     ArchiveSpec {
         target: "tbs-ja",
@@ -275,23 +267,16 @@ fn header_number(headers: &BTreeMap<String, String>, name: &str) -> Result<usize
     )
 }
 
-/// A PO catalog's messages and encoder options. It records no placement: the
-/// linker places the archive and resolves the addresses it holds.
 #[derive(Debug)]
 pub struct SourceCatalog {
     pub target: String,
     pub symbol_count: usize,
     pub banks: Vec<Vec<Option<Vec<u16>>>>,
-    /// Each message the code names, `Msg<Name>`, with its number: the
-    /// message's position in the catalog, which differs between editions.
     pub names: Vec<(String, usize)>,
 }
 
-/// The context of every message the code does not name.
 const UNNAMED: &str = "message";
 
-/// Whether `name` is a message name: `Msg`, a capital and plain letters or
-/// digits, so `Msg_Show` style functions are never mistaken for one.
 pub fn message_name(name: &str) -> bool {
     name.strip_prefix("Msg").is_some_and(|rest| {
         rest.starts_with(|c: char| c.is_ascii_uppercase())
@@ -299,7 +284,6 @@ pub fn message_name(name: &str) -> bool {
     })
 }
 
-/// Each named entry of a PO catalog: its `msgctxt` name and number.
 pub fn catalog_names(catalog: &Catalog) -> Result<Vec<(String, usize)>, String> {
     let mut names = Vec::new();
     for entry in &catalog.entries {
@@ -409,14 +393,7 @@ fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
     })
 }
 
-/// The catalog's message archive, word aligned: its context models (labelled
-/// `<label>Models`), offset table, context directory (`<label>Contexts`, which
-/// the symbol decoder reads), message banks and bank directory
-/// (`<label>Banks`, which the message lookup reads). Every address the
-/// archive holds is a word naming `<label>Models`, which the linker resolves.
 pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
-    // Laid out from a word-aligned start, its padding holds wherever the
-    // linker places it on a word boundary.
     let built = encode_huffman_archive(0, source.symbol_count, &source.banks)?;
     let mut data = Data::from_bytes(built.bytes);
     data.align = 4;
@@ -446,9 +423,6 @@ pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, Strin
     Ok(data)
 }
 
-/// A catalog's message archive and its message numbers as assembly: the
-/// archive under `label`, then each named message as an absolute symbol,
-/// the file the build includes and po2ags writes.
 pub fn messages_include(
     source: &SourceCatalog,
     label: &str,

@@ -16,7 +16,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
 void Render_ResetTransformState(void);
@@ -31,9 +30,6 @@ extern u16 ParticleStreams_CellOffsets[];
 
 #define MOTES_PER_MEMBER 128
 
-/* Battle effect: 128 motes leave every affected unit in random directions,
-   one unit every twenty frames, and the first 32 of each unit are drawn
-   while they are pulled towards the acting unit, where they vanish. */
 void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

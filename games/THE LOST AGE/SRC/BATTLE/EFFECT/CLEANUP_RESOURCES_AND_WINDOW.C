@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
 
-/* The world map's work, which ⚓️ keeps in its own block rather than ☀️'s map
-   cell buffer: the two resource entries first and the window at 0x1c. */
 struct WorldMapWork {
     u16 resources[2];
     u8 unknown_04[0x18];

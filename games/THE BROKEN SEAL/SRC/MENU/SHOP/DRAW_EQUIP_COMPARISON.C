@@ -15,12 +15,6 @@ void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Owner_RecalculateStatsFar(s32 unit_id);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 
-/* Draws how equipping an item would change a member's attack, defense and
- * agility: each stat without the item and, when it changes, with the item
- * tried on, an arrow for each change, and the name of the item it would
- * replace. The item is tried in the slot of the equipped item of its type,
- * else the first unequipped slot, else the first slot holding a type-6 item,
- * else the first slot. */
 void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 {
     struct ShopRuntime *shop = gMenuWork;

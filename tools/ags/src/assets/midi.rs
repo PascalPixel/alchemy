@@ -1,4 +1,3 @@
-//! Standard MIDI file events and conductor metadata.
 use super::{err, AssetError};
 fn be_u16(data: &[u8], at: usize) -> Option<u16> {
     data.get(at..at + 2)
@@ -177,9 +176,6 @@ fn midi_vlq(mut value: usize) -> Vec<u8> {
     bytes
 }
 
-/// Append a meta event with `payload` to the first (conductor) track of a MIDI
-/// file, immediately before its canonical end-of-track event, and rewrite the
-/// track length.
 pub fn append_conductor_meta(midi: &[u8], meta: u8, payload: &[u8]) -> Result<Vec<u8>, AssetError> {
     if midi.len() < 26 || &midi[..4] != b"MThd" {
         return err("MIDI header is missing");

@@ -84,10 +84,6 @@ directTest:
         goto directLoop;
 }
 
-/* Runs transition 4 of a render channel's work: each call draws a border one
- * tile outside the window and counts down; when the count reaches zero it
- * ends the transition, erases the outer border and redraws the window's own
- * border. */
 void UiWork_AdvanceChannelTransition(struct UiChannelSlot *channel)
 {
     struct UiWindow *work = channel->work;
@@ -128,7 +124,6 @@ void UiWork_ClearValueNameTables(void)
 #endif
     no = 0;
 
-    /* 対応する値と識別子は同じ順序で消去する。 */
     do {
         work->values[no] = 0;
         work->names[no] = 0;

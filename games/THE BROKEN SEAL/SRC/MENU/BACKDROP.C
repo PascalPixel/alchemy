@@ -11,11 +11,9 @@
 #include "DJINN_MENU.H"
 #include "HEAP_STATE.H"
 
-/* The tile in character block 1 that holds the window frame. */
 #define FRAME_TILE 150
 extern u8 gMenuWork[];
 
-/* The frame tile the backdrop screen loads into BG character block 1. */
 extern const u8 Menu_BackdropFrameTile[];
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
@@ -50,12 +48,8 @@ extern u8 MsgDjinnName[];
 s16 Djinn_ListOwnerEntries(void *, s32, s32);
 void DjinnMenu_DrawElementList(struct DjinnListTable *tbl);
 
-/* menu/core/compute_entry_values.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-/* Opens the full-width menu window: saves BG character block 1 and
-   palettes 4-7 into the backdrop buffer, blanks them with fill patterns,
-   loads the frame tile and palettes, then runs the backdrop screen. */
 s32 Menu_OpenBackdropScreen(void)
 {
     struct DjinnMenuWork *work = *(struct DjinnMenuWork **)gMenuWork;
@@ -80,7 +74,6 @@ s32 Menu_OpenBackdropScreen(void)
     return ((s32 (*)(struct DjinnListTable *))DjinnMenu_DrawElementList)(&backdrop->list);
 }
 
-/* Lists all slots in b, marks those absent from a, then appends slots only in a. */
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                           u16 *out, s32 *first_count, s32 *second_count)
 {
@@ -149,13 +142,9 @@ s32 Menu_ComputeEntryValues(void *tbl)
     }
 }
 
-/* Tilemap entry: the element tile in palette 5. */
 #define ELEMENT_TILE 0x5001
 #define ENTRY list[i]
 
-/* Lists every party member's Djinn in the full-width window, a column per
-   member and grouped by element: set Djinn in the second text colour, Djinn
-   that can be neither offered nor used in the fourth. */
 void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
 {
     struct DjinnMenuWork *menu;

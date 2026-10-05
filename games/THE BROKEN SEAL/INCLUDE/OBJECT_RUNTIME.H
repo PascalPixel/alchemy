@@ -4,10 +4,6 @@
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 
-/*
- * イベント・動作処理用オブジェクト。
- * 座標と移動量は特記がなければ16.16固定小数。
- */
 struct ObjectRuntime {
     s32 *script;
     s16 step;
@@ -17,7 +13,6 @@ struct ObjectRuntime {
     s32 z;
     s32 terrain_height;
     u8 unknown_18[0x08];
-    /* The contact radius, in pixels. */
     u16 radius;
     u8 terrain_id;
     u8 unknown_23;

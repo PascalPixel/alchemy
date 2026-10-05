@@ -54,7 +54,6 @@ s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
 void OverlayObject_UpdateArcFromParent(union FieldObject *object);
 void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
 
-/* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
     u16 attr0;
@@ -95,7 +94,6 @@ void HaidiaArashi_FlashLightning(void)
     Map_ClearLayerEntryFlag(5);
 }
 
-/* Keep actor 27's glow on actor 19: step the screen work values as 19's timer runs down, and on odd frames pulse the glow's scale by 19's beat. */
 void HaidiaArashi_UpdatePulsingGlow(void)
 {
     struct FieldActor *source;
@@ -286,7 +284,6 @@ void FieldScene_BuildPlacementGrid(void)
     Map_CopyCellAttributes(11, 66, 1, 1, 8, 73);
     Map_CopyCellAttributes(12, 66, 1, 4, 11, 73);
     Map_CopyCellAttributes(25, 0, 1, 1, 6, 74);
-    /* No-argument call that closes out the sequence started above. */
     Engine_MapRedraw();
 }
 
@@ -417,7 +414,6 @@ void OverlayObject_UpdateArcFromParent(union FieldObject *object)
     }
 }
 
-/* Stormy Haidia: spawns the linked pair of effect objects above the parent actor, with a cue, and gives both the parent's sprite priority. */
 void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];

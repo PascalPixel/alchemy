@@ -1,14 +1,3 @@
-@ Colour-buffer kernels that fade a buffer while saving a backup copy: each
-@ stores every original block to the backup buffer (stmia r1! or r2!) before
-@ writing it scaled by 3/4, halved or darkened. Each is ARM code behind a
-@ 4-byte Thumb entry (bx pc) that its loader in raw 08001c90.S copies
-@ to the stack, and each moves eight data words per ldm/stm pair, where
-@ GCC 2.96's block moves take at most four; the scaling and halving kernels
-@ also save r5-sl without lr, where GCC saves lr with any register. They are
-@ TLA's own revisions of TBS GRAPHICS/PALETTE/COLOR_BACKUP_KERNELS.S
-@ (0x08001ea8), sharing only runs of 16 and 32 bytes with it.
-@ Its three 4-byte Thumb entries, which are TLA's own, carry no credit.
-@ credit: handwritten — ARM colour-buffer fade kernels with backup, copied to the stack
 .syntax unified
 	.thumb
 	.global ColorBuffer_ScaleThreeQuartersKernelCode

@@ -26,7 +26,6 @@ s32 BattleUnit_LookupWeaponValueByClass(s32);
 s32 ArcTan2(s32, s32);
 extern const s32 BattlePres_ActorObjectScript[];
 
-/* Step table for battle placement: signed bytes in (x, y) pairs. */
 extern const s8 BattlePlacement_StepPairs[];
 s32 Resource_FindFreeSlot(s32 key);
 
@@ -145,7 +144,6 @@ done:
     return result;
 }
 
-/* battle/unit/lookup_weapon_value_by_class.c */
 s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 {
     struct BattleUnit *state;
@@ -310,7 +308,6 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
     ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattlePres_ActorObjectScript);
 }
 
-/* Read an (x, y) pair from the step table. */
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
 {
     index *= 2;
@@ -367,11 +364,6 @@ s32 Summon_FindSlot(void)
     return id;
 }
 
-/*
- * Lays out the battle's enemy list again: collects up to six ids,
- * computes their standing positions and moves every unit still present
- * there.
- */
 s32 Summon_Refresh(void)
 {
     struct BattleSession *work = gBattleWork;
@@ -397,11 +389,6 @@ s32 Summon_Refresh(void)
     }
 }
 
-/*
- * Stands every unit at its place: the party in the order
- * BattleParty_PrepareActiveOwners lists it, each member's place recorded in
- * the session, then the enemy list at its computed positions.
- */
 void BattleUnit_RefreshPlacement(void)
 {
     struct BattleSession *work;

@@ -63,7 +63,6 @@ void Ui_PrepareTransferForItem(s32 code)
     UiGlyph_DecodeWithHeapRoutines(state, 0);
 }
 
-/* 取得項目の+4値を先頭引数として転送する。 */
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
 {
     UiIcon_BuildAbilityIconTiles(BattleAction_Get(action)->unknown_04[0],

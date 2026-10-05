@@ -42,14 +42,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     s32 handle;
@@ -59,7 +56,6 @@ extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 Korosseo_GaugeGraphics[];
 extern u8 Korosseo_UpdatePathRival[];
 extern u8 HexDigits[];
-/* Sixteen packed direction steps: X in the high half and Z in the low half. */
 extern u32 KorosseoKawa_DirectionSteps[];
 
 typedef void(*SceneTask)(void);
@@ -76,13 +72,13 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);  /* terrain probe */
+s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
+void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
+void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 
-void Script_WaitForEventTimeout(struct FieldActor *);              /* re-attach the camera */
+void Script_WaitForEventTimeout(struct FieldActor *);
 
 struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
 {
@@ -101,7 +97,6 @@ struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct Fiel
     return 0;
 }
 
-/* If the cells beyond and above the occupant are clear and terrain permits, move it and the subject toward the point one step beyond it. */
 void StagedActor_PushActorAhead(void)
 {
     extern s16 Data_02000240[];
@@ -132,7 +127,6 @@ void StagedActor_PushActorAhead(void)
         return;
     }
 
-    /* Is the cell one step beyond the target already taken? */
     step = KorosseoKawa_DirectionSteps[dir];
     pos.x = target->x.fixed + (s32)(step & 0xffff0000);
     pos.y = target->y.fixed;
@@ -144,9 +138,8 @@ void StagedActor_PushActorAhead(void)
         return;
     }
 
-    /* ...and the cell directly above the target? */
     pos.x = target->x.fixed;
-    pos.y = target->y.fixed + 0x100000;      /* 128 << 13 */
+    pos.y = target->y.fixed + 0x100000;
     pos.z = target->z.fixed;
 
     blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
@@ -174,14 +167,13 @@ void StagedActor_PushActorAhead(void)
     target->acceleration = 0x3333;
     Object_SetMoveTarget(target, pos.x, pos.y, pos.z);
 
-    /* The same destination block, moved onto the subject this time. */
     subject->speed = 0x3333;
     subject->acceleration = 0x3333;
     Object_SetMoveTarget(subject, pos.x, pos.y, pos.z);
 
     Engine_AudioPlayCue(0xee);
     Script_WaitForEventTimeout(target);
-    Engine_AudioPlayCue(0x120);                                /* 144 << 1 */
+    Engine_AudioPlayCue(0x120);
 
     target->x.fixed = pos.x;
     target->z.fixed = pos.z;
@@ -190,8 +182,6 @@ void StagedActor_PushActorAhead(void)
 
     Object_SetMode(subject, 1);
 }
-
-/* Probe the two cells ahead and return the nearer occupant first; centre x and z in each cell while preserving y. */
 
 struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 {
@@ -204,20 +194,19 @@ struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 
     rec = Object_GetById(((ActiveSubjectSlot *)Data_02000240)->handle);
 
-    /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (rec->facing + 0x2000) & 0xc000;
 
     pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
     pos.y = rec->y.fixed;
     pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, facing, &pos);          /* 128 << 13 */
+    Vector_AddPolarOffset(0x100000, facing, &pos);
 
     hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
     if (hit == 0) {
         pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
         pos.y = rec->y.fixed;
         pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
-        Vector_AddPolarOffset(0x200000, facing, &pos);      /* 128 << 14 */
+        Vector_AddPolarOffset(0x200000, facing, &pos);
 
         hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
     }

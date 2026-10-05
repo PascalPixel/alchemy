@@ -1,8 +1,3 @@
-/* NONMATCHING: Japanese compile-known message number, 2026-10-01.
- * The approved TBS flags produce a 24-byte extent instead of the game's
- * 28 bytes. The number 6080 is built from a shifted byte, while the game
- * loads the canonical message from its pool. Call2 produces the same mismatch.
- */
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
 
@@ -30,8 +25,6 @@ extern const struct SceneEvent gMakyuriHeyaEvents2[];
 extern const struct SceneEvent gMakyuriHeyaEvents3[];
 extern const struct SceneEvent gMakyuriHeyaEventsOther[];
 
-/* Where the party appears in each of the lighthouse rooms; the first takes
-   the table the other scenes take. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 selector = gGameState.scene;

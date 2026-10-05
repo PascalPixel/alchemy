@@ -24,19 +24,16 @@ void ObjectMotion_ResetAndSetPositionInMode2();
 s32 Inventory_PromptAndSetObjectMode();
 s32 UiText_OpenMessageAtObject();
 
-/* A point the camera follows, in 16.16 fixed point. */
 struct FocusPoint {
     s32 x;
     s32 y;
     s32 z;
 };
 
-/* The map work begins with the point the camera follows. */
 struct FocusWork {
     struct FocusPoint *focus;
 };
 
-/* The scrolling sprite rows: three rows of nine, after the seal scene. */
 struct Ent SoruSekizo_SpriteRows[27];
 
 void SetMapCellCollision();
@@ -110,14 +107,6 @@ void Scene_OpenTheHole(void)
     SoruSekizo_RunStatueDropScene();
 }
 
-/*
- * The statue hall of Sol Sanctum, after Robin drops the statue into the
- * hole it opened. Sukureta comes down to look, Gerald and Jasmine tell him
- * what happened, and he decides the trap is disarmed before withdrawing to
- * the Luna room to watch from safety.
- */
-
-/* Each line follows the one before; only the first is set. */
 void FieldScene_SetupStagedActors(void)
 {
     struct FieldActor *leader;
@@ -261,7 +250,6 @@ void FieldScene_SetupStagedActors(void)
     Engine_EventEnd();
 }
 
-/* Run the scene for actors 8, 5, 1 and 0. */
 void FieldScene_RunStagedActorScene(void)
 {
     struct EventWork *work;
@@ -448,10 +436,6 @@ void FieldScene_RunStagedActorScene(void)
     Engine_EventEnd();
 }
 
-/* After the seal opens: the leader turns toward the seal from whichever side
- * of it he stands, the camera slides thirty pixels toward it, the seal's
- * cells pulse faster and faster, the opened seal is drawn, and the camera
- * slides back. */
 void SoruSekizo_RunSealOpenedSequence(void)
 {
     struct FocusWork *work;
@@ -567,7 +551,6 @@ void SceneEffect_UpdateScrollingSpriteRows(void)
             for (i = 0; i <= 8; i++) {
                 e->f06 = v;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-                /* The lower localized sprite row sits two pixels higher. */
                 e->f04 = sy + 6;
 #else
                 e->f04 = sy + 8;
@@ -597,16 +580,13 @@ void SceneState_RunWhenActorZeroFacing4000(void)
     }
 }
 
-/* If the code-2059 check passes, runs a short setup/configuration sequence
- * for id 9: two no-argument calls bracket a select call and two calls each
- * taking a pair of numeric arguments. */
 void FieldScene_RunPrimarySequenceHead(void)
 {
     if (GameFlag_IsSet(GATE_CODE) == 0) {
         Engine_EventBegin();
         Object_GetById(TARGET_ID);
-        Actor_SetSpeed(TARGET_ID, 13107, 0x00001999); /* object_id, speed_limit, acceleration */
-        Actor_WalkToAndWait(TARGET_ID, 504, 152); /* object_id, x=504, z=152 */
+        Actor_SetSpeed(TARGET_ID, 13107, 0x00001999);
+        Actor_WalkToAndWait(TARGET_ID, 504, 152);
         Engine_EventEnd();
     }
 }
@@ -975,7 +955,6 @@ void FieldScene_ApplyRect10_14_7_13_7(void)
     Scene_ShineLeftBeam();
 }
 
-/* Move actor 10 and the leader between adjacent rows in column 13 when actor 10 is present. */
 void SceneActor_UseActorTenCellAndNext(void)
 {
     struct FieldActor *record = Object_GetById(10);

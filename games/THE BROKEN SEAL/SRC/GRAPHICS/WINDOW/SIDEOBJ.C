@@ -4,16 +4,12 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-
 extern const s16 SideObject_CharacterIdMap[];
 extern const s16 SideObject_ActorKindIdMap[];
 
 extern s32 Localization_LookupEntryId();
 extern s32 CreateSideObject();
 
-
-
-/* 連続する2要素へ0x3e7を設定する。 */
 void UiWork_SetTwoEntriesTo999(void)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
@@ -25,9 +21,6 @@ void UiWork_SetTwoEntriesTo999(void)
     } while (index != 2);
 }
 
-/* Looks up the entry id paired with value: values below 20 search the
- * character pairs, others the second pair table, whose ids start at 128.
- * Returns -1 when the value is not listed. */
 s32 Localization_LookupEntryId(u32 value)
 {
     s32 result = -1;

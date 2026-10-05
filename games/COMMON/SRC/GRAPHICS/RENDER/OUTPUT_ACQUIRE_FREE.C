@@ -7,7 +7,6 @@
 #include "RAM_BUFFER.H"
 #endif
 
-/* Detach the first free output; an empty tail names the head link. */
 struct RenderOutput *RenderOutput_AcquireFree(void)
 {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
@@ -29,7 +28,6 @@ struct RenderOutput *RenderOutput_AcquireFree(void)
     return entry;
 }
 
-/* Only the records in this work block belong to its free list. */
 void RenderOutput_ReleaseFree(struct RenderOutput *entry)
 {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \

@@ -1,10 +1,3 @@
-/* Near miss, differ 10: restores the second party's (owners 4-7) fifteen
-   halfwords of state and four party halfwords from the snapshot at
-   Data_020023c4 when it carries 0x6774, clears its mark and flag 0x9ff.
-   The native loads the first party halfword before building 0x240 (the
-   load-first gap) and builds the zero for the mark before the last copy.
-   Reassigning the cursor to the snapshot for the clear fixed the register
-   choice. Joins a module after 080b1088 on a match. */
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"

@@ -2,9 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "PARTY_STATE.H"
 
-/* Lines spoken in Daila's houses, and an event opening that raises the
-   leader's sprite. */
-
 extern u8 MsgDeriHeyaScamps[];
 extern u8 MsgDeriHeyaMazeTreasure[];
 
@@ -28,7 +25,6 @@ s32 DeriHeya_TalkMazeTreasure(void)
     return 0;
 }
 
-/* Begins an event that the caller ends, with the leader drawn in front. */
 void DeriHeya_BeginLeaderEvent(void)
 {
     Engine_EventBegin();

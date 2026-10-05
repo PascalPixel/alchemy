@@ -16,14 +16,6 @@
 
 extern u8 gMapCellBuffer[];
 
-/* map/shared/events/CheckObjectMapTile.c */
-
-
-
-/* map/shared/events/MapEvent_RunTileTriggerSequence.c */
-
-
-
 void Audio_PlayCue(s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void CheckObjectMapTile(void);
@@ -37,7 +29,6 @@ typedef struct {
     u8 flag_b;
 } EffectSprite;
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Motion_SetTargetPositionFromMagnitudeAngle(
     struct ObjectRuntime *object, s32 magnitude, s32 angle);
 void *Object_Spawn(s32, s32, s32, s32);
@@ -58,7 +49,6 @@ void CheckObjectMapTile(void)
     runtime_slot_address = (u32)&gWork;
     runtime = gWork;
     object = ObjectTable_Get(gGameState.selected_actor);
-    /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 
     if (runtime->mode_19e == 3) {
@@ -187,7 +177,6 @@ void BattleFx_RunFlashingCallbackSequence(void)
     }
 }
 
-/* battle/effects/particles/spawn_random_angle_triplet.c */
 void BattleFx_SpawnRandomAngleTriplet(void *object)
 {
     s32 i;
@@ -221,8 +210,6 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
     }
 }
 
-/* battle/effects/obj/update_drifting_fall_object.c */
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *object)
 {
     s32 r;
@@ -240,7 +227,6 @@ void BattleFx_CallEffect05(void)
     RunBattleEffect05();
 }
 
-/* battle/effects/effect05.c */
 struct Effect05Point {
     s32 x, y, z;
 };
@@ -254,7 +240,7 @@ struct Effect05Sprite {
     u32 unknown_00[2];
     u8 unknown_08;
     u32 unknown_09_0 : 2;
-    u32 mode : 2;               /* 0x09, bits 2-3 */
+    u32 mode : 2;
     u32 unknown_09_4 : 4;
 };
 
@@ -264,24 +250,24 @@ struct Effect05Object {
     s32 altitude;
     s32 scale_x, scale_y;
     u8 reserved_20[0x30];
-    struct Effect05Sprite *sprite;  /* 0x50 */
+    struct Effect05Sprite *sprite;
     u8 reserved_54;
-    u8 flag;                        /* 0x55 */
+    u8 flag;
     u8 reserved_56[0x16];
-    void *callback;                 /* 0x6c */
+    void *callback;
 };
 
 struct Effect05State {
     s32 angle;
     s32 x, y, z;
-    struct Effect05Target *target;  /* 0x10 */
-    s32 initialized;                /* 0x14 */
+    struct Effect05Target *target;
+    s32 initialized;
     u8 reserved_18[8];
-    u8 high_arc;                    /* 0x20 */
+    u8 high_arc;
     u8 reserved_21[0x13];
-    u8 variant;                     /* 0x34 */
+    u8 variant;
     u8 reserved_35[0x10];
-    u8 alternate;                   /* 0x45 */
+    u8 alternate;
 };
 
 extern struct Effect05State *gEffectWork;
@@ -293,15 +279,11 @@ void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
 void AudioCommand_PlayFar(s32);
 
-/* The orb's scale between two sizes, step tenths of the way. */
 static __inline__ s32 Effect05_Interpolate(s32 start, s32 end, s32 step)
 {
     return start + step * (end - start) / 10;
 }
 
-/* An orb rises from the target to a point one step ahead of it, sheds
-   particles there (random-angle triplets, or drifting fall objects in the
-   alternate form) and glides back. */
 void RunBattleEffect05(void)
 {
     struct Effect05Point spawn;

@@ -14,7 +14,6 @@ void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode)
 
 void Owner_RecalculateStats();
 
-/* The scene's tables, in the overlay's read-only data. */
 extern u8 KuupuappuHeya_Scripts[];
 extern u8 KuupuappuHeya_Messages[];
 extern u8 KuupuappuHeya_Regions[];
@@ -161,8 +160,6 @@ u8 *SceneData_GetMessageTable(void)
     return KuupuappuHeya_Messages;
 }
 
-/* The actors placed in the Vault houses: entrances 15 to 17 have their own
-   table. The chosen table is prepared before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     const struct ScenePlacement *table;
@@ -274,8 +271,6 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
     Engine_EventEnd();
 }
 
-/* Actor 19 serves the shop when the leader faces it across the counter and
- * talks otherwise. */
 void FieldScene_RunActorNineteenAngleDialogue(void)
 {
     s32 v = Object_GetById(0)->facing;
@@ -370,8 +365,6 @@ void SceneDialogue_ShowEmptyChest(void)
     Engine_EventEnd();
 }
 
-/* What the Vault houses answer: entrances 15 to 17 have their own events,
-   and the others change once flag 0x855 is set. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */

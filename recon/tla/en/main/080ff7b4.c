@@ -4,7 +4,6 @@
 #include "FIXED_MATH.H"
 extern u8 Data_03001f2c[];
 
-/* menu/character_menu/build_availability.c */
 u8 *Owner_GetStateFar(s32 owner);
 
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)

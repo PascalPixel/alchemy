@@ -4,8 +4,6 @@
 
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
-/* -1 when another active script object lies within touching distance of
-   the position values, else 0. */
 s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values)
 {
     s32 index;
@@ -23,8 +21,6 @@ s32 ScriptObject_CheckOverlap(struct ObjectRuntime *object, s32 *values)
     return 0;
 }
 
-/* The first other active script object within touching distance of the
-   position values, or NULL. */
 struct ObjectRuntime *ScriptObject_FindOverlappingEntry(
     struct ObjectRuntime *object, s32 *values)
 {

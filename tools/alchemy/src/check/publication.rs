@@ -1,6 +1,3 @@
-//! Fail-closed publication checks for staged changes, outgoing history and
-//! whole tracked trees. Only what pret would commit passes: editable build
-//! inputs, source and tooling, never presentation material made from the game.
 use ags::assets::image::{indexed_bitmap_png, PNG_SIGNATURE};
 use ags::assets::midi::{midi_events, EventBody, MidiEvent};
 use ags::assets::wav::wav_pcm8;
@@ -13,32 +10,22 @@ const BLOCKED_EXTENSIONS: &[&str] = &[
     "gba", "gz", "ips", "lst", "log", "map", "o", "patch", "raw", "rom", "sav", "so", "sym", "tar",
     "tgz", "unidiff", "ups", "xdelta", "xdelta3", "zip", "7z",
 ];
-/// Fonts, rasters, audio and video no build consumes.
 pub(crate) const PRESENTATION_EXTENSIONS: &[&str] = &[
     "otf", "ttf", "ttc", "woff", "woff2", "eot", "fnt", "bdf", "pcf", "gif", "jpg", "jpeg", "webp",
     "bmp", "ico", "avif", "apng", "tif", "tiff", "mp3", "ogg", "flac", "m4a", "aac", "mp4", "webm",
     "mov", "svg",
 ];
-/// Native editable inputs; formats are validated independently of file names.
 const NATIVE_INPUT_EXTENSIONS: &[&str] = &[
     "c", "h", "inc", "s", "ld", "mk", "gitkeep", "png", "wav", "mid", "pcm4", "po", "tsv",
 ];
-/// Tooling metadata areas the former layout kept under `games/<game>/`; every
-/// other directory there is an asset root. Reconstruction metadata now lives
-/// under `recon/<id>/`, outside the game tree; these names still classify
-/// outgoing history written before that move.
 const METADATA_DIRECTORIES: &[&str] = &["metrics", "preview", "recon", "semantic"];
-/// Structured tables the asset build reads, where long numeric arrays are data.
 const DATA_TABLE_EXTENSIONS: &[&str] = &["tsv"];
-/// The licensed compiler submodules whose commits `make compiler-source-check` pins.
 const APPROVED_GITLINKS: &[&str] = &["agbcc", "agscc"];
 const FONT_TABLES: &[&[u8]] = &[
     b"BASE", b"CFF ", b"COLR", b"CPAL", b"DSIG", b"EBDT", b"EBLC", b"FFTM", b"GDEF", b"GPOS",
     b"GSUB", b"LTSH", b"OS/2", b"STAT", b"SVG ", b"VDMX", b"cmap", b"cvt ", b"fpgm", b"gasp",
     b"glyf", b"hdmx", b"head", b"hhea", b"kern", b"loca", b"maxp", b"name", b"post", b"prep",
 ];
-/// Standard ancillary PNG chunks and their largest specified bodies. Text,
-/// profile, EXIF and private chunks carry arbitrary bytes and are refused.
 const PNG_ANCILLARY: &[(&[u8], usize)] = &[
     (b"tRNS", 256),
     (b"sRGB", 1),
@@ -50,23 +37,16 @@ const PNG_ANCILLARY: &[(&[u8], usize)] = &[
     (b"tIME", 7),
 ];
 const PNG_SCANLINES_MAX: usize = 1 << 26;
-/// Alphanumeric runs this long are measured as possible encodings.
 const ENCODED_RUN_MIN: usize = 16;
-/// Encoded characters one text may hold; the tracked tree peaks near 32.
 const ENCODED_CHARACTERS_MAX: usize = 128;
-/// Unexplained digest-sized hex runs one text may hold.
 const DIGEST_RUNS_MAX: usize = 2_048;
-/// Consecutive integer literals that form an array rather than an expression.
 const NUMERIC_RUN_MIN: usize = 16;
-/// Array elements a text outside the game data tables may hold.
 const NUMERIC_ELEMENTS_MAX: usize = 2_048;
-/// JSON is banned from the repository, in every file and every form.
 const JSON_REASON: &str = "JSON is banned: write a TSV table, plain text or a source form";
 const INTEGER_SUFFIXES: &[&str] = &[
     "usize", "isize", "u128", "i128", "u64", "i64", "u32", "i32", "u16", "i16", "u8", "i8", "ull",
     "llu", "ul", "lu", "ll", "u", "l",
 ];
-/// Where the cartridge logo sits in a GBA header.
 const LOGO: std::ops::Range<usize> = 0x04..0xa0;
 const LOGO_REASON: &str = "Nintendo logo from a GBA cartridge header: ROM material";
 const UNREGISTERED: &str = "unregistered binary: pret commits only editable build inputs";
@@ -116,13 +96,10 @@ const GENERATED_LEDGER_NAMES: &[&str] = &[
 ];
 const GENERATED_REASON: &str =
     "calculated bookkeeping belongs in ignored out/: keep source decisions in code and build rules";
-/// JSON by its content, whatever the file is called: a text that is one
-/// bracketed document.
 fn json_text(text: &str) -> bool {
     let text = text.trim();
     (text.starts_with('{') && text.ends_with('}')) || (text.starts_with('[') && text.ends_with(']'))
 }
-/// A JSON file by its name, in any case: `.json`, `.jsonl` or `.json5`.
 fn json_path(path: &str) -> bool {
     listed(extension(path), &["json", "jsonl", "json5", "geojson"])
 }
@@ -217,8 +194,6 @@ fn gba_header(data: &[u8]) -> bool {
 fn gba_image(data: &[u8]) -> bool {
     data.len().is_multiple_of(0x8000) && data.len() <= 0x0400_0000 && gba_header(data)
 }
-/// The cartridge logo, read at run time from the local verified ROM; the gate
-/// source never carries it. Without the ROM the logo scan is skipped.
 fn nintendo_logo(root: &Path) -> Option<Vec<u8>> {
     let mut header = [0; 0xc0];
     std::fs::File::open(root.join("roms/tbs-en.gba"))
@@ -237,7 +212,6 @@ fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
     if gba_image(data) {
         return Some("GBA ROM image");
     }
-    // A cartridge header behind its entry branch is a ROM fragment at any size.
     if data.get(3) == Some(&0xea) && gba_header(data) {
         return Some("GBA ROM header fragment");
     }
@@ -271,19 +245,6 @@ fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
     }
     None
 }
-/// An `.incbin` directive, except four forms that commit no bytes. In
-/// scaffolding: pret's base-ROM range `.incbin "baserom.gba", OFFSET, SIZE`,
-/// which reads the builder's own ROM as pokeemerald's early data files did,
-/// and a code overlay the build links from its listing and compresses,
-/// `.incbin "overlays/resource_XXX.lz"`. In a game's sound data sources: a
-/// file the build makes from the like-named editable input beside them,
-/// `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"` from `WAVE_00.PCM8.WAV`, as
-/// pret's data files read the `.bin` files wav2agb makes. In a game's asset
-/// sources under `SRC`: a file the build makes from the like-named indexed
-/// PNG or TSV table, named by its recipe,
-/// `.incbin "GRAPHICS/FX/STAR.bitmap.lz"` from `SRC/GRAPHICS/FX/STAR.PNG` or
-/// `.incbin "MAP/M/METATILES.delta1.lz"` from `SRC/MAP/M/METATILES.TSV`, as pret's
-/// data files read the `.4bpp.lz` files gbagfx makes.
 fn font_range(text: &str) -> bool {
     let text = text
         .chars()
@@ -351,16 +312,10 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         r#"^\s*\.incbin\s+"(?:COMMON/)?SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#,
     )
     .expect("built sound pattern");
-    // A graphics or map file the build makes: an uppercase path whose name
-    // is a recipe the ags encoder builds, so the encoder alone decides which
-    // forms and codecs exist.
     let built_graphics = regex::Regex::new(
         r#"^\s*\.incbin\s+"((?:COMMON/)?(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
     )
     .expect("built graphics pattern");
-    // A font's source-owned character split labels its glyph and kanji groups
-    // inside one editable PNG recipe. Only constant layout arithmetic may
-    // slice an uncompressed generated font; ROMs and raw assets remain refused.
     let built_font = regex::Regex::new(
         r#"^\s*\.incbin\s+"((?:COMMON/)?GRAPHICS(?:/[A-Z0-9_]+)+\.font)"\s*,\s*([^,]+?)(?:\s*,\s*([^,]+?))?\s*$"#,
     ).expect("built font range pattern");
@@ -405,7 +360,6 @@ struct Png {
     colour: u8,
     animated: bool,
 }
-/// A loose PNG sniff for presentation formats, whatever the file is named.
 fn png(data: &[u8]) -> Option<Png> {
     if !data.starts_with(b"\x89PNG\r\n\x1a\n") || data.get(12..16) != Some(b"IHDR") {
         return None;
@@ -425,7 +379,6 @@ fn png(data: &[u8]) -> Option<Png> {
         animated,
     })
 }
-/// Signatures of presentation formats, whatever the file is named.
 fn presentation_magic_reason(data: &[u8]) -> Option<&'static str> {
     let head = |length: usize| data.get(..length).unwrap_or(&[]);
     let sfnt = matches!(head(4), b"OTTO" | b"true" | b"typ1" | b"\0\x01\0\0")
@@ -461,8 +414,6 @@ fn presentation_magic_reason(data: &[u8]) -> Option<&'static str> {
         _ => None,
     }
 }
-/// Every chunk from the PNG signature to the last byte, or `None` when a chunk
-/// is truncated.
 fn png_chunks(data: &[u8]) -> Option<Vec<(&[u8], &[u8])>> {
     let mut rest = data.strip_prefix(PNG_SIGNATURE.as_slice())?;
     let mut chunks = Vec::new();
@@ -474,7 +425,6 @@ fn png_chunks(data: &[u8]) -> Option<Vec<(&[u8], &[u8])>> {
     }
     Some(chunks)
 }
-/// Inflate a zlib stream to exactly `size` bytes, checksum included.
 fn inflate(stream: &[u8], size: usize) -> Option<Vec<u8>> {
     let mut decoder = fdeflate::Decompressor::new();
     let mut output = vec![0; size + 1];
@@ -492,21 +442,13 @@ fn inflate(stream: &[u8], size: usize) -> Option<Vec<u8>> {
     output.truncate(size);
     (produced == size).then_some(output)
 }
-/// Inflate one zlib stream that must end the input. The decoder may read past
-/// a stream's end, so the stream proves it is exact by failing once its last
-/// checksum byte is removed.
 fn inflate_exact(stream: &[u8], size: usize) -> Option<Vec<u8>> {
     let output = inflate(stream, size)?;
     let (_, shorter) = stream.split_last()?;
     inflate(shorter, size).is_none().then_some(output)
 }
-/// The packed pixel bytes of a PNG that is exactly an indexed build input:
-/// IHDR, PLTE, contiguous IDAT and a final IEND with only small standard
-/// ancillary chunks, one zlib stream holding exactly its non-interlaced
-/// scanlines, and pixels the asset build reads.
 fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
     exact_indexed_stream(data)?;
-    // A tile sheet or a linear bitmap: bitmaps may be any size.
     let image = indexed_bitmap_png(data).ok()?;
     let depth = data[24];
     Some(
@@ -517,8 +459,6 @@ fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
             .collect(),
     )
 }
-/// A palette of more than ink and paper whose every colour is grey: a dump
-/// drawn without the asset's real palette.
 fn grey_sheet(data: &[u8]) -> bool {
     png_chunks(data)
         .and_then(|chunks| chunks.into_iter().find(|(kind, _)| *kind == b"PLTE"))
@@ -529,8 +469,6 @@ fn grey_sheet(data: &[u8]) -> bool {
                 })
         })
 }
-/// The chunk and stream half of `indexed_png_bytes`, for an indexed image of
-/// any size.
 fn exact_indexed_stream(data: &[u8]) -> Option<()> {
     let chunks = png_chunks(data)?;
     let (_, header) = chunks
@@ -575,11 +513,6 @@ fn exact_indexed_stream(data: &[u8]) -> Option<()> {
     let scanlines = inflate_exact(&stream, size)?;
     (!scanlines.chunks(row).any(|line| line[0] > 4)).then_some(())
 }
-/// A standard MIDI file exactly as the sequence build reads it: MThd then only
-/// MTrk chunks covering the file, every track closed by end-of-track, text
-/// meta events as text and the rest at their specified sizes, and no
-/// system-exclusive payloads. JSON is banned: a text event that opens an
-/// object or array is refused.
 fn midi_reason(data: &[u8]) -> Option<&'static str> {
     const MALFORMED: &str =
         "MIDI is not an exact sequence build input: MThd, MTrk, sized or text metas only";
@@ -644,9 +577,6 @@ fn midi_reason(data: &[u8]) -> Option<&'static str> {
         .or_else(|| data_uri_reason(&text))
         .or_else(|| encoded_reason(&text, false))
 }
-/// A sequence's text names its own labels and events; where the song lands
-/// and what its tone bank's address is belong to the build. A hexadecimal
-/// literal of four or more digits, or a placement field, is refused.
 fn placement_reason(text: &str) -> Option<&'static str> {
     let address = text.match_indices("0x").any(|(index, _)| {
         text[index + 2..]
@@ -661,16 +591,10 @@ fn placement_reason(text: &str) -> Option<&'static str> {
     (address || placement)
         .then_some("MIDI records a ROM address or placement; the build supplies it")
 }
-/// Whether the build writes this PNG's palette into the ROM: a source beside
-/// it includes its `.gbapal` recipe. Such a palette is proven by the
-/// byte-for-byte build, so it may be grey (Pascal, 2026-09-29), as pret keeps
-/// grey images whose palettes the game stores.
 fn palette_built(path: &str) -> bool {
     own_palette_built(path) || part_palette_built(path)
 }
 
-/// Whether this PNG is a later part of a part list whose first part's palette
-/// the build writes: the parts share that one palette (Pascal, 2026-09-30).
 fn part_palette_built(path: &str) -> bool {
     let file = Path::new(path);
     let (Some(directory), Some(stem)) = (file.parent(), file.file_stem().and_then(|s| s.to_str()))
@@ -728,16 +652,10 @@ fn own_palette_built(path: &str) -> bool {
                 .is_ok_and(|text| text.contains(&format!("\"{relative}")))
     })
 }
-/// The binary build inputs a game may track, each parsed exactly as the asset
-/// build reads it; everything else is text.
 fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
     if data.is_empty() {
         return None;
     }
-    // The README figures are generated, but held to the indexed build-input
-    // standard: palette pixels and standard chunks, no text payloads. Only
-    // their size is exempt from the tile grid; like any other PNG they carry a
-    // real palette and never draw the cartridge logo.
     if matches!(path, "PROGRESS.png" | "PROGRESS_CHART.png") {
         if exact_indexed_stream(data).is_none() {
             return Some("README figure is not an exact indexed PNG");
@@ -801,10 +719,6 @@ enum Run {
     Digest,
     Encoded,
 }
-/// Classify one alphanumeric run. Decimal runs are numbers; hashes and 64-bit
-/// words are digests; other hex, upper-case base32 and mixed-case runs that do
-/// not read as words are encodings. Base64 and base64url split into runs at
-/// `+`, `/`, `-` and `_`.
 fn classify(run: &[u8]) -> Run {
     if run.len() < ENCODED_RUN_MIN {
         return Run::Plain;
@@ -831,9 +745,6 @@ fn classify(run: &[u8]) -> Run {
         Run::Plain
     }
 }
-/// Whether a mixed-case run reads as identifier words: once numbers are
-/// removed, three fifths of its letters sit in words of three or more letters,
-/// as in `SelectActor25SceneVariant` and not in random base64.
 fn wordlike(run: &[u8]) -> bool {
     let (mut letters, mut worded, mut index) = (0, 0, 0);
     while index < run.len() {
@@ -859,8 +770,6 @@ fn wordlike(run: &[u8]) -> bool {
     }
     letters < 8 || worded * 5 >= letters * 3
 }
-/// One integer literal: decimal, `0x` hex, `0b` binary, a `\x` escape or a
-/// two-digit hex byte, with an optional Rust or C integer suffix.
 fn numeric(token: &[u8]) -> bool {
     let token = match token {
         [b'-' | b'+', rest @ ..] => rest,
@@ -891,8 +800,6 @@ fn numeric(token: &[u8]) -> bool {
         _ => digits(body, 20, u8::is_ascii_digit),
     }
 }
-/// Elements of numeric array literals: runs of integer tokens separated only
-/// by whitespace, commas, brackets, quotes and escapes.
 fn numeric_elements(text: &[u8]) -> usize {
     let separator = |byte: &u8| byte.is_ascii_whitespace() || b",;:()[]{}\\\"'".contains(byte);
     let (mut total, mut run) = (0, 0);
@@ -906,7 +813,6 @@ fn numeric_elements(text: &[u8]) -> usize {
     }
     total + if run >= NUMERIC_RUN_MIN { run } else { 0 }
 }
-/// Encoded content measured over a whole text, whatever its lines or quoting.
 fn encoded_reason(text: &str, arrays: bool) -> Option<&'static str> {
     let (mut characters, mut digests) = (0, 0);
     for run in text.as_bytes().split(|byte| !byte.is_ascii_alphanumeric()) {
@@ -931,9 +837,6 @@ fn encoded_reason(text: &str, arrays: bool) -> Option<&'static str> {
     )
 }
 
-/// A digest or measured inventory remains generated bookkeeping after a rename
-/// or a split into smaller documents. Reference checksums and dependency pins
-/// are deliberate records; they do not carry these measured game fields.
 fn calculated_bookkeeping_reason(text: &str) -> Option<&'static str> {
     let header = text.lines().next().unwrap_or("");
     header
@@ -963,8 +866,6 @@ fn blocked_include(literal: &str, bytes: bool) -> bool {
     }) || listed(extension(&literal), PRESENTATION_EXTENSIONS)
         || listed(extension(&literal), BLOCKED_EXTENSIONS)
 }
-/// `include_bytes!` of game, ROM or output bytes, and `include_str!` of ROM or
-/// output text, in any delimiter, spacing, case or `concat!` split.
 fn included_bytes_reason(path: &str, text: &str) -> Option<&'static str> {
     if !extension(path).eq_ignore_ascii_case("rs") {
         return None;
@@ -1009,7 +910,6 @@ fn included_bytes_reason(path: &str, text: &str) -> Option<&'static str> {
     });
     embedded.then_some("include_bytes! or include_str! of game, ROM or output bytes")
 }
-/// Filter attributes such as `filter=lfs` store content outside the scanned blob.
 fn attributes_reason(path: &str, text: &str) -> Option<&'static str> {
     let leaf = path.rsplit('/').next().unwrap_or(path);
     let filtered = leaf.eq_ignore_ascii_case(".gitattributes")
@@ -1063,13 +963,10 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
 }
 const C_ALIAS_REASON: &str =
     "GCC alias attribute in maintained C (O2): define one name where its bytes are";
-/// An `alias` among an `__attribute__((...))` list's own attributes, not in
-/// comments, literals or nested arguments.
 fn c_alias_reason(path: &str, text: &str) -> Option<&'static str> {
     if !path.starts_with("games/") || !listed(extension(path), &["c", "h"]) {
         return None;
     }
-    // C splices lines before it sees tokens.
     let text = text.replace("\\\r\n", "").replace("\\\n", "");
     if !text.contains("__attribute") {
         return None;
@@ -1116,7 +1013,6 @@ fn c_alias_reason(path: &str, text: &str) -> Option<&'static str> {
     }
     None
 }
-/// Comments and quoted strings carry no linker or assembler statements.
 fn unquoted_source(text: &str) -> String {
     static NON_CODE: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
     NON_CODE
@@ -1128,8 +1024,6 @@ fn unquoted_source(text: &str) -> String {
         .into_owned()
 }
 const LINKER_ASSIGNMENT_REASON: &str = "linker alias or stored number (O2): define the name where its bytes are; layout and sizes come from sections and symbol differences";
-/// Section addresses combined with sums and differences. The entire
-/// expression must be arithmetic, so an unrelated ADDR cannot admit an alias.
 fn linker_section_expression(text: &str) -> bool {
     static TOKEN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
     let token = TOKEN.get_or_init(|| {
@@ -1235,7 +1129,6 @@ fn numeric_word(text: &str) -> Option<u32> {
     crate::assembly::addresses::integer(text)
 }
 fn memory_address(word: u32) -> bool {
-    // GBA address-space regions, including the Game Pak ROM's bus mirrors.
     (0x0200_0000..0x0204_0000).contains(&word)
         || (0x0300_0000..0x0300_8000).contains(&word)
         || (0x0800_0000..0x0e00_0000).contains(&word)
@@ -1253,9 +1146,6 @@ fn register_name(word: &str) -> Option<&str> {
             .map(|_| word),
     }
 }
-/// A loaded register is an address only when this local instruction stream
-/// dereferences or calls it before overwriting it. Pointer-only arguments and
-/// standalone tables need semantic review; coordinates can look like addresses.
 fn loaded_pointer(lines: &[&str], register: &str) -> bool {
     let Some(register) = register_name(register) else {
         return false;
@@ -1355,8 +1245,6 @@ fn loaded_pointer(lines: &[&str], register: &str) -> bool {
     }
     false
 }
-/// The same local pointer-use proof for ARM instructions that recon still
-/// spells as words. Unknown encodings end the proof instead of guessing.
 fn loaded_pointer_words(words: &[Option<u32>], start: usize, register: u32) -> bool {
     let mut states = BTreeMap::from([(start, 1_u16 << register)]);
     let mut queue = std::collections::VecDeque::from([start]);
@@ -1507,8 +1395,6 @@ fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
     let inspect_encoded = |words: &[Option<u32>]| {
         words.iter().enumerate().any(|(index, word)| {
             let Some(word) = word else { return false };
-            // An ARM word load from pc: its target is pc (+8), plus or
-            // minus the 12-bit byte offset. Only its literal is an address.
             if word & 0x0f7f_0000 != 0x051f_0000 || word & 3 != 0 {
                 return false;
             }
@@ -1575,10 +1461,6 @@ fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
     inspect_encoded(&encoded).then_some(RAW_ADDRESS_REASON)
 }
 const EDITION_EQUATE_REASON: &str = "equate in an edition scaffold: it brings in base-ROM bytes and labels where they are, never a number the linked code reads";
-/// Any equate or symbol assignment in an edition's scaffold,
-/// `recon/<game>/<lang>/*.s`: `.set`, `.equ`, `.equiv`, `.eqv` or `name =`.
-/// A length or address its code reads would come from the reference ROM;
-/// the scaffold places labels at bytes and the linker works out the rest.
 fn edition_equate_reason(path: &str, text: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let ["recon", game, lang, leaf] = components.as_slice() else {
@@ -1596,10 +1478,6 @@ fn edition_equate_reason(path: &str, text: &str) -> Option<&'static str> {
     equate.is_match(text).then_some(EDITION_EQUATE_REASON)
 }
 const ADDRESS_EQUATE_REASON: &str = "assembler equate of a full address: define the name as a label where its bytes are and reference it";
-/// An assembler equate that gives a name a whole 32-bit address, such as
-/// `.set .L_x, 0x080f0144`, in game or reconstruction source. Names are
-/// labels at their bytes; restating an address beside them is a stored
-/// answer, whichever equate directive spells it.
 fn address_equate_reason(path: &str, text: &str) -> Option<&'static str> {
     let game = path.starts_with("games/") || path.starts_with("recon/");
     if !game || !listed(extension(path), &["s", "inc", "asm"]) {
@@ -1615,22 +1493,16 @@ fn address_equate_reason(path: &str, text: &str) -> Option<&'static str> {
     equate.is_match(text).then_some(ADDRESS_EQUATE_REASON)
 }
 const RAW_ENCODING_REASON: &str = "credited assembly spelled as an encoding (.inst, or data that control runs into as code): write the instruction, or keep the module as disassembly in recon/<game>/raw";
-/// One statement of an assembly source, as the raw-encoding gate reads it.
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Statement {
-    /// A label; `true` for a function entry (`.thumb_func` or `.type ..., %function`).
     Label(bool),
     Instruction {
         ends_flow: bool,
     },
-    /// `.inst`, which always spells an instruction by its encoding.
     Encoding,
-    /// A data directive; `true` inside an AlchemyUncredited_* span.
     Data(bool),
-    /// A directive that switches section: control never runs across it.
     Section,
     Directive,
-    /// A macro invocation, whose expansion this gate does not read.
     Macro,
 }
 fn assembly_instruction(mnemonic: &str) -> bool {
@@ -1644,8 +1516,6 @@ fn assembly_instruction(mnemonic: &str) -> bool {
         })
         .is_match(mnemonic)
 }
-/// Whether an unconditional instruction leaves straight-line flow: a branch,
-/// a return, or any write to pc.
 fn assembly_ends_flow(mnemonic: &str, operands: &str) -> bool {
     let mnemonic = mnemonic.to_ascii_lowercase();
     let mnemonic = mnemonic
@@ -1671,8 +1541,6 @@ fn assembly_ends_flow(mnemonic: &str, operands: &str) -> bool {
         _ => false,
     }
 }
-/// The statements of an assembly source, comments, strings and preprocessor
-/// lines removed, in order.
 fn assembly_statements(text: &str) -> Vec<Statement> {
     let mut statements = Vec::new();
     let (mut block, mut function_next, mut uncredited) = (false, false, false);
@@ -1761,12 +1629,6 @@ fn assembly_statements(text: &str) -> Vec<Statement> {
     }
     statements
 }
-/// Credited assembly under `games/` is written as instructions, never as
-/// copied encodings (AGENTS.md, oracle leakage invariant 3). Refused: any
-/// `.inst`, and credited data that control reaches as code, because it follows
-/// an instruction that continues or opens a function before its first
-/// instruction. Literal pools and tables after a branch or return are data,
-/// as are the words of an AlchemyUncredited_* span, which claims no credit.
 fn raw_encoding_reason(path: &str, text: &str) -> Option<&'static str> {
     if !path.starts_with("games/") || !listed(extension(path), &["s", "inc", "asm"]) {
         return None;
@@ -1802,10 +1664,6 @@ fn raw_encoding_reason(path: &str, text: &str) -> Option<&'static str> {
     }
     None
 }
-/// The game whose asset roots hold `path`: every directory under
-/// `games/<game>/` except tooling metadata, with `asm/overlays` holding
-/// overlay streams, all matched without regard to case. Local reconstruction
-/// outputs under `recon/` are never native asset inputs.
 fn asset_game(path: &str) -> Option<&str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, game, area, rest @ ..] = components.as_slice() else {
@@ -1821,11 +1679,6 @@ fn asset_game(path: &str) -> Option<&str> {
     };
     asset.then_some(*game)
 }
-/// The shared root holds only what every game builds byte-exact from the
-/// same text: nested C source, interface headers, asset sources with the
-/// PNG and TSV inputs they are built from, and sequences, as MIDI or
-/// assembly, under SOUND/SEQUENCE and samples, WAV or PCM4, under
-/// SOUND/SAMPLE, as in each game.
 fn shared_root_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, root, rest @ ..] = components.as_slice() else {
@@ -1847,9 +1700,6 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
     )
 }
 const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD, C drafts under an edition and metrics/history.tsv";
-/// `recon/` fails closed as `games/` does: pret's scaffolding forms,
-/// nothing else. No JSON or TSV ledger, however
-/// it is named, may come back beside the scaffolding.
 fn recon_path_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, rest @ ..] = components.as_slice() else {
@@ -1870,10 +1720,8 @@ fn recon_path_reason(path: &str) -> Option<&'static str> {
             [g, leaf] => game(g) && named(leaf, &["s"]),
             [g, "raw", leaf] => game(g) && named(leaf, &["s", "S"]),
             [g, "raw", "overlays", leaf] => game(g) && named(leaf, &["s", "ld"]),
-            // An edition's own scaffold and the linker script that places it.
             [g, e, "MAIN.LD"] => game(g) && edition(e),
             [g, e, leaf] if named(leaf, &["s"]) => game(g) && edition(e),
-            // The published progress history the README figures draw.
             ["tbs", "metrics", "history.tsv"] => true,
             [g, e, .., leaf] => game(g) && edition(e) && named(leaf, &["c", "h"]),
             _ => false,
@@ -1961,8 +1809,6 @@ fn nul_list(value: &[u8]) -> Vec<String> {
         .map(|field| String::from_utf8_lossy(field).into_owned())
         .collect()
 }
-/// Parse `git diff --raw -z` into `(path, gitlink)` records. Renames and copies
-/// name their new path, which every path rule judges as new.
 fn raw_changes(value: &[u8]) -> Result<(bool, Vec<(String, bool)>), String> {
     let fields = nul_list(value);
     let mut changes = Vec::new();
@@ -1991,8 +1837,6 @@ struct Entry {
     object: String,
     listing_reason: Option<&'static str>,
 }
-/// One inspected path. Approved compiler submodules carry no blob to read;
-/// any other gitlink fails without being read.
 fn inspected(scope: &str, path: String, object: String, gitlink: bool) -> Option<Entry> {
     let listing_reason = if gitlink {
         if APPROVED_GITLINKS.contains(&path.as_str()) {
@@ -2009,7 +1853,6 @@ fn inspected(scope: &str, path: String, object: String, gitlink: bool) -> Option
         listing_reason,
     })
 }
-/// Stream blobs through one `git cat-file --batch` process in request order.
 fn blobs(
     root: &Path,
     objects: Vec<String>,
@@ -2081,7 +1924,6 @@ fn scan(root: &Path, entries: Vec<Entry>) -> Result<(), String> {
         ))
     }
 }
-/// Tracked `(gitlink, object, path)` records of the index or of a revision.
 fn tracked(root: &Path, revision: Option<&str>) -> Result<Vec<(bool, String, String)>, String> {
     let output = match revision {
         None => git(root, &["ls-files", "--stage", "-z"], "index scan")?,
@@ -2146,8 +1988,6 @@ fn check_staged(root: &Path) -> Result<(), String> {
     )?;
     let (anything, changes) = raw_changes(&output)?;
     if !anything {
-        // A normal merge may join histories whose file changes already landed.
-        // There is still a publishable tree to inspect; scan it in full.
         if git(
             root,
             &["rev-parse", "--verify", "MERGE_HEAD"],
@@ -2169,8 +2009,6 @@ fn check_staged(root: &Path) -> Result<(), String> {
     scan(root, entries)
 }
 fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, String> {
-    // A new branch still shares already-published history. The advertised
-    // destination also excludes commits when local remote-tracking refs lag.
     let mut args = vec!["rev-list", local, "--not", "--remotes"];
     if !remote.bytes().all(|byte| byte == b'0') {
         args.push(remote);
@@ -2191,8 +2029,6 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
         .filter(|line| !line.is_empty())
         .collect();
     if updates.is_empty() {
-        // Git supplies no updates when the remote is already current. There
-        // is no outgoing payload to inspect; staged changes are not pushed.
         return Ok(());
     }
     let mut commits = Vec::new();
@@ -2255,7 +2091,6 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
             inspected(scope, path.clone(), format!("{commit}:{path}"), gitlink)
         }));
     }
-    // Each pushed tip must also pass as a whole tree, not only as its deltas.
     for tip in tips {
         entries.extend(tree_entries(root, Some(&tip))?);
     }
@@ -2295,14 +2130,11 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 mod tests {
     use super::*;
 
-    /// Every file-level decision for one blob, as `scan` makes it.
     fn publication_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
         publication_path_reason(path)
             .or_else(|| native_path_reason(path))
             .or_else(|| publication_data_reason(path, data, logo))
     }
-    /// Deterministic pseudo-random bytes. Fixtures are built at run time so the
-    /// tracked gate source never carries the payloads it rejects.
     fn fixture_bytes(length: usize, seed: u32) -> Vec<u8> {
         let mut state = seed;
         (0..length)
@@ -2333,12 +2165,10 @@ mod tests {
         chunk.extend_from_slice(&crc.to_be_bytes());
         chunk
     }
-    /// Unfiltered blank scanlines of a square image.
     fn scanlines(size: usize, depth: usize) -> Vec<u8> {
         let row = (size * depth).div_ceil(8) + 1;
         vec![0; row * size]
     }
-    /// A square PNG: IHDR, a full palette, `extra` chunks, one IDAT and IEND.
     fn png_fixture(
         size: u32,
         depth: u8,
@@ -2369,7 +2199,6 @@ mod tests {
         let stream = fdeflate::compress_to_vec(&scanlines(16, usize::from(depth)));
         png_fixture(16, depth, 3, &stream, &[])
     }
-    /// An indexed fixture drawn with a grey ramp in place of a real palette.
     fn grey_fixture(depth: u8) -> Vec<u8> {
         let stream = fdeflate::compress_to_vec(&scanlines(16, usize::from(depth)));
         let header = [
@@ -2390,7 +2219,6 @@ mod tests {
         ]
         .concat()
     }
-    /// A one-track MIDI file of a note and, when `closed`, its end-of-track.
     fn midi_fixture(events: &[u8], closed: bool) -> Vec<u8> {
         let mut track = [&[0, 0x90, 60, 100, 96, 0x80, 60, 0], events].concat();
         if closed {
@@ -2405,11 +2233,9 @@ mod tests {
         ]
         .concat()
     }
-    /// A deterministic stand-in for the cartridge logo; the real bytes stay in the ROM.
     fn logo_fixture() -> Vec<u8> {
         fixture_bytes(LOGO.len(), 0x0bad_1060)
     }
-    /// `(path, bytes, expected rejection reason fragment)`.
     type Fixture = (&'static str, Vec<u8>, Option<&'static str>);
     fn binary_fixtures() -> Vec<Fixture> {
         let logo = logo_fixture();
@@ -2431,7 +2257,6 @@ mod tests {
             fdeflate::compress_to_vec(&fixture_bytes(512, 9)),
         ]
         .concat();
-        // The first row holds the logo under the Sub filter: each byte less its left.
         let mut row = logo.clone();
         row.resize(160, 0);
         let mut hidden = scanlines(160, 8);
@@ -2934,7 +2759,6 @@ mod tests {
             ("PROGRESS.svg", svg, Some("presentation material")),
         ]
     }
-    /// JSON anywhere is refused, whatever it holds.
     fn json_ban_fixtures() -> Vec<Fixture> {
         [
             "games/THE BROKEN SEAL/SRC/GAME/TABLE.JSON",
@@ -3071,7 +2895,6 @@ mod tests {
             "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
             b"\t.incbin \"COMMON/SAMPLE/WAVE_20.PCM8.bin\"\n"
         ));
-        // Only a game's sound sources, and only built files under SOUND.
         for (path, line) in [
             ("games/THE BROKEN SEAL/SRC/SOUND/DATA.S", sample.as_slice()),
             ("recon/tbs/unidentified.s", sample),
@@ -3117,7 +2940,6 @@ mod tests {
             assert!(!super::incbin(path, sheet), "{path}");
             assert!(!super::incbin(path, tiles), "{path}");
         }
-        // Only a game's sources under SRC, and only recipes under GRAPHICS.
         let star = "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S";
         for (path, line) in [
             ("recon/tbs/unidentified.s", sheet.as_slice()),
@@ -3290,10 +3112,6 @@ mod tests {
 
     #[test]
     fn message_archives_are_built_assembly_included_by_a_tracked_source() {
-        // Each game's TEXT/MESSAGES.S includes the assembly build rom writes
-        // from the edition's catalog, whose address words are relocations;
-        // the tracked source carries no bytes, and an .incbin of a built
-        // archive, which could hold no relocations, stays refused.
         let root = crate::compiler::routing::root();
         for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
             let path = format!("games/{game}/TEXT/MESSAGES.S");
@@ -3348,8 +3166,6 @@ mod tests {
 
     #[test]
     fn calculated_ledgers_and_saved_answers_fail_after_renaming_or_splitting() {
-        // Ledgers and saved answers written as JSON are refused as JSON,
-        // under any name.
         for data in [
             r#"{"decoded_sha256":"00"}"#,
             r#"[{"source":"FIELD/EVENT.C","address":"0x08000100","size":32}]"#,
@@ -3601,8 +3417,6 @@ mod tests {
                 );
             }
         }
-        // Comments and pc-relative loads are no equates; the English
-        // disassembly and game source keep their own rules.
         let accepted = "@ .set Size, 0x4e8 once stood here\n\tldr r0, =Label\n";
         assert!(edition_equate_reason("recon/tbs/ja/rom.s", accepted).is_none());
         let measured = "\t.set Tile_BuildMetatilesCodeSize, . - Tile_BuildMetatiles\n";
@@ -3697,7 +3511,6 @@ mod tests {
             .chain(b'0'..=b'9')
             .chain(*b"+/")
             .collect();
-        // Each line alone is short; the file as a whole is a payload.
         let short = (0..10)
             .map(|seed| format!("{}\n", encoded_fixture(&base64, 48, seed)))
             .collect::<String>();

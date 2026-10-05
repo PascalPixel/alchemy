@@ -1,12 +1,3 @@
-@ Stops a music track: walks its channel list, switches every sounding channel
-@ off through the driver's channel-off hook (SoundInfo+0x2c) and clears it.
-@ It branches on the flags left by tst r0, r1 (0x080f9f00) and by
-@ ands r0, r3; beq at 0x080f9f16 with no compare in between; both approved
-@ compilers put a cmp before every conditional branch. The hook is reached by
-@ bl to the bx r3 at 0x080f9ee8. Every TBS and TLA edition has these bytes.
-@ The zero halfword of alignment at 0x080f9f36 never runs and carries no
-@ credit.
-@ credit: library — TBS/TLA common sound driver track-stop routine
 .syntax unified
 	.thumb
 	.global MusicTrack_Stop

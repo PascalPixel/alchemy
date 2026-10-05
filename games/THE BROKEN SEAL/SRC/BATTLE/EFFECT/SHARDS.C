@@ -1,8 +1,3 @@
-/*
- * Battle effect 11: two mode-1 item-break anchors fly apart, then
- * twenty-four shards scatter from the scene centre at random speeds and
- * angles.
- */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "FX_SCENE.H"
@@ -82,8 +77,6 @@ void RunBattleEffect11(void)
     BattleFx_PrepareBufferInterpolation();
 }
 
-/* Spawns an item-break anchor, grows it to full size while it spins, then
-   turns it to face the given angle. */
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle)
 {
     struct MotionObject *obj;

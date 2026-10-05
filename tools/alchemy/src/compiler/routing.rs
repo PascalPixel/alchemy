@@ -1,17 +1,9 @@
-//! Compiler routing; `routing_data` is the sole table source.
-//!
-//! A whole source file routes to exactly one compiler family and flag set.
-//! Compiler decisions name the ordinary build inputs, never functions or
-//! calculated owner inventories.
 use crate::compiler::routing_data::*;
 use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
-/// Repository root: `<crate>/../..`.
 pub fn root() -> &'static Path {
     static ROOT: OnceLock<PathBuf> = OnceLock::new();
     ROOT.get_or_init(|| {
-        // The checkout the command runs in, so a binary built in one
-        // worktree never edits another; else the one it was built from.
         let current = std::env::current_dir().ok();
         if let Some(found) = current.as_deref().and_then(|dir| {
             dir.ancestors()
@@ -30,12 +22,9 @@ pub fn root() -> &'static Path {
 pub fn bundle() -> PathBuf {
     root().join("tools/out/compilers")
 }
-/// Native `arm-none-eabi` binutils built by bootstrap; ignored like the compilers.
 pub fn binutils_prefix() -> PathBuf {
     root().join("tools/out/binutils")
 }
-/// Put the installed binutils first on `PATH` for every child process, so the
-/// build never depends on system packages or an emulated host toolchain.
 pub fn prefer_installed_binutils() {
     let bin = binutils_prefix().join("bin");
     if !bin.is_dir() {
@@ -50,21 +39,15 @@ fn path_with_first(first: &Path, current: &std::ffi::OsStr) -> Option<std::ffi::
     let rest = std::env::split_paths(current).filter(|entry| entry != first);
     std::env::join_paths(std::iter::once(first.to_path_buf()).chain(rest)).ok()
 }
-/// Both games use the licensed agscc source and the same executable bundle,
-/// with the same stock options.
 pub fn bundle_for(_target: CompilerTarget) -> PathBuf {
     bundle()
 }
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")
 }
-/// pret's ARM compiler, agbcc/gcc_arm from the approved agbcc source.
 pub fn agbcc_arm_driver() -> PathBuf {
     bundle().join("agbcc").join("agbcc_arm")
 }
-/// Modern syntax support with the historical integer/soft-float object ABI.
-// GAS marks softfpa objects as VFP; explicit FPA with soft-float retains
-// the historical integer/soft-float ABI used by the compiler objects.
 pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
     [
         "arm-none-eabi-as",
@@ -81,8 +64,6 @@ pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
     .map(|s| (*s).to_string())
     .collect()
 }
-/// Unmodified GCC/agbcc output uses era GAS alignment semantics.
-/// ARM compiler output assembles without `-mthumb`.
 pub fn compiler_assembly_command(source: &str, object: &str, arm: bool) -> Vec<String> {
     let mut command = vec![bundle().join("as").to_string_lossy().into_owned()];
     command.push("-marm7tdmi".to_string());
@@ -112,7 +93,6 @@ impl CompilerTarget {
         }
     }
 }
-/// Build IDs remain stable when their physical workspaces are renamed.
 pub fn game_directory(game: &str) -> &str {
     match game {
         "tbs" => "THE BROKEN SEAL",
@@ -120,17 +100,11 @@ pub fn game_directory(game: &str) -> &str {
         _ => game,
     }
 }
-/// The compiler family a source belongs to. Membership is provenance (which
-/// compiler and library built the bytes), never a per-function tuning.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum CompilerFamily {
-    /// Game code: the staged GCC 2.96 with the canonical flags.
     Game,
-    /// Library code built with agbcc.
     Agbcc,
-    /// The flash library, built with agbcc at -O.
     AgbccFlash,
-    /// Resident ARM routines, built with pret's agbcc_arm.
     AgbccArm,
 }
 pub(crate) fn include_flag(target: CompilerTarget) -> String {
@@ -143,12 +117,9 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
             .display()
     )
 }
-/// The shared headers' modules under `games/COMMON/INCLUDE`.
 pub(crate) const COMMON_INCLUDE_MODULES: &[&str] = &[
     "BATTLE", "FIELD", "GAME", "GRAPHICS", "LIB", "MENU", "SOUND", "SYSTEM",
 ];
-/// Game code finds a shared header by its name, as it finds its own game's:
-/// each shared module follows the game's include tree on the search path.
 fn common_include_flags() -> impl Iterator<Item = String> {
     COMMON_INCLUDE_MODULES.iter().map(|module| {
         format!(
@@ -157,10 +128,6 @@ fn common_include_flags() -> impl Iterator<Item = String> {
         )
     })
 }
-/// Whether the game's own code was built to interwork with ARM callers.
-///
-/// This is a per-game build decision: TBS interworks and TLA does not.
-/// TLA's inherited library files keep the Agbcc family's interworking flags.
 fn interworks(target: CompilerTarget) -> bool {
     match target {
         CompilerTarget::Tbs => true,
@@ -178,10 +145,6 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     for flag in ["-mcpu=arm7tdmi", "-nostdinc", "-fcall-used-r4"] {
         flags.push(flag.to_string());
     }
-    // TLA's game code, main image and overlays alike, builds Thumb
-    // constants from a shifted byte and an add (Pascal, 2026-09-29), calls
-    // through a register with mov lr and a bl (Pascal, 2026-09-30) and
-    // schedules loads for the ARM9TDMI's pipeline (Pascal, 2026-10-05).
     if target == CompilerTarget::Tla {
         flags.push("-mtune=arm9tdmi".to_string());
         flags.push("-mthumb-split-constants".to_string());
@@ -200,8 +163,6 @@ pub fn agbcc_cflags() -> Vec<String> {
         .map(|s| (*s).to_string())
         .collect()
 }
-/// The ARM routines' agbcc_arm flags: interworking, at -O2, with no frame
-/// pointer and r4 free, as the ROM's ARM code has them.
 pub fn agbcc_arm_cflags() -> Vec<String> {
     [
         "-O2",
@@ -213,17 +174,12 @@ pub fn agbcc_arm_cflags() -> Vec<String> {
     .map(|s| (*s).to_string())
     .collect()
 }
-/// The flash library's agbcc flags: the library family's set at -O.
 pub fn agbcc_flash_cflags() -> Vec<String> {
     ["-mthumb-interwork", "-O"]
         .iter()
         .map(|s| (*s).to_string())
         .collect()
 }
-/// The compiler runtime the images linked from the toolchain library, built
-/// from the licensed agscc container (`compiler::runtime`): the canonical
-/// flags without interworking, with the stock r4 callee-saved ABI and without
-/// the game's include tree, uniformly for every member.
 pub fn runtime_library_cflags() -> Vec<String> {
     cflags()
         .into_iter()
@@ -234,9 +190,6 @@ pub fn runtime_library_cflags() -> Vec<String> {
 pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
     base_cflags(target)
 }
-/// Repository, absolute repository, and game-SRC-relative paths all name
-/// the same ordinary source file. Synthetic address paths have no family
-/// declaration and receive the game default.
 fn natural_source(target: CompilerTarget, source: &str) -> Option<PathBuf> {
     let path = Path::new(source);
     let path = if path.is_absolute() {
@@ -354,8 +307,6 @@ mod target_tests {
                 .any(|flag| flag == "-mthumb-inline-register-call"));
         }
     }
-    /// Every shared header module is searched, after the game's own tree, so
-    /// no game header only forwards to a shared one.
     #[test]
     fn game_code_searches_every_shared_module_after_its_own_tree() {
         let mut modules: Vec<String> = std::fs::read_dir(root().join("games/COMMON/INCLUDE"))
@@ -389,8 +340,6 @@ mod target_tests {
             }
         }
     }
-    /// The games' interworking decisions differ; inherited library files
-    /// retain their library flag set.
     #[test]
     fn only_tbs_game_code_interworks() {
         let tbs = cflags_for_target_source(CompilerTarget::Tbs, "MENU/INPUT_CANCEL_SOUND_TICK.C");
@@ -402,16 +351,11 @@ mod target_tests {
             bundle_for(CompilerTarget::Tla)
         );
         for flags in [&tbs, &tla] {
-            // No invented -mgs option: TLA adds only its two approved options.
             assert!(!flags.iter().any(|flag| flag.starts_with("-mgs")));
             assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-mthumb"));
         }
     }
-    /// Game code has one option set per game (K1): only Nintendo's library
-    /// files, named one by one as pret names them, leave the game compiler,
-    /// and they live in the sound and save library folders. Routing a game
-    /// file elsewhere to fit its bytes would be fitting the compiler (K3).
     #[test]
     fn only_library_files_leave_the_game_compiler() {
         for source in AGBCC_SOURCES
@@ -431,8 +375,6 @@ mod target_tests {
             );
         }
     }
-    /// Only TLA's game family splits Thumb constants; its inherited library
-    /// files and all of TBS keep stock constant loading.
     #[test]
     fn only_tla_game_code_splits_constants() {
         let split = |flags: Vec<String>| flags.iter().any(|flag| flag == "-mthumb-split-constants");
@@ -450,8 +392,6 @@ mod target_tests {
             "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"
         )));
     }
-    /// TLA's game code calls through a register as mov lr, rX and the second
-    /// half of a bl; stock GCC calls a _call_via_rX stub.
     #[test]
     fn call_via_lr_calls_through_a_register_inline() {
         let work = tempfile::tempdir().unwrap();
@@ -491,8 +431,6 @@ mod target_tests {
             "MENU/INPUT_CANCEL_SOUND_TICK.C"
         )));
     }
-    /// 301 is not a shifted byte, so stock GCC loads it from the pool; the
-    /// split builds it as 46 + 255.
     #[test]
     fn split_constants_build_an_odd_constant_with_an_add() {
         let work = tempfile::tempdir().unwrap();
@@ -570,8 +508,6 @@ mod target_tests {
                 assert!(files.insert(*entry), "duplicate family for {entry}");
             }
         }
-        // The shared MusicPlayer2000 folder holds only that library: every
-        // module in it is routed by name.
         let library = root().join("games/COMMON/SRC/SOUND");
         for entry in std::fs::read_dir(&library).unwrap() {
             let name = entry.unwrap().file_name().to_string_lossy().into_owned();
@@ -586,7 +522,6 @@ mod target_tests {
     }
     #[test]
     fn natural_paths_route_the_same_whole_file_and_respect_game_boundaries() {
-        // The flash library is shared from COMMON, so both games route it.
         let source = "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C";
         for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
             for path in [

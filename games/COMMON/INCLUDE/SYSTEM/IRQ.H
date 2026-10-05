@@ -5,14 +5,10 @@
 
 typedef void (*InterruptHandler)(void);
 
-/* Writable dispatch slots, one per interrupt bit. */
 extern InterruptHandler gIrqHandlers[14];
 
-/* Initial dispatch image copied as fourteen words. The TBS European image
-   also carries resident ARM instructions, so it is not a callback array. */
 extern const u32 Runtime_IrqHandlers[14];
 
-/* Resident code bank, its ROM copy source, and the BIOS interrupt vector. */
 extern u8 IwramIrqMain[];
 extern const u8 IwramRuntime_Rom[];
 extern void *Data_03007ffc;

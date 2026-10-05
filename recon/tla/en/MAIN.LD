@@ -1,6 +1,3 @@
-/* English native section bodies. Their source-object order also declares
-   the shared international composition; Japanese owns the game MAIN.LD.
-   This declaration is source only and never reads reference output. */
 .rom_start :
 {
         "*/recon/tla/unidentified.o"(.unidentified.08000000)

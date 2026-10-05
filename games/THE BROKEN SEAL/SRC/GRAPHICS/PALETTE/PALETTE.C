@@ -17,8 +17,6 @@ extern const u8 PaletteGlow_WaveTable[];
 
 u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale, s32 blue_scale);
 
-/* Clear the seven workspace entries, page, tint and cursor frame. The
-   entries' remaining fields are not established. */
 void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
 {
     struct MenuWorkspaceEntry *entry = (struct MenuWorkspaceEntry *)((u8 *)work + 0x400);
@@ -44,8 +42,6 @@ void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
     work->cursor_frame = zero;
 }
 
-/* Palette tint: three BGR channels kept at work + 0x576, driven by the
-   day counters in the game state and scaled into palette bank 15. */
 void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work)
 {
     s16 phase;
@@ -90,8 +86,6 @@ void Palette_WriteBlendedBank15Entries(struct WorkspaceWork *work)
     *(s16 *)0x050001F4 = Palette_ScaleTintChannels(work, 0x13BBB, 0x10000, 0x17777);
 }
 
-/* Scales the three tint channels kept at work + 0x576 by Q16 factors and
-   packs them, clamped to 0-31, into a BGR555 colour. */
 u16 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 scale_r, s32 scale_g, s32 scale_b)
 {
     s32 r;
@@ -140,8 +134,6 @@ u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale, s32 blue_sca
     return red + ((blue << 10) + (green << 5));
 }
 
-/* Cycles a base color around the wave table and writes seven shades of it
-   to OBJ palette 15, entries 4 to 10. */
 void PaletteGlow_Update(s32 phase, s32 brightness)
 {
     s16 rgb[3];

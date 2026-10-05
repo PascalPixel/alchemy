@@ -746,7 +746,6 @@ gArutinYamaEntrances11:
 	.4byte 0x00000000
 	.global gArutinYamaRegions9
 gArutinYamaRegions9:
-	/* Europe combines the two ninth-room boxes and widens the tenth. */
 	.ifdef TBS_EDITION_ES
 	.4byte 0xff8c0310
 	.4byte 0x0320023c

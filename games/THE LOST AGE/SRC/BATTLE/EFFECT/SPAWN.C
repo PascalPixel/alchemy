@@ -42,7 +42,6 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct ParticleSource *source)
     position.z = source->position.z;
     rnd = Random16();
     Vector_AddPolarOffset(rnd << 4, Random16(), &position);
-    /* ⚓️'s particle is object 0x2a1; ☀️'s is 0x11d. */
     object = Object_Spawn(0x2a1, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;

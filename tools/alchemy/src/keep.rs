@@ -1,9 +1,3 @@
-//! `alchemy keep`: of the source changed in the working tree, keep only what
-//! builds byte-identical. A rewrite of maintained C is tried as a batch of
-//! changed files; this reverts to HEAD the files the builds reject and
-//! bisects the rest against the Japanese builds of both games, then checks
-//! what survives in all twelve editions. The builds are the Makefile's own
-//! compare targets run with this executable; the reference ROMs only judge.
 use crate::compiler::routing::root;
 use crate::targets::TARGET_IDS;
 use regex::Regex;
@@ -35,22 +29,17 @@ fn editions() -> Vec<&'static str> {
     TARGET_IDS.iter().map(|id| id.as_str()).collect()
 }
 
-/// What one edition's compare target said.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Outcome {
-    /// The image was compared with the reference ROM.
     compared: bool,
     identical: bool,
-    /// Each source the build could not make.
     failures: Vec<Failure>,
-    /// The first error line, for people.
     error: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Failure {
     source: String,
-    /// Files under games/ that its error lines (not warnings) name.
     locations: Vec<String>,
 }
 
@@ -76,23 +65,12 @@ impl Reason {
 #[derive(Debug, Default)]
 pub(crate) struct Report {
     kept: Vec<String>,
-    /// Each reverted file and why, in the order decided.
     reverted: Vec<(Reason, String)>,
-    /// Kept files the Japanese builds cannot compile at HEAD beside the
-    /// PATHs' changes, so never bisected.
     needed: Vec<String>,
-    /// Editions that differ even with every change reverted.
     differ_without: Vec<&'static str>,
-    /// The last build of all twelve editions, of the kept changes.
     last: Vec<(&'static str, Outcome)>,
 }
 
-/// Split `candidates` into those that pass together and those that fail, by
-/// delta debugging: a group joins the good set when the good set with it
-/// passes; otherwise its halves are tried in turn, and a single file that
-/// fails is bad. When the first half joins whole, the good set with the
-/// second half is the set that just failed, so that half is split without
-/// asking again. `passes` must hold for the empty set.
 pub(crate) fn bisect<T: Clone, E>(
     candidates: &[T],
     mut passes: impl FnMut(&[T]) -> Result<bool, E>,
@@ -135,8 +113,6 @@ fn split<T: Clone, E>(
     )
 }
 
-/// The builds `decide` asks for, remembered by the set of changes applied:
-/// the builds are deterministic, so an edition is built once for a set.
 struct Builds<B> {
     build: B,
     known: BTreeMap<Vec<String>, BTreeMap<&'static str, Outcome>>,
@@ -180,10 +156,6 @@ fn failing(editions: &[&'static str], outcomes: &[Outcome]) -> Vec<&'static str>
         .collect()
 }
 
-/// The applied changes the builds rejected: a failing source that changed
-/// when its own lines carry the errors (or none do), else the changed files
-/// the error lines name, else the changed source. A failure that names no
-/// changed file is left to the bisect.
 fn blame(outcomes: &[Outcome], applied: &[String]) -> Vec<String> {
     let mut blamed = BTreeSet::new();
     for failure in outcomes.iter().flat_map(|outcome| &outcome.failures) {
@@ -214,9 +186,6 @@ fn revert(kept: &mut Vec<String>, report: &mut Report, files: Vec<String>, reaso
         .extend(files.into_iter().map(|path| (reason, path)));
 }
 
-/// The changed files the Japanese builds cannot do without once every
-/// other change is reverted: sources that no longer compile at HEAD beside
-/// what the PATHs keep. Any other failure there leaves nothing to bisect.
 fn needed<B>(builds: &mut Builds<B>, kept: &[String]) -> Result<Vec<String>, String>
 where
     B: FnMut(&[&'static str], &[String]) -> Result<Vec<Outcome>, String>,
@@ -249,8 +218,6 @@ where
     }
 }
 
-/// The kept files whose changes `editions` show as a byte difference: a
-/// bisect of all but `needed`, which stay applied throughout.
 fn differing_bytes<B>(
     builds: &mut Builds<B>,
     editions: &[&'static str],
@@ -274,8 +241,6 @@ where
     Ok(bad)
 }
 
-/// Which `candidates` to keep, given `build`, which applies a set of them
-/// (the others at HEAD) and compares the editions it is given.
 pub(crate) fn decide<B>(candidates: &[String], build: B) -> Result<Report, String>
 where
     B: FnMut(&[&'static str], &[String]) -> Result<Vec<Outcome>, String>,
@@ -287,7 +252,6 @@ where
     };
     let mut report = Report::default();
     let mut kept = candidates.to_vec();
-    // What the Japanese builds cannot compile, then a bisect by bytes.
     loop {
         let outcomes = builds.run(&JAPANESE, &kept)?;
         let rejected = blame(&outcomes, &kept);
@@ -301,8 +265,6 @@ where
         let bad = differing_bytes(&mut builds, &JAPANESE, &kept, &report.needed)?;
         revert(&mut kept, &mut report, bad, Reason::Bytes);
     }
-    // All twelve: what another edition cannot compile, then, once, a bisect
-    // against the editions that differ only with the changes.
     let mut bisected = false;
     let last = loop {
         let outcomes = builds.run(&all, &kept)?;
@@ -369,7 +331,6 @@ fn status(outcome: &Outcome) -> String {
     }
 }
 
-/// Up to three paths, then how many more.
 fn some(paths: &BTreeSet<&str>) -> String {
     let shown: Vec<&str> = paths.iter().take(3).copied().collect();
     match paths.len() {
@@ -388,7 +349,6 @@ fn describe(editions: &[&'static str], outcomes: &[Outcome]) -> String {
     lines.join("; ")
 }
 
-/// `PATH` from the command line as a path from the checkout's root.
 fn kept_path(cwd: &Path, root: &Path, argument: &str) -> Result<String, String> {
     let path: PathBuf = cwd.join(argument).components().collect();
     let relative = path
@@ -425,7 +385,6 @@ fn failed_source(line: &str) -> Option<(String, &str)> {
     Some((found[1].to_string(), &line[found.get(0)?.end()..]))
 }
 
-/// The file an error line names: `games/PATH:LINE: message`, not a warning.
 fn error_location(text: &str) -> Option<String> {
     static PATTERN: OnceLock<Regex> = OnceLock::new();
     let pattern = PATTERN.get_or_init(|| Regex::new(r"(?:^|\s)(games/[^:]+):\d+: (.*)$").unwrap());
@@ -434,8 +393,6 @@ fn error_location(text: &str) -> Option<String> {
     (!message.starts_with("warning")).then(|| found[1].to_string())
 }
 
-/// One edition's compare log, with this checkout's root taken out of its
-/// paths: the verdict on its image and each source it could not make.
 pub(crate) fn read_log(edition: &str, log: &str) -> Outcome {
     let image = format!("out/{edition}/{edition}.gba: ");
     let mut outcome = Outcome::default();
@@ -466,8 +423,6 @@ pub(crate) fn read_log(edition: &str, log: &str) -> Outcome {
     outcome
 }
 
-/// A changed file: its bytes at HEAD and in the working tree, none where
-/// it does not exist.
 struct Change {
     path: String,
     head: Option<Vec<u8>>,
@@ -492,7 +447,6 @@ fn git(root: &Path, arguments: &[&str]) -> Result<Vec<u8>, String> {
     Ok(output.stdout)
 }
 
-/// The files under games/ that differ from HEAD, except under `kept`.
 fn changes(root: &Path, kept: &[String]) -> Result<Vec<Change>, String> {
     let listing = git(
         root,
@@ -553,7 +507,6 @@ fn put(file: &Path, content: Option<&[u8]>) -> Result<(), String> {
     written.map_err(|error| format!("{}: {error}", file.display()))
 }
 
-/// The working tree with the changes in `set` and every other change at HEAD.
 fn apply(root: &Path, changes: &[Change], set: &[String]) -> Result<(), String> {
     for change in changes {
         let wanted = if set.contains(&change.path) {
@@ -579,7 +532,6 @@ fn save(directory: &Path, changes: &[Change]) -> Result<(), String> {
     Ok(())
 }
 
-/// `make compare-EDITION` with this executable, into the edition's log.
 fn compare_edition(
     root: &Path,
     logs: &Path,
@@ -606,7 +558,6 @@ fn compare_edition(
     Ok(read_log(edition, &text))
 }
 
-/// Apply `set`, then compare `editions` side by side.
 fn compare(
     root: &Path,
     changes: &[Change],
@@ -642,7 +593,6 @@ fn compare(
     Ok(outcomes)
 }
 
-/// The object a map line places at `address`, its whole path.
 fn object_at(map: &str, address: u32) -> Option<String> {
     map.lines().find_map(|line| {
         let line = line.trim_start();
@@ -741,7 +691,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         println!("no changes under games/ to check");
         return Ok(());
     }
-    // Headers first, so the bisect accepts a declaration before its users.
     changes.sort_by_key(|change| !is_header(&change.path));
     save(&directory.join("saved"), &changes)?;
     fs::write(&unfinished, "").map_err(|error| format!("{}: {error}", unfinished.display()))?;
@@ -784,8 +733,6 @@ mod tests {
             .cloned()
             .collect();
         assert_eq!(good, expected);
-        // One question for the whole set, then at most two on each of the
-        // five levels above each bad file.
         assert!(asked <= 1 + 2 * 2 * 5, "asked {asked} times");
     }
 
@@ -799,7 +746,6 @@ mod tests {
         })
         .unwrap();
         assert_eq!((good.len(), bad.len(), asked), (8, 0, 1));
-        // [a b] fails, [a] passes, so [b] is known to fail without a build.
         let mut asked = 0;
         let pair = names(0..2);
         let (good, bad) = bisect(&pair, |set: &[String]| {
@@ -852,7 +798,6 @@ mod tests {
         }
     }
 
-    /// A fake set of builds: `judge` gives one edition's outcome for a set.
     fn builds<'a>(
         judge: impl Fn(&str, &[String]) -> Outcome + 'a,
         log: &'a std::cell::RefCell<Vec<Vec<&'static str>>>,
@@ -869,7 +814,6 @@ mod tests {
         let report = decide(&names(0..5), builds(|_, _| pass(), &log)).unwrap();
         assert_eq!(report.kept, names(0..5));
         assert!(report.reverted.is_empty());
-        // The twelve-edition build reuses the Japanese results of the same set.
         let log = log.borrow();
         assert_eq!(log.len(), 2);
         assert_eq!(log[0], JAPANESE);
@@ -980,8 +924,6 @@ mod tests {
         };
         let report = decide(&files, builds(judge, &log)).unwrap();
         assert_eq!(report.reverted, [(Reason::Bytes, wrong)]);
-        // Both, then none, then the first alone; the pair is known to fail
-        // and the second alone is known by the bisect; then the other ten.
         let log = log.borrow();
         assert_eq!(log.len(), 4, "{log:?}");
     }
@@ -1012,23 +954,19 @@ mod tests {
             ..Outcome::default()
         };
         let other = "games/X/SRC/C.C";
-        // An unchanged file fails on a changed header's line.
         assert_eq!(
             blame(&[failure(other, &[&header])], &[header.clone()]),
             [header.clone()]
         );
-        // A changed file's own error, even beside a note in a changed header.
         let both = [header.clone(), source.clone()];
         assert_eq!(
             blame(&[failure(&source, &[&source, &header])], &both),
             [source.clone()]
         );
-        // A changed file that breaks an unchanged header.
         assert_eq!(
             blame(&[failure(&source, &["games/X/INCLUDE/Z.H"])], &both),
             [source.clone()]
         );
-        // Nothing changed is named: left to the bisect.
         assert!(blame(&[failure(other, &[other])], &both).is_empty());
     }
 

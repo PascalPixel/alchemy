@@ -8,7 +8,6 @@
 
 extern s8 BattleFx_RandomChildValues[];
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 
 void BattleEffect_SetRandomTableValueOnObject(struct DispatchObject *object)
@@ -18,8 +17,6 @@ void BattleEffect_SetRandomTableValueOnObject(struct DispatchObject *object)
     Animation_ApplyChildValuesFar(object, table[(u32)(index * 8) >> 16]);
 }
 
-/* Pauses an object: keeps its callback and its animation byte in the party
-   state, then hands it the random child value routine. */
 void BattleEffect_PauseObject(s32 id)
 {
     struct DispatchObject *object;

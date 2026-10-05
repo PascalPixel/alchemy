@@ -195,9 +195,6 @@ void SceneActor_SetActorZeroFacingC000AndRun(void)
     Engine_EventRequestExit(8);
 }
 
-/* Runs a short fixed sequence of two calls, one 3-argument call passing a
- * fixed-point-looking pair of constants, one 3-argument call passing
- * (0, 232, 204), and a final call, in that order. */
 void RunEventScript02(void)
 {
     u32 i;
@@ -210,10 +207,6 @@ void RunEventScript02(void)
     Engine_EventEnd();
 }
 
-/* Runs a long scripted sequence of position, animation, and timing calls
- * against actor records 0, 3, 19, and 20, with a scene phase word at
- * offset 0x1c0 of the shared scene work record set at the start and near
- * the end. */
 void FieldScene_RunThreeActorChoreography(void)
 {
 
@@ -225,7 +218,6 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
     Engine_ActorWalkTo(0, 0x2b2, 200);
 
-    /* Clear the byte at offset 85 of the returned record. */
     ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
@@ -409,14 +401,11 @@ void StagedActor_RunHeadingProbeStep(void)
 
     for (;;) {
         heading = ImiruMura_SwayHeadings[(Data_03001ae8 >> 4) & 15];
-        /* The test is on heading << 16 against 0xffff0000, that is on the
-         * signed halfword -1, which means "no heading". */
         if ((heading << 16) == -0x10000) {
             return;
         }
 
         Engine_EventBegin();
-
 
         probe[0] = (subject->x & 0xfff00000) + 0x80000;
         probe[1] = subject->y;
@@ -426,7 +415,6 @@ void StagedActor_RunHeadingProbeStep(void)
         p = (u8 *)subject;
         p += 34;
         goal = GetMapCellCollision((s32)*p, x, z);
-        /* The probe advances the position block passed to it. */
         Vector_AddPolarOffset((s32)0x100000, heading, probe);
 
         marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
@@ -437,14 +425,12 @@ void StagedActor_RunHeadingProbeStep(void)
             goto tail;
         }
 
-        /* Rewind the probe to the position it held before the step above. */
         probe[0] = x;
         probe[2] = z;
         subject->state_048 = 0x20000;
         subject->state_052 = 0x1999;
         subject->state_100 = 0;
         Engine_ObjectSetPosition(subject, x, subject->y, z);
-        /* Same import as the probe above, two arguments here. */
         Object_SetMode(subject, 2);
         ObjectDispatch_ApplyValueToChildren(subject, 48);
         Engine_ObjectCommitPosition(subject);
@@ -479,7 +465,6 @@ finishProbe:
         Engine_ObjectSetPosition(subject, x, subject->y, z);
         Engine_ObjectCommitPosition(subject);
         Engine_TaskWait(2);
-        /* The back edge re-reads the heading table and starts again. */
     }
 
 blocked:

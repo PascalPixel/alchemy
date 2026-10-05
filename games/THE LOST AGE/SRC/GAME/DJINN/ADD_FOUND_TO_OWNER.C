@@ -2,8 +2,6 @@
 
 void GameFlag_SetBit(s32 flag);
 
-/* Gives a party member a djinni, offers it for trade and raises its found
-   flag, 0x30 + element * 20 + djinni. */
 void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn)
 {
     s32 flag = element * 20 + djinn;

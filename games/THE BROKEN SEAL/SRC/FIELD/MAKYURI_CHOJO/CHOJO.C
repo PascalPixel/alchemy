@@ -34,7 +34,6 @@ struct EffectParams {
     u8 pad1c[12];
 };
 
-/* The event work's table of every actor by id, the party first. */
 struct ActorTable {
     u8 unknown_00[0x14];
     struct FieldActor *actors[66];
@@ -70,7 +69,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gMakyuriChojoEvents;
 }
 
-/* Mercury Lighthouse aerie entry: set the entrance selector and, in the aerie's first scene, raise the sprite priorities, lift actors 14-19 and set up the scene for the entrance. */
 s32 Scene_Initialize(void)
 {
     u32 i;
@@ -164,7 +162,7 @@ void FieldScene_RunFourActorPresentation(void)
     Engine_MapRenderWaitForValues();
     Engine_EventWait(30);
     Engine_EventGetViewCenter()->motion_flags = 0;
-    Camera_SetSpeed(0xcccc, 0x1999); /* speed_limit, acceleration */
+    Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x2000000, -0x180000, 0xa00000, 1);
     Engine_CameraWaitForMove();
     ColorBuffer_ApplySource(0x10000, 0);
@@ -178,7 +176,7 @@ void FieldScene_RunFourActorPresentation(void)
     Actor_SetPosition(ACTOR_GERALD, 0x2100000, 0x900000);
     Actor_SetPosition(ACTOR_IVAN, 0x1e80000, 0x900000);
     Actor_SetPosition(ACTOR_MIA, 0x2000000, 0x980000);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19); /* object 0, action 19 */
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
     Engine_ActorSetAnimation(ACTOR_GERALD, 19);
     Engine_ActorSetAnimation(ACTOR_IVAN, 19);
     Engine_ActorSetAnimation(ACTOR_MIA, 19);
@@ -235,9 +233,6 @@ void FieldScene_RunFourActorPresentation(void)
     Engine_EventEnd();
 }
 
-/* The whole-pixel distance between two fixed-point positions, through the
- * resident square root. Linked into the field overlays that measure it on
- * its own. */
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
@@ -250,8 +245,6 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
     return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-/* An object's sprite as far as the description it draws from, whose first
-   halfword is the sprite's number. */
 struct SpriteNumber {
     u8 unknown_00[0x28];
     const s16 *number;
@@ -286,12 +279,6 @@ s32 FindNearestF2Actor(void)
     return nearest_actor;
 }
 
-/*
- * Makyuri aerie: initialize the actor's motion. It computes the actor's
- * tile-aligned position from its angle, and if the motion check passes it
- * arms the motion fields, clears the active flag, and queues the start-up
- * cues before restoring the saved flags.
- */
 void SceneActor_InitializeMotion(void)
 {
     struct FieldActor *actor;
@@ -325,9 +312,6 @@ void SceneActor_InitializeMotion(void)
     }
 }
 
-/* The leader steps onto the nearest kind 0xf2 actor in reach: flag 0x250
-   records the ride, and the two dip under the leader's weight and settle
-   back over twenty frames. */
 void MakyuriChojo_StepOntoNearestActor(void)
 {
     struct FieldActor *leader;
@@ -1109,7 +1093,6 @@ void RunScene59Sequence(void)
         Camera_MoveTo(PIXELS(0x98), -1, PIXELS(0xD8), 1);
         lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
         lift->offset_y = 0x3800000;
-        /* The work cells: the map work first and the event work in cell 19. */
         cells = gMapWork;
         Engine_MapRedraw();
         Engine_TaskWait(1);
@@ -1351,7 +1334,6 @@ void RunScene59Sequence(void)
     Engine_EventEnd();
 }
 
-/* The lift comes up from below and the actors standing on it with it. */
 void MakyuriChojo_BringLiftUp(void)
 {
     struct MapLayerScroll *lift;
@@ -1381,7 +1363,6 @@ void MakyuriChojo_BringLiftUp(void)
     Engine_EventEnd();
 }
 
-/* The leader steps onto the lift and rides it down out of the aerie. */
 void MakyuriChojo_TakeLiftDown(void)
 {
     Engine_EventBegin();
@@ -1396,7 +1377,6 @@ void MakyuriChojo_TakeLiftDown(void)
     Engine_EventEnd();
 }
 
-/* Actors 22 and 24 sink away, throwing sparks in turn for 32 frames. */
 void MakyuriChojo_SinkActorPair(void)
 {
     struct EffectParams params;
@@ -1441,7 +1421,6 @@ void MakyuriChojo_SinkActorPair(void)
     Engine_ActorSetPosition(24, 0, 0);
 }
 
-/* Actors 22 and 24 rise back, throwing sparks in turn for 32 frames. */
 void MakyuriChojo_RiseActorPair(void)
 {
     struct EffectParams params;
@@ -1490,8 +1469,6 @@ void MakyuriChojo_RiseActorPair(void)
     SetOverlayObjectMode(Object_GetById(24), 1);
 }
 
-/* Append to out the slot of every record inside the band below the caller's
- * y: x cells 4 to 8, and rows 8 to 10 below 64 - y. */
 void MakyuriChojo_CollectBandSlots(s32 *out, s32 y)
 {
     struct ActorTable *table;
@@ -1552,8 +1529,6 @@ void MakyuriChojo_LowerCollectedActors(void)
         Object_GetById(ids[i])->motion_flags = 0;
 }
 
-/* Slide the work position up while lowering the collected actors, easing
- * the speed off over the last ten frames, then redraw the map. */
 void MakyuriChojo_RaiseCollectedActors(void)
 {
     s32 ids[5];
@@ -1619,7 +1594,6 @@ void SceneEffect_UpdateArcPosition(struct OverlayObject *object)
     object->angle_64 -= 0x200;
 }
 
-/* A lamp spark's object record, as this overlay fills it. */
 struct LampSpark {
     u8 unknown_00[0x30];
     s32 swing;
@@ -1634,12 +1608,8 @@ struct LampSpark {
     void (*update)();
 };
 
-/* The spark's motion script. */
 extern const s32 Data_02003c54[];
 
-/* Actor 8, the aerie's lamp, flickers between two heights and sizes while
- * the lamp work is low, and every sixteenth frame throws a spark that swings
- * round it. */
 void MakyuriChojo_FlickerActorEight(void)
 {
     struct FieldActor *lamp;
@@ -1654,7 +1624,6 @@ void MakyuriChojo_FlickerActorEight(void)
     lamp = Object_GetById(8);
     map = gMapWork[0];
     height = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
-    /* Only while the view is high enough to show the lamp. */
     if (((union FieldCoordinate *)&map->view_y)->part.pixel <= 129) {
         if (gFrameCount & 1) {
             Engine_ActorSetPosition(8, 0x1300000, 0x900000);

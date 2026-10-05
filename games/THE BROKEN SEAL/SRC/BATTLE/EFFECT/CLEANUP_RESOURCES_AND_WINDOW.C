@@ -20,9 +20,6 @@ void BattleFx_CleanupResourcesAndWindow(void)
     UiWork_FinalizeFar(*(u32 *)(gMapCellBuffer + 0x1c), 2);
 }
 
-/* The European world map steers its cursor to the nearest place while no
-   key is held, names places within 64 rather than 100 and starts the name
-   three pixels left of the marker rather than one. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define WORLD_MAP_CURSOR_SNAPS 1
@@ -121,9 +118,6 @@ void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
         *ime = saved;                                                       \
     } while (0)
 
-/* The world map's frame callback: move the cursor with the keys, place
-   the markers of the places the flags have opened, name the nearest one
-   in the window, and pulse the markers' blend. */
 void Map_UpdateWorldMapMarkers(void)
 {
     s32 leader;
@@ -252,8 +246,6 @@ markers:
             Runtime_PushSlotEntry(marker++, y);
     }
 #if WORLD_MAP_CURSOR_SNAPS
-    /* With no key held, the cursor jumps onto the nearest place within a
-       pixel, or steps toward it at a speed that starts at two pixels. */
     if (gKeysHeld == 0) {
         if (best != -1) {
             if (best_distance <= 1) {

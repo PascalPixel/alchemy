@@ -5,7 +5,6 @@ s32 BattleFx_FindConditionResourceFar(s16, s16);
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
 
-/* menu/draw/draw_selection_row.c */
 struct Work;
 
 void RenderOutput_PrepareForRedraw();

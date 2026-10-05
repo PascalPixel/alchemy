@@ -1,11 +1,6 @@
 #ifndef FIELD_SERVICE_H
 #define FIELD_SERVICE_H
 
-/*
- * More of the scene script layer described in FIELD_EVENT.H: inline calls
- * to the engine services, as the scenes were written.
- */
-
 #include "FIELD_EVENT.H"
 
 static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
@@ -118,13 +113,11 @@ static inline void Event_WaitForScreen(void)
     Engine_EventWaitForScreen();
 }
 
-/* Carries out the move FieldObject_SetPosition set, and waits for it. */
 static inline void FieldObject_CommitPosition(struct FieldActor *object)
 {
     Engine_ObjectCommitPosition(object);
 }
 
-/* Moves an object to a fixed-point position; committing it follows. */
 static inline void FieldObject_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y,
                                            s32 fixed_z)
 {

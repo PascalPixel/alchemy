@@ -4,10 +4,8 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* The constructor clears all 64 pointer words, including the two cursors. */
 extern void *gWorkSlot[64];
 
-/* The first two slots are heap cursors; the others cache allocated blocks. */
 union HeapState {
     struct {
         void *next_ewram;
@@ -33,11 +31,8 @@ enum HeapSlot {
     HEAP_SLOT_BATTLE_BACKGROUND = 44,
     HEAP_SLOT_BLITTER = 46,
     HEAP_SLOT_BLITTER_ALTERNATE = 47,
-    /* The save workspace: flash sector work and the three slot summaries. */
     HEAP_SLOT_SAVE = 51,
-    /* The sprite frame decoder, copied into RAM on first use. */
     HEAP_SLOT_FRAME_DECODER = 52,
-    /* The routine that uploads a composed sprite frame to VRAM. */
     HEAP_SLOT_FRAME_UPLOADER = 53,
     HEAP_SLOT_MENU = 55
 };

@@ -3,7 +3,6 @@
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
-/* Moves an object along an angle by a magnitude. */
 void Motion_SetTargetPositionFromMagnitudeAngle(
     struct ObjectRuntime *object, s32 magnitude, s32 angle)
 {

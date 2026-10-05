@@ -23,7 +23,6 @@ extern u8 gBattleFxWork[];
 
 extern u16 ParticleStreams_CellOffsets[];
 
-/* The motes live at the start of the map cell buffer. */
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -32,8 +31,6 @@ void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode);
-
-/* Mode entries of the particle pool effect. */
 
 void BattleFx_RunParticlePoolMode1(struct BattleEffectArgument *effect)
 {
@@ -45,15 +42,11 @@ void BattleFx_RunParticlePoolMode0(struct BattleEffectArgument *effect)
     BattleFx_RunParticlePool(effect, 0);
 }
 
-/* The two rectangle blitters BattleEffect_LoadWork leaves in heap slots 46
-   and 47, kept together: the effect fetches both and draws with the first. */
 struct BlitterPair {
     DrawRectangle upper;
     DrawRectangle lower;
 };
 
-/* Battle effect: a cloud of motes bursts from the actor and drifts, each
-   swaying on its own sine; the targets react one after another. */
 void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 {
     s32 point[3];

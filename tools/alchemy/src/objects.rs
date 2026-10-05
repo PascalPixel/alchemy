@@ -1,12 +1,3 @@
-//! `alchemy objects`: after a build, every linked section whose bytes
-//! differ from the edition's reference ROM, with the functions inside it
-//! that differ; where the image first differs and what is there; and every
-//! scaffold section or raw listing the linker placed somewhere other than
-//! where its bytes belong, which is how a lost or extra alignment pad in an
-//! earlier object shows. A scaffold section belongs where the `.incbin`
-//! that opens it reads the ROM (its name can be older than its bytes); an
-//! English raw listing where its file name says. A report for people (O1):
-//! nothing reads it.
 use crate::compiler::routing::root;
 use crate::ld_map::{Map, Placed, ROM};
 use crate::targets::decomp_target;
@@ -27,12 +18,8 @@ in it that differ (the first 40 unless --all). Code that runs from IWRAM
 is compared where the ROM holds it. Overlays are compared as the
 compressed blob that holds them; compare their code with alchemy diff."#;
 
-/// How many differing objects to list without --all.
 const SHOWN: usize = 40;
 
-/// Where each section of a scaffold source belongs: the ROM offset of the
-/// `.incbin "baserom.gba", OFFSET` that opens it, when nothing before it
-/// emits bytes. Alignment at a section's start emits none.
 pub(crate) fn scaffold_offsets(source: &str) -> HashMap<String, u32> {
     let mut found = HashMap::new();
     let mut open: Option<String> = None;
@@ -69,9 +56,7 @@ pub(crate) fn scaffold_offsets(source: &str) -> HashMap<String, u32> {
     found
 }
 
-/// Where scaffold sections and English raw listings belong.
 pub(crate) struct Anchors {
-    /// Scaffold object, then section, to the ROM offset its bytes come from.
     scaffold: HashMap<String, HashMap<String, u32>>,
     english: bool,
 }
@@ -81,14 +66,11 @@ fn is_ordinary(section: &str) -> bool {
 }
 
 impl Anchors {
-    /// From scaffold sources by object path (`recon/tbs/de/rom.o`).
     pub(crate) fn from_sources<'a>(sources: impl IntoIterator<Item = (&'a str, &'a str)>, english: bool) -> Anchors {
         let scaffold = sources.into_iter().map(|(object, text)| (object.to_string(), scaffold_offsets(text))).collect();
         Anchors { scaffold, english }
     }
 
-    /// The scaffold sources of the map's objects under recon/ that hold
-    /// sections of their own, read from the checkout at `root`.
     pub(crate) fn read(root: &Path, map: &Map, english: bool) -> Anchors {
         let objects: BTreeSet<&str> = map
             .placed
@@ -103,8 +85,6 @@ impl Anchors {
         Anchors::from_sources(texts.iter().map(|(o, t)| (*o, t.as_str())), english)
     }
 
-    /// The run-time address `p` belongs at, when its scaffold or its name
-    /// says.
     pub(crate) fn expected(&self, p: &Placed) -> Option<u32> {
         if let Some(&offset) = self.scaffold.get(p.object()).and_then(|sections| sections.get(&p.name)) {
             return Some((ROM + offset).wrapping_add(p.address).wrapping_sub(p.load));
@@ -118,12 +98,10 @@ impl Anchors {
     }
 }
 
-/// One linked section whose bytes differ.
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct Difference {
     pub label: String,
     pub first: u32,
-    /// The functions (or data labels) whose bytes differ, in order.
     pub functions: Vec<String>,
 }
 
@@ -132,8 +110,6 @@ fn rom_range(p: &Placed) -> std::ops::Range<usize> {
     start..start + p.size as usize
 }
 
-/// Each section in the image whose bytes differ, in image order, and the
-/// symbols whose ranges hold the differences.
 pub(crate) fn differences(map: &Map, reference: &[u8], built: &[u8]) -> Vec<Difference> {
     let length = reference.len().min(built.len());
     let mut sections: Vec<&Placed> = map.in_image(length).collect();
@@ -144,7 +120,6 @@ pub(crate) fn differences(map: &Map, reference: &[u8], built: &[u8]) -> Vec<Diff
         let Some(first) = range.clone().find(|&k| reference[k] != built[k]) else { continue };
         let mut functions: Vec<String> = Vec::new();
         if !p.is_fill() {
-            // Each symbol's range runs to the next symbol or the section end.
             let mut starts: Vec<u32> = p.symbols.iter().map(|(a, _)| *a).filter(|&a| a < p.end()).collect();
             starts.sort_unstable();
             starts.dedup();
@@ -166,8 +141,6 @@ pub(crate) fn differences(map: &Map, reference: &[u8], built: &[u8]) -> Vec<Diff
     found
 }
 
-/// The first offset at which the images differ, counting a length
-/// difference as one.
 pub(crate) fn first_offset(reference: &[u8], built: &[u8]) -> Option<usize> {
     let length = reference.len().min(built.len());
     (0..length)
@@ -175,9 +148,6 @@ pub(crate) fn first_offset(reference: &[u8], built: &[u8]) -> Option<usize> {
         .or_else(|| (reference.len() != built.len()).then_some(length))
 }
 
-/// The distance to where the reference holds the bytes the build put at
-/// `start`, when they are there and not here: from `start`, up to 512
-/// bytes of halfwords compared at shifts of up to 16 bytes either way.
 pub(crate) fn apparent_shift(reference: &[u8], built: &[u8], start: usize, end: usize) -> Option<i64> {
     let start = start & !1;
     let end = end.min(start + 512).min(built.len());
@@ -212,13 +182,10 @@ fn bytes(n: i64) -> String {
     if n == 1 { "1 byte".to_string() } else { format!("{n} bytes") }
 }
 
-/// "2 bytes early" for a section `shift` bytes from where it belongs.
 fn displacement(shift: i64) -> String {
     format!("{} {}", bytes(shift), if shift < 0 { "early" } else { "late" })
 }
 
-/// What is at the first differing image address, and where it belongs
-/// when its scaffold says or its bytes show it.
 pub(crate) fn describe_first(map: &Map, anchors: &Anchors, reference: &[u8], built: &[u8]) -> Option<String> {
     let offset = first_offset(reference, built)?;
     let load = ROM + offset as u32;
@@ -257,19 +224,15 @@ pub(crate) fn describe_first(map: &Map, anchors: &Anchors, reference: &[u8], bui
     Some(text)
 }
 
-/// A run of consecutive anchored sections all off by the same distance.
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct Run {
     pub shift: i64,
-    /// Indices into the map's sections: the first and last of the run and
-    /// the last anchored section before it that sits where it belongs.
     pub first: usize,
     pub last: usize,
     pub count: usize,
     pub before: Option<usize>,
 }
 
-/// Anchored sections in image order, grouped into runs of the same shift.
 pub(crate) fn misplaced(map: &Map, anchors: &Anchors) -> Vec<Run> {
     let mut anchored: Vec<(usize, i64)> = map
         .placed
@@ -297,7 +260,6 @@ pub(crate) fn misplaced(map: &Map, anchors: &Anchors) -> Vec<Run> {
     runs
 }
 
-/// What the linker placed between `before` and `first`, in image order.
 fn between(map: &Map, before: Option<usize>, first: usize) -> Vec<String> {
     let from = before.map_or(0, |b| map.placed[b].load + map.placed[b].size);
     let to = map.placed[first].load;
@@ -346,7 +308,6 @@ pub(crate) fn report(map: &Map, anchors: &Anchors, reference: &[u8], built: &[u8
     }
     let found = differences(map, reference, built);
     let _ = writeln!(out, "{} linked {}:", found.len(), if found.len() == 1 { "section differs" } else { "sections differ" });
-    // The sections of one object on one line, in image order.
     let mut lines: Vec<(String, Vec<String>)> = Vec::new();
     let mut line_of = HashMap::new();
     for d in &found {
@@ -399,8 +360,6 @@ mod tests {
     use super::*;
     use crate::ld_map::tests::MAP;
 
-    /// The scaffold sources of the test map. The unidentified range's name
-    /// is older than its bytes, which come from 0x38 as the map places them.
     const ROM_S: &str = "@ scaffold\n\t.section .rom.00000000, \"ax\"\n\t.global Rom_Start\nRom_Start:\n\t.incbin \"baserom.gba\", 0x00000000, 0x00000010\n\t.section .rom.00000020, \"ax\"\n\t.balign 4\n\t.global Func_08000020\n\t.thumb_func\nFunc_08000020:\n\t.incbin \"baserom.gba\", 0x00000020, 0x00000010\n\t.section .rom.00000060, \"ax\"\n\t.byte 0\n\t.incbin \"baserom.gba\", 0x00000061, 0x00000001\n";
     const UNIDENTIFIED_S: &str = "\t.section .unidentified.08000030,\"a\"\n\t.global Math_Table\nMath_Table:\n\t.incbin \"baserom.gba\", 0x00000038, 0x00000010\n";
 
@@ -417,15 +376,12 @@ mod tests {
         let offsets = scaffold_offsets(ROM_S);
         assert_eq!(offsets.get(".rom.00000000"), Some(&0));
         assert_eq!(offsets.get(".rom.00000020"), Some(&0x20));
-        // Bytes before the first .incbin: no anchor.
         assert_eq!(offsets.get(".rom.00000060"), None);
-        // The name is older than the bytes; the .incbin decides.
         assert_eq!(scaffold_offsets(UNIDENTIFIED_S).get(".unidentified.08000030"), Some(&0x38));
         let map = Map::parse(MAP);
         let english = anchors(true);
         let expected: Vec<Option<u32>> = map.placed.iter().map(|p| english.expected(p)).collect();
         assert_eq!(expected, [Some(0x0800_0000), None, None, Some(0x0800_0020), None, None, None, Some(0x0800_0038), Some(0x0800_0048)]);
-        // A raw listing's name is its English address only.
         assert_eq!(anchors(false).expected(&map.placed[8]), None);
         assert!(misplaced(&map, &english).is_empty());
     }
@@ -441,9 +397,9 @@ mod tests {
         let map = Map::parse(MAP);
         let reference = image();
         let mut built = reference.clone();
-        built[0x1a] ^= 1; // Input_Poll
-        built[0x34] ^= 1; // IWRAM code, loaded from the ROM
-        built[0x4a] ^= 1; // the raw listing
+        built[0x1a] ^= 1;
+        built[0x34] ^= 1;
+        built[0x4a] ^= 1;
         let found = differences(&map, &reference, &built);
         let summary: Vec<(&str, u32, &[String])> = found.iter().map(|d| (d.label.as_str(), d.first, d.functions.as_slice())).collect();
         assert_eq!(
@@ -463,8 +419,6 @@ mod tests {
 
     #[test]
     fn a_scaffold_section_two_bytes_early_is_named_with_the_object_before_it() {
-        // IO.o lost the two bytes the fill gave it: the scaffold section
-        // after it, and everything after that, sits two bytes early.
         let shifted = MAP
             .replace(" *fill*         0x000000000800001e        0x2\n", "")
             .replace(" .rom.00000020  0x0000000008000020", " .rom.00000020  0x000000000800001e")

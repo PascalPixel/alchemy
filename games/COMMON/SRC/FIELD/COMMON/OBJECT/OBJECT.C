@@ -50,7 +50,6 @@ void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *, s32);
 s32 Animation_InitializeObjects(struct AnimationObject *);
 s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
-/* Packed animation-child flags used by the bit setter. */
 struct ChildDisplayFlags {
     u8 padding[29];
     u8 unk_0 : 1;
@@ -84,7 +83,6 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
         index_mask = 0x3F;
         offset_mask = 0x3E;
 
-        /* 1行ごとに32セル進める。 */
         for (; row < count; row++, destination += 32, position++) {
             if ((position - 0x40) <= 0x3F) {
                 u8 entry;
@@ -174,9 +172,6 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
     return -1;
 }
 
-/* Allocates and clears the object system state and the object table,
-   configures the system for the mode and schedules the object update (the
-   motion-only one in mode 4) and the camera (fixed in modes 3 and 4). */
 void ObjectSystem_Initialize(s32 mode)
 {
     struct ObjectSystemWork *state;
@@ -209,7 +204,6 @@ void ResourceTable_ReservedNoOpC0C4(void)
 {
 }
 
-/* Empty resource-table hook. */
 void ResourceTable_ReservedNoOp2(void)
 {
 }
@@ -279,10 +273,6 @@ void ObjectDispatch_Release(struct DispatchObject *work)
 }
 
 #if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
-/* The engine's object constructor, reached from far code through
-   Object_CreateFar: takes a free object slot, attaches the sprite or the
-   two-sprite list the descriptor id names (its top nibble is the kind), and
-   resets position, scale, speed and script to their defaults. */
 struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 {
     struct ObjectRuntime *object;
@@ -352,7 +342,6 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
     return object;
 }
 
-/* Starts the object on a word-coded motion script from its first word. */
 void ObjectDispatch_Initialize(struct DispatchObject *object, const s32 *script)
 {
     if (object != 0) {
@@ -580,15 +569,10 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void)
     REG_DISPCNT &= 0xE1FF;
 }
 
-/* Always reports success. */
 s32 ObjectDispatch_ReturnTrue(void)
 {
     return 1;
 }
-
-/* The field camera: each frame one of the two scheduler callbacks above
-   places every live object on screen, through the tile map's layer bits or
-   through a fixed view. */
 
 struct CameraTile {
     u32 unk_00 : 12;
@@ -685,9 +669,6 @@ s32 ArcTan2(s32 x, s32 y);
 void Render_ResetTransformState(void);
 void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);
 
-/* Objects inside the view are projected through their tile's layer bits;
-   objects that leave it (or sit at the origin) fall back to their resource
-   entry. */
 void ObjectSystem_UpdateCamera(void)
 {
     /* FAKEMATCH: unused; the native frame keeps room for three points above the position. */
@@ -797,14 +778,11 @@ void ObjectSystem_UpdateCamera(void)
     Runtime_ReleaseHeapBlock(52);
 }
 
-/* Always reports success. */
 s32 ObjectCamera_ReturnTrue(void)
 {
     return 1;
 }
 
-/* The fixed camera looks from an eye at a target and places every live
-   object in back-to-front order, unscaled while flag 0x16b is set. */
 void ObjectSystem_UpdateCameraFixed(void)
 {
     s32 cnt;

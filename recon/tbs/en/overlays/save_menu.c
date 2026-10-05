@@ -1,104 +1,3 @@
-/* NONMATCHING: complete resource_370:020003cc..02000cfc, 2352 bytes.
- * Sol phase CFG audit (2026-09-27), bounded stop: canonical body retained.
- * Fresh retained-save-menu score reproduces 2336/2352 bytes, 1120 differing
- * halfwords, 833 aligned edits and 777 wrong instructions. Full normalized
- * diff and complete own-ROM control flow read; diagnostic compiler text is
- * unchanged. No materially different phase nesting was established.
- * Both graphs have 14 natural-loop headers and 29 backward transfers when
- * local BL far jumps count as transfers. The shared nesting is main menu,
- * slot selection, transfer-method selection, password-format selection,
- * page display. Reference headers are 04a8 / 07b8 / 07dc / 09d2 / 0aaa;
- * emitted headers are 0476 / 0772 / 0796 / 094c / 0a26 (all at 02000000).
- * Completion's only predecessor is 0ad0 -> 0474; it closes three windows,
- * waits one frame, then enters 04a8. Cancellation's only predecessor is
- * 0abc -> 09a6; it closes those windows and enters 09d2. The former cleanup
- * is outside the slot/method/format loops; the latter is inside the format
- * loop and outside page display. The canonical C already has these two
- * continuation owners, although the compiler places their blocks late.
- * Current conditional backward branches are 13/12, not the older 11/12.
- * The extra is link retry: candidate 0878 uses backward beq, whereas ROM
- * 08ea uses forward bne followed by backward b at 08ec. No phase is missing.
- * All 12 ROM conditional backward edges: 044e->0416, 053a->04a8,
- * 055c->0522, 058e->04a8, 07ea->07b8, 085a->084c, 08d8->088c,
- * 095c->092a, 0984->0978, 0b7c->0b68, 0bb2->0b92, 0c7e->0c0a.
- * Complete remaining invariant: frame 548 (current 560); encoded size r9,
- * page fp, page count r8, page window sl, with cleanup before the respective
- * enclosing headers, preserved calls/key reads, and exact full 2352 bytes
- * including every pool. Page and encoded size still spill. A loop-label
- * move cannot establish this invariant; do not reopen closed ABI, serial,
- * aggregate, header-union, zero or allocation spelling axes on this audit.
- * New exact function bytes: 0. New alignment bytes: 0. Owner remains not-yet-c.
- * Sol record H3 (2026-09-27): 2336/2352 bytes, 1120 differing halfwords,
- * 833 aligned edits, 777 wrong instructions. Full normalized diff read.
- * FIELD_EVENT.H's location record shares one union with the menu header
- * words/bytes. Prediction supported: entrance uses base +450, saved-location
- * copies use base +452/+454, and selected actor clears through base +500,
- * instead of folding these addresses into unrelated interior pool symbols.
- * The entry zero now occupies r0. Frame remains 560/548, page and encoded
- * size spill, and both cleanup blocks remain displaced. Three bounded
- * structural models preserved; stop without allocator respellings or credit.
- * Verified executable debt is still 2352 + 1024 function bytes and three
- * separate 2-byte alignment gaps; complete-owner adoption refuses enlarged
- * extents 144/112/228 for exact owners 142/110/226. Standards unchanged.
- * Sol lifetime H2 (2026-09-27): restored separate buffers; selection,
- * password mode and link window share one local as the reference does.
- * 2324/2352 bytes, 1118 differing halfwords, 897 aligned edits, 846 wrong
- * instructions. Full normalized diff read. Link-window copies disappear,
- * but frame is 560/548, page and encoded size spill, and cleanup remains
- * after password initialization instead of before its enclosing headers.
- * Improved edit distance is not an exact witness; no new credit.
- * Sol workspace H1 (2026-09-27): one typed object owns the started flag
- * and three contiguous buffers. 2364/2352 bytes, 1160 differing halfwords,
- * 938 aligned edits, 882 wrong instructions. Full normalized diff read.
- * Frame grows to 564/548: object escape adds a base temporary and started
- * reloads; buffers move to glyph +40, password +44, save data +364.
- * Page and encoded size both spill. Cleanup topology is unchanged. Reject
- * the object model; this commit preserves its complete negative witness.
- * Pre-burst cleanup H2: 2344 bytes, 1144 halfwords, 930 aligned edits.
- * Baseline 2026-09-27: 2368 bytes, 1145 halfwords, 903 aligned edits;
- * frame 556 rather than 548. Full listing and normalized diff read.
- * H1 tests the greeting payload boundary: four halfwords at 02002224
- * and four 24-byte receive records at 02002024. Exact serial packet
- * preparation copies 24 payload bytes; PollStatus/PollAndTransfer prove
- * the unsigned full-word SIOCNT peer extraction. Its canonical volatile
- * gSerialSendSource owns the transfer-active word, formerly an array cast.
- * No menu-flow or local
- * allocation permutations are included in this test.
- * The legacy resource_370_c_020003cc.c is the unchanged baseline witness.
- * Larger remaining problems: displaced password cleanup blocks, merged
- * key reads, 11 versus 12 backedges, frame and literal-pool ownership.
- * H1 result: 2340/2352 bytes, 1144 differing halfwords, 935 aligned edits,
- * 878 wrong instructions. The greeting now has one base and offsets
- * 0/2/4/6, receive records advance by 24, and SIOCNT uses the reference's
- * shift pair. Struct stores expose a new discrepancy: immediate 0x30
- * replaces the reference's two word-pool loads. Not an overall match.
- * H2 (f507603de): a shared word link value restores pool identity but CSE
- * removes the second required load and reverses the first value/base pair.
- * Result 2344/2352 bytes, 1146 halfwords, 940 aligned edits, 886 wrong
- * instructions. Full H1 diff and complete H1-to-H2 assembly delta read.
- * This correction is rejected and H1 restored byte-identically. The next
- * useful test needs password/menu control-flow ownership, not pool or
- * register permutations. ENTRY.INC invokes this owner at runtime 020083cd.
- * Cleanup H1, 2026-09-27: explicit outer menu loop owns the completion
- * cleanup at its continuation. 2332/2352, 1141 halfwords, 925 aligned
- * edits, 865 wrong instructions; frame remains 556 versus 548. The whole
- * diff and assembly delta show the cleanup moved after the password loop,
- * not before the main-menu header as required. It does recover the help
- * window store/reload before drawing. This does not validate the topology.
- * Score with --unit retained-save-menu: scoring the owner alone selects
- * the stale legacy 2368-byte draft. No serial or pool variants reopened.
- * Cleanup H2 restores pre-H1 flow and transfers the exact workspace/flag
- * menu volatile gKeyState interface for password input, plus the
- * void UiWork_Finalize(window, mode) interface from SELECT_RESOURCE_LAYOUT.
- * Own veneers 08015018 -> 08016418 and 08015060 -> 08016478 establish the
- * finalize/redraw bindings. Both password exits now use one declaration
- * per service, instead of mixed value-returning aliases for the same call.
- * Result: 2344/2352, 1144 halfwords, 930 aligned edits, 868 wrong
- * instructions. The four distinct key reads and mask operations are
- * recovered; page is still spilled, frame still 556, cleanup still late.
- * Serial input, greeting, transfer and pool spellings are unchanged.
- * Stop: completion/cancellation nesting and page/redraw lifetimes need a
- * broader source model; do not repeat the outer-loop placement alone. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
@@ -111,15 +10,11 @@ extern u8 MsgClearSendingData[];
 extern u8 MsgClearPasswordLabel[];
 extern u8 MsgClearSaveLabel[];
 
-
 extern volatile u32 gKeyState;
 void Engine_UiWorkFinalize(s32 window, s32 mode);
 void Engine_RenderOutputPrepareForRedraw(s32 window);
 
 extern u8 gSaveBuffer[];
-/* The menu consumes the saved-location fields and the same record's header
- * words and bytes. FIELD_EVENT.H owns the shared location layout; names for
- * the remaining bytes stay neutral until their consumers prove a meaning. */
 struct SaveMenuRecord {
     s32 word_00;
     s32 word_04;
@@ -147,7 +42,6 @@ struct SaveLinkGreeting {
     u16 code[4];
     u8 reserved[16];
 };
-
 
 extern struct SaveLinkGreeting Data_02002224;
 extern struct SaveLinkGreeting gLinkPeerSignatures[4];

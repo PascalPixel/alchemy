@@ -4,8 +4,6 @@
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
 
-
-/* The European editions never widen a window for the render mode. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 

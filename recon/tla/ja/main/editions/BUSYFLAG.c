@@ -1,8 +1,6 @@
-/* Draft: Japanese window busy flags sit 0x200 bytes earlier; two immediate bytes differ. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
-/* Raises the window work's two busy flags selected by bits 0 and 1. */
 void UiWork_SetBusyFlags(u32 flags)
 {
     u8 *work;

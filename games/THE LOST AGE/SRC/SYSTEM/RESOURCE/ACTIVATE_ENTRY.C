@@ -3,8 +3,6 @@
 
 #include "VRAM_TAB.H"
 
-/* Marks one of the 96 resource entries in use, releasing its slot
-   references first when it held a load state above 16. */
 s32 Resource_ActivateEntry(u32 resource_index)
 {
     u16 *entry = (u16 *)&ResourceTableEntries[resource_index];

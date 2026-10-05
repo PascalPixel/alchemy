@@ -17,7 +17,6 @@ s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
-/* These joining messages retain their five-word channel transport. */
 struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
@@ -25,8 +24,6 @@ s32 Audio_Check(void);
 
 extern volatile u32 gKeyState;
 
-/* Announce a Djinni joining: a window with the element's Djinni glyph and
-   its joining line, then wait for the jingle or a key. */
 void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
@@ -57,7 +54,6 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 
         p = entry;
         *p++ = zero;
-        /* the Djinni sits half a tile into the window, 12 lines down */
         *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
         *p = palette | 0xe000;
 
@@ -101,8 +97,6 @@ s32 Party_LookupCharacterValueByFlag32(u32 index)
 extern u8 MsgJoinedParty[];
 void AudioCommand_PlayFar(s32);
 
-/* Announce a character joining: a window with the character's portrait
-   glyph and the joining line, then wait for the jingle or a key. */
 void Party_ShowJoinedMessage(s32 member)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
@@ -120,7 +114,6 @@ void Party_ShowJoinedMessage(s32 member)
             0, &handle, &palette, 14, 0);
         p = entry;
         *p++ = 0;
-        /* the portrait sits half a tile into the window, 12 lines down */
         *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
         *p = palette | 0xe000;
         work->result[0] = 0;

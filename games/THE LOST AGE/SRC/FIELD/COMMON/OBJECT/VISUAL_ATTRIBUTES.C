@@ -30,8 +30,6 @@ void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
     }
 }
 
-/* ⚓️ arms the same turn and refreshes the object's selector instead of
-   waiting. */
 void ObjectMotion_ArmCallbackAndRefresh(s32 object_id, s32 angle)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
@@ -56,7 +54,6 @@ void ObjectMotion_SetActionVariant(u32 object_id, s32 priority)
     }
 }
 
-/* Give the target object the source's VRAM block and frame tile. */
 void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
 {
     struct FieldSprite *sprite;

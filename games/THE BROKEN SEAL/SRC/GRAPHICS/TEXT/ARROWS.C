@@ -1,4 +1,3 @@
-/* Status screens: create the up or down arrow beside a changed stat. */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "INVENTORY_MENU.H"
@@ -25,7 +24,6 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
     return 1;
 }
 
-/* Status screens: place the icon variant three or four pixels above y. */
 s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
     struct RenderOutput *object;

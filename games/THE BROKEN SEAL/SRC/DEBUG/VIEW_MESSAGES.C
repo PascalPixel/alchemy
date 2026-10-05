@@ -5,12 +5,8 @@
 #include "GAME_STATE.H"
 #include "BATTLE_RUNTIME.H"
 
-/* The German and French viewers start their second form one past the last
- * message of their catalogues, which has no name, and stay on scaffold. */
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 
-/* The byte in the window work the viewer clears after each message; the
- * localised window work is larger. */
 #if EDITION_INTERNATIONAL
 #define WINDOW_WORK_MESSAGE_BUSY 0x12f8
 #else
@@ -22,9 +18,6 @@ extern u8 *gWindowWork;
 extern u8 MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
 extern u8 MsgRariberoHowDidSearchForSheba;
 
-/* Where the second form starts: the first message after the menu texts in
- * the Japanese catalogue, which the English catalogue names, and in the
- * Italian and Spanish ones the empty message after the sample name. */
 #if defined(TBS_EDITION_EN)
 extern u8 MsgBecameCursed;
 #define DEBUG_SECOND_FORM ((s32)&MsgBecameCursed)
@@ -34,7 +27,6 @@ extern u8 MsgDebugSecondForm;
 #endif
 extern u8 MsgDebugSampleName;
 
-/* The furthest the viewer steps from a form's first message. */
 #define DEBUG_VIEW_LIMIT \
     ((s32)&MsgRariberoHowDidSearchForSheba - (s32)&MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5)
 
@@ -49,11 +41,6 @@ void UiWork_FinalizeFar(s32, s32);
 void AudioCommand_PlayFar(s32);
 void WaitFrames(s32);
 
-/* The debug message viewer: names the first party member with the sample
- * text, then shows one message at a time in a window, the first form at the
- * right and the second at the left. Right and left step through the
- * messages, L and R jump ten, up and down choose the form, B steps through
- * both forms. It never returns. */
 void DebugBattle_ViewMessages(void)
 {
     u16 text[64];

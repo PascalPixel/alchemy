@@ -1,6 +1,5 @@
 #include "TASK.H"
 
-/* Reset the selected actor's motion fields after refreshing it. */
 void StagedActor_ResetMotionAfterRefresh(s32 slot)
 {
     struct FieldActor *actor = Object_GetById(slot);

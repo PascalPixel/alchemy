@@ -25,7 +25,6 @@ extern u16 *gOv3;
 extern u8 gUnk[];
 s32 Math_DivideSigned();
 
-/* The board's records in the scene state, where the board setup points. */
 extern u8 gKorimaMagariEntrances[];
 extern u8 gKorimaMagariExits[];
 extern u8 gKorimaMagariPlacements[];
@@ -34,12 +33,6 @@ extern s16 *gKorimaMagariRecords;
 void Scene_PushBlockAlongRun(s16 *records);
 void State_StampRecordCells(s16 *records, s32 value);
 void State_ApplyRectByLayoutSelector(void);
-
-  /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
-
-  /* Place a fixture, second bank. */
-
-  /* Set object motion state. */
 
 u8 *KorimaMagari_GetEntrances(void)
 {
@@ -66,9 +59,6 @@ u8 *KorimaMagari_GetEvents(void)
     return gKorimaMagariEvents;
 }
 
-/* Redraw the board from its records: move the block along its run, restore
-   the cell attributes, stamp the record cells and apply the layout's
-   rectangle. */
 void KorimaMagari_RedrawBoard(void)
 {
     Scene_PushBlockAlongRun(gKorimaMagariRecords);
@@ -76,12 +66,6 @@ void KorimaMagari_RedrawBoard(void)
     ((s32 (*)())State_StampRecordCells)((s32)gKorimaMagariRecords, 0xff);
     State_ApplyRectByLayoutSelector();
 }
-
-  /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
-
-  /* Place a fixture, second bank. */
-
-  /* Set object motion state. */
 
 void KorimaMagari_TryJumpForward(void)
 {

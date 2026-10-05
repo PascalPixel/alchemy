@@ -3,8 +3,6 @@
 
 #include "TYPES.H"
 
-/* An enemy formation: up to five member kinds with the least and most of
-   each. The Lost Age's ids are halfwords. */
 struct BattleFormationRecord {
     u16 member_ids[5];
     u8 minimum_counts[5];

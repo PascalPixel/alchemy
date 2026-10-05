@@ -10,7 +10,6 @@ s32 BattleMotion_GetSlotPaletteFar(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 extern struct BattleEffectWork *gBattleFxWork;
 
-
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)
 {

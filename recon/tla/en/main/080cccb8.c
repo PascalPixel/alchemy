@@ -1,13 +1,6 @@
-/*
- * Draft: BattleAction_FindDescriptor, ported from its ☀️ twin with the event
- * work from its heap slot; it goes before SRC/GAME/FLAGS/IS_CONDITION_ACTIVE.C.
- * The listing loads the first table (ldr r7, [r3, #108]) before setting
- * up its two constants, where this C sets them first.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
-/* One 24-byte descriptor; a sprite of -1 ends each table. */
 struct ActionDescriptor {
     u16 sprite;
     s16 condition;

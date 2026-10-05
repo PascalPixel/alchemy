@@ -3,7 +3,6 @@
 #include "SCENE.H"
 void UiWindow_SetTilemapEntry(s32, s32, s32, s32, s32);
 
-/* ui/apply_table_scale_to_object.c */
 struct Effect {
     unsigned x : 16;
     unsigned y : 16;

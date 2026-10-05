@@ -9,13 +9,11 @@ void SceneState_CallWith432And32(void);
 
 void FieldScene_CallWith560And44(void);
 
-/* The spray's motion script. */
 extern const s32 gVinasuSprayScript[];
 
 struct FieldActor;
 s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor);
 
-/* Gives the next rubble a random size between 1.5 and 1.8 and a random spin. */
 static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
 {
     opts->start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
@@ -23,9 +21,6 @@ static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
     opts->spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 }
 
-/* The west ceiling gives way twice over: rubble rains down in ten rows, the
- * fourth row four times, while the map fills in behind it; then the fallen
- * blocks settle and a second fall uncovers the floor row by row. */
 void Scene_RunPairedParticleWaveSequence(void)
 {
     struct EffectOptions options;
@@ -78,9 +73,6 @@ void Scene_RunPairedParticleWaveSequence(void)
     Engine_EventEnd();
 }
 
-/* Rubble falling from the ceiling: on every fourth frame a coin toss drops
- * either a sinking piece near (x, z) or a slower one over x's own band, both
- * shrunk to 0.7 and given a random spin. */
 void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
 {
     struct EffectOptions options;
@@ -114,7 +106,6 @@ void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
     }
 }
 
-/* The two rubble callbacks spawn particles over their respective bands. */
 void SceneState_CallWith432And32(void)
 {
     VinasuHeya_SpawnRandomParticles(432, 32);
@@ -125,8 +116,6 @@ void FieldScene_CallWith560And44(void)
     VinasuHeya_SpawnRandomParticles(0x230, 44);
 }
 
-/* The ceiling gives way: rubble rains down in thirteen rows, the fourth row
- * four times, while the map fills in behind it. */
 void Scene_RunParticleWaveSequence(void)
 {
     struct EffectOptions options;
@@ -185,8 +174,6 @@ void Scene_RunParticleWaveSequence(void)
     Engine_EventEnd();
 }
 
-/* The ceiling gives way: rubble rains down in thirteen rows, the fourth row
- * four times, while the map fills in behind it. */
 void Scene_RunEastParticleWaveSequence(void)
 {
     struct EffectOptions options;
@@ -242,8 +229,6 @@ void Scene_RunEastParticleWaveSequence(void)
     Engine_EventEnd();
 }
 
-/* Every fourth frame, sprays a rising effect (type 286) from a random point
- * within 24 pixels of actor, with cue 246 every eighth frame. */
 s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor)
 {
     struct EffectOptions options;
@@ -334,7 +319,6 @@ void FieldScene_RunLeaderDropSequence(void)
     Engine_EventRequestExit(21);
 }
 
-/* A pushed track piece turns only into a piece shaped for that push. */
 struct SwitchCell {
     u32 x;
     u32 z;
@@ -344,7 +328,6 @@ struct TrackAnimation {
     s16 id;
 };
 
-/* A track piece's sprite: the shape it shows and its animation objects. */
 struct TrackSprite {
     u8 unknown_00[0x24];
     u8 shape;
@@ -352,25 +335,18 @@ struct TrackSprite {
     struct TrackAnimation *animations[4];
 };
 
-/* The shapes a push along -x, +x, -z and +z accepts, each list ending
-   in zero. */
 extern const u8 gVinasuShapesPushedLeft[];
 extern const u8 gVinasuShapesPushedRight[];
 extern const u8 gVinasuShapesPushedUp[];
 extern const u8 gVinasuShapesPushedDown[];
-/* The script a refused push runs. */
 extern const s32 gVinasuRefusedPushScript[];
 extern struct SwitchCell gVinasuSwitchCells[];
 extern struct SwitchCell gVinasuPillarCells[];
-/* Per switch cell: the shapes still to come and the script for each. */
 extern const u8 *gVinasuSwitchShapes[];
 extern const s32 **gVinasuSwitchPushScripts[];
 extern const u8 *gVinasuPillarShapes[];
 extern const s32 **gVinasuPillarPushScripts[];
 
-/* The push script of the piece below an actor: refused unless the piece is
- * idle and its shape is one the push direction accepts; on a switch cell, the
- * script for the next shape that cell still expects. */
 s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
 {
     s32 pos[3];

@@ -23,8 +23,6 @@ extern volatile u32 gKeysRepeat;
 extern u8 MsgItemPlainName[];
 
 #if EDITION_INTERNATIONAL
-/* These localization routines have no counterpart in Japanese TBS, which
-   places the command cursor arithmetically. */
 extern s32 ItemMenu_CommandColumnXTable[];
 
 s32 ItemMenu_CmdCursorX(s32 column, s32 row)
@@ -47,10 +45,6 @@ s32 ItemMenu_CmdCursorY(s32 column, s32 row)
 }
 #endif
 
-/* The item command grid, three columns by two rows in ItemMenuCommand order,
-   opens on the last command chosen, or on the preferred available one when
-   none is remembered (list_mode is -1). Returns the chosen command, or -1
-   when B cancels. Moving the cursor redraws the equipment preview. */
 s32 ItemMenu_ChooseCmd(void)
 {
     struct InventoryMenuState *menu;
@@ -100,7 +94,6 @@ s32 ItemMenu_ChooseCmd(void)
 
     saved = (s8)menu->list_mode;
     if (saved == -1) {
-        /* Later tests win: Use, then Remove, Equip, Give and Inspect. */
         if (command_states[2] == 1) {
             col = 2;
             row = 0;

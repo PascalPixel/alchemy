@@ -31,8 +31,6 @@ s32 Party_SumDjinnCounts(s32 index)
 s32 Trade_CanOfferDjinn(s32 owner, s32 element, s32 djinn);
 void BattlePlacement_UpdateTimedEntriesTwentyTimesFar(void);
 
-/* Sets every Djinni the active party members have offered back to work,
-   taking each out of the offer. */
 void Djinn_ActivateOfferedForParty(void)
 {
     u16 owners[16];

@@ -29,11 +29,6 @@ void Audio_PlayCue(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: up to five rocks (by variant) fall in turn between the
-   first and last affected units, each from its own frame and speeding up
-   until it lands. Eighteen frames after it starts falling a rock shatters
-   into 21 shards with a cue and a shake, and every affected unit reacts;
-   the shards fly up under gravity, cycling through three cells each. */
 void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
 {
     void **heap_cache;

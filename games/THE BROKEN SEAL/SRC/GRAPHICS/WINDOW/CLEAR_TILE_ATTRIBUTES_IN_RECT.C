@@ -8,9 +8,6 @@
 #include "IWRAM_CALL.H"
 #include "TEXT_RENDER_RUNTIME.H"
 
-/* Advance widths of the proportional glyphs from code 32 (the Japanese
-   table stops at 127; its kana and kanji are 8 wide) and the text colours'
-   pens. */
 extern const u8 UiText_GlyphWidths[];
 extern const u8 UiText_ColourPens[];
 
@@ -26,12 +23,6 @@ static __inline__ void FillWords(void *dest, s32 size, u32 value)
     Iwram_FillWords(dest, size, value);
 }
 
-/* Draws a script of glyphs and control codes into an eight-row canvas
-   starting x pixels into its first tile, packs the canvas into 4bpp text
-   tiles, gives every column a free text tile unless its tilemap entry
-   already holds one, and copies the tiles to VRAM. The tilemap entry and
-   its VRAM copy (mirror) take the window palette. Returns the number of
-   columns. */
 s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 {
     /* FAKEMATCH: an unread 32-byte reserve, the native frame's extra bytes (the frame is 36 bytes without it). */
@@ -106,8 +97,6 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
             } else {
                 c &= 0xFF;
 #if !EDITION_INTERNATIONAL
-                /* A voicing mark is drawn over the end of the kana
-                   before it. */
                 if (c == 222 || c == 223) {
                     x -= 3;
                     c += 32;
@@ -159,8 +148,6 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
         }
     }
 
-    /* Pack each row's pixel bytes into 4bpp words in place: column i of
-       row r ends up at canvas + r * 0x100 + i * 4. */
     count = (u32)(x + 7) >> 3;
     src = (u32 *)canvas;
     dst = canvas;
@@ -245,7 +232,6 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
     }
 }
 
-/* Mark attributes used by the visible 30 by 20 tilemap and clear stale marks. */
 void UiWindow_MarkVisibleTileAttributes(void)
 {
     u8 *base = gWindowWork[0];

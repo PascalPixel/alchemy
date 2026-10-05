@@ -1,11 +1,3 @@
-@ ARM colour-blend instruction templates (IroJun at 0x08197230, IroGyaku at
-@ 0x08197268) for the battle-effect code generator, whose literal pool names
-@ them (0x08196900 and 0x081968fc). They add colour bytes lane by lane
-@ against the mask the generated routine keeps in sl and have no return:
-@ templates copied into generated code, not compiled functions. These 112
-@ bytes equal TBS BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI_IRO.S (0x080eefa4) byte
-@ for byte; PATCH_TEMPLATE.S follows them.
-@ credit: library — TBS/TLA common ARM colour-blend instruction templates for the battle-effect code generator
 .syntax unified
 .text
 	.arm

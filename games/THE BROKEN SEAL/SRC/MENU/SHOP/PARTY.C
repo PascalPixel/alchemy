@@ -6,16 +6,13 @@
 #include "SHOP.H"
 #include "FIXED_POINT_POSITION.H"
 
-
 s32 Shop_CanServe(s32, s32);
 s32 Shop_ServicePrice(s32 selection, s32 variant);
 s32 Shop_MsgByMode(s32 msg);
 
-/* shop/unit/hilite.c */
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 extern struct ShopRuntime *gMenuWork;
 
-/* shop/draw/sel_msg.c */
 extern u8 MsgReviveCost;
 extern u8 MsgNoHealingNeeded;
 void UiWindow_Clear(s32 target);

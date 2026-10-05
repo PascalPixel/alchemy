@@ -8,10 +8,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Finds the first run of SIZE / 64 free VRAM blocks, marks them as owned by
-   resource ID and returns the run's byte offset, or -1 when ID is out of range
-   or no run is free. Occupied blocks are skipped a whole cached entry at a
-   time. */
 s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 {
     u32 blocks;
@@ -192,7 +188,6 @@ void Resource_InitializeTable(void)
     }
 }
 
-/* An unused cache entry has no assigned VRAM byte offset. */
 s32 Resource_FindFreeEntry(void)
 {
     s32 result = VRAM_CACHE_ENTRY_COUNT;

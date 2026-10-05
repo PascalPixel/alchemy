@@ -4,17 +4,12 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* A save file's 64-byte summary, as the file select screen shows it; the
-   four bytes at 0x38 come from the file's second flash sector. */
 struct SaveSummary {
     u8 unknown_00[0x38];
     u8 unknown_38[4];
     u32 checksum;
 };
 
-/* The save workspace (heap slot serial_work while saving): the fifteen
-   flash sectors' occupancy, record and sequence, one sector's buffer, the
-   three files' summaries and the summary of record 3. */
 struct SaveWorkspace {
     u8 occupied[15];
     u8 record_id[15];

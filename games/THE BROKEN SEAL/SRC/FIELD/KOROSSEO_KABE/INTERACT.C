@@ -17,7 +17,6 @@ extern u8 MsgKorosseoRobinWillCheerForWay[];
 extern u8 MsgKorosseoUnfortunatelyWeHaveFullHouse[];
 extern u8 MsgKorosseoWouldLikeFriendCheerFor[];
 
-/* The game state's cells, read here as bytes. */
 extern u8 gCell[];
 
 void RunPartyCountInteractionCopyA(s32 actorId)
@@ -52,7 +51,6 @@ void RunPartyCountInteractionCopyA(s32 actorId)
     Engine_EventEnd();
 }
 
-/* Six steps clear the game-state fields at 896 through 936, eight bytes apart. */
 void FieldScene_RunSixSteps896To936(void)
 {
     GameFlag_SetByte(896, 0);
@@ -63,10 +61,6 @@ void FieldScene_RunSixSteps896To936(void)
     GameFlag_SetByte(936, 0);
 }
 
-/* A finals competitor names the match by the stage the party stands on, the
- * river, the wall or the log-rolling stage; the first time, the competitor
- * offers to describe it. Returns the choice, or 2 and 3 for a party that has
- * heard it before. */
 s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
 {
     s32 v;
@@ -104,7 +98,6 @@ s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
     return Engine_EventChooseYesNo(0, 0);
 }
 
-/* The competitor's follow-up line for the stage's match. */
 void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b)
 {
     s32 v;
@@ -229,7 +222,6 @@ L_main:
     GameFlag_SetByte((obj << 4) + 888, sy);
 }
 
-/* Scan the object's first fifteen halfword entries at +0xd8 and call the handler for each entry equal to arg1. */
 void OverlayObject_NotifyMatchingEntries(s32 no, s32 val)
 {
     u16 *tbl = Owner_GetState(no);

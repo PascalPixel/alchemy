@@ -1,12 +1,3 @@
-/*
- * Draft: RenderOutput_UpdateScaleAnimation (☀️ SET_TILEMAP_ENTRY.C) on
- * ⚓️'s scale table. 12 instructions differ (8 with -mtune=arm9tdmi): load
- * scheduling and the literal pool order. Needs AFFINE.H in COMMON.
- * 2026-10-05: still 8 with AffineTransform declared inline: three
- * scheduling ties (a store before a load, the 31 mask, the 256 constant).
- * Joins SET_TILEMAP_ENTRY.C after UiWindow_SetTilemapEntry.
- * Links as recon/tla/raw/0803c40c.s.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "WINDOW.H"
@@ -25,10 +16,6 @@ struct OutputSprite {
 };
 extern u16 Data_0805e9c4[];
 
-/* Steps the output's scale animation through the scale table (modes 9 and
-   10 loop, 11 and 12 play eight steps once, 10 and 12 at half size) and
-   sets the sprite's affine mode: none at 1.0 (256), double-size and moved
-   8 pixels up and left when larger, plain affine when smaller. */
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 {
     s32 scale = 256;

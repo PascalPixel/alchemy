@@ -20,7 +20,6 @@ struct Output_08097f80 {
     s32 z;
 };
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 
 extern struct BattleFxScene *gEffectWork;
@@ -36,7 +35,6 @@ extern void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitu
 extern void Object_SetMode(void *, s32);
 extern void BattleFx_UpdateItemBreakFragment(void *);
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 extern void Audio_PlayCue(s32);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 s32 Object_CommitPosition();
@@ -49,28 +47,28 @@ extern u8 *gEventWork;
 
 struct FxObject {
     u8 unknown_00[8];
-    s32 x;                      /* 0x08 */
+    s32 x;
     s32 y;
     s32 z;
-    s32 ground;                 /* 0x14 */
+    s32 ground;
     u8 unknown_18[10];
-    u8 mode;                    /* 0x22 */
+    u8 mode;
     u8 unknown_23;
-    s32 velocity_x;             /* 0x24 */
-    s32 velocity_y;             /* 0x28 */
-    s32 velocity_z;             /* 0x2c */
-    s32 speed;                  /* 0x30 */
-    s32 lift;                   /* 0x34 */
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    s32 speed;
+    s32 lift;
     u8 unknown_38[12];
-    s32 gravity;                /* 0x44 */
+    s32 gravity;
     u8 unknown_48[13];
-    u8 flag;                    /* 0x55 */
+    u8 flag;
     u8 unknown_56[4];
     u8 unknown_5a;
     u8 unknown_5b;
     u8 unknown_5c[12];
-    struct FxObject *linked;    /* 0x68 */
-    void *callback;             /* 0x6c */
+    struct FxObject *linked;
+    void *callback;
 };
 
 extern const s32 BattleFx_SourceHoldScript[];
@@ -91,9 +89,6 @@ struct FxObject *Object_GetById(s32 id);
 void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
 void EffectRuntime_StopCurrentObject(void);
 
-/* Lets the player push the target one step: a preview object shows the step
-   tried, and a step that fits moves the target, with the source object too
-   when the source stands in the way and its next cell is free. */
 void BattleFx_SteerPushedTarget(s32 target_id)
 {
     struct Output_08097f80 position;
@@ -384,8 +379,6 @@ void BattleFx_SnapScaleToFull(struct MotionObject *obj)
     }
 }
 
-/* UpdateRisingParticleBurst: lift and spin the source for 31 frames, then
-   burst eight item-break fragments with random speeds and headings. */
 void UpdateRisingParticleBurst(void *object)
 {
     struct MotionObject *source = object;
@@ -428,8 +421,6 @@ void UpdateRisingParticleBurst(void *object)
     ObjectDispatch_ReleaseFar(source);
 }
 
-/* Sets the draw parameter of every live object whose first animation is
-   entry 200, and marks its sprite for redrawing. */
 void ObjectDispatch_ApplyValueToKind200Children(s32 value)
 {
     struct ObjectRuntime *object = *(struct ObjectRuntime **)gObjectSlots;
@@ -454,8 +445,6 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value)
     } while (count >= 0);
 }
 
-/* Counts down the scene timer while it runs and raises request 0x2090 once
-   the leader strays 60 units from the anchor or the timer runs out. */
 void FieldEffect_WatchLeaderDistance(void)
 {
     u8 *work;

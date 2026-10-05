@@ -1,8 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ UiText_Glyphs: the text font, one record per character from 0x20: its
-@ advance width, then its rows of sixteen pixels (fifteen in the European
-@ fonts, twelve in the Japanese ones, whose kanji from 0x100 are all one
-@ width and store no width).
 	.section .rodata
 	.global UiText_Glyphs
 UiText_Glyphs:

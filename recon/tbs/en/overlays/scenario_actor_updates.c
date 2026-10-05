@@ -1,4 +1,3 @@
-/* Contiguous unnamed state-owner run for resource_37f. */
 
 #include "TYPES.H"
 

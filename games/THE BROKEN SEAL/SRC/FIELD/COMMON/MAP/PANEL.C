@@ -1,13 +1,7 @@
-/* A panel of map cells drawn straight into a background's screen blocks.
- * The Kolima bend and the treasure pillars each link this copy to redraw
- * one part of their room. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "MAP.H"
 
-/* Draws a width by height block of map cells, starting at cell (x, y), into
- * the background plane's screen blocks at (destX, destY): each cell's two
- * rows of tile entries come from its map block. */
 void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY)
 {
     u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);

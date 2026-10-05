@@ -4,7 +4,6 @@ extern u8 IwramClearWords[];
 extern u8 gObjAffineCount[];
 extern u8 Data_03001400[];
 
-/* Call the IWRAM clear entry; the third argument is ignored. */
 s32 _call_via_r3(s32, s32, s32, s32);
 
 void Graphics_ResetFrameState(void)

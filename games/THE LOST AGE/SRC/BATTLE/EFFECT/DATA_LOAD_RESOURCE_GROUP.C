@@ -6,7 +6,6 @@ extern u8 gOverlayArea[];
 
 void Resource_LoadCode(u32 index, void *destination);
 
-/* Loads the current scene's overlay code into the overlay area. */
 void BattleFx_LoadResourceGroup(void)
 {
     const struct SceneRecord *table = Field_SceneTable;

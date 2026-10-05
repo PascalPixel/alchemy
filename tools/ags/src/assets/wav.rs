@@ -1,7 +1,5 @@
 use super::AssetError;
 
-/// Editable mono PCM and its standard RIFF sampler choices. Loop endpoints are
-/// inclusive; pitch_fraction is an unsigned fraction of one semitone.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Pcm8 {
     pub rate: u32,
@@ -12,7 +10,6 @@ pub struct Pcm8 {
 }
 
 impl Pcm8 {
-    /// Sample playback rate at a MIDI key, including its root-note tuning.
     pub fn playback_rate(&self, key: u8) -> f64 {
         f64::from(self.rate)
             * 2.0_f64.powf(
@@ -49,7 +46,6 @@ fn word(data: &[u8], offset: usize) -> Result<u32, AssetError> {
     Ok(u32::from_le_bytes(bytes.try_into().unwrap()))
 }
 
-/// Read bounded standard fmt/data/smpl chunks without accepting payload sidecars.
 pub fn read_pcm8(data: &[u8]) -> Result<Pcm8, AssetError> {
     if data.get(..4) != Some(b"RIFF")
         || data.get(8..12) != Some(b"WAVE")
@@ -137,13 +133,11 @@ pub fn read_pcm8(data: &[u8]) -> Result<Pcm8, AssetError> {
     Ok(wave)
 }
 
-/// Read mono 8-bit PCM WAV, returning its rate and signed PCM bytes.
 pub fn wav_pcm8(data: &[u8]) -> Result<(u32, Vec<u8>), AssetError> {
     let wave = read_pcm8(data)?;
     Ok((wave.rate, wave.samples))
 }
 
-/// Write PCM with only its standard forward-loop and MIDI root-pitch choices.
 pub fn write_pcm8(wave: &Pcm8) -> Result<Vec<u8>, AssetError> {
     wave.validate()?;
     let size = u32::try_from(wave.samples.len())
@@ -192,7 +186,6 @@ pub fn write_pcm8(wave: &Pcm8) -> Result<Vec<u8>, AssetError> {
     Ok(wav)
 }
 
-/// Encode signed PCM bytes as mono 8-bit PCM WAV at `rate` hertz.
 pub fn pcm8_wav(samples: &[u8], rate: u32) -> Result<Vec<u8>, AssetError> {
     write_pcm8(&Pcm8 {
         rate,

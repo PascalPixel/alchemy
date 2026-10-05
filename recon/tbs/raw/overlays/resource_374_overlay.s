@@ -609,7 +609,6 @@ Data_0200b108:
 	.4byte 0x00a01002
 	.4byte 0x00b0501c
 	.4byte 0x03214008
-	@ The late localizations use a different final first-visit script command.
 	.ifdef TBS_EDITION_FR
 	.4byte 0x0280000c
 	.else

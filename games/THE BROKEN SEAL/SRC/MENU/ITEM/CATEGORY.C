@@ -54,9 +54,6 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
     return 1;
 }
 
-/* Item menu: after resetting the category, place the flagged entries of
-   the five category sprites in a column 16 pixels apart, starting at 88.
- */
 void ItemMenu_ApplyFlags(const u8 *flags)
 {
     /* FAKEMATCH: the y-field pointer keeps the category flag index as a counter instead of a walking pointer. */

@@ -25,8 +25,6 @@ void Map_UpdateCurrentTileBlock(void);
 void Map_ShowBg1FromBuffer(void);
 #define BG_PALETTE ((s16 *)0x05000000)
 
-/* Display hook installed by MapAnimation_Start: selects the animation
-   layout for BG1 and copies the decoded frame into character VRAM. */
 void MapAnimation_PresentFrame(void)
 {
     s32 control = 0x682;
@@ -38,8 +36,6 @@ void MapAnimation_PresentFrame(void)
     Dma_Set((const void *)gMapCellBuffer, (void *)0x06006a00, DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
-/* Starts the map animation task, saves the second character block, and
-   decodes this frame's animation page into the buffer. */
 void MapAnimation_Start(void)
 {
     /* FAKEMATCH: the adjacent slot-cell walk avoids the four bytes added by separate gMapWork loads. */
@@ -58,8 +54,6 @@ void MapAnimation_Start(void)
     *(u32 *)Data_03001cfc = (u32)MapAnimation_PresentFrame;
 }
 
-/* Points BG1 at character block 2 and copies the 32 KB of buffered
-   characters into it. */
 void Map_ShowBg1FromBuffer(void)
 {
     u32 mode = 0x501;
@@ -70,9 +64,6 @@ void Map_ShowBg1FromBuffer(void)
             REG_DMA3);
 }
 
-/* Decodes the area's palette (keeping the backdrop colour) and its four tile
-   banks, shows BG1 over the full window, decodes the default cells and
-   leaves only the map animation running. */
 void Map_LoadAreaGraphics(void)
 {
     struct PerspectiveWork *state;

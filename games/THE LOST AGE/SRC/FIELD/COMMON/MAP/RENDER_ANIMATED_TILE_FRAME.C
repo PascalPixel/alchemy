@@ -5,14 +5,12 @@
 #include "VRAM_TAB.H"
 extern u8 Map_TileDissolveOrder[];
 
-/* An animation track: its script and the step it is on. */
 struct AnimTrack {
     u8 unknown_00[0x10];
     u8 *script;
     u8 index;
 };
 
-/* An animated object, as far as the wait reads it. */
 struct AnimObject {
     u8 unknown_00[0x18];
     u8 frame;
@@ -20,8 +18,6 @@ struct AnimObject {
     struct AnimTrack *track;
 };
 
-/* Waits, for up to 90 frames, until the object's track reaches its end
-   marker (241) or its frame changes. */
 void Animation_WaitForTrackEnd(struct AnimObject *object)
 {
     u8 frame = object->frame;
@@ -43,8 +39,6 @@ void Animation_WaitForTrackEnd(struct AnimObject *object)
     }
 }
 
-/* ☀️'s, reading the object's resource and size where ⚓️'s object keeps
-   them, 12 bytes earlier. */
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 {
     u16 *destination;
@@ -66,7 +60,6 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
         index_mask = 0x3F;
         offset_mask = 0x3E;
 
-        /* 1行ごとに32セル進める。 */
         for (; row < (u32)count; row++, destination += 32, position++) {
             if ((u32)(position - 0x40) <= 0x3F) {
                 u8 entry;

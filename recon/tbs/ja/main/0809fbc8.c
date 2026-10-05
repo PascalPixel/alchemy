@@ -1,23 +1,9 @@
-/* 2026-10-01: the Japanese PsynergyMenu_DrawRange, PsynergyMenu_DrawRangePage
-   and PsynergyMenu_DrawListPage, written as edition branches of games/THE
-   BROKEN SEAL/SRC/MENU/ABILITY/RANGE_PAGE.C (compile it with the Japanese
-   edition macro). The whole module matches the Japanese extent at 0809fbc8
-   byte for byte: six rows a page starting a tile higher, range icons from
-   tile 0xf200, and the places a Psynergy works listed a line at a time.
-   What keeps it out is its last line: the Japanese page closes with message
-   03231, "can be used", which follows MsgUsableAnywhere and has no
-   counterpart in the other five catalogs, so no name can give it a row in
-   every edition (build_text check_names), and the reference loads it as a
-   pool word of its own, which only MsgUsableAnywhere + 1 reproduces and the
-   ids gate refuses (O3: ids are used whole). */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "TBS_EDITION.H"
 void UiWindow_Commit(s32 window);
 
-/* The first range icon tile, and the tile row the lists start on: the
-   Japanese pages hold a sixth row, one tile higher. */
 #if defined(TBS_EDITION_JA)
 #define RANGE_ICON_TILE 0xf200
 #define LIST_FIRST_ROW  1
@@ -38,7 +24,6 @@ void PsynergyMenu_DrawRange(
 
     n = range * 2;
     tile = n + RANGE_ICON_TILE + 1;
-    /* Keep the empty zero path; GCC emits the reference branch shape. */
     if (!n) {
     }
     UiWindow_SetTilemapEntryFar(window, 0x400 | tile, x, y, 0);
@@ -53,46 +38,46 @@ void PsynergyMenu_DrawRange(
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
-    u8 state;                    /* 0x05 */
+    u8 state;
     u8 unknown_06[6];
-    u16 field_0c;                /* 0x0c */
+    u16 field_0c;
     u8 unknown_0e;
-    u8 field_0f;                 /* 0x0f */
+    u8 field_0f;
 };
 
 struct PsynergyListWork {
     u8 unknown_000[8];
-    s32 field_008;                            /* 0x008 */
+    s32 field_008;
     u8 unknown_00c[8];
-    struct MenuEntryIcon *pane_icon[2];       /* 0x014 */
-    s8 tab_index[2];                          /* 0x01c */
+    struct MenuEntryIcon *pane_icon[2];
+    s8 tab_index[2];
     u8 unknown_01e[6];
-    s32 field_024;                            /* 0x024 */
+    s32 field_024;
     u8 unknown_028[4];
-    void *info_window;                        /* 0x02c */
+    void *info_window;
     u8 unknown_030[4];
-    s32 list_window;                          /* 0x034 */
+    s32 list_window;
     u8 unknown_038[0x0c];
-    struct MenuEntryIcon *entry_grid_cursor;  /* 0x044 */
-    struct MenuEntryIcon *entry_icons[32];    /* 0x048 */
+    struct MenuEntryIcon *entry_grid_cursor;
+    struct MenuEntryIcon *entry_icons[32];
     u8 unknown_0c8[0x4c];
-    s32 tab_objects[4];                       /* 0x114 */
+    s32 tab_objects[4];
     u8 unknown_124[0x20];
-    u16 tab_colors[4];                        /* 0x144 */
+    u16 tab_colors[4];
     u8 unknown_14c[0x28];
-    u16 pane_row[2];                          /* 0x174 */
-    u16 pane_action[2];                       /* 0x178 */
+    u16 pane_row[2];
+    u16 pane_action[2];
     u8 unknown_17c[0x4c];
-    u16 psynergies[32];                       /* 0x1c8 */
-    u16 owner_table[8];                       /* 0x208 */
-    u8 psynergy_count;                        /* 0x218 */
-    u8 owner_count;                           /* 0x219 */
-    u8 owner_ids[2];                          /* 0x21a */
-    struct MenuEntryIcon *cursor_icon;        /* 0x21c */
-    u16 flags;                                /* 0x220 */
+    u16 psynergies[32];
+    u16 owner_table[8];
+    u8 psynergy_count;
+    u8 owner_count;
+    u8 owner_ids[2];
+    struct MenuEntryIcon *cursor_icon;
+    u16 flags;
     u8 unknown_222[0x3e];
-    s8 selected_index_by_owner[8];            /* 0x260 */
-    u8 mode;                                  /* 0x268 */
+    s8 selected_index_by_owner[8];
+    u8 mode;
 };
 
 extern u8 MsgAbilityDescription;
@@ -110,10 +95,6 @@ void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ACTION_ID_MASK 0x3fff
 
-/* The Psynergy page with the element and range icons: names the selected
-   entry and its targeting class (0xb13-0xb15), then redraws the five rows
-   with their range icons and highlights. The info window is held as a
-   pointer, which keeps its load independent of the page-state store. */
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 {
     struct PsynergyListWork *menu;
@@ -124,7 +105,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     menu = (struct PsynergyListWork *)gMenuWork;
     state->selected_index = state->page * PAGE_ROWS + state->row;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-    /* Spanish and Italian clear the info window's top row instead. */
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
 #elif defined(TBS_EDITION_JA)
     RenderOutput_ClearListFar((s32)menu->info_window);
@@ -143,9 +123,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
             (s32)menu->info_window, 0, 0);
         ability = BattleAction_Get(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
 #if defined(TBS_EDITION_JA)
-        /* The Japanese page lists where the Psynergy works, a line each,
-           and closes with its words for "can be used", the message after
-           MsgUsableAnywhere. */
         UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
         row = 0;
         if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
@@ -212,13 +189,11 @@ extern u8 MsgAbilityName;
 extern u8 MsgClassName;
 extern u8 Menu_LvString;
 
-
 #define PSY_LIST_OFS 0x1c8
 #define ACT_ID_MASK 0x3fff
 #define OWNER_LEVEL_OFS 15
 #define OWNER_CLASS_MSG_OFS 0x129
 
-/* The list's page icons, names and PP columns around each edition's words. */
 #if defined(TBS_EDITION_JA)
 #define LIST_ICONS_X     86
 #define LIST_ICONS_Y     53
@@ -310,7 +285,6 @@ s32 PsynergyMenu_DrawListPage(
     UiText_DrawAt(
         owner[OWNER_CLASS_MSG_OFS] + (s32)&MsgClassName, window, 0, 32);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
-    /* The Spanish and French level label is drawn at a pixel offset. */
     UiText_DrawStringAtOffsetFar(&Menu_LvString, (void *)window, 0, 48);
 #else
     UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);

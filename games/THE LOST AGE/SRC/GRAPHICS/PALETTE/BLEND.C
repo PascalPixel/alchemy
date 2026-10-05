@@ -7,8 +7,6 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
-/* Allocate and clear the transition's state in heap slot 31, clear the
-   screen, and start the per-frame update. */
 void DisplayTransition_InitializeState(s32 value)
 {
     struct DisplayTransitionState *state;
@@ -22,8 +20,6 @@ void DisplayTransition_InitializeState(s32 value)
     WaitFrames(0x78);
 }
 
-/* Fill the step table: each of the 0x540 colour components' distance to its
-   target, divided by the number of frames. */
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames)
 {
     s32 index;

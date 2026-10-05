@@ -1,11 +1,7 @@
-//! The treemap model the README's file map draws.
-/// One tracked file, or a folder of them.
 #[derive(Clone, Debug, Default)]
 pub struct Tile {
     pub label: String,
     pub bytes: i64,
-    /// A file's lowercase extension, `s-credited` for assembly its header
-    /// credits; empty for a folder.
     pub extension: String,
     pub source: Option<String>,
     pub children: Vec<Tile>,
@@ -22,9 +18,6 @@ pub struct Placed {
     pub index: usize,
     pub rect: Rect,
 }
-/// Deterministic, order-preserving binary treemap. Each partition is split
-/// across its longest edge near half of its total weight, producing readable
-/// two-dimensional blocks without changing proportional byte accounting.
 pub fn treemap<T, F: Fn(&T) -> i64>(items: &[T], weight: F, frame: Rect) -> Vec<Placed> {
     fn place(weighted: &[(usize, i64)], frame: Rect, out: &mut Vec<Placed>) {
         if weighted.is_empty() {

@@ -14,7 +14,6 @@ struct PeriodicEffectConfig {
     u16 id;
     u8 pad_1a[2];
     u8 *data;
-    /* The record occupies 40 bytes; its final two words are unused. */
     u8 pad_20[8];
 };
 
@@ -24,7 +23,6 @@ extern u8 gShianMuraExits[];
 extern u8 gShianMuraEvents[];
 extern u8 ShianMura_ActionTable[];
 
-/* The village's callbacks, installed by address. */
 s32 ShianMura_WatchGateTrigger();
 void Actor_UpdatePresentationFlag(void);
 extern u8 gShianMuraPlacements[];

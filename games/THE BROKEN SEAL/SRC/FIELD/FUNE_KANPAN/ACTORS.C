@@ -1,11 +1,8 @@
-/* Activate the deck's slot actors 8 to 19, keep the depth of the eight
-   standing ones and fill the drifting slots' modes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KANPAN.H"
 
-/* The standing slots' depths, uninitialised work after the deck's block. */
 s32 FuneKanpan_SlotDepth[8];
 void OverlayObject_ActivateSlotWithMode3(s32 actor);
 void FuneKanpan_ChooseSlotModes(void);

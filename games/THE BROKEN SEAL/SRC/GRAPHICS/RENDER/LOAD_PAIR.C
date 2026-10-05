@@ -17,7 +17,6 @@ s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
-/* This caller passes five words. */
 struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
@@ -25,8 +24,6 @@ s32 Audio_Check(void);
 
 extern volatile u32 gKeyState;
 
-/* Announce two characters joining the party: a window with both members'
-   glyphs and the joined line, then wait for the jingle or a key. */
 void Party_ShowPairJoinedMessage(s32 first, s32 second)
 {
     u8 *work = gWindowWork[0];
@@ -87,7 +84,6 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 }
 u32 Resource_DecodeByteLz(const void *, void *);
 
-/* graphics/resource/RenderOutput_LoadPair.c */
 extern const u8 *RenderResource_PairSourceTable[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
@@ -102,7 +98,6 @@ void RenderResource_LoadPair(s32 group_index, s32 resource_index)
     }
 }
 
-/* graphics/resource/RenderResource_CreatePair.c */
 struct RenderOutput *RenderResource_CreatePair(
     s32 group,
     struct RenderInput *input,
@@ -118,7 +113,6 @@ struct RenderOutput *RenderResource_CreatePair(
         return NULL;
 
     RenderResource_LoadPair(group, index);
-    /* Two 32x16 OBJ sprites; the right half starts eight tiles later. */
     first = RenderOutput_Create(index, 0x80004000, input, x, y);
     first->sentinel = 0xFD;
     second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);

@@ -4,7 +4,6 @@
 #include "BATTLE_EVENT.H"
 #include "BATTLE_TYPES.H"
 
-/* Battle-facing views of the polymorphic runtime lookup functions. */
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void BattleUnit_Recalculate(s32 unit_id);
 struct BattleAction *BattleAction_Get(s32 action_id);

@@ -7,8 +7,6 @@
 
 extern void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 slot);
 
-
-
 extern u8 *UiIcon_FramePointerTable[];
 extern u8 *UiIcon_ItemIconPointers[];
 
@@ -45,9 +43,7 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
 }
 
 extern GlyphTransfer *gGlyphWork;
-/* The marks drawn over an item's icon: broken, equipped, artifact. */
 extern u8 *UiIcon_MarkPointers[];
-/* The count digits: the ones at 0 to 9, then the tens from 1. */
 extern u8 *UiIcon_DigitPointers[];
 
 #define ICON_FRAME 1
@@ -57,11 +53,6 @@ extern u8 *UiIcon_DigitPointers[];
 #define ICON_BROKEN 16
 #define ICON_ARTIFACT 32
 
-/*
- * Compose an item slot's 16 by 16 icon in the glyph work: the frame, the
- * item's own picture, then the marks its slot bits ask for and the stack
- * count, each drawn only when its layer bit is set.
- */
 s32 ItemIcon_Compose(u32 code, u32 layers)
 {
     s32 overlay;

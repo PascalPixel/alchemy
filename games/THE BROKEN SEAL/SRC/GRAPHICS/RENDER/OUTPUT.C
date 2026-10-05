@@ -26,7 +26,6 @@ struct RenderOutput *RenderOutput_Create(
     y = offset_y + (input->y * 8) + 8;
     x &= 0x1ff;
     y &= 0xff;
-    /* Xをbit16～24、Yをbit0～7へ置き、flagsのフラグを重ねる。 */
     output->packed = (x << 16) | y | flags;
     output->table.value =
         ((struct VramBlockCacheEntry *)Ram_VramBlockCache)[slot].offset >> 5;

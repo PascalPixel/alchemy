@@ -23,14 +23,11 @@ void FieldScene_RunThreeCallSequence(void)
     Engine_EventEnd();
 }
 
-/* The far end of the bridge: the first time the leader steps on it, the
- * bridge rolls back the other way in a spray of dust. */
 void VinasuHeya_RetractBridge(void)
 {
     struct EffectOptions options;
     struct ScrollLayer *layer;
     struct FieldActor *leader;
-    /* The leader's tile column, then the bridge column being drawn. */
     s32 x;
     s32 z;
     s32 countdown;
@@ -86,14 +83,11 @@ void VinasuHeya_RetractBridge(void)
     }
 }
 
-/* Stepping onto the bridge end drops the leader a little; the first time,
- * the bridge rolls out across the chasm in a spray of dust. */
 void VinasuHeya_ExtendBridge(void)
 {
     struct EffectOptions options;
     struct ScrollLayer *layer;
     struct FieldActor *leader;
-    /* The leader's tile column, then the bridge column being drawn. */
     s32 x;
     s32 z;
     s32 countdown;
@@ -148,7 +142,6 @@ void VinasuHeya_ExtendBridge(void)
     }
 }
 
-/* The pillar switches and the two effects that open the way. */
 struct SwitchCell {
     u32 x;
     u32 z;
@@ -173,10 +166,6 @@ void ObjectDispatch_WaitForValue16(struct SwitchEffect *effect);
 void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 mode);
 void Battle_ResetEffectCounter(void);
 
-/*
- * A pushed pillar reaches a switch: it sinks into the floor, and once all
- * four are down the two door effects run and the way opens.
- */
 void Scene_RunScene3c8SequenceA(void)
 {
     struct FieldActor *effect;

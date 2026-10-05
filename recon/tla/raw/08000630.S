@@ -1,19 +1,3 @@
-@ Guarded ROM-to-IWRAM entry of the sound driver frame update. It reads a
-@ PC-relative block {stack limit 0x03007900, 'Smsh', 0x03007ff0} with
-@ add r1, pc and ldmia, returns 1 early when the stack pointer is below the
-@ limit or when the SoundInfo whose pointer 0x03007ff0 holds does not start
-@ with the 'Smsh' ID, then saves r0 and r8-r11 in a private frame (mov r1,
-@ r8 ... mov r4, fp; push {r0-r4}) and tail-branches with ldr r3; bx r3 into
-@ IWRAM code that restores it. Neither approved compiler emits add rd, pc, and
-@ GCC 2.96 saves high registers only in its prologue, through low registers it
-@ has already pushed, highest first. It is TLA's own revision of TBS
-@ SOUND/DRIVER/CHANNEL_UPDATE_ENTRY.S (0x080006fc), with an added stack check.
-@ The zero halfword after its early return (0x08000646) never runs, and the
-@ pool words 0x00000350 and 0x04000006 at 0x080006ac are loaded by no
-@ instruction; they carry no credit.
-@ It stays disassembly without credit: it calls through lr with the second
-@ halfword of a Thumb bl alone (0xf800), which the assembler cannot write as
-@ an instruction.
 .syntax unified
 	.thumb
 	.global SoundDriver_EnterFrameUpdate

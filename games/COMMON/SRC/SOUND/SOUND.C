@@ -1,7 +1,6 @@
 #include "AUDIO_ENGINE.H"
 #include "RAM_BUFFER.H"
 
-/* Shared driver settings, as MusicPlayer2000's C configuration supplies them. */
 #define SOUND_PLAYER_COUNT 8
 #define SOUND_MAX_LINES 0
 #define SOUND_CLEAR_CONTROL 0x05000040

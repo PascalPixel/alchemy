@@ -18,15 +18,6 @@ extern u8 gBattleFxWork[];
 
 void Render_ResetTransformState(void);
 
-/*
- * Battle effect: a burst of six particles over each affected unit in turn.
- * Every particle starts with a random polar velocity except each group's
- * sixth, which only falls. For 96 frames, unit i's group is drawn from
- * frame i * 8 for 40 frames above the unit: five 24x48 cels from the first
- * sheet under light gravity and the sixth from the second sheet under
- * heavier gravity, each cel advancing every six frames.
- */
-
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 

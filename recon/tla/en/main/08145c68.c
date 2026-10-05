@@ -1,20 +1,9 @@
-/* Near miss: unscored without IWRAM_CALL.H's Iwram_CopyWords, which ⚓️
-   would need at 0x03000730 (IwramCopyWords); with it the code is close in
-   shape but saves r11 too, one more callee-saved register than ⚓️ uses. The
-   delays come from ⚓️'s heap slot 0x64 and the buffer is Ram_MapCellBuffer. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
 
-/* Convert the tiled background through a blue palette ramp. Each screen
- * column begins after its random delay; the row budget grows each frame.
- * The second palette bank preserves the converted pixels after the sweep.
- */
-
 typedef s32 (*WordCopy)(void *, const void *, s32);
-
-
 
 static __inline__ void CopyWords(WordCopy copy, void *destination,
                                  const void *source, s32 size)

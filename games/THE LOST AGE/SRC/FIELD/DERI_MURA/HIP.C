@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* The old man who asks whether the party thinks the wave hurt his hip. */
-
 extern u8 MsgDeriHurtHip[];
 
 void DeriMura_TalkHip(void)

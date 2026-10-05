@@ -10,8 +10,6 @@ void VramBlock_LoadResourceFar(s32 entry_no, s32 size, s32 resource_id);
 s32 UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, s32 mode);
 void UiText_DrawString(u8 *text, s32 output, s32 x, s32 y);
 
-/* Loads the 128-byte icon tile block into a free VRAM cache entry and returns
-   the entry. */
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
 {
     s32 slot;
@@ -31,10 +29,7 @@ void Resource_CopyFixedBlockA(s32 slot)
     VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiFixedBlockATiles);
 }
 
-/* The Japanese edition has neither of the two text helpers that follow,
-   as in ☀️'s WINDOW14.C. */
 #if EDITION_INTERNATIONAL
-/* Copies a string into the text entry ring and returns its width. */
 s32 UiText_SetRenderString(const u8 *str)
 {
     struct UiRenderWork *work;
@@ -63,7 +58,6 @@ s32 UiText_SetRenderString(const u8 *str)
     return width;
 }
 
-/* Draws a name label padded with underscores to seven columns. */
 void UiText_DrawPaddedLabel(s32 output, u8 *input)
 {
     u8 text[20];

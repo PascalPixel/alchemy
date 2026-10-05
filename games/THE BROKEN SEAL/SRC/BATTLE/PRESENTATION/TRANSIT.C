@@ -10,9 +10,6 @@ struct BattleTransitionEntry {
     u32 fieldc;
 };
 
-/* Set blend control. */
-
-/* Set the blend control bits to 0xbf.  No arguments, no result. */
 void Graphics_SetBlendControl(void)
 {
     REG_BLDCNT = 0xbf;
@@ -22,7 +19,7 @@ void BattlePresentation_InitializeTransitionEntries(struct BattleTransitionEntry
 {
     u32 previous = entries[0].value;
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(entries);
     entries[0].sum = previous + entries[0].value;
 }

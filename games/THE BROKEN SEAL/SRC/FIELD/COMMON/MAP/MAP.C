@@ -61,9 +61,6 @@ static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod
     *(u32 *)(dest + 64) = *tiles;
 }
 
-/* A layered scene's resources, as rows counted from the first field map:
-   the map itself, then the palette, the three tile sheets and the layer
-   data. */
 struct SceneEntry {
     u16 resources[6];
 };
@@ -79,7 +76,6 @@ struct SceneLayerSource {
     u8 period_y;
 };
 
-/* The head of a field map resource (SRC/MAP/MAP.INC). */
 struct SceneHeader {
     u8 origin[4];
     u8 priority[3];
@@ -120,11 +116,6 @@ static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
     return result;
 }
 
-/* Loads a layered scene: decodes the map's cells, collision and tilemap and
-   starts its optional tile animation and blend script, sets the three
-   layers' origins, scroll rates and periods, writes the layers' background
-   controls, and, unless the flag that keeps the current pictures is set,
-   decodes the scene's palette, tile sheets and layer data. */
 s32 Map_LoadLayeredScene(s32 index)
 {
     struct SceneEntry *entry;
@@ -271,7 +262,6 @@ void Map_ApplyWorkOriginAndSpan(void)
     Map_UpdateLayerScroll();
 }
 
-/* Updates one visible metatile row after the camera crosses its boundary. */
 void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 {
     u8 *dest = (u8 *)(0x06002800 + (a0 << 11));
@@ -463,11 +453,8 @@ void Map_SetCameraCenter(s32 x, s32 y)
     }
 }
 
-/* Whole metatile positions of the three visible map layers. */
 struct TilePos { s32 x, y; };
 
-/* Copy cell indices while preserving their attributes, then refresh the
-   first visible layer's two tile words in VRAM. */
 void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
     u32 dst_x, u32 dst_y, u32 width, u32 height)
 {
@@ -491,7 +478,6 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
         for (x = dst_x; x < dst_x + width; x++) {
             /* FAKEMATCH: the cell value remains live in r5 while layers are tested. */
             register u32 cell __asm__ ("r5") = 0xfff & *src++;
-            /* Both destinations are VRAM: the display consumes each store. */
             volatile u32 *dest;
             u32 offset;
             u32 tmp3;
@@ -576,8 +562,6 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
     }
 }
 
-/* Each sequence command is five halfwords: source x, source y, dimensions
-   and delay. A source value of 0xffff ends the stream. */
 struct MapCopyCommand {
     u16 source;
     s16 y, width, height, delay;

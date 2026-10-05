@@ -15,8 +15,6 @@ void Scheduler_ScheduleCallbackA(void)
     Scheduler_RemoveCallback((u32)((s32)PaletteGlow_UpdateSine));
 }
 
-/* Fills a window-relative rectangle of the window tilemap with the blank
-   frame tile, clipped to the screen. */
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;

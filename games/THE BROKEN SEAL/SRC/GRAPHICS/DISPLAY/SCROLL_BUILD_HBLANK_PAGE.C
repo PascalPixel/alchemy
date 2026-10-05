@@ -2,8 +2,6 @@
 #include "IWRAM_CALL.H"
 #include "SCROLL.H"
 
-/* Build the idle page of per-scanline background offsets, bending each line
-   by a sine wave, then make it the page the H-blank DMA reads next. */
 void DisplayScroll_BuildAndSwapHBlankPage(void)
 {
     struct DisplayScrollWork *work = gHBlankScrollWork;

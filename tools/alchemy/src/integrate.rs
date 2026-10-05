@@ -1,9 +1,3 @@
-//! `alchemy integrate`: bring worker branches into the current branch the
-//! way every integration has gone by hand: merge each branch (the scaffold
-//! and linker-script drivers resolve the usual overlap), reconcile every
-//! edition's linker script with its scaffold, commit that, then build and
-//! compare all twelve editions and, for any that differ, name the first
-//! linked object whose bytes differ from the reference ROM.
 use crate::compiler::routing::root;
 use crate::process::run as command;
 use std::path::Path;
@@ -16,8 +10,6 @@ merge-driver links) and commits any change, then runs make
 compare-editions; for each edition that differs it names the first
 object whose bytes differ, from that edition's map and reference ROM."#;
 
-/// The first linked object whose bytes differ: its address, offset into
-/// the object and path, read from a GNU ld map.
 pub(crate) fn first_difference(map: &str, reference: &[u8], built: &[u8]) -> Option<(u32, u32, String)> {
     let mut best: Option<(u32, u32, String)> = None;
     for line in map.lines() {
@@ -62,8 +54,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         return Err(USAGE.into());
     }
     let root = root();
-    // The reconciliation commit stages games/ and recon/ whole, so it must
-    // start from a clean tree or it would sweep unrelated edits into it.
     if !command(&["git", "status", "--porcelain", "--", "games", "recon"], root)?.trim().is_empty() {
         return Err("games/ or recon/ has uncommitted changes; commit or stash them first".into());
     }
@@ -96,7 +86,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let ok = text.lines().filter(|l| l.ends_with(".gba: OK")).count();
         println!("{ok} of 12 editions identical");
         report_editions(root, &text);
-        // Compile and link errors, which leave no ROM to compare.
         let mut seen = std::collections::BTreeSet::new();
         for line in text.lines().filter(|l| !l.contains("warning") && (l.contains(": error") || l.contains("undefined reference") || l.contains("multiple definition") || l.contains("has no member") || l.contains("conflicting types") || l.contains("already defined"))) {
             if seen.insert(line.to_string()) && seen.len() <= 12 {

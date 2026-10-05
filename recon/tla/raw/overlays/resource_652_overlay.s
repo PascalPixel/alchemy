@@ -1417,7 +1417,6 @@ Data_02000e04:
 .L_02008e14:
 	.4byte 0x00000016
 	.4byte 0x0000001e
-	@ Property 0x1e differs in the first and third Japanese scripts.
 	.ifdef TLA_EDITION_JA
 	.4byte 0x00000083
 	.else
@@ -1600,7 +1599,6 @@ Data_02000e04:
 	.4byte 0x00000011
 	.4byte 0x00000016
 	.4byte 0x0000001e
-	@ Property 0x1e differs in the first and third Japanese scripts.
 	.ifdef TLA_EDITION_JA
 	.4byte 0x00000083
 	.else

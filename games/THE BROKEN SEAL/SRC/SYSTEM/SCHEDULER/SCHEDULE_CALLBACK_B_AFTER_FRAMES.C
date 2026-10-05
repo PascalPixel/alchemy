@@ -4,7 +4,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-
 void Scheduler_ScheduleCallbackBAfterFrames(void)
 {
     Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
@@ -12,8 +11,6 @@ void Scheduler_ScheduleCallbackBAfterFrames(void)
 
 extern struct PaletteSnapshotWork *gPaletteWork;
 
-/* Each frame, rotate every queued palette cycle whose delay has run out by
-   one colour and copy the rotated colours to its palette. */
 void PaletteQueue_StepCycles(void)
 {
     struct PaletteSnapshotWork *work = gPaletteWork;

@@ -2,15 +2,12 @@
 #ifndef ALCHEMY_PROBE_H
 #define ALCHEMY_PROBE_H
 
-/* Declarations shared by the Mercury Lighthouse room's scene sources. */
 #include "MAKYURI.H"
 #include "MAKYURI_HEYA.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-/* Values that look like 16.16 fixed-point fractions, named by that
- * fraction's decimal value. */
 #define FX16_0_1 0x1999
 #define FX16_0_25 0x4000
 #define FX16_0_4 0x6666
@@ -20,14 +17,11 @@
 #define FX16_1_0 0x10000
 
 enum {
-    /* Message 0x182 + 184. */
     ITEM_HERMES_WATER = 184
 };
 
 extern u8 gEffectWork[];
 
-/* The IWRAM work pointers from gWork: the event work, and 0x20 bytes on, the
- * scene's. */
 struct WorkPointers {
     u8 *event;
     u8 *unknown_04[7];
@@ -47,37 +41,34 @@ typedef struct {
 
 struct EffectAnchor {
     u8 pad00[8];
-    s32 f8;                     /* +8  */
+    s32 f8;
     u8 pad0c[4];
-    s32 f16;                    /* +16 */
+    s32 f16;
 };
 
 struct AnchoredEffect {
     u8 pad00[8];
-    s32 f8;                     /* +8  */
-    s32 f12;                    /* +12 */
-    s32 f16;                    /* +16 */
+    s32 f8;
+    s32 f12;
+    s32 f16;
     u8 pad14[4];
-    s32 f24;                    /* +24 */
-    s32 f28;                    /* +28 */
+    s32 f24;
+    s32 f28;
     u8 pad20[68];
-    s16 f100;                   /* +100 */
+    s16 f100;
     u8 pad66[2];
-    struct EffectAnchor *f104;  /* +104 */
+    struct EffectAnchor *f104;
 };
 
-/* A party member's state holds a table of halfwords at +216. */
 struct SceneLookupRecord {
     u8 pad00[216];
-    u16 tbl[1];                 /* +216 */
+    u16 tbl[1];
 };
 
-/* Map cell animations and object scripts in the overlay's data. */
 extern const u16 MakyuriHeya_GateCells[];
 extern const u16 MakyuriHeya_GateCloseCells[];
 extern const u16 MakyuriHeya_FloorSwitchCells[];
 
-/* Engine imports called with the arities these scenes pass. */
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 void BattleFx_SetPhaseRequest(s32, s32);
@@ -87,7 +78,6 @@ s32 PartyInventory_FindOwner();
 s32 Inventory_Find();
 struct SceneLookupRecord *Owner_GetState();
 
-/* The staged-actor code and the overlay's other sources. */
 s32 StagedActor_FindClearPosition();
 void SceneActor_MoveAndRedraw();
 void StagedActor_AdvancePair(void);

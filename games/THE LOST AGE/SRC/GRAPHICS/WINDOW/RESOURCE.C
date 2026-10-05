@@ -8,8 +8,6 @@ extern char ResourceId_CommandIcons;
 void Runtime_RemapBytesByTableFar(void *buffer, s32 size);
 void Resource_DecodeByteLzInRam(void *source, void *destination);
 
-/* Loads command icon index into VRAM block value, remapping its colours
-   when flag is set. */
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
 {
     s32 size = 1024;

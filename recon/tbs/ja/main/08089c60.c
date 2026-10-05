@@ -1,21 +1,3 @@
-/* DRAFT: Japanese UiText_OpenMessageAtObject at 08089c60 (780 bytes
-   including pools); the five international editions remain drafts.
-   2026-10-02 trial used RENDER_MODE_OFS for the Japanese work byte (0xf34).
-   Prior trial with named call targets: the plain source
-   scored 560 (7 register-only, 2 reordered, 2 inserted, 2 deleted).
-   The prior tagged r1 top copy scored 340 (3 register-only, 2 reordered,
-   1 inserted, 1 deleted): it loads top directly into r1 then reloads r2,
-   where the ROM loads r2 and copies r1. Two dimension arguments and the
-   final -1 are prepared in another order. Pinning the initial top to r2
-   scored 625; exposing top before the copy scored 445. No exact match.
-   Canonical-owner/pointer ordinary trial: 776 bytes for JA and 836 under
-   international defines; JA weighted diagnostic 2366 (83 rows) against the
-   native 780 bytes, with no unresolved calls. The identical side-window
-   branch was removed instead of forcing a mode reload. Measured 64-slot
-   window/event bank trial: 772 bytes against native 780; weighted diagnostic
-   2165 (53 rows: 27 register-only, 3 operand, 9 reordered, 5 inserted,
-   9 deleted), with no unresolved calls. Deleted mode/stack reloads and
-   register/argument ordering remain. No exact match. */
 #include "EDITION.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
@@ -36,7 +18,6 @@ struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 styl
 s32 UiWindow_CreateWithSideObjectFar(s32 speaker, s32 mode, s32 x, s32 y);
 s32 UiWork_IsCompleteFar(void);
 
-/* Low twelve bits name the actor; high bits place its message and portrait. */
 struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 {
     void **slots;

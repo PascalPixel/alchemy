@@ -10,7 +10,6 @@ extern volatile u32 gKeyState;
 
 void WaitFrames(s32);
 
-/* What holding Select answers: each edition's build has its own value. */
 #if EDITION_INTERNATIONAL
 #define DEBUG_SELECT_VALUE 0x18f
 #else

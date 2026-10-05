@@ -3,8 +3,6 @@
 #include "MOTION_OBJECT.H"
 #include "FIELD_EVENT.H"
 
-/* Mode entries of the projectile volley effect. */
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);

@@ -1,6 +1,3 @@
-/* resource_373: its entry veneers, its listing with maintained code and
-   the compiler library linked in place, as pret links objects and libgcc
-   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
@@ -15,6 +12,4 @@ SECTIONS
         "*/resource_373_overlay.o"(.rodata.x0200e190)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
-    /* The compiler calls its remainder helper by its ABI name; here it is the
-       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
 }

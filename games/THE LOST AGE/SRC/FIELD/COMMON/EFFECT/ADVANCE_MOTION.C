@@ -1,11 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-/*
- * Moves an effect by its velocity, slows it in X by an eighteenth and in Z
- * by a sixteenth each frame, grows it by its scale rates and turns its
- * sprite by its spin, as ☀️'s overlays' Effect_AdvanceMotion does.
- */
 void Effect_AdvanceMotion(union FieldObject *object)
 {
     struct FieldEffect *effect = &object->effect;

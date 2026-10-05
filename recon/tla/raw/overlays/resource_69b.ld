@@ -1,5 +1,3 @@
-/* resource_69b: its entry veneers, its listing and its import veneers
-   linked in place, as pret links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :

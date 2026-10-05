@@ -1,8 +1,4 @@
 #include "MAPCOPY.H"
-/*
- * resource_393 scene script: staged-actor motion, scene beats, and the
- * overlay's palette adjustment.
- */
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
@@ -36,7 +32,6 @@ void KorimaPalette_Capture(void);
 void KorimaPalette_SaveSecond(void);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 
-
 void SceneEffect_AdjustPaletteColors(s32 a);
 
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
@@ -67,8 +62,6 @@ s32 MapStagedScene_GetEmptyData(void)
 u8 *MapStagedScene_SelectSecondaryData(void) { return Data_02009028; }
 
 u8 *MapStagedScene_SelectTertiaryData(void) { return Data_02009038; }
-
-/* Run actor 10's scene transition when its placement reaches column 12. */
 
 void FieldScene_RunActorTenPlacementScene(void)
 {
@@ -163,7 +156,6 @@ void SceneActor_ApplyOffsetObjectPosition(void)
 
 u8 *KorimaKawa_GetEvents(void) { return Data_02009098; }
 
-/* Opens the scene with window transition 4, then runs its beat sequence. */
 s32 KorimaKawa_PrepareWindowTransition(void)
 {
     struct EventWork *work = gEventWork;
@@ -220,7 +212,6 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     green = (s16)(green - Math_DivideSigned(green, adj));
     blue = (s16)(blue - Math_DivideSigned(blue, adj));
 
-    /* Only the increasing colour channel is saturated. */
     if (red > 31)
         red = 31;
 

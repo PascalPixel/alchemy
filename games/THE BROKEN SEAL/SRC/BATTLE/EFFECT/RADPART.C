@@ -22,9 +22,9 @@ struct EffectVector {
 
 struct EffectOwner {
     u8 unknown_00[8];
-    struct EffectVector position;   /* 0x08 */
+    struct EffectVector position;
     u8 unknown_14[0x3c];
-    struct AnimationObject *sprite; /* 0x50 */
+    struct AnimationObject *sprite;
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
@@ -136,7 +136,6 @@ void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
 void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
 
-/* Object updates of the phased radial particle sequence. */
 void BattleFx_SetObjectAlternatingWords(u8 *object)
 {
     u32 *table = BattleFx_PulseScales;
@@ -170,13 +169,6 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
     }
 }
 
-/*
- * Moves a particle out from its origin to a random point on a ring,
- * waits there, then flies it to a random point near the current owner's
- * screen position before the slot is cleared. The particle's sprite takes
- * the owner sprite's draw priority on launch and the front priority while
- * it waits.
- */
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
 {
     struct EffectOwner *owner;
@@ -362,8 +354,6 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-/* Object updates of the radial spread page effect. */
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
 {
     s32 scale;
@@ -451,9 +441,6 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
     }
 }
 
-/* The Venus Djinni capture: the Djinni hops twice and leaps, a ring of
-   particles rises from it and falls back, then a burst above the leader
-   and eight sparks scattered around it close the scene. */
 void BattleFx_RunVenusDjinnCapture(s32 arg)
 {
     struct CaptureObject *leader;

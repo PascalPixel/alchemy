@@ -6,10 +6,6 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 #include "BATTLE_RUNTIME.H"
-/* The detail panel of the item menu: whether the item does anything, its
-   attack and defense bonuses, one row per effect (stat changes, element
-   power and resistance, critical rates, special effects), then use,
-   consumption, curse and repair notes. */
 #include "ITEM.H"
 
 extern volatile s32 gKeysRepeat;
@@ -48,7 +44,6 @@ s32 Menu_SelectQuantity(s32 value)
     confirmState->active = 13;
     window = UiWindow_CreateFar(0, 0, 30, 10, 2);
 #else
-    /* The Japanese window covers only the left of the screen. */
     window = UiWindow_CreateFar(0, 0, 13, 10, 2);
 #endif
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
@@ -116,8 +111,6 @@ done:
 #if EDITION_INTERNATIONAL
         iconState->active = 1;
 #else
-        /* The Japanese menu marks itself for a redraw instead of framing
-           the right-hand windows again. */
         /* FAKEMATCH: one register carries the 1 both stores write. */
         s32 one = 1;
 
@@ -224,7 +217,6 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
                 UiText_DrawNumberInWindowFar(amount, 1, window, 88, row * 8);
             }
 #else
-            /* The Japanese rate reads 1.5 and then its word for times. */
             if (amount > 9) {
                 UiText_DrawNumberInWindowFar(1, 1, window, 48, row * 8);
                 UiText_DrawStringInWindowFar(Menu_PointString, window, 56, row * 8);
@@ -299,7 +291,6 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         UiWork_PushValueSlotFar(amount + 1, 5);
         UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
 #else
-        /* The Japanese note draws the count before its words. */
         UiText_DrawNumberInWindowFar(amount + 1, 2, window, 0, row * 8);
         UiText_DrawCharacterAtOffsetFar(i + 1, window, 16, row * 8);
 #endif

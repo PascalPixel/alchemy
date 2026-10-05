@@ -30,7 +30,6 @@ void ObjectGroup_TickMemberTimers(void);
 
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 variant);
 
-/* Variant entries of the particle field variant effect. */
 void BattleFx_RunParticleFieldVariant0(s32 effect)
 {
     BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 0);
@@ -51,8 +50,6 @@ void BattleFx_RunParticleFieldVariant3(s32 effect)
     BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 3);
 }
 
-/* Draw the target's two panels, then a 64-particle burst and expanding rings
-   from the map cell buffer, in one of four palettes. */
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 variant)
 {
     /* FAKEMATCH: the blitter/camera declarations and independent store order preserve spill slots and loop preheader order. */

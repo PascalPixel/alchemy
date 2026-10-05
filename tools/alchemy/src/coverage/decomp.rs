@@ -1,14 +1,6 @@
-//! decomp.dev's objdiff report from the same verified count as README's
-//! progress line: twelve versions, one per game and edition, each split into
-//! accounting units by part. No functions, addresses or game bytes.
-//!
-//! Wire fields from objdiff/report.proto, version 2, revision
-//! 0c48d711c7bd51f791b353d7d85ba948b277e2f2. decomp.dev splits the combined
-//! report into versions by its `version` and `version.category` ids.
 use super::calcrom::{Counted, Game};
 use std::path::Path;
 
-/// The one report make land prepares and pre-push uploads.
 pub(crate) const REPORT: &str = "out/reports/decomp/combined_report/report.pb";
 
 const PARTS: [(&str, &str); 6] = [
@@ -20,7 +12,6 @@ const PARTS: [(&str, &str); 6] = [
     ("remaining", "Not yet C"),
 ];
 
-/// Protobuf fields in field order; proto3 leaves zero scalars out.
 #[derive(Default)]
 struct Wire(Vec<u8>);
 impl Wire {
@@ -50,7 +41,6 @@ impl Wire {
     }
 }
 
-/// Code bytes and units, matched or not; data stays unmeasured.
 #[derive(Clone, Copy, Default)]
 struct Measures {
     total: u64,
@@ -72,11 +62,11 @@ impl Measures {
             self.matched as f32 / self.total as f32 * 100.0
         };
         let mut wire = Wire::default();
-        wire.float(1, percent); // fuzzy_match_percent: no partial credit
+        wire.float(1, percent);
         wire.uint(2, self.total);
         wire.uint(3, self.matched);
         wire.float(4, percent);
-        wire.uint(11, self.matched); // complete_code
+        wire.uint(11, self.matched);
         wire.float(12, percent);
         wire.uint(15, self.units.into());
         wire.uint(16, self.complete.into());
@@ -84,7 +74,6 @@ impl Measures {
     }
 }
 
-/// An edition's DONE as units: (part, bytes, categories, complete).
 fn buckets(
     counted: &Counted,
 ) -> Result<[(&'static str, i64, &'static [&'static str], bool); 6], String> {
@@ -129,7 +118,6 @@ fn buckets(
     ])
 }
 
-/// A version's name as decomp.dev shows it, such as `The Broken Seal 🇯🇵`.
 fn version(id: &str, language: &str) -> String {
     let game = if id == "tbs" {
         "The Broken Seal"
@@ -167,7 +155,7 @@ fn report(games: [(&str, &Game); 2]) -> Result<Vec<u8>, String> {
                 };
                 whole.add(measures);
                 let mut metadata = Wire::default();
-                metadata.varint(1 << 3); // complete, present even when false
+                metadata.varint(1 << 3);
                 metadata.varint(complete.into());
                 metadata.bytes(5, name.as_bytes());
                 for tag in tags.iter() {
@@ -175,7 +163,7 @@ fn report(games: [(&str, &Game); 2]) -> Result<Vec<u8>, String> {
                     parts[at].add(measures);
                     metadata.bytes(5, format!("{name}.{tag}").as_bytes());
                 }
-                metadata.uint(6, 1); // auto_generated
+                metadata.uint(6, 1);
                 let mut unit = Wire::default();
                 unit.bytes(1, format!("{name}/{part}").as_bytes());
                 unit.bytes(2, &measures.encode());
@@ -192,7 +180,7 @@ fn report(games: [(&str, &Game); 2]) -> Result<Vec<u8>, String> {
     let mut wire = Wire::default();
     wire.bytes(1, &total.encode());
     wire.0.extend(units.0);
-    wire.uint(3, 2); // version
+    wire.uint(3, 2);
     for (id, name, measures) in categories {
         let mut category = Wire::default();
         category.bytes(1, id.as_bytes());
@@ -203,8 +191,6 @@ fn report(games: [(&str, &Game); 2]) -> Result<Vec<u8>, String> {
     Ok(wire.0)
 }
 
-/// Write the report when both games are measured; otherwise remove any
-/// earlier one, so a landing never uploads a stale count.
 pub(crate) fn write(
     root: &Path,
     games: [(&str, &Result<Game, String>); 2],

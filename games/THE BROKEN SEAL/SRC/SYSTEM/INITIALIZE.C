@@ -14,7 +14,6 @@ extern s32 gCartridgeResetMarker;
 extern u8 gOamCopyEnabled;
 extern u8 gSleepDisabled;
 
-
 void Resource_LoadWorkHeader(void);
 void WaitFrames(s32 frames);
 void Resource_InitializeTable(void);
@@ -23,16 +22,12 @@ void Ui_LoadWindowGraphics(void);
 void Game_ResetForNewGameFar(s32);
 void Audio_InitializeRuntimeDefaultsFar(void);
 
-/* The European editions halt on a Game Pak interrupt, when the cartridge
-   is pulled, through the halt loop start-up copied into the runtime. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define HALT_ON_GAMEPAK_IRQ 1
 void IwramHalt(void);
 #endif
 
-/* Stops DMA0, sets the wait states, clears IWRAM below the stack and
-   brings up the heap, resources, display, interrupts and task table. */
 void System_Initialize(void)
 {
     volatile u32 zero;
@@ -50,7 +45,6 @@ void System_Initialize(void)
     Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, REG_DMA3);
     Runtime_InitializeHeap();
     Runtime_InstallIwramAndIrqs();
-    /* Startup clears the count and its adjacent padding in one word. */
     *(u32 *)&gIoWriteQueue.count = 0;
     gDebugTextEnabled = 0;
     gDebugMode = 0;

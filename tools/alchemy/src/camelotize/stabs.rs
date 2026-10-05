@@ -1,10 +1,3 @@
-//! Struct layouts and declared types exactly as the build's compiler sees
-//! one source file. The file is compiled for its game with the build's own
-//! compiler and options plus -gstabs, whose records name every struct
-//! member with its bit offset, bit size and type; typedefs of __typeof__
-//! expressions, in a function after the file, report the types of the
-//! getters and globals a rewrite relies on. Only the assembly's debugging
-//! records are read: nothing is built or kept.
 use crate::compiler::bundle::compiler_command_for_target;
 use crate::compiler::routing::cflags_for_target_source;
 use crate::targets::DecompTarget;
@@ -20,7 +13,6 @@ pub(crate) struct Int {
 impl Int {
     pub(crate) const U8: Int = Int { bytes: 1, signed: false };
 
-    /// u8, s8, u16, s16, u32 or s32.
     pub(crate) fn parse(name: &str) -> Option<Int> {
         let signed = match name.as_bytes().first()? {
             b'u' => false,
@@ -52,8 +44,6 @@ pub(crate) enum Pointee {
     Other,
 }
 
-/// A scalar member, by its path from the struct (`x.part.pixel`), its byte
-/// offset and its type.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Member {
     pub path: String,
@@ -78,7 +68,6 @@ struct Field {
     bits: u32,
 }
 
-/// The stabs records of one compile.
 #[derive(Default)]
 pub(crate) struct Stabs {
     nodes: HashMap<u32, Node>,
@@ -132,7 +121,6 @@ impl Stabs {
         }
     }
 
-    /// A type with its aliases followed; a type aliased to itself is void.
     fn resolve(&self, ty: u32) -> Option<(u32, &Node)> {
         let mut ty = ty;
         for _ in 0..64 {
@@ -162,8 +150,6 @@ impl Stabs {
         }
     }
 
-    /// The scalar members of `struct tag`, nested structs and unions
-    /// flattened into paths; arrays, bit-fields and enums are left out.
     pub(crate) fn members(&self, tag: &str) -> Option<Vec<Member>> {
         let ty = *self.tags.get(tag)?;
         let mut members = Vec::new();
@@ -199,7 +185,6 @@ impl Stabs {
         }
     }
 
-    /// The type a probe typedef names.
     pub(crate) fn typedef(&self, name: &str) -> Option<Kind> {
         let ty = *self.typedefs.get(name)?;
         match self.resolve(ty) {
@@ -209,8 +194,6 @@ impl Stabs {
     }
 }
 
-/// An integer from its stabs range: 1, 2 or 4 bytes; a member's bit size
-/// must be the type's own, or it is a bit-field.
 fn int_of(lo: i128, hi: i128, bits: Option<u32>) -> Option<Int> {
     let natural = match (lo, hi) {
         (0, 255) | (-128, 127) => Some(1),
@@ -228,7 +211,6 @@ fn int_of(lo: i128, hi: i128, bits: Option<u32>) -> Option<Int> {
     Some(Int { bytes, signed: lo < 0 })
 }
 
-/// The body of a quoted stabs string, unescaped.
 fn quoted(rest: &str) -> Option<String> {
     let mut out = String::new();
     let mut chars = rest.chars();
@@ -362,7 +344,6 @@ impl Parser<'_> {
     }
 }
 
-/// One probe of the compile: `typedef __typeof__(EXPRESSION) NAME;`.
 pub(crate) struct Probe {
     pub name: String,
     pub expression: String,
@@ -370,9 +351,6 @@ pub(crate) struct Probe {
 
 const PROBE: &str = "ALCHEMY_PROBE.C";
 
-/// Compiles `file` for `target` with the build's compiler and options and
-/// -gstabs, and reads its records. A probe the file's own declarations
-/// cannot type is dropped and the compile repeated once without it.
 pub(crate) fn compile(target: DecompTarget, imports: Option<&Path>, file: &Path, probes: &[Probe]) -> Result<Stabs, String> {
     let directory = tempfile::Builder::new()
         .prefix("alchemy-camelotize-")
@@ -420,7 +398,6 @@ pub(crate) fn compile(target: DecompTarget, imports: Option<&Path>, file: &Path,
     }
 }
 
-/// The lines of the probe file a compiler error names.
 fn failed_lines(error: &str) -> Vec<usize> {
     let marker = format!("{PROBE}:");
     error

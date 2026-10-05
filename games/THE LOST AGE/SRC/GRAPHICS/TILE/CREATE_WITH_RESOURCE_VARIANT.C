@@ -47,8 +47,6 @@ void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct Battle
     }
 }
 
-/* Loads the icon tiles resource into a free entry and creates an icon
-   output from it; ☀️ passes the tiles' address where ⚓️ passes the resource. */
 s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
 {
     s32 slot;

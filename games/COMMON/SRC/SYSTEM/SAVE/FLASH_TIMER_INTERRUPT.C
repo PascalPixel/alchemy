@@ -1,15 +1,10 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 
-/* The flash driver's timer tick handler and the installer that arms it. */
-
 extern volatile u16 gFlashTimerCount;
 extern volatile u8 gFlashTimeoutFlag;
 extern volatile u8 gFlashTimerNum;
 extern volatile u16 *gFlashTimerReg;
 
-/* Count down one tick and raise the expiry flag at zero. Read the volatile
- * counter again after testing it; test the decremented value after storing
- * its low halfword without another counter read. */
 void FlashTimerIntr(void)
 {
     if (gFlashTimerCount != 0) {

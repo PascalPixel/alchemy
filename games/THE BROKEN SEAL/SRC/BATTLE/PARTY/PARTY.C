@@ -20,7 +20,6 @@
 #include "UI.H"
 #include "BATTLE_CALC.H"
 
-/* DMA3 fixed-source 32-bit fill of one freshly allocated block. */
 #define DMA_FILL32 0x85000000
 
 #define Dma3Fill(cell, dest, bytes)                                           \
@@ -32,8 +31,6 @@
 
 extern s32 gBattleRandomSeed;
 
-/* How the next battle begins (4 for a link battle), and the battle random
-   seed, each set as a statement of its own. */
 #define Battle_SetStart(mode)                                                 \
     do {                                                                      \
         gGameState.battle_start = (mode);                                     \
@@ -54,8 +51,6 @@ extern u8 gActorSpriteSlots[];
 extern u8 gCpuLoadDisplayEnabled;
 void BattlePresentation_UpdateCamera(void);
 void BattleActor_UpdateSpritePriorities(void);
-
-/* The relocated IWRAM block clear this owner reaches through __call_via_r3. */
 
 void Render_ResetTransformState(void);
 void GameFlag_SetBitFar(s32 id);
@@ -105,7 +100,6 @@ void Blend_WaitForTransition(void);
 void BattleParty_ResetActiveRuntimeFields(void);
 void Runtime_ReleaseHeapBlock10(void);
 
-/* Allocates battle work, plays the opening, and runs rounds to completion. */
 s32 Battle_RunEncounter(s32 enemy_group)
 {
     struct BattleCamera *camera;
@@ -133,7 +127,6 @@ s32 Battle_RunEncounter(s32 enemy_group)
     transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
     Runtime_AllocateBlock(11, 0x280);
     target = camera->pos;
-    /* __call_via_r3 -> the IWRAM block clear at 0x03000164. */
     /* FAKEMATCH: the setup's zero held in result, a global pseudo, so global allocation gives it r7 as listed. */
     result = 0;
     Iwram_ClearWords(owner_states, 0x7c8);
@@ -255,7 +248,6 @@ s32 Battle_RunEncounter(s32 enemy_group)
         transition->target_yaw = 0x2800;
         transition->frames = 60;
         UiWindow_DrawPartyStatusContentsFar(battle->party_status_mode);
-        /* __call_via_r3: clear the twenty action slots. */
         Iwram_ClearWords(battle->actions, 0x140);
         Resource_ResetEntry(battle->prompt_slot);
         if (GameFlag_IsSet(FLAG_AUTO_BATTLE) == 0) {
@@ -385,9 +377,6 @@ finished:
 
 s32 Party_CountActiveOwnersFar(void);
 
-/* Caps the active party at four owners, or three in the alternate battle mode,
- * optionally writes their identifiers with a 0xff terminator, marks each
- * selected battle unit with status 2, and returns the selected count. */
 s32 BattleParty_PrepareActiveOwners(u16 *owners)
 {
     s32 limit;
@@ -511,10 +500,6 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     return living_count;
 }
 
-/* Counts the units in the lists selected by groups, bit 0 for the
- * party and bit 1 for the enemies, skipping removed 254 entries.
- * When dst is given, the unit ids are also written there and terminated
- * with 255. */
 s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 {
     struct BattleSession *order;

@@ -1,10 +1,3 @@
-@ Ends a tied note: reads the optional key byte, then marks the first sounding
-@ channel of that key as releasing. This leaf saves r4 and r5 without lr
-@ (push {r4, r5} ... bx lr). Both approved compilers push lr whenever they
-@ save a register, and the game's -fcall-used-r4 route would not save r4 at
-@ all. Only the sequence command tables reach it. Every TBS and TLA edition
-@ has these bytes.
-@ credit: library — TBS/TLA common sound driver end-of-tie command routine
 .syntax unified
 	.thumb
 	.global MusicTrack_ReleaseKey

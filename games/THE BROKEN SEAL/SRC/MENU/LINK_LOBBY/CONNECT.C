@@ -1,7 +1,4 @@
 #include "RUNTIME_MEM.H"
-/* The party-record exchange with the other console: the parent sends
-   first and the child receives first; the received count is kept in flag
-   byte 0x3f0, and any failure resets the serial transfer. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -76,9 +73,6 @@ fail:
     return result;
 }
 
-/* The link lobby's connection: wait for the other console to answer (or
-   give up), walk the leader into the battle room, exchange the party
-   records and copy what arrived into the map cell buffer's second half. */
 s32 LinkLobby_RunConnectionSequence(void)
 {
     /* FAKEMATCH: the aggregate keeps the shared packet value in halfword mode. */
@@ -214,8 +208,6 @@ done:
     /* FAKEMATCH: the scene returns whatever the event end leaves in r0. */
     return ((s32 (*)(void))Engine_EventEnd)();
 }
-
-/* Handle battle applications and reopen the lobby attendant's dialogue. */
 
 s32 LinkLobby_RunBattleApplication(void)
 {

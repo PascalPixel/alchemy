@@ -6,8 +6,6 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-/* ☀️'s battle palette blend, its work in ⚓️'s heap block 32. */
-
 void BattlePalette_UpdateBlend(void);
 void BattleFx_BuildBuffer(s32 mode, struct BattleEffectBuffers *source, u16 *destination, s32 half);
 

@@ -1,5 +1,3 @@
-//! A minimal little-endian ELF32 reader: loaded section bytes by address and
-//! the symbol table, which is all a linked image needs to be disassembled.
 
 pub struct Section {
     pub address: u32,
@@ -10,7 +8,6 @@ pub struct Symbol {
     pub name: String,
     pub value: u32,
     pub size: u32,
-    /// STT_* in the low nibble of st_info.
     pub kind: u8,
     pub section: u16,
 }
@@ -104,7 +101,6 @@ impl Elf {
         Ok(Elf { sections, symbols })
     }
 
-    /// The loaded section holding `address`, and the offset into it.
     pub(crate) fn section_at(&self, address: u32) -> Option<(&Section, usize)> {
         self.sections.iter().find_map(|s| {
             (address >= s.address && address - s.address < s.bytes.len() as u32)

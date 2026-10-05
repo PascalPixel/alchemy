@@ -1,18 +1,9 @@
-//! `make progress`: DONE from each game's six verified builds together,
-//! measured by [`super::calcrom`]: the English build gives the bytes, and
-//! every edition earns those of the credited objects its own build links.
 use super::calcrom::Game;
 use super::{commas, floor_percent, measure_both};
 
 const USAGE: &str = "usage: alchemy check progress\n\
 Reports each game's DONE in all six of its editions together, in its parts, then each edition's share.";
 
-/// DONE bytes: shared permanent assembly, shared exact C, the game's own
-/// permanent assembly (with the compiler library) and the game's own exact C,
-/// out of executable bytes. A game's published DONE adds up its six editions:
-/// each edition's bytes are the English build's bytes of the credited objects
-/// that edition links, and `executable` is six times the English build's
-/// executable bytes. The Broken Seal is ☀️ and The Lost Age ⚓️.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct GameDone {
     pub common_asm: i64,
@@ -20,12 +11,9 @@ pub struct GameDone {
     pub game_asm: i64,
     pub game_c: i64,
     pub executable: i64,
-    /// Whole 8-byte far-call stubs (veneers), counted within the assembly.
     pub veneers: i64,
 }
 impl GameDone {
-    /// DONE in its parts, in percentage points of the executable bytes: C,
-    /// assembly without the stubs, and the 8-byte stubs.
     pub fn parts(&self) -> (f64, f64, f64) {
         (
             floor_percent(self.common_c + self.game_c, self.executable),
@@ -54,8 +42,6 @@ impl std::ops::AddAssign for GameDone {
     }
 }
 
-/// One game's DONE in all six editions with its parts and what the English
-/// build has not yet in C, or why it is pending.
 fn done_line(mark: &str, game: &str, status: &Result<Game, String>) -> String {
     match status {
         Ok(measured) => {
@@ -78,8 +64,6 @@ fn done_line(mark: &str, game: &str, status: &Result<Game, String>) -> String {
     }
 }
 
-/// One short line per edition: its own share of the English build's
-/// executable bytes, so a lagging edition shows.
 fn edition_lines(mark: &str, status: &Result<Game, String>) -> Vec<String> {
     let Ok(game) = status else {
         return Vec::new();

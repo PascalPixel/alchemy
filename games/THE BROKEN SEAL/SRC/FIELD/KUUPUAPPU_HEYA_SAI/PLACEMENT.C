@@ -1,7 +1,3 @@
-/*
- * Overlay resource_386: actor placement, per-actor dialogue lines and the
- * scene initialiser that installs the per-frame task.
- */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -25,13 +21,11 @@ extern u8 MsgKuupuappuWeHaventBeenGettingMany[];
 extern u8 MsgKuupuappuWowHaveManyThingsArent[];
 
 enum {
-    /* Message 0x182 + 231. */
     ITEM_BONE = 231
 };
 
 extern u8 *gWork;
 
-/* The scene's tables, laid out after the code. */
 extern u8 Placement_Scripts[];
 extern u8 Placement_Messages[];
 extern u8 Placement_Actors[];
@@ -60,7 +54,6 @@ u8 *SceneData_GetScriptTable(void)
     return Placement_Scripts;
 }
 
-/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -324,11 +317,6 @@ u8 *SceneData_GetEffectTable(void)
     return Placement_Effects;
 }
 
-/*
- * Overlay entry point: selects the scene from the global block and runs the
- * matching setup. It returns a constant zero status. The entrance the party
- * came in by selects the scene.
- */
 s32 FieldScene_InitSceneStateByStep(void)
 {
     s32 scene;
@@ -341,23 +329,19 @@ s32 FieldScene_InitSceneStateByStep(void)
         s32 fifth = 4;
         s32 sixth = 3;
 
-
         Engine_MapCopyCellsTo(0, 120, 8, 67, fifth, sixth);
         zero = 0;
         Object_GetById(8)->motion_flags = zero;
         Object_GetById(8)->y.fixed = zero;
         Object_GetById(8)->terrain_height = zero;
     } else if (scene == 7 || scene == 11) {
-        /* Built by shifts: 142 << 18, 128 << 13, 168 << 18. */
         OverlayObject_InitObject22(0xe7, 0x02380000, 0x00100000, 0x02a00000);
-        /* 200 << 4 is the period. */
         Engine_TaskAddCallback(SceneState_CheckPositionWindow, 0xc80);
     }
 
     return 0;
 }
 
-/* Creates object 22 where given and shows the item's icon on it. */
 void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
     u8 *o;

@@ -17,8 +17,6 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 battle_value);
 s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 void BattleEffect_SpawnBurstParticleField(void);
 
-/* battle/effects/scene_transition/reset.c */
-
 typedef struct {
     u8  reserved000[0xcb8];
     s16 active;
@@ -40,16 +38,13 @@ void Audio_PlayCue(s32 no);
 void FieldEffect_WatchLeaderDistance(void);
 extern struct BattleFxScene *gEffectWork;
 
-/* battle/effects/burst_particles/run_main_object.c */
 void Object_SetMode(void *, s32);
 void BattleFx_PrepareBufferInterpolation(void);
 
-/* battle/effects/burst_particles/run.c */
 struct BurstParticleVector {
     s32 values[3];
 };
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
 extern const s32 BattleFx_BurstParticleObjectScript[];
@@ -73,14 +68,12 @@ struct BurstParticleVisualGroup {
     struct BurstParticleVisual child;
 };
 
-
 void BattleEffect_InitializeSharedScene(void);
 void Animation_ApplyChildValuesFar(struct FieldActor *, s32);
 u32 Random16(void);
 void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
-
 
 struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(
@@ -184,10 +177,6 @@ void BattleFx_RunBurstParticles(void)
     BattleFx_PrepareBufferInterpolation();
 }
 
-/*
- * Spawns twenty-four burst particles around the effect target, two frames
- * apart, each drifting outwards from the scene centre.
- */
 void BattleEffect_SpawnBurstParticleField(void)
 {
     struct BattleFxScene *state;
@@ -257,10 +246,6 @@ void BattleEffect_SpawnBurstParticleField(void)
     WaitFrames(8);
 }
 
-/* Links the scene child to the main object, spawns two mode-3 item-break
- * anchors on either side of the scene position, sends them outward, then
- * raises both anchors and the child together until the child has risen
- * 0x200000 before finishing both bursts. */
 void BattleEffect_RunTargetedItemBreak(void)
 {
     struct BattleFxScene *scene;

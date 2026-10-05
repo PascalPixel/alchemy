@@ -3,11 +3,6 @@
 #include "SYSTEM.H"
 #include "IRQ.H"
 
-/* Allocates the save workspace, waits for the flash chip to identify itself
-   (eight tries, a frame apart; returns 1 if it never does), then reads all
-   sixteen slots: a slot with the signature, a record id below sixteen and a
-   good checksum is marked occupied, and of two slots holding the same record
-   only the one with the later sequence number stays. */
 s32 SaveState_InitializeWorkspace(void)
 {
     struct SaveWorkspace *work;
@@ -52,8 +47,6 @@ s32 SaveState_InitializeWorkspace(void)
         if (status != 0)
             continue;
 
-        /* The checksum was good, so status is zero: it is the counter of
-           the search through the slots read so far. */
         work->occupied[index] = 1;
         work->record_id[index] = record;
         if (status < index) {

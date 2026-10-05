@@ -8,7 +8,6 @@ struct BattleAnimationState {
     s16 *value_28;
 };
 
-/* Position and movement values are 16.16 fixed point. */
 struct ObjectRuntime {
     s32 *script;
     s16 step;
@@ -17,13 +16,10 @@ struct ObjectRuntime {
     s32 y;
     s32 z;
     s32 terrain_height;
-    /* The sprite's scale, 0x10000 for full size. */
     s32 scale_x;
     s32 scale_y;
-    /* The collision radius, in pixels. */
     u16 radius;
     u8 terrain_id;
-    /* Bit 0 keeps the sprite priority automatic. */
     u8 priority_flags;
     s32 velocity_x;
     s32 velocity_y;
@@ -33,20 +29,15 @@ struct ObjectRuntime {
     s32 target_x;
     s32 target_y;
     s32 target_z;
-    /* What a landing keeps of the fall speed, and what pulls the object
-       down each frame while it falls. */
     s32 bounce;
     s32 gravity;
     s32 unknown_4c;
     void *animation;
     u8 animation_kind;
-    /* Bit 0 keeps the object on the terrain height, bit 1 lets it fall. */
     u8 motion_flags;
     u8 unknown_56;
     u8 unknown_57;
-    /* Set to stop the object on its target, as ☀️'s motion object does. */
     u8 snap_to_target;
-    /* Bit 0 lets other objects collide with this one. */
     u8 collision_flags;
     u8 action_flags;
     u8 movement_state;
@@ -55,7 +46,6 @@ struct ObjectRuntime {
     s16 action;
     u16 unknown_66;
     struct ObjectRuntime *linked_object;
-    /* Runs every frame in place of the script, as ☀️'s update does. */
     void (*update)(void);
     u8 unknown_70[0x10];
 };

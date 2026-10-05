@@ -1,10 +1,3 @@
-@ The seven commands the dispatcher in BIT_DISPATCH.S jumps to. They share the
-@ decoder's registers (source r0, bit count r2, bit word r3, value r5 and the
-@ constant 7 in fp), refill r3 from r0 when r2 runs out and return with
-@ mov pc, lr or movpl pc, lr. Updating r5 and reading fp without saving them,
-@ and negating with rsbcs on the carry out of ands ip, ip, r3, lsr #4, are
-@ beyond both approved compilers. Every TBS and TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 .text
 	.arm
@@ -90,6 +83,5 @@ Func_080b5344:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-@ The end of the tile bit decoder block that begins at DECODE.S.
 	.global BitDecoder_End
 BitDecoder_End:

@@ -1,14 +1,11 @@
 #include "FIELDOBJ.H"
-/* Overlay object setup. */
 #include "CHOJO.H"
-
 
 void VinasuChojo_SetSpritePriority(struct FieldActor *actor, u32 value)
 {
     actor->sprite->priority = value;
 }
 
-/* Create a scene object with sprite priority zero. */
 void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *ret = Engine_ObjectCreate(kind, x, y, z);

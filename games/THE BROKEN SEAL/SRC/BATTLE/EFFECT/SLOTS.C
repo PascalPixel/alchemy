@@ -23,7 +23,6 @@ void Audio_PlayCue(s32);
 void BattleFx_UpdateEffect16State(void);
 void BattleFx_UpdatePairedArcSpawner(void);
 
-/* battle/effects/runtime/update_slot.c */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
@@ -36,9 +35,6 @@ u32 Random16(void);
 
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
 
-/* Battle effect 16, the paired arc: load the spark tiles, start the arc
-   spawner, pulse the caster's glow twenty times, then run the state
-   callback and restore the caster. */
 void RunBattleEffect16(void)
 {
     struct BattleFxScene *scene;
@@ -114,9 +110,6 @@ void EffectSlot_Update(struct EffectSlot *effect)
     }
 }
 
-/* Draws an effect object at its position, scaled by its own and its
-   sprite's factors, when it lies near the screen; flag 4 mirrors it about
-   the floor line. */
 void BattleFx_DrawScaledObject(struct EffectSlot *object)
 {
     struct AnimationObject *sprite;
@@ -138,9 +131,6 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object)
         Object_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 
-/* Steer an effect slot toward its target: snap to it once within 8.0,
-   otherwise turn by at most the slot's turn step, accelerate up to
-   the maximum speed and move along the heading. */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect)
 {
     s32 dx;
@@ -227,8 +217,6 @@ void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)
     effect->state = 0;
 }
 
-/* Effect slot: clear the slot, attach a new object of `kind`, place it at
-   x, z with unit scale and acceleration, and start it active in mode 1. */
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
 {
     s32 unit;

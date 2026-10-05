@@ -15,7 +15,6 @@ extern u8 UiText_DrawGlyphCodeSize[];
 
 typedef s32 (*GlyphRoutine)(struct UiWindow *, s32, s32, s32, u8 *);
 
-/* The sprite a glyph output carries, from the output's sixteenth byte. */
 struct GlyphSprite {
     u32 unknown_00;
     struct {
@@ -30,10 +29,6 @@ struct GlyphSprite {
 
 #define OAM(output) ((struct GlyphSprite *)(output)->unknown_10)
 
-/* Draws one character at (x, y) of a window and returns its width. Tile
-   windows run the ARM glyph routine from a RAM copy (the Japanese one draws
-   a voicing mark after the kana); others take a sprite output, or the
-   blinking cursor in mode 1. */
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
     s32 x, s32 y, s32 mode)
 {
@@ -175,9 +170,6 @@ done:
     return width;
 }
 
-/* The glyph renderer. The Japanese one also joins a kana voicing mark to the
-   kana before it, and draws its sprites two pixels lower. */
-
 struct SpriteAttr {
     u8 unk0[4];
     u8 y;
@@ -187,8 +179,6 @@ struct SpriteAttr {
     u32 unk8;
 };
 
-/* Glyph mode interprets the renderer's embedded words as OAM attributes.
-   This is a wire view of the existing output, not another allocation owner. */
 struct GlyphSpriteOutput {
     s32 link_word;
     u8 kind;
@@ -220,8 +210,6 @@ LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Table, struct GlyphSpriteOutput, attr.unk8
 
 #if EDITION_INTERNATIONAL
 
-/* Places a glyph: mode 1 queues it as a sprite at the window cell, other
-   modes write tiles up to 0xff into the window tilemap. */
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
     void *work = gWindowWork[0];
@@ -274,8 +262,6 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 
 #else
 
-/* Places a glyph: mode 1 queues it as a sprite at the window cell, other
-   modes write tiles up to 0xff into the window tilemap. */
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
     /* FAKEMATCH: the game keeps the work block in r12 for the tile store and a copy in r8 for the rest; as one plain variable it lives in r8 alone. */
@@ -320,8 +306,6 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
             out->active = mode;
         RenderOutput_AppendToList(&win->output, (struct RenderOutput *)out);
     } else if (tile <= 0xff) {
-        /* The voicing marks 0xde and 0xdf go into the cell before them,
-           joined to the kana tile 0x0e or 0x11 already there. */
         if (tile - 0xde <= 1) {
             u32 line;
 

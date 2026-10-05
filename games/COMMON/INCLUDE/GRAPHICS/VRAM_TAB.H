@@ -15,7 +15,6 @@ enum VramBlockLimits {
 
 extern u8 ResourceBlockOwners[VRAM_BLOCK_COUNT];
 
-/* A resource cache record keeps its load size/state and VRAM byte offset. */
 struct VramBlockCacheEntry {
     u16 size;
     u16 offset;

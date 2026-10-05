@@ -1,8 +1,6 @@
 #include "OBJECT_RUNTIME.H"
 #include "FIELD_EVENT.H"
 
-/* Centres an object on its 16-pixel column, plays an action, then moves
-   it by z_offset; offset 0x0a is the whole-pixel half of x. */
 void ObjectMotion_CenterOnColumn(u32 object_id, s32 action, s32 z_offset)
 {
     struct ObjectRuntime *object;

@@ -1,10 +1,3 @@
-@ Command-byte setters that save the return address in ip (mov ip, lr ...
-@ bx ip) and store the reader's r3 result, a return register no C call has.
-@ These 40 bytes equal TBS SOUND/DRIVER/COMMAND_BYTE_SETTERS.S (0x080fa1d4)
-@ byte for byte.
-@ The zero halfwords of alignment at 0x081c1e82 and 0x081c1e96 never run and
-@ carry no credit.
-@ credit: library — TBS/TLA common sound command-byte reader and setters (setters)
 .syntax unified
 	.thumb
 	.global MusicTrack_SetLfoSpeedFromCommand

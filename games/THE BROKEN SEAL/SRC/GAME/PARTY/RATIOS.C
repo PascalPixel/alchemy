@@ -7,13 +7,8 @@
 #include "FIXED_MATH.H"
 #include "CHARACTER.H"
 
-/* party/set_flag32_and_refresh_members.c */
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-
-/* party/apply_state_preset.c */
-
-/* owner/Owner_RefreshActiveRatios.c */
 
 extern const u8 Character_ElementGroupTable[];
 void *Owner_GetState(s32);

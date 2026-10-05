@@ -21,11 +21,6 @@ extern u8 KorashiamuIriguchi_ActionTable7[];
 extern u8 KorashiamuIriguchi_ActionTable8[];
 extern u8 KorashiamuIriguchi_ActionTable9[];
 
-/* Runs only while flag 0x962 is set: resets the battle runtime, stages
- * presentation actors 17 to 20, places party actors 0 to 3 (taking optional
- * party record positions), then plays one of three closing sequences chosen by
- * two queries. The later two sequences first skip a message; every sequence
- * closes the screen over 40 frames. */
 void Scene_RunBranchingActorPresentation(void)
 {
     s32 record;
@@ -235,8 +230,6 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_EventEnd();
 }
 
-/* Colosso entrance: once flag 0x234 is set, gather the competitors, let the
- * player answer the entry question and send everyone into the arena. */
 void KorashiamuIriguchi_RunGatherScene(void)
 {
     struct FieldActor *actor;

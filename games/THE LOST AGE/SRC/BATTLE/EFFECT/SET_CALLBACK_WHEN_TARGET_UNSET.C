@@ -4,8 +4,6 @@
 
 extern const u8 BattleFx_UntargetedObjectScript[];
 
-/* ☀️'s: an object whose move target is unset in all three axes starts the
-   untargeted script. */
 void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target)
 {
     s32 tx;

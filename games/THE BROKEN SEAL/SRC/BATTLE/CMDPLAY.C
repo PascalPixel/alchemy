@@ -27,15 +27,12 @@ s32 BattleTarget_SelectForAction(s32 actor_id, struct BattleAction *action);
 s32 BattleTarget_SelectRandomPosition(s32 side);
 extern u8 BattleCommand_SelectionWeights[3][8];
 
-/* Low bits of the combatant word copied from its enemy definition. */
 struct BattleAutomaticState {
     unsigned initialized : 1;
     unsigned selection : 3;
     unsigned remaining : 28;
 };
 
-/* Choose a legal automatic command using the class strategy, availability
- * bits and candidate action ids. The weighted selector shares this frame. */
 s32 BattleCommand_SelectAutomatic(
     struct BattleActionRecord *request,
     s32 retry)
@@ -277,13 +274,10 @@ done:
     return;
 }
 
-/* Call the routine supplied in r0. */
 void _call_via_r0(u32 routine);
 
 void BattleEvent_Playback(void);
 
-/* Writes three empty transfers to the DMA3 registers, then runs the hook
-   stored at 0x030000c4. */
 void Dma_StopAllThenRunHook(void)
 {
     Dma_Set(0, 0, 0x84000000, REG_DMA3);
@@ -343,16 +337,13 @@ u32 Summon_GetLayoutKind(s32 class_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
 void render_animated_tile_frameFar(u8 *record, u32 frame);
 
-/* Plays the queued battle events one frame at a time: the callback the event
- * runtime schedules while its phase is not 0 or 4. */
 void BattleEvent_Playback(void)
 {
-    u16 selection[8]; /* 0xff-terminated unit list for the panel highlight */
+    u16 selection[8];
     struct AnimationObject *records[4];
     struct BattleSession *work = gBattleWork;
     struct BattleEventState *state = &work->events;
 
-    /* Blanks the tiles a motion record's sprite occupies. */
     void BattleEvent_ClearRecordTiles(struct AnimationObject *record, s32 value)
     {
         Iwram_ClearWords((void *)(0x06010000 + gVramBlockCache[record->slot].offset),

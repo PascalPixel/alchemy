@@ -1,13 +1,3 @@
-@ Strided copy kernel, copied and run as one 128-byte unit (size and source
-@ {0x80, 0x080217a4} in its loader's literal pool at 0x08022c70). Behind a
-@ 4-byte Thumb entry (bx pc) the ARM body returns before saving anything
-@ when either dimension rounds down to zero (bics; bicsne; bxeq lr), saves
-@ r5-fp without lr and subtracts with sub r0, r0, r1; GCC saves lr with any
-@ register and writes register subtraction as rsb. After that entry its
-@ 124-byte body equals TBS GRAPHICS/TILE/COPY_STRIDED.S (0x0800a418) byte for
-@ byte.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, strided copy kernel
 .syntax unified
 	.thumb
 	.global Render_CopyStridedCode

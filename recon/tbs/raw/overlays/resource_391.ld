@@ -1,7 +1,3 @@
-/* resource_391: its entry veneers, its maintained code and the compiler
-   library linked in place, as pret links objects and libgcc members in ROM
-   order. Its import veneers follow its code, and its work follows its
-   loaded image. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
@@ -16,7 +12,6 @@ SECTIONS
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_391_overlay.o"(.rodata.x0200ad68)
     }
-    /* The overlay's own work, past its loaded image. */
     .bss (NOLOAD) :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/FALLING_EFFECT.o"(.bss)

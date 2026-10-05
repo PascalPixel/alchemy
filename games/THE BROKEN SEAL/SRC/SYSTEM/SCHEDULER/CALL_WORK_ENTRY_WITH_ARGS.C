@@ -3,8 +3,6 @@
 
 extern u8 Sound_CommandTable[];
 
-/* The veneer takes the target in r2 and its arguments in r0/r1.
- * No result is consumed. */
 void _call_via_r2(s32 arg0, s32 arg1, s32 target);
 
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)

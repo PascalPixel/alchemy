@@ -4,8 +4,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Sets or clears bit 12 of the window tilemap's cells across a rectangle of
-   a window's interior, clipped to the screen. */
 void Render_SetTilemapFlagRect(
     const struct UiWindow *object, s32 x, s32 y, s32 width, s32 height, u32 field)
 {
@@ -47,8 +45,6 @@ void Render_SetTilemapFlagRect(
     }
 }
 
-/* Copies object palette bank 0 over background bank 14, then copies object
-   colour 4 of bank 0 into background bank 14's entry 14. */
 void Palette_CopyObjectBankToBackground14(void)
 {
     Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);

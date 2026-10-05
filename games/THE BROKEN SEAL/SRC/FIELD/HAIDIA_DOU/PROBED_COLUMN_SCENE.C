@@ -11,9 +11,6 @@ void Engine_GameFlagSet();
 void Engine_EventEnd();
 void Audio_PlayCue();
 
-/* Haidia Cave: when the probe lands in map column 17, lower the probed actor
- * into place, fill the cleared grid rectangles, set flag 0x203 and play cue
- * 240. */
 void HaidiaDou_RunProbedColumnScene(void)
 {
     struct FieldActor *record;

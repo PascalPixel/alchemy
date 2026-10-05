@@ -13,7 +13,6 @@ void GameFlag_SetBit(s32 flag);
 void Func_080cee80(u32 object_id);
 void Func_080e70f8(u32 object_id);
 
-/* The shape bits of the object's sprite, 0 when it has none. */
 s32 Object_GetSpriteShape(u32 object_id)
 {
     struct ObjectRuntime *object;
@@ -29,9 +28,6 @@ s32 Object_GetSpriteShape(u32 object_id)
     return shape;
 }
 
-/* Mode 1 moves the object to z 0. Mode 2 raises the flag, gives an object
-   away from the origin its square sprite back, returns it to its home
-   tile and settles it there. */
 void Object_ReturnHome(s32 mode, u32 object_id, s32 flag)
 {
     struct ScriptObjectRuntime *object;

@@ -10,18 +10,13 @@
 #include "IO_REG.H"
 #include "FIXED_MATH.H"
 
-/* camera/scene/set_angle_parameters.c */
-
 extern const u8 Resource_DecodeHalfwordLz[];
 
-/* Linker sizes determine the stack allocation for the copied ARM entries. */
 extern u8 Resource_DecompressHalfwordsCodeSize[];
 extern const u8 Resource_DecodeType01Arm[];
 extern const u8 Resource_Decode2[];
 extern const u8 Resource_DecodeByteLzArm[];
 
-/* Each stream decoder is ARM code that runs from a heap copy of itself; the
-   copy lengths are link-time symbols. */
 extern u8 Resource_DecodeType01CodeSize[];
 extern u8 Resource_Decode2CodeSize[];
 extern u8 Resource_DecodeByteLzCodeSize[];
@@ -35,7 +30,6 @@ extern const u8 ColorBuffer_DarkenPartialKernel[];
 extern const u8 ColorBuffer_ScaleNonzeroThreeQuartersKernel[];
 extern const u8 ColorBuffer_HalveNonzeroKernel[];
 
-/* Linker sizes determine the stack allocation for the copied ARM entries. */
 extern u8 ColorBuffer_BackupAndBrightenCodeSize[];
 extern u8 ColorBuffer_BackupAndDarkenCodeSize[];
 extern u8 ColorBuffer_BackupAndScaleThreeQuartersCodeSize[];
@@ -45,13 +39,11 @@ extern u8 ColorBuffer_BackupAndDarkenPartialCodeSize[];
 extern u8 ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize[];
 extern u8 ColorBuffer_BackupAndHalveNonzeroCodeSize[];
 
-/* graphics/prepare_transfer_in_iwram_work.c */
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target)
 {
     Graphics_PrepareTransfer(eye, target, gTransform);
 }
 
-/* graphics/prepare_transfer_and_run.c */
 void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target)
 {
     s32 work[12];
@@ -60,7 +52,6 @@ void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target)
     Iwram_TransformMatrix(work);
 }
 
-/* camera/scene/set_angle_parameters.c */
 void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
 {
     s32 half;
@@ -78,7 +69,6 @@ void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
     gProjection.far = param2;
 }
 
-/* camera/scene/store_parameters.c */
 void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2)
 {
     struct Projection *work = &gProjection;
@@ -88,9 +78,6 @@ void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2)
     work->far = value2;
 }
 
-/* Transforms point through the IWRAM matrix routine and projects it to
-   screen x, y and depth; returns the perspective scale, or 0 when the depth
-   lies outside the near and far planes. */
 s32 Render_ProjectPoint(s32 *point, s32 *screen)
 {
     struct Projection *projection;
@@ -126,7 +113,6 @@ void Resource_DecompressHalfwords(const void *source, void *destination)
     ((void (*)(const void *, void *))routine)(source, destination);
 }
 
-/* Decodes stream types 0 and 1 (DECODE_01.S). */
 s32 Resource_DecodeType01(const void *source, void *destination)
 {
     s32 (*routine)(const void *, void *);
@@ -147,7 +133,6 @@ s32 Resource_DecodeType01(const void *source, void *destination)
     return result;
 }
 
-/* Decodes stream type 2 (DECODE_2.S). */
 s32 Resource_DecodeType2(const void *source, void *destination)
 {
     s32 (*routine)(const void *, void *);
@@ -168,7 +153,6 @@ s32 Resource_DecodeType2(const void *source, void *destination)
     return result;
 }
 
-/* Decodes byte LZ streams (DECODE_BYTE_LZ.S). */
 s32 Resource_DecodeByteLz(const void *source, void *destination)
 {
     s32 (*routine)(const void *, void *);
@@ -221,7 +205,6 @@ void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes)
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
-/* Words containing four maximum-intensity bytes are left untouched. */
 void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndBrightenPartialCodeSize >> 2;
@@ -230,7 +213,6 @@ void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup, u3
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
-/* Zero words are left untouched. */
 void ColorBuffer_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndDarkenPartialCodeSize >> 2;

@@ -8,9 +8,6 @@ void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
 void Map_ApplyWorkOriginAndSpanFar(void);
 void WaitFrames(s32);
 
-/* Points the map's origin at the camera's view centre and sets that centre
-   to follow an object; unless flag is set it also jumps there at once and,
-   outside party control mode 3, settles the map on it. */
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 {
     struct ObjectRuntime *obj;

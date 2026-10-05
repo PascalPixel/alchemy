@@ -5,7 +5,6 @@ void Object_SetMoveTarget(void *, s32, s32, s32);
 
 s32 Script_ApplyLocalOffsetPosition(struct ObjectRuntime *object)
 {
-    /* This command uses the original unwritten stack offsets. */
     s32 offset[3];
 
     Object_SetMoveTarget(

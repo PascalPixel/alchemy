@@ -72,7 +72,6 @@ void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 void Ui_FillBank15PaletteGrey(void);
 
-/* Drain effect objects, restore the scene position, and release effect data. */
 void BattleEffect_CleanupSceneObjects(void)
 {
     struct BattleFxScene **scene_cell;
@@ -225,10 +224,6 @@ void BattleFx_PrepareBufferInterpolation(void)
     BattleFx_StartBufferInterpolation(8);
 }
 
-/* Camera: turn a world position into screen coordinates in place. In the
-   projected camera mode (3) the point goes through the projection; otherwise
-   it is taken relative to the camera's whole-unit x and z, with height folded
-   into z. Either way the height is cleared. */
 void Camera_WorldToScreen(struct EffectVector *position)
 {
     struct EventRuntime **data = (struct EventRuntime **)&Data_03001ebc;
@@ -252,9 +247,6 @@ void Camera_WorldToScreen(struct EffectVector *position)
     }
 }
 
-/* Allocates and clears the 0x298-byte transition work, tints the target
-   buffer with the current hue, records the origin and starts the
-   transition task. */
 void RunSceneTransitionEffect(s32 x, s32 y)
 {
     u8 *work;

@@ -104,13 +104,10 @@ u8 *SceneData_GetMessageTable(void)
     return Placement_Messages;
 }
 
-/* The actors placed in the palace. Taking the reward changes four entries
-   of the palace's table, which is prepared first. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     u8 *p;
 
-    /* A signed halfword read. */
     if (gGameState.scene == (s32)&SceneId_BiribinoKyuden) {
         p = gBiribinoKyudenPlacements;
         FieldScene_PrepareActors(p);
@@ -129,7 +126,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gBiribinoKyudenPlacementsOther;
 }
 
-/* What the palace answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_BiribinoKyuden) {
@@ -138,7 +134,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gBiribinoKyudenEventsOther;
 }
 
-/* Actor 10 in the palace asks whether the party will go to Kolima Forest. */
 void Kyuden_AskAboutKolima(void)
 {
     Engine_EventBegin();
@@ -409,9 +404,6 @@ void FieldScene_RunPalaceFarewell(void)
     }
 }
 
-/* McCoy's Palace entry: record the arrival, clear two layer flags and, by
- * the story flags and the entrance, run the matching scene or restore the
- * room (the four guards at row 0x2d8, the opened doorway cells). */
 s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 {
     u32 i;
@@ -497,8 +489,6 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
     return 0;
 }
 
-/* Lord McCoy's audience: the party offers to go to Kolima Forest, and he
- * weighs whether they are up to the job. */
 void Kyuden_RunKolimaRequest(void)
 {
     struct FieldActor *record;
@@ -1264,7 +1254,6 @@ void RunEventScript02(void)
     Engine_EventEnd();
 }
 
-/* Pans the camera over the palace, lines up four actors in a row and runs their scripted beat. */
 void BiribinoKyuden_RunActorRowScene(void)
 {
     u16 zero;

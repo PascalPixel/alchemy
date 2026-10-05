@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-/* GameFlag_Test over another flag array: whether bit flag of bytes is set. */
 s32 FlagBits_Test(u8 *bytes, s32 flag)
 {
     s32 bit;

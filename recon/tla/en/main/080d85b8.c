@@ -1,6 +1,3 @@
-/* Near miss: score 240: four reordered instructions around the particle's
-   start offsets. ⚓️ reads the current owner from gPartyState and the effect
-   slot from the shared EFFECT_SLOT.H. */
 #include "FIXED_MATH.H"
 #include "EFFECT_SLOT.H"
 #include "SYSTEM.H"

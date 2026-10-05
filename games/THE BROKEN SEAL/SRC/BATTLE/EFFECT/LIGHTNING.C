@@ -24,11 +24,8 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 extern u16 ParticleStreams_CellOffsets[];
-/* By variant: how many sparks a pillar throws, and how long it shakes. */
 extern u16 LightningPillar_Sparks[];
-/* By side, seven columns each: where each pillar strikes. */
 extern u8 LightningPillar_Columns[];
-/* By variant: how many pillars strike. */
 extern u8 LightningPillar_Counts[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
@@ -38,13 +35,6 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
-/*
- * Pillars of lightning strike one column after another, eight frames apart.
- * Each pillar flashes the canvas, shows its two cells for three frames,
- * throws sparks that bounce along the ground, and knocks the affected units.
- * The variant picks how many pillars strike; the strongest also scrolls the
- * camera toward the struck side for its first 64 frames.
- */
 void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 {
     DrawRectangle draw[2];

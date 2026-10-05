@@ -1,11 +1,6 @@
 #include "TASK.H"
 #include "CALL.H"
 
-/*
- * The mode task's per-frame routine is installed as a callback.  The branch
- * chain picks one of five mode records by mode, consulting param only when
- * mode is 3.  The stores that follow reset the rest of the task's state.
- */
 void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 {
     s32 handler;

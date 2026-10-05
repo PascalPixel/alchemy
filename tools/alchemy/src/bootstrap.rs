@@ -1,4 +1,3 @@
-//! Installed dependencies survive output cleanup; imports never approve hashes.
 use crate::compiler::{
     bundle::validate_installation,
     routing::{binutils_prefix, bundle, root},
@@ -234,8 +233,6 @@ fn build_from_sources() -> Result<(), String> {
     })
 }
 
-/// Build GNU binutils for `arm-none-eabi` natively when no valid installation
-/// exists; a present but invalid installation is never replaced silently.
 fn ensure_binutils() -> Result<(), String> {
     let prefix = binutils_prefix();
     if validate_binutils(&prefix).is_ok() {
@@ -336,8 +333,6 @@ fn build_binutils(prefix: &Path) -> Result<(), String> {
             fs::remove_dir_all(prefix).map_err(|e| e.to_string())?;
         }
         installed?;
-        // Extracted third-party sources carry their own documents; keep only
-        // the verified archive under out/.
         for directory in [&source, &objects] {
             fs::remove_dir_all(directory).map_err(|e| e.to_string())?;
         }
@@ -345,8 +340,6 @@ fn build_binutils(prefix: &Path) -> Result<(), String> {
     })
 }
 
-/// Every required tool reports the pinned version and assembles with the
-/// historical soft-float flags the production build uses.
 fn validate_binutils(prefix: &Path) -> Result<(), String> {
     let tool = |name: &str| prefix.join("bin").join(format!("arm-none-eabi-{name}"));
     for name in MODERN_BINUTILS_TOOLS {
@@ -423,8 +416,6 @@ fn install(
         .map_err(|e| e.to_string())?;
     }
     validate(stage.path())?;
-    // Complete a partial installation only when every existing compiler is
-    // identical to the admitted bundle. Existing executables are preserved.
     if destination.exists() {
         let mut missing = Vec::new();
         for name in FILES {

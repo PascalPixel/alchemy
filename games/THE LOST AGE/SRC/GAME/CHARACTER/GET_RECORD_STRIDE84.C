@@ -6,15 +6,11 @@ s32 Owner_DetermineClass(s32 class_id, u32 *djinn, s32 item);
 void Owner_UpdateClassActions(s32 owner_no);
 void Owner_CalculateBaseElements(s32 owner_no, struct BattleElementStats *elements);
 
-/* A class's row of the class table. */
 struct ClassDefinition *Owner_GetRecordStride84(s32 class_id)
 {
     return &Class_DefinitionTable[class_id];
 }
 
-/* Recomputes what an owner's class, Djinn and equipment decide: the class
-   (⚓️ keeps its halfword where enemies keep their id), the class actions
-   and the elemental levels. */
 void Owner_RefreshDerivedData(s32 owner_no)
 {
     struct BattleUnit *owner = Owner_GetState(owner_no);

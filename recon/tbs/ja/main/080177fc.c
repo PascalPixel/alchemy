@@ -1,27 +1,3 @@
-/* 2026-10-01: the Japanese UiText_RenderGlyphPair, at 080177fc in the
-   Japanese ROM, for games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/
-   RENDER_GLYPH_PAIR.C (compile it with the Japanese edition macro). It
-   draws a 26-byte kana glyph, or past code 0xff a 24-byte kanji ten pixels
-   wide, and lays the voicing mark its top two bits name over the cells
-   above-left of it; the two Japanese tables it reads are named here
-   UiText_MarkGlyphCodes (080345e0) and UiText_KanjiGlyphs (08033b30). Every
-   instruction lines up but two orders: the reference stores the out pointer
-   before it loads gWindowWork's address, and on each path that draws the
-   mark it computes buf + 7 as the call's argument and copies it into r5 for
-   the packing loop, where this build computes r5 first and copies it into
-   the argument. alchemy permute (--target tbs-ja, listing made from the
-   Japanese ROM) took the score from 510 to 455 in four minutes (7
-   register-only, 2 reordered; the 15 operand differences are the listing's
-   absolute call targets) by indexing the mark table through pointer
-   arithmetic, and found no match.
-   2026-10-01, later: with the code taken as unsigned and buf + 7 assigned to
-   the loop's start inside each mark call (tagged below), the packing loop's
-   register order matches, leaving one order: whether the out pointer's
-   spill or gWindowWork's load comes first. Indexing the mark table through
-   pointer arithmetic fixes that order but swaps the ldrh base and index;
-   every other form tried keeps one of the two. alchemy permute ran another
-   eight minutes from these forms (best 305 = 1 register-only plus the 15
-   operand differences of the listing's absolute call targets). */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "TBS_EDITION.H"
@@ -41,10 +17,6 @@ extern u8 UiText_SecondGlyphs[];
 extern const u16 UiText_MarkGlyphCodes[];
 extern u8 UiText_KanjiGlyphs[];
 
-/* Render a kana, or past code 0xff a kanji ten pixels wide, into a nibble
-   canvas, with the voicing mark its top two bits name drawn over the cell
-   above-left of it, then pack the canvas into four 4bpp tiles. Returns the
-   width. */
 s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 {
     u8 buf[256];

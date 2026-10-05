@@ -18,7 +18,6 @@
 #include "HEAP_STATE.H"
 #include "TRANSFORM.H"
 
-/* One slot of the cache, addressed whole. */
 #define WORK_SLOT(kind) (*(void **)((u8 *)gWorkSlot + (kind) * 4))
 
 extern u8 gBattleFxWork[];
@@ -41,7 +40,6 @@ extern u16 BattleFx6_FlareCells[];
 
 void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode);
 
-/* Mode entries of battle effect series B. */
 void BattleFx_RunSeriesBMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunSeriesB(effect, 0);
@@ -72,8 +70,6 @@ void BattleFx_RunSeriesBMode4(struct BattleEffectArgument *effect)
     BattleFx_RunSeriesB(effect, 4);
 }
 
-/* Where the effect decodes its sheets in work->sheet: the flares, the
-   six-frame burst, the mode's own picture and the djinni. */
 enum SeriesBSheet {
     SERIES_B_FLARES = 0x0000,
     SERIES_B_BURST = 0x060e,
@@ -81,9 +77,6 @@ enum SeriesBSheet {
     SERIES_B_DJINNI = 0x65c0
 };
 
-/* Battle effect: a djinni hovers over the acting side while flares close in
-   on every affected unit, eight frames apart, and a burst and the mode's
-   own picture play over the unit; six modes. */
 void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 {
     void **cursor;

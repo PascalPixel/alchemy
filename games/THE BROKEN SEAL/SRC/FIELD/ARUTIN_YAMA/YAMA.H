@@ -1,5 +1,4 @@
 #include "GLOBAL_CELLS.H"
-/* Declarations shared by Altin Peak's set-piece sources (resource_3a4). */
 #ifndef YAMA_H
 #define YAMA_H
 
@@ -12,7 +11,6 @@
 #include "FIELD_SCENE.H"
 
 enum {
-    /* Message 0x182 + 202. */
     ITEM_FROST_JEWEL = 202
 };
 
@@ -24,10 +22,8 @@ struct Frame {
     s32 f10;
 };
 
-/* The shared work pointer. */
 extern u8 Data_03001ebc[];
 
-/* Tables and action scripts in the overlay's data. */
 extern u8 ArutinYama_StatueTable[];
 extern u8 ArutinYama_EarlyActorScript[];
 extern u8 ArutinYama_LogRideScript[];
@@ -39,10 +35,8 @@ extern u8 ArutinYama_MiaScript[];
 extern u8 ArutinYama_CelebrateScript[];
 extern u8 ArutinYama_PartyScript[];
 extern u8 ArutinYama_OpenedAreaScript[];
-/* Frames counted towards the next sparkle cue. */
 extern s32 ArutinYama_CueTicks;
 
-/* Cells after the overlay's image. */
 extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
 
@@ -60,7 +54,6 @@ void Audio_PlayCueFromEventWork();
 s32 BattleFx_SetQueuedSoundAndPlay();
 void BattleFx_PlayQueuedSound();
 
-/* The set-piece sources call one another across files. */
 void SceneState_SetValue14Mode23(void);
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object);
 s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst);

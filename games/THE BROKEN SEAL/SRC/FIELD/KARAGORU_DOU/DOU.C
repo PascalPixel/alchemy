@@ -45,7 +45,7 @@ struct EffectWork {
 
 struct HeightTrackedObject {
     u8 pad00[12];
-    s32 height;                 /* +12 */
+    s32 height;
 };
 
 extern u8 MsgKaragoruWarriorsHaveBeenFightingWhile[];
@@ -67,7 +67,6 @@ enum StagedPairMessage {
 
 extern u8 LinkedMessage_DoYouWishCrossInto[];
 
-/* Where the party appears in each of the cave's three scenes. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -84,17 +83,13 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gKaragoruDouEntrancesOther;
 }
 
-/* The cave has no regions. */
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-/* Every cave scene leaves through one exit table. */
 const u32 *Scene_GetExits(void)
 {
     return gKaragoruDouExits;
 }
 
-/* The actors placed in the cave; the first scene changes once flag 0x96f
-   is set. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -114,7 +109,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKaragoruDouPlacementsOther;
 }
 
-/* What the cave answers, chosen as its placements are. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -134,9 +128,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKaragoruDouEventsOther;
 }
 
-/* Actor 11 catches up with a leader turning back while flag 0x9a0 is set
-   and asks why. Going back sends the party to the Tolbi house at entrance
-   30; staying on, he follows the leader out and the leader steps on. */
 void FieldScene_RunScene3beSequenceB(void)
 {
     struct FieldActor *leader;
@@ -384,10 +375,6 @@ void StagedActorPairScene_RunActorTwelveCommand(void)
     Engine_ActorSetPosition(12, 0, 0);
 }
 
-/* The cave's scene start. Entering the first scene sets flag 0x144 and
-   hides actor 11 while flag 0x9a0 is set. In the third, entrance 1 opens
-   its passage, flags 0x9a2 and 0x9a5 move the actors their events have
-   moved, and actor 12's sprite flags are cleared. */
 s32 Scene_Initialize(void)
 {
     struct FieldActor *actor;

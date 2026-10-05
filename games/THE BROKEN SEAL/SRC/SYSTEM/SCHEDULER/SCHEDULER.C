@@ -14,12 +14,10 @@
 #include "LOW_RUNTIME.H"
 #include "OAM.H"
 
-/* Each of the 256 render priorities owns a linked-list head. */
 extern void *Data_03001400[256];
 extern const u8 Render_BuildOamListKernel[];
 typedef void (*OamBuildRoutine)(void *work);
 
-/* Linker-resolved absolute size of the routine copied into the heap. */
 extern u8 LoadedRuntime_Size[];
 
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
@@ -72,7 +70,6 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
     return index;
 }
 
-/* Each priority has a head; an entry contributes only its first-word link. */
 void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
 {
     void **head;

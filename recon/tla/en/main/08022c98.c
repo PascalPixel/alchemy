@@ -20,13 +20,6 @@ extern struct AnimationObject *gAnimationObjects[];
 
 s32 Animation_LookupValueByKey(s32 key);
 
-
-/* Takes the first free object of the 64 animation objects, one whose draw
- * kind is zero, and sets it up from the metadata of id: its frames, looked up
- * by id when the metadata gives none, its animation table and first entry,
- * draw kind and frame codec. Returns the object, or NULL when the metadata
- * has zero width or no object is free. */
-
 struct AnimationObject *AnimationObject_Allocate(s32 id)
 {
     struct AnimationMetadata *metadata;

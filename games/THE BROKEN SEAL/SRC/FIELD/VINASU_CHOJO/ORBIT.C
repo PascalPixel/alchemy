@@ -1,4 +1,3 @@
-/* The screen flash and orbiting effects. */
 #include "CHOJO.H"
 
 void VinasuChojo_FlashScreen(void)
@@ -12,7 +11,6 @@ void VinasuChojo_FlashScreen(void)
     Engine_TaskWait(1);
 }
 
-/* An effect that circles an actor. */
 union OrbitEffect {
     s32 words[26];
     struct {
@@ -36,11 +34,6 @@ enum {
     ORBIT_CENTER_ACTOR = 24
 };
 
-/*
- * Places the effect on an ellipse around actor 24, its radius plus 3 across
- * and two sine units deep, keeps a copy of the new position, then steps the
- * angle back by a thirty-second of a turn.
- */
 void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
 {
     struct FieldActor *center = Object_GetById(ORBIT_CENTER_ACTOR);
@@ -53,14 +46,6 @@ void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
     effect->orbit.angle -= 0x800;
 }
 
-/*
- * Per-frame orbit step for one actor: read the binary angle at +100, place
- * the actor on a circle around scene record 23, mirror the placement into
- * +56/+64, and advance the angle by -0x800, a thirty-second of a turn. The
- * two arms use deliberately different radius terms -- the +98 counter enters
- * both -- and must not be unified. The actor layout is raw offsets: nothing
- * establishes which of +8 and +16 is which world axis, so they are unnamed.
- */
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 {
     struct FieldActor *anchor = Object_GetById(23);
@@ -93,11 +78,6 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 
 extern const s32 VinasuChojo_OrbitParticleScript[];
 
-/*
- * Every third frame, and every frame once flag 0x236 is set, lets a particle
- * rise beside actor 24: higher once the flag is set. The particle starts at
- * a random angle of its orbit, with a random radius of up to 24.
- */
 void SceneEffect_SpawnParticlesAboveActor(void)
 {
     struct FieldActor *center;

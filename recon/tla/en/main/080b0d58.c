@@ -1,9 +1,3 @@
-/*
- * Draft: Trade_RemoveOffer, ☀️'s list-pointer form. 4 instructions differ:
- * the native fills two load delay slots (mov r6 after the ldrb, adds r4
- * after the compaction load). With -mtune=arm9tdmi (load scheduling) 2.
- * Links as recon/tla/raw/080b0d58.s.
- */
 #include "OWNER_STATE.H"
 
 struct TradeOfferList {

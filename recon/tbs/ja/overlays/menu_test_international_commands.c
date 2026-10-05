@@ -1,11 +1,3 @@
-/* Draft: Japanese debug-room source.
- * 2026-10-01: This international model produced a 5,772-byte Japanese scene,
- * 416 bytes longer than its own image. The Japanese scene omits the directional
- * message group, adds a buffer benchmark and character selector, sets 777,777
- * coins and levels all four owners to 30. This attempt retains the earlier
- * international behavior.
- * Compiles with ordinary TBS flags; no source selection or credit is claimed.
- */
 #include "EDITION.H"
 #include "../../../../games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/MENU_TEST.H"
 #include "CALL.H"
@@ -55,7 +47,6 @@ void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 
-/* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
 
 u8 *MenuTest_GetEntrances(void)

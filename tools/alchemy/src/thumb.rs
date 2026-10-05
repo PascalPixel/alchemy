@@ -1,4 +1,3 @@
-//! Thumb instruction encodings, without game policy.
 pub fn bl_displacement(pair: &[u8]) -> Option<i32> {
     let high = u16::from_le_bytes(pair.get(..2)?.try_into().ok()?);
     let low = u16::from_le_bytes(pair.get(2..4)?.try_into().ok()?);

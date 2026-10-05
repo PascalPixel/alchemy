@@ -31,8 +31,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
 
-/* The bytes of BG character block 1 the menu saves and restores: the
-   Japanese menu keeps 0x800 and leaves the block as it was. */
 #if EDITION_INTERNATIONAL
 #define SAVED_TILE_BYTES 0x2000
 #else
@@ -47,17 +45,12 @@ void Palette_LightenBankHighlight(s32 index);
 void UiWork_SetAltFlagAndClearTableFar(s32);
 void UiWindow_MarkVisibleTileAttributesFar(void);
 s32 Party_SumDjinnCountsFar(s32);
-/* The zero-argument definition ignores the extra words at this call boundary. */
 void FourObjectMotion_InitializeTopRow();
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
 void FourObjectMotion_ClearSlotsAndSchedule(void);
 
-/* Open the action menu: save palette bank 0-1 and BG character block 1, tint
-   the highlight bank, blank the block, lay out the selector window, row anchors
-   and the four djinn icon slots, run Menu_RunActionFlow, then restore the
-   saved palette and tiles and close the screen. Returns the flow result. */
 s32 ActionMenu_Open(void)
 {
     /* FAKEMATCH: addressing heap slot 15 relative to slot 6 preserves register and literal reuse on exit. */

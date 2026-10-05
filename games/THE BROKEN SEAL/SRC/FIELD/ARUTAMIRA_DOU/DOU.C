@@ -13,7 +13,6 @@ extern const struct ScenePlacement gArutamiraDouPlacements4[];
 extern const struct ScenePlacement gArutamiraDouPlacements6[];
 extern const struct ScenePlacement gArutamiraDouPlacementsOther[];
 
-/* Three DMA words hold the six actor-wheel halfwords. */
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
 union GameStateRows {
@@ -23,7 +22,6 @@ union GameStateRows {
     s32 words[256];
 };
 
-/* The game state read as rows of halfwords. */
 #define gGameStateRows (*(union GameStateRows *)&gGameState)
 
 extern u8 gEffectWork[];
@@ -60,7 +58,6 @@ u8 *ArutamiraDou_GetExits(void)
     return ArutamiraDou_SceneTableB;
 }
 
-/* The actors placed in the scene. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -77,7 +74,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gArutamiraDouPlacementsOther;
 }
 
-/* Set the blend mode, then the blend weights for the current fade level. */
 void ArutamiraDou_ApplyFadeBlend(void)
 {
     s8 level = ((s8 *)gSceneState)[4];
@@ -115,8 +111,6 @@ void ArutamiraDou_ApplyFadeBlend(void)
     }
 }
 
-/* Record the fade level in the scene state; while the event work's word at
-   +0xcb8 is clear, the blend takes it at once. */
 void ArutamiraDou_SetFadeLevel(s32 level)
 {
     u8 *work;
@@ -212,7 +206,6 @@ void SceneEffect_SetupBlendByFlag201(void)
     }
 }
 
-/* Restore the room's blend setting and the five actors' child poses. */
 void ArutamiraDou_ApplyRoomVisuals(void)
 {
     /* FAKEMATCH: the volatile view keeps two distinct scene reads; this initialized narrow record keeps the snapshot unsigned until its later signed comparison, without an extra halfword-to-word register copy. */
@@ -255,8 +248,6 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
     }
 }
 
-/* Replaces the object the effect work holds with a fresh copy of it: the
-   actor it belongs to turns, and the old object stops and goes idle. */
 void ArutamiraDou_RespawnActorObject(void)
 {
     u8 *work;
@@ -277,8 +268,6 @@ void ArutamiraDou_RespawnActorObject(void)
     }
 }
 
-/* When actor 12 stands on cell (30, 20), settles it there, copies the cell's
- * attributes to (32, 20) and sets flag 0x212. */
 void ArutamiraDou_SettleActorOnCell(void)
 {
     struct FieldActor *actor = Object_GetById(12);
@@ -337,8 +326,6 @@ void FieldScene_RunActorElevenCellSetup(void)
     }
 }
 
-/* Hops the selected actor one step (two cells) the way it faces, snapping to
- * the facing's sixteenth, unless something blocks the landing cell. */
 void ArutamiraDou_HopSelectedActor(void)
 {
     struct FieldActor *actor = Object_GetById(gGameState.selected_actor);
@@ -422,7 +409,6 @@ void SceneActor_PlaceFiveActorsInRow(u8 *p)
     } while (i <= 4);
 }
 
-/* Five actors turn in a ring: the wheel speeds up, runs, slows, and stops when the actor the scene state's third byte chooses comes round; that actor then pulses. A cue plays at every 0x3000 of travel. */
 void ArutamiraDou_SpinActorWheel(void)
 {
     /* FAKEMATCH: forced temporaries; the block-local zero and state, the reloaded work pointers and the stored-sum temporaries keep the game's register and pool order, which the plain statements do not. */

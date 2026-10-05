@@ -18,6 +18,8 @@ typedef int bool;
 #define FALSE 0
 #define TRUE 1
 
-/* Temporary workaround; AGENTS.md records the admitted uses and removal. */
+#define FIXED_ADDRESS(type, address, linked) (type address)
+#define FIXED_OFFSET(value, linked, from) value
+#define CAMELOT_ASM(proof)
 
 #endif

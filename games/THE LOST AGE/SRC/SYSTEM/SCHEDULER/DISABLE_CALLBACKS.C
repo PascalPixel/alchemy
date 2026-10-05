@@ -63,7 +63,6 @@ s32 Scheduler_DisableOverlayCallbacks(void)
     return result;
 }
 
-/* Runs the 24 task records whose high state byte matches the requested key. */
 void Scheduler_RunCallbacksByKey(s32 arg)
 {
     s32 key;
@@ -97,7 +96,6 @@ next_task:
     }
 }
 
-/* The disabled scheduler returns the shifted key. */
 s32 Scheduler_CountCallbacksByKey(s32 key)
 {
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
@@ -137,7 +135,6 @@ finish:
     return key;
 }
 
-/* The first task with high state byte 4 ends this bounded dispatch pass. */
 void Scheduler_RunCallbacksBeforeBoundary(s32 arg)
 {
     s32 key;
@@ -174,7 +171,6 @@ next_task:
     }
 }
 
-/* Advances the shared 32-bit LCG and returns bits 8 through 23. */
 u32 Random16(void)
 {
     u32 value;

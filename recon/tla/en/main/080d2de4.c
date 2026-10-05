@@ -1,7 +1,3 @@
-/*
- * Draft: ObjectMotion_ResetTargetsAndVelocity does not yet match; 4 bytes differ from +0x10.
- * Links as recon/tla/raw/080d2de4.s.
- */
 #include "OBJECT_RUNTIME.H"
 
 void ObjectMotion_ResetTargetsAndVelocity(u32 object_id)

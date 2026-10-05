@@ -4,15 +4,12 @@
 #include "TYPES.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
 
-/* One window slot's link in the chain of slots holding the same byte value. */
 struct AudioSlotNode {
     struct AudioSlotNode *prev;
     struct AudioSlotNode **back;
     s32 slot;
 };
 
-/* The packer's work block: a 1024-slot ring of input bytes, each slot chained
-   by byte value, and the token group being assembled. */
 struct AudioTrackSlotWork {
     struct AudioSlotNode nodes[0x400];
     struct AudioSlotNode *bucket[0x100];

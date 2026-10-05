@@ -5,7 +5,6 @@
 #include "BATTLE_WORK.H"
 
 extern volatile u16 gLinkStatus;
-/* Each peer's received payload, past its four-byte serial state. */
 extern u16 gLinkPeerSignatures[][12];
 
 s32 BattlePres_WaitSync(void)
@@ -23,7 +22,6 @@ s32 BattlePres_WaitSync(void)
     if (work->two_sided != 0) {
         u32 other = work->link_side ^ 1;
 
-        /* The serial state occupies the first four bytes of each payload. */
         peer = (u16 *)(gSerialPeerPayloads[other] + 4);
         sync = (u16 *)gSerialTransfer.payload;
         if (work->link_paused == 0) {
@@ -52,10 +50,6 @@ s32 BattlePres_WaitSync(void)
     return 0;
 }
 
-/* The five-stage handshake that opens a linked battle turn. Each side posts
-   ex/TU, rn, EXEC, tu and RN in turn, spelling EXECTURN, and waits for the
-   peer to echo each tag. Twenty-five frames in a row without a complete
-   transfer, or a peer whose earlier tag no longer matches, fail with -1. */
 s32 BattlePres_SyncTurn(void)
 {
 #if GAME_TLA
@@ -157,7 +151,6 @@ s32 BattlePres_SyncTurn(void)
             WaitFrames(1);
         }
 
-        /* The last tag needs no echo: wait only until the peer leaves rn. */
         sync[6] = 'R';
         sync[7] = 'N';
         for (;;) {

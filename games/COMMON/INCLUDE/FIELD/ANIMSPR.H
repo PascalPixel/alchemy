@@ -4,27 +4,22 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* One scripted layer of the composite object. */
 struct AnimationEntry {
-    s16 anim_id;    /* 0x00 */
-    u16 timer;      /* 0x02 compared as s16, updated as u16 */
-    u8 kind;        /* 0x04 direction-table selector */
-    u8 param;       /* 0x05 draw parameter */
-    u8 priority;    /* 0x06 draw order, 0..3 */
-    u8 mode;        /* 0x07 1 = copy, 3 = decode, else draw */
-    void **frames;  /* 0x08 */
-    u8 **scripts;   /* 0x0c decoded script-address table */
-    u8 *script;     /* 0x10 */
-    u8 pos;         /* 0x14 script cursor */
-    u8 step;        /* 0x15 timer decrement */
-    u8 frame;       /* 0x16 selected frame, 255 = none */
-    u8 frame_base;  /* 0x17 */
+    s16 anim_id;
+    u16 timer;
+    u8 kind;
+    u8 param;
+    u8 priority;
+    u8 mode;
+    void **frames;
+    u8 **scripts;
+    u8 *script;
+    u8 pos;
+    u8 step;
+    u8 frame;
+    u8 frame_base;
 };
 
-/* Slot 6 is allocated and cleared as one 92-byte object-system block.
-   The compositor counts uploaded bytes and uses the two outline colours;
-   menus suspend drawing through the halfword at 4. The constructor clears
-   these fields and installs colours 15/0. */
 struct ResourceSlot {
     s32 tag;
     void *buffer;
@@ -46,9 +41,6 @@ LAYOUT_OFFSET_GUARD(ObjectSystemWork_Count, struct ObjectSystemWork, count, 0x18
 LAYOUT_OFFSET_GUARD(ObjectSystemWork_Slots, struct ObjectSystemWork, slots, 0x1c);
 LAYOUT_SIZE_GUARD(ObjectSystemWork_Size, struct ObjectSystemWork, 0x5c);
 
-/* Four fixed-point coordinates passed to Render_ApplyProjectedPlacement.
-   x/y/z place the sprite; ground supplies the shadow height. The icon monitor
-   allocates ten records, and its ring builder updates only x/y/z. */
 struct AnimationPosition {
     s32 x;
     s32 y;
@@ -61,7 +53,6 @@ LAYOUT_OFFSET_GUARD(AnimationPosition_Ground, struct AnimationPosition, ground, 
 
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *points);
 
-/* Each linked OAM part carries the three hardware attributes. */
 struct AnimationSpritePart {
     u8 unknown_00[4];
     u16 y : 8;
@@ -79,23 +70,21 @@ struct AnimationSpritePart {
     u8 unknown_0a[2];
 };
 
-/* ResourceObject_Create initializes both parts in the 64-object pool;
-   projection and composition operate on this same 56-byte object. */
 struct AnimationObject {
     struct AnimationSpritePart part[2];
-    s32 scale;      /* 0x18 */
-    u8 slot;        /* 0x1c */
-    u8 display_flags; /* 0x1d hide and fixed-scale flags */
-    u16 rotation;    /* 0x1e */
-    u8 width;       /* 0x20 */
-    u8 height;      /* 0x21 */
+    s32 scale;
+    u8 slot;
+    u8 display_flags;
+    u16 rotation;
+    u8 width;
+    u8 height;
     s8 offset_x;
     s8 offset_y;
-    u8 last_no;     /* 0x24 */
-    u8 dirty;       /* 0x25 */
-    u8 flags;       /* 0x26 bit 1 requests the outline pass */
-    u8 count;       /* 0x27 */
-    struct AnimationEntry *entries[4]; /* 0x28 */
+    u8 last_no;
+    u8 dirty;
+    u8 flags;
+    u8 count;
+    struct AnimationEntry *entries[4];
 };
 
 LAYOUT_SIZE_GUARD(AnimationEntry_Size, struct AnimationEntry, 0x18);

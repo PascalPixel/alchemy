@@ -15,10 +15,6 @@ void RuntimeWait_BusyLoopTick(void)
 {
 }
 
-/* The link cable test: draws a row of twenty tiles, then copies each
-   completed 0x280-byte block it receives to BG VRAM and listens again.
-   A sends the cartridge's first 0x280 bytes, B the 0x280 bytes 4 KB in,
-   and Start stalls for ten thousand busy ticks. */
 void SerialTest_Run(void)
 {
     u16 *tile;
@@ -31,7 +27,7 @@ void SerialTest_Run(void)
     SerialRuntime_Initialize();
     n = 19;
     tile = (u16 *)0x06002426;
-    value = (s16)0xf093; /* palette 15, tile 0x93, counting down */
+    value = (s16)0xf093;
     do {
         n--;
         *tile = value;
@@ -44,7 +40,6 @@ void SerialTest_Run(void)
 restart:
     SerialRuntime_BeginTransferB(gMapCellBuffer);
     for (;;) {
-        /* VBlank refreshes the held keys between these button samples. */
         if ((*(volatile u32 *)&gKeysHeld) & 1)
             SerialRuntime_BeginTransferA((void *)Cart_Restart, 0x280);
         if ((*(volatile u32 *)&gKeysHeld) & 2)

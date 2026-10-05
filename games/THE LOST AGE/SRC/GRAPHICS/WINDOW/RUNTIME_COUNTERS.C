@@ -2,8 +2,6 @@
 #include "WINDOW.H"
 #include "RAM_BUFFER.H"
 
-/* 1 when a window has stopped moving and has no timer left; a missing
-   window counts as idle. */
 s32 UiWork_IsIdle(struct UiWindow *window)
 {
     if (window == NULL)
@@ -13,7 +11,6 @@ s32 UiWork_IsIdle(struct UiWindow *window)
     return 0;
 }
 
-/* Sets the text pen back to white, ten-pixel lines and no outline. */
 void UiWork_ResetCounters(void)
 {
     struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;

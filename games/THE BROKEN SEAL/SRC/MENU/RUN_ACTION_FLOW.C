@@ -43,7 +43,6 @@ s32 Menu_RunActionFlow(void)
         case 3:
             state->owner_cursors[0]->active = 13;
             result = ItemMenu_SelectItem();
-            /* Collapse every non-cancellation result to one. */
             changed = ~result;
             step = (-changed | changed) >> 31;
             break;
@@ -67,9 +66,6 @@ s32 CharacterSelector_RunRearrange(void);
 void UiIcon_PrepareObject(struct RenderOutput *cursor);
 void WaitFrames(s32 frames);
 
-/* Opens the owner selector for party SLOT: shows its cursor, slides to the
-   member it last chose (or clears the choice), runs the Psynergy or the
-   rearrange selector and returns its result. */
 s32 CharacterMenu_SelectOwner(s32 slot)
 {
     struct CharacterMenuState *menu;

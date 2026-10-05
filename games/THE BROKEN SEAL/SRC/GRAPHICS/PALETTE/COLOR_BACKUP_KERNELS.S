@@ -1,12 +1,3 @@
-@ Three colour-buffer kernels that save a backup copy while they fade a buffer:
-@ scale every colour byte by 3/4, halve it, or darken it by a bias. Each loader
-@ (0x080054e4, 0x08005534, 0x08005490) copies exactly its kernel onto the stack
-@ and calls it there. They are ARM-state code: the first two save r5 and r6
-@ without lr, and the darkening kernel pops its return address into ip and
-@ returns with bx ip. GCC saves lr with any register and returns through lr.
-@ No TLA edition carries these bytes; TLA has its own revisions (TLA
-@ GRAPHICS/COLOR_BACKUP_KERNELS.S).
-@ credit: handwritten — ARM colour-buffer fade kernels with backup, copied to the stack
 .syntax unified
 	.arm
 	.global ColorBuffer_ScaleThreeQuartersKernel

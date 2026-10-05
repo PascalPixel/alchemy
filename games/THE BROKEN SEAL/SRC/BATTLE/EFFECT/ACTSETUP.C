@@ -7,8 +7,6 @@
 #include "OBJDISP.H"
 #include "FIELDOBJ.H"
 #include "BATTLE_RUNTIME.H"
-/* Battle effect: spawn the pair of scaled objects that follow the linked
-   object in mirrored arcs, one for each scaled-arc update callback. */
 #include "TYPES.H"
 #include "GAME_STATE.H"
 #include "FX_SCENE.H"
@@ -21,8 +19,6 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 
-/* The existing packed arc-constructor view is kept only at its measured
-   alias boundary; other callbacks consume the shared object owners. */
 struct ArcChild {
     u8 pad00[22];
     u8 frame;
@@ -190,10 +186,6 @@ void BattleFx_UpdateAllEffectSlots(void)
     } while (cnt >= 0);
 }
 
-/* Battle effect: prepare the shared effect work for a battle action. The
-   work block is cleared when the battle has not set it up already, the action
-   and its animation class are recorded, and on the first run the effect
-   position, object pair, tile slot and slot-update callback are set up. */
 void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
 {
     struct BattleSceneState *scene = *(struct BattleSceneState **)(gWorkSlot + 27 * 4);

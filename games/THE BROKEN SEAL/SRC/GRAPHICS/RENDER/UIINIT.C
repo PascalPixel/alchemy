@@ -25,9 +25,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 }
 #endif
 
-/* Allocates and clears the UI work block, fills its tile map with blank
-   entries and schedules the block upload, as UiWork_Initialize does, but
-   seeds the counters from the resource table. */
 void UiWork_InitializeWithResourceCounters(void)
 {
     struct UiRenderWork *work;
@@ -40,8 +37,6 @@ void UiWork_InitializeWithResourceCounters(void)
     fill = 0;
     Dma_Set((const void *)&fill, work, 0x850004bf, REG_DMA3);
 #else
-    /* The Japanese build clears and fills the block with the IWRAM word
-       routines rather than DMA. */
     Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
     work->dirty = 1;
@@ -83,8 +78,6 @@ void UiWork_Initialize(s32 kind)
     fill = 0;
     Dma_Set(&fill, work, (0x85000000 | RENDER_WORK_SIZE / 4), REG_DMA3);
 #else
-    /* The Japanese build clears and fills the block with the IWRAM word
-       routines rather than DMA. */
     Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
     work->dirty = 1;

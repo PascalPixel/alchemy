@@ -25,8 +25,6 @@ void BattleFx_CallEffect14(s32);
 void BattleFx_RunEffect13Hook(s32);
 void BattleFx_FinishSceneAndReleaseHeapBlock(void);
 
-/* battle/effects/run/run_effect.c */
-
 extern struct BattleFxScene *gEffectWork;
 void BattleFx_RunItemBreakSequence(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
@@ -60,10 +58,7 @@ void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
 void Battle_Reset();
 extern char MsgNothingHappens;
 
-/* object/group/ObjectGroup_ApplyRandomChildValues.c */
 extern volatile s32 gFrameCount;
-
-/* object/motion/pos/Motion_SetTargetPositionFromMagnitudeAngle.c */
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
@@ -149,7 +144,6 @@ void BattleFx_Run(void)
     }
 }
 
-/* battle/effects/set/dispatch_request_kind.c */
 void BattleFx_DispatchRequestKind(void)
 {
     struct BattleFxScene *request = *(gWorkSlot + 56);
@@ -220,7 +214,6 @@ void BattleFx_DispatchRequestKind(void)
     }
 }
 
-/* battle/effects/misc/clear_child_value_on_mismatch.c */
 void BattleFx_ClearChildValueOnMismatch(void)
 {
     struct BattleFxScene *request = gEffectWork;
@@ -251,8 +244,6 @@ void FieldEvent_RunTypeHandler(void)
     }
 }
 
-/* battle/effects/run/run_event_action.c */
-/* Call the routine returned by BattleFx_FinishAction through the veneer. */
 s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
 {
     s32 resource;
@@ -278,7 +269,6 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
     return 0;
 }
 
-/* object/ObjectGroup_ApplyRandomChildValues.c */
 void ObjectGroup_ApplyRandomChildValues(void *owner)
 {
     s32 state;
@@ -291,7 +281,6 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
     s32 value;
 
     state = ((struct ObjectRuntime *)owner)->animation_kind;
-    /* 有効な所有物へ共有値を6で割った余りを配る。 */
     if (state == 1) {
         target = ((struct ObjectRuntime *)owner)->animation;
         if (target != 0 && (((struct AnimationObject *)target)->display_flags & state) == 0) {
@@ -317,7 +306,6 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
 {
     s32 values[3];
 
-    /* 座標3成分を一括変換して書き戻す。 */
     if (object != 0) {
         values[0] = object->x;
         values[1] = object->y;

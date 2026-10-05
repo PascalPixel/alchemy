@@ -15,10 +15,6 @@ extern const u16 SuharaMura_CellSteps1[];
 extern u8 SuharaMura_Extras[];
 extern u8 SuharaMura_ExtrasFlag96f[];
 
-/*
- * Suhara village's scene tables: the script and message tables and the
- * actor table the event flag 0x96f selects.
- */
 u8 *SceneData_GetScriptTable(void)
 {
     return SuharaMura_Scripts;
@@ -42,10 +38,6 @@ s32 SceneData_SelectActorTableByFlag96f(void)
     return (s32)SuharaMura_Actors;
 }
 
-/*
- * Two villagers' yes/no talks: each opens its question at the speaker and
- * answers with one of the two lines after it in the catalogue.
- */
 void SuharaMura_TalkLalivero(s32 obj)
 {
     s32 cue = (s32)MsgSuharaTryingGetLalivero;
@@ -74,10 +66,6 @@ void SuharaMura_TalkSandstorm(s32 obj)
     Engine_EventShowMessage(obj, 0);
 }
 
-/*
- * Scene script for overlay resource_3c1: the layout step, the indexed effect
- * setups, the event table choice and the entry state.
- */
 void FieldScene_RunLayoutStepThenSet201(void)
 {
     s32 width = 4;
@@ -127,7 +115,6 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 {
     struct EventWork *work;
 
-    /* Record arrival on map 90, then publish the initial scene phase/timer. */
     if (gGameState.entrance == 90) {
         Engine_GameFlagSet(0x96f);
     }
@@ -136,7 +123,6 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 24;
 
-    /* The dressing sequence and cue are unlocked by the shared event flag. */
     if (Engine_GameFlagIsSet(0x201) != 0) {
         FieldScene_RunLayoutStepThenSet201();
         Engine_ActorSetAnimation(16, 4);

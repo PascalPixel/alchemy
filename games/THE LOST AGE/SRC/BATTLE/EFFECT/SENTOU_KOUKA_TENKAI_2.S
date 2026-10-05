@@ -1,17 +1,3 @@
-@ Second battle-effect model decoder, the first member of another 0x234-byte
-@ unit that battle-effect code copies into a heap block, calls and frees
-@ (size and source 0x081a029c in its literal pool at 0x081a17a8). Behind a
-@ 4-byte Thumb entry (bx pc) it rebuilds the dispatcher's jump table for the
-@ address it runs at from its own position (add r3, pc; sub) and calls the
-@ dispatcher with bl while its state stays in registers. Neither approved
-@ compiler relocates code at run time or passes state that way. It is a
-@ TLA-only variant of SENTOU_KOUKA_TENKAI.S: three instruction words differ,
-@ an inner loop count of 64 (mov r7, #64) and a 0x1000-byte column step where
-@ that decoder has 32 and 0x800, and no TBS edition has it. Its data words
-@ (0x081a036c and 0x081a0380) are SENTOU_KOUKA_TENKAI_2_LINK.S and
-@ SENTOU_KOUKA_TENKAI_2_TABLES.S and carry no credit; neither does its
-@ entry.
-@ credit: handwritten — TLA variant model/bit-stream decoder of the battle-effect bank
 .syntax unified
 	.thumb
 	.global SentouKouka_Tenkai2Code

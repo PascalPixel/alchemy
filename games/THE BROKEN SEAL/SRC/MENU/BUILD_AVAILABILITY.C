@@ -10,8 +10,6 @@
 #include "FIXED_MATH.H"
 #include "BATTLE_RUNTIME.H"
 
-/* menu/character_menu/build_availability.c */
-
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
     struct BattleUnit *state;
@@ -50,7 +48,6 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
     return count;
 }
 
-/* menu/core/build_page_result.c */
 #if EDITION_INTERNATIONAL
 #define GROUP_LEN 5
 #else
@@ -91,7 +88,6 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
     return 1;
 }
 
-/* menu/core/build_pattern_tiles.c */
 struct TileMask {
     u32 word0;
     u32 word1;

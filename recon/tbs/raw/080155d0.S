@@ -1,10 +1,3 @@
-@ Draws one font character (codes 32 to 143; others return 1) into the 4bpp
-@ tiles at 0x06002500, with its fifth argument choosing between two glyph
-@ sets. It runs from a RAM copy of exactly these 792 bytes. Kept as assembly
-@ without credit: it has the shape of GCC 2.96 ARM-mode output (lr saved with
-@ r5-sl while r4 stays free, add sp then pop and bx lr on return, constants
-@ built with mov and add, a literal pool after an unconditional branch). The
-@ approved routes compile only Thumb.
 .syntax unified
 .text
 	.arm
@@ -48,8 +41,6 @@ UiText_DrawGlyphArm:
 	bhi .L_08015724
 	mov	sl, #9472
 	add	sl, sl, #100663296
-@ Second glyph set: each byte holds two 4-bit pixels; eight rows drawn in
-@ 0x1111 or 0x3333.
 .L_08015664:
 	mov	lr, #0
 	add	r4, r2, #1
@@ -57,7 +48,6 @@ UiText_DrawGlyphArm:
 	lsr	r8, r3, #3
 	and	r3, r3, #7
 	lsl	r6, r3, #1
-@ 1 行分: 画素位置からタイル内アドレスを求め、既存の 4bit を消して色を書く。
 .L_0801567c:
 	tst	lr, #1
 	lsr	r5, r5, #4
@@ -105,8 +95,6 @@ UiText_DrawGlyphArm:
 .L_08015724:
 	ldr	r0, [sp, #12]
 	b .L_080158dc
-@ First glyph set: 26-byte records at 0x08032224, a width halfword then twelve
-@ rows of up to 14 pixel bits.
 .L_0801572c:
 	sub	lr, r1, #222
 	add	r3, ip, ip, lsl #1
@@ -140,8 +128,6 @@ UiText_DrawGlyphArm:
 	mov	r1, #0
 	add	r2, r2, #2
 	str	r2, [sp, #4]
-@ Four passes, the fourth in 0x1111 and the others in 0x5555; with bit 6 of
-@ the halfword at r0 + 22 set, X and Y shift between passes.
 .L_0801579c:
 	cmp	r1, #3
 	moveq	r5, #4352
@@ -181,7 +167,6 @@ UiText_DrawGlyphArm:
 	bhi .L_080158cc
 	mov	r6, #9472
 	add	r6, r6, #100663296
-@ 行ビット列の立ったビットだけを VRAM タイルへ書く。
 .L_08015828:
 	mov	lr, #0
 	add	r4, r2, #1

@@ -24,7 +24,6 @@ struct Vector3 {
 };
 
 extern u16 BattleFx6_FlareCells[];
-/* One corner of the triangle before it is rolled into place. */
 extern struct Vector3 SpinningTriangle_Vertex[];
 extern struct Vector3 TriangleStrike_Vertex[];
 
@@ -37,12 +36,6 @@ void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale(struct Vector3 *scale);
 
-/*
- * A triangle of flare dots spins down onto each affected unit, shrinking for
- * 64 ticks, then gives way to the two halves of a 48 by 48 picture. With the
- * variant set, a 40 by 40 picture first circles the place the canvas effect
- * names and rises away. Units start eight frames apart.
- */
 void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
 {
     struct EffectPosition anchor;
@@ -182,10 +175,6 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/*
- * The same triangle without the circling picture: the acting unit closes on
- * the first target at frame 46.
- */
 void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
 {
     struct EffectPosition anchor;

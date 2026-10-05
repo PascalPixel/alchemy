@@ -3,9 +3,6 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 
-/* The scene's spark work, which heap slot 0xdc holds: 96 sparks of 28
-   bytes from 0x800, their 40-byte sprites from 0x1280, then the tile base
-   and the resource entry they draw from. */
 struct SparkWork {
     u8 unknown_0000[0x2102];
     u16 tile_base;
@@ -16,8 +13,6 @@ struct SparkWork {
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void Func_0200258c(void);
 
-/* Stops the spark updater, frees the sparks' resource entry and releases
-   their work block. */
 void VinasuIriguchi_StopSparks(void)
 {
     struct SparkWork *work = Ram_HeapSlots->menu_runtime;

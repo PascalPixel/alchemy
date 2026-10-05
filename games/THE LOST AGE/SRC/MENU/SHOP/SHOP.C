@@ -11,10 +11,8 @@ struct Record_080b06c0 {
     u8 values[21];
 };
 
-/* The byte offset of each selector cell in the shop's tilemap. */
 extern u16 Shop_SelectorOffsets[];
 
-/* Each glyph's rows of bytes, and the byte offset of each glyph cell. */
 extern u8 Shop_GlyphBytes[];
 extern u16 Shop_GlyphRowOffsets[];
 
@@ -40,8 +38,6 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
     }
 }
 
-/* ☀️'s: copy a glyph's rows of bytes into a shop window cell, stopping at
-   each row's first empty byte. */
 void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
 {
     u8 *src = Shop_GlyphBytes + ((u32)digit << 5);
@@ -64,12 +60,8 @@ void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
     } while (count >= 0);
 }
 
-/* The blank price tiles the digits are drawn over. */
 extern const u8 Shop_PriceTiles[];
 
-/* ☀️'s, staging in ⚓️'s heap block 56: builds a sprite showing a price of
-   up to five digits, least significant digit first, over the blank price
-   tiles. */
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 {
     u8 *buf;
@@ -106,8 +98,6 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     return sprite;
 }
 
-/* The scene layer refresh, reached through the far-call table, whose
-   Spanish and Italian editions hold these targets two entries earlier. */
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
 void Func_080c8368(s32, s32);
 void Func_080c8380(s32);
@@ -116,9 +106,6 @@ void Func_080c8378(s32, s32);
 void Func_080c8390(s32);
 #endif
 
-/* ☀️'s, over ⚓️'s event work and its block in heap slot 32: copies the
-   saved tile block at work + 0xe00 back into the scene's map and the work
-   area, then refreshes the scene layer. */
 void Shop_RestoreSceneTiles(s32 layer)
 {
     u8 *map = Ram_HeapSlots->event_work;

@@ -3,11 +3,6 @@
 
 #include "TYPES.H"
 
-/*
- * Register writes deferred to the next frame. Each entry holds the value, the
- * register address and a delay; the transfer command executor, copied onto
- * the stack, performs the queued writes.
- */
 struct IoWriteQueue {
     u16 count;
     u16 pad;
@@ -27,7 +22,6 @@ void QueueIoWriteDelay10(u32 address, u32 value);
 void QueueIoWriteDelay11(u32 address, u32 value);
 void IoWriteQueue_FlushPending(void);
 
-/* Queue a register write for the next flush with interrupts masked. */
 #define IO_WRITE_QUEUE_PUSH(address, value, delay)                         \
     {                                                                      \
         /* FAKEMATCH: nested one-pass blocks keep queue/save loads before the IME store, the u16 count store, and following stores after the IME restore. */ \

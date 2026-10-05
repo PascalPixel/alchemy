@@ -1,5 +1,3 @@
-/* NONMATCHING: 6 halfwords; with the 72-entry placement list the only
-   difference is the order of str r2,[sp] and movs r1,#0 in the entry loop. */
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 

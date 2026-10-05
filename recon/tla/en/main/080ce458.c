@@ -1,12 +1,3 @@
-/* Packed ability-event match trial, 2026-10-02.
- * EN ordinary compiler: 288 bytes versus the listing's 284-byte extent;
- * score 1510 (25 register, 5 operand, 11 reordered, 4 inserted, 2 deleted).
- * Byte-width, signed-command and branch reshapes scored 1689/1650/1754,
- * so this retains the initial ordinary typed form.
- * Traverses the same 12-byte event records as the selector draft.
- * No steering device. EN-only listing score; complete six-edition linked
- * body, pools, call identities and storage ownership remain unproved.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 struct PendingAction { u8 unknown_00[6]; u8 event_kind; u8 unknown_07[9]; };

@@ -1,6 +1,5 @@
 #include "BATTLE_RUNTIME.H"
 
-/* The special action is accepted without a PP cost; other actions need one. */
 u32 Ability_CheckStatusOrSpecialId(s32 action_id)
 {
     u8 cost;

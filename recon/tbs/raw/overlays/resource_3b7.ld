@@ -1,7 +1,3 @@
-/* resource_3b7: its entry veneers, its listing with maintained code and
-   the compiler library linked in place, as pret links objects and libgcc
-   members in ROM order. Its import veneers follow its code. The overlay's
-   own work follows the image. */
 EXTERN(_call_via_r0)
 SECTIONS
 {

@@ -2,9 +2,6 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 
-/* Battle timers: per-unit countdown bytes in the owner record, and the
-   placement entries whose timers expire into Djinn activation. */
-
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 owner);
 void Owner_RecalculateStatsFar(s32 unit_id);
 s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);

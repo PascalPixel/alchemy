@@ -1,7 +1,3 @@
-/* Near miss: score 60. The menu page work is ⚓️'s heap slot menu_page_work,
-   its icons 4 bytes later and its entry count at 0x214. ⚓️ reloads the
-   stacked y argument (ldr r7, [sp, #32]) earlier; a load-scheduling
-   difference with the approved game flags. */
 #include "TYPES.H"
 
 struct MenuPageIcon {
@@ -21,12 +17,6 @@ struct MenuPageWork {
 #include "RAM_BUFFER.H"
 
 void UiIcon_PrepareObject(struct MenuPageIcon *icon);
-
-/*
- * Hides every entry icon, then shows one page of them: up to page_size
- * icons from the first entry, placed in a column at (x, y), 16 pixels
- * apart, stopping at a missing icon or the end of the list.
- */
 
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y)
 {

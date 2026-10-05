@@ -9,9 +9,6 @@ extern const u8 Tile_Decompress4bpp[];
 
 extern u8 Tile_Decompress4bppCodeSize[];
 
-
-/* Copies the 4bpp decompressor (DECOMPRESS_4BPP.S) to a heap block and
-   runs the routine installed at 0x03001f14 on the work's stream. */
 void Ui_RunCopiedRoutine(GlyphTransfer *work)
 {
     u32 size;

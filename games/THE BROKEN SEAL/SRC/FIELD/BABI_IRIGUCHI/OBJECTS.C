@@ -6,12 +6,6 @@ void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
     owner->mode = mode;
 }
 
-/*
- * Spawns an overlay object and puts it into its configured state --
- * resource_3c5.
- */
-
-/* Spawn an object, clear its owner record's low flag bits and issue command 15. */
 u8 *OverlayObject_SpawnConfiguredObject(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *result;

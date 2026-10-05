@@ -12,7 +12,6 @@ extern u8 *gBattleFxWork[2];
 extern struct GameState gGameState;
 extern u8 gRandomSeed[];
 
-/* runtime/blank_display_load_value_and_run.c */
 s32 Audio_PlayCue(s32);
 void ReelGame_Run(void);
 
@@ -43,7 +42,6 @@ s32 Runtime_BlankDisplayLoadValueAndRun(void)
   return 0;
 }
 
-/* graphics/color/Palette_ScaleRgb555.c */
 s32 Graphics_ScaleRgb555(
     u16 *source,
     u16 *destination,
@@ -83,9 +81,6 @@ s32 Graphics_ScaleRgb555(
     return 0;
 }
 
-/* Runs the pending BG tile transfer once the effect requests it: a plain
-   copy to 0x06003500 followed by a refill, or the halved or three-quarter
-   colour backup; otherwise counts the frames since the last transfer. */
 void BattlePres_ProcessPendingTileTransfer(void)
 {
     struct BattleEffectWork *work;
@@ -113,8 +108,6 @@ void BattlePres_ProcessPendingTileTransfer(void)
     }
 }
 
-/* Darken background entries 160-175 and object entries 1-239 by one step
-   per channel, stopping each 5-bit channel at 0. */
 void Palette_DarkenSceneStep(void)
 {
     u16 *color;
@@ -158,8 +151,6 @@ void Palette_DarkenSceneStep(void)
     }
 }
 
-/* Step background colours 1-63 one unit per channel towards the palette of
-   resource_id. */
 void Palette_StepTowardResource(s32 resource_id)
 {
     u16 target[64];
@@ -192,9 +183,6 @@ void Palette_StepTowardResource(s32 resource_id)
     Dma_Set(target + 1, (void *)0x05000002, 0x8000003f, REG_DMA3);
 }
 
-/* Draw a line into the effect canvas (8bpp tiles, 32 tiles to a row) with
-   an 8.8 fraction, keeping the larger of the existing and new colour. The
-   major axis is walked from its lower end. */
 void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 {
     s32 dx = x1 - x0;

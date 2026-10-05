@@ -5,7 +5,6 @@
 
 enum { BATTLE_EVENT_CAPACITY = 64 };
 
-/* The queue driver checks for another event, dispatches it, then becomes ready. */
 enum BattlePlaybackPhase {
     BATTLE_PLAYBACK_IDLE = 0,
     BATTLE_PLAYBACK_RESOLVE_TARGET = 1,
@@ -14,10 +13,10 @@ enum BattlePlaybackPhase {
 };
 
 struct BattleEventQueue {
-    u8 opcodes[BATTLE_EVENT_CAPACITY]; /* 0x000 */
-    u32 operands[BATTLE_EVENT_CAPACITY]; /* 0x040 */
-    s32 target_index;                 /* 0x140 */
-    s32 count;                        /* 0x144 */
+    u8 opcodes[BATTLE_EVENT_CAPACITY];
+    u32 operands[BATTLE_EVENT_CAPACITY];
+    s32 target_index;
+    s32 count;
 };
 
 LAYOUT_SIZE_GUARD(
@@ -40,7 +39,6 @@ LAYOUT_OFFSET_GUARD(
     count,
     0x144);
 
-/* Opcodes consumed by the event dispatcher, BattleEvent_Playback. */
 enum BattleEventOpcode {
     BATTLE_EVENT_UNIT = 0,
     BATTLE_EVENT_VALUE = 1,
@@ -59,7 +57,6 @@ enum BattleEventOpcode {
     BATTLE_EVENT_SOUND = 14
 };
 
-/* The result has no contract and must be discarded. */
 s32 BattleActor_DestroyTemporaryObject(s32 unit_id);
 
 u32 BattleEv_Push(u32 opcode, u32 operand);

@@ -1,8 +1,3 @@
-/* NONMATCHING: Japanese Korima river's selected-actor position callback.
- * 2026-10-01, approved TBS flags: 76 bytes against the Japanese 56-byte
- * leader callback. The complete source overlay is 4308 against 4288.
- * The later-edition rounding and selected actor are preserved here.
- */
 #include "TYPES.H"
 #include "RESOURCE_393.H"
 

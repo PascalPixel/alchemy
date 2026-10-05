@@ -1,8 +1,5 @@
 #include "TYPES.H"
 
-/* 0 when two (x, y, z) positions lie closer than the sum of their radii,
-   comparing whole pixels; -1 otherwise, and always when x or z is more
-   than 0x400000 pixels apart. */
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b)
 {
     s32 dx = (*a++ - *b++) >> 16;

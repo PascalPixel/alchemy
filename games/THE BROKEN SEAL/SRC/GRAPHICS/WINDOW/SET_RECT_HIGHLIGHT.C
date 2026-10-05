@@ -3,9 +3,6 @@
 #include "TBS_EDITION.H"
 #include "BATTLE_WORK.H"
 
-/* Sets (alt bit 0 = 1) or clears palette bit 12 on every tile of a
-   width x height rectangle of the 32 x 32 window tilemap, clipped to the
-   30 x 20 screen, and marks each touched group of four rows dirty. */
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 {
     u8 *base = gWindowWork[0];
@@ -55,9 +52,6 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 
 s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 
-/* Clears the highlight over the whole party panel strip, then highlights
-   the panel of every unit in the 0xff-terminated id list (at most four)
-   that stands in one of the battle's first four party places. */
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
     struct BattleSession *battle = gBattleWork;

@@ -6,7 +6,6 @@ extern const u8 Func_08015430[];
 extern void *Data_03001e50[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
-
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
 {
     struct TextReader reader;

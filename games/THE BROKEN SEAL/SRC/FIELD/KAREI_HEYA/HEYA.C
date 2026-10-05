@@ -7,7 +7,6 @@ extern const struct SceneEntrance gKareiHeyaEntrances1[];
 extern const struct SceneEntrance gKareiHeyaEntrances2[];
 extern const struct SceneEntrance gKareiHeyaEntrancesOther[];
 
-/* Table selection, dialogue and arrival scripts for resource_3a9. */
 typedef struct Placement {
     u32 destination;
     u16 x;
@@ -43,7 +42,6 @@ enum ArrivalMessage {
     MSG_OUR_INN_FEELS_EMPTY_NOW = 0x1afb
 };
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -62,15 +60,11 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The scene's exit table. */
 u8 *KareiHeya_GetExits(void)
 {
     return KareiHeya_Exits;
 }
 
-/* The actors placed in the Kalay houses. In the first scene the entrances
-   9 to 15 and 17 have their own table; the first scene's table is prepared
-   before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s32 scene = gGameState.scene;
@@ -103,7 +97,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKareiHeyaPlacementsOther;
 }
 
-/* What the Kalay houses answer, chosen as their placements are. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s32 scene = gGameState.scene;
@@ -131,7 +124,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKareiHeyaEventsOther;
 }
 
-/* Placement table, four entries. */
 void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
     Engine_EventBegin();
@@ -153,7 +145,6 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
     struct FieldActor *p = Object_GetById(0);
 
-/* Band guard: facing in 0x6001..0x9fff. */
     if ((u16)(p->facing - 0x6001) <= 0x3FFE) {
         Engine_InnOpen(7, 8);
     } else {
@@ -165,7 +156,7 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
         } else {
             Engine_EventSetMessage((s32)MsgKareiGoingTolbiAlso);
             Engine_EventAskYesNo(8, 0);
-            Engine_GameFlagSet(0x910);           /* 145 << 4 */
+            Engine_GameFlagSet(0x910);
         }
 
         Engine_EventEnd();
@@ -178,7 +169,6 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 
     struct FieldActor *p = Object_GetById(0);
 
-/* Band guard: facing in 0xa001..0xdfff. */
     if ((u16)(p->facing + 0x5FFF) <= 0x3FFE) {
         Engine_SanctumOpen(8);
     } else {
@@ -189,7 +179,6 @@ void SceneDialogue_RunActor8FacingDialogue(void)
     }
 }
 
-/* Scene arrival: clear the field at +85 of scene slots 8 to 65, then place the player from the sub-state's table entry. Only sub-states 12, 13, 16 and 19 use a placement. */
 void FieldScene_RunArrivalPlacement(void)
 {
 
@@ -208,7 +197,7 @@ void FieldScene_RunArrivalPlacement(void)
         }
     }
 
-    switch (work->touched_trigger) {         /* 182 << 1 */
+    switch (work->touched_trigger) {
     case 12: idx = 0; break;
     case 13: idx = 1; break;
     case 16: idx = 2; break;
@@ -240,8 +229,6 @@ void FieldScene_RunArrivalPlacement(void)
     Engine_EventEnd();
 }
 
-/* The Kalay houses' scene start: open with the window transition; the first
-   scene clears the slots its entrance calls for. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -251,7 +238,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/* Clear the scene slots this sub-state leaves behind; sub-state 16 uses the final branch. */
 void SceneState_ClearSlotsBySubState(void)
 {
     s16 sub = gGameState.entrance;
@@ -277,7 +263,6 @@ void SceneState_ClearSlotsBySubState(void)
         goto other;
     }
 
-    /* sub is 9..15 or 17. */
     if (Engine_GameFlagIsSet(0x911) != 0) {
 
         Engine_ActorDestroy(10);

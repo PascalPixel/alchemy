@@ -9,7 +9,6 @@
 #include "TBS_EDITION.H"
 #include "UIFLOW.H"
 
-/* The object palette the slider graphics use. */
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 extern const u8 Resource_FixedBlockBTiles[];
@@ -53,8 +52,6 @@ void Ui_ApplyTableOffsetToPair(void *);
 void Audio_PlayCue(s32);
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void);
 
-/* Open the options window with four dividers, six captions, a cursor,
- * two slider markers at value * 60 / step pixels and seven icons in three rows. */
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {
     /* FAKEMATCH: the shared cursor union keeps pointer stores before window reads; an equal-size struct reorders these moves in all six editions. */
@@ -81,7 +78,6 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     msg++;
     UiText_DrawCharacterAtOffset(msg, win, 32, 40);
 #else
-    /* The Japanese speed caption is one line, level with its frames. */
     UiText_DrawCharacterAtOffset((s32)&MsgMessageSpeedLabel, win, 8, 40);
 #endif
     UiText_DrawCharacterAtOffset((s32)MsgSpeechLabel, win, 8, 64);
@@ -152,10 +148,6 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     return win;
 }
 
-/* Runs the workspace options page until A/START (0) or B (-1).  L and R
-   step through the presets, up and down move between the five settings and
-   left and right change the selected one; every change redraws the page.
-   On A the settings are copied into the game state. */
 s32 Menu_RunWorkspaceOptions(void)
 {
     struct WorkspaceWork *work;

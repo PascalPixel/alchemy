@@ -40,11 +40,6 @@ void FieldScene_RunGuardedRectStep(void)
     VinasuHeya_RunCellPushScene();
 }
 
-/* Venus Lighthouse room: after actors 9 to 11 are pushed, each block that
- * rests on one of the four switch cells and shares its cell with no other
- * block sinks into it and marks it. Once all three are down, two effects
- * play and flag 0x302 (block 9 on the first switch) or 0x303 is set, then
- * 0x304. */
 void VinasuHeya_SettlePushedBlocks(void)
 {
     struct FieldActor *marker = 0;
@@ -172,8 +167,6 @@ s32 SceneActor_SetHeightAboveLinkedRecord(Struct_22a4 *obj)
     return 0;
 }
 
-/* Moves actors 8 and 9 to the heights their table rows name, then marks the
- * cell under each of actors 8 to 12 that has sunk below the floor. */
 void VinasuHeya_LowerFloatingBlocks(s32 wait)
 {
     struct FieldActor *a = Object_GetById(8);
@@ -204,7 +197,6 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     Engine_EventWait(wait);
 }
 
-/* Among actors 8 to 13 on the selected actor's tile, find the highest at least one unit above it, record that actor's ID and run the move and effect. */
 void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 {
 
@@ -251,13 +243,11 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 
 struct FieldActor *Battle_GetWorkObject1e0(void);
 
-/* The scale pans, actors 8 and 9, keep a signed index into the height table. */
 struct FloatingBlock {
     u8 unknown_00[0x64];
     s16 height_index;
 };
 
-/* Leaves a block resting where it is: no target height, no fall, no step. */
 static __inline__ void FloatingBlock_Settle(struct FieldActor *block, s32 value)
 {
     block->target_y = ACTOR_NO_TARGET;
@@ -274,14 +264,6 @@ static __inline__ void Actor_CopyPosition(struct FieldActor *to, struct FieldAct
     to->z.fixed = from->z.fixed;
 }
 
-/*
- * After a push, deals with the first of blocks 10 to 13 that has come to
- * rest somewhere that matters and marks it done with flag 0x200 + block:
- * on the socket at cell (13, 7) it locks in place; pushed into the pit it
- * sinks behind two splashes and leaves the room; on the scale at row 19 it
- * changes places with the first earlier block still in play, drops onto
- * the pan below, and tips the two pans one step.
- */
 void VinasuHeya_ResolveFloatingBlock(void)
 {
     struct FieldActor work;

@@ -7,8 +7,6 @@
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 
-/* Spins the object faster each frame until it turns a sixteenth of a
-   circle more per frame than it started. */
 void BattleFx_UpdateSpinAngle(struct FieldActor *object)
 {
     u32 step;
@@ -19,8 +17,6 @@ void BattleFx_UpdateSpinAngle(struct FieldActor *object)
         object->timer = object->timer + 1;
 }
 
-/* Lifts the object a pixel a frame while it spins and shrinks, and
-   deactivates it once it is nearly gone. */
 void BattleFx_UpdateDescendingObject(struct FieldActor *object)
 {
     u32 scale;
@@ -44,7 +40,6 @@ extern struct BattleFxScene *gEffectWork;
 extern u32 gFrameCount;
 
 void Camera_WorldToScreen(struct Output *);
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Output *);
 void Audio_PlayCue(s32);
 

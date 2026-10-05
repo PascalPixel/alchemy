@@ -17,7 +17,6 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     UiText_BuildRenderEntries(arg0, 1);
     canvas->entries[*counter] = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-    /* Pass the built entries to the text canvas. */
     UiText_RenderWideStringAtOffset(canvas->entries, (struct UiWindow *)arg1, arg2, arg3);
 }
 
@@ -106,7 +105,6 @@ void UiText_DrawStringAtOffset(
     }
     *output = 0;
 
-    /* 座標を8ドット単位のセル番号へ変換する。 */
     cell = ((work->y + ((u32)offset_y >> 3) + 1) << 5)
         + (work->x + ((u32)offset_x >> 3)) + 1;
     if (cell < 0x280) {
@@ -145,7 +143,6 @@ void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawString(UiText_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
@@ -158,7 +155,6 @@ void UiText_DrawNumberAtOffset(
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawStringAtOffset(UiText_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
@@ -166,7 +162,6 @@ void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     u8 data[16];
 
-    /* 16バイト一時領域を介して次の処理へ渡す。 */
     UiText_DrawStringInWindow(UiText_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }
 
@@ -192,7 +187,6 @@ void UiText_DrawPrefixedNumberAtOffset(
     text = UiText_FormatNumber(formatted, value, 4);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)
-    /* Here the second variant has a prefix glyph pair of its own. */
     if (variant == 0) {
         output[0] = 0xf01d;
         output[1] = 0xf01e;

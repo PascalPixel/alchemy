@@ -1,26 +1,3 @@
-/*
- * Draft: UiWindow_Create. The native extent is 276 bytes in every edition:
- * JA starts at 08039254, the others at 08039260. Own-ROM comparison finds
- * the same body, with only call displacements differing between editions.
- *
- * Finite ordinary trials (2026-10-03, approved TLA flags):
- * - Legacy private state/self view and ignored x argument: score 220,
- *   3 differing rows. This does not establish the callee's argument contract.
- * - Maintained UiWindow output list, signed duration, guarded window array
- *   and no-argument ResetCounters: score 420, 9 rows; retained.
- * - Branch-local u16 flags read before duration, then flags/frame stores:
- *   score 1005, 16 rows; rejected.
- * - Branch-local u32 flags read before duration, then flags/frame stores:
- *   score 420, the same 9 remaining rows; simpler retained form kept.
- *
- * Remaining: the no-argument call changes x/width/height register lifetimes
- * and adds one move. Both forms store duration before flags; the native
- * immediate-draw branch stores duration before the flags OR, while generated
- * code computes the OR and prepares zero before storing duration.
- * ResetCounters does not read incoming r0, so passing x solely to recover
- * its lifetime would be a measured matching device, not an API.
- * No FAKEMATCH device is used; this is not an adoption.
- */
 #include "WINDOW.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
@@ -28,11 +5,6 @@
 void UiWork_ResetCounters(void);
 void UiWork_DrawByAttributes(struct UiWindow *window);
 void UiWork_WaitWindowDuration(void *work);
-
-/* Open a window at a tile position and size in the first free record, with
-   the attribute bits that choose its frame and drawing; a window drawn
-   through its attributes appears at once, any other one opens over eight
-   frames. Returns the record, or 0 when all twelve are in use. */
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 {

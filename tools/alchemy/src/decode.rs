@@ -1,5 +1,3 @@
-//! Thumb-1 decoding into instruction forms. Pool words are read from the
-//! image directly, so a `ldr rN, [pc, #k]` carries its constant.
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Cond {
@@ -106,12 +104,10 @@ pub enum Offset {
 pub enum Kind {
     Push {
         lr: bool,
-        /// The low registers pushed, as a bit per register.
         list: u8,
     },
     Pop {
         pc: bool,
-        /// The low registers popped, as a bit per register.
         list: u8,
     },
     Bx(u8),
@@ -120,12 +116,10 @@ pub enum Kind {
         rd: u8,
         imm: u32,
     },
-    /// `mov rd, rm` through the high-register form.
     MovHi {
         rd: u8,
         rm: u8,
     },
-    /// `movs rd, rm`, which the assembler spells as `lsls rd, rm, #0`.
     Movs {
         rd: u8,
         rm: u8,
@@ -387,7 +381,6 @@ pub fn text_of(kind: &Kind) -> String {
     }
 }
 
-/// Reads the little-endian halfword at `offset` of `bytes`.
 pub(crate) fn half_at(bytes: &[u8], offset: usize) -> Option<u16> {
     Some(u16::from_le_bytes([
         *bytes.get(offset)?,
@@ -404,8 +397,6 @@ pub(crate) fn word_at(bytes: &[u8], offset: usize) -> Option<u32> {
     ]))
 }
 
-/// Decodes one instruction at `pc`. `image` holds the whole overlay so pool
-/// words and branch targets resolve against real addresses.
 pub fn decode_one(image: &[u8], base: u32, pc: u32) -> Option<Ins> {
     let offset = pc.checked_sub(base)? as usize;
     let half = half_at(image, offset)?;

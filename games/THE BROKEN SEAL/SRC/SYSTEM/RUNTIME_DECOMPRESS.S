@@ -1,17 +1,6 @@
-@ Resident decompressor. Flag bits, eight to a byte with a sentinel bit,
-@ choose between literal bytes, where values above 0xdf skip destination
-@ bytes, and two-byte back-references with a 12-bit offset and a 4-bit
-@ length. It returns before saving anything when the halfword at the start
-@ of the stream is zero (orrs; bxeq lr), saves r5-r7 without lr and branches
-@ on the carry and zero flags left by lsrs r3, r3, #1. GCC saves lr with its
-@ registers on entry and never branches on the carry out of a shift. These
-@ 152 bytes equal TLA SYSTEM/IWRAM_RUNTIME_DECOMPRESS.S after its Thumb
-@ entry (0x08000c50, run at 0x03000698).
-@ credit: library — TBS/TLA common IWRAM runtime decompressor
 .syntax unified
 	.arm
 
-@ 制御語と後方参照を展開する常駐解凍処理。
 	.global IwramDecompress
 IwramDecompress:
 	ldrb	r2, [r0], #1

@@ -6,15 +6,10 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/* Set once the Boulder has come down. */
 enum {
     FLAG_BOULDER_FELL = 0x838
 };
 
-/*
- * Robin's parents, in the scene where the Boulder starts to slip: Dora asks
- * Kyle whether it can be stopped, and he answers her by name.
- */
 enum StormNightActor {
     ACTOR_DORA = ACTOR_FIRST_PLACED + 1,
     ACTOR_KYLE
@@ -100,12 +95,10 @@ extern u8 HaidiaArashi_ActorNineteenScript[];
 
 extern u8 HaidiaArashi_ActorEightScript[];
 
-/* Set actor sprite priority. */
 void ObjectMotion_SetActionVariant(s32 actor, s32 priority);
 
 extern s32 HaidiaArashi_ShakeDone;
 extern s32 HaidiaArashi_ShakeShift;
-/* The scene's tables, cell steps and action scripts, in the overlay's read-only data. */
 extern u8 HaidiaArashi_CellSteps2[];
 extern u8 HaidiaArashi_CellSteps3[];
 extern u8 HaidiaArashi_LastObjectCall[];

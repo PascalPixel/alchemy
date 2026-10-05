@@ -1,14 +1,3 @@
-/* Earlier private-view trial: score 160 with temporaries for the owned and
-   active words. ⚓️
-   sets the 0 result between loading the pledged word and testing its bit;
-   this draft after with the approved game flags. */
-/*
- * Earlier private-view trial: 8 bytes differed from +0x30.
- * EN 2026-10-03: canonical owner/offer fields score 1100, 30 differing
- * instructions; compiled 188 bytes versus native 192. Offer-base addressing,
- * scan registers and signed status loading differ from the listing.
- * Links as recon/tla/raw/080b0bb8.s.
- */
 #include "OWNER_STATE.H"
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)

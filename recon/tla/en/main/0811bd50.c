@@ -1,9 +1,3 @@
-/* Near miss: differ 2, one scheduling step. ☀️'s
-   BattleMotion_ProjectPosition with the slot found inline and the record's
-   scale at 0xc. The listing passes the projected pointer (adds r1, r7, #0)
-   before loading the object's y (ldr r3, [r5, #12]); this build loads
-   first. Goes after Camera_ApplyTransformByFlag in
-   RESET_BATTLE_OBJECT_RECORD_GROUPS.C. */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_SESSION.H"
@@ -32,7 +26,6 @@ static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
     return &slots[work[id]];
 }
 
-/* ☀️'s: projects a unit's object onto the screen. */
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
 {
     struct MotionObject *object = BattleObject_FindSlot(id)->object;

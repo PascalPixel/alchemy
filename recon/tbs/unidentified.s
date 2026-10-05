@@ -1,5 +1,3 @@
-@ Unidentified ROM data, read from your own ROM at build time as early pret
-@ projects read their base ROM. Each section shrinks as its data gains source.
 	.section .unidentified.08000000,"a"
 	.global Rom_Start
 Rom_Start:

@@ -1,10 +1,3 @@
-/* Near miss: DisplayScroll_UpdateObjects, ☀️'s grid over ⚓️'s intro crawl
-   cells, differ 2 under the ARM9TDMI schedule: the native steps the entry
-   pointer (adds r0, #8) before storing the tile word, this draft after.
-   ⚓️ advances the crawl every third frame with no busy check. Reordering
-   the entry step and the tile store, indexed stores and a 200-step device
-   search did not move it; the grid in 081a08c4 shares the same gap.
-   Joins DISPLAY6.C on a match. */
 #include "TYPES.H"
 #include "DMA.H"
 

@@ -19,8 +19,6 @@
 
 extern u8 gBattleFxWork[];
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-
 void Render_ResetTransformState(void);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
@@ -36,8 +34,6 @@ extern u16 ParticleField_PuffSizes[];
 
 void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode);
 
-/* Mode entries of the particle field effect. */
-
 void BattleFx_RunParticleFieldMode1(struct BattleEffectArgument *effect)
 {
     BattleFx_RunParticleField(effect, 1);
@@ -48,22 +44,18 @@ void BattleFx_RunParticleFieldMode0(struct BattleEffectArgument *effect)
     BattleFx_RunParticleField(effect, 0);
 }
 
-/* Per variant: how many motes fly, how many puffs open, how long it runs. */
 enum {
     FIELD_MOTES,
     FIELD_PUFFS,
     FIELD_FRAMES
 };
 
-/* Battle effect: a blast of motes and opening puffs thrown from one side of
-   the screen across the field. Mode 1 runs it over a grey ramp palette and
-   leaves the affected units still. */
 void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 {
     void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
-    DrawRectangle draw[2]; /* the effect pair: main and alternate blitter */
+    DrawRectangle draw[2];
     s32 variant;
     struct EffectPosition screen;
     s32 frame;

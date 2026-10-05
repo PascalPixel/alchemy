@@ -7,7 +7,6 @@
 #include "FACING_OBJECT.H"
 #include "CALL.H"
 
-/* The one placement the second scene sequence spawns. */
 extern const s32 ShindenHeya_PlacementSequenceB[];
 void ShindenHeya_SpawnOwnerEffect();
 
@@ -15,7 +14,6 @@ s32 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 
 struct FieldActor *GetActorState(s32 actor_id);
-/* Shared scene state; entry 225 holds the scene sub-state. */
 extern s16 Data_02000240[];
 void Event_CallWithLastActiveObjectId();
 void AudioCommand_WaitForCompletion();
@@ -30,11 +28,8 @@ extern u8 MsgShindenWhenStrayFromYourWorldly[];
 extern u8 MsgShindenWonderIfEverSeeOur[];
 extern u8 ShindenHeya_TableA;
 extern u8 ShindenHeya_TableB;
-/* Placement records have six words and end with 0xffff; coordinates are 16.16.
- * The writable tables also carry save state. */
 extern u8 ShindenHeya_PlacementA[];
 
-/* Empty table: place nothing. */
 extern u8 ShindenHeya_PlacementB[];
 extern u8 ShindenHeya_PlacementC[];
 extern u8 ShindenHeya_PlacementD[];
@@ -113,7 +108,6 @@ extern u32 gFrameCount;
 
 void SceneEffect_StepEllipseOrbit();
 
-/* The motion script the owner effect runs before deleting itself. */
 extern const s32 ShindenHeya_OwnerEffectScript[];
 
 s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
@@ -356,7 +350,6 @@ void FieldScene_RunActorTenCountStep(void)
     Engine_EventEnd();
 }
 
-/* Sanctum entry: record the arrival, fade in, then restore the room or run the entrance's scene. */
 s32 ShindenHeya_ApplyEntryState(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -411,7 +404,6 @@ void FieldScene_RunActorEightResetSequence(void)
     Engine_EventEnd();
 }
 
-/* Shrine room: the party faces the altar, the room fades to blue, three of the four lamps light, and the scene exits by the altar's answer. */
 void ShindenHeya_RunAltarScene(void)
 {
     struct ShrineWork *work;
@@ -453,7 +445,6 @@ void ShindenHeya_RunAltarScene(void)
     }
 }
 
-/* Draw the actor, both parts, at the leader's sprite priority. */
 s32 ShindenHeya_MatchLeaderPriority(struct FieldActor *actor)
 {
     actor->sprite->priority = Object_GetById(0)->sprite->priority;
@@ -526,7 +517,6 @@ void FieldScene_RunScriptedSceneSequence(void)
     Actor_FaceActor(ACTOR_GERALD, 0xb, 0);
     Engine_EventWait(0x14);
     Event_OpenMessage(0xb, 0);
-    /* Each answer advances the dialogue once, before or after showing its reply. */
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(0x14);
         Engine_ActorSetAnimationAndWait(0xb, 3);
@@ -1090,7 +1080,6 @@ void FieldScene_RunActorUpdateSequence(void)
     Engine_ActorSetChildValue(13, 0x100);
     Audio_PlayCue(17);
     Audio_PlayCue(0x134);
-    /* Shrink actor 13 over 32 steps, spawning a spark on each step. */
     for (i = 0; i < 32; i++) {
         ShindenHeya_SpawnActorSpark(13);
         Engine_EventWait(4);
@@ -1439,8 +1428,6 @@ void ShindenHeya_ResetActorUpdate(void)
     Engine_ActorSetPosition(14, 0, 0);
 }
 
-/* Holds an object on actor 8, moving it off by a few pixels on each
-   of four frames in turn so that it jitters. */
 void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
 {
     struct FieldActor *leader;
@@ -1465,7 +1452,6 @@ void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
     }
 }
 
-/* Orbit the anchor with radii 14 and 10, advancing the angle once per frame. */
 void SceneEffect_StepEllipseOrbit(u8 *obj)
 {
     u8 *anchor = *(u8 **)(obj + 104);
@@ -1487,7 +1473,6 @@ void SceneEffect_StepEllipseOrbit(u8 *obj)
     *angle = (u16)(*angle + ((struct FieldActor *)obj)->work);
 }
 
-/* Spawns the effect object above actor a0 with its script, zeroes its state and copies the owner's sprite mode. */
 void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
 {
     u32 i;

@@ -1,6 +1,3 @@
-@ tbs-de's iwram variables not yet defined in C, in address order, as pret's
-@ sym files list them: where this edition's code reads each one. Each
-@ .space runs to the next variable.
 	.section .sym_iwram,"aw",%nobits
 	.space 0x00000010
 	.global Data_03001400

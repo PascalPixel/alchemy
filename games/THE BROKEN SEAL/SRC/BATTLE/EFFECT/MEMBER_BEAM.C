@@ -22,9 +22,7 @@
 
 extern u8 gBattleFxWork[];
 
-/* Which crescent picture each of a mote's eight steps shows. */
 extern u8 MemberBeam_MotePictures[];
-/* The beam head's three pictures: place in the sheet, width and height. */
 extern u16 MemberBeam_HeadOffsets[];
 extern u8 MemberBeam_HeadWidths[];
 extern u8 MemberBeam_HeadHeights[];
@@ -48,8 +46,6 @@ static __inline__ void CopyPalette(WordCopy copy, void *destination, const void 
 
 void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode);
 
-/* Mode entries of the member beam effect. */
-
 void BattleFx_RunTwoModeAMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunMemberBeam(effect, 0);
@@ -60,8 +56,6 @@ void BattleFx_RunTwoModeAMode1(struct BattleEffectArgument *effect)
     BattleFx_RunMemberBeam(effect, 1);
 }
 
-/* Battle effect: motes sink towards each target, then a beam comes down on
-   it from the top of the screen. */
 void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 {
     struct EffectPosition single;

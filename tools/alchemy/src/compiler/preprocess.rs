@@ -1,5 +1,3 @@
-//! Fresh source expansion with the exact production compiler and edition.
-//! Expansion is returned in memory; saved intermediates and reports are never inputs.
 use super::routing::{cflags_for_target_source, uses_agbcc_compiler};
 use crate::targets::DecompTarget;
 use std::path::Path;
@@ -28,8 +26,6 @@ pub(crate) fn command(
     super::bundle::compiler_command_for_target(compiler, &flags)
 }
 
-/// One current edition's imports, shared only within a source analysis run.
-/// Every C file is still freshly preprocessed; nothing saved under out/ is read.
 pub(crate) struct Expansion<'a> {
     root: &'a Path,
     target: DecompTarget,

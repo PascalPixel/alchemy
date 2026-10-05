@@ -39,8 +39,6 @@ void Graphics_RenumberFillerEntries(void)
     } while (cnt != 0);
 }
 
-/* Converts the map at 0x02010000 into 0x02018000 with the ARM routine at
-   0x0800a37c, run from a heap copy, against a saved copy of the source. */
 void Tilemap_ConvertBuffer(void)
 {
     u8 *saved;

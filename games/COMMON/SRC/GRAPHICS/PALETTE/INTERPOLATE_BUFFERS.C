@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
-/* Fills step with the per-frame change from source to target over frames
-   frames for all 1536 channel values, dividing in IWRAM. */
 void Graphics_InterpolatePaletteBuffers(s16 *source, s16 *target, s16 *step, s32 frames)
 {
     s32 index;

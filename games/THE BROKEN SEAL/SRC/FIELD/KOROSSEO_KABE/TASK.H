@@ -2,15 +2,11 @@
 #ifndef KOROSSEO_KABE_TASK_H
 #define KOROSSEO_KABE_TASK_H
 
-/* Declarations shared by the Colosso wall stage's scene code. */
-
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/* The engine's work blocks, one pointer per slot; slot 59 holds the stage's
- * descriptor. */
 extern u8 gWorkSlot[];
 #define WORK_SLOT_STAGE 59
 extern u8 gEffectWork[];
@@ -49,8 +45,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The mode task's records; the halfword at +26 holds the per-mode span in
- * sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
@@ -104,7 +98,6 @@ typedef struct Position3 {
     s32 z;
 } Position3;
 
-/* The stage's data, in the overlay's read-only data and work. */
 extern u8 HexDigits[];
 extern u8 Korosseo_GaugeGraphics[];
 extern s32 KorosseoKabe_SparkScript[];
@@ -160,7 +153,6 @@ s32 Menu_OpenCharacterSelector();
 s32 AudioCommand_GetStateByte();
 void BattleFx_RunRisingObjectSequence();
 
-/* The stage tasks and shared Colosso services. */
 void KorosseoKabe_RollLogToCell();
 void Korosseo_SelectSoloCompetitor();
 void Korosseo_FinishSoloRound();
@@ -174,7 +166,6 @@ void Korosseo_UpdateModeTask(void);
 void Korosseo_UpdateMarker(void);
 void Korosseo_DrawGauge(void);
 
-/* The area's functions, in cartridge order. */
 void SceneData_NoOpHandler(void);
 void FieldScene_RunSingleStep(void);
 void SceneState_ConfigureRegionByActorElevenColumn(void);
@@ -221,7 +212,6 @@ void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z);
 void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z);
 void Text_WriteU32AsHex(u8 *buf, u32 value);
 void SceneState_EmptyHook(void);
-/* The stage's control record, at the head of the scene state. */
 struct StageControl {
     s16 status;
     s16 f2;

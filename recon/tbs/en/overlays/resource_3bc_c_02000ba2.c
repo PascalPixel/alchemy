@@ -1,11 +1,6 @@
 #include "TYPES.H"
 extern u8 MsgKorosseoDidntThinkBattles[];
 
-/* Audited retained supplemental scene body.
- * The complete production span preserves 40 calls, 1 loop(s), and 0 explicit memory operation(s).
- * Approved GCC changes scheduling, allocation, control-flow lowering, and
- * literal placement, so the reviewed assembly remains authoritative. */
-
 void Func_02003262();
 void Func_02004920();
 void Func_02004942();

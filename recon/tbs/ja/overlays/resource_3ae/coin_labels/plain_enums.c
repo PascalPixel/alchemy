@@ -1,9 +1,3 @@
-/* NONMATCHING: Japanese ticket-counter coin labels, 2026-10-01.
- * The complete opening callback compiles with approved TBS flags. Separate
- * whole enum arguments rematerialize the unit label and shorten the owner
- * by twelve bytes. Production updates one label selector between the two
- * catalog entries, preserving the saved register through the number draw.
- */
 #include "TBS_EDITION.H"
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI.H"
 #include "text/MSG_IDS.H"
@@ -68,7 +62,6 @@ union GameStateRows {
     s32 words[256];
 };
 
-/* The sprite's attribute bytes as the scene scripts write them. */
 struct SpriteBytes {
     u8 unknown_00[9];
     u8 priority;

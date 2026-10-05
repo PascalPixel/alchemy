@@ -1,7 +1,3 @@
-/* Battle effects: the fallback transition. An object grows as it glides
-   from above the scene's main object to above the scene position over
-   eleven frames, chimes three times, then throws out sixteen radial camera
-   particles from where it stands and is destroyed. */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "FX_SCENE.H"

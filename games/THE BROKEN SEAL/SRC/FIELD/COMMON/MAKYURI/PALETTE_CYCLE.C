@@ -5,10 +5,6 @@ extern s32 gPaletteCycleRed;
 extern s32 gPaletteCycleGreen;
 extern s32 gPaletteCycleBlue;
 
-/* Mercury Lighthouse: every fifth frame, advance the red phase and shift the
- * red channel of palette colours 105..110 up one slot, dimming the first
- * three by 40%, over a shared green and blue. The same functions sit in both
- * lighthouse overlays that cycle the light. */
 void Makyuri_CyclePalette(void)
 {
     volatile u16 cur;
@@ -33,7 +29,6 @@ void Makyuri_CyclePalette(void)
     *(u16 *)0x050000d2 = gPaletteCycleRed | bits;
 }
 
-/* Clear palette colours 105..111. */
 void Makyuri_ClearPalette(void)
 {
     u32 i;

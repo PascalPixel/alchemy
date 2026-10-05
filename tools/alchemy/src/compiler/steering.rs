@@ -1,5 +1,3 @@
-//! Source-owned steering and inline dependencies (S2).
-//! This analysis accepts fresh preprocessing, never compiled output or a report.
 use super::c_syntax::{lex, matching, scan_definitions, Tok, Token};
 use std::collections::BTreeSet;
 
@@ -78,8 +76,6 @@ fn origins(text: &str, fallback: &str) -> Vec<(String, usize)> {
 
 fn definitions(tokens: &[Token], origins: &[(String, usize)]) -> Vec<Definition> {
     scan_definitions(tokens).into_iter().filter_map(|(name, boundary, name_index, params_end, open)| {
-        // Raw conditionals may spell alternative unmatched bodies; the fresh
-        // compiler expansion supplies their active, balanced definitions.
         let close = matching(tokens, open)?;
         let (owner, line) = origins.get(tokens[name_index].line - 1).cloned().unwrap_or_default();
         let header = &tokens[boundary..name_index];
@@ -91,8 +87,6 @@ fn definitions(tokens: &[Token], origins: &[(String, usize)]) -> Vec<Definition>
     }).collect()
 }
 
-/// Literal pools emitted at file scope name their complete owner in .size.
-/// Data directives do not make neighboring plain functions steering code.
 fn pool_owners(tokens: &[Token], tag: usize) -> Option<BTreeSet<String>> {
     let at = (tag + 1..tokens.len()).find(|&at| !matches!(tokens[at].tok, Tok::Comment(_)))?;
     if !matches!(&tokens[at].tok, Tok::Ident(word) if ["asm", "__asm", "__asm__"].contains(&word.as_str()))
@@ -152,8 +146,6 @@ fn pool_owners(tokens: &[Token], tag: usize) -> Option<BTreeSet<String>> {
     Some(owners)
 }
 
-/// Whether a body uses one of `names` as a value: not as a member, and not
-/// where a type word declares it.
 fn names_any(body: &[Token], names: &BTreeSet<String>) -> bool {
     body.iter().enumerate().any(|(at, token)| {
         matches!(&token.tok, Tok::Ident(name) if names.contains(name))
@@ -172,9 +164,6 @@ fn names_any(body: &[Token], names: &BTreeSet<String>) -> bool {
     })
 }
 
-/// Inline-helper dependencies in one expanded translation unit: a function
-/// that names a steered inline helper is steered by it. A header preamble
-/// applies to that header's definitions, never to its including C file.
 pub(crate) fn analyze(text: &str, source: &str) -> Result<Analysis, String> {
     let tokens = lex(text)?;
     let locations = origins(text, source);
@@ -254,7 +243,6 @@ fn close_of(tokens: &[&Tok], open: usize) -> Option<usize> {
     None
 }
 
-/// Top-level pieces between commas.
 fn pieces<'a>(tokens: &'a [&'a Tok]) -> Option<Vec<&'a [&'a Tok]>> {
     let mut pieces = Vec::new();
     let (mut start, mut at) = (0, 0);
@@ -273,8 +261,6 @@ fn pieces<'a>(tokens: &'a [&'a Tok]) -> Option<Vec<&'a [&'a Tok]>> {
     Some(pieces)
 }
 
-/// The name an operand spells through casts and parentheses, and with
-/// `unary` through `*` and `&`.
 fn operand(mut tokens: &[&Tok], unary: bool) -> Option<String> {
     loop {
         match tokens {
@@ -293,8 +279,6 @@ fn operand(mut tokens: &[&Tok], unary: bool) -> Option<String> {
     }
 }
 
-/// `f(a, b);` or `return f(a, b);` as a body's only statement: the callee
-/// and its arguments' names.
 fn forwarded_call(body: &[&Tok]) -> Option<(String, Vec<String>)> {
     let statements = body
         .split(|tok| matches!(tok, Tok::Punct(";")))
@@ -343,8 +327,6 @@ fn forwarded_call(body: &[&Tok]) -> Option<(String, Vec<String>)> {
     Some((callee, args))
 }
 
-/// A parameter list's names: the identifier inside a pointer declarator's
-/// parentheses, as in `void (*f)(s32)`, else the last one outside brackets.
 fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
     if matches!(tokens, [] | [Tok::Ident(_)]) {
         return Some(Vec::new());
@@ -377,17 +359,12 @@ fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
         .collect()
 }
 
-/// Camelot's scene script layer (S2; Pascal, 2026-10-05): inline helpers that
-/// forward to the engine services as the scenes were written. One layer
-/// explains the scene code of the whole game, so its forwarders are source.
 pub(crate) const SCRIPT_LAYER: &[&str] = &[
     "games/THE BROKEN SEAL/INCLUDE/FIELD_EVENT.H",
     "games/THE BROKEN SEAL/INCLUDE/FIELD_SERVICE.H",
     "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/JO.H",
 ];
 
-/// Pure call/return adapters are steering helpers; transformed computations
-/// remain outside this deliberately bounded automatic convention.
 pub(crate) fn forwarding_findings(text: &str, source: &str) -> Result<Vec<Forwarder>, String> {
     let tokens = lex(text)?;
     let locations = origins(text, source);

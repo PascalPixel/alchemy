@@ -32,7 +32,6 @@ extern u8 MsgTorebiYaDontEnough[];
 s32 Party_GetAverageLevel(void);
 void Event_RequestDestination(s32 value, s32 mode);
 
-/* Lifts the workspace actor sixteen pixels with a cue, then steps the blend alpha through its eight-entry table. */
 void TorebiIzumi_RiseAndFadeIn(void)
 {
     u8 *p = gMapWork[0];
@@ -59,9 +58,6 @@ void TorebiIzumi_RiseAndFadeIn(void)
     }
 }
 
-/* The lucky wheels barker: counts the game tickets (item 228), offers a
- * game, warns when the bag is nearly full (six or fewer free slots) and
- * starts the lucky wheels when the player agrees. */
 void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 {
     s32 tickets = PartyInventory_CountItem(228);
@@ -121,7 +117,6 @@ play:
     Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 12);
 }
 
-/* Tolbi game attendant: quote ten coins per level; without enough coins say so, otherwise record the coins and, if the player accepts, walk in and start the game area. */
 void TorebiIzumi_PayToPlay(void)
 {
     u32 cost;
@@ -156,7 +151,6 @@ void TorebiIzumi_PayToPlay(void)
 }
 
 #if EDITION_INTERNATIONAL
-/* The spring game in the localized editions. */
 extern u8 MsgTorebiCoins[];
 extern u8 MsgTorebiThrow[];
 extern u8 MsgTorebiToss[];
@@ -184,8 +178,6 @@ void TorebiIzumi_RevealPrize(s32 item);
 #define TOSS_WIDTH 10
 #endif
 
-/* Asks to throw a coin or a ticket into the spring, rides it, and pays a
-   coin prize or draws a weighted item prize, halving the drawn weight. */
 s32 TorebiIzumi_RunSpringGame(void)
 {
     s32 choice = 0;
@@ -205,7 +197,6 @@ s32 TorebiIzumi_RunSpringGame(void)
     Battle_ResetEffectCounter();
     message = (s32)MsgTorebiThrow;
     state = &gGameState;
-    /* The halving device below raises state above message in priority. */
     /* FAKEMATCH: keeps message in r9 and state in fp, as the native does. */
     __asm__("" : "+r"(message));
 prompt:

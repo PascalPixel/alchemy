@@ -1,13 +1,9 @@
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
-/* Battle effect: spawn the two particles that fall in arcs either side of
-   the source object, one for each of the descending-arc update callbacks. */
 #include "TYPES.H"
 #include "SCENE_IDS.H"
 #include "FX_SCENE.H"
 
-/* A falling particle: a 16.16 position, the height it vanishes at, its
-   sprite scale, and the object it drifts down beside. */
 struct ArcParticle {
     u8 unknown_00[8];
     s32 x;
@@ -29,9 +25,6 @@ extern struct BattleEffect16GlobalState gGameState;
 
 void ObjectDispatch_ReleaseFar(void);
 
-/* Drops the particle two pixels a frame beside its source, on the positive
-   z side, while its sprite grows to full size; it vanishes ten pixels above
-   its floor (four in the Clear scene). */
 void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
 {
     struct ArcParticle *source;
@@ -60,7 +53,6 @@ void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
     particle->z = source->z + ((0x10000 - scale) * 5) + 0x90000;
 }
 
-/* The same fall on the negative z side, with the vertical scale negated. */
 void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 {
     struct ArcParticle *source;

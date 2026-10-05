@@ -1,7 +1,4 @@
 #include "EDITION.H"
-/* Browse the current owner's Psynergy from the status menu. L/R changes owners;
- * A advances to Item and B returns to character selection. The row coordinates
- * are signed because this view hides the four owner slots above the screen. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -13,7 +10,6 @@
 #include "PSYNERGY_MENU.H"
 #include "BATTLE_RUNTIME.H"
 
-/* Retained menu icon byte view; the shared owner is RenderOutput. */
 struct PsynergyMenuIcon {
     u8 unknown_00[5];
     u8 state;
@@ -156,8 +152,6 @@ s32 PsynergyMenu_SelectAction(void)
     return result;
 }
 
-/* The routine after the Psynergy action selector: it only reports
-   success. */
 s32 PsynergyMenu_ActionReturnTrue(void)
 {
     return 1;
@@ -176,7 +170,6 @@ void PsynergyMenu_PreparedIconsNoOp(void)
 {
 }
 
-/* Empty ability-menu hook. */
 void PsynergyMenu_PreparedIconsSecondNoOp(void)
 {
 }

@@ -2,8 +2,6 @@
 #include "SCENE.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-/* The battle effect work, seen through its shadows of the window, blend and
-   BG2 reference registers, which are copied to the hardware once a frame. */
 struct DisplayWork {
     u8 unknown_0000[0x77bc];
     u16 win0h;
@@ -33,8 +31,6 @@ struct DisplayWork {
 #define REG_BG2Y (*(s32 *)0x0400002c)
 
 extern struct DisplayWork *gBattleFxWork;
-
-/* graphics/registers/Display_ApplyWindowBlend.c */
 
 void Graphics_ApplyWindowBlendRegisters(void)
 {

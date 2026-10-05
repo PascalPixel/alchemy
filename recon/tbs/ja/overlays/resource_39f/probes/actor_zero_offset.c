@@ -1,8 +1,3 @@
-/* NONMATCHING: Japanese live-coordinate probe, 2026-10-01.
- * The approved TBS flags match the full 60-byte function except one pool
- * byte: this attempt probes 24 pixels behind the actor, while the Japanese
- * game probes 32 pixels behind it. Production preserves the corrected C.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MORI.H"
 #include "FIELD_EVENT.H"
 #include "STAGED_ACTOR.H"

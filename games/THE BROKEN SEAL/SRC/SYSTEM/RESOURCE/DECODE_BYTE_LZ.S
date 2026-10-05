@@ -1,13 +1,3 @@
-@ Byte LZ decoder that the resource loader at 0x080053e8 copies into a heap
-@ block, exactly these 600 bytes, calls there and then frees. Its flag byte
-@ rides in lr with a sentinel bit, back-references jump into unrolled copy
-@ runs with add pc, pc, ip, lsl #3, and it returns with pop {r0, r5, r6, r7,
-@ ip}; bx ip, reloading its saved second argument as the result. GCC never
-@ jumps into unrolled code, and with -mthumb-interwork it returns through lr.
-@ Every TBS and TLA edition has these bytes.
-@ The nops after its jumps (0x08001c70 and 0x08001d20), which the jumps
-@ always skip, carry no credit.
-@ credit: library — TBS/TLA common ARM byte-LZ decoder copied to the heap
 .syntax unified
 	.arm
 	.global Resource_DecodeByteLzArm

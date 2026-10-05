@@ -40,8 +40,6 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
     }
 }
 
-/* GetBattleObjectSlot, which ⚓️ expands here: enemies (ids above 7) index
-   the session's slot table from 8, and 0xff marks a unit without a slot. */
 static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
 {
     u8 *work = (u8 *)Ram_HeapSlots->battle_work;
@@ -55,7 +53,6 @@ static __inline__ struct BattleObjectSlot *BattleObject_FindSlot(s32 id)
     return &slots[work[id]];
 }
 
-/* ☀️'s: release the unit's slot values, then mark its slot active. */
 s32 ActivateBattleObjectSlot(s32 object_id)
 {
     struct BattleObjectSlot *slot;
@@ -66,8 +63,6 @@ s32 ActivateBattleObjectSlot(s32 object_id)
     return 0;
 }
 
-/* ☀️'s: destroys the object of every active unit slot and clears the
-   slot. */
 void BattleMotion_DestroyAllSlotObjects(void)
 {
     s32 no;

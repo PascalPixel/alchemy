@@ -34,7 +34,6 @@ extern u8 MsgRunpaGuardsCatchParty[];
 
 extern u8 MsgRunpaGuardForbidsReturn[];
 
-/* Where the party appears in the village and at the fortress gate. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s32 scene = gGameState.scene;
@@ -53,7 +52,6 @@ const struct SceneRegion *Scene_GetRegions(void)
     return NULL;
 }
 
-/* Where the village's and the gate's exits lead. */
 const u32 *Scene_GetExits(void)
 {
     s32 scene = gGameState.scene;
@@ -67,7 +65,6 @@ const u32 *Scene_GetExits(void)
     return gLunpaExits;
 }
 
-/* The actors standing in the village or at the gate. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s32 scene = gGameState.scene;
@@ -91,7 +88,6 @@ void FloatingNut_Catch(void)
     Engine_EventEnd();
 }
 
-/* The frozen puddle stands as a pillar of ice the party can climb. */
 void HiddenPuddle_Freeze(void)
 {
     struct FieldActor *pillar;
@@ -109,7 +105,6 @@ void HiddenPuddle_Freeze(void)
     GameFlag_Set(FLAG_LUNPA_PUDDLE_FROZEN);
 }
 
-/* A leader standing on the pillar draws above it. */
 void IcePillar_UpdateDrawOrder(void)
 {
     if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT) {
@@ -196,14 +191,11 @@ void Well_Search(void)
     Engine_EventEnd();
 }
 
-/* What the village answers before and after Lunpa trades again, and what
- * the gate answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s32 scene = gGameState.scene;
 
     if (scene == (s32)&SceneId_RunpaMura2) {
-        /* The gate asks whether Lunpa trades again but answers alike either way. */
         Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED);
         return gGateEvents;
     }
@@ -222,10 +214,6 @@ void WestGuard_Talk(void)
     Engine_EventEnd();
 }
 
-/*
- * Once the guards suspect Kalay, the east guard questions the party; each
- * reply draws a different line from him.
- */
 void EastGuard_Talk(void)
 {
     Engine_EventBegin();
@@ -340,7 +328,6 @@ void RightGuard_Talk(void)
     Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-/* Reading the left guard's mind while Hammet is near makes him look up. */
 void LeftGuard_MindRead(void)
 {
     s32 seen;
@@ -377,7 +364,6 @@ void RightGuard_MindRead(void)
     Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-/* After the escape, walking up to the fortress raises Gerald's objection. */
 void Party_WatchForFortress(void)
 {
     s32 cell_z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
@@ -403,7 +389,6 @@ void Gerald_RefusesToReturn(void)
     Engine_EventEnd();
 }
 
-/* The door opens, the leader steps through, and the scene changes. */
 void Door_Enter(void)
 {
     struct EventWork *work;
@@ -435,7 +420,6 @@ void Door_Enter(void)
     Engine_EventEnd();
 }
 
-/* The opened passage can be walked into only while Reveal lasts. */
 void HiddenPassage_Enter(void)
 {
     if (GameFlag_IsSet(FLAG_LUNPA_PASSAGE_OPEN) != 0) {
@@ -481,7 +465,6 @@ void Reveal_PlayTreasureCue(void)
     }
 }
 
-/* The switch grinds the hidden passage open, a block of cells at a time. */
 void HiddenSwitch_Pull(void)
 {
     if (GameFlag_IsSet(FLAG_LUNPA_SECRETS_HIDDEN) != 0) {
@@ -516,7 +499,6 @@ void HiddenSwitch_Pull(void)
     GameFlag_Set(FLAG_LUNPA_PASSAGE_OPEN);
 }
 
-/* Uncloaked, the party that nears the gate finds the guards in its way. */
 void Guards_BlockGate(void)
 {
     if (gGameState.cloaked == 0) {
@@ -548,7 +530,6 @@ void Scene_DoNothing(void)
 {
 }
 
-/* The cloaked party finds the gateway closed in front of it. */
 void Cloak_Begin(void)
 {
     Engine_MapCopyCellAttributes(6, 11, 1, 1, 7, 11);
@@ -619,7 +600,6 @@ void Gateway_Reopen(void)
     Engine_MapCopyCellAttributes(7, 12, 1, 1, 9, 11);
 }
 
-/* A party still near the gate when Cloak fades is spotted. */
 void Cloak_End(void)
 {
     struct EventWork *work;
@@ -642,7 +622,6 @@ void Cloak_End(void)
     Engine_GameFlagClear(FLAG_GATE_PARTY_CAUGHT);
 }
 
-/* An uncloaked party that walks up to the gate is spotted. */
 void Guards_Watch(void)
 {
     struct EventWork *work;
@@ -657,7 +636,6 @@ void Guards_Watch(void)
     }
 }
 
-/* Every sixteenth frame the dragged leader kicks up a puff of dust. */
 void Leader_KickUpDust(void)
 {
     struct FieldActor *leader;
@@ -675,10 +653,6 @@ void Leader_KickUpDust(void)
     }
 }
 
-/*
- * The guards drag the party caught inside the fortress down to the gate
- * road and throw it; the leader bounces twice and lies sprawled.
- */
 void Party_ThrownOut(void)
 {
     Engine_EventBegin();
@@ -686,7 +660,6 @@ void Party_ThrownOut(void)
     Actor_SetPosition(ACTOR_LEFT_GUARD, PIXELS(152), PIXELS(112));
     Actor_SetPosition(ACTOR_RIGHT_GUARD, PIXELS(168), PIXELS(112));
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    /* The script also turns the village guards, whom the gate does not place. */
     Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 0);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -756,7 +729,6 @@ void Party_ThrownOut(void)
     Engine_EventEnd();
 }
 
-/* The leader leaving the fortress casts Cloak and slips around the guards. */
 void Leader_SneaksOut(void)
 {
     Engine_EventBegin();
@@ -784,9 +756,6 @@ void Leader_SneaksOut(void)
     Engine_EventEnd();
 }
 
-/* The village hides its secrets and floats its Nut; the gate sets where a
- * retreat returns to, brings out a party thrown out or sneaking out, starts
- * the guards watching and forgets what the party did in the fortress. */
 s32 Scene_Initialize(void)
 {
     struct FieldActor *puddle;
@@ -837,7 +806,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/* The Nut circles its resting point, bobbing and swaying. */
 s32 FloatingNut_Update(union FieldObject *object)
 {
     struct FloatingNut *nut = (struct FloatingNut *)object;
@@ -859,7 +827,6 @@ s32 FloatingNut_Update(union FieldObject *object)
     return 0;
 }
 
-/* The Nut shows its item icon and hovers out of the party's reach. */
 void FloatingNut_Initialize(s32 actor)
 {
     struct FloatingNut *nut;

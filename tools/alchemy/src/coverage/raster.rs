@@ -1,9 +1,3 @@
-//! A small pixel canvas for the README figures: whole game pixels, flat
-//! colours, Weyard UI's stepped corners and translucent light bevels, glyphs
-//! from the tracked sheet, written as an indexed PNG at
-//! `FIGURE_SCALE` device pixels per game pixel, deflated with fdeflate, dated by
-//! its tIME chunk (the only standard chunk the publication check lets a date
-//! ride in).
 use super::letters::Letters;
 use super::palette::{corner_for, cut, DARK, LIGHT, LIGHT_OPACITY, SHADOW};
 
@@ -23,17 +17,13 @@ pub(crate) fn rgb(hex: &str) -> Rgb {
 pub(crate) struct Canvas {
     pub width: i32,
     pub height: i32,
-    /// `None` is a clear pixel: the page behind shows through.
     pixels: Vec<Option<Rgb>>,
 }
-/// Which way a bevelled box faces: raised is light along the top and left,
-/// sunken light along the bottom and right.
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Relief {
     Raised,
     Sunken,
 }
-/// `over` with `top` laid on it at `percent` opacity, each channel rounded.
 pub(crate) fn blend(top: Rgb, over: Rgb, percent: u32) -> Rgb {
     [0, 1, 2].map(|c| {
         ((u32::from(top[c]) * percent + u32::from(over[c]) * (100 - percent) + 50) / 100) as u8
@@ -58,8 +48,6 @@ impl Canvas {
         (x >= 0 && y >= 0 && x < self.width && y < self.height)
             .then(|| &mut self.pixels[(y * self.width + x) as usize])
     }
-    /// The pixels a box's stepped corners cut away, each with its offset
-    /// from the corner it belongs to.
     fn corner_pixels(x: i32, y: i32, width: i32, height: i32) -> Vec<(i32, i32)> {
         let corner = corner_for(width, height);
         let mut out = Vec::new();
@@ -78,7 +66,6 @@ impl Canvas {
         }
         out
     }
-    /// Run `draw` inside a box whose stepped corners keep what was beneath.
     pub(crate) fn rounded(&mut self, bounds: (i32, i32, i32, i32), draw: impl FnOnce(&mut Self)) {
         let (x, y, width, height) = bounds;
         let kept = Self::corner_pixels(x, y, width, height)
@@ -92,7 +79,6 @@ impl Canvas {
             }
         }
     }
-    /// Clear a box's cut corners, so the page shows through them.
     pub(crate) fn clear_corners(&mut self, x: i32, y: i32, width: i32, height: i32) {
         for (px, py) in Self::corner_pixels(x, y, width, height) {
             if let Some(slot) = self.at(px, py) {
@@ -100,8 +86,6 @@ impl Canvas {
             }
         }
     }
-    /// Lay `color` on one pixel, at `LIGHT_OPACITY` when it is a bevel or
-    /// shadow colour (`LIGHT`, `DARK` or `SHADOW`).
     fn bevel_pixel(&mut self, x: i32, y: i32, color: &str) {
         let ink = rgb(color);
         if let Some(slot) = self.at(x, y) {
@@ -119,16 +103,11 @@ impl Canvas {
             }
         }
     }
-    /// `fill` with the box's corners stepped.
     pub(crate) fn rounded_fill(&mut self, x: i32, y: i32, width: i32, height: i32, color: &str) {
         self.rounded((x, y, width, height), |canvas| {
             canvas.fill(x, y, width, height, color)
         });
     }
-    /// A one-pixel frame around a box with stepped corners: `LIGHT` (at
-    /// `LIGHT_OPACITY` over what it covers) and `DARK`, the dark side
-    /// owning the two mixed corners. A step wider than the corner pixel
-    /// draws its diagonal stair in the colour of that corner.
     pub(crate) fn bevel(&mut self, x: i32, y: i32, width: i32, height: i32, relief: Relief) {
         let (first, second) = match relief {
             Relief::Raised => (LIGHT, DARK),
@@ -147,8 +126,6 @@ impl Canvas {
                     continue;
                 }
                 let (px, py) = (x + across, y + down);
-                // Bottom and right, and the stairs of every corner but the
-                // top-left, take the second colour.
                 let top_left = across < width - 1 - across && down < height - 1 - down;
                 let on_edge = px == x || py == y || px == right || py == bottom;
                 let second_side = if on_edge {
@@ -160,7 +137,6 @@ impl Canvas {
             }
         }
     }
-    /// A line `thickness` pixels wide from one point to another.
     pub(crate) fn line(&mut self, from: (i32, i32), to: (i32, i32), thickness: i32, color: &str) {
         let (mut x, mut y) = from;
         let (dx, dy) = ((to.0 - x).abs(), -(to.1 - y).abs());
@@ -182,8 +158,6 @@ impl Canvas {
             }
         }
     }
-    /// Text in a line box whose top is `y`, each glyph's ink in `color` over
-    /// a shadow one pixel down and right; returns the advance.
     pub(crate) fn text(
         &mut self,
         letters: &Letters,
@@ -214,8 +188,6 @@ impl Canvas {
         }
         letters.width(text) as i32
     }
-    /// A Weyard UI mark (`letters::MARKS`) in a line box whose top is `y`,
-    /// its ink in `color` over the labels' one-pixel shadow; returns its width.
     pub(crate) fn mark(&mut self, x: i32, y: i32, name: &str, color: &str, shadow: &str) -> i32 {
         for (ink, dx) in [(shadow, 1), (color, 0)] {
             for (row, line) in super::letters::mark(name).iter().enumerate() {
@@ -228,8 +200,6 @@ impl Canvas {
         }
         super::letters::mark_width(name) as i32
     }
-    /// The canvas as RGBA bytes, each pixel `scale` device pixels wide, a
-    /// clear pixel all zero: exactly what its PNG decodes to.
     #[cfg(test)]
     pub(crate) fn rgba(&self, scale: u32) -> Vec<u8> {
         let scale = scale as usize;
@@ -249,10 +219,6 @@ impl Canvas {
         }
         out
     }
-    /// The canvas as an indexed PNG at the smallest bit depth its palette
-    /// allows, a clear pixel being entry 0 made transparent by tRNS, each pixel `scale` device pixels wide, every row after the
-    /// first filtered against the one above, deflated with fdeflate, and stamped
-    /// with `date` (`YYYY-MM-DD`) at midnight.
     pub(crate) fn png(&self, scale: u32, date: &str) -> Result<Vec<u8>, String> {
         let mut palette: Vec<Rgb> = Vec::new();
         let mut index = std::collections::HashMap::new();
@@ -293,7 +259,6 @@ impl Canvas {
             }
             for _ in 0..scale {
                 match &above {
-                    // Filter 2, Up: each byte less the one above it.
                     Some(previous) => {
                         raw.push(2);
                         raw.extend(packed.iter().zip(previous).map(|(a, b)| a.wrapping_sub(*b)));
@@ -330,7 +295,6 @@ impl Canvas {
         Ok(out)
     }
 }
-/// A PNG's pixels as RGBA bytes, with its width and height.
 #[cfg(test)]
 pub(crate) fn decode(bytes: &[u8]) -> Option<(u32, u32, Vec<u8>)> {
     let mut decoder = png::Decoder::new(std::io::Cursor::new(bytes));
@@ -365,7 +329,6 @@ fn chunk(kind: &[u8; 4], body: &[u8]) -> Vec<u8> {
     out
 }
 
-/// The date of a PNG's tIME chunk, `YYYY-MM-DD`.
 #[cfg(test)]
 pub(crate) fn png_date(bytes: &[u8]) -> Option<String> {
     let mut rest = bytes.get(8..)?;
@@ -396,11 +359,9 @@ mod tests {
         assert_eq!(canvas.get(7, 15), Some([0, 255, 0]));
         let png = canvas.png(2, "2026-09-24").unwrap();
         assert_eq!(png_date(&png).as_deref(), Some("2026-09-24"));
-        // Decoding gives back exactly the rendered pixels.
         let (width, height, data) = decode(&png).unwrap();
         assert_eq!((width, height), (16, 32));
         assert_eq!(data, canvas.rgba(2));
-        // The red game pixel covers two by two device pixels, and no more.
         for at in [0, 4, 64, 68] {
             assert_eq!(&data[at..at + 4], [255, 0, 0, 255]);
         }
@@ -414,12 +375,9 @@ mod tests {
         canvas.rounded_fill(2, 2, 8, 6, WELL);
         canvas.bevel(2, 2, 8, 6, Relief::Raised);
         let (face, light, dark) = (rgb(FACE), rgb(LIGHT), rgb(DARK));
-        // The cut corner pixels keep the face beneath.
         for (x, y) in [(2, 2), (9, 2), (2, 7), (9, 7)] {
             assert_eq!(canvas.get(x, y), Some(face), "{x},{y}");
         }
-        // The light edge is LIGHT_OPACITY light over the well it covers;
-        // the dark edge owns the mixed corners, just as translucent.
         let (o, rest) = (LIGHT_OPACITY, 100 - LIGHT_OPACITY);
         let over_well = blend(light, rgb(WELL), o);
         assert_eq!(
@@ -438,14 +396,12 @@ mod tests {
             assert_eq!(canvas.get(x, y), Some(blend(dark, rgb(WELL), o)), "{x},{y}");
         }
         assert_eq!(canvas.get(3, 3), Some(rgb(WELL)));
-        // A sunken frame puts its light, still translucent, on the other sides.
         canvas.bevel(2, 2, 8, 6, Relief::Sunken);
         assert_eq!(
             canvas.get(9, 3),
             Some(blend(light, blend(dark, rgb(WELL), o), o))
         );
         assert_eq!(canvas.get(3, 2), Some(blend(dark, over_well, o)));
-        // Cleared corners are transparent in the PNG and in its decoding.
         canvas.clear_corners(0, 0, 12, 10);
         assert_eq!(canvas.get(0, 0), None);
         assert_eq!(canvas.get(1, 0), Some(face));

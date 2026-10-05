@@ -2,10 +2,9 @@
 #include "RAM_BUFFER.H"
 #include "RENDER_INPUT.H"
 
-/* The item menu's work as ⚓️ lays it out. */
 struct ItemListMenu {
     u8 unknown_000[0xf0];
-    struct RenderOutput *message_window;    /* 0x0f0 */
+    struct RenderOutput *message_window;
 };
 
 void RenderOutput_RedrawSavedRectFar(struct RenderOutput *window);

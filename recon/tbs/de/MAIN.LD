@@ -1,7 +1,3 @@
-/* tbs-de: the bodies this edition gives games/THE BROKEN SEAL/MAIN.LD's output
-   sections, as pret links every version through one script: the game's own
-   lines it links from source, in the game's order, and between them its
-   rom.s scaffold of base-ROM ranges. */
 iwram :
 {
     "*/recon/tbs/de/sym_iwram.o"(.sym_iwram)
@@ -545,7 +541,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_DISPATCH.o"(.text .rodata .data .padding)
     "*/recon/tbs/de/rom.o"(.rom.000b7818)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
-    /* The tile bit decoder block BattleBackground_Load copies to RAM, DECODE.S to BIT_COMMANDS.S. */
     BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000b7b34)

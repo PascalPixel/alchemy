@@ -1,17 +1,3 @@
-/* Draft: Battle_SelectWeightedIndex, ☀️'s SELECT_WEIGHTED_INDEX.C as is.
- * Differ 2 (dd): native loads weights[0] before movs r3, #255; a volatile
- * barrier after the call fixes that but moves sub sp ahead of mov r3, r9.
- * 300 devsearch iterations found nothing. */
-/* Complete current-source and own-ROM audit, 2026-10-02.
- * Ordinary TBS flags; all six complete 62-byte functions are exact, with the
- * Random16 call resolved and one real public definition. The following two
- * bytes stay in their separate uncredited scaffold; no linker rows change.
- * EN trials first: plain shape emitted 46 bytes (60 linked differences);
- * chain-only and r0-memory each differed at 4 bytes; frame-order emitted 64
- * bytes with 53 differences; r0-order and weights-order emitted 64 bytes
- * with 55 differences; the short r0/chain handoff was exact.
- * All private trial assemblies were reproduced from their current sources.
- */
 #include "TYPES.H"
 #include "BATTLE_RUNTIME.H"
 extern u8 Data_03001e74[];

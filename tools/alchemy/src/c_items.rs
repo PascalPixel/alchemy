@@ -1,22 +1,12 @@
-//! A C source as its top-level items, with the names each one declares or
-//! defines: what `adopt --into` merges into a module and what `sizes`
-//! measures. Each item keeps its exact text, so a merge moves source as it
-//! was written; tokens and brackets come from `compiler::c_syntax`.
 use crate::compiler::c_syntax::{lex, scan_definitions, Tok};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum Kind {
-    /// One comment.
     Comment,
-    /// `#include`, with the header as written between its quotes or brackets.
     Include(String),
-    /// Any other directive line, line markers included.
     Directive,
-    /// An `#if` group through its `#endif`, whole.
     Conditional,
-    /// Everything up to a top-level `;`.
     Declaration,
-    /// A function definition; `body` is its opening brace within `text`.
     Function { body: usize },
 }
 
@@ -30,9 +20,7 @@ pub(crate) struct Item<'a> {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub(crate) enum Space {
-    /// Functions, objects, typedef names and enumeration constants.
     Ordinary,
-    /// Struct, union and enum tags.
     Tag,
     Macro,
 }
@@ -41,11 +29,7 @@ pub(crate) enum Space {
 pub(crate) struct Name {
     pub space: Space,
     pub name: String,
-    /// A definition (a body, a typedef, an object, a macro), not only a
-    /// declaration.
     pub defines: bool,
-    /// How the item declares it, parameter names and `extern` left out:
-    /// two declarations that agree on a name's type read alike.
     pub signature: String,
 }
 
@@ -54,7 +38,6 @@ impl Name {
         Name { space, name: name.to_string(), defines, signature }
     }
 
-    /// The name as C writes it: `struct Tag` for a tag.
     pub(crate) fn describe(&self) -> String {
         match self.space {
             Space::Tag => self.signature.clone(),
@@ -64,12 +47,10 @@ impl Name {
     }
 }
 
-/// Whether `at` is the first non-blank character of its line.
 fn line_start(bytes: &[u8], at: usize) -> bool {
     bytes[..at].iter().rev().take_while(|b| **b != b'\n').all(|b| *b == b' ' || *b == b'\t')
 }
 
-/// The end of a comment starting at `at`, or None when none starts there.
 fn comment_end(source: &str, at: usize) -> Option<usize> {
     let rest = &source[at..];
     if rest.starts_with("/*") {
@@ -81,7 +62,6 @@ fn comment_end(source: &str, at: usize) -> Option<usize> {
     }
 }
 
-/// The end of a string or character literal starting at `at`.
 fn literal_end(bytes: &[u8], at: usize) -> usize {
     let quote = bytes[at];
     let mut i = at + 1;
@@ -91,8 +71,6 @@ fn literal_end(bytes: &[u8], at: usize) -> usize {
     (i + 1).min(bytes.len())
 }
 
-/// The end of the directive line at `at`, through continuations and any
-/// comment that starts on it; the newline is not included.
 fn directive_end(source: &str, at: usize) -> usize {
     let bytes = source.as_bytes();
     let mut i = at;
@@ -110,15 +88,12 @@ fn directive_end(source: &str, at: usize) -> usize {
     i
 }
 
-/// The directive's name: `include`, `define`, `if`..., or a line marker's
-/// number.
 fn directive_name(line: &str) -> &str {
     let rest = line.trim_start().trim_start_matches('#').trim_start();
     let end = rest.find(|c: char| !c.is_ascii_alphanumeric() && c != '_').unwrap_or(rest.len());
     &rest[..end]
 }
 
-/// The end of the `#if` group whose first line starts at `at`.
 fn conditional_end(source: &str, at: usize) -> usize {
     let bytes = source.as_bytes();
     let mut depth = 0usize;
@@ -148,8 +123,6 @@ fn conditional_end(source: &str, at: usize) -> usize {
     source.len()
 }
 
-/// The end of the declaration or function definition starting at `at`, and
-/// the offset of a function's body brace.
 fn statement_end(source: &str, at: usize) -> (usize, Option<usize>) {
     let bytes = source.as_bytes();
     let (mut depth, mut i) = (0usize, at);
@@ -196,7 +169,6 @@ fn statement_end(source: &str, at: usize) -> (usize, Option<usize>) {
     (source.len(), None)
 }
 
-/// Extend `end` over comments that start on the item's last line.
 fn trailing_comments(source: &str, mut end: usize) -> usize {
     let bytes = source.as_bytes();
     loop {
@@ -211,14 +183,12 @@ fn trailing_comments(source: &str, mut end: usize) -> usize {
     }
 }
 
-/// The header an `#include` line names.
 fn include_header(line: &str) -> String {
     let rest = line.trim_start().trim_start_matches('#').trim_start();
     let rest = rest.strip_prefix("include").unwrap_or(rest).trim();
     rest.trim_start_matches(['"', '<']).split(['"', '>']).next().unwrap_or("").to_string()
 }
 
-/// Every top-level item of `source`, in order.
 pub(crate) fn items(source: &str) -> Vec<Item<'_>> {
     let bytes = source.as_bytes();
     let mut out = Vec::new();
@@ -250,7 +220,6 @@ pub(crate) fn items(source: &str) -> Vec<Item<'_>> {
     out
 }
 
-/// Whether a blank line separates `at` from the text before it.
 pub(crate) fn blank_line_before(source: &str, at: usize) -> bool {
     let gap: &str = source[..at].trim_end_matches([' ', '\t']);
     let gap = &gap[gap.trim_end().len()..];
@@ -264,8 +233,6 @@ fn token_text(tok: &Tok) -> &str {
     }
 }
 
-/// The text without comments, line continuations or spacing differences:
-/// two items that normalize alike say the same thing.
 pub(crate) fn normalized(item: &Item) -> String {
     match item.kind {
         Kind::Declaration | Kind::Function { .. } => match lex(item.text) {
@@ -324,7 +291,6 @@ const BASIC: &[&str] = &[
     "void", "char", "short", "int", "long", "float", "double", "signed", "unsigned", "__signed__",
 ];
 
-/// The bracket closing the one at `open`.
 fn close(toks: &[&Tok], open: usize) -> usize {
     let mut depth = 0usize;
     for (i, tok) in toks.iter().enumerate().skip(open) {
@@ -353,8 +319,6 @@ fn ident<'t>(tok: Option<&&'t Tok>) -> Option<&'t str> {
     }
 }
 
-/// A declaration's specifiers: where its declarators start, whether it is a
-/// typedef or extern, and a tag it names without a body.
 struct Specifiers {
     end: usize,
     typedef: bool,
@@ -399,7 +363,6 @@ fn specifiers(toks: &[&Tok]) -> Specifiers {
     spec
 }
 
-/// Where a declarator's name is.
 fn name_index(toks: &[&Tok]) -> Option<usize> {
     let mut i = 0;
     while i < toks.len() {
@@ -415,8 +378,6 @@ fn name_index(toks: &[&Tok]) -> Option<usize> {
     None
 }
 
-/// A declarator's name, whether it declares a function, and whether it has
-/// an initializer.
 fn declarator(toks: &[&Tok]) -> Option<(String, bool, bool)> {
     let at = name_index(toks)?;
     let Tok::Ident(name) = toks[at] else {
@@ -427,9 +388,6 @@ fn declarator(toks: &[&Tok]) -> Option<(String, bool, bool)> {
     Some((name.clone(), function, initialized))
 }
 
-/// One declarator's declaration as its type reads, without `extern`, an
-/// initializer or parameter names: `extern void f(u32 a);` reads as
-/// `void f(u32);` does.
 fn signature(specs: &[&Tok], declarator: &[&Tok]) -> String {
     let mut out: Vec<&str> = specs
         .iter()
@@ -464,7 +422,6 @@ fn signature(specs: &[&Tok], declarator: &[&Tok]) -> String {
     out.join(" ")
 }
 
-/// Split at top-level commas.
 fn split_commas<'s, 't>(toks: &'s [&'t Tok]) -> Vec<&'s [&'t Tok]> {
     let (mut parts, mut depth, mut from) = (Vec::new(), 0usize, 0);
     for (i, tok) in toks.iter().enumerate() {
@@ -482,7 +439,6 @@ fn split_commas<'s, 't>(toks: &'s [&'t Tok]) -> Vec<&'s [&'t Tok]> {
     parts.into_iter().filter(|p| !p.is_empty()).collect()
 }
 
-/// The declarators after a declaration's specifiers, without its `;`.
 fn declarators<'s, 't>(rest: &'s [&'t Tok]) -> Vec<&'s [&'t Tok]> {
     match rest.last() {
         Some(Tok::Punct(";")) => split_commas(&rest[..rest.len() - 1]),
@@ -490,8 +446,6 @@ fn declarators<'s, 't>(rest: &'s [&'t Tok]) -> Vec<&'s [&'t Tok]> {
     }
 }
 
-/// Tags defined with a body anywhere in the tokens, and the constants of
-/// every enum body.
 fn tag_definitions(toks: &[&Tok], names: &mut Vec<Name>) {
     for i in 0..toks.len() {
         let Some(keyword @ ("struct" | "union" | "enum")) = ident(toks.get(i)) else {
@@ -538,7 +492,6 @@ fn declaration_names(toks: &[&Tok]) -> Vec<Name> {
     names
 }
 
-/// The names an item declares or defines.
 pub(crate) fn names(item: &Item) -> Vec<Name> {
     match &item.kind {
         Kind::Comment | Kind::Include(_) => Vec::new(),
@@ -556,7 +509,6 @@ pub(crate) fn names(item: &Item) -> Vec<Name> {
             }
         }
         Kind::Conditional => {
-            // Both branches: every name the group can define.
             let inner: String = item
                 .text
                 .lines()
@@ -592,7 +544,6 @@ pub(crate) fn names(item: &Item) -> Vec<Name> {
     }
 }
 
-/// The file a line marker (`# 12 "FILE" 1`) names.
 pub(crate) fn line_marker(item: &Item) -> Option<String> {
     if item.kind != Kind::Directive {
         return None;
@@ -607,8 +558,6 @@ pub(crate) fn line_marker(item: &Item) -> Option<String> {
     Some(quoted[..quoted.find('"')?].to_string())
 }
 
-/// The struct and union types an item defines a body for, outside function
-/// bodies: `struct TAG` for each tag, and the typedef name of an untagged one.
 pub(crate) fn aggregate_types(item: &Item) -> Vec<String> {
     if item.kind != Kind::Declaration {
         return Vec::new();

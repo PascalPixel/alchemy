@@ -1,7 +1,6 @@
 #include "OWNER_STATE.H"
 #include "FIXED_MATH.H"
 
-
 void Owner_RecalculateRatios(s32 owner_no)
 {
     s32 first;

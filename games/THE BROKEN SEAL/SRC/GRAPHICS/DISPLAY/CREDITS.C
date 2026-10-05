@@ -8,16 +8,13 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 
-/* The scrolling credits keep 128 hardware OAM entries, two words each. */
 struct DisplayScrollObject {
     u32 attr01;
     u32 attr2;
 };
 
-/* The credits keep their scroll position in the shared scratch word. */
 extern u16 gScratchWord;
 extern s16 Flash_Handler0;
-/* Flash and audio reuse these scratch cells in their own modes. */
 extern struct DisplayScrollObject *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
@@ -32,11 +29,6 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 extern const u8 DisplayScroll_GlyphWidths[];
 extern const u8 DisplayScroll_Font[];
 
-/* Lay the 16 x 6 grid of wide text objects over the scroll position: each
-   row is eight pixels lower less the position's fine offset, and the tiles
-   continue from the position's line in the 0x300-tile ring. Copy the table
-   to OAM, then advance the position every fourth frame unless a line is
-   still being drawn. */
 void DisplayScroll_UpdateObjects(void)
 {
     /* FAKEMATCH: the two-word OAM walk preserves stores and registers reversed by named fields. */
@@ -65,9 +57,6 @@ void DisplayScroll_UpdateObjects(void)
         gScratchWord++;
 }
 
-/* When no line is still being drawn and the scroll position has entered a
-   new eight-pixel line, remember the position and draw that line's text
-   into its slot of the 32-line ring (24 tiles per line, eight ahead). */
 void DisplayScroll_RenderEnteringLine(void)
 {
     u32 current;
@@ -83,11 +72,6 @@ void DisplayScroll_RenderEnteringLine(void)
     }
 }
 
-/* Allocate the scrolling display's object table, clear OBJ VRAM and fill its
-   last tiles with colour 1, then lay out the entries: three strips of eight
-   tall objects, a 16 x 6 grid of wide objects stepping 8 down and 32 across
-   with 4 tiles each, and eight parked objects. Reset the scroll position and
-   group, schedule the step and group callbacks, and load the 32 tile groups. */
 void DisplayScroll_InitObjectTable(void)
 {
     /* FAKEMATCH: pointer-cell and postincrement stores retain 376 bytes; direct typed stores produce 368. */
@@ -156,14 +140,6 @@ static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, 
     Iwram_CopyWords(destination, source, size);
 }
 
-/* Draw one line of the scrolling text into 24 object tiles starting at
-   `slot`: left aligned, centred (1) or right aligned (2) in 192 pixels.
-
-   The line is drawn 8bpp into a 256-wide work buffer, each lit pixel in
-   colour 15 with a shadow in colour 1 one pixel down and to the right, then
-   packed to 4bpp in place and copied to object VRAM a tile column at a time.
-   The buffer has nine pixel rows: the ninth holds the shadow that falls below
-   the line, and becomes the top row of the next line drawn. */
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
 {
     u8 *buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x900);

@@ -1,6 +1,5 @@
 #include "FX_SCENE.H"
 #include "GLOBAL_CELLS.H"
-/* The Suhara desert: the phase request and two object toggles. */
 #include "SABAKU.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -27,7 +26,6 @@ extern u8 MsgSuharaNowhereFound[];
 
 void BattleFx_SetWeightedResult(s32 actor, s32 mode);
 
-/* The game state seen as rows, as this handler addresses it. */
 union GameStateRows {
     u8 bytes[512][2];
     s16 halves[512][1];
@@ -39,7 +37,6 @@ void Event_SetDestination(s32 scene, s32 entrance);
 extern const struct SceneEvent gSuharaSabakuEvents3[];
 extern const struct SceneEvent gSuharaSabakuEventsOther[];
 
-/* The IWRAM field globals: the map work first, the event work at +0x4c. */
 struct FieldGlobals {
     u8 *map;
     u8 unknown_04[0x48];
@@ -48,8 +45,6 @@ struct FieldGlobals {
 
 void QueueSceneSound(s32 cue);
 
-/* QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C) written out in place, with
- * that function's one-pass loops around the IME read and the queue update. */
 #define QUEUE_IO_WRITE(address, value)                                      \
     q = &gIoWriteQueue;                                                     \
     do { \
@@ -91,7 +86,6 @@ s32 SuharaSabaku_ToggleActorActive(u8 *obj)
     return 1;
 }
 
-/* Where the party appears in each of the desert's three areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 selector = gGameState.scene;
@@ -108,7 +102,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gSuharaSabakuEntrancesOther;
 }
 
-/* The Suhara desert: the empty table slot and the exits. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -119,7 +112,6 @@ u8 *SuharaSabaku_GetExits(void)
     return gSuharaSabakuExits;
 }
 
-/* The actors placed in each of the desert's three areas. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 selector = gGameState.scene;
@@ -136,7 +128,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gSuharaSabakuPlacementsOther;
 }
 
-/* The Suhara desert: the selected actor's progress and the middle steps. */
 void SuharaSabaku_SyncSelectedActorProgress(void)
 {
     struct Actor_02000400 *actor;
@@ -320,7 +311,6 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     Engine_EventEnd();
 }
 
-/* The Suhara desert: the late steps and actor 13's restoration. */
 void FieldScene_RunLateActor8Step(void) { SuharaSabaku_RestoreActorScaleAndBlend(8); }
 
 void FieldScene_RunLateActor9Step(void) { SuharaSabaku_RestoreActorScaleAndBlend(9); }
@@ -345,7 +335,6 @@ void FieldScene_RunActorThirteenRestoration(void)
                 GameFlag_Set(0x9b5);
                 Engine_EventBegin();
                 Engine_EventSetMessage((s32)MsgSuharaNowhereFound);
-                /* Record layout observed here: s32 at +8, s32 at +16. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
                     Actor_SetPosition(ACTOR_ID, record->x.fixed, record->z.fixed);
@@ -376,7 +365,6 @@ void FieldScene_RunActorThirteenRestoration(void)
                 Event_ShowMessage(ACTOR_ID, 0);
                 Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
                 Engine_ActorSetAnimation(ACTOR_ID, 2);
-                /* Record layout observed here: s16 at +10, s16 at +18. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
                     Actor_SetDestination(ACTOR_ID, record->x.part.pixel, record->z.part.pixel);
@@ -438,7 +426,6 @@ s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
     return 1;
 }
 
-/* The Suhara desert: actor 12's place and the effect state byte. */
 void PlaceActorTwelveWhenFlagClear(void)
 {
     if (GameFlag_IsSet(2487) == 0) {
@@ -454,7 +441,6 @@ void SuharaSabaku_EnableEffectChildOption(void)
     ((struct BattleFxScene *)state)->child_option = 1;
 }
 
-/* The Suhara desert: meeting one of the stranded actors 8 to 12. */
 void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 {
     register s32 a1 asm("r6") = actor; /* FAKEMATCH: pins the actor id to r6 */
@@ -497,10 +483,6 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
     Object_GetById(state->words[125])->motion_flags = 3;
 }
 
-/* The sand swallows the leader and the actor flag byte 0x218 names: cue 219,
- * both sink for sixty frames, the screen closes, flag 0x122 is set and the
- * party leaves for the world map, at entrance 77 from the second area when
- * the flag byte names actor 11 and at entrance 27 otherwise. */
 void SuharaSabaku_DropAndLeave(void)
 {
     s32 other;
@@ -536,7 +518,6 @@ void SuharaSabaku_DropAndLeave(void)
     }
 }
 
-/* The Suhara desert: the encounter palette's pulse. */
 void EncounterPalette_Pulse(void)
 {
     u16 phase = gFrameCount & 63;
@@ -549,8 +530,6 @@ void EncounterPalette_Pulse(void)
     EncounterPalette = ((u32)level << 16) >> 16;
 }
 
-/* The second desert area's encounter: actor 14 and map object 100 stand
- * aside while the encounter palette pulses. */
 s32 FieldScene_RunOpeningAuxiliarySequence(void)
 {
     s32 record;
@@ -592,7 +571,6 @@ s32 FieldScene_RunScene3c0SequenceA(void)
     }
 }
 
-/* The third area answers its own events; the others share one table. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku3) {
@@ -601,10 +579,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gSuharaSabakuEventsOther;
 }
 
-/* The desert's scene script: it opens the screen, starts the leader's
- * progress task when flag byte 0x210 is set, keeps the encounter palette's
- * level in the first two areas and blends the visit or altar flags there;
- * the third area plays cue 0x120. */
 s32 SuharaSabaku_RunSceneScript(void)
 {
     u8 *map;
@@ -633,7 +607,6 @@ s32 SuharaSabaku_RunSceneScript(void)
     return 0;
 }
 
-/* Raises flags 0x206-0x20a for each of flags 0x301-0x305 already set, resets the scale of actors 8 to 12 unless flag 0x109 is set, then queues the blend setup: full fade-in weights when flag 0x340 is set. */
 void SuharaSabaku_ApplyVisitFlagBlend(void)
 {
     /* FAKEMATCH: the queue bound is a variable, so the comparison stays signed on the u16 count as the ROM's bgt has it, and the queue writes keep the one-pass loops of QueueIoWriteDelay2. */
@@ -679,7 +652,6 @@ void SuharaSabaku_ApplyVisitFlagBlend(void)
     QUEUE_IO_WRITE(0x04000052, ((16 - alpha) << 8) | alpha);
 }
 
-/* Raises flags 0x206-0x208 for each of flags 0x311-0x313 already set and 0x9b7 for 0x315, resets the scale of actors 8 to 10 unless flag 0x109 is set, shows actor 11's second part, then queues the blend setup as SuharaSabaku_ApplyVisitFlagBlend does. */
 void SuharaSabaku_ApplyAltarFlagBlend(void)
 {
     /* FAKEMATCH: the queue bound is a variable, so the comparison stays signed on the u16 count as the ROM's bgt has it, and the queue writes keep the one-pass loops of QueueIoWriteDelay2. */

@@ -1,6 +1,3 @@
-@ Every song the game plays by number (struct SongEntry): its sequence
-@ header and the music player that plays it, recorded twice. Numbers
-@ without a song play the empty header after the table.
 	.macro song header:req, player:req
 	.4byte \header
 	.2byte \player, \player

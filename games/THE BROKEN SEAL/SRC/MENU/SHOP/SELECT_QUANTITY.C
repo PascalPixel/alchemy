@@ -3,7 +3,6 @@
 #include "EDITION.H"
 #include "DMA.H"
 
-/* The quantity, total and coins columns each edition's words leave room for. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
 #define QUANTITY_X 64
 #define COINS_X    128
@@ -30,9 +29,6 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 void WaitFrames(s32 frames);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 
-/* Spins a quantity from minimum + 1 to maximum with left and right, redrawing
-   the count and its total price; returns the chosen count, or -1 when
-   cancelled. */
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
 {
     void *buffer;
@@ -95,8 +91,6 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                     UiText_DrawNumberInWindowFar(price * result, 6, window, QUANTITY_X + 16, 0);
                     UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, COINS_X, 0);
 #else
-                    /* The Japanese count takes its counter word, and the
-                       coins label is the message before it. */
                     UiText_DrawNumberInWindowFar(result, 2, window, 64, 0);
                     msg = (s32)MsgPiece;
                     UiText_DrawCharacterAtOffsetFar(msg, window, 80, 0);

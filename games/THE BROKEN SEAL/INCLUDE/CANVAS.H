@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-/* The affine canvas is opened and closed by the TBS battle presentation. */
 void BattleFx_BeginCanvasLayer(s32 bg_control);
 void BattleFx_OpenCanvasLayer(s32 bg_control);
 void BattleFx_BeginTiledCanvas(s32 bg_control);

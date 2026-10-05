@@ -52,9 +52,6 @@ void UiMenu_PositionCursor(s32 x, s32 y);
 void UiIcon_PrepareObject(struct RenderOutput *icon);
 void Audio_PlayCue(s32 cue);
 
-/* Choose the party member an item is used on (mode 0) or given to (mode 1):
-   left and right step through the party, showing the stock or the equipment
-   preview for that member; A returns the member and B -1. */
 s32 ItemMenu_SelectTarget(s32 mode)
 {
     /* FAKEMATCH: the unsigned coordinate/OAM view retains chained halfword stores and the mask removed by signed coordinates. */
@@ -95,8 +92,6 @@ s32 ItemMenu_SelectTarget(s32 mode)
                     quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_items[0] & ITEM_ID_MASK);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)
-                    /* Here a full bag asks what to trade instead of saying
-                       none are in stock. */
                     if (ItemMenu_Count(menu->owner_ids[selection]) == 15 && quantity == 0)
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 0, 72);
                     else if (quantity != 0) {

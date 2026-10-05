@@ -6,7 +6,6 @@
 #include "RESOURCE.H"
 
 #if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
 
 struct MessageWindow;
 
@@ -27,9 +26,6 @@ s32 Audio_Check(void);
 void UiWork_Finalize(struct MessageWindow *, s32);
 
 extern volatile u32 gKeyState;
-
-/* Announce two characters joining the party: a window with both members'
-   glyphs and the joined line, then wait for the jingle or a key. */
 
 void Party_ShowPairJoinedMessage(s32 first, s32 second)
 {

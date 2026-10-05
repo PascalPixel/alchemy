@@ -1,9 +1,3 @@
-/* 2026-10-03 owner/API cleanup: shared affine input and canonical
- * resource/allocator/scheduler contracts. Fresh all-six complete objects
- * retain the current 2216-byte draft extent. The truthful s32 scheduler
- * result changes two argument-setup instructions' order from the former
- * void caller declaration. This uncredited residual is retained; no false
- * void API or instruction-steering device is introduced to hide it. */
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -13,42 +7,6 @@
 #include "FIXED_MATH.H"
 #include "IO_WRITE_QUEUE.H"
 
-/*
- * DRAFT main:08021e6c (2300 bytes, including pools), canonical best H2; H3 preserved in history.
- * Recover the 480-byte work record and natural screen loop before register
- * tuning. Cursor entries share byte/halfword OAM views, not RenderOutput's
- * unrelated 28-byte layout. Trade availability is a word, the party result
- * is four bytes, and this owner returns the selected kind or -1/-2.
- * Residual H1: 2196/2300 bytes; 1099 differing halfwords; topology differs,
- * 1074 wrong instructions, aligned distance 774 halfword edits. Seven-entry
- * prologue prefix agrees, but frame is 44 rather than 60 bytes. Residual runs:
- * 212 (0 register-only, 0 order-only, 8 pool/immediate, 41 copy/rematerialise,
- * 0 pool-placement, 163 other). Typed indexing has not fixed broad lowering.
- * Compiler rounds a standalone halfword union to four bytes: place all four
- * OAM bytes in one word union to keep entries at 28 bytes and work at 480.
- * Residual H2: 2216/2300 bytes; 1107 differing halfwords; topology differs,
- * 1034 wrong instructions, aligned distance 737 halfword edits. Frame 40/60.
- * Runs: 218 (0 register-only, 0 order-only, 9 pool/immediate,
- * 49 copy/rematerialise, 0 pool-placement, 160 other). Row-cursor traversal
- * improves alignment but not the frame. The compiler already hoists natural
- * loop exit stubs between mode-zero and trade setup, as in the reference;
- * adding gotos there would not address the remaining layout difference.
- * Residual H3: 2204/2300 bytes; 1117 differing halfwords; topology differs,
- * 1076 wrong instructions, aligned distance 777 halfword edits. Frame 48/60.
- * Runs: 223 (0 register-only, 0 order-only, 8 pool/immediate,
- * 50 copy/rematerialise, 0 pool-placement, 165 other). Explicit count and
- * selection cursors, sprite pointer traversal and a signed/halfword scale
- * union do not close broad lowering; this is worse than H2. Three structural
- * hypotheses exhausted without adoption; do not tune registers on this form.
- * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 17,661
- * candidates; the best scored 15395 against 21273 (310 register-only, 20
- * stack-only, 82 operand, 104 reordered, 16 inserted, 40 deleted) after 254
- * rewrites (swap commutative operands, introduce a temporary, reorder
- * independent statements, reorder local declarations), none of them kept.
- * Two hundred fifty-four rewrites across the whole selection screen, search
- * artefacts that stay out of the draft; register choice is still most of
- * the difference.
- */
 struct UiWindowWork;
 
 union SelectionOam {

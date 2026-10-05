@@ -4,7 +4,6 @@
 #include "GAME_STATE.H"
 #include "FIELD_EVENT.H"
 
-/* The stats a password carries for each party member. */
 struct PasswordStats {
     s16 value_10;
     s16 value_12;
@@ -15,7 +14,6 @@ struct PasswordStats {
     u8 level_1e;
 };
 
-/* A party member's record, as the password packer reads it. */
 struct PasswordOwner {
     u8 unknown_00[0x0f];
     u8 rank;
@@ -28,21 +26,11 @@ struct PasswordOwner {
 
 struct PasswordOwner *Owner_GetState(s32 owner);
 
-/* The four party members a password describes. */
 extern const s32 Clear_PasswordMembers[4];
-/* The event flags a password carries, one bit each. */
 extern const u16 Clear_PasswordFlags[6];
-/* The items whose presence a password carries, one bit each. */
 extern const u16 Clear_PasswordKeyItems[8];
-/* The items whose held count a password carries, five bits each. */
 extern const u16 Clear_PasswordStackItems[23];
 
-/* Pack the clear data a password encodes into out and return its length in
- * bytes: 173 for a mode 0 (gold) password, 39 for mode 1 (silver) and 9 for
- * mode 2 (bronze). Every mode carries the members' ranks and values and the
- * flags; the silver and gold ones add each member's stats and the key items,
- * and the gold one each member's items, the held counts and the coins. Out of
- * range stats are clamped in the records first. */
 s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 {
     s32 length;
@@ -235,9 +223,6 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
     return length;
 }
 
-/* Encode a password: mask every byte with the last, repack the bits as six-bit
- * symbols with a checksum symbol after every nine, then offset each symbol by
- * its position. Returns the symbol count. */
 s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out)
 {
     u8 *src;

@@ -3,9 +3,6 @@
 
 void BattleFx_BeginCanvasLayer(s32 bg_control);
 
-/* Battle effect: open the canvas layer with a 16 by 16 tile canvas on a
-   32-wide map. The left half of each map row holds the canvas tile pairs,
-   the right half is cleared. ⚓️ sets a smaller screen size than ☀️. */
 void BattleFx_BeginTiledCanvas(s32 bg_control)
 {
     s32 row;
@@ -30,8 +27,6 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
     }
 }
 
-/* ⚓️'s second canvas: the same tile pairs, with the right half of each map
-   row filled with tile 0x0f pairs instead of cleared. */
 void BattleFx_BeginTiledCanvasFilled(s32 bg_control)
 {
     s32 row;

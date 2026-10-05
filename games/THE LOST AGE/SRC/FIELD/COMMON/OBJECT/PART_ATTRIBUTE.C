@@ -20,9 +20,6 @@ struct ObjectPartList {
 extern u32 gFrameCount;
 extern const u8 ObjectGroup_BlinkChildValues[4];
 
-/* The display hook of a multi-part object (animation kind 1): every other
-   frame, gives each part that has graphics the next of four attributes, and
-   marks the part list dirty. */
 void ObjectGroup_ApplyIndexedChildValue(struct ObjectRuntime *object)
 {
     struct ObjectPartList *list;
@@ -45,8 +42,6 @@ void ObjectGroup_ApplyIndexedChildValue(struct ObjectRuntime *object)
     }
 }
 
-/* For a multi-part object (animation kind 1), sets the attribute byte of
-   every part that has graphics and marks the part list dirty. */
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute)
 {
     struct ObjectPartList *list;

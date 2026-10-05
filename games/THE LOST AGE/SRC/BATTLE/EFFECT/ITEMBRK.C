@@ -3,7 +3,6 @@
 #include "RAM_BUFFER.H"
 #include "FIELD_EVENT.H"
 
-/* The battle effects' work, as far as the item break reads it. */
 struct BattleFxScene {
     u8 unknown_00[16];
     void *volatile main_object;
@@ -15,8 +14,6 @@ void BattleFx_SnapScaleToFull(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
 
-/* The item break: shatter the main object into fragments, snap it back to
-   full scale, hold it for half a second, then lift and burst it. */
 void BattleFx_RunItemBreakSequence(void)
 {
     /* FAKEMATCH: an unused 12-byte local explains the native 12-byte frame. */

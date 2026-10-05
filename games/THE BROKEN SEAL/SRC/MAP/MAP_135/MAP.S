@@ -1,5 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Field_Map135: a field map.
 	.include "games/THE BROKEN SEAL/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map135

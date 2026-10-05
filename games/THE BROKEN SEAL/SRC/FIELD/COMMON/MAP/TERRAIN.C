@@ -8,16 +8,10 @@
 
 extern u8 gMapCellBuffer[];
 
-/* A metatile's attributes are four bytes: its shape in the low nibble of
- * the first, then the height bytes its shape's function reads. */
 typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 y);
 
-/* The height function of each of the sixteen shapes. */
 extern TerrainHeightFn Map_TerrainHeightFunctions[16];
 
-/* Height of the terrain at a 16.16 map position on one of the layers: the
- * metatile's shape selects the height function, which gets the metatile's
- * height bytes and the position inside the metatile. */
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
 {
     struct MapState *work = gMapWork[0];
@@ -90,18 +84,11 @@ s32 Map_GetCellHighFlags(s32 x, s32 y)
 {
     s32 tile_x = x / 16;
     s32 tile_y = y / 16;
-    /* Keep the complete cell index together before advancing the table. */
     struct MapCell *cell = (struct MapCell *)gMapCellBuffer + (tile_x + tile_y * 128);
 
     return ((u8 *)&cell->metatile_and_flags)[1] >> 6;
 }
 
-/*
- * Compare the terrain at a position with an object's height: 2 when the
- * cell is closed to walking, 1 when the terrain is more than half a tile
- * above the object, -1 when it is more than three quarters of a tile
- * below, 0 when the object can step there or no map is loaded.
- */
 s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position)
 {
     struct MapState *state;
@@ -112,7 +99,6 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *posi
     s32 height;
     s32 delta;
 
-    /* Terrain probes read the signed whole-pixel lanes of the 16.16 vector. */
     x = ((union FieldCoordinate *)&position->x)->part.pixel;
     z = ((union FieldCoordinate *)&position->z)->part.pixel;
     state = gMapWork[0];

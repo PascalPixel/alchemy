@@ -1,9 +1,6 @@
 #ifndef ALCHEMY_SCENE_IDS_H
 #define ALCHEMY_SCENE_IDS_H
 
-/* Scene numbers are rows of FIELD/SCENES.S, named for the area they load.
- * Each symbol has its row index as a link-time value, read by taking its
- * address. These values cannot be used as switch case labels. */
 extern char SceneId_Clear;
 extern char SceneId_Title;
 

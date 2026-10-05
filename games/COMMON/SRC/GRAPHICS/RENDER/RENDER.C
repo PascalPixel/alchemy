@@ -25,13 +25,11 @@ typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 extern const u32 RelocatedQ16DotProduct[];
 s32 FixedSqrt(s32 value);
 
-/* Allocates the transform stack's 48-byte slots, empties it and loads the
-   identity into the current transform. */
 void Render_ResetTransformState(void)
 {
     gTransformStackTop = Runtime_AllocateBlock(2, sizeof(gTransform));
     gTransformStackDepth = 0;
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(gTransform);
 }
 
@@ -71,13 +69,10 @@ void Graphics_RestoreTransferWork(void)
 
 void SceneTransform_ResetMatrix(void)
 {
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(gTransform);
 }
 
-/* Builds the rotation matrix for the three angles (Q16 sines and cosines,
-   rows x, y, z, zero translation) and hands it to the IWRAM transform
-   routine. */
 void SceneTransform_ApplyRotation(s32 *angles)
 {
     s32 sx, cx, sy, cy, sz, cz;
@@ -104,15 +99,13 @@ void SceneTransform_ApplyRotation(s32 *angles)
     Iwram_TransformMatrix(m);
 }
 
-/* Each builds one elementary matrix on the identity and hands it to the
-   IWRAM transform routine. */
 void SceneTransform_ApplyPitch(s32 angle)
 {
     s32 matrix[12];
     s32 sin = Trig_Sin(angle);
     s32 cos = Trig_Cos(angle);
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[4] = cos;
     matrix[5] = sin;
@@ -127,7 +120,7 @@ void SceneTransform_ApplyYaw(s32 angle)
     s32 sin = Trig_Sin(angle);
     s32 cos = Trig_Cos(angle);
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[0] = cos;
     matrix[2] = -sin;
@@ -142,7 +135,7 @@ void SceneTransform_ApplyRoll(s32 angle)
     s32 sin = Trig_Sin(angle);
     s32 cos = Trig_Cos(angle);
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[0] = cos;
     matrix[1] = sin;
@@ -155,7 +148,7 @@ void SceneTransform_ApplyPosition(const s32 *position)
 {
     s32 matrix[12];
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[9] = position[0];
     matrix[10] = position[1];
@@ -167,7 +160,7 @@ void SceneTransform_ApplyScale(const s32 *scale)
 {
     s32 matrix[12];
 
-    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
     Transform_SetIdentity(matrix);
     matrix[0] = scale[0];
     matrix[4] = scale[1];
@@ -175,9 +168,6 @@ void SceneTransform_ApplyScale(const s32 *scale)
     Iwram_TransformMatrix(matrix);
 }
 
-/* Builds the rotation matrix for the three angles with the given
-   translation as its last row and hands it to the IWRAM transform
-   routine. */
 void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position)
 {
     s32 sx, cx, sy, cy, sz, cz;
@@ -204,8 +194,6 @@ void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position)
     Iwram_TransformMatrix(m);
 }
 
-/* SceneTransform_ApplyRotationTranslation with each matrix row scaled by
-   the matching component of the scale vector. */
 void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale)
 {
     s32 sx, cx, sy, cy, sz, cz;
@@ -236,8 +224,6 @@ void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale)
     Iwram_TransformMatrix(m);
 }
 
-/* Build the look-at matrix from the eye and target, using a stack copy
- * of the dot-product routine for normalization and row offsets. */
 void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 {
     u32 code[7];

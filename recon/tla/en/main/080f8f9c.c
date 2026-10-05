@@ -2,9 +2,6 @@
 #include "IO_REG.H"
 #include "FIXED_MATH.H"
 
-/* Move a row or page using repeat keys. Returns -1 for no input, zero for
- * a row change and one for a page change. Keep result lifetimes local to
- * each decision and join row changes before the common result exit. */
 extern volatile u32 gKeysRepeat;
 
 void Link_DrawShiftedTilePairFar(s32 addr);

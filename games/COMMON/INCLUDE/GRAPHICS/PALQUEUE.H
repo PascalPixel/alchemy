@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* A palette cycle keeps its original colours and its next rotation. */
 struct PaletteSnapshot {
     u16 *source;
     u16 position;
@@ -14,7 +13,6 @@ struct PaletteSnapshot {
     u16 colors[16];
 };
 
-/* Heap slot 28 holds four cycles and the number queued. */
 struct PaletteSnapshotWork {
     struct PaletteSnapshot entries[4];
     u16 count;

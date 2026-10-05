@@ -10,7 +10,6 @@
 extern u8 Data_03001e9c[];
 s32 UiWork_IsIdle(struct UiWindow *window);
 
-/* The two resource groups and closing window in heap slot 19. */
 struct SelectionWorkspace {
     u8 unknown_000[0x46];
     u16 first_active;

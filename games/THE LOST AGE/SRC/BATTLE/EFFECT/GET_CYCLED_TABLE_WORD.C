@@ -3,7 +3,6 @@
 
 extern u16 BattleFx_CyclePatternWords[];
 
-/* ☀️'s, reading ⚓️'s held buttons from gInput. */
 u16 BattleFx_GetCycledTableWord(void)
 {
     struct InputState *input = &gInput;
@@ -16,7 +15,6 @@ u16 BattleFx_GetCycledTableWord(void)
 
 extern u16 BattleFx_EightWayHeadingWords[];
 
-/* The same lookup over the table that also gives the four diagonals. */
 u16 BattleFx_GetEightWayHeadingWord(void)
 {
     struct InputState *input = &gInput;

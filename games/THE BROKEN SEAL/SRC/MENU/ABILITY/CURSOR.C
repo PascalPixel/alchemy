@@ -171,9 +171,6 @@ void Menu_UpdateEntryObjectTransforms(void)
     }
 }
 
-/* Places the menu cursor at the given pixel offset from the top-left tile of
- * the menu window, plus eight pixels and a small diagonal bob that follows
- * the frame counter. */
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
 {
     /* FAKEMATCH: the unsigned position/OAM view and member lifetimes preserve load/register order changed by earlier caching. */
@@ -189,9 +186,6 @@ void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
         + ((struct RenderInput *)work->auxiliary_window)->y * 8 + 8;
 }
 
-/* Slides the menu cursor to the given pixel offset in two steps, a frame
- * apart, from where its sprite stands, pulled eight pixels back on each
- * axis. A set skip flag is cleared instead and the cursor stays. */
 void UiMenu_SlideCursor(s32 x, s32 y)
 {
     /* FAKEMATCH: the unsigned cursor/OAM view preserves scheduling changed by signed coordinates and packed-word casts. */

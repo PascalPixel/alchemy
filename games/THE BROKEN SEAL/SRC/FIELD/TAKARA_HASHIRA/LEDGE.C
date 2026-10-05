@@ -47,8 +47,6 @@ extern const struct ScenePlacement gTakaraHashiraPlacementsOther[];
 
 extern u32 gBgScroll[];
 
-/* Copy one map cell's attribute fields (all but the tile) from src into the
- * cell at x, y of a map layer. */
 void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src)
 {
     struct MapState *map = gMapWork[0];
@@ -66,9 +64,6 @@ void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *sr
     }
 }
 
-/* Steps the actor's column row by row until the terrain rises above its own
- * level, then prepares object 223 or 253 at that step and waits for the actor
- * to fall to it. */
 s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
 {
     struct FieldActor *actor = Object_GetById(id);
@@ -129,7 +124,6 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
     return found;
 }
 
-/* Lower the actor and its vertical scale for up to thirty-two frames, clamping the scale to 0x1999 when it falls below that value. */
 void StagedActor_StepDownUntilClamp(s32 index)
 {
     struct FieldActor *obj = Object_GetById(index);
@@ -288,7 +282,6 @@ s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
     return 0;
 }
 
-/* Where the party appears in each of the pillar rooms. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -321,7 +314,6 @@ const u32 *Scene_GetExits(void)
     return gTakaraHashiraExits;
 }
 
-/* The actors placed in the pillar rooms; the fourth room takes the others'. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -349,7 +341,6 @@ void FieldScene_RunTransitionOrFallback(void)
     Engine_EventEnd();
 }
 
-/* Move and redraw the actor when a clear placement is found. */
 void SceneState_ApplyPlacementResult(void)
 {
     struct StagedActorProbe out;
@@ -360,8 +351,6 @@ void SceneState_ApplyPlacementResult(void)
     Engine_EventEnd();
 }
 
-/* Copy the background scroll offsets for this frame, occasionally from the
- * shaken set while the display is outside the visible lines. */
 void TakaraHashira_JitterBackgroundScroll(void)
 {
     u32 line = REG_VCOUNT;

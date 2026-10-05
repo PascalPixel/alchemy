@@ -8,11 +8,6 @@ void EventRuntime_UpdateWaitMode(void)
 {
     struct BattleRuntime *runtime = Data_03001ebc;
 
-    /*
-     * 0x03001c94 is the button latch. 0x200 is L and 0x100 is R in the GBA
-     * key layout, so the two arms are the shoulder buttons setting the mode
-     * word either way round.
-     */
     if (gDebugMode != 0) {
         if (gKeyState & KEY_L) {
             runtime->mode_1cc = 0;

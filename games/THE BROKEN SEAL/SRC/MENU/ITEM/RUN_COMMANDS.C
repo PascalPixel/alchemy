@@ -8,8 +8,6 @@
 #include "INVENTORY_MENU.H"
 #include "GLOBAL_CELLS.H"
 #include "MENU_LIST.H"
-/* Where the shorter modal lines start: the Japanese ones a column or three
-   further right. */
 #if EDITION_INTERNATIONAL
 #define MODAL_SHORT_X   14
 #define MODAL_REMOVED_X 14
@@ -20,8 +18,6 @@
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
-/* The resident word copier is addressed from the IWRAM runtime bank,
- * whose first routine is the interrupt handler. */
 #define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
@@ -78,19 +74,6 @@ enum ItemMenuStep {
     ITEM_STEP_QUANTITY = 12
 };
 
-/*
- * The item menu command loop.  Each pass of the state machine runs one
- * screen: 0 picks the owner, 1 the item, 9 the command, and the handlers
- * use (2), equip (3), give (6, then 4 or the trade in 7), drop (5), unequip
- * (11) and inspect (10).  The loop ends when a handler sets done or flag
- * 0x150 is raised.  Using an item outside the menu fills the three out
- * parameters and returns 1; cancelling the owner returns -1, as does flag
- * 0x150; anything else returns 0.
- *
- * Every handler sets the next state inside the branch that leaves it, and
- * the trade backs both inventories up through the resident word copier so a
- * failed swap can restore them.
- */
 s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 {
     s32 done;
@@ -146,8 +129,6 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 done = 1;
             }
 #else
-            /* The Japanese loop keeps the owner, item and target it chose
-               and hands those out. */
             UiText_DrawWorkValueWithLabel((s32)menu->info_window);
             owner = ItemMenu_PrepOwner(0);
             if (owner == -1) {
@@ -481,8 +462,6 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetItemWin3();
             ItemMenu_DrawMsg(0, (s32)&MsgSwapForWhat);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-            /* In Spanish and Italian the swap list's choice does not
-               replace the selection a later drop confirms. */
             if (ItemMenu_RunList(1) == -1) {
 #else
             sel = ItemMenu_RunList(1);
@@ -556,8 +535,6 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 CopyWords(IWRAM_COPY_WORDS, target, target_copy, BATTLE_UNIT_SIZE);
                 RenderOutput_ClearListFar(menu->info_window);
 #if defined(TBS_EDITION_FR)
-                /* The longer French line starts further left, and the status
-                   window is redrawn after it. */
                 InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 11, 14);
                 RenderOutput_RedrawSavedRectFar(menu->status_window);
 #else
@@ -596,7 +573,6 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                         }
                     } else {
 #if defined(TBS_EDITION_IT)
-                        /* The longer Italian line starts further left. */
                         InventoryMenu_ShowModalMessage(
                             (s32)&MsgTraded, 13, 14);
 #else

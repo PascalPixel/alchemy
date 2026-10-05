@@ -2,8 +2,6 @@
 #include "IO_REG.H"
 #include "TYPES.H"
 
-/* Clears the background (or, when alternate, the second) character block to
-   its fill pattern and the matching palette bank to zero. */
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate)
 {
     u32 value;

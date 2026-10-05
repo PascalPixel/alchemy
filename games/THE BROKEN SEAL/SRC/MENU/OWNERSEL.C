@@ -21,11 +21,6 @@ void UiWindow_InitializeWork(s32);
 #define ROW_CNT 4
 #endif
 
-/*
- * Open the compact character selector, run its blocking interaction body,
- * and tear the screen down.  The shared object list is suspended while this
- * modal owns the display.  Its eight row anchors all begin at x=30.
- */
 s32 Menu_OpenCharacterSelector(void)
 {
     struct CharacterMenuState *state =
@@ -56,8 +51,6 @@ s32 Menu_OpenCharacterSelector(void)
     return result;
 }
 
-/* Run the character selector and return the chosen owner id, or -1 when it was
-   cancelled. */
 s32 CharacterSelector_Run(void)
 {
     struct CharacterMenuState *work = gMenuWork;

@@ -8,10 +8,6 @@ extern struct BattleFxScene *gEffectWork;
 void BattleFx_HalveDistanceToTarget(void);
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *);
 
-/* The Mercury Djinni capture: the Djinni bounces three times, splits into
-   eight linked copies of itself, rises out of view, and a ring of slot
-   particles closes the scene. */
-
 struct CaptureSprite {
     u8 unknown_00[40];
     s16 *resource;

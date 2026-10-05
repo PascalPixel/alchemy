@@ -1,49 +1,4 @@
-/* CANONICAL DRAFT: VINASU_CHOJO opening bank, 2026-10-02.
- * 2026-10-04: the idle hook (VinasuChojo_Idle) and the setup step after it
- * are C in SCENE_EVENTS.C; the startup (VinasuChojo_Start) is C for Japanese,
- * and the international editions keep its listing (their saved scene/entrance
- * stores rebuild 516 apart from 428 and load 5 from the pool).
- * Saved-tree default scorer: startup610/15, setup11025/152, departure
- *24410/362; overlay imports are unresolved in its main-only namespace.
- * This diagnostic does not replace the complete native identity judgments.
- * Intended adoption expands the existing FIELD/VINASU_CHOJO/PREPARE.C in
- * native order: startup, current idle hook4, setup, departure. No raw gap
- * or new per-function owner is crossed. Current listing: resource_64e.
- *
- * Closed ordinary forms: enum-first JA4172/4236, Intl4192/4264; truthful
- * table-owned Msg symbol JA4176/4236, Intl4196/4264. An EventWork-local
- * form and separate checked actor scopes emit identical EN assembly to
- * the latter. No compiler-steering device, ASM, pin or artificial storage.
- * The self-contained PartyState data view emits Intl4204/native4264;
- * its ordinary halfword cast makes GCC load5 and22 from scalar pools.
- * JA remains4176/native4236. This representation is not assembly-identical
- * to the proposed typed-header form, and no such fidelity is claimed.
- *
- * Current EN complete spans: startup212/native212 (97 nonrelocation byte
- * differences); idle4/4 exact; setup528/native516 (300, includes natural
- * internal2 after its526-byte symbol); departure3460/native3532 (1668).
- * JA startup184/native184 has zero nonrelocation differences; every other
- * edition still requires its complete binding/extent to match for credit.
- * These are same-offset byte differences, not an instruction-edit score.
- *
- * All483 ordered calls per edition resolve to the actual current native
- * targets (2898/2898 identities). Natural module offsets differ, so this
- * is an UNLINKED near miss; full emitted BL/pool equality is not claimed.
- * Broad constant sharing/high-register lifetimes and scalar pool/extent
- * differences remain. Native numeric values judge only; the source uses
- * the actual PO-owned Msg token whole, never a literal message number.
- *
- * The earlier local record named only observed1ac/1b4 stores, and used a
- * halfword view of the international1e4/1e6 reserve. Those fields now have
- * maintained owners below; the earlier byte judgments need a fresh run.
- * Func_02001c34 has an ignored opaque pointer-return view pending durable
- * API ownership; remaining numeric imports are current raw physical roles
- * and confer no resident-source readiness or credit.
- */
 
-/* The current EventWork and PartyState owners now name the draft fields.
- * Their maintained views replace the former local record; retained scores
- * describe the earlier attempt, not a fresh compile or complete match. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -74,7 +29,6 @@ void Event_WaitTransitionFrames(void);
 void GameFlag_ClearBit(s32);
 void Party_RemoveActiveOwner(s32);
 
-/* Current numeric import roles; no resident owner is adopted or renamed. */
 void Func_02001be4(u32, s32, s32);
 void Func_02001c1c(s32);
 void Func_02001c24(s32, s32);
@@ -89,7 +43,6 @@ void SceneState_RunActor13AtColumn42Setup(void);
 void Func_02000b2c(void);
 void Func_02000d30(void);
 
-/* The entering party joins the lighthouse departure, or hides its actors. */
 s32 Func_02000a54(void)
 {
     struct EventWork *work = Ram_HeapSlots->event_work;
@@ -120,13 +73,11 @@ s32 Func_02000a54(void)
     return 0;
 }
 
-/* The scene's last loader hook; this scene needs nothing. */
 s32 Scene_PrepareMap(void)
 {
     return 0;
 }
 
-/* Positions the three speakers and the lighthouse camera before departure. */
 void Func_02000b2c(void)
 {
     struct EventWork *work;
@@ -185,7 +136,6 @@ void Func_02000b2c(void)
     Func_02001be4(4, 0, 0);
 }
 
-/* The departure choreography, in the original event order. */
 void Func_02000d30(void)
 {
     struct EventWork *work;

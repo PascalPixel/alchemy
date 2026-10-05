@@ -1,6 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Slots_CashOutBanner: its 16-colour palette, then 80 tiles of 4-bit colour packed
-@ by the resource packer.
 	.section .rodata
 	.global Slots_CashOutBanner
 Slots_CashOutBanner:

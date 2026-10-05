@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* Once actor 10 has been pushed to column 42, drops it into place and opens
-   the way below. */
 void SceneState_RunActor13AtColumn42Setup(void)
 {
     struct FieldActor *obj;
@@ -31,7 +29,6 @@ void SceneState_RunActor13AtColumn42Setup(void)
 extern u8 MsgVinasuChojoReliefWords[];
 extern u8 MsgVinasuChojoTrueHeart[];
 
-/* The leader reads the words carved into the relief. */
 void VinasuChojo_ReadRelief(void)
 {
     Engine_EventBegin();
@@ -41,7 +38,6 @@ void VinasuChojo_ReadRelief(void)
     Engine_EventEnd();
 }
 
-/* The second carving: only a true heart knows the road. */
 void VinasuChojo_ReadTrueHeart(void)
 {
     Engine_EventBegin();

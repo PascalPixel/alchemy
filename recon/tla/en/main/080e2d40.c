@@ -1,6 +1,3 @@
-/* Near miss, differ 2: the native loads the effect work before the
-   callback's address; this draft loads the address first. Ends the effect
-   whose update is Func_080e2c38, releasing its resource entry. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "RESOURCE.H"

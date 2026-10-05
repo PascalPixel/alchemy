@@ -3,7 +3,6 @@
 #include "RUNTIME_MEM.H"
 #include "UIFLOW.H"
 
-/* ☀️'s: finishes the window that heap slot 16 holds and frees the slot. */
 void UiWork_FinalizeAndReleaseBlock16(void)
 {
     UiWork_Finalize(*(void **)Ram_HeapSlots->window_layout, 1);

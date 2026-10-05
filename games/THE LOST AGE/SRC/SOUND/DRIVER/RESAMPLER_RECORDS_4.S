@@ -1,8 +1,3 @@
-@ Fourth and fifth 76-byte records of RESAMPLER_RECORDS.S, which fill
-@ their slots: flag-setting asrs and rors feeding conditional mulne and
-@ mlane, then ldrsb sample reads with post-increment, with no entry or
-@ return. Fixed-size instruction records are not compiled functions.
-@ credit: handwritten — TLA fixed-size ARM sound resampler records
 .syntax unified
 	.arm
 	.global Sound_ResamplerRecord3

@@ -1,11 +1,3 @@
-/* Canonical saved DE/ES/FR/IT/JA attempt: the identical copies are
- * consolidated here. This path keeps DE as its draft-scoring edition. */
-/* NONMATCHING: partial canonical PO enum import, 2026-10-01.
- * The complete 2816-byte Scene_RunExtendedActorSequence extent compiles with
- * the approved TBS flags. 2 literal-pool bytes still differ because
- * MsgHaidiaFarewell remains the English immediate in this attempt.
- * Production IE.C imports both PO constants and matches this edition.
- */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.H"
 #include "MAP_SCROLL.H"
 #include "CALL.H"

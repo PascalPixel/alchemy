@@ -438,9 +438,6 @@ void ArmorMerchant_Talk(void)
     }
 }
 
-/* Lunpa's interiors open with the window transition. Entering from the
-   Suhara gate house clears the location-name flag and saves these rooms and
-   that entrance; the three shop counters' sprite flags are cleared. */
 s32 Scene_Initialize(void)
 {
     s16 entrance;

@@ -3,11 +3,6 @@
 
 #include "TYPES.H"
 
-/*
- * Script commands attached to runtime objects share one 0x70-byte record.
- * The script cursor occupies the otherwise unnamed first eight bytes of the
- * ordinary runtime-object view.
- */
 struct ScriptObjectRuntime {
     const s32 *script;
     u16 script_cursor;
@@ -36,7 +31,6 @@ struct ScriptObjectRuntime {
     u8 action_flags;
     u8 movement_state;
     u8 unknown_5c[0x02];
-    /* Set when a wander finds no free heading and turns the object round. */
     u16 turned_back;
     void *callback;
     s16 home_x;

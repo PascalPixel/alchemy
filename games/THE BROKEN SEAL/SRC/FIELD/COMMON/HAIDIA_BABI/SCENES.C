@@ -3,15 +3,10 @@
 #include "ANIMSPR.H"
 #include "VRAM_BLOCK.H"
 #include "B5_CONTEXT.H"
-/* Haidia village: the boulder scene. The actors are placed and the
-   screen fades in with a blend, the boulder warning is shown, and the
-   blend alpha ramps up and back down before the actors react. */
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
 #include "CALL.H"
 #include "HAIDIA_BABI.H"
-/* The sickbed visit: actor 8 coughs, asks who told the party about the
- * illness and leaves the bed; the scene ends by setting flags 0x81e and 0x203. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "FXBLEND.H"
@@ -21,15 +16,12 @@ void DisplayBlend_EnableRunScript();
 void Object_RefreshSelectorById(s32 actor);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
 
-/* The event work pointer and the heap slot pointers that follow it. */
 struct EventSlots {
     struct EventWork *event;
     void *unknown_04[2];
     struct FieldBlendWork *blend;
 };
 
-/* The blend registers take a word: the scene's values are computed as
-   ints and stored as halfwords. */
 static __inline__ void SetBlendTarget(u32 value)
 {
     REG_BLDCNT = value;
@@ -66,10 +58,8 @@ extern u8 MsgHaidiaDontWorryBest[];
 extern u8 MsgHaidiaUnnOhhKyle[];
 void Object_SetTargetAndCallback();
 
-/* Actor 8's departure, in the overlay's read-only data. */
 extern s32 gHaidiaBabiActor8Departure[];
 
-/* The bag's two motion scripts, in the overlay's read-only data. */
 extern s32 gHaidiaBabiBagLiftScript[];
 extern s32 gHaidiaBabiBagShowScript[];
 void ObjectDispatch_WaitForValue16();
@@ -219,7 +209,6 @@ ramp:
     Engine_EventRequestExit(21);
 }
 
-/* The innkeeper's and the villagers' talk about the house. */
 void HaidiaBabi_RunInnkeeperTalk(void)
 {
     struct FieldActor *actor;
@@ -387,10 +376,6 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventEnd();
 }
 
-/* Actor 8's two lines, depending on whether he has already left. */
-
-/* When flag 0x203 is set, actor 8 walks off and MsgHaidiaDontWorryBest plays;
- * otherwise it turns, shows MsgHaidiaUnnOhhKyle and then 0x1c7a. */
 void HaidiaBabi_RunActorEightMessageScene(void)
 {
     s32 message;
@@ -412,7 +397,6 @@ void HaidiaBabi_RunActorEightMessageScene(void)
     Engine_EventEnd();
 }
 
-/* The Mythril Bag scene and the sparkles that rise from the bag. */
 void ActorPresentation_SetTwoSceneCells(void)
 {
     {
@@ -553,7 +537,6 @@ void OverlayObject_UpdateArcFromAnchor(union FieldObject *object)
     obj->z.fixed = anchor->z.fixed - (0x10000 - amp) * 5 + 0x100000;
 }
 
-/* Spawns the linked pair of effect objects above the parent actor and gives the two their update routines and priorities. */
 void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 {
     union PairObject *parent = (union PairObject *)object;
@@ -608,7 +591,6 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
     }
 }
 
-/* The Psynergy steps the scene's events run. */
 void SceneState_SetValue140Mode0(void)
 {
     Engine_PsynergyBegin(0x8C, 0);

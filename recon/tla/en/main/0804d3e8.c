@@ -1,5 +1,3 @@
-/* Draft: Menu_CenterResourceEntries, demoted from MENU7.C when ⚓️ moved to -mtune=arm9tdmi
-   (Pascal, 2026-10-05). Under the new tuning the row store and the count address tie at priority 43 in sched2 and the independent movs wins, 3 instructions from the listing; barriers, volatile stores, register pins and 2000 hill-climb steps did not fix it. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"

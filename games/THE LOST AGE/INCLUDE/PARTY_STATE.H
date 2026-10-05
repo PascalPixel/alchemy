@@ -7,41 +7,30 @@ struct PartyState {
     u8 unknown_000[0x10];
     s32 coins;
     u8 unknown_014[0x124];
-    /* A second six-digit counter, as ☀️'s Party_AdjustSixDigitCounterB keeps. */
     s32 counter_b;
-    /* A counter capped at 28. */
     s8 counter_c;
     u8 unknown_13d[0xa3];
     s16 scene;
     s16 entrance;
     u16 saved_scene;
     u16 saved_entrance;
-    /* The debug selection's remembered pair; ☀️ keeps it at 0x1c8. */
     s16 primary;
     s16 secondary;
-    /* The area of the last scene; ☀️ keeps it at 0x1cc. */
     s16 scene_group;
-    /* Two halfword pairs; ☀️ keeps its first pair at 0x1ce. */
     u16 pair_1ee[2];
     u16 pair_1f2[2];
-    /* The halfword Event_GetSpecialValue reads; ☀️ keeps it at 0x1d6. */
     s16 special;
     u8 unknown_1f8[0x18];
-    /* The cue the scene plays; ☀️ keeps it at 0x1f0. */
     s16 cue;
     u8 render_mode;
     u8 unknown_213;
     s32 current_owner;
     u8 active_owners[8];
     u8 unknown_220[0x20];
-    /* Two packed event ids, cleared once they fail validation. */
     u16 packed_events[2];
     u8 unknown_244[7];
-    /* 6 in the battles whose foes cannot fall below 1 HP. */
     u8 battle_rule_24b;
     u8 unknown_24c[0x1d];
-    /* What BattleEffect_PauseObject keeps of the object it pauses; ☀️ keeps
-       them 0x20 earlier. */
     u8 saved_byte;
     u8 unknown_26a[2];
     s8 pending_third;

@@ -1,9 +1,5 @@
-/* Colosso: store a halfword into the stage's scene state, the block the
- * engine's work slot 59 points at. The same function sits in each of the
- * three Colosso trial overlays. */
 #include "TYPES.H"
 
-/* The engine's work blocks, one pointer per slot. */
 extern u8 gWorkSlot[];
 
 enum {

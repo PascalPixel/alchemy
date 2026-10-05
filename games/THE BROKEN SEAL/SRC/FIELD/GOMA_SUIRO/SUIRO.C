@@ -20,7 +20,6 @@ void SceneEffect_RunActorBurst(s32 no);
 extern const struct SceneEvent gGomaSuiroEvents2[];
 extern const struct SceneEvent gGomaSuiroEventsOther[];
 
-/* Where the party appears; the second area has its own entrances. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     if (gGameState.scene == (s32)&SceneId_GomaSuiro2) {
@@ -29,7 +28,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gGomaSuiroEntrancesOther;
 }
 
-/* The waterway's regions and exits, between its scene-dependent getters. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -40,7 +38,6 @@ const u32 *Scene_GetExits(void)
     return GomaSuiro_Exits;
 }
 
-/* The actors placed; the second area has its own. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_GomaSuiro2) {
@@ -67,7 +64,6 @@ void FieldScene_RunActor8AtCell24Sequence(void)
     }
 }
 
-/* What the waterway answers; the second area has its own events. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_GomaSuiro2) {
@@ -76,9 +72,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gGomaSuiroEventsOther;
 }
 
-/* The waterway's scene start: open with the window transition; in the
-   first area, entering by the fifth entrance clears flag 0x12f, and
-   otherwise actor 8 is set up, placed where flag 0x864 records it. */
 s32 FieldScene_PlaceActor8OnEntry(void)
 {
     struct FieldActor *record;

@@ -35,7 +35,6 @@ struct StagedActor {
     u32 movement_callback;
 };
 
-
 struct IwramField {
     u8 unknown_00[0x20];
     u32 camera;
@@ -58,9 +57,6 @@ extern s32 Object_CheckMovementCollision(void *, s32 *);
 extern void *Object_GetById(u32);
 extern void BattleFx_PlayQueuedSound(void);
 extern void Audio_PlayCue(s32);
-
-/* Func_02000314 is C: SceneActor_CalculateFixedPointDistance in
-   FIELD/VINASU_CHOJO/DISTANCE.C. */
 
 struct StagedActor *Func_0200034c(s32 *position, struct StagedActor *origin)
 {

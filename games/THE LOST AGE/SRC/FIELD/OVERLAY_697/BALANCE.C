@@ -1,12 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* The logs' balance state, the first halfword of the scene's saved words:
- * 9 once the competitors stand balanced, which the stage start waits for. */
-
 extern u8 gSceneState[];
 
-/* A stage hook this stage leaves empty. */
 void ColossoLogRollingStage_Idle(void)
 {
 }

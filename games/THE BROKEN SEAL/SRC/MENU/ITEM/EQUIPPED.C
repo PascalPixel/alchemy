@@ -23,8 +23,6 @@ s32 Menu_ReservedStatusOne(void)
     return 1;
 }
 
-/* Write equipped-item names into the equipment window, one row per item
- * type 1 to 4. Each name message is the item id plus 0x182. */
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 {
     struct InventoryMenuState *menu = gMenuWork;
@@ -46,7 +44,6 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     }
 }
 
-/* Where the equipped names start: the Japanese edition indents them. */
 #if EDITION_INTERNATIONAL
 #define NAME_X 8
 #else
@@ -112,8 +109,6 @@ void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
     UiIcon_PrepareObject(obj);
 }
 
-/* Place equipped-item icons by type: types 1 to 4 have a row each;
- * other types keep their position. */
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
 {
     struct InventoryMenuState *state;

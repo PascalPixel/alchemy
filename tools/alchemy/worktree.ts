@@ -5,8 +5,6 @@ import { execFileSync } from "node:child_process";
 const main = process.argv[2];
 if (!main) throw new Error("usage: bun tools/alchemy/worktree.ts MAIN_CHECKOUT");
 
-// The approved compiler sources: the submodules share the main checkout's
-// object store, so this reads nothing from the network.
 execFileSync("git", ["submodule", "update", "--init", "--quiet"], { stdio: "inherit" });
 
 mkdirSync("tools/out", { recursive: true });

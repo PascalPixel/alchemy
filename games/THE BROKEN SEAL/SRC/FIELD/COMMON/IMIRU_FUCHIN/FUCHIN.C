@@ -1,4 +1,3 @@
-/* The two page effects the cave's opening runs. */
 #include "IMIRU_FUCHIN.H"
 #include "TYPES.H"
 #include "GLYPH.H"
@@ -39,7 +38,6 @@ extern const struct SceneEvent gImiruFuchinEvents6[];
 extern const struct SceneEvent gImiruFuchinEvents7[];
 extern const struct SceneEvent gImiruFuchinEventsOther[];
 
-/* Raised by entry setup in scenes that track the leader. */
 s32 ImiruFuchin_TrackLeader;
 
 void ImiruFuchin_ApplyEntrySetup(void);
@@ -55,14 +53,12 @@ void DialogueLayout_ConfigureGroupThree(void);
 void FieldScene_RunFlagBranchedLayoutSteps(void);
 void OverlayObject_AdvancePositionByDelta(union FieldObject *object);
 
-/* The overlay's three effect scripts, at the start of its read-only data. */
 extern const s32 *const gEffectScripts[3];
 
 struct CaveEffectScripts {
     const s32 *script[3];
 };
 
-/* This cave's local spawner consumes only the six-word options prefix. */
 struct CaveDustOptions {
     s32 priority;
     s32 palette;
@@ -88,13 +84,11 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scal
 extern u32 gFrameCount;
 void Effect_Spawn();
 
-/* The work in slot 56, whose byte at +52 marks a fade under way. */
 struct FadeWork {
     u8 unknown_00[52];
     u8 active;
 };
 
-/* The cave's page-effect hooks. */
 void SceneState_ApplyValues8And2And1(void)
 {
     BattleFx_RunPageEffectForSlot(8, 2, 1);
@@ -105,7 +99,6 @@ void SceneState_ApplyValues11And62(void)
     BattleFx_SetPhaseRequest(0xB, 0x3E);
 }
 
-/* Where the party appears in each of the seven areas around Imil. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 v = gGameState.scene;
@@ -134,8 +127,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gImiruFuchinEntrancesOther;
 }
 
-/* Two of the scene hooks the entry veneers export: no follow-up, and the
- * cave's exits. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -146,7 +137,6 @@ s32 *ImiruFuchin_GetExits(void)
     return gImiruFuchinExits;
 }
 
-/* The actors placed in each area; the sixth area places the table the other scenes take. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 v = gGameState.scene;
@@ -172,7 +162,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gImiruFuchinPlacementsOther;
 }
 
-/* The cave's flag steps: each places or moves actors 8 to 11. */
 void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 {
     struct FieldActor *actor;
@@ -384,7 +373,6 @@ void FieldScene_PlaceActorEightByFlags(void)
 {
     Engine_AudioPlayCue((s32) 0xF1);
 
-    /* Either flag takes the same path; test the second only if the first is clear. */
     if (Engine_GameFlagIsSet((s32) 0x310) != 0 || Engine_GameFlagIsSet((s32) 0x30D) != 0) {
         SceneActor_PlacePairAtOffset(8, -48, 0);
         Engine_GameFlagClear((s32) 0x308);
@@ -835,7 +823,6 @@ struct FieldActor *OverlayObject_CreateAndInitialize(s32 a, s32 b, s32 c, s32 d)
     return 0;
 }
 
-/* What each area answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 v = gGameState.scene;
@@ -864,7 +851,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gImiruFuchinEventsOther;
 }
 
-/* The service step and the cave's dialogue layouts. */
 void ImiruFuchin_TurnLeaderAndExit(void)
 {
     struct FieldActor *work;
@@ -1055,7 +1041,6 @@ void DialogueLayout_ConfigureGroupThree(void)
 void FieldScene_RunFlagBranchedLayoutSteps(void)
 {
 
-    /* Entrances 1 and 2 use the upper layout. */
     if ((u32)((u32)((u16)gGameState.entrance - 1) << 16) <= (u32)0x10000) {
         { s32 x = 14; s32 y = 10; Engine_MapCopyCellAttributes(22, 20, 9, 8,  x, y); }
     } else {
@@ -1087,9 +1072,6 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
     }
 }
 
-/* Two map triggers of the cave: while the entry setup has raised the cave's
- * tracking flag, one hands the leader to the tracking work, the other takes
- * it away. */
 void ImiruFuchin_StartTrackingLeader(void)
 {
     if (ImiruFuchin_TrackLeader != 0) {
@@ -1108,9 +1090,6 @@ void ImiruFuchin_StopTrackingLeader(void)
     }
 }
 
-/* The scene start around Imil: open with the window transition; the first
-   area runs its opening sequence until flag 0x109 is set, and otherwise the
-   areas are set up for the entrance. */
 s32 ImiruFuchin_ApplyEntryHook(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -1123,7 +1102,6 @@ s32 ImiruFuchin_ApplyEntryHook(void)
     return 0;
 }
 
-/* The leader's arrival when the cave first opens. */
 void FieldScene_RunScene39aSequenceA(void)
 {
     struct FieldActor *actor;
@@ -1188,8 +1166,6 @@ void ImiruFuchin_ApplyEntrySetup(void)
     }
 }
 
-/* Copy the room's cell attributes for the way it is entered, then run the
- * room's layout step. */
 void ImiruFuchin_ApplyRoomLayout(void)
 {
     if (gGameState.scene == (s32)&SceneId_ImiruFuchin2) {
@@ -1211,7 +1187,6 @@ void ImiruFuchin_ApplyRoomLayout(void)
     }
 }
 
-/* Hop the leader across the gap the touched trigger stands for. */
 void ImiruFuchin_HopOnTrigger(void)
 {
     s32 trigger = gEventWork->touched_trigger;
@@ -1228,7 +1203,6 @@ void ImiruFuchin_HopOnTrigger(void)
     }
 }
 
-/* The leader's hops and the Dragon's Eye: placing it and taking it. */
 void FieldScene_ApplyOffset0Neg32(void)
 {
     ImiruFuchin_HopBy(0, -32);
@@ -1315,7 +1289,6 @@ s32 OverlayObject_ApplyValue15(s32 obj)
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
                   const struct EffectOptions *extra)
 {
-    /* The cave's three scripts set its dust motion and scale duration. */
     struct FieldEffect *obj;
     struct FieldSprite *spr;
     const s32 *script;
@@ -1361,7 +1334,6 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     }
 }
 
-/* Every fourth frame, blow a puff of dust across the cave mouth. */
 void ImiruFuchin_BlowCaveMouthDust(void)
 {
     struct CaveDustOptions params;
@@ -1385,10 +1357,6 @@ void ImiruFuchin_BlowCaveMouthDust(void)
         (const struct EffectOptions *)&params);
 }
 
-/*
- * The cave-mouth wind: four passes of the dust blower, scheduled as a
- * callback while the map opens.
- */
 void FieldScene_RunFourPassCallbackSequence(void)
 {
     u32 pass;
@@ -1454,7 +1422,6 @@ void FieldScene_RunScriptedStep17E3(void)
     Engine_EventEnd();
 }
 
-/* Show the dragon's eyes, or offer to place the Dragon's Eye when the party has it. */
 void SceneState_SetWorkspace370ByFlag820(void)
 {
 
@@ -1471,11 +1438,6 @@ void SceneState_SetWorkspace370ByFlag820(void)
     Engine_EventEnd();
 }
 
-/* The cave's fade-in, installed in its event table. */
-
-/* While the stage is early enough, start the fade-in: raise the fade flag,
- * set the three light flags of the work in slot 31 and interpolate the
- * palette over 16 frames. */
 void ImiruFuchin_StartFadeIn(void)
 {
     struct FadeWork *fade;
@@ -1495,7 +1457,6 @@ void ImiruFuchin_StartFadeIn(void)
     }
 }
 
-/* Turning and stepping an actor along the heading the held direction gives. */
 void SceneActor_TurnTowardTableAngle(union FieldObject *object)
 {
     struct FieldActor *actor = &object->actor;
@@ -1524,8 +1485,6 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
     Object_SetMode(actor, 2);
     ObjectDispatch_ApplyValueToChildren(actor, 0x30);
 }
-/* Follow held directions through walkable cell centres, probing the
- * marker and height before each step. */
 static inline void SceneActor_AdvanceProbe(s32 radius, s32 heading, struct FieldPosition *probe)
 {
     /* FAKEMATCH: the inline probe boundary preserves the second call's stack add instead of a register move. */
@@ -1547,7 +1506,6 @@ void SceneActor_StepSubjectAlongHeading(void)
 
     for (;;) {
         heading = gImiruFuchinHeadings[(*(u32 *)gKeysHeld >> 4) & 15];
-        /* A heading of -1 means no direction is held. */
         if ((heading << 16) == -0x10000) {
             return;
         }
@@ -1560,7 +1518,6 @@ void SceneActor_StepSubjectAlongHeading(void)
         z = probe.z;
         x = probe.x;
         goal = GetMapCellCollision(subject->terrain_id, x, z);
-        /* Advance the probe to the next cell centre. */
         Vector_AddPolarOffset(0x100000, heading, &probe);
 
         marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
@@ -1571,7 +1528,6 @@ void SceneActor_StepSubjectAlongHeading(void)
             goto tail;
         }
 
-        /* Return the probe to the current cell centre. */
         probe.x = x;
         probe.z = z;
         subject->speed = 0x20000;
@@ -1614,7 +1570,6 @@ finish_probe:
         Object_SetPosition(subject, x, subject->y.fixed, z);
         Object_CommitPosition(subject);
         Engine_TaskWait(2);
-        /* The back edge re-reads the heading table and starts again. */
     }
 
 blocked:

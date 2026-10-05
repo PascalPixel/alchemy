@@ -1,10 +1,3 @@
-//! Digests of the tool sources each cached step depends on, as pret's
-//! Makefile rebuilds only what a changed tool produces:
-//! `ALCHEMY_ENCODER` is the ags crate, which encodes every asset and code
-//! overlay; `ALCHEMY_LINK_RULE` is the build's own overlay rule in
-//! build_rom.rs. Compiling, assembling and linking key on the toolchain's
-//! executables and their commands instead. The byte-identical ROM comparison
-//! stays the proof; the digests decide only what may be reused.
 use sha2::{Digest, Sha256};
 use std::path::{Path, PathBuf};
 
@@ -18,7 +11,6 @@ fn collect(path: &Path, files: &mut Vec<PathBuf>) {
     }
 }
 
-/// One digest over `paths` (directories read recursively), named from `tools`.
 fn digest(tools: &Path, paths: &[&str]) -> String {
     let mut files = Vec::new();
     for path in paths {
@@ -50,8 +42,6 @@ fn digest(tools: &Path, paths: &[&str]) -> String {
 }
 
 pub(crate) fn main() {
-    // Cargo can reuse this executable from a copied worktree cache.
-    // Its runtime manifest directory names the checkout being built now.
     let manifest = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap());
     let tools = manifest.parent().unwrap();
     let encoder = digest(tools, &["ags/src", "ags/Cargo.toml", "Cargo.lock"]);

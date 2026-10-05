@@ -32,8 +32,6 @@ extern u8 gUnk[];
 u32 Random16Far(void);
 s32 Math_DivideSigned();
 
-/* The board's records and its layout in the scene state, where the board
-   setup points; the layout is 0 or 1. */
 extern s16 *gKorimaMagariRecords;
 extern s16 *gKorimaMagariLayout;
 void State_StampRecordCells(s16 *records, s32 value);
@@ -52,7 +50,6 @@ void Effect_AdjustPaletteColors(s32 amount);
 extern u16 KorimaMagari_DefaultRecords[];
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-/* An object placed at a cell, turned along one axis or the other. */
 struct IcePlacement {
     s16 type;
     s16 x;
@@ -61,11 +58,8 @@ struct IcePlacement {
     struct FieldActor *actor;
 };
 
-/* The map's cells, 128 to a row. */
 extern struct MapCell gMapCellBuffer[];
 
-/* A block on the ice: the four cells it covers from (x, z), across or down,
-   and the object that draws it. */
 struct TileRun2 {
     s16 id;
     s16 x;
@@ -74,8 +68,6 @@ struct TileRun2 {
     struct FieldActor *object;
 };
 
-/* By the leader's facing, in quarter turns: the push animation and the
-   leader's step after the block. */
 extern const u8 KorimaMagari_PushAnimations[];
 extern const s8 KorimaMagari_PushStepX[];
 extern const s8 KorimaMagari_PushStepZ[];
@@ -91,12 +83,6 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj);
 
 const struct TileRun *SceneData_FindTileRunAt( const struct TileRun *run, s32 x, s32 y);
 
-  /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
-
-  /* Place a fixture, second bank. */
-
-  /* Set object motion state. */
-
 void State_ApplyRectByLayoutSelector(void)
 {
     if (**(s16 **)0x020092c4 == 1) {
@@ -110,7 +96,6 @@ void State_ApplyRectByLayoutSelector(void)
     }
 }
 
-/* Repaint the board for its layout: its cells and attributes, then each record's piece, raised with its marker drawn in layout 1 and lowered in the other, and the record cells stamped. */
 void Scene_RepaintBoardRecords(void)
 {
     /* FAKEMATCH: forced temporaries; each copy's destination is set in a block of its own so it is built after the other arguments, and the zero the pieces take is held from before the loop. */
@@ -176,12 +161,6 @@ void Scene_RepaintBoardRecords(void)
 
     State_ApplyRectByLayoutSelector();
 }
-
-  /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
-
-  /* Place a fixture, second bank. */
-
-  /* Set object motion state. */
 
 void State_UpdateScrollRegistersWithPreset(void)
 {
@@ -384,9 +363,6 @@ void KorimaMagari_RunDepartSequence(void)
     Engine_EventEnd();
 }
 
-/* Set up the board: point the three state cells into the scene state, copy
- * the map cells, reset the board records unless flag 0x109 is set, place the
- * objects and actors, and fade the palette unless flag 0x845 is set. */
 s32 KorimaMagari_SetupBoard(void)
 {
     struct FieldActor *actor;
@@ -420,8 +396,6 @@ s32 KorimaMagari_SetupBoard(void)
     return 0;
 }
 
-/* Create each listed object centred on its cell and standing on the terrain;
- * the list ends at type -1. */
 void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
 {
     struct FieldActor *actor;
@@ -451,12 +425,6 @@ void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
         actor->terrain_height = height;
     }
 }
-
-  /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
-
-  /* Place a fixture, second bank. */
-
-  /* Set object motion state. */
 
 void State_StampRecordCells(s16 *records, s32 value)
 {
@@ -503,9 +471,6 @@ const struct TileRun *SceneData_FindTileRunAt(
     return 0;
 }
 
-/* Whether the four cells from (x, z) onward, rightward or in any other mode
-   downward, are all open: none is unwalkable and none has an attribute
-   whose collision entry is set. */
 s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
 {
     s32 i;
@@ -526,10 +491,6 @@ s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
     return 0;
 }
 
-/* Push the block in front of the leader: slide it cell by cell, up to eleven
-   cells, while the four cells beyond it are open, then play the push with
-   the block gliding to where it stopped. The actor is first the leader,
-   then the block. */
 void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 {
     struct FieldActor *actor;
@@ -600,9 +561,6 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
     Engine_EventEnd();
 }
 
-/* Adjust every palette colour but for colours 17 to 23 and 193 to 200 by
-   the amount given, keeping the palette before and after, then blend
-   towards it. */
 void Effect_AdjustPaletteColors(s32 amount)
 {
     u16 i;
@@ -619,12 +577,6 @@ void Effect_AdjustPaletteColors(s32 amount)
     Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
-  /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
-
-  /* Place a fixture, second bank. */
-
-  /* Set object motion state. */
-
 u16 Effect_AdjustColorChannels(u16 color, s32 adj)
 {
     s16 green = (s16)((color >> 5) & 31);
@@ -639,7 +591,6 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj)
     green = (s16)(green - Math_DivideSigned(green, adj));
     blue = (s16)(blue - Math_DivideSigned(blue, adj));
 
-    /* Only the increasing colour channel is saturated. */
     if (red > 31)
         red = 31;
 

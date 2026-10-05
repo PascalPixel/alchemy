@@ -36,7 +36,6 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         blend_y = (volatile u16 *)0x04000054;
         *blend_y = zero;
         sixteen = 16;
-        /* Preserve the volatile register-store scheduling used by agbcc. */
         do {
             blend_y[-1] = sixteen;
         } while (0);

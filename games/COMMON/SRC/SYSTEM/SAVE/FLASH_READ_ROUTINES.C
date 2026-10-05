@@ -56,7 +56,6 @@ check:
         goto loop;
 }
 
-/* Flash status polling callback. */
 typedef s32 (*FlashPollRoutine)(s32 argument);
 
 void StartFlashTimer(s32 timing_index);

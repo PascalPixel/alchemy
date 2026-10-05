@@ -6,9 +6,6 @@
 #include "BATTLE_RANDOM.H"
 #include "BATTLE_TYPES.H"
 
-/* The battle random and scaling helpers before this live in COMMON's RANDOM16.C. */
-
-/* item/get_unleash_rate_bonus.c */
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner)
 {
     s32 sum;

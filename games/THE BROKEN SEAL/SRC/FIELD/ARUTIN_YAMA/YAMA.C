@@ -1,7 +1,5 @@
 #include "GLOBAL_CELLS.H"
 #include "YAMA.H"
-/* Arutin mountain: the leader is carried with actor 8 until it has come
-   level with it, then the rolling object starts. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
@@ -81,10 +79,6 @@ s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst)
     return 0;
 }
 
-/*
- * Moves an actor by its velocity along x and y, grows it by its z velocity
- * on both scale axes and pulls its y velocity down by its gravity.
- */
 s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor)
 {
     s32 rise;
@@ -100,7 +94,6 @@ s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor)
     return 0;
 }
 
-/* Where the party appears in each of Altin Peak's eleven areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -141,7 +134,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gArutinYamaEntrancesOther;
 }
 
-/* Only the ninth and tenth areas have map regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     s16 scene = gGameState.scene;
@@ -160,8 +152,6 @@ u8 *ArutinYama_GetExits(void)
     return ArutinYama_StatueTable;
 }
 
-/* The actors placed in Altin Peak's areas; the second and fourth areas
-   take the table the other scenes take. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -281,21 +271,6 @@ void SceneActor_UpdateSlot10ByTileX(void)
         Engine_TaskWait(1);
     }
 }
-
-/*
- * Presentation setup in resource_3a4: clear a record byte, adjust two
- * handle flag bits, run two presentation primitives, then stamp a fixed
- * rate into the record.
- */
-
-/*
- * resource_3a4: a published callback that sets the mode of actor record 8.
- */
-
-/*
- * Presentation callback for resource_3a4, published rather than called
- * directly from this overlay.
- */
 
 void ActorPresentation_SetCellAndLowerActorEight(void)
 {

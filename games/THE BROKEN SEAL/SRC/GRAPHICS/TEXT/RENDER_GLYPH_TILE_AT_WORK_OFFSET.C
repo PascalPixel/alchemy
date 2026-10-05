@@ -3,7 +3,6 @@
 #include "TBS_EDITION.H"
 #include "MENU_LIST.H"
 
-
 void UiText_RenderGlyphTileAtWorkOffset(
     u16 *buffer,
     const struct RenderInput *work,

@@ -1,7 +1,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
-/* The sandstorm's frame task. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "GAME_STATE.H"
@@ -22,12 +21,6 @@ extern struct MenuSprite RamakanSabaku_SandWork[];
 extern u8 RamakanSabaku_SandTileBuffer[];
 extern u32 gFrameCount;
 
-/*
- * The sandstorm: while the storm flag is set it thins, otherwise it thickens.
- * Its strength shifts the screen's scanlines, warms three of the sand
- * palette's colours with the party's exposure, and draws the column of sand
- * sprites, emptied from the top as the exposure rises.
- */
 void RamakanSabaku_RunSandstorm(void)
 {
     u8 *buffer;
@@ -109,7 +102,6 @@ void RamakanSabaku_RunSandstorm(void)
         }
         *color++ = (blue << 10) | (green << 5) | red;
     }
-    /* Queue the three warmed colour pairs for the sprite palette. */
     palette = (u32 *)0x050003cc;
     word = (u32 *)(buffer + 12);
     QueueIoWriteDelay3((u32)palette++, *word++);

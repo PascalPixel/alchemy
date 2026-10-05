@@ -14,7 +14,6 @@
 #include "EVENT_RUNTIME.H"
 #include "FIXED_POINT_POSITION.H"
 
-/* shop/effect/reset.c */
 void EffectSlot_UpdateFar(s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, u32);
 

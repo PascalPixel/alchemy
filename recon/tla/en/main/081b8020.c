@@ -1,11 +1,3 @@
-/*
- * Draft: Camera_ResetSceneDefaults, ported from its ☀️ twin; it follows
- * Runtime_BlankDisplayAndRunScene in FIELD/COMMON/CAMERA/CAMERA.C. Score 2:
- * the listing passes the camera (adds r1, r5) before loading its distance
- * into the transform vector; this C loads first, with or without load
- * scheduling. A struct vector, a copied output pointer and a lifetime
- * barrier change nothing.
- */
 #include "IO_REG.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
@@ -18,7 +10,6 @@ void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
 
-/* The scene camera in its heap slot. */
 struct SceneCamera {
     u8 unknown_00[0x0c];
     s32 pos[3];
@@ -30,7 +21,6 @@ struct SceneCamera {
     s16 yaw;
 };
 
-/* The projection the camera's parameters feed. */
 struct SceneProjection {
     u32 unknown_00[3];
     s32 center_x;
@@ -39,8 +29,6 @@ struct SceneProjection {
 
 extern struct SceneProjection gCameraSceneParameters;
 
-/* Points the scene camera at the origin from its default pitch and
-   distance and sets up the projection from it. */
 void Camera_ResetSceneDefaults(void)
 {
     struct SceneCamera *state = Ram_HeapSlots->camera_work;

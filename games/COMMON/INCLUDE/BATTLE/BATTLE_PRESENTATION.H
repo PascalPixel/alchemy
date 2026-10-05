@@ -6,8 +6,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* The camera looks at pos from eye, which Iwram_TransformVector places at
-   distance from pos, turned by yaw and pitch. */
 struct BattleCamera {
     s32 eye[3];
     s32 pos[3];
@@ -32,16 +30,12 @@ struct BattlePresentationTransition {
     s32 target_yaw;
     s32 frames;
     u8 unknown_08[8];
-    s32 active;                    /* 0x10, an escape presentation is playing */
+    s32 active;
     s32 flag;
     s32 unknown_18;
     s32 unknown_1c;
 };
 
-/* The action effect prepared from a plan and consumed by the presentation
-   dispatchers. Its target storage is distinct from an individual effect
-   argument: presentation holds 8 target ids, then four child parameter
-   bytes for each target. */
 struct BattlePresentationWork {
     s32 kind;
     s32 side;
@@ -53,7 +47,7 @@ struct BattlePresentationWork {
     s32 flags;
     u8 unknown_20[4];
     s16 actors[8];
-    u8 params[8][4]; /* per-target child parameters */
+    u8 params[8][4];
 };
 
 LAYOUT_SIZE_GUARD(BattlePresentationTransition_Size, struct BattlePresentationTransition, 0x20);
@@ -61,7 +55,6 @@ LAYOUT_OFFSET_GUARD(BattlePresentationTransition_Active, struct BattlePresentati
 LAYOUT_SIZE_GUARD(BattlePresentationWork_Size, struct BattlePresentationWork, 0x54);
 LAYOUT_OFFSET_GUARD(BattlePresentationWork_Actors, struct BattlePresentationWork, actors, 0x24);
 
-/* Background modes share heap slot 44 with the other presentation work. */
 struct BattleBackgroundView {
     u8 unknown_00[8];
     s32 mode;
@@ -74,7 +67,6 @@ struct BattleAffine {
     s32 x, y;
 };
 
-/* Each page supplies one BG2CNT value per display line. */
 struct BattleAffineHdma {
     u32 page;
     u8 unknown_04[12];
@@ -89,7 +81,6 @@ LAYOUT_OFFSET_GUARD(BattleAffineHdma_Affine, struct BattleAffineHdma, affine, 0x
 LAYOUT_OFFSET_GUARD(BattleAffineHdma_Lines, struct BattleAffineHdma, lines, 0x20);
 
 struct BattlePlan;
-/* The second argument is unused. The result has no contract and must be discarded. */
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused);
 
 s32 BattlePres_BuildTargetList(

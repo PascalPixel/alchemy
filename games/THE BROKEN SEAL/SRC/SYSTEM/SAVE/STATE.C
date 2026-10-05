@@ -8,7 +8,6 @@
 #include "IO_REG.H"
 extern s32 Flash_Handler0;
 
-/* save/state/select_write_slot.c */
 u32 Random16(void);
 
 u32 SaveState_SelectWriteSlot(s32 mode)
@@ -44,11 +43,9 @@ u32 SaveState_SelectWriteSlot(s32 mode)
     return index;
 }
 
-/* save/state/write_workspace_slot.c */
 s32 _call_via_r3(s32, s32, s32, s32);
 s32 Flash_VerifySector(u16, s32);
 
-/* The old-style u16 formal receives an int-promoted incoming word. */
 u32 SaveState_WriteWorkspaceSlot(code)
 u16 code;
 {

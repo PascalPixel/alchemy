@@ -3,8 +3,6 @@
 
 #include "TYPES.H"
 
-/* Fills size bytes at destination with one word through DMA channel 3, which
-   reads it from a volatile stack word, as the SDK's DmaFill32 does. */
 #define Dma_Fill32(value, destination, size)                                 \
     {                                                                        \
         volatile u32 fill_ = (value);                                        \

@@ -3,26 +3,23 @@
 #include "OWNER_STATE.H"
 #include "RAM_BUFFER.H"
 
-/* Summon charge channels: each class holds a mask of the channels in use,
-   and a unit's name ends in the marker digit of its channel. */
 #define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
 
 struct SummonChargeState {
     u8 unknown_00[0x10];
-    u16 class_ids[6];   /* 0x10 */
-    u32 used_masks[6];  /* 0x1c */
-    s8 channels[6];     /* 0x34 */
+    u16 class_ids[6];
+    u32 used_masks[6];
+    s8 channels[6];
     u8 unknown_3a[6];
-    u8 count;           /* 0x40 */
+    u8 count;
 };
 
-/* ⚓️ keeps the class as a halfword at 0x14a; ☀️ as a byte at 0x128. */
 struct BattleActorDefinition {
     u8 name[14];
     u8 unknown_0e[0x11b];
-    u8 unavailable;     /* 0x129 */
+    u8 unavailable;
     u8 unknown_12a[0x20];
-    u16 class_id;       /* 0x14a */
+    u16 class_id;
 };
 
 s32 Summon_ReleaseCharge(s32 actor_id)
@@ -58,8 +55,6 @@ s32 Summon_ReleaseCharge(s32 actor_id)
     state->used_masks[index] &= ~(1 << bit);
 }
 
-/* Marks the name of the first standing enemy with this id, so two
-   enemies of a kind read apart. */
 s32 Summon_ResetCharge(s32 enemy_id)
 {
     struct BattleUnit *summon;

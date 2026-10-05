@@ -109,7 +109,6 @@ struct EffectParams {
 s32 Inventory_AddItemFar(s32 group, s32 value);
 void Inventory_EquipFar(s32 group, s32 index);
 
-/* The party member's record: the item ids of its fifteen inventory slots. */
 struct Member_387 {
     u8 pad[216];
     u16 items[15];
@@ -125,7 +124,6 @@ struct Item_387 {
 s32 Inventory_AddItemFar(s32 member, s32 item);
 void Inventory_EquipFar(s32 member, s32 slot);
 
-/* Run the first step, then wait the requested number of frames. */
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 {
     Engine_EventShowMessage(selector, 0);
@@ -529,7 +527,6 @@ void GomaIriguchi_SetEntranceFlag(void)
     EffectRuntime_StopCurrentObject();
 }
 
-/* Turn the object's attached presentation state by one eighth-turn. */
 void OverlayObject_TurnStateByEighth(u8 *obj)
 {
     u8 *state = *(u8 **)(obj + 80);
@@ -549,8 +546,6 @@ void OverlayObject_WaitForHeight(u8 *obj, s32 height)
     }
 }
 
-/* The actor spins up out of the ground, lands with a ring of dust and a
- * final burst. */
 void GomaIriguchi_RunSpinningLeap(s32 id)
 {
     struct Vec dir;
@@ -612,7 +607,6 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     Engine_MapWaitWorkValuesBelow256();
 }
 
-/* Apply a value to every matching member of a fifteen-slot group. */
 void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
 {
     u8 *work = Owner_GetStateFar(group);
@@ -624,9 +618,6 @@ void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
     }
 }
 
-/* Give member 2 item 65, dropping an item to make room while the inventory
- * is full (the last slot is cleared after a thousand tries), then equip every
- * slot holding it. */
 void GomaIriguchi_GiveShamansRod(void)
 {
     struct Member_387 *member;

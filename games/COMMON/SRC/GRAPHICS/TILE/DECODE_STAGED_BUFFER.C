@@ -3,9 +3,6 @@ extern u32 gMapBlocks[];
 #include "RAM_BUFFER.H"
 extern u8 gMapCellBuffer[];
 
-/* Decodes the tilemap staged at 0x02010000 (mode byte at +1) into
-   gMapBlocks: a plain halfword copy, a byte-planar delta, or a halfword
-   delta. */
 void Tilemap_DecodeStagedBuffer(s32 size)
 {
     u16 *destination;

@@ -44,8 +44,6 @@ extern const struct ScenePlacement gKuupuappuDouPlacementsOther[];
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
-/* One cell's step for each sixteenth of a turn: pixels across in the high
- * half, pixels along in the low half. */
 extern s32 KuupuappuDou_DirectionSteps[];
 
 extern const struct SceneEvent gKuupuappuDouEvents1[];
@@ -104,7 +102,6 @@ void SceneActor_SetupActors11To14AndInstallTask(void);
 void SceneState_ApplyThreeRectsRows9And10(void);
 void SceneState_DispatchByActorZeroDepth(void);
 
-/* Where the party appears in each of the cave's three areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -126,7 +123,6 @@ u8 *KuupuappuDou_GetRegions(void)
     return gKuupuappuDouRegions;
 }
 
-/* Where each area's exits lead. */
 const u32 *Scene_GetExits(void)
 {
     s16 scene = gGameState.scene;
@@ -143,7 +139,6 @@ const u32 *Scene_GetExits(void)
     return gKuupuappuDouExitsOther;
 }
 
-/* The actors placed in each area. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -160,9 +155,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKuupuappuDouPlacementsOther;
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
 s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
 {
     s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
@@ -178,9 +170,6 @@ s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
     return 0;
 }
 
-/* The leader pushes the block in the cell ahead one cell further, unless it
- * is one of actors 11 to 14, something solid lies beyond it or the landing
- * cell is higher; leader and block then move together. */
 void KuupuappuDou_PushBlockAhead(void)
 {
     struct FieldActor *leader = Object_GetById(0);
@@ -242,9 +231,6 @@ void KuupuappuDou_PushBlockAhead(void)
     Object_SetMode(leader, 1);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
 void SceneState_ApplyFlag300(void)
 {
     Engine_GameFlagSet(0x300);
@@ -255,7 +241,6 @@ void KuupuappuDou_ShowLockedDoorMessage(void)
     Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }
 
-/* What each area answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -272,9 +257,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKuupuappuDouEventsOther;
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
 s32 IsActor9AtTile15x54(void)
 {
     s32 *actor = Object_GetById(9);
@@ -551,9 +533,6 @@ void KuupuappuDou_RaiseActorPriorities(void)
     }
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
 void KuupuappuDou_EnableGroupAutomaticPriority(void)
 {
     s32 index = 16;
@@ -569,9 +548,6 @@ void KuupuappuDou_EnableGroupAutomaticPriority(void)
     } while (remaining >= 0);
 }
 
-/* The cave rumbles: the map shakes for 480 frames, drifting its scroll by
-   a random amount each frame, then the second layer fades out, the opened
-   passage is copied into the map and the chime plays. */
 void KuupuappuDou_RunRumble(void)
 {
     struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 0x164);
@@ -617,9 +593,6 @@ void KuupuappuDou_RunRumble(void)
     Engine_EventEnd();
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
 void FieldScene_RunScene3a7SequenceB(void)
 {
     u32 i;
@@ -647,10 +620,6 @@ void FieldScene_RunScene3a7SequenceB(void)
     }
 }
 
-/* Checks actors 11 to 14 in turn against the subject actor. The first one
- * whose y lies above 0 and below one tile, and that stands on the subject's
- * tile, is moved up to y 255 with fields 0x28 and 0x48 cleared, and the check
- * returns 1; otherwise it returns 0. */
 s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 {
     struct SceneActorRecord *subject = (struct SceneActorRecord *)Object_GetById(subject_actor);
@@ -681,9 +650,6 @@ s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
     return 0;
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
     s32 i;
@@ -792,7 +758,6 @@ void SceneActor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
     Object_SetMoveTarget(rec, pos[0], pos[1], pos[2]);
 }
 
-/* Spawn up to four small type-240 objects at the source, rising with a random speed and a random turn, each running the puff script. */
 void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
 {
     struct FieldActor *puff;
@@ -819,9 +784,6 @@ void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
     }
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
-/* Deliberate no-op callback. */
 void SceneActor_InitSlots10To15AndStartTask(void)
 {
     s32 selector = 10;
@@ -871,11 +833,6 @@ void SceneActor_SetupActors11To14AndInstallTask(void)
     }
 }
 
-/*
- * Kuupuappu Cave entry: open the screen with the window transition, then
- * for each of the cave's three areas set its actors and map cells for the
- * story so far. Retreat returns the party to the first area.
- */
 s32 KuupuappuDou_ApplyEntryState(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

@@ -4,12 +4,9 @@
 #include "FIELD_SCENE.H"
 
 struct EffectDescriptor;
-/* Six message offsets, for tiles 242 to 247. */
 extern const u8 Field_TileMessageOffsets[];
 extern struct EventRuntime *gEventWork;
 
-/* Messages are numbered by the edition's catalog; a name's address is its
-   number. The two families take a kind's offset. */
 extern char MsgTileChecked;
 extern char MsgCheckedGround;
 extern char MsgTileResult;
@@ -56,10 +53,6 @@ void BattleFx_FinishAction(void);
 void BattleFx_PlayQueuedSound(void);
 void AudioCommand_PlayFar(s32 cue);
 
-/* Serves the tile the leader stepped on or examined. Tiles 242 to 247 show
-   a fixed pair of messages. The others look up their descriptor and run its
-   action: a callback, a message, a Psynergy Stone, an ambush, coins or an
-   item, each only while the descriptor's condition holds. */
 s32 Field_RunTileAction(s32 tile)
 {
     const struct SceneEvent *descriptor;

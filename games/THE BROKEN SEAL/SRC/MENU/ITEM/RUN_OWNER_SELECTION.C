@@ -15,7 +15,6 @@ struct RenderOutput *RenderOutput_CreateFromResourceFar(
     s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 #if !EDITION_INTERNATIONAL
-/* The key names the Japanese help lines follow: "L+A:" and "R:". */
 extern u8 ItemMenu_ArrangeKeysString[];
 extern u8 ItemMenu_EquipmentKeyString[];
 void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
@@ -25,9 +24,6 @@ void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 s32 InventoryMenu_SortByListOrder(u16 *items, s32 mode);
 void Audio_PlayCue(s32 cue);
 
-/* Choose whose items to list: left and right step through the party, R held
-   shows the member's items by category, L with A cycles the sort order, A
-   picks a member who carries something and B returns -1. */
 s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
 {
     struct InventoryMenuState *menu;
@@ -59,7 +55,6 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
     UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp, (s32)menu->help_window, 0, 0);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp + 1, (s32)menu->help_window, 0, 8);
 #else
-    /* The Japanese help lines follow their key names. */
     UiText_DrawStringInWindowFar(ItemMenu_ArrangeKeysString, (s32)menu->help_window, 0, 0);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp, (s32)menu->help_window, 32, 0);
     UiText_DrawStringInWindowFar(ItemMenu_EquipmentKeyString, (s32)menu->help_window, 16, 8);

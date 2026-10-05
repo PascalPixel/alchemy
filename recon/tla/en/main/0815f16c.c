@@ -1,15 +1,6 @@
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
-/*
- * Battle presentation for action ids 100-200 (kind = id - 100): loads the
- * kind's graphics and palette, flies 64 particles in from the caster, then
- * runs the kind's frame-by-frame effect for its duration and restores the
- * target object. Complete draft of main:0815f16c; not exact.
- */
-
-/* The admitted DMA primitive, shared from TBS until it moves to games/COMMON;
- * TLA's TYPES.H already declares the same fixed-width types. */
 #define ALCHEMY_TYPES_H
 #include "../../../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
 

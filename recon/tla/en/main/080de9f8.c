@@ -1,4 +1,3 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CALL_EFFECT_03_AND_STOP.C. */
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"

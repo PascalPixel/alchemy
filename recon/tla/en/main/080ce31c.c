@@ -1,12 +1,3 @@
-/* Pending ability-event selection trial, 2026-10-02.
- * EN ordinary compiler: 312 bytes versus the listing's 316-byte extent;
- * score 910 (18 register, 5 reordered, 2 inserted, 3 deleted).
- * Ordinary width/branch/result reshapes improved the initial score 1955;
- * a finite 128-rewrite search did not improve the final result.
- * Traverses 12-byte event records and chooses a focused or nearby target.
- * No steering device. EN-only listing score; complete six-edition linked
- * body, pools, call identities and storage ownership remain unproved.
- */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 struct PendingAction { u8 unknown_00[6]; u8 event_kind; u8 unknown_07[9]; };

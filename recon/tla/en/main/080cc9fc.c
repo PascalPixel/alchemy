@@ -1,19 +1,10 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 
-/*
- * A developer palette editor over the background palettes. Shows the chosen
- * palette's fifteen colours as swatches with their red, green and blue
- * levels in hex digits; up and down pick the channel, left and right the
- * colour, L and R the palette, A and B raise and lower the level, holding
- * Start blinks the colour and Select leaves.
- */
-
 extern volatile u32 gKeysRepeat;
 extern volatile u32 Data_03001ae8;
 extern volatile u32 Data_03001e40;
 
-/* The compressed swatch tiles, one filled with each colour index. */
 extern const u8 Debug_PaletteSwatchTiles[];
 
 void Resource_DecompressHalfwords(const void *source, void *destination);

@@ -33,8 +33,6 @@ void ObjectTable_ClearBattleSlots(void)
     } while (count >= 0);
 }
 
-/* Generic word lookup at +0x14. Field mode uses 66 actor slots; the
-   0xbf limit is this accessor's contract, not a field allocation extent. */
 void *ObjectTable_Get(u32 index)
 {
     u8 *base = (u8 *)gWork;
@@ -45,11 +43,6 @@ void *ObjectTable_Get(u32 index)
     return *(void **)(base + offset);
 }
 
-/*
- * Copies every live object of the table (66 on the field, 8 in battle) into
- * the 32-entry snapshot beside its index, with its sprite's two frame bytes
- * and drawing priority, and marks the unused index slots with 255.
- */
 void ObjectTable_Snapshot(void)
 {
     struct ObjectRuntime *copy = Data_02001124;
@@ -94,12 +87,6 @@ void ObjectTable_Snapshot(void)
         *indices++ = 255;
 }
 
-/*
- * Puts back the objects ObjectTable_Snapshot saved: copies each saved
- * object over the live one at its index while keeping the live sprite,
- * restores its mode, frame and drawing priority, and re-centres the camera on
- * the selected actor.
- */
 void ObjectTable_Restore(void)
 {
     struct ObjectRuntime *copy = Data_02001124;

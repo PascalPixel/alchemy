@@ -7,8 +7,6 @@ struct ScriptMotionWords {
     s32 word[1];
 };
 
-/* The script slots updated by the field's motion pass. The vertical word is
-   a rebound factor for falling objects, or a phase for cyclic motion. */
 struct ScriptMotionObject {
     const struct ScriptMotionWords *script;
     u16 script_cursor;

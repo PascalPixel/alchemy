@@ -4,7 +4,6 @@
 
 s32 LuckyDice_Run(void);
 
-/* Turns every layer off and runs the lucky dice game. */
 s32 Runtime_BlankDisplayAndRun(void)
 {
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP;

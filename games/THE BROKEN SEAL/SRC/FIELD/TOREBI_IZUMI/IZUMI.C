@@ -1,7 +1,5 @@
 #include "TOPIC.H"
 #include "FIELD_SCENE.H"
-/* The two yes/no questions the spring's attendants ask. Each answer is the
- * line after its question, yes first. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
@@ -61,7 +59,6 @@ u8 *SceneData_GetSceneTableB(void)
     return TorebiIzumi_SceneTableB;
 }
 
-/* The actors placed at the spring; its second row places its own. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
@@ -98,7 +95,6 @@ void TorebiIzumi_AskIfFirstTime(s32 object)
     Engine_EventShowMessage(object, 0);
 }
 
-/* The saved game as words: word 125 is the selected actor. */
 void TorebiIzumi_WalkLeaderToSpring(void)
 {
     s32 leader = gGameState.selected_actor;
@@ -135,7 +131,6 @@ void FieldScene_RunIndexedStep0(void)
     TorebiIzumi_OfferLuckyWheels(0);
 }
 
-/* What the spring answers; its second row answers its own way. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
@@ -144,9 +139,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gTorebiIzumiEventsOther;
 }
 
-/* OAM buffer pending */
-
-/* Opens the Torebi spring scene: stages the blend and actors, reports the coin difference after a game, and hands out each prize item won. */
 s32 TorebiIzumi_OpenScene(void)
 {
     s32 diff;
@@ -250,9 +242,6 @@ s32 TorebiIzumi_OpenScene(void)
     return 0;
 }
 
-/* The spring gives up a prize: the leader turns to it, the water parts cell
- * by cell along both rows, the item is shown and given, and the water closes
- * again the way it opened. */
 void TorebiIzumi_RevealPrize(s32 item)
 {
     Engine_EventBegin();

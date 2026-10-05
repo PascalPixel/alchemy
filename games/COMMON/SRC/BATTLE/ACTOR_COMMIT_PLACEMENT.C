@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 
-
 s32 BattleActor_SpawnObjectsForList(void *, s32);
 
 void BattleActor_CommitPlacement(void)

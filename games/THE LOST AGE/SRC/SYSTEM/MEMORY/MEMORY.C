@@ -6,14 +6,10 @@
 #include "IO_REG.H"
 #include "RESOURCE.H"
 
-/* The window frame colours of background bank 15. */
 extern const u16 Ui_WindowPalette[];
 extern const u8 System_BasicColorPalette[];
 extern char ResourceId_WindowTiles;
 
-/* Loads the shared window graphics: resource 0x13 into BG character block
-   0, the window palette into background bank 15, the bank-15 frame colours
-   and the object palettes. */
 void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
@@ -69,10 +65,8 @@ void Runtime_InitializeHeap(void)
     Ram_HeapSlots->next_ewram = gEwramHeap;
 }
 
-/* The sound mixer's workspace, which the IWRAM heap ends at. */
 extern u8 IwramSoundMixWorkspace[];
 
-/* The IWRAM left between the heap's cursor and the mixer's workspace. */
 s32 Runtime_GetRemainingIwram(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
@@ -80,7 +74,6 @@ s32 Runtime_GetRemainingIwram(void)
     return (s32)IwramSoundMixWorkspace - (s32)work->next_iwram;
 }
 
-/* The EWRAM left between the heap's cursor and the end of EWRAM. */
 s32 Runtime_GetRemainingEwram(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
@@ -88,10 +81,6 @@ s32 Runtime_GetRemainingEwram(void)
     return 0x02040000 - (s32)work->next_ewram;
 }
 
-/* Hands out a block for the heap slot at byte offset kind once, from IWRAM
-   while it lasts and then from EWRAM below 0x02040000, and keeps it in the
-   slot; ⚓️ passes the offset where ☀️ passes the slot number. Slots 0 and
-   1 hold the EWRAM and IWRAM bump pointers. Returns 0 when both are full. */
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
 {
     u32 *allocator_state;
@@ -126,9 +115,6 @@ void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
     return (void *)cached_address;
 }
 
-/* Hands out a block for a byte-offset slot once, using EWRAM first and
-   IWRAM when EWRAM is full. The last usable IWRAM byte precedes the
-   sound mixer's workspace, so the first byte after a block may not pass it. */
 void *Runtime_AllocateBlock(s32 kind, s32 size)
 {
     u32 *allocator_state;
@@ -166,7 +152,6 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
     return (void *)cached_address;
 }
 
-/* Fills the still-free portions of the two bump heaps with a word value. */
 void Runtime_FillFreeHeapWords(u32 value)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
@@ -178,7 +163,6 @@ void Runtime_FillFreeHeapWords(u32 value)
     Iwram_FillWords((void *)address, 0x02040000U - address, value);
 }
 
-/* Allocate from IWRAM first, falling back to EWRAM. */
 void *Runtime_BumpAllocate(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
@@ -214,7 +198,6 @@ finish:
     return (void *)address;
 }
 
-/* Allocate from EWRAM first, falling back to IWRAM. */
 void *Runtime_BumpAllocateAlternatePool(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;

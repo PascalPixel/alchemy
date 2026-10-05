@@ -1,20 +1,8 @@
-//! `alchemy adopt ... --into MODULE.C [--head]`: before the scaffolding
-//! comes out, move the draft into the module that holds its linker
-//! neighbours (S3). The draft's includes the module lacks go after the
-//! module's top include block; its audit header stays behind; its
-//! declarations and functions the module lacks go at the module's end, or
-//! with --head before the module's first function, after its declarations.
-//! A name the draft would define a second time, beside the module's own
-//! definition or one in a header the module includes, refuses the merge
-//! before anything is written; a definition already there word for word is
-//! left to the module.
 use crate::c_items::{blank_line_before, items, line_marker, names, normalized, Item, Kind, Space};
 use crate::targets::{decomp_target, DecompTarget};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
-/// What some source already says: the names it defines and declares, with
-/// where and how, and every item's normalized text.
 #[derive(Default)]
 pub(crate) struct Known {
     defined: HashMap<(Space, String), String>,
@@ -34,8 +22,6 @@ impl Known {
         self.texts.insert(normalized(item));
     }
 
-    /// The headers of a preprocessed source (`-E -dD`), by its line
-    /// markers; the main file's own items are left out.
     pub(crate) fn of_headers(expanded: &str, main: &str) -> Known {
         let mut known = Known::default();
         let mut file = String::from("<built-in>");
@@ -50,8 +36,6 @@ impl Known {
     }
 }
 
-/// The module with the draft's missing includes after its top include
-/// block, and the include lines added.
 pub(crate) fn with_includes(module: &str, draft: &str) -> (String, Vec<String>) {
     let module_items = items(module);
     let mut have: HashSet<String> = module_items
@@ -92,19 +76,13 @@ pub(crate) fn with_includes(module: &str, draft: &str) -> (String, Vec<String>) 
     (format!("{}{text}{}", &module[..at], &module[at..]), added)
 }
 
-/// A merged module and what went into it.
 pub(crate) struct Merged {
     pub text: String,
-    /// The names the draft's merged items define.
     pub defined: Vec<String>,
-    /// Draft items the module or its headers already had.
     pub present: usize,
-    /// Names the module already declared differently from the draft.
     pub differing: Vec<String>,
 }
 
-/// Where --head puts the draft: before the module's first function and the
-/// comments directly above it.
 fn head_position(module_items: &[Item]) -> Option<usize> {
     let first = module_items.iter().position(|i| matches!(i.kind, Kind::Function { .. }))?;
     let comments = module_items[..first].iter().rev().take_while(|i| i.kind == Kind::Comment).count();
@@ -117,9 +95,6 @@ enum Fate {
     Refuse(String),
 }
 
-/// Merge the draft's declarations and functions into `module` (which
-/// already has the draft's includes). `headers` knows what the module's
-/// includes define; `module_name` names the module in refusals.
 pub(crate) fn merge(module: &str, draft: &str, headers: &Known, head: bool, module_name: &str) -> Result<Merged, String> {
     let module_items = items(module);
     let at = if head { head_position(&module_items).unwrap_or(module.len()) } else { module.len() };
@@ -130,7 +105,6 @@ pub(crate) fn merge(module: &str, draft: &str, headers: &Known, head: bool, modu
     }
 
     let draft_items = items(draft);
-    // The audit header: comments before and among the leading includes.
     let preamble = draft_items.iter().take_while(|i| matches!(i.kind, Kind::Comment | Kind::Include(_))).count();
     let (mut kept, mut pending) = (Vec::new(), Vec::new());
     let (mut refusals, mut differing, mut defined, mut present) = (Vec::new(), Vec::new(), Vec::new(), 0);
@@ -178,9 +152,6 @@ pub(crate) fn merge(module: &str, draft: &str, headers: &Known, head: bool, modu
     Ok(Merged { text, defined, present, differing })
 }
 
-/// Whether a draft item joins the module, is already there, or would
-/// define a name twice. Names the module or its headers declare with
-/// another type go to `differing`.
 fn fate(item: &Item, headers: &Known, before: &Known, after: &Known, differing: &mut Vec<String>) -> Fate {
     let item_names = names(item);
     let text = normalized(item);
@@ -224,8 +195,6 @@ fn read(path: &Path) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))
 }
 
-/// The module's headers, expanded with the build's own preprocessor for
-/// the game's English edition, as the module would include them.
 fn header_names(root: &Path, target: DecompTarget, module: &Path, text: &str) -> Result<Known, String> {
     let directory = tempfile::Builder::new()
         .prefix("alchemy-adopt-into-")
@@ -239,7 +208,6 @@ fn header_names(root: &Path, target: DecompTarget, module: &Path, text: &str) ->
     if let Some(imports) = &imports {
         command.insert(1, format!("-I{}", imports.path().display()));
     }
-    // Quoted includes search the module's own directory first.
     if let Some(parent) = module.parent() {
         command.insert(1, format!("-I{}", parent.display()));
     }
@@ -249,8 +217,6 @@ fn header_names(root: &Path, target: DecompTarget, module: &Path, text: &str) ->
     Ok(Known::of_headers(&expanded, &main))
 }
 
-/// The module's path under `root`, given from the current directory or
-/// from the checkout's root.
 fn module_path(root: &Path, module: &Path) -> Result<PathBuf, String> {
     let path = if module.is_file() { module.to_path_buf() } else { root.join(module) };
     let path = std::fs::canonicalize(&path).map_err(|e| format!("{}: {e}", module.display()))?;
@@ -261,8 +227,6 @@ fn module_path(root: &Path, module: &Path) -> Result<PathBuf, String> {
     }
 }
 
-/// Merge `recon/<game>/en/main/<address>.c` into `module`, write it and
-/// drop the draft.
 pub(crate) fn run(root: &Path, game: &str, address: &str, module: &Path, head: bool) -> Result<(), String> {
     let draft_name = format!("recon/{game}/en/main/{address}.c");
     let draft = read(&root.join(&draft_name))?;
@@ -333,7 +297,6 @@ mod tests {
             merged.text,
             "#include \"TYPES.H\"\n\nvoid Shop_Close(void);\n\nstruct Slot {\n    u8 id;\n};\ns32 Item_Count(u32 id);\n\n/* Counts the slot's items. */\ns32 Shop_Count(struct Slot *slot)\n{\n    return Item_Count(slot->id);\n}\n\n/* Opens. */\nvoid Shop_Open(void)\n{\n}\n"
         );
-        // A definition the first function's neighbours make later cannot come first.
         let later = "#include \"TYPES.H\"\nvoid Shop_Open(void)\n{\n}\nstruct Slot {\n    u8 id;\n};\n";
         let error = merge(later, DRAFT, &Known::default(), true, "SHOP.C").err().unwrap();
         assert!(error.contains("struct Slot is defined below the module's first function"), "{error}");
@@ -345,7 +308,6 @@ mod tests {
         let error = merge(module, DRAFT, &Known::default(), false, "SHOP.C").err().unwrap();
         assert!(error.contains("struct Slot is already defined in SHOP.C"), "{error}");
         assert!(error.contains("Shop_Count is already defined in SHOP.C"), "{error}");
-        // The same through a header the module includes.
         let headers = Known::of_headers(
             "# 1 \"/tmp/module.c\"\n# 1 \"games/COMMON/INCLUDE/GAME/ITEM.H\" 1\ntypedef unsigned short u16;\ns32 Item_Count(u32 count);\nstruct Slot { u32 id; };\n# 2 \"/tmp/module.c\" 2\n",
             "/tmp/module.c",

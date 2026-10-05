@@ -4,8 +4,6 @@
 
 extern u16 Graphics_ExpandNibbleTable[];
 
-/* Expands two banks of ten 4bpp tile rows at 0x06000600 into dst, each
-   nibble through its bank's sixteen colours of Graphics_ExpandNibbleTable. */
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 {
     s32 bank = 0;

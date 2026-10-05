@@ -16,8 +16,6 @@
 #include "TRANSFORM.H"
 #include "BATTLE_PRESENTATION.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-
 void Camera_ApplyPhasedDelta(void);
 void Render_ResetTransformState(void);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
@@ -36,9 +34,6 @@ extern u8 HomingEmbers_FlareHeights[];
 extern u8 HomingEmbers_FlareBiasY[];
 extern u16 HomingEmbers_FlareCells[];
 
-/* Battle effect: embers leave the acting unit in a random spray, one every
-   two frames, then turn towards the affected units in turn and burst into a
-   six-cel flare where they land. The variant picks how many embers fly. */
 void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

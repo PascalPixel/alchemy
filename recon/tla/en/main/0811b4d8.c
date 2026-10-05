@@ -1,4 +1,3 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/BATTLE.C. */
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_STATUS_ICON.H"

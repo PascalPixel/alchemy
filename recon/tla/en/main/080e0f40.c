@@ -1,12 +1,8 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_DESCENDING_ARC_PARTICLES.C. */
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
 #include "TYPES.H"
 #include "SCENE_IDS.H"
 
-/* Drops the particle two pixels a frame beside its source, on the positive
-   z side, while its sprite grows to full size; it vanishes ten pixels above
-   its floor (four in the Clear scene). */
 void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
 {
     struct ArcParticle *source;

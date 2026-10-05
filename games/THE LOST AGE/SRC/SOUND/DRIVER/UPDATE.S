@@ -1,11 +1,3 @@
-@ Sound driver update and timer module: literals shared across functions,
-@ carry and shift branches without compare, and a private frame epilogue
-@ whose final bx r3 other routines reach by bl as a call-through-r3 stub.
-@ These 692 bytes equal TBS SOUND/DRIVER/UPDATE.S (0x080f9c44) apart from one
-@ relocated literal word.
-@ The zero halfwords of alignment at 0x081c1922 and 0x081c1b86 never run and
-@ carry no credit.
-@ credit: library — TBS/TLA common sound driver update and timer module
 .syntax unified
 	.thumb
 	.global SoundDriver_Update

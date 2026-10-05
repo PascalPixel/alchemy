@@ -24,23 +24,16 @@ extern const s32 BabiFune_DriftScript[];
 extern s32 BabiFune_CountTicks;
 extern s32 BabiFune_Count;
 
-/* The overlay header exposes a scene table getter. */
-
 u8 *BabiFune_GetEntrances(void)
 {
     return BabiFune_SceneTableA;
 }
 
-/*
- * Babi Fune: the no-hit result the overlay's entry table publishes; the body
- * just returns zero.
- */
 s32 BabiFune_GetDefaultResult(void)
 {
     return 0;
 }
 
-/* The overlay header exposes getters for the scene tables. */
 u8 *BabiFune_GetExits(void)
 {
     return BabiFune_SceneTableB;
@@ -75,8 +68,6 @@ void FieldScene_ConfigureFixedPointValues(void)
 
 u8 *BabiFune_GetEvents(void) { return BabiFune_SceneTableD; }
 
-/* Babi Fune: copy six colours of the cycling palette for the current step
- * into palette colours 116..121 and advance the step, wrapping after 35. */
 void BabiFune_CyclePalette(void)
 {
     u16 *frame;
@@ -95,8 +86,6 @@ void BabiFune_CyclePalette(void)
     }
 }
 
-/* Lemurian ship: while the wait lasts, drift the object randomly sideways
- * and upwards; when it ends and a trigger is pending, start its script. */
 void BabiFune_UpdateDriftingObject(u8 *obj)
 {
     u16 *wait = &((struct FieldActor *)obj)->timer;
@@ -123,7 +112,6 @@ void BabiFune_UpdateDriftingObject(u8 *obj)
     }
 }
 
-/* Every forty ticks, count down while the count is above four. */
 void SceneState_CountDownEveryFortyTicks(void)
 {
     s32 n = BabiFune_CountTicks + 1;
@@ -137,7 +125,6 @@ void SceneState_CountDownEveryFortyTicks(void)
     }
 }
 
-/* The map layers as the sea swell moves them. */
 struct WaveMapLayer {
     s32 unknown_00[3];
     s32 y;
@@ -163,10 +150,6 @@ extern s32 BabiFune_StoredRecord2;
 
 void BabiFune_UpdateDriftingObject(u8 *obj);
 
-/* Each frame at sea: shimmer the blend, lift the two sea layers and the
-   party on the swell, and every other frame let one piece of drift loose
-   ahead of the ship. All four party members take the first one's rest
-   height, as the game has it. */
 void BabiFune_UpdateWaves(void)
 {
     volatile u16 blend;

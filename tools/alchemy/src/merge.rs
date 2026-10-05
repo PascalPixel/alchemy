@@ -1,14 +1,3 @@
-//! Git merge drivers for the files every adoption edits, so two branches
-//! that adopt neighbouring functions merge without hand work.
-//!
-//! An edition scaffold (`recon/<game>/<lang>/rom.s`) merges by ROM bytes: a
-//! byte stays scaffold only if both sides keep it, and a label, directive or
-//! section name survives unless one side removed it from the base. Linker
-//! scripts merge by lines: a base line survives only if both sides keep it,
-//! and each side's insertions land before the base line they precede. Then
-//! `alchemy merge-driver links` makes each edition's linker script name
-//! exactly the scaffold sections that exist. The build's comparison of all
-//! twelve editions judges the result, as it judges every change.
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
@@ -22,9 +11,7 @@ exactly the sections its rom.s defines, after a merge."#;
 struct Scaffold {
     header: Vec<String>,
     ranges: Vec<(u32, u32)>,
-    /// Lines before the block starting at an offset: labels and directives.
     pre: BTreeSet<(u32, String)>,
-    /// Lines after the block ending at an offset: end labels and .size.
     post: BTreeSet<(u32, String)>,
     sections: BTreeMap<u32, String>,
 }
@@ -84,9 +71,6 @@ fn parse(text: &str) -> Scaffold {
     s
 }
 
-/// Prefix each directive with the label it introduces (the next label line;
-/// none for directives before the incbin itself), so two labels at one
-/// address keep their own .global, .type and .thumb_func.
 fn tag(lines: Vec<String>) -> Vec<String> {
     let mut owner = String::new();
     let mut out: Vec<String> = lines
@@ -103,8 +87,6 @@ fn tag(lines: Vec<String>) -> Vec<String> {
     out
 }
 
-/// Write tagged lines grouped by label: each label's directives, then the
-/// label; lines that introduce no label first.
 fn emit(out: &mut Vec<String>, lines: Vec<&String>) {
     let rank = |l: &str| {
         if l.starts_with('@') { 0 } else if l.starts_with("\t.balign") { 1 } else if l.starts_with("\t.global") { 2 }
@@ -155,7 +137,6 @@ fn union(a: Vec<(u32, u32)>, b: Vec<(u32, u32)>) -> Vec<(u32, u32)> {
     out
 }
 
-/// The parts of `a` that `b` does not cover.
 fn subtract(a: Vec<(u32, u32)>, b: Vec<(u32, u32)>) -> Vec<(u32, u32)> {
     let b = union(b, Vec::new());
     let mut out = Vec::new();
@@ -183,11 +164,8 @@ fn three_way<T: Ord + Clone>(base: &BTreeSet<T>, ours: &BTreeSet<T>, theirs: &BT
         .collect()
 }
 
-/// Merge three versions of an edition scaffold by ROM bytes.
 pub fn merge_scaffold(base: &str, ours: &str, theirs: &str) -> String {
     let (b, o, t) = (parse(base), parse(ours), parse(theirs));
-    // A byte stays scaffold when both sides keep it, or when one side adds
-    // it back (a table relinked at its own address) and the base lacked it.
     let cover = union(
         intersect(o.ranges.clone(), t.ranges.clone()),
         union(subtract(o.ranges.clone(), b.ranges.clone()), subtract(t.ranges.clone(), b.ranges.clone())),
@@ -222,8 +200,6 @@ pub fn merge_scaffold(base: &str, ours: &str, theirs: &str) -> String {
     out.join("\n") + "\n"
 }
 
-/// Merge three versions of a line-oriented file: a base line survives only
-/// if both sides keep it; insertions land before the base line they precede.
 pub fn merge_lines(base: &str, ours: &str, theirs: &str) -> String {
     let base: Vec<&str> = base.lines().collect();
     let align = |side: &str| {
@@ -265,9 +241,6 @@ pub fn merge_lines(base: &str, ours: &str, theirs: &str) -> String {
     out.join("\n") + "\n"
 }
 
-/// Make a linker script name exactly the sections a scaffold defines:
-/// drop references to sections that are gone and place a new section after
-/// the one before it. Returns the script and what changed.
 pub fn reconcile_links(scaffold: &str, script: &str) -> (String, usize, Vec<String>) {
     let names: Vec<String> = scaffold.lines().filter_map(section).map(str::to_string).collect();
     let present: BTreeSet<&str> = names.iter().map(String::as_str).collect();
@@ -341,7 +314,6 @@ mod tests {
 
     #[test]
     fn adoptions_on_both_sides_both_leave_the_scaffold() {
-        // Ours adopted A; theirs adopted C.
         let ours = "@ header\n\t.section .rom.00000110, \"ax\"\n\t.global B\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000010\n\t.global C\nC:\n\t.incbin \"baserom.gba\", 0x00000120, 0x00000010\n";
         let theirs = "@ header\n\t.section .rom.00000100, \"ax\"\n\t.global A\nA:\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000010\n\t.global B\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000010\n";
         let merged = merge_scaffold(BASE, ours, theirs);
@@ -355,7 +327,6 @@ mod tests {
 
     #[test]
     fn bytes_one_side_adds_back_survive() {
-        // Ours adopted A; theirs relinked C and added 0x130..0x138 as scaffold.
         let ours = "@ header\n\t.section .rom.00000110, \"ax\"\n\t.global B\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000010\n\t.global C\nC:\n\t.incbin \"baserom.gba\", 0x00000120, 0x00000010\n";
         let theirs = format!("{BASE}\t.global D\nD:\n\t.incbin \"baserom.gba\", 0x00000130, 0x00000008\n");
         let merged = merge_scaffold(BASE, ours, &theirs);
@@ -374,8 +345,8 @@ mod tests {
     #[test]
     fn line_merge_keeps_both_insertions_and_both_deletions() {
         let base = "a\nb\nc\nd\n";
-        let ours = "a\nX\nc\nd\n"; // b replaced by X
-        let theirs = "a\nb\nc\nY\n"; // d replaced by Y
+        let ours = "a\nX\nc\nd\n";
+        let theirs = "a\nb\nc\nY\n";
         assert_eq!(merge_lines(base, ours, theirs), "a\nX\nc\nY\n");
     }
 }

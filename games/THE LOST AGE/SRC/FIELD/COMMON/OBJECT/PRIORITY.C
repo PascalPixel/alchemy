@@ -7,7 +7,6 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 value)
         Animation_ApplyChildValuesToRecord(object->target.child, value);
 }
 
-/* Sets both sprite priorities of a sprite object and stops automatic priority. */
 void ObjectDispatch_SetSpritePriority(struct DispatchObject *object, s32 priority)
 {
     struct FieldSprite *sprite;

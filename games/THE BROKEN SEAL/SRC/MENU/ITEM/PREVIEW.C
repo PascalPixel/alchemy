@@ -7,9 +7,6 @@
 #include "UI.H"
 #include "CHARACTER_MENU.H"
 #include "MENU_LIST.H"
-/* Inventory: remove the first stack without the 0x200 flag from an owner's
-   bag, one removal per unit it holds.  Returns 1 when the last removal
-   reports 2 or when the bag ends before such a stack, 0 otherwise. */
 #include "INVENTORY.H"
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
@@ -85,8 +82,6 @@ void InventoryMenu_NoOp(void)
 {
 }
 
-/* Temporarily equip the selected item on the target, draw its status, then
-   restore the complete BATTLE_UNIT_SIZE-byte owner record. */
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 {
     struct InventoryMenuState *menu = gMenuWork;

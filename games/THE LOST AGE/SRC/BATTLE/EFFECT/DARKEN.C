@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-/* Darken background entries 160-175 and object entries 1-239 by one step
-   per channel, stopping each 5-bit channel at 0. */
 void Palette_DarkenSceneStep(void)
 {
     u16 *color;

@@ -1,6 +1,3 @@
-@ VINASU_CHOJO: Japanese startup leaves the two PartyState halfwords after
-@ entrance untouched; all five international releases store 5/22 before the
-@ entrance 99 sequence. The 28-byte complete raw difference is uncredited.
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb

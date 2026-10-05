@@ -1,27 +1,14 @@
-//! The message archive's build rule. Each game's `TEXT/MESSAGES.S` includes
-//! `text/messages.inc`, which `build rom` writes from the edition's PO catalog
-//! as pret's mapjson writes the assembly its data files include: the Huffman
-//! archive, whose address words name its own labels, and an absolute symbol
-//! `Msg<Name>` for each message the code names, set to that message's number
-//! in this edition. The linker places the archive and fills every literal
-//! pool that loads a message number.
 use crate::targets::DecompTarget;
 use ags::text::{self, ARCHIVES};
 use std::fs;
 use std::path::Path;
 
-/// The generated include, under the build directory the assembler searches.
 pub(crate) const INCLUDE: &str = "text/messages.inc";
 
-/// C sources explicitly import canonical message names as integer constants.
 pub(crate) const C_INCLUDE: &str = "text/MSG_IDS.H";
 
-/// The archive's labels: `Text_MessageModels`, `Text_MessageContexts` (read
-/// by the symbol decoder) and `Text_MessageBanks` (read by the lookup).
 const LABEL: &str = "Text_Message";
 
-/// Write `output/text/messages.inc` for `target`, leaving an unchanged file
-/// untouched.
 pub(crate) fn build(root: &Path, target: DecompTarget, output: &Path) -> Result<(), String> {
     let spec = ARCHIVES
         .iter()
@@ -45,8 +32,6 @@ fn write_generated(path: &Path, contents: &str) -> Result<(), String> {
     fs::write(path, contents).map_err(|error| format!("{}: {error}", path.display()))
 }
 
-/// Lookup macros leave the C identifier namespace alone until source requests
-/// TEXT_MESSAGE_ENUM(MsgCanonicalName), which declares just that enum name.
 fn c_imports(names: &[(String, usize)]) -> String {
     let mut header = String::from(
         "/* Message numbers from the edition's editable PO catalog. */\n\
@@ -80,9 +65,6 @@ pub(crate) fn write_c_imports(output: &Path, header: &str) -> Result<(), String>
     write_generated(&output.join(C_INCLUDE), header)
 }
 
-/// Audit metadata is generated from current source in a temporary directory;
-/// old generated headers under out/ are never read by fresh source checks.
-/// Standalone compiler fixtures without a catalog need no message imports.
 pub(crate) fn fresh_c_imports(
     root: &Path,
     target: DecompTarget,

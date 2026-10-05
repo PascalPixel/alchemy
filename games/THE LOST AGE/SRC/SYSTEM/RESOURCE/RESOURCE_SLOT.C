@@ -6,7 +6,6 @@
 
 enum { RESOURCE_SLOT_COUNT = 8 };
 
-/* Which resource holds each animation number, ended by number 0. */
 struct ResourceSlotNumber {
     u16 resource;
     s16 number;
@@ -15,9 +14,6 @@ struct ResourceSlotNumber {
 extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
 extern u8 ResourceSlot_ConversionTables[][256];
 
-/* ☀️'s: loads animation number into the slot's buffer, relocating its
-   offset table and converting its text with one of five tables; returns
-   the frame's area. */
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
     struct AnimationMetadata *metadata;
@@ -82,7 +78,6 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
     return metadata->width * metadata->height;
 }
 
-/* The buffer of the loaded resource slot tagged key, or 0. */
 s32 Animation_LookupValueByKey(s32 key)
 {
     struct ObjectSystemWork *work = Ram_HeapSlots->object_system;

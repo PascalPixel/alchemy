@@ -5,42 +5,20 @@
 
 #include "LAYOUT_GUARD.H"
 
-/*
- * What a field scene's event scripts ask of the engine: holding the party
- * still while an event plays, dialogue, actor motion, the camera, the map,
- * flags, sound, exits and the shop, inn and sanctum services.
- *
- * Scenes call these services through the small inline functions below,
- * Camelot's scene script layer. The layer is the source's own shape, not a
- * device: as direct calls the same services change 642 of the 5,621 ☀️
- * English functions (396,186 bytes) across every field area, and through
- * the layer all of them match (measured 2026-10-05; Pascal approved
- * untagging them).
- */
-
 #include "GAME_STATE.H"
 
-/* Saved words the current scene keeps for itself: a puzzle's board, a
-   recorded course, the coins counted before paying. */
 extern u8 gSceneState[];
 
-/* The Korosseo stage's work, which its scenes share. */
 extern u8 *gKorosseoWork;
 
-/* Counts the frames the game has drawn; each frame wait advances it. */
 extern volatile u32 gFrameCount;
 
 #include "FIELDOBJ.H"
 
-/* The task priority scenes run their per-frame callbacks at. */
 enum {
     TASK_PRIORITY_SCENE = 3200
 };
 
-/*
- * Animations a person's sprite plays. The party leader nods when the player
- * answers yes to a question and shakes its head at no.
- */
 enum ActorAnimation {
     ANIM_STAND = 1,
     ANIM_WALK = 2,
@@ -48,22 +26,14 @@ enum ActorAnimation {
     ANIM_SHAKE_HEAD = 4
 };
 
-/* Emote and attached-effect sprites draw over the scenery with this bit. */
 #define EMOTE_IN_FRONT 0x100
 
-/* A speaker id with this bit opens the message window above the speaker. */
 #define SPEAKER_WINDOW_ABOVE 0x4000
 
-/*
- * A map cell animation is a list of steps of five words: the column and row
- * of a block of source cells, its width and height, and the frames the
- * block holds once copied into place. MAP_CELL_STEPS_END ends the list.
- */
 #define MAP_CELL_STEP(src_x, src_y, width, height, frames) \
     (src_x), (src_y), (width), (height), (frames)
 #define MAP_CELL_STEPS_END 0xffff
 
-/* Engine entry points imported by scene overlays. */
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);
@@ -172,19 +142,16 @@ void Engine_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 
 void Engine_PartyAddMembers(s32 first, s32 second);
 void Engine_MapRenderWaitForValues(void);
 
-/* Loader-imported object-motion services shared by field-scene overlays. */
 s32 Engine_UiWorkWaitThenFinalizeCapacity(s32 first, s32 second);
 void Engine_ObjectMotionArmCallback(s32 actor, s32 angle, s32 frames);
 void Engine_ObjectMotionSetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Engine_ObjectMotionSetPositionAndReset(s32 actor, s32 x, s32 z);
-/* Throws the actor upward at the given speed, then waits the given frames. */
 void Engine_ObjectMotionLaunch(s32 actor, s32 speed, s32 frames);
 void Engine_ObjectDispatchRelease(struct FieldActor *object);
 void Engine_MapWaitWorkValuesBelow256(void);
 void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
-/* Staged-actor overlays share these main-image imports with their scene code. */
 void Battle_WaitMode0(s32 frames);
 void WaitFrames(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -194,13 +161,6 @@ void Object_SetModeById(s32 actor, s32 animation);
 void Audio_PlayCue(s32 cue);
 #endif
 
-/*
- * Dialogue: choose the message, then let an actor say it. Each message shown
- * advances to the next one. An opened message stays on screen for the
- * question that follows it, and choosing yes returns 0.
- */
-
-/* Moves the next dialogue line on by count messages. */
 static inline void Event_SkipMessages(s32 count)
 {
     u16 *message = &gEventWork->message;
@@ -223,10 +183,6 @@ static inline s32 Event_AskYesNo(s32 speaker, s32 flags)
     return Engine_EventAskYesNo(speaker, flags);
 }
 
-/*
- * Actors. Positions set directly are fixed-point; destinations and offsets
- * are whole pixels. Walking plays the walk animation on the way.
- */
 static inline struct FieldActor *Actor_Get(s32 actor)
 {
     return Object_GetById(actor);
@@ -271,7 +227,6 @@ static inline void Actor_WalkBy(s32 actor, s32 dx, s32 dz)
     Engine_ActorWalkBy(actor, dx, dz);
 }
 
-/* Waits until the actor reaches its destination, then stands it still. */
 static inline void Actor_FaceDirection(s32 actor, s32 facing, s32 frames)
 {
     Engine_ActorFaceDirection(actor, facing, frames);
@@ -282,19 +237,15 @@ static inline void Actor_FaceActor(s32 actor, s32 target, s32 frames)
     Engine_ActorFaceActor(actor, target, frames);
 }
 
-/* Shows an emote over the actor and waits the given frames. */
 static inline void Actor_ShowEmote(s32 actor, s32 emote, s32 frames)
 {
     Engine_ActorShowEmote(actor, emote, frames);
 }
 
-/* Attaches a lasting effect sprite to the actor; effect 0 removes it. */
 static inline void Actor_SetAttachedEffect(s32 actor, s32 effect)
 {
     Engine_ActorSetAttachedEffect(actor, effect);
 }
-
-/* The camera. A pan of 0 moves it at once; -1 keeps a coordinate. */
 
 static inline void Camera_SetSpeed(s32 speed, s32 acceleration)
 {
@@ -306,10 +257,6 @@ static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan)
     Engine_CameraMoveTo(fixed_x, fixed_y, fixed_z, pan);
 }
 
-/*
- * The map, in cells. Copying cells redraws them; copying attributes keeps
- * each destination cell's tile and takes the rest from the source.
- */
 static inline void Map_CopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
                                  s32 dest_y)
 {
@@ -335,10 +282,6 @@ static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
     Engine_WorkSetValuesIfNonNegative(first, second, third);
 }
 
-/*
- * Story scenes all over the world clear this flag as they finish, and an
- * entry script sets it for an entrance whose arrival plays an event.
- */
 enum {
     FLAG_ARRIVAL_EVENT_PENDING = 0x12f
 };
@@ -385,7 +328,6 @@ static inline void Object_SetScript(struct FieldActor *object, const s32 *script
     Engine_ObjectSetScript(object, script);
 }
 
-/* The GBA sprite modes an object's sprite can take. */
 enum ObjectBlendMode {
     OBJECT_BLEND_NORMAL = 0,
     OBJECT_BLEND_TRANSLUCENT = 1
@@ -411,46 +353,29 @@ static inline void Actor_WalkByAndWait(s32 actor, s32 dx, s32 dz)
     Engine_ActorWalkByAndWait(actor, dx, dz);
 }
 
-/* Shows the next message for a speaker, then waits the given frames. */
 static inline void Event_ShowMessageAndWait(s32 speaker, s32 flags, s32 frames)
 {
     Engine_EventShowMessageAndWait(speaker, flags, frames);
 }
-
-/* Gives NULL for an actor the scene does not hold. */
-
-/* Removes an actor from the scene and frees its slot. */
 
 static inline void Actor_SetChildValue(s32 actor, s32 value)
 {
     Engine_ActorSetChildValue(actor, value);
 }
 
-/*
- * Starts an actor's action table. Passing ACTION_TABLE_STOP in place of a
- * table stops the action that is playing.
- */
 #define ACTION_TABLE_STOP ((const u8 *)1)
 
-/* Walks the scene's actor list after the map or camera changes. */
-
-/*
- * Copies a block of map cells; unlike Map_CopyCells the destination comes
- * before the size.
- */
 static inline void Map_CopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width,
                                    s32 height)
 {
     Engine_MapCopyCellsTo(src_x, src_y, dest_x, dest_y, width, height);
 }
 
-/* Stores three map render values; a negative value leaves its slot unchanged. */
 static inline void MapRender_SetValues(s32 value0, s32 value1, s32 value2)
 {
     Engine_MapRenderSetValues(value0, value1, value2);
 }
 
-/* The colour buffers a scene blends the palette through. */
 static inline void ColorBuffer_ApplySource(s32 value, s32 mode)
 {
     Engine_ColorBufferApplySource(value, mode);
@@ -461,10 +386,6 @@ static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode)
     Engine_ColorBufferApplyTarget(value, mode);
 }
 
-/*
- * Moves an actor to a whole-pixel position and waits until it arrives.
- * Walking plays the walk animation on the way and stands the actor still.
- */
 static inline void Actor_MoveToAndWait(s32 actor, s32 x, s32 z)
 {
     Engine_ActorMoveToAndWait(actor, x, z);
@@ -475,9 +396,6 @@ static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z)
     Engine_ActorWalkToAndWait(actor, x, z);
 }
 
-/* Throws the actor upward, plays the jump sound and waits the given frames. */
-
-/* Two speakers say their next messages at once; waits until both close. */
 static inline void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
                                                 s32 other_speaker, s32 other_x, s32 other_y,
                                                 s32 other_arg, s32 other_extra, s32 flags)
@@ -485,9 +403,5 @@ static inline void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 a
     Engine_EventShowTwoMessagesAndWait(speaker, x, y, arg, extra, other_speaker, other_x,
                                        other_y, other_arg, other_extra, flags);
 }
-
-/* Adds two characters to the party. */
-
-/* Waits until the first two map render values settle, then clears the third. */
 
 #endif

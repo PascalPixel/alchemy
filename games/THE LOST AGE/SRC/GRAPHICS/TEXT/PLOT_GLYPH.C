@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-/* Sets the pixels of a glyph's 14 rows, a halfword each with its top bit
-   leftmost, in a 192-pixel-wide 8bpp canvas. */
 void UiText_PlotGlyphRows(u16 *rows, u8 *dst, s32 color)
 {
     s32 y;

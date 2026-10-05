@@ -1,4 +1,3 @@
-# Maintained source is built through ordinary Make and GNU linker rules.
 .DEFAULT_GOAL := help
 TOOLS := tools
 CARGO ?= cargo
@@ -12,7 +11,6 @@ CHECK := $(ALCHEMY) check
 TARGET ?= tbs-ja
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 
-# Compiler library members come from the pinned toolchain's own sources/rules.
 LIBGCC := tools/out/compiler-runtime/libgcc.a
 
 .PHONY: compiler-runtime worktree
@@ -27,7 +25,6 @@ compiler-runtime: toolchain-check compiler-source-check
 	    _thenan_df=dp-bit.c \
 	    _lshrdi3=gcc/libgcc2.c
 
-# A fresh clone builds the library once, from make bootstrap.
 $(LIBGCC):
 	$(MAKE) compiler-runtime
 
@@ -56,7 +53,6 @@ help:
 	  'alchemy adopt ADDR LABEL [NAME]  take an adopted function out of the scaffolding of all six editions' \
 	  'alchemy queues --workers N --out-dir DIR  split not-yet-C work into queues by module run or overlay'
 
-# Setup may download pinned dependencies; ordinary build commands stay offline.
 fetch-dependencies:
 	$(CARGO) fetch --locked --manifest-path $(TOOLS)/Cargo.toml
 
@@ -65,18 +61,12 @@ bootstrap: fetch-dependencies
 	$(MAKE) $(LIBGCC)
 	$(MAKE) merge-drivers
 
-# Git merges scaffolds by ROM bytes and linker scripts by lines
-# (.gitattributes); after a merge, alchemy merge-driver links reconciles them.
 merge-drivers:
 	git config merge.alchemy-scaffold.name "edition scaffold by ROM bytes"
 	git config merge.alchemy-scaffold.driver "tools/out/cargo-target/release/alchemy merge-driver scaffold %O %A %B"
 	git config merge.alchemy-lines.name "linker script by lines"
 	git config merge.alchemy-lines.driver "tools/out/cargo-target/release/alchemy merge-driver lines %O %A %B"
 
-# In a new worktree, before its first build: check out the compiler
-# submodules, link the main checkout's ROMs and installed tools, and clone
-# release tools and edition builds copy-on-write.
-# Private reports, verification and recovery output stay in the main checkout.
 MAIN_CHECKOUT = $(shell git rev-parse --path-format=absolute --git-common-dir)/..
 worktree:
 	bun "$(TOOLS)/alchemy/worktree.ts" "$(MAIN_CHECKOUT)"
@@ -118,9 +108,6 @@ compare-tla:
 compare-all:
 	@$(MAKE) --no-print-directory -j2 compare compare-tla
 
-# The other ten editions link through their scaffold under recon/<game>/<lang>,
-# as pret's early builds linked a version through baserom.gba. Each edition
-# builds into its own out/<edition>, so they build concurrently, one per CPU.
 EDITIONS := tbs-en tbs-de tbs-es tbs-fr tbs-it tla-en tla-de tla-es tla-fr tla-it
 COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
@@ -147,18 +134,14 @@ precommit:
 prepush:
 	$(ALCHEMY) verify --pre-push
 
-# Every check over the whole tree, the tests and all twelve editions, at once.
 verify:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 	@$(ALCHEMY_BIN) verify
 
-# On main, before committing a landing: make verify, then one measurement and
-# the decomp.dev report; pre-push uploads both for CI, which publishes progress.
 land:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 	@$(ALCHEMY_BIN) verify --land
 
-# The checks AGENTS.md names, each runnable alone.
 publication-check:
 	$(CHECK) publication --tree
 	$(CHECK) layout
@@ -167,8 +150,6 @@ publication-staged-check:
 	$(CHECK) publication --staged
 	$(CHECK) layout
 
-# no-asm (S2): every C source as each game's Japanese and English builds
-# preprocess it.
 lint-staged:
 	$(CHECK) no-asm --target tbs-ja --target tla-ja --target tbs-en --target tla-en
 
@@ -182,33 +163,23 @@ test:
 test-integration: toolchain-check
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml -- --ignored
 
-# Source and build defaults are Japanese. Published coverage/progress count
-# each game's six editions together: the English build gives the bytes, and
-# an edition earns those of the objects its own verified build links.
 coverage-report:
 	$(CHECK) coverage --report
 
 progress:
 	$(CHECK) progress
 
-# PROGRESS.png and PROGRESS_CHART.png from the verified count, for people.
 figure:
 	$(ALCHEMY_BIN) figure
 
-# A report for people only: the build and the count never read it. The listings
-# under recon/<game>/raw are the English builds' disassembly, so it reads those.
 deps:
 	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- deps --build out/tbs-en --build out/tla-en \
 	    --out-dir out/reports $(DEPS_FLAGS)
 
-# Each not-yet-C function's nearest C twins across both games, for ports.
-# A report for people only.
 similar:
 	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- similar --build out/tbs-en --build out/tla-en \
 	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)
 
-# Maintained C ranked by how mechanical it reads, worst first: what to
-# rewrite in Camelot's style next. A report for people only.
 worst:
 	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- worst --out out/reports/worst.tsv
 

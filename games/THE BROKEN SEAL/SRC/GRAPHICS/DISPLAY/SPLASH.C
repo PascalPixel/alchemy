@@ -18,14 +18,10 @@ void Blend_WaitForTransition(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
 
-/* Empty callback in the title's palette entry table. */
 void Title_NoOpPalette(void)
 {
 }
 
-/* Title: show the splash picture, fade it in and wait for A or START (or
-   time out), then fade it out. Mode 0 only waits for two seconds after the
-   fade-in. Returns -1 when a button cut it short. */
 s32 Title_ShowSplashScreen(s32 mode)
 {
     s32 result;
@@ -126,8 +122,6 @@ row:
 extern u32 gFrameCount;
 void Blend_SetBrightenTarget0(s32 frames);
 
-/* Title: show the animated splash picture. Its four 1KB tile frames cycle
-   every eight frames for up to two seconds, or until A or START. */
 s32 Title_ShowAnimatedSplash(void)
 {
     s32 result;

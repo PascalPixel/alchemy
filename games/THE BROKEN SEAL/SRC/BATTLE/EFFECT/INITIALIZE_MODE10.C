@@ -18,7 +18,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern u8 gBattleFxWork[];
 extern volatile u32 gKeysRepeat;
 
@@ -36,12 +35,7 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32 x, s32 y);
 
-/* Three pairs of poses for the two middle objects, one pair every 24
-   frames. */
 extern u8 ThornVines_ObjectPoses[];
-/* The pictures in the sheet, each kind with where it starts and how large
-   it is: five thorns, three leaves, five chips, five sparks and seven
-   embers. */
 extern u16 ThornVines_ThornOffsets[];
 extern u8 ThornVines_ThornWidths[];
 extern u8 ThornVines_ThornHeights[];
@@ -55,12 +49,8 @@ extern u8 ThornVines_SparkSizes[];
 extern u16 ThornVines_EmberOffsets[];
 extern u16 ThornVines_EmberSizes[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: vines grow up through the ground under the enemy side,
-   thorns scatter, the picture dissolves through a shuffled dither, and
-   rings burst on every affected unit. */
 void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 {
     void **cursor;
@@ -501,10 +491,6 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* Battle effect mode 10: rocks burst from the ground around the targets
-   while nine sprite objects rise in a 3x3 block, then boulders rain down.
-   Phase one runs 288 frames (A or B skips it after frame 16); phase two
-   runs 146. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -572,7 +558,6 @@ extern const u16 BattleFx10_FallCells[];
 extern const u16 BattleFx_PuffCells[];
 extern const u8 BattleFx_PuffSizes[];
 
-/* The effect's work block (heap slot 39). */
 struct Mode10Work {
     u8 sheet[0x7080];
     struct EffectStep sparks[64];
@@ -1006,11 +991,6 @@ extern s32 IceShardBursts_Gravities[];
 
 #define SHARDS_PER_MEMBER 128
 
-/* Battle effect: every affected unit in turn, twenty frames apart, bursts
-   into 128 ice shards. Each shard starts on a random ring around the unit,
-   flies up and outwards and falls under one of four gravities until it has
-   dropped below the ground line. The shards of unit n lie n * 128 records
-   into the map cell buffer. */
 void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

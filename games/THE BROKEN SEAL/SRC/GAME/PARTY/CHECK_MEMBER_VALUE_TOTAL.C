@@ -34,7 +34,6 @@ s32 Party_CheckMemberValueTotal(s32 id)
 
 extern struct EventRuntime *gEventWork;
 extern u8 MsgKorosseoRobinGotItem;
-/* The German Black Orb has a line of its own, which names it. */
 extern u8 MsgGotBlackOrb;
 extern u8 MsgCannotCarryAnyMore;
 extern u8 MsgWhatWillYouDrop;
@@ -107,8 +106,6 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
                 count = Shop_GetSelectionState(member, s);
             }
 #if !defined(TBS_EDITION_EN)
-            /* The other editions turn away a member who already carries
-               thirty of the item, and ask again. */
             if (Inventory_CountItemFar(member, item) > 29) {
                 UiWork_PushValueSlotFar(member, 1);
                 UiWork_PushValueSlotFar(item, 2);

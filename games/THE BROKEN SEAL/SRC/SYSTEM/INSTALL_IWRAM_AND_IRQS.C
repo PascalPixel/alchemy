@@ -3,9 +3,6 @@
 #include "IRQ.H"
 #include "IO_REG.H"
 
-/* Copies the IWRAM runtime and its IRQ dispatch table into place with
-   interrupts off, points the interrupt vector at it, then enables the
-   V-blank and keypad interrupts. */
 void Runtime_InstallIwramAndIrqs(void)
 {
     volatile u16 *ime;
@@ -29,7 +26,6 @@ void Runtime_InstallIwramAndIrqs(void)
     REG_KEYCNT = value;
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    /* The European editions also take the Game Pak interrupt. */
     value = 0x3001;
 #else
     value = 0x1001;

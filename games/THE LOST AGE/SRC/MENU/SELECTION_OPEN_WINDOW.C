@@ -63,8 +63,6 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
 void Resource_ScheduleOwnerReset(void);
 void Resource_ResetPendingTransfer(void);
 
-/* ☀️'s, reaching the menu work through its heap slot, whose block ⚓️
-   releases by the slot's offset. */
 void Resource_ResetOwnerEntries(void)
 {
     struct SelectionScreen *state = Ram_HeapSlots->menu_work;

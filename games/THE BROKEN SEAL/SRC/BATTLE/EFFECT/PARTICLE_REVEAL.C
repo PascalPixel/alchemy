@@ -35,14 +35,8 @@ extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect: the small Venus djinn sheet swings in on an arc while ten
-   blue flame columns rise one after another, four frames apart; each column
-   throws sixteen motes into the map cell buffer as it appears, which fall
-   under gravity while their life in variant runs out, and makes every
-   affected unit react. */
 void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -148,13 +142,6 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* Battle effect: a glow orb animates for 24 frames, then the small Mars
-   djinn sheet slides across as a 20-pixel strip (frames 20-31, its palette
-   copied in at frame 20); from frame 32 nine puffs open along a shallow arc
-   (the puff records at work->particles keep their frame in variant). Each
-   puff seeded sixteen motes in the map cell buffer, which fall under gravity
-   from frame 40 on, a burst every two frames, swaying on an angle kept in z.
-   At frame 38 every affected unit reacts. */
 void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -164,7 +151,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     u8 *sheet;
     DrawRectangle callbacks[2];
     DrawRectangle *draw;
-    struct EffectStep *step; /* walks the puffs, then the motes it draws */
+    struct EffectStep *step;
     struct EffectStep *mote;
     s32 burst_offset;
     s32 member;
@@ -304,7 +291,6 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/* The effect's sixty-four motes live in the map cell buffer. */
 extern struct EffectStep gMapCellBuffer[];
 #define PARTICLE_COUNT 64
 
@@ -321,11 +307,6 @@ void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 
-/* Battle effect: water spray bursts from the first affected unit as
-   sixty-four ice chips that fly up and fall under gravity, a quarter of
-   them more every frame, while a small Mercury djinn circles above the
-   unit when the effect asks for one and a strip of waves rises along the
-   bottom of the screen. The last sixteen frames fade the blend out. */
 void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -440,8 +421,6 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 void BattleFx_StepPaletteToResource(s32 resource_id);
 void Render_ResetTransformState(void);
 
-/* The rock chips: four flip settings, then nine cells with their sizes,
-   sheet offsets and places on the rock. */
 extern u8 RockToss_ChipFlips[];
 extern u8 RockToss_ChipWidths[];
 extern u8 RockToss_ChipHeights[];
@@ -449,10 +428,6 @@ extern u16 RockToss_ChipCells[];
 extern u8 RockToss_ChipX[];
 extern u8 RockToss_ChipY[];
 
-/* Battle effect: the small Venus djinn swings in while six rocks leave the
-   acting unit one after another, two frames apart, each with four chips
-   that change shape and flip every other frame. Sixteen frames after it
-   leaves, a rock is pulled towards the target and lands on it. */
 void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 {
     struct BattleEffectWork *work;

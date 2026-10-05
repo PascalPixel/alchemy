@@ -1,7 +1,3 @@
-/*
- * Draft: Shop_SellOld does not yet match; 2 halfwords differ from ☀️'s C, first at +0x20 (ldrh r3, [r0, r3]).
- * Links as recon/tla/raw/08109188.s.
- */
 #include "SHOP.H"
 
 void Shop_SellItem(s32, s32, s32);

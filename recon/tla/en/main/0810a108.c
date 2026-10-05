@@ -2,11 +2,6 @@
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
-/* Sells count of one inventory slot (count -1 sells the whole stack as
-   one): refuses worthless and cursed-and-equipped items, picks the offer
-   text for broken, several, rare or ordinary items, and on agreement
-   removes the items and pays out. */
-
 extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
 extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];
 extern u8 MsgChangedMind[], MsgSold[], MsgKeepIt[];

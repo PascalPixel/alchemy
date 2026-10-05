@@ -1,4 +1,3 @@
-/* Resetting an actor's motion and claiming the stage's palette handle. */
 #include "LOG_ROLLING.H"
 
 void ColossoLogRollingStage_ResetActorMotion(s32 selector)

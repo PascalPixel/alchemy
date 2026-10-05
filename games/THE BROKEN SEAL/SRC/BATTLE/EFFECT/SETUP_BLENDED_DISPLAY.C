@@ -4,17 +4,11 @@
 #include "HEAP_STATE.H"
 #include "BATTLE_WORK.H"
 
-
 extern u16 gBgScroll[];
-
-
 
 void WaitFrames(s32 frames);
 void BattleBackground_LoadFar(s32 mode, s32 value, s32 size);
 
-/* Switches to mode 1, clears the effect buffer and the second character
-   block, then enables BG0-BG2 and OBJ with alpha blending (EVA 14,
-   EVB 16) and arms a 120-frame timer. */
 void BattleEffect_SetupBlendedDisplay(void)
 {
     void **slots = &gWorkSlot[HEAP_SLOT_BATTLE];

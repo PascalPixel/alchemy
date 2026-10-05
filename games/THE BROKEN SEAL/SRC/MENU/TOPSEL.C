@@ -24,7 +24,6 @@ s32 Menu_OpenConfirmPromptFar(void);
 s32 RunAssetSelectionScreenFar(void);
 void BattleFx_ClearRandomParticlesFar(void);
 
-/* ui/window/open_mode1_and_wait_frame.c */
 void UiWindow_CreateWithLayoutBounds(s32);
 
 void Menu_LoadSelectedResource(void)
@@ -74,7 +73,6 @@ void Resource_ResetPendingTransfer(void)
     }
 }
 
-/* menu/selection/run_top_selection.c */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 

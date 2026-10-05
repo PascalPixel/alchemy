@@ -1,4 +1,3 @@
-@ Ordered source overlays and uncredited reconstruction scaffold.
 	.section .overlays,"a"
 	.global Resource_Overlay36F
 Resource_Overlay36F:

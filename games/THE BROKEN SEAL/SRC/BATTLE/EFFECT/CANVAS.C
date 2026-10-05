@@ -5,12 +5,6 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "PROJECT.H"
-/* Battle effect: open the canvas layer an effect draws into, the counterpart
-   of BattleFx_EndCanvasLayer. Save the scroll pair in the work block, fade
-   the battle palette out, start the palette fade transfer, switch BG2 to the
-   affine canvas through the next-frame queue, set the identity projection,
-   window and blend registers, lay out the 16 by 16 canvas tile map (two tile
-   numbers per halfword) and clear the canvas buffers. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
@@ -151,12 +145,6 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
         *ime = saved;                                                       \
     } while (0)
 
-/* Battle effect: open a canvas layer over the battle scene. The variant of
-   BattleFx_BeginCanvasLayer that fades the battle palette only to level 128,
-   starts the palette fade transfer at 24 frames and queues the display
-   without the windows until the canvas is set up; it lays out the same 16 by
-   16 canvas tile map (two tile numbers per halfword) and clears the canvas
-   buffers. */
 void BattleFx_OpenCanvasLayer(s32 bg_control)
 {
     /* FAKEMATCH: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes. */
@@ -228,9 +216,6 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
 
 #undef QUEUE_DISPLAY_CONTROL
 
-/* Battle effect: open the canvas layer with a 16 by 16 tile canvas on a
-   32-wide map. The left half of each map row holds the canvas tile pairs,
-   the right half is cleared. */
 void BattleFx_BeginTiledCanvas(s32 bg_control)
 {
     s32 row;
@@ -282,11 +267,6 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
         } while (0);                                                        \
     }
 
-/* Battle effect: close the canvas layer an effect opened. Restore the scroll
-   pair saved in the work block, recentre the projection, clear the canvas
-   tiles, stop the canvas transfer callback, switch the display back through
-   the next-frame queue, and fade the battle palette back in over eight
-   frames. */
 void BattleFx_EndCanvasLayer(void)
 {
     /* FAKEMATCH: the one-pass IME/queue scopes and u16 count store preserve scheduling, loading the queue before the preceding store. */

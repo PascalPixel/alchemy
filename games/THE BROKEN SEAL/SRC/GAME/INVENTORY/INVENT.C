@@ -14,7 +14,6 @@
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 void Object_WaitUntilChildValueDiffers(s32, s32);
 
-/* The field event allocation also holds the confirmation menu's parameters. */
 struct EventPromptWork {
     struct EventRuntime event;
     u8 unknown_200[0xac2];
@@ -30,8 +29,6 @@ void UiWork_FinalizePendingCoreFar(void);
 
 s32 Menu_RunConfirmSelectionFar(s32 value, s32 x, s32 y, s32 z);
 
-/* An empty routine after the inventory give-and-report code; nothing in
-   the image calls it. */
 void Inventory_ReservedNoOp(void)
 {
 }
@@ -54,7 +51,6 @@ void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
     }
 }
 
-/* Places the answer menu below the dialogue when its windows leave room. */
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom)
 {
     struct EventPromptWork *work = (struct EventPromptWork *)gWork;

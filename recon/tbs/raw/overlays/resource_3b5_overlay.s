@@ -575,7 +575,6 @@ gTorebiMachiEvents:
 	.4byte 0x00000033
 	.4byte 0x0f970064
 	.4byte 0x00200009
-	/* Japanese actor-event row has no c400 mode flags. */
 	.ifeq EDITION_INTERNATIONAL
 	.4byte 0x00000023
 	.else

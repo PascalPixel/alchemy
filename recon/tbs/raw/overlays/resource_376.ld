@@ -1,6 +1,3 @@
-/* resource_376: its entry veneers, its listing with maintained code linked
-   in place, as pret links objects in ROM order. Its import veneers follow
-   its code. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -11,6 +8,4 @@ SECTIONS
         "*/resource_376_overlay.o"(.rodata.x020092fc)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
-    /* The compiler calls its remainder helper by its ABI name; here it is the
-       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
 }

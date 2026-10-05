@@ -3,11 +3,7 @@
 
 extern const u8 Func_08015570[];
 
-/* The message lookup is ARM code (LOOKUP_SYMBOL.S) that runs from a heap copy
-   of itself; the copy length is a link-time symbol. */
 extern u8 UiText_LookupMessageCodeSize[];
-
-/* Positions a text reader at the start of a message. */
 
 void UiText_LookupMessage(struct TextReader *reader, s32 message)
 {

@@ -2,7 +2,6 @@
 #include "RAM_BUFFER.H"
 #include "RENDER_INPUT.H"
 
-/* ⚓️ keeps the icon entries four bytes later than ☀️'s State080a8088. */
 struct IconMenuState {
     u8 padding_000[0x24];
     s32 handle;
@@ -47,7 +46,6 @@ void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1)
     } while (index2 <= 31);
 }
 
-/* Hides every icon entry of the menu work in its heap slot. */
 void ItemMenu_HideAllIcons(void)
 {
     s32 hidden_state = 13;

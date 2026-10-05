@@ -3,7 +3,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "STRING.H"
 
-/* ⚓️'s table holds 24 tasks and clears the counts plainly, where ☀️ holds 20. */
 void Scheduler_ResetTaskTable(void)
 {
     struct SchedulerTask *task;
@@ -103,7 +102,7 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order)
     s32 i;
 
     task = gSchedulerTaskTable;
-    (void)gSchedulerStatus; /* read and dropped */
+    (void)gSchedulerStatus;
     index = -1;
     /* FAKEMATCH: the one-pass blocks keep the task-table address load before IME's address. */
     do {

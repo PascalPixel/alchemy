@@ -17,7 +17,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
 void Render_ResetTransformState(void);
@@ -30,15 +29,10 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-/* Per variant: how many pillars rise, and how deep each one stands. */
 extern u8 FirePillars_Counts[];
 extern s8 FirePillars_Depths[][4];
-/* The frame on which each pillar rises. */
 extern u8 FirePillars_StartFrames[];
 
-/* Battle effect: up to four pillars of fire rise in a row before the
-   affected units, each from its own frame, throwing sparks that bounce on
-   the ground; in variant 2 the camera swings round meanwhile. */
 void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

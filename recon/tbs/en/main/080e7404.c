@@ -1,34 +1,3 @@
-/* Draft, complete main:080e7404 [080e7404,080e823c) with its two nested
-   functions main:080e7338 and main:080e73a0, 3844 bytes together, written
-   fresh from the listings in plain C.
-
-   On staging (2026-10-05) it uses the shared BattlePresentationWork, whose
-   word at 0x10 is initial_value: alchemy diff 340.
-
-   Near miss. Both nested functions, AddFlame (080e7338) and AddMote
-   (080e73a0), compile exactly, and the parent has the reference's 284-byte
-   frame. The two VRAM copies go through an inline CopyWords (tagged
-   FAKEMATCH): called directly, the constant arguments are precomputed ahead
-   of the routine's address and the size's lsls is scheduled before it.
-   What still differs in the parent:
-   - direction = side == 1 ? mode : -1 after the mode == 1 test: cse
-     substitutes the constant 1 (movs r4, #1); the reference reloads mode
-     from its stack slot. Tried: if/else, switch, u8 mode, mode != 1 first,
-     two separate mode tests, an unused &mode.
-   - heat = work->frame / 4 loads straight into the division temporary; the
-     reference loads into r2 and copies to r3 before the sign fix, and keeps
-     heat in r4 with a caller save around AudioCommand_PlayFar(141) at
-     [sp, #8], which shifts the spill slots below it by 4 and changes the
-     register choice through the colour-line loop. Tried: a time variable
-     (copy appears only when time is used again, e.g. in the frame == 0
-     test, which the reference does not do), heat /= 4, a volatile read,
-     heat declared at function scope, reordered block declarations, and a
-     15-minute permuter run on a macro-wrapped copy of the nested helpers.
-   - the 54-frame loop strength-reduces grow, (frame << 8) + 0x20000, into
-     its own stack induction variable; the reference computes it from frame
-     every pass.
-   - the rising-mote loop hoists ParticleStreams_CellOffsets into r9; the
-     reference reloads it each pass. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -50,9 +19,6 @@ struct Projection {
     s32 depth;
 };
 
-/* The battle presentation block in heap slot 44. */
-
-/* A scene object: two bits of its tenth byte pick its draw variant. */
 struct SceneObject {
     u8 reserved_00[9];
     u8 flags09_0 : 2;
@@ -66,8 +32,6 @@ struct Scale {
     s32 x;
     s32 y;
 };
-
-
 
 extern void *gBattleFxWork[];
 extern void *gTransitionWork[];
@@ -110,11 +74,9 @@ void Camera_ApplyShake(s32 x, s32 y);
 
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 
-/* The flashes and the embers of the second half live in the map cell buffer. */
 #define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
 #define EMBERS (&FLASHES[128])
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
@@ -126,10 +88,6 @@ static __inline__ void CopyWords(void *destination, const void *source, s32 size
     Iwram_CopyWords(destination, source, size);
 }
 
-/* Battle effect: a fiery orb is revealed line by line, flies up shedding
-   flames while seven motes circle it, and bursts into embers and flashes.
-   With mode 1 the actor rides it as two objects; otherwise one spawned
-   object does. A or B skips the flight. */
 void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode)
 {
     volatile u32 fill;
@@ -141,7 +99,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     struct BattleEffectWork *work;
     void *colors = (void *)0x05000000;
 
-    /* Wake the first free flame of the sixteen kept after the motes. */
     void AddFlame(s32 x, s32 y, s32 velocity_x)
     {
         s32 i;
@@ -159,7 +116,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         }
     }
 
-    /* Wake the first free mote. */
     void AddMote(s32 x, s32 y)
     {
         s32 i;

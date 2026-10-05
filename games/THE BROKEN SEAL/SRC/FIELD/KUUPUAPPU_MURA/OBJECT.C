@@ -1,8 +1,4 @@
 #include "FIELDOBJ.H"
-/*
- * Scene objects: an effect record's mode, and objects created where the
- * caller asks and made ready for the scene.
- */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

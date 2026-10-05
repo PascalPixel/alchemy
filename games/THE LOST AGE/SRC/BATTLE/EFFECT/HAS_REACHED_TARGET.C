@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_SLOT.H"
 
-/* Whether an object that stops at its target still has one to reach. */
 u32 BattleFx_HasReachedTarget(struct EffectSlot *effect)
 {
     u32 value;

@@ -1,10 +1,3 @@
-/* Near miss: ☀️'s BattleFx_SpawnRadialParticleRing, differ 2 under the
-   ARM9TDMI schedule. The native stores the sine into the velocity before
-   copying the origin pointer out of sl; this draft copies it first.
-   Assignment chains, reading the velocity back for the call, local
-   coordinates and declaration order did not move it. ADVANCE_MOTION.C
-   before it is being repaired elsewhere; adopt into a module of its own
-   after the padding listing at 080dfb0a. */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "FIELD_SCENE.H"

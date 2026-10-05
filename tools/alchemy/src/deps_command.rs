@@ -1,6 +1,3 @@
-//! `alchemy deps`: the dependency map of linked builds, one TSV per view.
-//! Rebuilt from the builds' ELF images and maps, the recon listings and the
-//! drafts on every run; a report for people that nothing else reads.
 
 use crate::deps::{self, Blocker, Image, Index, Key, Symbol, Target};
 use crate::elf::Elf;
@@ -105,7 +102,6 @@ fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
     Ok(images)
 }
 
-/// Identifiers the listings use, by the function each label starts.
 fn listing_ids(
     root: &Path,
     game: &str,
@@ -177,8 +173,6 @@ fn hex8(text: &str) -> Vec<u32> {
 fn drafts(root: &Path, game: &str, lang: &str, images: &[Image]) -> Vec<Draft> {
     let base = root.join("recon").join(game).join(lang);
     let mut files = Vec::new();
-    // Drafts sit in the language folder, main/, overlays/ and one folder per
-    // overlay (overlays/resource_XXX/ADDRESS.c).
     let mut dirs = vec![base.clone(), base.join("main"), base.join("overlays")];
     if let Ok(entries) = fs::read_dir(base.join("overlays")) {
         dirs.extend(entries.flatten().map(|e| e.path()).filter(|p| p.is_dir()));
@@ -229,7 +223,6 @@ fn drafts(root: &Path, game: &str, lang: &str, images: &[Image]) -> Vec<Draft> {
             .file_stem()
             .map(|s| s.to_string_lossy().into_owned())
             .unwrap_or_default();
-        // The overlay from the file name or its folder (resource_XXX).
         let place = path.strip_prefix(&base).map(|p| p.to_string_lossy().into_owned()).unwrap_or_default();
         let overlay = place
             .find("resource_")
@@ -237,13 +230,10 @@ fn drafts(root: &Path, game: &str, lang: &str, images: &[Image]) -> Vec<Draft> {
             .filter(|id| id.chars().all(|c| c.is_ascii_hexdigit()))
             .map(|id| format!("resource_{id}"));
         let image = overlay.as_deref().unwrap_or("");
-        // Overlay drafts name the address without the overlay's 0x8000 link
-        // offset as often as with it.
         let mut key = hex8(&file).last().and_then(|&a| {
             at(image, a).or_else(|| (!image.is_empty()).then(|| at(image, a + 0x8000)).flatten())
         });
         if key.is_none() {
-            // Otherwise the not-yet-C function the draft defines.
             key = text
                 .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
                 .find_map(|w| {
@@ -461,7 +451,6 @@ fn run(arguments: &[String]) -> Result<String, String> {
     }
     Ok(text)
 }
-/// The origin and reported source of an object path the linker map names.
 fn classify(root: &Path, object: &str) -> (Origin, String) {
     let file = object.rsplit('/').next().unwrap_or(object);
     let Some(at) = object.find("/obj/") else {

@@ -28,7 +28,6 @@ void MusicCommand_SetPitchAndUpdateFrequency();
 void BabiFune_ScheduleFade();
 void Event_SetDestinationFar();
 
-/* Keep field 12 of four records the scene reads back later. */
 s32 BabiFune_StoreLeaderHeight(void)
 {
     s32 *d;
@@ -73,9 +72,6 @@ s32 BabiFune_StoreActorTwoHeight(void)
     return 0;
 }
 
-/* The farewell on the ship's deck at the end of the voyage: the party's
- * last words, three questions, the ship setting sail and the screen closing
- * on the title scene at entrance 9. */
 void Scene_RunExtendedPresentationSequence(void)
 {
     struct MapScrollWork *scroll;
@@ -287,7 +283,6 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_CameraSetSpeed(144179, 655);
     Engine_CameraMoveTo(52953088, -1, 11010048, 1);
     Engine_EventWait(300);
-    /* The event work is the twentieth cell from the map work's. */
     event = gMapWork[19];
     event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     /* FAKEMATCH: keep the backdrop zero before its address calculation. */

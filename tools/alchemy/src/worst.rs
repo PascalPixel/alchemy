@@ -1,11 +1,6 @@
-//! Ranks maintained C by how mechanical it reads: the steering devices,
-//! raw byte offsets, casts and placeholder names a decompiler leaves and
-//! Camelot's programmers would not have written. A report for people that
-//! chooses what to rewrite next; nothing else reads it.
 
 use std::path::Path;
 
-/// One signal of mechanical code: its name, weight and how to find it.
 struct Signal {
     name: &'static str,
     weight: u32,
@@ -22,7 +17,6 @@ fn words_with_prefix(line: &str, prefixes: &[&str]) -> usize {
         .count()
 }
 
-/// Hex-suffixed placeholder names: Func_080abcde, Data_03001ec8, sub_0800caca.
 fn address_names(line: &str) -> usize {
     line.split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
         .filter(|word| {
@@ -44,7 +38,6 @@ fn address_names(line: &str) -> usize {
         .count()
 }
 
-/// A pointer cast to bytes followed by an added offset: ((u8 *)work + 0x1c0).
 fn byte_offsets(line: &str) -> usize {
     let mut found = 0;
     for cast in ["(u8 *)", "(s8 *)", "(char *)"] {
@@ -60,7 +53,6 @@ fn byte_offsets(line: &str) -> usize {
     found
 }
 
-/// A dereferenced cast to a sized integer pointer: *(u16 *)(...), *(volatile s32 *).
 fn deref_casts(line: &str) -> usize {
     let mut found = 0;
     for width in ["u8", "s8", "u16", "s16", "u32", "s32"] {
@@ -78,7 +70,6 @@ fn value_casts(line: &str) -> usize {
         .sum()
 }
 
-/// Hex literals of three digits or more: offsets and masks without a name.
 fn magic_numbers(line: &str) -> usize {
     let bytes = line.as_bytes();
     let mut found = 0;
@@ -155,7 +146,6 @@ const SIGNALS: &[Signal] = &[
     },
 ];
 
-/// A function's place and its mechanical signals.
 #[derive(Debug)]
 pub struct Ranked {
     pub file: String,
@@ -167,14 +157,12 @@ pub struct Ranked {
 }
 
 impl Ranked {
-    /// Score per ten lines, so a short dense function ranks beside a long one.
     pub fn density(&self) -> f64 {
         f64::from(self.score) * 10.0 / self.lines.max(1) as f64
     }
 }
 
 pub(crate) fn strip_comment(line: &str, in_block: &mut bool) -> String {
-    // Keep FAKEMATCH tags visible: they live in comments.
     let mut out = String::new();
     let mut rest = line;
     loop {
@@ -205,7 +193,6 @@ pub(crate) fn strip_comment(line: &str, in_block: &mut bool) -> String {
     }
 }
 
-/// The name of a function whose definition starts on this line, if any.
 pub(crate) fn definition_name(line: &str) -> Option<String> {
     let first = line.chars().next()?;
     if !(first.is_ascii_alphabetic() || first == '_') || line.trim_end().ends_with(';') {
@@ -229,7 +216,6 @@ pub(crate) fn definition_name(line: &str) -> Option<String> {
     .then_some(name)
 }
 
-/// Every function defined at the top level of one C source.
 pub fn rank_source(file: &str, text: &str) -> Vec<Ranked> {
     let mut ranked = Vec::new();
     let mut in_block = false;
@@ -255,7 +241,6 @@ pub fn rank_source(file: &str, text: &str) -> Vec<Ranked> {
                     score: 0,
                     signals: SIGNALS.iter().map(|s| (s.name, 0)).collect(),
                 };
-                // The definition line itself, when the brace opens below it.
                 if at != index + 1 {
                     for (slot, signal) in function.signals.iter_mut().zip(SIGNALS) {
                         let found = (signal.find)(&head);
@@ -288,7 +273,6 @@ pub fn rank_source(file: &str, text: &str) -> Vec<Ranked> {
     ranked
 }
 
-/// Every function under `games/`, worst first.
 pub fn rank_tree(root: &Path) -> Result<Vec<Ranked>, String> {
     let mut ranked = Vec::new();
     let mut stack = vec![root.join("games")];

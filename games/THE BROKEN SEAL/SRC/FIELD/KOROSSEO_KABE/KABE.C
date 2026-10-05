@@ -9,23 +9,19 @@
 #include "RESOURCE_IDS.H"
 #include "FIELD_SCENE.H"
 
-/* The scene's tables, which the entry veneers publish to the map engine. */
 extern const struct SceneEntrance gKorosseoKabeEntrances[];
 extern const u32 gKorosseoKabeExits[];
 extern const struct ScenePlacement gKorosseoKabePlacements[];
 void Object_CommitPosition();
 void Engine_MapCopyCellAttributes();
 
-/* The game state's cells, read here as halfwords. */
 extern s16 gCell[];
 void SceneActor_MovePairByTileOffset(s32 actor, s32 dx, s32 dz);
 
-/* The buttons held this frame. */
 extern u32 gKeysHeld;
 void Object_CommitPosition(struct FieldActor *object);
 void ObjectDispatch_InitFromTable4WithArgument(s32 handle, struct FieldActor *object);
 
-/* The log's rolling animation for each quarter of the pusher's heading. */
 extern u8 KorosseoKabe_RollLogScript[];
 void Object_RefreshSelectorById(s32 actor);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);
@@ -90,7 +86,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKorosseoKabePlacements;
 }
 
-/* Two handler slots intentionally do nothing. */
 void SceneData_NoOpHandler(void)
 {
 }
@@ -297,9 +292,6 @@ void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
     Engine_EventEnd();
 }
 
-/* When the leader stands in line with wall block 32 (or 33 on the far rows)
- * and pushes it along the row (left past column 51, right before it), moves
- * the block pair and redraws the cells under both blocks. */
 void KorosseoKabe_PushAlignedWall(void)
 {
     struct FieldActor *leader = Object_GetById(gGameState.selected_actor);
@@ -330,9 +322,6 @@ void KorosseoKabe_PushAlignedWall(void)
     }
 }
 
-/* The leader rolls log id to cell (column / 2, row) on the Board Walk: the
- * log rolls there with the animation for the push direction while the
- * leader follows half the distance behind it. */
 void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
 {
     s32 pusher = gGameState.selected_actor;
@@ -376,7 +365,6 @@ void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
     Engine_EventEnd();
 }
 
-/* Show one fixed line, then participant lines using actor 15 and 16's X coordinates and actor 17's Z coordinate, converted from signed fixed point. */
 void SceneState_ApplyRectsForActors15To17(void)
 {
     s32 field;
@@ -542,7 +530,6 @@ void KorosseoKabe_StartSupplementalSceneTask(void)
     Engine_GameFlagClear(0x104);
 }
 
-/* Wait for the two task status words to reach 0 and 75, checking both after each poll and giving up after 600 polls. */
 void SceneState_WaitForStatusWords(void)
 {
     s32 cnt;
@@ -562,7 +549,7 @@ void SceneState_WaitForStatusWords(void)
 void KorosseoKabe_StopSpectatorCallbackAndRestoreCells(void)
 {
     BattleEffect_PauseObject(31);
-    Engine_GameFlagSet(820);                 /* 205 << 2 */
+    Engine_GameFlagSet(820);
 
     if (KorosseoKabe_SpectatorPhase != 0) {
         KorosseoKabe_SpectatorTimer = 0;
@@ -577,9 +564,6 @@ void KorosseoKabe_StopSpectatorCallbackAndRestoreCells(void)
     Engine_MapCopyCellAttributes(57, 11, 1, 1, 58, 11);
 }
 
-/* The wall stage's start: the party walks up to the guide, the two face each
- * other and bow, then walk on to the wall; the result the approach returned
- * weights the round, and a retreat returns to the wall's entrance four. */
 void KorosseoKabe_RunStageStart(void)
 {
     s32 rec8;
@@ -656,7 +640,6 @@ void FieldScene_RunPairedEntranceWalk(s32 a0)
     Engine_EventEnd();
 }
 
-/* Wall arena entry: record the arrival, set the pillars, ledges and item icons by the story flags, then start the entrance's opening scene. */
 s32 KorosseoKabe_ApplyEntryState(void)
 {
     /* FAKEMATCH: the game state read as rows of halfwords and written as rows of bytes keeps the base-plus-index address form for both accesses, where its fields fold the offsets into the pool. */
@@ -836,10 +819,6 @@ s32 KorosseoKabe_ApplyEntryState(void)
     return 0;
 }
 
-/* Colosso: line the other competitors up around actor a0, show its message
- * and walk it back to its place while the others gather on actor 0. */
-/* Colosso: the competitors are greeted before a trial. The same scene sits
- * in the wall and log-rolling trial overlays. */
 void Korosseo_RunGreetScene(s32 a0)
 {
     s32 p10;
@@ -904,8 +883,6 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_EventEnd();
 }
 
-/* Colosso wall stage: unless the stage is already cleared, walk the player
- * along the wall, show the introduction and hand over to the stage. */
 void KorosseoKabe_RunStageIntro(s32 speaker)
 {
     s32 result;
@@ -1058,10 +1035,6 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
     }
 }
 
-/* In transition phase 2 only the fast path runs. Otherwise route 0 plays the
- * full presentation, passing actor 0's position on with Y raised by 0x400000,
- * route 1 plays the short revisit, and every such path ends in the common
- * coordinator tail. */
 void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 {
     s32 z;
@@ -1121,8 +1094,6 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
     Engine_EventEnd();
 }
 
-/* The leader pushes wall block id to cell (column / 2, row): the block slides
- * there and the leader follows half the distance behind it. */
 void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
 {
     s32 pusher = gGameState.selected_actor;
@@ -1162,9 +1133,6 @@ void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
     Engine_EventWait(15);
 }
 
-/* The Colosso guide at the Board Walk: on the first visit pans the camera
- * over the course and walks the competitor through pushing a block while
- * explaining it; afterwards reminds that the logs are rolled into a path. */
 void KorosseoKabe_RunGuideTalk(s32 speaker)
 {
     s32 result;

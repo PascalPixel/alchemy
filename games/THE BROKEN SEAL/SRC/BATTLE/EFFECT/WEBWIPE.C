@@ -40,10 +40,6 @@ void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void ObjectGroup_TickMemberTimers(void);
 
-/* Battle effect: a spider web drawn as four 32 by 32 rectangles on the
-   canvas layer, centred between the first and the last affected unit. The
-   blend fades it in over the first nine of 63 frames and out over the last
-   nine; frame 10 hits every affected unit. */
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 {
     struct EffectPosition first;
@@ -110,11 +106,6 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     BattleFx_EndCanvasLayer();
 }
 
-/* Battle effect: wipe the 128 by 128 canvas (16 by 16 tiles of 8 by 8
-   bytes) with a ragged front. Each of the 128 lanes waits a random 0..63
-   steps; the front then accelerates every frame, across the canvas when
-   mode is 1 and down it otherwise, writing 1 - value into every pixel it
-   passes. */
 void BattleEffect_WipeCanvas(s32 mode, s32 value)
 {
     struct BattleEffectWork *work;
@@ -172,10 +163,6 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
     }
 }
 
-/* Battle presentation: once per frame, flush the effect canvas to VRAM when
-   an effect marked it pending, in the transfer mode the effect chose (plain
-   copy, copy and clear, one of two blends, or a fade by amount); otherwise
-   count the frames since the last flush. */
 void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 {
     void **heap_cache = (void **)gBattleFxWork;
@@ -220,7 +207,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void)
     *counter = next_counter;
 }
 
-/* Flush the battle compositor's pending display transfer. */
 void BattleFx_FlushPendingGraphicsTransfer(void)
 {
     void **heap_cache;

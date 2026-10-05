@@ -6,13 +6,9 @@
 
 extern void *Resource_DirectoryTable[];
 
-/* The bl-pair fixer (PATCH_THUMB_BRANCH.S) runs from a heap copy of
-   itself; the copy length is a link-time symbol. */
 extern const u8 Resource_PatchThumbBranchCode[];
 extern u8 Resource_PatchThumbBranchCodeSize[];
 
-/* Called with a block count before the start-up allocations; empty in
-   the release build. */
 void Resource_ReservedNoOp(s32 count)
 {
 }
@@ -70,8 +66,6 @@ void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
     }
 }
 
-/* Decodes a code resource into place, then adjusts its Thumb calls for the
-   address it now runs from. */
 void Resource_LoadCode(u32 index, void *destination)
 {
     void (*routine)(void *, s32);

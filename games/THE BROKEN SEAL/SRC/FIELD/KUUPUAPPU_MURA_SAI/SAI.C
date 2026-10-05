@@ -56,7 +56,6 @@ struct SceneActor_02000350 {
     u8 active;
 };
 
-/* Actor 13's dialogue temporarily enables acceptance. */
 struct Actor_020007d4 {
     u8 reserved00[91];
     u8 accepted;
@@ -86,25 +85,21 @@ struct SceneActor_02000c1c {
     struct Presentation_02000c1c *presentation;
 };
 
-/* Actor 18's dialogue and restoration: if cue 231 is available and flag 0x858 is clear, enable the scene marker at +370 before closing. */
 struct SceneWork_02000e90 {
     u8 reserved000[370];
     u16 actor18_marker;
 };
 
-/* Actor 16's dialogue depends on the scene counter. */
 struct SceneWork_020006b4 {
     u8 reserved000[472];
     u16 branch_counter;
 };
 
-/* Actor 11's dialogue temporarily enables acceptance. */
 struct Actor_02000754 {
     u8 reserved00[91];
     u8 accepted;
 };
 
-/* Actor 15's dialogue preserves facing. */
 struct Actor_02000640 {
     u8 reserved00[6];
     u16 facing;
@@ -114,13 +109,11 @@ struct Actor_02000640 {
 
 extern u8 *gWork;
 
-/* The scene's tables, laid out after the code. */
 extern const u8 KuupuappuMuraSai_Scripts[];
 extern const u8 KuupuappuMuraSai_Messages[];
 extern const u8 KuupuappuMuraSai_Actors[];
 extern const u8 KuupuappuMuraSai_Extras[];
 
-/* Map cell steps played as the leader arrives in each scene. */
 extern const u16 KuupuappuMuraSai_Scene5Cells[];
 extern const u16 KuupuappuMuraSai_Scene6Cells[];
 extern const u16 KuupuappuMuraSai_Scene7Cells[];
@@ -150,9 +143,6 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void);
 extern u8 MsgKuupuappuGrownUpsAlways[];
 extern u8 MsgKuupuappuNotLikeEasy[];
 
-/*
- * Actor proximity, the scene tables and the first villagers' lines.
- */
 s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
@@ -291,8 +281,6 @@ void SceneDialogue_ShowLine1CB0ForActor13(void)
     ActorPresentation_RunActorModeOneThenZero(13);
 }
 
-/* Actor 14's first talk: "Hey, it's that warrior guy!", with its opening
- * lines only until flag 0x300 is set. It sets flag 0x307. */
 void SceneDialogue_RunActorFourteenFlagDialogue(void)
 {
     struct SceneActor *actor = Actor_Get(14);
@@ -320,10 +308,6 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void)
     GameFlag_Set(0x307);
 }
 
-/*
- * Actor dialogue: facing-preserving and timed lines, the acceptance
- * lines and the counted question.
- */
 void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
 {
     struct Actor_02000640 *actor;
@@ -398,8 +382,6 @@ void ActorPresentation_RunActor13AcceptanceDialogue(void)
     ((struct Actor_020007d4 *)Object_GetById(13))->accepted = 0;
 }
 
-/* Talking to actor 14: the first talk until flag 0x307 is set, then the line
- * about feeling brave. */
 void KuupuappuMuraSai_RunActor14Talk(void)
 {
     ((struct SceneActor *)Actor_Get(14))->state_flags |= 2;
@@ -415,10 +397,6 @@ void KuupuappuMuraSai_RunActor14Talk(void)
     ((struct SceneActor *)Actor_Get(14))->state_flags = 1;
 }
 
-/*
- * Scene steps: actor 16's question, actor 21's arrival and the leader's
- * arrival in scenes five to ten.
- */
 void SceneDialogue_RunActorFifteenDialogue(void)
 {
     {

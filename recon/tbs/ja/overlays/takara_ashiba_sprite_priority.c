@@ -1,8 +1,3 @@
-/* Draft: Treasure Isle scaffold initialization.
- * 2026-10-01: The international actor8 sprite-priority update is absent
- * in the Japanese initialization, adding8 bytes to this complete owner.
- * Ordinary approved TBS flags, no output edits.
- */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -17,12 +12,9 @@ void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 void TakaraAshiba_RaiseTriggerOnStand(void);
 void SceneState_TriggerColumnTen(void);
 void SceneState_TriggerColumnNineteen(void);
-/* CALL.H keeps each scheduled callback's original argument order. */
 
 enum {
-    /* Message 0x182 + 243. */
     ITEM_RED_KEY = 243,
-    /* Message 0x182 + 244. */
     ITEM_BLUE_KEY = 244
 };
 
@@ -54,17 +46,6 @@ void Korosseo_ShowItemIcon();
 void TakaraAshiba_DispatchByActorEightColumn();
 void TakaraAshiba_UpdateBlockRects();
 void ObjectDispatch_ApplyValueToChildren();
-
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
 
 void TakaraAshiba_OpenPlatformPassage(s32 a0);
 

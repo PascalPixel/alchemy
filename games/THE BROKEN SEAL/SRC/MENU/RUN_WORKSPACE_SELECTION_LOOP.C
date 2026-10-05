@@ -22,7 +22,6 @@ void RenderResource_LoadFrame(s32, s32, s32);
 void Ui_ApplyTableOffsetToPair(void *);
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void);
 
-/* menu/run_workspace_selection_loop.c */
 extern u8 gDebugMode;
 extern s8 Menu_WorkspaceIconFrames[];
 
@@ -66,7 +65,6 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     }
     pair = RenderResource_CreatePair(6, window, 0x28, y);
 #else
-    /* The Japanese pair sits at one height in the debug build too. */
     pair = RenderResource_CreatePair(6, window, 0x28, -0x18);
 #endif
     WaitFrames(1);
@@ -139,8 +137,6 @@ redraw_menu:
     return result;
 }
 
-/* The tile slots of the window work: one in-use byte per tile and the slot
-   the next search starts from. */
 struct UiTileSlotWork {
     u8 unknown_000[RENDER_TILE_ATTR_OFS];
     u8 used[0x100];
@@ -149,11 +145,6 @@ struct UiTileSlotWork {
 
 extern struct UiTileSlotWork *gWindowWork;
 
-/* Draws one pattern of the window tile sheet over the tile a map entry shows.
-   The tile is unpacked to one colour per byte, the pattern's pixels replace
-   those whose remapped colour is not transparent, and the result is packed
-   again. A shared tile (slot below 128) is first given a free slot of its
-   own, which both map entries then name. */
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap)
 {
     struct UiTileSlotWork *work = gWindowWork;

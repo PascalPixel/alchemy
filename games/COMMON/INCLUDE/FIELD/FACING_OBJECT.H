@@ -3,8 +3,6 @@
 
 #include "TYPES.H"
 
-/* The target-facing controller: ☀️ copies it into its small scene-object
-   overlays, ⚓️ keeps one in the main image. */
 struct FacingObject {
     u8 unknown_00[6];
     u16 facing;
@@ -14,7 +12,6 @@ struct FacingObject {
     u8 unknown_14[0x46];
     u8 facing_flags;
     u8 unknown_5b[9];
-    /* This selector is passed to the resolver by resource 378; its identity is unknown. */
     s16 unknown_64;
     struct FacingObject *facing_target;
 };

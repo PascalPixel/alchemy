@@ -31,8 +31,6 @@ s32 Map_ResumeAnimationFar(void);
 
 s32 Map_LoadAreaGraphicsFar(void);
 
-/* Party-wide HP changes in battle: drains, direct or percentage deltas, and
-   the poison and venom damage applied at the end of a round. */
 void BattleParty_ApplyDrain(s32 amount)
 {
     s32 target_count = Party_CountActiveOwnersFar();
@@ -42,11 +40,6 @@ void BattleParty_ApplyDrain(s32 amount)
         Owner_AdjustSecondValueFar(gGameState.active_owners[i], amount);
 }
 
-/* Passes a health change to every active party member: amount itself, or
- * when scaled amount percent of the member's maximum HP, falling back to the
- * magnitude of amount when that rounds to zero. A loss first flashes the
- * screen and plays the heavy impact cue when it exceeds ten, a lighter hit
- * cue otherwise; a gain plays the recovery cue. */
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 {
     s32 count;
@@ -153,13 +146,11 @@ void Battle_ClearObjectFlag5bWhenMode3(void)
     }
 }
 
-/* The field mode's work block (runtime block 27): the walking actors, the
-   request slots the field's handlers post in, and the scene's transition. */
 struct FieldWork {
     u8 unknown_000[0x10];
     s32 view;
     struct FieldActor *actors[86];
-    s16 action;                 /* 0x16c */
+    s16 action;
     s16 input;
     s16 exit;
     s16 menu;
@@ -171,25 +162,25 @@ struct FieldWork {
     s16 command;
     s16 item;
     s16 event;
-    s16 count;                  /* 0x184 */
+    s16 count;
     s16 survived;
-    s16 quantities[9];          /* 0x188 */
-    s16 item_argument;          /* 0x19a */
+    s16 quantities[9];
+    s16 item_argument;
     u8 unknown_19c[2];
-    s16 mode;                   /* 0x19e */
+    s16 mode;
     u8 unknown_1a0[8];
     s32 unknown_1a8;
     u8 unknown_1ac[4];
     s32 unknown_1b0;
     s32 unknown_1b4;
     u8 unknown_1b8[4];
-    u8 *cells;                  /* 0x1bc */
-    s32 transition;             /* 0x1c0 */
+    u8 *cells;
+    s32 transition;
     u16 unknown_1c4;
-    u16 transition_active;      /* 0x1c6 */
-    s32 transition_frames;      /* 0x1c8 */
+    u16 transition_active;
+    s32 transition_frames;
     u8 unknown_1cc[0xaea];
-    u16 busy;                   /* 0xcb6 */
+    u16 busy;
     u8 unknown_cb8[8];
     u16 unknown_cc0;
     u8 unknown_cc2[6];
@@ -281,7 +272,6 @@ extern u8 MsgFieldStrengthExhausted[];
 extern u8 MsgFieldPartyAnnihilated[];
 extern u8 MsgFieldPauseUnavailable[];
 
-/* A gauge ratio held to 0..0x4000. */
 static __inline__ s32 Vitals_Clamp(s32 ratio)
 {
     s32 clamped;
@@ -295,10 +285,6 @@ static __inline__ s32 Vitals_Clamp(s32 ratio)
     return clamped;
 }
 
-/* The field mode: sets the scene up, then alternates between walking (one
-   Field_ProcessStep a frame) and serving the requests the work block's
-   slots post, until one posts an exit code, which it returns. A defeat
-   revives the selected member with 1 HP and returns 999. */
 s32 Field_RunScene(s32 entrance)
 {
     volatile s32 zero;

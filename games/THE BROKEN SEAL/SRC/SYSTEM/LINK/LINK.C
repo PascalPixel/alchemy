@@ -62,9 +62,6 @@ extern volatile u16 gLinkStatus;
 
 struct OneCell { u16 v; };
 
-/* VBlank receives first, then sends, using one shared sequence and reply
-   byte. Each block carries 20 bytes; the high sequence bit requests a
-   resend, and a final-block exchange releases the active cursors. */
 void SerialRuntime_StepBlockTransfer(void)
 {
     struct SerialTransferState *peer;
@@ -80,7 +77,6 @@ void SerialRuntime_StepBlockTransfer(void)
     peer = (struct SerialTransferState *)gSerialPeerPayloads[id];
     if ((gLinkStatus & 3) != 3)
         return;
-    /* flags: 1 requests blocks; 2 acknowledges the final block. */
     {
         s32 *receive = &gSerialReceiveDest;
         s32 dest = *receive;
@@ -120,7 +116,6 @@ void SerialRuntime_StepBlockTransfer(void)
             }
         }
     }
-    /* peer_flags: 1 carries more data; 2 carries the final block. */
     {
         s32 *send = &gSerialSendSource;
         s32 src = *send;

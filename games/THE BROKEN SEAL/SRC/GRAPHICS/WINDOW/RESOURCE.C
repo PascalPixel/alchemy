@@ -13,7 +13,6 @@
 #include "B5_CONTEXT.H"
 #include "BATTLE_RUNTIME.H"
 
-/* Byte lanes used by the bobbing sprite pair. */
 struct UiBobPairOutput {
     struct UiBobPairOutput *next;
     u8 unknown_04[4];
@@ -22,7 +21,6 @@ struct UiBobPairOutput {
     u8 destination;
 };
 
-/* Frame counter advanced by the vertical-blank interrupt. */
 extern volatile u32 gFrameTick;
 extern volatile u32 gFrameCount;
 extern const u8 Ui_PairBobOffsets[];
@@ -30,14 +28,10 @@ extern const u8 Ui_PairBobOffsets[];
 void Runtime_RemapBytesByTableFar(void *, s32);
 u32 Resource_DecodeByteLz(const void *, void *);
 
-/* graphics/resource/RenderResource_LoadFrame.c */
-
-/* graphics/resource/RenderResource_CreateFrame.c */
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 
 void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
 
-/* ui/apply_table_scale_to_object.c */
 struct UiScaleSprite {
     u8 filler0[6];
     u16 src_6;
@@ -55,7 +49,6 @@ struct UiScaleSprite {
 
 extern s32 Ui_ObjectPulseScales[];
 
-/* menu/core/build_localized_pattern_tiles.c */
 struct TileMask {
     u32 word0;
     u32 word1;
@@ -68,10 +61,8 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
 
 extern const struct TileMask Data_08037250[];
 
-/* link/draw_shifted_tile_pair.c */
 extern u8 gRomShiftedTilePair[];
 
-/* graphics/tile/expand_vram_tiles_by_color_table.c */
 extern u16 Graphics_ExpandNibbleTable[];
 
 void Ui_PrepareTransferFromTableEntry(u32 index);
@@ -178,7 +169,6 @@ s32 Menu_BuildLocalizedPatternTiles(void)
     }
 }
 
-/* ui/window/draw_three_tile_column.c */
 int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     /* FAKEMATCH: the ignored integer result keeps the return-address pop in r1; void selects r0. */
@@ -190,7 +180,6 @@ int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     UiWindow_SetTilemapEntry((struct UiWindow *)arg0, tile, arg1 + 2, arg2, 0);
 }
 
-/* graphics/tile/merge_shifted_tile_rows.c */
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift)
 {
     s32 neg;

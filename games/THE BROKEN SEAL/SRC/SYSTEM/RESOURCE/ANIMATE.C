@@ -13,10 +13,8 @@ void ResourceMetadata_ClearRecord(void *);
 
 extern u8 Tile_CopyStrided[];
 
-/* The strided tile copy runs from a heap copy of itself. */
 extern u8 Tile_CopyStridedCodeSize[];
 
-/* The 16 by 8 oval, in colour 1, that objects draw beneath them. */
 extern const u8 Object_ShadowTiles[];
 void PaletteDma_LoadBlock(void);
 
@@ -25,7 +23,6 @@ s32 Animation_LookupValueByKey(s32 key);
 
 struct AnimationEntry *AnimationObject_Allocate(s32 id);
 
-/* One loadable number and the resource that holds its script. */
 struct ResourceSlotNumber {
     u16 resource;
     s16 number;
@@ -33,18 +30,9 @@ struct ResourceSlotNumber {
 
 enum { RESOURCE_SLOT_COUNT = 8, ANIMATION_OBJECT_COUNT = 64 };
 
-/* Up to 256 numbers, ended by number zero. */
 extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
-/* Five tables that map a script's bytes below 0xe0 for a text variant. */
 extern u8 ResourceSlot_ConversionTables[][256];
 
-/*
- * Load a number's script into a slot's buffer: find its resource, decode
- * it, turn the leading offset table (ended by a zero word) into pointers
- * and, for a text variant, convert the bytes that follow the table. Returns
- * the area of the number's metadata record, or zero when the slot or the
- * number does not exist.
- */
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
     struct AnimationMetadata *metadata;
@@ -160,7 +148,6 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
     return 0;
 }
 
-/* animation/init_work_from_metadata.c */
 void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
 {
     s32 value;
@@ -377,9 +364,6 @@ void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group, s32 val
     }
 }
 
-/* Allocates and clears the object and state blocks (from the heap in mode
-   3), loads the object graphics and copies the strided tile copy routine
-   into heap block 53. */
 void ObjectSystem_Configure(s32 mode)
 {
     void *objects;
@@ -407,11 +391,6 @@ void ObjectSystem_Configure(s32 mode)
             REG_DMA3);
 }
 
-/* Takes the first free object of the 64 animation objects, one whose draw
- * kind is zero, and sets it up from the metadata of id: its frames, looked up
- * by id when the metadata gives none, its animation table and first entry,
- * draw kind and frame codec. Returns the object, or NULL when the metadata
- * has zero width or no object is free. */
 struct AnimationEntry *AnimationObject_Allocate(s32 id)
 {
     struct AnimationMetadata *metadata;

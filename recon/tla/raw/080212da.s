@@ -240,7 +240,6 @@ Data_0802146c:
 	.4byte 0xe08330c2
 	.4byte 0xe586300c
 	.4byte 0xea00000d
-@ This is the table's data address, without its first entry's Thumb bit.
 1:
 	.4byte 0
 	.reloc 1b, R_ARM_ABS32_NOI, WaitFramesFar

@@ -4,26 +4,9 @@
 #include "BATTLE_EFX.H"
 #include "IO_REG.H"
 
-/*
- * Builds one rectangle blitter out of the instruction templates of
- * SENTOU_KOUKA_GOUSEI.S and leaves it in a heap slot, where the battle
- * effects fetch it and call it as a BattleEffectDrawRectangle.
- *
- * The canvas such a blitter draws on is one byte a pixel, stored cell by
- * cell (8 by 8 pixels, 64 bytes), 1 << width_shift pixels wide and
- * 1 << height_shift high.  `flags` says what happens at its edges and which
- * way the source is read, `mode` what a pixel does when it lands.
- *
- * The work is the step list of SENTOU_KOUKA_GOUSEI_STEPS.INC, run twice with
- * two sets of steps: the first only counts the words, so that the slot can
- * be sized, and the second writes them.
- */
-
 #define DMA3_REGISTERS (REG_DMA3)
-/* Enable, 32-bit units, this many of them. */
 #define DMA_COPY_WORDS(n) (0x84000000 | (n))
 
-/* How far the ARM branch at `site` has to go to land on `target`. */
 #define BRANCH_FIELD(site, target) \
     ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
@@ -43,9 +26,7 @@ extern const u32 SentouKouka_Mask[];
 extern const u32 SentouKouka_Gousei[];
 extern const u32 SentouKouka_IroJun[];
 extern const u32 SentouKouka_IroGyaku[];
-/* 1 << n, as the operand field of an ARM instruction holds it. */
 extern const u16 SentouKouka_BitOperands[];
-/* The table that follows the Gousei template: where the template ends. */
 extern const u32 ParticleStreams_CellOffsets[];
 
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode)
@@ -61,7 +42,6 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
     const u32 *end;
     s32 words;
 
-    /* First the steps that count. */
 #define PUT(word) words++
 #define COPY(n) words += (n); src += (n)
 #define COPY_FROM(from, n) words += (n)
@@ -100,21 +80,17 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
         Dma_Set(part, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
         dst += (n); \
     } while (0)
-/* A branch back to `target`. */
 #define PUT_BRANCH(target) do { \
         *dst = *src++ + BRANCH_FIELD(dst, target); \
         dst++; \
     } while (0)
-/* Remember where the next word goes. */
 #define MARK(site) site = dst
-/* Make the branch written at `site` land on the next word. */
 #define PATCH(site) do { *(site) |= BRANCH_FIELD(site, dst); } while (0)
 
     dst = (u32 *)Runtime_AllocateHeapBlock(slot, words << 2);
     src = SentouKouka_Gousei;
 #include "SENTOU_KOUKA_GOUSEI_STEPS.INC"
 
-    /* Every word of the template was either taken or passed over. */
     end = ParticleStreams_CellOffsets;
     return src == end;
 }

@@ -32,9 +32,6 @@ u8 Item_GetTargetMode(s32 item_id)
         Item_GetDirect(item_id)->action_id)->target_mode;
 }
 
-/* Add delta to one of the 300 item counters, held between 0 and 99; the
-   result is the new count, or 0 when it hit the floor or the slot is out of
-   range. */
 s32 ItemCounter_Adjust(s32 index, s32 delta)
 {
     s32 counter_slot = index;

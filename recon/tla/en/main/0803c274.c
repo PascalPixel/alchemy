@@ -39,9 +39,6 @@ struct WindowTilemap {
     u16 tiles[640];
 };
 
-/* Places a glyph: mode 1 queues it as a sprite at the window cell, other
-   modes write tiles up to 0xff into the window tilemap. */
-
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
     struct RenderOutput *out = (struct RenderOutput *)gWindowWork;

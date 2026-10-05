@@ -24,7 +24,6 @@ void SceneState_SetValues8_3_4(void)
     BattleFx_RunPageEffectForSlot(8, 3, 4);
 }
 
-/* Give the actor at most sixty frames to descend, then clamp its height to the target. */
 void SceneActor_WaitActorDescent(struct FieldActor *actor)
 {
     s32 frames = 60;
@@ -38,7 +37,6 @@ void SceneActor_WaitActorDescent(struct FieldActor *actor)
     actor->y.fixed = actor->terrain_height;
 }
 
-/* Point an object toward actor zero using their fixed-point X/Z delta. */
 s32 SceneActor_FaceActorZero(struct FieldActor *obj)
 {
     struct FieldActor *target = Object_GetById(ACTOR_PARTY_LEADER);
@@ -49,7 +47,6 @@ s32 SceneActor_FaceActorZero(struct FieldActor *obj)
     return 0;
 }
 
-/* Where the party appears in each of the sanctum's three areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -66,7 +63,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gHaidiaDouEntrancesOther;
 }
 
-/* The sanctum's regions and exits, between its scene-dependent getters. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -77,8 +73,6 @@ const u32 *Scene_GetExits(void)
     return HaidiaDou_Exits;
 }
 
-/* The actors placed in each of the sanctum's three areas; any other scene
-   takes the first area's. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -100,15 +94,11 @@ void FieldScene_ConfigureRegionAtRow15(void)
     Engine_MapCopyCells(16, 15, 1, 1, 15, 15);
 }
 
-/* Configure the matching 16x15 scene rectangle at row 17. */
 void FieldScene_ConfigureRegionAtRow17(void)
 {
     Engine_MapCopyCells(16, 17, 1, 1, 15, 15);
 }
 
-/* When the pillar (actor 9) stands in column 23, steps the leader aside and
- * lowers the pillar into the floor amid a spray of dust between two
- * markers, opens the cell it blocked and sets flag 0x200. */
 void HaidiaDou_SinkPillarColumn23(void)
 {
     struct EffectOptions options;
@@ -152,9 +142,6 @@ void HaidiaDou_SinkPillarColumn23(void)
     Engine_EventEnd();
 }
 
-/* When the pillar (actor 10) stands in column 27, lowers it into the floor
- * amid a spray of dust between two markers, opens the cells it blocked,
- * sets flag 0x201 and settles it below the floor. */
 void HaidiaDou_SinkPillarColumn27(void)
 {
     struct EffectOptions options;

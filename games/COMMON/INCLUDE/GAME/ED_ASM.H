@@ -1,5 +1,3 @@
-/* A build selects one edition. With none selected, source behavior is Japanese.
-   Keep this predicate in step with GAME/EDITION.H; it selects behavior, not addresses. */
 	.ifndef GUARD_ED_ASM_H
 	.set GUARD_ED_ASM_H, 1
 	.set EDITION_INTERNATIONAL, 0

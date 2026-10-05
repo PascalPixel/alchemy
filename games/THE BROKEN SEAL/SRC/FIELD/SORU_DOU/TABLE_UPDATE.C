@@ -1,9 +1,7 @@
-/* Scene table getters and the entry that posts the setup request and sets the view scale. */
 
 #include "TYPES.H"
 #include "SCENE.H"
 
-/* The scene's four tables, in the overlay's read-only data. */
 extern u8 SoruDou_SceneTable0[];
 extern u8 SoruDou_SceneTable1[];
 extern u8 SoruDou_SceneTable2[];
@@ -15,7 +13,6 @@ u8 *State_Run(void)
     return SoruDou_SceneTable0;
 }
 
-/* Table slot with no data: reads nothing and returns zero. */
 s32 SoruDou_GetView(void)
 {
     return 0;

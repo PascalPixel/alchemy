@@ -1,14 +1,3 @@
-@ Sound sequence command helpers. 0x080f9a80 copies the 36-entry command table
-@ at 0x080fb7a0 through the range check at 0x080f9a9a; the other entries read
-@ command bytes and words of the track in r1. They keep their return address
-@ in ip (mov ip, lr ... bx ip), let 0x080f9a98 fall through into 0x080f9a9a,
-@ hand results back in r3 and branch on flags from lsrs (0x080f9a9e). Neither
-@ approved compiler emits any of these. Every TBS and TLA edition has this
-@ code, differing only in the relocated table address.
-@ The zero halfwords of alignment at 0x080f9a96, 0x080f9abe, 0x080f9afa,
-@ 0x080f9b3e, 0x080f9b4a, 0x080f9b72, 0x080f9ba2, 0x080f9bb6, 0x080f9bf2 and
-@ 0x080f9bfe never run and carry no credit.
-@ credit: library — TBS/TLA common sound sequence command interpreter
 .syntax unified
 	.thumb
 .global Func_080f9a80

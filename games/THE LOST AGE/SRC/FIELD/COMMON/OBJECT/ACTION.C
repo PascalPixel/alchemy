@@ -12,7 +12,6 @@ s32 Object_ClearChildAndCollisionFlags(struct ObjectRuntime *obj)
     return 0;
 }
 
-/* ⚓️ splits ☀️'s reset in two: the child field alone, and a flag bit. */
 s32 Object_ClearChildFlags(struct ObjectRuntime *obj)
 {
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);

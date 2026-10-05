@@ -8,15 +8,11 @@
 extern char ResourceId_IntroTilesB;
 extern s16 gTitleVramBlock;
 
-/* The scene's last loader hook; this scene needs nothing. */
 s32 Scene_PrepareMap(void)
 {
     return 0;
 }
 
-/* Loads the title's sprite tiles: decodes them into a scratch buffer, takes
-   its first 32 bytes as object palette 15 and caches the rest in the
-   title's VRAM block. */
 void Title_LoadSprites(void)
 {
     u8 *buffer;

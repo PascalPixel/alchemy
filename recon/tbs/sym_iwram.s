@@ -1,5 +1,3 @@
-@ IWRAM variables not yet defined in C, in address order, as pret's
-@ sym files list them. Each .space runs to the next variable.
 	.section .sym_iwram,"aw",%nobits
 	.global Data_03001400
 Data_03001400:
@@ -170,7 +168,7 @@ gFrameRenderPending:
 Data_03001e50:
 	.global gWorkSlot
 	.type gWorkSlot, %object
-	.size gWorkSlot, 0x100 @ Runtime_InitializeHeap clears 0x40 words
+	.size gWorkSlot, 0x100
 gWorkSlot:
 	.space 0x0000000c
 	.global gAnimationObjects

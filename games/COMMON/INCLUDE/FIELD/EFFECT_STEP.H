@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* エフェクト1段分の座標・移動量。演算は32bitで循環する。 */
 struct EffectStep {
     s32 x;
     s32 y;
@@ -14,7 +13,6 @@ struct EffectStep {
     s32 variant;
 };
 
-/* Projected screen coordinates and depth, written by Render_ProjectPoint. */
 struct EffectPosition {
     s32 x;
     s32 y;

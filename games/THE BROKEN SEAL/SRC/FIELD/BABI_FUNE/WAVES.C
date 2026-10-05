@@ -1,5 +1,4 @@
 #include "GLOBAL_CELLS.H"
-/* Set actor collision and sprite priorities, background priorities and blending, then lower map layers 6 and 7. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
@@ -32,9 +31,6 @@ struct MapWork {
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n) ((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->second_priority = 1))
 
-/* The hblank scroll work: two pages of BG3 offsets, a pair for each of the
- * 160 lines, the page the DMA reads, the wave's phase, and per axis the
- * wave's frequency, its step per line and its amplitude. */
 struct ScrollWork {
     u16 pages[2][0x3c0];
     u8 page;
@@ -51,7 +47,6 @@ extern struct ScrollWork *gHBlankScrollWork;
 extern s16 gBgScroll[];
 extern const s16 BabiFune_WaveSine[256];
 
-/* One line's offset: the scroll swayed by the wave at this angle. */
 static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 {
     return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
@@ -73,15 +68,12 @@ void BabiFune_UpdateWaves(void);
 void SceneState_CountDownEveryFortyTicks(void);
 void BabiFune_CyclePalette(void);
 
-/* Scene task scheduler. */
 static inline void BabiFune_AddTask(void (*task)(void), s32 order)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
     Scheduler_AddOrUpdateCallback((s32)task, order);
 }
 
-/* An engine service called with three arguments held in an inline's
- * parameters, which loads them in order. */
 static inline void BabiFune_Call3(void (*service)(s32, s32, s32), s32 first, s32 second,
                                   s32 third)
 {
@@ -89,11 +81,6 @@ static inline void BabiFune_Call3(void (*service)(s32, s32, s32), s32 first, s32
     service(first, second, third);
 }
 
-/*
- * The ship's last scene: the backdrop warms to yellow, the lighthouse beam
- * flashes three times, the sea starts to swell and the ship sinks out of
- * view; then the screen fades to white and back and the next sequence runs.
- */
 void BabiFune_RunDeparture(void)
 {
     struct MapWork *map;
@@ -284,7 +271,6 @@ s32 BabiFune_SetupScene(void)
     return 0;
 }
 
-/* Arm BG3 HBlank scrolling: copy the current page's scroll line, clear DMA enable and done status, then start one 32-bit transfer. */
 void DisplayScroll_ArmHBlankDma(void)
 {
     struct ScrollWork *work;
@@ -305,9 +291,6 @@ void DisplayScroll_ArmHBlankDma(void)
     Dma_Set(source, destination, 0xa6600001, (volatile u32 *)dma0);
 }
 
-/* Babi Fune: fill the page the DMA is not reading with this frame's wave,
- * each line's horizontal and vertical BG3 offset swayed from the scroll by
- * a sine of the line, then flip pages and advance the phase. */
 void DisplayScroll_BuildAndSwapHBlankPage(void)
 {
     struct ScrollWork *work;

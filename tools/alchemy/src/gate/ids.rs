@@ -1,31 +1,13 @@
-//! Scene, resource and message ids come only from their tables and are used
-//! whole. A scene id is a named row of FIELD/SCENES.S, a resource id a named
-//! row of SYSTEM/RESOURCE/DIRECTORY.S, and a message id the number the build
-//! gives a PO `msgctxt` name in the generated include of TEXT/MESSAGES.S.
-//! Before the final link the build reads every object it links, the main
-//! image's and each overlay's, and fails when:
-//!
-//! - an object other than the kind's table defines a `SceneId_`,
-//!   `ResourceId_` or `Msg<Name>` symbol;
-//! - a relocation against one carries an addend, so the linker would store
-//!   the id plus or minus something: with REL relocations, the word the id
-//!   fills holds a nonzero value in place;
-//! - a relocation against one is not a data word (`R_ARM_ABS32`, `ABS16`,
-//!   `ABS8`), since an id is a whole number and never a branch or a
-//!   PC-relative place.
 use object::{Object, ObjectSection, ObjectSymbol, RelocationFlags, RelocationTarget};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-/// Each id kind: the prefix of its names and its table's source under the
-/// game directory. Message names are `Msg` and a capitalised word.
 const TABLES: [(&str, &str); 3] = [
     ("SceneId_", "SRC/FIELD/SCENES.S"),
     ("ResourceId_", "SRC/SYSTEM/RESOURCE/DIRECTORY.S"),
     ("Msg", "TEXT/MESSAGES.S"),
 ];
 
-/// The table that owns `name`, when it names an id.
 fn table(name: &str) -> Option<&'static str> {
     let [scene, resource, message] = TABLES;
     if name.starts_with(scene.0) {
@@ -39,9 +21,6 @@ fn table(name: &str) -> Option<&'static str> {
     }
 }
 
-/// Fail when any of `objects`, each `(source, object)` with the source
-/// relative to the repository, defines an id outside its table or uses one
-/// other than whole. `game` is the game directory the tables live in.
 pub(crate) fn check(game: &Path, objects: &[(PathBuf, PathBuf)]) -> Result<(), String> {
     let mut problems = Vec::new();
     for (source, object) in objects {
@@ -60,26 +39,18 @@ pub(crate) fn check(game: &Path, objects: &[(PathBuf, PathBuf)]) -> Result<(), S
     }
 }
 
-/// What one object says about ids.
 #[derive(Default)]
 struct Ids {
-    /// Every id the object defines.
     defined: Vec<String>,
-    /// Every relocation against an id.
     uses: Vec<Use>,
 }
 
 struct Use {
     name: String,
-    /// The relocated place, as `section+offset`.
     site: String,
-    /// The addend the place carries, or the relocation type when it is not
-    /// a data word.
     addend: Result<i64, u32>,
 }
 
-/// The addend a REL data-word relocation keeps in place, or `None` when the
-/// type is not a data word.
 fn in_place(data: &[u8], offset: usize, kind: u32) -> Option<i64> {
     let width = data_width(kind)?;
     let place = data.get(offset..offset + width)?;
@@ -90,7 +61,6 @@ fn in_place(data: &[u8], offset: usize, kind: u32) -> Option<i64> {
     })
 }
 
-/// The width of the data word a relocation type fills.
 fn data_width(kind: u32) -> Option<usize> {
     match kind {
         object::elf::R_ARM_ABS32 => Some(4),
@@ -142,7 +112,6 @@ fn read(bytes: &[u8]) -> Result<Ids, String> {
     Ok(ids)
 }
 
-/// Each way `ids`, read from the object of `source`, breaks the rule.
 fn violations(game: &Path, source: &Path, ids: &Ids) -> Vec<String> {
     let mut problems = Vec::new();
     for name in &ids.defined {

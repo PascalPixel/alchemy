@@ -6,8 +6,6 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-/* ☀️'s title palette fade, its work in ⚓️'s heap block 32. */
-
 void TitlePalette_InitializeBuffers(void)
 {
     struct TitlePaletteWork *buffer;

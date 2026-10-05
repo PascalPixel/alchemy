@@ -18,18 +18,12 @@
 
 extern void *gBattleFxWork[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
 #define REG16(address) (*(volatile u16 *)(address))
 
-/* 320 burst records fill the map cell buffer, 32 for each affected unit. */
 #define BURST ((struct EffectStep *)Ram_MapCellBuffer)
 
-/* The effect's work block: the shared layout with the nine spawned objects
-   named. */
-
-/* A projected placement: a 16.16 position and two words around it. */
 struct FxPlacement {
     s32 x;
     s32 scale;
@@ -49,7 +43,6 @@ struct FxControl {
 
 extern u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
-/* Each object's column and row in the formation. */
 extern const u8 ObjectRow_Columns[];
 extern const u8 ObjectRow_Rows[];
 extern const struct FxPair ObjectRow_SweepPair;
@@ -68,11 +61,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void Audio_PlayCue(s32 cue);
 
-/* Battle effect in two timed loops: 120 frames that sweep nine spawned
-   objects across the screen behind a growing ring and a 64-record fire
-   pool, then 96 frames in which the objects rise and each affected unit
-   bursts into 32 sparks as the row passes it. A held button ends the first
-   loop after its seventeenth frame. */
 void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 {
     void **cursor;
@@ -217,7 +205,6 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             } while (i != 9);
         }
 
-        /* The ring: up to 64 cells on an ellipse that widens with the scroll. */
         if (frame <= 26) {
             s32 size = grow + 4;
             s32 count = frame * 8;
@@ -382,7 +369,6 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
             Audio_PlayCue(137);
         }
 
-        /* Each unit bursts once, when the rising row has passed it. */
         for (i = 0; i != work->effect->count; i++) {
             if (hit[i] == 0) {
                 EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i], &unit);

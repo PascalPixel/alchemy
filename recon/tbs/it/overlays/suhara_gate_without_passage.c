@@ -1,9 +1,3 @@
-/* Draft: Suhara gate, IT.
- * 2026-10-01: Four callbacks omit the European passage-cell repairs.
- * Their complete compiled owners are collectively 140 bytes short; the
- * remaining 24-byte scene difference belongs to the placement scripts.
- * Ordinary approved TBS flags, no compiler output changes.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

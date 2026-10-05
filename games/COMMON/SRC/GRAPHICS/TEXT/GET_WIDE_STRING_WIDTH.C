@@ -1,8 +1,6 @@
 #include "EDITION.H"
 #include "GLYPH.H"
 
-/* The European editions give every single-byte character the full ten
-   pixels and count nothing for the rest. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) || \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \

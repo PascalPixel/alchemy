@@ -1,10 +1,7 @@
-/* Status screens: create one of two icon variants, shifting its tile index by the variant. */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
 extern u8 *gMenuWork;
-
-
 
 s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {

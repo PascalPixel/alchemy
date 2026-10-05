@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "ANIMSPR.H"
 
-/* Actor state shared by staged probing, movement and redraw. */
 union StagedActorCoordinate {
     s32 value;
     struct {
@@ -27,7 +26,6 @@ struct StagedActor {
     s32 velocity_z;
     s32 move_rate_x;
     s32 move_rate_z;
-    /* The fixed-point point the actor moves toward, or ACTOR_NO_TARGET. */
     s32 target_x;
     s32 target_y;
     s32 target_z;
@@ -77,8 +75,6 @@ typedef char StagedActor_movement_callback_offset[
 ];
 #undef STAGED_ACTOR_OFFSET
 
-/* Six-word record passed by value from StagedActor_FindClearPosition to
- * SceneActor_MoveAndRedraw: the destination square and movement callback. */
 struct StagedActorProbe {
     s32 footprint_index;
     s32 actor_slot;
@@ -94,7 +90,6 @@ struct StagedActorProbePosition {
     s32 z;
 };
 
-/* The x/z bounds used to sweep one staged actor footprint. */
 struct StagedActorFootprint {
     s32 x0;
     s32 z0;
@@ -119,7 +114,6 @@ typedef char StagedActorFootprint_size[
     sizeof(struct StagedActorFootprint) == 0x10 ? 1 : -1
 ];
 
-/* Directional point passed to the collision probe. */
 struct StagedActorProbePoint {
     s32 x;
     s32 y;
@@ -130,8 +124,6 @@ typedef char StagedActorProbePoint_size[
     sizeof(struct StagedActorProbePoint) == 0x0c ? 1 : -1
 ];
 
-/* The staged-actor module, linked whole into each field overlay that stages
-   actors (FIELD/COMMON/OBJECT/STAGED_ACTOR.C). */
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *self);
 void StagedActor_AdvancePair(void);

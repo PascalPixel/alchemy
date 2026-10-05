@@ -1,6 +1,5 @@
 #include "VILLAGE.H"
 
-/* Lunpa's entrances leave the camera free; the gate's keep it on the road. */
 #define LUNPA_ENTRANCE(entrance, x, z, facing) \
     { (entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0 }
 #define GATE_ENTRANCE(entrance, x, z, facing) \
@@ -32,7 +31,6 @@ const struct SceneEntrance gGateEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-/* A door leads to the room of the same number in the interiors. */
 #define ROOM_EXIT(exit) SCENE_EXIT((exit), SCENE_RUNPA_SUHARA, ROOM_ENTRANCE(exit))
 
 const u32 gLunpaExits[] = {
@@ -59,7 +57,6 @@ const u32 gGateExits[] = {
     SCENE_EXITS_END,
 };
 
-/* The puddle and the glint wait at the map's far corner until Reveal places them. */
 const struct ScenePlacement gLunpaPlacements[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(520), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -103,7 +100,6 @@ const struct ScenePlacement gGatePlacements[] = {
 #define MIND_READ(actor, value) \
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), (actor), CONDITION_ALWAYS, (value) }
 
-/* A door opens as the leader walks north into it. */
 #define DOOR(trigger) \
     { TOUCH_WALKING_INTO(FACING_NORTH), (trigger), CONDITION_ALWAYS, EVENT_SCRIPT(Door_Enter) }
 
@@ -211,7 +207,6 @@ const struct SceneEvent gGateEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-/* Each door swings open in two steps of cells copied over the doorway. */
 const u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
     { MAP_CELL_STEP(38, 35, 2, 2, 5), MAP_CELL_STEP(40, 35, 2, 2, 5), MAP_CELL_STEPS_END },
     { MAP_CELL_STEP(42, 35, 2, 2, 5), MAP_CELL_STEP(44, 35, 2, 2, 5), MAP_CELL_STEPS_END },
@@ -223,7 +218,6 @@ const u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
     { MAP_CELL_STEP(54, 33, 2, 2, 5), MAP_CELL_STEP(56, 33, 2, 2, 5), MAP_CELL_STEPS_END },
 };
 
-/* The doorway cells each door's steps are copied onto. */
 const struct LunpaDoor gLunpaDoors[] = {
     { gLunpaDoorSteps[0], 46, 9 },
     { gLunpaDoorSteps[1], 52, 12 },
@@ -235,5 +229,4 @@ const struct LunpaDoor gLunpaDoors[] = {
     { gLunpaDoorSteps[7], 44, 17 },
 };
 
-/* Nothing in the scene reads this word. */
 const u32 gLunpaUnusedWord = 0;

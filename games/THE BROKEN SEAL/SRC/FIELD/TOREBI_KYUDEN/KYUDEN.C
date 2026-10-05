@@ -53,7 +53,6 @@ void FieldScene_RunMainCutsceneSequence(void);
 void FieldScene_RunBranchingActorSequence(void);
 void FieldScene_RunScene3b8SequenceB(void);
 
-/* The stats an owner keeps: current HP and PP follow their maximums. */
 struct OwnerState {
     u8 unknown_00[0x34];
     u16 max_hp;
@@ -62,8 +61,6 @@ struct OwnerState {
     u16 pp;
 };
 
-/* Restore the whole party: every owner's HP and PP to their maximums, and
- * the three companions back into the active party. */
 static __inline__ void Party_RestoreAll(void)
 {
     s16 owners[8];
@@ -84,7 +81,6 @@ static __inline__ void Party_RestoreAll(void)
     Engine_InventorySnapshotRestore();
 }
 
-/* Where the party appears in the palace; the second scene has its own. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiKyuden2) {
@@ -103,9 +99,6 @@ s32 TorebiKyuden_GetExits(void)
     return (s32)TorebiKyuden_MessageTable;
 }
 
-/* The actors placed in the palace: the second scene has its own; the
-   others change once Colosso is under way (flag 0x962) and once it is over
-   (flag 0x950). */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiKyuden2) {
@@ -120,10 +113,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gTorebiKyudenPlacementsOther;
 }
 
-/* The palace guest rooms: the steward asks whether the party met Babi's
- * soldiers, the room keeper offers the four beds or a free rest, and the
- * last host asks about Colosso. Each question loads its first message once
- * and adds to it for the answers. */
 void FieldScene_RunBranchedSteps1FF1(s32 a)
 {
     s32 k = (s32)MsgTorebiRunBabisSoldiers;
@@ -309,11 +298,6 @@ void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
     Event_End();
 }
 
-/* The palace talks: the questions about meeting Babi and the eastern
- * shores past Karagol, the Cloak Ball found in the guest room, and the
- * morning the party wakes in the palace (FieldScene_RunScene3b8SequenceB).
- * The questions load their first message once and add to it for the
- * answers. */
 void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
     s32 k = (s32)MsgTorebiMeetBabi;
@@ -939,10 +923,6 @@ void RunPrimaryEffectSequence(void)
     Event_End();
 }
 
-/* Tolbi palace: the leader lies asleep while Garet, Ivan and Mia call his
-   name; the scene fades up from the darkened room and the leader answers
-   two yes-or-no questions, each answer moving the dialogue on by one or
-   two messages. */
 void FieldScene_RunBranchingActorSequence(void)
 {
     struct FieldActor *actor;
@@ -2172,8 +2152,6 @@ void RunSceneEffectSetup(void)
     Event_End();
 }
 
-/* Actor 8's question once flag 2412 is set: the leader walks over, and a
- * no brings actors 8 and 9 into a longer exchange. */
 void RunSupplementalSequenceOne(void)
 {
     s32 p;
@@ -2258,8 +2236,6 @@ void FieldScene_RunStepWithValue29e0(void)
     Engine_EventEnd();
 }
 
-/* What the palace answers: in each scene, one table while Colosso is under
-   way (flag 0x962), one once it is over (flag 0x950), one before. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiKyuden2) {
@@ -2280,9 +2256,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gTorebiKyudenEventsOther;
 }
 
-/* Start the palace scene. */
-
-/* Babi's Palace entry: record the entrance flags, then outside the second scene restore the lighthouse-item scene and the guards, set the entrance selector and, arriving by entrance 99 or 98, restore the party and run its scene. */
 s32 TorebiKyuden_ApplyEntryState(void)
 {
     struct FieldActor *actor;

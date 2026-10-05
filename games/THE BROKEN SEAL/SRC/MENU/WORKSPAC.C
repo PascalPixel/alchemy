@@ -8,8 +8,6 @@
 #include "WORKSPACE_OPTIONS.H"
 #include "IO_REG.H"
 
-/* Once the quest can no longer be saved, the workspace menu keeps only its
-   settings row, the third icon frame. The debug build adds three rows. */
 #define FLAG_WORKSPACE_SETTINGS_ONLY 0x17e
 #define WORKSPACE_ROWS 3
 #define WORKSPACE_DEBUG_ROWS 3
@@ -23,7 +21,6 @@ extern const u8 Resource_FixedBlockBTiles[];
 extern u8 MsgWorkspaceSaveQuest, MsgWorkspaceChangeSettings, MsgWorkspaceRoughMenu;
 
 void ShopCursor_AdvanceFar(void *);
-/* The callee edits the frame through its packed sprite-attribute view. */
 void Ui_ApplyTableScaleToObject(void *object);
 s32 GameFlag_IsSet(s32 flag);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
@@ -59,8 +56,6 @@ void Runtime_ScheduleCallbackAndReleaseBlock20A(void)
     Runtime_ReleaseHeapBlock(0x14);
 }
 
-/* Opens the workspace menu window: one row of three text lines per entry
-   with a divider between rows, the selection cursor, and an icon per row. */
 struct RenderInput *Menu_CreateWorkspaceWindows(void)
 {
     struct WorkspaceWork *work;

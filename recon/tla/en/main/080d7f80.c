@@ -9,7 +9,6 @@ void BattleFx_ShrinkObjectAndDestroySlow(void);
 void BattleEffect_UpdatePhasedRadialParticle(void);
 void BattleFx_SetObjectAlternatingWords(void);
 
-
 extern s32 gGameState[];
 void Motion_SetVarCbAndRefresh(s32, s32);
 void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *child, u32 value);

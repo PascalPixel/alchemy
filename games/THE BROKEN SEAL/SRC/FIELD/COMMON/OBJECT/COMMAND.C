@@ -15,7 +15,6 @@
 
 s32 FixedSqrt(s32 value);
 
-/* Object_UpdateAll is ARM code that runs from a heap copy of itself. */
 extern u8 Object_UpdateAll[];
 extern u8 Object_UpdateAllCodeSize[];
 
@@ -35,12 +34,6 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
-/*
- * Aims an object at a point. A point closer than one unit is taken at once;
- * otherwise, unless the object moves without easing, the target is pulled
- * in to where the object must start braking at its speed and acceleration.
- * The dominant axis of the move is kept at +0x56 (16 x, 17 y, 18 z).
- */
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 {
     s32 dx;
@@ -113,9 +106,6 @@ void Object_RunUpdateAllFromHeap(void)
     Sys_Free(routine);
 }
 
-/* Moves each of the fourteen entries of the object table toward its target,
-   applies gravity with bounce, notices when an axis target was passed and
-   turns the entry to face its motion. */
 void Object_UpdateAllMotion(void)
 {
     struct ScriptMotionObject *obj;
@@ -453,7 +443,6 @@ s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
     return 1;
 }
 
-/* The public script-entry boundary shares the real runtime-object pool. */
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
 {
     s32 index;
@@ -569,7 +558,6 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
 
 s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
 {
-    /* This command uses the original unwritten stack offsets. */
     s32 offset[3];
 
     Object_SetMoveTarget(
@@ -582,7 +570,6 @@ s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
     return 1;
 }
 
-/* The map work's scroll limits, in 16.16 world units. */
 struct MapScrollBounds {
     u8 unknown_00[0xec];
     s32 left;
@@ -591,12 +578,6 @@ struct MapScrollBounds {
     s32 bottom;
 };
 
-/*
- * Moves the camera object toward its linked object, kept inside the map's
- * scroll bounds: at once when it snaps, otherwise an eighth of the distance
- * a frame, no faster than its speed limit, and a quarter of a large height
- * difference.
- */
 s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
 {
     struct ObjectRuntime *leader;

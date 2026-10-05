@@ -1,7 +1,4 @@
 #include "RUNTIME_MEM.H"
-/* Draft: the 244-byte Japanese/English prefix routine lacks the localized
- * eight-character limit and separating space. All four localized editions
- * use the 266-byte production branch; this attempt remains compilable. */
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "SERIAL_RUNTIME.H"

@@ -1,12 +1,6 @@
-//! Compilation policy for source-to-assembly plans.
-//!
-//! `routing_source` selects evidenced compiler policy; `input` is the file being
-//! compiled. Candidate sources need both names. Compiler family and ordered
-//! flags come only from routing; callers may supply local include paths or dumps.
 use crate::compiler::bundle::{
     compiler_command_for_target, validate_agbcc_bundle, validate_bundle,
 };
-// POSIX filename semantics retained by the compiler argv contract.
 
 pub fn basename(path: &str) -> &str {
     path.trim_end_matches('/').rsplit('/').next().unwrap_or("")
@@ -32,9 +26,7 @@ pub struct SourceToAssemblyPlanOptions {
     pub input: String,
     pub output: String,
     pub support_flags: Vec<String>,
-    /// Preprocessor-only flags; old-agbcc rejects them on its `.i` compile step.
     pub preprocessor_flags: Vec<String>,
-    /// Explicit old-agbcc intermediate; otherwise inferred beside the output.
     pub preprocessed_output: Option<String>,
     pub dumpbase: Option<String>,
 }
@@ -57,8 +49,6 @@ impl SourceToAssemblyPlanOptions {
         }
     }
 }
-/// Preserves the pinned trailing-slash bug: `a.c/` becomes `a..i`. Fixing it
-/// would change a cache-visible intermediate name.
 pub fn inferred_preprocessed_output(output: &str) -> String {
     let extension = extname(output);
     if extension.is_empty() {
@@ -67,8 +57,6 @@ pub fn inferred_preprocessed_output(output: &str) -> String {
         format!("{}.i", &output[..output.len() - extension.len()])
     }
 }
-/// Flags that only add output beside the compile: debug records, include
-/// paths, `-d<letters>` RTL dumps and `-fsched-verbose=N` scheduling traces.
 fn diagnostic_flag(flag: &str) -> bool {
     flag == "-g"
         || flag.strip_prefix("-I").is_some_and(|path| !path.is_empty())
@@ -110,7 +98,6 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
             .preprocessed_output
             .clone()
             .unwrap_or_else(|| inferred_preprocessed_output(&options.output));
-        // old-agbcc identifies as 2.9.
         let gcc_minor = 9;
         steps.push(direct_preprocessor_command_for_target_with_minor_and_flags(
             options.target,
@@ -135,7 +122,6 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
         arguments.push("-S".to_string());
         arguments.push("-o".to_string());
         arguments.push(options.output.clone());
-        // GCC otherwise interprets Atlas's uppercase .C extension as C++.
         if extname(&options.input) == ".C" {
             arguments.extend(["-x".to_string(), "c".to_string()]);
         }

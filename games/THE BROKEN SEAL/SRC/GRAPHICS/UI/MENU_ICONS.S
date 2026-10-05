@@ -1,6 +1,3 @@
-@ The 16x16 icons the menus draw with the system palette's first row: the
-@ item, Psynergy and misc tables, each a word pointer per icon and a -1
-@ word, then each icon's pixels in the 4-bit icon coder, padded to a word.
 	.section .rodata
 	.balign 4
 	.global UiIcon_ItemIconPointers

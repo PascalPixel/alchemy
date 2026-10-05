@@ -20,7 +20,6 @@ union Slot {
     void *p;
 };
 
-/* The scene's tables, in the overlay's read-only data. */
 extern u8 ShianHeya_SceneTable0[];
 extern u8 ShianHeya_SceneTable1[];
 extern u8 ShianHeya_SceneTable2Entrance8[];
@@ -31,7 +30,6 @@ extern u8 MsgShianDidMonstersInAltinSpit[];
 
 extern u8 MsgShianWarriorWelcome[];
 
-/* The scene's tables, in the overlay's read-only data. */
 extern u8 ShianHeya_SceneTable3[];
 extern u8 ShianHeya_SceneTable3Entrance8[];
 void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type);
@@ -150,7 +148,6 @@ void SceneDialogue_RunActor10Dialogue(void)
     Engine_EventEnd();
 }
 
-/* Actor 12 asks whether the monsters in Altin spat water. */
 void SceneDialogue_RunActor12Dialogue(void)
 {
 
@@ -160,10 +157,6 @@ void SceneDialogue_RunActor12Dialogue(void)
     Engine_EventEnd();
 }
 
-/*
- * The Xian room's entry: the warrior's welcome, the scene table for the
- * entrance, and the objects the entrance sets up.
- */
 void SceneDialogue_RunActor9MotionDialogue(void)
 {
     void Engine_EventSetMessage(s32);

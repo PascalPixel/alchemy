@@ -18,6 +18,5 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
             WaitFrames(1);
         } while ((mask & gLinkStatus) != mask);
     }
-    /* SIOCNT bits 4-5: this unit's multiplayer ID. */
     return (REG_SIOCNT << 0x1A) >> 0x1E;
 }

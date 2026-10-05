@@ -1,4 +1,3 @@
-//! Golden Sun's twelve ROM targets and their isolated build paths.
 
 use crate::compiler::routing::CompilerTarget;
 
@@ -15,9 +14,6 @@ macro_rules! target_registry {
     };
 }
 
-// Each edition's approved reference ROM is known by its SHA-256 alone: an
-// intentional record that admits the builder's own copy, never a source of
-// build input.
 target_registry! {
     TbsJa => ("tbs-ja", "roms/tbs-ja.gba", "TBS_EDITION_JA", "out/tbs-ja",
         "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26"),
@@ -60,7 +56,6 @@ impl std::fmt::Display for DecompTargetId {
 pub struct DecompTarget {
     pub id: DecompTargetId,
     pub rom: &'static str,
-    /// The approved reference ROM's SHA-256.
     pub rom_sha256: &'static str,
     pub rom_size: u64,
     pub compiler: CompilerTarget,
@@ -68,13 +63,10 @@ pub struct DecompTarget {
     pub source_dir: &'static str,
     pub asm_dir: &'static str,
     pub output_dir: &'static str,
-    /// Fixed `ldr r4, [pc, #0]; bx r4` entry veneers every code overlay of
-    /// this game opens with: six in The Broken Seal, seven in The Lost Age.
     pub overlay_entry_veneers: usize,
 }
 
 impl DecompTarget {
-    /// Refuse `rom` unless it is this edition's approved reference ROM.
     pub fn verify_reference(&self, rom: &[u8]) -> Result<(), String> {
         if crate::compiler::sha256::hex(rom) != self.rom_sha256 {
             return Err(format!(
@@ -84,32 +76,25 @@ impl DecompTarget {
         }
         Ok(())
     }
-    /// The game's linker script, `MAIN.LD`, which composes every edition.
     pub fn script(&self) -> std::path::PathBuf {
         std::path::Path::new(self.game_dir()).join("MAIN.LD")
     }
-    /// The bodies another edition gives the game's output sections, beside
-    /// its scaffold in `recon/<game>/<lang>`, as pret's early versions linked
-    /// through `baserom.gba`; Japanese is the game's native composition.
     pub fn edition_script(&self) -> Option<std::path::PathBuf> {
         match self.id.as_str().split_once('-') {
             Some((_, "ja")) | None => None,
             Some((game, lang)) => Some(["recon", game, lang, "MAIN.LD"].iter().collect()),
         }
     }
-    /// The six editions of this target's game, Japanese first.
     pub fn editions(&self) -> [DecompTarget; 6] {
         let first = self.id as usize / 6 * 6;
         std::array::from_fn(|index| target_for(TARGET_IDS[first + index]))
     }
-    /// The edition's language, the `ja` of `tbs-ja`.
     pub fn language(&self) -> &'static str {
         self.id
             .as_str()
             .split_once('-')
             .map_or("", |(_, lang)| lang)
     }
-    /// The game's physical root, `games/THE BROKEN SEAL` or `games/THE LOST AGE`.
     pub fn game_dir(&self) -> &'static str {
         self.source_dir
             .strip_suffix("/SRC")

@@ -1,9 +1,5 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
-/* Battle: order the turn queue by priority, highest first. Commands of
-   kind 5 whose action has effect 46, 47 or 53 are raised by 10000 first;
-   the sort is a bubble sort of 16-byte entries through the IWRAM word
-   copier. */
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
 #include "BATTLE_COMMAND.H"

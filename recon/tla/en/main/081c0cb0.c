@@ -1,63 +1,3 @@
-/* AudioCommand_Play / AudioCommand_GetDefaultPreset: private TLA sound-command
- * reconstruction, 2026-10-02. Intended canonical draft: 081c0cb0.c.
- *
- * The native command extent is 384 bytes including its two literal pools and
- * anonymous trailing zero halfword. The adjacent preset helper is four bytes.
- * Fresh ordinary-compiler source links in JA/EN/DE/ES/FR/IT all have the
- * same measured result. Every actual BL operand and symbolic pool word
- * agrees with that edition's native command. The current raw 388-byte bank
- * independently links exactly in all six; no source adoption is claimed.
- * This candidate emits 4 + 382 bytes; the command has fourteen differing
- * instruction bytes in two ordering sites (+0x10..13, +0xce..d7) and does not
- * emit the trailing two alignment bytes. It is a draft and carries no credit.
- *
- * The initial plain range tree emitted 382/264 differing bytes in EN.
- * Eight ordinary range/type/lifetime forms emitted 378..394/324..359.
- * Five capture/argument forms emitted 378..382/16..329; the retained r3 tied
- * handoff is best. Seven further mask/argument dependencies and one memory
- * boundary kept 382/16. Two short-r7 forms incorrectly collapsed to 24 bytes
- * and were rejected. These finite measurements include length differences;
- * they do not prove those rejected shapes correct or claim source adoption.
- *
- * A second bounded cohort of sixteen forms, baseline included, left the
- * retained result unchanged. Five ordinary mask/zero/high-half/comma forms
- * measured 382/16,34,258; simple tied mask/high-argument boundaries stayed
- * 382/16. A short r7 capture with explicit tied inputs measured 382/48;
- * field-dependent argument boundaries grew to 386..390/171..184. None of
- * those follow-up devices is retained here. Complete EN follow-up trials
- * (command bytes / whole 388-byte bank differences, length included):
- *   baseline: 382/16.
- *   ordinary-mask-after-capture: 382/258.
- *   ordinary-mask-after-guard: 382/34.
- *   ordinary-jingle-zero-local: 382/16.
- *   ordinary-jingle-high-half: 382/16.
- *   ordinary-jingle-comma: 382/16.
- *   mask-tied-after-handoff: 382/16.
- *   jingle-high-tied-target: 382/16.
- *   jingle-high-r0-handoff: 382/16.
- *   jingle-two-field-boundaries: 386/173.
- *   jingle-r0-two-field-boundaries: 386/173.
- *   mask-short-r7-explicit-ties: 382/48.
- *   jingle-high-r0-earlyclobber: 382/16.
- *   jingle-lower-input-field-boundary: 386/171.
- *   jingle-two-input-only-boundaries: 386/174.
- *   jingle-r0-two-input-only-boundaries: 390/184.
- * The actual final source body is proved in all six. Current raw listings
- * retain placeholder function names, so ordinary drafts reports this
- * semantic-name proposal as unlisted; complete private links are separate.
- *
- * One saved shared-owner source form was freshly compiled in all twelve
- * editions on2026-10-02. The complete TBS358-byte command remains exact
- * (7 calls,16 symbolic words each). TLA preset4 + command382 still emits
- * 386/native388 and differs16 bytes including the missing zero2 tail,
- * with10 calls and16 symbolic words each. Five editions also lack the
- * proposed physical preset label. The namespace mapping is judgment-only;
- * no shared owner, name, padding, linker row or C credit was adopted.
- * This single form did not improve the retained canonical near miss.
- *
- * SongEntry, PlayerSlot and SoundPlayer are the current shared typed owners.
- * The busy capture is released to an ordinary local before every later call.
- */
 #include "AUDIO_ENGINE.H"
 
 struct AudioFrameState {
@@ -87,8 +27,6 @@ void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume);
 void Audio_PlaySound(u16 cue);
 void Sound_LoadPresetParameters(s32 preset);
 
-/* The native neighbor returns preset 3 and ignores the incoming cue argument.
- * Keep the argument because the command passes it in the native ABI. */
 s32 AudioCommand_GetDefaultPreset(s32 cue)
 {
     return 3;

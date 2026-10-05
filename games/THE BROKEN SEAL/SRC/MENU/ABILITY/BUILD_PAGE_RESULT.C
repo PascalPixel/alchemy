@@ -3,7 +3,6 @@
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
 
-
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {
     s32 owner_state;

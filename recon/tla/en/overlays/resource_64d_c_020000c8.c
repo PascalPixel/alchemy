@@ -1,10 +1,3 @@
-/*
- * Draft: Func_020000c8, overlay 64D's sliding pass for object id between
- * SCENE_TABLES.C (which now ends with VinasuIriguchi_RunActorSparkBurst and VinasuIriguchi_UpdateSparkTrail) and
- * SCENE_EVENTS.C. 31 rows differ: ⚓️ keeps the id in r5, the object in r6
- * and 0 in r8, and builds -96 afresh for each call; this C keeps -96 in a
- * register across the first call. Links as resource_64d .text.x020080c8.
- */
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 

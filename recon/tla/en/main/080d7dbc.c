@@ -2,8 +2,6 @@
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
 
-/* Object updates of the phased radial particle sequence. */
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 extern u32 gFrameTick;

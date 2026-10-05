@@ -1,7 +1,3 @@
-//! DONE (AGENTS.md C2, C3): pret's calcrom over the linker maps of each
-//! game's six verified builds. `make land` measures both games once and
-//! writes the measurement and decomp.dev report the push uploads; CI
-//! records that measurement and draws both figures on the progress branch.
 pub(crate) mod boxtree;
 pub(crate) mod calcrom;
 pub(crate) mod decomp;
@@ -51,8 +47,6 @@ pub fn commas(value: i64) -> String {
     out
 }
 
-/// A share as a percentage to two decimals, rounded down, so 100% is shown
-/// only when every byte is done.
 pub fn floor_percent(n: i64, d: i64) -> f64 {
     if d == 0 {
         0.0
@@ -61,8 +55,6 @@ pub fn floor_percent(n: i64, d: i64) -> f64 {
     }
 }
 
-/// Both games, each in all six editions together, measured at once:
-/// ☀️ from `tbs-en` and ⚓️ from `tla-en`, or why each is pending.
 pub(crate) fn measure_both(root: &Path) -> Result<[Result<Game, String>; 2], String> {
     let [sun, anchor] = std::thread::scope(|scope| {
         ["tbs-en", "tla-en"]
@@ -76,8 +68,6 @@ pub(crate) fn measure_both(root: &Path) -> Result<[Result<Game, String>; 2], Str
     Ok([sun?, anchor?])
 }
 
-/// ☀️ The Broken Seal and ⚓️ The Lost Age, each DONE in all six of its
-/// editions together and pending until six byte-identical builds measure it.
 fn status(games: &[Result<Game, String>; 2]) -> String {
     let (sun, anchor) = done(games);
     status_line(sun, anchor)
@@ -94,7 +84,6 @@ fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
 }
 const MEASUREMENT_HEADER: &str =
     "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers";
-/// The measurement a push carries to CI: each verified game's DONE parts.
 fn measurement_text(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let mut text = format!("{MEASUREMENT_HEADER}\n");
     for (game, done) in [("tbs", sun), ("tla", anchor)] {
@@ -183,8 +172,6 @@ mod tests {
         assert!(parse_measurement(&format!("{text}tla\t1\t2\n")).is_err());
     }
 }
-/// Both figures as the history's recorded figure date draws them; the map
-/// draws the files `root` tracks.
 fn render_figures(
     root: &Path,
     history: &history::History,
@@ -193,9 +180,6 @@ fn render_figures(
     let chart = figure::chart(&letters, &history::as_drawn(history));
     Ok((chart, figure::map(&letters, root)))
 }
-/// CI: record a pushed measurement in `directory`'s history, count every
-/// day after the frozen model table from main's commits, and draw both
-/// figures beside it.
 fn publish_figures(root: &Path, measurement: &Path, directory: &Path) -> Result<String, String> {
     let [sun, anchor] = parse_measurement(&read(measurement)?)?;
     let path = directory.join("history.tsv");
@@ -237,8 +221,6 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
 }
 
-/// `make land`: both games measured once, the measurement and the
-/// decomp.dev report written from that one count for the push to upload.
 pub(crate) fn report(root: &Path) -> Result<String, String> {
     let games = measure_both(root)?;
     let (sun, anchor) = done(&games);

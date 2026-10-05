@@ -1,8 +1,6 @@
 #include "FIELDOBJ.H"
 #include "PROBE.H"
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
     work->sprite->priority = mode;

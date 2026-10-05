@@ -21,8 +21,6 @@ s32 OverlayObject_PrepareObjectWithCommand15();
 void OverlayObject_WaitUntilIdle();
 void Engine_ActorStartAction();
 
-/* The first bridge slides beneath the leader while its map columns are
- * copied into place and dust trails along the moving edge. */
 void VinasuHeya_ShiftBridge(void)
 {
     struct EffectOptions options;
@@ -91,9 +89,6 @@ void VinasuHeya_ShiftBridge(void)
     }
 }
 
-/* Venus Lighthouse room: when actor 9 stands on cell (46, 45) and flag 0x301
- * is clear, push it through, shift the map cells, release actor 10 and set
- * the flag. */
 void VinasuHeya_RunCellPushScene(void)
 {
     u8 *flags;

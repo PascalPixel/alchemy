@@ -5,18 +5,12 @@
 #ifndef ALCHEMY_STATUE_HALL_H
 #define ALCHEMY_STATUE_HALL_H
 
-/* Declarations shared by the Sol Sanctum statue hall scene sources. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/*
- * The two statues at the head of the statue hall each shine a beam of light
- * into the floor; once both shine, the floor flickers and a hole opens.
- */
 enum StatueHallFlag {
     FLAG_STATUE_TRAP_SPRUNG = 0x813,
-    /* The beams drawn at map columns 15 and 17. */
     FLAG_LEFT_BEAM_SHINING = 0x816,
     FLAG_RIGHT_BEAM_SHINING = 0x817
 };
@@ -45,11 +39,8 @@ extern u8 SceneEventRuntime_MessageData[];
 extern u8 SceneEventRuntime_ActorData[];
 extern u8 SceneEventRuntime_EffectData[];
 extern s32 SoruSekizo_ScrollPhase;
-/* The saved game as halfwords. */
 extern u16 gCell[][1];
 
-/* The seal scene the guarded steps fill in (OPEN_SEAL.C), the rows of
- * scrolling sprites that follow it, and their graphics in the overlay's data. */
 struct SealScene;
 extern struct SealScene gSealScene;
 extern const u8 SoruSekizo_SpriteRowsGfx[];
@@ -69,13 +60,6 @@ void Scene_ShineLeftBeam(void);
 void Scene_ShineRightBeam(void);
 void SoruSekizo_OpenSeal(void);
 
-/* Scene-record accessor. */
-
-/* Argument shared by every configuration call below. */
-
-/* Condition code passed to the gating check; the body below runs only when
- * that check reports 0. */
-
 s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z);
 
 static __inline__ void ConfigureScene(s32 actor, s32 x, s32 y, s32 mode)
@@ -90,7 +74,6 @@ static __inline__ void SoruSekizo_ConfigureAlternateCell(s32 actor, s32 x, s32 y
     SetMapCellCollision(actor, x, y, mode);
 }
 
-/* Functions of the overlay's other sources. */
 u8 *SceneEventRuntime_GetScriptData(void);
 s32 SceneEventRuntime_ReturnZero(void);
 u8 *SceneEventRuntime_GetMessageData(void);

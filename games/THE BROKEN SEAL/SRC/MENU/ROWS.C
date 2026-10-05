@@ -9,7 +9,6 @@
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
 
-/* menu/draw/draw_selection_row.c */
 struct Work;
 void RenderOutput_PrepareForRedraw();
 void UiText_DrawNumber(s32 n, s32 digits, s32 work, s32 x, s32 y);
@@ -19,7 +18,6 @@ extern u8 MsgDebugEntryName[];
 extern u8 MsgDebugCategoryName[];
 extern u8 Menu_ColonString[];
 
-/* menu/sel/run_selection.c */
 struct MenuDefaults {
     u8 padding_000[0x1C8];
     s16 primary;
@@ -102,7 +100,6 @@ s16 Menu_RunSelection(void)
     }
 }
 
-/* Menu rows: step the value or its sub-value with the direction and shoulder keys, returning -1 on A and -2 on B. */
 s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode_arg)
 {
     register s16 *mode asm("r0") = mode_arg; /* FAKEMATCH: keeps the mode pointer in r0 */

@@ -12,14 +12,10 @@ extern const u8 SentouKouka_Tenkai[];
 extern u8 SentouKouka_TenkaiCodeSize[];
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
 
-/* The decoder returns a value this caller ignores. */
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
 
 extern u32 gFrameTick;
 
-/* Load the background character block and its palette, or the second
- * block/bank when alternate is set; resource 0 clears them. Copy the packed
- * decoder to heap block 49 and run it there; queue the palette for next frame. */
 void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
 {
     /* FAKEMATCH: the inline queue write keeps the one-pass IME read and u16 count-store scheduling. */
@@ -108,7 +104,7 @@ void DisplayScroll_BuildHblankWordTable(u32 *arg0)
 void DisplayScroll_StepPositionEveryFourFrames(void)
 {
     if ((gFrameTick & 3) == 0) {
-        u32 decrement = 0xffff; /* one step back in the 16-bit positions */
+        u32 decrement = 0xffff;
 
         gBgScroll[2].x += decrement;
         gBgScroll[3].x += decrement;
@@ -135,9 +131,6 @@ void WaitFrames(s32 frames);
         (reg) = value_; \
     } while (0)
 
-/* Shows the 33 slides, crossfading each into the other background over 16
-   steps of four frames and holding it 267 frames, then restores the menu
-   display. */
 s32 DisplayScroll_RunSlideshow(void)
 {
     u32 slide;

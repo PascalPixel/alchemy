@@ -22,7 +22,6 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
 
 u32 Resource_DecodeByteLz(const void *, void *);
 
-
 s32 Menu_SelectResource(s32 start, s32 goal)
 {
     s16 resource_base;
@@ -80,7 +79,6 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
     void *buffer = (void *)Runtime_BumpAllocate(size);
     u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-    /* 表内の相対位置から転送元を求める。 */
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
     VramBlock_LoadCached(slot, size, buffer);
     Runtime_BumpFree(buffer);
@@ -109,8 +107,6 @@ void Menu_AppendResourceEntry(s32 no)
     }
 }
 
-/* Lays the menu's entries out three tiles apart on the given tile row,
-   centred with the window for their text, and opens that window. */
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
 {
     struct ResourceMenuWork *menu = ((struct ResourceMenuWork *)gMenuSelectWork);

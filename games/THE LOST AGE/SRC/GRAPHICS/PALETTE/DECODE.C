@@ -4,8 +4,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Each stream decoder is ARM code behind a Thumb entry that runs from a
-   heap copy of itself; the copy lengths are link-time symbols. */
 extern const u8 Resource_Decode01Code[];
 extern const u8 Resource_Decode2Code[];
 extern const u8 Resource_DecodeByteLzCode[];
@@ -13,7 +11,6 @@ extern u8 Resource_Decode01CodeSize[];
 extern u8 Resource_Decode2CodeSize[];
 extern u8 Resource_DecodeByteLzCodeSize[];
 
-/* Decodes stream types 0 and 1 (DECODE_01.S). */
 s32 Resource_DecodeType01(const void *source, void *destination)
 {
     s32 (*routine)(const void *, void *);
@@ -34,7 +31,6 @@ s32 Resource_DecodeType01(const void *source, void *destination)
     return result;
 }
 
-/* Decodes stream type 2 (DECODE_2.S to DECODE_2_LOOP.S). */
 s32 Resource_DecodeType2(const void *source, void *destination)
 {
     s32 (*routine)(const void *, void *);
@@ -55,7 +51,6 @@ s32 Resource_DecodeType2(const void *source, void *destination)
     return result;
 }
 
-/* Decodes byte LZ streams (DECODE_BYTE_LZ.S). */
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination)
 {
     s32 (*routine)(const void *, void *);

@@ -1,7 +1,3 @@
-@ 16.16 fixed-point multiply of the resident runtime: smull, then the middle
-@ 32 bits of the 64-bit product in r0. These 16 bytes equal TLA
-@ SYSTEM/IWRAM_RUNTIME_MUL_Q16.S (0x080007d8) byte for byte.
-@ credit: library — TBS/TLA common IWRAM runtime 16.16 multiply
 .syntax unified
 	.arm
 

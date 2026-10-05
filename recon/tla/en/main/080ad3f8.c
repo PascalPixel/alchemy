@@ -1,121 +1,106 @@
 #include "RUNTIME_MEM.H"
-/*
- * Draft: Owner_RecalculateStats from the ☀️ source does not yet match ⚓️;
- * the ⚓️ body is about a quarter different (other stat offsets and a
- * shorter body). Links as recon/tla/raw/080ad3f8.s. Canonical owner and
- * Djinn getter declarations retain score 6335 (125 differing instructions).
- * Runtime_BumpFree is unresolved: this is a symbol-name comparison only.
- */
 #include "TYPES.H"
 #include "ITEM.H"
 #include "GAME_FLAGS.H"
 #include "OWNER_STATE.H"
 
-/* One party member's stored state: base statistics, derived statistics
-   and what the recalculation reads from equipment, Djinn and class. */
 struct OwnerStats {
     u8 unknown_000[0x10];
-    s16 base_hp;                /* 0x10 */
-    s16 base_pp;                /* 0x12 */
-    s16 hp_ratio;               /* 0x14 current/maximum HP, Q14 */
-    s16 pp_ratio;               /* 0x16 current/maximum PP, Q14 */
-    u16 base_attack;            /* 0x18 */
-    u16 base_defense;           /* 0x1a */
-    u16 base_agility;           /* 0x1c */
-    u8 base_luck;               /* 0x1e */
-    u8 base_turns;              /* 0x1f low nibble */
-    u8 base_20;                 /* 0x20 */
-    u8 base_21;                 /* 0x21 */
+    s16 base_hp;
+    s16 base_pp;
+    s16 hp_ratio;
+    s16 pp_ratio;
+    u16 base_attack;
+    u16 base_defense;
+    u16 base_agility;
+    u8 base_luck;
+    u8 base_turns;
+    u8 base_20;
+    u8 base_21;
     u8 unknown_022[2];
-    s16 base_element[4][2];     /* 0x24 power, resistance */
-    s16 max_hp;                 /* 0x34 */
-    s16 max_pp;                 /* 0x36 */
-    s16 hp;                     /* 0x38 */
-    s16 pp;                     /* 0x3a */
-    s16 attack;                 /* 0x3c */
-    s16 defense;                /* 0x3e */
-    s16 agility;                /* 0x40 */
-    u8 luck;                    /* 0x42 */
-    u8 turns;                   /* 0x43 */
-    u8 stat_44;                 /* 0x44 */
-    u8 stat_45;                 /* 0x45 */
+    s16 base_element[4][2];
+    s16 max_hp;
+    s16 max_pp;
+    s16 hp;
+    s16 pp;
+    s16 attack;
+    s16 defense;
+    s16 agility;
+    u8 luck;
+    u8 turns;
+    u8 stat_44;
+    u8 stat_45;
     u8 unknown_046[2];
-    s16 element[4][2];          /* 0x48 */
+    s16 element[4][2];
     u8 unknown_058[0x80];
-    u16 equipment[15];          /* 0xd8 */
+    u16 equipment[15];
     u8 unknown_0f6[0x12];
-    u32 djinn[4];               /* 0x108 */
+    u32 djinn[4];
     u8 unknown_118[0x10];
-    u8 character;               /* 0x128 */
-    u8 class_id;                /* 0x129 */
+    u8 character;
+    u8 class_id;
     u8 unknown_12a[2];
-    s8 element_level[4];        /* 0x12c */
-    s8 curse;                   /* 0x130 */
+    s8 element_level[4];
+    s8 curse;
     u8 unknown_131[2];
-    s8 attack_level;            /* 0x133 */
+    s8 attack_level;
     u8 unknown_134;
-    s8 defense_level;           /* 0x135 */
+    s8 defense_level;
     u8 unknown_136;
-    s8 resist_level;            /* 0x137 */
+    s8 resist_level;
     u8 unknown_138[3];
     u8 unknown_13b[7];
-    u8 bonus_142;               /* 0x142 */
-    u8 bonus_143;               /* 0x143 */
-    u8 extra_turn;              /* 0x144 */
+    u8 bonus_142;
+    u8 bonus_143;
+    u8 extra_turn;
     u8 unknown_145[2];
-    s8 agility_level;           /* 0x147 */
+    s8 agility_level;
 };
 
-/* Djinn definition: the statistic bonuses it adds while set. */
 struct DjinnDefinition {
     u8 unknown_00[4];
-    s8 hp;                      /* 0x04 */
-    s8 pp;                      /* 0x05 */
-    s8 attack;                  /* 0x06 */
-    s8 defense;                 /* 0x07 */
-    s8 agility;                 /* 0x08 */
-    s8 luck;                    /* 0x09 */
+    s8 hp;
+    s8 pp;
+    s8 attack;
+    s8 defense;
+    s8 agility;
+    s8 luck;
 };
 
-/* Class record: statistic multipliers in tenths. */
 struct ClassRecord {
     u8 unknown_00[8];
-    u8 hp;                      /* 0x08 */
-    u8 pp;                      /* 0x09 */
-    u8 attack;                  /* 0x0a */
-    u8 defense;                 /* 0x0b */
-    u8 agility;                 /* 0x0c */
-    u8 luck;                    /* 0x0d */
+    u8 hp;
+    u8 pp;
+    u8 attack;
+    u8 defense;
+    u8 agility;
+    u8 luck;
 };
 
 struct StatWork {
-    s32 hp;                     /* 0x00 */
-    s32 pp;                     /* 0x04 */
-    s32 attack;                 /* 0x08 */
-    s32 defense;                /* 0x0c */
-    s32 agility;                /* 0x10 */
+    s32 hp;
+    s32 pp;
+    s32 attack;
+    s32 defense;
+    s32 agility;
     s32 unused_14;
-    s32 luck;                   /* 0x18 */
-    s32 turns;                  /* 0x1c */
-    s32 stat_20;                /* 0x20 */
-    s32 stat_24;                /* 0x24 */
-    s32 element[4][2];          /* 0x28 */
-    s32 kind;                   /* 0x48 */
+    s32 luck;
+    s32 turns;
+    s32 stat_20;
+    s32 stat_24;
+    s32 element[4][2];
+    s32 kind;
     s32 unused_4c[2];
-    s32 amount;                 /* 0x54 */
-    struct ItemDefinition *item; /* 0x58 */
+    s32 amount;
+    struct ItemDefinition *item;
     s32 unused_5c;
 };
 
 struct ClassRecord *Owner_GetRecordStride84(s32 class_id);
 s32 __divsi3(s32 numerator, s32 denominator);
 
-/* Distance between a stored value and one recomputed from its ratio. */
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-/* Rebuilds a party member's derived statistics from the base values,
-   equipped items, set Djinn, class multipliers and levels, clamps them and
-   rescales current HP and PP to the new maxima. */
 void Owner_RecalculateStats(s32 owner)
 {
     struct StatWork *work;
@@ -284,7 +269,7 @@ void Owner_RecalculateStats(s32 owner)
                 kind = work->item->effects[j].kind;
                 amount = work->item->effects[j].amount;
                 work->kind = kind;
-                kind -= 7; /* rate effects 7..14 scale a statistic in tenths */
+                kind -= 7;
                 work->amount = amount;
                 switch (kind) {
                 case 0:

@@ -32,9 +32,6 @@ pub fn quoted_include(line: &str) -> Option<&str> {
     Some(rest.split_once('"')?.0)
 }
 
-/// A checkout's commands as a cache identity: its own root spelled
-/// `<root>`, as the runtime cache spells it, so every worktree shares one
-/// content-addressed cache. The inputs themselves are hashed by content.
 pub fn portable_commands(root: &Path, commands: &[Vec<String>]) -> Vec<Vec<String>> {
     let root = root.to_string_lossy();
     commands
@@ -65,8 +62,6 @@ fn visit(
     }
     active.insert(path.clone());
     let bytes = std::fs::read(&path).map_err(|error| error.to_string())?;
-    // Inside the checkout a file is named from its root, so one source
-    // has one identity in every worktree.
     let name = base
         .and_then(|base| path.strip_prefix(base).ok())
         .unwrap_or(&path);
@@ -107,8 +102,6 @@ pub fn compiler_source_tree_signature(
     let mut seen = BTreeSet::new();
     let mut active = BTreeSet::new();
     visit(base, &source, &dirs, &mut seen, &mut active, &mut hash)?;
-    // A forced include is a compiler input even though the C file does not
-    // include it; its contents, not its name, are the identity.
     for command in commands {
         for pair in command.windows(2) {
             if pair[0] == "-include" {

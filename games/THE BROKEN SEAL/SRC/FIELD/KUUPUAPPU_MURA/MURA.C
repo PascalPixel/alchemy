@@ -74,7 +74,6 @@ struct OverlayEffectMotion {
 extern u8 *Data_03001e8c[];
 extern u8 *gWork;
 
-/* The scene's tables, laid out after the code. */
 extern u8 KuupuappuMura_Scripts[];
 extern u8 KuupuappuMura_Messages[];
 extern u8 KuupuappuMura_Actors[];
@@ -82,7 +81,6 @@ extern u8 KuupuappuMura_ActorsFlag855[];
 extern u8 KuupuappuMura_Extras[];
 extern u8 KuupuappuMura_ExtrasFlag855[];
 
-/* Map cell steps played as the leader arrives in each scene. */
 extern const u16 KuupuappuMura_Scene5Cells[];
 extern const u16 KuupuappuMura_Scene6Cells[];
 extern const u16 KuupuappuMura_Scene7Cells[];
@@ -140,24 +138,17 @@ extern u8 MsgKuupuappuWhereDidIvanGoBy[];
 extern u8 MsgKuupuappuWithRoadOutOnlyWay[];
 extern u8 MsgKuupuappuYoureHittingRoadAgain[];
 
-/*
- * Per-frame callback for one actor record, installed into field +0x6c of
- * actors 14 and 15 by the overlay initialiser. Always returns 0. The work
- * pointer table holds the scene record at entry 0 and the scene work at
- * entry 12, the same pointer the rest of this overlay reads as gWork.
- */
 s32 SceneActor_UpdateProximityToLeader(u8 *self)
 {
     u8 **globals = Data_03001e8c;
     u8 *scene = globals[0];
-    u8 *workspace = globals[12];        /* the scene work, gWork */
+    u8 *workspace = globals[12];
     u16 *flags = (u16 *)(self + 100);
     s32 force = 0;
     s32 range = 18;
     struct FieldActor *partner;
     struct FieldActor *player;
 
-    /* Bit 0 of the actor's flag halfword selects which partner to test. */
     if ((*flags & 1) != 0) {
         partner = Object_GetById(15);
     } else {
@@ -169,10 +160,6 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
 
     player = Object_GetById(ACTOR_PARTY_LEADER);
 
-    /*
-     * Widen the range when the scene counter at workspace + 376 is already
-     * running, or when the render mode byte is set.
-     */
     if (*(s16 *)(workspace + 376) != 0 || scene[RENDER_MODE_OFS] != 0) {
         range = 26;
         if ((*flags & 2) != 0) {
@@ -231,7 +218,6 @@ int KuupuappuMura_GetIwanVenusDjinnCount(void)
     return ((struct BattleUnit *)Owner_GetState(2))->djinn_owned_counts[0];
 }
 
-/* Return the scene result while its flag is set. */
 s32 OverlayObject_RunObject2WhenFlagged(void)
 {
     BattlePlacement_UpdateTimedEntriesTwentyTimes();
@@ -243,7 +229,6 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
     }
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
 void KuupuappuMura_SayFarewellToIvan(void)
 {
     struct FieldActor *record;
@@ -417,7 +402,6 @@ void ActorPresentation_RunActorFifteenDialogue(void)
     actor->presentation_flags &= 1;
 }
 
-/* The villager who cannot find the man meant to be fixing the roof. */
 void Villager_LookForRoofer(void)
 {
     Engine_EventBegin();
@@ -429,12 +413,6 @@ void Villager_LookForRoofer(void)
     Engine_EventEnd();
 }
 
-/*
- * Kuupuappu scene steps after the roof dialogue: actor lines and the
- * leader's arrival in scenes five to ten.
- */
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
 void SceneActor_RunActorStep(int actor)
 {
     void Engine_EventShowMessage(int, int);

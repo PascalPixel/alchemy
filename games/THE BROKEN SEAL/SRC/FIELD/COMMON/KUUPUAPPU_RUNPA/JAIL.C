@@ -14,13 +14,6 @@ extern u8 MsgKuupuappuThiefLeaderThoughts[];
 extern u8 MsgKuupuappuPrisonerRegretsFight[];
 extern u8 MsgKuupuappuPrisonerThoughts[];
 
-/*
- * The jail cell on the underground way between the Vault and Lunpa. While
- * the Vault thieves are locked up, the three of them sit in the cell; after
- * the party returns from the later Vault, a lone prisoner has taken their
- * place.
- */
-
 enum JailEntrance {
     JAIL_ENTRANCE_FROM_VAULT = 1,
     JAIL_ENTRANCE_FROM_LUNPA = 2,
@@ -33,7 +26,6 @@ enum JailExit {
     JAIL_EXIT_TO_LUNPA = 3
 };
 
-/* Each exit arrives at the destination scene's entrance from the jail. */
 enum {
     ENTRANCE_FROM_JAIL = 12
 };
@@ -71,7 +63,6 @@ enum JailSprite {
     SPRITE_PRISONER = 0x74
 };
 
-/* The collision flags set on whoever sits in the cell. */
 enum {
     CELL_COLLISION_FLAGS = 0x14
 };
@@ -114,8 +105,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gJailThiefEvents;
 }
 
-/* The leader looks at each of his men and silences them, then turns to the
-   party and speaks again. */
 void ThiefLeader_Talk(void)
 {
     Engine_EventBegin();

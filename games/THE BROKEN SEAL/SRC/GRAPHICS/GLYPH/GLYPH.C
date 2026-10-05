@@ -21,10 +21,8 @@ extern const u8 Tile_Decompress4bpp[];
 extern const u8 Tile_ExpandMasked[];
 extern const u8 Tile_ExpandOpaque[];
 
-/* Heap block addresses, indexed by block number. */
 extern void *gWorkSlot[64];
 
-/* ARM routines copied into heap block 49 before each call. */
 extern u8 Tile_Decompress4bppCodeSize[];
 extern u8 Tile_ExpandMaskedCodeSize[];
 extern u8 Tile_ExpandOpaqueCodeSize[];
@@ -48,8 +46,6 @@ struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
 void Menu_LoadSelectedResource(void);
 
-/* ui/icon/build_ability_icon_tiles.c */
-/* ui/icon/icon_build_ability_icon_tiles.c */
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
                    s32 *dst, s32 reuse)
 {
@@ -117,8 +113,6 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
     Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, REG_DMA3);
 }
 
-/* An empty routine between the glyph loader and decoder; nothing in the
-   main image calls it by name. */
 void UiGlyph_ReservedNoOp(void)
 {
 }
@@ -164,7 +158,6 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);
 }
 
-/* The cursor subrecord is shared by the paired row resets. */
 void UiGlyph_ResetWorkState(void)
 {
     struct SelectionScreen *work;
@@ -239,8 +232,6 @@ void Resource_PushPendingPair(u32 first, u32 second)
     }
 }
 
-/* Link up to five of the selection screen's options into its node list,
-   then place the nodes around the screen's centred x. */
 void MenuSelection_BuildEntries(void)
 {
     struct SelectionScreen *screen = gResQueueWork;

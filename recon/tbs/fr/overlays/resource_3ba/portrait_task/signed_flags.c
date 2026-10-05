@@ -1,28 +1,11 @@
-/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
- * and canonical resource/allocator contracts. Earlier measurements are
- * prior checkpoints; fresh complete-object comparison is pending. */
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
-/* NONMATCHING: French Colosso signed sprite flags, 2026-10-01.
- * A signed flags local preserves the two-sprite callback extent of 1312
- * bytes but leaves eleven instruction bytes with exchanged spill slots.
- */
 #include "TBS_EDITION.H"
-/* Colosso: decode the portrait sheet into a scratch block, copy portrait
- * id's palette into object palette 15 and its 1 KB of tiles into the cached
- * VRAM slot (claimed on first use). Portrait 8 shares tiles with 4. The same
- * function sits in each of the three Colosso trial overlays. */
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
 #include "CALL.H"
-/* Colosso: the trial overlays' scripted sprite task. Each frame it runs the
- * mode script's commands until a wait, interpolates the sprite's scale, the
- * blend and the horizontal position toward their targets, draws the mode's
- * sprites through an affine matrix and queues the blend registers. The same
- * function sits in each of the three Colosso trial overlays, with its
- * variables in each overlay's own work. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"

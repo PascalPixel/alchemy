@@ -1,9 +1,3 @@
-/*
- * Draft: Object_IsOutsideAnimation108 does not yet match; the reference
- * computes x != 0x108 branch-free (eors/negs/orrs/lsrs) after an early
- * return of 1 for a null current frame; this version branches.
- * Links as its recon/tla/raw listing.
- */
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
@@ -12,8 +6,6 @@ struct ObjectAnimationState {
     s16 *current;
 };
 
-/* Whether an object is not playing animation 0x108; an object without a
-   sprite animation counts as not playing it. */
 s32 Object_IsOutsideAnimation108(struct ObjectRuntime *object)
 {
     struct ObjectAnimationState *state;

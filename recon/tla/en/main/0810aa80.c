@@ -17,8 +17,6 @@ void Sanctum_RunPartyService(void);
 s32 Menu_SelectEntry19To1cFar(s32 prev);
 void UiWork_FinalizeFar(s32 window, s32 style);
 
-/* Run the shop's yes/no party-action confirmation prompt for one unit. */
-
 s32 Shop_ConfirmAct(s32 unit_id)
 {
     s32 party_action = 0;

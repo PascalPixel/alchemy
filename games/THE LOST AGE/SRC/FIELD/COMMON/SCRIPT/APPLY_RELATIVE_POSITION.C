@@ -2,7 +2,6 @@
 
 void Object_SetMoveTarget(void *, s32, s32, s32);
 
-/* Moves the object by the three offsets the command carries. */
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
 {
     const s32 *cursor = object->script + (s16)object->script_cursor + 1;

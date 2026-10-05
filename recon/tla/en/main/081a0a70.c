@@ -1,9 +1,3 @@
-/* Near miss: DisplayScroll_InitObjectTable, ☀️'s source over ⚓️'s intro
-   crawl cells, differ 12 under the ARM9TDMI schedule: three pool loads
-   (the object cell, the third strip's attributes and the position cell)
-   come one instruction earlier in the native than here, as in the other
-   load-first gaps. ⚓️ schedules the object step at 0xc80 and the line
-   renderer at 0x480. Joins DISPLAY6.C on a match. */
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"

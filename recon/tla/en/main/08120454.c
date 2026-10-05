@@ -1,23 +1,4 @@
 #include "RUNTIME_MEM.H"
-/* 2026-10-03: the four unit modifier bytes now use element_modifier.
- * This draft still cannot compile because seven old battle/runtime headers
- * it includes are missing. Native comparison awaits their migration; the
- * previous measured residual below is retained. */
-/* Draft, not exact (2026-09-30, Mars): ⚓️'s Battle_ResolveTargetAction,
- * the twin of ☀️'s 080bbb0c (games/THE BROKEN SEAL/SRC/BATTLE/
- * ACTION_RESOLVE_TARGET_ACTION.C), at 08120454 (recon/tla/raw/08120454.s;
- * ja 08120450, de 0812046c). It compiles under ⚓️'s route against the
- * shared battle headers; `alchemy permute --target tla-en` scores it 17155
- * (130 register-only, 103 operand, 95 reordered, 50 inserted, 37 deleted).
- * Remaining: the IWRAM copy at 0x03000730 is called as `mov lr, r3` and a
- * bare BL low half, which agscc cannot emit (it calls _call_via_r3; about
- * 2000 ⚓️ call sites share this, a compiler question for Pascal); the
- * listing loads bytes with ldrb where the draft sign-extends s8 fields;
- * the listing calls Owner_RecalculateRatiosFar seven times where the draft
- * calls it five; and the shared text tails (.L_08122326, .L_081223ba) are
- * reached by different paths. The helper macros and hook bodies are
- * expanded inline here; fold them back into shared code once both games
- * compile from one source. */
 #include "../../../../games/THE LOST AGE/INCLUDE/TYPES.H"
 #include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_ACTOR.H"
 #include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_CALC.H"

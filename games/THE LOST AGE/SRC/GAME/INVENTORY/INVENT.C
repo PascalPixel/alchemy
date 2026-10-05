@@ -2,14 +2,10 @@
 #include "OBJECT_RUNTIME.H"
 #include "SYSTEM.H"
 
-/* Empty inventory hook. */
 void Inventory_ReservedNoOp(void)
 {
 }
 
-/* Waits up to 90 frames for an object's animation record to leave frame
-   value. ⚓️'s record keeps its last frame number at 0x18, twelve bytes
-   before ☀️'s, and the loop reads it through the record each frame. */
 void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 {
     struct ObjectRuntime *obj = ObjectTable_Get(object_id);

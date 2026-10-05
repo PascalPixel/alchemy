@@ -32,7 +32,6 @@ struct ElementLevelBonus {
 
 extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
 
-/* Elemental power less resistance, from +200 down to -200, and its bonus. */
 extern const s16 Element_PowerResistCurve[5][2];
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 
@@ -43,8 +42,6 @@ s32 Owner_RefreshClassActions(s32);
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 s32 Owner_DetermineClass(s32 character, const u8 *djinn);
 
-/* The mark after a repeated enemy's name: a letter from A in Japanese, a
-   digit from 1 in the localizations. */
 #if EDITION_INTERNATIONAL
 #define ENEMY_SUFFIX_FIRST '1'
 #define ENEMY_SUFFIX_LAST 8
@@ -66,10 +63,6 @@ static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 siz
     clear(destination, size);
 }
 
-/* Fill battle unit 128..134 from an enemy's definition and name it, with a
-   mark after the name when the battle holds the same enemy more than
-   once. The enemy carries each item of its definition as many times as the
-   definition counts, and enemies 158..171 fight on the second side. */
 s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
 {
     struct BattleUnit *unit;
@@ -413,9 +406,6 @@ copied:
     return result;
 }
 
-/* The class a character holds with the given set Djinn: the two strongest
-   elements pick the class series, and the last class of that series whose
-   element requirements are met wins. Some characters have fixed classes. */
 s32 Owner_DetermineClass(s32 character, const u8 *djinn)
 {
     s32 levels[4];
@@ -423,7 +413,7 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn)
     s32 best;
     s32 series;
     s32 result;
-    s32 j; /* the second element, then each requirement */
+    s32 j;
     s32 i;
 
     result = -1;
@@ -488,8 +478,6 @@ void Owner_RefreshDerivedData(s32 owner_no)
     Owner_CalculateBaseElements(owner_no, (s16 (*)[2])owner->base_elements);
 }
 
-/* The elemental bonus for a power less resistance, read off the curve between
-   its two nearest points: 0x100 plus the curve's value, or plus half of it. */
 s32 Curve_LookupScaledValue(s32 input, s32 halve)
 {
     s32 min;

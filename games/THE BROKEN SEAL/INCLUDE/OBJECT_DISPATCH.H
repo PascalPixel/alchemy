@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-/* 種別1は単体、種別2は4個の子要素を指す。 */
 struct DispatchObject {
     u32 value_00;
     s16 value_04;

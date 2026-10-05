@@ -4,8 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* Heap slot 30. The field constructors clear the whole block and build
-   two pictures and their per-frame difference; the storm task plays them. */
 struct FieldBlendWork {
     s16 from[0x540];
     s16 to[0x540];

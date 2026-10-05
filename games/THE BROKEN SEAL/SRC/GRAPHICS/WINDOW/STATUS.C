@@ -14,8 +14,6 @@
 #include "MENU_LIST.H"
 #include "BATTLE_RUNTIME.H"
 
-/* The eight-pixel row `up` rows above the bottom row of a background tile
-   in the first character block. */
 #define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
 s32 Runtime_GetLowTableAddress(void);
@@ -40,9 +38,6 @@ extern s32 Party_CountActiveOwnersFar(void);
 void UiWindow_BuildLayoutBounds(s32 flags);
 void UiWindow_DrawPartyStatusContents(s32);
 
-/* With no scene loaded, fills the 160-entry buffer with 0xe0e0; otherwise
-   copies the metatile builder into RAM and runs it over the buffer and the
-   scene record. */
 void UiWindow_FillFromScene(void *dst)
 {
     void *scene = gWindowWork[0];
@@ -135,10 +130,6 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     *busy = zero;
 }
 
-/* Draws the dividers between the party columns of a status window: a
-   joint on the top row, a foot on the bottom row and a bar between. The
-   wide layout shifts every divider five tiles and adds the leftmost one.
-   In the menu the bottom edge is then redrawn as a plain border. */
 void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
 {
     struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
@@ -186,11 +177,6 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
     canvas->dirty = 1;
 }
 
-/* Recolours one five-tile status bar in place: value pixels of forty are
-   filled. In each tile's bottom row, or its bottom three rows for a bar
-   that is not empty, the bar colour 14 and its shadow 1 become 8 and 13
-   where filled and 2 and 12 where empty. Outside the menu it first loads
-   the bar palette. */
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
 {
     /* FAKEMATCH: the ignored integer result keeps the return-address pop in r1; void selects r0. */
@@ -252,15 +238,9 @@ void UiText_DrawStringAtOffset(u8 *, struct RenderInput *, s32, s32);
 s32 BattlePlacement_CountValidEntriesFar(s32, u8 *);
 s32 __divsi3(s32, s32);
 void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
-/* Both are called as functions returning int, and the glyph call passes
-   four arguments: the game's code had no prototype for either in scope. */
 s32 UiText_DrawPrefixedNumberAtOffset();
 s32 UiWindow_PutGlyph();
 
-/* Draws the party status window: each active member's name, HP and its
-   bar, PP and its bar on the tall layout, and the four Djinn counts in the
-   wide battle layout. Flags of -1 keep the window's current layout; when
-   the layout changes the window is erased, resized and framed again. */
 void UiWindow_DrawPartyStatusContents(s32 flags)
 {
     void **slot = (void **)Data_03001e90;

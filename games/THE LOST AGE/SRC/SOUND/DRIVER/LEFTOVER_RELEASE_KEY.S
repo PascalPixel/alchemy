@@ -1,9 +1,3 @@
-@ A copy of the sound driver's end-of-tie command in the leftover block of
-@ LEFTOVER_HANDLE_NOTE.S. No bl reaches it and no literal pool names it. The
-@ leaf saves r4 and r5 without lr (push {r4, r5} ... bx lr). These 64 bytes
-@ equal TBS SOUND/DRIVER/RELEASE_KEY.S (0x080fa16c) and TLA RELEASE_KEY.S
-@ (0x081c1e08) byte for byte.
-@ credit: library — TBS/TLA common sound driver end-of-tie command routine
 .syntax unified
 	.thumb
 	.global MusicTrack_ReleaseKeyLeftover

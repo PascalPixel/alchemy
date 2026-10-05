@@ -103,7 +103,6 @@ void *HaidiaHeya_SelectEvents(void)
     return gValeHouseEvents;
 }
 
-/* Run actor 15's scene. */
 void Villager_AskWhySukuretaCame(void)
 {
     Engine_EventBegin();
@@ -113,7 +112,6 @@ void Villager_AskWhySukuretaCame(void)
     Engine_EventEnd();
 }
 
-/* Run actor 19's scene. */
 void Villager_PlanToScareVisitors(void)
 {
     Engine_EventBegin();
@@ -145,7 +143,6 @@ void Scene_GiveFarewellHerb(void)
     Engine_EventEnd();
 }
 
-/* Show actor 16's dialogue. */
 void Villager_AskAboutStrangePowers(void)
 {
     Engine_EventBegin();
@@ -154,7 +151,6 @@ void Villager_AskAboutStrangePowers(void)
     Engine_EventEnd();
 }
 
-/* Show actor 10's dialogue. */
 void Villager_AskAboutDora(void)
 {
     Engine_EventBegin();
@@ -163,7 +159,6 @@ void Villager_AskAboutDora(void)
     Engine_EventEnd();
 }
 
-/* A villager hopes the party did not get sick on its travels. */
 void HaidiaHeya_TalkHopeDidntGetSick(void)
 {
     Engine_EventBegin();
@@ -184,7 +179,6 @@ void HaidiaHeya_RequestWindowExit(s32 value)
     Engine_EventRequestExit(value);
 }
 
-/* Wrappers for the eight numbered scenes. */
 void FieldScene_RunIndexedStep1(void)
 {
     HaidiaHeya_RequestWindowExit(1);

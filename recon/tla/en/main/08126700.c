@@ -11,7 +11,7 @@ void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Graphics_PrepareTransferInIwramWork();
-s32 Render_ProjectPoint(); /* returns a value its callers here ignore */
+s32 Render_ProjectPoint();
 
 /* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
 

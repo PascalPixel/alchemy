@@ -1,8 +1,3 @@
-/* ObjectTable_Restore, after TABLE.C's snapshot: differ 10 with one tagged
-   barrier. Remaining: the preamble schedules count's zero (reused for
-   indices - 31) before the first index load, and the loop tail moves the
-   frames increment; 1,100 device-search steps, a load in the loop test and
-   count set after the load did not improve it. Append to TABLE.C on a match. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "EVENTWRK.H"
@@ -13,13 +8,9 @@
 
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, s32 value);
 
-/* The 32 objects ObjectTable_Snapshot saves; their indices sit in the 32
-   bytes before them and their two frame bytes and priorities after. */
 extern struct ObjectRuntime gSnapshotObjects[];
 
 struct ObjectRuntime *ObjectTable_Get(u32 object_id);
-/* Puts back the objects ObjectTable_Snapshot saved, keeping each live
-   sprite, and re-centres the camera on the controlled member. */
 void ObjectTable_Restore(void)
 {
     struct ObjectRuntime *copy = gSnapshotObjects;

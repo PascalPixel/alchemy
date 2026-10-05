@@ -5,9 +5,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* A transport prefix used by both map modes. This is not an allocation
-   or a complete map owner; each mode keeps its own full record. */
-
 struct MapRenderWork {
     u8 unknown_000[0xfc];
     s8 active;
@@ -15,7 +12,6 @@ struct MapRenderWork {
     s16 first;
     s16 second;
     u8 unknown_104[0x16];
-    /* The rotation sprites on the map turn to. */
     u16 rotation;
 };
 

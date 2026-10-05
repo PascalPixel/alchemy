@@ -201,9 +201,6 @@ void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 void Audio_PlayCue(s32);
 
-/* Runs the open selection from INITIAL: draws the current entry's name
-   (base message plus the index, or command name plus the entry's id), moves
-   with the pad and returns the chosen index, or -1 when cancelled. */
 s32 Menu_RunResourceSelectionLoop(s32 initial)
 {
     struct ResourceMenuWork *work = gMenuSelectWork;

@@ -1,9 +1,3 @@
-/* Draft: Kalay middle scene initialization.
- * 2026-10-01: The international late flag512 update leaves the Japanese
- * complete owner4 bytes long and preserves a different scene-record
- * lifetime. Japanese sets flag512 before testing flag265.
- * Approved TBS flags, no output changes.
- */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -17,7 +11,6 @@
 #define SCENE_FIELD_1C0 (*(s32 *)(*(u8 **)Data_03001ebc + 0x1c0))
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
@@ -253,8 +246,6 @@ extern s32 KareiMachi_DanceStep;
 extern u8 KareiMachi_DanceScriptA[];
 void Engine_ActorEnableActionCallback();
 
-/* Each clear builds its own zero; a shared zero variable would live in r5
- * across the calls. */
 static __inline__ void ClearStep(u8 *a)
 {
     s32 z = 0;
@@ -279,7 +270,6 @@ s32 Object_CreateFar();
 u8 *Battle_GetWorkObject1e0();
 void Object_Destroy(void);
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_0200164c(s32 amount)
 {
     extern u8 Data_03001ebc[];

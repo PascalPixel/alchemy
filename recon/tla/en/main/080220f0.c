@@ -1,4 +1,3 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_PROJECTED_SPRITE.C. */
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -6,8 +5,6 @@
 #include "ANIMSPR.H"
 #include "IWRAM_CALL.H"
 
-/* Places a sprite and its optional shadow from a four-word screen position
-   (x, shadow height, depth, ground) and a two-word scale. */
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
     s32 matrix;

@@ -1,35 +1,11 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
-/* 2026-10-03: the tile-animation declaration now comes from its actual
-   const-u16 script API in MAP.H. Fresh baseline compiled all six editions;
-   the grouped owner-cleanup comparison is pending. Prior score notes below
-   describe the measured source before this declaration-only closure. */
 #include "FIXED_POINT_POSITION.H"
 #include "BATTLE_PRESENTATION.H"
 #include "MAP_SCROLL.H"
 #include "PROJECT.H"
-/* 2026-09-30 (Mercury): EXACT, 864 of 864 bytes with approved agscc with the game build flags and four
-   tagged loop-note FAKEMATCHes. It precedes
-   FIELD/COMMON/MAP/SET_WINDOW_CELL_TILE, so its module is Mars's to choose;
-   compile it under #if defined(TBS_EDITION_EN) until the other editions
-   adopt theirs. */
-/* Exact (2026-09-30): complete 864-byte extent, 0 differing halfwords.
- * The ROM keeps several statement groups in source order where sched2
- * would otherwise hoist constants and argument loads: GCC 2.96 treats a
- * loop note as a scheduling barrier, so four do-while(0) groups (the
- * BG2 PA..PC writes, the rest of the affine block, the vertex-routine DMA
- * and the DISPCNT write) reproduce those barriers. The 0x10 slot is a
- * pointer (its alias set frees the store from the int-field stores), the
- * turn address is taken before the camera stores, and the pitch cache is
- * read through work->pitch so its load depends on the preceding store.
- */
 #include "TYPES.H"
 #include "DMA.H"
-
-/* Sets up the tilted-plane map view: clears the scene work, loads the map
-   graphics and animation, programs the two affine backgrounds, builds the
-   camera and projects the plane once, then tilts the camera down to its
-   resting pitch and starts the per-frame callbacks. */
 
 extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultMapCells;

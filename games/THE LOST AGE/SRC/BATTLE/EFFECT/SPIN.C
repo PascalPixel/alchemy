@@ -3,8 +3,6 @@
 
 void Func_080e3074(void);
 
-/* A sixteenth of a turn a frame: BattleFx_AdvanceSpinAngle again, for
-   this effect's own tables. */
 void BattleFx_SpinObject(struct MotionObject *object)
 {
     object->angle += 0x1000;

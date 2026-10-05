@@ -1,5 +1,4 @@
 #include "FIELDOBJ.H"
-/* Overlay object setup. */
 #include "STAR.H"
 
 void OverlayObject_SetHandleFlagBits2And3(s32 object, u32 value)

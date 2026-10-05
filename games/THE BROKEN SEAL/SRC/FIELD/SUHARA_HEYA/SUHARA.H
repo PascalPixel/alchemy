@@ -31,8 +31,6 @@ union SceneActor {
     u8 bytes[90];
 };
 
-/* The room's scene tables, in the overlay's data; flag 0x96f selects the
- * later placements and events. */
 extern u8 gSuharaHeyaEntrances[];
 extern u8 gSuharaHeyaRegions[];
 extern u8 gSuharaHeyaExits[];
@@ -41,7 +39,6 @@ extern u8 gSuharaHeyaPlacements96f[];
 extern u8 gSuharaHeyaEvents[];
 extern u8 gSuharaHeyaEvents96f[];
 
-/* Services used by this room. */
 void Engine_AudioPlayCueFromEventWork(void);
 void Engine_InnCheckIn(s32 first, s32 second);
 void Engine_MotionLaunchFromFocusedObject(s32 first, s32 second, s32 third, s32 fourth);

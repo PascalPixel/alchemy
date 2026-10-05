@@ -1,13 +1,3 @@
-/*
- * Battle effect 7: two mode-3 item-break anchors fly apart, then
- * twenty-four shards scatter from the scene centre at random speeds and
- * angles.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "SYSTEM.H"
@@ -21,10 +11,10 @@ struct BattleEffectScene {
 
 struct ScatterShard {
     u8 reserved_00[0x30];
-    s32 speed;                      /* 0x30 */
-    s32 lift;                       /* 0x34 */
+    s32 speed;
+    s32 lift;
     u8 reserved_38[0x55 - 0x38];
-    u8 flag;                        /* 0x55 */
+    u8 flag;
 };
 
 struct ScatterPosition {

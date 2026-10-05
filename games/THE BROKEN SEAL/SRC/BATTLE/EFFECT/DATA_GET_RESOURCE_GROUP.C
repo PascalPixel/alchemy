@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-/* battle/effects/data/get_resource_group.c */
 extern const u8 Field_SceneTable[];
 
 s8 BattleFx_GetResourceGroup(s32 effect_index)

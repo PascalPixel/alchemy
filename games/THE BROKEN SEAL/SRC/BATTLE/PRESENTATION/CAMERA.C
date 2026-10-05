@@ -22,10 +22,6 @@ void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 s32 Render_ProjectPoint();
 
-/* Zoom the battle floor about (cx, cy) by scale (16.16): set the BG2 affine
- * matrix and origin, then rebuild the back page of scanline BG2CNT values,
- * the floor's lines between the horizon and the zoomed floor edge wrapping
- * once the view is zoomed in. */
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 {
     struct BattleBackgroundView *view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
@@ -83,8 +79,6 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
         *line++ = 0x3f8e;
     work->page ^= 1;
 }
-
-/* returns a value its callers here ignore */
 
 void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 {

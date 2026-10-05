@@ -23,16 +23,12 @@ extern u8 MsgBiribinoWasSomeMealDontJust[];
 extern u8 MsgBiribinoWasntCurseInKolimaHorrifying[];
 extern u8 MsgBiribinoWhenSpringComesWantGo[];
 
-/* The room's scene tables, where the overlay's data lies. */
 extern u8 gBiribinoHeyaPlacements[];
 extern u8 BiribinoHeya_PrimaryTable[];
 extern u8 BiribinoHeya_SecondaryTable[];
 extern u8 BiribinoHeya_TertiaryTable[];
 
-/* Marks which of a scene's placements lie inside the current view. */
 void ScenePlacement_ClipToView(s32 placements);
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
 
 u8 *SceneData_GetPrimaryTable(void)
 {

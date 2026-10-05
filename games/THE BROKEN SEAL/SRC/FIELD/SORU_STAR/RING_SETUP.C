@@ -1,5 +1,4 @@
 #include "RUNTIME_MEM.H"
-/* The elemental rings shared by the Mt. Aleph rooms and their adjoining area; each scene supplies its own ring tables. */
 #include "DMA.H"
 #include "IO_REG.H"
 
@@ -54,11 +53,6 @@ struct SoruRingObject *Object_GetById(s32 actor);
 void Engine_ObjectSetBlendMode(struct SoruRingObject *obj, s32 mode);
 s32 Engine_TaskAddCallback(void *callback, s32 priority);
 
-/* Each frame: every ring breathes between its smallest size and its own
- * limit, and every third frame drifts by a random step along each axis its
- * direction table allows. A ring that has shrunk to its smallest size is
- * hidden at the origin for 24 steps while its saved position keeps
- * drifting, then reappears there. */
 void Soru_UpdateRing(void)
 {
     struct SoruRingList *list = Runtime_AllocateBlock(33, 404);
@@ -186,10 +180,6 @@ void Soru_UpdateRing(void)
     }
 }
 
-/* Mt. Aleph (Sol Sanctum and the crater): claim heap block 33 for up to ten
- * ring entries, one per actor from first, each blended, placed at its fixed
- * offset, and schedule the ring's update. The same function sits in both
- * overlays. */
 void SoruStar_SetupElementalRings(s32 first, u32 count)
 {
     struct SoruRingList *list;

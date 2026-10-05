@@ -9,8 +9,6 @@ extern const u8 BattleFx_ArcTiles[];
 
 void BattleFx_UpdateArcEffect(void);
 
-/* Starts the arc effect: its work, its tiles in a free resource entry,
-   both groups aged out, and its update every frame. */
 void BattleFx_StartArcEffect(void)
 {
     struct ArcEffectWork *work = Runtime_AllocateHeapBlock(248, sizeof(*work));
@@ -24,7 +22,6 @@ void BattleFx_StartArcEffect(void)
     Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateArcEffect, 1152);
 }
 
-/* Ends the arc effect, releasing its resource entry, update and work. */
 void BattleFx_EndArcEffect(void)
 {
     struct ArcEffectWork *work = Ram_HeapSlots->block_62;

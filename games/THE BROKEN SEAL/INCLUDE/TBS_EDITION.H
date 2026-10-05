@@ -3,15 +3,12 @@
 
 #include "EDITION.H"
 
-/* The Japanese fortress passage returns through the ninth window variant. */
 #if !EDITION_INTERNATIONAL
 #define RUNPA_RETURN_TRANSITION_VARIANT 9
 #else
 #define RUNPA_RETURN_TRANSITION_VARIANT 0
 #endif
 
-/* The Japanese render work carries 0x90 more bytes before these flags:
-   four more 0x24-byte window records, twelve against eight. */
 #if !EDITION_INTERNATIONAL
 #define RENDER_DIRTY_OFS 0xF33
 #define RENDER_MODE_OFS  0xF34
@@ -82,7 +79,6 @@
 
 #define MENU_TEXT_Y 60
 
-/* The localized lettering sheet has one more sixteen-colour palette. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define KOROSSEO_PALETTE_BYTES 192
@@ -92,7 +88,6 @@
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
-/* The localized ticket windows leave another column for the coin count. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define TICKET_COUNTER_WINDOW_X 18
 #define TICKET_COUNTER_WIDTH    12
@@ -107,9 +102,6 @@
 #endif
 #endif
 
-/* The shops' item list window, where the character-change and switch help
-   start, the rows a menu page holds and the rows of character positions: each
-   edition sizes them to its words. */
 #if !EDITION_INTERNATIONAL
 #define SHOP_LIST_X      16
 #define SHOP_LIST_WIDTH  14
@@ -133,9 +125,6 @@
 #define MENU_ROW_COUNT   8
 #endif
 
-/* The buy menu's money window, flush with the right edge, and its price
-   window: the international editions give each a column more, and the
-   German price window one more again. */
 #if !EDITION_INTERNATIONAL
 #define SHOP_MONEY_WIDTH 11
 #define SHOP_PRICE_WIDTH 14
@@ -147,8 +136,6 @@
 #define SHOP_PRICE_WIDTH 15
 #endif
 
-/* The Djinni joining window: the Italian line takes two more columns, so its
-   window starts a column further left. */
 #if defined(TBS_EDITION_IT)
 #define DJINN_JOIN_X      1
 #define DJINN_JOIN_WIDTH  28
@@ -157,11 +144,6 @@
 #define DJINN_JOIN_WIDTH  26
 #endif
 
-/* The options screen's windows, sliders, frame icons and setting names: the
-   Japanese labels are narrower, so its windows are narrower and a column
-   further right, the sliders start further left, the first row of frames
-   sits further right and the settings a column further right; the German and
-   French speed setting needs a wider slot. */
 #if !EDITION_INTERNATIONAL
 #define OPTION_WINDOW_X     2
 #define OPTION_WINDOW_WIDTH 26
@@ -184,7 +166,6 @@
 #endif
 #endif
 
-/* Where the item menu's in-stock label follows a member's count. */
 #if defined(TBS_EDITION_DE)
 #define STOCK_LABEL_X 32
 #elif defined(TBS_EDITION_ES)
@@ -195,8 +176,6 @@
 #define STOCK_LABEL_X 24
 #endif
 
-/* The reel game's falling title: the Spanish word has nine letters and
-   starts further left. */
 #if defined(TBS_EDITION_ES)
 #define REEL_TITLE_LETTERS 9
 #define REEL_TITLE_X       8
@@ -205,10 +184,6 @@
 #define REEL_TITLE_X       24
 #endif
 
-/* The reel game's two-line help window: the Japanese lines are shorter.
-   Its jackpot picture is sixteen tiles longer in the localized editions and
-   so starts sixteen tiles earlier in the sprite tiles, and so do the title
-   letters. */
 #if EDITION_INTERNATIONAL
 #define REEL_HELP_WINDOW_X     2
 #define REEL_HELP_WINDOW_WIDTH 26
@@ -223,11 +198,6 @@
 #define REEL_TITLE_TILES       0x380
 #endif
 
-/* The reel game's prompt windows, each sized to its edition's words: the
-   prompt to stop the reels, the warning that every reel is held, the lever's
-   prompt and the hold and release prompts. French, Italian and Spanish count
-   the coins in three digits from further left, and give the hint to hold
-   reels only before the last spin. */
 #if !EDITION_INTERNATIONAL
 #define REEL_STOP_X         23
 #define REEL_STOP_WIDTH     7
@@ -296,7 +266,6 @@
 #define RENDER_RESOURCE_BASE 0x99B
 #endif
 
-/* The Psynergy list's range tiles, six Japanese rows and text columns. */
 #if !EDITION_INTERNATIONAL
 #define RANGE_ICON_TILE       0xf200
 #define LIST_FIRST_ROW        1
@@ -317,7 +286,6 @@
 #define LIST_EMPTY_Y          17
 #endif
 
-/* The save slot list's localized names start six pixels further left. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #define SAVE_SLOT_NAME_X 6
 #else

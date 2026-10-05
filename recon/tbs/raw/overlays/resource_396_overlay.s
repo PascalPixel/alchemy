@@ -919,7 +919,6 @@ gToretoHeyaRegions:
 	.4byte 0x00ec0152
 	.4byte 0x015a0024
 	.4byte 0x000cffff
-	/* European localizations widen this region from four to eight pixels. */
 	.ifdef TBS_EDITION_ES
 	.4byte 0x0018009f
 	.4byte 0x00af0090

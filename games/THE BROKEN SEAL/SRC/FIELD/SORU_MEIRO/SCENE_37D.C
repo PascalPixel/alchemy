@@ -1,11 +1,9 @@
 
 
-/* Scene table getters and the entry that posts the scene request and sets the camera zoom. */
 #include "TYPES.H"
 #include "SCENE.H"
 extern struct Resource37deSceneRuntime *gEventWork;
 
-/* The scene's four tables, in the overlay's read-only data. */
 extern u8 SoruMeiro_SceneTable0[];
 extern u8 SoruMeiro_SceneTable1[];
 extern u8 SoruMeiro_SceneTable2[];
@@ -17,7 +15,6 @@ u8 *SceneData_GetScriptTable(void)
     return SoruMeiro_SceneTable0;
 }
 
-/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;

@@ -1,5 +1,3 @@
-# One workspace, one lockfile, one shared artifact tree for every tool crate.
-# Alchemy builds, checks, counts and analyses; ags encodes and decodes assets.
 [workspace]
 resolver = "2"
 members = ["ags", "alchemy"]
@@ -8,8 +6,6 @@ members = ["ags", "alchemy"]
 version = "0.1.0"
 edition = "2021"
 
-# Every build and test runs with --release. No debug info, no incremental
-# cache and stripped executables keep tools/out/cargo-target small.
 [profile.release]
 debug = false
 incremental = false

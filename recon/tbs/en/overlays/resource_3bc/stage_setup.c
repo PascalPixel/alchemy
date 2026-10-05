@@ -1,9 +1,3 @@
-/* Draft (unverified): the Colosseum log-rolling stage setup, begun by an
- * agent adopting number-bound overlay drafts and interrupted before it was
- * linked or compared. */
-/* The log-rolling stage's scene start, entry veneer 0: opens the screen,
- * places the logs, obstacles and paired actors from the story flags, then
- * runs the beat the entrance names. */
 /* FAKEMATCH: the six-argument cell copies go through the call wrapper, which
  * passes their constants straight into the argument registers; the item
  * icon and scene descriptor calls are declared returning a value, which
@@ -14,7 +8,6 @@
 #include "FIELD_SCENE.H"
 #include "RESOURCE_IDS.H"
 
-/* Record 30's script, where the overlay's data lies. */
 extern const s32 KorosseoMaruta_Object30Script[];
 
 s32 GameFlag_GetByte(s32 flag);
@@ -109,9 +102,6 @@ s32 StageSetup_BuildAndDispatch(void)
     Call6((void (*)())Engine_MapCopyCellAttributes, 18, 10, 3, 1, 18, 11);
     Call6((void (*)())Engine_MapCopyCellAttributes, 17, 11, 1, 1, cnt, 11);
 
-    /* The three drifting obstacles: any one still at rest and clear of the
-     * grid is planted and drawn twice, once on its own row and once 52 rows
-     * further down. */
     for (i = 15; i <= 17; i++) {
         rec = (u8 *)Object_GetById(i);
         hit = Map_GetTerrainHeight(0, *(s32 *)(rec + 8), *(s32 *)(rec + 16));
@@ -125,9 +115,6 @@ s32 StageSetup_BuildAndDispatch(void)
         }
     }
 
-    /* Two banks of five paired actors, 18..22 and 23..27.  The cleared arm
-     * also puts each pair on the grid; the uncleared arm only prepares the
-     * records and installs the second per-frame task. */
     if (Engine_GameFlagIsSet(865) != 0) {
         s32 state;
         s32 mode;

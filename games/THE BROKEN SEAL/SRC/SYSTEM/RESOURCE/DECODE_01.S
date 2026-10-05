@@ -1,12 +1,3 @@
-@ Resource decoder for stream types 0 and 1, run from a heap copy: the loader
-@ at 0x08005340 allocates 708 bytes, copies exactly this extent with DMA3,
-@ calls it and frees it. Type 0 is an LZ stream of variable-length bit codes,
-@ each bit tested with lsrs rN, rN, #1 and bcs or bcc; it reaches its refill
-@ subroutine through a second entry that points lr at 0x08002650 by hand
-@ (sub lr, pc, #284). Type 1 is a byte LZ whose flag byte rides in lr with a
-@ sentinel bit. Branching on the carry out of a shift and rewriting lr are
-@ beyond both approved compilers. Every TBS and TLA edition has these bytes.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
 	.global Resource_DecodeType01Arm

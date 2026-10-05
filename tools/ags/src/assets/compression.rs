@@ -1,4 +1,3 @@
-//! Pixel compression formats; no resource addresses or image-size defaults.
 use super::AssetError;
 
 #[derive(Default)]
@@ -23,8 +22,6 @@ impl Bits {
     }
 }
 
-/// Zero-skip byte stream: literals 1..=0xdf, runs of up to 32 zeros as
-/// `0xdf + count`, and a terminating zero byte.
 pub fn encode_zero_skip(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     let mut output = Vec::new();
     let mut cursor = 0;
@@ -75,17 +72,11 @@ pub fn encode_delta7(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
         bits.put(u32::from(value), value_bits);
         previous = pixel;
     }
-    // The writer flushes its pending halfword even when the last code filled
-    // the one before: a stream ending on a halfword boundary gains an empty
-    // halfword.
     bits.put(0, 1);
     bits.align(16, 0);
     Ok(bits.bytes)
 }
 
-/// Delta-code little-endian 16-bit tile entries behind a mode byte: mode 0
-/// keeps the entries, mode 2 XORs each entry with its predecessor, and mode 1
-/// writes that XOR stream as a plane of high bytes followed by the low bytes.
 pub fn encode_tilemap_delta(entries: &[u8], mode: u8) -> Result<Vec<u8>, AssetError> {
     if mode > 2 || entries.is_empty() || entries.len() % 2 != 0 {
         return Err(AssetError(
@@ -112,8 +103,6 @@ pub fn encode_tilemap_delta(entries: &[u8], mode: u8) -> Result<Vec<u8>, AssetEr
     Ok(output)
 }
 
-/// The 4-bit icon coder's prefix code for each move-to-front position, then
-/// its terminator, in the order the bits are read.
 const ICON4_CODES: [&str; 17] = [
     "0",
     "100",
@@ -134,9 +123,6 @@ const ICON4_CODES: [&str; 17] = [
     "1111111111",
 ];
 
-/// 4-bit pixels as move-to-front positions over the sixteen values, each a
-/// prefix code read least significant bit first, then the terminator; the
-/// last byte's unused bits are set.
 pub fn encode_icon4(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     let mut table: [u8; 16] = std::array::from_fn(|i| i as u8);
     let mut bits = Bits::default();

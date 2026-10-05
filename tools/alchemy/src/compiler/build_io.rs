@@ -1,4 +1,3 @@
-//! Small, shared path and argv operations used by the production build stages.
 
 use std::path::{Path, PathBuf};
 

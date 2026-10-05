@@ -2,11 +2,6 @@
 #include "OBJECT_DISPATCH.H"
 #include "ANIMSPR.H"
 
-/* ☀️'s FIELD/COMMON/OBJECT/GROUP_SET_CHILD_VALUE_UNLESS_FIFTEEN.C over ⚓️'s
-   object record, whose count and dirty flag sit earlier; ⚓️ adds a setter
-   for the first layer alone. */
-
-/* Gives the record's first layer the draw parameter value. */
 void Animation_ApplyChildValueToFirst(struct DispatchChild *record, u32 value)
 {
     if (record != NULL) {
@@ -15,8 +10,6 @@ void Animation_ApplyChildValueToFirst(struct DispatchChild *record, u32 value)
     }
 }
 
-/* Gives every layer of the record the draw parameter value, except layers
-   whose parameter is 15. */
 void Animation_ApplyChildValuesToRecord(struct DispatchChild *record, u32 value)
 {
     s32 i;

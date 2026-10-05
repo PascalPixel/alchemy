@@ -3,8 +3,6 @@
 
 #include "BATTLE_RUNTIME.H"
 
-/* Some callers pass the owner id already held in r0 without a C argument. */
-
 void *Owner_GetState();
 
 #endif

@@ -81,7 +81,6 @@ void BattleEffect_ClearAllObjects(void);
 void Djinn_ShowJoinedMessageFar(s32, s32, void *);
 void Battle_ClearObjectFlag5bWhenMode3(void);
 
-/* A scene actor's descriptor: its scene number (offset by 48) and position. */
 struct ActorDescriptor {
     s16 action;
     s16 scene;
@@ -95,9 +94,6 @@ struct ActorDescriptor *BattleAction_FindDescriptor(s32 action);
 
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *obj, s32 x, s32 y, s32 z);
 
-/* An event actor turns its back on the leader, hops three times, splits
-   into eight linked copies of itself and leaps away in the leader's
-   direction, then comes to rest with its motion cleared. */
 void EventActor_RunHopAndLeapSequence(s32 arg)
 {
     struct HopActor *actor;
@@ -230,10 +226,6 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
     }
 }
 
-/* Once flag 0x109 is set and the destination is one of scenes 300-380, put
-   every actor (objects 8-65) whose descriptor names that scene at its own
-   position, or, when bit 11 of the destination is set, just below the anchor
-   object. */
 void FieldObject_PlaceSceneActors(void)
 {
     s32 flags = gGameState.pending_djinn_event & 0xf000;

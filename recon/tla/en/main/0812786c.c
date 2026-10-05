@@ -30,10 +30,6 @@ struct OwnerState *Owner_GetStateFar(s32 owner);
 s32 __divsi3(s32 numerator, s32 denominator);
 void Owner_RecalculateStatsFar(s32 owner);
 
-/* Raise an owner by levels: each stat grows by a fixed tenth-step per level,
-   never below 70% of its value before the change and never past its cap.
-   Declared s32 without a return statement, as the ROM keeps r0 live. */
-
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
     struct OwnerStats *base;

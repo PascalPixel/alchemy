@@ -1,10 +1,5 @@
 name: Progress
 
-# make land measures both games from all twelve verified editions on a
-# machine that holds the ROMs; the pre-push hook uploads that measurement,
-# named by its commit, to the decomp-reports release. This job turns it
-# into the published progress: the history and both README figures on the
-# progress branch, and decomp.dev's report.
 on:
   push:
     branches: [main]
@@ -24,7 +19,6 @@ jobs:
     env:
       CARGO_TARGET_DIR: ${{ github.workspace }}/tools/out/cargo-target
       RUSTUP_TOOLCHAIN: 1.98.1
-      # The history's days and hours are Pascal's local calendar.
       TZ: Europe/London
     steps:
       - name: Check out main
@@ -67,7 +61,6 @@ jobs:
             commit --quiet -m "Progress for ${GITHUB_SHA::10}"
           git push origin HEAD:progress
 
-      # decomp.dev splits the combined report into twelve named versions.
       - name: Hand decomp.dev all twelve editions
         run: cp "measured/${GITHUB_SHA}.pb" report.pb
 

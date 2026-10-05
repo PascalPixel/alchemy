@@ -23,13 +23,6 @@ extern volatile u32 gFrameCount;
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_SetIrqHandler(s32 irq, s32 flags, s32 handler);
 
-
-/* Steps the transition value from start to end over duration frames; once
- * done it removes itself as a callback and clears the HBlank handler. Then
- * sets the window's two scanlines: 200 and 250 from a value of 80 up; on odd
- * frames with a nonzero value, 80 + value and 80 - value about the centre
- * row; otherwise 0 and 159, the whole screen. */
-
 void DisplayTransition_UpdateFromCentre(void)
 {
     struct DisplayTransitionState *state =

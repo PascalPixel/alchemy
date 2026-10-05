@@ -14,9 +14,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
     u8 packed_pixels;
     u32 result;
 
-    /* 1行64バイトで衝突判定タイル64個を表す。 */
     cell = (((y_step / 8) & 63) << 6) + ((x_step / 8) & 63);
-    /* 4×4ドット・4bppの衝突判定タイルは8バイト。 */
     pixel_offset = (((y_step / 2) & 3) << 1) + ((x_step / 4) & 1);
 
     tile = BG_SCREEN_BLOCK(10)[cell];
@@ -30,7 +28,6 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
             return result;
     }
 
-    /* 前面が空なら背面マップを調べる。 */
     tile = BG_SCREEN_BLOCK(8)[cell];
     packed_pixels = *(Ram_MapCollision + (tile << 3) + pixel_offset);
     if (packed_pixels != 0) {

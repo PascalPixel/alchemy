@@ -9,7 +9,6 @@ void SceneData_InitRecordTable(u8 *o);
 
 #define NULL ((void *)0)
 
-/* The village's own work, past the overlay image. */
 s32 KorimaMura_PendingPose __attribute__((section(".bss")));
 s32 KorimaMura_LayoutFlag __attribute__((section(".bss")));
 s32 KorimaMura_EffectActive __attribute__((section(".bss")));
@@ -100,12 +99,10 @@ extern const struct SceneEvent gKorimaMuraEvents[];
 extern const struct SceneEvent gKorimaMuraEvents3[];
 extern u8 *gWork;
 
-/* The map cell steps the switch plays, laid out after the code. */
 extern u8 KorimaMura_SwitchCells[];
 void FieldScene_ConfigureActor0ThenRun();
 extern u8 MsgKorimaGoingCrossBridge[];
 
-/* Actor 8's path and the debris script, laid out after the code. */
 extern u8 KorimaMura_Actor8Path[];
 extern u8 KorimaMura_DebrisScript[];
 void Engine_MapCopyCellAttributes();
@@ -133,12 +130,8 @@ extern u8 MsgKorimaYoureRobinThereIsntMuch[];
 extern s32 KorimaMura_PendingPose;
 extern s32 KorimaMura_LayoutFlag;
 
-/* The script the region runs, laid out after the code. */
 extern u8 KorimaMura_RegionScript[];
 
-/*
- * Per-frame actor and effect callbacks, and the village's work variables.
- */
 s32 KorimaMura_ApplyPendingPose(s32 arg0)
 {
     if (KorimaMura_PendingPose != 0) {
@@ -235,7 +228,6 @@ s32 SceneActor_TurnTowardTarget(struct Ent *p)
     return 1;
 }
 
-/* Where the party appears in each of Kori's scenes. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -249,7 +241,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gKorimaMuraEntrances;
 }
 
-/* Only the second scene has map regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_KorimaMura2) {
@@ -263,8 +254,6 @@ const u32 *Scene_GetExits(void)
     return gKorimaMuraExits;
 }
 
-/* The actors placed in each scene; the first scene's table is prepared
-   while flag 0x845 is clear. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s32 scene = gGameState.scene;
@@ -281,9 +270,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKorimaMuraPlacements;
 }
 
-/*
- * Actor 16's sanctum line and actor 27's step.
- */
 void FieldScene_RunActor16MessageBranch(void)
 {
     struct Rec *q = Object_GetById(0);
@@ -303,7 +289,6 @@ void FieldScene_RunActor27Step(void)
     BattleFx_RunPageEffectForSlot(27, 0, 1);
 }
 
-/* What Kori answers; the third scene has its own events. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_KorimaMura3) {
@@ -312,9 +297,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKorimaMuraEvents;
 }
 
-/*
- * The leader walks off the edge and the scene exits.
- */
 void FieldScene_ConfigureActor0ThenRun(s32 a0)
 {
     u32 i;
@@ -328,7 +310,6 @@ void FieldScene_ConfigureActor0ThenRun(s32 a0)
     Engine_EventRequestExit(a0);
 }
 
-/* Animate the map cells for the chosen switch, or leave the area. */
 void KorimaMura_AnimateSwitchOrExit(void)
 {
     u8 *work = gWork;
@@ -452,13 +433,6 @@ void KorimaMura_RunObjectSpreadScene(void)
     Engine_EventEnd();
 }
 
-/*
- * Kori's scene start: the third scene runs its flag branches and the second
- * opens with the window transition. The village itself hides actors 23 to
- * 26 behind their entry actions, keeps the plaza closed until flag 0x845,
- * and once flag 0x843 is set sends the party's companions and the villagers
- * away and runs the entry script.
- */
 s32 Scene_Initialize(void)
 {
     s16 scene;
@@ -1554,9 +1528,6 @@ s32 SceneEffect_SetModeByFrameBit1(s32 arg0)
     return 0;
 }
 
-/* Starts the region script when the actor stands inside one of the
- * village's trigger rectangles; the cleared layout has two, the first has
- * three. */
 s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {
     if (KorimaMura_LayoutFlag != 0) {

@@ -44,8 +44,6 @@ void Object_LinkPair(s32 first_id, s32 second_id, s32 wait)
     }
 }
 
-/* Turns two objects toward each other by at most 0x1000 per frame, for up
-   to sixty frames, until both face along the line between them. */
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first, struct FacingObject *raw_second)
 {
     struct ObjectRuntime *first = (struct ObjectRuntime *)raw_first;

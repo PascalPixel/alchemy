@@ -1,4 +1,3 @@
-/* Retained owners split from link-serial-enable-transfer-timer. */
 #include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_INITIALIZE.C"
 #include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_POLL_AND_TRANSFER.C"
 #include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_POLL_STATUS.C"

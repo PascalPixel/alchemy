@@ -5,7 +5,6 @@
 #include "LAYOUT_GUARD.H"
 #include "WINDOW.H"
 
-/* One queued icon, followed by its position and tile-slot handle. */
 struct ResourceMenuEntry {
     u32 link;
     u32 attr01;
@@ -16,8 +15,6 @@ struct ResourceMenuEntry {
     u16 slot;
 };
 
-/* AffineEffect_InitializeWork allocates this block. At most six icons
-   precede the text window and the two transfer-help windows. */
 struct ResourceMenuWork {
     struct ResourceMenuEntry entries[6];
     struct UiWindow *window;

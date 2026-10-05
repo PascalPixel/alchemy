@@ -6,8 +6,6 @@ void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 position);
 
 extern char MsgNothingHappens;
 
-/* Runs a pending event's action: a message below 0x10000, otherwise a
-   routine given the mode and target. Flag 0x142 then adds its message. */
 s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode, s32 target)
 {
     if (event != NULL) {

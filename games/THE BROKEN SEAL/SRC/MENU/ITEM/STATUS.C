@@ -26,7 +26,6 @@ struct InventoryMenuIcon {
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-/* "{L}-{R}:Switch characters", then "{A}:Status". */
 extern u8 MsgSwitchCharacterHelp;
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void ItemMenu_PosCategory(void);
@@ -40,8 +39,6 @@ void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 
-/* The status screen's item page: browse the current character's items, switch
-   characters with L and R, and return 1 for A or -1 for B. */
 s32 ItemMenu_SelectItem(void)
 {
     /* FAKEMATCH: the icon prefix keeps the row load before the active-byte store; the canonical view reverses them. */

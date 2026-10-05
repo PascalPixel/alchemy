@@ -1,11 +1,5 @@
-/* Near miss: differ 2, the split-constant scheduling gap: the listing loads
-   the slot (ldrh r3, [r7, r6]) before building ITEM_ID_MASK; this build
-   starts the mask (movs r5, #128) first, as in Item_AdjustCounter. Goes
-   after Inventory_Discard in MUTATION.C, before Inventory_CheckDiscard. */
 #include "INVENTORY.H"
 
-/* 8 for an empty slot, else 1 when the item is equipped and cannot be
-   taken off. */
 s32 Inventory_CheckUnequip(s32 owner, s32 slot)
 {
     struct OwnerInventoryState *inv = Owner_GetState(owner);

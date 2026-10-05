@@ -1,7 +1,5 @@
 #include "INVENTORY.H"
 
-/* 所持品追加。積み重ね可能な品は同一番号の枠を探して個数を増やし、
-   そうでなければ空き枠へ入れる。戻り値は枠番号、失敗は -1。 */
 s32 Inventory_AddItem(s32 owner_id, s32 item_id)
 {
     struct OwnerInventoryState *inv = Owner_GetState(owner_id);
@@ -68,8 +66,6 @@ s32 PartyInventory_Add(s32 item_id)
     return -1;
 }
 
-/* The first active party member with room for the item, found by adding it
-   and taking it straight back out; -1 when nobody has room. */
 s32 PartyInventory_FindRoom(s32 item_id)
 {
     s16 owners[10];

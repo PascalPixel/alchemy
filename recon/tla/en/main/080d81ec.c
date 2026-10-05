@@ -1,13 +1,8 @@
-/* Near miss: score 460: one shift and four reordered instructions in the
-   spread's setup. ⚓️ reads the current owner from gPartyState and the
-   effect slot from the shared EFFECT_SLOT.H. */
 #include "TYPES.H"
 #include "EFFECT_SLOT.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);
-
-/* Object updates of the radial spread page effect. */
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -42,7 +37,6 @@ struct PositionSource_08096048 {
 extern u32 gFrameTick;
 
 s32 Object_GetById(u32);
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, void *);
 void Camera_WorldToScreen(void *);
 void Audio_PlayCue(s32);

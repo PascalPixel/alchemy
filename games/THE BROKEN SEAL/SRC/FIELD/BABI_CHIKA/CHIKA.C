@@ -1,5 +1,4 @@
 #include "EDITION.H"
-/* Moving and positioning actor zero. */
 #include "BABI.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -15,7 +14,6 @@ s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
     return 0;
 }
 
-/* Probe the cell ahead of actor 0 and the requested target before moving; return 1 if either blocks the move and 0 on success. */
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
     Actor_02000cd0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -27,7 +25,6 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     probe[2] = (actor->z & 0xfff00000) + 0x00080000;
 
     Vector_AddPolarOffset(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
-
 
     if (Object_CheckMovementCollision(actor, probe) == 1) {
         goto refuse;
@@ -87,8 +84,6 @@ void SceneActor_PassActorZeroOffsetPoint(void)
     SceneActor_MoveActorZeroToTarget(pos);
 }
 
-/* Babi's tunnel: publish the player actor at +24 of the event work once it
- * has passed the row limit of the current area and story step. */
 void BabiChika_UpdateTrackedActor(void)
 {
     struct FieldActor *actor;
@@ -123,7 +118,6 @@ void BabiChika_UpdateTrackedActor(void)
     }
 }
 
-/* Depth flags and slot ranks. */
 s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
 {
     struct Actor_02000ec8 *ref;
@@ -162,7 +156,6 @@ void SceneState_SwapSlotPairByRank(s32 first, s32 second)
     }
 }
 
-/* Switch the object between animations 1 and 2 every two frames, and every fourth frame spawn a small palette-5 effect 16 pixels up its y axis, within three pixels of it in x and z. */
 s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 {
     struct EffectOptions options;
@@ -184,7 +177,6 @@ s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
     return 0;
 }
 
-/* Waits and effect motion. */
 s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 {
     Record *ref = Object_GetById(ACTOR_PARTY_LEADER);
@@ -228,13 +220,11 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
     track->mark = (s32) 0x80000000;
 }
 
-/* Divide the Z velocity by sixteen, rounding toward zero. */
 void Effect_AdvanceMotion(struct MotionEffect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
-
 
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
@@ -255,9 +245,6 @@ void Effect_AdvanceMotion(struct MotionEffect *effect)
     sprite->angle += effect->step64;
 }
 
-/* The leader is thrown up out of the water: it leaps, hangs for six frames,
- * then sinks back over eight while every other frame throws a drop of spray
- * to one side. */
 void BabiChika_RunLeaderSpray(void)
 {
     struct FieldActor *leader = Object_GetById(0);

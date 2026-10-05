@@ -2,7 +2,6 @@
 
 extern u8 ResourceBlockOwners[];
 
-/* Canonical C candidate: loop registers differ from the reference. */
 s32 ResourceTable_GetLongestFreeBlockRun(void)
 {
     u8 *marker = ResourceBlockOwners;

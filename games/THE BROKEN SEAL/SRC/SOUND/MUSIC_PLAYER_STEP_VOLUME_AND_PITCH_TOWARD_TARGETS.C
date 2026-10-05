@@ -1,7 +1,6 @@
 #include "AUDIO_ENGINE_TYPES.H"
 
 extern struct SoundPlayer gMusicPlayerBgm;
-/* Byte prefix used to access the player's status. */
 extern u8 gMusicPlayerFanfare[];
 
 extern u8 gMusicRestoreDelay;

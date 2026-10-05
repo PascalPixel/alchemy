@@ -11,8 +11,6 @@ void FieldEvent_RunTypeHandler(void);
 void EffectRuntime_StopCurrentObject(void);
 void BattleEffect_CleanupSceneObjects(void);
 
-/* Runs a packed action (id in the low ten bits, mode above it) with the
-   pending events of its kind before and after the type handler. */
 s32 EventRuntime_ExecutePackedAction(u32 packed)
 {
     s32 action, mode, kind, selector, target;

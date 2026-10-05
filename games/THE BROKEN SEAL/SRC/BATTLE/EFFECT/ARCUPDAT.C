@@ -16,8 +16,6 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 extern u8 gPlayerObjectId[];
 
-/* The existing arc-mode counter/link alias view. The callbacks otherwise
-   use the shared FieldActor geometry and true object API transports. */
 struct ArcObject {
     u8 pad00[8];
     s32 x;

@@ -10,9 +10,6 @@ struct ObjectSprite {
     u8 y_offset;
 };
 
-/* Mode 0 parks the object at the origin and marks it with 0x31415927;
-   any other mode turns its sprite into a wide shape of the smallest size,
-   four pixels lower. */
 void Object_SetWideSprite(u32 object_id, s32 mode)
 {
     struct ObjectRuntime *object;

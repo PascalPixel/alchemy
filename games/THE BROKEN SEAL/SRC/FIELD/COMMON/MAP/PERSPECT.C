@@ -24,8 +24,6 @@ extern char ResourceId_DefaultMetatileAttributes;
 void Transform_UpdateVertices(void);
 extern u8 Transform_UpdateVerticesSize;
 
-/* The heading and pitch the plane's scanline table was last built for;
-   clearing or changing them makes the next frame rebuild it. */
 extern u32 gScanlineAngle;
 extern u32 gScanlinePitch;
 extern u32 gFrameCount;
@@ -68,16 +66,8 @@ struct WorldCell {
 #define BG_PALETTE ((s16 *)0x05000000)
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
 
-/* The world map's screen entries on its two layers: each of the four
- * quarters of a layer is 32 by 32 entries at this base. */
 #define WORLD_SCREEN_ENTRIES 0x06004000
 
-/*
- * Put one world map tile, 16 by 16 cells, in a quarter of a layer: decode
- * the tile's cell ids, copy them into the block grid and, when asked, draw
- * each cell's top and bottom screen entries. Nothing happens when the
- * quarter already holds the tile, unless the draw is forced.
- */
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
 {
     struct PerspectiveWork *work = (struct PerspectiveWork *)gMapWork[0];
@@ -130,10 +120,6 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
     return 1;
 }
 
-/* Sets up the tilted-plane map view: clears the scene work, loads the map
-   graphics and animation, programs the two affine backgrounds, builds the
-   camera and projects the plane once, then tilts the camera down to its
-   resting pitch and starts the per-frame callbacks. */
 s32 Map_InitializePerspectiveScene(void)
 {
     struct PerspectiveWork *work;
@@ -304,10 +290,6 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
     }
 }
 
-/* Loads the world map graphics for the region around (x, z): the palette
-   (keeping the backdrop colour), four tile banks and the cell graphics,
-   clears the overlay map, lays out the fixed tile grid, and for the sea
-   variant also sets up its animated tiles. */
 void WorldMap_LoadGraphics(s32 x, s32 z)
 {
     struct PerspectiveWork *state;
@@ -366,10 +348,6 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     Runtime_BumpFree(buffer);
 }
 
-/* Each frame: stops the HBlank DMA, loads this frame's BG2 and BG3 affine
-   parameters from the double-buffered line table and restarts the DMA to
-   stream the rest, latches the window the scene asked for, and puts the
-   display in the affine mode only while that window is on screen. */
 void MapAnimation_ApplyAffineFrame(void)
 {
     /* FAKEMATCH: the adjacent slot-cell walk avoids the eight bytes added by separate gMapWork loads. */

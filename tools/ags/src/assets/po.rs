@@ -1,8 +1,3 @@
-//! Small, deterministic GNU gettext PO reader and writer.
-//!
-//! It deliberately supports the ordinary singular catalog subset used by
-//! game message tables: headers, comments, flags, contexts, ids and strings.
-//! Paths, languages and message semantics remain the caller's responsibility.
 
 use super::{err, AssetError};
 use std::collections::BTreeMap;

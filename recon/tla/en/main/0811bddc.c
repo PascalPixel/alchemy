@@ -1,11 +1,3 @@
-/* Draft: Camera_InitDefaultTransform, 96-byte EN extent.
- * 2026-10-04: differ 2 with ☀️'s body reading Ram_HeapSlots->camera_work.
- * The native moves the result pointer into r1 before loading the distance
- * for the transfer's z; this build loads first. Tried: an s32 array, a
- * pointer to the transfer, the result pointer as a local before the z store
- * (all 2), an initialised block (29) and devsearch 300 iterations (2).
- * GetBattleObjectSlot, its ☀️ neighbour, matches and is C.
- */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_POINT_POSITION.H"

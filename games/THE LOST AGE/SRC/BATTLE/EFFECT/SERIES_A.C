@@ -3,8 +3,6 @@
 
 void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode);
 
-/* Mode entries of battle effect series A, as ☀️'s SERIES_A.C has them;
-   ⚓️ adds modes 7 to 13. */
 void BattleFx_RunSeriesAMode0(struct BattleEffectArgument *effect)
 {
     BattleFx_RunSeriesA(effect, 0);
@@ -74,7 +72,6 @@ void BattleFx_RunSeriesAMode12(struct BattleEffectArgument *effect)
     BattleFx_RunSeriesA(effect, 12);
 }
 
-/* Mode 13 runs as the second variant without its casting prelude. */
 void BattleFx_RunSeriesAMode13(struct BattleEffectArgument *effect)
 {
     effect->prelude = 0;

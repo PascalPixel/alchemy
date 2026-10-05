@@ -1,14 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* Daila's people ask the party about their travels. */
-
 extern u8 MsgDeriBeenBefore[];
 extern u8 MsgDeriWaveNoInjuries[];
 extern u8 MsgDeriIndraMoved[];
 extern u8 MsgDeriWantBoat[];
 
-/* His first conversation marks that he has met the party. */
 void DeriMura_TalkBeenBefore(void)
 {
     s32 msg;

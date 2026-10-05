@@ -1,5 +1,4 @@
 #include "RESOURCE.H"
-/* Declarations shared by the Vale house scenes. */
 #ifndef HAIDIA_H
 #define HAIDIA_H
 
@@ -85,7 +84,6 @@ struct PairWork {
     u16 vram_block;
 };
 
-/* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
     u16 attr0;

@@ -1,42 +1,3 @@
-//! Field sprite banks: the table of sprite records the game reads by id,
-//! each sprite's animation list and frame list, the animation scripts, and
-//! the frames, built from a record table `STEM.TSV`, one `SPRITE.PNG` per
-//! sprite with frames (one frame wide, its frames stacked) and one
-//! `SPRITE.TSV` per sprite with animations.
-//!
-//! The record table's columns are `sprite width height scale draw adjust_x
-//! adjust_y box_x box_y codec frames animations`, one row per record in id
-//! order; `frames` and `animations` name the sprite whose list a record
-//! uses, or `-` for none; `SPRITE:N` uses the first N of that sprite's
-//! animations. A `sprite` of `NAME=FILES` reads its PNG and TSV from FILES,
-//! as an edition's table names its own pictures of a sprite. A sprite's
-//! own TSV holds lines of a key and its
-//! values:
-//!
-//! - `anim`: one of the sprite's animation scripts, as hex bytes, in the
-//!   order they are laid out.
-//! - `animations`: the animation list, when it is not each script once in
-//!   order: script numbers, or `SPRITE:N` for another sprite's script.
-//! - `list`: the frame list, when it is not each frame once in order: frame
-//!   numbers, or `-` for an empty entry.
-//! - `empty`: blank frames stored as empty streams.
-//!
-//! A sprite whose picture both games draw alike reads it from
-//! `games/COMMON`: the optional `PICTURES.TSV` beside the table maps the
-//! stem of its files to the shared picture's, read as `COMMON/NAME.PNG`.
-//!
-//! Frames are coded by the record's codec: 0 zero-skip, 1 the packer's
-//! tagged LZ of the pixels, 3 arena streams whose copies read the sprite's
-//! earlier frames.
-//!
-//! Two layouts exist. `.sprites` (⚓️) lays out every record, then every
-//! animation list, every frame list, every script and every frame, each in
-//! record order. `.spriteblocks` (☀️) lays out every record, then for each
-//! sprite in the order `LAYOUT.TSV` lists them its scripts and animation
-//! list, then again for each its frames and its frame list, which ends in
-//! a null word; scripts and frames are padded to a word. A `section NAME`
-//! line in the layout continues the bank in section `.rodata.NAME`, so
-//! another object can be linked between.
 use crate::asm::Data;
 use crate::graphics::indices;
 use crate::lz::compress_tagged;
@@ -49,12 +10,10 @@ use std::fmt::Write;
 
 struct Record {
     name: String,
-    /// The stem of the sprite's PNG and TSV.
     files: String,
     bytes: [u8; 12],
     frames: Option<String>,
     animations: Option<String>,
-    /// How many of the list's animations the record uses, when not all.
     count: Option<usize>,
 }
 
@@ -64,7 +23,6 @@ enum Script {
     Other(String, usize),
 }
 
-/// A sprite's own TSV.
 #[derive(Default)]
 struct Sprite {
     scripts: Vec<Vec<u8>>,
@@ -206,8 +164,6 @@ fn sprite_text(built: &str, text: &str) -> Result<Sprite, String> {
     Ok(sprite)
 }
 
-/// One sprite's frames, coded by `codec`, each after the ones before it.
-/// The frames `empty` names must be blank and are stored as empty streams.
 fn frame_streams(
     built: &str,
     codec: u8,
@@ -239,25 +195,16 @@ fn frame_streams(
     Ok(streams)
 }
 
-/// The label of a sprite's own item.
 fn label(sprite: &str, item: &str) -> String {
     format!("Sprite_{sprite}_{item}")
 }
 
-/// Everything a bank is built from.
 struct Bank {
     records: Vec<Record>,
     sprites: HashMap<String, Sprite>,
-    /// Sprites whose picture both games draw alike, by the stem of their
-    /// files: the picture in `games/COMMON` that draws it.
     pictures: HashMap<String, String>,
 }
 
-/// The optional `PICTURES.TSV` beside a bank: a `sprite\tpicture` header,
-/// then one line per sprite whose picture lives once in `games/COMMON`,
-/// the stem of its files and of the shared picture. A sprite named there
-/// reads `COMMON/PICTURE.PNG`, which the build resolves in COMMON's folder
-/// of the same name; its animations stay the game's own.
 fn shared_pictures(
     built: &str,
     sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
@@ -301,7 +248,6 @@ fn shared_pictures(
     Ok(pictures)
 }
 
-/// The shared-picture table beside a sprite bank.
 pub(crate) const PICTURES: &str = "PICTURES.TSV";
 
 impl Bank {
@@ -397,7 +343,6 @@ impl Bank {
         }
         Ok(())
     }
-    /// A sprite's frame list and its frames.
     fn frames(
         &self,
         built: &str,
@@ -447,7 +392,6 @@ impl Bank {
     }
 }
 
-/// ⚓️'s bank: records, animation lists, frame lists, scripts and frames.
 pub(crate) fn bank(
     built: &str,
     table: &[u8],
@@ -478,8 +422,6 @@ pub(crate) fn bank(
     Ok(data)
 }
 
-/// ☀️'s bank as sections: the name of the section each part continues in,
-/// or `None` for the first, and the part.
 pub(crate) fn blocks(
     built: &str,
     table: &[u8],
@@ -519,7 +461,6 @@ pub(crate) fn blocks(
     Ok(parts)
 }
 
-/// ☀️'s bank as assembler source.
 pub(crate) fn blocks_source(
     built: &str,
     table: &[u8],

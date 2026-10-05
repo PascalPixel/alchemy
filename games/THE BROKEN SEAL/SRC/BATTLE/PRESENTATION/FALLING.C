@@ -3,10 +3,6 @@
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
 #include "MENU_LIST.H"
-/* Battle presentation: set up the effect display. Windows 0 and 1 cover the
-   screen, blending starts from a clean slate, and the display control write
-   (mode 1, BG0/BG1/BG2 and objects) is queued for the next frame; then wait
-   one frame for it to land. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
@@ -39,7 +35,6 @@ void BattlePres_ConfigureEffectDisplay(void)
     REG_WIN1V = 0x1088;
     REG_WININ = 0x3537;
     REG_WINOUT = 0x3f21;
-    /* DISPCNT: mode 1, 1D sprite tiles, BG0 to BG2, objects and both windows. */
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
     WaitFrames(1);
 }
@@ -74,7 +69,6 @@ void Camera_AdvanceBg2Reference(void)
     }
 }
 
-/* H-blank callback: feed the per-line WIN0H table at 0x02010000 to WIN0H. */
 void BattleFx_ArmWin0HBlankDma(void)
 {
     volatile u16 *channel = REG_DMA0;
@@ -84,12 +78,8 @@ void BattleFx_ArmWin0HBlankDma(void)
     Dma_Set((void *)gMapCellBuffer, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
 }
 
-/* The heap slot table; BattleEffect_LoadWork leaves its rectangle blitters
-   in slots 46 and 47. */
-
 extern u16 BattleFx_PuffCells[];
 extern u8 BattleFx_PuffSizes[];
-/* For each variant: how many shards fall and how many frames it lasts. */
 extern u8 FallingShards_Counts[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
@@ -97,10 +87,6 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 
-/*
- * Battle effect: ice shards fall in a slanted line towards the targets'
- * side; each bursts where it lands, shakes the targets and throws off puffs.
- */
 void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
@@ -270,13 +256,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 }
 
 extern u16 BattleFx6_FlareCells[];
-/* For each variant: how many bolts fall, how many sparks each throws off
-   where it lands, how far apart the bolts start and how many frames the
-   effect lasts. */
 extern u8 FallingBolts_Counts[];
 
-/* The map cell buffer as this effect uses it: WIN0H for every screen line,
-   then the sparks. */
 struct BoltSparkBuffer {
     u16 lines[160];
     struct EffectStep sparks[512];
@@ -286,11 +267,6 @@ struct BoltSparkBuffer {
 
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
-/*
- * Battle effect: bolts fall in a slanted line towards the targets' side;
- * each bursts where it lands, shakes the targets and throws off sparks that
- * fall away under gravity.
- */
 void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 {
     void **heap_cache;

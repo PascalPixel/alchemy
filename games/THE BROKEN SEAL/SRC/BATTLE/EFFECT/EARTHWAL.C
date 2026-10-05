@@ -14,8 +14,6 @@
 
 extern u8 gBattleFxWork[];
 
-/* The earth wall's three cells: where each starts in the decoded sheet, and
-   its width and height in pixels. */
 extern u16 EarthWall_CellSourceOffsets[];
 extern u8 EarthWall_CellWidths[];
 extern u8 EarthWall_CellHeights[];
@@ -73,12 +71,6 @@ static __inline__ void CopyPalette(WordCopy copy, void *destination, const void 
     copy(destination, source, size);
 }
 
-/*
- * The earth wall: a pair of mirrored cells rises beside the target for 28 of
- * the effect's 48 frames while the screen shakes. Mode 0 draws it at full
- * scale over the plain sheet, modes 1 and 2 at 0xcc with a harder shake, and
- * mode 2 also takes the fireball palette and a different member motion.
- */
 void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 mode)
 {
     void **cursor;

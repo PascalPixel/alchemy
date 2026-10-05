@@ -1,11 +1,7 @@
-/* Korima: the village's palette snapshots. The colour work buffer mirrors
- * palette RAM; each overlay keeps two saved copies of it in its variables.
- * The same four functions sit in each of the four Korima overlays. */
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
 
-/* The colour work buffer, as the battle effects' colour buffers name it. */
 extern u8 *Data_03001ed0;
 extern u8 KorimaPalette_First[];
 extern u8 KorimaPalette_Second[];
@@ -20,8 +16,6 @@ void KorimaPalette_SaveSecond(void)
     Dma_Set(Data_03001ed0, KorimaPalette_Second, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
 }
 
-/* Copy both halves of palette RAM into the work buffer and take it as the
- * colour source. */
 void KorimaPalette_Capture(void)
 {
     u8 *buf = Data_03001ed0;
@@ -31,8 +25,6 @@ void KorimaPalette_Capture(void)
     Engine_ColorBufferApplySource(0x10000, 0);
 }
 
-/* Put a saved copy back into the work buffer, take it as the colour target
- * and capture palette RAM again as the source. */
 void KorimaPalette_Restore(s32 second)
 {
     u8 *buf = Data_03001ed0;

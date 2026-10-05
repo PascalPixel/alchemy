@@ -18,7 +18,6 @@ s32 Fixed_Remainder(s32 value, s32 divisor);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 extern const s32 BattleFx_UntargetedObjectScript[];
 
-
 void BattleFx_ArmBg0HBlankDma(void);
 extern void BattleFx_ArmBg0HBlankDma(void);
 extern s32 PaletteGlow_UpdateFar(s32, s32);
@@ -77,9 +76,6 @@ void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *mini
     *minimum = BattleFx_HueChannelRamp(value + 0xFF880000, 0, 0x1F0000);
 }
 
-/* One colour channel of a hue wheel: angle (Q16 degrees, taken modulo 360)
-   ramps from 0 up to high over 0-60, holds high to 180, ramps back down over
-   180-240 and is low beyond. */
 s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high)
 {
     s32 product;
@@ -104,8 +100,6 @@ out:
     return low;
 }
 
-/* Fixed-point remainder: value less the whole multiples of |divisor|, using
-   the IWRAM ratio and the IWRAM Q16 multiply. */
 s32 Fixed_Remainder(s32 value, s32 divisor)
 {
     s32 quotient;

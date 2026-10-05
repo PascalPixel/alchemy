@@ -43,14 +43,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-/* The two mode records the entry point seeds; the halfword at +26 holds the
- * per-mode span in sixtieths. */
 struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
 
-/* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
     void *handle;
@@ -74,8 +71,6 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 void Script_WaitForEventTimeout(struct FieldActor *);
 
-/* The rival's path recorder in the scene state, as COMMON/KOROSSEO/PATH_RIVAL.C
-   reads it. */
 struct PathRecorder {
     s16 mode;
     s16 mirror;
@@ -83,28 +78,6 @@ struct PathRecorder {
     u16 pos;
     s16 still;
 };
-
-/* allocate a record by (id, size) */
-
-/* reserve a graphics handle */
-
-/* upload image data to a handle */
-
-/* next palette slot index */
-
-/* install a per-frame task (callback, rate) */
-
-/* release a graphics handle */
-
-/* terrain probe */
-
-/* place at (x, y, z) */
-
-/* place at (x, y, z) */
-
-/* re-attach the camera */
-
-/* The palette index is a signed sixteen-bit value; read actor coordinates only when the flag is clear. */
 
 void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)
@@ -150,9 +123,6 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     Runtime_BumpFree(handle);
 }
 
-/* Decode the rival's recorded course into the stage work and, until flag
-   0x109 is set, start the recorder replaying it for the actor the work
-   names; then schedule the rival's update. */
 void SceneState_InitControlWhenFlag109Clear(s32 resource)
 {
     u8 *work = gKorosseoWork;

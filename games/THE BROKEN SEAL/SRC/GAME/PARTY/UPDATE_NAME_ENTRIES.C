@@ -26,7 +26,6 @@ void *Trade_GetOfferStateFar(s32);
 
 extern char MsgEnemyLabel;
 
-/* The link protocol sends these lengths, including its trailing words. */
 enum LinkPartyPacketSize {
     LINK_PARTY_UNIT_BYTES = 340,
     LINK_PARTY_OFFER_BYTES = 320
@@ -89,9 +88,6 @@ s32 UpdateNameEntries(void)
     return named_count;
 }
 
-/* Send this side's battle party over the link: one unit state per transfer,
- * padded to three, then the Djinn offer with owners expressed as member
- * slots. The integer result is unspecified. */
 s32 LinkBattle_SendParty(void)
 {
     u8 *buffer;

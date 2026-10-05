@@ -9,8 +9,6 @@ struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
 s32 BattleFx_HasMatchingEvent5(s32 effectId);
 void ObjectMotion_SnapToTerrain(void *object);
 
-/* Whether a kind 5 event answers the effect, as in ☀️; ⚓️ passes the
-   event lookup the effect's selector. */
 s32 BattleFx_HasMatchingEvent5(s32 effectId)
 {
     u16 kind = effectId;

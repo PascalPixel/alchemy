@@ -2,8 +2,6 @@
 #include "RAM_BUFFER.H"
 #include "PARTY_STATE.H"
 
-/* ☀️'s encounter lookups, reading ⚓️'s event work through its heap slot. */
-
 extern s32 Encounter_SelectEnemyGroup();
 s32 BattleFx_LookupResult(void *);
 extern u16 Encounter_EnemyGroupTable[];
@@ -13,7 +11,6 @@ s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
     u8 *table = (u8 *)Ram_HeapSlots->event_work + 0x18c;
 
-    /* 第2引数は呼出元のr1を引き継ぐ特殊な呼出規約。 */
     return Encounter_SelectEnemyGroup(table[index]);
 }
 
@@ -41,14 +38,11 @@ u16 BattleFx_GetPhaseResult(s32 phase)
 {
     u16 *entry = (u16 *)(Encounter_AreaEntryTable + phase * 4);
 
-    /* The return value is carried through r0 from this call. */
     BattleFx_GetWeightedResult(entry[0], entry[1]);
 }
 
 s32 GameFlag_Test(s32 flag);
 
-/* A scene's cue: the scene or its area, an entrance (-1 for any) and a
-   flag (-1 for none) that must be set. */
 struct SceneCueRule {
     s16 id;
     s16 entrance : 15;
@@ -59,8 +53,6 @@ struct SceneCueRule {
 
 extern const struct SceneCueRule Scene_CueRuleTable[];
 
-/* Picks the cue of the first rule that matches the scene, or its area, and
-   the entrance; 79 when none does. */
 void Scene_ResolveInteractionResult(void)
 {
     s16 cue = 79;
@@ -103,11 +95,8 @@ struct SceneAreaNameRule {
 
 extern const struct SceneAreaNameRule Scene_AreaNameRules[];
 
-/* This caller consumes the unextended result; the definition returns s8. */
 s32 BattleFx_GetResourceGroup(s32 effect_id);
 
-/* Select an area-name index by scene or scene group and entrance; -1 matches
- * every entrance. */
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
     const struct SceneAreaNameRule *entry = Scene_AreaNameRules;

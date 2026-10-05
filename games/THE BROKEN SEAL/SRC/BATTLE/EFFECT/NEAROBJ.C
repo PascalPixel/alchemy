@@ -18,7 +18,6 @@ s32 BattleFx_MapKeyThroughTable(s32 battleMode);
 
 s32 BattleFx_StartRandomParticleEmitter(s32, s32);
 
-/* battle/effects/play_cue_and_start_emitter_on_target.c */
 extern void Object_SetMode(struct ParticleEffectObject *, s32);
 s32 Object_GetById(u32);
 s32 Audio_PlayCue(s32);
@@ -41,11 +40,6 @@ s32 BattleFx_MapKeyThroughTable(s32 key)
     return result;
 }
 
-/* The nearest of the 67 objects to SOURCEID's object, other than itself, by
-   whole-unit distance under 32: objects flagged 8 are skipped, objects
-   flagged 4 count as ten thirteenths as far, the vertical gap may not exceed
-   0x2fffff, and beyond 11 units the object must lie within 0x2fff of the
-   source's facing. Returns its id, or -1. */
 s32 BattleEffect_SelectNearbyObject(s32 sourceId)
 {
     struct ObjectRuntime *source;

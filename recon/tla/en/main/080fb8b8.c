@@ -1,9 +1,5 @@
 #include "TYPES.H"
 
-/* The detail panel of the item menu: whether the item does anything, its
-   attack and defense bonuses, one row per effect (stat changes, element
-   power and resistance, critical rates, special effects), then use,
-   consumption, curse and repair notes. */
 #include "ITEM.H"
 
 extern u8 MsgEquipEffectHeading[], MsgStatLabel[], MsgDefenseLabel[], MsgEquipEffectName[];

@@ -1,16 +1,9 @@
-//! Context-modelled Huffman message archives: one canonical tree per preceding
-//! symbol, packed leaf tables, bank payloads with byte-run lengths and an
-//! address directory. No game addresses, command tables or bank counts.
 use std::collections::HashMap;
 
-/// A built archive and the addresses its self-referential header records.
 pub(crate) struct HuffmanArchive {
     pub bytes: Vec<u8>,
     pub context_directory: u32,
     pub directory: u32,
-    /// Offsets into `bytes` of the little-endian words that hold an address
-    /// inside the archive, so a linker can relocate them from the archive's
-    /// own label instead of trusting `base`.
     pub pointers: Vec<usize>,
 }
 
@@ -25,7 +18,6 @@ struct Context {
     paths: HashMap<u16, Vec<bool>>,
 }
 
-/// Bits are packed least-significant bit first; the last byte is zero padded.
 fn pack_bits(bits: &[bool]) -> Vec<u8> {
     let mut bytes = vec![0u8; bits.len().div_ceil(8)];
     for (index, _) in bits.iter().enumerate().filter(|(_, bit)| **bit) {
@@ -34,8 +26,6 @@ fn pack_bits(bits: &[bool]) -> Vec<u8> {
     bytes
 }
 
-/// Leaves are twelve-bit symbols packed two per three bytes; the groups are
-/// stored last first and an odd final symbol takes two bytes.
 fn pack_leaves(leaves: &[u16]) -> Vec<u8> {
     let mut groups: Vec<Vec<u8>> = leaves
         .chunks(2)
@@ -53,8 +43,6 @@ fn pack_leaves(leaves: &[u16]) -> Vec<u8> {
     groups.concat()
 }
 
-/// Build the canonical tree for one context from its transition counts in
-/// first-seen order: the two lightest nodes merge, ties resolved by age.
 fn derive_context(transitions: &[(u16, u64)]) -> Context {
     let mut order = transitions.len();
     let mut nodes: Vec<(u64, usize, Node)> = transitions
@@ -93,8 +81,6 @@ fn derive_context(transitions: &[(u16, u64)]) -> Context {
     context
 }
 
-/// Every message starts in context zero and ends with symbol zero; the
-/// context after each symbol is that symbol.
 fn derive_contexts(
     symbol_count: usize,
     banks: &[Vec<Option<Vec<u16>>>],
@@ -119,13 +105,6 @@ fn derive_contexts(
         .collect())
 }
 
-/// Encode message banks as a context-modelled Huffman archive at `base`:
-/// context records (packed leaves, then tree bits), a halfword offset table
-/// (offset of each tree, `0x8000` for an unused context) padded to a word,
-/// the archive and offset-table addresses, then each bank's payloads followed
-/// by its byte-run lengths, and finally the bank directory of payload and
-/// length addresses, aligned to a word for the ARM message lookup.
-/// `None` is an empty message.
 pub(crate) fn encode_huffman_archive(
     base: u32,
     symbol_count: usize,
@@ -208,7 +187,6 @@ pub(crate) fn encode_huffman_archive(
         bytes.extend(payload);
         bytes.extend(lengths);
     }
-    // The ARM lookup reads both bank pointers with a word transfer.
     while (base as usize + bytes.len()) % 4 != 0 {
         bytes.push(0);
     }

@@ -756,7 +756,6 @@ gTakaraHashiraEvents5:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.section .bss,"aw",%nobits
-	/* Keep the four pillar-work records in a sixteen-byte-aligned bank. */
 	.balign 16
 	.global TakaraHashira_PillarSlots
 TakaraHashira_PillarSlots:

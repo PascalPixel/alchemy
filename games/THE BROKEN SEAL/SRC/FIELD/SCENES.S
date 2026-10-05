@@ -1,6 +1,3 @@
-@ Every scene the game enters by number: the resource holding its code,
-@ its area, its kind and its map. A named row defines SceneId_<name> as its
-@ own row number, so the scene numbers the code loads are these rows.
 	.macro scene name, code:req, area:req, kind:req, map:req
 	.ifnb \name
 	.global SceneId_\name

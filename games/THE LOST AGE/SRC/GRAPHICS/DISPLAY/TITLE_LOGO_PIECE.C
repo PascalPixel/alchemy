@@ -2,7 +2,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* A hardware sprite's attributes. */
 struct OamEntry {
     u32 y : 8;
     u32 affine : 2;
@@ -19,9 +18,6 @@ struct OamEntry {
     u16 unused;
 };
 
-/* Places a 64x64 double-size 256-colour translucent sprite of the title
-   at tile, in the OAM entry the tile number gives (one per 128 tiles),
-   placed 32 pixels up and left of x, y. */
 void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y)
 {
     struct OamEntry oam;

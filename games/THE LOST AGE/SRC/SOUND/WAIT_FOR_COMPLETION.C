@@ -1,8 +1,6 @@
 #include "AUDIO_ENGINE.H"
 #include "SYSTEM.H"
 
-
-/* Waits up to 300 frames for the pending music restore to finish. */
 void AudioCommand_WaitForCompletion(void)
 {
     s32 wait_count = 0;

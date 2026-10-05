@@ -1,9 +1,3 @@
-@ Interpolation templates and sample fetch of the resident mixer. The three
-@ 24-byte templates at its start are copied by RUNTIME_MIX.S into its
-@ sample loop and are not run here. The rest fetches samples and returns
-@ to the mixer two instructions past the call with addne pc, lr, #8, a
-@ return that no compiler emits.
-@ credit: handwritten — IWRAM runtime interpolation templates and sample fetch
 .syntax unified
 	.arm
 	asr	r9, r9, #22

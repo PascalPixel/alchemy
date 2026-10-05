@@ -1,45 +1,3 @@
-/*
- * Unmatched canonical draft: recon/tla/en/main/08143000.c.
- * BattlePresentation_ProcessPendingGraphicsTransfer (raw Func_08143000).
- * Measured 2026-10-02 with the ordinary TLA compiler plan, all six editions.
- * Native complete extent is 276 bytes, pools included. This source emits
- * 272 and differs by 124 bytes in every edition; no exact match is claimed.
- * The native callback has identical complete instructions/scalars/pools in
- * all six. All four direct colour-loader destinations and the IME, canvas,
- * copy and fill literal values are proved from their actual native bodies.
- * The four complete raw colour loaders (128 bytes) stay uncredited.
- *
- * The LOCAL DRAFT VIEW below gives only the four observed fields; it is
- * neither a second maintained header nor the complete shared work type.
- * It replaces the private full-prefix proposal without changing instructions,
- * relocations or offsets. Canonical publication needs no private include.
- *
- * Critical-order limitation: ordinary work fields let GCC read pending
- * before writing the interrupt mask and delay restoration past a work read.
- * Native claims/clears the pending flag inside the interrupt boundary and
- * restores IME before reading the transfer mode. It also discards a counter
- * read before assigning 1; this plain source omits that access. Registers,
- * argument scheduling, pool order and the final counter store differ.
- * No runnable equivalence is claimed. No assembly, fixed register, forced
- * unread storage, new work volatile or compiler option is retained.
- *
- * Eight ordinary source forms, EN complete extent/differing bytes:
- * u16 saved/direct I/O: 284/271
- * s32 saved/I/O pointer: 272/124 (retained)
- * u32 saved/I/O pointer: 272/124
- * s32 saved/direct I/O: 280/246
- * single final counter store: 272/125
- * idle branch returns first: 272/250
- * transfer mode captured before restore: 272/124
- * canvas loaded only for a transfer: 272/135
- * This self-contained conversion is a representation check, not a ninth form.
- *
- * The private proof initially resolved the four ColorBuffer_* loaders through
- * their complete raw instruction definitions at the actual native bytes.
- * All six editions now define those names at their raw/scaffold starts; the
- * localized definitions preserve the same128-byte scaffold and carry no credit.
- * Existing reviewed resident entries remain IwramCopyWords/IwramFillWords.
- */
 
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -47,9 +5,6 @@
 #include "IWRAM_CALL.H"
 #include "LAYOUT_GUARD.H"
 
-/* LOCAL DRAFT VIEW: the four fields observed in the canvas callback.
- * The intervening bytes belong to the existing heap work block; this view
- * does not allocate another buffer or claim the rest of the record's shape. */
 struct CanvasTransferDraftWork {
     u8 unknown_0000[0x7780];
     s32 transfer_mode;
@@ -73,10 +28,6 @@ void ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 void ColorBuffer_Darken(void *source, s32 amount, void *destination, s32 size);
 void ColorBuffer_Brighten(void *source, s32 amount, void *destination, s32 size);
 
-/* Send a ready battle canvas to BG character block 1 and count the frames
- * since that transfer. The effect selects copy, clear, fade or colour shift.
- * Claim the ready flag while interrupts are masked; the pixel work happens
- * after the previous interrupt state is restored. */
 void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 {
     struct CanvasTransferDraftWork *work;

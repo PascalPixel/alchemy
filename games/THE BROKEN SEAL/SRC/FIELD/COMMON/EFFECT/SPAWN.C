@@ -6,7 +6,6 @@
 extern const s32 *const gEffectScripts[];
 struct FieldActor *Object_CreateFar(s32 type, s32 x, s32 y, s32 z);
 
-/* The resident script dispatcher takes an address word. */
 static inline struct FieldActor *Effect_CreateResident(s32 type, s32 x, s32 y, s32 z)
 {
     /* FAKEMATCH: the inline result-copy lifetime preserves the eight-byte spawn frame; direct calls use four. */
@@ -26,7 +25,6 @@ enum {
     EFFECT_SCRIPT_REPEAT_COUNT = 3
 };
 
-/* Overlays call their import entries; the resident copy calls the main far entries. */
 #define EFFECT_SPAWN(name, create, set_script, section_name) \
 void __attribute__((section(section_name))) name( \
     s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, \

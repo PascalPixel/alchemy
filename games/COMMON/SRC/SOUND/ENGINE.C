@@ -24,7 +24,6 @@ extern const u8 Sound_NoisePitchCodes[];
 
 void CgbChannel_Mute(u8 channel);
 
-/* CGB channel 3 output-level codes, indexed by envelope level. */
 extern const u8 Sound_Cgb3LevelCodes[];
 
 void AudioEngine_Initialize(struct SoundWork *work)
@@ -450,8 +449,6 @@ scale:
     note->pan_bits &= note->channel_bits;
 }
 
-/* Step the envelope of every sounding CGB channel once per frame and write
- * its registers. */
 void Cgb_UpdateChannels(void)
 {
     s32 channel;

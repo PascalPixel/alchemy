@@ -2,11 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-/*
- * The Xian room's object helpers: set an object's sprite priority, and
- * create an object with its sprite flags, palette and blend configured.
- */
-
 #define NULL ((void *)0)
 
 void OverlayObject_SetEntryField(struct FieldActor *object, s32 priority)

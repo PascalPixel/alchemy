@@ -1,13 +1,7 @@
-//! C source as text: a blanked copy whose byte offsets are the source's,
-//! matching brackets, function bodies, and #include lines found, resolved,
-//! spelled and inserted.
 use std::collections::BTreeSet;
 use std::ops::Range;
 use std::path::{Component, Path, PathBuf};
 
-/// The source with comments, the insides of string and character literals,
-/// preprocessor lines and any non-ASCII byte blanked to spaces, byte for
-/// byte, newlines kept: what is left is the code to match against.
 pub(crate) fn mask(text: &str) -> Vec<u8> {
     let bytes = text.as_bytes();
     let mut out = bytes.to_vec();
@@ -84,7 +78,6 @@ pub(crate) fn text(mask: &[u8], range: Range<usize>) -> &str {
     std::str::from_utf8(&mask[range]).unwrap_or("")
 }
 
-/// `range` without the blanks at either end.
 pub(crate) fn trim(mask: &[u8], range: Range<usize>) -> Range<usize> {
     let mut range = range;
     while range.start < range.end && mask[range.start].is_ascii_whitespace() {
@@ -96,7 +89,6 @@ pub(crate) fn trim(mask: &[u8], range: Range<usize>) -> Range<usize> {
     range
 }
 
-/// Whether `range` is one C identifier.
 pub(crate) fn identifier(mask: &[u8], range: &Range<usize>) -> bool {
     !range.is_empty()
         && !mask[range.start].is_ascii_digit()
@@ -108,7 +100,6 @@ const KEYWORDS: &[&str] = &[
     "if", "else", "while", "for", "do", "switch", "case", "return", "sizeof", "goto",
 ];
 
-/// The bracket closing the one at `open`.
 pub(crate) fn closing(mask: &[u8], open: usize) -> Option<usize> {
     let (o, c) = match mask.get(open)? {
         b'(' => (b'(', b')'),
@@ -130,7 +121,6 @@ pub(crate) fn closing(mask: &[u8], open: usize) -> Option<usize> {
     None
 }
 
-/// The bracket opening the one that closes at `close`.
 pub(crate) fn opening(mask: &[u8], close: usize) -> Option<usize> {
     let (o, c) = match mask.get(close)? {
         b')' => (b'(', b')'),
@@ -152,17 +142,14 @@ pub(crate) fn opening(mask: &[u8], close: usize) -> Option<usize> {
     None
 }
 
-/// The first code byte at or after `at`.
 pub(crate) fn next(mask: &[u8], at: usize) -> Option<usize> {
     (at..mask.len()).find(|&i| !mask[i].is_ascii_whitespace())
 }
 
-/// The last code byte before `at`.
 pub(crate) fn previous(mask: &[u8], at: usize) -> Option<usize> {
     (0..at.min(mask.len())).rev().find(|&i| !mask[i].is_ascii_whitespace())
 }
 
-/// The identifier that ends at the last code byte before `at`.
 pub(crate) fn word_before(mask: &[u8], at: usize) -> Option<Range<usize>> {
     let end = previous(mask, at)? + 1;
     let start = (0..end).rev().take_while(|&i| is_ident(mask[i])).last()?;
@@ -170,13 +157,11 @@ pub(crate) fn word_before(mask: &[u8], at: usize) -> Option<Range<usize>> {
     (!mask[start].is_ascii_digit()).then_some(range)
 }
 
-/// The identifier starting at `at`.
 pub(crate) fn word_at(mask: &[u8], at: usize) -> Range<usize> {
     let end = (at..mask.len()).find(|&i| !is_ident(mask[i])).unwrap_or(mask.len());
     at..end
 }
 
-/// Every whole-word occurrence of `word` in `range`.
 pub(crate) fn words(mask: &[u8], word: &str, range: Range<usize>) -> Vec<usize> {
     let needle = word.as_bytes();
     let mut found = Vec::new();
@@ -195,7 +180,6 @@ pub(crate) fn words(mask: &[u8], word: &str, range: Range<usize>) -> Vec<usize> 
     found
 }
 
-/// A type written as words then stars, normalized as `u8 *` or `s32`.
 pub(crate) fn normal_type(inner: &str) -> Option<String> {
     if !inner.bytes().all(|b| is_ident(b) || b == b'*' || b.is_ascii_whitespace()) {
         return None;
@@ -213,7 +197,6 @@ pub(crate) fn normal_type(inner: &str) -> Option<String> {
     Some(name)
 }
 
-/// A parenthesized type at `at`, normalized, and where it ends.
 pub(crate) fn type_name(mask: &[u8], at: usize) -> Option<(String, usize)> {
     if mask.get(at) != Some(&b'(') {
         return None;
@@ -222,13 +205,10 @@ pub(crate) fn type_name(mask: &[u8], at: usize) -> Option<(String, usize)> {
     Some((normal_type(text(mask, at + 1..close))?, close + 1))
 }
 
-/// Whether a plain assignment stores into what ends at `end`.
 pub(crate) fn store(mask: &[u8], end: usize) -> bool {
     next(mask, end).is_some_and(|i| mask[i] == b'=' && mask.get(i + 1) != Some(&b'='))
 }
 
-/// Whether a postfix operator follows `end`, which would bind to what
-/// precedes it before any cast or dereference does.
 pub(crate) fn postfix(mask: &[u8], end: usize) -> bool {
     next(mask, end).is_some_and(|i| {
         matches!(mask[i], b'[' | b'(' | b'.')
@@ -238,7 +218,6 @@ pub(crate) fn postfix(mask: &[u8], end: usize) -> bool {
     })
 }
 
-/// The ranges between top-level commas of `range`.
 pub(crate) fn split_commas(mask: &[u8], range: Range<usize>) -> Vec<Range<usize>> {
     let mut parts = Vec::new();
     let (mut depth, mut start) = (0i32, range.start);
@@ -257,8 +236,6 @@ pub(crate) fn split_commas(mask: &[u8], range: Range<usize>) -> Vec<Range<usize>
     parts
 }
 
-/// A function definition: its name, the inside of its parameter list and
-/// its body from `{` through `}`.
 #[derive(Clone, Debug)]
 pub(crate) struct Function {
     pub name: Range<usize>,
@@ -266,7 +243,6 @@ pub(crate) struct Function {
     pub body: Range<usize>,
 }
 
-/// Every top-level function definition.
 pub(crate) fn functions(mask: &[u8]) -> Vec<Function> {
     let mut found = Vec::new();
     let (mut depth, mut i) = (0usize, 0);
@@ -289,7 +265,6 @@ pub(crate) fn functions(mask: &[u8]) -> Vec<Function> {
     found
 }
 
-/// The function whose body opens at the top-level `brace`.
 pub(crate) fn function_at(mask: &[u8], brace: usize) -> Option<Function> {
     let close = previous(mask, brace)?;
     if mask[close] != b')' {
@@ -308,8 +283,6 @@ pub(crate) fn function_at(mask: &[u8], brace: usize) -> Option<Function> {
     })
 }
 
-/// The names a text includes, and whether each is quoted (searched for
-/// beside the including file first) rather than angled.
 pub(crate) fn includes(text: &str) -> Vec<(String, bool)> {
     text.lines()
         .filter_map(|line| {
@@ -325,8 +298,6 @@ pub(crate) fn includes(text: &str) -> Vec<(String, bool)> {
         .collect()
 }
 
-/// The header the preprocessor finds for `name` included from a file in
-/// `directory`.
 pub(crate) fn resolve(name: &str, quoted: bool, directory: &Path, search: &[PathBuf]) -> Option<PathBuf> {
     let beside = quoted.then(|| directory.to_path_buf());
     beside
@@ -337,7 +308,6 @@ pub(crate) fn resolve(name: &str, quoted: bool, directory: &Path, search: &[Path
         .and_then(|path| path.canonicalize().ok())
 }
 
-/// Every header a file reaches through #include lines, under any condition.
 pub(crate) fn reachable(file: &Path, search: &[PathBuf]) -> BTreeSet<PathBuf> {
     let mut seen = BTreeSet::new();
     let mut pending = vec![file.to_path_buf()];
@@ -358,8 +328,6 @@ pub(crate) fn reachable(file: &Path, search: &[PathBuf]) -> BTreeSet<PathBuf> {
     seen
 }
 
-/// How `file` names `header` in an #include: its bare name when the search
-/// path finds that header by it, else its path from the file's directory.
 pub(crate) fn spelling(file: &Path, header: &Path, search: &[PathBuf]) -> Option<String> {
     let directory = file.parent()?;
     let header = header.canonicalize().ok()?;
@@ -386,9 +354,6 @@ fn relative_path(from: &Path, to: &Path) -> PathBuf {
     path
 }
 
-/// Adds `#include "NAME"` after the last unconditional #include of the
-/// file's opening run of comments and preprocessor lines, never after an
-/// #include further down; with none there, before the first such line.
 pub(crate) fn insert_include(text: &str, name: &str) -> String {
     let line = format!("#include \"{name}\"\n");
     let mask = mask(text);

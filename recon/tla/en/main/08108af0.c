@@ -1,10 +1,3 @@
-/*
- * Draft: Shop_PlaceCursor over ⚓️'s menu work (heap slot 0xdc; cursor at
- * 0x4dc, mode at 0x505) with signed window coordinates. Score 2: adds r1, #8
- * is issued after the y load in the listing. The rest is load scheduling: the
- * native issues loads (and fills their delay) earlier than agscc at
- * -mcpu=arm7tdmi; with -mtune=arm9tdmi added it scores 0.
- */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "RAM_BUFFER.H"
@@ -21,9 +14,9 @@ struct ShopCursor {
 
 struct ShopRuntime {
     u8 unknown_000[0x4dc];
-    struct ShopCursor cursor;           /* 0x4dc */
+    struct ShopCursor cursor;
     u8 unknown_4ec[0x19];
-    u8 mode;                            /* 0x505 */
+    u8 mode;
 };
 
 struct SpriteAttr {

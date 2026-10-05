@@ -63,9 +63,6 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     work->cursor_frame++;
 }
 
-/* Allocates and clears the option menu work block, copies the five option
-   settings into it, each beside its number of choices, and schedules the
-   menu. */
 void OptionMenu_InitializeWork(void)
 {
     struct WorkspaceWork *work;

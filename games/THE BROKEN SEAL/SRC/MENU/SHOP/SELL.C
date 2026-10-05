@@ -34,7 +34,6 @@ extern u8 MsgBecameCursed[];
 void Shop_SellItem(s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
 s32 Inventory_CountFar(s32);
-/* This caller passes an extra word beyond the helper's four arguments. */
 void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 s32 Shop_SelSell(s32);
@@ -174,10 +173,6 @@ s32 Shop_SalePrice(s32 item_id)
 #define BASE_W 11
 #endif
 
-/*
- * Keep an actor-selection menu active while dispatching the chosen actor into
- * one of two action screens.  The menu itself closes only when cancelled.
- */
 s32 Shop_PickUnit(void)
 {
     struct ShopRuntime *shop = gMenuWork;
@@ -249,12 +244,6 @@ s32 Shop_PickUnit(void)
     }
 }
 
-/*
- * Sell flow reached from Shop_PickUnit when the shop's party action
- * is "sell": browse the chosen member's inventory, priced one slot at a
- * time, and hand a confirmed slot off to Shop_SelSellNum before
- * writing the sale back through Shop_SellItem.
- */
 s32 Shop_SelSell(s32 unit_id)
 {
     s32 price_window;
@@ -444,10 +433,6 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
     return result;
 }
 
-/* Sells count of one inventory slot (count -1 sells the whole stack as
-   one): refuses worthless and cursed-and-equipped items, picks the offer
-   text for broken, several, rare or ordinary items, and on agreement
-   removes the items and pays out. */
 void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 {
     struct ShopRuntime *shop = gMenuWork;

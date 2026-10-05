@@ -6,8 +6,6 @@
 #define KEY_REPEAT_FIRST 19
 #define KEY_REPEAT_NEXT  6
 
-/* Repeats held keys after a delay and resolves diagonal input using the
-   previous direction mask. */
 void Input_UpdateKeyRepeatAndDirection(void)
 {
     /* FAKEMATCH: volatile reads and the repeat clear preserve separate input-cell rereads. */

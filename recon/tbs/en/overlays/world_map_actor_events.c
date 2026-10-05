@@ -107,7 +107,6 @@ void WorldMap_RunActorSequence(void)
     Func_0200c2e4();
 }
 
-/* The argument is unused; callers share the actor-preparation interface. */
 void WorldMap_PrepareTriggerActor(s32 actor)
 {
     struct SceneEvent *event = gWorldMapEvents;

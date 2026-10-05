@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* LOOKUP_SYMBOL initializes the three words DECODE_SYMBOL advances. */
 struct TextReader {
     u32 previous_code;
     const u32 *words;

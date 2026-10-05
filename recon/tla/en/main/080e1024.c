@@ -1,11 +1,4 @@
-/* 2026-10-03 resource-record ownership closure: use COMMON VRAM_TAB.H's
-   two-halfword size/state and byte-offset record. Native VramBlock_LoadCached
-   writes the requested byte size at +0 and VRAM byte offset at +2; initialize
-   and reset retain their existing zero/0xffff state policies. Current EN
-   score 1825/31; object, animation and effect-work names remain unresolved. This is a draft, with no new byte credit. */
 #include "RESOURCE.H"
-/* Battle effect: spawn the two particles that fall in arcs either side of
-   the source object, one for each of the descending-arc update callbacks. */
 #include "TYPES.H"
 
 void BattleFx_UpdateDescendingParticleNegativeArc(void);

@@ -2,7 +2,6 @@
 #include "TYPES.H"
 #include "RAMAKAN.H"
 
-/* Set the selected actor's sprite priority. */
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
     work->sprite->priority = mode;

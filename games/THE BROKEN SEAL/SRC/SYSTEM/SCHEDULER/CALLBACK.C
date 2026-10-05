@@ -15,7 +15,6 @@
 
 typedef void (*KeyCallbackFn)(void);
 
-/* The linear-congruential generator updates one unsigned word. */
 extern u32 gRandomSeed;
 extern const u16 Math_ArcTanTable[];
 
@@ -23,19 +22,12 @@ extern const u8 System_BasicColorPalette[];
 
 extern u8 gNumberTextBuffer[];
 
-/* ui/text/fmt/format_hex_to_work.c */
 extern const u8 RomBytes_0800795c[];
 
-/* ui/text/format_signed_decimal_to_work.c */
 extern u8 Text_PowersOfTen[];
 
-/* graphics/fill_word_stream_with_f000.c */
 extern u16 *gDebugTextCursor;
 
-/*
- * Each table update masks interrupts by writing IME the low half of its own
- * address (0x208, bit 0 clear) and restores the saved value afterwards.
- */
 void Scheduler_ResetTaskTable(void)
 {
     struct SchedulerTask *task = gSchedulerTaskTable;
@@ -134,7 +126,7 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order)
 
     index = -1;
     task = gSchedulerTaskTable;
-    (void)gSchedulerStatus; /* read and dropped */
+    (void)gSchedulerStatus;
     /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_state = REG_IME;
@@ -359,7 +351,6 @@ s32 Scheduler_DisableOverlayCallbacks(void)
     return result;
 }
 
-/* Run tasks whose high state byte selects this callback key. */
 void Runtime_InvokeCallbacksByKey(s32 key)
 {
     struct SchedulerTask *task = gSchedulerTaskTable;
@@ -392,7 +383,6 @@ u32 Random16(void)
     return (value << 8) >> 16;
 }
 
-/* Moves an (x, y, z) position radius along angle in the x-z plane. */
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position)
 {
     *position++ += Iwram_MulQ16(radius, Trig_Sin(angle + 0x4000));
@@ -514,7 +504,6 @@ s32 Runtime_GetLowTableAddress(void)
     return (s32)System_BasicColorPalette;
 }
 
-/* ui/text/fmt/text_format_hex_to_work.c */
 void Text_FormatHexToWork(u32 value)
 {
     u8 *buffer = gNumberTextBuffer;

@@ -2,7 +2,6 @@
 #define TOREBI_KYUDEN_KYUDEN_H
 extern struct EventWork *gEventWork;
 
-/* Services used by the palace scene. */
 struct OwnerState;
 
 void Audio_PlayCueFromEventWork(void);
@@ -30,11 +29,7 @@ void Engine_OwnerRecalculateRatios(s32 owner);
 void Engine_PartyAddActiveOwner(s32 owner);
 s32 Engine_PartyListActiveOwners(s16 *owners);
 void Engine_UiTextDrawQuantity(s32 first, s32 second);
-/* Branching dialogue and actor presentation sequences. */
 
-/* The work-record cells are written as a union, not as bare halfwords: the
- * halfword store and the scene-pointer read that follows are only ordered
- * against each other when they can alias. */
 union WorkCell {
     s32 w;
     u16 h;
@@ -48,17 +43,12 @@ static __inline__ void SetHalf(u16 *at, s32 value)
 extern u8 *gWork[];
 extern s32 gKeysHeld;
 
-/* Supplemental scene sequence of the resource_3b8 overlay. */
-
 extern u8 TorebiKyuden_EmptyTable[];
 extern u8 TorebiKyuden_MessageTable[];
 
 extern u8 TorebiKyuden_MiddleActionScript[];
 
-/* Primary effect sequence of the resource_3b8 overlay: two hundred and fifty scene calls with constant arguments. */
-
 enum {
-    /* Message 0x182 + 205. */
     ITEM_CLOAK_BALL = 205
 };
 

@@ -1,4 +1,3 @@
-/* Show the acquired Djinn of each element, then restore the party selector. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SYSTEM.H"
@@ -56,7 +55,6 @@ s32 DjinnMenu_ShowCurrentList(void)
             s32 id = row * 20 + col;
 
             if (GameFlag_TestFar(48 + id)) {
-                /* Tilemap entry: tile 1 + row in palette 1. */
                 UiWindow_SetTilemapEntryFar(window, 0x1001 + row,
                     row * 7 + 1, col + 3, 0);
                 UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnName + id,

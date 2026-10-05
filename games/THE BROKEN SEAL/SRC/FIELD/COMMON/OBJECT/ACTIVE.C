@@ -60,7 +60,6 @@ s32 BattleFx_GetResourceId(s32 speaker);
 struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 style);
 s32 UiWindow_CreateWithSideObjectFar(s32 speaker, s32 mode, s32 x, s32 y);
 
-/* Low twelve bits name the actor; high bits place its message and portrait. */
 struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 {
     struct UiRenderWork *win;
@@ -218,7 +217,6 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
             else
                 handle = UiText_OpenMessageWindowFar(message, left, top, (icon << 16) | 1);
         }
-        /* Both modes open the same side window. */
         if (win->mode != 0)
             side = UiWindow_CreateWithSideObjectFar(speaker, 0, column, tail);
         else

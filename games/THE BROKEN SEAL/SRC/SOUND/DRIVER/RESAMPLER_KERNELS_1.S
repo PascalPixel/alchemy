@@ -1,9 +1,3 @@
-@ Second 152-byte record of RESAMPLER_KERNELS.S up to its branch to the
-@ slot's end: shifted sums with conditional corrections (asrs; adds;
-@ addmi) and rotations over the loop's live registers, with no entry or
-@ return of its own. Its three nop words of padding are
-@ RESAMPLER_KERNELS_PAD_1.S. TBS only.
-@ credit: handwritten — ARM sound-buffer record patched into the IWRAM runtime
 .syntax unified
 	.arm
 	.global IwramCodeRecord1

@@ -121,20 +121,6 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     return 1;
 }
 
-/* Psynergy/action selection loop, entered for pane 0. Open the list and
- * collect usable actions for the current owner. A confirms, refusing
- * restricted or unaffordable actions with cue 114; B returns -1. L/R
- * rotate through owners until one has entries. Holding Select shows the
- * shortcut prompt; Select + L/R assigns the action to shortcut 0/1.
- * Both panes, owner tabs and per-owner selections share the menu record;
- * the detail-page scratch buffer belongs to this caller. The detail-page
- * renderer result is discarded. */
-
-/*
- * types.h already supplies WaitFrames, __modsi3, Audio_PlayCue, GameFlag_IsSet,
- * Ability_GetData, UiText_DrawCharacterAtOffsetFar, UiIcon_PrepareObject and
- * Object_InitializeMode; only the names it does not carry are declared here.
- */
 s32 PsynergyMenu_RunList(s32 pane)
 {
     struct PsynergyMenuState *menu;
@@ -233,7 +219,6 @@ s32 PsynergyMenu_RunList(s32 pane)
                 changed = 0;
             }
 
-            /* The shortcut prompt only appears in plain selection mode. */
             if (menu->mode == 0) {
                 if ((gKeyState & KEY_SELECT) != 0 && prompt == 0) {
                     ability = Ability_GetData(
@@ -257,8 +242,6 @@ s32 PsynergyMenu_RunList(s32 pane)
                 }
             }
 
-            /* Shortcut-assignment mode returns the highlighted action with cue 130.
-             * Plain selection rejects empty, restricted or unaffordable actions. */
             if ((gKeyState & KEY_A) != 0) {
                 if (menu->mode != 0) {
                     Audio_PlayCue(130);

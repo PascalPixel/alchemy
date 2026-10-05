@@ -9,21 +9,6 @@
 
 TEXT_MESSAGE_ENUM(MsgBattleNoPsynergy);
 
-/*
- * The battle Psynergy list.
- *
- * Draws one page of at most five entries from `actions` into a 21x11 window,
- * with a description line in a second full-width window, a page indicator
- * when the list is longer than one page, five entry glyph sprites and a
- * blinking cursor sprite. It then blocks, one frame at a time, handling the
- * four direction keys plus confirm and cancel, and returns the selected index
- * into `actions`, or -1 when the player cancelled. MsgBattleNoPsynergy
- * describes an empty list. Japanese decodes the description into a 32-unit
- * buffer; the other editions copy it with room for 52. Spanish, French and
- * Italian draw the second label tile of a row from 0xf005.
- *
- */
-
 #define ACTION_ID_MASK 0x3fff
 
 extern u8 MsgAbilityName;

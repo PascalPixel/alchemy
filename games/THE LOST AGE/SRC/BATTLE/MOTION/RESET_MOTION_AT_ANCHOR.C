@@ -13,8 +13,6 @@ void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot, struc
 void BattleMotion_SetObjectPosition(struct BattleObjectSlot *slot);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id);
 
-/* The object slot of a unit: party units 0-7 and enemies 128-135 share one
-   placement table, whose 0xff marks a unit with no object. */
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id)
 {
     struct BattleSession *work = Ram_HeapSlots->battle_work;

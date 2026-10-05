@@ -2,22 +2,12 @@
 #include "SELECT.H"
 #include "TYPES.H"
 
-/* The sprite attributes a selection record keeps for its icon. */
-/* One icon of the selection screen: an entry of the list being chosen from,
-   or an earlier choice kept on the path above it. MENU2.C describes the same
-   52-byte record for the code that scrolls the list. */
-/* The selection screen's work block. It holds its sixteen records itself:
-   the two arrows, the list, the path, and one more. */
 void WaitFrames(s32 frames);
 void Menu_SendNodeCountList(struct SelectionScreen *screen);
 void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
 void Resource_ResetPendingTransfer(void);
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 
-/* Confirm the entry under the cursor. The other entries slide onto it and
-   are released, the chosen one moves up under the earlier choices, and a
-   copy of it joins the end of the path. The list's position and cursor are
-   kept for that depth, and the entry's index in the whole list is returned. */
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
 {
     struct SelectionNode *node;

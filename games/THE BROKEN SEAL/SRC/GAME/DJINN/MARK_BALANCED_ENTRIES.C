@@ -8,7 +8,6 @@ extern struct DjinnMenuWork *gMenuWork;
 s32 Djinn_CheckTurnBalance(s32, s32);
 void Djinn_CountTurns(u8 *);
 
-/* djinn/mark_balanced_entries.c */
 s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
 {
     s32 sp0;
@@ -37,8 +36,6 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
     }
     return cnt;
 }
-
-/* djinn/check_turn_balance.c */
 
 s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 {
@@ -71,8 +68,6 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
     }
     return balanced;
 }
-
-/* djinn/count_turns.c */
 
 void Djinn_CountTurns(u8 *counts)
 {

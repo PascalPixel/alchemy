@@ -1,11 +1,3 @@
-@ Map conversion kernel, copied and run as one 160-byte unit (size and source
-@ {0xa0, 0x08021704} in its loader's literal pool at 0x0802a644). Behind a
-@ 4-byte Thumb entry (bx pc) the ARM body saves r5-r8 without lr and stores
-@ with strh ip, [r1], #4, a post-increment larger than the access, which
-@ GCC 2.96 does not emit for halfwords. After that entry its 156-byte body
-@ equals TBS GRAPHICS/TILE/CONVERT_MAP.S (0x0800a37c) byte for byte.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, map conversion kernel
 .syntax unified
 	.thumb
 	.global Render_ConvertMapCode

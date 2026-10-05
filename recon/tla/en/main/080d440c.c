@@ -10,9 +10,6 @@ extern u8 gCam[];
 
 void WaitFrames(s32);
 
-/* object/attach_work_target_to_object.c */
-/* object/attach_work_target_to_object.c */
-
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
 {
     s32 should_use_setter;

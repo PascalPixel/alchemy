@@ -75,8 +75,6 @@ void RamakanSabaku_UpdateTravelDust(void)
     }
 }
 
-/* Lamakan Desert: face the nearest of actors 9 to 12, then walk the leader
- * towards it with the search emote. */
 void RamakanSabaku_FaceNearestActor(void)
 {
     struct FieldActor *target;
@@ -270,8 +268,6 @@ void RamakanSabaku_PlayStartledRetreat(void)
     }
 }
 
-/* Lamakan Desert: reset the area timers and, outside the town variant, open
- * the map cells of the stored area variant before applying the entry state. */
 s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 {
     s32 v5;

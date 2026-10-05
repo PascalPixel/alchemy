@@ -28,7 +28,7 @@ struct EffectWork {
 
 struct HeightTrackedObject {
     u8 pad00[12];
-    s32 height;                 /* +12 */
+    s32 height;
 };
 
 extern u8 LinkedMessage_DoYouWishCrossInto[];

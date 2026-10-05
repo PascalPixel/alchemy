@@ -1,8 +1,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
-/* Near miss: Localized four-row title, ordinary nested for loops: the inner writer is coalesced with the sprite pointer and gains an extra saved register; DE loaded overlay is twelve bytes longer. */
-/* The title overlay: its scene tables. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
@@ -35,7 +33,6 @@ void PaletteFar_Entry20(s32 mode);
 
 void Sys_Free(void *buffer);
 #define DMA3 ((volatile u32 *)0x040000d4)
-
 
 static __inline__ void RestoreInterrupts(u32 saved)
 {
@@ -123,11 +120,6 @@ u8 *Title_GetEvents(void)
     return gTitleEvents;
 }
 
-/* The title scene's driver. Entrance 10 reveals the title and waits up to a
- * minute for a key before returning to it; entrance 9 plays the ending's
- * scroll and returns to the clear screen; entrance 2 runs the title menu until
- * a saved game is chosen; any other entrance starts a new game in Lunpa's
- * village, Haidia. */
 s32 Title_Run(void)
 {
     s32 wait;
@@ -199,11 +191,6 @@ s32 Title_Run(void)
     return 0;
 }
 
-/* The title sprites: decode their tiles and palette, then load the tiles
- * into the title's VRAM block. */
-
-/* Decode the title sprites' tiles and palette and load the tiles into the
- * title's VRAM block, finding one the first time. */
 void Title_LoadSprites(s32 unused)
 {
     u8 *buffer;
@@ -212,8 +199,6 @@ void Title_LoadSprites(s32 unused)
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     u8 *res;
 
-    /* The localized title fills four rows; its resource starts with the
-       full object palette, followed by the compressed tile sheet. */
     buffer = Runtime_BumpAllocateAlternatePool(0x9600);
     res = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
     if (gTitleVramBlock == -1)
@@ -237,11 +222,6 @@ void Title_LoadSprites(s32 unused)
     Sys_Free(buffer);
 }
 
-/* The title screen's reveal: the background fades in and a row of eighteen
- * sprites appears one by one. */
-
-/* Rebuild the row of eighteen title sprites; one more shows every two
- * frames, and the newest two blink with the frame counter. */
 void Title_RevealSpriteRow(void)
 {
     u32 *w;
@@ -304,8 +284,6 @@ loop:
     gTitleRevealFrame++;
 }
 
-/* Fade the title in: the background, then the sprite row under a blend
- * that clears over sixteen steps. */
 void Title_RevealScreen(s32 unused)
 {
     s32 i;
@@ -332,12 +310,6 @@ void Title_RevealScreen(s32 unused)
     gEventWork->transition_frames = 60;
 }
 
-/* The title screen's background: the Golden Sun logo's palette, tiles and a
- * 30 x 20 map counting up from tile 0x1a0, then cleared scroll registers.
- * The cell buffer is the fixed RAM buffer, reloaded for each use. */
-
-/* Load the title background: palette, tiles and a 30 x 20 map counting up from
- * tile 0x1a0, then clear the scroll registers. */
 void Title_LoadBackground(void)
 {
     u8 *res;

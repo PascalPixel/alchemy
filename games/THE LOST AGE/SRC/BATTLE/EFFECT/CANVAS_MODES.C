@@ -3,10 +3,6 @@
 #include "MOTION_OBJECT.H"
 #include "FIELD_EVENT.H"
 
-/* Mode entries of the canvas effect that follows them: the count picks
-   mode 1 or 2, and mode 3 runs with the object's action, as the projectile
-   volley's mode 6 does. */
-
 s32 ObjectDispatch_ApplyValueToChildrenFar(struct FieldActor *, s32);
 void Func_0818f620(void *effect, s32 mode);
 

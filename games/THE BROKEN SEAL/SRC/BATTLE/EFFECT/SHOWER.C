@@ -21,11 +21,8 @@ extern u8 gBattleFxWork[];
 
 void WaitFrames(s32);
 
-/* Resident word copier passed to the palette copy routine. */
 typedef s32 (*CopyWords)(void *, const void *, s32);
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
-   This owner reads kinds 39 (its work block), 40, 41, 46 and 47. */
 void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
 void Audio_PlayCue(s32);
 void BattleMotion_ApplyVariantMotionFar(s32, s32);
@@ -35,8 +32,6 @@ void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 typedef struct BattleEffectArgument Efx;
 
-/* One 28-byte record; the array starts at work + 0x7080.  x and y are
-   16.16 fixed point and their integer halves are read directly. */
 typedef struct Spark {
     s32 x;
     s32 y;
@@ -65,8 +60,6 @@ void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyRoll(s32 angle);
 
-/* H-blank callback: feed the per-line BG2X/BG2Y words in the battle work
-   area to the BG2 affine reference point. */
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {
     struct BattleEffectWork *work = *(void **)gBattleFxWork;
@@ -77,9 +70,6 @@ void BattleFx_ArmBg2AffineHBlankDma(void)
     Dma_Set(work->bg2_x, (void *)0x04000028, 0xa6600001, (volatile u32 *)channel);
 }
 
-/* Cached rectangle blitter: destination, source cell, x, y, width, height. */
-
-/* Mode entries of the burst shower (effect series I). */
 void BattleFx_RunSeriesIMode0(struct BattleEffectArgument *effect)
 {
     BattleEffect_RunBurstShower(effect, 0);
@@ -248,8 +238,6 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         }
 
         if (mode == 5) {
-            /* One large cell of a nine-cell sheet; the sequence advances
-               every third frame and wraps every ninth. */
             if (WORK_EFX->side == 1) {
                 ((DrawRectangle)blit[0])(dst,
                     SHEET
@@ -267,7 +255,6 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             aim[0] = (seat[pick][0] + (Random16() & 31)) - 16;
             aim[1] = (seat[pick][1] + (Random16() & 63)) - 16;
             if (frame <= 47) {
-                /* The original uses half the vertical fixed-point scale for x. */
                 SPARKS[frame].x = pos[0] << 15;
                 SPARKS[frame].y = pos[1] << 16;
                 SPARKS[frame].dx = (aim[0] - pos[0]) << 11;
@@ -353,14 +340,6 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     BattleFx_EndCanvasLayer();
 }
 
-/*
- * Battle effect: a cloud of 256 stars scattered through a cube around the
- * scene centre (only the first 64 are shown). For 160 frames star i appears
- * from frame i / 4, turned by a yaw, pitch or roll (or both of the last two,
- * by i & 3) that grows with the frame, and is drawn from one of four sheets
- * at a size of 1..9 pixels by depth. Thirty frames after it appears each
- * star is pulled back towards the centre.
- */
 void BattleFx_RunSwirlingStars(void *object)
 {
     void **heap_cache;
@@ -458,8 +437,6 @@ void BattleFx_RunSwirlingStars(void *object)
     BattleFx_EndCanvasLayer();
 }
 
-/* Three sparks orbit each affected unit for 64 frames from frame i * 16,
-   drawn through the single loaded blitter. */
 void BattleFx_RunOrbitingSparks(void)
 {
     /* FAKEMATCH: relative heap-cell loads preserve load and literal order; independent typed slots change both. */

@@ -1,7 +1,3 @@
-//! Pixel layouts over decoded indexed images: frame atlases, GBA tiles in
-//! frame order, metatiles and the pictures a tilemap draws.
-//! Pixel codecs themselves (4/8bpp packing, zero-skip, MTF4, delta7, tilemap
-//! delta) are in `assets`; this module arranges what they are given.
 use crate::assets::image::{GbaBpp, IndexedImage};
 
 fn tile_bytes(bpp: GbaBpp) -> usize {
@@ -11,13 +7,10 @@ fn tile_bytes(bpp: GbaBpp) -> usize {
     }
 }
 
-/// An indexed image's palette indices, row by row, one byte each.
 pub fn indices(image: &IndexedImage) -> Vec<u8> {
     image.pixels.iter().map(|pixel| *pixel as u8).collect()
 }
 
-/// Frames of `frame_width` by `frame_height` pixels, `columns` to a row,
-/// numbered left to right and top to bottom.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Atlas {
     pub frame_width: usize,
@@ -26,7 +19,6 @@ pub(crate) struct Atlas {
 }
 
 impl Atlas {
-    /// How many frame slots an image of `width` by `height` holds.
     pub(crate) fn slots(&self, width: usize, height: usize) -> Result<usize, String> {
         if self.frame_width == 0
             || self.frame_height == 0
@@ -40,13 +32,6 @@ impl Atlas {
     }
 }
 
-/// Pack pixels `width` by `height` into GBA 8x8 tiles. Without an atlas the
-/// tiles run left to right, top to bottom; with one, each of its first
-/// `frames` frames (whole tiles each) contributes its own tiles in that
-/// order before the next frame's. A four-bit tile keeps each pixel's low
-/// four bits, as pret's gbagfx does: an 8-bit PNG may carry each tile's
-/// palette row in the high bits, so a bank whose tiles use several rows is
-/// drawn in its real colours.
 pub(crate) fn tiles(
     pixels: &[u8],
     width: usize,
@@ -103,11 +88,6 @@ pub(crate) fn tiles(
     Ok(data)
 }
 
-/// Pack pixels into tiles metatile by metatile, as pret's gbagfx does with
-/// -mwidth and -mheight: the sheet is cut row by row into metatiles of
-/// `meta_width` by `meta_height` tiles, and each metatile's tiles run left
-/// to right, top to bottom, before the next metatile's. A one-by-one
-/// metatile is the plain row-major order.
 pub fn metatiles(
     pixels: &[u8],
     width: usize,
@@ -148,29 +128,18 @@ fn flip_tile(pixels: &[u8], hflip: bool, vflip: bool) -> Vec<u8> {
     output
 }
 
-/// A run of BG tiles drawn as the tilemap that shows them: tiles `first`
-/// to `first + count`, in the box of map cells that show any of them.
-/// A picture is that box once; its tiles the map never shows are blank.
-/// Animation frames are that box stacked, each frame the run again, the
-/// tiles its map never shows laid row by row in the rows beneath the box.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MapDrawing {
-    /// Cell column and row of the box's top left, and its size in cells.
     pub left: usize,
     pub top: usize,
     pub wide: usize,
     pub high: usize,
-    /// Each box cell, row by row: the run tile it shows and its flips.
     pub cells: Vec<Option<(usize, bool, bool)>>,
-    /// The run tiles no cell shows, in order.
     pub hidden: Vec<usize>,
-    /// The run's length in tiles.
     pub count: usize,
 }
 
 impl MapDrawing {
-    /// Lay out tiles `first..first + count` as `entries`, 16-bit tilemap
-    /// entries `map_wide` cells a row, show them.
     pub fn new(
         entries: &[u16],
         map_wide: usize,
@@ -229,15 +198,10 @@ impl MapDrawing {
         })
     }
 
-    /// Cell rows a frame takes: the box, then its hidden tiles' rows.
     pub(crate) fn frame_rows(&self) -> usize {
         self.high + self.hidden.len().div_ceil(self.wide)
     }
 
-    /// Pack the tiles a drawing `width` by `height` pixels holds: one
-    /// picture, or with `frames` as many frames as it stacks. A cell that
-    /// shows a tile twice must agree, and a cell showing no run tile, like
-    /// a picture's hidden tile, is blank.
     pub(crate) fn tiles(
         &self,
         pixels: &[u8],
@@ -316,8 +280,6 @@ impl MapDrawing {
         Ok(output)
     }
 
-    /// Draw packed tiles, whole runs of this drawing, as its picture
-    /// (one run) or its stacked frames: pixels and their height.
     pub fn draw(
         &self,
         packed: &[u8],

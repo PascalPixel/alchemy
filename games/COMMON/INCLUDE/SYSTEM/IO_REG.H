@@ -3,9 +3,6 @@
 
 #include "TYPES.H"
 
-/* Game Boy Advance I/O registers at their hardware addresses, named as the
-   public hardware documentation names them. */
-
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)
 #define REG_DISPSTAT (*(volatile u16 *)0x04000004)
 #define REG_VCOUNT (*(volatile u16 *)0x04000006)
@@ -13,12 +10,10 @@
 #define REG_BG2CNT (*(volatile u16 *)0x0400000c)
 #define REG_BG3CNT (*(volatile u16 *)0x0400000e)
 
-/* BGxCNT: the character and screen base blocks a background reads. */
 #define BGCNT_CHAR_BASE(block) ((block) << 2)
 #define BGCNT_SCREEN_BASE(block) ((block) << 8)
 #define BGCNT_256_COLORS 0x0080
 
-/* DISPCNT: one-dimensional sprite tiles and the layers it shows. */
 enum DisplayControl {
     DISPCNT_OBJ_1D_MAP = 0x0040,
     DISPCNT_BG0_ON = 0x0100,
@@ -60,7 +55,6 @@ enum DisplayControl {
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 #define REG_BLDY (*(volatile u16 *)0x04000054)
 
-/* BG2's screen block in the canvas layout. */
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
 #define REG_BG0HOFS ((void *)0x04000010)
 
@@ -68,18 +62,14 @@ enum DisplayControl {
 
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 
-/* The first backdrop colour of the palette RAM. */
 #define PLTT_BACKDROP (*(volatile u16 *)0x05000000)
 
-/* Background palette RAM: sixteen palettes of sixteen colours. */
 #define BG_PLTT ((volatile u16 *)0x05000000)
 #define BG_PLTT_COLOR(palette, color) (BG_PLTT[(palette) * 16 + (color)])
 #define OBJ_PLTT ((volatile u16 *)0x05000200)
 #define OBJ_PLTT_COLOR(palette, color) (OBJ_PLTT[(palette) * 16 + (color)])
 
-/* Background character blocks of 16 KiB each in VRAM. */
 #define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
-/* Background screen blocks of 2 KiB each in VRAM. */
 #define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
 #define TILE_SIZE_4BPP 32
 
@@ -94,16 +84,13 @@ enum DisplayControl {
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)
 #define REG_RCNT (*(volatile u16 *)0x04000134)
 
-/* DMA control bits. */
 #define DMA_ENABLE 0x8000
 #define DMA_START_HBLANK_REPEAT 0x3a00
 #define DMA_32BIT 0x04000000
-/* The source address stays put: the transfer fills with one value. */
 #define DMA_SRC_FIXED32 0x01000000
 #define DMA_ENABLE32 0x80000000
 
 #define OAM ((void *)0x07000000)
-/* Button bits in KEYINPUT and the held, pressed and repeat-key cells. */
 enum KeyMask {
     KEY_A = 0x001,
     KEY_B = 0x002,
@@ -123,7 +110,6 @@ enum KeyMask {
 
 #define KEYS_MASK 0x3ff
 
-/* The rest of the hardware registers by their documented names. */
 #define REG_BG0CNT (*(volatile u16 *)0x04000008)
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012)
 #define REG_SOUNDCNT_H (*(volatile u16 *)0x04000082)
@@ -158,14 +144,10 @@ enum KeyMask {
 #define REG_WAITCNT (*(volatile u16 *)0x04000204)
 #define REG_IME (*(volatile u16 *)0x04000208)
 
-/* KEYCNT: interrupt when A, B, Select and Start are all held (soft reset). */
 #define KEYCNT_SOFT_RESET 0xc00f
-/* KEYCNT: interrupt when L and R are both held (The Broken Seal wakes from sleep). */
 #define KEYCNT_SHOULDERS_WAKE 0xc300
-/* KEYCNT: interrupt when L, R and Select are all held (wake from sleep). */
 #define KEYCNT_SLEEP_WAKE 0xc304
 
-/* WAITCNT: game pak wait states 3,1 with the prefetch buffer on. */
 #define WAITCNT_GAME 0x4014
 
 #endif

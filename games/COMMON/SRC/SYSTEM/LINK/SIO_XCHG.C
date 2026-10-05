@@ -2,7 +2,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Exchange one packet pair, then report the same status as the poll paths. */
 s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
 {
     volatile u32 *siocnt;

@@ -9,8 +9,6 @@
 struct BattleUnit;
 struct OwnerActionSlot;
 
-/* The character and command pages allocated by Menu_OpenCharacterSelector
-   and ActionMenu_Open. Inventory and Psynergy keep their own mode records. */
 struct CharacterMenuState {
     u8 unknown_000[8];
     s32 selected_owner;
@@ -86,7 +84,6 @@ s32 CharacterSelector_MoveEntry(s32 selected, s32 direction);
 s32 CharacterMenu_SelectOwner(s32 slot);
 s32 CharacterMenu_SelectCommand(void);
 s32 Menu_RunActionFlow(void);
-/* Existing callers supply extra words to this zero-argument definition. */
 void Menu_InitSelectorCursorAndEntries();
 void Menu_CreateWindowAndEntryObjects(s32 owner, s32 page);
 void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 owner, s32 mode);

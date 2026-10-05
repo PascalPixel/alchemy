@@ -35,8 +35,6 @@ s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s
     UiWindow_SetPaletteBitRectFar(((struct UiWindow *)win)->x + arg1 + 1, ((struct UiWindow *)win)->y + arg2 + 1, arg3, arg4, arg5);
 }
 
-/* Set palette `palette` on every tile of a clipped rectangle of the 32x32
-   tile map that uses palette 15, and mark the touched rows dirty. */
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
 {
     u8 *base;
@@ -87,9 +85,6 @@ void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 he
         ((struct UiWindow *)obj)->y + y + 1, width, height, palette);
 }
 
-/* The Djinn help screen: seven topics, each with its explanation. Up and
-   down or A step through them; B or Select returns -1 and Start -2, which
-   also clears the menu's windows. */
 s32 DjinnMenu_ShowHelp(void)
 {
     s32 win_b;

@@ -88,8 +88,6 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset)
     } while (iter <= 1);
 }
 
-/* Builds and sorts this turn's actions, setting guard levels for defensive
-   actions. Returns the action count, or -1 when the link fails. */
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 {
     struct BattleUnit *character;
@@ -189,7 +187,6 @@ finish:
     return count;
 }
 
-/* A tagged slot names a member by its low nibble; bit 7 selects the enemy. */
 s16 Battle_GetTaggedSlotValue(s32 slot)
 {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
@@ -203,7 +200,6 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
     return battle->party_units[slot & 0xf];
 }
 
-/* Removed members are skipped; the end marker means no matching slot. */
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)

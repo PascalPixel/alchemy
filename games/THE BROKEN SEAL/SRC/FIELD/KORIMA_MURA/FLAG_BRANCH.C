@@ -1,6 +1,3 @@
-/*
- * Restores the map cells flags 0x845 and 0x847 have changed.
- */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

@@ -1,10 +1,3 @@
-@ Long-multiply helpers behind Thumb entries: each bx pc; nop stub enters an
-@ ARM umulls. The first returns the high word of r0 * r1; the second
-@ multiplies that high word by r2 and adds r0 (mla). umulls sets flags,
-@ which none of GCC 2.96's long-multiply patterns does. TBS has no such
-@ helpers.
-@ Its two 4-byte Thumb entries, which are TLA's own, carry no credit.
-@ credit: handwritten — unsigned high-word multiply and multiply-accumulate helpers
 .syntax unified
 	.thumb
 	.global Math_UnsignedMulHigh

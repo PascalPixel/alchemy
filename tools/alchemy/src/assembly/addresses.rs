@@ -1,15 +1,10 @@
-//! Address uses in assembly source. Values come from source operands; no
-//! image, placement, expected bytes or generated report enters the analysis.
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 #[derive(Clone, Debug, Default)]
 pub struct Types {
-    /// Pointer arguments in the first four ARM ABI registers.
     pub arguments: BTreeMap<String, u16>,
-    /// Source declarations of arrays whose elements are pointers.
     pub tables: BTreeSet<String>,
-    /// Pointer-valued source objects, distinct from pointer arrays.
     pub objects: BTreeSet<String>,
 }
 
@@ -20,8 +15,6 @@ pub struct Site {
     pub value: u32,
 }
 
-/// An integer assembler expression, never a symbol's address. Arithmetic is
-/// evaluated as a 32-bit word, just as GAS emits it in a word directive.
 pub fn integer(text: &str) -> Option<u32> {
     fn atom(text: &[u8], at: &mut usize) -> Option<u32> {
         space(text, at);
@@ -118,8 +111,6 @@ pub(crate) fn memory_address(word: u32) -> bool {
         || (0x0300_0000..0x0300_8000).contains(&word)
         || (0x0800_0000..0x0e00_0000).contains(&word)
 }
-/// A source-spelled immediate call, including a numeric expression. Register
-/// calls and symbol expressions remain references rather than absolute calls.
 pub fn numeric_calls(source: &str) -> Vec<(usize, u32)> {
     source
         .lines()
@@ -839,8 +830,6 @@ fn run(
     summary
 }
 
-/// Sources must already have strings and comments removed. Every source in a
-/// call/table context belongs to the same source tree and target game.
 pub fn sites(sources: &[&str], types: &Types) -> Vec<Site> {
     let mut program = Program::default();
     for (index, source) in sources.iter().enumerate() {

@@ -18,10 +18,8 @@ struct DispatchChild {
     u8 unknown_11_high : 6;
     s16 value_12;
     u8 unknown_14[5];
-    /* Set when the layers change. */
     u8 dirty;
     u8 value_1a;
-    /* How many of the layers below are in use. */
     u8 count;
     u8 unknown_1c[0x0c];
     struct AnimationEntry *entries[4];
@@ -33,7 +31,7 @@ struct DispatchObject {
     u32 value_00;
     s16 value_04;
     u8 unknown_06[0x1d];
-    u8 priority_flags;      /* 0x23: bit 0 keeps the sprite priority automatic */
+    u8 priority_flags;
     u8 unknown_24[0x0c];
     s32 value_30;
     s32 value_34;
@@ -55,7 +53,6 @@ struct DispatchObject {
     s16 value_64;
     u8 unknown_66[2];
     s32 argument;
-    /* Runs every frame in place of the script. */
     void (*update)(struct DispatchObject *object);
 };
 

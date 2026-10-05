@@ -9,12 +9,6 @@
 
 void MapAnimation_Update(void);
 
-/* Steps the sixteen tile-animation channels. A channel whose timer has run
-   out reads commands until one copies characters: 0xffff restarts the
-   channel, 0xfeXX jumps to command XX (0xfeff stops it for this frame), and
-   any other command copies COUNT characters from character OP to character
-   DST and waits TIMER frames. Characters past VRAM's range come from EWRAM.
- */
 void MapAnimation_Update(void)
 {
     /* FAKEMATCH: indexed channel expressions preserve ip/lr allocation and the sentinel/VRAM pool order. */
@@ -81,10 +75,6 @@ void Map_SetLayerEntryFlag(u32 no)
     anim->paused = 1;
 }
 
-/* Clears the sixteen tile-animation channels, then reads a 0xffff-terminated
-   command list: each 0xfdXX command starts channel XX & 15 on the commands
-   that follow it, held paused when bit 7 is set. Schedules the animation update
-   when any channel started. */
 void MapAnimation_StartChannels(const u16 *script)
 {
     struct MapState *state;

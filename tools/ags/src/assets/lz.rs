@@ -1,34 +1,20 @@
-//! Explicit LZ stream codecs, independent of ROM layouts and resource tables.
 use super::{err, AssetError};
-/// `["l", n]` / `["c", length, distance]` from the TypeScript.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GeneralToken {
     Literal(u32),
     Copy { length: u32, distance: u32 },
 }
-/// `["l"]` / `["e"]` / `["c", length, distance]` from the TypeScript.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PaletteOperation {
     Literal,
     End,
     Copy { length: u32, distance: u32 },
 }
-/// `["z"]` / `["g", ops]` from the TypeScript.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PaletteGroup {
     Zeros,
     Group(Vec<PaletteOperation>),
 }
-// ---------------------------------------------------------------------------
-// bit reader
-// ---------------------------------------------------------------------------
-/// LSB-first bit reader over 16-bit little-endian words.
-///
-/// PORT NOTE: the TypeScript accumulator is a JS number normalised with
-/// `>>> 0`, i.e. exactly a `u32`. `count` never exceeds 27 here (the widest
-/// `get` is 12 bits and `fill` only runs when `count < requested`), so the
-/// `value | word << count` shift can never reach 32 and the two
-/// implementations drop the same high bits.
 struct LsbBits<'a> {
     data: &'a [u8],
     origin: usize,
@@ -74,8 +60,6 @@ impl<'a> LsbBits<'a> {
         self.count += 16;
         Ok(())
     }
-    /// One past the last byte holding a consumed bit. The reader fetches whole
-    /// words, so `cursor` can already stand one byte beyond the stream.
     fn stored_end(&self) -> usize {
         self.origin + ((self.cursor - self.origin) * 8 - self.count as usize).div_ceil(8)
     }
@@ -83,7 +67,6 @@ impl<'a> LsbBits<'a> {
         while self.count < count {
             self.fill()?;
         }
-        // `2 ** count - 1` for count in 0..=12.
         let mask = (1u32 << count) - 1;
         let value = self.value & mask;
         self.value >>= count;
@@ -91,16 +74,12 @@ impl<'a> LsbBits<'a> {
         Ok(value)
     }
 }
-/// `Math.floor(Math.log2(value)) + 1`, with `0 -> 0`.
 fn bit_length(value: u32) -> u32 {
     if value == 0 {
         return 0;
     }
     32 - value.leading_zeros()
 }
-// ---------------------------------------------------------------------------
-// general stream
-// ---------------------------------------------------------------------------
 fn append_copy(
     output: &mut Vec<u8>,
     distance: u32,
@@ -144,7 +123,6 @@ fn decode_length(bits: &mut LsbBits) -> Result<Option<u32>, AssetError> {
     let long = bits.get(7)?;
     Ok(if long == 0 { None } else { Some(long + 10) })
 }
-/// Shared body of `decode_general_trace` and `decode_general_prefill_trace`.
 fn decode_general_body(
     data: &[u8],
     start: usize,
@@ -321,9 +299,6 @@ fn encode_general_inner(
             }
         }
     }
-    // A failure here must name a COORDINATE, not just a verdict: the divergence
-    // offset is the whole diagnosis, and it costs one loop to compute on a path
-    // that is already throwing.
     let rebuilt = &replay[prefill..];
     if cursor != decoded.len() || rebuilt != decoded {
         let mut at: i64 = -1;
@@ -348,9 +323,6 @@ fn encode_general_inner(
 pub fn encode_general(decoded: &[u8], tokens: &[GeneralToken]) -> Result<Vec<u8>, AssetError> {
     encode_general_inner(decoded, tokens, 0, 1)
 }
-// ---------------------------------------------------------------------------
-// palette stream
-// ---------------------------------------------------------------------------
 pub(crate) fn decode_palette_trace(
     data: &[u8],
     start: usize,
@@ -508,11 +480,6 @@ pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>
     }
     Ok(encoded)
 }
-// ---------------------------------------------------------------------------
-// MTF4 LZ stream (tag 2)
-// ---------------------------------------------------------------------------
-/// A token of the tag-2 stream: the general stream's copy coding with
-/// literals written as two move-to-front nibble indices of `width` bits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Mtf4LzToken {
     Literal { width: u32 },
@@ -585,10 +552,6 @@ fn decode_mtf4_body(
     }
 }
 
-/// Encode `decoded` as a tag-2 stream: tag byte 2, then LSB-first bits where
-/// a literal is `1`, a two-bit width selector (`1` = 2 bits, `01` = 3 bits,
-/// `00` = 4 bits) and the low then high nibble as MTF indices, and a copy uses
-/// the general stream's length and position-dependent distance coding.
 pub fn encode_mtf4_lz(decoded: &[u8], tokens: &[Mtf4LzToken]) -> Result<Vec<u8>, AssetError> {
     let mut bits: Vec<u8> = Vec::new();
     let mut table: [u8; 16] = std::array::from_fn(|index| index as u8);
@@ -655,13 +618,6 @@ pub fn encode_mtf4_lz(decoded: &[u8], tokens: &[Mtf4LzToken]) -> Result<Vec<u8>,
     Ok(packed)
 }
 
-// ---------------------------------------------------------------------------
-// arena stream
-// ---------------------------------------------------------------------------
-/// Encode `decoded` as an arena stream. `tokens` of `None` stores it raw behind
-/// a zero split; otherwise the literal runs and copies are laid out from the
-/// plan and every copy is checked against `arena` (the bytes that precede this
-/// stream) followed by the stream itself.
 pub(crate) fn encode_arena(
     decoded: &[u8],
     tokens: Option<&[GeneralToken]>,
@@ -669,7 +625,6 @@ pub(crate) fn encode_arena(
     arena: &[u8],
 ) -> Result<Vec<u8>, AssetError> {
     let Some(tokens) = tokens else {
-        // An empty input is a bare split: the writer adds no bytes after it.
         if !decoded.is_empty()
             && (decoded.last() != Some(&0) || decoded[..decoded.len() - 1].contains(&0))
         {
@@ -765,22 +720,9 @@ pub(crate) fn encode_arena(
     }
     Ok(output)
 }
-/// Copies count back at most 0xfff bytes from the literal block.
 const ARENA_WINDOW: usize = 0xfff;
 const ARENA_MAX_COPY: usize = 273;
-/// A compressed stream longer than this work buffer is stored raw.
 const ARENA_WORK_BUFFER: usize = 0x400;
-/// Compress `decoded` against `arena`, the bytes that precede the stream.
-///
-/// Each position takes its longest match, the oldest source on ties. A match
-/// ends before the stream's split halfword, lies within the copy window and
-/// never reaches past the decoded offset equal to the arena's length. Token
-/// lengths are decided from the end: when a strictly longer match starts
-/// inside a copy, the parse from that match is walked while it stays inside
-/// the copy, and the first token longer than the copy cuts the copy there (a
-/// cut shorter than three bytes is a literal). The stream is stored raw when
-/// its compressed form exceeds the work buffer or saves less than a tenth of
-/// the payload before its terminator.
 pub fn compress_arena(decoded: &[u8], arena: &[u8]) -> Result<Vec<u8>, AssetError> {
     let compressed = encode_arena(decoded, Some(&arena_tokens(decoded, arena)), 0, arena)?;
     let payload = decoded.len().saturating_sub(1);
@@ -870,9 +812,3 @@ fn arena_tokens(decoded: &[u8], arena: &[u8]) -> Vec<GeneralToken> {
     tokens
 }
 
-// ---------------------------------------------------------------------------
-// halfword LZ: 16-flag groups over little-endian 16-bit units
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// self-test
-// ---------------------------------------------------------------------------

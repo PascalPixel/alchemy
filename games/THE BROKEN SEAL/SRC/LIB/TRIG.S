@@ -1,13 +1,3 @@
-@ Cosine of a 16-bit angle (a quarter turn is 0x4000) in 16.16 fixed point:
-@ 0x0800231c adds a quarter turn, rounds to one of the 256 entries of the
-@ quarter-wave sine table in SINE_TABLE.S, mirrors and negates by quadrant,
-@ and branches back into 0x0800230c for the angles on an axis. It reaches
-@ the table PC-relatively with the Thumb add r3, pc, #12, which neither
-@ approved compiler emits, and the branches at 0x08002316, 0x08002328,
-@ 0x0800232c and 0x0800233c test carry or zero left by lsrs, where both
-@ approved compilers put a cmp before every conditional branch. TLA
-@ LIB/TRIG.S is a different routine over a different table.
-@ credit: handwritten — Q16 cosine lookup
 .syntax unified
 	.thumb
 	.global Func_0800230c

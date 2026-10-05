@@ -18,7 +18,6 @@ s32 BattleFx_GetResourceIdFar(s32);
 void UiIcon_PrepareObjectFar(void *);
 s32 Menu_RunConfirmSelectionAtFar(s32, s32, s32);
 
-/* ui/message/show_and_wait.c */
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 extern u8 MsgWeaponShopWelcome[];
@@ -27,7 +26,6 @@ extern u8 MsgItemShopWelcome[];
 extern u8 MsgWarriorShopWelcome[];
 extern u16 RomBytes_080b413c[];
 
-/* shop/sel/fill.c */
 struct Record_080b06c0 {
     u8 filler0[4];
     u8 values[21];
@@ -35,7 +33,6 @@ struct Record_080b06c0 {
 
 extern u16 RomBytes_080b4100[];
 
-/* shop/draw/glyphs.c */
 extern u8 Shop_GlyphBytes[];
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
 extern u8 gEventWork[];
@@ -77,7 +74,6 @@ struct ShopCursorSprite3 {
 
 extern struct ShopRuntime *gMenuWork;
 
-/* shop/place_cursor.c */
 void Shop_SetCursor(struct ShopCursor *cursor, s32 x, s32 y, s8 kind);
 
 void UiMessage_ShowAndWait(s32 arg0)
@@ -101,7 +97,6 @@ void UiMessage_ShowAndWait(s32 arg0)
     WaitFrames(1);
 }
 
-/* ui/message/show_and_restore_state.c */
 void UiMessage_ShowAndRestoreState(s32 message_id)
 {
     s32 variant;
@@ -138,7 +133,6 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
     state->cursor.anchor->active = saved;
 }
 
-/* ui/message/show_choice.c */
 s32 UiMessage_ShowChoice(s32 arg0)
 {
     struct RenderOutput **slot = &gMenuWork->cursor.anchor;
@@ -153,7 +147,6 @@ s32 UiMessage_ShowChoice(s32 arg0)
     return arg0;
 }
 
-/* ui/message/show_choice_variant.c */
 s32 UiMessage_ShowChoiceVariant(s32 arg0)
 {
     struct RenderOutput **slot = &gMenuWork->cursor.anchor;
@@ -197,7 +190,6 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
     }
 }
 
-/* 4行分の非0バイトを指定配置へ順にコピーする。 */
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
 {
     u8 *src = Shop_GlyphBytes + (arg0 << 5);
@@ -221,8 +213,6 @@ void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
     } while (count >= 0);
 }
 
-/* Builds a sprite showing a price of up to five digits, least significant
-   digit first, over the blank price tiles. */
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 {
     u8 *buf;
@@ -259,8 +249,6 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     return sprite;
 }
 
-/* Copies the saved tile block at work + 0xe00 back into the scene's map and
-   the work area, then refreshes the scene layer. */
 void Shop_RestoreSceneTiles(s32 layer)
 {
     u32 *scene = (u32 *)gEventWork;
@@ -280,10 +268,6 @@ void Shop_InitEffect(void)
     BattleFx_StartBufferInterpolationFar(0x10);
 }
 
-/* ShopCursor_Advance: step the cursor sprite one frame of a linear tween
-   from its position toward its target over kind frames, refreshing the
-   sprite's position and OAM coordinates, and stop when the tween ends.
- */
 void ShopCursor_Advance(struct ShopCursor *cursor)
 {
     struct RenderOutput *sprite;
@@ -311,9 +295,6 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     }
 }
 
-/* Moves the cursor sprite a quarter of its remaining signed X and Y distance
- * toward the target, at least one pixel per axis, and refreshes the packed
- * screen coordinate of each axis that moved. */
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 {
     struct RenderOutput *sprite;
@@ -379,8 +360,6 @@ void Shop_SetCursor(
     cursor->active = 0;
 }
 
-/* Places the cursor sprite at (x, y) at once: the position, the target and
-   the sprite's OAM coordinates all take the new values. */
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
 {
 
@@ -423,7 +402,6 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
         shop->mode);
 }
 
-/* shop/sel/buy.c */
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 MsgItemPlainName[];
@@ -449,13 +427,6 @@ void Item_AdjustCounterFar(s32 item, s32 delta);
 s32 AbilityMenu_BuildAvailableList(void);
 void Audio_PlayCue(s32 cue);
 
-/*
- * The shop's buy menu: browse the stock seven to a row, then pick the
- * member who carries the chosen item (a full bag or an item they cannot
- * use asks again), choose how many, and let the special-item offer follow
- * the purchase. Artifact shops drop the bought stock and close when it
- * runs out.
- */
 s32 Shop_SelBuy(void)
 {
     struct ShopRuntime *shop = gMenuWork;

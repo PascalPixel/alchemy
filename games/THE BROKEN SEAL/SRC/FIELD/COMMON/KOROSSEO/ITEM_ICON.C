@@ -10,10 +10,6 @@ void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void ItemIcon_LoadTilesFar(s32 item);
 void ResourceMetadata_ClearRecordFar(void *record);
 
-/* Colosso: when object id is in state 1, borrow heap block 17, clear its
- * 128-byte icon buffer, draw the item icon there, load it into the sprite
- * slot of the object and point its sprite at the new tiles. The
- * same function sits in each of the three Colosso trial overlays. */
 void Korosseo_ShowItemIcon(s32 id, s32 item)
 {
     struct FieldActor *obj;

@@ -2,11 +2,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Starts the serial runtime: installs the serial and timer interrupt
- * handlers, resets the SIO registers into multiplayer mode, clears the
- * runtime record and lays out its send, incoming, ready and pending buffers,
- * enables the serial interrupt and the VBlank exchange, and clears the
- * transfer state. */
 void SerialRuntime_Initialize(void)
 {
     u32 interrupt_enable;
@@ -49,7 +44,6 @@ void SerialRuntime_Initialize(void)
     REG_IME = 0;
     REG_IE |= 0x80;
     REG_IME = 1;
-    /* VBlank checks this flag while interrupts are enabled. */
     *(volatile u16 *)&gSerialExchangeActive = 1;
     gLinkExchangeState = 0;
     gSerialSendSource = 0;

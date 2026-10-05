@@ -22,6 +22,5 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
     *(u16 *)(base + offset) = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-    /* 0xeb0から始まる列を次の処理へ渡す。 */
     UiText_RenderWideStringAtOffset(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
 }

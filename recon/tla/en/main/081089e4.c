@@ -1,11 +1,3 @@
-/*
- * Draft: ShopCursor_MoveTowardTarget, ☀️'s SHOP.C body. Score 2: movs r2,
- * #128 (the 0x1ff mask) is issued before reloading sprite->x where the
- * listing issues it after. devsearch (300 iterations) found nothing.
- * With -mtune=arm9tdmi (2026-10-05) still score 2, the same swap. A barrier
- * before the packed write leaves it; reading the reload into a temporary
- * before a barrier lets the compiler reuse the stored value (score 53).
- */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "RAM_BUFFER.H"
@@ -22,9 +14,9 @@ struct ShopCursor {
 
 struct ShopRuntime {
     u8 unknown_000[0x4dc];
-    struct ShopCursor cursor;           /* 0x4dc */
+    struct ShopCursor cursor;
     u8 unknown_4ec[0x19];
-    u8 mode;                            /* 0x505 */
+    u8 mode;
 };
 
 struct SpriteAttr {
@@ -62,9 +54,6 @@ struct ShopCursorSprite3 {
 
 void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
 
-/* Moves the cursor sprite a quarter of its remaining signed X and Y distance
- * toward the target, at least one pixel per axis, and refreshes the packed
- * screen coordinate of each axis that moved. */
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 {
     struct RenderOutput *sprite;

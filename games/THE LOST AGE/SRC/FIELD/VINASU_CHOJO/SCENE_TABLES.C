@@ -3,7 +3,6 @@
 #include "FIELD_EVENT.H"
 #include "PARTY_STATE.H"
 
-/* The opening's cast arrives through this entrance and stands apart. */
 enum {
     ENTRANCE_ALTERNATE_PLACEMENTS = 99
 };
@@ -21,7 +20,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gSceneEntrances;
 }
 
-/* This scene declares no regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -32,7 +30,6 @@ const u32 *Scene_GetExits(void)
     return gSceneExits;
 }
 
-/* Takes the low four bits of an actor's counter as its part attribute. */
 s32 SceneActor_ApplyCounterLowBitsAsMode(struct FieldActor *actor)
 {
     Object_SetPartAttribute(actor, actor->timer & 15);

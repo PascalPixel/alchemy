@@ -1,9 +1,3 @@
-/* Draft: Altmiller Cave persistent cell restoration.
- * 2026-10-01: The international variant records flag530 when actor12
- * settles and restores cell(32,20) on reentry. Japanese has neither
- * persistence step; their complete owners shrink12+36 bytes.
- * Ordinary approved TBS flags, no output changes.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

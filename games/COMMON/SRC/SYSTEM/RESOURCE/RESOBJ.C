@@ -3,8 +3,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-/* Resource records occupy 56 bytes; the two games place their resource and
- * flags fields at different offsets. */
 struct ResourceObjectWork {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
     u8 unknown_00[16];
@@ -66,7 +64,6 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
         op = p[0];
         val = p[1];
         p += 2;
-        /* 終端命令は長さへ含めない。 */
         if (op == 254 || op == 241 || op == 253 || op == 239) {
             break;
         }

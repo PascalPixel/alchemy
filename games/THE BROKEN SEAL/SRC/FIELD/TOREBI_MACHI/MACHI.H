@@ -2,11 +2,6 @@
 #ifndef TOREBI_MACHI_MACHI_H
 #define TOREBI_MACHI_MACHI_H
 
-/* Tolbi town (resource_3b5): the declarations, views and call helpers its
- * scene sources share. */
-
-/* Shared scene work, actor setup, dialogue and event sequences. */
-
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -16,13 +11,8 @@ extern u8 gWindowWork[];
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-/*
- * Object-id slot at 0x1f4 of the shared scene work record, set once below to
- * the id of the object created earlier in the same function.
- */
 #define SCENE_OBJECT_ID (*(s32 *)((u8 *)gEventWork + 0x1f4))
 
-/* The Japanese scene record stores this flag after a larger prefix. */
 struct TorebiSceneWork {
 #if EDITION_INTERNATIONAL
     u8 unknown_00[0xea4];
@@ -38,10 +28,6 @@ struct SceneSetup {
     u16 second;
 };
 
-/*
- * The sprite of an actor in this scene repeats its priority bits in the byte
- * at 0x15, beside the priority FieldSprite names at 0x09.
- */
 struct SceneSprite {
     u8 unknown_00[0x15];
     u8 unknown_15_low : 2;
@@ -90,7 +76,6 @@ void SceneState_SetValues31_2_4(void);
 
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b);
 
-/* The per-frame callback for actors 16 and 17 receives its actor record and returns zero. */
 #include "TYPES.H"
 
 struct SceneActor {
@@ -100,11 +85,6 @@ struct SceneActor {
     u8 unk_14[71];
     u8 active;
     u8 unk_5c[8];
-    /*
-     * Read by the partner-proximity callback: bit 0 chooses actor 17 rather
-     * than 16 as the partner, and bit 1 is set while the party talks to the
-     * actor.
-     */
     u16 proximity_flags;
 };
 

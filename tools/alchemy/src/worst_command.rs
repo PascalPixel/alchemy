@@ -1,5 +1,3 @@
-//! `alchemy worst`: maintained C ranked by how mechanical it reads, worst
-//! first, into a TSV for people choosing what to rewrite next.
 
 use crate::worst;
 use std::fmt::Write as _;
@@ -40,8 +38,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     let total: u32 = ranked.iter().map(|r| r.score).sum();
     println!("{} functions, total score {total}; {}", ranked.len(), out.display());
-    // Camelotized: the share of functions, and of their lines, with no
-    // mechanical signal at all, for each game and the shared code.
     for (label, needle) in [("☀️", "games/THE BROKEN SEAL/"), ("⚓️", "games/THE LOST AGE/"), ("COMMON", "games/COMMON/")] {
         let part: Vec<_> = ranked.iter().filter(|r| r.file.starts_with(needle)).collect();
         let lines: usize = part.iter().map(|r| r.lines).sum();

@@ -1,19 +1,8 @@
-/* Trial 2026-10-03: use OWNER_STATE.H for the getter contract.
- * Complete object unchanged for this edition. Fresh scoring is unavailable:
- * Inn_PlaySleep has no unresolved raw listing in the current tree.
- */
 #include "OWNER_STATE.H"
-/* Draft: the shared 164-byte Inn_PlaySleep body is instruction-identical.
- * This edition still differs in 5 bytes at its screen-effect entry calls;
- * its native table exposes the set/clear/delay helpers through other entries.
- * Compile with the ordinary TLA ES flags. No output changes.
- */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 
-/* The event work's screen effect and its delay: ☀️ keeps them at 0x1c0 and
-   0x1c8. */
 struct FieldEffectState {
     u8 padding0[0x1AC];
     s32 effect;
@@ -38,8 +27,6 @@ void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
 void Event_StartScreenTransitionFar(void);
 
-/* ☀️'s: pay for the room, restore every active member and play the night's
-   fade and tune. */
 void Inn_PlaySleep(s32 room_price)
 {
     s16 objects[8];

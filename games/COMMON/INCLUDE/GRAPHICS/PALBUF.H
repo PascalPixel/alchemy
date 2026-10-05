@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* TitlePalette_InitializeBuffers creates the two-bank title palette fade. */
 struct TitlePaletteWork {
     u16 palette[512];
     u16 current[0x600];
@@ -24,7 +23,6 @@ LAYOUT_OFFSET_GUARD(TitlePaletteWork_Delta, struct TitlePaletteWork, delta, 0x1c
 LAYOUT_OFFSET_GUARD(TitlePaletteWork_Packed, struct TitlePaletteWork, packed, 0x2800);
 LAYOUT_OFFSET_GUARD(TitlePaletteWork_Page, struct TitlePaletteWork, page, 0x3000);
 
-/* BattleEffect_InitializeBuffers allocates and clears this palette blend. */
 struct BattleEffectBuffers {
     u16 palette[0x1c0];
     u16 current[0x540];
@@ -44,15 +42,10 @@ LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Delta, struct BattleEffectBuffers, delta
 LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Packed, struct BattleEffectBuffers, packed, 0x2300);
 LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Page, struct BattleEffectBuffers, page, 0x2a00);
 
-/* Channel-index curves for the expanded palette work buffers. */
 extern u16 Palette_ChannelCurve[32];
 extern u16 Palette_ChannelCurveLight[32];
 extern u16 Palette_ChannelCurveContrast[32];
 
-/* Graphics_TransformPaletteBuffer's modes: below FROM_SOURCE a BGR555 fill
-   colour; FROM_SOURCE takes the mode from the source's first entry; the
-   fixed treatments follow PLAIN; from FLAGS on, a tint colour in the low
-   bits with one treatment flag, or else the address of an expanded buffer. */
 enum PaletteTransform {
     PALETTE_TRANSFORM_FROM_SOURCE = 0x8000,
     PALETTE_TRANSFORM_PLAIN = 0x10000,

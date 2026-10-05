@@ -3,7 +3,6 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-
 void UiWork_SetAltFlagAndClearTable(s32 flag)
 {
     s32 i;

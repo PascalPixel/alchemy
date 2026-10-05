@@ -1,4 +1,3 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSIT.C. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_REG.H"
@@ -10,9 +9,6 @@
 #include "DISPTRAN.H"
 #define QUEUE_DISPLAY_CONTROL(value)                                        \
 
-/* Ends a screen transition. The high byte of mode picks the effect (darken
-   blend, palette fade, window wipe, tile fill, scanline split); the low byte
-   is kept in the transition state. */
 void DisplayTransition_Finish(s32 mode, s32 frames)
 {
     s32 value;

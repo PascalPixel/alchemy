@@ -1,7 +1,6 @@
 #include "SERIAL_RUNTIME.H"
 #include "IO_REG.H"
 
-/* link/serial/enable_transfer_timer.c */
 void SerialRuntime_EnableTransferTimer(void)
 {
     struct SerialRuntime *state = &gSerialRuntime;

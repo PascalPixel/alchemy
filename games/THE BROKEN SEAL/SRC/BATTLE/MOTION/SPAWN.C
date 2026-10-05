@@ -26,8 +26,6 @@ s32 ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
 void Animation_SetWorkEntryFar(struct AnimationEntry *entry, s32 index);
 void BattlePres_SetActorModeAndAction(s32 id);
 
-/* Gives every unit of the list its battle objects: the sprite, or the paired
- * objects of the two large enemies, with overlay, animation and effect. */
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {
     s32 i;

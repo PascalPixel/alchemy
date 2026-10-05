@@ -19,10 +19,8 @@ s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
 s32 Audio_PlayCueReturnOne(s32 cue);
 
-/* ability/play_use_animation.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-/* menu/core/get_modulo_of_sum.c */
 void Ability_PlayUseAnimation(s32 action);
 
 struct ItemMenuModeState {
@@ -35,7 +33,6 @@ struct ItemMenuDisplayState {
     u16 busy;
 };
 
-/* This pointer is cleared alongside the variant. */
 struct ItemMenuSavedGraphics {
     u8 reserved_000[0xa8];
     u8 tiles[0x2000];
@@ -120,11 +117,6 @@ s32 Item_ReturnOne(void)
     return 1;
 }
 
-/* Apply an item or ability effect to its target, or with range 0xff to
-   every member of the menu's party list: restore HP or PP, raise a stat,
-   revive or cure. Returns -1 and leaves the result message code when
-   nothing changed.
- */
 s32 BattleEffect_ApplyToTargets(
     s32 effect_id,
     s32 source_id,
@@ -391,7 +383,6 @@ void Item_PlayUseAnimation(u32 item)
     Ability_PlayUseAnimation(Item_Get(item)->action_id & 0x3fff);
 }
 
-/* menu/entry/set_first_object_row_coordinates.c */
 void Ability_PlayUseAnimation(s32 action)
 {
     s32 animation_type;
@@ -455,8 +446,6 @@ void Ability_PlayUseAnimation(s32 action)
     }
 }
 
-/* menu/reserved_status_zero.c */
-/* menu/status/reserved_status_zero.c */
 s32 Menu_ReservedStatusZero(void)
 {
     return 0;
@@ -486,8 +475,6 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
     return arg0;
 }
 
-/* Open the item menu as a modal view, selecting its story variant, then
-   restore the saved graphics and the caller's menu mode. */
 s32 ItemMenu_Run(void)
 {
     struct ItemMenuWork *menu;
@@ -557,7 +544,6 @@ s32 ItemMenu_Run(void)
     return 1;
 }
 
-/* The Djinn screen's commands, each a step of its loop. */
 void AudioCommand_PlayFar(s32 cue);
 void RenderOutput_ClearListFar(s32 window);
 void Owner_RecalculateStatsFar(s32 owner);
@@ -575,9 +561,6 @@ s32 Unnamed_080ae2f4(void);
 void DjinnMenu_DrawElementList(struct DjinnListTable *tbl);
 s32 Menu_ComputeEntryValues(void *tbl);
 
-/* The Djinn screen: choose a Djinni and what to do with it (set it, put it
-   on standby, give it or trade it for another member's), until the screen
-   is closed. Returns -1 when it was cancelled from its first step. */
 s32 DjinnMenu_RunScreen(void)
 {
     struct DjinnMenuWork *menu;

@@ -1,62 +1,3 @@
-/* 2026-10-03 shared state and ordinary-source trial:
- * Window/input globals now use their owning headers. Message speed uses
- * GameState, shared with the options-menu reader and writer, at +0x20c.
- * The two-minute ordinary rewrite trial offered score 16554, but deleted
- * pressed=2 in tutorial phase 13 and repeat=32 in phase 21. Rejected those
- * behavior changes and restored both writes; removed its added row temporary.
- * Retained only ordinary declaration, branch and independent-statement order.
- * Corrected score 19544: 513 register, 39 stack, 78 operand, 97 reordered,
- * 47 inserted and 46 deleted. No new matching device.
- */
-/* 2026-10-03 canonical model pass: still uncredited.
- * Fresh EN baseline: score 16338, with UiWork_Create, UiWindow_Close and
- * two Value_ message placeholders unresolved. The corrected draft scores
- * 20089 (521 register, 39 stack, 77 operand, 104 reordered, 45 inserted,
- * 49 deleted); all calls and message imports now resolve.
- *
- * Replaced private menu/backdrop/owner/cursor views with DJINN_MENU.H,
- * BattleUnit and RenderOutput. The displayed class byte is class_index
- * (+0x129), not class_id (+0x128). Tutorial timer/step and both menu
- * selection fields are named once in their owning header with offset guards.
- * Native call targets now name Owner_GetStateFar, Owner_RecalculateStatsFar,
- * RenderOutput_RedrawSavedRectFar, UiText_DrawCharacterAtOffsetFar,
- * UiText_DrawResourceFar, AudioCommand_PlayFar, UiText_OpenMessageWindowFar
- * and UiWork_FinalizeFar. Open/finalize use the returned window pointer;
- * Djinn state operations and balance output use their producer contracts.
- *
- * MsgDjinnSetAll and MsgDjinnTutorialGive name the existing entries in each
- * edition's editable PO catalog. Message enums, including MsgClassName,
- * replace numeric-address placeholders. No compiler or build route changed.
- * Matching the corrected model's allocation/control flow remains open.
- */
-/* 2026-10-02: 2175 of 2181 instructions, 1177 lines differ, nearly all of them
- * the same thing: the ROM's reloads rotate through r7 (and r6) as well, here
- * only through r0-r3 and r5, and the list pointer is in r9 there, r10 here.
- * Settled: the declarations in the order below with their initialisers put
- * every stack slot where the ROM has it; the mode 1 message loop has its own
- * counter in a register; the set-all loop walks a pointer. Open: the ROM keeps
- * the usable flag of the A and select handlers in i's slot (sp+68); using i
- * for it here moves i into r11 and pushes repeat out, so i must live longer
- * or weigh less than this spelling makes it.
- * The listing's names for the callees (RenderOutput_RedrawSavedRectFar,
- * Owner_GetStateFar, UiText_DrawCharacterAtOffsetFar, AudioCommand_PlayFar,
- * gCell) and the message symbols still have to replace the draft's. */
-/* 2026-09-29: five minutes of permutation reached 7394 from 16667 through
- * 71 rewrites; not kept, since the owner (4888 bytes) is far from exact and
- * its messages 0xb98 and 0xc40 are still Value_ symbols. */
-/* 2026-09-29: the address macros for the menu, window and key cells are now
- * extern declarations of the build's names (gMenuWork, gWindowWork,
- * gKeysHeld, gKeysRepeat, gKeyState, gKeysPressedLatch) and callees are
- * renamed, so the draft compiles again; alchemy permute scores 16667. */
-/* NONMATCHING: shared callee return types audited on 2026-09-26.
- * 4872 of 4888 bytes, 2287 differing halfwords, 1169 aligned edits.
- * Canonical declarations are retained; the remaining source model is not exact. */
-/* NONMATCHING: 4888 bytes, candidate 4872, 2287 differing halfwords,
- * 1175 halfword edits (2026-09-25). Djinn selection now splits each cached
- * cursor with the observed halfword conversions. State/redraw declaration
- * order follows their stack slots; the descending status clear was already
- * correct.
- * WALL: Remaining menu-loop control flow and local stack ownership. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "TBS_EDITION.H"
@@ -72,15 +13,9 @@ TEXT_MESSAGE_ENUM(MsgDjinnSetAll);
 TEXT_MESSAGE_ENUM(MsgDjinnTutorialGive);
 TEXT_MESSAGE_ENUM(MsgClassName);
 
-/* Packed Djinn list entry: owner, element and number, bit 15 set = Set. */
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
-
-/*
- * The menu and tutorial texts are linked message identities: every edition
- * numbers them differently, while their order inside each block is fixed.
- */
 
 enum DjinnMenuMessage {
     DJINN_MSG_SET_ALL = 0x00,

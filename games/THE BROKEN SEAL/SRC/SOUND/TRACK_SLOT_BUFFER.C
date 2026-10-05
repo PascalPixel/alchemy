@@ -163,22 +163,11 @@ void AudioTrack_CopyBufferedBytes(u8 *destination)
 
 extern u8 gMapCellBuffer[];
 
-/*
- * Sliding-window packer over the slot work block above.
- *
- * Output: a control byte whose set bits mark coded pairs, then per token one
- * literal byte or a big-endian 16-bit code (distance bits 8..11 in the top
- * nibble, length - 1 in the next, distance bits 0..7 below), with a third
- * byte holding length - 17 when the length nibble is 0. A zero code ends it.
- */
-
 #define WINDOW_MASK 0x3ff
 #define MATCH_MAX 272
 #define DIST_MAX 63
 #define PRIME_COUNT 672
 
-/* Longest run at `start` that repeats an earlier slot on the same byte-value
-   chain, left in match_len and match_ofs; a length of 1 means no match. */
 static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 {
     struct AudioSlotNode *node;
@@ -190,7 +179,6 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
     }
     node = gScratchWord->bucket[gScratchWord->bucket_by_slot[start]];
     if (start + MATCH_MAX > WINDOW_MASK) {
-        /* The run can wrap the ring, so both sides are masked. */
         while (node != NULL) {
             s32 dist = (start - node->slot) & WINDOW_MASK;
 
@@ -235,7 +223,6 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
     }
 }
 
-/* Pack `size` bytes of `input` into `dst`; returns the packed byte count. */
 s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 {
     s32 defer;
@@ -262,9 +249,6 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
         if (defer == 0) {
             len = gScratchWord->match_len;
             if (gScratchWord->match_len > 1) {
-                /* Lazy evaluation: take one literal now when the match one
-                   slot later reaches at least as far as this match followed
-                   by the best one after it. */
                 save_ofs = gScratchWord->match_ofs;
                 save_len = len;
                 AudioTrack_FindWindowMatch((gScratchWord->pos + 1) & WINDOW_MASK);

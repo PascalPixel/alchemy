@@ -28,8 +28,6 @@ struct Ring {
     s32 age;
 };
 
-/* The star field's work block in heap slot 39: the decoded ring sheet, the
-   sparks and rings, and BG2's reference point the effect moves. */
 struct SparkWork {
     u8 sheet[0x11c0];
     struct Spark sparks[16];
@@ -138,8 +136,6 @@ s32 BattleFx_InitializeStarField(s32 mode)
 u32 Graphics_UploadVramBlock(void);
 s32 BattleFx_UpdateStarField(void);
 
-/* The presentation passes its kind, but cleanup does not use it. The
-   resident clear entry consumes destination/size and sets its fill to zero. */
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused)
 {
     Iwram_ClearWords((void *)0x06004000, 0x4000);
@@ -189,9 +185,6 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 co
     return 0;
 }
 
-/* The tail of the work block in heap slot 39 that both the star field and
-   the prepared scene end with: where BG2's reference point should be, and
-   word that it has changed. */
 struct Bg2OriginWork {
     u8 unknown_0000[0x13c4];
     s32 origin_x;
@@ -199,8 +192,6 @@ struct Bg2OriginWork {
     s32 origin_pending;
 };
 
-/* The argument block the effect launchers take. The frame gives each of the
-   two here 84 bytes. */
 struct EffectLaunch {
     s32 kind;
     s32 side;
@@ -234,8 +225,6 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
         (reg) = value_; \
     } while (0)
 
-/* Queue the two-word copy of the origin to BG2's reference point for the
-   next frame, with interrupts off. */
 #define BG2_QUEUE_ORIGIN(ime, find_ime, origin) \
     { \
         struct IoWriteQueue *q; \
@@ -263,12 +252,6 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
         } while (0); \
     }
 
-/*
- * Show one of four effects on a unit. Mode 0 is the star field, faded in
- * over 25 frames and followed for 45; mode 1 the prepared scene, followed
- * for 40; mode 2 and the others launch an effect with an argument block
- * built here.
- */
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 {
     /* FAKEMATCH: an unread ten-word launch tail, the native frame's 40 extra bytes. */

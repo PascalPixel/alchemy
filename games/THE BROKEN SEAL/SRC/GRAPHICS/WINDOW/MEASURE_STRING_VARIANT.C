@@ -4,9 +4,6 @@
 
 s32 __divsi3(s32 numerator, s32 denominator);
 
-/* Measures the widest queued line and total height, adding 15 for every line.
-   Only the four spacing slots saturate. Optional 8.8 spacing is between words
-   internationally and between characters in Japanese. */
 void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16 *spacing)
 {
     struct UiRenderWork *work;
@@ -163,12 +160,6 @@ done:
     }
 }
 
-/* Measures a rendered message: the widest line of its first variant, the
-   tallest variant (a newline adds 15 pixels to the variant it ends) and, for
-   up to four lines, the 8.8 spacing that spreads each line across the window
-   width. Control 0 ends the message, 1 starts the next variant, 3 the next
-   line. The Japanese edition counts every character and takes back a few
-   pixels after certain punctuation; the localized editions count spaces. */
 void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height,
                                  u16 *spacing)
 {
@@ -304,7 +295,6 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height,
         case 14:
         case 28:
             start = (start + 1) & RENDER_ENTRY_MASK;
-            /* fall through */
         case 8:
         case 10:
         case 15:

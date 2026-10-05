@@ -7,9 +7,6 @@
 #include "BATTLE_PRESENTATION.H"
 #include "FIELD_EVENT.H"
 
-/* Cycle status icons and set effect priority to 9 while a unit is airborne,
- * or 0 otherwise, marking changed records dirty. Party and enemy sprites
- * use hardware priorities 1 and 2, swapped when camera yaw is negative. */
 void BattleActor_UpdateSpritePriorities(void)
 {
     u16 ids[14];
@@ -158,7 +155,6 @@ s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
     output->active_conditions = flags;
 }
 
-/* The return value is unspecified and ignored by the caller. */
 s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
 {
     struct AnimationEntry *old_effect;

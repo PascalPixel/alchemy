@@ -11,10 +11,6 @@
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
 
-/* Party-state word 0x234 holds a pending Djinn event: the top nibble is the
-   kind and the low bits the game flag. Flags 300-380 are the eighty Djinn,
-   twenty per element. */
-
 struct MapActor {
     s16 id;
     s16 event;

@@ -5,10 +5,6 @@
 extern u32 gMapBlocks[];
 extern const u8 WorldMap_TerrainBehaviorTable[];
 
-/* The world map's behaviour under a position: the collision code picks the
-   column and the block under it the row. Bits 24-29 of the block are its
-   terrain kind, stored for the caller; kinds past 40, kind 36 and kinds 12
-   and 15 have rows of their own, as does a block with its top bit set. */
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
 {
     s32 selector = GetWorldMapCollision(position);
@@ -44,7 +40,6 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
     return WorldMap_TerrainBehaviorTable[flag + selector];
 }
 
-/* Sets the map's shake values; a negative value keeps the current one. */
 void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
 {
     struct MapWork *work;

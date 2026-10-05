@@ -1,9 +1,4 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
-@ Far-call stub table heading the object motion and battle effect code at 0x0808a000: fixed 8-byte
-@ veneers, each loading its target into r4 and branching, which the calling
-@ convention permits. No compiler emits them; the shared overlay veneer macro
-@ builds every entry from its target.
-@ credit: reconstructed_veneer — main-image far-call stub table
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
@@ -707,7 +702,6 @@ Party_RemapCharacterIdIfEnabledFar:
 	overlay_veneer Party_RemapCharacterIdIfEnabled
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
-	@ The European editions add the top menu's particle pause.
 	.global BattleFx_ClearRandomParticlesFar
 	.thumb_func
 BattleFx_ClearRandomParticlesFar:

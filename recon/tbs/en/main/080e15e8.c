@@ -2,13 +2,6 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "PROJECT.H"
-/* Draft, 664 rows off, most of them from one cause: the frame is 4 bytes
-   short. The ROM spills count itself (sp+100, between size and sc) as a copy
-   of the frame * 2 induction; here count is replaced by the temporary of its
-   own multiplication, whose slot falls below sc. The ROM also reduces
-   frame * 4 for the three line lengths to an induction of its own (sp+24);
-   here that value lives too briefly to be worth one. And the ROM keeps j in
-   r8 and n in r10 where this has them the other way round. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "RESOURCE_IDS.H"
@@ -47,8 +40,6 @@ void BattleEffect_RunImpactBurst(s32, s32, s32);
 
 extern u8 gWorkSlot[];
 extern volatile u32 gKeysRepeat;
-
-
 
 extern s16 Mode12_Points[][2];
 extern u16 ParticleStreams_CellOffsets[];

@@ -27,8 +27,6 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
     } while (n >= 0);
 }
 
-/* Lists the djinn that differ between two 32-slot grids: first those only in
-   the new grid (flagged 0x8000), then those only in the old one (0x4000). */
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost)
 {
     s32 i;

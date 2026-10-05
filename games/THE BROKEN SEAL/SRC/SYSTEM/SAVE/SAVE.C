@@ -57,12 +57,6 @@ struct RenderOutput *RenderResource_CreatePair(s32 mode, struct UiWindow *win, s
 void Ui_ApplyTableOffsetToPair(void *pair);
 void RenderOutput_RedrawSavedRect(void *win);
 
-/* The save slot menu: three summaries, the chosen slot's status, djinn and
-   counts windows, up and down skipping the slots MODE cannot use. Returns
-   the slot, -1 when cancelled, or -2 when no slot can be chosen. Each slot
-   names its area by the area name messages' first number,
-   MsgDebugEntryName. The Japanese menu is 0x78 bytes longer and stays on
-   its scaffold. */
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {
     struct UiWindow *list;

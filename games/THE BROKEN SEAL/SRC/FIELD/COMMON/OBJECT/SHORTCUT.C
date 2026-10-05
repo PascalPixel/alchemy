@@ -5,7 +5,6 @@
 s32 Party_ListActiveOwnersFar(u16 *objects);
 #define ACTION_ID_MASK 0x3FFF
 
-/* An ability collected for an active owner; shortcuts pack the two values. */
 struct AbilityListEntry {
     u16 owner;
     u16 ability;
@@ -79,8 +78,6 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
     return output_count;
 }
 
-/* Find the positions of the two Psynergy shortcuts in a 448-entry ability
-   list; a shortcut that is not in the list leaves its position at 0. */
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct AbilityListEntry *entries)
 {

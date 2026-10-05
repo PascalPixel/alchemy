@@ -2,7 +2,6 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
-/* Field effects: set up 32 motes on the terrain around the map position, the blend registers and their update callback. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
@@ -124,10 +123,6 @@ s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mod
 void BattleFx_InterpolateBuffers(s16 *from, s16 *to, s16 *step, s32 frames);
 void BattleFx_UpdateStormFlash(void);
 
-/* Each frame, draws the motes that are on screen, rising as they age and
-   shrinking through three sizes, and sets up to eight spent ones down again
-   at random spots on the ground around the leader. Flag 0x166 holds every
-   mote on its frame. */
 void FieldMotes_Update(void)
 {
     /* FAKEMATCH: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
@@ -231,8 +226,6 @@ void FieldMotes_Start(void)
     Scheduler_AddOrUpdateCallback((s32)(FieldMotes_Update), 0xc80);
 }
 
-/* Draw the ground sparkles that twinkle around the leader, and every so often
-   start a burst of four at a random spot nearby. */
 void FieldEffect_UpdateSparkles(void)
 {
     /* FAKEMATCH: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
@@ -319,10 +312,6 @@ void FieldEffect_UpdateSparkles(void)
     } while (i <= 31);
 }
 
-/* FieldEffect_InitSparkles: allocate and clear the sparkle work, load the
-   sparkle tiles into a cached VRAM block, place the 32 particles on the
-   ground under the leader with staggered timers and schedule
-   FieldEffect_UpdateSparkles. */
 void FieldEffect_InitSparkles(void)
 {
     struct DustWork *work = Runtime_AllocateBlock(29, 0x410);
@@ -369,8 +358,6 @@ loop:
     Scheduler_AddOrUpdateCallback((s32)(FieldEffect_UpdateSparkles), 0xc80);
 }
 
-/* Builds two 0xa80-byte buffers and the per-frame step between them for a
-   twelve-frame blend, then schedules the blend. */
 void BattleFx_StartTwelveFrameBlend(void)
 {
     u8 *work;
@@ -420,10 +407,6 @@ void BattleFx_SetBlock30Values128One(void)
     state->enabled = 1;
 }
 
-/* Builds the buffers for two effect sources and the per-frame step between
-   them for a twelve-frame blend, then schedules the blend. The work block
-   holds the from buffer, the to buffer at +0xa80, the step at +0x1500 and
-   the frame count and position at +0x1f80. */
 void BattleFx_StartBufferBlend(s32 from, s32 to)
 {
     struct FieldBlendWork *work;

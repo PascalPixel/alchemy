@@ -8,10 +8,6 @@ void Engine_ObjectAttachWorkTarget(s32 id, s32 target);
 struct BattleUnit *Engine_OwnerGetState(s32 id);
 void Engine_EventClearInvalidPackedValues(void);
 
-/* Colosso: leave only the competitor in the active party, select it, cure
- * its poison and fill its HP and PP, then set both gauges from them, each
- * clamped to 0..0x4000 and kept nonzero while the points are. The same
- * function sits in each of the three Colosso trial overlays. */
 void Korosseo_SelectSoloCompetitor(s32 id)
 {
     struct BattleUnit *unit;

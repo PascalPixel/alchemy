@@ -7,8 +7,6 @@
 extern const u8 Text_LookupSymbolCode[];
 extern u8 Text_LookupSymbolCodeSize[];
 
-/* Positions a text reader at the start of a message, running the ARM
-   lookup from a heap copy. */
 void UiText_LookupMessage(struct TextReader *reader, s32 message)
 {
     void (*routine)(struct TextReader *, s32);

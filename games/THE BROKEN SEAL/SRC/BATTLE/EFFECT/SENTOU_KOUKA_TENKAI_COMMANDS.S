@@ -1,12 +1,3 @@
-@ The seven bit commands the dispatcher jumps to. They share the decoder's
-@ registers (source r0, bit count r2, bit word r3, value r5 and the
-@ constant 7 in fp), refill r3 from r0 when r2 runs out and return with
-@ mov pc, lr or movpl pc, lr. Updating r5 and reading fp without saving
-@ them, and negating with rsbcs on the carry out of ands ip, ip, r3, lsr #4,
-@ are beyond both approved compilers. These 272 bytes equal TBS
-@ GRAPHICS/TILE/BIT_COMMANDS.S (0x080b5258) and TLA
-@ BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_COMMANDS.S (0x081a0170).
-@ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, bit commands
 .syntax unified
 	.arm
 	.global SentouKouka_TenkaiCase2

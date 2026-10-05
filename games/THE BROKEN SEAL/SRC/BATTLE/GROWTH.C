@@ -47,12 +47,8 @@ struct BattleBaseStats {
     struct BattleElementStats elements[4];
 };
 
-/* The copied base-stat range is exactly BattleUnit.base_hp through
-   base_elements. It is a snapshot, not a separate owner allocation. */
-
 void Owner_RecalculateStatsFar(s32 owner);
 
-/* battle/formation/select_level_matched_candidate.c */
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
     s32 match_count = 0;
@@ -134,9 +130,6 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
     return result;
 }
 
-/* Raise an owner by levels: each stat grows by a fixed tenth-step per level,
- * never below 70% of its value before the change or beyond its cap.
- * The integer result is unspecified. */
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
     struct BattleBaseStats *base;
@@ -212,16 +205,12 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     Runtime_BumpFree(base);
 }
 
-/* 召喚チャージ管理。クラスごとに使用中チャンネルのビットを持ち、 */
-/* 取得・解放・名前印のリセットを行う。 */
 #if EDITION_INTERNATIONAL
 #define CH_CNT 9
 #else
 #define CH_CNT 26
 #endif
 
-/* 番号表を線形探索し、既存なら次の空きビットを剰余で回して確保、 */
-/* 無ければ表末尾に新規登録する。 */
 s32 Summon_TakeCharge(s32 no, s32 n)
 {
     struct BattleSession *w;

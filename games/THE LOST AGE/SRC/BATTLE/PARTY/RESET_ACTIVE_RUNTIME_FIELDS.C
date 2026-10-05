@@ -1,7 +1,6 @@
 #include "OWNER_STATE.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
-/* Clear active and reserve party members' status bytes and stat modifiers. */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 

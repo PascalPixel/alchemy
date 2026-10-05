@@ -2,25 +2,6 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "PROJECT.H"
-/* NONMATCHING: 5756 bytes, candidate 5728, 2604 differing halfwords,
- * 1472 halfword edits (2026-09-25). Battle effect mode 9: receding sprites,
- * sparks, concentric ellipses and palette ramps. The verified canvas-layer
- * queue shape reduces the baseline by 53 edits.
- * WALL: Second-phase callback spills and palette-loop source structure.
- * 2026-10-03 shared resource/canvas contracts: all six diagnostic builds
- * retain 5728 bytes including pools. Against the fresh current-source
- * baseline, the true scalar-result rectangle blitters reorder argument
- * setup at nine calls (28 halfwords); symbols and relocations stay exact.
- * The opaque resource casts add no difference. Earlier ROM scores below
- * remain prior checkpoints; this owner pass has not been ROM-scored.
- * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 5,617
- * candidates; the best scored 31834 against 34547 (698 register-only, 39
- * stack-only, 131 operand, 204 reordered, 53 inserted, 75 deleted) after
- * 271 rewrites (swap commutative operands, reorder local declarations,
- * reorder independent statements, introduce a temporary), none of them
- * kept. At about ten candidates a second the search barely samples a
- * function this size; its rewrites stay out of the draft.
- */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "DMA.H"
@@ -59,8 +40,6 @@ struct Cells03001ad0 {
 };
 extern struct Cells03001ad0 gBgScroll;
 
-
-
 extern u8 Value_0000003b;
 extern u8 Value_0000003e;
 extern u8 Value_00000036;
@@ -86,7 +65,6 @@ extern const u16 BattleFx9_ShardCells[];
 extern const u8 BattleFx9_ShardWidths[];
 extern const u8 BattleFx9_ShardHeights[];
 
-/* The effect's work block (heap slot 39). */
 struct Mode9Work {
     u8 sheet[0x7080];
     struct EffectStep rain[16];
@@ -251,7 +229,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&Value_000000ce, work->sheet + 0x95c, 1, 0);
     Resource_LoadAndDecompress((s32)&Value_00000073, ramp, 0, 0);
 
-    /* Eight progressively darker clamped copies of the 770-byte ramp. */
     for (i1 = 0, pos = 0, lim = 64; i1 != 8; i1++, pos += 770, lim -= 7) {
         u8 *src = ramp;
         u8 *dst = work->sheet + pos + 0x2710;

@@ -1,7 +1,3 @@
-/* Near miss: score 160 (one reorder plus the trailing pad). After the second
-   Vector_AddPolarOffset ⚓️ copies the phase pointer (mov r2, r8) between
-   ldr r3, [r5] and its store; agscc copies it just before the phase
-   increment. ☀️'s C otherwise matches. */
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -31,7 +27,6 @@ struct Effect_080b2f4c {
     s8 flag;
 };
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Position *);
 
 void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)

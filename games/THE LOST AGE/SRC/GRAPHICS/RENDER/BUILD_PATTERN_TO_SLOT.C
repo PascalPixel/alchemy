@@ -5,8 +5,6 @@
 
 void Ui_PrepareTransferFromTableEntry(u32 index);
 
-/* ☀️'s: decodes a table pattern into the glyph transfer work and loads its
-   tiles into a VRAM slot; ⚓️ passes the heap slot's byte offset. */
 s32 Ui_BuildPatternToSlot(s32 no, s32 unused, s32 slot)
 {
     GlyphTransfer *work;

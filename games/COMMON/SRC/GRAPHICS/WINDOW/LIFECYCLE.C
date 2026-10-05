@@ -1,6 +1,5 @@
 #include "UIWINDOW.H"
 
-/* This call supplies one word and ignores the result. */
 void UiWork_FinalizeFar();
 struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);

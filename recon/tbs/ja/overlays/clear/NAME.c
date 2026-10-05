@@ -1,6 +1,3 @@
-/* Draft: retaining the English name-entry grid produces 142 bytes;
- * the Japanese 90-byte function instead selects its own glyph ranges
- * and appends dakuten to the final grid entries. */
 #include "TYPES.H"
 
 void Clear_NameEntryCharacter(s32 cell, u8 *text)

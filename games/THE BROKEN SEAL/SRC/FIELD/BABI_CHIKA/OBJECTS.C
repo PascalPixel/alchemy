@@ -1,5 +1,4 @@
 #include "FIELDOBJ.H"
-/* Overlay object setup. */
 #include "BABI.H"
 
 void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
@@ -9,7 +8,6 @@ void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
     actor->sprite->priority = mode;
 }
 
-/* Create an object with sprite priority zero and child value 14. */
 u8 *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *ret;
@@ -30,7 +28,6 @@ u8 *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
     return (u8 *)ret;
 }
 
-/* Create an underfoot object with sprite priority one and child value 15. */
 u8 *OverlayObject_PrepareSpawnedObjectMode4(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *ret;

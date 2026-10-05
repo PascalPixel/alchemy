@@ -3,7 +3,6 @@
 
 #include "EFFECT_RUNTIME.H"
 
-/* Runtime and slot views used by the scene entry routine. */
 struct Resource388Runtime {
     u8 unknown_000[0x1c0];
     s32 setup_request_1c0;

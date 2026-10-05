@@ -1,6 +1,3 @@
-@ The resource directory Resource_GetTableEntry indexes: one word per
-@ resource number, the address of the resource's first byte. Rows are
-@ labels, never numbers; an empty row is 0.
 	.macro resource name, place:req
 	.ifnb \name
 	.global ResourceId_\name

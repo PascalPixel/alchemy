@@ -75,8 +75,6 @@ extern struct SaveWorkspace *gSaveWorkspace;
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
 
-/* The signature a save slot's header starts with, and the eight bytes of
-   signature and record byte that each written slot's header starts from. */
 extern const u8 Save_Signature[];
 extern const u8 Save_HeaderTemplate[];
 
@@ -90,13 +88,9 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 
 #define WAIT_DMA() WaitDma(DMA3)
 
-/* Set by the save scan when a slot's summary marks it for sending and R
-   and Left are held; the title menu then offers Send. */
 extern s16 gTitleSendOptionEnabled;
 
-/* Save records share sixteen flash sectors and three visible summaries. */
 s32 SaveState_InitializeWorkspace(void);
-/* No caller consumes the result. */
 u32 SaveState_ReleaseWorkspace(void);
 u32 SaveState_SelectWriteSlot(s32 record_id);
 u32 SaveState_WriteWorkspaceSlot(s32 sector);

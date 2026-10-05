@@ -1,7 +1,3 @@
-/* Clamp the second input to 0..limitY and store it, then refresh both
-   output ratios (input << 14 over its limit, clamped to 0..0x4000, and at
-   least 1 while the input is nonzero). The first-input sibling is
-   Owner_UpdateRatioPair in RATIOS.C. */
 #include "BATTLE_UNIT.H"
 
 void Owner_UpdateSecondInputAndRatios(

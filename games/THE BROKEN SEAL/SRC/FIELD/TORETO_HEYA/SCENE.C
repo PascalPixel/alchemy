@@ -8,7 +8,6 @@
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
 
-/* The room's tables, which the entry veneers publish to the map engine. */
 extern const struct SceneEntrance gToretoHeyaEntrances[];
 extern const struct SceneRegion gToretoHeyaRegions[];
 extern const u32 gToretoHeyaExits[];
@@ -20,7 +19,6 @@ extern const struct SceneEvent gToretoHeyaEvents[];
 
 extern u8 MsgToretoHmHrooom[];
 
-/* The action tables the four party members take at the table. */
 extern const u8 ToretoHeya_TableActions0[];
 extern const u8 ToretoHeya_TableActions1[];
 extern const u8 ToretoHeya_TableActions2[];
@@ -41,7 +39,6 @@ extern struct BattleEffectBuffers *Data_03001ed0;
 
 extern u8 *gWork[];
 
-/* Current entry in the RGB tint list; a red of 99 ends the list. */
 extern s32 ToretoHeya_TintIndex;
 extern s32 ToretoHeya_TintSteps[];
 
@@ -53,8 +50,6 @@ struct Vec {
     s32 z;
 };
 
-/* Swirl the object around its origin for 80 frames, shrinking it over the
- * first 40, then release it. */
 struct Swirl {
     u8 pad00[8];
     s32 x;
@@ -88,7 +83,6 @@ struct Vec3 {
     s32 z;
 };
 
-/* Each patch stores flag, enabled, source x/y and destination x/y. */
 extern s16 ToretoHeya_MapPatches[];
 
 void ToretoHeya_AdvanceEffectMotion();
@@ -125,9 +119,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gToretoHeyaPlacements;
 }
 
-/* A floor switch: when the leader steps onto a new entrance tile, copy its
- * cell; the first time, just set its flag, otherwise drop the leader through
- * the floor to map 0x2d at the entrance, spinning as it falls. */
 void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
 {
     s32 dest_x;
@@ -227,8 +218,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gToretoHeyaEvents;
 }
 
-/* The party sits down at the table: the host hums, the four take their
- * places and gesture along, and the scene returns to the room afterwards. */
 void ToretoHeya_RunTableScene(void)
 {
     u32 i;
@@ -528,9 +517,6 @@ void SceneState_ApplyRectsByFlag844(s32 flag)
     }
 }
 
-/* Enter the room: hide the lamps, drift the camera, set the room flags, and
- * finish the fall from the floor above when entered through entrance 20 to
- * 50 (the leader lands on the entrance ten below it). */
 s32 ToretoHeya_EnterRoom(void)
 {
     /* FAKEMATCH: the map work and the event work are read as cells of one pointer array based at gMapWork (the event work is its twentieth), which keeps one pool address for both. */
@@ -607,18 +593,12 @@ s32 ToretoHeya_EnterRoom(void)
     return 0;
 }
 
-/*
- * Toreto house: upload the room's palette bank from the source pointed at by
- * the loader's palette pointer. The DMA runs from the VRAM pattern bank into
- * the palette RAM and waits on the DMA status register.
- */
 void ToretoPalette_CaptureBank(void)
 {
     Dma_Set((const void *)0x05000000, *(void **)&Data_03001ed0, 0x84000070,
             REG_DMA3);
 }
 
-/* Every 32 frames, tint the background palette, weaker for later colours. */
 void ToretoPalette_ApplyTint(void)
 {
     /* FAKEMATCH: reading the event work and the palette work through the engine's table of work pointers keeps one address base for both cells, where their own names would each take a pool word. */
@@ -686,7 +666,6 @@ void ToretoPalette_ApplyTint(void)
         ToretoHeya_TintIndex = 0;
 }
 
-/* Play one of actor 8's numbered gestures, then wait twelve frames. */
 void ToretoHeya_PlayGesture(s32 gesture)
 {
     switch (gesture) {
@@ -837,7 +816,6 @@ void ToretoHeya_SpawnSwirlSparks(void)
     }
 }
 
-/* Copy the one-cell patch of each enabled entry whose flag is set. */
 void ToretoHeya_ApplyFlaggedMapPatches(void)
 {
     s32 i;
@@ -857,13 +835,11 @@ void SceneEffect_RegisterPaletteFadeCallback(void)
     Engine_TaskRemoveCallback(ToretoPalette_ApplyTint);
 }
 
-/* Divide the Z velocity by sixteen, rounding toward zero. */
 void ToretoHeya_AdvanceEffectMotion(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
-
 
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
@@ -884,7 +860,6 @@ void ToretoHeya_AdvanceEffectMotion(struct Effect *effect)
     sprite->angle += effect->step64;
 }
 
-/* The leader lands in the room in a ring of dust, then the camera settles. */
 void ToretoHeya_RunLandingDustScene(void)
 {
     struct EffectParams params;

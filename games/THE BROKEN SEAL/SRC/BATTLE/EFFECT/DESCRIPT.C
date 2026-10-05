@@ -40,7 +40,6 @@ extern struct EffectObject *ObjectTable_Get(s32 object);
 extern void *gEventWork;
 typedef s32 (*WorkEntryFn)(void);
 
-/* The shared runtime descriptor lookup; distinct from the local BattleFx_FindDescriptor. */
 struct EffectDescriptor *BattleFx_FindDescriptor(s32, s32);
 
 struct BattleEffectAction {

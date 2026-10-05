@@ -8,7 +8,6 @@ extern const struct SceneEntrance gArutinMuraEntrances1[];
 extern const struct SceneEntrance gArutinMuraEntrances2[];
 extern const struct SceneEntrance gArutinMuraEntrancesOther[];
 
-/* The scene's message table, laid out after the code. */
 extern u8 Placement_Messages[];
 
 extern u8 gArutinMuraPlacements1[];
@@ -43,7 +42,6 @@ extern u8 MsgArutinYourFirstTimeVisitAltin[];
 void FieldScene_RunMiddleSequence(void);
 void FieldScene_RunScene3a3SequenceD(void);
 
-/* Where the party appears in each of Altin's two areas. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 v = gGameState.scene;
@@ -57,8 +55,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gArutinMuraEntrancesOther;
 }
 
-/* The table accessors between the scene-id selectors at the head of the
-   overlay. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -69,9 +65,6 @@ u8 *SceneData_GetMessageTable(void)
     return Placement_Messages;
 }
 
-/* The actors placed in each of Altin's two areas, patched in place by the
-   story flags: the overlay image is writable. The second area's table is
-   prepared before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s32 id = gGameState.scene;
@@ -93,7 +86,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return (const struct ScenePlacement *)gArutinMuraPlacementsOther;
 }
 
-/* What each of Altin's two areas answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 v = gGameState.scene;
@@ -135,12 +127,6 @@ void SceneDialogue_ShowLine1918(void)
     Engine_EventEnd();
 }
 
-/*
- * One of two branches of the opening setup: a short branch that only moves
- * actor 14, or a longer branch that positions actor 18 and a second record
- * from their x/y/z fields at +8/+12/+16, clearing a byte at +85 of a
- * separately looked-up record on the way.
- */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 
@@ -151,25 +137,24 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Engine_EventBegin();
     if (GameFlag_IsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinOnesWhoDefeatedWaterBeasts);
-        Event_AskYesNo(14, 0); /* object 14, action 0 */
+        Event_AskYesNo(14, 0);
     } else {
-        Engine_ActorSetAnimation(14, 4); /* object 14, action 4 */
+        Engine_ActorSetAnimation(14, 4);
         Engine_EventSetMessage((s32)MsgArutinWeCantDrinkWaterMonsters);
         Event_ShowMessageAndWait(14, 0, 10);
         ready_flag = GameFlag_IsSet(0x8ff);
         if (ready_flag == 0) {
             rec18 = Object_GetById(18);
 
-            /* Clear the byte at +85 of the lookup result. */
             ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = ready_flag;
             Camera_SetSpeed(0x10000, 0x2000);
-            Camera_MoveTo(rec18->x.fixed, rec18->y.fixed, rec18->z.fixed, 1); /* use_setter 1 */
+            Camera_MoveTo(rec18->x.fixed, rec18->y.fixed, rec18->z.fixed, 1);
             Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
             Actor_FaceDirection(14, 0x3000, 0);
             Engine_CameraWaitForMove();
-            Engine_EventWait(120); /* should_wait 120 */
+            Engine_EventWait(120);
             record = Object_GetById(0);
-            Camera_MoveTo(record->x.fixed, record->y.fixed, record->z.fixed, 1); /* use_setter 1 */
+            Camera_MoveTo(record->x.fixed, record->y.fixed, record->z.fixed, 1);
             Engine_CameraWaitForMove();
         }
         Engine_ActorSetAnimationAndWait(14, 4);
@@ -482,7 +467,6 @@ void SceneState_SetFlag906ByActorNineteenX(void)
     }
 }
 
-/* Mirror three Altin progress flags into scene flags, then continue the area the party enters. */
 s32 Scene_Initialize(void)
 {
     s16 scene;

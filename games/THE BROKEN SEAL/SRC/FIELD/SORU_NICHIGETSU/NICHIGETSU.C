@@ -5,7 +5,6 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 
-/* The scene's tables, which the entry veneers publish to the map engine. */
 extern const struct SceneEntrance gSoruNichigetsuEntrances[];
 extern const u32 gSoruNichigetsuExits[];
 extern const struct ScenePlacement gSoruNichigetsuPlacements[];
@@ -50,7 +49,6 @@ void InitializeSceneRecordBuffer(void);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
 
-/* The IWRAM event globals: the event work, then the field work at +0x14. */
 struct EventGlobals {
     struct EventWork *event;
     u8 unknown_04[0x10];
@@ -293,7 +291,6 @@ void SetStatueLightGroup4(void)
     }
 }
 
-/* Before flag 0x809 is set, move actors 0, 1, 5 and 16, choose the closing dialogue, restore their walks and set flags 0x144 and 0x809. */
 void FieldScene_RunScene37aSequenceF(void)
 {
     struct FieldActor *rec;
@@ -1096,7 +1093,6 @@ void FieldScene_RunActorPositionTransition(void)
     Engine_GameFlagSet(0x811);
 }
 
-/* Each actor's rise-and-shrink loops share one counter. */
 void FieldScene_RunSanctumRiseAndShrink(void)
 {
     u32 i;
@@ -1409,14 +1405,12 @@ s32 CheckAllStatueLights(void)
     return all_set;
 }
 
-/* Show the requested message, then wait for the requested number of frames. */
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
 {
     Engine_EventShowMessage(actor_step, 0);
     Engine_EventWait(wait_frames);
 }
 
-/* Sol Sanctum: the two actors walk up, the light rises, and the scene clears the light tables and backdrop before handing back to the map. */
 void SoruNichigetsu_RunLightScene(void)
 {
     struct FieldActor *leader;

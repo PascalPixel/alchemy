@@ -82,8 +82,6 @@ s32 PartyInventory_CountFreeSlots(void)
     return cnt;
 }
 
-/* 所持品追加。積み重ね可能な品は同一番号の枠を探して個数を増やし、
-   そうでなければ空き枠へ入れる。戻り値は枠番号、失敗は -1。 */
 s32 Inventory_AddItem(s32 owner_id, s32 item_id)
 {
     struct BattleUnit *inv = Owner_GetState(owner_id);
@@ -277,10 +275,6 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *inv, s32 type)
     return 0;
 }
 
-/* Takes one item from an owner's slot: a stacked item loses one from its
-   count, a single item is removed and the list is compacted so the empty
-   slots follow the rest. The compaction reads the slots as signed
-   halfwords. Returns 1 or 2 for those cases, -1 for an empty slot. */
 s32 Inventory_Remove(s32 owner, s32 slot)
 {
     struct BattleUnit *inv = Owner_GetState(owner);
@@ -476,7 +470,6 @@ struct BattleAction *BattleAction_GetDirect(s32 action_id) {
     return &BattleAction_DefinitionTable[entry_index];
 }
 
-/* inventory/has_equipment_value.c */
 s32 Equipment_HasValue(s32 owner, s32 value)
 {
     struct BattleUnit *unit = Owner_GetState(owner);

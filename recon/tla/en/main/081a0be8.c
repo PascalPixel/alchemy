@@ -1,10 +1,3 @@
-/* Draft, differ 43: the intro crawl's line drawer. Renders the message
-   into a cleared 0x900-byte 8bpp canvas through Func_08038418, packs it
-   to 4bpp in place and copies its two halves to object VRAM a tile column
-   at a time; returns the renderer's busy flag. The native keeps a 32-byte
-   frame it never uses (kept here as a tagged unused local), loops with
-   the tile counter in r6 and the column base in r12, and loads the copy
-   source byte pair second byte first. */
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "IWRAM_CALL.H"

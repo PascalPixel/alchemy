@@ -5,8 +5,6 @@ void Object_SetPartAttribute(void *object, s32 value);
 
 extern u32 gFrameCount;
 
-/* Flickers an object's part every fourth frame and plays cue 138 every
-   eighth. */
 s32 OverlayObject_UpdateEveryFourFrames(void *obj)
 {
     if ((gFrameCount & 3) == 0)

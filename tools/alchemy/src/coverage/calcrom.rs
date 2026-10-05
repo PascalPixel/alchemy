@@ -1,19 +1,3 @@
-//! pret's calcrom over the linker's own maps. Every executable byte of a
-//! verified build is an input `text` section the map places; the object that
-//! supplied it says whether it is maintained source under `games/`, a proven
-//! compiler-library member, or disassembly not yet in C. Nothing else is read:
-//! no catalog, no receipt and no guess at what is code.
-//!
-//! DONE counts a game's six editions together, so 100% means every language
-//! builds all its code from source. The English build gives each credited
-//! function's bytes and the executable total E. An edition earns a C function's
-//! English bytes only when its own verified build links that definition from
-//! source in the same image: the main image, or the same code overlay built
-//! from source in that edition. DONE is the sum over the six editions out of
-//! 6 × E, and a game is published only while all six builds are verified.
-//!
-//! Known limit: sizes are the English build's, and code that exists only in
-//! another edition is not in the total.
 use super::progress::GameDone;
 use crate::targets::DecompTarget;
 use object::{Object, ObjectSection, ObjectSymbol, SymbolKind};
@@ -21,25 +5,15 @@ use sha1::{Digest, Sha1};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
-/// One source contribution in one image: its image and object path, and
-/// for C, the actual function definition. Assembly and library members keep
-/// their existing whole-object identity. C names stay object-scoped so a
-/// same-name static helper in another module cannot earn the function.
 pub(crate) type Unit = (String, String, Option<String>);
 
-/// The image every build links first; the others are its code overlays.
 pub(crate) const MAIN_IMAGE: &str = "main";
 
-/// DONE bytes with the parts shown beside them: one object's in the English
-/// build, an edition's, or a game's in all six editions together.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Counted {
     pub done: GameDone,
-    /// Compiler-library members, counted within `done.game_asm`.
     pub library: i64,
-    /// English text bytes of C functions this edition's FAKEMATCH tags steer.
     pub steered: i64,
-    /// Padding a source marks as carrying no credit, left out of DONE.
     pub uncredited: i64,
 }
 impl std::ops::AddAssign for Counted {
@@ -51,18 +25,12 @@ impl std::ops::AddAssign for Counted {
     }
 }
 
-/// A game's DONE in all six of its editions together.
 #[derive(Clone, Debug)]
 pub(crate) struct Game {
-    /// The English build: every credited object's bytes and the executable
-    /// total.
     pub english: Measurement,
-    /// Each edition by its language, Japanese first: the English bytes of
-    /// the credited objects its own build links, out of the English total.
     pub editions: Vec<(&'static str, Counted)>,
 }
 impl Game {
-    /// The six editions added up: DONE out of six times the English total.
     pub fn combined(&self) -> Counted {
         let mut combined = Counted::default();
         for (_, edition) in &self.editions {
@@ -72,8 +40,6 @@ impl Game {
     }
 }
 
-/// What an edition earns: the English bytes of every credited unit its own
-/// build links, less the stray padding, out of the English executable total.
 pub(crate) fn share(english: &Measurement, linked: &BTreeSet<Unit>) -> Counted {
     let mut counted = Counted::default();
     for (unit, credit) in &english.credits {
@@ -87,9 +53,6 @@ pub(crate) fn share(english: &Measurement, linked: &BTreeSet<Unit>) -> Counted {
     counted
 }
 
-/// Keep English sizes and source credit, but use the tags in the edition
-/// whose build links each function. Conditional localized devices must not
-/// inherit the English branch's unsteered classification, or vice versa.
 fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
     let linked = edition.credits.keys().cloned().collect();
     let mut counted = share(english, &linked);
@@ -107,55 +70,33 @@ fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
     counted
 }
 
-/// One game's executable bytes by the object that supplied them.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Measurement {
-    /// DONE: maintained C and assembly under `games/`, the library in game assembly.
     pub done: GameDone,
-    /// Compiler-library members, counted within `done.game_asm`.
     pub library: i64,
-    /// Main-image disassembly under `recon/<game>/raw`, not yet C.
     pub raw: i64,
-    /// Code overlays still linked from their listings, not yet C.
     pub listings: i64,
-    /// Any other object with text, not yet C, shown so it is never hidden.
     pub other: Vec<(String, i64)>,
-    /// Text of the C functions a FAKEMATCH tag steers: counted in DONE until
-    /// both games are done (AGENTS.md S2), shown on its own.
     pub steered: i64,
-    /// Padding a source marks as carrying no credit, between its
-    /// `AlchemyUncredited_X` and `AlchemyUncreditedEnd_X` labels: placed,
-    /// but not counted in DONE (C2).
     pub uncredited: i64,
-    /// The part of `uncredited` that sits in no credited unit. It is taken
-    /// from the game's own assembly as a whole, in every edition alike.
     pub stray: i64,
-    /// DONE by the unit that supplied it, without its own uncredited padding:
-    /// what an edition earns when its own build links the unit.
     pub credits: BTreeMap<Unit, Counted>,
 }
 
-/// What a `games/` source says about its object's bytes.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Mark {
-    /// C steered by a FAKEMATCH workaround.
     pub steered: Steered,
-    /// Assembly credited as whole 8-byte stubs (`@ credit: reconstructed_veneer`).
     pub veneer: bool,
 }
 
-/// Which of a C source's functions its FAKEMATCH tags steer.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) enum Steered {
     #[default]
     None,
-    /// Source-owned file-scope steering: the whole object counts.
     Whole,
-    /// Tagged definitions and callers of tagged inline helpers.
     Functions(std::collections::BTreeSet<String>),
 }
 
-/// Read the marks of the maintained source a `games/` object was built from.
 fn source_mark(
     root: &Path,
     expansion: &crate::compiler::preprocess::Expansion<'_>,
@@ -183,14 +124,22 @@ fn source_mark(
             Steered::Functions(analysis.steered)
         }
     } else if text.contains("FAKEMATCH") {
-        // A tagged assembly source counts as steered as a whole.
         Steered::Whole
     } else {
         Steered::None
     };
     Ok(Mark {
         steered,
-        veneer: text.contains("@ credit: reconstructed_veneer"),
+        veneer: builds_veneers(&text),
+    })
+}
+
+/// Assembly that builds its entries with a veneer macro: the 8-byte far-call
+/// and IWRAM entry stubs counted as veneers.
+fn builds_veneers(text: &str) -> bool {
+    text.lines().any(|line| {
+        let word = line.split_whitespace().next().unwrap_or("");
+        word == "overlay_veneer" || word == "IwramEntry"
     })
 }
 
@@ -228,15 +177,11 @@ fn section_function_definitions<'a>(
     Ok(symbols)
 }
 
-/// The C definitions in a placed section, with their complete spans including
-/// pools and alignment through the next function or section end. A positive
-/// C section without usable definition metadata cannot earn object credit.
 #[derive(Debug, PartialEq, Eq)]
 struct CFunction {
     offset: i64,
     bytes: i64,
     name: String,
-    /// Compiler-local and exported names of the same physical definition.
     names: BTreeSet<String>,
 }
 
@@ -281,10 +226,6 @@ fn c_functions_from_object(
                 first.name
             ));
         }
-        // GCC's nested definition has a local assembler name and can also
-        // export one public name for its same body. It is one extent, not two
-        // C functions. Only identical nonzero symbol extents and one public
-        // identity are usable; conflicting public definitions stay refused.
         let definition = if group.len() == 1 {
             first
         } else {
@@ -314,9 +255,6 @@ fn c_functions_from_object(
     Ok(functions)
 }
 
-/// The span between each `AlchemyUncredited_X` label and its
-/// `AlchemyUncreditedEnd_X` in one image's `nm` output: where it starts and
-/// its bytes, in address order.
 pub(crate) fn uncredited_spans(nm: &str) -> Vec<(i64, i64)> {
     let mut starts = BTreeMap::new();
     let mut ends = BTreeMap::new();
@@ -343,10 +281,6 @@ pub(crate) fn uncredited_spans(nm: &str) -> Vec<(i64, i64)> {
     spans
 }
 
-/// Take one image's uncredited padding out of DONE: each span leaves the
-/// credit of the unit whose placed text holds it, assembly first. A span in
-/// no credited unit (a listing marks its padding before it is adopted) is
-/// stray: it leaves the game's own assembly as a whole, as it always has.
 fn discredit(measurement: &mut Measurement, placed: &[(i64, i64, Unit)], spans: &[(i64, i64)]) {
     for (start, bytes) in spans {
         measurement.uncredited += bytes;
@@ -382,8 +316,6 @@ fn discredit(measurement: &mut Measurement, placed: &[(i64, i64, Unit)], spans: 
     }
 }
 
-/// A section whose bytes are data the image carries: not code, RAM layout
-/// or a packed code overlay.
 fn is_data(name: &str) -> bool {
     name.starts_with(".rodata")
         || name == ".data"
@@ -391,7 +323,6 @@ fn is_data(name: &str) -> bool {
         || name.starts_with(".unidentified")
 }
 
-/// Where a text section's object came from.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Origin {
     CommonC,
@@ -404,15 +335,12 @@ enum Origin {
     Other,
 }
 
-/// The language of the maintained source an object under `games/` was built
-/// from, as `build rom` chooses it: C first, then assembly.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Language {
     C,
     Assembly,
 }
 
-/// An input section a map places.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Placed<'a> {
     pub name: &'a str,
@@ -421,8 +349,6 @@ pub(crate) struct Placed<'a> {
     pub object: &'a str,
 }
 
-/// Every input section the map places. The discarded sections listed before
-/// the memory map are skipped.
 pub(crate) fn sections(map: &str) -> Vec<Placed<'_>> {
     let mut found = Vec::new();
     let mut discarded = false;
@@ -439,7 +365,6 @@ pub(crate) fn sections(map: &str) -> Vec<Placed<'_>> {
         let name_end = rest.find(char::is_whitespace).unwrap_or(rest.len());
         let name = &line[1..name_end + 2];
         let placed = if name_end == rest.len() {
-            // A long section name stands alone; its placement follows.
             match lines.peek().and_then(|next| placement(next)) {
                 Some(placed) => {
                     lines.next();
@@ -465,7 +390,6 @@ pub(crate) fn sections(map: &str) -> Vec<Placed<'_>> {
     found
 }
 
-/// `  0xADDRESS  0xSIZE  object`, as the map places an input section.
 fn placement(text: &str) -> Option<(i64, i64, &str)> {
     let hex = |field: &str| {
         field
@@ -482,8 +406,6 @@ fn placement(text: &str) -> Option<(i64, i64, &str)> {
     Some((address, hex(size)?, object))
 }
 
-/// An object's path under its build directory's `obj/` (or, in an overlay
-/// map, under `overlays/`), and whether it sits in the overlay directory.
 pub(crate) fn relative_object<'a>(
     object: &'a str,
     output: &str,
@@ -504,8 +426,6 @@ pub(crate) fn relative_object<'a>(
     }
 }
 
-/// Classify one object by its path alone. `output` is the build directory,
-/// such as `out/tbs-en`; `source` finds the language of a `games/` object.
 fn origin(
     object: &str,
     output: &str,
@@ -545,20 +465,16 @@ fn origin(
     Ok(Origin::Other)
 }
 
-/// `resource_XXX_overlay.o`, an overlay assembled from its listing.
 fn is_listing(name: &str) -> bool {
     name.strip_prefix("resource_")
         .and_then(|rest| rest.strip_suffix("_overlay.o"))
         .is_some_and(|id| !id.is_empty() && id.bytes().all(|byte| byte.is_ascii_hexdigit()))
 }
 
-/// Whether a placed section is executable bytes.
 fn is_text(placed: &Placed) -> bool {
     placed.size > 0 && !is_data(placed.name) && placed.name.contains("text")
 }
 
-/// The name a credited object keeps in every edition's build: its path under
-/// `obj/`, or its compiler-library member.
 fn unit_object(object: &str, output: &str, overlay: bool) -> Option<String> {
     match object.rfind("libgcc.a(") {
         Some(member) => Some(object[member..].to_owned()),
@@ -566,8 +482,6 @@ fn unit_object(object: &str, output: &str, overlay: bool) -> Option<String> {
     }
 }
 
-/// Add one map's text sections to `measurement`, and return where the map
-/// places each credited unit's text. `image` names the map's image.
 fn tally(
     measurement: &mut Measurement,
     map: &str,
@@ -666,14 +580,12 @@ fn tally(
     Ok(credited)
 }
 
-/// The language `build rom` compiled a `games/` object from.
 pub(crate) fn maintained_source(root: &Path, stem: &str) -> Option<Language> {
     [
         ("C", Language::C),
         ("c", Language::C),
         ("S", Language::Assembly),
         ("s", Language::Assembly),
-        // A sequence's assembly is converted from its MIDI in every build.
         ("MID", Language::Assembly),
     ]
     .into_iter()
@@ -681,13 +593,10 @@ pub(crate) fn maintained_source(root: &Path, stem: &str) -> Option<Language> {
     .map(|(_, language)| language)
 }
 
-/// The image `build rom` writes for a target, as `rom.sha1` names it.
 pub(crate) fn image(target: DecompTarget) -> String {
     format!("{}/{}.gba", target.output_dir, target.id)
 }
 
-/// Whether the target's linked image is byte-identical to its reference:
-/// `Ok(Err(reason))` while it is missing or differs.
 pub(crate) fn verified(root: &Path, target: DecompTarget) -> Result<Result<(), String>, String> {
     let name = image(target);
     let digests = std::fs::read_to_string(root.join("rom.sha1"))
@@ -716,11 +625,6 @@ pub(crate) fn verified(root: &Path, target: DecompTarget) -> Result<Result<(), S
     })
 }
 
-/// The resource ids of the code overlays a main image builds from source:
-/// each object its map places in `.overlays` is assembled from a source that
-/// reads the built stream `overlays/resource_XXX.lz` of every such overlay,
-/// found as `build rom` finds them. An overlay an edition still copies from
-/// its scaffold has no stream.
 fn streamed(root: &Path, target: DecompTarget, map: &str) -> Result<Vec<String>, String> {
     let mut ids = BTreeSet::new();
     for placed in sections(map) {
@@ -742,18 +646,12 @@ fn streamed(root: &Path, target: DecompTarget, map: &str) -> Result<Vec<String>,
     Ok(ids.into_iter().collect())
 }
 
-/// One image of a build with its linker map.
 struct ImageMap {
-    /// `main`, or the overlay's resource id.
     image: String,
     path: PathBuf,
     text: String,
 }
 
-/// The linker maps of a target's verified build, or why it is pending: its
-/// main image's, then the map of every code overlay the main image builds
-/// from source. A map an older build left beside an overlay the edition no
-/// longer builds is not read.
 fn maps(root: &Path, target: DecompTarget) -> Result<Result<Vec<ImageMap>, String>, String> {
     if let Err(reason) = verified(root, target)? {
         return Ok(Err(reason));
@@ -796,7 +694,6 @@ fn maps(root: &Path, target: DecompTarget) -> Result<Result<Vec<ImageMap>, Strin
         });
     }
     for map in &found {
-        // A link that failed after writing its map leaves an older image.
         if written(&map.path)? > linked {
             return Ok(Err(format!(
                 "pending: {} is newer than its verified image; rebuild",
@@ -807,8 +704,6 @@ fn maps(root: &Path, target: DecompTarget) -> Result<Result<Vec<ImageMap>, Strin
     Ok(Ok(found))
 }
 
-/// An edition's measurement from its verified image, or why it is
-/// pending.
 pub(crate) fn measure(
     root: &Path,
     target: DecompTarget,
@@ -838,8 +733,6 @@ pub(crate) fn measure(
             &source,
             &mark,
         )?;
-        // The main image names its symbols; every image may place padding its
-        // source marks as uncredited, which leaves DONE (C2).
         let elf = if map.image == MAIN_IMAGE {
             root.join(format!("{output}/{}.elf", target.id))
         } else {
@@ -870,10 +763,6 @@ pub(crate) fn measure(
     Ok(Ok(measurement))
 }
 
-/// A game's DONE in all six editions together, measured on its English
-/// build `target`, or why it is pending: every edition's build must be
-/// verified and current. The six editions are measured at once; the first
-/// failure in edition order, English first, is the one reported.
 pub(crate) fn measure_game(
     root: &Path,
     target: DecompTarget,
@@ -902,8 +791,6 @@ pub(crate) fn measure_game(
                 Err(reason) => return Ok(Err(reason)),
             }
         };
-        // The English build links every unit it credits: its share is its
-        // own measurement, byte for byte.
         if edition.id == target.id
             && (earned.done != english.done || earned.steered != english.steered)
         {

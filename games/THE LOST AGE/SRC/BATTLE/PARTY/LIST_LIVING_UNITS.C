@@ -4,9 +4,6 @@
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
 
-
-/* Lists the enemy units still present (six, or three when flag 0x16c is
-   set) into unit_ids, ending the list with 0xff, and returns how many. */
 s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
 {
     s16 *output;

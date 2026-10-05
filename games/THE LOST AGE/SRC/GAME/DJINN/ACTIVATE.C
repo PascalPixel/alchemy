@@ -11,9 +11,6 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit);
 
-/* Sets a Djinni the owner holds active when the trade rules allow,
-   counting it among its element's active Djinn, and refreshes the owner's
-   stats; returns 0 when it cannot. */
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
     struct OwnerDjinnState *state = Owner_GetState(owner);
@@ -32,8 +29,6 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
     return result;
 }
 
-/* Takes an active Djinni off its element's active set and refreshes the
-   owner's stats; returns whether it was active. */
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
     struct OwnerDjinnState *state = Owner_GetState(owner);

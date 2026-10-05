@@ -18,19 +18,14 @@ void SoundDriver_EnterMixer(void);
 #define SOUND_PRESET_SIZE 152
 extern u8 IwramCodeRecords[];
 
-/* five 152-byte sound presets in ROM */
 extern u8 Data_03000bd8[];
 
-/* VBlank interrupt handler: stops H-blank DMA 0, runs the link exchange,
-   sound and blend updates, flushes the OAM and display register buffers,
-   runs the one-shot hook and the frame callbacks, then samples the keys. */
 void System_VBlankHandler(void)
 {
     u32 keys;
     void (*hook)(void);
 
     {
-        /* Stop the H-blank scroll DMA; the read waits for it to settle. */
         volatile u16 *dma0 = REG_DMA0;
 
         dma0[5] &= ~DMA_START_HBLANK_REPEAT;
@@ -82,7 +77,6 @@ void System_VBlankHandler(void)
     SoundDriver_EnterMixer();
 }
 
-/* active sound parameters in IWRAM */
 s32 Sound_LoadPresetParameters(s32 preset)
 {
     s32 index;
@@ -96,8 +90,6 @@ s32 Sound_LoadPresetParameters(s32 preset)
     return 0;
 }
 
-/* Two empty routines between the preset loader and the key interrupt
-   setup; nothing in the image calls either by name. */
 void Sound_ReservedNoOpA(void)
 {
 }

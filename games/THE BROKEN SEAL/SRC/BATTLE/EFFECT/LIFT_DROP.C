@@ -1,7 +1,3 @@
-/*
- * Battle effect 11's lift: two item-break anchors carry the target while the
- * player steers it, drop it where it fits, and break into twenty shards.
- */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "FX_SCENE.H"
@@ -16,28 +12,28 @@ struct FxPosition {
 
 struct FxObject {
     u8 unknown_00[8];
-    s32 x;                      /* 0x08 */
+    s32 x;
     s32 y;
     s32 z;
-    s32 ground;                 /* 0x14 */
+    s32 ground;
     u8 unknown_18[10];
-    u8 mode;                    /* 0x22 */
+    u8 mode;
     u8 unknown_23;
-    s32 velocity_x;             /* 0x24 */
-    s32 velocity_y;             /* 0x28 */
-    s32 velocity_z;             /* 0x2c */
-    s32 speed;                  /* 0x30 */
-    s32 lift;                   /* 0x34 */
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    s32 speed;
+    s32 lift;
     u8 unknown_38[12];
-    s32 gravity;                /* 0x44 */
+    s32 gravity;
     u8 unknown_48[13];
-    u8 flag;                    /* 0x55 */
+    u8 flag;
     u8 unknown_56[4];
     u8 unknown_5a;
     u8 unknown_5b;
     u8 unknown_5c[12];
-    struct FxObject *linked;    /* 0x68 */
-    void *callback;             /* 0x6c */
+    struct FxObject *linked;
+    void *callback;
 };
 
 extern struct BattleFxScene *gEffectWork;
@@ -69,7 +65,6 @@ void ObjectDispatch_ReleaseFar(struct FxObject *object);
 void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
 void BattleFx_SpawnRadialParticleRing(struct FxObject *object);
 
-/* Tests the object's movement from one step above the ground. */
 static __inline__ s32 Object_ProbeRaised(struct FxObject *object, struct FxPosition *position)
 {
     s32 hit;
@@ -80,11 +75,6 @@ static __inline__ s32 Object_ProbeRaised(struct FxObject *object, struct FxPosit
     return hit;
 }
 
-/* Lifts the target between two anchors and lets the keys steer it: each
-   frame the anchors follow, and a direction is tried one step ahead. A step
-   that is blocked shakes the anchors; one that fits sets the target down.
-   Either way the anchors then break into twenty shards and the target takes
-   its own script back, falling if the effect says so. */
 void BattleFx_SteerLiftedTarget(s32 target_id)
 {
     struct BattleFxScene *work;

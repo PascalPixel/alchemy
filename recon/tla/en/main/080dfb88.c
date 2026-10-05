@@ -1,11 +1,3 @@
-/*
- * Canonical draft API context; no match or adoption is claimed.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "IWRAM_CALL.H"
 #include "OBJDISP.H"
 #include "SYSTEM.H"
@@ -29,10 +21,6 @@ struct OrbitEffect {
     struct OrbitEffect *anchor;
     void (*update)(struct OrbitEffect *);
 };
-
-
-/* Drifts along a slowly turning heading with random pauses, then ends the
-   effect after 101 frames. */
 
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
 {

@@ -8,13 +8,10 @@
 
 extern u8 *gWork;
 
-/* The game state read as halfwords: 225 is the entrance. */
 extern s16 Data_02000240[];
 
-/* Frames actor 13 has idled; ACTOR13_IDLE.C owns it. */
 extern s32 GomaHashira_Actor13Frames;
 
-/* The scene's tables, laid out after the code. */
 extern u8 GomaHashira_Scripts[];
 extern u8 GomaHashira_Messages[];
 extern u8 GomaHashira_Actors[];
@@ -32,12 +29,7 @@ struct ScriptTable {
     u8 *script[3];
 };
 
-/* The three scripts a pillar effect may play. */
 extern struct ScriptTable GomaHashira_PillarScripts;
-/*
- * A pillar effect drifts across one plane of the map by two rates a frame,
- * keeping its target on its position.
- */
 struct PillarEffect {
     u8 unknown_00[8];
     s32 x;
@@ -53,7 +45,6 @@ struct PillarEffect {
     s16 plane;
 };
 
-/* The plane a pillar effect drifts in, by the axes its two rates move. */
 enum PillarEffectPlane {
     PLANE_XY = 0,
     PLANE_XZ = 1,
@@ -69,9 +60,6 @@ struct Sprite389 {
     u8 hi : 4;
 };
 
-/*
- * The pillar effect's per-frame step and the small actor helpers before it.
- */
 void ConfigureActorThirteenSceneParameters(void)
 {
     Actor_ShowEmote(13, 256, 0);
@@ -111,9 +99,6 @@ s32 OverlayObject_ApplyValue15(s32 actor)
     return 0;
 }
 
-/* Spawn a pillar effect object: flags pick the script (low nibble) and the
- * palette (bits 16-19); the high half of layer picks the sprite layer, 0 to
- * copy the leader's, and its low half is stored at +102. */
 void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
 {
     struct ScriptTable table;
@@ -151,10 +136,6 @@ void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flag
     }
 }
 
-/*
- * The scene tables, actor 8's column switch and the task that spawns
- * pillar effects while the pillar moves.
- */
 u8 *SceneData_GetScriptTable(void) { return GomaHashira_Scripts; }
 
 s32 SceneData_ReturnZero(void) { return 0; }

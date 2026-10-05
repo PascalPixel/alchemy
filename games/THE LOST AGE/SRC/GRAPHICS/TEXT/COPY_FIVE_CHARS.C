@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-/* ☀️'s: copy four halfword characters as bytes into a local buffer,
-   turning each empty one into an underscore. */
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
 {
     u8 buffer[5];

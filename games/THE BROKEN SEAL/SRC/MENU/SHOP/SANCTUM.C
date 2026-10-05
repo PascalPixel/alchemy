@@ -45,7 +45,6 @@ void UiMessage_ShowResolvedAndRestoreState(s32 message);
 s32 UiMessage_ShowChoiceVariant(s32 arg0);
 void Shop_RunPartyMemberIconBurst(s32 member);
 s32 Party_AdjustCoinsFar(s32 amount);
-/* Four-word void helper; this caller keeps its legacy extra word. */
 void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 extern char MsgReviveDonation;
@@ -149,7 +148,6 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
     state->cursor.anchor->active = saved;
 }
 
-/* Run the shop's yes/no party-action confirmation prompt for one unit. */
 s32 Shop_ConfirmAct(s32 unit_id)
 {
     s32 party_action = 0;
@@ -225,12 +223,6 @@ s32 Shop_ConfirmAct(s32 unit_id)
     return 0;
 }
 
-/* Lets the player choose which party member receives the chosen sanctum
- * service, starting on the first member who needs it; left and right move the
- * cursor and B leaves. A on a member who needs the service quotes the
- * donation. Declining it, or being unable to pay, says so and starts the
- * choice again; paying treats the member and, while others still need the
- * service, starts the choice again. */
 s32 Sanctum_RunPartyService(void)
 {
     struct ShopRuntime *shop = ((struct ShopRuntime *)gMenuWork);

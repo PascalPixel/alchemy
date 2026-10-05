@@ -28,9 +28,6 @@ void Object_AttachWorkTargetToObject(s32 arg0, s32 arg1);
 
 extern struct EventRuntime *gEventWork;
 
-/* Plays the scene's cue and two sound effects, whitens one palette colour
- * (colour 243 in mode 3, the backdrop otherwise), finishes the display
- * transition, then fades that colour from white to black over 16 frames. */
 s32 Scene_FadeColorFromWhite(void)
 {
     struct EventRuntime *work = gEventWork;
@@ -192,7 +189,6 @@ void DisplayScroll_ArmHBlankDma(void)
     state = gHBlankScrollWork;
     source = (u32 *)state->rows[state->page];
 
-    /* Stop channel 0 before the first scanline's words are written by hand. */
     dma = REG_DMA0;
     destination = (volatile u32 *)0x04000014;
     status = dma[5];

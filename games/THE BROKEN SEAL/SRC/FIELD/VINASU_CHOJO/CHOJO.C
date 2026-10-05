@@ -1,5 +1,4 @@
 #include "RESOURCE.H"
-/* Object motion, scene tables and the actors' setup. */
 #include "CHOJO.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"
@@ -94,7 +93,6 @@ extern struct PairWork *Data_03001f30;
 
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
-/* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
     u16 attr0;
@@ -136,10 +134,6 @@ s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
     return 1;
 }
 
-/*
- * Moves an effect like BattleFx_UpdateObjectMotionScaleAndLinkedAngle, and slows its horizontal velocity by a
- * twenty-second across and a twentieth in depth each frame.
- */
 void Effect_MoveWithDrag(union FieldObject *object)
 {
     s32 velocity_x = object->effect.velocity_x;
@@ -435,11 +429,6 @@ void VinasuChojo_FaceActor(s32 actor, s32 facing)
     Engine_ActorFaceDirection(actor, facing, 10);
 }
 
-/*
- * Entrance 1: the leader is carried up to the summit beside actor 18, the
- * pair and actors 21 and 6 talk it out, and the scene cuts to the party below
- * before they climb after them.
- */
 void Scene_RunScriptedActorPresentation(void)
 {
     struct FieldActor *companion;
@@ -717,8 +706,6 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventEnd();
 }
 
-/* Shows a party member walking at the party's pace, or hides it while the
-   leader is carried up alone. */
 void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
 {
     s32 record;
@@ -735,9 +722,6 @@ void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
     }
 }
 
-/* The party reaches the summit: Robin speaks, the others gather, and the
-   summit's scene is recorded in two scene and entrance pairs of the game
-   state, with entrances 2 and 9. */
 void Scene_RunActorEntrySequence(void)
 {
     s32 owner;
@@ -1149,7 +1133,6 @@ void Scene_RunActorEntrySequence(void)
     GameFlag_Set(0x350);
 }
 
-/* Frame-driven effects. */
 void SceneEffect_UpdateObjectByFrameParity(s32 a)
 {
     if (*(s32 *)&gFrameCount & 2) {
@@ -1211,7 +1194,6 @@ void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect)
     }
 }
 
-/* Spawns the linked pair of effect objects above the parent actor, with a cue, and gives both the parent's sprite priority. */
 void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 {
     union PairObject *pair[2];
@@ -1266,7 +1248,6 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
     }
 }
 
-/* Small scene steps. */
 void SceneState_ApplyPair140And0(void)
 {
     Engine_PsynergyBegin(140, 0);
@@ -1282,7 +1263,6 @@ void FieldScene_RunStep6(void)
     SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(6));
 }
 
-/* The scene after the pair fall. */
 extern u8 MsgVinasuBeatEm[];
 extern const u8 VinasuChojo_ScaleStepAction[];
 extern const u8 VinasuChojo_BeamOpenAction[];
@@ -1291,7 +1271,6 @@ extern const u8 Data_0200622c[];
 void SceneEffect_SpawnParticlesAboveActor(void);
 void Owner_RefreshRatiosOnFlag(void);
 
-/* Aims one particle of a burst: a flat ring, three wide and two deep. */
 static inline void VinasuChojo_AimBurst(s32 velocity[3], s32 angle)
 {
     s32 sine;
@@ -1307,7 +1286,6 @@ static inline void VinasuChojo_AimBurst(s32 velocity[3], s32 angle)
     velocity[0] = cosine;
 }
 
-/* The defeated pair light the beacon, recover, then begin their transformation. */
 void Scene_RunPairedActorEffectSequence(void)
 {
     struct EffectOptions second_burst;
@@ -1320,7 +1298,6 @@ void Scene_RunPairedActorEffectSequence(void)
     struct FieldActor *bird;
     struct FieldSprite *sprite;
     u8 *buffer;
-    /* Counts the particles of a burst, and before that holds the answer. */
     u32 i;
 
     Event_Begin();
@@ -1417,7 +1394,6 @@ void Scene_RunPairedActorEffectSequence(void)
         gEventWork->message++;
     }
 
-    /* The pair get up and throw the Venus Star into the beacon. */
     Actor_Stop(ACTOR_FIRST_OF_PAIR);
     Actor_Stop(ACTOR_SECOND_OF_PAIR);
     Task_Wait(1);
@@ -1595,7 +1571,6 @@ void Scene_RunPairedActorEffectSequence(void)
     }
     Event_Wait(20);
 
-    /* Raise the two light shafts and brighten the scene in stages. */
     Actor_SetSpriteFlags(Actor_Get(24), 0);
     Actor_SetChildValue(24, 7);
     actor = Actor_Get(24);
@@ -1792,7 +1767,6 @@ void Scene_RunPairedActorEffectSequence(void)
     VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
     VinasuChojo_FlashScreen();
 
-    /* Draw seventeen-particle rings around each member of the pair. */
     second = Actor_Get(ACTOR_SECOND_OF_PAIR);
     second_burst.palette = 7;
     second_burst.update = Effect_MoveWithDrag;

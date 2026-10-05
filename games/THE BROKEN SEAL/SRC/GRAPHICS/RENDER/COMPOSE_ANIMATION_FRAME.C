@@ -9,13 +9,6 @@
 #include "HEAP_STATE.H"
 extern void *gMenuCtrlWork[];
 
-/* Steps the scripts of a composite sprite's layers, picks each layer's frame
-   for the facing direction and, when a frame changed, draws the layers in
-   priority order, outlines the result and uploads it. Returns whether the
-   first layer's facing entry asks for a flip. */
-
-/* Running byte total plus the two outline colours. */
-
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
@@ -182,7 +175,6 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
         buf = (u8 *)Runtime_BumpAllocate(size);
         Iwram_ClearWords(buf, size);
 
-        /* Insertion sort of (priority, index) keys, low key drawn first. */
         n = -1;
         for (i = obj->count - 1; i >= 0; i--) {
             e = obj->entries[i];
@@ -241,8 +233,6 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
         }
 
         if ((obj->flags & 2) != 0) {
-            /* Erode the composed silhouette; interior keeps the fill
-               colour, everything else that is set becomes the edge. */
             u8 *mask;
             u8 edge;
             u8 fill;

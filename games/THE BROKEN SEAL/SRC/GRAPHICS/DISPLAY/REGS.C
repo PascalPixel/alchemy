@@ -8,14 +8,11 @@
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
 
-/* The battle effect work, seen through its shadows of the window, blend and
-   BG2 reference registers, which are copied to the hardware once a frame. */
-
 extern struct BattleEffectWork *gBattleFxWork;
 
 void Graphics_ScaleRgb555ClampedFar(void *, void *, s32, s32);
-#define FADE_BG_PALETTE ((void *)0x050000c0) /* BG palettes 6 to 9 */
-#define FADE_STEP 1092 /* one sixtieth of full brightness */
+#define FADE_BG_PALETTE ((void *)0x050000c0)
+#define FADE_STEP 1092
 
 void Graphics_ApplyWindowBlendRegisters(void)
 {
@@ -58,7 +55,6 @@ void Palette_StepFadeTransfer(void)
 
 void BattleFx_ClearActorTimers(void)
 {
-    /* IWRAM_CALL.H owns the actual two-argument resident entry. */
     Iwram_ClearWords(gBattleFxWork->actor_timers, sizeof(gBattleFxWork->actor_timers));
 }
 

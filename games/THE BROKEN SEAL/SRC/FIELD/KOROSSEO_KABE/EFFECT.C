@@ -2,7 +2,6 @@
 
 extern u8 MsgKorosseoRobinGotItem[];
 
-/* The game state's cells, read here as words. */
 extern s32 gCell[];
 
 void Text_WriteU32AsHex(u8 *buf, u32 value)
@@ -23,13 +22,11 @@ void SceneState_EmptyHook(void)
 {
 }
 
-/* Mark the stage's control record finished. */
 void KorosseoKabe_MarkStageReady(void)
 {
     ((struct StageControl *)gSceneState)->status = 9;
 }
 
-/* Wait until the stage's control record is marked finished. */
 void SceneState_WaitUntilStatusNine(void)
 {
     s16 *status = &((struct StageControl *)gSceneState)->status;

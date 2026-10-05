@@ -1,4 +1,3 @@
-/* Declarations shared by Mogall Forest's waypoint sources (resource_39f). */
 #ifndef MORI_H
 #define MORI_H
 
@@ -14,7 +13,6 @@
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
 enum {
-    /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
@@ -68,15 +66,8 @@ void BattleFx_SetWeightedResult();
 u8 *AllocateEffectTransfer(s32, s32);
 void MogoruMori_SpawnPuffRing(s32 id);
 
-/* The scene table in the overlay's data. */
 extern u8 MogoruMori_SceneTable[];
 
-/* Copy the low two mode bits into the object's owner record. */
-
-/* Returns a slot record.  Its fields are named by position and not verified:
- * +8/+12/+16 read as the position and +10/+18 as signed halfwords. */
-
-/* The sources call one another across files. */
 void OverlayObject_SetOwnerMode(u8 *object, s32 mode);
 u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind);
 u8 *OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind);

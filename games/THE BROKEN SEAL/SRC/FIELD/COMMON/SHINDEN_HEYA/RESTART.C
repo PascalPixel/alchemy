@@ -1,4 +1,3 @@
-/* The shrine's question after the party falls: restart, or the file screen. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SAVE_STATE.H"
@@ -10,7 +9,6 @@
 
 extern u8 MsgShindenGreatHealer[];
 
-/* A text cursor record the text-resource routines fill and move. */
 struct TextCursor {
     u8 storage[12];
 };
@@ -18,7 +16,6 @@ struct TextCursor {
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern volatile u32 gFrameTick;
-/* How far the cursor bobs right over sixteen two-frame steps. */
 extern const s32 ShindenHeya_CursorBob[16];
 
 void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);
@@ -48,11 +45,6 @@ static inline void TextCursor_SetPosition(struct TextCursor *cursor, s32 x, s32 
 #define CURSOR_X 64
 #endif
 
-/*
- * Hides the party, fades the screen and asks whether to restart, offering
- * the file screen when no save records exist. Up and down move the cursor
- * between the two answers; A returns the one chosen, 0 or 1.
- */
 s32 ShindenHeya_ChooseRestartOption(void)
 {
     s32 slot;

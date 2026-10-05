@@ -1,4 +1,3 @@
-//! Golden Sun repository scan orchestration; lexical policy lives in compiler::no_asm.
 
 #[cfg(test)]
 use crate::compiler::no_asm::self_test;
@@ -16,10 +15,8 @@ use std::sync::Mutex;
 const USAGE: &str =
     "usage: alchemy check no-asm [--target TARGET]...\n\nScan raw and preprocessed C for instruction, register, and ABI escape hatches.";
 type Job = (String, Vec<String>);
-/// One preprocessing command prefix of a target and the sources it expands.
 type Group = ((String, Vec<String>), Vec<String>);
 
-/// Keep fresh catalog metadata alive for every batch in an edition.
 struct MessageImports {
     _directory: tempfile::TempDir,
     flag: String,
@@ -98,8 +95,6 @@ fn groups(
     Ok(groups.into_iter().collect())
 }
 
-/// The scanner's own source: a clean result stays known clean until the
-/// scanner or the lexer it reads with changes, not with every tool change.
 fn scanner() -> &'static str {
     static DIGEST: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     DIGEST.get_or_init(|| {
@@ -116,11 +111,6 @@ fn scanner() -> &'static str {
     })
 }
 
-/// The identity of one source's expansion: the command, the source with
-/// every header it includes, the compiler bundle and the scanner. A source
-/// whose expansion was clean under the same identity is not expanded again,
-/// as make skips an up-to-date object; any change to it or a header it
-/// includes scans it afresh.
 fn clean_key(
     root: &Path,
     label: &str,
@@ -134,10 +124,6 @@ fn clean_key(
         &[prefix.to_vec()],
     )
     .ok()?;
-    // A temporary include directory is not a compiler option. Its current
-    // catalog contents are part of every key, even when this source does not
-    // import any messages. Imported headers also stay in the source tree
-    // signature; their temporary path may cause a safe extra expansion.
     let command = prefix
         .iter()
         .map(|part| {
@@ -164,8 +150,6 @@ fn clean_key(
     Some(crate::compiler::sha256::hex(identity.as_bytes()))
 }
 
-/// Preprocessing batches for every source not already known clean, with
-/// the clean keys each batch would record, and the number of inputs.
 fn jobs(
     root: &Path,
     groups: Vec<Group>,
@@ -235,9 +219,6 @@ fn run(root: &Path, job: &Job) -> Result<Vec<Finding>, String> {
     }
     let text = String::from_utf8_lossy(&output.stdout);
     let mut findings = find_preprocessed(&job.0, &text);
-    // GCC 2.96 -C preserves macro-body tags but its logical line spacing can
-    // drift through multiline comments. Keep the existing plain expansion
-    // for assembly admission and use the comment expansion for helper bodies.
     let mut command = job.1.clone();
     command.push("-C".into());
     let output = Command::new(&command[0])
@@ -290,7 +271,6 @@ fn scan_preprocessed(
             scope.spawn(move || {
                 for (index, (job, keys)) in jobs.iter().enumerate().skip(offset).step_by(workers) {
                     let result = run(root, job);
-                    // Only a batch that expanded without findings is known clean.
                     if let (Ok(findings), Some(cache)) = (&result, cache) {
                         if findings.is_empty() {
                             for key in keys {
@@ -363,7 +343,6 @@ fn fail(message: impl std::fmt::Display) -> ExitCode {
     ExitCode::FAILURE
 }
 
-/// One source as written: its escape hatches and unmarked forwarders.
 fn raw_findings(root: &Path, path: &Path) -> Result<Vec<Finding>, String> {
     let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
     let name = path.strip_prefix(root).unwrap_or(path).to_string_lossy();
@@ -388,7 +367,6 @@ fn raw_findings(root: &Path, path: &Path) -> Result<Vec<Finding>, String> {
 
 fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
     let root = compiler_root();
-    // Maintained source under games/ and the drafts under recon/.
     let files = match ["games", "recon"]
         .into_iter()
         .map(|tree| source_files(&root.join(tree)))

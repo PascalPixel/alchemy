@@ -1,9 +1,3 @@
-/* NONMATCHING: localized ship deck entrance, 2026-10-01.
- * The approved TBS flags compile the complete 60-byte extent. Six bytes
- * differ only in the ordering of movement argument setup; the plain direct
- * call shifts the z argument before setting actor and x. Production retains
- * the measured Call3 spelling and matches this edition.
- */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

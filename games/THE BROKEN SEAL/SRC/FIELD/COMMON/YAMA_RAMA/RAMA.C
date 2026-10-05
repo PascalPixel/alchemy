@@ -26,7 +26,6 @@ extern u8 MsgYamaRobinDidLiftBoulder[];
 extern u8 MsgYamaYahhSilkRoadBouldersBlock[];
 extern u8 MsgYamaYoungWarriorsDoComeFrom[];
 
-/* The mountain's scene tables. */
 extern const u16 YamaRama_BoulderCells[];
 extern const u16 YamaRama_BoulderCellsBack[];
 extern const u8 YamaRama_HsuAction[];
@@ -59,7 +58,6 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void);
 void YamaRama_DisableActorCollision(void);
 void Scene_RunActorExchange(void);
 
-/* Actor callbacks that open the mountain overlay. */
 s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor)
 {
     actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -88,7 +86,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return YamaRama_Entrances;
 }
 
-/* The mountain's regions and exits. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
@@ -676,8 +673,6 @@ void SceneActor_UpdateActorFourteenByDepth(void)
     }
 }
 
-/* Clear actor 14's automatic-priority and collision bits and its motion flags,
- * then update its priority relative to the leader's height each frame. */
 void ActorPresentation_PrepareActorFourteenWithCallback(void)
 {
     u8 zero;
@@ -721,7 +716,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return YamaRama_Events;
 }
 
-/* Mountain entry: set the entrance selector; in the second area stage the actors and the entrance scene, in the first restore the exchange scene's actors and cells from its story flags. */
 s32 YamaRama_ApplyEntryState(void)
 {
     s32 entrance;

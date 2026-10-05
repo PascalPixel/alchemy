@@ -1,19 +1,8 @@
-//! The lettering of the README figures: a small pixel face defined here, in
-//! tool source, like the marks below it. Nothing is read from a ROM, and no
-//! glyph sheet or font file is tracked.
 use std::collections::BTreeMap;
 
-/// Device pixels per game pixel in the README figures, drawn for retina
-/// displays and shown at half their width.
 pub(crate) const FIGURE_SCALE: u32 = 2;
-/// A text line, in game pixels: the box the face's seven-pixel capitals and
-/// two-pixel descenders sit in.
 pub(crate) const LINE: u32 = 16;
 
-/// Printable ASCII, one glyph per character: rows from the cap line down,
-/// `/` between rows, `#` ink. Capitals and digits stand seven rows high on
-/// the baseline under row seven; descenders take two rows more. A glyph
-/// advances its width and one pixel of spacing.
 const FACE: [(char, &str); 95] = [
     (' ', "..."),
     ('!', "#/#/#/#/#/./#"),
@@ -112,12 +101,9 @@ const FACE: [(char, &str); 95] = [
     ('~', "...../...../.#.../#.#.#/...#."),
 ];
 
-/// One face: frames of `cell` game pixels (rows most significant bit
-/// leftmost), each frame's advance, and the characters it draws.
 #[derive(Clone, PartialEq, Debug)]
 pub(crate) struct Letters {
     pub cell: (u32, u32),
-    /// Rows from the top of a `LINE` box to the top of a cell.
     pub top: u32,
     pub rows: Vec<Vec<u16>>,
     pub advance: Vec<u32>,
@@ -125,7 +111,6 @@ pub(crate) struct Letters {
 }
 
 impl Letters {
-    /// The figures' face: every printable ASCII character of `FACE`.
     pub(crate) fn face() -> Self {
         let mut letters = Self {
             cell: (8, 9),
@@ -151,12 +136,9 @@ impl Letters {
         }
         letters
     }
-    /// A character's frame, when the face draws it.
     pub(crate) fn frame(&self, character: char) -> Option<usize> {
         self.map.get(&character).copied()
     }
-    /// A string's width in game pixels; a character the face lacks takes a
-    /// question mark's place.
     pub(crate) fn width(&self, text: &str) -> u32 {
         text.chars().map(|c| self.advance[self.stand_in(c)]).sum()
     }
@@ -170,10 +152,6 @@ impl Letters {
     }
 }
 
-/// Weyard UI's three logo marks: Alchemy's mountain, The Broken Seal's sun
-/// and The Lost Age's anchor. No tracked item, Psynergy or status icon draws
-/// them cleanly, so they are drawn here as one-colour masks on a `LINE` box,
-/// `#` ink, and take the labels' one-pixel shadow wherever they are shown.
 pub(crate) const MARKS: [(&str, [&str; LINE as usize]); 3] = [
     (
         "alchemy",
@@ -239,7 +217,6 @@ pub(crate) const MARKS: [(&str, [&str; LINE as usize]); 3] = [
         ],
     ),
 ];
-/// A mark's rows, by name.
 pub(crate) fn mark(name: &str) -> &'static [&'static str; LINE as usize] {
     &MARKS
         .iter()
@@ -247,7 +224,6 @@ pub(crate) fn mark(name: &str) -> &'static [&'static str; LINE as usize] {
         .expect("a Weyard UI mark")
         .1
 }
-/// A mark's width: its rightmost ink column and one more.
 pub(crate) fn mark_width(name: &str) -> u32 {
     mark(name)
         .iter()
@@ -258,8 +234,6 @@ pub(crate) fn mark_width(name: &str) -> u32 {
 
 #[cfg(test)]
 pub(crate) fn fixture() -> Letters {
-    // A three-pixel square for every Latin-1 code but the C1 controls,
-    // advancing four.
     let mut rows = vec![0u16; 16];
     for row in &mut rows[8..11] {
         *row = 0xe000;
@@ -295,7 +269,6 @@ mod tests {
                     && row.bytes().all(|pixel| pixel == b'.' || pixel == b'#')),
                 "{character:?}"
             );
-            // Only a descender reaches below the baseline.
             assert!(
                 rows.len() <= 7 || "gjpqy,;_".contains(character),
                 "{character:?}"
@@ -318,7 +291,6 @@ mod tests {
                         && row.chars().all(|c| c == '.' || c == '#')),
                 "{name}"
             );
-            // Each keeps its last column clear for the shadow.
             assert!(mark_width(name) < LINE, "{name}");
         }
         assert_eq!(

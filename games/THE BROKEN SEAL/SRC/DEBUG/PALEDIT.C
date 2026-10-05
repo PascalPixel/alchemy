@@ -25,17 +25,17 @@ struct Object *ObjectTable_Get(s32);
 s32 BattleFx_FindDescriptor(s32, s32);
 
 struct EntranceView {
-    s16 entrance;                   /* 0x00; -1 ends the table */
-    s16 flag;                       /* 0x02; -1 when unconditional */
-    s16 x;                          /* 0x04 */
-    s16 y;                          /* 0x06 */
-    s16 z;                          /* 0x08 */
-    u16 heading;                    /* 0x0a */
+    s16 entrance;
+    s16 flag;
+    s16 x;
+    s16 y;
+    s16 z;
+    u16 heading;
     s16 unknown_0c;
-    s16 left;                       /* 0x0e; -1 keeps the current limit */
-    s16 top;                        /* 0x10 */
-    s16 right;                      /* 0x12 */
-    s16 bottom;                     /* 0x14 */
+    s16 left;
+    s16 top;
+    s16 right;
+    s16 bottom;
     s16 unknown_16;
 };
 
@@ -46,10 +46,10 @@ struct ViewServices {
 
 struct MapScrollWork {
     u8 unknown_000[0xec];
-    s32 left;                       /* 0x0ec */
-    s32 top;                        /* 0x0f0 */
-    s32 right;                      /* 0x0f4 */
-    s32 bottom;                     /* 0x0f8 */
+    s32 left;
+    s32 top;
+    s32 right;
+    s32 bottom;
 };
 
 extern struct ViewServices gOverlayArea;
@@ -57,7 +57,6 @@ extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;
 
-/* The compressed swatch tiles, one filled with each colour index. */
 extern const u8 Debug_PaletteSwatchTiles[];
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void WaitFrames(s32 count);
@@ -67,7 +66,6 @@ void Bg0_ClearTilemap(void);
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define HEX_DIGIT 0xf0e0
 
-/* One 24-byte descriptor; a sprite of -1 ends each table. */
 struct ActionDescriptor {
     u16 sprite;
     s16 condition;
@@ -126,13 +124,6 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
     return result;
 }
 
-/*
- * Places the battle view for the current entrance: finds the entrance's
- * entry in the overlay's view table (the first entry whose flag is clear
- * when none matches), sets the view position and heading from it unless
- * flag 0x109 is set, then applies the entry's scroll limits and keeps the
- * view window at least one screen (240 by 160) inside them.
- */
 void BattleMap_ApplyEntranceView(void)
 {
     struct MapScrollWork *work = gMapWork[0];
@@ -174,13 +165,6 @@ void BattleMap_ApplyEntranceView(void)
         work->top = work->bottom - (160 << 16);
 }
 
-/*
- * A developer palette editor over the background palettes. Shows the chosen
- * palette's fifteen colours as swatches with their red, green and blue
- * levels in hex digits; up and down pick the channel, left and right the
- * colour, L and R the palette, A and B raise and lower the level, holding
- * Start blinks the colour and Select leaves.
- */
 void Debug_RunPaletteEditor(void)
 {
     s32 palette = 0;
@@ -316,12 +300,6 @@ redraw:
     Bg0_ClearTilemap();
 }
 
-/*
- * Finds the descriptor for a battle action across the event work's four
- * tables. Ids up to 7 name a descriptor by its sprite; larger ids count,
- * from 8, the descriptors whose sprite is above 7. Returns NULL when the
- * id is not found.
- */
 struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
 {
     struct ActionDescriptor *entry;

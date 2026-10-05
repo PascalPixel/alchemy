@@ -1,5 +1,3 @@
-/* Draft: the ordinary Japanese repair has the correct 5592-byte extent;
- * nine instruction bytes differ in zero/mask allocation. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.H"
 #include "TYPES.H"
 #include "CALL.H"
@@ -53,10 +51,6 @@ enum {
 
 void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
 
-/*
- * An actor climbs between the yard and the ledge in front of the house at
- * x 392, playing one animation for each half of the climb.
- */
 void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void PaletteGlow_Update(s32 a, s32 b);
@@ -124,11 +118,6 @@ void Scene_RepairTheHouse(void)
     Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
     Actor_SetPosition(ACTOR_DORA, 0x1880000, 0x3800000);
     turned = Actor_Get(ACTOR_DORA);
-    /*
-     * Overwritten at once, but the store must stay: its zero halfword
-     * temporary is what the record byte stores below reuse out of a high
-     * register.
-     */
     *(u16 *)(turned + 6) = 0;
     turn_back = 0xc000;
     *(u16 *)(turned + 6) = turn_back;
@@ -192,7 +181,6 @@ void Scene_RepairTheHouse(void)
         Engine_TaskWait(1);
     }
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-    /* Callback symbols are pooled loads that stay after the preceding call. */
     callback_a = (s32)SceneState_SetValue0ThenCall;
     Value2(Engine_TaskAddCallback, callback_a, 3200);
     callback_b = (s32)FieldScene_RunStep17;
@@ -204,7 +192,7 @@ void Scene_RepairTheHouse(void)
     Engine_EventWait(20);
     {
         u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
-        u8 value = *(volatile u8 *)&record[35]; /* Keeps the byte in its own register. */
+        u8 value = *(volatile u8 *)&record[35];
 
         record[35] = (u8)(value | 1);
     }
@@ -493,7 +481,7 @@ void Scene_RepairTheHouse(void)
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
     Event_OpenMessage(ACTOR_DORA, 0);
-    none = 0; /* One zero shared by the placement call and the byte store. */
+    none = 0;
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         bump_step(1);
     }
@@ -529,8 +517,6 @@ void Scene_RepairTheHouse(void)
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA)
     Actor_WalkToAndWait(ACTOR_GERALD, 374, 827);
 #else
-    /* The localized repair scene commits Gerald's landing two pixels
-       further south before the conversation resumes. */
     Actor_WalkToAndWait(ACTOR_GERALD, 374, 829);
     Actor_SetPosition(ACTOR_GERALD, PIXELS(374), PIXELS(829));
 #endif
@@ -557,7 +543,7 @@ void Scene_RepairTheHouse(void)
         *(s32 *)(rec + 28) += 0x1999;
         Engine_EventWait(1);
     }
-    none = 0; /* Refreshed after the loops for the closing scene store. */
+    none = 0;
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_FaceDirection(ACTOR_GERALD, 0x5000, 30);
@@ -687,7 +673,7 @@ void Scene_RepairTheHouse(void)
     Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
     Engine_EventWait(60);
     rec = Actor_Get(ACTOR_GERALD);
-    flag = 1; /* One shared mark bit for the three record flags. */
+    flag = 1;
     rec[90] |= flag;
     rec = Actor_Get(ACTOR_JASMINE);
     rec[90] |= flag;

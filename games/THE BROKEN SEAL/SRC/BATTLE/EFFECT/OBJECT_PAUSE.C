@@ -7,7 +7,6 @@
 
 extern s8 BattleFx_RandomChildValues[];
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Animation_ApplyChildValuesFar(void *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 
@@ -18,8 +17,6 @@ void BattleEffect_SetRandomTableValueOnObject(s32 arg0)
     Animation_ApplyChildValuesFar((void *)arg0, table[(u32)(index * 8) >> 16]);
 }
 
-/* Stops the object's own update, keeping it and the sprite's pose in the
-   game state, and shuffles its pose each frame until it resumes. */
 void BattleEffect_PauseObject(s32 id)
 {
     struct FieldActor *object;

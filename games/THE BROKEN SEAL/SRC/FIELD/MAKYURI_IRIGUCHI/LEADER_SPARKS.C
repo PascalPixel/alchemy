@@ -1,6 +1,5 @@
 #include "ENTRANCE.H"
 
-
 s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
 {
     s32 value;
@@ -21,14 +20,12 @@ s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
     return 0;
 }
 
-/* Play the footprint-motion completion cue. */
 s32 SceneAudio_PlayCue118AndReturnZero(void)
 {
     Audio_PlayCue(118);
     return 0;
 }
 
-/* Keep this object facing actor 0 while the actor remains near ground level. */
 s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 {
     struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);

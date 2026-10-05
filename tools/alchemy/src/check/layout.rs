@@ -1,25 +1,3 @@
-//! `alchemy check layout`: every tile sheet is drawn as its pictures were.
-//!
-//! A PNG built by a tile recipe (`.4bpp`, `.8bpp`, their OBJ-shaped
-//! `.4bppWxH` forms, directly or as a part of a `.parts` list) is decoded to
-//! the tiles the build makes, and the layout finder in `ags::assets` picks the layout at which
-//! neighbouring tile edges agree most. When that layout beats the drawn one
-//! by a clear margin, the picture is banked (cut into strips, or its sprites
-//! set side by side in the wrong order) and the check refuses it. Sprite
-//! banks (`.frames`) stay one frame wide by their format and are not tile
-//! recipes.
-//!
-//! A `.bitmap` recipe writes its pixels row by row, so a bitmap one tile (8
-//! pixels) wide is byte for byte a column of 8-bit tiles: its whole tiles are
-//! judged as that column, so tiles never pass as a narrow bitmap. A wider
-//! bitmap is a picture drawn row by row and is not a tile sheet.
-//!
-//! A part list that carries a tilemap (a table of u16 columns) builds a
-//! background: each of its tile parts must be drawn by that map, as the
-//! picture the map shows or as animation frames of the tiles it swaps in
-//! (`PART FORM MAP FIRST COUNT [frames]`), so a picture holds exactly the
-//! tiles its map shows. A tile part cut plainly beside a tilemap is refused;
-//! a drawn part's layout is the map's and the finder does not judge it.
 use ags::assets::image::{
     indexed_bitmap_png, sprite_runs, sprite_runs_score, tile_sheet_layout, tile_sheet_score,
     GbaBpp, SpriteRun, TileLayout,
@@ -32,18 +10,14 @@ const USAGE: &str = "usage: alchemy check layout [--report]\n\
 Refuses every tile-sheet PNG whose finder layout beats the drawn one clearly;\n\
 --report lists every sheet with both scores instead.";
 
-/// How much better, in the share of agreeing inked seams, the finder's
-/// layout must be before the drawn one counts as banked.
 pub const MARGIN: f64 = 0.1;
 
-/// One tile recipe: the PNG it reads and the form it builds.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 struct Recipe {
     png: PathBuf,
     form: String,
 }
 
-/// A tile form's bit depth and OBJ metatile shape in tiles.
 fn tile_form(form: &str) -> Option<(GbaBpp, (usize, usize))> {
     let bpp = match form.get(..4)? {
         "4bpp" => GbaBpp::Bpp4,
@@ -64,22 +38,17 @@ fn tile_form(form: &str) -> Option<(GbaBpp, (usize, usize))> {
     ))
 }
 
-/// Whether a form is judged: a tile form, or a bitmap, whose one-tile-wide
-/// pictures are columns of 8-bit tiles.
 fn judged_form(form: &str) -> bool {
     tile_form(form).is_some() || form == BITMAP
 }
 
-/// The bitmap form: pixels row by row, one palette index per byte.
 const BITMAP: &str = "bitmap";
 
-/// The form a built name gives, the extension after its stem.
 fn form_of(built: &str) -> Option<&str> {
     let file = built.rsplit('/').next()?;
     file.split('.').nth(1)
 }
 
-/// The tile recipes a source's `.incbin` names read, relative to `source_root`.
 fn recipes_in(
     source_root: &Path,
     text: &str,
@@ -100,7 +69,6 @@ fn recipes_in(
         let Some(form) = form_of(built) else {
             continue;
         };
-        // A COMMON/ recipe reads its input from games/COMMON's SRC.
         let (root, built) = match built.strip_prefix("COMMON/") {
             Some(shared) => match source_root.parent().and_then(Path::parent) {
                 Some(games) => (games.join("COMMON/SRC"), shared),
@@ -146,8 +114,6 @@ fn recipes_in(
     }
 }
 
-/// What a part list that carries a tilemap draws wrongly: tile parts cut
-/// plainly beside it, or drawings that do not build.
 fn tilemap_problems(list: &str, sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>) -> Vec<String> {
     let lines: Vec<Vec<&str>> = list
         .lines()
@@ -200,7 +166,6 @@ fn tilemap_problems(list: &str, sibling: &dyn Fn(&str) -> Result<Vec<u8>, String
     problems
 }
 
-/// Every tile recipe under `games/`, and every tilemap part-list problem.
 fn recipes(root: &Path) -> Result<(BTreeSet<Recipe>, Vec<String>), String> {
     let mut found = BTreeSet::new();
     let mut problems = Vec::new();
@@ -222,7 +187,6 @@ fn recipes(root: &Path) -> Result<(BTreeSet<Recipe>, Vec<String>), String> {
     Ok((found, problems))
 }
 
-/// A sheet's drawn layout and score, and the finder's.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Judgement {
     pub tiles: usize,
@@ -232,16 +196,10 @@ pub struct Judgement {
     pub best_score: f64,
     pub runs: Vec<SpriteRun>,
     pub runs_score: f64,
-    /// Whether the sheet is a bitmap one tile wide, which is judged against
-    /// its sprite runs whatever their shapes.
     pub bitmap: bool,
 }
 
 impl Judgement {
-    /// Whether the drawn sheet is an animation strip: small frames stacked
-    /// one frame wide, which the finder would set side by side in rows no
-    /// taller than a frame. Only the frame width is judged there, and it is
-    /// the drawn width.
     fn animation(&self) -> bool {
         self.drawn.meta == (1, 1)
             && self.drawn.tiles_wide <= ANIMATION_TILES
@@ -250,15 +208,11 @@ impl Judgement {
             && self.tiles / self.best.tiles_wide <= self.drawn.tiles_wide
     }
 
-    /// Whether the sheet is one tile column of OBJ pictures of several
-    /// shapes, which only a part list of sprite runs draws whole, or a
-    /// bitmap column of tiles, whose runs may also be plain tiles.
     fn mixed(&self) -> bool {
         self.drawn.tiles_wide == 1
             && (self.bitmap || self.runs.iter().any(|run| run.layout.meta != (1, 1)))
     }
 
-    /// The better of the finder's layout and its sprite runs, as judged.
     pub fn found_score(&self) -> f64 {
         let layout = if self.animation() {
             self.drawn_score
@@ -277,23 +231,18 @@ impl Judgement {
     }
 }
 
-/// The widest animation frame, in tiles, of a strip drawn one frame wide.
 const ANIMATION_TILES: usize = 4;
 
-/// Judge one PNG as the tile form `form` builds it.
 pub fn judge(png: &[u8], form: &str) -> Result<Option<Judgement>, String> {
     let image = indexed_bitmap_png(png).map_err(|error| error.0)?;
     let (bpp, meta) = match tile_form(form) {
         Some(tiles) => tiles,
-        // A bitmap one tile wide is a column of 8-bit tiles; any wider
-        // bitmap is drawn row by row and is not a tile sheet.
         None if form == BITMAP && image.width == 8 => (GbaBpp::Bpp8, (1, 1)),
         None if form == BITMAP => return Ok(None),
         None => return Err(format!(".{form} is not a tile form")),
     };
     let mut tiles = ags::resource::build_file(&format!("SHEET.{form}"), png)?;
     let count = tiles.len() / bpp.tile_bytes();
-    // Only whole tiles are judged: bytes after the last one are not a tile.
     tiles.truncate(count * bpp.tile_bytes());
     if count < 2 {
         return Ok(None);
@@ -315,7 +264,6 @@ pub fn judge(png: &[u8], form: &str) -> Result<Option<Judgement>, String> {
         ));
     }
     let best = tile_sheet_layout(&tiles, bpp);
-    // Only a one-column sheet can hide pictures of several OBJ shapes.
     let runs = if drawn.tiles_wide == 1 {
         sprite_runs(&tiles, bpp)
     } else {
@@ -465,7 +413,6 @@ mod tests {
     use super::*;
     use ags::assets::image::png_from_bitmap;
 
-    /// An 80x16 picture: a band across its middle, crossing every tile seam.
     fn picture() -> Vec<u8> {
         let (wide, high) = (80usize, 16usize);
         (0..wide * high)
@@ -473,7 +420,6 @@ mod tests {
             .collect()
     }
 
-    /// The same tiles re-cut into a sheet `width` pixels wide, row-major.
     fn banked(pixels: &[u8], wide: usize, width: usize) -> Vec<u8> {
         let tiles: Vec<Vec<u8>> = (0..pixels.len() / 64)
             .map(|tile| {
@@ -516,22 +462,18 @@ mod tests {
     #[test]
     fn a_bitmap_one_tile_wide_is_judged_as_its_column_of_tiles() {
         let palette = [0u8; 32];
-        // The picture's tiles stacked in one column, with half a tile of
-        // bytes after them, drawn as a bitmap 8 pixels wide.
         let mut column = banked(&picture(), 80, 8);
         column.extend([0u8; 32]);
         let png = png_from_bitmap(&column, &palette, 8).unwrap();
         let judgement = judge(&png, "bitmap").unwrap().unwrap();
         assert_eq!(judgement.tiles, 20);
         assert!(judgement.banked(), "{judgement:?}");
-        // The same picture as a bitmap at its own width is no tile sheet.
         let png = png_from_bitmap(&picture(), &palette, 80).unwrap();
         assert!(judge(&png, "bitmap").unwrap().is_none());
     }
 
     #[test]
     fn an_animation_strip_one_frame_wide_passes() {
-        // Four 8x8 frames of a spark touching every edge, stacked.
         let pixels: Vec<u8> = (0..4 * 64)
             .map(|index| u8::from(index % 64 / 8 == 3 || index % 8 == 3))
             .collect();
@@ -542,7 +484,6 @@ mod tests {
 
     #[test]
     fn a_column_of_several_obj_shapes_is_refused() {
-        // A 16x16 sprite, then a 32x8 one, their tiles in one column.
         let mut tiles: Vec<Vec<u8>> = Vec::new();
         for (wide, high) in [(2usize, 2usize), (4, 1)] {
             for tile in 0..wide * high {
@@ -563,7 +504,6 @@ mod tests {
         assert!(judgement.banked(), "{judgement:?}");
     }
 
-    /// A 4x2 tilemap showing tiles 1 and 2 side by side at row 1, the rest 0.
     fn map_sibling(name: &str) -> Result<Vec<u8>, String> {
         match name {
             "M.TSV" => Ok(b"a:u16\tb:u16\tc:u16\td:u16\n0\t0\t0\t0\n0\t1\t2\t0\n".to_vec()),
@@ -583,7 +523,6 @@ mod tests {
     fn tile_parts_drawn_by_their_tilemap_pass() {
         let list = "P\tgbapal\nM\ttable\nP\t8bpp\tM\t0\t3\nF\t8bpp\tM\t1\t3\tframes\n";
         assert!(tilemap_problems(list, &map_sibling).is_empty());
-        // A drawing by a map the list does not carry, or of tiles it never shows.
         assert_eq!(
             tilemap_problems("M\ttable\nP\t8bpp\tN\t0\t3\n", &map_sibling).len(),
             1

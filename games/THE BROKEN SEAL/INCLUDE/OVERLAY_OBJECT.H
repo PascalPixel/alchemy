@@ -3,17 +3,11 @@
 
 #include "TYPES.H"
 
-/* Observed nested record used by the small overlay-object setup wrappers. */
 struct OverlayObjectRecord {
     u8 unknown_00[9];
     u8 flags;
 };
 
-/*
- * Shared prefix evidenced by the overlay setup wrappers and the object
- * orientation update. Fields between observed offsets deliberately remain
- * unnamed.
- */
 struct OverlayObject {
     u8 unknown_00[6];
     u16 angle;

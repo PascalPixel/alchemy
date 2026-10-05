@@ -1,8 +1,3 @@
-//! A content cache in one plain append-only file: a line per stored key,
-//! `KEY<TAB>KIND=HEX<TAB>KIND=HEX...`, read once when opened. A later line
-//! replaces an earlier one for the same key. Each line is written with one
-//! append, so concurrent writers interleave whole lines, and an interrupted
-//! write leaves at most one unterminated line, which is ignored.
 
 use std::collections::HashMap;
 use std::fs;
@@ -53,7 +48,6 @@ impl Cache {
             .map_err(failed)?;
         let text = fs::read_to_string(path).map_err(failed)?;
         if !text.is_empty() && !text.ends_with('\n') {
-            // End a torn line so the next append starts a line of its own.
             (&file).write_all(b"\n").map_err(failed)?;
         }
         let entries = text
@@ -66,13 +60,11 @@ impl Cache {
         })
     }
 
-    /// Every (kind, value) pair stored for `key`, or `None` if the key has no entries.
     pub fn get(&self, key: &str) -> Result<Option<Items>, String> {
         let entries = self.entries.lock().map_err(|_| "cache poisoned")?;
         Ok(entries.get(key).filter(|items| !items.is_empty()).cloned())
     }
 
-    /// Replace every entry for `key` with `items`.
     pub fn put(&self, key: &str, items: &[(&str, &[u8])]) -> Result<(), String> {
         let plain = |text: &str| !text.is_empty() && !text.contains(['\t', '\n', '=']);
         if !plain(key) || !items.iter().all(|(kind, _)| plain(kind)) {

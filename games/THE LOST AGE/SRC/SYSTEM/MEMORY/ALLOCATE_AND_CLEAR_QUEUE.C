@@ -3,8 +3,6 @@
 #include "TYPES.H"
 #include "PALQUEUE.H"
 
-/* Takes heap slot 28 for the palette cycle queue and clears its four
-   cycles; ⚓️ passes the slot's byte offset. */
 void Runtime_AllocateAndClearQueue(void)
 {
     struct PaletteSnapshotWork *queue;

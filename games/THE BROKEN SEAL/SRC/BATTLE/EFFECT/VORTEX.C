@@ -17,15 +17,10 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
-/* The camera sway the phased-delta callback reads: its strength at 0x77ac
-   and its running flag at 0x77b0. */
 #define WORK_FIELD(work, offset) (*(s32 *)((u8 *)(work) + (offset)))
 
 extern u8 gMapCellBuffer[];
-/* By variant: how many motes fly, and for how many frames. */
 extern u8 VortexMotes_Counts[];
-/* By variant: how many columns the tornado has, how far it sways, and how
-   hard the screen shakes. */
 extern u8 Tornado_Shapes[];
 extern u16 BattleFx_GlintCellOffsets[];
 extern u8 BattleFx_GlintCellWidths[];
@@ -40,12 +35,6 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 s32 Battle_GetObjectTableValueFar(s32 id);
 
-/*
- * Motes burst from the acting unit two frames apart, drift, then home on the
- * affected units in turn. A mote that reaches the ground becomes a column
- * drawn in two halves for sixteen frames and knocks its unit. The variant
- * picks how many motes there are and how long the effect runs.
- */
 void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
 {
     struct EffectPosition pos;
@@ -175,11 +164,6 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-/*
- * A swaying tornado of stacked segments, one column a variant step, with
- * four glints circling each column. The canvas clears on seven beats, and
- * each affected unit is struck on those beats three frames after the last.
- */
 void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 {
     DrawRectangle draw[2];

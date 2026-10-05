@@ -18,8 +18,6 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
     return clamped;
 }
 
-/* Takes an owner out of the active party fully restored; if no active member
-   is left standing, the current owner gets 1 HP. */
 void Party_RemoveOwnerRestored(s32 owner)
 {
     struct BattleUnit *vitals;

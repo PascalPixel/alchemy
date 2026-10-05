@@ -1,52 +1,5 @@
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
-/*
- * Draft, not exact.
- *
- * 2026-10-05 deep finisher 20: alchemy diff 969 -> 113 (1605 listing
- * instructions, 1600 here).
- *   - The blitter routines are read as gWorkSlot[46] and [47] from
- *     HEAP_STATE.H, so the slot address is formed as gWorkSlot + 184 the
- *     way the native forms it: 909.
- *   - The shot block reaches its position through a block pointer,
- *     pos = &position; with &position itself, GCSE keeps the address in
- *     one register over the whole loop nest, and mode loses r8 to it: 783
- *     (mode r8, steps r10 and pos r7 as in the native).
- *   - Ram_MapCellBuffer stays: the gMapCellBuffer symbol scores 1047.
- *   - One k for both spawn loops (765), and the two spawn loops read
- *     position.x and .y directly, which gives the native its hoisted copies
- *     of pos (r10 and r4); mode 6 counts its sparks in shift, the shift
- *     variable of the impact loop: 635, with work in r11, k in r1, shift
- *     in r2 and pos in r7 as in the native.
- *   - stagger, delay and height are declared in a block after steps: the
- *     native gives the mode * 4 temporary its spill slot (sp+84) before
- *     theirs (80, 76, 72), so their pseudos are numbered after it: 623.
- *   - The impact shift is mode == 5 ? 12 : 11, which if-conversion turns
- *     into the native eors/negs/orrs/lsrs into r2 (12 - (mode != 5) adds a
- *     move): 612.
- *   - The side test loads shot->x once into x (the native reads it once,
- *     before testing target->x) and sets hit in an if/else after the
- *     variant test; if-conversion then makes the native lsrs #31 and
- *     mvns + lsrs #31 store-flags: 581. Still not exact: the native keeps
- *     the two arms apart with a test in each, here x >= 0 is computed
- *     ahead of the branch. Other spellings tried: the conditional
- *     expression in the condition, with shifts, != 0, == 1 or & 1
- *     (783-789), or with shot->x read in each arm (618).
- *   - The mote loops pass size * 2 as the height, with no tall local:
- *     the second loop then hoists the cell-offset table into r6 as the
- *     native does, its ldrsh scratch has to take r7, r7 joins reload's
- *     spill registers, and the round-robin reload choices all over the
- *     function line up with the native: 155.
- *   - shots * stagger in total and i * shots + j for the shot index in
- *     both loops, the operand orders the native multiplies in: 143.
- *   - index advances in the shot loop header, j++, index++: its biv then
- *     comes before j, as the native orders the shot loop spill slots: 113.
- * Remaining: the side test arms (above); the spill slots of the frame
- * loop hoists (camera + 12 at sp+48 in the native, sp+44 here, swapped
- * with i * delay: GCSE PRE hoists camera + 12 into a new pseudo here,
- * the native keeps the expansion one); the mode 11 and 6 sheet loads (the
- * native keeps their argument setup apart).
- */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -67,9 +20,6 @@ extern u8 gBattleFxWork[];
 extern u16 ParticleStreams_CellOffsets[];
 
 extern u8 Volley_CometHeights[];
-/* Five bytes for each mode: how many shots it throws at a unit, how many
-   frames a shot flies, how many frames lie between two shots and between
-   two units, and how many sparks a hit throws. */
 extern u8 Volley_Modes[];
 extern u8 Volley_FlashWidths[];
 extern u8 Volley_FlashHeights[];

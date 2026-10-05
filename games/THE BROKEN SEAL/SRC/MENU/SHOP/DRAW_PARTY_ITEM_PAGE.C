@@ -5,8 +5,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "UI.H"
 
-/* The Japanese item names and stats sit closer, and the page icons a little
-   further right. */
 #if EDITION_INTERNATIONAL
 #define SHOP_PAGE_ICONS_X 119
 #define SHOP_ITEM_NAME_X  128

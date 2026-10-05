@@ -10,10 +10,6 @@ void GameFlag_RefreshLureCapFar(void);
 
 extern void Audio_PlayCue(s16 arg0);
 
-/* Entering a scene: unless the scene keeps its state, clears the scene
-   flags 0x200-0x2ff, the area flags 0x300-0x3ff when the scene group
-   changes (recording the retreat point), and the per-visit flags; then
-   records the group and variant and sets the group's visited flag. */
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
 {
     s32 group = SCENE_RECORD(gGameState.scene)->group;

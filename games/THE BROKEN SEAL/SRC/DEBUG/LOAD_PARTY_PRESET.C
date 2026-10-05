@@ -1,8 +1,3 @@
-/* Debug: rebuild the party from preset number `preset` of the debug party
-   table, whose presets are runs of rows ended by an owner of -1. Each row
-   re-adds one owner at its level, clears its Djinn and Psynergy, gives its
-   Djinn in order per element, and replaces its inventory with equipped
-   items. Returns 1 when the table ran out before the preset was found. */
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 

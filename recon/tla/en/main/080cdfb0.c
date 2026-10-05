@@ -1,4 +1,3 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/ITEMS.C. */
 #include "BATTLE_RUNTIME.H"
 #include "FIELDRUN.H"
 #include "SCENE.H"

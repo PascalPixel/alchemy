@@ -13,8 +13,6 @@ void MakyuriChojo_SetSpritePriority(struct OverlayObject *object, s32 priority)
     sprite->priority = priority;
 }
 
-/* Creates an object at a fixed-point position with its sprite in front of
-   every background layer, standing still and set going. */
 void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 type)
 {
     struct FieldActor *object;

@@ -26,9 +26,6 @@ void UiWork_SetParamNibbleFar(s32 color);
 void WaitFrames(s32 frames);
 s32 Owner_GetResistanceValueFar(s32 unit, s32 element);
 
-/* Draws a unit's page of the status screen: the ailments it suffers and,
- * outside the short mode, the Djinn it holds and its power and resistance in
- * each element. */
 void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mode)
 {
     struct CharacterMenuState *state = gMenuWork;

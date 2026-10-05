@@ -1,21 +1,3 @@
-@ Battle-effect kernel 5, one of the bank described in RELOCATED_KERNELS.S,
-@ from its 4-byte Thumb entry (bx pc) at 0x08139aac to its return (pop
-@ {r5-fp, lr}; bx lr) at 0x08139f68. The entry branches to set-up code at
-@ 0x08139e94, which clears bit 0 of the kernel's closing literal 0x080028a9
-@ at 0x08139f54, the address of the reciprocal table at 0x080028a8 (ldr fp,
-@ [pc, #180]; bic fp, fp, #1; str fp, [pc, #172]), ORs shift amounts into
-@ five of its own instructions (ldr r3, [pc, #-N]; orr r3, r3, r5, lsl #7;
-@ str r3, [pc, #-N]), stores the four words after that literal and has DMA3
-@ copy the nine instruction words at 0x08139dd0 over the nine zero words
-@ that follow them (0x08139df4; control 0x84000009) before it enters its
-@ loop, which then runs both copies and multiplies with umulls and umullsne.
-@ The loop also saves two words just after the entry (0x08139ab4; sub r0,
-@ pc, #236; stm r0, {r7, r8}). Rewriting its own instructions, storing to
-@ PC-relative addresses and flag-setting long multiplies are beyond both
-@ approved compilers. The entry, which is TLA's own, the two and four
-@ variable words, the zero words, which never run as stored, and the
-@ literal, a word rewritten at run time, carry no credit.
-@ credit: handwritten — relocated self-modifying ARM kernel 5 of the battle-effect bank
 .syntax unified
 	.thumb
 	.global Data_08139aac
@@ -249,7 +231,6 @@ AlchemyUncreditedEnd_08139ab4:
 	strblt	sl, [r2, r7, ror #29]
 	adds	r7, r7, r1
 	subcc	r7, r7, #8
-@ Zero words that the set-up code fills by DMA3 with a copy of the words before them.
 .L_08139df4:
 AlchemyUncredited_08139df4:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0

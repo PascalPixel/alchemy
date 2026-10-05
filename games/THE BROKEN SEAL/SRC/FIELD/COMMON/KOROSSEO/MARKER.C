@@ -1,14 +1,7 @@
 #include "CALLBACK_SCHEDULER.H"
-/* Colosso: the marker task. While a move is running it eases the marker
- * from its start toward its end position, one step of the move's length per
- * frame; then it blinks the marker, drawn through the OAM queue for 14 of
- * every 20 frames. The same function sits in each of the three Colosso
- * trial overlays, with its variables in each overlay's own work. */
 #include "TYPES.H"
 #include "VRAM_BLOCK.H"
 
-/* The marker's start is read both as a signed coordinate and as the raw
- * halfword the position is rebuilt from. */
 union MarkerCoordinate {
     s16 signed_value;
     u16 value;

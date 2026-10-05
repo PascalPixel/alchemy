@@ -1,8 +1,3 @@
-/* Draft: Vale sanctum collision target.
- * 2026-10-01: The international tile-center snap has a complete192-byte
- * owner; Japanese keeps the current x coordinate and adds32px to z,
- * making its complete owner176 bytes. Ordinary approved TBS flags.
- */
 #include "TYPES.H"
 #include "../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/HAIDIA.H"
 

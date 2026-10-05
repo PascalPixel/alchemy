@@ -16,9 +16,7 @@ void SceneState_TriggerColumnTen(void);
 void SceneState_TriggerColumnNineteen(void);
 
 enum {
-    /* Message 0x182 + 243. */
     ITEM_RED_KEY = 243,
-    /* Message 0x182 + 244. */
     ITEM_BLUE_KEY = 244
 };
 
@@ -110,9 +108,6 @@ void TakaraAshiba_InitializeScene1(void)
     }
 }
 
-/* The second platform scene's start: actors 8 to 11 become solid, 8 to 12
- * are drawn at 0.7 of their width, the column and stand triggers are
- * scheduled, and the blend is set. */
 void TakaraAshiba_InitializeScene2(void)
 {
     Object_GetById(8)->collision_flags = 1;

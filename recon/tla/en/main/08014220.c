@@ -1,7 +1,3 @@
-/*
- * Draft: ResourceTable_CountFreeBlocks does not yet match; 4 halfwords differ from ☀️'s C, first at +0x2 (ldr r1, [pc, #24]).
- * Links as recon/tla/raw/08014220.s.
- */
 #include "TYPES.H"
 
 extern u8 ResourceBlockOwners[];

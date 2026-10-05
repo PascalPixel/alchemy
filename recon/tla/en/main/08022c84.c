@@ -1,8 +1,3 @@
-/*
- * Draft: VramBlock_Load93, after VramBlock_Reset93 in
- * GRAPHICS/TILE/VRAM_BLOCK_93.C. Score 2: the listing sets r1 before r0 after
- * the pool load.
- */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SERIAL_RUNTIME.H"

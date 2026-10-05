@@ -4,8 +4,6 @@
 
 #include "MAPCOPY.H"
 
-/* Scene state and services used by the Lunpa fortress. */
-
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 #include "FIELD_SCENE.H"
@@ -13,52 +11,39 @@
 
 #include "GAME_STATE.H"
 
-/* Counts the frames the game has drawn. */
 extern u32 gFrameCount;
 
-/* The engine's event work. */
 struct EventWork {
     u8 unknown_000[0x34];
-    /* Actors placed by the scene, with ids 8 through 65. */
     struct FieldActor *placed_actors[58];
     u8 unknown_11c[0x50];
-    /* The map trigger the leader has run into, handled on the next frame. */
     s16 touched_trigger;
     u8 unknown_16e[4];
     u16 unknown_172;
     u8 unknown_174[0xa];
-    /* Psynergy the player has asked to use, handled on the next frame. */
     s16 psynergy_request;
     u8 unknown_180[2];
-    /* A trigger a script raises for the events that answer it. */
     s16 raised_trigger;
     u8 unknown_184[0x3c];
-    /* How the screen opens when the scene starts. */
     s32 start_transition;
     u8 unknown_1c4[4];
-    /* The frames the screen takes to open or close. */
     s32 transition_frames;
     u8 unknown_1cc[0x0c];
-    /* The message the next dialogue line shows. */
     u16 message;
     u8 unknown_1da[6];
-    /* The actor at the centre of the area where actors are active. */
     struct FieldActor *view_center;
 };
 
 extern struct EventWork *gEventWork;
 
-/* A scene transition is a style in the high byte and its variant in the low byte. */
 enum SceneTransitionStyle {
     TRANSITION_FADE = 0,
-    /* Fades in from the colour behind the background layers. */
     TRANSITION_BACKDROP_FADE = 1,
     TRANSITION_WINDOW = 2
 };
 
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 
-/* A 16.16 fixed-point map coordinate; its high half is the whole pixel. */
 union FieldCoordinate {
     s32 fixed;
     struct {
@@ -70,7 +55,6 @@ union FieldCoordinate {
 struct FieldSprite;
 union FieldObject;
 
-/* The runtime actor as event scripts see it. */
 struct FieldActor {
     u8 unknown_00[6];
     u16 facing;
@@ -78,10 +62,8 @@ struct FieldActor {
     union FieldCoordinate y;
     union FieldCoordinate z;
     u8 unknown_14[4];
-    /* The sprite's scale on each axis; 0x10000 draws it at full size. */
     s32 scale_x;
     s32 scale_y;
-    /* How near another actor must come to touch this one. */
     u16 radius;
     u8 unknown_22;
     u8 priority_flags;
@@ -90,13 +72,11 @@ struct FieldActor {
     s32 velocity_z;
     s32 speed;
     s32 acceleration;
-    /* The fixed-point point the actor moves toward, or ACTOR_NO_TARGET. */
     s32 target_x;
     s32 target_y;
     s32 target_z;
     u8 unknown_44[0x0c];
     struct FieldSprite *sprite;
-    /* Cleared while the actor is outside the area where actors are active. */
     u8 active;
     u8 motion_flags;
     u8 unknown_56[3];
@@ -105,32 +85,18 @@ struct FieldActor {
     u8 paused;
     u8 unknown_5c;
     u8 unknown_5d[5];
-    /* Counts the frames of a rise while rise_enabled is set. */
     u8 rise_counter;
     u8 rise_enabled;
-    /* A count the actor's update or action script keeps: most count
-       frames in it; some keep an index or a done mark there. */
     u16 timer;
-    /* A second halfword the update keeps for itself: an angle, the step
-       it has reached, or a mark that holds it. */
     u16 work;
     u8 unknown_68[4];
-    /* Called each frame while set. */
     void (*update)(union FieldObject *object);
 };
 
-/* An actor's priority flags. */
 enum ActorPriorityFlag {
-    /* Cleared when a script sets the sprite priority. */
     ACTOR_PRIORITY_AUTOMATIC = 0x01,
-    /*
-     * Set on objects the party passes over or stands on: effects, a glint
-     * on the ground, and a pillar while the leader stands on top of it.
-     */
     ACTOR_PRIORITY_UNDERFOOT = 0x02
 };
-
-/* The map work cell; the event work pointer follows it at +0x4c. */
 
 void Battle_WaitMode0(s32 frames);
 void *Object_GetById(s32 actor);
@@ -140,7 +106,6 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Object_SetModeById(s32 actor, s32 animation);
 void Audio_PlayCue(s32 cue);
 
-/* The other import veneers the fortress calls. */
 s32 Engine_PartyInventoryFindOwner(s32 item_id);
 s32 Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 value, s32 actor, s32 item);
 void Engine_BattleFxSetWeightedResult(s32 slot, s32 value);
@@ -273,10 +238,6 @@ static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
     Engine_WorkSetValuesIfNonNegative(first, second, third);
 }
 
-/*
- * The services whose direct calls still change the fortress's bytes; the
- * others are called by their import names.
- */
 static inline void *Actor_Get(s32 actor)
 {
     return Object_GetById(actor);

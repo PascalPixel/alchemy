@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
-/* Each link slot's four-byte value and its word in the outgoing payload. */
 extern const s32 LinkLobby_SlotValues[];
 extern const u8 LinkLobby_SlotColumns[];
 

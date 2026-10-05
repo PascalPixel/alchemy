@@ -5,8 +5,6 @@
 #include "MAP.H"
 #include "IO_REG.H"
 
-/* Blend script runner: a halfword script in the map work that writes
-   BLDCNT and the alpha or brightness level on a frame delay. */
 void DisplayBlend_RunScript(void)
 {
     struct MapWork *work = Ram_HeapSlots->map_work;
@@ -63,8 +61,6 @@ tick:
     state->delay = value + 0xffff;
 }
 
-/* Clears the blend script state and, unless the script is empty (0xffff),
-   starts it and schedules DisplayBlend_RunScript. */
 void DisplayBlend_StartScript(u16 *script)
 {
     struct BlendScriptState *state;

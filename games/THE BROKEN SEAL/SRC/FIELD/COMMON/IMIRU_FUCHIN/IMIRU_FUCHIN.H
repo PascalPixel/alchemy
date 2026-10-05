@@ -13,16 +13,13 @@ enum {
 
 #define NULL ((void *)0)
 
-/* The engine's heap-allocation cache: each slot holds its kind's block. */
 extern void *gWorkSlot[];
 
-/* The work in slot 36 tracks an actor. */
 struct TrackingWork {
     u8 unknown_00[24];
     struct FieldActor *actor;
 };
 
-/* The cave's heading tables, placed Dragon's Eye and exits. */
 extern s16 gImiruFuchinKeyHeadings[];
 extern s16 gImiruFuchinHeadings[];
 extern struct FieldActor *gImiruFuchinDragonsEye;
@@ -31,7 +28,6 @@ extern s32 gImiruFuchinExits[];
 void ImiruFuchin_BlowCaveMouthDust(void);
 void SceneActor_TurnTowardTableAngle(union FieldObject *object);
 
-/* The cave's shared engine services. */
 void BattleFx_RunPageEffectForSlot();
 void BattleFx_SetPhaseRequest();
 void Object_SetPosition();

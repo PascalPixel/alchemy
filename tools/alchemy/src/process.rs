@@ -1,15 +1,3 @@
-//! Execute an explicit tool command without choosing a compiler or its flags.
-//!
-//! On macOS the child runs with address-space layout randomisation disabled.
-//! The approved GCC 2.96 bundle hashes heap pointers in its CSE tables
-//! (agscc gcc/cse.c:2244 hashes a LABEL_REF by rtx address, :2249 hashes a
-//! SYMBOL_REF by the address of its name), so under ASLR one input can
-//! compile to different bytes on different runs: resource_37a:02001be8 split
-//! 27 to 3 across thirty stock runs and came out identical thirty times once
-//! randomisation was off. The host this compiler was built for had no ASLR,
-//! so this restores its original determinism rather than changing it. The
-//! setting is inherited by every process the driver forks, so one spawn
-//! covers cpp0, cc1 and as.
 use std::path::Path;
 
 struct Output {
@@ -62,10 +50,6 @@ fn spawn(program: &str, args: &[&str], cwd: &Path) -> Result<Output, String> {
     address_stable::spawn(program, args, cwd)
 }
 
-/// posix_spawn with `_POSIX_SPAWN_DISABLE_ASLR`, the same request a debugger
-/// makes. The standard library exposes no spawn attributes, so this is the
-/// small amount of C interface it takes; stdout and stderr go to private
-/// files because reading two pipes needs a second thread and files do not.
 #[cfg(target_os = "macos")]
 mod address_stable {
     use super::Output;

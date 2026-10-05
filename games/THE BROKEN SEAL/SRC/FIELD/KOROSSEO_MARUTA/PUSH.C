@@ -1,8 +1,5 @@
-/* Finding an actor on a tile and pushing a staged actor. */
 #include "LOG_ROLLING.H"
 
-/* The actor standing on the tile of position, if any. Callers pass the actor
- * that is moving as well; the lookup does not skip it. */
 s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
 {
     s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
@@ -52,7 +49,6 @@ void ColossoLogRollingStage_PushStagedActor(void)
         return;
     }
 
-    /* Is the cell one step beyond the target already taken? */
     step = StagedActor_DirectionSteps[direction];
     position.x = target->x + (s32)(step & 0xffff0000);
     position.y = target->y;
@@ -64,9 +60,8 @@ void ColossoLogRollingStage_PushStagedActor(void)
         return;
     }
 
-    /* ...and the cell directly above the target? */
     position.x = target->x;
-    position.y = target->y + 0x100000;      /* 128 << 13 */
+    position.y = target->y + 0x100000;
     position.z = target->z;
 
     blocker = FindActorAtWholeTilePosition(&position, target);
@@ -100,7 +95,7 @@ void ColossoLogRollingStage_PushStagedActor(void)
 
     Engine_AudioPlayCue(0xee);
     Object_CommitPosition(target);
-    Engine_AudioPlayCue(0x120);                                /* 144 << 1 */
+    Engine_AudioPlayCue(0x120);
 
     target->x = position.x;
     target->z = position.z;
@@ -110,7 +105,6 @@ void ColossoLogRollingStage_PushStagedActor(void)
     Object_SetMode(subject, 1);
 }
 
-/* Look up the occupant in this stage. */
 s32 *ColossoLogRollingStage_FindActorAhead(void)
 {
     extern void Vector_AddPolarOffset();
@@ -122,20 +116,19 @@ s32 *ColossoLogRollingStage_FindActorAhead(void)
 
     record = Object_GetById(gGameState.selected_actor);
 
-    /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (record->facing + 0x2000) & 0xc000;
 
     position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
     position[1] = record->y.fixed;
     position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, facing, position);          /* 128 << 13 */
+    Vector_AddPolarOffset(0x100000, facing, position);
 
     occupant = FindActorAtWholeTilePosition(position, record);
     if (occupant == 0) {
         position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
         position[1] = record->y.fixed;
         position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-        Vector_AddPolarOffset(0x200000, facing, position);      /* 128 << 14 */
+        Vector_AddPolarOffset(0x200000, facing, position);
 
         occupant = FindActorAtWholeTilePosition(position, record);
     }

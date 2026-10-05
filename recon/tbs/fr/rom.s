@@ -1,5 +1,3 @@
-@ tbs-fr's scaffold: the base-ROM ranges its MAIN.LD places between the
-@ lines it links from source, with a label where the source names a place.
 	.section .rom.00000000, "ax"
 	.global Rom_Start
 Rom_Start:

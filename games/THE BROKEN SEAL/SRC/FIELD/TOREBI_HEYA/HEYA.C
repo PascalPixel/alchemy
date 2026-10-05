@@ -1,4 +1,3 @@
-/* Scene tables, the primary sequence and the facing actors. */
 #include "TOREBI.H"
 #include "CALL.H"
 
@@ -195,8 +194,6 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiHeWontSailShipEven);
     Engine_EventWait(30);
-    /* Same import, same first two arguments, differing only in the third.
-     * Two call sites, not a loop. */
     Engine_ActorJump(31, 4, 13);
     Engine_ActorJump(31, 4, 30);
     Engine_EventShowMessage(31, 0);
@@ -216,8 +213,6 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(31, 0);
     Engine_EventWait(10);
-    /* Repeats the (32, 3) call made above; a second site, deliberately not
-     * folded with the first. */
     Engine_ActorSetAnimationAndWait(32, 3);
     Engine_EventWait(30);
     Engine_EventEnd();
@@ -263,9 +258,6 @@ s32 Scene_InitFacingActors(void)
     return 0;
 }
 
-/* The facing prompts: a shop when the leader faces the counter, otherwise a
- * line chosen by the story flags. The yes-or-no lines load their first
- * message once and add to it for the two answers. */
 void SceneDialogue_RunFacingPrompt(s32 no)
 {
     struct FieldActor *actor = Object_GetById(0);
@@ -321,7 +313,6 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
     }
 }
 
-/* The facing action line. */
 void SceneDialogue_RunFacingAction(s32 no)
 {
     struct FieldActor *actor = Object_GetById(0);
@@ -341,7 +332,6 @@ void SceneDialogue_RunFacingAction(s32 no)
     }
 }
 
-/* Asks whether the party was watching Colosso. */
 void SceneDialogue_AskWatchingColosso(s32 subject)
 {
     s32 message;
@@ -362,7 +352,6 @@ void SceneDialogue_AskWatchingColosso(s32 subject)
     Engine_EventEnd();
 }
 
-/* The chef's line. */
 void SceneDialogue_RunActorLine23a1(s32 no)
 {
     Engine_EventBegin();
@@ -371,7 +360,6 @@ void SceneDialogue_RunActorLine23a1(s32 no)
     Engine_EventEnd();
 }
 
-/* The offer to stay, and the excited girl's lines. */
 void SceneDialogue_AskStay(s32 subject)
 {
     s32 msg;
@@ -423,7 +411,6 @@ void SceneDialogue_RunExcitedLines(s32 a0)
     Engine_EventEnd();
 }
 
-/* Flagged lines. */
 void SceneDialogue_RunActor25FlaggedLine(void)
 {
     void Engine_EventBegin(void);
@@ -450,7 +437,6 @@ void TorebiHeya_ComplainAboutScam(s32 a0)
     Engine_EventEnd();
 }
 
-/* Asks whether the would-be warrior remembers the speaker. */
 void SceneDialogue_AskRememberWarrior(s32 subject)
 {
     s32 message;
@@ -471,7 +457,6 @@ void SceneDialogue_AskRememberWarrior(s32 subject)
     Engine_EventEnd();
 }
 
-/* The facing message. */
 void SceneDialogue_RunFacingMessage(s32 no)
 {
     s32 Engine_GameFlagIsSet(s32 flag);

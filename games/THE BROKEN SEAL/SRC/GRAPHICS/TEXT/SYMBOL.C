@@ -14,8 +14,6 @@ s32 UiWork_IsIdle(struct UiWindow *window);
 
 extern const u8 UiText_LookupMessageArm[];
 
-/* The message lookup is ARM code (LOOKUP_SYMBOL.S) that runs from a heap copy
-   of itself; the copy length is a link-time symbol. */
 extern u8 UiText_LookupMessageCodeSize[];
 
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
@@ -67,7 +65,6 @@ s32 UiText_BuildRenderEntriesMode1(s32 arg0)
     return UiText_BuildRenderEntries(arg0, 1);
 }
 
-/* Positions a text reader at the start of a message. */
 void UiText_LookupMessage(struct TextReader *reader, s32 message)
 {
     void (*routine)(struct TextReader *, s32);
@@ -83,16 +80,8 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message)
     Sys_Free(routine);
 }
 
-/* Per previous character: the code tree's bits, with the leaf values packed
-   as 12-bit entries just before them, and the offsets of each tree. */
 extern const void *const Text_MessageContexts[][2];
 
-/* Decodes the next character of a message, the Thumb twin of the ARM decoder
-   in DECODE_SYMBOL.S: walk the code tree chosen by the previous character,
-   reading tree bits and message bits through one-bit readers whose buffer
-   carries a sentinel 1 above the unread bits, skip a whole subtree for each
-   set message bit while counting its leaves, then fetch the leaf's 12-bit
-   value from the table packed backwards before the tree. */
 s32 UiText_DecodeSymbol(struct TextReader *reader)
 {
     u32 code;

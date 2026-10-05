@@ -1,17 +1,12 @@
 #include "MAPCOPY.H"
-/*
- * Actor 13's departure and the scene initialiser that restores the pillars.
- */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 
-/* Frames actor 13 has idled; ACTOR13_IDLE.C owns it. */
 extern s32 GomaHashira_Actor13Frames;
 
-/* The scene's tables, laid out after the code. */
 extern u8 GomaHashira_Scripts[];
 extern u8 GomaHashira_Messages[];
 extern u8 GomaHashira_Actors[];

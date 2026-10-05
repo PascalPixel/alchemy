@@ -1,9 +1,6 @@
 #ifndef ALCHEMY_RESOURCE_IDS_H
 #define ALCHEMY_RESOURCE_IDS_H
 
-/* Resource numbers are rows of SYSTEM/RESOURCE/DIRECTORY.S. Each row's
- * symbol has its index as a link-time value, read by taking its address.
- * These values cannot be used as switch case labels. */
 extern char ResourceId_BuildStamp;
 extern char ResourceId_PaletteFarCalls;
 extern char ResourceId_EffectFarCalls;

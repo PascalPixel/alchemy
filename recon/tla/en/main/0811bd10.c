@@ -1,9 +1,3 @@
-/* Matches (differ 0): ☀️'s Camera_ApplyTransformByFlag with the camera
-   from its heap slot, the near GameFlag_Test and the flag matrix at
-   Data_08128868. Not adopted only because it would sit alone between the
-   Battle_GetWorkEntryPair and BattleMotion_ProjectPosition listings; it
-   goes in RESET_BATTLE_OBJECT_RECORD_GROUPS.C once Battle_GetWorkEntryPair
-   does. */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_SESSION.H"
@@ -26,8 +20,6 @@ struct MotionRecordScale {
     s32 scale;
 };
 
-/* ☀️'s: loads the battle camera's view, through the flag 0x16b matrix
-   when that flag is up. */
 s32 Camera_ApplyTransformByFlag(void)
 {
     struct BattleCamera *state = Ram_HeapSlots->camera_work;

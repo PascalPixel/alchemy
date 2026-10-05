@@ -7,10 +7,7 @@
 #include "FRAME.H"
 #include "CARTBOOT.H"
 
-/* With auto-sleep on, the frames without a button held before the game sleeps:
-   three minutes. */
 #define SLEEP_IDLE_FRAMES 10800
-/* The backdrop colour while the game sleeps. */
 #define RGB_WHITE 0x7fff
 
 #define Io_Write16(value_, reg_) do { \
@@ -27,20 +24,18 @@ static __inline__ void System_Reset(void)
     AudioEngine_SuspendDirectSoundFar();
     entry = Cart_Restart;
     Io_Write16(0, &REG_IME);
-    /* CAMELOT_ASM: the cartridge restart transfers control without returning. */
+    CAMELOT_ASM("the cartridge restart transfers control without returning.")
     __asm__ volatile("bx %0" : : "r"(entry));
 }
 
 static __inline__ void Bios_Stop(void)
 {
-    /* CAMELOT_ASM: BIOS Stop has no C instruction. */
+    CAMELOT_ASM("BIOS Stop has no C instruction.")
     __asm__ volatile("swi 3");
 }
 
 void WaitFrames(s32 frames)
 {
-    /* VBlank writes the repeated-key snapshot. Its volatile field keeps
-       both debug-loop tests reading the shared input state. */
     u32 i;
     u32 line;
     s32 j;
@@ -160,7 +155,6 @@ void WaitFrames(s32 frames)
     }
 }
 
-/* Sets the key repeat timer to 19 frames. */
 void Runtime_SetMainState19(void)
 {
     gInput.repeat_timer = 19;

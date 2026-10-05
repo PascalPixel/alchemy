@@ -1,13 +1,3 @@
-@ Transfer command executor run from the stack. Its loader (0x08013d84)
-@ reserves (0x6b + 4) & ~3 = 108 bytes of stack, has DMA3 copy exactly these
-@ 108 bytes there and calls the copy. Behind a 4-byte Thumb entry (bx pc)
-@ the ARM body picks a byte, halfword or word access with three conditional
-@ loads (ldrbcc, ldrheq, ldrgt) after one compare and saves r5 alone with
-@ stmfd sp!, {r5}; GCC saves lr with any register. After that entry its
-@ 104-byte body equals TBS SYSTEM/RESOURCE/EXECUTE_TRANSFER.S (0x08002cf4)
-@ byte for byte.
-@ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
-@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, transfer command executor
 .syntax unified
 	.thumb
 	.global Resource_ExecuteTransferCode

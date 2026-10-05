@@ -5,7 +5,6 @@
 
 extern u8 MsgFieldFlippedSwitch[];
 
-/* The four background scroll pairs; the shaken copy starts at the second. */
 extern u16 gBgScroll[];
 
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
@@ -20,8 +19,6 @@ struct MapCell {
     u32 event : 8;
 };
 
-/* A pillar's last cell position, the map cell it covered and the flag it
-   raises when it stands on another pillar. */
 struct PillarSlot {
     s32 x;
     s32 y;
@@ -97,9 +94,6 @@ void FieldScene_RunScene3b3SequenceA(void)
     WaitFrames(30);
 }
 
-/* Runs one of two near-identical setup sequences for record REC_ID and
- * records 9-15, chosen by the query call's return value; each sequence ends
- * with its own closing call carrying QUERY_FLAG. */
 void FieldScene_RunFlaggedDisplayScene(void)
 {
     u32 i;
@@ -118,7 +112,6 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Engine_EventWait(30);
         Audio_PlayCue(240);
         Engine_ActorSetSpritePriority(REC_ID, 1);
-        /* Flag byte at +85: cleared, since queried is zero here. */
         Object_GetById(REC_ID)->motion_flags = queried;
         record = Actor_Get(REC_ID);
         record->y.fixed = -0x200000;
@@ -142,7 +135,6 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Map_AnimateCells(TakaraHashira_ShiftSteps2, 84, 24);
         Engine_EventWait(30);
         Audio_PlayCue(230);
-        /* Flag byte at +85: cleared unconditionally in this branch. */
         Object_GetById(REC_ID)->motion_flags = 0;
         record = Actor_Get(REC_ID);
         record->y.fixed = -0x200000;
@@ -164,9 +156,6 @@ void FieldScene_RunFlaggedDisplayScene(void)
     Engine_EventEnd();
 }
 
-/* Whether actor stands directly in front of front (the mirror of
- * TakaraHashira_SyncPriorityIfAhead); when front draws in a higher sprite priority
- * number, actor takes front's priorities. */
 s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *front)
 {
     s32 result = 0;
@@ -188,9 +177,6 @@ s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldAct
     return result;
 }
 
-/* Whether actor stands directly in front of front: within a cell across,
- * on the same height and up to two cells nearer. When it does and front
- * draws in a lower sprite priority, actor takes front's priorities. */
 s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActor *actor)
 {
     s32 result = 0;
@@ -212,8 +198,6 @@ s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActo
     return result;
 }
 
-/* The sprite read through an s32 view of actor->sprite, so the pointer reloads
- * after each bitfield store. */
 s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
 {
     struct FieldActor *leader = Object_GetById(0);
@@ -260,7 +244,6 @@ void TakaraHashira_SortPillarActors(void)
     struct FieldActor *a;
     struct FieldActor *b;
     u8 actor[112];
-    /* Holds the first 16 bytes of a slot; the copy runs over into actor, which is no longer needed. */
     s32 slot[3];
 
     for (i = 0; i <= 2; i++) {
@@ -293,7 +276,6 @@ void TakaraHashira_SortPillarActors(void)
     }
 }
 
-/* A pillar block's object record, as the pillar update reads it. */
 struct PillarActor {
     u8 unknown_00[8];
     s32 x;
@@ -308,7 +290,6 @@ struct PillarActor {
     u8 motion_flags;
 };
 
-/* Where a moved pillar's position is copied to test it for collisions. */
 extern s32 TakaraHashira_ProbePosition[];
 
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
@@ -319,11 +300,6 @@ void SceneActor_WaitHeightBelowLimit(struct FieldActor *actor, s32 limit);
 void StagedActor_StepDownUntilClamp(s32 id);
 void OverlayObject_WaitUntilSettledAndReset(struct FieldActor *actor);
 
-/* Each frame, for pillars 8 to 11: a pillar that moved since its slot was
- * written restores the cells it covered, drops onto a ledge or into a pit
- * when its move left it unsupported, takes the cells where it now stands,
- * and raises the flag of each pillar it stands on. Last the pillars are
- * sorted. */
 void TakaraHashira_UpdatePillarActors(void)
 {
     u32 id;

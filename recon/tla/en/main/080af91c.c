@@ -1,48 +1,36 @@
-/* Trial 2026-10-03: use OWNER_STATE.H for the getter contract.
- * Complete object unchanged; fresh EN score 230, 5 differing rows.
- */
 #include "OWNER_STATE.H"
 #include "RUNTIME_MEM.H"
-/*
- * Draft: Owner_LevelUp does not yet match; ported from its ☀️ twin. Two
- * scheduling differences remain: mov r8,r0 (band*2) and mov r3,r9 are
- * swapped before the first growth load, and the store of res->luck sinks
- * below the base-statistic updates instead of following base_pp.
- * Links as recon/tla/raw/080af91c.s.
- */
 #include "TYPES.H"
 
 struct OwnerLevelState {
     u8 unknown_000[0x0f];
-    u8 level;                   /* 0x0f */
-    u16 base_hp;                /* 0x10 */
-    u16 base_pp;                /* 0x12 */
+    u8 level;
+    u16 base_hp;
+    u16 base_pp;
     u8 unknown_014[4];
-    u16 base_attack;            /* 0x18 */
-    u16 base_defense;           /* 0x1a */
-    u16 base_agility;           /* 0x1c */
-    u8 base_luck;               /* 0x1e */
-    u8 base_turns;              /* 0x1f */
-    u8 base_20;                 /* 0x20 */
-    u8 base_21;                 /* 0x21 */
+    u16 base_attack;
+    u16 base_defense;
+    u16 base_agility;
+    u8 base_luck;
+    u8 base_turns;
+    u8 base_20;
+    u8 base_21;
     u8 unknown_022[0x102];
-    u32 experience;             /* 0x124 */
-    u8 character;               /* 0x128 */
-    u8 class_id;                /* 0x129 */
+    u32 experience;
+    u8 character;
+    u8 class_id;
 };
 
-/* Growth record: each statistic at levels 0, 20, 40, 60, 80 and 100. */
 struct OwnerGrowth {
     u8 unknown_00[0x50];
-    s16 hp[6];                  /* 0x50 */
-    s16 pp[6];                  /* 0x5c */
-    u16 attack[6];              /* 0x68 */
-    u16 defense[6];             /* 0x74 */
-    u16 agility[6];             /* 0x80 */
-    u8 luck[6];                 /* 0x8c */
+    s16 hp[6];
+    s16 pp[6];
+    u16 attack[6];
+    u16 defense[6];
+    u16 agility[6];
+    u8 luck[6];
 };
 
-/* What a level gained, for the level-up message. */
 struct LevelUpResult {
     s16 level;
     u16 ability;
@@ -70,9 +58,6 @@ u32 Random16(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 u32 __udivsi3(u32 numerator, u32 denominator);
 
-/* Raises a party member one level: the gain of each statistic is the
-   growth between the two surrounding twenty-level marks, spread over twenty
-   levels with a random remainder. Level 99 is the cap. */
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 {
     struct OwnerLevelState *st;

@@ -1,12 +1,3 @@
-/* Draft: the complete 136-byte ES output has 2 differing import bytes.
- * All non-relocation instructions match; callee ownership must be proved
- * before a source call-target change. Preserved at the Japanese-base pivot.
- * API context measured 2026-10-02 with ordinary target flags:
- * all six prior successful objects retain every allocated byte and
- * normalized call/pool operand; no new match or adoption is claimed.
- * The shared void DispatchObject/u32 contract uses ordinary data casts;
- * every original matching-body and trial annotation is retained.
- */
 #include "TYPES.H"
 #include "OBJDISP.H"
 
@@ -58,7 +49,6 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
     position.z = emitter->position.z;
     random_angle = Random16();
     Vector_AddPolarOffset(random_angle << 4, Random16(), &position);
-    /* ⚓️'s particle is object 0x2a1; ☀️'s is 0x11d. */
     object = Object_Spawn(0x2a1, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;

@@ -1,7 +1,6 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-/* The flash chip description: its five handlers, then its geometry. */
 struct FlashChipType {
     u32 handlers[5];
     u32 size;
@@ -14,8 +13,6 @@ typedef s32 (*FlashVerifyCore)(s32 source, u8 *flash, u32 size);
 
 extern const struct FlashChipType Flash_ChipUnknown;
 
-/* Copies the byte comparison loop into a stack buffer, since it must run
-   outside the cartridge bus, and compares one whole sector with source. */
 s32 Flash_VerifySector(u16 sector, s32 source)
 {
     u16 code[128];

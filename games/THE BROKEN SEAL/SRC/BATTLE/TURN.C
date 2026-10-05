@@ -186,7 +186,6 @@ s32 BattlePres_BuildUnitEntries(
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++) {
-            /* The word read tests confusion, charm and stun together. */
             if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00)) {
                 struct BattleActionRecord *entry =
                     &entries[entry_count];

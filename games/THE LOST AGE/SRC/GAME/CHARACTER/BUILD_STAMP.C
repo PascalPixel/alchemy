@@ -4,8 +4,6 @@
 
 extern char ResourceId_BuildStamp;
 
-/* The build stamp's HHMMSS digits packed as hours, minutes and seconds in
-   one halfword; the top bit marks a debug build. */
 u16 Runtime_GetBuildStampTime(void)
 {
     u8 *digits;

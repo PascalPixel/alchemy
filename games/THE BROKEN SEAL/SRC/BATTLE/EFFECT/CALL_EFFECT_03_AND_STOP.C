@@ -12,11 +12,6 @@ void BattleFx_CallEffect03AndStop(void)
     EffectRuntime_StopCurrentObject();
 }
 
-/* Battle effect 03: spawn eight shrinking orbit objects around the target,
- * then one spark object that flashes for 30 frames, runs its emitter and is
- * sent off and destroyed; release the linked resource and run the finish
- * callback. The spark reuses the target and object variables. */
-
 struct BattleEffect03Object {
     u8 reserved_00[8];
     s32 x;

@@ -54,13 +54,11 @@ void OverlayObject_WaitUntilIdle(s32 *obj)
     }
 }
 
-/* Divide the Z velocity by sixteen, rounding toward zero. */
 void Effect_AdvanceMotion(struct MotionEffect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
-
 
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
@@ -81,10 +79,6 @@ void Effect_AdvanceMotion(struct MotionEffect *effect)
     sprite->angle += effect->step64;
 }
 
-/* The arrival by entrance 3 the scene start plays until its flag is set: the
-   leader is raised far over the floor and, once the screen has opened, falls
-   slowly without rebounding, lands in a ring of seventeen sparks and
-   recovers. */
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     u32 i;
@@ -131,7 +125,6 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_EventEnd();
 }
 
-/* The leader falls in, hidden, and at once leaves by the exit given. */
 void FieldScene_RunScene3c5SequenceA(s32 exit)
 {
     struct FieldActor *leader;
@@ -161,7 +154,6 @@ void FieldScene_RunScene3c5SequenceA(s32 exit)
     Engine_EventEnd();
 }
 
-/* Where the party appears in the scene it enters. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -178,7 +170,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gBabiIriguchiEntrancesOther;
 }
 
-/* Only the third scene has regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_BabiIriguchi3) {
@@ -187,14 +178,11 @@ const struct SceneRegion *Scene_GetRegions(void)
     return 0;
 }
 
-/* The entrance's exits, which the main image asks for through the overlay's
- * entry veneers. */
 u8 *BabiIriguchi_GetExits(void)
 {
     return gBabiIriguchiExits;
 }
 
-/* The actors placed in each of the entrance's scenes. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -905,11 +893,6 @@ void SceneState_ApplyRectAt32x78(void)
     }
 }
 
-/* The door of truth: actors 8 and 9 are its two leaves. Flag 0x985 records
-   it open; a switch opens it for one who sees with a true heart. */
-
-/* Slide the leaves apart and open the passage; the first time, the scene
-   that follows plays. */
 void BabiIriguchi_OpenTruthDoor(void)
 {
     if (GameFlag_IsSet(0x985) == 0) {
@@ -928,7 +911,6 @@ void BabiIriguchi_OpenTruthDoor(void)
     }
 }
 
-/* Slide the leaves together, close the passage and toggle flag 0x301. */
 void BabiIriguchi_CloseTruthDoor(void)
 {
     if (GameFlag_IsSet(0x985) != 0) {
@@ -949,8 +931,6 @@ void BabiIriguchi_CloseTruthDoor(void)
     }
 }
 
-/* The door's switch: while the word at +0xcb8 of the event work is set the
-   leader flips it and the door opens; otherwise the door's words show. */
 void BabiIriguchi_FlipTruthDoorSwitch(void)
 {
     u8 *work = (u8 *)gEventWork;
@@ -978,7 +958,6 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
     Engine_EventEnd();
 }
 
-/* The terrain lookup uses both computed coordinates and the mode. */
 struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
 {
     s32 pos[3];
@@ -1049,13 +1028,6 @@ void SceneActor_PushObjectAheadIfLevel(void)
     StagedActor_AdvancePair();
 }
 
-/* The facing check reads the game state as rows of bytes, not through the
- * field event header's structure. */
-
-/* With the party leader facing north or south and either the byte at 498 of
- * the game state set or no actor ahead, runs the grid placement for that
- * facing; unless that placement reports zero, pushes the object ahead when
- * the byte is clear. */
 void SceneActor_RunSlotZeroFacingCheck(void)
 {
     struct StagedActor *p = (struct StagedActor *)Object_GetById(0);
@@ -1078,7 +1050,6 @@ void SceneActor_RunSlotZeroFacingCheck(void)
     }
 }
 
-/* What each of the entrance's scenes answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -1137,8 +1108,6 @@ void SceneState_ApplyRectsAtActors8And9(void)
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-/* Keep the two door-side actors on the leader's background layer. Actors
-   behind the leader use the next layer and enable depth sorting. */
 void BabiIriguchi_MatchLeaderPriority(void)
 {
     struct FieldSprite *sprite;
@@ -1169,8 +1138,6 @@ void BabiIriguchi_MatchLeaderPriority(void)
 }
 #endif
 
-/* An actor of the antechamber's row, with the frames it waits before it
-   starts to turn. */
 struct RowActor {
     u8 unknown_00[8];
     union FieldCoordinate x;
@@ -1186,8 +1153,6 @@ struct RowActor {
     u16 delay;
 };
 
-/* The scene start of the entrance's four scenes: where Retreat returns to,
-   then what each scene and each way in has to put in place. */
 s32 BabiIriguchi_SetupScene(void)
 {
     struct FieldActor *actor;

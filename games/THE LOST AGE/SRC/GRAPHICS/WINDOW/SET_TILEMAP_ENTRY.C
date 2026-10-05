@@ -13,7 +13,6 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
-/* Writes one tile into a window's tilemap; modes 2-4 add palette bits. */
 void UiWindow_SetTilemapEntry(
     struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode)
 {

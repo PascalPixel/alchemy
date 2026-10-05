@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* Parks an actor where it stands: no target to move toward, no velocity
- * and its timer cleared. */
 void SceneActor_ParkRecord(struct FieldActor *actor)
 {
     actor->target_x = ACTOR_NO_TARGET;

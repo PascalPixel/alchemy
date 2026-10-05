@@ -1,4 +1,3 @@
-/* The Mars star, the party's talk and entering the star room. */
 #include "STAR.H"
 #include "CALL.H"
 #include "TYPES.H"
@@ -136,7 +135,6 @@ void Scene_BagMarsStar(void)
     Engine_EventRequestExit(2);
 }
 
-/* Sukureta urges the party on, or apologizes once the Stars are gone. */
 void Sukureta_Talk(void)
 {
     Engine_EventBegin();
@@ -155,7 +153,6 @@ void Sukureta_Talk(void)
     Engine_EventEnd();
 }
 
-/* Jasmine teases Sukureta, or wonders why her brother kept silent. */
 void Jasmine_Talk(void)
 {
     Engine_EventBegin();
@@ -174,7 +171,6 @@ void Jasmine_Talk(void)
     Engine_EventEnd();
 }
 
-/* Saturos demands the last Elemental Star. */
 void Saturos_Talk(void)
 {
     Engine_EventBegin();
@@ -183,7 +179,6 @@ void Saturos_Talk(void)
     Engine_EventEnd();
 }
 
-/* Menardi demands the last Elemental Star. */
 void Menardi_Talk(void)
 {
     Engine_EventBegin();
@@ -192,7 +187,6 @@ void Menardi_Talk(void)
     Engine_EventEnd();
 }
 
-/* Garcia says nothing. */
 void Garcia_Talk(void)
 {
     Engine_EventBegin();
@@ -201,7 +195,6 @@ void Garcia_Talk(void)
     Engine_EventEnd();
 }
 
-/* Alex counts the one Star left. */
 void Alex_Talk(void)
 {
     Engine_EventBegin();
@@ -210,10 +203,6 @@ void Alex_Talk(void)
     Engine_EventEnd();
 }
 
-/*
- * Same bracket and line call as the talk handlers, but the tail pairs actors
- * 9 and 10 through the overlay's own call.
- */
 void SceneDialogue_RunLine1072WithPair9And10(void)
 {
     Engine_EventBegin();
@@ -895,9 +884,6 @@ void Scene_EnterStarRoom(void)
     Engine_EventEnd();
 }
 
-/* Elemental Star Room entry: set flag 0x144, show actors 15..24 above the
- * floor and start their ring, then restore the actors and the opened cells
- * each story flag records. */
 s32 SoruStar_ApplyEntryState(void)
 {
     u32 i;
@@ -961,17 +947,12 @@ s32 SoruStar_ApplyEntryState(void)
     return 0;
 }
 
-/* A line followed by a wait. */
-
-/* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
     Engine_EventShowMessage(speaker, 0);
     Engine_EventWait(frames);
 }
 
-/* Presenting an item: its icon rises over the scene while the party member
-   holding item 224 exchanges it for the presented item. */
 s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
 {
     register GlyphTransfer *glyph asm("r8"); /* FAKEMATCH: pins the glyph buffer to r8 */
@@ -1015,9 +996,6 @@ s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
     return owner;
 }
 
-/* The mythril bags. */
-
-/* Save the scene counter, prime both channels and drain events until four of the thirty slots are free, then flush four times with ID 224 and restore the counter. */
 void Scene_GiveMythrilBags(void)
 {
     u8 *work = (u8 *)gEventWork;
@@ -1046,7 +1024,6 @@ void Scene_GiveMythrilBags(void)
     *(s16 *)(work + 472) = saved;
 }
 
-/* Actor 14 rises back into view, throwing sparks every other frame. */
 void SoruStar_RiseActorFourteenSparks(void)
 {
     struct EffectParams params;

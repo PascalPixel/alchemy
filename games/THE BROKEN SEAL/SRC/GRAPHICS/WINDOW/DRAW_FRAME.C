@@ -4,9 +4,6 @@
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
-/* Draws a window frame into the text canvas: corners, edges and a blank
-   interior. The alternate frame style uses the flipped corner
-   tiles of the second border set. */
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 {
     struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
@@ -45,9 +42,6 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
     canvas->dirty = 1;
 }
 
-/* Fills a window's interior with the text canvas tiles, numbered down each
-   column from tile 0x127, so glyphs drawn into the canvas show through.
-   The full-width form covers the border columns too. */
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width)
 {
     struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];

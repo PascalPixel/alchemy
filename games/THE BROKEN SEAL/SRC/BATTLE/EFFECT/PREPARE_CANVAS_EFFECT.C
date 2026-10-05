@@ -31,15 +31,8 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 
 extern u16 ParticleStreams_CellOffsets[];
 
-/* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* Battle effect opening shared by the djinn effects: thirty-two sparks spin
-   out of the acting unit and are pulled back in while the gathering point
-   travels to the place the anchor picks; a djinn of the kind's colour then
-   appears there, its screen position goes back to the caller, and a burst of
-   sixty-four motes flies out of it. Kinds above three run twenty frames
-   longer and fade the blend out at the end. */
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y)
 {

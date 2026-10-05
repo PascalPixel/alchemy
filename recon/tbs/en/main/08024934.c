@@ -1,57 +1,5 @@
-/* 2026-10-05 sun deep finisher 19: alchemy diff 979, unchanged. Read from
- * the native frame (372): spill slots follow declaration order, as in
- * Battle_SelectAbility (now 378 after that change): standby 84, count 80,
- * window 76, render 72, drawn_row 68, cursor_handle 64, description 60,
- * counts 56, mask 52, preferred 48, &ordered 32, sprites base 28, last 20;
- * drawn_page r9, page r11, row r10; arrays cursor 360, sprites 312,
- * available 276, ordered 240, then text and handles (96), glyph's address
- * lowest. Declaring the scalars in that order alone scores 979 with a 376
- * frame: the draft's cursor_sprite set before the loop takes one more slot
- * than the native, which recomputes &cursor ([sp+24] in the loop). Next:
- * that order with the cursor written as Battle_SelectAbility's now is
- * (CursorSprite, pointer re-pointed each frame) and block-local indices.
- */
-/* 2026-10-04 fill-return contract: current EN score 15855 (217 register,75 stack,50 operand,83 reordered,41 inserted,44 deleted)
- * after MENU_LIST.H follows the native s32 Ui_FillVramBlockPattern ABI
- * instead of void (previous score 15925). Native08016738 preserves
- * the fill cursor in r0 with pop{r1}/bx r1; an isolated void-return
- * control uses pop{r0}/bx r0. Callers discard the result.
- * No body change or steering device was added.
- * Earlier header measurements below refer to the prior declaration.
- */
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-/* Not-yet-C: complete 2124-byte summon picker, including literal pools.
- * Current EN score15925: 219 register,75 stack,50 operand,84 reordered,
- * 41 inserted,44 deleted instruction differences; no unresolved symbols.
- * Ordinary routed compilation emits2124 bytes including pools, frame376
- * versus native372. Equal extent does not mean byte identity.
- * 2026-10-02 owner recovery: MENU_LIST.H owns windows, render work, menu
- * cell, sprites and text-call prototypes. gWindowWork[0]/[42] are their
- * existing pointer cells; no invented global bundle or duplicate record.
- * MsgAbilityName/Description come from the current editable catalogs, and
- * tile-map entries are enum values rather than address-spelling symbols.
- * H0 shared owners: score17411, frame368 versus native372. Retained as
- * the source owner correction, despite the scheduling changes.
- * H1 used cursor base across rendering calls: score17294, retained.
- * H2 existing MenuPoint for both used cursor coordinates: score15925,
- * frame376. Retained as the closer ordinary source shape; it is not exact.
- * Earlier scalar baseline score16810 had eight unresolved Value_* symbols.
- * No unused storage, fixed register, inline assembly, option or output patch
- * was added. This function remains a draft and earns no edition credit.
- * Earlier near-miss measurements before this owner correction:
- * Standby counts arrive in argument three; returns a summon id or -1.
- * Candidate 2112 bytes, 655 aligned halfword edits. Per-phase counters
- * recover drawn_page in r9. Holding last=count-1 across sorting/navigation
- * recovers its spill and signed reverse walk, bringing the frame to 368
- * bytes (reference 372). Remaining: cursor-coordinate spills, first sprite
- * loop/pools, the inner affordability test and indexed icon traversal.
- * Explicit full-width OAM masks did not recover the first-loop roles.
- * A two-word cursor-position aggregate forces both coordinate spills, but
- * gives a 376-byte frame and shifts every fixed local by four bytes
- * (2124-byte candidate, 641 aligned edits); rejected as the stack model.
- * The old generated draft omitted fifth call arguments and widened byte
- * sprite writes; the typed record now follows those observed accesses. */
 #include "TYPES.H"
 #include "BATTLE_SUMMON.H"
 #include "MENU_LIST.H"

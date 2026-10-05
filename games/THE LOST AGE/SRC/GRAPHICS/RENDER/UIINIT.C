@@ -20,10 +20,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
     return fill(dst, size, value);
 }
 
-/* Allocates and clears the UI work block, fills its tilemap with blank
-   entries and schedules the block upload, as UiWork_Initialize does, but
-   seeds the counters from the resource table. ⚓️ clears and fills the block
-   with the IWRAM word routines in every edition. */
 void UiWork_InitializeWithResourceCounters(void)
 {
     struct UiRenderWork *work;

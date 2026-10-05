@@ -15,8 +15,6 @@ struct MessageFrame {
     struct MessageContext *context;
     u8 *padding;
 };
-/* The caller's r9 points just past the captured context and padding fields.
- * The callback result is ignored. */
 s32 UiText_DrawWaitingForOpponent(void)
 {
     /* FAKEMATCH: Retain the native incoming-r9 chain spill before message argument setup; ordinary captured-frame shapes change its store/register order. */

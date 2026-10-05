@@ -1,9 +1,6 @@
 #ifndef RUNPA_JO_FORTRESS_H
 #define RUNPA_JO_FORTRESS_H
 
-/* The Lunpa fortress (resource_3bf): the declarations, views and call
- * helpers its scene sources share. */
-
 #include "TYPES.H"
 #include "JO.H"
 #include "FIELD_SCENE.H"
@@ -17,17 +14,17 @@
 
 typedef struct SceneActor {
     u8 pad0[8];
-    s32 x;          /* 0x08 */
-    s32 y;          /* 0x0c */
-    s32 z;          /* 0x10 */
+    s32 x;
+    s32 y;
+    s32 z;
 } SceneActor;
 
 typedef struct DirectionalSceneActor {
     u8 pad0[6];
-    u16 dir;        /* 0x06 */
-    s32 x;          /* 0x08 */
-    s32 y;          /* 0x0c */
-    s32 z;          /* 0x10 */
+    u16 dir;
+    s32 x;
+    s32 y;
+    s32 z;
 } DirectionalSceneActor;
 extern u32 gRunpaJoRandomPick;
 extern s32 gRunpaJoPairTableA[];
@@ -250,7 +247,6 @@ void FieldScene_ActivateAlternateActorGroup(void);
 
 void ActivateFiveActorGroupFromFlags(void);
 
-/* SET_POSITION_PAIRS.C */
 void FieldScene_SetPositionPairs(s32 idx);
 
 #endif

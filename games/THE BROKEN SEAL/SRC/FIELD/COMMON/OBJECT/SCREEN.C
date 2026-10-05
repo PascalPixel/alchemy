@@ -5,9 +5,6 @@
 #include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"
 
-/* Writes the object's position relative to the camera in whole units, x
-   then z less height; sprite-mode objects are raised by their metadata
-   offset. Returns -1 when there is no such object. */
 s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);

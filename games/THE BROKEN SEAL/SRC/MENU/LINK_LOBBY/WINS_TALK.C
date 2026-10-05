@@ -18,7 +18,6 @@ void UiWork_ClearValueNameTables(void);
 void UiText_DrawQuantity(s32 value, s32 digits);
 s32 Engine_EventShowMessage(s32 actor, s32 mode);
 
-/* The attendant's win count: by the player's facing, total or consecutive linked wins; with none yet, the matching wait line, otherwise the count as a five-digit argument before the line. The empty case of the first branch shares the printing tail. */
 s32 LinkLobby_TalkLinkedWins(s32 actor)
 {
     u32 facing = Object_GetById(0)->facing;

@@ -58,12 +58,6 @@ s32 Shop_SelUnit(void)
     return 0;
 }
 
-/*
- * Repair flow reached from Shop_PickUnit when the shop's party
- * action is not "sell": browse the chosen member's inventory, priced one
- * slot at a time, and hand a confirmed slot off to Shop_RepairItem before
- * showing the repair-result message.
- */
 s32 Shop_SelRepair(s32 unit_id)
 {
     struct ShopRuntime *shop;
@@ -168,10 +162,6 @@ done:
     return result;
 }
 
-/* Repairs one item for a party member at the shop: refuses items that
-   cannot be repaired, are not broken or cost more than the party has, and
-   otherwise takes the money, plays the smithing sounds and offers to equip
-   the mended item. */
 void Shop_RepairItem(s32 unit_id, s32 slot)
 {
     struct ShopRuntime *shop = gMenuWork;
@@ -238,9 +228,6 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
         Shop_SellOld(unit_id, equipped);
 }
 
-/* Offers the shop's special item, whose price rises with each purchase:
-   when the party can afford it, the player picks the member who carries
-   it, and a full bag sends them back to choose again. */
 void Shop_BuySpecialItem(void *window, s32 item_window)
 {
     struct ShopRuntime *shop = gMenuWork;

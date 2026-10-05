@@ -4,12 +4,6 @@
 
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
 
-/* The nearest of the 67 objects to SOURCEID's object, other than itself, by
-   whole-unit distance under 32: objects flagged 8 are skipped, objects
-   flagged 4 count as ten thirteenths as far, the vertical gap may not exceed
-   0x2fffff, and beyond 11 units the object must lie within 0x2fff of the
-   source's facing. Returns its id, or -1. */
-
 s32 BattleEffect_SelectNearbyObject(s32 sourceId)
 {
     struct ObjectRuntime *source;

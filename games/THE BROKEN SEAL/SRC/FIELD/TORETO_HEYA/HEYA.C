@@ -25,9 +25,6 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
     return NULL;
 }
 
-/* Creates an object of the given kind at (x, y, z) and configures it: the
- * sprite's priority becomes 1, its flags clear, palette 15, and the
- * object's draw bits select the second layer. */
 void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *effect = Engine_ObjectCreate(kind, x, y, z);

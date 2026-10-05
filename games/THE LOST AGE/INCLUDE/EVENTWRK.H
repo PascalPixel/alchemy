@@ -3,8 +3,6 @@
 
 #include "../../COMMON/INCLUDE/FIELD/EVENTWRK.H"
 
-/* A pending event: twelve bytes, keyed by a packed filter; its action is a
-   message below 0x10000 and otherwise a routine. */
 struct PendingEvent {
     u32 key;
     u16 flags;

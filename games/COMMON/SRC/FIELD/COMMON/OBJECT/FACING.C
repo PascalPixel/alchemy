@@ -3,7 +3,6 @@
 
 s32 ArcTan2(s32, s32);
 
-/* Turn toward the facing target by at most 0x1000 per frame. */
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 {
     s32 delta;

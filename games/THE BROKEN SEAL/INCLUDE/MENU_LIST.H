@@ -9,17 +9,8 @@
 #include "WINDOW.H"
 #include "LAYOUT_GUARD.H"
 
-/* What the paged list screens share: the battle ability, item and summon
-   lists, the target and status screens. Each opens a list window and a message
-   window, draws one page of rows, queues one sprite per row and a blinking
-   cursor, and keeps its page and row in the shared menu cell so that the list
-   reopens where it was left. The battle item and ability lists keep five rows
-   in every edition, independently of the shops' localized page size. */
-
 enum { BATTLE_LIST_ROWS = 5 };
 
-/* A queued sprite: the list link, then three hardware attributes as
- * two words or named fields. */
 struct MenuSprite {
     struct MenuSprite *next;
     union {
@@ -45,9 +36,6 @@ struct MenuSprite {
     } oam;
 };
 
-/* A queued cursor sprite with its attributes as fields only: the blinking
-   list cursor and the battle prompt arrow. Code clears its two attribute
-   words through a u32 view of the sprite, then sets the fields. */
 struct CursorSprite {
     struct CursorSprite *next;
     u16 y : 8;
@@ -65,33 +53,27 @@ struct CursorSprite {
     u16 unused;
 };
 
-/* The attribute words of a blank 16x16 sprite. */
 #define MENU_SPRITE_SIZE_16 0x40000000
 
-/* A pixel position. As a local it is one two-word value, so it never lives in
-   registers across a call. */
 struct MenuPoint {
     s32 x;
     s32 y;
 };
 
-/* The menu cell behind gWindowWork[42], which the link countdown shares
-   (gLinkCountdownWork names the same pointer). A list keeps its position
-   here between openings; `active` cleared from outside closes the list. */
 struct MenuCell {
     u8 unknown_00[0x28];
-    s32 slide_offset;           /* 0x28: target marker slide */
+    s32 slide_offset;
     u8 unknown_2c[4];
-    s32 row;                    /* 0x30: row within the page */
-    s32 page;                   /* 0x34: index of the page's first entry */
-    s32 preferred_row;          /* 0x38: row to return to when paging */
+    s32 row;
+    s32 page;
+    s32 preferred_row;
     u8 unknown_3c[8];
-    void *work;                 /* 0x44: screen workspace */
-    s32 busy;                   /* 0x48: screen redraw in progress */
-    s32 active;                 /* 0x4c */
+    void *work;
+    s32 busy;
+    s32 active;
     u8 unknown_50[0x88];
-    s32 auto_enabled;           /* 0xd8: automatic target selection */
-    s32 auto_delay;             /* 0xdc: frames until automatic input */
+    s32 auto_enabled;
+    s32 auto_delay;
 };
 
 LAYOUT_OFFSET_GUARD(MenuCell_Slide, struct MenuCell, slide_offset, 0x28);
@@ -121,7 +103,6 @@ void UiWindow_SetTilemapEntry(
     struct UiWindow *window, s32 tile, s32 x, s32 y, u32 layer);
 void UiWork_SetParamNibble(s32 param);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 value);
-/* Returns the IWRAM fill cursor left in r0; callers discard it. */
 s32 Ui_FillVramBlockPattern(void);
 void Vram_CopyTile(s32 source, s32 destination);
 void AudioCommand_PlayFar(s32 cue);

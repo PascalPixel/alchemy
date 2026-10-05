@@ -3,7 +3,6 @@
 #include "SYSTEM.H"
 
 void Blend_SetDarkenTarget16(s32 arg0);
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 
 s32 BattlePres_RunMosaicFadeOut(void)
 {

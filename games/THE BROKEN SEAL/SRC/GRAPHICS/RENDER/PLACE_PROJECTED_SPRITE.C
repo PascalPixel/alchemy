@@ -1,8 +1,6 @@
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-/* Project a sprite part pair to the screen. Test all four screen bounds;
- * when flipped, set the matrix index before negating the offset. */
 #include "TYPES.H"
 #include "ANIMSPR.H"
 #include "IWRAM_CALL.H"
@@ -11,8 +9,6 @@ extern u8 gMenuCtrlWork[];
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *sprite, u16 mode);
-/* Places a sprite and its optional shadow from a four-word screen position
-   (x, shadow height, depth, ground) and a two-word scale. */
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
     s32 matrix;

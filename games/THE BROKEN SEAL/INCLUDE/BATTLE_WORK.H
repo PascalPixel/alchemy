@@ -7,8 +7,6 @@
 #include "BATTLE_EVENT.H"
 #include "BATTLE_SESSION.H"
 
-/* The advance arrow as the session keeps it: an OAM entry in the making,
-   its three attributes as halfword bit fields (as AnimationSpritePart). */
 struct BattlePromptSprite {
     struct BattlePromptSprite *next;
     u16 y : 8;
@@ -22,14 +20,12 @@ struct BattlePromptSprite {
 
 struct UiWindow;
 
-/* The message viewport scrolls in 8.8 fixed point. */
 struct BattleDisplayOffset {
     s32 unknown_00;
     u16 x;
     u16 y;
 };
 
-/* Heap slot 37: the message window, its viewport, and the queued mark. */
 struct BattleDisplayWork {
     struct UiWindow *window;
     struct BattleDisplayOffset *offset;
@@ -41,67 +37,59 @@ LAYOUT_SIZE_GUARD(BattleDisplayWork_Size, struct BattleDisplayWork, 12);
 LAYOUT_OFFSET_GUARD(BattleDisplayWork_Marked, struct BattleDisplayWork, marked, 8);
 extern struct BattleDisplayWork *gBattleDisplayWork;
 
-/* Queued battle events and the state of their playback. */
 struct BattleEventState {
-    struct BattleEventQueue queue;  /* 0x000 */
-    s32 phase;                      /* 0x148 */
-    s32 event_index;                /* 0x14c */
-    s32 timer;                      /* 0x150 */
-    struct BattlePromptSprite display_entry; /* 0x154 */
-    s32 display_source;             /* 0x160 */
-    s32 actor_id;                   /* 0x164 */
-    s32 pending_cue;                /* 0x168, played before the next actor */
-    s32 flags;                      /* 0x16c, bit 0: defeats earn spoils */
+    struct BattleEventQueue queue;
+    s32 phase;
+    s32 event_index;
+    s32 timer;
+    struct BattlePromptSprite display_entry;
+    s32 display_source;
+    s32 actor_id;
+    s32 pending_cue;
+    s32 flags;
 };
 
-/*
- * The battle session gBattleWork points to. Unit lists hold unit ids ending
- * at 255; a removed unit's entry is 254 until the list is compacted.
- */
 struct BattleSession {
-    s32 enemy_group;                /* 0x000 */
-    s16 sprite_slots[6];            /* 0x004, unit holding each sprite slot */
-    u16 enemy_classes[6];           /* 0x010 */
-    u32 summon_masks[6];            /* 0x01c */
-    s8 summon_channels[6];          /* 0x034 */
+    s32 enemy_group;
+    s16 sprite_slots[6];
+    u16 enemy_classes[6];
+    u32 summon_masks[6];
+    s8 summon_channels[6];
     u8 unknown_03a[2];
-    u16 first_defeated;             /* 0x03c, lowest slot defeated */
-    u16 defeat_state;               /* 0x03e */
-    u8 summon_count;                /* 0x040 */
-    u8 party_status_mode;           /* 0x041 */
-    u8 battle_type;                 /* 0x042, the formation's member order */
-    u8 flags_043;                   /* 0x043, bit 1: an enemy challenged */
-    u8 two_sided;                   /* 0x044, a linked battle */
-    u8 encounter_mode;              /* 0x045 */
-    u8 escape_failures;             /* 0x046 */
+    u16 first_defeated;
+    u16 defeat_state;
+    u8 summon_count;
+    u8 party_status_mode;
+    u8 battle_type;
+    u8 flags_043;
+    u8 two_sided;
+    u8 encounter_mode;
+    u8 escape_failures;
     u8 unknown_047;
-    u8 owner_slots[8];              /* 0x048, member slot per owner, 0xff none */
-    u8 link_side;                   /* 0x050 */
-    u8 link_misses;                 /* 0x051, consecutive missed link frames */
-    u8 link_paused;                 /* 0x052 */
+    u8 owner_slots[8];
+    u8 link_side;
+    u8 link_misses;
+    u8 link_paused;
     u8 unknown_053;
-    s32 prompt_slot;                /* 0x054, the advance arrow's tile slot */
-    s16 party_units[7];             /* 0x058 */
-    s16 enemy_units[7];             /* 0x066 */
-    struct BattleObjectSlot slots[14]; /* 0x074, object records in formation order */
-    u8 placement[14];               /* 0x2dc, standing place per unit */
+    s32 prompt_slot;
+    s16 party_units[7];
+    s16 enemy_units[7];
+    struct BattleObjectSlot slots[14];
+    u8 placement[14];
     u8 unknown_2ea[2];
-    struct BattleActionRecord actions[20]; /* 0x2ec */
+    struct BattleActionRecord actions[20];
     u8 unknown_42c[0x104];
-    struct BattleSpoils spoils;     /* 0x530 */
-    u16 palette[128];               /* 0x544, BG palette 6 at full level */
-    s32 brightness;                 /* 0x644 */
-    u16 background;                 /* 0x648 */
+    struct BattleSpoils spoils;
+    u16 palette[128];
+    s32 brightness;
+    u16 background;
     u8 unknown_64a[4];
-    /* Brightens the highlighted actors' sprites while highlight_mode is set;
-       highlight_step walks the brightness table. */
-    u16 highlight_step;             /* 0x64e */
-    u16 highlight_mode;             /* 0x650 */
+    u16 highlight_step;
+    u16 highlight_mode;
     u8 unknown_652[2];
-    struct BattlePlan plan;        /* 0x654 */
-    struct BattleEventState events; /* 0x6b8 */
-    /* What the debug key adjuster raises and lowers. */
-    s32 debug_value;                /* 0x828 */
+    struct BattlePlan plan;
+    struct BattleEventState events;
+    s32 debug_value;
 };
 
 LAYOUT_SIZE_GUARD(BattleSession_Size, struct BattleSession, 0x82c);
@@ -144,7 +132,6 @@ LAYOUT_OFFSET_GUARD(BattleEventState_Flags, struct BattleEventState, flags, 0x16
 
 extern struct BattleSession *gBattleWork;
 
-/* Reset passes on the value left in r0; callers retain its integer return. */
 s32 BattleUnit_TickRefrain(s32 unit_id);
 u32 BattleEventRuntime_Reset(void);
 s32 BattleEventRuntime_WaitForReady(void);

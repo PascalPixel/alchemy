@@ -1,8 +1,4 @@
-/* Draft: dynamic digit-width alignment has no Japanese instruction extent.
- * Japanese HP/PP consumers draw fixed four-digit numbers directly. */
 #if !defined(TBS_EDITION_JA)
-/* Japanese menus use fixed digit counts; this localization helper is absent
- * in both Japanese editions. */
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
@@ -25,6 +21,5 @@ void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y)
     x -= digits << 3;
     UiText_DrawNumberAtOffsetFar(number, digits, layer, x, y);
 }
-
 
 #endif

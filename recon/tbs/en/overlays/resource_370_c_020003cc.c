@@ -1,11 +1,3 @@
-/* NONMATCHING: 2352 bytes, candidate 2368, 1145 differing halfwords, 903
- * halfword edits (2026-09-25). SaveMenu_Run, meant for MENU/CLEAR/F_003CC.C
- * as a single-overlay unit binding its names at their runtime addresses (an
- * import veneer's listing offset plus 0x8000). Remaining: 1145 differing
- * halfwords. Fresh decompile had @ parse error (while rec==-1 after
- * Main_080152e8). Recon Func_02 draft parked. WALL: far — rewrite by hand
- * from inspect --asm. */
-/* Save selection, link transfer and password display. */
 #include "TYPES.H"
 extern u8 MsgNoBackupMemory[];
 extern u8 MsgSaveAdventureQuestion[];

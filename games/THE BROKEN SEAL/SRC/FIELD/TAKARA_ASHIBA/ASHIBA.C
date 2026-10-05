@@ -8,9 +8,7 @@
 #include "IO_REG.H"
 
 enum {
-    /* Message 0x182 + 243. */
     ITEM_RED_KEY = 243,
-    /* Message 0x182 + 244. */
     ITEM_BLUE_KEY = 244
 };
 
@@ -78,7 +76,6 @@ void TakaraAshiba_OpenPassage(s32);
 extern s32 TakaraAshiba_SlotColumns[];
 extern u8 TakaraAshiba_SceneTable[];
 extern const s32 TakaraAshiba_ActorFifteenMotionScript[];
-/* Where actor 15 walks from each of the triggers 30 on: x, then z. */
 extern const s32 TakaraAshiba_ActorFifteenWalkTargets[];
 
 void Battle_Reset();
@@ -94,7 +91,6 @@ void battle_owner_69();
 void FieldEffect_UpdateGridPlacement();
 void SceneActor_BranchOnSlotZeroAtTile38(void);
 
-/* Repaints the lifted block's cell at a column and raises actor 8 to it. */
 static __inline__ void LiftBlock(s32 column, u8 lowered)
 {
     { s32 fifth = column; s32 last = 42; Engine_MapCopyCellAttributes(61, 36, 1, 1, fifth, last); }
@@ -118,10 +114,6 @@ void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 extern s32 TakaraAshiba_IconTimer;
 
-/* resource_3b4 actor presentation: cell repaints for slots 11 and 12. */
-
-
-
 void SceneActor_SetActor15ModeZero(void)
 {
     BattleFx_RunPageEffectForSlot(15, 0, 6);
@@ -131,7 +123,6 @@ void Resource3b4_EmptyHookA(void)
 {
 }
 
-/* Where the party appears on each of the island's three platforms. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 selector = gGameState.scene;
@@ -158,7 +149,6 @@ u8 *SceneData_GetSceneTable(void)
     return TakaraAshiba_SceneTable;
 }
 
-/* The actors placed on each of the island's three platforms. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 selector = gGameState.scene;
@@ -179,7 +169,6 @@ void Resource3b4_EmptyHookB(void)
 {
 }
 
-/* Each frame, turns the actor to face the leader. */
 s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor)
 {
     struct FieldActor *leader = Object_GetById(0);
@@ -338,7 +327,6 @@ void FieldScene_RunActor15ZeroStep(void)
     Engine_EventEnd();
 }
 
-/* What each of the island's three platforms answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 selector = gGameState.scene;
@@ -360,7 +348,6 @@ void TakaraAshiba_CheckLeaderAhead(void)
     Engine_LeaderCheckAhead();
 }
 
-/* Passage n (low byte of arg, four cells apart): with bit 8 set, play cue 157, set the work values and show the 1x3 tiles from (79, 29) for 40 frames first; then draw the tiles from (80, 29) and copy the row-40 cell attributes down to rows 41 and 42. */
 void TakaraAshiba_OpenPassage(s32 arg)
 {
     s32 step = (arg & 0xff) * 4;
@@ -413,7 +400,6 @@ void FieldScene_RunScene3b4SequenceC(void)
     }
 }
 
-/* Four sites of one import, so four names. */
 void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
 {
     struct FieldActor *slot = Object_GetById(0);
@@ -546,9 +532,6 @@ void FieldScene_RunStep12ValueEeb(void)
     Engine_GameFlagSet(0xEEB);
 }
 
-/* Once the leader stands in cells x 21-23, z 10-11 while not cloaked and
- * actor 8 is not halted, sets flag 0x220 and raises trigger 91; flag 0x220
- * keeps it from firing again. */
 void TakaraAshiba_RaiseTriggerOnStand(void)
 {
     struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -705,9 +688,6 @@ void FieldScene_RunPrimarySequence(void)
     }
 }
 
-/* Unless the scene is 11, bring actor 11 level with the leader (0.85
- * speed), play cue 188 twice around a facing beat and walk it to (0x158,
- * 0x168). */
 void TakaraAshiba_RunActorElevenFollowScene(void)
 {
     struct FieldActor *record;
@@ -799,7 +779,6 @@ void SetBlendAlphaCoefficients(void)
     REG_BLDALPHA = coefficient;
 }
 
-/* Set blend alpha. */
 void SceneEffect_SetBlendAlpha0607(void)
 {
     u16 value = 0x0607;
@@ -807,9 +786,6 @@ void SceneEffect_SetBlendAlpha0607(void)
     REG_BLDALPHA = value;
 }
 
-
-
-/* Dispatch on the leader's facing: two directions repaint a cell when flag 0x206 is set and update flag 0x207; facing 0x8000 selects by height. */
 void FieldScene_DispatchBySlotZeroFacing(void)
 {
     struct FieldActor *slot = Object_GetById(ACTOR_PARTY_LEADER);
@@ -838,7 +814,6 @@ void FieldScene_DispatchBySlotZeroFacing(void)
     }
 }
 
-/* Deliberate no-op callback. */
 void FieldScene_NoOpCallback(void) {}
 
 void SceneActor_MarkSlot13AndSetFlag200(void)
@@ -857,7 +832,6 @@ void SceneActor_MarkSlot13AndSetFlag200(void)
     }
     Engine_GameFlagSet(512);
 }
-
 
 void SceneState_BranchOnActorZeroFacing(void)
 {
@@ -906,10 +880,6 @@ void TakaraAshiba_RestoreLeftUnderfootCell(void)
     Object_GetById(8)->priority_flags = 2;
 }
 
-/* Acts on the map column actor 8 stands in: marks it when it rests on the
- * ground, repaints the four gate cells, then opens the passage for columns
- * 40 to 42, or lifts the block in columns 37 to 39. Each of those three
- * columns lifts it on its own branch. */
 void TakaraAshiba_DispatchByActorEightColumn(void)
 {
     struct FieldActor *actor = Object_GetById(8);
@@ -939,7 +909,6 @@ void TakaraAshiba_DispatchByActorEightColumn(void)
     }
 }
 
-/* When actor 0 is on tile 38 and actor 8 is not, actor 0's facing selects a notification; otherwise run the ordinary three-step path. */
 void SceneActor_BranchOnSlotZeroAtTile38(void)
 {
     s32 *slot0 = Object_GetById(0);
@@ -1024,9 +993,6 @@ void TakaraAshiba_RestoreActorTenRightCell(void)
     Object_GetById(10)->motion_flags = 0;
 }
 
-/* Tracks block 10: once it has sunk to cell height 2 or below, applies its
- * rectangle and sets flag 0x300; on row 55 applies the rectangle for columns
- * 42 and 38, and anywhere else the two rectangles at row 56. */
 void TakaraAshiba_UpdateBlockRects(void)
 {
     struct FieldActor *block = Object_GetById(10);
@@ -1078,7 +1044,6 @@ void SceneState_ApplyFourRectsAt48_55(void)
     Engine_MapCopyCellAttributes(48, 55, 1, 1, 52, base);
 }
 
-/* Repaint the four fixed cells and the cells beneath actors 11 and 12, converting X to tile coordinates with division toward zero. */
 void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
 {
     s32 *slot;
@@ -1135,11 +1100,6 @@ void SceneActor_PassActorNinePositionWithId107(void)
     Engine_MapObjectSetPosition(107, frame->f08, frame->f10 + 0x10000);
 }
 
-/*
- * While the leader stands up on the scaffold, the platforms 8, 10, 11 and
- * 12 draw underfoot; back on the ground, platform 10 draws behind the
- * leader once the leader is far enough down the map.
- */
 void SceneActor_PublishMarkerBySlotZeroHeight(void)
 {
     struct FieldActor *leader = Object_GetById(0);
@@ -1164,7 +1124,6 @@ void SceneActor_PublishMarkerBySlotZeroHeight(void)
     Object_GetById(12)->priority_flags = priority;
 }
 
-/* Open the screen through the window transition, then run each platform's opening. */
 s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -1180,7 +1139,6 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/* Run a sixteen-frame cycle: on frame 12 return the actors whose flags are clear to their marks, and on the even frames before it show their item icons in turn. */
 void TakaraAshiba_UpdateItemIcons(void)
 {
     if (++TakaraAshiba_IconTimer > 16) {

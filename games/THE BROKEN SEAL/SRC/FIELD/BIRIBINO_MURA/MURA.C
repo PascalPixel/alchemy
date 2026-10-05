@@ -40,7 +40,6 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
 void Scene_UpdatePuzzleActors(void);
 void FieldScene_DrawTilesByActor8Row(void);
 
-/* One cell step per facing sixteenth: x in the high half, z in the low. */
 extern s32 BiribinoMura_FacingCellSteps[];
 
 void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
@@ -78,7 +77,6 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
     return 1;
 }
 
-/* Where the party appears in each of Bilibin's three scenes. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;
@@ -95,7 +93,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gBiribinoMuraEntrancesOther;
 }
 
-/* Only the second scene has map regions. */
 const struct SceneRegion *Scene_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_BiribinoMura2) {
@@ -104,7 +101,6 @@ const struct SceneRegion *Scene_GetRegions(void)
     return 0;
 }
 
-/* Returns the scene's message table. */
 u8 *SceneData_GetMessageTable(void)
 {
     return Placement_Messages;
@@ -115,7 +111,6 @@ void SceneState_SetValues9_3_0(void)
     BattleFx_RunPageEffectForSlot(9, 3, 0);
 }
 
-/* The actors placed in each of Bilibin's three scenes. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s16 scene = gGameState.scene;
@@ -140,7 +135,6 @@ void FieldScene_RunScriptedSteps947And29DD(void)
     Engine_EventEnd();
 }
 
-/* What each of Bilibin's three scenes answers. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
     s16 scene = gGameState.scene;
@@ -434,8 +428,6 @@ void BiribinoMura_ReceiveJillsGift(void)
     }
 }
 
-/* Bilibin's scene start: fade in from the backdrop and run the scene's own
-   opening; the third scene also schedules its task. */
 s32 Scene_Initialize(void)
 {
     /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
@@ -611,15 +603,6 @@ void FieldScene_RunScene38bSequenceA(void)
     ActorPresentation_RepaintTenCellsAndActorEightCell();
 }
 
-/*
- * Ten (x, z) tile pairs, held in the overlay's own writable image.  Overlay
- * data lives in EWRAM and is deliberately not const.
- */
-
-/* The cell renderer takes the tile's X and Z coordinates after its first four arguments. */
-
-/* Repaint ten fixed collision cells, followed by actor 8's cell. */
-
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 {
     struct FieldActor *actor;
@@ -627,27 +610,16 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
     s32 tz;
     u32 i;
 
-    /*
-     * Slot 8 is the scene's own actor; the accessor result is not
-     * null-checked here.  The 20-bit shift is one signed arithmetic shift:
-     * 16 takes the fixed-point coordinate to pixels, the further 4 take it
-     * to the 16-pixel tile grid.
-     */
     actor = Object_GetById(8);
     tx = actor->x.fixed >> 20;
     tz = actor->z.fixed >> 20;
 
-/* Ten fixed cells from the table, then the actor's own cell. */
     for (i = 0; i < 20; i += 2) {
         s32 x = (s32)Mura_RepaintCells[i];
         s32 z = (s32)Mura_RepaintCells[i + 1];
         Engine_MapCopyCellAttributes(1, 0, 1, 1, x, z);
     }
 
-    /*
-     * The same repaint with 0 rather than 1 in the first argument.  What
-     * that selector chooses is not established.
-     */
     Engine_MapCopyCellAttributes(0, 0, 1, 1, tx, tz);
 }
 
@@ -676,7 +648,6 @@ void BiribinoMura_RestoreRaisedEntrance(void)
     }
 }
 
-/* The placed actor (ids 8 to 65) standing on map cell x, z. */
 struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
     struct FieldActor **actors = gEventWork->placed_actors - 8;
@@ -692,8 +663,6 @@ struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
     return 0;
 }
 
-/* Pushes the block the leader faces one cell ahead when nothing is in the
- * way, walking the leader along with it. */
 void BiribinoMura_PushFacedBlock(void)
 {
     /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
@@ -745,8 +714,6 @@ void BiribinoMura_PushFacedBlock(void)
     }
 }
 
-/* Spawn a kind-24 effect every thirty calls while the selected actor is
- * below both coordinate limits. Only the y limit resets the counter. */
 void BiribinoMura_UpdateCornerSpawn(void)
 {
     /* FAKEMATCH: halfword aggregates retain the short literal-pool reach. */
@@ -771,8 +738,6 @@ void BiribinoMura_UpdateCornerSpawn(void)
     }
 }
 
-/* Spawns the kind-24 effect where the actor stands, drawn translucent
-   behind the background layers. */
 void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
 {
     struct FieldActor *effect;
@@ -796,7 +761,6 @@ void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
     sprite->priority = 3;
 }
 
-/* Opens the two gate cells on row 14 the actor stands in (z 6 or 9). */
 void FieldScene_DrawTilesByActor8Row(void)
 {
     struct FieldActor *actor;

@@ -9,17 +9,11 @@ extern u8 TestRooms_Exits[];
 extern u8 TestRooms_Placements[];
 extern u8 TestRooms_Events[];
 
-/*
- * Overlay resource_3cc: in-image table getters and the scene state helpers
- * that pair a value update with a follow-up counter write.
- */
-
 u8 *TestRooms_GetEntrances(void)
 {
     return TestRooms_Entrances;
 }
 
-/* Table slot with no data: reads nothing and returns zero. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -64,7 +58,6 @@ u8 *TestRooms_GetEvents(void)
     return TestRooms_Events;
 }
 
-/* Empty scene entry point. */
 s32 Scene_RunEmptyScene(void)
 {
     return 0;

@@ -4,7 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/* Palette wipes and scanline splits share the same frame interpolation. */
 struct DisplayTransitionFrame {
     u8 unknown_000[0x508];
     u8 palette_nibbles[0x22];
@@ -17,7 +16,6 @@ struct DisplayTransitionFrame {
     s8 step;
 };
 
-/* The transition's fields in the map work, including the IRQ's latched lines. */
 struct DisplayTransitionWindow {
     u32 unknown_000[5];
     u16 dispcnt;
@@ -29,15 +27,12 @@ struct DisplayTransitionWindow {
     u16 irq_phase;
 };
 
-/* The window/tile transition view of the 0x540-byte block. Each page is
-   two window control halfwords and 160 scanline pairs; the scanline table
-   fills the page the DMA is not reading and then flips page. */
 struct DisplayTransitionState {
     u16 pages[2][322];
     u32 solid_tile[8];
     u16 mode;
     u16 value;
-    s32 centre_x;        /* map position the stored-centre shapes draw around */
+    s32 centre_x;
     s32 centre_y;
     s16 mask;
     s16 active;
@@ -47,7 +42,7 @@ struct DisplayTransitionState {
     s8 end;
     s8 duration;
     s8 step;
-    s8 next_mode;        /* mode taken at the last step; zero ends the effect */
+    s8 next_mode;
 };
 
 LAYOUT_OFFSET_GUARD(DisplayTransitionFrame_Value, struct DisplayTransitionFrame, value, 0x52a);

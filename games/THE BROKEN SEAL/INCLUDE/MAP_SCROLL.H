@@ -22,7 +22,6 @@ struct MapScrollWork {
     u8 *script;
     u16 flags;
     u8 wide_tiles;
-    /* Set where the party leaves footprints as it walks. */
     u8 footprints;
     struct MapAnimation anim[16];
     struct BlendScriptState blend;
@@ -37,7 +36,6 @@ struct MapScrollWork {
 
 #include "PERSPECT.H"
 
-/* Slot 8 has distinct layered-scene and perspective-scene allocations. */
 LAYOUT_SIZE_GUARD(MapLayerScroll_Size, struct MapLayerScroll, 0x30);
 LAYOUT_OFFSET_GUARD(MapLayerScroll_Cells, struct MapLayerScroll, cells, 0x2c);
 LAYOUT_SIZE_GUARD(MapScrollWork_Size, struct MapScrollWork, 0x194);
@@ -46,8 +44,6 @@ LAYOUT_OFFSET_GUARD(MapScrollWork_Blend, struct MapScrollWork, blend, 0xd8);
 LAYOUT_OFFSET_GUARD(MapScrollWork_View, struct MapScrollWork, view_x, 0xe4);
 LAYOUT_OFFSET_GUARD(MapScrollWork_Active, struct MapScrollWork, animation_active, 0xfc);
 LAYOUT_OFFSET_GUARD(MapScrollWork_Layers, struct MapScrollWork, layers, 0x104);
-
-
 
 struct BgScroll { u16 x, y; };
 

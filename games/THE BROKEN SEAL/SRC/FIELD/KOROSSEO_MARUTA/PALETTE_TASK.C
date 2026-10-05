@@ -1,5 +1,4 @@
 #include "RESOURCE.H"
-/* The palette task and positioning scaled objects. */
 #include "LOG_ROLLING.H"
 
 void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, u32 mode)

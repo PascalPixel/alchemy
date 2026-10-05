@@ -22,7 +22,6 @@ s32 Game_ResetForNewGameFar(s32);
 extern struct BattleUnit *gBattleOwnerStates;
 extern const struct EnemyDefinition Enemy_Definitions[];
 
-/* The stat-store view uses the byte multiplier prefix of ClassDefinition. */
 struct ClassRecord {
     u8 unknown_00[8];
     u8 hp;
@@ -34,27 +33,26 @@ struct ClassRecord {
 };
 
 struct StatWork {
-    s32 hp;                     /* 0x00 */
-    s32 pp;                     /* 0x04 */
-    s32 attack;                 /* 0x08 */
-    s32 defense;                /* 0x0c */
-    s32 agility;                /* 0x10 */
+    s32 hp;
+    s32 pp;
+    s32 attack;
+    s32 defense;
+    s32 agility;
     s32 unknown_14;
-    s32 luck;                   /* 0x18 */
-    s32 turns;                  /* 0x1c */
-    s32 hp_regen;                /* 0x20 */
-    s32 pp_regen;                /* 0x24 */
-    s32 element[4][2];          /* 0x28 */
-    s32 kind;                   /* 0x48 */
+    s32 luck;
+    s32 turns;
+    s32 hp_regen;
+    s32 pp_regen;
+    s32 element[4][2];
+    s32 kind;
     s32 unknown_4c[2];
-    s32 amount;                 /* 0x54 */
-    struct ItemDefinition *item; /* 0x58 */
+    s32 amount;
+    struct ItemDefinition *item;
     s32 unknown_5c;
 };
 
 struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
 
-/* Distance between a stored value and one recomputed from its ratio. */
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 void GameFlag_ClearBit(s32 flag);
@@ -148,9 +146,6 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 directio
     }
 }
 
-/* Rebuilds a party member's derived statistics from the base values,
-   equipped items, set Djinn, class multipliers and levels, clamps them and
-   rescales current HP and PP to the new maxima. */
 void Owner_RecalculateStats(s32 owner)
 {
     struct StatWork *work;
@@ -318,7 +313,7 @@ void Owner_RecalculateStats(s32 owner)
                 kind = work->item->effects[j].kind;
                 amount = work->item->effects[j].amount;
                 work->kind = kind;
-                kind -= ITEM_EFFECT_SCALE_HP; /* rate effects 7..14 scale a statistic in tenths */
+                kind -= ITEM_EFFECT_SCALE_HP;
                 work->amount = amount;
                 switch (kind) {
                 case 0:
@@ -553,8 +548,6 @@ extern u8 gSaveStamp[];
 extern u8 gSceneState[];
 extern s16 gSaveSlot;
 
-/* The scene work past its first 0x100 bytes: the play-time word a save
-   copies there and the byte after it, which a new game marks unset. */
 struct SceneStateTail {
     u8 unknown_000[0x100];
     u32 play_time;
@@ -564,9 +557,6 @@ struct SceneStateTail {
 void Owner_InitRecords(void);
 void Party_AddActiveOwner(s32 owner);
 
-/* Clears the game state, the scene work, the story flags and the save
-   records, then seeds a new game's options, first party member, start
-   stamp and the defaults at 0x11d. */
 void GameState_InitDefaults(void)
 {
     volatile s32 zero;

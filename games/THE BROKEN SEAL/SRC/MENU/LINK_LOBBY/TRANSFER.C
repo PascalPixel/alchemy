@@ -1,4 +1,3 @@
-/* The link lobby: the attendant's call into the circle. */
 #include "TYPES.H"
 #include "CHARACTER.H"
 #include "RUNTIME_MEM.H"
@@ -11,8 +10,6 @@
 
 extern u8 MsgLobbyWantParticipatePlease[];
 
-/* Frames since the attendant last called out; it follows the overlay's
- * image, after the peers' wait. */
 u32 gLinkLobbyCallFrames;
 
 extern u8 MsgLobbyLinkDisconnected[];
@@ -22,9 +19,6 @@ extern volatile u16 gLinkStatus;
 u8 *Owner_GetState(s32 owner);
 void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
 
-/* Unless flag 0x203 is set, has the attendant call "please step into the
- * circle!" (MsgLobbyWantParticipatePlease) once every 300 frames: flag 0x200 marks a call
- * already made in the current period. */
 s32 LinkLobby_CallIntoCircle(void)
 {
     s32 set;
@@ -49,8 +43,6 @@ s32 LinkLobby_CallIntoCircle(void)
     Engine_EventEnd();
 }
 
-/* Clear lobby state and report a disconnected link; the final engine
- * call leaves the integer result in r0. */
 s32 Scene_ClearFlagsAndPlayCue2927(void)
 {
     u16 *work = *(u16 **)&gEventWork;
@@ -73,11 +65,6 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
     Engine_EventEnd();
 }
 
-/* Receives the linked player's three party records (0x154-byte transfers)
- * and then one 0x140-byte block, waiting on each transfer for at most 900
- * frames in total and 24 unready polls. Each party name gets the peer's
- * prefix (up to five characters) shifted in. Returns how many received
- * records have the byte at 0x12a set, or -1 when the link fails. */
 s32 LinkLobby_ReceivePartyRecords(void)
 {
     u16 buf[24];
@@ -195,7 +182,6 @@ done:
     return result;
 }
 
-/* The link lobby: the party members copied for the exchange. */
 s32 SceneData_CopyUpToThreeEntries(u16 *dest)
 {
     s32 cnt = Party_CountActiveOwners();
@@ -217,7 +203,6 @@ s32 SceneData_CopyUpToThreeEntries(u16 *dest)
     return cnt;
 }
 
-/* One offered item: the third byte names the party member it belongs to. */
 struct LinkOffer {
     u8 item;
     u8 count;
@@ -225,18 +210,11 @@ struct LinkOffer {
     u8 flags;
 };
 
-/* The trade offer after its eight-byte header. */
 struct LinkOfferList {
     struct LinkOffer entries[64];
     s32 count;
 };
 
-/* Sends this console's party records to the linked player: each member's
- * 0x154-byte record marked 2 at 0x12a, then blank records (marked 0) up to
- * three, then the 0x140-byte trade offer with its owners renumbered into
- * the peer's order and the items of members not sent removed. Every send
- * waits for at most 600 frames in total and 24 unready polls. Returns 0, or
- * -1 when the link fails. */
 s32 LinkLobby_SendPartyRecords(void)
 {
     s32 result;

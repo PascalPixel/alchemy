@@ -3,7 +3,6 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE.H"
 
-
 struct TableEntry {
     u16 unused;
     u16 value;

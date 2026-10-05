@@ -1,8 +1,3 @@
-/* Sound test: three cue numbers, one per row (a background track, a jingle
-   and a song). Up and down pick the row; right and left step its cue by one
-   and R and L by ten; A plays it, B plays cue 19 and START fades the music
-   out. SELECT cycles the mixer preset and fades the second player. A clip in
-   the mixer restarts the twenty-frame indicator timer. Never returns. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SYSTEM.H"

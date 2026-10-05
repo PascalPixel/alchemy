@@ -4,10 +4,6 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-/*
- * The sprite an object draws. It keeps the three GBA sprite attribute words
- * the engine copies into OAM.
- */
 struct FieldSprite {
     u8 unknown_00[4];
     u16 y : 8;
@@ -21,18 +17,14 @@ struct FieldSprite {
     u16 flip_x : 1;
     u16 flip_y : 1;
     u16 tile : 10;
-    /* Sprites with a lower priority draw above the background layers. */
     u16 priority : 2;
     u16 palette : 4;
     u8 unknown_0a[0x0a];
-    /* The third attribute word of a two-part sprite's second part. */
     u16 second_tile : 10;
     u16 second_priority : 2;
     u16 second_palette : 4;
     u8 unknown_16[2];
-    /* The 16.16 factor an actor's contact radius is scaled by. */
     s32 scale;
-    /* The VRAM block that holds the sprite's frames. */
     u8 vram_block;
     u8 unknown_1d;
     u16 rotation;
@@ -46,16 +38,11 @@ LAYOUT_OFFSET_GUARD(FieldSprite_VramBlock, struct FieldSprite, vram_block, 0x1c)
 LAYOUT_OFFSET_GUARD(FieldSprite_Rotation, struct FieldSprite, rotation, 0x1e);
 LAYOUT_OFFSET_GUARD(FieldSprite_PartCount, struct FieldSprite, part_count, 0x27);
 
-/*
- * The sprite's priority as scripts change it: through the byte of the third
- * attribute word that holds it, leaving the tile and palette alone.
- */
 struct FieldSpritePriority {
     u8 unknown_00[9];
     u8 tile_high : 2;
     u8 priority : 2;
     u8 palette : 4;
 };
-
 
 #endif

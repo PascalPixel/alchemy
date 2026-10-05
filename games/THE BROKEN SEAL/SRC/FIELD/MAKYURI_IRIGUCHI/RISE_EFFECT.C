@@ -1,6 +1,5 @@
 #include "ENTRANCE.H"
 
-/* Spawn and configure the compact companion object at a source position. */
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
     struct FieldActor *obj = Engine_ObjectCreate(24, src->x.fixed, src->y.fixed, src->z.fixed);

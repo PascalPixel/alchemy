@@ -1,11 +1,3 @@
-/*
- * Draft: UiWork_DrawByAttributes, ☀️'s WINDOW.C body with signed window
- * positions. differ 6 (2026-10-05): the native loads the window heap slot
- * after x and the height, and the flags before y; every order of the six
- * loads and the duration store tried (720, with the slot load first or
- * after x) is 6 or more. Follows UiWindow_EraseBorderRect in ⚓️'s WINDOW.C.
- * Links as recon/tla/raw/080391c4.s.
- */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"

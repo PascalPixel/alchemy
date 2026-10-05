@@ -62,7 +62,6 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
             case 12:
             case 17:
 #if EDITION_INTERNATIONAL
-            /* Code 29 carries an operand outside the Japanese edition. */
             case 29:
 #endif
                 text++;
@@ -73,7 +72,6 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
             if ((((struct UiWindow *)window)->flags & 8) == 0) {
                 next = *text;
 #if defined(TBS_EDITION_ES)
-                /* Spanish pairs narrower glyphs in colour 1. */
                 if (c > 32 && next > 32) {
                     s16 width = UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width;
 
@@ -96,8 +94,6 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
 #endif
             }
 #else
-            /* A Japanese voicing mark after a kana rides in the glyph's
-               upper bits instead of taking a column. */
             if (*text == 0xde) {
                 c |= 0x4000;
                 text++;

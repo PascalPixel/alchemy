@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
-/* Battle effect 14: its object update and its entry. */
-
 s32 Object_SetPositionAndResetMotionFar(void *, s32, s32, s32);
 s32 RunBattleEffect14();
 

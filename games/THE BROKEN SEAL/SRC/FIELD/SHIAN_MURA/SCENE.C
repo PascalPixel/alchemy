@@ -3,7 +3,6 @@
 #include "FIELD_EVENT.H"
 #include "CALL.H"
 
-/* Set once the man at the well has spilled his water on the party. */
 #define FLAG_SHIAN_WATER_SPILLED 0x200
 
 struct SceneState { u8 unk_00[14]; s16 field_0e; };
@@ -79,13 +78,11 @@ s32 SceneEffect_CalculatePositionDistance( s32 *first_position, s32 *second_posi
 s32 ShianMura_WatchGateTrigger(struct FieldActor *self);
 s32 SceneActor_UpdateTracking( struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking);
 
-/* Play page effect 22 for slot 1 in mode 2. */
 void SceneEffect_RequestFixedEffect(void)
 {
     BattleFx_RunPageEffectForSlot(22, 1, 2);
 }
 
-/* Set actor 20's presentation flag while the scene counter exceeds the threshold; clear it otherwise. */
 void Actor_UpdatePresentationFlag(void)
 {
     struct SceneState *scene = (void *)Object_GetById(0);
@@ -96,7 +93,6 @@ void Actor_UpdatePresentationFlag(void)
     }
 }
 
-/* Adjust actor 19's sprite counter. */
 void SceneEffect_AdvanceRotatingSprite(void)
 {
     u8 *entity = Object_GetById(19);
@@ -126,7 +122,6 @@ void SceneEffect_SpawnPeriodicEffect(void)
     }
 }
 
-/* Return the integer distance between two 16.16 positions. */
 s32 SceneEffect_CalculatePositionDistance(
     s32 *first_position,
     s32 *second_position)
@@ -141,11 +136,6 @@ s32 SceneEffect_CalculatePositionDistance(
     return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-/* Decides whether an actor tracks its target. An actor already tracking in
- * mode 0 carries on. Otherwise, when the target is closer than the distance
- * limit and lies in the actor's facing sector or one beside it, or tracking
- * is forced, the actor starts tracking in mode 1; if not, it stops tracking.
- * Returns 1 while tracking. */
 s32 SceneActor_UpdateTracking(
     struct MapActor *actor,
     struct MapActor *target,
@@ -187,7 +177,6 @@ s32 SceneActor_UpdateTracking(
     return result;
 }
 
-/* Counts the frames the leader stands at the gate beside this actor and raises trigger 200 after two seconds. */
 s32 ShianMura_WatchGateTrigger(struct FieldActor *self)
 {
     struct FieldActor *leader;
@@ -476,7 +465,6 @@ void ShianMura_RunNpcMeetScene(void)
     }
 }
 
-/* Show message 0x17f7 between the scene's opening and closing calls. */
 void SceneEffect_RunActorSceneMessage(void)
 {
     Engine_EventBegin();
@@ -485,8 +473,6 @@ void SceneEffect_RunActorSceneMessage(void)
     Engine_EventEnd();
 }
 
-/* Steps the leader half a cell ahead of the snapped cell it faces and
- * hops it there when nothing blocks the way. */
 void ShianMura_HopLeaderAhead(void)
 {
     s32 flags;
@@ -539,13 +525,6 @@ void ShianMura_WalkThroughExit(s32 a0)
     Engine_EventRequestExit(a0);
 }
 
-/*
- * The selector is halfword [182] of the event work,
- * guarded to the range 1..7.  The pointer is loaded before the first call and
- * held across all of them, so it is a function-top local.  Cases 2 and 3 set
- * the two shared arguments and jump into the middle of case 6 to share its
- * final call; the goto and the two locals are what reproduce that.
- */
 void SceneEffect_DispatchStep(void)
 {
     s16 *scene = (s16 *)gEventWork;

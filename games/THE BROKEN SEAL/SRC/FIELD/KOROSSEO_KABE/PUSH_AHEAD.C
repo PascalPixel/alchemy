@@ -1,10 +1,7 @@
 #include "TASK.H"
 
-/* The game state's cells, read here as halfwords. */
 extern s16 gCell[];
 
-/* The placed actor whose cell holds a position.  Callers also pass the
- * record asking, which the search does not need. */
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self)
 {
     s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
@@ -22,7 +19,6 @@ s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self)
     return 0;
 }
 
-/* Move the occupant and subject toward the point one step beyond the occupant, then commit the occupant's position. */
 void StagedActor_PushActorAhead(void)
 {
 
@@ -81,7 +77,6 @@ void StagedActor_PushActorAhead(void)
     step <<= 16;
     pos.z = target->z + (s32)step;
 
-    /* Terrain probe: signed, so only a positive code refuses the move. */
     if (Object_CheckMovementCollision(target, &pos) > 0) {
         return;
     }
@@ -93,7 +88,6 @@ void StagedActor_PushActorAhead(void)
     target->rate_z = 0x3333;
     Engine_ObjectSetPosition(target, pos.x, pos.y, pos.z);
 
-    /* The same destination block, moved onto the subject this time. */
     subject->rate_x = 0x3333;
     subject->rate_z = 0x3333;
     Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
@@ -110,7 +104,6 @@ void StagedActor_PushActorAhead(void)
     Object_SetMode(subject, 1);
 }
 
-/* Probe the two cells ahead and return the nearer occupant first; centre x and z in each cell while preserving y. */
 s32 *SceneActor_FindOccupantAheadOfSubject(void)
 {
 
@@ -121,20 +114,19 @@ s32 *SceneActor_FindOccupantAheadOfSubject(void)
 
     record = Object_GetById(gGameState.selected_actor);
 
-    /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
     facing = (record->facing + 0x2000) & 0xc000;
 
     position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
     position[1] = record->y.fixed;
     position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, facing, position);          /* 128 << 13 */
+    Vector_AddPolarOffset(0x100000, facing, position);
 
     occupant = SceneData_FindSlotAtPosition(position, record);
     if (occupant == 0) {
         position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
         position[1] = record->y.fixed;
         position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-        Vector_AddPolarOffset(0x200000, facing, position);      /* 128 << 14 */
+        Vector_AddPolarOffset(0x200000, facing, position);
 
         occupant = SceneData_FindSlotAtPosition(position, record);
     }

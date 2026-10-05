@@ -1,5 +1,3 @@
-/* Clear active party members' status bytes and stat modifiers.
- * The integer result is unspecified. */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "SCENE.H"

@@ -1,6 +1,5 @@
 #include "CAVE.H"
 
-
 const struct SceneEntrance gCaveEntrances[] = {
     { 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
@@ -21,7 +20,6 @@ const struct ScenePlacement gCaveNoPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-/* Hammet, Bunza and the party wait out of sight until the reunion places them. */
 const struct ScenePlacement gCavePlacements[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,

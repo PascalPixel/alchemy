@@ -1,7 +1,3 @@
-/* NONMATCHING: localized scene source, 2026-10-01.
- * The complete 94-byte scene lacks the European leader-height refresh.
- * ES/FR/IT query terrain height before the probe; their function is 148 bytes.
- */
 #include "HASHIRA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

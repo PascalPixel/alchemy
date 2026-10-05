@@ -13,9 +13,6 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Owner_RefreshActiveRatios(s32 mode);
 
-/* Saves the party's inventories once, with the two Psynergy shortcuts and
- * the first four active owners, then leaves each member only the items of
- * type 6, packed to the front, and hands the first member item 16. */
 void InventorySnapshot_Save(void)
 {
     u16 *save;
@@ -62,10 +59,6 @@ void InventorySnapshot_Save(void)
     Owner_RefreshActiveRatios(1);
 }
 
-/* Restores a saved inventory snapshot when it starts with its sentinel: the
- * fifteen inventory words of each of the four owners, refreshing their
- * derived data and stats, then the two Psynergy shortcuts and the two words
- * at party state 0x1f8. The sentinel is then cleared, as is flag 0x952. */
 void InventorySnapshot_Restore(void)
 {
     s32 owner;

@@ -1,6 +1,3 @@
-/* Place both 12-byte sprite parts from fixed-point screen coordinates,
- * object and ground heights, and a two-word scale. Dimensions are unsigned;
- * the vertical offset is signed. */
 #include "TYPES.H"
 #include "ANIMSPR.H"
 

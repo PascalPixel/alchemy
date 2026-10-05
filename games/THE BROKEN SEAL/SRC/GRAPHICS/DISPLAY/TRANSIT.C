@@ -19,8 +19,6 @@ void BattleFx_StartBufferInterpolation(s32 frames);
 
 extern volatile u32 gFrameCount;
 
-/* Queue a display-control write for the next frame; read the value only
- * after a queue entry is free. */
 #define QUEUE_DISPLAY_CONTROL(value)                                        \
     do {                                                                    \
         volatile u16 *ime;                                                  \
@@ -45,10 +43,6 @@ extern volatile u32 gFrameCount;
         do { *ime = saved; } while (0);                                     \
     } while (0)
 
-/* Starts a screen transition; DisplayTransition_Finish ends it. The high
-   byte of mode picks the effect (darken blend, palette fade, window wipe,
-   tile fill, scanline split); the low byte is kept in the transition state.
-   Every effect but the darken blend also queues the display control write. */
 void DisplayTransition_Start(s32 mode, s32 frames)
 {
     void **work;
@@ -107,7 +101,6 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     case 4: {
         struct DisplayTransitionState *state;
 
-        /* The map work pointer is read again here, as a plain pointer. */
         display = (struct DisplayTransitionWindow *)*work;
         state = DisplayTransition_AllocateAndClearState();
         display->first_line = 80;
@@ -134,9 +127,6 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
 }
 
-/* Ends a screen transition. The high byte of mode picks the effect (darken
-   blend, palette fade, window wipe, tile fill, scanline split); the low byte
-   is kept in the transition state. */
 void DisplayTransition_Finish(s32 mode, s32 frames)
 {
     s32 value;
@@ -221,7 +211,6 @@ void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200)
     }
 }
 
-/* Signed division runs from IWRAM through the register-call veneer. */
 void DisplayTransition_Update(void)
 {
     struct DisplayTransitionFrame *state =
@@ -259,11 +248,6 @@ void DisplayTransition_Update(void)
     }
 }
 
-/* Steps the transition value from start to end over duration frames; once
- * done it removes itself as a callback and clears the HBlank handler. Then
- * sets the window's two scanlines: 200 and 250 from a value of 80 up; on odd
- * frames with a nonzero value, 80 + value and 80 - value about the centre
- * row; otherwise 0 and 159, the whole screen. */
 void DisplayTransition_UpdateFromCentre(void)
 {
     struct DisplayTransitionFrame *state =

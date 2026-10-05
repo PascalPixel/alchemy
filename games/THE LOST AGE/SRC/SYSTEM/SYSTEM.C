@@ -76,12 +76,14 @@ void WaitFrames(s32 frames)
                 else {
                     gIdleFrameCount++;
                     {
-                        /* FAKEMATCH: plain source shifts the idle limit before the volatile counter reload; this short boundary keeps the base and reload ready before the shift. */
+                        /* FAKEMATCH: under the ARM9TDMI load schedule plain source shifts the idle limit before the volatile counter reload; native starts the limit, reloads the counter, then shifts. */
                         u32 idle; u32 limit;
                         limit = SLEEP_IDLE_FRAMES >> 6;
+                        /* FAKEMATCH: start the limit's base before the counter reload, value unchanged. */
+                        __asm__ ("" : "+r"(limit));
                         idle = gIdleFrameCount;
-                        /* FAKEMATCH: preserve the measured idle reload/limit shift order with unchanged live values. */
-                        __asm__ volatile("" : "+r"(idle) : "r"(limit));
+                        /* FAKEMATCH: finish the reload before the limit's shift, with neither value changed. */
+                        __asm__ ("" : "+r"(idle) : "r"(limit));
                         if (idle > (limit << 6) + (SLEEP_IDLE_FRAMES & 63)) gSleepRequested = 1;
                     }
                 }
@@ -98,15 +100,7 @@ void WaitFrames(s32 frames)
         if (gDebugMode) {
             for (;;) {
                 if (gDebugPaused) {
-                    {
-                        /* FAKEMATCH: the plain repeat test loads before preparing its mask; the earlier handoff fixes that order but leaves the result in r2. This short capture and explicit mask assignment preserve native preparation and result register. */
-                        register u32 repeat __asm__("r3");
-                        repeat = gInput.repeat;
-                        /* FAKEMATCH: keep the current measured read/mask preparation boundary. */
-                        __asm__ volatile("" : "+r"(repeat) : "r"(KEY_A | KEY_B | KEY_SELECT));
-                        repeat &= KEY_A | KEY_B | KEY_SELECT;
-                        if (repeat) break;
-                    }
+                    if (gInput.repeat & (KEY_A | KEY_B | KEY_SELECT)) break;
                     if (gInput.held & KEYS_DPAD) break;
                     if (gInput.repeat & KEY_START) { gDebugPaused = 0; break; }
                 } else {

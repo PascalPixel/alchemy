@@ -225,3 +225,5 @@ AlchemyUncreditedEnd_080128a8:
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	b	.L_08012b40
+	.global Resource_Decode01CodeSize
+	.set Resource_Decode01CodeSize, . - Resource_Decode01Code

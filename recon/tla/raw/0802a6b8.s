@@ -386,7 +386,7 @@ Func_0802a6b8:
 	adds r0, r0, r6
 	bl Resource_GetTableEntry
 	adds r1, r7, #0
-	bl Func_080158cc
+	bl Resource_DecodeType2
 	mov r2, r10
 	adds r1, r7, #0
 	ldr r0, .L_0802aa60
@@ -397,7 +397,7 @@ Func_0802a6b8:
 	adds r0, r0, r6
 	bl Resource_GetTableEntry
 	adds r1, r7, #0
-	bl Func_080158cc
+	bl Resource_DecodeType2
 	adds r1, r7, #0
 	mov r2, r10
 	ldr r0, .L_0802aa64
@@ -408,7 +408,7 @@ Func_0802a6b8:
 	adds r0, r0, r6
 	bl Resource_GetTableEntry
 	adds r1, r7, #0
-	bl Func_080158cc
+	bl Resource_DecodeType2
 	adds r1, r7, #0
 	mov r2, r10
 	ldr r0, .L_0802aa68
@@ -419,7 +419,7 @@ Func_0802a6b8:
 	adds r0, r0, r6
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802aa6c
-	bl Func_080158cc
+	bl Resource_DecodeType2
 	adds r0, r7, #0
 	bl Sys_Free
 .L_0802aa24:

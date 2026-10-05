@@ -185,3 +185,5 @@ AlchemyUncreditedEnd_0800180c:
 	pop	{r0, r5, r6, r7, ip}
 	sub	r0, r1, r0
 	bx	ip
+	.global Resource_DecodeByteLzCodeSize
+	.set Resource_DecodeByteLzCodeSize, . - Resource_DecodeByteLzCode

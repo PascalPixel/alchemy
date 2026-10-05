@@ -299,18 +299,8 @@ Func_08015714:
 	.thumb_func
 Render_ProjectPoint:
 	.incbin "baserom.gba", 0x00015778, 0x00000104
-	.section .rom.0001587c, "ax"
-	.global Resource_DecodeType01
-	.type Resource_DecodeType01, %function
-	.thumb_func
-Resource_DecodeType01:
-	.incbin "baserom.gba", 0x0001587c, 0x000000a0
-	.section .rom.0001591c, "ax"
-	.global Resource_DecodeByteLzInRam
-	.type Resource_DecodeByteLzInRam, %function
-	.thumb_func
-Resource_DecodeByteLzInRam:
-	.incbin "baserom.gba", 0x0001591c, 0x000005f0
+	.section .rom.0001596c, "ax"
+	.incbin "baserom.gba", 0x0001596c, 0x000005a0
 	.global SaveState_FindLatestSlot
 SaveState_FindLatestSlot:
 	.incbin "baserom.gba", 0x00015f0c, 0x000000f0

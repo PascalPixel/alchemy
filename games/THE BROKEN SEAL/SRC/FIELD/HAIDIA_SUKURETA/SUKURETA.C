@@ -633,25 +633,25 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_SetSpeed(ACTOR_SATUROS, 0x8000, 0x4000);
 
     record = Object_GetById(14);
-    record->unknown_5a &= 0xfe;
+    record->steering_flags &= ~ACTOR_FACES_MOTION;
     record = Object_GetById(15);
-    record->unknown_5a &= 0xfe;
+    record->steering_flags &= ~ACTOR_FACES_MOTION;
 
     Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x178);
     Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x178);
     Engine_EventWait(6);
 
     record = Object_GetById(14);
-    record->unknown_5a |= 1;
+    record->steering_flags |= ACTOR_FACES_MOTION;
     record = Object_GetById(15);
     {
         /* FAKEMATCH: a result temporary, not the compound or-assign the
          * first occurrence above uses: the reference merges the byte into
          * the mask's register, which the two-address ORR does only when
          * the result is its own object. */
-        u8 merged = (u8)(record->unknown_5a | 1);
+        u8 merged = (u8)(record->steering_flags | 1);
 
-        record->unknown_5a = merged;
+        record->steering_flags = merged;
     }
 
     Engine_ActorSetAnimation(ACTOR_SATUROS, 0);

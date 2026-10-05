@@ -670,10 +670,10 @@ void Scene_JoinRodSearch(void)
     Engine_EventWait(40);
     SceneState_SetValue2ThenFinish();
     Engine_ActorRunRepeatedMotion(0, 1);
-    Object_GetById(0)->unknown_5a &= ~1;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Call3(Engine_ActorWalkToAndWait, 0, 0x180, 0x1a8);
     Engine_EventWait(1);
-    Object_GetById(0)->unknown_5a |= 1;
+    Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(30);
     Engine_EventShowMessage(2, 0);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
@@ -713,10 +713,10 @@ void Scene_JoinRodSearch(void)
     Call3(Engine_ActorShowEmote, 1, 0x102, 0);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(1, 1);
-    Object_GetById(1)->unknown_5a &= ~1;
+    Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
     Call3(Engine_ActorWalkToAndWait, 1, 0x160, 0x198);
     Engine_EventWait(1);
-    Object_GetById(1)->unknown_5a |= 1;
+    Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(10);
     Call3(Engine_ActorWalkTo, 2, 0x170, 0x198);
     Engine_EventWait(20);

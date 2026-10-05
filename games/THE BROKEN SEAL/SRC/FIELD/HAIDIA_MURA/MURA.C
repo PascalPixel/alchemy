@@ -544,10 +544,10 @@ void FieldScene_RunScene373SequenceE(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 5, 0);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 215, 0x193);
-    rec7->unknown_5a |= 1;
+    rec7->steering_flags |= ACTOR_FACES_MOTION;
     Actor_SetPosition(22, 0xa60000, 0x1770000);
     Actor_FaceDirection(22, 0x2000, 20);
-    rec7->unknown_5a = (rec7->unknown_5a ^ 1);
+    rec7->steering_flags = (rec7->steering_flags ^ 1);
     Actor_SetSpeed(22, 0x28000, 0x28000);
     Engine_ActorJump(22, 4, 0);
     Actor_WalkToAndWait(22, 202, 0x18b);
@@ -909,10 +909,10 @@ void HouseScene_RunRepairMorning(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
     Actor_WalkTo(ACTOR_GERALD, 392, 843);
-    Actor_Get(ACTOR_JASMINE)->unknown_5a &= 0xfe;
+    Actor_Get(ACTOR_JASMINE)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_JASMINE, 408, 843);
     Engine_EventWait(1);
-    Actor_Get(ACTOR_JASMINE)->unknown_5a |= 1;
+    Actor_Get(ACTOR_JASMINE)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 0);
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Engine_ActorSetAnimation(ACTOR_GERALD, ANIM_STAND);
@@ -1007,7 +1007,7 @@ void HouseScene_RunRepairMorning(void)
     Event_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, ACTOR_GERALD, 10, 14, 4, 14, 0);
     actor = Actor_Get(ACTOR_DORA);
     actor->sprite->flags = 0;
-    actor->unknown_5a &= 0xfe;
+    actor->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
     Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
     Engine_EventWait(4);
@@ -1083,7 +1083,7 @@ void HouseScene_RunRepairMorning(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, ANIM_STAND);
     Actor_SetSpeed(ACTOR_GERALD, 0x40000, 0x20000);
     actor = Actor_Get(ACTOR_GERALD);
-    actor->unknown_5a &= 0xfe;
+    actor->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetDestination(ACTOR_GERALD, 403, 827);
     Actor_SetAttachedEffect(ACTOR_JASMINE, EMOTE_IN_FRONT | 2);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTH, 20);
@@ -1171,9 +1171,9 @@ void HouseScene_RunRepairMorning(void)
 
     /* The three set off together. */
     actor = Actor_Get(ACTOR_GERALD);
-    actor->unknown_5a |= 1;
+    actor->steering_flags |= ACTOR_FACES_MOTION;
     actor = Actor_Get(ACTOR_JASMINE);
-    actor->unknown_5a |= 1;
+    actor->steering_flags |= ACTOR_FACES_MOTION;
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);
@@ -1195,7 +1195,7 @@ void HouseScene_RunRepairMorning(void)
     HaidiaMura_RunWalkScene03380(ACTOR_PARTY_LEADER, 13, 10, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_Get(ACTOR_DORA)->unknown_5a |= 1;
+    Actor_Get(ACTOR_DORA)->steering_flags |= ACTOR_FACES_MOTION;
     HaidiaMura_RunWalkScene03380(ACTOR_DORA, 6, 5, 0);
     Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
     Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
@@ -2261,7 +2261,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
     Actor_WalkTo(ACTOR_GERALD, 392, 843);
-    Object_GetById(5)->unknown_5a &= 0xfe;
+    Object_GetById(5)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_JASMINE, 408, 843);
     Engine_EventWait(1);
     {
@@ -2357,10 +2357,10 @@ void Scene_RepairTheHouse(void)
     Audio_PlayCue(161);
     rec = Actor_Get(ACTOR_DORA);
     {
-        u8 value = *(volatile u8 *)&rec->unknown_5a;
+        u8 value = *(volatile u8 *)&rec->steering_flags;
 
         *(u8 *)(*(s32 *)((u8 *)rec + 80) + 38) = none;
-        rec->unknown_5a = (u8)(value & 0xfe);
+        rec->steering_flags = (u8)(value & 0xfe);
     }
     Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
     Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
@@ -2443,7 +2443,7 @@ void Scene_RepairTheHouse(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Actor_SetSpeed(ACTOR_GERALD, 0x40000, 0x20000);
     rec = Actor_Get(ACTOR_GERALD);
-    rec->unknown_5a &= 0xfe;
+    rec->steering_flags &= ~ACTOR_FACES_MOTION;
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     Actor_SetDestination(ACTOR_GERALD, 403, 829);
 #else
@@ -2535,9 +2535,9 @@ void Scene_RepairTheHouse(void)
     Engine_EventWait(60);
     rec = Actor_Get(ACTOR_GERALD);
     flag = 1; /* One shared mark bit for the three record flags. */
-    rec->unknown_5a |= flag;
+    rec->steering_flags |= flag;
     rec = Actor_Get(ACTOR_JASMINE);
-    rec->unknown_5a |= flag;
+    rec->steering_flags |= flag;
     rec = Actor_Get(ACTOR_PARTY_LEADER);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);

@@ -32,7 +32,7 @@ struct OverlayObject {
     u8 unknown_55;
     u8 unknown_56[3];
     u8 unknown_59;
-    u8 unknown_5a;
+    u8 steering_flags;
     u8 unknown_5b[9];
     u16 angle_64;
     u8 unknown_66[2];
@@ -70,8 +70,8 @@ typedef char OvObj_unknown_55_offset[
 typedef char OvObj_unknown_59_offset[
     OVERLAY_OBJECT_OFFSET(unknown_59) == 0x59 ? 1 : -1
 ];
-typedef char OvObj_unknown_5a_offset[
-    OVERLAY_OBJECT_OFFSET(unknown_5a) == 0x5a ? 1 : -1
+typedef char OvObj_steering_flags_offset[
+    OVERLAY_OBJECT_OFFSET(steering_flags) == 0x5a ? 1 : -1
 ];
 typedef char OvObj_angle_64_offset[
     OVERLAY_OBJECT_OFFSET(angle_64) == 0x64 ? 1 : -1

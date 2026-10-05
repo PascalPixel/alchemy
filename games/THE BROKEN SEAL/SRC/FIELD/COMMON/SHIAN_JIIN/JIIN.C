@@ -2038,7 +2038,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(20);
     /* Clear bit 0 of the flag byte at +90. */
-    Object_GetById(0)->unknown_5a &= 0xfe;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
     Engine_EventWait(1);
     {

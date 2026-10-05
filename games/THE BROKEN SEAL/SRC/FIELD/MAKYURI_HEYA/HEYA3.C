@@ -15,7 +15,7 @@ void MakyuriHeya_WalkLeaderIn(void)
     Engine_TaskAddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
     Actor_SetSpeed(0, 0x28000, 0x14000);
     Object_SetModeById(0, 1);
-    Object_GetById(0)->unknown_5a &= 254;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Audio_PlayCue(228);
     if (work->touched_trigger == 2) {
         Actor_SetDestination(0, 232, 616);
@@ -35,7 +35,7 @@ void MakyuriHeya_WalkLeaderIn(void)
 #endif
     }
     ObjectMotion_CommitCurrentPositionAndActivate(0);
-    Object_GetById(0)->unknown_5a |= 1;
+    Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_TaskRemoveCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame);
     Engine_EventEnd();
 }

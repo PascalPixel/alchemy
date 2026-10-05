@@ -736,7 +736,7 @@ void Scene_EnterStarRoom(void)
     Actor_MoveToAndWait(ACTOR_SUKURETA, 0x1d7, 0x18b);
     Engine_TaskWait(6);
     Actor_SetSpeed(ACTOR_SUKURETA, 0x4ccc, 0x2666);
-    sukureta_flags = &rising->unknown_5a;
+    sukureta_flags = &rising->steering_flags;
     *sukureta_flags &= 254;
     Actor_SetDestination(ACTOR_SUKURETA, 0x1d9, 0x18b);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);

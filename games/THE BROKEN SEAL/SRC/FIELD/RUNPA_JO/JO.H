@@ -108,7 +108,7 @@ struct FieldActor {
     u8 motion_flags;
     u8 unknown_56[3];
     u8 collision_flags;
-    u8 unknown_5a;
+    u8 steering_flags;
     u8 unknown_5b;
     u8 unknown_5c;
     u8 unknown_5d[5];

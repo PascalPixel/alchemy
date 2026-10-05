@@ -830,7 +830,7 @@ void Scene_RunExtendedActorTransition(void)
     Engine_ActorSetAnimation(21, 0);
     Engine_ActorJump(21, 6, 0);
     Actor_SetSpeed(21, 0x30000, 0x18000);
-    Object_GetById(21)->unknown_5a &= ~1;
+    Object_GetById(21)->steering_flags &= ~ACTOR_FACES_MOTION;
     actor = Object_GetById(21);
     actor->update = (void (*)(union FieldObject *))OverlayObject_DecayRecordField1e;
     actor->facing = FACING_WEST;

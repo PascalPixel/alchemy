@@ -1324,8 +1324,8 @@ s32 BabiIriguchi_SetupScene(void)
             break;
         }
     } else if (scene == (s32)&SceneId_BabiIriguchi1) {
-        Object_GetById(8)->unknown_5a &= 0xfe;
-        Object_GetById(9)->unknown_5a &= 0xfe;
+        Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
+        Object_GetById(9)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_SetSpeed(8, 0x10000, 0x8000);
         Actor_SetSpeed(9, 0x10000, 0x8000);
         if (GameFlag_IsSet(0x109) == 0) {

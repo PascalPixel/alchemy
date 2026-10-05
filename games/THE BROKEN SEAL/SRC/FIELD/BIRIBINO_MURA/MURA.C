@@ -299,7 +299,7 @@ void FieldScene_RunScene38bSequenceC(void)
         Engine_EventWait(20);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
         Actor_SetSpeed(11, 0x3333, 0x1999);
-        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
+        Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
         rec7->motion_flags = 0;
         rec->scale_x = -0x10000;
         Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -320,7 +320,7 @@ void FieldScene_RunScene38bSequenceC(void)
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 132, 186);
         rec->scale_x = 0x10000;
-        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
+        Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
@@ -395,10 +395,10 @@ void FieldScene_RunScene38b_02000584(void)
             Engine_EventWait(20);
             Event_ShowMessage(14, 0);
             Actor_SetSpeed(14, 0x9999, 0x4ccc);
-            Object_GetById(14)->unknown_5a &= 254;
+            Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(14, 0x10a, 172);
             Engine_EventWait(1);
-            Object_GetById(14)->unknown_5a |= 1;
+            Object_GetById(14)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_EventWait(10);
             Engine_ActorSetAnimationAndWait(14, 3);
             Event_ShowMessageAndWait(14, 0, 10);
@@ -410,7 +410,7 @@ void FieldScene_RunScene38b_02000584(void)
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
             Actor_SetSpeed(14, 0x10000, 0x8000);
-            Object_GetById(14)->unknown_5a &= 254;
+            Object_GetById(14)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(14, 0x106, 156);
             Engine_EventWait(1);
             {

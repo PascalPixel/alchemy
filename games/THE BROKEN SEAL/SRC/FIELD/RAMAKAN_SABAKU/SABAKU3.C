@@ -116,7 +116,7 @@ void RamakanSabaku_FaceNearestActor(void)
         }
     }
     Engine_ActorSetAnimation(0, 1);
-    Object_GetById(0)->unknown_5a &= 254;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorFaceActor(0, best, 0);
     Engine_EventWait(20);
     Actor_SetAttachedEffect(0, 0x102);
@@ -139,7 +139,7 @@ void RamakanSabaku_FaceNearestActor(void)
     Actor_ShowEmote(best, 0x104, 0);
     Engine_EventWait(60);
     Actor_SetAttachedEffect(0, 0x100);
-    Object_GetById(0)->unknown_5a |= 1;
+    Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
     record = Object_GetById(0);
     *(s32 *)((u8 *)record + 108) = 0;
     BattleFx_SetWeightedResult(53, 4);
@@ -245,7 +245,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
             Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
             Engine_EventWait(40);
-            Object_GetById(0)->unknown_5a &= 254;
+            Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
             rect[0] = rec8;
             rect[1] = rec8;
             rect[2] = rec8;
@@ -256,7 +256,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000, rect[2] / 0x10000);
             Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
             Engine_EventWait(2);
-            Object_GetById(0)->unknown_5a |= 1;
+            Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_EventWait(30);
             Audio_PlayCue(148);
             Engine_ActorRunRepeatedMotion(8, 2);

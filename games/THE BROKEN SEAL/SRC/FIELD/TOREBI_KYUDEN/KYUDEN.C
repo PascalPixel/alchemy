@@ -1285,9 +1285,9 @@ void FieldScene_RunMainCutsceneSequence(void)
         Actor_FaceDirection(20, 0x4000, 0);
         Event_Wait(20);
         Actor_SetSpeed(20, 0xcccc, 0x6666);
-        Actor_Get(20)->unknown_5a &= 0xfe;
+        Actor_Get(20)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_WalkByAndWait(20, 0, -16);
-        Actor_Get(20)->unknown_5a |= 1;
+        Actor_Get(20)->steering_flags |= ACTOR_FACES_MOTION;
         Actor_FaceDirection(14, 0x4000, 0);
         Event_Wait(40);
         Actor_SetSpeed(14, 0xcccc, 0x6666);

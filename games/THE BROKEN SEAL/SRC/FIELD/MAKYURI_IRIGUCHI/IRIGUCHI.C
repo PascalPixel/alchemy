@@ -461,7 +461,7 @@ void MakyuriIriguchi_CrossDoorway(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_ActorRunRepeatedMotion(3, 1);
-    Object_GetById(8)->unknown_5a &= 254;
+    Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Battle_WaitMode0(20);
     mask = 254;
     zero = 0;
@@ -475,7 +475,7 @@ void MakyuriIriguchi_CrossDoorway(void)
         ivan = Object_GetById(3);
         /* FAKEMATCH: or-ing a zero kept from before the loop leaves the
          * reference's unread zero in sl. */
-        ivan->unknown_5a = (ivan->unknown_5a & mask) | zero;
+        ivan->steering_flags = (ivan->steering_flags & mask) | zero;
         Engine_ActorWalkTo(3, 136, 184);
         Battle_WaitMode0(10);
         Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path1);

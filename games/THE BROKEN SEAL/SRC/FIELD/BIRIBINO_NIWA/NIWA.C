@@ -222,10 +222,10 @@ void BiribinoNiwa_RunGardenEvent(void)
         Engine_EventShowMessageAndWait(11, 0, 20);
         Call3(Engine_ActorFaceDirection, 11, 0xf000, 0);
         Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-        Object_GetById(12)->unknown_5a &= 0xfe;
+        Object_GetById(12)->steering_flags &= ~ACTOR_FACES_MOTION;
         Call3(Engine_ActorWalkToAndWait, 12, 0x15a, 0x107);
         Engine_EventWait(1);
-        Object_GetById(12)->unknown_5a |= 1;
+        Object_GetById(12)->steering_flags |= ACTOR_FACES_MOTION;
         Call3(Engine_ActorSetSpeed, 11, 0x9999, 0x4ccc);
         Call3(Engine_ActorWalkToAndWait, 11, 0x148, 0x107);
         Call3(Engine_ActorWalkToAndWait, 11, 0x148, 252);

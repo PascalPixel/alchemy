@@ -69,7 +69,7 @@ s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
     if (linked_object != NULL) {
         s32 angle_delta;
         u16 angle;
-        object->unknown_5a = object->unknown_5a & 0xFE;
+        object->steering_flags = object->steering_flags & 0xFE;
         angle_delta = (u16)CalculateAngleFromCoordinateDelta(
             linked_object->coordinate_10 - object->coordinate_10,
             linked_object->coordinate_08 - object->coordinate_08);
@@ -866,7 +866,7 @@ void Scene_UnmaskGarcia(void)
             Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
             Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
             obj = Object_GetById(ACTOR_PARTY_LEADER);
-            obj->unknown_5a &= 254;
+            obj->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(ACTOR_GERALD, 244, 0x1de);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
@@ -879,9 +879,9 @@ void Scene_UnmaskGarcia(void)
                 /* FAKEMATCH: a result temporary, not a compound or-assign: the
                  * reference merges the byte into the mask's register, which the
                  * two-address ORR does only when the result is its own object. */
-                u8 flags = obj->unknown_5a | 1;
+                u8 flags = obj->steering_flags | 1;
 
-                obj->unknown_5a = flags;
+                obj->steering_flags = flags;
             }
         } else {
             Engine_EventSetMessage((s32)MsgSoruWontLetGo);
@@ -899,15 +899,15 @@ void Scene_UnmaskGarcia(void)
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     obj = Object_GetById(ACTOR_GERALD);
-    obj->unknown_5a &= 254;
+    obj->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x1e2);
     {
         /* FAKEMATCH: a result temporary, not a compound or-assign: the
          * reference merges the byte into the mask's register, which the
          * two-address ORR does only when the result is its own object. */
-        u8 flags = obj->unknown_5a | 1;
+        u8 flags = obj->steering_flags | 1;
 
-        obj->unknown_5a = flags;
+        obj->steering_flags = flags;
     }
     Actor_WalkToAndWait(ACTOR_GERALD, 0x116, 0x1e0);
     obj->speed = 0x30000;
@@ -970,13 +970,13 @@ void Scene_AlexTakesStars(void)
     UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     rec = Object_GetById(ACTOR_GERALD);
-    rec->unknown_5a &= 254;
+    rec->steering_flags &= ~ACTOR_FACES_MOTION;
     /* FAKEMATCH: the zero is parked here, well before its one store, which
      * keeps it in the register the reference holds it in. */
     none = 0;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Engine_EventWait(30);
-    rec->unknown_5a |= 1;
+    rec->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
     Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgSoruPermitRelieveElemental + 5);
@@ -1066,7 +1066,7 @@ void Scene_AlexTakesStars(void)
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
     Engine_EventWait(20);
     rec = Object_GetById(ACTOR_GERALD);
-    rec->unknown_5a |= 1;
+    rec->steering_flags |= ACTOR_FACES_MOTION;
     rec->speed = 0x30000;
     rec->acceleration = 0x20000;
     Audio_PlayCue(153);

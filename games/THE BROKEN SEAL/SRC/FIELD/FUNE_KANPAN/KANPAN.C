@@ -796,7 +796,7 @@ void FieldScene_RunScene3af_020010a0(void)
             Battle_ResetEffectCounter();
             FieldScene_RunScene3af_020012f0();
             Actor_SetSpeed(20, 0x6666, 0x3333);
-            Object_GetById(20)->unknown_5a &= 254;
+            Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(20, 232, 0x330);
             Engine_EventWait(1);
             bits = 1;
@@ -810,14 +810,14 @@ void FieldScene_RunScene3af_020010a0(void)
             Engine_ActorStartRepeatedMotion(20, 2);
             FieldScene_RunStepThen10(20);
             Actor_SetSpeed(20, 0x13333, 0x9999);
-            Object_GetById(20)->unknown_5a &= 254;
+            Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(20, 244, 0x324);
             Engine_EventWait(1);
             {
                 struct FieldActor *record = Object_GetById(20);
 
-                bits |= record->unknown_5a;
-                record->unknown_5a = bits;
+                bits |= record->steering_flags;
+                record->steering_flags = bits;
             }
             Engine_EventWait(20);
             Actor_SetSpeed(20, 0x33333, 0x19999);
@@ -841,7 +841,7 @@ void FieldScene_RunScene3af_020011c8(void)
             Battle_ResetEffectCounter();
             FieldScene_RunScene3af_020012f0();
             Actor_SetSpeed(20, 0x6666, 0x3333);
-            Object_GetById(20)->unknown_5a &= 254;
+            Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(20, 202, 0x330);
             Engine_EventWait(1);
             bits = 1;
@@ -855,14 +855,14 @@ void FieldScene_RunScene3af_020011c8(void)
             Engine_ActorStartRepeatedMotion(20, 2);
             FieldScene_RunStepThen10(20);
             Actor_SetSpeed(20, 0x13333, 0x9999);
-            Object_GetById(20)->unknown_5a &= 254;
+            Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(20, 192, 0x324);
             Engine_EventWait(1);
             {
                 struct FieldActor *record = Object_GetById(20);
 
-                bits |= record->unknown_5a;
-                record->unknown_5a = bits;
+                bits |= record->steering_flags;
+                record->steering_flags = bits;
             }
             Engine_EventWait(20);
             Actor_SetSpeed(20, 0x33333, 0x19999);

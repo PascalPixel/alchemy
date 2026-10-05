@@ -689,7 +689,7 @@ void FieldScene_RunScene3a4_02000c9c(void)
     Audio_PlayCue(185);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-    Object_GetById(10)->unknown_5a &= 254;
+    Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 0x190, 0x1a8);
     Actor_SetDestination(10, 0x198, 0x1a8);

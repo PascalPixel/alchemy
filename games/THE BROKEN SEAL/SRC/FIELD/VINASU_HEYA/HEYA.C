@@ -874,15 +874,15 @@ void FieldScene_RunLeaderSurpriseApproach(void)
     actor->velocity_y = 0x40000;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x40000, 0x20000);
     if (actor->z.fixed >> 20 <= 54) {
-        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= 254;
+        Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
         z = 210;
     } else {
-        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= 254;
+        Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
         z = 238;
     }
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, actor->x.part.pixel, z << 2);
     Engine_EventWait(1);
-    SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a, 1);
+    SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steering_flags, 1);
     Engine_EventWait(20);
     actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEveryEightFramesB;
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);

@@ -381,7 +381,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     record = Object_GetById(0);
     record->facing = 0;
     Engine_TaskWait(1);
-    Object_GetById(0)->unknown_5a &= ~1;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Call3(Engine_ActorSetDestination, 0, 0x22e, 0x184);
     Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
     Engine_ActorSetAnimation(8, 14);
@@ -389,7 +389,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventWait(40);
     Call3(Engine_ActorWalkToAndWait, 8, 0x244, 0x17e);
     Call3(Engine_ActorFaceDirection, 8, 0x8000, 40);
-    Object_GetById(0)->unknown_5a |= 1;
+    Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_ActorFaceDirection(8, 0xc000, 8);
     Engine_ActorFaceDirection(8, 0, 8);
     Call3(Engine_ActorFaceDirection, 8, 0x4000, 8);

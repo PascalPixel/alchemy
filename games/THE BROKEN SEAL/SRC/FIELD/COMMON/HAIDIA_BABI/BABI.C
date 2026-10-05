@@ -443,10 +443,10 @@ void FieldScene_RunComplexActorSequence(void)
     FieldScene_RunSixStepSequence17e4();
     Engine_ActorStartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(36872, 0, 20);
-    Object_GetById(8)->unknown_5a &= 0xfe;
+    Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(8, 542, 680);
     Engine_EventWait(1);
-    Object_GetById(8)->unknown_5a |= 0x1;
+    Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(8, 2);
     ObjectDispatch_RegisterChildMetadata(Object_GetById(0), 226);
@@ -456,10 +456,10 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_EventWait(10);
     Engine_ActorSetChildValue(0, 0);
     Engine_EventWait(20);
-    Object_GetById(8)->unknown_5a &= 0xfe;
+    Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(8, 534, 688);
     Engine_EventWait(1);
-    Object_GetById(8)->unknown_5a |= 0x1;
+    Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
     Engine_EventWait(20);
     Actor_SetSpeed(8, 98304, 49152);
     Actor_SetSpeed(0, 98304, 49152);

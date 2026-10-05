@@ -286,12 +286,12 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
                 Engine_ActorSetPosition(13, record->x.fixed, record->z.fixed);
             }
             Call3(Engine_ActorFaceActor, 13, 0x4000, 0);
-            Object_GetById(13)->unknown_5a &= 254;
+            Object_GetById(13)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorWalkTo(13, p9, (p11 - 16));
-            Object_GetById(0)->unknown_5a &= 254;
+            Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
             Engine_ActorWalkToAndWait(0, (p9 + 8), (p11 - 40));
             Engine_EventWait(1);
-            Object_GetById(0)->unknown_5a |= 1;
+            Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_ActorSetAnimation(13, 1);
             Engine_ActorFaceDirection(0, 0x4000, 0);
             Engine_EventSetMessage((s32)MsgSuharaSandstorm);

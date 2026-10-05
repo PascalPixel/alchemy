@@ -594,9 +594,9 @@ void FieldScene_RunSecondarySequence(void)
     Engine_EventWait(10);
     /* Clear bit 0 of the actor flag byte, then set it back through a second
      * record accessor. */
-    ((struct FieldActor *)Actor_Get(22))->unknown_5a &= ~1;
+    ((struct FieldActor *)Actor_Get(22))->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkByAndWait(22, 0, -16);
-    ((struct FieldActor *)Actor_Get(22))->unknown_5a |= 1;
+    ((struct FieldActor *)Actor_Get(22))->steering_flags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(22, 0x4100, 0);
     Engine_EventWait(30);
     Engine_EventWait(10);

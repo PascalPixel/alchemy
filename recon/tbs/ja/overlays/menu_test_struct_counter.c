@@ -29,10 +29,10 @@ extern u8 MsgArmorShopWelcome[];
 extern u8 MsgItemShopWelcome[];
 extern u8 *Data_03001f30[];
 extern u8 Data_03001ebc[];
-extern u8 MenuTest_SlotValues[];
-extern u8 MenuTest_CommandTable[];
-extern u8 MenuTest_CommandTableB[];
-extern u8 MenuTest_CommandTableC[];
+extern u8 MenuTest_Events[];
+extern u8 MenuTest_Entrances[];
+extern u8 MenuTest_Exits[];
+extern u8 MenuTest_Placements[];
 extern u8 MenuTest_SlotOffsets[];
 
 u8 Engine_TaskWait();
@@ -104,10 +104,10 @@ static __inline__ void bump_step(s32 amount)
 }
 
 /* The sources call one another across files. */
-u8 *SceneData_GetTable93c8(void);
+u8 *MenuTest_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetTable93f8(void);
-u8 *SceneData_GetTable93fc(void);
+u8 *MenuTest_GetExits(void);
+u8 *MenuTest_GetPlacements(void);
 void SceneState_ApplyBlockC9b(void);
 void SceneState_ApplyBlockCc6(void);
 void SceneState_ApplyBlockCf1(void);
@@ -118,8 +118,8 @@ void SceneState_QueryTwoValues(void);
 void SceneState_ApplyZero(void);
 void CommandTable_NoOpCallback(void);
 void SceneState_SetRecordFlag53(void);
-s32 SceneData_GetTable9564(void);
-void FieldScene_ApplyTable9684ValueToFourSlots(void);
+s32 MenuTest_GetEvents(void);
+void MenuTest_RaisePartyLevelTarget(void);
 void FieldScene_GrantItemListToSlots(void);
 void CommandTable_ConfigureCommandGroups(void);
 void FieldScene_ApplySlotOffsetsAndFlags(void);

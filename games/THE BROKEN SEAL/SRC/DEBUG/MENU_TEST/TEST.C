@@ -49,9 +49,9 @@ extern u8 MsgDebugGotTreasure[];
 /* Party members, in party order. */
 enum { ROBIN, JERARD, IWAN, MEARI };
 
-u8 *SceneData_GetTable93c8(void)
+u8 *MenuTest_GetEntrances(void)
 {
-    return MenuTest_CommandTable;
+    return MenuTest_Entrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -59,14 +59,14 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTable93f8(void)
+u8 *MenuTest_GetExits(void)
 {
-    return MenuTest_CommandTableB;
+    return MenuTest_Exits;
 }
 
-u8 *SceneData_GetTable93fc(void)
+u8 *MenuTest_GetPlacements(void)
 {
-    return MenuTest_CommandTableC;
+    return MenuTest_Placements;
 }
 
 #if EDITION_INTERNATIONAL
@@ -208,12 +208,12 @@ void DebugMenu_GiveItemToParty(void)
 }
 #endif
 
-s32 SceneData_GetTable9564(void)
+s32 MenuTest_GetEvents(void)
 {
-    return (s32)MenuTest_SlotValues;
+    return (s32)MenuTest_Events;
 }
 
-void FieldScene_ApplyTable9684ValueToFourSlots(void)
+void MenuTest_RaisePartyLevelTarget(void)
 {
     s32 *p;
 

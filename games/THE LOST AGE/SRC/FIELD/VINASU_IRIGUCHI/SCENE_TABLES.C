@@ -1,5 +1,19 @@
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
+#include "OBJECT_RUNTIME.H"
+
+struct ObjectRuntime *Object_GetById(u32 id);
+void Battle_WaitMode0(s32 frames);
+void Func_02002a34(s32 a, s32 b);
+void Func_02002a44(void);
+void Func_02002a4c(void);
+void Func_02002a54(void);
+void Func_02002a5c(struct ObjectRuntime *object, s32 mode);
+void Func_02002a64(s32 cue);
+void Field_BeginPaletteTransition(s32 mode);
+void Field_EndActorSpriteEffect(s32 mode);
+void Func_020023a4(void *object);
+void Func_0200260c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
@@ -25,3 +39,28 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 {
     return gScenePlacements;
 }
+
+void Func_02000054(void *object)
+{
+    Func_02002a34(8, 0x4084);
+    Func_02002a44();
+    Func_02002a5c(Object_GetById(5), 2);
+    Battle_WaitMode0(20);
+    Func_020023a4(object);
+    Func_02002a5c(Object_GetById(5), 0);
+    Func_02002a54();
+    Func_02002a4c();
+#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+    Field_EndActorSpriteEffect(8);
+#else
+    Field_BeginPaletteTransition(8);
+#endif
+}
+
+void Func_0200009c(struct ObjectRuntime *object)
+{
+    Func_0200260c(object, object->x, object->y, object->z);
+    if (++object->action % 8 == 0)
+        Func_02002a64(125);
+}
+

@@ -1,66 +1,6 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {r5, lr}
-	movs r1, #128
-	lsls r1, r1, #7
-	adds r1, #132
-	adds r5, r0, #0
-	movs r0, #8
-	bl Func_02002a34
-	bl Func_02002a44
-	movs r0, #5
-	bl Object_GetById
-	movs r1, #2
-	bl Func_02002a5c
-	movs r0, #20
-	bl Battle_WaitMode0
-	adds r0, r5, #0
-	bl Func_020023a4
-	movs r0, #5
-	bl Object_GetById
-	movs r1, #0
-	bl Func_02002a5c
-	bl Func_02002a54
-	bl Func_02002a4c
-	movs r0, #8
-	.ifdef TLA_EDITION_ES
-	bl Field_EndActorSpriteEffect
-	.else
-	.ifdef TLA_EDITION_IT
-	bl Field_EndActorSpriteEffect
-	.else
-	bl Field_BeginPaletteTransition
-	.endif
-	.endif
-	pop {r5, pc}
-	.section .text.x0200809c,"ax",%progbits
-	.global Func_0200009c
-	.thumb_func
-Func_0200009c:
-	push {r5, lr}
-	adds r5, r0, #0
-	ldr r2, [r5, #12]
-	ldr r3, [r5, #16]
-	ldr r1, [r5, #8]
-	adds r5, #100
-	bl Func_0200260c
-	ldrh r2, [r5]
-	movs r3, #224
-	adds r2, #1
-	strh r2, [r5]
-	lsls r3, r3, #11
-	lsls r2, r2, #16
-	ands r3, r2
-	cmp r3, #0
-	bne .L_020080c4
-	movs r0, #125
-	bl Func_02002a64
-.L_020080c4:
-	pop {r5, pc}
+	.section .text.x020080c6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020080c8,"ax",%progbits
 	.global Func_020000c8

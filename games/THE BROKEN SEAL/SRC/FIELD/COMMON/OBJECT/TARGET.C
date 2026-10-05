@@ -120,7 +120,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
     }
 }
 
-s32 Object_ResetAndClearField59(void *obj)
+s32 Object_ClearChildAndCollisionFlags(void *obj)
 {
     ObjectDispatch_SetSingleChildField26Far(obj, 0);
     ((struct ScriptObjectRuntime *)obj)->flags_59 = 0;

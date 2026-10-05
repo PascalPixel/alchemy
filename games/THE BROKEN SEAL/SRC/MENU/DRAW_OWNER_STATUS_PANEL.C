@@ -20,7 +20,7 @@
    page without the window, name and side portrait. */
 
 extern u8 IwramCopyWords[];
-extern u8 Data_080af20c[];
+extern u8 Ui_LvString[];
 extern u8 MsgClassName[], MsgAbilityName[];
 extern u8 MsgPoisonLabel[], MsgVenomLabel[], MsgCurseLabel[], MsgHauntLabel[];
 extern u8 MsgExpLabel[], MsgCannotEquip[], MsgWillLearn[], MsgLearned[];
@@ -95,9 +95,9 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         if (cnt < 2) {
             value = unit->level;
 #if EDITION_INTERNATIONAL
-            UiText_DrawStringAtOffsetFar(Data_080af20c, window, 40, 16);
+            UiText_DrawStringAtOffsetFar(Ui_LvString, window, 40, 16);
 #else
-            UiText_DrawStringInWindowFar(Data_080af20c, window, 40, 16);
+            UiText_DrawStringInWindowFar(Ui_LvString, window, 40, 16);
 #endif
             UiText_DrawNumberInWindowFar(value, 4, window, 56, 16);
         }

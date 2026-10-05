@@ -479,8 +479,8 @@ Item_DefinitionTable:
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
 	.incbin "baserom.gba", 0x00074e58, 0x00002070
-	.global Data_08080ec8
-Data_08080ec8:
+	.global Enemy_Definitions
+Enemy_Definitions:
 	.incbin "baserom.gba", 0x00076ec8, 0x00003624
 	.global Character_DefinitionTable
 Character_DefinitionTable:
@@ -743,8 +743,8 @@ Data_080aedcc:
 	.global Data_080af08c
 Data_080af08c:
 	.incbin "baserom.gba", 0x000a5fac, 0x00000180
-	.global Data_080af20c
-Data_080af20c:
+	.global Ui_LvString
+Ui_LvString:
 	.incbin "baserom.gba", 0x000a612c, 0x00000004
 	.global Ui_HpRowString
 Ui_HpRowString:
@@ -758,8 +758,8 @@ ItemMenu_ArrangeKeysString:
 	.global ItemMenu_EquipmentKeyString
 ItemMenu_EquipmentKeyString:
 	.incbin "baserom.gba", 0x000a6148, 0x00000004
-	.global Data_080af220
-Data_080af220:
+	.global Menu_PointString
+Menu_PointString:
 	.incbin "baserom.gba", 0x000a614c, 0x00000004
 	.global Menu_PlusSignString
 Menu_PlusSignString:
@@ -782,14 +782,14 @@ Menu_ShortcutRColonString:
 	.global Menu_LvString
 Menu_LvString:
 	.incbin "baserom.gba", 0x000a6168, 0x00000004
-	.global Data_080af230
-Data_080af230:
+	.global Menu_SlashString
+Menu_SlashString:
 	.incbin "baserom.gba", 0x000a616c, 0x00000004
-	.global Data_080af234
-Data_080af234:
+	.global Menu_HpString
+Menu_HpString:
 	.incbin "baserom.gba", 0x000a6170, 0x00000004
-	.global Data_080af238
-Data_080af238:
+	.global Menu_PpString
+Menu_PpString:
 	.incbin "baserom.gba", 0x000a6174, 0x00000004
 	.global Data_080af23c
 Data_080af23c:

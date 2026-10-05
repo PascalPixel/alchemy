@@ -53,7 +53,7 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn);
 #define ENEMY_SUFFIX_LAST 25
 #endif
 
-extern const u8 Data_08080ec8[];
+extern const struct EnemyDefinition Enemy_Definitions[];
 extern u8 MsgEnemyName;
 
 void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
@@ -92,7 +92,7 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     ClearWords(Iwram_ClearWords, unit, BATTLE_UNIT_SIZE);
     if (index > 164)
         index = 0;
-    enemy = &((const struct EnemyDefinition *)Data_08080ec8)[index];
+    enemy = &Enemy_Definitions[index];
     unit->level = enemy->level;
     unit->base_hp = enemy->hp;
     unit->hp = enemy->hp;

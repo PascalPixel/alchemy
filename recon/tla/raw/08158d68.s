@@ -49,6 +49,6 @@ Func_08158d68:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_08158dc0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08158dc4:
 	.4byte gCameraSceneParameters

@@ -32,11 +32,11 @@ UiText_DrawQuantity:
 	.global Func_08038128
 	.thumb_func
 Func_08038128:
-	overlay_veneer Func_08042690
+	overlay_veneer UiWindow_CreateWithLayoutBounds
 	.global UiWindow_DrawPartyStatusContentsFar
 	.thumb_func
 UiWindow_DrawPartyStatusContentsFar:
-	overlay_veneer Func_0804297c
+	overlay_veneer UiWindow_DrawPartyStatusContents
 	.global Func_08038138
 	.thumb_func
 Func_08038138:
@@ -44,7 +44,7 @@ Func_08038138:
 	.global UiWork_FinalizePendingCoreFar
 	.thumb_func
 UiWork_FinalizePendingCoreFar:
-	overlay_veneer Func_0803ce1c
+	overlay_veneer UiWork_FinalizePendingCore
 	.global Func_08038148
 	.thumb_func
 Func_08038148:

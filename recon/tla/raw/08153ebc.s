@@ -66,7 +66,7 @@ Func_08153ebc:
 .L_08153f3c:
 	.4byte gMapCellBuffer
 .L_08153f40:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08153f44:
 	.4byte Func_08143000
 .L_08153f48:
@@ -896,7 +896,7 @@ Func_08153ebc:
 	ldr r3, .L_08154650
 	strh r2, [r3, #4]
 	bl Func_0814cca8
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -964,7 +964,7 @@ Func_08153ebc:
 .L_0815464c:
 	.4byte Func_0813baec
 .L_08154650:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08154654:
 	.4byte 0x05000200
 .L_08154658:

@@ -2,6 +2,9 @@
  * Draft: ShopCursor_MoveTowardTarget, ☀️'s SHOP.C body. Score 2: movs r2,
  * #128 (the 0x1ff mask) is issued before reloading sprite->x where the
  * listing issues it after. devsearch (300 iterations) found nothing.
+ * With -mtune=arm9tdmi (2026-10-05) still score 2, the same swap. A barrier
+ * before the packed write leaves it; reading the reload into a temporary
+ * before a barrier lets the compiler reuse the stored value (score 53).
  */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"

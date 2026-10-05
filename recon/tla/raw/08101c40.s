@@ -29,7 +29,7 @@ Func_08101c40:
 	adds r0, r5, #0
 	movs r3, #6
 	str r4, [sp, #4]
-	bl Func_08101c18
+	bl UiPanel_SetRectHighlight
 	add sp, #8
 	pop {r5, pc}
 	.2byte 0x0000

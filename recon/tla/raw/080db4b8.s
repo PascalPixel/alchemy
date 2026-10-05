@@ -46,7 +46,7 @@ BattleFx_Run:
 .L_080db50a:
 	cmp r2, #6
 	bne .L_080db514
-	bl Func_080de688
+	bl BattleFx_RunOrbitingParticles
 	b .L_080db668
 .L_080db514:
 	cmp r2, #3

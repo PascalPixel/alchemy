@@ -6,8 +6,8 @@
 #include "IO_REG.H"
 #include "FIXED_MATH.H"
 
-/* Lost Age source currently covers rewind, push and the two matrix copies.
-   Its reset, pop and identity helpers remain raw until their C matches.
+/* Lost Age source currently covers rewind, push, pop and the two matrix copies.
+   Its reset and identity helpers remain raw until their C matches.
    These game branches describe source presence; both games retain their
    ordinary compiler and options, and each native bank keeps its order. */
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
@@ -60,9 +60,6 @@ void Graphics_LoadTransferWork(const void *source)
     Dma_Set(source, gTransform, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
 }
 
-#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
 void Graphics_RestoreTransferWork(void)
 {
     if (gTransformStackDepth > 0) {
@@ -71,6 +68,10 @@ void Graphics_RestoreTransferWork(void)
         Dma_Set(gTransformStackTop, gTransform, DMA_ENABLE32 | DMA_32BIT | 12, REG_DMA3);
     }
 }
+
+#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
 
 void SceneTransform_ResetMatrix(void)
 {

@@ -6,8 +6,7 @@ SECTIONS
     {
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/SCENE_TABLES.o"(.text)
-        "*/resource_64d_overlay.o"(.text.x02008054)
-        "*/resource_64d_overlay.o"(.text.x0200809c)
+        "*/resource_64d_overlay.o"(.text.x020080c6)
         "*/resource_64d_overlay.o"(.text.x020080c8)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/SCENE_EVENTS.o"(.text)
         "*/resource_64d_overlay.o"(.text.x02008128)
@@ -23,7 +22,7 @@ SECTIONS
         "*/resource_64d_overlay.o"(.text.x0200a58c)
         "*/resource_64d_overlay.o"(.text.x0200a60c)
         "*/resource_64d_overlay.o"(.text.x0200a6f4)
-        "*/resource_64d_overlay.o"(.text.x0200a7b0)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/SPARKS.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/IMPORT.o"(.text)
         "*/resource_64d_overlay.o"(.rodata.x0200aa6c)
     }

@@ -433,7 +433,7 @@ Func_0815e9f4:
 .L_0815ed7c:
 	.4byte Func_08143488
 .L_0815ed80:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815ed84:
 	.4byte Data_08197424
 .L_0815ed88:
@@ -742,7 +742,7 @@ Func_0815e9f4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0815efe8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0815efec:
 	.4byte gMapCellBuffer
 .L_0815eff0:

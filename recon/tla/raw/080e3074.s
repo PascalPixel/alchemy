@@ -42,7 +42,7 @@ Func_080e3074:
 	movs r6, #0
 	ldr r0, [r1, #16]
 	movs r1, #0
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	ldr r3, .L_080e342c
 	mov r2, r10
 	str r3, [r2, #108]

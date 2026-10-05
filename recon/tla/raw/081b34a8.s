@@ -287,7 +287,7 @@ Func_081b34a8:
 .L_081b36d4:
 	.4byte 0x00003f44
 .L_081b36d8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081b36dc:
 	strh r3, [r2]
 	ldr r3, .L_081b3714
@@ -785,7 +785,7 @@ Func_081b34a8:
 	ldr r3, [r2]
 	cmp r3, #15
 	bgt .L_081b3ad8
-	bl Func_081b2150
+	bl Palette_DarkenSceneStep
 	ldr r7, [sp, #16]
 	ldr r3, [r7]
 .L_081b3ad8:

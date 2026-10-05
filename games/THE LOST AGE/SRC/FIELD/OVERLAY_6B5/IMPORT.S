@@ -97,7 +97,7 @@ GameFlag_SetByte:
 	.global Func_0200197c
 	.thumb_func
 Func_0200197c:
-	overlay_veneer Func_08020120
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Func_02001984
 	.thumb_func
 Func_02001984:

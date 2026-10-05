@@ -41,4 +41,4 @@ Func_0813baec:
 .L_0813bb32:
 	pop {r5, pc}
 .L_0813bb34:
-	.4byte Data_03001120
+	.4byte gBgScroll

@@ -43,7 +43,7 @@ Func_0814cca8:
 .L_0814ccf4:
 	.4byte 0x00000001
 .L_0814ccf8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0814ccfc:
 	.4byte IwramFillWords
 .L_0814cd00:

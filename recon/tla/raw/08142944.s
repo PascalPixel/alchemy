@@ -840,7 +840,7 @@ Func_08142944:
 .L_08142ff0:
 	.4byte Func_08143000
 .L_08142ff4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08142ff8:
 	.4byte Func_08143488
 .L_08142ffc:

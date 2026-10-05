@@ -106,7 +106,7 @@ Func_080d3378:
 .L_080d3450:
 	.4byte 0xffffe667
 .L_080d3454:
-	.4byte Func_080d333c
+	.4byte Object_DriftAndDamp
 .L_080d3458:
 	pop {r3}
 	mov r8, r3

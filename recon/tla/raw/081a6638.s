@@ -77,7 +77,7 @@ Func_081a6638:
 .L_081a66bc:
 	.4byte 0x00000000
 .L_081a66c0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a66c4:
 	movs r1, #3
 .L_081a66c6:
@@ -89,28 +89,28 @@ Func_081a6638:
 	bge .L_081a66c6
 	movs r0, #0
 	movs r1, #0
-	bl Func_081a81f4
+	bl Graphics_TransformSmallPalette
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	ldr r3, .L_081a6718
 	movs r2, #128
 	lsls r2, r2, #19
 	movs r0, #40
 	strh r3, [r2]
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 	movs r0, #150
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a671c
 	movs r0, #2
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #40
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 	movs r0, #60
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	beq .L_081a6720
 	b .L_081a671c

@@ -60,7 +60,7 @@ Func_0813fd84:
 .L_0813fdf8:
 	.4byte Func_08143000
 .L_0813fdfc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813fe00:
 	ldrh r3, [r3, #4]
 	str r3, [sp, #104]
@@ -222,7 +222,7 @@ Func_0813fd84:
 .L_0813ff48:
 	.4byte 0x00000071
 .L_0813ff4c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0813ff50:
 	.4byte 0x00000134
 .L_0813ff54:
@@ -1276,7 +1276,7 @@ Func_0813fd84:
 .L_08140798:
 	.4byte Data_081976e0
 .L_0814079c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081407a0:
 	movs r2, #238
 	lsls r2, r2, #7
@@ -1452,7 +1452,7 @@ Func_0813fd84:
 .L_081408f8:
 	.4byte 0x00000786
 .L_081408fc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08140900:
 	.4byte Data_02012000
 .L_08140904:
@@ -2444,7 +2444,7 @@ Func_0813fd84:
 .L_081410a4:
 	.4byte 0xffe00000
 .L_081410a8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081410ac:
 	.4byte 0x00ffffff
 .L_081410b0:
@@ -2526,7 +2526,7 @@ Func_0813fd84:
 	mov r3, r10
 	cmp r3, #18
 	bne .L_0814113e
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -2597,7 +2597,7 @@ Func_0813fd84:
 .L_081411dc:
 	.4byte 0x00001010
 .L_081411e0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081411e4:
 	.4byte gCameraSceneParameters
 .L_081411e8:
@@ -2984,7 +2984,7 @@ Func_0813fd84:
 	beq .L_081414da
 	b .L_08141248
 .L_081414da:
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	ldr r0, .L_08141538
 	bl Scheduler_RemoveCallback
 	movs r0, #104

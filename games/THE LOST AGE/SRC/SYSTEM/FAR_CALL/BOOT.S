@@ -68,7 +68,7 @@ Func_08000130:
 	.global Func_08000138
 	.thumb_func
 Func_08000138:
-	overlay_veneer Func_08014c6c
+	overlay_veneer Runtime_InitializeHeap
 	.global Func_08000140
 	.thumb_func
 Func_08000140:
@@ -160,11 +160,11 @@ Func_080001e8:
 	.global Func_080001f0
 	.thumb_func
 Func_080001f0:
-	overlay_veneer Func_08014bac
+	overlay_veneer Ui_LoadWindowGraphics
 	.global Func_080001f8
 	.thumb_func
 Func_080001f8:
-	overlay_veneer Func_08014c4c
+	overlay_veneer PaletteDma_LoadBlock
 	.global Func_08000200
 	.thumb_func
 Func_08000200:
@@ -180,7 +180,7 @@ Func_08000210:
 	.global Func_08000218
 	.thumb_func
 Func_08000218:
-	overlay_veneer Func_08014ea8
+	overlay_veneer Graphics_RestoreTransferWork
 	.global Func_08000220
 	.thumb_func
 Func_08000220:

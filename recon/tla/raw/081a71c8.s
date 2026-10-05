@@ -46,9 +46,9 @@ Func_081a71c8:
 .L_081a722c:
 	movs r0, #0
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #10
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 	movs r0, #10
 	bl WaitFrames
 	cmp r5, #0
@@ -75,9 +75,9 @@ Func_081a71c8:
 	movs r2, #128
 	lsls r2, r2, #19
 	strh r3, [r2]
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
-	bl Func_081a814c
+	bl TitlePalette_InitializeBuffers
 	ldr r2, .L_081a728c
 	ldrb r3, [r6]
 	movs r0, #1
@@ -92,7 +92,7 @@ Func_081a71c8:
 .L_081a7290:
 	.4byte gRenderOamEnabled
 .L_081a7294:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a7298:
 	pop {r5, r6, pc}
 	.2byte 0x0000

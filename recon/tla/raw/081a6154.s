@@ -148,7 +148,7 @@ Func_081a6154:
 	bge .L_081a624e
 	cmp r6, #0
 	bne .L_081a6274
-	bl Func_081a814c
+	bl TitlePalette_InitializeBuffers
 	b .L_081a6274
 .L_081a6264:
 	.4byte 0x00001e05
@@ -157,15 +157,15 @@ Func_081a6154:
 .L_081a626c:
 	.4byte 0x00000a0b
 .L_081a6270:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081a6274:
 	movs r0, #2
 	movs r1, #0
-	bl Func_081a81f4
+	bl Graphics_TransformSmallPalette
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	ldr r3, .L_081a629c
 	movs r2, #128
 	lsls r2, r2, #19
@@ -173,14 +173,14 @@ Func_081a6154:
 	cmp r6, #0
 	bne .L_081a62a0
 	movs r0, #1
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 	b .L_081a62a6
 	.2byte 0x0000
 .L_081a629c:
 	.4byte 0x00000600
 .L_081a62a0:
 	movs r0, #10
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 .L_081a62a6:
 	cmp r6, #0
 	beq .L_081a62ac
@@ -200,7 +200,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a62d2
 	b .L_081a6562
@@ -222,7 +222,7 @@ Func_081a6154:
 	adds r0, r5, #0
 	mov r11, r2
 	mov r8, r3
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a62fe
 	b .L_081a6562
@@ -240,7 +240,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a6322
 	b .L_081a6562
@@ -259,7 +259,7 @@ Func_081a6154:
 	str r6, [r5, #32]
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a6348
 	b .L_081a6562
@@ -276,7 +276,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a636a
 	b .L_081a6562
@@ -293,7 +293,7 @@ Func_081a6154:
 	str r7, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a638c
 	b .L_081a6562
@@ -311,7 +311,7 @@ Func_081a6154:
 	str r6, [r5, #32]
 	adds r0, r5, #0
 	mov r10, r4
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a63b0
 	b .L_081a6562
@@ -330,7 +330,7 @@ Func_081a6154:
 	str r6, [r5, #32]
 	adds r0, r5, #0
 	mov r9, r4
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a63d6
 	b .L_081a6562
@@ -348,16 +348,16 @@ Func_081a6154:
 	str r7, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a63fa
 	b .L_081a6562
 .L_081a63fa:
 	movs r0, #2
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #60
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 	mov r0, r11
 	movs r3, #60
 	mov r4, r8
@@ -392,7 +392,7 @@ Func_081a6154:
 	str r7, [r5, #32]
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a6452
 	b .L_081a6562
@@ -412,7 +412,7 @@ Func_081a6154:
 	adds r0, r5, #0
 	mov r11, r4
 	mov r10, r2
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r3, #10
@@ -430,7 +430,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r7, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	mov r2, r9
@@ -446,7 +446,7 @@ Func_081a6154:
 	str r7, [r5, #28]
 	str r7, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	mov r0, r8
@@ -463,7 +463,7 @@ Func_081a6154:
 	str r7, [r5, #32]
 	adds r0, r5, #0
 	mov r10, r2
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	mov r4, r8
@@ -479,7 +479,7 @@ Func_081a6154:
 	str r7, [r5, #28]
 	str r7, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r4, #2
@@ -499,14 +499,14 @@ Func_081a6154:
 	adds r0, r5, #0
 	mov r11, r2
 	mov r9, r4
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r0, #2
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #60
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 	mov r3, r8
 	mov r0, r10
 	mov r2, r11
@@ -522,7 +522,7 @@ Func_081a6154:
 	str r7, [r5, #32]
 .L_081a6558:
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	bne .L_081a6624
 .L_081a6562:
@@ -544,7 +544,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r3, #16
@@ -560,7 +560,7 @@ Func_081a6154:
 	str r6, [r5, #28]
 	str r6, [r5, #32]
 	adds r0, r5, #0
-	bl Func_081a60c0
+	bl Title_RunScrollStep
 	cmp r0, #0
 	beq .L_081a6562
 	movs r2, #128
@@ -585,7 +585,7 @@ Func_081a6154:
 	adds r3, #8
 	strh r3, [r6, #10]
 	adds r7, #1
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a6562
 	ldrh r3, [r6, #6]
@@ -598,7 +598,7 @@ Func_081a6154:
 	adds r3, #8
 	strh r3, [r6, #10]
 	adds r7, #1
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	bne .L_081a6562
 	adds r5, #1
@@ -608,11 +608,11 @@ Func_081a6154:
 	lsls r0, r0, #7
 	adds r0, #255
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #1
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 	movs r0, #2
-	bl Func_081a6094
+	bl Title_WaitFramesOrPress
 	cmp r0, #0
 	beq .L_081a6624
 	bl Blend_WaitForTransition
@@ -628,4 +628,4 @@ Func_081a6154:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_081a6634:
-	.4byte Data_03001120
+	.4byte gBgScroll

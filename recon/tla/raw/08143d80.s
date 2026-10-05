@@ -60,7 +60,7 @@ Func_08143d80:
 .L_08143dec:
 	.4byte 0x000000ff
 .L_08143df0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08143df4:
 	.4byte IwramClearWords
 .L_08143df8:

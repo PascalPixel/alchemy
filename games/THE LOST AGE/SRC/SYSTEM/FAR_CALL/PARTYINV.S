@@ -16,7 +16,7 @@ Equipment_GetUnleashRateBonusFar:
 	.global Func_080ad2c8
 	.thumb_func
 Func_080ad2c8:
-	overlay_veneer Func_080add74
+	overlay_veneer Runtime_GetBuildStampTime
 	.global PartyInventory_CountFreeSlotsFar
 	.thumb_func
 PartyInventory_CountFreeSlotsFar:

@@ -82,6 +82,8 @@ void DisplayBlend_StartScript(u16 *script)
     if (first != 0xffff) {
         state->script = script;
         state->cursor = script;
+        /* FAKEMATCH: the ARM9 scheduling would clear the delay and pause before storing the pointers. */
+        __asm__("");
         state->delay = 0;
         state->paused = 0;
         started = 1;

@@ -46,7 +46,7 @@ Func_08044dc8:
 	movs r1, #4
 	bl UiWork_PushValueSlot
 	ldr r0, .L_08044f3c
-	bl Func_0803cf60
+	bl UiText_BuildRenderEntriesMode1
 	mov r10, r0
 	mov r1, r10
 	movs r2, #0
@@ -94,7 +94,7 @@ Func_08044dc8:
 	movs r1, #4
 	bl UiWork_PushValueSlot
 	ldr r0, .L_08044f44
-	bl Func_0803cf60
+	bl UiText_BuildRenderEntriesMode1
 	mov r10, r0
 	adds r0, r7, #0
 	bl SummonDefinition_Get

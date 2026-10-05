@@ -1975,7 +1975,7 @@ Func_08173aac:
 	ldr r1, [sp, #20]
 	movs r2, #4
 	bl Func_08196958
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	mov r0, r10
 	bl Func_08196a7c
 	movs r4, #1
@@ -3669,7 +3669,7 @@ Func_08173aac:
 	bl Func_08196958
 	mov r0, r10
 	bl Func_08196a7c
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 .L_081757be:
 	movs r1, #1
 	add r8, r1

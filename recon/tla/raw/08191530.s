@@ -61,7 +61,7 @@ Func_08191530:
 .L_081915a0:
 	.4byte 0x00000787
 .L_081915a4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081915a8:
 	lsls r2, r2, #7
 	add r2, r10
@@ -521,7 +521,7 @@ Func_08191530:
 .L_08191940:
 	.4byte 0x00000130
 .L_08191944:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08191948:
 	.4byte gIoWriteQueue
 .L_0819194c:

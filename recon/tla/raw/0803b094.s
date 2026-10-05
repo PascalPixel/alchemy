@@ -78,7 +78,7 @@ UiText_BuildRenderEntries:
 	mov r0, r10
 	ldr r1, [sp, #48]
 	mov r9, r3
-	bl Func_0803d178
+	bl UiText_LookupMessage
 	mov r3, sp
 	adds r3, #84
 	str r3, [sp, #12]

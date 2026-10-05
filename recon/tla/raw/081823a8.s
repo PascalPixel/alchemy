@@ -414,7 +414,7 @@ Func_081823a8:
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r2, [r5, #8]
 	cmp r2, #249
 	bgt .L_081826e8

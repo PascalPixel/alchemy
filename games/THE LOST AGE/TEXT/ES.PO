@@ -19803,7 +19803,7 @@ msgctxt "message"
 msgid "04948"
 msgstr "Error de comunicación"
 
-msgctxt "message"
+msgctxt "MsgIntroCrawl"
 msgid "04949"
 msgstr "Siglos atrás, o eso cuentan"
 

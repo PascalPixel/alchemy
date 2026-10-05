@@ -105,7 +105,7 @@ Object_SetPositionAndResetMotion:
 	.global Func_020021e4
 	.thumb_func
 Func_020021e4:
-	overlay_veneer Func_08020120
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Func_020021ec
 	.thumb_func
 Func_020021ec:

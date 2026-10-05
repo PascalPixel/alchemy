@@ -70,7 +70,7 @@ Func_081843fc:
 .L_08184488:
 	.4byte 0x00000000
 .L_0818448c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08184490:
 	.4byte Func_08143000
 .L_08184494:

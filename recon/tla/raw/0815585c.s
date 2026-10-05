@@ -600,7 +600,7 @@ Func_0815585c:
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r2, [r5, #8]
 	cmp r2, #249
 	bgt .L_08155d04

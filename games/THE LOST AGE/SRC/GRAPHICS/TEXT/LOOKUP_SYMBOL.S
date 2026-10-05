@@ -45,3 +45,5 @@ AlchemyUncreditedEnd_0803857c:
 	stm	r0, {r1, r2, r3}
 	bx	lr
 	.4byte	Text_MessageBanks
+	.global Text_LookupSymbolCodeSize
+	.set Text_LookupSymbolCodeSize, . - Text_LookupSymbolCode

@@ -284,7 +284,7 @@ Func_08146638:
 	str r3, [r5, #12]
 	ldr r3, [r6, #4]
 	str r3, [r5, #16]
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r4, [sp, #12]
 	adds r5, #28
 	adds r4, #1

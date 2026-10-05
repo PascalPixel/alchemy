@@ -67,8 +67,8 @@ Func_080dc7e8:
 	asrs r3, r3, #24
 	cmp r3, #0
 	bne .L_080dc942
-	bl Func_080e137c
-	bl Func_080e1650
+	bl BattleFx_WaitForArcGroups
+	bl BattleFx_EndArcEffect
 	movs r3, #197
 	lsls r3, r3, #1
 	add r3, r11

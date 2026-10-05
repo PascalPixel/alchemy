@@ -55,7 +55,7 @@ Func_080f9644:
 	add r2, r9
 	movs r3, #0
 	strh r3, [r2]
-	bl Func_080fbe48
+	bl ItemMenu_SetMsgWin3
 	bl ItemMenu_SetItemWin3
 	movs r3, #134
 	lsls r3, r3, #2
@@ -103,7 +103,7 @@ Func_080f9644:
 	bne .L_080f9732
 	bl .L_080fa280
 .L_080f9732:
-	bl Func_080fbe48
+	bl ItemMenu_SetMsgWin3
 	bl ItemMenu_SetItemWin3
 	movs r3, #134
 	lsls r3, r3, #2
@@ -304,7 +304,7 @@ Func_080f9644:
 	mov r5, r9
 	adds r5, #240
 	bl ItemMenu_HideAllIcons
-	bl Func_080fbddc
+	bl ItemMenu_SetMsgWin5
 	bl ItemMenu_SetItemWin5
 	ldr r0, [r5]
 	bl RenderOutput_RedrawSavedRectFar
@@ -399,7 +399,7 @@ Func_080f9644:
 .L_080f99a4:
 	mov r5, r9
 	adds r5, #240
-	bl Func_080fbddc
+	bl ItemMenu_SetMsgWin5
 	bl ItemMenu_SetItemWin5
 	ldr r0, [r5]
 	bl RenderOutput_RedrawSavedRectFar
@@ -908,7 +908,7 @@ Func_080f9644:
 .L_080f9dd6:
 	movs r3, #0
 	mov r10, r3
-	bl Func_080fbe48
+	bl ItemMenu_SetMsgWin3
 	bl ItemMenu_SetItemWin3
 	ldr r1, .L_080f9e68
 	movs r0, #0
@@ -1175,7 +1175,7 @@ Func_080f9644:
 	bl Owner_RecalculateStatsFar
 	ldrb r0, [r7]
 	bl Owner_RecalculateStatsFar
-	bl Func_080fbddc
+	bl ItemMenu_SetMsgWin5
 	mov r3, r9
 	adds r3, #240
 	ldr r0, [r3]

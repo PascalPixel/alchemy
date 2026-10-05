@@ -680,7 +680,7 @@ Func_081039fc:
 	mov r0, r9
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #8
 	movs r2, #0
 	movs r3, #1
@@ -755,7 +755,7 @@ Func_081039fc:
 	mov r0, r9
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #8
 	movs r2, #0
 	movs r3, #1
@@ -1175,7 +1175,7 @@ Func_081039fc:
 	ldr r0, [sp, #100]
 	movs r1, #2
 	str r2, [sp, #96]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	str r0, [sp, #100]
 .L_08104386:
 	ldr r3, [sp, #100]
@@ -1272,7 +1272,7 @@ Func_081039fc:
 	str r0, [r5]
 	ldr r2, [sp, #28]
 	ldr r1, [r3, r2]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	str r0, [r5]
 	movs r0, #111
 	bl Audio_PlayCue
@@ -1303,7 +1303,7 @@ Func_081039fc:
 	ldr r2, [sp, #28]
 	str r1, [sp, #96]
 	ldr r1, [r3, r2]
-	bl Func_08100e28
+	bl Menu_GetModuloOfSum
 	str r0, [r5]
 .L_08104488:
 	movs r0, #1

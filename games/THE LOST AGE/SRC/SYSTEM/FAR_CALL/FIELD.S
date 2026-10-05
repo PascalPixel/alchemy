@@ -60,19 +60,51 @@ Func_080c87c0:
 	.global Func_080c87c8
 	.thumb_func
 Func_080c87c8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_StepVector2
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_StepVector2
+.else
 	overlay_veneer Func_080eb01c
+.endif
+.endif
 	.global Func_080c87d0
 	.thumb_func
 Func_080c87d0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_StepVector3
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_StepVector3
+.else
 	overlay_veneer Func_080eb298
+.endif
+.endif
 	.global Func_080c87d8
 	.thumb_func
 Func_080c87d8:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080eb2c8
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080eb2c8
+.else
+	overlay_veneer BattleFx_StepVector2
+.endif
+.endif
 	.global Func_080c87e0
 	.thumb_func
 Func_080c87e0:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080eb2d0
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080eb2d0
+.else
+	overlay_veneer BattleFx_StepVector3
+.endif
+.endif
 	.global Func_080c87e8
 	.thumb_func
 Func_080c87e8:
@@ -98,18 +130,26 @@ Func_080c87f0:
 	.global Func_080c87f8
 	.thumb_func
 Func_080c87f8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_StartArcEffect
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_StartArcEffect
+.else
 	overlay_veneer Func_080dc1b0
+.endif
+.endif
 	.ifdef TLA_EDITION_ES
 	.global Field_EndActorSpriteEffectFar
 	.thumb_func
 Field_EndActorSpriteEffectFar:
-	overlay_veneer Field_EndActorSpriteEffect
+	overlay_veneer BattleFx_EndArcEffect
 	.else
 	.ifdef TLA_EDITION_IT
 	.global Field_EndActorSpriteEffectFar
 	.thumb_func
 Field_EndActorSpriteEffectFar:
-	overlay_veneer Field_EndActorSpriteEffect
+	overlay_veneer BattleFx_EndArcEffect
 	.else
 	.global Field_BeginPaletteTransitionFar
 	.thumb_func
@@ -120,16 +160,48 @@ Field_BeginPaletteTransitionFar:
 	.global Func_080c8808
 	.thumb_func
 Func_080c8808:
-	overlay_veneer Func_080e15fc
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_WaitForArcGroups
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_WaitForArcGroups
+.else
+	overlay_veneer BattleFx_StartArcEffect
+.endif
+.endif
 	.global Func_080c8810
 	.thumb_func
 Func_080c8810:
-	overlay_veneer Func_080e1650
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetObjectTickMode
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetObjectTickMode
+.else
+	overlay_veneer BattleFx_EndArcEffect
+.endif
+.endif
 	.global Func_080c8818
 	.thumb_func
 Func_080c8818:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080e137c
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080e137c
+.else
+	overlay_veneer BattleFx_WaitForArcGroups
+.endif
+.endif
 	.global Func_080c8820
 	.thumb_func
 Func_080c8820:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080e1420
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080e1420
+.else
+	overlay_veneer BattleFx_SetObjectTickMode
+.endif
+.endif

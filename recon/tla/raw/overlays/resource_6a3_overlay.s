@@ -208,7 +208,7 @@ Func_020000c4:
 .L_020081e8:
 	.4byte 0x06002000
 .L_020081ec:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_020081f0:
 	movs r0, #1
 	bl Func_0200492c
@@ -396,7 +396,7 @@ Func_020000c4:
 .L_02008388:
 	.4byte gPartyState
 .L_0200838c:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_02008390:
 	.4byte gCpuLoadDisplayEnabled
 .L_02008394:

@@ -157,7 +157,7 @@ Game_ResetForNewGame:
 	movs r1, #0
 	movs r2, #0
 	bl Runtime_SetIrqHandler
-	bl Func_08014c6c
+	bl Runtime_InitializeHeap
 	bl Func_08014b70
 	b .L_080c9a98
 	.2byte 0x0000
@@ -292,7 +292,7 @@ Game_ResetForNewGame:
 	movs r3, #0
 	ldrsh r0, [r2, r3]
 	bl Func_080c9c38
-	bl Func_080ca1bc
+	bl Scene_ResolveInteractionResult
 	adds r0, r5, #0
 	bl GameFlag_Test
 	cmp r0, #0

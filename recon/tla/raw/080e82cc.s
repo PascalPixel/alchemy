@@ -115,7 +115,7 @@ Func_080e82cc:
 .L_080e83b0:
 	.4byte gCpuLoadDisplayEnabled
 .L_080e83b4:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080e83b8:
 	.4byte IwramFillWords
 .L_080e83bc:

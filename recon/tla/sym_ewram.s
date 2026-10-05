@@ -103,11 +103,11 @@ ResourceTableEntries:
 	.global Data_02003860
 Data_02003860:
 	.space 0x00000010
-	.global Data_02003870
-Data_02003870:
+	.global gSerialPeerPayloads
+gSerialPeerPayloads:
 	.space 0x00000004
-	.global Data_02003874
-Data_02003874:
+	.global gLinkPeerSignatures
+gLinkPeerSignatures:
 	.space 0x0000005c
 	.global gSerialSendSource
 gSerialSendSource:
@@ -265,17 +265,17 @@ gFlashSavedIme:
 	.global Data_02007500
 Data_02007500:
 	.space 0x00000004
-	.global Data_02007504
-Data_02007504:
+	.global DisplayScroll_Position
+DisplayScroll_Position:
 	.space 0x00000004
-	.global Data_02007508
-Data_02007508:
+	.global DisplayScroll_Busy
+DisplayScroll_Busy:
 	.space 0x00000004
-	.global Data_0200750c
-Data_0200750c:
+	.global DisplayScroll_LastPosition
+DisplayScroll_LastPosition:
 	.space 0x00000004
-	.global Data_02007510
-Data_02007510:
+	.global DisplayScroll_Objects
+DisplayScroll_Objects:
 	.space 0x00000004
 	.global Data_02007514
 Data_02007514:
@@ -793,8 +793,8 @@ Data_0202e004:
 	.global Data_0202e008
 Data_0202e008:
 	.space 0x00001ff8
-	.global Data_02030000
-Data_02030000:
+	.global gEwramHeap
+gEwramHeap:
 	.space 0x00008000
 	.global Data_02038000
 Data_02038000:

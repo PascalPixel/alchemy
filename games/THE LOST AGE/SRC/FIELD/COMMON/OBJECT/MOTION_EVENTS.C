@@ -53,3 +53,21 @@ void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant)
     ObjectMotion_SetVariantCallback(object_id, variant);
     Object_RefreshSelectorById(object_id);
 }
+
+/* Moves an object by its two drift values, lifts it by 1/64 of a unit and
+   damps the drifts by 1/18 and 1/16. */
+void Object_DriftAndDamp(struct ObjectRuntime *object)
+{
+    s32 drift_x;
+    s32 drift_z;
+    s32 pos;
+
+    drift_x = object->speed_limit;
+    pos = object->x;
+    drift_z = object->acceleration;
+    object->x = pos + drift_x;
+    object->z += drift_z;
+    object->y += 0x400;
+    object->speed_limit = drift_x - drift_x / 18;
+    object->acceleration = drift_z - drift_z / 16;
+}

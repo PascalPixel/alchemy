@@ -95,7 +95,7 @@ Func_08192c9c:
 .L_08192d54:
 	.4byte Data_02011f40
 .L_08192d58:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08192d5c:
 	.4byte Func_08143000
 .L_08192d60:
@@ -363,7 +363,7 @@ Func_08192c9c:
 	adds r6, #240
 	ldr r0, [r3, r6]
 	bl Func_0814cc4c
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	ldr r3, [r5]
 	movs r0, #0
 	ldr r3, [r3, r6]
@@ -1679,7 +1679,7 @@ Func_08192c9c:
 	adds r6, #240
 	ldr r0, [r3, r6]
 	bl Func_0814cc4c
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	ldr r0, [sp, #64]
 	movs r5, #0
 	ldr r3, [r0]
@@ -2892,7 +2892,7 @@ Func_08192c9c:
 .L_081942e4:
 	.4byte Data_08199f40
 .L_081942e8:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081942ec:
 	ldr r5, [sp, #152]
 	movs r6, #166
@@ -5366,7 +5366,7 @@ Func_08192c9c:
 .L_0819560c:
 	.4byte IwramMulQ16
 .L_08195610:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08195614:
 	ldr r2, .L_08195664
 	movs r3, #1
@@ -5414,7 +5414,7 @@ Func_08192c9c:
 .L_08195660:
 	.4byte 0x0000001f
 .L_08195664:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08195668:
 	lsls r3, r4, #10
 	lsls r2, r1, #5
@@ -5501,7 +5501,7 @@ Func_08192c9c:
 .L_08195710:
 	.4byte IwramFillWords
 .L_08195714:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08195718:
 	ldr r4, [sp, #180]
 	mov r2, r10

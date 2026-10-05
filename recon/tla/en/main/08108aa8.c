@@ -3,6 +3,9 @@
  * target_y store and the anchor reload swap places. The rest is load
  * scheduling: the native issues loads (and fills their delay) earlier than
  * agscc at -mcpu=arm7tdmi; with -mtune=arm9tdmi added it scores 2.
+ * With -mtune=arm9tdmi (2026-10-05) score 2: the anchor reload comes before
+ * the cursor's y store where the listing stores first. A barrier after the
+ * store gives 6; loading the anchor before the store changes nothing.
  */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"

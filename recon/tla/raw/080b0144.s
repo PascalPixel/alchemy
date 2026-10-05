@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080b0144
+	.global Owner_DetermineClass
 	.thumb_func
-Func_080b0144:
+Owner_DetermineClass:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

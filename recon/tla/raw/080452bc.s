@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080452bc
+	.global Graphics_MergeShiftedTileRows
 	.thumb_func
-Func_080452bc:
+Graphics_MergeShiftedTileRows:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

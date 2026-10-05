@@ -12,7 +12,23 @@ Func_08020340:
 	.global Func_08020348
 	.thumb_func
 Func_08020348:
-	overlay_veneer Func_08026f80
+.ifdef TLA_EDITION_DE
+	overlay_veneer Func_0802b828
+.else
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_0802b828
+.else
+.ifdef TLA_EDITION_FR
+	overlay_veneer Func_0802b828
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_0802b828
+.else
+	overlay_veneer Runtime_CheckRadiusOverlap
+.endif
+.endif
+.endif
+.endif
 	.global Func_08020350
 	.thumb_func
 Func_08020350:

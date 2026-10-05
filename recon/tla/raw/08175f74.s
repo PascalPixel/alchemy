@@ -72,7 +72,7 @@ Func_08175f74:
 .L_08176000:
 	.4byte gMapCellBuffer
 .L_08176004:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08176008:
 	.4byte Func_08143000
 .L_0817600c:
@@ -99,7 +99,7 @@ Func_08175f74:
 	strh r5, [r3]
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r7, #237
 	ldr r5, [sp, #68]
 	lsls r7, r7, #3
@@ -3417,7 +3417,7 @@ Func_08175f74:
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #104
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	ldr r3, .L_08177a08
 	movs r2, #128
 	lsls r2, r2, #19
@@ -4565,7 +4565,7 @@ Func_08175f74:
 	ldr r2, [r3, #24]
 	b .L_081782b0
 .L_081782a0:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_081782a4:
 	.4byte 0x0063ffff
 .L_081782a8:
@@ -5032,7 +5032,7 @@ Func_08175f74:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08178658:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0817865c:
 	.4byte 0xffffc000
 .L_08178660:

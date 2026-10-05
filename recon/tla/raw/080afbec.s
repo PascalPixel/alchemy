@@ -195,7 +195,7 @@ Func_080afbec:
 	adds r1, r5, #0
 	adds r1, #36
 	ldr r0, [sp, #12]
-	bl Func_080b0084
+	bl Owner_BuildDigitTiles
 	ldr r0, [sp, #12]
 	bl Owner_RecalculateStats
 	movs r3, #149

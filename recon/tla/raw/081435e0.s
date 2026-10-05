@@ -142,7 +142,7 @@ BattleFx_BeginCanvasLayer:
 .L_081436f8:
 	.4byte 0x00000784
 .L_081436fc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08143700:
 	.4byte Func_08143488
 .L_08143704:
@@ -304,4 +304,4 @@ BattleFx_BeginCanvasLayer:
 .L_08143838:
 	.4byte 0x06004000
 .L_0814383c:
-	.4byte Data_03001120
+	.4byte gBgScroll

@@ -321,7 +321,7 @@ Func_0802c240:
 .L_0802c4b8:
 	.4byte 0x000fffff
 .L_0802c4bc:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_0802c4c0:
 	.4byte gCameraSceneParameters
 .L_0802c4c4:

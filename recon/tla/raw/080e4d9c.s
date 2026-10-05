@@ -1141,7 +1141,7 @@ Func_080e4d9c:
 	mov r1, r10
 	ldr r0, [r1, #16]
 	movs r1, #0
-	bl Func_080e1420
+	bl BattleFx_SetObjectTickMode
 	ldrh r2, [r5]
 .L_080e56e2:
 	lsls r3, r2, #16

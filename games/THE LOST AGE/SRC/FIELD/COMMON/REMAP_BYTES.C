@@ -17,8 +17,6 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
             u32 index = *p;
 
             n -= 1;
-            /* FAKEMATCH: the plain order counts down after the table load. */
-            __asm__("");
             *p = tbl[index];
             p += 1;
         } while (n != -1);

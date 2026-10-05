@@ -211,7 +211,7 @@ Func_0816d130:
 	ldr r3, [r5]
 	asrs r3, r3, #1
 	str r3, [r5]
-	bl Func_08014ea8
+	bl Graphics_RestoreTransferWork
 	ldr r2, .L_0816d3d4
 	movs r3, #12
 	subs r3, #2

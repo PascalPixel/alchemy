@@ -16,7 +16,7 @@ Func_080202b0:
 	.global ResourceSlot_LoadFar
 	.thumb_func
 ResourceSlot_LoadFar:
-	overlay_veneer Func_080227e0
+	overlay_veneer ResourceSlot_Load
 	.global Func_080202c0
 	.thumb_func
 Func_080202c0:
@@ -25,9 +25,9 @@ Func_080202c0:
 	.thumb_func
 Animation_ApplyChildValueFar:
 	overlay_veneer Animation_ApplyChildValue
-	.global Func_080202d0
+	.global Runtime_RemapBytesByTableFar
 	.thumb_func
-Func_080202d0:
+Runtime_RemapBytesByTableFar:
 	overlay_veneer Runtime_RemapBytesByTable
 	.global Map_EnableUpdateCallbackFar
 	.thumb_func
@@ -40,7 +40,7 @@ Map_DisableUpdateCallbackFar:
 	.global Func_080202e8
 	.thumb_func
 Func_080202e8:
-	overlay_veneer Func_08024f80
+	overlay_veneer ScriptObject_FindOverlappingEntry
 	.global Func_080202f0
 	.thumb_func
 Func_080202f0:

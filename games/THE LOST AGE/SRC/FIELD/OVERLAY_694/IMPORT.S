@@ -89,7 +89,7 @@ Func_02003ff4:
 	.global Func_02003ffc
 	.thumb_func
 Func_02003ffc:
-	overlay_veneer Func_08020120
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Func_02004004
 	.thumb_func
 Func_02004004:

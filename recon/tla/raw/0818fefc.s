@@ -592,7 +592,7 @@ Func_0818fefc:
 .L_08190390:
 	.4byte gMapCellBuffer
 .L_08190394:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08190398:
 	.4byte 0xffff0000
 .L_0819039c:

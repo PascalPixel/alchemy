@@ -205,7 +205,7 @@ Func_0816729c:
 .L_08167440:
 	.4byte gCameraSceneParameters
 .L_08167444:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08167448:
 	.4byte 0xffc00000
 .L_0816744c:
@@ -1138,7 +1138,7 @@ Func_0816729c:
 	bne .L_08167b72
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -3056,7 +3056,7 @@ Func_0816729c:
 .L_08168a30:
 	.4byte IwramFillWords
 .L_08168a34:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_08168a38:
 	.4byte 0x000fffff
 .L_08168a3c:

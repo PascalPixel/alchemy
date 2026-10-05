@@ -45,8 +45,6 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
             index--;
             source++;
             target++;
-            /* FAKEMATCH: step the step pointer after the other two. */
-            asm("");
             step++;
         } while (index >= 0);
     }

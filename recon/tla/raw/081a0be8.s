@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081a0be8
+	.global DisplayScroll_DrawMessageLine
 	.thumb_func
-Func_081a0be8:
+DisplayScroll_DrawMessageLine:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

@@ -9907,7 +9907,7 @@ Func_02004ddc:
 .L_0200d100:
 	.4byte 0xfffff000
 .L_0200d104:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_0200d108:
 	.4byte gLinkStatus
 .L_0200d10c:

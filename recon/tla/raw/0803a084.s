@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803a084
+	.global UiWindow_DrawFrame
 	.thumb_func
-Func_0803a084:
+UiWindow_DrawFrame:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

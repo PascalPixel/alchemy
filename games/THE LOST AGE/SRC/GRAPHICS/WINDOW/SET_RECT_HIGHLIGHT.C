@@ -45,14 +45,14 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
                 do {
                     u32 tile = *p;
                     col--;
-                    /* FAKEMATCH: the plain order counts down after masking the tile. */
-                    __asm__("");
                     tile = (tile & ~0x1000) | alt;
                     *p = tile;
                     p++;
                 } while (col != 0);
             }
             tiles->dirty |= 2 << ((u32)y >> 2);
+            /* FAKEMATCH: the ARM9 scheduling would count the row down before marking it dirty. */
+            __asm__("");
             height--;
             y++;
         } while (height != 0);

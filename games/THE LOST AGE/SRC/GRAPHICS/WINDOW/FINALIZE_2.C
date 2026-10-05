@@ -1,7 +1,8 @@
 #include "UIFLOW.H"
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *work);
-void RenderOutput_RedrawSavedRect(void *work);
+void RenderOutput_RedrawSavedRect(struct UiWindow *window);
+void UiWindow_DrawFrame(s16 x, s16 y, u16 width, u16 height);
 void RenderOutput_ClearList(void *work);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 
@@ -51,4 +52,10 @@ void RenderOutput_PrepareForRedraw(struct UiWindow *work)
         RenderOutput_RedrawSavedRect(work);
         RenderOutput_ClearList(work);
     }
+}
+
+/* Redraws a window's frame where it stands. */
+void RenderOutput_RedrawSavedRect(struct UiWindow *window)
+{
+    UiWindow_DrawFrame(window->x, window->y, window->width, window->height);
 }

@@ -108,10 +108,12 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
     index = -1;
     /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
-        saved_interrupt_state = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_state = *ime;
+            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks. */
+            __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
         do {
@@ -210,10 +212,12 @@ s32 Scheduler_EnableCallbacks(u32 callback)
     result = -1;
     /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
-        saved_interrupt_master = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_master = *ime;
+            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks. */
+            __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
         do {
@@ -223,6 +227,8 @@ s32 Scheduler_EnableCallbacks(u32 callback)
                         continue;
                 }
                 TASK_STATE_HIGH(task) |= 1;
+                /* FAKEMATCH: the result copy follows the state byte store, as in Scheduler_EnableUnmaskedOverlayCallbacks. */
+                __asm__ volatile("");
                 result = i;
             }
         } while (0);
@@ -240,22 +246,24 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
+    /* FAKEMATCH: the block that runs once, as in Scheduler_FindCallback */
     do {
-        saved_interrupt_master = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_master = *ime;
+            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks; holding the copy and the IME pointer here also keeps the native r6/r7 choice. */
+            __asm__ volatile("" : "+r"(saved_interrupt_master) : "r"(ime));
             *ime = (u16)(u32)ime;
         }
-        do {
-            for (i = 0; i <= 23; i++, task++) {
-                if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
-                    TASK_STATE_HIGH(task) |= 1;
-                    result = i;
-                }
+        for (i = 0; i <= 23; i++, task++) {
+            if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
+                TASK_STATE_HIGH(task) |= 1;
+                /* FAKEMATCH: under the ARM9TDMI load schedule the result copy fills the state byte's load delay; native stores the byte first. */
+                __asm__ volatile("");
+                result = i;
             }
-        } while (0);
+        }
         REG_IME = saved_interrupt_master;
     } while (0);
     return result;

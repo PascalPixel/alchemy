@@ -12,7 +12,7 @@ Func_081a052c:
 	cmp r0, #0
 	bne .L_081a0544
 	adds r0, r5, #0
-	bl Func_081a04d0
+	bl Graphics_ClearCharacterBlockAndPalette
 	b .L_081a065c
 .L_081a0544:
 	bl Resource_GetTableEntry

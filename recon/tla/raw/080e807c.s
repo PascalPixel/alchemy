@@ -93,7 +93,7 @@ Func_080e807c:
 .L_080e8130:
 	.4byte gPartyState
 .L_080e8134:
-	.4byte Data_03001120
+	.4byte gBgScroll
 .L_080e8138:
 	ldrh r0, [r6]
 	lsrs r0, r0, #1

@@ -20,7 +20,8 @@ struct ObjectRuntime {
     /* The sprite's scale, 0x10000 for full size. */
     s32 scale_x;
     s32 scale_y;
-    u8 unknown_20[2];
+    /* The collision radius, in pixels. */
+    u16 radius;
     u8 terrain_id;
     u8 unknown_23;
     s32 velocity_x;

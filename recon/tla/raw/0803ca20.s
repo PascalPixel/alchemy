@@ -42,7 +42,7 @@ UiText_DecodeMessage:
 	mov r1, r9
 	adds r0, r5, #0
 	mov r8, r3
-	bl Func_0803d178
+	bl UiText_LookupMessage
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255

@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Func_080af4e4
+	.global Owner_UpdateClassActions
 	.thumb_func
-Func_080af4e4:
+Owner_UpdateClassActions:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

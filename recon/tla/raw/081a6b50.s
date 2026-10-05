@@ -309,11 +309,11 @@ Func_081a6b50:
 	adds r5, #50
 	movs r0, #0
 	adds r2, r5, #0
-	bl Func_081a6ab4
+	bl Title_PlaceLogoPiece
 	movs r0, #128
 	movs r1, #83
 	adds r2, r5, #0
-	bl Func_081a6ab4
+	bl Title_PlaceLogoPiece
 	movs r0, #6
 	ldrsh r3, [r6, r0]
 	ldr r1, .L_081a6e04
@@ -330,7 +330,7 @@ Func_081a6b50:
 	subs r1, r3, r2
 	adds r0, r7, #0
 	adds r2, r5, #0
-	bl Func_081a6ab4
+	bl Title_PlaceLogoPiece
 	ldrh r2, [r6, #6]
 	movs r3, #224
 	lsls r3, r3, #19

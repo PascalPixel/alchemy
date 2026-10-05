@@ -2,6 +2,10 @@
  * Draft: Bg0_ClearTilemap, ☀️'s MEMORY.C body; opens ⚓️'s
  * SYSTEM/MEMORY/MEMORY.C. Score 2: the listing issues the fill constant's
  * pool load before sub sp. Data_030011c4 is ☀️'s gDebugTextCursor.
+ * With -mtune=arm9tdmi (2026-10-05) still score 2, sub sp first; the plain
+ * cursor and BG0CNT stores without the do-while give 21 and an initialised
+ * fill changes nothing. Ui_LoadWindowGraphics and the two after it now open
+ * MEMORY.C without it.
  */
 #include "TYPES.H"
 #include "DMA.H"
@@ -11,9 +15,9 @@
 
 extern u16 *Data_030011c4;
 extern const u8 Data_08017b10[];
-extern const u16 Data_08017af0[];
-extern u8 Data_03001300[];
-extern u8 Data_02030000[];
+extern const u16 Ui_WindowPalette[];
+extern u8 gIwramHeap[];
+extern u8 gEwramHeap[];
 extern u8 IwramSoundMixWorkspace[];
 extern char ResourceId_WindowTiles;
 void *Resource_GetTableEntry(s32);

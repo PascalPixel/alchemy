@@ -737,7 +737,7 @@ Func_02000570:
 	pop {pc}
 	.2byte 0x0000
 .L_02008618:
-	.4byte Data_02030000
+	.4byte gEwramHeap
 .L_0200861c:
 	.4byte 0x03490000
 .L_02008620:

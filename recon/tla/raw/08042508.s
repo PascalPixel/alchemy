@@ -49,7 +49,7 @@ Ui_LoadCharacterEntryForSlot:
 	add r2, sp, #12
 	add r3, sp, #8
 	adds r1, r7, #0
-	bl Func_0803dab0
+	bl UiGlyph_LoadEntryWithPalette
 .L_08042568:
 	add sp, #16
 	pop {r5, r6, r7, pc}

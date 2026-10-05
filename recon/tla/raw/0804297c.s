@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0804297c
+	.global UiWindow_DrawPartyStatusContents
 	.thumb_func
-Func_0804297c:
+UiWindow_DrawPartyStatusContents:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -175,7 +175,7 @@ Func_0804297c:
 	ldrh r0, [r5, #4]
 	bl UiWindow_EraseBorderRect
 	mov r0, r10
-	bl Func_08042630
+	bl UiWindow_BuildLayoutBounds
 	ldrh r3, [r5, #8]
 	mov r4, r9
 	strh r3, [r4, #8]
@@ -189,7 +189,7 @@ Func_0804297c:
 	ldrh r1, [r5, #6]
 	ldrh r2, [r5, #8]
 	ldrh r3, [r5, #10]
-	bl Func_0803a084
+	bl UiWindow_DrawFrame
 	mov r0, r9
 	mov r1, r10
 	bl Func_080426e0

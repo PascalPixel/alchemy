@@ -103,7 +103,7 @@ Func_0802de8c:
 	movs r0, #1
 	bl Func_08013eb4
 .L_0802df54:
-	bl Func_08014c6c
+	bl Runtime_InitializeHeap
 	bl Scheduler_ResetTaskTable
 	movs r1, #160
 	movs r0, #36
@@ -118,7 +118,7 @@ Func_0802de8c:
 	ldr r1, .L_0802df88
 	movs r3, #0
 	movs r0, #0
-	bl Func_080227e0
+	bl ResourceSlot_Load
 	mov r2, r10
 	b .L_0802df8c
 .L_0802df84:
@@ -139,7 +139,7 @@ Func_0802de8c:
 	adds r2, #1
 	movs r0, #1
 	movs r3, #0
-	bl Func_080227e0
+	bl ResourceSlot_Load
 .L_0802dfac:
 	movs r6, #0
 	mov r7, r10

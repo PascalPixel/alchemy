@@ -58,10 +58,10 @@ Func_08043690:
 	bl Menu_RunConfirmSelection
 	cmp r0, #0
 	beq .L_0804370c
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 	b .L_08043752
 .L_0804370c:
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 .L_08043710:
 	ldr r3, .L_08043760
 	movs r0, #0
@@ -76,7 +76,7 @@ Func_08043690:
 	adds r5, r0, #0
 	adds r0, r6, #0
 	bl Func_08042eec
-	bl Func_0803ce1c
+	bl UiWork_FinalizePendingCore
 	cmp r5, #0
 	beq .L_0804374a
 	ldr r0, .L_0804376c

@@ -35,7 +35,7 @@ Func_080400e8:
 	movs r2, #64
 	mov r1, r8
 	movs r0, #7
-	bl Func_08044f88
+	bl RenderResource_CreatePair
 	str r0, [sp, #12]
 	movs r0, #1
 	bl WaitFrames

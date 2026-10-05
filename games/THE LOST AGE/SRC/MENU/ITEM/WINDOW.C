@@ -58,3 +58,23 @@ void ItemMenu_SetItemWin3(void)
 {
     UiWindow_SetBounds(ITEM_MENU->item_window, 13, 3, 17, 10);
 }
+
+void ItemMenu_SetMsgWin5(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 5);
+}
+
+void ItemMenu_SetMsgWin6(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 6);
+}
+
+void ItemMenu_SetMsgWin7(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 7);
+}
+
+void ItemMenu_SetMsgWin3(void)
+{
+    UiWindow_SetBounds(ITEM_MENU->message_window, 13, 0, 17, 3);
+}

@@ -19,8 +19,8 @@ gBlendFramesLeft:
 	.global Data_03001110
 Data_03001110:
 	.space 0x00000010
-	.global Data_03001120
-Data_03001120:
+	.global gBgScroll
+gBgScroll:
 	.space 0x00000018
 	.global Data_03001138
 Data_03001138:
@@ -154,5 +154,5 @@ gNumberTextHexEnd:
 	.global gNumberTextDecimalEnd
 gNumberTextDecimalEnd:
 	.space 0x000000a6
-	.global Data_03001300
-Data_03001300:
+	.global gIwramHeap
+gIwramHeap:

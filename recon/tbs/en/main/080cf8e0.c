@@ -18,7 +18,15 @@
    (u32)(k * 4) * 8, (s16)(k * 4) * 8, (k << 2) * 8, a [][8] view, which
    gives k * 896). So the ROM's index keeps k * 4 apart in some form not
    yet found, and that same form presumably defeats the reduction. A
-   device search reached 328 only by piling up barriers; not kept. */
+   device search reached 328 only by piling up barriers; not kept.
+   2026-10-05 sun deep finisher 7: a variable first = k * 4 set just before
+   the burst loop and &gBursts[first * 8 + i] (486) is still strength-
+   reduced to a pointer from [sp, #12]. In the ROM the burst loop reloads
+   the gBursts base from the pool every pass and places the 16-burst
+   branch out of line (bne to a far block, b back), while 63 is hoisted
+   into r8: consistent with loop.c moving only the cheap constant and
+   leaving the giv unreduced, which a smaller benefit (one address use
+   per pass, here several) or a larger loop body would explain. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"

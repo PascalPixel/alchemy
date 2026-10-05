@@ -16,7 +16,9 @@ extern struct ShopRuntime *gMenuWork;
    Register roles still differ from the first window on: the native keeps
    shop in sl, the stock count in r9, redraw in fp and spills the stock
    window to sp+28 (36-byte frame); this draft gives shop r8 and the stock
-   window fp (32-byte frame).
+   window fp (32-byte frame). A devsearch run (seed 71, 410 iterations)
+   reached 209 only with nine devices, among them an unread 36-byte array
+   and two locals pinned to r6; not kept.
 
    Current owner closure repairs the stale GameState money name to coins.
    The previous current-source draft did not compile; no unchanged native

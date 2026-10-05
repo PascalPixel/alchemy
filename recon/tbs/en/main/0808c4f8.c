@@ -1,17 +1,45 @@
-/* 2026-10-04 sun finisher 4 (second wave): compiles again (the game state
- * cell at 0x24a is now paused_object); alchemy diff scores 724 (965 listing
- * instructions, 971 here), far from the near match described below. */
-#include "RUNTIME_MEM.H"
 /* DRAFT of Func_0808c4f8, the field mode's entry and outer loop: sets up the
    scene, then alternates between walking (one Field_ProcessStep a frame)
    and serving the requests the field work block's slots post, until one
    posts an exit code.
-   Not exact: 2424 of 2428 bytes, every call, branch and store in place.
-   Remaining: (1) the reference hoists the game state's base out of the loop
-   into r9 and loads the leader's address at each use; here the leader's
-   address takes r9, which also puts r0 among the reload registers;
-   (2) the reference clears the fill word from r7 with one more stack slot;
-   (3) it compares the map with a pooled 1 (a halfword compare). */
+
+   2026-10-05 deep finisher 12: alchemy diff 106 (965 listing instructions,
+   963 here); every other difference is a pool offset shifted by the two
+   missing pool words below.  Earlier history: 724 at the start of this wave
+   (the old "2424 of 2428 bytes" was a size count, not a match).
+   What moved it, in order (each measured alone on top of the previous):
+   - result starts at 0 (s32 result = 0): the fill word is then stored from
+     result's register r7, as the reference does: 724 -> 686.
+   - every game state cell is a plain field access, no (*(T *)&field) cell
+     macros: the leader's address is then a hoisted pseudo that spills and is
+     rematerialised from the pool at each use, and the base takes r9:
+     686 -> 425 (leader), -> 250 (and 0x238), -> 108 with entrance too
+     (entrance plain was worse before the later fixes; turn is neutral).
+   - the loop's exit check uses its own block variable (next), separate from
+     the first check's code: 250 -> 240.
+   - found and the trigger tile share the function's mode variable, as the
+     reference keeps both in r6 with mode: 240 -> 223; found is
+     Find(...) != 0, which gives the reference's flag sequence exactly.
+   - Vitals_Ratio(1, max_hp) after hp = 1 keeps the numerator and the 0x4000
+     clamp in one register with the vitals in r6: 229 -> 198.
+   - the loop exit sets result before clearing exit: 108 -> 106.
+   Tried and worse: wrapping the body in do { } while (0) (651 from 724, but
+   it stops loop.c moving the exit block out of the loop); the hp and pp
+   ratios written out in place with block variables (258);
+   Vitals_Ratio(vitals->hp, ...) instead of 1 (137 at 106); Map_ShowWorldMap
+   declared with u16, s32, u8 or no prototype, or passed a local s16 (no
+   change).
+   Remaining:
+   (1) the map compare: the reference compares with a pooled 1 (a spilled
+       halfword constant pseudo, like the busy = 1 stores) and stores the
+       perspective flag from a fresh 1; here CSE reuses the loaded map value.
+   (2) Map_ShowWorldMap is passed a pooled 27 (again a spilled halfword
+       constant); here movs r0, #27.  The adopted Map_ShowWorldMap takes no
+       argument, so the argument's source is unknown.
+   (3) the hp ratio's numerator: the reference shifts a register holding 1
+       (movs r1, #1; lsls r5, r1, #14), the spilled hoisted 1 that also
+       stores hp; here the constant 0x4000 is built as 128 << 7. */
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "ITEMGIFT.H"
 #include "IO_REG.H"
@@ -94,12 +122,6 @@ struct MenuCtrl {
     u8 unknown_00[4];
     u16 wait;
 };
-
-/* Four cells of the game state are reached by their own addresses. */
-#define STATE_LEADER (*(s32 *)&gGameState.selected_actor)
-#define STATE_TURN (*(u16 *)&gGameState.turn)
-#define STATE_ENTRANCE (*(s16 *)&gGameState.entrance)
-#define STATE_238 (*(s32 *)&gGameState.unknown_238)
 
 void WaitFrames(s32 frames);
 void Scheduler_ResetTaskTable(void);
@@ -194,7 +216,7 @@ s32 Func_0808c4f8(void)
     struct FieldWork *work;
     struct FieldActor *actor;
     s32 mode;
-    s32 result;
+    s32 result = 0;
     s32 code;
 
     work = Runtime_AllocateBlock(27, sizeof(struct FieldWork));
@@ -295,19 +317,20 @@ s32 Func_0808c4f8(void)
 
     for (;;) {
         GameFlag_SetBitFar(0x104);
-        actor = work->actors[STATE_LEADER];
+        actor = work->actors[gGameState.selected_actor];
         Object_ResetMotion(actor);
         gGameState.x = actor->x;
         gGameState.y = 0;
         gGameState.z = actor->z;
         gGameState.heading = actor->angle;
-        STATE_TURN = actor->turn;
+        gGameState.turn = actor->turn;
 
         while (BattleFx_SumCounters() != 0) {
-            code = work->exit;
-            if (code != 0) {
+            s32 next = work->exit;
+
+            if (next != 0) {
+                result = next;
                 work->exit = 0;
-                result = code;
                 goto done;
             }
             if (work->event != 0) {
@@ -325,7 +348,7 @@ s32 Func_0808c4f8(void)
                     if (work->survived == 0) {
                         struct OwnerVitals *vitals;
 
-                        if (STATE_LEADER == 0) {
+                        if (gGameState.selected_actor == 0) {
                             if (GameFlag_IsSet(32) != 0)
                                 Object_SetMode(actor, 21);
                             else
@@ -335,16 +358,16 @@ s32 Func_0808c4f8(void)
                         }
                         AudioCommand_PlayFar(59);
                         UiText_ShowPositionedMessageAndWaitFar(0x91b, 1);
-                        vitals = Owner_GetStateFar(STATE_LEADER);
+                        vitals = Owner_GetStateFar(gGameState.selected_actor);
                         vitals->hp = 1;
-                        vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
+                        vitals->hp_ratio = Vitals_Ratio(1, vitals->max_hp);
                         if (vitals->hp_ratio == 0 && vitals->hp != 0)
                             vitals->hp_ratio = 1;
                         vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
                         if (vitals->pp_ratio == 0 && vitals->pp != 0)
                             vitals->pp_ratio = 1;
                         gGameState.scene = gGameState.saved_scene;
-                        STATE_ENTRANCE = gGameState.saved_entrance;
+                        gGameState.entrance = gGameState.saved_entrance;
                         Battle_ClearObjectFlag5bWhenMode3();
                         result = 999;
                         goto done;
@@ -366,12 +389,12 @@ s32 Func_0808c4f8(void)
                 ObjectTable_Snapshot();
                 gGameState.return_cue = -1;
                 gGameState.scene = 510;
-                STATE_ENTRANCE = work->scene;
+                gGameState.entrance = work->scene;
                 work->exit = 999;
                 Scene_FadeColorFromWhite(work->scene);
                 work->unknown_1a8 = 0;
                 work->scene = 0;
-                STATE_238 = 0;
+                gGameState.unknown_238 = 0;
             } else if (work->action != 0) {
                 work->busy = 1;
                 BattleAction_RunDescriptor(work->action);
@@ -382,24 +405,20 @@ s32 Func_0808c4f8(void)
                 work->input = 0;
             } else if (work->examine != 0) {
                 s32 object;
-                s32 found;
 
                 UiTimedNotice_CloseIfActiveFar();
-                object = BattleEffect_SelectNearbyObject(STATE_LEADER);
-                found = 0;
+                object = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
+                mode = 0;
                 if (object != -1) {
-                    found = BattleFx_FindDescriptorWithOverride(object);
-                    if (found != 0)
-                        found = 1;
+                    mode = BattleFx_FindDescriptorWithOverride(object) != 0;
                 }
-                if (found != 0) {
+                if (mode != 0) {
                     work->descriptor = object | 0x1000;
                     work->menu = 0;
                 } else {
-                    s32 tile = Object_GetTriggerTileAheadOfCurrent();
-
-                    if (tile != 0) {
-                        work->tile = tile;
+                    mode = Object_GetTriggerTileAheadOfCurrent();
+                    if (mode != 0) {
+                        work->tile = mode;
                         work->menu = 0;
                     } else {
                         work->menu = 1;
@@ -488,7 +507,7 @@ s32 Func_0808c4f8(void)
         }
 
         GameFlag_ClearBitFar(0x104);
-        actor = work->actors[STATE_LEADER];
+        actor = work->actors[gGameState.selected_actor];
         if (actor != NULL) {
             if (gGameState.movement_mode == 2)
                 ObjectDispatch_InitFromTable0Far(actor);
@@ -501,7 +520,7 @@ s32 Func_0808c4f8(void)
         }
         do {
             WaitFrames(1);
-            actor = work->actors[STATE_LEADER];
+            actor = work->actors[gGameState.selected_actor];
             if (gDebugMode == 0 || GameFlag_IsSet(0x163) == 0)
                 Field_ProcessStep(actor->turn, actor->x, actor->y, actor->z);
         } while (BattleFx_SumCounters() == 0);

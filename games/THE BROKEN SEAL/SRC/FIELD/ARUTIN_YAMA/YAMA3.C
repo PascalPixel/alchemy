@@ -462,13 +462,13 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 
     switch (ArutinYama_LeafMode) {
     case 0:
-        leaf->x.fixed += (*(s16 *)&leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+        leaf->x.fixed += ((s16)leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
         break;
     case 0x8000:
-        leaf->x.fixed -= (*(s16 *)&leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+        leaf->x.fixed -= ((s16)leaf->unknown_64 << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
         break;
     }
-    if (*(s16 *)&leaf->unknown_64 <= 3) {
+    if ((s16)leaf->unknown_64 <= 3) {
         switch (ArutinYama_LeafMode) {
         case 0:
             leaf->x.fixed += 0x8000;
@@ -484,12 +484,12 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
         leaf->scale_x += 0x7ae;
         leaf->scale_y += 0x7ae;
     }
-    if ((u32)(*(s16 *)&leaf->unknown_64 * Engine_RandomNext()) >> 16 == 0)
+    if ((u32)((s16)leaf->unknown_64 * Engine_RandomNext()) >> 16 == 0)
         ObjectGroup_SetChildValue(leaf, 7);
-    if (*(s16 *)&leaf->unknown_64 != 0)
+    if ((s16)leaf->unknown_64 != 0)
         *(s16 *)&leaf->unknown_64 -= 2;
     else
-        *(s16 *)&leaf->unknown_64 = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
+        leaf->unknown_64 = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
     if (--object->effect.countdown == 0)
         Engine_ObjectDispatchRelease(leaf);
 }
@@ -935,14 +935,14 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     Engine_AudioPlayCue(152);
     leader->x.fixed = x;
     leader->velocity_y = 0x60000;
-    *(s32 *)((u8 *)leader + 72) = 0x10000;
+    leader->gravity = 0x10000;
     leader->z.fixed = center_z;
-    ((struct FieldSprite *)*(s32 *)((u8 *)(leader) + 0x50))->priority = 0;
+    leader->sprite->priority = 0;
     Object_SetMode(leader, 7);
     Engine_ObjectSetPosition(leader, x, leader->y.fixed, z + 0x180000);
     leader->facing = 0x4000;
     Engine_TaskWait(20);
-    ((struct FieldSprite *)*(s32 *)((u8 *)(leader) + 0x50))->priority = 2;
+    leader->sprite->priority = 2;
     Engine_AudioPlayCue(159);
 }
 

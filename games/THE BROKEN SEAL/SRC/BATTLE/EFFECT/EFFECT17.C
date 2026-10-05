@@ -178,6 +178,6 @@ void BattleFx_MarkChildAndRunFallbackTransition(void)
 {
     struct FieldActor *child = gEffectWork->child;
 
-    child->unknown_5b = 1;
+    child->paused = 1;
     BattleEffect_RunFallbackObjectTransition();
 }

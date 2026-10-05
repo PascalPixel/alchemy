@@ -36,7 +36,7 @@ void BattleEffect_PauseObject(s32 id)
             }
         }
         object->update = (void (*)(union FieldObject *))BattleEffect_SetRandomTableValueOnObject;
-        object->unknown_5b = 1;
+        object->paused = 1;
         ObjectDispatch_ApplyValueToChildrenFar(object, 0);
     }
 }
@@ -51,7 +51,7 @@ void BattleFx_ResumeObject(void)
             state->paused_update = 0;
             Animation_ApplyChildValuesFar(object, state->paused_pose);
         }
-        object->unknown_5b = 0;
+        object->paused = 0;
         ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     }
 }

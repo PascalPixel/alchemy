@@ -1,61 +1,10 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_UNIT.H"
-/* 2026-10-04 sun finisher 8: DjinnMenu_ShowChangePreview (main:08022b44)
- * with its nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c),
- * one object, 1788 bytes (Japanese 1784). As written: 6 instructions off in
- * the nested function only, the parent exact in all six TBS editions
- * (Japanese stat columns at x 4/5 and the separator at 40; Spanish, French
- * and Italian label tile 0xf005).
- * Found: the stat labels as label = (s32)MsgPreviewStatLabel; label + k
- * (the DJINN.C pattern; CSE keeps the adds from one base), the real message
- * names (MsgAbilityName, MsgClassName, MsgPsynergyGained/Lost/Unchanged,
- * MsgBattleAdditionalPsynergyHelp) and Iwram_CopyWords replace the old
- * stand-in symbols; sentinel, x, y and then the attribute word in that order.
- * Remaining: the tile clear. The ROM clears it through the entry pointer
- * after the attribute word (str r5, [r7, #8], zero materialised late in r5).
- * Written that way the clear reuses the zero of the s8 field stores' bit-field
- * expansion (all s8 struct-field stores expand as read-modify-write here),
- * global gives it r8 and x/chain move to r9/r5 (20). A tagged empty asm on a
- * fresh zero fixes that (2 off): then only sched2 differs, placing the
- * "adds r7, r6, #0" half of entry = output + 16 after the x/y stores: both
- * have priority 20 and the x store wins the tie on dependants (it has four:
- * the union word store and tile clear are alias set 0). Tried: every order
- * of entry/clear/sentinel/x/y/word (both clear forms, with active and/or kind
- * through u8 casts), field/u16/s16/u32 casts of x, y, word and clear, a
- * separate bit-field struct, entry split across a barrier, a slot local.
- * 2026-10-04 sun w2 finisher 3: the draft below is that 2-off form (alchemy
- * diff 08022a7c,08022b44: differ 2). Measured with -fsched-verbose: the
- * reload copy 326 (adds r7, r6, #0) has two dependants (93, the block end)
- * and priority prio(93) + 1 = 20; the x store has priority 20 only through
- * its anti dependence on r3 for the word's pool load (anti costs 0), and
- * three or four dependants. The ROM order needs the copy to beat the x
- * store and the x store to beat 93 (six dependants) one cycle later, i.e.
- * prio(copy) >= prio(93) + 2, impossible while 93 is the copy's only real
- * dependant; so the ROM's dependence graph here differs, not just a tie.
- * Also measured: the alias sets. RenderOutput's set (25) holds int and u32
- * through its table union, so a u32-typed word or clear still conflicts
- * with x/y; a non-union word store or a separate x/y view (no ints) unpins
- * the word store from the window load and everything floats (14-16);
- * volatile barriers after sentinel, x, y or entry give 10-12; a "+r" copy
- * of entry before the + 16 swaps r6/r7 (38).
- * 2026-10-04 sun w3 finisher 1: with -fsched-verbose the tie at the copy is
- * x store 127 (priority 20, four dependants: block end, the word's pool load
- * by anti dependence on r3, the word store and the tile clear) against the
- * reload copy 326 (priority 20, two dependants); rank_for_schedule then
- * prefers more dependants. The copy would win the luid tie only if the word
- * and the clear did not depend on the x/y stores, i.e. were not alias set 0
- * (both are set 0 because they are union member accesses). Every typed
- * spelling of the word or the clear measured (u32, unsigned long, void *, a
- * one-word struct, a struct holding a RenderOutput pointer or the two words,
- * through casts of &entry->attributes / &entry->tile or entry) lets the word
- * store float past the window load (14-18); only the clear typed and the word
- * a union access keeps 2 (or 4). So the reference's word store must still
- * conflict with the window's frame load while not depending on the x/y
- * stores; no C spelling found gives both. */
 #include "RENDER_INPUT.H"
 #include "IWRAM_CALL.H"
 #include "EDITION.H"
+#include "DJINN_PREVIEW.H"
 
 /* Preview setting or resting one Djinn: toggle it on the live owner record,
  * recalculate, show the old and new class and stats with an arrow beside
@@ -102,16 +51,6 @@ void UiWindow_SetTilemapEntry(
     struct RenderInput *win, s32 tile, s32 x, s32 y, s32 flags);
 s32 UiWindow_DrawThreeTileColumn(
     struct RenderInput *win, s32 x, s32 y, s32 tile, s32 flags);
-struct PreviewSprite {
-    u32 unknown;
-    union {
-        u32 word;
-        struct { unsigned y:8; unsigned flags:8; unsigned x:9; unsigned high:7; } bits;
-    } attributes;
-    union RenderTableValue tile;
-};
-struct RenderOutput *RenderOutput_AcquireFree(void);
-void RenderOutput_AppendToList(struct RenderInput *, struct RenderOutput *);
 extern u8 MsgAbilityName[];
 extern u8 MsgPreviewStatLabel[];
 extern u8 MsgBattleAdditionalPsynergyHelp[];
@@ -119,8 +58,6 @@ extern u8 MsgPsynergyGained[];
 extern u8 MsgPsynergyLost[];
 extern u8 MsgPsynergyUnchanged[];
 extern u8 MsgClassName[];
-extern u8 Data_080313a4[];
-extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost);
 s32 Djinn_IsActiveFar(s32 owner, s32 col, s32 row);
@@ -172,20 +109,23 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         if (output) {
             output->active = 1;
             output->kind = 1;
-            output->index = Resource_LoadIntoFreeSlot(128);
+            /* FAKEMATCH: a char store (alias set 0) keeps the index store ahead of the attribute word in sched2 */
+            *(s8 *)&output->index = Resource_LoadIntoFreeSlot(128);
             entry = (struct PreviewSprite *)((u8 *)output + 16);
             output->sentinel = 240;
             output->x = 120;
             output->y = 120;
-            entry->attributes.word = 0x40000400;
+            /* FAKEMATCH: typed like the window pointer, the word store waits for the window load but not for the x and y stores, so sched2 places the entry copy before them */
+            *(struct RenderInput **)&entry->attributes = (struct RenderInput *)0x40000400;
             zero = 0;
             /* FAKEMATCH: a fresh zero keeps the window chain in r9 */
             __asm__("" : "=r"(zero) : "0"(zero));
-            entry->tile.value = zero;
+            /* FAKEMATCH: a pointer-typed clear does not wait for the x and y stores (sched2 order) */
+            *(void **)&entry->tile = (void *)zero;
             entry->attributes.bits.x = win->x * 8 + x;
             entry->attributes.bits.y = win->y * 8 + y;
-            entry->tile.bits.index = Resource_GetBuffer((u8)output->index, rising ? Data_080313a4 : Data_08031424);
-            RenderOutput_AppendToList(win, output);
+            entry->tile.bits.index = Resource_GetBuffer((u8)output->index, (s32)(rising ? DjinnMenu_ArrowUpTiles : DjinnMenu_ArrowDownTiles));
+            RenderOutput_AppendToList((struct RenderOutputList *)win, output);
         }
     }
 

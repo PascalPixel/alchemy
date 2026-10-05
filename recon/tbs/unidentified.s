@@ -196,11 +196,11 @@ Resource_FixedBlockBTiles:
 	.global RomBytes_080310a4
 RomBytes_080310a4:
 	.incbin "baserom.gba", 0x000310a4, 0x00000300
-	.global Data_080313a4
-Data_080313a4:
+	.global DjinnMenu_ArrowUpTiles
+DjinnMenu_ArrowUpTiles:
 	.incbin "baserom.gba", 0x000313a4, 0x00000080
-	.global Data_08031424
-Data_08031424:
+	.global DjinnMenu_ArrowDownTiles
+DjinnMenu_ArrowDownTiles:
 	.incbin "baserom.gba", 0x00031424, 0x000003c0
 	.global RomBytes_080317e4
 RomBytes_080317e4:

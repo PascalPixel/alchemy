@@ -250,8 +250,8 @@ SaveMenu_SelectSlot:
 	.incbin "baserom.gba", 0x0001eee8, 0x00000580
 	.section .rom.00020b2e, "ax"
 	.incbin "baserom.gba", 0x00020b2e, 0x000008fe
-	.section .rom.0002173e, "ax"
-	.incbin "baserom.gba", 0x0002173e, 0x00002706
+	.section .rom.00021e3c, "ax"
+	.incbin "baserom.gba", 0x00021e3c, 0x00002008
 	.section .rom.00024d44, "ax"
 	.incbin "baserom.gba", 0x00024d44, 0x00000e00
 	.section .rom.00025dd8, "ax"
@@ -302,7 +302,13 @@ UiIcon_MiscIconPointers:
 	.global RomBytes_080310a4
 Resource_FixedBlockBTiles:
 RomBytes_080310a4:
-	.incbin "baserom.gba", 0x0002fd6c, 0x00000740
+	.incbin "baserom.gba", 0x0002fd6c, 0x00000300
+	.global DjinnMenu_ArrowUpTiles
+DjinnMenu_ArrowUpTiles:
+	.incbin "baserom.gba", 0x0003006c, 0x00000080
+	.global DjinnMenu_ArrowDownTiles
+DjinnMenu_ArrowDownTiles:
+	.incbin "baserom.gba", 0x000300ec, 0x000003c0
 	.global RomBytes_080317e4
 RomBytes_080317e4:
 	.incbin "baserom.gba", 0x000304ac, 0x00000080

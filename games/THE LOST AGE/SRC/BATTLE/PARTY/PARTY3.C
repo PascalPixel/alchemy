@@ -87,19 +87,19 @@ s32 BattleParty_ApplyStatusDamage(void)
         remaining = count;
 
         do {
-            u8 *object = (u8 *)Owner_GetState(*entry);
+            struct BattleUnit *object = Owner_GetState(*entry);
             s32 amount;
 
-            switch ((s8)object[0x131]) {
+            switch (object->poison) {
             case 1:
-                amount = -((*(s16 *)(object + 0x34) + 10) / 20);
+                amount = -((object->max_hp + 10) / 20);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 0)
                     result = 1;
                 break;
             case 2:
-                amount = -((*(s16 *)(object + 0x34) + 5) / 10);
+                amount = -((object->max_hp + 5) / 10);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 1)

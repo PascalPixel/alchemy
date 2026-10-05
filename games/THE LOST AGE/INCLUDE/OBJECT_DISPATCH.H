@@ -4,6 +4,8 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 
+struct AnimationObject;
+
 struct DispatchChild {
     u8 unknown_00[5];
     u8 unknown_05_low : 2;
@@ -35,6 +37,7 @@ struct DispatchObject {
         struct DispatchChild *child;
         struct DispatchChild **children;
         struct FieldSprite *sprite;
+        struct AnimationObject *animation;
     } target;
     u8 kind;
     u8 unknown_55[2];

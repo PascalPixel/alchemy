@@ -182,7 +182,6 @@
     "*/games/THE BROKEN SEAL/SRC/LIB/CURVE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP5.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00012518)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/FIND_NEXT_NUMBER_WITH_METADATA.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE4.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00012f20)

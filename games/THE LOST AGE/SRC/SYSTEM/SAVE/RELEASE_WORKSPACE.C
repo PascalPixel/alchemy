@@ -13,13 +13,11 @@ s32 SaveState_LoadExtraSummary(void)
 {
     struct SaveWorkspace *work;
     struct SaveSummary *summary;
-    volatile u32 zero;
     u32 index;
 
     work = Ram_HeapSlots->serial_work;
     summary = &work->extra;
-    zero = 0;
-    Dma_Set((const void *)&zero, summary, 0x85000010, REG_DMA3);
+    Dma_Fill32(0, summary, sizeof(*summary));
     index = SaveState_FindLatestSlot(3);
     if (index <= 14) {
         ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));

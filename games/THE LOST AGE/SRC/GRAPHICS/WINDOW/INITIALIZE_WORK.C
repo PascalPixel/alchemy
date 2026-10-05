@@ -19,8 +19,8 @@ struct InventoryMenuState {
 void UiWindow_InitializeWork(s32 unused)
 {
     struct InventoryMenuState *work = Ram_HeapSlots->menu_runtime;
-    volatile u32 zero = 0;
-    Dma_Set(&zero, work, 0x8500033b, REG_DMA3);
+
+    Dma_Fill32(0, work, 0x33b * 4);
     work->pane_index[0] = -1;
     work->pane_count[0] = 1;
     work->pane_count[1] = 1;

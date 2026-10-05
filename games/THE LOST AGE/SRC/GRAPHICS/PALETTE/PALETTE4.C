@@ -10,13 +10,11 @@
 
 void TitlePalette_InitializeBuffers(void)
 {
-    volatile u32 zero;
     struct TitlePaletteWork *buffer;
     s32 operation;
 
     buffer = Runtime_AllocateBlock(128, sizeof(*buffer));
-    zero = 0;
-    Dma_Set(&zero, buffer, 0x85000c01, REG_DMA3);
+    Dma_Fill32(0, buffer, sizeof(*buffer));
     Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
     Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
     Graphics_TransformPaletteBuffer(0x10000, buffer->palette, buffer->target, 0);

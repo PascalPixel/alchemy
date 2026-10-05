@@ -25,10 +25,8 @@ struct OamEntry {
 void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y)
 {
     struct OamEntry oam;
-    volatile u32 zero;
 
-    zero = 0;
-    Dma_Set((void *)&zero, &oam, 0x85000002, REG_DMA3);
+    Dma_Fill32(0, &oam, sizeof(oam));
     oam.shape = 0;
     oam.size = 3;
     oam.colors256 = 1;

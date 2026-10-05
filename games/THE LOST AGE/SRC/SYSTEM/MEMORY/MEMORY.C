@@ -64,8 +64,8 @@ void PaletteDma_LoadBlock(void)
 void Runtime_InitializeHeap(void)
 {
     struct HeapSlots *work = Ram_HeapSlots;
-    volatile u32 zero = 0;
-    Dma_Set(&zero, work, 0x85000040, REG_DMA3);
+
+    Dma_Fill32(0, work, sizeof(struct HeapSlots));
     Ram_HeapSlots->next_iwram = gIwramHeap;
     Ram_HeapSlots->next_ewram = gEwramHeap;
 }

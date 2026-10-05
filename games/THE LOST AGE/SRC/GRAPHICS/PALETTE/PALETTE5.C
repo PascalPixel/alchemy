@@ -15,11 +15,9 @@
 void DisplayTransition_InitializeState(s32 value)
 {
     struct DisplayTransitionState *state;
-    volatile u32 zero;
 
     state = Runtime_AllocateBlock(0x7c, sizeof(*state));
-    zero = 0;
-    Dma_Set(&zero, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
+    Dma_Fill32(0, state, sizeof(*state));
     DisplayTransition_FillTilemapAndSolidTile(0);
     state->mode = value;
     state->value = 0;

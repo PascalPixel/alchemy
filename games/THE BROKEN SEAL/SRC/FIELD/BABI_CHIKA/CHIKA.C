@@ -86,22 +86,22 @@ refuse:
 void SceneActor_PassRaisedPointOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *p = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
 
-    pos[0] = p->f08;
-    pos[1] = p->f0c;
-    pos[2] = p->f10 + 0x200000;
+    pos[0] = p->x.fixed;
+    pos[1] = p->y.fixed;
+    pos[2] = p->z.fixed + 0x200000;
     SceneActor_MoveActorZeroToTarget(pos);
 }
 
 void SceneActor_PassActorZeroOffsetPoint(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    pos[0] = actor->f08;
-    pos[1] = actor->f0c;
-    pos[2] = actor->f10 + 0xFFE00000;
+    pos[0] = actor->x.fixed;
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed + 0xFFE00000;
     SceneActor_MoveActorZeroToTarget(pos);
 }
 
@@ -208,10 +208,10 @@ s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
     Record *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
     if (ref->w12 > (s32)0xffd00000
-        && (((Record* (*)())Object_GetById)(8)->w16 >> 20) == 10) {
-        record->w8 = ((Record* (*)())Object_GetById)(8)->w8;
+        && (Object_GetById(8)->z.fixed >> 20) == 10) {
+        record->w8 = Object_GetById(8)->x.fixed;
         record->w12 = (s32)0xffe00000;
-        record->w16 = ((Record* (*)())Object_GetById)(8)->w16;
+        record->w16 = Object_GetById(8)->z.fixed;
     } else {
         record->w8 = 0;
         record->w12 = 0;

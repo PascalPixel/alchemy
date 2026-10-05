@@ -36,7 +36,7 @@ void BabiChika_UpdateTrackedActor(void);
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor)
 {
-    struct SceneObject *object;
+    struct FieldActor *object;
     struct Vec vec;
     struct EffectParams params;
     u32 i;
@@ -44,7 +44,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
     s32 x;
     s32 z;
 
-    object = (struct SceneObject *)Object_GetById(actor);
+    object = Object_GetById(actor);
     params.unk00 = 1;
     params.mode = 7;
     params.callback = (s32)Effect_AdvanceMotion;
@@ -57,7 +57,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
         vec.z = z;
         x = x + Math_Divide(x, 3);
         vec.x = x;
-        ((void (*)())Effect_Spawn)(object->x, object->y, object->z, x, vec.y, z, 0x01030001, &params);
+        ((void (*)())Effect_Spawn)(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
     }
 }
 
@@ -115,11 +115,11 @@ void SceneState_RunRect73x38Step(void)
 void SceneActor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
-    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    point[0] = actor->f08 + 0xFFE00000;
-    point[1] = actor->f0c;
-    point[2] = actor->f10;
+    point[0] = actor->x.fixed + 0xFFE00000;
+    point[1] = actor->y.fixed;
+    point[2] = actor->z.fixed;
     SceneActor_MoveActorZeroToTarget(point);
 }
 
@@ -143,11 +143,11 @@ void FieldScene_RunStepWith6(void)
 void SceneActor_PassPointTwoRightOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    pos[0] = actor->f08 + 0x200000;
-    pos[1] = actor->f0c;
-    pos[2] = actor->f10;
+    pos[0] = actor->x.fixed + 0x200000;
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed;
     SceneActor_MoveActorZeroToTarget(pos);
 }
 
@@ -166,12 +166,12 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
 /* Scene tables, layouts and supplemental sequences. */
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
-    struct Actor02001424 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
     s32 target[3];
 
-    target[0] = actor->x;
-    target[1] = actor->y;
-    target[2] = actor->z + 0x00200000;
+    target[0] = actor->x.fixed;
+    target[1] = actor->y.fixed;
+    target[2] = actor->z.fixed + 0x00200000;
     if (SceneActor_MoveActorZeroToTarget(target)!= 0) {
         SceneState_ApplyTwoRectsAndRunThree();
     }
@@ -231,18 +231,18 @@ void SceneState_ApplyFlag970(void)
 
 void SceneState_RunUnlessActorZeroAtTile32x50(void)
 {
-    struct Actor_02001510 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if ((actor->f08 >> 20) != 32 || (actor->f10 >> 20) != 50) {
+    if ((actor->x.fixed >> 20) != 32 || (actor->z.fixed >> 20) != 50) {
         SceneActor_ApplyPointLeftOfActorZero();
     }
 }
 
 void SceneState_RunUnlessActorZeroAt30_52(void)
 {
-    struct Actor_02000cc0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if ((actor->f08 >> 20) != 30 || (actor->f10 >> 20) != 52) {
+    if ((actor->x.fixed >> 20) != 30 || (actor->z.fixed >> 20) != 52) {
         SceneActor_PassActorZeroOffsetPoint();
     }
 }
@@ -506,9 +506,9 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 s32 OverlayObject_SetYAboveLinkedActor(u8 *owner)
 {
     s16 *id = (s16 *)(owner + 100);
-    struct Actor *actor = Object_GetById(*id);
+    struct FieldActor *actor = Object_GetById(*id);
 
-    *(s32 *)(owner + 12) = actor->f0c + 0x100000;
+    *(s32 *)(owner + 12) = actor->y.fixed + 0x100000;
     return 0;
 }
 

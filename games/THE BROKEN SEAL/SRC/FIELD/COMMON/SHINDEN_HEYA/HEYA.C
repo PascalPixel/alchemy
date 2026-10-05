@@ -76,7 +76,7 @@ void ShindenHeya_SpawnActorSpark();
 extern u8 MsgShindenAcceptRobinCantMean[];
 extern u8 MsgShindenRobinWillAcceptResponsibilityFor[];
 extern u8 MsgShindenWeHadIdeaTrueSanctum[];
-void SceneState_ResetObject14Word108(void);
+void ShindenHeya_ResetActorUpdate(void);
 
 void ShindenHeya_FollowLeaderOffset();
 
@@ -128,7 +128,7 @@ s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
     return 0;
 }
 
-void *SceneData_GetTableBaa8(void)
+void *ShindenHeya_GetEntrances(void)
 {
     return &ShindenHeya_TableA;
 }
@@ -138,7 +138,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-void *SceneData_GetTableBbc8(void)
+void *ShindenHeya_GetExits(void)
 {
     return &ShindenHeya_TableB;
 }
@@ -691,7 +691,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Engine_EventWait(0x20);
     Actor_SetChildValue(8, 0);
     Engine_EventWait(0x1e);
-    SceneState_ResetObject14Word108();
+    ShindenHeya_ResetActorUpdate();
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(0x14);
@@ -768,7 +768,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Engine_EventWait(0x80);
     Actor_SetChildValue(8, 0);
     Engine_EventWait(0x1e);
-    SceneState_ResetObject14Word108();
+    ShindenHeya_ResetActorUpdate();
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(0x1e);
@@ -1108,7 +1108,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Engine_ColorBufferApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(120);
-    SceneState_ResetObject14Word108();
+    ShindenHeya_ResetActorUpdate();
     Engine_ActorSetAnimation(8, 1);
     Audio_PlayCue(2);
     Engine_EventWait(60);
@@ -1432,7 +1432,7 @@ void ShindenHeya_CopyActorPose(void)
     ((struct FieldSprite *)p5)->priority = 2;
 }
 
-void SceneState_ResetObject14Word108(void)
+void ShindenHeya_ResetActorUpdate(void)
 {
     struct FieldActor *state = Object_GetById(14);
     state->update = 0;

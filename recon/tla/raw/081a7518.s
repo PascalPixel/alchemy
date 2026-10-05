@@ -130,7 +130,7 @@ Func_081a7518:
 	cmp r3, #0
 	bne .L_081a766e
 	movs r0, #1
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	bl Blend_WaitForTransition
 	ldr r3, .L_081a764c
 	movs r2, #9
@@ -193,11 +193,11 @@ Func_081a7518:
 	cmp r6, #0
 	beq .L_081a76a0
 	movs r0, #8
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	b .L_081a76a6
 .L_081a76a0:
 	movs r0, #60
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 .L_081a76a6:
 	bl Blend_WaitForTransition
 	cmp r6, #0

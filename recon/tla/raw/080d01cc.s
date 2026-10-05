@@ -36,7 +36,7 @@ DisplayTransition_Start:
 	movs r0, #0
 	bl Blend_SetDarkenTarget16
 	mov r0, r10
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	movs r0, #1
 	bl WaitFrames
 	b .L_080d04d2

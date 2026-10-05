@@ -126,36 +126,6 @@ Input_HandleKeyInterrupt:
 	.incbin "baserom.gba", 0x00013b40, 0x00000028
 	.section .rom.00013d84, "ax"
 	.incbin "baserom.gba", 0x00013d84, 0x000000ec
-	.section .rom.00013e70, "ax"
-	.global Blend_SetDarkenTarget16
-	.type Blend_SetDarkenTarget16, %function
-	.thumb_func
-Blend_SetDarkenTarget16:
-	.incbin "baserom.gba", 0x00013e70, 0x00000044
-	.section .rom.00013eb4, "ax"
-	.global Func_08013eb4
-	.type Func_08013eb4, %function
-	.thumb_func
-Func_08013eb4:
-	.incbin "baserom.gba", 0x00013eb4, 0x00000044
-	.section .rom.00013ef8, "ax"
-	.global Func_08013ef8
-	.type Func_08013ef8, %function
-	.thumb_func
-Func_08013ef8:
-	.incbin "baserom.gba", 0x00013ef8, 0x00000044
-	.section .rom.00013f3c, "ax"
-	.global Func_08013f3c
-	.type Func_08013f3c, %function
-	.thumb_func
-Func_08013f3c:
-	.incbin "baserom.gba", 0x00013f3c, 0x00000044
-	.section .rom.00013f80, "ax"
-	.global Func_08013f80
-	.type Func_08013f80, %function
-	.thumb_func
-Func_08013f80:
-	.incbin "baserom.gba", 0x00013f80, 0x0000005c
 	.section .rom.00013ffc, "ax"
 	.global Graphics_ResetFrameState
 	.type Graphics_ResetFrameState, %function

@@ -30,7 +30,7 @@ DisplayTransition_Finish:
 	.4byte .L_080d069a
 .L_080d0558:
 	movs r0, #0
-	bl Func_08013eb4
+	bl Blend_SetDarkenTarget0
 	mov r0, r10
 	bl Blend_SetDarkenTarget16
 	b .L_080d0718

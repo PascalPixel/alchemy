@@ -24,7 +24,7 @@ Func_081a729c:
 	mov r11, r0
 	bl Scheduler_ResetTaskTable
 	movs r0, #1
-	bl Func_08013ef8
+	bl Blend_SetBrightenTarget16
 	bl Func_08014b70
 	bl Func_08014368
 	movs r0, #1
@@ -166,7 +166,7 @@ Func_081a729c:
 	bl Runtime_ReleaseHeapBlock
 .L_081a73f2:
 	movs r0, #30
-	bl Func_08013f3c
+	bl Blend_SetBrightenTarget0
 	bl Blend_WaitForTransition
 	ldr r3, .L_081a7420
 	movs r2, #128

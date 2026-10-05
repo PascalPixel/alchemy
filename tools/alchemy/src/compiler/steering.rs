@@ -377,6 +377,15 @@ fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
         .collect()
 }
 
+/// Camelot's scene script layer (S2; Pascal, 2026-10-05): inline helpers that
+/// forward to the engine services as the scenes were written. One layer
+/// explains the scene code of the whole game, so its forwarders are source.
+pub(crate) const SCRIPT_LAYER: &[&str] = &[
+    "games/THE BROKEN SEAL/INCLUDE/FIELD_EVENT.H",
+    "games/THE BROKEN SEAL/INCLUDE/FIELD_SERVICE.H",
+    "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/JO.H",
+];
+
 /// Pure call/return adapters are steering helpers; transformed computations
 /// remain outside this deliberately bounded automatic convention.
 pub(crate) fn forwarding_findings(text: &str, source: &str) -> Result<Vec<Forwarder>, String> {
@@ -391,7 +400,10 @@ pub(crate) fn forwarding_findings(text: &str, source: &str) -> Result<Vec<Forwar
             .collect::<Vec<_>>()
     };
     let mut found = Vec::new();
-    for def in defs.iter().filter(|def| def.inline && def.static_) {
+    for def in defs
+        .iter()
+        .filter(|def| def.inline && def.static_ && !SCRIPT_LAYER.contains(&def.owner.as_str()))
+    {
         if has_reason(&tokens[def.open + 1..def.close]) {
             continue;
         }

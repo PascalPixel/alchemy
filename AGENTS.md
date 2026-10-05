@@ -124,7 +124,11 @@ or functions is exactly this cheating.
   inline assembly. A fake match stays in the source, tagged; it is never
   replaced by a compiler option or routing that fits only those functions
   (K1, K3). `/* CAMELOT_ASM: proof */` marks assembly Camelot very likely
-  wrote in C; the reviewed `Dma_Set` and `Iwram_*` macros stay. Never patch
+  wrote in C; the reviewed `Dma_Set` and `Iwram_*` macros stay. A layer that
+  explains a habit of the whole game is source, not a device: the ☀️ scene
+  script layer (inline helpers forwarding to the engine services in
+  `FIELD_EVENT.H`, `FIELD_SERVICE.H` and `RUNPA_JO/JO.H`) matches every scene
+  where direct calls break 642 functions (Pascal, 2026-10-05). Never patch
   compiler output. _Check: no-asm (in lint-staged)._
 - **S3** Write it the way Camelot would have in 2001: `games/<GAME>/SRC`,
   `INCLUDE`, `SOUND`, `TEXT`, with the same folder layout in both games and

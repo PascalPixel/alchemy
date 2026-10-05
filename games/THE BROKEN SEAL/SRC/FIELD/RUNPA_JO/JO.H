@@ -207,92 +207,77 @@ void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 
 static inline void Actor_FaceDirection(s32 actor, s32 facing, s32 frames)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_ActorFaceDirection(actor, facing, frames);
 }
 
 static inline void Actor_SetAttachedEffect(s32 actor, s32 effect)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_ActorSetAttachedEffect(actor, effect);
 }
 
 static inline void Actor_SetDestination(s32 actor, s32 x, s32 z)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_ActorSetDestination(actor, x, z);
 }
 
 static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
 }
 
 static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_ActorSetPosition(actor, fixed_x, fixed_z);
 }
 
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void Actor_ShowEmote(s32 actor, s32 emote, s32 frames)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_ActorShowEmote(actor, emote, frames);
 }
 
 static inline void Actor_WalkTo(s32 actor, s32 x, s32 z)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_ActorWalkTo(actor, x, z);
 }
 
 static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_ActorWalkToAndWait(actor, x, z);
 }
 
 static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_CameraMoveTo(fixed_x, fixed_y, fixed_z, pan);
 }
 
 static inline void Camera_SetSpeed(s32 speed, s32 acceleration)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_CameraSetSpeed(speed, acceleration);
 }
 
 static inline s32 GameFlag_IsSet(s32 flag)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     return Engine_GameFlagIsSet(flag);
 }
 
 static inline s32 GameFlag_Set(s32 flag)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     return Engine_GameFlagSet(flag);
 }
 
 static inline void Map_CopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
                                  s32 dest_y)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_MapCopyCells(src_x, src_y, width, height, dest_x, dest_y);
 }
 
 static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
 {
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
     Engine_WorkSetValuesIfNonNegative(first, second, third);
 }
 
@@ -302,13 +287,11 @@ static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
  */
 static inline void *Actor_Get(s32 actor)
 {
-    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
     return Object_GetById(actor);
 }
 
 static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
 {
-    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
     Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
 }
 

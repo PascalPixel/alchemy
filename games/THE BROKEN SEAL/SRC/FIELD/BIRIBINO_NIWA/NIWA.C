@@ -218,7 +218,7 @@ done:
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene38e_0200045c(void)
+void BiribinoNiwa_LeaveThroughGate(void)
 {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x200) == 0) {

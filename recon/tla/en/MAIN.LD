@@ -2756,7 +2756,7 @@
         "*/recon/tla/raw/081a729c.o"(.text)
         "*/recon/tla/raw/081a7518.o"(.text)
         "*/recon/tla/raw/081a76f8.o"(.text)
-        "*/recon/tla/raw/081a7870.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/PALETTE/INTERPOLATE_BUFFERS.o"(.text)
         "*/recon/tla/raw/081a78c0.o"(.text)
         "*/recon/tla/raw/081a7a28.o"(.text)
         "*/recon/tla/raw/081a814c.o"(.text)

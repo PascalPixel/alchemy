@@ -5505,7 +5505,9 @@ Func_081a6020:
 	.type Func_081a6028, %function
 	.thumb_func
 Func_081a6028:
-	.incbin "baserom.gba", 0x001a6028, 0x0000223c
+	.incbin "baserom.gba", 0x001a6028, 0x00001848
+	.section .rom.001a78c0, "ax"
+	.incbin "baserom.gba", 0x001a78c0, 0x000009a4
 	.section .rom.001a8286, "ax"
 	.incbin "baserom.gba", 0x001a8286, 0x00003d7a
 	.section .rom.001ac026, "ax"

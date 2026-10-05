@@ -1306,6 +1306,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.001a052c)
     "*/games/THE LOST AGE/SRC/SYSTEM/SCENE_STATE_SET_HALFWORD.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001a1280)
+    "*/games/COMMON/SRC/GRAPHICS/PALETTE/INTERPOLATE_BUFFERS.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.001a78c0)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COLOR_BUFFER.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COLOR_BUFFER_2.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001a8286)

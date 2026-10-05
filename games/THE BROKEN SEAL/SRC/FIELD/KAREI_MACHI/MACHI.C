@@ -113,14 +113,16 @@ typedef struct OrbitingSceneObject {
     u8 padding_00[8];
     s32 x;
     s32 y;
-    u8 padding_10[19];
+    s32 z;
+    u8 padding_14[15];
     u8 flags_23;
     u8 padding_24[12];
     s32 orbit_angle;
     u8 padding_34[4];
     s32 orbit_center_x;
     s32 orbit_center_y;
-    u8 padding_40[16];
+    s32 orbit_center_z;
+    u8 padding_44[12];
     OrbitingSceneObjectSprite *sprite;
     u8 padding_54;
     u8 mode;
@@ -1113,12 +1115,10 @@ s32 Scene_Initialize(void)
 
 void KareiMachi_SetupEntryActors(void)
 {
-    u32 i;
-    u8 *rec;
-    s32 rec2;
-    s32 rec7;
-    s32 record;
-    u8 *p6;
+    OrbitingSceneObject *nut;
+    s32 found;
+    u8 *heap;
+    OrbitingSceneObjectSprite *sprite;
 
     if (Engine_GameFlagIsSet(0x941) != 0) {
         Engine_GameFlagSet(0x321);
@@ -1133,29 +1133,30 @@ void KareiMachi_SetupEntryActors(void)
         Call3(Engine_ActorSetPosition, 25, 0x1a80000, 0x580000);
     }
     Engine_ActorSetChildValue(21, 2);
-    rec2 = Engine_GameFlagIsSet(0x916);
-    if (rec2 != 0) {
+    /* The nut actor 26 floats above its spot until the party takes it. */
+    found = Engine_GameFlagIsSet(0x916);
+    if (found != 0) {
         Engine_ActorSetPosition(26, 0, 0);
     } else {
-        rec = (s32)Object_GetById(26);
-        p6 = *(s32 *)((s32)rec + 80);
-        ((struct SpriteBits *)p6)->mode = 1;
-        ((struct SpriteBits *)p6)->hidden = 0;
-        ((struct SpriteBits *)p6)->b9_hi = 0;
-        p6[39] = rec2;
-        rec[92] = 1;
-        *(u8 *)((((s32)rec + 92) - 7)) = rec2;
-        *(s32 *)((s32)rec + 12) = 0xa0000;
-        rec[97] = 1;
-        rec7 = (s32)Engine_HeapAllocate(17, 0x608);
-        Engine_ItemLoadIcon(181);
-        Engine_VramLoad(p6[28], 128, (rec7 + 0x400));
+        nut = (OrbitingSceneObject *)Object_GetById(26);
+        sprite = nut->sprite;
+        sprite->flags_09_mode = 1;
+        sprite->flags_05_bit_5 = 0;
+        sprite->flags_09_high = 0;
+        sprite->state = found;
+        nut->active = 1;
+        nut->mode = found;
+        nut->y = 0xa0000;
+        nut->visible = 1;
+        heap = Engine_HeapAllocate(17, 0x608);
+        Engine_ItemLoadIcon(ITEM_NUT);
+        Engine_VramLoad(sprite->palette, 128, heap + 0x400);
         Engine_HeapRelease(17);
-        *(s32 *)((s32)rec + 48) = rec2;
-        *(s32 *)((s32)rec + 56) = *(s32 *)((s32)rec + 8);
-        *(s32 *)((s32)rec + 60) = *(s32 *)((s32)rec + 12);
-        *(s32 *)((s32)rec + 64) = *(s32 *)((s32)rec + 16);
-        ((void (*)())Engine_TaskAddCallback)((s32)SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
+        nut->orbit_angle = found;
+        nut->orbit_center_x = nut->x;
+        nut->orbit_center_y = nut->y;
+        nut->orbit_center_z = nut->z;
+        Engine_TaskAddCallback(SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
     }
 }
 

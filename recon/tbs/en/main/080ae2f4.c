@@ -26,11 +26,30 @@
  *   MenuRenderWork (and with a bitfield or a union there) sched2 hoists the
  *   load; *(u8 *)&render->menu_busy (alias set 0) keeps the order but
  *   makes the constant 1 QImode, not hoisted, and scores 97.
- * Remaining (61), three things:
+ * 2026-10-05 q6: 61 to 47, no S2 devices.
+ * - The row_y loop counts with side, not i: the native's counter is a
+ *   pseudo of its own (r2, with 200 in r1), while i is the tab loop's r5
+ *   throughout: 53. cursor[1] = cursor[0] = 0 written on the array before
+ *   sel = cursor: 47. All 13,440 orders of the eight opening statements
+ *   (menu before the state and the row loop) score 47 or more.
+ * - Tried: volatile frame, pending or phase (187+), the row loop on tile,
+ *   result or a block-local k (k scores 47 too), forward i (no change).
+ *   Pinning the -1 to r5 with a register asm variable fixes the shared -1
+ *   (43) but is a device for a near miss, so it is not kept.
+ * - Why the -1 is hoisted (loop dump): pass 1 sees 212 real insns in the
+ *   frame loop (life 15 * 14 = 210, not desirable), pass 2 sees 188
+ *   (life 14 * 14 = 196, moved). Its life runs from the set after the
+ *   first call's x to the second call's r3 move; the native needs 9 more
+ *   loop insns at pass 2 or a life of 13.
+ * - Why the cursor zero is frame's slot: CSE canonicalises the zero
+ *   register of the cursor store to frame's pseudo (reg 38, set to 0
+ *   first), which is spilled, so reload loads it from sp+48.
+ * Remaining (47), three things:
  * 1. Opening reloads: the native loads 1, 0, 0 into r1, r2, r0 (pending,
  *    frame, phase, no inheritance between the zeros) and the cursor zero
  *    separately into r7; here the zeros share r0 and the cursor stores
- *    reload frame from its slot.
+ *    reload frame from its slot. The row loop's literal pool then sits
+ *    2 bytes later.
  * 2. The -1 shared in r5 by the two calls after the tab loop: loop.c's
  *    second pass hoists it (life 14 * threshold 14 = 196 >= 188 real insns
  *    in the frame loop); the native's loop must have had at least 197 real
@@ -138,10 +157,10 @@ s32 Unnamed_080ae2f4(void)
     pending = 1;
     phase = 0;
     menu->cursor->state = 13;
+    cursor[1] = cursor[0] = 0;
     sel = cursor;
-    sel[1] = sel[0] = 0;
-    for (i = 3; i >= 0; i--)
-        menu->row_y[i] = 200;
+    for (side = 3; side >= 0; side--)
+        menu->row_y[side] = 200;
     RenderOutput_ClearListFar(menu->list_window);
     WaitFrames(1);
     page = pages;

@@ -26,13 +26,20 @@ fn words_with_prefix(line: &str, prefixes: &[&str]) -> usize {
 fn address_names(line: &str) -> usize {
     line.split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
         .filter(|word| {
-            ["Func_", "Data_", "Unnamed_", "sub_", "FunctionHead_", "Unk_"]
-                .iter()
-                .any(|prefix| {
-                    word.strip_prefix(prefix).is_some_and(|rest| {
-                        rest.len() >= 6 && rest.chars().all(|c| c.is_ascii_hexdigit())
-                    })
+            [
+                "Func_",
+                "Data_",
+                "Unnamed_",
+                "sub_",
+                "FunctionHead_",
+                "Unk_",
+            ]
+            .iter()
+            .any(|prefix| {
+                word.strip_prefix(prefix).is_some_and(|rest| {
+                    rest.len() >= 6 && rest.chars().all(|c| c.is_ascii_hexdigit())
                 })
+            })
         })
         .count()
 }
@@ -94,16 +101,58 @@ fn magic_numbers(line: &str) -> usize {
 }
 
 const SIGNALS: &[Signal] = &[
-    Signal { name: "fakematch", weight: 10, find: |l| count(l, "FAKEMATCH") },
-    Signal { name: "asm", weight: 6, find: |l| count(l, "asm(") + count(l, "asm (") + count(l, "__asm__") },
-    Signal { name: "byte_offset", weight: 5, find: byte_offsets },
-    Signal { name: "placeholder", weight: 3, find: |l| words_with_prefix(l, &["unknown_", "padding", "field_", "unk_"]) + address_names(l) },
-    Signal { name: "deref_cast", weight: 3, find: deref_casts },
-    Signal { name: "one_pass", weight: 3, find: |l| count(l, "while (0)") },
-    Signal { name: "goto", weight: 2, find: |l| words_with_prefix(l, &["goto"]) },
-    Signal { name: "volatile", weight: 2, find: |l| count(l, "volatile") },
-    Signal { name: "magic", weight: 0, find: magic_numbers },
-    Signal { name: "cast", weight: 1, find: value_casts },
+    Signal {
+        name: "fakematch",
+        weight: 10,
+        find: |l| count(l, "FAKEMATCH"),
+    },
+    Signal {
+        name: "asm",
+        weight: 6,
+        find: |l| count(l, "asm(") + count(l, "asm (") + count(l, "__asm__"),
+    },
+    Signal {
+        name: "byte_offset",
+        weight: 5,
+        find: byte_offsets,
+    },
+    Signal {
+        name: "placeholder",
+        weight: 3,
+        find: |l| {
+            words_with_prefix(l, &["unknown_", "padding", "field_", "unk_"]) + address_names(l)
+        },
+    },
+    Signal {
+        name: "deref_cast",
+        weight: 3,
+        find: deref_casts,
+    },
+    Signal {
+        name: "one_pass",
+        weight: 3,
+        find: |l| count(l, "while (0)"),
+    },
+    Signal {
+        name: "goto",
+        weight: 2,
+        find: |l| words_with_prefix(l, &["goto"]),
+    },
+    Signal {
+        name: "volatile",
+        weight: 2,
+        find: |l| count(l, "volatile"),
+    },
+    Signal {
+        name: "magic",
+        weight: 0,
+        find: magic_numbers,
+    },
+    Signal {
+        name: "cast",
+        weight: 1,
+        find: value_casts,
+    },
 ];
 
 /// A function's place and its mechanical signals.
@@ -124,7 +173,7 @@ impl Ranked {
     }
 }
 
-fn strip_comment(line: &str, in_block: &mut bool) -> String {
+pub(crate) fn strip_comment(line: &str, in_block: &mut bool) -> String {
     // Keep FAKEMATCH tags visible: they live in comments.
     let mut out = String::new();
     let mut rest = line;
@@ -157,7 +206,7 @@ fn strip_comment(line: &str, in_block: &mut bool) -> String {
 }
 
 /// The name of a function whose definition starts on this line, if any.
-fn definition_name(line: &str) -> Option<String> {
+pub(crate) fn definition_name(line: &str) -> Option<String> {
     let first = line.chars().next()?;
     if !(first.is_ascii_alphabetic() || first == '_') || line.trim_end().ends_with(';') {
         return None;
@@ -175,8 +224,9 @@ fn definition_name(line: &str) -> Option<String> {
         .into_iter()
         .rev()
         .collect();
-    (!name.is_empty() && !["if", "while", "for", "switch", "return", "sizeof"].contains(&name.as_str()))
-        .then_some(name)
+    (!name.is_empty()
+        && !["if", "while", "for", "switch", "return", "sizeof"].contains(&name.as_str()))
+    .then_some(name)
 }
 
 /// Every function defined at the top level of one C source.
@@ -247,14 +297,27 @@ pub fn rank_tree(root: &Path) -> Result<Vec<Ranked>, String> {
             let path = entry.map_err(|e| e.to_string())?.path();
             if path.is_dir() {
                 stack.push(path);
-            } else if path.extension().is_some_and(|e| e.eq_ignore_ascii_case("c")) {
-                let text = std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-                let name = path.strip_prefix(root).unwrap_or(&path).to_string_lossy().into_owned();
+            } else if path
+                .extension()
+                .is_some_and(|e| e.eq_ignore_ascii_case("c"))
+            {
+                let text = std::fs::read_to_string(&path)
+                    .map_err(|e| format!("{}: {e}", path.display()))?;
+                let name = path
+                    .strip_prefix(root)
+                    .unwrap_or(&path)
+                    .to_string_lossy()
+                    .into_owned();
                 ranked.extend(rank_source(&name, &text));
             }
         }
     }
-    ranked.sort_by(|a, b| b.score.cmp(&a.score).then(a.file.cmp(&b.file)).then(a.line.cmp(&b.line)));
+    ranked.sort_by(|a, b| {
+        b.score
+            .cmp(&a.score)
+            .then(a.file.cmp(&b.file))
+            .then(a.line.cmp(&b.line))
+    });
     Ok(ranked)
 }
 

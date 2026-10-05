@@ -9,9 +9,9 @@ mod bootstrap;
 mod build;
 mod build_rom;
 mod build_text;
-mod camelotize;
 mod c_items;
 mod cache;
+mod camelotize;
 mod check;
 mod compiler;
 mod coverage;
@@ -21,6 +21,7 @@ mod deps_command;
 mod diff;
 mod edition;
 mod elf;
+mod fakematch;
 mod gate;
 mod integrate;
 mod keep;
@@ -67,6 +68,7 @@ Check the whole build
 
 Camelotize
   worst         maintained C ranked by how mechanical it reads
+  fakematch     every FAKEMATCH tag by device and family, largest first
   camelotize    mechanical rewrites: actors, events, registers,
                 declarations, barriers
   keep          keep only the edits that leave all twelve editions identical
@@ -108,6 +110,7 @@ fn main() -> ExitCode {
         "similar" => similar_command::entry(rest),
         "sizes" => result(sizes::run(rest)),
         "worst" => result(worst_command::run(rest)),
+        "fakematch" => result(fakematch::run(rest)),
         "figure" => result(coverage::figures::run(rest)),
         "camelotize" => result(camelotize::run(rest)),
         "objects" => result(objects::run(rest)),

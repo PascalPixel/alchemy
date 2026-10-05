@@ -67,7 +67,7 @@ void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
     while (frames != 0) {
         Engine_TaskWait(1);
         frames--;
-        if (*(s32 *)(o + 12) <= limit) break;
+        if (((struct FieldActor *)o)->y.fixed <= limit) break;
     }
 }
 

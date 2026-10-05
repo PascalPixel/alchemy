@@ -1026,7 +1026,7 @@
     "*/recon/tla/fr/rom.o"(.rom.000e2630)
     "*/recon/tla/fr/rom.o"(.rom.000e265c)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/UPDATE_ORBITING_PARTICLE_MAIN.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000e3648)
+    "*/recon/tla/fr/rom.o"(.rom.000e367c)
     "*/recon/tla/fr/rom.o"(.rom.000e3cac)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/EFFECT41.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000e3dd4)

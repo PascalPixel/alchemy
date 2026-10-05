@@ -1505,7 +1505,6 @@
         "*/recon/tla/raw/080de214.o"(.text)
         "*/recon/tla/raw/080de21c.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/UPDATE_ORBITING_PARTICLE_MAIN.o"(.text)
-        "*/recon/tla/raw/080de654.o"(.text)
         "*/recon/tla/raw/080de688.o"(.text)
         "*/recon/tla/raw/080de818.o"(.text)
         "*/recon/tla/raw/080de864.o"(.text)

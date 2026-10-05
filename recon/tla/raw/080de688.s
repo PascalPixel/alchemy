@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080de688
+	.global BattleFx_RunOrbitingParticles
 	.thumb_func
-Func_080de688:
+BattleFx_RunOrbitingParticles:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

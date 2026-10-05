@@ -6,6 +6,8 @@
 #include "SYSTEM.H"
 #include "FRAME.H"
 #include "OBJECT_DISPATCH.H"
+#include "FX_SCENE.H"
+#include "RAM_BUFFER.H"
 
 struct OrbitingParticle;
 
@@ -101,5 +103,28 @@ void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
         } else {
             *(s32 *)(arg + 108) = (s32)BattleFx_UpdateOrbitingParticleFade;
         }
+    }
+}
+
+struct OrbitingParticleChild {
+    u8 reserved_00[35];
+    u8 flags;
+};
+
+void BattleFx_RunOrbitingParticles(void);
+
+/* Starts the orbit: enables the scene when its child runs a mode, marks
+   the child and runs the particles. */
+void BattleFx_StartOrbitingParticles(void)
+{
+    struct BattleFxScene *state = Ram_HeapSlots->effect_work;
+    struct OrbitingParticleChild *child = state->child;
+
+    if (child != 0) {
+        if (state->child_mode != 0) {
+            state->enabled = 1;
+        }
+        child->flags |= 2;
+        BattleFx_RunOrbitingParticles();
     }
 }

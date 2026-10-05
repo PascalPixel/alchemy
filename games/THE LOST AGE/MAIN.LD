@@ -950,7 +950,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000dd5f8)
     "*/recon/tla/ja/rom.o"(.rom.000dd624)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/UPDATE_ORBITING_PARTICLE_MAIN.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000de610)
+    "*/recon/tla/ja/rom.o"(.rom.000de644)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/EFFECT41.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ded9c)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)

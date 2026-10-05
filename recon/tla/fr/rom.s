@@ -3835,8 +3835,12 @@ BattleFx_SnapScaleToFull:
 	.thumb_func
 UpdateRisingParticleBurst:
 	.incbin "baserom.gba", 0x000e265c, 0x00000ee8
-	.section .rom.000e3648, "ax"
-	.incbin "baserom.gba", 0x000e3648, 0x00000664
+	.section .rom.000e367c, "ax"
+	.global BattleFx_RunOrbitingParticles
+	.type BattleFx_RunOrbitingParticles, %function
+	.thumb_func
+BattleFx_RunOrbitingParticles:
+	.incbin "baserom.gba", 0x000e367c, 0x00000630
 	.section .rom.000e3cac, "ax"
 	.global Func_080decb8
 	.type Func_080decb8, %function

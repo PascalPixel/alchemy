@@ -28,12 +28,17 @@ struct ObjectRuntime {
     s32 target_x;
     s32 target_y;
     s32 target_z;
-    u8 unknown_44[0x0c];
+    /* What a landing keeps of the fall speed, and what pulls the object
+       down each frame while it falls. */
+    s32 bounce;
+    s32 gravity;
+    s32 unknown_4c;
     void *animation;
     u8 animation_kind;
     u8 flags;
     u8 motion_flags;
-    u8 unknown_57[2];
+    u8 unknown_57;
+    u8 unknown_58;
     u8 unknown_59;
     u8 action_flags;
     u8 movement_state;

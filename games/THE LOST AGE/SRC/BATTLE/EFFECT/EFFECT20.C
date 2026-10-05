@@ -1,38 +1,22 @@
 #include "MOTION_OBJECT.H"
 #include "B5_CONTEXT.H"
 #include "TYPES.H"
+#include "OBJECT_RUNTIME.H"
 
-void Object_ResetMotion(void *);
-void Object_SetPosition(void *, s32, s32, s32);
-void Object_SetMode(void *, s32);
 
-struct RisingObjectState {
-    u8 padding_00[0x28];
-    s32 field_28;
-    u8 padding_2c[4];
-    s32 field_30;
-    s32 field_34;
-    u8 padding_38[0xc];
-    s32 field_44;
-    s32 field_48;
-    u8 padding_4c[0xc];
-    u8 field_58;
-    u8 padding_59;
-    u8 field_5a;
-};
-
-void BattleFx_InitializeRisingObject(s32 arg0)
+/* Starts a battle object rising from the ground below its slot's anchor. */
+void BattleFx_InitializeRisingObject(s32 slot)
 {
-    struct BattleObjectSlot *context = GetBattleObjectSlotFar(arg0);
-    struct RisingObjectState *object = (struct RisingObjectState *)context->object;
+    struct BattleObjectSlot *context = GetBattleObjectSlotFar(slot);
+    struct ObjectRuntime *object = context->object;
 
-    object->field_34 = 0x20000;
-    object->field_30 = 0x80000;
-    object->field_28 = 0x40000;
-    object->field_48 = 0xAB85;
-    object->field_44 = 0;
-    object->field_5a = 0;
-    object->field_58 = 1;
+    object->acceleration = 0x20000;
+    object->speed_limit = 0x80000;
+    object->velocity_y = 0x40000;
+    object->gravity = 0xAB85;
+    object->bounce = 0;
+    object->action_flags = 0;
+    object->unknown_58 = 1;
     Object_ResetMotion(object);
     Object_SetPosition(object, context->anchor_x, 0, context->anchor_z);
     Object_SetMode(object, 1);

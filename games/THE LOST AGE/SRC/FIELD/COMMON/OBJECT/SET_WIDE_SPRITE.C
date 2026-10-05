@@ -24,7 +24,7 @@ void Object_SetWideSprite(u32 object_id, s32 mode)
     if (mode == 0) {
         object->x = 0;
         object->z = 0;
-        *(s32 *)&object->unknown_44[8] = 0x31415927;
+        object->unknown_4c = 0x31415927;
         return;
     }
     sprite = object->animation;

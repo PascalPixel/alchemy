@@ -139,7 +139,7 @@ void Engine_EventEnd();
 extern u8 MsgKorosseoAreaCalledPipeworks[];
 extern u8 MsgKorosseoObjectiveMakeGood[];
 void SceneState_InitTableWordsAndLoad3200();
-void SceneState_ReleaseTableAndResetC6a6();
+void KorosseoKawa_ReleaseMarker();
 void Engine_ObjectSetPosition();
 
 extern u8 MsgKorosseoLogsKeyClearingStage[];
@@ -152,7 +152,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void);
 void KorosseoKawa_WaitForCountdown(void);
 void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz);
 void SceneState_SendIdBySceneId(s32 a, s32 b);
-void SceneState_ReleaseTableAndResetC6a6(void);
+void KorosseoKawa_ReleaseMarker(void);
 
 u8 *KorosseoKawa_GetEntrances(void)
 {
@@ -993,7 +993,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             SceneState_InitTableWordsAndLoad3200(160, 96, 10);
             Engine_EventWait(70);
             Engine_EventShowMessage(a0, 0);
-            SceneState_ReleaseTableAndResetC6a6();
+            KorosseoKawa_ReleaseMarker();
             Engine_TaskWait(2);
             first = Object_GetById(13);
             first->motion_flags = 0;
@@ -1027,7 +1027,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             SceneState_InitTableWordsAndLoad3200(56, 64, 10);
             Engine_EventWait(70);
             Engine_EventShowMessage(a0, 0);
-            SceneState_ReleaseTableAndResetC6a6();
+            KorosseoKawa_ReleaseMarker();
             Engine_TaskWait(2);
             Engine_CameraFollowActor(0, 0);
             SceneState_SendIdBySceneId(a0, 2);
@@ -1119,7 +1119,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
         Event_ShowMessage(scene, 0);
         SceneState_StoreParamsAndInitTable(120, 72, 0);
         Event_ShowMessage(scene, 0);
-        SceneState_ReleaseTableAndResetC6a6();
+        KorosseoKawa_ReleaseMarker();
         Engine_EventWait(15);
         Korosseo_FadeInCompetitor(0, 984, 200);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);

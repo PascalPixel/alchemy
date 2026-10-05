@@ -108,7 +108,7 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
     Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
 }
 
-void SceneState_ReleaseTableAndResetC6a6(void)
+void KorosseoKawa_ReleaseMarker(void)
 {
 
     Scheduler_RemoveCallbackFar(Korosseo_UpdateMarker);

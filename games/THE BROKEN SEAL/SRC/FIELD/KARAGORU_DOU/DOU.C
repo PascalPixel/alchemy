@@ -21,9 +21,6 @@ extern const struct SceneEvent gKaragoruDouEvents2[];
 extern const struct SceneEvent gKaragoruDouEvents3[];
 extern const struct SceneEvent gKaragoruDouEventsOther[];
 
-/* The cave links the staged-actor code, so this scene reaches these engine
-   imports by the names that code gives them, beside the Engine_ names the
-   cave's other scenes use. */
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);

@@ -7,6 +7,7 @@
 #include "SCENE.H"
 #include "BATTLE_WORK.H"
 #include "BATTLE_PRESENTATION.H"
+#include "BATTLE_RUNTIME.H"
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value);
 s32 ObjectDispatch_ReleaseFar(s32);
@@ -14,7 +15,6 @@ s32 ObjectDispatch_ReleaseFar(s32);
 void Render_ResetTransformState(void);
 s32 Graphics_PrepareTransferAndRun(void *, void *);
 s32 Graphics_PrepareTransferInIwramWork(void *, void *);
-s32 GameFlag_TestFar(s32);
 extern u8 Camera_FlagTransformWork[];
 
 s32 Render_ProjectPoint(const s32 *, s32 *);

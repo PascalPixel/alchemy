@@ -5,6 +5,7 @@
 #include "FIELD_SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
+#include "OBJECT_RUNTIME.H"
 
 extern const struct SceneEntrance gKuupuappuDouEntrances1[];
 extern const struct SceneEntrance gKuupuappuDouEntrances2[];
@@ -12,7 +13,6 @@ extern const struct SceneEntrance gKuupuappuDouEntrances3[];
 extern const struct SceneEntrance gKuupuappuDouEntrancesOther[];
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
-void Object_SetMoveTarget(s32 *, s32, s32, s32);
 void KuupuappuDou_PushBlockAhead();
 s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor);
 void KuupuappuDou_SpawnPuffs();
@@ -42,7 +42,6 @@ extern const struct ScenePlacement gKuupuappuDouPlacements3[];
 extern const struct ScenePlacement gKuupuappuDouPlacementsOther[];
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-void Engine_ObjectCommitPosition(struct FieldActor *object);
 
 /* One cell's step for each sixteenth of a turn: pixels across in the high
  * half, pixels along in the low half. */
@@ -65,7 +64,6 @@ struct MapShake {
 
 extern u32 gFrameCount;
 void QueueIoWriteDelay2(u32 address, s32 value);
-void Engine_MapRenderWaitForValues(void);
 
 void KuupuappuDou_RunRumble(void);
 

@@ -1,6 +1,7 @@
 #include "NIWA.H"
 #include "TYPES.H"
 #include "CALL.H"
+#include "FIELD_EVENT.H"
 
 extern u8 gBiribinoNiwaPlacements[];
 extern const struct ScenePlacement gBiribinoNiwaPlacementsOther[];
@@ -23,23 +24,6 @@ extern struct EventWork *gEventWork;
 
 /* Main-image code reached through the overlay's import veneers, declared
  * old-style: the scene passes its arguments as plain words. */
-s32 Engine_GameFlagIsSet();
-void Engine_EventBegin();
-void Engine_EventEnd();
-void Engine_EventWait();
-void Engine_EventSetMessage();
-void Engine_EventShowMessage();
-void Engine_EventShowMessageAndWait();
-s32 Engine_EventOpenMessage();
-s32 Engine_EventChooseYesNo();
-void Engine_ActorSetSpeed();
-void Engine_ActorShowEmote();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorStartRepeatedMotion();
-void Engine_ActorRunRepeatedMotion();
-void Engine_ActorFaceDirection();
-void Engine_ActorSetAnimation();
-void Engine_ActorSetAnimationAndWait();
 void Engine_ObjectSetTargetAndCallback();
 void FieldScene_OpenGate();
 
@@ -48,24 +32,12 @@ extern u8 BiribinoNiwa_GuardScript[];
 
 void BiribinoNiwa_ApplyEntryState(void);
 
-void Engine_GameFlagClear();
 void InitializeOrbitingSceneEntity();
 void BiribinoNiwa_RunGardenScene();
 
 extern u8 MsgBiribinoNotTrueWitnesses[];
 extern u8 MsgBiribinoOhItS[];
 extern u8 MsgBiribinoUnderArrest[];
-void Engine_CameraMoveTo();
-void Engine_MapRedraw();
-void Engine_TaskWait();
-void Engine_EventOpenScreen();
-void Engine_CameraSetSpeed();
-void Engine_ActorSetAttachedEffect();
-void Engine_ActorWalkTo();
-void Engine_ActorWaitForMove();
-void Engine_EventCloseScreen();
-void Engine_EventWaitForScreen();
-void Engine_EventRequestExit();
 
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 {

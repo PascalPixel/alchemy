@@ -26,18 +26,6 @@ extern s16 ImiruMura_ExitCellPoints[][2];
 extern u8 MsgMakyuriCatchUpLostOpportunity[];
 extern u8 MsgMakyuriStoreClosedUntilWell[];
 extern u8 ImiruMura_TurnScript[];
-s32 Engine_GameFlagIsSet();
-void Engine_ShopOpen();
-void Engine_EventBegin();
-void Engine_ActorFaceActor();
-void Engine_EventWait();
-void Engine_EventSetMessage();
-void Engine_EventShowMessage();
-void Engine_ActorFaceDirection();
-void Engine_EventEnd();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
 void Object_SetActionCallbackAndRefreshById();
 
 extern u8 MsgMakyuriShameStoreClosed[];

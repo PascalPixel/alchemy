@@ -5,6 +5,7 @@
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
 #include "BATTLE_PRESENTATION.H"
+#include "FIELD_EVENT.H"
 
 /* A battle callback: cycle the units' status icons, give each unit's
  * effect entry priority 9 while the unit is off the ground and 0 otherwise
@@ -130,7 +131,6 @@ s32 ResourceMetadata_RegisterFar(struct AnimationObject *context, s32 effect_id)
 void ResourceMetadata_UnregisterFar(struct AnimationObject *context, s32 entry_handle);
 void Animation_SetWorkEntryFar(struct AnimationEntry *effect, s32 entry_index);
 
-void Object_SetMode(struct MotionObject *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *, s32);
 
 s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)

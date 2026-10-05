@@ -4,6 +4,9 @@
 #include "FIELD_SCENE.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "CALL.H"
+#include "BATTLE_RUNTIME.H"
+#include "ITEM.H"
+#include "INVENTORY.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -37,13 +40,8 @@ extern u8 GomaIriguchi_SceneTableB[];
 extern u8 GomaIriguchi_SceneTableC[];
 extern u8 GomaIriguchi_SceneTableD[];
 
-void Engine_EventWait();
 void BattleFx_SetQueuedSoundAndPlay();
-void Engine_ActorSetAnimation();
-s32 Engine_GameFlagIsSet();
 void Engine_MapCopyCellAttributes();
-void Engine_ActorSetPosition();
-void Engine_ActorSetSpriteFlags();
 
 struct Flags35 {
     u8 pad[35];
@@ -65,18 +63,8 @@ void EventObject_Initialize();
 void EffectRuntime_StopCurrentObject();
 
 void OverlayObject_TurnStateByEighth();
-void Engine_TaskWait(s32 frames);
-s32 Engine_MathCos(s32 angle);
-void Engine_ActorSetSpeed();
-void Engine_ActorSetDestination(s32 actor, s32 x, s32 y);
-void Engine_ActorWaitForMove(s32 actor);
 void OverlayObject_WaitForHeight();
-void Engine_AudioPlayCue(s32 cue);
-void Engine_WorkSetValuesIfNonNegative();
-s32 Engine_MathSin(s32 angle);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
-void Engine_ActorSetAnimation(s32 actor, s32 anim);
-void Engine_MapWaitWorkValuesBelow256(void);
 
 struct Actor {
     u8 pad00[8];
@@ -119,7 +107,6 @@ struct EffectParams {
     u8 pad1c[12];
 };
 
-u8 *Owner_GetStateFar(s32 group);
 s32 Inventory_AddItemFar(s32 group, s32 value);
 void Inventory_EquipFar(s32 group, s32 index);
 
@@ -137,8 +124,6 @@ struct Item_387 {
 };
 
 s32 Inventory_AddItemFar(s32 member, s32 item);
-struct Item_387 *Item_Get();
-void Inventory_Discard(s32 member, s32 slot);
 void Inventory_EquipFar(s32 member, s32 slot);
 
 /*

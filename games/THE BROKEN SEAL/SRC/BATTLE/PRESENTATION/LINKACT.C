@@ -5,16 +5,11 @@
 #include "BATTLE_RANDOM.H"
 #include "BATTLE_RUNTIME.H"
 #include "IO_REG.H"
+#include "SERIAL_RUNTIME.H"
 
 extern s32 gRandomSeed;
 extern volatile u16 gLinkStatus;
 extern volatile u16 gSerialReceivedSize;
-
-s32 SerialRuntime_BeginTransferA(void *data, s32 size);
-s32 SerialRuntime_BeginTransferB(void *data);
-s32 SerialRuntime_GetActiveTransfers(void);
-void SerialRuntime_RemoveIrqHandlers(void);
-void BattleLink_ResetTransferState(void);
 
 /* The header sent ahead of the actions: how many follow, a random check
  * value both sides must agree on, and the seed the battle continues from. */

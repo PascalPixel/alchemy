@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 *gEventWork;
 
@@ -60,8 +61,6 @@ struct SceneInteractionEntry {
 };
 
 extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
-
-s32 GameFlag_TestFar(s32 flag);
 
 void Scene_ResolveInteractionResult(void)
 {

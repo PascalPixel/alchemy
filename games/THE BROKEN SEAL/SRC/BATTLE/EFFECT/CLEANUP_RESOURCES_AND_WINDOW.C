@@ -7,6 +7,7 @@
 #include "IO_WRITE_QUEUE.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 gMapCellBuffer[];
 
@@ -92,7 +93,6 @@ extern const s32 WorldMap_PlaceMarkers[];
 extern u8 MsgDebugEntryName[];
 extern u8 MsgPresentLocation[];
 
-s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 ArcTan2(s32 dz, s32 dx);

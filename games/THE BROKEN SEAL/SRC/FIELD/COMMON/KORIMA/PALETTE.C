@@ -2,13 +2,12 @@
  * palette RAM; each overlay keeps two saved copies of it in its variables.
  * The same four functions sit in each of the four Korima overlays. */
 #include "DMA.H"
+#include "FIELD_EVENT.H"
 
 /* The colour work buffer, as the battle effects' colour buffers name it. */
 extern u8 *Data_03001ed0;
 extern u8 KorimaPalette_First[];
 extern u8 KorimaPalette_Second[];
-void Engine_ColorBufferApplySource(s32 value, s32 mode);
-void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 
 void KorimaPalette_SaveFirst(void)
 {

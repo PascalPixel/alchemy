@@ -17,20 +17,9 @@ extern u8 MsgShianIsntNobleHimTrySave[];
 extern u8 MsgShianNowHeTrulyBeyondWorlds[];
 
 extern u8 MsgShianAlreadyHeardTest[];
-void Engine_EventBegin();
-void Engine_EventSetMessage();
-void Engine_EventShowMessageAndWait();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorFaceDirection();
-void Engine_AudioPlayCue();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetDestination();
-void Engine_ActorWaitForMove();
 void Effect_Spawn();
-void Engine_EventWait();
 void BattleFx_PlayQueuedSoundFar();
 void Engine_MapCopyCellAttributes();
-void Engine_EventEnd();
 
 extern u8 MsgShianDoNotWorryWillPermitted[];
 extern u8 MsgShianEnjoyReadingMindsOthersDo[];
@@ -50,21 +39,13 @@ union SceneWord {
     u16 half[2];
 };
 
-void Engine_TaskWait();
-
 extern u8 MsgShianCannotPushHands[];
 extern u8 MsgShianGreatWarriorTrain[];
 extern u8 MsgShianWarriorsCannotUse[];
 void ShianJiin_WalkByFacing(void);
 
 extern u8 MsgShianLookTreeFell[];
-void Engine_ActorFaceActor();
-void Engine_ActorRunRepeatedMotion();
-void Engine_ActorShowEmote();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorFaceEachOther();
 void ShianJiin_WalkByFacing();
-void Engine_ActorSetPosition();
 
 extern u8 MsgShianDidDoWarrior[];
 extern u8 MsgShianImTravelingAroundWorldSpread[];

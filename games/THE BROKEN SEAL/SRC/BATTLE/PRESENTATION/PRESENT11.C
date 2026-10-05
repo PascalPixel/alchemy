@@ -4,9 +4,9 @@
 #include "IWRAM_CALL.H"
 #include "BATTLE_PRESENTATION.H"
 #include "SCENE.H"
+#include "BATTLE_RUNTIME.H"
 
 #include "MAP_SCROLL.H"
-s32 GameFlag_TestFar(s32 flag);
 
 /* Inline, so the arguments are computed before the routine's address. */
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
@@ -14,7 +14,6 @@ static __inline__ s32 DivQ16(s32 divisor, s32 value)
     /* FAKEMATCH: a direct call finishes the value shift before the divisor load; the reference loads the divisor first. */
     return Iwram_RatioMulQ14(divisor, value);
 }
-
 
 void Camera_StoreSceneParameters(s32, u32, s32);
 void Render_ResetTransformState(void);

@@ -2,6 +2,7 @@
 #include "MAP_SCROLL.H"
 #include "HAIDIA_BABI.H"
 #include "RAM_BUFFER.H"
+#include "FIELD_EVENT.H"
 
 s32 FieldScene_PrepareActors(s32);
 
@@ -307,37 +308,17 @@ struct SceneHalf {
 };
 
 void FieldScene_RunSixStepSequence17e4();
-void Engine_TaskWait();
-void Engine_MapRedraw();
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
-void Engine_ActorSetSpriteFlags(struct FieldActor *actor, s32 flags);
 void Graphics_EnableObjLayerAndCallbacks();
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void ObjectDispatch_RegisterChildMetadata(struct FieldActor *actor, s32 palette);
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset);
-void Engine_EventWait();
-void Engine_EventBegin();
-s32 Engine_EventChooseYesNo();
 void Object_RefreshSelectorById();
-void Engine_ActorSetPosition();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorJump();
-void Engine_ActorStartRepeatedMotion();
-void Engine_ActorRunRepeatedMotion();
-void Engine_ActorSetChildValue();
-void Engine_EventSetMessage();
 void Ui_SetRenderResultFromObject();
-void Engine_ActorSetSpritePriority();
-void Engine_CameraFollowActor();
-void Engine_EventRequestExit();
 void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
-void Engine_EventOpenScreen();
-void Engine_EventCloseScreen();
-void Engine_EventWaitForScreen();
-void Engine_AudioPlayCue();
 
 /* Haidia, the morning after the storm: the leader wakes in the house, the
    view opens on the room, the two talk over the scene's messages, and both

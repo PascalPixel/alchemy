@@ -7,6 +7,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "BATTLE_RUNTIME.H"
 
 s32 BattleEffect_SelectNearbyTargetObject(s32 obj_id, s32 battle_mode);
 s32 BattleFx_FindDescriptorWithOverride(s32 obj_id);
@@ -25,8 +26,6 @@ void BattleFx_RunEffect13Hook(s32);
 void BattleFx_FinishSceneAndReleaseHeapBlock(void);
 
 /* battle/effects/run/run_effect.c */
-
-
 
 extern struct BattleFxScene *gEffectWork;
 void BattleFx_RunItemBreakSequence(void);
@@ -58,7 +57,6 @@ void BattleEv_RunWait(s32, s32);
 void BattleFx_FinishAction();
 void _call_via_r3(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
-s32 GameFlag_TestFar(s32);
 void Battle_Reset();
 extern char MsgNothingHappens;
 

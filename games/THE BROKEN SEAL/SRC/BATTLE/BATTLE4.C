@@ -79,8 +79,6 @@ pick:
     return positions[(u32)(Random16() * count) >> 16];
 }
 
-s32 BattleFx_IsReviveFar(s32 effect);
-
 struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
 
 u32 Random16(void);

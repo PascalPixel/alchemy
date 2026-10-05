@@ -2,7 +2,6 @@
 #include "ITEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
-s32 Item_CanOwnerEquip(s32, s32);
 
 s32 Item_ClassifyUseAbility(s32 owner, s32 item)
 {

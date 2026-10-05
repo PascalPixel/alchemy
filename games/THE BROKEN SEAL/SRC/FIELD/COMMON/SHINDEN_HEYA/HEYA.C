@@ -75,8 +75,6 @@ extern u8 MsgShindenRobinWillAcceptResponsibilityFor[];
 extern u8 MsgShindenWeHadIdeaTrueSanctum[];
 void SceneState_ResetObject14Word108(void);
 
-void Engine_ActorSetPosition();
-void Engine_ActorSetAnimation();
 void ShindenHeya_FollowLeaderOffset();
 
 /* Resource 378 object reset at 0x02002660(28 bytes including alignment). */
@@ -111,7 +109,6 @@ enum FacingGatedMessage {
 
 extern u32 gFrameCount;
 
-void Engine_ObjectSetScript();
 void SceneEffect_StepEllipseOrbit();
 
 /* The motion script the owner effect runs before deleting itself. */

@@ -3,9 +3,9 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
+#include "OBJECT_RUNTIME.H"
 
 extern const s32 KorosseoKawa_ApproachScript[];
-
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -49,7 +49,6 @@ struct ModeRecord {
     u16 span;
 };
 
-
 /* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
@@ -61,7 +60,6 @@ extern u8 KorosseoKawa_ScriptB[];
 extern u8 HexDigits[];
 extern u8 KorosseoKawa_ScriptA[];
 typedef void(*SceneTask)(void);
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 void Vector_AddPolarOffset(s32, s32, s32 *);
@@ -70,7 +68,6 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
-void Object_SetMoveTarget();
 s32 SceneActor_ApplyValueAndMatchingSlots();
 void UiWork_PushValueSlot();
 void ObjectDispatch_WaitForValue16();

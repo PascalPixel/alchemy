@@ -4,6 +4,7 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "CALL.H"
+#include "B5_CONTEXT.H"
 
 extern u8 *gWork;
 
@@ -19,8 +20,6 @@ extern u8 GomaHashira_Messages[];
 extern u8 GomaHashira_Actors[];
 
 /* Imports this overlay shares with the staged-actor module, by its names. */
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void BattleFx_SetPhaseRequest(s32, s32);
 void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPillarSequence(void);
@@ -54,10 +53,6 @@ struct PillarEffect {
     u8 unknown_44[0x22];
     s16 plane;
 };
-
-LAYOUT_OFFSET_GUARD(PillarEffect_RateFirst, struct PillarEffect, rate_first, 0x30);
-LAYOUT_OFFSET_GUARD(PillarEffect_TargetX, struct PillarEffect, target_x, 0x38);
-LAYOUT_OFFSET_GUARD(PillarEffect_Plane, struct PillarEffect, plane, 0x66);
 
 /* The plane a pillar effect drifts in, by the axes its two rates move. */
 enum PillarEffectPlane {

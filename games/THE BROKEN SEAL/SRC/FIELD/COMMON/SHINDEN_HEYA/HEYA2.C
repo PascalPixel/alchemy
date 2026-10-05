@@ -7,9 +7,9 @@
 #include "FIELD_SCENE.H"
 #include "FACING_OBJECT.H"
 #include "CALL.H"
+#include "OBJECT_DISPATCH.H"
 
 void ShindenHeya_RaiseItemIcon(s32 item);
-
 
 /* The action-callback paths that walk the leader and Gerald in circles. */
 extern const s32 ShindenHeya_LeaderCircleScript[];
@@ -21,7 +21,6 @@ struct FacingObject *ResolveFacingObject(s16);
 
 struct FieldActor *GetActorState(s32 actor_id);
 void Object_RefreshSelectorById();
-
 
 enum FacingGatedMessage {
     MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS = 0x1035,
@@ -52,7 +51,6 @@ enum FacingGatedMessage {
 
 s32 UpdateFacingFromResolvedObject(struct FacingObject *object);
 
-void ObjectDispatch_Initialize();
 void WaitFrames();
 void Ui_PrepareTransferForItem();
 
@@ -63,7 +61,6 @@ extern const s32 ShindenHeya_ItemIconEndScript[];
 /* The motion script that deletes a spark once it has risen. */
 extern const s32 ShindenHeya_SparkEndScript[];
 
-s32 Engine_RandomNext();
 s32 Math_RemainderUnsigned();
 void ShindenHeya_UpdateRisingSpark(union FieldObject *object);
 

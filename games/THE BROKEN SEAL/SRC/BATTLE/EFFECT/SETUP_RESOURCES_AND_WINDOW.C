@@ -6,6 +6,9 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "VRAM_BLOCK.H"
 #include "IO_REG.H"
+#include "FIELD_EVENT.H"
+#include "BATTLE_RUNTIME.H"
+#include "UI.H"
 
 struct FxWindowEntry {
     u32 a;
@@ -35,10 +38,7 @@ struct FxObject {
 
 extern struct FxWindowWork gMapCellBuffer;
 
-struct FxObject *Object_GetById(s32 id);
-s32 GameFlag_TestFar(s32 flag);
 u16 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 
 void BattleFx_SetupResourcesAndWindow(void)
 {

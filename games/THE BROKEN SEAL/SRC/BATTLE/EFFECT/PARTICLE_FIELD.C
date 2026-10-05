@@ -14,6 +14,7 @@
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "MENU_LIST.H"
 
 extern u8 gBattleFxWork[];
 
@@ -22,7 +23,6 @@ extern u8 gBattleFxWork[];
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void AudioCommand_PlayFar(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);

@@ -4,7 +4,7 @@
 #include "FOUR_OBJECT_MOTION.H"
 #include "FIELD_SPRITE.H"
 #include "ANIMSPR.H"
-void ResourceObject_ReleaseFar(void *);
+#include "RESOURCE.H"
 s32 Object_ApplyProjectedPlacementFar(u32 object, u32 *request, u32 *motion, u32 limit);
 extern struct FourObjectMotionState *gMenuWork;
 
@@ -13,7 +13,6 @@ extern u8 RomBytes_080ad40d[];
 /* object/motion/four_object/FourObjectMotion_InitializeTopRow.c */
 extern s32 RomBytes_080af304[];
 
-void *ResourceObject_CreateFar(s32);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 void FourObjectMotion_UpdateAllPositions(void);

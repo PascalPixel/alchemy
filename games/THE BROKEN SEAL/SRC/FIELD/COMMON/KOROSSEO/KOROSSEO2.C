@@ -46,13 +46,6 @@ struct CompetitorState {
         *ime = saved; \
     } while (0)
 
-void Engine_ActorSetAnimation();
-void Engine_ActorFaceDirection();
-void Engine_EventWait();
-void Engine_ActorSetSpriteFlags();
-void Object_SetMode();
-void Engine_TaskWait();
-
 /* Save the competitor's starting position and fade in its sprite. */
 void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
 {

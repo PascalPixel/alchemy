@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
-
-void BattlePres_SetActorRecordMode(s32, s32);
+#include "BATTLE_PRESENTATION.H"
 
 void BattlePres_SetOtherActorRecordModes(s32 excluded)
 {

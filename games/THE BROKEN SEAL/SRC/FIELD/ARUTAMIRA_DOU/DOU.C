@@ -27,8 +27,6 @@ union GameStateRows {
 #define gGameStateRows (*(union GameStateRows *)&gGameState)
 
 extern u8 gEffectWork[];
-void Battle_WaitMode0();
-void Engine_ActorFaceDirection();
 
 struct Obj {
     u8 unknown_00[24];

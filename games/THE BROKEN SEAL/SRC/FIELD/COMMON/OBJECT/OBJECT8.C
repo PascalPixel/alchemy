@@ -6,6 +6,7 @@
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
+#include "BATTLE_RUNTIME.H"
 
 struct SideObjectRegistry {
 #if EDITION_INTERNATIONAL
@@ -22,7 +23,6 @@ struct SideObjectRegistry {
 extern s32 GameFlag_IsSet(s32);
 extern s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
-s32 GameFlag_TestFar(s32);
 
 struct RenderOutput *CreateSideObject(
     s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)

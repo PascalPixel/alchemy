@@ -1,5 +1,6 @@
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
+#include "BATTLE_RUNTIME.H"
 /* Field: show the world map. The map layers are hidden and the map picture
    is decoded over BG1 until A or B is pressed, then the field comes back. */
 #include "TYPES.H"
@@ -28,7 +29,6 @@ void Event_WaitValue1c8Frames(void);
 void WaitFrames(s32 frames);
 void BattleFx_SetupResourcesAndWindow(void);
 void BattleFx_CleanupResourcesAndWindow(void);
-s32 GameFlag_TestFar(s32 flag);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void Map_LoadAreaGraphicsFar(void);
 

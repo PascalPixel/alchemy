@@ -2,6 +2,7 @@
 #include "CANVAS.H"
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
+#include "MENU_LIST.H"
 /* Battle presentation: set up the effect display. Windows 0 and 1 cover the
    screen, blending starts from a clean slate, and the display control write
    (mode 1, BG0/BG1/BG2 and objects) is queued for the next frame; then wait
@@ -92,7 +93,6 @@ extern u8 BattleFx_PuffSizes[];
 extern u8 FallingShards_Counts[];
 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
-void AudioCommand_PlayFar(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);

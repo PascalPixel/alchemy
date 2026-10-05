@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 
-s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 void UiText_DrawStringAtOffset(u8 *s, s32 window, s32 x, s32 y);
 extern u8 Link_TimeLabelString[];

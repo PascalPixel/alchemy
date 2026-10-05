@@ -19,9 +19,6 @@ s32 Math_DivideUnsigned();
 extern u16 BabiFune_PaletteStep;
 extern const u16 BabiFune_PaletteFrames[];
 
-s32 Engine_RandomNext();
-void Object_SetMode();
-void Engine_ObjectSetScript();
 extern const s32 BabiFune_DriftScript[];
 
 extern s32 BabiFune_CountTicks;

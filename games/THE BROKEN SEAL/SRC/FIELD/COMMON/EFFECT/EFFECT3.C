@@ -18,6 +18,7 @@
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 #include "IO_REG.H"
+#include "MENU_LIST.H"
 
 s32 Render_ProjectPoint(s32 *, s32 *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
@@ -156,7 +157,6 @@ void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleFx_SetTransitionFlagAndDisplay(void);
 void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
-void AudioCommand_PlayFar(s32 cue);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);

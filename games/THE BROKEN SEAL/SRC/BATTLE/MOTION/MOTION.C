@@ -8,6 +8,7 @@
 #include "BATTLE_MOTION.H"
 #include "BATTLE_PRESENTATION.H"
 #include "BATTLE_RUNTIME.H"
+#include "FIELD_EVENT.H"
 
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
@@ -16,7 +17,6 @@ void SceneTransform_ApplyPitch(s32);
 
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
-void Object_SetMode(struct MotionObject *, s32);
 s32 ArcTan2(s32, s32);
 
 extern s32 BattleMotion_VariantAcceleration[];

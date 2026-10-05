@@ -9,6 +9,7 @@
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_SLOT.H"
 #include "IO_REG.H"
+#include "FIELD_EVENT.H"
 
 /* Party-state word 0x234 holds a pending Djinn event: the top nibble is the
    kind and the low bits the game flag. Flags 300-380 are the eighty Djinn,
@@ -33,7 +34,6 @@ struct Vec {
 };
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
-struct MotionObject *Object_GetById(s32);
 void Camera_WorldToScreen(struct Vec *);
 
 void Djinn_ResolvePendingEvent(s32 capture)

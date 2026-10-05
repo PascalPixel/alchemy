@@ -7,6 +7,7 @@
 #include "OBJECT_DISPATCH.H"
 #include "IO_REG.H"
 #include "DMA.H"
+#include "BATTLE_RUNTIME.H"
 
 /* Object dispatch and its linker-neighbor bank. The TBS terminal camera bank
    follows the dispatcher; TLA emits only the adjacent lookup/release prefix. */
@@ -216,7 +217,6 @@ void ResourceTable_ReservedNoOpC0C4(void)
 void ResourceTable_ReservedNoOp2(void)
 {
 }
-
 
 #endif
 
@@ -688,7 +688,6 @@ extern const s32 Camera_FixedViewMatrix[];
 void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale, u16 angle);
 s32 ArcTan2(s32 x, s32 y);
 void Render_ResetTransformState(void);
-s32 GameFlag_TestFar(s32 flag);
 void Graphics_PrepareTransferAndRun(struct CameraPoint *eye, struct CameraPoint *target);
 void Graphics_PrepareTransferInIwramWork(struct CameraPoint *eye, struct CameraPoint *target);
 void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);

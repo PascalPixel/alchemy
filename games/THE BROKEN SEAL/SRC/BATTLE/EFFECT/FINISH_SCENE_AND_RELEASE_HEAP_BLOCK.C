@@ -2,6 +2,9 @@
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "FIELD_EVENT.H"
+#include "FIXED_MATH.H"
+#include "MENU_LIST.H"
 
 /* battle/effects/scene_transition/finish_and_release_heap_block.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -60,10 +63,8 @@ extern struct WaveFxWork *gBattleBgFxWork;
 
 void Animation_ApplyChildPalette(struct FxObject *object, s32 palette);
 void Ui_SetBank15PaletteAndClearRenderMode(void);
-struct FxObject *Object_GetById(s32 id);
 void BattleFx_PrepareBufferInterpolation(void);
 u32 __udivsi3(u32 numerator, u32 denominator);
-s32 Trig_Sin(s32 angle);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 mode);
 void BattleFx_AdvanceHueCycle(void);
@@ -71,7 +72,6 @@ s16 *BattleAction_FindDescriptor(s32 id);
 struct FxObject *Object_CreateFar(s32 sprite, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
-void AudioCommand_PlayFar(s32 cue);
 void BattleFx_SetCallbackWhenTargetUnset(void);
 void BattleFx_UpdateWaveScene(void);
 

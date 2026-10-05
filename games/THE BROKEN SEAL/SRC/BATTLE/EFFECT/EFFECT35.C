@@ -6,6 +6,7 @@
 #include "SCRIPT_MOTION.H"
 #include "OBJDISP.H"
 #include "FIELDOBJ.H"
+#include "BATTLE_RUNTIME.H"
 /* Battle effect: spawn the pair of scaled objects that follow the linked
    object in mirrored arcs, one for each scaled-arc update callback. */
 #include "TYPES.H"
@@ -19,9 +20,6 @@
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
-
-
-
 
 /* The existing packed arc-constructor view is kept only at its measured
    alias boundary; other callbacks consume the shared object owners. */
@@ -104,7 +102,6 @@ struct BattleSceneState {
 extern u8 gWorkSlot[];
 
 extern const u8 Data_0809c410[];
-struct BattleAction *BattleAction_Get(s32 action);
 s32 ResourceTable_CountFreeBlocks(void);
 void BattleFx_SetupObjectPair(s32 first, s32 second);
 void BattleFx_UpdateAllEffectSlots(void);

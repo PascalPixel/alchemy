@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "CALL.H"
 #include "STAGED_ACTOR.H"
+#include "FIELD_EVENT.H"
 
 void Effect_AdvanceMotion(struct MotionEffect *effect);
 void OverlayObject_WaitUntilIdle(s32 *obj);
@@ -14,15 +15,7 @@ extern const struct ScenePlacement gBabiIriguchiPlacements3[];
 extern const struct ScenePlacement gBabiIriguchiPlacements2[];
 extern const struct ScenePlacement gBabiIriguchiPlacements1[];
 extern const struct ScenePlacement gBabiIriguchiPlacementsOther[];
-void Engine_EventBegin();
-void Engine_ActorShowEmote();
-void ObjectMotion_SetSpeedParameters();
-void Engine_ActorJump();
-void ObjectMotion_OffsetPositionAndResetMotion();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void Engine_ActorFaceDirection();
 void SceneState_ApplyRectsAtActors8And9();
-void Engine_EventEnd();
 extern u8 MsgBabiSeemsLocked[];
 extern u8 MsgBabiTheDoor[];
 extern u8 MsgBabiYoureSureTheyWentThrough[];

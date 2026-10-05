@@ -10,15 +10,14 @@
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "IO_REG.H"
-
-
+#include "BATTLE_PRESENTATION.H"
+#include "FIXED_MATH.H"
 
 extern s8 Data_080c5c10[];
 
 void Graphics_AdvancePaletteCycle(void);
 void BattlePres_ClearAllActorRecordModes(void);
 void QueueIoWriteDelay2(u32, u32);
-void BattlePres_SetActorRecordMode(s32, s32);
 #include "BATTLE_WORK.H"
 
 struct Spark {
@@ -47,14 +46,11 @@ struct SparkWork {
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 height);
 
-
 extern s32 Data_080c3604[];
 extern u8 Data_080c3620[];
 extern s32 Data_080c3628[];
 s32 FixedSqrt(s32 value);
 u32 Random16(void);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
 
 u32 ColorBuffer_BackupAndScaleThreeQuarters(void *, void *, u32);
 

@@ -102,40 +102,13 @@ extern u8 *gWork;
 
 /* The map cell steps the switch plays, laid out after the code. */
 extern u8 KorimaMura_SwitchCells[];
-void Engine_EventBegin();
-void Engine_AudioPlayCue();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetDestinationOffset();
-void Engine_EventRequestExit();
-void Engine_EventEnd();
-void Engine_MapAnimateCells();
 void FieldScene_ConfigureActor0ThenRun();
 extern u8 MsgKorimaGoingCrossBridge[];
 
 /* Actor 8's path and the debris script, laid out after the code. */
 extern u8 KorimaMura_Actor8Path[];
 extern u8 KorimaMura_DebrisScript[];
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_EventWait();
-void Engine_ActorShowEmote();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventSetMessage();
-void Engine_EventShowMessage();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorFaceDirection();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorSetAnimation();
-void Engine_ActorJump();
-void Engine_ObjectMotionSetPositionAndCommit();
-void Engine_MapCopyCellsTo();
-void Engine_ActorSetSpriteFlags();
-s32 Engine_RandomNext();
-void Object_SetMode();
-void Engine_ObjectSetScript();
 void Engine_MapCopyCellAttributes();
-void Engine_WorkSetValuesIfNonNegative();
 void Object_SetTargetAndCallback();
 
 struct Flags9 {

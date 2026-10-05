@@ -35,7 +35,6 @@ extern const s32 WorldMap_KeyYaws[16];
 extern const u8 WorldMap_FootprintActions[];
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
 s32 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 s32 Field_CheckConfiguredKeys(void);
@@ -323,7 +322,6 @@ movement_done:
     object->step++;
     return 1;
 }
-
 
 s32 Field_CheckConfiguredKeysAndCount(void *work)
 {

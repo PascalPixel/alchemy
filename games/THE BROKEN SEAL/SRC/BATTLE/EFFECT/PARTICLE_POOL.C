@@ -16,6 +16,7 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "MENU_LIST.H"
 
 extern u8 gBattleFxWork[];
 
@@ -25,7 +26,6 @@ extern u16 ParticleStreams_CellOffsets[];
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_TickMemberTimers(void);

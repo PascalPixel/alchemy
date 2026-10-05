@@ -1,8 +1,6 @@
 #include "TYPES.H"
-
-void Engine_TaskRemoveCallback(void *callback);
-void DisplayScroll_ArmHBlankDma(void);
-void DisplayScroll_BuildAndSwapHBlankPage(void);
+#include "FIELD_EVENT.H"
+#include "SCROLL.H"
 
 /* Remove the two hblank scroll callbacks and stop DMA 0. */
 void SceneEffect_LoadTablesAndStopDma0(void)

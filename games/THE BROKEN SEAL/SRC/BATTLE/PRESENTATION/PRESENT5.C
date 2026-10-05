@@ -10,7 +10,6 @@
 #include "BATTLE_PARTY.H"
 #include "IWRAM_CALL.H"
 
-s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *entry, s32 mode);
 
 s32 Djinn_GetDefinitionHeaderFar(s32 group, s32 index);

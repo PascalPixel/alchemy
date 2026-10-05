@@ -5,6 +5,7 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_RUNTIME.H"
 #include "INVENTORY.H"
+#include "BATTLE_PARTY.H"
 
 s32 Summon_IsEntryFlagged(s32 class_id);
 s32 Summon_GetEntryValue(s32 class_id);
@@ -401,8 +402,6 @@ s32 Summon_Refresh(void)
         }
     }
 }
-
-s32 BattleParty_PrepareActiveOwners(u16 *ids);
 
 /*
  * Stands every unit at its place: the party in the order

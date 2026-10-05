@@ -10,9 +10,9 @@
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
+#include "MENU_LIST.H"
 
 extern u8 gBattleFxWork[];
-
 
 /* The earth wall's three cells: where each starts in the decoded sheet, and
    its width and height in pixels. */
@@ -22,7 +22,6 @@ extern u8 EarthWall_CellHeights[];
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
-void AudioCommand_PlayFar(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Camera_ApplyShake(s32 x, s32 y);

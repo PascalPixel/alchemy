@@ -6,45 +6,26 @@
 #include "FIELDOBJ.H"
 #include "MAP_SCROLL.H"
 #include "IO_REG.H"
+#include "FIELD_EVENT.H"
 
 extern s32 BabiFune_StoredSlot0;
 extern s32 BabiFune_StoredRecord1;
 extern s32 BabiFune_StoredSlot3;
 extern s32 BabiFune_StoredRecord2;
-struct FieldActor *Object_GetById(s32 actor);
 
 extern u8 MsgFieldLooksLikeFinally[];
 extern const s32 BabiFune_ActionScriptA[];
 extern const s32 BabiFune_ActionScriptB[];
 extern const s32 BabiFune_ActionScriptC[];
 extern const s32 BabiFune_ActionScriptD[];
-void Engine_EventBegin();
-void Engine_CameraMoveTo();
 void Engine_MapCopyCellAttributes();
-void Engine_EventSetMessage();
 void Motion_LaunchFromFocusedObject();
-void Engine_ActorWaitForMove();
-void Engine_EventWait();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventShowMessage();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorFaceDirection();
-void Engine_ActorSetAnimation();
 s32 UiText_OpenMessageAtObject();
 s32 Inventory_PromptAndSetObjectMode();
-void Engine_ActorShowEmote();
-void Engine_AudioPlayCue();
-void Engine_ActorSetSpeed();
-void Engine_ActorEnableActionCallback();
 void Object_RefreshSelectorById();
 void ObjectMotion_CommitPositionAndActivate();
-void Engine_CameraWaitForMove();
 void MusicCommand_SetPitchAndUpdateFrequency();
 void BabiFune_ScheduleFade();
-void Engine_CameraSetSpeed();
-void Engine_EventCloseScreen();
-void Engine_EventWaitForScreen();
-void Engine_GameFlagSet();
 void Event_SetPairWork1c0Far();
 
 /* Keep field 12 of four records the scene reads back later. */

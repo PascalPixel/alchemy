@@ -15,11 +15,12 @@
 #include "BATTLE_MOTION.H"
 #include "BATTLE_COMMAND.H"
 #include "IO_REG.H"
+#include "FIELD_EVENT.H"
+#include "BATTLE_ACTOR.H"
 
 void UiWork_ClearValueNameTablesFar(void);
 s32 BattlePres_ShowMessageWhenField38Positive(const struct BattleActionRecord *);
 s32 BattlePres_RunUnitAction(s16 *);
-s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *);
 void BattleMotion_SetupEscapeObject(s32);
 
 /* battle/presentation/act/run.c */
@@ -30,12 +31,7 @@ void UiWork_ResetFreeChannelFar(void);
 /* battle/presentation/misc/msg_field38.c */
 void UiWork_PushValueSlotFar(s32, s32);
 
-void Object_SetMode(struct MotionObject *object, s32 mode);
-
-s32 BattleObject_IsValidId(u32);
-
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
-void Actor_ResetMotionAtAnchor(s32);
 void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *);
 
 /* Build the action order from agility: party members start with target

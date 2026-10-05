@@ -8,6 +8,9 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_MSG.H"
+#include "FIELD_EVENT.H"
+#include "BATTLE_ACTOR.H"
+#include "MENU_LIST.H"
 
 /*
  * Walks every motion record of an object: the first child of each record
@@ -46,16 +49,13 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 
 extern struct BattlePresentationTransition *gTransitionWork;
 u16 ArcTan2(s32 x, s32 y);
-void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-void Actor_ResetMotionAtAnchor(s32 actor);
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattleFx_PlayUnitElementEffect(s32 actor, s32 kind, s32 mode, s32 variant);
 void BattlePres_RunWithZeroArguments(void);
 void BattleFx_DispatchByIdRangeFar(s32 *work);
 void BattleFx_DispatchModeFar(s32 *work);
-void AudioCommand_PlayFar(s32 cue);
 void BattleEvent_Playback(void);
 
 /*

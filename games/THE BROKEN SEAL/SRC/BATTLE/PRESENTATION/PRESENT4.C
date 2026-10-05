@@ -27,7 +27,6 @@ void UiWork_FinalizeSharedSlotFar(void);
 void BattlePresentation_WaitForAdvance(void);
 
 extern s8 BattleParty_CenterOrderOffsets[];
-s32 BattleParty_PrepareActiveOwners(u16 *out);
 
 void BattlePresentation_UpdateCamera(void)
 {

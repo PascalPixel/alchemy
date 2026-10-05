@@ -36,11 +36,9 @@ struct ItemCommandRuntime {
 
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 
-struct BattleUnit *Owner_GetStateFar(s32 actor);
 s32 Party_CountActiveOwnersFar(void);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
-s32 GameFlag_TestFar(s32 flag);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 s32 Object_CallSpawnRoutineAtOrigin(s32 mode);

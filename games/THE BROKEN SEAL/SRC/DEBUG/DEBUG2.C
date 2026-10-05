@@ -3,6 +3,7 @@
 #include "IO_REG.H"
 #include "GAME_STATE.H"
 #include "RAM_BUFFER.H"
+#include "BATTLE_RUNTIME.H"
 
 struct Vec {
     s32 x;
@@ -52,7 +53,6 @@ struct MapScrollWork {
 };
 
 extern struct ViewServices gOverlayArea;
-s32 GameFlag_TestFar(s32 flag);
 extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;

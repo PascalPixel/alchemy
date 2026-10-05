@@ -9,7 +9,6 @@
 #include "BATTLE_PRESENTATION.H"
 
 extern u8 gKeysHeld[];
-void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
 /* battle/presentation/cam/shoulder_alt.c */
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)

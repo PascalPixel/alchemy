@@ -36,7 +36,6 @@ void FieldScene_RunScene38bSequenceA(void);
 void FieldScene_RunScene38b_02000d10(void);
 void BiribinoMura_UpdateCornerSpawn(void);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-void Engine_ObjectCommitPosition(struct FieldActor *object);
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
 void Scene_UpdatePuzzleActors(void);
 void FieldScene_DrawTilesByActor8Row(void);

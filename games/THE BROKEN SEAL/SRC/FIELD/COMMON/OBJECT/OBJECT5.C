@@ -10,12 +10,12 @@
 #include "FIELDRUN.H"
 #include "MAP_SCROLL.H"
 #include "ANIMSPR.H"
+#include "FIELD_EVENT.H"
 
 extern struct ObjectRuntime Data_02001124[32];
 
 void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *object, s32 value);
 void Object_ResetMotion(struct ObjectRuntime *object);
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 
 /* object/table/ObjectTable_ClearBattleSlots.c */
 void ObjectTable_ClearBattleSlots(void)

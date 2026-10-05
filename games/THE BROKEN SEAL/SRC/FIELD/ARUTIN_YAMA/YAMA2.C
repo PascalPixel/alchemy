@@ -2,8 +2,7 @@
 #include "TYPES.H"
 #include "ARUTIN.H"
 #include "CALL.H"
-
-void SceneMotion_UpdateTimedActor(struct SceneMotion *work);
+#include "FIELD_EVENT.H"
 
 extern u8 MsgArutinWatchFallingRocks[];
 
@@ -20,9 +19,6 @@ extern const struct SceneEvent gArutinYamaEvents9[];
 extern const struct SceneEvent gArutinYamaEvents10[];
 extern const struct SceneEvent gArutinYamaEvents11[];
 
-extern void Engine_WorkSetValuesIfNonNegative();
-extern void Engine_AudioPlayCue(s32);
-
 struct ActorMotion {
     u8 pad0[100];
     u16 step[2];
@@ -30,22 +26,9 @@ struct ActorMotion {
     s32 callback;
 };
 
-void Engine_EventBegin();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_AudioPlayCue();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventWait();
-void Engine_ActorSetSpeed();
-void Engine_ActorMoveToAndWait();
-void Engine_WorkSetValuesIfNonNegative();
-void Engine_ActorFaceDirection();
 void FieldScene_RunActorTenFourStepSequence();
 void Engine_MapCopyCellAttributes();
-void Engine_ActorSetSpriteFlags();
 void Engine_ObjectSetTargetAndCallback();
-void Engine_EventEnd();
 
 struct Half { u16 v; };
 

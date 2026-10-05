@@ -15,6 +15,8 @@
 #include "INVENTORY.H"
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "BATTLE_ACTOR.H"
+#include "FIELD_EVENT.H"
 s32 ResourceMetadata_SumCommandLengthsFar(s32 battle_value, s32 second, s32 third);
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 id);
@@ -25,14 +27,12 @@ s32 ArcTan2(s32 first, s32 second);
 
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 action);
 
-void Actor_ResetMotionAtAnchor(s32 id);
 void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *work);
 void BattleFx_DispatchModeFar(struct BattlePresentationWork *work);
 u32 Battle_GetEntryField2HighBits(u32 value);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 s32 BattleActor_SpawnObjectsForList(void *list, s32 mode);
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode);
-void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void BattleEvent_Playback(void);
 
@@ -249,7 +249,6 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     return 0;
 }
 
-void Object_SetMode(void *object, s32 mode);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 

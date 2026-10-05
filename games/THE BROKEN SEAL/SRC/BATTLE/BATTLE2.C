@@ -13,7 +13,6 @@
 #include "GAME_STATE.H"
 #include "PROJECT.H"
 
-s32 Trig_Cos(s32);
 extern s32 gFrameCount;
 
 void Render_ResetTransformState(void);
@@ -21,7 +20,6 @@ void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
-void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
 s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
 

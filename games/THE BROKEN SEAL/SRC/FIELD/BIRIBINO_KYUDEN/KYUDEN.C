@@ -37,17 +37,7 @@ extern u8 MsgBiribinoWasWatchingFromHereAfter[];
 extern u8 MsgBiribinoWeReallyGivingOurTreasure[];
 
 extern struct EventWork *gEventWork;
-s32 Engine_GameFlagIsSet();
-void Engine_AudioPlayCue();
 void Map_ClearLayerEntryFlag();
-void Engine_EventBegin();
-void Engine_EventWait();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetAnimation();
-void Engine_ActorSetDestinationOffset();
-void Engine_ActorCenterAndWalk();
-void Engine_EventRequestExit();
-void Engine_EventEnd();
 void Map_SetLayerEntryFlag();
 
 extern u8 MsgBiribinoAlwaysWelcomeInPalaceLord[];

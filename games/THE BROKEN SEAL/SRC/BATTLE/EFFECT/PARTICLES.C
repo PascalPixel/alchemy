@@ -5,6 +5,7 @@
 #include "OBJECT_EFFECT.H"
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
+#include "FIELD_EVENT.H"
 u8 *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 struct Vector_08099d18 {
@@ -41,7 +42,6 @@ extern struct State_08099d18 *gEffectWork;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Vector_08099d18 *);
-void Object_SetMode(u8 *, s32);
 
 void BattleFx_SpawnFallingParticles(void)
 {

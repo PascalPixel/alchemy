@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "FIELD_EVENT.H"
 
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, s32 effect);
-void Engine_GameFlagClear(s32 flag);
 
 /*
  * Overlay resource_3cc: in-image table getters and the scene state helpers

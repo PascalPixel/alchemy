@@ -14,6 +14,8 @@
 #include "FIELDRUN.H"
 #include "FIELDOBJ.H"
 #include "OBJECT_DISPATCH.H"
+#include "FIELD_EVENT.H"
+#include "BATTLE_RUNTIME.H"
 
 void Object_Destroy(void *);
 
@@ -26,13 +28,11 @@ void ObjectTable_ClearBattleSlots(void);
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *object, u32 value);
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 struct ObjectRuntime *Object_CreateFar(s32 character, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitFromTable4WithArgumentFar(struct DispatchObject *object, s32 argument);
 s32 ResourceMetadata_RegisterFar(struct AnimationObject *sprite, s32 kind);
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 Party_RemapCharacterIdByFlags(s32 id);
-s32 GameFlag_TestFar(s32 flag);
 void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object, s32 value);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 u32 Random16(void);

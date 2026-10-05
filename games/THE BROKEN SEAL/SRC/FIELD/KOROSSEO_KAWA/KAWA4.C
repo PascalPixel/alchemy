@@ -5,6 +5,7 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
+#include "OBJECT_RUNTIME.H"
 
 /* The marker task's state in the overlay's work area. */
 extern u16 Korosseo_MarkerX;
@@ -62,7 +63,6 @@ struct ModeRecord {
     u16 span;
 };
 
-
 /* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
@@ -77,7 +77,6 @@ void Scheduler_RemoveCallbackFar(u8 *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 void ObjectDispatch_InitFromTable6(struct FieldActor *);
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);

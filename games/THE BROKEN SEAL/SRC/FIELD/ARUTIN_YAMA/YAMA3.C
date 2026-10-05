@@ -11,12 +11,8 @@ void ArutinYama_ApplyEntryState(void);
 void ArutinYama_PlaceFlaggedActors(void);
 
 extern u8 ArutinYama_ActorScript[];
-s32 Engine_GameFlagIsSet();
 void FieldScene_RunOpeningAuxiliarySequence();
 void ArutinYama_StartPaletteAnim();
-void Engine_ActorSetSpriteFlags();
-void Engine_ActorSetChildValue();
-void Engine_ActorSetAnimation();
 void Engine_MapCopyCellAttributes();
 void Engine_ObjectSetTargetAndCallback();
 void SceneActor_ClearCollisionFlagAndPlaceMarker();
@@ -29,7 +25,6 @@ extern s32 ArutinYama_LeafMode;
 extern u8 MsgArutinGuardianStatuesWereCreatedLong[];
 extern u8 MsgArutinWeDidRobinWeBeat[];
 
-void Engine_ObjectCommitPosition(struct FieldActor *object);
 void ResourceMetadata_ClearRecord(s32 handle);
 struct FieldActor *ObjectTable_Get(s32 actor);
 
@@ -67,8 +62,6 @@ extern s16 ArutinYama_PaletteStep;
 
 /* Pairs of (first colour, frames to hold), ended by -1. */
 extern s8 ArutinYama_PaletteScript[];
-
-s32 Engine_TaskAddCallback();
 
 void ArutinYama_StepPaletteAnim(void);
 

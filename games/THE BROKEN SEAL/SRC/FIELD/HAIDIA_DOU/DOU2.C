@@ -4,6 +4,7 @@
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
+#include "STAGED_ACTOR.H"
 
 extern const struct SceneEvent gHaidiaDouEvents1[];
 extern const struct SceneEvent gHaidiaDouEvents2[];
@@ -13,11 +14,9 @@ extern const struct SceneEvent gHaidiaDouEventsOther[];
 void WaitFrames();
 void HaidiaDou_ApplyEntryState();
 
-void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
 void WaitFrames(s32 frames);
 void *OverlayObject_CreateConfiguredB(s32 x, s32 y, s32 z, s32 kind);
 void DialogueLayout_ConfigureRowsByFlag301(void);
-s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 
 /* What each of the sanctum's three areas answers. */
 const struct SceneEvent *Scene_GetEvents(void)
@@ -148,7 +147,6 @@ void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
 }
 
 /* Advance actor eleven through the two presentation states used at scene end. */
-
 
 /* Vale Cave entry: by the room and entrance, set the sprite priorities, spawn the stage objects and restore the opened cells and footprints the story flags record. */
 void HaidiaDou_ApplyEntryState(void)

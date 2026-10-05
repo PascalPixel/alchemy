@@ -15,6 +15,7 @@
 #include "GLOBAL_CELLS.H"
 #include "FRAME.H"
 #include "IO_REG.H"
+#include "BATTLE_RUNTIME.H"
 
 extern u8 gObjectSlots[];
 extern struct BattleFxScene *gEffectWork;
@@ -48,9 +49,7 @@ void BattleFx_CycleObjectValueByCounter();
 #define CALLBACK_2      (u32)BattleFx_CycleObjectValueByCounter
 extern u8 MsgAbilityAnnounce[];
 
-
 extern const s32 Data_080a0108[];
-s32 GameFlag_TestFar(s32);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 void BattleFx_StartBufferInterpolation(s32);
 

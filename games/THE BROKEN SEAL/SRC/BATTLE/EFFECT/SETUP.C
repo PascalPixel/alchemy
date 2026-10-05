@@ -4,6 +4,7 @@
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
+#include "FIELD_EVENT.H"
 
 void Object_EffectSpawnCallback(void);
 
@@ -93,8 +94,6 @@ void Battle_WaitMode0(s32 frames)
         WaitFrames(frames);
     }
 }
-
-s32 Object_SetMode(s32, s32);
 
 void Battle_InitializeRenderObject(void)
 {

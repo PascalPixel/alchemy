@@ -12,13 +12,8 @@
 extern const struct SceneEntrance gKorosseoKabeEntrances[];
 extern const u32 gKorosseoKabeExits[];
 extern const struct ScenePlacement gKorosseoKabePlacements[];
-void Engine_TaskWait();
-void Engine_ObjectSetPosition();
 void Object_CommitPosition();
 void Engine_MapCopyCellAttributes();
-void Engine_EventWait();
-void Engine_ActorSetAnimation();
-void Engine_AudioPlayCue();
 
 /* The game state's cells, read here as halfwords. */
 extern s16 gCell[];
@@ -48,31 +43,13 @@ void FieldScene_RunSupplementalSequenceOne(void);
 void KorosseoKabe_MarkSceneProgress(void);
 void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
-
 extern u8 MsgKorosseoSiteSecondFinals[];
-void Engine_EventBegin();
-void Engine_ActorSetSpeed();
-void Engine_CameraFollowActor();
-void Engine_EventOpenScreen();
-void Engine_EventWaitForScreen();
-void Engine_EventSetMessage();
-void Engine_ActorSetAnimationAndWait();
-void Engine_EventShowMessage();
-void Engine_ActorRunRepeatedMotion();
-void Engine_ActorSetDestination();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorFaceDirection();
-void Engine_EventEnd();
 
 extern u8 MsgKorosseoMainThingStage[];
 extern u8 MsgKorosseoStageDubbedMini[];
 void Korosseo_FinishSoloRound();
 s32 KorosseoKabe_RunStateInteraction();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
 void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
-void Engine_ActorSetAttachedEffect();
 void Korosseo_RestoreCompetitor();
 void KorosseoKabe_ShowFollowUpPrompt();
 extern u8 MsgKorosseoHereYourObjectiveRideLogs[];
@@ -81,7 +58,6 @@ extern u8 MsgKorosseoOperatorLiftsWillCheerFor[];
 extern u8 MsgKorosseoShiftingFloorStage[];
 extern u8 MsgKorosseoFansJustCallWall[];
 extern u8 MsgKorosseoScalingWallQuickly[];
-void ObjectMotion_CommitCurrentPositionAndActivate();
 void BattleFx_RunRisingObjectSequence();
 void battle_owner_69();
 extern u8 MsgKorosseoFocusRollingLogs[];

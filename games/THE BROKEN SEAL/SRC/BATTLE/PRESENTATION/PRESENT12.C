@@ -8,8 +8,8 @@
 #include "BATTLE_MSG.H"
 #include "SYSTEM.H"
 #include "ANIMSPR.H"
+#include "FIELD_EVENT.H"
 
-void Object_SetMode(struct MotionObject *actor, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);

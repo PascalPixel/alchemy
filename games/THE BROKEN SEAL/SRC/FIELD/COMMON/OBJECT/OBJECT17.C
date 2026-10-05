@@ -8,6 +8,9 @@
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "FIELD_SPRITE.H"
 #include "ANIMSPR.H"
+#include "BATTLE_PARTY.H"
+#include "B5_CONTEXT.H"
+#include "FIELD_EVENT.H"
 
 struct LinkedEffectObject {
     u8 unknown_00[8];
@@ -25,10 +28,6 @@ struct LinkedEffectObject {
     s32 (*callback)(void *);
 };
 
-LAYOUT_SIZE_GUARD(LinkedEffectObject_Size, struct LinkedEffectObject, 0x70);
-LAYOUT_OFFSET_GUARD(LinkedEffectObject_Counter, struct LinkedEffectObject, counter, 0x64);
-LAYOUT_OFFSET_GUARD(LinkedEffectObject_Resource, struct LinkedEffectObject, resource, 0x68);
-
 void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Object_Destroy(void *object);
 s32 BattleFx_CopyLinkedObjectPosition(void *);
@@ -37,7 +36,6 @@ extern const u8 Data_0809fd38[];
 extern struct ObjectRuntime *gObjectSlots;
 void ObjectDispatch_SetSingleChildField26Far(void *, s32);
 s32 ArcTan2(s32, s32);
-struct ObjectRuntime *Object_GetById(u32);
 extern const u8 ObjectMotion_ActionKind1Script[];
 extern const u8 ObjectMotion_ActionKind2Script[];
 extern const u8 ObjectMotion_ActionKind3Script[];
@@ -46,7 +44,6 @@ extern const u8 ObjectMotion_MoveTowardTargetScript[];
 extern const u8 ObjectMotion_TurnTowardLinkedScript[];
 extern const u8 ObjectMotion_ResetActionScript[];
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-void Object_SetMode(struct ObjectRuntime *, s32);
 
 void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 {

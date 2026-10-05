@@ -6,6 +6,7 @@
 #include "FIELDRUN.H"
 #include "GAME_STATE.H"
 #include "WINDOW.H"
+#include "UI.H"
 
 extern struct FieldStepWork *gEventWork;
 
@@ -58,7 +59,6 @@ void WaitFrames(s32 frames);
 s32 BattleFx_GetResourceId(s32 speaker);
 struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 style);
 s32 UiWindow_CreateWithSideObjectFar(s32 speaker, s32 mode, s32 x, s32 y);
-s32 UiWork_IsCompleteFar(void);
 
 /* Low twelve bits name the actor; high bits place its message and portrait.
    The Japanese edition measures the message once less and stays on its

@@ -15,11 +15,11 @@
 #include "RESOURCE_IDS.H"
 #include "EFFECT_STEP.H"
 #include "MOTION_OBJECT.H"
+#include "FIELD_EVENT.H"
 
 extern u8 gBattleFxWork[];
 
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
-void BattleFx_ArmBg2AffineHBlankDma(void);
 
 /*
  * Battle effect: a rippling disc. A 128 x 128 map of distances from a point
@@ -191,9 +191,6 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
     BattleFx_EndCanvasLayer();
 }
 
-
-
-
 extern u8 gMapCellBuffer[];
 /* The fire swirl's seven cells: size, place in the sheet and offset from
    the caster. */
@@ -205,7 +202,6 @@ extern s8 FireSwirl_CellBiasY[];
 
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
-void Object_SetMode(struct MotionObject *object, s32 mode);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);

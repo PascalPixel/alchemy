@@ -2,10 +2,7 @@
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
 #include "TYPES.H"
-
-void DisplayTransition_Start(s32 mode, s32 frames);
-
-void DisplayTransition_Finish(s32 mode, s32 frames);
+#include "DISPTRAN.H"
 
 s32 WaitFrames(s32);
 

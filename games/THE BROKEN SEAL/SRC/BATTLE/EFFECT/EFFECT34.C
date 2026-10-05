@@ -7,15 +7,14 @@
 #include "FX_SCENE.H"
 #include "OBJECT_EFX.H"
 #include "FIXED_MATH.H"
+#include "FIELD_EVENT.H"
 
 extern struct BattleFxScene *gEffectWork;
 struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
 void ObjectDispatch_ReleaseFar(struct ObjectRuntime *);
 void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
-void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 extern u8 gPlayerObjectId[];
-
 
 /* The existing arc-mode counter/link alias view. The callbacks otherwise
    use the shared FieldActor geometry and true object API transports. */

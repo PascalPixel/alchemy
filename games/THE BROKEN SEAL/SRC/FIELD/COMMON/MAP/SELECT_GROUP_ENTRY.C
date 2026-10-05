@@ -3,9 +3,8 @@
 #include "BATTLE_TYPES.H"
 #include "GAME_STATE.H"
 #include "FIELDRUN.H"
+#include "BATTLE_RUNTIME.H"
 
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
-s32 GameFlag_TestFar(s32 flag_id);
 void GameFlag_SetBitFar(s32 flag_id);
 
 /*
@@ -19,7 +18,6 @@ void GameFlag_SetBitFar(s32 flag_id);
  * bits 20-27 kind (0 ends the group, 0xff matches any kind), bit 28 marks
  * that a flag id follows in the next word.
  */
-
 
 void MapGroupTable_SelectEntry(s32 kind)
 {

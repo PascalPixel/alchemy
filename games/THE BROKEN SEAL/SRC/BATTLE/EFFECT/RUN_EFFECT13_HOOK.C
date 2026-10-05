@@ -7,19 +7,19 @@
 #include "MOTION_OBJECT.H"
 #include "FIXED_POINT_POSITION.H"
 #include "SYSTEM.H"
+#include "FIELD_EVENT.H"
+#include "MENU_LIST.H"
 
 extern struct BattleFxScene *gEffectWork;
 
 void RunBattleEffect13(void);
 void Vector_AddPolarOffset(s32, s32, s32 *);
 struct MotionObject *Object_Spawn(s32, s32, s32, s32);
-void Object_SetMode(struct MotionObject *, s32);
 void Object_SetPositionAndResetMotionFar(struct MotionObject *, s32, s32, s32);
 void Animation_ApplyChildValuesFar(struct MotionObject *, u32);
 void ObjectDispatch_ReleaseFar(struct MotionObject *);
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
-void AudioCommand_PlayFar(s32);
 
 void BattleFx_RunEffect13Hook(void)
 {

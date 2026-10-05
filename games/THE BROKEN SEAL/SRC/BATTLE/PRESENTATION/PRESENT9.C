@@ -13,6 +13,8 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_RUNTIME.H"
 #include "HEAP_STATE.H"
+#include "IRQ.H"
+#include "BATTLE_INTRO.H"
 
 /* The first two display registers. */
 struct DisplayRegisters {
@@ -32,18 +34,12 @@ struct TransitionActorList {
 /* Seven 4bpp tiles of the curtain's rows. */
 extern const u8 BattlePres_CurtainTiles[];
 
-
-void Runtime_SetIrqHandler(s32 irq, s32 mask, void (*handler)(void));
-void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 frames);
 void BattlePres_AdvanceTransitionTimer(void);
 void BattlePres_DrawTransitionRows(void);
 void Graphics_ClearBg0Vofs(void);
 void UiWindow_CreateWithLayoutBoundsFar(s32 terrain);
-void BattleIntro_AnnounceEncounter(s32 enemy_count);
 void BattleActor_SpawnObjectsForList(u16 *ids, s32 mode);
 void BattleEffect_RunTileAndPaletteAnimationFar(struct TransitionActorList *list);
-void BattlePres_SetActorRecordMode(s32 id, s32 mode);
-
 
 /*
  * The battle-entry transition. The normal entry copies the seven curtain

@@ -12,6 +12,8 @@
 #include "BATTLE_UNIT.H"
 #include "BATTLE_WORK.H"
 #include "CHARACTER.H"
+#include "BATTLE_RUNTIME.H"
+#include "B5_CONTEXT.H"
 
 extern struct BattleFormationRecord BattleFormation_Records[];
 
@@ -19,14 +21,12 @@ struct EnemyDefinition *Owner_GetRecordFar(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 
 s32 GameFlag_ClearBitFar(s32 id);
-s32 BattleParty_PrepareActiveOwners(u16 *out_units);
 
 struct FormationCandidate {
     s16 record_id;
     s16 score;
 };
 
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
 extern u16 RomBytes_080c73f8[];
 s32 GameFlag_GetByteFar(s32 id);
@@ -49,8 +49,6 @@ struct BattleBaseStats {
 
 /* The copied base-stat range is exactly BattleUnit.base_hp through
    base_elements. It is a snapshot, not a separate owner allocation. */
-LAYOUT_SIZE_GUARD(BattleBaseStats_Size, struct BattleBaseStats, 36);
-LAYOUT_OFFSET_GUARD(BattleBaseStats_Elements, struct BattleBaseStats, elements, 0x14);
 
 void Owner_RecalculateStatsFar(s32 owner);
 

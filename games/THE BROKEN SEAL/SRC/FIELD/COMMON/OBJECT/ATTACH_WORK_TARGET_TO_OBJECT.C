@@ -12,7 +12,6 @@ void Map_ApplyWorkOriginAndSpanFar(void);
 
 void WaitFrames(s32);
 
-
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 {
     struct ObjectRuntime *obj;
@@ -127,7 +126,6 @@ void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
 }
 
 void Object_CommitPosition(struct ObjectRuntime *);
-void Battle_WaitMode0(s32 arg0);
 
 void BattleFx_CommitObjectPositionAndWait(void)
 {

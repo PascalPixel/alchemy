@@ -1,6 +1,7 @@
 #include "SUKURETA.H"
 #include "CALL.H"
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 extern u8 MsgHaidiaFineIfTheyDontSee[];
 extern u8 MsgHaidiaGeraldIllTakeOverIf[];
@@ -25,34 +26,10 @@ extern u8 MsgHaidiaTheyKnowLittleOfThe[];
 extern u8 MsgHaidiaYoureTheOnesSneakingAround[];
 
 extern u8 MsgHaidiaWho[];
-s32 Engine_GameFlagIsSet();
-void Engine_EventBegin();
-void Engine_ActorSetSpeed();
-void Engine_EventSetMessage();
-void Engine_EventShowMessage();
-void Engine_ActorSetPosition();
-void Engine_ActorWalkTo();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorSetAnimation();
-void Engine_ActorFaceDirection();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventWait();
-void Engine_EventShowMessageAndWait();
-void Engine_ActorJump();
-void Engine_ActorShowEmote();
-void Engine_ActorSetAnimationAndWait();
-void Engine_CameraFollowActor();
-void Engine_ActorSetDestination();
-void Engine_ActorWaitForMove();
-void Engine_EventEnd();
 
 extern u8 Sukureta_Actor11Actions[];
-void Engine_GameFlagClear();
 s32 Effect_SoundAndFlash();
 void BattleFx_StartTwelveFrameBlend();
-void Engine_ActorEnableActionCallback();
 void Engine_MapCopyCellAttributes();
 void Scene_LeaveForMtAleph();
 struct GameState;
@@ -61,10 +38,6 @@ extern struct GameState gGameState;
 extern u8 MsgHaidiaRockslideDestroyedFence[];
 extern u8 MsgHaidiaSaveYourselves[];
 extern u8 Sukureta_Actor11RockslideActions[];
-void Engine_ActorStop();
-s32 Engine_EventOpenMessage();
-s32 Engine_EventChooseYesNo();
-void Engine_ActorFaceActor();
 void Object_SetActionCallbackAndRefreshById();
 
 extern u8 MsgHaidiaMemoriesOfThisCottage[];

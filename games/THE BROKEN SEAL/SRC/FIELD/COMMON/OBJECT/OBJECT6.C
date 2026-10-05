@@ -1,11 +1,9 @@
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 #include "FIELDOBJ.H"
+#include "FIELD_EVENT.H"
 
 void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetMode(struct ObjectRuntime *, s32);
-void *Object_GetById(u32);
-void Battle_WaitMode0(s32);
 extern const u8 ObjectMotion_StepAngleScript[];
 
 void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callback)

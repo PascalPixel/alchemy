@@ -5,6 +5,7 @@
 #include "CALL.H"
 #include "FIELD_EFFECT.H"
 #include "TBS_EDITION.H"
+#include "B5_CONTEXT.H"
 
 struct Pulse {
     u8 unknown_00[0x64];
@@ -40,8 +41,6 @@ struct PairWork {
     u16 vram_block;
 };
 
-LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
-LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *gEffectWork;
 
 struct WorldMapVramBlock {

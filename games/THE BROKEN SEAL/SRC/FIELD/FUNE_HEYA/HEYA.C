@@ -76,7 +76,6 @@ extern u8 FuneHeya_StepScriptD[];
 extern u8 FuneHeya_StepScriptC[];
 extern u8 FuneHeya_StepScriptB[];
 extern u8 FuneHeya_StepScriptA[];
-s32 Engine_GameFlagIsSet();
 extern u8 Data_02000240[];
 
 extern u8 MsgFuneBadLuckLosingMyLucky[];
@@ -133,12 +132,7 @@ s32 SceneState_ApplyLevelFromFlags();
 
 s32 SceneActor_CheckBucketOffsetPoint();
 void FieldScene_CallPairWith10();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetPosition();
-void Engine_ActorSetDestinationOffset();
-void Engine_ActorSetAnimation();
 void ObjectMotion_SetActionVariant();
-void Engine_ActorWaitForMove();
 extern s32 FuneHeya_TurnSteps[];
 
 void FuneHeya_TurnActorToOpenSide(s32 a0);

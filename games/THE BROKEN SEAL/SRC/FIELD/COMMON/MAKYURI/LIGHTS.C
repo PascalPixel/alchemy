@@ -25,7 +25,6 @@ struct MakyuriLights {
 
 extern const s32 Makyuri_PillarScript[];
 extern const s32 Makyuri_RampScript[];
-s32 Engine_GameFlagIsSet(s32 flag);
 void *ObjectTable_Get();
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *anim, s32 animation);
 

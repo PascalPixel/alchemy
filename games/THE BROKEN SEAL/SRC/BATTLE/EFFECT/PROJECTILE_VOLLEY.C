@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
+#include "FIELD_EVENT.H"
 
 /* Mode entries of the projectile volley effect. */
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Object_SetMode(s32, s32);
 s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 

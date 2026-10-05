@@ -6,6 +6,7 @@
 #include "STAGED_ACTOR.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
+#include "INVENTORY.H"
 
 extern u8 MsgFuneAnotherMonsterIsntFirstClass[];
 extern u8 MsgFuneBoatsRockingMuchImCertain[];
@@ -41,10 +42,6 @@ extern u32 FuneHeya_TurnSteps[];
 s32 Object_CheckMovementCollision();
 struct FieldActor *FindActorNearPosition(s32 x, s32 y);
 
-s32 Engine_GameFlagIsSet();
-void Engine_GameFlagClear();
-void Engine_EventBegin();
-void Engine_EventEnd();
 void Battle_ResetEffectCounterFar();
 void Func_02007fcc();
 void Func_02007fe8();
@@ -65,7 +62,6 @@ void ConfigureSceneMotionFlags();
 void Object_RefreshSelectorById();
 u8 *Object_GetByIdFar();
 void Audio_PlayCueFromEventWork();
-void PartyInventory_Discard();
 
 void SceneState_RunFlagGatedSetupCascade(void);
 void RunSceneSelectionChain(void);
@@ -178,7 +174,6 @@ enum { CabinSpeakerRequest = 0xa01b };
 /* The item object once it has been placed. */
 extern struct FieldActor *FuneHeya_AnchorObject;
 
-void Engine_ActorSetAnimation();
 void Object_SetActionById();
 
 extern const s32 FuneHeya_CellStepsA[];
@@ -190,8 +185,6 @@ void FuneHeya_PoseSceneActor();
 void ObjectMotion_WaitForAnimationChange();
 void ObjectMotion_ArmCallback();
 void Event_WaitValue1c8FramesFar();
-void Object_SetModeById();
-void Battle_WaitMode0();
 void Event_CallWithLastActiveObjectId();
 u8 *Battle_GetWorkObject1e0();
 void FieldScene_CallPairWith10(s32 a, u16 b);
@@ -219,28 +212,13 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src);
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
 void FieldScene_RunPositionTransferPresentation(void);
 
-extern void Engine_WorkSetValuesIfNonNegative();
-extern s32 Engine_RandomNext();
-extern void Engine_AudioPlayCue();
-
 extern u8 MsgFuneReachedIslandRowers[];
 extern u8 MsgFuneShipWentOff[];
 extern struct EventWork *gEventWork;
 extern u8 FuneHeya_ProgressTableB;
 extern u8 FuneHeya_ProgressTableC;
 void SceneActor_SetFlagBit3ForActors28To35();
-void Engine_ActorSetPosition();
-void Engine_ActorSetChildValue();
-void Engine_ActorSetSpriteFlags();
 void FieldScene_InstallFlaggedActors10To17();
-void Engine_ActorSetSpeed();
-void Engine_ActorStartRepeatedMotion();
-void Engine_EventSetMessage();
-void Engine_EventWait();
-void Engine_ActorRunRepeatedMotion();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorShowEmote();
-void Engine_ActorDestroy();
 
 extern u8 MsgFuneSorryEveryoneButWeNeed[];
 void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b);

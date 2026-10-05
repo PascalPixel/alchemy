@@ -7,6 +7,7 @@
 #include "DMA.H"
 #include "MAP.H"
 #include "IO_REG.H"
+#include "IRQ.H"
 
 struct TileRun {
     s16 id;
@@ -44,26 +45,7 @@ extern u8 MsgFieldFlippedSwitch[];
 void State_CopyPresetA0d0WithOffsetB0(void);
 void State_UpdateScrollRegistersWithPreset(void);
 void Scene_RepaintBoardRecords();
-void Engine_TaskWait();
-void Engine_EventBegin();
-void Engine_MessageShowCentered();
-void Engine_MapCopyCells();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_ActorSetPosition();
-void Engine_AudioPlayCue();
-void Engine_ActorSetAnimation();
-void Runtime_SetIrqHandler();
-void Engine_MapRedraw();
-void Engine_EventEnd();
 extern u16 *gKorimaMagariReturned;
-void Engine_EventWait();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetDestination();
-void Engine_ActorSetDestinationOffset();
-void Engine_ActorWaitForMove();
-void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void KorimaMagari_PlaceObjects();
 void Scene_RepaintBoardRecords(void);
 void Effect_AdjustPaletteColors(s32 amount);

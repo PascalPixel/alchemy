@@ -10,6 +10,7 @@
 #include "FIELDRUN.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
+#include "BATTLE_RUNTIME.H"
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
@@ -224,7 +225,6 @@ typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 extern OperandFunc Script_OperandHandlerTable[];
 
 /* field/store_assigned_key_value.c */
-s32 GameFlag_TestFar(s32);
 
 static __inline__ void StoreHalfword(s16 *address, s32 value)
 {

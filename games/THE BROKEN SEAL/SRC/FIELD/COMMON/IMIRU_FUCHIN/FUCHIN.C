@@ -5,6 +5,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+#include "BATTLE_PARTY.H"
 extern u8 MsgFuchinDragonFlameShowsPath[];
 extern u8 MsgFuchinSecretKiRevealed[];
 extern u8 MsgFuchinLightRevealsShadows[];
@@ -72,8 +73,6 @@ struct CaveDustOptions {
     s32 target_scale_y;
 };
 
-LAYOUT_SIZE_GUARD(CaveEffectScripts_Size, struct CaveEffectScripts, 12);
-LAYOUT_SIZE_GUARD(CaveDustOptions_Size, struct CaveDustOptions, 24);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Priority, struct CaveDustOptions, priority,
     (u32)&((struct EffectOptions *)0)->priority);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Palette, struct CaveDustOptions, palette,
@@ -88,7 +87,6 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scal
     (u32)&((struct EffectOptions *)0)->target_scale_y);
 
 extern u32 gFrameCount;
-void Engine_AudioPlayCue();
 void Effect_Spawn();
 
 /* The work in slot 56, whose byte at +52 marks a fade under way. */

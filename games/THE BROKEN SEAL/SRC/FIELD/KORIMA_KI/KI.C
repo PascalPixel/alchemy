@@ -4,19 +4,12 @@
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
+#include "PALETTE_SCENE.H"
 
 extern u8 MsgKorimaWho[];
 extern u8 MsgKorimaForestKolimaAlive[];
 extern u8 MsgKorimaLeaveBeforeForest[];
-void Engine_EventBegin();
 void KorimaKi_PlayGesture(s32 actor, s32 gesture);
-s32 Engine_GameFlagIsSet();
-void Engine_EventSetMessage();
-void Engine_EventShowMessage();
-void Engine_EventShowMessageAndWait();
-void Engine_EventWait();
-void Engine_ActorSetAnimationAndWait();
-void Engine_EventEnd();
 
 extern u8 MsgKorimaControlTretsHeartShallNot[];
 extern u8 MsgKorimaFeelGreatPowerSpreadingThrough[];
@@ -36,7 +29,6 @@ s32 gKorimaKiSparkCount __attribute__((section(".bss")));
 s32 gKorimaKiSparkSound __attribute__((section(".bss")));
 s32 gKorimaKiTransitionStep __attribute__((section(".bss")));
 
-void PaletteScene_AdjustPaletteWindow(s32 step);
 s32 Object_ReplaceResourceEntry(struct FieldSprite *sprite, s32 previous);
 
 struct Spark {

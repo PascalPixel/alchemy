@@ -13,9 +13,9 @@
 #include "BATTLE_WORK.H"
 #include "MOTION_OBJECT.H"
 #include "RUNTIME_MEM.H"
+#include "BATTLE_PRESENTATION.H"
 
 void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
-void BattleActor_CommitPlacement(void);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 /* 行動1件の対象解決。コピーを取り、命中とダメージ種別を決めて効果を出す。 */
@@ -37,7 +37,6 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
         if (range != 4)                                                        \
             bonus = power - target->elements[range].resist;                    \
     }
-
 
 #define TEXT_SIDE(player, enemy)                                               \
 {                                                                              \
@@ -187,7 +186,6 @@ after_power:
             BattleEv_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
     }
 
-
     nibble = action->target_flags & 15;
     {
         s32 first;
@@ -266,7 +264,6 @@ after_power:
         }
     }
 
-
     if (hit != 0) {
         s32 efx;
 
@@ -302,7 +299,6 @@ after_power:
         s32 pp;
         s32 cur;
 
-
         /*
          * -1 PPダメージ(別系)  1 HP回復  2 HPダメージ  3/4 武器攻撃
          *  5/6/8 加算攻撃(アイテム・distance テーブル別)  10 PP吸収系  11 PP回復
@@ -314,7 +310,6 @@ after_power:
         {
             s32 def;
             s32 apwr;
-
 
             hp0 = target->hp;
             def = target->defense;
@@ -503,7 +498,6 @@ after_power:
         case BATTLE_DAMAGE_HP_ADDITIVE_7:
         case BATTLE_DAMAGE_HP_ADDITIVE_9:
         {
-
 
             if (action->power == 0)
                 break;
@@ -911,7 +905,6 @@ after_power:
             target->defense_modifier_turns = 7;
             break;
 
-
         case EFX_REVIVE_FULL:
             if (target->hp != 0)
                 break;
@@ -935,8 +928,6 @@ after_power:
             target->hp = (s16)(target->max_hp * 8 / 10);
             Owner_RecalculateRatiosFar(target_id);
             break;
-
-
 
         case EFX_CURE_POISON:
             if (target->poison != 0)
@@ -1111,8 +1102,6 @@ after_power:
             Owner_AdjustSecondValueFar(actor_id, dmg);
             break;
 
-
-
         case EFX_BUFF_CLEAR:
             if (target->attack_modifier > 0) {
                 target->attack_modifier = 0;
@@ -1180,8 +1169,6 @@ after_power:
             target->guard_level = 1;
             break;
 
-
-
         case EFX_GUARD2:
 
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura2);
@@ -1190,13 +1177,9 @@ after_power:
             target->guard_level = 2;
             break;
 
-
-
         case EFX_TEXT_NONE:
             BattleEv_Push(BATTLE_EVENT_TEXT, (u32)-1);
             break;
-
-
 
         default:
             break;

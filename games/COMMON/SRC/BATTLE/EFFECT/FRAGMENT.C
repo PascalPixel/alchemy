@@ -4,6 +4,7 @@
 #include "FIXED_MATH.H"
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
+#include "FIELD_EVENT.H"
 
 struct ItemBreakFragmentPosition {
     s32 x;
@@ -36,7 +37,6 @@ extern s32 ArcTan2(s32, s32);
 
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
-extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
 
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
 {

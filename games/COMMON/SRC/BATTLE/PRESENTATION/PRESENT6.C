@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "EDITION.H"
+#include "BATTLE_ESCAPE.H"
 
 #include "BATTLE_WORK.H"
 #include "BATTLE_PARTY.H"
@@ -17,7 +18,6 @@ void GameFlag_ClearBitFar(s32 flag);
 void Camera_ConfigureScene(s32 scene);
 void UiWork_FinalizeSharedSlotFar(void);
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *actions);
-s32 BattleEscape_CheckSuccess(void);
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
 s32 BattlePres_WaitSync(void);
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *actions);

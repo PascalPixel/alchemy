@@ -17,9 +17,9 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "MENU_LIST.H"
 
 extern u8 gBattleFxWork[];
-
 
 /* Which crescent picture each of a mote's eight steps shows. */
 extern u8 MemberBeam_MotePictures[];
@@ -35,7 +35,6 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);

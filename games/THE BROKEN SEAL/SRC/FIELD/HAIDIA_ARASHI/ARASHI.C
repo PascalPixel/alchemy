@@ -4,24 +4,15 @@
 #include "FIELD_SERVICE.H"
 #include "FIELDOBJ.H"
 #include "ANIMSPR.H"
+#include "FIELD_EVENT.H"
 
 extern u8 MsgHaidiaBigBoyWhy[];
 extern u8 MsgHaidiaKnowWayGo[];
 extern u8 MsgHaidiaKyleAbleStop[];
 void BattleFx_SetBlock30Values12Zero(void);
-s32 Engine_GameFlagIsSet();
-void Engine_EventBegin();
-void Engine_WorkSetValuesIfNonNegative();
-void Engine_AudioPlayCue();
-void Engine_TaskWait();
-void Engine_ActorSetPosition();
-void Engine_ActorWalkToAndWait();
-void Engine_EventWait();
-void Engine_MapWaitWorkValuesBelow256();
 void BattleFx_PlayQueuedSound();
 void HaidiaArashi_SetStormCellAttributes();
 void SceneActor_RunActor22PlacementSequence();
-void Engine_EventEnd();
 
 struct Flags35 {
     u8 pad[35];
@@ -46,18 +37,6 @@ extern u8 MsgHaidiaKnowRightOk[];
 extern u8 MsgHaidiaRightDitchStuff[];
 extern u8 MsgHaidiaRockHitsLose[];
 extern u8 MsgHaidiaThinkForgetThings[];
-s32 Engine_EventOpenMessage();
-void Engine_ActorFaceEachOther();
-s32 Engine_EventChooseYesNo();
-void Engine_EventSetMessage();
-void Engine_EventShowMessageAndWait();
-void Engine_ActorSetAttachedEffect();
-void Engine_ActorSetAnimation();
-void Engine_ActorFaceActor();
-void Engine_ActorSetAnimationAndWait();
-void Engine_EventShowMessage();
-void Engine_ActorSetDestination();
-void Engine_ActorWaitForMove();
 void Event_PrepareObjectAndApplyValue();
 extern u8 MsgHaidiaHey[];
 extern u8 HaidiaArashi_ActorTwentyTwoScriptA[];
@@ -90,15 +69,9 @@ extern u8 HaidiaArashi_CellSteps5[];
 extern u8 MsgHaidiaOh[];
 extern u8 MsgHaidiaTwoDontEnough[];
 extern u8 MsgHaidiaMomDadBack[];
-void Engine_ActorFaceDirection();
-void Engine_ActorRunRepeatedMotion();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_ActorEnableActionCallback();
 
 /* Actor 9's action table for the run through the storm. */
 extern u8 HaidiaArashi_StormRunActions[];
-void Engine_CameraWaitForMove();
 void Scene_RunActorGroupDepartureSequence();
 
 /* Configures actor 22 (position, pose, and movement/sprite flags) for the

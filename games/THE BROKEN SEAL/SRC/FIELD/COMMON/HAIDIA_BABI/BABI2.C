@@ -2,6 +2,7 @@
 #include "GLYPH.H"
 #include "ANIMSPR.H"
 #include "VRAM_BLOCK.H"
+#include "B5_CONTEXT.H"
 /* Haidia village: the boulder scene. The actors are placed and the
    screen fades in with a blend, the boulder warning is shown, and the
    blend alpha ramps up and back down before the actors react. */
@@ -58,31 +59,11 @@ extern u8 MsgHaidiaYouveGrownSoMuch[];
 extern u8 MsgHaidiaCoughCoughWho[];
 extern u8 MsgHaidiaWhoToldIll[];
 extern struct EventWork *gEventWork;
-void Engine_EventBegin();
-void Engine_ActorSetSpeed();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorFaceDirection();
-void Engine_ActorStartRepeatedMotion();
-void Engine_EventSetMessage();
-void Engine_EventShowMessageAndWait();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventWait();
-void Engine_ActorSetDestination();
 void Map_SetLayerEntryFlag();
 void Map_ClearLayerEntryFlag();
-void Engine_ActorSetAnimation();
-void Engine_ActorSetAnimationAndWait();
-s32 Engine_EventOpenMessage();
-s32 Engine_EventChooseYesNo();
-s32 Engine_GameFlagIsSet();
-void Engine_EventShowMessage();
-void Engine_TaskWait();
-void Engine_ActorJump();
-void Engine_EventEnd();
 
 extern u8 MsgHaidiaDontWorryBest[];
 extern u8 MsgHaidiaUnnOhhKyle[];
-void Engine_MessageShowCentered();
 void Object_SetTargetAndCallback();
 
 /* Actor 8's departure, in the overlay's read-only data. */
@@ -108,7 +89,6 @@ struct PairWork {
     u16 vram_block;
 };
 
-LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *gEffectWork;
 
 s32 Object_InitializeMode(struct AnimationObject *object, s32 animation);

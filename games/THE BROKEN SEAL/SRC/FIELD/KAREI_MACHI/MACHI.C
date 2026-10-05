@@ -210,14 +210,6 @@ void SceneState_ApplyFlagGatedActorEightSetup(void);
 void SceneState_SetWork448AndRunFlag915Step(void);
 void FieldScene_RunMiddleSequence(void);
 
-s32 Engine_GameFlagIsSet();
-s32 Engine_GameFlagSet();
-void Engine_ActorSetPosition();
-void Engine_ActorSetChildValue();
-void Engine_ItemLoadIcon();
-s32 Engine_VramLoad();
-void Engine_HeapRelease();
-
 struct SpriteBits {
     u8 pad0[5];
     u8 b5_lo : 5;
@@ -239,12 +231,10 @@ void FieldScene_RunSupplementalSequenceOne();
 void BattleFx_StartFadeOverlay();
 void BattleFx_SetQueuedSoundAndPlay();
 
-void Engine_ActorSetSpeed();
 void KareiMachi_AlternateDance(void);
 extern s32 KareiMachi_DanceStep;
 
 extern u8 KareiMachi_DanceScriptA[];
-void Engine_ActorEnableActionCallback();
 
 /* Each clear builds its own zero; a shared zero variable would live in r5
  * across the calls. */

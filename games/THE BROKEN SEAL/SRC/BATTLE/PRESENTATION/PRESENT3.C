@@ -12,6 +12,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
+#include "MENU_LIST.H"
 
 u32 Random16(void);
 void Render_ResetTransformState(void);
@@ -54,7 +55,6 @@ extern u8 CornerSparks_DrawFlags[];
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-void AudioCommand_PlayFar(s32 value);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
@@ -179,7 +179,6 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
-
 
 /*
  * Frame callback that BattlePresentation_PrepareScene schedules at 0xc80.
@@ -330,7 +329,6 @@ void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx)
 
 void BattleEventRuntime_BeginPhaseFar(s32 cue);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
-void AudioCommand_PlayFar(s32 cue);
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 

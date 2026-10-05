@@ -14,6 +14,7 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "IWRAM_CALL.H"
+#include "FIXED_MATH.H"
 
 extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultMapCells;
@@ -34,8 +35,6 @@ void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Graphics_PrepareTransferInIwramWork(s32, s32);
-s32 Trig_Cos(s32);
-s32 Trig_Sin(s32);
 void MapAnimation_ApplyAffineFrame(void);
 void WorldMap_UpdateView(void);
 
@@ -68,8 +67,6 @@ struct WorldCell {
 
 #define BG_PALETTE ((s16 *)0x05000000)
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
-
-
 
 /* The world map's screen entries on its two layers: each of the four
  * quarters of a layer is 32 by 32 entries at this base. */

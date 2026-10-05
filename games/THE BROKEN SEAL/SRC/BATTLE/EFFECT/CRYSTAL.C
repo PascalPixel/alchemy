@@ -10,6 +10,8 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
+#include "BATTLE_PRESENTATION.H"
+#include "MENU_LIST.H"
 
 struct CameraWork {
     u8 unknown_00[0x36];
@@ -27,9 +29,7 @@ extern u8 Crystal_ShardWidths[];
 extern u8 Crystal_ShardHeights[];
 extern s32 Crystal_ShardOffsets[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
-void AudioCommand_PlayFar(s32 value);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);

@@ -6,12 +6,10 @@
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_PARTY.H"
 #include "OWNER_STATE.H"
-
-void BattleUnit_Recalculate(s32 owner);
+#include "BATTLE_RUNTIME.H"
 
 s32 Trade_CanOfferDjinnFar(s32 id, s32 element, s32 index);
 void Trade_AddOfferFar(s32 id, s32 element, s32 index);
-s32 GameFlag_TestFar(s32 message);
 s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);
 

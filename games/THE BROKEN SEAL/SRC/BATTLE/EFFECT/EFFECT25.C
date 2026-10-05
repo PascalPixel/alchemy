@@ -16,7 +16,6 @@ extern s32 RomWords_0809e270[];
  * the last group's cue.
  */
 extern const u16 gBattleCueTable[];
-s32 GameFlag_TestFar(s32);
 
 void Party_ResolveTablePair(void)
 {

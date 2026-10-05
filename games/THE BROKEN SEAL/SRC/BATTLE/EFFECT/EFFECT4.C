@@ -14,10 +14,10 @@
 #include "EFFECT_STEP.H"
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
+#include "MENU_LIST.H"
+#include "FIELD_EVENT.H"
 
 extern u8 gBattleFxWork[];
-void BattleFx_ArmBg2AffineHBlankDma(void);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 /*
  * Battle-presentation sub-effect: entry 34 of the effect callback table at
@@ -47,17 +47,14 @@ struct Chip {
 
 #define gChips ((struct Chip *)Ram_MapCellBuffer)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-void Object_SetMode(struct MotionObject *object, s32 mode);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
 
@@ -219,17 +216,13 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 
 #define gSkulls ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_ArmBg2AffineHBlankDma(void);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyPitch(s32 angle);
-
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
@@ -352,7 +345,6 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }
-
 
 /* A small absolute link-time constant.  The resource id must be built from a
  * literal pool word, which an ordinary integer literal cannot produce. */
@@ -514,7 +506,6 @@ extern u8 MemberBurst_Counts[];
 
 u32 Battle_GetObjectTableValueFar(s32 actor_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void AudioCommand_PlayFar(s32 value);
 void ObjectGroup_TickMemberTimers(void);
 
 /* Battle effect: motes burst out of the actor, hang in the air and then

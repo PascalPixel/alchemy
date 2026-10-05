@@ -4,6 +4,7 @@
 #include "RESOURCE.H"
 #include "TBS_EDITION.H"
 #include "RUNTIME_MEM.H"
+#include "FIELD_EVENT.H"
 /* Colosso: decode the portrait sheet into a scratch block, copy portrait
  * id's palette into object palette 15 and its 1 KB of tiles into the cached
  * VRAM slot (claimed on first use). Portrait 8 shares tiles with 4. The same
@@ -32,7 +33,6 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 
 struct Sprite { u32 words[3]; };
 
-
 struct Half { u16 value; };
 
 extern s16 Korosseo_PortraitSlot, Korosseo_ModeTaskTimer, Korosseo_ModeMoveTarget, Korosseo_ModeMoveDuration;
@@ -42,7 +42,6 @@ extern s16 Korosseo_ModeBlendDuration, Korosseo_ModeBlendStep, Korosseo_ModeTask
 extern s32 Korosseo_ModeTaskPosition;
 extern s16 *Korosseo_ModeTaskScript;
 extern u32 Korosseo_ModeTaskSprites[];
-extern s32 Engine_TaskRemoveCallback(void (*fn)(void));
 
 #define QueueRegister(address, value) \
 { \

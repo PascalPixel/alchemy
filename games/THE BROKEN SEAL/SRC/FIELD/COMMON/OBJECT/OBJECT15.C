@@ -4,10 +4,9 @@
 #include "SCENE.H"
 #include "INVENTORY_MENU.H"
 #include "ANIMSPR.H"
+#include "RESOURCE.H"
 
 extern s32 FourObjectMotion_ResourceIds[];
-void ResourceObject_ReleaseFar(void *);
-void *ResourceObject_CreateFar(s32);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 void FourObjectMotion_UpdateBottomRow(void);
 

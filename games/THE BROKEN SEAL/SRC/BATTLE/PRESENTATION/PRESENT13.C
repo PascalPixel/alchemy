@@ -9,6 +9,7 @@
 #include "BATTLE_MSG.H"
 #include "BATTLE_PRESENTATION.H"
 #include "SYSTEM.H"
+#include "BATTLE_ACTOR.H"
 
 void BattlePres_SetActorModes(u16 *, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
@@ -28,8 +29,6 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 mode, struct BattleActionRec
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
-void BattleActor_CommitPlacement(void);
-void Actor_ResetMotionAtAnchor(s32 id);
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 background, s32 level);
 
 /* Inline, so the divisor is built again for the camera call. */

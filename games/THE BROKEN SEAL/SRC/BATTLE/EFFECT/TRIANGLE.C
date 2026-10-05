@@ -14,7 +14,7 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
-
+#include "MENU_LIST.H"
 
 struct Vector3 {
     s32 x;
@@ -36,7 +36,6 @@ void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale(struct Vector3 *scale);
-void AudioCommand_PlayFar(s32 value);
 
 /*
  * A triangle of flare dots spins down onto each affected unit, shrinking for

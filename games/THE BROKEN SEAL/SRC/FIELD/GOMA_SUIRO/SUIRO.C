@@ -14,14 +14,11 @@ extern const u32 GomaSuiro_Exits[];
 extern const struct ScenePlacement gGomaSuiroPlacements2[];
 extern const struct ScenePlacement gGomaSuiroPlacementsOther[];
 
-void Engine_ActorSetSpriteFlags();
 void GameFlag_SetBit();
 void SceneEffect_RunActorBurst(s32 no);
 
 extern const struct SceneEvent gGomaSuiroEvents2[];
 extern const struct SceneEvent gGomaSuiroEventsOther[];
-
-void Object_SetModeById();
 
 /* Where the party appears; the second area has its own entrances. */
 const struct SceneEntrance *Scene_GetEntrances(void)

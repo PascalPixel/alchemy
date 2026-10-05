@@ -4,6 +4,7 @@
 #include "TRANSFORM.H"
 #include "DMA.H"
 #include "IO_REG.H"
+#include "FIXED_MATH.H"
 
 /* Lost Age source currently covers rewind, push and the two matrix copies.
    Its reset, pop and identity helpers remain raw until their C matches.
@@ -23,9 +24,6 @@ void SceneTransform_RewindStack(void)
 #else
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
-
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 extern const u32 RelocatedQ16DotProduct[];

@@ -70,10 +70,7 @@ extern u8 KorimaHiroba_Messages[];
 extern u8 KorimaHiroba_Actors[];
 extern u8 KorimaHiroba_Extras[];
 
-
 u8 *SceneData_GetScriptTable(void) { return KorimaHiroba_Scripts; }
-
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 s32 SceneData_ReturnZero(void)
 {

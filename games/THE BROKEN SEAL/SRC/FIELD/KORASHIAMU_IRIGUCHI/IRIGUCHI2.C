@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "CALL.H"
 #include "FIELDOBJ.H"
+#include "FIELD_EVENT.H"
 
 extern u8 MsgKorashiamuHeyYouRe[];
 extern u8 KorashiamuIriguchi_ActionTable1[];
@@ -17,36 +18,7 @@ static __inline__ void Event_SkipMessages(s32 count)
 
 void FieldScene_CallPairWith10();
 void SceneState_ForwardMaskedHalfwordWith10();
-s32 Engine_GameFlagIsSet();
-void Engine_GameFlagSet();
-void Engine_EventWait();
-void Engine_EventBegin();
-void Engine_EventEnd();
-s32 Engine_EventChooseYesNo();
-struct FieldActor *Object_GetById();
-void Engine_ActorSetSpeed();
-void Engine_ActorEnableActionCallback();
 void Object_SetActionCallbackAndRefreshById();
-void Engine_ActorWalkTo();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorSetPosition();
-void Engine_ActorSetAnimation();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorStartRepeatedMotion();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventSetMessage();
-void Engine_EventOpenMessage();
-void Engine_EventShowMessageAndWait();
-void Engine_ActorFaceDirection();
-void Engine_ActorShowEmote();
-void Engine_ActorSetAttachedEffect();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-struct FieldActor *Engine_EventGetViewCenter();
-void Engine_EventRequestExit();
-void Engine_EventCloseScreen();
-void Engine_EventWaitForScreen();
 
 extern u8 MsgKorashiamuDayTiredWaiting[];
 extern u8 MsgKorashiamuYouReadyForFinals[];
@@ -55,10 +27,6 @@ extern u8 KorashiamuIriguchi_ActionTable6[];
 extern u8 KorashiamuIriguchi_ActionTable7[];
 extern u8 KorashiamuIriguchi_ActionTable8[];
 extern u8 KorashiamuIriguchi_ActionTable9[];
-
-void Engine_ActorStop();
-void Engine_TaskWait();
-void Engine_EventShowMessage();
 
 /* Runs only while flag 0x962 is set: resets the battle runtime, stages
  * presentation actors 17 to 20, places party actors 0 to 3 (taking optional

@@ -390,7 +390,7 @@ void FieldScene_RunScene3a2_020008a8(void)
 void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 {
 
-    u32 heading = ((struct FieldActor *)Object_GetById(0))->facing;
+    u32 heading = Object_GetById(0)->facing;
 
     Engine_EventBegin();
     if (heading - 0xA001 <= 0x3FFE) {
@@ -675,7 +675,7 @@ void SceneState_RunRect6x28Step(void)
 
 s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 {
-    if (((struct FieldActor *)Object_GetById(0))->y.fixed > actor->y.fixed) {
+    if (Object_GetById(0)->y.fixed > actor->y.fixed) {
         actor->priority_flags |= 2;
     } else {
         actor->priority_flags &= 0xFD;
@@ -763,7 +763,7 @@ s32 YamaRama_ApplyEntryState(void)
         }
     } else if (gGameState.scene == (s32)&SceneId_YamaRama1) {
         Engine_ActorSetSpriteFlags((struct FieldActor *)Object_GetById(14), 0);
-        ((struct FieldActor *)Object_GetById(14))->priority_flags |= 2;
+        Object_GetById(14)->priority_flags |= 2;
         if (Engine_GameFlagIsSet(0x200)) {
             Engine_ActorSetAnimation(14, 5);
             ActorPresentation_PrepareActorFourteenWithCallback();
@@ -799,12 +799,12 @@ s32 YamaRama_ApplyEntryState(void)
             Call3(Engine_ActorFaceDirection, 8, 0x5000, 0);
             Call3(Engine_ActorFaceDirection, 10, 0xb000, 0);
             Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
-            ((struct FieldActor *)Object_GetById(9))->scale_x = -0x10000;
+            Object_GetById(9)->scale_x = -0x10000;
         }
         if (!Value1(Engine_GameFlagIsSet, 0x8b2)) {
             Call3(Engine_ActorSetPosition, 9, 0xa40000, 0x1180000);
             Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
-            ((struct FieldActor *)Object_GetById(9))->scale_x = -0x10000;
+            Object_GetById(9)->scale_x = -0x10000;
         }
         if (gGameState.entrance == 5 && !Engine_GameFlagIsSet(0x8b1) && !Engine_GameFlagIsSet(0x109) && !Engine_GameFlagIsSet(0x8b2)) {
             Scene_RunActorExchange();

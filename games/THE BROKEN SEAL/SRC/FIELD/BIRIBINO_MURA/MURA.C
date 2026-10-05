@@ -289,8 +289,8 @@ void FieldScene_RunScene38bSequenceC(void)
     struct FieldActor *rec;
     struct FieldActor *rec7;
 
-    rec = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
-    rec7 = (struct FieldActor *)Object_GetById(11);
+    rec = Object_GetById(ACTOR_PARTY_LEADER);
+    rec7 = Object_GetById(11);
     if ((rec7->x.fixed >> 20) == 6) {
         Engine_EventBegin();
         Engine_ActorSetSpritePriority(11, 1);

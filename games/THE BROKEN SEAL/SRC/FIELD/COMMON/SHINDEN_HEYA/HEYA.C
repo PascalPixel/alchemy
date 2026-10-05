@@ -1696,7 +1696,7 @@ void ShindenHeya_CopyActorPose(void)
         }
     }
     p5->dirty = 1;
-    ((struct FieldActor *)Object_GetById(14))->priority_flags &= 254;
+    Object_GetById(14)->priority_flags &= 254;
     ((struct FieldSprite *)p5)->priority = 2;
 }
 

@@ -260,7 +260,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     u8 *frame;
 
     Engine_EventBegin();
-    actor = (struct FieldActor *)Object_GetById(18);
+    actor = Object_GetById(18);
     if ((actor->x.fixed >> 20) == 46) {
         Battle_WaitMode0(30);
         rec2 = OverlayObject_CreateAndInitialize(0x2e80000, 0, 0xb80000, 253);
@@ -340,7 +340,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     u8 *slot;
 
     Engine_EventBegin();
-    actor = (struct FieldActor *)Object_GetById(19);
+    actor = Object_GetById(19);
     if ((actor->x.fixed >> 20) == 48) {
         if (GameFlag_IsSet(0x202) != 0) {
             Battle_WaitMode0(30);

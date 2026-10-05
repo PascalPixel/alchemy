@@ -183,7 +183,7 @@ void FieldScene_RunScene387SequenceC(void)
     struct FieldActor *actor;
     s32 tile_x;
 
-    actor = (struct FieldActor *)Object_GetById(10);
+    actor = Object_GetById(10);
     tile_x = actor->x.fixed / 0x100000;
     if (tile_x == 23) {
         Engine_EventWait(10);

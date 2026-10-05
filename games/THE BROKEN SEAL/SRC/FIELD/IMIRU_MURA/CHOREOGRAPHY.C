@@ -237,7 +237,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
-    leader = (struct FieldActor *)Object_GetById(0);
+    leader = Object_GetById(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }

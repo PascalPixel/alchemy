@@ -542,7 +542,7 @@ void FieldScene_RunScene399_02000a3c(void)
 {
     struct FieldActor *leader;
 
-    leader = (struct FieldActor *)((s32)Object_GetById(0));
+    leader = Object_GetById(0);
     if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
         Engine_InnOpen(4, 16);
     } else {
@@ -564,7 +564,7 @@ void FieldScene_RunScene399_02000abc(void)
 {
     struct FieldActor *leader;
 
-    leader = (struct FieldActor *)((s32)Object_GetById(0));
+    leader = Object_GetById(0);
     if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
         Engine_EventBegin();
         if (GameFlag_IsSet(0x82d) == 0) {
@@ -730,11 +730,11 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x6666, 0x3333);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
-    leader = (struct FieldActor *)Object_GetById(0);
+    leader = Object_GetById(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
     }
-    leader = (struct FieldActor *)Object_GetById(0);
+    leader = Object_GetById(0);
     if (leader != NULL) {
         Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
@@ -850,17 +850,17 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x40000, 0x20000);
     Actor_SetSpeed(ACTOR_IVAN, 0x40000, 0x20000);
     Audio_PlayCue(152);
-    ((struct FieldActor *)((s32)Object_GetById(0)))->steering_flags &= ~ACTOR_FACES_MOTION;
-    ((struct FieldActor *)((s32)Object_GetById(1)))->steering_flags &= ~ACTOR_FACES_MOTION;
-    ((struct FieldActor *)((s32)Object_GetById(2)))->steering_flags &= ~ACTOR_FACES_MOTION;
+    (Object_GetById(0))->steering_flags &= ~ACTOR_FACES_MOTION;
+    (Object_GetById(1))->steering_flags &= ~ACTOR_FACES_MOTION;
+    (Object_GetById(2))->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetDestination(ACTOR_PARTY_LEADER, 132, 206);
     Actor_SetDestination(ACTOR_GERALD, 136, 221);
     Actor_SetDestination(ACTOR_IVAN, 122, 238);
     Object_RefreshSelectorById(3);
     Engine_EventWait(80);
-    ((struct FieldActor *)((s32)Object_GetById(0)))->steering_flags |= ACTOR_FACES_MOTION;
-    ((struct FieldActor *)((s32)Object_GetById(1)))->steering_flags |= ACTOR_FACES_MOTION;
-    ((struct FieldActor *)((s32)Object_GetById(2)))->steering_flags |= ACTOR_FACES_MOTION;
+    (Object_GetById(0))->steering_flags |= ACTOR_FACES_MOTION;
+    (Object_GetById(1))->steering_flags |= ACTOR_FACES_MOTION;
+    (Object_GetById(2))->steering_flags |= ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);

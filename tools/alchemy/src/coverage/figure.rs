@@ -202,7 +202,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
 /// weakest to strongest (Haiku and Luna, Sonnet and Terra, Opus and Sol,
 /// Fable and Astra); within a model line the latest version is the brightest.
 /// Grok is black; Cursor, which left no logs, is grey.
-const MODEL_COLOURS: [(&str, &str); 14] = [
+const MODEL_COLOURS: [(&str, &str); 15] = [
     // The key's order (Pascal, 2026-09-24): Claude weakest to strongest,
     // then Codex weakest to strongest, each model line oldest to newest.
     // Claude is warm (yellow, orange, red) and Codex cool (blue, indigo,
@@ -218,6 +218,7 @@ const MODEL_COLOURS: [(&str, &str); 14] = [
     ("Luna 5.6", "#dcf0ff"),
     ("Terra 5.6", "#aed4fb"),
     ("Sol 5.6", "#9fabf5"),
+    ("Sol 6.1", "#7d8cf0"),
     ("Astra 6", "#c8a6f7"),
     ("Grok 4.6", "#000000"),
     ("Grok", "#000000"),

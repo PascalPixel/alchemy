@@ -179,9 +179,11 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
         flags.push(flag.to_string());
     }
     // TLA's game code, main image and overlays alike, builds Thumb
-    // constants from a shifted byte and an add (Pascal, 2026-09-29) and
-    // calls through a register with mov lr and a bl (Pascal, 2026-09-30).
+    // constants from a shifted byte and an add (Pascal, 2026-09-29), calls
+    // through a register with mov lr and a bl (Pascal, 2026-09-30) and
+    // schedules loads for the ARM9TDMI's pipeline (Pascal, 2026-10-05).
     if target == CompilerTarget::Tla {
+        flags.push("-mtune=arm9tdmi".to_string());
         flags.push("-mthumb-split-constants".to_string());
         flags.push("-mthumb-call-via-lr".to_string());
     }
@@ -341,6 +343,7 @@ mod target_tests {
             .filter(|flag| {
                 *flag != "-mthumb-split-constants"
                     && *flag != "-mthumb-call-via-lr"
+                    && *flag != "-mtune=arm9tdmi"
                     && !flag.starts_with("-I")
             })
             .collect();

@@ -13,7 +13,6 @@
 #include "IO_REG.H"
 #include "LOW_RUNTIME.H"
 
-
 typedef void (*KeyCallbackFn)(void);
 
 /* The linear-congruential generator updates one unsigned word. */
@@ -32,7 +31,6 @@ extern u8 Text_PowersOfTen[];
 
 /* graphics/fill_word_stream_with_f000.c */
 extern u16 *gDebugTextCursor;
-
 
 /*
  * Each table update masks interrupts by writing IME the low half of its own
@@ -66,9 +64,7 @@ void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count)
 
 void Scheduler_SortTasks(void)
 {
-    /* FAKEMATCH: the ordinary nested for loops reduce this
-       complete native sort from 84 to 80 bytes. Retain its existing
-       leading test and reused swap cursor over the actual task records. */
+    /* FAKEMATCH: the leading test and reused swap cursor retain 84 bytes; ordinary nested for loops produce 80. */
     struct SchedulerTask saved;
     struct SchedulerTask *base = gSchedulerTaskTable;
     struct SchedulerTask *task;
@@ -108,8 +104,7 @@ s32 Scheduler_FindCallback(SchedulerCallback callback)
 
     result = -1;
     task = gSchedulerTaskTable;
-    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the
-     * interrupt-master register's address is loaded before the task table's. */
+    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the interrupt-master register's address is loaded before the task table's. */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -381,10 +376,7 @@ next_task:
             if (TASK_STATE_HIGH(task) == key) {
                 KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
 
-                /* FAKEMATCH: three ordinary void-call shapes select r3
-                   and _call_via_r3. The inherited C89 ignored-result cast
-                   keeps native r0/_call_via_r0 at the same 56-byte extent.
-                   Callback owners remain void; no result is consumed. */
+                /* FAKEMATCH: the ignored-result cast keeps r0/_call_via_r0; void-call forms select r3/_call_via_r3. */
                 ((s32 (*)(void))callback)();
             }
             goto next_task;

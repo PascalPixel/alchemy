@@ -82,14 +82,8 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
 
 /* Sprite record setup for the menu selection list. */
 
-/*
- * Load the graphic for kind through one of three tile loaders, record the
- * tile base, source slot and returned tile index in the node, then reset the
- * node's render object.  The object is reached through a pointer so that
- * every byte access stays within Thumb's 5-bit offset range from one base
- * register.  The per-kind tile counts are link-time constants; an integer
- * literal cannot produce 0x1f here.
- */
+/* Load the graphic through the selected tile loader, record its tile base,
+ * source slot and tile index, then reset the node's render object. */
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse)
 {
     s32 src;
@@ -129,11 +123,7 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s3
     obj->mode = 0;
     obj->colors = 0;
     obj->mosaic = 0;
-    /*
-     * size = 1 stays before shape = 0: both mask with 0x3f, and the
-     * mask is copied before the byte-7 store because the byte-5 store still
-     * needs it.
-     */
+
     obj->size = 1;
     obj->shape = 0;
     obj->palette = 0;

@@ -64,8 +64,7 @@ void System_VBlankHandler(void)
         gKeyState = pressed;
         gKeysPressedLatch |= pressed;
     }
-    /* FAKEMATCH: the volatile store keeps the held-key reload in the repeat
-       test after the write; the shared cell's declared type is unchanged. */
+    /* FAKEMATCH: the volatile store keeps the held-key reload in the repeat test after the write; the shared cell's declared type is unchanged. */
     *(volatile u32 *)&gKeysHeld = keys;
     if (keys == 0) {
         gKeyRepeatTimer = 19;

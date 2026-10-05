@@ -21,8 +21,7 @@
 
 static __inline__ void System_SoftReset(void)
 {
-    /* FAKEMATCH: a void-returning entry pointer places the target in r1;
-       the value-returning pointer preserves the measured r0 call. */
+    /* FAKEMATCH: a void-returning entry pointer places the target in r1; the value-returning pointer preserves the measured r0 call. */
     s32 (*reset)(void) = (s32 (*)(void))Cart_Restart;
 
     gCartridgeResetMarker = 0x19670704;
@@ -51,12 +50,9 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
         u32 ie;
 
         ime = *ime_reg;
-        /* FAKEMATCH: the address value leaves IME bit 0 clear and keeps
-           the measured address-register store. A plain zero store adds
-           a literal load and splits the pool (124 to 136 bytes). */
+        /* FAKEMATCH: the address value leaves IME bit 0 clear and keeps the measured address-register store. A plain zero store adds a literal load and splits the pool (124 to 136 bytes). */
         *ime_reg = (u32)ime_reg;
-        /* FAKEMATCH: an empty do-while keeps the IE address load after the
-           IME write */
+        /* FAKEMATCH: an empty do-while keeps the IE address load after the IME write */
         do {
         } while (0);
         bit = 1 << irq;
@@ -225,8 +221,7 @@ void WaitFrames(s32 frames)
         /* CAMELOT_ASM: reads the stack pointer */
         __asm__ volatile("mov %0, sp" : "+r"(base) : : "memory");
         base -= gSavedStackSize;
-        /* FAKEMATCH: the operand-only asm flushes CSE, preserving the
-           measured reload of the saved-stack-size address. */
+        /* FAKEMATCH: the operand-only asm flushes CSE, preserving the measured reload of the saved-stack-size address. */
         /* CAMELOT_ASM: moves the stack pointer */
         __asm__ volatile("mov sp, %0" : : "r"(base));
         Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);

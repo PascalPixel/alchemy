@@ -59,9 +59,7 @@ void SerialRuntime_HandleTransferInterrupt(void)
     struct SerialRuntime *send_state;
     struct SerialRuntime *receive_state;
     struct SerialRuntime *tail_state;
-    /* FAKEMATCH: a plain value snapshot delays stack allocation and the
-       snapshot pointer in lr, and reverses indexed halfword operands. The
-       volatile local and restricted view retain the measured order. */
+    /* FAKEMATCH: a plain value snapshot delays stack allocation and the snapshot pointer in lr, and reverses indexed halfword operands. The volatile local and restricted view retain the measured order. */
     volatile union SerialDataRegisters serial_data;
     union SerialDataRegisters *const __restrict serial_snapshot =
         (union SerialDataRegisters *)&serial_data;
@@ -164,17 +162,12 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
     s32 value;
     s32 transfer;
 
-    /* FAKEMATCH: sharing the integer address carrier with the result keeps
-       the source in r0 through the busy check. A separate result is hoisted
-       into r0 and moves the source to another register. */
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps the source in r0 through the busy check. A separate result is hoisted into r0 and moves the source to another register. */
     value = (s32)source;
     active = &SERIAL_ACTIVE_A;
     busy = *active;
     transfer = transfer_value;
-    /* FAKEMATCH: both do/while blocks and the second active assignment are
-     * meaningless. Setting active twice raises its allocation priority above
-     * transfer, so active gets r5 and transfer r6; the blocks keep the stores
-     * in the reference order. */
+    /* FAKEMATCH: assigning active twice selects r5 for active and r6 for transfer; one-pass blocks preserve store order. */
     do {
         state = &gSerialTransfer;
     } while (0);
@@ -211,9 +204,7 @@ s32 SerialRuntime_BeginTransferB(void *destination)
     s32 busy;
     s32 value;
 
-    /* FAKEMATCH: sharing the integer address carrier with the result keeps
-       the destination in r0 through the busy check. A separate result is
-       hoisted into r0 and makes the function save another register. */
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps the destination in r0 through the busy check. A separate result is hoisted into r0 and makes the function save another register. */
     value = (s32)destination;
     state = &gSerialTransfer;
     active = &SERIAL_ACTIVE_B;
@@ -227,8 +218,7 @@ begin_transfer:
     ime = &REG_IME;
     saved_interrupt_master = *ime;
     *ime = (u32)ime; /* its own address, 0x208: bit 0 clear */
-    /* FAKEMATCH: the one-pass block keeps the IME read and write ahead of
-       the transfer stores, as in SerialRuntime_BeginTransferA. */
+    /* FAKEMATCH: the one-pass block keeps the IME read and write ahead of the transfer stores, as in SerialRuntime_BeginTransferA. */
     do {
         state->status = 0x81;
         SERIAL_VALUE_B = 0;
@@ -236,8 +226,7 @@ begin_transfer:
         *active = value;
     } while (0);
     {
-        /* The sequence clear stores a pooled halfword zero loaded into r0
-         * after the sequence's address, where CSE would store busy's zero. */
+
         volatile u8 *sequence = &gSerialBlockSequence;
         register u16 zero asm("r0") = 0; /* FAKEMATCH: the zero in r0, see above */
         *sequence = zero;

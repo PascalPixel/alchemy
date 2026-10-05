@@ -71,8 +71,7 @@ void SerialRuntime_StepBlockTransfer(void)
     u32 id;
     struct SerialTransferState *own;
     u32 gap;
-    /* FAKEMATCH: the halfword record retains the measured pooled-one
-       construction; it is not protocol state. */
+    /* FAKEMATCH: the halfword record retains the measured pooled-one construction; it is not protocol state. */
     struct OneCell one;
 
     id = ~((REG_SIOCNT << 26) >> 30) & 1;

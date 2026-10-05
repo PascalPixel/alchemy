@@ -14,7 +14,6 @@
 #include "LOW_RUNTIME.H"
 #include "OAM.H"
 
-
 /* Each of the 256 render priorities owns a linked-list head. */
 extern void *Data_03001400[256];
 extern const u8 Render_BuildOamListKernel[];
@@ -94,11 +93,7 @@ void Render_BuildOamList(void *work)
     u32 size;
     OamBuildRoutine routine;
 
-    /*
-     * FAKEMATCH: a loop that runs once around the size load. It is a
-     * scheduling barrier: without it the size literal is loaded before the
-     * output buffer is copied to r8.
-     */
+    /* FAKEMATCH: a loop that runs once around the size load. It is a scheduling barrier: without it the size literal is loaded before the output buffer is copied to r8. */
     do {
         size = (u32)LoadedRuntime_Size;
     } while (0);

@@ -154,9 +154,7 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 
 s32 SaveState_ScanRecordFlags(void)
 {
-    /* FAKEMATCH: retain the existing signed byte cursor from the summary
-       party tail. Direct flag fields fold a different pool base at the
-       same 156-byte extent; offsets below come from the real record. */
+    /* FAKEMATCH: the signed cursor from the party tail preserves the literal base changed by direct flag fields. */
     s32 err;
     s32 cnt;
     s32 ret;

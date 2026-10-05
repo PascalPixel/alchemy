@@ -38,7 +38,6 @@ extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
 /* Five tables that map a script's bytes below 0xe0 for a text variant. */
 extern u8 ResourceSlot_ConversionTables[][256];
 
-
 /*
  * Load a number's script into a slot's buffer: find its resource, decode
  * it, turn the leading offset table (ended by a zero word) into pointers
@@ -147,9 +146,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
         if (frames == 0)
             frames = Animation_LookupValueByKey(object->anim_id);
 
-        /* FAKEMATCH: the existing metadata address-word stores keep frames
-           before script/codec stores. Pointer stores move frames later in
-           the complete 168-byte native initializer. */
+        /* FAKEMATCH: metadata address-word stores keep frames before script/codec stores; typed pointers move frames later. */
         object->kind = metadata->draw_kind;
         animation = metadata->animation;
         *(s32 *)&object->frames = frames;
@@ -176,8 +173,7 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
             value = info->frames;
             if (value == 0)
                 value = Animation_LookupValueByKey(work->anim_id);
-            /* FAKEMATCH: pointer assignments move the existing frames store
-               after the codec/zero setup in this 68-byte initializer. */
+            /* FAKEMATCH: address-word assignments keep the frames store before codec/zero setup; typed pointers move it after. */
             work->kind = info->draw_kind;
             *(s32 *)&work->scripts = info->animation;
             *(s32 *)&work->frames = value;
@@ -303,9 +299,7 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
     high_bit = flags & 0x80;
     flags &= 0x7f;
 
-    /* FAKEMATCH: the existing index/test loop keeps the 8-byte frame and
-       154-byte function. A for loop creates a spilled entry cursor, a
-       12-byte frame and a 166-byte extent with the same real records. */
+    /* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an entry cursor and uses 12 bytes. */
     if (state->last_no != flags) {
         index = 0;
         goto test_entry;
@@ -446,9 +440,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
             object->anim_id = id;
             if (frames == 0)
                 frames = Animation_LookupValueByKey(id);
-            /* FAKEMATCH: the original address-word boundary keeps the two
-               list stores before codec/frame setup; pointer assignments
-               reorder them in the complete 134-byte allocation path. */
+            /* FAKEMATCH: the original address-word boundary keeps the two list stores before codec/frame setup; pointer assignments reorder them in the complete 134-byte allocation path. */
             animation = metadata->animation;
             *(s32 *)&object->scripts = animation;
             *(s32 *)&object->frames = frames;

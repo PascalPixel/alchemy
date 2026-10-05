@@ -4,17 +4,18 @@
 
 s32 GameFlag_Test(s32);
 void GameFlag_SetBit(s32 flag);
-extern const u16 Djinn_Definitions[];
+/* Each Djinn's six-halfword definition, twenty to an element. */
+extern const u16 Djinn_Definitions[][6];
 
 const u16 *Djinn_GetDefinition(u32 group, u32 index)
 {
     s32 entry;
 
     entry = 0;
-    if ((group <= 3U) && (index <= 0x13U)) {
-        entry = (group * 0x14) + index;
+    if (group <= 3 && index <= 19) {
+        entry = group * 20 + index;
     }
-    return (const u16 *)((u8 *)Djinn_Definitions + entry * 0xC);
+    return Djinn_Definitions[entry];
 }
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)

@@ -96,75 +96,47 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
 
 void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle)
 {
-    s32 *remaining_slot;
-    s32 *slot_cursor;
-    s32 slot_value;
-    s32 later_slot_count;
-    u32 slot_index;
-    u32 later_index;
-    u32 slot_offset;
+    s32 count;
+    u32 slot;
+    u32 i;
 
     if (state != NULL && handle != 0) {
         ResourceMetadata_ClearRecord((void *)handle);
-        slot_index = 0;
-        if (handle != state->slots[0]) {
-            slot_cursor = state->slots;
-        next_slot:
-            slot_index++;
-            if (slot_index <= 3U) {
-                slot_cursor++;
-                if (handle != *slot_cursor)
-                    goto next_slot;
-            }
+        for (slot = 0; slot <= 3; slot++) {
+            if (handle == state->slots[slot])
+                break;
         }
-        if (slot_index != 4) {
-            slot_offset = slot_index * 4 + 0x28;
-            *(s32 *)((u8 *)state + slot_offset) = 0;
-            later_index = slot_index + 1;
-            later_slot_count = 0;
-            if (later_index <= 3U) {
-                remaining_slot = (s32 *)(later_index * 4 + (u32)state + 0x28);
-                do {
-                    slot_value = *remaining_slot++;
-                    if (slot_value != 0)
-                        later_slot_count++;
-                    later_index++;
-                } while (later_index <= 3U);
+        if (slot != 4) {
+            state->slots[slot] = 0;
+            count = 0;
+            for (i = slot + 1; i <= 3; i++) {
+                if (state->slots[i] != 0)
+                    count++;
             }
-            if (later_slot_count == 0)
-                state->count = (s8)slot_index;
+            if (count == 0)
+                state->count = slot;
         }
     }
 }
 
-void ResourceMetadata_ReleaseSlot(u8 *rec, u32 no)
+void ResourceMetadata_ReleaseSlot(struct MetadataSlotState *state, u32 no)
 {
-    void **p;
-    void *t;
-    s32 off;
-    void *v;
-    s32 cnt;
+    s32 slot;
+    s32 count;
     u32 i;
 
-    if (rec != NULL && no <= 3) {
-        off = no * 4 + 0x28;
-        v = *(void **)(rec + off);
-        if (v != NULL) {
-            ResourceMetadata_ClearRecord(v);
-            *(void **)(rec + off) = NULL;
-            i = no + 1;
-            cnt = 0;
-            if (i <= 3) {
-                p = (void **)(i * 4 + (u32)rec + 0x28);
-                do {
-                    t = *p++;
-                    if (t != NULL)
-                        cnt++;
-                    i++;
-                } while (i <= 3);
+    if (state != NULL && no <= 3) {
+        slot = state->slots[no];
+        if (slot != 0) {
+            ResourceMetadata_ClearRecord((void *)slot);
+            state->slots[no] = 0;
+            count = 0;
+            for (i = no + 1; i <= 3; i++) {
+                if (state->slots[i] != 0)
+                    count++;
             }
-            if (cnt == 0)
-                *(s8 *)(rec + 0x1b) = (s8)no;
+            if (count == 0)
+                state->count = no;
         }
     }
 }

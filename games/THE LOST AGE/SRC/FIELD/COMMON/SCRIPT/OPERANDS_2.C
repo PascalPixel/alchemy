@@ -67,7 +67,7 @@ void Script_SetOrCompareHalfword20(struct ScriptOperands *state, s32 operation, 
         return;
     }
     if (operation == 1) {
-        state->halfword_20 = (u16)((u32)state->halfword_20 + (u32)value);
+        state->halfword_20 += value;
         return;
     }
     current = state->halfword_20;

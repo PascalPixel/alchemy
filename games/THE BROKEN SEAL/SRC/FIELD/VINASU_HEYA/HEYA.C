@@ -440,8 +440,8 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_MapRedraw();
     Engine_TaskWait(1);
     actor->y.fixed = 0x820000;
-    *(s32 *)((u8 *)actor + 72) = 0x8000;
-    *(s32 *)((u8 *)actor + 68) = 0;
+    actor->gravity = 0x8000;
+    actor->bounce = 0;
     actor->motion_flags = 0;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -473,8 +473,8 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_MapRenderWaitForValues();
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
     BattleFx_PlayQueuedSound();
-    *(s32 *)((u8 *)actor + 72) = 0x10000;
-    *(s32 *)((u8 *)actor + 68) = 0x4000;
+    actor->gravity = 0x10000;
+    actor->bounce = 0x4000;
     Engine_EventEnd();
 }
 

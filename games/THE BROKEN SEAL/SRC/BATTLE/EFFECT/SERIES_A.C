@@ -22,11 +22,9 @@
 #define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
 
 
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
-    s32 side, s32 narrow, s32 *x, s32 *y);
+void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side, s32 narrow, s32 *x, s32 *y);
 void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
-    s32 slot, s32 delay);
+void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 
 
 

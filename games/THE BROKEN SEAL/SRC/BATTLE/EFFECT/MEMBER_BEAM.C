@@ -30,8 +30,7 @@
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
-    s32 anchor, s32 *out_x, s32 *out_y);
+void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)

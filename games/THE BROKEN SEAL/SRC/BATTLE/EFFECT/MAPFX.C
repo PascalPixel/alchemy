@@ -29,11 +29,7 @@ struct Work_080936a0 {
 s32 WaitFrames(s32 frames);
 s16 *BattleAction_FindDescriptor(s16 action);
 
-struct FieldActor *Object_CreateFar(
-    s32 kind,
-    s32 x,
-    s32 y,
-    s32 z);
+struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetMode(struct FieldActor *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Battle_WaitMode0(s32 state);

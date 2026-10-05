@@ -21,17 +21,12 @@ extern volatile u32 gKeyState;
 extern const u8 Resource_FixedBlockBTiles[];
 
 s32 OwnerAction_AddFar(s32 owner, s32 action);
-void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
-                              const struct ShortcutListEntry *entries);
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
-                                    s32 style);
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
-                                  s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 digits,
-                               struct RenderInput *window, s32 x, s32 y);
+void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index, const struct ShortcutListEntry *entries);
+struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 digits, struct RenderInput *window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRect(struct RenderInput *window);
-void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x, s32 y,
-                              s32 width, s32 style);
+void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x, s32 y, s32 width, s32 style);
 void WaitFrames(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 

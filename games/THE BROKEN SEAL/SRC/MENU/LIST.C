@@ -12,8 +12,7 @@
 #define ACTION_ID_MASK 0x3fff
 
 
-void UiWindow_DrawThreeTileColumn(
-    struct UiWindow *window, s32 x, s32 y, s32 range, s32 layer);
+void UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 x, s32 y, s32 range, s32 layer);
 
 s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 {

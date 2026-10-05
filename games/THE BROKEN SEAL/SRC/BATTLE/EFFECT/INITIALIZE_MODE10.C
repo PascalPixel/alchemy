@@ -31,8 +31,7 @@ extern const u8 BattleFx_PuffSizes[];
 extern volatile u32 gKeysRepeat;
 
 void AudioCommand_PlayFar(s32 cue);
-void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
-    s32 slot, s32 delay);
+void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 
 #define HI(v) (((s16 *)&(v))[1])
 

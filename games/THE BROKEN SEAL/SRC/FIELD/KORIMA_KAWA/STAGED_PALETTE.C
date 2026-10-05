@@ -16,12 +16,14 @@ struct SceneBeatSubject {
 };
 
 void Battle_Reset(void);
-void Object_SetModeById(s32, s32); void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
-void Battle_WaitMode0(s32); u8 *Object_GetById();
-void GameFlag_SetBit(s32); void ObjectDispatch_SetSingleChildFlags(u8 *, s32);
+void Object_SetModeById(s32, s32);
+void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
+void Battle_WaitMode0(s32);
+u8 *Object_GetById();
+void GameFlag_SetBit(s32);
+void ObjectDispatch_SetSingleChildFlags(u8 *, s32);
 void BattleFx_FinishAction(void);
-s32 Object_CheckMovementCollision(struct StagedActorEffect *actor,
-                         struct StagedActorEffectRequest *request);
+s32 Object_CheckMovementCollision(struct StagedActorEffect *actor, struct StagedActorEffectRequest *request);
 s32 GameFlag_Test();
 void WaitFrames(s32 actor_index);
 void Object_SetMode(struct StagedActorEffect *actor, s32 mode);

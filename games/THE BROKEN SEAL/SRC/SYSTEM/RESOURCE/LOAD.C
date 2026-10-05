@@ -6,8 +6,7 @@
 #include "text/MSG_IDS.H"
 
 
-void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
-                   s32 *result, s32 reuseSource);
+void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex, s32 *result, s32 reuseSource);
 
 s32 Resource_LoadByMode(s32 mode, s32 value)
 {

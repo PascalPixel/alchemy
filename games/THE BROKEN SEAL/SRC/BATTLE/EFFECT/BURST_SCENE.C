@@ -23,8 +23,7 @@
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
 
-void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
-    s32 anchor, s32 *out_x, s32 *out_y);
+void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void Audio_PlayCue(s32 cue);
 
@@ -210,8 +209,7 @@ struct WallScale {
 };
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 animation);
-void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, s32 *position,
-    struct WallScale *scale, s32 mode);
+void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, s32 *position, struct WallScale *scale, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
 extern const struct WallScale RisingWall_UnitScale;

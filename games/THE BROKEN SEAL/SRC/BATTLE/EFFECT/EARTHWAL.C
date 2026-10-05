@@ -22,8 +22,7 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void WaitFrames(s32 frames);
-void EffectPosition_ApplyAlternateStepAndYOffset(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 
 
 void BattleFx_FetchRectangleBlitters(s32 alternate,

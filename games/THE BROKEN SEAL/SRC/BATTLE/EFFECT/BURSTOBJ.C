@@ -71,8 +71,7 @@ void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 
-void Motion_SetTargetPositionFromMagnitudeAngle(
-    void *object, s32 magnitude, s32 angle);
+void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 

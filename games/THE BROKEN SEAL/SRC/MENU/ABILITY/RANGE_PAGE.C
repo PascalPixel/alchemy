@@ -135,8 +135,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 
 #define ACT_ID_MASK 0x3fff
 
-void Menu_DrawPageIndicator(
-    s32 window, s32 item_count, s32 page_size, s32 selected_page, s32 right_edge);
+void Menu_DrawPageIndicator(s32 window, s32 item_count, s32 page_size, s32 selected_page, s32 right_edge);
 void UiText_DrawStringAtOffsetFar(u8 *, void *, s32, s32);
 void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 

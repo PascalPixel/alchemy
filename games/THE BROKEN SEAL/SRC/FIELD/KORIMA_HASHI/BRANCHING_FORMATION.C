@@ -83,8 +83,7 @@ static __inline__ void DrawPlacement(
     Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
 }
 
-s32 Object_CheckMovementCollision(struct StagedActorEffect *actor,
-                                  struct StagedActorEffectRequest *request);
+s32 Object_CheckMovementCollision(struct StagedActorEffect *actor, struct StagedActorEffectRequest *request);
 
 s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {

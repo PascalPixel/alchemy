@@ -8,8 +8,7 @@
 #include "WINDOW.H"
 #include "IO_REG.H"
 
-struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry,
-    s32 x, s32 y, u16 *colours, s32 flags);
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *colours, s32 flags);
 s32 UiWork_IsComplete(void);
 
 

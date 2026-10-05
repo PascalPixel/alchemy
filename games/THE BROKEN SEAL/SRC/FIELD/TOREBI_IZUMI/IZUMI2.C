@@ -170,7 +170,7 @@ void Battle_ResetEffectCounter(void);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
 s32 Menu_SelectEntry20To21(s32 choice);
 void UiWork_FinalizePendingCore(void);
-s32 Party_AdjustSixDigitCounterA(s32 amount);
+s32 Party_AdjustCoins(s32 amount);
 s32 TorebiIzumi_RunSpringRide(s32 side);
 void TorebiIzumi_RevealPrize(s32 item);
 
@@ -283,14 +283,14 @@ play:
         goto end;
     }
     if (choice == 0) {
-        Party_AdjustSixDigitCounterA(-1);
+        Party_AdjustCoins(-1);
     } else if (choice == 1) {
         PartyInventory_Remove(229);
     }
     result = TorebiIzumi_RunSpringRide(choice);
     if (choice == 0) {
         if (result != 4) {
-            Party_AdjustSixDigitCounterA(Data_0200200c[result]);
+            Party_AdjustCoins(Data_0200200c[result]);
             Audio_PlayCue(91);
             UiWork_PushValueSlot(Data_0200200c[result], 5);
             Event_SetMessage((s32)MsgTorebiWonNumberCoin);

@@ -2023,10 +2023,10 @@ Item_IsCompatibleWithOwnerFar:
 	.thumb_func
 Inventory_FindEquippedFar:
 	.incbin "baserom.gba", 0x000b21d0, 0x00000008
-	.global Party_AdjustSixDigitCounterAFar
-	.type Party_AdjustSixDigitCounterAFar, %function
+	.global Party_AdjustCoinsFar
+	.type Party_AdjustCoinsFar, %function
 	.thumb_func
-Party_AdjustSixDigitCounterAFar:
+Party_AdjustCoinsFar:
 	.incbin "baserom.gba", 0x000b21d8, 0x00000008
 	.global Item_GetEquipmentGroupFar
 	.type Item_GetEquipmentGroupFar, %function

@@ -14,7 +14,7 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_FindEquippedFar(s32, u8);
-s32 Party_AdjustSixDigitCounterAFar(s32);
+s32 Party_AdjustCoinsFar(s32);
 s32 Party_AdjustSixDigitCounterBFar(s16);
 void UiMessage_ShowAndRestoreState(s32 message);
 void Audio_PlayCue(s32);
@@ -71,7 +71,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
     if (added_slot < remaining) {
         do {
             added_slot = Inventory_AddItemFar(unit_id, item_id);
-            Party_AdjustSixDigitCounterAFar(0 - item->price);
+            Party_AdjustCoinsFar(0 - item->price);
             remaining -= 1;
             Party_AdjustSixDigitCounterBFar(item->price);
             Shop_DrawMoney();
@@ -499,7 +499,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
     Audio_PlayCue(102);
     for (i = 0; i < count; i++)
         Inventory_DiscardFar(unit_id, slot);
-    Party_AdjustSixDigitCounterAFar(total);
+    Party_AdjustCoinsFar(total);
     Shop_DrawMoney();
     Shop_DrawUnitGrid(shop->item_window, unit_id);
     if (rare || all)

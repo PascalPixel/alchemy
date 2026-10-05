@@ -4,7 +4,7 @@
 /* The party's counters, each kept within its range as ☀️ keeps them. */
 
 /* Adds to the party's coins, kept within 0..999999. */
-s32 Party_AdjustSixDigitCounterA(s32 amount)
+s32 Party_AdjustCoins(s32 amount)
 {
     s32 value;
 

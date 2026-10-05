@@ -124,7 +124,7 @@ void Battle_AwardSpoils(void)
     if (spoils->coins != 0) {
         UiWork_PushValueSlotFar(spoils->coins, 5);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgCoinsGained);
-        Party_AdjustSixDigitCounterAFar(spoils->coins);
+        Party_AdjustCoinsFar(spoils->coins);
         BattlePresentation_WaitForAdvance();
     }
     found = &gOverflowItem;

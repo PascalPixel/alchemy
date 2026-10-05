@@ -34,10 +34,10 @@ Func_02000988:
 	.thumb_func
 PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
-	.global Party_AdjustSixDigitCounterA
+	.global Party_AdjustCoins
 	.thumb_func
-Party_AdjustSixDigitCounterA:
-	overlay_veneer Party_AdjustSixDigitCounterAFar
+Party_AdjustCoins:
+	overlay_veneer Party_AdjustCoinsFar
 	.global Func_020009a0
 	.thumb_func
 Func_020009a0:

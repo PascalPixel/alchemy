@@ -86,10 +86,10 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
-	.global Party_AdjustSixDigitCounterA
+	.global Party_AdjustCoins
 	.thumb_func
-Party_AdjustSixDigitCounterA:
-	overlay_veneer Party_AdjustSixDigitCounterAFar
+Party_AdjustCoins:
+	overlay_veneer Party_AdjustCoinsFar
 	.global Party_GetAverageLevel
 	.thumb_func
 Party_GetAverageLevel:

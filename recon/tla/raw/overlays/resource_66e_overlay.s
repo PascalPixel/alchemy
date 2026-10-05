@@ -803,7 +803,7 @@ Func_02000390:
 	bl Func_02001108
 	movs r0, #20
 	negs r0, r0
-	bl Party_AdjustSixDigitCounterA
+	bl Party_AdjustCoins
 .L_0200875a:
 	add sp, #8
 	pop {r5, r6, r7, pc}

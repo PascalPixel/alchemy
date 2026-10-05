@@ -610,7 +610,7 @@ LuckyDice_Run:
 	cmp r1, #0
 	ble .L_080f46d8
 	adds r0, r1, #0
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	ldr r3, [sp, #80]
 	movs r2, #1
 	str r2, [sp, #72]
@@ -994,7 +994,7 @@ LuckyDice_Run:
 .L_080f4956:
 	ldr r2, [sp, #92]
 	negs r0, r2
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	ldr r0, [r6, #16]
 	ldr r4, [sp, #108]
 	movs r6, #153

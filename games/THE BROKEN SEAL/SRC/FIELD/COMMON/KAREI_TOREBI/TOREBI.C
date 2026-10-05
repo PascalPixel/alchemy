@@ -396,7 +396,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Event_ShowMessage(8, 0);
             Engine_PartyGiveItem(235, 0);
             GameFlag_Set(0x8a5);
-            Party_AdjustSixDigitCounterA(-six00);
+            Party_AdjustCoins(-six00);
         }
         L_02000660:;
         Engine_EventEnd();

@@ -39,7 +39,7 @@ extern s8 Data_080b4ab2[];
 
 extern struct EventRuntime *gEventWork;
 s32 Party_ListActiveOwnersFar(s16 *);
-void Party_AdjustSixDigitCounterAFar(s32);
+void Party_AdjustCoinsFar(s32);
 void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);
@@ -254,7 +254,7 @@ void Inn_PlaySleep(s32 room_price)
     struct EventRuntime *state;
 
     count = Party_ListActiveOwnersFar(objects);
-    Party_AdjustSixDigitCounterAFar(-room_price);
+    Party_AdjustCoinsFar(-room_price);
 
     for (index = 0; index < count; index++) {
         object = Owner_GetStateFar(objects[index]);

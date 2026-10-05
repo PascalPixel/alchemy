@@ -94,10 +94,10 @@ Menu_SelectEntry20To21:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global Party_AdjustSixDigitCounterA
+	.global Party_AdjustCoins
 	.thumb_func
-Party_AdjustSixDigitCounterA:
-	overlay_veneer Party_AdjustSixDigitCounterAFar
+Party_AdjustCoins:
+	overlay_veneer Party_AdjustCoinsFar
 	.global Func_02001358
 	.thumb_func
 Func_02001358:

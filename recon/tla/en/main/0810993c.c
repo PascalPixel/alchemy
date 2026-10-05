@@ -8,7 +8,7 @@ extern u8 gKeysRepeat[];
 
 s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_FindEquippedFar(s32, u8);
-s32 Party_AdjustSixDigitCounterAFar(s32);
+s32 Party_AdjustCoinsFar(s32);
 s32 Party_AdjustSixDigitCounterBFar(s16);
 void UiMessage_ShowAndRestoreState(s32 message);
 void Audio_PlayCue(s32);

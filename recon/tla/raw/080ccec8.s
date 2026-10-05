@@ -435,7 +435,7 @@ Func_080ccec8:
 	ldr r0, .L_080cd4b0
 	bl UiText_ShowPositionedMessageAndWaitFar
 	adds r0, r7, #0
-	bl Party_AdjustSixDigitCounterAFar
+	bl Party_AdjustCoinsFar
 	movs r1, #1
 	negs r1, r1
 	cmp r9, r1

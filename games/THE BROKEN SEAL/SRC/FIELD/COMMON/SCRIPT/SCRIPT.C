@@ -734,7 +734,7 @@ s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
     return 1;
 }
 
-void ObjectDispatch_SetField6c(void *raw, s32 value)
+void ObjectDispatch_SetUpdateValue(void *raw, s32 value)
 {
     struct ObjectRuntime *object = raw;
 

@@ -196,16 +196,6 @@ Tile_BuildMetatiles:
 	.incbin "baserom.gba", 0x000145c4, 0x00000214
 	.global Tile_BuildMetatilesEnd
 Tile_BuildMetatilesEnd:
-	.section .rom.00016c56, "ax"
-	.incbin "baserom.gba", 0x00016c56, 0x00000002
-	.section .rom.00016c58, "ax"
-	.global Func_08018038
-	.global UiText_BuildRenderEntries
-	.type UiText_BuildRenderEntries, %function
-	.thumb_func
-Func_08018038:
-UiText_BuildRenderEntries:
-	.incbin "baserom.gba", 0x00016c58, 0x000006ac
 	.section .rom.00020b2e, "ax"
 	.incbin "baserom.gba", 0x00020b2e, 0x000008fe
 	.section .rom.00021e3c, "ax"
@@ -280,7 +270,10 @@ UiText_SecondGlyphs:
 	.incbin "baserom.gba", 0x00032bd4, 0x00000024
 	.global Data_08033e40
 Data_08033e40:
-	.incbin "baserom.gba", 0x00032bf8, 0x00000090
+	.incbin "baserom.gba", 0x00032bf8, 0x00000080
+	.global UiText_ItemPossessives
+UiText_ItemPossessives:
+	.incbin "baserom.gba", 0x00032c78, 0x00000010
 	.global UiSprite_CursorBobOffsets
 UiSprite_CursorBobOffsets:
 	.incbin "baserom.gba", 0x00032c88, 0x00000050
@@ -438,6 +431,8 @@ Workspace_PageLabel:
 Workspace_RangeDash:
 	.incbin "baserom.gba", 0x00036294, 0x00000004
 	.section .rom.0007a770, "ax"
+	.global UiText_ItemGenders
+UiText_ItemGenders:
 	.incbin "baserom.gba", 0x0007a770, 0x0000010d
 	.global UiText_SpeedDelays
 UiText_SpeedDelays:
@@ -447,7 +442,10 @@ UiText_SpeedSteps:
 	.incbin "baserom.gba", 0x0007a880, 0x00000003
 	.global UiText_SpeedCueGaps
 UiText_SpeedCueGaps:
-	.incbin "baserom.gba", 0x0007a883, 0x00000045
+	.incbin "baserom.gba", 0x0007a883, 0x00000005
+	.global UiText_NumberWords
+UiText_NumberWords:
+	.incbin "baserom.gba", 0x0007a888, 0x00000040
 	.global WorkspaceOptions_SliderPalette
 WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x0007a8c8, 0x00000040

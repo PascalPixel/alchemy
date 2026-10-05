@@ -3,7 +3,12 @@
    and spills (60-byte frame versus native 68), instruction order and pools.
    Japanese eligibility scans are independent; its cursor is a ShopCursor
    local and it does not install the international scheduler callbacks.
-   Trial: the shared MenuCursor union emitted the same 0x5c8-byte body. */
+   Trials: the shared MenuCursor union emitted the same 0x5c8-byte body.
+   Thumb scaffold diff: 663 native instructions, 638 draft, common 354,
+   differ 593. Computing y from i keeps the ascending index but emits a
+   64-byte frame and differ 607; indexed summary plus independent y returns
+   to a descending counter. A fixed r4 index gives differ 544 but loses the
+   native caller-save stores and is rejected. No new device retained. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

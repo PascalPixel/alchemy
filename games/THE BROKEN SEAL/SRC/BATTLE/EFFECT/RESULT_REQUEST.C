@@ -1,7 +1,7 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 #include "RESOURCE_IDS.H"
-extern struct EventRuntime *Data_03001ebc;
+extern struct EventRuntime *gEventWork;
 
 struct ResultWork {
     u8 unknown_000[0x1d6];
@@ -23,7 +23,7 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
 {
     register s32 first = arg0;
     register s32 second = arg1;
-    register struct EventRuntime *runtime = Data_03001ebc;
+    register struct EventRuntime *runtime = gEventWork;
 
     runtime->value_17c = BattleFx_GetWeightedResult(first, second);
     /* Request 98, 0 sets the next battle's backdrop (game state halfword
@@ -41,7 +41,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
     struct ResultWork *shared;
     s32 high;
 
-    state = Data_03001ebc;
+    state = gEventWork;
     high = flags & 0x800;
     flags &= 0xff;
 

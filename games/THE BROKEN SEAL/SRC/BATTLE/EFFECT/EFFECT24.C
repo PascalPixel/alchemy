@@ -11,7 +11,6 @@ struct BattleLocationRule {
 };
 
 
-extern u8 *Data_03001ebc;
 extern const struct BattleLocationRule Battle_LocationRules[];
 s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SetSpecialFromTable(void);
@@ -79,7 +78,7 @@ void BattleFx_SelectLocationRule(s32 check)
     s16 fade;
     u32 i;
 
-    work = Data_03001ebc;
+    work = gEventWork;
     map = gGameState.scene;
     room = gGameState.entrance;
     out = work + 0x1a0;

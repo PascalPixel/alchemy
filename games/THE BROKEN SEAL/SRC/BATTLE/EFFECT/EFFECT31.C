@@ -59,7 +59,7 @@ void ObjectDispatch_SetSingleChildField26Far(struct HopActor *actor, s32 value);
 void *Object_ReplaceResourceEntry(struct HopSprite *sprite, void *resource);
 void BattleFx_FinishAction(void);
 
-extern u8 Data_03001ebc[];
+extern struct MenuState *gEventWork;
 
 struct MenuState {
     u8 padding_000[20];
@@ -196,7 +196,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
     struct MenuState *state;
     s32 selection;
 
-    state = *(struct MenuState **)((u32)&Data_03001ebc);
+    state = gEventWork;
     if (GameFlag_TestFar(366) != 0) {
         selection = 0;
         GameFlag_SetBitFar((u8 *)entries + page * 20 + 48);

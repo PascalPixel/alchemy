@@ -150,7 +150,6 @@ struct Source_0808f28c {
 
 extern struct ObjectRuntime *Object_Spawn(s32, u32, u32, u32);
 
-extern u8 Data_03001ebc[];
 extern const u8 BattleFx_MarkerParticleScript[];
 
 

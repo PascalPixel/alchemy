@@ -4,7 +4,6 @@
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
 
-extern u8 gEventWork[];
 extern volatile u32 gKeysHeld;
 
 struct UiWindow;
@@ -13,13 +12,13 @@ s32 UiWork_IsIdleFar(struct UiWindow *window);
 
 void Battle_WaitMode0(s32 mode);
 void BattleEv_RunWait(s32 action, s32 flag);
-extern u8 Data_03001ebc[];
+extern struct EventRuntime *gEventWork;
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force);
 
 void BattleEv_RunWait(s32 action, s32 flag)
 {
     s32 masked_action;
-    struct EventRuntime *runtime = *(struct EventRuntime **)gEventWork;
+    struct EventRuntime *runtime = gEventWork;
     struct UiWindow *window = UiText_OpenMessageAtObject(action);
     s32 message_id;
     u32 frames;
@@ -71,10 +70,10 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
     result = Inventory_PromptAndSetObjectMode(save->selected_actor, 0);
     if (result == 0) {
         BattleEv_RunWait(object_id, action_id);
-        runtime = *(struct EventRuntime **)Data_03001ebc;
+        runtime = gEventWork;
         runtime->message += 1;
     } else {
-        runtime = *(struct EventRuntime **)Data_03001ebc;
+        runtime = gEventWork;
         runtime->message += 1;
         BattleEv_RunWait(object_id, action_id);
     }

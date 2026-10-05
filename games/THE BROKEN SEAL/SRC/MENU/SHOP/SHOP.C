@@ -37,7 +37,6 @@ void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
 extern u8 gEventWork[];
 void BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 void BattleFx_StartBufferInterpolationFar(s32);
-extern u8 Data_03001ebc[];
 
 struct SpriteAttr {
     unsigned y : 8;
@@ -273,7 +272,7 @@ void Shop_RestoreSceneTiles(s32 layer)
 
 void Shop_InitEffect(void)
 {
-    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)((u32)&Data_03001ebc) + 0x236, 1);
+    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)gEventWork + 0x236, 1);
     BattleFx_StartBufferInterpolationFar(0x10);
 }
 

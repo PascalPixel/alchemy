@@ -98,7 +98,7 @@ gKorimaMagariEvents:
 	.4byte 0x00000002
 	.4byte 0x00004602
 	.4byte 0xffff000a
-	.4byte Scene_CallHelper118c
+	.4byte KorimaMagari_TryJumpForward
 	.4byte 0x00000202
 	.4byte 0xffff000b
 	.4byte KorimaMagari_RedrawBoard

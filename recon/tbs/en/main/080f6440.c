@@ -1,15 +1,14 @@
-/* 2026-10-05 (deep finisher 16, later): alchemy diff 160. The settled
- * count adds one in two places, if held, else if stopped on a cell
- * boundary (jump2 merges the two increments): the extra references put
- * the count in r1 ahead of the pos offset giv (r0), as listed.
- * Still open in the spin's pos update loop: the listing keeps i, steps a
- * row pointer and holds pos in a register through the += 8 (GCSE moves
- * the load to the stop != 0 edge); the indexed reads here re-read pos for
- * the 336 test. A row pointer declared inside the held test gives that
- * loop but for a copy of the pointer and the block order (169); declared
- * with the loop body 165-223. The state-11 branch computes &work->window
- * before the phase store in the listing, after it here (phase set first
- * 168, phase = hits 160).
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 120. The spin's
+ * pos update loop works through a row pointer and adds 8 in two places,
+ * if (row->stop != 0) row->pos += 8; else if ((row->pos & 15) != 8)
+ * row->pos += 8; (jump2 merges the two adds): GCSE then moves the pos
+ * load onto the stop != 0 edge, keeps pos in a register for the 336 test,
+ * and leaves 15 and 336 in the loop, as listed. One || condition with the
+ * pointer gave 165-223 (15 hoisted, the edge block placed before the add).
+ * Remaining: state 0's prize branch (the listing sets r8 = &work->spins
+ * inline before its far jump to build_objects, this draft shares the join
+ * stub; the reload registers of the prize store differ), and state 11's
+ * &work->window, computed before the phase store in the listing.
  */
 /* 2026-10-04: column r10 binding trial scored 15310 vs 3720; rejected.
  * Use the existing ReelGame_Run saved-game view from GameState+12 instead
@@ -453,11 +452,15 @@ void ReelGame_RunFrame(void)
 
         if (work->state == 1) {
             for (i = 0; i != 5; i++) {
-                if (work->row[i].held == 0) {
-                    if (work->row[i].stop != 0 || (work->row[i].pos & 15) != 8)
-                        work->row[i].pos += 8;
-                    if (work->row[i].pos == 336)
-                        work->row[i].pos = 0;
+                struct ReelRow *row = &work->row[i];
+
+                if (row->held == 0) {
+                    if (row->stop != 0)
+                        row->pos += 8;
+                    else if ((row->pos & 15) != 8)
+                        row->pos += 8;
+                    if (row->pos == 336)
+                        row->pos = 0;
                 }
             }
         }

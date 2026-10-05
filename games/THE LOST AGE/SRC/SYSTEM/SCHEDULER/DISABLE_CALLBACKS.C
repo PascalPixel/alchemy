@@ -12,23 +12,23 @@ s32 Scheduler_DisableCallbacks(u32 callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the
+    /* FAKEMATCH: the block that runs once is meaningless. Without it, the
      * interrupt-master register's address is loaded before the task table's. */
     do {
-        saved_interrupt_master = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_master = *ime;
+            /* FAKEMATCH: under the ARM9TDMI load schedule the saved copy follows the IME store; this boundary keeps the native copy before it. */
+            __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
-        do {
-            for (i = 0; i <= 23; i++, task++) {
-                if (callback == 0 || task->callback == callback) {
-                    TASK_STATE_HIGH(task)&= (u8)~1;
-                    result = i;
-                }
+        for (i = 0; i <= 23; i++, task++) {
+            if (callback == 0 || task->callback == callback) {
+                TASK_STATE_HIGH(task) &= (u8)~1;
+                result = i;
             }
-        } while (0);
+        }
         REG_IME = saved_interrupt_master;
     } while (0);
     return result;
@@ -43,22 +43,22 @@ s32 Scheduler_DisableOverlayCallbacks(void)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_DisableCallbacks */
+    /* FAKEMATCH: the block that runs once, as in Scheduler_DisableCallbacks */
     do {
-        saved_interrupt_master = REG_IME;
         {
             volatile u16 *ime = &REG_IME;
 
+            saved_interrupt_master = *ime;
+            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks. */
+            __asm__ volatile("");
             *ime = (u16)(u32)ime;
         }
-        do {
-            for (i = 0; i <= 23; i++, task++) {
-                if ((task->callback >> 24) == 2) {
-                    TASK_STATE_HIGH(task)&= (u8)~1;
-                    result = i;
-                }
+        for (i = 0; i <= 23; i++, task++) {
+            if ((task->callback >> 24) == 2) {
+                TASK_STATE_HIGH(task) &= (u8)~1;
+                result = i;
             }
-        } while (0);
+        }
         REG_IME = saved_interrupt_master;
     } while (0);
     return result;

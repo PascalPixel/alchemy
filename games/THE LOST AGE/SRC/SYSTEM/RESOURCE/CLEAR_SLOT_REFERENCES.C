@@ -21,8 +21,8 @@ s32 Resource_ClearSlotReferences(s32 resource_id)
     remaining = VRAM_BLOCK_COUNT;
     do {
         if (*marker == resource_id) {
-            cleared_count++;
             *marker = empty_marker;
+            cleared_count++;
         }
         marker++;
         remaining--;

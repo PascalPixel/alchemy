@@ -117,7 +117,7 @@ extern void Graphics_SetBg1Priority3(void);
 extern void Graphics_ClearBg1ControlBit2(void);
 extern struct TradeOfferState *Trade_GetOfferStateFar(s32 index);
 extern void BattlePlacement_CountValidEntriesFar(s32 index, u8 *party);
-extern void Func_080b5128(s32 x, s32 y);
+extern void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 extern void Audio_PlayCue(s32 cue);
 
 s32 Ui_RunSelectionScreen(s32 mode)
@@ -300,7 +300,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                                 message = UiText_ShowMessageAndWaitComplete(0xc4a, 15, 8);
                             else if (kind == 16)
                                 message = UiText_ShowMessageAndWaitComplete(0xc49, 15, 8);
-                            Func_080b5128(102, 155);
+                            BattlePresentation_WaitForPromptAtFar(102, 155);
                             UiWork_Finalize(message, 1);
                             runtime->auto_phase++;
                             runtime->auto_delay = 45;

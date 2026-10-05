@@ -28,9 +28,9 @@ Func_080f9010:
 	.thumb_func
 AudioCommand_PlayFar:
 	overlay_veneer AudioCommand_Play
-	.global Func_080f9018
+	.global MusicPlayer_StepVolumeAndPitchTowardTargetsFar
 	.thumb_func
-Func_080f9018:
+MusicPlayer_StepVolumeAndPitchTowardTargetsFar:
 	overlay_veneer MusicPlayer_StepVolumeAndPitchTowardTargets
 	.global MusicCommand_SetPitchAndUpdateFrequencyFar
 	.thumb_func

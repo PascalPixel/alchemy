@@ -148,9 +148,9 @@ BattleActor_CommitPlacementFar:
 Func_080b5118:
 	overlay_veneer BattleActor_CommitPlacement
 	overlay_veneer ReleaseBattleObjectRecords
-	.global Func_080b5128
+	.global BattlePresentation_WaitForPromptAtFar
 	.thumb_func
-Func_080b5128:
+BattlePresentation_WaitForPromptAtFar:
 	overlay_veneer BattlePresentation_WaitForPromptAt
 	.global BattlePlacement_CountValidEntriesFar
 	.thumb_func

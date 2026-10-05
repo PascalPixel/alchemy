@@ -42,7 +42,7 @@ struct ObjectRuntime *Object_GetByIdFar(s32 id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 a, s32 b, s32 c);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowAndWait(s32 message);
-s32 Func_08015380(s32 choice);
+s32 Menu_SelectEntry11To14Far(s32 choice);
 s32 AbilityMenu_BuildAvailableList(void);
 s32 Shop_SelBuy(void);
 s32 Shop_PickUnit(void);
@@ -175,7 +175,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
     UiMessage_ShowAndWait((s32)MsgWeaponShopWelcome);
 loop:
     {
-        choice = Func_08015380(choice);
+        choice = Menu_SelectEntry11To14Far(choice);
         shop->party_action = choice;
         if (choice == 0) {
             shop->stock_count = EventTable_CopyRowHeader(row, shop->stock_item_ids);

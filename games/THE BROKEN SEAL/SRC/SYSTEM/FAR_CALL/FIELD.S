@@ -340,9 +340,9 @@ Map_SetWorkFlagBits9To11Far:
 ResourceMetadata_SumCommandLengthsFar:
 Func_08009260:
 	overlay_veneer ResourceMetadata_SumCommandLengths
-	.global Func_08009268
+	.global GetWorldMapTerrainBehaviorFar
 	.thumb_func
-Func_08009268:
+GetWorldMapTerrainBehaviorFar:
 	overlay_veneer GetWorldMapTerrainBehavior
 	.global ResourceSlot_LoadFar
 	.thumb_func
@@ -352,9 +352,9 @@ ResourceSlot_LoadFar:
 	.thumb_func
 SetMapCellCollisionFar:
 	overlay_veneer SetMapCellCollision
-	.global Func_08009280
+	.global AnimationObjects_SetField15OnActiveFar
 	.thumb_func
-Func_08009280:
+AnimationObjects_SetField15OnActiveFar:
 	overlay_veneer AnimationObjects_SetField15OnActive
 	.global Runtime_RemapBytesByTableFar
 	.thumb_func

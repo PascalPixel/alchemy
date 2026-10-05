@@ -16,7 +16,7 @@ extern const struct BattleLocationRule Battle_LocationRules[];
 s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SetSpecialFromTable(void);
 
-s32 Func_08009268(void *, s32 *);
+s32 GetWorldMapTerrainBehaviorFar(void *, s32 *);
 
 /* battle/effects/data/lookup_result.c */
 typedef struct Entry {
@@ -121,7 +121,7 @@ s32 BattleFx_LookupResult(void *arg0)
 {
     s32 value;
     Entry *entry = BattleFx_ResultRules;
-    s32 key = Func_08009268(arg0, &value);
+    s32 key = GetWorldMapTerrainBehaviorFar(arg0, &value);
     s32 result = 0;
 
     while (entry->first != -1) {

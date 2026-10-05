@@ -8,7 +8,7 @@
 extern u8 Data_080aed4c[];
 extern u8 Data_080aedcc[];
 
-s32 Func_080153d0(s32, s32, s32 *, s32 *, s32);
+s32 Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 
 /* ui/icon/load_resource_into_slot.c */
 
@@ -51,7 +51,7 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
 
     allocation = (s32)Runtime_AllocateBlock(0x11, 0x608);
     selected_slot = slot;
-    Func_080153d0(resource_id, 0, &selected_slot, &resource_info, 1);
+    Ability_LoadGlyphFar(resource_id, 0, &selected_slot, &resource_info, 1);
     buffer = Resource_GetBuffer(slot, allocation + 0x400);
     Runtime_ReleaseHeapBlock(0x11);
     return buffer;

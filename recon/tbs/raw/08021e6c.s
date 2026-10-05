@@ -915,7 +915,7 @@ Ui_RunSelectionScreen:
 .L_0802253a:
 	movs r1, #155
 	movs r0, #102
-	bl Func_080b5128
+	bl BattlePresentation_WaitForPromptAtFar
 	movs r1, #1
 	ldr r0, [sp, #20]
 	bl UiWork_Finalize

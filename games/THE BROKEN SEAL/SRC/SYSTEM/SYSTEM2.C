@@ -10,7 +10,7 @@
 #include "KEYSTATE.H"
 
 extern u16 gLinkStatus;
-void Func_080f9018(void);
+void MusicPlayer_StepVolumeAndPitchTowardTargetsFar(void);
 void BlendTransition_Update(void);
 void Func_080006fc(void);
 
@@ -42,7 +42,7 @@ void System_VBlankHandler(void)
         *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)gSerialPeerPayloads);
         SerialRuntime_StepBlockTransfer();
     }
-    Func_080f9018();
+    MusicPlayer_StepVolumeAndPitchTowardTargetsFar();
     BlendTransition_Update();
     if (gFrameRenderPending != 0) {
         if (gOamCopyEnabled != 0)

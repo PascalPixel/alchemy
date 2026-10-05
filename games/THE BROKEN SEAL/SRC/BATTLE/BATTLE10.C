@@ -52,7 +52,7 @@ void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
-s32 Func_080770b8(s32 unit_id, s16 *gains);
+s32 Owner_GetValueIfLevelThresholdReachedFar(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
@@ -182,7 +182,7 @@ void Battle_AwardSpoils(void)
         unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
         unit->experience += spoils->experience;
         while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
-            Func_080770b8(unit_id, gains) != 0) {
+            Owner_GetValueIfLevelThresholdReachedFar(unit_id, gains) != 0) {
             Audio_PlayCue(0x59);
             UiWork_ClearValueNameTablesFar();
             UiWork_PushValueSlotFar(unit->class_index, 3);

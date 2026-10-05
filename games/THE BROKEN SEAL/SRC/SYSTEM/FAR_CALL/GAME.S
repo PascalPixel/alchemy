@@ -95,9 +95,9 @@ Inventory_RemoveFar:
 	.thumb_func
 Inventory_BreakFar:
 	overlay_veneer Inventory_Break
-	.global Func_08077068
+	.global Inventory_RepairFar
 	.thumb_func
-Func_08077068:
+Inventory_RepairFar:
 	overlay_veneer Inventory_Repair
 	overlay_veneer Item_GetTargetMode
 	.global Inventory_GetEquippedItemFar
@@ -131,9 +131,9 @@ GameState_InitDefaultsFar:
 	overlay_veneer OwnerAction_CheckLevelThreshold
 	overlay_veneer Owner_InitRecords
 	overlay_veneer Owner_LevelNoOp
-	.global Func_080770b8
+	.global Owner_GetValueIfLevelThresholdReachedFar
 	.thumb_func
-Func_080770b8:
+Owner_GetValueIfLevelThresholdReachedFar:
 	overlay_veneer Owner_GetValueIfLevelThresholdReached
 	.global Func_080770c0
 	.thumb_func
@@ -399,9 +399,9 @@ Party_SumDjinnCountsFar:
 	.thumb_func
 Party_AdjustSixDigitCounterBFar:
 	overlay_veneer Party_AdjustSixDigitCounterB
-	.global Func_080772a0
+	.global Party_AdjustCounterCappedAt28Far
 	.thumb_func
-Func_080772a0:
+Party_AdjustCounterCappedAt28Far:
 	overlay_veneer Party_AdjustCounterCappedAt28
 	.global Inventory_CheckDiscardFar
 	.thumb_func

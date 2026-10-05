@@ -288,7 +288,7 @@ void FieldScene_RunPrimarySequence(void)
         if (GameFlag_IsSet(FLAG_SHIAN_WATER_SPILLED) == 0) {
             gEventWork->message++;
             Event_ShowMessage(18, 0);
-            Object_GetById(18)->unknown_64 = 0;
+            Object_GetById(18)->timer = 0;
             record = Object_GetById(18);
             record->facing = facing;
         } else {

@@ -560,8 +560,8 @@ void OverlayObject_InitWithRandomFields(s32 a)
     obj = Object_GetById(a);
     Engine_ActorSetSpritePriority(a, 1);
     obj->motion_flags = 0;
-    obj->unknown_64 = Random16() >> 15;
-    obj->unknown_66 = Random16() >> 15;
+    obj->timer = Random16() >> 15;
+    obj->work = Random16() >> 15;
     x = Random16();
     x <<= 2;
     x >>= 16;

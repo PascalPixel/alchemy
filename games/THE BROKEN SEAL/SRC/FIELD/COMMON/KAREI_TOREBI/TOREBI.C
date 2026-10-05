@@ -704,12 +704,12 @@ void FieldScene_RunScene3aeSequenceA(void)
     {
         s32 shown = record->x.fixed / 0x10000;
 
-        record->unknown_64 = shown;
+        record->timer = shown;
     }
     {
         s32 shown = record->z.fixed / 0x10000;
 
-        record->unknown_66 = shown;
+        record->work = shown;
     }
     Engine_EventEnd();
 }

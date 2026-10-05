@@ -247,8 +247,8 @@ void BabiFune_UpdateWaves(void)
         actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
-            actor->unknown_64 = 60;
-            actor->unknown_66 = 1;
+            actor->timer = 60;
+            actor->work = 1;
             actor->motion_flags = 0;
             actor->priority_flags = 2;
             actor->sprite->priority = 2;

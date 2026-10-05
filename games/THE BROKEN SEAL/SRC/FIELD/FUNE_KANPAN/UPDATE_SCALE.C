@@ -18,7 +18,7 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
     /* FAKEMATCH: In-place signed accesses preserve the countdown's load
      * and address scheduling. */
-    switch (*(s16 *)&actor->unknown_64) {
+    switch (*(s16 *)&actor->timer) {
     case 6:
         actor->scale_x += -0x4000;
         actor->scale_y += 0x2000;
@@ -35,11 +35,11 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
     case 0:
         actor->scale_x = 0x10000;
         actor->scale_y = 0x10000;
-        (*(s16 *)&actor->unknown_64) =
+        (*(s16 *)&actor->timer) =
             (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
-    (*(s16 *)&actor->unknown_64)--;
+    (*(s16 *)&actor->timer)--;
     return 1;
 }
 

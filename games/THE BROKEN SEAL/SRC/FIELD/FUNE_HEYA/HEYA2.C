@@ -1375,7 +1375,7 @@ void FuneHeya_ApplyFlaggedLayout(void)
         x = 0x1e0;
         OverlayObject_SetPositionAndHeading(9, x, 0x258, 0xb000);
         Call3((void (*)())Engine_ActorSetSpeed, 9, 0xcccc, 0x6666);
-        actor->unknown_66 = done;
+        actor->work = done;
         zero.v = 0;
         actor->rise_enabled = zero.v;
         actor->collision_flags |= 128;

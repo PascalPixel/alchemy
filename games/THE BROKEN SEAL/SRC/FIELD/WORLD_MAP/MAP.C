@@ -94,8 +94,8 @@ void StoryProgress_TriggerEvent080A(void)
 
 void StoryActor_AdvanceTimer(struct FieldActor *actor)
 {
-    if ((s16)actor->unknown_64 <= 0) {
-        actor->unknown_64++;
+    if ((s16)actor->timer <= 0) {
+        actor->timer++;
     } else {
         Engine_ObjectDispatchRelease(actor);
     }
@@ -130,7 +130,7 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
     ((struct FieldSpritePriority *)spark->sprite)->priority = 1;
     Engine_ActorSetSpriteFlags(spark, 0);
     Object_SetMode(spark, 1);
-    spark->unknown_64 = 0;
+    spark->timer = 0;
     spark->update = (void (*)(union FieldObject *))StoryActor_AdvanceTimer;
 }
 
@@ -144,8 +144,8 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
         Engine_ObjectSetPartPalettes(actor, 10);
     else
         Engine_ObjectSetPartPalettes(actor, 7);
-    if ((s16)actor->unknown_66 == 0) {
-        angle = (s16 *)&actor->unknown_64;
+    if ((s16)actor->work == 0) {
+        angle = (s16 *)&actor->timer;
         actor->x.fixed = 0x15d00000;
         actor->y.fixed = Iwram_MulQ16(Engine_MathSin(*angle << 3), 0x40000) + 0x100000;
         actor->z.fixed = 0x5300000;
@@ -167,8 +167,8 @@ s32 StoryActor_Initialize(struct FieldActor *actor)
     }
     actor->update = (void (*)(union FieldObject *))WorldMap_UpdateBobbingMarker;
     actor->motion_flags = 0;
-    actor->unknown_64 = 0;
-    actor->unknown_66 = 0;
+    actor->timer = 0;
+    actor->work = 0;
     fixed_scale = 0x8000;
     actor->scale_x = fixed_scale;
     actor->scale_y = fixed_scale;
@@ -754,7 +754,7 @@ void FieldScene_RunActorTransferSequence(void)
     actor->bounce = 0x1999;
     actor->scale_x = 0x18000;
     actor->scale_y = 0x18000;
-    actor->unknown_64 = 0;
+    actor->timer = 0;
     actor->y.fixed = 0x400000;
     actor->sprite->rotation = 0xf000;
     Engine_ActorSetSpriteFlags(actor, 0);
@@ -765,7 +765,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_TaskAddCallback(FieldScene_RunScene371_020017a4, 0xc80);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
     record = Actor_Get(14);
@@ -945,7 +945,7 @@ void FieldScene_RunScene371_020017a4(void)
             Audio_PlayCue(145);
             Object_SetMode(actor, 3);
             GameFlag_Set(0x200);
-            actor->unknown_64 = 1;
+            actor->timer = 1;
         }
     }
 }
@@ -988,11 +988,11 @@ void FieldScene_RunScene371_02001888(void)
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    actor->unknown_64 = 0;
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1016,11 +1016,11 @@ void FieldScene_RunScene371_02001938(void)
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    actor->unknown_64 = 0;
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1044,11 +1044,11 @@ void FieldScene_RunScene371_020019e8(void)
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    actor->unknown_64 = 0;
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1072,7 +1072,7 @@ void FieldScene_RunScene371_02001a98(void)
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    actor->unknown_64 = 0;
+    actor->timer = 0;
     if (StoryScene_ComputeOpposingSlotDelta() == 11) {
         Engine_ActorEnableActionCallback(8, gTransferLeaderTurn);
     } else {
@@ -1080,7 +1080,7 @@ void FieldScene_RunScene371_02001a98(void)
     }
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1188,7 +1188,7 @@ void WorldMap_MeetVenusDjinni(void)
         Actor_FaceActor(0, DJINNI, 0);
         Event_Wait(10);
         Actor_ShowEmote(0, 0x101, 60);
-        djinni->unknown_66 = 1;
+        djinni->work = 1;
         Actor_FaceActor(DJINNI, 0, 0);
         Task_Wait(16);
         Event_SetMessage((s32)MsgWorldMapOh);

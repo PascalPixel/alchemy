@@ -254,14 +254,14 @@ void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle)
     s32 count;
 
     if (particle != NULL) {
-        count = particle->unknown_64 - 1;
-        particle->unknown_64 = count;
+        count = particle->timer - 1;
+        particle->timer = count;
         life = count;
         if (life != 0) {
             pos.x = particle->target_x;
             pos.y = particle->target_y;
             pos.z = particle->target_z;
-            Vector_AddPolarOffset(life << 17, (s16)particle->unknown_66 + (life << 11), &pos);
+            Vector_AddPolarOffset(life << 17, (s16)particle->work + (life << 11), &pos);
             particle->x.fixed = pos.x;
             particle->y.fixed = pos.y;
             particle->z.fixed = pos.z;
@@ -279,14 +279,14 @@ void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle)
     s32 count;
 
     if (particle != NULL) {
-        count = particle->unknown_64 - 1;
-        particle->unknown_64 = count;
+        count = particle->timer - 1;
+        particle->timer = count;
         life = count;
         if (life != 0) {
             pos.x = particle->target_x;
             pos.y = particle->target_y;
             pos.z = particle->target_z;
-            Vector_AddPolarOffset(life << 17, (s16)particle->unknown_66 - (life << 11), &pos);
+            Vector_AddPolarOffset(life << 17, (s16)particle->work - (life << 11), &pos);
             particle->x.fixed = pos.x;
             particle->y.fixed = pos.y;
             particle->z.fixed = pos.z;
@@ -343,8 +343,8 @@ void BattleFx_RunOrbitingParticles(void)
                 particle->update = (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleRight;
 
             particle->facing = Random16();
-            particle->unknown_64 = 60;
-            particle->unknown_66 = Random16();
+            particle->timer = 60;
+            particle->work = Random16();
             Animation_ApplyChildValuesFar(particle, 9);
 
             p->x = scene->x;
@@ -416,14 +416,14 @@ void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *object)
     s32 count;
 
     if (object != NULL) {
-        count = object->unknown_64 - 1;
-        object->unknown_64 = count;
+        count = object->timer - 1;
+        object->timer = count;
         life = count;
         if (life != 0) {
             pos.x = scene->x;
             pos.y = scene->y + 0xa0000;
             pos.z = scene->z;
-            Vector_AddPolarOffset(life << 16, (s16)object->unknown_66 + (life << 11), &pos);
+            Vector_AddPolarOffset(life << 16, (s16)object->work + (life << 11), &pos);
             object->x.fixed = pos.x;
             object->y.fixed = pos.y;
             object->z.fixed = pos.z;

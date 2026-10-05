@@ -709,13 +709,13 @@ void FieldScene_RunScene3b9_020024d8(void)
     FieldScene_CallPairWith10(8);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     {
-        u16 *target = (u16 *)&rec7->unknown_64;
+        u16 *target = (u16 *)&rec7->timer;
         s32 shown = 0x2d0;
 
         *target = shown;
     }
     {
-        u16 *target = (u16 *)&rec7->unknown_66;
+        u16 *target = (u16 *)&rec7->work;
         s32 shown = 112;
 
         *target = shown;

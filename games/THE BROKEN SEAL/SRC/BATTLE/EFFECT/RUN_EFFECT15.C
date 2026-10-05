@@ -14,10 +14,10 @@ void BattleFx_UpdateSpinAngle(struct FieldActor *object)
 {
     u32 step;
 
-    step = (s16)object->unknown_64 * 0x50;
+    step = (s16)object->timer * 0x50;
     object->facing = object->facing + step + 0x1000;
     if (step < 0x1000)
-        object->unknown_64 = object->unknown_64 + 1;
+        object->timer = object->timer + 1;
 }
 
 /* Lifts the object a pixel a frame while it spins and shrinks, and
@@ -135,7 +135,7 @@ void BattleFx_RunEffect15(void)
     Animation_ApplyChildValuesFar(main_object, 0);
     Object_SetMode(main_object, 3);
     main_object->update = (void (*)(union FieldObject *))BattleFx_UpdateSpinAngle;
-    main_object->unknown_64 = 0;
+    main_object->timer = 0;
     WaitFrames(70);
     ObjectDispatch_SetSingleChildField26Far(main_object, 0);
     main_object->motion_flags = 0;

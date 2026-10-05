@@ -233,13 +233,13 @@ void FieldScene_RunScene3b9_02000468(void)
     Engine_ActorRunRepeatedMotion(13, 1);
     Engine_EventShowMessage(13, 0);
     {
-        u16 *target = (u16 *)&rec7->unknown_64;
+        u16 *target = (u16 *)&rec7->timer;
         s32 shown = 0x2d0;
 
         *target = shown;
     }
     {
-        u16 *target = (u16 *)&rec7->unknown_66;
+        u16 *target = (u16 *)&rec7->work;
         s32 shown = 112;
 
         *target = shown;

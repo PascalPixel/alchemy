@@ -259,10 +259,10 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(10);
     /* The engine ignores the facing callback's integer result. */
-    Object_GetById(8)->unknown_64 = 1;
+    Object_GetById(8)->timer = 1;
     Object_GetById(8)->update =
         (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
-    Object_GetById(12)->unknown_64 = 1;
+    Object_GetById(12)->timer = 1;
     Object_GetById(12)->update =
         (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
     Engine_ActorWalkToAndWait(1, 196, 180);
@@ -435,10 +435,10 @@ void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
     s32 scale;
     s32 timer;
 
-    spark->y.fixed += (s16)spark->unknown_64 << 12;
+    spark->y.fixed += (s16)spark->timer << 12;
     spark->target_y = spark->y.fixed;
     scale = 0;
-    switch ((u16)((s16)spark->unknown_66 >> 2) & 3) {
+    switch ((u16)((s16)spark->work >> 2) & 3) {
     case 0:
         scale = 0x10000;
         break;
@@ -452,8 +452,8 @@ void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
     }
     spark->scale_x = scale;
     spark->scale_y = scale;
-    timer = spark->unknown_66 - 1;
-    spark->unknown_66 = timer;
+    timer = spark->work - 1;
+    spark->work = timer;
     if ((s16)timer <= 0)
         Engine_ObjectSetScript(spark, ShindenHeya_SparkEndScript);
 }
@@ -481,8 +481,8 @@ void ShindenHeya_SpawnActorSpark(s32 id)
         return;
     spr = obj->sprite;
     obj->motion_flags = 0;
-    obj->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
-    obj->unknown_66 = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
+    obj->timer = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
+    obj->work = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
     obj->update = ShindenHeya_UpdateRisingSpark;
     spr->flags = 0;
     spr->priority = actor->sprite->priority;

@@ -1130,8 +1130,8 @@ void FieldScene_RunOpeningSequenceThird(void)
     GameFlag_Set(768);
     Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
     /* Starting movement steps for the two thieves. */
-    ((struct FieldActor *)actor24)->unknown_64 = 1;
-    ((struct FieldActor *)actor25)->unknown_64 = 3;
+    ((struct FieldActor *)actor24)->timer = 1;
+    ((struct FieldActor *)actor25)->timer = 3;
     Engine_EventEnd();
 }
 

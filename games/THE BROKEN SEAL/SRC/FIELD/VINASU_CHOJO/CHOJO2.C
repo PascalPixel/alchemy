@@ -844,7 +844,7 @@ void Scene_RunExtendedActorTransition(void)
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 60);
-    Object_GetById(ACTOR_PARTY_LEADER)->unknown_64 = 10;
+    Object_GetById(ACTOR_PARTY_LEADER)->timer = 10;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, VinasuChojo_ScaleStepAction);
     Actor_ShowEmote(ACTOR_GERALD, 0x100, 80);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 40);
@@ -959,22 +959,22 @@ void Scene_RunExtendedActorTransition(void)
     Map_CopyCellsTo(19, 92, 19, 68, 8, 21);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     actor->z.fixed -= PIXELS(32);
-    actor->unknown_66 = 0;
+    actor->work = 0;
     SceneActor_ParkRecord(actor);
     actor = Object_GetById(ACTOR_GERALD);
     actor->x.fixed -= PIXELS(4);
     actor->z.fixed -= PIXELS(32);
-    actor->unknown_66 = 0;
+    actor->work = 0;
     SceneActor_ParkRecord(actor);
     actor = Object_GetById(ACTOR_IVAN);
     actor->x.fixed -= PIXELS(4);
     actor->z.fixed -= PIXELS(32);
-    actor->unknown_66 = 0;
+    actor->work = 0;
     SceneActor_ParkRecord(actor);
     actor = Object_GetById(ACTOR_MIA);
     actor->x.fixed -= PIXELS(4);
     actor->z.fixed -= PIXELS(18);
-    actor->unknown_66 = 0;
+    actor->work = 0;
     SceneActor_ParkRecord(actor);
     Object_GetById(23)->y.fixed = PIXELS(56);
     Camera_MoveTo(PIXELS(338), PIXELS(32), PIXELS(180), 0);
@@ -1107,7 +1107,7 @@ void SceneActor_ParkRecord(struct FieldActor *actor)
     actor->velocity_y = 0;
     actor->velocity_z = 0;
 
-    actor->unknown_64 = 0;
+    actor->timer = 0;
 }
 
 /*
@@ -1211,8 +1211,8 @@ void VinasuChojo_RunTransitionStep(void)
             ObjectGroup_SetChildValue(effect, 1);
             effect->motion_flags = 0;
             angle = Random_Next() & 0xffff000;
-            effect->unknown_64 = angle;
-            effect->unknown_66 = 0;
+            effect->timer = angle;
+            effect->work = 0;
             effect->rise_counter = (u32)Random_Next() >> 13;
             effect->update = (void (*)(union FieldObject *))SceneEffect_UpdateCounterDrivenOrbit;
             effect->speed = Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24;
@@ -1295,8 +1295,8 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     ObjectGroup_SetChildValue(effect, 5);
     effect->motion_flags = phase;
     angle = Random_Next() & 0xffff000;
-    effect->unknown_64 = angle;
-    effect->unknown_66 = phase;
+    effect->timer = angle;
+    effect->work = phase;
     *(struct FieldActor **)effect->unknown_68 = center;
     effect->update = FieldScene_RunScene3c9_02005b90;
     effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;

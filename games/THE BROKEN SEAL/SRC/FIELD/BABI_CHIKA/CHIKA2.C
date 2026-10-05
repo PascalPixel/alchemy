@@ -525,13 +525,13 @@ void BabiChika_SettleSteps(s32 wait)
         Audio_PlayCue(180);
     }
     Object_SetPosition(Object_GetById(10), Object_GetById(10)->x.fixed,
-                             Data_0200b350[(s16)Object_GetById(10)->unknown_64], Object_GetById(10)->z.fixed);
+                             Data_0200b350[(s16)Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
     Object_SetPosition(Object_GetById(11), Object_GetById(11)->x.fixed,
-                             Data_0200b350[(s16)Object_GetById(11)->unknown_64], Object_GetById(11)->z.fixed);
+                             Data_0200b350[(s16)Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
     ObjectMotion_CommitCurrentPositionAndActivate(10);
     ObjectMotion_CommitCurrentPositionAndActivate(11);
-    Object_GetById(10)->y.fixed = Data_0200b350[(s16)Object_GetById(10)->unknown_64];
-    Object_GetById(11)->y.fixed = Data_0200b350[(s16)Object_GetById(11)->unknown_64];
+    Object_GetById(10)->y.fixed = Data_0200b350[(s16)Object_GetById(10)->timer];
+    Object_GetById(11)->y.fixed = Data_0200b350[(s16)Object_GetById(11)->timer];
     if (wait != 0) {
         Audio_PlayCue(0x121);
     }
@@ -574,7 +574,7 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
         if (best > ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000) continue;
 
         best = ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000;
-        Object_GetById(subject)->unknown_64 = (u16)slot;
+        Object_GetById(subject)->timer = (u16)slot;
     }
 
     ObjectMotion_SetSpeedParameters(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
@@ -1126,8 +1126,8 @@ s32 FieldScene_InitializeActorGroups(void)
                 Object_GetById(11)->priority_flags |= 2;
                 Object_GetById(10)->collision_flags &= 0xfe;
                 Object_GetById(11)->collision_flags &= 0xfe;
-                Object_GetById(10)->unknown_64 = 3;
-                Object_GetById(11)->unknown_64 = 3;
+                Object_GetById(10)->timer = 3;
+                Object_GetById(11)->timer = 3;
                 Engine_ActorSetSpritePriority(10, 1);
                 Engine_ActorSetSpritePriority(11, 1);
                 Object_GetById(12)->motion_flags = 0;
@@ -1136,25 +1136,25 @@ s32 FieldScene_InitializeActorGroups(void)
                 Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
                 Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
                 Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
-                Object_GetById(12)->unknown_64 = 0;
-                Object_GetById(13)->unknown_64 = 0;
-                Object_GetById(14)->unknown_64 = 0;
+                Object_GetById(12)->timer = 0;
+                Object_GetById(13)->timer = 0;
+                Object_GetById(14)->timer = 0;
                 if (gGameState.entrance != 5)
                     break;
                 Object_GetById(10)->y.fixed = -0x200000;
                 Object_GetById(11)->y.fixed = -0x400000;
-                Object_GetById(10)->unknown_64 = 2;
-                Object_GetById(11)->unknown_64 = 4;
+                Object_GetById(10)->timer = 2;
+                Object_GetById(11)->timer = 4;
                 Call3((void (*)())Engine_ActorSetPosition, 12, 200 << 16, 152 << 16);
-                Object_GetById(12)->unknown_64 = 11;
+                Object_GetById(12)->timer = 11;
                 Object_GetById(12)->update = ACTOR_UPDATE_PANEL;
                 Object_GetById(12)->priority_flags |= 2;
                 Call3((void (*)())Engine_ActorSetPosition, 13, 200 << 16, 152 << 16);
-                Object_GetById(13)->unknown_64 = 12;
+                Object_GetById(13)->timer = 12;
                 Object_GetById(13)->update = ACTOR_UPDATE_PANEL;
                 Object_GetById(13)->priority_flags |= 2;
                 Engine_ActorSetPosition(14, 136 << 16, 152 << 16);
-                Object_GetById(14)->unknown_64 = 10;
+                Object_GetById(14)->timer = 10;
                 Object_GetById(14)->update = ACTOR_UPDATE_PANEL;
                 Object_GetById(14)->priority_flags |= 2;
                 Battle_WaitMode0(2);

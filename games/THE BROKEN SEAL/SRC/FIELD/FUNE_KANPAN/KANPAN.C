@@ -248,7 +248,7 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel);
 
 s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {
-    s16 *flag = (s16 *)&actor->unknown_66;
+    s16 *flag = (s16 *)&actor->work;
     s32 val;
     s32 tmp;
 
@@ -1373,9 +1373,9 @@ void FieldScene_RunShipDeckEventScript(void)
     Call3(ObjectMotion_ResetAndSetPosition, 0, 154, 609);
     AudioCommand_Play(146);
     v = 0;
-    Object_GetById(24)->unknown_64 = v;
-    Object_GetById(25)->unknown_64 = v;
-    Object_GetById(26)->unknown_64 = v;
+    Object_GetById(24)->timer = v;
+    Object_GetById(25)->timer = v;
+    Object_GetById(26)->timer = v;
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 24, 2097152, 31719424);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 25, 5505024, 32505856);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 26, 1048576, 39059456);
@@ -1391,7 +1391,7 @@ void FieldScene_RunShipDeckEventScript(void)
     ObjectGroup_ConfigureChildValue(26, 3);
     do {
         WaitFrames(1);
-    } while (*(s16 *)&Object_GetById(24)->unknown_64 == 0);
+    } while (*(s16 *)&Object_GetById(24)->timer == 0);
     FuneKanpan_OpenFirstDoor();
     /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. */
     do {

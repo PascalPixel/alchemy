@@ -605,8 +605,8 @@ s32 ImiruMura_ApplyEntryState(void)
             Engine_GameFlagClear(0x200);
             Engine_GameFlagClear(0x201);
         }
-        leader->unknown_64 = 0;
-        leader->unknown_66 = 0;
+        leader->timer = 0;
+        leader->work = 0;
         Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene399SequenceA, 0xc80);
         Engine_TaskAddCallback((s32)SceneState_UpdateZoneFlagsFromActorZero, 0xc80);
         Engine_ActorSetSpritePriority(11, 1);
@@ -648,7 +648,7 @@ s32 ImiruMura_ApplyEntryState(void)
                 if (Engine_GameFlagIsSet(0x82c)) {
                     Engine_ActorSetPosition(8, 0x950000, 0x740000);
                     Object_GetById(8)->facing = 0;
-                    Object_GetById(9)->unknown_66 = 0;
+                    Object_GetById(9)->work = 0;
                     Engine_ActorEnableActionCallback(9, ImiruMura_ActorScriptA);
                 } else {
                     Engine_ActorEnableActionCallback(8, (const u8 *)2);
@@ -656,7 +656,7 @@ s32 ImiruMura_ApplyEntryState(void)
             }
         } else if (entrance == 2) {
             if (!Engine_GameFlagIsSet(0x881)) {
-                Object_GetById(11)->unknown_66 = 1;
+                Object_GetById(11)->work = 1;
                 Engine_ActorEnableActionCallback(11, ImiruMura_ActorScriptA);
             }
         } else if (entrance == 4) {
@@ -911,9 +911,9 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
     struct FieldActor *spark;
     s32 radius;
 
-    actor->x.fixed = ImiruMura_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin((s16)actor->unknown_64 << 10));
-    actor->unknown_64++;
-    actor->unknown_64 = ((s16)actor->unknown_64 + 64) % 64;
+    actor->x.fixed = ImiruMura_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin((s16)actor->timer << 10));
+    actor->timer++;
+    actor->timer = ((s16)actor->timer + 64) % 64;
     if (gFrameCount % 3 == 0) {
         pos[0] = actor->x.fixed;
         pos[1] = actor->y.fixed + 0x20000;

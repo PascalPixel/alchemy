@@ -332,8 +332,8 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_ActorStop(13);
             actor = Object_GetById(13);
             actor->update = NULL;
-            actor->unknown_64 = 0;
-            actor->unknown_66 = 0;
+            actor->timer = 0;
+            actor->work = 0;
             actor->velocity_x = 0;
             actor->velocity_y = 0;
             actor->velocity_z = 0;

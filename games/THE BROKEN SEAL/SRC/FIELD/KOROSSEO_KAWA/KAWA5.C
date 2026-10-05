@@ -237,13 +237,13 @@ void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
 
 s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 {
-    struct FieldActor *o = Object_GetById((s16)a->unknown_64);
+    struct FieldActor *o = Object_GetById((s16)a->timer);
 
     Object_SetMoveTarget(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
     o->motion_flags = 0;
     Engine_ObjectSetScript(o, (s32)KorosseoKawa_ScriptB);
     Engine_AudioPlayCue(83);
-    a->unknown_64 = 0;
+    a->timer = 0;
     return 0;
 }
 
@@ -279,7 +279,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
         cuep = (u16 *)(work + 226);
     }
 
-    waitp = (s16 *)&rec->unknown_64;
+    waitp = (s16 *)&rec->timer;
     *waitp = *cuep;
     rec->acceleration = 0x4000;
     rec->speed = 0x10000;

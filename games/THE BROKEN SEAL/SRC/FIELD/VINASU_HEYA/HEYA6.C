@@ -185,12 +185,12 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     if (wait != 0) {
         Engine_AudioPlayCue(180);
     }
-    Call4((void (*)())Engine_ObjectSetPosition, (s32)a, a->x.fixed, gVinasuBlockHeights[(s16)a->unknown_64], a->z.fixed);
-    Call4((void (*)())Engine_ObjectSetPosition, (s32)b, b->x.fixed, gVinasuBlockHeights[(s16)b->unknown_64], b->z.fixed);
+    Call4((void (*)())Engine_ObjectSetPosition, (s32)a, a->x.fixed, gVinasuBlockHeights[(s16)a->timer], a->z.fixed);
+    Call4((void (*)())Engine_ObjectSetPosition, (s32)b, b->x.fixed, gVinasuBlockHeights[(s16)b->timer], b->z.fixed);
     Engine_ActorWaitForMove(8);
     Engine_ActorWaitForMove(9);
-    a->y.fixed = gVinasuBlockHeights[(s16)a->unknown_64];
-    b->y.fixed = gVinasuBlockHeights[(s16)b->unknown_64];
+    a->y.fixed = gVinasuBlockHeights[(s16)a->timer];
+    b->y.fixed = gVinasuBlockHeights[(s16)b->timer];
     if (wait != 0) {
         Engine_AudioPlayCue(0x121);
     }

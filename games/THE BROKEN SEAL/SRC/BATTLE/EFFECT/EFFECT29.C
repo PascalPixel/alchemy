@@ -171,8 +171,8 @@ void BattleFx_SpawnLinked(
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_LinkedObjectScript);
             Object_SetMode(object, flags & 15);
             object->motion_flags = 0;
-            object->unknown_64 = 0;
-            object->unknown_66 = resource_id;
+            object->timer = 0;
+            object->work = resource_id;
             object->update = (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
             object->sprite->flags = 0;
             *(struct FieldActor **)&object->unknown_68[0] = resource;

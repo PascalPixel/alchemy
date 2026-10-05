@@ -373,7 +373,7 @@ void FieldScene_RunScene383SequenceC(void)
 done:;
 }
 
-void FieldScene_RunScene383_0200091c(void)
+void KuupuappuHeya_OfferBone(void)
 {
     u32 i;
     s32 record;

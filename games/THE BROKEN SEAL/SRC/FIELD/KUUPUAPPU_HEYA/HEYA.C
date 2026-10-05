@@ -428,7 +428,7 @@ void SceneDialogue_RunActorElevenDialogue(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene383_02000428(void)
+void KuupuappuHeya_TalkAboutIvan(void)
 {
     u32 i;
     s32 record;

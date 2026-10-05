@@ -4246,29 +4246,6 @@ Func_020026f4:
 	.4byte 0x000001e1
 .L_0200a7ac:
 	.4byte Func_0200258c
-	.section .text.x0200a7b0,"ax",%progbits
-	.global Func_020027b0
-	.thumb_func
-Func_020027b0:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #220
-	ldr r0, .L_0200a7d8
-	ldr r5, [r3]
-	bl Scheduler_RemoveCallbackFar
-	movs r3, #132
-	lsls r3, r3, #6
-	adds r3, #132
-	adds r5, r5, r3
-	movs r3, #0
-	ldrsh r0, [r5, r3]
-	bl Resource_ResetEntry
-	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
-	pop {r5, pc}
-.L_0200a7d8:
-	.4byte Func_0200258c
 	.section .rodata.x0200aa6c,"a",%progbits
 	.global Data_02002a6c
 Data_02002a6c:

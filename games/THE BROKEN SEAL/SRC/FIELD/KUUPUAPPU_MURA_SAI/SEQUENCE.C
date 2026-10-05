@@ -247,7 +247,7 @@ void FieldScene_RunActorEighteenDialogue(void)
     Engine_EventEnd();
 }
 
-void SceneState_SetFlag947AndValue29dc(void)
+void KuupuappuMuraSai_InspectWell(void)
 {
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);

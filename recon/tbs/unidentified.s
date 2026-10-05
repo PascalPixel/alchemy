@@ -216,14 +216,14 @@ UiText_SecondGlyphs:
 	.global Data_08033e40
 Data_08033e40:
 	.incbin "baserom.gba", 0x00033e40, 0x00000020
-	.global Data_08033e60
-Data_08033e60:
+	.global UiSprite_CursorBobOffsets
+UiSprite_CursorBobOffsets:
 	.incbin "baserom.gba", 0x00033e60, 0x00000050
-	.global Data_08033eb0
-Data_08033eb0:
+	.global UiSprite_WobbleOffsets
+UiSprite_WobbleOffsets:
 	.incbin "baserom.gba", 0x00033eb0, 0x00000038
-	.global Data_08033ee8
-Data_08033ee8:
+	.global UiSprite_BounceOffsets
+UiSprite_BounceOffsets:
 	.incbin "baserom.gba", 0x00033ee8, 0x00000010
 	.global Menu_CursorLeftObjectTiles
 Menu_CursorLeftObjectTiles:
@@ -267,8 +267,8 @@ SideObject_CharacterIdMap:
 	.global SideObject_ActorKindIdMap
 SideObject_ActorKindIdMap:
 	.incbin "baserom.gba", 0x0003680c, 0x000000c8
-	.global Data_080368d4
-Data_080368d4:
+	.global UiSprite_CursorFrameTiles
+UiSprite_CursorFrameTiles:
 	.incbin "baserom.gba", 0x000368d4, 0x000008f0
 	.global UiWindow_PartyColumnOffsets
 UiWindow_PartyColumnOffsets:

@@ -223,12 +223,6 @@ UiWork_StepChannelScript:
 Func_08018038:
 UiText_BuildRenderEntries:
 	.incbin "baserom.gba", 0x00017f44, 0x00000688
-	.section .rom.000190e0, "ax"
-	.global UiWork_AnimateSpriteSlots
-	.type UiWork_AnimateSpriteSlots, %function
-	.thumb_func
-UiWork_AnimateSpriteSlots:
-	.incbin "baserom.gba", 0x000190e0, 0x00000480
 	.section .rom.0001ddf8, "ax"
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function
@@ -297,7 +291,16 @@ UiText_SecondGlyphs:
 	.incbin "baserom.gba", 0x00033f6c, 0x0000003c
 	.global Data_08033e40
 Data_08033e40:
-	.incbin "baserom.gba", 0x00033fa8, 0x000000e4
+	.incbin "baserom.gba", 0x00033fa8, 0x0000004c
+	.global UiSprite_CursorBobOffsets
+UiSprite_CursorBobOffsets:
+	.incbin "baserom.gba", 0x00033ff4, 0x00000050
+	.global UiSprite_WobbleOffsets
+UiSprite_WobbleOffsets:
+	.incbin "baserom.gba", 0x00034044, 0x00000038
+	.global UiSprite_BounceOffsets
+UiSprite_BounceOffsets:
+	.incbin "baserom.gba", 0x0003407c, 0x00000010
 	.global Menu_CursorLeftObjectTiles
 Menu_CursorLeftObjectTiles:
 	.incbin "baserom.gba", 0x0003408c, 0x00000400
@@ -339,7 +342,10 @@ SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x00036978, 0x00000028
 	.global SideObject_ActorKindIdMap
 SideObject_ActorKindIdMap:
-	.incbin "baserom.gba", 0x000369a0, 0x000009b8
+	.incbin "baserom.gba", 0x000369a0, 0x000000c8
+	.global UiSprite_CursorFrameTiles
+UiSprite_CursorFrameTiles:
+	.incbin "baserom.gba", 0x00036a68, 0x000008f0
 	.global UiWindow_PartyColumnOffsets
 UiWindow_PartyColumnOffsets:
 	.incbin "baserom.gba", 0x00037358, 0x0000001c

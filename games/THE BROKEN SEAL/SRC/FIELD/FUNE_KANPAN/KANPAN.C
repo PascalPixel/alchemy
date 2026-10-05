@@ -1315,14 +1315,12 @@ void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
 
 void FieldScene_RunActorTwentyDialogueSequence(void)
 {
-    extern s32 *Data_03001ebc;
-
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
-    Engine_ActorSetSpriteFlags((s32)Object_GetById(0), 0);
-    Data_03001ebc[0x70] = 0x202;
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);

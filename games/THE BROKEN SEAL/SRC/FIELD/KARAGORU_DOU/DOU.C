@@ -241,11 +241,9 @@ void ActorPresentation_SelectActorNineScript(void)
 
 void FieldScene_RunScene3be_02001080(void)
 {
-    extern u8 *Data_03001ebc;
+    struct EventWork *work;
 
-    u8 *work;
-
-    work = Data_03001ebc;
+    work = gEventWork;
     Engine_EventBegin();
     if (GameFlag_IsSet(0x204) != 0) {
         GameFlag_Clear(0x9a3);
@@ -255,7 +253,7 @@ void FieldScene_RunScene3be_02001080(void)
         GameFlag_Set(0x9a5);
         GameFlag_Set(0x9a4);
     }
-    Engine_EventRequestExit(*(s16 *)(work + 0x16c));
+    Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();
@@ -323,8 +321,6 @@ void StagedActorPairScene_RotateActorPart(u8 *actor)
 void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object,
                                        s32 limit)
 {
-    extern u8 Data_03001ebc[];
-
     s32 frames = 40;
 
     while (frames != 0) {

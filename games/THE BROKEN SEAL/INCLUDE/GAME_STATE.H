@@ -114,13 +114,18 @@ struct GameState {
     s16 retreat_entrance;
     /* How far the party may still walk before Avoid wears off. */
     s32 avoid_distance;
-    u8 unknown_248[2];
+    u8 unknown_248;
+    /* The pose a paused object's sprite showed, restored when it resumes. */
+    s8 paused_pose;
     /* The battle object an effect paused, resumed when the next one runs;
        -1 when none is. */
     s16 paused_object;
     /* Set while Cloak hides the party; no monsters appear. */
     s16 cloaked;
-    u8 unknown_24e[0x56];
+    u8 unknown_24e[2];
+    /* The update a paused object ran, given back when it resumes. */
+    u32 paused_update;
+    u8 unknown_254[0x50];
     /* The link lobby's tallies, which its rounds count and its attendants
        report (MENU/LINK_LOBBY). */
     u16 link_tallies[8];

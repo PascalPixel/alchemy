@@ -4,6 +4,7 @@
    secondary object shrinks away. */
 #include "TYPES.H"
 #include "FX_SCENE.H"
+#include "FIELDOBJ.H"
 #include "FIXED_MATH.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -35,12 +36,11 @@ void WaitFrames(s32);
 void Audio_PlayCue(s32);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
-void Object_Destroy(void *);
+void ObjectDispatch_ReleaseFar(void *);
 void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_ShrinkObjectScaleUntilHalf(void);
 void BattleFx_CircleAnchor(void);
 
-extern u8 Data_03001f30[];
 s32 BattleEffect_RunFallbackObjectTransition();
 
 /* battle/effects/radial_camera/update.c */
@@ -118,7 +118,7 @@ void RunBattleEffect14(void)
     WaitFrames(30);
     Audio_PlayCue(0x88);
     WaitFrames(20);
-    Object_Destroy(object);
+    ObjectDispatch_ReleaseFar(object);
     BattleFx_PrepareBufferInterpolation();
 }
 
@@ -176,6 +176,8 @@ advance:
 /* battle/effects/misc/mark_child_and_run_fallback_transition.c */
 void BattleFx_MarkChildAndRunFallbackTransition(void)
 {
-    FIELD_AT_OFFSET(FIELD_AT_OFFSET(*(void **)((u32)&Data_03001f30), void **, 0x14), s8 *, 0x5B) = 1;
+    struct FieldActor *child = gEffectWork->child;
+
+    child->unknown_5b = 1;
     BattleEffect_RunFallbackObjectTransition();
 }

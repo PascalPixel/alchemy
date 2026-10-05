@@ -1,9 +1,11 @@
+#include "GAME_STATE.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "VRAM_BLOCK.H"
+#include "IO_REG.H"
 
 struct FxWindowEntry {
     u32 a;
@@ -32,11 +34,10 @@ struct FxObject {
 };
 
 extern struct FxWindowWork gMapCellBuffer;
-extern struct BattleWork gGameState;
 
 struct FxObject *Object_GetById(s32 id);
 s32 GameFlag_TestFar(s32 flag);
-u16 Func_080153b8(void);
+u16 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 
 void BattleFx_SetupResourcesAndWindow(void)
@@ -54,10 +55,10 @@ void BattleFx_SetupResourcesAndWindow(void)
     pal = (u32 *)Runtime_BumpAllocateAlternatePool(32);
     work = &gMapCellBuffer;
     oam = (u32 *)work->entries;
-    object = Object_GetById(gGameState.object_id);
+    object = Object_GetById(gGameState.selected_actor);
     work->tiles = Resource_FindFreeEntry();
     fill = 0;
-    Dma_Set((const void *)&fill, pal, 0x85000020, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, pal, 0x85000020, REG_DMA3);
     pal[0] = 255;
     pal[1] = 0x1ff;
     pal[2] = 272;
@@ -86,7 +87,7 @@ void BattleFx_SetupResourcesAndWindow(void)
         work->x = (((object->x - 0x10000000) >> 16) * 240 / 4096) << 16;
         work->y = ((object->y * 160) / 4096) << 16;
     }
-    work->window_slot = Func_080153b8();
+    work->window_slot = Resource_LoadFixedBlockBIntoFreeSlotFar();
     tile = gVramBlockCache[work->window_slot].offset;
     work->window = UiWindow_CreateFar(0, 0, 0, 0, 2);
     work->unknown_12 = 0xffff;

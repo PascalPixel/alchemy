@@ -7,8 +7,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.global Func_08002cf4
-Func_08002cf4:
+	.global Resource_ExecuteTransfer
+Resource_ExecuteTransfer:
 	stmfd	sp!, {r5}
 	add	r0, r0, #4
 .L_08002cfc:
@@ -40,4 +40,4 @@ Func_08002cf4:
 	stm	ip, {r2, r3, r4}
 	b	.L_08002d3c
 	.global TransferCommandExecutor_Size
-	.set TransferCommandExecutor_Size, . - Func_08002cf4
+	.set TransferCommandExecutor_Size, . - Resource_ExecuteTransfer

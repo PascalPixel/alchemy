@@ -6,6 +6,7 @@
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
 #include "IWRAM_CALL.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 /* Finds the first run of SIZE / 64 free VRAM blocks, marks them as owned by
    resource ID and returns the run's byte offset, or -1 when ID is out of range
@@ -158,7 +159,7 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
             if (source == (const void *)-1) {
                 Iwram_ClearWords(destination, size);
             } else {
-                Dma_Set(source, destination, (size >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
+                Dma_Set(source, destination, (size >> 2) | 0x84000000, REG_DMA3);
             }
         }
         return (u32)offset >> 5;

@@ -7,6 +7,7 @@
 #include "RESOURCE.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
+#include "IO_REG.H"
 
 extern u8 RomBytes_080308a0[];
 
@@ -22,7 +23,7 @@ extern const u8 Tile_ExpandMasked[];
 extern const u8 Tile_ExpandOpaque[];
 
 /* Heap block addresses, indexed by block number. */
-extern void *Data_03001e50[];
+extern void *gWorkSlot[64];
 
 /* ARM routines copied into heap block 49 before each call. */
 extern u8 Tile_Decompress4bppCodeSize[];
@@ -42,7 +43,6 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
 
-extern u8 Data_03001e98[];
 
 extern struct SelectionScreen *gResQueueWork;
 
@@ -116,7 +116,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
         *slot = Resource_FindFreeEntry();
     *tile = VramBlock_LoadCached(*slot, 0x200, work->tiles);
     Runtime_ReleaseHeapBlock(17);
-    Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, (volatile u32 *)0x040000d4);
+    Dma_Set(entry, (void *)(0x05000200 + palette * 32), 0x80000010, REG_DMA3);
 }
 
 /* An empty routine between the glyph loader and decoder; nothing in the
@@ -139,9 +139,9 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
         Dma_Set((const void *)Tile_Decompress4bpp, code,
-            0x84000000 | size, (volatile u32 *)0x040000d4);
+            0x84000000 | size, REG_DMA3);
     }
-    ((void (*)(const void *, u8 *))Data_03001e50[ROUTINE_BLOCK])(
+    ((void (*)(const void *, u8 *))gWorkSlot[ROUTINE_BLOCK])(
         glyph->encoded, glyph->input);
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);
     if (outlined) {
@@ -151,7 +151,7 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
         Dma_Set((const void *)Tile_ExpandMasked, code,
-            0x84000000 | size, (volatile u32 *)0x040000d4);
+            0x84000000 | size, REG_DMA3);
     } else {
         u32 size;
 
@@ -159,9 +159,9 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
         Dma_Set((const void *)Tile_ExpandOpaque, code,
-            0x84000000 | size, (volatile u32 *)0x040000d4);
+            0x84000000 | size, REG_DMA3);
     }
-    ((void (*)(u8 *, u8 *, u32, u32))Data_03001e50[ROUTINE_BLOCK])(
+    ((void (*)(u8 *, u8 *, u32, u32))gWorkSlot[ROUTINE_BLOCK])(
         glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);
 }

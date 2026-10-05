@@ -103,8 +103,8 @@ gMusicPitchStep:
 	.global gMusicVolumeStep
 gMusicVolumeStep:
 	.space 0x00000004
-	.global Data_02003014
-Data_02003014:
+	.global gMusicFadeRequested
+gMusicFadeRequested:
 	.space 0x0000000c
 	.global gMusicPlayerVolumes
 gMusicPlayerVolumes:

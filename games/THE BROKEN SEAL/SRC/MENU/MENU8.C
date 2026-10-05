@@ -40,7 +40,7 @@ void Menu_UpdateEntryObjectTransforms(void);
 void ItemMenu_ResetCategory(void);
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 
 /* Pick a party member, rearranging the order with L and R; returns 1 when
  * one was chosen, -1 when cancelled. */
@@ -66,10 +66,10 @@ s32 CharacterSelector_RunRearrange(void)
         work->row_y[i] = 0x80;
     }
     Palette_LightenBankHighlight(14);
-    Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
+    Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
+    Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
+    Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
     while (!GameFlag_TestFar(0x150)) {
         if (redraw) {
             redraw = 0;
@@ -514,8 +514,8 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
         if (entries[index] != 0) {
             if (selected == count) {
                 s32 message = (s32)MsgStatusAdvice[index];
-                UiText_DrawMessageAt(message, target, 0, -1);
-                UiText_DrawMessageAt(message + 1, target, 0, 15);
+                UiText_DrawResourceFar(message, target, 0, -1);
+                UiText_DrawResourceFar(message + 1, target, 0, 15);
             }
             count++;
         }
@@ -523,5 +523,5 @@ void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
     } while (index <= 4);
 
     if (count == 0)
-        UiText_DrawMessageAt((s32)MsgStatusNormal, target, 0, 0);
+        UiText_DrawResourceFar((s32)MsgStatusNormal, target, 0, 0);
 }

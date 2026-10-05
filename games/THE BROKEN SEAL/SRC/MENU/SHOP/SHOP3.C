@@ -15,7 +15,7 @@ extern struct ShopRuntime *gMenuWork;
 extern u8 MsgHowManyToBuy;
 extern void UiMessage_ShowAndWait(s32);
 extern s32 Item_FindSlot(s32, s32);
-extern s32 Ability_GetMaximum(s32, s32);
+extern s32 Item_AdjustCounterFar(s32, s32);
 extern s32 Shop_SelectQuantity(s32, s32, s32);
 
 /* Draw the member's inventory in three rows of five icons, with the
@@ -112,9 +112,9 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
             chance = (u32)(gGameState.coins) / item->price;
 
         if (shop->party_action == 2) {
-            maximum = Ability_GetMaximum(item_id, 0);
+            maximum = Item_AdjustCounterFar(item_id, 0);
             if (chance > maximum)
-                maximum = Ability_GetMaximum(item_id, 0);
+                maximum = Item_AdjustCounterFar(item_id, 0);
             else
                 maximum = chance;
             chance = maximum;

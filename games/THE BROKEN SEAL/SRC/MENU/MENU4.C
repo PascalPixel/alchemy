@@ -7,7 +7,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 
-s32 Func_0808a5f0(s8 kind, s8 variant);
+s32 Party_RemapCharacterIdIfEnabledFar(s8 kind, s8 variant);
 
 struct PlacementDescriptor {
     u8 pad_00[0x2c];
@@ -53,7 +53,7 @@ void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
 
     for (i = 0; i < 4 && descriptor->kinds[i] != -1; i++) {
         struct AnimationObject *object =
-            GetBattleEffectObject(Func_0808a5f0(descriptor->kinds[i],
+            GetBattleEffectObject(Party_RemapCharacterIdIfEnabledFar(descriptor->kinds[i],
                                         descriptor->variant));
 
         if (object != 0) {

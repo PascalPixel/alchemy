@@ -19,7 +19,7 @@ extern struct ShopRuntime *gMenuWork;
 extern u8 MsgReviveCost;
 extern u8 MsgNoHealingNeeded;
 void UiWindow_Clear(s32 target);
-void UiText_DrawMessageAt(s32 message, s32 target, s32 arg2, s32 arg3);
+void UiText_DrawResourceFar(s32 message, s32 target, s32 arg2, s32 arg3);
 void UiWork_PushValueSlotFar(s32 message, s32 style);
 
 void EffectSlot_SetPositionFar(struct EffectSlot *, s32, s32);
@@ -89,7 +89,7 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
         }
         variant = Shop_MsgByMode(variant);
         UiWork_PushValueSlotFar(message, 5);
-        UiText_DrawMessageAt(variant, target, 0, 0);
+        UiText_DrawResourceFar(variant, target, 0, 0);
     }
 }
 

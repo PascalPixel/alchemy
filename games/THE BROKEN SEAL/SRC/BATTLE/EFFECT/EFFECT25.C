@@ -114,7 +114,7 @@ void BattleFx_SelectBattleCue(s32 first, s32 second)
                 cue = value & 0xfff;
         }
     }
-    Data_02000240.battle_cue = cue;
+    gGameState.scene_cue = cue;
 }
 
 s32 Party_RemapCharacterIdByFlags(s32 arg0)

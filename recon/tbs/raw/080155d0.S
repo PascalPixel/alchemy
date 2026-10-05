@@ -8,8 +8,8 @@
 .syntax unified
 .text
 	.arm
-	.global Func_080155d0
-Func_080155d0:
+	.global UiText_DrawGlyphArm
+UiText_DrawGlyphArm:
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	mov	r7, r3
 	sub	sp, sp, #44

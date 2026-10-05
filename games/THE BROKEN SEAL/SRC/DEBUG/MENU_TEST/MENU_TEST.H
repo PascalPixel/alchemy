@@ -6,16 +6,16 @@
 #include "OWNER_STATE.H"
 #include "OWNERVAL.H"
 #include "GAME_STATE.H"
+#include "FX_SCENE.H"
+#include "FIELDOBJ.H"
 
-extern s16 Data_02000240[];
-extern volatile s32 Data_03001ae8;
+extern volatile s32 gKeysHeld;
 /* The shops' welcome lines open their blocks of messages; the menu steps
  * through a block as long as the distance between the first two. */
 extern u8 MsgWeaponShopWelcome[];
 extern u8 MsgArmorShopWelcome[];
 extern u8 MsgItemShopWelcome[];
-extern u8 *Data_03001f30[];
-extern u8 Data_03001ebc[];
+extern struct BattleFxScene *gEffectWork;
 extern u8 MenuTest_SlotValues[];
 extern u8 MenuTest_CommandTable[];
 extern u8 MenuTest_CommandTableB[];
@@ -86,9 +86,7 @@ s32 Menu_OpenCharacterSelector(void);
  * index-only calls. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* The sources call one another across files. */

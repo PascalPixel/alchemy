@@ -21,7 +21,7 @@ struct WindowBuffer {
 };
 
 extern volatile u32 gFrameCount;
-extern u16 Data_080366f8[];
+extern u16 Ui_BounceScales[];
 extern u8 *gDisplayTransition;
 
 void AffineEffect_UpdateFrame(void)
@@ -43,7 +43,7 @@ void AffineEffect_UpdateFrame(void)
 
     work = gMenuSelectWork;
     sprite = work->entries;
-    scale = Data_080366f8[(gFrameCount * 2) & 31];
+    scale = Ui_BounceScales[(gFrameCount * 2) & 31];
     scale = (scale - 256) / 4 + 304;
     effect.scale_x = scale;
     effect.scale_y = scale;
@@ -166,7 +166,7 @@ void *AffineEffect_InitializeWork(void)
     volatile u32 zero;
     work = Runtime_AllocateBlock(58, 152);
     zero = 0;
-    Dma_Set(&zero, work, 0x85000026, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x85000026, REG_DMA3);
     Scheduler_AddOrUpdateCallback((s32)(AffineEffect_UpdateFrame), 0xc76);
     return work;
 }

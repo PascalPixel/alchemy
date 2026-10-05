@@ -8,7 +8,8 @@
 extern u8 *volatile gWindowWork;
 void Audio_PlayCue(s32 cue);
 
-extern u8 Data_03001c94[];
+#include "KEYSTATE.H"
+#include "IO_REG.H"
 
 /* menu/input/cancel_sound_tick.c */
 s32 GameFlag_SetBitFar(s32);
@@ -48,7 +49,7 @@ s32 Audio_PlayCueReturnOne(s32 cue)
 /* menu/input/cancel_sound_tick.c */
 void Menu_CancelSoundTick(void)
 {
-    if (*(s32 *)((u32)&Data_03001c94) & 8) {
+    if (gKeyState & KEY_START) {
         Audio_PlayCue(SOUND_MENU_CANCEL);
         GameFlag_SetBitFar(0x150);
         Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));

@@ -75,7 +75,7 @@ void SceneTransform_ApplyRoll(s32 angle);
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {
     struct BattleEffectWork *work = *(void **)gBattleFxWork;
-    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    volatile u16 *channel = REG_DMA0;
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];
@@ -150,7 +150,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     aux = (u8 *)cache[41 - 40];
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
-    *(s16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
 
     if (mode == 7) {
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
@@ -175,7 +175,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                 *pal = (u16)(((lum << 10) | (lum << 5)) | lum);
                 pal++;
             }
-            *(s16 *)0x04000050 = 0;
+            REG_BLDCNT = 0;
         } else {
             switch (mode) {
             case 0:
@@ -232,7 +232,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     }
     if (mode == 5) {
         pos[0] = pos[0] / 3;
-        *(s16 *)0x04000020 = 85;
+        REG_BG2PA = 85;
     }
 
     i = 0;

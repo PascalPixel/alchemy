@@ -10,7 +10,7 @@ s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32);
 void RenderOutput_ClearListFar(s32);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 /* The Japanese rows' highlight starts a tile in and is a tile narrower. */
@@ -50,7 +50,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
 #if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->info_window, 0, 0);
 #else
-            UiText_DrawMessageAt(masked, (s32)menu->info_window, 0, 0);
+            UiText_DrawResourceFar(masked, (s32)menu->info_window, 0, 0);
 #endif
         }
     } else {

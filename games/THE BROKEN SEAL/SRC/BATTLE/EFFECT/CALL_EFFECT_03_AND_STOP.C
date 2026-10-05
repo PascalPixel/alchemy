@@ -58,7 +58,7 @@ void Audio_PlayCue(s32);
 void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct BattleEffect03Object *, s32, s32);
 void Object_CommitPosition(struct BattleEffect03Object *);
-void Object_Destroy(struct BattleEffect03Object *);
+void ObjectDispatch_ReleaseFar(struct BattleEffect03Object *);
 void BattleFx_PrepareBufferInterpolation(void);
 
 void RunBattleEffect03(void)
@@ -132,7 +132,7 @@ void RunBattleEffect03(void)
         target->unknown_5a = 0;
         Motion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
         Object_CommitPosition(target);
-        Object_Destroy(target);
+        ObjectDispatch_ReleaseFar(target);
     }
     if (link_marker != 0x60)
         Resource_ResetEntry(link_marker);

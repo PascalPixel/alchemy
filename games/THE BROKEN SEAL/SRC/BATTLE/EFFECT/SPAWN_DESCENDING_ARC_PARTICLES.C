@@ -26,7 +26,7 @@ struct BattleEffect16GlobalState {
 
 extern struct BattleEffect16GlobalState gGameState;
 
-void Object_Destroy(void);
+void ObjectDispatch_ReleaseFar(void);
 
 /* Drops the particle two pixels a frame beside its source, on the positive
    z side, while its sprite grows to full size; it vanishes ten pixels above
@@ -45,7 +45,7 @@ void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
 
     y = particle->y;
     if (y <= limit) {
-        Object_Destroy();
+        ObjectDispatch_ReleaseFar();
         return;
     }
 
@@ -74,7 +74,7 @@ void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 
     y = particle->y;
     if (y <= limit) {
-        Object_Destroy();
+        ObjectDispatch_ReleaseFar();
         return;
     }
 

@@ -45,7 +45,7 @@ void UiWindow_DrawDividerLineFar(s32 window, s32 unused, s32 x, s32 y, s32 width
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
@@ -139,7 +139,7 @@ s32 ItemMenu_SelectTarget(s32 mode)
 #if EDITION_INTERNATIONAL
                     UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & ITEM_ID_MASK) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
 #else
-                    UiText_DrawMessageAt((menu->selected_items[0] & ITEM_ID_MASK) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
+                    UiText_DrawResourceFar((menu->selected_items[0] & ITEM_ID_MASK) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
 #endif
                     shown = 1;
                 } else {

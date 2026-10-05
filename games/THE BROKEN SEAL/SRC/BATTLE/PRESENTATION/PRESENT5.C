@@ -13,7 +13,7 @@
 s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *entry, s32 mode);
 
-s32 Func_080771e8(s32 group, s32 index);
+s32 Djinn_GetDefinitionHeaderFar(s32 group, s32 index);
 
 static __inline__ void CopyWords(
     void *destination, const void *source, s32 size)
@@ -108,7 +108,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
             struct BattleAction *action;
 
             Owner_GetStateFar(entry->unit_id);
-            action = BattleAction_Get(Func_080771e8(
+            action = BattleAction_Get(Djinn_GetDefinitionHeaderFar(
                 (s16)((u16)entry->parameter) >> 8 & 15, ((u16)entry->parameter) & 0xff));
             if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
                 entry->priority += 10000;

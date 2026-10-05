@@ -125,7 +125,7 @@ extern u8 *gBattleOwnerStates;
 extern u8 gActorSpriteSlots[];
 extern u8 gCpuLoadDisplayEnabled;
 void BattlePresentation_UpdateCamera(void);
-void Func_080b7738(void);
+void BattleActor_UpdateSpritePriorities(void);
 
 /* The relocated IWRAM block clear this owner reaches through __call_via_r3. */
 #include "IWRAM_CALL.H"
@@ -334,7 +334,7 @@ s32 Battle_RunEncounter(s32 arg)
     BattlePres_RunEntryTransition(object, arg);
     timer->field_14 = 0;
     gCpuLoadDisplayEnabled = 0;
-    Scheduler_AddOrUpdateCallback((s32)Func_080b7738, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)BattleActor_UpdateSpritePriorities, 0xc80);
 
     for (;;) {
         Battle_ReservedNoOp9B2C();
@@ -471,7 +471,7 @@ finished:
     Battle_ReservedNoOpF674();
     BattlePlacement_UpdateTimedEntries();
     gCell[0x22b] = 0;
-    Scheduler_RemoveCallback((s32)Func_080b7738);
+    Scheduler_RemoveCallback((s32)BattleActor_UpdateSpritePriorities);
     Runtime_ReleaseHeapBlock10();
     return i;
 }

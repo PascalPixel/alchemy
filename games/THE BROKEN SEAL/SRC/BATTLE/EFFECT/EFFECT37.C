@@ -8,6 +8,7 @@
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+#include "IO_REG.H"
 
 extern u8 *gBattleBgFxWork;
 
@@ -18,7 +19,6 @@ s32 Fixed_Remainder(s32 value, s32 divisor);
 extern const u8 BattleFx_UntargetedObjectScript[];
 
 
-extern u8 Data_03001e8c[];
 void BattleFx_ArmBg0HBlankDma(void);
 extern void BattleFx_ArmBg0HBlankDma(void);
 extern s32 PaletteGlow_UpdateFar(s32, s32);
@@ -28,7 +28,7 @@ void BattleFx_ArmBg0HBlankDma(void)
     u8 *work = gBattleBgFxWork;
     if (!work[660]) {
         u32 offset = work[650] * 324;
-        volatile u16 *channel = (volatile u16 *)0x040000b0;
+        volatile u16 *channel = REG_DMA0;
         channel[5] &= 0xc5ff;
         channel[5] &= 0x7fff;
         (void)channel[5];

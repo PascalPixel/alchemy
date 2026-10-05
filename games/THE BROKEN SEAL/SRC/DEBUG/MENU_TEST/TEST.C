@@ -82,15 +82,14 @@ void SceneDialogue_ShowMessageAndWait(s32 arg0)
 
 void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 {
-    s16 *tbl = Data_02000240;
     volatile s32 *key;
     s32 token;
     s32 i;
 
-    *(u8 *)&tbl[262] = 2;
+    gGameState.message_speed = 2;
     token = UiWindow_CreateWithSideObject(125, 0, 0, 0);
     for (i = 0; i < cnt; i++) {
-        key = &Data_03001ae8;
+        key = &gKeysHeld;
         UiWork_PushValueSlot(1, 1);
         UiWork_PushValueSlot(141, 2);
         UiWork_PushValueSlot(0x1e240, 5);
@@ -199,7 +198,7 @@ void CommandTable_NoOpCallback(void)
 
 void SceneState_SetRecordFlag53(void)
 {
-    Data_03001f30[0][0x35] = 1;
+    gEffectWork->child_mode = 1;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -605,9 +604,9 @@ void DebugMenu_SelectItem(void)
     item = 1;
     redraw = 1;
     Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Engine_TaskWait(1);
     for (;;) {
         if (redraw) {

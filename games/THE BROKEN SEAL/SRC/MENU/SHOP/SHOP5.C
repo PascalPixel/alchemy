@@ -31,7 +31,7 @@ s32 UiMessage_ShowChoice(s32 value);
 void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void Func_08077068(s32 unit_id, s32 slot);
+void Inventory_RepairFar(s32 unit_id, s32 slot);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
 #define SPECIAL_ITEM 228
 
@@ -46,12 +46,12 @@ s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
 s32 Inventory_CountFar(s32 unit_id);
 void Party_AdjustSixDigitCounterBFar(s32 amount);
-void Func_080772a0(s32 value);
+void Party_AdjustCounterCappedAt28Far(s32 value);
 
 extern s16 EventTable_AbilityLoadouts[][33];
 s32 GameFlag_TestFar(s32);
 s32 GameFlag_SetBitFar(s32);
-void Ability_GetMaximum(s32, s32);
+void Item_AdjustCounterFar(s32, s32);
 
 s32 Shop_SelUnit(void)
 {
@@ -229,7 +229,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     Audio_PlayCue(112);
     WaitFrames(20);
     unit->inventory[slot] = saved;
-    Func_08077068(unit_id, slot);
+    Inventory_RepairFar(unit_id, slot);
     Party_AdjustSixDigitCounterAFar(-price);
     Shop_DrawMoney();
     Shop_DrawUnitGrid(shop->item_window, unit_id);
@@ -295,7 +295,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
             UiMessage_ShowAndRestoreState((s32)MsgHereYouGo);
             Inventory_AddItemFar(unit_id, shop->selected_item);
             Party_AdjustSixDigitCounterBFar(-price);
-            Func_080772a0(1);
+            Party_AdjustCounterCappedAt28Far(1);
             goto done;
         }
         if ((gKeyState & KEY_B) != 0) {
@@ -341,7 +341,7 @@ void EventTable_ApplyRowAbilities(s32 row_no)
             row = EventTable_AbilityLoadouts[row_no];
             entry = row + 24;
             do {
-                Ability_GetMaximum(value, 1);
+                Item_AdjustCounterFar(value, 1);
                 count++;
                 if (count > 7)
                     break;

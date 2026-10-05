@@ -29,10 +29,8 @@ Object_InitializeMode:
 	overlay_veneer AnimationObjects_SelectAnimation
 	overlay_veneer AnimationObjects_SetHalfword02OnActive
 	.global ResourceObject_CreateFar
-	.global Func_08009030
 	.thumb_func
 ResourceObject_CreateFar:
-Func_08009030:
 	.global GetBattleEffectObject
 	.thumb_func
 GetBattleEffectObject:
@@ -116,9 +114,6 @@ Object_CreateFar:
 	.thumb_func
 Func_080090c8:
 	overlay_veneer FieldObject_Create
-	.global Func_080090d0
-	.thumb_func
-Func_080090d0:
 	.global Object_Destroy
 	.thumb_func
 Object_Destroy:
@@ -284,9 +279,6 @@ Func_080091e0:
 	.thumb_func
 Animation_SetStateField5Bits2To3Far:
 	overlay_veneer Animation_SetStateField5Bits2To3
-	.global Func_080091f0
-	.thumb_func
-Func_080091f0:
 	.global Runtime_SetWorkTripleIfNonNegativeFar
 	.thumb_func
 Runtime_SetWorkTripleIfNonNegativeFar:
@@ -348,9 +340,9 @@ Map_SetWorkFlagBits9To11Far:
 ResourceMetadata_SumCommandLengthsFar:
 Func_08009260:
 	overlay_veneer ResourceMetadata_SumCommandLengths
-	.global Func_08009268
+	.global GetWorldMapTerrainBehaviorFar
 	.thumb_func
-Func_08009268:
+GetWorldMapTerrainBehaviorFar:
 	overlay_veneer GetWorldMapTerrainBehavior
 	.global ResourceSlot_LoadFar
 	.thumb_func
@@ -360,9 +352,9 @@ ResourceSlot_LoadFar:
 	.thumb_func
 SetMapCellCollisionFar:
 	overlay_veneer SetMapCellCollision
-	.global Func_08009280
+	.global AnimationObjects_SetField15OnActiveFar
 	.thumb_func
-Func_08009280:
+AnimationObjects_SetField15OnActiveFar:
 	overlay_veneer AnimationObjects_SetField15OnActive
 	.global Runtime_RemapBytesByTableFar
 	.thumb_func

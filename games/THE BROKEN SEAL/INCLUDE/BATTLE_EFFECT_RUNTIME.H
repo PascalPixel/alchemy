@@ -51,18 +51,6 @@ struct BattleRuntime {
     s16 unknown_cc4;
 };
 
-struct BattleWork {
-    u8 unknown_000[0x1ee];
-    /* Audio cue the battle-start transition plays first. */
-    u16 battle_cue;
-    u8 unknown_1f0[2];
-    u8 mode_1f2;
-    u8 unknown_1f3;
-    s32 object_id;
-    s32 unknown_1f8;
-    u8 unknown_1fc[0x0e];
-    u8 enabled_20a;
-};
 
 /* BattleEffect_InitializeBuffers allocates and clears this palette blend. */
 struct BattleEffectBuffers {
@@ -92,7 +80,6 @@ struct BattleEffectEntry {
 
 extern struct BattleRuntime *Data_03001ebc;
 extern struct BattleEffectBuffers *Data_03001ed0;
-extern struct BattleWork Data_02000240;
 
 void BattleFx_SpawnLinked(s32 resource_id, s32 flags, s32 state);
 

@@ -99,7 +99,7 @@ extern struct SelectionRender *gWindowWork;
 extern struct SelectionRuntime *gLinkCountdownWork;
 extern struct SelectionScroll gBgScroll;
 extern s32 gFrameCount, gKeyState, gKeysRepeat;
-extern u16 Data_080366f8[];
+extern u16 Ui_BounceScales[];
 extern volatile u16 RegIme;
 extern u8 Value_0000001f[];
 
@@ -117,7 +117,7 @@ extern void Graphics_SetBg1Priority3(void);
 extern void Graphics_ClearBg1ControlBit2(void);
 extern struct TradeOfferState *Trade_GetOfferStateFar(s32 index);
 extern void BattlePlacement_CountValidEntriesFar(s32 index, u8 *party);
-extern void Func_080b5128(s32 x, s32 y);
+extern void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 extern void Audio_PlayCue(s32 cue);
 
 s32 Ui_RunSelectionScreen(s32 mode)
@@ -197,7 +197,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
     for (;;) {
-        scale = ((s32)Data_080366f8[(gFrameCount * 2) & 31] - 256) / 4 + 304;
+        scale = ((s32)Ui_BounceScales[(gFrameCount * 2) & 31] - 256) / 4 + 304;
         work->affine.scale_x = scale;
         work->affine.scale_y = scale;
         gBgScroll.x = 0;
@@ -300,7 +300,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                                 message = UiText_ShowMessageAndWaitComplete(0xc4a, 15, 8);
                             else if (kind == 16)
                                 message = UiText_ShowMessageAndWaitComplete(0xc49, 15, 8);
-                            Func_080b5128(102, 155);
+                            BattlePresentation_WaitForPromptAtFar(102, 155);
                             UiWork_Finalize(message, 1);
                             runtime->auto_phase++;
                             runtime->auto_delay = 45;

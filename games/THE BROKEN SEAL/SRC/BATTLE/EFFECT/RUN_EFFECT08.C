@@ -1,3 +1,4 @@
+#include "GAME_STATE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -24,12 +25,7 @@ struct EffectTarget {
     s32 y;
     s32 z;
 };
-struct PartyTargetState {
-    u8 unknown_000[500];
-    s32 target;
-};
 extern struct EffectGlobals Data_03001ebc;
-extern struct PartyTargetState Data_02000240;
 void ObjectDispatch_ApplyValueToKind200Children(s32);
 void DisplayTransition_InitializeBattleEffectState(s32);
 struct EffectTarget *ObjectTable_Get(s32);
@@ -56,7 +52,7 @@ void RunBattleEffect08(void)
     ObjectDispatch_ApplyValueToKind200Children(6);
     DisplayTransition_InitializeBattleEffectState(8);
     work = Data_03001ebc.work;
-    target = ObjectTable_Get(Data_02000240.target);
+    target = ObjectTable_Get(gGameState.selected_actor);
     work->x = target->x;
     work->height = target->z - target->y;
     BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
@@ -69,7 +65,7 @@ void RunBattleEffect08(void)
     WaitFrames(1);
     result = BattleFx_FindMatchingEvent(0x50000005, 8, &resource);
     if (result != 0)
-        BattleFx_RunEventAction(result, Data_02000240.target, resource);
+        BattleFx_RunEventAction(result, gGameState.selected_actor, resource);
     Audio_PlayCue(131);
     scene->active = 1;
     scene->center_x = work->x / 0x10000;

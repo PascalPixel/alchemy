@@ -244,7 +244,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
     } while (0);
 
     if (level == 0) {
-        Dma_Set(palette, (void *)0x050000c0, 0x80000080, (volatile u32 *)0x040000d4);
+        Dma_Set(palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
     } else {
         Graphics_ScaleRgb555Clamped(palette, (u16 *)0x050000c0, screen->brightness = 0x10000 - level * 1092, 128);
     }
@@ -283,7 +283,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         {
             /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
             do {
-                ime = (volatile u16 *)0x04000208;
+                ime = &REG_IME;
                 saved = *ime;
             } while (0);
             *ime = (u16)ime;
@@ -299,11 +299,11 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         }
     }
 
-    Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
 
     if (fade == 0x80) {
-        Dma_Set(gBattleWork->palette, (void *)0x050000c0, 0x80000080, (volatile u32 *)0x040000d4);
+        Dma_Set(gBattleWork->palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
     } else if (fade != 0) {
         u16 *source = gBattleWork->palette;
         u16 *destination = (u16 *)0x050000c0;

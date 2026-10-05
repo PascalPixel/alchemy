@@ -25,9 +25,9 @@ void BattleEffect_SetupBlendedDisplay(void)
     gBgScroll[3] = 32;
     BattleBackground_LoadFar(1, *(u16 *)(work + 0x648), 24);
     zero = 0;
-    Dma_Set((const void *)&zero, buffer, 0x85001000, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, buffer, 0x85001000, REG_DMA3);
     zero = 0;
-    Dma_Set((const void *)&zero, (void *)0x06004000, 0x85001000, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, (void *)0x06004000, 0x85001000, REG_DMA3);
     WaitFrames(1);
     REG_BLDALPHA = 0x100e;
     REG_BLDCNT = 0x3f46;

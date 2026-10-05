@@ -1,5 +1,6 @@
 #include "SERIAL_RUNTIME.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 /* Exchange one packet pair, then report the same status as the poll paths. */
 s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
@@ -47,7 +48,7 @@ void SerialRuntime_PrepareSendPacket(void *payload)
         checksum = 0;
         packet[1] = received_mask ^ current_mask;
         *(u16 *)(packet + 2) = checksum;
-        Dma_Set(payload, packet + 4, 0x84000006, (volatile u32 *)0x040000d4);
+        Dma_Set(payload, packet + 4, 0x84000006, REG_DMA3);
     }
     {
         u16 *packet;

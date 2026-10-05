@@ -4,6 +4,7 @@
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 #include "WINDOW.H"
+#include "IO_REG.H"
 
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 s32 UiText_GetResourceDimensions(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
@@ -12,7 +13,7 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 ent
 s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct UiWindow *window);
 
-extern const u8 Func_08015570[];
+extern const u8 UiText_LookupMessageArm[];
 
 /* The message lookup is ARM code (LOOKUP_SYMBOL.S) that runs from a heap copy
    of itself; the copy length is a link-time symbol. */
@@ -79,7 +80,7 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message)
         size = (u32)UiText_LookupMessageCodeSize;
     } while (0);
     routine = (void (*)(struct TextReader *, s32))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Func_08015570, routine, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)UiText_LookupMessageArm, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(reader, message);
     Sys_Free(routine);
 }

@@ -14,9 +14,9 @@
 .syntax unified
 .text
 	.thumb
-	.global Func_080006fc
+	.global SoundDriver_EnterMixer
 	.thumb_func
-Func_080006fc:
+SoundDriver_EnterMixer:
 	ldr	r0, [pc, #108]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #100]

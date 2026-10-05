@@ -722,9 +722,9 @@ BattleFx_PlayQueuedSoundFar:
 	.thumb_func
 Func_0808a5e8:
 	overlay_veneer BattleFx_PlayQueuedSound
-	.global Func_0808a5f0
+	.global Party_RemapCharacterIdIfEnabledFar
 	.thumb_func
-Func_0808a5f0:
+Party_RemapCharacterIdIfEnabledFar:
 	overlay_veneer Party_RemapCharacterIdIfEnabled
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL

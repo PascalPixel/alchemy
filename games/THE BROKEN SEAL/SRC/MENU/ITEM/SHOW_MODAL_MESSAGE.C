@@ -7,12 +7,12 @@
 
 extern volatile u32 gKeyState;
 
-void Func_08015108(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
+void UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void Func_08015078(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void GameFlag_SetBitFar(s32 flag);
 /* The pointer-cell closer ignores the extra legacy caller word. */
 void UiWindow_CloseIfOpen();
@@ -31,7 +31,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
 
     menu->pane_icons[0]->active = 13;
     if (y != -1) {
-        Func_08015108(message, &left, &top, &width, &height);
+        UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
         if (UiWindow_UpdateOrCreate((s32 *)&menu->modal_window, x, y, width, height, 0x102) == 0)
             UiWindow_SetBounds((struct RenderInput *)menu->modal_window, x, y, width, height);
         window = (s32)menu->modal_window;
@@ -44,11 +44,11 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
     if (y == -1)
         UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
     else
-        Func_08015078(message, window, 0, 0);
+        UiText_DrawResourceFar(message, window, 0, 0);
 #else
     /* The Japanese menu draws every message the same way and leaves the
        sized window open. */
-    Func_08015078(message, window, 0, 0);
+    UiText_DrawResourceFar(message, window, 0, 0);
 #endif
     if (x != -1) {
         WaitFrames(1);

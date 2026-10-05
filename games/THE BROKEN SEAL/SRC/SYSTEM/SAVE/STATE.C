@@ -5,6 +5,7 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
+#include "IO_REG.H"
 extern s32 Flash_Handler0;
 
 /* save/state/select_write_slot.c */
@@ -77,7 +78,7 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
 
     work = gSaveWorkspace;
     ReadFlash((u16)index, 0, work->slot.bytes, sizeof(work->slot));
-    Dma_Set(&work->slot, &header, 0x84000004, (volatile u32 *)0x040000d4);
+    Dma_Set(&work->slot, &header, 0x84000004, REG_DMA3);
     WAIT_DMA();
     checksum = SaveState_ChecksumWorkspace();
     return (u16)checksum - header.checksum;

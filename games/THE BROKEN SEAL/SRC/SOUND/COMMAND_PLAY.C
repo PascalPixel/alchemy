@@ -6,7 +6,7 @@
    for a silent start. */
 #include "AUDIO_ENGINE.H"
 
-extern u8 Data_02003014;
+extern u8 gMusicFadeRequested;
 
 void Audio_PlaySound(u16 id);
 
@@ -19,10 +19,10 @@ void AudioCommand_Play(s32 id)
     id &= AUDIO_CUE_ID_MASK;
 
     if (id == AUDIO_CUE_FADE_BGM) {
-        if (Data_02003014 != 0)
+        if (gMusicFadeRequested != 0)
             return;
         MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
-        Data_02003014++;
+        gMusicFadeRequested++;
         gAudioSecondaryState = 19;
     } else if (id == AUDIO_CUE_FADE_SLOT3) {
         gMusicPlayerVolumes[3] = 0;
@@ -60,6 +60,6 @@ void AudioCommand_Play(s32 id)
             gMusicVolume = 0x100;
         gMusicVolumeTarget = 0x100;
         gMusicVolumeStep = 4;
-        Data_02003014 = 0;
+        gMusicFadeRequested = 0;
     }
 }

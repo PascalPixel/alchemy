@@ -37,7 +37,7 @@ struct ScrollPair {
     u16 y;
 };
 
-#define DMA3 ((volatile u32 *)0x040000d4)
+#define DMA3 (REG_DMA3)
 
 extern u16 Clear_BlendFrame;
 void Clear_UpdateBlend(void);

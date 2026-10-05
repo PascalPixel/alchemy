@@ -45,7 +45,7 @@ void Inventory_RemoveFar(s32 unit_id, s32 slot);
 s32 Inventory_CountFar(s32 unit_id);
 s32 Item_IsCompatibleWithOwnerFar(s32 unit_id, s32 item_id);
 void Shop_BuySpecialItem(s32 window, s32 item_window);
-void Ability_GetMaximum(s32 item, s32 delta);
+void Item_AdjustCounterFar(s32 item, s32 delta);
 s32 AbilityMenu_BuildAvailableList(void);
 void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
@@ -228,7 +228,7 @@ outer:
         WaitFrames(1);
         if (result == 0 && shop->party_action == 2) {
             for (i = result; i < quantity; i++)
-                Ability_GetMaximum(shop->selected_item, -1);
+                Item_AdjustCounterFar(shop->selected_item, -1);
             if (AbilityMenu_BuildAvailableList() == 0)
                 goto leave;
             if (selected > shop->stock_count - 1)

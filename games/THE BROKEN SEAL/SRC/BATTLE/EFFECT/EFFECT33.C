@@ -12,7 +12,7 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 extern u32 gFrameTick;
 extern u32 BattleFx_PulseScales[];
-void Object_Destroy();
+void ObjectDispatch_ReleaseFar();
 
 struct EffectVector {
     s32 x;
@@ -114,7 +114,7 @@ void BattleFx_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void Func_080091f0(s32 x, s32 y, s32 z);
+void Runtime_SetWorkTripleIfNonNegativeFar(s32 x, s32 y, s32 z);
 void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
@@ -173,7 +173,7 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
     ((struct MotionObject *)obj)->angle = (u16)(((struct MotionObject *)obj)->angle + 0x2000);
     ((struct MotionObject *)obj)->scale_x = scale;
     if (scale < 0x3000) {
-        Object_Destroy();
+        ObjectDispatch_ReleaseFar();
     }
 }
 
@@ -380,7 +380,7 @@ void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
     ((struct MotionObject *)obj)->angle = (u16)(((struct MotionObject *)obj)->angle + 0x2000);
     ((struct MotionObject *)obj)->scale_x = scale;
     if (scale < 0x3000) {
-        Object_Destroy();
+        ObjectDispatch_ReleaseFar();
     }
 }
 
@@ -406,7 +406,7 @@ void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg)
     y = arg->y + 0xFFFF0000;
     arg->y = y;
     if (y < other->y + 0x140000)
-        Object_Destroy(arg);
+        ObjectDispatch_ReleaseFar(arg);
 }
 
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
@@ -491,7 +491,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     Audio_PlayCue(153);
     ObjectMotion_Launch(arg, 8, 22);
     Audio_PlayCue(140);
-    Func_080091f0(0x14ccc, 0x14ccc, 0x10000);
+    Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
     djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
     Object_SetMode((struct ObjectRuntime *)djinni, 3);
     WaitFrames(90);
@@ -499,7 +499,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     WaitFrames(20);
     Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
     WaitFrames(30);
-    Func_080091f0(0x19999, 0x19999, 0x10000);
+    Runtime_SetWorkTripleIfNonNegativeFar(0x19999, 0x19999, 0x10000);
 
     position[0] = djinni->x;
     position[1] = djinni->y;
@@ -537,7 +537,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     }
 
     WaitFrames(20);
-    Func_080091f0(1, 1, 1);
+    Runtime_SetWorkTripleIfNonNegativeFar(1, 1, 1);
     WaitFrames(30);
 
     for (remaining = 0; remaining <= 23; remaining++) {

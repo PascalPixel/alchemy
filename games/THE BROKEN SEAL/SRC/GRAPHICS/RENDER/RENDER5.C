@@ -6,6 +6,7 @@
 #include "DMA.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
 
 extern void UiWork_InitFreeList(void);
 extern void UiWork_SetTwoEntriesTo999(void);
@@ -37,7 +38,7 @@ void UiWork_InitializeWithResourceCounters(void)
     work = (struct UiRenderWork *)Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
 #if EDITION_INTERNATIONAL
     fill = 0;
-    Dma_Set((const void *)&fill, work, 0x850004bf, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, work, 0x850004bf, REG_DMA3);
 #else
     /* The Japanese build clears and fills the block with the IWRAM word
        routines rather than DMA. */
@@ -48,7 +49,7 @@ void UiWork_InitializeWithResourceCounters(void)
     work->level = 15;
 #if EDITION_INTERNATIONAL
     fill = 0xf000f000;
-    Dma_Set((const void *)&fill, work, 0x85000140, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, work, 0x85000140, REG_DMA3);
 #else
     FillWords(Iwram_FillWords, work, 0x500, 0xf000f000);
 #endif
@@ -73,14 +74,14 @@ void UiWork_Initialize(s32 kind)
         dst &= 0x3ff;
         Dma_Set((void *)(0x06000010 + src * 32),
                 (void *)(0x06000000 + dst * 32),
-                0x80000008, (volatile u32 *)0x040000d4);
+                0x80000008, REG_DMA3);
         return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
     }
 
     work = (struct UiRenderWork *)Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
 #if EDITION_INTERNATIONAL
     fill = 0;
-    Dma_Set(&fill, work, (0x85000000 | RENDER_WORK_SIZE / 4), (volatile u32 *)0x040000d4);
+    Dma_Set(&fill, work, (0x85000000 | RENDER_WORK_SIZE / 4), REG_DMA3);
 #else
     /* The Japanese build clears and fills the block with the IWRAM word
        routines rather than DMA. */
@@ -95,7 +96,7 @@ void UiWork_Initialize(s32 kind)
     work->level = 15;
 #if EDITION_INTERNATIONAL
     fill = 0xf000f000;
-    Dma_Set(&fill, work, 0x85000140, (volatile u32 *)0x040000d4);
+    Dma_Set(&fill, work, 0x85000140, REG_DMA3);
 #else
     FillWords(Iwram_FillWords, work, 0x500, 0xf000f000);
 #endif

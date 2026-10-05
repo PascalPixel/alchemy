@@ -10,13 +10,13 @@
 #include "KEYSTATE.H"
 
 extern u16 gLinkStatus;
-void Func_080f9018(void);
+void MusicPlayer_StepVolumeAndPitchTowardTargetsFar(void);
 void BlendTransition_Update(void);
-void Func_080006fc(void);
+void SoundDriver_EnterMixer(void);
 
 #define SOUND_PRESET_COUNT 5
 #define SOUND_PRESET_SIZE 152
-extern u8 Data_08000404[];
+extern u8 IwramCodeRecords[];
 
 /* five 152-byte sound presets in ROM */
 extern u8 Data_03000bd8[];
@@ -42,7 +42,7 @@ void System_VBlankHandler(void)
         *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)gSerialPeerPayloads);
         SerialRuntime_StepBlockTransfer();
     }
-    Func_080f9018();
+    MusicPlayer_StepVolumeAndPitchTowardTargetsFar();
     BlendTransition_Update();
     if (gFrameRenderPending != 0) {
         if (gOamCopyEnabled != 0)
@@ -70,17 +70,17 @@ void System_VBlankHandler(void)
     if (keys == 0) {
         gKeyRepeatTimer = 19;
         gKeysRepeat = keys;
-    } else if (gKeysHeld & (Data_03001d0c ^ 0xffff)) {
+    } else if (gKeysHeld & (gKeysHeldAtVBlank ^ 0xffff)) {
         gKeyRepeatTimer = -1;
         gKeysRepeat = keys;
     } else if (gKeyRepeatTimer > 0) {
         gKeyRepeatTimer--;
     }
-    Data_03001d0c = keys;
+    gKeysHeldAtVBlank = keys;
     gFrameTick++;
     gLagFrameCount++;
     gVBlankDone = 1;
-    Func_080006fc();
+    SoundDriver_EnterMixer();
 }
 
 /* active sound parameters in IWRAM */
@@ -92,8 +92,8 @@ s32 Sound_LoadPresetParameters(s32 preset)
     if ((u32)preset > SOUND_PRESET_COUNT - 1) {
         index = 0;
     }
-    Dma_Set(Data_08000404 + index * SOUND_PRESET_SIZE, Data_03000bd8, 0x84000026,
-            (volatile u32 *)0x040000d4);
+    Dma_Set(IwramCodeRecords + index * SOUND_PRESET_SIZE, Data_03000bd8, 0x84000026,
+            REG_DMA3);
     return 0;
 }
 

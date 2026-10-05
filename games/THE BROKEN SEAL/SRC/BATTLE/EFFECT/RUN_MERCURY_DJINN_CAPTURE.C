@@ -57,7 +57,7 @@ void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Object_SetMode(struct CaptureObject *object, s32 mode);
 void ObjectDispatch_SetSingleChildField26Far(struct CaptureObject *object, s32 value);
 struct CaptureResource *Object_ReplaceResourceEntry(struct CaptureSprite *sprite, struct CaptureResource *resource);
-void Func_080090d0(struct CaptureObject *object);
+void ObjectDispatch_ReleaseFar(struct CaptureObject *object);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
@@ -140,10 +140,10 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         djinni->y += 0x80000;
         WaitFrames(1);
     }
-    Func_080090d0(djinni);
+    ObjectDispatch_ReleaseFar(djinni);
     list = copies;
     for (remaining = 7; remaining >= 0; remaining--)
-        Func_080090d0(*list++);
+        ObjectDispatch_ReleaseFar(*list++);
     if (resource_id != 96)
         Resource_ResetEntry(resource_id);
     WaitFrames(10);

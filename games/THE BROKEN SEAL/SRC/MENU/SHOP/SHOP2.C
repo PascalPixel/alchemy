@@ -13,11 +13,12 @@
 #include "UI.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
 
 extern struct ShopRuntime *gMenuWork;
 
 /* ui/ability_menu/build_available_list.c */
-s32 Ability_GetMaximum(s32, s32);
+s32 Item_AdjustCounterFar(s32, s32);
 
 void Shop_StepCursor(void);
 void Battle_ResetEffectCounterFar(void);
@@ -41,7 +42,7 @@ struct ObjectRuntime *Object_GetByIdFar(s32 id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 a, s32 b, s32 c);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowAndWait(s32 message);
-s32 Func_08015380(s32 choice);
+s32 Menu_SelectEntry11To14Far(s32 choice);
 s32 AbilityMenu_BuildAvailableList(void);
 s32 Shop_SelBuy(void);
 s32 Shop_PickUnit(void);
@@ -71,7 +72,7 @@ s32 AbilityMenu_BuildAvailableList(void)
     do {
         mode = (s8)state->shop_type;
         if (mode == Item_GetEquipmentGroupFar(index) &&
-            Ability_GetMaximum(index, 0) != 0) {
+            Item_AdjustCounterFar(index, 0) != 0) {
             *output = index;
             count++;
             output++;
@@ -100,7 +101,7 @@ void Shop_InitializeCursorWork(void)
     work = Runtime_AllocateHeapBlock(55, 0xa70);
     Battle_ResetEffectCounterFar();
     zero = 0;
-    Dma_Set((const void *)&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, work, 0x8500029c, REG_DMA3);
     work->mode = 12;
     work->party_member_count = Party_ListActiveOwnersFar(work->party_member_ids);
     slot = Resource_FindFreeEntry();
@@ -174,7 +175,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
     UiMessage_ShowAndWait((s32)MsgWeaponShopWelcome);
 loop:
     {
-        choice = Func_08015380(choice);
+        choice = Menu_SelectEntry11To14Far(choice);
         shop->party_action = choice;
         if (choice == 0) {
             shop->stock_count = EventTable_CopyRowHeader(row, shop->stock_item_ids);

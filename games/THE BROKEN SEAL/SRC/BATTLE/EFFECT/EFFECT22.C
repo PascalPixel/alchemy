@@ -16,7 +16,6 @@
 extern u8 gBattleFxWork[];
 
 extern u8 gMapCellBuffer[];
-extern BattleEffectDrawRectangle Data_03001e50[];
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -85,7 +84,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 0);
     else
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 0);
-    draw[0] = Data_03001e50[46];
+    draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     Audio_PlayCue(212);
     for (frame = 0; frame != 21; frame++) {
         if (frame <= 3)
@@ -159,7 +158,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &position);
-    *(volatile u32 *)0x04000028 = (64 - position.x) << 8;
+    REG_BG2X = (64 - position.x) << 8;
     for (i = 0, spark = work->particles; i != 16; i++) {
         spread = (Random16() & 0x1ff) + 128;
         angle = Random16() & 0xffff;

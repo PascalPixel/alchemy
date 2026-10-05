@@ -9,7 +9,7 @@
 #include "BATTLE_PRESENTATION.H"
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value);
-s32 Object_Destroy(s32);
+s32 ObjectDispatch_ReleaseFar(s32);
 
 void Render_ResetTransformState(void);
 s32 Graphics_PrepareTransferAndRun(void *, void *);
@@ -101,7 +101,7 @@ void *BattleMotion_DestroyAllSlotObjects(void)
         }
         slot = GetBattleObjectSlot(no);
         if ((slot != NULL) && (slot->active != 0)) {
-            Object_Destroy((s32)slot->object);
+            ObjectDispatch_ReleaseFar((s32)slot->object);
             slot->object = NULL;
             slot->active = 0;
         }

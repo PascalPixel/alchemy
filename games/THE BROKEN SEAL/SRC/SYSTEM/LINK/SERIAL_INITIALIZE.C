@@ -1,5 +1,6 @@
 #include "SERIAL_RUNTIME.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 /* Starts the serial runtime: installs the serial and timer interrupt
  * handlers, resets the SIO registers into multiplayer mode, clears the
@@ -36,7 +37,7 @@ void SerialRuntime_Initialize(void)
     state = &gSerialRuntime;
     REG_IME = 1;
     zero = 0;
-    Dma_Set(&zero, state, 0x85000058, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, state, 0x85000058, REG_DMA3);
     state->send_index = -1;
     state->send_buffer[0] = (u16 *)(state->storage + 0);
     state->send_buffer[1] = (u16 *)(state->storage + 32);

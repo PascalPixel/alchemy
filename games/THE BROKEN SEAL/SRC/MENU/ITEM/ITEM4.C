@@ -23,7 +23,7 @@ extern u8 Data_080aeb4c[];
 extern u8 MsgItemPlainName;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
-void UiText_DrawMessageAt(s32, s32, s32, s32);
+void UiText_DrawResourceFar(s32, s32, s32, s32);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 extern u8 MsgItemName;
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
@@ -119,7 +119,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state)
 #if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->info_window, 0, 0);
 #else
-        UiText_DrawMessageAt(masked, (s32)menu->info_window, 0, 0);
+        UiText_DrawResourceFar(masked, (s32)menu->info_window, 0, 0);
 #endif
     }
 

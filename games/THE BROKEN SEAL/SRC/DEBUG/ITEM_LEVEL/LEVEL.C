@@ -196,9 +196,9 @@ void ItemLevel_SelectItem(void)
     details = UiWindow_Create(0, 8, 13, 10, 2);
 #endif
     Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Engine_TaskWait(1);
     for (;;) {
         if (redraw) {
@@ -321,9 +321,9 @@ void ItemLevel_SelectAbility(void)
     redraw = 1;
     window = UiWindow_Create(0, 0, 30, 12, 2);
     Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Engine_TaskWait(1);
     for (;;) {
         if (redraw) {

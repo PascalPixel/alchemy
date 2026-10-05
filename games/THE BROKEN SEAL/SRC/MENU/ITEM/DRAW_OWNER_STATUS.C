@@ -11,9 +11,9 @@ extern u8 MsgClassName;
 
 /* Fixed labels drawn with the panel. */
 extern const u8 Menu_LvString[];
-extern const u8 Data_080af230[];
-extern const u8 Data_080af234[];
-extern const u8 Data_080af238[];
+extern const u8 Menu_SlashString[];
+extern const u8 Menu_HpString[];
+extern const u8 Menu_PpString[];
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -59,21 +59,21 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
     UiWork_SetParamNibbleFar(15);
     UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
 #if EDITION_INTERNATIONAL
-    UiText_DrawStringAtOffsetFar(Data_080af234, window, 40, 16);
+    UiText_DrawStringAtOffsetFar(Menu_HpString, window, 40, 16);
 #else
-    UiText_DrawStringInWindowFar(Data_080af234, window, 40, 16);
+    UiText_DrawStringInWindowFar(Menu_HpString, window, 40, 16);
 #endif
     UiText_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
     UiText_DrawNumberInWindowFar(unit->max_hp, 4, window, 112, 16);
-    UiText_DrawStringInWindowFar(Data_080af230, window, 104, 16);
+    UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 16);
 #if EDITION_INTERNATIONAL
-    UiText_DrawStringAtOffsetFar(Data_080af238, window, 40, 24);
+    UiText_DrawStringAtOffsetFar(Menu_PpString, window, 40, 24);
 #else
-    UiText_DrawStringInWindowFar(Data_080af238, window, 40, 24);
+    UiText_DrawStringInWindowFar(Menu_PpString, window, 40, 24);
 #endif
     UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
     UiText_DrawNumberInWindowFar(unit->max_pp, 4, window, 112, 24);
-    UiText_DrawStringInWindowFar(Data_080af230, window, 104, 24);
+    UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 24);
     UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 40, 8);
     UiText_DrawNumberInWindowFar(unit->experience, 7, window, 88, 8);
     if (flags == 0) {

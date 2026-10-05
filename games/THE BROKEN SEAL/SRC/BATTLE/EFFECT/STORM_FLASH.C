@@ -8,6 +8,7 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "MAP_SCROLL.H"
 #include "FXBLEND.H"
+#include "IO_REG.H"
 
 s32 GameFlag_TestFar(s32);
 void Audio_PlayCue(s32);
@@ -132,7 +133,7 @@ void BattleFx_UpdateStormFlash(void)
     case 5:
     case 10:
         BattleFx_ApplyColorToTargetBuffer(work, 1);
-        Dma_Set(work->delta, target->delta, 0x840002a0, (volatile u32 *)0x040000d4);
+        Dma_Set(work->delta, target->delta, 0x840002a0, REG_DMA3);
         target->duration = 12;
         target->step = 0;
         break;
@@ -171,7 +172,7 @@ void Unnamed_08094ac8(void)
     particle = work->particles;
     fill = (u32)words;
     Dma_Set((const void *)&fill, work, 0x85000000 | (sizeof(struct GroundParticleWork) / 4),
-        (volatile u32 *)0x040000d4);
+        REG_DMA3);
     words = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(FieldFx_GroundParticleTiles, words);
     work->entry = Resource_FindFreeEntry();

@@ -76,10 +76,10 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         WaitFrames(1);
         break;
     case 1:
-        BattleFx_ApplyColorToSourceBuffer(0x8000, *(u16 *)0x05000000);
+        BattleFx_ApplyColorToSourceBuffer(0x8000, PLTT_BACKDROP);
         BattleFx_StartBufferInterpolation(frames);
         WaitFrames(1);
-        QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+        QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
         BattleFx_SetPrimaryBufferValue(0);
         return;
     case 2: {
@@ -91,7 +91,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateScanlineTable), 0xc80);
         Scheduler_AddOrUpdateCallback((s32)(BattleFx_StartWindowHBlankDma), 0x480);
         WaitFrames(1);
-        QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+        QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
         state->start = 0;
         state->end = 32;
         state->duration = frames;
@@ -105,7 +105,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         DisplayTransition_FillTilemapAndSolidTile(15);
         WaitFrames(1);
         Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
-        QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+        QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
         state->start = 0;
         state->end = 32;
         state->duration = frames;
@@ -139,7 +139,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         break;
     }
     }
-    QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+    QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
 }
 
 /* Ends a screen transition. The high byte of mode picks the effect (darken

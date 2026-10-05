@@ -49,12 +49,12 @@ void UiWindow_FillFromScene(void *dst)
     if (scene == 0) {
         volatile u16 fill = 0xe0e0;
 
-        Dma_Set((void *)&fill, dst, 0x810000a0, (volatile u32 *)0x040000d4);
+        Dma_Set((void *)&fill, dst, 0x810000a0, REG_DMA3);
     } else {
         u32 size = (u32)Tile_BuildMetatilesCodeSize;
         RamRoutine code = (RamRoutine)Runtime_BumpAllocate(size);
 
-        Dma_Set((void *)Tile_BuildMetatiles, code, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+        Dma_Set((void *)Tile_BuildMetatiles, code, 0x84000000 | (size >> 2), REG_DMA3);
         code(dst, scene);
         Runtime_BumpFree(code);
     }

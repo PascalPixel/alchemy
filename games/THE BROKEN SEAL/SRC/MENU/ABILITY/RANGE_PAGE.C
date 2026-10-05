@@ -40,7 +40,7 @@ extern u8 MsgCanBeUsed;
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 struct BattleAction *BattleAction_Get(s32 action);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
@@ -73,7 +73,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 #if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar(
 #else
-        UiText_DrawMessageAt(
+        UiText_DrawResourceFar(
 #endif
             (menu->psynergies[state->selected_index] & ACTION_ID_MASK)
                 + (s32)&MsgAbilityDescription,

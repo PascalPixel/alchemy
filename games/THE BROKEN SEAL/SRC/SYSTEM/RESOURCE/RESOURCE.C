@@ -6,6 +6,7 @@
 #include "SCENE.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
+#include "IO_REG.H"
 
 struct ResourceWork {
     u32 header[3];
@@ -14,7 +15,7 @@ struct ResourceWork {
 
 extern struct ResourceWork Data_03007804;
 extern void *Resource_DirectoryTable[];
-extern const u8 Func_08002d5c[];
+extern const u8 Resource_PatchThumbBranch[];
 
 /* The bl-pair fixer (PATCH_THUMB_BRANCH.S) is ARM code that runs from a heap
    copy of itself; the copy length is a link-time symbol. */
@@ -27,7 +28,7 @@ void Resource_LoadWorkHeader(void)
 
     header = (const void *)Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
     work = &Data_03007804;
-    Dma_Set(header, work, 0x84000003, (volatile u32 *)0x040000d4);
+    Dma_Set(header, work, 0x84000003, REG_DMA3);
     work->cursor = 0;
 }
 
@@ -101,7 +102,7 @@ void Resource_LoadCode(u32 index, void *destination)
         size = (u32)Resource_PatchThumbBranchCodeSize;
     } while (0);
     routine = (void (*)(void *, s32))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Func_08002d5c, routine, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)Resource_PatchThumbBranch, routine, 0x84000000 | (size >> 2), REG_DMA3);
     routine(destination, end);
     Sys_Free(routine);
 }

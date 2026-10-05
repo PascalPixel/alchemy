@@ -10,6 +10,7 @@
 #include "RAM_BUFFER.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
+#include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
 
@@ -134,7 +135,7 @@ void BattleFx_BuildWindowEdgeTable(void)
         }
     }
     {
-        volatile u16 *channel = (volatile u16 *)0x040000b0;
+        volatile u16 *channel = REG_DMA0;
         channel[5] &= 0xc5ff;
         channel[5] &= 0x7fff;
         (void)channel[5];

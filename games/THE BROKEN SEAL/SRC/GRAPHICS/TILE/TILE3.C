@@ -36,9 +36,9 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alternate)
         palette = 0x05000100;
     }
     fill = value;
-    Dma_Set((const void *)&fill, (void *)vram, 0x85001e00, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, (void *)vram, 0x85001e00, REG_DMA3);
     fill = 0;
-    Dma_Set((const void *)&fill, (void *)palette, 0x85000040, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, (void *)palette, 0x85000040, REG_DMA3);
 }
 
 /* Load character set `resource` into the background (or, when alternate, the
@@ -74,7 +74,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
     }
     size = (u32)SentouKouka_TenkaiCodeSize;
     decoder = Runtime_AllocateHeapBlock(49, size);
-    Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), REG_DMA3);
     ((PackedDecoder)((union HeapState *)gWorkSlot)->slots[49])(data + 256, vram, fill);
     Runtime_ReleaseHeapBlock(49);
 
@@ -145,7 +145,7 @@ void DisplayScroll_StepPositionEveryFourFrames(void)
 
 extern u8 gOamCopyEnabled;
 extern u8 gCpuLoadDisplayEnabled;
-extern u8 Data_03001ac4;
+extern u8 gDebugTextEnabled;
 extern u8 gOptionMirror;
 extern const u32 DisplayScroll_SlideResources[];
 
@@ -175,7 +175,7 @@ s32 DisplayScroll_RunSlideshow(void)
 
     gOamCopyEnabled = 0;
     gCpuLoadDisplayEnabled = 0;
-    Data_03001ac4 = 0;
+    gDebugTextEnabled = 0;
     gOptionMirror = 0;
     Scheduler_ResetTaskTable();
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_StepPositionEveryFourFrames, 0x480);

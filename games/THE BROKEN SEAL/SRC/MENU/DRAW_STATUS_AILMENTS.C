@@ -8,7 +8,7 @@ extern u8 MsgNormalLabel, MsgDownLabel, MsgPoisonLabel, MsgVenomLabel, MsgCurseL
 
 extern struct CharacterMenuState *gMenuWork;
 extern const u8 Menu_LvString[];
-extern const u8 Data_080af230[];
+extern const u8 Menu_SlashString[];
 
 s32 Party_SumDjinnCountsFar(s32 side);
 struct BattleUnit *Owner_GetStateFar(s32 unit);
@@ -112,7 +112,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
         if ((mode & 0xff) == 1) {
             if (has_djinn) {
                 UiNumber_DrawAt(status->djinn_active_counts[i], 1, window, i * 32 + 104, row * 8 + 8);
-                UiText_DrawStringInWindowFar(Data_080af230, window, i * 32 + 112, row * 8 + 8);
+                UiText_DrawStringInWindowFar(Menu_SlashString, window, i * 32 + 112, row * 8 + 8);
             }
             UiNumber_DrawAt(Owner_GetResistanceValueFar(unit, i), 2, window, i * 32 + 112, row * 8 + 16);
             UiNumber_DrawAt(status->elements[i].power, 3, window, i * 32 + 104, row * 8 + 24);

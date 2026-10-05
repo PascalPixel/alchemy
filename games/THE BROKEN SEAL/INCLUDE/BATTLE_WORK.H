@@ -100,8 +100,13 @@ struct BattleSession {
     u16 palette[128];               /* 0x544, BG palette 6 at full level */
     s32 brightness;                 /* 0x644 */
     u16 background;                 /* 0x648 */
-    u8 unknown_64a[0x0a];
-    struct BattlePlan plan;         /* 0x654 */
+    u8 unknown_64a[4];
+    /* Brightens the highlighted actors' sprites while highlight_mode is set;
+       highlight_step walks the brightness table. */
+    u16 highlight_step;             /* 0x64e */
+    u16 highlight_mode;             /* 0x650 */
+    u8 unknown_652[2];
+    struct BattlePlan plan;        /* 0x654 */
     struct BattleEventState events; /* 0x6b8 */
 };
 

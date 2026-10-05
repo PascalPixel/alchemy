@@ -77,12 +77,6 @@ UiWindow_ClearInteriorTilesFar:
 	.thumb_func
 UiWindow_DrawDividerLineFar:
 	overlay_veneer UiWindow_DrawDividerLine
-	.global Func_08015078
-	.thumb_func
-Func_08015078:
-	.global UiText_DrawMessageAt
-	.thumb_func
-UiText_DrawMessageAt:
 	.global UiText_DrawResourceFar
 	.thumb_func
 UiText_DrawResourceFar:
@@ -160,9 +154,6 @@ Func_080150f8:
 	.thumb_func
 UiWork_FinalizeEntityMatchingLocalizedIdFar:
 	overlay_veneer UiWork_FinalizeEntityMatchingLocalizedId
-	.global Func_08015108
-	.thumb_func
-Func_08015108:
 	.global UiText_GetResourceDimensionsFar
 	.thumb_func
 UiText_GetResourceDimensionsFar:
@@ -341,9 +332,6 @@ Func_08015298:
 Resource_LoadByModeIntoSlotFar:
 	overlay_veneer Resource_LoadByModeIntoSlot
 	overlay_veneer Debug_SelectAbilityPair
-	.global Func_080152a8
-	.thumb_func
-Func_080152a8:
 	.global UiWindow_MarkVisibleTileAttributesFar
 	.thumb_func
 UiWindow_MarkVisibleTileAttributesFar:
@@ -426,9 +414,9 @@ Func_08015370:
 Menu_RunWorkspaceResultLoopFar:
 	overlay_veneer Menu_RunWorkspaceResultLoop
 	overlay_veneer UiWindow_FillScreenBlockRect
-	.global Func_08015380
+	.global Menu_SelectEntry11To14Far
 	.thumb_func
-Func_08015380:
+Menu_SelectEntry11To14Far:
 	overlay_veneer Menu_SelectEntry11To14
 	.global Menu_SelectEntry19To1cFar
 	.thumb_func
@@ -456,9 +444,6 @@ PartyTalkMenu_ChooseFar:
 Menu_RunConfirmSelectionAtFar:
 Func_080153b0:
 	overlay_veneer Menu_RunConfirmSelectionAt
-	.global Func_080153b8
-	.thumb_func
-Func_080153b8:
 	.global Resource_LoadFixedBlockBIntoFreeSlotFar
 	.thumb_func
 Resource_LoadFixedBlockBIntoFreeSlotFar:
@@ -471,20 +456,14 @@ UiText_MeasureResourceEntriesFar:
 	.thumb_func
 UiWindow_SetPaletteBitRectFar:
 	overlay_veneer Ui_SetRectHighlight
-	.global Func_080153d0
+	.global Ability_LoadGlyphFar
 	.thumb_func
-Func_080153d0:
+Ability_LoadGlyphFar:
 	overlay_veneer Ability_LoadGlyph
-	.global Func_080153d8
-	.thumb_func
-Func_080153d8:
 	.global Graphics_ExpandVramTilesByColorTableFar
 	.thumb_func
 Graphics_ExpandVramTilesByColorTableFar:
 	overlay_veneer Graphics_ExpandVramTilesByColorTable
-	.global Func_080153e0
-	.thumb_func
-Func_080153e0:
 	.global UiWork_SetAltFlagAndClearTableFar
 	.thumb_func
 UiWork_SetAltFlagAndClearTableFar:

@@ -4,6 +4,7 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
+#include "IO_REG.H"
 
 /* The battle-effect display transition state: the per-scanline window
    tables fill the block and the control fields follow them. */
@@ -18,7 +19,7 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode)
     volatile u32 zero;
 
     zero = 0;
-    Dma_Set((const void *)&zero, state, 0x85000000 | (sizeof(*state) / 4), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
     state->mode = mode;
     state->value = 0;
     state->mask = 0x3f3f;
@@ -40,6 +41,6 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void)
 
     state = Runtime_AllocateBlock(31, sizeof(*state));
     clear_value = 0;
-    Dma_Set(&clear_value, state, 0x85000000 | (sizeof(*state) / 4), (volatile u32 *)0x040000d4);
+    Dma_Set(&clear_value, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
     return state;
 }

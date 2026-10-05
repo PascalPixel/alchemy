@@ -6,6 +6,7 @@
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "WORKSPACE_OPTIONS.H"
+#include "IO_REG.H"
 
 /* Once the quest can no longer be saved, the workspace menu keeps only its
    settings row, the third icon frame. The debug build adds three rows. */
@@ -48,7 +49,7 @@ void Menu_InitializeSelectedWorkspace(void)
     volatile u32 zero;
     work = Runtime_AllocateBlock(20, 0x628);
     zero = 0;
-    Dma_Set(&zero, work, 0x8500018a, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x8500018a, REG_DMA3);
     Scheduler_AddOrUpdateCallback((s32)(Menu_RunSelectedWorkspaceEntry), 3200);
 }
 

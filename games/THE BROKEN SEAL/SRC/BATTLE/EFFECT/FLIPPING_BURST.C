@@ -220,7 +220,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *efx)
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
-    *(s32 *)0x04000028 = (64 - position.x) << 8;
+    REG_BG2X = (64 - position.x) << 8;
     for (i = 0; i != 64; i++) {
         s32 column;
 

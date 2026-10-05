@@ -3,6 +3,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "SCRIPT_MOTION.H"
 #include "FIELDOBJ.H"
+#include "FRAME.H"
 /*
  * Battle effect 4: a ring of twelve screen-space particles, then a growing
  * burst object and three copies launched at the target, which share one
@@ -53,58 +54,11 @@ static __inline__ void RaisedPosition(struct FieldActor *object, struct BurstPos
     pos->z = object->z.fixed;
 }
 
-extern u8 Data_03001e40[];
-s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
-
-/* battle/effects/orbiting_particles/update_main.c */
-struct OrbitingParticle;
-
-/* battle/effects/orbiting_particles/update_fade.c */
-
-/* battle/effects/orbiting_particles/update_orbit_left.c */
-struct OrbitingParticleVector {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-void BattleFx_UpdateOrbitingParticleFade(void *object);
-
-/* battle/effects/orbiting_particles/start.c */
-struct OrbitingParticleChild {
-    u8 reserved_00[35];
-    u8 flags;
-};
-
 void BattleFx_RunOrbitingParticles(void);
-
-/* battle/effects/orbiting_particles/run.c */
-struct OrbitingParticle {
-    u8 reserved_00[0x06];
-    u16 rotation;
-    struct OrbitingParticleVector position;
-    u8 reserved_14[0x04];
-    s32 scale_x;
-    s32 scale_y;
-    u8 reserved_20[0x18];
-    struct OrbitingParticleVector orbit_center;
-    u8 reserved_44[0x20];
-    u16 lifetime;
-    u16 orbit_angle;
-    u8 reserved_68[0x04];
-    void (*update)(struct OrbitingParticle *);
-};
-
-void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle);
-void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle);
-void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle);
-void Audio_PlayCue(s32 sound_id);
-
-struct Triple08099340 {
-    s32 x;
-    s32 y;
-    s32 z;
-};
+void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle);
+void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle);
+void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle);
+void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle);
 
 struct SparkObject {
     u8 unknown_00[8];
@@ -128,16 +82,8 @@ struct SparkObject {
     void (*update)(struct SparkObject *);
 };
 
-struct SparkAnchor {
-    u8 unknown_00[4];
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
-extern u32 gFrameCount;
-
-void BattleFx_SwayParticle(u8 *object);
+void BattleFx_SwayParticle(struct SparkObject *object);
 
 /* Twelve screen-space particles precede the main burst and its three
    copies. All copies share one resource entry until their scripts finish. */
@@ -267,7 +213,7 @@ wait_script:
     }
     event = BattleFx_FindMatchingEvent(0x50000005, 4, &event_context);
     if (event != 0)
-        BattleFx_RunEventAction((void *)event, Data_02000240.object_id, event_context);
+        BattleFx_RunEventAction((void *)event, gGameState.selected_actor, event_context);
     WaitFrames(10);
     BattleFx_PrepareBufferInterpolation();
     WaitFrames(20);
@@ -275,85 +221,77 @@ wait_script:
         Resource_ResetEntry(resource_id);
 }
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
+/* Alternates the main object's pose on even frames. */
+void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle)
 {
-    s32 battle_mode = *(s32 *)((u32)&Data_03001e40) & 7;
-    if (battle_mode == 0) {
+    s32 frame = gFrameCount & 7;
+    if (frame == 0) {
         Animation_ApplyChildValuesFar(particle, 2);
-    } else if (battle_mode == 2) {
+    } else if (frame == 2) {
         Animation_ApplyChildValuesFar(particle, 0);
     }
 }
 
-void BattleFx_UpdateOrbitingParticleFade(void *object)
+/* Shrinks the particle until it is nearly gone, then ends it. */
+void BattleFx_UpdateOrbitingParticleFade(struct FieldActor *particle)
 {
-  s32 primary_fade;
-  u8 *object_bytes;
-  if (object != ((void *) 0))
-  {
-    primary_fade = *((s32 *)(((u8 *)object) + 0x18));
-    primary_fade = primary_fade + 0xFFFFF000;
-    *((s32 *)((object_bytes = (u8 *)object) + 0x1C)) = (s32)((*((s32 *)(object_bytes + 0x1C))) + 0xFFFFF000);
-    *((s32 *)(object_bytes + 0x18)) = primary_fade;
-    if (primary_fade <= 0x1000)
-    {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
+    s32 scale;
+
+    if (particle != NULL) {
+        scale = particle->scale_x - 0x1000;
+        particle->scale_y -= 0x1000;
+        particle->scale_x = scale;
+        if (scale <= 0x1000)
+            ObjectDispatch_InitializeFar((struct DispatchObject *)particle, (u32)BattleFx_CommonParticleScript);
     }
-  }
 }
 
-void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
+/* Spirals the particle in to its orbit centre, turning one way. */
+void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle)
 {
-    u8 *arg = (u8 *)particle;
-    struct OrbitingParticleVector local;
+    struct BurstPosition pos;
     s16 life;
-    s32 cnt;
+    s32 count;
 
-    if (arg != 0) {
-        cnt = *(u16 *)(arg + 100) - 1;
-        *(u16 *)(arg + 100) = cnt;
-        life = (s16)cnt;
+    if (particle != NULL) {
+        count = particle->unknown_64 - 1;
+        particle->unknown_64 = count;
+        life = count;
         if (life != 0) {
-            local.x = *(s32 *)(arg + 56);
-            local.y = *(s32 *)(arg + 60);
-            local.z = *(s32 *)(arg + 64);
-            Vector_AddPolarOffset(life << 17,
-                          *(s16 *)(arg + 102) + (life << 11),
-                          &local);
-            *(s32 *)(arg + 8) = local.x;
-            *(s32 *)(arg + 12) = local.y;
-            *(s32 *)(arg + 16) = local.z;
+            pos.x = particle->target_x;
+            pos.y = particle->target_y;
+            pos.z = particle->target_z;
+            Vector_AddPolarOffset(life << 17, (s16)particle->unknown_66 + (life << 11), &pos);
+            particle->x.fixed = pos.x;
+            particle->y.fixed = pos.y;
+            particle->z.fixed = pos.z;
         } else {
-            *(s32 *)(arg + 108) = (s32)BattleFx_UpdateOrbitingParticleFade;
+            particle->update = (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleFade;
         }
     }
 }
 
-/* battle/effects/orbiting_particles/update_orbit_right.c */
-void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
+/* Spirals the particle in to its orbit centre, turning the other way. */
+void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle)
 {
-    u8 *arg = (u8 *)particle;
-    struct OrbitingParticleVector local;
-    s16 battle_value;
-    s32 raw_value;
+    struct BurstPosition pos;
+    s16 life;
+    s32 count;
 
-    if (arg != 0) {
-        raw_value = *(u16 *)(arg + 100) - 1;
-        *(u16 *)(arg + 100) = raw_value;
-        battle_value = (s16)raw_value;
-        if (battle_value != 0) {
-            local.x = *(s32 *)(arg + 56);
-            local.y = *(s32 *)(arg + 60);
-            local.z = *(s32 *)(arg + 64);
-            Vector_AddPolarOffset(battle_value << 17,
-                          *(s16 *)(arg + 102) - (battle_value << 11),
-                          &local);
-            *(s32 *)(arg + 8) = local.x;
-            *(s32 *)(arg + 12) = local.y;
-            *(s32 *)(arg + 16) = local.z;
+    if (particle != NULL) {
+        count = particle->unknown_64 - 1;
+        particle->unknown_64 = count;
+        life = count;
+        if (life != 0) {
+            pos.x = particle->target_x;
+            pos.y = particle->target_y;
+            pos.z = particle->target_z;
+            Vector_AddPolarOffset(life << 17, (s16)particle->unknown_66 - (life << 11), &pos);
+            particle->x.fixed = pos.x;
+            particle->y.fixed = pos.y;
+            particle->z.fixed = pos.z;
         } else {
-            *(s32 *)(arg + 108) = (s32)BattleFx_UpdateOrbitingParticleFade;
+            particle->update = (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleFade;
         }
     }
 }
@@ -361,13 +299,13 @@ void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
 void BattleFx_StartOrbitingParticles(void)
 {
     struct BattleFxScene *state = gEffectWork;
-    struct OrbitingParticleChild *child = state->child;
+    struct FieldActor *child = state->child;
 
     if (child != 0) {
         if (state->child_mode != 0) {
             state->enabled = 1;
         }
-        child->flags |= 2;
+        child->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         BattleFx_RunOrbitingParticles();
     }
 }
@@ -375,11 +313,11 @@ void BattleFx_StartOrbitingParticles(void)
 void BattleFx_RunOrbitingParticles(void)
 {
     s32 resource_size;
-    struct OrbitingParticleVector position;
-    struct OrbitingParticleVector *p;
+    struct BurstPosition position;
+    struct BurstPosition *p;
     struct BattleFxScene *scene;
-    struct OrbitingParticle *main_particle;
-    struct OrbitingParticle *particle;
+    struct FieldActor *main_particle;
+    struct FieldActor *particle;
     void *resource;
     s32 entry_count;
 
@@ -400,13 +338,13 @@ void BattleFx_RunOrbitingParticles(void)
             particle->scale_y = initial_scale;
             particle->scale_x = initial_scale;
             if ((Random16() & 1) != 0)
-                particle->update = BattleFx_UpdateOrbitingParticleLeft;
+                particle->update = (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleLeft;
             else
-                particle->update = BattleFx_UpdateOrbitingParticleRight;
+                particle->update = (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleRight;
 
-            particle->rotation = Random16();
-            particle->lifetime = 60;
-            particle->orbit_angle = Random16();
+            particle->facing = Random16();
+            particle->unknown_64 = 60;
+            particle->unknown_66 = Random16();
             Animation_ApplyChildValuesFar(particle, 9);
 
             p->x = scene->x;
@@ -414,9 +352,9 @@ void BattleFx_RunOrbitingParticles(void)
             p->z = scene->z;
             magnitude = (Random16() << 2) + 0x20000;
             Vector_AddPolarOffset(magnitude, Random16(), p);
-            particle->orbit_center.x = p->x;
-            particle->orbit_center.y = p->y;
-            particle->orbit_center.z = p->z;
+            particle->target_x = p->x;
+            particle->target_y = p->y;
+            particle->target_z = p->z;
         }
 
         WaitFrames(3);
@@ -444,7 +382,7 @@ void BattleFx_RunOrbitingParticles(void)
             Object_SetMode(main_particle, 2);
         }
 
-        main_particle->update = BattleFx_UpdateOrbitingParticleMain;
+        main_particle->update = (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleMain;
         resource = BattleFx_FindMatchingEvent(0x50000005, 6, &resource_size);
         if (resource != NULL) {
             BattleFx_RunEventAction(
@@ -457,42 +395,40 @@ void BattleFx_RunOrbitingParticles(void)
 
     BattleFx_PrepareBufferInterpolation();
 }
-
 /* Sways the object four units either side of its anchor x, stepping a
    128-step phase each frame. */
-void BattleFx_SwayParticle(u8 *object)
+void BattleFx_SwayParticle(struct SparkObject *object)
 {
     s16 *phase;
 
-    phase = (s16 *)(object + 100);
-    *(s32 *)(object + 8) = *(s32 *)(object + 56) + Iwram_MulQ16(0x40000, Trig_Sin(*phase << 9));
+    phase = &object->phase;
+    object->x = object->anchor_x + Iwram_MulQ16(0x40000, Trig_Sin(*phase << 9));
     (*phase)++;
     *phase = (*phase + 128) % 128;
 }
 
-void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
+/* Spirals the object in over the effect's centre until its life runs out. */
+void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *object)
 {
-    s32 *global = gEffectWork;
-    struct Triple08099340 local;
-    s16 value;
-    s32 raw;
+    struct BattleFxScene *scene = gEffectWork;
+    struct BurstPosition pos;
+    s16 life;
+    s32 count;
 
-    if (arg != 0) {
-        raw = *(u16 *)(arg + 100) - 1;
-        *(u16 *)(arg + 100) = raw;
-        value = (s16)raw;
-        if (value != 0) {
-            local.x = global[1];
-            local.y = global[2] + 0xA0000;
-            local.z = global[3];
-            Vector_AddPolarOffset(value << 16,
-                          *(s16 *)(arg + 102) + (value << 11),
-                          &local);
-            *(s32 *)(arg + 8) = local.x;
-            *(s32 *)(arg + 12) = local.y;
-            *(s32 *)(arg + 16) = local.z;
+    if (object != NULL) {
+        count = object->unknown_64 - 1;
+        object->unknown_64 = count;
+        life = count;
+        if (life != 0) {
+            pos.x = scene->x;
+            pos.y = scene->y + 0xa0000;
+            pos.z = scene->z;
+            Vector_AddPolarOffset(life << 16, (s16)object->unknown_66 + (life << 11), &pos);
+            object->x.fixed = pos.x;
+            object->y.fixed = pos.y;
+            object->z.fixed = pos.z;
         } else {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)arg, (u32)BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
         }
     }
 }
@@ -501,17 +437,17 @@ void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
    swaying spark at a random offset around it. */
 void BattleFx_RunSparkEmitter(struct SparkObject *object)
 {
-    struct SparkAnchor *anchor;
+    struct BattleFxScene *scene;
     s16 *phase;
     struct SparkObject *spark;
     s32 position[3];
 
     phase = &object->phase;
-    anchor = gEffectWork;
+    scene = gEffectWork;
     if (*phase != -1) {
-        object->x = anchor->x + Iwram_MulQ16(0x60000, Trig_Sin(*phase << 10));
-        object->y = anchor->y + 0x100000;
-        object->z = anchor->z;
+        object->x = scene->x + Iwram_MulQ16(0x60000, Trig_Sin(*phase << 10));
+        object->y = scene->y + 0x100000;
+        object->z = scene->z;
         (*phase)++;
         *phase = (*phase + 64) % 64;
     }

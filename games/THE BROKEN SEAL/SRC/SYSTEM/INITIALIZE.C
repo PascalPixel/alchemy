@@ -7,7 +7,7 @@
 
 void System_VBlankHandler(void);
 
-extern u8 Data_03001ac4;
+extern u8 gDebugTextEnabled;
 extern u8 gDebugMode;
 extern u8 gCpuLoadDisplayEnabled;
 extern s32 gCartridgeResetMarker;
@@ -38,7 +38,7 @@ void System_Initialize(void)
     volatile u32 zero;
 
     {
-        volatile u16 *dma0 = (volatile u16 *)0x040000b0;
+        volatile u16 *dma0 = REG_DMA0;
 
         dma0[5] &= 0xc5ff;
         dma0[5] &= 0x7fff;
@@ -47,12 +47,12 @@ void System_Initialize(void)
     /* FAKEMATCH: the do-while wraps pin the register writes in place. */
     do { u32 value = WAITCNT_GAME; REG_WAITCNT = value; } while (0);
     zero = 0;
-    Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, REG_DMA3);
     Runtime_InitializeHeap();
     Runtime_InstallIwramAndIrqs();
     /* Startup clears the count and its adjacent padding in one word. */
     *(u32 *)&gIoWriteQueue.count = 0;
-    Data_03001ac4 = 0;
+    gDebugTextEnabled = 0;
     gDebugMode = 0;
     gCpuLoadDisplayEnabled = 0;
     Resource_LoadWorkHeader();

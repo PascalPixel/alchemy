@@ -27,7 +27,7 @@ void Bg0_ClearTilemap(void)
     volatile u32 fill;
 
     fill = 0xf000f000;
-    Dma_Set((const void *)&fill, (void *)0x06002000, 0x85000140, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&fill, (void *)0x06002000, 0x85000140, REG_DMA3);
     /* FAKEMATCH: the cursor store sits in a do-while(0) to hold the BG0CNT constant load order */
     do {
         gDebugTextCursor = (u16 *)0x06002000;
@@ -45,9 +45,9 @@ void Bg0_ClearTilemap(void)
 void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     /* FAKEMATCH: the two do-while blocks keep the value-before-address
        order of the palette stores */
     do {
@@ -81,19 +81,19 @@ void Ui_LoadWindowGraphics(void)
         *pal = color;
     } while (0);
     Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)
 {
     union HeapState *work = (union HeapState *)gWorkSlot;
     volatile u32 zero = 0;
-    Dma_Set(&zero, work, 0x85000040, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x85000040, REG_DMA3);
     work->heap.next_iwram = gIwramHeap;
     work->heap.next_ewram = gEwramHeap;
 }

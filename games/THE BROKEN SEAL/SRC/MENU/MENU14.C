@@ -6,6 +6,7 @@
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 void ShopCursor_AdvanceFar(void *);
 void ShopCursor_MoveTowardTargetFar(void *);
@@ -74,7 +75,7 @@ void OptionMenu_InitializeWork(void)
 
     work = (struct WorkspaceWork *)Runtime_AllocateBlock(20, 0x628);
     zero = 0;
-    Dma_Set((const void *)&zero, work, 0x8500018a, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
     work->option[0] = gGameState.palette_glow[0];
     work->option_count[0] = 24;
     work->option[1] = gGameState.palette_glow[1];

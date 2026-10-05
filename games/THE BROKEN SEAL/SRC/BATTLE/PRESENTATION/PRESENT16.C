@@ -92,9 +92,9 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
         for (pos = count - 1; pos > 0; pos--) {
             if ((s16)entries[pos].priority > (s16)entries[pos - 1].priority) {
-                Dma_Set(&entries[pos], &swap, 0x84000004, (volatile u32 *)0x040000d4);
-                Dma_Set(&entries[pos - 1], &entries[pos], 0x84000004, (volatile u32 *)0x040000d4);
-                Dma_Set(&swap, &entries[pos - 1], 0x84000004, (volatile u32 *)0x040000d4);
+                Dma_Set(&entries[pos], &swap, 0x84000004, REG_DMA3);
+                Dma_Set(&entries[pos - 1], &entries[pos], 0x84000004, REG_DMA3);
+                Dma_Set(&swap, &entries[pos - 1], 0x84000004, REG_DMA3);
                 swaps++;
             }
         }

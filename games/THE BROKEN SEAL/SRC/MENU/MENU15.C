@@ -16,9 +16,9 @@ extern const u8 WorkspaceOptions_SliderTiles[];
 extern const u16 WorkspaceOptions_SliderPalette[];
 extern u8 MsgWindowColorLabel;
 extern u8 MsgMessageSpeedLabel;
-extern s8 Data_080367c9[];
-extern s8 Data_080367cc[];
-extern s8 Data_080367ce[];
+extern s8 OptionMenu_SpeedFrames[];
+extern s8 OptionMenu_SpeechFrames[];
+extern s8 OptionMenu_SleepFrames[];
 extern u8 MsgSpeechLabel[];
 extern u8 MsgAutoSleepLabel[];
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
@@ -26,9 +26,9 @@ void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
 struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
-void Func_080b0038(void *object, s32 x, s32 y);
+void ShopCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
@@ -36,8 +36,8 @@ extern u8 MsgMessageSpeedSetting;
 extern u8 MsgSpeechSetting;
 extern u8 MsgAutoSleepSetting;
 extern u8 MsgOptionHelp;
-extern u8 Data_080367d0[];
-extern u8 Data_080367d6[];
+extern u8 OptionMenu_FirstColorPresets[];
+extern u8 OptionMenu_SecondColorPresets[];
 void OptionMenu_InitializeWork(void);
 struct RenderOutput *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
@@ -96,7 +96,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         work->cursor.output = out;
         x = win->x * 8;
         y = win->y * 8 + 12;
-        Func_080b0038(&work->cursor, x, y);
+        ShopCursor_SetPositionImmediateFar(&work->cursor, x, y);
     }
 
     x = Resource_FindFreeEntry();
@@ -126,7 +126,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         x = win->x * 8 + OPTION_SLIDER_X;
         x += work->option[0] * 60 / work->option_count[0];
         y = win->y * 8 + 4;
-        Func_080b0038(&work->marker[0], x, y);
+        ShopCursor_SetPositionImmediateFar(&work->marker[0], x, y);
     }
 
     x = Resource_FindFreeEntry();
@@ -138,19 +138,19 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         x = win->x * 8 + OPTION_SLIDER_X;
         x += work->option[1] * 60 / work->option_count[1];
         y = win->y * 8 + 20;
-        Func_080b0038(&work->marker[1], x, y);
+        ShopCursor_SetPositionImmediateFar(&work->marker[1], x, y);
     }
 
     y = 28;
-    work->frame[0][0] = RenderResource_CreateFrame(Data_080367c9[0], 0, win, OPTION_FRAME_X, y);
-    work->frame[0][1] = RenderResource_CreateFrame(Data_080367c9[1], 0, win, OPTION_FRAME_X + 24, y);
-    work->frame[0][2] = RenderResource_CreateFrame(Data_080367c9[2], 0, win, OPTION_FRAME_X + 48, y);
+    work->frame[0][0] = RenderResource_CreateFrame(OptionMenu_SpeedFrames[0], 0, win, OPTION_FRAME_X, y);
+    work->frame[0][1] = RenderResource_CreateFrame(OptionMenu_SpeedFrames[1], 0, win, OPTION_FRAME_X + 24, y);
+    work->frame[0][2] = RenderResource_CreateFrame(OptionMenu_SpeedFrames[2], 0, win, OPTION_FRAME_X + 48, y);
     y = 52;
-    work->frame[1][0] = RenderResource_CreateFrame(Data_080367cc[0], 0, win, 100, y);
-    work->frame[1][1] = RenderResource_CreateFrame(Data_080367cc[1], 0, win, 124, y);
+    work->frame[1][0] = RenderResource_CreateFrame(OptionMenu_SpeechFrames[0], 0, win, 100, y);
+    work->frame[1][1] = RenderResource_CreateFrame(OptionMenu_SpeechFrames[1], 0, win, 124, y);
     y = 76;
-    work->frame[2][0] = RenderResource_CreateFrame(Data_080367ce[0], 0, win, 100, y);
-    work->frame[2][1] = RenderResource_CreateFrame(Data_080367ce[1], 0, win, 124, y);
+    work->frame[2][0] = RenderResource_CreateFrame(OptionMenu_SleepFrames[0], 0, win, 100, y);
+    work->frame[2][1] = RenderResource_CreateFrame(OptionMenu_SleepFrames[1], 0, win, 124, y);
     return win;
 }
 
@@ -206,7 +206,7 @@ s32 Menu_RunWorkspaceOptions(void)
                 dim = 0;
                 if (i != work->option[2])
                     dim = 1;
-                RenderResource_LoadFrame(Data_080367c9[i], index, dim);
+                RenderResource_LoadFrame(OptionMenu_SpeedFrames[i], index, dim);
             }
             for (i = 0; i <= 1; i++) {
                 frame = work->frame[1][i];
@@ -216,7 +216,7 @@ s32 Menu_RunWorkspaceOptions(void)
                 dim = 0;
                 if (i != work->option[3])
                     dim = 1;
-                RenderResource_LoadFrame(Data_080367cc[i], index, dim);
+                RenderResource_LoadFrame(OptionMenu_SpeechFrames[i], index, dim);
             }
             for (i = 0; i <= 1; i++) {
                 frame = work->frame[2][i];
@@ -226,7 +226,7 @@ s32 Menu_RunWorkspaceOptions(void)
                 dim = 0;
                 if (i != work->option[4])
                     dim = 1;
-                RenderResource_LoadFrame(Data_080367ce[i], index, dim);
+                RenderResource_LoadFrame(OptionMenu_SleepFrames[i], index, dim);
             }
 
             x = icon->x * 8 + OPTION_SLIDER_X;
@@ -260,7 +260,7 @@ s32 Menu_RunWorkspaceOptions(void)
         Ui_ApplyTableOffsetToPair(pair);
         WaitFrames(1);
 
-        if (Data_03001c94 & 4) {
+        if (gKeyState & KEY_SELECT) {
             Audio_PlayCue(112);
             preset = &work->preset;
             n = *preset + 1;
@@ -270,16 +270,16 @@ s32 Menu_RunWorkspaceOptions(void)
             redraw = 1;
             if ((u32)(n << 16) > 0x50000)
                 work->preset = dim;
-            *pA = Data_080367d0[*preset];
-            *pB = Data_080367d6[*preset];
+            *pA = OptionMenu_FirstColorPresets[*preset];
+            *pB = OptionMenu_SecondColorPresets[*preset];
             continue;
         }
-        if (Data_03001c94 & 9) {
+        if (gKeyState & (KEY_A | KEY_START)) {
             result = 0;
             Audio_PlayCue(112);
             break;
         }
-        if (Data_03001c94 & 2) {
+        if (gKeyState & KEY_B) {
             result = -1;
             Audio_PlayCue(113);
             break;

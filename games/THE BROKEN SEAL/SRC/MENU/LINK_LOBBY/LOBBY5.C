@@ -13,8 +13,8 @@ extern u8 MsgLobbyChooseParameters[];
 extern u8 MsgLobbyNoParameterAsk[];
 extern u8 MsgLobbySettingsMadeRest[];
 extern u8 MsgLobbyTease[];
-extern u8 gKeyState[];
-extern u8 gKeysRepeat[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 s32 Engine_DebugCreateWindow();
 void RenderOutput_PrepareForRedraw();
 void UiText_DrawNumber();
@@ -94,19 +94,19 @@ s32 LinkLobby_RunChoicePrompt(s32 id)
             UiText_DrawNumber(choice, 3, window, 0, 0);
             shown = choice;
         }
-        if (*(volatile u32 *)gKeysRepeat & KEY_LEFT) {
+        if (gKeysRepeat & KEY_LEFT) {
             choice--;
         }
-        if (*(volatile u32 *)gKeysRepeat & KEY_RIGHT) {
+        if (gKeysRepeat & KEY_RIGHT) {
             choice++;
         }
         if (choice < 0) {
             choice = 0;
         }
-        if (*(volatile u32 *)gKeyState & KEY_A) {
+        if (gKeyState & KEY_A) {
             break;
         }
-        if (*(volatile u32 *)gKeyState & KEY_B) {
+        if (gKeyState & KEY_B) {
             choice = -1;
             break;
         }
@@ -282,13 +282,13 @@ s32 LinkLobby_TalkAlternating(s32 actor)
  * message when there is none. */
 s32 LinkLobby_ShowCountMessage(s32 id)
 {
-    u8 *gs;
+    struct GameState *gs;
 
     Engine_EventBegin();
-    gs = (u8 *)&gGameState;
-    Engine_ActorFaceActor(id, *(s32 *)(gs + 500), 0);
-    if (*(u16 *)(gs + 680) != 0) {
-        UiText_DrawQuantity(*(u16 *)(gs + 680), 5);
+    gs = &gGameState;
+    Engine_ActorFaceActor(id, gs->selected_actor, 0);
+    if (gs->link_tallies[2] != 0) {
+        UiText_DrawQuantity(gs->link_tallies[2], 5);
         Engine_EventSetMessage((s32)MsgLobbyWonNumberConsecutive);
     } else {
         Engine_EventSetMessage((s32)MsgLobbyCantWaitSee);

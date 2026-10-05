@@ -21,7 +21,7 @@ s32 Game_ResetForNewGameFar(s32);
 
 
 extern struct BattleUnit *gBattleOwnerStates;
-extern const u8 Data_08080ec8[];
+extern const struct EnemyDefinition Enemy_Definitions[];
 
 /* The existing byte-only multiplier prefix is used only at the stat store
    boundary below; ClassDefinition remains the full table-row owner. */
@@ -126,7 +126,7 @@ const u8 *Owner_GetRecord(s32 selector)
     if (record_index > 0xF9U) {
         record_index = 0;
     }
-    return (const u8 *)&((const struct EnemyDefinition *)Data_08080ec8)[record_index];
+    return (const u8 *)&Enemy_Definitions[record_index];
 }
 
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 direction)

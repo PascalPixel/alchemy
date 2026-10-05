@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFX.H"
+#include "IO_REG.H"
 
 /*
  * Builds one rectangle blitter out of the instruction templates of
@@ -18,7 +19,7 @@
  * be sized, and the second writes them.
  */
 
-#define DMA3_REGISTERS ((volatile u32 *)0x040000d4)
+#define DMA3_REGISTERS (REG_DMA3)
 /* Enable, 32-bit units, this many of them. */
 #define DMA_COPY_WORDS(n) (0x84000000 | (n))
 

@@ -8,6 +8,7 @@
 #include "DMA.H"
 #include "RESOURCE.H"
 #include "SHOP.H"
+#include "IO_REG.H"
 
 s32 BattleFx_GetResourceIdFar(s32);
 void UiIcon_PrepareObjectFar(void *);
@@ -36,7 +37,6 @@ void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
 extern u8 gEventWork[];
 void BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 void BattleFx_StartBufferInterpolationFar(s32);
-extern u8 Data_03001ebc[];
 
 struct SpriteAttr {
     unsigned y : 8;
@@ -227,7 +227,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
     buf = Runtime_AllocateBlock(14, 0x400);
     sprite = 0;
-    Dma_Set(Shop_PriceTiles, buf, 0x84000040, (volatile u32 *)0x040000d4);
+    Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
     Shop_CopyGlyphs(value % 10, buf, 0);
     value = value / 10;
     if (value != 0) {
@@ -264,15 +264,15 @@ void Shop_RestoreSceneTiles(s32 layer)
     u8 *map = (u8 *)scene[0];
     u8 *saved = work + 0xe00;
 
-    Dma_Set(saved, map + 0x236, 0x84000150, (volatile u32 *)0x040000d4);
-    Dma_Set(saved, work + 0x380, 0x840002a0, (volatile u32 *)0x040000d4);
+    Dma_Set(saved, map + 0x236, 0x84000150, REG_DMA3);
+    Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
     BattleFx_ApplyColorToTargetBufferFar(layer, 1);
     BattleFx_StartBufferInterpolationFar(16);
 }
 
 void Shop_InitEffect(void)
 {
-    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)((u32)&Data_03001ebc) + 0x236, 1);
+    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)gEventWork + 0x236, 1);
     BattleFx_StartBufferInterpolationFar(0x10);
 }
 

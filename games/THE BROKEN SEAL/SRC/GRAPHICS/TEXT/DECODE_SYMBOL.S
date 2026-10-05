@@ -10,8 +10,8 @@
 .syntax unified
 .text
 	.arm
-	.global Func_08015430
-Func_08015430:
+	.global Text_DecodeSymbol
+Text_DecodeSymbol:
 	push	{r5, r6}
 	ldm	r0, {r1, r2, r3}
 	ldr	ip, [pc, #300]
@@ -102,4 +102,4 @@ Func_08015430:
 	bx	lr
 	.4byte Text_MessageContexts
 	.global Text_DecodeSymbolCodeSize
-	.set Text_DecodeSymbolCodeSize, . - Func_08015430
+	.set Text_DecodeSymbolCodeSize, . - Text_DecodeSymbol

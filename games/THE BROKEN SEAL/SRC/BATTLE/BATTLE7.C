@@ -7,6 +7,7 @@
 #include "GAME_STATE.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
+#include "IO_REG.H"
 
 struct BattleCommandRuntime {
     u8 pad000[0x170]; s16 result_code; u8 pad172[0x2c]; s16 battle_mode;
@@ -100,7 +101,7 @@ struct MarkerWork {
 struct ScriptObjectRuntime *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildField26Far(struct ScriptObjectRuntime *object, s32 value);
 s32 GameFlag_TestFar(s32 flag);
-void Object_Destroy(struct ScriptObjectRuntime *object);
+void ObjectDispatch_ReleaseFar(struct ScriptObjectRuntime *object);
 void Object_SetMode(struct ScriptObjectRuntime *object, s32 mode);
 void Object_ResetMotion(struct ScriptObjectRuntime *object);
 
@@ -261,7 +262,7 @@ void Battle_PlaceMapMarkers(void)
     u32 row;
 
     fill = 0;
-    Dma_Set((void *)&fill, slot, 0x85000000 | (sizeof(struct MarkerSlot) * 10 / 4), (volatile u32 *)0x040000d4);
+    Dma_Set((void *)&fill, slot, 0x85000000 | (sizeof(struct MarkerSlot) * 10 / 4), REG_DMA3);
     if (list == NULL)
         return;
 
@@ -283,7 +284,7 @@ void Battle_PlaceMapMarkers(void)
                 ObjectDispatch_SetSingleChildField26Far(object, 0);
                 if (GameFlag_TestFar(event->condition)) {
                     if ((event->value & 0xfff00000) == 0x500000) {
-                        Object_Destroy(object);
+                        ObjectDispatch_ReleaseFar(object);
                         continue;
                     }
                     Object_SetMode(object, 2);

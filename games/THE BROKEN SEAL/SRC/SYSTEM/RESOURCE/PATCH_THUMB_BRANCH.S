@@ -7,8 +7,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.global Func_08002d5c
-Func_08002d5c:
+	.global Resource_PatchThumbBranch
+Resource_PatchThumbBranch:
 	push	{r5, r6}
 	add	r1, r1, r1
 	add	r2, r0, r1
@@ -43,4 +43,4 @@ Func_08002d5c:
 	pop	{r5, r6}
 	bx	lr
 	.global Resource_PatchThumbBranchCodeSize
-	.set Resource_PatchThumbBranchCodeSize, . - Func_08002d5c
+	.set Resource_PatchThumbBranchCodeSize, . - Resource_PatchThumbBranch

@@ -3,6 +3,7 @@
 #include "SYSTEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCROLL.H"
+#include "IO_REG.H"
 
 static __inline__ void WaitDma(volatile u32 *channel)
 {
@@ -19,8 +20,8 @@ void DisplayScroll_InitializeHBlankDma(
 
     work = Runtime_AllocateBlock(34, 0xf20);
     zero = 0;
-    Dma_Set(&zero, work, 0x850003c8, (volatile u32 *)0x040000d4);
-    WaitDma((volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x850003c8, REG_DMA3);
+    WaitDma(REG_DMA3);
     work->mode = mode;
     work->freq_x = freq_x;
     work->freq_y = freq_y;

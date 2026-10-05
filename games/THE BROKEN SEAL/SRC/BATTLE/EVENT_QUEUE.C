@@ -11,7 +11,7 @@ void BattleEv_SetRuntimeField8(void)
     gBattleDisplayWork->marked = 1;
 }
 
-void Object_Destroy(struct DispatchObject *object);
+void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
 void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
@@ -32,7 +32,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
         runtime = GetBattleObjectSlot(arg0);
-        Object_Destroy((struct DispatchObject *)runtime->object);
+        ObjectDispatch_ReleaseFar((struct DispatchObject *)runtime->object);
         runtime->object = 0;
         runtime->active = 0;
     }

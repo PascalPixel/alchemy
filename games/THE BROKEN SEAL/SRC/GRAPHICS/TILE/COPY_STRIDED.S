@@ -9,8 +9,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.global Func_0800a418
-Func_0800a418:
+	.global Tile_CopyStrided
+Tile_CopyStrided:
 	bics	r1, r1, #7
 	bicsne	r2, r2, #7
 	bxeq	lr
@@ -45,4 +45,4 @@ Func_0800a418:
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
 	.global Tile_CopyStridedCodeSize
-	.set Tile_CopyStridedCodeSize, . - Func_0800a418
+	.set Tile_CopyStridedCodeSize, . - Tile_CopyStrided

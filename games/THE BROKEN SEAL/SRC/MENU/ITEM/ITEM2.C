@@ -14,7 +14,7 @@ void UiMenu_PositionCursor(s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused1, s32 unused2);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
-void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 GameFlag_TestFar(s32 flag);
 void Audio_PlayCue(s32 cue);
 
@@ -91,7 +91,7 @@ s32 ItemMenu_ChooseCmd(void)
             (s32)menu->info_window, 0, 0);
 #else
         RenderOutput_ClearListFar((s32)menu->info_window);
-        UiText_DrawMessageAt(
+        UiText_DrawResourceFar(
             (menu->selected_items[0] & 0x1ff) + (s32)MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
 #endif

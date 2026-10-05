@@ -224,5 +224,5 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap
         *entry = slot | 0xf000;
         *mirror = slot | 0xf000;
     }
-    Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, (volatile u32 *)0x040000d4);
+    Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, REG_DMA3);
 }

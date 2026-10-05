@@ -19,27 +19,25 @@ struct ScatterPosition {
 
 extern struct BattleFxScene *gEffectWork;
 void BattleEffect_InitializeSharedScene(void);
-void *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
+struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 struct MotionObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 extern const u8 BattleFx_FragmentScript[];
-void Object_Destroy(void *object);
+void ObjectDispatch_ReleaseFar(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 
-/* battle/effects/item_break/spawn_mode_1.c */
-void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
 
 void RunBattleEffect11(void)
 {
     struct BattleFxScene *scene;
     struct MotionObject *obj;
-    void *anchors[2];
+    struct MotionObject *anchors[2];
     struct ScatterPosition position;
-    void **walk;
+    struct MotionObject **walk;
     s32 index;
     s32 magnitude;
 
@@ -59,7 +57,7 @@ void RunBattleEffect11(void)
         obj = *walk++;
         if (obj != 0)
             Motion_SetTargetPositionFromMagnitudeAngle(
-                obj, 0x180000, *(u16 *)((u8 *)obj + 6));
+                obj, 0x180000, obj->angle);
     }
 
     Object_CommitPosition(anchors[0]);
@@ -79,39 +77,39 @@ void RunBattleEffect11(void)
         }
     }
 
-    Object_Destroy(anchors[0]);
-    Object_Destroy(anchors[1]);
+    ObjectDispatch_ReleaseFar(anchors[0]);
+    ObjectDispatch_ReleaseFar(anchors[1]);
     BattleFx_PrepareBufferInterpolation();
 }
 
-void *BattleFx_SpawnItemBreakMode1(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+/* Spawns an item-break anchor, grows it to full size while it spins, then
+   turns it to face the given angle. */
+struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle)
 {
-    u8 *obj;
-    s32 v;
-    s32 zero;
+    struct MotionObject *obj;
+    s32 scale;
 
     Audio_PlayCue(SOUND_ITEM_BREAK);
-    obj = Object_Spawn(215, arg0, arg1, arg2);
+    obj = Object_Spawn(215, x, y, z);
     if (obj != NULL) {
-        *(s32 *)(obj + 0x1C) = 0x4000;
-        *(s32 *)(obj + 0x18) = 0x4000;
-        *(s32 *)(obj + 0x30) = 0x30000;
-        *(s32 *)(obj + 0x34) = 0x30000;
-        zero = 0;
-        *(s8 *)(obj + 0x5A) = zero;
+        obj->scale_y = 0x4000;
+        obj->scale_x = 0x4000;
+        obj->speed_limit = 0x30000;
+        obj->acceleration = 0x30000;
+        obj->auto_face_motion = 0;
         Object_SetMode(obj, 1);
-        v = *(s32 *)(obj + 0x18);
-        if (v < 0x10000) {
+        scale = obj->scale_x;
+        if (scale < 0x10000) {
             do {
-                v += 0x800;
-                *(s32 *)(obj + 0x1C) = v;
-                *(s32 *)(obj + 0x18) = v;
-                *(u16 *)(obj + 6) += 0x2000;
+                scale += 0x800;
+                obj->scale_y = scale;
+                obj->scale_x = scale;
+                obj->angle += 0x2000;
                 WaitFrames(1);
-                v = *(s32 *)(obj + 0x18);
-            } while (v <= 0xFFFF);
+                scale = obj->scale_x;
+            } while (scale <= 0xffff);
         }
-        *(u16 *)(obj + 6) = (u16)arg3;
+        obj->angle = angle;
     }
     return obj;
 }

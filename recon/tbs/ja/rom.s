@@ -196,8 +196,8 @@ Script_OperandHandlerTable:
 Map_LayeredScenes:
 	.incbin "baserom.gba", 0x000136e4, 0x0000191c
 	.section .rom.000155d0, "ax"
-	.global Func_080155d0
-Func_080155d0:
+	.global UiText_DrawGlyphArm
+UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000155d0, 0x0000030c
 	.global Tile_BuildMetatiles
 Tile_BuildMetatiles:
@@ -315,8 +315,8 @@ Menu_CursorObjectTiles:
 	.global Menu_AnimatedCursorTiles
 Menu_AnimatedCursorTiles:
 	.incbin "baserom.gba", 0x00034e80, 0x00002000
-	.global Data_080366f8
-Data_080366f8:
+	.global Ui_BounceScales
+Ui_BounceScales:
 	.incbin "baserom.gba", 0x00036e80, 0x00000048
 	.global Menu_CursorBobOffsets
 Menu_CursorBobOffsets:
@@ -324,20 +324,20 @@ Menu_CursorBobOffsets:
 	.global PaletteGlow_WaveTable
 PaletteGlow_WaveTable:
 	.incbin "baserom.gba", 0x00036ed8, 0x00000079
-	.global Data_080367c9
-Data_080367c9:
+	.global OptionMenu_SpeedFrames
+OptionMenu_SpeedFrames:
 	.incbin "baserom.gba", 0x00036f51, 0x00000003
-	.global Data_080367cc
-Data_080367cc:
+	.global OptionMenu_SpeechFrames
+OptionMenu_SpeechFrames:
 	.incbin "baserom.gba", 0x00036f54, 0x00000002
-	.global Data_080367ce
-Data_080367ce:
+	.global OptionMenu_SleepFrames
+OptionMenu_SleepFrames:
 	.incbin "baserom.gba", 0x00036f56, 0x00000002
-	.global Data_080367d0
-Data_080367d0:
+	.global OptionMenu_FirstColorPresets
+OptionMenu_FirstColorPresets:
 	.incbin "baserom.gba", 0x00036f58, 0x00000006
-	.global Data_080367d6
-Data_080367d6:
+	.global OptionMenu_SecondColorPresets
+OptionMenu_SecondColorPresets:
 	.incbin "baserom.gba", 0x00036f5e, 0x00000006
 	.global Menu_WorkspaceIconFrames
 Menu_WorkspaceIconFrames:
@@ -426,20 +426,20 @@ Menu_ColonString:
 	.global Menu_HexDigitsString
 Menu_HexDigitsString:
 	.incbin "baserom.gba", 0x00037b34, 0x00000014
-	.global Data_08037440
-Data_08037440:
+	.global Workspace_ItemTitle
+Workspace_ItemTitle:
 	.incbin "baserom.gba", 0x00037b48, 0x00000008
-	.global Data_08037448
-Data_08037448:
+	.global Workspace_EnergyTitle
+Workspace_EnergyTitle:
 	.incbin "baserom.gba", 0x00037b50, 0x00000008
-	.global Data_08037450
-Data_08037450:
+	.global Workspace_StatusTitle
+Workspace_StatusTitle:
 	.incbin "baserom.gba", 0x00037b58, 0x00000008
-	.global Data_08037458
-Data_08037458:
+	.global Workspace_PageLabel
+Workspace_PageLabel:
 	.incbin "baserom.gba", 0x00037b60, 0x00000008
-	.global Data_08037460
-Data_08037460:
+	.global Workspace_RangeDash
+Workspace_RangeDash:
 	.incbin "baserom.gba", 0x00037b68, 0x00000004
 	.section .rom.0006c1a0, "ax"
 	.incbin "baserom.gba", 0x0006c1a0, 0x0000000a
@@ -477,8 +477,8 @@ Item_DefinitionTable:
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
 	.incbin "baserom.gba", 0x00074e58, 0x00002070
-	.global Data_08080ec8
-Data_08080ec8:
+	.global Enemy_Definitions
+Enemy_Definitions:
 	.incbin "baserom.gba", 0x00076ec8, 0x00003624
 	.global Character_DefinitionTable
 Character_DefinitionTable:
@@ -741,8 +741,8 @@ Data_080aedcc:
 	.global Data_080af08c
 Data_080af08c:
 	.incbin "baserom.gba", 0x000a5fac, 0x00000180
-	.global Data_080af20c
-Data_080af20c:
+	.global Ui_LvString
+Ui_LvString:
 	.incbin "baserom.gba", 0x000a612c, 0x00000004
 	.global Ui_HpRowString
 Ui_HpRowString:
@@ -756,8 +756,8 @@ ItemMenu_ArrangeKeysString:
 	.global ItemMenu_EquipmentKeyString
 ItemMenu_EquipmentKeyString:
 	.incbin "baserom.gba", 0x000a6148, 0x00000004
-	.global Data_080af220
-Data_080af220:
+	.global Menu_PointString
+Menu_PointString:
 	.incbin "baserom.gba", 0x000a614c, 0x00000004
 	.global Menu_PlusSignString
 Menu_PlusSignString:
@@ -780,14 +780,14 @@ Menu_ShortcutRColonString:
 	.global Menu_LvString
 Menu_LvString:
 	.incbin "baserom.gba", 0x000a6168, 0x00000004
-	.global Data_080af230
-Data_080af230:
+	.global Menu_SlashString
+Menu_SlashString:
 	.incbin "baserom.gba", 0x000a616c, 0x00000004
-	.global Data_080af234
-Data_080af234:
+	.global Menu_HpString
+Menu_HpString:
 	.incbin "baserom.gba", 0x000a6170, 0x00000004
-	.global Data_080af238
-Data_080af238:
+	.global Menu_PpString
+Menu_PpString:
 	.incbin "baserom.gba", 0x000a6174, 0x00000004
 	.global Data_080af23c
 Data_080af23c:
@@ -986,8 +986,8 @@ Data_080c3628:
 	.global BattlePres_AdvanceArrowTiles
 BattlePres_AdvanceArrowTiles:
 	.incbin "baserom.gba", 0x000ba734, 0x00000800
-	.global Data_080c3f34
-Data_080c3f34:
+	.global Debug_PartyPresets
+Debug_PartyPresets:
 	.incbin "baserom.gba", 0x000baf34, 0x00001a04
 	.global BattlePres_ActorObjectScript
 BattlePres_ActorObjectScript:
@@ -1086,11 +1086,11 @@ RockWall_Heights:
 	.global RisingWall_UnitScale
 RisingWall_UnitScale:
 	.incbin "baserom.gba", 0x000e4ab0, 0x00000008
-	.global Data_080edab8
-Data_080edab8:
+	.global Formation_NormalScale
+Formation_NormalScale:
 	.incbin "baserom.gba", 0x000e4ab8, 0x00000008
-	.global Data_080edac0
-Data_080edac0:
+	.global Formation_SmallScale
+Formation_SmallScale:
 	.incbin "baserom.gba", 0x000e4ac0, 0x00000008
 	.global CirclingScene_UnitScale
 CirclingScene_UnitScale:
@@ -1669,23 +1669,23 @@ FireSwirl_CellBiasX:
 	.global FireSwirl_CellBiasY
 FireSwirl_CellBiasY:
 	.incbin "baserom.gba", 0x000e5e17, 0x00000007
-	.global Data_080eee1e
-Data_080eee1e:
+	.global Formation_TwelveX
+Formation_TwelveX:
 	.incbin "baserom.gba", 0x000e5e1e, 0x0000000c
-	.global Data_080eee2a
-Data_080eee2a:
+	.global Formation_TwelveZ
+Formation_TwelveZ:
 	.incbin "baserom.gba", 0x000e5e2a, 0x0000000c
-	.global Data_080eee36
-Data_080eee36:
+	.global Formation_RightEightX
+Formation_RightEightX:
 	.incbin "baserom.gba", 0x000e5e36, 0x00000008
-	.global Data_080eee3e
-Data_080eee3e:
+	.global Formation_RightEightZ
+Formation_RightEightZ:
 	.incbin "baserom.gba", 0x000e5e3e, 0x00000008
-	.global Data_080eee46
-Data_080eee46:
+	.global Formation_SmallEightX
+Formation_SmallEightX:
 	.incbin "baserom.gba", 0x000e5e46, 0x00000008
-	.global Data_080eee4e
-Data_080eee4e:
+	.global Formation_SmallEightZ
+Formation_SmallEightZ:
 	.incbin "baserom.gba", 0x000e5e4e, 0x00000008
 	.global ImpactBurst_CellWidths
 ImpactBurst_CellWidths:

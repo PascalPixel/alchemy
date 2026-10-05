@@ -11,13 +11,7 @@
 #include "RESOURCE_IDS.H"
 #include "IO_REG.H"
 
-extern u8 Data_03001e74[];
 
-struct State080c1084 {
-    u8 padding_000[0x64e];
-    u16 index;
-    u16 field_650;
-};
 
 extern s8 Data_080c5c10[];
 
@@ -25,7 +19,7 @@ void Graphics_AdvancePaletteCycle(void);
 void BattlePres_ClearAllActorRecordModes(void);
 void QueueIoWriteDelay2(u32, u32);
 void BattlePres_SetActorRecordMode(s32, s32);
-extern u8 *gBattleWork;
+#include "BATTLE_WORK.H"
 
 struct Spark {
     s32 pos[6];
@@ -53,16 +47,7 @@ struct SparkWork {
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 height);
 
-struct WorkSlots {
-    u8 padding00[0x9c];
-    struct SparkWork *work;
-    void *dest;
-    u8 padding0a4[0xb8 - 0xa4];
-    DrawFunc draw_spark;
-    DrawFunc draw_ring;
-};
 
-extern struct WorkSlots Data_03001e50;
 extern s32 Data_080c3604[];
 extern u8 Data_080c3620[];
 extern s32 Data_080c3628[];
@@ -74,41 +59,33 @@ s32 Trig_Sin(s32 angle);
 u32 ColorBuffer_BackupAndScaleThreeQuarters(void *, void *, u32);
 
 /* graphics/vram/Display_UploadBlock.c */
-struct State {
-    u8 unknown[156];
-    u32 context;
-    u32 source;
-};
 
-extern struct State gWorkSlot;
+#include "HEAP_STATE.H"
 
 void Graphics_AdvancePaletteCycle(void)
 {
-    s32 _c0 = ((u32)&Data_03001e74);
+    struct BattleSession *battle = gBattleWork;
     s8 *table;
-    u16 index;
+    u16 step;
     s32 next;
-    struct State080c1084 *state;
 
-    state = *(struct State080c1084 **)_c0;
-    if ((state != NULL) && (state->field_650 != 0)) {
-        FIELD_AT_OFFSET((void *)0x04000050, s16 *, 0) = 0x3F90;
-        FIELD_AT_OFFSET((void *)0x04000050, s16 *, 2) = 0x10;
+    if (battle != NULL && battle->highlight_mode != 0) {
+        REG_BLDCNT = 0x3f90;
+        REG_BLDALPHA = 0x10;
         table = Data_080c5c10;
-        *(s16 *)0x04000054 = table[state->index];
-        index = state->index;
-        next = (index + 1) & 0xF;
-        if ((u32)index > 0xEU) {
+        REG_BLDY = table[battle->highlight_step];
+        step = battle->highlight_step;
+        next = (step + 1) & 0xf;
+        if (step > 14)
             next |= 0x10;
-        }
-        state->index = next;
+        battle->highlight_step = next;
     }
 }
 
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
     s16 active_actors[14];
-    u8 *battle = gBattleWork;
+    struct BattleSession *battle = gBattleWork;
     u32 count;
     u32 i;
     volatile u16 *blend_y;
@@ -124,8 +101,8 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         u32 zero = 0;
         u32 sixteen;
 
-        *(u16 *)(battle + 0x650) = mode;
-        *(u16 *)(battle + 0x64e) = zero;
+        battle->highlight_mode = mode;
+        battle->highlight_step = zero;
         blend_y = (volatile u16 *)0x04000054;
         *blend_y = zero;
         sixteen = 16;
@@ -189,10 +166,10 @@ s32 BattleFx_UpdateStarField(void)
     s32 y;
     s32 life;
 
-    dest = Data_03001e50.dest;
-    work = Data_03001e50.work;
+    dest = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+    work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
     work->ready = 0;
-    draw = Data_03001e50.draw_spark;
+    draw = (DrawFunc)gWorkSlot[HEAP_SLOT_BLITTER];
     for (i = 0; i < 16; i++) {
         spark = &work->sparks[i];
         life = spark->life;
@@ -247,7 +224,7 @@ s32 BattleFx_UpdateStarField(void)
             draw(dest, (u8 *)work + Data_080c3604[frame], x - (size >> 1), y - (size >> 1), size, size);
         }
     }
-    draw = Data_03001e50.draw_ring;
+    draw = (DrawFunc)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     for (ring = work->rings, j = 2; j >= 0; j--, ring++) {
         ring->x += ring->vel_x;
         ring->y += ring->vel_y;
@@ -265,8 +242,8 @@ s32 BattleFx_UpdateStarField(void)
 
 u32 Graphics_UploadVramBlock(void)
 {
-    void *source = (void *)gWorkSlot.source;
-    u8 *context = (u8 *)gWorkSlot.context;
+    void *source = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+    u8 *context = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
 
     if (source != 0) {
         u32 *active = (u32 *)(context + 0x13C0);

@@ -15,11 +15,11 @@ struct DebugPartyEntry {
     u16 unknown_12;
 };
 
-extern struct DebugPartyEntry Data_080c3f34[];
+extern struct DebugPartyEntry Debug_PartyPresets[];
 
 void Party_RemoveActiveOwnerFar(s32 owner);
 void Party_AddActiveOwnerFar(s32 owner);
-void Func_080771f0(s32 owner, s32 level);
+void Party_AdvanceOwnerCountToTargetFar(s32 owner, s32 level);
 void OwnerAction_AddFar(s32 owner, s32 action);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 djinn);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 djinn);
@@ -50,7 +50,7 @@ s32 DebugParty_LoadPreset(s32 preset)
         next_djinn[i] = 0;
 
     for (row = 0;; row++) {
-        owner = Data_080c3f34[row].owner;
+        owner = Debug_PartyPresets[row].owner;
         if ((u32)row > 332) {
             done = 1;
             break;
@@ -65,7 +65,7 @@ s32 DebugParty_LoadPreset(s32 preset)
             continue;
 
         Party_AddActiveOwnerFar(owner);
-        Func_080771f0(owner, Data_080c3f34[row].level);
+        Party_AdvanceOwnerCountToTargetFar(owner, Debug_PartyPresets[row].level);
         state = (struct BattleUnit *)Owner_GetStateFar(owner);
         for (i = 0; i < 4; i++) {
             state->djinn_owned_counts[i] = 0;
@@ -78,11 +78,11 @@ s32 DebugParty_LoadPreset(s32 preset)
                from the literal pool, as the reference does. */
             *(u16 *)&((struct BattleUnit *)state)->action_slots[i] = 0;
         for (i = 0; i < 2; i++) {
-            if (Data_080c3f34[row].actions[i] != 0)
-                OwnerAction_AddFar(owner, Data_080c3f34[row].actions[i]);
+            if (Debug_PartyPresets[row].actions[i] != 0)
+                OwnerAction_AddFar(owner, Debug_PartyPresets[row].actions[i]);
         }
         for (i = 0; i < 4; i++) {
-            for (j = 0; j < Data_080c3f34[row].djinn_counts[i]; j++) {
+            for (j = 0; j < Debug_PartyPresets[row].djinn_counts[i]; j++) {
                 Djinn_AddToOwnerFar(owner, i, next_djinn[i]);
                 Djinn_ActivateFar(owner, i, next_djinn[i]);
                 next_djinn[i]++;
@@ -91,8 +91,8 @@ s32 DebugParty_LoadPreset(s32 preset)
         for (i = 0; i < 16; i++)
             Inventory_RemoveFar(owner, 0);
         for (i = 0; i < 4; i++) {
-            if (Data_080c3f34[row].items[i] != 0)
-                Inventory_EquipFar(owner, Inventory_AddItemFar(owner, Data_080c3f34[row].items[i]));
+            if (Debug_PartyPresets[row].items[i] != 0)
+                Inventory_EquipFar(owner, Inventory_AddItemFar(owner, Debug_PartyPresets[row].items[i]));
         }
     }
     return done;

@@ -1,12 +1,13 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 
 
 void Graphics_FadeAlphaOut(void)
 {
     s32 alpha_step;
 
-    *(s16 *)0x04000050 = 0x2044;
+    REG_BLDCNT = 0x2044;
     alpha_step = 1;
     do
     {
@@ -15,7 +16,7 @@ void Graphics_FadeAlphaOut(void)
        * WaitFrames argument into r0; the English translation unit differs. */
       do
       {
-        *(s16 *)0x04000052 = 0x1010 - alpha_step;
+        REG_BLDALPHA = 0x1010 - alpha_step;
         alpha_step += 2;
         WaitFrames(1);
       }

@@ -4,6 +4,7 @@
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
+#include "IO_REG.H"
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
@@ -35,7 +36,7 @@ void UiWork_UploadDirtyBlocks(void)
             flags &= 63;
             flags >>= 1;
             do {
-                if (flags & 1) Dma_Set(src, dst, 0x84000040, (volatile u32 *)0x040000d4);
+                if (flags & 1) Dma_Set(src, dst, 0x84000040, REG_DMA3);
                 flags >>= 1;
                 src += 256;
                 dst += 256;

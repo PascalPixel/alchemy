@@ -8,6 +8,7 @@
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
 extern char MsgMonstersAttackLess;
 
@@ -46,7 +47,6 @@ s32 FixedSqrt(s32 value);
 
 void AnimationObjects_SelectAnimationFar(void *, s32);
 
-void *Func_08009030(s32 kind);
 u32 Random16(void);
 
 
@@ -79,7 +79,7 @@ void RunBattleEffect16(void)
         *tile_slot = slot;
         VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
         gGameState.avoid_distance = 0x09600000;
-        gGameState.unknown_248[0] = GameFlag_TestFar(0x145);
+        gGameState.unknown_248 = GameFlag_TestFar(0x145);
         Animation_ApplyChildValuesFar(object, zero);
         object->callback = BattleFx_UpdatePairedArcSpawner;
         object->phase = zero;
@@ -254,8 +254,8 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
     volatile u32 zero;
 
     zero = 0;
-    Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), (volatile u32 *)0x040000d4);
-    object = Func_08009030(kind);
+    Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), REG_DMA3);
+    object = ResourceObject_CreateFar(kind);
     effect->object = object;
     if (object != NULL)
         object[9] &= ~0x0c;
@@ -284,5 +284,5 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
     if (slot->object)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
     zero = 0;
-    Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), REG_DMA3);
 }

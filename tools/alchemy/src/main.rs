@@ -40,32 +40,44 @@ mod verify;
 mod worst;
 mod worst_command;
 
-const USAGE: &str = r#"usage: alchemy <command> [args]  (both games, all twelve editions)
-Build and verify:
-  bootstrap   install or validate the persistent compiler toolchain
-  build       build compilers, maintained source, assembly and ROMs
-  verify      the gates of make verify, make land and the commit hooks
-  check       run repository contract checks
-Matching:
-  diff        compare a C draft with the listing it would replace
-  adopt       take an adopted function out of every edition's scaffolding
-  label       label English-only scaffold data in the other editions
-  queues      split not-yet-C work into queues that cannot collide
-  integrate   merge worker branches, reconcile, build and name what differs
-  keep        keep only the changed source that builds byte-identical
-  camelotize  mechanical readability rewrites: actors, events, registers,
-              declarations, barriers (then keep)
-  merge-driver  git merge drivers for scaffolds and linker scripts, and
-              links, which reconciles linker scripts after a merge
-Reports for people (nothing else reads them):
-  deps        dependency map of not-yet-C code: what unblocks the most
-  similar     each not-yet-C function's nearest C twins in either game
-  sizes       a draft's struct sizes, and the types that fill a frame gap
-  worst       maintained C ranked by how mechanical it reads
-  figure      PROGRESS.png and PROGRESS_CHART.png from the verified count
-  objects     linked objects and functions that differ from the reference ROM
-  show        a built function beside the reference, instruction by instruction
-Run any command with --help for its options."#;
+const USAGE: &str = r#"usage: alchemy <command> [args]   (both games, all twelve editions)
+Run any command with --help for its options. The binary acts on the
+checkout it runs in.
+
+Set up and build
+  bootstrap     install or validate the pinned compiler toolchain
+  build         compilers, maintained source, assembly and ROMs
+  verify        every gate of make verify, make land and the commit hooks
+  check         one repository contract check
+
+Choose what to match
+  deps          what not-yet-C code calls and blocks: what unblocks the most
+  similar       each not-yet-C function's nearest C twins in either game
+
+Match one function
+  diff          a C draft against the listing it would replace
+  sizes         the structs a draft sees, and the locals that fill a frame gap
+  show          a built function beside the reference ROM
+  adopt         the C into its module (--into) and out of all scaffolding
+  label         name English-only scaffold data in the other editions
+
+Check the whole build
+  objects       what differs from the reference ROM, object or placement
+  progress      DONE in every edition from the verified linker maps
+
+Camelotize
+  worst         maintained C ranked by how mechanical it reads
+  camelotize    mechanical rewrites: actors, events, registers,
+                declarations, barriers
+  keep          keep only the edits that leave all twelve editions identical
+
+Work in parallel
+  queues        split not-yet-C work into queues that cannot collide
+  integrate     merge branches, reconcile linker scripts, build all twelve
+  merge-driver  git merge drivers for scaffolds and linker scripts
+
+Report for people (nothing else reads it)
+  figure        PROGRESS.png and PROGRESS_CHART.png from the verified count"#;
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();
@@ -80,6 +92,11 @@ fn main() -> ExitCode {
         "build" => build::entry(rest),
         "verify" => verify::entry(rest),
         "check" => check::entry(rest),
+        "progress" => {
+            let mut args = vec!["progress".to_string()];
+            args.extend(rest.iter().cloned());
+            check::entry(&args)
+        }
         "deps" => deps_command::entry(rest),
         "adopt" => result(adopt::run(rest)),
         "label" => result(label::run(rest)),

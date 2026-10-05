@@ -34,10 +34,13 @@ sharing as much code between the games as possible.
   own `recon/<game>/<lang>/MAIN.LD`.
 - `recon/<game>/<lang>` holds that edition's ROM scaffold (`rom.s`,
   `overlays.s`) and its drafts (`main/`, `overlays/`).
-- `tools/` holds alchemy (build, checks, count, and the reports `deps` and
-  `worst`: one `alchemy` command for both games) and ags (asset encoders and
-  decoders). `out/` and `tools/out/` are build output and are
-  ignored.
+- `tools/` holds alchemy (one `alchemy` command for both games: build,
+  checks, the count, matching, camelotizing and reports; see Commands) and
+  ags (asset encoders and decoders). `out/` and `tools/out/` are build
+  output and are ignored.
+- `PROGRESS.png` (the repository by kind) and `PROGRESS_CHART.png` (DONE over
+  time, with the models that did the work) are README's figures, drawn by
+  `make figure` from `recon/tbs/metrics/history.tsv`.
 
 ## Rules
 
@@ -162,7 +165,7 @@ never a file or a function.
 - **K1** Game code compiles with agscc (GCC 2.96, the 2000-07-31 snapshot) and
   one option set per game, the same for every game C file:
   `-O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4`, plus
-  `-mthumb-interwork` for ☀️ and K2's two options for ⚓️. `-fcall-used-r4` is a
+  `-mthumb-interwork` for ☀️ and K2's options for ⚓️. `-fcall-used-r4` is a
   stock GCC option: 265 of 266 ☀️ and 1,648 of 2,302 ⚓️ functions that save lr
   start saving at r5. Nintendo's library code is not Camelot's and keeps
   the compiler and flags its own bytes show, one setting per whole library
@@ -174,7 +177,8 @@ never a file or a function.
   _Check: routing tests._
 - **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
   GCC's Thumb backend between the games, rebuilt as options in GCC's own
-  style and turned on for all of ⚓️'s game code:
+  style, and one stock scheduling option, all turned on for all of ⚓️'s game
+  code:
   - `-mthumb-split-constants` builds a constant that no single Thumb
     immediate holds inline, from a shifted byte and an add, instead of loading
     it from the literal pool. 13,907 of the 14,101 constant-building sequences
@@ -183,8 +187,17 @@ never a file or a function.
     lr and branching with the second half of a BL, instead of calling a
     `_call_via_rX` stub. ⚓️ makes 2,549 such calls and 3 stub calls, all in the
     separately compiled sound library; ☀️ makes 596 stub calls.
+  - `-mtune=arm9tdmi` (stock GCC; Pascal, 2026-10-05) schedules loads for the
+    ARM9TDMI pipeline. About 30 ⚓️ near misses that differed only by load
+    order matched under it; 14 objects that matched before changed, 12 were
+    repaired and `Menu_CenterResourceEntries` and
+    `Menu_LayoutResourceEntries` went back to listings with their C kept as
+    drafts. It is not yet the whole answer: some native sequences fit a load
+    latency of 3 cycles and others leave a load's delay slot unfilled, and
+    many remaining ⚓️ drafts differ by one swapped load. A load model that
+    explains both is an open K3 study for Pascal.
 
-  Why a person at Camelot made them: each habit runs through the whole game,
+  Why a person at Camelot made the two changes: each habit runs through the whole game,
   so it belongs to the compiler, not to some functions; neither is in ☀️,
   built a year earlier with the same compiler family; no public GCC from
   2000-2002 has either (the study in agscc's README read all 417 ARM backend
@@ -220,27 +233,89 @@ never a file or a function.
 - **W4** Choose what to match from `make deps`: first the functions other
   unfinished functions call, with the structures they share, then the ones
   with nothing left to name, largest first.
+- **W5** The whole ROM judges. Before every commit, `make compare-editions`
+  must print OK for all twelve editions; a per-object or per-function diff
+  misses a scaffold section placed two bytes early or a lost alignment pad.
+  `alchemy objects` names both; `alchemy keep` checks all twelve.
+- **W6** A change to what counts, a rule, a compiler option or routing lands
+  as its own commit, with DONE before and after in its message, never mixed
+  with new C. Most of DONE's large jumps and drops have been changes of this
+  kind, not matching.
+- **W7** Parallel work divides by owner: `alchemy queues` gives each worker
+  whole modules or overlays, and each camelotize worker one area. Before
+  naming a field or function, check no other branch named it
+  (`git log --all -S`). When branches merge, an adoption wins over edits to
+  its draft, and code that used an old name takes the new one. A worker
+  commits only verified work; anything unverified at a stop is discarded.
+- **W8** A mechanical rewrite is `alchemy camelotize` followed by
+  `alchemy keep`; a rewrite by hand meets the same test. Message names stay
+  linker symbols: as an enum, small ids become immediate moves instead of
+  literal-pool loads and the bytes change.
+
+### Notes from matching
+
+Not rules; what earlier work measured.
+
+- Gaps between locals and spill slots come from register allocation, not
+  from locals; an unused local exactly the size of a native frame gap is the
+  only frame device S2 allows (`alchemy sizes` lists the candidates).
+- An empty asm barrier between two tests blocks jump threading; `const`
+  declarations change scheduling; a store through a struct field and one
+  through a cast pointer build a halfword constant differently.
+- CSE can reuse a register that already holds 0 or 1, so a native store of a
+  register is often a constant in the source.
+- A two-byte padding piece next to a function becomes the compiler's
+  alignment once the function is C; the listing or scaffold section that
+  follows then starts with `.balign 4`.
+- Editions differ: Japanese is often an older layout of the same function
+  and gets its own `#if` branch, or stays on its scaffold (S4). The
+  German, Spanish, French and Italian far-call tables sometimes name a stub
+  differently; `alchemy label` names a scaffold-only stub.
+- Nested functions adopt with their parent.
 
 ## Commands
 
+Setup needs Apple Silicon macOS with Xcode's command-line tools, Rust with
+Cargo, and Bun. Put your own ROMs under `roms/` as `tbs-en.gba`,
+`tla-ja.gba` and so on; each is checked before use and none is ever
+committed (L1).
+
 ```sh
 git submodule update --init && git config core.hooksPath .hooks
-make bootstrap
+make bootstrap         # pinned compilers; BUNDLE=/path imports an approved bundle
 make worktree          # in a new worktree, before its first build
 make compare           # the Japanese base of ☀️; compare-tla for ⚓️
-make compare-editions  # all twelve editions
+make compare-tbs-en    # one edition: tbs or tla, then ja, en, de, es, fr or it
+make compare-editions  # all twelve editions (W5)
+make build-rom TARGET=tbs-en  # build a changed game without comparing
 make test
-make progress          # the count, with one line per edition
-make figure            # redraw PROGRESS.png and PROGRESS_CHART.png after a build
-make deps              # dependency map: what unblocks the most
-make worst             # maintained C ranked by how mechanical it reads
-tools/out/cargo-target/release/alchemy diff DRAFT.c   # a draft against its listing
-tools/out/cargo-target/release/alchemy adopt ADDR LABEL NAME [--into MODULE.C]   # then out of the scaffolding
-tools/out/cargo-target/release/alchemy queues --workers N --out-dir DIR   # work that cannot collide
-tools/out/cargo-target/release/alchemy objects EDITION      # after a build: what differs from the ROM, and where
-tools/out/cargo-target/release/alchemy show EDITION FUNCTION # one built function beside the ROM
-tools/out/cargo-target/release/alchemy keep [PATH...]       # keep only source edits that leave all twelve identical
-tools/out/cargo-target/release/alchemy sizes DRAFT.c [SIZE] # struct sizes; the locals that fill a frame gap
 make verify
 make land              # on main, before committing a landing
+```
+
+The `alchemy` binary is `tools/out/cargo-target/release/alchemy`; it acts on
+the checkout it runs in, and `alchemy --help` lists every command.
+
+```sh
+# Choose what to match
+make deps                              # what unblocks the most (W4)
+alchemy similar                        # nearest C twins in either game
+# Match one function
+alchemy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
+alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a frame gap
+alchemy show EDITION FUNCTION          # a built function beside the ROM
+alchemy adopt ADDR LABEL NAME [--into MODULE.C]   # into its module, out of all scaffolding
+alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in other editions
+# Check the whole build
+alchemy objects EDITION...             # what differs from the ROM, object or placement
+make progress                          # DONE, one line per edition (alchemy progress)
+# Camelotize
+make worst                             # maintained C ranked by how mechanical it reads
+alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
+alchemy keep [PATH...]                 # keep only edits that leave all twelve identical
+# Work in parallel
+alchemy queues --workers N --out-dir DIR   # work that cannot collide (W7)
+alchemy integrate BRANCH...            # merge, reconcile linker scripts, build all twelve
+# Report for people
+make figure                            # PROGRESS.png and PROGRESS_CHART.png after a build
 ```

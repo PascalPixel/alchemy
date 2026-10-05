@@ -108,8 +108,6 @@
         "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/CALLBACK_SCHEDULER.o"(.text)
         "*/recon/tla/raw/0801471c.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/DISABLE_CALLBACKS.o"(.text)
-        "*/recon/tla/raw/0801489c.o"(.text)
-        "*/recon/tla/raw/080148e8.o"(.text)
         "*/games/THE LOST AGE/SRC/LIB/MATH.o"(.text)
         "*/recon/tla/raw/080149f8.o"(.text)
         "*/recon/tla/raw/08014a24.o"(.text)

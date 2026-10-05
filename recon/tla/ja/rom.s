@@ -219,18 +219,6 @@ Resource_FindFreeEntry:
 	.thumb_func
 Scheduler_SetCallbackMask:
 	.incbin "baserom.gba", 0x0001471c, 0x00000040
-	.section .rom.0001489c, "ax"
-	.global Vector_AddPolarOffset
-	.type Vector_AddPolarOffset, %function
-	.thumb_func
-Vector_AddPolarOffset:
-	.incbin "baserom.gba", 0x0001489c, 0x0000004c
-	.section .rom.000148e8, "ax"
-	.global ArcTan2
-	.type ArcTan2, %function
-	.thumb_func
-ArcTan2:
-	.incbin "baserom.gba", 0x000148e8, 0x000000cc
 	.section .rom.000149f8, "ax"
 	.global Text_FormatHexToWork
 	.type Text_FormatHexToWork, %function
@@ -491,7 +479,10 @@ Func_08016dd0:
 	.section .rom.000178b4, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x000178b4, 0x0000025c
+	.incbin "baserom.gba", 0x000178b4, 0x00000136
+	.global Math_ArcTanTable
+Math_ArcTanTable:
+	.incbin "baserom.gba", 0x000179ea, 0x00000126
 	.global System_BasicColorPalette
 System_BasicColorPalette:
 	.incbin "baserom.gba", 0x00017b10, 0x000001d8

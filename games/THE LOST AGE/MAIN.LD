@@ -114,8 +114,6 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/CALLBACK_SCHEDULER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0001471c)
     "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/DISABLE_CALLBACKS.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0001489c)
-    "*/recon/tla/ja/rom.o"(.rom.000148e8)
     "*/games/THE LOST AGE/SRC/LIB/MATH.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000149f8)
     "*/recon/tla/ja/rom.o"(.rom.00014a24)

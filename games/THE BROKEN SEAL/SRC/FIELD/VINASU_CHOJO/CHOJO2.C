@@ -70,9 +70,7 @@ void VinasuChojo_UpdateBeamActors(void)
 
     first = Object_GetById(ACTOR_FIRST_OF_PAIR);
     second = Object_GetById(ACTOR_SECOND_OF_PAIR);
-    /* FAKEMATCH: the dead first test and the word temporaries below reproduce the
-     * reference's leftover loads and stores. 2026-10-02: removing only the
-     * overwritten first test removes real loads and exchanges r5/r6 roles. */
+    /* FAKEMATCH: the dead first test and the word temporaries below reproduce the reference's leftover loads and stores. 2026-10-02: removing only the overwritten first test removes real loads and exchanges r5/r6 roles. */
     stopped = first->target_x == ACTOR_NO_TARGET && first->target_y == first->target_x && first->target_z == first->target_y;
     if (second->target_x == ACTOR_NO_TARGET && second->target_y == second->target_x && second->target_z == second->target_y) {
         stopped = 1;
@@ -82,12 +80,12 @@ void VinasuChojo_UpdateBeamActors(void)
     if (stopped != 0) {
         {
             s32 shown = 0;
-        
+
             first->facing = shown;
         }
         {
             s32 shown = 0;
-        
+
             second->facing = shown;
         }
         if (Engine_GameFlagIsSet(FLAG_PAIR_GROWING) != 0) {
@@ -658,8 +656,7 @@ void VinasuChojo_RunActorTransition(void)
     ObjectTable_Snapshot();
     Event_SetPairWork1c0((s32)&SceneId_WorldMap, 91);
     {
-        /* FAKEMATCH: storing 0x7fff directly reuses the colour's earlier pool
-         * entry and moves the literal pool; measured 2026-10-04. */
+        /* FAKEMATCH: storing 0x7fff directly reuses the colour's earlier pool entry and moves the literal pool; measured 2026-10-04. */
         s32 white = 0x7fff;
 
         PLTT_BACKDROP = white;
@@ -1080,8 +1077,7 @@ void Scene_RunExtendedActorTransition(void)
     ((struct EventWork *)*cell)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     ((struct EventWork *)*cell)->transition_frames = 16;
     Engine_EventCloseScreen();
-    /* FAKEMATCH: the window work is reached 12 cells below the event work's cell,
-     * as the scene's single pool word shows; naming gWindowWork adds a word. */
+    /* FAKEMATCH: the window work is reached 12 cells below the event work's cell, as the scene's single pool word shows; naming gWindowWork adds a word. */
     cell -= 12;
     Engine_EventWaitForScreen();
     Engine_EventWait(80);

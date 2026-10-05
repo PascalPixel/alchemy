@@ -1231,7 +1231,7 @@
     "*/games/COMMON/SRC/BATTLE/MOTION/RELEASE_BATTLE_OBJECT_RECORDS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0011b772)
     "*/recon/tla/fr/rom.o"(.rom.0011b774)
-    "*/games/THE LOST AGE/SRC/BATTLE/MOTION/MOTION2.o"(.text)
+    "*/games/THE LOST AGE/SRC/BATTLE/MOTION/OBJECTS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0011ba14)
     "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RESET_BATTLE_OBJECT_RECORD_GROUPS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0011bd04)

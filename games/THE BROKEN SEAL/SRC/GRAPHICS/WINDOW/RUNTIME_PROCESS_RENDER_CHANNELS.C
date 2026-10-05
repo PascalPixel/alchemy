@@ -92,9 +92,6 @@ void UiWork_ProcessRenderChannels(void)
     } while (channel_no != 3);
 }
 
-/* The Japanese channel script step is still a draft
-   (recon/tbs/ja/main/080168a0.c). */
-#if EDITION_INTERNATIONAL
 extern volatile u32 gKeysHeld;
 extern u32 gKeysPressedLatch;
 extern volatile u16 gLagFramesShown;
@@ -142,7 +139,8 @@ enum {
 /*
  * Run one frame of a text channel's script: draw the next glyphs, or carry
  * out the command codes met on the way. Returns 8 when the text ended and 9
- * when a key wait was cancelled, otherwise 0.
+ * when a key wait was cancelled or, in Japanese, a glyph could not be
+ * drawn; otherwise 0.
  */
 s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 {
@@ -216,9 +214,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
                 if (UiWork_CheckCancelByModeInput(ch) == 0) {
                     struct UiWindow *pane = ch->work;
 
+#if EDITION_INTERNATIONAL
                     if (pane->width == 0 || pane->height == 0
                         || work->unknown_after_result != 0)
                         break;
+#else
+                    if (work->unknown_after_result != 0)
+                        break;
+#endif
                     UiText_DrawGlyph(pane, 1, pane->width * 4 - 8,
                                      pane->height * 8 - 16, 1);
                     work->unknown_after_result = 1;
@@ -349,13 +352,13 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
             gy = (ch->y + 128) / 256;
             cue = UiText_SpeedCueGaps[MESSAGE_SPEED];
             pc = ch->entry;
-#if defined(TBS_EDITION_EN)
+#if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
             if (work->mode != 0)
                 gx += 8;
 #endif
             pc = (pc + 1) & RENDER_ENTRY_MASK;
             next = work->entries[pc];
-#if defined(TBS_EDITION_EN)
+#if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
             /* English keeps the Japanese voicing marks. */
             if (next == TEXT_DAKUTEN) {
                 code |= 0x4000;
@@ -365,6 +368,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
                 ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
             }
 #endif
+#if EDITION_INTERNATIONAL
             /* Two narrow glyphs share one cell. */
 #if defined(TBS_EDITION_ES)
             if (!(ch->work->flags & 8) && code > TEXT_SPACE
@@ -392,6 +396,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
                 ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
             }
 #endif
+#endif
             advance = UiText_DrawGlyph(ch->work, code, gx, gy, 0);
             ch->unknown_22 = UiText_SpeedDelays[MESSAGE_SPEED];
             if (advance != 0) {
@@ -406,10 +411,19 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
                     }
                 }
                 width = advance << 8;
+#if EDITION_INTERNATIONAL
                 if (code == TEXT_SPACE)
                     width += ch->colours[ch->unknown_10];
+#else
+                width += ch->colours[ch->unknown_10];
+#endif
                 ch->x += width;
             }
+#if !EDITION_INTERNATIONAL
+            /* Japanese closes the window at a glyph it cannot draw. */
+            else
+                return 9;
+#endif
             if (code == TEXT_SPACE && work->menu_state == 0)
                 count = 1;
         }
@@ -424,4 +438,3 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 
     return 0;
 }
-#endif

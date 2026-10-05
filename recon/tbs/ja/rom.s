@@ -196,12 +196,6 @@ Tile_BuildMetatiles:
 	.incbin "baserom.gba", 0x000158dc, 0x000001f4
 	.global Tile_BuildMetatilesEnd
 Tile_BuildMetatilesEnd:
-	.section .rom.000168a0, "ax"
-	.global UiWork_StepChannelScript
-	.type UiWork_StepChannelScript, %function
-	.thumb_func
-UiWork_StepChannelScript:
-	.incbin "baserom.gba", 0x000168a0, 0x000005dc
 	.section .rom.00017da8, "ax"
 	.global Func_08018038
 	.global UiText_BuildRenderEntries
@@ -439,7 +433,15 @@ Workspace_PageLabel:
 Workspace_RangeDash:
 	.incbin "baserom.gba", 0x00037b68, 0x00000004
 	.section .rom.0006c1a0, "ax"
-	.incbin "baserom.gba", 0x0006c1a0, 0x0000000a
+	.global UiText_SpeedDelays
+UiText_SpeedDelays:
+	.incbin "baserom.gba", 0x0006c1a0, 0x00000003
+	.global UiText_SpeedSteps
+UiText_SpeedSteps:
+	.incbin "baserom.gba", 0x0006c1a3, 0x00000003
+	.global UiText_SpeedCueGaps
+UiText_SpeedCueGaps:
+	.incbin "baserom.gba", 0x0006c1a6, 0x00000004
 	.global WorkspaceOptions_SliderPalette
 WorkspaceOptions_SliderPalette:
 	.incbin "baserom.gba", 0x0006c1aa, 0x00000042

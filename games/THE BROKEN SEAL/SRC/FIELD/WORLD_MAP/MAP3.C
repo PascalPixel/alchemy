@@ -40,11 +40,9 @@ void Map_LoadAreaGraphics(void);
 void SceneEffect_RestoreBlendRegisters(void);
 void FieldScene_RunLateSequence(void);
 
-/* FAKEMATCH: the one-pass read preserves the saved-IME copy before masking.
- * Each request preserves IME while publishing one complete DMA transfer.
- * The original writes 0x0208 to IME; its enable bit is clear.
- * FAKEMATCH: the one-pass restore keeps subsequent callback setup outside
- * the queue-publication control boundary. */
+/* Each request preserves IME while publishing one complete DMA transfer. */
+/* FAKEMATCH: the one-pass read preserves the saved-IME copy before masking. */
+/* FAKEMATCH: the one-pass restore keeps subsequent callback setup outside the queue-publication control boundary. */
 #define QueueTransfer(source, destination, control) \
 { \
     u32 saved; \
@@ -313,7 +311,6 @@ s32 StoryScene_ComputeOpposingSlotDelta(void)
     return positive_total - negative_total;
 }
 
-/* Complete reference-actor-54 selected-actor setup wrapper. */
 s32 StoryReward_LookupBySelection(u32 selection)
 {
     s32 flag_base = 0;
@@ -568,12 +565,6 @@ void FieldScene_RunLateSequence(void)
     }
 }
 
-/* Exact 1300-byte owner, resource_371:020039fc..02003f10.
- * Verified 2026-09-27: zero differing halfwords and equal topology.
- * The previous two-halfword residual was callback-address loading before
- * IME restoration. A one-pass scope around the final volatile restore keeps
- * that publication boundary intact; all queue entries and pools still match.
- * Reconstructed from our own ROM and the existing world-map queue model. */
 void Scene_RunScene371SequenceA(s32 palette)
 {
     struct IoWriteQueue *q;
@@ -585,8 +576,7 @@ void Scene_RunScene371SequenceA(s32 palette)
     Map_ResumeAnimation();
     Resource_DecodeType01(gWorldMapPackedTiles, buffer);
     Resource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
-    /* FAKEMATCH: one scope keeps the queue ahead of the IME pointer in
-     * register allocation and the literal pool. */
+    /* FAKEMATCH: one scope keeps the queue ahead of the IME pointer in register allocation and the literal pool. */
     do {
         q = &gIoWriteQueue;
         ime = &REG_IME;

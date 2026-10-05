@@ -83,8 +83,7 @@ void Map_RenderPaletteMappedColumn(u32 value)
    rebuild the camera transform and hand the frame to the renderer. */
 void WorldMap_UpdateView(void)
 {
-    /* FAKEMATCH: retain the existing slot 12-relative cell reads. Loading
-       slots 7/8 independently in 1a5404f7 added eight bytes in all editions. */
+    /* FAKEMATCH: retain the existing slot 12-relative cell reads. Loading slots 7/8 independently in 1a5404f7 added eight bytes in all editions. */
     void **slot = (void **)&gCameraWork;
     struct BattleCamera *cam = slot[0];
     struct MapFrameWork *map = slot[-5];

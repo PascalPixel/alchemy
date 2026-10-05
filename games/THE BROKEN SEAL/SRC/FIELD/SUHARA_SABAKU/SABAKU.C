@@ -77,14 +77,14 @@ void SceneState_SendRequest15With45(void)
     BattleFx_SetPhaseRequest(15, 45);
 }
 
-s32 OverlayObject_ApplyZeroAndClearByte89(u8 *obj)
+s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj)
 {
     Engine_ActorSetSpriteFlags(obj, 0);
     obj[89] = 0;
     return 0;
 }
 
-s32 OverlayObject_ToggleField84Bit0(u8 *obj)
+s32 SuharaSabaku_ToggleActorActive(u8 *obj)
 {
     obj[84] ^= 1;
     return 1;
@@ -447,7 +447,7 @@ void PlaceActorTwelveWhenFlagClear(void)
     }
 }
 
-void SceneState_SetStateByte52(void)
+void SuharaSabaku_EnableEffectChildOption(void)
 {
     u8 *state = *(u8 **)gEffectWork;
     state[52] = 1;

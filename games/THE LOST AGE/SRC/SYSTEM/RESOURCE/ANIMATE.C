@@ -33,8 +33,6 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
             animation = info->animation;
             work->frames = (void **)value;
             work->scripts = (u8 **)animation;
-            /* FAKEMATCH: and the cursor straight after them. */
-            asm("");
             work->pos = z;
             /* FAKEMATCH: then the codec and the frame. */
             asm("");

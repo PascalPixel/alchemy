@@ -246,8 +246,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         if (*slot == 99)
             *slot = Resource_FindFreeEntry();
         column = 0xfffe;
-        /* FAKEMATCH: the volatile width read is scheduled before the column constant's pool load, as in the reference. */
-        attr->x = (win->x + (column + *(volatile u16 *)&win->width)) * 8 + 4;
+        attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 - 1;
         /* FAKEMATCH: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */

@@ -44,8 +44,6 @@ void BattleActor_RemoveFromLists(s32 actor)
     i = (u32)&((struct BattleSession *)0)->party_units;
     slot = i;
     unit = *(s16 *)(slot + (u32)work);
-    /* FAKEMATCH: keep the initial signed list read ahead of splitting the removal exits. */
-    asm("" : "+r" (slot), "+r" (i) : "r" (unit));
     if (unit == actor)
         goto party_removed;
     if (unit != BATTLE_UNIT_LIST_END) {

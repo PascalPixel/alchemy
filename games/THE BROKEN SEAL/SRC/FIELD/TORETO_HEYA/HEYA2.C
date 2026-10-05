@@ -533,9 +533,7 @@ void SceneState_ApplyRectsByFlag844(s32 flag)
  * 50 (the leader lands on the entrance ten below it). */
 s32 ToretoHeya_EnterRoom(void)
 {
-    /* FAKEMATCH: the map work and the event work are read as cells of one
-     * pointer array based at gMapWork (the event work is its twentieth), which
-     * keeps one pool address for both. */
+    /* FAKEMATCH: the map work and the event work are read as cells of one pointer array based at gMapWork (the event work is its twentieth), which keeps one pool address for both. */
     struct FieldActor *lamp;
     struct FieldActor *actor;
     u8 **globals;
@@ -623,9 +621,7 @@ void ToretoPalette_CaptureBank(void)
 /* Every 32 frames, tint the background palette, weaker for later colours. */
 void ToretoPalette_ApplyTint(void)
 {
-    /* FAKEMATCH: reading the event work and the palette work through the
-     * engine's table of work pointers keeps one address base for both cells,
-     * where their own names would each take a pool word. */
+    /* FAKEMATCH: reading the event work and the palette work through the engine's table of work pointers keeps one address base for both cells, where their own names would each take a pool word. */
     u16 *src;
     u16 *dst;
     u32 i;
@@ -832,8 +828,7 @@ void ToretoHeya_SpawnSwirlSparks(void)
         }
     case 44:
         Engine_AudioPlayCue(0x121);
-        /* FAKEMATCH: the counter pointer is taken again here so it is dead
-         * across the spark loop, where the loop index takes its register. */
+        /* FAKEMATCH: the counter pointer is taken again here so it is dead across the spark loop, where the loop index takes its register. */
         counter = &ToretoHeya_SparkCounter;
         break;
     }
@@ -842,14 +837,11 @@ void ToretoHeya_SpawnSwirlSparks(void)
     }
 }
 
-/* Exact 96-byte owner, resource_396:020017ec..0200184c, including pool. */
-
 /* Copy the one-cell patch of each enabled entry whose flag is set. */
 void ToretoHeya_ApplyFlaggedMapPatches(void)
 {
     s32 i;
-    /* FAKEMATCH: halfword storage delays the size producer until after the
-     * sentinel and offset, matching the loop preheader. */
+    /* FAKEMATCH: halfword storage delays the size producer until after the sentinel and offset, matching the loop preheader. */
     struct Half { u16 v; } size;
 
     for (i = 0; ToretoHeya_MapPatches[i] != -1; i += 6) {
@@ -865,17 +857,14 @@ void SceneEffect_RegisterPaletteFadeCallback(void)
     Engine_TaskRemoveCallback(ToretoPalette_ApplyTint);
 }
 
-/*
- * The decay of the Z velocity stays a signed divide by sixteen: that shape is
- * what reproduces the negative bias and arithmetic shift in the reference.
- */
+/* Divide the Z velocity by sixteen, rounding toward zero. */
 void ToretoHeya_AdvanceEffectMotion(struct Effect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
 
-    /* This block orders the Z load after the Y store; do not flatten it. */
+
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity_x;

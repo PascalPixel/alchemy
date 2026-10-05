@@ -109,7 +109,16 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * takes r6 and the velocity constants swap), size reused as 0x7800 (70),
  * an empty asm between copy and fill (47: CSE still shares the constants),
  * the copy's buffer and size in register asm r0/r2 variables (175: the
- * copy matches, but the same reallocation as the top-set locals follows).
+ * copy matches, but the same reallocation as the top-set locals follows),
+ * any of the 28 locals' declarations moved to any other position (45 at
+ * best).
+ * Where the sharing comes from (RTL dumps): expand puts each costly
+ * constant argument in a pseudo (191, 193 for the copy, 195, 196 for the
+ * fill) and the first CSE pass canonicalises 195 and 196 to 191 and 193,
+ * so one pseudo per constant lives across the copy call and takes a
+ * call-saved register. The native behaves as if the fill's pseudos were
+ * never merged, or were merged and then spilled. The sibling 080ae2f4
+ * stalls on the same CSE canonicalisation (its cursor zero).
  *
  * Tried and worse before the fade/ring rewrite (scores of that time):
  * gMapCellBuffer[...] for the ring (1043 vs 910), cells/map locals for

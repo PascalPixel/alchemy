@@ -319,7 +319,7 @@ Func_080f8170:
 	bl UiText_DrawCharacterAtOffsetFar
 	mov r0, r10
 	adds r1, r7, #0
-	bl Func_080f8658
+	bl Ui_DrawValuePairRows
 	movs r3, #146
 	lsls r3, r3, #1
 	add r3, r10
@@ -351,7 +351,7 @@ Func_080f8170:
 	bl UiText_DrawCharacterAtOffsetFar
 	mov r0, r10
 	adds r1, r7, #0
-	bl Func_080f8658
+	bl Ui_DrawValuePairRows
 	b .L_080f85fe
 .L_080f8458:
 	mov r0, r11

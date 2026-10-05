@@ -4066,8 +4066,6 @@ Menu_UpdateEntryObjectTransformsFar:
 	.incbin "baserom.gba", 0x000fa050, 0x00000020
 	.section .rom.000fa170, "ax"
 	.incbin "baserom.gba", 0x000fa170, 0x000004a0
-	.section .rom.000fa656, "ax"
-	.incbin "baserom.gba", 0x000fa656, 0x000000b2
 	.section .rom.000fa888, "ax"
 	.global UiIcon_PrepareObject
 	.type UiIcon_PrepareObject, %function
@@ -4207,7 +4205,16 @@ Func_081050b8:
 Func_081052ac:
 	.incbin "baserom.gba", 0x001074a8, 0x00000230
 	.section .rom.0010774e, "ax"
-	.incbin "baserom.gba", 0x0010774e, 0x00000352
+	.incbin "baserom.gba", 0x0010774e, 0x00000346
+	.global Ui_HpString
+Ui_HpString:
+	.incbin "baserom.gba", 0x00107a94, 0x00000004
+	.global Ui_SlashString
+Ui_SlashString:
+	.incbin "baserom.gba", 0x00107a98, 0x00000004
+	.global Ui_PpString
+Ui_PpString:
+	.incbin "baserom.gba", 0x00107a9c, 0x00000004
 	.section .rom.00107aa0, "ax"
 	.global Data_08105948
 Data_08105948:

@@ -1013,7 +1013,7 @@
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000fe170)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000fe64a)
+    "*/games/COMMON/SRC/GRAPHICS/RENDER/DRAW_VALUE_PAIR_ROWS.o"(.text)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_RESOURCE_VARIANT.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000fe87c)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/CALL_ICON_ROUTINE.o"(.text)

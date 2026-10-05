@@ -998,6 +998,7 @@ SECTIONS
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000f8170)
+    "*/games/COMMON/SRC/GRAPHICS/RENDER/DRAW_VALUE_PAIR_ROWS.o"(.text)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_RESOURCE_VARIANT.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000f8830)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/CALL_ICON_ROUTINE.o"(.text)

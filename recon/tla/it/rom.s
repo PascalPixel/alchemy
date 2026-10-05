@@ -4472,8 +4472,6 @@ ColorBuffer_FadeStep3Map:
 	.incbin "baserom.gba", 0x000f3c10, 0x000043f0
 	.section .rom.000f8170, "ax"
 	.incbin "baserom.gba", 0x000f8170, 0x000004a0
-	.section .rom.000f8656, "ax"
-	.incbin "baserom.gba", 0x000f8656, 0x000000b2
 	.section .rom.000f8888, "ax"
 	.global UiIcon_PrepareObject
 	.type UiIcon_PrepareObject, %function
@@ -4648,7 +4646,16 @@ Func_0810532c:
 Func_08105350:
 	.incbin "baserom.gba", 0x00105464, 0x00000230
 	.section .rom.0010570a, "ax"
-	.incbin "baserom.gba", 0x0010570a, 0x00000352
+	.incbin "baserom.gba", 0x0010570a, 0x00000346
+	.global Ui_HpString
+Ui_HpString:
+	.incbin "baserom.gba", 0x00105a50, 0x00000004
+	.global Ui_SlashString
+Ui_SlashString:
+	.incbin "baserom.gba", 0x00105a54, 0x00000004
+	.global Ui_PpString
+Ui_PpString:
+	.incbin "baserom.gba", 0x00105a58, 0x00000004
 	.global Data_08105948
 Data_08105948:
 	.incbin "baserom.gba", 0x00105a5c, 0x00000024

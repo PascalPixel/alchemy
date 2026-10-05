@@ -1091,7 +1091,7 @@
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00102170)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.00102656)
+    "*/games/COMMON/SRC/GRAPHICS/RENDER/DRAW_VALUE_PAIR_ROWS.o"(.text)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_RESOURCE_VARIANT.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00102888)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/CALL_ICON_ROUTINE.o"(.text)

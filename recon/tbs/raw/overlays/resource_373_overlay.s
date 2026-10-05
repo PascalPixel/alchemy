@@ -1208,7 +1208,7 @@ gHaidiaMuraEvents3:
 	.4byte MsgHaidiaMtAlephsEruptionWasSoPowerful
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte FieldScene_RunScene373_02000cd0
+	.4byte HaidiaMura_ReactToTremor
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte MsgHaidiaTheySayTheDangerIsGone

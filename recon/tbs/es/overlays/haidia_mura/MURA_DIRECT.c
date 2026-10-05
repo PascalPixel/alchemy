@@ -236,7 +236,7 @@ void SceneDialogue_RunActor10LineAndFlag81f(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene373_02000cd0(void)
+void HaidiaMura_ReactToTremor(void)
 {
     u32 i;
     s32 record;

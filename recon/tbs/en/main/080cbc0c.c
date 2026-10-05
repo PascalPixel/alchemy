@@ -45,7 +45,7 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * into the 8bpp map cells at 0x02010000, 33 sheet pieces fly apart until
  * frame 50, and from frame 53 the flash burst cells scatter.
  *
- * Score: 49 (alchemy diff, listing 1051, draft 1052, common 1027). The old
+ * Score: 45 (alchemy diff, listing 1051, draft 1052, common 1029). The old
  * m2c draft scored 1312; plain rewrites took it to 173.
  *
  * What moved it, in order (each measured against the previous):
@@ -97,6 +97,19 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  *     49  octant setup in the order x2, x1, left, y1, y2 and x2, x1, left2,
  *         y2, y1 (each octant's round-robin reloads then land on r3/r4,
  *         r5/r7 and r5/r7, r1/r3). The ring matches.
+ *     45  particle loop through block temporaries x, y, vx, vy: both start
+ *         bytes load before the stores, x in r2 and y in r3, and both
+ *         velocities are computed before either is stored, so -0x200000 is
+ *         hoisted first (r7) as native. The particle loop matches.
+ *
+ * Tried after 45 (2026-10-05): cells/len locals set just before the copy
+ * (45: CSE and GCSE propagate them back), also used by the frame-4 fill
+ * and the late copy (45), len alone set at the top (164), both set before
+ * the particle loop (173: rematerialised as native, but the fill routine
+ * takes r6 and the velocity constants swap), size reused as 0x7800 (70),
+ * an empty asm between copy and fill (47: CSE still shares the constants),
+ * the copy's buffer and size in register asm r0/r2 variables (175: the
+ * copy matches, but the same reallocation as the top-set locals follows).
  *
  * Tried and worse before the fade/ring rewrite (scores of that time):
  * gMapCellBuffer[...] for the ring (1043 vs 910), cells/map locals for
@@ -113,9 +126,7 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * the copy and fill (both rematerialise; the fill routine then gets r6 and
  * the velocity constants swap: 233), map local used by the plots too (820).
  *
- * Remaining difference: register choice and scheduling only.
- *  - Particle loop: the native loads both start bytes before the first
- *    store (x in r2, y in r3); the piece->x form stores x first.
+ * Remaining difference: register choice only.
  *  - Copy/fill: the native rematerialises 0x7800 and the buffer address
  *    before each call (no hard register for the shared constants) and
  *    keeps the fill routine in r5 for both fills; the draft keeps the
@@ -215,10 +226,16 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     r = 0;
     piece = work->particles;
     for (i = 0; i != 33; i++) {
-        piece->x = *start_x++ << 16;
-        piece->y = *start_y++ << 16;
-        piece->velocity_x = (piece->x - 0x200000) >> 2;
-        piece->velocity_y = (piece->y - 0x3c0000) >> 2;
+        s32 x, y, vx, vy;
+
+        x = *start_x++ << 16;
+        y = *start_y++ << 16;
+        piece->x = x;
+        piece->y = y;
+        vx = (x - 0x200000) >> 2;
+        vy = (y - 0x3c0000) >> 2;
+        piece->velocity_x = vx;
+        piece->velocity_y = vy;
         piece++;
     }
 

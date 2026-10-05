@@ -350,7 +350,7 @@ void SceneEffect_RotatePaletteEntries40To47(void)
     u16 *src;
     u32 front;
 
-    if ((*(volatile u32 *)&gFrameCount & 7) != 0) {
+    if ((gFrameCount & 7) != 0) {
         return;
     }
 
@@ -626,7 +626,7 @@ void SceneEffect_RotatePaletteEntries97To103(void)
     u16 *src;
     u32 first;
 
-    if ((*(volatile u32 *)&gFrameCount & 7) != 0) {
+    if ((gFrameCount & 7) != 0) {
         return;
     }
 

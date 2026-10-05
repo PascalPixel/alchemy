@@ -327,7 +327,7 @@ void SceneActor_SetModeByFrameBit1(s32 o)
 {
     s32 v;
 
-    if ((*(volatile s32 *)&gFrameCount & 2) != 0) {
+    if ((gFrameCount & 2) != 0) {
         Engine_ObjectSetPartPalettes(o, 7);
     } else {
         Engine_ObjectSetPartPalettes(o, 0);

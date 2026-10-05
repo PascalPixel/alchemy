@@ -245,9 +245,9 @@ void SceneEffect_SpawnRandomizedParticle(void)
     u32 draw;
     u32 mask;
 
-    if ((*(volatile s32 *)&gFrameCount & 2) != 0)
+    if ((gFrameCount & 2) != 0)
         return;
-    if ((*(volatile s32 *)&gFrameCount & 7) == 0)
+    if ((gFrameCount & 7) == 0)
         Engine_AudioPlayCue(136);
 
     d = descriptor;
@@ -276,7 +276,7 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
 {
     u8 desc[40];
     u8 *p;
-    u32 phase = (u32)*(volatile s32 *)&gFrameCount & 7;
+    u32 phase = gFrameCount & 7;
     s32 x;
     s32 y;
     s32 z;

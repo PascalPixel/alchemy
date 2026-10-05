@@ -1348,12 +1348,12 @@ void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 
 void OverlayObject_UpdateOnFrameBit1(s32 obj)
 {
-    if ((*(volatile s32 *)&gFrameCount & 2) != 0) {
+    if ((gFrameCount & 2) != 0) {
         Engine_ObjectSetPartPalettes(obj, 7);
     } else {
         Engine_ObjectSetPartPalettes(obj, 0);
     }
-    if ((*(volatile s32 *)&gFrameCount & 15) == 0) {
+    if ((gFrameCount & 15) == 0) {
         HaidiaIe_SpawnEffectPair(obj);
     }
 }

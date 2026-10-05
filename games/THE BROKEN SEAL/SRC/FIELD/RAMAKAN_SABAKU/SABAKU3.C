@@ -62,12 +62,12 @@ void RamakanSabaku_UpdateTravelDust(void)
         }
         Effect_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0, 0x880001, &params);
     } else {
-        phase = *(volatile u32 *)&gFrameCount & 7;
+        phase = gFrameCount & 7;
         if (phase != 0) {
             return;
         }
         /* FAKEMATCH: the reference reads the frame counter again and discards it */
-        *(volatile u32 *)&gFrameCount;
+        gFrameCount;
         params.scale_x = 0xcccc;
         params.scale_y = 0xcccc;
         params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;

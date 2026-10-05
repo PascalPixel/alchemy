@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 
 void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
-void ObjectDispatch_SetSingleChildField26(struct FieldActor *object, s32 value);
+void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 value);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
 
@@ -20,7 +20,7 @@ struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
         Object_SetSpritePriority(object, 0);
         object->motion_flags = 0;
         object->collision_flags = 8;
-        ObjectDispatch_SetSingleChildField26(object, 0);
+        ObjectDispatch_SetSingleChildFlags(object, 0);
         Object_SetPartAttribute(object, 14);
         Animation_SetStateFlags(object, 1);
         return object;

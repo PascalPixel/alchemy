@@ -293,7 +293,7 @@ Func_020001d8:
 	bl Animation_ApplyChildValues
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r2, r7, #0
 	adds r2, #35
 	ldrb r3, [r2]
@@ -321,7 +321,7 @@ Func_020001d8:
 	bl Animation_ApplyChildValues
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r1, r7, #0
 	adds r1, #35
 	ldrb r3, [r1]
@@ -6012,7 +6012,7 @@ Func_02003658:
 	orrs r3, r2
 	strb r3, [r1]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #204
 	lsls r3, r3, #7
 	adds r3, #102

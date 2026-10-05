@@ -56,7 +56,7 @@ void Object_CommitPosition(struct HopActor *actor);
 struct HopActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct HopActor *actor, s32 value);
 void Object_SetMode(struct HopActor *actor, s32 mode);
-void ObjectDispatch_SetSingleChildField26Far(struct HopActor *actor, s32 value);
+void ObjectDispatch_SetSingleChildFlagsFar(struct HopActor *actor, s32 value);
 void *Object_ReplaceResourceEntry(struct HopSprite *sprite, void *resource);
 void BattleFx_FinishAction(void);
 
@@ -167,7 +167,7 @@ void EventActor_RunHopAndLeapSequence(s32 arg)
             copy->sprite->priority = 0;
             Animation_ApplyChildValuesFar(copy, value);
             Object_SetMode(copy, 0);
-            ObjectDispatch_SetSingleChildField26Far(copy, 0);
+            ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
             resource = Object_ReplaceResourceEntry(copy->sprite, resource);
             copy->linked = previous;
             previous = copy;

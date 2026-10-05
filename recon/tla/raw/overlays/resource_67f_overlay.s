@@ -33,7 +33,7 @@ Func_02000038:
 	strb r3, [r1]
 	movs r1, #0
 	str r4, [sp, #0]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r4, [sp, #0]
 	lsls r6, r6, #16
 	lsls r4, r4, #16
@@ -1156,7 +1156,7 @@ Func_02000974:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r6, #0
 	movs r1, #2
 	bl Func_02001428
@@ -1296,7 +1296,7 @@ Func_02000aa8:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r7, #0
 	movs r1, #2
 	bl Func_02001428
@@ -1552,7 +1552,7 @@ Func_02000ce4:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008ea4
 	mov r1, r9
 	str r3, [r6, #108]
@@ -1916,7 +1916,7 @@ Func_0200100c:
 	ldrsh r6, [r7, r3]
 	movs r1, #0
 	adds r5, r0, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	lsls r0, r6, #16
 	lsrs r0, r0, #16
 	bl GameFlag_Test

@@ -31,7 +31,7 @@ Func_020000d0:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #15
 	bl Object_SetPartAttribute
@@ -124,7 +124,7 @@ Func_0200015c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008334
 	mov r1, r9
 	str r3, [r6, #108]
@@ -762,7 +762,7 @@ Func_02000668:
 	adds r5, r0, #0
 	movs r1, #0
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r2, r8
 	ldrb r0, [r2]
 	ldr r1, [r6, #8]
@@ -945,7 +945,7 @@ Func_0200079c:
 	strb r5, [r3]
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	asrs r6, r6, #19
 	ldr r1, [r7, #8]
 	ldr r2, [r7, #16]
@@ -2296,7 +2296,7 @@ Func_020011e4:
 	bl Func_02003a54
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	bl Func_02003aec
 	movs r0, #0
 	bl Func_02003bcc
@@ -3083,7 +3083,7 @@ Func_02001738:
 	adds r3, r0, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r7, r5]
 	movs r1, #3
 	bl Func_02003a54
@@ -3110,7 +3110,7 @@ Func_02001738:
 	adds r3, r0, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r7]
 	movs r1, #3
 	bl Func_02003a54
@@ -3740,7 +3740,7 @@ Func_02001c00:
 	bl Func_02003c54
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r5, .L_02009df8
 	movs r2, #133
 	lsls r2, r2, #2
@@ -4579,7 +4579,7 @@ Func_0200244c:
 	strb r6, [r3]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, [r5, #12]
 	movs r2, #128
 	adds r3, r3, r7
@@ -4720,7 +4720,7 @@ Func_02002518:
 	adds r3, r0, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r7, r5]
 	movs r1, #3
 	bl Func_02003a54
@@ -4746,7 +4746,7 @@ Func_02002518:
 	adds r3, r0, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r7]
 	movs r1, #3
 	bl Func_02003a54
@@ -4928,7 +4928,7 @@ Func_02002618:
 	str r3, [r0, #12]
 	str r3, [r0, #20]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200a75e:
 	movs r0, #20
 	bl Func_02002518
@@ -5165,7 +5165,7 @@ Func_02002618:
 	str r3, [r0, #12]
 	str r3, [r0, #20]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #18
 	bl Object_GetById
 	ldr r3, [r0, #8]
@@ -5181,7 +5181,7 @@ Func_02002618:
 	adds r3, r3, r5
 	str r3, [r0, #12]
 	str r3, [r0, #20]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200a98c:
 	movs r0, #15
 	bl Func_02002518
@@ -5313,7 +5313,7 @@ Func_02002618:
 	str r3, [r0, #12]
 	str r3, [r0, #20]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #12
 	bl Object_GetById
 	ldr r3, [r0, #8]
@@ -5329,7 +5329,7 @@ Func_02002618:
 	adds r3, r3, r5
 	str r3, [r0, #12]
 	str r3, [r0, #20]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200aaca:
 	movs r0, #10
 	bl Func_02002518
@@ -5375,7 +5375,7 @@ Func_02002618:
 	str r3, [r0, #12]
 	str r3, [r0, #20]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_0200ab2c:
 	movs r0, #13
 	bl Func_02002518
@@ -6538,7 +6538,7 @@ Func_020034ac:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r6, #0
 	movs r1, #2
 	bl Func_02003a54
@@ -6678,7 +6678,7 @@ Func_020035e0:
 	movs r1, #0
 	mov r9, r0
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r7, #0
 	movs r1, #2
 	bl Func_02003a54

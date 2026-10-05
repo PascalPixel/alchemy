@@ -1191,14 +1191,14 @@ Func_02000a50:
 	movs r0, #24
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #5
 	movs r0, #25
 	bl Object_SetModeById
 	movs r0, #25
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_02008ac0:
 	movs r2, #133
 	lsls r2, r2, #2
@@ -1244,7 +1244,7 @@ Func_02000a50:
 	movs r0, #13
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	bl Func_02000dac
 	movs r0, #162
@@ -1260,7 +1260,7 @@ Func_02000a50:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #1
 	movs r0, #9
 	bl Engine_ActorSetSpritePriority
@@ -1296,7 +1296,7 @@ Func_02000a50:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_02008bac:
 	movs r0, #128
 	lsls r0, r0, #4

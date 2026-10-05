@@ -1006,7 +1006,7 @@ Func_020006ec:
 	lsls r3, r3, #16
 	str r3, [r5, #12]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #27
 	mov r2, r10
 	str r2, [sp, #0]
@@ -1040,7 +1040,7 @@ Func_020006ec:
 	str r3, [r5, #12]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #37
 	movs r2, #102
 	str r3, [sp, #0]
@@ -1487,7 +1487,7 @@ Func_02000b2c:
 	strb r3, [r1]
 	adds r0, r4, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
@@ -1699,7 +1699,7 @@ Func_02000bc0:
 	bl Battle_WaitMode0
 	adds r0, r5, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #1
 	adds r0, r5, #0
 	bl Func_02000e24

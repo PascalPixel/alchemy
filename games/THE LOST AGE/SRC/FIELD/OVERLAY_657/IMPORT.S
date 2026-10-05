@@ -86,10 +86,10 @@ Func_02001f2c:
 	.thumb_func
 Func_02001f34:
 	overlay_veneer Func_08020198
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:

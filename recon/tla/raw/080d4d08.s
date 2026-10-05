@@ -306,7 +306,7 @@ Func_080d4d08:
 	movs r1, #254
 	ands r1, r2
 	adds r0, r6, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r3, .L_080d5064
 	movs r5, #133
 	lsls r5, r5, #2
@@ -322,7 +322,7 @@ Func_080d4d08:
 	bl Object_SetMode
 	adds r0, r6, #0
 	ldr r1, [sp, #0]
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r0, [r3, #32]

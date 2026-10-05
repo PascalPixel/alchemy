@@ -755,11 +755,11 @@ Func_02000580:
 	movs r0, #19
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #17
 	bl Object_GetById
 	adds r0, #85
@@ -795,14 +795,14 @@ Func_02000580:
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r1, r5, #0
 	movs r0, #18
 	bl Func_02000894
 	movs r0, #18
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_020086ac:
 	ldr r3, .L_020086fc
 	movs r2, #241

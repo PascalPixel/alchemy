@@ -33,7 +33,7 @@ Func_02000038:
 	strb r3, [r1]
 	movs r1, #0
 	str r4, [sp, #0]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r4, [sp, #0]
 	lsls r6, r6, #16
 	lsls r4, r4, #16
@@ -247,7 +247,7 @@ Func_02000268:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #15
 	bl Object_SetPartAttribute
@@ -340,7 +340,7 @@ Func_020002f4:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_020084cc
 	mov r1, r9
 	str r3, [r6, #108]
@@ -1084,7 +1084,7 @@ Func_02000908:
 	adds r6, r0, #0
 	movs r3, #2
 	ldrsh r5, [r7, r3]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r2, r8
 	lsls r0, r2, #16
 	lsrs r0, r0, #16
@@ -1155,7 +1155,7 @@ Func_02000988:
 	movs r1, #0
 	adds r0, r7, #0
 	mov r11, r2
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #148
 	lsls r0, r0, #2
 	bl GameFlag_SetBit
@@ -1428,7 +1428,7 @@ Func_02000988:
 	bl Func_02005d94
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #3
 	mov r2, r11
 	strb r3, [r2]
@@ -1457,7 +1457,7 @@ Func_02000988:
 	lsls r3, r3, #19
 	str r3, [r7, #16]
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #192
 	lsls r3, r3, #11
 	str r3, [r7, #40]
@@ -1954,7 +1954,7 @@ Func_02000f34:
 	bl Func_02005d5c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, [r5, #80]
 	movs r3, #13
 	ldrb r2, [r1, #9]
@@ -2425,7 +2425,7 @@ Func_02001290:
 	bl Func_02005d5c
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, [r7, #80]
 	movs r3, #13
 	ldrb r2, [r1, #9]
@@ -2518,7 +2518,7 @@ Func_02001420:
 	adds r0, r5, #0
 	movs r1, #0
 	str r3, [r5, #108]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_02009452:
 	pop {r5, r6, r7, pc}
 .L_02009454:
@@ -2766,7 +2766,7 @@ Func_0200160c:
 	bl Func_02005d5c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #6
 	bl Object_SetPartAttribute
@@ -3075,7 +3075,7 @@ Func_02001828:
 	bl Func_02005d5c
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02009be0
 	add r5, sp, #16
 	str r3, [r7, #24]
@@ -3196,7 +3196,7 @@ Func_02001828:
 	bl Func_02005d6c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Object_SetPartAttribute
@@ -3420,7 +3420,7 @@ Func_02001828:
 	ands r3, r2
 	strb r3, [r1]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, [r7, #80]
 	ldr r0, [r5, #80]
 	ldrb r3, [r3, #9]
@@ -3474,7 +3474,7 @@ Func_02001828:
 	strb r3, [r1]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, [r7, #80]
 	ldr r0, [r5, #80]
 	ldrb r3, [r3, #9]
@@ -3546,7 +3546,7 @@ Func_02001828:
 	strb r3, [r1]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, [r7, #80]
 	ldr r0, [r5, #80]
 	ldrb r3, [r3, #9]
@@ -3662,7 +3662,7 @@ Func_02001828:
 	strb r3, [r1]
 	adds r0, r5, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Object_SetSpritePriority
@@ -3734,7 +3734,7 @@ Func_02001828:
 	bl OverlayObject_WaitUntilIdle
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r1, r8
 	strb r6, [r1]
 	movs r0, #240
@@ -5824,7 +5824,7 @@ Func_02002cf0:
 	bl Func_02005d6c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Object_SetPartAttribute
@@ -6938,7 +6938,7 @@ Func_02003654:
 	bl Func_02005d6c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Object_SetPartAttribute
@@ -7358,7 +7358,7 @@ Func_02003b7c:
 	bl Object_SetSpritePriority
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, [r7, #80]
 	movs r3, #13
 	ldrb r2, [r1, #5]
@@ -7740,7 +7740,7 @@ Func_02003e7c:
 	bl Func_02005d5c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -8213,7 +8213,7 @@ Func_02004138:
 	bl Func_02005d5c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -8330,7 +8330,7 @@ Func_02004138:
 	bl Func_02005d5c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -8431,7 +8431,7 @@ Func_02004138:
 	bl Func_02005d5c
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -9482,7 +9482,7 @@ Func_02004cc8:
 	mov r10, r1
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #192
 	lsls r3, r3, #9
 	str r3, [r7, #48]
@@ -9500,7 +9500,7 @@ Func_02004cc8:
 	bl Func_02005d5c
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r3, r6, #0
 	adds r3, #85
 	strb r5, [r3]
@@ -9627,7 +9627,7 @@ Func_02004cc8:
 	movs r1, #1
 	str r3, [r7, #20]
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r2, sp
 	ldrb r2, [r2]
 	mov r3, r8
@@ -9698,7 +9698,7 @@ Func_02004eb0:
 	adds r0, r5, #0
 	str r3, [r5, #108]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Object_SetPartAttribute
@@ -10235,15 +10235,15 @@ Func_020051f8:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #12
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_0200d420
 	movs r2, #241
 	lsls r2, r2, #1
@@ -10349,7 +10349,7 @@ Func_020051f8:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_0200d50c
 	movs r2, #241
 	lsls r2, r2, #1
@@ -10498,11 +10498,11 @@ Func_020051f8:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #13
 	b .L_0200dbc6
 .L_0200d644:
@@ -11143,7 +11143,7 @@ Func_020051f8:
 .L_0200dbc6:
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	b .L_0200dca4
 .L_0200dbd2:
 	ldr r3, .L_0200dcb0
@@ -11203,7 +11203,7 @@ Func_020051f8:
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #192
 	lsls r0, r0, #2
 	adds r0, #6

@@ -34,7 +34,7 @@ s32 BattleFx_CopyLinkedObjectPosition(void *);
 extern const u8 Data_0809fd38[];
 
 extern struct ObjectRuntime *gObjectSlots;
-void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 s32 ArcTan2(s32, s32);
 extern const u8 ObjectMotion_ActionKind1Script[];
 extern const u8 ObjectMotion_ActionKind2Script[];
@@ -122,7 +122,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 
 s32 Object_ResetAndClearField59(void *obj)
 {
-    ObjectDispatch_SetSingleChildField26Far(obj, 0);
+    ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
     ((struct ScriptObjectRuntime *)obj)->flags_59 = 0;
     return 0;
 }

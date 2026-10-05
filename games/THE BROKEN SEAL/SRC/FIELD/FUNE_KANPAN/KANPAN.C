@@ -132,7 +132,7 @@ extern u8 MsgFuneArrgh[];
 extern u8 MsgFuneNoUseLate[];
 void FieldScene_RunStepThen10();
 void WaitFrames();
-void ObjectDispatch_SetSingleChildField26(void *, s32);
+void ObjectDispatch_SetSingleChildFlags(void *, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain();
 void ObjectGroup_ConfigureChildValue();
 void *ObjectMotion_SetPositionAndReset();
@@ -178,7 +178,7 @@ extern u8 FuneKanpan_CrewScriptD[];
 extern u8 FuneKanpan_DeckActionsA[];
 extern u8 FuneKanpan_DeckActionsB[];
 extern u8 FuneKanpan_DeckActionsC[];
-void ObjectDispatch_SetSingleChildField26Far(struct FieldActor *object, s32 value);
+void ObjectDispatch_SetSingleChildFlagsFar(struct FieldActor *object, s32 value);
 void Event_ClearStatus1c6Far();
 void Event_WaitValue1c8FramesFar();
 
@@ -1345,7 +1345,7 @@ void FieldScene_RunShipDeckEventScript(void)
     WaitFrames(1);
     Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 21, 16252928, 47710208);
     ObjectGroup_ConfigureChildValue(0, 15);
-    ObjectDispatch_SetSingleChildField26(Object_GetById(0), 0);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(0), 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_SetStatus1c6();
     Call3(ObjectMotion_SetSpeedParameters, 21, 104857, 52428);
@@ -1497,7 +1497,7 @@ void FieldScene_RunActorSequence(void)
     Engine_EventBegin();
     Engine_ActorSetChildValue(0, 15);
     record = Object_GetById(0);
-    ObjectDispatch_SetSingleChildField26Far(record, 0);
+    ObjectDispatch_SetSingleChildFlagsFar(record, 0);
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptD);

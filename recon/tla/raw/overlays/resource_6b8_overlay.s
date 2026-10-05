@@ -1288,7 +1288,7 @@ Func_02000a10:
 	cmp r5, #0
 	beq .L_02008a46
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r2, r5, #0
 	adds r2, #35
 	movs r3, #2
@@ -1306,7 +1306,7 @@ Func_02000a10:
 	cmp r5, #0
 	beq .L_02008ac2
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #192
 	lsls r3, r3, #11
 	str r3, [r5, #40]

@@ -100,7 +100,7 @@ void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 extern const s32 RomBytes_0809e75c[];
 
 /* effect_runtime/Effect_RunRisingObjectSequence.c */
-void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 
 /* battle/effects/objects/start_effect_22.c */
 struct EffectVisual_0808f1c0 {
@@ -374,7 +374,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
     if (object != NULL) {
         other = ObjectTable_Get(gGameState.selected_actor);
         if (flags & 1) {
-            ObjectDispatch_SetSingleChildField26Far(object, 0);
+            ObjectDispatch_SetSingleChildFlagsFar(object, 0);
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_ParticleEmitterScript);
             FIELD_AT_OFFSET(object, u32 *, 0x28) = 0x20000;
             FIELD_AT_OFFSET(object, u32 *, 0x48) = 0x4000;
@@ -578,7 +578,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
                             actor = (struct ObjectRuntime *)Object_CreateFar(22, (x << 20) + 0x80000, 0, (z << 20) + 0x80000);
                             if (actor != 0) {
                                 ObjectDispatch_InitializeFar((struct DispatchObject *)actor, BattleFx_MarkerParticleScript);
-                                ObjectDispatch_SetSingleChildField26Far(actor, 0);
+                                ObjectDispatch_SetSingleChildFlagsFar(actor, 0);
                                 *(s32 *)((u8 *)actor + 108) = (s32)BattleFx_SpawnRandomParticleAtPosition;
                             }
                         }

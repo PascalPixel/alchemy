@@ -24,7 +24,7 @@ struct SceneBeatSubject {
 void Battle_Reset(void);
 void Object_SetModeById(s32, s32); void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
 void Battle_WaitMode0(s32); u8 *Object_GetById();
-void GameFlag_SetBit(s32); void ObjectDispatch_SetSingleChildField26(u8 *, s32);
+void GameFlag_SetBit(s32); void ObjectDispatch_SetSingleChildFlags(u8 *, s32);
 void BattleFx_FinishAction(void);
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor,
                          struct StagedActorEffectRequest *request);
@@ -93,7 +93,7 @@ void FieldScene_RunActorTenPlacementScene(void)
             StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, zero);
             GameFlag_SetBit(0x201);
             actor = Object_GetById(10);
-            ObjectDispatch_SetSingleChildField26(actor, 0);
+            ObjectDispatch_SetSingleChildFlags(actor, 0);
         }
     }
     BattleFx_FinishAction();
@@ -118,10 +118,10 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         actor->move_rate_z = 0x20000;
         actor->elevation_rate = 0x40000;
         *flags &= 0x7e;
-        ObjectDispatch_SetSingleChildField26(actor, 0);
+        ObjectDispatch_SetSingleChildFlags(actor, 0);
         ObjectMotion_SetPositionAndCommit(0, request->cell_x, request->cell_z);
         Object_SetMode(actor, 6);
-        ObjectDispatch_SetSingleChildField26(actor, 1);
+        ObjectDispatch_SetSingleChildFlags(actor, 1);
         *flags = (u8)result;
         Object_SetModeById(10, 7);
         actor->position_x += 0xffff0000;
@@ -177,7 +177,7 @@ s32 SceneState_SetRuntimeWord448To516(void)
         subj->marker = 2;
         DrawSceneBeat(32, 20, 2, 4, 11, 16);
         StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-        ObjectDispatch_SetSingleChildField26(Object_GetById(10), 0);
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
     }
 
     FieldScene_RedrawActorFootprint(8);

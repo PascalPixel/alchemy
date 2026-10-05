@@ -1171,7 +1171,7 @@ Func_02000a98:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r5]
 	movs r1, #13
 	bl Object_SetModeById

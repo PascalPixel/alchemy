@@ -1805,7 +1805,7 @@ Func_02000f38:
 	movs r0, #4
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #4
 	movs r1, #13
 	bl Object_SetModeById
@@ -1905,7 +1905,7 @@ Func_02001080:
 	movs r0, #20
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	pop {pc}
 	.section .text.x020090a0,"ax",%progbits
 	.global Func_020010a0
@@ -1923,7 +1923,7 @@ Func_020010a0:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	pop {pc}
 	.section .text.x020090c0,"ax",%progbits
 	.global Func_020010c0

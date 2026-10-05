@@ -27,7 +27,7 @@ extern const struct ScenePlacement Data_0809f810[2];
 void ObjectTable_ClearBattleSlots(void);
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *object, u32 value);
+void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, u32 value);
 struct ObjectRuntime *Object_CreateFar(s32 character, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitFromTable4WithArgumentFar(struct DispatchObject *object, s32 argument);
 s32 ResourceMetadata_RegisterFar(struct AnimationObject *sprite, s32 kind);
@@ -186,7 +186,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
         object->y += hgt;
         object->terrain_height = object->y;
         object->flags = 0;
-        ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)object, 0);
+        ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
         Object_SetMode(object, 12);
     } else {
         gGameState.movement_mode = 0;

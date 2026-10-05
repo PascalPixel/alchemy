@@ -22,7 +22,7 @@ Func_080e37e0:
 	mov r0, r8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	bl EventRuntime_StartScreen
 	bl EventRuntime_WaitDelay
 	movs r0, #140
@@ -88,7 +88,7 @@ Func_080e37e0:
 	mov r0, r8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r0, #10
 	bl EventRuntime_Wait
 	adds r0, r5, #0

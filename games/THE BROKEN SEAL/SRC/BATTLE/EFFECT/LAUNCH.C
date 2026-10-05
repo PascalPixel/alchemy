@@ -104,7 +104,7 @@ void ObjectMotion_ArmCallback(s32, s32, s32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
 void Animation_ApplyChildValuesFar(void *, s32);
-void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 void EffectSlot_Initialize(void *, s32, s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, s32);
 void BattleFx_PrepareBufferInterpolation(void);
@@ -135,7 +135,7 @@ void BattleFx_RunEffect15(void)
     main_object->update = (void (*)(union FieldObject *))BattleFx_UpdateSpinAngle;
     main_object->timer = 0;
     WaitFrames(70);
-    ObjectDispatch_SetSingleChildField26Far(main_object, 0);
+    ObjectDispatch_SetSingleChildFlagsFar(main_object, 0);
     main_object->motion_flags = 0;
     main_object->update = (void (*)(union FieldObject *))BattleFx_UpdateDescendingObject;
     main_object->target_x = ACTOR_NO_TARGET;

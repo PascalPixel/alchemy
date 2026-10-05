@@ -2582,7 +2582,7 @@ Func_020015c8:
 	lsls r3, r3, #8
 	str r3, [r5, #52]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #0
 	bl Func_02002bf0
@@ -4819,7 +4819,7 @@ Func_02002970:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #128
 	lsls r0, r0, #2
 	adds r0, #2
@@ -4893,7 +4893,7 @@ Func_02002970:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_Test

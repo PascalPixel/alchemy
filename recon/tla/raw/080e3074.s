@@ -366,7 +366,7 @@ Func_080e3074:
 	bl Object_SetPositionAndResetMotionFar
 	movs r1, #0
 	mov r0, r10
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r2, [sp, #36]
 	movs r5, #0
 	movs r1, #24
@@ -518,7 +518,7 @@ Func_080e3074:
 	bl Object_SetPositionAndResetMotionFar
 	movs r1, #0
 	mov r0, r10
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r2, r10
 	adds r2, #85
 	movs r3, #0

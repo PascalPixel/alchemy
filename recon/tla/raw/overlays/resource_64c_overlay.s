@@ -295,7 +295,7 @@ Func_0200020c:
 .L_02008270:
 	.4byte Data_02003dbe
 .L_02008274:
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	mov r1, r11
 	cmp r1, #4
 	bne .L_02008282

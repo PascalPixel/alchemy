@@ -1656,7 +1656,7 @@ Func_02000dc4:
 	movs r0, #17
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #17
 	bl Object_GetById
 	movs r5, #0

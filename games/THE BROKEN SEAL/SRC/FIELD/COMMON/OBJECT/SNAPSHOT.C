@@ -15,7 +15,7 @@
 
 extern struct ObjectRuntime Data_02001124[32];
 
-void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *object, s32 value);
+void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, s32 value);
 void Object_ResetMotion(struct ObjectRuntime *object);
 
 void ObjectTable_ClearBattleSlots(void)
@@ -130,7 +130,7 @@ void ObjectTable_Restore(void)
             frame = *frames;
             if (frame != 0)
                 Object_SetMode(object, frame);
-            ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)object, *next_frames);
+            ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, *next_frames);
             priority = *priorities;
             sprite->priority = priority;
             sprite->second_priority = priority;

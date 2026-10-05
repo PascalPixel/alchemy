@@ -9,9 +9,9 @@
 	.thumb_func
 Func_08020210:
 	overlay_veneer Func_0802d87c
-	.global ObjectDispatch_SetSingleChildField26Far
+	.global ObjectDispatch_SetSingleChildFlagsFar
 	.thumb_func
-ObjectDispatch_SetSingleChildField26Far:
+ObjectDispatch_SetSingleChildFlagsFar:
 	overlay_veneer ObjectDispatch_SetSingleChildField1a
 	.global Animation_SetStateFlagsFar
 	.thumb_func

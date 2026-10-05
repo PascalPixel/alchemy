@@ -550,7 +550,7 @@ Func_02000438:
 	movs r0, #4
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #4
 	movs r1, #13
 	bl Object_SetModeById

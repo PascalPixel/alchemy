@@ -41,11 +41,11 @@ Map_CopyCellAttributeRect:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Runtime_SetWorkTripleIfNonNegative
 	.thumb_func
 Runtime_SetWorkTripleIfNonNegative:

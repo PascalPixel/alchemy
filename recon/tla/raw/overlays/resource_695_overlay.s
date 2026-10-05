@@ -68,7 +68,7 @@ Func_02000098:
 	bl WaitFrames
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #0
 	strb r3, [r7]
 	pop {r5, r6, r7, pc}
@@ -359,7 +359,7 @@ Func_0200032c:
 	push {r5, lr}
 	movs r1, #0
 	adds r5, r0, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, [r5, #80]
 	movs r3, #13
 	ldrb r2, [r1, #9]
@@ -1607,7 +1607,7 @@ Func_02000e04:
 	str r3, [r5, #8]
 	str r2, [r5, #12]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #38
 	movs r2, #19
 	str r3, [sp, #0]
@@ -1621,7 +1621,7 @@ Func_02000e04:
 	movs r0, #16
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #16
 	movs r1, #1
 	bl Object_SetModeById

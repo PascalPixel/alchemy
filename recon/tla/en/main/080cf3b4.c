@@ -24,7 +24,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
     if (object != NULL) {
         other = ObjectTable_Get(gGameState.object_index);
         if (flags & 1) {
-            ObjectDispatch_SetSingleChildField26Far(object, 0);
+            ObjectDispatch_SetSingleChildFlagsFar(object, 0);
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleEmitterScript);
             FIELD_AT_OFFSET(object, u32 *, 0x28) = 0x20000;
             FIELD_AT_OFFSET(object, u32 *, 0x48) = 0x4000;

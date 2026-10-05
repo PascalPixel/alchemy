@@ -105,11 +105,11 @@ Object_CheckMovementCollision:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global OverlayObject_SetValue1
 	.thumb_func
 OverlayObject_SetValue1:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:

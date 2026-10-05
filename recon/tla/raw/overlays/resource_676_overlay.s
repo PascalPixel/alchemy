@@ -16,7 +16,7 @@ Func_02000038:
 Func_02000044:
 	push {lr}
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {pc}
 	.section .text.x02008050,"ax",%progbits

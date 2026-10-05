@@ -3941,7 +3941,7 @@ Func_020013f0:
 	movs r0, #18
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #40
 	bl Battle_WaitMode0
 	movs r1, #0

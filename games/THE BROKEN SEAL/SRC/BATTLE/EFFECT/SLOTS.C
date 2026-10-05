@@ -16,7 +16,7 @@ extern char MsgMonstersAttackLess;
 extern struct BattleFxScene *gEffectWork;
 extern const u8 BattleFx_ArcSparkTiles[];
 void WaitFrames(s32);
-void ObjectDispatch_SetSingleChildField26Far(struct ArcEffectObject *, s32);
+void ObjectDispatch_SetSingleChildFlagsFar(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
 void UiText_DrawMessage(s32, s32);
 void Audio_PlayCue(s32);
@@ -89,9 +89,9 @@ void RunBattleEffect16(void)
     WaitFrames(55);
     Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
     if (gGameState.cloaked != 0)
-        ObjectDispatch_SetSingleChildField26Far(object, 2);
+        ObjectDispatch_SetSingleChildFlagsFar(object, 2);
     else
-        ObjectDispatch_SetSingleChildField26Far(object, 1);
+        ObjectDispatch_SetSingleChildFlagsFar(object, 1);
     Animation_ApplyChildValuesFar(object, 0);
     Resource_ResetEntry(scene->arc_tile_slot);
     UiText_DrawMessage((s32)&MsgMonstersAttackLess, 1);

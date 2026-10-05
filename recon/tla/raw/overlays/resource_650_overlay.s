@@ -14,7 +14,7 @@ Func_02000098:
 	adds r0, r6, #0
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, [r5, #8]
 	ldr r2, .L_020080ec
 	movs r0, #1
@@ -27,7 +27,7 @@ Func_02000098:
 	adds r0, r6, #0
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #11
 	str r3, [r5, #40]
@@ -82,13 +82,13 @@ Func_020000f0:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #11
 	str r3, [r5, #40]
@@ -276,13 +276,13 @@ Func_020002b4:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #11
 	str r3, [r5, #40]
@@ -479,7 +479,7 @@ Func_0200049c:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r5, .L_02008638
@@ -1169,7 +1169,7 @@ Func_020006a8:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r2, #204
@@ -1554,7 +1554,7 @@ Func_020016d8:
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	bl Event_SetStatus1c6
@@ -2196,7 +2196,7 @@ Func_020016d8:
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #10
 	bl Object_GetById
 	movs r1, #0
@@ -2360,7 +2360,7 @@ Func_02001ee0:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r5, .L_0200a2e0
 	movs r2, #133
 	lsls r2, r2, #2
@@ -2382,7 +2382,7 @@ Func_02001ee0:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #196
 	movs r2, #172
 	lsls r1, r1, #17
@@ -2414,7 +2414,7 @@ Func_02001ee0:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #176
 	movs r2, #204
 	lsls r2, r2, #16
@@ -2427,7 +2427,7 @@ Func_02001ee0:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	bl Event_SetStatus1c6
@@ -2573,7 +2573,7 @@ Func_02001ee0:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #20
 	movs r0, #8
 	movs r1, #4
@@ -2584,7 +2584,7 @@ Func_02001ee0:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #5
 	movs r1, #4
 	movs r2, #20
@@ -2831,7 +2831,7 @@ Func_02002304:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	movs r1, #156
 	movs r2, #230
@@ -2847,7 +2847,7 @@ Func_02002304:
 	ldr r0, [r6]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	bl Event_SetStatus1c6
@@ -2994,7 +2994,7 @@ Func_02002304:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
 	bl Battle_WaitMode0
 	movs r1, #129
@@ -3390,7 +3390,7 @@ Func_02002304:
 	ldr r0, [r6]
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r7, #24]
@@ -3760,7 +3760,7 @@ Func_02002c64:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	movs r1, #192
@@ -3808,7 +3808,7 @@ Func_02002c64:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl Task_Wait
 	movs r2, #20
@@ -4041,7 +4041,7 @@ Func_02002f88:
 	adds r0, r5, #0
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	ldr r2, .L_0200afcc
 	lsls r3, r3, #7
@@ -4103,7 +4103,7 @@ Func_02002fd4:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	ldr r2, .L_0200b040
 	lsls r3, r3, #7
@@ -4151,7 +4151,7 @@ Func_02002fd4:
 	movs r0, #5
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	ldr r2, .L_0200b0ac
 	lsls r3, r3, #7
@@ -4203,7 +4203,7 @@ Func_02002fd4:
 	movs r0, #6
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r3, r5, #0
 	adds r3, #85
 	strb r6, [r3]

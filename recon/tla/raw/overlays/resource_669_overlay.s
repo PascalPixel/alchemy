@@ -1346,7 +1346,7 @@ Func_02000c5c:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #228
 	movs r2, #216
 	lsls r2, r2, #17
@@ -1360,7 +1360,7 @@ Func_02000c5c:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #9
 	bl Object_GetById
 	movs r5, #128
@@ -1379,7 +1379,7 @@ Func_02000c5c:
 	movs r0, #22
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #210
 	movs r2, #212
 	lsls r2, r2, #17
@@ -1393,7 +1393,7 @@ Func_02000c5c:
 	movs r0, #23
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #194
 	movs r2, #220
 	lsls r2, r2, #17
@@ -1406,7 +1406,7 @@ Func_02000c5c:
 	movs r0, #24
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #228
 	movs r2, #188
 	movs r0, #25
@@ -3012,7 +3012,7 @@ Func_02000c5c:
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #192
 	movs r0, #8
 	lsls r1, r1, #8
@@ -3037,7 +3037,7 @@ Func_02000c5c:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #228
 	movs r2, #228
 	lsls r2, r2, #17
@@ -3050,7 +3050,7 @@ Func_02000c5c:
 	movs r0, #22
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #212
 	movs r2, #212
 	lsls r2, r2, #17
@@ -3063,7 +3063,7 @@ Func_02000c5c:
 	movs r0, #23
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #204
 	movs r2, #220
 	lsls r2, r2, #17
@@ -3076,7 +3076,7 @@ Func_02000c5c:
 	movs r0, #24
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r1, #192
 	movs r0, #9
 	lsls r1, r1, #8

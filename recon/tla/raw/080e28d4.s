@@ -33,7 +33,7 @@ Func_080e28d4:
 	b .L_080e2a5a
 .L_080e2912:
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r3, #178
 	lsls r3, r3, #7
 	adds r3, #153

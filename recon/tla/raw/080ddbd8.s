@@ -162,7 +162,7 @@ Func_080ddbd8:
 	bl ObjectDispatch_InitializeFar
 	adds r0, r7, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r2, r9
 	ldr r3, [r2, #4]
 	mov r0, r10

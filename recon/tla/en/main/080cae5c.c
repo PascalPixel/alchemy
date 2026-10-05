@@ -11,7 +11,7 @@
 #include "MAP.H"
 #include "DMA.H"
 
-void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *object, s32 value);
+void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, s32 value);
 
 /* The 32 objects ObjectTable_Snapshot saves; their indices sit in the 32
    bytes before them and their two frame bytes and priorities after. */
@@ -47,7 +47,7 @@ void ObjectTable_Restore(void)
             Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), (volatile u32 *)0x040000d4);
             object->animation = sprite;
             Object_SetMode(object, *frames);
-            ObjectDispatch_SetSingleChildField26Far(object, *next_frames);
+            ObjectDispatch_SetSingleChildFlagsFar(object, *next_frames);
             priority = *priorities;
             sprite->priority = priority;
             sprite->part_priority = priority;

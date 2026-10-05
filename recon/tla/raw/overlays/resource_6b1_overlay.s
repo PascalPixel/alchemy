@@ -31,7 +31,7 @@ Func_020000d0:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #15
 	bl Object_SetPartAttribute
@@ -124,7 +124,7 @@ Func_0200015c:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008334
 	mov r1, r9
 	str r3, [r6, #108]
@@ -300,7 +300,7 @@ Func_0200015c:
 Func_0200033c:
 	push {lr}
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {pc}
 	.section .text.x0200835c,"ax",%progbits
@@ -481,12 +481,12 @@ Func_020004b4:
 	blt .L_020084d4
 	adds r0, r5, #0
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	b .L_020084dc
 .L_020084d4:
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 .L_020084dc:
 	pop {r5, pc}
 	.2byte 0x0000
@@ -667,7 +667,7 @@ Func_02000588:
 	lsls r3, r3, #10
 	str r3, [r5, #48]
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r1, [r5, #8]
 	ldr r2, .L_02008708
 	ldr r3, [r5, #16]

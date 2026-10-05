@@ -12,7 +12,7 @@
 #include "OBJECT_EFX.H"
 #include "MOTION_OBJECT.H"
 
-void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 void ObjectDispatch_ApplyValueToKind200Children(s32 battle_value);
 s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 void BattleEffect_SpawnBurstParticleField(void);
@@ -138,7 +138,7 @@ void BattleFx_RunBurstParticleMainObject(void)
         BattleEffect_SpawnBurstParticleField();
         Object_SetMode(object, 2);
         object->collision_flags = 0;
-        ObjectDispatch_SetSingleChildField26Far(object, 0);
+        ObjectDispatch_SetSingleChildFlagsFar(object, 0);
         object->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         WaitFrames(10);
         Audio_PlayCue(0x7e);
@@ -239,7 +239,7 @@ void BattleEffect_SpawnBurstParticleField(void)
             Animation_ApplyChildValuesFar(object, 11);
             Object_SetMode(object, 7);
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript + 1);
-            ObjectDispatch_SetSingleChildField26Far(object, 1);
+            ObjectDispatch_SetSingleChildFlagsFar(object, 1);
 
             position[0] = state->x;
             position[1] = state->y;

@@ -33,7 +33,7 @@ Engine_MapCopyCellsTo:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:

@@ -171,7 +171,7 @@ Func_080cec34:
 	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r0, r10
 	bl GameFlag_Test
 	cmp r0, #0

@@ -13,7 +13,7 @@ extern const u32 gSceneExits[];
 extern const struct ScenePlacement gScenePlacements[];
 extern const struct ScenePlacement gScenePlacementsEntrance99[];
 
-void ObjectDispatch_SetSingleChildField26(void *object, s32 value);
+void ObjectDispatch_SetSingleChildFlags(void *object, s32 value);
 void Object_SetPartAttribute(void *object, s32 value);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -41,7 +41,7 @@ s32 SceneActor_ApplyCounterLowBitsAsMode(struct FieldActor *actor)
 
 s32 SceneActor_ClearSingleChildField(void *actor)
 {
-    ObjectDispatch_SetSingleChildField26(actor, 0);
+    ObjectDispatch_SetSingleChildFlags(actor, 0);
     return 0;
 }
 

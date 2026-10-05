@@ -119,7 +119,7 @@ Func_080d8740:
 	bl Object_SetMode
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r1, r10
 	ldr r0, [r5, #80]
 	bl Func_080dc0d8

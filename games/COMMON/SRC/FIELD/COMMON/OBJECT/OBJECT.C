@@ -344,7 +344,7 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
         motion->vertical.bounce = 0x4000;
         object->unknown_59 = 0;
         object->action_flags = 1;
-        *(s32 *)((u8 *)motion + 0x4c) = 0;
+        actor->rise_base_y = 0;
         object->angle = 0x4000;
         script->home_x = x / 65536;
         script->home_z = z / 65536;
@@ -443,7 +443,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 arg1,
     }
 }
 
-void ObjectDispatch_SetChildField1e(struct DispatchObject *object, u32 value)
+void ObjectDispatch_SetChildRotation(struct DispatchObject *object, u32 value)
 {
     if (object != 0 && (object->kind & 0xf) == 1)
         ((struct FieldSprite *)object->target.child)->rotation = value;
@@ -531,7 +531,7 @@ void ObjectDispatch_WaitForValue16(void *raw_object)
     }
 }
 
-void ObjectDispatch_SetSingleChildField26(struct DispatchObject *object, u32 value)
+void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object, u32 value)
 {
     if (object != NULL) {
         if ((object->kind & 0xf) == 1)
@@ -539,7 +539,7 @@ void ObjectDispatch_SetSingleChildField26(struct DispatchObject *object, u32 val
     }
 }
 
-void Animation_SetStateField5Bits2To3(struct DispatchObject *obj, u32 v)
+void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 v)
 {
     if (obj != 0 && obj->kind == 1) {
         struct FieldSprite *sprite = obj->target.child;
@@ -547,7 +547,7 @@ void Animation_SetStateField5Bits2To3(struct DispatchObject *obj, u32 v)
     }
 }
 
-void Animation_SetStateField1dBit1(struct DispatchObject *obj, u32 v)
+void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 v)
 {
     if (obj != 0 && obj->kind == 1) {
         /* FAKEMATCH: the packed bit access preserves mask/register order; a byte mask changes it at the same 40-byte size. */

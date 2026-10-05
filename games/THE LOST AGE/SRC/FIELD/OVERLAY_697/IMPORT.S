@@ -218,10 +218,10 @@ Func_02005828:
 	.endif
 	.endif
 	.endif
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Func_02005838
 	.thumb_func
 Func_02005838:

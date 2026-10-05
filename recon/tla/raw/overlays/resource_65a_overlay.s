@@ -70,7 +70,7 @@ Func_02000038:
 	adds r2, #4
 	strb r3, [r2]
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #4
 	add r10, r3
 	mov r2, r10
@@ -1584,7 +1584,7 @@ Func_02000c94:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #15
@@ -1624,7 +1624,7 @@ Func_02000cf4:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #15

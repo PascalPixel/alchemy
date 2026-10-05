@@ -113,7 +113,7 @@ Map_SetWindowCellTile:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Map_ResumeAnimation
 	.thumb_func
 Map_ResumeAnimation:

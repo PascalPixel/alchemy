@@ -77,7 +77,7 @@ Map_CopyCellAttributeRect:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:

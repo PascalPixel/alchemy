@@ -1400,7 +1400,7 @@ Func_02000bdc:
 	movs r0, #4
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #129
 	bl Func_02000e08
 	movs r2, #16

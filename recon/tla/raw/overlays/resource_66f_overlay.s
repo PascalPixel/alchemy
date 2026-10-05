@@ -819,7 +819,7 @@ Func_0200063c:
 	movs r0, #19
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #19
 	bl Object_GetById
 	adds r0, #89

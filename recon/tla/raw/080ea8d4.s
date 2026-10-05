@@ -61,7 +61,7 @@ Func_080ea8d4:
 	adds r5, r5, r0
 	movs r1, #0
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r0, [r7, #8]
 	movs r3, #255
 	strb r3, [r5, #2]

@@ -73,7 +73,7 @@ Engine_MapCopyCellAttributes:
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
 Engine_ObjectSetBlendMode:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:

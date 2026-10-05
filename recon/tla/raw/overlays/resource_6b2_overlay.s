@@ -109,7 +109,7 @@ Func_020000f4:
 	ldr r0, [r3]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_020081a4
 	ldr r7, [r3]
 	movs r3, #15
@@ -146,7 +146,7 @@ Func_020000f4:
 	str r2, [r6, #16]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r1, r6, #0
 	adds r1, #35
 	ldrb r2, [r1]

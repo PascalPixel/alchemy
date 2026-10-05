@@ -64,11 +64,11 @@ Object_CheckMovementCollision:
 	.global SetOverlayObjectMode
 	.thumb_func
 SetOverlayObjectMode:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global RunOverlayObjectCommand1
 	.thumb_func
 RunOverlayObjectCommand1:
-	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer ObjectDispatch_SetChildBlendModeFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:

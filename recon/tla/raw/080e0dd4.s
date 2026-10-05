@@ -58,7 +58,7 @@ Func_080e0dd4:
 	bl WaitFrames
 	adds r0, r7, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	ldr r5, .L_080e0e90
 	adds r3, r7, #0
 	adds r3, #85

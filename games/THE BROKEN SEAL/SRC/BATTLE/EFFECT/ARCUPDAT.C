@@ -12,7 +12,7 @@
 extern struct BattleFxScene *gEffectWork;
 struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
 void ObjectDispatch_ReleaseFar(struct ObjectRuntime *);
-void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
+void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 extern u8 gPlayerObjectId[];
 
@@ -47,7 +47,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
         object->flags = 4;
         object->unknown_23 = 4;
         ((struct AnimationObject *)object->animation)->part[0].priority = 0;
-        ObjectDispatch_SetSingleChildField26Far(object, 0);
+        ObjectDispatch_SetSingleChildFlagsFar(object, 0);
         Object_SetMode(object, 1);
     }
     return object;

@@ -94,10 +94,10 @@ Object_SetPositionAndResetMotion:
 	.thumb_func
 Func_02002884:
 	overlay_veneer Object_SetPosition
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Func_02002894
 	.thumb_func
 Func_02002894:

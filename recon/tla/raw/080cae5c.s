@@ -63,7 +63,7 @@ Func_080cae5c:
 	ldr r3, [sp, #0]
 	adds r0, r6, #0
 	ldrb r1, [r3]
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r2, r11
 	ldrb r1, [r2]
 	movs r3, #3

@@ -164,7 +164,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     Scheduler_AddOrUpdateCallback((s32)Func_080df174, 0x480);
     Audio_PlayCue(130);
     target->flag = 4;
-    ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)target, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
     if (anchors[0] != NULL && anchors[1] != NULL) {
         while (target->y - target->ground <= 0x180000) {
             object->y += 0x6000;

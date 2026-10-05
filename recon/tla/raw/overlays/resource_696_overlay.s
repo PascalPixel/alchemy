@@ -126,7 +126,7 @@ Func_020000b8:
 	strb r5, [r3]
 	adds r0, r6, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	ldr r3, .L_02008278
 	mov r1, r9
 	str r3, [r6, #108]
@@ -951,7 +951,7 @@ Func_0200057c:
 	bl Engine_ObjectSetScript
 	adds r0, r5, #0
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	adds r0, r5, #0
 	movs r1, #2
 	bl Object_SetPartAttribute
@@ -7735,7 +7735,7 @@ Func_020041b8:
 	movs r0, #16
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	add sp, #8
 	pop {pc}
 	.2byte 0x0000
@@ -7825,7 +7825,7 @@ Func_0200430c:
 	adds r0, r6, #0
 	movs r1, #0
 	strb r5, [r7]
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r3, #128
 	lsls r3, r3, #8
 	str r3, [r6, #24]
@@ -8129,7 +8129,7 @@ Func_02004534:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
 	bl WaitFrames
 	bl Event_SetStatus1c6
@@ -8199,7 +8199,7 @@ Func_02004534:
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r1, #1
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	bl Func_020048cc
 	movs r2, #241
 	lsls r2, r2, #1

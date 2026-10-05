@@ -319,7 +319,7 @@ Func_080cb91c:
 	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 .L_080cbbc8:
 	bl Func_080cb05c
 	movs r0, #2

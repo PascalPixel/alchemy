@@ -7,7 +7,7 @@ s32 __divsi3(s32, s32);
 
 s32 Object_ResetAndClearField59(struct ObjectRuntime *obj)
 {
-    ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)obj, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
     obj->collision_flags = 0;
     return 0;
 }
@@ -15,7 +15,7 @@ s32 Object_ResetAndClearField59(struct ObjectRuntime *obj)
 /* ⚓️ splits ☀️'s reset in two: the child field alone, and a flag bit. */
 s32 Object_ResetChildField26(struct ObjectRuntime *obj)
 {
-    ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)obj, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
     return 0;
 }
 

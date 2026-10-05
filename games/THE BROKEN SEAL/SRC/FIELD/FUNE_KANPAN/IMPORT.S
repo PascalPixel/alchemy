@@ -50,12 +50,12 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global ObjectDispatch_SetSingleChildField26Far
+	.global ObjectDispatch_SetSingleChildFlagsFar
 	.thumb_func
-ObjectDispatch_SetSingleChildField26Far:
-	.global ObjectDispatch_SetSingleChildField26
+ObjectDispatch_SetSingleChildFlagsFar:
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
+ObjectDispatch_SetSingleChildFlags:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:

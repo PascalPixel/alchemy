@@ -19,7 +19,7 @@ void Battle_Reset(void);
 void Object_SetMode(struct ObjectRuntime *actor, s32 mode);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *actor, s32 value);
+void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *actor, s32 value);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *actor, s32 kind);
 void BattleFx_FinishAction(void);
@@ -78,10 +78,10 @@ again:
     leader->acceleration = 0x20000;
     leader->velocity_y = 0x40000;
     *flags &= 0x7e;
-    ObjectDispatch_SetSingleChildField26Far(leader, child_mode & 0xfe);
+    ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode & 0xfe);
     ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, *(s16 *)((u8 *)&pos->x + 2), *(s16 *)((u8 *)&pos->z + 2));
     Object_SetMode(leader, 6);
-    ObjectDispatch_SetSingleChildField26Far(leader, child_mode);
+    ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode);
     if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
         || (target = Object_FindNearestFacingTarget(leader, 205)) != NULL) {
         Object_SetMode(target, 7);
@@ -147,7 +147,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
             Object_RefreshSelectorById(gGameState.selected_actor);
             object->action_flags = 1;
             object->flags = 0;
-            ObjectDispatch_SetSingleChildField26Far(object, 0);
+            ObjectDispatch_SetSingleChildFlagsFar(object, 0);
             Object_SetMode(object, 13);
             Object_SetPosition(object, grid_x << 16,
                 object->y - 0x100000, (grid_z << 16) + 0x100000);
@@ -161,7 +161,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
         object->flags = 3;
         object->velocity_y = 0x40000;
         object->terrain_height = object->y;
-        ObjectDispatch_SetSingleChildField26Far(object, 1);
+        ObjectDispatch_SetSingleChildFlagsFar(object, 1);
         Battle_WaitMode0(6);
         gGameState.movement_mode = 0;
         object->action_flags = 1;
@@ -220,7 +220,7 @@ s32 battle_owner_69(void)
             WaitFrames(4);
             object->flags = 0;
             child_mode &= 0xfe;
-            ObjectDispatch_SetSingleChildField26Far(object, child_mode);
+            ObjectDispatch_SetSingleChildFlagsFar(object, child_mode);
             object->speed_limit = 0x10000;
             object->velocity_y = 0;
             Object_SetMode(object, 12);
@@ -240,7 +240,7 @@ s32 battle_owner_69(void)
         object->flags = 3;
         child_mode |= 1;
         object->terrain_height = object->y;
-        ObjectDispatch_SetSingleChildField26Far(object, child_mode);
+        ObjectDispatch_SetSingleChildFlagsFar(object, child_mode);
         Battle_WaitMode0(4);
         gGameState.movement_mode = 0;
         object->action_flags = 1;

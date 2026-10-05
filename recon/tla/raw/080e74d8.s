@@ -345,7 +345,7 @@ Func_080e74d8:
 	movs r1, #0
 	str r3, [r7, #28]
 	adds r0, r7, #0
-	bl ObjectDispatch_SetSingleChildField26Far
+	bl ObjectDispatch_SetSingleChildFlagsFar
 	mov r1, r9
 	cmp r1, #30
 	bne .L_080e77c8

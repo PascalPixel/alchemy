@@ -162,10 +162,10 @@ Func_020021b0:
 	.thumb_func
 Func_020021b8:
 	overlay_veneer Func_08020210
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Func_020021c8
 	.thumb_func
 Func_020021c8:

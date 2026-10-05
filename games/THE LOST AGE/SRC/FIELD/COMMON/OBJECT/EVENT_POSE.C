@@ -10,7 +10,7 @@ struct DispatchObject;
 
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 s32 Func_08020190(s32, s32, s32);
-void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *, u32);
+void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *, u32);
 void Func_080caa2c(u32 object_id);
 
 void ObjectEvent_SetMode5WithCue(u32 object_id)
@@ -31,7 +31,7 @@ void ObjectEvent_Spring(u32 object_id)
     Audio_PlayCue(146);
     if (object != 0) {
         object->velocity_y = 0x80000;
-        ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)object, 1);
+        ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
     }
 }
 

@@ -56,7 +56,7 @@ void Object_CommitPosition(struct FxObject *object);
 void ObjectGroup_ApplyRandomChildValues(void);
 void BattleFx_SpawnFallingParticles(void);
 void AudioCommand_PlayFar(s32 cue);
-void ObjectDispatch_SetSingleChildField26Far(struct FxObject *object, s32 value);
+void ObjectDispatch_SetSingleChildFlagsFar(struct FxObject *object, s32 value);
 s32 BattleFx_GetCycledTableWord(u32 keys);
 void Object_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position);
@@ -137,7 +137,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
     AudioCommand_PlayFar(130);
     target->flag = 4;
-    ObjectDispatch_SetSingleChildField26Far(target, 0);
+    ObjectDispatch_SetSingleChildFlagsFar(target, 0);
     if (anchors[0] != NULL && anchors[1] != NULL) {
         while (target->y - target->ground <= 0x180000) {
             object->y += 0x6000;

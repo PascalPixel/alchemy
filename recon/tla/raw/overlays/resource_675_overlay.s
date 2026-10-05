@@ -493,7 +493,7 @@ Func_020003bc:
 Func_020003c8:
 	push {lr}
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #0
 	pop {pc}
 	.section .text.x020083d4,"ax",%progbits
@@ -897,7 +897,7 @@ Func_0200069c:
 	movs r0, #9
 	bl Object_GetById
 	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
+	bl ObjectDispatch_SetSingleChildFlags
 	movs r2, #241
 	lsls r2, r2, #1
 	adds r3, r5, r2

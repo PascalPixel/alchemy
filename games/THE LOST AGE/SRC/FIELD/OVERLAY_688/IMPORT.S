@@ -22,10 +22,10 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global ObjectDispatch_SetSingleChildField26
+	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
-	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global UiWork_Finalize
 	.thumb_func
 UiWork_Finalize:

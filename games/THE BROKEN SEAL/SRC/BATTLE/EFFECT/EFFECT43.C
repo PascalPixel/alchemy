@@ -14,18 +14,6 @@ extern char MsgMonstersAttackLess;
 
 
 
-struct ArcEffectObject {
-    u8 unknown_00[6];
-    u16 angle;
-    u8 unknown_08[0x48];
-    struct AnimationObject *records;
-    u8 unknown_54[0x10];
-    s16 phase;
-    s16 step;
-    u8 unknown_68[4];
-    void *callback;
-};
-
 extern struct BattleFxScene *gEffectWork;
 extern const u8 BattleFx_ArcSparkTiles[];
 void WaitFrames(s32);
@@ -79,7 +67,7 @@ void RunBattleEffect16(void)
         *tile_slot = slot;
         VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
         gGameState.avoid_distance = 0x09600000;
-        gGameState.unknown_248 = GameFlag_TestFar(0x145);
+        gGameState.avoid_by_item = GameFlag_TestFar(0x145);
         Animation_ApplyChildValuesFar(object, zero);
         object->callback = BattleFx_UpdatePairedArcSpawner;
         object->phase = zero;

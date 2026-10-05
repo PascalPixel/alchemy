@@ -40,7 +40,7 @@ struct GameState {
     s16 special;
     u8 unknown_1d8[2];
     /* The map the current scene shows, from its row of the scene table. */
-    u16 map;
+    s16 map;
     /* The party's position on the map, in 16.16 fixed point. */
     s32 x;
     s32 y;
@@ -115,7 +115,8 @@ struct GameState {
     s16 retreat_entrance;
     /* How far the party may still walk before Avoid wears off. */
     s32 avoid_distance;
-    u8 unknown_248;
+    /* Whether an item, not the Psynergy, cast Avoid. */
+    s8 avoid_by_item;
     /* The pose a paused object's sprite showed, restored when it resumes. */
     s8 paused_pose;
     /* The battle object an effect paused, resumed when the next one runs;

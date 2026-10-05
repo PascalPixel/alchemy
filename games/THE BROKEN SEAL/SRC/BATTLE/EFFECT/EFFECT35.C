@@ -227,9 +227,9 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
     work->saved_x = origin->x;
     work->saved_y = origin->y;
     work->saved_z = origin->z;
-    if ((s16)gGameState.map == (s32)&SceneId_MakyuriIriguchi)
+    if (gGameState.map == (s32)&SceneId_MakyuriIriguchi)
         work->lit = 1;
-    if ((s16)gGameState.map == (s32)&SceneId_MakyuriHeya2)
+    if (gGameState.map == (s32)&SceneId_MakyuriHeya2)
         work->lit = 1;
     BattleFx_SetupObjectPair(gGameState.selected_actor, -1);
     if (work->animation != 8)

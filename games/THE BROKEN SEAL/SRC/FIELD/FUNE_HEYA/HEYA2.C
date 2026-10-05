@@ -2552,7 +2552,7 @@ void FieldScene_RunScene3b1_02005068(void)
  * companions set off. */
 void FieldScene_RunPositionTransferPresentation(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 message;
 
     ConfigureSceneMotionFlags(0x1b80000, -1, 0xb00000, 0x1000001);
@@ -2565,17 +2565,17 @@ void FieldScene_RunPositionTransferPresentation(void)
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x1b0, 166);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    record = ((s32 (*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
     }
-    record = ((s32 (*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
     }
-    record = ((s32 (*)())Object_GetById)(1);
+    record = Object_GetById(1);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_MIA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
     }
     Engine_TaskWait(1);
     Actor_SetSpeed(ACTOR_IVAN, 0x19999, 0xcccc);

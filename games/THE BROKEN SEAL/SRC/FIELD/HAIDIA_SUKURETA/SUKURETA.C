@@ -357,18 +357,18 @@ void Scene_PlanSanctumVisit(void)
 
 void Scene_LeaveForMtAleph(void)
 {
-    s32 record;
+    struct FieldActor *record;
     s32 facing;
 
     Engine_EventBegin();
     Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
     Actor_SetPosition(ACTOR_GERALD, 0xd80000, 0x1080000);
     Actor_SetPosition(ACTOR_JASMINE, 0xf80000, 0x1080000);
-    record = (s32)Object_GetById(1);
+    record = Object_GetById(1);
     facing = 0xc000;
-    *(u16 *)(record + 6) = facing;
-    record = (s32)Object_GetById(5);
-    *(u16 *)(record + 6) = facing;
+    record->facing = facing;
+    record = Object_GetById(5);
+    record->facing = facing;
     Map_AnimateCells(Sukureta_GateCells, 43, 8);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
@@ -399,19 +399,19 @@ void Scene_LeaveForMtAleph(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0xcccc, 0x6666);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    record = ((s32 (*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
-    record = ((s32 (*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_JASMINE, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
-    record = ((s32 (*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_SUKURETA, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);

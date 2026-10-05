@@ -2,6 +2,7 @@
 #include "CALL.H"
 #include "FIELDOBJ.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 extern u8 MsgKorashiamuHeyYouRe[];
 extern u8 KorashiamuIriguchi_ActionTable1[];
@@ -36,7 +37,7 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(17, 1);
     Call3(Engine_ActorFaceDirection, 17, 0x3000, 20);
-    Engine_ActorFaceDirection(17, 0, 60);
+    Engine_ActorFaceDirection(17, FACING_EAST, 60);
     Call3(Engine_ActorShowEmote, 17, 0x100, 40);
     SceneState_ForwardMaskedHalfwordWith10(17, 0x3000);
     Engine_EventSetMessage((s32)MsgKorashiamuHeyYouRe);
@@ -91,7 +92,7 @@ void Scene_RunBranchingActorPresentation(void)
     Call3(Engine_ActorWalkToAndWait, 17, 0x102, 172);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3(Engine_ActorWalkToAndWait, 0, 0x106, 188);
-    Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 0, FACING_NORTH, 0);
     record = Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetPosition(1, ((struct FieldActor *)record)->x.fixed, ((struct FieldActor *)record)->z.fixed);
@@ -112,9 +113,9 @@ void Scene_RunBranchingActorPresentation(void)
     Call3(Engine_ActorWalkToAndWait, 3, 0x116, 200);
     Engine_ActorSetAnimation(2, 1);
     Engine_ActorSetAnimation(1, 1);
-    Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0xc000, 40);
+    Call3(Engine_ActorFaceDirection, 1, FACING_NORTH, 0);
+    Call3(Engine_ActorFaceDirection, 2, FACING_NORTH, 0);
+    Call3(Engine_ActorFaceDirection, 3, FACING_NORTH, 40);
     Engine_ActorRunRepeatedMotion(17, 1);
     FieldScene_CallPairWith10(17);
     Engine_ActorStartRepeatedMotion(0, 2);
@@ -124,8 +125,8 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_ActorSetAnimationAndWait(17, 3);
     /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
     Value2(Engine_EventOpenMessage, 17, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0xe000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0xa000, 0);
+    Call3(Engine_ActorFaceDirection, 1, FACING_NORTHEAST, 0);
+    Call3(Engine_ActorFaceDirection, 3, FACING_NORTHWEST, 0);
 
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(17, 3);
@@ -162,8 +163,8 @@ void Scene_RunBranchingActorPresentation(void)
         Call3(Engine_ActorShowEmote, 3, 0x102, 40);
         FieldScene_CallPairWith10(3);
         Call3(Engine_ActorFaceDirection, 17, 0xb000, 0);
-        Engine_ActorFaceDirection(19, 0x8000, 0);
-        Engine_ActorFaceDirection(20, 0, 60);
+        Engine_ActorFaceDirection(19, FACING_WEST, 0);
+        Engine_ActorFaceDirection(20, FACING_EAST, 60);
         Engine_ActorFaceDirection(17, 0x3000, 0);
         Engine_ActorFaceDirection(19, 0x3000, 0);
         Engine_ActorFaceDirection(20, 0x3000, 20);
@@ -288,8 +289,8 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_ActorStartRepeatedMotion(14, 2);
             Engine_ActorRunRepeatedMotion(16, 2);
             Engine_EventWait(20);
-            Engine_ActorFaceDirection(13, 0, 0);
-            Engine_ActorFaceDirection(14, 0x8000, 0);
+            Engine_ActorFaceDirection(13, FACING_EAST, 0);
+            Engine_ActorFaceDirection(14, FACING_WEST, 0);
             Engine_ActorFaceDirection(16, 0xb000, 40);
             Engine_ActorSetAnimation(13, 3);
             Engine_ActorSetAnimation(14, 3);
@@ -302,13 +303,13 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_EventWait(20);
             Engine_ActorFaceDirection(15, 0xd000, 0);
             Engine_ActorFaceDirection(17, 0xb000, 0);
-            Engine_ActorFaceDirection(0, 0xa000, 0);
+            Engine_ActorFaceDirection(0, FACING_NORTHWEST, 0);
             Engine_ActorFaceDirection(12, 0xd000, 0);
             Engine_ActorFaceDirection(18, 0xb000, 0);
             Object_SetActionCallbackAndRefreshById(14, (s32)KorashiamuIriguchi_ActionTable6);
             Engine_EventWait(20);
-            Engine_ActorFaceDirection(8, 0, 0);
-            Engine_ActorFaceDirection(11, 0x8000, 40);
+            Engine_ActorFaceDirection(8, FACING_EAST, 0);
+            Engine_ActorFaceDirection(11, FACING_WEST, 40);
             Engine_ActorSetAnimation(8, 3);
             Engine_ActorSetAnimationAndWait(11, 3);
             Engine_CameraMoveTo(0x3280000, -1, 0x560000, 1);

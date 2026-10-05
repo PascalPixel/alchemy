@@ -169,20 +169,20 @@ void KorosseoKabe_SpinActorAway(void)
     u8 *p6;
 
     rec2 = Object_GetById(30);
-    p6 = *(s32 *)((u8 *)rec2 + 80);
+    p6 = (u8 *)rec2->sprite;
     Call1(Engine_GameFlagSet, 0x330);
     rec2->acceleration = 0x1999;
     rec2->speed = 0x13333;
     Engine_AudioPlayCue(227);
     Call4(Engine_ObjectSetPosition, rec2, 0x1500000, 0xa0000, 0x1080000);
     for (spin = 0, frames = 9; frames >= 0; frames--) {
-        *(u16 *)((s32)p6 + 30) -= spin;
+        ((struct FieldSprite *)p6)->rotation -= spin;
         Engine_TaskWait(1);
         spin += 36;
     }
     Call4(Engine_ObjectSetPosition, rec2, 0x14a0000, -0x100000, 0x1080000);
     for (spin2 = 0x168, frames2 = 21; frames2 >= 0; frames2--) {
-        *(u16 *)((s32)p6 + 30) -= spin2;
+        ((struct FieldSprite *)p6)->rotation -= spin2;
         Engine_TaskWait(1);
         spin2 += 36;
     }
@@ -192,7 +192,7 @@ void KorosseoKabe_SpinActorAway(void)
     {
         s32 shown = 0;
 
-        *(u16 *)((s32)p6 + 30) = shown;
+        ((struct FieldSprite *)p6)->rotation = shown;
     }
     Engine_ActorSetAnimation(30, 4);
     rec2->x.fixed = 0x1500000;
@@ -249,7 +249,7 @@ void KorosseoKabe_RunSelectedActorRisingEffect(void)
 {
     s16 *tbl = gCell;
 
-    BattleFx_RunRisingObjectSequence(*(s32 *)(tbl + 250), 6, 0);
+    BattleFx_RunRisingObjectSequence(((struct GameState *)tbl)->selected_actor, 6, 0);
 }
 
 void KorosseoKabe_CheckLeaderAhead(void)

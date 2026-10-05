@@ -265,14 +265,14 @@ void RunEventScript01(void)
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 1);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 10);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     Engine_EventWait(20);
@@ -308,33 +308,33 @@ void RunEventScript01(void)
     Event_ShowMessageAndWait(10, 0, 10);
     Engine_ActorSetAnimationAndWait(11, 4);
     Event_ShowMessageAndWait(11, 0, 10);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
     Event_ShowMessageAndWait(0x6002, 0, 10);
     Engine_ActorRunRepeatedMotion(11, 2);
     Event_ShowMessageAndWait(11, 0, 10);
     Engine_ActorSetAnimation(10, 4);
     Event_ShowMessageAndWait(10, 0, 10);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
     Event_ShowMessageAndWait(0x2002, 0, 10);
     Actor_ShowEmote(8, 0x101, 60);
     Event_ShowMessageAndWait(8, 0, 10);
     Engine_ActorRunRepeatedMotion(11, 2);
     Event_ShowMessageAndWait(11, 0, 10);
-    Actor_FaceDirection(ACTOR_IVAN, 0x2000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 10);
     Engine_ActorSetAnimationAndWait(10, 3);
     Event_ShowMessageAndWait(10, 0, 10);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
     Event_ShowMessageAndWait(0x6002, 0, 10);
     Engine_ActorSetAnimationAndWait(10, 3);
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
     Event_AskYesNo(0x6002, 0);
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
     Event_ShowMessageAndWait(8, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
@@ -366,10 +366,10 @@ void RunEventScript01(void)
     Event_ShowMessageAndWait(10, 0, 10);
     Engine_ActorRunRepeatedMotion(8, 2);
     Actor_FaceDirection(8, 0x5000, 10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(11, 0x9000, 40);
     Actor_FaceDirection(10, 0xf000, 20);
     Event_ShowMessageAndWait(10, 0, 20);
@@ -397,9 +397,9 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(8, 4);
     Event_ShowMessageAndWait(8, 0, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 20);
     Event_OpenMessage(ACTOR_GERALD, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     v5 = 1;
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         gEventWork->message++;
@@ -409,7 +409,7 @@ void RunEventScript01(void)
     if (v5 != 0) {
         gEventWork->message++;
     }
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
     Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
     Engine_EventWait(60);
     Actor_ShowEmote(8, 0x101, 0);
@@ -418,17 +418,17 @@ void RunEventScript01(void)
     Actor_FaceDirection(8, 0x3000, 20);
     Event_ShowMessageAndWait(8, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 10);
     Event_ShowMessageAndWait(0x2002, 0, 10);
     Actor_ShowEmote(8, 0x107, 60);
     Engine_EventShowMessageAndWait(8, 0, 10);
     Engine_ActorSetAnimationAndWait(8, 4);
     Event_OpenMessage(8, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(8, 3);
@@ -441,10 +441,10 @@ void RunEventScript01(void)
         Event_ShowMessageAndWait(8, 0, 10);
     }
     SceneChannel_ConfigureUniformAndHandoff(20);
-    Actor_FaceDirection(ACTOR_IVAN, 0x2000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 40);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 40);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
     Actor_ShowEmote(8, 0x105, 60);
     Event_ShowMessageAndWait(8, 0, 40);
@@ -480,9 +480,9 @@ void RunEventScript01(void)
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 1);
     Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         Actor_SetAttachedEffect(8, 0x102);
@@ -499,10 +499,10 @@ void RunEventScript01(void)
         Event_ShowMessageAndWait(8, 0, 10);
     }
     Actor_ShowEmote(ACTOR_MIA, 0x101, 40);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
     Event_ShowMessage(ACTOR_MIA, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
     Engine_ActorSetAnimationAndWait(8, 3);
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -511,9 +511,9 @@ void RunEventScript01(void)
     Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
     Engine_EventWait(40);
     Event_ShowMessageAndWait(8, 0, 10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
     Event_ShowMessageAndWait(0x2002, 0, 10);
     Engine_ActorSetAnimationAndWait(8, 3);
@@ -595,18 +595,18 @@ void RunEventScript01(void)
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_ShowEmote(ACTOR_IVAN, 0x105, 60);
     Event_ShowMessageAndWait(0x2002, 0, 10);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 10);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
-    Actor_FaceDirection(ACTOR_IVAN, 0x2000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 10);
     Engine_ActorSetAnimation(ACTOR_IVAN, 4);
     Event_ShowMessageAndWait(0x2002, 0, 10);
     Engine_ActorSetAnimationAndWait(8, 4);
     Event_ShowMessageAndWait(8, 0, 10);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 10);
     Engine_ActorSetAnimationAndWait(8, 4);
     Event_ShowMessageAndWait(8, 0, 10);
@@ -623,9 +623,9 @@ void RunEventScript01(void)
     Engine_EventShowMessageAndWait(1, 0, 10);
     Engine_ActorRunRepeatedMotion(8, 1);
     Event_OpenMessage(8, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         SceneChannel_ConfigureUniformAndHandoff(10);
@@ -692,10 +692,10 @@ void RunEventScript01(void)
 
 void ConfigureFourSceneChannelsAndHandoff(s32 handoff)
 {
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(1, 0xe000, 0);
-    Actor_FaceDirection(2, 0x2000, 0);
-    Actor_FaceDirection(3, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(1, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(2, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(3, FACING_NORTHWEST, 0);
     if (handoff != 0) {
         Engine_EventWait(handoff);
     }
@@ -703,10 +703,10 @@ void ConfigureFourSceneChannelsAndHandoff(s32 handoff)
 
 void SceneChannel_ConfigureUniformAndHandoff(s32 handoff)
 {
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_FaceDirection(0, FACING_NORTH, 0);
+    Actor_FaceDirection(1, FACING_NORTH, 0);
+    Actor_FaceDirection(2, FACING_NORTH, 0);
+    Actor_FaceDirection(3, FACING_NORTH, 0);
     if (handoff != 0) {
         Engine_EventWait(handoff);
     }
@@ -810,24 +810,24 @@ void Scene_RunPartySequence(void)
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
     Actor_FaceDirection(9, 0x5000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
     Event_ShowMessageAndWait(0x6002, 0, 10);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
     Event_ShowMessageAndWait(0x2002, 0, 20);
     Engine_ActorSetAnimationAndWait(8, 3);
     Event_ShowMessageAndWait(8, 0, 20);
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     Event_ShowMessageAndWait(0x6002, 0, 10);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 10);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
     Actor_ShowEmote(ACTOR_MIA, 0x105, 40);
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Engine_EventWait(80);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 10);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
     Event_OpenMessage(ACTOR_GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {

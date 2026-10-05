@@ -4,6 +4,7 @@
 #include "CALL.H"
 #include "STAGED_ACTOR.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 void Effect_AdvanceMotion(struct MotionEffect *effect);
 void OverlayObject_WaitUntilIdle(s32 *obj);
@@ -230,12 +231,12 @@ void BabiIriguchi_JumpFromLedge(void)
 { u16 dir = rec7->facing; if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff) goto step_down; }
         ObjectMotion_OffsetPositionAndResetMotion(0, 16, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
-        Call3(Engine_ActorFaceDirection, 0, 0x8000, 20);
+        Call3(Engine_ActorFaceDirection, 0, FACING_WEST, 20);
         goto done;
         step_down:;
         Call3(ObjectMotion_OffsetPositionAndResetMotion, 0, 0, -16);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
-        Call3(Engine_ActorFaceDirection, 0, 0x4000, 20);
+        Call3(Engine_ActorFaceDirection, 0, FACING_SOUTH, 20);
     }
     done:;
     SceneState_ApplyRectsAtActors8And9();
@@ -335,7 +336,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Engine_EventSetMessage((s32)MsgBabiYoureSureTheyWentThrough);
     Iriguchi_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x160);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Battle_WaitMode0(10);
     Call4(Motion_LaunchFromFocusedObject, 10, 16, 0, 0xc000);
     Call4(Motion_LaunchFromFocusedObject, 1, -8, 16, 0xc000);
@@ -353,8 +354,8 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(30);
     Event_ShowMessage(11, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(14, 0xc000, 0);
-    Actor_FaceDirection(11, 0xc000, 0);
+    Actor_FaceDirection(14, FACING_NORTH, 0);
+    Actor_FaceDirection(11, FACING_NORTH, 0);
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(14, 2);
@@ -373,13 +374,13 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_ShowEmote(12, 0x102, 50);
     Event_ShowMessage(12, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(13, 0, 0);
+    Actor_FaceDirection(13, FACING_EAST, 0);
     Battle_WaitMode0(25);
     Engine_ActorRunRepeatedMotion(13, 2);
     Battle_WaitMode0(20);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(12, 0x8000, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(13, 4);
     Battle_WaitMode0(20);
@@ -391,17 +392,17 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(20);
     Actor_ShowEmote(13, 0x107, 40);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(13, 0x4000, 0);
+    Actor_FaceDirection(13, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(20);
     Actor_ShowEmote(13, 0x101, 75);
     Actor_ShowEmote(14, 0x101, 60);
-    Actor_FaceDirection(12, 0x4000, 0);
+    Actor_FaceDirection(12, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
-    Actor_FaceDirection(11, 0x4000, 0);
+    Actor_FaceDirection(11, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Battle_WaitMode0(30);
     Event_ShowMessage(14, 0);
     Camera_MoveTo(0x1180000, -1, 0x1400000, 1);
@@ -431,7 +432,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Event_OpenMessage(ACTOR_GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
-        Actor_FaceDirection(10, 0x8000, 0);
+        Actor_FaceDirection(10, FACING_WEST, 0);
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(10, 3);
         Battle_WaitMode0(30);
@@ -439,7 +440,7 @@ void FieldScene_RunBranchingActorSequence(void)
         gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
-        Actor_FaceDirection(10, 0x8000, 0);
+        Actor_FaceDirection(10, FACING_WEST, 0);
         Battle_WaitMode0(30);
         Engine_ActorSetAnimationAndWait(10, 4);
         Battle_WaitMode0(20);
@@ -453,7 +454,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(10, 0xc000, 0);
+    Actor_FaceDirection(10, FACING_NORTH, 0);
     Battle_WaitMode0(35);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
@@ -508,7 +509,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
     Actor_ShowEmote(10, 0x102, 60);
-    Actor_FaceDirection(10, 0x8000, 0);
+    Actor_FaceDirection(10, FACING_WEST, 0);
     Battle_WaitMode0(25);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
@@ -529,7 +530,7 @@ void FieldScene_RunBranchingActorSequence(void)
         Event_ShowMessage(10, 0);
     }
     Battle_WaitMode0(10);
-    Actor_FaceDirection(10, 0xc000, 0);
+    Actor_FaceDirection(10, FACING_NORTH, 0);
     Battle_WaitMode0(35);
     Engine_ActorSetAnimationAndWait(14, 3);
     Battle_WaitMode0(30);
@@ -541,8 +542,8 @@ void FieldScene_RunBranchingActorSequence(void)
     Object_SetModeById(12, 3);
     Engine_ActorSetAnimationAndWait(13, 3);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(12, 0x4000, 0);
-    Actor_FaceDirection(13, 0x4000, 0);
+    Actor_FaceDirection(12, FACING_SOUTH, 0);
+    Actor_FaceDirection(13, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
     Object_SetModeById(12, 3);
     Engine_ActorSetAnimationAndWait(13, 3);
@@ -556,20 +557,20 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_WalkTo(13, 0x158, 0x138);
     Actor_WalkToAndWait(12, 0x158, 0x150);
     Object_SetModeById(13, 1);
-    Actor_FaceDirection(12, 0x8000, 0);
-    Actor_FaceDirection(13, 0x8000, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
+    Actor_FaceDirection(13, FACING_WEST, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(14, 0x4000, 0);
+    Actor_FaceDirection(14, FACING_SOUTH, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
     Iriguchi_SetSpeed(14, 0x10000, 0x8000);
     Actor_WalkToAndWait(14, 0x148, 0x138);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(30);
     Iriguchi_SetSpeed(11, 0x10000, 0x8000);
     Actor_WalkToAndWait(11, 0x148, 0x148);
-    Actor_FaceDirection(11, 0x8000, 0);
+    Actor_FaceDirection(11, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Iriguchi_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
     Iriguchi_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
@@ -609,7 +610,7 @@ void FieldScene_RunActorEventSequence(void)
     Engine_EventSetMessage((s32)MsgBabiTheDoor);
     Iriguchi_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x138);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Battle_WaitMode0(10);
     Motion_LaunchFromFocusedObject(1, 0, 16, 0);
     Call4(Motion_LaunchFromFocusedObject, 2, -16, -8, 0);
@@ -646,13 +647,13 @@ void FieldScene_RunActorEventSequence(void)
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(20);
     Actor_ShowEmote(12, 0x101, 50);
-    Actor_FaceDirection(12, 0x8000, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
     Battle_WaitMode0(25);
     Event_ShowMessage(12, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(14, 0x8000, 0);
-    Actor_FaceDirection(11, 0x8000, 0);
-    Actor_FaceDirection(13, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
+    Actor_FaceDirection(11, FACING_WEST, 0);
+    Actor_FaceDirection(13, FACING_WEST, 0);
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
@@ -678,21 +679,21 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(20);
     Iriguchi_SetSpeed(10, 0x10000, 0x8000);
     Actor_WalkByAndWait(10, 0, -40);
-    Actor_FaceDirection(10, 0, 0);
+    Actor_FaceDirection(10, FACING_EAST, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
     Engine_ActorSetAnimationAndWait(14, 3);
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(13, 0x4000, 0);
-    Actor_FaceDirection(12, 0xc000, 0);
+    Actor_FaceDirection(13, FACING_SOUTH, 0);
+    Actor_FaceDirection(12, FACING_NORTH, 0);
     Battle_WaitMode0(30);
     Object_SetModeById(12, 3);
     Engine_ActorSetAnimationAndWait(13, 3);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(13, 0x8000, 0);
-    Actor_FaceDirection(12, 0x8000, 0);
+    Actor_FaceDirection(13, FACING_WEST, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(10, 3);
     Battle_WaitMode0(30);
@@ -709,10 +710,10 @@ void FieldScene_RunActorEventSequence(void)
     Actor_FaceDirection(11, 0xb000, 0);
     Actor_FaceDirection(12, 0xb000, 0);
     Actor_FaceDirection(13, 0xb000, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Battle_WaitMode0(30);
     Actor_ShowEmote(11, 0x100, 0);
     Actor_ShowEmote(12, 0x100, 0);
@@ -730,13 +731,13 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(10);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(ACTOR_IVAN, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(10, 0x4000, 0);
+    Actor_FaceDirection(10, FACING_SOUTH, 0);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(ACTOR_MIA, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
     Battle_WaitMode0(30);
     Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 0);
@@ -748,15 +749,15 @@ void FieldScene_RunActorEventSequence(void)
     Event_ShowMessage(ACTOR_GERALD, 0);
     Battle_WaitMode0(20);
     Actor_ShowEmote(14, 0x103, 50);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Event_OpenMessage(14, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(11, 0x8000, 0);
-    Actor_FaceDirection(12, 0x8000, 0);
-    Actor_FaceDirection(13, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(11, FACING_WEST, 0);
+    Actor_FaceDirection(12, FACING_WEST, 0);
+    Actor_FaceDirection(13, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x1000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
         Engine_ActorRunRepeatedMotion(14, 2);
@@ -774,11 +775,11 @@ void FieldScene_RunActorEventSequence(void)
     Engine_ActorRunRepeatedMotion(10, 2);
     Battle_WaitMode0(20);
     Actor_WalkByAndWait(10, 0, 16);
-    Actor_FaceDirection(10, 0x2000, 0);
+    Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(14, 0xa000, 0);
+    Actor_FaceDirection(14, FACING_NORTHWEST, 0);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(14, 4);
     Battle_WaitMode0(20);
@@ -797,7 +798,7 @@ void FieldScene_RunActorEventSequence(void)
     Actor_ShowEmote(10, 0x101, 60);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
-        Actor_FaceDirection(10, 0x2000, 0);
+        Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(10, 3);
         Battle_WaitMode0(30);
@@ -805,7 +806,7 @@ void FieldScene_RunActorEventSequence(void)
         gEventWork->message++;
     } else {
         Battle_WaitMode0(30);
-        Actor_FaceDirection(10, 0x2000, 0);
+        Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(10, 4);
         Battle_WaitMode0(20);
@@ -821,7 +822,7 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(20);
     Engine_ActorRunRepeatedMotion(14, 2);
     Battle_WaitMode0(40);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
@@ -834,8 +835,8 @@ void FieldScene_RunActorEventSequence(void)
     Engine_ActorRunRepeatedMotion(10, 2);
     Battle_WaitMode0(20);
     Actor_WalkToAndWait(10, 0x138, 0x138);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(10, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(10, FACING_WEST, 0);
     Battle_WaitMode0(25);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
@@ -872,7 +873,7 @@ void FieldScene_RunActorEventSequence(void)
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Battle_WaitMode0(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(10, 0xb000, 0);
     Actor_FaceDirection(14, 0xb000, 0);
     Actor_FaceDirection(11, 0xb000, 0);
@@ -1322,10 +1323,10 @@ s32 BabiIriguchi_SetupScene(void)
             Actor_SetPosition(12, 0x1380000, 0xf80000);
             Actor_SetPosition(13, 0x1280000, 0xf80000);
             Actor_SetPosition(14, 0x1400000, 0x1280000);
-            Actor_FaceDirection(11, 0, 0);
-            Actor_FaceDirection(12, 0xc000, 0);
-            Actor_FaceDirection(13, 0xc000, 0);
-            Actor_FaceDirection(14, 0x8000, 0);
+            Actor_FaceDirection(11, FACING_EAST, 0);
+            Actor_FaceDirection(12, FACING_NORTH, 0);
+            Actor_FaceDirection(13, FACING_NORTH, 0);
+            Actor_FaceDirection(14, FACING_WEST, 0);
             Battle_WaitMode0(5);
         } else if (GameFlag_IsSet(0x989) != 0) {
             Actor_SetPosition(10, 0x1380000, 0x1380000);
@@ -1339,8 +1340,8 @@ s32 BabiIriguchi_SetupScene(void)
         if (GameFlag_IsSet(0x985) != 0) {
             Actor_SetPosition(8, 0x1180000, 0xf00000);
             Actor_SetPosition(9, 0x1480000, 0xf00000);
-            Actor_FaceDirection(8, 0x8000, 0);
-            Actor_FaceDirection(9, 0, 0);
+            Actor_FaceDirection(8, FACING_WEST, 0);
+            Actor_FaceDirection(9, FACING_EAST, 0);
             Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
         }
         if (gGameState.entrance == 3) {

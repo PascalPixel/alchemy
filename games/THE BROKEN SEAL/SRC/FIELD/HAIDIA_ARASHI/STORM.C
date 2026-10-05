@@ -6,6 +6,7 @@
 #include "FIELD_EFFECT.H"
 #include "TBS_EDITION.H"
 #include "B5_CONTEXT.H"
+#include "FIELD_SCENE.H"
 
 struct Pulse {
     u8 unknown_00[0x64];
@@ -254,7 +255,7 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
     Event_ShowMessageAndWait(0x1016, 0, 10);
-    Actor_FaceDirection(ACTOR_ID, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_ID, FACING_NORTH, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
     Event_ShowMessageAndWait(0x1016, 0, 10);
     Actor_FaceDirection(ACTOR_ID, 0x1000, 20);
@@ -504,15 +505,15 @@ void HaidiaArashi_CopyLeaderSpritePriority(void)
     Ent *dst;
     Ent *dst2;
 
-    src = ((Rec *)Object_GetById(0))->f50;
+    src = (Ent *)Object_GetById(0)->sprite;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    ObjectMotion_SetActionVariant(22, src->f);
-    ObjectMotion_SetActionVariant(8, src->f);
+    ObjectMotion_SetActionVariant(22, ((struct FieldSpritePriority *)src)->priority);
+    ObjectMotion_SetActionVariant(8, ((struct FieldSpritePriority *)src)->priority);
 #else
-    dst = ((Rec *)Object_GetById(22))->f50;
-    dst->f = src->f;
-    dst2 = ((Rec *)Object_GetById(8))->f50;
-    dst2->f = src->f;
+    dst = (Ent *)Object_GetById(22)->sprite;
+    ((struct FieldSpritePriority *)dst)->priority = ((struct FieldSpritePriority *)src)->priority;
+    dst2 = (Ent *)Object_GetById(8)->sprite;
+    ((struct FieldSpritePriority *)dst2)->priority = ((struct FieldSpritePriority *)src)->priority;
 #endif
 }
 

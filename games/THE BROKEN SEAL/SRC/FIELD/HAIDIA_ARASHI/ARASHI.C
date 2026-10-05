@@ -5,6 +5,7 @@
 #include "FIELDOBJ.H"
 #include "ANIMSPR.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 extern u8 MsgHaidiaBigBoyWhy[];
 extern u8 MsgHaidiaKnowWayGo[];
@@ -74,44 +75,43 @@ extern u8 MsgHaidiaMomDadBack[];
 extern u8 HaidiaArashi_StormRunActions[];
 void Scene_RunActorGroupDepartureSequence();
 
-/* Configures actor 22 (position, pose, and movement/sprite flags) for the
- * scene. */
+/* Pick another heading when the actor's countdown reaches zero. */
 s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
 {
-    s32 loaded = object->counter;
+    s32 loaded = (*(s16 *)&((struct FieldActor *)object)->timer);
     s32 counter = (s16)loaded;
 
     if (loaded == 0) {
-        object->x = Engine_RandomNext();
+        ((struct FieldActor *)object)->facing = Engine_RandomNext();
         counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
-        object->counter = counter;
+        (*(s16 *)&((struct FieldActor *)object)->timer) = counter;
     }
-    object->counter = counter - 1;
+    (*(s16 *)&((struct FieldActor *)object)->timer) = counter - 1;
     return 1;
 }
 
 s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
 {
-    switch (state->countdown) {
+    switch ((*(s16 *)&((struct FieldActor *)state)->timer)) {
     case 6:
-        state->fixed_point_18 -= 0x4000;
-        state->fixed_point_1c += 0x2000;
+        ((struct FieldActor *)state)->scale_x -= 0x4000;
+        ((struct FieldActor *)state)->scale_y += 0x2000;
         break;
     case 4:
-        state->fixed_point_18 += 0x2000;
-        state->fixed_point_1c += -0x1000;
+        ((struct FieldActor *)state)->scale_x += 0x2000;
+        ((struct FieldActor *)state)->scale_y += -0x1000;
         break;
     case 2:
-        state->fixed_point_18 += 0x1000;
-        state->fixed_point_1c -= 0x800;
+        ((struct FieldActor *)state)->scale_x += 0x1000;
+        ((struct FieldActor *)state)->scale_y -= 0x800;
         break;
     case 0:
-        state->fixed_point_18 = 0x10000;
-        state->fixed_point_1c = 0x10000;
-        state->countdown = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+        ((struct FieldActor *)state)->scale_x = 0x10000;
+        ((struct FieldActor *)state)->scale_y = 0x10000;
+        (*(s16 *)&((struct FieldActor *)state)->timer) = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
-    state->countdown--;
+    (*(s16 *)&((struct FieldActor *)state)->timer)--;
     return 1;
 }
 
@@ -489,7 +489,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         }
         Engine_ActorEnableActionCallback(25, tbl);
         Engine_ActorSetPosition(23, x23, z23);
-        Engine_ActorFaceDirection(23, 0xC000, 0);
+        Engine_ActorFaceDirection(23, FACING_NORTH, 0);
         Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
         Engine_ActorSetPosition(17, 0, 0);
         Engine_ActorSetPosition(18, 0, 0);
@@ -587,7 +587,7 @@ void Scene_DoraSendsRobinToThePlaza(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x13e, 0x389);
     Engine_ActorSetAnimation(ACTOR_DORA, 1);
     Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
-    Actor_FaceDirection(ACTOR_DORA, 0xc000, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
     message = (s32)MsgHaidiaKyleAbleStop;
     Engine_EventSetMessage(message);
     Event_ShowMessage(ACTOR_DORA, 0);
@@ -597,30 +597,30 @@ void Scene_DoraSendsRobinToThePlaza(void)
     Event_ShowMessage(ACTOR_KYLE, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
     Engine_EventWait(40);
-    Actor_FaceDirection(ACTOR_KYLE, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
     Event_ShowMessageAndWait(ACTOR_KYLE, 0, 20);
     Actor_ShowEmote(ACTOR_DORA, 0x101, 20);
-    Actor_FaceDirection(ACTOR_DORA, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_KYLE, 4);
     Event_ShowMessage(ACTOR_KYLE, 0);
     Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
     Engine_EventWait(30);
-    Actor_FaceDirection(ACTOR_DORA, 0, 50);
-    Actor_FaceDirection(ACTOR_DORA, 0xc000, 10);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 50);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
     Actor_SetSpeed(ACTOR_DORA, 0x18000, 0xc000);
     Actor_WalkToAndWait(ACTOR_DORA, 0x121, 0x373);
-    Actor_FaceDirection(ACTOR_DORA, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTHEAST, 0);
     Event_ShowMessage(ACTOR_DORA, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_KYLE, 2);
     Event_ShowMessage(ACTOR_KYLE, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-    Actor_FaceDirection(ACTOR_DORA, 0x2000, 10);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 10);
     Engine_EventSetMessage((message + 8));
     Event_OpenMessage(ACTOR_DORA, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x12e, 0x389);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     while (Engine_EventChooseYesNo(0, 0) == 1) {
         Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
         Engine_EventSetMessage((s32)MsgHaidiaBigBoyWhy);
@@ -814,8 +814,8 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             actor->speed = 0x18000;
             actor->acceleration = 0x18000;
             actor->y.fixed += 0x500000;
-            *(s32 *)((u8 *)actor + 0x3c) = actor->y.fixed;
-            *(s32 *)((u8 *)actor + 0x44) = 0x8000;
+            actor->target_y = actor->y.fixed;
+            actor->bounce = 0x8000;
             Actor_WalkToAndWait(13, 64, 0x2bf);
             Engine_EventWait(40);
             Audio_PlayCue(0x121);
@@ -1000,7 +1000,7 @@ void FieldScene_RunScene372SequenceC(void)
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgHaidiaBoulderNeedGet);
         Event_ShowMessage(22, 0);
-        Actor_FaceDirection(22, 0xe000, 10);
+        Actor_FaceDirection(22, FACING_NORTHEAST, 10);
         Engine_EventEnd();
     } else {
         if (GameFlag_IsSet(0x837) == 0) {
@@ -1065,7 +1065,7 @@ void FieldScene_RunScene372SequenceE(void)
         Engine_EventSetMessage(base);
         Event_ShowMessage(22, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
         Camera_SetSpeed(0x6666, 0xccc);
         Camera_MoveTo(0x1000000, -1, 0x24c0000, 1);
         Actor_SetSpeed(22, 0x20000, 0x10000);
@@ -1122,7 +1122,7 @@ void FieldScene_RunScene372SequenceD(void)
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(20);
-    Actor_FaceDirection(22, 0x4000, 0);
+    Actor_FaceDirection(22, FACING_SOUTH, 0);
     Event_ShowMessage(22, 0);
     Engine_ActorSetAnimation(22, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1218,8 +1218,8 @@ void Scene_BoulderFalls(void)
         ObjectMotion_SetActionVariant(29, 3);
         Engine_EventSetMessage((s32)MsgHaidiaTheBoulderIsFalling);
         Event_ShowMessageAndWait(28, 0, 20);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-        Actor_FaceDirection(22, 0xc000, 20);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+        Actor_FaceDirection(22, FACING_NORTH, 20);
         Camera_SetSpeed(0x40000, 0x8000);
         Camera_MoveTo(0x700000, -1, 0x14b0000, 1);
         Engine_CameraWaitForMove();
@@ -1291,10 +1291,10 @@ void Scene_BoulderFalls(void)
         Engine_TaskWait(1);
         Actor_SetChildValue(29, 0);
         Actor_ShowEmote(29, 0x105, 20);
-        Actor_FaceDirection(29, 0x8000, 40);
-        Actor_FaceDirection(29, 0, 20);
-        Actor_FaceDirection(29, 0x8000, 20);
-        Actor_FaceDirection(29, 0x4000, 40);
+        Actor_FaceDirection(29, FACING_WEST, 40);
+        Actor_FaceDirection(29, FACING_EAST, 20);
+        Actor_FaceDirection(29, FACING_WEST, 20);
+        Actor_FaceDirection(29, FACING_SOUTH, 40);
         Actor_ShowEmote(29, 0x100, 0);
         Engine_ActorRunRepeatedMotion(29, 2);
         Engine_ActorJump(29, 4, 40);
@@ -1394,7 +1394,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     }
     Engine_EventBegin();
     Call3(Engine_ActorSetPosition, 10, 0xC00000, 0x4BE0000);
-    Call3(Engine_ActorFaceDirection, 10, 0x2000, 0);
+    Call3(Engine_ActorFaceDirection, 10, FACING_SOUTHEAST, 0);
     Engine_ActorSetAnimation(10, 5);
     {
         u8 *o;
@@ -1402,37 +1402,37 @@ void FieldScene_RunFlagGatedActorSequence(void)
         o = (u8 *)Object_GetById(10);
         v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
         tbl = HaidiaArashi_ActorEightScript;
-        *(u16 *)(o + 0x64) = v;
+        ((struct FieldActor *)o)->timer = v;
         Engine_ActorEnableActionCallback(10, (s32)tbl);
     }
     Call3(Engine_ActorSetPosition, 9, 0xC00000, 0x4A50000);
-    Call3(Engine_ActorFaceDirection, 9, 0x2000, 0);
+    Call3(Engine_ActorFaceDirection, 9, FACING_SOUTHEAST, 0);
     Call3(Engine_ActorSetPosition, 24, 0xE30000, 0x4BE0000);
-    Call3(Engine_ActorFaceDirection, 24, 0x4000, 0);
+    Call3(Engine_ActorFaceDirection, 24, FACING_SOUTH, 0);
     Engine_ActorSetAnimation(24, 6);
     {
         u8 *o;
         s32 v;
         o = (u8 *)Object_GetById(24);
         v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-        *(u16 *)(o + 0x64) = v;
+        ((struct FieldActor *)o)->timer = v;
         Engine_ActorEnableActionCallback(24, (s32)tbl);
     }
     Call3(Engine_ActorSetPosition, 25, 0xFA0000, 0x4BE0000);
-    Call3(Engine_ActorFaceDirection, 25, 0x4000, 0);
+    Call3(Engine_ActorFaceDirection, 25, FACING_SOUTH, 0);
     Engine_ActorSetAnimation(25, 6);
     {
         u8 *o;
         s32 v;
         o = (u8 *)Object_GetById(25);
         v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-        *(u16 *)(o + 0x64) = v;
+        ((struct FieldActor *)o)->timer = v;
         Engine_ActorEnableActionCallback(25, (s32)tbl);
     }
     Call3(Engine_ActorSetPosition, 26, 0xE30000, 0x4A50000);
     Call3(Engine_ActorFaceDirection, 26, 0x3000, 0);
     Call3(Engine_ActorSetPosition, 23, 0xF30000, 0x4FD0000);
-    Call3(Engine_ActorFaceDirection, 23, 0xC000, 0);
+    Call3(Engine_ActorFaceDirection, 23, FACING_NORTH, 0);
     Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
     Engine_TaskWait(3);
     Engine_EventSetMessage((s32)MsgHaidiaNoBrother);
@@ -1449,8 +1449,8 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorWalkToAndWait, 22, 132, 0x446);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
     Engine_EventWait(40);
-    Call3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0x4000, 0);
-    Call3(Engine_ActorFaceDirection, 22, 0x4000, 20);
+    Call3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Call3(Engine_ActorFaceDirection, 22, FACING_SOUTH, 20);
     Call2(Engine_CameraSetSpeed, 0x40000, 0x8000);
     Call4(Engine_CameraMoveTo, 0xD80000, -1, 0x4D00000, 1);
     Engine_CameraWaitForMove();
@@ -1458,7 +1458,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Engine_ActorRunRepeatedMotion(10, 2);
     Engine_EventShowMessageAndWait(10, 0, 10);
     Engine_ActorRunRepeatedMotion(23, 3);
-    Engine_ActorFaceDirection(9, 0, 10);
+    Engine_ActorFaceDirection(9, FACING_EAST, 10);
     Engine_ActorSetAnimationAndWait(9, 3);
     Engine_EventShowMessageAndWait(9, 0, 10);
     Call3(Engine_ActorFaceDirection, 9, 0x3000, 10);
@@ -1477,22 +1477,22 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         o = (u8 *)Object_GetById(10);
-        *(s32 *)(o + 0x18) = 0x10000;
-        *(s32 *)(o + 0x1C) = 0x10000;
+        ((struct FieldActor *)o)->scale_x = 0x10000;
+        ((struct FieldActor *)o)->scale_y = 0x10000;
     }
     Engine_ActorSetAnimation(24, 1);
     {
         u8 *o;
         o = (u8 *)Object_GetById(24);
-        *(s32 *)(o + 0x18) = 0x10000;
-        *(s32 *)(o + 0x1C) = 0x10000;
+        ((struct FieldActor *)o)->scale_x = 0x10000;
+        ((struct FieldActor *)o)->scale_y = 0x10000;
     }
     Engine_ActorSetAnimation(25, 1);
     {
         u8 *o;
         o = (u8 *)Object_GetById(25);
-        *(s32 *)(o + 0x18) = 0x10000;
-        *(s32 *)(o + 0x1C) = 0x10000;
+        ((struct FieldActor *)o)->scale_x = 0x10000;
+        ((struct FieldActor *)o)->scale_y = 0x10000;
     }
     Engine_ActorStartRepeatedMotion(10, 2);
     Engine_ActorStartRepeatedMotion(9, 2);
@@ -1521,7 +1521,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         o = (u8 *)Object_GetById(23);
-        *(s32 *)(o + 0x28) = 0x20000;
+        ((struct FieldActor *)o)->velocity_y = 0x20000;
     }
     Engine_EventWait(6);
     Engine_ActorSetAnimation(23, 7);
@@ -1541,12 +1541,12 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         o = (u8 *)Object_GetById(25);
-        o[0x5A] &= 0xFE;
+        ((struct FieldActor *)o)->steering_flags &= 0xFE;
     }
     {
         u8 *o;
         o = (u8 *)Object_GetById(26);
-        o[0x5A] &= 0xFE;
+        ((struct FieldActor *)o)->steering_flags &= 0xFE;
     }
     Call3(Engine_ActorSetSpeed, 25, 0x9999, 0x4CCC);
     Call3(Engine_ActorSetSpeed, 26, 0x9999, 0x4CCC);
@@ -1555,38 +1555,38 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         o = (u8 *)Object_GetById(25);
-        o[0x5A] |= 1;
+        ((struct FieldActor *)o)->steering_flags |= 1;
     }
     {
         u8 *o;
         o = (u8 *)Object_GetById(26);
-        o += 0x5A;
+        o = &((struct FieldActor *)o)->steering_flags;
         /* FAKEMATCH: the set bit first, so the or writes into the register that holds it, as the ROM's does. */
         {
             u8 set = 1 | *o;
             *o = set;
         }
     }
-    Engine_ActorFaceDirection(26, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 25, 0x8000, 10);
+    Engine_ActorFaceDirection(26, FACING_SOUTHWEST, 0);
+    Call3(Engine_ActorFaceDirection, 25, FACING_WEST, 10);
     Engine_ActorSetAnimation(24, 4);
     Engine_EventShowMessageAndWait(0x8018, 0, 10);
-    Call3(Engine_ActorFaceDirection, 10, 0xC000, 20);
-    Engine_ActorFaceDirection(10, 0, 10);
+    Call3(Engine_ActorFaceDirection, 10, FACING_NORTH, 20);
+    Engine_ActorFaceDirection(10, FACING_EAST, 10);
     Engine_ActorSetAnimation(10, 4);
     Call3(Engine_EventShowMessageAndWait, 0x800A, 0, 10);
     Call3(Engine_ActorShowEmote, 24, 0x105, 0);
     Call3(Engine_ActorShowEmote, 10, 0x105, 60);
     Call3(Engine_ActorShowEmote, 9, 0x106, 20);
-    Call3(Engine_ActorFaceDirection, 9, 0x8000, 40);
-    Call3(Engine_ActorFaceDirection, 9, 0xC000, 20);
-    Engine_ActorFaceDirection(9, 0, 30);
-    Call3(Engine_ActorFaceDirection, 9, 0x4000, 10);
+    Call3(Engine_ActorFaceDirection, 9, FACING_WEST, 40);
+    Call3(Engine_ActorFaceDirection, 9, FACING_NORTH, 20);
+    Engine_ActorFaceDirection(9, FACING_EAST, 30);
+    Call3(Engine_ActorFaceDirection, 9, FACING_SOUTH, 10);
     Engine_EventShowMessageAndWait(9, 0, 10);
-    Call3(Engine_ActorFaceDirection, 10, 0xC000, 0);
+    Call3(Engine_ActorFaceDirection, 10, FACING_NORTH, 0);
     Call3(Engine_ActorFaceDirection, 25, 0x9000, 0);
-    Call3(Engine_ActorFaceDirection, 24, 0xA000, 0);
-    Call3(Engine_ActorFaceDirection, 26, 0x8000, 10);
+    Call3(Engine_ActorFaceDirection, 24, FACING_NORTHWEST, 0);
+    Call3(Engine_ActorFaceDirection, 26, FACING_WEST, 10);
     Engine_ActorRunRepeatedMotion(10, 1);
     Call3(Engine_EventShowMessageAndWait, 0x800A, 0, 10);
     Engine_ActorSetAnimation(9, 4);
@@ -1595,13 +1595,13 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorShowEmote, 24, 0x105, 0);
     Call3(Engine_ActorShowEmote, 25, 0x105, 0);
     Call3(Engine_ActorShowEmote, 26, 0x105, 40);
-    Engine_ActorFaceDirection(9, 0, 10);
+    Engine_ActorFaceDirection(9, FACING_EAST, 10);
     Engine_ActorFaceEachOther(24, 25, 0);
     Engine_EventWait(20);
-    Engine_ActorFaceDirection(9, 0, 0);
-    Engine_ActorFaceDirection(10, 0, 10);
-    Call3(Engine_ActorFaceDirection, 24, 0x8000, 0);
-    Call3(Engine_ActorFaceDirection, 25, 0x8000, 10);
+    Engine_ActorFaceDirection(9, FACING_EAST, 0);
+    Engine_ActorFaceDirection(10, FACING_EAST, 10);
+    Call3(Engine_ActorFaceDirection, 24, FACING_WEST, 0);
+    Call3(Engine_ActorFaceDirection, 25, FACING_WEST, 10);
     Engine_ActorSetAnimation(24, 3);
     Engine_ActorSetAnimationAndWait(25, 3);
     Engine_ActorFaceEachOther(10, 9, 0);
@@ -1612,11 +1612,11 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Call3(Engine_ActorFaceDirection, 24, 0xD000, 10);
     Engine_ActorStartRepeatedMotion(24, 1);
     Engine_EventShowMessageAndWait(24, 0, 10);
-    Engine_ActorFaceDirection(10, 0, 0);
-    Engine_ActorFaceDirection(9, 0, 0);
+    Engine_ActorFaceDirection(10, FACING_EAST, 0);
+    Engine_ActorFaceDirection(9, FACING_EAST, 0);
     Engine_ActorRunRepeatedMotion(26, 1);
-    Call3(Engine_ActorFaceDirection, 26, 0x2000, 20);
-    Call3(Engine_ActorFaceDirection, 25, 0xA000, 20);
+    Call3(Engine_ActorFaceDirection, 26, FACING_SOUTHEAST, 20);
+    Call3(Engine_ActorFaceDirection, 25, FACING_NORTHWEST, 20);
     Engine_ActorSetAnimationAndWait(25, 3);
     Engine_EventShowMessageAndWait(25, 0, 10);
     Engine_ActorSetAnimationAndWait(26, 3);
@@ -1624,7 +1624,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Engine_ActorRunRepeatedMotion(9, 2);
     Engine_ActorSetAnimationAndWait(9, 3);
     Engine_EventShowMessageAndWait(9, 0, 10);
-    Call3(Engine_ActorFaceDirection, 26, 0x8000, 10);
+    Call3(Engine_ActorFaceDirection, 26, FACING_WEST, 10);
     Engine_ActorSetAnimationAndWait(26, 3);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(9, 1);
@@ -1677,9 +1677,7 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_ActorSetAnimation(10, 5);
     Engine_ActorSetAnimation(24, 6);
     Engine_ActorSetAnimation(25, 6);
-    /* For records 10, 24 and 25: fetch the record's entry pointer, fetch a
-     * value from that record's own state, and store a derived value into
-     * the entry's field at offset 100. */
+    /* Give the three waiting actors a random starting countdown. */
     entry = Actor_Get(10);
     record = Engine_RandomNext();
     entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
@@ -1727,17 +1725,15 @@ void HaidiaArashi_RunRiverSearch(void)
     Camera_SetSpeed(0x20000, 0x4000);
     Camera_MoveTo(0x690000, -1, 0x43e0000, 1);
     Object_RefreshSelectorById(9);
-    Actor_FaceDirection(9, 0, 0);
+    Actor_FaceDirection(9, FACING_EAST, 0);
     Actor_ShowEmote(9, 0x100, 40);
     Event_ShowMessageAndWait(9, 0, 10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-    Actor_FaceDirection(22, 0x8000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
+    Actor_FaceDirection(22, FACING_WEST, 10);
     Actor_WalkToAndWait(9, 105, 0x43e);
     Engine_ActorRunRepeatedMotion(9, 2);
     Event_OpenMessage(0x8009, 0);
-    Actor_FaceDirection(22, 0, 0);
-    /* Branch on a condition; pass byte 4 or byte 5 of the 0xe9b
-     * table to the corresponding follow-up call. */
+    Actor_FaceDirection(22, FACING_EAST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(9, 3);
         Engine_EventSetMessage((north + 4));
@@ -1746,18 +1742,16 @@ void HaidiaArashi_RunRiverSearch(void)
         Engine_EventSetMessage((north + 5));
     }
     Event_ShowMessage(0x8009, 0);
-    Actor_FaceDirection(22, 0x8000, 40);
+    Actor_FaceDirection(22, FACING_WEST, 40);
     Actor_ShowEmote(9, 0x100, 30);
     suppose = (s32)MsgHaidiaDontSupposeTwo;
     Engine_EventSetMessage(suppose);
     Event_OpenMessage(0x8009, 0);
-    /* Branch on a condition; each side reads a different byte of the
-     * 0xea1 table and runs its own follow-up sequence. */
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(9, 3);
         Engine_EventSetMessage((suppose + 1));
         Event_ShowMessageAndWait(0x8009, 0, 30);
-        Actor_FaceDirection(22, 0x8000, 20);
+        Actor_FaceDirection(22, FACING_WEST, 20);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
         Engine_ActorSetAnimation(22, 3);
         Engine_ActorSetAnimationAndWait(9, 3);
@@ -1777,11 +1771,10 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_ActorSetAnimationAndWait(22, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(22, 2);
-    /* If a record pointer is returned, pass its s16 fields at offsets 10
-     * and 18 through to the follow-up call. */
+    /* Walk actor 22 back to the leader. */
     record = (s32)Actor_Get(0);
     if (record != 0) {
-        Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(22, ((struct FieldActor *)record)->x.part.pixel, ((struct FieldActor *)record)->z.part.pixel);
     }
     Engine_ActorWaitForMove(22);
     Actor_SetPosition(22, 0, 0);
@@ -1854,7 +1847,7 @@ void HaidiaArashi_RunReunionAndDeparture(void)
             Call3(Engine_ActorWalkToAndWait, 26, 199, 0x557);
             Call3(Engine_ActorFaceDirection, 26, 0xd000, 0);
             Call3(Engine_ActorSetPosition, 25, 0xf70000, 0x4ba0000);
-            Engine_ActorFaceDirection(25, 0x6000, 0);
+            Engine_ActorFaceDirection(25, FACING_SOUTHWEST, 0);
             record = Object_GetById(8);
             p4 = (u8 *)record->sprite;
             record->priority_flags &= 254;
@@ -1873,9 +1866,9 @@ void HaidiaArashi_RunReunionAndDeparture(void)
             Engine_EventSetMessage((s32)MsgHaidiaMomDadBack);
             Engine_EventShowMessageAndWait(26, 0, 40);
             Call3(Engine_ActorSetPosition, 9, 0x650000, 0x4ad0000);
-            Call3(Engine_ActorFaceDirection, 9, 0x2000, 0);
+            Call3(Engine_ActorFaceDirection, 9, FACING_SOUTHEAST, 0);
             Engine_EventShowMessageAndWait(0x1009, 0, 10);
-            Call3(Engine_ActorFaceDirection, 26, 0xa000, 0);
+            Call3(Engine_ActorFaceDirection, 26, FACING_NORTHWEST, 0);
             Engine_CameraSetSpeed(0x13333, 0x2666);
             Call4(Engine_CameraMoveTo, 0x650000, -1, 0x4ad0000, 1);
             Call3(Engine_ActorSetSpeed, 9, 0x16666, 0xb333);
@@ -1907,7 +1900,7 @@ void HaidiaArashi_RunReunionAndDeparture(void)
             Engine_EventShowMessage(9, 0);
             Engine_ActorRunRepeatedMotion(26, 2);
             Engine_EventShowMessageAndWait(26, 0, 10);
-            Call3(Engine_ActorFaceDirection, 9, 0xe000, 40);
+            Call3(Engine_ActorFaceDirection, 9, FACING_NORTHEAST, 40);
             Call3(Engine_ActorFaceDirection, 9, 0x3000, 20);
             Engine_ActorSetAnimationAndWait(9, 3);
             Engine_EventShowMessage(9, 0);
@@ -2003,7 +1996,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Event_Wait(104);
     Camera_MoveTo(0x990000, -1, 0x52d0000, 1);
     Actor_WalkToAndWait(9, 158, 0x4f8);
-    Actor_FaceDirection(9, 0x2000, 0);
+    Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
     Object_RefreshSelectorById(8);
     Actor_EnableActionCallback(8, HaidiaArashi_GatherPath8);
     Actor_EnableActionCallback(26, HaidiaArashi_GatherPath26);
@@ -2152,19 +2145,19 @@ void Scene_RunActorGroupDepartureSequence(void)
     Task_Wait(1);
     Actor_SetAnimation(23, 8);
     Actor_SetPosition(9, 0xa90000, 0x4f00000);
-    Actor_FaceDirection(9, 0xc000, 0);
+    Actor_FaceDirection(9, FACING_NORTH, 0);
     Actor_SetAnimation(9, 9);
     Actor_SetPosition(26, 0x970000, 0x50c0000);
-    Actor_FaceDirection(26, 0x8000, 0);
+    Actor_FaceDirection(26, FACING_WEST, 0);
     Actor_SetAnimation(26, 5);
     Actor_SetPosition(8, 0xaa0000, 0x5210000);
-    Actor_FaceDirection(8, 0x6000, 0);
+    Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
     Actor_SetAnimation(8, 5);
     Actor_SetPosition(0, 0xb90000, 0x5350000);
-    Actor_FaceDirection(0, 0x2000, 0);
+    Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
     Actor_SetAnimation(0, 17);
     Actor_SetPosition(22, 0xa90000, 0x5680000);
-    Actor_FaceDirection(22, 0x4000, 0);
+    Actor_FaceDirection(22, FACING_SOUTH, 0);
     Actor_SetAnimation(22, 0);
     Camera_MoveTo(0xa60000, 0, 0x5390000, 0);
     Engine_MapRedraw();
@@ -2218,8 +2211,8 @@ void Scene_RunActorGroupDepartureSequence(void)
     actor->target_z = 0x80000000;
     groupVisual->priority = 1;
     Actor_SetPosition(27, 0xd60000, 0x4c00000);
-    Actor_FaceDirection(24, 0xc000, 0);
-    Actor_FaceDirection(25, 0xc000, 20);
+    Actor_FaceDirection(24, FACING_NORTH, 0);
+    Actor_FaceDirection(25, FACING_NORTH, 20);
     GameFlag_Set(0x166);
     Map_SetLayerEntryFlag(0);
     Map_SetLayerEntryFlag(1);

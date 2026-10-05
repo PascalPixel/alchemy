@@ -1,4 +1,5 @@
 #include "STATUS.H"
+#include "FIELD_SCENE.H"
 
 extern u8 MsgKorashiamuHaveMakeThroughCountlessMatches[];
 extern u8 MsgKorashiamuHavePerfectTechniquesLikeThose[];
@@ -107,7 +108,7 @@ void FieldScene_BuildActorPresentationGroup(void)
     Engine_EventWait(20);
     Actor_WalkToAndWait(16, 164, 0x398);
     Actor_WalkToAndWait(16, 185, 0x398);
-    Actor_FaceDirection(16, 0xc000, 20);
+    Actor_FaceDirection(16, FACING_NORTH, 20);
     Actor_WalkToAndWait(16, 185, 0x394);
     Engine_ActorSetAnimation(16, 11);
     Engine_EventWait(40);
@@ -121,8 +122,8 @@ void FieldScene_BuildActorPresentationGroup(void)
     Engine_EventWait(60);
     Actor_FaceDirection(14, 0xd000, 0);
     Actor_FaceDirection(15, 0x5000, 0);
-    Actor_FaceDirection(17, 0, 0);
-    Actor_FaceDirection(18, 0x8000, 20);
+    Actor_FaceDirection(17, FACING_EAST, 0);
+    Actor_FaceDirection(18, FACING_WEST, 20);
     Actor_SetAttachedEffect(14, 0x102);
     Actor_SetAttachedEffect(15, 0x102);
     Actor_SetAttachedEffect(17, 0x102);
@@ -247,7 +248,7 @@ void FieldScene_RunMiddleSequence(void)
     Engine_EventWait(20);
     Actor_WalkToAndWait(17, 164, 0x398);
     Actor_WalkToAndWait(17, 185, 0x398);
-    Actor_FaceDirection(17, 0xc000, 20);
+    Actor_FaceDirection(17, FACING_NORTH, 20);
     Actor_WalkToAndWait(17, 185, 0x394);
     Engine_ActorSetAnimation(17, 11);
     Engine_EventWait(40);
@@ -261,7 +262,7 @@ void FieldScene_RunMiddleSequence(void)
     Engine_EventWait(60);
     Actor_FaceDirection(14, 0xd000, 0);
     Actor_FaceDirection(15, 0x5000, 0);
-    Actor_FaceDirection(18, 0x8000, 20);
+    Actor_FaceDirection(18, FACING_WEST, 20);
     Actor_SetAttachedEffect(14, 0x102);
     Actor_SetAttachedEffect(15, 0x102);
     Actor_SetAttachedEffect(17, 0x102);
@@ -474,8 +475,8 @@ void FieldScene_BuildActorPresentationSequence(void)
     FieldScene_CallPairWith10(8);
     Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
     FieldScene_CallPairWith10(3);
-    Actor_FaceDirection(8, 0x8000, 0);
-    Actor_FaceDirection(9, 0, 40);
+    Actor_FaceDirection(8, FACING_WEST, 0);
+    Actor_FaceDirection(9, FACING_EAST, 40);
     Actor_FaceDirection(8, 0x5000, 0);
     SceneState_ForwardMaskedHalfwordWith10(9, 0x3000);
     Actor_ShowEmote(9, 0x105, 20);
@@ -508,9 +509,9 @@ void FieldScene_BuildActorPresentationSequence(void)
     SceneState_ForwardMaskedHalfwordWith10(1, 0x2000);
     FieldScene_CallPairWith10(1);
     Actor_ShowEmote(ACTOR_IVAN, 0x105, 60);
-    Actor_FaceDirection(ACTOR_IVAN, 0x2000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xe000, 20);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x102, 80);
@@ -518,9 +519,9 @@ void FieldScene_BuildActorPresentationSequence(void)
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     SceneState_ForwardMaskedHalfwordWith10(2, 0xc000);
     FieldScene_CallPairWith10(2);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
     SceneState_ForwardMaskedHalfwordWith10(8, 0x3000);
     Engine_ActorSetAnimationAndWait(8, 3);
     FieldScene_CallPairWith10(8);
@@ -529,22 +530,22 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
     Engine_ActorRunRepeatedMotion(9, 1);
     FieldScene_CallPairWith10(9);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xe000, 40);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
     Engine_ActorRunRepeatedMotion(10, 1);
     FieldScene_CallPairWith10(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     SceneState_ForwardMaskedHalfwordWith10(3, 0xc000);
     Engine_ActorSetAnimationAndWait(11, 3);
     FieldScene_CallPairWith10(11);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xe000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
     Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x105, 80);
@@ -552,14 +553,14 @@ void FieldScene_BuildActorPresentationSequence(void)
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     SceneState_ForwardMaskedHalfwordWith10(2, 0xe000);
     FieldScene_CallPairWith10(2);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 20);
     Actor_ShowEmote(11, 0x101, 60);
     Event_OpenMessage(ACTOR_IVAN, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     flag = 0;
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         FieldScene_CallPairWith10(2);
@@ -573,8 +574,8 @@ void FieldScene_BuildActorPresentationSequence(void)
     if (flag != 0) {
         gEventWork->message++;
     }
-    Actor_FaceDirection(8, 0x8000, 0);
-    Actor_FaceDirection(9, 0, 0);
+    Actor_FaceDirection(8, FACING_WEST, 0);
+    Actor_FaceDirection(9, FACING_EAST, 0);
     Actor_FaceDirection(10, 0x3000, 0);
     Actor_FaceDirection(11, 0xb000, 20);
     Actor_ShowEmote(8, 0x105, 0);
@@ -584,10 +585,10 @@ void FieldScene_BuildActorPresentationSequence(void)
     Engine_ActorRunRepeatedMotion(8, 1);
     SceneState_ForwardMaskedHalfwordWith10(8, 0x3000);
     FieldScene_CallPairWith10(8);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
     Engine_ActorRunRepeatedMotion(9, 1);
     SceneState_ForwardMaskedHalfwordWith10(9, 0x3000);
     FieldScene_CallPairWith10(9);
@@ -597,8 +598,8 @@ void FieldScene_BuildActorPresentationSequence(void)
     SceneState_ForwardMaskedHalfwordWith10(11, 0x8000);
     Engine_ActorSetAnimationAndWait(11, 3);
     FieldScene_CallPairWith10(11);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     Engine_ActorSetAnimation(ACTOR_IVAN, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
@@ -681,13 +682,13 @@ void KorashiamuIriguchi_AnnounceFinals(void)
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_ActorStop(13);
     Engine_TaskWait(1);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     Engine_ActorSetAnimation(13, 1);
     Actor_FaceDirection(12, 0xd000, 0);
-    Actor_FaceDirection(13, 0, 0);
-    Actor_FaceDirection(14, 0x8000, 0);
+    Actor_FaceDirection(13, FACING_EAST, 0);
+    Actor_FaceDirection(14, FACING_WEST, 0);
     Actor_FaceDirection(15, 0xd000, 0);
-    Actor_FaceDirection(16, 0x8000, 0);
+    Actor_FaceDirection(16, FACING_WEST, 0);
     Actor_FaceDirection(17, 0xb000, 0);
     Actor_FaceDirection(18, 0xb000, 0);
     Engine_EventSetMessage((s32)MsgKorashiamuPrepareYourselvesContestantsFinalsWill);
@@ -709,7 +710,7 @@ void KorashiamuIriguchi_AnnounceFinals(void)
     Actor_FaceDirection(12, 0x3000, 0);
     Actor_FaceDirection(14, 0xb000, 0);
     Actor_FaceDirection(15, 0x5000, 0);
-    Actor_FaceDirection(16, 0, 0);
+    Actor_FaceDirection(16, FACING_EAST, 0);
     Actor_FaceDirection(17, 0x5000, 0);
     Actor_FaceDirection(18, 0x5000, 0);
     Engine_EventEnd();
@@ -760,8 +761,8 @@ void KorashiamuIriguchi_CelebrateAdvancement(void)
     Engine_ActorRunRepeatedMotion(11, 1);
     Engine_ActorSetAnimation(11, 3);
     FieldScene_CallPairWith10(11);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
@@ -863,8 +864,8 @@ void KorashiamuIriguchi_CelebrateBothWins(void)
     Engine_ActorRunRepeatedMotion(11, 1);
     Engine_ActorSetAnimation(11, 3);
     FieldScene_CallPairWith10(11);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);

@@ -2,6 +2,7 @@
 #include "CALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 extern u8 MsgHaidiaFineIfTheyDontSee[];
 extern u8 MsgHaidiaGeraldIllTakeOverIf[];
@@ -189,8 +190,8 @@ void Scene_PlanSanctumVisit(void)
         Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
         Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-        Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 20);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 20);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 60);
         Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 0);
@@ -210,11 +211,11 @@ void Scene_PlanSanctumVisit(void)
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
         Engine_EventSetMessage((s32)MsgHaidiaJasmineTheyMightBeThieves);
         Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
-        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
+        Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 10);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 30);
         Engine_ActorJump(ACTOR_GERALD, 4, 30);
-        Actor_FaceDirection(ACTOR_GERALD, 0, 10);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 10);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
         Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 10);
         Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
@@ -227,9 +228,9 @@ void Scene_PlanSanctumVisit(void)
         Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
         Engine_ActorSetAnimation(ACTOR_GERALD, 1);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-        Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
-        Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 16);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTH, 16);
         Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
         Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 3);
         Engine_EventWait(10);
@@ -251,7 +252,7 @@ void Scene_PlanSanctumVisit(void)
         Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
         Engine_ActorJump(ACTOR_GERALD, 2, 0);
         Engine_ActorJump(ACTOR_JASMINE, 2, 10);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
         Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 10);
@@ -262,7 +263,7 @@ void Scene_PlanSanctumVisit(void)
         Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
         Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 30);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
@@ -277,7 +278,7 @@ void Scene_PlanSanctumVisit(void)
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
         sneak = (s32)MsgHaidiaFineIfTheyDontSee;
         Engine_EventSetMessage(sneak);
-        Actor_FaceDirection(ACTOR_GERALD, 0, 10);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 10);
         Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
         Event_OpenMessage(ACTOR_GERALD, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -287,7 +288,7 @@ void Scene_PlanSanctumVisit(void)
         }
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
         Engine_EventSetMessage((s32)MsgHaidiaJasmineOurSecret);
-        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
+        Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 10);
         Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
         Event_OpenMessage(ACTOR_JASMINE, 0);
         Engine_EventWait(4);
@@ -305,7 +306,7 @@ void Scene_PlanSanctumVisit(void)
         Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
         Engine_EventWait(10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
         Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 10);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -324,19 +325,19 @@ void Scene_PlanSanctumVisit(void)
         }
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-        Actor_FaceDirection(ACTOR_GERALD, 0, 10);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 10);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
-        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
+        Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 10);
         Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 4);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
         Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-        Actor_FaceDirection(ACTOR_GERALD, 0x8000, 10);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 10);
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 30);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
         Actor_ShowEmote(ACTOR_SUKURETA, 0x100, 40);
         Engine_ActorJump(ACTOR_SUKURETA, 4, 40);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-        Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
         Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 20);
         Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 10);
         Audio_PlayCue(158);
@@ -384,20 +385,20 @@ void Scene_LeaveForMtAleph(void)
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 10);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 10);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_JASMINE, 0xcccc, 0x6666);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetById(0);
     if (record != 0) {
@@ -462,7 +463,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 30);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x148);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
 
     record = Object_GetById(0);
     x = record->x.part.pixel;
@@ -477,14 +478,14 @@ void Scene_OverhearSaturosAndMenardi(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, 0, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_EAST, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Actor_ShowEmote(ACTOR_JASMINE, 0x101, 30);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTH, 0);
     Camera_SetSpeed(0x60000, 0xc000);
     Camera_MoveTo(0xd70000, -1, 0x1590000, 1);
     Engine_CameraWaitForMove();
@@ -494,11 +495,11 @@ void Scene_OverhearSaturosAndMenardi(void)
     Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
     Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-    Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
+    Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
     Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
-    Actor_FaceDirection(ACTOR_MENARDI, 0x4000, 60);
+    Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH, 60);
     Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
     Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
@@ -508,21 +509,21 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_ShowEmote(ACTOR_SATUROS, 0x100, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
+    Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
     Actor_ShowEmote(ACTOR_MENARDI, 0x101, 40);
-    Actor_FaceDirection(ACTOR_SATUROS, 0, 60);
-    Actor_FaceDirection(ACTOR_SATUROS, 0x8000, 40);
-    Actor_FaceDirection(ACTOR_SATUROS, 0, 40);
+    Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 60);
+    Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 40);
+    Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 40);
     Actor_WalkToAndWait(ACTOR_SATUROS, 232, 0x168);
-    Actor_FaceDirection(ACTOR_SATUROS, 0, 10);
+    Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
     Engine_EventWait(10);
     Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x168);
     Actor_WalkToAndWait(ACTOR_MENARDI, 216, 0x168);
     Actor_WalkTo(ACTOR_MENARDI, 0x178, 0x168);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTH, 0);
     Camera_MoveTo(0x1890000, -1, 0x1530000, 1);
     Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x168);
     Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x168);
@@ -562,7 +563,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, 3);
     Event_ShowMessageAndWait(0x1005, 0, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-    Actor_FaceDirection(ACTOR_SATUROS, 0xa000, 20);
+    Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST, 20);
     Event_OpenMessage(ACTOR_SATUROS, 0);
 
     if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -571,8 +572,8 @@ void Scene_OverhearSaturosAndMenardi(void)
         Engine_EventSetMessage(evt2 + 6);
     }
 
-    Actor_FaceDirection(ACTOR_JASMINE, 0, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
     Actor_FaceActor(ACTOR_SATUROS, ACTOR_GERALD, 30);
@@ -589,13 +590,13 @@ void Scene_OverhearSaturosAndMenardi(void)
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
-    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 10);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTH, 10);
     Event_ShowMessageAndWait(0x1005, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
-    Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
+    Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
     Event_ShowMessageAndWait(0x100f, 0, 10);
-    Actor_FaceDirection(ACTOR_SATUROS, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
     Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
@@ -681,7 +682,7 @@ void HaidiaSukureta_RunArrivalScene(void)
         Call3(Engine_ActorFaceDirection, 0, 0xb000, 0);
         Engine_CameraMoveTo(0xe80000, -1, 0xf00000, 1);
         Engine_CameraWaitForMove();
-        Call3(Engine_ActorFaceDirection, 13, 0x8000, 20);
+        Call3(Engine_ActorFaceDirection, 13, FACING_WEST, 20);
         Engine_ActorRunRepeatedMotion(13, 2);
         Engine_EventShowMessage(13, 0);
         Call3(Engine_ActorSetSpeed, 13, 0x3333, 0x1999);
@@ -691,7 +692,7 @@ void HaidiaSukureta_RunArrivalScene(void)
         Engine_EventWait(10);
         Engine_EventShowMessageAndWait(13, 0, 40);
         Engine_ActorJump(13, 2, 10);
-        Engine_ActorFaceDirection(13, 0, 10);
+        Engine_ActorFaceDirection(13, FACING_EAST, 10);
         Engine_EventShowMessageAndWait(13, 0, 10);
         Engine_ActorWalkToAndWait(13, 248, 232);
         Engine_EventWait(40);
@@ -700,11 +701,11 @@ void HaidiaSukureta_RunArrivalScene(void)
         Engine_EventShowMessage(13, 0);
         Call3(Engine_ActorShowEmote, 13, 0x101, 60);
         Engine_ActorRunRepeatedMotion(13, 1);
-        Call3(Engine_ActorFaceDirection, 13, 0x8000, 20);
+        Call3(Engine_ActorFaceDirection, 13, FACING_WEST, 20);
         Engine_EventShowMessageAndWait(13, 0, 2);
         Engine_ActorWalkToAndWait(13, 232, 232);
         Engine_EventWait(2);
-        Call3(Engine_ActorFaceDirection, 13, 0x4000, 4);
+        Call3(Engine_ActorFaceDirection, 13, FACING_SOUTH, 4);
         Engine_ActorRunRepeatedMotion(13, 2);
         Engine_EventWait(4);
         Engine_EventShowMessageAndWait(13, 0, 2);
@@ -842,13 +843,13 @@ void HaidiaSukureta_RunActorSequence(void)
             Call3(Engine_ActorShowEmote, 0, 0x100, 30);
             Engine_CameraMoveTo(0x620000, -1, 0x11b0000, 1);
             Call3(Engine_ActorWalkToAndWait, 0, 94, 0x125);
-            Call3(Engine_ActorFaceDirection, 0, 0xa000, 0);
+            Call3(Engine_ActorFaceDirection, 0, FACING_NORTHWEST, 0);
             record = Object_GetById(0);
             if (record != 0) {
                 Engine_ActorSetPosition(1, record->x.fixed, record->z.fixed);
             }
             Call3(Engine_ActorWalkToAndWait, 1, 110, 0x117);
-            Call3(Engine_ActorFaceDirection, 1, 0xa000, 40);
+            Call3(Engine_ActorFaceDirection, 1, FACING_NORTHWEST, 40);
             Engine_ActorRunRepeatedMotion(11, 2);
             Engine_EventWait(40);
             Engine_EventOpenMessage(11, 0);
@@ -879,8 +880,8 @@ void HaidiaSukureta_RunActorSequence(void)
                 Object_SetActionCallbackAndRefreshById(11, (s32)Sukureta_Actor11RockslideActions);
                 Engine_ActorStop(0);
                 Engine_ActorStop(1);
-                Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
-                Call3(Engine_ActorFaceDirection, 1, 0x4000, 60);
+                Call3(Engine_ActorFaceDirection, 0, FACING_SOUTH, 0);
+                Call3(Engine_ActorFaceDirection, 1, FACING_SOUTH, 60);
                 Call3(Engine_ActorShowEmote, 0, 0x105, 0);
                 Engine_ActorShowEmote(1, 0x105, 120);
                 Engine_GameFlagSet(0x839);

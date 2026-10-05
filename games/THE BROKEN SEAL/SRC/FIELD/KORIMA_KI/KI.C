@@ -107,7 +107,7 @@ void KorimaKi_RunMessageScene(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene395_02000158(void)
+void KorimaKi_TalkToToreto(void)
 {
     u32 i;
     s32 record;

@@ -6,7 +6,6 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
-#define FrameCounter gFrameCount
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 
 enum {
@@ -140,7 +139,7 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
 {
     s16 *angle;
 
-    if (FrameCounter & 2)
+    if (gFrameCount & 2)
         Engine_ObjectSetPartPalettes(actor, 10);
     else
         Engine_ObjectSetPartPalettes(actor, 7);
@@ -157,8 +156,6 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
 
 s32 StoryActor_Initialize(struct FieldActor *actor)
 {
-    s32 fixed_scale;
-
     if (Engine_GameFlagIsSet(0x30) != 0) {
         return 0;
     }
@@ -169,9 +166,8 @@ s32 StoryActor_Initialize(struct FieldActor *actor)
     actor->motion_flags = 0;
     actor->timer = 0;
     actor->work = 0;
-    fixed_scale = 0x8000;
-    actor->scale_x = fixed_scale;
-    actor->scale_y = fixed_scale;
+    actor->scale_x = 0x8000;
+    actor->scale_y = 0x8000;
     return 0;
 }
 

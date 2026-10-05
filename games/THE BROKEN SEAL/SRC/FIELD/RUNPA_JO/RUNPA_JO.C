@@ -1491,7 +1491,7 @@ void PlayStoryScene(void)
         Engine_EventSetMessage(text_line);
         Engine_EventShowMessage(13, 0);
         FieldScene_RunScene3bf_0200269c();
-        SHARED_RECORD_FIELD_448 = 512;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Battle_WaitMode0(1);
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
@@ -1691,7 +1691,7 @@ void PlayStoryScene(void)
         FieldScene_RunScene3bf_02002718();
         FieldScene_RunScene3bf_0200269c();
         GameFlag_Set(2370);
-        SHARED_RECORD_FIELD_448 = 512;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Battle_WaitMode0(1);
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
@@ -2718,19 +2718,19 @@ void ConfigureActor13SceneResource(void)
  * came through. */
 s32 FieldScene_DispatchActorUpdate(void)
 {
-    struct ObjectRuntime *actor;
+    struct FieldActor *actor;
 
     gRunpaJoRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
-    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo1) {
+    if (gGameState.scene == (s32)&SceneId_RunpaJo1) {
         Engine_MapSetWorkFlagBits9To11(0xe00);
         FieldScene_InstallSceneTasks();
     }
-    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo2)
+    if (gGameState.scene == (s32)&SceneId_RunpaJo2)
         FieldScene_SetupActorsForScene();
-    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo3)
+    if (gGameState.scene == (s32)&SceneId_RunpaJo3)
         FieldScene_RestoreActorsFromFlags();
-    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo4) {
-        ((struct DispatcherEventRuntime*)gEventWork)->value_1c0 = 0x204;
+    if (gGameState.scene == (s32)&SceneId_RunpaJo4) {
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
         Engine_ActorSetSpriteFlags(Actor_Get(12), 0);
         Actor_FaceDirection(12, 0, 0);
         Object_SetModeById(12, 0);
@@ -2738,21 +2738,21 @@ s32 FieldScene_DispatchActorUpdate(void)
         actor = Actor_Get(8);
         if (actor != 0)
             Engine_ActorSetSpriteFlags(actor, 0);
-        actor->unknown_23 = 2;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         actor = Actor_Get(9);
         if (actor != 0)
             Engine_ActorSetSpriteFlags(actor, 0);
-        actor->unknown_23 = 2;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         actor = Actor_Get(10);
         if (actor != 0)
             Engine_ActorSetSpriteFlags(actor, 0);
-        actor->unknown_23 = 2;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         Engine_MapSetWorkFlagBits9To11(0xe00);
-        if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.second == 4) {
+        if (gGameState.entrance == 4) {
             Engine_MapSetWorkFlagBits9To11(0xc00);
             FieldScene_RunMainScriptSequence();
         }
-        if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.second == 3) {
+        if (gGameState.entrance == 3) {
             Engine_MapSetWorkFlagBits9To11(0xc00);
             if (GameFlag_IsSet(0x941) != 0) {
                 Actor_SetPosition(12, 0, 0);
@@ -2767,8 +2767,8 @@ s32 FieldScene_DispatchActorUpdate(void)
         actor = Actor_Get(15);
         if (actor != 0)
             Engine_ActorSetSpriteFlags(actor, 0);
-        actor->unknown_23 = 2;
-        *(s32 *)&actor->unknown_18[0] = 0xcccc;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        actor->scale_x = 0xcccc;
     }
     return 0;
 }
@@ -2829,7 +2829,7 @@ void FieldScene_InstallSceneTasks(void)
 
 void FieldScene_SetupActorsForScene(void)
 {
-    struct ObjectRuntime *actor;
+    struct FieldActor *actor;
 
     FieldScene_ActivateTwoActorGroup();
     Engine_ActorSetChildValue(9, 1);
@@ -2903,13 +2903,13 @@ void FieldScene_SetupActorsForScene(void)
     actor = Actor_Get(8);
     Engine_ActorSetSpriteFlags(Actor_Get(8), 0);
     Engine_ActorSetSpritePriority(8, 1);
-    *(s32 *)&actor->unknown_18[0] = 0xc000;
-    *(s32 *)&actor->unknown_18[4] = 0xc000;
+    actor->scale_x = 0xc000;
+    actor->scale_y = 0xc000;
 }
 
 void FieldScene_RestoreActorsFromFlags(void)
 {
-    struct ObjectRuntime *actor;
+    struct FieldActor *actor;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     FieldScene_ActivateAlternateActorGroup();
@@ -2939,24 +2939,24 @@ void FieldScene_RestoreActorsFromFlags(void)
     Engine_EventBegin();
     actor = Actor_Get(8);
     if (actor != 0) {
-        actor->unknown_23 = 2;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
     }
     actor = Actor_Get(9);
     if (actor != 0) {
-        actor->unknown_23 = 2;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
     }
     actor = Actor_Get(10);
     if (actor != 0) {
-        actor->unknown_23 = 2;
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
     }
     actor = Actor_Get(11);
     if (actor != 0) {
         Engine_ActorSetSpriteFlags(actor, 0);
     }
-    actor->unknown_23 = 2;
+    actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
     actor = Actor_Get(12);
     if (actor != 0) {
-        actor->unknown_59 |= 0x10;
+        actor->collision_flags |= 0x10;
     }
     Engine_ActorSetSpriteFlags(Actor_Get(11), 0);
     Engine_EventEnd();

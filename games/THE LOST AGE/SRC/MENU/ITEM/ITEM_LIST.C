@@ -34,10 +34,6 @@ void ItemMenu_DrawMsg(s32 unused, s32 message)
     struct ItemListMenu *menu;
 
     menu = Ram_HeapSlots->menu_runtime;
-    /* FAKEMATCH: keeps the menu base live as the native allocates it. */
-    __asm__("" : "+r"(menu));
-    /* FAKEMATCH: the plain order adds the window offset before saving message. */
-    __asm__("");
     RenderOutput_RedrawSavedRectFar(menu->message_window);
     UiText_DrawCharacterAtOffsetFar(message, (s32)menu->message_window, 0, 0);
 }

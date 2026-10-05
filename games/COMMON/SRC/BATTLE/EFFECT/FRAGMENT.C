@@ -57,8 +57,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
             s32 current = source->angle;
             s32 max_turn = 128;
 
-            /* FAKEMATCH: the zero-instruction dependency keeps the clamp byte seed before the signed angle difference. */
-            asm("" : "+r"(max_turn), "+r"(angle) : "r"(current));
             steering_delta = (s16)(angle - current);
             max_turn <<= 5;
             if (steering_delta > max_turn)

@@ -148,8 +148,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
     gSerialSendSource = zero;
     gSerialSendSize = zero;
     gSerialReceiveDest = zero;
-    /* FAKEMATCH: the two volatile byte accesses keep their order before the received-size store; one volatile access reverses the pair. */
-    *(volatile u8 *)&state->peer_flags = zero;
+    *(u8 *)&state->peer_flags = zero;
     *(volatile u8 *)&state->flags = zero;
     gSerialReceivedSize = zero;
     *ime = saved;

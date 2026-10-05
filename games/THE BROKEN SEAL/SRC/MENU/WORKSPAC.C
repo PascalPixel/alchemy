@@ -1,7 +1,4 @@
 #include "TYPES.H"
-/* FAKEMATCH: this file reads Menu_WorkspaceIconFrames through its own declaration; the shop's changes its code. */
-#define OWN_Menu_WorkspaceIconFrames
-extern const s8 Menu_WorkspaceIconFrames[];
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

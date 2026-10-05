@@ -1,7 +1,4 @@
 #include "TYPES.H"
-/* FAKEMATCH: this file reads FuneHeya_TurnSteps through its own declaration; the shop's changes its code. */
-#define OWN_FuneHeya_TurnSteps
-extern u32 FuneHeya_TurnSteps[];
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"

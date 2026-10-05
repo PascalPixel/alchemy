@@ -19,11 +19,9 @@ void BattleLink_ResetTransferState(void)
     zero = 0;
     state = &gSerialTransfer;
     state->status = 0x80;
-    /* FAKEMATCH: each flag byte keeps its place among the volatile stores. */
-    *(volatile u8 *)&state->peer_flags = zero;
+    *(u8 *)&state->peer_flags = zero;
     gSerialSendSource = zero;
-    /* FAKEMATCH: each flag byte keeps its place among the volatile stores. */
-    *(volatile u8 *)&state->flags = zero;
+    *(u8 *)&state->flags = zero;
     gSerialSendSize = zero;
     gSerialReceiveDest = zero;
     gSerialReceivedSize = zero;

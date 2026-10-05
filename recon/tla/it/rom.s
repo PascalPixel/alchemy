@@ -5507,7 +5507,16 @@ Func_081a6020:
 Func_081a6028:
 	.incbin "baserom.gba", 0x001a6028, 0x00001848
 	.section .rom.001a78c0, "ax"
-	.incbin "baserom.gba", 0x001a78c0, 0x000009a4
+	.global TitlePalette_UpdateFade
+	.type TitlePalette_UpdateFade, %function
+	.thumb_func
+TitlePalette_UpdateFade:
+	.incbin "baserom.gba", 0x001a78c0, 0x00000168
+	.global Graphics_TransformPaletteBuffer
+	.type Graphics_TransformPaletteBuffer, %function
+	.thumb_func
+Graphics_TransformPaletteBuffer:
+	.incbin "baserom.gba", 0x001a7a28, 0x00000724
 	.section .rom.001a8286, "ax"
 	.incbin "baserom.gba", 0x001a8286, 0x00003d7a
 	.section .rom.001ac026, "ax"

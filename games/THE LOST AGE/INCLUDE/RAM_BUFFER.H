@@ -68,7 +68,11 @@ struct HeapSlots {
     /* The display transition's state, which The Broken Seal keeps in its
        slot 31 too. */
     struct DisplayTransitionState *display_transition;
-    void *unknown_80[12];
+    /* Heap block 32, which each screen fills with its own work: the title
+       palette fade's (The Broken Seal keeps it in its own cell) or the
+       shop's. */
+    void *block_32;
+    void *unknown_84[11];
     struct BattlePresentationTransition *transition_work;
     void *unknown_b4[6];
     /* The serial link runtime's work. */

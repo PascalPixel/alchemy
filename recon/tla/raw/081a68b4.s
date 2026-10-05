@@ -131,9 +131,9 @@ Func_081a68b4:
 	lsls r0, r0, #7
 	adds r0, #255
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #10
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 .L_081a69b4:
 	mov r3, r8
 	ldrh r2, [r3, #12]
@@ -152,9 +152,9 @@ Func_081a68b4:
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
-	bl Func_081a81d4
+	bl Graphics_TransformLargePalette
 	movs r0, #10
-	bl Func_081a8228
+	bl Graphics_UpdatePaletteInterpolation
 .L_081a69e0:
 	movs r0, #4
 	ldrsh r3, [r5, r0]

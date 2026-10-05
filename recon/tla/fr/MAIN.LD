@@ -1399,6 +1399,7 @@
     "*/recon/tla/fr/rom.o"(.rom.001a1294)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/INTERPOLATE_BUFFERS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001a78c0)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/PALETTE/PALETTE4.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COLOR_BUFFER.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/COLOR_BUFFER_2.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001a8286)

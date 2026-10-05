@@ -778,7 +778,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000cafc4)
     "*/games/THE LOST AGE/SRC/BATTLE/PARTY/HEALTH.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cb82c)
-    "*/games/THE LOST AGE/SRC/DEBUG/DEBUG2.o"(.text)
+    "*/games/THE LOST AGE/SRC/DEBUG/STREAM.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cc9f4)
     "*/recon/tla/ja/rom.o"(.rom.000cccb0)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/IS_CONDITION_ACTIVE.o"(.text)

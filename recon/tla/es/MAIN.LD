@@ -749,7 +749,7 @@
     "*/recon/tla/es/rom.o"(.rom.000d3fc4)
     "*/games/THE LOST AGE/SRC/BATTLE/PARTY/HEALTH.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000d482c)
-    "*/games/THE LOST AGE/SRC/DEBUG/DEBUG2.o"(.text)
+    "*/games/THE LOST AGE/SRC/DEBUG/STREAM.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000d59fc)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/IS_CONDITION_ACTIVE.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000d5d76)

@@ -1068,7 +1068,7 @@
         "*/recon/tla/raw/080cc54c.o"(.text)
         "*/recon/tla/raw/080cc67c.o"(.text)
         "*/recon/tla/raw/080cc7c4.o"(.text)
-        "*/games/THE LOST AGE/SRC/DEBUG/DEBUG2.o"(.text)
+        "*/games/THE LOST AGE/SRC/DEBUG/STREAM.o"(.text)
         "*/recon/tla/raw/080cc9fc.o"(.text)
         "*/recon/tla/raw/080cccb8.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/FLAGS/IS_CONDITION_ACTIVE.o"(.text)

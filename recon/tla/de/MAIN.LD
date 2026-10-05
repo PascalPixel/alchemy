@@ -758,7 +758,7 @@
     "*/recon/tla/de/rom.o"(.rom.000d882c)
     "*/recon/tla/de/rom.o"(.rom.000d88a4)
     "*/recon/tla/de/rom.o"(.rom.000d954c)
-    "*/games/THE LOST AGE/SRC/DEBUG/DEBUG2.o"(.text)
+    "*/games/THE LOST AGE/SRC/DEBUG/STREAM.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000d99fc)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/IS_CONDITION_ACTIVE.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000d9d76)

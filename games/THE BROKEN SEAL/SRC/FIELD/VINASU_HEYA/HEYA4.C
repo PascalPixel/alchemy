@@ -85,9 +85,7 @@ void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
 {
     struct EffectOptions options;
     struct EffectOptions *p = &options;
-    register struct EffectOptions *opts asm("r8"); /* FAKEMATCH: the options pointer is held in r8 once both scales are stored through p.
-        2026-10-02: an ordinary pointer puts options in r7 and x in r8,
-        changing spin storage and both spawn calls. */
+    register struct EffectOptions *opts asm("r8"); /* FAKEMATCH: the options pointer is held in r8 once both scales are stored through p. 2026-10-02: an ordinary pointer puts options in r7 and x in r8, changing spin storage and both spawn calls. */
     s32 phase;
     u32 coin;
 
@@ -116,12 +114,7 @@ void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
     }
 }
 
-/*
- * Two rubble-fall task callbacks: each spawns the random particles over its
- * own band.  The 16-byte owners load no literal, so they carry no pool word
- * and no alignment halfword.  432 is built from a shifted immediate and
- * passed straight to the callee as a value, not used as a displacement.
- */
+/* The two rubble callbacks spawn particles over their respective bands. */
 void SceneState_CallWith432And32(void)
 {
     VinasuHeya_SpawnRandomParticles(432, 32);
@@ -138,8 +131,7 @@ void Scene_RunParticleWaveSequence(void)
 {
     struct EffectOptions options;
     u32 repeat;
-    /* The spawn velocities, held in one register for the stack arguments. */
-    s32 zero;
+        s32 zero;
     u32 row;
     s32 offset;
     s32 z;
@@ -199,8 +191,7 @@ void Scene_RunEastParticleWaveSequence(void)
 {
     struct EffectOptions options;
     u32 repeat;
-    /* The spawn velocities, held in one register for the stack arguments. */
-    s32 zero;
+        s32 zero;
     u32 row;
     s32 offset;
     s32 z;

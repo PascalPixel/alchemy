@@ -67,8 +67,7 @@ void FieldScene_DrawTilesWhenCheckClear(void)
     Scene_RunScene3c8SequenceA();
 }
 
-/* Runs a fixed sequence of setup calls with literal parameters; most share
- * a leading 0 argument. */
+/* Run the fixed scene setup sequence. */
 void FieldScene_RunApproachAndSpawnEffect(void)
 {
     Engine_EventBegin();
@@ -78,7 +77,7 @@ void FieldScene_RunApproachAndSpawnEffect(void)
     (void)OverlayObject_SpawnWithMode14(0x2080000, 0, 0x3100000, 223);
     BattleFx_RunRisingObjectSequence(0, 6, 0);
     Engine_EventWait(60);
-    Engine_EventRequestExit(20); /* main:0808a248 */
+    Engine_EventRequestExit(20);
     Engine_EventEnd();
 }
 

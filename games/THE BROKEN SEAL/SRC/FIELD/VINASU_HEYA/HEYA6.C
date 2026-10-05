@@ -204,18 +204,7 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     Engine_EventWait(wait);
 }
 
-/*
- * resource_3c8 owner at 0x020023d4, 168 bytes: among scene slots 8-13,
- * locate candidates sharing the selected slot's x/z tile, retain the highest
- * candidate at least one 16.16 unit above its y value, store that candidate id
- * at selected+100, then move/release the selected slot and run its local effect.
- *
- * Complete owner: high-register prologue and four-byte frame at 0x020023d4
- * through the sole interworking return at 0x02002468-0x02002474, followed by
- * alignment and one referenced pool word through 0x0200247b.  Eight static
- * calls across seven targets match independently; the two scene-accessor call
- * sites sit inside the bounded six-iteration loop.
- */
+/* Among actors 8 to 13 on the selected actor's tile, find the highest at least one unit above it, record that actor's ID and run the move and effect. */
 void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 {
 

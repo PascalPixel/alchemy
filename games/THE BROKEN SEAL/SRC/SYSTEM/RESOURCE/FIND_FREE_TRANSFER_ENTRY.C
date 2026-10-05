@@ -21,7 +21,7 @@ struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
     state = (s32)gResQueueWork;
     if (kind != 0) {
         i = 0;
-        p = (u16 *)(state + 0x1DE);
+        p = &((struct SelectionScreen *)state)->records[9].kind;
         off = 0;
 loop_2:
         if (*p == 0) {
@@ -37,7 +37,7 @@ loop_2:
     }
     j = 0;
     ret = state + 0x68;
-    q = (u16 *)(state + 0x72);
+    q = &((struct SelectionScreen *)state)->records[2].kind;
 loop_7:
     v = *q;
     q += 0x1A;

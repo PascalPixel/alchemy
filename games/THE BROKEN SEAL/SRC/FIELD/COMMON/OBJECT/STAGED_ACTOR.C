@@ -128,12 +128,12 @@ void StagedActor_AdvancePair(void)
     BattleFx_PlayQueuedSound();
     next->x.value = dst[0];
     next->z.value = dst[2];
-    next->unknown_24 = 0;
-    next->unknown_2c = 0;
-    lead->unknown_38 = 0x80000000;
-    lead->unknown_40 = 0x80000000;
-    lead->unknown_24 = 0;
-    lead->unknown_2c = 0;
+    next->velocity_x = 0;
+    next->velocity_z = 0;
+    lead->target_x = 0x80000000;
+    lead->target_z = 0x80000000;
+    lead->velocity_x = 0;
+    lead->velocity_z = 0;
     lead->x.value = lead->x.parts.cell << 16;
     lead->z.value = lead->z.parts.cell << 16;
     Object_SetMode(lead, 1);
@@ -189,10 +189,10 @@ s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
             if (kind == *kinds++) goto done;
             i++;
         } while (i <= 5);
-        actor->unknown_24 = 0;
-        actor->unknown_2c = 0;
-        actor->unknown_38 = 0x80000000;
-        actor->unknown_40 = 0x80000000;
+        actor->velocity_x = 0;
+        actor->velocity_z = 0;
+        actor->target_x = 0x80000000;
+        actor->target_z = 0x80000000;
     }
     step = StagedActor_DirectionSteps[dir];
     probe.x = actor->x.value + (step & 0xffff0000);
@@ -200,10 +200,10 @@ s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
     step = step << 16;
     probe.z = actor->z.value + step;
     if (Object_CheckMovementCollision(actor, (s32 *)&probe) > 0) {
-        actor->unknown_24 = 0;
-        actor->unknown_2c = 0;
-        actor->unknown_38 = 0x80000000;
-        actor->unknown_40 = 0x80000000;
+        actor->velocity_x = 0;
+        actor->velocity_z = 0;
+        actor->target_x = 0x80000000;
+        actor->target_z = 0x80000000;
     }
 done:
     return 0;
@@ -439,8 +439,8 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 
     actor->x.value = probe.position_x;
     actor->z.value = probe.position_z;
-    actor->unknown_24 = 0;
-    actor->unknown_2c = 0;
+    actor->velocity_x = 0;
+    actor->velocity_z = 0;
     Object_SetMode(actor, 1);
 
     {

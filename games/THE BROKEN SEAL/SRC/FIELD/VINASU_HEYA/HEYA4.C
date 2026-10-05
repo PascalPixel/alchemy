@@ -363,19 +363,19 @@ struct TrackSprite {
 
 /* The shapes a push along -x, +x, -z and +z accepts, each list ending
    in zero. */
-extern const u8 Data_020051a4[];
-extern const u8 Data_020051a8[];
-extern const u8 Data_020051ac[];
-extern const u8 Data_020051b0[];
+extern const u8 gVinasuShapesPushedLeft[];
+extern const u8 gVinasuShapesPushedRight[];
+extern const u8 gVinasuShapesPushedUp[];
+extern const u8 gVinasuShapesPushedDown[];
 /* The script a refused push runs. */
-extern const s32 Data_02005564[];
+extern const s32 gVinasuRefusedPushScript[];
 extern struct SwitchCell gVinasuSwitchCells[];
-extern struct SwitchCell Data_02005164[];
+extern struct SwitchCell gVinasuPillarCells[];
 /* Per switch cell: the shapes still to come and the script for each. */
-extern const u8 *Data_0200772c[];
-extern const s32 **Data_0200777c[];
-extern const u8 *Data_0200778c[];
-extern const s32 **Data_020077ec[];
+extern const u8 *gVinasuSwitchShapes[];
+extern const s32 **gVinasuSwitchPushScripts[];
+extern const u8 *gVinasuPillarShapes[];
+extern const s32 **gVinasuPillarPushScripts[];
 
 /* The push script of the piece below an actor: refused unless the piece is
  * idle and its shape is one the push direction accepts; on a switch cell, the
@@ -404,15 +404,15 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
 
         if (ax > az) {
             if (vx / 0x10000 < 0) {
-                shapes = Data_020051a4;
+                shapes = gVinasuShapesPushedLeft;
             } else {
-                shapes = Data_020051a8;
+                shapes = gVinasuShapesPushedRight;
             }
         } else {
             if (vz / 0x10000 < 0) {
-                shapes = Data_020051ac;
+                shapes = gVinasuShapesPushedUp;
             } else {
-                shapes = Data_020051b0;
+                shapes = gVinasuShapesPushedDown;
             }
         }
         for (; *shapes != 0; shapes++) {
@@ -421,7 +421,7 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
             }
         }
         if (*shapes == 0) {
-            Engine_ObjectSetScript(actor, Data_02005564);
+            Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
             return 0;
         }
         if (gGameState.scene == (s32)&SceneId_VinasuHeya5) {
@@ -430,39 +430,39 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
                  cell++) {
             }
             for (skip = 0;; skip++) {
-                cursor = Data_0200772c[cell];
+                cursor = gVinasuSwitchShapes[cell];
                 shape = *cursor;
                 if (shape == 0) {
-                    Engine_ObjectSetScript(actor, Data_02005564);
+                    Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
                     return 0;
                 }
                 if (shape == ((struct TrackSprite *)piece->sprite)->shape) {
                     break;
                 }
-                Data_0200772c[cell] = cursor + 1;
+                gVinasuSwitchShapes[cell] = cursor + 1;
             }
-            Engine_ObjectSetScript(actor, Data_0200777c[cell][skip]);
+            Engine_ObjectSetScript(actor, gVinasuSwitchPushScripts[cell][skip]);
         } else {
-            for (cell = 0; cell <= 7 && !(actor->x.fixed >> 20 == Data_02005164[cell].x
-                                          && actor->z.fixed >> 20 == Data_02005164[cell].z);
+            for (cell = 0; cell <= 7 && !(actor->x.fixed >> 20 == gVinasuPillarCells[cell].x
+                                          && actor->z.fixed >> 20 == gVinasuPillarCells[cell].z);
                  cell++) {
             }
             for (skip = 0;; skip++) {
-                cursor = Data_0200778c[cell];
+                cursor = gVinasuPillarShapes[cell];
                 shape = *cursor;
                 if (shape == 0) {
-                    Engine_ObjectSetScript(actor, Data_02005564);
+                    Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
                     return 0;
                 }
                 if (shape == ((struct TrackSprite *)piece->sprite)->shape) {
                     break;
                 }
-                Data_0200778c[cell] = cursor + 1;
+                gVinasuPillarShapes[cell] = cursor + 1;
             }
-            Engine_ObjectSetScript(actor, Data_020077ec[cell][skip]);
+            Engine_ObjectSetScript(actor, gVinasuPillarPushScripts[cell][skip]);
         }
     } else {
-        Engine_ObjectSetScript(actor, Data_02005564);
+        Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
     }
     return 0;
 }

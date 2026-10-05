@@ -47,7 +47,7 @@ s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work)
 
 s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o)
 {
-    u16 *c = &o->unknown_64;
+    u16 *c = &o->timer;
     s16 n;
 
     *c = *c + 1;
@@ -62,7 +62,7 @@ s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o)
 
 s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
 {
-    u16 *c = &o->unknown_64;
+    u16 *c = &o->timer;
     s16 n;
 
     *c = *c + 1;

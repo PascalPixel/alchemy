@@ -1127,8 +1127,8 @@ void FieldScene_RunOpeningSequenceThird(void)
     GameFlag_Set(768);
     Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
     /* Starting movement steps for the two thieves. */
-    ((struct FieldActor *)actor24)->unknown_64 = 1;
-    ((struct FieldActor *)actor25)->unknown_64 = 3;
+    ((struct FieldActor *)actor24)->timer = 1;
+    ((struct FieldActor *)actor25)->timer = 3;
     Engine_EventEnd();
 }
 
@@ -1145,12 +1145,12 @@ void FieldScene_RunScene383SequenceB(void)
     Engine_EventBegin();
     Scheduler_RemoveCallback((u32)((s32)SceneActor_FaceActors24And25TowardActorZero));
     GameFlag_Clear(0x300);
-    if ((s16)actor24->unknown_64 <= 3) {
+    if ((s16)actor24->timer <= 3) {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptG);
     } else {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptF);
     }
-    if ((s16)actor25->unknown_64 <= 2) {
+    if ((s16)actor25->timer <= 2) {
         Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptK);
     } else {
         Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptF);
@@ -1573,9 +1573,9 @@ void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, c
 {
     struct FieldActor *rec = Object_GetById(actor);
 
-    if ((s16)rec->unknown_64 == expected) {
+    if ((s16)rec->timer == expected) {
         Engine_ActorEnableActionCallback(actor, desc);
-        rec->unknown_64 = (u16)next;
+        rec->timer = (u16)next;
     }
 }
 

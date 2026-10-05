@@ -160,11 +160,11 @@ struct SwitchEffect {
     u8 finished;
 };
 
-extern struct SwitchCell Data_02005164[8];
-extern s32 Data_0200577c[];
-extern s32 Data_020057c8[];
-extern s32 Data_02005ac8[];
-extern u16 Data_02005d3c[];
+extern struct SwitchCell gVinasuPillarCells[8];
+extern s32 gVinasuFirstGateScript[];
+extern s32 gVinasuFirstGateOpenScript[];
+extern s32 gVinasuSecondGateScript[];
+extern u16 gVinasuGateCells[];
 
 struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
 void OverlayObject_WaitUntilIdle(struct FieldActor *object);
@@ -212,8 +212,8 @@ void Scene_RunScene3c8SequenceA(void)
 
         slot = 8;
         for (i = 0; i < 8; i++) {
-            if ((actor->x.fixed >> 20) == Data_02005164[i].x
-                && (actor->z.fixed >> 20) == Data_02005164[i].z
+            if ((actor->x.fixed >> 20) == gVinasuPillarCells[i].x
+                && (actor->z.fixed >> 20) == gVinasuPillarCells[i].z
                 && actor->y.fixed >= 0) {
                 slot = i;
                 break;
@@ -234,7 +234,7 @@ void Scene_RunScene3c8SequenceA(void)
             continue;
 
         priority = leader->sprite->priority;
-        if ((u32)(leader->z.fixed >> 20) <= Data_02005164[slot].z) {
+        if ((u32)(leader->z.fixed >> 20) <= gVinasuPillarCells[slot].z) {
             effect = OverlayObject_PrepareObjectWithCommand15(actor->x.fixed, actor->y.fixed,
                                    actor->z.fixed - 0x40000, 20);
             Actor_SetSpritePriority(0, 3);
@@ -252,7 +252,7 @@ void Scene_RunScene3c8SequenceA(void)
         *motion = 3;
         ((union FieldObject *)actor)->effect.velocity_y = 0x1999;
         ((union FieldObject *)actor)->effect.velocity_x = 0;
-        Map_CopyCellAttributes(6, 44, 1, 1, Data_02005164[slot].x, Data_02005164[slot].z);
+        Map_CopyCellAttributes(6, 44, 1, 1, gVinasuPillarCells[slot].x, gVinasuPillarCells[slot].z);
         OverlayObject_WaitUntilIdle(actor);
         Audio_PlayCue(188);
         actor->collision_flags = 0;
@@ -260,7 +260,7 @@ void Scene_RunScene3c8SequenceA(void)
         actor->y.fixed = -0x100000;
         Actor_SetSpritePriority(id, 3);
         *flags = 2;
-        Map_CopyCellAttributes(73, 48, 1, 1, Data_02005164[slot].x, Data_02005164[slot].z);
+        Map_CopyCellAttributes(73, 48, 1, 1, gVinasuPillarCells[slot].x, gVinasuPillarCells[slot].z);
         Actor_SetSpritePriority(0, priority);
         Object_GetById(0)->priority_flags |= 1;
         for (i = 15; i <= 18; i++) {
@@ -288,17 +288,17 @@ void Scene_RunScene3c8SequenceA(void)
             Camera_SetSpeed(0x10000, 0x2000);
             Object_PlaceCurrentWithinCameraBounds(14, 1);
             Camera_WaitForMove();
-            first = SceneEffect_SpawnEffect284AtCell(136, 0x308, Data_0200577c);
+            first = SceneEffect_SpawnEffect284AtCell(136, 0x308, gVinasuFirstGateScript);
             Event_Wait(30);
             Camera_SetSpeed(0x6666, 0xccc);
             Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
             ObjectDispatch_WaitForValue16(first);
-            Object_SetScript((struct FieldActor *)first, Data_020057c8);
-            second = SceneEffect_SpawnEffect284AtCell(216, 0x2f8, Data_02005ac8);
+            Object_SetScript((struct FieldActor *)first, gVinasuFirstGateOpenScript);
+            second = SceneEffect_SpawnEffect284AtCell(216, 0x2f8, gVinasuSecondGateScript);
             while (first->active != 0 || second->active != 0) {
                 if (first->finished != 0 || second->finished != 0) {
                     Event_Wait(30);
-                    Map_AnimateCells(Data_02005d3c, 77, 35);
+                    Map_AnimateCells(gVinasuGateCells, 77, 35);
                     Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
                     GameFlag_Set(0x308);
                     break;

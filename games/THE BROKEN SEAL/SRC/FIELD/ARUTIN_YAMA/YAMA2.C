@@ -86,7 +86,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
-    actor0->unknown_64 = 0;
+    actor0->timer = 0;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ArutinYama_LeaderRideScript);
     if (GameFlag_IsSet(0x205) != 0) {
         Actor_SetPosition(ACTOR_GERALD, 0x36e0000, 0x2100000);
@@ -98,15 +98,15 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Engine_EventWait(a0);
     Engine_ActorSetSpritePriority(8, 1);
     Actor_SetSpeed(8, 0x195c2, 0xcae1);
-    actor8->unknown_64 = 0;
+    actor8->timer = 0;
     Engine_ActorEnableActionCallback(8, ArutinYama_LogRideScript);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor0->unknown_64 == 0);
+    } while ((s16)actor0->timer == 0);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor8->unknown_64 == 0);
+    } while ((s16)actor8->timer == 0);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Audio_PlayCue(0x121);

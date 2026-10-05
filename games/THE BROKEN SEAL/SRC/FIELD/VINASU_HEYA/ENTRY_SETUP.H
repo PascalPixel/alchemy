@@ -336,7 +336,7 @@ void SetMapCellCollision(s32, s32, s32, s32);
 void OverlayObject_WaitUntilIdle();
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 s32 Object_CheckMovementCollision();
-s32 *SceneData_FindSlotAtPosition();
+struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self);
 void SceneEvents_UpdateInView(u8 *);
 void Scene_RunScene3c8SequenceA(void);
 void VinasuHeya_RunCellPushScene(void);

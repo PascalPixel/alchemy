@@ -108,7 +108,7 @@ void VinasuChojo_FaceActor(s32 actor, s32 facing);
 
 s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
 {
-    s16 *counter = (s16 *)&actor->unknown_64;
+    s16 *counter = (s16 *)&actor->timer;
 
     switch (*counter) {
     case 6:
@@ -130,9 +130,9 @@ s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
         break;
     }
     {
-        s32 t = actor->unknown_64;
+        s32 t = actor->timer;
         t = t - 1;
-        actor->unknown_64 = t;
+        actor->timer = t;
     }
     return 1;
 }
@@ -172,7 +172,7 @@ void OverlayObject_DecayRecordField1e(struct FieldActor *actor)
 
 s32 OverlayObject_UpdateHeadingTimer(struct FieldActor *actor)
 {
-    u16 *q = &actor->unknown_66;
+    u16 *q = &actor->work;
     s32 c = *q;
     s16 v = *(s16 *)q;
 
@@ -1350,14 +1350,14 @@ void Scene_RunPairedActorEffectSequence(void)
     Actor_Get(21)->facing = FACING_SOUTHEAST + FACING_STEP;
     Actor_SetPosition(21, PIXELS(268), PIXELS(164));
     actor = Actor_Get(ACTOR_FIRST_OF_PAIR);
-    actor->unknown_64 = 10;
+    actor->timer = 10;
     actor->facing = FACING_NORTH + FACING_STEP;
     Actor_SetPosition(ACTOR_FIRST_OF_PAIR, PIXELS(294), PIXELS(212));
     Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 9);
     Actor_EnableActionCallback(ACTOR_FIRST_OF_PAIR, VinasuChojo_ScaleStepAction);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_OF_PAIR), 0);
     actor = Actor_Get(ACTOR_SECOND_OF_PAIR);
-    actor->unknown_64 = 10;
+    actor->timer = 10;
     actor->facing = FACING_EAST;
     Actor_SetPosition(ACTOR_SECOND_OF_PAIR, PIXELS(286), PIXELS(192));
     Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 7);

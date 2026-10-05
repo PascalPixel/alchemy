@@ -127,7 +127,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
-    while ((s16)Object_GetById(0)->unknown_64 == 0) {
+    while ((s16)Object_GetById(0)->timer == 0) {
         Engine_TaskWait(1);
     }
     Call3(Engine_ActorFaceDirection, 0, 0x4000, 20);

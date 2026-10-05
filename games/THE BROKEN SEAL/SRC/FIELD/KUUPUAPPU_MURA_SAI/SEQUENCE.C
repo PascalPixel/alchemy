@@ -282,12 +282,12 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     {
         struct FieldActor *actor = Object_GetById(14);
         s32 mode = 1;
-        actor->unknown_64 = mode;
+        actor->timer = mode;
     }
     mode = 0;
     actor = Object_GetById(15);
     actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
-    Object_GetById(15)->unknown_64 = mode;
+    Object_GetById(15)->timer = mode;
     if (Engine_GameFlagIsSet(0x858))
         Call3(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
     if (gGameState.entrance <= 2 && !Engine_GameFlagIsSet(52)

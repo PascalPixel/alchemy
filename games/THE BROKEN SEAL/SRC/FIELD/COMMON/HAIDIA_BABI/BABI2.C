@@ -516,8 +516,8 @@ void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object)
     s32 amplitude;
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
-    self->unknown_64 = (u16)(self->unknown_64 + 1);
-    frame = (s16)self->unknown_64;
+    self->timer = (u16)(self->timer + 1);
+    frame = (s16)self->timer;
 
     if (frame > 31) {
         Engine_ObjectDispatchRelease(self);
@@ -540,8 +540,8 @@ void OverlayObject_UpdateArcFromAnchor(union FieldObject *object)
     s32 amp;
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
-    obj->unknown_64 = (u16)(obj->unknown_64 + 1);
-    frame = (s16)obj->unknown_64;
+    obj->timer = (u16)(obj->timer + 1);
+    frame = (s16)obj->timer;
 
     if (frame > 31) {
         Engine_ObjectDispatchRelease(obj);

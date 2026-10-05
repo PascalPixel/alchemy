@@ -9,7 +9,6 @@
 #include "FIELD_SCENE.H"
 #include "ITEM_IDS.H"
 
-#define SHARED_RECORD_FIELD_448 (*(u32 *)(*(u8 **)&gEventWork + 448))
 #define PRIMARY_ID 24
 #define DERIVED_ID 25
 
@@ -234,20 +233,6 @@ void ConfigureActor13Interaction(void);
 void ConfigureActor13SceneResource(void);
 
 #include "OBJECT_RUNTIME.H"
-
-struct DispatcherEventRuntime {
-    u8 unknown_000[0x1c0];
-    s32 value_1c0;
-};
-
-union DispatcherEventWork {
-    struct {
-        u8 unknown_000[0x1c0];
-        u16 first;
-        u16 second;
-    } pair;
-    u32 words[0x1c4 / 4];
-};
 
 s32 FieldScene_DispatchActorUpdate(void);
 

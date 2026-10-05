@@ -395,7 +395,7 @@ void FieldScene_RunScene371_0200357c(void)
     record = Actor_Get(8);
     Engine_ActorSetSpriteFlags(record, 0);
     Actor_SetSpeed(8, 0x6666, 0x3333);
-    actor->unknown_64 = 0;
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, (s32)gOpeningLeaderRise);
     Engine_TaskAddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

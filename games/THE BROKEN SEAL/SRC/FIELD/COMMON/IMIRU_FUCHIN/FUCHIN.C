@@ -1555,9 +1555,9 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
     s32 direction;
     u16 facing;
 
-    timer = (s16)actor->unknown_64;
+    timer = (s16)actor->timer;
     if (timer != 0) {
-        (*(s16 *)&actor->unknown_64)--;
+        (*(s16 *)&actor->timer)--;
         return;
     }
     actor->steering_flags = 0;
@@ -1636,7 +1636,7 @@ void SceneActor_StepSubjectAlongHeading(void)
         probe.z = z;
         subject->speed = 0x20000;
         subject->acceleration = 0x1999;
-        subject->unknown_64 = 0;
+        subject->timer = 0;
         Object_SetPosition(subject, x, subject->y.fixed, z);
         /*
          * Same call word as the marker lookup, but a two-argument command, so

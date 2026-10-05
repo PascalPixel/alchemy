@@ -115,8 +115,12 @@ struct FieldActor {
     /* Counts the frames of a rise while rise_enabled is set. */
     u8 rise_counter;
     u8 rise_enabled;
-    u16 unknown_64;
-    u16 unknown_66;
+    /* A count the actor's update or action script keeps: most count
+       frames in it; some keep an index or a done mark there. */
+    u16 timer;
+    /* A second halfword the update keeps for itself: an angle, the step
+       it has reached, or a mark that holds it. */
+    u16 work;
     u8 unknown_68[4];
     /* Called each frame while set. */
     void (*update)(union FieldObject *object);

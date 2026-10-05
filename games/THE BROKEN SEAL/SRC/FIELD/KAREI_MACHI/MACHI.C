@@ -639,14 +639,14 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorEnableActionCallback(33, SceneAction_GroupMotion);
         Engine_ActorEnableActionCallback(34, SceneAction_GroupMotion);
         last = Actor_Get(21);
-        last->unknown_64 = 0;
+        last->timer = 0;
         Engine_ActorEnableActionCallback(21, SceneAction_GroupMotion);
         Camera_MoveTo(PIXELS(186), -1, PIXELS(272), 1);
         Object_RefreshSelectorById(20);
         Actor_FaceDirection(20, FACING_EAST, 0);
         do {
             Engine_TaskWait(1);
-        } while ((s16)last->unknown_64 == 0);
+        } while ((s16)last->timer == 0);
         Engine_EventWait(40);
         Engine_ActorRunRepeatedMotion(27, 2);
         Actor_FaceDirection(27, FACING_SOUTH + FACING_STEP, 20);
@@ -795,9 +795,9 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorStop(21);
         Engine_TaskWait(1);
         head_wait = Actor_Get(20);
-        head_wait->unknown_64 = 0;
+        head_wait->timer = 0;
         last_wait = Actor_Get(21);
-        last_wait->unknown_64 = 0;
+        last_wait->timer = 0;
         Actor_SetSpeed(20, 0xcccc, 0x6666);
         Actor_SetSpeed(21, 0xcccc, 0x6666);
         Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptC);
@@ -813,8 +813,8 @@ void FieldScene_RunStagedGroupSequence(void)
         SceneEffect_SetSlotVariantAndDescriptor(30);
         do {
             Engine_TaskWait(1);
-        } while ((s16)Actor_Get(20)->unknown_64 == 0 ||
-                 (s16)Actor_Get(21)->unknown_64 != 1);
+        } while ((s16)Actor_Get(20)->timer == 0 ||
+                 (s16)Actor_Get(21)->timer != 1);
         Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptE);
         Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptF);
         Engine_ActorStop(31);
@@ -959,11 +959,11 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorEnableActionCallback(33, SceneAction_GroupOffsetMotion);
         Engine_ActorEnableActionCallback(34, SceneAction_GroupOffsetMotion);
         closing = Actor_Get(21);
-        closing->unknown_64 = 0;
+        closing->timer = 0;
         Engine_ActorEnableActionCallback(21, SceneAction_GroupOffsetMotion);
         do {
             Engine_TaskWait(1);
-        } while ((s16)Actor_Get(21)->unknown_64 != 1);
+        } while ((s16)Actor_Get(21)->timer != 1);
         Engine_EventWait(80);
         Actor_SetPosition(14, PIXELS(340), PIXELS(274));
         Engine_TaskWait(1);
@@ -986,11 +986,11 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorJump(14, 4, 40);
         Actor_SetSpeed(14, 0x13333, 0x9999);
         closing = Actor_Get(14);
-        closing->unknown_64 = 0;
+        closing->timer = 0;
         Engine_ActorEnableActionCallback(14, SceneAction_GroupOffsetMotion);
         do {
             Engine_TaskWait(1);
-        } while ((s16)Actor_Get(14)->unknown_64 != 1);
+        } while ((s16)Actor_Get(14)->timer != 1);
         Actor_SetPosition(14, PIXELS(359), PIXELS(314));
         late = Actor_Get(14);
         late->facing = FACING_NORTH + FACING_STEP;
@@ -1404,28 +1404,28 @@ void KareiMachi_AlternateDance(void)
         KareiMachi_DanceStep++;
         break;
     case 1:
-        if ((s16)Object_GetById(21)->unknown_64 != 0) {
+        if ((s16)Object_GetById(21)->timer != 0) {
             ClearStep((u8 *)Object_GetById(20));
             Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 2:
-        if ((s16)Object_GetById(20)->unknown_64 != 0) {
+        if ((s16)Object_GetById(20)->timer != 0) {
             ClearStep((u8 *)Object_GetById(20));
             Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptA);
             KareiMachi_DanceStep++;
         }
         break;
     case 3:
-        if ((s16)Object_GetById(20)->unknown_64 != 0) {
+        if ((s16)Object_GetById(20)->timer != 0) {
             ClearStep((u8 *)Object_GetById(21));
             Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 4:
-        if ((s16)Object_GetById(21)->unknown_64 != 0) {
+        if ((s16)Object_GetById(21)->timer != 0) {
             KareiMachi_DanceStep = 0;
         }
         break;

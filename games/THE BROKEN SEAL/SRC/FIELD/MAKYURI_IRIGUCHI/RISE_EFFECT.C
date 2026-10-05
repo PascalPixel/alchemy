@@ -41,7 +41,7 @@ s32 SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work)
 
 s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
 {
-    u16 *c = &o->unknown_64;
+    u16 *c = &o->timer;
     s16 n;
 
     *c = *c + 1;
@@ -56,7 +56,7 @@ s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
 
 s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
 {
-    u16 *c = &o->unknown_64;
+    u16 *c = &o->timer;
     s16 n;
 
     *c = *c + 1;

@@ -119,7 +119,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
         cuep = (u16 *)(workspace + 226);
     }
 
-    waitp = (s16 *)&record->unknown_64;
+    waitp = (s16 *)&record->timer;
     *waitp = *cuep;
     record->acceleration = 0x4000;
     record->speed = 0x10000;

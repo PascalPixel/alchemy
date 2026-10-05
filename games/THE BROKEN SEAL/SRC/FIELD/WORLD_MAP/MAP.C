@@ -6,7 +6,6 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
-#define FrameCounter gFrameCount
 void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 
 enum {
@@ -42,6 +41,7 @@ void FieldScene_RunActorEightApproach(void);
 void FieldScene_RunActorPresentationSequence(void);
 void MapActor_UpdateContact(void);
 void StoryScene_UpdateSelectedActorProgress(void);
+s32 StoryActor_ApplyMapRotation(struct FieldActor *actor);
 extern s32 gWorldMapTriggerActor;
 
 extern u8 MsgWorldMapAfterBringingDjinniIntoYour[];
@@ -49,108 +49,88 @@ extern u8 MsgWorldMapNextIllShowHowCan[];
 extern u8 MsgWorldMapWeCantStayAnotherMinute[];
 
 /*
- * The progress word is game-state halfword 284 read as a whole word and the level
- * word is the workspace at +428; both offsets are built in one register, so
- * the order in which the locals are declared is what reproduces the
- * reference.
+ * Near the next random encounter (nine tenths of the way), the world map may
+ * raise one of its story events instead: the event clears the encounter's
+ * spread, and a missed chance brings the encounter on at the next step.
  */
 void StoryProgress_TriggerEvent0808(void)
 {
+    struct EventWork *work = gEventWork;
 
-    u8 *workspace = (u8 *)gEventWork;
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
+    if (gGameState.encounter_steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         if ((u32)Engine_RandomNext() < 0x8000) {
             BattleFx_SetPhaseRequest(0x808, 3);
-            *(s32 *)(workspace + 424) = 0;
+            work->encounter_bias = 0;
         } else {
-            *progress = *level;
+            gGameState.encounter_steps = work->encounter_threshold;
         }
     }
 }
 
 void StoryProgress_TriggerEvent0809(void)
 {
+    struct GameState *state = &gGameState;
+    s32 *steps = &state->encounter_steps;
+    struct EventWork *work = gEventWork;
 
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    u8 *workspace = (u8 *)gEventWork;
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
+    if (*steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         BattleFx_SetPhaseRequest(0x809, 42);
-        *(s32 *)(workspace + 424) = 0;
+        work->encounter_bias = 0;
     }
 }
 
 void StoryProgress_TriggerEvent080A(void)
 {
+    struct GameState *state = &gGameState;
+    s32 *steps = &state->encounter_steps;
+    struct EventWork *work = gEventWork;
 
-    s16 *state_table = (s16 *)&gGameState;
-    s32 *progress = (s32 *)&state_table[284];
-    u8 *workspace = (u8 *)gEventWork;
-    s32 *level = (s32 *)(workspace + 428);
-
-    if (*progress >= Math_Divide(*level * 9, 10)) {
+    if (*steps >= Math_Divide(work->encounter_threshold * 9, 10)) {
         BattleFx_SetPhaseRequest(0x80a, 24);
-        *(s32 *)(workspace + 424) = 0;
+        work->encounter_bias = 0;
     }
 }
 
 void StoryActor_AdvanceTimer(struct FieldActor *actor)
 {
-    if ((s16)actor->unknown_64 <= 0) {
-        actor->unknown_64++;
+    if ((s16)actor->timer <= 0) {
+        actor->timer++;
     } else {
         Engine_ObjectDispatchRelease(actor);
     }
 }
 
+/* Pulses the actor's size with the frame counter and, every other pair of
+ * frames, leaves a short-lived spark behind it with a cue. */
 void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 {
+    struct FieldActor *spark;
+    s32 x;
+    s32 y;
+    s32 z;
 
-    s32 fixed_scale;
-    struct FieldActor *spawned_actor;
-
-    if ((gFrameCount & 4) != 0) {
-        fixed_scale = 0x14ccc;
-        actor->scale_x = fixed_scale;
-        actor->scale_y = fixed_scale;
+    if (gFrameCount & 4) {
+        actor->scale_x = 0x14ccc;
+        actor->scale_y = 0x14ccc;
     } else {
-        fixed_scale = 0x10000;
-        actor->scale_x = fixed_scale;
-        actor->scale_y = fixed_scale;
+        actor->scale_x = 0x10000;
+        actor->scale_y = 0x10000;
     }
-
-    if ((gFrameCount & 2) == 0) {
+    if (!(gFrameCount & 2))
         return;
-    }
-
-    {
-        s32 x = actor->x.fixed;
-        s32 y = actor->y.fixed;
-        s32 z = actor->z.fixed;
-        spawned_actor = Engine_ObjectCreate(0x11d, x, y, z);
-    }
+    x = actor->x.fixed;
+    y = actor->y.fixed;
+    z = actor->z.fixed;
+    spark = Engine_ObjectCreate(0x11d, x, y, z);
     Engine_AudioPlayCue(0xf6);
-    if (spawned_actor == 0) {
+    if (spark == 0)
         return;
-    }
-
-    {
-        u8 *flags = &spawned_actor->motion_flags;
-        s32 zero_value = 0;
-
-        *flags = zero_value;
-        ((struct FieldSpritePriority *)spawned_actor->sprite)->priority = 1;
-        Engine_ActorSetSpriteFlags(spawned_actor, 0);
-        Object_SetMode(spawned_actor, 1);
-        spawned_actor->unknown_64 = zero_value;
-        spawned_actor->update = (void (*)(union FieldObject *))StoryActor_AdvanceTimer;
-    }
+    spark->motion_flags = 0;
+    ((struct FieldSpritePriority *)spark->sprite)->priority = 1;
+    Engine_ActorSetSpriteFlags(spark, 0);
+    Object_SetMode(spark, 1);
+    spark->timer = 0;
+    spark->update = (void (*)(union FieldObject *))StoryActor_AdvanceTimer;
 }
 
 /* Blink the actor's palette with the frame counter and, while it is not held,
@@ -159,12 +139,12 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
 {
     s16 *angle;
 
-    if (FrameCounter & 2)
+    if (gFrameCount & 2)
         Engine_ObjectSetPartPalettes(actor, 10);
     else
         Engine_ObjectSetPartPalettes(actor, 7);
-    if ((s16)actor->unknown_66 == 0) {
-        angle = (s16 *)&actor->unknown_64;
+    if ((s16)actor->work == 0) {
+        angle = (s16 *)&actor->timer;
         actor->x.fixed = 0x15d00000;
         actor->y.fixed = Iwram_MulQ16(Engine_MathSin(*angle << 3), 0x40000) + 0x100000;
         actor->z.fixed = 0x5300000;
@@ -176,8 +156,6 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
 
 s32 StoryActor_Initialize(struct FieldActor *actor)
 {
-    s32 fixed_scale;
-
     if (Engine_GameFlagIsSet(0x30) != 0) {
         return 0;
     }
@@ -186,11 +164,10 @@ s32 StoryActor_Initialize(struct FieldActor *actor)
     }
     actor->update = (void (*)(union FieldObject *))WorldMap_UpdateBobbingMarker;
     actor->motion_flags = 0;
-    actor->unknown_64 = 0;
-    actor->unknown_66 = 0;
-    fixed_scale = 0x8000;
-    actor->scale_x = fixed_scale;
-    actor->scale_y = fixed_scale;
+    actor->timer = 0;
+    actor->work = 0;
+    actor->scale_x = 0x8000;
+    actor->scale_y = 0x8000;
     return 0;
 }
 
@@ -209,9 +186,9 @@ u8 *WorldMap_GetExits(void)
     return gWorldMapExits;
 }
 
-s32 StoryActor_ApplyFlaggedMode(u8 *actor)
+s32 StoryActor_ApplyFlaggedMode(struct FieldActor *actor)
 {
-    StoryActor_ApplyMapRotation();
+    StoryActor_ApplyMapRotation(actor);
     if (Engine_GameFlagIsSet(0x847) != 0) {
         Object_SetMode(actor, 2);
     }
@@ -242,67 +219,35 @@ s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
 
 s32 StoryActor_ResetPosition(struct FieldActor *actor)
 {
-    s32 zero;
-
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ObjectSetPartPalettes(actor, 10);
-    {
-        u8 *flags = &actor->collision_flags;
-
-        zero = 0;
-        *flags = zero;
-    }
+    actor->collision_flags = 0;
     if (Engine_GameFlagIsSet(0x8A0) != 0) {
         Engine_GameFlagSet(0x2f1);
-        actor->x.fixed = zero;
-        actor->y.fixed = zero;
+        actor->x.fixed = 0;
+        actor->y.fixed = 0;
     }
     return 0;
 }
 
-/*
- * The popped register is r1, so r0 survives the return and is the result.
- * The owner includes its alignment halfword and its one pool word, the
- * address of gFrameCount -- a live status word, not overlay image data.
- * The exclusive or against the bit just tested clears bit 0 only.  value is
- * a byte, so value >> 8 is zero and both branches do the same clear and
- * store; that shape is deliberate and decides the register allocation.
- */
-s32 StoryActor_ClearActiveFlag(u8 *actor)
+/* Flickers the actor out: on frames whose low bit is set, an active actor
+ * turns inactive. */
+s32 StoryActor_ClearActiveFlag(struct FieldActor *actor)
 {
-
-    u8 *active_flags = actor + 0x54;
-    u8 value = *active_flags;
-    u32 active_bit = 1 + (value >> 8);
-
-    if ((active_bit & value) != 0 && (gFrameCount & active_bit) != 0) {
-        u8 cleared = 1;
-
-        if (active_flags) {
-            cleared ^= value;
-            *active_flags = (u8)cleared;
-        } else {
-            cleared ^= value;
-            *active_flags = (u8)cleared;
-        }
-    }
+    if ((actor->active & 1) && (gFrameCount & 1))
+        actor->active ^= 1;
     return 1;
 }
 
 /*
- * Selects the placement and spawn table for the current scene. The selector is
- * the signed game-state halfword 225; only 49 through 80 are covered and
- * everything else takes the default arm, which calls Engine_GameFlagSet before
- * returning. Cases 49 and 64 are conditional and fall through to the default
- * when their test fails. The case arms are in the order the reference uses,
- * not ascending, and that order is what reproduces it.
+ * Selects the placements for the entrance the party arrives by: only 49
+ * through 80 have their own, and the others take the default placements
+ * after setting flag 0x235. Entrances 49 and 64 have theirs only while
+ * their story flags call for them.
  */
 struct ScenePlacement *StoryScene_SelectPlacementTable(void)
 {
-    s16 *scene_table = (s16 *)&gGameState;
-    s32 scene_id = scene_table[225];
-
-    switch (scene_id) {
+    switch (gGameState.entrance) {
     case 49:
         if (Engine_GameFlagIsSet(0x94f) == 0 && Engine_GameFlagIsSet(0x941) != 0) {
             return gWorldMapPlacements49;
@@ -490,11 +435,9 @@ void FieldScene_RunStep74(void)
 /* World map entry: record the arrival and start the map's camera and tasks, then run the scene the entrance or the story flags call for. */
 s32 WorldMap_EnterScene(void)
 {
-    s16 *entrance;
-    u8 *state;
+    struct GameState *state = &gGameState;
+    s16 *entrance = &state->entrance;
 
-    state = (u8 *)&gGameState;
-    entrance = &((struct GameState *)state)->entrance;
     if (*entrance == 99) {
         Engine_GameFlagSet(0x160);
         Engine_GameFlagSet(0x161);
@@ -582,8 +525,7 @@ s32 WorldMap_EnterScene(void)
         case 77:
             Engine_GameFlagSet(0x11c);
             if (GameFlag_GetByte(0x2f8) != 0) {
-                state = (u8 *)&gGameState;
-                state[0x1f2] = 2;
+                gGameState.movement_mode = 2;
                 Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
             }
             break;
@@ -667,8 +609,7 @@ void FieldScene_RunActorTransferSequence(void)
 {
     struct FieldActor *actor;
     struct FieldActor *record;
-    s32 scale;
-    s32 action;
+    const u8 *action;
 
     actor = Object_GetById(15);
     Engine_EventBegin();
@@ -699,7 +640,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(12, gTransferArrive12);
     Engine_EventWait(20);
-    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferArrive13);
+    Object_SetActionCallbackAndRefreshById(13, gTransferArrive13);
     Audio_PlayCue(0x121);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
@@ -729,7 +670,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 10);
-    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferDepart13);
+    Object_SetActionCallbackAndRefreshById(13, gTransferDepart13);
     Audio_PlayCue(0x121);
     Engine_EventWait(20);
     Battle_ClearObjectFlag5bWhenMode3();
@@ -809,7 +750,7 @@ void FieldScene_RunActorTransferSequence(void)
     actor->bounce = 0x1999;
     actor->scale_x = 0x18000;
     actor->scale_y = 0x18000;
-    actor->unknown_64 = 0;
+    actor->timer = 0;
     actor->y.fixed = 0x400000;
     actor->sprite->rotation = 0xf000;
     Engine_ActorSetSpriteFlags(actor, 0);
@@ -817,20 +758,19 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_TaskWait(1);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
-    Engine_TaskAddCallback((s32)FieldScene_RunScene371_020017a4, 0xc80);
+    Engine_TaskAddCallback(FieldScene_RunScene371_020017a4, 0xc80);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
     record = Actor_Get(14);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_EventWait(10);
-    scale = 192;
     record = Actor_Get(9);
-    record->velocity_y = (scale << 11);
+    record->velocity_y = 0x60000;
     record = Object_GetById(8);
-    record->velocity_y = (scale << 11);
+    record->velocity_y = 0x60000;
     Audio_PlayCue(145);
     Camera_SetSpeed(0x40000, 0x40000);
     FieldScene_RunScene371_02001680();
@@ -843,7 +783,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetAttachedEffect(9, 0x102);
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
-    Engine_TaskRemoveCallback((s32)FieldScene_RunScene371_020017a4);
+    Engine_TaskRemoveCallback(FieldScene_RunScene371_020017a4);
     Engine_TaskWait(1);
     Actor_SetPosition(14, 0, 0);
     Actor_SetPosition(15, 0, 0);
@@ -872,19 +812,19 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_WalkToAndWait(9, 0x1608, 0x6d8);
     Actor_SetPosition(9, 0, 0);
     Audio_PlayCue(141);
-    Engine_ActorEnableActionCallback(10, (s32)gTransferReturn10);
+    Engine_ActorEnableActionCallback(10, gTransferReturn10);
     Engine_ActorEnableActionCallback(11, gTransferReturn11);
     Engine_EventWait(40);
     Engine_ActorEnableActionCallback(12, gTransferReturn12);
     Engine_EventWait(40);
-    Object_SetActionCallbackAndRefreshById(13, (s32)gTransferReturn13);
+    Object_SetActionCallbackAndRefreshById(13, gTransferReturn13);
     Battle_ClearObjectFlag5bWhenMode3();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x170c0000, 0x6280000);
     Actor_SetPosition(ACTOR_GERALD, 0x17140000, 0x6400000);
     Camera_SetSpeed(0x40000, 0x8000);
     Camera_MoveTo(0x16d80000, -1, 0x6480000, 1);
     Engine_CameraWaitForMove();
-    action = (s32)gTransferGather;
+    action = gTransferGather;
     Engine_ActorEnableActionCallback(10, action);
     Engine_EventWait(20);
     Camera_SetSpeed(0x6666, 0xccc);
@@ -929,10 +869,6 @@ void FieldScene_RunActorTransferSequence(void)
 
 void FieldScene_RunScene371_0200155c(void)
 {
-
-    u32 i;
-    s32 record;
-
     Camera_MoveTo(0x160c0000, -1, 0x6f80000, 1);
     Engine_TaskWait(4);
     Camera_MoveTo(0x16040000, -1, 0x6fc0000, 1);
@@ -961,10 +897,6 @@ void FieldScene_RunScene371_0200155c(void)
 
 void FieldScene_RunScene371_02001680(void)
 {
-
-    u32 i;
-    s32 record;
-
     Camera_MoveTo(0x15ec0000, -1, 0x6c80000, 1);
     Engine_TaskWait(4);
     Camera_MoveTo(0x15e40000, -1, 0x6cc0000, 1);
@@ -991,47 +923,40 @@ void FieldScene_RunScene371_02001680(void)
     Engine_TaskWait(4);
 }
 
+/* Each frame of the transfer, keeps actor 15 over the guide (actor 14) and,
+ * the first time it comes down to its landing height, lands it with a cue
+ * and marks it landed for the scene that waits on it. */
 void FieldScene_RunScene371_020017a4(void)
 {
+    struct FieldActor *actor;
+    struct FieldActor *guide;
 
-    u32 i;
-    struct FieldActor *rec7;
-    struct FieldActor *record;
-
-    rec7 = Object_GetById(15);
-    record = Object_GetById(14);
-    rec7->x.fixed = record->x.fixed;
-    rec7->z.fixed = record->z.fixed;
-    if (rec7->y.fixed < 0xa0000) {
-        rec7->y.fixed = 0xa0000;
+    actor = Object_GetById(15);
+    guide = Object_GetById(14);
+    actor->x.fixed = guide->x.fixed;
+    actor->z.fixed = guide->z.fixed;
+    if (actor->y.fixed < 0xa0000) {
+        actor->y.fixed = 0xa0000;
         if (GameFlag_IsSet(0x200) == 0) {
             Audio_PlayCue(145);
-            Object_SetMode(rec7, 3);
+            Object_SetMode(actor, 3);
             GameFlag_Set(0x200);
-            {
-                u16 *target = (u16 *)&rec7->unknown_64;
-                s32 shown = 1;
-
-                *target = shown;
-            }
+            actor->timer = 1;
         }
     }
 }
 
 void FieldScene_RunScene371_020017fc(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    struct FieldActor *rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    rec7->scale_y = 0x14000;
-    rec7->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
+    actor->scale_x = 0x14000;
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x6666, 0x3333);
@@ -1045,32 +970,25 @@ void FieldScene_RunScene371_020017fc(void)
 
 void FieldScene_RunScene371_02001888(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    struct FieldActor *rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    rec7->scale_x = 0x14000;
-    rec7->scale_y = 0x14000;
+    actor->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    {
-        s32 shown = 0;
-
-        rec7->unknown_64 = shown;
-    }
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)rec7->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1080,32 +998,25 @@ void FieldScene_RunScene371_02001888(void)
 
 void FieldScene_RunScene371_02001938(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    struct FieldActor *rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    rec7->scale_x = 0x14000;
-    rec7->scale_y = 0x14000;
+    actor->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    {
-        s32 shown = 0;
-
-        rec7->unknown_64 = shown;
-    }
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)rec7->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1115,32 +1026,25 @@ void FieldScene_RunScene371_02001938(void)
 
 void FieldScene_RunScene371_020019e8(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    struct FieldActor *rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    rec7->scale_x = 0x14000;
-    rec7->scale_y = 0x14000;
+    actor->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    {
-        s32 shown = 0;
-
-        rec7->unknown_64 = shown;
-    }
+    actor->timer = 0;
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)rec7->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1150,28 +1054,21 @@ void FieldScene_RunScene371_020019e8(void)
 
 void FieldScene_RunScene371_02001a98(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    struct FieldActor *rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    rec7->scale_x = 0x14000;
-    rec7->scale_y = 0x14000;
+    actor->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    {
-        s32 shown = 0;
-
-        rec7->unknown_64 = shown;
-    }
+    actor->timer = 0;
     if (StoryScene_ComputeOpposingSlotDelta() == 11) {
         Engine_ActorEnableActionCallback(8, gTransferLeaderTurn);
     } else {
@@ -1179,7 +1076,7 @@ void FieldScene_RunScene371_02001a98(void)
     }
     do {
         Engine_TaskWait(1);
-    } while ((s16)rec7->unknown_64 == 0);
+    } while ((s16)actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1189,19 +1086,16 @@ void FieldScene_RunScene371_02001a98(void)
 
 void FieldScene_RunScene371_02001b5c(void)
 {
+    struct FieldActor *actor;
 
-    u32 i;
-    struct FieldActor *rec7;
-    s32 record;
-
-    rec7 = Object_GetById(8);
+    actor = Object_GetById(8);
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x13e80000, 0x9180000);
-    rec7->scale_y = 0x14000;
-    rec7->scale_x = 0x14000;
+    actor->scale_y = 0x14000;
+    actor->scale_x = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
@@ -1217,10 +1111,6 @@ void FieldScene_RunScene371_02001b5c(void)
 
 void WorldMap_ShowDjinnTutorial(void)
 {
-
-    u32 i;
-    s32 record;
-
     Battle_ClearObjectFlag5bWhenMode3();
     BattleFx_ScheduleRatioTransition(0x10000, 6);
     Event_WaitForDisplayField358Clear();
@@ -1294,7 +1184,7 @@ void WorldMap_MeetVenusDjinni(void)
         Actor_FaceActor(0, DJINNI, 0);
         Event_Wait(10);
         Actor_ShowEmote(0, 0x101, 60);
-        djinni->unknown_66 = 1;
+        djinni->work = 1;
         Actor_FaceActor(DJINNI, 0, 0);
         Task_Wait(16);
         Event_SetMessage((s32)MsgWorldMapOh);

@@ -488,7 +488,7 @@ s32 Field_RunScene(s32 entrance)
                 Scene_FadeColorFromWhite(work->scene);
                 work->unknown_1a8 = 0;
                 work->scene = 0;
-                gGameState.unknown_238 = 0;
+                gGameState.encounter_steps = 0;
             } else if (work->action != 0) {
                 work->busy = 1;
                 BattleAction_RunDescriptor(work->action);

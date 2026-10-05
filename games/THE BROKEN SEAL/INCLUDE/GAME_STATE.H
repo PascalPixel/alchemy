@@ -105,7 +105,9 @@ struct GameState {
     s16 pending_djinn_event;
     /* Why the scene is changing: -1 when the party fell in battle. */
     s16 scene_change_reason;
-    s32 unknown_238;
+    /* The distance walked toward the next random encounter, which comes
+       once it reaches the event work's encounter_threshold. */
+    s32 encounter_steps;
     /* The item the field hands the party once the scene is up. */
     u16 pending_item;
     /* The variant of the current scene, from its row of the scene table. */

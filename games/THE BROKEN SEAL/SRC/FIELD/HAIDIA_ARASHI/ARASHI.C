@@ -411,9 +411,9 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             actor = Object_GetById(9);
             h2 = 0xE000;
             actor->facing = h2;
-            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
             tbl = HaidiaArashi_ActorEightScript;
-            actor->unknown_66 = 1;
+            actor->work = 1;
             Engine_ActorEnableActionCallback(9, tbl);
         }
         Engine_ActorSetPosition(26, 0xA50000, 0x4E60000);
@@ -422,8 +422,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 
             actor = Object_GetById(26);
             actor->facing = h2;
-            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-            actor->unknown_66 = 2;
+            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->work = 2;
             Engine_ActorEnableActionCallback(26, tbl);
         }
         Engine_ActorSetPosition(22, 0x980000, 0x5050000);
@@ -432,8 +432,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 
             actor = Object_GetById(22);
             actor->facing = h2;
-            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-            actor->unknown_66 = 3;
+            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->work = 3;
             Engine_ActorEnableActionCallback(22, tbl);
         }
         Engine_ActorSetPosition(8, 0xB80000, 0x5180000);
@@ -442,8 +442,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 
             actor = Object_GetById(8);
             actor->facing = h2;
-            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-            actor->unknown_66 = 4;
+            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->work = 4;
             Engine_ActorEnableActionCallback(8, tbl);
         }
         Engine_ActorSetAnimation(8, 6);
@@ -466,7 +466,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             struct FieldActor *actor;
 
             actor = Object_GetById(10);
-            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         }
         tbl = HaidiaArashi_ActorEightScript;
         Engine_ActorEnableActionCallback(10, tbl);
@@ -477,7 +477,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             struct FieldActor *actor;
 
             actor = Object_GetById(24);
-            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         }
         Engine_ActorEnableActionCallback(24, tbl);
         Engine_ActorSetPosition(25, x25, z25);
@@ -487,7 +487,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
             struct FieldActor *actor;
 
             actor = Object_GetById(25);
-            actor->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         }
         Engine_ActorEnableActionCallback(25, tbl);
         Engine_ActorSetPosition(23, x23, z23);
@@ -1685,13 +1685,13 @@ void HaidiaArashi_RunRiverSearch(void)
      * the entry's field at offset 100. */
     entry = Actor_Get(10);
     record = Engine_RandomNext();
-    entry->unknown_64 = (Math_RemainderUnsigned(record, 90) + 60);
+    entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
     entry = Actor_Get(24);
     record = Engine_RandomNext();
-    entry->unknown_64 = (Math_RemainderUnsigned(record, 90) + 60);
+    entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
     entry = Actor_Get(25);
     record = Engine_RandomNext();
-    entry->unknown_64 = (Math_RemainderUnsigned(record, 90) + 60);
+    entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
     script = (s32)HaidiaArashi_ActorEightScript;
     Engine_ActorEnableActionCallback(10, (const u8 *)script);
     Engine_ActorEnableActionCallback(24, (const u8 *)script);
@@ -1818,7 +1818,7 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
         rec = Object_GetById(10);
         v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
         tbl = HaidiaArashi_ActorEightScript;
-        rec->unknown_64 = v;
+        rec->timer = v;
         Engine_ActorEnableActionCallback(10, tbl);
     }
     Engine_EventWait(20);
@@ -2028,21 +2028,21 @@ void Scene_RunActorGroupDepartureSequence(void)
     fieldActor = Actor_Get(0);
     random = Random_Next();
     random = Math_RemainderUnsigned(random, 20) + 20;
-    fieldActor->unknown_64 = random;
+    fieldActor->timer = random;
     zero = 0;
     still = 0;
     fieldActor = Actor_Get(22);
     random = Random_Next();
-    fieldActor->unknown_64 = (Math_RemainderUnsigned(random, 20) + 20);
+    fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
     fieldActor = Actor_Get(26);
     random = Random_Next();
-    fieldActor->unknown_64 = (Math_RemainderUnsigned(random, 20) + 20);
+    fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
     fieldActor = Actor_Get(8);
     random = Random_Next();
-    fieldActor->unknown_64 = (Math_RemainderUnsigned(random, 20) + 20);
+    fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
     fieldActor = Actor_Get(9);
     random = Random_Next();
-    fieldActor->unknown_64 = (Math_RemainderUnsigned(random, 20) + 20);
+    fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
     moveActions = HaidiaArashi_LookAroundScript;
     Actor_EnableActionCallback(9, moveActions);
     Event_Wait(30);
@@ -2120,7 +2120,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Camera_MoveTo(0xaf0000, 0x600000, 0x43e0000, 1);
     do {
         Task_Wait(1);
-    } while ((s16)actor->unknown_66 != 8);
+    } while ((s16)actor->work != 8);
     ColorBuffer_ApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(60);
     Task_Wait(60);
@@ -2254,32 +2254,32 @@ void Scene_RunActorGroupDepartureSequence(void)
     actor = Actor_Get(9);
     actor->facing = 0xe000;
     random = Random_Next();
-    actor->unknown_64 = Math_RemainderUnsigned(random, 90) + 60;
+    actor->timer = Math_RemainderUnsigned(random, 90) + 60;
     departureActions = HaidiaArashi_ActorEightScript;
-    actor->unknown_66 = 1;
+    actor->work = 1;
     Actor_EnableActionCallback(9, departureActions);
     Actor_SetPosition(26, 0xa50000, 0x4e60000);
     Actor_SetAnimation(26, 1);
     actor = Actor_Get(26);
     actor->facing = 0xe000;
     random = Random_Next();
-    actor->unknown_64 = Math_RemainderUnsigned(random, 90) + 60;
-    actor->unknown_66 = 2;
+    actor->timer = Math_RemainderUnsigned(random, 90) + 60;
+    actor->work = 2;
     Actor_EnableActionCallback(26, departureActions);
     Actor_SetPosition(22, 0x980000, 0x5050000);
     Actor_SetAnimation(22, 1);
     actor = Actor_Get(22);
     actor->facing = 0xe000;
     random = Random_Next();
-    actor->unknown_64 = Math_RemainderUnsigned(random, 90) + 60;
-    actor->unknown_66 = 3;
+    actor->timer = Math_RemainderUnsigned(random, 90) + 60;
+    actor->work = 3;
     Actor_EnableActionCallback(22, departureActions);
     Actor_SetPosition(8, 0xb40000, 0x51f0000);
     actor = Actor_Get(8);
     actor->facing = 0xe000;
     random = Random_Next();
-    actor->unknown_64 = Math_RemainderUnsigned(random, 90) + 60;
-    actor->unknown_66 = 4;
+    actor->timer = Math_RemainderUnsigned(random, 90) + 60;
+    actor->work = 4;
     Actor_EnableActionCallback(8, departureActions);
     Actor_SetAnimation(8, 6);
     Object_GetById(22)->priority_flags &= 254;

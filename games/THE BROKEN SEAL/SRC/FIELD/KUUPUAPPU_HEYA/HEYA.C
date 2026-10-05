@@ -628,7 +628,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
     Engine_EventShowMessage(24, 0);
     Engine_ActorSetSpeed(24, 0x40000, 0x20000);
     if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
-        q = (s16 *)&p->unknown_64;
+        q = (s16 *)&p->timer;
         v = *q;
         if (v <= 2) {
             Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
@@ -636,7 +636,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
             goto clamp;
         }
     } else {
-        q = (s16 *)&p->unknown_64;
+        q = (s16 *)&p->timer;
         v = *q;
         if (v > 2) {
             Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);

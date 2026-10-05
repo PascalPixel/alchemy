@@ -67,7 +67,7 @@ void Korosseo_UpdatePathRival(void)
                 fz = work->finish_z - 0x100000;
                 facing = &work->finish_facing_a;
             }
-            obj->unknown_64 = *facing;
+            obj->timer = *facing;
             obj->acceleration = 0x4000;
             obj->speed = 0x10000;
             Engine_ObjectSetPosition(obj, x, 0, fz);

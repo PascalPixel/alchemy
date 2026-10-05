@@ -146,7 +146,7 @@ void MakyuriHeya_SpawnSparkPair(void)
         sprite = spark->sprite;
         Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
         spark->motion_flags = 0;
-        spark->unknown_64 = 0;
+        spark->timer = 0;
         *(struct SpawnPoint **)&spark->unknown_68 = point;
         if (sprite != NULL) {
             AnimationObjects_SelectAnimation(sprite, 2);
@@ -160,7 +160,7 @@ void MakyuriHeya_SpawnSparkPair(void)
         sprite = spark->sprite;
         Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
         spark->motion_flags = 0;
-        spark->unknown_64 = 0;
+        spark->timer = 0;
         *(struct SpawnPoint **)&spark->unknown_68 = point;
         spark->priority_flags = 2;
         if (sprite != NULL) {

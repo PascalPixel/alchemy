@@ -70,9 +70,7 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     Object_SetMode(actor, 1);
     Engine_ActorSetPosition(id, x << 16, z << 16);
     Engine_ActorFaceActor(0, 0x4000, 0);
-    /* FAKEMATCH: retain the queue cursor/count halfword view and IME
-       pointer lifetime; direct count-field stores swap row-address setup
-       with the count write twice at the same 476-byte extent. */
+    /* FAKEMATCH: the halfword count view and IME lifetime keep row-address setup before the count writes. */
     QUEUE_IO_WRITE(0x4000050, 0xf00, 0x20000);
     sprite->part[0].object_mode = 1;
     sprite->part[1].object_mode = 1;
@@ -105,8 +103,7 @@ void Korosseo_RestoreCompetitor(s32 id)
     struct FieldActor *actor;
     s32 zero;
     u8 *control;
-    /* FAKEMATCH: retain the existing halfword zero carrier for the layer
-       byte; direct zero changes the earlier stage and later word registers. */
+    /* FAKEMATCH: the halfword zero preserves the earlier stage and later word registers. */
     struct { u16 value; } layer;
 
     state = *(struct CompetitorState **)gMenuCtrlWork;
@@ -120,8 +117,7 @@ void Korosseo_RestoreCompetitor(s32 id)
         Engine_EventWait(30);
     }
     zero = 0;
-    /* FAKEMATCH: retain the existing byte protocol for these two cells;
-       direct field writes move stage zero after the start-position load. */
+    /* FAKEMATCH: byte accesses keep the stage zero before the start-position load. */
     control = (u8 *)state;
     control[(u32)&((struct CompetitorState *)0)->stage] = zero;
     control[(u32)&((struct CompetitorState *)0)->mode] = 15;

@@ -1,4 +1,5 @@
 #include "STATUS.H"
+#include "FIELD_SCENE.H"
 
 extern const struct SceneEntrance gKorashiamuIriguchiEntrances1[];
 extern const struct SceneEntrance gKorashiamuIriguchiEntrances3[];
@@ -329,7 +330,7 @@ void KorashiamuIriguchi_IntroduceSeventhSeed(void)
     FieldScene_CallPairWith10(18);
     Actor_FaceDirection(18, 0xd000, 20);
     Actor_FaceDirection(18, 0xb000, 20);
-    Actor_FaceDirection(18, 0x8000, 40);
+    Actor_FaceDirection(18, FACING_WEST, 40);
     Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
     FieldScene_CallPairWith10(18);
     Engine_ActorSetAnimationAndWait(18, 3);

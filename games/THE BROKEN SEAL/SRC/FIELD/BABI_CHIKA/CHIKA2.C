@@ -177,15 +177,7 @@ void SceneActor_CheckTwoUnitsAboveActorZero(void)
     }
 }
 
-/*
- * resource_3c4 @ 0x02001458 (84 bytes: 80 code and one pool word).
- *
- * This is the selector-reversed sibling immediately before 0x020014ac and is
- * written in that owner's proven shape.  It initializes query 0x200, tests
- * flag 0x201, then mirrors the queried state into slot 14's byte at +98 and
- * bit 3 of the byte at +89.  The zero halfword at 0x02001456 is alignment
- * after the preceding owner, not part of this one.
- */
+/* Set flag 0x200; flag 0x201 clears actor 14's rise counter and collision bit 3, otherwise both are set. */
 void SceneActor_MirrorFlag201IntoSlot14(void)
 {
     u8 *flags;
@@ -461,14 +453,7 @@ void SceneActor_InstallSlotNineHandler(void)
     owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
-/*
- * Brings slot 9 up: four state writes, clear bit 1 of the byte at +35,
- * publish selector 0x204, pin an overlay at slot 9's 12.20 grid cell, then
- * install one handler on slots 9 and 8. The 136-byte owner at 0x02001a10
- * includes its alignment halfword and its one pool word; that word is an
- * odd Thumb pointer, so the handler is SceneActor_SetFlagBitByRelativeDepth. The bit-clear folds
- * +35 into the returned pointer through the address local, not into a copy.
- */
+/* Raise actor 9, clear its flag bit 1, set selector 0x204, place the overlay at its grid cell and install the relative-depth handler on actors 9 and 8. */
 void SceneActor_SetupSlotNineAndInstallHandler(void)
 {
     typedef s32(*Handler_02001a10)(struct Record_02000ec8 *record);
@@ -546,14 +531,7 @@ void BabiChika_SettleSteps(s32 wait)
 
 /* Platform landing and the late sequences. */
 
-/*
- * Scan slots 10 to 14, skipping the subject, keep those whose whole-tile x
- * and z match the subject's, and take the greatest height among them; the
- * winning slot index goes into the subject's tag at +100. The starting best
- * height is -5.0 in 12.20, held in the owner's one pool word, and it is what
- * the move receives when no slot matches -- the tag is then left untouched.
- * Every field read re-fetches its record, which is the shape to keep.
- */
+/* Among actors 10 to 14 on the subject's tile, find the highest other actor and store its ID; if none matches, move to height -5.0 and leave the ID unchanged. */
 void SceneActor_LandOnHighestPlatform(s32 subject)
 {
     s32 best = -0x500000;
@@ -713,8 +691,8 @@ void FieldScene_RunFourCallSequence(void)
  * value (198<<18) equals the first call's end value. */
 void FieldScene_RunLateSequenceHead(void)
 {
-    Map_CopyCellAttributes(72, 49, 1, 1, 8, 49); /* main:080091c0 */
-    Map_CopyCellAttributes(113, 43, 1, 1, 49, 43); /* main:080091c0 */
+    Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
+    Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
     MapObject_SetPosition(100, 0, 0);
     MapObject_SetPosition(101, 0, 0);
     Actor_SetPosition(15, 8912896, 51904512); /* 136<<16, 198<<18 */

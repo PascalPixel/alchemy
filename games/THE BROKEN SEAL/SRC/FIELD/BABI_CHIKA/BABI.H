@@ -123,17 +123,6 @@ s32 Battle_GetWorkObject1e0();
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 struct Record_02000ec8;
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
 /* Copy the low two mode bits into the object's owner record. */
 
 /*

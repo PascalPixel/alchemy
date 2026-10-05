@@ -9,30 +9,13 @@
 #define FIELD_STAGED_ACTOR_IMPORTS
 extern u8 *gActorEffectWork;
 
-/*
- * resource_3c4 @ 0x02001f70 (84 bytes: 72 code + alignment + two pool words).
- *
- * Publishes selector 0x974 for slot 17 and 0x975 for slot 18, choosing a
- * different publisher for each depending on whether that slot's +8 word sits
- * at 12.20 row 45 and 46 respectively.  `asrs #20` makes both tests signed.
- * Both pool words are selectors, not addresses.
- *
- * `pop {r0} ; bx r0` return: void.
- */
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
     Engine_ActorSetSpriteFlags(no, 0);
     return 0;
 }
 
-/*
- * Tries to move actor 0 onto the caller's target.  It builds a three-word
- * 12.20 probe from the record's own position -- the horizontal words snapped
- * to their whole-unit grid and lifted by half a unit -- asks the collision
- * service about it, and refuses when either the probe or the target is
- * rejected.  Returns 1 when refused and 0 when the move ran.  The 248-byte
- * owner includes its one pool word.
- */
+/* Probe the cell ahead of actor 0 and the requested target before moving; return 1 if either blocks the move and 0 on success. */
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
     Actor_02000cd0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -45,8 +28,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 
     Vector_AddPolarOffset(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
 
-    /* Both guards branch to one shared exit placed after the body.  Writing
-     * `return 1` twice would put an inline copy near the top instead. */
+
     if (Object_CheckMovementCollision(actor, probe) == 1) {
         goto refuse;
     }
@@ -63,7 +45,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     actor->speedX = 0x00030000;
     actor->speedY = 0x00020000;
     actor->speedZ = 0x00040000;
-    actor->flags &= (u8)0x7e;   /* masks the byte re-read here, not `saved` */
+    actor->flags &= (u8)0x7e;
 
     Engine_ActorSetSpriteFlags(actor, 0);
 #if EDITION_INTERNATIONAL
@@ -246,17 +228,14 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
     track->mark = (s32) 0x80000000;
 }
 
-/*
- * The decay of the Z velocity stays a signed divide by sixteen: that shape is
- * what reproduces the negative bias and arithmetic shift in the reference.
- */
+/* Divide the Z velocity by sixteen, rounding toward zero. */
 void Effect_AdvanceMotion(struct MotionEffect *effect)
 {
     s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
 
-    /* This block orders the Z load after the Y store; do not flatten it. */
+
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity[0];

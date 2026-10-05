@@ -8,3 +8,41 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 
     return (u32)(-value | value) >> 31;
 }
+
+s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit);
+
+/* Sets a Djinni the owner holds active when the trade rules allow,
+   counting it among its element's active Djinn, and refreshes the owner's
+   stats; returns 0 when it cannot. */
+s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
+{
+    struct OwnerDjinnState *state = Owner_GetState(owner);
+    s32 result = Trade_CanOfferDjinn(owner, index, bit);
+
+    if (result != 0) {
+        u32 owned = state->flags.banks.owned[index];
+        if (owned & (1 << bit)) {
+            state->flags.banks.active[index] |= 1 << bit;
+        } else {
+            return 0;
+        }
+        state->counts.banks.active[index]++;
+        Owner_RefreshDerivedData(owner);
+    }
+    return result;
+}
+
+/* Takes an active Djinni off its element's active set and refreshes the
+   owner's stats; returns whether it was active. */
+u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
+{
+    struct OwnerDjinnState *state = Owner_GetState(owner);
+    u32 present = Djinn_IsActive(owner, index, bit);
+
+    if (present != 0) {
+        state->counts.banks.active[index]--;
+        state->flags.banks.active[index] &= ~(1 << bit);
+        Owner_RefreshDerivedData(owner);
+    }
+    return present;
+}

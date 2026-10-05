@@ -2419,6 +2419,10 @@ Owner_GetDigitValues:
 Owner_GetDefaultElement:
 	.incbin "baserom.gba", 0x000b505c, 0x0000022c
 	.section .rom.000b5298, "ax"
+	.global Owner_RefreshDerivedData
+	.type Owner_RefreshDerivedData, %function
+	.thumb_func
+Owner_RefreshDerivedData:
 	.incbin "baserom.gba", 0x000b5298, 0x0000003c
 	.global Owner_RefreshClassActions
 	.type Owner_RefreshClassActions, %function
@@ -2436,21 +2440,12 @@ Curve_LookupScaledValue:
 	.align 2, 0
 	.incbin "baserom.gba", 0x000b575c, 0x00000338
 	.section .rom.000b5bb6, "ax"
-	.incbin "baserom.gba", 0x000b5bb6, 0x000000c2
-	.section .rom.000b5c9a, "ax"
-	.incbin "baserom.gba", 0x000b5c9a, 0x00000002
-	.section .rom.000b5c9c, "ax"
-	.global Djinn_Activate
-	.type Djinn_Activate, %function
+	.incbin "baserom.gba", 0x000b5bb6, 0x00000002
+	.global Trade_CanOfferDjinn
+	.type Trade_CanOfferDjinn, %function
 	.thumb_func
-Djinn_Activate:
-	.incbin "baserom.gba", 0x000b5c9c, 0x00000068
-	.section .rom.000b5d04, "ax"
-	.global Djinn_Deactivate
-	.type Djinn_Deactivate, %function
-	.thumb_func
-Djinn_Deactivate:
-	.incbin "baserom.gba", 0x000b5d04, 0x00000054
+Trade_CanOfferDjinn:
+	.incbin "baserom.gba", 0x000b5bb8, 0x000000c0
 	.section .rom.000b5d58, "ax"
 	.global Trade_RemoveOffer
 	.type Trade_RemoveOffer, %function

@@ -2135,20 +2135,6 @@ Func_080b075c:
 	.thumb_func
 Trade_CanOfferDjinn:
 	.incbin "baserom.gba", 0x000bdbb8, 0x000000c0
-	.section .rom.000bdc9a, "ax"
-	.incbin "baserom.gba", 0x000bdc9a, 0x00000002
-	.section .rom.000bdc9c, "ax"
-	.global Djinn_Activate
-	.type Djinn_Activate, %function
-	.thumb_func
-Djinn_Activate:
-	.incbin "baserom.gba", 0x000bdc9c, 0x00000068
-	.section .rom.000bdd04, "ax"
-	.global Djinn_Deactivate
-	.type Djinn_Deactivate, %function
-	.thumb_func
-Djinn_Deactivate:
-	.incbin "baserom.gba", 0x000bdd04, 0x00000054
 	.section .rom.000bdd58, "ax"
 	.global Trade_RemoveOffer
 	.type Trade_RemoveOffer, %function

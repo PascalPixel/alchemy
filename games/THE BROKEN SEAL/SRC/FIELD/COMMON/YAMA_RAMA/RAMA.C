@@ -56,7 +56,7 @@ extern u8 YamaRama_ActorNineAction[];
 void ConfigureAndPlaceActorFourteen(void);
 void FieldScene_RunScene3a2SequenceA(void);
 void ActorPresentation_PrepareActorFourteenWithCallback(void);
-void FieldScene_SetSlot15Byte89AndRunStep(void);
+void YamaRama_DisableActorCollision(void);
 void Scene_RunActorExchange(void);
 
 /* Actor callbacks that open the mountain overlay. */
@@ -699,7 +699,7 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     Engine_EventEnd();
 }
 
-void FieldScene_SetSlot15Byte89AndRunStep(void)
+void YamaRama_DisableActorCollision(void)
 {
     u8 *slot;
 
@@ -756,7 +756,7 @@ s32 YamaRama_ApplyEntryState(void)
         }
         if (Engine_GameFlagIsSet(0x201)) {
             Engine_ActorSetAnimation(15, 4);
-            FieldScene_SetSlot15Byte89AndRunStep();
+            YamaRama_DisableActorCollision();
         }
         if (gGameState.entrance == 4 || gGameState.entrance == 5) {
             Engine_GameFlagClear(0x12f);

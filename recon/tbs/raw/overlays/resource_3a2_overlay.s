@@ -514,7 +514,7 @@ YamaRama_TempleEvents:
 	.4byte ActorPresentation_PrepareActorFourteenWithCallback
 	.4byte 0x00000c15
 	.4byte 0x0201000f
-	.4byte FieldScene_SetSlot15Byte89AndRunStep
+	.4byte YamaRama_DisableActorCollision
 	.4byte 0x00000003
 	.4byte 0xffff0007
 	.4byte FieldScene_RunScriptedSteps0And1A12

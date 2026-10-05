@@ -71,14 +71,6 @@ Object_UpdateAll:
 	.incbin "baserom.gba", 0x00009c94, 0x000004e8
 	.global Object_UpdateAllEnd
 Object_UpdateAllEnd:
-	.section .rom.0000b470, "ax"
-	.balign 4
-	.global ResourceObject_Create
-	.type ResourceObject_Create, %function
-	.thumb_func
-ResourceObject_Create:
-	.incbin "baserom.gba", 0x0000b470, 0x00000164
-	.size ResourceObject_Create, .-ResourceObject_Create
 	.section .rom.0000c2ca, "ax"
 	.incbin "baserom.gba", 0x0000c2ca, 0x00000002
 	.section .rom.00012720, "ax"

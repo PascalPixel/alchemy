@@ -3942,9 +3942,7 @@ ItemMenu_ArrangeCategoryItemIcons:
 	.thumb_func
 ItemMenu_PosCategory:
 	.incbin "baserom.gba", 0x0010a8cc, 0x00000728
-	.section .rom.0010b028, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0010b028, 0x00000020
+	.section .rom.0010b048, "ax"
 	.global Func_08100e7c
 	.type Func_08100e7c, %function
 	.thumb_func

@@ -1141,7 +1141,6 @@
     "*/recon/tla/fr/rom.o"(.rom.001027d0)
     "*/recon/tla/fr/rom.o"(.rom.00102870)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/ROW_COORDINATES.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00102fcc)
     "*/recon/tla/fr/rom.o"(.rom.00102fec)
     "*/games/COMMON/SRC/MENU/ADJUST_PALETTE_BANK.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.001037a8)

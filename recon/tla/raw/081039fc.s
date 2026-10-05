@@ -680,7 +680,7 @@ Func_081039fc:
 	mov r0, r9
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #8
 	movs r2, #0
 	movs r3, #1
@@ -755,7 +755,7 @@ Func_081039fc:
 	mov r0, r9
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #8
 	movs r2, #0
 	movs r3, #1

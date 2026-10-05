@@ -1061,7 +1061,6 @@
     "*/games/THE LOST AGE/SRC/MENU/PLACE_ENTRY_OBJECT_IN_GRID.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0010077c)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/ROW_COORDINATES.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.00100f78)
     "*/recon/tla/it/rom.o"(.rom.00100f98)
     "*/games/COMMON/SRC/MENU/ADJUST_PALETTE_BANK.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00101754)

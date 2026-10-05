@@ -1822,7 +1822,6 @@
         "*/recon/tla/raw/08100d40.o"(.text)
         "*/recon/tla/raw/08100d58.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/ITEM/ROW_COORDINATES.o"(.text)
-        "*/recon/tla/raw/08100e5c.o"(.text)
         "*/recon/tla/raw/08100e7c.o"(.text)
         "*/recon/tla/raw/0810106c.o"(.text)
         "*/games/COMMON/SRC/MENU/ADJUST_PALETTE_BANK.o"(.text)

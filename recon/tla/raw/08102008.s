@@ -858,7 +858,7 @@ Func_08102008:
 	beq .L_081026d4
 	b .L_08102b06
 .L_081026d4:
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r2, #9
 	movs r3, #1
 	adds r0, #12
@@ -886,7 +886,7 @@ Func_08102008:
 	bl Func_08101c0c
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r2, #9
 	movs r3, #1
 	adds r0, #13
@@ -944,7 +944,7 @@ Func_08102008:
 	b .L_08102b06
 .L_08102798:
 	str r4, [sp, #8]
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #9
 	movs r2, #9
 	movs r3, #1
@@ -1054,7 +1054,7 @@ Func_08102008:
 	b .L_08102b06
 .L_08102870:
 	str r4, [sp, #8]
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #9
 	movs r2, #9
 	movs r3, #1
@@ -1155,7 +1155,7 @@ Func_08102008:
 	movs r3, #1
 	strb r3, [r2]
 	str r4, [sp, #8]
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r2, #9
 	movs r3, #1
 	movs r1, #9
@@ -1206,7 +1206,7 @@ Func_08102008:
 	bl Func_08101c0c
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #9
 	movs r2, #9
 	movs r3, #1
@@ -1254,7 +1254,7 @@ Func_08102008:
 	bl Func_08101c0c
 	movs r0, #1
 	bl WaitFrames
-	bl Func_08100e5c
+	bl Menu_GetDjinnGiveMessage
 	movs r1, #9
 	movs r2, #9
 	movs r3, #1

@@ -1142,7 +1142,7 @@
     "*/games/THE LOST AGE/SRC/MENU/PLACE_ENTRY_OBJECT_IN_GRID.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0010a82c)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/ROW_COORDINATES.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.0010b028)
+    "*/recon/tla/de/rom.o"(.rom.0010b048)
     "*/games/COMMON/SRC/MENU/ADJUST_PALETTE_BANK.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0010b804)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_LOADED_RESOURCE.o"(.text)

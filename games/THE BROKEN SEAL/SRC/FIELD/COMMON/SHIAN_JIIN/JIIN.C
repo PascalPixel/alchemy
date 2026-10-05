@@ -716,14 +716,14 @@ void FieldScene_DispatchApproachByFacing(void)
 
 void FieldScene_DispatchByFacing(void)
 {
-    struct SceneActor_02001334 *record = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *record = Object_GetById(ACTOR_PARTY_LEADER);
     u16 angle;
 
     Engine_EventBegin();
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
     Engine_EventWait(20);
 
-    angle = *(u16 *)((u8 *)record + 6);
+    angle = record->facing;
 
     if ((u16)(angle - 0x2000) <= 0x3fffu) {
         Scene_RunPrimarySequence();

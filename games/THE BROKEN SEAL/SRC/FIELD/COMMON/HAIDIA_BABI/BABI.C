@@ -225,7 +225,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
 
     if (gGameState.entrance == 19) {
         Engine_GameFlagClear(0x12f);
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     } else {
         if (Engine_GameFlagIsSet(0x834) != 0) {
             Engine_ActorSetPosition(11, 0, 0);
@@ -268,7 +268,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
                         FieldScene_RunSupplementalSequenceOne();
                     } else {
                         control = &gEventWork;
-                        (*control)->start_transition = 0x209;
+                        (*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
                         if (Engine_GameFlagIsSet(0x834) != 0) {
                             BattleFx_StartTwelveFrameBlend();
                             {
@@ -403,7 +403,7 @@ void FieldScene_RunComplexActorSequence(void)
     scene_actor->z.fixed = 0x02b30000;
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    (*control)->start_transition = 521;
+    (*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     (*control)->transition_frames = 64;
     BattleFx_StartTwelveFrameBlend();
     (*(struct FieldBlendWork **)((u8 *)control + Ram_SceneMapStateOffset))->loud = 1;
@@ -487,7 +487,7 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_ActorEnableActionCallback(8, gHaidiaBabiActorExitAction);
     Engine_ActorEnableActionCallback(0, gHaidiaBabiLeaderExitAction);
     Engine_EventWait(20);
-    (*control)->start_transition = 513;
+    (*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     (*control)->transition_frames = 16;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

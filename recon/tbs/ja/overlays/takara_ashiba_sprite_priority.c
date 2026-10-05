@@ -68,7 +68,7 @@ void ObjectDispatch_ApplyValueToChildren();
 
 void FieldScene_RunScene3b4_02000fdc(s32 a0);
 
-s32 *Engine_GetTriggerActor(s32 slot);
+s32 *Object_GetById(s32 slot);
 s32 Engine_TestTriggerFlag(s32 flag);
 void Engine_SetTriggerFlag(s32 flag);
 
@@ -113,11 +113,11 @@ void TakaraAshiba_InitializeScene3(void)
     if (GameFlag_IsSet(0x109) == 0) {
         if (GameFlag_IsSet(0x9ca) != 0) {
             Actor_SetPosition(15, 0x3580000, 0x3380000);
-            record = Engine_GetTriggerActor(15);
+            record = Object_GetById(15);
             *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
         } else if (GameFlag_IsSet(0x9c9) != 0) {
             Actor_SetPosition(15, 0x3780000, 0x2980000);
-            record = Engine_GetTriggerActor(15);
+            record = Object_GetById(15);
             *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
             ObjectDispatch_ApplyValueToChildren(record, 16);
         } else if (GameFlag_IsSet(0x9c8) != 0) {

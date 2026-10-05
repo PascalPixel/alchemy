@@ -173,7 +173,7 @@ void Scene_BagVenusStar(void)
     Engine_MapCopyCellAttributes(0, 0, 1, 1, 41, 10);
     Engine_MapCopyCellsTo(87, 42, 41, 12, 1, 2);
     Engine_EventWait(40);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Call4(Engine_CameraMoveTo, 0x2c60000, -1, 0x1da0000, 0);

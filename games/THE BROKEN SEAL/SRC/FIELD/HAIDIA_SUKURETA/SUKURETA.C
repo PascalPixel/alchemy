@@ -941,7 +941,7 @@ void SceneState_SetWorkAndFlag87d(void)
     Engine_EventBegin();
 
     work = gEventWork;
-    work->start_transition = 512;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     work->transition_frames = 64;
 
     Engine_GameFlagSet(0x87D);
@@ -957,7 +957,7 @@ void SceneState_SetWorkAndFlag87e(void)
     Engine_EventBegin();
 
     work = gEventWork;
-    work->start_transition = 512;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     work->transition_frames = 64;
 
     Engine_GameFlagSet(0x87E);

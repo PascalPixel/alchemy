@@ -40,47 +40,47 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
-    step->x = (s32)((u32)step->x + (u32)step->velocity_x);
-    step->y = (s32)((u32)step->y + (u32)step->velocity_y);
-    step->z = (s32)((u32)step->z + (u32)step->velocity_z);
-    step->velocity_y = (s32)((u32)step->velocity_y + (u32)gravity);
-    step->velocity_x = (s32)((u32)step->velocity_x * (u32)damping) / 64;
-    step->velocity_y = (s32)((u32)step->velocity_y * (u32)damping) / 64;
-    step->velocity_z = (s32)((u32)step->velocity_z * (u32)damping) / 64;
+    step->x += step->velocity_x;
+    step->y += step->velocity_y;
+    step->z += step->velocity_z;
+    step->velocity_y += gravity;
+    step->velocity_x = step->velocity_x * damping / 64;
+    step->velocity_y = step->velocity_y * damping / 64;
+    step->velocity_z = step->velocity_z * damping / 64;
 }
 
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity)
 {
-    step->x = (s32)((u32)step->x + (u32)step->velocity_x);
-    step->y = (s32)((u32)step->y + (u32)step->velocity_y);
-    step->velocity_y = (s32)((u32)step->velocity_y + (u32)gravity);
-    step->velocity_x = (s32)((u32)step->velocity_x * (u32)damping) / 64;
-    step->velocity_y = (s32)((u32)step->velocity_y * (u32)damping) / 64;
+    step->x += step->velocity_x;
+    step->y += step->velocity_y;
+    step->velocity_y += gravity;
+    step->velocity_x = step->velocity_x * damping / 64;
+    step->velocity_y = step->velocity_y * damping / 64;
 }
 
 s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position)
 {
     s32 result = Render_ProjectPoint(point, &position->x);
-    position->y = (s32)((u32)position->y - 0x10);
+    position->y -= 16;
     return result;
 }
 
 void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *position)
 {
     BattleUnit_ProjectToScreen(id, &position->x);
-    position->y = (s32)((u32)position->y - 0x10);
+    position->y -= 16;
 }
 
 void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position)
 {
     BattleMotion_ProjectScaledPositionFar(id, position);
-    position->y = (s32)((u32)position->y - 0x10);
+    position->y -= 16;
 }
 
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position)
 {
     BattleMotion_ProjectPositionFar(id, position);
-    position->y = (s32)((u32)position->y - 0x10);
+    position->y -= 16;
 }
 
 /* Projects a battle unit's position to the screen and lifts it by its

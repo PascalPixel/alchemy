@@ -382,7 +382,7 @@ void FieldScene_RunEarlySequence(void)
         Map_AnimateCells(*(s32 *)(tbl + off), a, b);
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     if (idx == 6) {

@@ -242,7 +242,7 @@ s32 FuneHobashira_ApplyEntryState(void)
     struct FieldActor *leader;
 
     Engine_GameFlagSet(0x144);
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if ((Engine_GameFlagIsSet(0x927) != 0 || Engine_GameFlagIsSet(0x928) != 0)
         && Engine_GameFlagIsSet(0x93e) == 0 && Engine_GameFlagIsSet(0x8a0) == 0) {
         FuneHobashira_SwayX = (u16)Random16();
@@ -342,7 +342,7 @@ void FieldScene_RunScene3b0_02000468(void)
 
 void FieldScene_RunScene3b0_020004b0(void)
 {
-    gEventWork->start_transition = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
@@ -388,7 +388,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
     event = &(*(struct FieldGlobals *)gMapWork).event;
-    (*event)->start_transition = 0x203;
+    (*event)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
@@ -446,7 +446,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorJump(8, 6, 40);
     Engine_ActorStartRepeatedMotion(8, 3);
     Engine_EventShowMessageAndWait(8, 0, 20);
-    (*event)->start_transition = 0x202;
+    (*event)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(11);
@@ -474,7 +474,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     OverlayObject_InitWithRandomFields(14);
     OverlayObject_InitWithRandomFields(15);
     Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
-    gEventWork->start_transition = 0x203;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(120);

@@ -73,7 +73,7 @@ static __inline__ void bump_step(s32 amount)
 void SceneState_SetValue14Mode23(void);
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object);
 s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst);
-s32 OverlayObject_IntegrateAndDamp(u8 *p);
+s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor);
 u8 *SceneData_GetTableC85c(void);
 void FieldScene_RunSharedSetPiece(s32 a0);
 void FieldScene_RunFallingRocksWarning(void);

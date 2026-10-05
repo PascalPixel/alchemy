@@ -1353,7 +1353,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
     if (Engine_GameFlagIsSet(0x200)) {
         SceneEffect_SetupBlendByFlag201();
     } else {
-        gEventWork->start_transition = 0x204;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
         gEventWork->transition_frames = 24;
     }
     return 0;

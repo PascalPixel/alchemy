@@ -2339,7 +2339,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
         } else if (GameFlag_IsSet(0x962) && !GameFlag_IsSet(0x966)) {
             Actor_SetPosition(10, 0x780000, 0x480000);
         }
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         Actor_Get(9)->collision_flags |= 4;
         if (gGameState.entrance == 99) {
             Party_RestoreAll();

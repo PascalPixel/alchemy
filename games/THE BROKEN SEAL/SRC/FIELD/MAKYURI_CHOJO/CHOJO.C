@@ -127,7 +127,7 @@ s32 MakyuriChojo_ApplyEntryState(void)
     struct FieldActor *obj;
 
     Engine_GameFlagSet(0x111);
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (gGameState.scene == (s32)&SceneId_MakyuriChojo1) {
     Engine_GameFlagSet(0x144);
     Engine_TaskAddCallback(MakyuriChojo_FlickerActorEight, 0xc80);

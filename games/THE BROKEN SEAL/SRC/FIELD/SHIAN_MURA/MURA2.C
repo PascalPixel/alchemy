@@ -696,7 +696,7 @@ s32 ShianMura_SetupScene(void)
     u32 n;
     s32 x;
 
-    gEventWork->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     BattleFx_SetQueuedSoundAndPlay(169);
     if (gGameState.entrance > 9) {
         Engine_GameFlagClear(0x12f);

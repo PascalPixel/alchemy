@@ -1366,7 +1366,7 @@ void FieldScene_RunShipDeckEventScript(void)
     ObjectGroup_ConfigureChildValue(0, 15);
     p8 = (void *)Object_GetById(0);
     ObjectDispatch_SetSingleChildField26(p8, 0);
-    gEventWork->start_transition = 514;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_SetStatus1c6();
     Call3(ObjectMotion_SetSpeedParameters, 21, 104857, 52428);
     Call3(ObjectMotion_SetPositionAndReset, 21, 242, 692);
@@ -1601,7 +1601,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetChildValue(27, 3);
     Engine_ActorSetChildValue(28, 3);
     Engine_ActorSetChildValue(29, 3);
-    gEventWork->start_transition = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(80);

@@ -50,17 +50,17 @@ void MakyuriHeya_DropLeaderToColumn(s32 a0)
 
 void SceneState_ApplyWork16cMinus50A(void)
 {
-    SceneActor_RunActorZeroHandledMotion(*(s16 *)((u8 *)gEventWork + 0x16c) - 50);
+    SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
 void SceneState_ApplyWork16cMinus50(void)
 {
-    SceneActor_RunActorZeroHandledMotion(*(s16 *)((u8 *)gEventWork + 0x16c) - 50);
+    SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
 void SceneState_ApplyWork16cMinus50B(void)
 {
-    SceneActor_RunActorZeroHandledMotion(*(s16 *)((u8 *)gEventWork + 0x16c) - 50);
+    SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
 void MakyuriHeya_ExitWhenChannelsOpen(void)
@@ -73,7 +73,7 @@ void MakyuriHeya_ExitWhenChannelsOpen(void)
         Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
         Audio_PlayCue(141);
         Battle_WaitMode0(60);
-        *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
         Audio_PlayCue(0x121);

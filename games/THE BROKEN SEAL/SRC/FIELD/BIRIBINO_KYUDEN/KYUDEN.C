@@ -428,7 +428,7 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
     s32 rec8;
     s32 record;
 
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
     Engine_GameFlagSet(0x84b);
@@ -1316,7 +1316,7 @@ void BiribinoKyuden_RunActorRowScene(void)
     Object_GetById(24)->y.fixed = -0x40000;
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    gEventWork->start_transition = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     gEventWork->transition_frames = 16;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();

@@ -260,7 +260,7 @@ void Scene_RunScene3c3SequenceA(void)
         Engine_EventWait(40);
         Event_ShowMessageAndWait(11, 0, 10);
     } else {
-        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+        gEventWork->message += 1;
     }
     Actor_FaceDirection(11, 0x5000, 10);
     Event_ShowMessageAndWait(11, 0, 40);

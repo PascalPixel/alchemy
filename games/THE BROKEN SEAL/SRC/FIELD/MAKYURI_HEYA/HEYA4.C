@@ -487,7 +487,7 @@ void FieldScene_RunColumnChoreography(void)
         Engine_EventSetMessage((s32)MsgMakyuriDidThat);
         Engine_EventOpenMessage(3, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
-            *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+            gEventWork->message += 1;
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(3, 3);
             Engine_EventShowMessageAndWait(3, 0, 20);
@@ -495,7 +495,7 @@ void FieldScene_RunColumnChoreography(void)
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(3, 4);
             Event_ShowMessageAndWait(3, 0, 20);
-            *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+            gEventWork->message += 1;
         }
         Engine_ActorShowEmote(0, 0x100, 60);
         record = Object_GetById(1);
@@ -545,9 +545,9 @@ void FieldScene_RunColumnChoreography(void)
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(1, 3);
             Engine_EventShowMessageAndWait(1, 0, 20);
-            *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+            gEventWork->message += 1;
         } else {
-            *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+            gEventWork->message += 1;
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(1, 4);
             Engine_EventShowMessageAndWait(1, 0, 20);
@@ -1191,7 +1191,7 @@ s32 Scene_Initialize(void)
     Engine_GameFlagSet(0x111);
     gGameState.retreat_entrance = 11;
     gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     /* FAKEMATCH: the do/while and the held value keep the blend constant in a register ahead of its address load. */
     do {
         s32 blend = 0x3f40;
@@ -1450,7 +1450,7 @@ s32 Scene_Initialize(void)
             Object_GetById(8)->motion_flags = 0;
             Object_GetById(8)->bounce = 0;
             Object_GetById(8)->gravity = 0x4ccc;
-            gEventWork->start_transition = 0x100;
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
             Object_GetById(8)->motion_flags = 3;

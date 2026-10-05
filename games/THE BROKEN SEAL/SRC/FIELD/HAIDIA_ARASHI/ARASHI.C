@@ -199,7 +199,7 @@ void SceneState_SetWork1c0AndRunObject(u8 *o)
         BattleFx_SetBlock30ValuesMaxZero();
     }
     state = gEventWork;
-    state->start_transition = 0x100;
+    state->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     state->transition_frames = 16;
     Engine_EventRequestExit(o);
 }

@@ -1239,7 +1239,7 @@ s32 FieldScene_RunSceneEntryHook(void)
     s32 pos;
     s32 tmp;
 
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     area = gGameState.scene;
     if (area == (s32)&SceneId_MogoruMori1) {
         entry = gGameState.entrance;

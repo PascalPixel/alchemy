@@ -286,7 +286,7 @@ void FieldScene_RunStagedActorScene(void)
 
     Engine_EventBegin();
     work = gEventWork;
-    work->start_transition = 0x100;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 32;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -460,7 +460,7 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorSetPosition(1, 0, 0);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     work = gEventWork;
-    work->start_transition = 0x204;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     work->transition_frames = 16;
     Engine_EventEnd();
 }

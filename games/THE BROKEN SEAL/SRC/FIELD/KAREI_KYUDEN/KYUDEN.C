@@ -253,7 +253,7 @@ void RunEventScript01(void)
     Engine_TaskWait(1);
     work = gEventWork;
     work->transition_frames = 24;
-    work->start_transition = 0x201;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Actor_SetPosition(8, 0x3580000, 0x1b80000);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3580000, 0x1e60000);
     Actor_SetPosition(ACTOR_GERALD, 0x3500000, 0x1f60000);
@@ -692,7 +692,7 @@ void RunEventScript01(void)
     Object_SetActionCallbackAndRefreshById(3, tbl);
     work = gEventWork;
     work->transition_frames = 16;
-    work->start_transition = 0x209;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Set(0x912);
     Engine_EventEnd();
@@ -880,7 +880,7 @@ void Scene_RunPartySequence(void)
     Object_SetActionCallbackAndRefreshById(3, tbl);
     work = gEventWork;
     work->transition_frames = 16;
-    work->start_transition = 0x209;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Set(0x914);
     Engine_EventEnd();

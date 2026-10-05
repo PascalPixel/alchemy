@@ -963,7 +963,7 @@ void BabiChika_MarkActorCells(void)
 /* Entry setup for the underground passage: by area and entrance, restores the lift cells, pins and parks the paired actors and re-applies each flagged block. */
 s32 FieldScene_InitializeActorGroups(void)
 {
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (gGameState.scene == (s32)&SceneId_BabiChika1 || gGameState.scene == (s32)&SceneId_BabiChika2) {
         BattleFx_StartFadeOverlay(0);
         gGameState.retreat_entrance = 1;

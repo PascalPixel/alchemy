@@ -2360,7 +2360,7 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_WalkTo(12, 0x160, 0x168);
     Battle_WaitMode0(20);
     Audio_PlayCue(17);
-    gEventWork->start_transition = 0x203;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Engine_EventCloseScreen();
     Battle_WaitMode0(1);
     Battle_WaitMode0(210);

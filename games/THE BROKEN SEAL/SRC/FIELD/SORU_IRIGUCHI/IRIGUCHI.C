@@ -949,7 +949,7 @@ void Scene_RunTransitionCue(void)
     struct FieldActor *record;
 
     Engine_EventBegin();
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);

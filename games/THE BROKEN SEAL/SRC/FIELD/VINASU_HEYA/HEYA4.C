@@ -33,7 +33,7 @@ void Scene_RunPairedParticleWaveSequence(void)
     u32 row;
     u32 i;
 
-    gEventWork->start_transition = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventBegin();
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorSetChildValue(0, 15);
@@ -146,7 +146,7 @@ void Scene_RunParticleWaveSequence(void)
     u32 i;
     struct EffectOptions *opts;
 
-    gEventWork->start_transition = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventBegin();
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorSetChildValue(0, 15);
@@ -207,7 +207,7 @@ void Scene_RunEastParticleWaveSequence(void)
     u32 i;
     struct EffectOptions *opts;
 
-    gEventWork->start_transition = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventBegin();
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorSetChildValue(0, 15);

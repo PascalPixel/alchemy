@@ -147,9 +147,6 @@ Object_GetByIdFar:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Engine_GetTriggerActor
-	.thumb_func
-Engine_GetTriggerActor:
 	overlay_veneer Func_0808a080
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func

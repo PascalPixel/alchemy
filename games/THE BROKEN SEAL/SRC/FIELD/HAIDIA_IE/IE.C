@@ -377,7 +377,7 @@ void SceneState_SetWork1c0AndRun(s32 no)
         BattleFx_SetBlock30ValuesMaxZero();
     }
     p = gEventWork;
-    p->start_transition = 0x100;
+    p->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     p->transition_frames = 16;
     Engine_EventRequestExit(no);
 }
@@ -1323,7 +1323,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorEnableActionCallback(1, base5_200adf0);
     Engine_EventWait(60);
     work = *(struct EventWork **)Data_03001ebc;
-    work->start_transition = 0x100;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 60;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

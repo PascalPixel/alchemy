@@ -427,7 +427,7 @@ void ImiruMura_RunExitDoor(void)
         Engine_MapAnimateCells(ImiruMura_ExitCellSteps[exit - 1], x, y);
     }
     Call3((void (*)())Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
-    gEventWork->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (exit == 6) {
         Call3((void (*)())Engine_ActorSetSpeed, 0, 0x3333, 0x1999);
         Engine_ActorSetAnimation(0, 2);
@@ -611,7 +611,7 @@ s32 ImiruMura_ApplyEntryState(void)
 
     if (gGameState.scene == (s32)&SceneId_ImiruMura1) {
         leader = Object_GetById(0);
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         Engine_ActorSetAnimation(10, 9);
         if (Value1(Engine_GameFlagIsSet, 0x109)) {
             Engine_GameFlagClear(0x200);
@@ -629,7 +629,7 @@ s32 ImiruMura_ApplyEntryState(void)
             RunEventScript02();
         }
     } else if (gGameState.scene == (s32)&SceneId_ImiruMura2) {
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         entrance = gGameState.entrance;
         if (entrance == 1) {
             Engine_ActorSetChildValue(21, 15);

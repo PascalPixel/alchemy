@@ -1005,7 +1005,7 @@ void FieldScene_RunVaultClosingSequence(void)
     SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
     Engine_EventShowMessage(10, 0);
     GameFlag_Set(2132);
-    gEventWork->start_transition = 0x200;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     base = (s32)&SceneId_KuupuappuHeya;
     Party_SetFields1ceAnd1d0(base, 17);
     Event_SetPair1d4(base, 16);
@@ -1070,7 +1070,7 @@ void FieldScene_RunOpeningSequenceSecond(void)
         Event_ShowMessage(8, 0);
         Engine_EventEnd();
     }
-    *(u32 *)((u8 *)gEventWork + 456) = 16;
+    gEventWork->transition_frames = 16;
     Engine_AudioPlayCue(123);
     Engine_EventRequestExit(14);
 }
@@ -1864,7 +1864,7 @@ void KuupuappuHeya_RunVaultEvent(void)
     Actor_FaceDirection(1, 0xb000, 0);
     Actor_FaceDirection(2, 0xb000, 0);
     Actor_FaceActor(8, 10, 0);
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_CameraFollowActor(0, 0);
     Engine_CameraWaitForMove();
     Engine_MapRedraw();
@@ -1891,7 +1891,7 @@ void KuupuappuHeya_RunVaultEvent(void)
     Engine_EventWait(20);
     SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
     Event_ShowMessage(10, 0);
-    gEventWork->start_transition = 0x200;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
     Event_SetPair1d4((s32)&SceneId_KuupuappuHeya, 16);
     state = (u8 *)&gGameState;
@@ -2244,7 +2244,7 @@ void RunDialoguePromptScene(void)
     Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Actor_FaceActor(ACTOR_IVAN, 10, 0);
     gEventWork->transition_frames = 30;
-    gEventWork->start_transition = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
@@ -2642,7 +2642,7 @@ void RunDialoguePromptScene(void)
     Actor_SetPosition(11, 0, 0);
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_EventEnd();
 }
 
@@ -2673,7 +2673,7 @@ void SceneState_SetWord1c0To209AndRun(void)
     struct EventWork *state;
 
     state = gEventWork;
-    state->start_transition = 0x209;
+    state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(1);

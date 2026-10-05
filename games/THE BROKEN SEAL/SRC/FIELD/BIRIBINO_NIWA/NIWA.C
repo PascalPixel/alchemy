@@ -276,7 +276,7 @@ s32 Scene_Initialize(void)
     u8 *fp;
     s32 zero;
 
-    work->start_transition = 256;            /* 128 << 1 */
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);            /* 128 << 1 */
 
     ent = (struct SceneEntity *)Object_GetById(8);
     fp = (u8 *)ent + 35;
@@ -419,7 +419,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_ActorSetPosition(11, 0, 0);
     Engine_ActorWaitForMove(0);
     Engine_ActorSetPosition(0, 0, 0);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(10);

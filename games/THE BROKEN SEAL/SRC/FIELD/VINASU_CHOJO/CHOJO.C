@@ -332,16 +332,16 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
 
 void SceneActor_SetByte55ForActorZeroAnd12To17(void)
 {
-    s32 val;
+    s32 flags;
 
-    *((u8 *)Object_GetById(0) + 0x55) = 3;
-    val = 4;
-    *((u8 *)Object_GetById(12) + 0x55) = val;
-    *((u8 *)Object_GetById(13) + 0x55) = val;
-    *((u8 *)Object_GetById(14) + 0x55) = val;
-    *((u8 *)Object_GetById(15) + 0x55) = val;
-    *((u8 *)Object_GetById(16) + 0x55) = val;
-    *((u8 *)Object_GetById(17) + 0x55) = val;
+    Object_GetById(0)->motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    flags = 4;
+    Object_GetById(12)->motion_flags = flags;
+    Object_GetById(13)->motion_flags = flags;
+    Object_GetById(14)->motion_flags = flags;
+    Object_GetById(15)->motion_flags = flags;
+    Object_GetById(16)->motion_flags = flags;
+    Object_GetById(17)->motion_flags = flags;
 }
 
 s32 SceneData_GetTableE6ec(void)

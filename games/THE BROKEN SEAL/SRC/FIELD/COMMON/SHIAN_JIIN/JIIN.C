@@ -2169,7 +2169,7 @@ s32 ShianJiin_ApplyEntryState(void)
     s32 set;
 
     if (gGameState.scene == (s32)&SceneId_ShianJiin2) {
-        gEventWork->start_transition = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         if (gGameState.entrance == 1) {
             if (Engine_GameFlagIsSet(0x88f)) {
                 Engine_ActorSetAnimation(8, 6);

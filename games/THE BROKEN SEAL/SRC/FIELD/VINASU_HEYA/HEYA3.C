@@ -153,10 +153,10 @@ s32 Scene_RunEntrySetup(void)
     if (Engine_GameFlagIsSet(0x109))
         SceneActor_ApplySlotsMatchingKind212();
     Engine_GameFlagSet(0x110);
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     area = gGameState.scene;
     if (area == (s32)&SceneId_VinasuHeya1) {
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         if (!Engine_GameFlagIsSet(0x981))
             SceneActor_ClearActorModeAndSetState5(8);
         else
@@ -339,7 +339,7 @@ s32 Scene_RunEntrySetup(void)
             VinasuHeya_RunCellPushScene();
             break;
         case 11:
-            gEventWork->start_transition = 0x202;
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
             Object_GetById(0)->y.fixed = -0x20000;
         case 7:
         case 8:
@@ -367,7 +367,7 @@ s32 Scene_RunEntrySetup(void)
                 break;
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
-            gEventWork->start_transition = 0x204;
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
             break;
         case 1:
             goto cue;
@@ -511,7 +511,7 @@ s32 Scene_RunEntrySetup(void)
             break;
         case 18:
         case 19:
-            gEventWork->start_transition = 0x202;
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
             Object_GetById(0)->y.fixed = -0x20000;
         case 3:
         case 4:
@@ -552,7 +552,7 @@ s32 Scene_RunEntrySetup(void)
             if (gGameState.entrance == 18 || gGameState.entrance == 19) {
                 Engine_EventOpenScreen();
                 Engine_EventWaitForScreen();
-                gEventWork->start_transition = 0x204;
+                gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
             }
             if (gGameState.entrance == 20)
                 FieldScene_RunLeaderDropSequence();

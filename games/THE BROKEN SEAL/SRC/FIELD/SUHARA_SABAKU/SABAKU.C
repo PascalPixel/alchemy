@@ -617,7 +617,7 @@ s32 SuharaSabaku_RunSceneScript(void)
     u8 *map;
 
     map = (*(struct FieldGlobals *)gMapWork).map;
-    (*(struct FieldGlobals *)gMapWork).event->start_transition = 0x201;
+    (*(struct FieldGlobals *)gMapWork).event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     if (GameFlag_GetByte(0x210) != 0) {
         gGameState.movement_mode = 2;
         Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);

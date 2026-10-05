@@ -234,7 +234,7 @@ void MakyuriIriguchi_OpenEntrance(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(8, 2);
     Battle_WaitMode0(20);
-    gEventWork->start_transition = 0x200;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
     game = (s32)&gGameState;
     /* FAKEMATCH: the do/while loads the game state's address ahead of the
@@ -312,7 +312,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
     else
         Makyuri_ClearPalette();
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     switch (gGameState.entrance) {
     case 1:
         if (!GameFlag_IsSet(0x872))
@@ -412,7 +412,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_EventBegin();
         Engine_MapRedraw();
         WaitFrames(1);
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Battle_WaitMode0(120);

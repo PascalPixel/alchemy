@@ -752,7 +752,7 @@ s32 YamaRama_ApplyEntryState(void)
 {
     s32 entrance;
 
-    gEventWork->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (gGameState.scene == (s32)&SceneId_YamaRama2) {
         BattleFx_SetQueuedSoundAndPlay(169);
         Engine_ActorSetAnimation(11, 5);

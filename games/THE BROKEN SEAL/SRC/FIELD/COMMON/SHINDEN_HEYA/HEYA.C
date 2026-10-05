@@ -477,7 +477,7 @@ void FieldScene_RunActorTenCountStep(void)
 /* Sanctum entry: record the arrival, fade in, then restore the room or run the entrance's scene. */
 s32 ShindenHeya_ApplyEntryState(void)
 {
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_ColorBufferApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_EventWait(1);
@@ -750,7 +750,7 @@ void FieldScene_RunScriptedSceneSequence(void)
         Actor_FaceActor(0xa, ACTOR_PARTY_LEADER, 0);
         Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
         Engine_CameraWaitForMove();
-        gEventWork->start_transition = 0x100;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         gEventWork->transition_frames = 0x40;
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
@@ -763,7 +763,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Engine_EventWait(1);
     Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
     Engine_CameraWaitForMove();
-    gEventWork->start_transition = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     FieldScene_RunPairedActorChoreography();

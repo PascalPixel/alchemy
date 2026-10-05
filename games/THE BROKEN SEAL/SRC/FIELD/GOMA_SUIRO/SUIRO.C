@@ -91,7 +91,7 @@ s32 FieldScene_PlaceActor8OnEntry(void)
 {
     struct FieldActor *record;
 
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (gGameState.scene == (s32)&SceneId_GomaSuiro1) {
         if (gGameState.entrance == 5) {
             Engine_GameFlagClear(0x12f);

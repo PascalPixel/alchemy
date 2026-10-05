@@ -1266,7 +1266,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         } while (base5_0 != 60);
         Engine_ActorSetPosition(16, 0, 0);
         Engine_EventWait(80);
-        gEventWork->start_transition = 0x203;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
         gEventWork->transition_frames = 24;
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
@@ -1286,7 +1286,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
     s32 lit;
 
     Engine_TaskWait(1);
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     done = 0;
     if (Engine_GameFlagIsSet(0x809) != 0 && Engine_GameFlagIsSet(0x814) == 0
         && Engine_GameFlagIsSet(0x819) == 0) {
@@ -1535,7 +1535,7 @@ void SoruNichigetsu_RunLightScene(void)
     field[0x2a03] = 1;
     /* FAKEMATCH: the do/while keeps the backdrop-colour clear ahead of the event-work load. */
     do { PLTT_BACKDROP = 0; } while (0);
-    Data_03001ebc.event->start_transition = 0x204;
+    Data_03001ebc.event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Data_03001ebc.event->transition_frames = 16;
     Engine_EventEnd();
 }

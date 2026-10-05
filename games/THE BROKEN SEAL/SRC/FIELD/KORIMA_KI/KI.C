@@ -657,7 +657,7 @@ s32 KorimaKi_PrepareActors(void)
     second = Object_GetById(11);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(14, 15);
-    gEventWork->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     gGameState.retreat_scene = (s32)&SceneId_KorimaHashi;
     gGameState.retreat_entrance = 4;
     /* FAKEMATCH: the heights are cleared through a u8 local zero, which the

@@ -433,19 +433,19 @@ gTorebiMachiEvents:
 	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x00000002
 	.4byte 0x08c00014
 	.4byte FieldScene_RunPrimarySequence
@@ -632,19 +632,19 @@ gTorebiMachiEvents2:
 	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0x18c100ef
 	.4byte SceneState_SetValue30ThenCall
@@ -823,19 +823,19 @@ gTorebiMachiEvents3:
 	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte SceneState_PassWorkHalfword16C
+	.4byte TorebiMachi_RequestTouchedExit
 	.4byte 0x0000c402
 	.4byte 0x18c100ef
 	.4byte SceneState_SetValue30ThenCall

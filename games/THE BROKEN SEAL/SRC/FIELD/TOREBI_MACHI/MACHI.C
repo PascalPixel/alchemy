@@ -491,7 +491,7 @@ void SceneState_SetValue30ThenCall(void)
     Engine_EventEnd();
 }
 
-void SceneState_PassWorkHalfword16C(void)
+void TorebiMachi_RequestTouchedExit(void)
 {
 
     s16 *cnt = &gEventWork->touched_trigger;

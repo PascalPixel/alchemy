@@ -163,7 +163,7 @@ void FieldScene_RunScene3b5SequenceA(void);
 
 void SceneState_SetValue30ThenCall(void);
 
-void SceneState_PassWorkHalfword16C(void);
+void TorebiMachi_RequestTouchedExit(void);
 
 void FieldScene_RunPrimarySequence(void);
 

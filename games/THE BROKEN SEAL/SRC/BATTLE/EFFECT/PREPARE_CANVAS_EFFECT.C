@@ -20,9 +20,10 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+
 
 void Audio_PlayCue(s32 cue);
-void SceneTransform_ApplyPosition(s32 *position);
 
 
 #define HI(v) (((s16 *)&(v))[1])

@@ -77,8 +77,6 @@ struct ArcObject {
 extern struct BattleFxScene *gEffectWork;
 struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *sprite, s32 animation);
-void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
-void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj);
 
 extern volatile u32 gFrameCount;
 void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 value);

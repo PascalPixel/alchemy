@@ -1,7 +1,8 @@
 #include "PROTO.H"
 #include "OBJECT_RUNTIME.H"
 
-s32 Object_SetPositionAndResetMotionFar(struct ObjectRuntime *, s32, s32, s32);
+#define Object_SetPositionAndResetMotionFar ((s32 (*)(struct ObjectRuntime*,s32,s32,s32))Object_SetPositionAndResetMotionFar)
+
 
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 object_id, s32 x, s32 z)
 {

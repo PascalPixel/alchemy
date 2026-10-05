@@ -19,6 +19,11 @@
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 
+#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))ObjectGroup_SetChildValueUnlessFifteenFar)
+#define ScriptObject_CheckOverlapFar ((s32 (*)(struct FieldActor*,struct BurstPosition*))ScriptObject_CheckOverlapFar)
+#define Object_ReplaceResourceEntry ((struct AnimationObject * (*)(struct AnimationObject*,struct AnimationObject*))Object_ReplaceResourceEntry)
+#define Camera_WorldToScreen ((void (*)(struct BurstPosition*))Camera_WorldToScreen)
+
 struct BurstPosition { s32 x, y, z; };
 
 void WaitFrames(s32 frames);
@@ -28,14 +33,8 @@ extern struct BattleFxScene *gEffectWork;
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct BurstPosition *pos);
 void Animation_ApplyChildValuesFar(struct FieldActor *object, s32 value);
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
-s32 ScriptObject_CheckOverlapFar(struct FieldActor *object, struct BurstPosition *pos);
 s32 BattleFx_FindMatchingEvent(s32 flags, s32 group, s32 *context);
-s32 BattleFx_RunEventAction(void *event, s32 object, s32 context);
-struct AnimationObject *Object_ReplaceResourceEntry(struct AnimationObject *sprite, struct AnimationObject *resource);
 struct FieldActor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Camera_WorldToScreen(struct BurstPosition *pos);
-void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
 void Audio_PlayCue(s32 cue);
 
 static __inline__ void RaisedPosition(struct FieldActor *object, struct BurstPosition *pos)

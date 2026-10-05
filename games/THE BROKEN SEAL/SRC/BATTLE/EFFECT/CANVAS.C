@@ -14,7 +14,8 @@
 #include "IO_REG.H"
 #include "RAM_BUFFER.H"
 
-void BattlePresentation_ConfigurePaletteFadeFar(s32, u16, s32);
+#define BattlePresentation_SetPaletteLevelFar ((void (*)(u16,s32))BattlePresentation_SetPaletteLevelFar)
+
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
@@ -26,7 +27,6 @@ static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 siz
 
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
-void BattlePresentation_SetPaletteLevelFar(u16 background, s32 level);
 
 void QueueIoWriteDelay2(u32 first, u32 second);
 

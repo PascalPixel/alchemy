@@ -1,10 +1,12 @@
+#include "PROTO.H"
 #include "BATTLE_UNIT.H"
 #include "TASK.H"
 #include "text/MSG_IDS.H"
 
+#define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
+
 
 void Battle_ResetEffectCounter(void);
-s32 PartyTalkMenu_Choose(s32 mode);
 
 
 extern u8 gCell[];

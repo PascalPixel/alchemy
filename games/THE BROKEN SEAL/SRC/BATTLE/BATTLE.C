@@ -8,6 +8,8 @@
 #include "BATTLE_PRESENTATION.H"
 #include "FIELD_EVENT.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 void BattleActor_UpdateSpritePriorities(void)
 {
     u16 ids[14];
@@ -121,7 +123,6 @@ again:
 }
 
 
-void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *, s32);
 
 s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
 {

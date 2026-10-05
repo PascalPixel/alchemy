@@ -18,7 +18,6 @@
 #include "B5_CONTEXT.H"
 
 
-s32 GameFlag_IsSet(s32 flag);
 
 s32 GameFlag_ClearBitFar(s32 id);
 
@@ -44,7 +43,6 @@ struct BattleBaseStats {
     struct BattleElementStats elements[4];
 };
 
-void Owner_RecalculateStatsFar(s32 owner);
 
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {

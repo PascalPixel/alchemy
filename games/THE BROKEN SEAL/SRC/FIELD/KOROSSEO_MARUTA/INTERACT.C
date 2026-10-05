@@ -1,11 +1,13 @@
+#include "PROTO.H"
 #include "BATTLE_UNIT.H"
 #include "LOG_ROLLING.H"
 #include "text/MSG_IDS.H"
 
+#define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
+
 
 void Battle_ResetEffectCounter(void);
 void UiText_DrawQuantity(s32 value, s32 digits);
-s32 PartyTalkMenu_Choose(s32 menu);
 
 
 void RunPartyCountInteractionCopyB(s32 actorId)

@@ -18,6 +18,10 @@
 #include "IRQ.H"
 #include "BATTLE_INTRO.H"
 
+#define BattleActor_SpawnObjectsForList ((void (*)(u16*,s32))BattleActor_SpawnObjectsForList)
+#define Graphics_BuildSequentialTileTable ((void (*)(void*))Graphics_BuildSequentialTileTable)
+#define BattlePresentation_BuildTilemap ((void (*)(void*))BattlePresentation_BuildTilemap)
+
 #define gTransitionWork ((u8 (*))&gTransitionWork)
 
 struct DisplayRegisters {
@@ -33,7 +37,6 @@ struct TransitionActorList {
 };
 
 
-void BattleActor_SpawnObjectsForList(u16 *ids, s32 mode);
 
 void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 {
@@ -188,8 +191,6 @@ struct Half {
     u16 v;
 };
 
-void Graphics_BuildSequentialTileTable(void *);
-void BattlePresentation_BuildTilemap(void *);
 
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {

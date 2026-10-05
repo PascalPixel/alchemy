@@ -9,7 +9,6 @@
 #include "MENU_LIST.H"
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
-void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 typedef s32 (*UiFillFn)(void *dst, s32 size, u32 value);
 

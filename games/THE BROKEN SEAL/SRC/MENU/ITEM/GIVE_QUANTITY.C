@@ -25,10 +25,8 @@ extern volatile s32 gKeyState;
 #define GIVE_ASK_Y    32
 #endif
 
-void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(u8 *text, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
-s32 GameFlag_IsSet(s32 flag);
 
 s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 {

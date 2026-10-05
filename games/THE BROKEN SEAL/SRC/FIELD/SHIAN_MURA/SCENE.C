@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "SHIAN.H"
 #include "TYPES.H"
@@ -69,7 +70,6 @@ void Actor_UpdatePresentationFlag(void);
 
 s32 SceneEffect_CalculatePositionDistance( s32 *first_position, s32 *second_position);
 s32 ShianMura_WatchGateTrigger(struct FieldActor *self);
-s32 SceneActor_UpdateTracking( struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking);
 
 void SceneEffect_RequestFixedEffect(void)
 {

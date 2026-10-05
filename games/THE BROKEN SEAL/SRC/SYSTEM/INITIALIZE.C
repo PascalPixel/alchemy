@@ -15,7 +15,6 @@ extern u8 gOamCopyEnabled;
 extern u8 gSleepDisabled;
 
 void WaitFrames(s32 frames);
-void Game_ResetForNewGameFar(s32);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)

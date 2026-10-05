@@ -7,16 +7,17 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_ClearInteriorTilesFar ((void (*)(void*,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+#define UiText_DrawStringInWindowFar ((void (*)(const void*,void*,s32,s32))UiText_DrawStringInWindowFar)
+#define UiNumber_DrawAt ((void (*)(s32,s32,void*,s32,s32))UiNumber_DrawAt)
+
 
 extern struct CharacterMenuState *gMenuWork;
 
 s32 Party_SumDjinnCountsFar(s32 side);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 flags, s32 unit);
-void UiWindow_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 text, void *window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
-void UiText_DrawStringInWindowFar(const void *text, void *window, s32 x, s32 y);
-void UiNumber_DrawAt(s32 value, s32 digits, void *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(void *window, s32 index, s32 x, s32 y, s32 tile);
 void UiWork_SetParamNibbleFar(s32 color);
 void WaitFrames(s32 frames);

@@ -19,13 +19,13 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 #define WORK_FIELD(work, offset) (*(s32 *)((u8 *)(work) + (offset)))
 
 extern u8 gMapCellBuffer[];
 
-void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Battle_GetObjectTableValueFar(s32 id);
 
 void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
 {

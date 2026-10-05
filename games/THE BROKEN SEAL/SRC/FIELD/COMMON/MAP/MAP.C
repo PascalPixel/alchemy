@@ -12,6 +12,9 @@
 #include "IO_REG.H"
 #include "FLAG_IDS.H"
 
+#define Tilemap_DecodeStagedBuffer ((void (*)(void))Tilemap_DecodeStagedBuffer)
+#define DisplayBlend_StartScript ((void (*)(void*))DisplayBlend_StartScript)
+
 
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
@@ -92,9 +95,6 @@ struct SceneHeader {
 
 extern u8 gMapLayerData[];
 
-void Tilemap_DecodeStagedBuffer(void);
-void DisplayBlend_StartScript(void *script);
-s32 GameFlag_IsSet(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 key);
 

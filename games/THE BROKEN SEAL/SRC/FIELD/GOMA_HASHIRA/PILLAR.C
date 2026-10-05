@@ -12,6 +12,8 @@
 #include "FIELD_EVENT.H"
 #include "FIXED_POINT_POSITION.H"
 
+#define Field_TryJumpForward ((void (*)(void))Field_TryJumpForward)
+
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
 void WaitFrames(s32 frames);
 #endif
@@ -41,7 +43,6 @@ void ObjectGroup_ConfigureChildValue();
 void Engine_TaskAddCallback();
 void Engine_TaskRemoveCallback();
 #endif
-void Field_TryJumpForward(void);
 void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPrimarySequence(void);
 

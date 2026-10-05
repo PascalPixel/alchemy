@@ -20,6 +20,8 @@
 #include "SYSTEM.H"
 #include "TRANSFORM.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 #define gBattleFxWork ((void *(*))&gBattleFxWork)
 
 
@@ -27,7 +29,6 @@
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 speed, s32 mode);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
-void Camera_ApplyShake(s32 x, s32 y);
 void AudioCommand_PlayFar(s32 cue);
 
 

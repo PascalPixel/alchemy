@@ -13,23 +13,20 @@
 #include "MOTION_OBJECT.H"
 #include "ITEM.H"
 
+#define Battle_GetTaggedSlotValue ((s32 (*)(s32))Battle_GetTaggedSlotValue)
+#define Trade_AddOfferFar ((void (*)(s32,s32,s32))Trade_AddOfferFar)
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v)   ((v) & 255)
 
-struct BattleAction *Ability_GetData(s32 action);
-s32 Battle_GetTaggedSlotValue(s32 target);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
-s32 GameFlag_IsSet(s32 flag);
 void Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 void Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
-void Trade_AddOfferFar(s32 unit_id, s32 element, s32 index);
-void Owner_RecalculateStatsFar(s32 unit_id);
 s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
-void BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 flag);
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 void BattlePresentation_WaitForAdvance(void);
 

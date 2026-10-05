@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
@@ -8,11 +9,12 @@
 #include "ANIMSPR.H"
 #include "text/MSG_IDS.H"
 
+#define BattleFx_SpawnDescendingArcParticles ((void (*)(void*))BattleFx_SpawnDescendingArcParticles)
+#define UiText_DrawMessage ((void (*)(void*,s32))UiText_DrawMessage)
+
 extern u32 gFrameCount;
-void BattleFx_SpawnDescendingArcParticles(void *);
 
 void UiText_DrawQuantity(s32 arg0, s32 arg1);
-void UiText_DrawMessage(void *arg0, s32 arg1);
 
 void BattleFx_UpdateEffect16State(void)
 {

@@ -20,6 +20,9 @@
 #include "DISPTRAN.H"
 #include "BATTLE_RUNTIME.H"
 
+#define EffectRuntime_GetCurrentObject ((s32 (*)(s32))EffectRuntime_GetCurrentObject)
+#define _call_via_r0 ((struct MapEventEntry * (*)(s32))_call_via_r0)
+
 struct ParticlePosition {
     s32 x;
     s32 y;
@@ -151,8 +154,6 @@ struct FieldMapState {
 };
 
 extern struct FieldMapState gOverlayArea;
-s32 EffectRuntime_GetCurrentObject(s32 id);
-struct MapEventEntry *_call_via_r0(s32 resource);
 
 extern struct DisplayTransitionState *gDisplayTransition;
 

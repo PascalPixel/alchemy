@@ -19,15 +19,14 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "TRANSFORM.H"
 
+#define Camera_StoreSceneParameters ((void (*)(s32,u32,s32))Camera_StoreSceneParameters)
+#define BattleUnit_ProcessTurnEnd ((void (*)(struct BattlePlan*))BattleUnit_ProcessTurnEnd)
+#define BattleFx_PlayUnitElementEffect ((s32 (*)(s32,s32,s32,s32))BattleFx_PlayUnitElementEffect)
+
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
 s32 ActivateBattleObjectSlot(s32 unit_id);
-s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
-void Camera_StoreSceneParameters(s32, u32, s32);
-s32 BattlePres_RunItem(struct BattlePlan *plan, s32 mode, struct BattleActionRecord *request);
 void BattleMotion_DestroyAllSlotObjects(void);
-void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
-void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 background, s32 level);
 
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
@@ -223,10 +222,6 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void Object_SetMode(void *object, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
-s32 BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
-void BattleActor_SpawnObjectsForList(s16 *actors, s32 mode);
-void BattleFx_DispatchByIdRangeFar(s32 *work);
-void BattleFx_DispatchModeFar(s32 *work);
 
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
 {

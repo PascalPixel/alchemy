@@ -14,14 +14,15 @@
 #include "BATTLE_TYPES.H"
 #include "IO_REG.H"
 
+#define BattleEffect_RunCirclingFallingScene ((void (*)(s32*))BattleEffect_RunCirclingFallingScene)
+#define BattleEffect_RunEmberColumns ((void (*)(s32*))BattleEffect_RunEmberColumns)
+#define BattleFx_RunObjectRow ((void (*)(s32*))BattleFx_RunObjectRow)
+#define BattleEffect_RunStagedParticles ((void (*)(s32*))BattleEffect_RunStagedParticles)
+#define BattleFx_InitializeMode6 ((void (*)(s32*))BattleFx_InitializeMode6)
+#define BattleFx_InitializeMode10 ((void (*)(s32*))BattleFx_InitializeMode10)
+
 
 typedef void (*Callback)(s32 *);
-void BattleEffect_RunCirclingFallingScene(s32 *);
-void BattleEffect_RunEmberColumns(s32 *);
-void BattleFx_RunObjectRow(s32 *);
-void BattleEffect_RunStagedParticles(s32 *);
-void BattleFx_InitializeMode6(s32 *);
-void BattleFx_InitializeMode10(s32 *);
 extern Callback BattleFx_ModeHandlers[];
 
 extern u8 gMapCellBuffer[];

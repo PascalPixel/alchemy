@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "CHARACTER.H"
 #include "RUNTIME_MEM.H"
@@ -9,13 +10,14 @@
 #include "IWRAM_CALL.H"
 #include "text/MSG_IDS.H"
 
+#define Ui_AdjustValueWithoutLimit ((void (*)(s32,u16*))Ui_AdjustValueWithoutLimit)
+
 
 u32 gLinkLobbyCallFrames;
 
 
 extern volatile u16 gLinkStatus;
 u8 *Owner_GetState(s32 owner);
-void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
 
 s32 LinkLobby_CallIntoCircle(void)
 {

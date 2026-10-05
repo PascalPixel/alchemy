@@ -13,6 +13,10 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define SceneActor_PlaceFiveActorsInRow ((void (*)(s32))SceneActor_PlaceFiveActorsInRow)
+#define Camera_WorldToScreen ((void (*)(s32*))Camera_WorldToScreen)
+#define EffectSlot_Initialize ((void (*)(u8*,s32,s32,s32))EffectSlot_Initialize)
+
 extern u8 gDisplayTransition[];
 void Battle_ResetEffectCounter(void);
 void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
@@ -31,13 +35,10 @@ static inline void Actor_StepOutFromLeader(s32 actor, s32 dx, s32 dz, s32 facing
 
 
 
-void SceneActor_PlaceFiveActorsInRow(s32 spacing);
 
 extern u8 gFrameTick[];
 
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
-void Camera_WorldToScreen(s32 *pos);
-void EffectSlot_Initialize(u8 *object, s32 type, s32 x, s32 z);
 void EffectSlot_SetCallback(u8 *object, void (*update)());
 void EffectSlot_SetObjectMode(u8 *object, s32 mode);
 s32 Math_DivideUnsigned(s32 value, s32 divisor);

@@ -14,13 +14,13 @@
 #include "GAME_STATE.H"
 #include "PROJECT.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
+#define Owner_RecalculateStatsFar ((void (*)(u16))Owner_RecalculateStatsFar)
+
 extern s32 gFrameCount;
 
-void SceneTransform_ApplyPosition(void *);
-void Camera_StoreSceneParameters(u32, u32, u32);
 
 
-void Owner_RecalculateStatsFar(u16 id);
 
 u32 Random16(void);
 

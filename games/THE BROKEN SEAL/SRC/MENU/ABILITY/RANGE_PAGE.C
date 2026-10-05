@@ -33,7 +33,6 @@ void PsynergyMenu_DrawRange(
 #if !EDITION_INTERNATIONAL
 #endif
 
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
@@ -128,6 +127,9 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+#define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
+
 #define Menu_LvString (*(u8 *)&Menu_LvString)
 
 
@@ -136,10 +138,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 void Menu_DrawPageIndicator(
     s32 window, s32 item_count, s32 page_size, s32 selected_page, s32 right_edge);
 void UiText_DrawStringAtOffsetFar(u8 *, void *, s32, s32);
-void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
 void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
-void PsynergyMenu_DrawRange(s32, s32, s32, s32, s32);
-struct BattleAction *Ability_GetData(s32 action);
 
 s32 PsynergyMenu_DrawListPage(
     s32 window, s32 unused, const struct MenuResult *res)

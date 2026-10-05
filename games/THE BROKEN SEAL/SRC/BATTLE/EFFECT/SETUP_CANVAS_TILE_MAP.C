@@ -4,6 +4,8 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 
+#define BattlePresentation_ConfigurePaletteFadeFar ((void (*)(s32,s32,s32))BattlePresentation_ConfigurePaletteFadeFar)
+
 extern u8 gBattleWork[];
 
 typedef s32 (*ClearFn)(void *dst, s32 size);
@@ -32,7 +34,6 @@ struct BattleLayer {
 };
 
 extern u16 gBgScroll[];
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 fade, s32 arg);
 
 void BattleFx_SetupCanvasTileMap(void)
 {

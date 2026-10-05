@@ -14,9 +14,10 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+
 #define gBattleFxWork ((void *(*))&gBattleFxWork)
 
-void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 

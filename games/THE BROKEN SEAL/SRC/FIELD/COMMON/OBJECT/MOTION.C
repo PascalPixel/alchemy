@@ -11,6 +11,8 @@
 #include "BATTLE_PARTY.H"
 #include "B5_CONTEXT.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 struct FieldCueWork {
     u8 padding[0xcc8];
     s16 queued_sound;
@@ -21,7 +23,6 @@ void Audio_PlayCue(s32);
 
 void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
-void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Battle_WaitMode0(s32);
 void Object_ResetMotion(struct ObjectRuntime *);

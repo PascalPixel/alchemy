@@ -12,7 +12,6 @@ void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
 
 
-void BattleMotion_ApproachTarget( s32 actor_id, s32 target_id, s32 travel_divisor, s32 initial_velocity_y );
 void BattleMotion_ReservedNoOp83B0();
 
 void BattleMotion_ResetSlotObjectMode2(s32 id)

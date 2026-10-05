@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "IO_REG.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
@@ -19,11 +20,12 @@
 #include "SHOP.H"
 #include "text/MSG_IDS.H"
 
+#define Shop_FillSelector ((void (*)(s32,s32,void*))Shop_FillSelector)
+
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
 void Audio_PlayCue(s32 cue);
-void Shop_FillSelector(s32 value, s32 x, void *buffer);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 void UiWork_FinalizeFar(s32 window, s32 mode);

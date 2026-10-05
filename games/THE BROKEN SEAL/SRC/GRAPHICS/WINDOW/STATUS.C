@@ -18,7 +18,6 @@
 
 #define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
-s32 Runtime_GetLowTableAddress(void);
 typedef void (*RamRoutine)(void *dst, void *scene);
 
 

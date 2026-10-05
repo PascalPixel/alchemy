@@ -11,11 +11,12 @@
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
+#define Party_LookupCharacterValueByFlag32 ((s32 (*)(s32))Party_LookupCharacterValueByFlag32)
+#define UiGlyph_LoadEntryWithPalette ((void (*)(s32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
+
 
 void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
-s32 Party_LookupCharacterValueByFlag32(s32);
 s32 Localization_LookupEntryId(s32);
-void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);

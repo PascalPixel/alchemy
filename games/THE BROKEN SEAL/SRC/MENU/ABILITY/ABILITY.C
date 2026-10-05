@@ -12,7 +12,9 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
+#define UiText_GetResourceDimensionsFar ((s32 (*)(s32,s32*,s32*,s32*,s32*))UiText_GetResourceDimensionsFar)
+#define UiText_DrawStringInWindowFar ((void (*)(const u8*,s32*,s32,s32))UiText_DrawStringInWindowFar)
+
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
@@ -291,7 +293,6 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
 }
 
 
-s32 UiText_GetResourceDimensionsFar(s32 message, s32 *left, s32 *top, s32 *width, s32 *height);
 void UiText_DrawStringAtOffsetFar(void *text, s32 *window, s32 x, s32 y);
 void UiWork_SetParamNibbleFar(s32 value);
 
@@ -353,7 +354,6 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 }
 #else
 
-void UiText_DrawStringInWindowFar(const u8 *text, s32 *window, s32 x, s32 y);
 
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
 {

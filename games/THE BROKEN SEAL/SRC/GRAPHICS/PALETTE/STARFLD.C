@@ -18,6 +18,10 @@
 #include "BATTLE_WORK.H"
 #include "IO_REG.H"
 
+#define FarCall_EffectTable ((s32 (*)(s32,s32,s32,s32,s32))FarCall_EffectTable)
+#define BattleMotion_ProjectScaledPosition ((void (*)(s32,struct EffectPosition*))BattleMotion_ProjectScaledPosition)
+#define BattleFx_RunIceFleckBurstFar ((void (*)(struct EffectLaunch*))BattleFx_RunIceFleckBurstFar)
+
 #define gTransitionWork (*(s32 * *)&gTransitionWork)
 
 struct Spark {
@@ -36,7 +40,6 @@ struct SparkWork {
     s32 origin_pending;
 };
 
-s32 FarCall_EffectTable(s32 kind, s32 width, s32 height, s32 count, s32 mode);
 
 s32 BattleFx_InitializeStarField(s32 mode)
 {
@@ -198,9 +201,6 @@ struct EffectLaunch {
 
 extern void *gWorkSlot[];
 
-void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade);
-void BattleMotion_ProjectScaledPosition(s32 unit, struct EffectPosition *position);
-void BattleFx_RunIceFleckBurstFar(struct EffectLaunch *launch);
 
 /* FAKEMATCH: the write goes through its own int, which loads each value as a word, and the do/while (0) ends a scheduling region after it, as in the slideshow's register writes. */
 #define Io_Write16(reg, value) \

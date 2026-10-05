@@ -7,7 +7,6 @@
 #include "SYSTEM.H"
 #include "FIELDRUN.H"
 
-void ObjectTable_ResetForObject(struct ScenePlacement *table);
 
 extern struct EventRuntime *gEventWork;
 

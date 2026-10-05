@@ -11,6 +11,8 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define Object_ReplaceResourceEntry ((s32 (*)(struct FieldSprite*,s32))Object_ReplaceResourceEntry)
+
 
 void Event_SetDestination(s32 scene, s32 entrance);
 
@@ -53,7 +55,6 @@ struct Swirl {
     s16 angle;
 };
 
-s32 Object_ReplaceResourceEntry(struct FieldSprite *sprite, s32 previous);
 
 struct Spark {
     u8 unknown_00[0x64];

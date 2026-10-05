@@ -11,6 +11,8 @@
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
 
+#define StoryActor_ConfigureSpawnedObject ((void (*)(u8*))StoryActor_ConfigureSpawnedObject)
+
 void Battle_SetObjectFlag5bWhenMode3(void);
 void Battle_ClearObjectFlag5bWhenMode3(void);
 void BattleFx_ScheduleRatioTransition(s32 speed, s32 frames);
@@ -237,7 +239,6 @@ void StoryScene_ShowRewardDialogue(void)
 }
 
 void ObjectDispatch_InitFromTable6(struct FieldActor *object);
-void StoryActor_ConfigureSpawnedObject(u8 *actor);
 
 #define SITE 55
 #define ITEM_BLACK_ORB 242

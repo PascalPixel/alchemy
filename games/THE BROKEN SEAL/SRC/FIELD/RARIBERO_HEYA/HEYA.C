@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "HEYA.H"
 #include "TYPES.H"
@@ -6,7 +7,9 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
-void Shop_Run(s32, s32);
+#define Shop_Run ((void (*)(s32,s32))Shop_Run)
+#define Inn_CheckIn ((void (*)(s32,s32))Inn_CheckIn)
+
 
 s32 Engine_GameFlagIsSet(s32);
 void Engine_EventSetMessage(s32);
@@ -15,7 +18,6 @@ void Engine_EventShowMessage(s32, s32);
 
 void Shop_ConfirmAct(s32);
 
-void Inn_CheckIn(s32, s32);
 
 void Engine_ResetSceneEffectCounter(void);
 void Engine_ActorSetAnimationAndWait(s32 actor, s32 mode);

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "IMIRU.H"
 #include "TYPES.H"
@@ -7,8 +8,9 @@
 #include "IWRAM_CALL.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
 
-void FieldScene_PrepareActors(u8 *placements);
+
 
 
 

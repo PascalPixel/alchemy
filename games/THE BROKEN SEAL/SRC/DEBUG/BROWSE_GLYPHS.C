@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -25,7 +26,6 @@ extern volatile u32 gKeysRepeat;
 struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void RenderOutput_PrepareForRedraw(struct RenderInput *);
-void UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
 void UiText_DrawCharacterAtOffset(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);

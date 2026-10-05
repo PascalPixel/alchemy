@@ -9,6 +9,8 @@
 #include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
+#define StagedActor_CountdownUntilPositionUnset ((s32 (*)(u8*))StagedActor_CountdownUntilPositionUnset)
+
 enum ExtendedChoreographyMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
     MSG_ITS_TOO_LATE_HIRE_MERCENARIES = 0x1d30,
@@ -85,7 +87,6 @@ void FieldScene_CallPairWith10();
 void ObjectMotion_SetActionVariant();
 
 
-s32 StagedActor_CountdownUntilPositionUnset(u8 *object);
 
 struct Walker {
     u8 unknown_00[0x4c];

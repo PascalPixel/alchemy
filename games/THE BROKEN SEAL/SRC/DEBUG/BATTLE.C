@@ -7,14 +7,14 @@
 #include "RESOURCE_IDS.H"
 #include "CALLBACK_SCHEDULER.H"
 
+#define Battle_RunEncounter ((void (*)(s32))Battle_RunEncounter)
+
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 s32 DebugParty_LoadPreset(s32 preset);
-void Battle_RunEncounter(s32 encounter);
-void Owner_RecalculateStatsFar(s32 owner);
 
 void DebugBattle_RunMenu(void)
 {

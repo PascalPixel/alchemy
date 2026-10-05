@@ -23,16 +23,18 @@ extern const u16 ParticleStreams_CellOffsets[];
 #include "MOTION_OBJECT.H"
 #include "IO_REG.H"
 
+#define EffectPosition_ApplyAnimationAndYOffset ((void (*)(s32,s32*))EffectPosition_ApplyAnimationAndYOffset)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+
 
 
 void WaitFrames(s32);
 
 typedef s32 (*CopyWords)(void *, const void *, s32);
 
-void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
 void Audio_PlayCue(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void Camera_ApplyShake(s32, s32);
 typedef struct BattleEffectArgument Efx;
 
 typedef struct Spark {
@@ -55,7 +57,6 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
     copy(destination, source, size);
 }
 
-void SceneTransform_ApplyPosition(s32 *position);
 
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {

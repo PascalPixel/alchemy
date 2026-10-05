@@ -12,6 +12,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "MENU_LIST.H"
 
+#define Link_DrawShiftedTilePairFar ((void (*)(void*))Link_DrawShiftedTilePairFar)
+
 struct AssetSelectionResult {
     s32 unknown_000[0x60];
     u16 unknown_180;
@@ -38,7 +40,6 @@ static __inline__ s32 FillWords(FillFn fill, void *dst, s32 size, u32 value)
 
 void WaitFrames(s32 frames);
 s32 Party_ListActiveOwnersFar(void *session);
-void Link_DrawShiftedTilePairFar(void *address);
 void Event_ClearInvalidPackedValuesFar(void);
 
 s32 RunAssetSelectionScreen(void)

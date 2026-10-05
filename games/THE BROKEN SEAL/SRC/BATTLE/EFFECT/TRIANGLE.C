@@ -20,10 +20,11 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
+#define SceneTransform_ApplyScale ((void (*)(struct Vector3*))SceneTransform_ApplyScale)
+
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 a, s32 b, s32 c, s32 *x, s32 *y);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 a, s32 b);
-void SceneTransform_ApplyScale(struct Vector3 *scale);
 
 void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
 {

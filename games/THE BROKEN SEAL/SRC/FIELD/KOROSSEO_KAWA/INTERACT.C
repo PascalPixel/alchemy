@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
 #include "FIELD_EVENT.H"
@@ -5,6 +6,9 @@
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
 #include "text/MSG_IDS.H"
+
+#define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
+#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
 
 
 typedef struct Ctl {
@@ -58,7 +62,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 
 void Battle_ResetEffectCounter(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
-s32 PartyTalkMenu_Choose(s32 menu);
 
 s32 Party_CountActiveOwnersFar();
 void Party_RemoveActiveOwner();
@@ -68,7 +71,6 @@ void GameFlag_SetByte();
 void Object_LinkObjectAndSetCallback();
 s32 Menu_OpenCharacterSelector();
 void Inventory_AddItem(s32, s32);
-void Inventory_EquipFar(s32, s32);
 
 void RunPartyCountInteraction(s32 actorId)
 {

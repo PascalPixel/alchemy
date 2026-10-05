@@ -8,6 +8,10 @@
 #include "SYSTEM.H"
 #include "text/MSG_IDS.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct BattleActionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define BattleFx_ResumeObject ((void (*)(s32))BattleFx_ResumeObject)
+#define Field_TryJumpForward ((void (*)(void))Field_TryJumpForward)
+
 s32 GameFlag_TestFar();
 
 extern u8 gOverlayArea[];
@@ -39,7 +43,6 @@ extern struct EffectObject *ObjectTable_Get(s32 object);
 extern void *gEventWork;
 typedef s32 (*WorkEntryFn)(void);
 
-struct EffectDescriptor *BattleFx_FindDescriptor(s32, s32);
 
 struct BattleEffectAction {
     s16 id;
@@ -78,10 +81,8 @@ extern s32 BattleFx_GetFlags(s32);
 extern void Battle_Reset(void);
 extern void Event_SetMessageId(s32);
 extern void BattleFx_FinishAction(void);
-extern void ObjectDispatch_ApplyValueToChildrenFar(struct BattleActionObject *, s32);
 extern void Object_LinkPair(s32, s32, s32);
 extern void ObjectMotion_SetActionCallback(struct BattleActionObject *, void *);
-extern void BattleFx_ResumeObject(s32);
 
 typedef struct {
     s32 flags;
@@ -107,7 +108,6 @@ struct GlobalData_0808d8f0 {
 
 extern volatile u32 gKeysHeld;
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
-void Field_TryJumpForward(void);
 void FieldEffect_UpdateGridPlacement(void);
 void battle_owner_69(void);
 

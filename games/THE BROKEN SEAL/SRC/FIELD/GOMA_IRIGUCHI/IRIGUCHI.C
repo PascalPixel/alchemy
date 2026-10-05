@@ -12,6 +12,9 @@
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
 
+#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
+#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
+
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -85,7 +88,6 @@ struct EffectParams {
 };
 
 s32 Inventory_AddItemFar(s32 group, s32 value);
-void Inventory_EquipFar(s32 group, s32 index);
 
 struct Member_387 {
     u8 pad[216];
@@ -100,7 +102,6 @@ struct Item_387 {
 };
 
 s32 Inventory_AddItemFar(s32 member, s32 item);
-void Inventory_EquipFar(s32 member, s32 slot);
 
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 {

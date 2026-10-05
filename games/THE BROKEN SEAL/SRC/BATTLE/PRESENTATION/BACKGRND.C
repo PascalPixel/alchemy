@@ -14,6 +14,9 @@
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
 
+#define Graphics_BuildSequentialTileTable ((void (*)(void*))Graphics_BuildSequentialTileTable)
+#define BattlePresentation_BuildTilemap ((void (*)(void*))BattlePresentation_BuildTilemap)
+
 #define gTransitionWork (*(struct BattleBackgroundView * *)&gTransitionWork)
 
 
@@ -37,8 +40,6 @@ void Runtime_ReleaseHeapBlock10(void)
 typedef void (*BitDecoder)(const u8 *source, void *destination);
 
 
-void Graphics_BuildSequentialTileTable(void *destination);
-void BattlePresentation_BuildTilemap(void *destination);
 
 void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {

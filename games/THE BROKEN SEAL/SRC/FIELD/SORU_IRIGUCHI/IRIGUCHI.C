@@ -8,9 +8,10 @@
 #include "SCENE_IDS.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(s32))FieldScene_PrepareActors)
+
 void Scene_RunActorFormation(s32 a0);
 
-void FieldScene_PrepareActors(s32 placements);
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void FieldScene_RunSceneEntryHook(void);

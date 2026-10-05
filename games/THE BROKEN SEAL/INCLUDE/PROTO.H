@@ -1210,4 +1210,705 @@ void WorldMap_TransferToFuneHeya(void);
 void WorldMap_UpdateView(void);
 void YamaRama_DisableActorCollision(void);
 
+struct AbilityListEntry;
+struct AnimationEntry;
+struct AnimationObject;
+struct ArcEffectObject;
+struct ArcObject;
+struct BattleAction;
+struct BattleActionRecord;
+struct BattleEffectArgument;
+struct BattleObjectSlot;
+struct BattlePlan;
+struct BattleSummonState;
+struct DispatchObject;
+struct EffectDescriptor;
+struct EffectObject_02000c5c;
+struct EffectPosition;
+struct EffectSlot;
+struct EffectVector;
+struct FieldActor;
+struct ItemBreakFragmentSource;
+struct LinkedCaptureObject;
+struct MakyuriLights;
+struct MapActor;
+struct MenuResult;
+struct MotionObject;
+struct NumberRow;
+struct ObjectRuntime;
+struct OrbitEffect;
+struct OwnerActionSlot;
+struct PlacementDescriptor;
+struct RenderInput;
+struct RenderOutput;
+struct SceneObject_02000b98;
+struct ScenePlacement;
+struct SceneRegionEntry;
+struct ScriptObjectEntry;
+struct ShopCursor;
+struct SparkObject;
+struct TileRun;
+struct TileRun2;
+struct UiBobPairOutput;
+struct UiScaleSprite;
+struct UiWindow;
+
+#ifndef OWN__call_via_r0
+void _call_via_r0(u32 routine);
+#endif
+#ifndef OWN_Ability_GetData
+struct BattleAction * Ability_GetData(s32 action_id);
+#endif
+#ifndef OWN_Animation_ApplyChildPalette
+void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette);
+#endif
+#ifndef OWN_Animation_SetWorkEntry
+void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
+#endif
+#ifndef OWN_Battle_DispatchInputEvent
+s32 Battle_DispatchInputEvent(s32 event);
+#endif
+#ifndef OWN_Battle_FindTaggedSlotByValue
+s32 Battle_FindTaggedSlotByValue(u32 value);
+#endif
+#ifndef OWN_Battle_GetObjectTableValueFar
+s32 Battle_GetObjectTableValueFar(s32 actor_id);
+#endif
+#ifndef OWN_Battle_GetTaggedSlotValue
+s16 Battle_GetTaggedSlotValue(s32 slot);
+#endif
+#ifndef OWN_Battle_ProcessRoundEnd
+s32 Battle_ProcessRoundEnd(void);
+#endif
+#ifndef OWN_Battle_RunEncounter
+s32 Battle_RunEncounter(s32 enemy_group);
+#endif
+#ifndef OWN_BattleAction_RunDescriptor
+s32 BattleAction_RunDescriptor(s32 arg0);
+#endif
+#ifndef OWN_BattleActor_SpawnObjectsForList
+void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
+#endif
+#ifndef OWN_BattleCommand_ExecuteSelectedAction
+s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction);
+#endif
+#ifndef OWN_BattleCommand_ExecuteSelectedItem
+s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot);
+#endif
+#ifndef OWN_BattleCommand_SelectAutomatic
+s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 retry);
+#endif
+#ifndef OWN_BattleEffect_ApplyToTargets
+s32 BattleEffect_ApplyToTargets(s32 effect_id, s32 source_id, s32 target_id, s32 fixed_scale);
+#endif
+#ifndef OWN_BattleEffect_RunCirclingFallingScene
+void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect);
+#endif
+#ifndef OWN_BattleEffect_RunEmberColumns
+void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect);
+#endif
+#ifndef OWN_BattleEffect_RunStagedParticles
+void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect);
+#endif
+#ifndef OWN_BattleEffect_RunTargetedItemBreak
+void BattleEffect_RunTargetedItemBreak(void);
+#endif
+#ifndef OWN_BattleEffect_SelectNearbyObject
+s32 BattleEffect_SelectNearbyObject(s32 sourceId);
+#endif
+#ifndef OWN_BattleFx_AdvanceSpinAngle
+void BattleFx_AdvanceSpinAngle(struct MotionObject *object);
+#endif
+#ifndef OWN_BattleFx_ApplyColorToTargetBuffer
+void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode);
+#endif
+#ifndef OWN_BattleFx_ApplyLookupResult
+s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1);
+#endif
+#ifndef OWN_BattleFx_CallEffect03AndStop
+void BattleFx_CallEffect03AndStop(void);
+#endif
+#ifndef OWN_BattleFx_CallEffect04
+void BattleFx_CallEffect04(void);
+#endif
+#ifndef OWN_BattleFx_CallEffect05
+void BattleFx_CallEffect05(void);
+#endif
+#ifndef OWN_BattleFx_CircleAnchor
+void BattleFx_CircleAnchor(struct OrbitEffect *effect);
+#endif
+#ifndef OWN_BattleFx_DispatchByIdRangeFar
+void BattleFx_DispatchByIdRangeFar(s32 *arg0);
+#endif
+#ifndef OWN_BattleFx_DispatchModeFar
+void BattleFx_DispatchModeFar(s32 *state);
+#endif
+#ifndef OWN_BattleFx_FindDescriptor
+struct EffectDescriptor * BattleFx_FindDescriptor(s32 kind, s32 value);
+#endif
+#ifndef OWN_BattleFx_GetCycledTableWord
+u16 BattleFx_GetCycledTableWord(void);
+#endif
+#ifndef OWN_BattleFx_GetPhaseResult
+unsigned char BattleFx_GetPhaseResult(s32 phase_index);
+#endif
+#ifndef OWN_BattleFx_GetResourceGroup
+s8 BattleFx_GetResourceGroup(s32 effect_index);
+#endif
+#ifndef OWN_BattleFx_GetResourceId
+s32 BattleFx_GetResourceId(u32 id);
+#endif
+#ifndef OWN_BattleFx_GetResourceIdFar
+s32 BattleFx_GetResourceIdFar(u16);
+#endif
+#ifndef OWN_BattleFx_HalveDistanceToTarget
+void BattleFx_HalveDistanceToTarget(struct LinkedCaptureObject *object);
+#endif
+#ifndef OWN_BattleFx_InitializeMode10
+void BattleFx_InitializeMode10(struct BattleEffectArgument *efx);
+#endif
+#ifndef OWN_BattleFx_InitializeMode6
+void BattleFx_InitializeMode6(struct BattleEffectArgument *efx);
+#endif
+#ifndef OWN_BattleFx_LoadResourceGroup
+void BattleFx_LoadResourceGroup(void);
+#endif
+#ifndef OWN_BattleFx_MarkChildAndRunFallbackTransition
+void BattleFx_MarkChildAndRunFallbackTransition(void);
+#endif
+#ifndef OWN_BattleFx_PlayUnitElementEffect
+void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
+#endif
+#ifndef OWN_BattleFx_RenderMode5
+void BattleFx_RenderMode5(struct BattleEffectArgument *effect);
+#endif
+#ifndef OWN_BattleFx_ResumeObject
+void BattleFx_ResumeObject(void);
+#endif
+#ifndef OWN_BattleFx_RunBurstParticleMainObject
+void BattleFx_RunBurstParticleMainObject(void);
+#endif
+#ifndef OWN_BattleFx_RunCastingImpact
+void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind);
+#endif
+#ifndef OWN_BattleFx_RunDescriptorAction
+s32 BattleFx_RunDescriptorAction(s32 id);
+#endif
+#ifndef OWN_BattleFx_RunEffect13Hook
+void BattleFx_RunEffect13Hook(void);
+#endif
+#ifndef OWN_BattleFx_RunEventAction
+s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2);
+#endif
+#ifndef OWN_BattleFx_RunIceFleckBurstFar
+void BattleFx_RunIceFleckBurstFar(struct BattleEffectArgument *effect);
+#endif
+#ifndef OWN_BattleFx_RunKind6DescriptorAction
+s32 BattleFx_RunKind6DescriptorAction(s32 arg0);
+#endif
+#ifndef OWN_BattleFx_RunObjectRow
+void BattleFx_RunObjectRow(struct BattleEffectArgument *effect);
+#endif
+#ifndef OWN_BattleFx_RunSparkEmitter
+void BattleFx_RunSparkEmitter(struct SparkObject *object);
+#endif
+#ifndef OWN_BattleFx_SetCallbackWhenTargetUnset
+void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target);
+#endif
+#ifndef OWN_BattleFx_SetSpecialFromTable
+void BattleFx_SetSpecialFromTable(s32 arg0, s32 arg1);
+#endif
+#ifndef OWN_BattleFx_ShrinkObjectScaleUntilHalf
+void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj);
+#endif
+#ifndef OWN_BattleFx_SpawnDescendingArcParticles
+void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source);
+#endif
+#ifndef OWN_BattleFx_SpawnItemBreakMode1
+struct MotionObject * BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
+#endif
+#ifndef OWN_BattleFx_SpawnRadialParticleRing
+void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin);
+#endif
+#ifndef OWN_BattleFx_StartOrbitingParticles
+void BattleFx_StartOrbitingParticles(void);
+#endif
+#ifndef OWN_BattleFx_UpdateItemBreakFragment
+void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source);
+#endif
+#ifndef OWN_BattleFx_UpdatePairedArcSpawner
+void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *object);
+#endif
+#ifndef OWN_BattleFx_UpdateScaledArcObjectA
+void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
+#endif
+#ifndef OWN_BattleFx_UpdateScaledArcObjectB
+void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj);
+#endif
+#ifndef OWN_BattleFx_UpdateShrinkingOrbitObject
+void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *object);
+#endif
+#ifndef OWN_BattleLayout_HighlightPartyPanels
+s32 BattleLayout_HighlightPartyPanels(u16 *ids);
+#endif
+#ifndef OWN_BattleMotion_ProjectScaledPosition
+s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected);
+#endif
+#ifndef OWN_BattleParty_ReconcileDjinnRecovery
+s32 BattleParty_ReconcileDjinnRecovery(void);
+#endif
+#ifndef OWN_BattleParty_ResetActiveRuntimeFields
+s32 BattleParty_ResetActiveRuntimeFields(void);
+#endif
+#ifndef OWN_BattlePres_BuildOpponentEntries
+s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries);
+#endif
+#ifndef OWN_BattlePres_BuildUnitEntries
+s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries);
+#endif
+#ifndef OWN_BattlePres_RunItem
+s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused, struct BattleActionRecord *selection);
+#endif
+#ifndef OWN_BattlePres_SetActorModeAndAction
+s32 BattlePres_SetActorModeAndAction(s32 id);
+#endif
+#ifndef OWN_BattlePresentation_BuildSortedUnitEntries
+s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries);
+#endif
+#ifndef OWN_BattlePresentation_BuildTilemap
+void BattlePresentation_BuildTilemap(s32 *destination);
+#endif
+#ifndef OWN_BattlePresentation_ConfigurePaletteFade
+void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade);
+#endif
+#ifndef OWN_BattlePresentation_ConfigurePaletteFadeFar
+void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, u16 value, s32 fade);
+#endif
+#ifndef OWN_BattlePresentation_SetPaletteLevelFar
+void BattlePresentation_SetPaletteLevelFar(s32 unused, s32 level);
+#endif
+#ifndef OWN_BattlePresentation_SpawnActorObject
+void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 unit, s32 x, s32 y);
+#endif
+#ifndef OWN_BattlePresentation_WaitForPromptAt
+s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y);
+#endif
+#ifndef OWN_BattleRandomPercent
+u32 BattleRandomPercent(void);
+#endif
+#ifndef OWN_BattleSummon_UpdateAvailability
+struct BattleSummonState * BattleSummon_UpdateAvailability(void);
+#endif
+#ifndef OWN_BattleTarget_SelectForAction
+s32 BattleTarget_SelectForAction(s32 actor_id, struct BattleAction *action);
+#endif
+#ifndef OWN_BattleUnit_ProcessTurnEnd
+s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
+#endif
+#ifndef OWN_Camera_ApplyShake
+void Camera_ApplyShake(s32 random_mask, u32 shake_range);
+#endif
+#ifndef OWN_Camera_StoreSceneParameters
+void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2);
+#endif
+#ifndef OWN_Camera_WorldToScreen
+void Camera_WorldToScreen(struct EffectVector *position);
+#endif
+#ifndef OWN_ColorBuffer_BackupAndBrighten
+void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup, u32 bytes);
+#endif
+#ifndef OWN_ColorBuffer_BackupAndDarken
+void ColorBuffer_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup, u32 bytes);
+#endif
+#ifndef OWN_ColorBuffer_BackupAndHalve
+void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes);
+#endif
+#ifndef OWN_ColorBuffer_BackupAndScaleThreeQuarters
+void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup, u32 bytes);
+#endif
+#ifndef OWN_CountRemainingErasedFlashBytes
+s32 CountRemainingErasedFlashBytes(u8 *ptr);
+#endif
+#ifndef OWN_DisplayBlend_StartScript
+void DisplayBlend_StartScript(u16 *script);
+#endif
+#ifndef OWN_DisplayScroll_InitializeHBlankDma
+void DisplayScroll_InitializeHBlankDma(s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y);
+#endif
+#ifndef OWN_Djinn_DeactivateFar
+u32 Djinn_DeactivateFar(s32 owner, s32 index, s32 bit);
+#endif
+#ifndef OWN_Djinn_ListOwnerEntries
+s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element);
+#endif
+#ifndef OWN_DjinnMenu_ShowCurrentList
+s32 DjinnMenu_ShowCurrentList(void);
+#endif
+#ifndef OWN_EffectPosition_ApplyAnimationAndYOffset
+void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *position);
+#endif
+#ifndef OWN_EffectRuntime_GetCurrentObject
+struct ObjectRuntime * EffectRuntime_GetCurrentObject(s32 id);
+#endif
+#ifndef OWN_EffectRuntime_LookupByTableEntry
+s32 EffectRuntime_LookupByTableEntry(u32 index);
+#endif
+#ifndef OWN_EffectRuntime_PrepareRisingObject
+void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object);
+#endif
+#ifndef OWN_EffectSlot_Initialize
+void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z);
+#endif
+#ifndef OWN_Event_RequestDestination
+void Event_RequestDestination(u16 first, u16 second);
+#endif
+#ifndef OWN_FarCall_EffectTable
+s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
+#endif
+#ifndef OWN_Field_RunTileAction
+s32 Field_RunTileAction(s32 tile);
+#endif
+#ifndef OWN_Field_TryJumpForward
+s32 Field_TryJumpForward(void);
+#endif
+#ifndef OWN_FieldScene_BuildSceneDescriptorAndInstallTask
+void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
+#endif
+#ifndef OWN_FieldScene_PrepareActors
+void FieldScene_PrepareActors(struct SceneRegionEntry *entry);
+#endif
+#ifndef OWN_FourObjectMotion_InitializeBottomRow
+void FourObjectMotion_InitializeBottomRow(void);
+#endif
+#ifndef OWN_Game_ResetForNewGameFar
+void Game_ResetForNewGameFar(s32 mode);
+#endif
+#ifndef OWN_GameFlag_IsSet
+s32 GameFlag_IsSet(s32 flag);
+#endif
+#ifndef OWN_GetMotionRecordFar
+void * GetMotionRecordFar(struct MotionObject *object, s32 record_index);
+#endif
+#ifndef OWN_Graphics_BuildSequentialTileTable
+void Graphics_BuildSequentialTileTable(s32 *destination);
+#endif
+#ifndef OWN_Graphics_ScaleRgb555
+s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count);
+#endif
+#ifndef OWN_Graphics_TransformSmallPalette
+void Graphics_TransformSmallPalette(s32 index, s32 transform);
+#endif
+#ifndef OWN_Inn_CheckIn
+s32 Inn_CheckIn(s32 mode, s32 object_id);
+#endif
+#ifndef OWN_Inventory_DiscardFar
+s32 Inventory_DiscardFar(s32 owner, s32 slot);
+#endif
+#ifndef OWN_Inventory_EquipFar
+s32 Inventory_EquipFar(s32 owner, s32 slot);
+#endif
+#ifndef OWN_Inventory_FindEquippedFar
+s32 Inventory_FindEquippedFar(s32 owner, s32 type);
+#endif
+#ifndef OWN_InventoryMenu_ShowModalMessage
+void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
+#endif
+#ifndef OWN_Item_AdjustCounterFar
+s32 Item_AdjustCounterFar(s32 item_id, s32 delta);
+#endif
+#ifndef OWN_Item_EncodeBankedId
+u32 Item_EncodeBankedId(u32 value);
+#endif
+#ifndef OWN_Item_IsCompatibleWithOwnerFar
+s32 Item_IsCompatibleWithOwnerFar(s32 owner_id, s32 item_id);
+#endif
+#ifndef OWN_Link_DrawShiftedTilePairFar
+void Link_DrawShiftedTilePairFar(s32 offset);
+#endif
+#ifndef OWN_LinkLobby_PollPeerReady
+s32 LinkLobby_PollPeerReady(void);
+#endif
+#ifndef OWN_Makyuri_SpawnLightObjects
+void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st);
+#endif
+#ifndef OWN_Map_LoadAreaGraphicsFar
+void Map_LoadAreaGraphicsFar(void);
+#endif
+#ifndef OWN_MapGroupTable_SelectEntry
+void MapGroupTable_SelectEntry(s32 kind);
+#endif
+#ifndef OWN_Menu_OpenSelectionWindow
+void Menu_OpenSelectionWindow(s32 mode, u32 count);
+#endif
+#ifndef OWN_Menu_SpawnFourObjectsAtOrigin
+void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y);
+#endif
+#ifndef OWN_MenuSelection_BuildEntries
+void MenuSelection_BuildEntries(void);
+#endif
+#ifndef OWN_Object_CollectResources
+s32 Object_CollectResources(struct AbilityListEntry *output);
+#endif
+#ifndef OWN_Object_Destroy
+void Object_Destroy(struct DispatchObject *work);
+#endif
+#ifndef OWN_Object_InitializeMode
+s32 Object_InitializeMode(struct AnimationObject *state, s32 flags);
+#endif
+#ifndef OWN_Object_ReplaceResourceEntry
+void * Object_ReplaceResourceEntry(void *src, void *alt);
+#endif
+#ifndef OWN_Object_SetMoveTargetFar
+void Object_SetMoveTargetFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+#endif
+#ifndef OWN_Object_SetPositionAndResetMotionFar
+void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+#endif
+#ifndef OWN_ObjectDispatch_ApplyValueToChildrenFar
+void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
+#endif
+#ifndef OWN_ObjectDispatch_InitFromTable4WithArgument
+void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s32 argument);
+#endif
+#ifndef OWN_ObjectDispatch_RegisterChildMetadata
+void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 value);
+#endif
+#ifndef OWN_ObjectGroup_ApplyRandomChildValues
+void ObjectGroup_ApplyRandomChildValues(void *owner);
+#endif
+#ifndef OWN_ObjectGroup_SetActionForOthers
+void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object, s32 group_mode, s32 action);
+#endif
+#ifndef OWN_ObjectGroup_SetChildValueUnlessFifteenFar
+void ObjectGroup_SetChildValueUnlessFifteenFar(void *raw_parent, u32 value);
+#endif
+#ifndef OWN_ObjectPlacement_CreateGroup
+void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y, struct PlacementDescriptor *descriptor);
+#endif
+#ifndef OWN_ObjectTable_ResetForObject
+void ObjectTable_ResetForObject(struct ScenePlacement *table);
+#endif
+#ifndef OWN_ObjectVisual_CopyAttributes
+void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id);
+#endif
+#ifndef OWN_OverlayObject_PrepareObject
+void * OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth);
+#endif
+#ifndef OWN_OverlayObject_WaitUntilSettledAndReset
+void OverlayObject_WaitUntilSettledAndReset(u8 *obj);
+#endif
+#ifndef OWN_Owner_RecalculateStatsFar
+void Owner_RecalculateStatsFar(s32 owner);
+#endif
+#ifndef OWN_OwnerAction_DiffSlots
+s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b, u16 *out, s32 *first_count, s32 *second_count);
+#endif
+#ifndef OWN_PaletteGlow_UpdateFar
+void PaletteGlow_UpdateFar(s32 phase, s32 brightness);
+#endif
+#ifndef OWN_Party_AdjustSixDigitCounterBFar
+s32 Party_AdjustSixDigitCounterBFar(s32 amount);
+#endif
+#ifndef OWN_Party_GetAverageLevel
+u32 Party_GetAverageLevel(void);
+#endif
+#ifndef OWN_Party_LookupCharacterValueByFlag32
+s32 Party_LookupCharacterValueByFlag32(u32 index);
+#endif
+#ifndef OWN_Party_ReservedNoOp5B14
+void Party_ReservedNoOp5B14(void);
+#endif
+#ifndef OWN_PartyTalkMenu_Choose
+s32 PartyTalkMenu_Choose(void);
+#endif
+#ifndef OWN_PsynergyMenu_CallIconRoutineWithValue
+void PsynergyMenu_CallIconRoutineWithValue(s32 arg0, s32 arg1);
+#endif
+#ifndef OWN_PsynergyMenu_DrawListPage
+s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *res);
+#endif
+#ifndef OWN_PsynergyMenu_DrawRange
+void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused);
+#endif
+#ifndef OWN_RamakanSabaku_EmitSandEffect
+s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor);
+#endif
+#ifndef OWN_RenderOutput_Create
+struct RenderOutput * RenderOutput_Create(s32 slot, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
+#endif
+#ifndef OWN_RenderResource_CreateFrame
+struct RenderOutput * RenderResource_CreateFrame(s32 arg0, s32 arg1, struct RenderInput *arg2, s32 arg3, s32 arg4);
+#endif
+#ifndef OWN_RenderResource_CreatePair
+struct RenderOutput * RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
+#endif
+#ifndef OWN_Runtime_GetBuildStampTimeFar
+u32 Runtime_GetBuildStampTimeFar(void);
+#endif
+#ifndef OWN_Runtime_GetLowTableAddress
+s32 Runtime_GetLowTableAddress(void);
+#endif
+#ifndef OWN_Runtime_GetRemainingEwram
+s32 Runtime_GetRemainingEwram(void);
+#endif
+#ifndef OWN_Runtime_GetRemainingIwram
+s32 Runtime_GetRemainingIwram(void);
+#endif
+#ifndef OWN_RuntimeDispatch_NoOpHook
+void RuntimeDispatch_NoOpHook(void);
+#endif
+#ifndef OWN_Scene_FadeColorFromWhite
+s32 Scene_FadeColorFromWhite(void);
+#endif
+#ifndef OWN_Scene_PushBlockAlongRun
+void Scene_PushBlockAlongRun(struct TileRun2 *runs);
+#endif
+#ifndef OWN_SceneActor_PlaceFiveActorsInRow
+void SceneActor_PlaceFiveActorsInRow(u8 *p);
+#endif
+#ifndef OWN_SceneActor_UpdateTracking
+s32 SceneActor_UpdateTracking(struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking);
+#endif
+#ifndef OWN_SceneData_FindTileRunAt
+const struct TileRun * SceneData_FindTileRunAt(const struct TileRun *run, s32 x, s32 y);
+#endif
+#ifndef OWN_SceneEffect_SpawnEffect284AtCell
+struct EffectObject_02000c5c * SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2);
+#endif
+#ifndef OWN_SceneEffect_SpawnRandomizedParticleEveryFourFrames
+s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct SceneObject_02000b98 *obj);
+#endif
+#ifndef OWN_SceneTransform_ApplyPosition
+void SceneTransform_ApplyPosition(const s32 *position);
+#endif
+#ifndef OWN_SceneTransform_ApplyScale
+void SceneTransform_ApplyScale(const s32 *scale);
+#endif
+#ifndef OWN_ScriptObject_CheckOverlapFar
+s32 ScriptObject_CheckOverlapFar(struct ScriptObjectEntry *object, s32 *values);
+#endif
+#ifndef OWN_Shop_BuySpecialItem
+void Shop_BuySpecialItem(void *window, s32 item_window);
+#endif
+#ifndef OWN_Shop_FillSelector
+void Shop_FillSelector(s32 count, s32 selector, u8 *base);
+#endif
+#ifndef OWN_Shop_Run
+s32 Shop_Run(s32 row, s32 keeper_id);
+#endif
+#ifndef OWN_Shop_SetCursor
+void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
+#endif
+#ifndef OWN_Shop_SetCursorFar
+void Shop_SetCursorFar(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
+#endif
+#ifndef OWN_ShopCursor_AdvanceFar
+void ShopCursor_AdvanceFar(struct ShopCursor *cursor);
+#endif
+#ifndef OWN_ShopCursor_MoveTowardTargetFar
+void ShopCursor_MoveTowardTargetFar(struct ShopCursor *cursor);
+#endif
+#ifndef OWN_ShopCursor_SetPositionImmediateFar
+void ShopCursor_SetPositionImmediateFar(struct ShopCursor *cursor, s32 x, s32 y);
+#endif
+#ifndef OWN_SideObject_CreateFar
+struct RenderOutput * SideObject_CreateFar(s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5);
+#endif
+#ifndef OWN_StagedActor_CountdownUntilPositionUnset
+s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o);
+#endif
+#ifndef OWN_StartFlashTimer
+void StartFlashTimer(u8 index);
+#endif
+#ifndef OWN_StatusMenu_DrawCharacterSummary
+void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st);
+#endif
+#ifndef OWN_StoryActor_ConfigureSpawnedObject
+void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor);
+#endif
+#ifndef OWN_TakaraHashira_ReadMapCell
+void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst);
+#endif
+#ifndef OWN_Text_FormatHex
+void Text_FormatHex(u32 value, u32 count, u8 *output);
+#endif
+#ifndef OWN_Tilemap_DecodeStagedBuffer
+void Tilemap_DecodeStagedBuffer(s32 size);
+#endif
+#ifndef OWN_Title_ShowSplashScreen
+s32 Title_ShowSplashScreen(s32 mode);
+#endif
+#ifndef OWN_Trade_AddOfferFar
+u32 * Trade_AddOfferFar(u32 kind, u32 first, u32 second);
+#endif
+#ifndef OWN_Ui_AdjustValueWithoutLimit
+void Ui_AdjustValueWithoutLimit(s32 no, s32 value);
+#endif
+#ifndef OWN_Ui_ApplyTableOffsetToPair
+void Ui_ApplyTableOffsetToPair(struct UiBobPairOutput *obj);
+#endif
+#ifndef OWN_Ui_ApplyTableScaleToObject
+void Ui_ApplyTableScaleToObject(struct UiScaleSprite *obj);
+#endif
+#ifndef OWN_UiGlyph_LoadEntryWithPalette
+void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse);
+#endif
+#ifndef OWN_UiIcon_BuildAbilityIconTiles
+void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32 reuse);
+#endif
+#ifndef OWN_UiIcon_CreateWithLoadedResource
+s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s32 resource_id);
+#endif
+#ifndef OWN_UiIcon_Draw
+struct RenderOutput * UiIcon_Draw(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
+#endif
+#ifndef OWN_UiIcon_DrawVariantWithTileOffset
+s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32 variant);
+#endif
+#ifndef OWN_UiIcon_PrepareObjectFar
+void UiIcon_PrepareObjectFar(struct RenderOutput *object);
+#endif
+#ifndef OWN_UiNumber_DrawAt
+void UiNumber_DrawAt(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+#endif
+#ifndef OWN_UiText_DrawFourNumbersInRow
+void UiText_DrawFourNumbersInRow(struct RenderInput *work, struct NumberRow *row);
+#endif
+#ifndef OWN_UiText_DrawMessage
+void UiText_DrawMessage(s32 no, s32 flags);
+#endif
+#ifndef OWN_UiText_DrawStringInWindowFar
+void UiText_DrawStringInWindowFar(u8 *text, s32 arg1, u32 x, u32 y);
+#endif
+#ifndef OWN_UiText_GetResourceDimensions
+s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
+#endif
+#ifndef OWN_UiText_GetResourceDimensionsFar
+s32 UiText_GetResourceDimensionsFar(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
+#endif
+#ifndef OWN_UiText_RenderWideStringAtOffset
+void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
+#endif
+#ifndef OWN_UiWindow_ClearInteriorTiles
+void UiWindow_ClearInteriorTiles(const struct RenderInput *window, u32 left, u32 top, u32 right, u32 bottom);
+#endif
+#ifndef OWN_UiWindow_ClearInteriorTilesFar
+void UiWindow_ClearInteriorTilesFar(const struct RenderInput *window, u32 left, u32 top, u32 right, u32 bottom);
+#endif
+#ifndef OWN_UiWindow_CreateWithSideObjectFar
+s32 UiWindow_CreateWithSideObjectFar(s32 arg0, s32 arg1, s32 x, s32 y);
+#endif
+#ifndef OWN_UiWindow_FillTilemapRect
+void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height);
+#endif
+#ifndef OWN_UiWindow_MapTextCanvasTiles
+void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
+#endif
+#ifndef OWN_UiWork_CloseAndRelease
+void UiWork_CloseAndRelease(void);
+#endif
+#ifndef OWN_UiWork_FinalizeEntityMatchingLocalizedId
+void UiWork_FinalizeEntityMatchingLocalizedId(void);
+#endif
+
 #endif

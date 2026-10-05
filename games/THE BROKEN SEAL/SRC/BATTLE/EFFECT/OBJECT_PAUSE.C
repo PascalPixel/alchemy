@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FIXED_MATH.H"
 #include "OBJECT_LOOKUP.H"
@@ -6,9 +7,10 @@
 #include "GAME_STATE.H"
 #include "FIELDOBJ.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(void*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 
 void Animation_ApplyChildValuesFar(void *, s32);
-void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 
 void BattleEffect_SetRandomTableValueOnObject(s32 arg0)
 {

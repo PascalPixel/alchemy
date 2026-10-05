@@ -9,7 +9,6 @@
 #include "INVENTORY.H"
 #include "BATTLE_PARTY.H"
 
-s32 Inventory_FindEquippedFar(s32, s32);
 
 struct MotionObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32, s32);

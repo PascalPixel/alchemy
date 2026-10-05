@@ -13,6 +13,8 @@
 #include "IRQ.H"
 #include "text/MSG_IDS.H"
 
+#define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
+
 s32 Math_DivideSigned();
 
 extern u8 gBgScroll[];
@@ -40,14 +42,12 @@ struct TileRun2 {
 };
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *point);
-void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FieldActor *object);
 void KorimaPalette_SaveFirst(void);
 void KorimaPalette_SaveSecond(void);
 void KorimaPalette_Capture(void);
 
-const struct TileRun *SceneData_FindTileRunAt( const struct TileRun *run, s32 x, s32 y);
 
 void State_ApplyRectByLayoutSelector(void)
 {

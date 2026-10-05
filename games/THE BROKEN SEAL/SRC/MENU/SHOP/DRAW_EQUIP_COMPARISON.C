@@ -7,9 +7,6 @@
 
 extern struct ShopRuntime *gMenuWork;
 
-s32 Inventory_FindEquippedFar(s32 unit_id, s32 kind);
-void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void Owner_RecalculateStatsFar(s32 unit_id);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 
 void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)

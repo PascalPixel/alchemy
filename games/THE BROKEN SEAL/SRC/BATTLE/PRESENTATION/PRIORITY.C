@@ -7,7 +7,6 @@
 #include "BATTLE_PARTY.H"
 #include "IWRAM_CALL.H"
 
-s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *entry, s32 mode);
 
 
 static __inline__ void CopyWords(

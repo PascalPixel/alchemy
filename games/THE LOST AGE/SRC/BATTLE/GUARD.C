@@ -1,9 +1,11 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_UNIT.H"
 #include "OWNER_STATE.H"
 
-void Owner_RecalculateStatsFar(u16 id);
+#define Owner_RecalculateStatsFar ((void (*)(u16))Owner_RecalculateStatsFar)
+
 
 void BattleUnit_ResetGuardLevels(void)
 {

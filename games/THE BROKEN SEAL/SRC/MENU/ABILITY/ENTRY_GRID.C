@@ -3,8 +3,9 @@
 #include "GLOBAL_CELLS.H"
 #include "UI.H"
 
+#define SideObject_CreateFar ((void * (*)(s32,s32,s32,s32,s32,s32))SideObject_CreateFar)
+
 void PsynergyMenu_InitializeEntryObjects();
-void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 struct RenderOutput *RenderOutput_CreateFromResourceFar(s32, s32, struct RenderInput *, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)

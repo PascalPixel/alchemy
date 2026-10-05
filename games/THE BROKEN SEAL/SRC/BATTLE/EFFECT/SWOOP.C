@@ -17,13 +17,14 @@
 #include "IRQ.H"
 #include "RESOURCE.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 extern u8 gMapCellBuffer[];
 void WaitFrames(s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void Camera_ApplyShake(s32, s32);
 extern volatile u32 gKeysRepeat;
 
 extern struct Cells03001ad0 gBgScroll;

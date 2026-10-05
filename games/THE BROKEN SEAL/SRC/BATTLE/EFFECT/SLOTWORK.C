@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
@@ -10,6 +11,8 @@
 #include "EFFECT_SLOT.H"
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
+
+#define Camera_WorldToScreen ((void (*)(struct Vec*))Camera_WorldToScreen)
 
 struct MapActor {
     s16 id;
@@ -30,7 +33,6 @@ struct Vec {
 };
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
-void Camera_WorldToScreen(struct Vec *);
 
 void Djinn_ResolvePendingEvent(s32 capture)
 {

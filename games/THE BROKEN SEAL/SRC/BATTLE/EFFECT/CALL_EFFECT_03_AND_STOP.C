@@ -3,6 +3,10 @@
 #include "TYPES.H"
 #include "FX_SCENE.H"
 
+#define BattleFx_UpdateShrinkingOrbitObject ((void (*)(void))BattleFx_UpdateShrinkingOrbitObject)
+#define BattleFx_RunSparkEmitter ((void (*)(void))BattleFx_RunSparkEmitter)
+#define Object_ReplaceResourceEntry ((struct BattleEffect03Link * (*)(void*,struct BattleEffect03Link*))Object_ReplaceResourceEntry)
+
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 
@@ -42,11 +46,8 @@ struct BattleEffect03Link {
 };
 
 extern struct BattleFxScene *gEffectWork;
-void BattleFx_UpdateShrinkingOrbitObject(void);
-void BattleFx_RunSparkEmitter(void);
 
 struct BattleEffect03Object *Object_Spawn(s32, s32, s32, s32);
-struct BattleEffect03Link *Object_ReplaceResourceEntry(void *, struct BattleEffect03Link *);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);

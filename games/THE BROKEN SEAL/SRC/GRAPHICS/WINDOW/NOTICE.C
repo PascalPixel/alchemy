@@ -12,11 +12,12 @@
 #include "GAME_STATE.H"
 #include "B5_CONTEXT.H"
 
+#define MenuSelection_BuildEntries ((void (*)(u32))MenuSelection_BuildEntries)
+#define Menu_OpenSelectionWindow ((void (*)(u32,u32))Menu_OpenSelectionWindow)
+#define UiText_GetResourceDimensions ((s32 (*)(s32,s32*,s32*,s32*,s32*))UiText_GetResourceDimensions)
+
 s32 UiGlyph_ResetWorkState();
 
-void MenuSelection_BuildEntries(u32);
-void Menu_OpenSelectionWindow(u32, u32);
-s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *height);
 void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 s32 PartyInventory_RemoveFar(s32);
 

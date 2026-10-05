@@ -12,7 +12,6 @@
 #include "TBS_EDITION.H"
 
 extern volatile u32 gKeysRepeat;
-void Link_DrawShiftedTilePairFar(s32 addr);
 void Audio_PlayCue(s32 cue);
 void Runtime_SetMainState19(void);
 

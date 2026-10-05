@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
@@ -9,10 +10,11 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
+
 extern u8 *gActorEffectWork;
 
 
-void FieldScene_PrepareActors(u8 *placements);
 
 s32 SceneEffect_SpawnRandomEveryEightFramesB();
 

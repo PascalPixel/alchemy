@@ -2,7 +2,8 @@
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
-s32 Object_SetPositionAndResetMotionFar(void *, s32, s32, s32);
+#define Object_SetPositionAndResetMotionFar ((s32 (*)(void*,s32,s32,s32))Object_SetPositionAndResetMotionFar)
+
 s32 RunBattleEffect14();
 
 

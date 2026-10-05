@@ -10,11 +10,12 @@
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
+#define Makyuri_SpawnLightObjects ((void (*)(s32,s32))Makyuri_SpawnLightObjects)
+
 
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
-void Makyuri_SpawnLightObjects(s32 count, s32 base);
 void Makyuri_CyclePalette(void);
 void BattleFx_StartFadeOverlay(s32 value);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);

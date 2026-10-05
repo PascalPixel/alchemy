@@ -11,22 +11,23 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-void BattleFx_MarkChildAndRunFallbackTransition(s32 obj_id);
+#define BattleFx_MarkChildAndRunFallbackTransition ((void (*)(s32))BattleFx_MarkChildAndRunFallbackTransition)
+#define BattleEffect_RunTargetedItemBreak ((void (*)(s32))BattleEffect_RunTargetedItemBreak)
+#define BattleFx_CallEffect04 ((void (*)(s32))BattleFx_CallEffect04)
+#define BattleFx_CallEffect05 ((void (*)(s32))BattleFx_CallEffect05)
+#define BattleFx_StartOrbitingParticles ((void (*)(s32))BattleFx_StartOrbitingParticles)
+#define BattleFx_RunBurstParticleMainObject ((void (*)(s32))BattleFx_RunBurstParticleMainObject)
+#define BattleFx_CallEffect03AndStop ((void (*)(s32))BattleFx_CallEffect03AndStop)
+#define BattleFx_RunEffect13Hook ((void (*)(s32))BattleFx_RunEffect13Hook)
+#define BattleFx_ResumeObject ((void (*)(s32))BattleFx_ResumeObject)
+
 void BattleEffect_RunFallbackObjectTransition(void);
-void BattleEffect_RunTargetedItemBreak(s32);
-void BattleFx_CallEffect04(s32);
-void BattleFx_CallEffect05(s32);
-void BattleFx_StartOrbitingParticles(s32);
-void BattleFx_RunBurstParticleMainObject(s32);
-void BattleFx_CallEffect03AndStop(s32);
 void BattleFx_CallEffect14(s32);
-void BattleFx_RunEffect13Hook(s32);
 
 extern struct BattleFxScene *gEffectWork;
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
 void RunBattleEffect04(void);
 void RunBattleEffect14(void);
-void BattleFx_ResumeObject(s32 obj_id);
 void BattleFx_SetupObjectPair(s32 selected_object, s32 obj_id);
 void BattleEffect_PauseObject(s32 obj_id);
 

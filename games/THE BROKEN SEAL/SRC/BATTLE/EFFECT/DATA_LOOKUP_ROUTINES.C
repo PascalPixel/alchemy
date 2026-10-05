@@ -6,6 +6,8 @@
 #include "GAME_STATE.H"
 #include "EVENTWRK.H"
 
+#define BattleFx_GetResourceGroup ((s32 (*)(s32))BattleFx_GetResourceGroup)
+
 extern struct EventWork *gEventWork;
 
 extern s32 Encounter_SelectEnemyGroup();
@@ -106,7 +108,6 @@ struct SceneAreaNameRule {
 };
 
 
-s32 BattleFx_GetResourceGroup(s32 effect_id);
 
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {

@@ -16,6 +16,11 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 
+#define ColorBuffer_BackupAndHalve ((void (*)(void*,void*,s32))ColorBuffer_BackupAndHalve)
+#define ColorBuffer_BackupAndScaleThreeQuarters ((void (*)(void*,void*,s32))ColorBuffer_BackupAndScaleThreeQuarters)
+#define ColorBuffer_BackupAndDarken ((void (*)(void*,s32,void*,s32))ColorBuffer_BackupAndDarken)
+#define ColorBuffer_BackupAndBrighten ((void (*)(void*,s32,void*,s32))ColorBuffer_BackupAndBrighten)
+
 
 u32 Random16(void);
 
@@ -31,10 +36,6 @@ static __inline__ void FillWords(void *destination, s32 size, s32 value)
     Iwram_FillWords(destination, size, value);
 }
 
-void ColorBuffer_BackupAndHalve(void *source, void *destination, s32 size);
-void ColorBuffer_BackupAndScaleThreeQuarters(void *source, void *destination, s32 size);
-void ColorBuffer_BackupAndDarken(void *source, s32 amount, void *destination, s32 size);
-void ColorBuffer_BackupAndBrighten(void *source, s32 amount, void *destination, s32 size);
 
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);

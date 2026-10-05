@@ -13,6 +13,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -20,18 +22,13 @@ void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 
-s32 GameFlag_IsSet(s32 message);
 struct AnimationObject;
-s32 Object_InitializeMode(struct AnimationObject *object, s32 mode);
-struct BattleAction *Ability_GetData(s32 action);
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 mode);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 pane);

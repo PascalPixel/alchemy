@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "ANIMSPR.H"
 #include "FIELDOBJ.H"
@@ -10,11 +11,12 @@
 #include "FIXED_MATH.H"
 #include "FIELD_EVENT.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 extern struct BattleFxScene *gEffectWork;
 struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
 void ObjectDispatch_ReleaseFar(struct ObjectRuntime *);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *, s32);
-void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 
 struct ArcObject {
     u8 pad00[8];

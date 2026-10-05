@@ -1,6 +1,9 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
+
+#define StartFlashTimer ((void (*)(s32))StartFlashTimer)
 
 #define gFlash (*(u8 * *)&gFlash)
 
@@ -57,7 +60,6 @@ check:
 
 typedef s32 (*FlashPollRoutine)(s32 argument);
 
-void StartFlashTimer(s32 timing_index);
 
 s32 WaitForFlashWrite(u8 value, s32 argument, u8 expected)
 {

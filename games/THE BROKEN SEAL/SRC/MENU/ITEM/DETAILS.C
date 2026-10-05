@@ -11,12 +11,13 @@
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
 
+#define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
+
 extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWork_FinalizeFar(s32, s32);
 
-void UiText_DrawStringInWindowFar(u8 *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 palette);
 void UiWork_PushValueSlotFar(u32 value, u32 slot);

@@ -43,11 +43,7 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 }
 
 u16 ArcTan2(s32 x, s32 y);
-void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-void BattleFx_PlayUnitElementEffect(s32 actor, s32 kind, s32 mode, s32 variant);
-void BattleFx_DispatchByIdRangeFar(s32 *work);
-void BattleFx_DispatchModeFar(s32 *work);
 
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
 {

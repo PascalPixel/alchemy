@@ -12,12 +12,13 @@
 #include "TBS_EDITION.H"
 #include "IO_REG.H"
 
+#define PaletteGlow_UpdateFar ((s32 (*)(s32,s32))PaletteGlow_UpdateFar)
+
 #define gBattleBgFxWork (*(u8 * *)&gBattleBgFxWork)
 
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern s32 PaletteGlow_UpdateFar(s32, s32);
 
 void BattleFx_ArmBg0HBlankDma(void)
 {

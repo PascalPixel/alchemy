@@ -15,6 +15,11 @@ extern const s8 Menu_WorkspaceIconFrames[];
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define ShopCursor_AdvanceFar ((void (*)(void*))ShopCursor_AdvanceFar)
+#define Ui_ApplyTableScaleToObject ((void (*)(void*))Ui_ApplyTableScaleToObject)
+#define ShopCursor_SetPositionImmediateFar ((void (*)(void*,s32,s32))ShopCursor_SetPositionImmediateFar)
+#define RenderResource_CreateFrame ((void * (*)(s32,s32,struct RenderInput*,s32,s32))RenderResource_CreateFrame)
+
 
 #define FLAG_WORKSPACE_SETTINGS_ONLY 0x17e
 #define WORKSPACE_ROWS 3
@@ -26,14 +31,9 @@ extern const s8 Menu_WorkspaceIconFrames[];
 extern u8 gDebugMode;
 extern const u8 Resource_FixedBlockBTiles[];
 
-void ShopCursor_AdvanceFar(void *);
-void Ui_ApplyTableScaleToObject(void *object);
-s32 GameFlag_IsSet(s32 flag);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
-void ShopCursor_SetPositionImmediateFar(void *, s32, s32);
-void *RenderResource_CreateFrame(s32, s32, struct RenderInput *, s32, s32);
 
 void Menu_RunSelectedWorkspaceEntry(void)
 {

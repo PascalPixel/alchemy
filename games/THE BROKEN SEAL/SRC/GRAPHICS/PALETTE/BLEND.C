@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "DISPTRAN.H"
@@ -12,7 +13,6 @@
 
 extern struct DisplayTransitionState *gDisplayTransition;
 
-s32 GameFlag_IsSet(s32 flag);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 /* FAKEMATCH: SYSTEM/IO_WRITE_QUEUE.C's queue idiom, for that file's reasons: the loop that runs once around the IME read, and the count stored through a u16 pointer before the entry is written. */

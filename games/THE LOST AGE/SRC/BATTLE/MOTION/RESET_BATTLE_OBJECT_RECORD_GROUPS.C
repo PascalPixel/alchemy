@@ -5,11 +5,12 @@
 #include "BATTLE_WORK.H"
 #include "RAM_BUFFER.H"
 
+#define Object_Destroy ((void (*)(void*))Object_Destroy)
+
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 void ResetMotionRecordGroup(void *owner);
 s32 ActivateBattleObjectSlot(s32 object_id);
-void Object_Destroy(void *object);
 
 void ResetBattleObjectRecordGroups(struct MotionObject *object)
 {

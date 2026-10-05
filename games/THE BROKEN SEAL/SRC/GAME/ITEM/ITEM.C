@@ -15,11 +15,15 @@
 #include "BATTLE_CALC.H"
 #include "UI.H"
 
+#define Link_DrawShiftedTilePairFar ((void (*)(void*))Link_DrawShiftedTilePairFar)
+#define FourObjectMotion_InitializeBottomRow ((void (*)(s32,s32))FourObjectMotion_InitializeBottomRow)
+#define Djinn_DeactivateFar ((s32 (*)(s32,s32,s32))Djinn_DeactivateFar)
+#define Trade_AddOfferFar ((s32 (*)(s32,s32,s32))Trade_AddOfferFar)
+
 #define gMenuCtrlWork (*(struct ItemMenuDisplayState * *)&gMenuCtrlWork)
 
 extern struct InventoryMenuState *gMenuWork;
 s32 Inventory_RemoveFar(s32, s32);
-s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -62,9 +66,7 @@ struct ItemMenuWork {
 };
 
 extern struct ItemMenuModeState gGameState;
-void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Party_ListActiveOwnersFar(u16 *owners);
-void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
 void Event_ClearInvalidPackedValuesFar(void);
 
 
@@ -536,11 +538,8 @@ s32 ItemMenu_Run(void)
 
 void AudioCommand_PlayFar(s32 cue);
 void RenderOutput_ClearListFar(s32 window);
-void Owner_RecalculateStatsFar(s32 owner);
 s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
-s32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 index);
-s32 Trade_AddOfferFar(s32 owner, s32 element, s32 index);
 
 s32 DjinnMenu_RunScreen(void)
 {

@@ -8,6 +8,10 @@
 #include "FIXED_MATH.H"
 #include "MENU_LIST.H"
 
+#define Animation_ApplyChildPalette ((void (*)(struct FxObject*,s32))Animation_ApplyChildPalette)
+#define Object_SetMoveTargetFar ((void (*)(struct FxObject*,s32,s32,s32))Object_SetMoveTargetFar)
+#define BattleFx_SetCallbackWhenTargetUnset ((void (*)(void))BattleFx_SetCallbackWhenTargetUnset)
+
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 struct FxVector {
@@ -59,14 +63,10 @@ struct WaveFxWork {
 };
 
 
-void Animation_ApplyChildPalette(struct FxObject *object, s32 palette);
 void Ui_SetBank15PaletteAndClearRenderMode(void);
-void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 s16 *BattleAction_FindDescriptor(s32 id);
 struct FxObject *Object_CreateFar(s32 sprite, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
-void BattleFx_SetCallbackWhenTargetUnset(void);
 
 void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 {

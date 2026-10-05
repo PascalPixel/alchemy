@@ -14,14 +14,14 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define BattleFx_UpdatePairedArcSpawner ((void (*)(void))BattleFx_UpdatePairedArcSpawner)
+
 
 extern struct BattleFxScene *gEffectWork;
 void WaitFrames(s32);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
-void UiText_DrawMessage(s32, s32);
 void Audio_PlayCue(s32);
-void BattleFx_UpdatePairedArcSpawner(void);
 
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);

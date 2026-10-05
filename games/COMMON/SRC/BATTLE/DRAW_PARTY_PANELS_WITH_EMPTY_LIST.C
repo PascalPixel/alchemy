@@ -1,6 +1,7 @@
 #include "PROTO.H"
 #include "TYPES.H"
-void BattleLayout_HighlightPartyPanels(u16 *);
+
+#define BattleLayout_HighlightPartyPanels ((void (*)(u16*))BattleLayout_HighlightPartyPanels)
 void Battle_DrawPartyPanelsWithEmptyList(void)
 {
     /* FAKEMATCH: the incoming r9 chain spill preserves the ABI save/store omitted by ordinary top-level C. */

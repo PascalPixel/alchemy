@@ -7,6 +7,8 @@
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
+
 enum {
     ITEM_BONE = 231
 };
@@ -18,7 +20,6 @@ extern u8 Placement_Messages[];
 extern u8 Placement_Actors[];
 extern u8 Placement_Effects[];
 
-void FieldScene_PrepareActors(u8 *);
 
 void SceneState_CheckPositionWindow(void)
 {

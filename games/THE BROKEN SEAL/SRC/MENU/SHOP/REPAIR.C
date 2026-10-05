@@ -12,12 +12,15 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define Inventory_FindEquippedFar ((s32 (*)(s32,u8))Inventory_FindEquippedFar)
+#define Party_AdjustSixDigitCounterBFar ((void (*)(s32))Party_AdjustSixDigitCounterBFar)
+#define Item_AdjustCounterFar ((void (*)(s32,s32))Item_AdjustCounterFar)
+
 extern struct ShopRuntime *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void UiWork_FinalizeFar(s32, s32);
 void Audio_PlayCue(s32);
-s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
@@ -27,10 +30,8 @@ void Party_AdjustCoinsFar(s32 amount);
 
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
-void Party_AdjustSixDigitCounterBFar(s32 amount);
 
 s32 GameFlag_SetBitFar(s32);
-void Item_AdjustCounterFar(s32, s32);
 
 s32 Shop_SelUnit(void)
 {

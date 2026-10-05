@@ -10,6 +10,9 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_RUNTIME.H"
 
+#define MapGroupTable_SelectEntry ((void (*)(void))MapGroupTable_SelectEntry)
+#define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)
+
 enum {
     SCENE_BLANK = 0x1fb,
     SCENE_TABLE_LOAD = 0x1fc,
@@ -22,10 +25,7 @@ enum {
 
 extern u8 gDebugMode;
 
-void PaletteGlow_UpdateFar(s32 first, s32 second);
 void GameFlag_ClearBitFar(s32 flag);
-void MapGroupTable_SelectEntry(void);
-void BattleFx_LoadResourceGroup(s32 group);
 void Audio_PlayCueFromEventWork(void);
 void Audio_PlayCue(s32 cue);
 

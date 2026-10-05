@@ -5,7 +5,6 @@
 #include "BATTLE_SESSION.H"
 #include "OWNER_STATE.H"
 
-void Object_Destroy(struct DispatchObject *object);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 

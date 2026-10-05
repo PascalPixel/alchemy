@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "FIXED_MATH.H"
 #include "OBJDISP.H"
 #include "TYPES.H"
@@ -8,6 +9,8 @@
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
 
+#define Camera_WorldToScreen ((void (*)(struct EffectPosition*))Camera_WorldToScreen)
+
 struct EffectPosition {
     s32 x;
     s32 y;
@@ -17,7 +20,6 @@ struct EffectPosition {
 extern struct BattleFxScene *gEffectWork;
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectPosition *output);
-void Camera_WorldToScreen(struct EffectPosition *value);
 
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 

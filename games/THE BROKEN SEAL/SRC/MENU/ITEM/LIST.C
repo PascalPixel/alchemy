@@ -18,6 +18,8 @@
 #include "MENU_RESULT.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+
 
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
@@ -25,14 +27,10 @@ s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
-s32 GameFlag_IsSet(s32 message);
-s32 Object_InitializeMode(struct AnimationObject *object, s32 mode);
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 void Audio_PlayCue(s32 cue);
 extern u32 gFrameCount;
 

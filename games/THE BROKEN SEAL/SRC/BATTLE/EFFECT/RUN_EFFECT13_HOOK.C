@@ -7,11 +7,12 @@
 #include "FIELD_EVENT.H"
 #include "MENU_LIST.H"
 
+#define Object_SetPositionAndResetMotionFar ((void (*)(struct MotionObject*,s32,s32,s32))Object_SetPositionAndResetMotionFar)
+
 extern struct BattleFxScene *gEffectWork;
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
 struct MotionObject *Object_Spawn(s32, s32, s32, s32);
-void Object_SetPositionAndResetMotionFar(struct MotionObject *, s32, s32, s32);
 void Animation_ApplyChildValuesFar(struct MotionObject *, u32);
 void ObjectDispatch_ReleaseFar(struct MotionObject *);
 

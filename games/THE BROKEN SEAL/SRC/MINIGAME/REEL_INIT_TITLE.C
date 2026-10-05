@@ -20,6 +20,9 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define UiNumber_DrawAt ((void (*)(s32,s32,struct UiWindow*,s32,s32))UiNumber_DrawAt)
+#define RuntimeDispatch_NoOpHook ((void (*)(s32))RuntimeDispatch_NoOpHook)
+
 struct Reel {
     s32 position;
     u8 symbols[21];
@@ -68,7 +71,6 @@ extern u8 gDebugPaused;
 struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, struct UiWindow *window, s32 x, s32 y);
 void UiWork_FinalizeFar(struct UiWindow *window, s32 style);
-void UiNumber_DrawAt(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
 s32 PartyInventory_RemoveFar(s32 item);
 void AudioCommand_PlayFar(s32 command);
 
@@ -645,9 +647,6 @@ void ReelGame_InitTitle(void)
 extern u8 gOamCopyEnabled;
 extern DrawRectangle gWorkSlot[];
 
-void RuntimeDispatch_NoOpHook(s32 resource);
-s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
-s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count);
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 

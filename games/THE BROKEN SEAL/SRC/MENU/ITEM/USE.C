@@ -7,10 +7,10 @@
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
 
+#define InventoryMenu_ShowModalMessage ((s32 (*)(s32,s32,s32))InventoryMenu_ShowModalMessage)
+
 s32 Audio_PlayCue(s32);
 s32 Item_Use(s32 slot, s32 owner, s32 target);
-s32 InventoryMenu_ShowModalMessage(s32 message, s32 a, s32 b);
-void Owner_RecalculateStatsFar(s32 owner);
 
 s32 ItemMenu_Use(void)
 {

@@ -14,8 +14,10 @@
 #include "OBJECT_EFX.H"
 #include "MOTION_OBJECT.H"
 
+#define BattleFx_ApplyColorToTargetBuffer ((void (*)(u32,s32))BattleFx_ApplyColorToTargetBuffer)
+#define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
+
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
-s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 
 typedef struct {
     u8  reserved000[0xcb8];
@@ -31,7 +33,6 @@ typedef struct {
 } SceneTransitionScene;
 
 void *BattleFx_FindMatchingEvent(u32 kind, u32 entry_index, s32 *size);
-void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
 void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
 void Audio_PlayCue(s32 no);
 extern struct BattleFxScene *gEffectWork;
@@ -74,7 +75,6 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
-void ObjectGroup_ApplyRandomChildValues(void);
 
 void ResetSceneTransitionEffect(void)
 {

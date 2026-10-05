@@ -13,21 +13,21 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define PsynergyMenu_CallIconRoutineWithValue ((void (*)(void*,s32))PsynergyMenu_CallIconRoutineWithValue)
+#define DjinnMenu_ShowCurrentList ((void (*)(void))DjinnMenu_ShowCurrentList)
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+
 struct InventoryMenuState;
 extern volatile u32 gKeyState, gKeysRepeat;
-void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
 void Audio_PlayCue(s32 cue);
 void PsynergyMenu_InitializeEntryObjects();
-void DjinnMenu_ShowCurrentList(void);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 Party_AddActiveOwnerFar(s32 owner);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 s32 Party_RemoveActiveOwnerFar(s32 owner);
-struct RenderOutput *SideObject_CreateFar(s32 owner, s32 position, s32 side, s32 window, s32 x, s32 y);
 void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
 s32 Party_SumDjinnCountsFar(s32 side);
 void RenderOutput_ClearListFar(s32 window);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 
 s32 CharacterSelector_RunRearrange(void)
 {

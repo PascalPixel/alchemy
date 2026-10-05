@@ -16,6 +16,8 @@
 #include "B5_CONTEXT.H"
 #include "BATTLE_RUNTIME.H"
 
+#define UiGlyph_LoadEntryWithPalette ((s32 (*)(u32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
+
 struct UiBobPairOutput {
     struct UiBobPairOutput *next;
     u8 unknown_04[4];
@@ -53,7 +55,6 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
 
 
 s32 ItemIcon_Compose(s32, s32);
-s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 
 void Ui_ApplyTableOffsetToPair(struct UiBobPairOutput *obj)
 {

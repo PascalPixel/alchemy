@@ -16,6 +16,11 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
+#define BattleFx_UpdateItemBreakFragment ((void (*)(void*))BattleFx_UpdateItemBreakFragment)
+#define Object_SetMoveTargetFar ((void (*)(struct FxObject*,s32,s32,s32))Object_SetMoveTargetFar)
+#define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
+#define BattleFx_GetCycledTableWord ((s32 (*)(u32))BattleFx_GetCycledTableWord)
+
 #define gObjectSlots ((u8 (*))&gObjectSlots)
 
 struct Output_08097f80 {
@@ -32,7 +37,6 @@ void Object_SetMode(void *object, s32 mode);
 extern void *Object_Spawn(s32, s32, s32, s32);
 extern void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
 extern void Object_SetMode(void *, s32);
-extern void BattleFx_UpdateItemBreakFragment(void *);
 
 extern void Audio_PlayCue(s32);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -74,10 +78,7 @@ extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
 void WaitFrames(s32 frames);
-void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
-void ObjectGroup_ApplyRandomChildValues(void);
 void AudioCommand_PlayFar(s32 cue);
-s32 BattleFx_GetCycledTableWord(u32 keys);
 s32 Object_CheckMovementCollision(struct FxObject *object, struct Output_08097f80 *position);
 struct FxObject *Object_GetById(s32 id);
 void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);

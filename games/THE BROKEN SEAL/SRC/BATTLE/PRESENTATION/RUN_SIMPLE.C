@@ -20,15 +20,16 @@
 #include "BATTLE_ACTOR.H"
 #include "FIELD_EVENT.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define BattleFx_DispatchByIdRangeFar ((void (*)(struct BattlePresentationWork*))BattleFx_DispatchByIdRangeFar)
+#define BattleFx_DispatchModeFar ((void (*)(struct BattlePresentationWork*))BattleFx_DispatchModeFar)
+#define BattleActor_SpawnObjectsForList ((s32 (*)(void*,s32))BattleActor_SpawnObjectsForList)
+
 
 s32 ArcTan2(s32 first, s32 second);
 
-void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 action);
 
-void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *work);
-void BattleFx_DispatchModeFar(struct BattlePresentationWork *work);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-s32 BattleActor_SpawnObjectsForList(void *list, s32 mode);
 
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 {

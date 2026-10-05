@@ -7,6 +7,9 @@
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 
+#define BattleFx_ShrinkObjectScaleUntilHalf ((void (*)(void))BattleFx_ShrinkObjectScaleUntilHalf)
+#define BattleFx_CircleAnchor ((void (*)(void))BattleFx_CircleAnchor)
+
 struct EffectVector { s32 x, y, z; };
 
 struct EffectParticle {
@@ -33,12 +36,9 @@ void Audio_PlayCue(s32);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 void ObjectDispatch_ReleaseFar(void *);
-void BattleFx_ShrinkObjectScaleUntilHalf(void);
-void BattleFx_CircleAnchor(void);
 
 s32 BattleEffect_RunFallbackObjectTransition();
 
-extern void Camera_WorldToScreen(struct EffectVector *);
 
 void RunBattleEffect14(void)
 {

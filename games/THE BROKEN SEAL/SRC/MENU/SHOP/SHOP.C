@@ -17,8 +17,11 @@
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
 
-s32 BattleFx_GetResourceIdFar(s32);
-void UiIcon_PrepareObjectFar(void *);
+#define BattleFx_GetResourceIdFar ((s32 (*)(s32))BattleFx_GetResourceIdFar)
+#define UiIcon_PrepareObjectFar ((void (*)(void*))UiIcon_PrepareObjectFar)
+#define Shop_BuySpecialItem ((void (*)(s32,s32))Shop_BuySpecialItem)
+#define Item_AdjustCounterFar ((void (*)(s32,s32))Item_AdjustCounterFar)
+
 
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
@@ -68,7 +71,6 @@ struct ShopCursorSprite3 {
 
 extern struct ShopRuntime *gMenuWork;
 
-void Shop_SetCursor(struct ShopCursor *cursor, s32 x, s32 y, s8 kind);
 
 void UiMessage_ShowAndWait(s32 arg0)
 {
@@ -404,9 +406,6 @@ void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
-s32 Item_IsCompatibleWithOwnerFar(s32 unit_id, s32 item_id);
-void Shop_BuySpecialItem(s32 window, s32 item_window);
-void Item_AdjustCounterFar(s32 item, s32 delta);
 void Audio_PlayCue(s32 cue);
 
 s32 Shop_SelBuy(void)

@@ -11,6 +11,8 @@
 #include "LAYOUT_GUARD.H"
 #include "text/MSG_IDS.H"
 
+#define Menu_OpenSelectionWindow ((void (*)(u16,u32))Menu_OpenSelectionWindow)
+
 #define SELECTION_FIXED 999
 
 #define NODE_STATUS_SCROLLING 33
@@ -24,7 +26,6 @@
 extern u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);
-void Menu_OpenSelectionWindow(u16 type, u32 value);
 
 void WaitFrames(s32 frames);
 

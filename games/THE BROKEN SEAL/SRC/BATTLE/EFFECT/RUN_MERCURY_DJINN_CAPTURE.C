@@ -4,9 +4,14 @@
 #include "FX_SCENE.H"
 #include "GAME_STATE.H"
 
+#define BattleFx_HalveDistanceToTarget ((void (*)(void))BattleFx_HalveDistanceToTarget)
+#define Object_ReplaceResourceEntry ((struct CaptureResource * (*)(struct CaptureSprite*,struct CaptureResource*))Object_ReplaceResourceEntry)
+#define Camera_WorldToScreen ((void (*)(s32*))Camera_WorldToScreen)
+#define EffectSlot_Initialize ((void (*)(void*,s32,s32,s32))EffectSlot_Initialize)
+#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))ObjectGroup_SetChildValueUnlessFifteenFar)
+
 extern struct BattleFxScene *gEffectWork;
 
-void BattleFx_HalveDistanceToTarget(void);
 
 struct CaptureSprite {
     u8 unknown_00[40];
@@ -50,13 +55,9 @@ struct CaptureObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Object_SetMode(struct CaptureObject *object, s32 mode);
 void ObjectDispatch_SetSingleChildFlagsFar(struct CaptureObject *object, s32 value);
-struct CaptureResource *Object_ReplaceResourceEntry(struct CaptureSprite *sprite, struct CaptureResource *resource);
 void ObjectDispatch_ReleaseFar(struct CaptureObject *object);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
-void Camera_WorldToScreen(s32 *position);
-void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
 
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
 void BattleFx_RunMercuryDjinnCapture(s32 arg)

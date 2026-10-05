@@ -10,6 +10,9 @@
 #include "GLOBAL_CELLS.H"
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
+
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+#define Item_AdjustCounterFar ((void (*)(s32,s32))Item_AdjustCounterFar)
 #if EDITION_INTERNATIONAL
 #define MODAL_SHORT_X   14
 #define MODAL_REMOVED_X 14
@@ -30,17 +33,12 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32
 
 
 void WaitFrames(s32 frames);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-void Owner_RecalculateStatsFar(s32 owner);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
-s32 Inventory_EquipFar(s32 owner, s32 slot);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
-void Item_AdjustCounterFar(s32 item, s32 mode);
 void Event_ClearInvalidPackedValuesFar(void);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
-void InventoryMenu_ShowModalMessage(s32 message, s32 acknowledgement_mode, s32 window_mode);
 
 enum ItemMenuStep {
     ITEM_STEP_OWNER = 0,

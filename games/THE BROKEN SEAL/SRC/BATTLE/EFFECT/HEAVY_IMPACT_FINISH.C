@@ -8,7 +8,6 @@
 extern struct BattleFxScene *gEffectWork;
 
 struct MotionObject *Object_GetById(s32 id);
-void BattleFx_AdvanceSpinAngle(struct MotionObject *object);
 
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
 int ObjectMotion_ArmCallback();

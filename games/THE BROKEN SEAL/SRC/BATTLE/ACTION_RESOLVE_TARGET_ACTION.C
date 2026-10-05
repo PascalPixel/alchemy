@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "IWRAM_CALL.H"
@@ -15,7 +16,8 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 
-void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
+#define BattlePresentation_SpawnActorObject ((void (*)(void*,s32,s32,s32))BattlePresentation_SpawnActorObject)
+
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 #define CLAMP_MOD(v)                                                           \

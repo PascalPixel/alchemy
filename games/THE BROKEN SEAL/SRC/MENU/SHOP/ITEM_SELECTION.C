@@ -5,7 +5,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
 extern struct ShopRuntime *gMenuWork;
-void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 

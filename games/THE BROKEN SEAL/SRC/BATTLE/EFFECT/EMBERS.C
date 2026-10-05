@@ -18,6 +18,9 @@
 #include "RAM_BUFFER.H"
 #include "TRANSFORM.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+#define Object_InitializeMode ((void (*)(void*,s32))Object_InitializeMode)
+
 struct Point2D {
     s32 x;
     s32 y;
@@ -34,8 +37,6 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 #define gDrops ((struct EffectStep *)Ram_MapCellBuffer)
 
-void Camera_ApplyShake(s32 x, s32 y);
-void Object_InitializeMode(void *object, s32 mode);
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -7,6 +8,8 @@
 #include "GAME_STATE.H"
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
+
+#define Object_CollectResources ((s32 (*)(struct ShortcutListEntry*))Object_CollectResources)
 
 struct ShortcutListEntry {
     u16 owner;
@@ -18,7 +21,6 @@ extern volatile u32 gKeyState;
 extern const u8 Resource_FixedBlockBTiles[];
 
 s32 OwnerAction_AddFar(s32 owner, s32 action);
-s32 Object_CollectResources(struct ShortcutListEntry *output);
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct ShortcutListEntry *entries);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
@@ -30,7 +32,6 @@ void UiText_DrawNumberAtOffset(s32 value, s32 digits,
 void RenderOutput_RedrawSavedRect(struct RenderInput *window);
 void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x, s32 y,
                               s32 width, s32 style);
-struct BattleAction *Ability_GetData(s32 ability);
 void WaitFrames(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 

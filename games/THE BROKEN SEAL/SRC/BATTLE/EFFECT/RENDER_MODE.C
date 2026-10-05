@@ -20,13 +20,14 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-void SceneTransform_ApplyPosition(s32 *position);
+
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
-void Camera_ApplyShake(s32 x, s32 y);
 
 
 #define CONVERGES(mode) \

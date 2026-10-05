@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -5,7 +6,6 @@
 #include "WINDOW.H"
 #include "text/MSG_IDS.H"
 struct UiWindow;
-void UiText_RenderWideStringAtOffset(u16 *, struct UiWindow *, s32, s32);
 struct MessageContext {
     u8 unknown_00[0x44];
     struct UiWindow *window;

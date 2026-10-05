@@ -9,6 +9,8 @@
 #include "WINDOW.H"
 #include "UI.H"
 
+#define BattleFx_GetResourceId ((s32 (*)(s32))BattleFx_GetResourceId)
+
 extern struct FieldStepWork *gEventWork;
 
 void Event_SetMessageId(s16 value)
@@ -52,11 +54,8 @@ s32 ObjectTable_FindActiveByValue(s32 value)
 
 #if EDITION_INTERNATIONAL
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
-s32 UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
 void WaitFrames(s32 frames);
-s32 BattleFx_GetResourceId(s32 speaker);
 struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 style);
-s32 UiWindow_CreateWithSideObjectFar(s32 speaker, s32 mode, s32 x, s32 y);
 
 struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 {

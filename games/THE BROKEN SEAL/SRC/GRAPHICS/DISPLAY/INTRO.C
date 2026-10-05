@@ -14,6 +14,8 @@
 #include "SYSTEM.H"
 #include "PALBUF.H"
 
+#define Graphics_TransformSmallPalette ((s32 (*)(s32,s32))Graphics_TransformSmallPalette)
+
 struct IntroSprite {
     u32 unknown_0;
     u8 y;
@@ -273,7 +275,6 @@ extern volatile u32 gKeyState;
 extern u8 gOamCopyEnabled;
 extern volatile u8 gCpuLoadDisplayEnabled;
 
-s32 Graphics_TransformSmallPalette(s32 index, s32 transform);
 
 s32 Title_ShowIntro(s32 prompt)
 {

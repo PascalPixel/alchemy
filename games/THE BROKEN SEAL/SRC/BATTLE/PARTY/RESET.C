@@ -7,7 +7,8 @@
 #include "OWNER_STATE.H"
 #include "BATTLE_RUNTIME.H"
 
-void Trade_AddOfferFar(s32 id, s32 element, s32 index);
+#define Trade_AddOfferFar ((void (*)(s32,s32,s32))Trade_AddOfferFar)
+
 s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);
 

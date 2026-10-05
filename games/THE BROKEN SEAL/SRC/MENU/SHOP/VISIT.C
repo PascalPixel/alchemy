@@ -17,24 +17,22 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
+
 extern struct ShopRuntime *gMenuWork;
 
-s32 Item_AdjustCounterFar(s32, s32);
 
 void Battle_ResetEffectCounterFar(void);
 u8 Party_ListActiveOwnersFar(void *);
 s32 UiWork_FinalizePendingCoreFar();
 
 struct ObjectRuntime *Object_GetByIdFar(s32 id);
-s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 a, s32 b, s32 c);
 void UiWork_FinalizeFar(s32 window, s32 style);
 void WaitFrames(s32 frames);
 
-void Inventory_EquipFar(s32, s32);
 s32 Inventory_AddItemFar(s32, s32);
 
 
-s32 Shop_Run(s32 row, s32 keeper_id);
 
 s32 AbilityMenu_BuildAvailableList(void)
 {

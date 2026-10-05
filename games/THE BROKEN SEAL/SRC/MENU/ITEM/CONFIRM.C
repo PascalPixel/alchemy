@@ -9,6 +9,8 @@
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+
 extern void UiText_DrawStringAtOffsetFar(u8 *text, void *window, s32 x, s32 y);
 extern void UiText_DrawCharacterAtOffsetFar(s32, void *, s32, s32);
 
@@ -18,7 +20,6 @@ s32 __modsi3(s32, s32);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
-s32 GameFlag_IsSet(s32);
 void Audio_PlayCue(s32 cue);
 
 void ItemMenu_DrawItemHead(void)
@@ -122,9 +123,6 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     return sel;
 }
 
-s32 Inventory_EquipFar(s32 owner, s32 item);
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void Owner_RecalculateStatsFar(s32 owner);
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 

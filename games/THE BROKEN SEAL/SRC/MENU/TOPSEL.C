@@ -12,9 +12,10 @@
 #include "TBS_EDITION.H"
 #include "NODE_CHAIN.H"
 
+#define UiWork_CloseAndRelease ((s32 (*)(void))UiWork_CloseAndRelease)
+
 void Resource_DecodeByteLz(void *source, void *destination);
 
-s32 UiWork_CloseAndRelease(void);
 s32 ItemMenu_Open(void);
 extern u8 *gWork;
 

@@ -18,9 +18,10 @@
 #include "SAVE_STATE.H"
 #include "IO_REG.H"
 
+#define Game_ResetForNewGameFar ((s32 (*)(s32))Game_ResetForNewGameFar)
+
 #define gBattleOwnerStates (*(struct BattleUnit * *)&gBattleOwnerStates)
 
-s32 Game_ResetForNewGameFar(s32);
 
 
 struct ClassRecord {

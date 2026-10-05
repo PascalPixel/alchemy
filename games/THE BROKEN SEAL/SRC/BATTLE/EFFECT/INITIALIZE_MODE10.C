@@ -30,12 +30,9 @@ extern const u8 BattleFx_PuffSizes[];
 
 extern volatile u32 gKeysRepeat;
 
-void *GetMotionRecordFar(struct MotionObject *object, s32 index);
-s32 Object_InitializeMode(void *object, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
-void Camera_ApplyShake(s32 x, s32 y);
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -490,6 +487,10 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
+#define Object_InitializeMode ((s32 (*)(void*,s32))Object_InitializeMode)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 
 extern u8 gMapCellBuffer[];
 
@@ -499,7 +500,6 @@ void Audio_PlayCue(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void Camera_ApplyShake(s32, s32);
 
 extern volatile u32 gKeysRepeat;
 
@@ -937,7 +937,6 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     BattleFx_EndCanvasLayer();
 }
 
-s32 Battle_GetObjectTableValueFar(s32 member_id);
 
 
 #define SHARDS_PER_MEMBER 128

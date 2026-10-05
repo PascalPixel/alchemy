@@ -1,11 +1,13 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RESMENU.H"
 #include "RAM_BUFFER.H"
 
+#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
+
 extern char ResourceId_CommandIcons;
-void Resource_DecodeByteLzInRam(void *source, void *destination);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 void Menu_LoadResourceSlot(s32 slot, s32 index)

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "KORIMAKI.H"
 #include "TYPES.H"
@@ -9,6 +10,8 @@
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
+#define Object_ReplaceResourceEntry ((s32 (*)(struct FieldSprite*,s32))Object_ReplaceResourceEntry)
+
 void KorimaKi_PlayGesture(s32 actor, s32 gesture);
 
 s32 gKorimaKiSparkOrigin[3] __attribute__((section(".bss")));
@@ -16,7 +19,6 @@ s32 gKorimaKiSparkCount __attribute__((section(".bss")));
 s32 gKorimaKiSparkSound __attribute__((section(".bss")));
 s32 gKorimaKiTransitionStep __attribute__((section(".bss")));
 
-s32 Object_ReplaceResourceEntry(struct FieldSprite *sprite, s32 previous);
 
 struct Spark {
     u8 unknown_00[0x64];

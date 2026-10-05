@@ -31,7 +31,6 @@ extern volatile u32 gKeysRepeat;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 void Audio_PlayCue(s32 cue);
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 
 s32 ItemMenu_SelectItem(void)
 {

@@ -14,7 +14,6 @@ struct PlacementTable {
     struct PlacementList list;
 };
 
-void Owner_RecalculateStatsFar(s32 unit_id);
 
 s32 BattleUnit_TickReflect(s32 id)
 {

@@ -1,8 +1,10 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 
-void Resource_DecodeByteLzInRam(void *source, void *destination);
+#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
+
 
 void VramBlock_LoadResource(s32 entry_no, s32 size, s32 resource_id)
 {

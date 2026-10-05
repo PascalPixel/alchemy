@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "MENU_LIST.H"
@@ -7,6 +8,8 @@
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
 #include "BATTLE_RUNTIME.H"
+
+#define UiGlyph_LoadEntryWithPalette ((void (*)(s32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
 
 struct SideObjectRegistry {
 #if EDITION_INTERNATIONAL
@@ -20,9 +23,7 @@ struct SideObjectRegistry {
 #endif
 };
 
-extern s32 GameFlag_IsSet(s32);
 extern s32 Localization_LookupEntryId(s32);
-void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 
 struct RenderOutput *CreateSideObject(
     s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)

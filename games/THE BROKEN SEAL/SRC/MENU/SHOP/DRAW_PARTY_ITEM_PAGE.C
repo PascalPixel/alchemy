@@ -7,6 +7,8 @@
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+
 #if EDITION_INTERNATIONAL
 #define SHOP_PAGE_ICONS_X 119
 #define SHOP_ITEM_NAME_X  128
@@ -18,7 +20,6 @@
 #endif
 
 extern struct InventoryMenuState *gMenuWork;
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);

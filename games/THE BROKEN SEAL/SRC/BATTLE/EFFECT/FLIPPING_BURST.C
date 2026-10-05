@@ -20,9 +20,10 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-s32 Battle_GetObjectTableValueFar(s32 member_id);
-void Camera_ApplyShake(s32 x, s32 y);
+
 void Audio_PlayCue(s32 cue);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
@@ -156,8 +157,6 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 }
 
 
-s32 Battle_GetObjectTableValueFar(s32 member_id);
-void Camera_ApplyShake(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);

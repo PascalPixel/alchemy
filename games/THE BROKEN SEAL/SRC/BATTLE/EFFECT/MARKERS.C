@@ -4,6 +4,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "DISPTRAN.H"
 
+#define BattleFx_RunEventAction ((void (*)(s32,s32,s32))BattleFx_RunEventAction)
+
 struct EffectState {
     u8 unknown_000[0x52a];
     u16 frame;
@@ -30,10 +32,8 @@ struct EffectTarget {
 extern struct EffectGlobals Data_03001ebc;
 struct EffectTarget *ObjectTable_Get(s32);
 void BattleFx_ApplyColorToSourceBuffer(s32, s32);
-void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 void WaitFrames(s32);
 s32 BattleFx_FindMatchingEvent(s32, s32, s32 *);
-void BattleFx_RunEventAction(s32, s32, s32);
 void Audio_PlayCue(s32);
 
 void RunBattleEffect08(void)

@@ -15,8 +15,6 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
-s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *actions);
-s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *actions);
 
 void Palette_CopyBanksWithBrightnessOffset(s32 offset)
 {

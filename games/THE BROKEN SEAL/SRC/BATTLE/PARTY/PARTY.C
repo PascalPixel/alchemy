@@ -23,6 +23,15 @@
 #include "BATTLE_CALC.H"
 #include "text/MSG_IDS.H"
 
+#define BattleParty_ReconcileDjinnRecovery ((void (*)(void))BattleParty_ReconcileDjinnRecovery)
+#define BattleSummon_UpdateAvailability ((void (*)(void))BattleSummon_UpdateAvailability)
+#define Party_ReservedNoOp5B14 ((void (*)(s32))Party_ReservedNoOp5B14)
+#define Runtime_GetRemainingIwram ((void (*)(void))Runtime_GetRemainingIwram)
+#define Runtime_GetRemainingEwram ((void (*)(void))Runtime_GetRemainingEwram)
+#define Battle_ProcessRoundEnd ((void (*)(void))Battle_ProcessRoundEnd)
+#define BattlePresentation_WaitForPromptAt ((void (*)(s32,s32))BattlePresentation_WaitForPromptAt)
+#define BattleParty_ResetActiveRuntimeFields ((void (*)(void))BattleParty_ResetActiveRuntimeFields)
+
 #define DMA_FILL32 0x85000000
 
 #define Dma3Fill(cell, dest, bytes)                                           \
@@ -48,26 +57,16 @@ extern u8 gActorSpriteSlots[];
 extern u8 gCpuLoadDisplayEnabled;
 
 void GameFlag_SetBitFar(s32 id);
-s32 GameFlag_IsSet(s32 flag);
 void WaitFrames(s32 frames);
-void BattleParty_ReconcileDjinnRecovery(void);
-void BattleSummon_UpdateAvailability(void);
 s32 *Trade_GetOfferStateFar(s32 index);
-void Party_ReservedNoOp5B14(s32 value);
 s32 BattleRandom16Far(void);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-void Runtime_GetRemainingIwram(void);
-void Runtime_GetRemainingEwram(void);
-s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *actions);
-void Battle_ProcessRoundEnd(void);
 void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
-void BattlePresentation_WaitForPromptAt(s32 a, s32 b);
 void UiWork_PushValueSlotFar(s32 a, s32 b);
 void UiText_ShowMessageAndWaitCoreFar(s32 id);
 void BattlePresentation_WaitForAdvance(void);
-void BattleParty_ResetActiveRuntimeFields(void);
 
 s32 Battle_RunEncounter(s32 enemy_group)
 {

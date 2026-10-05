@@ -2,6 +2,8 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 #include "RESOURCE_IDS.H"
+
+#define BattleFx_GetPhaseResult ((s16 (*)(s32))BattleFx_GetPhaseResult)
 extern struct EventRuntime *gEventWork;
 
 struct ResultWork {
@@ -15,7 +17,6 @@ struct ResultWork {
 
 extern struct ResultWork gGameState;
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
-s16 BattleFx_GetPhaseResult(s32 value);
 s32 BattleFx_SelectBattleCue(s32, s32);
 
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)

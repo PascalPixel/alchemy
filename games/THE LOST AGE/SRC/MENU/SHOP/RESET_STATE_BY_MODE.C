@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_RUNTIME.H"
 #include "OWNER_STATE.H"
 
 u8 *Item_Get(u16);
-void Owner_RecalculateStatsFar(s32 unit_id);
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {

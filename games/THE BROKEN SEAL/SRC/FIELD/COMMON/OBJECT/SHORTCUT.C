@@ -3,6 +3,8 @@
 #include "OWNER_STATE.H"
 #include "GAME_STATE.H"
 
+#define Ability_GetData ((void * (*)(s32))Ability_GetData)
+
 s32 Party_ListActiveOwnersFar(u16 *objects);
 #define ACTION_ID_MASK 0x3FFF
 
@@ -11,7 +13,6 @@ struct AbilityListEntry {
     u16 ability;
 };
 
-void *Ability_GetData(s32 resource_id);
 
 struct ShortcutState {
     u32 unknown_000[0x220 / 4];

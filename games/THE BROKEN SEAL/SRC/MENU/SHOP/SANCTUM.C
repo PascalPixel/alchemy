@@ -12,13 +12,12 @@
 #include "OBJECT_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define SideObject_CreateFar ((void (*)(s32,s32,s32,s32,s32,s32))SideObject_CreateFar)
+
 extern struct ShopRuntime *gMenuWork;
-s32 BattleFx_GetResourceIdFar(u16);
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
-s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
-void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 void UiWork_FinalizeFar(s32 window, s32 style);
 
 extern volatile u32 gKeyState;

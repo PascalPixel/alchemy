@@ -4,9 +4,10 @@
 #include "MOTION_OBJECT.H"
 #include "FIELD_EVENT.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((s32 (*)(s32,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 
 void BattleFx_RunMode0(void *effect)
 {

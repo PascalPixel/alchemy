@@ -15,10 +15,11 @@
 #include "ANIMSPR.H"
 #include "text/MSG_IDS.H"
 
+#define BattleEffect_SelectNearbyObject ((s32 (*)(u32))BattleEffect_SelectNearbyObject)
+
 extern u32 gFrameCount;
 
 void *ObjectTable_Get(u32);
-s32 BattleEffect_SelectNearbyObject(u32 object_id);
 s32 GetFocusedObjectCollision(void);
 
 extern struct BattleRuntime *gEventWork;
@@ -48,9 +49,7 @@ void BattleFx_Run(void);
 void BattleEffect_CleanupSceneObjects(void);
 u8 Inventory_RemoveFar(s32 actor, s32 slot);
 
-struct BattleAction *Ability_GetData(s32);
 void BattleFx_SetupObjectPair(s32, s32);
-s32 BattleFx_RunEventAction(void *, s32, s32);
 void EffectRuntime_StopCurrentObject(void);
 
 void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette)

@@ -4,7 +4,8 @@
 #include "MOTION_OBJECT.H"
 #include "FIELD_EVENT.H"
 
-s32 ObjectDispatch_ApplyValueToChildrenFar(struct FieldActor *, s32);
+#define ObjectDispatch_ApplyValueToChildrenFar ((s32 (*)(struct FieldActor*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 
 void BattleFx_RunMode0(struct BattleEffectArgument *effect)
 {

@@ -10,6 +10,8 @@
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
 
+#define Animation_SetWorkEntry ((void (*)(void*,s32))Animation_SetWorkEntry)
+
 #define gMenuCtrlWork ((void *(*))&gMenuCtrlWork)
 #define Render_DecodeFrame ((const u8 (*))&Render_DecodeFrame)
 
@@ -18,7 +20,6 @@ typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
 
 
-void Animation_SetWorkEntry(void *work, s32 no);
 
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 {

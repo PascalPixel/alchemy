@@ -30,9 +30,7 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 window, s32 owner);
-s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *);
 void Audio_PlayCue(s32 cue);
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 void ItemMenu_HideAllIcons(void);
 
 s32 PsynergyMenu_SelectAction(void)

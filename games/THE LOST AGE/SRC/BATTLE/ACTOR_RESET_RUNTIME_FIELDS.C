@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OWNER_STATE.H"
 #include "BATTLE_STATUS_ICON.H"
 
-void Owner_RecalculateStatsFar(s32);
 s32 GetBattleObjectSlot(s32);
 
 s32 BattleActor_ResetRuntimeFields(s32 actor)

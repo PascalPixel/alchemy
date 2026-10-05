@@ -7,6 +7,8 @@
 #include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"
 
+#define BattlePres_SetActorModeAndAction ((void (*)(s32))BattlePres_SetActorModeAndAction)
+
 #define gMenuCtrlWork (*(u8 * *)&gMenuCtrlWork)
 
 struct PairedObjectList {
@@ -23,7 +25,6 @@ extern volatile u8 gSchedulerStatus;
 
 void WaitFrames(s32 frames);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 id);
-void BattlePres_SetActorModeAndAction(s32 id);
 
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {

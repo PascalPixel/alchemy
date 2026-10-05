@@ -45,7 +45,6 @@ void BattlePresentation_WaitForAdvance(void);
 void Audio_PlayCue(u32);
 void BattleMotion_RunValueSequence();
 void UiWindow_DrawPartyStatusContentsFar(u32);
-s32 BattlePres_SetActorModeAndAction(s32 unit_id);
 
 u32 BattleEv_DispatchQueued(void)
 {

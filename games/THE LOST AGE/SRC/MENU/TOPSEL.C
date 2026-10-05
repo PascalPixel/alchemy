@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "GLYPH.H"
 #include "SELECT.H"
@@ -7,9 +8,10 @@
 #include "RAM_BUFFER.H"
 #include "NODE_CHAIN.H"
 
+#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
+
 extern char ResourceId_CommandIcons;
 
-void Resource_DecodeByteLzInRam(void *source, void *destination);
 
 void Menu_LoadSelectedResource(void)
 {

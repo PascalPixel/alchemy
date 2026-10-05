@@ -9,7 +9,6 @@
 #include "SOUND_IDS.H"
 
 extern struct BattleFxScene *gEffectWork;
-struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);

@@ -6,6 +6,8 @@
 #include "EVENTWRK.H"
 #include "BATTLE_UNIT.H"
 
+#define BattleFx_SetSpecialFromTable ((void (*)(void))BattleFx_SetSpecialFromTable)
+
 struct BattleLocationRule {
     s16 map;
     s16 room;
@@ -15,7 +17,6 @@ struct BattleLocationRule {
 };
 
 s32 GameFlag_TestFar(s32 flag);
-void BattleFx_SetSpecialFromTable(void);
 
 
 typedef struct Entry {
@@ -49,7 +50,6 @@ struct FieldPartyState {
 extern struct EventWork *gEventWork;
 extern struct FieldPartyState gGameState;
 extern struct EncounterZone Encounter_EnemyGroupTable[];
-s32 GameFlag_IsSet(s32 flag);
 struct BattleUnit *Owner_GetStateFar(s32 unit);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);

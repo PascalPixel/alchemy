@@ -22,9 +22,8 @@
 #include "UI.H"
 #include "MENU_LIST.H"
 
-struct BattleAction *Ability_GetData(s32 action_id);
-s32 Battle_FindTaggedSlotByValue(s32 actor_id);
-s32 BattleTarget_SelectForAction(s32 actor_id, struct BattleAction *action);
+#define Battle_FindTaggedSlotByValue ((s32 (*)(s32))Battle_FindTaggedSlotByValue)
+
 
 struct BattleAutomaticState {
     unsigned initialized : 1;
@@ -273,7 +272,6 @@ done:
     return;
 }
 
-void _call_via_r0(u32 routine);
 
 
 void Dma_StopAllThenRunHook(void)
@@ -317,10 +315,8 @@ extern volatile s32 gKeysPressedLatch;
 void AudioCommand_PlayFar(s32 cue);
 void UiText_DrawQuantity(u32 value, u32 slot);
 void Object_SetMode(void *object, s32 mode);
-s32 Object_InitializeMode(struct AnimationObject *record, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value);
-s32 BattlePres_SetActorModeAndAction(s32 unit_id);
 void QueueIoWriteDelay6(u32 address, u32 value);
 s32 BattleLayout_HighlightPartyPanelsFar(u16 *selection);
 

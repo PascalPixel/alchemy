@@ -14,6 +14,8 @@
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
 
+#define Makyuri_SpawnLightObjects ((void (*)(s32,s32))Makyuri_SpawnLightObjects)
+
 
 
 struct ColumnProbe {
@@ -45,7 +47,6 @@ void BattleFx_RunRisingObjectSequence();
 
 void Engine_MapCopyCellsTo(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h);
 void Battle_WaitMode0(s32 frames);
-void Makyuri_SpawnLightObjects(s32 count, s32 base);
 void Makyuri_CyclePalette(void);
 void SceneActor_UseActorNinePositionWithYOffset(void);
 void BattleFx_StartFadeOverlay(s32 value);

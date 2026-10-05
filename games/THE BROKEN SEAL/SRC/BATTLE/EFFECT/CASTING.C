@@ -18,18 +18,17 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(void*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define BattleFx_RenderMode5 ((void (*)(void*))BattleFx_RenderMode5)
+
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
 
 void Object_SetMode(void *object, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
-s32 Battle_GetObjectTableValueFar(s32 actor_id);
 s32 BattleFx_RunSparkGroups(void *effect, s32 mode);
-void BattleFx_RenderMode5(void *effect);
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s32 state_slot,
                                s32 state_value);
 void Graphics_PackTileRows();
-void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 
 void Audio_PlayCue(s32 cue);
 

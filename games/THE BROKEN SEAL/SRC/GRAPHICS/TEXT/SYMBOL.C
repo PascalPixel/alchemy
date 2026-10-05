@@ -8,7 +8,6 @@
 #include "WINDOW.H"
 #include "IO_REG.H"
 
-s32 UiText_GetResourceDimensions(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry,
     s32 x, s32 y, u16 *colours, s32 flags);
 s32 UiWork_IsComplete(void);

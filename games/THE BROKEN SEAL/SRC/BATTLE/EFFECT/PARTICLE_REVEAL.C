@@ -20,11 +20,13 @@
 #include "MOTION_OBJECT.H"
 #include "TRANSFORM.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
-void Camera_ApplyShake(s32 x, s32 y);
 
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -291,7 +293,6 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 anchor, s32 *out_x, s32 *out_y);
 void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Camera_ApplyShake(s32 a, s32 b);
 
 void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 {

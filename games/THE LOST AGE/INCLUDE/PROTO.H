@@ -325,4 +325,61 @@ void UiWork_UploadDirtyBlocks(void);
 void UpdateRisingParticleBurst(void *object);
 void VramBlock_LoadResourceFar(s32 entry_no, s32 mode, s32 resource_id);
 
+struct BattleActionRecord;
+struct BattleObjectSlot;
+struct DispatchObject;
+struct ObjectRuntime;
+
+#ifndef OWN_BattleActor_SpawnObjectsForList
+void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
+#endif
+#ifndef OWN_BattleFx_GetResourceGroup
+s8 BattleFx_GetResourceGroup(s32 effect_index);
+#endif
+#ifndef OWN_BattleLayout_HighlightPartyPanels
+s32 BattleLayout_HighlightPartyPanels(u16 *ids);
+#endif
+#ifndef OWN_BattleMotion_ApproachTarget
+void BattleMotion_ApproachTarget(s32 actor_id, s32 target_id, s32 travel_divisor, s32 initial_velocity_y);
+#endif
+#ifndef OWN_BattleMotion_InterpolatePosition
+void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot, struct BattleObjectSlot *end_slot, s32 progress);
+#endif
+#ifndef OWN_BattlePres_BuildOpponentEntries
+s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries);
+#endif
+#ifndef OWN_BattlePres_BuildUnitEntries
+s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries);
+#endif
+#ifndef OWN_CountRemainingErasedFlashBytes
+s32 CountRemainingErasedFlashBytes(u8 *ptr);
+#endif
+#ifndef OWN_Object_Destroy
+void Object_Destroy(struct DispatchObject *work);
+#endif
+#ifndef OWN_Object_SetPartAttribute
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
+#endif
+#ifndef OWN_Object_SetPositionAndResetMotionFar
+void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+#endif
+#ifndef OWN_ObjectDispatch_ApplyValueToChildrenFar
+void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
+#endif
+#ifndef OWN_Owner_RecalculateStatsFar
+void Owner_RecalculateStatsFar(s32);
+#endif
+#ifndef OWN_Resource_DecodeByteLzInRam
+s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
+#endif
+#ifndef OWN_StartFlashTimer
+void StartFlashTimer(u8 index);
+#endif
+#ifndef OWN_UiIcon_BuildAbilityIconTiles
+void UiIcon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
+#endif
+#ifndef OWN_UiText_DrawStringInWindowFar
+void UiText_DrawStringInWindowFar(u8 *text, s32 arg1, u32 x, u32 y);
+#endif
+
 #endif

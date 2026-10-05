@@ -14,7 +14,6 @@
 
 void UiWindow_DrawThreeTileColumn(
     struct UiWindow *window, s32 x, s32 y, s32 range, s32 layer);
-struct BattleAction *Ability_GetData(s32 action);
 
 s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 {

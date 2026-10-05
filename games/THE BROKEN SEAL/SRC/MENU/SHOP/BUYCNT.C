@@ -6,11 +6,11 @@
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
+#define UiIcon_Draw ((struct RenderOutput * (*)(u16,s32,s32,s32,s32))UiIcon_Draw)
+
 void UiWork_PushValueSlotFar(s32 kosuu, s32 style);
-struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
 extern struct ShopRuntime *gMenuWork;
-extern s32 Item_AdjustCounterFar(s32, s32);
 
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {

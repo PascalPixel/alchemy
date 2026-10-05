@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "STRUCT.H"
 #include "RESOURCE.H"
 #include "GROUP_DEPARTURE.H"
@@ -9,6 +10,8 @@
 #include "B5_CONTEXT.H"
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
+
+#define Object_InitializeMode ((s32 (*)(struct FieldSprite*,s32))Object_InitializeMode)
 
 struct Pulse {
     u8 unknown_00[0x64];
@@ -43,7 +46,6 @@ struct PairWork {
 extern struct PairWork *gEffectWork;
 
 extern struct WorldMapVramBlock gVramBlockCache[];
-s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
 void OverlayObject_UpdateArcFromParent(union FieldObject *object);
 void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
 

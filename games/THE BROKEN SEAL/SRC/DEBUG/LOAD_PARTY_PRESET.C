@@ -2,6 +2,8 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
+#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
+
 struct DebugPartyEntry {
     s8 owner;
     u8 level;
@@ -19,7 +21,6 @@ void OwnerAction_AddFar(s32 owner, s32 action);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 djinn);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
-void Inventory_EquipFar(s32 owner, s32 slot);
 
 s32 DebugParty_LoadPreset(s32 preset)
 {

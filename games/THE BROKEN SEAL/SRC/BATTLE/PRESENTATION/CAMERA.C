@@ -10,14 +10,15 @@
 #include "MAP_SCROLL.H"
 #include "TRANSFORM.H"
 
+#define Camera_StoreSceneParameters ((void (*)(s32,u32,s32))Camera_StoreSceneParameters)
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
     /* FAKEMATCH: a direct call finishes the value shift before the divisor load; the reference loads the divisor first. */
     return Iwram_RatioMulQ14(divisor, value);
 }
 
-void Camera_StoreSceneParameters(s32, u32, s32);
-void SceneTransform_ApplyPosition(s32 *);
 s32 Render_ProjectPoint();
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)

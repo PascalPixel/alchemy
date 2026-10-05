@@ -1,7 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 
-s32 BattleActor_SpawnObjectsForList(void *, s32);
+#define BattleActor_SpawnObjectsForList ((s32 (*)(void*,s32))BattleActor_SpawnObjectsForList)
+
 
 void BattleActor_CommitPlacement(void)
 {

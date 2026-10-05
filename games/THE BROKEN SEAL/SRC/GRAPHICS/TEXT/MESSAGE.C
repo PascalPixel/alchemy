@@ -22,7 +22,6 @@ LAYOUT_OFFSET_GUARD(BattleMessageSlotRange_HeapEndpoint, union HeapState,
 typedef char BattleMessageSlotRange_InBank[
     HEAP_SLOT_BATTLE_DISPLAY < sizeof(((union HeapState *)0)->slots) / sizeof(void *) ? 1 : -1];
 
-void UiWindow_MapTextCanvasTiles(s32, s32, s32, s32, s32);
 
 void UiText_PrepareMessageWork(s32 argument)
 {
@@ -73,6 +72,8 @@ have_work:
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "GLOBAL_CELLS.H"
+
+#define UiWindow_MapTextCanvasTiles ((void (*)(s32,s32,s32,s32,s32))UiWindow_MapTextCanvasTiles)
 
 s32 UiWork_IsComplete(void);
 void UiText_ShowMessageAndWaitCore(s32 argument)

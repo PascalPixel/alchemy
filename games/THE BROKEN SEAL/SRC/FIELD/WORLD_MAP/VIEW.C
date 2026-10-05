@@ -13,6 +13,9 @@
 #include "FIXED_MATH.H"
 #include "TRANSFORM.H"
 
+#define Camera_StoreSceneParameters ((void (*)(s32,s32,s32))Camera_StoreSceneParameters)
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
 {
     u32 palette = *(u16 *)map;
@@ -24,8 +27,6 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination)
 }
 
 u32 Random16(void);
-void Camera_StoreSceneParameters(s32 distance, s32 half, s32 twice);
-void SceneTransform_ApplyPosition(s32 *position);
 
 void Map_RenderPaletteMappedRow(u32 value)
 {

@@ -10,6 +10,8 @@
 #include "SERIAL_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define LinkLobby_PollPeerReady ((void (*)(void))LinkLobby_PollPeerReady)
+
 s32 SaveState_ProcessSelectedSlot(void);
 
 extern volatile u32 gKeyState;
@@ -40,7 +42,6 @@ void GameFlag_SetByte(s32 counter, s32 value);
 void UiText_DrawQuantity(s32 value, s32 digits);
 void Owner_RefreshActiveRatios(s32 value);
 void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
-void LinkLobby_PollPeerReady(void);
 
 s32 LinkLobby_RunChoicePrompt(s32 id)
 {

@@ -1,7 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Object_SetPartAttribute(void *object, s32 value);
+#define Object_SetPartAttribute ((void (*)(void*,s32))Object_SetPartAttribute)
+
 
 extern u32 gFrameCount;
 

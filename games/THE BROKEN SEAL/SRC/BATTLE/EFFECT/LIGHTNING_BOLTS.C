@@ -14,12 +14,13 @@
 #include "IWRAM_CALL.H"
 #include "BATTLE_PRESENTATION.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-void Camera_ApplyShake(s32 x, s32 y);
 
 
 void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)

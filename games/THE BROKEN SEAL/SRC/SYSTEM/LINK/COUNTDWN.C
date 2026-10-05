@@ -14,6 +14,8 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define UiText_RenderWideStringAtOffset ((void (*)(s16*,s32,s32,s32))UiText_RenderWideStringAtOffset)
+
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 
@@ -49,7 +51,6 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 a
 void Audio_PlayCue(s32 soundId);
 
 unsigned char Ui_FillVramBlockPattern(void);
-void UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
 void UpdateLinkSessionCountdown(void)

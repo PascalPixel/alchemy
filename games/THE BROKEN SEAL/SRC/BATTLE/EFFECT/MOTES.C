@@ -15,9 +15,10 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+
 extern void *gWorkSlot[];
 
-void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);

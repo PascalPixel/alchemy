@@ -26,7 +26,6 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-void Map_LoadAreaGraphicsFar(void);
 
 extern u32 gKeysHeld;
 void BattleFx_ScheduleRatioTransition(s32, s32);

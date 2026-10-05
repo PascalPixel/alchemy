@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "EDITION.H"
 #include "FIXED_MATH.H"
 #include "INVENTORY_MENU.H"
@@ -9,7 +10,8 @@
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
 
-s32 InventoryMenu_ShowModalMessage(s32, s32, s32);
+#define InventoryMenu_ShowModalMessage ((s32 (*)(s32,s32,s32))InventoryMenu_ShowModalMessage)
+
 s32 Audio_PlayCue(s32);
 
 void ItemMenu_TryBreak(void)

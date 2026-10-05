@@ -8,6 +8,11 @@
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 
+#define Camera_WorldToScreen ((void (*)(struct Output*))Camera_WorldToScreen)
+#define EffectSlot_Initialize ((void (*)(void*,s32,s32,s32))EffectSlot_Initialize)
+#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(void*,s32))ObjectGroup_SetChildValueUnlessFifteenFar)
+#define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
+
 void BattleFx_UpdateSpinAngle(struct FieldActor *object)
 {
     u32 step;
@@ -40,7 +45,6 @@ struct Output {
 extern struct BattleFxScene *gEffectWork;
 extern u32 gFrameCount;
 
-void Camera_WorldToScreen(struct Output *);
 void Vector_AddPolarOffset(s32, s32, struct Output *);
 void Audio_PlayCue(s32);
 
@@ -99,9 +103,6 @@ void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
 void Animation_ApplyChildValuesFar(void *, s32);
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
-void EffectSlot_Initialize(void *, s32, s32, s32);
-void ObjectGroup_SetChildValueUnlessFifteenFar(void *, s32);
-void ObjectGroup_ApplyRandomChildValues(void);
 
 void BattleFx_RunEffect15(void)
 {

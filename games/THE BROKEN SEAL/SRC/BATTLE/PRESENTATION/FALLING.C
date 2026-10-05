@@ -21,6 +21,8 @@
 #include "BATTLE_PRESENTATION.H"
 #include "RAM_BUFFER.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
 
@@ -83,7 +85,6 @@ void BattleFx_ArmWin0HBlankDma(void)
 
 
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 
 void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 {

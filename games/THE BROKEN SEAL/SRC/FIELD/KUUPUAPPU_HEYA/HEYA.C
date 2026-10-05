@@ -12,6 +12,8 @@
 #include "BATTLE_PARTY.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement*))FieldScene_PrepareActors)
+
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode);
 
@@ -44,7 +46,6 @@ void Object_SetMoveTarget(s32, s32, s32, s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 
 enum PromptMessage {
     MSG_ROBIN_CHECKED_CHEST = 0x929,

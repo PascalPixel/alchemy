@@ -16,6 +16,12 @@
 #include "WORKSPACE_OPTIONS.H"
 #include "BATTLE_RUNTIME.H"
 
+#define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
+#define Shop_SetCursorFar ((void (*)(union MenuCursor*,s32,s32,s32))Shop_SetCursorFar)
+#define ShopCursor_AdvanceFar ((void (*)(union MenuCursor*))ShopCursor_AdvanceFar)
+#define ShopCursor_MoveTowardTargetFar ((void (*)(union MenuCursor*))ShopCursor_MoveTowardTargetFar)
+#define UiWork_FinalizeEntityMatchingLocalizedId ((void (*)(s32))UiWork_FinalizeEntityMatchingLocalizedId)
+
 extern u8 Resource_FixedBlockBTiles[];
 
 
@@ -230,12 +236,7 @@ extern u32 gKeyState;
 s32 Localization_LookupEntryId(s32 entry);
 s32 UiWindow_CreateWithSideObject(s32 entry, s32 side, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x0, s32 y0, s32 x1, s32 y1);
-void ShopCursor_SetPositionImmediateFar(union MenuCursor *cursor, s32 x, s32 y);
 void RenderOutput_PrepareForRedraw(struct RenderInput *window);
-void Shop_SetCursorFar(union MenuCursor *cursor, s32 x, s32 y, s32 speed);
-void ShopCursor_AdvanceFar(union MenuCursor *cursor);
-void ShopCursor_MoveTowardTargetFar(union MenuCursor *cursor);
-void UiWork_FinalizeEntityMatchingLocalizedId(s32 entry);
 
 s32 NameEntry_EditOwnerName(s32 entry)
 {

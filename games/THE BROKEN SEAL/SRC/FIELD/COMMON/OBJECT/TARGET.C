@@ -14,6 +14,8 @@
 #include "B5_CONTEXT.H"
 #include "FIELD_EVENT.H"
 
+#define Object_Destroy ((void (*)(void*))Object_Destroy)
+
 struct LinkedEffectObject {
     u8 unknown_00[8];
     s32 x;
@@ -31,7 +33,6 @@ struct LinkedEffectObject {
 };
 
 void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Object_Destroy(void *object);
 
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 s32 ArcTan2(s32, s32);

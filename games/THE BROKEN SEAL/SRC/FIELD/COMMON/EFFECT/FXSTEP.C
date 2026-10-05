@@ -23,18 +23,19 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
+#define GetMotionRecordFar ((void * (*)(void*,s32))GetMotionRecordFar)
+#define BattleFx_RunCastingImpact ((void * (*)(s32*))BattleFx_RunCastingImpact)
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
 s32 Render_ProjectPoint(s32 *, s32 *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
 
-void *GetMotionRecordFar(void *object, s32 mode);
-s32 Battle_GetObjectTableValueFar(s32 unit);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
 extern u8 gKeysHeld[];
 
-void *BattleFx_RunCastingImpact(s32 *);
 
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
@@ -136,8 +137,6 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
 
 extern DrawRectangle gWorkSlot[];
 
-void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
-void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
 
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 {

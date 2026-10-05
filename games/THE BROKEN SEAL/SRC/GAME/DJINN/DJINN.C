@@ -12,7 +12,8 @@
 #include "CHARACTER.H"
 #include "BATTLE_PARTY.H"
 
-s32 BattleRandomPercent(void);
+#define BattleRandomPercent ((s32 (*)(void))BattleRandomPercent)
+
 
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);

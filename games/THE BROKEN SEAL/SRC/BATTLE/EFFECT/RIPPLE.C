@@ -19,6 +19,9 @@
 #include "MOTION_OBJECT.H"
 #include "FIELD_EVENT.H"
 
+#define Object_SetMoveTargetFar ((void (*)(struct MotionObject*,s32,s32,s32))Object_SetMoveTargetFar)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 
@@ -187,10 +190,8 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 extern u8 gMapCellBuffer[];
 
 void Object_ResetMotion(struct MotionObject *object);
-void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 
 void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 {

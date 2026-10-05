@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FXBLEND.H"
 #include "MAP_SCROLL.H"
@@ -6,7 +7,9 @@
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
-s32 FieldScene_PrepareActors(s32);
+#define FieldScene_PrepareActors ((s32 (*)(s32))FieldScene_PrepareActors)
+#define ObjectDispatch_RegisterChildMetadata ((void (*)(struct FieldActor*,s32))ObjectDispatch_RegisterChildMetadata)
+
 
 
 void BattleFx_SetBlock30ValuesMaxZero(void);
@@ -301,7 +304,6 @@ void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
 void Graphics_EnableObjLayerAndCallbacks();
 void ObjectDispatch_StopCallbacksAndHideLayers();
-void ObjectDispatch_RegisterChildMetadata(struct FieldActor *actor, s32 palette);
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset);
 void Object_RefreshSelectorById();
 void Ui_SetRenderResultFromObject();

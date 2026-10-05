@@ -9,7 +9,6 @@ void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
 s32 ArcTan2(s32, s32);
 
-void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot, struct BattleObjectSlot *end_slot, s32 progress);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id)
 {

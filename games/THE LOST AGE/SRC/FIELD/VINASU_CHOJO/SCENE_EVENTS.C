@@ -7,6 +7,8 @@
 #include "PARTY_STATE.H"
 #include "TLA_EDITION.H"
 
+#define Object_SetPartAttribute ((void (*)(struct FieldActor*,s32))Object_SetPartAttribute)
+
 enum {
     ENTRANCE_OPENING = 99
 };
@@ -45,7 +47,6 @@ struct AerieEventWork {
     s32 mode;
 };
 
-void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 
 #if !EDITION_INTERNATIONAL
 s32 VinasuChojo_Start(void)

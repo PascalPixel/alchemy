@@ -20,6 +20,11 @@
 #include "FIELD_EVENT.H"
 #include "TRANSFORM.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+#define Object_SetMoveTargetFar ((void (*)(struct MotionObject*,s32,s32,s32))Object_SetMoveTargetFar)
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+#define Battle_GetObjectTableValueFar ((u32 (*)(s32))Battle_GetObjectTableValueFar)
+
 
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
@@ -39,11 +44,9 @@ struct Chip {
 
 #define gChips ((struct Chip *)Ram_MapCellBuffer)
 
-void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void Object_ResetMotion(struct MotionObject *object);
-void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
 
 void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 {
@@ -202,7 +205,6 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 #define gSkulls ((struct EffectStep *)Ram_MapCellBuffer)
 
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void SceneTransform_ApplyPosition(s32 *position);
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
@@ -466,7 +468,6 @@ void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect)
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
-u32 Battle_GetObjectTableValueFar(s32 actor_id);
 
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 {

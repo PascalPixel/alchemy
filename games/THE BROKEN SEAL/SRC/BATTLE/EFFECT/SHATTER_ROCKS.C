@@ -14,8 +14,9 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
-void Camera_ApplyShake(s32 x, s32 y);
+
 void Audio_PlayCue(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])

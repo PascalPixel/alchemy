@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -12,14 +13,11 @@
 extern struct EventRuntime *gEventWork;
 extern volatile u32 gKeyState;
 s32 ObjectTable_ReadActiveValue(s32);
-s32 BattleFx_GetResourceId(u32);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-s32 UiWindow_CreateWithSideObjectFar(s32, s32, s32, s32);
 s32 UiWork_IsIdleFar(s32);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 void UiWork_FinalizePendingCoreFar(void);
 
-s32 BattleFx_GetResourceId(u32 id);
 
 s32 ObjectTable_ReadActiveValue(s32 key);
 

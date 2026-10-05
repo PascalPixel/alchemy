@@ -6,9 +6,10 @@
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
 
+#define Scene_PushBlockAlongRun ((void (*)(s16*))Scene_PushBlockAlongRun)
+
 s32 Math_DivideSigned();
 
-void Scene_PushBlockAlongRun(s16 *records);
 
 u8 *KorimaMagari_GetEntrances(void)
 {

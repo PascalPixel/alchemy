@@ -18,7 +18,6 @@ void Runtime_RemoveIrqHandlerSlot2(void)
     Runtime_SetIrqHandler(2, 0, 0);
 }
 
-s32 GameFlag_IsSet(s32 flag);
 
 s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 {

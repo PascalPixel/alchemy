@@ -7,11 +7,11 @@
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
+
 s32 LuckyDice_Run();
 s32 Audio_PlayCue(s32);
 
-void SceneTransform_ApplyPosition(void *);
-void Camera_StoreSceneParameters(u32, u32, u32);
 
 s32 Runtime_BlankDisplayAndRun(void)
 {

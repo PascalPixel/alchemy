@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
@@ -13,8 +14,9 @@
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_PARTY.H"
 
+#define BattleFx_ApplyColorToTargetBuffer ((void (*)(void*,s32))BattleFx_ApplyColorToTargetBuffer)
+
 void Audio_PlayCue(s32);
-void BattleFx_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 
 extern void *Data_03001ec8[];
 

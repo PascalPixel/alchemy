@@ -13,6 +13,14 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_FillTilemapRect ((void (*)(void*,s32,s32,s32,s32))UiWindow_FillTilemapRect)
+#define UiText_DrawFourNumbersInRow ((void (*)(void*,void*))UiText_DrawFourNumbersInRow)
+#define StatusMenu_DrawCharacterSummary ((void (*)(void*,void*))StatusMenu_DrawCharacterSummary)
+#define ObjectPlacement_CreateGroup ((void (*)(void*,s32,s32,void*))ObjectPlacement_CreateGroup)
+#define Menu_SpawnFourObjectsAtOrigin ((void (*)(void*,s32,s32))Menu_SpawnFourObjectsAtOrigin)
+#define RenderResource_CreatePair ((struct RenderOutput * (*)(s32,struct UiWindow*,s32,s32))RenderResource_CreatePair)
+#define Ui_ApplyTableOffsetToPair ((void (*)(void*))Ui_ApplyTableOffsetToPair)
+
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
@@ -26,19 +34,11 @@ extern s16 gPostLoadCounter;
 extern volatile s32 gKeyState;
 extern volatile s32 gKeysRepeat;
 
-u32 Runtime_GetBuildStampTimeFar(void);
 void AudioCommand_PlayFar(s32 cue);
 void PaletteGlow_Update(s32 icon, s32 icon_sub);
-void UiWindow_FillTilemapRect(void *win, s32 x, s32 y, s32 width, s32 height);
 void UiWindow_DrawDividerLine(void *win, s32 a, s32 b, s32 c, s32 d);
 void UiText_DrawResource(s32 message, void *win, s32 x, s32 y);
 void UiText_DrawString(void *text, void *win, s32 x, s32 y);
-void UiText_DrawFourNumbersInRow(void *win, void *entry);
-void StatusMenu_DrawCharacterSummary(void *win, void *entry);
-void ObjectPlacement_CreateGroup(void *win, s32 x, s32 y, void *entry);
-void Menu_SpawnFourObjectsAtOrigin(void *win, s32 x, s32 y);
-struct RenderOutput *RenderResource_CreatePair(s32 mode, struct UiWindow *win, s32 x, s32 y);
-void Ui_ApplyTableOffsetToPair(void *pair);
 void RenderOutput_RedrawSavedRect(void *win);
 
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)

@@ -1,8 +1,10 @@
+#include "PROTO.H"
 #include "OBJECT_LOOKUP.H"
 #include "OBJECT_DISPATCH.H"
 
+#define Object_SetPartAttribute ((void (*)(struct DispatchObject*,s32))Object_SetPartAttribute)
+
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *);
-void Object_SetPartAttribute(struct DispatchObject *, s32);
 
 void ObjectGroup_ConfigureChildValue(s32 object_id, s32 value)
 {

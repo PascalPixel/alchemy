@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "IO_REG.H"
 #include "RESOURCE.H"
 #include "EDITION.H"
@@ -7,14 +8,15 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define ShopCursor_AdvanceFar ((void (*)(union MenuCursor*))ShopCursor_AdvanceFar)
+#define Shop_SetCursorFar ((void (*)(union MenuCursor*,s32,s32,s32))Shop_SetCursorFar)
+#define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
+
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
-void ShopCursor_AdvanceFar(union MenuCursor *cursor);
-void Shop_SetCursorFar(union MenuCursor *cursor, s32 x, s32 y, s32 speed);
-void ShopCursor_SetPositionImmediateFar(union MenuCursor *cursor, s32 x, s32 y);
 
 extern u8 Resource_FixedBlockBTiles[];
 

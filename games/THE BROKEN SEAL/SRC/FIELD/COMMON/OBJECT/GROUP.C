@@ -7,9 +7,10 @@
 #include "TYPES.H"
 #include "ANIMSPR.H"
 
+#define GetMotionRecordFar ((void * (*)(void*,s32))GetMotionRecordFar)
+
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
-void *GetMotionRecordFar(void *, s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,

@@ -8,6 +8,8 @@
 #include "FIELD_SCENE.H"
 #include "IO_REG.H"
 
+#define OverlayObject_PrepareObject ((s32 (*)(s32,s32,s32,s32))OverlayObject_PrepareObject)
+
 extern s32 StagedActor_DirectionSteps[];
 
 struct MapCell {
@@ -29,7 +31,6 @@ struct MapState {
 };
 
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-s32 OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 
 
 

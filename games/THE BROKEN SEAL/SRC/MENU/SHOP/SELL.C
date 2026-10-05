@@ -11,16 +11,20 @@
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
 
+#define Inventory_FindEquippedFar ((s32 (*)(s32,u8))Inventory_FindEquippedFar)
+#define Party_AdjustSixDigitCounterBFar ((s32 (*)(s16))Party_AdjustSixDigitCounterBFar)
+#define Inventory_FindEquippedFar ((s32 (*)(s32,u8))Inventory_FindEquippedFar)
+#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
+#define UiIcon_Draw ((struct RenderOutput * (*)(u16,s32,s32,s32,s32))UiIcon_Draw)
+#define UiIcon_PrepareObjectFar ((void (*)(void*))UiIcon_PrepareObjectFar)
+#define Inventory_DiscardFar ((void (*)(s32,s32))Inventory_DiscardFar)
+
 extern struct ShopRuntime *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 s32 Inventory_AddItemFar(s32, s32);
-s32 Inventory_FindEquippedFar(s32, u8);
 s32 Party_AdjustCoinsFar(s32);
-s32 Party_AdjustSixDigitCounterBFar(s16);
 void Audio_PlayCue(s32);
-s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
-void Inventory_EquipFar(s32 unit_id, s32 slot);
 void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);
 void Shop_DrawUnitGrid(s32 value, s32 unit_id);
 void Audio_PlayCue(s32 cue);
@@ -28,11 +32,8 @@ void UiWork_FinalizePendingCoreFar(void);
 s32 UiText_OpenMessageWindowFar(s32 a, s32 b, s32 c, s32 d);
 void UiWork_FinalizeFar(s32, s32);
 void PsynergyMenu_InitializeEntryObjectsFar();
-struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 s32 Shop_SelectQuantity(s32, s32, s32);
-void UiIcon_PrepareObjectFar(void *);
 
-void Inventory_DiscardFar(s32 unit_id, s32 slot);
 
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 {

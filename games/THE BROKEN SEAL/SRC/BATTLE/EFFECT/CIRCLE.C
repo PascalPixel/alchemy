@@ -8,6 +8,8 @@
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 
+#define Object_SetPositionAndResetMotionFar ((void (*)(void*,s32,s32,s32))Object_SetPositionAndResetMotionFar)
+
 extern const s32 BattleFx_CommonParticleScript[];
 
 struct OrbitEffect {
@@ -29,7 +31,6 @@ struct OrbitEffect {
 
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-void Object_SetPositionAndResetMotionFar(void *, s32, s32, s32);
 s32 RunBattleEffect14();
 
 void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object)

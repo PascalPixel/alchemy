@@ -29,6 +29,8 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_ClearInteriorTiles ((void (*)(void*,s32,s32,s32,s32))UiWindow_ClearInteriorTiles)
+
 
 s32 Party_SumDjinnCountsFar(s32);
 void Menu_CenterResourceEntries(s32, s32, s32);
@@ -76,7 +78,6 @@ s32 Menu_SelectTopEntry(s32 sel)
     return ret;
 }
 
-void UiWork_CloseAndRelease(void);
 
 #if EDITION_INTERNATIONAL
 #define ANIMATE_ENTRIES_ROW 7
@@ -151,7 +152,6 @@ s32 Menu_SelectSaveSlotAction(void)
     return ret;
 }
 
-extern void UiWindow_ClearInteriorTiles(void *, s32, s32, s32, s32);
 extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 #if EDITION_INTERNATIONAL

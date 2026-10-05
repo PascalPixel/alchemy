@@ -1,8 +1,11 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EVENT.H"
 #include "PARTY_STATE.H"
+
+#define Object_SetPartAttribute ((void (*)(void*,s32))Object_SetPartAttribute)
 
 enum {
     ENTRANCE_ALTERNATE_PLACEMENTS = 99
@@ -10,7 +13,6 @@ enum {
 
 
 void ObjectDispatch_SetSingleChildFlags(void *object, s32 value);
-void Object_SetPartAttribute(void *object, s32 value);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

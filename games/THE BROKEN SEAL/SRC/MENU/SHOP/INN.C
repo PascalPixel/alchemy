@@ -17,7 +17,8 @@
 #include "FIXED_POINT_POSITION.H"
 #include "text/MSG_IDS.H"
 
-void ObjectGroup_SetChildValueUnlessFifteenFar(void *, u32);
+#define UiWindow_CreateWithSideObjectFar ((s32 (*)(u16,s32,s32,s32))UiWindow_CreateWithSideObjectFar)
+
 
 union PositionWord { s32 w; s16 h[2]; };
 
@@ -45,7 +46,6 @@ enum InnMessageId {
 };
 
 void UiWork_FinalizeFar(s32, s32);
-s32 UiWindow_CreateWithSideObjectFar(u16, s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
 struct ObjectRuntime *Object_GetByIdFar(s32);
 

@@ -12,7 +12,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "FIELD_EVENT.H"
 
-void SceneTransform_ApplyPosition(void *);
+#define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
+
 
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "OWNERVAL.H"
@@ -15,25 +16,25 @@
 #include "IWRAM_CALL.H"
 #include "BATTLE_CALC.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define BattlePres_SetActorModeAndAction ((void (*)(s32))BattlePres_SetActorModeAndAction)
+#define BattlePresentation_ConfigurePaletteFade ((void (*)(s32,s32,s32))BattlePresentation_ConfigurePaletteFade)
+#define BattleFx_PlayUnitElementEffect ((s32 (*)(s32,s32,s32,s32))BattleFx_PlayUnitElementEffect)
+
 struct BattleGroupOrder {
     s32 group[2];
 };
 
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-void Owner_RecalculateStatsFar(s32 unit_id);
 s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 void Object_SetMode(struct MotionObject *object, s32 animation);
-void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 flags);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void Audio_PlayCue(s32 cue);
-void BattlePres_SetActorModeAndAction(s32 unit_id);
 void BattlePresentation_WaitForAdvance(void);
 s32 BattleEventRuntime_SchedulePhase(s32 frames);
-void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 value, s32 arg);
-s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
 
 s32 Battle_ProcessRoundEnd(void)
 {
@@ -233,7 +234,6 @@ s32 Battle_ProcessRoundEnd(void)
     }
 }
 
-u32 Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
 
 s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 {

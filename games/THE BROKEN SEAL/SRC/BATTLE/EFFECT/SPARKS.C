@@ -17,12 +17,13 @@
 #include "BATTLE_PRESENTATION.H"
 #include "MENU_LIST.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
 extern void *gWorkSlot[];
 extern u8 gMapCellBuffer[];
 
-void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)

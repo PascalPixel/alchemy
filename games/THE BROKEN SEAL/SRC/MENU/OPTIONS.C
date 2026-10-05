@@ -12,29 +12,27 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define RenderResource_CreateFrame ((void * (*)(s32,s32,struct RenderInput*,s32,s32))RenderResource_CreateFrame)
+#define ShopCursor_SetPositionImmediateFar ((void (*)(void*,s32,s32))ShopCursor_SetPositionImmediateFar)
+#define Shop_SetCursorFar ((void (*)(void*,s32,s32,s32))Shop_SetCursorFar)
+#define UiWindow_ClearInteriorTiles ((void (*)(struct RenderInput*,s32,s32,s32,s32))UiWindow_ClearInteriorTiles)
+#define Ui_ApplyTableOffsetToPair ((void (*)(void*))Ui_ApplyTableOffsetToPair)
+
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 extern const u8 Resource_FixedBlockBTiles[];
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
-struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
-void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
-void ShopCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
-struct RenderOutput *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
-void UiIcon_PrepareObjectFar(struct RenderOutput *);
-void Shop_SetCursorFar(void *cursor, s32 x, s32 y, s32 mode);
-void UiWindow_ClearInteriorTiles(struct RenderInput *, s32, s32, s32, s32);
 void PaletteGlow_Update(s32, s32);
 void RenderOutput_ClearList(struct RenderInput *);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
-void Ui_ApplyTableOffsetToPair(void *);
 void Audio_PlayCue(s32);
 
 struct RenderInput *Menu_OpenWorkspaceOptions(void)

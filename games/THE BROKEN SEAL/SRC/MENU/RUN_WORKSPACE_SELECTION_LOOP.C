@@ -16,16 +16,16 @@
 #include "BATTLE_RUNTIME.H"
 #include "UIFLOW.H"
 
+#define Shop_SetCursorFar ((void (*)(void*,s32,s32,s32))Shop_SetCursorFar)
+#define Ui_ApplyTableOffsetToPair ((void (*)(void*))Ui_ApplyTableOffsetToPair)
+#define UiIcon_PrepareObjectFar ((void (*)(void*))UiIcon_PrepareObjectFar)
+
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];
-void Shop_SetCursorFar(void *, s32, s32, s32);
-void Ui_ApplyTableOffsetToPair(void *);
 
 extern u8 gDebugMode;
 
-void UiIcon_PrepareObjectFar(void *);
 
-struct RenderOutput *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 
 s32 Menu_RunWorkspaceSelectionLoop(void)
 {

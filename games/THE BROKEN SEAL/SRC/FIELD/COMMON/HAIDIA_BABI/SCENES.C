@@ -61,7 +61,6 @@ struct PairWork {
 
 extern struct PairWork *gEffectWork;
 
-s32 Object_InitializeMode(struct AnimationObject *object, s32 animation);
 
 void BattleEffect_CleanupSceneObjects(void);
 void OverlayObject_UpdateOnFrameParity(union FieldObject *object);

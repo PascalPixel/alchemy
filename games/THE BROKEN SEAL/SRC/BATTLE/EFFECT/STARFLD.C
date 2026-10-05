@@ -39,9 +39,10 @@ typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 heigh
 
 u32 Random16(void);
 
-u32 ColorBuffer_BackupAndScaleThreeQuarters(void *, void *, u32);
 
 #include "HEAP_STATE.H"
+
+#define ColorBuffer_BackupAndScaleThreeQuarters ((u32 (*)(void*,void*,u32))ColorBuffer_BackupAndScaleThreeQuarters)
 
 void Graphics_AdvancePaletteCycle(void)
 {

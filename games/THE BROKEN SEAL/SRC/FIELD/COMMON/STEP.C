@@ -9,6 +9,9 @@
 #include "FIELDRUN.H"
 #include "BATTLE_RUNTIME.H"
 
+#define BattleFx_ApplyLookupResult ((s32 (*)(void*,s32))BattleFx_ApplyLookupResult)
+#define EffectRuntime_LookupByTableEntry ((s32 (*)(s32,s32))EffectRuntime_LookupByTableEntry)
+
 void Vector_AddPolarOffset(s32, u32, struct FieldPosition *);
 extern struct EventRuntime *gEventWork;
 
@@ -40,8 +43,6 @@ enum StepTileEvent {
 #define STEP_CUE_EFFECT 139
 s32 Party_CountActiveOwnersFar(void);
 void UpdateMapRegionAtPosition(s32 x, s32 y, s32 z);
-s32 BattleFx_ApplyLookupResult(void *motion, s32 speed);
-s32 EffectRuntime_LookupByTableEntry(s32 kind, s32 speed);
 void BattleParty_ApplyDrain(s32 steps, s32 unused);
 void Audio_PlayCue(s32 cue);
 

@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -13,6 +14,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define Runtime_GetBuildStampTimeFar ((u32 (*)(s32))Runtime_GetBuildStampTimeFar)
+
 #define gTitleExtraOptionEnabled (*(s16 *)&gTitleExtraOptionEnabled)
 
 u8 *UiText_FormatNumber(u8 *, s32, s32);
@@ -23,7 +26,6 @@ extern u8 gSceneState[];
 extern u32 gLoadedStateWord;
 extern u8 gOptionMirror;
 extern u32 GameFlagBytes[];
-u32 Runtime_GetBuildStampTimeFar(s32);
 u8 Party_SumDjinnCountsFar(s32 element);
 void Party_ListActiveOwnersFar(u16 *owners);
 

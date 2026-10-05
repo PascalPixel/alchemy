@@ -12,6 +12,10 @@
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
 
+#define Event_RequestDestination ((void (*)(s32,s32))Event_RequestDestination)
+#define Party_GetAverageLevel ((s32 (*)(void))Party_GetAverageLevel)
+#define Event_RequestDestination ((void (*)(s32,s32))Event_RequestDestination)
+
 struct Workspace {
     u8 unknown_000[356];
     struct FieldActor actor;
@@ -20,11 +24,8 @@ struct Workspace {
 
 void ObjectTable_Snapshot(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
-void Event_RequestDestination(s32 a, s32 b);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 
-s32 Party_GetAverageLevel(void);
-void Event_RequestDestination(s32 value, s32 mode);
 
 void TorebiIzumi_RiseAndFadeIn(void)
 {

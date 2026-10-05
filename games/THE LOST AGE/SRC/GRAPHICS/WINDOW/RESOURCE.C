@@ -4,9 +4,10 @@
 #include "RENDER_INPUT.H"
 #include "RUNTIME_MEM.H"
 
+#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
+
 extern char ResourceId_CommandIcons;
 
-void Resource_DecodeByteLzInRam(void *source, void *destination);
 
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
 {

@@ -7,9 +7,10 @@
 #include "SYSTEM.H"
 #include "UI.H"
 
+#define UiText_GetResourceDimensionsFar ((void (*)(s32,s32*,s32*,s32*,s32*))UiText_GetResourceDimensionsFar)
+
 extern volatile u32 gKeyState;
 
-void UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 void GameFlag_SetBitFar(s32 flag);

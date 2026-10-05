@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "STRUCT.H"
 #include "GLOBAL.H"
 #include "ENTRY_SETUP.H"
@@ -6,9 +7,10 @@
 #include "CALL.H"
 #include "FIELD_SERVICE.H"
 
+#define SceneEffect_SpawnEffect284AtCell ((struct SwitchEffect * (*)(s32,s32,const void*))SceneEffect_SpawnEffect284AtCell)
+
 struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
 void OverlayObject_WaitUntilIdle(struct FieldActor *object);
-struct SwitchEffect *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, const void *script);
 
 void FieldScene_RunGuardedRectStep(void)
 {

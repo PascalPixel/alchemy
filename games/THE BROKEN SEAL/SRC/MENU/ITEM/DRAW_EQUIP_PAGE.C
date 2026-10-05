@@ -11,6 +11,8 @@
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
 
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+
 #if EDITION_INTERNATIONAL
 #define EQUIP_SLOT_X     1
 #define EQUIP_SLOT_WIDTH 12
@@ -20,7 +22,6 @@
 #endif
 
 
-void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 

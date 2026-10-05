@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
 #include "TYPES.H"
@@ -12,7 +13,6 @@ extern u8 RenderResource_PairSourceTable;
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *, s32);
 extern GlyphTransfer *gGlyphWork;
 extern u8 *UiIcon_ItemIconPointers[];
-void UiIcon_BuildAbilityIconTiles(u32, s32, s32 *, s32 *, s32);
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {

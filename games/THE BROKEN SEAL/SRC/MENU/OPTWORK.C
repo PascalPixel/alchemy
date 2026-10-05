@@ -9,9 +9,10 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-void ShopCursor_AdvanceFar(void *);
-void ShopCursor_MoveTowardTargetFar(void *);
-void Ui_ApplyTableScaleToObject(void *);
+#define ShopCursor_AdvanceFar ((void (*)(void*))ShopCursor_AdvanceFar)
+#define ShopCursor_MoveTowardTargetFar ((void (*)(void*))ShopCursor_MoveTowardTargetFar)
+#define Ui_ApplyTableScaleToObject ((void (*)(void*))Ui_ApplyTableScaleToObject)
+
 
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)

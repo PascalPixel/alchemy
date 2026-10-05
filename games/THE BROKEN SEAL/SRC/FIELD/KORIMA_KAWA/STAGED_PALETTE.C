@@ -28,7 +28,6 @@ void Object_SetMode(struct StagedActorEffect *actor, s32 mode);
 void KorimaPalette_SaveFirst(void);
 void KorimaPalette_Capture(void);
 void KorimaPalette_SaveSecond(void);
-void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 
 
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,

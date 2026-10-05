@@ -8,10 +8,11 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+#define LinkLobby_PollPeerReady ((void (*)(void))LinkLobby_PollPeerReady)
+
 void GameFlag_SetByte(s32 flag, s32 value);
 
 extern u8 gMapCellBuffer[];
-void LinkLobby_PollPeerReady(void);
 s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 void UiWork_Finalize(s32 window, s32 flags);
 void Map_ClearLayerEntryFlag(s32 layer);

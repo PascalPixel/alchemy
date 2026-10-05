@@ -1,4 +1,5 @@
 
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -7,13 +8,14 @@
 #include "RESOURCE_390_TABLE.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
+
 struct Approach390Subject {
     u16 unknown_00[3];
     u16 dir;
 };
 
 
-void FieldScene_PrepareActors(u8 *);
 
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
 {

@@ -6,6 +6,8 @@
 #include "GAME_STATE.H"
 #include "SCENE_IDS.H"
 
+#define RamakanSabaku_EmitSandEffect ((s32 (*)(u8*))RamakanSabaku_EmitSandEffect)
+
 void Effect_Spawn();
 
 struct DustParams {
@@ -18,7 +20,6 @@ struct DustParams {
 };
 
 void Object_SetActionById();
-s32 RamakanSabaku_EmitSandEffect(u8 *actor);
 void BattleFx_SetWeightedResult();
 void RamakanSabaku_UpdateTravelDust(void);
 s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);

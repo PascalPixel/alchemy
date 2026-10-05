@@ -8,12 +8,13 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
+#define SceneEffect_SpawnRandomizedParticleEveryFourFrames ((void (*)(union FieldObject*))SceneEffect_SpawnRandomizedParticleEveryFourFrames)
+
 
 void BattleFx_StartFadeOverlay(s32 mode);
 void BattleFx_SetQueuedSoundAndPlay(s32 cue);
 void DisplayBlend_EnableRunScript(void);
 void SceneActor_SetFlagBitByRelativeDepth(union FieldObject *object);
-void SceneEffect_SpawnRandomizedParticleEveryFourFrames(union FieldObject *object);
 void SceneState_MarkActorAndApplyRectAtTile();
 void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 mode);
 void OverlayObject_WaitUntilIdle();

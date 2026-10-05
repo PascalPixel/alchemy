@@ -13,6 +13,8 @@
 #include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
+#define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
+
 void Object_CommitPosition();
 void Engine_MapCopyCellAttributes();
 
@@ -21,7 +23,6 @@ void SceneActor_MovePairByTileOffset(s32 actor, s32 dx, s32 dz);
 
 extern u32 gKeysHeld;
 void Object_CommitPosition(struct FieldActor *object);
-void ObjectDispatch_InitFromTable4WithArgument(s32 handle, struct FieldActor *object);
 
 void Object_RefreshSelectorById(s32 actor);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);

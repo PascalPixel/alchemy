@@ -4,9 +4,10 @@
 #include "OBJDISP.H"
 #include "SYSTEM.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+
 void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
-void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 void Audio_PlayCue(s32);
 
 void Object_ResetMotion(struct ObjectRuntime *);

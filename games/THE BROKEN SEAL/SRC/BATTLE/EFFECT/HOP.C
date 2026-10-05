@@ -5,6 +5,8 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_RUNTIME.H"
 
+#define Object_ReplaceResourceEntry ((void * (*)(struct HopSprite*,void*))Object_ReplaceResourceEntry)
+
 void ObjectMotion_MoveHalfwayTowardTarget(void);
 
 struct HopSprite {
@@ -58,7 +60,6 @@ struct HopActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct HopActor *actor, s32 value);
 void Object_SetMode(struct HopActor *actor, s32 mode);
 void ObjectDispatch_SetSingleChildFlagsFar(struct HopActor *actor, s32 value);
-void *Object_ReplaceResourceEntry(struct HopSprite *sprite, void *resource);
 void BattleFx_FinishAction(void);
 
 extern struct MenuState *gEventWork;
@@ -85,7 +86,6 @@ struct ActorDescriptor {
 
 struct ActorDescriptor *BattleAction_FindDescriptor(s32 action);
 
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *obj, s32 x, s32 y, s32 z);
 
 void EventActor_RunHopAndLeapSequence(s32 arg)
 {

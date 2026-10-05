@@ -11,6 +11,9 @@
 #include "RESOURCE_IDS.H"
 #include "text/MSG_IDS.H"
 
+#define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
+#define FieldScene_BuildSceneDescriptorAndInstallTask ((s32 (*)(s32,s32,s32,s32,s32,s32,s32))FieldScene_BuildSceneDescriptorAndInstallTask)
+
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -76,7 +79,6 @@ s32 SceneState_StoreParamsAndInitTable();
 s32 Korosseo_FadeInCompetitor();
 
 void StagedActor_PushActorAhead(void);
-void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
 s32 FieldScene_RunFlag211ApproachScene();
 void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
@@ -87,7 +89,6 @@ void FieldScene_RunLateSequence(s32 a0);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
-s32 FieldScene_BuildSceneDescriptorAndInstallTask(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 void Korosseo_SelectSoloCompetitor(s32 index);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);

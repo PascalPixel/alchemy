@@ -20,7 +20,6 @@
 
 s32 Party_ListActiveOwnersFar(u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);
-void Link_DrawShiftedTilePairFar(s32 addr);
 void RenderOutput_ClearListFar(s32 screen_handle);
 void ItemMenu_Close(void);
 void Event_ClearInvalidPackedValuesFar(void);
@@ -112,9 +111,7 @@ void WaitFrames(s32 frames);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
 s32 PsynergyMenu_SelectPartySlot(s32 unused);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
-void InventoryMenu_ShowModalMessage(s32 message, s32 arg1, s32 arg2);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
-s32 BattleEffect_ApplyToTargets(s32 action, s32 owner, s32 target, s32 flags);
 void Audio_PlayCue(s32 cue);
 
 s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)

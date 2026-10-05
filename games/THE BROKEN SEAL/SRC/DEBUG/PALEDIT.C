@@ -7,6 +7,8 @@
 #include "RAM_BUFFER.H"
 #include "BATTLE_RUNTIME.H"
 
+#define BattleFx_FindDescriptor ((s32 (*)(s32,s32))BattleFx_FindDescriptor)
+
 struct Vec {
     s32 x;
     s32 y;
@@ -24,7 +26,6 @@ struct Object {
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 struct Object *ObjectTable_Get(s32);
-s32 BattleFx_FindDescriptor(s32, s32);
 
 struct EntranceView {
     s16 entrance;

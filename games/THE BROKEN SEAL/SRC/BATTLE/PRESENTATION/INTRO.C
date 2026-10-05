@@ -14,9 +14,10 @@
 #include "BATTLE_WORK.H"
 #include "IO_REG.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
+
 extern volatile u16 gLinkStatus;
 
-void SceneTransform_ApplyPosition(void *);
 
 void UiWork_PushValueSlotFar(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32);

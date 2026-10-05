@@ -4,6 +4,8 @@
 #include "RAM_BUFFER.H"
 #include "PARTY_STATE.H"
 
+#define BattleFx_GetResourceGroup ((s32 (*)(s32))BattleFx_GetResourceGroup)
+
 extern s32 Encounter_SelectEnemyGroup();
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
@@ -92,7 +94,6 @@ struct SceneAreaNameRule {
 };
 
 
-s32 BattleFx_GetResourceGroup(s32 effect_id);
 
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {

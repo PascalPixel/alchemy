@@ -30,7 +30,6 @@ struct PlacementState {
 };
 
 extern struct PlacementState *Data_03001f2c_a;
-s32 Object_InitializeMode(struct AnimationObject *, s32);
 
 s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 

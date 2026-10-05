@@ -32,7 +32,6 @@ void BattleFx_LoadActionEffectResources(s32, s32);
 void BattleFx_SetupObjectPair(s32, s32);
 void EventObject_Initialize(void);
 
-s32 BattleFx_RunEventAction(void *, s32, s32);
 void BattleFx_DispatchRequestKind(void);
 void BattleFx_Run(void);
 void EffectRuntime_StopCurrentObject(void);

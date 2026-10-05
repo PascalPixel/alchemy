@@ -9,6 +9,8 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+#define Object_Destroy ((void (*)(void))Object_Destroy)
+
 #define NULL ((void *)0)
 
 enum {
@@ -216,7 +218,6 @@ void BattleFx_PlayQueuedSound();
 void FieldScene_RunScene3a8SequenceA();
 s32 Object_CreateFar();
 u8 *Battle_GetWorkObject1e0();
-void Object_Destroy(void);
 
 
 

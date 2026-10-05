@@ -15,10 +15,11 @@
 #include "B5_CONTEXT.H"
 #include "IO_REG.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 
 extern u8 gMapCellBuffer[];
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
-void Camera_ApplyShake(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);

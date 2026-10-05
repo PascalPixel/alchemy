@@ -23,15 +23,16 @@
 #include "BATTLE_WORK.H"
 #include "ANIMSPR.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(void*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define BattleFx_DispatchByIdRangeFar ((void (*)(struct BattlePresentationWork*))BattleFx_DispatchByIdRangeFar)
+#define BattleFx_RunIceFleckBurstFar ((void (*)(struct BattlePresentationWork*))BattleFx_RunIceFleckBurstFar)
+#define BattleFx_DispatchModeFar ((void (*)(struct BattlePresentationWork*))BattleFx_DispatchModeFar)
+
 
 void UiText_ShowMessageAndWaitCoreFar(s32);
 
 void UiWork_PushValueSlotFar(s32, s32);
 
-void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
-void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *);
-void BattleFx_RunIceFleckBurstFar(struct BattlePresentationWork *);
-void BattleFx_DispatchModeFar(struct BattlePresentationWork *);
 
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries)

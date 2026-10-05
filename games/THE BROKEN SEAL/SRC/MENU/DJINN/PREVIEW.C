@@ -10,6 +10,9 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define Djinn_DeactivateFar ((void (*)(s32,s32,s32))Djinn_DeactivateFar)
+#define Ability_GetData ((struct AbilityData * (*)(s32))Ability_GetData)
+
 struct AbilityData {
     u8 field_00[2];
     u8 kind;
@@ -41,11 +44,8 @@ s32 UiWindow_DrawThreeTileColumn(
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost);
 void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
-void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
 
 s32 __divsi3(s32 numerator, s32 denominator);
-struct AbilityData *Ability_GetData(s32 code);
-void Owner_RecalculateStatsFar(s32 owner);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
 void UiText_DrawNumberInWindow(

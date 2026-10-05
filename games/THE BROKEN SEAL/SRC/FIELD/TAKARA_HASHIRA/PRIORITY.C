@@ -6,6 +6,9 @@
 #include "DMA.H"
 #include "text/MSG_IDS.H"
 
+#define TakaraHashira_ReadMapCell ((void (*)(s32,s32,s32,struct MapCell*))TakaraHashira_ReadMapCell)
+#define OverlayObject_WaitUntilSettledAndReset ((void (*)(struct FieldActor*))OverlayObject_WaitUntilSettledAndReset)
+
 
 extern u16 gBgScroll[];
 
@@ -292,8 +295,6 @@ struct PillarActor {
 
 
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
-void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, struct MapCell *dst);
-void OverlayObject_WaitUntilSettledAndReset(struct FieldActor *actor);
 
 void TakaraHashira_UpdatePillarActors(void)
 {

@@ -13,6 +13,12 @@
 #include "DJINN_MENU.H"
 #include "text/MSG_IDS.H"
 
+#define UiIcon_DrawVariantWithTileOffset ((void (*)(s32,s32,s32,s32))UiIcon_DrawVariantWithTileOffset)
+#define UiIcon_CreateWithLoadedResource ((void (*)(s32,s32,s32,s32))UiIcon_CreateWithLoadedResource)
+#define SideObject_CreateFar ((void (*)(s32,s32,s32,s32,s32,s32))SideObject_CreateFar)
+#define Djinn_DeactivateFar ((void (*)(s32,s32,s32))Djinn_DeactivateFar)
+#define OwnerAction_DiffSlots ((s8 (*)(void*,void*,u16*,s32*,s32*))OwnerAction_DiffSlots)
+
 extern struct DjinnMenuWork *gMenuWork;
 
 #define DJINN_ENTRY_SET (-0x8000)
@@ -22,20 +28,12 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
 
 extern struct UiWork *gWindowWork;
 
-void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 palette);
-void UiIcon_DrawVariantWithTileOffset(s32 window, s32 x, s32 y, s32 variant);
-void UiIcon_CreateWithLoadedResource(s32 window, s32 x, s32 y, s32 icon);
 void UiWork_SetParamNibbleFar(s32 value);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x0, s32 y0, s32 x1, s32 y1);
-void SideObject_CreateFar(s32 owner, s32 a, s32 side, s32 window, s32 b, s32 c);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
-void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
-void Owner_RecalculateStatsFar(s32 owner);
-struct BattleAction *Ability_GetData(s32 action);
-s8 OwnerAction_DiffSlots(void *before, void *after, u16 *out, s32 *gained, s32 *lost);
 
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
 {

@@ -15,6 +15,9 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 extern u8 gMapCellBuffer[];
 
 struct DualColumn {
@@ -34,7 +37,6 @@ struct DualPuff {
 };
 
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Camera_ApplyShake(s32 a, s32 b);
 void WaitFrames(s32 frames);
 
 typedef struct Column {
@@ -46,7 +48,6 @@ extern void *gWorkSlot[];
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void Audio_PlayCue(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void Camera_ApplyShake(s32, s32);
 #define WORK_EFFECT ((struct BattleEffectArgument *)work->effect)
 
 void WaitFrames(s32);

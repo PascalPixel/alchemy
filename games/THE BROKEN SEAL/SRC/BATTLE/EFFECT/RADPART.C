@@ -12,6 +12,11 @@
 #include "EFFECT_SLOT.H"
 #include "SYSTEM.H"
 
+#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))ObjectGroup_SetChildValueUnlessFifteenFar)
+#define BattleFx_AdvanceSpinAngle ((void (*)(void))BattleFx_AdvanceSpinAngle)
+#define EffectSlot_Initialize ((void (*)(void*,s32,s32,s32))EffectSlot_Initialize)
+#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))ObjectGroup_SetChildValueUnlessFifteenFar)
+
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 extern u32 gFrameTick;
 void ObjectDispatch_ReleaseFar();
@@ -27,12 +32,10 @@ struct ObjectRuntime *Object_GetById(u32 actor);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
-void Camera_WorldToScreen(struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
 
 extern struct BattleFxScene *gEffectWork;
 void Motion_SetVarCbAndRefresh(s32, s32);
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32, s32);
 
 struct PhasedRadialSequenceObject {
     u8 unknown_00[8];
@@ -72,7 +75,6 @@ struct SpreadPosition {
 
 void Audio_PlayCue(s32);
 
-void BattleFx_AdvanceSpinAngle(void);
 extern const s32 BattleFx_CommonParticleScript[];
 
 struct CaptureObject {
@@ -104,8 +106,6 @@ void WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
-void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s32 magnitude, s32 angle);

@@ -20,12 +20,13 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void Audio_PlayCue(s32 cue);
-void Camera_ApplyShake(s32 x, s32 y);
 
 
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)

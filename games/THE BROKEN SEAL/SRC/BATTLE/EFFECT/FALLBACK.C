@@ -4,6 +4,9 @@
 #include "FX_SCENE.H"
 #include "EFFECT_SLOT.H"
 
+#define Camera_WorldToScreen ((void (*)(s32*))Camera_WorldToScreen)
+#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(struct MotionObject*,s32))ObjectGroup_SetChildValueUnlessFifteenFar)
+
 struct FallbackPosition {
     s32 x;
     s32 y;
@@ -16,11 +19,8 @@ struct MotionObject *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
-void Camera_WorldToScreen(s32 *);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, u32, s32 *);
-void EffectSlot_Initialize(struct EffectSlot *, s32, s32, s32);
-void ObjectGroup_SetChildValueUnlessFifteenFar(struct MotionObject *, s32);
 void ObjectDispatch_ReleaseFar(struct MotionObject *);
 
 void BattleEffect_RunFallbackObjectTransition(void)

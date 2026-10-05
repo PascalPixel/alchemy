@@ -284,7 +284,6 @@ void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx)
     BattleFx_RunTwoResource(efx, 1);
 }
 
-void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 
 
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)

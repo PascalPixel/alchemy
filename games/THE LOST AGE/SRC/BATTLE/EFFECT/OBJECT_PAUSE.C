@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "FIXED_MATH.H"
 #include "OBJECT_LOOKUP.H"
@@ -7,8 +8,9 @@
 #include "PARTY_STATE.H"
 #include "ANIMSPR.H"
 
+#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(void*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 
-void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
+
 
 void BattleEffect_SetRandomTableValueOnObject(struct DispatchObject *object)
 {

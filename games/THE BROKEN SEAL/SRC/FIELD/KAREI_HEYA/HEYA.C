@@ -6,6 +6,8 @@
 #include "RESOURCE_3A9.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement*))FieldScene_PrepareActors)
+
 
 typedef struct Placement {
     u32 destination;
@@ -14,7 +16,6 @@ typedef struct Placement {
 } Placement;
 
 
-void FieldScene_PrepareActors(const struct ScenePlacement *placements);
 
 extern Placement KareiHeya_ArrivalPlacements[];
 

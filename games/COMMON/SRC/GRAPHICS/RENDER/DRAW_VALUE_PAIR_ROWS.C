@@ -3,12 +3,13 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
+
+#define UiText_DrawStringInWindowFar ((void (*)(s32,s32,s32,s32))UiText_DrawStringInWindowFar)
 #if EDITION_INTERNATIONAL
 #else
 #endif
 
 void UiText_DrawStringAtOffsetFar(s32 image, s32 layer, s32 x, s32 y);
-void UiText_DrawStringInWindowFar(s32 image, s32 layer, s32 x, s32 y);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 s32 UiWork_SetParamNibbleFar(s32 color);

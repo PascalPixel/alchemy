@@ -1,9 +1,9 @@
+#include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 owner);
-void Owner_RecalculateStatsFar(s32 unit_id);
 s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 

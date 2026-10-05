@@ -14,12 +14,13 @@
 #include "IO_REG.H"
 #include "MENU_LIST.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Camera_ApplyShake(s32 x, s32 y);
 void WaitFrames(s32 frames);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);

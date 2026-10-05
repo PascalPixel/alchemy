@@ -18,7 +18,8 @@
 #include "FIELD_EVENT.H"
 #include "BATTLE_RUNTIME.H"
 
-void Object_Destroy(void *);
+#define Object_Destroy ((void (*)(void*))Object_Destroy)
+
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
@@ -27,7 +28,6 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, u32 value);
 struct ObjectRuntime *Object_CreateFar(s32 character, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitFromTable4WithArgumentFar(struct DispatchObject *object, s32 argument);
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 u32 Random16(void);
 u32 __umodsi3(u32 numerator, u32 denominator);
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action);

@@ -6,6 +6,13 @@
 #include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 
+#define BattleFx_SpawnItemBreakMode1 ((struct FxObject * (*)(s32,s32,s32,s32))BattleFx_SpawnItemBreakMode1)
+#define Object_SetMoveTargetFar ((void (*)(struct FxObject*,s32,s32,s32))Object_SetMoveTargetFar)
+#define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
+#define BattleFx_GetCycledTableWord ((s32 (*)(u32))BattleFx_GetCycledTableWord)
+#define ScriptObject_CheckOverlapFar ((s32 (*)(struct FxObject*,struct FxPosition*))ScriptObject_CheckOverlapFar)
+#define BattleFx_SpawnRadialParticleRing ((void (*)(struct FxObject*))BattleFx_SpawnRadialParticleRing)
+
 struct FxPosition {
     s32 x;
     s32 y;
@@ -44,24 +51,18 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
-struct FxObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 void WaitFrames(s32 frames);
-void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FxObject *object);
-void ObjectGroup_ApplyRandomChildValues(void);
 void AudioCommand_PlayFar(s32 cue);
 void ObjectDispatch_SetSingleChildFlagsFar(struct FxObject *object, s32 value);
-s32 BattleFx_GetCycledTableWord(u32 keys);
 void Object_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position);
-s32 ScriptObject_CheckOverlapFar(struct FxObject *object, struct FxPosition *position);
 s32 Object_CheckMovementCollision(struct FxObject *object, struct FxPosition *position);
 struct FxObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 s32 Random16(void);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct FxObject *object, s32 magnitude, s32 angle);
 void ObjectDispatch_ReleaseFar(struct FxObject *object);
 void Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
-void BattleFx_SpawnRadialParticleRing(struct FxObject *object);
 
 static __inline__ s32 Object_ProbeRaised(struct FxObject *object, struct FxPosition *position)
 {

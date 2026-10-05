@@ -1,7 +1,9 @@
+#include "PROTO.H"
 #include "SHOP.H"
 
+#define Item_IsCompatibleWithOwnerFar ((s32 (*)(s16,s32))Item_IsCompatibleWithOwnerFar)
+
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-s32 Item_IsCompatibleWithOwnerFar(s16, s32);
 
 extern struct ShopRuntime *gMenuWork;
 

@@ -18,10 +18,11 @@
 #include "RESOURCE_IDS.H"
 #include "TRANSFORM.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 
 void Graphics_PackTileRows(void *source, void *destination, s32 width, s32 rows);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-void Camera_ApplyShake(s32 x, s32 y);
 
 
 void BattleFx_RunParticleFieldVariant0(s32 effect)

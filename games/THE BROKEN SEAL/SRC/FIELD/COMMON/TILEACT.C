@@ -6,6 +6,9 @@
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
 
+#define EffectRuntime_GetCurrentObject ((void * (*)(s32))EffectRuntime_GetCurrentObject)
+#define EffectRuntime_PrepareRisingObject ((void (*)(void*))EffectRuntime_PrepareRisingObject)
+
 struct EffectDescriptor;
 extern struct EventRuntime *gEventWork;
 
@@ -15,17 +18,13 @@ void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ReleaseFar(void *object);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void UiText_DrawQuantity(s32 quantity, s32 slot);
-s32 GameFlag_IsSet(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void Party_AdjustCoinsFar(s32 coins);
 s32 BattleFx_GetWeightedResult(s32 weight, s32 group);
 void BattleFx_SelectBattleCue(s32 weight, s32 group);
 void BattleParty_ApplyDrain(s32 amount, s32 mode);
-struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 tile);
-void *EffectRuntime_GetCurrentObject(s32 tile);
 void *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
-void EffectRuntime_PrepareRisingObject(void *object);
 void Battle_WaitMode0(s32 frames);
 void Battle_Reset(void);
 void BattleFx_FinishAction(void);

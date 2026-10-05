@@ -1,3 +1,4 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "KYUDEN.H"
 #include "TYPES.H"
@@ -5,7 +6,8 @@
 #include "FIELD_EVENT.H"
 #include "text/MSG_IDS.H"
 
-void FieldScene_PrepareActors(u8 *placements);
+#define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
+
 
 struct SceneRecord {
     u8 unk_000[166];

@@ -7,10 +7,11 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(void*))FieldScene_PrepareActors)
+
 
 extern u8 Placement_Messages[];
 
-void FieldScene_PrepareActors(void *placements);
 
 
 void FieldScene_RunMiddleSequence(void);

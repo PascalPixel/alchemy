@@ -21,11 +21,13 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define BattleFx_UpdateScaledArcObjectB ((void (*)(void))BattleFx_UpdateScaledArcObjectB)
+#define BattleFx_UpdateScaledArcObjectA ((void (*)(void))BattleFx_UpdateScaledArcObjectA)
+#define ObjectGroup_SetActionForOthers ((void (*)(void*,s32,s32))ObjectGroup_SetActionForOthers)
+
 #define gObjectSlots ((u8 (*))&gObjectSlots)
 
 extern struct BattleFxScene *gEffectWork;
-void BattleFx_UpdateScaledArcObjectB(void);
-void BattleFx_UpdateScaledArcObjectA(void);
 
 struct BattleEffectRuntime {
     u8 reserved_000[0xcc0];
@@ -46,20 +48,16 @@ struct BattleEffectPosition {
 void BattleFx_ClearOwnedSlot(struct EffectSlot *object);
 void BattleFx_PlayQueuedSound(void);
 
-void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
 void BattleFx_FlickerObjectAndTick();
 void BattleFx_CycleObjectValueByCounter();
 #define CALLBACK_1      (u32)BattleFx_FlickerObjectAndTick
 #define CALLBACK_2      (u32)BattleFx_CycleObjectValueByCounter
 
-void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 
-void BattleFx_ApplyColorToTargetBuffer(s32 arg0, s32 arg1);
 
 s32 Render_ProjectPoint(struct EffectVector *position, struct EffectVector *result);
 
 s32 __umodsi3(s32, s32);
-void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 
 void BattleEffect_CleanupSceneObjects(void)
 {

@@ -41,7 +41,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 s32 Party_ListActiveOwnersFar(u16 *);
 s32 Party_SumDjinnCountsFar(s32);
 void FourObjectMotion_InitializeTopRow();
-void Link_DrawShiftedTilePairFar(s32 addr);
 
 s32 ActionMenu_Open(void)
 {

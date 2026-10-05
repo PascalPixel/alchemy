@@ -6,6 +6,8 @@
 #include "KANPAN.H"
 #include "text/MSG_IDS.H"
 
+#define ObjectVisual_CopyAttributes ((void (*)(s32,s32))ObjectVisual_CopyAttributes)
+
 u32 FuneKanpan_SlotMode[8];
 
 union Slot {
@@ -14,7 +16,6 @@ union Slot {
 };
 
 
-void ObjectVisual_CopyAttributes(s32 actor, s32 source);
 
 struct SlotSprite {
     s32 unknown_00[7];

@@ -18,8 +18,9 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
 
-void SceneTransform_ApplyPosition(s32 *position);
+
 void Audio_PlayCue(s32 cue);
 
 

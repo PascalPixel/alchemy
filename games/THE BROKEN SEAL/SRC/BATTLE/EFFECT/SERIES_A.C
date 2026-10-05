@@ -19,10 +19,11 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
+#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 side, s32 narrow, s32 *x, s32 *y);
-void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);

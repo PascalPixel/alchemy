@@ -6,10 +6,11 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+#define FieldScene_PrepareActors ((void (*)(struct ScenePlacement*))FieldScene_PrepareActors)
+
 extern const struct SceneEntrance gShianJiinEntrances1[];
 extern const struct SceneEntrance gShianJiinEntrancesOther[];
 
-void FieldScene_PrepareActors(struct ScenePlacement *placements);
 extern const struct ScenePlacement gShianJiinPlacements1[];
 extern const struct ScenePlacement gShianJiinPlacementsEntrance3[];
 extern struct ScenePlacement gShianJiinPlacements[];

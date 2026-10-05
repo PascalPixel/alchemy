@@ -1,10 +1,12 @@
+#include "PROTO.H"
 #include "GLOBAL.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
-void Resource_DecodeByteLzInRam(void *source, void *destination);
+#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
+
 
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)

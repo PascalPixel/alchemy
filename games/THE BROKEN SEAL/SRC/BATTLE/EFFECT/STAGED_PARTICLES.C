@@ -20,6 +20,8 @@
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
 #define gTransitionWork (*(struct BattleBackgroundView * *)&gTransitionWork)
 
 
@@ -33,7 +35,6 @@ typedef struct Scale {
 
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, const Scale *scale, s32 mode);
 void Audio_PlayCue(s32 cue);
-void Camera_ApplyShake(s32 x, s32 y);
 
 extern const Scale StagedParticles_UnitScale;
 

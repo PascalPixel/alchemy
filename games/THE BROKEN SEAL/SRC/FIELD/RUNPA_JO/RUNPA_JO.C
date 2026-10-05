@@ -1370,7 +1370,7 @@ void RunpaJo_GatherPartyAroundActorTwelve(void)
     Battle_WaitMode0(15);
 }
 
-void FieldScene_RunScene3bf_020025f8(void)
+void RunpaJo_ActivateLeverTrap(void)
 {
     u32 i;
     s32 record;
@@ -1478,7 +1478,7 @@ void PlayStoryScene(void)
         Audio_PlayCue(155);
         Engine_MessageShowCentered(text_line + 1, 1);
         Actor_SetDestinationOffset(13, 8, -8);
-        FieldScene_RunScene3bf_020025f8();
+        RunpaJo_ActivateLeverTrap();
         Battle_WaitMode0(120);
         Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
@@ -1678,7 +1678,7 @@ void PlayStoryScene(void)
         Engine_MessageShowCentered((s32)MsgRunpaDodonpaPulledLever, 1);
         Actor_SetDestinationOffset(13, 8, -8);
         Engine_ActorFaceActor(13, 11, 0);
-        FieldScene_RunScene3bf_020025f8();
+        RunpaJo_ActivateLeverTrap();
         Audio_PlayCue(52);
         Engine_EventSetMessage(text_line + 23);
         Engine_EventShowMessage(13, 0);

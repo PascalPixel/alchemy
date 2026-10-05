@@ -190,7 +190,7 @@ void NoOpInteractionCallback(void);
 
 void RunpaJo_GatherPartyAroundActorTwelve(void);
 
-void FieldScene_RunScene3bf_020025f8(void);
+void RunpaJo_ActivateLeverTrap(void);
 
 void RunpaJo_RevealMonster(void);
 

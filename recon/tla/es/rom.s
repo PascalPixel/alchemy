@@ -2462,10 +2462,10 @@ Event_CallWithLastActiveObjectIdFar:
 	.thumb_func
 Scene_AssignViewFlagsFar:
 	.incbin "baserom.gba", 0x000d1038, 0x00000008
-	.global Event_SetWorkWord10Far
-	.type Event_SetWorkWord10Far, %function
+	.global Event_SetSceneEventsFar
+	.type Event_SetSceneEventsFar, %function
 	.thumb_func
-Event_SetWorkWord10Far:
+Event_SetSceneEventsFar:
 	.incbin "baserom.gba", 0x000d1040, 0x00000008
 	.global Event_PrepareObjectAndApplyValueFar
 	.type Event_PrepareObjectAndApplyValueFar, %function

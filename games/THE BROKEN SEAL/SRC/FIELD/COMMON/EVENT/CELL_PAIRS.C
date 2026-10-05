@@ -4,13 +4,13 @@
 
 extern struct EventRuntime *gEventWork;
 
-void Event_SetPair1d4(u16 first, u16 second)
+void Event_SetDefeatDestination(u16 first, u16 second)
 {
     gGameState.defeat_scene = first;
     gGameState.defeat_entrance = second;
 }
 
-void Event_SetPair1c0AndSetValue170(u16 first, u16 second)
+void Event_RequestDestination(u16 first, u16 second)
 {
     struct EventRuntime *work = gEventWork;
     gGameState.scene = first;

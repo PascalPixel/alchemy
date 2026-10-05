@@ -90,7 +90,7 @@ void SceneState_WaitUntilWord1000IsNine(void);
 void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0();
-void Event_SetPair1d4(s32 scene, s32 entrance);
+void Event_SetDefeatDestination(s32 scene, s32 entrance);
 extern u8 KorosseoKawa_SceneTableD[];
 void Owner_RefreshActiveRatios();
 void FieldScene_RunTwoCallSequence(void);
@@ -644,7 +644,7 @@ void KorosseoKawa_RunStageStart(void)
         state[0x22b] = 3;
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKawa, 4);
-    Event_SetPair1d4((s32)&SceneId_KorosseoKawa, 5);
+    Event_SetDefeatDestination((s32)&SceneId_KorosseoKawa, 5);
     GameFlag_Set(0x11a);
 }
 

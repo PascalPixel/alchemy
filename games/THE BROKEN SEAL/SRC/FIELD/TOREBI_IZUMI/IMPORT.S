@@ -162,10 +162,10 @@ Engine_ActorFaceDirection:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetPair1c0AndSetValue170
+	.global Event_RequestDestination
 	.thumb_func
-Event_SetPair1c0AndSetValue170:
-	overlay_veneer Event_SetPair1c0AndSetValue170Far
+Event_RequestDestination:
+	overlay_veneer Event_RequestDestinationFar
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:

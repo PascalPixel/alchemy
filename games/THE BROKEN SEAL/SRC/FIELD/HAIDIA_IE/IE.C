@@ -918,7 +918,7 @@ void FieldScene_RunGroupChoreography(void)
         const void *message = &SceneId_HaidiaIe;
 
         Party_SetFields1ceAnd1d0(message, 19);
-        Event_SetPair1d4(message, 19);
+        Event_SetDefeatDestination(message, 19);
     }
     BattleFx_SetWeightedResult(12, 4);
     Engine_GameFlagSet(0x11a);

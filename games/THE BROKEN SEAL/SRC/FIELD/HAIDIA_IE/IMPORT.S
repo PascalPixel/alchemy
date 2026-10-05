@@ -262,10 +262,10 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetPair1d4
+	.global Event_SetDefeatDestination
 	.thumb_func
-Event_SetPair1d4:
-	overlay_veneer Event_SetPair1d4Far
+Event_SetDefeatDestination:
+	overlay_veneer Event_SetDefeatDestinationFar
 	.global Unnamed_08094ac8
 	.thumb_func
 Unnamed_08094ac8:

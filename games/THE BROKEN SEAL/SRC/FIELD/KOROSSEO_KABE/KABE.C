@@ -29,7 +29,7 @@ extern u8 KorosseoKabe_RollLogScript[];
 void Object_RefreshSelectorById(s32 actor);
 void BattleFx_SetWeightedResult(s32 value, s32 mode);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void Event_SetPair1d4(s32 scene, s32 entrance);
+void Event_SetDefeatDestination(s32 scene, s32 entrance);
 extern const struct SceneEvent gKorosseoKabeEvents[];
 void SceneState_ApplyRectsForActors15To17(void);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
@@ -645,7 +645,7 @@ void KorosseoKabe_RunStageStart(void)
         gGameState.battle_start = 3;
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKabe, 4);
-    Event_SetPair1d4((s32)&SceneId_KorosseoKabe, 5);
+    Event_SetDefeatDestination((s32)&SceneId_KorosseoKabe, 5);
     Engine_GameFlagSet(0x11a);
 }
 

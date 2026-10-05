@@ -55,7 +55,7 @@ extern u8 MsgVinasuLongLastTime[];
 extern const s32 SceneAction_EntryGroup[];
 extern const s32 SceneAction_EntryPair[];
 void BattleFx_SetWeightedResult();
-void Event_SetPair1d4(s32 scene, s32 entrance);
+void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 s32 PartyInventory_Remove();
 s32 PartyInventory_FindOwner();
@@ -1153,7 +1153,7 @@ void Scene_RunActorEntrySequence(void)
          * in, and direct calls here emit them the other way round.
          */
         Call2(Party_SetFields1ceAnd1d0, actor, 2);
-        Call2(Event_SetPair1d4, actor, 9);
+        Call2(Event_SetDefeatDestination, actor, 9);
     }
     BattleFx_SetWeightedResult(98, 1);
     GameFlag_Set(0x350);
@@ -1859,7 +1859,7 @@ void Scene_RunPairedActorEffectSequence(void)
         gGameState.battle_start = 3;
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_VinasuChojo, 3);
-    Event_SetPair1d4((s32)&SceneId_VinasuChojo, 9);
+    Event_SetDefeatDestination((s32)&SceneId_VinasuChojo, 9);
     BattleFx_SetWeightedResult(98, 0);
     Owner_RefreshRatiosOnFlag();
     GameFlag_Set(0x351);

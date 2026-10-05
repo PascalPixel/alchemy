@@ -25,7 +25,7 @@ void UiWork_Finalize(s32 window, s32 flags);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(s32 layer);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void Event_SetPair1d4(s32 scene, s32 entrance);
+void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
 struct PacketHalf {
@@ -188,10 +188,10 @@ s32 LinkLobby_RunConnectionSequence(void)
         }
         if (Engine_GameFlagIsSet(0x173)) {
             Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 8);
-            Event_SetPair1d4((s32)&SceneId_LinkLobby, 9);
+            Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 9);
         } else {
             Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 10);
-            Event_SetPair1d4((s32)&SceneId_LinkLobby, 11);
+            Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 11);
         }
         gGameState.battle_start = 4;
         BattleFx_SetWeightedResult(1, 1);

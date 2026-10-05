@@ -24,13 +24,13 @@ extern u8 MsgTorebiStepRightEnjoy[];
 extern u8 MsgTorebiStepRightTry[];
 void ObjectTable_Snapshot(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
-void Event_SetPair1c0AndSetValue170(s32 a, s32 b);
+void Event_RequestDestination(s32 a, s32 b);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 
 extern u8 MsgTorebiBuddyWannaTry[];
 extern u8 MsgTorebiYaDontEnough[];
 s32 Party_GetAverageLevel(void);
-void Event_SetPair1c0AndSetValue170(s32 value, s32 mode);
+void Event_RequestDestination(s32 value, s32 mode);
 
 /* Lifts the workspace actor sixteen pixels with a cue, then steps the blend alpha through its eight-entry table. */
 void TorebiIzumi_RiseAndFadeIn(void)
@@ -117,7 +117,7 @@ void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 play:
     Engine_EventSetMessage((s32)MsgTorebiStepRightEnjoy);
     Engine_EventShowMessage(8, 0);
-    Event_SetPair1c0AndSetValue170(508, 0);
+    Event_RequestDestination(508, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 12);
 }
 
@@ -146,7 +146,7 @@ void TorebiIzumi_PayToPlay(void)
         Engine_ActorWalkToAndWait(0, 120, 152);
         Engine_ActorFaceDirection(0, 0x8000, 0);
         Engine_EventWait(20);
-        Event_SetPair1c0AndSetValue170(0x1fd, 0);
+        Event_RequestDestination(0x1fd, 0);
         Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 13);
     } else {
         gEventWork->message++;

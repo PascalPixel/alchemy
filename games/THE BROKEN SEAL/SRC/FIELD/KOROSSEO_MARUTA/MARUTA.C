@@ -66,7 +66,7 @@ void ColossoLogRollingStage_WaitForBalanceState(void);
 void Object_RefreshSelectorById(s32 object);
 void BattleFx_SetWeightedResult(s32 kind, s32 weight);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void Event_SetPair1d4(s32 scene, s32 entrance);
+void Event_SetDefeatDestination(s32 scene, s32 entrance);
 
 /* The object script record 30 runs. */
 extern u8 KorosseoMaruta_Record30Script[];
@@ -754,7 +754,7 @@ void KorosseoMaruta_RunStageStart(void)
         gGameState.battle_start = 3;
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoMaruta, 4);
-    Event_SetPair1d4((s32)&SceneId_KorosseoMaruta, 5);
+    Event_SetDefeatDestination((s32)&SceneId_KorosseoMaruta, 5);
     Engine_GameFlagSet(0x11a);
 }
 

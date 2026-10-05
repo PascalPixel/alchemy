@@ -43,7 +43,7 @@ Func_0808a038:
 	.global Func_0808a040
 	.thumb_func
 Func_0808a040:
-	overlay_veneer Event_SetWorkWord10
+	overlay_veneer Event_SetSceneEvents
 	.global Event_PrepareObjectAndApplyValueFar
 	.thumb_func
 Event_PrepareObjectAndApplyValueFar:
@@ -215,7 +215,7 @@ BattleEventRuntime_ProcessActionFar:
 	overlay_veneer BattleEventRuntime_EmptyCallback
 	overlay_veneer Event_ShowSpeakerMessage
 	overlay_veneer ObjectTable_CallRefreshHook
-	overlay_veneer Event_ShowValue1d8AtPosition
+	overlay_veneer Event_ShowMessageAtPosition
 	.global ObjectMotion_ArmCallbackFar
 	.thumb_func
 ObjectMotion_ArmCallbackFar:
@@ -301,14 +301,14 @@ BattleFx_SetPhaseRequestFar:
 	.thumb_func
 Party_SetFields1ceAnd1d0Far:
 	overlay_veneer Party_SetFields1ceAnd1d0
-	.global Event_SetPair1d4Far
+	.global Event_SetDefeatDestinationFar
 	.thumb_func
-Event_SetPair1d4Far:
-	overlay_veneer Event_SetPair1d4
-	.global Event_SetPair1c0AndSetValue170Far
+Event_SetDefeatDestinationFar:
+	overlay_veneer Event_SetDefeatDestination
+	.global Event_RequestDestinationFar
 	.thumb_func
-Event_SetPair1c0AndSetValue170Far:
-	overlay_veneer Event_SetPair1c0AndSetValue170
+Event_RequestDestinationFar:
+	overlay_veneer Event_RequestDestination
 	.global Object_GetScreenPositionFar
 	.global Func_0808a278
 	.thumb_func

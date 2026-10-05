@@ -8,7 +8,7 @@ void *ObjectTable_Get(s32 id);
 s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
 s32 UiWork_IsIdleFar(s32 window);
 
-s32 Event_ShowValue1d8AtPosition();
+s32 Event_ShowMessageAtPosition();
 
 void Event_ShowSpeakerMessage(s32 speaker)
 {
@@ -32,5 +32,5 @@ void Event_ShowSpeakerMessage(s32 speaker)
 
 void ObjectTable_CallRefreshHook(void)
 {
-    Event_ShowValue1d8AtPosition();
+    Event_ShowMessageAtPosition();
 }

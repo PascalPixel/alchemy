@@ -33,10 +33,10 @@ Event_CallWithLastActiveObjectIdFar:
 	.thumb_func
 Scene_AssignViewFlagsFar:
 	overlay_veneer Scene_AssignViewFlags
-	.global Event_SetWorkWord10Far
+	.global Event_SetSceneEventsFar
 	.thumb_func
-Event_SetWorkWord10Far:
-	overlay_veneer Event_SetWorkWord10
+Event_SetSceneEventsFar:
+	overlay_veneer Event_SetSceneEvents
 	.global Event_PrepareObjectAndApplyValueFar
 	.thumb_func
 Event_PrepareObjectAndApplyValueFar:

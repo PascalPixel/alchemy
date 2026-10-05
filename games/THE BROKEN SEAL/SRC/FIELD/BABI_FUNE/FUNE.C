@@ -26,7 +26,7 @@ extern s32 BabiFune_Count;
 
 /* The overlay header exposes a scene table getter. */
 
-u8 *SceneData_GetTable96c8(void)
+u8 *BabiFune_GetEntrances(void)
 {
     return BabiFune_SceneTableA;
 }
@@ -41,12 +41,12 @@ s32 BabiFune_GetDefaultResult(void)
 }
 
 /* The overlay header exposes getters for the scene tables. */
-u8 *SceneData_GetTable9710(void)
+u8 *BabiFune_GetExits(void)
 {
     return BabiFune_SceneTableB;
 }
 
-u8 *SceneData_GetTable971c(void)
+u8 *BabiFune_GetPlacements(void)
 {
     return BabiFune_SceneTableC;
 }
@@ -63,7 +63,7 @@ void PlayWorkspaceCueAndClearPaletteZero(void)
     } while (0);
 }
 
-void FieldScene_Forward11fc(void)
+void BabiFune_LoadTablesAndStopDma(void)
 {
     SceneEffect_LoadTablesAndStopDma0();
 }
@@ -73,7 +73,7 @@ void FieldScene_ConfigureFixedPointValues(void)
     DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
-u8 *SceneData_GetTable97AC(void) { return BabiFune_SceneTableD; }
+u8 *BabiFune_GetEvents(void) { return BabiFune_SceneTableD; }
 
 /* Babi Fune: copy six colours of the cycling palette for the current step
  * into palette colours 116..121 and advance the step, wrapping after 35. */

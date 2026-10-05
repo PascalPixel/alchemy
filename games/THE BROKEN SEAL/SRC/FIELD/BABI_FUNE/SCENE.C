@@ -29,7 +29,7 @@ void BabiFune_ScheduleFade();
 void Event_SetPairWork1c0Far();
 
 /* Keep field 12 of four records the scene reads back later. */
-s32 SceneState_StoreSlotZeroField12(void)
+s32 BabiFune_StoreLeaderHeight(void)
 {
     s32 *d;
     struct FieldActor *p;
@@ -40,7 +40,7 @@ s32 SceneState_StoreSlotZeroField12(void)
     return 0;
 }
 
-s32 SceneData_StoreRecord1Field12(void)
+s32 BabiFune_StoreActorOneHeight(void)
 {
     s32 *p;
     struct FieldActor *rec;
@@ -51,7 +51,7 @@ s32 SceneData_StoreRecord1Field12(void)
     return 0;
 }
 
-s32 SceneState_StoreSlotThreeField12(void)
+s32 BabiFune_StoreActorThreeHeight(void)
 {
     s32 *d;
     struct FieldActor *p;
@@ -62,7 +62,7 @@ s32 SceneState_StoreSlotThreeField12(void)
     return 0;
 }
 
-s32 SceneData_StoreRecord2Field12(void)
+s32 BabiFune_StoreActorTwoHeight(void)
 {
     s32 *d;
     struct FieldActor *p;

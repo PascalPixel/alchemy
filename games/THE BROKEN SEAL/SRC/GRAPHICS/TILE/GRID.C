@@ -123,7 +123,7 @@ struct Vec2 {
 
 extern struct Vec2 Battle_FormationPlacementScale;
 
-void Ui_SetGridColumnByte5(s32 slot, s32 value)
+void Ui_SetGridColumnParameter(s32 slot, s32 value)
 {
     struct AnimationObject *object = gSpriteObjects;
     s32 i;
@@ -135,7 +135,7 @@ void Ui_SetGridColumnByte5(s32 slot, s32 value)
     }
 }
 
-void Ui_SetGridColumnByte6(s32 slot, s32 value)
+void Ui_SetGridColumnPriority(s32 slot, s32 value)
 {
     struct AnimationObject *object = gSpriteObjects;
     s32 i;

@@ -36,7 +36,7 @@ struct BattleLayer {
 };
 
 extern u16 gBgScroll[];
-void Runtime_ApplyValueToWork7818(void);
+void BattleFx_ClearActorTimers(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 fade, s32 arg);
 
 void BattleFx_SetupCanvasTileMap(void)
@@ -49,7 +49,7 @@ void BattleFx_SetupCanvasTileMap(void)
     s32 col;
     s32 off;
 
-    Runtime_ApplyValueToWork7818();
+    BattleFx_ClearActorTimers();
     BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
     gBgScroll[3] = 32;
     layer->offset = 0;

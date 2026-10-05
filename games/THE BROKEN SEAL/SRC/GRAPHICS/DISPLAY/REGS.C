@@ -56,7 +56,7 @@ void Palette_StepFadeTransfer(void)
     }
 }
 
-void Runtime_ApplyValueToWork7818(void)
+void BattleFx_ClearActorTimers(void)
 {
     /* IWRAM_CALL.H owns the actual two-argument resident entry. */
     Iwram_ClearWords(gBattleFxWork->actor_timers, sizeof(gBattleFxWork->actor_timers));

@@ -43,8 +43,8 @@ void ObjectSystem_Initialize(s32);
 s32 ResourceSlot_Load(u32, u32 *, s32, u32);
 s32 ResourceMetadata_Register(struct AnimationObject *, s32);
 s32 Ui_FindNextNumberWithMetadata(s32, s32);
-void Ui_SetGridColumnByte5(s32, s32);
-void Ui_SetGridColumnByte6(s32, s32);
+void Ui_SetGridColumnParameter(s32, s32);
+void Ui_SetGridColumnPriority(s32, s32);
 void Ui_FillGridColumnFromMetadata(s32, s32);
 void Ui_SetGridColumnNumber(s32, s32);
 void Battle_PlaceActorsByFormationKind(void);
@@ -124,11 +124,11 @@ restart:
 
     for (i = 0; i <= 3; i++) {
         if (ent[i].on != 0) {
-            Ui_SetGridColumnByte6(i, ent[i].priority);
+            Ui_SetGridColumnPriority(i, ent[i].priority);
         } else {
-            Ui_SetGridColumnByte6(i, 8);
+            Ui_SetGridColumnPriority(i, 8);
         }
-        Ui_SetGridColumnByte5(i, ent[i].param);
+        Ui_SetGridColumnParameter(i, ent[i].param);
         Ui_FillGridColumnFromMetadata(i, ent[i].animation);
     }
 
@@ -239,8 +239,8 @@ next:
                 goto next;
             }
             Ui_SetGridColumnNumber(slot, ent[slot].no);
-            Ui_SetGridColumnByte6(slot, ent[slot].priority);
-            Ui_SetGridColumnByte5(slot, ent[slot].param);
+            Ui_SetGridColumnPriority(slot, ent[slot].priority);
+            Ui_SetGridColumnParameter(slot, ent[slot].param);
             Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
             goto next;
 
@@ -266,7 +266,7 @@ next:
             if (ent[slot].on == 0) {
                 goto next;
             }
-            Ui_SetGridColumnByte6(slot, ent[slot].priority);
+            Ui_SetGridColumnPriority(slot, ent[slot].priority);
             goto next;
 
         case 3:
@@ -291,7 +291,7 @@ next:
             if (ent[slot].on == 0) {
                 goto next;
             }
-            Ui_SetGridColumnByte5(slot, ent[slot].param);
+            Ui_SetGridColumnParameter(slot, ent[slot].param);
             goto next;
 
         default:
@@ -313,7 +313,7 @@ next:
                 }
             } else if (slot != 0) {
                 ent[slot].on = ent[slot].on ^ 1;
-                Ui_SetGridColumnByte6(slot, ent[slot].on != 0 ? ent[slot].priority : 8);
+                Ui_SetGridColumnPriority(slot, ent[slot].on != 0 ? ent[slot].priority : 8);
                 goto next;
             }
         }

@@ -23,7 +23,7 @@ void BattleFx_SetupCanvasTileMap(void)
     s32 col;
     s32 off;
 
-    Runtime_ApplyValueToWork7818();
+    BattleFx_ClearActorTimers();
     BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
     gBgScroll[3] = 32;
     layer->offset = 0;

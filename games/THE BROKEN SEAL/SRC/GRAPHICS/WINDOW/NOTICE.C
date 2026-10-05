@@ -124,7 +124,7 @@ s32 Item_ReturnTrue(void)
     return 1;
 }
 
-void Party_AdjustByte205ByDirection(s32 arg0)
+void Party_AdjustPaletteGlowPhase(s32 arg0)
 {
     u8 value = gGameState.palette_glow[0];
     if (arg0 & 0x20)

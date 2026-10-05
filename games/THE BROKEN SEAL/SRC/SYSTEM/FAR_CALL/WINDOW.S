@@ -143,7 +143,7 @@ SideObject_CreateFar:
 Ui_LoadCharacterEntryForSlotFar:
 	overlay_veneer Ui_LoadCharacterEntryForSlot
 	overlay_veneer RenderOutput_SetAnimation
-	overlay_veneer UiWork_SetByte15Inverted
+	overlay_veneer RenderOutput_SetInvertedSentinel
 	.global UiWindow_CreateWithSideObjectFar
 	.global Func_080150f8
 	.thumb_func

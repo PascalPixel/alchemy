@@ -19,7 +19,7 @@
 #include "IO_REG.H"
 #include "RAM_BUFFER.H"
 
-void Runtime_ApplyValueToWork7818(void);
+void BattleFx_ClearActorTimers(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, u16, s32);
 void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 mode);
 
@@ -72,7 +72,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
     s32 col;
     s32 offset;
 
-    Runtime_ApplyValueToWork7818();
+    BattleFx_ClearActorTimers();
     display->second_mode = 1;
     WaitFrames(1);
     REG_BLDCNT = 0;
@@ -171,7 +171,7 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
     s32 col;
     s32 offset;
 
-    Runtime_ApplyValueToWork7818();
+    BattleFx_ClearActorTimers();
     display->second_mode = 1;
     WaitFrames(1);
     REG_BLDCNT = 0;

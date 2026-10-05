@@ -34,7 +34,7 @@ BattleEffect_RunTileAndPaletteAnimation:
 	mov r9, r3
 	adds r3, r1, r2
 	str r5, [r3]
-	bl Runtime_ApplyValueToWork7818
+	bl BattleFx_ClearActorTimers
 	mov r4, r9
 	ldr r2, .L_080cbccc
 	movs r3, #1

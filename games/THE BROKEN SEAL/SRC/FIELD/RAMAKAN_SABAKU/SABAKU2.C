@@ -326,8 +326,7 @@ void RamakanSabaku_ReturnToArea3(void)
 {
     Engine_ActorRunRepeatedMotion(8, 2);
     Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
-    /* FAKEMATCH: the do/while loads the game state's base before the 0x22b
-       offset, which fixes their registers and literal-pool order. */
+    /* FAKEMATCH: the do/while loads the game state's base before the 0x22b offset, which fixes their registers and literal-pool order. */
     do {
         gGameState.battle_start = 3;
     } while (0);

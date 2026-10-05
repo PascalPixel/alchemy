@@ -53,15 +53,6 @@ typedef struct Effect {
     s8 state23;
 } Effect;
 
-struct SceneWork {
-    u8 unknown_000[0x1c0];
-    s32 request;
-    u8 unknown_1c4[4];
-    s32 setup;
-    u8 unknown_1cc[12];
-    u16 step;
-};
-
 struct Obj_020036f8 {
     u8 filler00[8];
     s32 f08;
@@ -1626,11 +1617,10 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
 
 void FieldScene_RunSecondaryGroupSequence(void)
 {
-    extern struct SceneWork *Data_03001ebc;
 
     u8 *fieldActor;
     struct FieldActor *object;
-    struct SceneWork *work;
+    struct EventWork *work;
     u32 random;
     u32 motionPhase;
     const u8 *motionActions;
@@ -1814,7 +1804,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
-        Data_03001ebc->step += 3;
+        gEventWork->message += 3;
     } else {
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(11, 2);
@@ -1861,7 +1851,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_WalkToAndWait(10, 246, 148);
     Actor_WalkToAndWait(10, 246, 142);
     Actor_SetPosition(10, 0, 0);
-    Data_03001ebc->request = 514;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Actor_SetPosition(9, 0x1b80000, 0x1540000);
@@ -1905,27 +1895,26 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_WalkToAndWait(9, 0x1b8, 0x1f4);
     Actor_WalkTo(9, 0x1b8, 0x258);
     Audio_PlayCue(0x121);
-    work = Data_03001ebc;
-    work->setup = 24;
-    work->request = 0x100;
+    work = gEventWork;
+    work->transition_frames = 24;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(10);
     Engine_EventEnd();
 }
 
-s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
+/* The placed actor (ids 8 to 65) standing on map cell x, z. */
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
-    extern u8 *Data_03001ebc;
-
-    s32 **tbl = (s32 **)(Data_03001ebc + 0x14);
+    struct FieldActor **actors = gEventWork->placed_actors - 8;
     u32 i;
 
     for (i = 8; i <= 65; i++) {
-        s32 *p = tbl[i];
+        struct FieldActor *actor = actors[i];
 
-        if (x == (p[2] >> 20) && z == (p[4] >> 20)) {
-            return p;
+        if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20) {
+            return actor;
         }
     }
     return 0;
@@ -1948,7 +1937,7 @@ void FieldScene_RunLateSequence(void)
     idx = (s32)((u32)leader->facing >> 12);
     a = leader->x.part.pixel;
     w = KareiMachi_Data01[idx];
-    block = (struct FieldActor *)SceneActor_FindAtTileXZ((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s32)(s16)w) >> 4);
+    block = SceneActor_FindActorAtCell((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s32)(s16)w) >> 4);
     if (block != NULL) {
         zero = 0;
         block->terrain_id = 2;

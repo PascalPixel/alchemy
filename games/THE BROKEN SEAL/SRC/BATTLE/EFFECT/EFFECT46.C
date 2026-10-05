@@ -16,6 +16,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
+#include "TRANSFORM.H"
 
 
 extern void *gBattleFxWork[];
@@ -31,7 +32,6 @@ void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(u8 *source, u8 *destination);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
@@ -472,7 +472,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
             }
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= 18 && frame <= 83) {
             s32 lift;
 
@@ -578,7 +578,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     u8 *cells;
-    u8 *transfer;
+    struct BattleCamera *view;
     struct MotionObject *slot;
     struct EffectStep *shard;
     struct EffectPosition position;
@@ -596,7 +596,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     cells = heap_cache[2];
-    transfer = heap_cache[-27];
+    view = heap_cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
     burst = Ram_MapCellBuffer;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
@@ -667,7 +667,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
             Dma_Set((void *)&fill, canvas, 0x85001000, REG_DMA3);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(transfer, transfer + 12);
+        Graphics_PrepareTransferInIwramWork(view->eye, view->pos);
         if (frame > 3) {
             BattleFx_FetchRectangleBlitters(work->effect->side, routine);
             for (i = 0; i != 64; i++) {

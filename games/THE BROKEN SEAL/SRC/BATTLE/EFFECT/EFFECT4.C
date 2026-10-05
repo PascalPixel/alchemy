@@ -16,6 +16,7 @@
 #include "RAM_BUFFER.H"
 #include "MENU_LIST.H"
 #include "FIELD_EVENT.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -27,7 +28,6 @@ extern u8 gBattleFxWork[];
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
@@ -50,7 +50,6 @@ struct Chip {
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -109,7 +108,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
         struct BattleCamera *camera = gCameraWork;
 
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame > 17 || frame == 0) {
             EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &position);
             position.x /= 2;
@@ -218,7 +217,6 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void SceneTransform_ApplyPosition(s32 *position);
@@ -302,7 +300,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
             struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = target->x;
             point[1] = 0x140000;
             point[2] = target->z;
@@ -405,12 +403,12 @@ void BattleFx_RunMemberOrbit(void *object)
             frame != (work->effect->count
                 * 16) + 48;
             frame++) {
-        s32 facing;
+        struct BattleCamera *view;
         s32 *scanline;
         s32 i;
         s32 id_ofs;
 
-        facing = (s32)gCameraWork;
+        view = gCameraWork;
         scanline = work->bg2_x;
         if (work->effect->side == 0) {
             s32 angle;
@@ -430,7 +428,7 @@ void BattleFx_RunMemberOrbit(void *object)
             }
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(view->eye, view->pos);
         member = 0;
         if (work->effect->count != 0) {
             record_slot = record;
@@ -576,7 +574,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
                 BattleEventRuntime_BeginPhaseFar(133);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         row = work->bg2_x;
         for (i = 0; i != 160; i++)
             *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;

@@ -16,6 +16,7 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -23,7 +24,6 @@ extern u8 gBattleFxWork[];
 
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -186,7 +186,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
             draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = object->x;
             point[1] = 160 << 13;
             point[2] = object->z;

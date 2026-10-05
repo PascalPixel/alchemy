@@ -16,13 +16,13 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -164,7 +164,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
             if (frame > total - 16)
                 REG_BLDALPHA = (total - frame) | 0x1000;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             for (k = 0; k != work->effect->count; k++) {
                 if (frame >= k * 32) {
                     for (j = 0; j != streaks; j++) {

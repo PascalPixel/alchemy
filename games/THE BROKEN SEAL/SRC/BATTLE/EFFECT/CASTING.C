@@ -20,6 +20,7 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
@@ -29,7 +30,6 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyRoll(s32 angle);
-void Graphics_PrepareTransferInIwramWork(void *eye, void *target);
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 s32 Battle_GetObjectTableValueFar(s32 actor_id);
@@ -342,7 +342,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             active_cnt = cnt;
             if (active_cnt <= 63) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 EffectPosition_ApplyBaseAndYOffset((s32 *)&moving_pos, &spark_screen);
                 orb_x = spark_screen.x;
                 /* FAKEMATCH: Keep signed halving in the loaded coordinate register. */
@@ -607,7 +607,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 draw_pair[1](canvas, work->sheet + (frame - 4) / 2 * 960 + 0x5100, target_screen->x / 2 - 8, caster_screen->y - 24, 20, 48);
             }
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             if (frame > 3) {
                 for (i = 0; i != 128; i++) {
                     s32 index = i / 2;

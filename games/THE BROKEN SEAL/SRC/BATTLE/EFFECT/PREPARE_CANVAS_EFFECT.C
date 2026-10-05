@@ -23,7 +23,6 @@ extern u8 gBattleFxWork[];
 
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -170,7 +169,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         if (frame == 8)
             Audio_PlayCue(212);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= 6 && frame <= 45) {
             base[0] += step[0];
             base[1] += step[1];

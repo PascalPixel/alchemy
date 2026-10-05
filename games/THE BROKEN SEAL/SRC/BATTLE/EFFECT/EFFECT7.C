@@ -10,11 +10,11 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern void *gBattleFxWork[];
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -81,7 +81,7 @@ void BattleFx_RunBouncingSheep(void *object)
 
             member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             record[0] = *(s32 *)((u8 *)member_object + 8);
             record[1] = 160 << 14;
             record[2] = *(s32 *)((u8 *)member_object + 16);

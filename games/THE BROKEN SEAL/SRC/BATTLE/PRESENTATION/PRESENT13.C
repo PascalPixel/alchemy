@@ -15,6 +15,7 @@
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "TRANSFORM.H"
 
 void BattlePres_SetActorModes(u16 *, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
@@ -25,7 +26,6 @@ s32 ActivateBattleObjectSlot(s32 unit_id);
 extern struct BattlePresentationTransition *gTransitionWork;
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Camera_StoreSceneParameters(s32, u32, s32);
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode);
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
@@ -74,7 +74,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     battle->brightness = 0x10000;
     camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
     Camera_StoreSceneParameters(0x01fe0000, DivQ16(0x01fe0000, 0xc000), 0x7fff0000);
     if (delay != 0) {
         view->target_yaw = 0x2000;

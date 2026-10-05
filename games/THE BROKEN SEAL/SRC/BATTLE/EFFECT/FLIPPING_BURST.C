@@ -16,12 +16,12 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -91,7 +91,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 
         camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == 0) {
             target->velocity_y = 0xf0000;
             target->vertical_motion_strength = 0x91eb;
@@ -117,7 +117,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
             Object_SetPosition(object, 0, 0, object->z);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         record[0] = object->x;
         record[1] = object->y;
         record[2] = object->z;
@@ -167,7 +167,6 @@ extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -325,7 +324,6 @@ extern u16 BattleFx6_FlareCells[];
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
@@ -436,7 +434,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
         }
         GetBattleObjectSlotFar(work->effect->actor);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != 32; i++) {
             struct EffectStep *fleck = &gFlecks[i];
 

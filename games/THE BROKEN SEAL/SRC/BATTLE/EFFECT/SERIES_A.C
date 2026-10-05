@@ -15,6 +15,7 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -22,7 +23,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 side, s32 narrow, s32 *x, s32 *y);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -261,7 +261,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
             s32 start = member * 8;
 
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             point[0] = object->x;
             point[1] = 160 << 14;
             point[2] = object->z;

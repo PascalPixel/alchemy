@@ -15,6 +15,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 struct Vector3 {
     s32 x;
@@ -32,7 +33,6 @@ void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 a, s32 b);
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale(struct Vector3 *scale);
@@ -127,7 +127,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
             object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             if (tick >= 0 && tick < 96) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 vector.x = object->x;
                 vector.y = object->y;
                 vector.z = object->z;
@@ -251,7 +251,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
             object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             if (tick >= 0 && tick < 96) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 vector.x = object->x;
                 vector.y = object->y;
                 vector.z = object->z;

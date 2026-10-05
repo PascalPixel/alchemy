@@ -16,6 +16,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -441,7 +442,6 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 
 void BattleFx_StepPaletteToResource(s32 resource_id);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 
 /* The rock chips: four flip settings, then nine cells with their sizes,
    sheet offsets and places on the rock. */
@@ -531,7 +531,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
             }
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != 6; i++) {
             struct EffectStep *rock = &work->particles[i];
 

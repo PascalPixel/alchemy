@@ -19,7 +19,6 @@ extern u8 gBattleFxWork[];
 
 
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -102,7 +101,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
         if (frame == 80)
             Audio_PlayCue(142);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= 30 && frame < 70) {
             position[0] += delta[0];
             position[1] += delta[1];
@@ -177,7 +176,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     for (frame = 0; frame != work->effect->count * 8 + 72; frame++) {
         struct BattleCamera *camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= work->effect->count * 8 + 40)
             target[1] += 0x40000;
         point[0] = target[0];
@@ -190,7 +189,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
             struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             s32 start = member * 8;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             position[0] = object->x;
             position[1] = 160 << 14;
             position[2] = object->z;

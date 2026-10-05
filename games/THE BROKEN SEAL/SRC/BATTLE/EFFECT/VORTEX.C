@@ -15,6 +15,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 /* The camera sway the phased-delta callback reads: its strength at 0x77ac
    and its running flag at 0x77b0. */
@@ -33,7 +34,6 @@ extern u8 BattleFx_GlintCellHeights[];
 void Camera_ApplyPhasedDelta(void);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -115,7 +115,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
         if (frame == VortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
             BattleEventRuntime_BeginPhaseFar(132);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         for (i = 0; i != VortexMotes_Counts[work->effect->variant * 2]; i++) {
             point = &work->particles[i];
             if (frame > i * 2 && flags[i] == 0) {

@@ -12,12 +12,12 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 
 /*
  * Battle effect: a burst of six particles over each affected unit in turn.
@@ -31,7 +31,6 @@ void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 /* Resource ids the reference loads from its literal pool. */
 
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 
 void BattleFx_RunTargetBursts(void *object)
@@ -99,7 +98,7 @@ void BattleFx_RunTargetBursts(void *object)
 
             member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             record[0] = member_object->x;
             record[1] = 160 << 13;
             record[2] = member_object->z;

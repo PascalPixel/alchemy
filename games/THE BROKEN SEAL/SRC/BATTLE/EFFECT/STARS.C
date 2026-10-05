@@ -33,7 +33,6 @@ extern u8 gMapCellBuffer[];
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(void *position);
 void SceneTransform_ApplyRoll(s32 angle);
@@ -134,7 +133,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
                 if (size > 10)
                     size = 10;
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 SceneTransform_ApplyPosition(step);
                 peak = 0;
                 for (j = 0; j != 10; j++) {
@@ -275,7 +274,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
             step = &work->particles[i];
             if (frame >= step->variant) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 EffectPosition_ApplyBaseAndYOffset((s32 *)step, &pos);
                 pos.x >>= 1;
                 if (pos.x >= -8 && pos.x <= 127) {

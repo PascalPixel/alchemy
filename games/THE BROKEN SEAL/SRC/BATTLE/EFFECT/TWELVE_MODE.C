@@ -18,6 +18,7 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -54,7 +55,6 @@ extern const u8 TwelveMode_GlintDrawFlags[];
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -376,7 +376,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
         }
 
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
         draw[0] = gBlitters[46];
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);

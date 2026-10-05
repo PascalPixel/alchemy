@@ -13,12 +13,13 @@
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
+#include "BATTLE_PRESENTATION.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 
 void Camera_ApplyPhasedDelta(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
@@ -45,7 +46,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
-    s32 facing;
+    struct BattleCamera *camera;
     u8 *sheet;
     s32 top;
     struct EffectPosition screen;
@@ -57,7 +58,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    facing = *(s32 *)((u8 *)gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + 12 * 4);
     sheet = heap_cache[2];
     work->effect = effect;
     if (effect->side == 1)
@@ -106,7 +107,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
             BattleEventRuntime_BeginPhaseFar(133);
         BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 
         for (i = 0; i != HomingEmbers_Counts[work->effect->variant]; i++) {
             struct EffectStep *ember = &((struct EffectStep *)Ram_MapCellBuffer)[i];

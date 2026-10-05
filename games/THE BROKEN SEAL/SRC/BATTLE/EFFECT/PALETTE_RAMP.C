@@ -14,12 +14,12 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
@@ -157,12 +157,12 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
             object = GetBattleObjectSlotFar(work->effect->actors[j])->object;
             if (time > 0) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 point[0] = object->x;
                 point[1] = 160 << 13;
                 point[2] = object->z;
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 SceneTransform_ApplyPosition(point);
                 origin[0] = 0;
                 origin[1] = 0;

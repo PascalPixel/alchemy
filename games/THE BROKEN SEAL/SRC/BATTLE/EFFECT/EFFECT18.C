@@ -63,7 +63,6 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
 /* Resource id the reference loads from its literal pool. */
 extern const u16 ParticleStreams_CellOffsets[];
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *eye, void *target);
 void SceneTransform_ApplyPosition(s32 *position);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -413,7 +412,7 @@ void BattleFx_RunSwirlingStars(void *object)
 
         camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         SceneTransform_ApplyPosition(record);
         star = (struct EffectStep *)Ram_MapCellBuffer;
         for (i = 0; i != 64; i++, star++) {
@@ -537,7 +536,7 @@ void BattleFx_RunOrbitingSparks(void)
                 register s32 *rec asm("r0");
 
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+                Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
                 rec = record;
                 rec[0] = member_object->x;
                 rec[1] = member_object->y;

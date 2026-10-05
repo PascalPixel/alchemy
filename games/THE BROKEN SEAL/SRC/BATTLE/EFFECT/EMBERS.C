@@ -14,6 +14,7 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_PRESENTATION.H"
 #include "RAM_BUFFER.H"
+#include "TRANSFORM.H"
 
 struct Point2D {
     s32 x;
@@ -55,7 +56,6 @@ extern u16 PaletteParticles_StreakOffsets[];
 
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void Object_InitializeMode(void *object, s32 mode);
@@ -177,7 +177,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
             frame = 160;
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == 178)
             BattleEventRuntime_BeginPhaseFar(134);
         if (frame == 128)

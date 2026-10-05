@@ -16,6 +16,7 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern u8 gBattleFxWork[];
@@ -24,7 +25,6 @@ extern volatile u32 gKeysRepeat;
 void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void *GetMotionRecordFar(struct MotionObject *object, s32 index);
 s32 Object_InitializeMode(void *object, s32 mode);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
@@ -157,7 +157,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         if (frame == 224)
             work->transfer_mode = 0;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == 31) {
             work->shake_frames = 8;
             AudioCommand_PlayFar(157);
@@ -1000,7 +1000,6 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     BattleFx_EndCanvasLayer();
 }
 
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void ObjectGroup_TickMemberTimers(void);
 
@@ -1047,7 +1046,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
         ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+    Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 
     for (member = 0; member != work->effect->count; member++) {
         struct MotionObject *object;

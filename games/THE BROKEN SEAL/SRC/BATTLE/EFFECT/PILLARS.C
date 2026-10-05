@@ -15,13 +15,13 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
+#include "TRANSFORM.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *a, void *b);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
@@ -109,7 +109,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
         if (frame == 16)
             BattleEventRuntime_BeginPhaseFar(134);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 
         if (frame < 64) {
             for (pillar = 0; pillar != FirePillars_Counts[work->effect->variant]; pillar++) {

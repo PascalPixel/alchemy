@@ -15,13 +15,13 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "MENU_LIST.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
@@ -128,7 +128,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 
         camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame == 2)
             AudioCommand_PlayFar(144);
         if (frame == ParticleField_Counts[variant][FIELD_FRAMES] - 48)

@@ -14,6 +14,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
+#include "TRANSFORM.H"
 
 extern u8 gBattleFxWork[];
 
@@ -24,7 +25,6 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *
 void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
 void BattleEventRuntime_BeginPhaseFar(s32 mode);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
@@ -156,7 +156,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
         }
         if (offset >= 0 && offset <= 55) {
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             for (cnt = 0; cnt != 64; cnt++) {
                 particle = &work->particles[cnt];
                 size = particle->variant;

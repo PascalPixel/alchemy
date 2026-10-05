@@ -114,7 +114,7 @@ void QueueIoWriteDelay2(u32 address, u32 value);
 
 /* The world map's own callbacks and scenes. */
 void WorldMap_CreateLinkedEffects();
-void StoryActor_AdvanceTimer(u8 *actor);
+void StoryActor_AdvanceTimer(struct FieldActor *actor);
 void WorldMap_UpdateBobbingMarker();
 void WorldMap_SpawnActorEightPuff(void);
 void StoryScene_UpdateSelectedActorProgress(void);

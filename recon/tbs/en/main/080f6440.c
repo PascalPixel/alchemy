@@ -1,10 +1,14 @@
-/* 2026-10-05 (deep finisher 16): alchemy diff 226 (was 337). The reel
- * cells loop reads each row through a row pointer, struct ReelRow *row =
- * &work->row[i], declared in the row loop: the listing keeps that pointer
- * in r5 and the cell offsets column by column, which the indexed
- * work->row[i] reads did not give (they left an offset giv and work in two
- * registers). A pointer stepped with row++ in the for header instead is
- * worse (264).
+/* 2026-10-05 (deep finisher 16, later): alchemy diff 172. The lever's
+ * height is its own block-local variable instead of y: with y shared by
+ * the cursor objects and the lever the allocator put the cursor x and y
+ * in r6 and r5 and the lever in r5 (listed: r5, r6, r4). The lever in x
+ * gave 206, in cnt 176 (the lever matches but the settled count moves to
+ * r4), in col 184, in all or held 198, in k or i 206, in v 297, in
+ * coins 743. Row pointers in the other row loops (line check 259, pos
+ * update 289 or 235 inside the held test, held markers 226, stop
+ * countdown 251, settled count 241, stop start 278), the settled count
+ * kept in k (230), col or all (331), and declaration order (226) were
+ * tried on top of the cells' row pointer and are no better.
  */
 /* 2026-10-04: column r10 binding trial scored 15310 vs 3720; rejected.
  * Use the existing ReelGame_Run saved-game view from GameState+12 instead
@@ -555,14 +559,17 @@ build_objects:
         }
     }
 
-    y = 40;
-    if (work->state == 1) {
-        if (work->timer <= 47)
-            y = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
-        else if (work->timer <= 55)
-            y = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
+    {
+        s32 lever = 40;
+
+        if (work->state == 1) {
+            if (work->timer <= 47)
+                lever = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
+            else if (work->timer <= 55)
+                lever = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
+        }
+        work->obj[n].attr01 = lever | blend | 0x80d06000;
     }
-    work->obj[n].attr01 = y | blend | 0x80d06000;
     work->obj[n].attr2 = 0x500;
     n++;
 

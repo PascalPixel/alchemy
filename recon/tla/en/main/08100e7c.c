@@ -58,7 +58,7 @@ void Menu_SetFirstObjectRowCoordinates(s32 mode);
 void Palette_LightenBankHighlight(s32 palette);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
-void Func_080aa768(void);
+void DjinnMenu_RunScreen(void);
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
 void Menu_ResetTwoResourceEntries(void);
 void ItemMenu_Close(void);
@@ -116,7 +116,7 @@ s32 ItemMenu_Run(void)
     menu->slot = 0;
     menu->target_slot = 0;
     FourObjectMotion_InitializeBottomRow(menu->window, 0);
-    Func_080aa768();
+    DjinnMenu_RunScreen();
     FourObjectMotion_ClearSlotsAndScheduleAlt();
     Menu_ResetTwoResourceEntries();
     WaitFrames(1);

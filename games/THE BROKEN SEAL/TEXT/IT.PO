@@ -10287,11 +10287,11 @@ msgctxt "message"
 msgid "02569"
 msgstr "non puoi tirare la leva!"
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02570"
 msgstr "{argument_actor_name:1} non ha più forza...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02571"
 msgstr "La squadra di {protagonist_name} è{line_break}annientata...{end_wait}"
 
@@ -12159,7 +12159,7 @@ msgctxt "MsgSleepMode"
 msgid "03037"
 msgstr "Avvio modalità Riposo.{line_break}Premi {button_icon:3}+{button_icon:4} per uscire.{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03038"
 msgstr "Il menu Pausa non è{line_break}disponibile al momento.{end_wait}"
 

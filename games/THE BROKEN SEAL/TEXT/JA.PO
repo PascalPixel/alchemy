@@ -9331,11 +9331,11 @@ msgctxt "message"
 msgid "02330"
 msgstr "パスワードあってるカモ。"
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02331"
 msgstr "{argument_actor_name:234} 力つきた・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02332"
 msgstr "{protagonist_name}たちは ぜんめつした・・・。{end_wait}"
 
@@ -14055,7 +14055,7 @@ msgctxt "message"
 msgid "03511"
 msgstr "うのパラメータ"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03512"
 msgstr "ポーズメニューは{line_break}ここではつかえません{end_wait}"
 

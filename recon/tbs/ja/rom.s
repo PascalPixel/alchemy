@@ -498,12 +498,6 @@ Element_PowerResistCurve:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0007f26c, 0x00001d94
-	.section .rom.000834f8, "ax"
-	.global Func_0808c4f8
-	.type Func_0808c4f8, %function
-	.thumb_func
-Func_0808c4f8:
-	.incbin "baserom.gba", 0x000834f8, 0x0000097c
 	.section .rom.0008652c, "ax"
 	.global DisplayTransition_UpdateScanlineTable
 	.type DisplayTransition_UpdateScanlineTable, %function
@@ -702,14 +696,23 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
-	.section .rom.000a1664, "ax"
-	.global Func_080aa768
-Func_080aa768:
-	.incbin "baserom.gba", 0x000a1664, 0x0000051c
 	.section .rom.000a24e0, "ax"
+	.global DjinnMenu_SelectDjinn
+	.type DjinnMenu_SelectDjinn, %function
+	.thumb_func
+DjinnMenu_SelectDjinn:
 	.incbin "baserom.gba", 0x000a24e0, 0x00001308
 	.section .rom.000a45f4, "ax"
-	.incbin "baserom.gba", 0x000a45f4, 0x00001040
+	.global OwnerAction_RunCompareLoop
+	.type OwnerAction_RunCompareLoop, %function
+	.thumb_func
+OwnerAction_RunCompareLoop:
+	.incbin "baserom.gba", 0x000a45f4, 0x00000c20
+	.global Unnamed_080ae2f4
+	.type Unnamed_080ae2f4, %function
+	.thumb_func
+Unnamed_080ae2f4:
+	.incbin "baserom.gba", 0x000a5214, 0x00000420
 	.section .rom.000a596c, "ax"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:

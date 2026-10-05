@@ -28,13 +28,13 @@ void WorldMap_ActivateSite138(s32 actor);
 void WorldMap_RunBlackOrbScene(void);
 void RunEventScript01(void);
 void FieldScene_RunActorTransferSequence(void);
-void FieldScene_RunScene371_020017fc(void);
-void FieldScene_RunScene371_02001888(void);
-void FieldScene_RunScene371_02001938(void);
-void FieldScene_RunScene371_020019e8(void);
-void FieldScene_RunScene371_02001a98(void);
+void WorldMap_TransferToExit102(void);
+void WorldMap_TransferToExit103(void);
+void WorldMap_TransferToExit104(void);
+void WorldMap_TransferToFuneHeya(void);
+void WorldMap_TransferToExit106(void);
 void WorldMap_CompleteTransfer(void);
-void FieldScene_RunScene371_02002274(void);
+void WorldMap_DisembarkCarriage(void);
 void WorldMap_RunOpeningRise(void);
 void StoryScene_StartTransition(void);
 void FieldScene_RunActorEightApproach(void);
@@ -494,25 +494,25 @@ s32 WorldMap_EnterScene(void)
             }
             break;
         case 65:
-            FieldScene_RunScene371_020017fc();
+            WorldMap_TransferToExit102();
             break;
         case 66:
-            FieldScene_RunScene371_02001888();
+            WorldMap_TransferToExit103();
             break;
         case 67:
-            FieldScene_RunScene371_02001938();
+            WorldMap_TransferToExit104();
             break;
         case 68:
-            FieldScene_RunScene371_020019e8();
+            WorldMap_TransferToFuneHeya();
             break;
         case 69:
-            FieldScene_RunScene371_02001a98();
+            WorldMap_TransferToExit106();
             break;
         case 70:
             WorldMap_CompleteTransfer();
             break;
         case 71:
-            FieldScene_RunScene371_02002274();
+            WorldMap_DisembarkCarriage();
             break;
         case 72:
             WorldMap_RunOpeningRise();
@@ -946,7 +946,7 @@ void WorldMap_UpdateTransferredActorLanding(void)
     }
 }
 
-void FieldScene_RunScene371_020017fc(void)
+void WorldMap_TransferToExit102(void)
 {
     struct FieldActor *actor;
 
@@ -968,7 +968,7 @@ void FieldScene_RunScene371_020017fc(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001888(void)
+void WorldMap_TransferToExit103(void)
 {
     struct FieldActor *actor;
 
@@ -996,7 +996,7 @@ void FieldScene_RunScene371_02001888(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001938(void)
+void WorldMap_TransferToExit104(void)
 {
     struct FieldActor *actor;
 
@@ -1024,7 +1024,7 @@ void FieldScene_RunScene371_02001938(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_020019e8(void)
+void WorldMap_TransferToFuneHeya(void)
 {
     struct FieldActor *actor;
 
@@ -1052,7 +1052,7 @@ void FieldScene_RunScene371_020019e8(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene371_02001a98(void)
+void WorldMap_TransferToExit106(void)
 {
     struct FieldActor *actor;
 

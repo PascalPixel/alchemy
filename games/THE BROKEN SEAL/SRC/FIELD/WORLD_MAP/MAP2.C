@@ -26,7 +26,7 @@ extern u8 MsgWorldMapWreckageShipScuttledOffCoast[];
  * Black Orb scene set it. */
 s32 gWorldMapTriggerActor;
 
-void FieldScene_RunScene371_02002274(void)
+void WorldMap_DisembarkCarriage(void)
 {
     struct FieldActor *actor;
 

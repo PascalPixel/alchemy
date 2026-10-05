@@ -31,9 +31,9 @@ extern u8 MsgBiribinoThankSavedMeFromBeing[];
 extern u8 MsgBiribinoThereTreeLooksLikePerson[];
 extern u8 MsgBiribinoWasTurnedIntoTreeFor[];
 extern u8 MsgBiribinoYoureGuy[];
-void FieldScene_RunScene38b_020008f0(void);
+void BiribinoMura_RestoreVillageActors(void);
 void FieldScene_RunScene38bSequenceA(void);
-void FieldScene_RunScene38b_02000d10(void);
+void BiribinoMura_RestoreRaisedEntrance(void);
 void BiribinoMura_UpdateCornerSpawn(void);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
@@ -178,7 +178,7 @@ void SceneDialogue_RunLine1470(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene38b_02000240(void)
+void BiribinoMura_TalkAboutHumanTree(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoItsTreeButAlmostLooks);
@@ -340,7 +340,7 @@ void FieldScene_CallHelper170c(void)
     Engine_LeaderCheckAhead();
 }
 
-void FieldScene_RunScene38b_02000584(void)
+void BiribinoMura_ReceiveJillsGift(void)
 {
     u32 i;
     struct FieldActor *rec7;
@@ -442,21 +442,21 @@ s32 Scene_Initialize(void)
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (gGameState.scene == (s32)&SceneId_BiribinoMura1) {
-        FieldScene_RunScene38b_020008f0();
+        BiribinoMura_RestoreVillageActors();
     } else {
         if (gGameState.scene == (s32)&SceneId_BiribinoMura3) {
             FieldScene_RunScene38bSequenceA();
             ((void (*)())Engine_TaskAddCallback)((s32)BiribinoMura_UpdateCornerSpawn, 0xc80);
         } else {
             if (gGameState.scene == (s32)&SceneId_BiribinoMura2) {
-                FieldScene_RunScene38b_02000d10();
+                BiribinoMura_RestoreRaisedEntrance();
             }
         }
     }
     return 0;
 }
 
-void FieldScene_RunScene38b_020008f0(void)
+void BiribinoMura_RestoreVillageActors(void)
 {
 
     struct FieldActor *record;
@@ -651,7 +651,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
     Engine_MapCopyCellAttributes(0, 0, 1, 1, tx, tz);
 }
 
-void FieldScene_RunScene38b_02000d10(void)
+void BiribinoMura_RestoreRaisedEntrance(void)
 {
     /* FAKEMATCH: the inline halfword cell view remains pending a native field review. */
 

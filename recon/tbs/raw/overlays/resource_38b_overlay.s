@@ -415,7 +415,7 @@ gBiribinoMuraEvents1:
 	.4byte FieldScene_RunEarlySequence
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte FieldScene_RunScene38b_02000240
+	.4byte BiribinoMura_TalkAboutHumanTree
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte SceneDialogue_ShowLine16BF
@@ -649,7 +649,7 @@ gBiribinoMuraEvents3:
 	.2byte 0x40
 	.4byte 0x00000002
 	.4byte 0x0849000d
-	.4byte FieldScene_RunScene38b_02000584
+	.4byte BiribinoMura_ReceiveJillsGift
 	.4byte 0x00008c15
 	.4byte 0x0848000b
 	.4byte FieldScene_RunScene38bSequenceC

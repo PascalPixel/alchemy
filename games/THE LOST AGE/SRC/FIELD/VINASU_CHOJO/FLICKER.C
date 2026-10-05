@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 void Object_SetPartAttribute(void *object, s32 value);
-void Engine_AudioPlayCue(s32 cue);
 
 extern u32 gFrameCount;
 

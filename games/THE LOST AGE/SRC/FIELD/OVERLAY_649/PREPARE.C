@@ -2,10 +2,8 @@
 #include "FIELD_SCENE.H"
 #include "RESOURCE.H"
 #include "DMA.H"
+#include "RUNTIME_MEM.H"
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Sys_Free(void *block);
-s32 Resource_FindFreeEntry(void);
 void Func_02000594(const void *source, void *destination);
 
 extern char ResourceId_IntroTilesB;

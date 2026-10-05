@@ -1,6 +1,5 @@
 #include "TYPES.H"
-
-void Audio_PlayCue(s32 cue);
+#include "FIELD_EVENT.H"
 
 /* The fields of an effect object this step reads. */
 struct TimedObject {

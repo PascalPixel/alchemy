@@ -4,12 +4,12 @@
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
+#include "RESOURCE.H"
 
 /* The window frame colours of background bank 15. */
 extern const u16 Ui_WindowPalette[];
 extern const u8 System_BasicColorPalette[];
 extern char ResourceId_WindowTiles;
-void *Resource_GetTableEntry(s32 id);
 
 /* Loads the shared window graphics: resource 0x13 into BG character block
    0, the window palette into background bank 15, the bank-15 frame colours

@@ -1,14 +1,13 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "IO_REG.H"
 
-s32 LuckyDice_Run();
+s32 LuckyDice_Run(void);
 
-/* The interrupt master-enable word (IME) before and after the blanked frame. */
-#define REG_IME (*(volatile u16 *)0x04000000)
-
+/* Turns every layer off and runs the lucky dice game. */
 s32 Runtime_BlankDisplayAndRun(void)
 {
-    REG_IME = 0x40;
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
     Audio_PlayCue(2);
     LuckyDice_Run();
     return 0;

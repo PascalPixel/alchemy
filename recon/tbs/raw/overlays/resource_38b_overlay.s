@@ -655,10 +655,10 @@ gBiribinoMuraEvents3:
 	.4byte FieldScene_RunScene38bSequenceC
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0x00008602
 	.4byte 0xffff000a
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0x00004602
 	.4byte 0xffff000a
 	.4byte BiribinoMura_PushFacedBlock
@@ -699,13 +699,13 @@ gBiribinoMuraEvents2:
 	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte FieldScene_CallHelper170c
+	.4byte BiribinoMura_CheckLeaderAhead
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

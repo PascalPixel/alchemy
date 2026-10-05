@@ -166,7 +166,7 @@ extern u8 MsgKuupuappuTheyreBack[];
 extern u8 MsgKuupuappuImSurrounded[];
 extern u8 MsgKuupuappuNowIvan[];
 extern u8 MsgKuupuappuTheresNowhereRun[];
-void KuupuappuHeya_RunScene021C8();
+void KuupuappuHeya_RunBranchingDialogueScene();
 void KuupuappuHeya_UpdateActorStops(void);
 
 extern u8 MsgKuupuappuLearn[];
@@ -1199,7 +1199,7 @@ void FieldScene_SelectActorPair(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    KuupuappuHeya_RunScene021C8();
+    KuupuappuHeya_RunBranchingDialogueScene();
     Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
     GameFlag_Set(0x853);
     {
@@ -1219,7 +1219,7 @@ void FieldScene_SelectActorPair(void)
     Engine_EventEnd();
 }
 
-void KuupuappuHeya_RunScene021C8(void)
+void KuupuappuHeya_RunBranchingDialogueScene(void)
 {
     u32 i;
     u8 *record;

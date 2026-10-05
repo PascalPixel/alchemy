@@ -92,8 +92,7 @@ void SceneActor_RunPlacementQuery(void)
     Engine_EventEnd();
 }
 
-/* Scene setup for slot 11 and effect 181. */
-void FieldScene_SetupActor11Effect181(void)
+void KorimaHiroba_AwardHiddenNut(void)
 {
     Engine_EventBegin();
     Engine_ActorSetPosition(11, 0, 0);

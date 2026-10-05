@@ -57,8 +57,8 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
  * An actor climbs between the yard and the ledge in front of the house at
  * x 392, playing one animation for each half of the climb.
  */
-void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
-void HaidiaMura_RunWalkScene03380(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void PaletteGlow_Update(s32 a, s32 b);
 void FieldScene_RunLargeStagingSequence(void);
 void HaidiaMura_OpenVillagerLane(void);
@@ -517,7 +517,7 @@ void SceneState_RunFlag204Step(void)
     m = 20;
     n = 50;
     Map_CopyCellAttributes(49, 53, 8, 4, m, n);
-    HaidiaMura_RunWalkScene032B0(0, 10, 11, 1);
+    HaidiaMura_MoveActorAlongLowerZPath(0, 10, 11, 1);
     GameFlag_Set(0x204);
     Engine_EventEnd();
 }
@@ -526,7 +526,7 @@ void SceneState_SetFlag204AndConfigureRegion49_46(void)
 {
     s32 p5, p6;
     Engine_EventBegin();
-    HaidiaMura_RunWalkScene03380(0, 13, 10, 1);
+    HaidiaMura_MoveActorAlongHigherZPath(0, 13, 10, 1);
     GameFlag_Clear(0x204);
     p5 = 20;
     p6 = 50;
@@ -800,7 +800,7 @@ void HouseScene_RunRepairMorning(void)
     Engine_ActorJump(ACTOR_DORA, 2, 20);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
-    HaidiaMura_RunWalkScene032B0(ACTOR_DORA, 5, 6, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(ACTOR_DORA, 5, 6, 0);
     Actor_SetSpeed(ACTOR_DORA, 0x4ccc, 0x2666);
     Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
     Engine_EventWait(20);
@@ -884,7 +884,7 @@ void HouseScene_RunRepairMorning(void)
     Actor_WalkTo(ACTOR_GERALD, 369, 904);
     Actor_WalkToAndWait(ACTOR_JASMINE, 392, 904);
     Engine_ActorSetAnimation(ACTOR_GERALD, ANIM_STAND);
-    HaidiaMura_RunWalkScene032B0(ACTOR_JASMINE, 10, 11, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(ACTOR_JASMINE, 10, 11, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 0);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
@@ -906,7 +906,7 @@ void HouseScene_RunRepairMorning(void)
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-    HaidiaMura_RunWalkScene032B0(ACTOR_GERALD, 10, 11, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(ACTOR_GERALD, 10, 11, 0);
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
     Actor_WalkTo(ACTOR_GERALD, 392, 843);
@@ -1193,11 +1193,11 @@ void HouseScene_RunRepairMorning(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_PartyAddMembers(ACTOR_GERALD, ACTOR_JASMINE);
     Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
-    HaidiaMura_RunWalkScene03380(ACTOR_PARTY_LEADER, 13, 10, 0);
+    HaidiaMura_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER, 13, 10, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_Get(ACTOR_DORA)->unknown_5a |= 1;
-    HaidiaMura_RunWalkScene03380(ACTOR_DORA, 6, 5, 0);
+    HaidiaMura_MoveActorAlongHigherZPath(ACTOR_DORA, 6, 5, 0);
     Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
     Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
@@ -1518,7 +1518,7 @@ void FieldScene_RunCompanionActorSequence(void)
     Engine_EventEnd();
 }
 
-void HaidiaMura_RunWalkScene032B0(s32 a0, s32 a1, s32 a2, s32 a3)
+void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 {
     u32 i;
     s32 p10;
@@ -1557,7 +1557,7 @@ void HaidiaMura_RunWalkScene032B0(s32 a0, s32 a1, s32 a2, s32 a3)
     p10b = (s32)rec8 + 85;
 }
 
-void HaidiaMura_RunWalkScene03380(s32 a0, s32 a1, s32 a2, s32 a3)
+void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 {
     u32 i;
     s32 p10;
@@ -2154,7 +2154,7 @@ void Scene_RepairTheHouse(void)
     Engine_EventSetMessage((s32)MsgHaidiaGoodJob);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x1000, 10);
-    HaidiaMura_RunWalkScene032B0(21, 5, 6, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(21, 5, 6, 0);
     Actor_SetSpeed(ACTOR_DORA, 0x4ccc, 0x2666);
     Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
     Engine_EventWait(20);
@@ -2227,7 +2227,7 @@ void Scene_RepairTheHouse(void)
     Actor_WalkTo(ACTOR_GERALD, 369, 904);
     Actor_WalkToAndWait(ACTOR_JASMINE, 392, 904);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-    HaidiaMura_RunWalkScene032B0(5, 10, 11, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(5, 10, 11, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 0);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
@@ -2246,7 +2246,7 @@ void Scene_RepairTheHouse(void)
     Engine_ActorSetAnimation(ACTOR_DORA, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-    HaidiaMura_RunWalkScene032B0(1, 10, 11, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(1, 10, 11, 0);
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
     Actor_WalkTo(ACTOR_GERALD, 392, 843);
@@ -2545,7 +2545,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_PartyAddMembers(1, 5);
     Camera_MoveTo(0x1790000, 0xa00000, 0x3770000, 1);
-    HaidiaMura_RunWalkScene03380(0, 13, 10, 0);
+    HaidiaMura_MoveActorAlongHigherZPath(0, 13, 10, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     {
@@ -2554,7 +2554,7 @@ void Scene_RepairTheHouse(void)
 
         record[90] = (u8)(value | flag);
     }
-    HaidiaMura_RunWalkScene03380(21, 6, 5, 0);
+    HaidiaMura_MoveActorAlongHigherZPath(21, 6, 5, 0);
     Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
     Actor_FaceDirection(ACTOR_DORA, 0x4000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 40);

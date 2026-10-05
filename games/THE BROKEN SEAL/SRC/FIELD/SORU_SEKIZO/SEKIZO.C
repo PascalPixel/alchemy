@@ -824,7 +824,7 @@ void FieldScene_RunClosingSequence(void)
     }
 }
 
-void SoruSekizo_CheckTileTrigger0166C(void)
+void SoruSekizo_BlockLeftTriggerCell(void)
 {
     s32 x = Object_GetById(0)->x.fixed >> 20;
     s32 y = Object_GetById(0)->z.fixed >> 20;
@@ -834,7 +834,7 @@ void SoruSekizo_CheckTileTrigger0166C(void)
     }
 }
 
-void SoruSekizo_CheckTileTrigger016A4(void)
+void SoruSekizo_BlockRightTriggerCell(void)
 {
     s32 x = Object_GetById(0)->x.fixed >> 20;
     s32 y = Object_GetById(0)->z.fixed >> 20;

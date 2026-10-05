@@ -335,7 +335,7 @@ void FieldScene_RunScene38bSequenceC(void)
     }
 }
 
-void FieldScene_CallHelper170c(void)
+void BiribinoMura_CheckLeaderAhead(void)
 {
     Engine_LeaderCheckAhead();
 }

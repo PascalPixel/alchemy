@@ -100,8 +100,8 @@ void Actor_UpdatePresentationFlag(void)
 void SceneEffect_AdvanceRotatingSprite(void)
 {
     u8 *entity = Object_GetById(19);
-    u8 *sprite = *(u8 **)(entity + 80);
-    *(u16 *)(sprite + 30) += 0x1400;
+    u8 *sprite = (u8 *)((struct FieldActor *)entity)->sprite;
+    ((struct FieldSprite *)sprite)->rotation += 0x1400;
 }
 
 void SceneEffect_SpawnPeriodicEffect(void)

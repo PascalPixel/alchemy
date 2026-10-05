@@ -96,7 +96,7 @@ void FieldScene_RunScriptedSteps0And17E6(void);
 void FieldScene_RunActor10WaypointSequence(void);
 void FieldScene_RunActorElevenPresentationBeat(void);
 void SceneActor_RunActorTwelveThreeWaypointMotion(void);
-void FieldScene_RunStepFD4WithActor181(s32 a);
+void MogoruMori_AwardHiddenNut(s32 a);
 void FieldScene_RunProbedActorEightOrTenScene(void);
 void SceneState_ApplyCrossRectsAroundActor11(void);
 void FieldScene_RunActorThirteenPresentationBeat(void);

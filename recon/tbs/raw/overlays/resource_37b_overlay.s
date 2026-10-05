@@ -217,13 +217,13 @@ SceneEventRuntime_EffectData:
 	.4byte FieldScene_RunFiveValueStep15
 	.4byte 0x10008c15
 	.4byte 0x0816000a
-	.4byte SoruSekizo_CheckTileTrigger0166C
+	.4byte SoruSekizo_BlockLeftTriggerCell
 	.4byte 0x00008c15
 	.4byte 0x0816000a
 	.4byte ConfigureSceneAndCheckActors
 	.4byte 0x10008c15
 	.4byte 0x0817000c
-	.4byte SoruSekizo_CheckTileTrigger016A4
+	.4byte SoruSekizo_BlockRightTriggerCell
 	.4byte 0x00008c15
 	.4byte 0x0817000c
 	.4byte ConfigureAlternateSceneAndCheckActors

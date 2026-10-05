@@ -2412,7 +2412,7 @@ gVinasuHeyaEvents4:
 	.4byte FieldScene_RunGuardedRectStep
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00008c15
 	.4byte 0x03010009
 	.4byte VinasuHeya_RunCellPushScene
@@ -2486,7 +2486,7 @@ gVinasuHeyaEvents5:
 	.4byte SceneState_RunConditionalStep
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00000013
 	.4byte 0x0f350064
 	.4byte 0x00100052
@@ -2599,7 +2599,7 @@ gVinasuHeyaEvents6:
 	.4byte FieldScene_DrawTilesWhenCheckClear
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte SceneState_SetFlag953
+	.4byte VinasuHeya_ShowLockedDoorMessage
 	.4byte 0x00000013
 	.4byte 0x0f360064
 	.4byte 0x00100009

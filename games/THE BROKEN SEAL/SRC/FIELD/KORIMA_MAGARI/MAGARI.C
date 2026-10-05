@@ -83,7 +83,7 @@ void KorimaMagari_RedrawBoard(void)
 
   /* Set object motion state. */
 
-void Scene_CallHelper118c(void)
+void KorimaMagari_TryJumpForward(void)
 {
     Field_TryJumpForward();
 }

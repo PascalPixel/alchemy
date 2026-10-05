@@ -198,7 +198,7 @@ void FieldScene_RunSupplementalSequenceOne(void);
 void FieldScene_PlaceSpectatorRow(void);
 void KorosseoKabe_StartSupplementalSceneTask(void);
 void SceneState_WaitForStatusWords(void);
-void SceneState_InstallTask8714AndApplyTwoRects(void);
+void KorosseoKabe_StopSpectatorCallbackAndRestoreCells(void);
 void FieldScene_RunPairedEntranceWalk(s32 a0);
 void FieldScene_RunSecondActorInteraction(s32 a0);
 void FieldScene_RunSceneThreeCoordinator(s32 a0);

@@ -195,7 +195,7 @@ MakyuriHeya_PushScriptA:
 	.4byte 0x00000010
 	.4byte 0x00003333
 	.4byte 0x00000022
-	.4byte SceneData_LoadBlockA2c5
+	.4byte MakyuriHeya_StartActorNineParticles
 	.4byte 0x00000003
 	.4byte 0x03180000
 	.4byte 0x00000000
@@ -213,7 +213,7 @@ MakyuriHeya_PushScriptB:
 	.4byte 0x00000010
 	.4byte 0x00003333
 	.4byte 0x00000022
-	.4byte SceneData_LoadBlockA2c5
+	.4byte MakyuriHeya_StartActorNineParticles
 	.4byte 0x00000003
 	.4byte 0x03180000
 	.4byte 0x00000000
@@ -233,7 +233,7 @@ MakyuriHeya_PushScriptD:
 	.4byte 0x00000010
 	.4byte 0x00003333
 	.4byte 0x00000022
-	.4byte SceneData_LoadBlockA2c5
+	.4byte MakyuriHeya_StartActorNineParticles
 	.4byte 0x00000003
 	.4byte 0x03380000
 	.4byte 0x00000000
@@ -247,7 +247,7 @@ MakyuriHeya_PushScriptC:
 	.4byte 0x00000000
 	.4byte 0x0000002d
 	.4byte 0x00000022
-	.4byte SceneData_LoadBlockA2c5
+	.4byte MakyuriHeya_StartActorNineParticles
 	.4byte 0x00000010
 	.global gPaletteCycleRed
 gPaletteCycleRed:
@@ -1029,13 +1029,13 @@ gMakyuriHeyaEvents1:
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x18750015
-	.4byte FieldScene_CallHelper67e8
+	.4byte MakyuriHeya_TickSpawnTimer
 	.4byte 0x00000202
 	.4byte 0x1875000b
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000002
 	.4byte 0x1875000b
-	.4byte FieldScene_CallHelper6364
+	.4byte MakyuriHeya_TriggerPillarRise
 	.4byte 0x00004602
 	.4byte 0xffff000f
 	.4byte FieldScene_RunScene39cSequenceB

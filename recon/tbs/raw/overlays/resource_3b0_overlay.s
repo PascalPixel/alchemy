@@ -391,7 +391,7 @@ FuneHobashira_LandingObjects:
 FuneHobashira_SceneTableE:
 	.4byte 0x00004602
 	.4byte 0xffff000a
-	.4byte FieldScene_CallHelper14d0
+	.4byte FuneHobashira_UpdateGridPlacement
 	.4byte 0x00000000
 	.4byte 0x09280008
 	.4byte MsgFuneWatchSeasHelpKaja

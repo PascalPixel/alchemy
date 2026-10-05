@@ -559,7 +559,7 @@ void SceneState_WaitForStatusWords(void)
     }
 }
 
-void SceneState_InstallTask8714AndApplyTwoRects(void)
+void KorosseoKabe_StopSpectatorCallbackAndRestoreCells(void)
 {
     BattleEffect_PauseObject(31);
     Engine_GameFlagSet(820);                 /* 205 << 2 */

@@ -682,7 +682,7 @@ no_match:
     return (const struct ScenePlacement *)gVinasuHeyaPlacementsOther;
 }
 
-void SceneState_SetFlag953(void)
+void VinasuHeya_ShowLockedDoorMessage(void)
 {
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);

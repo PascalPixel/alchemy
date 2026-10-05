@@ -172,7 +172,7 @@ void SceneActor_UseActorNinePositionWithYOffset(void)
     SceneEffect_SpawnRandomEveryFourFrames(p[2], b, c);
 }
 
-s32 SceneData_LoadBlockA2c5(void)
+s32 MakyuriHeya_StartActorNineParticles(void)
 {
     s32 n = 0xc80;
 

@@ -112,7 +112,7 @@ s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
     return 1;
 }
 
-void OverlayObject_Add160ToFields18And1c(struct FieldActor *o)
+void FuneHobashira_GrowActorScale(struct FieldActor *o)
 {
     if (o->scale_x < 0x10000) {
         o->scale_x += 160;
@@ -212,7 +212,7 @@ u8 *FuneHobashira_GetEvents(void)
     return FuneHobashira_SceneTableE;
 }
 
-void FieldScene_CallHelper14d0(void)
+void FuneHobashira_UpdateGridPlacement(void)
 {
     FieldEffect_UpdateGridPlacement();
 }
@@ -411,7 +411,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorSetChildValue(12, 3);
     actor = Object_GetById(10);
     scale = 0x8000;
-    update = (s32)OverlayObject_Add160ToFields18And1c;
+    update = (s32)FuneHobashira_GrowActorScale;
     actor->scale_y = scale;
     actor->scale_x = scale;
     actor->update = (void (*)(union FieldObject *))update;

@@ -110,7 +110,7 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b);
 void SceneState_ConfigureEightCornerRegions(void);
 void FieldScene_RunStepByRuntimeBits(s32 a);
 void SceneState_SetValue140Mode0(void);
-void FieldScene_CallHelper6620(void);
+void SoruFunka_CleanupSceneObjects(void);
 void FieldScene_RunActor15TwoStep(void);
 void BattleEffect_CleanupSceneObjects(void);
 

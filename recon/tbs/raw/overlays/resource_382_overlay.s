@@ -725,7 +725,7 @@ KuupuappuMura_Extras:
 	.4byte FieldScene_RunActor23SequenceOnceByFlag867
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte SceneState_SetFlags947And29dc
+	.4byte KuupuappuMura_InspectWell
 	.4byte 0x000000d3
 	.4byte 0x0f4a0065
 	.4byte 0x001000b5
@@ -850,7 +850,7 @@ KuupuappuMura_ExtrasFlag855:
 	.4byte FieldScene_RunActor23SequenceOnceByFlag867
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte SceneState_SetFlags947And29dc
+	.4byte KuupuappuMura_InspectWell
 	.4byte 0x0000e714
 	.4byte 0x08580013
 	.4byte FieldScene_RunActor19MotionSequence

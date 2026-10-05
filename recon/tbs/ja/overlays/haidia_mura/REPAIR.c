@@ -57,8 +57,8 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
  * An actor climbs between the yard and the ledge in front of the house at
  * x 392, playing one animation for each half of the climb.
  */
-void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
-void HaidiaMura_RunWalkScene03380(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_MoveActorAlongHigherZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void PaletteGlow_Update(s32 a, s32 b);
 void FieldScene_RunLargeStagingSequence(void);
 void HaidiaMura_OpenVillagerLane(void);
@@ -318,7 +318,7 @@ void Scene_RepairTheHouse(void)
     Engine_EventSetMessage((s32)MsgHaidiaGoodJob);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x1000, 10);
-    HaidiaMura_RunWalkScene032B0(21, 5, 6, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(21, 5, 6, 0);
     Actor_SetSpeed(ACTOR_DORA, 0x4ccc, 0x2666);
     Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
     Engine_EventWait(20);
@@ -391,7 +391,7 @@ void Scene_RepairTheHouse(void)
     Actor_WalkTo(ACTOR_GERALD, 369, 904);
     Actor_WalkToAndWait(ACTOR_JASMINE, 392, 904);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-    HaidiaMura_RunWalkScene032B0(5, 10, 11, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(5, 10, 11, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 0);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
@@ -410,7 +410,7 @@ void Scene_RepairTheHouse(void)
     Engine_ActorSetAnimation(ACTOR_DORA, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-    HaidiaMura_RunWalkScene032B0(1, 10, 11, 0);
+    HaidiaMura_MoveActorAlongLowerZPath(1, 10, 11, 0);
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
     Actor_WalkTo(ACTOR_GERALD, 392, 843);
@@ -709,7 +709,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Engine_PartyAddMembers(1, 5);
     Camera_MoveTo(0x1790000, 0xa00000, 0x3770000, 1);
-    HaidiaMura_RunWalkScene03380(0, 13, 10, 0);
+    HaidiaMura_MoveActorAlongHigherZPath(0, 13, 10, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     {
@@ -718,7 +718,7 @@ void Scene_RepairTheHouse(void)
 
         record[90] = (u8)(value | flag);
     }
-    HaidiaMura_RunWalkScene03380(21, 6, 5, 0);
+    HaidiaMura_MoveActorAlongHigherZPath(21, 6, 5, 0);
     Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
     Actor_FaceDirection(ACTOR_DORA, 0x4000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 40);

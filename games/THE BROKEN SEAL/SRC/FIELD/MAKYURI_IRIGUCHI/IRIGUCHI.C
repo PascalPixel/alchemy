@@ -52,7 +52,7 @@ void MakyuriIriguchi_TickSpawnTimer(void)
     Makyuri_TickSpawnTimer();
 }
 
-void FieldScene_CallHelper2e58(void)
+void MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget(void)
 {
     SceneState_ClearCurrentRecordAndReleaseTarget();
 }
@@ -62,7 +62,7 @@ void FieldScene_RunSingleStep(void)
     Makyuri_RunActorMove();
 }
 
-void FieldScene_CallHelper2d50(void)
+void MakyuriIriguchi_TriggerPillarRise(void)
 {
     MakyuriIriguchi_RaisePillar();
 }

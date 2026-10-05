@@ -426,10 +426,10 @@ gTakaraAshibaEvents1:
 	.4byte TakaraAshiba_ResetBlockedStepsForSelectorThree
 	.4byte 0x00004602
 	.4byte 0xffff0035
-	.4byte FieldScene_CallHelper3500
+	.4byte TakaraAshiba_CheckLeaderAhead
 	.4byte 0x00004602
 	.4byte 0xffff0036
-	.4byte FieldScene_CallHelper3500
+	.4byte TakaraAshiba_CheckLeaderAhead
 	.4byte 0x00000013
 	.4byte 0x0eca0064
 	.4byte 0x0020014d
@@ -612,7 +612,7 @@ gTakaraAshibaEvents3:
 	.4byte FieldScene_RunSingleStep
 	.4byte 0x00008c15
 	.4byte 0x0205000c
-	.4byte FieldScene_CallHelper3c70
+	.4byte TakaraAshiba_RepaintActorCells
 	.4byte 0x00000013
 	.4byte 0x0ed60068
 	.4byte 0x0020029a

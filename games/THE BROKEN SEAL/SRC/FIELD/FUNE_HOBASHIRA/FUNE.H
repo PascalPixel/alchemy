@@ -48,7 +48,7 @@ enum {
 
 void FieldEffect_UpdateGridPlacement(void);
 void FuneHobashira_AnnounceClearCourse(void);
-void OverlayObject_Add160ToFields18And1c(struct FieldActor *o);
+void FuneHobashira_GrowActorScale(struct FieldActor *o);
 s32 Battle_GetWorkObject1e0();
 void Event_CallWithLastActiveObjectId(s32 value);
 void Object_SetPosition();

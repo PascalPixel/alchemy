@@ -355,7 +355,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gTakaraAshibaEventsOther;
 }
 
-void FieldScene_CallHelper3500(void)
+void TakaraAshiba_CheckLeaderAhead(void)
 {
     Engine_LeaderCheckAhead();
 }
@@ -1106,7 +1106,7 @@ void FieldScene_RunThreeCallSequence(void)
     FieldScene_RunSingleStep();
 }
 
-void FieldScene_CallHelper3c70(void)
+void TakaraAshiba_RepaintActorCells(void)
 {
     ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
@@ -1115,7 +1115,7 @@ void FieldScene_RunThreeStepSequence(void)
 {
     SceneState_ApplyFourRectsAt48_55();
     StagedActor_AdvancePair();
-    FieldScene_CallHelper3c70();
+    TakaraAshiba_RepaintActorCells();
 }
 
 void ActorPresentation_PlaceActorFourteenOnActorNine(void)

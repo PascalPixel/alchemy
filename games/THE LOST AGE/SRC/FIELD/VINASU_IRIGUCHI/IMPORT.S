@@ -400,7 +400,7 @@ Func_02002a54:
 	.thumb_func
 Func_02002a5c:
 	overlay_veneer Func_080c8820
-	.global Func_02002a64
+	.global Engine_AudioPlayCue
 	.thumb_func
-Func_02002a64:
+Engine_AudioPlayCue:
 	overlay_veneer Audio_PlayCue

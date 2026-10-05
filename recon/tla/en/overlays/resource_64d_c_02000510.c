@@ -42,7 +42,7 @@ void Func_02002a44();
 void Func_02002a4c();
 void Func_02002a54();
 void Func_02002a5c();
-void Func_02002a64();
+void Engine_AudioPlayCue();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -360,11 +360,11 @@ void Scene_RunSoldierInterception(void)
     Func_02002a44();
     record = Func_020028cc(9);
     Func_02002a5c((s32)record, 2);
-    Func_02002a64(178);
+    Engine_AudioPlayCue(178);
     Func_020028ac(20);
     Call2(Func_02002a34, 8, 0x4084);
     Func_020028ac(60);
-    Call1(Func_02002a64, 0x186);
+    Call1(Engine_AudioPlayCue, 0x186);
     Func_0200295c(12, 0);
     Func_020023a4(12);
     Value3(Func_02002964, 17, 0x100, 0);
@@ -487,7 +487,7 @@ void Scene_RunSoldierInterception(void)
     Call3(Func_020028fc, 17, -20, 20);
     Func_02002904(17);
     Func_02002914(17, 1);
-    Func_02002a64(133);
+    Engine_AudioPlayCue(133);
     *(s32 *)(rec + 8) += 0x80000;
     *(s32 *)(rec + 108) = v5;
     *(s32 *)(rec + 16) += -0x80000;
@@ -513,13 +513,13 @@ void Scene_RunSoldierInterception(void)
     }
     Func_02002924(17, 6, 40);
     Func_02002914(17, 11);
-    Func_02002a64(135);
+    Engine_AudioPlayCue(135);
     Func_020028ac(14);
-    Func_02002a64(135);
+    Engine_AudioPlayCue(135);
     Func_020028ac(14);
-    Func_02002a64(135);
+    Engine_AudioPlayCue(135);
     Func_020028ac(14);
-    Func_02002a64(135);
+    Engine_AudioPlayCue(135);
     Func_020028ac(14);
     Func_020028ac(20);
     *(u16 *)p10 = v5;

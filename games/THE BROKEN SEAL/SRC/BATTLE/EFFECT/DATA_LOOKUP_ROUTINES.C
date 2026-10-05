@@ -2,14 +2,15 @@
 #include "SCENE.H"
 #include "BATTLE_RUNTIME.H"
 #include "GAME_STATE.H"
+#include "EVENTWRK.H"
 
-extern u8 *gEventWork;
+extern struct EventWork *gEventWork;
 
 extern s32 Encounter_SelectEnemyGroup();
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
-    u8 *table = gEventWork + 0x1a0;
+    u8 *table = gEventWork->encounter_groups;
 
     /* 第2引数は呼出元のr1を引き継ぐ特殊な呼出規約。 */
     return Encounter_SelectEnemyGroup(table[index]);

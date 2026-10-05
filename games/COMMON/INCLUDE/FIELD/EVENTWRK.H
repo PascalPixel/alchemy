@@ -98,7 +98,9 @@ struct EventWork {
     u8 unknown_184[0x18];
     /* Frames the leader has pressed against something it cannot pass. */
     s16 blocked_steps;
-    u8 unknown_19e[0x0a];
+    u8 unknown_19e[2];
+    /* Enemy-group indices selected by the current scene's location rule. */
+    u8 encounter_groups[8];
     /* A random spread drawn once per encounter, which shifts how fast the
        encounter steps grow until the next encounter clears it. */
     s32 encounter_bias;
@@ -125,6 +127,9 @@ LAYOUT_OFFSET_GUARD(EventWork_FacingTrigger, struct EventWork, facing_trigger, 0
 LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork, psynergy_request, 0x17e);
 LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raised_trigger, 0x182);
 LAYOUT_OFFSET_GUARD(EventWork_BlockedSteps, struct EventWork, blocked_steps, 0x19c);
+LAYOUT_OFFSET_GUARD(EventWork_EncounterGroups, struct EventWork, encounter_groups, 0x1a0);
+LAYOUT_OFFSET_GUARD(EventWork_EncounterBias, struct EventWork, encounter_bias, 0x1a8);
+LAYOUT_OFFSET_GUARD(EventWork_EncounterThreshold, struct EventWork, encounter_threshold, 0x1ac);
 LAYOUT_OFFSET_GUARD(EventWork_StartTransition, struct EventWork, start_transition, 0x1c0);
 LAYOUT_OFFSET_GUARD(EventWork_TransitionFrames, struct EventWork, transition_frames, 0x1c8);
 LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, message, 0x1d8);

@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
+#include "EVENTWRK.H"
+#include "BATTLE_UNIT.H"
 
 struct BattleLocationRule {
     s16 map;
@@ -46,11 +48,11 @@ struct FieldPartyState {
     s16 no_encounters;
 };
 
-extern u8 *gEventWork;
+extern struct EventWork *gEventWork;
 extern struct FieldPartyState gGameState;
 extern struct EncounterZone Encounter_EnemyGroupTable[];
 s32 GameFlag_IsSet(s32 flag);
-u8 *Owner_GetStateFar(s32 unit);
+struct BattleUnit *Owner_GetStateFar(s32 unit);
 s32 Party_GetAverageLevelFar(void);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);
@@ -63,7 +65,7 @@ void BattleFx_SelectBattleCue(s32 zone);
 void BattleFx_SelectLocationRule(s32 check)
 {
     /* FAKEMATCH: the shift temporaries order the zero between the two stores. */
-    u8 *work;
+    struct EventWork *work;
     s32 map;
     s32 room;
     u8 *out;
@@ -75,7 +77,7 @@ void BattleFx_SelectLocationRule(s32 check)
     work = gEventWork;
     map = gGameState.scene;
     room = gGameState.entrance;
-    out = work + 0x1a0;
+    out = work->encounter_groups;
     entry = Battle_LocationRules;
     track = 0;
     fade = 0;
@@ -98,15 +100,15 @@ void BattleFx_SelectLocationRule(s32 check)
             track++;
     }
     if (fade != 0) {
-        u8 v = work[0x1a1];
-        u8 *d = &work[0x1a0];
+        u8 v = work->encounter_groups[1];
+        u8 *d = &work->encounter_groups[0];
         s32 zero = 0;
 
         *d = v;
-        work[0x1a1] = zero;
+        work->encounter_groups[1] = zero;
     }
-    *(s32 *)(work + 0x1a8) = 0;
-    *(s32 *)(work + 0x1ac) = 0x100000;
+    work->encounter_bias = 0;
+    work->encounter_threshold = 0x100000;
     BattleFx_SetSpecialFromTable();
 }
 
@@ -132,7 +134,7 @@ s32 BattleFx_LookupResult(void *arg0)
 
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 {
-    u8 *work;
+    struct EventWork *work;
     struct EncounterZone *entry;
     s32 rate;
     s32 level;
@@ -157,7 +159,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
     if (rate == 0)
         return 0;
     if (GameFlag_IsSet(5) != 0) {
-        level = *(s32 *)(Owner_GetStateFar(5) + 292);
+        level = (s32)Owner_GetStateFar(5)->experience;
         if (level > 130)
             return 0;
     }
@@ -169,21 +171,21 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
     if (level > 0 && gGameState.encounters_off != 0)
         return 0;
     rate += level * 5;
-    bias = *(s32 *)(work + 0x1a8);
+    bias = work->encounter_bias;
     if (bias == 0) {
         s32 a = Random16();
         s32 b = Random16();
         s32 c = Random16();
 
         bias = (a - b + c - (s32)Random16()) / 2;
-        *(s32 *)(work + 0x1a8) = bias;
+        work->encounter_bias = bias;
     }
     step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gGameState.encounter_steps += Iwram_MulQ16(step, steps);
-    if (total < *(s32 *)(work + 0x1ac))
+    if (total < work->encounter_threshold)
         return 0;
 encounter:
-    *(s32 *)(work + 0x1a8) = 0;
+    work->encounter_bias = 0;
     sum = 0;
     for (i = 0; i < 8; i++)
         sum += entry->weights[i];

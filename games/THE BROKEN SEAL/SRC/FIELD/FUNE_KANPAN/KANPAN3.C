@@ -551,7 +551,7 @@ void FuneKanpan_RunRobinTalk(void)
     Engine_EventRequestExit(17);
 }
 
-void FieldScene_RunScene3af_02004218(void)
+void FuneKanpan_PlaceLeaderOnDeck(void)
 {
     struct FieldActor *record;
 

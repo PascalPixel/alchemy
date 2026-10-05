@@ -83,8 +83,8 @@ void SceneEffect_InitSlotsEightToNineteen(void);
 void SceneState_InitActorSlots8To19(void);
 void SceneState_ConfigureEntries8Through19(void);
 void FuneKanpan_RockDeck(void);
-void FieldScene_RunScene3af_02001b58(void);
-void FieldScene_RunScene3af_02001a98(void);
+void FuneKanpan_SetupVisibleLeaderDeparture(void);
+void FuneKanpan_SetupHiddenLeaderDeparture(void);
 void FieldScene_RunActorTwentyDialogueSequence(void);
 void FieldScene_RunShipDeckEventScript(void);
 void FuneKanpan_RunDeckCrewScene(void);
@@ -94,8 +94,8 @@ void FieldScene_ConfigureLeadActors(void);
 void FieldScene_ConfigureThreeActors(void);
 void FieldScene_RunPartyRosterScene(void);
 void FuneKanpan_ArriveAtTolbi(void);
-void FieldScene_RunScene3af_02001920(void);
-void FieldScene_RunScene3af_0200185c(void);
+void FuneKanpan_SetupDeckCrewman(void);
+void FuneKanpan_SetupRaisedCrewman(void);
 void SceneActor_PlaceActors20To27(void);
 void FuneKanpan_PlaceRandomDeckActors(void);
 
@@ -113,7 +113,7 @@ extern u8 FuneKanpan_LeadActionsB[];
 extern u8 FuneKanpan_LeadActionsC[];
 extern u8 FuneKanpan_CrewScript[];
 void Event_CallWithLastActiveObjectId();
-void FieldScene_RunScene3af_02004218(void);
+void FuneKanpan_PlaceLeaderOnDeck(void);
 
 extern u8 FuneKanpan_CrewScriptE[];
 void Engine_EventBegin();
@@ -124,7 +124,7 @@ void Engine_EventEnd();
 
 extern u8 MsgFuneAyeCaptainSeaMonsters[];
 extern u8 MsgFunePreparationsReady[];
-void FieldScene_RunScene3af_02001c14();
+void FuneKanpan_AnnouncePreparationsReady();
 void FieldScene_CallPairWith10();
 void FuneKanpan_OpenFirstDoor(void);
 
@@ -777,7 +777,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
     }
 }
 
-void FieldScene_RunScene3af_020010a0(void)
+void FuneKanpan_WatchCrewmanLeaveRight(void)
 {
     u8 bits;
 
@@ -785,7 +785,7 @@ void FieldScene_RunScene3af_020010a0(void)
         if (GameFlag_IsSet(0x922) == 0) {
             Engine_EventBegin();
             Battle_ResetEffectCounter();
-            FieldScene_RunScene3af_020012f0();
+            FuneKanpan_ConfrontCrewman();
             Actor_SetSpeed(20, 0x6666, 0x3333);
             Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(20, 232, 0x330);
@@ -822,7 +822,7 @@ void FieldScene_RunScene3af_020010a0(void)
     }
 }
 
-void FieldScene_RunScene3af_020011c8(void)
+void FuneKanpan_WatchCrewmanLeaveLeft(void)
 {
     u8 bits;
 
@@ -830,7 +830,7 @@ void FieldScene_RunScene3af_020011c8(void)
         if (GameFlag_IsSet(0x922) == 0) {
             Engine_EventBegin();
             Battle_ResetEffectCounter();
-            FieldScene_RunScene3af_020012f0();
+            FuneKanpan_ConfrontCrewman();
             Actor_SetSpeed(20, 0x6666, 0x3333);
             Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToAndWait(20, 202, 0x330);
@@ -867,7 +867,7 @@ void FieldScene_RunScene3af_020011c8(void)
     }
 }
 
-void FieldScene_RunScene3af_020012f0(void)
+void FuneKanpan_ConfrontCrewman(void)
 {
     u32 i;
     s32 record;
@@ -958,9 +958,9 @@ void FuneKanpan_ApplyEntryState(void)
         break;
     case 10:
         if (Engine_GameFlagIsSet(0x928) != 0) {
-            FieldScene_RunScene3af_02001b58();
+            FuneKanpan_SetupVisibleLeaderDeparture();
         } else {
-            FieldScene_RunScene3af_02001a98();
+            FuneKanpan_SetupHiddenLeaderDeparture();
         }
         return;
     case 11:
@@ -980,7 +980,7 @@ void FuneKanpan_ApplyEntryState(void)
         return;
     case 16:
         if (Engine_GameFlagIsSet(0x109) != 0) {
-            FieldScene_RunScene3af_02001920();
+            FuneKanpan_SetupDeckCrewman();
         } else {
             FieldScene_ConfigureLeadActors();
         }
@@ -1002,9 +1002,9 @@ void FuneKanpan_ApplyEntryState(void)
     } else if (Engine_GameFlagIsSet(0x8a0) != 0) {
         ((void (*)(void))FuneKanpan_PlaceDeckActors)();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {
-        FieldScene_RunScene3af_02001920();
+        FuneKanpan_SetupDeckCrewman();
     } else if (Engine_GameFlagIsSet(0x928) != 0) {
-        FieldScene_RunScene3af_0200185c();
+        FuneKanpan_SetupRaisedCrewman();
     } else if (Engine_GameFlagIsSet(0x925) != 0) {
         SceneActor_PlaceActors20To27();
     } else if (Engine_GameFlagIsSet(0x911) != 0) {
@@ -1102,7 +1102,7 @@ void SceneActor_PlaceActors20To27(void)
     Engine_ActorSetPosition(20, 0, 0);
 }
 
-void FieldScene_RunScene3af_0200185c(void)
+void FuneKanpan_SetupRaisedCrewman(void)
 {
     struct FieldActor *record;
     u8 bits;
@@ -1133,12 +1133,12 @@ void FieldScene_RunScene3af_0200185c(void)
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);
     if (GameFlag_IsSet(0x109) != 0) {
-        FieldScene_RunScene3af_02004218();
+        FuneKanpan_PlaceLeaderOnDeck();
     }
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3af_02001920(void)
+void FuneKanpan_SetupDeckCrewman(void)
 {
     struct FieldActor *record;
 
@@ -1162,7 +1162,7 @@ void FieldScene_RunScene3af_02001920(void)
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);
     if (GameFlag_IsSet(0x109) != 0) {
-        FieldScene_RunScene3af_02004218();
+        FuneKanpan_PlaceLeaderOnDeck();
     }
     Engine_EventEnd();
 }
@@ -1212,7 +1212,7 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3af_02001a98(void)
+void FuneKanpan_SetupHiddenLeaderDeparture(void)
 {
     struct FieldActor *record;
 
@@ -1243,10 +1243,10 @@ void FieldScene_RunScene3af_02001a98(void)
     Camera_MoveTo(0xe80000, -1, 0x27c0000, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    FieldScene_RunScene3af_02001c14(23, 21);
+    FuneKanpan_AnnouncePreparationsReady(23, 21);
 }
 
-void FieldScene_RunScene3af_02001b58(void)
+void FuneKanpan_SetupVisibleLeaderDeparture(void)
 {
     struct FieldActor *record;
 
@@ -1281,10 +1281,10 @@ void FieldScene_RunScene3af_02001b58(void)
         record->facing = shown;
     }
     Engine_TaskWait(1);
-    FieldScene_RunScene3af_02001c14(20, 23);
+    FuneKanpan_AnnouncePreparationsReady(20, 23);
 }
 
-void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
+void FuneKanpan_AnnouncePreparationsReady(s32 a0, s32 a1)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_EventOpenScreen();

@@ -569,6 +569,7 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
 
 s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
 {
+    /* This command uses the original unwritten stack offsets. */
     s32 offset[3];
 
     Object_SetMoveTarget(

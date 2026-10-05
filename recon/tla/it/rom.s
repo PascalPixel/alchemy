@@ -4884,7 +4884,7 @@ ColorBuffer_Scale:
 	.type DebugParty_LoadPreset, %function
 	.thumb_func
 DebugParty_LoadPreset:
-	.incbin "baserom.gba", 0x00118738, 0x00000638
+	.incbin "baserom.gba", 0x00118738, 0x000005f4
 	.section .rom.00118e64, "ax"
 	.incbin "baserom.gba", 0x00118e64, 0x00000108
 	.section .rom.00118f6c, "ax"

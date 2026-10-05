@@ -1201,6 +1201,7 @@
     "*/recon/tla/fr/rom.o"(.rom.00118394)
     "*/recon/tla/fr/rom.o"(.rom.00118410)
     "*/recon/tla/fr/rom.o"(.rom.00118738)
+    "*/games/COMMON/SRC/BATTLE/PRESENTATION/TILE_PATTERN.o"(.text)
     "*/games/THE LOST AGE/SRC/BATTLE/PARTY/RESET_ACTIVE_RUNTIME_FIELDS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00118e64)
     "*/recon/tla/fr/rom.o"(.rom.00118f6c)

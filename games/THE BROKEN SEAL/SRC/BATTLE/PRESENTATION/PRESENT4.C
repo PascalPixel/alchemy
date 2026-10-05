@@ -153,24 +153,3 @@ void BattleParty_CollectUnitList(void)
 done:
     battle->enemy_units[count] = 0xff;
 }
-
-/* Copies the eight-word tile pattern one row down in VRAM, then clears the
-   five words at 0x0600028c with the IWRAM word clear. */
-s32 BattlePresentation_InitializeTilePattern(void)
-{
-    Dma_Set((const void *)0x06000290, (void *)0x06000280, 0x80000008,
-            REG_DMA3);
-    return Iwram_ClearWords((void *)0x0600028c, 20);
-}
-
-/* Battle presentation keeps its own copy of the BG0 vertical offset reset. */
-void BattlePresentation_ClearBg0VerticalOffset(void)
-{
-    u32 zero = 0;
-
-    REG_BG0VOFS = zero;
-}
-
-void Party_ReservedNoOp5B14(void)
-{
-}

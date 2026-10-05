@@ -61,7 +61,7 @@ struct StagedParticle {
     u16 f5e;
 };
 
-/* Emitter fields are named by offset; the layout is not verified. */
+/* Particle emitter state. */
 struct Resource373Emitter {
     u8 unknown_00[6];
     u16 field06;
@@ -199,17 +199,6 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id);
 void WorldMap_CreateLinkedEffects(s32);
 s32 SceneEffect_UpdateOrbitPosition(s32 *p);
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
 /* Actor IDs the scene sets up: three actors share a common data pointer,
  * a fourth actor (11) is driven through its own sequence of position/speed
  * calls. */
@@ -218,13 +207,5 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p);
 
 void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
 
-/* Newly identified engine calls: each macro below names the site's own
- * engine function from its reconstructed C source, and keeps the site's
- * own calling form. */
-
-/*
- * Staged actor cutscene tail -- resource_373. The long scene script plus the
- * particle, sound, and vertical-motion effects it drives.
- */
-
+/* The scene script and the particle, sound and vertical-motion effects it drives. */
 #endif

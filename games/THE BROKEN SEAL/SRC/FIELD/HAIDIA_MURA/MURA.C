@@ -368,16 +368,12 @@ void SceneDialogue_RunFlag815GatedStep(void)
     }
 }
 
-/* Runs four scene primitives in sequence: one single-argument call, one call
- * passing the address of gHaidiaMuraCellAnimB plus two small constants, one call
- * with a byte-flag-sized first argument (0) and two larger constants, and a
- * final single-argument call. */
 void FieldScene_RunPrimarySequence(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)gHaidiaMuraCellAnimB, 49, 69); /* main:08009178 */
+    Map_AnimateCells((s32)gHaidiaMuraCellAnimB, 49, 69);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 0x466); /* object_id 0, x 326, z 0x466 */
-    Engine_EventRequestExit(8); /* main:0808a248 */
+    Engine_EventRequestExit(8);
 }
 
 /* Runs a short scripted step, then two 3-argument setup calls, then another
@@ -385,17 +381,17 @@ void FieldScene_RunPrimarySequence(void)
 void FieldScene_RunScene373SequenceA(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76); /* main:08009178 */
+    Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6); /* object_id 0, x 0x176, z 0x4d6 */
-    Engine_EventRequestExit(9); /* main:0808a248 */
+    Engine_EventRequestExit(9);
 }
 
 void FieldScene_RunPrimarySequenceSecond(void)
 {
     Audio_PlayCue(158);
-    Map_AnimateCells((s32)gHaidiaMuraCellAnimA, 35, 74); /* main:08009178 */
+    Map_AnimateCells((s32)gHaidiaMuraCellAnimA, 35, 74);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
-    Engine_EventRequestExit(10); /* main:0808a248 */
+    Engine_EventRequestExit(10);
 }
 
 void FieldScene_RunScene373SequenceC(void)
@@ -1601,7 +1597,7 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
             Engine_ActorSetSpriteFlags(actor, 0);
             actor->field08 = 0x01860000;   /* 0xc3 << 17. */
             actor->field0c = 0x00a00000;   /* 0xa0 << 16. */
-            actor->field10 = 0x034a0000;   /* The literal pool word. */
+            actor->field10 = 0x034a0000;
             selector++;
         }
         return;
@@ -1617,11 +1613,7 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
 void FieldScene_RunLargeStagingSequence(void)
 {
     u32 i;
-    /* FAKEMATCH: rec's dead zero initialiser, and k, none2 and facing below,
-     * park values in locals only to keep the reference's register
-     * assignment; folding any of them into its uses changes it.
-     * 2026-10-02: removing only rec's initializer still changes allocation
-     * through the whole scene, including actor setup and stacked messages. */
+    /* FAKEMATCH: rec's dead zero initializer and the k, none2 and facing temporaries preserve register allocation throughout the scene. */
     s32 rec = 0;
     struct FieldActor *rec3;
     struct FieldActor *rec8;
@@ -1958,11 +1950,7 @@ void Scene_RepairTheHouse(void)
     Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
     Actor_SetPosition(ACTOR_DORA, 0x1880000, 0x3800000);
     turned = Actor_Get(ACTOR_DORA);
-    /*
-     * Overwritten at once, but the store must stay: its zero halfword
-     * temporary is what the record byte stores below reuse out of a high
-     * register.
-     */
+
     turned->facing = 0;
     turn_back = 0xc000;
     turned->facing = turn_back;
@@ -2026,7 +2014,7 @@ void Scene_RepairTheHouse(void)
         Engine_TaskWait(1);
     }
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-    /* Callback symbols are pooled loads that stay after the preceding call. */
+
     callback_a = (s32)SceneState_SetValue0ThenCall;
     Value2(Engine_TaskAddCallback, callback_a, 3200);
     callback_b = (s32)FieldScene_RunStep17;
@@ -2323,7 +2311,8 @@ void Scene_RepairTheHouse(void)
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
     Event_OpenMessage(ACTOR_DORA, 0);
-    none = 0; /* One zero shared by the placement call and the byte store. */
+    none = 0;
+
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         gEventWork->message++;
     }
@@ -2617,6 +2606,7 @@ void SceneState_SetValue25ThenCall(void)
     SceneEffect_UpdateObjectOnOddFramesOnly();
 }
 
+/* Distance between two 16.16 positions: convert each axis delta to an integer, sum the squares and take the integer square root. */
 s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
@@ -2717,7 +2707,7 @@ void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
     for (frame_countdown = 30; frame_countdown >= 0; frame_countdown--) {
         emitter->y += 0x10000;              /* 0x80 << 9. */
         emitter->field06 = (u16)(emitter->field06 + 0x2000);  /* 0x80 << 6. */
-        emitter->field18 += -2048;          /* The pool word 0xfffff800. */
+        emitter->field18 += -2048;
         emitter->field1c += -2048;
         Engine_TaskWait(1);
     }
@@ -2777,8 +2767,7 @@ void SceneState_ApplyRectAndRunTwo(void)
     s32 e;
     s32 f;
 #if !EDITION_INTERNATIONAL
-    /* FAKEMATCH: the Japanese scene looks up its current villager before
-       copying the lane cells and drops the returned record. */
+    /* FAKEMATCH: the Japanese scene looks up its current villager before copying the lane cells and drops the returned record. */
     if (Engine_GameFlagIsSet(0x87a))
         Object_GetById(ACTOR_DORA);
     else

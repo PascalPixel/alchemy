@@ -1,7 +1,7 @@
 /* Draft: ☀️'s ObjectEffect_EndContextEffect (OBJECT10.C) for ⚓️: the
    controlled owner from gPartyState, sprite entry 0x10b, the sprite's flag
-   and count bytes at 0x1a and 0x1b. Differ 14 as written; storing entry 0
-   before raising the flag gives 8. What remains: the listing builds the
+   and count bytes at 0x1a and 0x1b. Differ 8 with entry 0 stored before
+   the flag is raised (14 the other way round). What remains: the listing builds the
    first sprite base copy in r2 (mov r2, r8) where this build uses r3, loads
    the x coordinate before building 0x80000 (movs r1, #128), and after the
    record is cleared reloads the sprite base into r1 and zero into r3; the
@@ -52,8 +52,8 @@ void ObjectEffect_EndContextEffect(s32 mode)
     WaitFrames(30);
     ctx->count = 1;
     ResourceMetadata_ClearRecordFar(ctx->entry);
-    ctx->flags = 1;
     ctx->entry = (void *)zero;
+    ctx->flags = 1;
     obj->acceleration = 0x10000;
     obj->speed_limit = 0x10000;
     Object_SetPosition(obj, obj->x, obj->y, obj->z + 0x80000);

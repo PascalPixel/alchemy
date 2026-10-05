@@ -40,8 +40,24 @@ Func_080c84f0:
 	.global Func_080c84f8
 	.thumb_func
 Func_080c84f8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_HasMatchingEvent5
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_HasMatchingEvent5
+.else
 	overlay_veneer Func_080dca84
+.endif
+.endif
 	.global Func_080c8500
 	.thumb_func
 Func_080c8500:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_HasTrigger
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_HasTrigger
+.else
 	overlay_veneer Func_080dcadc
+.endif
+.endif

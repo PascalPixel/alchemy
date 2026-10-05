@@ -1112,7 +1112,6 @@
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/EXECUTE.o"(.text)
         "*/recon/tla/raw/080ce61c.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/EVENT/PENDING_EVENT.o"(.text)
-        "*/recon/tla/raw/080ceb58.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/HAS_TRIGGER.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/OBJECT_STATE.o"(.text)
         "*/recon/tla/raw/080ceba8.o"(.text)

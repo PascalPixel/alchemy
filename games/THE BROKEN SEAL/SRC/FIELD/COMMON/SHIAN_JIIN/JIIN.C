@@ -594,11 +594,7 @@ void ShianJiin_WalkByFacing(void)
     }
 }
 
-/* The Xian master's lines to his pupils before the training starts. */
-
-/* Actor 15 speaks the lines for the given mode, then actors 19 and 20 are
- * placed and actor 15 walks up to them. The first mode's line is the one
- * before its name, as the game counts down from it in instructions. */
+/* The master addresses his pupils, then walks up to actors 19 and 20 for training. */
 void ShianJiin_RunMasterScene(s32 mode)
 {
     s32 msg;
@@ -790,6 +786,7 @@ firstSceneComplete:
     Engine_EventEnd();
 }
 
+/* Accepting either offer sets flag 0x898; declining both sets flag 0x899. */
 void FieldScene_RunSecondEnsembleBeat(void)
 {
     s32 id;
@@ -833,8 +830,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_WalkToAndWait(16, 154 << 1, 136 << 1);
     Engine_EventWait(1);
     rec = (struct FieldActor *)Value1(Object_GetById, 16);
-    /* The mask comes first: the reference merges the byte into the mask's
-       register. */
+
     rec->steering_flags = ACTOR_FACES_MOTION | rec->steering_flags;
     Event_ShowMessageAndWait(16, 0, 50);
     Actor_SetPosition(17, 152 << 17, 216 << 16);
@@ -1023,7 +1019,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
         goto joinBeat;
     }
 
-    /* Skipped once: bump the workspace skip counter and offer the beat again. */
+    /* Declining the first offer advances the dialogue to a second offer. */
     Event_SkipMessages(1);
     Engine_EventWait(20);
     Actor_ShowEmote(18, 0x105, 60);
@@ -1063,7 +1059,6 @@ finish:
 void FieldScene_RunSkippableStoryBeat(void)
 {
 
-
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianWarriorWillShowMeYour);
     Engine_EventOpenMessage(18, 0);
@@ -1080,8 +1075,7 @@ void FieldScene_RunSkippableStoryBeat(void)
     }
 }
 
-/* Looks up actors 18, 13, 14, 15 and 16 and clears their +108 field before
- * the scene runs. */
+/* Stop the gathering actors' update callbacks before the scene runs. */
 void FieldScene_RunEnsembleStoryBeat(void)
 {
     u32 i;
@@ -1529,8 +1523,7 @@ void ShianJiin_AskIfCurious(void)
         Actor_ShowEmote(8, 0x102, 60);
         Engine_EventSetMessage((s32)MsgShianCanReadMindsKnowCurious);
         Event_OpenMessage(8, 0);
-        /* FAKEMATCH: the question repeats through this label rather than a
-         * while loop, which keeps the reference's block order. */
+        /* FAKEMATCH: repeating through this label preserves the question's block order. */
     ask_again:
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             Engine_EventWait(10);
@@ -1602,8 +1595,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(20);
     Actor_FaceDirection(9, 0xd000, 0);
-    /* Copy the pair of s32 fields at +8/+16 from actor 0's record (as seen
-     * through each accessor) into the matching setter for another actor. */
+    /* Place the other party members at the leader's position. */
     source_record = Actor_Get(ACTOR_PARTY_LEADER);
     if (source_record != 0) {
         Actor_SetPosition(ACTOR_GERALD, source_record->x.fixed, source_record->z.fixed);
@@ -2003,7 +1995,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Event_ShowMessageAndWait(8, 0, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(20);
-    /* Clear bit 0 of the flag byte at +90. */
+    /* Keep the actor's facing fixed during the move. */
     Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
     Engine_EventWait(1);

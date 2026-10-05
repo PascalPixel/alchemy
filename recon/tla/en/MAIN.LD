@@ -676,7 +676,7 @@
         "*/recon/tla/raw/0803f778.o"(.text)
         "*/recon/tla/raw/0803f800.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/WINDOW/RUNTIME_CLOSE_AND_RELEASE.o"(.text)
-        "*/recon/tla/raw/0803f818.o"(.text)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/WINDOW6.o"(.text)
         "*/recon/tla/raw/0803f82c.o"(.text)
         "*/recon/tla/raw/0803f86c.o"(.text)
         "*/recon/tla/raw/0803f900.o"(.text)

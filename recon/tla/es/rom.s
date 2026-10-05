@@ -1373,8 +1373,9 @@ UiTextResource_SetPosition:
 	.thumb_func
 Func_0803f778:
 	.incbin "baserom.gba", 0x0003f7d8, 0x00000098
-	.section .rom.0003f878, "ax"
-	.incbin "baserom.gba", 0x0003f878, 0x00000054
+	.section .rom.0003f88c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0003f88c, 0x00000040
 	.section .rom.0003f8cc, "ax"
 	.global Func_0803f86c
 	.type Func_0803f86c, %function

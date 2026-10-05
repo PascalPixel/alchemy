@@ -602,7 +602,7 @@ gKorosseoKabeEvents:
 	.4byte SceneState_StoreSlotTileXToWork832To848
 	.4byte 0x00009115
 	.4byte 0x0334001f
-	.4byte SceneState_InstallTask8714AndApplyTwoRects
+	.4byte KorosseoKabe_StopSpectatorCallbackAndRestoreCells
 	.4byte 0x00000000
 	.4byte 0xffff0022
 	.4byte RunPartyCountInteractionCopyA

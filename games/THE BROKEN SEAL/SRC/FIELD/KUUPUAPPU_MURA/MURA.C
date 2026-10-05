@@ -228,7 +228,7 @@ void *SceneData_SelectActorTableByFlag855(void)
 
 int KuupuappuMura_GetIwanVenusDjinnCount(void)
 {
-    return Owner_GetState(2)[280];
+    return ((struct BattleUnit *)Owner_GetState(2))->djinn_owned_counts[0];
 }
 
 /* Return the scene result while its flag is set. */

@@ -11,9 +11,9 @@
 
 extern u16 *Data_030011c4;
 extern const u8 Data_08017b10[];
-extern const u16 Data_08017af0[];
-extern u8 Data_03001300[];
-extern u8 Data_02030000[];
+extern const u16 Ui_WindowPalette[];
+extern u8 gIwramHeap[];
+extern u8 gEwramHeap[];
 extern u8 IwramSoundMixWorkspace[];
 extern char ResourceId_WindowTiles;
 void *Resource_GetTableEntry(s32);

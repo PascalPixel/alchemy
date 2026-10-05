@@ -103,11 +103,11 @@ ResourceTableEntries:
 	.global Data_02003860
 Data_02003860:
 	.space 0x00000010
-	.global Data_02003870
-Data_02003870:
+	.global gSerialPeerPayloads
+gSerialPeerPayloads:
 	.space 0x00000004
-	.global Data_02003874
-Data_02003874:
+	.global gLinkPeerSignatures
+gLinkPeerSignatures:
 	.space 0x0000005c
 	.global gSerialSendSource
 gSerialSendSource:
@@ -793,8 +793,8 @@ Data_0202e004:
 	.global Data_0202e008
 Data_0202e008:
 	.space 0x00001ff8
-	.global Data_02030000
-Data_02030000:
+	.global gEwramHeap
+gEwramHeap:
 	.space 0x00008000
 	.global Data_02038000
 Data_02038000:

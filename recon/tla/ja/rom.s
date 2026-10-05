@@ -261,24 +261,6 @@ Runtime_WriteDebugTextTiles:
 	.thumb_func
 Func_08014b70:
 	.incbin "baserom.gba", 0x00014b70, 0x0000003c
-	.section .rom.00014bac, "ax"
-	.global Func_08014bac
-	.type Func_08014bac, %function
-	.thumb_func
-Func_08014bac:
-	.incbin "baserom.gba", 0x00014bac, 0x000000a0
-	.section .rom.00014c4c, "ax"
-	.global Func_08014c4c
-	.type Func_08014c4c, %function
-	.thumb_func
-Func_08014c4c:
-	.incbin "baserom.gba", 0x00014c4c, 0x00000020
-	.section .rom.00014c6c, "ax"
-	.global Func_08014c6c
-	.type Func_08014c6c, %function
-	.thumb_func
-Func_08014c6c:
-	.incbin "baserom.gba", 0x00014c6c, 0x00000034
 	.section .rom.00014de0, "ax"
 	@ Uncredited four-byte tail; independent purpose is unproved.
 	.incbin "baserom.gba", 0x00014de0, 0x00000004
@@ -491,7 +473,10 @@ Func_08016dd0:
 	.section .rom.000178b4, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x000178b4, 0x0000025c
+	.incbin "baserom.gba", 0x000178b4, 0x0000023c
+	.global Ui_WindowPalette
+Ui_WindowPalette:
+	.incbin "baserom.gba", 0x00017af0, 0x00000020
 	.global System_BasicColorPalette
 System_BasicColorPalette:
 	.incbin "baserom.gba", 0x00017b10, 0x000001d8
@@ -4793,13 +4778,8 @@ Func_08118f6c:
 	.incbin "baserom.gba", 0x00118f6c, 0x000000e8
 	.section .rom.00119148, "ax"
 	.incbin "baserom.gba", 0x00119148, 0x00000158
-	.section .rom.001192ce, "ax"
-	.incbin "baserom.gba", 0x001192ce, 0x00000002
-	.global BattlePres_WaitSync
-	.type BattlePres_WaitSync, %function
-	.thumb_func
-BattlePres_WaitSync:
-	.incbin "baserom.gba", 0x001192d0, 0x00000304
+	.section .rom.001195a0, "ax"
+	.incbin "baserom.gba", 0x001195a0, 0x00000034
 	.section .rom.001195ec, "ax"
 	.incbin "baserom.gba", 0x001195ec, 0x00000148
 	.section .rom.00119734, "ax"

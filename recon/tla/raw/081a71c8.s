@@ -75,7 +75,7 @@ Func_081a71c8:
 	movs r2, #128
 	lsls r2, r2, #19
 	strh r3, [r2]
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	bl Func_081a814c
 	ldr r2, .L_081a728c

@@ -37,7 +37,7 @@ Func_0801319c:
 	ldr r2, .L_08013248
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Func_08014c6c
+	bl Runtime_InitializeHeap
 	bl Runtime_InstallIwramAndIrqs
 	ldr r3, .L_0801324c
 	str r5, [r3]
@@ -48,7 +48,7 @@ Func_0801319c:
 	ldr r3, .L_08013258
 	strb r5, [r3]
 	bl Func_080132d0
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	ldr r3, .L_08013240
 	movs r2, #128

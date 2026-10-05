@@ -1,19 +1,56 @@
-/*
- * Draft: BattlePres_SyncTurn, ☀️'s WAIT_SYNC.C body over ⚓️'s battle session
- * (heap slot 9, link_side and link_paused now named in BATTLE_WORK.H). Score
- * 10: sub sp lands after the two_sided load instead of before it, and the 'e'
- * store's movs r0, #1 is hoisted. The rest is load scheduling: the native
- * issues loads (and fills their delay) earlier than agscc at -mcpu=arm7tdmi;
- * with -mtune=arm9tdmi added it scores 0. Goes with BattlePres_WaitSync
- * (081192d0) into a ⚓️ WAIT_SYNC.C, or COMMON with ☀️'s.
- */
 #include "TYPES.H"
+#include "EDITION.H"
+#include "RAM_BUFFER.H"
 #include "SERIAL_RUNTIME.H"
 #include "BATTLE_WORK.H"
 
 extern u8 gLinkStatus[];
+/* Each peer's received payload, past its four-byte serial state. */
 extern u16 gLinkPeerSignatures[][12];
-void WaitFrames(s32);
+
+s32 BattlePres_WaitSync(void)
+{
+#if GAME_TLA
+    struct BattleSession *work = Ram_HeapSlots->battle_work;
+#else
+    struct BattleSession *work = gBattleWork;
+#endif
+    u16 *peer;
+    u16 *sync;
+    s32 miss = 0;
+    s32 i;
+
+    if (work->two_sided != 0) {
+        u32 other = work->link_side ^ 1;
+
+        /* The serial state occupies the first four bytes of each payload. */
+        peer = (u16 *)(gSerialPeerPayloads[other] + 4);
+        sync = (u16 *)gSerialTransfer.payload;
+        if (work->link_paused == 0) {
+            sync[0] = 'E';
+            sync[1] = 'X';
+            sync[2] = 'E';
+            sync[3] = 'C';
+
+            for (i = 0; i <= 29; i++) {
+                if ((*(u16 *)gLinkStatus & 3) != 3) {
+                    miss++;
+                    if (miss > 24) {
+                        return -1;
+                    }
+                } else {
+                    miss = 0;
+                    if (sync[2] == peer[2] && sync[3] == peer[3]) {
+                        return 0;
+                    }
+                }
+                WaitFrames(1);
+            }
+        }
+        return -1;
+    }
+    return 0;
+}
 
 /* The five-stage handshake that opens a linked battle turn. Each side posts
    ex/TU, rn, EXEC, tu and RN in turn, spelling EXECTURN, and waits for the
@@ -21,7 +58,11 @@ void WaitFrames(s32);
    transfer, or a peer whose earlier tag no longer matches, fail with -1. */
 s32 BattlePres_SyncTurn(void)
 {
+#if GAME_TLA
     struct BattleSession *work = Ram_HeapSlots->battle_work;
+#else
+    struct BattleSession *work = gBattleWork;
+#endif
     u16 *peer;
     u16 *sync;
     s32 miss = 0;

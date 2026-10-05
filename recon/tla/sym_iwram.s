@@ -154,5 +154,5 @@ gNumberTextHexEnd:
 	.global gNumberTextDecimalEnd
 gNumberTextDecimalEnd:
 	.space 0x000000a6
-	.global Data_03001300
-Data_03001300:
+	.global gIwramHeap
+gIwramHeap:

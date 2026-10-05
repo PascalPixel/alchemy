@@ -1372,7 +1372,7 @@ Func_081693d0:
 	movs r0, #2
 	bl Runtime_SetIrqHandler
 	bl Func_0814cca8
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128

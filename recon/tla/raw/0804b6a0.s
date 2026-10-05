@@ -151,4 +151,4 @@ Func_0804b6a0:
 .L_0804b7b8:
 	.4byte 0x06006680
 .L_0804b7bc:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures

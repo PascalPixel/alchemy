@@ -569,7 +569,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/UPDATE_AVAILABILITY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/UPDATE_NAME_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_NAME.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/WAIT_SYNC.o"(.text)
+        "*/games/COMMON/SRC/BATTLE/PRESENTATION/WAIT_SYNC.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT15.o"(.text)
         "*/recon/tbs/raw/080b63c8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY.o"(.text)

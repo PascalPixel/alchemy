@@ -1363,7 +1363,7 @@ Func_0814153c:
 	cmp r8, r3
 	bne .L_08141fda
 .L_08142008:
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	ldr r3, .L_08142048
 	ldr r2, .L_08142064
 	movs r6, #128

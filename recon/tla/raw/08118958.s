@@ -20,10 +20,10 @@ Func_08118958:
 .L_08118976:
 	movs r5, #181
 	lsls r5, r5, #1
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	bl Scheduler_ResetTaskTable
-	bl Func_08014c6c
+	bl Runtime_InitializeHeap
 	bl Func_08014368
 	adds r0, r5, #0
 	movs r6, #69
@@ -167,10 +167,10 @@ Func_08118958:
 	ldr r3, .L_08118ad8
 	mov r2, r10
 	strb r2, [r3]
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	bl Func_08014b70
 	bl Scheduler_ResetTaskTable
-	bl Func_08014c6c
+	bl Runtime_InitializeHeap
 	bl Func_08014368
 	b .L_081189ae
 .L_08118ab8:

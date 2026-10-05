@@ -58,7 +58,7 @@ Func_080e87c4:
 	ldr r0, .L_080e8984
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08014bac
+	bl Ui_LoadWindowGraphics
 	movs r2, #128
 	movs r3, #128
 	lsls r3, r3, #19

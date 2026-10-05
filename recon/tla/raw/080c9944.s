@@ -157,7 +157,7 @@ Game_ResetForNewGame:
 	movs r1, #0
 	movs r2, #0
 	bl Runtime_SetIrqHandler
-	bl Func_08014c6c
+	bl Runtime_InitializeHeap
 	bl Func_08014b70
 	b .L_080c9a98
 	.2byte 0x0000

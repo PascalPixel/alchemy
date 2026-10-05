@@ -29,7 +29,7 @@ Func_08022bd8:
 	bl Runtime_AllocateHeapBlock
 .L_08022c0e:
 	adds r6, r0, #0
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	mov r4, sp
 	movs r5, #0

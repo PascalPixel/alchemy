@@ -2516,7 +2516,7 @@ Func_08185b9c:
 	cmp r9, r3
 	bne .L_08185c16
 .L_08185c44:
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	bl Func_0814cca8
 	ldr r2, .L_08185cd4
 	movs r3, #240

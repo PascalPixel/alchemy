@@ -2526,7 +2526,7 @@ Func_0813fd84:
 	mov r3, r10
 	cmp r3, #18
 	bne .L_0814113e
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	movs r3, #128
 	movs r1, #160
 	movs r2, #128
@@ -2984,7 +2984,7 @@ Func_0813fd84:
 	beq .L_081414da
 	b .L_08141248
 .L_081414da:
-	bl Func_08014c4c
+	bl PaletteDma_LoadBlock
 	ldr r0, .L_08141538
 	bl Scheduler_RemoveCallback
 	movs r0, #104

@@ -28,7 +28,7 @@
  *     waiting for "VSST"/"EDVS" while "EXEC" keeps the wait alive.  The
  *     same 24-byte record, the same side/paused bytes at 0x50/0x52 of the
  *     0x03001e74 cell and the same 0x03001f64 status mask appear in
- *     games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/WAIT_SYNC.C and
+ *     games/COMMON/SRC/BATTLE/PRESENTATION/WAIT_SYNC.C and
  *     games/THE BROKEN SEAL/SRC/SYSTEM/LINK/UPDATE_SESSION_COUNTDOWN.C.
  *   - The 260-byte block taken from pool 57 is published at 0x03001f34 and
  *     is the countdown/panel state whose entries[3], entryActive[3],

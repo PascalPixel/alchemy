@@ -1486,7 +1486,7 @@ Func_02000b24:
 .L_02008bf8:
 	.4byte 0x04000128
 .L_02008bfc:
-	.4byte Data_02003874
+	.4byte gLinkPeerSignatures
 .L_02008c00:
 	.4byte Data_02003a74
 .L_02008c04:

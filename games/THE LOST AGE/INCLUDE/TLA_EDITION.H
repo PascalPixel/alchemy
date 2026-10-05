@@ -17,7 +17,7 @@
 #define SELECT_MENU_WIDTH 5
 #endif
 
-/* Reconstructed international debug layout; Japanese remains raw. */
+/* International debug layout. */
 #if EDITION_INTERNATIONAL
 #define MENU_TEXT_X 74
 #define MENU_TEXT_Y 60
@@ -43,6 +43,5 @@
 #define WINDOW_BUSY_FLAGS_OFS 0x138A
 #define SUMMON_CHANNEL_MARKER '1'
 #endif
-
 
 #endif

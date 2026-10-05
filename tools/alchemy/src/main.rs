@@ -9,6 +9,7 @@ mod bootstrap;
 mod build;
 mod build_rom;
 mod build_text;
+mod camelotize;
 mod c_items;
 mod cache;
 mod check;
@@ -52,6 +53,8 @@ Matching:
   queues      split not-yet-C work into queues that cannot collide
   integrate   merge worker branches, reconcile, build and name what differs
   keep        keep only the changed source that builds byte-identical
+  camelotize  mechanical readability rewrites: actors, events, registers,
+              declarations, barriers (then keep)
   merge-driver  git merge drivers for scaffolds and linker scripts, and
               links, which reconciles linker scripts after a merge
 Reports for people (nothing else reads them):
@@ -89,6 +92,7 @@ fn main() -> ExitCode {
         "sizes" => result(sizes::run(rest)),
         "worst" => result(worst_command::run(rest)),
         "figure" => result(coverage::figures::run(rest)),
+        "camelotize" => result(camelotize::run(rest)),
         "objects" => result(objects::run(rest)),
         "show" => result(show::run(rest)),
         "-h" | "--help" => {

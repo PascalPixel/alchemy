@@ -728,7 +728,7 @@ fn groups(text: &str, spec: &Spec, unit: &Unit) -> Vec<Group> {
     let pointer = format!("struct {} *", spec.tag);
     for function in &found {
         for declaration in declarations(&mask, function) {
-            let name = text(&mask, declaration.name.clone()).to_string();
+            let name = super::source::text(&mask, declaration.name.clone()).to_string();
             if declarations_of(&mask, function, &name) != 1 {
                 continue;
             }

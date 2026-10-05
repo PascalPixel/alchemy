@@ -144,7 +144,7 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
     )
 }
 /// The shared headers' modules under `games/COMMON/INCLUDE`.
-const COMMON_INCLUDE_MODULES: &[&str] = &[
+pub(crate) const COMMON_INCLUDE_MODULES: &[&str] = &[
     "BATTLE", "FIELD", "GAME", "GRAPHICS", "LIB", "MENU", "SOUND", "SYSTEM",
 ];
 /// Game code finds a shared header by its name, as it finds its own game's:

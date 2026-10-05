@@ -82,7 +82,7 @@ void RamakanSabaku_FaceNearestActor(void)
 {
     struct FieldActor *target;
     struct FieldActor *actor;
-    u8 *record;
+    struct FieldActor *record;
     s32 id;
     s32 best;
     s32 min;
@@ -125,15 +125,15 @@ void RamakanSabaku_FaceNearestActor(void)
     Actor_SetAttachedEffect(0, 0x101);
     actor = Actor_Get(0);
     record = Object_GetById(0);
-    actor->facing = (*(u16 *)(record + 6) + 0x8000) & -0x1000;
+    actor->facing = (record->facing + 0x8000) & -0x1000;
     Engine_ActorSetAnimation(0, 5);
     Object_SetActionById(0, 24);
     Actor_SetSpeed(0, 0x1999, 0xccc);
     record = Object_GetById(0);
-    *(s32 *)(record + 108) = (s32)RamakanSabaku_EmitSandEffect;
+    *(s32 *)((u8 *)record + 108) = (s32)RamakanSabaku_EmitSandEffect;
     record = Actor_Get(best);
     if (record != 0) {
-        Engine_ActorSetDestination(0, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(0, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_EventWait(60);
     Actor_ShowEmote(best, 0x104, 0);
@@ -141,7 +141,7 @@ void RamakanSabaku_FaceNearestActor(void)
     Actor_SetAttachedEffect(0, 0x100);
     Object_GetById(0)->unknown_5a |= 1;
     record = Object_GetById(0);
-    *(s32 *)(record + 108) = 0;
+    *(s32 *)((u8 *)record + 108) = 0;
     BattleFx_SetWeightedResult(53, 4);
 }
 

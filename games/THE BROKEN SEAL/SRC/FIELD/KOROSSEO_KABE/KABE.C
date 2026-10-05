@@ -190,18 +190,18 @@ void SceneState_SetWorkByte35(void)
 
 void KorosseoKabe_SpinActorAway(void)
 {
-    s32 rec2;
+    struct FieldActor *rec2;
     s32 frames;
     s32 spin;
     s32 frames2;
     s32 spin2;
     u8 *p6;
 
-    rec2 = (s32)Object_GetById(30);
-    p6 = *(s32 *)(rec2 + 80);
+    rec2 = Object_GetById(30);
+    p6 = *(s32 *)((u8 *)rec2 + 80);
     Call1(Engine_GameFlagSet, 0x330);
-    *(s32 *)(rec2 + 52) = 0x1999;
-    *(s32 *)(rec2 + 48) = 0x13333;
+    rec2->acceleration = 0x1999;
+    rec2->speed = 0x13333;
     Engine_AudioPlayCue(227);
     Call4(Engine_ObjectSetPosition, rec2, 0x1500000, 0xa0000, 0x1080000);
     for (spin = 0, frames = 9; frames >= 0; frames--) {
@@ -224,11 +224,11 @@ void KorosseoKabe_SpinActorAway(void)
         *(u16 *)((s32)p6 + 30) = shown;
     }
     Engine_ActorSetAnimation(30, 4);
-    *(s32 *)(rec2 + 8) = 0x1500000;
-    *(s32 *)(rec2 + 12) = -0x80000;
-    *(s32 *)(rec2 + 16) = 0x1080000;
-    *(s32 *)(rec2 + 40) = 0;
-    *(s32 *)(rec2 + 36) = 0;
+    rec2->x.fixed = 0x1500000;
+    rec2->y.fixed = -0x80000;
+    rec2->z.fixed = 0x1080000;
+    rec2->velocity_y = 0;
+    rec2->velocity_x = 0;
     Call6(Engine_MapCopyCellAttributes, 19, 16, 1, 1, 20, 16);
     Call6(Engine_MapCopyCellAttributes, 20, 80, 1, 1, 21, 80);
 }

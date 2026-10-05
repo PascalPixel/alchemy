@@ -440,14 +440,14 @@ void TakaraHashira_PrepLoweredActor(s32 id)
 void FieldScene_RunScene3b3_0200263c(s32 a0)
 {
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
-    rec7 = (s32)Object_GetById(a0);
+    rec7 = Object_GetById(a0);
     if (GameFlag_IsSet((a0 + 0x1f5)) != 0) {
         Object_SetMode(rec7, 5);
-        *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
-        Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
+        *(s32 *)((u8 *)rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
+        Map_CopyCellAttributes(20, 14, 1, 1, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20));
         Engine_ActorEnableActionCallback(a0, TakaraHashira_ActionTable);
     }
 }

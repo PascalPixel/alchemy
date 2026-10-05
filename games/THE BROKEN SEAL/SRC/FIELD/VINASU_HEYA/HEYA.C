@@ -333,7 +333,7 @@ void SceneEffect_RunObjectZeroColorSequence(void)
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
     u32 i;
-    u8 *entry;
+    struct FieldActor *entry;
     u8 *guard;
     u8 *sub;
 
@@ -343,10 +343,10 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Engine_EventBegin();
         Camera_MoveTo(-1, -1, -1, 0);
         /* Stage byte at +85 of the entry record. */
-        entry[85] = guard;
+        entry->motion_flags = guard;
         /* Position, from the entry's own s16 coordinates at +10/+18
          * (converted to 16.16 fixed point; the y term is offset by -16.0). */
-        Actor_SetPosition(ACTOR_PARTY_LEADER, (*(s16 *)(entry + 10) << 16), ((*(s16 *)(entry + 18) << 16) + -0x100000));
+        Actor_SetPosition(ACTOR_PARTY_LEADER, (entry->x.part.pixel << 16), ((entry->z.part.pixel << 16) + -0x100000));
         Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
         sub = Actor_Get(ACTOR_PARTY_LEADER);
         Engine_ActorSetSpriteFlags(sub, 0);
@@ -355,16 +355,16 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Audio_PlayCue(228);
         /* Override field at +108 of the entry record; holds an EWRAM
          * address while the effect sequence below runs. */
-        *(s32 *)(entry + 108) = (s32)SceneEffect_SpawnTwoRandomizedParticles;
+        *(s32 *)((u8 *)entry + 108) = (s32)SceneEffect_SpawnTwoRandomizedParticles;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
         Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
         Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
         sub = Actor_Get(ACTOR_PARTY_LEADER);
         Engine_ActorSetSpriteFlags(sub, 1);
         Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
-        entry[85] = 3;
+        entry->motion_flags = 3;
         /* Restore the +108 override field to the original (unset) value. */
-        *(s32 *)(entry + 108) = guard;
+        *(s32 *)((u8 *)entry + 108) = guard;
         BattleFx_PlayQueuedSound();
         Engine_EventEnd();
     }

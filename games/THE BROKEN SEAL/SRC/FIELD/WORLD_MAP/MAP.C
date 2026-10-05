@@ -1076,7 +1076,7 @@ void FieldScene_RunScene371_02001888(void)
 {
 
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(8);
@@ -1085,8 +1085,8 @@ void FieldScene_RunScene371_02001888(void)
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    *(s32 *)(rec7 + 24) = 0x14000;
-    *(s32 *)(rec7 + 28) = 0x14000;
+    rec7->scale_x = 0x14000;
+    rec7->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
@@ -1094,12 +1094,12 @@ void FieldScene_RunScene371_02001888(void)
     {
         s32 shown = 0;
 
-        *(u16 *)(rec7 + 100) = shown;
+        rec7->unknown_64 = shown;
     }
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(rec7 + 100) == 0);
+    } while (*(s16 *)((u8 *)rec7 + 100) == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1111,7 +1111,7 @@ void FieldScene_RunScene371_02001938(void)
 {
 
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(8);
@@ -1120,8 +1120,8 @@ void FieldScene_RunScene371_02001938(void)
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    *(s32 *)(rec7 + 24) = 0x14000;
-    *(s32 *)(rec7 + 28) = 0x14000;
+    rec7->scale_x = 0x14000;
+    rec7->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
@@ -1129,12 +1129,12 @@ void FieldScene_RunScene371_02001938(void)
     {
         s32 shown = 0;
 
-        *(u16 *)(rec7 + 100) = shown;
+        rec7->unknown_64 = shown;
     }
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(rec7 + 100) == 0);
+    } while (*(s16 *)((u8 *)rec7 + 100) == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1146,7 +1146,7 @@ void FieldScene_RunScene371_020019e8(void)
 {
 
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(8);
@@ -1155,8 +1155,8 @@ void FieldScene_RunScene371_020019e8(void)
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    *(s32 *)(rec7 + 24) = 0x14000;
-    *(s32 *)(rec7 + 28) = 0x14000;
+    rec7->scale_x = 0x14000;
+    rec7->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
@@ -1164,12 +1164,12 @@ void FieldScene_RunScene371_020019e8(void)
     {
         s32 shown = 0;
 
-        *(u16 *)(rec7 + 100) = shown;
+        rec7->unknown_64 = shown;
     }
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(rec7 + 100) == 0);
+    } while (*(s16 *)((u8 *)rec7 + 100) == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1181,7 +1181,7 @@ void FieldScene_RunScene371_02001a98(void)
 {
 
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
     rec7 = Object_GetById(8);
@@ -1190,8 +1190,8 @@ void FieldScene_RunScene371_02001a98(void)
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(8, 0x1f080000, 0xc80000);
-    *(s32 *)(rec7 + 24) = 0x14000;
-    *(s32 *)(rec7 + 28) = 0x14000;
+    rec7->scale_x = 0x14000;
+    rec7->scale_y = 0x14000;
     Engine_TaskWait(1);
     Engine_CameraFollowActor(8, 1);
     Engine_EventOpenScreen();
@@ -1199,7 +1199,7 @@ void FieldScene_RunScene371_02001a98(void)
     {
         s32 shown = 0;
 
-        *(u16 *)(rec7 + 100) = shown;
+        rec7->unknown_64 = shown;
     }
     if (StoryScene_ComputeOpposingSlotDelta() == 11) {
         Engine_ActorEnableActionCallback(8, gTransferLeaderTurn);
@@ -1208,7 +1208,7 @@ void FieldScene_RunScene371_02001a98(void)
     }
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)(rec7 + 100) == 0);
+    } while (*(s16 *)((u8 *)rec7 + 100) == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);

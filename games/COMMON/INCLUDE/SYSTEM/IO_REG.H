@@ -79,6 +79,8 @@ enum DisplayControl {
 
 /* Background character blocks of 16 KiB each in VRAM. */
 #define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
+/* Background screen blocks of 2 KiB each in VRAM. */
+#define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
 #define TILE_SIZE_4BPP 32
 
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)

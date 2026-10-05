@@ -1,6 +1,7 @@
 #include "RAM_BUFFER.H"
 #include "TYPES.H"
 #include "MAP.H"
+#include "IO_REG.H"
 
 s32 GetWorldMapCollision(struct WorldPosition *position)
 {
@@ -20,7 +21,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
     pixel_offset = (((u32)(y_step / 2) & 3) << 1) +
         ((u32)(x_step / 4) & 1);
 
-    tile = *(u8 *)(0x06005000 + cell);
+    tile = BG_SCREEN_BLOCK(10)[cell];
     packed_pixels = *(Ram_MapCollision + 0x800 + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
         if ((u32)x_step & 2)
@@ -32,7 +33,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
     }
 
     /* 前面が空なら背面マップを調べる。 */
-    tile = *(u8 *)(0x06004000 + cell);
+    tile = BG_SCREEN_BLOCK(8)[cell];
     packed_pixels = *(Ram_MapCollision + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
         if ((u32)x_step & 2)

@@ -142,11 +142,6 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
 extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
@@ -279,11 +274,7 @@ static __inline__ void bump_halfword(s32 off, s32 amount)
 {
     u8 *work = (u8 *)gEventWork;
     u16 *slot = (u16 *)(work + off);
-    /* FAKEMATCH: the sum goes through a word-sized temporary before the
-     * halfword store, as the reference computes it. 2026-10-02: both
-     * *slot += amount and *slot = *slot + amount introduce a pooled one
-     * shared with an earlier byte store in RunDialoguePromptScene, adding
-     * a saved register and changing its literal-pool placement. */
+    /* FAKEMATCH: the word-sized sum avoids a pooled one, an extra saved register and changed pool placement. */
     s32 next = *slot + amount;
 
     *slot = next;
@@ -308,12 +299,6 @@ struct StopRecord {
     u8 unknown_00[16];
 };
 
-/*
- * resource_383 owner at 0x020047bc, 64 bytes.
- * Tests whether a record is within eight units of the given point. Each axis
- * falls back to the record's own position when its target field is the
- * unset marker 0x80000000; the comparison is on the squared distance.
- */
 struct Rec_383b {
     u8 pad00[8];
     s32 f8;                     /* +8  */
@@ -327,34 +312,6 @@ struct Rec_383b {
 
 struct Rec_383b *ObjectTable_Get();
 
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
-
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void SceneDialogue_RunActor10Line(void)
 {
     Engine_EventBegin();
@@ -416,34 +373,6 @@ void FieldScene_RunScene383SequenceC(void)
 done:;
 }
 
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
-
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void FieldScene_RunScene383_0200091c(void)
 {
     u32 i;
@@ -991,8 +920,7 @@ void FieldScene_RunVaultClosingSequence(void)
     Party_SetFields1ceAnd1d0(base, 17);
     Event_SetPair1d4(base, 16);
     state = (u8 *)&gGameState;
-    /* FAKEMATCH: the do-while puts the state's address in a block of its
-       own, so it is loaded ahead of the byte's offset. */
+    /* FAKEMATCH: the do-while puts the state's address in a block of its own, so it is loaded ahead of the byte's offset. */
     do {
         state[0x22b] = 3;
     } while (0);
@@ -1000,28 +928,6 @@ void FieldScene_RunVaultClosingSequence(void)
     Engine_EventEnd();
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void SceneState_SetValue123Mode11(void)
 {
     Engine_AudioPlayCue(123);
@@ -1055,35 +961,6 @@ void FieldScene_RunOpeningSequenceSecond(void)
     Engine_EventRequestExit(14);
 }
 
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
-
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
-
 /* Third scene step: sets up actors 24 and 25 (fetching each one's record),
  * runs a shared series of configuration calls touching actors 0-2, 10, 14,
  * 20, 24 and 25, then marks the two fetched records with a byte flag. */
@@ -1110,7 +987,7 @@ void FieldScene_RunOpeningSequenceThird(void)
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgKuupuappuWant);
     SceneActor_SetModeZeroAndValue(24, 20);
-    Actor_SetAttachedEffect(25, 258); /* main:0808a1f0 */
+    Actor_SetAttachedEffect(25, 258);
     Engine_EventWait(60);
     SceneActor_SetModeZeroAndValue(25, 20);
     Engine_ActorRunRepeatedMotion(24, 1);
@@ -1120,7 +997,7 @@ void FieldScene_RunOpeningSequenceThird(void)
     Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptO);
     Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
     Object_RefreshSelectorById(24);
-    Map_CopyCellAttributes(14, 45, 3, 1, 14, 44); /* main:080091c0 */
+    Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
     GameFlag_Set(2130);
     GameFlag_Set(768);
     Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
@@ -1213,28 +1090,6 @@ void FieldScene_RunScene383SequenceB(void)
     Engine_EventEnd();
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void FieldScene_RunSteps107And250(void)
 {
     Engine_GameFlagSet(0x107);
@@ -1263,9 +1118,7 @@ void FieldScene_ConfigurePairedActors(void)
     ((s32 (*)())Engine_ActorEnableActionCallback)(25, (s32)KuupuappuHeya_PairScriptO);
     Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
     Object_RefreshSelectorById(24);
-    /* FAKEMATCH: each shown state is parked in a word-sized local before
-     * its halfword store, which keeps the constants' loads where the
-     * reference has them. */
+    /* FAKEMATCH: each shown state is parked in a word-sized local before its halfword store, which keeps the constants' loads where the reference has them. */
     {
         u8 *record = (u8 *)Object_GetById(24);
         s32 shown = 1;
@@ -1545,28 +1398,7 @@ void KuupuappuHeya_PoseDialogueActors(void)
     }
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
+/* Update the actor's animation descriptor when its state matches the expected state. */
 void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc)
 {
     struct FieldActor *rec = Object_GetById(actor);
@@ -1728,34 +1560,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
     return 0;
 }
 
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
-
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
+/* Turn actors 24 and 25 toward the leader. */
 void SceneActor_FaceActors24And25TowardActorZero(void)
 {
     struct FieldActor *origin = Object_GetById(0);
@@ -1874,45 +1679,19 @@ void KuupuappuHeya_RunVaultEvent(void)
     Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
     Event_SetPair1d4((s32)&SceneId_KuupuappuHeya, 16);
     state = (u8 *)&gGameState;
-    /* FAKEMATCH: the do-while puts the state's address in a block of its
-       own, so it is loaded ahead of the byte's offset. */
+    /* FAKEMATCH: the do-while puts the state's address in a block of its own, so it is loaded ahead of the byte's offset. */
     do {
         state[0x22b] = 3;
         BattleFx_SetWeightedResult(12, 5);
     } while (0);
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 s32 OverlayObject_GetObjectTwoByte118(void)
 {
     return Owner_GetState(2)[0x118];
 }
 
-/* After twenty placement updates, if bit 0 of party member 2's word at
-   +0xf8 is set, his djinni are transferred, cue 126 plays and members 0
-   and 2 have their stats recalculated. It is declared to return a value,
-   and returns none. */
+/* After twenty placement updates, bit 0 of party member 2's word at +0xf8 triggers a Djinn transfer, cue 126 and stat recalculation for members 0 and 2. */
 s32 OverlayObject_RunObjectTwoWhenFlagged(void)
 {
     u8 *state;
@@ -1926,29 +1705,6 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
         Owner_RecalculateStats(2);
     }
 }
-
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 
 /* Sets up actors 10, 11, 12 (position, pose, flags) and actors 0-2 and 8-9 and
  * 13-14 in several later waves, moving and animating them through a long
@@ -2307,9 +2063,7 @@ void RunDialoguePromptScene(void)
         u16 *slot0;
         s32 next0;
 
-        /* FAKEMATCH: the step offset is parked in off1d8 for the later
-         * bump and the sum goes through a word-sized temporary; both keep
-         * the reference's registers. */
+        /* FAKEMATCH: the step offset is parked in off1d8 for the later bump and the sum goes through a word-sized temporary; both keep the reference's registers. */
         off1d8 = 0x1d8;
         slot0 = (u16 *)(work0 + off1d8);
         next0 = *slot0 + 1;
@@ -2330,8 +2084,7 @@ void RunDialoguePromptScene(void)
     Engine_ActorSetAnimation(16, 4);
     {
         struct FieldActor *rec;
-        /* FAKEMATCH: the zero is spelled as a sum of a zero local with
-         * itself, which keeps the reference's register for it. */
+        /* FAKEMATCH: the zero is spelled as a sum of a zero local with itself, which keeps the reference's register for it. */
         s32 t = 0;
         u16 zero_sym = (u16)(t + t);
 
@@ -2465,8 +2218,7 @@ void RunDialoguePromptScene(void)
     obj = Object_GetById(14);
     {
         u8 *target = &obj->paused;
-        /* FAKEMATCH: the flag goes through a word-sized local and a
-         * pointer temporary, which keeps the reference's registers. */
+        /* FAKEMATCH: the flag goes through a word-sized local and a pointer temporary, which keeps the reference's registers. */
         s32 shown = 1;
 
         *target = shown;
@@ -2619,28 +2371,6 @@ void RunDialoguePromptScene(void)
     Engine_EventEnd();
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void SceneState_SetWord1c0To209AndRun(void)
 {
     struct EventWork *state;
@@ -2768,8 +2498,7 @@ struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos
         d = (s16)(p - *pos);
         if (d < 0)
             d = -d;
-        /* FAKEMATCH: the used-stop test reads the id through a volatile
-         * lvalue, so the id is loaded again for the result. */
+        /* FAKEMATCH: the used-stop test reads the id through a volatile lvalue, so the id is loaded again for the result. */
         if (*(volatile u8 *)&stop->id != 0xff && d < best) {
             best = d;
             id = stop->id;
@@ -2782,6 +2511,7 @@ struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos
     return &((struct StopRecord *)KuupuappuHeya_Stops)[id];
 }
 
+/* Test an eight-unit radius, using the current position when the target is unset. */
 s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
 {
     struct Rec_383b *rec = ObjectTable_Get(id);
@@ -2826,28 +2556,6 @@ s32 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id)
     return 0;
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 s32 SceneActor_CheckTileFreeOfKinds(u8 *p)
 {
     s32 x;

@@ -6,7 +6,6 @@
 extern u16 KuupuappuHeya_StopTimer;
 void KuupuappuHeya_UpdateActorStops(void);
 
-/* FAKEMATCH: a one-halfword struct keeps the zero a halfword pool constant. */
 struct Half {
     u16 v;
 };
@@ -17,6 +16,7 @@ void KuupuappuHeya_StartActorStops(void)
 {
     u32 i;
     s32 record;
+    /* FAKEMATCH: a one-halfword struct keeps the zero a halfword pool constant. */
     struct Half zero;
 
     Engine_EventBegin();

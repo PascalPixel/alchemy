@@ -19,11 +19,6 @@ extern u8 KuupuappuHeya_Scripts[];
 extern u8 KuupuappuHeya_Messages[];
 extern u8 KuupuappuHeya_Regions[];
 
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
 extern u8 KuupuappuHeya_SceneTableB[];
 extern u8 KuupuappuHeya_SceneTableA[];
 extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
@@ -128,11 +123,6 @@ extern u8 MsgKuupuappuThievesDidntHitOurHouse[];
 extern u8 MsgKuupuappuWeDontHaveTimeFor[];
 extern u8 MsgKuupuappuWowHaveManyThingsArent[];
 
-/*
- * resource_383 owner at 0x02002ba0, 80 bytes.
- * Points two records at a third: each gets the angle from its own offset to the
- * reference record, stored as a halfword at +6.
- */
 extern s32 KuupuappuHeya_StepActions[];
 extern s32 KuupuappuHeya_IdleActions[];
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
@@ -156,28 +146,6 @@ extern u8 MsgKuupuappuThoseThreeStrangersSureHave[];
 extern u8 MsgKuupuappuWithBridgeOutWillQuite[];
 extern u8 MsgKuupuappuYoureGoingHelpIvan[];
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 u8 *SceneData_GetScriptTable(void)
 {
     return KuupuappuHeya_Scripts;
@@ -198,8 +166,7 @@ u8 *SceneData_GetMessageTable(void)
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     const struct ScenePlacement *table;
-    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler
-       from rewriting the test as greater than 14. */
+    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */
     s32 first = 15;
 
     if (gGameState.entrance <= 17) {
@@ -214,28 +181,6 @@ prepare:
     return table;
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 #if !EDITION_INTERNATIONAL
 s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
 {
@@ -349,28 +294,6 @@ void FieldScene_RunActorNineteenAngleDialogue(void)
     Engine_EventEnd();
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void FieldScene_RunActorTwentyAngleDialogue(void)
 {
     s32 v = Object_GetById(0)->facing;
@@ -451,8 +374,7 @@ void SceneDialogue_ShowEmptyChest(void)
    and the others change once flag 0x855 is set. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler
-       from rewriting the test as greater than 14. */
+    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */
     s32 first = 15;
 
     if (gGameState.entrance <= 17) {
@@ -466,28 +388,6 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKuupuappuHeyaEvents;
 }
 
-/*
- * Update one actor's animation descriptor when its current state matches the
- * expected state. The helper is called by the 17-entry scene transition table
- * at 0x02002564.
- *
- * The owner starts with push {r5,r6,r7,lr} at 0x020026e4, returns through
- * pop {r5,r6,r7}/pop {r0}/bx r0 at 0x02002716-0x0200271a, and is immediately
- * followed by the callback owner at 0x0200271c. It has no trailing pool, so
- * the complete span is 56 bytes.
- */
-
-/* Word at +456 of the shared scene work record. */
-
-/* Field at +456 of the shared scene work record, addressed through the
- * loader-fixed pointer at 0x03001ebc. */
-
-/* Pair of ratio-like arguments shared by three setup calls below (each
- * applied to a different index: 0, 1, 2). */
-
-/* The "shown" half word at +100 of an actor record. */
-
-/* Phase/status word at 0x1c0 of the shared scene work record. */
 void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 {
     Engine_ActorSetAnimation(x, 1);

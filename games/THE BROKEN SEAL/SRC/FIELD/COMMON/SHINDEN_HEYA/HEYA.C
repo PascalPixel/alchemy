@@ -1502,16 +1502,17 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
     if (rec != 0) {
         rec8 = Value4(Engine_ObjectCreate, 0x11d, rec->x.fixed, rec->y.fixed + 0x2d0000, rec->z.fixed);
         if ((s32)rec8 != 0) {
-            p5 = *(s32 *)((s32)rec8 + 80);
+            p5 = (u8 *)((struct FieldActor *)rec8)->sprite;
             Engine_ObjectSetScript((s32)rec8, (s32)ShindenHeya_OwnerEffectScript);
             {
                 s32 zero = 0;
 
-                rec8[85] = zero;
-                *(u16 *)(rec8 + 100) = zero;
+                ((struct FieldActor *)rec8)->motion_flags = zero;
+                ((struct FieldActor *)rec8)->timer = zero;
             }
-            *(u16 *)(rec8 + 102) = p8;
-            *(s32 *)((s32)rec8 + 108) = (s32)SceneEffect_StepEllipseOrbit;
+            ((struct FieldActor *)rec8)->work = p8;
+            ((struct FieldActor *)rec8)->update =
+                (void (*)(union FieldObject *))SceneEffect_StepEllipseOrbit;
             { u16 v = 0; p5[38] = v; }
             /* FAKEMATCH: byte-bitfield aliasing preserves the anchor-store order and mov13/neg sequence. */
             {

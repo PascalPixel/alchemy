@@ -28,14 +28,14 @@ void HaidiaDou_RunProbedColumnScene(void)
         if ((probe.position_x >> 20) == 17) {
             Object_SetModeById(probe.actor_slot, 3);
             v6 = 0;
-            *(u8 *)((s32)Object_GetById(probe.actor_slot) + 85) = v6;
+            ((struct FieldActor *)Object_GetById(probe.actor_slot))->motion_flags = v6;
             record = Object_GetById(probe.actor_slot);
             record->bounce = v6;
             ObjectMotion_OffsetPositionAndResetMotion(probe.actor_slot, -12, 0);
             ObjectMotion_CommitCurrentPositionAndActivate(probe.actor_slot);
             Object_SetModeById(probe.actor_slot, 3);
             Engine_ActorSetSpritePriority(10, 3);
-            *(u8 *)((s32)Object_GetById(probe.actor_slot) + 85) = 3;
+            ((struct FieldActor *)Object_GetById(probe.actor_slot))->motion_flags = 3;
             ObjectMotion_OffsetPositionAndResetMotion(probe.actor_slot, -6, 0);
             SceneActor_WaitActorDescent(Object_GetById(probe.actor_slot));
             Object_SetModeById(probe.actor_slot, 8);

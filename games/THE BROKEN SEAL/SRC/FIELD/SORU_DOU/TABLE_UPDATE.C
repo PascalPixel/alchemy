@@ -1,7 +1,4 @@
-/*
- * Overlay resource_37c: in-image table getters and the scene entry that posts
- * the setup request and sets the view scale.
- */
+/* Scene table getters and the entry that posts the setup request and sets the view scale. */
 
 #include "TYPES.H"
 #include "SCENE.H"
@@ -13,10 +10,6 @@ extern u8 SoruDou_SceneTable2[];
 extern u8 SoruDou_SceneTable3[];
 #include "RESOURCE_37C_RUNTIME.H"
 
-/*
- * The eight-byte owner includes its one pool word, which holds the address
- * returned here. The word is loaded and returned, never dereferenced.
- */
 u8 *State_Run(void)
 {
     return SoruDou_SceneTable0;
@@ -28,19 +21,16 @@ s32 state_update_0432(void)
     return 0;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetPrimaryTable37c(void)
 {
     return SoruDou_SceneTable1;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetSecondaryTable37c(void)
 {
     return SoruDou_SceneTable2;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTertiaryTable37c(void)
 {
     return SoruDou_SceneTable3;
@@ -48,10 +38,7 @@ u8 *SceneData_GetTertiaryTable37c(void)
 
 s32 Resource37c_Run(void)
 {
-    /*
-     * The three 16.16 scale values must stay separate locals built in the
-     * entry block; sharing them turns two of the three into register copies.
-     */
+
     s32 scale_x = 0x10000;
     s32 scale_y = 0x10000;
     s32 scale_z = 0x10000;

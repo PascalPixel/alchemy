@@ -190,7 +190,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     flag = Engine_GameFlagIsSet(0x211);
 
     shared = Data_02000240;
-    rec = Object_GetById(*(s32 *)(shared + 500));
+    rec = Object_GetById(((struct GameState *)shared)->selected_actor);
 
     if (*(s32 *)(work + 232) < rec->x.fixed) {
         x = *(s32 *)(work + 232) + 0xc0000;
@@ -228,7 +228,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     }
 
     shared = Data_02000240;
-    UiWork_PushValueSlot(*(s32 *)(shared + 500), 1);
+    UiWork_PushValueSlot(((struct GameState *)shared)->selected_actor, 1);
     Engine_MessageShowCentered((s32)MsgKorosseoRobinGotItem, 3);
     ObjectDispatch_WaitForValue16(rec);
 

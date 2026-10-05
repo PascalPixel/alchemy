@@ -100,9 +100,9 @@ void FieldScene_RunNearestActor165Scene(void)
     }
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Engine_EventShowMessage(best, 0);
-    q = (s32 *)(state + 448);
+    q = &((struct EventWork *)state)->start_transition;
     *q = 512;
-    *(s32 *)(state + 456) = 15;
+    ((struct EventWork *)state)->transition_frames = 15;
     Engine_EventWait(20);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

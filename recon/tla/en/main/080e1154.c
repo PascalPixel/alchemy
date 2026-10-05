@@ -1,4 +1,4 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT42.C. */
+/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ARCSTATE.C. */
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"

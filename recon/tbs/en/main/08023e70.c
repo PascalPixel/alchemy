@@ -89,7 +89,7 @@
  * The former ordinary draft scored13657 and had a 216-byte frame.
  *
  * Shared UiWindow/MenuSprite/UiRenderWork, MenuCell, BattleUnit and
- * DjinnRecoveryList replace duplicate views. Current WINDOW15.C owns the
+ * DjinnRecoveryList replace duplicate views. Current STATUS.C owns the
  * 16-byte party-panel shape retained locally here. The command collector
  * allocates260 bytes and writes actor/result fields ate0/e4; that tail
  * remains a guarded local view, not an extension invented for the frame.
@@ -155,7 +155,7 @@ struct BattleMenuSelection {
 LAYOUT_SIZE_GUARD(BattleMenuSelection_Size, struct BattleMenuSelection, 0x104);
 LAYOUT_OFFSET_GUARD(BattleMenuSelection_Selected, struct BattleMenuSelection, selected, 0xe4);
 
-/* Same producer-owned record as WINDOW15.C. It describes the party panel,
+/* Same producer-owned record as STATUS.C. It describes the party panel,
  * not a cursor sprite; leave this local until that owner is shared. */
 struct PartyStatusWindow {
     struct UiWindow *window;

@@ -1,4 +1,4 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT3.C. */
+/* Ported from ☀️ games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STARFLD.C. */
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PARTY.H"
 #include "TYPES.H"

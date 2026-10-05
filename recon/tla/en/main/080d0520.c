@@ -1,4 +1,4 @@
-/* Ported from ☀️ games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY7.C. */
+/* Ported from ☀️ games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSIT.C. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_REG.H"

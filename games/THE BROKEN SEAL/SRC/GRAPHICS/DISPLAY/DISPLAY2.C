@@ -247,16 +247,15 @@ void DisplayTransition_UpdateScanlineTable(void)
         break;
 
     case 7:
-        /* Ellipse around the selected actor, closed on odd frames. The
-           running index k of mode 8 is left over unused; only its frame
-           counter read remains. */
+        /* Ellipse around the selected actor, closed on odd frames. */
         view7 = &map->view_x;
         ax = view7[0] & 0xffff0000;
         ay = view7[1] & 0xffff0000;
         obj = ObjectTable_Get(gGameState.selected_actor);
         cx = (obj->x - ax) / 0x10000;
         cy = ((obj->z - obj->y) - ay) / 0x10000 - 16;
-        k = -cy * 2 + gFrameCount;
+        /* FAKEMATCH: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
+        gFrameCount;
         *dst++ = state->active;
         *dst++ = state->mask;
         v = state->value;
@@ -352,7 +351,8 @@ void DisplayTransition_UpdateScanlineTable(void)
         obj = ObjectTable_Get(gGameState.selected_actor);
         cx = (obj->x - ax) / 0x10000;
         cy = ((obj->z - obj->y) - ay) / 0x10000 - 16;
-        k = -cy * 2 + gFrameCount;
+        /* FAKEMATCH: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
+        gFrameCount;
         *dst++ = state->mask;
         *dst++ = state->active;
         v = state->value;
@@ -393,7 +393,8 @@ void DisplayTransition_UpdateScanlineTable(void)
         obj = ObjectTable_Get(gGameState.selected_actor);
         cx = (obj->x - ax) / 0x10000;
         cy = ((obj->z - obj->y) - ay) / 0x10000 - 8;
-        k = -cy * 2 + gFrameCount;
+        /* FAKEMATCH: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
+        gFrameCount;
         *dst++ = state->mask;
         *dst++ = state->active;
         v = state->value;

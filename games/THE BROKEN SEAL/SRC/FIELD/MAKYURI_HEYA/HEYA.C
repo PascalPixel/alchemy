@@ -71,7 +71,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gMakyuriHeyaPlacementsOther;
 }
 
-void FieldScene_CallHelper67e8(void)
+void MakyuriHeya_TickSpawnTimer(void)
 {
     Makyuri_TickSpawnTimer();
 }
@@ -86,7 +86,7 @@ void FieldScene_RunSingleStep(void)
     Makyuri_RunActorMove();
 }
 
-void FieldScene_CallHelper6364(void)
+void MakyuriHeya_TriggerPillarRise(void)
 {
     MakyuriIriguchi_RaisePillar();
 }

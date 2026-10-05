@@ -2,8 +2,15 @@
 /* FAKEMATCH: this file reads Menu_WorkspaceIconFrames through its own declaration; the shop's changes its code. */
 #define OWN_Menu_WorkspaceIconFrames
 extern const s8 Menu_WorkspaceIconFrames[];
-#include "GLOBAL.H"
-#include "PROTO.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"

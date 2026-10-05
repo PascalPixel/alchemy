@@ -1,11 +1,11 @@
-#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-#define Flash_Handler4 (*(u16 * *)&Flash_Handler4)
-#define gFlashSavedIme (*(u16 *)&gFlashSavedIme)
-#define gFlashTimerCount (*(u16 *)&gFlashTimerCount)
-
+extern u16 *Flash_Handler4;
+extern u16 gFlashSavedIme;
+extern volatile u8 gFlashTimerNum;
+extern u8 gFlashTimeoutFlag;
+extern u16 gFlashTimerCount;
 extern u16 *volatile gFlashTimerReg;
 
 void StartFlashTimer(u8 index)

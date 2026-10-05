@@ -5,7 +5,15 @@ extern const s16 SideObject_CharacterIdMap[];
 /* FAKEMATCH: this file reads SideObject_ActorKindIdMap through its own declaration; the shop's changes its code. */
 #define OWN_SideObject_ActorKindIdMap
 extern const s16 SideObject_ActorKindIdMap[];
-#include "GLOBAL.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "WINDOW.H"

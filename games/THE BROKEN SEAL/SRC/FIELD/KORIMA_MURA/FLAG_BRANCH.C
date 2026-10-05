@@ -1,5 +1,8 @@
 
-#include "STRUCT.H"
+#include "BATTLE.H"
+#include "FIELD.H"
+#include "MENU.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

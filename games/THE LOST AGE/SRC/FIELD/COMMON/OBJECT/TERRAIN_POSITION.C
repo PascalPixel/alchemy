@@ -1,4 +1,12 @@
-#include "PROTO.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "OBJECT_RUNTIME.H"
 
 #define Object_SetPositionAndResetMotionFar ((s32 (*)(struct ObjectRuntime*,s32,s32,s32))Object_SetPositionAndResetMotionFar)

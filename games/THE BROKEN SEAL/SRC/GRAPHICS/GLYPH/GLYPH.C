@@ -1,9 +1,16 @@
 #include "TYPES.H"
-#include "PROTO.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 /* FAKEMATCH: this file reads RomBytes_08029a10 through its own declaration; the shop's changes its code. */
 #define OWN_RomBytes_08029a10
 extern u8 *RomBytes_08029a10[];
-#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "SELECT.H"
 #include "GLYPH.H"

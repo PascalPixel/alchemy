@@ -1,7 +1,15 @@
 /*----------------------------------------------------------
     ルンパ城  イベント
 ----------------------------------------------------------*/
-#include "GLOBAL.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "FORTRESS.H"

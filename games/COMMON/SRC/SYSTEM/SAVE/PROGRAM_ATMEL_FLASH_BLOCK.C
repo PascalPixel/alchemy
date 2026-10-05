@@ -1,4 +1,3 @@
-#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
@@ -9,6 +8,7 @@ struct FlashInfo08007220 {
     u16 control;
 };
 
+extern struct FlashInfo08007220 Flash_ChipAtmel;
 extern struct FlashInfo08007220 Flash_ChipAtmelLayout;
 extern u16 gFlashNumRemainingBytes;
 

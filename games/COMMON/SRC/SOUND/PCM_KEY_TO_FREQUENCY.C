@@ -1,7 +1,8 @@
-#include "PROTO.H"
-#include "GLOBAL.H"
 #include "TYPES.H"
 
+s32 Audio_UmulHigh32(s32, s32);
+extern u8 Sound_PcmPitchCodes[];
+extern u32 Sound_PcmFrequencySteps[];
 
 s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
 {

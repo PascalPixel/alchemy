@@ -1,4 +1,12 @@
-#include "PROTO.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "LIB.H"
+#include "MENU.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "OWNER_STATE.H"
 
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)

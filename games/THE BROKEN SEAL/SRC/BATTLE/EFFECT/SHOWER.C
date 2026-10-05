@@ -2,8 +2,15 @@
 /* FAKEMATCH: this file reads ParticleStreams_CellOffsets through its own declaration; the shop's changes its code. */
 #define OWN_ParticleStreams_CellOffsets
 extern const u16 ParticleStreams_CellOffsets[];
-#include "GLOBAL.H"
-#include "PROTO.H"
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"

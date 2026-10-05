@@ -1,8 +1,8 @@
-#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 
-#define gFlashTimeoutFlag (*(volatile u8 *)&gFlashTimeoutFlag)
-
+extern volatile u16 gFlashTimerCount;
+extern volatile u8 gFlashTimeoutFlag;
+extern volatile u8 gFlashTimerNum;
 extern volatile u16 *gFlashTimerReg;
 
 void FlashTimerIntr(void)

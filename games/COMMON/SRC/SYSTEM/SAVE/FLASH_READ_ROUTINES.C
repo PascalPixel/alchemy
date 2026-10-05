@@ -1,13 +1,11 @@
-#include "PROTO.H"
-#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-#define StartFlashTimer ((void (*)(s32))StartFlashTimer)
-
-#define gFlash (*(u8 * *)&gFlash)
-
+extern u8 *gFlash;
+extern volatile u8 gFlashTimerNum;
+extern u8 gFlashTimeoutFlag;
 extern u16 *volatile gFlashTimerReg;
+extern volatile u16 gFlashSavedIme;
 
 void StopFlashTimer(void)
 {
@@ -60,6 +58,7 @@ check:
 
 typedef s32 (*FlashPollRoutine)(s32 argument);
 
+void StartFlashTimer(s32 timing_index);
 
 s32 WaitForFlashWrite(u8 value, s32 argument, u8 expected)
 {

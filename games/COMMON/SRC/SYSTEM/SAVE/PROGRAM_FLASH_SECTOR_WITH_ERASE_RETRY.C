@@ -1,9 +1,5 @@
-#include "GLOBAL.H"
-#include "PROTO.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
-
-#define CountRemainingErasedFlashBytes ((void (*)(void))CountRemainingErasedFlashBytes)
 
 struct FlashChipInfo {
     u8 unknown_00[4];
@@ -13,8 +9,11 @@ struct FlashChipInfo {
     u16 wait;
 };
 
+extern struct FlashChipInfo *gFlash;
 extern u16 gFlashNumRemainingBytes;
 
+void CountRemainingErasedFlashBytes(void);
+s32 RunFlashEraseVerifier(u8 *, u8 *);
 
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
 {

@@ -18,7 +18,7 @@ struct ObjectPartList {
 };
 
 extern u32 gFrameCount;
-extern const u8 Data_080f088c[4];
+extern const u8 ObjectGroup_BlinkChildValues[4];
 
 /* The display hook of a multi-part object (animation kind 1): every other
    frame, gives each part that has graphics the next of four attributes, and
@@ -32,7 +32,7 @@ void ObjectGroup_ApplyIndexedChildValue(struct ObjectRuntime *object)
 
     if ((object->animation_kind & 0xf) == 1) {
         list = object->animation;
-        attribute = Data_080f088c[(gFrameCount >> 1) & 3];
+        attribute = ObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
         for (i = 0; i < list->count; i++) {
             part = list->parts[i];
             if (part != 0 && part->graphics != 0) {

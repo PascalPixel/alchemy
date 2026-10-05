@@ -42,14 +42,11 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 
 /* ☀️'s: copy a glyph's rows of bytes into a shop window cell, stopping at
    each row's first empty byte. */
-void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
+void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place)
 {
-    u8 *src = Shop_GlyphBytes + ((u32)arg0 << 5);
-    u32 offset = Shop_GlyphRowOffsets[arg2];
+    u8 *src = Shop_GlyphBytes + ((u32)digit << 5);
+    u8 *dst = tiles + Shop_GlyphRowOffsets[place] + 2;
     s32 count = 3;
-    u8 *dst;
-
-    dst = (u8 *)((u32)arg1 + offset + 2);
 
     do {
         if (*src != 0) {
@@ -82,21 +79,21 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     buf = Runtime_AllocateBlock(56, 0x400);
     sprite = 0;
     Dma_Set(Shop_PriceTiles, buf, 0x84000040, REG_DMA3);
-    Shop_CopyGlyphs(value % 10, (s32)buf, 0);
+    Shop_CopyGlyphs(value % 10, buf, 0);
     value = value / 10;
     if (value != 0) {
-        Shop_CopyGlyphs(value % 10, (s32)buf, 1);
+        Shop_CopyGlyphs(value % 10, buf, 1);
         value = value / 10;
         if (value != 0) {
-            Shop_CopyGlyphs(value % 10, (s32)buf, 2);
+            Shop_CopyGlyphs(value % 10, buf, 2);
             value = value / 10;
             if (value != 0) {
                 s32 last;
 
-                Shop_CopyGlyphs(value % 10, (s32)buf, 3);
+                Shop_CopyGlyphs(value % 10, buf, 3);
                 last = value / 10;
                 if (last != 0)
-                    Shop_CopyGlyphs(last % 10, (s32)buf, 4);
+                    Shop_CopyGlyphs(last % 10, buf, 4);
             }
         }
     }

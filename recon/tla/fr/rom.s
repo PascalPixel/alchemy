@@ -4023,8 +4023,8 @@ BattleFx_ParticleScript:
 	.global Object_VariantMotionScripts
 Object_VariantMotionScripts:
 	.incbin "baserom.gba", 0x000f56cc, 0x000001b4
-	.global Data_080f088c
-Data_080f088c:
+	.global ObjectGroup_BlinkChildValues
+ObjectGroup_BlinkChildValues:
 	.incbin "baserom.gba", 0x000f5880, 0x000005c8
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:

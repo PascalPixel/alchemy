@@ -628,8 +628,8 @@ Data_080f085c:
 	.global Data_080f0874
 Data_080f0874:
 	.incbin "baserom.gba", 0x000f0874, 0x00000018
-	.global Data_080f088c
-Data_080f088c:
+	.global ObjectGroup_BlinkChildValues
+ObjectGroup_BlinkChildValues:
 	.incbin "baserom.gba", 0x000f088c, 0x00000004
 	.global Data_080f0890
 Data_080f0890:

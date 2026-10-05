@@ -12,7 +12,6 @@
 #include "RAM_BUFFER.H"
 
 extern u32 gWorkSlot[];
-extern u8 gMapCellBuffer[];
 
 extern u8 BattlePieceStartX[];
 extern u8 BattlePieceStartY[];
@@ -34,7 +33,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *ent, s32 arg1, s32 arg2)
 void Audio_PlayCue(s32 id);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
-#define PLOT(x, y) (Ram_MapCellBuffer[((x) & 7) + ((x) / 8 << 6) + ((y) & 7) * 8 + ((y) / 8 << 11)] = 2)
+#define PLOT(x, y) (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 + (y) / 8 * 2048) = 2)
 
 /*
  * Blocking battle effect scene at 0x080cbc0c, BattleEffect_RunTileAndPaletteAnimation.
@@ -46,8 +45,8 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * into the 8bpp map cells at 0x02010000, 33 sheet pieces fly apart until
  * frame 50, and from frame 53 the flash burst cells scatter.
  *
- * Score: 246 (alchemy diff, listing 1051, draft 1051, common 928). The old
- * m2c draft scored 1312; this wave rewrote it as plain C.
+ * Score: 167 (alchemy diff, listing 1051, draft 1052, common 968). The old
+ * m2c draft scored 1312; the wave before last rewrote it as plain C (246).
  *
  * What moved it, in order (each measured against the previous):
  *   1312  old m2c draft
@@ -84,24 +83,53 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  *    274  x1 = 96 - px; left = x1 (the unclamped copy is the second pseudo,
  *         native keeps it in lr); same for the swapped half
  *    246  plain-swap hill climb (declaration and independent statement order)
+ *    236  the canvas size is a local set between the first two allocations
+ *         and passed to the allocation and both clears (as EFFECT3.C does):
+ *         GCSE propagates the constant into the clears, so each call builds
+ *         0x4000 itself instead of sharing one register
+ *    226  start_y assigned before start_x, and each piece written as
+ *         piece->x = *start_x++ << 16 with the velocity read back through
+ *         piece->x (the y pointer is the first pool entry, x values in r2)
+ *    205  plain-swap hill climb again (x1/py/x2 declarations, the colour
+ *         field order red after green, goal_red after goal_blue)
+ *    171  plot through pointer arithmetic with multiplications:
+ *         *(Ram_MapCellBuffer + (x & 7) + x / 8 * 64 + (y & 7) * 8
+ *         + y / 8 * 2048). Expanded as an address sum, the products stay
+ *         deferred until the address is forced, so x / 8 * 64 is formed after
+ *         the y division and added as (x/8*64) + (x&7), as the native does;
+ *         the same spelling as an array index lets fold factor the products
+ *         (885)
+ *    167  the second octant keeps its unclamped x1 in its own left2 (native:
+ *         lr for the first octant, r10 for the second)
  *
  * Tried and worse: gMapCellBuffer[...] for the ring (1043 vs 910),
+ * cells/map locals for 0x7800 and the buffer (the copies rematerialise but
+ * the fill routine pointer lands in r6 because draw1 prefers r5: 287),
+ * every order of the particle loop's six statements with x/y temporaries
+ * (best 226 with x loaded first; with temporaries the x chain wins r3),
+ * goal = target[i] or battle->palette[i] (the giv increments at the loop end,
+ * not after the load: 172-610), target pinned to r9 (599), every order of
+ * the octant setup statements (167 at best),
  * 96 - px + 1 (folds to 97 - px), shared left/left2 split (274 = same),
  * level shared across loops, piece++ pointer walks in the draw/scatter loops,
  * indexed start tables (eliminates the counter), indexed BG_PLTT for the fade,
  * x/y as u32 or s32 in the fade (687+).
  *
- * Remaining difference: register choice only, in four places.
- *  - Copy/fill and clear constants: the native rematerialises 0x4000, 0x7800
- *    and the map buffer address before each call (no shared pseudo), the
- *    draft keeps them in r5/r6 across the call.
- *  - The fade loop: native target pointer in r9, colour/goal fields in
- *    r5,r2,r0 / r1,r4,r3; the draft uses sl and a different permutation.
- *  - The ring plot: native forms (x / 8) << 6 after the y division and adds
- *    it as the first operand ((x/8<<6) + (x&7)); in plots 2 and 4 the native
- *    adds the row term first (adds r3, r6, r3). The draft shifts right after
- *    the division.
- *  - The 0x33 ramp: native pointer r0 / level r1, draft swapped.
+ * Remaining difference: register choice and scheduling only.
+ *  - Copy/fill constants: the native rematerialises 0x7800 and the buffer
+ *    address before each call; the draft keeps them in r5/r6.
+ *  - Particle loop: the native loads both start bytes before the first
+ *    store; the piece->x form stores x first (a u8 load cannot pass it).
+ *  - Fade loop: reload takes r7 from the target pointer and r3 from the
+ *    goal << 16 temporary in the same pass, and retry_global_alloc visits
+ *    them in pseudo order: target gets r10 and the temporary r9; the
+ *    native has them the other way round. The search's colour field order
+ *    (red after green) scores better overall but differs here.
+ *  - Ring: reload picks round-robin spill registers, so the y1 = 60 - py
+ *    inputs (native r5/r7) and the base reloads follow from every reload
+ *    before them; the shape of each plot now matches.
+ *  - After each IME restore the native stores first; the draft hoists the
+ *    two pool loads above the store (priority 146 vs 144).
  */
 void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect)
 {
@@ -124,17 +152,20 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     s32 j;
     s32 k;
     s32 d;
-    s32 x1;
     s32 py;
+    s32 x1;
+    s32 size;
     s32 left;
-    s32 x2;
+    s32 left2;
     s32 y1;
+    s32 x2;
     s32 y2;
     u8 *start_y;
     u8 *start_x;
 
     work = Runtime_AllocateHeapBlock(39, 0x782c);
-    canvas = Runtime_AllocateHeapBlock(40, 0x4000);
+    size = 0x4000;
+    canvas = Runtime_AllocateHeapBlock(40, size);
     Runtime_AllocateHeapBlock(41, 0x302);
     slots = (void **)&gBattleWork;
     battle = slots[0];
@@ -170,8 +201,8 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
         }
     }
 
-    Iwram_ClearWords(canvas, 0x4000);
-    Iwram_ClearWords((void *)0x06004000, 0x4000);
+    Iwram_ClearWords(canvas, size);
+    Iwram_ClearWords((void *)0x06004000, size);
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
     REG_BLDALPHA = 0x1010;
     REG_BLDCNT = 0;
@@ -185,25 +216,20 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     BattleEffect_LoadWork(47, 7, 7, 3, 2);
     draw1 = cache[47];
 
-    start_x = BattlePieceStartX;
     start_y = BattlePieceStartY;
+    start_x = BattlePieceStartX;
     r = 0;
     piece = work->particles;
     for (i = 0; i != 33; i++) {
-        s32 y;
-        s32 x;
-
-        y = *start_y++ << 16;
-        x = *start_x++ << 16;
-        piece->x = x;
-        piece->y = y;
-        piece->velocity_x = (x - 0x200000) >> 2;
-        piece->velocity_y = (y - 0x3c0000) >> 2;
+        piece->x = *start_x++ << 16;
+        piece->y = *start_y++ << 16;
+        piece->velocity_x = (piece->x - 0x200000) >> 2;
+        piece->velocity_y = (piece->y - 0x3c0000) >> 2;
         piece++;
     }
 
-    Iwram_CopyWords(gMapCellBuffer, (void *)0x06008000, 0x7800);
-    Iwram_FillWords(gMapCellBuffer, 0x7800, 0x01010101);
+    Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
+    Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
     view->busy = 1;
     work->saved_bg1_x = gBgScroll[1].x;
     work->saved_bg1_y = gBgScroll[1].y;
@@ -245,12 +271,12 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
                 s32 goal_red;
 
                 color = *pal;
-                red = color & 0x1f;
                 green = (color >> 5) & 0x1f;
+                red = color & 0x1f;
                 blue = (color >> 10) & 0x1f;
                 goal = *target++;
-                goal_red = goal & 0x1f;
                 goal_blue = (goal >> 10) & 0x1f;
+                goal_red = goal & 0x1f;
                 goal_green = (goal >> 5) & 0x1f;
                 if (red < goal_red)
                     red++;
@@ -283,8 +309,8 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
                 d = r;
                 while (px >= py) {
                     y1 = 60 - py;
-                    x2 = px + 96;
                     x1 = 96 - px;
+                    x2 = px + 96;
                     left = x1;
                     y2 = py + 60;
                     if (y1 < 0)
@@ -313,7 +339,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
                     y1 = 60 - px;
                     x1 = 96 - py;
                     x2 = py + 96;
-                    left = x1;
+                    left2 = x1;
                     y2 = px + 60;
                     if (x1 < 0)
                         x1 = 0;
@@ -327,7 +353,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
                     PLOT(x2, y1);
                     PLOT(x1, y2);
                     PLOT(x1, y1);
-                    x1 = left + 1;
+                    x1 = left2 + 1;
                     x2 = py + 97;
                     if (x1 < 0)
                         x1 = 0;
@@ -346,7 +372,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
                     py++;
                 }
             }
-            Iwram_CopyWords((void *)0x06008000, gMapCellBuffer, 0x7800);
+            Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
         }
 
         if (frame <= 50) {

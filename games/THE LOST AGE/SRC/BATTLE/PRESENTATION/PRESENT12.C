@@ -2,6 +2,12 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_UNIT.H"
 #include "OWNER_STATE.H"
+#include "SYSTEM.H"
+#include "ANIMSPR.H"
+#include "FIXED_MATH.H"
+#include "BATTLE_PARTY.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_TARGET.H"
 
 extern u8 MsgBitterBlow[];
 extern u8 MsgDmgP[];
@@ -73,4 +79,63 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 
     slot = GetBattleObjectSlot(unit_id);
     Object_SetMode(slot->object, 1);
+}
+
+/* A battle object's animation records, whose first entry sits at 0x28. */
+struct BattleObjectAnimation {
+    u8 unknown_00[0x28];
+    struct AnimationEntry *entry;
+};
+
+s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
+s32 Map_RenderAnimatedTileFramesForObjectFar(void *object);
+s32 ActivateBattleObjectSlot(s32 unit_id);
+
+/* Poses a unit whose HP has run out in animation 5 on its sixth frame
+   parameter, with no frame selected, then reactivates its object slot. */
+void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
+{
+    struct BattleObjectAnimation *animation;
+    struct AnimationEntry *entry;
+
+    if (((struct BattleUnit *)Owner_GetState(unit_id))->hp <= 0) {
+        animation = GetBattleObjectSlot(unit_id)->object->records;
+        Animation_ApplyChildArgumentFar(animation, 5);
+        entry = animation->entry;
+        entry->param = 6;
+        entry->frame = 0xff;
+        WaitFrames(4);
+        Map_RenderAnimatedTileFramesForObjectFar(animation);
+        ActivateBattleObjectSlot(unit_id);
+    }
+}
+
+/* The target of an action, or when it is down a living unit of its side
+   picked at random, or 0x100 when that side has none. */
+s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
+{
+    s16 living_units[14];
+    s32 target_id;
+    s32 living_count;
+
+    target_id = action->target;
+    if (((struct BattleUnit *)Owner_GetState(target_id))->hp != 0) {
+        return target_id;
+    }
+
+    if (target_id > 0x7F) {
+        living_count = BattleParty_ListLivingUnits(
+            BATTLE_SIDE_ENEMIES,
+            living_units);
+    } else {
+        living_count = BattleParty_ListLivingUnits(
+            BATTLE_SIDE_PARTY,
+            living_units);
+    }
+
+    if (living_count == 0) {
+        return 0x100;
+    }
+
+    return living_units[(u32)(Random16() * living_count) >> 0x10];
 }

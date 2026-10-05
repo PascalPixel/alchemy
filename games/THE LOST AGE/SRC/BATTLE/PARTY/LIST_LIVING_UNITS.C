@@ -2,8 +2,41 @@
 #include "GAME_FLAGS.H"
 #include "OWNER_STATE.H"
 #include "TYPES.H"
+#include "BATTLE_UNIT.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+
+/* Lists the enemy units still present (six, or three when flag 0x16c is
+   set) into unit_ids, ending the list with 0xff, and returns how many. */
+s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
+{
+    s16 *output;
+    s32 count;
+    s32 id;
+    s32 limit;
+    s32 listed;
+
+    output = unit_ids;
+    listed = 0;
+    limit = 6;
+    count = 0;
+    if (output != NULL) {
+        if (GameFlag_Test(0x16c) != 0)
+            limit = 3;
+        id = 0x80;
+        limit += 0x80;
+        for (; id < limit; id++) {
+            if (((struct BattleUnit *)Owner_GetState(id))->status_12a != 0) {
+                *output = id;
+                listed++;
+                output++;
+            }
+        }
+        count = listed;
+        *output = 0xff;
+    }
+    return count;
+}
 
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
 {

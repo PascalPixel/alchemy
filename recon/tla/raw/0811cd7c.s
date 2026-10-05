@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Camera_ConfigureScene
 	.thumb_func
 Camera_ConfigureScene:

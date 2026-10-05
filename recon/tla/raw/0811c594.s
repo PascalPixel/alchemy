@@ -17,7 +17,7 @@ Func_0811c594:
 	b .L_0811c646
 .L_0811c5ae:
 	adds r0, r7, #0
-	bl Func_0811cd30
+	bl BattleTarget_ReplaceDefeated
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #176

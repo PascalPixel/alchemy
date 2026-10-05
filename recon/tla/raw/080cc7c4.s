@@ -27,7 +27,7 @@ Func_080cc7c4:
 	str r5, [sp, #4]
 	movs r1, #0
 	ldrsh r7, [r3, r1]
-	bl Func_080cc994
+	bl Stream_ReadU16
 	lsls r0, r0, #16
 	lsrs r0, r0, #16
 	adds r0, r0, r5
@@ -57,12 +57,12 @@ Func_080cc7c4:
 	adds r3, #1
 	mov r0, r10
 	str r3, [sp, #4]
-	bl Func_080cc9ac
+	bl Stream_ReadS16
 	lsls r0, r0, #16
 	asrs r0, r0, #16
 	mov r8, r0
 	mov r0, r10
-	bl Func_080cc9ac
+	bl Stream_ReadS16
 	lsls r0, r0, #16
 	asrs r0, r0, #16
 	mov r2, r8
@@ -116,7 +116,7 @@ Func_080cc7c4:
 	ldr r3, .L_080cc988
 	mov r0, r10
 	str r3, [sp, #4]
-	bl Func_080cc994
+	bl Stream_ReadU16
 	ldr r1, .L_080cc97c
 	lsls r0, r0, #16
 	lsrs r0, r0, #16

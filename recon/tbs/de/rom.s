@@ -907,12 +907,6 @@ Battle_RunEncounter:
 	.thumb_func
 BattlePres_RunUnitAction:
 	.incbin "baserom.gba", 0x000bb234, 0x0000019c
-	.section .rom.000bc4d8, "ax"
-	.global BattlePresentation_RunUnitTransition
-	.type BattlePresentation_RunUnitTransition, %function
-	.thumb_func
-BattlePresentation_RunUnitTransition:
-	.incbin "baserom.gba", 0x000bc4d8, 0x000003bc
 	.section .rom.000bfe68, "ax"
 	.incbin "baserom.gba", 0x000bfe68, 0x00000048
 	.section .rom.000bfeb0, "ax"

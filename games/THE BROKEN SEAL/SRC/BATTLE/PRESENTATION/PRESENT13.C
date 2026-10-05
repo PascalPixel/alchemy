@@ -9,6 +9,11 @@
 #include "BATTLE_MSG.H"
 #include "BATTLE_PRESENTATION.H"
 #include "SYSTEM.H"
+#include "IO_REG.H"
+#include "BATTLE_WORK.H"
+#include "MOTION_OBJECT.H"
+#include "ANIMSPR.H"
+#include "CALLBACK_SCHEDULER.H"
 
 void BattlePres_SetActorModes(u16 *, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
@@ -22,7 +27,7 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Camera_StoreSceneParameters(s32, u32, s32);
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode);
-void BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
+s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 s32 BattlePres_RunItem(struct BattlePlan *plan, s32 mode, struct BattleActionRecord *request);
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
@@ -224,4 +229,152 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
 
     presentation->active = 0;
     return completed;
+}
+
+void BattleEvent_Playback(void);
+void UiWindow_DrawPartyStatusContentsFar(s32 mode);
+void Object_SetMode(void *object, s32 mode);
+void AudioCommand_PlayFar(s32 cue);
+/* Declared with a result, as PROCESS_ROUND_END.C declares it. */
+s32 BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
+void BattlePres_RunWithZeroArguments(void);
+void BattleActor_SpawnObjectsForList(s16 *actors, s32 mode);
+void BattleFx_DispatchByIdRangeFar(s32 *work);
+void BattleFx_DispatchModeFar(s32 *work);
+
+/* Moves a unit across the field: turns the camera to the actor's side, fades
+   out every opposing unit, then either reports the failure or spawns the
+   actor's side and the targets and plays the effect, and fades the
+   opposing units back in. Returns 0. */
+s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
+{
+    u16 units[14];
+    struct BattlePresentationWork work;
+    u32 actor;
+    u32 target;
+    u32 count;
+    s32 i;
+    s32 n;
+    u32 kept;
+    struct MotionObject *object;
+    void **slots = (void **)&gBattleWork;
+
+    BattlePres_BuildTargetList(plan, &work);
+    actor = plan->actor_id;
+    target = plan->target_ids[0];
+    if (plan->presentation_flags & 0x8000) {
+        struct BattlePresentationTransition *transition;
+        s32 yaw;
+        transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+        yaw = 0x2000;
+        if (actor > 7)
+            yaw = 0x5000;
+        transition->target_yaw = yaw;
+        transition->frames = 60;
+    } else {
+        struct BattlePresentationTransition *transition;
+        s32 yaw;
+        transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+        yaw = -0x2000;
+        if (actor <= 7)
+            yaw = 0x2000;
+        if (transition->target_yaw != yaw)
+            transition->target_yaw = yaw;
+    }
+    BattlePres_SetActorModes(0, 0);
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode & ~1);
+    object = GetBattleObjectSlot(actor)->object;
+    REG_BLDCNT = 0x3f40;
+    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);
+    for (i = 0; i != count; i++) {
+        if (units[i] == BATTLE_UNIT_REMOVED)
+            continue;
+        if (units[i] != actor) {
+            if ((target <= 7) != (units[i] <= 7))
+                BattlePres_SetActorRecordMode(units[i], 1);
+        } else {
+            Object_SetMode(object, 3);
+        }
+    }
+    AudioCommand_PlayFar(0x9a);
+    BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 0, 0);
+    if (mode & 1)
+        BattlePres_SetActorRecordMode(actor, 1);
+    for (i = 0; i != 16; i++) {
+        REG_BLDALPHA = (16 - i) | 0x1000;
+        WaitFrames(1);
+    }
+    if (plan->failure != 0) {
+        if (plan->failure == 1) {
+            BattleEv_Push(0, plan->actor_id);
+            BattleEv_Push(4, (s32)&MsgPsynergyBlocked);
+        } else {
+            BattleEv_Push(4, (s32)&MsgCastLacksPp);
+        }
+        BattleEv_DispatchQueued();
+        BattlePres_RunWithZeroArguments();
+    } else {
+        kept = 0;
+        for (i = 0; i < count; i++) {
+            u32 unit = units[i];
+            if (unit == actor) {
+                if (!(mode & 1))
+                    units[kept++] = actor;
+            } else if ((target <= 7) == (unit <= 7)) {
+                units[kept++] = unit;
+            }
+        }
+        units[kept] = BATTLE_UNIT_LIST_END;
+        BattleActor_SpawnObjectsForList((s16 *)units, 0);
+        for (n = 0; n < plan->target_count; n++)
+            units[n] = plan->target_ids[n];
+        units[n] = BATTLE_UNIT_LIST_END;
+        for (i = 0; i != work.count; i++) {
+            struct AnimationObject *animation;
+            u32 child;
+
+            animation = GetMotionRecord(GetBattleObjectSlot(work.actors[i])->object, 0);
+            for (child = 0; child != animation->count - 1; child++)
+                work.params[i][child] = animation->entries[child]->param;
+        }
+        if (plan->presentation_flags & 0x8000) {
+            if (target > 7)
+                work.side = 0;
+            else
+                work.side = 1;
+        } else {
+            if (plan->target_ids[0] <= 7)
+                work.side = 1;
+            else
+                work.side = 0;
+        }
+        if (plan->presentation_flags & 0x20000)
+            work.side ^= 1;
+        Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+        if (plan->presentation_flags & 0x8000)
+            BattleFx_InitializeModeFar((s32 *)&work);
+        else if (plan->presentation_flags & 0x4000)
+            BattleFx_DispatchByIdRangeFar((s32 *)&work);
+        else
+            BattleFx_DispatchModeFar((s32 *)&work);
+        BattleEventRuntime_WaitForReady();
+    }
+    BattleActor_CommitPlacement();
+    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);
+    REG_BLDCNT = 0x3f40;
+    for (i = 0; i != count; i++) {
+        if (units[i] == BATTLE_UNIT_REMOVED || units[i] == actor)
+            continue;
+        if ((target <= 7) != (units[i] <= 7))
+            BattlePres_SetActorRecordMode(units[i], 1);
+    }
+    for (i = 0; i != 16; i++) {
+        REG_BLDALPHA = i | 0x1000;
+        WaitFrames(1);
+    }
+    for (i = 0; i != count; i++)
+        BattlePres_SetActorRecordMode(units[i], 0);
+    BattlePres_SetupTransitionScene(0, 0, 0, 100);
+    WaitFrames(1);
+    return 0;
 }

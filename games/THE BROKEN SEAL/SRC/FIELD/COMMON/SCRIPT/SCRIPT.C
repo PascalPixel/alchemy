@@ -43,9 +43,7 @@ s32 Object_Wander(struct ScriptObjectRuntime *object)
     base = *args++;
     range = *args++;
     limit = *args / 0x10000;
-    /* FAKEMATCH: the seven-trial retry entry and single-pass distance
-       block retain the native 32-byte frame; the ordinary for/early-return
-       form uses 36 bytes and changes the division/load registers. */
+    /* FAKEMATCH: the retry label and one-pass distance block preserve the 32-byte frame and division/load registers. */
     tries = 0;
     limit = limit * limit;
 retry:
@@ -223,8 +221,6 @@ enum ScriptOperandOperation {
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 extern OperandFunc Script_OperandHandlerTable[];
-
-/* field/store_assigned_key_value.c */
 
 static __inline__ void StoreHalfword(s16 *address, s32 value)
 {
@@ -785,16 +781,13 @@ u32 Field_StoreAssignedKeyValue(u32 value)
     return request;
 }
 
-/* field/check_configured_keys.c */
 /* キー入力と設定表の照合。押下キーに対応する番号欄へ1を立てる。
    該当が無ければ表の値を Field_StoreAssignedKeyValue へ渡す。
    キー状態は割り込みで更新されるため、判定ごとに読み直す。 */
 s32 Field_CheckConfiguredKeys(void)
 {
     struct EventRuntime *work = gWork;
-    /* FAKEMATCH: indexed immediate stores introduce two literal-1 loads
-       and grow this service from 168 to 192 bytes. Keep the selected
-       halfword address and signed word value local to each store. */
+    /* FAKEMATCH: local halfword addresses and signed values avoid two extra literal-1 loads and 24 extra bytes. */
     s32 result = 0;
 
     if (work == NULL)

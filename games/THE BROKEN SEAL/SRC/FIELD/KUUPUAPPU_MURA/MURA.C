@@ -244,7 +244,7 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-void FieldScene_RunScene382_020004a0(void)
+void KuupuappuMura_SayFarewellToIvan(void)
 {
     struct FieldActor *record;
     struct EventWork *p5;

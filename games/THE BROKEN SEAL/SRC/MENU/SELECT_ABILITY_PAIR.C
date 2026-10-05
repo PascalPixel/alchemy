@@ -87,13 +87,7 @@ void Debug_SelectAbilityPair(void)
             cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
         }
         {
-            /* The title's message is held in r5 and copied to the argument.
-               Written plainly, with the three labels in the loop as this
-               message plus 5, 3 and 4, the compiler does exactly that by
-               itself and the whole function matches: that is how the
-               original addressed them. The id gate refuses a message id with
-               an offset in a literal pool, so the labels are addressed from
-               "Status" instead, whose id the pool holds whole. */
+            /* The labels are addressed relative to the "Status" message. */
             /* FAKEMATCH: pin the title's message to r5, where the plain form puts it. */
             register s32 message asm("r5") = (s32)MsgPanelHpMaxLabel;
 
@@ -164,13 +158,7 @@ void Debug_SelectAbilityPair(void)
                 AudioCommand_PlayFar(113);
             else
                 continue;
-            /* FAKEMATCH: the flag is written and never read. With it the
-               zeros stored to the two entries and to the cursor's last
-               argument are loaded fresh; without it they are copied from the
-               row's register. A variable cleared at the top whose later
-               writes are all dropped is the only thing found that does that,
-               so the original very likely had such a flag, but its name and
-               where it was set are a guess. */
+            /* FAKEMATCH: the unread flag forces fresh zeros for both entries and the cursor argument instead of reusing the row register. */
             done = 1;
             break;
         }

@@ -32,7 +32,7 @@ void AffineEffect_UpdateFrame(void)
     s32 scale;
     s32 matrix;
     s32 edge;
-    /* Unpinned, global allocation gives x r1 and the entry offset r4. */
+
     /* FAKEMATCH: register choice, measured 42 instructions without. */
     register s32 x asm("r0");
     s32 y;
@@ -74,7 +74,7 @@ void AffineEffect_UpdateFrame(void)
             u32 value;
 
             attr = &sprite->link;
-            /* Without this use the attr copy follows the y load. */
+
             /* FAKEMATCH: instruction order, measured 2 instructions without. */
             __asm__("" : : "r"(attr));
             y = sprite->y;
@@ -89,7 +89,7 @@ void AffineEffect_UpdateFrame(void)
     }
     if (work->row == 0) {
         struct WindowBuffer *window;
-        /* With x pinned, x + span otherwise lands in r0. */
+
         /* FAKEMATCH: register choice, measured 4 instructions without. */
         register s32 span asm("r2");
 
@@ -123,7 +123,7 @@ void AffineEffect_UpdateFrame(void)
     } else {
         struct WindowBuffer *window;
         s32 start;
-        /* With x pinned, x + span otherwise lands in r0. */
+
         /* FAKEMATCH: register choice, measured 4 instructions without. */
         register s32 span asm("r3");
 
@@ -159,7 +159,6 @@ void AffineEffect_UpdateFrame(void)
 
 void AffineEffect_UpdateFrame(void);
 
-
 void *AffineEffect_InitializeWork(void)
 {
     void *work;
@@ -191,7 +190,6 @@ void Menu_EndResourceSelection(void)
     Runtime_ReleaseHeapBlock(0x3A);
     WaitFrames(1U);
 }
-
 
 extern u8 MsgCommandName;
 

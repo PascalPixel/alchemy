@@ -362,8 +362,7 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
         dst = output;
         src = EventTable_AbilityLoadouts[row_no];
         do {
-            /* FAKEMATCH: only the copy read is volatile, so its lifetime
-               stays separate from the signed sentinel read. */
+            /* FAKEMATCH: only the copy read is volatile, so its lifetime stays separate from the signed sentinel read. */
             *dst = *(volatile s16 *)src;
             count++;
             src++;

@@ -45,8 +45,7 @@ void Menu_StepLeft(struct SelectionScreen *state);
 /* Runs the selection until it is confirmed, or cancelled when mode allows. */
 s32 Menu_SelectionLoop(s32 mode)
 {
-    /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM
-     * loads in the right and left tests. */
+    /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM loads in the right and left tests. */
     struct SelectionScreen *screen = gResQueueWork;
 
     Menu_LoadSelectionNodeResource(screen, 0);
@@ -73,8 +72,7 @@ s32 Menu_SelectionLoop(s32 mode)
 /* As Menu_SelectionLoop, with sound cues, returning the chosen row. */
 u32 Menu_WaitForSelectionInput(u32 mode)
 {
-    /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM
-     * loads in the right and left tests. */
+    /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM loads in the right and left tests. */
     struct SelectionScreen *screen = gResQueueWork;
     u32 result;
 
@@ -179,9 +177,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
    cursor reaches the fourth slot. */
 void Menu_StepRight(struct SelectionScreen *state)
 {
-    /* FAKEMATCH: the row targets are read as plain halfwords, not struct
-       members, so GCC reloads them after every node store as the reference
-       does. */
+    /* FAKEMATCH: the row targets are read as plain halfwords, not struct members, so GCC reloads them after every node store as the reference does. */
     struct SelectionNode *node;
     u16 *ids;
     s32 y;
@@ -249,32 +245,8 @@ void Menu_StepRight(struct SelectionScreen *state)
 
 /* Selection lists: move the cursor up one entry, scrolling or wrapping the list to its end. */
 
-/* main:0801b810 Menu_StepLeft - hand-written draft, 174 of 204 halfwords
-   differ, almost all from one register choice: the ROM keeps the top row
-   in r1 and ORs it with the cursor into a scratch r3, then stores 0 from a
-   fresh r0; this C ORs into r1 and reuses that known zero, which shifts
-   every later instruction by four bytes and swaps r1/r2 in the row loops.
-   Baseline is 404 bytes / 34 aligned halfword edits (2026-09-26).
-   Explicit u32 cursor/top snapshots give 400 bytes / 40 edits, dropping
-   another required input copy. An inline OR-result boundary gives 404
-   bytes / 42 edits, reverses the input loads and moves the cursor pointer
-   to r5. Neither recovers the r1-to-r3 copy or the independent wrap zero;
-   keep the original control flow until their source ancestry is known.
-   Writing the test as two != 0 tests merges them into one word load,
-   which the ROM does not do. Otherwise the code is the ROM's, including
-   the count - 5 loop.
-   2026-09-29 (alchemy permute scorer): the draft scored 280 (16
-   register-only, 2 deleted). Storing the wrap's zero through the count
-   variable (more_below = i = 0) scores 65, 13 register-only rows: the OR
-   test, its r1-to-r3 copy and the fresh wrap zero now match. Remaining:
-   the zero takes r1 (i's register) where the ROM uses r0, and in both row
-   loops y and the hoisted 12/0xfff4 take r2/r1 where the ROM has r1/r2;
-   plus one commutative add order (state + offset). A separate zero
-   variable is constant-propagated back to the old code. Two 400-second
-   searches (256,000 candidates) found nothing below 65.
-
-   The mirror of Menu_StepRight: step the cursor left, wrap a long list to
-   its last page, or scroll one row up at the first slot. */
+/* Mirror Menu_StepRight: step the cursor left, wrap a long list to its
+ * last page, or scroll one row up at the first slot. */
 void Menu_StepLeft(struct SelectionScreen *state)
 {
     struct SelectionNode *node;

@@ -138,8 +138,7 @@ typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
 {
-    /* FAKEMATCH: a direct call loads the size before the copy routine and
-       the two blocks, where the reference loads it last. */
+    /* FAKEMATCH: a direct call loads the size before the copy routine and the two blocks, where the reference loads it last. */
     return copy(dst, src, size);
 }
 

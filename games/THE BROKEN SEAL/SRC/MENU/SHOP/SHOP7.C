@@ -86,9 +86,7 @@ void Shop_ResetEffects(void)
 
 void Shop_RunPartyMemberIconBurst(s32 member)
 {
-    /* Keep the existing EffectSlot flag-byte walks. Direct member loops
-       measured the same 448 bytes but changed the address registers and
-       the order of the loop-start instructions. */
+
     struct ShopRuntime *shop;
     s8 saved_kind;
     struct FixedPointPosition position;
@@ -107,8 +105,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     callback_flags = 0xc80;
     Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
 
-    /* FAKEMATCH: the x store goes through a union with a halfword view so it
-       may alias the member_z load, which keeps the reference schedule. */
+    /* FAKEMATCH: the x store goes through a union with a halfword view so it may alias the member_z load, which keeps the reference schedule. */
     ((union PositionWord *)&position.x)->w = shop->party_member_x[member] << 16;
     position.z = (shop->party_member_y[member] << 16) + 0xfff40000;
 

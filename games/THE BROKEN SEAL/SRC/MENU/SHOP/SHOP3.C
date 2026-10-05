@@ -21,9 +21,7 @@ extern s32 Item_AdjustCounterFar(s32, s32);
    number already owned above them when the chosen item is in the bag. */
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {
-    /* Keep the existing inventory byte-index walk from the owner base.
-       The direct array loop measured 196 bytes against native 204 and
-       changed the two-register slot addresses. */
+
     u8 *unit;
     s32 x;
     s32 y;

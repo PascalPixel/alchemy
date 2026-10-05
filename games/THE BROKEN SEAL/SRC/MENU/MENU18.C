@@ -10,9 +10,8 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-/* Move a row or page using repeat keys. Returns -1 for no input, zero for
- * a row change and one for a page change. Keep result lifetimes local to
- * each decision and join row changes before the common result exit. */
+/* Move a row or page using repeat keys. Return -1 for no input,
+ * zero for a row change, or one for a page change. */
 extern volatile u32 gKeysRepeat;
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Audio_PlayCue(s32 cue);

@@ -22,17 +22,6 @@ TEXT_MESSAGE_ENUM(MsgBattleNoPsynergy);
  * buffer; the other editions copy it with room for 52. Spanish, French and
  * Italian draw the second label tile of a row from 0xf005.
  *
- * Shapes the code shows:
- * - a declaration at the top of the entry loop body: the block note it leaves
- *   makes the loop pass treat the loop as phony, so nothing in it is hoisted
- *   and `page` loses its register to the short-lived values of that loop.
- * - the cursor position is one two-word struct, so it lives on the stack.
- * - the render work flags are struct fields, not bytes of a u8 array.
- * - the divisions are written as divisions, so that the page count is reused
- *   after the second indicator loop and recomputed inside it.
- * - `spr` is one pointer for the row sprites and the cursor.
- * - MenuSprite's word view is unsigned long, a type no int shares: the tile
- *   and position stores do not wait for the glyph and frame counter reads.
  */
 
 #define ACTION_ID_MASK 0x3fff
@@ -245,7 +234,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, 0xf335, window->width - 2, edge, 0);
-            /* An ordinary scoped pointer retained the inverse load order. */
+
             /* FAKEMATCH: reload render work before its dirty-field offset. */
             __asm__ volatile ("" : : "r" (render));
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
@@ -278,8 +267,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 if ((Ability_GetData(actions[result])->target_flags & ACTION_USABLE_IN_BATTLE) != 0) {
                     break;
                 }
-                /* FAKEMATCH: a dead store here keeps the test above from
-                   being threaded past the break. */
+                /* FAKEMATCH: a dead store here keeps the test above from being threaded past the break. */
                 result = -1;
             } else {
                 result = -1;

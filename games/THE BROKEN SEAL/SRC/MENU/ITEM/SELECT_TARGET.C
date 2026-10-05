@@ -57,9 +57,7 @@ void Audio_PlayCue(s32 cue);
    preview for that member; A returns the member and B -1. */
 s32 ItemMenu_SelectTarget(s32 mode)
 {
-    /* FAKEMATCH: the existing unsigned coordinate/OAM prefix retains the native chained
-       halfword stores: the canonical coordinate view measured 816 bytes
-       against 824, losing the unsigned-halfword mask. */
+    /* FAKEMATCH: the unsigned coordinate/OAM view retains chained halfword stores and the mask removed by signed coordinates. */
     struct InventoryMenuState *menu;
     s32 window;
     s32 count;

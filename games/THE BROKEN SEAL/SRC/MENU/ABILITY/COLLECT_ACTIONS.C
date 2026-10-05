@@ -7,7 +7,7 @@
 /* PsynergyMenu_CollectActions per games/THE BROKEN SEAL/INCLUDE/PSYNERGY_MENU.H. */
 s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode)
 {
-    /* FAKEMATCH: retain the existing scalar action-slot cursor, byte-offset clearing stores and empty pass branches. Ordinary indexed clearing and simpler branches shrink the native function from 274 to 266 bytes and change operand order. */
+    /* FAKEMATCH: the scalar cursor, offset clears and empty branches preserve operand order and 274 bytes; indexed clearing yields 266. */
     s32 n;
     u16 *out;
     s32 passes;

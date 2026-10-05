@@ -60,8 +60,7 @@ void FourObjectMotion_ClearSlotsAndSchedule(void);
    saved palette and tiles and close the screen. Returns the flow result. */
 s32 ActionMenu_Open(void)
 {
-    /* FAKEMATCH: the existing field-address slice names heap slot 15 relative
-       to slot 6. A whole-bank base changes register and pool reuse on exit. */
+    /* FAKEMATCH: addressing heap slot 15 relative to slot 6 preserves register and literal reuse on exit. */
     struct CharacterMenuState *state = (struct CharacterMenuState *)Runtime_AllocateHeapBlock(55, 0x0a70);
     void *palette = Runtime_BumpAllocateAlternatePool(64);
     void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);

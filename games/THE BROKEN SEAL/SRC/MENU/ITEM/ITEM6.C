@@ -23,9 +23,8 @@ s32 Menu_ReservedStatusOne(void)
     return 1;
 }
 
-/* Item menu: write the names of the equipped items into the equipment
-   window, one row per item type 1 to 4. The name message is the item id
-   plus 0x182; its pool constant is hoisted into a register for the loop. */
+/* Write equipped-item names into the equipment window, one row per item
+ * type 1 to 4. Each name message is the item id plus 0x182. */
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 {
     struct InventoryMenuState *menu = gMenuWork;
@@ -113,10 +112,8 @@ void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
     UiIcon_PrepareObject(obj);
 }
 
-/* Item menu: place the icon of each equipped item in the category page by
-   item type: types 1 to 4 each have a row; other types keep their
-   position. Each case stores its own column, as the reference keeps 216
-   in a register across the loop. */
+/* Place equipped-item icons by type: types 1 to 4 have a row each;
+ * other types keep their position. */
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
 {
     struct InventoryMenuState *state;

@@ -59,8 +59,7 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
  */
 void ItemMenu_ApplyFlags(const u8 *flags)
 {
-    /* FAKEMATCH: the existing y-field pointer keeps the flag index as a
-       counter rather than a walking pointer in the native category loop. */
+    /* FAKEMATCH: the y-field pointer keeps the category flag index as a counter instead of a walking pointer. */
     struct InventoryMenuState *base;
     struct RenderOutput **slot;
     struct RenderOutput *entry;

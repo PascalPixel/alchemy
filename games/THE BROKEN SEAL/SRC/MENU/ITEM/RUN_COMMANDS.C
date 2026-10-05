@@ -20,10 +20,8 @@
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
-/* The resident word copier, addressed from the start of the IWRAM runtime
-   bank, whose first routine is the interrupt handler. A symbol plus an
-   offset keeps the call in a register as the pool entry's schedule shows;
-   named alone, GCC emits a Thumb bl that cannot reach IWRAM. */
+/* The resident word copier is addressed from the IWRAM runtime bank,
+ * whose first routine is the interrupt handler. */
 #define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
@@ -389,8 +387,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 }
                 stack = (menu->selected_items[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
                 if (aborted == 0) {
-                    /* FAKEMATCH: the loop only places a label between the
-                       count and its sign-extended use. */
+                    /* FAKEMATCH: the loop only places a label between the count and its sign-extended use. */
                     do {
                         amount = stack;
                     } while (0);

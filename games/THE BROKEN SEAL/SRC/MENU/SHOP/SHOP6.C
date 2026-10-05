@@ -45,7 +45,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 message);
 s32 UiMessage_ShowChoiceVariant(s32 arg0);
 void Shop_RunPartyMemberIconBurst(s32 member);
 s32 Party_AdjustSixDigitCounterAFar(s32 amount);
-/* Four-word void helper; this caller keeps its legacy extra word. */
+/* This caller passes an extra word beyond the helper's four arguments. */
 void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 extern char MsgReviveDonation;

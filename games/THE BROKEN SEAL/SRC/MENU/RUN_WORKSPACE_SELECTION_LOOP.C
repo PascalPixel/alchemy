@@ -168,8 +168,7 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap
     dst = pixels;
     src = (u8 *)(0x06000000 + 32 * slot);
     for (i = 0; i < 32; i++) {
-        /* FAKEMATCH: the second byte's address as its own value keeps the
-           two stores on separate address registers. */
+        /* FAKEMATCH: the second byte's address as its own value keeps the two stores on separate address registers. */
         u8 *high = dst + 1;
 
         n = *src++;
@@ -197,8 +196,7 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap
         u8 *p;
 
         dst = pixels;
-        /* FAKEMATCH: counter before pointer, in one statement, orders the
-           two initial moves as the listing has them. */
+        /* FAKEMATCH: counter before pointer, in one statement, orders the two initial moves as the listing has them. */
         i = 0, p = dst;
         while (i < 32) {
             u32 value = p[0] | p[1] << 4;

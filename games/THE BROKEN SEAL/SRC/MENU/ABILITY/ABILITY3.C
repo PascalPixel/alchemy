@@ -121,28 +121,14 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     return 1;
 }
 
-/*
- * Psynergy / action list selection loop.
- *
- * Called from Menu_ResolveSelectedAction (0x080a5cc0) with a pane
- * index of 0.  It opens the list window, collects the current owner's usable
- * actions through PsynergyMenu_CollectActions, and then runs an input loop:
- *
- *   A          confirm the highlighted entry (denied with cue 114 when the
- *              action is restricted or costs more PP than the owner has)
- *   B          cancel, returning -1
- *   L / R      rotate to the previous / next party owner, re-collecting the
- *              list until an owner with at least one entry is found
- *   Select     hold to show the shortcut prompt; Select + L / R assigns the
- *              highlighted action to shortcut slot 0 / 1
- *
- * The shared Psynergy menu record holds both panes, the owner tabs and
- * the remembered selection for each party member. The detail-page scratch
- * buffer remains private to this caller.
- *
- * PsynergyMenu_DrawDetailPage returns a value its caller discards: its epilogue returns
- * through r1, and the call sets r0 last.
- */
+/* Psynergy/action selection loop, entered for pane 0. Open the list and
+ * collect usable actions for the current owner. A confirms, refusing
+ * restricted or unaffordable actions with cue 114; B returns -1. L/R
+ * rotate through owners until one has entries. Holding Select shows the
+ * shortcut prompt; Select + L/R assigns the action to shortcut 0/1.
+ * Both panes, owner tabs and per-owner selections share the menu record;
+ * the detail-page scratch buffer belongs to this caller. The detail-page
+ * renderer result is discarded. */
 
 /*
  * types.h already supplies WaitFrames, __modsi3, Audio_PlayCue, GameFlag_IsSet,
@@ -271,13 +257,8 @@ s32 PsynergyMenu_RunList(s32 pane)
                 }
             }
 
-            /*
-             * Confirming in shortcut-assignment mode (mode != 0) reports the
-             * highlighted action straight back with cue 130; plain selection
-             * mode first rejects an empty slot, a restricted action and an
-             * action the owner cannot pay for.  Both arms leave through the
-             * one exit the reference shares.
-             */
+            /* Shortcut-assignment mode returns the highlighted action with cue 130.
+             * Plain selection rejects empty, restricted or unaffordable actions. */
             if ((gKeyState & KEY_A) != 0) {
                 if (menu->mode != 0) {
                     Audio_PlayCue(130);

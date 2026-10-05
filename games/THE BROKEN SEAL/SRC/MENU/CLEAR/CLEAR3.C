@@ -262,8 +262,7 @@ s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out)
     group = 0;
     do {
         value = 0;
-        /* FAKEMATCH: the source address is added as integers, index first,
-         * for the reference operand order. */
+        /* FAKEMATCH: the source address is added as integers, index first, for the reference operand order. */
         for (j = 0, src = (u8 *)(index + (s32)data); j != 6; j++) {
             b = (*src >> (7 - bit)) & 1;
             bit++;

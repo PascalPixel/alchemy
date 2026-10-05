@@ -68,9 +68,7 @@ extern u16 gBgScroll[];
 
 static __inline__ void DecodeBackground(const u8 *res)
 {
-    /* FAKEMATCH: this call boundary keeps the source in r4 and reloads the
-       map-cell buffer after the decode; a direct call retains r5 and changes
-       the DMA literal pool. */
+    /* FAKEMATCH: this call boundary keeps the source in r4 and reloads the map-cell buffer after the decode; a direct call retains r5 and changes the DMA literal pool. */
     Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
 }
 
@@ -185,9 +183,6 @@ s32 Title_Run(void)
     return 0;
 }
 
-/* The title sprites: decode their tiles and palette, then load the tiles
- * into the title's VRAM block. */
-
 /* Decode the title sprites' tiles and palette and load the tiles into the
  * title's VRAM block, finding one the first time. */
 void Title_LoadSprites(s32 unused)
@@ -250,9 +245,7 @@ void Title_RevealSpriteRow(void)
         i = 0;
 localized_sprite:
         {
-            /* FAKEMATCH: the explicit inner boundary keeps the record writer
-               independent of the sprite pointer; a nested for loop adds a
-               saved register and twelve bytes. */
+            /* FAKEMATCH: the explicit inner boundary keeps the record writer independent of the sprite pointer; a nested for loop adds a saved register and twelve bytes. */
             *w++ = 0;
             *w++ = (i * 8 << 16) | y | 0x2400;
             *w++ = tile;
@@ -302,8 +295,7 @@ loop:
  * that clears over sixteen steps. */
 void Title_RevealScreen(s32 unused)
 {
-    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
-     * the count cast preserves the queue's original publication order. */
+    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking; the count cast preserves the queue's original publication order. */
     s32 i;
     struct IoWriteQueue *q;
 

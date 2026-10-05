@@ -50,9 +50,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
         Resource_GetTableEntry(src1));
 
     if (sel > 1) {
-        /* FAKEMATCH: keep the existing scalar table address. The shared
-           frame array preserves extent but changes r1/r2 in all six
-           editions (2026-10-03 ordinary-owner attempt aadcc37dd). */
+        /* FAKEMATCH: the scalar table address preserves r1/r2 choices changed by the shared frame array. */
         s32 idx = sel * 3;
         s32 adj = 0x594 + sel;
         s32 off;

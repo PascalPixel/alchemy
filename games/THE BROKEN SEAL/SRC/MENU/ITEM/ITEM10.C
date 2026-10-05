@@ -44,9 +44,7 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
    characters with L and R, and return 1 for A or -1 for B. */
 s32 ItemMenu_SelectItem(void)
 {
-    /* FAKEMATCH: the existing icon prefix keeps the row load before
-       the active-byte store. The canonical view measured the same 728 bytes
-       with that schedule reversed. */
+    /* FAKEMATCH: the icon prefix keeps the row load before the active-byte store; the canonical view reverses them. */
     struct InventoryMenuState *menu;
     struct BattleUnit *owner;
     s32 result;

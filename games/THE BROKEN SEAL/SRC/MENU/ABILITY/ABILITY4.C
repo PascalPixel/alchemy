@@ -46,9 +46,7 @@ void ItemMenu_HideAllIcons(void);
 
 s32 PsynergyMenu_SelectAction(void)
 {
-    /* FAKEMATCH: retain the existing unsigned icon-byte transport. The
-       direct RenderOutput field store moves ahead of the page-coordinate
-       read while keeping this module's 742-byte extent. */
+    /* FAKEMATCH: the unsigned icon-byte view keeps the page-coordinate read before the store; direct fields reverse them. */
     struct PsynergyMenuState *menu;
     s32 result;
     s32 done;
@@ -178,7 +176,7 @@ void PsynergyMenu_PreparedIconsNoOp(void)
 {
 }
 
-/* A second empty routine; nothing in the ROM refers to either. */
+/* Empty ability-menu hook. */
 void PsynergyMenu_PreparedIconsSecondNoOp(void)
 {
 }

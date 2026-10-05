@@ -383,9 +383,7 @@ void Shop_SetCursor(
    the sprite's OAM coordinates all take the new values. */
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
 {
-    /* Retain the existing unsigned coordinate/OAM prefix at this wire
-       boundary: direct canonical members measured 62 bytes against 74
-       and elided the chained halfword masks. */
+
     {
         struct ShopCursorSprite3 *sprite = (struct ShopCursorSprite3 *)cursor->anchor;
 

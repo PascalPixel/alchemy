@@ -8,15 +8,10 @@
 #include "BATTLE_RUNTIME.H"
 #include "UIFLOW.H"
 
-/* Preview setting or resting one Djinn: toggle it on the live owner record,
- * recalculate, show the old and new class and stats with an arrow beside
- * each change (page 0) or the Psynergy gained and lost (later pages), then
- * restore the record from the snapshot. The arrow renderer is a GNU C nested
- * function (main:08022a7c) that reaches the window through the static chain.
- *
- * UiText_RenderWideStringInWindow and UiWindow_DrawThreeTileColumn are
- * declared returning a value so r0 is set last at each call. The locals are
- * declared in the reference's spill-slot order. */
+/* Preview setting or resting a Djinn: change the live owner record,
+ * recalculate, show class and stat changes on page 0 or Psynergy changes
+ * on later pages, then restore the snapshot. The nested arrow renderer
+ * accesses the window through its captured frame. */
 
 /* Ability table entry returned by Ability_GetData. */
 struct AbilityData {
@@ -41,9 +36,6 @@ struct BattleUnitRecord {
     u8 grid[0x129 - 0x58];     /* 0x58, compared entry by entry */
     u8 element;                /* 0x129 */
 };
-
-/* Callees the owner register already names, spelled the way types.h spells
- * its own aliases: the address symbol stays the ABI. */
 
 s32 UiText_RenderWideStringInWindow(s16 *text, struct RenderInput *win, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);

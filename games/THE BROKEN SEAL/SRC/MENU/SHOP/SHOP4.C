@@ -34,7 +34,7 @@ extern u8 MsgBecameCursed[];
 void Shop_SellItem(s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
 s32 Inventory_CountFar(s32);
-/* Four-word void helper; this caller keeps its legacy extra word. */
+/* This caller passes an extra word beyond the helper's four arguments. */
 void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 s32 Shop_SelSell(s32);

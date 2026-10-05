@@ -76,8 +76,7 @@ s32 Menu_OpenBackdropScreen(void)
     Graphics_AdjustPaletteBank(8);
     BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
     BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
-    /* FAKEMATCH: the list drawing returns nothing, but called as a statement
-       its argument is loaded before the last palette store instead of after. */
+    /* FAKEMATCH: the list drawing returns nothing, but called as a statement its argument is loaded before the last palette store instead of after. */
     return ((s32 (*)(struct DjinnListTable *))DjinnMenu_DrawElementList)(&backdrop->list);
 }
 

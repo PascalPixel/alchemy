@@ -12,9 +12,8 @@ extern volatile u32 gKeysRepeat;
 extern u8 MsgCannotDropIt[];
 extern u8 MsgCannotRemoveIt[];
 
-
 void UiWork_FinalizeFar(s32 window, s32 style);
-/* Four-word void helper; this caller keeps its legacy extra word. */
+/* This caller passes an extra word beyond the helper's four arguments. */
 void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 void Shop_InitializeCursorWork(void);
@@ -130,10 +129,7 @@ extern u8 MsgItemPlainName;
 s32 Shop_SelUse(s32 actor)
 {
     struct ShopRuntime *shop = gMenuWork;
-    /* win2 declared ahead of win1 (and both ahead of object) to match the
-     * reference's sp+8/sp+12/sp+16 spill-slot order for these three
-     * call-result locals; declaring them in call order instead misassigns
-     * object and win2 to each other's slots under this compiler. */
+
     s32 win2;
     s32 win1;
     struct BattleUnit *object;
@@ -147,11 +143,6 @@ s32 Shop_SelUse(s32 actor)
     s32 x;
     s32 y;
 
-    /* count/result/redraw assigned as statements here (not declaration
-     * initializers) so the reference's constant-materialization order is
-     * reproduced: a shared movs r1,#1 is committed to count's and redraw's
-     * home registers (sl, r9) right before r1 is needed again for win1's
-     * call args, in this exact count-then-redraw order. */
     object = Runtime_GetObject(actor);
     count = 1;
     result = 0;
@@ -209,12 +200,6 @@ s32 Shop_SelUse(s32 actor)
             goto exit_loop;
         }
 
-        /* selection -= 1 / += 1 as its own statement before the __modsi3
-         * call (matching sibling main:080b211c's idiom) so the compiler
-         * commits the +-1 directly into selection's home register (r7)
-         * ahead of the add; folding it into one `selection +- 1 + count`
-         * expression instead subtracts/adds 1 from the sum register after
-         * the add, which is a different (non-matching) instruction order. */
         if ((gKeysRepeat & KEY_LEFT) != 0) {
             Audio_PlayCue(111);
             selection -= 1;

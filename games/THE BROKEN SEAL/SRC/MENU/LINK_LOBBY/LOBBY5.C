@@ -123,8 +123,7 @@ s32 LinkLobby_RunChoicePrompt(s32 id)
             message = (s32)MsgLobbyTease;
             goto show;
         }
-        /* FAKEMATCH: the refusal jumps into the 0x98b branch so the two share
-         * one message call, as the reference lays them out. */
+        /* FAKEMATCH: the refusal jumps into the 0x98b branch so the two share one message call, as the reference lays them out. */
         if (ok != 0) {
             message = (s32)MsgLobbyNoParameterAsk;
         show:
@@ -223,9 +222,7 @@ s32 LinkLobby_StartExchange(void)
     } while (0);
 }
 
-/* FAKEMATCH: Engine_EventEnd is declared returning s32 so each handler
- * returns the last callee's r0, as the battle application does, and
- * the game state is read through a word view for the selected actor. */
+/* FAKEMATCH: Engine_EventEnd is declared returning s32 so each handler returns the last callee's r0, as the battle application does, and the game state is read through a word view for the selected actor. */
 
 /* The three lobby regulars face the leader and speak a line that moves on
  * with the lobby's progress flags. */
@@ -373,7 +370,7 @@ s32 LinkLobby_RunRoundResult(void)
     LinkLobby_WriteSlotValue(4);
     Engine_TaskWait(1);
     Map_SetLayerEntryFlag(5);
-    /* Through a pointer the halfword letters load from the literal pool. */
+
     {
         u16 *name = (u16 *)gSerialTransfer.payload;
 

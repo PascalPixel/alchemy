@@ -64,8 +64,7 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
  */
 s32 Menu_OpenConfirmPrompt(void)
 {
-    /* FAKEMATCH: retain the existing heap-bank slice based at slot 6.
-       A whole-bank base adds a pool word and changes renderer/event load scheduling. */
+    /* FAKEMATCH: the heap slice at slot 6 preserves renderer/event load order; a whole-bank base adds a literal word. */
 #if defined(PROMPT_SAVES_TILES)
     void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
 #endif

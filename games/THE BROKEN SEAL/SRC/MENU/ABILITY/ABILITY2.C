@@ -130,7 +130,7 @@ void Menu_ReleaseEntryObjects(void)
 
 void Menu_UpdateEntryObjectTransforms(void)
 {
-    /* FAKEMATCH: retain the existing volatile transform writes, signed sprite-byte update and byte cursor. Typed arrays/priority fields change the native loop registers and write order. */
+    /* FAKEMATCH: volatile transforms, signed sprite-byte writes and the byte cursor preserve loop registers and write order. */
     u8 *p;
     s32 pos[2];
     s32 trans[4];
@@ -176,7 +176,7 @@ void Menu_UpdateEntryObjectTransforms(void)
  * the frame counter. */
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
 {
-    /* FAKEMATCH: keep the existing unsigned-position/OAM sprite view and original member-read lifetimes; caching the window and cursor before the frame-counter reads changes load/register order at the same 126-byte native extent. */
+    /* FAKEMATCH: the unsigned position/OAM view and member lifetimes preserve load/register order changed by earlier caching. */
     struct PsynergyMenuState *work = gMenuWork;
 
     ((struct MenuCursorSprite *)work->pane_icon[0])->attributes.x =
@@ -194,7 +194,7 @@ void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
  * axis. A set skip flag is cleared instead and the cursor stays. */
 void UiMenu_SlideCursor(s32 x, s32 y)
 {
-    /* FAKEMATCH: keep the existing unsigned cursor/OAM sprite view; canonical signed RenderOutput coordinates and packed-word casts change native scheduling. The skip flag is the original halfword at 0x222. */
+    /* FAKEMATCH: the unsigned cursor/OAM view preserves scheduling changed by signed coordinates and packed-word casts. */
     struct PsynergyMenuState *work = gMenuWork;
     struct MenuCursorSprite *cursor;
     s32 steps;

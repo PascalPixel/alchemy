@@ -49,14 +49,8 @@ s32 LinkLobby_CallIntoCircle(void)
     Engine_EventEnd();
 }
 
-/*
- * The link lobby's scene teardown, which clears the lobby flags: reset one
- * workspace field, clear three flags, play cue
- * 0x2927 and return the last call's result -- the epilogue pops the return
- * address into r1, so r0 survives and is the result. The 88-byte owner
- * includes its alignment bytes and four pool words, one of which is
- * 0x03001ebc -- the IWRAM workspace-pointer cell, not an in-image address.
- */
+/* Clear lobby state and report a disconnected link; the final engine
+ * call leaves the integer result in r0. */
 s32 Scene_ClearFlagsAndPlayCue2927(void)
 {
     u16 *work = *(u16 **)&gEventWork;
@@ -67,14 +61,7 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
     Engine_EventBegin();
 
     {
-        /*
-         * The halfword store goes through a pointer local and then a value
-         * local, in that order. Storing the literal straight into the
-         * halfword builds the constant in HImode and fetches it from the
-         * literal pool, costing a pool word the reference does not have;
-         * splitting the address out first also fixes which register holds
-         * the address.
-         */
+
         u16 *p = (u16 *)((u32)work + 386);
         s32 val = 0;
         *p = val;
@@ -277,9 +264,7 @@ s32 LinkLobby_SendPartyRecords(void)
         table[i] = 0;
     }
     for (i = 0; i < count; i++) {
-        /* FAKEMATCH: a one-pass boundary keeps the send failure inline and
-           gives the record copy's argument order; without it loop.c moves
-           the failure out of the loop. */
+        /* FAKEMATCH: a one-pass boundary keeps the send failure inline and gives the record copy's argument order; without it loop.c moves the failure out of the loop. */
         do {
             Iwram_CopyWords(heap, Owner_GetState(owners[i]), size);
             heap[0x12a] = 2;
@@ -294,10 +279,7 @@ s32 LinkLobby_SendPartyRecords(void)
         while (SerialRuntime_GetActiveTransfers() != 0) {
             Engine_TaskWait(1);
             if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-                /* FAKEMATCH: a one-pass boundary keeps this failure inline,
-                   so its -1 is reloaded here and jump2 merges it into the
-                   offer's; moved out of the loop, it shifts every later
-                   reload register. */
+                /* FAKEMATCH: a one-pass boundary keeps this failure inline, so its -1 is reloaded here and jump2 merges it into the offer's; moved out of the loop, it shifts every later reload register. */
                 do {
                     if (++tries > 24) {
                         result = -1;
@@ -335,8 +317,7 @@ next:
     Runtime_BumpFree(heap);
     size = 0x140;
     heap = Runtime_BumpAllocateAlternatePool(size);
-    /* FAKEMATCH: a one-pass boundary gives the offer copy's argument order
-       and keeps the list base's copy first after the call. */
+    /* FAKEMATCH: a one-pass boundary gives the offer copy's argument order and keeps the list base's copy first after the call. */
     do {
         Iwram_CopyWords(heap, Trade_GetOfferState(0), size);
     } while (0);

@@ -53,10 +53,8 @@ void Ui_ApplyTableOffsetToPair(void *);
 void Audio_PlayCue(s32);
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void);
 
-/* Opens the workspace options window: four divider lines, six captions,
-   the selection cursor, the two value markers placed along their sliders
-   (value * 60 / step pixels in) and seven frame icons in three rows.
-   Caption ids come from the literal pool as link-time values. */
+/* Open the options window with four dividers, six captions, a cursor,
+ * two slider markers at value * 60 / step pixels and seven icons in three rows. */
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {
     /* FAKEMATCH: the shared cursor union keeps pointer stores before window reads; an equal-size struct reorders these moves in all six editions. */

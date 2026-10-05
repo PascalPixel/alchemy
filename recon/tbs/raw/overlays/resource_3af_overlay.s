@@ -318,7 +318,7 @@ FuneKanpan_DeckActionsA:
 	.global FuneKanpan_DeckActionsC
 FuneKanpan_DeckActionsC:
 	.4byte 0x00000022
-	.4byte SceneActor_SetWord28RandomlyOneIn40
+	.4byte FuneKanpan_RandomlyStartActorHop
 	.global FuneKanpan_RosterActions
 FuneKanpan_RosterActions:
 	.4byte 0x0000001c

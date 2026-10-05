@@ -425,7 +425,7 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
     return 1;
 }
 
-s32 SceneActor_SetWord28RandomlyOneIn40(struct FieldActor *actor)
+s32 FuneKanpan_RandomlyStartActorHop(struct FieldActor *actor)
 {
     if ((((u32)(Engine_RandomNext() * 40)) >> 16) == 0)
         actor->velocity_y = 0x40000;
@@ -466,17 +466,17 @@ s32 FuneKanpan_IdleTurn(u8 *actor)
     return 1;
 }
 
-u8 *SceneData_GetTablec994(void)
+u8 *FuneKanpan_GetEntrances(void)
 {
     return FuneKanpan_SceneTableA;
 }
 
-u8 *SceneData_GetTablecb44(void)
+u8 *FuneKanpan_GetRegions(void)
 {
     return FuneKanpan_SceneTableB;
 }
 
-u8 *SceneData_GetTablecb64(void)
+u8 *FuneKanpan_GetExits(void)
 {
     return FuneKanpan_SceneTableC;
 }

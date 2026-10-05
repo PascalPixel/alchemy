@@ -338,7 +338,7 @@ Object_GetTriggerTileAheadOfCurrentFar:
 	.thumb_func
 Party_RemapCharacterIdByFlagsFar:
 	overlay_veneer Party_RemapCharacterIdByFlags
-	overlay_veneer FunctionHead_08097c3c
+	overlay_veneer BattleFx_SteerPushedTarget
 	overlay_veneer BattleFx_RunFlashingCallbackSequence
 	.global Field_TryJumpForwardFar
 	.thumb_func

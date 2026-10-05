@@ -533,12 +533,6 @@ BattleFx_BuildBuffer:
 	.thumb_func
 UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x00089c60, 0x0000030c
-	.section .rom.0008ec24, "ax"
-	.global FunctionHead_08097c3c
-	.type FunctionHead_08097c3c, %function
-	.thumb_func
-FunctionHead_08097c3c:
-	.incbin "baserom.gba", 0x0008ec24, 0x00000344
 	.section .rom.00093404, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -632,7 +626,10 @@ BattleFx_FragmentScript:
 	.incbin "baserom.gba", 0x000960b8, 0x00000024
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
-	.incbin "baserom.gba", 0x000960dc, 0x00000024
+	.incbin "baserom.gba", 0x000960dc, 0x00000020
+	.global Data_0809f118
+Data_0809f118:
+	.incbin "baserom.gba", 0x000960fc, 0x00000004
 	.global BattleFx_BurstParticleObjectScript
 BattleFx_BurstParticleObjectScript:
 	.incbin "baserom.gba", 0x00096100, 0x00000044

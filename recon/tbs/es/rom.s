@@ -555,12 +555,6 @@ DisplayTransition_UpdateScanlineTable:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x00095ac8, 0x00000718
-	.section .rom.0009ccc8, "ax"
-	.global FunctionHead_08097c3c
-	.type FunctionHead_08097c3c, %function
-	.thumb_func
-FunctionHead_08097c3c:
-	.incbin "baserom.gba", 0x0009ccc8, 0x00000344
 	.section .rom.000a1568, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -654,7 +648,10 @@ BattleFx_FragmentScript:
 	.incbin "baserom.gba", 0x000a422c, 0x00000024
 	.global BattleFx_CyclePatternWords
 BattleFx_CyclePatternWords:
-	.incbin "baserom.gba", 0x000a4250, 0x00000024
+	.incbin "baserom.gba", 0x000a4250, 0x00000020
+	.global Data_0809f118
+Data_0809f118:
+	.incbin "baserom.gba", 0x000a4270, 0x00000004
 	.global BattleFx_BurstParticleObjectScript
 BattleFx_BurstParticleObjectScript:
 	.incbin "baserom.gba", 0x000a4274, 0x00000044

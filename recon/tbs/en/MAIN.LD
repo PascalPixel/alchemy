@@ -420,7 +420,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT37.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT2.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/FRAGMENT.o"(.text)
-        "*/recon/tbs/raw/08097c3c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT13.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT08.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT38.o"(.text)

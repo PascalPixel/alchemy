@@ -12,7 +12,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 obj_id, s32 battle_mode);
 s32 BattleFx_FindDescriptorWithOverride(s32 obj_id);
 void BattleFx_MarkChildAndRunFallbackTransition(s32 obj_id);
 void BattleEffect_RunFallbackObjectTransition(void);
-void FunctionHead_08097c3c(s32);
+void BattleFx_SteerPushedTarget(s32);
 void BattleEffect_RunTargetedItemBreak(s32);
 void BattleFx_SteerLiftedTarget(s32);
 void BattleFx_CallEffect04(s32);
@@ -170,7 +170,7 @@ void BattleFx_DispatchRequestKind(void)
         RunSceneTransitionEffect(request->first_object_id, target_id);
         break;
     case 1:
-        FunctionHead_08097c3c(target_id);
+        BattleFx_SteerPushedTarget(target_id);
         break;
     case 7:
         BattleEffect_RunTargetedItemBreak(target_id);

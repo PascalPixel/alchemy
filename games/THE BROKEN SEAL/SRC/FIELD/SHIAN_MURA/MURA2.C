@@ -375,7 +375,7 @@ void SceneEffect_ActivateNearbyActor(void)
         Engine_ActorSetSpritePriority(20, 1);
 }
 
-void FieldScene_RunScene3a0_02000968(void)
+void ShianMura_ActivateActorTwentyPlatform(void)
 {
     u32 i;
     s32 record;
@@ -522,7 +522,7 @@ void ShianMura_HopLeaderAhead(void)
     }
 }
 
-void FieldScene_RunScene3a0_02000de8(s32 a0)
+void ShianMura_WalkThroughExit(s32 a0)
 {
     u32 i;
     s32 record;
@@ -592,7 +592,7 @@ void SceneEffect_DispatchStep(void)
         break;
     }
 
-    FieldScene_RunScene3a0_02000de8(scene[182]);
+    ShianMura_WalkThroughExit(scene[182]);
     Engine_EventEnd();
 }
 
@@ -626,7 +626,7 @@ void Scene_RunActorNineteenScript(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene3a0_02001060(void)
+void ShianMura_EscortActorEighteen(void)
 {
     u32 i;
     s32 record;

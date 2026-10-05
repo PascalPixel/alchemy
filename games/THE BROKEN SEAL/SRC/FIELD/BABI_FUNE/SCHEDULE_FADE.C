@@ -23,7 +23,6 @@ struct FadeSprite {
 
 extern struct FadeSprite BabiFune_FadeSprites[24];
 
-
 /* Each frame of the Babi Fune fade: count the step down and push three
    columns of eight wide sprites, the first sliding in from the left edge
    and the other two from the right as the step shrinks. */
@@ -77,7 +76,7 @@ void BabiFune_ScheduleFade(void)
     fill = 0x11111111;
     Dma_Set((const void *)&fill, buf, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x40, REG_DMA3);
     VramBlock_LoadCached(BabiFune_FadeSlot, 0x100, (s32)buf);
-    /* The halfword constant comes from the literal pool (HImode move). */
+
     BabiFune_FadeStep = 0x30;
     Scheduler_AddOrUpdateCallback((s32)(BabiFune_StepFade), 0xc80);
 }

@@ -661,10 +661,10 @@ gValeHouseEvents:
 	.4byte FieldScene_RunByActorDirectionAndFlags
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte FieldScene_RunScene376_0200055c
+	.4byte HaidiaHeya_OpenArmorShop
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte FieldScene_RunScene376_020005d4
+	.4byte HaidiaHeya_OpenItemShop
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte FieldScene_RunIndexedStep1
@@ -774,10 +774,10 @@ gValeHouseEventsAfterLeaving:
 	.4byte FieldScene_RunByActorDirectionAndFlags
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte FieldScene_RunScene376_0200055c
+	.4byte HaidiaHeya_OpenArmorShop
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte FieldScene_RunScene376_020005d4
+	.4byte HaidiaHeya_OpenItemShop
 	.4byte 0x00008d15
 	.4byte 0xffff0015
 	.4byte MsgHaidiaRobinYoureGoingOnADifficult
@@ -932,10 +932,10 @@ gValeHouseReturnEvents:
 	.4byte FieldScene_RunByActorDirectionAndFlags
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte FieldScene_RunScene376_0200055c
+	.4byte HaidiaHeya_OpenArmorShop
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte FieldScene_RunScene376_020005d4
+	.4byte HaidiaHeya_OpenItemShop
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte MsgHaidiaItMustBeNiceToBe

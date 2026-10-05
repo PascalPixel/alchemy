@@ -236,7 +236,7 @@ void SceneDialogue_RunActor10LineAndFlag81f(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene373_02000cd0(void)
+void HaidiaMura_ReactToTremor(void)
 {
     u32 i;
     s32 record;
@@ -282,7 +282,7 @@ void SceneState_Send210AndApplyRect(void)
     Map_CopyCellAttributes(40, 89, 7, 4, m, n);
 }
 
-void FieldScene_RunScene373_02000dc0(void)
+void HaidiaMura_OpenExitEleven(void)
 {
     u32 i;
     s32 record;
@@ -321,7 +321,7 @@ void SceneState_ApplyValues123And2(void)
     Engine_EventRequestExit(2);
 }
 
-void FieldScene_RunScene373_02000e54(void)
+void HaidiaMura_OpenExitFive(void)
 {
     u32 i;
     s32 record;
@@ -332,7 +332,7 @@ void FieldScene_RunScene373_02000e54(void)
     Engine_EventRequestExit(5);
 }
 
-void FieldScene_RunScene373_02000e84(void)
+void HaidiaMura_OpenExitSix(void)
 {
     u32 i;
     s32 record;
@@ -589,12 +589,12 @@ void SceneState_RunTablePairWhenActor22State1(void)
         u8 *q = p;
         q += 100;
         if (*(s16 *)q == 1) {
-            FieldScene_RunScene373_02001490((s32)gHaidiaMuraPairTableA, (s32)gHaidiaMuraPairTableB);
+            HaidiaMura_AskAboutSneakingToAleph((s32)gHaidiaMuraPairTableA, (s32)gHaidiaMuraPairTableB);
         }
     }
 }
 
-void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
+void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
 {
     u32 i;
     s32 p8;
@@ -635,7 +635,7 @@ void SceneState_RunTablePairWhenActor22State2(void)
         u8 *q = p;
         q += 100;
         if (*(s16 *)q == 2) {
-            FieldScene_RunScene373_02001490((s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableD);
+            HaidiaMura_AskAboutSneakingToAleph((s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableD);
         }
     }
 }
@@ -649,9 +649,9 @@ void SceneState_RunTablePairByActor22State(void)
         q += 100;
         v = *(s16 *)q;
         if (v == 1) {
-            FieldScene_RunScene373_02001490((s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableB);
+            HaidiaMura_AskAboutSneakingToAleph((s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableB);
         } else if (v == 2) {
-            FieldScene_RunScene373_02001490((s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableD);
+            HaidiaMura_AskAboutSneakingToAleph((s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableD);
         }
     }
 }

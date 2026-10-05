@@ -145,11 +145,7 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
     KorimaPalette_Capture(); KorimaPalette_SaveSecond(); Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
-/*
- * Applies the asymmetric RGB555 colour adjustment: red rises, green and
- * blue fall. Control jumps over a mask literal inside the span and rejoins
- * before the common return.
- */
+/* Adjust RGB555 colours by raising red and lowering green and blue. */
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {
     s16 green = (s16)((color >> 5) & 31);
@@ -164,7 +160,7 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     green = (s16)(green - Math_Divide(green, adj));
     blue = (s16)(blue - Math_Divide(blue, adj));
 
-    /* Only the increasing channel is explicitly saturated by this owner. */
+    /* Only the increasing colour channel is saturated. */
     if (red > 31)
         red = 31;
 

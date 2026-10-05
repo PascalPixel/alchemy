@@ -981,7 +981,7 @@ void TurnActorToSceneDirection(s32 actor_id)
         RunActorScriptedSequenceC(actor_id);
         break;
     case 2:
-        FieldScene_RunScene3bf_02001cf0(actor_id);
+        RunpaJo_ActOutGuardShiftDialogue(actor_id);
         break;
     case 3:
         RunActorScriptedSequenceD(actor_id);
@@ -1024,7 +1024,7 @@ void RunActorScriptedSequenceC(s32 actor_id)
     Engine_EventShowMessage(actor_id, 0);
 }
 
-void FieldScene_RunScene3bf_02001cf0(s32 a0)
+void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
 {
     u32 i;
     s32 record;
@@ -1169,7 +1169,7 @@ void FieldScene_RunSequenceTail(void)
     Object_SetModeById(14, 5); /* object_id 14, action 5 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Engine_EventEnd();
-    Engine_EventOpenScreen(); /* main:0808a360 */
+    Engine_EventOpenScreen();
 }
 
 void InspectEmptySceneObject(void)
@@ -1338,7 +1338,7 @@ void NoOpInteractionCallback(void)
 {
 }
 
-void FieldScene_RunScene3bf_0200252c(void)
+void RunpaJo_GatherPartyAroundActorTwelve(void)
 {
     struct FieldActor *actor;
 
@@ -1370,7 +1370,7 @@ void FieldScene_RunScene3bf_0200252c(void)
     Battle_WaitMode0(15);
 }
 
-void FieldScene_RunScene3bf_020025f8(void)
+void RunpaJo_ActivateLeverTrap(void)
 {
     u32 i;
     s32 record;
@@ -1391,7 +1391,7 @@ void FieldScene_RunScene3bf_020025f8(void)
     Battle_WaitMode0(60);
 }
 
-void FieldScene_RunScene3bf_0200269c(void)
+void RunpaJo_RevealMonster(void)
 {
     u32 i;
     s32 record;
@@ -1411,7 +1411,7 @@ void FieldScene_RunScene3bf_0200269c(void)
     Battle_WaitMode0(30);
 }
 
-void FieldScene_RunScene3bf_02002718(void)
+void RunpaJo_PositionPartyForMonster(void)
 {
     u32 i;
     s32 record;
@@ -1449,7 +1449,7 @@ void PlayStoryScene(void)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
         Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
-        FieldScene_RunScene3bf_0200252c();
+        RunpaJo_GatherPartyAroundActorTwelve();
         Actor_ShowEmote(12, 256, 60);
         Actor_FaceDirection(12, 32768, 0);
         Engine_ActorJump(12, 4, 0);
@@ -1478,7 +1478,7 @@ void PlayStoryScene(void)
         Audio_PlayCue(155);
         Engine_MessageShowCentered(text_line + 1, 1);
         Actor_SetDestinationOffset(13, 8, -8);
-        FieldScene_RunScene3bf_020025f8();
+        RunpaJo_ActivateLeverTrap();
         Battle_WaitMode0(120);
         Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
@@ -1486,11 +1486,11 @@ void PlayStoryScene(void)
         Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
         Battle_WaitMode0(20);
         text_line += 2;
-        FieldScene_RunScene3bf_02002718();
+        RunpaJo_PositionPartyForMonster();
         Engine_ActorFaceActor(13, ACTOR_PARTY_LEADER, 0);
         Engine_EventSetMessage(text_line);
         Engine_EventShowMessage(13, 0);
-        FieldScene_RunScene3bf_0200269c();
+        RunpaJo_RevealMonster();
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Battle_WaitMode0(1);
         /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
@@ -1516,7 +1516,7 @@ void PlayStoryScene(void)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
         Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
-        FieldScene_RunScene3bf_0200252c();
+        RunpaJo_GatherPartyAroundActorTwelve();
         Actor_SetSpeed(ACTOR_IVAN, 45875, 22937);
         Actor_WalkTo(2, 464, 192);
         ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
@@ -1678,7 +1678,7 @@ void PlayStoryScene(void)
         Engine_MessageShowCentered((s32)MsgRunpaDodonpaPulledLever, 1);
         Actor_SetDestinationOffset(13, 8, -8);
         Engine_ActorFaceActor(13, 11, 0);
-        FieldScene_RunScene3bf_020025f8();
+        RunpaJo_ActivateLeverTrap();
         Audio_PlayCue(52);
         Engine_EventSetMessage(text_line + 23);
         Engine_EventShowMessage(13, 0);
@@ -1688,8 +1688,8 @@ void PlayStoryScene(void)
         Engine_ActorFaceActor(ACTOR_IVAN, 11, 0);
         Engine_ActorFaceActor(ACTOR_MIA, 11, 0);
         Engine_ActorFaceActor(12, 11, 0);
-        FieldScene_RunScene3bf_02002718();
-        FieldScene_RunScene3bf_0200269c();
+        RunpaJo_PositionPartyForMonster();
+        RunpaJo_RevealMonster();
         GameFlag_Set(2370);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Battle_WaitMode0(1);
@@ -1744,8 +1744,7 @@ void FieldScene_RunMainScriptSequence(void)
     Object_SetModeById(13, 5);
     Engine_EventOpenScreen();
     Battle_WaitMode0(120);
-    /* Script line bases are overlay data symbols: an integer base would be
-     * constant-propagated into every offset instead of staying in r5. */
+
     script_a = (s32)MsgRunpaUhnnGetOff;
     Engine_EventSetMessage(script_a);
     Engine_EventShowMessage(13, 0);

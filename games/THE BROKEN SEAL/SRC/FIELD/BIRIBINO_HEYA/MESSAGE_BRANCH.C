@@ -300,11 +300,7 @@ s32 FieldScene_SetupActor27OnEntry(void)
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     actor = (u8 *)Object_GetById(27);
-    /*
-     * The stored zero is also the mask's starting value: -13 is built by
-     * subtracting from the register the strb already set to zero, not by
-     * materializing 0xf3 or negating 13.
-     */
+
     actor[0x23] = bits = 0;
     record = *(u8 **)(actor + 0x50);
     bits -= 13;

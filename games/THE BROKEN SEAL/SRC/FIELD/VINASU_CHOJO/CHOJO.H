@@ -124,6 +124,6 @@ void VinasuChojo_ShowMessage();
 
 s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position);
 
-void FieldScene_RunScene3c9_02004b28();
+void VinasuChojo_TryToPreventFall();
 
 #endif

@@ -12,7 +12,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/MURA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/SCENE_CELLS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/MURA2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ARRIVAL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_382_overlay.o"(.rodata.x02009b0c)

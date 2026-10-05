@@ -10,7 +10,6 @@ void SetEffectRecordMode(struct FieldActor *work, s32 mode)
  * Poll an overlay object until it settles, then reset it -- resource_3b3.
  */
 
-/* Declared without a prototype; the call site passes one argument. */
 void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     struct FieldActor *obj = Engine_ObjectCreate(arg3, arg0, arg1, arg2);

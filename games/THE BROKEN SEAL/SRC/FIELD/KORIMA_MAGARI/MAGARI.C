@@ -31,23 +31,12 @@ void Scene_PushBlockAlongRun(s16 *records);
 void State_StampRecordCells(s16 *records, s32 value);
 void State_ApplyRectByLayoutSelector(void);
 
-/* Old-style declarations: interfaces vary by call site across this overlay. */
-
   /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
 
   /* Place a fixture, second bank. */
 
   /* Set object motion state. */
 
-/*
- * One symbol per call site, named at the site's pc-relative-decoded address.
- * All three reach the same ARM-mode IWRAM helper that scales a channel by the
- * adjustment, and each still needs its own name.
- */
-
-/* 0x02000efa */
-
-/* 0x02000f08 */
 u8 *SceneData_GetTable9170(void)
 {
     return (u8 *)0x02009170;
@@ -84,23 +73,12 @@ void KorimaMagari_RedrawBoard(void)
     State_ApplyRectByLayoutSelector();
 }
 
-/* Old-style declarations: interfaces vary by call site across this overlay. */
-
   /* Place a fixture, first bank: (x, y, w, h, sx, sy). */
 
   /* Place a fixture, second bank. */
 
   /* Set object motion state. */
 
-/*
- * One symbol per call site, named at the site's pc-relative-decoded address.
- * All three reach the same ARM-mode IWRAM helper that scales a channel by the
- * adjustment, and each still needs its own name.
- */
-
-/* 0x02000efa */
-
-/* 0x02000f08 */
 void Scene_CallHelper118c(void)
 {
     Field_TryJumpForward();

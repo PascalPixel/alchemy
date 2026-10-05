@@ -89,11 +89,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return gKorosseoKabePlacements;
 }
 
-/*
- * Two bytes, `bx lr', with no prologue and no pool.  Two data-table slots
- * install it as a handler, so the empty body is deliberate rather than
- * padding.
- */
+/* Two handler slots intentionally do nothing. */
 void SceneData_NoOpHandler(void)
 {
 }
@@ -131,9 +127,7 @@ void FieldScene_RunTwoStepSequence(void)
 
 void SceneState_StoreSlotTileXToWork832To848(void)
 {
-    /* The two stack arguments each need their own local: the reference builds
-     * both into separate registers before storing either, and a literal pair
-     * lets the compiler reuse one register for both. */
+
     s32 fifth = 14;
     s32 sixth = 11;
     s32 *record;
@@ -196,7 +190,7 @@ void KorosseoKabe_SpinActorAway(void)
     Engine_AudioPlayCue(240);
     {
         s32 shown = 0;
-    
+
         *(u16 *)((s32)p6 + 30) = shown;
     }
     Engine_ActorSetAnimation(30, 4);
@@ -381,14 +375,7 @@ void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
     Engine_EventEnd();
 }
 
-/*
- * One fixed line, then three whose fifth or sixth argument is a field of the
- * record fetched for participants 15, 16 and 17.  Records 15 and 16 contribute
- * their word at +8, record 17 its word at +16, which moves to the sixth
- * argument slot while a literal 18 takes the fifth.  The shift is arithmetic,
- * so the fields are signed fixed-point with 20 fractional bits.  Only those two
- * fields are asserted; what the six arguments mean is not established here.
- */
+/* Show one fixed line, then participant lines using actor 15 and 16's X coordinates and actor 17's Z coordinate, converted from signed fixed point. */
 void SceneState_ApplyRectsForActors15To17(void)
 {
     s32 field;
@@ -554,19 +541,11 @@ void SceneState_ApplyTable8715AndValue104(void)
     Engine_GameFlagClear(0x104);
 }
 
-/*
- * Spin until the first status word reaches zero with the second equal to 75,
- * giving up after 600 polls. Both words are re-read on every pass, because the
- * poll call lets the task that publishes them run.
- * The plain while loop is the spelling that reproduces the reference. What the
- * two words mean is not established here -- only that another task publishes
- * them while this owner spins.
- */
+/* Wait for the two task status words to reach 0 and 75, checking both after each poll and giving up after 600 polls. */
 void SceneState_WaitForStatusWords(void)
 {
     s32 cnt;
 
-    /* The frame count is a literal ten. */
     Engine_TaskWait(10);
 
     cnt = 0;
@@ -591,9 +570,6 @@ void SceneState_InstallTask8714AndApplyTwoRects(void)
     Engine_TaskWait(30);
     Engine_TaskWait(1);
 
-    /* The task is published as its entry address with the Thumb bit set. The
-     * `.thumb_set` alias the exact reconstruction emits for a Thumb symbol already carries
-     * bit 0, so adding it again here overshoots by one. */
     Engine_TaskRemoveCallback(FieldScene_RunSupplementalSequenceOne);
 
     Engine_MapCopyCellAttributes(58, 28, 7, 1, 58, 13);
@@ -636,11 +612,9 @@ void KorosseoKabe_RunStageStart(void)
     Engine_ActorSetAnimation(0, 16);
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
-    /* FAKEMATCH: base is set at the top of the function, so 2 - rec8 + 1
-     * is not folded into 3 - rec8. */
+    /* FAKEMATCH: base is set at the top of the function, so 2 - rec8 + 1 is not folded into 3 - rec8. */
     BattleFx_SetWeightedResult(72, base - rec8 + 1);
-    /* FAKEMATCH: the do/while keeps the stage flag store ahead of the
-     * pool load that follows it. */
+    /* FAKEMATCH: the do/while keeps the stage flag store ahead of the pool load that follows it. */
     do {
         gGameState.battle_start = 3;
     } while (0);
@@ -684,9 +658,7 @@ void FieldScene_RunPairedEntranceWalk(s32 a0)
 /* Wall arena entry: record the arrival, set the pillars, ledges and item icons by the story flags, then start the entrance's opening scene. */
 s32 KorosseoKabe_ApplyEntryState(void)
 {
-    /* FAKEMATCH: the game state read as rows of halfwords and written as rows
-     * of bytes keeps the base-plus-index address form for both accesses, where
-     * its fields fold the offsets into the pool. */
+    /* FAKEMATCH: the game state read as rows of halfwords and written as rows of bytes keeps the base-plus-index address form for both accesses, where its fields fold the offsets into the pool. */
     union GameStateRows {
         u8 bytes[512][2];
         s16 halves[512][1];
@@ -814,8 +786,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
     Engine_ActorSetChildValue(8, 1);
     switch (((union GameStateRows *)&gGameState)->halves[225][0]) {
     case 1:
-        /* FAKEMATCH: called as returning a value, the call sets its first
-         * argument last, as the game does. */
+        /* FAKEMATCH: called as returning a value, the call sets its first argument last, as the game does. */
         ((s32 (*)(s32, s32, s32, s32, s32, s32, s32))FieldScene_BuildDescriptorAndInstallTask)(
             0, 8, 5, 0x680000, 0x1000000, 40, 41);
         Call6(Map_UpdateCellRect, 127, 0, 1, 2, 79, 6);

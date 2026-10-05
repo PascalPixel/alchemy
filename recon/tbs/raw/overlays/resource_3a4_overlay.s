@@ -1375,7 +1375,7 @@ gArutinYamaEvents7:
 	.4byte SceneActor_UpdateSlot10ByTileX
 	.4byte 0x00000602
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene3a4_02000c9c
+	.4byte ArutinYama_PushMovableObject
 	.4byte 0x00001815
 	.4byte 0x02000009
 	.4byte SceneActor_RaiseSlot9StepA

@@ -4,14 +4,7 @@
 
 #include "MAPCOPY.H"
 
-/*
- * What the Lunpa fortress scene sees of the engine. The fortress links beside
- * the staged-actor code (FIELD/COMMON/OBJECT/STAGED_ACTOR.C), and several of
- * the overlay's import veneers carry that code's names, among them the sound
- * cue, which FIELD_EVENT.H spells as an inline service; so the fortress takes
- * the scene state and services it uses from this view instead, each service
- * reaching its veneer by the one name the overlay gives it.
- */
+/* Scene state and services used by the Lunpa fortress. */
 
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
@@ -139,7 +132,6 @@ enum ActorPriorityFlag {
 
 /* The map work cell; the event work pointer follows it at +0x4c. */
 
-/* Import veneers named by the staged-actor code. */
 void Battle_WaitMode0(s32 frames);
 void *Object_GetById(s32 actor);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);

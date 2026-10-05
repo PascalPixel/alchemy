@@ -326,10 +326,10 @@ extern const struct SceneEvent gTakaraShimaEventsOther[];
 void Battle_Reset(s32 arg0);
 
 void InitializeEscapeSceneActors(void);
-void FieldScene_RunScene3b2_0200167c(void);
+void TakaraShima_RestoreRoomActors(void);
 void InitializeSwayingSceneObject();
 void FieldScene_RunScene3b2SequenceA(void);
-void FieldScene_RunScene3b2_02001494(void);
+void TakaraShima_LeaveClearedRoom(void);
 void SetMapCellCollision();
 
 union GameStateRows {
@@ -422,7 +422,7 @@ void AdvanceEffectMotion(struct Effect *effect)
     struct Sprite *sprite;
     s32 velocity_x;
 
-    /* Macro-shaped block keeps the following Z load after the Y store. */
+
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity[0];
@@ -553,7 +553,7 @@ s32 Scene_Initialize(void)
     }
     current = gGameState.scene;
     if (current == (s32)&SceneId_TakaraShima1) {
-        FieldScene_RunScene3b2_0200167c();
+        TakaraShima_RestoreRoomActors();
         Actor_Get(8)->target_x = 0x810000;
         FieldScene_RedrawActorFootprint(9);
         FieldScene_RedrawActorFootprint(10);
@@ -612,7 +612,7 @@ s32 Scene_Initialize(void)
         if (current <= (s32)&SceneId_TakaraShima14) {
             FieldScene_RunScene3b2SequenceA();
             if (gGameState.entrance == 5) {
-                FieldScene_RunScene3b2_02001494();
+                TakaraShima_LeaveClearedRoom();
             }
         }
     }
@@ -648,9 +648,7 @@ void FieldScene_RunScene3b2SequenceA(void)
 
 void FieldScene_HandleEscapeColumn(void)
 {
-    /* FAKEMATCH: the block-local two preserves the sprite-flag registers;
-     * Japanese reuses a zero automatic across the waits and sprite reset.
-     * Literal zero clears make its complete function 12 bytes shorter. */
+    /* FAKEMATCH: the block-local two preserves the sprite-flag registers; Japanese reuses a zero automatic across the waits and sprite reset. Literal zero clears make its complete function 12 bytes shorter. */
     struct FieldActor *entity;
     s16 *slot;
     s32 column;
@@ -668,7 +666,7 @@ void FieldScene_HandleEscapeColumn(void)
         slot = (s16 *) ((u8 *) ((s16 *)&gGameState) + off);
     }
     if ((u8 *)Engine_GameFlagIsSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6)) != 0) {
-        return;                             /* handled by 0x02001214 instead */
+        return;
     }
 #endif
 
@@ -772,38 +770,20 @@ void TakaraShima_RunAreaEntry(void)
     }
 }
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
 /* Advance actor 18 and its companions along the Z-axis escape route.
    Shared branches preserve the transition call sites used by multiple rows. */
-
-/* Old-style declarations: overlay imports vary in arity between call sites.
-   One import name per call site: bl displacements are per-site. */
-
-/* This overlay's transition starter at 0x02001774, one name per site. */
 
 /* Advance actor 9 and its companions along the Z-axis escape route.
    Shared branches preserve the transition call sites used by multiple rows. */
 
 /* Return leg of the slot-14 transition beat: negated ids. */
 
-/* This overlay's transition starter at 0x02001774. */
-
 /* Outbound leg of the slot-14 transition beat. */
 
 /* Return leg of the slot-16 transition beat: negated ids. */
 
 /* Outbound leg of the slot-16 transition beat. */
-void FieldScene_RunScene3b2_02001494(void)
+void TakaraShima_LeaveClearedRoom(void)
 {
     u32 i;
     s32 record;
@@ -904,7 +884,7 @@ void ShowSaveMyLifeMessage(void)
     Engine_GameFlagSet(2247);
 }
 
-void FieldScene_RunScene3b2_0200167c(void)
+void TakaraShima_RestoreRoomActors(void)
 {
     struct FieldActor *record;
 

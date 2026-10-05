@@ -12,4 +12,4 @@
 	overlay_veneer SceneData_SelectTableByFlag834
 	overlay_veneer SceneData_SelectTableByFlags834And87a
 	overlay_veneer SceneData_SelectTableByFlags87a_815_834
-	overlay_veneer Func_02000090
+	overlay_veneer HaidiaIe_GetDefaultResult

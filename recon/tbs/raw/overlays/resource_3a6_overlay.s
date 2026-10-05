@@ -603,7 +603,7 @@ gHaidiaDouEvents3:
 	.4byte HaidiaDou_RunProbedColumnScene
 	.4byte 0x00000602
 	.4byte 0xffff0015
-	.4byte FieldScene_RunScene3a6_020014ac
+	.4byte HaidiaDou_ToppleActorNine
 	.4byte 0x00000202
 	.4byte 0xffff0016
 	.4byte HaidiaDou_RunLoweredActorScene

@@ -248,13 +248,7 @@ void FieldScene_RunFlag821Dialogue(void)
         work = gWork;
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
         {
-            /*
-             * The halfword store goes through a pointer local and then an
-             * s32 value local, in that order.  Storing the literal straight
-             * into the halfword builds the constant in HImode and fetches it
-             * from the literal pool, which costs a pool word; splitting the
-             * address out first also fixes which register holds it.
-             */
+
             u16 *frame = (u16 *)(work + 370);
             s32 one = 1;
             *frame = (u16)one;
@@ -469,9 +463,7 @@ s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
     return 0;
 }
 
-/* Push the faced block and leader together, then refresh the current puzzle.
- * The coordinate lookup and position lifetime follow the exact Biribino
- * push-block family; Soru retains its own entrance-dependent flag updates. */
+/* Push the faced block and leader together, refresh the puzzle and update the entrance's flags. */
 void SoruIriguchi_PushFacedBlock(void)
 {
     struct FieldActor *leader;

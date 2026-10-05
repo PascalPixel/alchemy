@@ -1,8 +1,6 @@
-/*
- * Overlay resource_388: in-image table getters and the scene entry that
- * places actor 8 once the gate is open.
- */
 
+
+/* Scene table getters and the entry that places actor 8 once the gate is open. */
 #include "TYPES.H"
 #include "SCENE.H"
 extern struct Resource388Runtime *gEventWork;
@@ -16,10 +14,6 @@ extern u8 GomaIke_SceneTable3[];
 
 extern void *Object_GetById(u32);
 
-/*
- * The eight-byte owner includes its one pool word, which holds the address
- * returned here. The word is loaded and returned, never dereferenced.
- */
 u8 *SceneData_GetPrimaryTable(void)
 {
     return GomaIke_SceneTable0;
@@ -31,19 +25,16 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetSecondaryTable(void)
 {
     return GomaIke_SceneTable1;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTertiaryTable(void)
 {
     return GomaIke_SceneTable2;
 }
 
-/* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetQuaternaryTable(void)
 {
     return GomaIke_SceneTable3;
@@ -52,11 +43,7 @@ u8 *SceneData_GetQuaternaryTable(void)
 s32 Scene_PlaceActor8OnGate300(void)
 {
     struct Resource388Runtime *work;
-    /*
-     * state, arg5 and arg6 must stay locals: they keep the values out of the
-     * immediate operands of the stores and the call, so each gets its own
-     * register.
-     */
+
     s8 state;
     s32 arg5;
     s32 arg6;

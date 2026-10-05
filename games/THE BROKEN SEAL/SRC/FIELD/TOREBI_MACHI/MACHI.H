@@ -5,10 +5,7 @@
 /* Tolbi town (resource_3b5): the declarations, views and call helpers its
  * scene sources share. */
 
-/*
- * Overlay resource_3b5: shared scene work plus the actor setup, dialogue and
- * event sequences that drive this scene, in address order.
- */
+/* Shared scene work, actor setup, dialogue and event sequences. */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -72,7 +69,7 @@ void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
 s32 SceneActor_UpdatePlayerProximity();
 void SetMapCellCollision();
-void FieldScene_RunScene3b5_02000224();
+void TorebiMachi_OpenActorEightPassage();
 void FieldScene_ResetActor9AndDrawTiles();
 s32 UiWindow_CreateWithSideObject();
 void UiText_OpenMessageWindow();
@@ -83,7 +80,7 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Engine_MapObjectSetPosition(actor, x, y);
 }
 
-static __inline__ void PlaceActor_02001104(s32 actor, s32 x, s32 y)
+static __inline__ void TorebiMachi_PlaceHiddenMapActor(s32 actor, s32 x, s32 y)
 {
     /* FAKEMATCH: a direct call changes HideActorOneHundredTwo from mov r1, #1 to mov r2, #1 (24/23 assembly lines). */
     Engine_MapObjectSetPosition(actor, x, y);
@@ -93,15 +90,7 @@ void SceneState_SetValues31_2_4(void);
 
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b);
 
-/*
- * Per-frame actor callback, whose argument is the owning actor record. The
- * initialiser stores this address plus the Thumb bit into field +0x6c of
- * actors 16 and 17. It returns a constant zero.
- *
- * The owner's eight-byte literal pool follows its return and belongs to it.
- * 0x03001e8c is a table of pointers whose entry 12 is 0x03001ebc, the overlay
- * work pointer the rest of this overlay loads directly.
- */
+/* The per-frame callback for actors 16 and 17 receives its actor record and returns zero. */
 #include "TYPES.H"
 
 struct SceneActor {
@@ -134,7 +123,7 @@ u8 *TorebiMachi_GetExits(void);
 
 u8 *TorebiMachi_GetPlacements(void);
 
-void FieldScene_RunScene3b5_02000224(void);
+void TorebiMachi_OpenActorEightPassage(void);
 
 void ConfigureAndPlaceActorOneHundredTwo(void);
 
@@ -156,13 +145,13 @@ void SceneDialogue_RunActor24Message1f9d(void);
 
 void FieldScene_RunPatientTalk(void);
 
-void FieldScene_RunScene3b5_02000568(void);
+void TorebiMachi_AskForSweets(void);
 
 void SceneDialogue_RunActor27Message1fa3(void);
 
 void SceneDialogue_RunActor24Message235f(void);
 
-void FieldScene_RunScene3b5_020005dc(void);
+void TorebiMachi_ReceiveLeftovers(void);
 
 void SceneScript_SetupActors(void);
 

@@ -11,7 +11,7 @@
 
 TEXT_MESSAGE_ENUM(MsgMogoruMoriBrokenSign);
 
-/* The IWRAM divide, reached through this overlay's import veneer. */
+/* Resident IWRAM division. */
 
 struct Vec {
     s32 x;
@@ -29,7 +29,7 @@ extern const struct ScenePlacement gMogoruMoriPlacements3[];
 extern const struct ScenePlacement gMogoruMoriPlacementsOther[];
 
 void FieldScene_RunSixCallSetupSequence();
-void FieldScene_RunScene39f_02000d90();
+void MogoruMori_HopActorTo();
 void Effect_Spawn();
 
 void MogoruMori_SpawnPuffRing();
@@ -56,8 +56,7 @@ void SceneState_SetValue18Mode2(void)
 
 /* Mogall Forest: when the leader can step onto the next slot, play the hop
  * and move the leader there. */
-/* 0x02004918 serves two imports: the two-argument mode select and the
- * zero-argument bracket close. */
+
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 {
     struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
@@ -104,8 +103,8 @@ s32 OverlayObject_ApplyZero(s32 a)
 }
 
 /* Mogall Forest: slide an actor to a point with the swish of cue 152,
- * lifting it by the given height while it moves. */
-void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3)
+ * giving it the requested initial vertical velocity. */
+void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3)
 {
     struct FieldActor *rec7;
 
@@ -182,13 +181,11 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     return gMogoruMoriEntrancesOther;
 }
 
-/* Complete four-byte leaf: movs r0,#0 followed by bx lr. */
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/* Complete eight-byte literal-address getter, including its sole pool word. */
 u8 *SceneData_GetTableB5bc(void)
 {
     return MogoruMori_SceneTable;
@@ -240,9 +237,6 @@ void MogoruMori_RunProbedActorNineScene(void)
     Engine_EventEnd();
 }
 
-/* The five tile-painting calls take (layer, x, z, width, height, value) and
- * all reach the same routine, but each keeps its own call word: the encoding
- * is per site, so they must not be collapsed onto one alias. */
 void SceneActor_PassOffsetPointOfActorZero(void)
 {
     s32 v[3];
@@ -310,11 +304,10 @@ void FieldScene_RunActor10WaypointSequence(void)
 
     slot = Object_GetById(10);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(10, 1);
-    FieldScene_RunScene39f_02000d90(10, 88, 120, 0x60000);        /* 192 << 11 */
+    MogoruMori_HopActorTo(10, 88, 120, 0x60000);        /* 192 << 11 */
 
     Effect_Spawn(slot->x.fixed, slot->y.fixed,
                   slot->z.fixed + 0x180000,   /* 192 << 13 */
@@ -327,16 +320,16 @@ void FieldScene_RunActor10WaypointSequence(void)
     Engine_ActorSetAttachedEffect(10, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    /* Three waypoints, each at height 0x30000 (192 << 10). */
-    FieldScene_RunScene39f_02000d90(10, 88, 152, 0x30000);
+    /* Each of the three hops starts with vertical velocity 3.0. */
+    MogoruMori_HopActorTo(10, 88, 152, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Battle_WaitMode0(10);
 
-    FieldScene_RunScene39f_02000d90(10, 120, 192, 0x30000);
+    MogoruMori_HopActorTo(10, 120, 192, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Battle_WaitMode0(10);
 
-    FieldScene_RunScene39f_02000d90(10, 120, 240, 0x30000);
+    MogoruMori_HopActorTo(10, 120, 240, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Battle_WaitMode0(10);
 
@@ -344,19 +337,12 @@ void FieldScene_RunActor10WaypointSequence(void)
     Engine_ActorSetPosition(13, 0, 0);
     Engine_ActorSetPosition(10, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
 /* Mogall Forest: actor 11 hops out of the trees, greets the party and
  * hops back to the leader. */
-/*
- * A full cutscene beat for slot 11: opens the slot, places it at (408, 456),
- * publishes an eight-argument piece, runs the presentation, then re-places the
- * slot on the party's current heading readings and sets the engine byte at
- * gGameState + 0x22b to 3.  The 228-byte owner includes an alignment
- * halfword and its four pool words.
- */
+/* Present actor 11 at (408, 456), return it to the leader's position and set the area state to 3. */
 void FieldScene_RunActorElevenPresentationBeat(void)
 {
     struct FieldActor *slot;
@@ -364,12 +350,10 @@ void FieldScene_RunActorElevenPresentationBeat(void)
 
     slot = Object_GetById(11);
 
-    /* Reads the record left in r0 by the call above; it must not be respelled
-     * as a fresh fetch. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(11, 0);
-    FieldScene_RunScene39f_02000d90(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
+    MogoruMori_HopActorTo(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
 
     Effect_Spawn(slot->x.fixed, slot->y.fixed,
                   slot->z.fixed + 0x180000,   /* 192 << 13 */
@@ -385,7 +369,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
 
     /* Two signed halfwords of slot 0, each read after its own fetch of the
      * record. */
-    FieldScene_RunScene39f_02000d90(11,
+    MogoruMori_HopActorTo(11,
                   Object_GetById(0)->x.part.pixel,
                   Object_GetById(0)->z.part.pixel,
                   0x40000);                          /* 128 << 11 */
@@ -394,14 +378,12 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     Engine_GameFlagSet(0x301);
     Engine_ActorSetPosition(14, 0, 0);
 
-    /* FAKEMATCH: the byte offset held in a forced temporary keeps the
-     * game-state address and the offset apart. */
+    /* FAKEMATCH: the byte offset held in a forced temporary keeps the game-state address and the offset apart. */
     offset = 0x22b;
     ((u8 *)&gGameState)[offset] = 3;
 
     BattleFx_SetWeightedResult(53, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -411,11 +393,10 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
 
     slot = Object_GetById(12);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(12, 1);
-    FieldScene_RunScene39f_02000d90(12, 536, 344, 0x70000);       /* 134 << 2, 172 << 1, 224 << 11 */
+    MogoruMori_HopActorTo(12, 536, 344, 0x70000);       /* 134 << 2, 172 << 1, 224 << 11 */
 
     Effect_Spawn(slot->x.fixed, slot->y.fixed,
                   slot->z.fixed + 0x100000,   /* 128 << 13 */
@@ -428,24 +409,22 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     Engine_ActorSetAttachedEffect(12, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    /* Three waypoints, each at height 0x30000 (192 << 10); the X literals are
-     * 146 << 2, 158 << 2 and 170 << 2 and the Z is the same 172 << 1. */
-    FieldScene_RunScene39f_02000d90(12, 584, 344, 0x30000);
+    /* Each of the three hops starts with vertical velocity 3.0. */
+    MogoruMori_HopActorTo(12, 584, 344, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(12, 632, 344, 0x30000);
+    MogoruMori_HopActorTo(12, 632, 344, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(12, 680, 344, 0x30000);
+    MogoruMori_HopActorTo(12, 680, 344, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
     Battle_WaitMode0(6);
 
     Engine_GameFlagSet(0x302);
     Engine_ActorSetPosition(15, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -469,7 +448,6 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
     s32 height;
     s32 value;
 
-    /* No argument register is written before this branch. */
     Engine_EventBegin();
 
     if (StagedActor_FindClearPosition(&probe) != 0) {
@@ -480,8 +458,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
             sixth = 68;
             Map_CopyCellAttributeRect(35, 67, 4, 1, fifth, sixth);
         } else if (probe.actor_slot == 10 && (probe.position_x >> 20) == 35) {
-            /* Written here, not at the call: the reference keeps it in a
-             * callee-saved register across the whole sequence. */
+
             value = 0;
             Engine_GameFlagSet(0x311);
             Object_SetModeById(10, 3);
@@ -500,7 +477,6 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
         }
     }
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -509,7 +485,6 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
     s32 x;
     s32 z;
 
-    /* No argument register is written before this branch. */
     Engine_EventBegin();
 
     /* Both coordinates are 16.16 fixed point reduced to whole tiles with
@@ -531,7 +506,6 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
         *(s32 *)(p + 12) = (s32)0xfffe0000;
     }
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -544,7 +518,7 @@ void MogoruMori_RunBranchHopScene(void)
     rec7 = Object_GetById(12);
     Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(12, 1);
-    FieldScene_RunScene39f_02000d90(12, 0x188, 104, 0x70000);
+    MogoruMori_HopActorTo(12, 0x188, 104, 0x70000);
     Battle_WaitMode0(10);
     Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + 0x40000), 0, 0, 0, 1, 0);
     Engine_CameraFollowActor(12, 1);
@@ -553,16 +527,16 @@ void MogoruMori_RunBranchHopScene(void)
     Engine_ActorStartRepeatedMotion(12, 2);
     Engine_ActorSetAttachedEffect(12, 0x102);
     Battle_WaitMode0(60);
-    FieldScene_RunScene39f_02000d90(12, 0x1a8, 120, 0x30000);
+    MogoruMori_HopActorTo(12, 0x1a8, 120, 0x30000);
     Engine_ActorFaceActor(0, 12, 0);
     Battle_WaitMode0(6);
-    FieldScene_RunScene39f_02000d90(12, 0x1a8, 168, 0x30000);
+    MogoruMori_HopActorTo(12, 0x1a8, 168, 0x30000);
     Engine_ActorFaceActor(0, 12, 0);
     Battle_WaitMode0(6);
-    FieldScene_RunScene39f_02000d90(12, 0x1a8, 208, 0x30000);
+    MogoruMori_HopActorTo(12, 0x1a8, 208, 0x30000);
     Engine_ActorFaceActor(0, 12, 0);
     Battle_WaitMode0(6);
-    FieldScene_RunScene39f_02000d90(12, 0x1a8, 232, 0x30000);
+    MogoruMori_HopActorTo(12, 0x1a8, 232, 0x30000);
     Engine_ActorFaceActor(0, 12, 0);
     Battle_WaitMode0(6);
     Engine_ActorSetPosition(12, 0, 0);
@@ -577,11 +551,10 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
 
     slot = Object_GetById(13);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(13, 1);
-    FieldScene_RunScene39f_02000d90(13, 456, 104, 0x70000);       /* 228 << 1, 224 << 11 */
+    MogoruMori_HopActorTo(13, 456, 104, 0x70000);       /* 228 << 1, 224 << 11 */
     Battle_WaitMode0(10);
 
     Effect_Spawn(slot->x.fixed, slot->y.fixed,
@@ -595,19 +568,19 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
     Engine_ActorSetAttachedEffect(13, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    FieldScene_RunScene39f_02000d90(13, 472, 136, 0x30000);       /* 236 << 1, 192 << 10 */
+    MogoruMori_HopActorTo(13, 472, 136, 0x30000);       /* 236 << 1, 192 << 10 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(13, 504, 136, 0x33333);       /* 252 << 1, pooled height */
+    MogoruMori_HopActorTo(13, 504, 136, 0x33333);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(13, 552, 136, 0x38000);       /* 138 << 2, 224 << 10 */
+    MogoruMori_HopActorTo(13, 552, 136, 0x38000);       /* 138 << 2, 224 << 10 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(13, 584, 136, 0x38000);       /* 146 << 2 */
+    MogoruMori_HopActorTo(13, 584, 136, 0x38000);       /* 146 << 2 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Battle_WaitMode0(6);
 
@@ -615,18 +588,17 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
     Engine_GameFlagSet(772);                         /* 193 << 2 */
     Engine_ActorSetPosition(16, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene39f_02001818(void)
+void MogoruMori_TransferActorFourteen(void)
 {
     u32 i;
     s32 record;
 
     Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(14, 1);
-    FieldScene_RunScene39f_02000d90(14, 0x1a8, 0x1e0, 0x79999);
+    MogoruMori_HopActorTo(14, 0x1a8, 0x1e0, 0x79999);
     Battle_WaitMode0(2);
     MogoruMori_SpawnPuffRing(14);
     Actor_SetChildValue(14, 15);
@@ -644,11 +616,10 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
 
     slot = Object_GetById(14);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(14, 1);
-    FieldScene_RunScene39f_02000d90(14, 392, 504, 0x60000);       /* 196 << 1, 252 << 1, 192 << 11 */
+    MogoruMori_HopActorTo(14, 392, 504, 0x60000);       /* 196 << 1, 252 << 1, 192 << 11 */
     Battle_WaitMode0(10);
 
     Effect_Spawn(slot->x.fixed, slot->y.fixed,
@@ -662,20 +633,20 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
     Engine_ActorSetAttachedEffect(14, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    /* Four waypoints; Z is 132 << 2 and the height 192 << 10 throughout. */
-    FieldScene_RunScene39f_02000d90(14, 360, 528, 0x30000);
+    /* Each of the four hops starts with vertical velocity 3.0. */
+    MogoruMori_HopActorTo(14, 360, 528, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(14, 328, 528, 0x30000);
+    MogoruMori_HopActorTo(14, 328, 528, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(14, 288, 528, 0x30000);
+    MogoruMori_HopActorTo(14, 288, 528, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(14, 256, 528, 0x30000);
+    MogoruMori_HopActorTo(14, 256, 528, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Battle_WaitMode0(6);
 
@@ -685,7 +656,6 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
     Engine_GameFlagSet(0x306);
     Engine_ActorSetPosition(17, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -761,7 +731,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     target[2] = Object_GetById(0)->z.fixed;
 
     if (SceneActor_TryRunSlotZeroMoveStep(target)!= 0) {
-        /* r0 still holds the nonzero result of the test above. */
+
         Engine_EventBegin();
 
         *mode = 0;
@@ -787,21 +757,12 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     }
 }
 
-/*
- * Parking step for actor slot 13 in resource_39f. It marks the actor's own
- * tile 0xff, clears the four orthogonally adjacent tiles, and once the actor
- * stands on tile (45, 6) clears the record's mode byte and writes -2.0 in
- * 16.16 into the words at +12 and +20.
- *
- * The 176-byte owner at 0x02001b84 runs past its code to include an alignment
- * halfword and the pool word 0xfffe0000 at 0x02001c30.
- */
+/* Mark actor 13's tile occupied and clear its four neighbours; at tile (45, 6), clear its mode and write -2.0 to the fields at +12 and +20. */
 void SceneActor_MarkActorThirteenTileAndPark(void)
 {
     s32 x;
     s32 z;
 
-    /* No argument register is written before this branch. */
     Engine_EventBegin();
 
     x = Object_GetById(13)->x.fixed >> 20;
@@ -821,7 +782,6 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
         *(s32 *)(record + 12) = (s32)0xfffe0000;
     }
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -858,10 +818,6 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 /* Mogall Forest: actor 15 hops out of the trees, greets the party and
  * hops back to the leader, then sets flag 0x307. */
-/*
- * Actor presentation beat for overlay resource_39f.  The twin at 0x02001d04
- * is the same beat for slot 15.
- */
 void FieldScene_RunScene39fSequenceA(void)
 {
 
@@ -876,7 +832,7 @@ void FieldScene_RunScene39fSequenceA(void)
     big = 0x80000;
     Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(15, 0);
-    FieldScene_RunScene39f_02000d90(15, 0x1d8, 104, big);
+    MogoruMori_HopActorTo(15, 0x1d8, 104, big);
     Battle_WaitMode0(10);
     Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + big), 0, 0, 0, 1, 0);
     Engine_CameraFollowActor(15, 1);
@@ -889,13 +845,11 @@ void FieldScene_RunScene39fSequenceA(void)
     first = Object_GetById(ACTOR_PARTY_LEADER);
     shown = first->x.part.pixel;
     second = Object_GetById(ACTOR_PARTY_LEADER);
-    FieldScene_RunScene39f_02000d90(15, shown, second->z.part.pixel, 0x60000);
-    /* FAKEMATCH: called as returning a doubleword, the wait keeps the
-     * registers the game keeps across it. */
+    MogoruMori_HopActorTo(15, shown, second->z.part.pixel, 0x60000);
+    /* FAKEMATCH: called as returning a doubleword, the wait keeps the registers the game keeps across it. */
     ((s64 (*)())Battle_WaitMode0)(10);
     Engine_GameFlagSet(0x307);
-    /* FAKEMATCH: the game-state address held in a forced temporary keeps
-     * it apart from the byte offset. */
+    /* FAKEMATCH: the game-state address held in a forced temporary keeps it apart from the byte offset. */
     base3_2000240 = (s32)&gGameState;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
     BattleFx_SetWeightedResult(53, 0);
@@ -908,11 +862,10 @@ void FieldScene_RunSlot16WaypointSequence(void)
 
     slot = Object_GetById(16);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(16, 1);
-    FieldScene_RunScene39f_02000d90(16, 456, 152, 0x60000);       /* 228 << 1, 192 << 11 */
+    MogoruMori_HopActorTo(16, 456, 152, 0x60000);       /* 228 << 1, 192 << 11 */
     Battle_WaitMode0(10);
 
     Effect_Spawn(slot->x.fixed, slot->y.fixed,
@@ -926,16 +879,16 @@ void FieldScene_RunSlot16WaypointSequence(void)
     Engine_ActorSetAttachedEffect(16, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    /* Three waypoints at height 0x30000 (192 << 10). */
-    FieldScene_RunScene39f_02000d90(16, 448, 192, 0x30000);       /* 224 << 1 */
+    /* Each of the three hops starts with vertical velocity 3.0. */
+    MogoruMori_HopActorTo(16, 448, 192, 0x30000);       /* 224 << 1 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 16, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(16, 424, 208, 0x30000);       /* 212 << 1 */
+    MogoruMori_HopActorTo(16, 424, 208, 0x30000);       /* 212 << 1 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 16, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(16, 424, 224, 0x30000);
+    MogoruMori_HopActorTo(16, 424, 224, 0x30000);
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 16, 0);
     Battle_WaitMode0(6);
 
@@ -945,7 +898,6 @@ void FieldScene_RunSlot16WaypointSequence(void)
     Engine_GameFlagSet(776);                         /* 194 << 2 */
     Engine_ActorSetPosition(20, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
@@ -955,11 +907,10 @@ void FieldScene_RunActor17CameraSequence(void)
 
     slot = Object_GetById(17);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(17, 1);
-    FieldScene_RunScene39f_02000d90(17, 392, 104, 0x60000);       /* 196 << 1, 192 << 11 */
+    MogoruMori_HopActorTo(17, 392, 104, 0x60000);       /* 196 << 1, 192 << 11 */
     Battle_WaitMode0(10);
 
     Effect_Spawn(slot->x.fixed, slot->y.fixed,
@@ -973,15 +924,15 @@ void FieldScene_RunActor17CameraSequence(void)
     Engine_ActorSetAttachedEffect(17, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    FieldScene_RunScene39f_02000d90(17, 376, 152, 0x60000);       /* 188 << 1 */
+    MogoruMori_HopActorTo(17, 376, 152, 0x60000);       /* 188 << 1 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 17, 0);
     Battle_WaitMode0(10);
 
-    FieldScene_RunScene39f_02000d90(17, 328, 160, 0x30000);       /* 164 << 1, 192 << 10 */
+    MogoruMori_HopActorTo(17, 328, 160, 0x30000);       /* 164 << 1, 192 << 10 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 17, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(17, 296, 160, 0x30000);       /* 148 << 1 */
+    MogoruMori_HopActorTo(17, 296, 160, 0x30000);       /* 148 << 1 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 17, 0);
     Battle_WaitMode0(6);
 
@@ -991,11 +942,10 @@ void FieldScene_RunActor17CameraSequence(void)
     Engine_GameFlagSet(0x309);
     Engine_ActorSetPosition(21, 0, 0);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene39f_02002004(void)
+void MogoruMori_TransferActorEighteen(void)
 {
     u32 i;
     s32 record;
@@ -1003,7 +953,7 @@ void FieldScene_RunScene39f_02002004(void)
     Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(18, 1);
     Camera_MoveTo(0x2e80000, -1, 0x1f80000, 1);
-    FieldScene_RunScene39f_02000d90(18, 0x2e8, 0x1f8, 0x90000);
+    MogoruMori_HopActorTo(18, 0x2e8, 0x1f8, 0x90000);
     MogoruMori_SpawnPuffRing(18);
     Actor_SetChildValue(18, 15);
     record = Actor_Get(18);
@@ -1020,11 +970,10 @@ void FieldScene_RunActorEighteenEffectSequence(void)
 
     slot = Object_GetById(18);
 
-    /* r0 still holds the record returned above. */
     Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(18, 1);
-    FieldScene_RunScene39f_02000d90(18, 712, 536, 0x60000);       /* 178 << 2, 134 << 2, 192 << 11 */
+    MogoruMori_HopActorTo(18, 712, 536, 0x60000);       /* 178 << 2, 134 << 2, 192 << 11 */
     Battle_WaitMode0(10);
 
     Effect_Spawn(slot->x.fixed, slot->y.fixed,
@@ -1038,19 +987,19 @@ void FieldScene_RunActorEighteenEffectSequence(void)
     Engine_ActorSetAttachedEffect(18, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
-    FieldScene_RunScene39f_02000d90(18, 712, 568, 0x60000);       /* 142 << 2 */
+    MogoruMori_HopActorTo(18, 712, 568, 0x60000);       /* 142 << 2 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(10);
 
-    FieldScene_RunScene39f_02000d90(18, 712, 600, 0x30000);       /* 150 << 2, 192 << 10 */
+    MogoruMori_HopActorTo(18, 712, 600, 0x30000);       /* 150 << 2, 192 << 10 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(18, 736, 640, 0x30000);       /* X += 24, 160 << 2 */
+    MogoruMori_HopActorTo(18, 736, 640, 0x30000);       /* X += 24, 160 << 2 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
 
-    FieldScene_RunScene39f_02000d90(18, 736, 704, 0x30000);       /* 176 << 2 */
+    MogoruMori_HopActorTo(18, 736, 704, 0x30000);       /* 176 << 2 */
     Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
 
@@ -1059,11 +1008,10 @@ void FieldScene_RunActorEighteenEffectSequence(void)
     Battle_WaitMode0(30);
     Engine_GameFlagSet(0x30b);
 
-    /* Common exit; no argument registers are set. */
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene39f_020021b0(void)
+void MogoruMori_RunActorEighteenEscape(void)
 {
     struct FieldActor *rec7;
 
@@ -1071,20 +1019,20 @@ void FieldScene_RunScene39f_020021b0(void)
     Engine_EventBegin();
     Actor_SetPosition(18, 0x880000, 0x1680000);
     FieldScene_RunSixCallSetupSequence(18, 1);
-    FieldScene_RunScene39f_02000d90(18, 136, 0x198, 0x80000);
+    MogoruMori_HopActorTo(18, 136, 0x198, 0x80000);
     Battle_WaitMode0(10);
     Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + 0x40000), 0, 0, 0, 1, 0);
     Actor_FaceDirection(18, 0xc000, 40);
     Actor_SetAttachedEffect(18, 0x102);
     Engine_ActorRunRepeatedMotion(18, 2);
     Engine_CameraFollowActor(18, 1);
-    FieldScene_RunScene39f_02000d90(18, 136, 0x1b8, 0x60000);
+    MogoruMori_HopActorTo(18, 136, 0x1b8, 0x60000);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(10);
-    FieldScene_RunScene39f_02000d90(18, 136, 0x1d8, 0x30000);
+    MogoruMori_HopActorTo(18, 136, 0x1d8, 0x30000);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
-    FieldScene_RunScene39f_02000d90(18, 136, 0x1f8, 0x30000);
+    MogoruMori_HopActorTo(18, 136, 0x1f8, 0x30000);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
@@ -1130,13 +1078,12 @@ void MogoruMori_RunClosingChoreography(void)
     actor->scale_x = 0x13333;
     actor->scale_y = 0x13333;
     Engine_ActorSetChildValue(18, 5);
-    FieldScene_RunScene39f_02000d90(18, 136, 0x188, 0xf0000);
+    MogoruMori_HopActorTo(18, 136, 0x188, 0xf0000);
     Battle_WaitMode0(15);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
     for (i = 0; i <= 16; i++) {
         v = &dir;
-        /* FAKEMATCH: zero is set inside the loop (always entered) so it is
-         * materialized with the counter. */
+        /* FAKEMATCH: zero is set inside the loop (always entered) so it is materialized with the counter. */
         zero = 0;
         v->x = Engine_MathCos(i << 12);
         v->y = zero;
@@ -1156,11 +1103,10 @@ void MogoruMori_RunClosingChoreography(void)
     {
         s32 px = Object_GetById(0)->x.part.pixel;
 
-        FieldScene_RunScene39f_02000d90(18, px, Object_GetById(0)->z.part.pixel - 16, 0x80000);
+        MogoruMori_HopActorTo(18, px, Object_GetById(0)->z.part.pixel - 16, 0x80000);
     }
     Battle_WaitMode0(10);
-    /* FAKEMATCH: an empty do-while here moves px into r1 after the
-     * other arguments of the call above. */
+    /* FAKEMATCH: an empty do-while here moves px into r1 after the other arguments of the call above. */
     do { } while (0);
     gGameState.battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
@@ -1220,7 +1166,7 @@ s32 FieldScene_RunSceneEntryHook(void)
                 Call3(Engine_ActorShowEmote, 10, 256, 0);
                 Engine_ActorRunRepeatedMotion(10, 2);
                 Battle_WaitMode0(30);
-                FieldScene_RunScene39f_02000d90(10, 136, 116, 0x70000);
+                MogoruMori_HopActorTo(10, 136, 116, 0x70000);
                 MogoruMori_SpawnPuffRing(10);
                 Engine_ActorSetChildValue(10, 15);
                 Engine_ActorSetSpriteFlags(Object_GetById(10), 0);

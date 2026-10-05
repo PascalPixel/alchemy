@@ -261,9 +261,7 @@ void FieldScene_SetupStagedActors(void)
     Engine_EventEnd();
 }
 
-/* Staged scene for actors 8, 5, 1 and 0. The shared work pointer is fetched
- * again at the tail after the intervening calls. Runtime veneer bindings
- * belong to this module's translation-unit declaration. */
+/* Run the scene for actors 8, 5, 1 and 0. */
 void FieldScene_RunStagedActorScene(void)
 {
     struct EventWork *work;
@@ -803,7 +801,7 @@ void ConfigureSceneAndCheckActors(void)
 
 void ConfigureAlternateSceneAndCheckActors(void)
 {
-    ConfigureScene_02003a30(2, 23068672, 7340032, 0);
+    SoruSekizo_ConfigureAlternateCell(2, 23068672, 7340032, 0);
     if (SceneActor_IsActorAtTile(12, 21, 7) != 0) {
         Scene_ShineRightBeam();
     }
@@ -977,13 +975,7 @@ void FieldScene_ApplyRect10_14_7_13_7(void)
     Scene_ShineLeftBeam();
 }
 
-/*
- * Fetches scene record 10 and, when it exists, hands a coarse coordinate
- * derived from it to a five-argument routine, which receives both the
- * coordinate and the coordinate plus one; the fifth argument travels on the
- * stack. The `>> 20` reduction to a cell index is by analogy with the rest of
- * the tree and is not verified, and the repeated 13 is as written.
- */
+/* Move actor 10 and the leader between adjacent rows in column 13 when actor 10 is present. */
 void SceneActor_UseActorTenCellAndNext(void)
 {
     struct FieldActor *record = Object_GetById(10);

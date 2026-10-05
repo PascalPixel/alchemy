@@ -15,7 +15,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/PROBED_COLUMN_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/ACTOR_NINE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/LOWERED_ACTOR_SCENE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/DOU2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3a6_overlay.o"(.rodata.x02009da0)

@@ -24,15 +24,8 @@ extern const s32 BabiFune_DriftScript[];
 extern s32 BabiFune_CountTicks;
 extern s32 BabiFune_Count;
 
-/*
- * Overlay resource_3ca. Exported getter for an in-image table, published
- * from the overlay header.
- */
+/* The overlay header exposes a scene table getter. */
 
-/*
- * The eight-byte owner at 0x02000030 includes its one pool word, which holds
- * the returned address; the table is returned without being dereferenced.
- */
 u8 *SceneData_GetTable96c8(void)
 {
     return BabiFune_SceneTableA;
@@ -47,12 +40,7 @@ s32 BabiFune_GetDefaultResult(void)
     return 0;
 }
 
-/*
- * Overlay resource_3ca. Exported getters for in-image tables, published
- * from the overlay header. Each eight-byte owner includes its one pool word,
- * which holds the returned address; the table is returned without being
- * dereferenced.
- */
+/* The overlay header exposes getters for the scene tables. */
 u8 *SceneData_GetTable9710(void)
 {
     return BabiFune_SceneTableB;
@@ -196,8 +184,7 @@ void BabiFune_UpdateWaves(void)
         {
             u32 value = blend;
 
-            /* FAKEMATCH: outside a one-pass block the register's address is
-               formed before the halfword is read back. */
+            /* FAKEMATCH: outside a one-pass block the register's address is formed before the halfword is read back. */
             do {
                 REG_BLDALPHA = value;
             } while (0);

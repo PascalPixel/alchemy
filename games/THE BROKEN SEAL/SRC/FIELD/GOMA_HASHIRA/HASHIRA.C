@@ -19,7 +19,6 @@ extern u8 GomaHashira_Scripts[];
 extern u8 GomaHashira_Messages[];
 extern u8 GomaHashira_Actors[];
 
-/* Imports this overlay shares with the staged-actor module, by its names. */
 void BattleFx_SetPhaseRequest(s32, s32);
 void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPillarSequence(void);

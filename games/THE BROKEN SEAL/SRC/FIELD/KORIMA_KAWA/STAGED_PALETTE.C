@@ -36,10 +36,6 @@ void KorimaPalette_Capture(void);
 void KorimaPalette_SaveSecond(void);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 
-/*
- * Six-argument draw wrapper.  Inlining it here preserves the reference's
- * r2-before-r3 stacked-literal order at the call site.
- */
 
 void SceneEffect_AdjustPaletteColors(s32 a);
 
@@ -72,12 +68,7 @@ u8 *MapStagedScene_SelectSecondaryData(void) { return Data_02009028; }
 
 u8 *MapStagedScene_SelectTertiaryData(void) { return Data_02009038; }
 
-/*
- * Placement query followed by the tile-(10,12) scene transition.  The
- * six-word result is one aggregate and its two-word tail is forwarded by
- * value.  Keeping `zero' live across the draw is load-bearing: it lets the
- * dead result pointer be reused for the following stack slot.
- */
+/* Run actor 10's scene transition when its placement reaches column 12. */
 
 void FieldScene_RunActorTenPlacementScene(void)
 {
@@ -229,7 +220,7 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     green = (s16)(green - Math_DivideSigned(green, adj));
     blue = (s16)(blue - Math_DivideSigned(blue, adj));
 
-    /* Only the increasing channel is explicitly saturated by this owner. */
+    /* Only the increasing colour channel is saturated. */
     if (red > 31)
         red = 31;
 

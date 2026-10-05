@@ -56,14 +56,7 @@ struct Object {
     s16 mode;
 };
 
-/*
- * Prepare the scene service selected by index zero, set its halfword at +6,
- * and run the four follow-up services in the order present in the overlay.
- *
- * This owner starts at the saved-link prologue at 0x02001990 and returns at
- * 0x020019b8.  The next saved-link prologue is at 0x020019bc, so the two zero
- * bytes between them are alignment and are deliberately outside this source.
- */
+/* Prepare scene service zero, set its halfword field and run the four follow-up services. */
 struct SceneService_02001990 {
     u16 unknown00[3];
     u16 value06;
@@ -95,18 +88,7 @@ typedef struct {
     s16 unk66;
 } T_0200154c;
 
-/*
- * resource_399 owner at 0x02001704, 72 bytes.
- *
- * Resets one actor: clears the state byte at +85 and the halfword at +100,
- * drops bit 0 of the flag byte at +35, sets the two-bit mode field of the
- * linked record to 1, and re-centres the two 20.12 offsets on half a unit.
- *
- * The mode write is a bitfield assignment, not mask arithmetic. Spelling it
- * `(f9 & ~12) | 4` lets the compiler narrow the mask to a byte and emit
- * `movs r3,#243`; the reference builds -13 as `movs r3,#13 / negs r3,r3`,
- * which is what the bitfield path produces.
- */
+/* Reset the actor's state, shown value and low flag bit, set its linked record's mode to 1 and centre both offsets on half a unit. */
 struct Rec_399 {
     u8 pad00[9];
     u8 lo : 2;
@@ -219,31 +201,23 @@ s32 GetMapCellCollision();
 void Engine_ObjectSetPosition();
 void Engine_ObjectCommitPosition();
 
-/* Veneers with no unambiguous reference site name over this owner. */
-
-/* Byte offset of the flag byte on an actor record; bit 0 is cleared for
- * actors 0, 1 and 2 and set again after they are repositioned. */
-
 /* Halfword at offset 100 of an actor record: the scene waits until it
  * becomes non-zero. */
 
-/* Scripted dialogue step for resource_399.  The imports name loader-relocated
- * call words and stay old-style because their arity varies between sites. */
+/* Scripted dialogue step. */
 
+/* The per-frame callback installed on the actor. */
+
+/* Byte offset of the flag byte on an actor record; bit 0 is cleared for
+ * actors 0, 1 and 2 and set again after they are repositioned. */
 /* Byte offset of a flags field on the actor 8 record touched below; bit 1
  * of that byte is toggled at the end of the third branch. */
-
 /* Byte offset of a flags field on the actor records touched below; bit 0
  * of that byte is cleared and later set back for actors 20 (twice). */
 /* ImiruMura_SwayHeadings is this overlay's heading table.  Data_02000240 is a resident
  * table; its word at byte offset 500 selects the subject. */
 
-/* The per-frame callback installed on the subject, named by its address. */
-
-/* Imports named by their relocated call words.  Old-style declarations are
- * mandatory: one of these imports is reached with two arguments here while its
- * other sites pass three or four. */
-static __inline__ void AdvanceProbe_02001fa4(s32 heading, s32 *probe)
+static __inline__ void ImiruMura_AdvanceProbe(s32 heading, s32 *probe)
 {
     /* FAKEMATCH: a direct call reuses r5 after the shift; this boundary rebuilds sp+8 before completing 0x100000. */
     Vector_AddPolarOffset((s32)0x100000, heading, probe);
@@ -264,13 +238,13 @@ void SceneDialogue_RunActor12Line(void);
 void SceneDialogue_RunActor18Line(void);
 void SceneDialogue_RunActor20BranchScene(void);
 void SceneDialogue_RunActor20FlaggedLine(void);
-void FieldScene_RunScene399_020005dc(void);
+void ImiruMura_TalkAboutLighthouse(void);
 void SceneDialogue_RunActorEightBranchedDialogue(void);
 void FieldScene_RunSingleStep(void);
 void SceneDialogue_ShowLine156E(void);
 void SceneDialogue_ShowLine1573Or155A(void);
-void FieldScene_RunScene399_02000a3c(void);
-void FieldScene_RunScene399_02000abc(void);
+void ImiruMura_OpenInn(void);
+void ImiruMura_OpenSanctum(void);
 void FieldScene_RunPrimaryScriptChoreography(void);
 void SceneActor_UpdateCountdownArcPosition(T_0200154c *o);
 void ActorPresentation_ApplyTableA5ecToActorNine(void);

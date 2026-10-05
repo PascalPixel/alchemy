@@ -66,7 +66,7 @@ void ObjectDispatch_ApplyValueToChildren();
  * is load-bearing for byte-identity and must not become struct field access.
  */
 
-void FieldScene_RunScene3b4_02000fdc(s32 a0);
+void TakaraAshiba_OpenPlatformPassage(s32 a0);
 
 s32 *Object_GetById(s32 slot);
 s32 Engine_TestTriggerFlag(s32 flag);

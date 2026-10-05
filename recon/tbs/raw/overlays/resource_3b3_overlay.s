@@ -653,7 +653,7 @@ gTakaraHashiraEvents4:
 	.4byte 0x00000002
 	.4byte 0x00000202
 	.4byte 0xffff001e
-	.4byte FieldScene_RunScene3b3_02001fd4
+	.4byte TakaraHashira_PushPillar
 	.4byte 0x0000c602
 	.4byte 0xffff001f
 	.4byte FieldScene_RunSingleStep
@@ -662,7 +662,7 @@ gTakaraHashiraEvents4:
 	.4byte TakaraHashira_RunStagedCellScene
 	.4byte 0x00000202
 	.4byte 0xffff001f
-	.4byte FieldScene_RunScene3b3_02001fd4
+	.4byte TakaraHashira_PushPillar
 	.4byte 0x00000002
 	.4byte 0xffff0028
 	.4byte SceneState_LinkActorZeroToWork24
@@ -745,7 +745,7 @@ gTakaraHashiraEvents5:
 	.4byte FieldScene_RunActor12Step
 	.4byte 0x10001815
 	.4byte 0x0202000d
-	.4byte FieldScene_RunScene3b3_0200215c
+	.4byte TakaraHashira_CheckLeaderOnPillar
 	.4byte 0x50001815
 	.4byte 0x0202000d
 	.4byte TakaraHashira_RaiseActorFourteen

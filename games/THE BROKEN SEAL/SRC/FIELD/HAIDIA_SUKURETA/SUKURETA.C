@@ -740,8 +740,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
     s16 *room;
 
     {
-        /* FAKEMATCH: indexing through a variable keeps the game state base in a
-         * register and adds the entrance offset, as the reference does. */
+        /* FAKEMATCH: indexing through a variable keeps the game state base in a register and adds the entrance offset, as the reference does. */
         s32 k = 225;
 
         room = (s16 *)&gGameState + k;
@@ -772,7 +771,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         record = Object_GetById(11);
         {
             s32 shown = 12;
-        
+
             record->radius = shown;
         }
         Engine_ActorEnableActionCallback(11, Sukureta_Actor11Actions);

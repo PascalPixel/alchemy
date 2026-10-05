@@ -45,7 +45,6 @@ struct FieldGlobals {
     struct EventWork *event;
 };
 
-
 void QueueSceneSound(s32 cue);
 
 /* QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C) written out in place, with
@@ -208,10 +207,9 @@ void FieldScene_RunActor11Step(void) { FieldScene_RunMiddleAuxiliarySequence(11)
 
 void FieldScene_RunActor12Step(void) { FieldScene_RunMiddleAuxiliarySequence(12); }
 
-/* FAKEMATCH: a one-pass IME wrapper and a signed queue limit preserve the
- * queued write order, as in VISIT_BLEND.C. */
 void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 {
+    /* FAKEMATCH: a one-pass IME wrapper and a signed queue limit preserve the queued write order. */
     s32 i;
     s32 next_frame;
     volatile u16 *ime;
@@ -565,8 +563,7 @@ s32 FieldScene_RunOpeningAuxiliarySequence(void)
         Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
         /* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
         Value6(Engine_MapCopyCellAttributes, 11, 71, 1, 1, 12, 71);
-        /* FAKEMATCH: an empty scheduling barrier after the third cell copy
-         * gives the game's argument order r1, r2, r3, r0. */
+        /* FAKEMATCH: an empty scheduling barrier after the third cell copy gives the game's argument order r1, r2, r3, r0. */
         do {
         } while (0);
         record = Engine_TaskRemoveCallback(EncounterPalette_Pulse);
@@ -635,15 +632,10 @@ s32 SuharaSabaku_RunSceneScript(void)
     return 0;
 }
 
-/* Raises flags 0x206-0x20a for each of flags 0x301-0x305 already set,
- * resets the scale of actors 8 to 12 unless flag 0x109 is set, then queues
- * the blend setup: full fade-in weights when flag 0x340 is set.
- *
- * FAKEMATCH: the queue bound is a variable, so the comparison stays signed
- * on the u16 count as the ROM's bgt has it, and the queue writes keep the
- * one-pass loops of QueueIoWriteDelay2. */
+/* Raises flags 0x206-0x20a for each of flags 0x301-0x305 already set, resets the scale of actors 8 to 12 unless flag 0x109 is set, then queues the blend setup: full fade-in weights when flag 0x340 is set. */
 void SuharaSabaku_ApplyVisitFlagBlend(void)
 {
+    /* FAKEMATCH: the queue bound is a variable, so the comparison stays signed on the u16 count as the ROM's bgt has it, and the queue writes keep the one-pass loops of QueueIoWriteDelay2. */
     volatile u16 *ime;
     struct IoWriteQueue *q;
     u32 saved;
@@ -686,16 +678,10 @@ void SuharaSabaku_ApplyVisitFlagBlend(void)
     QUEUE_IO_WRITE(0x04000052, ((16 - alpha) << 8) | alpha);
 }
 
-/* Raises flags 0x206-0x208 for each of flags 0x311-0x313 already set and
- * 0x9b7 for 0x315, resets the scale of actors 8 to 10 unless flag 0x109 is
- * set, shows actor 11's second part, then queues the blend setup as
- * SuharaSabaku_ApplyVisitFlagBlend does.
- *
- * FAKEMATCH: the queue bound is a variable, so the comparison stays signed
- * on the u16 count as the ROM's bgt has it, and the queue writes keep the
- * one-pass loops of QueueIoWriteDelay2. */
+/* Raises flags 0x206-0x208 for each of flags 0x311-0x313 already set and 0x9b7 for 0x315, resets the scale of actors 8 to 10 unless flag 0x109 is set, shows actor 11's second part, then queues the blend setup as SuharaSabaku_ApplyVisitFlagBlend does. */
 void SuharaSabaku_ApplyAltarFlagBlend(void)
 {
+    /* FAKEMATCH: the queue bound is a variable, so the comparison stays signed on the u16 count as the ROM's bgt has it, and the queue writes keep the one-pass loops of QueueIoWriteDelay2. */
     volatile u16 *ime;
     struct IoWriteQueue *q;
     u32 saved;

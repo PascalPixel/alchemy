@@ -599,10 +599,10 @@ KuupuappuMura_ActorsFlag855:
 KuupuappuMura_Extras:
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte FieldScene_RunScene382_020004a0
+	.4byte KuupuappuMura_SayFarewellToIvan
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte FieldScene_RunScene382_020004a0
+	.4byte KuupuappuMura_SayFarewellToIvan
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte SceneState_Apply200ThenPlace55_26
@@ -736,10 +736,10 @@ KuupuappuMura_Extras:
 KuupuappuMura_ExtrasFlag855:
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte FieldScene_RunScene382_020004a0
+	.4byte KuupuappuMura_SayFarewellToIvan
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte FieldScene_RunScene382_020004a0
+	.4byte KuupuappuMura_SayFarewellToIvan
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte SceneState_Apply200ThenPlace55_26

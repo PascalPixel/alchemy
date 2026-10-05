@@ -156,11 +156,7 @@ void ColossoLogRollingStage_WaitForSceneTask(void)
 {
     s32 polls;
 
-    /* 素直な while ループ。goto 版では初回の読みがテストへ沈む。
-     * A plain while loop. The goto-scaffolded version let gcc sink the first
-     * read of gColossoSceneTaskStatus into the test block, where the reference loads it
-     * before the loop. And the frame count is a literal ten: the reference
-     * emits `movs r0, #10`, which a Value_ symbol cannot produce. */
+    /* 素直な while ループ。goto 版では初回の読みがテストへ沈む。 */
     Engine_TaskWait(10);
 
     polls = 0;
@@ -690,8 +686,7 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
         Engine_EventSetMessage(lines + msg);
         Engine_EventOpenMessage(a0, 0);
         if (Engine_EventChooseYesNo(owner, 0) == 0) {
-            /* FAKEMATCH: each answer's line goes through its own local, here
-             * and below, which keeps the reference's addition order. */
+            /* FAKEMATCH: each answer's line goes through its own local, here and below, which keeps the reference's addition order. */
             s32 yes = msg + 1;
             Engine_EventSetMessage(lines + yes);
             Engine_EventShowMessage(a0, 0);
@@ -720,8 +715,7 @@ void KorosseoMaruta_RunStageStart(void)
     s32 i;
     s32 last;
 
-    /* FAKEMATCH: the last place is set at the top as a forced temporary, so
-     * the weight stays 4 - place + 1 instead of folding to 5 - place. */
+    /* FAKEMATCH: the last place is set at the top as a forced temporary, so the weight stays 4 - place + 1 instead of folding to 5 - place. */
     last = 4;
     ColossoLogRollingStage_NoopSceneHook();
     Engine_EventBegin();
@@ -748,8 +742,7 @@ void KorosseoMaruta_RunStageStart(void)
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
     BattleFx_SetWeightedResult(72, last - place + 1);
-    /* FAKEMATCH: the do/while keeps the stage flag store ahead of the
-     * scene load that follows it. */
+    /* FAKEMATCH: the do/while keeps the stage flag store ahead of the scene load that follows it. */
     do {
         gGameState.battle_start = 3;
     } while (0);
@@ -873,8 +866,7 @@ s32 StageSetup_BuildAndDispatch(void)
         s32 underfoot;
         s32 row;
 
-        /* FAKEMATCH: the loop's constants live in locals so they stay in r8-sl
-         * across the calls, as native keeps them; written inline they do not. */
+        /* FAKEMATCH: the loop's constants live in locals so they stay in r8-sl across the calls, as native keeps them; written inline they do not. */
         i = 18;
         still = 0;
         underfoot = ACTOR_PRIORITY_UNDERFOOT;
@@ -953,8 +945,7 @@ s32 StageSetup_BuildAndDispatch(void)
 
     switch (gGameState.entrance) {
     case 1:
-        /* FAKEMATCH: called as returning s32 it sets r0 before the constants, as
-         * native does; the void call sets it after them. */
+        /* FAKEMATCH: called as returning s32 it sets r0 before the constants, as native does; the void call sets it after them. */
         ((s32 (*)())ColossoLogRollingStage_SetupSceneDescriptor)(0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
         Call6(Engine_MapCopyCellsTo, 127, 0, 1, 2, 5, 2);
         Engine_ActorDestroy(32);

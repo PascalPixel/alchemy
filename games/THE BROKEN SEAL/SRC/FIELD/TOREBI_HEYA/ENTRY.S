@@ -12,4 +12,4 @@
 	overlay_veneer SceneData_GetTable8dac
 	overlay_veneer SceneData_SelectTable8e00ByFlag
 	overlay_veneer SceneData_SelectTable9310ByFlags
-	overlay_veneer Func_02000038
+	overlay_veneer TorebiHeya_GetDefaultResult

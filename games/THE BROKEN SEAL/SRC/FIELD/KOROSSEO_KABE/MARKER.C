@@ -59,13 +59,7 @@ void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z)
     }
 }
 
-/*
-* Spawn an object and run a short fixed setup sequence on it.  `no' is
- * forwarded unchanged -- it is never freshly loaded before the first call.
- * The object's fields (0x30 and 0x34 taking the fixed 0x14000/0xa000 pair,
- * 0x5b cleared, 0xc read back for the position call) are named by position
- * from call shape alone and are not verified.
- */
+/* Spawn an object and run its fixed setup sequence. */
 void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
 {
     struct FieldActor *obj = Engine_ActorLookup(no);

@@ -100,7 +100,7 @@ extern u8 HaidiaArashi_ActorNineteenScript[];
 
 extern u8 HaidiaArashi_ActorEightScript[];
 
-/* The import veneer the actors' sprite priority goes through. */
+/* Set actor sprite priority. */
 void ObjectMotion_SetActionVariant(s32 actor, s32 priority);
 
 extern s32 HaidiaArashi_ShakeDone;
@@ -142,8 +142,6 @@ void Object_RefreshSelectorById();
 
 void Object_SetActionCallbackAndRefreshById();
 
-
-
 void Map_SetLayerEntryFlag();
 
 void Map_ClearLayerEntryFlag();
@@ -170,13 +168,13 @@ void SceneState_ApplyValues123And3(void);
 void SceneState_SetValue123Mode4(void);
 void FieldScene_RunStep7BAndCheckFlags841And842(void);
 void FieldScene_SetupDescriptorD78a(void);
-void FieldScene_RunScene372_02000278(void);
+void HaidiaArashi_OpenGateRoute(void);
 void FieldScene_SetupDescriptorD78aIfFlag205Clear(void);
 void FieldScene_SetupWithDescriptorD7A0(void);
 void FieldScene_SetupDescriptorD7b6(void);
-void FieldScene_RunScene372_02000398(void);
-void FieldScene_RunScene372_020003cc(void);
-void FieldScene_RunScene372_02000400(void);
+void HaidiaArashi_OpenRouteTen(void);
+void HaidiaArashi_OpenRouteTwelve(void);
+void HaidiaArashi_OpenRouteThirteen(void);
 s32 FieldScene_RunFlagGatedActorSetup(void);
 void Scene_DoraSendsRobinToThePlaza(void);
 void HaidiaArashi_SetStormCellAttributes(void);
@@ -194,7 +192,7 @@ void ActorPresentation_SetFourActorsModeByBit(void);
 void SceneDialogue_RunActorTenFlag30dDialogue(void);
 void HaidiaArashi_FlashLightning(void);
 void ActorPresentation_SelectActorTwentySevenState(void);
-void FieldScene_RunScene372_02003e48(void);
+void HaidiaArashi_TryToFreeActorEight(void);
 void FieldScene_ConfigureActorTwentyTwoScene(void);
 void FieldScene_BuildPlacementGrid(void);
 void SceneState_SetWords1c0And1c8AndRun(void);

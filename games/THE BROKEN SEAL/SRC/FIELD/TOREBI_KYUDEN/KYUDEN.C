@@ -62,7 +62,6 @@ struct OwnerState {
     u16 pp;
 };
 
-
 /* Restore the whole party: every owner's HP and PP to their maximums, and
  * the three companions back into the active party. */
 static __inline__ void Party_RestoreAll(void)
@@ -195,7 +194,7 @@ void RunOpeningAuxiliarySequence(s32 a)
     Event_End();
 }
 
-void FieldScene_RunScene3b8_02000264(s32 a0)
+void TorebiKyuden_OfferRest(s32 a0)
 {
     u32 i;
     s32 record;
@@ -289,7 +288,7 @@ void RunMiddleAuxiliarySequence(s32 a)
     Event_End();
 }
 
-void FieldScene_RunScene3b8_0200049c(s32 unused0, s32 a1)
+void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
 {
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiEvenIfEscapedBabiPalace);
@@ -2129,7 +2128,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_End();
 }
 
-void FieldScene_RunScene3b8_02003d40(void)
+void TorebiKyuden_LeaveThroughDoor(void)
 {
     struct EventWork *work;
 
@@ -2281,7 +2280,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gTorebiKyudenEventsOther;
 }
 
-/* The palace's scene start, entry veneer 0. */
+/* Start the palace scene. */
 
 /* Babi's Palace entry: record the entrance flags, then outside the second scene restore the lighthouse-item scene and the guards, set the entrance selector and, arriving by entrance 99 or 98, restore the party and run its scene. */
 s32 TorebiKyuden_ApplyEntryState(void)

@@ -293,6 +293,7 @@ void SetStatueLightGroup4(void)
     }
 }
 
+/* Before flag 0x809 is set, move actors 0, 1, 5 and 16, choose the closing dialogue, restore their walks and set flags 0x144 and 0x809. */
 void FieldScene_RunScene37aSequenceF(void)
 {
     struct FieldActor *rec;
@@ -554,8 +555,7 @@ void UpdateStatueTrapActor(void)
     if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
         Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
     } else {
-        /* FAKEMATCH: the reference tests the entered flag here and drops
-         * the result; no use of it is recovered. */
+        /* FAKEMATCH: the entered-flag test is retained even though its result is unused. */
         GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);
     }
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
@@ -1096,11 +1096,7 @@ void FieldScene_RunActorPositionTransition(void)
     Engine_GameFlagSet(0x811);
 }
 
-/*
- * Exact 2026-09-23 (1,120 bytes), with two tagged fake matches for the
- * zero stores of the two presentations. Both rise-and-shrink loops of each
- * actor share one counter.
- */
+/* Each actor's rise-and-shrink loops share one counter. */
 void FieldScene_RunSanctumRiseAndShrink(void)
 {
     u32 i;
@@ -1413,6 +1409,7 @@ s32 CheckAllStatueLights(void)
     return all_set;
 }
 
+/* Show the requested message, then wait for the requested number of frames. */
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
 {
     Engine_EventShowMessage(actor_step, 0);

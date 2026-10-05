@@ -881,7 +881,7 @@ HaidiaArashi_SceneTable3:
 	.4byte FieldScene_SetupDescriptorD78a
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte FieldScene_RunScene372_02000278
+	.4byte HaidiaArashi_OpenGateRoute
 	.4byte 0x0000c602
 	.4byte 0xffff0008
 	.4byte FieldScene_SetupDescriptorD78aIfFlag205Clear
@@ -893,13 +893,13 @@ HaidiaArashi_SceneTable3:
 	.4byte FieldScene_SetupDescriptorD7b6
 	.4byte 0x0000c602
 	.4byte 0xffff000b
-	.4byte FieldScene_RunScene372_02000398
+	.4byte HaidiaArashi_OpenRouteTen
 	.4byte 0x0000c602
 	.4byte 0xffff000c
-	.4byte FieldScene_RunScene372_020003cc
+	.4byte HaidiaArashi_OpenRouteTwelve
 	.4byte 0x0000c602
 	.4byte 0xffff000d
-	.4byte FieldScene_RunScene372_02000400
+	.4byte HaidiaArashi_OpenRouteThirteen
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte FieldScene_RunScene372SequenceC
@@ -920,7 +920,7 @@ HaidiaArashi_SceneTable3:
 	.4byte MsgHaidiaMomDadGarsiaPleaseDontLeave
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte FieldScene_RunScene372_02003e48
+	.4byte HaidiaArashi_TryToFreeActorEight
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte MsgHaidiaRockCannotBeMoved

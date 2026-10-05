@@ -45,7 +45,6 @@ void FieldScene_SetActor13Value41(void)
     BattleFx_SetPhaseRequest(13, 0x41);
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3bd. */
 u8 *SceneData_GetTablebf70(void)
 {
     return ArutamiraDou_SceneTableA;
@@ -83,8 +82,7 @@ void ArutamiraDou_ApplyFadeBlend(void)
 {
     s8 level = ((s8 *)gSceneState)[4];
 
-    /* FAKEMATCH: the do-while wrap keeps the level's sign extension after
-     * the BLDCNT store. */
+    /* FAKEMATCH: the do-while wrap keeps the level's sign extension after the BLDCNT store. */
     do {
         s32 blend = 0x3f42;
 
@@ -217,9 +215,7 @@ void SceneEffect_SetupBlendByFlag201(void)
 /* Restore the room's blend setting and the five actors' child poses. */
 void ArutamiraDou_ApplyRoomVisuals(void)
 {
-    /* FAKEMATCH: the volatile view keeps two distinct scene reads; this
-     * initialized narrow record keeps the snapshot unsigned until its later
-     * signed comparison, without an extra halfword-to-word register copy. */
+    /* FAKEMATCH: the volatile view keeps two distinct scene reads; this initialized narrow record keeps the snapshot unsigned until its later signed comparison, without an extra halfword-to-word register copy. */
     struct { u32 value : 16; } map = { 0 };
 
     map.value = gGameStateRows.snapshot[224][0];
@@ -304,7 +300,6 @@ void FieldScene_RunTwoCallSequence(void)
     ArutamiraDou_SettleActorOnCell();
 }
 
-/* Contiguous unnamed state-owner run for resource_3bd. */
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
     u8 *obj = *(u8 **)gEffectWork;
@@ -416,7 +411,6 @@ void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
     obj->z.fixed = k3;
 }
 
-/* Contiguous unnamed state-owner run for resource_3bd. */
 void SceneActor_PlaceFiveActorsInRow(u8 *p)
 {
     s32 i = 0;
@@ -428,14 +422,10 @@ void SceneActor_PlaceFiveActorsInRow(u8 *p)
     } while (i <= 4);
 }
 
-/* Five actors turn in a ring: the wheel speeds up, runs, slows, and stops
-   when the actor the scene state's third byte chooses comes round; that
-   actor then pulses. A cue plays at every 0x3000 of travel.
-   FAKEMATCH: forced temporaries; the block-local zero and state, the
-   reloaded work pointers and the stored-sum temporaries keep the game's
-   register and pool order, which the plain statements do not. */
+/* Five actors turn in a ring: the wheel speeds up, runs, slows, and stops when the actor the scene state's third byte chooses comes round; that actor then pulses. A cue plays at every 0x3000 of travel. */
 void ArutamiraDou_SpinActorWheel(void)
 {
+    /* FAKEMATCH: forced temporaries; the block-local zero and state, the reloaded work pointers and the stored-sum temporaries keep the game's register and pool order, which the plain statements do not. */
     u16 *p = ArutamiraDou_ClearTarget;
     s32 flag = 1;
     s32 state = *(s16 *)p;

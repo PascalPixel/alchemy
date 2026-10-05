@@ -4,8 +4,6 @@
 
 #include "MAPCOPY.H"
 
-/* The forest links the staged-actor code, so its scenes reach the engine by
-   the names that code gives the imports. */
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -59,8 +57,6 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-/* Main-image code the import veneers reach, under the names the staged-actor
- * module gives those veneers in this overlay. */
 void WaitFrames(s32 frames);
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -75,39 +71,10 @@ void MogoruMori_SpawnPuffRing(s32 id);
 /* The scene table in the overlay's data. */
 extern u8 MogoruMori_SceneTable[];
 
-/*
- * Distance between two three-component 16.16 fixed-point positions.
- *
- * Each argument walks three consecutive 16.16 words in x, y, z order. The
- * per-axis deltas are taken in fixed point, shifted down to integers, squared,
- * and summed; the total is passed to the resident IWRAM integer square root.
- *
- * Expressions are preserved exactly as reconstructed: the walking-pointer form
- * is load-bearing for byte-identity and must not become struct field access.
- */
-
 /* Copy the low two mode bits into the object's owner record. */
-
-/* 0x02003fb6 serves the two-argument presentation select and, twice later,
- * one-argument imports; the `_b` alias carries the two-argument one. */
-
-/* An EWRAM global, not overlay data: the module is linked above this address,
- * so it cannot be in-image. */
 
 /* Returns a slot record.  Its fields are named by position and not verified:
  * +8/+12/+16 read as the position and +10/+18 as signed halfwords. */
-
-/* Four register arguments plus four stack words. */
-
-/* 0x02004246 serves two imports: the one-argument post at site 5 and the
- * six-argument message at site 12. */
-
-/* 0x02004d98 serves two imports: the two-argument setter at site 7 and the
- * three-argument one at site 14. */
-
-/* 0x02004f28 serves two imports: the two-argument setter at site 7 and the
- * three-argument step at site 14. */
-
 
 /* The sources call one another across files. */
 void OverlayObject_SetOwnerMode(u8 *object, s32 mode);
@@ -117,7 +84,7 @@ void SceneState_SetValue18Mode2(void);
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg);
 s32 OverlayObject_ApplyField100(s32 a);
 s32 OverlayObject_ApplyZero(s32 a);
-void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3);
+void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3);
 void FieldScene_RunSixCallSetupSequence(s32 no, s32 val);
 
 s32 SceneData_ReturnZero(void);
@@ -133,7 +100,7 @@ void FieldScene_RunStepFD4WithActor181(s32 a);
 void FieldScene_RunProbedActorEightOrTenScene(void);
 void SceneState_ApplyCrossRectsAroundActor11(void);
 void FieldScene_RunActorThirteenPresentationBeat(void);
-void FieldScene_RunScene39f_02001818(void);
+void MogoruMori_TransferActorFourteen(void);
 void SceneActor_RunActorFourteenFourWaypointMotion(void);
 void SceneActor_BobActorZeroWhenTargetClear(void);
 void SceneActor_MarkActorThirteenTileAndPark(void);
@@ -141,9 +108,9 @@ void FieldScene_RunSupplementalSequenceOne(void);
 void FieldScene_RunScene39fSequenceA(void);
 void FieldScene_RunSlot16WaypointSequence(void);
 void FieldScene_RunActor17CameraSequence(void);
-void FieldScene_RunScene39f_02002004(void);
+void MogoruMori_TransferActorEighteen(void);
 void FieldScene_RunActorEighteenEffectSequence(void);
-void FieldScene_RunScene39f_020021b0(void);
+void MogoruMori_RunActorEighteenEscape(void);
 
 s32 UpdateOrbitingSceneObject(s32 *p);
 void InitializeOrbitingEffect(s32 id);

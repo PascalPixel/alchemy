@@ -107,7 +107,7 @@ void KorimaKi_RunMessageScene(void)
     Engine_EventEnd();
 }
 
-void FieldScene_RunScene395_02000158(void)
+void KorimaKi_TalkToToreto(void)
 {
     u32 i;
     s32 record;
@@ -649,8 +649,7 @@ s32 KorimaKi_PrepareActors(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     gGameState.retreat_scene = (s32)&SceneId_KorimaHashi;
     gGameState.retreat_entrance = 4;
-    /* FAKEMATCH: the heights are cleared through a u8 local zero, which the
-     * compiler loads from the pool. */
+    /* FAKEMATCH: the heights are cleared through a u8 local zero, which the compiler loads from the pool. */
     zero = 0;
     if (!Engine_GameFlagIsSet(0x845))
         PaletteScene_AdjustPaletteWindow(3);
@@ -965,11 +964,7 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
     KorimaPalette_Capture(); KorimaPalette_SaveSecond(); Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
-/*
- * Applies the asymmetric RGB555 colour adjustment: red rises, green and blue
- * fall. Control jumps over a mask literal inside the span and rejoins before
- * the common return, so the literal belongs to this owner.
- */
+/* Adjust RGB555 colours by raising red and lowering green and blue. */
 u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
 {
     s16 green = (s16)((color >> 5) & 31);
@@ -984,7 +979,7 @@ u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
     green = (s16)(green - Math_Divide(green, adjustment));
     blue = (s16)(blue - Math_Divide(blue, adjustment));
 
-    /* Only the increasing channel is explicitly saturated by this owner. */
+    /* Only the increasing colour channel is saturated. */
     if (red > 31)
         red = 31;
 

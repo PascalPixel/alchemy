@@ -194,7 +194,6 @@ out:
     return 1;
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3c9. */
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     return gVinasuChojoEntrances;
@@ -495,8 +494,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(10);
     Object_GetById(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
     {
-        /* FAKEMATCH: the facing held in a block temporary keeps the pool where
-         * the reference has it; a plain store moves it (measured 2026-10-04). */
+        /* FAKEMATCH: the facing held in a block temporary keeps the pool where the reference has it; a plain store moves it (measured 2026-10-04). */
         s32 shown = FACING_SOUTH;
 
         leader->y.fixed = -PIXELS(32);
@@ -1013,8 +1011,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_WalkToAndWait(21, 328, 186);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(21, 2);
-    /* The message is a link-time name, loaded from the literal pool after
-       the two preceding calls, as the game loads it. */
+
     message = (s32)MsgVinasuRobinHandedOverShamansRod;
     Engine_MessageShowCentered(message, 1);
     Actor_WalkToAndWait(21, 310, 192);
@@ -1138,20 +1135,13 @@ void Scene_RunActorEntrySequence(void)
     Engine_ActorEnableActionCallback(ACTOR_FIRST_OF_PAIR, SceneAction_EntryPair);
     Engine_ActorEnableActionCallback(21, SceneAction_EntryGroup);
     Object_SetActionCallbackAndRefreshById(6, SceneAction_EntryGroup);
-    /* FAKEMATCH: a plain store is scheduled into the last action call's
-     * argument setup; the one-pass block keeps it after the call. Measured
-     * 2026-10-04. */
+    /* FAKEMATCH: a plain store is scheduled into the last action call's argument setup; the one-pass block keeps it after the call. Measured 2026-10-04. */
     do {
         gGameState.battle_start = 3;
     } while (0);
     {
         s32 actor = (s32)&SceneId_VinasuChojo;
 
-        /*
-         * Through Call2 rather than called directly: the helper's parameter
-         * pseudos fix the order the two argument registers are materialised
-         * in, and direct calls here emit them the other way round.
-         */
         Call2(Party_SetFields1ceAnd1d0, actor, 2);
         Call2(Event_SetPair1d4, actor, 9);
     }
@@ -1174,8 +1164,7 @@ void SceneEffect_UpdateObjectByFrameParity(s32 a)
 
 void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
-    /* FAKEMATCH: the volatile frame-cell view retains three separate reads
-     * of gFrameCount. */
+    /* FAKEMATCH: the volatile frame-cell view retains three separate reads of gFrameCount. */
     volatile u32 *p = (u32 *)&gFrameCount;
 
     if (*p & 1) {
@@ -1250,9 +1239,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;

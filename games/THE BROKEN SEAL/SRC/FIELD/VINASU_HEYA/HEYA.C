@@ -395,20 +395,14 @@ void OverlayObject_WaitUntilIdle(struct BusyObject *obj)
     }
 }
 
-/*
- * Owner at 0x0200096c.  Add the velocity at +68/+72/+76 into the position at
- * +8/+12/+16, decay the X and Z velocities, accumulate the rates at +48/+52
- * into +24/+28, and advance the sprite angle by the record's step.  The Z
- * decay must stay written as a signed divide by 16 -- the negative bias and
- * arithmetic shift are what that division compiles to.
- */
+/* Advance position, decay X and Z velocity, accumulate the two rates and advance the sprite angle; Z decay divides by sixteen toward zero. */
 void Effect_AdvanceMotion(struct Effect_0200096c *effect)
 {
     s32 velocity_z;
     struct Sprite_0200096c *sprite;
     s32 velocity_x;
 
-    /* The block keeps the Z load after the Y store. */
+
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity[0];
@@ -1118,9 +1112,7 @@ void Scene_RunActorLeapSequence(void)
         OverlayObject_SpawnWithMode14(rec7->x.fixed, 0, z, 223);
     }
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    /* FAKEMATCH: the existing map adapter keeps destination setup and
-       zero/state scheduling; the direct Engine call changes nine instruction
-       bytes in this complete localized leap. */
+    /* FAKEMATCH: the existing map adapter keeps destination setup and zero/state scheduling; the direct Engine call changes nine instruction bytes in this complete localized leap. */
     Map_CopyCellAttributes(33, 35, 7, 1, 33, 34);
     *state = 3;
 #else

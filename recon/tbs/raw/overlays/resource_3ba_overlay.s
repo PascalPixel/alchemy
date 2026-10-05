@@ -467,7 +467,7 @@ KorosseoKawa_SceneTableD:
 	.4byte SceneState_ApplyRectAndSend303
 	.4byte 0x00002115
 	.4byte 0x0301000d
-	.4byte FieldScene_RunScene3ba_02000270
+	.4byte KorosseoKawa_RaisePlatformPair
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte RunPartyCountInteraction

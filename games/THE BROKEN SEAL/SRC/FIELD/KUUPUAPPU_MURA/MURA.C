@@ -157,11 +157,7 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
     struct FieldActor *partner;
     struct FieldActor *player;
 
-    /*
-     * Bit 0 of the actor's own flag halfword selects which partner to test.
-     * This must stay two calls rather than one call on a conditional
-     * expression: the conditional form folds to arithmetic on the flag.
-     */
+    /* Bit 0 of the actor's flag halfword selects which partner to test. */
     if ((*flags & 1) != 0) {
         partner = Object_GetById(15);
     } else {
@@ -235,11 +231,7 @@ int OverlayObject_GetObject2Byte280(void)
     return Owner_GetState(2)[280];
 }
 
-/*
- * The flagged path passes the result of its final call back to the caller, so
- * this is spelled as a tail call and the return type is s32. The
- * fall-through path returns nothing.
- */
+/* Return the scene result while its flag is set. */
 s32 OverlayObject_RunObject2WhenFlagged(void)
 {
     BattlePlacement_UpdateTimedEntriesTwentyTimes();
@@ -252,7 +244,7 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-void FieldScene_RunScene382_020004a0(void)
+void KuupuappuMura_SayFarewellToIvan(void)
 {
     struct FieldActor *record;
     struct EventWork *p5;
@@ -494,7 +486,7 @@ void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
     struct SceneActor *actor = Object_GetById(14);
     u16 *flags = &actor->presentation_flags;
     s16 saved = actor->temporary_state;
-    /* tmp keeps the flag result live in a register; do not fold it away. */
+
     s32 tmp;
 
     *flags = (tmp = *flags | 2);

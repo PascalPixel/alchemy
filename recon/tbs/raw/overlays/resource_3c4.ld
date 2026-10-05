@@ -12,7 +12,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/CHIKA.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/CHIKA2.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/PLATFORM.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c4_overlay.o"(.rodata.x0200b1f0)

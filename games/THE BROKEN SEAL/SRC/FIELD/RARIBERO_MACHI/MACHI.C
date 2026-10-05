@@ -206,8 +206,8 @@ void Scene_RunPrimarySequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorSetAnimation(8, 0);
     Engine_ActorSetAnimation(9, 0);
-    Engine_EventOpenScreen(); /* main:0808a360 */
-    Engine_EventWaitForScreen(); /* main:0808a370 */
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     Engine_EventWait(20);
     Call4(Motion_LaunchFromFocusedObject, 22, 8, -16, 0xc000);
     Engine_ActorWaitForMove(22);
@@ -226,7 +226,7 @@ void Scene_RunPrimarySequence(void)
     Engine_EventWait(10);
     Actor_FaceDirection(22, 0x4000, 0);
     Engine_EventWait(30);
-    Event_OpenMessage(22, 0); /* main:0808a178 */
+    Event_OpenMessage(22, 0);
     Engine_EventChooseYesNo(0, 0);
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(8, 2);

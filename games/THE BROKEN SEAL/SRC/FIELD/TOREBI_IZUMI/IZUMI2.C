@@ -156,9 +156,7 @@ void TorebiIzumi_PayToPlay(void)
 }
 
 #if EDITION_INTERNATIONAL
-/* The localized editions' spring game. The Japanese one, with its counter
-   marks beside both numbers, keeps other registers and stays on its
-   listing until its branch is written. */
+/* The spring game in the localized editions. */
 extern u8 MsgTorebiCoins[];
 extern u8 MsgTorebiThrow[];
 extern u8 MsgTorebiToss[];
@@ -320,12 +318,11 @@ play:
             i = 14;
         }
         TorebiIzumi_RevealPrize(Data_02001fd0[i]);
-        /* Without it GCSE PRE reuses the roll loop's state + 1 from r5. */
+
         /* FAKEMATCH: the native recomputes state + 1 into r0 after the call. */
         __asm__("" : "+r"(state));
         {
-            /* Computed first, so sched2 puts its add between mov r0, fp */
-            /* and adds r0, #1; as a pseudo it loses r1 to state + 1. */
+
             /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. */
             register s32 slot asm("r1") = i + 284;
             s8 *w = (s8 *)state + 1;

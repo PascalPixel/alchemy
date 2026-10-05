@@ -404,14 +404,6 @@ void FieldScene_RunSecondaryScript(void)
     }
 }
 
-/*
- * The 148-byte owner includes its eight-word literal pool: those words lie
- * past the return and are read only by the pc-relative loads.
- * Field names are descriptive only: the 24-byte record stride and the cleared
- * halfwords at +14..+20 are read off the stores alone, and the second heading
- * is 0x0001 rather than a multiple of 0x4000 -- the byte is certain, its
- * meaning is not.
- */
 void SceneState_InitFourActorRecordsAndInstallTask(void)
 {
     struct SpringRide *ride = &TorebiIzumi_Ride;
@@ -451,7 +443,6 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     ride->velocity.z = 0;
     ride->frames = 0;
 
-    /* r0 carries each lookup's result straight into the retag call. */
     Object_SetMode(Object_GetById(20), 2);
     Object_SetMode(Object_GetById(21), 2);
 

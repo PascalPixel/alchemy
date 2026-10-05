@@ -26,7 +26,7 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
 
     cursor = gCell[308 + topic];
 
-    /* `lsls #1 / lsrs #16` - a 0/1 coin flip from the same random source. */
+    /* A coin flip from the same random source. */
     variant = (cursor + (s32)((unsigned int)(Engine_RandomNext() * 2) >> 16) + 4) % 3;
 
     gCell[308 + topic] = (s8)variant;
@@ -34,7 +34,6 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
     return TorebiIzumi_TopicIds[topic * 3 + variant];
 }
 
-/* The zero is a one-halfword struct; the child-byte OR goes through a word temporary with 255 held in a variable, so it stays ldrb/orrs. */
 void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
 {
     u8 *actor = (u8 *)Object_GetById(id);

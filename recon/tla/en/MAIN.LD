@@ -298,7 +298,7 @@
         "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/VRAM_BLOCK_93.o"(.text)
         "*/recon/tla/raw/08022c84.o"(.text)
         "*/recon/tla/raw/08022c98.o"(.text)
-        "*/recon/tla/raw/08022d1c.o"(.text)
+        "*/games/COMMON/SRC/SYSTEM/RESOURCE/OBJECT.o"(.text)
         "*/recon/tla/raw/08022d40.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
         "*/recon/tla/raw/08022f22.o"(.text)

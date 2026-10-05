@@ -621,11 +621,6 @@ Func_08022c78:
 	.thumb_func
 Func_08022c98:
 	.incbin "baserom.gba", 0x00022c98, 0x00000084
-	.global ResourceMetadata_ClearRecord
-	.type ResourceMetadata_ClearRecord, %function
-	.thumb_func
-ResourceMetadata_ClearRecord:
-	.incbin "baserom.gba", 0x00022d1c, 0x00000024
 	.section .rom.00022d40, "ax"
 	.global ResourceObject_Create
 	.type ResourceObject_Create, %function

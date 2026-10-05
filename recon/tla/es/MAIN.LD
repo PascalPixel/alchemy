@@ -252,6 +252,7 @@
     "*/recon/tla/es/rom.o"(.rom.00022bd8)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/VRAM_BLOCK_93.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00022c84)
+    "*/games/COMMON/SRC/SYSTEM/RESOURCE/OBJECT.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00022d40)
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00022f22)

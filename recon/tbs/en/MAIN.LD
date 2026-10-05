@@ -153,7 +153,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_PROJECTED_SPRITE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/GROUP_SET_CHILD_VALUE_UNLESS_FIFTEEN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESOURCE3.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/OBJECT.o"(.text)
+        "*/games/COMMON/SRC/SYSTEM/RESOURCE/OBJECT.o"(.text)
         "*/recon/tbs/raw/0800bc70.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
         "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/OBJECT.o"(.text)

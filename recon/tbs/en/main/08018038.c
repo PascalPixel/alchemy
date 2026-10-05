@@ -6,25 +6,44 @@
 #include "HEAP_STATE.H"
 #include "GAME_STATE.H"
 #include "BATTLE_RUNTIME.H"
+#include "SCENE.H"
 
 /*
  * Expands message glyphs, names, numbers and control codes into the render
  * ring. A message of -1 returns the previous message's starting position.
  * The cached decoder is an ARM routine called through a function pointer;
- * the compiler emits the interworking call. The native r9 load is that
- * callable target, not a dead value or a direct call to _call_via_r9.
+ * the compiler emits the interworking call.
  *
- * Earlier trial, 2026-09-29: did not compile against then-current headers.
- * Before this ownership repair, EN 2026-10-03 scored 10163 with 296 differing
- * instructions and unresolved Text_FormatNumber (symbol-name comparison).
- * The decoder/field repair scored 6975/254. One ordinary local-declaration
- * reorder scored 6959/253 and is retained. The complete draft is 1608 bytes;
- * the current native owner is 1620, including its literal pools. Stack
- * locals, initial stores, cached-decoder addressing and branch scheduling
- * still differ. No unresolved calls, new matching device or byte credit.
- * The control-code meanings and message-table bases are only partly known;
- * this remains an English draft, with no new linked source or byte credit.
+ * 2026-10-05, EN: 78 differ (alchemy diff; 76 with branch and pool offsets
+ * ignored), from 553. What moved it:
+ * - the heap slot table read once through gWindowWork: the decoder slot is
+ *   gWindowWork[35] (heap slot 50), as the native adds 140 to the window
+ *   slot's address; gWorkSlot[50] loads a second base;
+ * - spilled locals declared in the native's stack-slot order (work, head,
+ *   quote, start, cnt, plural, running, overflow), initialized at their
+ *   declarations;
+ * - the message bases as pooled absolute symbols (MsgClassName,
+ *   MsgItemName, MsgAbilityName, MsgDebugEntryName, which is
+ *   RENDER_RESOURCE_BASE in every edition): the native loads them from the
+ *   pool, never splits 0x182, and ties the add to the symbol;
+ * - one variable (msg) for codes 17, 19, 20 and 21's looked-up numbers, so
+ *   code 17's owner number is not folded into the call;
+ * - codes 21 and 23 copy the name through their own pointer and index
+ *   (p, next), the native keeps that index in r0 and assigns pos after;
+ * - the number loop of code 22 with its own index and the name copies of
+ *   codes 16 to 18 counting an unsigned off up (bls, not reversed);
+ * - code 26 as ((decode - 1) << 1) + 128 into a block-local, then + 1.
+ * Still different, all register choices: the prologue's store order (two
+ * swaps) and the allocator call's argument order; code 22's index (r0
+ * against r4) and its biv is eliminated (cmp against an end pointer, the
+ * native compares 16); msg in r3 against r2; in the copies off and dst
+ * swap r2 and r4. Tried without gain: for loops and array indexing for the
+ * copies (the allocator moves ch to r8, 700+), off shared by code 22 and
+ * the copies (off takes r0, 135), next or value or mag for code 22's
+ * index, msg in place of value for code 22, any order of the uninitialized
+ * declarations (60 swaps, no change).
  */
+
 
 /* The two spacing entries themselves. */
 #define ENTRY_NARROW_GAP 5
@@ -38,53 +57,45 @@
 extern const u8 Text_DecodeSymbol[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
-/* The maintained callee exposes a pointer word; this consumer interprets
-   that word as a message index. Its wider interface remains unresolved. */
-void *BattleFx_FindConditionResourceFar(s32 no, s32 kind);
+/* The first message of each name table, from the edition's catalog. */
+extern char MsgItemName;
+extern char MsgAbilityName;
+extern char MsgClassName;
+extern char MsgDebugEntryName;
 
 s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 {
-    struct UiRenderWork *work;
-    u16 *entry;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    s32 head = 1;
+    s32 quote = 0;
+    u32 start = work->count;
+    u32 cnt = 0;
+    s32 plural = 0;
+    s32 running = 1;
+    s32 overflow = 0;
+    u32 pos = start;
+    u16 *entry = work->entries;
+    u32 ch = 0;
+    u32 prev;
+    s32 suffix = 0;
     void *buf;
     u32 size;
     s32 (*decode)(struct TextReader *);
-    u32 start;
-    u32 pos;
     u32 next;
-    u32 ch;
-    u32 prev;
-    u32 cnt;
-    s32 running;
-    s32 overflow;
-    s32 head;
-    s32 quote;
-    s32 plural;
-    s32 suffix;
     s32 no;
-    s32 off;
+    u32 off;
+    u32 i;
     s32 value;
+    s32 icon;
+    u32 msg;
     s32 mag;
     u8 *num;
     u8 *src;
     u16 *dst;
+    u16 *p;
     u16 name[24];
     u8 numbuf[16];
     struct TextReader st;
-
-    work = (struct UiRenderWork *)gWindowWork[0];
-    start = work->count;
-    entry = work->entries;
-    pos = start;
-    ch = 0;
-    prev = 0;
-    cnt = 0;
-    running = 1;
-    overflow = 0;
-    head = 1;
-    quote = 0;
-    plural = 0;
-    suffix = 0;
 
     if (script == -1) {
         start = work->message_start;
@@ -95,7 +106,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 DMA_ENABLE | (size >> 2),
                 (volatile u32 *)DMA3_REGS);
         decode = (s32 (*)(struct TextReader *))
-            ((union HeapState *)&gWorkSlot)->slots[TEXT_WORK_BLOCK];
+            gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
         UiText_LookupMessage(&st, script);
 
         do {
@@ -205,7 +216,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 29:
                         entry[pos] = (u16)ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
-                        entry[pos] = (u16)(decode(&st) + 0xFFFF);
+                        entry[pos] = decode(&st) + 0xFFFFU;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 22:
@@ -217,64 +228,64 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         if (mag <= 1)
                             plural = 0;
                         num = UiText_FormatNumber(numbuf, value, 0);
-                        off = num - numbuf;
-                        while (off != 16 && numbuf[off] != 0) {
-                            entry[pos] = numbuf[off];
+                        i = num - numbuf;
+                        while (i != 16 && numbuf[i] != 0) {
+                            entry[pos] = numbuf[i];
                             pos = (pos + 1) & RENDER_ENTRY_MASK;
-                            off++;
+                            i++;
                         }
                         break;
                     case 19:
                         no = decode(&st) - 1;
-                        UiText_DecodeMessage(
-                            UiRender_LookupNamedValue(3, clear) + 0x741,
-                            name, 24);
+                        msg = UiRender_LookupNamedValue(3, clear);
+                        UiText_DecodeMessage(msg + (s32)&MsgClassName, name, 24);
                         pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
                     case 20:
                         no = decode(&st) - 1;
-                        UiText_DecodeMessage(
-                            (UiRender_LookupNamedValue(2, clear) &
-                             RENDER_ENTRY_MASK) + 0x182,
-                            name, 24);
+                        msg = UiRender_LookupNamedValue(2, clear);
+                        UiText_DecodeMessage((msg & RENDER_ENTRY_MASK) + (s32)&MsgItemName,
+                                             name, 24);
                         pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
                     case 21:
-                        UiText_DecodeMessage(
-                            UiRender_LookupNamedValue(4, clear) + 0x333,
-                            name, 24);
-                        dst = name;
-                        while (*dst != 0) {
-                            entry[pos] = *dst;
-                            dst++;
-                            pos = (pos + 1) & RENDER_ENTRY_MASK;
+                        msg = UiRender_LookupNamedValue(4, clear);
+                        UiText_DecodeMessage(msg + (s32)&MsgAbilityName, name, 24);
+                        p = name;
+                        next = pos;
+                        while (*p != 0) {
+                            entry[next] = *p;
+                            p++;
+                            next = (next + 1) & RENDER_ENTRY_MASK;
                         }
+                        pos = next;
                         break;
                     case 23:
                         UiText_DecodeMessage(
-                            (s32)BattleFx_FindConditionResourceFar(
-                                UiRender_LookupNamedValue(6, clear), 1) +
-                                RENDER_RESOURCE_BASE,
-                            name, 24);
-                        dst = name;
-                        while (*dst != 0) {
-                            entry[pos] = *dst;
-                            dst++;
-                            pos = (pos + 1) & RENDER_ENTRY_MASK;
+                            Scene_GetAreaNameIndexFar(
+                                UiRender_LookupNamedValue(6, clear), 1)
+                            + (s32)&MsgDebugEntryName, name, 24);
+                        p = name;
+                        next = pos;
+                        while (*p != 0) {
+                            entry[next] = *p;
+                            p++;
+                            next = (next + 1) & RENDER_ENTRY_MASK;
                         }
+                        pos = next;
                         break;
                     case 16:
                         src = Owner_GetStateFar(gGameState.selected_actor)->name;
                         dst = name;
-                        no = 0;
+                        off = 0;
                         do {
                             *dst = *src;
-                            no++;
+                            off++;
                             src++;
                             dst++;
-                        } while (no <= 14);
+                        } while (off <= 14);
                         pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0,
                                             &suffix);
                         break;
@@ -294,24 +305,24 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 17:
-                        no = decode(&st) - 1;
-                        src = Owner_GetStateFar(no)->name;
+                        msg = decode(&st) - 1;
+                        src = Owner_GetStateFar(msg)->name;
                         dst = name;
-                        no = 0;
+                        off = 0;
                         do {
                             *dst = *src;
-                            no++;
+                            off++;
                             src++;
                             dst++;
-                        } while (no <= 14);
+                        } while (off <= 14);
                         pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0,
                                             &suffix);
                         break;
                     case 26:
-                        no = (decode(&st) - 1) * 2;
-                        entry[pos] = (u16)(no + 128);
+                        icon = ((decode(&st) - 1) << 1) + 128;
+                        entry[pos] = icon;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
-                        entry[pos] = (u16)(no + 129);
+                        entry[pos] = icon + 1;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 24:

@@ -179,7 +179,7 @@ struct DoorCells {
 
 extern struct DoorCells KareiMachi_DoorCells[];
 
-u8 *Object_GetByIdFar();
+struct FieldActor *Object_GetByIdFar(s32 actor);
 
 extern u8 MsgKareiOkListeningLets[];
 extern u8 MsgKareiDecideEnteringColosso[];
@@ -569,7 +569,7 @@ void RunSceneArrivalSetup(void)
     Map_CopyCellsTo(39, 23, 43, 12, two, two);
     Engine_TaskWait(5);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(0)[85] = 0;
+    Object_GetByIdFar(ACTOR_PARTY_LEADER)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Actor_SetDestinationOffset(0, 0, -8);
     Engine_EventWait(10);
@@ -1059,31 +1059,31 @@ void SceneState_LinkRecordZeroWhenFlag200Clear(void)
     }
 }
 
-void SceneActor_SetActorZeroByte35Bit0(void)
+void SceneActor_SetLeaderPriorityAutomatic(void)
 {
     u8 *p;
     s32 v;
 
-    p = (u8 *)((s32)Object_GetByIdFar(0) + 35);
-    v = 1;
+    p = &Object_GetByIdFar(ACTOR_PARTY_LEADER)->priority_flags;
+    v = ACTOR_PRIORITY_AUTOMATIC;
     v |= *p;
     *p = v;
 }
 
-void SceneState_ClearRecordZeroBit0At35(void)
+void SceneState_ClearLeaderPriorityAutomatic(void)
 {
     u8 *p;
     s32 v;
 
-    p = (u8 *)((s32)Object_GetByIdFar(0) + 35);
-    v = 254;
+    p = &Object_GetByIdFar(ACTOR_PARTY_LEADER)->priority_flags;
+    v = (u8)~ACTOR_PRIORITY_AUTOMATIC;
     v &= *p;
     *p = v;
 }
 
 void SceneDialogue_RunActor181Line916(void)
 {
-    Scheduler_RemoveCallback((u32)((s32)((u8 *)SceneEffect_UpdateLobeOrbitEffect26)));
+    Scheduler_RemoveCallback((u32)SceneEffect_UpdateLobeOrbitEffect26);
     Engine_TaskWait(1);
     Engine_ActorSetPosition(26, 0, 0);
     Engine_GameFlagSet(0x916);
@@ -1263,8 +1263,8 @@ void FieldScene_RunMiddleSequence(void)
             Map_CopyCellAttributes(0, 0, 1, 1, v5, 14);
             Map_CopyCellAttributes(0, 0, 1, 1, v5, 45);
             {
-                u8 *p = Object_GetByIdFar(11) + 35;
-                s32 v = 2;
+                u8 *p = &Object_GetByIdFar(11)->priority_flags;
+                s32 v = ACTOR_PRIORITY_UNDERFOOT;
 
                 v |= *p;
                 *p = v;

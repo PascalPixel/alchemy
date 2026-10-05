@@ -1,3 +1,16 @@
+/* 2026-10-05 sun deep finisher 19: alchemy diff 979, unchanged. Read from
+ * the native frame (372): spill slots follow declaration order, as in
+ * Battle_SelectAbility (now 378 after that change): standby 84, count 80,
+ * window 76, render 72, drawn_row 68, cursor_handle 64, description 60,
+ * counts 56, mask 52, preferred 48, &ordered 32, sprites base 28, last 20;
+ * drawn_page r9, page r11, row r10; arrays cursor 360, sprites 312,
+ * available 276, ordered 240, then text and handles (96), glyph's address
+ * lowest. Declaring the scalars in that order alone scores 979 with a 376
+ * frame: the draft's cursor_sprite set before the loop takes one more slot
+ * than the native, which recomputes &cursor ([sp+24] in the loop). Next:
+ * that order with the cursor written as Battle_SelectAbility's now is
+ * (CursorSprite, pointer re-pointed each frame) and block-local indices.
+ */
 /* 2026-10-04 fill-return contract: current EN score 15855 (217 register,75 stack,50 operand,83 reordered,41 inserted,44 deleted)
  * after MENU_LIST.H follows the native s32 Ui_FillVramBlockPattern ABI
  * instead of void (previous score 15925). Native08016738 preserves

@@ -60,7 +60,6 @@ void FieldScene_RunScene3b3_02001fd4(void)
     Engine_EventEnd();
 }
 
-/* Complete one-call wrapper through interworking return and alignment. */
 void FieldScene_RunSingleStep(void)
 {
     battle_owner_69();
@@ -84,7 +83,7 @@ void TakaraHashira_RunStagedCellScene(void)
     }
 }
 
-/* Complete scene/entity linker through return and its sole pool word. */
+/* Link the scene and entity. */
 void SceneState_LinkActorZeroToWork24(void)
 {
     struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
@@ -105,18 +104,8 @@ void SceneState_ClearWord24AndObjectByte62(void)
  * Place a staged actor at object ten's grid cell -- resource_3b3.
  */
 
-/*
- * The Func_ aliases name the call words encoded in the overlay image. The
- * declarations are old-style because the call sites vary in arity.
- */
+/* While the actor's Z exceeds the leader's, set its underfoot priority only when its height is below the leader's. */
 
-/*
- * resource_3b3 @ 0x020020b8 (56 bytes including trailing alignment).
- *
- * Compares an actor with slot zero.  When it is farther right, bit 1 at +35
- * is cleared and then restored only if the actor is also above slot zero.
- * The function always returns zero.
- */
 s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
 {
     struct FieldActor *ref = Object_GetById(ACTOR_PARTY_LEADER);
@@ -143,15 +132,11 @@ void TakaraHashira_RunActorAction(s32 id)
     Engine_EventEnd();
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3b3. */
-
-/* Complete 12-byte actor-11 wrapper before 0x02002150. */
 void FieldScene_RunActor11Step(void)
 {
     TakaraHashira_RunActorAction(11);
 }
 
-/* Complete 12-byte actor-12 wrapper before 0x0200215c. */
 void FieldScene_RunActor12Step(void)
 {
     TakaraHashira_RunActorAction(12);
@@ -296,11 +281,7 @@ void TakaraHashira_RunMapShiftScene(void)
     }
 }
 
-/*
- * Fetch object ten, shift its +8 and +16 fixed-point fields down to grid
- * coordinates, and place there. The last two literal arguments go on the
- * stack.
- */
+/* Place object 10 at its position converted to grid coordinates. */
 void StagedActor_PlaceAtObjectTenCell(void)
 {
     struct FieldActor *obj = Object_GetById(10);

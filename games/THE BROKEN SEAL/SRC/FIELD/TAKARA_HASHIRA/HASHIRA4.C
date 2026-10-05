@@ -59,8 +59,7 @@ void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *sr
         cell += x + (y << 7);
 
         cell->layer = src->layer;
-        /* FAKEMATCH: the kind is read as the top of the source byte, not
-         * through the bitfield, as the reference loads it. */
+        /* FAKEMATCH: the kind is read as the top of the source byte, not through the bitfield, as the reference loads it. */
         cell->kind = ((u8 *)src)[1] >> 6;
         cell->height = src->height;
         cell->event = src->event;
@@ -111,8 +110,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
                 y = top << 20;
                 kind = 253;
             }
-            /* FAKEMATCH: a do-while(0) around the object and height lets sched2
-               issue the height arithmetic first, as the reference does */
+            /* FAKEMATCH: a do-while(0) around the object and height lets sched2 issue the height arithmetic first, as the reference does */
             do {
                 object = OverlayObject_PrepareObject(x, y, z, kind);
                 height = actor->z.fixed - z + y;
@@ -131,13 +129,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
     return found;
 }
 
-/*
- * Each Func_ name labels the call word of one call site rather than a
- * runtime address.  The first call is made before r0 is disturbed, so the
- * index is passed straight through instead of being materialised again.  The
- * two exits differ: the thirty-two frame cap returns without pinning, while
- * the clamp path pins the record to exactly 0x1999.
- */
+/* Lower the actor and its vertical scale for up to thirty-two frames, clamping the scale to 0x1999 when it falls below that value. */
 void StagedActor_StepDownUntilClamp(s32 index)
 {
     struct FieldActor *obj = Object_GetById(index);
@@ -357,10 +349,7 @@ void FieldScene_RunTransitionOrFallback(void)
     Engine_EventEnd();
 }
 
-/*
- * Scene state reset for overlay resource_3b3. The callee name refers to its
- * own call word rather than to a shared runtime address.
- */
+/* Move and redraw the actor when a clear placement is found. */
 void SceneState_ApplyPlacementResult(void)
 {
     struct StagedActorProbe out;

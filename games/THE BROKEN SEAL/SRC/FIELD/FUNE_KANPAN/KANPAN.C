@@ -184,7 +184,6 @@ void Event_WaitValue1c8FramesFar();
 
 extern struct GameState gGameState;
 
-
 void OverlayObject_DecayFields24And28();
 void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
@@ -467,7 +466,6 @@ s32 FuneKanpan_IdleTurn(u8 *actor)
     return 1;
 }
 
-/* Contiguous unnamed leaf-owner run for resource_3af. */
 u8 *SceneData_GetTablec994(void)
 {
     return FuneKanpan_SceneTableA;
@@ -1032,7 +1030,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         record = (s32)Object_GetById(22);
         {
             s32 shown = 0x8000;
-        
+
             *(u16 *)(record + 6) = shown;
         }
         Engine_ActorSetPosition(23, 0, 0);
@@ -1044,7 +1042,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         record = (s32)Object_GetById(21);
         {
             s32 shown = 0x5000;
-        
+
             *(u16 *)(record + 6) = shown;
         }
         a = (s32)Object_GetById(21);
@@ -1485,38 +1483,6 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_EventRequestExit(13);
 }
 
-/* EXACT: 856 bytes, candidate 856, 0 differing halfwords, 0 halfword
- * edits (2026-09-27). FieldScene_RunActorSequence in
- * FIELD/FUNE_KANPAN/DECK_SEQ.C is a single-overlay unit binding its names at
- * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Complete extent 020022c0..02002618: first zero/pool 23b8..23d4,
- * second zero/pool 252c..2554, return 2606 and final pool 2608..2614.
- * The 24fc call is ActorSetDestination (runtime veneer 0200c344), not
- * ActorWalkToAndWait (0200c35c); retained this independently verified fix.
- * Three structural trials: sharing the early actor-result scalar with the
- * loop counter produced 860 bytes / 361 differing halfwords / 135 edits,
- * adding unwanted saved-register copies to the initial facing stores.
- * One shared halfword-zero record across both phases gave 856 / 85 / 57:
- * second zero uses saved r6 and the store order matches, but actor stays r5,
- * first zero also moves to r6, and the second pool remains four bytes early.
- * Phase-scoped actor pointers gave 848 / 211 / 94, removing the reference's
- * saved-pointer copies for actors 30 and 0; the single shared actor survives.
- * Retained the original lifetimes plus the destination-call correction.
- * Previous remaining: actor/counter r5/r6 versus r6/r5, second zero in r2 versus r5,
- * second pool four bytes early, and callback address hoisted before its
- * speed call. Those lifetime-only trials are closed.
- * New interface model: exact FIELD_EVENT.H FieldActor accesses, canonical
- * void Engine_ActorEnableActionCallback and named FuneKanpan_SailorActions, supported by
- * OBJECT/BY_ID.C and exact FUNE_KANPAN deck scenes. Keep all original local
- * lifetimes and calls; this reduces 83 halfwords/55 edits to 3/2. Complete
- * 856-byte owner, saved registers and all three pools now agree. Only the
- * loop increment at 247c is early: candidate adds r5 before the scale_y
- * store and movs r0,#1; reference adds after both, immediately before wait.
- * Follow-up: compiler dumps locate that independent increment before
- * NOTE_INSN_LOOP_CONT. Make it the natural for-loop continuation after
- * the wait instead of a pre-wait body statement. The scheduler then emits
- * the reference store/movs/increment/call order: all 856 bytes and pools
- * exact. No counter type, declaration-order or fixed-register changes. */
 void FieldScene_RunActorSequence(void)
 {
     u32 i;
@@ -1762,8 +1728,7 @@ void FuneKanpan_RunJumpScene(void)
     Actor_WalkTo(ACTOR_MIA, 248, 564);
     Engine_EventWait(20);
     gGameState.saved_scene = (s32)&SceneId_FuneHeya;
-    /* FAKEMATCH: the one-pass block keeps the entrance store ahead of the
-     * battle start's address; a plain store is scheduled after it. */
+    /* FAKEMATCH: the one-pass block keeps the entrance store ahead of the battle start's address; a plain store is scheduled after it. */
     do {
         gGameState.saved_entrance = 30;
     } while (0);
@@ -1910,7 +1875,7 @@ void FieldScene_RunPartyRosterScene(void)
         category[index] = 0;
     }
 
-    /* Phase 2 -- nine search blocks, in source order. */
+/* Phase 2: nine search blocks. */
     member = 23;
     for (index = 0; index <= 3; index++) {
         if (roster[index] == member) {

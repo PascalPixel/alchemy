@@ -16,8 +16,7 @@ s32 Math_RemainderUnsigned(s32, s16);
 /* Briefly stretches the sprite, then waits before the next pulse. */
 s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
-    /* FAKEMATCH: In-place signed accesses preserve the countdown's load
-     * and address scheduling. */
+    /* FAKEMATCH: In-place signed accesses preserve the countdown's load and address scheduling. */
     switch (*(s16 *)&actor->timer) {
     case 6:
         actor->scale_x += -0x4000;
@@ -25,7 +24,7 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
         break;
     case 4:
         actor->scale_x += 0x2000;
-        /* The loader relocates the stored pool word to -0x1000. */
+
         actor->scale_y -= 0x1000;
         break;
     case 2:

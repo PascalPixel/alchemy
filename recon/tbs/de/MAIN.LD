@@ -274,7 +274,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU4.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_FOUR_NUMBERS_IN_ROW.o"(.text)
     "*/games/COMMON/SRC/MENU/DRAW_CHARACTER_SUMMARY.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0001eee8)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW14.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/PARTY/TALK_CHOICE.o"(.text)

@@ -236,4 +236,11 @@
 #define LIST_EMPTY_Y          17
 #endif
 
+/* The save slot list's localized names start six pixels further left. */
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define SAVE_SLOT_NAME_X 6
+#else
+#define SAVE_SLOT_NAME_X 12
+#endif
+
 #endif

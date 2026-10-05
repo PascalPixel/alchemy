@@ -214,12 +214,6 @@ UiText_BuildRenderEntries:
 	.thumb_func
 UiText_RenderStringTiles:
 	.incbin "baserom.gba", 0x0001cdbc, 0x00000410
-	.section .rom.0001f1c8, "ax"
-	.global SaveMenu_SelectSlot
-	.type SaveMenu_SelectSlot, %function
-	.thumb_func
-SaveMenu_SelectSlot:
-	.incbin "baserom.gba", 0x0001f1c8, 0x00000580
 	.section .rom.00020e0e, "ax"
 	.incbin "baserom.gba", 0x00020e0e, 0x000008fe
 	.section .rom.0002211c, "ax"

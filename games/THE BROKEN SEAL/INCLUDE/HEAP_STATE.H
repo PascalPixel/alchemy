@@ -33,6 +33,8 @@ enum HeapSlot {
     HEAP_SLOT_BATTLE_BACKGROUND = 44,
     HEAP_SLOT_BLITTER = 46,
     HEAP_SLOT_BLITTER_ALTERNATE = 47,
+    /* The save workspace: flash sector work and the three slot summaries. */
+    HEAP_SLOT_SAVE = 51,
     /* The sprite frame decoder, copied into RAM on first use. */
     HEAP_SLOT_FRAME_DECODER = 52,
     /* The routine that uploads a composed sprite frame to VRAM. */

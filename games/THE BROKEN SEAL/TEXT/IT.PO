@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 250\n"
 "X-Alchemy-Target: tbs-it\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(Nessun dato salvato)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Continua da Tempio)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(Non concluso)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(Dati danneggiati)"
 

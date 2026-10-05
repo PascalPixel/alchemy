@@ -123,5 +123,6 @@ s32 SaveState_CopySlotPair(void);
 s32 SaveState_DeleteSelectedSlot(void);
 s32 SaveState_LoadRecordIntoWork(s32 mode);
 s32 Save_WriteSelectedSlot(void);
+s32 SaveMenu_SelectSlot(s32 slot, s32 mode);
 
 #endif

@@ -21,7 +21,6 @@ extern u8 MsgSaveFailed;
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
-s32 SaveMenu_SelectSlot(s16, s32);
 s32 Menu_RunConfirmSelection(s32, s32, s32, s32);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 

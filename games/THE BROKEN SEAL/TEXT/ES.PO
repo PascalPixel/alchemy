@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 253\n"
 "X-Alchemy-Target: tbs-es\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(No hay partida)."
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Empezar en un Templo)."
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(No ha sido borrado)."
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(Partida dañada)."
 

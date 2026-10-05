@@ -7,19 +7,19 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 370\n"
 "X-Alchemy-Target: tbs-ja\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(きろくされてません)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(神殿からのスタートになります)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(まだクリアしてません)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(データがこわれています)"
 

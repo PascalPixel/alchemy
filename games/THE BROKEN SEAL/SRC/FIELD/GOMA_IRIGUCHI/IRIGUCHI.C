@@ -132,7 +132,7 @@ void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
     Engine_EventWait(frames);
 }
 
-void *SceneData_GetTable92f8(void)
+void *GomaIriguchi_GetEntrances(void)
 {
     return GomaIriguchi_SceneTableA;
 }
@@ -142,12 +142,12 @@ int SceneData_ReturnZero(void)
     return 0;
 }
 
-void *SceneData_GetTable9358(void)
+void *GomaIriguchi_GetExits(void)
 {
     return GomaIriguchi_SceneTableB;
 }
 
-void *SceneData_GetTable9368(void)
+void *GomaIriguchi_GetPlacements(void)
 {
     return GomaIriguchi_SceneTableC;
 }
@@ -228,7 +228,7 @@ void FieldScene_RunStepWithValue866(void)
     Engine_EventEnd();
 }
 
-void *SceneData_GetTable9488(void)
+void *GomaIriguchi_GetEvents(void)
 {
     return GomaIriguchi_SceneTableD;
 }

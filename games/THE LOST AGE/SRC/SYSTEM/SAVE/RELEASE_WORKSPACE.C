@@ -22,8 +22,8 @@ s32 SaveState_LoadExtraSummary(void)
     Dma_Set((const void *)&zero, summary, 0x85000010, REG_DMA3);
     index = SaveState_FindLatestSlot(3);
     if (index <= 14) {
-        ReadFlash((u16)index, 0, (u8 *)summary, sizeof(*summary));
-        ReadFlash((u16)(index + 1), 0x110, work->extra.unknown_38, sizeof(work->extra.unknown_38));
+        ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
+        ReadFlash(index + 1, 0x110, work->extra.unknown_38, sizeof(work->extra.unknown_38));
         return 1;
     }
     return 0;

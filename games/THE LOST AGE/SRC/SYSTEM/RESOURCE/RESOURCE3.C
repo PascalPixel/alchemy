@@ -221,7 +221,7 @@ next_entry:
 test_entry:
         if (index < state->count)
             goto entry_loop;
-        state->last_no = (u8)flags;
+        state->last_no = flags;
     }
     return 0;
 }

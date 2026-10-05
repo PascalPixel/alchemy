@@ -361,7 +361,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY3.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000834f8)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/DEBUG2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT27.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/TILEACT.o"(.text)

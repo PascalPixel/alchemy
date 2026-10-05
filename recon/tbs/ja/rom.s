@@ -500,12 +500,6 @@ Element_PowerResistCurve:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0007f26c, 0x00001d94
-	.section .rom.000834f8, "ax"
-	.global Func_0808c4f8
-	.type Func_0808c4f8, %function
-	.thumb_func
-Func_0808c4f8:
-	.incbin "baserom.gba", 0x000834f8, 0x0000097c
 	.section .rom.0008652c, "ax"
 	.global DisplayTransition_UpdateScanlineTable
 	.type DisplayTransition_UpdateScanlineTable, %function

@@ -10287,11 +10287,11 @@ msgctxt "message"
 msgid "02569"
 msgstr "vous ne jouerez pas!"
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02570"
 msgstr "{argument_actor_name:1} n'a plus de forces...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02571"
 msgstr "Le groupe de {protagonist_name} a{line_break}été anéanti...{end_wait}"
 
@@ -12159,7 +12159,7 @@ msgctxt "MsgSleepMode"
 msgid "03037"
 msgstr "Entrer mode veille.{line_break}{button_icon:3}+{button_icon:4} pour reprendre.{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03038"
 msgstr "Le menu Pause n'est pas{line_break}disponible pour l'instant.{end_wait}"
 

@@ -2,7 +2,9 @@
 #include "RESOURCE.H"
 #include "BATTLE_RUNTIME.H"
 /* Field: show the world map. The map layers are hidden and the map picture
-   is decoded over BG1 until A or B is pressed, then the field comes back. */
+   is decoded over BG1 until A or B is pressed, then the field comes back.
+   The field mode passes the picture's resource id; the body loads the same
+   id itself. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -36,7 +38,7 @@ extern u32 gKeysHeld;
 void Battle_InitializeRenderObject(void);
 void BattleFx_ScheduleRatioTransition(s32, s32);
 
-void Map_ShowWorldMap(void)
+void Map_ShowWorldMap(s32 picture)
 {
     /* FAKEMATCH: two one-pass loops act as scheduling barriers: one around
      * the display-control value 64 so it is built before the register address,

@@ -10287,11 +10287,11 @@ msgctxt "message"
 msgid "02569"
 msgstr "Du kannst nicht drehen!"
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02570"
 msgstr "{argument_actor_name:1}{possessive_suffix} Kraft ist verbraucht...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02571"
 msgstr "{protagonist_name}{possessive_suffix} Team wurde{line_break}ausgelöscht...{end_wait}"
 
@@ -12159,7 +12159,7 @@ msgctxt "MsgSleepMode"
 msgid "03037"
 msgstr "Schlafmodus wird aktiviert.{line_break}Drücke {button_icon:3}+{button_icon:4}, um fortzufahren.{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03038"
 msgstr "Das Pausenmenü ist jetzt{line_break}nicht verfügbar.{end_wait}"
 

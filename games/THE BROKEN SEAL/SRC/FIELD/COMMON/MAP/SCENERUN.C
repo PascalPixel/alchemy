@@ -34,7 +34,7 @@ void BattleFx_LoadResourceGroup(s32 group);
 void Scene_ResetFlagsOnEnter(s32 scene, s32 keep);
 void Audio_PlayCueFromEventWork(void);
 void Scene_ResolveInteractionResult(void);
-void Func_0808c4f8(s32 entrance);
+s32 Field_RunScene(s32 entrance);
 s32 Battle_RunEncounterFar(s32 entrance);
 s32 FarCall_BlankRunTable(s32 entrance);
 s32 FarCall_BlankLoadTable(s32 entrance);
@@ -154,7 +154,7 @@ start:
         }
         gGameState.map = record->map_index;
         BattleFx_LoadResourceGroup(0);
-        Func_0808c4f8(entrance);
+        Field_RunScene(entrance);
         MapGroupTable_SelectEntry();
     }
 }

@@ -9327,11 +9327,11 @@ msgctxt "message"
 msgid "02329"
 msgstr "Password may be incorrect."
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "02330"
 msgstr "{argument_actor_name:1}'s strength is exhausted...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "02331"
 msgstr "{protagonist_name}'s party has{line_break}been annihilated...{end_wait}"
 
@@ -12483,7 +12483,7 @@ msgctxt "message"
 msgid "03118"
 msgstr "Parameter"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "03119"
 msgstr "The Pause menu is not{line_break}available now.{end_wait}"
 

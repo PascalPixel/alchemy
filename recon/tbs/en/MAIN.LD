@@ -351,7 +351,6 @@
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY3.o"(.text)
-        "*/recon/tbs/raw/0808c4f8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/DEBUG2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT27.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/TILEACT.o"(.text)

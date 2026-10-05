@@ -12,7 +12,7 @@ FarCall_ObjectTable:
 	.global Func_0808a000
 	.thumb_func
 Func_0808a000:
-	overlay_veneer Func_0808c4f8
+	overlay_veneer Field_RunScene
 	.global Game_ResetForNewGameFar
 	.global Func_0808a008
 	.thumb_func

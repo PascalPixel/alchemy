@@ -58,9 +58,11 @@ s32 Summon_ReleaseCharge(s32 actor_id)
     state->used_masks[index] &= ~(1 << bit);
 }
 
-s32 Summon_ResetCharge(s32 class_id)
+/* Marks the name of the first standing enemy with this id, so two
+   enemies of a kind read apart. */
+s32 Summon_ResetCharge(s32 enemy_id)
 {
-    u8 *summon;
+    struct BattleUnit *summon;
     s32 object_index;
     s32 slot;
     s32 next_slot;
@@ -70,23 +72,23 @@ s32 Summon_ResetCharge(s32 class_id)
     object_index = 0;
     marker = LIST_MARKER_CHAR;
 scan_objects:
-    summon = (u8 *)Owner_GetState(object_index + 0x80);
-    occupied = summon[298];
+    summon = Owner_GetState(object_index + 0x80);
+    occupied = summon->status_12a;
     if (occupied != 1) goto next_object;
-    if (*(u16 *)(summon + 330) != class_id) goto next_object;
+    if (summon->enemy_id != enemy_id) goto next_object;
     slot = 0;
-    if (summon[0] != 0) goto scan_slots;
-    summon[0] = marker;
-    summon[occupied] = slot;
+    if (summon->name[0] != 0) goto scan_slots;
+    summon->name[0] = marker;
+    summon->name[occupied] = slot;
     return;
 scan_slots:
     slot++;
     if (slot > 13) return;
-    occupied = summon[slot];
+    occupied = summon->name[slot];
     if (occupied != 0) goto scan_slots;
     next_slot = slot + 1;
-    summon[slot] = marker;
-    summon[next_slot] = occupied;
+    summon->name[slot] = marker;
+    summon->name[next_slot] = occupied;
     return;
 next_object:
     object_index++;

@@ -15,7 +15,7 @@
 
 void Resource_DecodeByteLz(const void *src, void *dst);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
-void Unnamed_08094bbc(void);
+void FieldMotes_Update(void);
 
 struct Mote {
     s32 state;
@@ -128,7 +128,7 @@ void BattleFx_UpdateStormFlash(void);
    shrinking through three sizes, and sets up to eight spent ones down again
    at random spots on the ground around the leader. Flag 0x166 holds every
    mote on its frame. */
-void Unnamed_08094bbc(void)
+void FieldMotes_Update(void)
 {
     /* FAKEMATCH: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
     struct SparkleWork *work = gParticleWork;
@@ -228,7 +228,7 @@ void FieldMotes_Start(void)
         mote++;
     }
     do { s32 v; v = 0x3f00; reg = &REG_BLDCNT; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
-    Scheduler_AddOrUpdateCallback((s32)(Unnamed_08094bbc), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FieldMotes_Update), 0xc80);
 }
 
 /* Draw the ground sparkles that twinkle around the leader, and every so often

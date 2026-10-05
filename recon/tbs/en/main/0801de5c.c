@@ -1,4 +1,21 @@
 /*
+ * 2026-10-05 (deep finisher 16, later): alchemy diff 2. The VRAM copy
+ * writes through one pointer, *p++ = ... eight times: p is set several
+ * times, so global-alloc owns it and tile * 32 (r2) outranks the
+ * addresses (r1), and CSE turns each p + 4 back into tile * 32 plus the
+ * next constant, as listed. (Every form with a fresh address per store
+ * left the addresses to local-alloc, which put them in r2 and tile * 32 in
+ * r1, and tied the last address to it: 36-38.) Remaining: i = count is
+ * scheduled before the hoisted tile-loop constants here and after them in
+ * the listing (mov r9, r6 two places later).
+ * Tried for that and no better: i = count before dst = canvas (2 lines
+ * the same), dst = canvas or i = count outside the if (40-42), a
+ * while (i != 0) loop (44), for (0..count) with dst = canvas before it
+ * (44: the load lands before the pre-test) or inside if (count != 0)
+ * (103-105: the inner pre-test stays), a separate canvas index whose
+ * pointer loop.c derives (36 before the copy fix: one place closer),
+ * tile = *tiles; tile &= 0x3FF (224).
+ *
  * 2026-10-05 (deep finisher 16): alchemy diff 36 (was 349), no register
  * pins. The listing reuses function-scope variables across the loops, as
  * one 2001 function would: i is the glyph row, the pack row and the tile
@@ -234,14 +251,18 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
                 *tiles = attr | tile;
                 *mirror = attr | tile;
             }
-            ((u32 *)(0x06000000 + tile * 32))[0] = ((u32 *)dst)[0];
-            ((u32 *)(0x06000000 + tile * 32))[1] = ((u32 *)dst)[0x40];
-            ((u32 *)(0x06000000 + tile * 32))[2] = ((u32 *)dst)[0x80];
-            ((u32 *)(0x06000000 + tile * 32))[3] = ((u32 *)dst)[0xC0];
-            ((u32 *)(0x06000000 + tile * 32))[4] = ((u32 *)dst)[0x100];
-            ((u32 *)(0x06000000 + tile * 32))[5] = ((u32 *)dst)[0x140];
-            ((u32 *)(0x06000000 + tile * 32))[6] = ((u32 *)dst)[0x180];
-            ((u32 *)(0x06000000 + tile * 32))[7] = ((u32 *)dst)[0x1C0];
+            {
+                u32 *p = (u32 *)(0x06000000 + tile * 32);
+
+                *p++ = ((u32 *)dst)[0];
+                *p++ = ((u32 *)dst)[0x40];
+                *p++ = ((u32 *)dst)[0x80];
+                *p++ = ((u32 *)dst)[0xC0];
+                *p++ = ((u32 *)dst)[0x100];
+                *p++ = ((u32 *)dst)[0x140];
+                *p++ = ((u32 *)dst)[0x180];
+                *p++ = ((u32 *)dst)[0x1C0];
+            }
             tiles++;
             mirror++;
             dst += 4;

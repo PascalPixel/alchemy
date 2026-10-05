@@ -1445,31 +1445,31 @@ LightningBolts_GlintPalettes:
 LightningBolts_GlintModes:
 	.incbin "baserom.gba", 0x000eebe6, 0x00000002
 	.incbin "baserom.gba", 0x000eebe8, 0x00000001
-	.global Data_080eebe9
-Data_080eebe9:
+	.global Volley_CometHeights
+Volley_CometHeights:
 	.incbin "baserom.gba", 0x000eebe9, 0x00000003
-	.global Data_080eebec
-Data_080eebec:
+	.global Volley_Modes
+Volley_Modes:
 	.incbin "baserom.gba", 0x000eebec, 0x0000003c
-	.global Data_080eec28
-Data_080eec28:
+	.global Volley_FlashWidths
+Volley_FlashWidths:
 	.incbin "baserom.gba", 0x000eec28, 0x00000006
 	.incbin "baserom.gba", 0x000eec2e, 0x00000001
-	.global Data_080eec2f
-Data_080eec2f:
+	.global Volley_FlashHeights
+Volley_FlashHeights:
 	.incbin "baserom.gba", 0x000eec2f, 0x00000007
-	.global Data_080eec36
-Data_080eec36:
+	.global Volley_FlashSteps
+Volley_FlashSteps:
 	.incbin "baserom.gba", 0x000eec36, 0x00000006
 	.incbin "baserom.gba", 0x000eec3c, 0x00000001
-	.global Data_080eec3d
-Data_080eec3d:
+	.global Volley_FlashRises
+Volley_FlashRises:
 	.incbin "baserom.gba", 0x000eec3d, 0x00000007
-	.global Data_080eec44
-Data_080eec44:
+	.global Volley_FlashOffsets
+Volley_FlashOffsets:
 	.incbin "baserom.gba", 0x000eec44, 0x0000000e
-	.global Data_080eec52
-Data_080eec52:
+	.global Volley_PelletOffsets
+Volley_PelletOffsets:
 	.incbin "baserom.gba", 0x000eec52, 0x00000008
 	.global MercuryDjinnFlames_LaunchFrames
 MercuryDjinnFlames_LaunchFrames:

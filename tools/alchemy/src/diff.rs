@@ -2,6 +2,9 @@ use crate::build_rom::c_steps;
 use crate::compiler::routing::{family_for_source, root, CompilerFamily};
 use crate::process::run as command;
 use crate::targets::{decomp_target, DecompTarget};
+use crate::elf::Elf;
+use crate::ld_map::{Map, Placed, ROM};
+use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = r#"usage: alchemy diff DRAFT.c [ADDRESS[,ADDRESS...]] [--game tbs|tla] [--edition EDITION] [--arm] [--show]
@@ -16,8 +19,12 @@ how many differ; --show prints the comparison, - for the listing and + for
 the draft. "differ 0" means the code matches instruction for instruction.
 An overlay draft (a path under overlays/) compares with the function of
 the same name, or --symbol, in out/EDITION/overlays/OVERLAY_overlay.o;
-the overlay defaults from the path (resource_XXX). Main-image scaffolds
-without a separate listing object are not supported.
+the overlay defaults from the path (resource_XXX). When no separate listing
+object exists, a main-image Thumb scaffold is resolved by ADDRESS or --symbol
+in the selected edition's map and ELF. Its reference ROM extent is read only
+for comparison; literal pools and jump tables are omitted. ARM or mixed-mode
+scaffolds are unsupported. This normalized comparison is analysis only;
+the full twelve-edition ROM comparison remains the matching authority.
 --arm is an explicit analysis-only study with the pinned game compiler:
 replace -mthumb with stock -marm, retaining every other game option. This
 is not an admitted build route and earns no credit, even at differ 0.
@@ -84,6 +91,9 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     let path_text = draft.to_string_lossy().into_owned();
     if overlay.is_none() && path_text.contains("/overlays/") {
         overlay = resource_name(&path_text);
+    }
+    if addresses.is_empty() && overlay.is_none() && symbol.is_some() {
+        addresses.push(symbol.as_ref().unwrap().clone());
     }
     if addresses.is_empty() && overlay.is_none() {
         let stem = draft
@@ -173,7 +183,7 @@ pub(crate) fn normalize(objdump: &str) -> Vec<String> {
                 return Some(mnemonic.to_string());
             }
             let mut out = if is_branch(mnemonic) && !operands.is_empty() {
-                match u32::from_str_radix(operands[0], 16) {
+                match u32::from_str_radix(operands[0].trim_start_matches("0x"), 16) {
                     Ok(target) => format!("{mnemonic} {:+}", i64::from(target) - i64::from(at)),
                     Err(_) => text.to_string(),
                 }
@@ -247,6 +257,73 @@ fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<String>, Strin
     }
     arguments.push(&object);
     Ok(normalize(&command(&arguments, root())?))
+}
+
+fn scaffold_extent(map: &Map, elf: &Elf, wanted: &str) -> Result<(u32, u32, u32, String), String> {
+    // STT_ARM_TFUNC (15) is the old assembler's Thumb function alias type.
+    let functions: Vec<(u32, String)> = elf.symbols.iter()
+        .filter(|symbol| matches!(symbol.kind, 2 | 15) && !symbol.name.starts_with('$'))
+        .map(|symbol| (symbol.value & !1, symbol.name.clone()))
+        .collect();
+    let (section, start, name) = crate::show::resolve(map, Some(elf), &functions, wanted)?;
+    if !section.object().starts_with("recon/") || !section.object().ends_with("/rom.o")
+        || !section.name.starts_with(".rom.") || !section.loaded || section.load < ROM {
+        return Err(format!("{name}: no main-image scaffold extent; build the selected edition first"));
+    }
+    let statics: Vec<u32> = functions.iter().map(|(address, _)| *address).collect();
+    let size = elf.symbols.iter().find(|symbol| symbol.name == name && matches!(symbol.kind, 2 | 15)).map(|symbol| symbol.size);
+    let end = crate::show::function_end(section, start, &statics, size);
+    require_thumb_scaffold(elf, section, start, end)?;
+    let offset = section.load - ROM + (start - section.address);
+    Ok((start, end, start.wrapping_sub(offset), name))
+}
+
+fn require_thumb_scaffold(elf: &Elf, section: &Placed, start: u32, end: u32) -> Result<(), String> {
+    let thumb = elf.symbols.iter().any(|symbol| (symbol.value & !1) == start
+        && (symbol.kind == 15 || (symbol.kind == 2 && symbol.value & 1 != 0)));
+    let arm = elf.symbols.iter().any(|symbol| symbol.value >= start && symbol.value < end
+        && (symbol.name.starts_with("$a") || (symbol.kind == 2 && symbol.value & 1 == 0)));
+    if !thumb || arm || start & 1 != 0 || end <= start || end > section.end() {
+        return Err("main-image scaffold comparison supports a bounded Thumb function only; ARM, mixed or unknown ISA is unsupported".into());
+    }
+    Ok(())
+}
+
+fn thumb_reference(file: &Path, image: &[u8], base: u32, start: u32, end: u32) -> Result<Vec<String>, String> {
+    if start < base || (end - base) as usize > image.len() {
+        return Err("scaffold function runs past the reference image".into());
+    }
+    let lines = crate::show::thumb_lines(image, base, start, end, &crate::show::Names::new());
+    if lines.iter().any(|line| line.text.starts_with(".2byte")) {
+        return Err("scaffold contains an unsupported Thumb instruction; no comparison produced".into());
+    }
+    let instructions: BTreeSet<u32> = lines.iter().filter(|line| !line.wide).map(|line| line.address).collect();
+    let output = command(&[
+        "arm-none-eabi-objdump", "-D", "-b", "binary", "-marm", "-Mforce-thumb",
+        "--no-show-raw-insn", "--disassemble-zeroes",
+        &format!("--adjust-vma={base:#x}"), &format!("--start-address={start:#x}"),
+        &format!("--stop-address={end:#x}"), &file.to_string_lossy(),
+    ], root())?;
+    let code: String = output.lines().filter(|line| {
+        line.trim_start().split_once(":\t")
+            .and_then(|(address, _)| u32::from_str_radix(address, 16).ok())
+            .is_some_and(|address| instructions.contains(&address))
+    }).map(|line| format!("{line}\n")).collect();
+    Ok(normalize(&code))
+}
+
+fn scaffold_reference(target: DecompTarget, wanted: &str) -> Result<(Vec<String>, String), String> {
+    let output = root().join(target.output_dir);
+    let read = |name: &str| std::fs::read(output.join(name))
+        .map_err(|error| format!("{}: {error}; build {} first", output.join(name).display(), target.id));
+    let map = Map::parse(&String::from_utf8_lossy(&read(&format!("{}.map", target.id))?));
+    let elf = Elf::parse(&read(&format!("{}.elf", target.id))?)?;
+    let (start, end, base, name) = scaffold_extent(&map, &elf, wanted)?;
+    let reference = read("baserom.gba")?;
+    target.verify_reference(&reference)?;
+    let tokens = thumb_reference(&output.join("baserom.gba"), &reference, base, start, end)?;
+    println!("Thumb scaffold analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
+    Ok((tokens, name))
 }
 
 fn resource_name(path: &str) -> Option<String> {
@@ -325,13 +402,18 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             .join(target.output_dir)
             .join(format!("obj/recon/{}/raw/{address}.o", options.game));
         if !reference.exists() {
-            return Err(format!(
-                "{}: no listing object for {}; build that edition first (main-image scaffolds without a separate listing are unsupported)",
-                reference.display(),
-                target.id
-            ));
+            if options.arm_study {
+                return Err("--arm needs a separate listing object; ARM main-image scaffold comparison is unsupported".into());
+            }
+            let wanted = options.symbol.as_deref().unwrap_or(address);
+            let (tokens, name) = scaffold_reference(target, wanted)?;
+            listing.extend(tokens);
+            if options.addresses.len() == 1 && text_symbols(&object)?.contains(&name) {
+                draft_symbol = Some(name);
+            }
+        } else {
+            listing.extend(disassemble(&reference, None)?);
         }
-        listing.extend(disassemble(&reference, None)?);
     }
     let compiled = disassemble(&object, draft_symbol.as_deref())?;
     let (common, script) = compare(&listing, &compiled);
@@ -352,6 +434,71 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn scaffold_bounds_use_symbols_and_refuse_arm_or_unknown_modes() {
+        let section = Placed {
+            name: ".rom.00000100".into(), path: "out/tbs-ja/obj/recon/tbs/ja/rom.o".into(),
+            address: ROM + 0x100, load: ROM + 0x100, size: 0x30, loaded: true,
+            symbols: vec![(ROM + 0x100, "First".into()), (ROM + 0x118, "Next".into())],
+        };
+        let map = Map { placed: vec![section.clone()] };
+        let symbol = |name: &str, value, kind| crate::elf::Symbol { name: name.into(), value, size: 0, kind, section: 1 };
+        let mut elf = Elf { sections: vec![], symbols: vec![symbol("First", ROM + 0x101, 2), symbol("Next", ROM + 0x119, 2)] };
+        assert_eq!(scaffold_extent(&map, &elf, "First").unwrap(), (ROM + 0x100, ROM + 0x118, ROM, "First".into()));
+        assert_eq!(scaffold_extent(&map, &elf, "08000100").unwrap().1, ROM + 0x118);
+        elf.symbols[0].size = 0x10;
+        assert_eq!(scaffold_extent(&map, &elf, "First").unwrap().1, ROM + 0x110);
+        elf.symbols[0].kind = 15;
+        elf.symbols[0].value &= !1;
+        assert!(scaffold_extent(&map, &elf, "First").is_ok());
+        elf.symbols.push(symbol("$a", ROM + 0x108, 0));
+        assert!(scaffold_extent(&map, &elf, "First").unwrap_err().contains("mixed"));
+        elf.symbols.pop();
+        elf.symbols[0].kind = 2;
+        assert!(scaffold_extent(&map, &elf, "First").is_err());
+        elf.symbols[0].kind = 0;
+        assert!(scaffold_extent(&map, &elf, "First").is_err());
+        let mut ordinary = section;
+        ordinary.path = "games/THE BROKEN SEAL/SRC/TEST.o".into();
+        assert!(scaffold_extent(&Map { placed: vec![ordinary] }, &elf, "First").unwrap_err().contains("no main-image scaffold"));
+    }
+
+    #[test]
+    fn scaffold_reference_omits_pools_tables_and_adjacent_functions() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("reference.s");
+        let object = work.path().join("reference.o");
+        let binary = work.path().join("reference.bin");
+        std::fs::write(&source, ".syntax unified\n.thumb\n.text\n.global First\n.thumb_func\nFirst:\nldr r0, .Lpool\nb .Lend\nmovs r0, #1\nbx lr\n.align 2\n.Lpool:\n.word 0x12345678\n.Lend:\nmovs r0, #2\nbx lr\n.size First, .-First\n.thumb_func\nNext:\nmovs r0, #99\nbx lr\n").unwrap();
+        command(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-o", &object.to_string_lossy(), &source.to_string_lossy()], root()).unwrap();
+        command(&["arm-none-eabi-objcopy", "-O", "binary", "--only-section=.text", &object.to_string_lossy(), &binary.to_string_lossy()], root()).unwrap();
+        let image = std::fs::read(&binary).unwrap();
+        let actual = thumb_reference(&binary, &image, ROM, ROM, ROM + 16).unwrap();
+        assert_eq!(actual, disassemble(&object, Some("First")).unwrap());
+        assert_eq!(actual.len(), 6);
+        assert!(!actual.iter().any(|line| line.contains("#99")));
+        assert!(thumb_reference(&binary, &image, ROM, ROM, ROM + 100).is_err());
+
+        let mut image: Vec<u8> = [0x4a05u16, 0x00bb, 0x589b, 0x469f].into_iter().flat_map(u16::to_le_bytes).collect();
+        image.extend((ROM + 0x10).to_le_bytes());
+        image.extend((ROM + 0x14).to_le_bytes());
+        image.extend([0x2001u16, 0x4770, 0x2002, 0x4770].into_iter().flat_map(u16::to_le_bytes));
+        image.extend((ROM + 8).to_le_bytes());
+        std::fs::write(&binary, &image).unwrap();
+        let table = thumb_reference(&binary, &image, ROM, ROM, ROM + 28).unwrap();
+        assert_eq!(table.len(), 8);
+        assert_eq!(&table[4..], ["movs r0, #1", "bx lr", "movs r0, #2", "bx lr"]);
+    }
+
+    #[test]
+    fn main_scaffold_can_be_named_explicitly() {
+        let args = ["candidate.c", "--edition", "tbs-ja", "--symbol", "SaveMenu_SelectSlot"].map(String::from);
+        let parsed = parse(&args).unwrap();
+        assert_eq!(parsed.addresses, ["SaveMenu_SelectSlot"]);
+        assert_eq!(parsed.target.id.as_str(), "tbs-ja");
+    }
 
     #[test]
     fn arm_study_is_explicit_and_does_not_accept_other_codegen_options() {

@@ -62,7 +62,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* The exit table, the third entry the main image calls. */
+/* The scene's exit table. */
 u8 *KareiHeya_GetExits(void)
 {
     return KareiHeya_Exits;
@@ -131,7 +131,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gKareiHeyaEventsOther;
 }
 
-/* In-image placement table, four entries. */
+/* Placement table, four entries. */
 void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
     Engine_EventBegin();
@@ -153,8 +153,7 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
     struct FieldActor *p = Object_GetById(0);
 
-    /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
-     * arm's condition, which is what reproduces the branch. */
+/* Band guard: facing in 0x6001..0x9fff. */
     if ((u16)(p->facing - 0x6001) <= 0x3FFE) {
         Engine_InnOpen(7, 8);
     } else {
@@ -179,8 +178,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 
     struct FieldActor *p = Object_GetById(0);
 
-    /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
-     * arm's condition, which is what reproduces the branch. */
+/* Band guard: facing in 0xa001..0xdfff. */
     if ((u16)(p->facing + 0x5FFF) <= 0x3FFE) {
         Engine_SanctumOpen(8);
     } else {
@@ -191,14 +189,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
     }
 }
 
-/*
- * Scene arrival: clears the residue byte at +85 of every scene slot from 8 to
- * 65, then looks the sub-state up in the placement table and places the
- * player from that entry. Sub-states other than 12, 13, 16 and 19 return
- * without touching anything. The loop skips a null record but the later clear
- * of the player's own +85 does not test for null; that asymmetry is real.
- * 158 is read as a cue id from its argument position and is not verified.
- */
+/* Scene arrival: clear the field at +85 of scene slots 8 to 65, then place the player from the sub-state's table entry. Only sub-states 12, 13, 16 and 19 use a placement. */
 void FieldScene_RunArrivalPlacement(void)
 {
 
@@ -217,8 +208,6 @@ void FieldScene_RunArrivalPlacement(void)
         }
     }
 
-    /* The sub-state slot is read twice, here and for Engine_EventRequestExit below, and
-     * both reads are kept. */
     switch (work->touched_trigger) {         /* 182 << 1 */
     case 12: idx = 0; break;
     case 13: idx = 1; break;
@@ -262,13 +251,7 @@ s32 Scene_Initialize(void)
     return 0;
 }
 
-/*
- * Clears the set of scene slots this sub-state leaves behind. Sub-state 16
- * takes the last arm even though it lies inside 9..17, so the test is not
- * written as a range. 0x911 is read as an event-flag id from its argument
- * position, and the six-argument call's argument meanings are not
- * established.
- */
+/* Clear the scene slots this sub-state leaves behind; sub-state 16 uses the final branch. */
 void SceneState_ClearSlotsBySubState(void)
 {
     s16 sub = gGameState.entrance;
@@ -276,8 +259,7 @@ void SceneState_ClearSlotsBySubState(void)
     switch (sub) {
     case 3:
     {
-        /* The last two arguments travel on the stack. */
-        s32 fifth = 4;
+                s32 fifth = 4;
         s32 sixth = 2;
         Engine_MapCopyCellsTo(30, 14, 30, 16, fifth, sixth);
         return;
@@ -297,8 +279,7 @@ void SceneState_ClearSlotsBySubState(void)
 
     /* sub is 9..15 or 17. */
     if (Engine_GameFlagIsSet(0x911) != 0) {
-        /* Nine distinct call sites, not a loop; the trailing 15 is out of
-         * order and is kept that way. */
+
         Engine_ActorDestroy(10);
         Engine_ActorDestroy(11);
         Engine_ActorDestroy(12);

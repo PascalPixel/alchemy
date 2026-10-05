@@ -1407,7 +1407,7 @@ void Scene_RunExtendedEffectPresentation(void)
     quake->fading = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
-    FieldScene_CallHelper6620();
+    SoruFunka_CleanupSceneObjects();
     GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
     GameFlag_Set(FLAG_STAR_ROOM_COLLAPSED);
     Engine_EventRequestExit(5);
@@ -1784,7 +1784,7 @@ void SceneState_SetValue140Mode0(void)
     Engine_PsynergyBegin(140, 0);
 }
 
-void FieldScene_CallHelper6620(void)
+void SoruFunka_CleanupSceneObjects(void)
 {
     BattleEffect_CleanupSceneObjects();
 }

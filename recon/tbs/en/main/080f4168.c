@@ -1,3 +1,12 @@
+/* 080f4168: uncredited draft; listing 2046, draft 1947, differ 1977.
+ * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
+ * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
+ * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
+ * The minimally repaired private-layout draft differed 1938 (1978 instructions).
+ * Remove its unsupported unused s32[8], volatile affine locals and discarded
+ * key reads rather than retaining unproven steering. The natural frame is 716
+ * bytes; native is 768. Loop/register allocation and frame layout remain open.
+ */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -6,21 +15,14 @@
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 #include "UI.H"
-
-struct LuckyDiceDie {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 vx;
-    s32 vy;
-    s32 vz;
-    s32 angle;
-};
-
-struct LuckyDiceWork {
-    u8 filler[0x7080];
-    struct LuckyDiceDie die[2];
-};
+#include "GAME_STATE.H"
+#include "MAP_SCROLL.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "IWRAM_CALL.H"
+#include "TRANSFORM.H"
+#include "RESOURCE_IDS.H"
+#include "text/MSG_IDS.H"
 
 struct LuckyDiceObj {
     u32 attr01;
@@ -35,29 +37,8 @@ struct LuckyDiceSprites {
     s32 help_window;
 };
 
-struct LuckyDiceBlocks {
-    void *render;
-    struct LuckyDiceSprites *sprites;
-    struct LuckyDiceWork *work;
-    u16 *obj_palette;
-};
-
-struct LuckyDiceParty {
-    u8 filler[16];
-    u32 coins;
-};
-
-struct LuckyDiceScroll {
-    u16 unk00;
-    u16 unk02;
-    u16 unk04;
-    u16 unk06;
-};
-
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
-extern struct LuckyDiceParty gGameState;
-extern struct LuckyDiceScroll gBgScroll;
 extern u8 gOamCopyEnabled;
 extern u8 Data_080f53fc[];
 extern u8 Data_080f5400[];
@@ -66,14 +47,11 @@ extern s16 Data_080f541a[];
 extern char ResourceId_EffectFarCalls;
 extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
-extern char MsgLuckyDiceHelp;
 
-void RuntimeDispatch_NoOpHook(s32 value);
 void Camera_ResetSceneDefaults(void);
 void Scheduler_ResetTaskTable(void);
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 count);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(void *work, void *transfer);
 s32 Render_ProjectPoint(void *point, s32 *out);
 u32 __umodsi3(u32 numerator, u32 denominator);
 void FarCall_WindowTable(void);
@@ -83,23 +61,6 @@ void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
 void Audio_PlayCue(s32 cue);
 
-#define REG_DISPCNT (*(u16 *)0x04000000)
-#define REG_BG1CNT (*(u16 *)0x0400000a)
-#define REG_BG1HOFS (*(u16 *)0x04000014)
-#define REG_BG1VOFS (*(u16 *)0x04000016)
-#define REG_BG2HOFS (*(u16 *)0x04000018)
-#define REG_BG2VOFS (*(u16 *)0x0400001a)
-#define REG_WIN0H (*(u16 *)0x04000040)
-#define REG_WIN1H (*(u16 *)0x04000042)
-#define REG_WIN0V (*(u16 *)0x04000044)
-#define REG_WIN1V (*(u16 *)0x04000046)
-#define REG_WININ (*(u16 *)0x04000048)
-#define REG_WINOUT (*(u16 *)0x0400004a)
-#define REG_BLDCNT (*(u16 *)0x04000050)
-#define REG_BLDALPHA (*(u16 *)0x04000052)
-
-#define LuckyDice_Sqrt ((s32 (*)(s32))0x030001d8)
-
 void LuckyDice_Run(void)
 {
     u16 palette[256];
@@ -107,22 +68,21 @@ void LuckyDice_Run(void)
     s32 results[4];
     s32 point[3];
     s32 proj[3];
-    s32 unused[8];
-    volatile u16 affine_a;
-    volatile u16 affine_b;
-    volatile u16 affine_c;
-    volatile u16 affine_d;
+    u16 affine_a;
+    u16 affine_b;
+    u16 affine_c;
+    u16 affine_d;
     s32 spin[2];
     s32 flash[2];
     s32 faces[2];
     s32 order[2];
     s32 matches[2];
     u16 *obj_palette;
-    struct LuckyDiceWork *work;
+    struct BattleEffectWork *work;
     struct LuckyDiceSprites *sprites;
-    void *render;
-    struct LuckyDiceDie *die;
-    struct LuckyDiceDie *other;
+    struct BattleCamera *render;
+    struct EffectStep *die;
+    struct EffectStep *other;
     s32 state;
     s32 frame;
     s32 timer;
@@ -163,7 +123,7 @@ void LuckyDice_Run(void)
     work = Runtime_AllocateBlock(39, 0x782c);
     sprites = Runtime_AllocateBlock(45, 0x618);
     render = Runtime_AllocateBlock(12, 76);
-    RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
+    ((void (*)(s32))RuntimeDispatch_NoOpHook)((s32)&ResourceId_EffectFarCalls);
     Camera_ResetSceneDefaults();
     Scheduler_ResetTaskTable();
     gOamCopyEnabled = 0;
@@ -195,8 +155,8 @@ void LuckyDice_Run(void)
     REG_DISPCNT = 0x3340;
     REG_BLDCNT = 0x3f44;
     REG_BLDALPHA = 0x0810;
-    gBgScroll.unk04 = 0;
-    gBgScroll.unk06 = 0;
+    gBgScroll[1].x = 0;
+    gBgScroll[1].y = 0;
     REG_BG1HOFS = 0;
     REG_BG1VOFS = 0xff60;
     REG_BG2HOFS = 0;
@@ -211,15 +171,15 @@ void LuckyDice_Run(void)
     kind = -1;
     winnings = 0;
     counter = 0;
-    die = work->die;
+    die = work->particles;
     for (i = 0; i != 2; i++) {
         die->x = ((Random16() & 127) - 64) << 16;
         die->y = (Random16() & 31) << 16;
         die->z = ((Random16() & 127) - 64) << 16;
-        die->vx = ((Random16() & 127) - 64) << 14;
-        die->vy = ((Random16() & 31) + 32) << 12;
-        die->vz = ((Random16() & 127) - 64) << 14;
-        die->angle = 0;
+        die->velocity_x = ((Random16() & 127) - 64) << 14;
+        die->velocity_y = ((Random16() & 31) + 32) << 12;
+        die->velocity_z = ((Random16() & 127) - 64) << 14;
+        die->variant = 0;
         spin[i] = 300;
         die++;
     }
@@ -229,22 +189,22 @@ void LuckyDice_Run(void)
     do {
         faces[1] = __umodsi3(Random16(), 6);
     } while (faces[0] == faces[1]);
-    work->die[0].x = 0x280000;
-    work->die[0].y = 0x600000;
-    work->die[0].z = -0xa00000;
-    work->die[1].x = -0x280000;
-    work->die[1].y = 0x600000;
-    work->die[1].z = -0xa00000;
+    work->particles[0].x = 0x280000;
+    work->particles[0].y = 0x600000;
+    work->particles[0].z = -0xa00000;
+    work->particles[1].x = -0x280000;
+    work->particles[1].y = 0x600000;
+    work->particles[1].z = -0xa00000;
 
     FarCall_WindowTable();
     window = UiWindow_CreateFar(18, 0, 12, 3, 6);
     sprites->coins_window = window;
-    UiText_DrawCharacterAtOffsetFar(0x906, window, 48, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
     UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
     sprites->help_window = window;
-    UiText_DrawCharacterAtOffsetFar(0x910, window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar(0x911, sprites->help_window, 0, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
 
     frame = 0;
     for (;;) {
@@ -254,7 +214,7 @@ void LuckyDice_Run(void)
             Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, frame << 12, 256);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(render, (u8 *)render + 12);
+        Graphics_PrepareTransferInIwramWork(render->eye, render->pos);
 
         count = 0;
         sprites->obj[count].attr01 = 0xc0006000;
@@ -323,8 +283,8 @@ void LuckyDice_Run(void)
                 }
                 window = UiWindow_CreateFar(9 - digits / 2, 16, digits + 12, 3, 6);
                 sprites->winnings_window = window;
-                UiText_DrawCharacterAtOffsetFar(0x907, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar(0x906, sprites->winnings_window, digits * 8 + 48, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, sprites->winnings_window, digits * 8 + 48, 0);
                 UiText_DrawNumberInWindowFar(winnings, digits, sprites->winnings_window, 48, 0);
             }
             if (counter > 0) {
@@ -339,8 +299,8 @@ void LuckyDice_Run(void)
                     state = 0;
                     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                     sprites->help_window = window;
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceHelp, window, 0, 0);
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceHelp + 1, sprites->help_window, 0, 8);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
                     reset = 1;
                 }
             }
@@ -356,36 +316,31 @@ void LuckyDice_Run(void)
                 UiWork_FinalizeFar(sprites->winnings_window, 1);
                 window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                 sprites->help_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceHelp, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceHelp + 1, sprites->help_window, 0, 8);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
                 reset = 1;
             }
             counter++;
         } else if (state == 0 && frame > 17) {
-            /* FAKEMATCH: two discarded reads of the repeat keys */
-            if (gKeysRepeat & 0) {
-            }
-            if (gKeysRepeat & 0) {
-            }
             if (gKeysHeld & KEY_UP) {
-                work->die[0].y += 0x40000;
-                work->die[1].y += 0x40000;
+                work->particles[0].y += 0x40000;
+                work->particles[1].y += 0x40000;
             }
             if (gKeysHeld & KEY_DOWN) {
-                work->die[0].y += -0x40000;
-                work->die[1].y += -0x40000;
+                work->particles[0].y += -0x40000;
+                work->particles[1].y += -0x40000;
             }
-            if (work->die[0].y < 0x200000) {
-                work->die[0].y = 0x200000;
+            if (work->particles[0].y < 0x200000) {
+                work->particles[0].y = 0x200000;
             }
-            if (work->die[0].y > 0xa00000) {
-                work->die[0].y = 0xa00000;
+            if (work->particles[0].y > 0xa00000) {
+                work->particles[0].y = 0xa00000;
             }
-            if (work->die[1].y < 0x200000) {
-                work->die[1].y = 0x200000;
+            if (work->particles[1].y < 0x200000) {
+                work->particles[1].y = 0x200000;
             }
-            if (work->die[1].y > 0xa00000) {
-                work->die[1].y = 0xa00000;
+            if (work->particles[1].y > 0xa00000) {
+                work->particles[1].y = 0xa00000;
             }
             if (gGameState.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
                 UiWork_FinalizeFar(sprites->help_window, 1);
@@ -406,17 +361,17 @@ void LuckyDice_Run(void)
                 }
                 Party_AdjustCoinsFar(-bet);
                 UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
-                die = work->die;
+                die = work->particles;
                 for (i = 0; i != 2; i++) {
                     if (i > 1) {
                         die->z = -0xb40000;
                         die->y = 0x600000;
                     }
-                    die->vx = ((Random16() & 127) - 64) << 12;
-                    die->vy = ((Random16() & 15) + 48) << 13;
+                    die->velocity_x = ((Random16() & 127) - 64) << 12;
+                    die->velocity_y = ((Random16() & 15) + 48) << 13;
                     n = Random16() & 63;
-                    die->vz = ((n + 140) << 12) + __divsi3(die->y, 6);
-                    die->angle = __umodsi3(Random16(), 0x4800);
+                    die->velocity_z = ((n + 140) << 12) + __divsi3(die->y, 6);
+                    die->variant = __umodsi3(Random16(), 0x4800);
                     spin[i] = 300;
                     die++;
                 }
@@ -424,12 +379,12 @@ void LuckyDice_Run(void)
         }
 
         if (reset == 1) {
-            work->die[0].x = 0x280000;
-            work->die[0].y = 0x600000;
-            work->die[0].z = -0xa00000;
-            work->die[1].x = -0x280000;
-            work->die[1].y = 0x600000;
-            work->die[1].z = -0xa00000;
+            work->particles[0].x = 0x280000;
+            work->particles[0].y = 0x600000;
+            work->particles[0].z = -0xa00000;
+            work->particles[1].x = -0x280000;
+            work->particles[1].y = 0x600000;
+            work->particles[1].z = -0xa00000;
             faces[0] = __umodsi3(Random16(), 6);
             do {
                 faces[1] = __umodsi3(Random16(), 6);
@@ -440,14 +395,14 @@ void LuckyDice_Run(void)
         order[1] = 1;
         for (i = 1; i < 2; i++) {
             key = order[i];
-            for (j = i - 1; j >= 0 && work->die[order[j]].z > work->die[key].z; j--) {
+            for (j = i - 1; j >= 0 && work->particles[order[j]].z > work->particles[key].z; j--) {
                 order[j + 1] = order[j];
             }
             order[j + 1] = key;
         }
 
         for (i = 0; i != 2; i++) {
-            die = &work->die[order[i]];
+            die = &work->particles[order[i]];
             Render_ProjectPoint(die, proj);
             if (proj[2] < 0x15e) {
                 proj[2] = 0x15e;
@@ -461,13 +416,13 @@ void LuckyDice_Run(void)
             y = proj[1] - d;
             if (y + 96 > -16) {
                 sprites->obj[count].attr01 = ((order[i] << 25) | (((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x40002300;
-                sprites->obj[count].attr2 = (Data_080f5408[die->angle / 1024] << 3) | 0x400;
+                sprites->obj[count].attr2 = (Data_080f5408[die->variant / 1024] << 3) | 0x400;
                 count++;
             }
         }
 
         if (state == 0) {
-            die = work->die;
+            die = work->particles;
             for (i = 0; i != 2; i++) {
                 Render_ProjectPoint(die, proj);
                 n = depth[order[i]] / 2 + 128;
@@ -483,7 +438,7 @@ void LuckyDice_Run(void)
             }
         }
 
-        die = work->die;
+        die = work->particles;
         for (i = 0; i != 2; i++) {
             point[1] = 0;
             point[0] = die->x;
@@ -507,12 +462,12 @@ void LuckyDice_Run(void)
 
         if (state == 1) {
             stopped = 0;
-            die = work->die;
+            die = work->particles;
             for (i = 0; i != 2; i++) {
-                die->x += die->vx;
-                die->y += die->vy;
-                die->z += die->vz;
-                other = work->die;
+                die->x += die->velocity_x;
+                die->y += die->velocity_y;
+                die->z += die->velocity_z;
+                other = work->particles;
                 for (j = 0; j != 2; j++) {
                     if (i != j) {
                         dx = (die->x - other->x) >> 16;
@@ -520,77 +475,77 @@ void LuckyDice_Run(void)
                         dz = (die->z - other->z) >> 16;
                         dist = dx * dx + dy * dy + dz * dz;
                         if (dist <= 0x9c3) {
-                            dist = LuckyDice_Sqrt(dist);
-                            die->vx += __divsi3(dx << 15, dist);
-                            die->vy += __divsi3(dy << 15, dist);
-                            die->vz += __divsi3(dz << 15, dist);
+                            dist = Iwram_Sqrt(dist);
+                            die->velocity_x += __divsi3(dx << 15, dist);
+                            die->velocity_y += __divsi3(dy << 15, dist);
+                            die->velocity_z += __divsi3(dz << 15, dist);
                         }
                     }
                     other++;
                 }
                 if (die->x < -0xc80000) {
                     die->x = -0xc80000;
-                    die->vx = -die->vx * 48 / 64;
+                    die->velocity_x = -die->velocity_x * 48 / 64;
                 }
                 if (die->x > 0xc80000) {
                     die->x = 0xc80000;
-                    die->vx = -die->vx * 48 / 64;
+                    die->velocity_x = -die->velocity_x * 48 / 64;
                 }
                 if (die->z < -0x960000) {
                     die->z = -0x960000;
-                    die->vz = -die->vz * 48 / 64;
+                    die->velocity_z = -die->velocity_z * 48 / 64;
                 }
                 if (die->z > die->y + 0xb40000) {
                     die->z = die->y + 0xb40000;
-                    if (die->vz > 0) {
-                        die->vy += die->vz / 2;
-                        die->vz = -die->vz * 48 / 64;
+                    if (die->velocity_z > 0) {
+                        die->velocity_y += die->velocity_z / 2;
+                        die->velocity_z = -die->velocity_z * 48 / 64;
                     }
                 }
-                die->vy += -0x8000;
+                die->velocity_y += -0x8000;
                 if (die->y <= 0) {
                     die->y = 0;
-                    die->vy = -die->vy * 48 / 64;
+                    die->velocity_y = -die->velocity_y * 48 / 64;
                     if ((Random16() & 3) == 0) {
-                        speed = LuckyDice_Sqrt((die->vx >> 8) * (die->vx >> 8) + (die->vz >> 8) * (die->vz >> 8)) * 56 / 64;
+                        speed = Iwram_Sqrt((die->velocity_x >> 8) * (die->velocity_x >> 8) + (die->velocity_z >> 8) * (die->velocity_z >> 8)) * 56 / 64;
                         angle = Random16() & 0xffff;
-                        die->vx = speed * Trig_Sin(angle) >> 8;
-                        die->vz = speed * Trig_Cos(angle) >> 8;
+                        die->velocity_x = speed * Trig_Sin(angle) >> 8;
+                        die->velocity_z = speed * Trig_Cos(angle) >> 8;
                     } else {
-                        die->vx = die->vx * 56 / 64;
-                        die->vz = die->vz * 56 / 64;
+                        die->velocity_x = die->velocity_x * 56 / 64;
+                        die->velocity_z = die->velocity_z * 56 / 64;
                     }
                     if (spin[i] > 19) {
                         spin[i] -= 20;
                     }
-                    if (die->vy < 0x30000) {
-                        die->vx = 0;
-                        die->vy = 0;
-                        die->vz = 0;
+                    if (die->velocity_y < 0x30000) {
+                        die->velocity_x = 0;
+                        die->velocity_y = 0;
+                        die->velocity_z = 0;
                         spin[i] = 0;
-                        n = die->angle;
+                        n = die->variant;
                         switch (__modsi3(n / 1024, 3)) {
                         case 1:
-                            die->angle = n + 0x800;
+                            die->variant = n + 0x800;
                             break;
                         case 2:
-                            die->angle = n + 0x400;
+                            die->variant = n + 0x400;
                             break;
                         }
                     }
                 }
-                die->vx = die->vx * 63 / 64;
-                die->vy = die->vy * 63 / 64;
-                die->vz = die->vz * 63 / 64;
-                die->angle += spin[i];
-                if (die->angle > 0x47ff) {
-                    die->angle -= 0x4800;
+                die->velocity_x = die->velocity_x * 63 / 64;
+                die->velocity_y = die->velocity_y * 63 / 64;
+                die->velocity_z = die->velocity_z * 63 / 64;
+                die->variant += spin[i];
+                if (die->variant > 0x47ff) {
+                    die->variant -= 0x4800;
                 }
                 if (spin[i] > 0) {
                     spin[i]--;
                 }
-                if (die->vx == 0 && die->vy == 0 && die->vz == 0 && die->y == 0) {
-                    results[i] = __divsi3(die->angle, 0xc00);
+                if (die->velocity_x == 0 && die->velocity_y == 0 && die->velocity_z == 0 && die->y == 0) {
+                    results[i] = __divsi3(die->variant, 0xc00);
                     for (j = 0; j != 6; j++) {
                         if (die->z > Data_080f541a[j] << 16) {
                             results[i + 2] = j;

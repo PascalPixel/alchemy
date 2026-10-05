@@ -9247,11 +9247,11 @@ msgctxt "MsgSlotsBet"
 msgid "02309"
 msgstr "Bet"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "02310"
 msgstr "Coins"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "02311"
 msgstr "Winnings"
 
@@ -9287,11 +9287,11 @@ msgctxt "MsgSlotsStart"
 msgid "02319"
 msgstr "{button_icon:1}:Start machine"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceThrow"
 msgid "02320"
 msgstr "{button_icon:1}:Throw"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceQuit"
 msgid "02321"
 msgstr "{button_icon:2}:Quit"
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "BATTLE_RUNTIME.H"
 #include "EDITION.H"
@@ -127,7 +128,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
-extern u8 Menu_LvString;
+#define Menu_LvString (*(u8 *)&Menu_LvString)
+
 
 #define ACT_ID_MASK 0x3fff
 

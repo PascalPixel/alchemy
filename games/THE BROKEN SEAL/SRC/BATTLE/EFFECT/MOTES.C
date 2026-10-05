@@ -22,8 +22,6 @@ void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 
-extern u16 BattleFx_PuffCells[];
-extern u8 BattleFx_PuffSizes[];
 
 #define HI(v) (((s16 *)&(v))[1])
 

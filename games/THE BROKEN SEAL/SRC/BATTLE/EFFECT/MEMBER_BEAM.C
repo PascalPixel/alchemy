@@ -22,7 +22,6 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)

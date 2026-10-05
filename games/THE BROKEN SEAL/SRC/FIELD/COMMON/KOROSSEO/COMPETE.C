@@ -8,7 +8,8 @@
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
 
-extern u8 gMenuCtrlWork[];
+#define gMenuCtrlWork ((u8 (*))&gMenuCtrlWork)
+
 
 
 struct CompetitorState {

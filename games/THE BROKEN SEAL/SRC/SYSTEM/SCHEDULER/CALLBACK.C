@@ -14,9 +14,10 @@
 #include "IO_REG.H"
 #include "LOW_RUNTIME.H"
 
+#define gRandomSeed (*(u32 *)&gRandomSeed)
+
 typedef void (*KeyCallbackFn)(void);
 
-extern u32 gRandomSeed;
 
 
 

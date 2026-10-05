@@ -15,7 +15,8 @@
 
 #include "MAP_SCROLL.H"
 
-extern u8 gScanlinePitch[];
+#define gScanlinePitch ((u8 (*))&gScanlinePitch)
+
 
 struct Work_080936a0 {
     u8 filler0[848];

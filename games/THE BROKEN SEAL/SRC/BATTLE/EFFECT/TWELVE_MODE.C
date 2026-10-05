@@ -22,9 +22,7 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
-extern u16 ParticleStreams_CellOffsets[];
 
 
 #define gBlitters ((DrawRectangle *)gWorkSlot)

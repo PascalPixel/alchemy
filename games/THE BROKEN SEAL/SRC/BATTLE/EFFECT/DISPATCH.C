@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -13,7 +14,6 @@
 #include "BATTLE_TYPES.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
 
 typedef void (*Callback)(s32 *);
 void BattleEffect_RunCirclingFallingScene(s32 *);

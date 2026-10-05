@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "HEAP_STATE.H"
@@ -8,10 +9,10 @@
 #include "RESOURCE.H"
 #include "IO_REG.H"
 
-extern u8 *gBattleFxWork[2];
+#define gBattleFxWork ((u8 *(*))&gBattleFxWork)
+
 
 extern struct GameState gGameState;
-extern u8 gRandomSeed[];
 
 s32 Audio_PlayCue(s32);
 

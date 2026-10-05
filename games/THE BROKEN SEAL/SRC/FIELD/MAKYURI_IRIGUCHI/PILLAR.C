@@ -6,6 +6,8 @@
 #include "IWRAM_CALL.H"
 #include "FIELD_EVENT.H"
 
+#define Makyuri_PillarScript ((u8 (*))&Makyuri_PillarScript)
+
 #define FrameCounter gFrameCount
 
 struct FollowDetail {
@@ -36,7 +38,6 @@ struct EventSpawns {
 };
 
 void WaitFrames(s32 frames);
-extern u8 Makyuri_PillarScript[];
 
 struct WorkPointers {
     u8 *event;

@@ -19,7 +19,6 @@
 #include "MOTION_OBJECT.H"
 #include "FIELD_EVENT.H"
 
-extern u8 gBattleFxWork[];
 
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 
@@ -169,7 +168,6 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-extern u8 gBattleFxWork[];
 
 void BattleFx_PrepareCanvasEffect();
 

@@ -1183,5 +1183,143 @@ extern const u16 YamaRama_BoulderCellsBack[];
 extern const u32 YamaRama_Exits[];
 extern const u8 YamaRama_HsuAction[];
 extern const u8 YamaRama_LeaderAction[];
+#ifndef OWN_gTransitionWork
+extern struct BattlePresentationTransition *gTransitionWork;
+#endif
+#ifndef OWN_gObjectSlots
+extern struct ObjectRuntime *gObjectSlots;
+#endif
+#ifndef OWN_gMenuCtrlWork
+extern struct ObjectSystemWork *gMenuCtrlWork;
+#endif
+#ifndef OWN_Render_DecodeFrame
+extern u8 Render_DecodeFrame[];
+#endif
+#ifndef OWN_RomBytes_08029a10
+extern u8 RomBytes_08029a10[];
+#endif
+#ifndef OWN_gFlash
+extern struct FlashChipInfo *gFlash;
+#endif
+#ifndef OWN_gFlashTimeoutFlag
+extern u8 gFlashTimeoutFlag;
+#endif
+#ifndef OWN_gFlashSavedIme
+extern volatile u16 gFlashSavedIme;
+#endif
+#ifndef OWN_gFlashTimerCount
+extern volatile u16 gFlashTimerCount;
+#endif
+#ifndef OWN_Flash_Handler0
+extern u32 Flash_Handler0;
+#endif
+#ifndef OWN_Flash_Handler4
+extern u32 Flash_Handler4;
+#endif
+#ifndef OWN_gFlashNumRemainingBytes
+extern u16 gFlashNumRemainingBytes;
+#endif
+#ifndef OWN_ParticleStreams_CellOffsets
+extern u16 ParticleStreams_CellOffsets[];
+#endif
+#ifndef OWN_gBattleFxWork
+extern u8 gBattleFxWork[];
+#endif
+#ifndef OWN_gRandomSeed
+extern u8 gRandomSeed[];
+#endif
+#ifndef OWN_gBattleBgFxWork
+extern struct WaveFxWork *gBattleBgFxWork;
+#endif
+#ifndef OWN_BattleFx_PuffCells
+extern u16 BattleFx_PuffCells[];
+#endif
+#ifndef OWN_BattleFx_PuffSizes
+extern u8 BattleFx_PuffSizes[];
+#endif
+#ifndef OWN_gScanlinePitch
+extern u32 gScanlinePitch;
+#endif
+#ifndef OWN_gBattleOwnerStates
+extern u8 *gBattleOwnerStates;
+#endif
+#ifndef OWN_SideObject_CharacterIdMap
+extern s16 SideObject_CharacterIdMap[][2];
+#endif
+#ifndef OWN_SideObject_ActorKindIdMap
+extern s16 SideObject_ActorKindIdMap[][2];
+#endif
+#ifndef OWN_ArutinYama_ActorScript
+extern u8 ArutinYama_ActorScript[];
+#endif
+#ifndef OWN_BabiFune_CountTicks
+extern s32 BabiFune_CountTicks;
+#endif
+#ifndef OWN_BabiFune_ShimmerActive
+extern s32 BabiFune_ShimmerActive;
+#endif
+#ifndef OWN_BabiFune_ShimmerPhase
+extern s32 BabiFune_ShimmerPhase;
+#endif
+#ifndef OWN_BabiFune_DriftActive
+extern s32 BabiFune_DriftActive;
+#endif
+#ifndef OWN_BabiFune_SwellActive
+extern s32 BabiFune_SwellActive;
+#endif
+#ifndef OWN_BabiFune_SwellLayerSixY
+extern s32 BabiFune_SwellLayerSixY;
+#endif
+#ifndef OWN_BabiFune_SwellLayerSevenY
+extern s32 BabiFune_SwellLayerSevenY;
+#endif
+#ifndef OWN_Makyuri_PillarScript
+extern const s32 Makyuri_PillarScript[];
+#endif
+#ifndef OWN_FuneHeya_TurnSteps
+extern s32 FuneHeya_TurnSteps[];
+#endif
+#ifndef OWN_KuupuappuHeya_PairScriptR
+extern const u8 KuupuappuHeya_PairScriptR[];
+#endif
+#ifndef OWN_KuupuappuHeya_PairScriptP
+extern const u8 KuupuappuHeya_PairScriptP[];
+#endif
+#ifndef OWN_RamakanSabaku_SandVramSlot
+extern u16 RamakanSabaku_SandVramSlot;
+#endif
+#ifndef OWN_RamakanSabaku_SandCounter
+extern u16 RamakanSabaku_SandCounter;
+#endif
+#ifndef OWN_RamakanSabaku_SandPhase
+extern u16 RamakanSabaku_SandPhase;
+#endif
+#ifndef OWN_VinasuChojo_ScaleStepAction
+extern const u8 VinasuChojo_ScaleStepAction[];
+#endif
+#ifndef OWN_VinasuChojo_BeamOpenAction
+extern const u8 VinasuChojo_BeamOpenAction[];
+#endif
+#ifndef OWN_Data_03001400
+extern u8 Data_03001400[];
+#endif
+#ifndef OWN_Menu_CursorObjectTiles
+extern const u8 Menu_CursorObjectTiles[];
+#endif
+#ifndef OWN_Menu_LvString
+extern const u8 Menu_LvString[];
+#endif
+#ifndef OWN_Menu_ColonString
+extern const u8 Menu_ColonString[];
+#endif
+#ifndef OWN_Menu_WorkspaceIconFrames
+extern s8 Menu_WorkspaceIconFrames[];
+#endif
+#ifndef OWN_gTitleExtraOptionEnabled
+extern u8 gTitleExtraOptionEnabled[];
+#endif
+#ifndef OWN_Data_03007804
+extern s32 Data_03007804;
+#endif
 
 #endif

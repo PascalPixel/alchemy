@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "HEAP_STATE.H"
@@ -6,7 +7,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-extern struct BattleEffectWork *gBattleFxWork;
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 

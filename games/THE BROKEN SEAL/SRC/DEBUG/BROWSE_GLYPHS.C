@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "RENDER_INPUT.H"
@@ -14,7 +15,6 @@ struct GlyphWork {
 
 extern struct GlyphWork *gWindowWork;
 extern volatile u32 gKeysRepeat;
-extern s16 SideObject_CharacterIdMap[][2], SideObject_ActorKindIdMap[][2];
 
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
 #define DEBUG_GLYPH_NAME ((s32)MsgDebugGlyphName)

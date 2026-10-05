@@ -20,14 +20,12 @@
 #include "FIELD_EVENT.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
 
-extern u16 ParticleStreams_CellOffsets[];
 
 struct Chip {
     s32 x;

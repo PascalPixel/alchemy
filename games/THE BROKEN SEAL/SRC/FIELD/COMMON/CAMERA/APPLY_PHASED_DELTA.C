@@ -1,9 +1,11 @@
+#include "GLOBAL.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 
-extern struct BattleEffectWork *gBattleFxWork;
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+
 
 void Camera_ApplyPhasedDelta(void)
 {

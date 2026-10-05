@@ -6,12 +6,13 @@
 #include "SCRIPT_MOTION.H"
 #include "SCRIPT_OBJECT_ENTRY.H"
 
+#define gObjectSlots (*(struct ScriptMotionObject * *)&gObjectSlots)
+
 #define TARGET_UNSET ((s32)0x80000000)
 
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern ScriptCommandFn ScriptObject_CommandTable[];
-extern struct ScriptMotionObject *gObjectSlots;
 
 s32 Map_GetTerrainHeight(s32, s32, s32);
 s32 ArcTan2(s32, s32);

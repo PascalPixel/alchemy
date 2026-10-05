@@ -9,12 +9,13 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
-extern void *gMenuCtrlWork[];
+
+#define gMenuCtrlWork ((void *(*))&gMenuCtrlWork)
+#define Render_DecodeFrame ((const u8 (*))&Render_DecodeFrame)
 
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
-extern const u8 Render_DecodeFrame[];
 
 
 void Animation_SetWorkEntry(void *work, s32 no);

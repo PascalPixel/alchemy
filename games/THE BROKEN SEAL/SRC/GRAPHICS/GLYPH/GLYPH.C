@@ -1,4 +1,8 @@
+#include "TYPES.H"
 #include "PROTO.H"
+/* FAKEMATCH: this file reads RomBytes_08029a10 through its own declaration; the shop's changes its code. */
+#define OWN_RomBytes_08029a10
+extern u8 *RomBytes_08029a10[];
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "SELECT.H"
@@ -12,7 +16,7 @@
 #include "IO_REG.H"
 
 
-extern u8 *RomBytes_08029a10[];
+
 extern u8 *UiIcon_PsynergyIconPointers[];
 
 extern GlyphTransfer *gGlyphWork;

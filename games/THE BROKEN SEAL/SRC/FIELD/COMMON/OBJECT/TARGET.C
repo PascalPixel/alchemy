@@ -33,7 +33,6 @@ struct LinkedEffectObject {
 void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Object_Destroy(void *object);
 
-extern struct ObjectRuntime *gObjectSlots;
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 s32 ArcTan2(s32, s32);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);

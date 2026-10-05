@@ -124,5 +124,20 @@ extern u8 *UiIcon_MiscIconPointers[];
 extern u8 UiIcon_PsynergyIconPointers[];
 extern u8 UiIcon_PsynergyIconPointersEnd[];
 extern const u8 WorldMap_TerrainBehaviorTable[];
+#ifndef OWN_gFlash
+extern struct FlashChipInfo *gFlash;
+#endif
+#ifndef OWN_gFlashTimeoutFlag
+extern u8 gFlashTimeoutFlag;
+#endif
+#ifndef OWN_gFlashSavedIme
+extern volatile u16 gFlashSavedIme;
+#endif
+#ifndef OWN_gFlashTimerCount
+extern volatile u16 gFlashTimerCount;
+#endif
+#ifndef OWN_Flash_Handler4
+extern u32 Flash_Handler4;
+#endif
 
 #endif

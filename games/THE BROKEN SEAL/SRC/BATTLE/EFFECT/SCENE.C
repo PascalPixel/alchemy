@@ -21,7 +21,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
-extern u8 gObjectSlots[];
+#define gObjectSlots ((u8 (*))&gObjectSlots)
+
 extern struct BattleFxScene *gEffectWork;
 void BattleFx_UpdateScaledArcObjectB(void);
 void BattleFx_UpdateScaledArcObjectA(void);

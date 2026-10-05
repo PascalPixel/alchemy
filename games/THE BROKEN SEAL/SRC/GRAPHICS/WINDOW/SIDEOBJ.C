@@ -1,11 +1,18 @@
+#include "TYPES.H"
+/* FAKEMATCH: this file reads SideObject_CharacterIdMap through its own declaration; the shop's changes its code. */
+#define OWN_SideObject_CharacterIdMap
+extern const s16 SideObject_CharacterIdMap[];
+/* FAKEMATCH: this file reads SideObject_ActorKindIdMap through its own declaration; the shop's changes its code. */
+#define OWN_SideObject_ActorKindIdMap
+extern const s16 SideObject_ActorKindIdMap[];
+#include "GLOBAL.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-extern const s16 SideObject_CharacterIdMap[];
-extern const s16 SideObject_ActorKindIdMap[];
+
 
 extern s32 Localization_LookupEntryId();
 extern s32 CreateSideObject();

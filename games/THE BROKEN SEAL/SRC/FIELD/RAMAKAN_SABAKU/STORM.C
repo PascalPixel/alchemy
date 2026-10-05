@@ -12,9 +12,10 @@
 #include "VRAM_BLOCK.H"
 #include "IO_REG.H"
 
-extern s16 RamakanSabaku_SandVramSlot;
-extern s16 RamakanSabaku_SandCounter;
-extern s16 RamakanSabaku_SandPhase;
+#define RamakanSabaku_SandVramSlot (*(s16 *)&RamakanSabaku_SandVramSlot)
+#define RamakanSabaku_SandCounter (*(s16 *)&RamakanSabaku_SandCounter)
+#define RamakanSabaku_SandPhase (*(s16 *)&RamakanSabaku_SandPhase)
+
 extern struct MenuSprite RamakanSabaku_SandWork[];
 extern u32 gFrameCount;
 

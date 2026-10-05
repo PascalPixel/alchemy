@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
@@ -10,7 +11,6 @@ struct FlashChipInfo {
     u16 wait;
 };
 
-extern struct FlashChipInfo *gFlash;
 extern u16 gFlashNumRemainingBytes;
 
 void CountRemainingErasedFlashBytes(void);

@@ -39,7 +39,6 @@ void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 s32 ArcTan2(s32 y, s32 x);
 void Audio_PlayCue(s32 cue);
-extern struct ObjectRuntime *gObjectSlots;
 extern u8 ResourceBlockOwners[];
 
 

@@ -20,7 +20,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
@@ -156,7 +155,6 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     BattleFx_EndCanvasLayer();
 }
 
-extern u8 gBattleFxWork[];
 
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);

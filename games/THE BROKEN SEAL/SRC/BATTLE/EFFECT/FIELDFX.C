@@ -16,6 +16,8 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
+#define gObjectSlots ((u8 (*))&gObjectSlots)
+
 struct Output_08097f80 {
     s32 x;
     s32 y;
@@ -38,7 +40,6 @@ s32 Object_CommitPosition();
 
 extern void ObjectDispatch_ReleaseFar(void *object);
 
-extern u8 gObjectSlots[];
 
 extern u8 *gEventWork;
 

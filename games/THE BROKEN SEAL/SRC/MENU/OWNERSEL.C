@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "EDITION.H"
 #include "LAYOUT_GUARD.H"
@@ -9,7 +10,6 @@
 #include "UI.H"
 #include "MENU_LIST.H"
 
-extern struct ObjectSystemWork *gMenuCtrlWork;
 extern struct CharacterMenuState *gMenuWork;
 void ItemMenu_Close(void);
 s32 Party_ListActiveOwnersFar(u16 *);

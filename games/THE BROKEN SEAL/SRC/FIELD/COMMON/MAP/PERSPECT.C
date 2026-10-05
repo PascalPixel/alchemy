@@ -24,7 +24,6 @@ extern char ResourceId_DefaultMapCells;
 extern char ResourceId_DefaultMapAnimation;
 extern char ResourceId_DefaultMetatileAttributes;
 
-extern u32 gScanlinePitch;
 extern u32 gFrameCount;
 void Camera_StoreSceneParameters(u32, u32, u32);
 void SceneTransform_ApplyPosition(s32 *);

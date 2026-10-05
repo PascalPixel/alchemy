@@ -21,7 +21,8 @@
 #include "BATTLE_PRESENTATION.H"
 #include "RAM_BUFFER.H"
 
-extern struct BattleEffectWork *gBattleFxWork;
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+
 
 void WaitFrames(s32 frames);
 
@@ -80,8 +81,6 @@ void BattleFx_ArmWin0HBlankDma(void)
     Dma_Set((void *)gMapCellBuffer, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
 }
 
-extern u16 BattleFx_PuffCells[];
-extern u8 BattleFx_PuffSizes[];
 
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);

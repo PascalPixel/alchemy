@@ -1,4 +1,8 @@
+#include "TYPES.H"
 #include "PROTO.H"
+/* FAKEMATCH: this file reads FuneHeya_TurnSteps through its own declaration; the shop's changes its code. */
+#define OWN_FuneHeya_TurnSteps
+extern u32 FuneHeya_TurnSteps[];
 #include "GLOBAL.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -10,6 +14,7 @@
 #include "CALL.H"
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
+
 
 
 struct SceneActor {
@@ -26,7 +31,6 @@ struct EffectRecord {
     u8 active;
 };
 
-extern u32 FuneHeya_TurnSteps[];
 s32 Object_CheckMovementCollision();
 
 void Battle_ResetEffectCounterFar();

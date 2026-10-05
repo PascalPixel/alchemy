@@ -1,3 +1,8 @@
+#include "TYPES.H"
+/* FAKEMATCH: this file reads ParticleStreams_CellOffsets through its own declaration; the shop's changes its code. */
+#define OWN_ParticleStreams_CellOffsets
+extern const u16 ParticleStreams_CellOffsets[];
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -18,7 +23,7 @@
 #include "MOTION_OBJECT.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
+
 
 void WaitFrames(s32);
 
@@ -50,7 +55,6 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
     copy(destination, source, size);
 }
 
-extern const u16 ParticleStreams_CellOffsets[];
 void SceneTransform_ApplyPosition(s32 *position);
 
 void BattleFx_ArmBg2AffineHBlankDma(void)

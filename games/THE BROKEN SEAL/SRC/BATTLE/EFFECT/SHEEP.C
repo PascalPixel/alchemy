@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
@@ -13,7 +14,8 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-extern void *gBattleFxWork[];
+#define gBattleFxWork ((void *(*))&gBattleFxWork)
+
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);

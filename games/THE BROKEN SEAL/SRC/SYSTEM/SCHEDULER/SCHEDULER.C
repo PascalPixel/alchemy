@@ -15,7 +15,8 @@
 #include "LOW_RUNTIME.H"
 #include "OAM.H"
 
-extern void *Data_03001400[256];
+#define Data_03001400 ((void *(*))&Data_03001400)
+
 typedef void (*OamBuildRoutine)(void *work);
 
 

@@ -62,7 +62,6 @@ struct ReelSave {
     s8 won_prizes[16];
 };
 
-extern u8 gBattleFxWork[];
 extern volatile u32 gKeysHeld;
 extern u8 gDebugPaused;
 

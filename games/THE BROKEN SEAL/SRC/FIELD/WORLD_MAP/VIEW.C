@@ -23,7 +23,6 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination)
     *(u16 *)(destination + 64) = *colors;
 }
 
-extern u32 gScanlinePitch;
 u32 Random16(void);
 void Camera_StoreSceneParameters(s32 distance, s32 half, s32 twice);
 void SceneTransform_ApplyPosition(s32 *position);

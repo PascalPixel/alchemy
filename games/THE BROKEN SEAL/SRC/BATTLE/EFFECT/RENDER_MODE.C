@@ -20,7 +20,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 void SceneTransform_ApplyPosition(s32 *position);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);

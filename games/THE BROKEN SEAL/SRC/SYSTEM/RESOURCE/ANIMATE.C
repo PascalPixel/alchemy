@@ -9,7 +9,6 @@
 #include "DMA.H"
 #include "IO_REG.H"
 
-extern struct ObjectSystemWork *gMenuCtrlWork;
 
 void ResourceMetadata_ClearRecord(void *);
 

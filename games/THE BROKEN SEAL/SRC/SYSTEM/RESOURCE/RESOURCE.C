@@ -9,12 +9,13 @@
 #include "GLOBAL_CELLS.H"
 #include "IO_REG.H"
 
+#define Data_03007804 (*(struct ResourceWork *)&Data_03007804)
+
 struct ResourceWork {
     u32 header[3];
     u32 cursor;
 };
 
-extern struct ResourceWork Data_03007804;
 
 
 void Resource_LoadWorkHeader(void)

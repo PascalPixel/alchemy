@@ -14,7 +14,6 @@
 #include "IWRAM_CALL.H"
 #include "BATTLE_PRESENTATION.H"
 
-extern u8 gBattleFxWork[];
 
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
@@ -22,7 +21,6 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void Camera_ApplyShake(s32 x, s32 y);
 
-extern u16 ParticleStreams_CellOffsets[];
 
 void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 {

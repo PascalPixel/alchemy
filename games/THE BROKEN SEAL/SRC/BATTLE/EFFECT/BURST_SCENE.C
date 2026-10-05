@@ -20,7 +20,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
@@ -28,7 +27,6 @@ void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed
 void Audio_PlayCue(s32 cue);
 void Camera_ApplyShake(s32 x, s32 y);
 
-extern u16 ParticleStreams_CellOffsets[];
 
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 {

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "SCENE.H"
@@ -5,7 +6,8 @@
 #include "BATTLE_EFX.H"
 #include "IO_REG.H"
 
-extern struct BattleEffectWork *gBattleFxWork;
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+
 
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
 {

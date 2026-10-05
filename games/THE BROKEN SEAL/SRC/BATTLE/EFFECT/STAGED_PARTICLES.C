@@ -20,7 +20,8 @@
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
-extern struct BattleBackgroundView *gTransitionWork;
+#define gTransitionWork (*(struct BattleBackgroundView * *)&gTransitionWork)
+
 
 extern u8 gMapCellBuffer[];
 extern volatile u32 gKeysRepeat;
@@ -34,7 +35,6 @@ void Object_ApplyProjectedPlacementFar(void *object, s32 *position, const Scale 
 void Audio_PlayCue(s32 cue);
 void Camera_ApplyShake(s32 x, s32 y);
 
-extern u16 ParticleStreams_CellOffsets[];
 extern const Scale StagedParticles_UnitScale;
 
 #define OBJECTS (work->objects)

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
@@ -19,7 +20,6 @@
 #include "BATTLE_ACTOR.H"
 #include "FIELD_EVENT.H"
 
-extern struct BattlePresentationTransition *gTransitionWork;
 
 s32 ArcTan2(s32 first, s32 second);
 

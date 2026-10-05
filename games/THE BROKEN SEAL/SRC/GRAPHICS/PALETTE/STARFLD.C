@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "STRUCT.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
@@ -17,6 +18,8 @@
 #include "BATTLE_WORK.H"
 #include "IO_REG.H"
 
+#define gTransitionWork (*(s32 * *)&gTransitionWork)
+
 struct Spark {
     s32 pos[6];
     s32 life;
@@ -33,7 +36,6 @@ struct SparkWork {
     s32 origin_pending;
 };
 
-extern s32 *gTransitionWork;
 s32 FarCall_EffectTable(s32 kind, s32 width, s32 height, s32 count, s32 mode);
 
 s32 BattleFx_InitializeStarField(s32 mode)

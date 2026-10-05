@@ -12,7 +12,8 @@
 #include "TBS_EDITION.H"
 #include "IO_REG.H"
 
-extern u8 *gBattleBgFxWork;
+#define gBattleBgFxWork (*(u8 * *)&gBattleBgFxWork)
+
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 

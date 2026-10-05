@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
@@ -6,9 +7,10 @@
 #include "TYPES.H"
 #include "ANIMSPR.H"
 
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+
 void *GetMotionRecordFar(void *, s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
-extern struct BattleEffectWork *gBattleFxWork;
 
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)

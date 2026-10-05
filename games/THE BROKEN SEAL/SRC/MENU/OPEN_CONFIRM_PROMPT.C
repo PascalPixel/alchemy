@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "CHARACTER_MENU.H"
 #include "PSYNERGY_MENU.H"
@@ -16,7 +17,6 @@
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
-extern struct ObjectSystemWork *gMenuCtrlWork;
 
 s32 Party_ListActiveOwnersFar(u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);

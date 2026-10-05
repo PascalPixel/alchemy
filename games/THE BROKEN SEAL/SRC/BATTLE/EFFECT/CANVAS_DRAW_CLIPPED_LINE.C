@@ -1,6 +1,6 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 
-extern u8 gBattleFxWork[];
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 

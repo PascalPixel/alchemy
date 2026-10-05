@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "HEAP_STATE.H"
@@ -23,7 +24,6 @@
 #include "ANIMSPR.H"
 
 
-extern struct BattlePresentationTransition *gTransitionWork;
 void UiText_ShowMessageAndWaitCoreFar(s32);
 
 void UiWork_PushValueSlotFar(s32, s32);

@@ -20,7 +20,6 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);

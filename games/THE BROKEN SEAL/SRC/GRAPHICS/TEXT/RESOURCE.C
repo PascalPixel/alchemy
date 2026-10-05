@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
@@ -27,7 +28,6 @@ void UiTextResource_NoOpCallback4(void)
 {
 }
 
-extern const u8 Menu_CursorObjectTiles[];
 
 void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot)
 {

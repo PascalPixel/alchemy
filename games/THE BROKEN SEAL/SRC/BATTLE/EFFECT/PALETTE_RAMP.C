@@ -18,7 +18,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);

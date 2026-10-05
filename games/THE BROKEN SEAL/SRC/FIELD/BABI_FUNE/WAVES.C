@@ -9,6 +9,14 @@
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
+#define BabiFune_ShimmerActive (*(u32 *)&BabiFune_ShimmerActive)
+#define BabiFune_ShimmerPhase (*(u32 *)&BabiFune_ShimmerPhase)
+#define BabiFune_CountTicks (*(u32 *)&BabiFune_CountTicks)
+#define BabiFune_DriftActive (*(u32 *)&BabiFune_DriftActive)
+#define BabiFune_SwellActive (*(u32 *)&BabiFune_SwellActive)
+#define BabiFune_SwellLayerSixY (*(u32 *)&BabiFune_SwellLayerSixY)
+#define BabiFune_SwellLayerSevenY (*(u32 *)&BabiFune_SwellLayerSevenY)
+
 void Inventory_AddItemFar(s32 a, s32 b);
 
 union GameStateRows {
@@ -52,13 +60,6 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
     return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
 }
 
-extern u32 BabiFune_ShimmerActive;
-extern u32 BabiFune_ShimmerPhase;
-extern u32 BabiFune_CountTicks;
-extern u32 BabiFune_DriftActive;
-extern u32 BabiFune_SwellActive;
-extern u32 BabiFune_SwellLayerSixY;
-extern u32 BabiFune_SwellLayerSevenY;
 
 void Battle_ResetEffectCounter(void);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);

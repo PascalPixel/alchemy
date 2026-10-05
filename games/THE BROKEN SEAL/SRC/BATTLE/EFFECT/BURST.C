@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -17,9 +18,7 @@
 #include "RESOURCE_IDS.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
-extern u16 ParticleStreams_CellOffsets[];
 void Graphics_PackTileRows(void *source, void *destination, s32 width, s32 rows);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void Camera_ApplyShake(s32 x, s32 y);

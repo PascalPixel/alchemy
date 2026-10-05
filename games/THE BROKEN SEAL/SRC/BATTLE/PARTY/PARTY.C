@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
@@ -43,7 +44,6 @@ extern s32 gBattleRandomSeed;
     } while (0)
 
 extern volatile u16 gLinkStatus;
-extern u8 *gBattleOwnerStates;
 extern u8 gActorSpriteSlots[];
 extern u8 gCpuLoadDisplayEnabled;
 

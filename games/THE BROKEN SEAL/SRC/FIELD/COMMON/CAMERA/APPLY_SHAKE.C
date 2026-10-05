@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "MAP_SCROLL.H"
 #include "BATTLE_PRESENTATION.H"
@@ -7,7 +8,8 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
-extern struct BattleEffectWork *gBattleFxWork;
+
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
 void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 {

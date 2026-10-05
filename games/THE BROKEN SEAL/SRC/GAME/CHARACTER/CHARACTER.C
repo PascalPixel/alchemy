@@ -18,9 +18,10 @@
 #include "SAVE_STATE.H"
 #include "IO_REG.H"
 
+#define gBattleOwnerStates (*(struct BattleUnit * *)&gBattleOwnerStates)
+
 s32 Game_ResetForNewGameFar(s32);
 
-extern struct BattleUnit *gBattleOwnerStates;
 extern const struct EnemyDefinition Enemy_Definitions[];
 
 struct ClassRecord {

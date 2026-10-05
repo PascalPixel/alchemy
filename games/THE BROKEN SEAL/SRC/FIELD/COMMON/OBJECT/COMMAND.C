@@ -15,9 +15,10 @@
 #include "IO_REG.H"
 #include "BATTLE_RUNTIME.H"
 
+#define gObjectSlots (*(struct ScriptMotionObject * *)&gObjectSlots)
 
 
-extern struct ScriptMotionObject *gObjectSlots;
+
 #define TARGET_UNSET ((s32)0x80000000)
 
 s32 ArcTan2(s32, s32);

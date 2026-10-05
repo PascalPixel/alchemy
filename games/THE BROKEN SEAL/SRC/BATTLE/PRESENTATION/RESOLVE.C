@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "HEAP_STATE.H"
@@ -21,7 +22,6 @@
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
 s32 ActivateBattleObjectSlot(s32 unit_id);
-extern struct BattlePresentationTransition *gTransitionWork;
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
 void Camera_StoreSceneParameters(s32, u32, s32);
 s32 BattlePres_RunItem(struct BattlePlan *plan, s32 mode, struct BattleActionRecord *request);

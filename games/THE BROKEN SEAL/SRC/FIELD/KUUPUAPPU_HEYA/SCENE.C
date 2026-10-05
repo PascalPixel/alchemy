@@ -12,6 +12,9 @@
 #include "BATTLE_PARTY.H"
 #include "text/MSG_IDS.H"
 
+#define KuupuappuHeya_PairScriptP ((u8 (*))&KuupuappuHeya_PairScriptP)
+#define KuupuappuHeya_PairScriptR ((u8 (*))&KuupuappuHeya_PairScriptR)
+
 void Owner_RecalculateStats();
 s32 PartyInventory_HasSpace(void);
 void BattleEffect_CleanupSceneObjects(void);
@@ -132,8 +135,6 @@ void Engine_EventWaitForScreen();
 s32 Engine_UiWorkWaitThenFinalizeCapacity();
 void Engine_ActorStartRepeatedMotion();
 
-extern u8 KuupuappuHeya_PairScriptP[];
-extern u8 KuupuappuHeya_PairScriptR[];
 s32 Engine_GameFlagIsSet();
 void Engine_ActorFaceDirection();
 void Engine_ActorEnableActionCallback();

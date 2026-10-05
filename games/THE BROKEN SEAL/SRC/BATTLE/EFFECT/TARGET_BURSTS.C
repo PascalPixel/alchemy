@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -15,7 +16,6 @@
 #include "RESOURCE_IDS.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 
 void SceneTransform_ApplyPosition(s32 *position);

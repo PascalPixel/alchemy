@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -57,7 +58,6 @@ struct WaveFxWork {
     u8 counter;
 };
 
-extern struct WaveFxWork *gBattleBgFxWork;
 
 void Animation_ApplyChildPalette(struct FxObject *object, s32 palette);
 void Ui_SetBank15PaletteAndClearRenderMode(void);

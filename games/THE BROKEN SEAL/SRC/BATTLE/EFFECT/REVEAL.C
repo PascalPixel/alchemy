@@ -18,7 +18,6 @@
 #include "BATTLE_PRESENTATION.H"
 
 extern u8 gMapCellBuffer[];
-extern u8 gBattleFxWork[];
 
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Audio_PlayCue(s32 cue);

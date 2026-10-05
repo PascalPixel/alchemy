@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "SAVE_STATE.H"
 #include "TYPES.H"
@@ -6,7 +7,6 @@
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
 #include "IO_REG.H"
-extern s32 Flash_Handler0;
 
 u32 Random16(void);
 
@@ -66,6 +66,8 @@ u16 code;
 
 #include "DMA.H"
 #include "FLASH.H"
+
+#define Flash_Handler0 (*(s32 *)&Flash_Handler0)
 
 s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
 {

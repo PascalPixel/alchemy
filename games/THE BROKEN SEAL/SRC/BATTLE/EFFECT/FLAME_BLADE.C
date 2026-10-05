@@ -15,13 +15,13 @@
 #include "IO_REG.H"
 #include "FIXED_MATH.H"
 
-extern void *gBattleFxWork[];
+#define gBattleFxWork ((void *(*))&gBattleFxWork)
+
 
 #define HI(v) (((s16 *)&(v))[1])
 
 #define SPARK ((struct EffectStep *)Ram_MapCellBuffer)
 
-extern u16 ParticleStreams_CellOffsets[];
 
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);

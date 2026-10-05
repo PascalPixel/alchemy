@@ -34,7 +34,6 @@ typedef struct Scale {
 } Scale;
 
 extern const Scale BattleFx6_UnitScale;
-extern u16 ParticleStreams_CellOffsets[];
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 #define HI(v) (((s16 *)&(v))[1])

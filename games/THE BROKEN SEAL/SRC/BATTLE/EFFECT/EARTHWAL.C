@@ -14,7 +14,6 @@
 #include "IO_REG.H"
 #include "MENU_LIST.H"
 
-extern u8 gBattleFxWork[];
 
 
 typedef s32 (*WordCopy)(void *, const void *, s32);

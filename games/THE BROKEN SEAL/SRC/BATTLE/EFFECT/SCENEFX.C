@@ -20,9 +20,9 @@
 #include "SYSTEM.H"
 #include "TRANSFORM.H"
 
-extern void *gBattleFxWork[];
+#define gBattleFxWork ((void *(*))&gBattleFxWork)
 
-extern u16 ParticleStreams_CellOffsets[];
+
 
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 speed, s32 mode);
 void Audio_PlayCue(s32 cue);

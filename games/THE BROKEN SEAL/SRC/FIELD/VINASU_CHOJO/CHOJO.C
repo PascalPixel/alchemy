@@ -1259,8 +1259,6 @@ void FieldScene_RunStep6(void)
     SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(6));
 }
 
-extern const u8 VinasuChojo_ScaleStepAction[];
-extern const u8 VinasuChojo_BeamOpenAction[];
 void SceneEffect_SpawnParticlesAboveActor(void);
 void Owner_RefreshRatiosOnFlag(void);
 

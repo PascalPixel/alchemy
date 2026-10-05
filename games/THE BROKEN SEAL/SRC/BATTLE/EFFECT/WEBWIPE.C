@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -15,7 +16,6 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
 
 u32 Random16(void);
 

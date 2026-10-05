@@ -13,10 +13,11 @@
 #include "BATTLE_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
+#define gTitleExtraOptionEnabled (*(s16 *)&gTitleExtraOptionEnabled)
+
 u8 *UiText_FormatNumber(u8 *, s32, s32);
 
 extern volatile u32 gKeysHeld;
-extern s16 gTitleExtraOptionEnabled;
 
 extern u8 gSceneState[];
 extern u32 gLoadedStateWord;

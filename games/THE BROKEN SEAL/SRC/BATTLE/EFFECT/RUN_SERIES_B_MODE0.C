@@ -22,7 +22,6 @@
 
 #define WORK_SLOT(kind) (*(void **)((u8 *)gWorkSlot + (kind) * 4))
 
-extern u8 gBattleFxWork[];
 
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 side, s32 narrow, s32 *x, s32 *y);

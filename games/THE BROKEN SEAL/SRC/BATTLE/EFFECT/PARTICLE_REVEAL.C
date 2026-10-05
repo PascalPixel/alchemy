@@ -20,14 +20,12 @@
 #include "MOTION_OBJECT.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
 
-extern u16 ParticleStreams_CellOffsets[];
 
 #define HI(v) (((s16 *)&(v))[1])
 

@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "FIELDOBJ.H"
@@ -22,6 +23,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "DISPTRAN.H"
 #include "text/MSG_IDS.H"
+
+#define gMenuCtrlWork (*(struct MenuCtrl * *)&gMenuCtrlWork)
 
 s32 Party_CountActiveOwnersFar(void);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
@@ -228,7 +231,6 @@ void AudioCommand_PlayFar(s32 cue);
 extern struct OverlayEntries gOverlayArea;
 extern u8 ResourceBlockOwners[];
 extern volatile u32 gKeysHeld;
-extern struct MenuCtrl *gMenuCtrlWork;
 extern volatile u8 gDebugMode;
 
 static __inline__ s32 Vitals_Clamp(s32 ratio)

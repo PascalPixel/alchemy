@@ -2,10 +2,9 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
-extern u8 *gFlash;
-extern u8 gFlashTimeoutFlag;
+#define gFlash (*(u8 * *)&gFlash)
+
 extern u16 *volatile gFlashTimerReg;
-extern volatile u16 gFlashSavedIme;
 
 void StopFlashTimer(void)
 {

@@ -8,7 +8,6 @@
 #include "text/MSG_IDS.H"
 
 
-extern const u8 Menu_LvString[];
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);

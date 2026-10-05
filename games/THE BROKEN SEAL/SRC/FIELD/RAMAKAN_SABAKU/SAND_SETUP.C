@@ -4,9 +4,6 @@
 #include "RAMAKAN.H"
 #include "FIELD_EVENT.H"
 
-extern u16 RamakanSabaku_SandVramSlot;
-extern u16 RamakanSabaku_SandCounter;
-extern u16 RamakanSabaku_SandPhase;
 
 
 struct Half {

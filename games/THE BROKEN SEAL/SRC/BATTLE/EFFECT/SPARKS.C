@@ -21,7 +21,6 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 
 extern void *gWorkSlot[];
 extern u8 gMapCellBuffer[];
-extern u16 ParticleStreams_CellOffsets[];
 
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);

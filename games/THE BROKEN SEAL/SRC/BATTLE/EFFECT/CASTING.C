@@ -57,7 +57,6 @@ static __inline__ void FillWords(void *dest, u32 size, u32 value)
     Iwram_FillWords(dest, size, value);
 }
 
-extern u16 ParticleStreams_CellOffsets[];
 
 static __inline__ void DrawImage(void *canvas, const void *pixels, s32 x, s32 y, s32 width, s32 height,
                                  RectangleBlit *draw)

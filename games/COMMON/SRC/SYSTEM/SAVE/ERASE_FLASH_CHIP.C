@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/FLASH_DATA.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
@@ -10,7 +11,6 @@ struct FlashChipInfo {
     u16 control;
 };
 
-extern struct FlashChipInfo *gFlash;
 extern FlashWaitProc Flash_Handler3;
 
 s32 _call_via_r3(s32, u8 *, u8, s32);

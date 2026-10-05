@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
@@ -24,7 +25,6 @@ void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 
-extern u16 ParticleStreams_CellOffsets[];
 
 #define MOTES_PER_MEMBER 128
 

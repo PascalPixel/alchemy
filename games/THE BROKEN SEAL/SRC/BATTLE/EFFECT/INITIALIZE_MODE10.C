@@ -1,5 +1,12 @@
+#include "TYPES.H"
 #include "STRUCT.H"
 #include "PROTO.H"
+/* FAKEMATCH: this file reads BattleFx_PuffCells through its own declaration; the shop's changes its code. */
+#define OWN_BattleFx_PuffCells
+extern const u16 BattleFx_PuffCells[];
+/* FAKEMATCH: this file reads BattleFx_PuffSizes through its own declaration; the shop's changes its code. */
+#define OWN_BattleFx_PuffSizes
+extern const u8 BattleFx_PuffSizes[];
 #include "GLOBAL.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -21,7 +28,6 @@
 #include "IO_REG.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 extern volatile u32 gKeysRepeat;
 
 void *GetMotionRecordFar(struct MotionObject *object, s32 index);
@@ -484,6 +490,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
 
+
 extern u8 gMapCellBuffer[];
 
 void WaitFrames(s32);
@@ -504,8 +511,6 @@ typedef struct Scale {
 } Scale;
 
 extern const Scale BattleFx10_UnitScale;
-extern const u16 BattleFx_PuffCells[];
-extern const u8 BattleFx_PuffSizes[];
 
 struct Mode10Work {
     u8 sheet[0x7080];
@@ -934,7 +939,6 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 
-extern u16 ParticleStreams_CellOffsets[];
 
 #define SHARDS_PER_MEMBER 128
 

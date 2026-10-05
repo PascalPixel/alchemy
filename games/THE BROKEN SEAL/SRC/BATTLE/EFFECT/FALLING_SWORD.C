@@ -15,14 +15,14 @@
 #include "IO_REG.H"
 #include "FIXED_MATH.H"
 
-extern void *gBattleFxWork[];
+#define gBattleFxWork ((void *(*))&gBattleFxWork)
+
 
 #define HI(v) (((s16 *)&(v))[1])
 
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
-extern u16 ParticleStreams_CellOffsets[];
 
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);

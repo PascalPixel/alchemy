@@ -18,7 +18,8 @@
 #include "RESOURCE.H"
 #include "FIXED_MATH.H"
 
-extern void *gBattleFxWork[];
+#define gBattleFxWork ((void *(*))&gBattleFxWork)
+
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -44,7 +45,6 @@ struct FxControl {
 };
 
 extern u32 gKeysRepeat;
-extern u16 ParticleStreams_CellOffsets[];
 extern const struct FxPair ObjectRow_SweepPair;
 extern const struct FxPair ObjectRow_RisePair;
 

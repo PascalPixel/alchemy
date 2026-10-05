@@ -18,6 +18,8 @@
 #include "IRQ.H"
 #include "BATTLE_INTRO.H"
 
+#define gTransitionWork ((u8 (*))&gTransitionWork)
+
 struct DisplayRegisters {
     u16 control;
     u16 green_swap;
@@ -181,7 +183,6 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 }
 
 
-extern u8 gTransitionWork[];
 
 struct Half {
     u16 v;

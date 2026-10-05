@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -16,16 +17,12 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 
-extern u8 gBattleFxWork[];
 
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 
-extern u16 ParticleStreams_CellOffsets[];
-extern u16 BattleFx_PuffCells[];
-extern u8 BattleFx_PuffSizes[];
 
 void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 {

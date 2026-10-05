@@ -83,7 +83,6 @@ s32 SceneState_ApplyLevelFromFlags();
 s32 SceneActor_CheckBucketOffsetPoint();
 void FieldScene_CallPairWith10();
 void ObjectMotion_SetActionVariant();
-extern s32 FuneHeya_TurnSteps[];
 
 
 s32 StagedActor_CountdownUntilPositionUnset(u8 *object);

@@ -12,7 +12,6 @@
 #include "text/MSG_IDS.H"
 
 
-extern u8 ArutinYama_ActorScript[];
 void FieldScene_RunOpeningAuxiliarySequence();
 void ArutinYama_StartPaletteAnim();
 void Engine_MapCopyCellAttributes();

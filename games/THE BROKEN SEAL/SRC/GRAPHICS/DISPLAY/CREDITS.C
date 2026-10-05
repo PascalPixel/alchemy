@@ -10,14 +10,15 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 
+#define Flash_Handler0 (*(s16 *)&Flash_Handler0)
+#define gFlashNumRemainingBytes (*(struct DisplayScrollObject * *)&gFlashNumRemainingBytes)
+
 struct DisplayScrollObject {
     u32 attr01;
     u32 attr2;
 };
 
 extern u16 gScratchWord;
-extern s16 Flash_Handler0;
-extern struct DisplayScrollObject *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
 

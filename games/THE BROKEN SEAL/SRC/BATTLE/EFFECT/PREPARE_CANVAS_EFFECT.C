@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -19,12 +20,10 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
 
 void Audio_PlayCue(s32 cue);
 void SceneTransform_ApplyPosition(s32 *position);
 
-extern u16 ParticleStreams_CellOffsets[];
 
 #define HI(v) (((s16 *)&(v))[1])
 

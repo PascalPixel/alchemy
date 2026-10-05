@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "SYSTEM.H"
@@ -7,7 +8,8 @@
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
 
-extern s32 gRandomSeed;
+#define gRandomSeed (*(s32 *)&gRandomSeed)
+
 extern volatile u16 gLinkStatus;
 extern volatile u16 gSerialReceivedSize;
 

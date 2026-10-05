@@ -1,3 +1,8 @@
+#include "TYPES.H"
+/* FAKEMATCH: this file reads Menu_WorkspaceIconFrames through its own declaration; the shop's changes its code. */
+#define OWN_Menu_WorkspaceIconFrames
+extern const s8 Menu_WorkspaceIconFrames[];
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -10,6 +15,7 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
+
 #define FLAG_WORKSPACE_SETTINGS_ONLY 0x17e
 #define WORKSPACE_ROWS 3
 #define WORKSPACE_DEBUG_ROWS 3
@@ -18,7 +24,6 @@
 #define RESOURCE_SLOTS 96
 
 extern u8 gDebugMode;
-extern const s8 Menu_WorkspaceIconFrames[];
 extern const u8 Resource_FixedBlockBTiles[];
 
 void ShopCursor_AdvanceFar(void *);

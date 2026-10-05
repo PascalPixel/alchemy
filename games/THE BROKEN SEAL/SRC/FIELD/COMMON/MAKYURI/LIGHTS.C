@@ -24,7 +24,6 @@ struct MakyuriLights {
     struct FieldActor *upper;
 };
 
-extern const s32 Makyuri_PillarScript[];
 void *ObjectTable_Get();
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *anim, s32 animation);
 

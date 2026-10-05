@@ -11,7 +11,6 @@
 #define BRANCH_FIELD(site, target) \
     ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
-extern const u32 ParticleStreams_CellOffsets[];
 
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode)
 {
@@ -74,6 +73,8 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
     dst = (u32 *)Runtime_AllocateHeapBlock(slot, words << 2);
     src = SentouKouka_Gousei;
 #include "SENTOU_KOUKA_GOUSEI_STEPS.INC"
+
+#define ParticleStreams_CellOffsets ((const u32 (*))&ParticleStreams_CellOffsets)
 
     end = ParticleStreams_CellOffsets;
     return src == end;

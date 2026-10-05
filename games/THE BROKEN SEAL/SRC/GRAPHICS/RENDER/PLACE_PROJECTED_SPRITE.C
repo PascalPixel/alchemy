@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -6,7 +7,8 @@
 #include "ANIMSPR.H"
 #include "IWRAM_CALL.H"
 
-extern u8 gMenuCtrlWork[];
+#define gMenuCtrlWork ((u8 (*))&gMenuCtrlWork)
+
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)

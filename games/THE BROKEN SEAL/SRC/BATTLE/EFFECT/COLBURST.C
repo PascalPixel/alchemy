@@ -15,7 +15,6 @@
 #include "B5_CONTEXT.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
 
 extern u8 gMapCellBuffer[];
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);

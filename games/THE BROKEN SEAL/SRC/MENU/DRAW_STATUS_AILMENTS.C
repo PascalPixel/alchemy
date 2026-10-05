@@ -9,7 +9,6 @@
 
 
 extern struct CharacterMenuState *gMenuWork;
-extern const u8 Menu_LvString[];
 
 s32 Party_SumDjinnCountsFar(s32 side);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 flags, s32 unit);

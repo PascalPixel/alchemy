@@ -15,7 +15,6 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
 
 struct Scale { s32 x; s32 y; };
 struct Placement { s32 x; s32 y; s32 z; s32 w; };
@@ -70,7 +69,6 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 void Audio_PlayCue(s32 cue);
 
 extern struct EffectStep gMapCellBuffer[];
-extern u16 ParticleStreams_CellOffsets[];
 
 #define HI(v) (((s16 *)&(v))[1])
 

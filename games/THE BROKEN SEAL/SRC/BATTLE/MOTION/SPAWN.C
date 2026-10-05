@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
@@ -5,6 +6,8 @@
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"
+
+#define gMenuCtrlWork (*(u8 * *)&gMenuCtrlWork)
 
 struct PairedObjectList {
     u8 padding0[8];
@@ -17,7 +20,6 @@ struct PairedObjectTable {
 };
 
 extern volatile u8 gSchedulerStatus;
-extern u8 *gMenuCtrlWork;
 
 void WaitFrames(s32 frames);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 id);

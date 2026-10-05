@@ -14,7 +14,8 @@
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
 
-extern struct BattleBackgroundView *gTransitionWork;
+#define gTransitionWork (*(struct BattleBackgroundView * *)&gTransitionWork)
+
 
 void BattlePresentation_InitializeWorkAndResetState(void)
 {

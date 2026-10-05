@@ -26,13 +26,11 @@ struct Point2D {
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 extern volatile u32 gKeysRepeat;
-extern u16 ParticleStreams_CellOffsets[];
 
 struct BattleEffectTargetArgument;
 void AudioCommand_PlayFar(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
-extern u8 gBattleFxWork[];
 
 #define gDrops ((struct EffectStep *)Ram_MapCellBuffer)
 

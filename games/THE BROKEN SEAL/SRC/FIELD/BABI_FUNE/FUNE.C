@@ -15,7 +15,6 @@ void DisplayScroll_InitializeHBlankDma(s32 mode, s32 a, s32 b, s32 c, s32 d, s32
 s32 Math_DivideUnsigned();
 
 
-extern s32 BabiFune_CountTicks;
 
 u8 *BabiFune_GetEntrances(void)
 {
@@ -129,12 +128,6 @@ struct WaveMap {
     struct WaveMapLayer layers[8];
 };
 
-extern s32 BabiFune_ShimmerActive;
-extern s32 BabiFune_ShimmerPhase;
-extern s32 BabiFune_DriftActive;
-extern s32 BabiFune_SwellActive;
-extern s32 BabiFune_SwellLayerSixY;
-extern s32 BabiFune_SwellLayerSevenY;
 
 
 void BabiFune_UpdateWaves(void)

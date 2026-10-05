@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "CHARACTER_MENU.H"
 #include "HEAP_STATE.H"
@@ -30,7 +31,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
     return fill(dst, size, value);
 }
 
-extern struct ObjectSystemWork *gMenuCtrlWork;
 
 #if EDITION_INTERNATIONAL
 #define SAVED_TILE_BYTES 0x2000

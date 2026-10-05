@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -8,6 +9,8 @@
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
+#define Menu_ColonString ((u8 (*))&Menu_ColonString)
+
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 
 struct Work;
@@ -15,7 +18,6 @@ void RenderOutput_PrepareForRedraw();
 void UiText_DrawNumber(s32 n, s32 digits, s32 work, s32 x, s32 y);
 void UiText_DrawString(u8 *str, s32 work, s32 x, s32 y);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
-extern u8 Menu_ColonString[];
 
 struct MenuDefaults {
     u8 padding_000[0x1C8];

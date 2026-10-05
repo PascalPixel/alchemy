@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "RUNTIME_MEM.H"
 #include "HEAP_STATE.H"
@@ -20,9 +21,7 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
-extern u8 gBattleFxWork[];
 
-extern u16 ParticleStreams_CellOffsets[];
 
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 

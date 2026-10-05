@@ -4,8 +4,6 @@
 #include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
-extern const u8 KuupuappuHeya_PairScriptR[];
-extern const u8 KuupuappuHeya_PairScriptP[];
 
 void Object_RefreshSelectorById(s32 actor);
 

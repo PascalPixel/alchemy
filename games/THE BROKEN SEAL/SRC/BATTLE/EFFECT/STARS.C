@@ -20,7 +20,6 @@
 #include "MENU_LIST.H"
 #include "FIELD_EVENT.H"
 
-extern u16 ParticleStreams_CellOffsets[];
 extern struct Vector3 RingBolts_Points[];
 extern u8 gMapCellBuffer[];
 

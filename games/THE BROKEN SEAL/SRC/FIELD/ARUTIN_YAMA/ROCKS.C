@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "YAMA.H"
 #include "TYPES.H"
 #include "ARUTIN.H"
@@ -5,6 +6,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
+
+#define ArutinYama_ActorScript (*(u8 *)&ArutinYama_ActorScript)
 
 
 extern const struct SceneEvent gArutinYamaEventsOther[];
@@ -33,7 +36,6 @@ void Engine_ObjectSetTargetAndCallback();
 
 struct Half { u16 v; };
 
-extern u8 ArutinYama_ActorScript;
 
 void FieldScene_RunSharedSetPiece(s32 a0)
 {

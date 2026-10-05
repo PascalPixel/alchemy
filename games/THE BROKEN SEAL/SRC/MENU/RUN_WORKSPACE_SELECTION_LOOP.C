@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "EDITION.H"
@@ -21,7 +22,6 @@ void Shop_SetCursorFar(void *, s32, s32, s32);
 void Ui_ApplyTableOffsetToPair(void *);
 
 extern u8 gDebugMode;
-extern s8 Menu_WorkspaceIconFrames[];
 
 void UiIcon_PrepareObjectFar(void *);
 

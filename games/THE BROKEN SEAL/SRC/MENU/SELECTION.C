@@ -4,7 +4,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SAVE_STATE.H"
-extern u8 gTitleExtraOptionEnabled[];
 
 
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)

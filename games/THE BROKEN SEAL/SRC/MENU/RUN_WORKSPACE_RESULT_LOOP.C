@@ -8,6 +8,8 @@
 #include "IO_REG.H"
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
+
+#define gMenuCtrlWork (*(struct DebugMenuState * *)&gMenuCtrlWork)
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 
 extern u8 gSleepRequested;
@@ -41,7 +43,6 @@ struct DebugMenuState {
     u16 active;
 };
 
-extern struct DebugMenuState *gMenuCtrlWork;
 extern volatile u32 gKeysRepeat;
 
 void WaitFrames(s32);

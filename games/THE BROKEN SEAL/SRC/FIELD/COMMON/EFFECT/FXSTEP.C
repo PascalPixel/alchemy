@@ -23,6 +23,8 @@
 #include "MENU_LIST.H"
 #include "TRANSFORM.H"
 
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+
 s32 Render_ProjectPoint(s32 *, s32 *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
 
@@ -30,7 +32,6 @@ void *GetMotionRecordFar(void *object, s32 mode);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
-extern struct BattleEffectWork *gBattleFxWork;
 extern u8 gKeysHeld[];
 
 void *BattleFx_RunCastingImpact(s32 *);

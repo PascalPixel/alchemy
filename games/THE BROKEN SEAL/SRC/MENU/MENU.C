@@ -11,8 +11,9 @@
 #include "NODE_CHAIN.H"
 #include "text/MSG_IDS.H"
 
+#define Menu_CursorObjectTiles ((u8 (*))&Menu_CursorObjectTiles)
+
 extern u32 gFrameTick;
-extern u8 Menu_CursorObjectTiles[];
 extern s32 GameFlag_IsSet(s32 flag);
 
 void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);

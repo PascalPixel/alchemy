@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -9,7 +10,8 @@
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
 
-extern struct BattleEffectWork *gBattleFxWork;
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+
 
 #define FADE_BG_PALETTE ((void *)0x050000c0)
 #define FADE_STEP 1092

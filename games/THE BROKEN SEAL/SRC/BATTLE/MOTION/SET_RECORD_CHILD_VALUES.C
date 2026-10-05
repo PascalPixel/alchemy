@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
@@ -41,7 +42,6 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
     }
 }
 
-extern struct BattlePresentationTransition *gTransitionWork;
 u16 ArcTan2(s32 x, s32 y);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);

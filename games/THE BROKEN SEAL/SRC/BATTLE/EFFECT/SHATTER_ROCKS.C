@@ -14,7 +14,6 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 
-extern u8 gBattleFxWork[];
 
 void Camera_ApplyShake(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);

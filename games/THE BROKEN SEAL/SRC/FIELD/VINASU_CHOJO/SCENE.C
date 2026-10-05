@@ -16,9 +16,11 @@
 #include "WINDOW.H"
 #include "text/MSG_IDS.H"
 
+#define VinasuChojo_BeamOpenAction ((u8 (*))&VinasuChojo_BeamOpenAction)
+#define VinasuChojo_ScaleStepAction ((u8 (*))&VinasuChojo_ScaleStepAction)
+
 void SceneEffect_SpawnParticlesAboveActor(void);
 
-extern u8 VinasuChojo_BeamOpenAction[];
 void SceneEffect_SpawnParticlesAboveActor();
 void VinasuChojo_RunTransitionStep();
 
@@ -34,7 +36,6 @@ enum {
 void SceneEffect_SpawnParticlesBesideActor(void);
 
 
-extern u8 VinasuChojo_ScaleStepAction[];
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
 void Graphics_EnableObjLayerAndCallbacks();

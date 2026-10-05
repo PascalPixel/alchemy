@@ -7,7 +7,6 @@
 #include "AUDIO_ENGINE.H"
 
 extern volatile u32 gKeysRepeat;
-extern s32 Data_03007804;
 void AudioCommand_Play(s32 id);
 
 

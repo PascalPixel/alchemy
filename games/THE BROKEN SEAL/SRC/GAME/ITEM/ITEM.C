@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "PROTO.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
@@ -13,6 +14,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_CALC.H"
 #include "UI.H"
+
+#define gMenuCtrlWork (*(struct ItemMenuDisplayState * *)&gMenuCtrlWork)
 
 extern struct InventoryMenuState *gMenuWork;
 s32 Inventory_RemoveFar(s32, s32);
@@ -59,7 +62,6 @@ struct ItemMenuWork {
 };
 
 extern struct ItemMenuModeState gGameState;
-extern struct ItemMenuDisplayState *gMenuCtrlWork;
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);

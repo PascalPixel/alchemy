@@ -2,6 +2,8 @@
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
+#define gFlash (*(const void * *)&gFlash)
+
 struct FlashChip {
     u32 handlers[5];
     u8 layout[20];
@@ -11,8 +13,6 @@ struct FlashChip {
 extern const struct FlashChip *const Flash_Chips[];
 extern u32 Flash_Handler3;
 extern u32 Flash_Handler0;
-extern const void *gFlash;
-extern u32 Flash_Handler4;
 
 s32 IdentifyFlash(void)
 {

@@ -1,6 +1,8 @@
+#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 
-extern u8 *gFlash;
+#define gFlash (*(u8 * *)&gFlash)
+
 
 s32 CountRemainingErasedFlashBytes(u8 *ptr)
 {

@@ -14,7 +14,6 @@
 #include "IO_REG.H"
 #include "BATTLE_PRESENTATION.H"
 
-extern u8 gBattleFxWork[];
 
 void Graphics_TransposeCopy(const u8 *source_base, u8 *destination_base,
     s32 row_size, s32 column_count);
@@ -23,7 +22,6 @@ void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
 
-extern u16 ParticleStreams_CellOffsets[];
 
 #define HI(v) (((s16 *)&(v))[1])
 

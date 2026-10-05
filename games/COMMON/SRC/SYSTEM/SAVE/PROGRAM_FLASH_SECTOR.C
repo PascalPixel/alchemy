@@ -1,3 +1,4 @@
+#include "GLOBAL.H"
 #include "../../../INCLUDE/SYSTEM/FLASH.H"
 #include "../../../INCLUDE/SYSTEM/IO_REG.H"
 
@@ -9,7 +10,6 @@ struct FlashChipInfo {
     u16 control;
 };
 
-extern struct FlashChipInfo *gFlash;
 extern u16 gFlashNumRemainingBytes;
 
 u16 ProgramFlashSector(u16 sector, u8 *source)

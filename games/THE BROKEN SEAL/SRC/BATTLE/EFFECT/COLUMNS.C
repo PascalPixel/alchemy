@@ -16,7 +16,6 @@
 #include "BATTLE_PRESENTATION.H"
 
 extern u8 gMapCellBuffer[];
-extern u8 gBattleFxWork[];
 
 struct DualColumn {
     s32 x;

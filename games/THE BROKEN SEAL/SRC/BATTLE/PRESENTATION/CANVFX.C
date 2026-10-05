@@ -40,7 +40,6 @@ struct StreakPoint {
 #include "B5_CONTEXT.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
 
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
